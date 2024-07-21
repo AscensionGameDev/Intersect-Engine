@@ -29,12 +29,12 @@ namespace Intersect.Server.Core.Commands
             if (string.IsNullOrEmpty(Mute.FindMuteReason(target.User.Id, "")))
             {
                 Mute.Add(target, duration, reason, Strings.Commands.muteuser, ip ? target.Ip : "");
-                PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(name));
-                Console.WriteLine($@"    {Strings.Account.muted.ToString(name)}");
+                PacketSender.SendGlobalMsg(Strings.Account.Muted.ToString(name));
+                Console.WriteLine($@"    {Strings.Account.Muted.ToString(name)}");
             }
             else
             {
-                Console.WriteLine($@"    {Strings.Account.alreadymuted.ToString(name)}");
+                Console.WriteLine($@"    {Strings.Account.AlreadyMuted.ToString(name)}");
             }
         }
 

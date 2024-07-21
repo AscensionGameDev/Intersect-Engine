@@ -870,19 +870,19 @@ public partial class User
 
         if (Options.BlockClientRegistrations)
         {
-            error = Strings.Account.registrationsblocked;
+            error = Strings.Account.RegistrationsBlocked;
             return false;
         }
 
         if (!FieldChecking.IsValidUsername(username, Strings.Regex.username))
         {
-            error = Strings.Account.invalidname;
+            error = Strings.Account.InvalidName;
             return false;
         }
 
         if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.email))
         {
-            error = Strings.Account.invalidemail;
+            error = Strings.Account.InvalidEmail;
             return false;
         }
 
@@ -894,13 +894,13 @@ public partial class User
 
         if (UserExists(username))
         {
-            error = Strings.Account.exists;
+            error = Strings.Account.AccountAlreadyExists;
             return false;
         }
 
         if (UserExists(email))
         {
-            error = Strings.Account.emailexists;
+            error = Strings.Account.EmailExists;
             return false;
         }
 

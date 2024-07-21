@@ -25,7 +25,7 @@ namespace Intersect.Server.Core.Commands
         {
             if (target == null)
             {
-                Console.WriteLine($@"    {Strings.Account.notfound}");
+                Console.WriteLine($@"    {Strings.Account.NotFound}");
 
                 return;
             }

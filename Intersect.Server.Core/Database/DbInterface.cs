@@ -463,7 +463,7 @@ public static partial class DbInterface
         }
         else
         {
-            Console.WriteLine(Strings.Account.doesnotexist);
+            Console.WriteLine(Strings.Account.AccountDoesNotExist);
         }
     }
 
@@ -478,7 +478,7 @@ public static partial class DbInterface
         }
         else
         {
-            Console.WriteLine(Strings.Account.doesnotexist);
+            Console.WriteLine(Strings.Account.AccountDoesNotExist);
 
             return false;
         }

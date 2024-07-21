@@ -504,7 +504,7 @@ internal sealed partial class PacketHandler
     {
         if (client.AccountAttempts > 3 && client.TimeoutMs > Timing.Global.Milliseconds)
         {
-            PacketSender.SendError(client, Strings.Errors.errortimeout);
+            PacketSender.SendError(client, Strings.Errors.errortimeout, Strings.General.NoticeError);
             client.ResetTimeout();
 
             return;
@@ -516,7 +516,7 @@ internal sealed partial class PacketHandler
         // Are we at capacity yet, or can this user still log in?
         if (Globals.OnlineList.Count >= Options.MaxLoggedinUsers)
         {
-            PacketSender.SendError(client, Strings.Networking.ServerFull);
+            PacketSender.SendError(client, Strings.Networking.ServerFull, Strings.General.NoticeError);
 
             return;
         }
@@ -527,7 +527,7 @@ internal sealed partial class PacketHandler
             UserActivityHistory.LogActivity(Guid.Empty, Guid.Empty, client?.Ip, UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.FailedLogin, packet.Username);
 
             client.FailedAttempt();
-            PacketSender.SendError(client, Strings.Account.badlogin);
+            PacketSender.SendError(client, Strings.Account.BadLogin, Strings.General.NoticeError);
 
             return;
         }
@@ -574,7 +574,7 @@ internal sealed partial class PacketHandler
         {
             client.SetUser(null);
             client.Banned = true;
-            PacketSender.SendError(client, isBanned);
+            PacketSender.SendError(client, isBanned, Strings.General.NoticeError);
 
             return;
         }
@@ -584,7 +584,7 @@ internal sealed partial class PacketHandler
         {
             if (client.Power == UserRights.None)
             {
-                PacketSender.SendError(client, Strings.Account.adminonly);
+                PacketSender.SendError(client, Strings.Account.AdminOnly, Strings.General.NoticeError);
 
                 return;
             }
@@ -1402,7 +1402,7 @@ internal sealed partial class PacketHandler
     {
         if (client.TimeoutMs > Timing.Global.Milliseconds)
         {
-            PacketSender.SendError(client, Strings.Errors.errortimeout);
+            PacketSender.SendError(client, Strings.Errors.errortimeout, Strings.General.NoticeError);
             client.ResetTimeout();
 
             return;
@@ -1412,21 +1412,21 @@ internal sealed partial class PacketHandler
 
         if (Options.BlockClientRegistrations)
         {
-            PacketSender.SendError(client, Strings.Account.registrationsblocked);
+            PacketSender.SendError(client, Strings.Account.RegistrationsBlocked, Strings.General.NoticeError);
 
             return;
         }
 
         if (!FieldChecking.IsValidUsername(packet.Username, Strings.Regex.username))
         {
-            PacketSender.SendError(client, Strings.Account.invalidname);
+            PacketSender.SendError(client, Strings.Account.InvalidName, Strings.General.NoticeError);
 
             return;
         }
 
         if (!FieldChecking.IsWellformedEmailAddress(packet.Email, Strings.Regex.email))
         {
-            PacketSender.SendError(client, Strings.Account.invalidemail);
+            PacketSender.SendError(client, Strings.Account.InvalidEmail, Strings.General.NoticeError);
 
             return;
         }
@@ -1435,20 +1435,20 @@ internal sealed partial class PacketHandler
         var isBanned = Ban.CheckBan(client.Ip);
         if (isBanned != null)
         {
-            PacketSender.SendError(client, isBanned);
+            PacketSender.SendError(client, isBanned, Strings.General.NoticeError);
 
             return;
         }
 
         if (User.UserExists(packet.Username))
         {
-            PacketSender.SendError(client, Strings.Account.exists);
+            PacketSender.SendError(client, Strings.Account.AccountAlreadyExists, Strings.General.NoticeError);
         }
         else
         {
             if (User.UserExists(packet.Email))
             {
-                PacketSender.SendError(client, Strings.Account.emailexists);
+                PacketSender.SendError(client, Strings.Account.EmailExists, Strings.General.NoticeError);
             }
             else
             {
@@ -1475,7 +1475,7 @@ internal sealed partial class PacketHandler
                 {
                     if (client.Power == UserRights.None)
                     {
-                        PacketSender.SendError(client, Strings.Account.adminonly);
+                        PacketSender.SendError(client, Strings.Account.AdminOnly, Strings.General.NoticeError);
 
                         return;
                     }
@@ -1498,7 +1498,7 @@ internal sealed partial class PacketHandler
 
         if (!FieldChecking.IsValidUsername(packet.Name, Strings.Regex.username))
         {
-            PacketSender.SendError(client, Strings.Account.invalidname);
+            PacketSender.SendError(client, Strings.Account.InvalidName, Strings.General.NoticeError);
 
             return;
         }
@@ -1507,14 +1507,14 @@ internal sealed partial class PacketHandler
         var classBase = ClassBase.Get(packet.ClassId);
         if (classBase == null || classBase.Locked)
         {
-            PacketSender.SendError(client, Strings.Account.invalidclass);
+            PacketSender.SendError(client, Strings.Account.InvalidClass, Strings.General.NoticeError);
 
             return;
         }
 
         if (Player.PlayerExists(packet.Name))
         {
-            PacketSender.SendError(client, Strings.Account.characterexists);
+            PacketSender.SendError(client, Strings.Account.CharacterExists, Strings.General.NoticeError);
             return;
         }
 
@@ -2507,7 +2507,7 @@ internal sealed partial class PacketHandler
         catch (Exception exception)
         {
             Log.Warn(exception);
-            PacketSender.SendError(client, Strings.Account.loadfail);
+            PacketSender.SendError(client, Strings.Account.LoadFail, Strings.General.NoticeError);
             client.Logout();
         }
     }
@@ -2522,7 +2522,7 @@ internal sealed partial class PacketHandler
 
         if (Player.FindOnline(packet.CharacterId) != null)
         {
-            PacketSender.SendError(client, Strings.Account.deletecharerror, Strings.Account.deletederror);
+            PacketSender.SendError(client, Strings.Account.DeleteCharacterError, Strings.General.NoticeError);
             PacketSender.SendPlayerCharacters(client);
             return;
         }
@@ -2533,7 +2533,7 @@ internal sealed partial class PacketHandler
             character.LoadGuild();
             if (character.Guild != null && character.GuildRank == 0)
             {
-                PacketSender.SendError(client, Strings.Guilds.deleteguildleader, Strings.Account.deleted);
+                PacketSender.SendError(client, Strings.Guilds.deleteguildleader, Strings.General.NoticeError);
                 return;
             }
 
@@ -2551,7 +2551,7 @@ internal sealed partial class PacketHandler
             }
         }
 
-        PacketSender.SendError(client, Strings.Account.deletechar, Strings.Account.deleted);
+        PacketSender.SendError(client, Strings.Account.CharacterDeleted, Strings.General.Notice);
         PacketSender.SendPlayerCharacters(client);
     }
 
@@ -2565,7 +2565,7 @@ internal sealed partial class PacketHandler
         }
         else
         {
-            PacketSender.SendError(client, Strings.Account.maxchars);
+            PacketSender.SendError(client, Strings.Account.MaxCharacters, Strings.General.NoticeError);
         }
     }
 
@@ -2576,7 +2576,7 @@ internal sealed partial class PacketHandler
 
         if (client.TimeoutMs > Timing.Global.Milliseconds)
         {
-            PacketSender.SendError(client, Strings.Errors.errortimeout);
+            PacketSender.SendError(client, Strings.Errors.errortimeout, Strings.General.NoticeError);
             client.ResetTimeout();
 
             return;

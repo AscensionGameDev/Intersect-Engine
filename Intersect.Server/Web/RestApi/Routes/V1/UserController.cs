@@ -951,7 +951,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     }
                     else if (Ban.Find(user.Id) != null) // If the target is already banned.
                     {
-                        return BadRequest(Strings.Account.alreadybanned.ToString(user.Name));
+                        return BadRequest(Strings.Account.AlreadyBanned.ToString(user.Name));
                     }
 
                     // If target is online, not yet banned and the banner has the authority to ban.
@@ -967,10 +967,10 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         client?.Disconnect();
 
                         // Sends a global chat message to every user online about the banned player.
-                        PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(user.Name));
+                        PacketSender.SendGlobalMsg(Strings.Account.Banned.ToString(user.Name));
 
                         //  Inform to the API about the successful ban.
-                        return Ok(Strings.Account.banned.ToString(user.Name));
+                        return Ok(Strings.Account.Banned.ToString(user.Name));
                     }
 
                 case AdminAction.UnBan:
@@ -988,7 +988,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     }
                     else if (Mute.Find(user) != null) // If the target is already muted.
                     {
-                        return BadRequest(Strings.Account.alreadymuted.ToString(user.Name));
+                        return BadRequest(Strings.Account.AlreadyMuted.ToString(user.Name));
                     }
 
                     // If target is online, not yet muted and the action performer has the authority to mute.
@@ -999,9 +999,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                             actionPerformer.Name, actionParameters.Ip ? targetIp : string.Empty
                         );
 
-                        PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(user.Name));
+                        PacketSender.SendGlobalMsg(Strings.Account.Muted.ToString(user.Name));
 
-                        return Ok(Strings.Account.muted.ToString(user.Name));
+                        return Ok(Strings.Account.Muted.ToString(user.Name));
                     }
 
                 case AdminAction.UnMute:

@@ -236,7 +236,7 @@ public partial class Mute
 
             return expired
                 ? null
-                : Strings.Account.mutestatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason);
+                : Strings.Account.MuteStatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason);
         }
         catch (Exception ex)
         {
@@ -270,7 +270,7 @@ public partial class Mute
 
             return expired
                 ? null
-                : Strings.Account.mutestatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason);
+                : Strings.Account.MuteStatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason);
         }
         catch (Exception ex)
         {

@@ -51,7 +51,7 @@ internal sealed partial class NetworkedPacketHandler
     {
         if (client.TimeoutMs > Timing.Global.Milliseconds)
         {
-            PacketSender.SendError(client, Strings.Errors.errortimeout);
+            PacketSender.SendError(client, Strings.Errors.errortimeout, Strings.General.NoticeError);
             client.ResetTimeout();
 
             return;
@@ -66,7 +66,7 @@ internal sealed partial class NetworkedPacketHandler
                 var email = new PasswordResetEmail(user);
                 if (!email.Send())
                 {
-                    PacketSender.SendError(client, Strings.Account.emailfail);
+                    PacketSender.SendError(client, Strings.Account.EmailFail, Strings.General.NoticeError);
                 }
             }
             else
@@ -92,7 +92,7 @@ internal sealed partial class NetworkedPacketHandler
         {
             if (client.AccountAttempts > 3 && client.TimeoutMs > Timing.Global.Milliseconds)
             {
-                PacketSender.SendError(client, Strings.Errors.errortimeout);
+                PacketSender.SendError(client, Strings.Errors.errortimeout, Strings.General.NoticeError);
                 client.ResetTimeout();
 
                 return;
@@ -106,7 +106,7 @@ internal sealed partial class NetworkedPacketHandler
                 UserActivityHistory.LogActivity(Guid.Empty, Guid.Empty, client?.Ip, UserActivityHistory.PeerType.Editor, UserActivityHistory.UserAction.FailedLogin, packet.Username);
 
                 client.FailedAttempt();
-                PacketSender.SendError(client, Strings.Account.badlogin);
+                PacketSender.SendError(client, Strings.Account.BadLogin, Strings.General.NoticeError);
 
                 return;
             }
@@ -114,7 +114,7 @@ internal sealed partial class NetworkedPacketHandler
             if (!user.Power.Editor)
             {
                 client.FailedAttempt();
-                PacketSender.SendError(client, Strings.Account.badaccess);
+                PacketSender.SendError(client, Strings.Account.BadAccess, Strings.General.NoticeError);
 
                 return;
             }

@@ -49,7 +49,7 @@ namespace Intersect.Server.Admin.Actions
             else if (Ban.Find(targetUsername) != null) // If the target is already banned.
             {
                 PacketSender.SendChatMsg(
-                    player, Strings.Account.alreadybanned.ToString(target.Name), ChatMessageType.Admin, Color.Red
+                    player, Strings.Account.AlreadyBanned.ToString(target.Name), ChatMessageType.Admin, Color.Red
                 );
             }
 
@@ -73,7 +73,7 @@ namespace Intersect.Server.Admin.Actions
                 target.Client?.Disconnect();
 
                 // Sends a global chat message to every user online about the banned player.
-                PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(target.Name));
+                PacketSender.SendGlobalMsg(Strings.Account.Banned.ToString(target.Name));
             }
         }
 
@@ -208,7 +208,7 @@ namespace Intersect.Server.Admin.Actions
             else if (Mute.Find(targetUsername) != null) // If the target is already muted.
             {
                 PacketSender.SendChatMsg(
-                    player, Strings.Account.alreadymuted.ToString(target.Name), ChatMessageType.Admin, Color.Red
+                    player, Strings.Account.AlreadyMuted.ToString(target.Name), ChatMessageType.Admin, Color.Red
                 );
             }
 
@@ -229,7 +229,7 @@ namespace Intersect.Server.Admin.Actions
                 );
 
                 // Sends a global chat message to every user online about the muted player.
-                PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(target.Name));
+                PacketSender.SendGlobalMsg(Strings.Account.Muted.ToString(target.Name));
             }
         }
 

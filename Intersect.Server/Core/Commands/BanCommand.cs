@@ -30,12 +30,12 @@ namespace Intersect.Server.Core.Commands
             {
                 Ban.Add(target, duration, reason, Strings.Commands.banuser, ip ? target.Ip : "");
                 target.Disconnect();
-                PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(name));
-                Console.WriteLine($@"    {Strings.Account.banned.ToString(name)}");
+                PacketSender.SendGlobalMsg(Strings.Account.Banned.ToString(name));
+                Console.WriteLine($@"    {Strings.Account.Banned.ToString(name)}");
             }
             else
             {
-                Console.WriteLine($@"    {Strings.Account.alreadybanned.ToString(name)}");
+                Console.WriteLine($@"    {Strings.Account.AlreadyBanned.ToString(name)}");
             }
         }
 

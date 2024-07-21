@@ -14,90 +14,92 @@ public static partial class Strings
 
     public sealed partial class AccountNamespace : LocaleNamespace
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString AccountAlreadyExists = @"Account already exists!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString adminonly =
-            @"The server is currently allowing only admins to connect. Come back later!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString alreadybanned = @"{00} has already been banned!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString alreadymuted = @"{00} has already been muted!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString badaccess = @"Access denied! Invalid power level!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString badlogin = @"Username or password incorrect.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString banned = @"{00} has been banned!";
+        public readonly LocalizedString AccountDoesNotExist = @"Account does not exist.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString UnbanSuccess = @"{00} has been unbanned!";
+        public readonly LocalizedString AdminOnly = @"The server is currently allowing only admins to connect. Please come back later!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString UnbanFail = @"Failed to unban {00}. The user is not banned!";
+        public readonly LocalizedString AlreadyBanned = @"{00} has already been banned!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString AlreadyMuted = @"{00} has already been muted!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString BadAccess = @"Access denied! Invalid power level!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString BadLogin = @"Username or password incorrect.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString BanStatus = @"Your account has been banned since: {00} (UTC) by {01}. Ban expires: {02} (UTC). Reason for ban: {03}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Banned = @"{00} has been banned!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString CharacterExists = @"An account with this character name already exists. Please choose another.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString CharacterDeleted = @"The character has been deleted.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString DeleteCharacterError = @"This character cannot be deleted, they may be stuck online in combat.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString EmailExists = @"An account with this email address already exists.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString EmailFail = @"Failed to send your password reset email at this time. Please try again later.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString InvalidClass = @"Invalid class selected. Please try again.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString InvalidEmail = @"The chosen email does not meet the requirements set by the server.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString InvalidName = @"The chosen name does not meet the requirements set by the server.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString LoadFail = @"Failed to load account. Please try logging in again.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString MaxCharacters = @"You have already created the maximum number of characters. Delete one before creating a new one.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Muted = @"{00} has been muted!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString MuteStatus = @"Your account has been muted since: {00} by {01}. Mute expires: {02}. Reason for mute: {03}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString NotAllowed = @"You do not have the permission to do this.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString banstatus =
-            @"Your account has been banned since: {00} (UTC) by {01}. Ban expires: {02} (UTC). Reason for ban: {03}";
+        public readonly LocalizedString NotFound = @"Error: Account {00} was not found!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString characterexists =
-            @"An account with this character name exists. Please choose another.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString deletechar = @"The character has been deleted.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString deleted = @"Delete Character";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString deletecharerror = @"This character cannot be deleted, they may be stuck online in combat.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString deletederror = @"Error Deleting Character";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString doesnotexist = @"Account does not exist.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString emailexists = @"An account with this email address already exists.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString exists = @"Account already exists!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString invalidclass = @"Invalid class selected. Try again.";
+        public readonly LocalizedString RegistrationsBlocked = @"Account registrations are currently blocked by the server.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString invalidemail =
-            @"The chosen email does not meet requirements set by the server.";
+        public readonly LocalizedString UnbanFail = @"Failed to unban {00}. The user is not banned!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString invalidname =
-            @"The chosen name does not meet requirements set by the server.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString loadfail = @"Failed to load account. Please try logging in again.";
+        public readonly LocalizedString UnbanSuccess = @"{00} has been unbanned!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString maxchars =
-            @"You have already created the maximum number of characters. Delete one before creating a new one.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString muted = @"{00} has been muted!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString UnmuteSuccess = @"{00} has been unmuted!";
+        public readonly LocalizedString UnknownError = @"An unknown error occurred while saving the user.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString UnmuteFail = @"Failed to unmute {00}. The user is not muted!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString mutestatus =
-            @"Your account has been muted since: {00} by {01}. Mute expires: {02}. Reason for mute: {03}";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString notfound = @"Error: Account {00} was not found!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString registrationsblocked =
-            @"Account registrations are currently blocked by the server.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString emailfail = @"Failed to send your password reset email at this time. Please try again later.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString UnknownError = @"An unknown error occurred while saving the user.";
+        public readonly LocalizedString UnmuteSuccess = @"{00} has been unmuted!";
     }
 
     public sealed partial class BagsNamespace : LocaleNamespace
@@ -777,17 +779,26 @@ public static partial class Strings
 
     public sealed partial class GeneralNamespace : LocaleNamespace
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Disabled = @"Disabled";
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString Disabled = @"Disabled";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString DisabledLowerCase = @"disabled";
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString DisabledLowerCase = @"disabled";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Enabled = @"Enabled";
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString Enabled = @"Enabled";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString EnabledLowerCase = @"enabled";
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString EnabledLowerCase = @"enabled";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString None = @"None";
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString none = @"None";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Notice = @"Notice";
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString NoticeError = @"Error Notice";
     }
 
     public sealed partial class GuildsNamespace : LocaleNamespace
