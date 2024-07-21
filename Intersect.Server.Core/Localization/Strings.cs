@@ -170,61 +170,59 @@ public static partial class Strings
 
     public sealed partial class ChatNamespace : LocaleNamespace
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Admin = @"[ADMIN] {00}: {01}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString admin = @"[ADMIN] {00}: {01}";
+        public readonly LocalizedString AdminCommand = @"/admin";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString admincmd = @"/admin";
+        public readonly LocalizedString AllCommand = @"/all";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString allcmd = @"/all";
+        public readonly LocalizedString Announcement = @"[ANNOUNCEMENT] {00}: {01}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString announcement = @"[ANNOUNCEMENT] {00}: {01}";
+        public readonly LocalizedString AnnouncementCommand = @"/announcement";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString announcementcmd = @"/announcement";
-
-        [JsonProperty("global", NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString Global = @"[GLOBAL] {00}: {01}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString globalcmd = @"/global";
+        public readonly LocalizedString GlobalCommand = @"/global";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString local = @"{00}: {01}";
+        public readonly LocalizedString Local = @"{00}: {01}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString localcmd = @"/local";
+        public readonly LocalizedString LocalCommand = @"/local";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString messagecmd = @"/message";
+        public readonly LocalizedString MessageCommand = @"/message";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString party = @"[PARTY] {00}: {01}";
+        public readonly LocalizedString Party = @"[PARTY] {00}: {01}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString partycmd = @"/party";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString pmcmd = @"/pm";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString PrivateTo = @"[PM] To {00}: {01}";
+        public readonly LocalizedString PartyCommand = @"/party";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString PrivateFrom = @"[PM] From {00}: {01}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString rcmd = @"/r";
+        public readonly LocalizedString PrivateTo = @"[PM] To {00}: {01}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString replycmd = @"/reply";
+        public readonly LocalizedString PrivateMessageCommand = @"/pm";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString toofast = @"You are chatting too fast!";
+        public readonly LocalizedString ReplyCommand = @"/reply";
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ReplyShortcutCommand = @"/r";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString TooFast = @"You are chatting too fast!";
     }
 
     public sealed partial class ClassesNamespace : LocaleNamespace

@@ -800,7 +800,7 @@ internal sealed partial class PacketHandler
 
         if (player.LastChatTime > Timing.Global.MillisecondsUtc)
         {
-            PacketSender.SendChatMsg(player, Strings.Chat.toofast, ChatMessageType.Notice);
+            PacketSender.SendChatMsg(player, Strings.Chat.TooFast, ChatMessageType.Notice);
             player.LastChatTime = Timing.Global.MillisecondsUtc + Options.MinChatInterval;
 
             return;
@@ -818,17 +818,17 @@ internal sealed partial class PacketHandler
             switch (channel)
             {
                 case 0: //local
-                    cmd = Strings.Chat.localcmd;
+                    cmd = Strings.Chat.LocalCommand;
 
                     break;
 
                 case 1: //global
-                    cmd = Strings.Chat.allcmd;
+                    cmd = Strings.Chat.AllCommand;
 
                     break;
 
                 case 2: //party
-                    cmd = Strings.Chat.partycmd;
+                    cmd = Strings.Chat.PartyCommand;
 
                     break;
 
@@ -837,7 +837,7 @@ internal sealed partial class PacketHandler
                     break;
 
                 case 4: //admin
-                    cmd = Strings.Chat.admincmd;
+                    cmd = Strings.Chat.AdminCommand;
 
                     break;
 
@@ -855,7 +855,7 @@ internal sealed partial class PacketHandler
 
         var msgSplit = msg.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-        if (cmd == Strings.Chat.localcmd)
+        if (cmd == Strings.Chat.LocalCommand)
         {
             if (msg.Trim().Length == 0)
             {
@@ -874,13 +874,13 @@ internal sealed partial class PacketHandler
             }
 
             PacketSender.SendProximityMsgToLayer(
-                Strings.Chat.local.ToString(player.Name, msg), ChatMessageType.Local, player.MapId, player.MapInstanceId, chatColor,
+                Strings.Chat.Local.ToString(player.Name, msg), ChatMessageType.Local, player.MapId, player.MapInstanceId, chatColor,
                 player.Name
             );
             PacketSender.SendChatBubble(player.Id, player.MapInstanceId, (int)EntityType.GlobalEntity, msg, player.MapId);
             ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Local, Guid.Empty);
         }
-        else if (cmd == Strings.Chat.allcmd || cmd == Strings.Chat.globalcmd)
+        else if (cmd == Strings.Chat.AllCommand || cmd == Strings.Chat.GlobalCommand)
         {
             if (msg.Trim().Length == 0)
             {
@@ -900,7 +900,7 @@ internal sealed partial class PacketHandler
             PacketSender.SendGlobalMsg(Strings.Chat.Global.ToString(player.Name, msg), chatColor, player.Name);
             ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Global, Guid.Empty);
         }
-        else if (cmd == Strings.Chat.partycmd)
+        else if (cmd == Strings.Chat.PartyCommand)
         {
             if (msg.Trim().Length == 0)
             {
@@ -910,7 +910,7 @@ internal sealed partial class PacketHandler
             if (player.InParty(player))
             {
                 PacketSender.SendPartyMsg(
-                    player, Strings.Chat.party.ToString(player.Name, msg), CustomColors.Chat.PartyChat, player.Name
+                    player, Strings.Chat.Party.ToString(player.Name, msg), CustomColors.Chat.PartyChat, player.Name
                 );
                 ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Party, Guid.Empty);
             }
@@ -919,7 +919,7 @@ internal sealed partial class PacketHandler
                 PacketSender.SendChatMsg(player, Strings.Parties.notinparty, ChatMessageType.Party, CustomColors.Alerts.Error);
             }
         }
-        else if (cmd == Strings.Chat.admincmd)
+        else if (cmd == Strings.Chat.AdminCommand)
         {
             if (msg.Trim().Length == 0)
             {
@@ -929,7 +929,7 @@ internal sealed partial class PacketHandler
             if (client?.Power.IsModerator ?? false)
             {
                 PacketSender.SendAdminMsg(
-                    Strings.Chat.admin.ToString(player.Name, msg), CustomColors.Chat.AdminChat, player.Name
+                    Strings.Chat.Admin.ToString(player.Name, msg), CustomColors.Chat.AdminChat, player.Name
                 );
                 ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Admin, Guid.Empty);
             }
@@ -953,7 +953,7 @@ internal sealed partial class PacketHandler
             ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Guild, player.Guild.Id);
 
         }
-        else if (cmd == Strings.Chat.announcementcmd)
+        else if (cmd == Strings.Chat.AnnouncementCommand)
         {
             if (msg.Trim().Length == 0)
             {
@@ -963,7 +963,7 @@ internal sealed partial class PacketHandler
             if (client?.Power.IsModerator ?? false)
             {
                 PacketSender.SendGlobalMsg(
-                    Strings.Chat.announcement.ToString(player.Name, msg), CustomColors.Chat.AnnouncementChat,
+                    Strings.Chat.Announcement.ToString(player.Name, msg), CustomColors.Chat.AnnouncementChat,
                     player.Name
                 );
 
@@ -977,7 +977,7 @@ internal sealed partial class PacketHandler
                 ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Notice, Guid.Empty);
             }
         }
-        else if (cmd == Strings.Chat.pmcmd || cmd == Strings.Chat.messagecmd)
+        else if (cmd == Strings.Chat.PrivateMessageCommand || cmd == Strings.Chat.MessageCommand)
         {
             if (msgSplit.Length < 2)
             {
@@ -1019,7 +1019,7 @@ internal sealed partial class PacketHandler
                 PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.PM, CustomColors.Alerts.Error);
             }
         }
-        else if (cmd == Strings.Chat.replycmd || cmd == Strings.Chat.rcmd)
+        else if (cmd == Strings.Chat.ReplyCommand || cmd == Strings.Chat.ReplyShortcutCommand)
         {
             if (msg.Trim().Length == 0)
             {
