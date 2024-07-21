@@ -113,7 +113,7 @@ internal sealed partial class PacketHandler
         if (pSize > thresholds.MaxPacketSize)
         {
             Log.Error(
-                Strings.Errors.floodsize.ToString(
+                Strings.Errors.ErrorFloodSize.ToString(
                     pSize, client?.User?.Name ?? "", client?.Entity?.Name ?? "", client.Ip
                 )
             );
@@ -130,7 +130,7 @@ internal sealed partial class PacketHandler
             if (client.PacketCount > thresholds.MaxPacketPerSec)
             {
                 Log.Error(
-                    Strings.Errors.floodburst.ToString(
+                    Strings.Errors.ErrorFloodBurst.ToString(
                         client.PacketCount, client?.User?.Name ?? "", client?.Entity?.Name ?? "", client.Ip
                     )
                 );
@@ -504,7 +504,7 @@ internal sealed partial class PacketHandler
     {
         if (client.AccountAttempts > 3 && client.TimeoutMs > Timing.Global.Milliseconds)
         {
-            PacketSender.SendError(client, Strings.Errors.errortimeout, Strings.General.NoticeError);
+            PacketSender.SendError(client, Strings.Errors.ErrorTimeout, Strings.General.NoticeError);
             client.ResetTimeout();
 
             return;
@@ -1402,7 +1402,7 @@ internal sealed partial class PacketHandler
     {
         if (client.TimeoutMs > Timing.Global.Milliseconds)
         {
-            PacketSender.SendError(client, Strings.Errors.errortimeout, Strings.General.NoticeError);
+            PacketSender.SendError(client, Strings.Errors.ErrorTimeout, Strings.General.NoticeError);
             client.ResetTimeout();
 
             return;
@@ -2576,7 +2576,7 @@ internal sealed partial class PacketHandler
 
         if (client.TimeoutMs > Timing.Global.Milliseconds)
         {
-            PacketSender.SendError(client, Strings.Errors.errortimeout, Strings.General.NoticeError);
+            PacketSender.SendError(client, Strings.Errors.ErrorTimeout, Strings.General.NoticeError);
             client.ResetTimeout();
 
             return;

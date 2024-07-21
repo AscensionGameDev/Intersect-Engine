@@ -51,7 +51,7 @@ internal sealed partial class NetworkedPacketHandler
     {
         if (client.TimeoutMs > Timing.Global.Milliseconds)
         {
-            PacketSender.SendError(client, Strings.Errors.errortimeout, Strings.General.NoticeError);
+            PacketSender.SendError(client, Strings.Errors.ErrorTimeout, Strings.General.NoticeError);
             client.ResetTimeout();
 
             return;
@@ -92,7 +92,7 @@ internal sealed partial class NetworkedPacketHandler
         {
             if (client.AccountAttempts > 3 && client.TimeoutMs > Timing.Global.Milliseconds)
             {
-                PacketSender.SendError(client, Strings.Errors.errortimeout, Strings.General.NoticeError);
+                PacketSender.SendError(client, Strings.Errors.ErrorTimeout, Strings.General.NoticeError);
                 client.ResetTimeout();
 
                 return;

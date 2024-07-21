@@ -532,44 +532,32 @@ public static partial class Strings
 
     public sealed partial class ErrorsNamespace : LocaleNamespace
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ErrorFloodBurst = "[Flood]: {00} Burst Packets [User: {01} | Player: {02} | IP {03}]";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString errorloadingconfig =
-            @"Failed to load server options! Press any key to shut down.";
+        public readonly LocalizedString ErrorFloodSize = @"[Flood]: Packet Size: {00} [User: {01} | Player: {02} | IP {03}]";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString
-            ErrorLoadingStrings = @"Failed to load strings! Press any key to shut down.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString errorlogged = @"An error was logged into errors.log";
+        public readonly LocalizedString ErrorLoadingConfiguration = @"Failed to load server options! Press any key to shut down.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString errorservercrash =
-            @"The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log. Press enter to exit.";
+        public readonly LocalizedString ErrorLoadingStrings = @"Failed to load strings! Press any key to shut down.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString errorservercrashnohalt =
-            @"The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString errortimeout = @"Too many failed requests. Please wait and try again!";
+        public readonly LocalizedString ErrorLogged = @"An error was logged into errors.log.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString floodaverage =
-            @"[Flood]: 3+ Rapid Detections. Total Detections: {00} [User: {01} | Player: {02} | IP {03}]";
+        public readonly LocalizedString ErrorServerCrash = @"The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log. Press enter to exit.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString floodburst =
-            @"[Flood]: {00} Burst Packets [User: {01} | Player: {02} | IP {03}]";
+        public readonly LocalizedString ErrorServerCrashNoHalt = @"The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString floodsize =
-            @"[Flood]: Packet Size: {00} [User: {01} | Player: {02} | IP {03}]";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString warpfail = @"Failed to warp player to new map -- warping to spawn.";
+        public readonly LocalizedString ErrorTimeout = @"Too many failed requests. Please wait and try again!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString UnknownErrorTryAgain = @"An unknown error occurred, please try again.";
-
     }
 
     public sealed partial class EventsNamespace : LocaleNamespace

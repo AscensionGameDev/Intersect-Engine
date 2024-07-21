@@ -46,7 +46,7 @@ namespace Intersect.Server.Core.Commands
                     : Strings.Player.deadmin.ToString(target.Entity.Name)
             );
 
-            Console.WriteLine($@"    {Strings.Commandoutput.powerchanged.ToString(target.Entity.Name)}");
+            Console.WriteLine($@"    {Strings.Commandoutput.PowerChanged.ToString(target.Entity.Name)}");
         }
 
     }

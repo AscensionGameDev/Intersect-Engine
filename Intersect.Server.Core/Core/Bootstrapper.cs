@@ -114,11 +114,11 @@ internal static class Bootstrapper
         {
             if (noHaltOnError)
             {
-                Console.WriteLine(Strings.Errors.errorservercrashnohalt);
+                Console.WriteLine(Strings.Errors.ErrorServerCrashNoHalt);
             }
             else
             {
-                Console.WriteLine(Strings.Errors.errorservercrash);
+                Console.WriteLine(Strings.Errors.ErrorServerCrash);
                 Console.ReadLine();
             }
         }
@@ -181,7 +181,7 @@ internal static class Bootstrapper
 
         if (!Options.LoadFromDisk())
         {
-            Console.WriteLine(Strings.Errors.errorloadingconfig);
+            Console.WriteLine(Strings.Errors.ErrorLoadingConfiguration);
             Console.ReadKey();
 
             return false;
