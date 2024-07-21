@@ -3121,7 +3121,7 @@ public partial class Player : Entity
 
         if (itemInSlot.TryGetBag(out var bag) && !bag.IsEmpty)
         {
-            PacketSender.SendChatMsg(this, Strings.Bags.dropnotempty, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+            PacketSender.SendChatMsg(this, Strings.Bags.DropNotEmpty, ChatMessageType.Inventory, CustomColors.Alerts.Error);
             return false;
         }
 
@@ -3813,7 +3813,7 @@ public partial class Player : Entity
                     {
                         if (!bag.IsEmpty)
                         {
-                            PacketSender.SendChatMsg(this, Strings.Bags.onlysellempty, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+                            PacketSender.SendChatMsg(this, Strings.Bags.OnlySellEmpty, ChatMessageType.Inventory, CustomColors.Alerts.Error);
                             return;
                         }
                     }
@@ -4542,13 +4542,13 @@ public partial class Player : Entity
         // Make Sure we are not Storing a Bag inside of itself
         if (inventorySlot.Bag == InBag)
         {
-            PacketSender.SendChatMsg(this, Strings.Bags.baginself, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+            PacketSender.SendChatMsg(this, Strings.Bags.BagInSelf, ChatMessageType.Inventory, CustomColors.Alerts.Error);
             return;
         }
 
         if (itemDescriptor.ItemType == ItemType.Bag)
         {
-            PacketSender.SendChatMsg(this, Strings.Bags.baginbag, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+            PacketSender.SendChatMsg(this, Strings.Bags.BagInBag, ChatMessageType.Inventory, CustomColors.Alerts.Error);
             return;
         }
 
@@ -4598,7 +4598,7 @@ public partial class Player : Entity
         if (!TryFillBagStacksOfItemFromInventorySlot(bag, inventorySlotIndex, relevantSlots, itemDescriptor, amount))
         {
             // If we're STILL not done, alert the user that we didn't have enough slots
-            PacketSender.SendChatMsg(this, Strings.Bags.bagnospace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+            PacketSender.SendChatMsg(this, Strings.Bags.BagNoSpace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
         }
     }
 
@@ -4667,7 +4667,7 @@ public partial class Player : Entity
         if (!TryFillInventoryStacksOfItemFromBagSlot(bag, slot, relevantSlots, itemBase, amount))
         {
             // If we're STILL not done, alert the user that we didn't have enough slots
-            PacketSender.SendChatMsg(this, Strings.Bags.withdrawinvalid, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+            PacketSender.SendChatMsg(this, Strings.Bags.WithdrawInvalid, ChatMessageType.Inventory, CustomColors.Alerts.Error);
         }
     }
 
@@ -4813,7 +4813,7 @@ public partial class Player : Entity
                 //Check if the item is bound.. if so don't allow trade
                 if (!itemBase.CanTrade)
                 {
-                    PacketSender.SendChatMsg(this, Strings.Bags.tradebound, ChatMessageType.Trading, CustomColors.Items.Bound);
+                    PacketSender.SendChatMsg(this, Strings.Bags.TradeBound, ChatMessageType.Trading, CustomColors.Items.Bound);
 
                     return;
                 }
@@ -4825,7 +4825,7 @@ public partial class Player : Entity
                     {
                         if (!bag.IsEmpty)
                         {
-                            PacketSender.SendChatMsg(this, Strings.Bags.onlytradeempty, ChatMessageType.Trading, CustomColors.Alerts.Error);
+                            PacketSender.SendChatMsg(this, Strings.Bags.OnlyTradeEmpty, ChatMessageType.Trading, CustomColors.Alerts.Error);
                             return;
                         }
                     }
@@ -4962,7 +4962,7 @@ public partial class Player : Entity
         if (!TryFillInventoryStacksOfItemForTradeOffer(tradeItem, slot, relevantSlots, itemBase, amount))
         {
             // If we're STILL not done, alert the user that we didn't have enough slots
-            PacketSender.SendChatMsg(this, Strings.Bags.withdrawinvalid, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+            PacketSender.SendChatMsg(this, Strings.Bags.WithdrawInvalid, ChatMessageType.Inventory, CustomColors.Alerts.Error);
         }
     }
 

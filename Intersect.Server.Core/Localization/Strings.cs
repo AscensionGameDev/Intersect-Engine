@@ -104,41 +104,38 @@ public static partial class Strings
 
     public sealed partial class BagsNamespace : LocaleNamespace
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString BagInBag = @"You cannot store a bag inside another bag!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString baginbag = @"You cannot store a bag inside another bag!";
+        public readonly LocalizedString BagInSelf = @"You cannot store a bag within itself!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString baginself = @"You cannot store a bag in within itself!";
+        public readonly LocalizedString BagNoSpace = @"There is no space left in your bag for that item!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString bagnospace = @"There is no space left in your bag for that item!";
+        public readonly LocalizedString DepositInvalid = @"Invalid item selected to store!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString depositinvalid = @"Invalid item selected to store!";
+        public readonly LocalizedString DropNotEmpty = @"You cannot drop a bag unless it's empty!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString dropnotempty = @"You cannot drop a bag unless it's empty!";
+        public readonly LocalizedString InventoryNoSpace = @"There is no space left in your inventory for that item!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString inventorynospace =
-            @"There is no space left in your inventory for that item!";
+        public readonly LocalizedString OnlySellEmpty = @"Cannot sell the bag unless it's empty!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString onlysellempty = @"Cannot sell bag unless it's empty!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString onlytradeempty = @"Cannot trade bag unless it's empty!";
+        public readonly LocalizedString OnlyTradeEmpty = @"Cannot trade the bag unless it's empty!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString SlotOccupied = @"That slot is occupied by another item!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString tradebound = @"Cannot trade bound items!";
+        public readonly LocalizedString TradeBound = @"Cannot trade bound items!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString withdrawinvalid = @"Invalid item selected to retreive!";
-
+        public readonly LocalizedString WithdrawInvalid = @"Invalid item selected to retrieve!";
     }
 
     public sealed partial class BanksNamespace : LocaleNamespace
