@@ -131,7 +131,7 @@ public static partial class CommandProcessing
     )
     {
         var txt = ParseEventText(command.Text, player, instance);
-        var color = Color.FromName(command.Color, Strings.Colors.presets);
+        var color = Color.FromName(command.Color, Strings.Colors.Presets);
         switch (command.Channel)
         {
             case ChatboxChannel.Player:

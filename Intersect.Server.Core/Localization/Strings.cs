@@ -234,12 +234,11 @@ public static partial class Strings
         public readonly LocalizedString LastClassError = @"Failed to delete class. You must have at least one class at all times!";
     }
 
-    public sealed partial class ColorsNamespace : LocaleNamespace
+    public sealed partial class ColorNamespace : LocaleNamespace
     {
-
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocaleDictionary<int, LocalizedString> presets = new LocaleDictionary<int, LocalizedString>(
-            new Dictionary<int, LocalizedString>
+        public readonly LocaleDictionary<int, LocalizedString> Presets =
+        new LocaleDictionary<int, LocalizedString>(new Dictionary<int, LocalizedString>
             {
                 {0, @"Black"},
                 {1, @"White"},
@@ -254,7 +253,6 @@ public static partial class Strings
                 {10, @"Cyan"}
             }
         );
-
     }
 
     public sealed partial class CombatNamespace : LocaleNamespace
@@ -1604,7 +1602,7 @@ public static partial class Strings
 
         public readonly ClassNamespace Classes = new ClassNamespace();
 
-        public readonly ColorsNamespace Colors = new ColorsNamespace();
+        public readonly ColorNamespace Colors = new ColorNamespace();
 
         public readonly CombatNamespace Combat = new CombatNamespace();
 
@@ -1679,7 +1677,7 @@ public static partial class Strings
 
     public static ClassNamespace Classes => Root.Classes;
 
-    public static ColorsNamespace Colors => Root.Colors;
+    public static ColorNamespace Colors => Root.Colors;
 
     public static CombatNamespace Combat => Root.Combat;
 
