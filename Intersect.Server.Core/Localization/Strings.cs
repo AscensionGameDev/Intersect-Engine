@@ -102,7 +102,7 @@ public static partial class Strings
         public readonly LocalizedString UnmuteSuccess = @"{00} has been unmuted!";
     }
 
-    public sealed partial class BagsNamespace : LocaleNamespace
+    public sealed partial class BagNamespace : LocaleNamespace
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString BagInBag = @"You cannot store a bag inside another bag!";
@@ -138,41 +138,34 @@ public static partial class Strings
         public readonly LocalizedString WithdrawInvalid = @"Invalid item selected to retrieve!";
     }
 
-    public sealed partial class BanksNamespace : LocaleNamespace
+    public sealed partial class BankNamespace : LocaleNamespace
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString BankNoSpace = @"There is no space left in your bank for that item!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString banknospace = @"There is no space left in your bank for that item!";
+        public readonly LocalizedString DepositInvalid = @"Invalid item selected to deposit!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString depositinvalid = @"Invalid item selected to deposit!";
+        public readonly LocalizedString DepositSuccessNonStackable = @"You have stored: {00}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString DepositSuccessStackable =
-            @"You have stored: {00} {01}";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString DepositSuccessNonStackable =
-            @"You have stored: {00}";
+        public readonly LocalizedString DepositSuccessStackable = @"You have stored: {00} {01}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString InvalidSlotToSwap = @"Invalid slots to swap!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString inventorynospace =
-            @"There is no space left in your inventory for that item!";
+        public readonly LocalizedString InventoryNoSpace = @"There is no space left in your inventory for that item!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString withdrawinvalid = @"Invalid item selected to withdraw!";
+        public readonly LocalizedString WithdrawInvalid = @"Invalid item selected to withdraw!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString WithdrawSuccessStackable =
-            @"You have withdrawn: {00} {01}";
+        public readonly LocalizedString WithdrawSuccessNonStackable = @"You have withdrawn: {00}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString WithdrawSuccessNonStackable =
-            @"You have withdrawn: {00}";
-
+        public readonly LocalizedString WithdrawSuccessStackable = @"You have withdrawn: {00} {01}";
     }
 
     public sealed partial class ChatNamespace : LocaleNamespace
@@ -1608,9 +1601,9 @@ public static partial class Strings
 
         public readonly AccountNamespace Account = new AccountNamespace();
 
-        public readonly BagsNamespace Bags = new BagsNamespace();
+        public readonly BagNamespace Bags = new BagNamespace();
 
-        public readonly BanksNamespace Banks = new BanksNamespace();
+        public readonly BankNamespace Banks = new BankNamespace();
 
         public readonly ChatNamespace Chat = new ChatNamespace();
 
@@ -1683,9 +1676,9 @@ public static partial class Strings
 
     public static AccountNamespace Account => Root.Account;
 
-    public static BagsNamespace Bags => Root.Bags;
+    public static BagNamespace Bags => Root.Bags;
 
-    public static BanksNamespace Banks => Root.Banks;
+    public static BankNamespace Banks => Root.Banks;
 
     public static ChatNamespace Chat => Root.Chat;
 

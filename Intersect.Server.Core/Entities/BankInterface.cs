@@ -102,7 +102,7 @@ public partial class BankInterface
         {
             PacketSender.SendChatMsg(
                 mPlayer,
-                Strings.Banks.depositinvalid,
+                Strings.Banks.DepositInvalid,
                 ChatMessageType.Bank,
                 CustomColors.Alerts.Error
             );
@@ -139,7 +139,7 @@ public partial class BankInterface
             {
                 PacketSender.SendChatMsg(
                     mPlayer,
-                    Strings.Banks.banknospace,
+                    Strings.Banks.BankNoSpace,
                     ChatMessageType.Bank,
                     CustomColors.Alerts.Error
                 );
@@ -165,7 +165,7 @@ public partial class BankInterface
             {
                 PacketSender.SendChatMsg(
                     mPlayer,
-                    Strings.Banks.withdrawinvalid,
+                    Strings.Banks.WithdrawInvalid,
                     ChatMessageType.Bank,
                     CustomColors.Alerts.Error
                 );
@@ -322,7 +322,7 @@ public partial class BankInterface
         {
             PacketSender.SendChatMsg(
                 mPlayer,
-                Strings.Banks.withdrawinvalid,
+                Strings.Banks.WithdrawInvalid,
                 ChatMessageType.Bank,
                 CustomColors.Alerts.Error
             );
@@ -350,7 +350,7 @@ public partial class BankInterface
             {
                 PacketSender.SendChatMsg(
                     mPlayer,
-                    Strings.Banks.inventorynospace,
+                    Strings.Banks.InventoryNoSpace,
                     ChatMessageType.Inventory,
                     CustomColors.Alerts.Error
                 );
@@ -376,7 +376,7 @@ public partial class BankInterface
             {
                 PacketSender.SendChatMsg(
                     mPlayer,
-                    Strings.Banks.withdrawinvalid,
+                    Strings.Banks.WithdrawInvalid,
                     ChatMessageType.Bank,
                     CustomColors.Alerts.Error
                 );
