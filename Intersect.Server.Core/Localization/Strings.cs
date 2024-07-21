@@ -225,16 +225,13 @@ public static partial class Strings
         public readonly LocalizedString TooFast = @"You are chatting too fast!";
     }
 
-    public sealed partial class ClassesNamespace : LocaleNamespace
+    public sealed partial class ClassNamespace : LocaleNamespace
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString LastClass = @"Last Class";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString lastclass = @"Last Class";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString lastclasserror =
-            @"Failed to delete class, you must have at least one class at all times!";
-
+        public readonly LocalizedString LastClassError = @"Failed to delete class. You must have at least one class at all times!";
     }
 
     public sealed partial class ColorsNamespace : LocaleNamespace
@@ -1605,7 +1602,7 @@ public static partial class Strings
 
         public readonly ChatNamespace Chat = new ChatNamespace();
 
-        public readonly ClassesNamespace Classes = new ClassesNamespace();
+        public readonly ClassNamespace Classes = new ClassNamespace();
 
         public readonly ColorsNamespace Colors = new ColorsNamespace();
 
@@ -1680,7 +1677,7 @@ public static partial class Strings
 
     public static ChatNamespace Chat => Root.Chat;
 
-    public static ClassesNamespace Classes => Root.Classes;
+    public static ClassNamespace Classes => Root.Classes;
 
     public static ColorsNamespace Colors => Root.Colors;
 

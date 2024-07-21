@@ -857,7 +857,7 @@ internal sealed partial class NetworkedPacketHandler
                 case GameObjectType.Class:
                     if (ClassBase.Lookup.Count == 1)
                     {
-                        PacketSender.SendError(client, Strings.Classes.lastclasserror, Strings.Classes.lastclass);
+                        PacketSender.SendError(client, Strings.Classes.LastClassError, Strings.Classes.LastClass);
 
                         return;
                     }
