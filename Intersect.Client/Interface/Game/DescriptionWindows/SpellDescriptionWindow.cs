@@ -11,13 +11,13 @@ public partial class SpellDescriptionWindow : DescriptionWindowBase
 {
     protected SpellBase mSpell;
 
-    public SpellDescriptionWindow(Guid spellId, int x, int y) : base(Interface.GameUi.GameCanvas, "DescriptionWindow")
+    public SpellDescriptionWindow(Guid spellId, int x, int y, ImagePanel? itemDecriptionContainer = null) : base(Interface.GameUi.GameCanvas, "DescriptionWindow")
     {
         mSpell = SpellBase.Get(spellId);
 
         GenerateComponents();
         SetupDescriptionWindow();
-        SetPosition(x, y);
+        SetPosition(x, y, itemDecriptionContainer);
     }
 
     public SpellDescriptionWindow(Guid spellId, ImagePanel _statusIcon) : base(Interface.GameUi.GameCanvas, "DescriptionWindow")
