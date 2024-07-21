@@ -496,11 +496,12 @@ public static partial class Strings
 
     public sealed partial class DatabaseNamespace : LocaleNamespace
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocaleDictionary<DatabaseType, LocalizedString> DatabaseTypes = new(
             new Dictionary<DatabaseType, LocalizedString>
             {
-                { DatabaseType.Sqlite, "SQLite" },
-                { DatabaseType.MySql, "MySql" }
+            { DatabaseType.Sqlite, "SQLite" },
+            { DatabaseType.MySql, "MySql" }
             }
         );
 
@@ -508,41 +509,25 @@ public static partial class Strings
         public readonly LocalizedString Default = @"Default";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString MigratingAutomatically = @"The --migrate-automatically flag was passed to the server on startup and the user will not be prompted...";
+        public readonly LocalizedString MigratingAutomatically = @"The --migrate-automatically flag was passed to the server on startup, so the user will not be prompted.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString noclasses = @"No classes found! - Creating a default class!";
+        public readonly LocalizedString NoClasses = @"No classes found! Creating a default class.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString nomaps = @"No maps found! - Creating an empty map!";
+        public readonly LocalizedString NoMaps = @"No maps found! Creating an empty map.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString nullerror = @"Tried to load one or more null game objects!";
+        public readonly LocalizedString UpgradeBackup = @"Please make a backup of your game and player databases, then type '{00}' to continue or '{01}' to quit.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString nullfound = @"Tried to load null value for index {00} of {01}";
+        public readonly LocalizedString UpgradeExit = @"EXIT";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString upgradebackup =
-            @"Please make a backup of your game and player databases, and then type '{00}' to continue or '{01}' to quit.";
+        public readonly LocalizedString UpgradeReady = @"READY";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString upgradeexit = @"EXIT";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString upgradepleasewait =
-            @"Please wait! Migrations can take several minutes, and even longer if you are using MySQL databases!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString upgradeready = @"READY";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString upgraderequired =
-            @"Your databases need to be upgraded! This process could corrupt your game data if any errors are encountered.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString usingsqlite = @"Using SQLite Database for account and data storage.";
-
+        public readonly LocalizedString UpgradeRequired = @"Your databases need to be upgraded! This process could corrupt your game data if any errors are encountered.";
     }
 
     public sealed partial class ErrorsNamespace : LocaleNamespace
