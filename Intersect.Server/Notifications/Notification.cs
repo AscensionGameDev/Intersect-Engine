@@ -117,8 +117,8 @@ namespace Intersect.Server.Notifications
             {
                 IsHtml = true;
                 Body = File.ReadAllText(filepath);
-                Body = Body.Replace("{{product}}", Strings.Notifications.product);
-                Body = Body.Replace("{{copyright}}", Strings.Notifications.copyright);
+                Body = Body.Replace("{{product}}", Strings.Notifications.Product);
+                Body = Body.Replace("{{copyright}}", Strings.Notifications.Copyright);
                 Body = Body.Replace("{{name}}", username);
 
                 return true;
