@@ -30,13 +30,13 @@ namespace Intersect.Server.Networking.Helpers
                 var cts = new CancellationTokenSource(5000);
                 sDevice = await nat.DiscoverDeviceAsync(PortMapper.Upnp, cts);
                 sExternalIp = (await sDevice.GetExternalIPAsync()).ToString();
-                Log.Pretty.Info(Strings.Upnp.initialized);
+                Log.Pretty.Info(Strings.Upnp.Initialized);
                 sLog.AppendLine("Connected to UPnP device: " + sDevice.ToString());
             }
             catch (Exception exception)
             {
-                Log.Pretty.Error(exception, Strings.Upnp.initializationfailed);
-                sLog.AppendLine(Strings.Upnp.initializationfailed);
+                Log.Pretty.Error(exception, Strings.Upnp.InitializationFailed);
+                sLog.AppendLine(Strings.Upnp.InitializationFailed);
                 sLog.AppendLine("UPnP Initialization Error: " + exception.ToString());
             }
 
@@ -62,14 +62,14 @@ namespace Intersect.Server.Networking.Helpers
                 switch (protocol)
                 {
                     case Protocol.Tcp:
-                        Log.Pretty.Info(Strings.Upnp.forwardedtcp.ToString(port));
-                        sLog.AppendLine(Strings.Upnp.forwardedtcp.ToString(port));
+                        Log.Pretty.Info(Strings.Upnp.ForwardedTcp.ToString(port));
+                        sLog.AppendLine(Strings.Upnp.ForwardedTcp.ToString(port));
 
                         break;
 
                     case Protocol.Udp:
-                        Log.Pretty.Info(Strings.Upnp.forwardedudp.ToString(port));
-                        sLog.AppendLine(Strings.Upnp.forwardedudp.ToString(port));
+                        Log.Pretty.Info(Strings.Upnp.ForwardedUdp.ToString(port));
+                        sLog.AppendLine(Strings.Upnp.ForwardedUdp.ToString(port));
                         sPortForwarded = true;
 
                         break;
@@ -83,14 +83,14 @@ namespace Intersect.Server.Networking.Helpers
                 switch (protocol)
                 {
                     case Protocol.Tcp:
-                        Log.Pretty.Warn(Strings.Upnp.failedforwardingtcp.ToString(port));
+                        Log.Pretty.Warn(Strings.Upnp.FailedForwardingTcp.ToString(port));
                         Log.Warn("UPnP Could Not Open TCP Port " + port + Environment.NewLine + ex.ToString());
                         sLog.AppendLine("UPnP Could Not Open TCP Port " + port + Environment.NewLine + ex.ToString());
 
                         break;
 
                     case Protocol.Udp:
-                        Log.Pretty.Warn(Strings.Upnp.failedforwardingudp.ToString(port));
+                        Log.Pretty.Warn(Strings.Upnp.FailedForwardingUdp.ToString(port));
                         Log.Warn("UPnP Could Not Open UDP Port " + port + Environment.NewLine + ex.ToString());
                         sLog.AppendLine("UPnP Could Not Open UDP Port " + port + Environment.NewLine + ex.ToString());
 

@@ -1282,29 +1282,23 @@ public static partial class Strings
 
     public sealed partial class UpnpNamespace : LocaleNamespace
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString FailedForwardingTcp = @"Failed to automatically port forward TCP port {00} using UPnP. UPnP might be disabled in your router settings, or this port might already be forwarded.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString failedforwardingtcp =
-            @"Failed to automatically port forward tcp port {00} using UPnP. (UPnP possibly disabled in your router settings, or this port might already be forwarded!)";
+        public readonly LocalizedString FailedForwardingUdp = @"Failed to automatically port forward UDP port {00} using UPnP. UPnP might be disabled in your router settings, or this port might already be forwarded.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString failedforwardingudp =
-            @"Failed to automatically port forward udp port {00} using UPnP. (UPnP possibly disabled in your router settings, or this port might already be forwarded!)";
+        public readonly LocalizedString ForwardedTcp = @"Successfully auto port forwarded TCP port {00} using UPnP.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString
-            forwardedtcp = @"Successfully auto port forwarded tcp port {00} using UPnP.";
+        public readonly LocalizedString ForwardedUdp = @"Successfully auto port forwarded UDP port {00} using UPnP.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString
-            forwardedudp = @"Successfully auto port forwarded udp port {00} using UPnP.";
+        public readonly LocalizedString InitializationFailed = @"UPnP Service Initialization Failed. You might not have a router, or UPnP on your router might be disabled.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString initializationfailed =
-            @"UPnP Service Initialization Failed. You might not have a router, or UPnP on your router might be disabled.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString initialized = @"UPnP Service Initialization Succeeded";
-
+        public readonly LocalizedString Initialized = @"UPnP Service Initialization Succeeded.";
     }
 
     #region Serialization
