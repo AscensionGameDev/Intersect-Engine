@@ -5021,7 +5021,7 @@ public partial class Player : Entity
 
         if (Party.Count != 0)
         {
-            PacketSender.SendChatMsg(fromPlayer, Strings.Parties.inparty.ToString(Name), ChatMessageType.Party, CustomColors.Alerts.Error);
+            PacketSender.SendChatMsg(fromPlayer, Strings.Parties.InParty.ToString(Name), ChatMessageType.Party, CustomColors.Alerts.Error);
 
             return;
         }
@@ -5040,7 +5040,7 @@ public partial class Player : Entity
 
         if (PartyRequests.ContainsKey(fromPlayer) && PartyRequests[fromPlayer] > Timing.Global.Milliseconds)
         {
-            PacketSender.SendChatMsg(fromPlayer, Strings.Parties.alreadydenied, ChatMessageType.Party, CustomColors.Alerts.Error);
+            PacketSender.SendChatMsg(fromPlayer, Strings.Parties.AlreadyDenied, ChatMessageType.Party, CustomColors.Alerts.Error);
         }
         else
         {
@@ -5052,7 +5052,7 @@ public partial class Player : Entity
             else
             {
                 PacketSender.SendChatMsg(
-                    fromPlayer, Strings.Parties.busy.ToString(Name), ChatMessageType.Party, CustomColors.Alerts.Error
+                    fromPlayer, Strings.Parties.Busy.ToString(Name), ChatMessageType.Party, CustomColors.Alerts.Error
                 );
             }
         }
@@ -5069,7 +5069,7 @@ public partial class Player : Entity
         {
             if (PartyLeader != this)
             {
-                PacketSender.SendChatMsg(this, Strings.Parties.leaderinvonly, ChatMessageType.Party, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(this, Strings.Parties.LeaderInviteOnly, ChatMessageType.Party, CustomColors.Alerts.Error);
 
                 return false;
             }
@@ -5086,7 +5086,7 @@ public partial class Player : Entity
 
         if (Party.Count >= Options.Party.MaximumMembers)
         {
-            PacketSender.SendChatMsg(this, Strings.Parties.limitreached, ChatMessageType.Party, CustomColors.Alerts.Error);
+            PacketSender.SendChatMsg(this, Strings.Parties.LimitReached, ChatMessageType.Party, CustomColors.Alerts.Error);
             return false;
         }
 
@@ -5100,7 +5100,7 @@ public partial class Player : Entity
             member.Party = cachedParty;
             PacketSender.SendParty(member);
             PacketSender.SendChatMsg(
-                member, Strings.Parties.joined.ToString(target.Name), ChatMessageType.Party, CustomColors.Alerts.Accepted
+                member, Strings.Parties.Joined.ToString(target.Name), ChatMessageType.Party, CustomColors.Alerts.Accepted
             );
         }
         return true;
@@ -5117,7 +5117,7 @@ public partial class Player : Entity
                 {
                     oldMember.Party = new List<Player>();
                     PacketSender.SendParty(oldMember);
-                    PacketSender.SendChatMsg(oldMember, Strings.Parties.kicked, ChatMessageType.Party, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(oldMember, Strings.Parties.Kicked, ChatMessageType.Party, CustomColors.Alerts.Error);
 
                     // Kick the player out of your shared instance!
                     if (Options.Instance.Instancing.KickPartyMembersOnKick && oldMember.InstanceType == MapInstanceType.Shared)
@@ -5135,7 +5135,7 @@ public partial class Player : Entity
                             Party[i].Party = Party;
                             PacketSender.SendParty(Party[i]);
                             PacketSender.SendChatMsg(
-                                Party[i], Strings.Parties.memberkicked.ToString(oldMember.Name),
+                                Party[i], Strings.Parties.MemberKicked.ToString(oldMember.Name),
                                 ChatMessageType.Party,
                                 CustomColors.Alerts.Error
                             );
@@ -5146,7 +5146,7 @@ public partial class Player : Entity
                         var remainder = Party[0];
                         remainder.Party.Clear();
                         PacketSender.SendParty(remainder);
-                        PacketSender.SendChatMsg(remainder, Strings.Parties.disbanded, ChatMessageType.Party, CustomColors.Alerts.Error);
+                        PacketSender.SendChatMsg(remainder, Strings.Parties.Disbanded, ChatMessageType.Party, CustomColors.Alerts.Error);
                     }
                 }
             }
@@ -5170,8 +5170,8 @@ public partial class Player : Entity
         currentParty.Remove(this);
 
         string partyMessage = currentParty.Count > 1
-            ? Strings.Parties.memberleft.ToString(Name)
-            : Strings.Parties.disbanded;
+            ? Strings.Parties.MemberLeft.ToString(Name)
+            : Strings.Parties.Disbanded;
 
         // Update all members of the party with the new list
         foreach (var partyMember in currentParty)
@@ -5188,7 +5188,7 @@ public partial class Player : Entity
 
         Party = new List<Player>();
         PacketSender.SendParty(this);
-        PacketSender.SendChatMsg(this, Strings.Parties.left, ChatMessageType.Party, CustomColors.Alerts.Error);
+        PacketSender.SendChatMsg(this, Strings.Parties.Left, ChatMessageType.Party, CustomColors.Alerts.Error);
     }
 
     public bool InParty(Player member)

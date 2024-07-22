@@ -916,7 +916,7 @@ internal sealed partial class PacketHandler
             }
             else
             {
-                PacketSender.SendChatMsg(player, Strings.Parties.notinparty, ChatMessageType.Party, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(player, Strings.Parties.NotInParty, ChatMessageType.Party, CustomColors.Alerts.Error);
             }
         }
         else if (cmd == Strings.Chat.AdminCommand)
@@ -1999,7 +1999,7 @@ internal sealed partial class PacketHandler
             return;
         }
 
-        PacketSender.SendChatMsg(player, Strings.Parties.outofrange, ChatMessageType.Combat, CustomColors.Combat.NoTarget);
+        PacketSender.SendChatMsg(player, Strings.Parties.OutOfRange, ChatMessageType.Combat, CustomColors.Combat.NoTarget);
     }
 
     //PartyInviteResponsePacket
@@ -2024,7 +2024,7 @@ internal sealed partial class PacketHandler
             else
             {
                 PacketSender.SendChatMsg(
-                    player.PartyRequester, Strings.Parties.declined.ToString(client.Entity.Name),
+                    player.PartyRequester, Strings.Parties.Declined.ToString(client.Entity.Name),
                     ChatMessageType.Party,
                     CustomColors.Alerts.Declined
                 );
@@ -2123,7 +2123,7 @@ internal sealed partial class PacketHandler
         }
 
         //Player Out of Range Or Offline
-        PacketSender.SendChatMsg(player, Strings.Trading.outofrange.ToString(), ChatMessageType.Trading, CustomColors.Combat.NoTarget);
+        PacketSender.SendChatMsg(player, Strings.Trading.OutOfRange.ToString(), ChatMessageType.Trading, CustomColors.Combat.NoTarget);
     }
 
     //TradeRequestResponsePacket
@@ -2153,7 +2153,7 @@ internal sealed partial class PacketHandler
                         else
                         {
                             PacketSender.SendChatMsg(
-                                player, Strings.Trading.outofrange.ToString(), ChatMessageType.Trading, CustomColors.Combat.NoTarget
+                                player, Strings.Trading.OutOfRange.ToString(), ChatMessageType.Trading, CustomColors.Combat.NoTarget
                             );
                         }
                     }

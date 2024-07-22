@@ -518,7 +518,7 @@ public static partial class Strings
     public sealed partial class ErrorsNamespace : LocaleNamespace
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString ErrorFloodBurst = "[Flood]: {00} Burst Packets [User: {01} | Player: {02} | IP {03}]";
+        public readonly LocalizedString ErrorFloodBurst = @"[Flood]: {00} Burst Packets [User: {01} | Player: {02} | IP {03}]";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString ErrorFloodSize = @"[Flood]: Packet Size: {00} [User: {01} | Player: {02} | IP {03}]";
@@ -950,83 +950,79 @@ public static partial class Strings
     public sealed partial class NotificationsNamespace : LocaleNamespace
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString Copyright = "Copyright (C) 2020-2024 Ascension Game Dev, All Rights Reserved";
+        public readonly LocalizedString Copyright = @"Copyright (C) 2020-2024 Ascension Game Dev, All Rights Reserved";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString Product = "Intersect Game Engine";
+        public readonly LocalizedString Product = @"Intersect Game Engine";
     }
 
     public sealed partial class PartiesNamespace : LocaleNamespace
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString AlreadyDenied = @"Your party invitation has already been rejected!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString alreadydenied = @"Your party invitation has already been rejected!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString busy = @"{00} is busy. Please try again later!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString declined = @"{00} has declined your party invitation!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString disbanded = @"The party has been disbanded.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString InInstance = @"You cannot invite someone to a party while in an instance!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString inparty = @"{00} is already in a party!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString joined = @"{00} has joined the party!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString kicked = @"You have been kicked from the party!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString
-            leaderinvonly = @"Only the party leader can send invitations to your party.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString left = @"You have left the party.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString limitreached =
-            @"You have reached the maximum limit of party members. Kick another member before adding more.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString memberkicked = @"{00} has been kicked from the party!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString memberleft = @"{00} has left the party!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString notinparty = @"You are not in a party.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString outofrange = @"Target is out of range or offline.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString InstanceInUse = @"Can not create new instance - party members are still in the old one.";
+        public readonly LocalizedString Busy = @"{00} is busy. Please try again later!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString CannotCreateInstance = @"Only the party leader can create a shared instance.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString InstanceInProgress = @"The party has not yet completed their instance.";
+        public readonly LocalizedString Declined = @"{00} has declined your party invitation!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString WrongInstance = @"Your party is currently doing a different instance.";
+        public readonly LocalizedString Disbanded = @"The party has been disbanded.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString InstanceLivesRemaining = @"Your party has {00} lives remaining on this instance!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString NoMoreLivesRemaining = @"Your party has no more lives remaining! You will respawn out of the instance on your next death.";
+        public readonly LocalizedString InInstance = @"You cannot invite someone to a party while in an instance!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString InstanceFailed = @"Your party has failed the instance...";
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString InstanceInProgress = @"The party has not yet completed their instance.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString InstanceInUse = @"Cannot create a new instance - party members are still in the old one.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString InstanceLivesRemaining = @"Your party has {00} lives remaining in this instance!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString InParty = @"{00} is already in a party!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Joined = @"{00} has joined the party!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Kicked = @"You have been kicked from the party!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString LeaderInviteOnly = @"Only the party leader can send invitations to your party.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Left = @"You have left the party.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString LimitReached = @"You have reached the maximum limit of party members. Kick another member before adding more.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString MemberKicked = @"{00} has been kicked from the party!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString MemberLeft = @"{00} has left the party!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString NoMoreLivesRemaining = @"Your party has no more lives remaining! You will respawn outside the instance on your next death.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString NotInParty = @"You are not in a party.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString OutOfRange = @"Target is out of range or offline.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString WrongInstance = @"Your party is currently doing a different instance.";
     }
 
     public sealed partial class PasswordResetNotificationNamespace : LocaleNamespace
@@ -1308,7 +1304,7 @@ public static partial class Strings
         public readonly LocalizedString RevokeNotAllowed = @"You can't revoke this item, {00} already accepted the trade!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString outofrange = @"Trade target is out of range or offline.";
+        public readonly LocalizedString OutOfRange = @"Trade target is out of range or offline.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString revokeinvalid = @"Invalid item selected to revoke!";
