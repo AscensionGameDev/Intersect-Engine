@@ -943,17 +943,8 @@ public static partial class Strings
 
     public sealed partial class NetworkingNamespace : LocaleNamespace
     {
-
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString badpacket =
-            @"Error handling client packet. Disconnecting client. More info logged to errors.log";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString disconnected = @"Client disconnected.";
-
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString ServerFull = @"The server is currently full, please try again later.";
-
+        public readonly LocalizedString ServerFull = @"The server is currently full. Please try again later.";
     }
 
     public sealed partial class NotificationsNamespace : LocaleNamespace
