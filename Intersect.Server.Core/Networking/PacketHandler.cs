@@ -1256,7 +1256,7 @@ internal sealed partial class PacketHandler
                     {
                         PacketSender.SendChatMsg(
                             player,
-                            Strings.Items.notenough.ToString(ItemBase.GetName(projectileBase.AmmoItemId)),
+                            Strings.Items.NotEnough.ToString(ItemBase.GetName(projectileBase.AmmoItemId)),
                             ChatMessageType.Inventory,
                             CustomColors.Combat.NoAmmo
                         );
@@ -1668,7 +1668,7 @@ internal sealed partial class PacketHandler
                     // We couldn't give the player their item, notify them.
                     PacketSender.SendChatMsg(
                         player,
-                        Strings.Items.InventoryNoSpace,
+                        Strings.Items.NoSpaceForItem,
                         ChatMessageType.Inventory,
                         CustomColors.Alerts.Error
                     );

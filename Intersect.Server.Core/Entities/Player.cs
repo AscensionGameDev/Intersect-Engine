@@ -3103,7 +3103,7 @@ public partial class Player : Entity
 
         if (Equipment?.Any(equipmentSlotIndex => equipmentSlotIndex == slotIndex) ?? false)
         {
-            PacketSender.SendChatMsg(this, Strings.Items.equipped, ChatMessageType.Inventory, CustomColors.Items.Bound);
+            PacketSender.SendChatMsg(this, Strings.Items.Equipped, ChatMessageType.Inventory, CustomColors.Items.Bound);
             return false;
         }
 
@@ -3115,7 +3115,7 @@ public partial class Player : Entity
 
         if (!itemDescriptor.CanDrop)
         {
-            PacketSender.SendChatMsg(this, Strings.Items.bound, ChatMessageType.Inventory, CustomColors.Items.Bound);
+            PacketSender.SendChatMsg(this, Strings.Items.Bound, ChatMessageType.Inventory, CustomColors.Items.Bound);
             return false;
         }
 
@@ -3194,14 +3194,14 @@ public partial class Player : Entity
             {
                 if (status.Type == SpellEffect.Stun)
                 {
-                    PacketSender.SendChatMsg(this, Strings.Items.stunned, ChatMessageType.Error);
+                    PacketSender.SendChatMsg(this, Strings.Items.Stunned, ChatMessageType.Error);
 
                     return;
                 }
 
                 if (status.Type == SpellEffect.Sleep)
                 {
-                    PacketSender.SendChatMsg(this, Strings.Items.sleep, ChatMessageType.Error);
+                    PacketSender.SendChatMsg(this, Strings.Items.Sleep, ChatMessageType.Error);
 
                     return;
                 }
@@ -3223,7 +3223,7 @@ public partial class Player : Entity
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(this, Strings.Items.dynamicreq, ChatMessageType.Error);
+                    PacketSender.SendChatMsg(this, Strings.Items.DynamicRequirement, ChatMessageType.Error);
                 }
 
                 return;
@@ -3233,7 +3233,7 @@ public partial class Player : Entity
             if (!itemBase.IgnoreGlobalCooldown && mGlobalCooldownTimer > Timing.Global.MillisecondsUtc)
             {
                 //Cooldown warning!
-                PacketSender.SendChatMsg(this, Strings.Items.cooldown, ChatMessageType.Error);
+                PacketSender.SendChatMsg(this, Strings.Items.Cooldown, ChatMessageType.Error);
 
                 return;
             }
@@ -3241,7 +3241,7 @@ public partial class Player : Entity
             if (ItemCooldowns.ContainsKey(itemBase.Id) && ItemCooldowns[itemBase.Id] > Timing.Global.MillisecondsUtc)
             {
                 //Cooldown warning!
-                PacketSender.SendChatMsg(this, Strings.Items.cooldown, ChatMessageType.Error);
+                PacketSender.SendChatMsg(this, Strings.Items.Cooldown, ChatMessageType.Error);
 
                 return;
             }
@@ -3258,7 +3258,7 @@ public partial class Player : Entity
                     }
                     else
                     {
-                        PacketSender.SendChatMsg(this, Strings.Items.cannotuse, ChatMessageType.Error);
+                        PacketSender.SendChatMsg(this, Strings.Items.CannotUse, ChatMessageType.Error);
                     }
 
                     return;
@@ -3392,7 +3392,7 @@ public partial class Player : Entity
 
                     break;
                 default:
-                    PacketSender.SendChatMsg(this, Strings.Items.notimplemented, ChatMessageType.Error);
+                    PacketSender.SendChatMsg(this, Strings.Items.NotImplemented, ChatMessageType.Error);
 
                     return;
             }
@@ -4535,7 +4535,7 @@ public partial class Player : Entity
 
         if (!itemDescriptor.CanBag)
         {
-            PacketSender.SendChatMsg(this, Strings.Items.nobag, ChatMessageType.Inventory, CustomColors.Items.Bound);
+            PacketSender.SendChatMsg(this, Strings.Items.NoBag, ChatMessageType.Inventory, CustomColors.Items.Bound);
             return;
         }
 
@@ -4598,7 +4598,7 @@ public partial class Player : Entity
         if (!TryFillBagStacksOfItemFromInventorySlot(bag, inventorySlotIndex, relevantSlots, itemDescriptor, amount))
         {
             // If we're STILL not done, alert the user that we didn't have enough slots
-            PacketSender.SendChatMsg(this, Strings.Bags.BagNoSpace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+            PacketSender.SendChatMsg(this, Strings.Items.NoSpaceForItem, ChatMessageType.Inventory, CustomColors.Alerts.Error);
         }
     }
 
@@ -4888,7 +4888,7 @@ public partial class Player : Entity
                     }
                 }
 
-                PacketSender.SendChatMsg(this, Strings.Trading.tradenospace, ChatMessageType.Trading, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(this, Strings.Items.NoSpaceForItem, ChatMessageType.Trading, CustomColors.Alerts.Error);
             }
             else
             {
@@ -5472,7 +5472,7 @@ public partial class Player : Entity
                     if (Options.Combat.EnableCombatChatMessages)
                     {
                         PacketSender.SendChatMsg(
-                            this, Strings.Items.notenough.ToString(ItemBase.GetName(projectileBase.AmmoItemId)),
+                            this, Strings.Items.NotEnough.ToString(ItemBase.GetName(projectileBase.AmmoItemId)),
                             ChatMessageType.Inventory,
                             CustomColors.Alerts.Error
                         );

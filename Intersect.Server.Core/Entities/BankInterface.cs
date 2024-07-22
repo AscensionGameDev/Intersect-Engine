@@ -114,7 +114,7 @@ public partial class BankInterface
 
         if (!canBank)
         {
-            PacketSender.SendChatMsg(mPlayer, Strings.Items.nobank, ChatMessageType.Bank, CustomColors.Items.Bound);
+            PacketSender.SendChatMsg(mPlayer, Strings.Items.NoBank, ChatMessageType.Bank, CustomColors.Items.Bound);
             return false;
         }
 
@@ -139,7 +139,7 @@ public partial class BankInterface
             {
                 PacketSender.SendChatMsg(
                     mPlayer,
-                    Strings.Banks.BankNoSpace,
+                    Strings.Items.NoSpaceForItem,
                     ChatMessageType.Bank,
                     CustomColors.Alerts.Error
                 );
@@ -350,7 +350,7 @@ public partial class BankInterface
             {
                 PacketSender.SendChatMsg(
                     mPlayer,
-                    Strings.Banks.InventoryNoSpace,
+                    Strings.Items.NoSpaceForItem,
                     ChatMessageType.Inventory,
                     CustomColors.Alerts.Error
                 );
