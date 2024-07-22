@@ -7461,7 +7461,7 @@ public partial class Player : Entity
     public bool TryChangeName(string newName)
     {
         // Is the name available?
-        if (!FieldChecking.IsValidUsername(newName, Strings.Regex.username))
+        if (!FieldChecking.IsValidUsername(newName, Strings.Regex.Username))
         {
             return false;
         }

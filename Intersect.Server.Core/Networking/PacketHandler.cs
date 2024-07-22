@@ -1417,14 +1417,14 @@ internal sealed partial class PacketHandler
             return;
         }
 
-        if (!FieldChecking.IsValidUsername(packet.Username, Strings.Regex.username))
+        if (!FieldChecking.IsValidUsername(packet.Username, Strings.Regex.Username))
         {
             PacketSender.SendError(client, Strings.Account.InvalidName, Strings.General.NoticeError);
 
             return;
         }
 
-        if (!FieldChecking.IsWellformedEmailAddress(packet.Email, Strings.Regex.email))
+        if (!FieldChecking.IsWellformedEmailAddress(packet.Email, Strings.Regex.Email))
         {
             PacketSender.SendError(client, Strings.Account.InvalidEmail, Strings.General.NoticeError);
 
@@ -1496,7 +1496,7 @@ internal sealed partial class PacketHandler
             return;
         }
 
-        if (!FieldChecking.IsValidUsername(packet.Name, Strings.Regex.username))
+        if (!FieldChecking.IsValidUsername(packet.Name, Strings.Regex.Username))
         {
             PacketSender.SendError(client, Strings.Account.InvalidName, Strings.General.NoticeError);
 

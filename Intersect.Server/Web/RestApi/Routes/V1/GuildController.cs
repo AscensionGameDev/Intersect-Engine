@@ -78,7 +78,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpPost("{guildId:guid}/name")]
         public object ChangeName(Guid guildId, [FromBody] NameChange change)
         {
-            if (!FieldChecking.IsValidGuildName(change.Name, Strings.Regex.guildname))
+            if (!FieldChecking.IsValidGuildName(change.Name, Strings.Regex.GuildName))
             {
                 return BadRequest($@"Invalid guild name.");
             }

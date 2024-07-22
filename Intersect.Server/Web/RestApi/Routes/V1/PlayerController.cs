@@ -265,7 +265,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-            if (!FieldChecking.IsValidUsername(change.Name, Strings.Regex.username))
+            if (!FieldChecking.IsValidUsername(change.Name, Strings.Regex.Username))
             {
                 return BadRequest($@"Invalid name.");
             }

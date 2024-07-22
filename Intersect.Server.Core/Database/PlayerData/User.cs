@@ -874,13 +874,13 @@ public partial class User
             return false;
         }
 
-        if (!FieldChecking.IsValidUsername(username, Strings.Regex.username))
+        if (!FieldChecking.IsValidUsername(username, Strings.Regex.Username))
         {
             error = Strings.Account.InvalidName;
             return false;
         }
 
-        if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.email))
+        if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.Email))
         {
             error = Strings.Account.InvalidEmail;
             return false;

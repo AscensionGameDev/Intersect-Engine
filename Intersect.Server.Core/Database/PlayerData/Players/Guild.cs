@@ -106,7 +106,7 @@ public partial class Guild
     {
         name = name.Trim();
 
-        if (creator != null && FieldChecking.IsValidGuildName(name, Strings.Regex.guildname))
+        if (creator != null && FieldChecking.IsValidGuildName(name, Strings.Regex.GuildName))
         {
             using (var context = DbInterface.CreatePlayerContext(readOnly: false))
             {
@@ -708,7 +708,7 @@ public partial class Guild
     /// <param name="initiator">The player who initiated this change (null if done by the api or some other method).</param>
     public bool Rename(string name, Player initiator = null)
     {
-        if (GuildExists(name) || !FieldChecking.IsValidGuildName(name, Strings.Regex.guildname))
+        if (GuildExists(name) || !FieldChecking.IsValidGuildName(name, Strings.Regex.GuildName))
         {
             return false;
         }

@@ -118,12 +118,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest("Username, Email, and Password all must be provided, and not null/empty.");
             }
 
-            if (!FieldChecking.IsWellformedEmailAddress(user.Email, Strings.Regex.email))
+            if (!FieldChecking.IsWellformedEmailAddress(user.Email, Strings.Regex.Email))
             {
                 return BadRequest($@"Malformed email address '{user.Email}'.");
             }
 
-            if (!FieldChecking.IsValidUsername(user.Username, Strings.Regex.username))
+            if (!FieldChecking.IsValidUsername(user.Username, Strings.Regex.Username))
             {
                 return BadRequest($@"Invalid username '{user.Username}'.");
             }
@@ -223,7 +223,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest("Invalid user name.");
             }
 
-            if (!FieldChecking.IsValidUsername(change.Name, Strings.Regex.username))
+            if (!FieldChecking.IsValidUsername(change.Name, Strings.Regex.Username))
             {
                 return BadRequest($@"Invalid name.");
             }
@@ -254,7 +254,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Invalid user id '{userId}'.");
             }
 
-            if (!FieldChecking.IsValidUsername(change.Name, Strings.Regex.username))
+            if (!FieldChecking.IsValidUsername(change.Name, Strings.Regex.Username))
             {
                 return BadRequest($@"Invalid name.");
             }
@@ -451,7 +451,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Malformed email address '{email}'.");
             }
 
-            if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.email))
+            if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.Email))
             {
                 return BadRequest($@"Malformed email address '{email}'.");
             }
@@ -490,7 +490,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Malformed email address '{email}'.");
             }
 
-            if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.email))
+            if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.Email))
             {
                 return BadRequest($@"Malformed email address '{email}'.");
             }
@@ -528,7 +528,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Malformed email address '{email}'.");
             }
 
-            if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.email))
+            if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.Email))
             {
                 return BadRequest($@"Malformed email address '{email}'.");
             }
@@ -571,7 +571,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Malformed email address '{email}'.");
             }
 
-            if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.email))
+            if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.Email))
             {
                 return BadRequest($@"Malformed email address '{email}'.");
             }

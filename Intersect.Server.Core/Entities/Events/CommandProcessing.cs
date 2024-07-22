@@ -1415,7 +1415,7 @@ public static partial class CommandProcessing
             var gname = player.GetVariable(playerVariable.Id)?.Value.String?.Trim();
 
             // Can we use this name according to our configuration?
-            if (gname != null && FieldChecking.IsValidGuildName(gname, Strings.Regex.guildname))
+            if (gname != null && FieldChecking.IsValidGuildName(gname, Strings.Regex.GuildName))
             {
                 // Is the name already in use?
                 if (Guild.GetGuild(gname) == null)
