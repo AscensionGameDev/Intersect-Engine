@@ -75,7 +75,7 @@ namespace Intersect.Server.Core
                     throw new ArgumentNullException(nameof(serverContext));
                 }
 
-                Console.WriteLine(Strings.Intro.consoleactive);
+                Console.WriteLine(Strings.Intro.ConsoleActive);
                 try
                 {
                     while (serverContext.IsRunning && !mDoNotContinue)

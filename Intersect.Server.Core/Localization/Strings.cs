@@ -763,35 +763,23 @@ public static partial class Strings
 
     public sealed partial class IntroNamespace : LocaleNamespace
     {
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString api = @"API listening on '{00}'.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString apifailed = @"Failed to start API.";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ConsoleActive = @"Type 'exit' to shut down the server, or 'help' for a list of commands.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString consoleactive =
-            @"Type exit to shutdown the server, or help for a list of commands.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString exit = @"Press enter to exit.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString loading = @"Loading, please wait.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString started = @"Server Started. Using UDP Port #{00}";
+        public readonly LocalizedString Loading = @"Loading, please wait.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString support =
-            @"For help, support, and updates visit: https://www.ascensiongamedev.com";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString tagline = @"                          free 2d orpg engine";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString title = @"Intersect Server";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString version = @"Version {00}";
+        public readonly LocalizedString ServerStarted = @"Server started. Using UDP Port #{00}.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString websocketstarted =
-            @"Websocket listener started for Unity WebGL Clients using Port #{00}";
+        public readonly LocalizedString Support = @"For help, support, and updates, visit: https://www.ascensiongamedev.com";
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Tagline = @"                          Free 2D ORPG engine";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Version = @"Version {00}";
     }
 
     public sealed partial class ItemsNamespace : LocaleNamespace

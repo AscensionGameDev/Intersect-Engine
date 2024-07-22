@@ -252,7 +252,7 @@ internal partial class ServerContext : ApplicationContext<ServerContext, ServerC
         }
         else
         {
-            Console.WriteLine(Strings.Intro.started.ToString(Options.ServerPort));
+            Console.WriteLine(Strings.Intro.ServerStarted.ToString(Options.ServerPort));
         }
     }
 
