@@ -931,18 +931,14 @@ public static partial class Strings
 
     public sealed partial class NetDebugNamespace : LocaleNamespace
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Hastebin = @"Network debug information uploaded to {00} (copied to clipboard). Share this link with AGD when requesting help to get your game online!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString hastebin =
-            @"Network Debug information uploaded to {00} (copied to clipboard) share this link with AGD when requesting for help getting your game online!";
+        public readonly LocalizedString PleaseWait = @"Please wait while network diagnostics run...";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString pleasewait = @"Please wait while network diagnostics run....";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString savedtofile =
-            @"Network Debug information saved to netdebug.txt! Upload that file and share it with AGD when requesting for help getting your game online!";
-
+        public readonly LocalizedString SavedToFile = @"Network debug information saved to netdebug.txt! Upload that file and share it with AGD when requesting help to get your game online!";
     }
 
     public sealed partial class NetworkingNamespace : LocaleNamespace
