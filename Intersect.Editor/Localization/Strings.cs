@@ -4195,6 +4195,18 @@ Tick timer saved in server config.json.";
 
     }
 
+    public partial struct MapInstance
+    {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static Dictionary<MapInstanceType, LocalizedString> InstanceTypes = new Dictionary<MapInstanceType, LocalizedString>
+        {
+            {MapInstanceType.Overworld, @"Overworld" },
+            {MapInstanceType.Personal, @"Personal" },
+            {MapInstanceType.Guild, @"Guild" },
+            {MapInstanceType.Shared, @"Shared" }
+        };
+    }
+
     public partial struct MapLayers
     {
 
@@ -4247,14 +4259,6 @@ Tick timer saved in server config.json.";
 
     public partial struct Mapping
     {
-        public static LocaleDictionary<MapInstanceType, LocalizedString> InstanceTypes = new LocaleDictionary<MapInstanceType, LocalizedString>()
-        {
-            {MapInstanceType.Overworld, @"Overworld"},
-            {MapInstanceType.Personal, @"Personal"},
-            {MapInstanceType.Guild, @"Guild"},
-            {MapInstanceType.Shared, @"Shared"},
-        };
-
         public static LocalizedString createmap = @"Create new map.";
 
         public static LocalizedString createmapdialogue = @"Do you want to create a map here?";
