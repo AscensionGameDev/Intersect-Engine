@@ -634,28 +634,26 @@ public static partial class Strings
 
     public sealed partial class FriendsNamespace : LocaleNamespace
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Accept = @"{00} has accepted your friend request!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString accept = @"{00} has accepted your friend request!";
+        public readonly LocalizedString AlreadyFriends = @"You are already friends with {00}.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString alreadyfriends = @"You are already friends with {00}.";
+        public readonly LocalizedString Busy = @"{00} is currently busy. Please try again later.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString busy = @"{00} is busy. Please try again later!";
+        public readonly LocalizedString FriendLoggedIn = @"{00} has logged in.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString notification = @"You are now friends with {00}!";
+        public readonly LocalizedString FriendNotification = @"You are now friends with {00}!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString remove = @"Friend removed.";
+        public readonly LocalizedString FriendRemoved = @"Friend has been removed.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString sent = @"Friend request sent.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString LoggedIn = @"{00} has logged in.";
-
+        public readonly LocalizedString FriendRequestSent = @"Friend request has been sent.";
     }
 
     public sealed partial class GeneralNamespace : LocaleNamespace

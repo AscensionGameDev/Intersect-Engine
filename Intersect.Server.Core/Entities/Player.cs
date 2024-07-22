@@ -384,7 +384,7 @@ public partial class Player : Entity
                 var onlineFriend = Player.FindOnline(friend.Key);
                 if (onlineFriend != null)
                 {
-                    PacketSender.SendChatMsg(onlineFriend, Strings.Friends.LoggedIn.ToString(Name), ChatMessageType.Friend, CustomColors.Alerts.Info, Name);
+                    PacketSender.SendChatMsg(onlineFriend, Strings.Friends.FriendLoggedIn.ToString(Name), ChatMessageType.Friend, CustomColors.Alerts.Info, Name);
                 }
             }
         }
@@ -4721,12 +4721,12 @@ public partial class Player : Entity
             {
                 FriendRequester = fromPlayer;
                 PacketSender.SendFriendRequest(this, fromPlayer);
-                PacketSender.SendChatMsg(fromPlayer, Strings.Friends.sent, ChatMessageType.Friend, CustomColors.Alerts.RequestSent);
+                PacketSender.SendChatMsg(fromPlayer, Strings.Friends.FriendRequestSent, ChatMessageType.Friend, CustomColors.Alerts.RequestSent);
             }
             else
             {
                 PacketSender.SendChatMsg(
-                    fromPlayer, Strings.Friends.busy.ToString(Name), ChatMessageType.Friend, CustomColors.Alerts.Error
+                    fromPlayer, Strings.Friends.Busy.ToString(Name), ChatMessageType.Friend, CustomColors.Alerts.Error
                 );
             }
         }

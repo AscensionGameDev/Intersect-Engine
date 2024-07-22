@@ -2370,7 +2370,7 @@ internal sealed partial class PacketHandler
                     }
                     else
                     {
-                        PacketSender.SendChatMsg(player, Strings.Friends.busy.ToString(target.Name), ChatMessageType.Friend);
+                        PacketSender.SendChatMsg(player, Strings.Friends.Busy.ToString(target.Name), ChatMessageType.Friend);
                     }
                 }
                 else
@@ -2381,7 +2381,7 @@ internal sealed partial class PacketHandler
             else
             {
                 PacketSender.SendChatMsg(
-                    player, Strings.Friends.alreadyfriends.ToString(packet.Name), ChatMessageType.Friend, CustomColors.Alerts.Info
+                    player, Strings.Friends.AlreadyFriends.ToString(packet.Name), ChatMessageType.Friend, CustomColors.Alerts.Info
                 );
             }
         }
@@ -2394,7 +2394,7 @@ internal sealed partial class PacketHandler
                 var otherPlayer = Player.FindOnline(friendId);
                 player.CachedFriends.Remove(friendId);
                 PacketSender.SendFriends(player);
-                PacketSender.SendChatMsg(player, Strings.Friends.remove, ChatMessageType.Friend, CustomColors.Alerts.Declined);
+                PacketSender.SendChatMsg(player, Strings.Friends.FriendRemoved, ChatMessageType.Friend, CustomColors.Alerts.Declined);
 
                 if (otherPlayer?.CachedFriends.ContainsKey(player.Id) ?? false)
                 {
@@ -2437,7 +2437,7 @@ internal sealed partial class PacketHandler
                 }
 
                 PacketSender.SendChatMsg(
-                    player, Strings.Friends.notification.ToString(target.Name), ChatMessageType.Friend, CustomColors.Alerts.Accepted
+                    player, Strings.Friends.FriendNotification.ToString(target.Name), ChatMessageType.Friend, CustomColors.Alerts.Accepted
                 );
 
                 PacketSender.SendFriends(player);
@@ -2451,7 +2451,7 @@ internal sealed partial class PacketHandler
                 }
 
                 PacketSender.SendChatMsg(
-                    target, Strings.Friends.accept.ToString(player.Name), ChatMessageType.Friend, CustomColors.Alerts.Accepted
+                    target, Strings.Friends.Accept.ToString(player.Name), ChatMessageType.Friend, CustomColors.Alerts.Accepted
                 );
 
                 PacketSender.SendFriends(target);
