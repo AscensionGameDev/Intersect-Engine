@@ -2160,14 +2160,14 @@ internal sealed partial class PacketHandler
                     else
                     {
                         PacketSender.SendChatMsg(
-                            player, Strings.Trading.busy.ToString(player.Trading.Requester.Name), ChatMessageType.Trading, Color.Red
+                            player, Strings.Trading.Busy.ToString(player.Trading.Requester.Name), ChatMessageType.Trading, Color.Red
                         );
                     }
                 }
                 else
                 {
                     PacketSender.SendChatMsg(
-                        player.Trading.Requester, Strings.Trading.declined.ToString(player.Name),
+                        player.Trading.Requester, Strings.Trading.Declined.ToString(player.Name),
                         ChatMessageType.Trading,
                         CustomColors.Alerts.Declined
                     );
@@ -2252,9 +2252,9 @@ internal sealed partial class PacketHandler
             player.Trading.Counterparty.ReturnTradeItems();
             player.ReturnTradeItems();
 
-            PacketSender.SendChatMsg(player, Strings.Trading.accepted, ChatMessageType.Trading, CustomColors.Alerts.Accepted);
+            PacketSender.SendChatMsg(player, Strings.Trading.Accepted, ChatMessageType.Trading, CustomColors.Alerts.Accepted);
             PacketSender.SendChatMsg(
-                player.Trading.Counterparty, Strings.Trading.accepted, ChatMessageType.Trading, CustomColors.Alerts.Accepted
+                player.Trading.Counterparty, Strings.Trading.Accepted, ChatMessageType.Trading, CustomColors.Alerts.Accepted
             );
 
             PacketSender.SendTradeClose(player.Trading.Counterparty);

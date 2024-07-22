@@ -122,9 +122,6 @@ public static partial class Strings
         public readonly LocalizedString SlotOccupied = @"That slot is occupied by another item!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString TradeBound = @"Cannot trade bound items!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString WithdrawInvalid = @"Invalid item selected to retrieve!";
     }
 
@@ -1249,40 +1246,38 @@ public static partial class Strings
 
     public sealed partial class TradingNamespace : LocaleNamespace
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Accepted = @"The trade was successful!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString accepted = @"The trade was successful!";
+        public readonly LocalizedString AlreadyDenied = @"Your trade request has already been denied!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString alreadydenied = @"Your trade request has already been denied!";
+        public readonly LocalizedString Bound = @"This item is bound to you and cannot be traded!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString bound = @"This item is bound to you and cannot be traded!";
+        public readonly LocalizedString Busy = @"{00} is busy. Please try again later!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString busy = @"{00} is busy. Please try again later!";
+        public readonly LocalizedString Declined = @"The trade was declined!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString declined = @"The trade was declined!";
+        public readonly LocalizedString InvalidOffer = @"Invalid item selected to offer!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString itemsdropped =
-            @"Out of inventory space. Some of your items have been dropped on the ground!";
+        public readonly LocalizedString InvalidRevoke = @"Invalid item selected to revoke!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ItemsDropped = @"Out of inventory space. Some of your items have been dropped on the ground!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString OfferAccepted = @"{00} has accepted your offer. Please confirm the trade.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString offerinvalid = @"Invalid item selected to offer!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString RevokeNotAllowed = @"You can't revoke this item, {00} already accepted the trade!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString OutOfRange = @"Trade target is out of range or offline.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString revokeinvalid = @"Invalid item selected to revoke!";
+        public readonly LocalizedString RevokeNotAllowed = @"You can't revoke this item, {00} has already accepted the trade!";
     }
 
     public sealed partial class UpnpNamespace : LocaleNamespace

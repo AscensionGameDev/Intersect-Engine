@@ -4767,7 +4767,7 @@ public partial class Player : Entity
 
         if (Trading.Requests.ContainsKey(fromPlayer) && Trading.Requests[fromPlayer] > Timing.Global.Milliseconds)
         {
-            PacketSender.SendChatMsg(fromPlayer, Strings.Trading.alreadydenied, ChatMessageType.Trading, CustomColors.Alerts.Error);
+            PacketSender.SendChatMsg(fromPlayer, Strings.Trading.AlreadyDenied, ChatMessageType.Trading, CustomColors.Alerts.Error);
         }
         else
         {
@@ -4779,7 +4779,7 @@ public partial class Player : Entity
             else
             {
                 PacketSender.SendChatMsg(
-                    fromPlayer, Strings.Trading.busy.ToString(Name), ChatMessageType.Trading, CustomColors.Alerts.Error
+                    fromPlayer, Strings.Trading.Busy.ToString(Name), ChatMessageType.Trading, CustomColors.Alerts.Error
                 );
             }
         }
@@ -4813,7 +4813,7 @@ public partial class Player : Entity
                 //Check if the item is bound.. if so don't allow trade
                 if (!itemBase.CanTrade)
                 {
-                    PacketSender.SendChatMsg(this, Strings.Bags.TradeBound, ChatMessageType.Trading, CustomColors.Items.Bound);
+                    PacketSender.SendChatMsg(this, Strings.Trading.Bound, ChatMessageType.Trading, CustomColors.Items.Bound);
 
                     return;
                 }
@@ -4892,7 +4892,7 @@ public partial class Player : Entity
             }
             else
             {
-                PacketSender.SendChatMsg(this, Strings.Trading.offerinvalid, ChatMessageType.Trading, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(this, Strings.Trading.InvalidOffer, ChatMessageType.Trading, CustomColors.Alerts.Error);
             }
         }
     }
@@ -4917,7 +4917,7 @@ public partial class Player : Entity
 
         if (Trading.Offer[slot] == null || Trading.Offer[slot].ItemId == Guid.Empty)
         {
-            PacketSender.SendChatMsg(this, Strings.Trading.revokeinvalid, ChatMessageType.Trading, CustomColors.Alerts.Error);
+            PacketSender.SendChatMsg(this, Strings.Trading.InvalidRevoke, ChatMessageType.Trading, CustomColors.Alerts.Error);
 
             return;
         }
@@ -4983,7 +4983,7 @@ public partial class Player : Entity
             if (!TryGiveItem(offer, -1) && MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
             {
                 instance.SpawnItem(X, Y, offer, offer.Quantity, Id);
-                PacketSender.SendChatMsg(this, Strings.Trading.itemsdropped, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(this, Strings.Trading.ItemsDropped, ChatMessageType.Inventory, CustomColors.Alerts.Error);
             }
 
             offer.ItemId = Guid.Empty;
@@ -5001,12 +5001,12 @@ public partial class Player : Entity
         }
 
         Trading.Counterparty.ReturnTradeItems();
-        PacketSender.SendChatMsg(Trading.Counterparty, Strings.Trading.declined, ChatMessageType.Trading, CustomColors.Alerts.Error);
+        PacketSender.SendChatMsg(Trading.Counterparty, Strings.Trading.Declined, ChatMessageType.Trading, CustomColors.Alerts.Error);
         PacketSender.SendTradeClose(Trading.Counterparty);
         Trading.Counterparty.Trading.Counterparty = null;
 
         ReturnTradeItems();
-        PacketSender.SendChatMsg(this, Strings.Trading.declined, ChatMessageType.Trading, CustomColors.Alerts.Error);
+        PacketSender.SendChatMsg(this, Strings.Trading.Declined, ChatMessageType.Trading, CustomColors.Alerts.Error);
         PacketSender.SendTradeClose(this);
         Trading.Counterparty = null;
     }
