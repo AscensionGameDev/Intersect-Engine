@@ -833,12 +833,19 @@ public static partial class Strings
     public sealed partial class MigrationNamespace : LocaleNamespace
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString AlreadyUsingProvider =
-            @"   Migration Error: {00} database is already using {01}!";
+        public readonly LocalizedString AlreadyUsingProvider = @"Migration Error: The {00} database is already using {01}!";
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString Cancel = @"   Press any other key to cancel migration.";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Cancel = @"Press any other key to cancel the migration.";
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString CurrentlyUsing = @"currently using {00}";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ConfirmCharacter = @"y";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString DatabaseFileAlreadyExists = @"{00} already exists. Overwrite? (y/n)";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString DefaultDatabase = @"intersect_{00}_{01}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString DefaultHost = @"localhost";
@@ -850,89 +857,76 @@ public static partial class Strings
         public readonly LocalizedString DefaultUsername = @"root";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString DefaultDatabase = "intersect_{00}_{01}";
+        public readonly LocalizedString EnterConnectionStringParameters = @"Please enter your connection string parameters:";
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString EnterConnectionStringParameters = @"Please enter your connection string parameters:";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString GameDatabaseName = @"Game";
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString GameDatabaseName = @"Game";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString LoggingDatabaseName = @"Logging";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString OptionMySql = @"   [2] Mysql";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString OptionSqlite = @"   [1] Sqlite";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString LoggingDatabaseName = @"Logging";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString MigratingDbSet = @"Migrating entities in {00}...";
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString MigrationCanceled = @"Migration Cancelled";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString MigrationComplete = @"Migration complete! Press enter to exit.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString MySqlConnecting = @"Please wait, attempting to connect to database...";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString MySqlConnectionError = @"Error opening db connection! Error: {00}";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString MigrationCanceled = @"Migration Canceled";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString MySqlNotEmpty =
-            @"Database must be empty before migration! Please delete any tables before proceeding! Migration Cancelled.";
+        public readonly LocalizedString MigrationComplete = @"Migration complete! Press enter to exit.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString MySqlTryAgain =
-            @"Would you like to try entering your connection info again? (y/n)  ";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString ConfirmCharacter = @"y";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString PlayerDatabaseName = @"Player";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString PromptDatabase = @"Database ({00}): ";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString PromptHost = @"Host ({00}): ";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString PromptPassword = @"Password (empty): ";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString PromptPort = @"Port ({00}): ";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString PromptUsername = @"User ({00}): ";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString SelectContext = @"Which database would you like to migrate:";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString SelectProvider = @"Select which engine to migrate the {00} database to:";
+        public readonly LocalizedString MySqlConnecting = @"Please wait, attempting to connect to the database...";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString SqliteRecommended = "Sqlite strongly recommended!";
+        public readonly LocalizedString MySqlConnectionError = @"Error opening database connection! Error: {00}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString SelectDatabase = @"    [{00}] {01} (currently using {02}) {03}";
+        public readonly LocalizedString MySqlNotEmpty = @"The database must be empty before migration! Please delete any tables before proceeding. Migration Canceled.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString SelectDatabaseType = @"    [{00}] {01}";
+        public readonly LocalizedString MySqlTryAgain = @"Would you like to try entering your connection information again? (y/n)";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString SelectGameDatabaseProvider =
-            "   [1] Game Database ({00})  -  Sqlite Strongly Recommended!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString SelectGameDatabaseKey = @"1";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString SelectMySqlKey = @"2";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString SelectPlayerDatabaseProvider = "   [2] Player Database ({00})";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString SelectPlayerDatabaseKey = @"2";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString SelectSqliteKey = @"1";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString DatabaseFileAlreadyExists = @"{00} already exists, overwrite? (y/n)  ";
+        public readonly LocalizedString PlayerDatabaseName = @"Player";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString StartingMigration =
-            @"Starting migration, please wait! (This could take several minutes depending on the size of your game)";
+        public readonly LocalizedString PromptDatabase = @"Database ({00}):";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString StoppingServer =
-            @"Please wait, stopping server, and saving current database...";
+        public readonly LocalizedString PromptHost = @"Host ({00}):";
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString TryAgainCharacter = @"y";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString PromptPassword = @"Password (empty):";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString PromptPort = @"Port ({00}):";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString PromptUsername = @"User ({00}):";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString SelectContext = @"Which database would you like to migrate:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString SelectDatabase = @"[{00}] {01} (currently using {02}) {03}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString SelectDatabaseType = @"[{00}] {01}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString SelectProvider = @"Select which engine to migrate the {00} database to:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString SqliteRecommended = @"SQLite is strongly recommended!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString StartingMigration = @"Starting migration, please wait! This could take several minutes depending on the size of your game.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString StoppingServer = @"Please wait, stopping the server and saving the current database...";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString TryAgainCharacter = @"y";
     }
 
     public sealed partial class NetDebugNamespace : LocaleNamespace
