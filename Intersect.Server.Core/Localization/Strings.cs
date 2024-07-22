@@ -628,17 +628,8 @@ public static partial class Strings
 
     public sealed partial class FormulasNamespace : LocaleNamespace
     {
-
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString loadfailed = @"Failed to load formulas! Press any key to shut down.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString missing = @"Formulas.json missing. Generated default formulas file.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString syntax =
-            @"Error loading formulas! Please make sure the file exists and is free on syntax errors.";
-
+        public readonly LocalizedString Missing = @"Formulas.json file is missing. A default formulas file has been generated.";
     }
 
     public sealed partial class FriendsNamespace : LocaleNamespace
