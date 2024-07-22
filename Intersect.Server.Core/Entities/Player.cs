@@ -506,9 +506,9 @@ public partial class Player : Entity
 
         PacketSender.SendEntityLeave(this);
 
-        if (!string.IsNullOrWhiteSpace(Strings.Player.left.ToString()))
+        if (!string.IsNullOrWhiteSpace(Strings.Player.Left.ToString()))
         {
-            PacketSender.SendGlobalMsg(Strings.Player.left.ToString(Name, Options.Instance.GameName));
+            PacketSender.SendGlobalMsg(Strings.Player.Left.ToString(Name, Options.Instance.GameName));
         }
 
         // Remove this player from the online list
@@ -1215,14 +1215,14 @@ public partial class Player : Entity
                     if (TryTeachSpell(spellInstance, true))
                     {
                         messages.Add(
-                            Strings.Player.spelltaughtlevelup.ToString(SpellBase.GetName(spellInstance.SpellId))
+                            Strings.Player.SpellTaughtLevelUp.ToString(SpellBase.GetName(spellInstance.SpellId))
                         );
                     }
                 }
             }
         }
 
-        PacketSender.SendChatMsg(this, Strings.Player.levelup.ToString(Level), ChatMessageType.Experience, CustomColors.Combat.LevelUp, Name);
+        PacketSender.SendChatMsg(this, Strings.Player.LevelUp.ToString(Level), ChatMessageType.Experience, CustomColors.Combat.LevelUp, Name);
         PacketSender.SendActionMsg(this, Strings.Combat.LevelUp, CustomColors.Combat.LevelUp);
         foreach (var message in messages)
         {
@@ -1232,7 +1232,7 @@ public partial class Player : Entity
         if (StatPoints > 0)
         {
             PacketSender.SendChatMsg(
-                this, Strings.Player.statpoints.ToString(StatPoints), ChatMessageType.Experience, CustomColors.Combat.StatPoints, Name
+                this, Strings.Player.StatPoints.ToString(StatPoints), ChatMessageType.Experience, CustomColors.Combat.StatPoints, Name
             );
         }
 
@@ -5249,7 +5249,7 @@ public partial class Player : Entity
                 {
                     PacketSender.SendPlayerSpellUpdate(this, i);
                     PacketSender.SendChatMsg(this,
-                        Strings.Player.spelltaughtlevelup.ToString(SpellBase.GetName(spell.SpellId)),
+                        Strings.Player.SpellTaughtLevelUp.ToString(SpellBase.GetName(spell.SpellId)),
                         ChatMessageType.Experience, CustomColors.Alerts.Info, Name);
                 }
 

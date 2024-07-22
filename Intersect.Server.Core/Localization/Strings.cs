@@ -1032,74 +1032,83 @@ public static partial class Strings
 
     public sealed partial class PlayerNamespace : LocaleNamespace
     {
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString admin = @"{00} has been given administrative powers!";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Admin = "{00} has been given administrative powers!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString adminjoined =
-            @"You are an administrator! Press Insert at any time to access the administration menu or F2 for debug information.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString adminsetpower = @"Only admins can set power!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString InstanceUpdate = @"Your instance ID has changed from {00} to {01}";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString OverworldReturnAdmin = @"You have returned {00} to the overworld.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString OverworldReturned = @"You have been returned to the overworld.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString beenwarpedto = @"You have been warped to {00}.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString changeownpower = @"You cannot alter your own power!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString deadmin = @"{00} has had their administrative powers revoked!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString demod = @"{00} has had their moderation powers revoked!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString haswarpedto = @"{00} has been warped to you.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString joined = @"{00} has joined {01}.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString kicked = @"{00} has been kicked by {01}!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString killed = @"{00} has been killed by {01}!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString left = @"{00} has left {01}.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString levelup = @"You have leveled up! You are now level {00}!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString mod = @"{00} has been given moderation powers!";
+        public readonly LocalizedString AdminJoined = "You are an administrator! Press Insert at any time to access the administration menu or F2 for debug information.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString modjoined =
-            @"You are a moderator! Press Insert at any time to access the administration menu or F2 for debug information.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString notarget = @"You need to select a valid target.";
+        public readonly LocalizedString AdminSetPower = "Only administrators can set power!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString CannotWarpToYourself =
-            @"You cannot warp to yourself.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString offline = @"User not online!";
+        public readonly LocalizedString BeenWarpedTo = "You have been warped to {00}.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString PlayerNotFound = @"The player '{00}' was not found!";
+        public readonly LocalizedString CannotAlterOwnPower = "You cannot alter your own power!";
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString powerchanged = @"Your power has been modified!";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString CannotWarpToYourself = "You cannot warp to yourself.";
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString serverkicked = @"{00} has been kicked by the server!";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Deadmin = "{00} has had their administrative powers revoked!";
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString serverkilled = @"{00} has been killed by the server!";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString HasWarpedTo = "{00} has been warped to you.";
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString spelltaughtlevelup = @"You've learned the {00} spell!";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString InstanceUpdate = "Your instance ID has changed from {00} to {01}.";
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString statpoints = @"You have {00} stat points available to be spent!";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Kicked = "{00} has been kicked by {01}!";
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString targetoutsiderange = @"Target not in range.";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Killed = "{00} has been killed by {01}!";
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString warpedto = @"Warped to {00}.";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Left = "{00} has left {01}.";
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString warpedtoyou = @"{00} warped to you.";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString LevelUp = "You have leveled up! You are now level {00}!";
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Moderator = "{00} has been given moderation powers!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ModeratorJoined = "You are a moderator! Press Insert at any time to access the administration menu or F2 for debug information.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Offline = "User not online!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString OverworldReturnAdmin = "You have returned {00} to the overworld.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString OverworldReturned = "You have been returned to the overworld.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString PlayerNotFound = "The player '{00}' was not found!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString PowerChanged = "Your power has been modified!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ServerKicked = "{00} has been kicked by the server!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ServerKilled = "{00} has been killed by the server!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString SpellTaughtLevelUp = "You've learned the {00} spell!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString StatPoints = "You have {00} stat points available to be spent!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString WarpedTo = "Warped to {00}.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString WarpedToYou = "{00} warped to you.";
     }
 
     public sealed partial class PortcheckingNamespace : LocaleNamespace

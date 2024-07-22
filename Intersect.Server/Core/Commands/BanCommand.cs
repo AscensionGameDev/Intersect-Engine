@@ -19,7 +19,7 @@ namespace Intersect.Server.Core.Commands
         {
             if (target.Entity == null)
             {
-                Console.WriteLine($@"    {Strings.Player.offline}");
+                Console.WriteLine($@"    {Strings.Player.Offline}");
 
                 return;
             }

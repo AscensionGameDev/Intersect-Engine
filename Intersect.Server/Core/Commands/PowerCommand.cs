@@ -25,7 +25,7 @@ namespace Intersect.Server.Core.Commands
         {
             if (target?.Entity == null)
             {
-                Console.WriteLine($@"    {Strings.Player.offline}");
+                Console.WriteLine($@"    {Strings.Player.Offline}");
 
                 return;
             }
@@ -42,8 +42,8 @@ namespace Intersect.Server.Core.Commands
             PacketSender.SendEntityDataToProximity(target.Entity);
             PacketSender.SendGlobalMsg(
                 power != Access.None
-                    ? Strings.Player.admin.ToString(target.Entity.Name)
-                    : Strings.Player.deadmin.ToString(target.Entity.Name)
+                    ? Strings.Player.Admin.ToString(target.Entity.Name)
+                    : Strings.Player.Deadmin.ToString(target.Entity.Name)
             );
 
             Console.WriteLine($@"    {Strings.Commandoutput.PowerChanged.ToString(target.Entity.Name)}");

@@ -1049,9 +1049,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         else
                         {
                             client.Disconnect(actionParameters.Reason);
-                            PacketSender.SendGlobalMsg(Strings.Player.serverkicked.ToString(player?.Name));
+                            PacketSender.SendGlobalMsg(Strings.Player.ServerKicked.ToString(player?.Name));
 
-                            return Ok(Strings.Player.serverkicked.ToString(player?.Name));
+                            return Ok(Strings.Player.ServerKicked.ToString(player?.Name));
                         }
                     }
 
@@ -1073,7 +1073,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                                 client.Entity.Die();
                             }
 
-                            PacketSender.SendGlobalMsg(Strings.Player.serverkilled.ToString(player?.Name));
+                            PacketSender.SendGlobalMsg(Strings.Player.ServerKilled.ToString(player?.Name));
 
                             return Ok(Strings.Commandoutput.KillSuccess.ToString(player?.Name));
                         }
@@ -1092,7 +1092,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     return NotImplemented(adminAction.ToString());
             }
 
-            return NotFound(Strings.Player.offline);
+            return NotFound(Strings.Player.Offline);
         }
 
         #endregion

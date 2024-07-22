@@ -16,15 +16,15 @@ namespace Intersect.Server.Core.Commands
         {
             if (target?.Entity == null)
             {
-                Console.WriteLine($@"    {Strings.Player.offline}");
+                Console.WriteLine($@"    {Strings.Player.Offline}");
 
                 return;
             }
 
             var name = target.Entity.Name;
             target.Disconnect();
-            PacketSender.SendGlobalMsg(Strings.Player.serverkicked.ToString(name));
-            Console.WriteLine($@"    {Strings.Player.serverkicked.ToString(name)}");
+            PacketSender.SendGlobalMsg(Strings.Player.ServerKicked.ToString(name));
+            Console.WriteLine($@"    {Strings.Player.ServerKicked.ToString(name)}");
         }
 
     }

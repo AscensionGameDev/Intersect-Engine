@@ -89,11 +89,11 @@ public static partial class PacketSender
 
             if (client.Power.Editor)
             {
-                SendChatMsg(player, Strings.Player.adminjoined, ChatMessageType.Notice, CustomColors.Alerts.AdminJoined);
+                SendChatMsg(player, Strings.Player.AdminJoined, ChatMessageType.Notice, CustomColors.Alerts.AdminJoined);
             }
             else if (client.Power.IsModerator)
             {
-                SendChatMsg(player, Strings.Player.modjoined, ChatMessageType.Notice, CustomColors.Alerts.ModJoined);
+                SendChatMsg(player, Strings.Player.ModeratorJoined, ChatMessageType.Notice, CustomColors.Alerts.ModJoined);
             }
 
             player.LoginWarp();

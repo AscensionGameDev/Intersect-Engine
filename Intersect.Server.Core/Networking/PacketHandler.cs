@@ -1016,7 +1016,7 @@ internal sealed partial class PacketHandler
             }
             else
             {
-                PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.PM, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(player, Strings.Player.Offline, ChatMessageType.PM, CustomColors.Alerts.Error);
             }
         }
         else if (cmd == Strings.Chat.ReplyCommand || cmd == Strings.Chat.ReplyShortcutCommand)
@@ -1043,7 +1043,7 @@ internal sealed partial class PacketHandler
             }
             else
             {
-                PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.PM, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(player, Strings.Player.Offline, ChatMessageType.PM, CustomColors.Alerts.Error);
             }
         }
         else
@@ -2375,7 +2375,7 @@ internal sealed partial class PacketHandler
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.Friend, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(player, Strings.Player.Offline, ChatMessageType.Friend, CustomColors.Alerts.Error);
                 }
             }
             else

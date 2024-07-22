@@ -732,7 +732,7 @@ public static partial class CommandProcessing
         }
 
         PacketSender.SendEntityDataToProximity(player);
-        PacketSender.SendChatMsg(player, Strings.Player.powerchanged, ChatMessageType.Notice, Color.Red);
+        PacketSender.SendChatMsg(player, Strings.Player.PowerChanged, ChatMessageType.Notice, Color.Red);
         player.UnequipInvalidItems();
     }
 

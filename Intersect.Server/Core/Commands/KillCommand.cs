@@ -16,7 +16,7 @@ namespace Intersect.Server.Core.Commands
         {
             if (target?.Entity == null)
             {
-                Console.WriteLine($@"    {Strings.Player.offline}");
+                Console.WriteLine($@"    {Strings.Player.Offline}");
 
                 return;
             }
@@ -26,7 +26,7 @@ namespace Intersect.Server.Core.Commands
                 target.Entity.Die();
             }
             
-            PacketSender.SendGlobalMsg($@"    {Strings.Player.serverkilled.ToString(target.Entity.Name)}");
+            PacketSender.SendGlobalMsg($@"    {Strings.Player.ServerKilled.ToString(target.Entity.Name)}");
             Console.WriteLine($@"    {Strings.Commandoutput.KillSuccess.ToString(target.Entity.Name)}");
         }
 
