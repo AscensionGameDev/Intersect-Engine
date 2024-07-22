@@ -1758,18 +1758,18 @@ public static partial class CommandProcessing
             var time = Time.GetTime();
             var replacements = new Dictionary<string, string>()
             {
-                { Strings.Events.playernamecommand, player.Name },
-                { Strings.Events.playerguildcommand, player.Guild?.Name ?? "" },
-                { Strings.Events.timehour, Time.Hour },
-                { Strings.Events.militaryhour, Time.MilitaryHour },
-                { Strings.Events.timeminute, Time.Minute },
-                { Strings.Events.timesecond, Time.Second },
-                { Strings.Events.timeperiod, time.Hour >= 12 ? Strings.Events.periodevening : Strings.Events.periodmorning },
-                { Strings.Events.onlinecountcommand, Player.OnlineCount.ToString() },
-                { Strings.Events.onlinelistcommand, input.Contains(Strings.Events.onlinelistcommand) ? string.Join(", ", Player.OnlineList.Select(p => p.Name).ToList()) : "" },
-                { Strings.Events.eventnamecommand, instance?.PageInstance?.Name ?? "" },
-                { Strings.Events.commandparameter, instance?.PageInstance?.Param ?? "" },
-                { Strings.Events.eventparams, (instance != null && input.Contains(Strings.Events.eventparams)) ? instance.FormatParameters(player) : "" },
+                { Strings.Events.PlayerNameCommand, player.Name },
+                { Strings.Events.PlayerGuildCommand, player.Guild?.Name ?? "" },
+                { Strings.Events.TimeHour, Time.Hour },
+                { Strings.Events.MilitaryHour, Time.MilitaryHour },
+                { Strings.Events.TimeMinute, Time.Minute },
+                { Strings.Events.TimeSecond, Time.Second },
+                { Strings.Events.TimePeriod, time.Hour >= 12 ? Strings.Events.PeriodEvening : Strings.Events.PeriodMorning },
+                { Strings.Events.OnlineCountCommand, Player.OnlineCount.ToString() },
+                { Strings.Events.OnlineListCommand, input.Contains(Strings.Events.OnlineListCommand) ? string.Join(", ", Player.OnlineList.Select(p => p.Name).ToList()) : "" },
+                { Strings.Events.EventNameCommand, instance?.PageInstance?.Name ?? "" },
+                { Strings.Events.CommandParameter, instance?.PageInstance?.Param ?? "" },
+                { Strings.Events.EventParameters, (instance != null && input.Contains(Strings.Events.EventParameters)) ? instance.FormatParameters(player) : "" },
 
             };
 
@@ -1808,7 +1808,7 @@ public static partial class CommandProcessing
                 var parms = instance.GetParams(player);
                 foreach (var val in parms)
                 {
-                    sb.Replace(Strings.Events.eventparam + "{" + val.Key + "}", val.Value);
+                    sb.Replace(Strings.Events.EventParameter + "{" + val.Key + "}", val.Value);
                 }
             }
 

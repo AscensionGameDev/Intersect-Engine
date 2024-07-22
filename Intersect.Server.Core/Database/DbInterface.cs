@@ -1477,8 +1477,8 @@ public static partial class DbInterface
         {
             if (!string.IsNullOrWhiteSpace(variable.TextId) && !addedIds.Contains(variable.TextId))
             {
-                lookup.Add(Strings.Events.playervar + "{" + variable.TextId + "}", variable);
-                lookup.Add(Strings.Events.playerswitch + "{" + variable.TextId + "}", variable);
+                lookup.Add(Strings.Events.PlayerVariable + "{" + variable.TextId + "}", variable);
+                lookup.Add(Strings.Events.PlayerSwitch + "{" + variable.TextId + "}", variable);
                 addedIds.Add(variable.TextId);
             }
         }
@@ -1493,8 +1493,8 @@ public static partial class DbInterface
         {
             if (!string.IsNullOrWhiteSpace(variable.TextId) && !addedIds.Contains(variable.TextId))
             {
-                lookup.Add(Strings.Events.globalvar + "{" + variable.TextId + "}", variable);
-                lookup.Add(Strings.Events.globalswitch + "{" + variable.TextId + "}", variable);
+                lookup.Add(Strings.Events.GlobalVariable + "{" + variable.TextId + "}", variable);
+                lookup.Add(Strings.Events.GlobalSwitch + "{" + variable.TextId + "}", variable);
                 addedIds.Add(variable.TextId);
             }
         }
@@ -1509,7 +1509,7 @@ public static partial class DbInterface
         {
             if (!string.IsNullOrWhiteSpace(variable.TextId) && !addedIds.Contains(variable.TextId))
             {
-                lookup.Add(Strings.Events.guildvar + "{" + variable.TextId + "}", variable);
+                lookup.Add(Strings.Events.GuildVariable + "{" + variable.TextId + "}", variable);
                 addedIds.Add(variable.TextId);
             }
         }

@@ -114,13 +114,7 @@ public static partial class Strings
         public readonly LocalizedString BagNoSpace = @"There is no space left in your bag for that item!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString DepositInvalid = @"Invalid item selected to store!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString DropNotEmpty = @"You cannot drop a bag unless it's empty!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString InventoryNoSpace = @"There is no space left in your inventory for that item!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString OnlySellEmpty = @"Cannot sell the bag unless it's empty!";
@@ -562,78 +556,74 @@ public static partial class Strings
 
     public sealed partial class EventsNamespace : LocaleNamespace
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString CommandParameter = @"\param";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString commandparameter = @"\param";
+        public readonly LocalizedString EventNameCommand = @"\en";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString eventnamecommand = @"\en";
+        public readonly LocalizedString EventParameter = @"\evtparam";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString eventparam = @"\evtparam";
+        public readonly LocalizedString EventParameters = @"\evtparams";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString eventparams = @"\evtparams";
+        public readonly LocalizedString GlobalSwitch = @"\gs";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString globalswitch = @"\gs";
+        public readonly LocalizedString GlobalVariable = @"\gv";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString globalvar = @"\gv";
+        public readonly LocalizedString GuildVariable = @"\guildvar";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString militaryhour = @"\24hour";
+        public readonly LocalizedString MilitaryHour = @"\24hour";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString onlinecountcommand = @"\onlinecount";
+        public readonly LocalizedString OnlineCountCommand = @"\onlinecount";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString onlinelistcommand = @"\onlinelist";
+        public readonly LocalizedString OnlineListCommand = @"\onlinelist";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString periodevening = @"PM";
+        public readonly LocalizedString PeriodEvening = @"PM";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString periodmorning = @"AM";
+        public readonly LocalizedString PeriodMorning = @"AM";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString playernamecommand = @"\pn";
+        public readonly LocalizedString PlayerGuildCommand = @"\pg";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString playerguildcommand = @"\pg";
+        public readonly LocalizedString PlayerNameCommand = @"\pn";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString playerswitch = @"\ps";
+        public readonly LocalizedString PlayerSwitch = @"\ps";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString playervar = @"\pv";
+        public readonly LocalizedString PlayerVariable = @"\pv";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString timehour = @"\hour";
+        public readonly LocalizedString TimeHour = @"\hour";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString timeminute = @"\minute";
+        public readonly LocalizedString TimeMinute = @"\minute";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString timeperiod = @"\period";
+        public readonly LocalizedString TimePeriod = @"\period";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString timesecond = @"\second";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString watchdogkill =
-            @"Event killed due to commands processed in a single frame surpassing Event Watchdog Threshhold.  (Map: {00}  Event: {01})";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString watchdogkillcommon =
-            @"Common event killed due to commands processed in a single frame surpassing the Event Watchdog Threshhold.  (Event {00})";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString guildvar = @"\guildvar";
+        public readonly LocalizedString TimeSecond = @"\second";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString UserVariable = @"\uservar";
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString WatchdogKill = @"Event killed due to commands processed in a single frame surpassing Event Watchdog Threshold. (Map: {00} Event: {01})";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString WatchdogKillCommon = @"Common event killed due to commands processed in a single frame surpassing the Event Watchdog Threshold. (Event {00})";
     }
 
     public sealed partial class FormulasNamespace : LocaleNamespace
