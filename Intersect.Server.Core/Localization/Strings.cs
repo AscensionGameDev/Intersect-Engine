@@ -1186,31 +1186,29 @@ public static partial class Strings
 
     public sealed partial class QuestsNamespace : LocaleNamespace
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Abandoned = @"Quest Abandoned: {00}!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString abandoned = @"Quest Abandoned: {00}!";
+        public readonly LocalizedString Completed = @"Quest: {00} completed!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString completed = @"Quest: {00} completed!";
+        public readonly LocalizedString Declined = @"Quest Declined: {00}!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString declined = @"Quest Declined: {00}!";
+        public readonly LocalizedString ItemTask = @"{00} updated! {01}/{02} {03}(s) gathered!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString itemtask = @"{00}  updated! {01}/{02} {03}(s) gathered!";
+        public readonly LocalizedString NpcTask = @"{00} updated! {01}/{02} {03}(s) slain!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString npctask = @"{00}  updated! {01}/{02} {03}(s) slain!";
+        public readonly LocalizedString Started = @"Quest Started: {00}!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString started = @"Quest Started: {00}!";
+        public readonly LocalizedString TaskCompleted = @"Task Completed!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString taskcompleted = @"Task Completed!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString updated = @"Quest: {00} updated!";
-
+        public readonly LocalizedString Updated = @"Quest: {00} updated!";
     }
 
     public sealed partial class RegexNamespace : LocaleNamespace

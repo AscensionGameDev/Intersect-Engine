@@ -1386,7 +1386,7 @@ public partial class Player : Entity
                                 PacketSender.SendQuestsProgress(this);
                                 PacketSender.SendChatMsg(
                                     this,
-                                    Strings.Quests.npctask.ToString(
+                                    Strings.Quests.NpcTask.ToString(
                                         quest.Name, questProgress.TaskProgress, questTask.Quantity,
                                         NpcBase.GetName(questTask.TargetId)
                                     ),
@@ -6105,7 +6105,7 @@ public partial class Player : Entity
 
             EnqueueStartCommonEvent(EventBase.Get(quest.StartEventId));
             PacketSender.SendChatMsg(
-                this, Strings.Quests.started.ToString(quest.Name), ChatMessageType.Quest, CustomColors.QuestAlert.Started
+                this, Strings.Quests.Started.ToString(quest.Name), ChatMessageType.Quest, CustomColors.QuestAlert.Started
             );
 
             PacketSender.SendQuestsProgress(this);
@@ -6156,7 +6156,7 @@ public partial class Player : Entity
             {
                 QuestOffers.Remove(questId);
                 PacketSender.SendChatMsg(
-                    this, Strings.Quests.declined.ToString(QuestBase.GetName(questId)), ChatMessageType.Quest, CustomColors.QuestAlert.Declined
+                    this, Strings.Quests.Declined.ToString(QuestBase.GetName(questId)), ChatMessageType.Quest, CustomColors.QuestAlert.Declined
                 );
 
                 foreach (var evt in EventLookup)
@@ -6198,7 +6198,7 @@ public partial class Player : Entity
                     questProgress.TaskId = Guid.Empty;
                     questProgress.TaskProgress = -1;
                     PacketSender.SendChatMsg(
-                        this, Strings.Quests.abandoned.ToString(QuestBase.GetName(questId)), ChatMessageType.Quest,
+                        this, Strings.Quests.Abandoned.ToString(QuestBase.GetName(questId)), ChatMessageType.Quest,
                         CustomColors.QuestAlert.Abandoned
                     );
 
@@ -6224,7 +6224,7 @@ public partial class Player : Entity
                     {
                         if (quest.Tasks[i].Id == taskId)
                         {
-                            PacketSender.SendChatMsg(this, Strings.Quests.taskcompleted, ChatMessageType.Quest);
+                            PacketSender.SendChatMsg(this, Strings.Quests.TaskCompleted, ChatMessageType.Quest);
                             if (i == quest.Tasks.Count - 1)
                             {
                                 //Complete Quest
@@ -6238,7 +6238,7 @@ public partial class Player : Entity
 
                                 EnqueueStartCommonEvent(EventBase.Get(quest.EndEventId));
                                 PacketSender.SendChatMsg(
-                                    this, Strings.Quests.completed.ToString(quest.Name), ChatMessageType.Quest,
+                                    this, Strings.Quests.Completed.ToString(quest.Name), ChatMessageType.Quest,
                                     CustomColors.QuestAlert.Completed
                                 );
                             }
@@ -6258,7 +6258,7 @@ public partial class Player : Entity
                                 }
 
                                 PacketSender.SendChatMsg(
-                                    this, Strings.Quests.updated.ToString(quest.Name),
+                                    this, Strings.Quests.Updated.ToString(quest.Name),
                                     ChatMessageType.Quest,
                                     CustomColors.QuestAlert.TaskUpdated
                                 );
@@ -6289,7 +6289,7 @@ public partial class Player : Entity
                 {
                     EnqueueStartCommonEvent(EventBase.Get(quest.EndEventId));
                     PacketSender.SendChatMsg(
-                        this, Strings.Quests.completed.ToString(quest.Name), ChatMessageType.Quest,
+                        this, Strings.Quests.Completed.ToString(quest.Name), ChatMessageType.Quest,
                         CustomColors.QuestAlert.Completed
                     );
                 }
@@ -6329,7 +6329,7 @@ public partial class Player : Entity
                                     PacketSender.SendQuestsProgress(this);
                                     PacketSender.SendChatMsg(
                                         this,
-                                        Strings.Quests.itemtask.ToString(
+                                        Strings.Quests.ItemTask.ToString(
                                             quest.Name, questProgress.TaskProgress, questTask.Quantity,
                                             ItemBase.GetName(questTask.TargetId)
                                         ),
