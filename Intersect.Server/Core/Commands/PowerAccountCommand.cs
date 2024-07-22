@@ -26,7 +26,7 @@ namespace Intersect.Server.Core.Commands
             var power = result.Find(Power);
             if (DbInterface.SetPlayerPower(target, power.AsUserRights()))
             {
-                Console.WriteLine($@"    {Strings.Commandoutput.powerchanged.ToString(target?.Name)}");
+                Console.WriteLine($@"    {Strings.Commandoutput.PowerChanged.ToString(target?.Name)}");
             }
         }
 

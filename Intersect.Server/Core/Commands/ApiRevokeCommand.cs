@@ -25,7 +25,7 @@ namespace Intersect.Server.Core.Commands
         {
             if (target == null)
             {
-                Console.WriteLine($@"    {Strings.Account.notfound}");
+                Console.WriteLine($@"    {Strings.Account.NotFound}");
 
                 return;
             }
@@ -49,14 +49,14 @@ namespace Intersect.Server.Core.Commands
             else
             {
                 //Role Not Found
-                Console.WriteLine(Strings.Commandoutput.apirolenotfound.ToString(role));
+                Console.WriteLine(Strings.Commandoutput.ApiRoleNotFound.ToString(role));
 
                 return;
             }
 
             target.Save();
 
-            Console.WriteLine(Strings.Commandoutput.apirolerevoked.ToString(target.Name, role));
+            Console.WriteLine(Strings.Commandoutput.ApiRoleRevoked.ToString(target.Name, role));
         }
 
     }

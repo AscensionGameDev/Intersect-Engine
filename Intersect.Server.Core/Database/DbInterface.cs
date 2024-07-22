@@ -358,9 +358,9 @@ public static partial class DbInterface
             else
             {
                 Console.WriteLine();
-                Console.WriteLine(Strings.Database.upgraderequired);
+                Console.WriteLine(Strings.Database.UpgradeRequired);
                 Console.WriteLine(
-                    Strings.Database.upgradebackup.ToString(Strings.Database.upgradeready, Strings.Database.upgradeexit)
+                    Strings.Database.UpgradeBackup.ToString(Strings.Database.UpgradeReady, Strings.Database.UpgradeExit)
                 );
 
                 Console.WriteLine();
@@ -368,7 +368,7 @@ public static partial class DbInterface
                 {
                     Console.Write("> ");
                     var input = Console.ReadLine().Trim();
-                    if (input == Strings.Database.upgradeready.ToString().Trim())
+                    if (input == Strings.Database.UpgradeReady.ToString().Trim())
                     {
                         break;
                     }
@@ -376,7 +376,7 @@ public static partial class DbInterface
                     if (
                         !string.Equals(
                             input,
-                            Strings.Database.upgradeexit.ToString().Trim(),
+                            Strings.Database.UpgradeExit.ToString().Trim(),
                             StringComparison.CurrentCultureIgnoreCase
                         )
                     )
@@ -463,7 +463,7 @@ public static partial class DbInterface
         }
         else
         {
-            Console.WriteLine(Strings.Account.doesnotexist);
+            Console.WriteLine(Strings.Account.AccountDoesNotExist);
         }
     }
 
@@ -478,7 +478,7 @@ public static partial class DbInterface
         }
         else
         {
-            Console.WriteLine(Strings.Account.doesnotexist);
+            Console.WriteLine(Strings.Account.AccountDoesNotExist);
 
             return false;
         }
@@ -1421,7 +1421,7 @@ public static partial class DbInterface
     {
         if (MapBase.Lookup.Count == 0)
         {
-            Console.WriteLine(Strings.Database.nomaps);
+            Console.WriteLine(Strings.Database.NoMaps);
             AddGameObject(GameObjectType.Map);
         }
 
@@ -1439,7 +1439,7 @@ public static partial class DbInterface
     {
         if (ClassBase.Lookup.Count == 0)
         {
-            Console.WriteLine(Strings.Database.noclasses);
+            Console.WriteLine(Strings.Database.NoClasses);
             var cls = (ClassBase)AddGameObject(GameObjectType.Class);
             cls.Name = Strings.Database.Default;
             var defaultMale = new ClassSprite()
@@ -1477,8 +1477,8 @@ public static partial class DbInterface
         {
             if (!string.IsNullOrWhiteSpace(variable.TextId) && !addedIds.Contains(variable.TextId))
             {
-                lookup.Add(Strings.Events.playervar + "{" + variable.TextId + "}", variable);
-                lookup.Add(Strings.Events.playerswitch + "{" + variable.TextId + "}", variable);
+                lookup.Add(Strings.Events.PlayerVariable + "{" + variable.TextId + "}", variable);
+                lookup.Add(Strings.Events.PlayerSwitch + "{" + variable.TextId + "}", variable);
                 addedIds.Add(variable.TextId);
             }
         }
@@ -1493,8 +1493,8 @@ public static partial class DbInterface
         {
             if (!string.IsNullOrWhiteSpace(variable.TextId) && !addedIds.Contains(variable.TextId))
             {
-                lookup.Add(Strings.Events.globalvar + "{" + variable.TextId + "}", variable);
-                lookup.Add(Strings.Events.globalswitch + "{" + variable.TextId + "}", variable);
+                lookup.Add(Strings.Events.GlobalVariable + "{" + variable.TextId + "}", variable);
+                lookup.Add(Strings.Events.GlobalSwitch + "{" + variable.TextId + "}", variable);
                 addedIds.Add(variable.TextId);
             }
         }
@@ -1509,7 +1509,7 @@ public static partial class DbInterface
         {
             if (!string.IsNullOrWhiteSpace(variable.TextId) && !addedIds.Contains(variable.TextId))
             {
-                lookup.Add(Strings.Events.guildvar + "{" + variable.TextId + "}", variable);
+                lookup.Add(Strings.Events.GuildVariable + "{" + variable.TextId + "}", variable);
                 addedIds.Add(variable.TextId);
             }
         }

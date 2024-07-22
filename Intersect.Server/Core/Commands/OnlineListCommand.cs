@@ -21,8 +21,8 @@ namespace Intersect.Server.Core.Commands
             var columnWidths = new[]
             {
                 37,
-                -Strings.Commandoutput.listaccount.ToString().Length,
-                -Strings.Commandoutput.listcharacter.ToString().Length,
+                -Strings.Commandoutput.ListAccount.ToString().Length,
+                -Strings.Commandoutput.ListCharacter.ToString().Length,
                 37,
             };
             var resizableColumns = columnWidths.Count(columnWidth => columnWidth < 1);
@@ -64,14 +64,14 @@ namespace Intersect.Server.Core.Commands
             if (clients.Length > 0)
             {
                 Console.WriteLine(
-                    Strings.Commandoutput.OnlineListActiveConnectionsN.ToString(context.Network.ConnectionCount)
+                    Strings.Commandoutput.ActiveConnections.ToString(context.Network.ConnectionCount)
                 );
 
                 Console.WriteLine(
                     formatLine,
-                    Strings.Commandoutput.listid,
-                    Strings.Commandoutput.listaccount,
-                    Strings.Commandoutput.listcharacter,
+                    Strings.Commandoutput.ListId,
+                    Strings.Commandoutput.ListAccount,
+                    Strings.Commandoutput.ListCharacter,
                     "Connection ID"
                 );
 
@@ -92,7 +92,7 @@ namespace Intersect.Server.Core.Commands
             }
             else
             {
-                Console.WriteLine(Strings.Commandoutput.OnlineListNoClientsConnected);
+                Console.WriteLine(Strings.Commandoutput.NoClientsConnected);
             }
 
             var strayConnections =
@@ -101,7 +101,7 @@ namespace Intersect.Server.Core.Commands
             // ReSharper disable once InvertIf
             if (strayConnections.Length > 0)
             {
-                Console.WriteLine(Strings.Commandoutput.OnlineListStrayConnectionsN.ToString(strayConnections.Length));
+                Console.WriteLine(Strings.Commandoutput.StrayConnections.ToString(strayConnections.Length));
 
                 foreach (var connection in strayConnections)
                 {

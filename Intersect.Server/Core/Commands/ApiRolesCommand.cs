@@ -18,7 +18,7 @@ namespace Intersect.Server.Core.Commands
         {
             if (target == null)
             {
-                Console.WriteLine($@"    {Strings.Account.notfound}");
+                Console.WriteLine($@"    {Strings.Account.NotFound}");
 
                 return;
             }
@@ -28,7 +28,7 @@ namespace Intersect.Server.Core.Commands
                 throw new ArgumentNullException(nameof(target.Power));
             }
 
-            Console.WriteLine(Strings.Commandoutput.apiroles.ToString(target.Name));
+            Console.WriteLine(Strings.Commandoutput.ApiRoles.ToString(target.Name));
             Console.WriteLine("users.query: " + target.Power.ApiRoles.UserQuery);
             Console.WriteLine("users.manage: " + target.Power.ApiRoles.UserManage);
         }

@@ -118,12 +118,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest("Username, Email, and Password all must be provided, and not null/empty.");
             }
 
-            if (!FieldChecking.IsWellformedEmailAddress(user.Email, Strings.Regex.email))
+            if (!FieldChecking.IsWellformedEmailAddress(user.Email, Strings.Regex.Email))
             {
                 return BadRequest($@"Malformed email address '{user.Email}'.");
             }
 
-            if (!FieldChecking.IsValidUsername(user.Username, Strings.Regex.username))
+            if (!FieldChecking.IsValidUsername(user.Username, Strings.Regex.Username))
             {
                 return BadRequest($@"Invalid username '{user.Username}'.");
             }
@@ -223,7 +223,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest("Invalid user name.");
             }
 
-            if (!FieldChecking.IsValidUsername(change.Name, Strings.Regex.username))
+            if (!FieldChecking.IsValidUsername(change.Name, Strings.Regex.Username))
             {
                 return BadRequest($@"Invalid name.");
             }
@@ -254,7 +254,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Invalid user id '{userId}'.");
             }
 
-            if (!FieldChecking.IsValidUsername(change.Name, Strings.Regex.username))
+            if (!FieldChecking.IsValidUsername(change.Name, Strings.Regex.Username))
             {
                 return BadRequest($@"Invalid name.");
             }
@@ -451,7 +451,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Malformed email address '{email}'.");
             }
 
-            if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.email))
+            if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.Email))
             {
                 return BadRequest($@"Malformed email address '{email}'.");
             }
@@ -490,7 +490,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Malformed email address '{email}'.");
             }
 
-            if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.email))
+            if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.Email))
             {
                 return BadRequest($@"Malformed email address '{email}'.");
             }
@@ -528,7 +528,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Malformed email address '{email}'.");
             }
 
-            if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.email))
+            if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.Email))
             {
                 return BadRequest($@"Malformed email address '{email}'.");
             }
@@ -571,7 +571,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Malformed email address '{email}'.");
             }
 
-            if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.email))
+            if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.Email))
             {
                 return BadRequest($@"Malformed email address '{email}'.");
             }
@@ -951,7 +951,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     }
                     else if (Ban.Find(user.Id) != null) // If the target is already banned.
                     {
-                        return BadRequest(Strings.Account.alreadybanned.ToString(user.Name));
+                        return BadRequest(Strings.Account.AlreadyBanned.ToString(user.Name));
                     }
 
                     // If target is online, not yet banned and the banner has the authority to ban.
@@ -967,10 +967,10 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         client?.Disconnect();
 
                         // Sends a global chat message to every user online about the banned player.
-                        PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(user.Name));
+                        PacketSender.SendGlobalMsg(Strings.Account.Banned.ToString(user.Name));
 
                         //  Inform to the API about the successful ban.
-                        return Ok(Strings.Account.banned.ToString(user.Name));
+                        return Ok(Strings.Account.Banned.ToString(user.Name));
                     }
 
                 case AdminAction.UnBan:
@@ -988,7 +988,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     }
                     else if (Mute.Find(user) != null) // If the target is already muted.
                     {
-                        return BadRequest(Strings.Account.alreadymuted.ToString(user.Name));
+                        return BadRequest(Strings.Account.AlreadyMuted.ToString(user.Name));
                     }
 
                     // If target is online, not yet muted and the action performer has the authority to mute.
@@ -999,9 +999,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                             actionPerformer.Name, actionParameters.Ip ? targetIp : string.Empty
                         );
 
-                        PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(user.Name));
+                        PacketSender.SendGlobalMsg(Strings.Account.Muted.ToString(user.Name));
 
-                        return Ok(Strings.Account.muted.ToString(user.Name));
+                        return Ok(Strings.Account.Muted.ToString(user.Name));
                     }
 
                 case AdminAction.UnMute:
@@ -1049,9 +1049,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         else
                         {
                             client.Disconnect(actionParameters.Reason);
-                            PacketSender.SendGlobalMsg(Strings.Player.serverkicked.ToString(player?.Name));
+                            PacketSender.SendGlobalMsg(Strings.Player.ServerKicked.ToString(player?.Name));
 
-                            return Ok(Strings.Player.serverkicked.ToString(player?.Name));
+                            return Ok(Strings.Player.ServerKicked.ToString(player?.Name));
                         }
                     }
 
@@ -1073,9 +1073,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                                 client.Entity.Die();
                             }
 
-                            PacketSender.SendGlobalMsg(Strings.Player.serverkilled.ToString(player?.Name));
+                            PacketSender.SendGlobalMsg(Strings.Player.ServerKilled.ToString(player?.Name));
 
-                            return Ok(Strings.Commandoutput.killsuccess.ToString(player?.Name));
+                            return Ok(Strings.Commandoutput.KillSuccess.ToString(player?.Name));
                         }
                     }
 
@@ -1092,7 +1092,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     return NotImplemented(adminAction.ToString());
             }
 
-            return NotFound(Strings.Player.offline);
+            return NotFound(Strings.Player.Offline);
         }
 
         #endregion

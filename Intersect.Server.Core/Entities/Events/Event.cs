@@ -248,21 +248,21 @@ public partial class Event
                         CallStack.Clear(); //Killing this event, we're over it.
                         if (this.BaseEvent.MapId == Guid.Empty)
                         {
-                            Log.Error(Strings.Events.watchdogkillcommon.ToString(BaseEvent.Name));
+                            Log.Error(Strings.Events.WatchdogKillCommon.ToString(BaseEvent.Name));
                             if (Player.Power.IsModerator)
                             {
                                 PacketSender.SendChatMsg(
-                                    Player, Strings.Events.watchdogkillcommon.ToString(BaseEvent.Name), ChatMessageType.Error, Color.Red
+                                    Player, Strings.Events.WatchdogKillCommon.ToString(BaseEvent.Name), ChatMessageType.Error, Color.Red
                                 );
                             }
                         }
                         else
                         {
-                            Log.Error(Strings.Events.watchdogkill.ToString(map.Name, BaseEvent.Name));
+                            Log.Error(Strings.Events.WatchdogKill.ToString(map.Name, BaseEvent.Name));
                             if (Player.Power.IsModerator)
                             {
                                 PacketSender.SendChatMsg(
-                                    Player, Strings.Events.watchdogkill.ToString(map.Name, BaseEvent.Name),
+                                    Player, Strings.Events.WatchdogKill.ToString(map.Name, BaseEvent.Name),
                                     ChatMessageType.Error, Color.Red
                                 );
                             }

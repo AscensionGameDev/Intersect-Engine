@@ -47,7 +47,7 @@ public partial class Formulas
         }
         catch (Exception ex)
         {
-            throw new Exception(Strings.Formulas.missing, ex);
+            throw new Exception(Strings.Formulas.Missing, ex);
         }
     }
 

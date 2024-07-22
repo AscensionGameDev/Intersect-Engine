@@ -25,7 +25,7 @@ namespace Intersect.Server.Networking.Helpers
 
         public static void GenerateDebugFile()
         {
-            Console.WriteLine(Strings.NetDebug.pleasewait);
+            Console.WriteLine(Strings.NetDebug.PleaseWait);
             var hasteClient = new HasteBinClient("https://hastebin.com");
             var sb = new StringBuilder();
             sb.AppendLine("Intersect Network Diagnostics");
@@ -119,12 +119,12 @@ namespace Intersect.Server.Networking.Helpers
             {
                 Bootstrapper.MainThread.NextAction = () =>
                 {
-                    Console.WriteLine(Strings.NetDebug.hastebin.ToString(result.Result.FullUrl));
+                    Console.WriteLine(Strings.NetDebug.Hastebin.ToString(result.Result.FullUrl));
                 };
             }
             else
             {
-                Console.WriteLine(Strings.NetDebug.savedtofile);
+                Console.WriteLine(Strings.NetDebug.SavedToFile);
                 File.WriteAllText("netdebug.txt", sb.ToString());
             }
         }

@@ -113,7 +113,7 @@ internal sealed partial class PacketHandler
         if (pSize > thresholds.MaxPacketSize)
         {
             Log.Error(
-                Strings.Errors.floodsize.ToString(
+                Strings.Errors.ErrorFloodSize.ToString(
                     pSize, client?.User?.Name ?? "", client?.Entity?.Name ?? "", client.Ip
                 )
             );
@@ -130,7 +130,7 @@ internal sealed partial class PacketHandler
             if (client.PacketCount > thresholds.MaxPacketPerSec)
             {
                 Log.Error(
-                    Strings.Errors.floodburst.ToString(
+                    Strings.Errors.ErrorFloodBurst.ToString(
                         client.PacketCount, client?.User?.Name ?? "", client?.Entity?.Name ?? "", client.Ip
                     )
                 );
@@ -504,7 +504,7 @@ internal sealed partial class PacketHandler
     {
         if (client.AccountAttempts > 3 && client.TimeoutMs > Timing.Global.Milliseconds)
         {
-            PacketSender.SendError(client, Strings.Errors.errortimeout);
+            PacketSender.SendError(client, Strings.Errors.ErrorTimeout, Strings.General.NoticeError);
             client.ResetTimeout();
 
             return;
@@ -516,7 +516,7 @@ internal sealed partial class PacketHandler
         // Are we at capacity yet, or can this user still log in?
         if (Globals.OnlineList.Count >= Options.MaxLoggedinUsers)
         {
-            PacketSender.SendError(client, Strings.Networking.ServerFull);
+            PacketSender.SendError(client, Strings.Networking.ServerFull, Strings.General.NoticeError);
 
             return;
         }
@@ -527,7 +527,7 @@ internal sealed partial class PacketHandler
             UserActivityHistory.LogActivity(Guid.Empty, Guid.Empty, client?.Ip, UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.FailedLogin, packet.Username);
 
             client.FailedAttempt();
-            PacketSender.SendError(client, Strings.Account.badlogin);
+            PacketSender.SendError(client, Strings.Account.BadLogin, Strings.General.NoticeError);
 
             return;
         }
@@ -574,7 +574,7 @@ internal sealed partial class PacketHandler
         {
             client.SetUser(null);
             client.Banned = true;
-            PacketSender.SendError(client, isBanned);
+            PacketSender.SendError(client, isBanned, Strings.General.NoticeError);
 
             return;
         }
@@ -584,7 +584,7 @@ internal sealed partial class PacketHandler
         {
             if (client.Power == UserRights.None)
             {
-                PacketSender.SendError(client, Strings.Account.adminonly);
+                PacketSender.SendError(client, Strings.Account.AdminOnly, Strings.General.NoticeError);
 
                 return;
             }
@@ -800,7 +800,7 @@ internal sealed partial class PacketHandler
 
         if (player.LastChatTime > Timing.Global.MillisecondsUtc)
         {
-            PacketSender.SendChatMsg(player, Strings.Chat.toofast, ChatMessageType.Notice);
+            PacketSender.SendChatMsg(player, Strings.Chat.TooFast, ChatMessageType.Notice);
             player.LastChatTime = Timing.Global.MillisecondsUtc + Options.MinChatInterval;
 
             return;
@@ -818,26 +818,26 @@ internal sealed partial class PacketHandler
             switch (channel)
             {
                 case 0: //local
-                    cmd = Strings.Chat.localcmd;
+                    cmd = Strings.Chat.LocalCommand;
 
                     break;
 
                 case 1: //global
-                    cmd = Strings.Chat.allcmd;
+                    cmd = Strings.Chat.AllCommand;
 
                     break;
 
                 case 2: //party
-                    cmd = Strings.Chat.partycmd;
+                    cmd = Strings.Chat.PartyCommand;
 
                     break;
 
                 case 3:
-                    cmd = Strings.Guilds.guildcmd;
+                    cmd = Strings.Guilds.GuildCommand;
                     break;
 
                 case 4: //admin
-                    cmd = Strings.Chat.admincmd;
+                    cmd = Strings.Chat.AdminCommand;
 
                     break;
 
@@ -855,7 +855,7 @@ internal sealed partial class PacketHandler
 
         var msgSplit = msg.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-        if (cmd == Strings.Chat.localcmd)
+        if (cmd == Strings.Chat.LocalCommand)
         {
             if (msg.Trim().Length == 0)
             {
@@ -874,13 +874,13 @@ internal sealed partial class PacketHandler
             }
 
             PacketSender.SendProximityMsgToLayer(
-                Strings.Chat.local.ToString(player.Name, msg), ChatMessageType.Local, player.MapId, player.MapInstanceId, chatColor,
+                Strings.Chat.Local.ToString(player.Name, msg), ChatMessageType.Local, player.MapId, player.MapInstanceId, chatColor,
                 player.Name
             );
             PacketSender.SendChatBubble(player.Id, player.MapInstanceId, (int)EntityType.GlobalEntity, msg, player.MapId);
             ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Local, Guid.Empty);
         }
-        else if (cmd == Strings.Chat.allcmd || cmd == Strings.Chat.globalcmd)
+        else if (cmd == Strings.Chat.AllCommand || cmd == Strings.Chat.GlobalCommand)
         {
             if (msg.Trim().Length == 0)
             {
@@ -900,7 +900,7 @@ internal sealed partial class PacketHandler
             PacketSender.SendGlobalMsg(Strings.Chat.Global.ToString(player.Name, msg), chatColor, player.Name);
             ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Global, Guid.Empty);
         }
-        else if (cmd == Strings.Chat.partycmd)
+        else if (cmd == Strings.Chat.PartyCommand)
         {
             if (msg.Trim().Length == 0)
             {
@@ -910,16 +910,16 @@ internal sealed partial class PacketHandler
             if (player.InParty(player))
             {
                 PacketSender.SendPartyMsg(
-                    player, Strings.Chat.party.ToString(player.Name, msg), CustomColors.Chat.PartyChat, player.Name
+                    player, Strings.Chat.Party.ToString(player.Name, msg), CustomColors.Chat.PartyChat, player.Name
                 );
                 ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Party, Guid.Empty);
             }
             else
             {
-                PacketSender.SendChatMsg(player, Strings.Parties.notinparty, ChatMessageType.Party, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(player, Strings.Parties.NotInParty, ChatMessageType.Party, CustomColors.Alerts.Error);
             }
         }
-        else if (cmd == Strings.Chat.admincmd)
+        else if (cmd == Strings.Chat.AdminCommand)
         {
             if (msg.Trim().Length == 0)
             {
@@ -929,12 +929,12 @@ internal sealed partial class PacketHandler
             if (client?.Power.IsModerator ?? false)
             {
                 PacketSender.SendAdminMsg(
-                    Strings.Chat.admin.ToString(player.Name, msg), CustomColors.Chat.AdminChat, player.Name
+                    Strings.Chat.Admin.ToString(player.Name, msg), CustomColors.Chat.AdminChat, player.Name
                 );
                 ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Admin, Guid.Empty);
             }
         }
-        else if (cmd == Strings.Guilds.guildcmd)
+        else if (cmd == Strings.Guilds.GuildCommand)
         {
             if (player.Guild == null)
             {
@@ -949,11 +949,11 @@ internal sealed partial class PacketHandler
 
             //Normalize Rank
             var rank = Options.Instance.Guild.Ranks[Math.Max(0, Math.Min(player.GuildRank, Options.Instance.Guild.Ranks.Length - 1))].Title;
-            PacketSender.SendGuildMsg(player, Strings.Guilds.guildchat.ToString(rank, player.Name, msg), CustomColors.Chat.GuildChat);
+            PacketSender.SendGuildMsg(player, Strings.Guilds.GuildChat.ToString(rank, player.Name, msg), CustomColors.Chat.GuildChat);
             ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Guild, player.Guild.Id);
 
         }
-        else if (cmd == Strings.Chat.announcementcmd)
+        else if (cmd == Strings.Chat.AnnouncementCommand)
         {
             if (msg.Trim().Length == 0)
             {
@@ -963,7 +963,7 @@ internal sealed partial class PacketHandler
             if (client?.Power.IsModerator ?? false)
             {
                 PacketSender.SendGlobalMsg(
-                    Strings.Chat.announcement.ToString(player.Name, msg), CustomColors.Chat.AnnouncementChat,
+                    Strings.Chat.Announcement.ToString(player.Name, msg), CustomColors.Chat.AnnouncementChat,
                     player.Name
                 );
 
@@ -977,7 +977,7 @@ internal sealed partial class PacketHandler
                 ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Notice, Guid.Empty);
             }
         }
-        else if (cmd == Strings.Chat.pmcmd || cmd == Strings.Chat.messagecmd)
+        else if (cmd == Strings.Chat.PrivateMessageCommand || cmd == Strings.Chat.MessageCommand)
         {
             if (msgSplit.Length < 2)
             {
@@ -1016,10 +1016,10 @@ internal sealed partial class PacketHandler
             }
             else
             {
-                PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.PM, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(player, Strings.Player.Offline, ChatMessageType.PM, CustomColors.Alerts.Error);
             }
         }
-        else if (cmd == Strings.Chat.replycmd || cmd == Strings.Chat.rcmd)
+        else if (cmd == Strings.Chat.ReplyCommand || cmd == Strings.Chat.ReplyShortcutCommand)
         {
             if (msg.Trim().Length == 0)
             {
@@ -1043,7 +1043,7 @@ internal sealed partial class PacketHandler
             }
             else
             {
-                PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.PM, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(player, Strings.Player.Offline, ChatMessageType.PM, CustomColors.Alerts.Error);
             }
         }
         else
@@ -1083,14 +1083,14 @@ internal sealed partial class PacketHandler
         {
             if (status.Type == SpellEffect.Stun)
             {
-                PacketSender.SendChatMsg(player, Strings.Combat.stunblocking, ChatMessageType.Combat);
+                PacketSender.SendChatMsg(player, Strings.Combat.StunBlocking, ChatMessageType.Combat);
 
                 return;
             }
 
             if (status.Type == SpellEffect.Sleep)
             {
-                PacketSender.SendChatMsg(player, Strings.Combat.sleepblocking, ChatMessageType.Combat);
+                PacketSender.SendChatMsg(player, Strings.Combat.SleepBlocking, ChatMessageType.Combat);
 
                 return;
             }
@@ -1139,7 +1139,7 @@ internal sealed partial class PacketHandler
         {
             if (Options.Combat.EnableCombatChatMessages)
             {
-                PacketSender.SendChatMsg(player, Strings.Combat.channelingnoattack, ChatMessageType.Combat);
+                PacketSender.SendChatMsg(player, Strings.Combat.ChannelingNoAttack, ChatMessageType.Combat);
             }
 
             return;
@@ -1155,7 +1155,7 @@ internal sealed partial class PacketHandler
             {
                 if (Options.Combat.EnableCombatChatMessages)
                 {
-                    PacketSender.SendChatMsg(player, Strings.Combat.stunattacking, ChatMessageType.Combat);
+                    PacketSender.SendChatMsg(player, Strings.Combat.StunAttacking, ChatMessageType.Combat);
                 }
 
                 return;
@@ -1165,7 +1165,7 @@ internal sealed partial class PacketHandler
             {
                 if (Options.Combat.EnableCombatChatMessages)
                 {
-                    PacketSender.SendChatMsg(player, Strings.Combat.sleepattacking, ChatMessageType.Combat);
+                    PacketSender.SendChatMsg(player, Strings.Combat.SleepAttacking, ChatMessageType.Combat);
                 }
 
                 return;
@@ -1173,7 +1173,7 @@ internal sealed partial class PacketHandler
 
             if (status.Type == SpellEffect.Blind)
             {
-                PacketSender.SendActionMsg(player, Strings.Combat.miss, CustomColors.Combat.Missed);
+                PacketSender.SendActionMsg(player, Strings.Combat.Miss, CustomColors.Combat.Missed);
 
                 return;
             }
@@ -1256,7 +1256,7 @@ internal sealed partial class PacketHandler
                     {
                         PacketSender.SendChatMsg(
                             player,
-                            Strings.Items.notenough.ToString(ItemBase.GetName(projectileBase.AmmoItemId)),
+                            Strings.Items.NotEnough.ToString(ItemBase.GetName(projectileBase.AmmoItemId)),
                             ChatMessageType.Inventory,
                             CustomColors.Combat.NoAmmo
                         );
@@ -1402,7 +1402,7 @@ internal sealed partial class PacketHandler
     {
         if (client.TimeoutMs > Timing.Global.Milliseconds)
         {
-            PacketSender.SendError(client, Strings.Errors.errortimeout);
+            PacketSender.SendError(client, Strings.Errors.ErrorTimeout, Strings.General.NoticeError);
             client.ResetTimeout();
 
             return;
@@ -1412,21 +1412,21 @@ internal sealed partial class PacketHandler
 
         if (Options.BlockClientRegistrations)
         {
-            PacketSender.SendError(client, Strings.Account.registrationsblocked);
+            PacketSender.SendError(client, Strings.Account.RegistrationsBlocked, Strings.General.NoticeError);
 
             return;
         }
 
-        if (!FieldChecking.IsValidUsername(packet.Username, Strings.Regex.username))
+        if (!FieldChecking.IsValidUsername(packet.Username, Strings.Regex.Username))
         {
-            PacketSender.SendError(client, Strings.Account.invalidname);
+            PacketSender.SendError(client, Strings.Account.InvalidName, Strings.General.NoticeError);
 
             return;
         }
 
-        if (!FieldChecking.IsWellformedEmailAddress(packet.Email, Strings.Regex.email))
+        if (!FieldChecking.IsWellformedEmailAddress(packet.Email, Strings.Regex.Email))
         {
-            PacketSender.SendError(client, Strings.Account.invalidemail);
+            PacketSender.SendError(client, Strings.Account.InvalidEmail, Strings.General.NoticeError);
 
             return;
         }
@@ -1435,20 +1435,20 @@ internal sealed partial class PacketHandler
         var isBanned = Ban.CheckBan(client.Ip);
         if (isBanned != null)
         {
-            PacketSender.SendError(client, isBanned);
+            PacketSender.SendError(client, isBanned, Strings.General.NoticeError);
 
             return;
         }
 
         if (User.UserExists(packet.Username))
         {
-            PacketSender.SendError(client, Strings.Account.exists);
+            PacketSender.SendError(client, Strings.Account.AccountAlreadyExists, Strings.General.NoticeError);
         }
         else
         {
             if (User.UserExists(packet.Email))
             {
-                PacketSender.SendError(client, Strings.Account.emailexists);
+                PacketSender.SendError(client, Strings.Account.EmailExists, Strings.General.NoticeError);
             }
             else
             {
@@ -1475,7 +1475,7 @@ internal sealed partial class PacketHandler
                 {
                     if (client.Power == UserRights.None)
                     {
-                        PacketSender.SendError(client, Strings.Account.adminonly);
+                        PacketSender.SendError(client, Strings.Account.AdminOnly, Strings.General.NoticeError);
 
                         return;
                     }
@@ -1496,9 +1496,9 @@ internal sealed partial class PacketHandler
             return;
         }
 
-        if (!FieldChecking.IsValidUsername(packet.Name, Strings.Regex.username))
+        if (!FieldChecking.IsValidUsername(packet.Name, Strings.Regex.Username))
         {
-            PacketSender.SendError(client, Strings.Account.invalidname);
+            PacketSender.SendError(client, Strings.Account.InvalidName, Strings.General.NoticeError);
 
             return;
         }
@@ -1507,14 +1507,14 @@ internal sealed partial class PacketHandler
         var classBase = ClassBase.Get(packet.ClassId);
         if (classBase == null || classBase.Locked)
         {
-            PacketSender.SendError(client, Strings.Account.invalidclass);
+            PacketSender.SendError(client, Strings.Account.InvalidClass, Strings.General.NoticeError);
 
             return;
         }
 
         if (Player.PlayerExists(packet.Name))
         {
-            PacketSender.SendError(client, Strings.Account.characterexists);
+            PacketSender.SendError(client, Strings.Account.CharacterExists, Strings.General.NoticeError);
             return;
         }
 
@@ -1668,7 +1668,7 @@ internal sealed partial class PacketHandler
                     // We couldn't give the player their item, notify them.
                     PacketSender.SendChatMsg(
                         player,
-                        Strings.Items.InventoryNoSpace,
+                        Strings.Items.NoSpaceForItem,
                         ChatMessageType.Inventory,
                         CustomColors.Alerts.Error
                     );
@@ -1999,7 +1999,7 @@ internal sealed partial class PacketHandler
             return;
         }
 
-        PacketSender.SendChatMsg(player, Strings.Parties.outofrange, ChatMessageType.Combat, CustomColors.Combat.NoTarget);
+        PacketSender.SendChatMsg(player, Strings.Parties.OutOfRange, ChatMessageType.Combat, CustomColors.Combat.NoTarget);
     }
 
     //PartyInviteResponsePacket
@@ -2024,7 +2024,7 @@ internal sealed partial class PacketHandler
             else
             {
                 PacketSender.SendChatMsg(
-                    player.PartyRequester, Strings.Parties.declined.ToString(client.Entity.Name),
+                    player.PartyRequester, Strings.Parties.Declined.ToString(client.Entity.Name),
                     ChatMessageType.Party,
                     CustomColors.Alerts.Declined
                 );
@@ -2123,7 +2123,7 @@ internal sealed partial class PacketHandler
         }
 
         //Player Out of Range Or Offline
-        PacketSender.SendChatMsg(player, Strings.Trading.outofrange.ToString(), ChatMessageType.Trading, CustomColors.Combat.NoTarget);
+        PacketSender.SendChatMsg(player, Strings.Trading.OutOfRange.ToString(), ChatMessageType.Trading, CustomColors.Combat.NoTarget);
     }
 
     //TradeRequestResponsePacket
@@ -2153,21 +2153,21 @@ internal sealed partial class PacketHandler
                         else
                         {
                             PacketSender.SendChatMsg(
-                                player, Strings.Trading.outofrange.ToString(), ChatMessageType.Trading, CustomColors.Combat.NoTarget
+                                player, Strings.Trading.OutOfRange.ToString(), ChatMessageType.Trading, CustomColors.Combat.NoTarget
                             );
                         }
                     }
                     else
                     {
                         PacketSender.SendChatMsg(
-                            player, Strings.Trading.busy.ToString(player.Trading.Requester.Name), ChatMessageType.Trading, Color.Red
+                            player, Strings.Trading.Busy.ToString(player.Trading.Requester.Name), ChatMessageType.Trading, Color.Red
                         );
                     }
                 }
                 else
                 {
                     PacketSender.SendChatMsg(
-                        player.Trading.Requester, Strings.Trading.declined.ToString(player.Name),
+                        player.Trading.Requester, Strings.Trading.Declined.ToString(player.Name),
                         ChatMessageType.Trading,
                         CustomColors.Alerts.Declined
                     );
@@ -2252,9 +2252,9 @@ internal sealed partial class PacketHandler
             player.Trading.Counterparty.ReturnTradeItems();
             player.ReturnTradeItems();
 
-            PacketSender.SendChatMsg(player, Strings.Trading.accepted, ChatMessageType.Trading, CustomColors.Alerts.Accepted);
+            PacketSender.SendChatMsg(player, Strings.Trading.Accepted, ChatMessageType.Trading, CustomColors.Alerts.Accepted);
             PacketSender.SendChatMsg(
-                player.Trading.Counterparty, Strings.Trading.accepted, ChatMessageType.Trading, CustomColors.Alerts.Accepted
+                player.Trading.Counterparty, Strings.Trading.Accepted, ChatMessageType.Trading, CustomColors.Alerts.Accepted
             );
 
             PacketSender.SendTradeClose(player.Trading.Counterparty);
@@ -2370,18 +2370,18 @@ internal sealed partial class PacketHandler
                     }
                     else
                     {
-                        PacketSender.SendChatMsg(player, Strings.Friends.busy.ToString(target.Name), ChatMessageType.Friend);
+                        PacketSender.SendChatMsg(player, Strings.Friends.Busy.ToString(target.Name), ChatMessageType.Friend);
                     }
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.Friend, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(player, Strings.Player.Offline, ChatMessageType.Friend, CustomColors.Alerts.Error);
                 }
             }
             else
             {
                 PacketSender.SendChatMsg(
-                    player, Strings.Friends.alreadyfriends.ToString(packet.Name), ChatMessageType.Friend, CustomColors.Alerts.Info
+                    player, Strings.Friends.AlreadyFriends.ToString(packet.Name), ChatMessageType.Friend, CustomColors.Alerts.Info
                 );
             }
         }
@@ -2394,7 +2394,7 @@ internal sealed partial class PacketHandler
                 var otherPlayer = Player.FindOnline(friendId);
                 player.CachedFriends.Remove(friendId);
                 PacketSender.SendFriends(player);
-                PacketSender.SendChatMsg(player, Strings.Friends.remove, ChatMessageType.Friend, CustomColors.Alerts.Declined);
+                PacketSender.SendChatMsg(player, Strings.Friends.FriendRemoved, ChatMessageType.Friend, CustomColors.Alerts.Declined);
 
                 if (otherPlayer?.CachedFriends.ContainsKey(player.Id) ?? false)
                 {
@@ -2437,7 +2437,7 @@ internal sealed partial class PacketHandler
                 }
 
                 PacketSender.SendChatMsg(
-                    player, Strings.Friends.notification.ToString(target.Name), ChatMessageType.Friend, CustomColors.Alerts.Accepted
+                    player, Strings.Friends.FriendNotification.ToString(target.Name), ChatMessageType.Friend, CustomColors.Alerts.Accepted
                 );
 
                 PacketSender.SendFriends(player);
@@ -2451,7 +2451,7 @@ internal sealed partial class PacketHandler
                 }
 
                 PacketSender.SendChatMsg(
-                    target, Strings.Friends.accept.ToString(player.Name), ChatMessageType.Friend, CustomColors.Alerts.Accepted
+                    target, Strings.Friends.Accept.ToString(player.Name), ChatMessageType.Friend, CustomColors.Alerts.Accepted
                 );
 
                 PacketSender.SendFriends(target);
@@ -2507,7 +2507,7 @@ internal sealed partial class PacketHandler
         catch (Exception exception)
         {
             Log.Warn(exception);
-            PacketSender.SendError(client, Strings.Account.loadfail);
+            PacketSender.SendError(client, Strings.Account.LoadFail, Strings.General.NoticeError);
             client.Logout();
         }
     }
@@ -2522,7 +2522,7 @@ internal sealed partial class PacketHandler
 
         if (Player.FindOnline(packet.CharacterId) != null)
         {
-            PacketSender.SendError(client, Strings.Account.deletecharerror, Strings.Account.deletederror);
+            PacketSender.SendError(client, Strings.Account.DeleteCharacterError, Strings.General.NoticeError);
             PacketSender.SendPlayerCharacters(client);
             return;
         }
@@ -2533,7 +2533,7 @@ internal sealed partial class PacketHandler
             character.LoadGuild();
             if (character.Guild != null && character.GuildRank == 0)
             {
-                PacketSender.SendError(client, Strings.Guilds.deleteguildleader, Strings.Account.deleted);
+                PacketSender.SendError(client, Strings.Guilds.DeleteGuildLeader, Strings.General.NoticeError);
                 return;
             }
 
@@ -2551,7 +2551,7 @@ internal sealed partial class PacketHandler
             }
         }
 
-        PacketSender.SendError(client, Strings.Account.deletechar, Strings.Account.deleted);
+        PacketSender.SendError(client, Strings.Account.CharacterDeleted, Strings.General.Notice);
         PacketSender.SendPlayerCharacters(client);
     }
 
@@ -2565,7 +2565,7 @@ internal sealed partial class PacketHandler
         }
         else
         {
-            PacketSender.SendError(client, Strings.Account.maxchars);
+            PacketSender.SendError(client, Strings.Account.MaxCharacters, Strings.General.NoticeError);
         }
     }
 
@@ -2576,7 +2576,7 @@ internal sealed partial class PacketHandler
 
         if (client.TimeoutMs > Timing.Global.Milliseconds)
         {
-            PacketSender.SendError(client, Strings.Errors.errortimeout);
+            PacketSender.SendError(client, Strings.Errors.ErrorTimeout, Strings.General.NoticeError);
             client.ResetTimeout();
 
             return;

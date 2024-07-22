@@ -252,7 +252,7 @@ internal partial class ServerContext : ApplicationContext<ServerContext, ServerC
         }
         else
         {
-            Console.WriteLine(Strings.Intro.started.ToString(Options.ServerPort));
+            Console.WriteLine(Strings.Intro.ServerStarted.ToString(Options.ServerPort));
         }
     }
 
@@ -263,7 +263,7 @@ internal partial class ServerContext : ApplicationContext<ServerContext, ServerC
     #region Exception Handling
 
     protected override void NotifyNonTerminatingExceptionOccurred() =>
-        Console.WriteLine(Strings.Errors.errorlogged);
+        Console.WriteLine(Strings.Errors.ErrorLogged);
 
     internal static void DispatchUnhandledException(Exception exception, bool isTerminating = true)
     {

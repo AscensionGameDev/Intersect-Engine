@@ -114,11 +114,11 @@ internal static class Bootstrapper
         {
             if (noHaltOnError)
             {
-                Console.WriteLine(Strings.Errors.errorservercrashnohalt);
+                Console.WriteLine(Strings.Errors.ErrorServerCrashNoHalt);
             }
             else
             {
-                Console.WriteLine(Strings.Errors.errorservercrash);
+                Console.WriteLine(Strings.Errors.ErrorServerCrash);
                 Console.ReadLine();
             }
         }
@@ -181,7 +181,7 @@ internal static class Bootstrapper
 
         if (!Options.LoadFromDisk())
         {
-            Console.WriteLine(Strings.Errors.errorloadingconfig);
+            Console.WriteLine(Strings.Errors.ErrorLoadingConfiguration);
             Console.ReadKey();
 
             return false;
@@ -281,7 +281,7 @@ internal static class Bootstrapper
         Console.WriteLine(Strings.Commandoutput.EventCount.ToString(EventBase.Lookup.Count));
         Console.WriteLine(Strings.Commandoutput.ItemCount.ToString(ItemBase.Lookup.Count));
         Console.WriteLine();
-        Console.WriteLine(Strings.Commandoutput.gametime.ToString(Time.GetTime().ToString("F")));
+        Console.WriteLine(Strings.Commandoutput.GameTime.ToString(Time.GetTime().ToString("F")));
         Console.WriteLine();
 
         PacketSender.CacheGameDataPacket();
@@ -304,12 +304,12 @@ internal static class Bootstrapper
         Console.WriteLine(@"   | | | '_ \| __/ _ \ '__/ __|/ _ \/ __| __|");
         Console.WriteLine(@"  _| |_| | | | ||  __/ |  \__ \  __/ (__| |_ ");
         Console.WriteLine(@" |_____|_| |_|\__\___|_|  |___/\___|\___|\__|");
-        Console.WriteLine(Strings.Intro.tagline);
+        Console.WriteLine(Strings.Intro.Tagline);
         Console.WriteLine(@"Copyright (C) 2020 Ascension Game Dev");
-        Console.WriteLine(Strings.Intro.version.ToString(Assembly.GetExecutingAssembly().GetName().Version));
-        Console.WriteLine(Strings.Intro.support);
+        Console.WriteLine(Strings.Intro.Version.ToString(Assembly.GetExecutingAssembly().GetName().Version));
+        Console.WriteLine(Strings.Intro.Support);
         Console.WriteLine();
-        Console.WriteLine(Strings.Intro.loading);
+        Console.WriteLine(Strings.Intro.Loading);
     }
 
     #endregion

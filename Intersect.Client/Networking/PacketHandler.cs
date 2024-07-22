@@ -1193,7 +1193,7 @@ internal sealed partial class PacketHandler
     {
         Fade.FadeIn(ClientConfiguration.Instance.FadeDurationMs);
         Globals.WaitingOnServer = false;
-        Interface.Interface.ShowError(packet.Header, packet.Error);
+        Interface.Interface.ShowError(packet.Error, packet.Header);
         Interface.Interface.MenuUi?.Reset();
     }
 

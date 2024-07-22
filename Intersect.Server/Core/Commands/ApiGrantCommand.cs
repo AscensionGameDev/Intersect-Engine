@@ -25,7 +25,7 @@ namespace Intersect.Server.Core.Commands
         {
             if (target == null)
             {
-                Console.WriteLine($@"    {Strings.Account.notfound}");
+                Console.WriteLine($@"    {Strings.Account.NotFound}");
 
                 return;
             }
@@ -39,7 +39,7 @@ namespace Intersect.Server.Core.Commands
 
             if (!target.Power.Api)
             {
-                Console.WriteLine(Strings.Commandoutput.apirolenotgranted.ToString(role, target.Name));
+                Console.WriteLine(Strings.Commandoutput.ApiRoleNotGranted.ToString(role, target.Name));
 
                 return;
             }
@@ -56,7 +56,7 @@ namespace Intersect.Server.Core.Commands
                 }
                 else
                 {
-                    Console.WriteLine(Strings.Commandoutput.apiroleprereq.ToString(role, "users.query"));
+                    Console.WriteLine(Strings.Commandoutput.ApiRolePrerequisite.ToString(role, "users.query"));
 
                     return;
                 }
@@ -64,14 +64,14 @@ namespace Intersect.Server.Core.Commands
             else
             {
                 //Role Not Found
-                Console.WriteLine(Strings.Commandoutput.apirolenotfound.ToString(role));
+                Console.WriteLine(Strings.Commandoutput.ApiRoleNotFound.ToString(role));
 
                 return;
             }
 
             target.Save();
 
-            Console.WriteLine(Strings.Commandoutput.apirolegranted.ToString(target.Name, role));
+            Console.WriteLine(Strings.Commandoutput.ApiRoleGranted.ToString(target.Name, role));
         }
 
     }

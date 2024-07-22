@@ -25,7 +25,7 @@ namespace Intersect.Server.Core.Commands
         {
             if (target == null)
             {
-                Console.WriteLine($@"    {Strings.Account.notfound}");
+                Console.WriteLine($@"    {Strings.Account.NotFound}");
 
                 return;
             }
@@ -46,8 +46,8 @@ namespace Intersect.Server.Core.Commands
 
             Console.WriteLine(
                 access
-                    ? $@"    {Strings.Commandoutput.apigranted.ToString(target.Name)}"
-                    : $@"    {Strings.Commandoutput.apirevoked.ToString(target.Name)}"
+                    ? $@"    {Strings.Commandoutput.ApiAccessGranted.ToString(target.Name)}"
+                    : $@"    {Strings.Commandoutput.ApiAccessRevoked.ToString(target.Name)}"
             );
         }
 

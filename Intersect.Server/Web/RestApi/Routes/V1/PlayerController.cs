@@ -265,7 +265,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-            if (!FieldChecking.IsValidUsername(change.Name, Strings.Regex.username))
+            if (!FieldChecking.IsValidUsername(change.Name, Strings.Regex.Username))
             {
                 return BadRequest($@"Invalid name.");
             }
@@ -817,7 +817,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     }
                     else if (Ban.Find(userId) != null) // If the target is already banned.
                     {
-                        return BadRequest(Strings.Account.alreadybanned.ToString(player.Name));
+                        return BadRequest(Strings.Account.AlreadyBanned.ToString(player.Name));
                     }
 
                     // If target is online, not yet banned and the banner has the authority to ban.
@@ -833,10 +833,10 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         client?.Disconnect();
 
                         // Sends a global chat message to every user online about the banned player.
-                        PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(player.Name));
+                        PacketSender.SendGlobalMsg(Strings.Account.Banned.ToString(player.Name));
 
                         //  Inform to the API about the successful ban.
-                        return Ok(Strings.Account.banned.ToString(player.Name));
+                        return Ok(Strings.Account.Banned.ToString(player.Name));
                     }
 
                 case AdminAction.UnBan:
@@ -854,7 +854,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     }
                     else if (Mute.Find(userId) != null) // If the target is already muted.
                     {
-                        return BadRequest(Strings.Account.alreadymuted.ToString(player.Name));
+                        return BadRequest(Strings.Account.AlreadyMuted.ToString(player.Name));
                     }
 
                     // If target is online, not yet muted and the action performer has the authority to mute.
@@ -875,9 +875,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                             );
                         }
 
-                        PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(player.Name));
+                        PacketSender.SendGlobalMsg(Strings.Account.Muted.ToString(player.Name));
 
-                        return Ok(Strings.Account.muted.ToString(player.Name));
+                        return Ok(Strings.Account.Muted.ToString(player.Name));
                     }
 
                 case AdminAction.UnMute:
@@ -928,9 +928,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         else
                         {
                             client.Disconnect(actionParameters.Reason);
-                            PacketSender.SendGlobalMsg(Strings.Player.serverkicked.ToString(player.Name));
+                            PacketSender.SendGlobalMsg(Strings.Player.ServerKicked.ToString(player.Name));
 
-                            return Ok(Strings.Player.serverkicked.ToString(player.Name));
+                            return Ok(Strings.Player.ServerKicked.ToString(player.Name));
                         }
                     }
 
@@ -952,9 +952,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                                 client.Entity.Die();
                             }
 
-                            PacketSender.SendGlobalMsg(Strings.Player.serverkilled.ToString(player.Name));
+                            PacketSender.SendGlobalMsg(Strings.Player.ServerKilled.ToString(player.Name));
 
-                            return Ok(Strings.Commandoutput.killsuccess.ToString(player.Name));
+                            return Ok(Strings.Commandoutput.KillSuccess.ToString(player.Name));
                         }
                     }
 
@@ -971,7 +971,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     return NotImplemented(adminAction.ToString());
             }
 
-            return NotFound(Strings.Player.offline);
+            return NotFound(Strings.Player.Offline);
         }
     }
 }

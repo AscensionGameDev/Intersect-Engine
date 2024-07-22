@@ -237,7 +237,7 @@ public partial class Ban
 
         return expired
             ? null
-            : Strings.Account.banstatus.ToString(ban.StartTime, ban.Banner, ban.EndTime, ban.Reason);
+            : Strings.Account.BanStatus.ToString(ban.StartTime, ban.Banner, ban.EndTime, ban.Reason);
     }
 
     public static bool IsBanned(IPAddress ipAddress, [NotNullWhen(true)] out string? message)

@@ -34,7 +34,7 @@ namespace Intersect.Server.Core.Commands
         {
             if (target == null)
             {
-                Console.WriteLine($@"    {Strings.Player.offline}");
+                Console.WriteLine($@"    {Strings.Player.Offline}");
 
                 return;
             }

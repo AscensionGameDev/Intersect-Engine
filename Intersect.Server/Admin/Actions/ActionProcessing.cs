@@ -49,7 +49,7 @@ namespace Intersect.Server.Admin.Actions
             else if (Ban.Find(targetUsername) != null) // If the target is already banned.
             {
                 PacketSender.SendChatMsg(
-                    player, Strings.Account.alreadybanned.ToString(target.Name), ChatMessageType.Admin, Color.Red
+                    player, Strings.Account.AlreadyBanned.ToString(target.Name), ChatMessageType.Admin, Color.Red
                 );
             }
 
@@ -73,7 +73,7 @@ namespace Intersect.Server.Admin.Actions
                 target.Client?.Disconnect();
 
                 // Sends a global chat message to every user online about the banned player.
-                PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(target.Name));
+                PacketSender.SendGlobalMsg(Strings.Account.Banned.ToString(target.Name));
             }
         }
 
@@ -90,7 +90,7 @@ namespace Intersect.Server.Admin.Actions
 
             if (target == null) // If the target is offline.
             {
-                PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.Admin, Color.Red);
+                PacketSender.SendChatMsg(player, Strings.Player.Offline, ChatMessageType.Admin, Color.Red);
             }
             else if (player.Power.CompareTo(target.Power) < 1) // Authority Comparison.
             {
@@ -115,7 +115,7 @@ namespace Intersect.Server.Admin.Actions
                     $"{target.User?.Name},{target.Name}");
 
                 // Sends a global chat message to every user online about the kicked player.
-                PacketSender.SendGlobalMsg(Strings.Player.kicked.ToString(target.Name, player.Name));
+                PacketSender.SendGlobalMsg(Strings.Player.Kicked.ToString(target.Name, player.Name));
 
                 // Kick the target.
                 target.Client?.Disconnect();
@@ -135,7 +135,7 @@ namespace Intersect.Server.Admin.Actions
 
             if (target == null) // If the target is offline.
             {
-                PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.Admin, Color.Red);
+                PacketSender.SendChatMsg(player, Strings.Player.Offline, ChatMessageType.Admin, Color.Red);
             }
             else if (player.Power.CompareTo(target.Power) < 1) // Authority Comparison.
             {
@@ -160,7 +160,7 @@ namespace Intersect.Server.Admin.Actions
                     $"{target.User?.Name},{target.Name}");
 
                 // Sends a global chat message to every user online about the killed player.
-                PacketSender.SendGlobalMsg(Strings.Player.killed.ToString(target.Name, player.Name));
+                PacketSender.SendGlobalMsg(Strings.Player.Killed.ToString(target.Name, player.Name));
 
                 lock (target.EntityLock)
                 {
@@ -208,7 +208,7 @@ namespace Intersect.Server.Admin.Actions
             else if (Mute.Find(targetUsername) != null) // If the target is already muted.
             {
                 PacketSender.SendChatMsg(
-                    player, Strings.Account.alreadymuted.ToString(target.Name), ChatMessageType.Admin, Color.Red
+                    player, Strings.Account.AlreadyMuted.ToString(target.Name), ChatMessageType.Admin, Color.Red
                 );
             }
 
@@ -229,7 +229,7 @@ namespace Intersect.Server.Admin.Actions
                 );
 
                 // Sends a global chat message to every user online about the muted player.
-                PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(target.Name));
+                PacketSender.SendGlobalMsg(Strings.Account.Muted.ToString(target.Name));
             }
         }
 
@@ -239,7 +239,7 @@ namespace Intersect.Server.Admin.Actions
             var target = Player.FindOnline(action.Name);
             if (target == null || target.Client == null)
             {
-                PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.Admin, Color.Red);
+                PacketSender.SendChatMsg(player, Strings.Player.Offline, ChatMessageType.Admin, Color.Red);
 
                 return;
             }
@@ -262,25 +262,25 @@ namespace Intersect.Server.Admin.Actions
                     targetClient.Power = power;
                     if (targetClient.Power.IsAdmin)
                     {
-                        PacketSender.SendGlobalMsg(Strings.Player.admin.ToString(target.Name));
+                        PacketSender.SendGlobalMsg(Strings.Player.Admin.ToString(target.Name));
                     }
                     else if (targetClient.Power.IsModerator)
                     {
-                        PacketSender.SendGlobalMsg(Strings.Player.mod.ToString(target.Name));
+                        PacketSender.SendGlobalMsg(Strings.Player.Moderator.ToString(target.Name));
                     }
                     else
                     {
-                        PacketSender.SendGlobalMsg(Strings.Player.deadmin.ToString(target.Name));
+                        PacketSender.SendGlobalMsg(Strings.Player.Deadmin.ToString(target.Name));
                     }
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(player, Strings.Player.adminsetpower, ChatMessageType.Admin);
+                    PacketSender.SendChatMsg(player, Strings.Player.AdminSetPower, ChatMessageType.Admin);
                 }
             }
             else
             {
-                PacketSender.SendChatMsg(player, Strings.Player.changeownpower, ChatMessageType.Admin);
+                PacketSender.SendChatMsg(player, Strings.Player.CannotAlterOwnPower, ChatMessageType.Admin);
             }
         }
 
@@ -295,7 +295,7 @@ namespace Intersect.Server.Admin.Actions
             }
             else
             {
-                PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.Admin, Color.Red);
+                PacketSender.SendChatMsg(player, Strings.Player.Offline, ChatMessageType.Admin, Color.Red);
             }
         }
 
@@ -310,7 +310,7 @@ namespace Intersect.Server.Admin.Actions
             }
             else
             {
-                PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.Admin, Color.Red);
+                PacketSender.SendChatMsg(player, Strings.Player.Offline, ChatMessageType.Admin, Color.Red);
             }
         }
 
@@ -401,14 +401,14 @@ namespace Intersect.Server.Admin.Actions
             {
                 var forceInstanceChange = target.InstanceType != player.InstanceType;
                 player.AdminWarp(target.MapId, (byte)target.X, (byte)target.Y, target.MapInstanceId, target.InstanceType, forceInstanceChange);
-                PacketSender.SendChatMsg(player, Strings.Player.warpedto.ToString(target.Name), ChatMessageType.Admin);
+                PacketSender.SendChatMsg(player, Strings.Player.WarpedTo.ToString(target.Name), ChatMessageType.Admin);
                 PacketSender.SendChatMsg(
-                    target, Strings.Player.warpedtoyou.ToString(player.Name), ChatMessageType.Notice
+                    target, Strings.Player.WarpedToYou.ToString(player.Name), ChatMessageType.Notice
                 );
             }
             else
             {
-                PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.Admin, Color.Red);
+                PacketSender.SendChatMsg(player, Strings.Player.Offline, ChatMessageType.Admin, Color.Red);
             }
         }
 
@@ -430,7 +430,7 @@ namespace Intersect.Server.Admin.Actions
             var target = Player.FindOnline(action.Name);
             if (target == null)
             {
-                PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.Admin, Color.Red);
+                PacketSender.SendChatMsg(player, Strings.Player.Offline, ChatMessageType.Admin, Color.Red);
 
                 return;
             }
@@ -456,11 +456,11 @@ namespace Intersect.Server.Admin.Actions
 
                 target.AdminWarp(player.MapId, (byte)player.X, (byte)player.Y, player.MapInstanceId, player.InstanceType, forceInstanceChange);
                 PacketSender.SendChatMsg(
-                    player, Strings.Player.haswarpedto.ToString(target.Name), ChatMessageType.Admin, player.Name
+                    player, Strings.Player.HasWarpedTo.ToString(target.Name), ChatMessageType.Admin, player.Name
                 );
 
                 PacketSender.SendChatMsg(
-                    target, Strings.Player.beenwarpedto.ToString(player.Name), ChatMessageType.Notice, player.Name
+                    target, Strings.Player.BeenWarpedTo.ToString(player.Name), ChatMessageType.Notice, player.Name
                 );
             }
         }
@@ -471,7 +471,7 @@ namespace Intersect.Server.Admin.Actions
             var target = Player.FindOnline(action.PlayerName);
             if (target == null)
             {
-                PacketSender.SendChatMsg(player, Strings.Player.offline, Enums.ChatMessageType.Admin);
+                PacketSender.SendChatMsg(player, Strings.Player.Offline, Enums.ChatMessageType.Admin);
 
                 return;
             }

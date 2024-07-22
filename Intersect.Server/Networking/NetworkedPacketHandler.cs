@@ -51,7 +51,7 @@ internal sealed partial class NetworkedPacketHandler
     {
         if (client.TimeoutMs > Timing.Global.Milliseconds)
         {
-            PacketSender.SendError(client, Strings.Errors.errortimeout);
+            PacketSender.SendError(client, Strings.Errors.ErrorTimeout, Strings.General.NoticeError);
             client.ResetTimeout();
 
             return;
@@ -66,7 +66,7 @@ internal sealed partial class NetworkedPacketHandler
                 var email = new PasswordResetEmail(user);
                 if (!email.Send())
                 {
-                    PacketSender.SendError(client, Strings.Account.emailfail);
+                    PacketSender.SendError(client, Strings.Account.EmailFail, Strings.General.NoticeError);
                 }
             }
             else
@@ -92,7 +92,7 @@ internal sealed partial class NetworkedPacketHandler
         {
             if (client.AccountAttempts > 3 && client.TimeoutMs > Timing.Global.Milliseconds)
             {
-                PacketSender.SendError(client, Strings.Errors.errortimeout);
+                PacketSender.SendError(client, Strings.Errors.ErrorTimeout, Strings.General.NoticeError);
                 client.ResetTimeout();
 
                 return;
@@ -106,7 +106,7 @@ internal sealed partial class NetworkedPacketHandler
                 UserActivityHistory.LogActivity(Guid.Empty, Guid.Empty, client?.Ip, UserActivityHistory.PeerType.Editor, UserActivityHistory.UserAction.FailedLogin, packet.Username);
 
                 client.FailedAttempt();
-                PacketSender.SendError(client, Strings.Account.badlogin);
+                PacketSender.SendError(client, Strings.Account.BadLogin, Strings.General.NoticeError);
 
                 return;
             }
@@ -114,7 +114,7 @@ internal sealed partial class NetworkedPacketHandler
             if (!user.Power.Editor)
             {
                 client.FailedAttempt();
-                PacketSender.SendError(client, Strings.Account.badaccess);
+                PacketSender.SendError(client, Strings.Account.BadAccess, Strings.General.NoticeError);
 
                 return;
             }
@@ -456,7 +456,7 @@ internal sealed partial class NetworkedPacketHandler
                     if (packet.ParentId == Guid.Empty)
                     {
                         parent = default;
-                        MapList.List.AddFolder(Strings.Mapping.newfolder);
+                        MapList.List.AddFolder(Strings.Mapping.NewFolder);
                         break;
                     }
 
@@ -471,7 +471,7 @@ internal sealed partial class NetworkedPacketHandler
                     }
 
                     currentList = parent?.Children ?? MapList.List;
-                    currentList.AddFolder(Strings.Mapping.newfolder);
+                    currentList.AddFolder(Strings.Mapping.NewFolder);
                     break;
 
                 case MapListUpdate.Rename:
@@ -527,7 +527,7 @@ internal sealed partial class NetworkedPacketHandler
 
                         if (MapController.Lookup.Count < 2)
                         {
-                            PacketSender.SendError(client, Strings.Mapping.lastmaperror, Strings.Mapping.lastmap);
+                            PacketSender.SendError(client, Strings.Mapping.LastMapError, Strings.Mapping.LastMap);
                             return;
                         }
 
@@ -694,11 +694,11 @@ internal sealed partial class NetworkedPacketHandler
                                         //Incompatible Link!
                                         PacketSender.SendError(
                                             client,
-                                            Strings.Mapping.linkfailerror.ToString(
+                                            Strings.Mapping.LinkFailureError.ToString(
                                                 MapBase.GetName(linkMapId), MapBase.GetName(adjacentMapId),
                                                 MapBase.GetName(adjacentGrid.MapIdGrid[x, y]),
                                                 MapBase.GetName(linkGrid.MapIdGrid[x + xOffset, y + yOffset])
-                                            ), Strings.Mapping.linkfail
+                                            ), Strings.Mapping.LinkFailure
                                         );
 
                                         return;
@@ -857,7 +857,7 @@ internal sealed partial class NetworkedPacketHandler
                 case GameObjectType.Class:
                     if (ClassBase.Lookup.Count == 1)
                     {
-                        PacketSender.SendError(client, Strings.Classes.lastclasserror, Strings.Classes.lastclass);
+                        PacketSender.SendError(client, Strings.Classes.LastClassError, Strings.Classes.LastClass);
 
                         return;
                     }
