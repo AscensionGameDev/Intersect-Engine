@@ -456,7 +456,7 @@ internal sealed partial class NetworkedPacketHandler
                     if (packet.ParentId == Guid.Empty)
                     {
                         parent = default;
-                        MapList.List.AddFolder(Strings.Mapping.newfolder);
+                        MapList.List.AddFolder(Strings.Mapping.NewFolder);
                         break;
                     }
 
@@ -471,7 +471,7 @@ internal sealed partial class NetworkedPacketHandler
                     }
 
                     currentList = parent?.Children ?? MapList.List;
-                    currentList.AddFolder(Strings.Mapping.newfolder);
+                    currentList.AddFolder(Strings.Mapping.NewFolder);
                     break;
 
                 case MapListUpdate.Rename:
@@ -527,7 +527,7 @@ internal sealed partial class NetworkedPacketHandler
 
                         if (MapController.Lookup.Count < 2)
                         {
-                            PacketSender.SendError(client, Strings.Mapping.lastmaperror, Strings.Mapping.lastmap);
+                            PacketSender.SendError(client, Strings.Mapping.LastMapError, Strings.Mapping.LastMap);
                             return;
                         }
 
@@ -694,11 +694,11 @@ internal sealed partial class NetworkedPacketHandler
                                         //Incompatible Link!
                                         PacketSender.SendError(
                                             client,
-                                            Strings.Mapping.linkfailerror.ToString(
+                                            Strings.Mapping.LinkFailureError.ToString(
                                                 MapBase.GetName(linkMapId), MapBase.GetName(adjacentMapId),
                                                 MapBase.GetName(adjacentGrid.MapIdGrid[x, y]),
                                                 MapBase.GetName(linkGrid.MapIdGrid[x + xOffset, y + yOffset])
-                                            ), Strings.Mapping.linkfail
+                                            ), Strings.Mapping.LinkFailure
                                         );
 
                                         return;

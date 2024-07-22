@@ -814,24 +814,20 @@ public static partial class Strings
 
     public sealed partial class MappingNamespace : LocaleNamespace
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString LastMap = @"Last Map";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString lastmap = @"Last Map";
+        public readonly LocalizedString LastMapError = @"Failed to delete the map. You must have at least one map at all times!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString lastmaperror =
-            @"Failed to delete map, you must have at least one map at all times!";
+        public readonly LocalizedString LinkFailure = @"Map Link Failure";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString linkfail = @"Map Link Failure";
+        public readonly LocalizedString LinkFailureError = @"Failed to link map {00} to map {01}. If this merge were to happen, maps {02} and {03} would occupy the same space in the world.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString linkfailerror =
-            @"Failed to link map {00} to map {01}. If this merge were to happen, maps {02} and {03} would occupy the same space in the world.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString newfolder = @"New Folder";
-
+        public readonly LocalizedString NewFolder = @"New Folder";
     }
 
     public sealed partial class MigrationNamespace : LocaleNamespace
