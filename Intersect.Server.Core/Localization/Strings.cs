@@ -8,7 +8,6 @@ using Newtonsoft.Json;
 
 namespace Intersect.Server.Localization;
 
-
 public static partial class Strings
 {
 
@@ -1027,9 +1026,8 @@ public static partial class Strings
 
     public sealed partial class PasswordResetNotificationNamespace : LocaleNamespace
     {
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString subject = @"Intersect Game Engine - Password Reset Code";
-
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Subject = "Intersect Game Engine - Password Reset Code";
     }
 
     public sealed partial class PlayerNamespace : LocaleNamespace

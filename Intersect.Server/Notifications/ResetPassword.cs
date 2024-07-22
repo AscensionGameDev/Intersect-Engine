@@ -14,7 +14,7 @@ namespace Intersect.Server.Notifications
         public PasswordResetEmail(User user) : base(user.Email)
         {
             LoadFromTemplate("PasswordReset", user.Name);
-            Subject = Strings.PasswordResetNotification.subject;
+            Subject = Strings.PasswordResetNotification.Subject;
             var resetCode = GenerateResetCode(6);
             Body = Body.Replace("{{code}}", resetCode);
             Body = Body.Replace("{{expiration}}", Options.PasswordResetExpirationMinutes.ToString());
