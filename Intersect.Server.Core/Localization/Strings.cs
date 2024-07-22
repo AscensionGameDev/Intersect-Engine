@@ -659,19 +659,10 @@ public static partial class Strings
     public sealed partial class GeneralNamespace : LocaleNamespace
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString Disabled = @"Disabled";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString DisabledLowerCase = @"disabled";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString Enabled = @"Enabled";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString EnabledLowerCase = @"enabled";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString None = @"None";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString Notice = @"Notice";
