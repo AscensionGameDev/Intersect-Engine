@@ -3801,7 +3801,7 @@ public partial class Player : Entity
             {
                 if (!itemDescriptor.CanSell)
                 {
-                    PacketSender.SendChatMsg(this, Strings.Shops.bound, ChatMessageType.Inventory, CustomColors.Items.Bound);
+                    PacketSender.SendChatMsg(this, Strings.Shops.Bound, ChatMessageType.Inventory, CustomColors.Items.Bound);
 
                     return;
                 }
@@ -3825,7 +3825,7 @@ public partial class Player : Entity
                     {
                         if (!shop.BuyingWhitelist)
                         {
-                            PacketSender.SendChatMsg(this, Strings.Shops.doesnotaccept, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+                            PacketSender.SendChatMsg(this, Strings.Shops.DoesNotAccept, ChatMessageType.Inventory, CustomColors.Alerts.Error);
 
                             return;
                         }
@@ -3843,7 +3843,7 @@ public partial class Player : Entity
                 {
                     if (shop.BuyingWhitelist)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Shops.doesnotaccept, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+                        PacketSender.SendChatMsg(this, Strings.Shops.DoesNotAccept, ChatMessageType.Inventory, CustomColors.Alerts.Error);
 
                         return;
                     }
@@ -3944,13 +3944,13 @@ public partial class Player : Entity
         var itemCostTotal = boughtItem.CostItemQuantity * boughtItemAmount;
         if (currencyAmount < itemCostTotal)
         {
-            PacketSender.SendChatMsg(this, Strings.Shops.cantafford, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
+            PacketSender.SendChatMsg(this, Strings.Shops.CannotAfford, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
             return;
         }
 
         if (!CanGiveItem(boughtItemBase.Id, boughtItemAmount))
         {
-            PacketSender.SendChatMsg(this, Strings.Shops.inventoryfull, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
+            PacketSender.SendChatMsg(this, Strings.Shops.InventoryFull, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
             return;
         }
 
@@ -3968,7 +3968,7 @@ public partial class Player : Entity
                 if (!TryTakeItem(itemSlot, quantityToRemove))
                 {
                     success = false;
-                    Log.Warn(Strings.Shops.FailedRemovedItem.ToString(itemSlot, Id, quantityToRemove, "BuyItem(int slot, int amount)"));
+                    Log.Warn(Strings.Shops.FailedToRemoveItem.ToString(itemSlot, Id, quantityToRemove, "BuyItem(int slot, int amount)"));
                     break;
                 }
 

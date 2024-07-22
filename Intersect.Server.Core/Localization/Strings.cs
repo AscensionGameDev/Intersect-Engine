@@ -1027,88 +1027,88 @@ public static partial class Strings
     public sealed partial class PasswordResetNotificationNamespace : LocaleNamespace
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString Subject = "Intersect Game Engine - Password Reset Code";
+        public readonly LocalizedString Subject = @"Intersect Game Engine - Password Reset Code";
     }
 
     public sealed partial class PlayerNamespace : LocaleNamespace
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString Admin = "{00} has been given administrative powers!";
+        public readonly LocalizedString Admin = @"{00} has been given administrative powers!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString AdminJoined = "You are an administrator! Press Insert at any time to access the administration menu or F2 for debug information.";
+        public readonly LocalizedString AdminJoined = @"You are an administrator! Press Insert at any time to access the administration menu or F2 for debug information.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString AdminSetPower = "Only administrators can set power!";
+        public readonly LocalizedString AdminSetPower = @"Only administrators can set power!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString BeenWarpedTo = "You have been warped to {00}.";
+        public readonly LocalizedString BeenWarpedTo = @"You have been warped to {00}.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString CannotAlterOwnPower = "You cannot alter your own power!";
+        public readonly LocalizedString CannotAlterOwnPower = @"You cannot alter your own power!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString CannotWarpToYourself = "You cannot warp to yourself.";
+        public readonly LocalizedString CannotWarpToYourself = @"You cannot warp to yourself.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString Deadmin = "{00} has had their administrative powers revoked!";
+        public readonly LocalizedString Deadmin = @"{00} has had their administrative powers revoked!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString HasWarpedTo = "{00} has been warped to you.";
+        public readonly LocalizedString HasWarpedTo = @"{00} has been warped to you.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString InstanceUpdate = "Your instance ID has changed from {00} to {01}.";
+        public readonly LocalizedString InstanceUpdate = @"Your instance ID has changed from {00} to {01}.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString Kicked = "{00} has been kicked by {01}!";
+        public readonly LocalizedString Kicked = @"{00} has been kicked by {01}!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString Killed = "{00} has been killed by {01}!";
+        public readonly LocalizedString Killed = @"{00} has been killed by {01}!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString Left = "{00} has left {01}.";
+        public readonly LocalizedString Left = @"{00} has left {01}.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString LevelUp = "You have leveled up! You are now level {00}!";
+        public readonly LocalizedString LevelUp = @"You have leveled up! You are now level {00}!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString Moderator = "{00} has been given moderation powers!";
+        public readonly LocalizedString Moderator = @"{00} has been given moderation powers!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString ModeratorJoined = "You are a moderator! Press Insert at any time to access the administration menu or F2 for debug information.";
+        public readonly LocalizedString ModeratorJoined = @"You are a moderator! Press Insert at any time to access the administration menu or F2 for debug information.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString Offline = "User not online!";
+        public readonly LocalizedString Offline = @"User not online!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString OverworldReturnAdmin = "You have returned {00} to the overworld.";
+        public readonly LocalizedString OverworldReturnAdmin = @"You have returned {00} to the overworld.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString OverworldReturned = "You have been returned to the overworld.";
+        public readonly LocalizedString OverworldReturned = @"You have been returned to the overworld.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString PlayerNotFound = "The player '{00}' was not found!";
+        public readonly LocalizedString PlayerNotFound = @"The player '{00}' was not found!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString PowerChanged = "Your power has been modified!";
+        public readonly LocalizedString PowerChanged = @"Your power has been modified!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString ServerKicked = "{00} has been kicked by the server!";
+        public readonly LocalizedString ServerKicked = @"{00} has been kicked by the server!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString ServerKilled = "{00} has been killed by the server!";
+        public readonly LocalizedString ServerKilled = @"{00} has been killed by the server!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString SpellTaughtLevelUp = "You've learned the {00} spell!";
+        public readonly LocalizedString SpellTaughtLevelUp = @"You've learned the {00} spell!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString StatPoints = "You have {00} stat points available to be spent!";
+        public readonly LocalizedString StatPoints = @"You have {00} stat points available to be spent!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString WarpedTo = "Warped to {00}.";
+        public readonly LocalizedString WarpedTo = @"Warped to {00}.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString WarpedToYou = "{00} warped to you.";
+        public readonly LocalizedString WarpedToYou = @"{00} warped to you.";
     }
 
     public sealed partial class PortcheckingNamespace : LocaleNamespace
@@ -1225,28 +1225,26 @@ public static partial class Strings
 
     public sealed partial class ShopsNamespace : LocaleNamespace
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Bound = @"This item is bound to you and cannot be sold!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString bound = @"This item is bound to you and cannot be sold!";
+        public readonly LocalizedString CannotAfford = @"Transaction failed due to insufficient funds.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString DoesNotAccept = @"This shop does not accept that item!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString FailedToRemoveItem = @"Failed to remove items from slot {00} for player {01}. Quantity to remove: {02} at {03}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString InventoryFull = @"You do not have enough space to purchase that item!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString SuccessfullyRemovedItem = @"Successfully removed {00} items from slot {01} for player {02} at {03}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString TransactionFailed = @"Transaction failed!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString cantafford = @"Transaction failed due to insufficent funds.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString doesnotaccept = @"This shop does not accept that item!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString inventoryfull = @"You do not have space to purchase that item!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString SuccessfullyRemovedItem = @"Successfully took {00} items from slot {01} for player {02} at {03}";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString FailedRemovedItem = @"Failed to take items from slot {00} for player {01}. Quantity to remove: {02} at {03}";
-
     }
 
     public sealed partial class TradingNamespace : LocaleNamespace
