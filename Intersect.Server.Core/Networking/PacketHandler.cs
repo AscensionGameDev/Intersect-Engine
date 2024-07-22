@@ -833,7 +833,7 @@ internal sealed partial class PacketHandler
                     break;
 
                 case 3:
-                    cmd = Strings.Guilds.guildcmd;
+                    cmd = Strings.Guilds.GuildCommand;
                     break;
 
                 case 4: //admin
@@ -934,7 +934,7 @@ internal sealed partial class PacketHandler
                 ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Admin, Guid.Empty);
             }
         }
-        else if (cmd == Strings.Guilds.guildcmd)
+        else if (cmd == Strings.Guilds.GuildCommand)
         {
             if (player.Guild == null)
             {
@@ -949,7 +949,7 @@ internal sealed partial class PacketHandler
 
             //Normalize Rank
             var rank = Options.Instance.Guild.Ranks[Math.Max(0, Math.Min(player.GuildRank, Options.Instance.Guild.Ranks.Length - 1))].Title;
-            PacketSender.SendGuildMsg(player, Strings.Guilds.guildchat.ToString(rank, player.Name, msg), CustomColors.Chat.GuildChat);
+            PacketSender.SendGuildMsg(player, Strings.Guilds.GuildChat.ToString(rank, player.Name, msg), CustomColors.Chat.GuildChat);
             ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Guild, player.Guild.Id);
 
         }
@@ -2533,7 +2533,7 @@ internal sealed partial class PacketHandler
             character.LoadGuild();
             if (character.Guild != null && character.GuildRank == 0)
             {
-                PacketSender.SendError(client, Strings.Guilds.deleteguildleader, Strings.General.NoticeError);
+                PacketSender.SendError(client, Strings.Guilds.DeleteGuildLeader, Strings.General.NoticeError);
                 return;
             }
 
