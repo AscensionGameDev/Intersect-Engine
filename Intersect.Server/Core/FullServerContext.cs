@@ -124,7 +124,7 @@ internal class FullServerContext : ServerContext, IFullServerContext
 
                 if (Options.UPnP && !StartupOptions.NoNatPunchthrough)
                 {
-                    Log.Pretty.Info(Strings.Portchecking.PortNotOpenTryingUPnP.ToString(Options.ServerPort));
+                    Log.Pretty.Info(Strings.Portchecking.PortNotOpenTryingUpnp.ToString(Options.ServerPort));
                     Console.WriteLine();
 
                     if (TryUPnP())
@@ -138,31 +138,31 @@ internal class FullServerContext : ServerContext, IFullServerContext
                     }
                     else
                     {
-                        Log.Pretty.Warn(Strings.Portchecking.UPnPFailed);
+                        Log.Pretty.Warn(Strings.Portchecking.RouterUpnpFailed);
                     }
                 }
                 else
                 {
-                    Log.Pretty.Warn(Strings.Portchecking.PortNotOpenUPnPDisabled.ToString(Options.ServerPort));
+                    Log.Pretty.Warn(Strings.Portchecking.PortNotOpenUpnpDisabled.ToString(Options.ServerPort));
                 }
             }
             else if (Options.UPnP)
             {
-                Log.Pretty.Info(Strings.Portchecking.TryingUPnP);
+                Log.Pretty.Info(Strings.Portchecking.TryingUpnp);
                 Console.WriteLine();
 
                 if (TryUPnP())
                 {
-                    Log.Pretty.Info(Strings.Portchecking.UPnPSucceededPortCheckerDisabled);
+                    Log.Pretty.Info(Strings.Portchecking.UpnpSucceededPortCheckerDisabled);
                 }
                 else
                 {
-                    Log.Pretty.Warn(Strings.Portchecking.UPnPFailed);
+                    Log.Pretty.Warn(Strings.Portchecking.RouterUpnpFailed);
                 }
             }
             else
             {
-                Log.Pretty.Warn(Strings.Portchecking.PortCheckerAndUPnPDisabled);
+                Log.Pretty.Warn(Strings.Portchecking.PortCheckerAndUpnpDisabled);
             }
         }
 
@@ -179,7 +179,7 @@ internal class FullServerContext : ServerContext, IFullServerContext
                 return true;
             }
 
-            Console.WriteLine(Strings.Portchecking.checkrouterupnp);
+            Console.WriteLine(Strings.Portchecking.CheckRouterUpnp);
             return false;
         }
 
@@ -201,19 +201,19 @@ internal class FullServerContext : ServerContext, IFullServerContext
 
             if (!string.IsNullOrEmpty(externalIp))
             {
-                Console.WriteLine(Strings.Portchecking.connectioninfo);
-                Console.WriteLine(Strings.Portchecking.publicip, externalIp);
-                Console.WriteLine(Strings.Portchecking.publicport, Options.ServerPort);
+                Console.WriteLine(Strings.Portchecking.ConnectionInfo);
+                Console.WriteLine(Strings.Portchecking.PublicIp, externalIp);
+                Console.WriteLine(Strings.Portchecking.PublicPort, Options.ServerPort);
             }
 
             if (portCheckResult == PortCheckResult.Inaccessible)
             {
                 Console.WriteLine();
 
-                Console.WriteLine(Strings.Portchecking.debuggingsteps);
-                Console.WriteLine(Strings.Portchecking.checkfirewalls);
-                Console.WriteLine(Strings.Portchecking.checkantivirus);
-                Console.WriteLine(Strings.Portchecking.screwed);
+                Console.WriteLine(Strings.Portchecking.DebuggingSteps);
+                Console.WriteLine(Strings.Portchecking.CheckFirewalls);
+                Console.WriteLine(Strings.Portchecking.AntivirusCheck);
+                Console.WriteLine(Strings.Portchecking.WithinRestrictedNetwork);
             }
 
             Console.WriteLine();
