@@ -19,29 +19,28 @@ public partial class HotBarWindow
     //Init
     public HotBarWindow(Canvas gameCanvas)
     {
-        HotbarWindow = new ImagePanel(gameCanvas, "HotbarWindow");
-        HotbarWindow.ShouldCacheToTexture = true;
+        HotbarWindow = new ImagePanel(gameCanvas, "HotbarWindow")
+        {
+            ShouldCacheToTexture = true
+        };
+
+        if (Graphics.Renderer == null)
+        {
+            return;
+        }
+
         InitHotbarItems();
         HotbarWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-
-        for (var i = 0; i < Items.Count; i++)
-        {
-            if (Items[i].EquipPanel.Texture == null)
-            {
-                Items[i].EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
-            }
-        }
     }
 
     private void InitHotbarItems()
     {
-        var x = 12;
         for (var i = 0; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
         {
             Items.Add(new HotbarItem((byte) i, HotbarWindow));
-            Items[i].Pnl = new ImagePanel(HotbarWindow, "HotbarContainer" + i);
+            Items[i].HotbarIcon = new ImagePanel(HotbarWindow, "HotbarContainer" + i);
             Items[i].Setup();
-            Items[i].KeyLabel = new Label(Items[i].Pnl, "HotbarLabel" + i);
+            Items[i].KeyLabel = new Label(Items[i].HotbarIcon, "HotbarLabel" + i);
         }
     }
 

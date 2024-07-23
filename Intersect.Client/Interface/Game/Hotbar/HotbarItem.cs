@@ -1,4 +1,3 @@
-using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
@@ -18,182 +17,169 @@ namespace Intersect.Client.Interface.Game.Hotbar;
 
 public partial class HotbarItem
 {
+    private const int ItemXPadding = 4;
+    private const int ItemYPadding = 4;
 
-    private static int sItemXPadding = 4;
-
-    private static int sItemYPadding = 4;
-
-    public Label EquipLabel;
-
-    public ImagePanel EquipPanel;
-
-    public bool IsDragging;
-
+    private bool _canDrag;
+    private long _clickTime;
+    private ImagePanel _contentPanel;
+    private Label _cooldownLabel;
+    private Guid _currentId = Guid.Empty;
+    private ItemBase? _currentItem = null;
+    private SpellBase? _currentSpell = null;
+    private Draggable _dragIcon;
+    private Label _equipLabel;
+    private bool _isDragging;
+    private bool _isEquipped;
+    private bool _isFaded;
+    private readonly Base _hotbarWindow;
+    private readonly byte _hotbarSlotIndex;
+    private ControlValue? _hotKey;
+    private Item? _inventoryItem = null;
+    private int _inventoryItemIndex = -1;
+    private ItemDescriptionWindow? _itemDescWindow;
+    private bool _mouseOver;
+    private int _mouseX = -1;
+    private int _mouseY = -1;
+    private Label _quantityLabel;
+    private Spell? _spellBookItem = null;
+    private SpellDescriptionWindow? _spellDescWindow;
+    private bool _textureLoaded;
     public Label KeyLabel;
-
-    //Dragging
-    private bool mCanDrag;
-
-    private long mClickTime;
-
-    //pnl is the background iamge
-    private ImagePanel mContentPanel;
-
-    private Label mCooldownLabel;
-
-    //Item Info
-    private Guid mCurrentId = Guid.Empty;
-
-    private ItemBase mCurrentItem = null;
-
-    private SpellBase mCurrentSpell = null;
-
-    private Draggable mDragIcon;
-
-    //Textures
-    private Base mHotbarWindow;
-
-    private ControlValue mHotKey;
-
-    private Item mInventoryItem = null;
-
-    private int mInventoryItemIndex = -1;
-
-    private bool mIsEquipped;
-
-    private bool mIsFaded;
-
-    private ItemDescriptionWindow mItemDescWindow;
-
-    //Mouse Event Variables
-    private bool mMouseOver;
-
-    private int mMouseX = -1;
-
-    private int mMouseY = -1;
-
-    private Spell mSpellBookItem = null;
-
-    private SpellDescriptionWindow mSpellDescWindow;
-
-    private bool mTexLoaded;
-
-    private byte mYindex;
-
-    public ImagePanel Pnl;
+    public ImagePanel HotbarIcon;
 
     public HotbarItem(byte index, Base hotbarWindow)
     {
-        mYindex = index;
-        mHotbarWindow = hotbarWindow;
+        _hotbarSlotIndex = index;
+        _hotbarWindow = hotbarWindow;
     }
 
     public void Setup()
     {
-        //Content Panel is layered on top of the container.
-        //Shows the Item or Spell Icon
-        mContentPanel = new ImagePanel(Pnl, "HotbarIcon" + mYindex);
-        mContentPanel.HoverEnter += pnl_HoverEnter;
-        mContentPanel.HoverLeave += pnl_HoverLeave;
-        mContentPanel.RightClicked += pnl_RightClicked;
-        mContentPanel.Clicked += pnl_Clicked;
+        // Content Panel is layered on top of the container (shows the Item or Spell Icon).
+        _contentPanel = new ImagePanel(HotbarIcon, nameof(HotbarIcon) + _hotbarSlotIndex);
+        _contentPanel.HoverEnter += hotbarIcon_HoverEnter;
+        _contentPanel.HoverLeave += hotbarIcon_HoverLeave;
+        _contentPanel.RightClicked += hotbarIcon_RightClicked;
+        _contentPanel.Clicked += hotbarIcon_Clicked;
 
-        EquipPanel = new ImagePanel(mContentPanel, "HotbarEquipedIcon" + mYindex);
-        EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
-        EquipLabel = new Label(Pnl, "HotbarEquippedLabel" + mYindex);
-        EquipLabel.IsHidden = true;
-        EquipLabel.Text = Strings.Inventory.EquippedSymbol;
-        EquipLabel.TextColor = new Color(0, 255, 255, 255);
-        mCooldownLabel = new Label(Pnl, "HotbarCooldownLabel" + mYindex);
-        mCooldownLabel.IsHidden = true;
-        mCooldownLabel.TextColor = new Color(0, 255, 255, 255);
+        _equipLabel = new Label(HotbarIcon, nameof(_equipLabel) + _hotbarSlotIndex)
+        {
+            IsHidden = true,
+            Text = Strings.Inventory.EquippedSymbol,
+            TextColor = new Color(255, 255, 255, 255)
+        };
+
+        _quantityLabel = new Label(HotbarIcon, nameof(_quantityLabel) + _hotbarSlotIndex)
+        {
+            IsHidden = true,
+            TextColor = new Color(255, 255, 255, 255)
+        };
+
+        _cooldownLabel = new Label(HotbarIcon, nameof(_cooldownLabel) + _hotbarSlotIndex)
+        {
+            IsHidden = true,
+            TextColor = new Color(255, 255, 255, 255)
+        };
     }
 
     public void Activate()
     {
-        if (mCurrentId != Guid.Empty)
+        if (_currentId != Guid.Empty && Globals.Me != null)
         {
-            if (mCurrentItem != null)
+            if (_currentItem != null)
             {
-                if (mInventoryItemIndex > -1)
+                if (_inventoryItemIndex > -1)
                 {
-                    Globals.Me.TryUseItem(mInventoryItemIndex);
+                    Globals.Me.TryUseItem(_inventoryItemIndex);
                 }
             }
-            else if (mCurrentSpell != null)
+            else if (_currentSpell != null)
             {
-                Globals.Me.TryUseSpell(mCurrentSpell.Id);
+                Globals.Me.TryUseSpell(_currentSpell.Id);
             }
         }
     }
 
-    void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
+    private void hotbarIcon_RightClicked(Base sender, ClickedEventArgs arguments)
     {
-        Globals.Me.AddToHotbar(mYindex, -1, -1);
-    }
-
-    void pnl_Clicked(Base sender, ClickedEventArgs arguments)
-    {
-        mClickTime = Timing.Global.MillisecondsUtc + 500;
-    }
-
-    void pnl_HoverLeave(Base sender, EventArgs arguments)
-    {
-        mMouseOver = false;
-        mMouseX = -1;
-        mMouseY = -1;
-        if (mItemDescWindow != null)
-        {
-            mItemDescWindow.Dispose();
-            mItemDescWindow = null;
-        }
-
-        if (mSpellDescWindow != null)
-        {
-            mSpellDescWindow.Dispose();
-            mSpellDescWindow = null;
-        }
-    }
-
-    void pnl_HoverEnter(Base sender, EventArgs arguments)
-    {
-        if (InputHandler.MouseFocus != null)
+        if (Globals.Me == null)
         {
             return;
         }
 
-        mMouseOver = true;
-        mCanDrag = true;
+        Globals.Me.AddToHotbar(_hotbarSlotIndex, -1, -1);
+    }
+
+    private void hotbarIcon_Clicked(Base sender, ClickedEventArgs arguments)
+    {
+        _clickTime = Timing.Global.MillisecondsUtc + 500;
+    }
+
+    private void hotbarIcon_HoverLeave(Base sender, EventArgs arguments)
+    {
+        _mouseOver = false;
+        _mouseX = -1;
+        _mouseY = -1;
+        if (_itemDescWindow != null)
+        {
+            _itemDescWindow.Dispose();
+            _itemDescWindow = null;
+        }
+
+        if (_spellDescWindow != null)
+        {
+            _spellDescWindow.Dispose();
+            _spellDescWindow = null;
+        }
+    }
+
+    private void hotbarIcon_HoverEnter(Base sender, EventArgs arguments)
+    {
+        if (InputHandler.MouseFocus != null || Globals.Me == null)
+        {
+            return;
+        }
+
+        _mouseOver = true;
+        _canDrag = true;
         if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
         {
-            mCanDrag = false;
+            _canDrag = false;
 
             return;
         }
 
-        if (mCurrentItem != null && mInventoryItem != null)
+        if (_currentItem != null && _inventoryItem != null)
         {
-            if (mItemDescWindow != null)
+            if (_itemDescWindow != null)
             {
-                mItemDescWindow.Dispose();
-                mItemDescWindow = null;
+                _itemDescWindow.Dispose();
+                _itemDescWindow = null;
             }
 
-            mItemDescWindow = new ItemDescriptionWindow(
-                mCurrentItem, 1, mHotbarWindow.X + (mHotbarWindow.Width / 2), mHotbarWindow.Y + mHotbarWindow.Height + 2,
-                mInventoryItem.ItemProperties, mCurrentItem.Name, ""
+            var quantityOfItem = 1;
+
+            if (_currentItem.IsStackable)
+            {
+                quantityOfItem = Globals.Me.GetQuantityOfItemInInventory(_currentItem.Id);
+            }
+
+            _itemDescWindow = new ItemDescriptionWindow(
+                _currentItem, quantityOfItem, _hotbarWindow.X + (_hotbarWindow.Width / 2), _hotbarWindow.Y + _hotbarWindow.Height + 2,
+                _inventoryItem.ItemProperties, _currentItem.Name, ""
             );
         }
-        else if (mCurrentSpell != null)
+        else if (_currentSpell != null)
         {
-            if (mSpellDescWindow != null)
+            if (_spellDescWindow != null)
             {
-                mSpellDescWindow.Dispose();
-                mSpellDescWindow = null;
+                _spellDescWindow.Dispose();
+                _spellDescWindow = null;
             }
 
-            mSpellDescWindow = new SpellDescriptionWindow(
-                mCurrentSpell.Id, mHotbarWindow.X + (mHotbarWindow.Width / 2), mHotbarWindow.Y + mHotbarWindow.Height + 2
+            _spellDescWindow = new SpellDescriptionWindow(
+                _currentSpell.Id, _hotbarWindow.X + (_hotbarWindow.Width / 2), _hotbarWindow.Y + _hotbarWindow.Height + 2
             );
         }
     }
@@ -202,10 +188,10 @@ public partial class HotbarItem
     {
         var rect = new FloatRect()
         {
-            X = Pnl.LocalPosToCanvas(new Point(0, 0)).X,
-            Y = Pnl.LocalPosToCanvas(new Point(0, 0)).Y,
-            Width = Pnl.Width,
-            Height = Pnl.Height
+            X = HotbarIcon.LocalPosToCanvas(new Point(0, 0)).X,
+            Y = HotbarIcon.LocalPosToCanvas(new Point(0, 0)).Y,
+            Width = HotbarIcon.Width,
+            Height = HotbarIcon.Height
         };
 
         return rect;
@@ -213,125 +199,121 @@ public partial class HotbarItem
 
     public void Update()
     {
-        if (Globals.Me == null)
+        if (Globals.Me == null || Controls.ActiveControls == null)
         {
             return;
         }
 
-        //See if Label Should be changed
-        var keybind = Controls.ActiveControls.ControlMapping[Control.Hotkey1 + mYindex].Bindings[0];
-        if (mHotKey == null || mHotKey.Modifier != keybind.Modifier || mHotKey.Key != keybind.Key)
+        // Check if the label should be changed
+        var keybind = Controls.ActiveControls.ControlMapping[Control.Hotkey1 + _hotbarSlotIndex].Bindings[0];
+        if (_hotKey == null || _hotKey.Modifier != keybind.Modifier || _hotKey.Key != keybind.Key)
         {
-            if (keybind.Modifier != Keys.None)
-            {
-                KeyLabel.SetText(string.Format("{00} + {01}",
-                    Strings.Keys.KeyDictionary[Enum.GetName(typeof(Keys), keybind.Modifier).ToLower()],
-                    Strings.Keys.KeyDictionary[Enum.GetName(typeof(Keys), keybind.Key).ToLower()]
-                ));
-            }
-            else
-            {
-                KeyLabel.SetText(
-                    Strings.Keys.KeyDictionary[Enum.GetName(typeof(Keys), keybind.Key).ToLower()]
-                );
-            }
-            
+            string modifierText = keybind.Modifier != Keys.None ? $"{Strings.Keys.KeyDictionary[Enum.GetName(typeof(Keys), keybind.Modifier)!.ToLower()]} + " : "";
+            string keyText = Strings.Keys.KeyDictionary[Enum.GetName(typeof(Keys), keybind.Key)!.ToLower()];
 
-            mHotKey = keybind;
+            KeyLabel.SetText($"{modifierText}{keyText}");
+
+            _hotKey = keybind;
         }
 
-        var slot = Globals.Me.Hotbar[mYindex];
-        var updateDisplay =
-            mCurrentId != slot.ItemOrSpellId ||
-            mTexLoaded ==
-            false; //Update display if the hotbar item changes or we dont have a texture for the current item
+        var slot = Globals.Me.Hotbar[_hotbarSlotIndex];
+        var updateDisplay = _currentId != slot.ItemOrSpellId || _textureLoaded == false; // Update display if item changes or we dont have a texture for it.
 
-        if (mCurrentId != slot.ItemOrSpellId)
+        if (_currentId != slot.ItemOrSpellId)
         {
-            mCurrentItem = null;
-            mCurrentSpell = null;
+            _currentItem = null;
+            _currentSpell = null;
             var itm = ItemBase.Get(slot.ItemOrSpellId);
             var spl = SpellBase.Get(slot.ItemOrSpellId);
             if (itm != null)
             {
-                mCurrentItem = itm;
+                _currentItem = itm;
             }
 
             if (spl != null)
             {
-                mCurrentSpell = spl;
+                _currentSpell = spl;
             }
 
-            mCurrentId = slot.ItemOrSpellId;
+            _currentId = slot.ItemOrSpellId;
         }
 
-        mSpellBookItem = null;
-        mInventoryItem = null;
-        mInventoryItemIndex = -1;
+        _spellBookItem = null;
+        _inventoryItem = null;
+        _inventoryItemIndex = -1;
 
-        if (mCurrentItem != null)
+        if (_currentItem != null)
         {
             var itmIndex = Globals.Me.FindHotbarItem(slot);
             if (itmIndex > -1)
             {
-                mInventoryItemIndex = itmIndex;
-                mInventoryItem = Globals.Me.Inventory[itmIndex] as Item;
+                _inventoryItemIndex = itmIndex;
+                _inventoryItem = (Item)Globals.Me.Inventory[itmIndex];
             }
         }
-        else if (mCurrentSpell != null)
+        else if (_currentSpell != null)
         {
             var splIndex = Globals.Me.FindHotbarSpell(slot);
             if (splIndex > -1)
             {
-                mSpellBookItem = Globals.Me.Spells[splIndex] as Spell;
+                _spellBookItem = Globals.Me.Spells[splIndex] as Spell;
             }
         }
 
-        if (mCurrentItem != null) //When it's an item
+        if (_currentItem != null) //When it's an item
         {
             //We don't have it, and the icon isn't faded
-            if (mInventoryItem == null && !mIsFaded)
+            if (_inventoryItem == null && !_isFaded)
             {
                 updateDisplay = true;
             }
 
             //We have it, and the equip icon doesn't match equipped status
-            if (mInventoryItem != null && Globals.Me.IsEquipped(mInventoryItemIndex) != mIsEquipped)
+            if (_inventoryItem != null && Globals.Me.IsEquipped(_inventoryItemIndex) != _isEquipped)
             {
                 updateDisplay = true;
             }
 
             //We have it, and it's on cd
-            if (mInventoryItem != null && Globals.Me.IsItemOnCooldown(mInventoryItemIndex))
+            if (_inventoryItem != null && Globals.Me.IsItemOnCooldown(_inventoryItemIndex))
             {
                 updateDisplay = true;
             }
 
             //We have it, and it's on cd, and the fade is incorrect
-            if (mInventoryItem != null && Globals.Me.IsItemOnCooldown(mInventoryItemIndex) != mIsFaded)
+            if (_inventoryItem != null && Globals.Me.IsItemOnCooldown(_inventoryItemIndex) != _isFaded)
             {
+                updateDisplay = true;
+            }
+
+            //We have it, and the quantity label is incorrect
+            var quantityText = Strings.FormatQuantityAbbreviated(Globals.Me.GetQuantityOfItemInInventory(_currentItem.Id));
+            if (_inventoryItem != null && _quantityLabel.Text != quantityText)
+            {
+                _quantityLabel.Text = quantityText;
                 updateDisplay = true;
             }
         }
 
-        if (mCurrentSpell != null) //When it's a spell
+        if (_currentSpell != null) //When it's a spell
         {
-            //We don't know it, and the icon isn't faded!
-            if (mSpellBookItem == null && !mIsFaded)
+            //We don't know it, remove from hotbar right away!
+            if (_spellBookItem == null)
             {
+                Globals.Me.AddToHotbar(_hotbarSlotIndex, -1, -1);
                 updateDisplay = true;
             }
 
             //Spell on cd
-            if (mSpellBookItem != null &&
-                Globals.Me.GetSpellCooldown(mSpellBookItem.Id) > Timing.Global.Milliseconds)
+            if (_spellBookItem != null &&
+                Globals.Me.GetSpellCooldown(_spellBookItem.Id) > Timing.Global.Milliseconds)
             {
                 updateDisplay = true;
             }
 
             //Spell on cd and the fade is incorrect
-            if (mSpellBookItem != null &&
-                Globals.Me.GetSpellCooldown(mSpellBookItem.Id) > Timing.Global.Milliseconds != mIsFaded)
+            if (_spellBookItem != null &&
+                Globals.Me.GetSpellCooldown(_spellBookItem.Id) > Timing.Global.Milliseconds != _isFaded)
             {
                 updateDisplay = true;
             }
@@ -339,147 +321,156 @@ public partial class HotbarItem
 
         if (updateDisplay) //Item on cd and fade is incorrect
         {
-            if (mCurrentItem != null)
+            if (_currentItem != null)
             {
-                mCooldownLabel.IsHidden = true;
-                mContentPanel.Show();
-                mContentPanel.Texture = Globals.ContentManager.GetTexture(
-                    Framework.Content.TextureType.Item, mCurrentItem.Icon
+                _contentPanel.Show();
+                _contentPanel.Texture = Globals.ContentManager.GetTexture(
+                    Framework.Content.TextureType.Item, _currentItem.Icon
                 );
 
-                if (mInventoryItemIndex > -1)
+                _equipLabel.IsHidden = true;
+                _quantityLabel.IsHidden = true;
+                _cooldownLabel.IsHidden = true;
+
+                if (_inventoryItemIndex > -1)
                 {
-                    EquipPanel.IsHidden = !Globals.Me.IsEquipped(mInventoryItemIndex);
-                    EquipLabel.IsHidden = !Globals.Me.IsEquipped(mInventoryItemIndex);
-                    mIsFaded = Globals.Me.IsItemOnCooldown(mInventoryItemIndex);
-                    if (mIsFaded)
+                    _isFaded = Globals.Me.IsItemOnCooldown(_inventoryItemIndex);
+                    _isEquipped = Globals.Me.IsEquipped(_inventoryItemIndex);
+
+                    if (_isFaded)
                     {
-                        mCooldownLabel.IsHidden = false;
-                        mCooldownLabel.Text = TimeSpan
-                            .FromMilliseconds(Globals.Me.GetItemRemainingCooldown(mInventoryItemIndex))
+                        _cooldownLabel.IsHidden = false;
+                        _cooldownLabel.Text = TimeSpan
+                            .FromMilliseconds(Globals.Me.GetItemRemainingCooldown(_inventoryItemIndex))
                             .WithSuffix();
                     }
-
-                    mIsEquipped = Globals.Me.IsEquipped(mInventoryItemIndex);
                 }
                 else
                 {
-                    EquipPanel.IsHidden = true;
-                    EquipLabel.IsHidden = true;
-                    mIsEquipped = false;
-                    mIsFaded = true;
+                    _equipLabel.IsHidden = true;
+                    _quantityLabel.IsHidden = true;
+                    _cooldownLabel.IsHidden = true;
+                    _isEquipped = false;
+                    _isFaded = true;
                 }
 
-                mTexLoaded = true;
+                _equipLabel.IsHidden = !_isEquipped || _inventoryItemIndex < 0;
+                _quantityLabel.IsHidden = !_currentItem.Stackable || _inventoryItemIndex < 0;
+                _cooldownLabel.IsHidden = !_isFaded || _inventoryItemIndex < 0;
+
+                _textureLoaded = true;
             }
-            else if (mCurrentSpell != null)
+            else if (_currentSpell != null)
             {
-                mContentPanel.Show();
-                mContentPanel.Texture = Globals.ContentManager.GetTexture(
-                    Framework.Content.TextureType.Spell, mCurrentSpell.Icon
+                _contentPanel.Show();
+                _contentPanel.Texture = Globals.ContentManager.GetTexture(
+                    Framework.Content.TextureType.Spell, _currentSpell.Icon
                 );
 
-                EquipPanel.IsHidden = true;
-                EquipLabel.IsHidden = true;
-                mCooldownLabel.IsHidden = true;
-                if (mSpellBookItem != null)
+                _equipLabel.IsHidden = true;
+                _quantityLabel.IsHidden = true;
+                _cooldownLabel.IsHidden = true;
+                if (_spellBookItem != null)
                 {
                     var spellSlot = Globals.Me.FindHotbarSpell(slot);
-                    mIsFaded = Globals.Me.IsSpellOnCooldown(spellSlot);
-                    if (mIsFaded)
+                    _isFaded = Globals.Me.IsSpellOnCooldown(spellSlot);
+                    if (_isFaded)
                     {
-                        mCooldownLabel.IsHidden = false;
+                        _cooldownLabel.IsHidden = false;
                         var remaining = Globals.Me.GetSpellRemainingCooldown(spellSlot);
-                        mCooldownLabel.Text = TimeSpan.FromMilliseconds(remaining).WithSuffix("0.0");
+                        _cooldownLabel.Text = TimeSpan.FromMilliseconds(remaining).WithSuffix("0.0");
                     }
                 }
                 else
                 {
-                    mIsFaded = true;
+                    _isFaded = true;
                 }
 
-                mTexLoaded = true;
-                mIsEquipped = false;
+                _textureLoaded = true;
+                _isEquipped = false;
             }
             else
             {
-                mContentPanel.Hide();
-                mTexLoaded = true;
-                mIsEquipped = false;
-                EquipPanel.IsHidden = true;
-                EquipLabel.IsHidden = true;
-                mCooldownLabel.IsHidden = true;
+                _contentPanel.Hide();
+                _textureLoaded = true;
+                _isEquipped = false;
+                _equipLabel.IsHidden = true;
+                _quantityLabel.IsHidden = true;
+                _cooldownLabel.IsHidden = true;
             }
 
-            if (mIsFaded)
+            if (_isFaded)
             {
-                if (mCurrentSpell != null)
+                if (_currentSpell != null)
                 {
-                    mContentPanel.RenderColor = new Color(100, 255, 255, 255);
+                    _contentPanel.RenderColor = new Color(60, 255, 255, 255);
                 }
-                
-                if (mCurrentItem != null)
+
+                if (_currentItem != null)
                 {
-                    mContentPanel.RenderColor = new Color(100, mCurrentItem.Color.R, mCurrentItem.Color.G, mCurrentItem.Color.B);
-                } 
+                    _contentPanel.RenderColor = new Color(60, _currentItem.Color.R, _currentItem.Color.G, _currentItem.Color.B);
+                }
             }
             else
             {
-                if (mCurrentSpell != null)
+                if (_currentSpell != null)
                 {
-                    mContentPanel.RenderColor = Color.White;
+                    _contentPanel.RenderColor = Color.White;
                 }
-                
-                if (mCurrentItem != null)
+
+                if (_currentItem != null)
                 {
-                    mContentPanel.RenderColor = mCurrentItem.Color;
+                    _contentPanel.RenderColor = _currentItem.Color;
                 }
             }
         }
 
-        if (mCurrentItem != null || mCurrentSpell != null)
+        if (_currentItem != null || _currentSpell != null)
         {
-            if (!IsDragging)
+            if (!_isDragging)
             {
-                mContentPanel.IsHidden = false;
-                if (mMouseOver)
+                _contentPanel.IsHidden = false;
+                _equipLabel.IsHidden = _currentItem == null || !Globals.Me.IsEquipped(_inventoryItemIndex) || _inventoryItemIndex < 0;
+                _quantityLabel.IsHidden = _currentItem == null || !_currentItem.Stackable || _inventoryItemIndex < 0;
+
+                if (_mouseOver)
                 {
                     if (!Globals.InputManager.MouseButtonDown(MouseButtons.Left))
                     {
-                        mCanDrag = true;
-                        mMouseX = -1;
-                        mMouseY = -1;
-                        if (Timing.Global.MillisecondsUtc < mClickTime)
+                        _canDrag = true;
+                        _mouseX = -1;
+                        _mouseY = -1;
+                        if (Timing.Global.MillisecondsUtc < _clickTime)
                         {
                             Activate();
-                            mClickTime = 0;
+                            _clickTime = 0;
                         }
                     }
                     else
                     {
-                        if (mCanDrag && Draggable.Active == null)
+                        if (_canDrag && Draggable.Active == null)
                         {
-                            if (mMouseX == -1 || mMouseY == -1)
+                            if (_mouseX == -1 || _mouseY == -1)
                             {
-                                mMouseX = InputHandler.MousePosition.X - Pnl.LocalPosToCanvas(new Point(0, 0)).X;
-                                mMouseY = InputHandler.MousePosition.Y - Pnl.LocalPosToCanvas(new Point(0, 0)).Y;
+                                _mouseX = InputHandler.MousePosition.X - HotbarIcon.LocalPosToCanvas(new Point(0, 0)).X;
+                                _mouseY = InputHandler.MousePosition.Y - HotbarIcon.LocalPosToCanvas(new Point(0, 0)).Y;
                             }
                             else
                             {
-                                var xdiff = mMouseX -
+                                var xdiff = _mouseX -
                                             (InputHandler.MousePosition.X -
-                                             Pnl.LocalPosToCanvas(new Point(0, 0)).X);
+                                             HotbarIcon.LocalPosToCanvas(new Point(0, 0)).X);
 
-                                var ydiff = mMouseY -
+                                var ydiff = _mouseY -
                                             (InputHandler.MousePosition.Y -
-                                             Pnl.LocalPosToCanvas(new Point(0, 0)).Y);
+                                             HotbarIcon.LocalPosToCanvas(new Point(0, 0)).Y);
 
                                 if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                 {
-                                    IsDragging = true;
-                                    mDragIcon = new Draggable(
-                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseX,
-                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseY, mContentPanel.Texture, mContentPanel.RenderColor
+                                    _isDragging = true;
+                                    _dragIcon = new Draggable(
+                                        HotbarIcon.LocalPosToCanvas(new Point(0, 0)).X + _mouseX,
+                                        HotbarIcon.LocalPosToCanvas(new Point(0, 0)).X + _mouseY, _contentPanel.Texture, _contentPanel.RenderColor
                                     );
 
                                     //SOMETHING SHOULD BE RENDERED HERE, RIGHT?
@@ -491,13 +482,13 @@ public partial class HotbarItem
             }
             else
             {
-                if (mDragIcon.Update())
+                if (_dragIcon.Update())
                 {
                     //Drug the item and now we stopped
-                    IsDragging = false;
+                    _isDragging = false;
                     var dragRect = new FloatRect(
-                        mDragIcon.X - sItemXPadding / 2, mDragIcon.Y - sItemYPadding / 2, sItemXPadding / 2 + 32,
-                        sItemYPadding / 2 + 32
+                        _dragIcon.X - ItemXPadding / 2, _dragIcon.Y - ItemYPadding / 2, ItemXPadding / 2 + 32,
+                        ItemYPadding / 2 + 32
                     );
 
                     float bestIntersect = 0;
@@ -530,20 +521,22 @@ public partial class HotbarItem
                             }
                         }
 
-                        if (bestIntersectIndex > -1 && bestIntersectIndex != mYindex)
+                        if (bestIntersectIndex > -1 && bestIntersectIndex != _hotbarSlotIndex)
                         {
-                            Globals.Me.HotbarSwap(mYindex, (byte) bestIntersectIndex);
+                            Globals.Me.HotbarSwap(_hotbarSlotIndex, (byte)bestIntersectIndex);
                         }
                     }
 
-                    mDragIcon.Dispose();
+                    _dragIcon.Dispose();
                 }
                 else
                 {
-                    mContentPanel.IsHidden = true;
+                    _contentPanel.IsHidden = true;
+                    _equipLabel.IsHidden = true;
+                    _quantityLabel.IsHidden = true;
+                    _cooldownLabel.IsHidden = true;
                 }
             }
         }
     }
-
 }
