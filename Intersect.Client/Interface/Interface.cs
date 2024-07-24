@@ -7,7 +7,7 @@ using Intersect.Client.Framework.Gwen.Skin;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Menu;
-using Intersect.Client.Interface.Shared.Errors;
+using Intersect.Client.Interface.Shared;
 using Intersect.Configuration;
 
 using Base = Intersect.Client.Framework.Gwen.Renderer.Base;
