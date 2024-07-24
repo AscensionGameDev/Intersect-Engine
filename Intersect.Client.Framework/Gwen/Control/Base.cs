@@ -863,11 +863,17 @@ public partial class Base : IDisposable
         return json;
     }
 
-    public void LoadJsonUi(GameContentManager.UI stage, string resolution, bool saveOutput = true)
+    public void LoadJsonUi(GameContentManager.UI stage, string? resolution, bool saveOutput = true)
     {
         if (string.IsNullOrWhiteSpace(Name))
         {
             Log.Warn($"Attempted to load layout for nameless {GetType().FullName}");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(resolution) || string.IsNullOrEmpty(resolution))
+        {
+            Log.Warn($"Attempted to load layout for {Name} with no resolution");
             return;
         }
 

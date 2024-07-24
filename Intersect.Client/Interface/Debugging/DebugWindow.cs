@@ -20,10 +20,14 @@ internal sealed partial class DebugWindow : Window
 
     public DebugWindow(Base parent) : base(parent, Strings.Debug.Title, false, nameof(DebugWindow))
     {
-        _disposables = new List<IDisposable>();
-
+        _disposables = [];
         DisableResizing();
 
+        CheckboxDrawDebugOutlines = CreateCheckboxDrawDebugOutlines();
+        CheckboxEnableLayoutHotReloading = CreateCheckboxEnableLayoutHotReloading();
+        ButtonShutdownServer = CreateButtonShutdownServer();
+        ButtonShutdownServerAndExit = CreateButtonShutdownServerAndExit();
+        TableDebugStats = CreateTableDebugStats();
         IsHidden = true;
     }
 
@@ -39,13 +43,7 @@ internal sealed partial class DebugWindow : Window
 
     protected override void EnsureInitialized()
     {
-        CheckboxDrawDebugOutlines = CreateCheckboxDrawDebugOutlines();
-        CheckboxEnableLayoutHotReloading = CreateCheckboxEnableLayoutHotReloading();
-        ButtonShutdownServer = CreateButtonShutdownServer();
-        ButtonShutdownServerAndExit = CreateButtonShutdownServerAndExit();
-        TableDebugStats = CreateTableDebugStats();
-
-        LoadJsonUi(UI.Debug, Graphics.Renderer.GetResolutionString());
+        LoadJsonUi(UI.Debug, Graphics.Renderer?.GetResolutionString());
     }
 
     protected override void OnAttached(Base parent)
@@ -110,10 +108,7 @@ internal sealed partial class DebugWindow : Window
             Text = Strings.Debug.EnableLayoutHotReloading,
         };
 
-        checkbox.CheckChanged += (sender, args) =>
-        {
-            Globals.ContentManager.ContentWatcher.Enabled = checkbox.IsChecked;
-        };
+        checkbox.CheckChanged += (sender, args) => Globals.ContentManager.ContentWatcher.Enabled = checkbox.IsChecked;
 
         checkbox.SetToolTipText(Strings.Internals.ExperimentalFeatureTooltip);
         checkbox.ToolTipFont = Skin.DefaultFont;
@@ -160,7 +155,7 @@ internal sealed partial class DebugWindow : Window
             ColumnCount = 2,
         };
 
-        var fpsProvider = new ValueTableCellDataProvider<int>(() => Graphics.Renderer.GetFps());
+        var fpsProvider = new ValueTableCellDataProvider<int>(() => Graphics.Renderer?.GetFps() ?? 0);
         table.AddRow(Strings.Debug.Fps).Listen(fpsProvider, 1);
         _disposables.Add(fpsProvider.Generator.Start());
 
@@ -218,7 +213,7 @@ internal sealed partial class DebugWindow : Window
         table.AddRow(Strings.Debug.LightsDrawn).Listen(lightsDrawnProvider, 1);
         _disposables.Add(lightsDrawnProvider.Generator.Start());
 
-        var timeProvider = new ValueTableCellDataProvider<string>(() => Time.GetTime());
+        var timeProvider = new ValueTableCellDataProvider<string>(Time.GetTime);
         table.AddRow(Strings.Debug.Time).Listen(timeProvider, 1);
         _disposables.Add(timeProvider.Generator.Start());
 
@@ -227,7 +222,7 @@ internal sealed partial class DebugWindow : Window
             try
             {
                 return Interface.CurrentInterface?.Children.ToArray().SelectManyRecursive(
-                    x => x.Children.ToArray(),
+                    x => [.. x.Children],
                     cancellationToken
                 ).ToArray().Length ?? 0;
             }
@@ -264,7 +259,7 @@ internal sealed partial class DebugWindow : Window
             Generator = new CancellableGenerator<Base>(CreateControlUnderCursorGenerator);
         }
 
-        public event TableDataChangedEventHandler DataChanged;
+        public event TableDataChangedEventHandler? DataChanged;
 
         public CancellableGenerator<Base> Generator { get; }
 
