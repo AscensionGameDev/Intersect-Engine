@@ -4,11 +4,9 @@ using Intersect.Reflection;
 
 namespace Intersect.Client.Interface;
 
-
 public abstract partial class MutableInterface : IMutableInterface
 {
-
-    private static DebugWindow _debugWindow;
+    private static DebugWindow? _debugWindow;
 
     public static void DetachDebugWindow()
     {
@@ -18,7 +16,10 @@ public abstract partial class MutableInterface : IMutableInterface
         }
     }
 
-    internal static void DisposeDebugWindow() => _debugWindow?.Dispose();
+    internal static void DisposeDebugWindow()
+    {
+        _debugWindow?.Dispose();
+    }
 
     private static void EnsureDebugWindowInitialized(Base parent)
     {
@@ -33,19 +34,18 @@ public abstract partial class MutableInterface : IMutableInterface
     protected internal MutableInterface(Base root)
     {
         Root = root;
-
         EnsureDebugWindowInitialized(root);
     }
 
     internal Base Root { get; }
 
     /// <inheritdoc />
-    public List<Base> Children => Root.Children ?? new List<Base>();
+    public List<Base> Children => Root.Children ?? [];
 
     /// <inheritdoc />
     public TElement Create<TElement>(params object[] parameters) where TElement : Base
     {
-        var fullParameterList = new List<object?> {Root};
+        var fullParameterList = new List<object?> { Root };
         fullParameterList.AddRange(parameters);
 
         var fullParameters = fullParameterList.ToArray();
@@ -56,46 +56,46 @@ public abstract partial class MutableInterface : IMutableInterface
             var constructorParameters = constructor.GetParameters();
             if (fullParameters.Length != constructorParameters.Length)
             {
-                fullParameters = fullParameters.Concat(
-                        Enumerable.Range(0, constructorParameters.Length - fullParameters.Length)
-                            .Select(_ => default(object))
-                    )
-                    .ToArray();
+                fullParameters =
+                [
+                    .. fullParameters,
+                    .. Enumerable.Range(0, constructorParameters.Length - fullParameters.Length)
+                        .Select(_ => default(object))
+,
+                ];
             }
 
-            if (constructor.Invoke(fullParameters) is not TElement constructedElement)
-            {
-                throw new NullReferenceException("Failed to invoke constructor that matches parameters.");
-            }
-
-            return constructedElement;
+            return constructor.Invoke(fullParameters) is not TElement constructedElement
+                ? throw new NullReferenceException("Failed to invoke constructor that matches parameters.")
+                : constructedElement;
         }
 
         throw new NullReferenceException("Failed to find constructor that matches parameters.");
     }
 
     /// <inheritdoc />
-    public TElement Find<TElement>(string name = null, bool recurse = false) where TElement : Base
+    public TElement? Find<TElement>(string? name = null, bool recurse = false) where TElement : Base
     {
-        if (!string.IsNullOrWhiteSpace(name))
-        {
-            return Root.FindChildByName(name, recurse) as TElement;
-        }
-
-        return Root.Find(child => child is TElement) as TElement;
+        return !string.IsNullOrWhiteSpace(name)
+            ? Root.FindChildByName(name, recurse) as TElement
+            : Root.Find(child => child is TElement) as TElement;
     }
 
     /// <inheritdoc />
-    public IEnumerable<TElement> FindAll<TElement>(bool recurse = false) where TElement : Base =>
-        Root.FindAll(child => child is TElement, recurse).Select(child => child as TElement);
+    public IEnumerable<TElement?> FindAll<TElement>(bool recurse = false) where TElement : Base
+    {
+        return Root.FindAll(child => child is TElement, recurse).Select(child => child as TElement);
+    }
 
     /// <inheritdoc />
-    public void Remove<TElement>(TElement element, bool dispose = false) where TElement : Base =>
+    public void Remove<TElement>(TElement element, bool dispose = false) where TElement : Base
+    {
         Root.RemoveChild(element, dispose);
+    }
 
     public static bool ToggleDebug()
     {
-        _debugWindow.ToggleHidden();
-        return _debugWindow.IsVisible;
+        _debugWindow?.ToggleHidden();
+        return _debugWindow?.IsVisible ?? false;
     }
 }
