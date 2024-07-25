@@ -96,12 +96,12 @@ public partial class InputBox : Base
         string prompt,
         bool modal,
         InputType inputType,
-        EventHandler onSuccess,
-        EventHandler onCancel,
-        object userData,
+        EventHandler? onSuccess,
+        EventHandler? onCancel = default,
+        object? userData = default,
         int quantity = 0,
         int maxQuantity = Int32.MaxValue,
-        Base parent = null,
+        Base? parent = null,
         GameContentManager.UI stage = GameContentManager.UI.InGame
     ) : base(parent)
     {
