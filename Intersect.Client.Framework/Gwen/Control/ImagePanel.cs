@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.ControlInternal;
@@ -50,7 +50,7 @@ public partial class ImagePanel : Base
     /// <summary>
     ///     Assign Existing Texture
     /// </summary>
-    public GameTexture Texture
+    public GameTexture? Texture
     {
         get => mTexture;
         set
