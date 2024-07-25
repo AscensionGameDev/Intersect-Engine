@@ -132,7 +132,7 @@ public partial class EscapeMenu : ImagePanel
     /// <inheritdoc />
     public override void ToggleHidden()
     {
-        if (mSettingsWindow.IsVisible)
+        if (!mSettingsWindow.IsHidden)
         {
             return;
         }
