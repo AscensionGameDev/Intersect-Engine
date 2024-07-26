@@ -116,7 +116,7 @@ public static partial class Interface
 
         FocusElements = new List<Framework.Gwen.Control.Base>();
         InputBlockingElements = new List<Framework.Gwen.Control.Base>();
-        ErrorMsgHandler = new ErrorHandler(sMenuCanvas, sGameCanvas);
+        ErrorMsgHandler = new ErrorHandler();
 
         if (Globals.GameState == GameStates.Intro || Globals.GameState == GameStates.Menu)
         {

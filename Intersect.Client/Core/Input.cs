@@ -7,6 +7,7 @@ using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface;
 using Intersect.Client.Interface.Game;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Maps;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
@@ -82,12 +83,10 @@ public static partial class Input
                 {
                     try
                     {
-                        var iBox = (InputBox)Interface.Interface.InputBlockingElements[i];
-                        if (iBox != null && !iBox.IsHidden)
+                        if (Interface.Interface.InputBlockingElements[i] is InputBox inputBox && !inputBox.IsHidden)
                         {
-                            iBox.okayBtn_Clicked(null, null);
+                            inputBox.SubmitInput();
                             canFocusChat = false;
-
                             break;
                         }
                     }

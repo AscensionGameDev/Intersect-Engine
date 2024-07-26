@@ -72,7 +72,7 @@ public partial class WindowControl : ResizableControl
     /// <param name="title">Window title.</param>
     /// <param name="modal">Determines whether the window should be modal.</param>
     /// <param name="name">name of this control</param>
-    public WindowControl(Base parent, string? title = default, bool modal = false, string? name = default) : base(parent, name)
+    public WindowControl(Base? parent, string? title = default, bool modal = false, string? name = default) : base(parent, name)
     {
         mTitleBar = new Dragger(this);
         mTitleBar.Height = 24;

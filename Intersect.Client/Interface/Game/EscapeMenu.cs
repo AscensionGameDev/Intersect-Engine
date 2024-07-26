@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Core;
+using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -140,7 +140,7 @@ public partial class EscapeMenu : ImagePanel
         base.ToggleHidden();
     }
 
-    private void LogoutToCharacterSelect(object sender, EventArgs e)
+    private void LogoutToCharacterSelect(object? sender, EventArgs? e)
     {
         if (Globals.Me != null)
         {
@@ -150,7 +150,7 @@ public partial class EscapeMenu : ImagePanel
         Main.Logout(true);
     }
 
-    private void LogoutToMainMenu(object sender, EventArgs e)
+    private void LogoutToMainMenu(object? sender, EventArgs? e)
     {
         if (Globals.Me != null)
         {
@@ -160,7 +160,7 @@ public partial class EscapeMenu : ImagePanel
         Main.Logout(false);
     }
 
-    private void ExitToDesktop(object sender, EventArgs e)
+    private void ExitToDesktop(object? sender, EventArgs? e)
     {
         if (Globals.Me != null)
         {
@@ -176,9 +176,11 @@ public partial class EscapeMenu : ImagePanel
         if (Globals.Me.CombatTimer > Timing.Global.Milliseconds)
         {
             //Show Logout in Combat Warning
-            var box = new InputBox(
-                Strings.Combat.WarningTitle, Strings.Combat.WarningCharacterSelect, true, InputBox.InputType.YesNo,
-                LogoutToCharacterSelect, null, null
+            _ = new InputBox(
+                title: Strings.Combat.WarningTitle,
+                prompt: Strings.Combat.WarningCharacterSelect,
+                inputType: InputBox.InputType.YesNo,
+                onSuccess: LogoutToCharacterSelect
             );
         }
         else
@@ -193,9 +195,11 @@ public partial class EscapeMenu : ImagePanel
         if (Globals.Me.CombatTimer > Timing.Global.Milliseconds)
         {
             //Show Logout in Combat Warning
-            var box = new InputBox(
-                Strings.Combat.WarningTitle, Strings.Combat.WarningLogout, true, InputBox.InputType.YesNo,
-                LogoutToMainMenu, null, null
+            _ = new InputBox(
+                title: Strings.Combat.WarningTitle,
+                prompt: Strings.Combat.WarningLogout,
+                inputType: InputBox.InputType.YesNo,
+                onSuccess: LogoutToMainMenu
             );
         }
         else
@@ -210,9 +214,11 @@ public partial class EscapeMenu : ImagePanel
         if (Globals.Me.CombatTimer > Timing.Global.Milliseconds)
         {
             //Show Logout in Combat Warning
-            var box = new InputBox(
-                Strings.Combat.WarningTitle, Strings.Combat.WarningExitDesktop, true, InputBox.InputType.YesNo,
-                ExitToDesktop, null, null
+            _ = new InputBox(
+                title: Strings.Combat.WarningTitle,
+                prompt: Strings.Combat.WarningExitDesktop,
+                inputType: InputBox.InputType.YesNo,
+                onSuccess: ExitToDesktop
             );
         }
         else

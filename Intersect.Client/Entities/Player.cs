@@ -6,9 +6,9 @@ using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Items;
 using Intersect.Client.General;
-using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Interface.Game.EntityPanel;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Items;
 using Intersect.Client.Localization;
 using Intersect.Client.Maps;
@@ -395,29 +395,25 @@ public partial class Player : Entity, IPlayer
         var canDropMultiple = quantity > 1;
         var inputType = canDropMultiple ? InputBox.InputType.NumericSliderInput : InputBox.InputType.YesNo;
         var prompt = canDropMultiple ? Strings.Inventory.DropItemPrompt : Strings.Inventory.DropPrompt;
-        InputBox.Open(
+        _ = new InputBox(
             title: Strings.Inventory.DropItemTitle,
             prompt: prompt.ToString(itemDescriptor.Name),
-            modal: true,
             inputType: inputType,
-            onSuccess: DropInputBoxOkay,
-            onCancel: default,
-            userData: inventorySlotIndex,
             quantity: quantity,
-            maxQuantity: quantity
-        );
-    }
-
-    private void DropInputBoxOkay(object? sender, EventArgs e)
-    {
-        if (sender is InputBox inputBox)
-        {
-            var value = (int)Math.Round(inputBox.Value);
-            if (value > 0)
+            maxQuantity: quantity,
+            userData: inventorySlotIndex,
+            onSuccess: (s, e) =>
             {
-                PacketSender.SendDropItem((int)inputBox.UserData, value);
+                if (s is InputBox inputBox && inputBox.UserData is int invSlot)
+                {
+                    var value = (int)Math.Round(inputBox.Value);
+                    if (value > 0)
+                    {
+                        PacketSender.SendDropItem(invSlot, value);
+                    }
+                }
             }
-        }
+        );
     }
 
     public int FindItem(Guid itemId, int itemVal = 1)
@@ -648,7 +644,13 @@ public partial class Player : Entity, IPlayer
 
         var prompt = Strings.Shop.SellPrompt;
         var inputType = InputBox.InputType.YesNo;
-        EventHandler? onSuccess = SellInputBoxOkay;
+        EventHandler? onSuccess = (s, e) =>
+        {
+            if (s is InputBox inputBox && inputBox.UserData is int invSlot)
+            {
+                PacketSender.SendSellItem(invSlot, 1);
+            }
+        };
         var userData = inventorySlotIndex;
         var slotQuantity = inventorySlot.Quantity;
         var maxQuantity = slotQuantity;
@@ -668,21 +670,29 @@ public partial class Player : Entity, IPlayer
                 maxQuantity = inventoryQuantity;
                 prompt = Strings.Shop.SellItemPrompt;
                 inputType = InputBox.InputType.NumericSliderInput;
-                onSuccess = SellItemInputBoxOkay;
+                onSuccess = (s, e) =>
+                {
+                    if (s is InputBox inputBox && inputBox.UserData is int invSlot)
+                    {
+                        var value = (int)Math.Round(inputBox.Value);
+                        if (value > 0)
+                        {
+                            PacketSender.SendSellItem(invSlot, value);
+                        }
+                    }
+                };
                 userData = inventorySlotIndex;
             }
         }
 
-        InputBox.Open(
+        _ = new InputBox(
             title: Strings.Shop.SellItem,
             prompt: prompt.ToString(itemDescriptor.Name),
-            modal: true,
             inputType: inputType,
-            onSuccess: onSuccess,
-            onCancel: null,
-            userData: userData,
             quantity: slotQuantity,
-            maxQuantity: maxQuantity
+            maxQuantity: maxQuantity,
+            userData: userData,
+            onSuccess: onSuccess
         );
     }
 
@@ -719,49 +729,25 @@ public partial class Player : Entity, IPlayer
             return;
         }
 
-        InputBox.Open(
+        _ = new InputBox(
             title: Strings.Shop.BuyItem,
             prompt: Strings.Shop.BuyItemPrompt.ToString(itemDescriptor.Name),
-            modal: true,
             inputType: InputBox.InputType.NumericSliderInput,
-            onSuccess: BuyItemInputBoxOkay,
-            onCancel: null,
-            userData: shopSlotIndex,
             quantity: maxBuyAmount,
-            maxQuantity: maxBuyAmount
+            maxQuantity: maxBuyAmount,
+            userData: shopSlotIndex,
+            onSuccess: (s, e) =>
+            {
+                if (s is InputBox inputBox && inputBox.UserData is int shopSlot)
+                {
+                    var value = (int)Math.Round(inputBox.Value);
+                    if (value > 0)
+                    {
+                        PacketSender.SendBuyItem(shopSlot, value);
+                    }
+                }
+            }
         );
-    }
-
-    private void BuyItemInputBoxOkay(object? sender, EventArgs e)
-    {
-        if (sender is InputBox inputBox)
-        {
-            var value = (int)Math.Round(inputBox.Value);
-            if (value > 0)
-            {
-                PacketSender.SendBuyItem((int)inputBox.UserData, value);
-            }
-        }
-    }
-
-    private void SellItemInputBoxOkay(object? sender, EventArgs e)
-    {
-        if (sender is InputBox inputBox)
-        {
-            var value = (int)Math.Round(inputBox.Value);
-            if (value > 0)
-            {
-                PacketSender.SendSellItem((int)inputBox.UserData, value);
-            }
-        }
-    }
-
-    private void SellInputBoxOkay(object? sender, EventArgs e)
-    {
-        if (sender is InputBox inputBox)
-        {
-            PacketSender.SendSellItem((int)inputBox.UserData, 1);
-        }
     }
 
     /// <summary>
@@ -853,16 +839,25 @@ public partial class Player : Entity, IPlayer
             return true;
         }
 
-        InputBox.Open(
+        _ = new InputBox(
             title: Strings.Bank.DepositItem,
             prompt: Strings.Bank.DepositItemPrompt.ToString(itemDescriptor.Name),
-            modal: true,
             inputType: InputBox.InputType.NumericSliderInput,
-            onSuccess: DepositItemInputBoxOkay,
-            onCancel: null,
-            userData: new[] { inventorySlotIndex, bankSlotIndex },
             quantity: movableQuantity,
-            maxQuantity: maximumQuantity
+            maxQuantity: maximumQuantity,
+            userData: new Tuple<int, int>(inventorySlotIndex, bankSlotIndex),
+            onSuccess: (s, e) =>
+            {
+                if (s is InputBox inputBox && inputBox.UserData is Tuple<int, int> bankData)
+                {
+                    var value = (int)Math.Round(inputBox.Value);
+                    if (value > 0)
+                    {
+                        var (invSlot, bankSlot) = bankData;
+                        PacketSender.SendDepositItem(invSlot, value, bankSlot);
+                    }
+                }
+            }
         );
 
         return true;
@@ -872,20 +867,6 @@ public partial class Player : Entity, IPlayer
     {
         return !string.IsNullOrWhiteSpace(Globals.Me?.Guild) &&
                (Globals.Me?.GuildRank?.Permissions.BankDeposit == true || Globals.Me?.Rank == 0);
-    }
-
-    private void DepositItemInputBoxOkay(object? sender, EventArgs e)
-    {
-        if (sender is InputBox inputBox)
-        {
-            var value = (int)Math.Round(inputBox.Value);
-            if (value > 0)
-            {
-                var userData = (int[])inputBox.UserData;
-
-                PacketSender.SendDepositItem(userData[0], value, userData[1]);
-            }
-        }
     }
 
     /// <summary>
@@ -976,16 +957,25 @@ public partial class Player : Entity, IPlayer
             return true;
         }
 
-        InputBox.Open(
+        _ = new InputBox(
             title: Strings.Bank.WithdrawItem,
             prompt: Strings.Bank.WithdrawItemPrompt.ToString(itemDescriptor.Name),
-            modal: true,
             inputType: InputBox.InputType.NumericSliderInput,
-            onSuccess: WithdrawItemInputBoxOkay,
-            onCancel: null,
-            userData: new[] { bankSlotIndex, inventorySlotIndex },
             quantity: movableQuantity,
-            maxQuantity: maximumQuantity
+            maxQuantity: maximumQuantity,
+            userData: new Tuple<int, int>(bankSlotIndex, inventorySlotIndex),
+            onSuccess: (s, e) =>
+            {
+                if (s is InputBox inputBox && inputBox.UserData is Tuple<int, int> bankData)
+                {
+                    var value = (int)Math.Round(inputBox.Value);
+                    if (value > 0)
+                    {
+                        var (bankSlot, invSlot) = bankData;
+                        PacketSender.SendWithdrawItem(bankSlot, value, invSlot);
+                    }
+                }
+            }
         );
 
         return true;
@@ -997,19 +987,6 @@ public partial class Player : Entity, IPlayer
                (Globals.Me?.GuildRank?.Permissions.BankRetrieve == true || Globals.Me?.Rank == 0);
     }
 
-    private void WithdrawItemInputBoxOkay(object? sender, EventArgs e)
-    {
-        if (sender is InputBox inputBox)
-        {
-            var value = (int)Math.Round(inputBox.Value);
-            if (value > 0)
-            {
-                int[] userData = (int[])inputBox.UserData;
-                PacketSender.SendWithdrawItem(userData[0], value, userData[1]);
-            }
-        }
-    }
-
     //Bag
     public void TryStoreBagItem(int inventorySlotIndex, int bagSlotIndex)
     {
@@ -1019,16 +996,8 @@ public partial class Player : Entity, IPlayer
             return;
         }
 
-        int[] userData = [inventorySlotIndex, bagSlotIndex];
-
         var quantity = inventorySlot.Quantity;
         var maxQuantity = quantity;
-
-        // TODO: Refactor server bagging logic to allow transferring quantities from the entire inventory and not just the slot
-        //if (itemDescriptor.IsStackable)
-        //{
-        //    maxQuantity = GetQuantityOfItemInInventory(itemDescriptor.Id);
-        //}
 
         if (maxQuantity < 2)
         {
@@ -1036,29 +1005,26 @@ public partial class Player : Entity, IPlayer
             return;
         }
 
-        InputBox.Open(
+        _ = new InputBox(
             title: Strings.Bags.StoreItem,
-            prompt: Strings.Bags.StoreItemPrompt.ToString(itemDescriptor.Name), true,
+            prompt: Strings.Bags.StoreItemPrompt.ToString(itemDescriptor.Name),
             inputType: InputBox.InputType.NumericSliderInput,
-            onSuccess: StoreBagItemInputBoxOkay,
-            onCancel: null,
-            userData: userData,
             quantity: quantity,
-            maxQuantity: maxQuantity
-        );
-    }
-
-    private void StoreBagItemInputBoxOkay(object? sender, EventArgs e)
-    {
-        if (sender is InputBox inputBox)
-        {
-            var value = (int)Math.Round(inputBox.Value);
-            if (value > 0)
+            maxQuantity: maxQuantity,
+            userData: new Tuple<int, int>(inventorySlotIndex, bagSlotIndex),
+            onSuccess: (s, e) =>
             {
-                int[] userData = (int[])inputBox.UserData;
-                PacketSender.SendStoreBagItem(userData[0], value, userData[1]);
+                if (s is InputBox inputBox && inputBox.UserData is Tuple<int, int> bagData)
+                {
+                    var value = (int)Math.Round(inputBox.Value);
+                    if (value > 0)
+                    {
+                        var (invSlot, bagSlot) = bagData;
+                        PacketSender.SendStoreBagItem(invSlot, value, bagSlot);
+                    }
+                }
             }
-        }
+        );
     }
 
     public void TryRetreiveBagItem(int bagSlotIndex, int inventorySlotIndex)
@@ -1074,16 +1040,8 @@ public partial class Player : Entity, IPlayer
             return;
         }
 
-        var userData = new int[2] { bagSlotIndex, inventorySlotIndex };
-
         var quantity = bagSlot.Quantity;
         var maxQuantity = quantity;
-
-        // TODO: Refactor server bagging logic to allow transferring quantities from the entire inventory and not just the slot
-        //if (itemDescriptor.IsStackable)
-        //{
-        //    maxQuantity = GetQuantityOfItemInBag(itemDescriptor.Id);
-        //}
 
         if (maxQuantity < 2)
         {
@@ -1091,30 +1049,26 @@ public partial class Player : Entity, IPlayer
             return;
         }
 
-        InputBox.Open(
+        _ = new InputBox(
             title: Strings.Bags.RetrieveItem,
             prompt: Strings.Bags.RetrieveItemPrompt.ToString(itemDescriptor.Name),
-            modal: true,
             inputType: InputBox.InputType.NumericSliderInput,
-            onSuccess: RetreiveBagItemInputBoxOkay,
-            onCancel: null,
-            userData: userData,
             quantity: quantity,
-            maxQuantity: maxQuantity
-        );
-    }
-
-    private void RetreiveBagItemInputBoxOkay(object? sender, EventArgs e)
-    {
-        if (sender is InputBox inputBox)
-        {
-            var value = (int)Math.Round(inputBox.Value);
-            if (value > 0)
+            maxQuantity: maxQuantity,
+            userData: new Tuple<int, int>(bagSlotIndex, inventorySlotIndex),
+            onSuccess: (s, e) =>
             {
-                int[] userData = (int[])inputBox.UserData;
-                PacketSender.SendRetrieveBagItem(userData[0], value, userData[1]);
+                if (s is InputBox inputBox && inputBox.UserData is Tuple<int, int> bagData)
+                {
+                    var value = (int)Math.Round(inputBox.Value);
+                    if (value > 0)
+                    {
+                        var (bagSlot, invSlot) = bagData;
+                        PacketSender.SendRetrieveBagItem(bagSlot, value, invSlot);
+                    }
+                }
             }
-        }
+        );
     }
 
     //Trade
@@ -1134,29 +1088,25 @@ public partial class Player : Entity, IPlayer
             return;
         }
 
-        InputBox.Open(
+        _ = new InputBox(
             title: Strings.Trading.OfferItem,
             prompt: Strings.Trading.OfferItemPrompt.ToString(tradingItem.Name),
-            modal: true,
             inputType: InputBox.InputType.NumericSliderInput,
-            onSuccess: TradeItemInputBoxOkay,
-            onCancel: null,
-            userData: index,
             quantity: quantity,
-            maxQuantity: quantity
-        );
-    }
-
-    private void TradeItemInputBoxOkay(object? sender, EventArgs e)
-    {
-        if (sender is InputBox inputBox)
-        {
-            var value = (int)Math.Round(inputBox.Value);
-            if (value > 0)
+            maxQuantity: quantity,
+            userData: index,
+            onSuccess: (s, e) =>
             {
-                PacketSender.SendOfferTradeItem((int)inputBox.UserData, value);
+                if (s is InputBox inputBox && inputBox.UserData is int slotIndex)
+                {
+                    var value = (int)Math.Round(inputBox.Value);
+                    if (value > 0)
+                    {
+                        PacketSender.SendOfferTradeItem(slotIndex, value);
+                    }
+                }
             }
-        }
+        );
     }
 
     public void TryRevokeItem(int index)
@@ -1175,29 +1125,25 @@ public partial class Player : Entity, IPlayer
             return;
         }
 
-        InputBox.Open(
+        _ = new InputBox(
             title: Strings.Trading.RevokeItem,
             prompt: Strings.Trading.RevokeItemPrompt.ToString(revokedItem.Name),
-            modal: true,
             inputType: InputBox.InputType.NumericSliderInput,
-            onSuccess: RevokeItemInputBoxOkay,
-            onCancel: null,
-            userData: index,
             quantity: quantity,
-            maxQuantity: quantity
-        );
-    }
-
-    private void RevokeItemInputBoxOkay(object? sender, EventArgs? e)
-    {
-        if (sender is InputBox inputBox)
-        {
-            var value = (int)Math.Round(inputBox.Value);
-            if (value > 0)
+            maxQuantity: quantity,
+            userData: index,
+            onSuccess: (s, e) =>
             {
-                PacketSender.SendRevokeTradeItem((int)inputBox.UserData, value);
+                if (s is InputBox inputBox && inputBox.UserData is int slotIndex)
+                {
+                    var value = (int)Math.Round(inputBox.Value);
+                    if (value > 0)
+                    {
+                        PacketSender.SendRevokeTradeItem(slotIndex, value);
+                    }
+                }
             }
-        }
+        );
     }
 
     //Spell Processing
@@ -1212,23 +1158,19 @@ public partial class Player : Entity, IPlayer
         var spellSlot = Spells[spellIndex];
         if (SpellBase.TryGet(spellSlot.Id, out var spellDescriptor))
         {
-            InputBox.Open(
+            _ = new InputBox(
                 title: Strings.Spells.ForgetSpell,
                 prompt: Strings.Spells.ForgetSpellPrompt.ToString(spellDescriptor.Name),
-                modal: true,
                 inputType: InputBox.InputType.YesNo,
-                onSuccess: ForgetSpellInputBoxOkay,
-                onCancel: null,
-                userData: spellIndex
+                userData: spellIndex,
+                onSuccess: (s, e) =>
+                {
+                    if (s is InputBox inputBox && inputBox.UserData != default)
+                    {
+                        PacketSender.SendForgetSpell((int)inputBox.UserData);
+                    }
+                }
             );
-        }
-    }
-
-    private void ForgetSpellInputBoxOkay(object? sender, EventArgs? e)
-    {
-        if (sender is InputBox inputBox)
-        {
-            PacketSender.SendForgetSpell((int)inputBox.UserData);
         }
     }
 

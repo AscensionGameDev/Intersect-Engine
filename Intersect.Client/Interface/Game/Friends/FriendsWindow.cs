@@ -3,6 +3,7 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Utilities;
@@ -98,27 +99,24 @@ partial class FriendsWindow
 
     void addButton_Clicked(Base sender, ClickedEventArgs arguments)
     {
-        var iBox = new InputBox(
-            Strings.Friends.AddFriend, Strings.Friends.AddFriendPrompt, true, InputBox.InputType.TextInput,
-            AddFriend, null, 0
+        _ = new InputBox(
+            title: Strings.Friends.AddFriend,
+            prompt: Strings.Friends.AddFriendPrompt,
+            inputType: InputBox.InputType.TextInput,
+            onSuccess: (s, e) =>
+            {
+                if (s is InputBox inputBox && inputBox.TextValue.Trim().Length >= 3)
+                {
+                    if (Globals.Me?.CombatTimer < Timing.Global.Milliseconds)
+                    {
+                        PacketSender.SendAddFriend(inputBox.TextValue);
+                    }
+                    else
+                    {
+                        PacketSender.SendChatMsg(Strings.Friends.InFight.ToString(), 4);
+                    }
+                }
+            }
         );
     }
-
-
-    private void AddFriend(Object sender, EventArgs e)
-    {
-        var ibox = (InputBox) sender;
-        if (ibox.TextValue.Trim().Length >= 3) //Don't bother sending a packet less than the char limit
-        {
-            if (Globals.Me.CombatTimer < Timing.Global.Milliseconds)
-            {
-                PacketSender.SendAddFriend(ibox.TextValue);
-            }
-            else
-            {
-                PacketSender.SendChatMsg(Strings.Friends.InFight.ToString(), 4);
-            }
-        }
-    }
-
 }

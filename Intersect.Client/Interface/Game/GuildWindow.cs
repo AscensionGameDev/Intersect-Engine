@@ -1,8 +1,9 @@
-﻿using Intersect.Client.Core;
+using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Network.Packets.Server;
@@ -156,32 +157,28 @@ partial class GuildWindow
 
     void addPopupButton_Clicked(Base sender, ClickedEventArgs arguments)
     {
-        var iBox = new InputBox(
-            Strings.Guilds.InviteMemberTitle, Strings.Guilds.InviteMemberPrompt.ToString(Globals.Me.Guild), true, InputBox.InputType.TextInput,
-            AddMember, null, 0
+        _ = new InputBox(
+            title: Strings.Guilds.InviteMemberTitle,
+            prompt: Strings.Guilds.InviteMemberPrompt.ToString(Globals.Me?.Guild),
+            inputType: InputBox.InputType.TextInput,
+            onSuccess: (s, e) =>
+            {
+                if (s is InputBox inputBox && inputBox.TextValue.Trim().Length >= 3)
+                {
+                    PacketSender.SendInviteGuild(inputBox.TextValue);
+                }
+            }
         );
     }
 
     private void leave_Clicked(Base sender, ClickedEventArgs arguments)
     {
-        var iBox = new InputBox(
-            Strings.Guilds.LeaveTitle, Strings.Guilds.LeavePrompt, true, InputBox.InputType.YesNo,
-            LeaveGuild, null, 0
+        _ = new InputBox(
+            title: Strings.Guilds.LeaveTitle,
+            prompt: Strings.Guilds.LeavePrompt.ToString(Globals.Me?.Guild),
+            inputType: InputBox.InputType.YesNo,
+            onSuccess: (s, e) => PacketSender.SendLeaveGuild()
         );
-    }
-
-    private void LeaveGuild(object sender, EventArgs e)
-    {
-        PacketSender.SendLeaveGuild();
-    }
-
-    private void AddMember(Object sender, EventArgs e)
-    {
-        var ibox = (InputBox)sender;
-        if (ibox.TextValue.Trim().Length >= 3) //Don't bother sending a packet less than the char limit
-        {
-            PacketSender.SendInviteGuild(ibox.TextValue);
-        }
     }
 
     #endregion
@@ -310,18 +307,20 @@ partial class GuildWindow
         var isOwner = rankIndex == 0;
         if (mSelectedMember != null && (rank.Permissions.Kick || isOwner) && mSelectedMember.Rank > rankIndex)
         {
-            var iBox = new InputBox(
-                Strings.Guilds.KickTitle, Strings.Guilds.KickPrompt.ToString(mSelectedMember?.Name), true, InputBox.InputType.YesNo,
-                KickMember, null, mSelectedMember
+            _ = new InputBox(
+                title: Strings.Guilds.KickTitle,
+                prompt: Strings.Guilds.KickPrompt.ToString(mSelectedMember?.Name),
+                inputType: InputBox.InputType.YesNo,
+                userData: mSelectedMember,
+                onSuccess: (s, e) =>
+                {
+                    if (s is InputBox inputBox && inputBox.UserData is GuildMember member)
+                    {
+                        PacketSender.SendKickGuildMember(member.Id);
+                    }
+                }
             );
         }
-    }
-
-    private void KickMember(object sender, EventArgs e)
-    {
-        var input = (InputBox)sender;
-        var member = (GuildMember)input.UserData;
-        PacketSender.SendKickGuildMember(member.Id);
     }
 
     #endregion
@@ -334,24 +333,21 @@ partial class GuildWindow
         var isOwner = rankIndex == 0;
         if (mSelectedMember != null && (rank.Permissions.Kick || isOwner) && mSelectedMember.Rank > rankIndex)
         {
-            var iBox = new InputBox(
-                Strings.Guilds.TransferTitle, Strings.Guilds.TransferPrompt.ToString(mSelectedMember?.Name, rank.Title, Globals.Me?.Guild), true, InputBox.InputType.TextInput,
-                TransferGuild, null, mSelectedMember
+            _ = new InputBox(
+                title: Strings.Guilds.TransferTitle,
+                prompt: Strings.Guilds.TransferPrompt.ToString(mSelectedMember?.Name, rank.Title, Globals.Me?.Guild),
+                inputType: InputBox.InputType.TextInput,
+                userData: mSelectedMember,
+                onSuccess: (s, e) =>
+                {
+                    if (s is InputBox inputBox && inputBox.TextValue == Globals.Me?.Guild && inputBox.UserData is GuildMember member)
+                    {
+                        PacketSender.SendTransferGuild(member.Id);
+                    }
+                }
             );
         }
     }
-
-    private void TransferGuild(object sender, EventArgs e)
-    {
-        var input = (InputBox)sender;
-        var member = (GuildMember)input.UserData;
-        var text = input.TextValue;
-        if (text == Globals.Me?.Guild)
-        {
-            PacketSender.SendTransferGuild(member.Id);
-        }
-    }
-
     #endregion
 
 
@@ -374,20 +370,22 @@ partial class GuildWindow
         var newRank = (int)sender.UserData;
         if (mSelectedMember != null && (rank.Permissions.Kick || isOwner) && mSelectedMember.Rank > rankIndex)
         {
-            var iBox = new InputBox(
-                Strings.Guilds.PromoteTitle, Strings.Guilds.PromotePrompt.ToString(mSelectedMember?.Name, Options.Instance.Guild.Ranks[newRank].Title), true, InputBox.InputType.YesNo,
-                PromoteMember, null, new KeyValuePair<GuildMember, int>(mSelectedMember, newRank)
+            _ = new InputBox(
+                title: Strings.Guilds.PromoteTitle,
+                prompt: Strings.Guilds.PromotePrompt.ToString(mSelectedMember?.Name, Options.Instance.Guild.Ranks[newRank].Title),
+                inputType: InputBox.InputType.YesNo,
+                userData: new Tuple<GuildMember?, int>(mSelectedMember, newRank),
+                onSuccess: (s, e) =>
+                {
+                    if (s is InputBox inputBox && inputBox.UserData is Tuple<GuildMember?, int> memberRankPair)
+                    {
+                        var (member, newRank) = memberRankPair;
+                        PacketSender.SendPromoteGuildMember(member?.Id ?? Guid.Empty, newRank);
+                    }
+                }
             );
         }
     }
-
-    private void PromoteMember(object sender, EventArgs e)
-    {
-        var input = (InputBox)sender;
-        var memberRankPair = (KeyValuePair<GuildMember, int>)input.UserData;
-        PacketSender.SendPromoteGuildMember(memberRankPair.Key?.Id ?? Guid.Empty, memberRankPair.Value);
-    }
-
     #endregion
 
 
@@ -400,20 +398,22 @@ partial class GuildWindow
         var newRank = (int)sender.UserData;
         if (mSelectedMember != null && (rank.Permissions.Kick || isOwner) && mSelectedMember.Rank > rankIndex)
         {
-            var iBox = new InputBox(
-                Strings.Guilds.DemoteTitle, Strings.Guilds.DemotePrompt.ToString(mSelectedMember?.Name, Options.Instance.Guild.Ranks[newRank].Title), true, InputBox.InputType.YesNo,
-                DemoteMember, null, new KeyValuePair<GuildMember, int>(mSelectedMember, newRank)
+            _ = new InputBox(
+                title: Strings.Guilds.DemoteTitle,
+                prompt: Strings.Guilds.DemotePrompt.ToString(mSelectedMember?.Name, Options.Instance.Guild.Ranks[newRank].Title),
+                inputType: InputBox.InputType.YesNo,
+                userData: new Tuple<GuildMember?, int>(mSelectedMember, newRank),
+                onSuccess: (s, e) =>
+                {
+                    if (s is InputBox inputBox && inputBox.UserData is Tuple<GuildMember?, int> memberRankPair)
+                    {
+                        var (member, newRank) = memberRankPair;
+                        PacketSender.SendDemoteGuildMember(member?.Id ?? Guid.Empty, newRank);
+                    }
+                }
             );
         }
     }
-
-    private void DemoteMember(object sender, EventArgs e)
-    {
-        var input = (InputBox)sender;
-        var memberRankPair = (KeyValuePair<GuildMember, int>)input.UserData;
-        PacketSender.SendDemoteGuildMember(memberRankPair.Key?.Id ?? Guid.Empty, memberRankPair.Value);
-    }
-
     #endregion
 
 }

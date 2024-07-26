@@ -24,6 +24,7 @@ using Intersect.Utilities;
 
 using MainMenu = Intersect.Client.Interface.Menu.MainMenu;
 using Intersect.Logging;
+using Intersect.Client.Interface.Shared;
 
 namespace Intersect.Client.MonoGame;
 
@@ -330,16 +331,6 @@ internal partial class IntersectGame : Game
         base.Draw(gameTime);
     }
 
-    private void ExitToDesktop(object sender, EventArgs e)
-    {
-        if (Globals.Me != null)
-        {
-            Globals.Me.CombatTimer = 0;
-        }
-
-        Globals.IsRunning = false;
-    }
-
     protected override void OnExiting(object sender, EventArgs args)
     {
         Log.Info("System window closing (due to user interaction most likely).");
@@ -368,9 +359,19 @@ internal partial class IntersectGame : Game
             if (!exception)
             {
                 //Show Message Getting Exit Confirmation From Player to Leave in Combat
-                var box = new InputBox(
-                    Strings.Combat.WarningTitle, Strings.Combat.WarningCharacterSelect, true,
-                    InputBox.InputType.YesNo, ExitToDesktop, null, null
+                _ = new InputBox(
+                    title: Strings.Combat.WarningTitle,
+                    prompt: Strings.Combat.WarningCharacterSelect,
+                    inputType: InputBox.InputType.YesNo,
+                    onSuccess: (s, e) =>
+                    {
+                        if (Globals.Me != null)
+                        {
+                            Globals.Me.CombatTimer = 0;
+                        }
+
+                        Globals.IsRunning = false;
+                    }
                 );
 
                 //Restart the MonoGame RunLoop

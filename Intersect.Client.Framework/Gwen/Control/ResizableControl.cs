@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Framework.Gwen.ControlInternal;
+using Intersect.Client.Framework.Gwen.ControlInternal;
 
 using Newtonsoft.Json.Linq;
 
@@ -20,7 +20,7 @@ public partial class ResizableControl : Base
     /// </summary>
     /// <param name="parent">Parent control.</param>
     /// <param name="name">name of this control</param>
-    public ResizableControl(Base parent, string? name) : base(parent, name)
+    public ResizableControl(Base? parent, string? name) : base(parent, name)
     {
         mResizer = new Resizer[10];
         MinimumSize = new Point(5, 5);

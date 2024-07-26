@@ -1,9 +1,11 @@
+using System;
 using Intersect.Admin.Actions;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.GameObjects.Maps.MapList;
@@ -377,9 +379,12 @@ partial class AdminWindow
     {
         if (TextboxName.Text.Trim().Length > 0)
         {
-            new InputBox(Strings.Admin.UnmuteCaption.ToString(TextboxName.Text),
-                Strings.Admin.UnmutePrompt.ToString(TextboxName.Text), true, InputBox.InputType.YesNo, UnmuteUser,
-                null, -1);
+            _ = new InputBox(
+                title: Strings.Admin.UnmuteCaption.ToString(TextboxName.Text),
+                prompt: Strings.Admin.UnmutePrompt.ToString(TextboxName.Text),
+                inputType: InputBox.InputType.YesNo,
+                onSuccess: (s, e) => PacketSender.SendAdminAction(new UnmuteAction(TextboxName.Text))
+            );
         }
     }
 
@@ -387,20 +392,13 @@ partial class AdminWindow
     {
         if (TextboxName.Text.Trim().Length > 0)
         {
-            new InputBox(Strings.Admin.UnbanCaption.ToString(TextboxName.Text),
-                Strings.Admin.UnbanPrompt.ToString(TextboxName.Text), true, InputBox.InputType.YesNo, UnbanUser,
-                null, -1);
+            _ = new InputBox(
+                title: Strings.Admin.UnbanCaption.ToString(TextboxName.Text),
+                prompt: Strings.Admin.UnbanPrompt.ToString(TextboxName.Text),
+                inputType: InputBox.InputType.YesNo,
+                onSuccess: (s, e) => PacketSender.SendAdminAction(new UnbanAction(TextboxName.Text))
+            );
         }
-    }
-
-    void UnmuteUser(object sender, EventArgs e)
-    {
-        PacketSender.SendAdminAction(new UnmuteAction(TextboxName.Text));
-    }
-
-    void UnbanUser(object sender, EventArgs e)
-    {
-        PacketSender.SendAdminAction(new UnbanAction(TextboxName.Text));
     }
 
     void _setSpriteButton_Clicked(Base sender, ClickedEventArgs arguments)
