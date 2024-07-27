@@ -7,6 +7,7 @@ using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Localization;
+using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.GameObjects;
 using Intersect.Utilities;
@@ -530,6 +531,10 @@ public partial class InventoryItem
                             );
                         }
                     }
+                }
+                else if (!Globals.Me.IsBusy)
+                {
+                    PacketSender.SendDropItem(mMySlot, Globals.Me.Inventory[mMySlot].Quantity);
                 }
 
                 mDragIcon.Dispose();

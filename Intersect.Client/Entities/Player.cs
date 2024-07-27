@@ -16,6 +16,7 @@ using Intersect.Client.Networking;
 using Intersect.Config.Guilds;
 using Intersect.Configuration;
 using Intersect.Enums;
+using Intersect.Extensions;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Logging;
@@ -400,17 +401,49 @@ public partial class Player : Entity, IPlayer
             prompt: prompt.ToString(itemDescriptor.Name),
             inputType: inputType,
             quantity: quantity,
-            maxQuantity: quantity,
+            maxQuantity: GetQuantityOfItemInInventory(itemDescriptor.Id),
             userData: inventorySlotIndex,
             onSuccess: (s, e) =>
             {
-                if (s is InputBox inputBox && inputBox.UserData is int invSlot)
+                if (s is not InputBox inputBox || inputBox.UserData is not int invSlot)
                 {
-                    var value = (int)Math.Round(inputBox.Value);
-                    if (value > 0)
+                    return;
+                }
+
+                var value = (int)Math.Round(inputBox.Value);
+
+                if (value <= 0)
+                {
+                    return;
+                }
+
+                // Check if the item can be dropped in multiple quantities or if value is less than or equal to the quantity in the initial slot
+                if (!canDropMultiple || value <= quantity)
+                {
+                    PacketSender.SendDropItem(invSlot, !canDropMultiple ? 1 : value);
+                    return;
+                }
+
+                // Find all slots containing the item.
+                var itemSlots = Inventory.Where(s => s.ItemId == itemDescriptor.Id).ToList();
+
+                // Send the drop item packet for the initial slot.
+                PacketSender.SendDropItem(invSlot, quantity);
+                value -= quantity;
+                itemSlots.Remove(inventorySlot); // Remove the initial slot from the list of item slots
+
+                // Iterate through the remaining slots containing the item
+                foreach (var slot in itemSlots)
+                {
+                    var dropAmount = Math.Min(value, slot.Quantity);
+
+                    if (dropAmount <= 0)
                     {
-                        PacketSender.SendDropItem(invSlot, value);
+                        break;
                     }
+
+                    PacketSender.SendDropItem(Inventory.IndexOf(slot), dropAmount);
+                    value -= dropAmount;
                 }
             }
         );
