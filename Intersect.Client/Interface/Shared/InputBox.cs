@@ -87,9 +87,10 @@ public partial class InputBox : WindowControl
         {
             NotchCount = maxQuantity,
             SnapToNotches = true,
+            Min = 1,
+            Max = maxQuantity,
             Value = quantity
         };
-        _numericSlider.SetRange(1, maxQuantity);
         _numericSlider.ValueChanged += _numericSlider_ValueChanged;
         _txtNumericSlider = new TextBoxNumeric(_numericSliderBg, "SliderboxText")
         {
