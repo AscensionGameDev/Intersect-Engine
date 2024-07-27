@@ -430,7 +430,7 @@ public partial class Player : Entity, IPlayer
                 // Send the drop item packet for the initial slot.
                 PacketSender.SendDropItem(invSlot, quantity);
                 value -= quantity;
-                itemSlots.Remove(inventorySlot); // Remove the initial slot from the list of item slots
+                _ = itemSlots.Remove(inventorySlot); // Remove the initial slot from the list of item slots
 
                 // Iterate through the remaining slots containing the item
                 foreach (var slot in itemSlots)
