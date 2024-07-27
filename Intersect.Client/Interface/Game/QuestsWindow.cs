@@ -3,6 +3,7 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Enums;
@@ -72,10 +73,18 @@ public partial class QuestsWindow
     {
         if (mSelectedQuest != null)
         {
-            new InputBox(
-                Strings.QuestLog.AbandonTitle.ToString(mSelectedQuest.Name),
-                Strings.QuestLog.AbandonPrompt.ToString(mSelectedQuest.Name), true, InputBox.InputType.YesNo,
-                AbandonQuest, null, mSelectedQuest.Id
+            _ = new InputBox(
+                title: Strings.QuestLog.AbandonTitle.ToString(mSelectedQuest.Name),
+                prompt: Strings.QuestLog.AbandonPrompt.ToString(mSelectedQuest.Name),
+                inputType: InputBox.InputType.YesNo,
+                userData: mSelectedQuest.Id,
+                onSuccess: (s, e) =>
+                {
+                    if (s is InputBox inputBox && inputBox.UserData is Guid questId)
+                    {
+                        PacketSender.SendAbandonQuest(questId);
+                    }
+                }
             );
         }
     }

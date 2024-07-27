@@ -5,6 +5,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Game.Chat;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Network.Packets.Server;
@@ -390,26 +391,30 @@ public partial class SelectCharacterWindow
             return;
         }
 
-        var iBox = new InputBox(
-            Strings.CharacterSelection.DeleteTitle.ToString(Characters[mSelectedChar].Name),
-            Strings.CharacterSelection.DeletePrompt.ToString(Characters[mSelectedChar].Name), true,
-            InputBox.InputType.YesNo, DeleteCharacter, null, Characters[mSelectedChar].Id, 0, 0,
-            mCharacterSelectionPanel.Parent, GameContentManager.UI.Menu
+        _ = new InputBox(
+            title: Strings.CharacterSelection.DeleteTitle.ToString(Characters[mSelectedChar].Name),
+            prompt: Strings.CharacterSelection.DeletePrompt.ToString(Characters[mSelectedChar].Name),
+            inputType: InputBox.InputType.YesNo,
+            userData: Characters[mSelectedChar].Id,
+            onSuccess: DeleteCharacter
         );
     }
 
-    private void DeleteCharacter(Object sender, EventArgs e)
+    private void DeleteCharacter(Object? sender, EventArgs e)
     {
-        PacketSender.SendDeleteCharacter((Guid) ((InputBox) sender).UserData);
+        if (sender is InputBox inputBox && inputBox.UserData is Guid charId)
+        {
+            PacketSender.SendDeleteCharacter(charId);
 
-        Globals.WaitingOnServer = true;
-        mPlayButton.Disable();
-        mNewButton.Disable();
-        mDeleteButton.Disable();
-        mLogoutButton.Disable();
+            Globals.WaitingOnServer = true;
+            mPlayButton.Disable();
+            mNewButton.Disable();
+            mDeleteButton.Disable();
+            mLogoutButton.Disable();
 
-        mSelectedChar = 0;
-        UpdateDisplay();
+            mSelectedChar = 0;
+            UpdateDisplay();
+        }
     }
 
     private void _newButton_Clicked(Base sender, ClickedEventArgs arguments)

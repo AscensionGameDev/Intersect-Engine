@@ -5,7 +5,6 @@ using Intersect.Client.Entities.Projectiles;
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.Items;
 using Intersect.Client.General;
-using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Interface.Menu;
 using Intersect.Client.Items;
@@ -25,6 +24,8 @@ using Intersect.Utilities;
 using Intersect.Framework;
 using Intersect.Models;
 using MapAttribute = Intersect.Enums.MapAttribute;
+using Intersect.Client.Interface.Shared;
+using Intersect.Network.Packets.Client;
 
 namespace Intersect.Client.Networking;
 
@@ -149,7 +150,7 @@ internal sealed partial class PacketHandler
     }
 
     //PingPacket
-    public void HandlePacket(IPacketSender packetSender, PingPacket packet)
+    public void HandlePacket(IPacketSender packetSender, Intersect.Network.Packets.Server.PingPacket packet)
     {
         if (!packet.RequestingReply)
         {
@@ -553,7 +554,7 @@ internal sealed partial class PacketHandler
     }
 
     //ChatMsgPacket
-    public void HandlePacket(IPacketSender packetSender, ChatMsgPacket packet)
+    public void HandlePacket(IPacketSender packetSender, Intersect.Network.Packets.Server.ChatMsgPacket packet)
     {
         ChatboxMsg.AddMessage(
             new ChatboxMsg(
@@ -1182,9 +1183,13 @@ internal sealed partial class PacketHandler
                 break;
         }
 
-        var iBox = new InputBox(
-            packet.Title, packet.Prompt, true, type, PacketSender.SendEventInputVariable,
-            PacketSender.SendEventInputVariableCancel, packet.EventId
+        _ = new InputBox(
+            title: packet.Title,
+            prompt: packet.Prompt,
+            inputType: type,
+            userData: packet.EventId,
+            onSuccess: PacketSender.SendEventInputVariable,
+            onCancel: PacketSender.SendEventInputVariableCancel
         );
     }
 
@@ -1810,11 +1815,15 @@ internal sealed partial class PacketHandler
     }
 
     //PartyInvitePacket
-    public void HandlePacket(IPacketSender packetSender, PartyInvitePacket packet)
+    public void HandlePacket(IPacketSender packetSender, Intersect.Network.Packets.Server.PartyInvitePacket packet)
     {
-        var iBox = new InputBox(
-            Strings.Parties.PartyInvite, Strings.Parties.InvitePrompt.ToString(packet.LeaderName), true,
-            InputBox.InputType.YesNo, PacketSender.SendPartyAccept, PacketSender.SendPartyDecline, packet.LeaderId
+        _ = new InputBox(
+            title: Strings.Parties.PartyInvite,
+            prompt: Strings.Parties.InvitePrompt.ToString(packet.LeaderName),
+            inputType: InputBox.InputType.YesNo,
+            userData: packet.LeaderId,
+            onSuccess: PacketSender.SendPartyAccept,
+            onCancel: PacketSender.SendPartyDecline
         );
     }
 
@@ -1950,12 +1959,15 @@ internal sealed partial class PacketHandler
     }
 
     //TradeRequestPacket
-    public void HandlePacket(IPacketSender packetSender, TradeRequestPacket packet)
+    public void HandlePacket(IPacketSender packetSender, Intersect.Network.Packets.Server.TradeRequestPacket packet)
     {
-        var iBox = new InputBox(
-            Strings.Trading.TradeRequest, Strings.Trading.RequestPrompt.ToString(packet.PartnerName), true,
-            InputBox.InputType.YesNo, PacketSender.SendTradeRequestAccept, PacketSender.SendTradeRequestDecline,
-            packet.PartnerId
+        _ = new InputBox(
+            title: Strings.Trading.TradeRequest,
+            prompt: Strings.Trading.RequestPrompt.ToString(packet.PartnerName),
+            inputType: InputBox.InputType.YesNo,
+            userData: packet.PartnerId,
+            onSuccess: PacketSender.SendTradeRequestAccept,
+            onCancel: PacketSender.SendTradeRequestDecline
         );
     }
 
@@ -2057,10 +2069,13 @@ internal sealed partial class PacketHandler
     //FriendRequestPacket
     public void HandlePacket(IPacketSender packetSender, FriendRequestPacket packet)
     {
-        var iBox = new InputBox(
-            Strings.Friends.Request, Strings.Friends.RequestPrompt.ToString(packet.FriendName), true,
-            InputBox.InputType.YesNo, PacketSender.SendFriendRequestAccept, PacketSender.SendFriendRequestDecline,
-            packet.FriendId
+        _ = new InputBox(
+            title: Strings.Friends.Request,
+            prompt: Strings.Friends.RequestPrompt.ToString(packet.FriendName),
+            inputType: InputBox.InputType.YesNo,
+            userData: packet.FriendId,
+            onSuccess: PacketSender.SendFriendRequestAccept,
+            onCancel: PacketSender.SendFriendRequestDecline
         );
     }
 
@@ -2145,10 +2160,12 @@ internal sealed partial class PacketHandler
     //GuildInvitePacket
     public void HandlePacket(IPacketSender packetSender, GuildInvitePacket packet)
     {
-        var iBox = new InputBox(
-            Strings.Guilds.InviteRequestTitle, Strings.Guilds.InviteRequestPrompt.ToString(packet.Inviter, packet.GuildName), true,
-            InputBox.InputType.YesNo, PacketSender.SendGuildInviteAccept, PacketSender.SendGuildInviteDecline,
-            null
+        _ = new InputBox(
+            title: Strings.Guilds.InviteRequestTitle,
+            prompt: Strings.Guilds.InviteRequestPrompt.ToString(packet.Inviter, packet.GuildName),
+            inputType: InputBox.InputType.YesNo,
+            onSuccess: PacketSender.SendGuildInviteAccept,
+            onCancel: PacketSender.SendGuildInviteDecline
         );
     }
 

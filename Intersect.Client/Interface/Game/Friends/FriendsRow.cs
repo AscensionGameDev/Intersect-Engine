@@ -1,10 +1,11 @@
-﻿using Intersect.Client.Core;
+using Intersect.Client.Core;
 using Intersect.Client.Networking;
 using Intersect.Client.Localization;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Interface.Shared;
 
 namespace Intersect.Client.Interface.Game;
 
@@ -89,14 +90,11 @@ public partial class FriendsRow
     private void MRemove_Clicked(Base sender, ClickedEventArgs arguments)
     {
         var iBox = new InputBox(
-            Strings.Friends.RemoveFriend, Strings.Friends.RemoveFriendPrompt.ToString(mMyName), true,
-            InputBox.InputType.YesNo, RemoveFriend, null, 0
+            title: Strings.Friends.RemoveFriend,
+            prompt: Strings.Friends.RemoveFriendPrompt.ToString(mMyName),
+            inputType: InputBox.InputType.YesNo,
+            onSuccess: (s, e) => PacketSender.SendRemoveFriend(mMyName)
         );
-    }
-
-    private void RemoveFriend(Object sender, EventArgs e)
-    {
-        PacketSender.SendRemoveFriend(mMyName);
     }
 
     private void MTell_Clicked(Base sender, ClickedEventArgs arguments)

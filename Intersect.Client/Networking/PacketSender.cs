@@ -1,6 +1,7 @@
 using Intersect.Client.Entities.Events;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Maps;
 using Intersect.Enums;
 using Intersect.Framework;
@@ -142,23 +143,20 @@ public static partial class PacketSender
         Network.SendPacket(new EventResponsePacket(ed.EventId, response));
     }
 
-    public static void SendEventInputVariable(object sender, EventArgs e)
+    public static void SendEventInputVariable(object? sender, EventArgs e)
     {
-        Network.SendPacket(
-            new EventInputVariablePacket(
-                (Guid) ((InputBox) sender).UserData, (int) ((InputBox) sender).Value, ((InputBox) sender).TextValue
-            )
-        );
+        if (sender is InputBox inputBox && inputBox.UserData is Guid eventId)
+        {
+            Network.SendPacket(new EventInputVariablePacket(eventId, (int)inputBox.Value, inputBox.TextValue));
+        }
     }
 
-    public static void SendEventInputVariableCancel(object sender, EventArgs e)
+    public static void SendEventInputVariableCancel(object? sender, EventArgs e)
     {
-        Network.SendPacket(
-            new EventInputVariablePacket(
-                (Guid) ((InputBox) sender).UserData, (int) ((InputBox) sender).Value, ((InputBox) sender).TextValue,
-                true
-            )
-        );
+        if (sender is InputBox inputBox && inputBox.UserData is Guid eventId)
+        {
+            Network.SendPacket(new EventInputVariablePacket(eventId, (int)inputBox.Value, inputBox.TextValue, true));
+        }
     }
 
     public static void SendCreateAccount(string username, string password, string email)
@@ -298,14 +296,20 @@ public static partial class PacketSender
         Network.SendPacket(new PartyLeavePacket());
     }
 
-    public static void SendPartyAccept(object sender, EventArgs e)
+    public static void SendPartyAccept(object? sender, EventArgs e)
     {
-        Network.SendPacket(new PartyInviteResponsePacket((Guid) ((InputBox) sender).UserData, true));
+        if (sender is InputBox inputBox && inputBox.UserData is Guid partyId)
+        {
+            Network.SendPacket(new PartyInviteResponsePacket(partyId, true));
+        }
     }
 
-    public static void SendPartyDecline(object sender, EventArgs e)
+    public static void SendPartyDecline(object? sender, EventArgs e)
     {
-        Network.SendPacket(new PartyInviteResponsePacket((Guid) ((InputBox) sender).UserData, false));
+        if (sender is InputBox inputBox && inputBox.UserData is Guid partyId)
+        {
+            Network.SendPacket(new PartyInviteResponsePacket(partyId, false));
+        }
     }
 
     public static void SendAcceptQuest(Guid questId)
@@ -348,14 +352,20 @@ public static partial class PacketSender
         Network.SendPacket(new DeclineTradePacket());
     }
 
-    public static void SendTradeRequestAccept(object sender, EventArgs e)
+    public static void SendTradeRequestAccept(object? sender, EventArgs e)
     {
-        Network.SendPacket(new TradeRequestResponsePacket((Guid) ((InputBox) sender).UserData, true));
+        if (sender is InputBox inputBox && inputBox.UserData is Guid tradeId)
+        {
+            Network.SendPacket(new TradeRequestResponsePacket(tradeId, true));
+        }
     }
 
-    public static void SendTradeRequestDecline(object sender, EventArgs e)
+    public static void SendTradeRequestDecline(object? sender, EventArgs e)
     {
-        Network.SendPacket(new TradeRequestResponsePacket((Guid) ((InputBox) sender).UserData, false));
+        if (sender is InputBox inputBox && inputBox.UserData is Guid tradeId)
+        {
+            Network.SendPacket(new TradeRequestResponsePacket(tradeId, false));
+        }
     }
 
     public static void SendStoreBagItem(int invSlot, int amount, int bagSlot)
@@ -393,14 +403,20 @@ public static partial class PacketSender
         Network.SendPacket(new UpdateFriendsPacket(name, false));
     }
 
-    public static void SendFriendRequestAccept(Object sender, EventArgs e)
+    public static void SendFriendRequestAccept(Object? sender, EventArgs e)
     {
-        Network.SendPacket(new FriendRequestResponsePacket((Guid) ((InputBox) sender).UserData, true));
+        if (sender is InputBox inputBox && inputBox.UserData is Guid requestId)
+        {
+            Network.SendPacket(new FriendRequestResponsePacket(requestId, true));
+        }
     }
 
-    public static void SendFriendRequestDecline(Object sender, EventArgs e)
+    public static void SendFriendRequestDecline(Object? sender, EventArgs e)
     {
-        Network.SendPacket(new FriendRequestResponsePacket((Guid) ((InputBox) sender).UserData, false));
+        if (sender is InputBox inputBox && inputBox.UserData is Guid requestId)
+        {
+            Network.SendPacket(new FriendRequestResponsePacket(requestId, false));
+        }
     }
 
     public static void SendSelectCharacter(Guid charId)
@@ -443,12 +459,12 @@ public static partial class PacketSender
         Network.SendPacket(new RequestGuildPacket());
     }
 
-    public static void SendGuildInviteAccept(Object sender, EventArgs e)
+    public static void SendGuildInviteAccept(Object? sender, EventArgs e)
     {
         Network.SendPacket(new GuildInviteAcceptPacket());
     }
 
-    public static void SendGuildInviteDecline(Object sender, EventArgs e)
+    public static void SendGuildInviteDecline(Object? sender, EventArgs e)
     {
         Network.SendPacket(new GuildInviteDeclinePacket());
     }
