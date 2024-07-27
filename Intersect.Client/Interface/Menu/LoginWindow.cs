@@ -1,6 +1,5 @@
 using System.Security.Cryptography;
 using System.Text;
-
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
@@ -17,13 +16,11 @@ namespace Intersect.Client.Interface.Menu;
 public partial class LoginWindow : ImagePanel, IMainMenuWindow
 {
     private readonly MainMenu _mainMenu;
-
     private readonly TextBox _txtUsername;
     private readonly TextBoxPassword _txtPassword;
     private readonly LabeledCheckBox _chkSavePass;
     private readonly Button _btnForgotPasssword;
     private readonly Button _btnLogin;
-
     private bool _useSavedPass;
     private string _savedPass = string.Empty;
 
@@ -80,7 +77,7 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
         Globals.InputManager.OpenKeyboard(
             KeyboardType.Normal,
             text => _txtUsername.Text = text ?? string.Empty,
-            "Username",
+            Strings.LoginWindow.Username,
             _txtUsername.Text,
             inputBounds: _txtUsername.BoundsGlobal
         );
@@ -96,7 +93,7 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
         Globals.InputManager.OpenKeyboard(
             KeyboardType.Password,
             text => _txtPassword.Text = text ?? string.Empty,
-            "Password",
+            Strings.LoginWindow.Password,
             _txtPassword.Text
         );
     }
@@ -212,20 +209,16 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
         _chkSavePass.IsChecked = true;
     }
 
-    private static string ComputePasswordHash(string password)
-    {
-        using var sha = new SHA256Managed();
-        return BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password ?? ""))).Replace("-", "");
-    }
+    private static string ComputePasswordHash(string password) =>
+        BitConverter.ToString(SHA256.HashData(Encoding.UTF8.GetBytes(password ?? string.Empty))).Replace("-", string.Empty);
 
     private void SaveCredentials()
     {
-        var username = "";
-        var password = "";
+        string username = string.Empty, password = string.Empty;
 
         if (_chkSavePass.IsChecked)
         {
-            username = _txtUsername?.Text?.Trim();
+            username = _txtUsername.Text.Trim();
             password = _useSavedPass ? _savedPass : ComputePasswordHash(_txtPassword.Text.Trim());
         }
 
