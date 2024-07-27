@@ -8,108 +8,80 @@ using Newtonsoft.Json;
 
 namespace Intersect.Client.Interface.Menu;
 
-
-public partial class CreditsWindow : IMainMenuWindow
+public partial class CreditsWindow : ImagePanel, IMainMenuWindow
 {
+    private readonly MainMenu _mainMenu;
+    private readonly RichLabel _richLabel;
 
-    private Button mBackBtn;
-
-    //Content
-    private ScrollControl mCreditsContent;
-
-    //Parent
-    private Label mCreditsHeader;
-
-    //Controls
-    private ImagePanel mCreditsWindow;
-
-    private MainMenu mMainMenu;
-
-    private RichLabel mRichLabel;
-
-    //Init
-    public CreditsWindow(Canvas parent, MainMenu mainMenu)
+    public CreditsWindow(Canvas parent, MainMenu mainMenu) : base(parent, "CreditsWindow")
     {
-        //Assign References
-        mMainMenu = mainMenu;
+        _mainMenu = mainMenu;
 
-        //Main Menu Window
-        mCreditsWindow = new ImagePanel(parent, "CreditsWindow");
+        var _creditsHeader = new Label(this, "CreditsHeader") { Text = Strings.Credits.Title };
 
-        //Menu Header
-        mCreditsHeader = new Label(mCreditsWindow, "CreditsHeader");
-        mCreditsHeader.SetText(Strings.Credits.Title);
+        var _creditsContent = new ScrollControl(this, "CreditsScrollview");
+        _creditsContent.EnableScroll(false, true);
 
-        mCreditsContent = new ScrollControl(mCreditsWindow, "CreditsScrollview");
-        mCreditsContent.EnableScroll(false, true);
+        _richLabel = new RichLabel(_creditsContent, "CreditsLabel");
 
-        mRichLabel = new RichLabel(mCreditsContent, "CreditsLabel");
+        var _btnBack = new Button(this, "BackButton") { Text = Strings.Credits.Back };
+        _btnBack.Clicked += BackBtn_Clicked;
 
-        //Back Button
-        mBackBtn = new Button(mCreditsWindow, "BackButton");
-        mBackBtn.SetText(Strings.Credits.Back);
-        mBackBtn.Clicked += BackBtn_Clicked;
-
-        mCreditsWindow.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+        LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
     }
 
     private void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)
     {
         Hide();
-        mMainMenu.Show();
+        _mainMenu.Show();
     }
 
-    //Methods
-    public void Update()
+    public override void Show()
     {
-    }
-
-    public void Hide()
-    {
-        mCreditsWindow.IsHidden = true;
-    }
-
-    public void Show()
-    {
-        mCreditsWindow.IsHidden = false;
-        mRichLabel.ClearText();
+        base.Show();
+        _richLabel.ClearText();
         var credits = new Credits();
         var creditsFile = Path.Combine(ClientConfiguration.ResourcesDirectory, "credits.json");
+
         if (File.Exists(creditsFile))
         {
             credits = JsonConvert.DeserializeObject<Credits>(File.ReadAllText(creditsFile));
         }
         else
         {
-            var line = new Credits.CreditsLine();
-            line.Text = "Insert your credits here!";
-            line.Alignment = "center";
-            line.Size = 12;
-            line.Clr = Intersect.Color.White;
-            line.Font = "sourcesansproblack";
+            var line = new Credits.CreditsLine
+            {
+                Text = "Insert your credits here!",
+                Alignment = "center",
+                Size = 12,
+                TextColor = Color.White,
+                Font = "sourcesansproblack"
+            };
+
             credits.Lines.Add(line);
         }
 
         File.WriteAllText(creditsFile, JsonConvert.SerializeObject(credits, Formatting.Indented));
 
-        foreach (var line in credits.Lines)
+        foreach (var line in credits?.Lines ?? [])
         {
             if (line.Text.Trim().Length == 0)
             {
-                mRichLabel.AddLineBreak();
+                _richLabel.AddLineBreak();
             }
             else
             {
-                mRichLabel.AddText(
-                    line.Text, new Color(line.Clr.A, line.Clr.R, line.Clr.G, line.Clr.B), line.GetAlignment(),
-                    GameContentManager.Current.GetFont(line.Font, line.Size)
+                _richLabel.AddText(
+                    text: line.Text,
+                    color: new Color(line.TextColor?.A ?? 255, line.TextColor?.R ?? 255, line.TextColor?.G ?? 255, line.TextColor?.B ?? 255),
+                    alignment: line.GetAlignment(),
+                    font: GameContentManager.Current.GetFont(line.Font, line.Size)
                 );
 
-                mRichLabel.AddLineBreak();
+                _richLabel.AddLineBreak();
             }
         }
 
-        mRichLabel.SizeToChildren(false, true);
+        _ = _richLabel.SizeToChildren(false, true);
     }
-
 }

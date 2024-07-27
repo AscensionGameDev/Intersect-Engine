@@ -1,39 +1,27 @@
-﻿using Intersect.Client.Framework.Gwen;
+using Intersect.Client.Framework.Gwen;
 
 namespace Intersect.Client.Interface.Menu;
 
-
 partial class Credits
 {
-
-    public List<CreditsLine> Lines = new List<CreditsLine>();
+    public List<CreditsLine> Lines = [];
 
     public partial struct CreditsLine
     {
-
         public string Text;
-
         public string Font;
-
         public int Size;
-
         public string Alignment;
-
-        public Color Clr;
+        public Color TextColor;
 
         public Alignments GetAlignment()
         {
-            switch (Alignment)
+            return Alignment switch
             {
-                case "center":
-                    return Alignments.CenterH;
-                case "right":
-                    return Alignments.Right;
-                default:
-                    return Alignments.Left;
-            }
+                "center" => Alignments.CenterH,
+                "right" => Alignments.Right,
+                _ => Alignments.Left,
+            };
         }
-
     }
-
 }
