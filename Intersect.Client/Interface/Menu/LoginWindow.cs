@@ -209,7 +209,7 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
         _chkSavePass.IsChecked = true;
     }
 
-    private static string ComputePasswordHash(string password) =>
+    public static string ComputePasswordHash(string password) =>
         BitConverter.ToString(SHA256.HashData(Encoding.UTF8.GetBytes(password ?? string.Empty))).Replace("-", string.Empty);
 
     private void SaveCredentials()
