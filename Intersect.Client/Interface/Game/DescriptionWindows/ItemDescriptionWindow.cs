@@ -325,7 +325,7 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
         for (var i = 0; i < Enum.GetValues<Stat>().Length; i++)
         {
             // Do we have item properties, if so this is a finished item. Otherwise does this item not have growing stats?
-            if (statModifiers != default || mItem.StatRanges?.Length == 0 || (mItem.StatRanges != default && mItem.StatRanges[i].LowRange == 0 && mItem.StatRanges[i].HighRange == 0))
+            if (statModifiers != default || mItem.StatRanges?.Length == 0)
             {
                 var flatStat = mItem.StatsGiven[i];
                 if (statModifiers != default)
@@ -349,23 +349,48 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
             // We do not have item properties and have growing stats! So don't display a finished stat but a range instead.
             else
             {
-                if (mItem.TryGetRangeFor((Stat)i, out var range))
+                var statGiven = mItem.StatsGiven[i];
+                var percentageStatGiven = mItem.PercentageStatsGiven[i];
+
+                // Display only the given stat if range is not available or not set
+                if (!mItem.TryGetRangeFor((Stat)i, out var range) || range == null || (range.LowRange == 0 && range.HighRange == 0))
                 {
-                    var statGiven = mItem.StatsGiven[i];
-                    var percentageStatGiven = mItem.PercentageStatsGiven[i];
+                    if (statGiven != 0)
+                    {
+                        if (percentageStatGiven != 0)
+                        {
+                            rows.AddKeyValueRow(Strings.ItemDescription.StatCounts[i], Strings.ItemDescription.RegularAndPercentage.ToString(statGiven, percentageStatGiven));
+                        }
+                        else
+                        {
+                            rows.AddKeyValueRow(Strings.ItemDescription.StatCounts[i], statGiven.ToString());
+                        }
+                    }
+                    else if (percentageStatGiven != 0)
+                    {
+                        rows.AddKeyValueRow(Strings.ItemDescription.StatCounts[i], Strings.ItemDescription.Percentage.ToString(percentageStatGiven));
+                    }
+                }
+                // If range is available, display the stat range
+                else
+                {
                     var statLow = statGiven + range.LowRange;
                     var statHigh = statGiven + range.HighRange;
 
-                    var statMessage = Strings.ItemDescription.StatGrowthRange.ToString(statLow, statHigh);
-
-                    if (percentageStatGiven != 0)
+                    // Ensure we don't display the range if both statLow and statHigh are zero
+                    if (statLow != 0 || statHigh != 0)
                     {
-                        statMessage = Strings.ItemDescription.RegularAndPercentage.ToString(statMessage, percentageStatGiven);
+                        var statMessage = Strings.ItemDescription.StatGrowthRange.ToString(statLow, statHigh);
+
+                        if (percentageStatGiven != 0)
+                        {
+                            statMessage = Strings.ItemDescription.RegularAndPercentage.ToString(statMessage, percentageStatGiven);
+                        }
+                        rows.AddKeyValueRow(Strings.ItemDescription.StatCounts[i], statMessage);
                     }
-                    rows.AddKeyValueRow(Strings.ItemDescription.StatCounts[i], statMessage);
                 }
+            }
         }
-    }
 
         // Bonus Effect
         foreach (var effect in mItem.Effects)
