@@ -1995,7 +1995,7 @@ public partial class Player : Entity, IPlayer
                             if (bestMatch is Player)
                             {
                                 //Select in admin window if open
-                                if (Interface.Interface.GameUi.AdminWindowOpen())
+                                if (Interface.Interface.GameUi.IsAdminWindowOpen)
                                 {
                                     Interface.Interface.GameUi.AdminWindowSelectName(bestMatch.Name);
                                 }
@@ -2049,7 +2049,7 @@ public partial class Player : Entity, IPlayer
         if (entity is Player)
         {
             //Select in admin window if open
-            if (Interface.Interface.GameUi.AdminWindowOpen())
+            if (Interface.Interface.GameUi.IsAdminWindowOpen)
             {
                 Interface.Interface.GameUi.AdminWindowSelectName(entity.Name);
             }
