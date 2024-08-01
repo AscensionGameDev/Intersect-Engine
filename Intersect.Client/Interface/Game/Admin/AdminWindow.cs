@@ -13,7 +13,7 @@ using static Intersect.Client.Framework.File_Management.GameContentManager;
 
 namespace Intersect.Client.Interface.Game.Admin;
 
-partial class AdminWindow : WindowControl
+public partial class AdminWindow : WindowControl
 {
     private readonly TextBox _textboxName;
     private readonly ComboBox _dropdownAccess;
