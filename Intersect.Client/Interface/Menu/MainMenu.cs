@@ -167,7 +167,7 @@ public partial class MainMenu : MutableInterface
     public void NotifyOpenCharacterSelection(List<Character> characters)
     {
         mShouldOpenCharacterSelection = true;
-        mSelectCharacterWindow.Characters = characters;
+        mSelectCharacterWindow.Characters = [.. characters];
     }
 
     public void NotifyOpenForgotPassword()
