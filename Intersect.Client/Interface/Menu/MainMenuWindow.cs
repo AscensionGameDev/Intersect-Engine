@@ -134,7 +134,7 @@ public partial class MainMenuWindow : Window
     {
         if (Networking.Network.InterruptDisconnectsIfConnected())
         {
-            _mainMenu.SwitchToWindow<RegisterWindow>();
+            _mainMenu.SwitchToWindow<RegistrationWindow>();
         }
         else
         {
@@ -163,7 +163,7 @@ public partial class MainMenuWindow : Window
     private void RegisterConnected(object? sender, EventArgs eventArgs)
     {
         RemoveRegisterEvents();
-        _mainMenu.SwitchToWindow<RegisterWindow>();
+        _mainMenu.SwitchToWindow<RegistrationWindow>();
     }
 
     #endregion Register

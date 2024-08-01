@@ -10,7 +10,7 @@ using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Menu;
 
-public partial class RegisterWindow : ImagePanel, IMainMenuWindow
+public partial class RegistrationWindow : ImagePanel, IMainMenuWindow
 {
     private readonly MainMenu _mainMenu;
 
@@ -22,7 +22,7 @@ public partial class RegisterWindow : ImagePanel, IMainMenuWindow
     private readonly Button _buttonRegister;
 
     //Init
-    public RegisterWindow(Canvas parent, MainMenu mainMenu) : base(parent, "RegistrationWindow")
+    public RegistrationWindow(Canvas parent, MainMenu mainMenu) : base(parent, nameof(RegistrationWindow))
     {
         //Assign References
         _mainMenu = mainMenu;
