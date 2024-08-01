@@ -39,7 +39,7 @@ public partial class MainMenu : MutableInterface
 
     private readonly SettingsWindow mSettingsWindow;
 
-    private readonly RegisterWindow mRegisterWindow;
+    private readonly RegistrationWindow mRegisterWindow;
 
     private readonly ResetPasswordWindow mResetPasswordWindow;
 
@@ -73,7 +73,7 @@ public partial class MainMenu : MutableInterface
         mLoginWindow = new LoginWindow(menuCanvas, this);
 
         //Register Controls
-        mRegisterWindow = new RegisterWindow(menuCanvas, this);
+        mRegisterWindow = new RegistrationWindow(menuCanvas, this);
 
         //Forgot Password Controls
         mForgotPasswordWindow = new ForgotPasswordWindow(menuCanvas, this);
@@ -228,7 +228,7 @@ public partial class MainMenu : MutableInterface
         {
             mLoginWindow.Show();
         }
-        else if (typeof(TMainMenuWindow) == typeof(RegisterWindow))
+        else if (typeof(TMainMenuWindow) == typeof(RegistrationWindow))
         {
             mRegisterWindow.Show();
         }
