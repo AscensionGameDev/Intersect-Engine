@@ -62,6 +62,9 @@ public partial class Options
     [JsonProperty("Player")]
     public PlayerOptions PlayerOpts = new PlayerOptions();
 
+    [JsonProperty("Minimap")]
+    public MinimapOptions MinimapOpts = new();
+
     [JsonProperty("Party")]
     public PartyOptions PartyOpts = new PartyOptions();
 

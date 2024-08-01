@@ -98,6 +98,8 @@ public partial class Controls
         CreateControlMap(Control.HoldToZoomIn, ControlValue.Default, ControlValue.Default);
         CreateControlMap(Control.HoldToZoomOut, ControlValue.Default, ControlValue.Default);
         CreateControlMap(Control.ToggleFullscreen, new ControlValue(Keys.Alt, Keys.Enter), ControlValue.Default);
+        CreateControlMap(Control.OpenMinimap, new ControlValue(Keys.None, Keys.M), ControlValue.Default);
+
     }
 
     private static void MigrateControlBindings(Control control)

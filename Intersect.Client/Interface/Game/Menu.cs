@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Core;
+using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -10,6 +10,10 @@ using Intersect.Client.Interface.Game.Spells;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Enums;
+
+using Intersect.GameObjects;
+using Intersect.Client.Interface.Game.Map;
+using System.Diagnostics;
 
 namespace Intersect.Client.Interface.Game;
 
@@ -38,6 +42,12 @@ public partial class Menu
     private readonly ImagePanel mMenuBackground;
 
     private readonly Button mMenuButton;
+
+    private readonly ImagePanel mMinimapBackground;
+
+    private readonly Button mMinimapButton;
+
+    private readonly MinimapWindow mMinimapWindow;
 
     //Menu Container
     private readonly ImagePanel mMenuContainer;
@@ -140,6 +150,7 @@ public partial class Menu
         mQuestsWindow = new QuestsWindow(gameCanvas);
         mMapItemWindow = new MapItemWindow(gameCanvas);
         mGuildWindow = new GuildWindow(gameCanvas);
+        mMinimapWindow = new MinimapWindow(gameCanvas);
     }
 
     //Methods
@@ -153,6 +164,7 @@ public partial class Menu
         mQuestsWindow.Update(updateQuestLog);
         mMapItemWindow.Update();
         mGuildWindow.Update();
+        mMinimapWindow.Update();
     }
 
     public void UpdateFriendsList()
@@ -179,6 +191,7 @@ public partial class Menu
         mQuestsWindow.Hide();
         mSpellsWindow.Hide();
         mGuildWindow.Hide();
+        mMinimapWindow.Hide();
     }
 
     public void ToggleCharacterWindow()
@@ -194,6 +207,19 @@ public partial class Menu
         }
     }
 
+    public void ToggleMinimapWindow()
+    {
+
+        if (mMinimapWindow.IsVisible())
+        {
+            mMinimapWindow.Hide();
+        }
+        else
+        {
+            HideWindows();
+            mMinimapWindow.Show();
+        }
+    }
     public bool ToggleFriendsWindow()
     {
         if (mFriendsWindow.IsVisible)
@@ -401,4 +427,5 @@ public partial class Menu
     {
         ToggleCharacterWindow();
     }
+
 }

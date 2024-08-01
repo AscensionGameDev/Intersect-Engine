@@ -329,6 +329,11 @@ public static partial class Input
                                     _ = (Interface.Interface.GameUi?.GameMenu.ToggleGuildWindow());
 
                                     break;
+
+                                case Control.OpenMinimap:
+                                    Interface.Interface.GameUi?.GameMenu?.ToggleMinimapWindow();
+
+                                    break;
                             }
 
                             break;
