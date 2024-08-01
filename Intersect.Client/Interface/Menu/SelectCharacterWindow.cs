@@ -16,15 +16,15 @@ public partial class SelectCharacterWindow : ImagePanel
 {
     private readonly MainMenu _mainMenu;
 
-    private readonly Label _lblCharname;
-    private readonly Label _lblInfo;
+    private readonly Label _labelCharname;
+    private readonly Label _labelInfo;
     private readonly ImagePanel _charContainer;
-    private readonly Button _btnNextChar;
-    private readonly Button _btnPrevChar;
-    private readonly Button _btnPlay;
-    private readonly Button _btnDelete;
-    private readonly Button _btnNew;
-    private readonly Button _btnLogout;
+    private readonly Button _buttonNextChar;
+    private readonly Button _buttonPrevChar;
+    private readonly Button _buttonPlay;
+    private readonly Button _buttonDelete;
+    private readonly Button _buttonNew;
+    private readonly Button _buttonLogout;
 
     private ImagePanel[]? _renderLayers;
 
@@ -42,49 +42,49 @@ public partial class SelectCharacterWindow : ImagePanel
         _ = new Label(this, "CharacterSelectionHeader") { Text = Strings.CharacterSelection.Title };
 
         //Character Name
-        _lblCharname = new Label(this, "CharacterNameLabel") { Text = Strings.CharacterSelection.Empty };
+        _labelCharname = new Label(this, "CharacterNameLabel") { Text = Strings.CharacterSelection.Empty };
 
         //Character Info
-        _lblInfo = new Label(this, "CharacterInfoLabel") { Text = Strings.CharacterSelection.New };
+        _labelInfo = new Label(this, "CharacterInfoLabel") { Text = Strings.CharacterSelection.New };
 
         //Character Container
         _charContainer = new ImagePanel(this, "CharacterContainer");
 
         //Next char Button
-        _btnNextChar = new Button(_charContainer, "NextCharacterButton");
-        _btnNextChar.Clicked += _btnNextChar_Clicked;
+        _buttonNextChar = new Button(_charContainer, "NextCharacterButton");
+        _buttonNextChar.Clicked += _buttonNextChar_Clicked;
 
         //Prev Char Button
-        _btnPrevChar = new Button(_charContainer, "PreviousCharacterButton");
-        _btnPrevChar.Clicked += _btnPrevChar_Clicked;
+        _buttonPrevChar = new Button(_charContainer, "PreviousCharacterButton");
+        _buttonPrevChar.Clicked += _buttonPrevChar_Clicked;
 
         //Play Button
-        _btnPlay = new Button(this, "PlayButton")
+        _buttonPlay = new Button(this, "PlayButton")
         {
             Text = Strings.CharacterSelection.Play,
             IsHidden = true
         };
-        _btnPlay.Clicked += PlayButton_Clicked;
+        _buttonPlay.Clicked += ButtonPlay_Clicked;
 
         //Delete Button
-        _btnDelete = new Button(this, "DeleteButton")
+        _buttonDelete = new Button(this, "DeleteButton")
         {
             Text = Strings.CharacterSelection.Delete,
             IsHidden = true
         };
-        _btnDelete.Clicked += _btnDelete_Clicked;
+        _buttonDelete.Clicked += _buttonDelete_Clicked;
 
         //Create new char Button
-        _btnNew = new Button(this, "NewButton") { Text = Strings.CharacterSelection.New };
-        _btnNew.Clicked += _btnNew_Clicked;
+        _buttonNew = new Button(this, "NewButton") { Text = Strings.CharacterSelection.New };
+        _buttonNew.Clicked += _buttonNew_Clicked;
 
         //Logout Button
-        _btnLogout = new Button(this, "LogoutButton")
+        _buttonLogout = new Button(this, "LogoutButton")
         {
             Text = Strings.CharacterSelection.Logout,
             IsHidden = true
         };
-        _btnLogout.Clicked += _btnLogout_Clicked;
+        _buttonLogout.Clicked += _buttonLogout_Clicked;
 
         LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
     }
@@ -99,10 +99,10 @@ public partial class SelectCharacterWindow : ImagePanel
         }
 
         // Re-Enable our buttons if we're not waiting for the server anymore with it disabled.
-        _btnPlay.IsDisabled = Globals.WaitingOnServer;
-        _btnNew.IsDisabled = Globals.WaitingOnServer;
-        _btnDelete.IsDisabled = Globals.WaitingOnServer;
-        _btnLogout.IsDisabled = Globals.WaitingOnServer;
+        _buttonPlay.IsDisabled = Globals.WaitingOnServer;
+        _buttonNew.IsDisabled = Globals.WaitingOnServer;
+        _buttonDelete.IsDisabled = Globals.WaitingOnServer;
+        _buttonLogout.IsDisabled = Globals.WaitingOnServer;
     }
 
     private void UpdateDisplay()
@@ -112,13 +112,13 @@ public partial class SelectCharacterWindow : ImagePanel
             return;
         }
 
-        _btnNextChar.IsHidden = Characters.Length <= 1;
-        _btnPrevChar.IsHidden = Characters.Length <= 1;
+        _buttonNextChar.IsHidden = Characters.Length <= 1;
+        _buttonPrevChar.IsHidden = Characters.Length <= 1;
 
         if (Characters.Length > 1)
         {
-            _btnNextChar.BringToFront();
-            _btnPrevChar.BringToFront();
+            _buttonNextChar.BringToFront();
+            _buttonPrevChar.BringToFront();
         }
 
         foreach (var paperdollPortrait in _renderLayers)
@@ -129,25 +129,25 @@ public partial class SelectCharacterWindow : ImagePanel
 
         if (Characters[mSelectedChar] == default)
         {
-            _btnPlay.Hide();
-            _btnDelete.Hide();
-            _btnNew.Show();
+            _buttonPlay.Hide();
+            _buttonDelete.Hide();
+            _buttonNew.Show();
 
-            _lblCharname.SetText(Strings.CharacterSelection.Empty);
-            _lblInfo.SetText(string.Empty);
+            _labelCharname.SetText(Strings.CharacterSelection.Empty);
+            _labelInfo.SetText(string.Empty);
             return;
         }
 
-        _lblCharname.SetText(Strings.CharacterSelection.Name.ToString(Characters[mSelectedChar].Name));
-        _lblInfo.SetText(
+        _labelCharname.SetText(Strings.CharacterSelection.Name.ToString(Characters[mSelectedChar].Name));
+        _labelInfo.SetText(
             Strings.CharacterSelection.Info.ToString(
                 Characters[mSelectedChar].Level, Characters[mSelectedChar].Class
             )
         );
 
-        _btnPlay.Show();
-        _btnDelete.Show();
-        _btnNew.Hide();
+        _buttonPlay.Show();
+        _buttonDelete.Show();
+        _buttonNew.Hide();
 
         // we are rendering the player facing down, then we need to know the render order of the equipments
         for (var i = 0; i < Options.Equipment.Paperdoll.Down.Count; i++)
@@ -239,27 +239,27 @@ public partial class SelectCharacterWindow : ImagePanel
         base.Show();
     }
 
-    private void _btnLogout_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _buttonLogout_Clicked(Base sender, ClickedEventArgs arguments)
     {
         Main.Logout(false, skipFade: true);
         _mainMenu.Reset();
     }
 
-    private void _btnPrevChar_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _buttonPrevChar_Clicked(Base sender, ClickedEventArgs arguments)
     {
         mSelectedChar--;
         if (mSelectedChar < 0)
         {
-            mSelectedChar = Characters.Length - 1;
+            mSelectedChar = Characters!.Length - 1;
         }
 
         UpdateDisplay();
     }
 
-    private void _btnNextChar_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _buttonNextChar_Clicked(Base sender, ClickedEventArgs arguments)
     {
         mSelectedChar++;
-        if (mSelectedChar >= Characters.Length)
+        if (mSelectedChar >= Characters!.Length)
         {
             mSelectedChar = 0;
         }
@@ -267,9 +267,9 @@ public partial class SelectCharacterWindow : ImagePanel
         UpdateDisplay();
     }
 
-    private void _btnDelete_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _buttonDelete_Clicked(Base sender, ClickedEventArgs arguments)
     {
-        if (Globals.WaitingOnServer)
+        if (Globals.WaitingOnServer || Characters == default)
         {
             return;
         }
@@ -290,17 +290,17 @@ public partial class SelectCharacterWindow : ImagePanel
             PacketSender.SendDeleteCharacter(charId);
 
             Globals.WaitingOnServer = true;
-            _btnPlay.Disable();
-            _btnNew.Disable();
-            _btnDelete.Disable();
-            _btnLogout.Disable();
+            _buttonPlay.Disable();
+            _buttonNew.Disable();
+            _buttonDelete.Disable();
+            _buttonLogout.Disable();
 
             mSelectedChar = 0;
             UpdateDisplay();
         }
     }
 
-    private void _btnNew_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _buttonNew_Clicked(Base sender, ClickedEventArgs arguments)
     {
         if (Globals.WaitingOnServer)
         {
@@ -310,15 +310,15 @@ public partial class SelectCharacterWindow : ImagePanel
         PacketSender.SendNewCharacter();
 
         Globals.WaitingOnServer = true;
-        _btnPlay.Disable();
-        _btnNew.Disable();
-        _btnDelete.Disable();
-        _btnLogout.Disable();
+        _buttonPlay.Disable();
+        _buttonNew.Disable();
+        _buttonDelete.Disable();
+        _buttonLogout.Disable();
     }
 
-    public void PlayButton_Clicked(Base? sender, ClickedEventArgs? arguments)
+    public void ButtonPlay_Clicked(Base? sender, ClickedEventArgs? arguments)
     {
-        if (Globals.WaitingOnServer)
+        if (Globals.WaitingOnServer || Characters == default)
         {
             return;
         }
@@ -327,10 +327,10 @@ public partial class SelectCharacterWindow : ImagePanel
         PacketSender.SendSelectCharacter(Characters[mSelectedChar].Id);
 
         Globals.WaitingOnServer = true;
-        _btnPlay.Disable();
-        _btnNew.Disable();
-        _btnDelete.Disable();
-        _btnLogout.Disable();
+        _buttonPlay.Disable();
+        _buttonNew.Disable();
+        _buttonDelete.Disable();
+        _buttonLogout.Disable();
     }
 }
 

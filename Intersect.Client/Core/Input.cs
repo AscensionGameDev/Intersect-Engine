@@ -216,7 +216,7 @@ public static partial class Input
                                 case Control.Enter:
                                     if (!selectCharacterWindow.IsHidden && selectCharacterWindow.Characters[selectCharacterWindow.mSelectedChar] != null)
                                     {
-                                        selectCharacterWindow.PlayButton_Clicked(null, null);
+                                        selectCharacterWindow.ButtonPlay_Clicked(null, null);
                                         consumeKey = true;
                                     }
 
