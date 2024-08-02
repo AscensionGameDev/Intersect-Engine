@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Core;
+using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 
@@ -9,40 +9,21 @@ namespace Intersect.Client.Interface.Game;
 /// <summary>
 /// The GUI class for the Announcement Window that can pop up on-screen during gameplay.
 /// </summary>
-public partial class AnnouncementWindow
+public partial class AnnouncementWindow : ImagePanel
 {
+    private readonly Label _label;
 
-    //Controls
-    private Canvas mGameCanvas;
-
-    private ImagePanel mPicture;
-
-    private Label mLabel;
-
-    private string mLabelText;
-
-    private long mDisplayUntil = 0;
-
-    /// <summary>
-    /// Indicates whether the control is hidden.
-    /// </summary>
-    public bool IsHidden
-    {
-        get { return mPicture.IsHidden; }
-        set { mPicture.IsHidden = value; }
-    }
+    private string _labelText = string.Empty;
+    private long _duration = 0;
 
     /// <summary>
     /// Create a new instance of the <see cref="AnnouncementWindow"/> class.
     /// </summary>
     /// <param name="gameCanvas">The <see cref="Canvas"/> to render this control on.</param>
-    public AnnouncementWindow(Canvas gameCanvas)
+    public AnnouncementWindow(Canvas gameCanvas) : base(gameCanvas, nameof(AnnouncementWindow))
     {
-       mGameCanvas = gameCanvas;
-       mPicture = new ImagePanel(gameCanvas, "AnnouncementWindow");
-       mLabel = new Label(mPicture, "AnnouncementLabel");
-    
-       mPicture.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        _label = new Label(this, "AnnouncementLabel");
+        LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer?.GetResolutionString());
     }
 
     /// <summary>
@@ -50,16 +31,20 @@ public partial class AnnouncementWindow
     /// </summary>
     public void Update()
     {
-        // Only update when we're visible to the user.
-        if (!mPicture.IsHidden)
+        if (IsHidden)
         {
-            mLabel.Text = mLabelText;
+            return;
+        }
 
-            // Are we still supposed to be visible?
-            if (Timing.Global.Milliseconds > mDisplayUntil)
-            {
-                Hide();
-            }
+        if(_label.Text != _labelText)
+        {
+            _label.Text = _labelText;
+        }
+
+        // Are we still supposed to be visible?
+        if (Timing.Global.Milliseconds > _duration)
+        {
+            Hide();
         }
     }
 
@@ -70,25 +55,8 @@ public partial class AnnouncementWindow
     /// <param name="displayTime">The time for which to display the announcement.</param>
     public void ShowAnnouncement(string announcementText, long displayTime)
     {
-        mLabelText = announcementText;
-        mDisplayUntil = Timing.Global.Milliseconds + displayTime;
+        _labelText = announcementText;
+        _duration = Timing.Global.Milliseconds + displayTime;
         Show();
     }
-
-    /// <summary>
-    /// Hides the control.
-    /// </summary>
-    public void Hide()
-    {
-        mPicture.Hide();
-    }
-
-    /// <summary>
-    /// Shows the control.
-    /// </summary>
-    public void Show()
-    {
-        mPicture.Show();
-    }
-
 }
