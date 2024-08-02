@@ -210,7 +210,7 @@ public static partial class Input
                             break;
 
                         case GameStates.Menu:
-                            var selectCharacterWindow = Interface.Interface.MenuUi.MainMenu.mSelectCharacterWindow;
+                            var selectCharacterWindow = Interface.Interface.MenuUi.MainMenu.SelectCharacterWindow;
 
                             switch (control)
                             {

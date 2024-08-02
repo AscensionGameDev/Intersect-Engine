@@ -32,14 +32,14 @@ public partial class MainMenuWindow : Window
             IsTabable = true,
             Text = Strings.MainMenu.Credits,
         };
-        _buttonCredits.Clicked += ButtonCreditsOnClicked;
+        _buttonCredits.Clicked += _buttonCredits_Clicked;
 
         _buttonExit = new Button(this, nameof(_buttonExit))
         {
             IsTabable = true,
             Text = Strings.MainMenu.Exit,
         };
-        _buttonExit.Clicked += ButtonExitOnClicked;
+        _buttonExit.Clicked += _buttonExit_Clicked;
 
         _buttonLogin = new Button(this, nameof(_buttonLogin))
         {
@@ -48,23 +48,24 @@ public partial class MainMenuWindow : Window
             IsTabable = true,
             Text = Strings.MainMenu.Login,
         };
-        _buttonLogin.Clicked += ButtonLoginOnClicked;
+        _buttonLogin.Clicked += _buttonLogin_Clicked;
 
         _buttonRegister = new Button(this, nameof(_buttonRegister))
         {
-            IsDisabled = MainMenu.ActiveNetworkStatus != NetworkStatus.Online || Options.Loaded && Options.BlockClientRegistrations,
+            IsDisabled = MainMenu.ActiveNetworkStatus != NetworkStatus.Online || (Options.Loaded && Options.BlockClientRegistrations),
             IsHidden = ClientContext.IsSinglePlayer,
             IsTabable = true,
             Text = Strings.MainMenu.Register,
         };
-        _buttonRegister.Clicked += ButtonRegisterOnClicked;
+        _buttonRegister.Clicked += _buttonRegister_Clicked;
 
         _buttonSettings = new Button(this, nameof(_buttonSettings))
         {
             IsTabable = true,
             Text = Strings.MainMenu.Settings,
         };
-        _buttonSettings.Clicked += ButtonSettingsOnClicked;
+        _buttonSettings.Clicked += _buttonSettings_Clicked;
+
         if (!string.IsNullOrEmpty(Strings.MainMenu.SettingsTooltip))
         {
             _buttonSettings.SetToolTipText(Strings.MainMenu.SettingsTooltip);
@@ -76,13 +77,12 @@ public partial class MainMenuWindow : Window
             IsVisible = ClientContext.IsSinglePlayer,
             Text = Strings.MainMenu.Start,
         };
-        _buttonStart.Clicked += ButtonStartOnClicked;
+        _buttonStart.Clicked += _buttonStart_Clicked;
     }
 
-    private void ButtonCreditsOnClicked(Base sender, ClickedEventArgs arguments) =>
-        _mainMenu.SwitchToWindow<CreditsWindow>();
+    private void _buttonCredits_Clicked(Base sender, ClickedEventArgs arguments) => _mainMenu.SwitchToWindow<CreditsWindow>();
 
-    private static void ButtonExitOnClicked(Base sender, ClickedEventArgs arguments)
+    private static void _buttonExit_Clicked(Base sender, ClickedEventArgs arguments)
     {
         Log.Info("User clicked exit button.");
         Globals.IsRunning = false;
@@ -90,7 +90,7 @@ public partial class MainMenuWindow : Window
 
     #region Login
 
-    private void ButtonLoginOnClicked(Base sender, ClickedEventArgs arguments)
+    private void _buttonLogin_Clicked(Base sender, ClickedEventArgs arguments)
     {
         if (Networking.Network.InterruptDisconnectsIfConnected())
         {
@@ -99,30 +99,32 @@ public partial class MainMenuWindow : Window
         else
         {
             _buttonLogin.IsDisabled = Globals.WaitingOnServer;
-            AddLoginEvents();
+            _addLoginEvents();
             Networking.Network.TryConnect();
         }
     }
 
-    private void AddLoginEvents()
+    private void _addLoginEvents()
     {
-        MainMenu.ReceivedConfiguration += LoginConnected;
-        Networking.Network.Socket.ConnectionFailed += LoginConnectionFailed;
-        Networking.Network.Socket.Disconnected += LoginDisconnected;
+        MainMenu.ReceivedConfiguration += _loginConnected;
+        Networking.Network.Socket.ConnectionFailed += _loginConnectionFailed;
+        Networking.Network.Socket.Disconnected += _loginDisconnected;
     }
 
-    private void RemoveLoginEvents()
+    private void _removeLoginEvents()
     {
-        MainMenu.ReceivedConfiguration -= LoginConnected;
-        Networking.Network.Socket.ConnectionFailed -= LoginConnectionFailed;
-        Networking.Network.Socket.Disconnected -= LoginDisconnected;
+        MainMenu.ReceivedConfiguration -= _loginConnected;
+        Networking.Network.Socket.ConnectionFailed -= _loginConnectionFailed;
+        Networking.Network.Socket.Disconnected -= _loginDisconnected;
     }
 
-    private void LoginConnectionFailed(INetworkLayerInterface nli, ConnectionEventArgs args, bool denied) => RemoveLoginEvents();
-    private void LoginDisconnected(INetworkLayerInterface nli, ConnectionEventArgs args) => RemoveLoginEvents();
-    private void LoginConnected(object? sender, EventArgs eventArgs)
+    private void _loginConnectionFailed(INetworkLayerInterface nli, ConnectionEventArgs args, bool denied) => _removeLoginEvents();
+
+    private void _loginDisconnected(INetworkLayerInterface nli, ConnectionEventArgs args) => _removeLoginEvents();
+
+    private void _loginConnected(object? sender, EventArgs eventArgs)
     {
-        RemoveLoginEvents();
+        _removeLoginEvents();
         _mainMenu.SwitchToWindow<LoginWindow>();
     }
 
@@ -130,7 +132,7 @@ public partial class MainMenuWindow : Window
 
     #region Register
 
-    private void ButtonRegisterOnClicked(Base sender, ClickedEventArgs arguments)
+    private void _buttonRegister_Clicked(Base sender, ClickedEventArgs arguments)
     {
         if (Networking.Network.InterruptDisconnectsIfConnected())
         {
@@ -139,39 +141,40 @@ public partial class MainMenuWindow : Window
         else
         {
             _buttonRegister.IsDisabled = Globals.WaitingOnServer;
-            AddRegisterEvents();
+            _addRegisterEvents();
             Networking.Network.TryConnect();
         }
     }
 
-    private void AddRegisterEvents()
+    private void _addRegisterEvents()
     {
-        MainMenu.ReceivedConfiguration += RegisterConnected;
-        Networking.Network.Socket.ConnectionFailed += RegisterConnectionFailed;
-        Networking.Network.Socket.Disconnected += RegisterDisconnected;
+        MainMenu.ReceivedConfiguration += _registerConnected;
+        Networking.Network.Socket.ConnectionFailed += _registerConnectionFailed;
+        Networking.Network.Socket.Disconnected += _registerDisconnected;
     }
 
-    private void RemoveRegisterEvents()
+    private void _removeRegisterEvents()
     {
-        MainMenu.ReceivedConfiguration -= RegisterConnected;
-        Networking.Network.Socket.ConnectionFailed -= RegisterConnectionFailed;
-        Networking.Network.Socket.Disconnected -= RegisterDisconnected;
+        MainMenu.ReceivedConfiguration -= _registerConnected;
+        Networking.Network.Socket.ConnectionFailed -= _registerConnectionFailed;
+        Networking.Network.Socket.Disconnected -= _registerDisconnected;
     }
 
-    private void RegisterConnectionFailed(INetworkLayerInterface nli, ConnectionEventArgs args, bool denied) => RemoveRegisterEvents();
-    private void RegisterDisconnected(INetworkLayerInterface nli, ConnectionEventArgs args) => RemoveRegisterEvents();
-    private void RegisterConnected(object? sender, EventArgs eventArgs)
+    private void _registerConnectionFailed(INetworkLayerInterface nli, ConnectionEventArgs args, bool denied) => _removeRegisterEvents();
+
+    private void _registerDisconnected(INetworkLayerInterface nli, ConnectionEventArgs args) => _removeRegisterEvents();
+
+    private void _registerConnected(object? sender, EventArgs eventArgs)
     {
-        RemoveRegisterEvents();
+        _removeRegisterEvents();
         _mainMenu.SwitchToWindow<RegistrationWindow>();
     }
 
     #endregion Register
 
-    private void ButtonSettingsOnClicked(Base sender, ClickedEventArgs arguments) =>
-        _mainMenu.SettingsButton_Clicked(sender, arguments);
+    private void _buttonSettings_Clicked(Base sender, ClickedEventArgs arguments) => _mainMenu.SettingsButton_Clicked();
 
-    private void ButtonStartOnClicked(Base sender, ClickedEventArgs arguments)
+    private void _buttonStart_Clicked(Base sender, ClickedEventArgs arguments)
     {
         Hide();
         Networking.Network.TryConnect();
@@ -179,10 +182,7 @@ public partial class MainMenuWindow : Window
         PacketSender.SendLogin(singleplayer, Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(singleplayer))));
     }
 
-    internal void Reset()
-    {
-        _buttonSettings.Show();
-    }
+    internal void Reset() => _buttonSettings.Show();
 
     internal void Update()
     {
@@ -195,8 +195,8 @@ public partial class MainMenuWindow : Window
 
     internal void UpdateDisabled()
     {
-        _buttonLogin.IsDisabled = MainMenu.ActiveNetworkStatus != NetworkStatus.Online;
-        _buttonRegister.IsDisabled = MainMenu.ActiveNetworkStatus != NetworkStatus.Online ||
-                                     Options.Loaded && Options.BlockClientRegistrations;
+        var isOffline = MainMenu.ActiveNetworkStatus != NetworkStatus.Online;
+        _buttonLogin.IsDisabled = isOffline;
+        _buttonRegister.IsDisabled = isOffline || (Options.Loaded && Options.BlockClientRegistrations);
     }
 }
