@@ -18,8 +18,8 @@ namespace Intersect.Client.Interface.Shared;
 public partial class SettingsWindow : ImagePanel
 {
     // Parent Window.
-    private readonly MainMenu _mainMenu;
-    private readonly EscapeMenu _escapeMenu;
+    private readonly MainMenu? _mainMenu;
+    private readonly EscapeMenu? _escapeMenu;
 
     // Settings Window.
     private readonly Label _settingsHeader;
@@ -96,7 +96,7 @@ public partial class SettingsWindow : ImagePanel
     private bool _returnToMenu;
 
     // Initialize.
-    public SettingsWindow(Base parent, MainMenu mainMenu, EscapeMenu escapeMenu) : base(parent, "SettingsWindow")
+    public SettingsWindow(Base parent, MainMenu? mainMenu, EscapeMenu? escapeMenu) : base(parent, nameof(SettingsWindow))
     {
         // Assign References.
         _mainMenu = mainMenu;
