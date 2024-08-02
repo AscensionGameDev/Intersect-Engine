@@ -11,6 +11,7 @@ using Intersect.Client.Interface.Shared;
 using Intersect.Client.Maps;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
+using Intersect.Enums;
 using Intersect.Utilities;
 
 namespace Intersect.Client.Core;
@@ -97,7 +98,7 @@ public static partial class Input
                         var eventWindow = (EventWindow)Interface.Interface.InputBlockingElements[i];
                         if (eventWindow != null && !eventWindow.IsHidden && Globals.EventDialogs.Count > 0)
                         {
-                            eventWindow.EventResponse1_Clicked(null, null);
+                            eventWindow.CloseEventResponse(EventResponseType.OneOption);
                             canFocusChat = false;
 
                             break;
