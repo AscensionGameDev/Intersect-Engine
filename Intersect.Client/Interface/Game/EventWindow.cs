@@ -32,11 +32,11 @@ public partial class EventWindow : ImagePanel
     private bool _isTypewriting = false;
     private readonly long _typewriterResponseDelay = ClientConfiguration.Instance.TypewriterResponseDelay;
 
-    private Dialog _currentDialog => Globals.EventDialogs[0];
-    private bool _hasOneOption => _currentDialog.Opt1.Length > 0;
-    private bool _hasTwoOptions => _currentDialog.Opt2.Length > 0;
-    private bool _hasThreeOptions => _currentDialog.Opt3.Length > 0;
-    private bool _hasFourOptions => _currentDialog.Opt4.Length > 0;
+    private static Dialog CurrentDialog => Globals.EventDialogs[0];
+    private static bool HasOneOption => CurrentDialog.Opt1.Length > 0;
+    private static bool HasTwoOptions => CurrentDialog.Opt2.Length > 0;
+    private static bool HasThreeOptions => CurrentDialog.Opt3.Length > 0;
+    private static bool HasFourOptions => CurrentDialog.Opt4.Length > 0;
 
     public EventWindow(Canvas gameCanvas) : base(gameCanvas, nameof(EventWindow))
     {
@@ -94,9 +94,9 @@ public partial class EventWindow : ImagePanel
 
             // Always show option 1 ("continue" if options empty)
             _buttonEventResponse1.IsHidden = !_writer.IsDone;
-            _buttonEventResponse2.IsHidden = !_writer.IsDone || string.IsNullOrEmpty(_currentDialog.Opt2);
-            _buttonEventResponse3.IsHidden = !_writer.IsDone || string.IsNullOrEmpty(_currentDialog.Opt3);
-            _buttonEventResponse4.IsHidden = !_writer.IsDone || string.IsNullOrEmpty(_currentDialog.Opt4);
+            _buttonEventResponse2.IsHidden = !_writer.IsDone || string.IsNullOrEmpty(CurrentDialog.Opt2);
+            _buttonEventResponse3.IsHidden = !_writer.IsDone || string.IsNullOrEmpty(CurrentDialog.Opt3);
+            _buttonEventResponse4.IsHidden = !_writer.IsDone || string.IsNullOrEmpty(CurrentDialog.Opt4);
 
             _writer.Write(ClientConfiguration.Instance.TypewriterSounds.ElementAtOrDefault(voiceIdx));
             if (_writer.IsDone)
@@ -124,24 +124,24 @@ public partial class EventWindow : ImagePanel
         var responseCount = 0;
         var maxResponse = 1;
 
-        if (_hasOneOption)
+        if (HasOneOption)
         {
             responseCount++;
         }
 
-        if (_hasTwoOptions)
-        {
-            responseCount++;
-            maxResponse++;
-        }
-
-        if (_hasThreeOptions)
+        if (HasTwoOptions)
         {
             responseCount++;
             maxResponse++;
         }
 
-        if (_hasFourOptions)
+        if (HasThreeOptions)
+        {
+            responseCount++;
+            maxResponse++;
+        }
+
+        if (HasFourOptions)
         {
             responseCount++;
             maxResponse++;
@@ -152,7 +152,7 @@ public partial class EventWindow : ImagePanel
         Name = $"EventDialogWindow_{maxResponse}Response{(maxResponse == 1 ? string.Empty : 's')}";
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer?.GetResolutionString());
 
-        var faceTex = Globals.ContentManager.GetTexture(TextureType.Face, _currentDialog.Face);
+        var faceTex = Globals.ContentManager.GetTexture(TextureType.Face, CurrentDialog.Face);
         _panelEventFace.Texture = faceTex;
         _panelEventFace.IsHidden = faceTex == null;
         _areaEventDialog.IsHidden = faceTex == null;
@@ -168,23 +168,23 @@ public partial class EventWindow : ImagePanel
         }
         else
         {
-            _buttonEventResponse1.IsHidden = !_hasOneOption;
-            _buttonEventResponse1.SetText(_currentDialog.Opt1);
-            _buttonEventResponse2.IsHidden = !_hasTwoOptions;
-            _buttonEventResponse2.SetText(_currentDialog.Opt2);
-            _buttonEventResponse3.IsHidden = !_hasThreeOptions;
-            _buttonEventResponse3.SetText(_currentDialog.Opt3);
-            _buttonEventResponse4.IsHidden = !_hasFourOptions;
-            _buttonEventResponse4.SetText(_currentDialog.Opt4);
+            _buttonEventResponse1.IsHidden = !HasOneOption;
+            _buttonEventResponse1.SetText(CurrentDialog.Opt1);
+            _buttonEventResponse2.IsHidden = !HasTwoOptions;
+            _buttonEventResponse2.SetText(CurrentDialog.Opt2);
+            _buttonEventResponse3.IsHidden = !HasThreeOptions;
+            _buttonEventResponse3.SetText(CurrentDialog.Opt3);
+            _buttonEventResponse4.IsHidden = !HasFourOptions;
+            _buttonEventResponse4.SetText(CurrentDialog.Opt4);
         }
 
         if (faceTex != null)
         {
-            ShowDialog(_richLabelEventDialog, _labelEventDialog, _areaEventDialog, _currentDialog.Prompt);
+            ShowDialog(_richLabelEventDialog, _labelEventDialog, _areaEventDialog, CurrentDialog.Prompt);
         }
         else
         {
-            ShowDialog(_richLabelEventDialogNoFace, _labelEventDialogNoFace, _areaEventDialogNoFace, _currentDialog.Prompt);
+            ShowDialog(_richLabelEventDialogNoFace, _labelEventDialogNoFace, _areaEventDialogNoFace, CurrentDialog.Prompt);
         }
     }
 
@@ -223,7 +223,7 @@ public partial class EventWindow : ImagePanel
             return;
         };
 
-        var eventDialog = _currentDialog;
+        var eventDialog = CurrentDialog;
         if (eventDialog.ResponseSent != 0)
         {
             return;

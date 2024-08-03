@@ -27,7 +27,7 @@ public partial class AnnouncementWindow : ImagePanel
     }
 
     /// <summary>
-    /// Update this control..
+    /// Update this control...
     /// </summary>
     public void Update()
     {

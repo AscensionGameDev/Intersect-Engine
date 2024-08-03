@@ -13,21 +13,50 @@ public partial class BanMuteBox : WindowControl
 
     private readonly Dictionary<string, int> _dayCount = new()
     {
-        { Strings.BanMute.OneDay, 1 },
-        { Strings.BanMute.TwoDays, 2 },
-        { Strings.BanMute.ThreeDays, 3 },
-        { Strings.BanMute.FourDays, 4 },
-        { Strings.BanMute.FiveDays, 5 },
-        { Strings.BanMute.OneWeek, 7 },
-        { Strings.BanMute.TwoWeeks, 14 },
-        { Strings.BanMute.OneMonth, 30 },
-        { Strings.BanMute.TwoMonths, 60 },
-        { Strings.BanMute.SixMonths, 180 },
-        { Strings.BanMute.OneYear, 365 },
-        { Strings.BanMute.Forever, 999999 }
+        {
+            Strings.BanMute.OneDay, 1
+        },
+        {
+            Strings.BanMute.TwoDays, 2
+        },
+        {
+            Strings.BanMute.ThreeDays, 3
+        },
+        {
+            Strings.BanMute.FourDays, 4
+        },
+        {
+            Strings.BanMute.FiveDays, 5
+        },
+        {
+            Strings.BanMute.OneWeek, 7
+        },
+        {
+            Strings.BanMute.TwoWeeks, 14
+        },
+        {
+            Strings.BanMute.OneMonth, 30
+        },
+        {
+            Strings.BanMute.TwoMonths, 60
+        },
+        {
+            Strings.BanMute.SixMonths, 180
+        },
+        {
+            Strings.BanMute.OneYear, 365
+        },
+        {
+            Strings.BanMute.Forever, 999999
+        },
     };
 
-    public BanMuteBox(string title, string prompt, EventHandler okayHandler) : base(Interface.GameUi.GameCanvas, title, true, "BanMuteWindow")
+    public BanMuteBox(string title, string prompt, EventHandler okayHandler) : base(
+        Interface.GameUi.GameCanvas,
+        title,
+        true,
+        "BanMuteWindow"
+    )
     {
         DisableResizing();
         Interface.InputBlockingElements.Add(this);
@@ -38,34 +67,49 @@ public partial class BanMuteBox : WindowControl
         var richLabelPrompt = new RichLabel(promptContainer);
 
         // Reason label
-        _ = new Label(this, "LabelReason") { Text = Strings.BanMute.Reason };
+        _ = new Label(this, "LabelReason")
+        {
+            Text = Strings.BanMute.Reason,
+        };
 
         // Reason textbox
         _textboxReason = new TextBox(this, "TextboxReason");
         Interface.FocusElements.Add(_textboxReason);
 
         // Duration label
-        _ = new Label(this, "LabelDuration") { Text = Strings.BanMute.Duration };
+        _ = new Label(this, "LabelDuration")
+        {
+            Text = Strings.BanMute.Duration,
+        };
 
         // Duration combobox
         _comboboxDuration = new ComboBox(this, "ComboBoxDuration");
         foreach (var day in _dayCount)
         {
-            _ = _comboboxDuration.AddItem(label: day.Key, userData: day.Value);
+            _ = _comboboxDuration.AddItem(day.Key, userData: day.Value);
         }
 
         // Include IP checkbox
-        _checkboxIP = new LabeledCheckBox(this, "CheckboxIp") { Text = Strings.BanMute.IncludeIp };
+        _checkboxIP = new LabeledCheckBox(this, "CheckboxIp")
+        {
+            Text = Strings.BanMute.IncludeIp,
+        };
 
         // Ok and Cancel buttons
-        var buttonOkay = new Button(this, "ButtonOkay") { Text = Strings.BanMute.Okay };
+        var buttonOkay = new Button(this, "ButtonOkay")
+        {
+            Text = Strings.BanMute.Okay,
+        };
         buttonOkay.Clicked += (s, e) =>
         {
             okayHandler?.Invoke(this, EventArgs.Empty);
             Dispose();
         };
 
-        var buttonCancel = new Button(this, "ButtonCancel") { Text = Strings.BanMute.Cancel };
+        var buttonCancel = new Button(this, "ButtonCancel")
+        {
+            Text = Strings.BanMute.Cancel,
+        };
         buttonCancel.Clicked += (s, e) => Dispose();
 
         LoadJsonUi(UI.InGame, Graphics.Renderer?.GetResolutionString(), true);
@@ -84,9 +128,18 @@ public partial class BanMuteBox : WindowControl
         GC.SuppressFinalize(this);
     }
 
-    public int GetDuration() => (int)_comboboxDuration.SelectedItem.UserData;
+    public int GetDuration()
+    {
+        return (int)_comboboxDuration.SelectedItem.UserData;
+    }
 
-    public string GetReason() => _textboxReason.Text;
+    public string GetReason()
+    {
+        return _textboxReason.Text;
+    }
 
-    public bool BanIp() => _checkboxIP.IsChecked;
+    public bool BanIp()
+    {
+        return _checkboxIP.IsChecked;
+    }
 }

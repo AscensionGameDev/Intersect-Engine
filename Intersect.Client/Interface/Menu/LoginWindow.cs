@@ -18,7 +18,7 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
     private readonly TextBox _txtUsername;
     private readonly TextBoxPassword _txtPassword;
     private readonly LabeledCheckBox _chkSavePass;
-    private readonly Button _btnForgotPasssword;
+    private readonly Button _btnForgotPassword;
     private readonly Button _btnLogin;
     private bool _useSavedPass;
     private string _savedPass = string.Empty;
@@ -30,47 +30,65 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
         _mainMenu = mainMenu;
 
         //Menu Header
-        var _loginHeader = new Label(this, "LoginHeader") { Text = Strings.LoginWindow.Title };
+        _ = new Label(this, "LoginHeader")
+        {
+            Text = Strings.LoginWindow.Title,
+        };
 
         //Login Username Label/Textbox
-        var _usernameBackground = new ImagePanel(this, "UsernamePanel");
-        var _usernameLabel = new Label(_usernameBackground, "UsernameLabel") { Text = Strings.LoginWindow.Username };
-        _txtUsername = new TextBox(_usernameBackground, "UsernameField");
+        var usernameBackground = new ImagePanel(this, "UsernamePanel");
+        _ = new Label(usernameBackground, "UsernameLabel")
+        {
+            Text = Strings.LoginWindow.Username,
+        };
+        _txtUsername = new TextBox(usernameBackground, "UsernameField");
         _txtUsername.SubmitPressed += (s, e) => TryLogin();
         _txtUsername.Clicked += _txtUsername_Clicked;
 
         //Login Password Label/Textbox
-        var _passwordBackground = new ImagePanel(this, "PasswordPanel");
-        var _passwordLabel = new Label(_passwordBackground, "PasswordLabel") { Text = Strings.LoginWindow.Password };
-        _txtPassword = new TextBoxPassword(_passwordBackground, "PasswordField");
+        var passwordBackground = new ImagePanel(this, "PasswordPanel");
+        _ = new Label(passwordBackground, "PasswordLabel")
+        {
+            Text = Strings.LoginWindow.Password,
+        };
+        _txtPassword = new TextBoxPassword(passwordBackground, "PasswordField");
         _txtPassword.SubmitPressed += (s, e) => TryLogin();
         _txtPassword.TextChanged += _txtPassword_TextChanged;
         _txtPassword.Clicked += _txtPassword_Clicked;
 
         //Login Save Pass Checkbox
-        _chkSavePass = new LabeledCheckBox(this, "SavePassCheckbox") { Text = Strings.LoginWindow.SavePassword };
+        _chkSavePass = new LabeledCheckBox(this, "SavePassCheckbox")
+        {
+            Text = Strings.LoginWindow.SavePassword,
+        };
 
         //Forgot Password Button
-        _btnForgotPasssword = new Button(this, "ForgotPasswordButton")
+        _btnForgotPassword = new Button(this, "ForgotPasswordButton")
         {
-            IsHidden = true,
-            Text = Strings.LoginWindow.ForgotPassword,
+            IsHidden = true, Text = Strings.LoginWindow.ForgotPassword,
         };
-        _btnForgotPasssword.Clicked += _btnForgotPasssword_Clicked;
+        _btnForgotPassword.Clicked += _btnForgotPassword_Clicked;
 
         //Login - Send Login Button
-        _btnLogin = new Button(this, "LoginButton") { Text = Strings.LoginWindow.Login };
+        _btnLogin = new Button(this, "LoginButton")
+        {
+            Text = Strings.LoginWindow.Login,
+        };
         _btnLogin.Clicked += (s, e) => TryLogin();
 
         //Login - Back Button
-        var _btnBack = new Button(this, "BackButton") { Text = Strings.LoginWindow.Back };
-        _btnBack.Clicked += _btnBack_Clicked;
+        var btnBack = new Button(this, "BackButton")
+        {
+            Text = Strings.LoginWindow.Back,
+        };
+        btnBack.Clicked += _btnBack_Clicked;
 
         LoadCredentials();
         LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
     }
 
     #region Input Handling
+
     private void _txtUsername_Clicked(Base sender, ClickedEventArgs arguments)
     {
         Globals.InputManager.OpenKeyboard(
@@ -97,17 +115,18 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
         );
     }
 
-    private void _btnForgotPasssword_Clicked(Base sender, ClickedEventArgs arguments)
+    private static void _btnForgotPassword_Clicked(Base sender, ClickedEventArgs arguments)
     {
         Interface.MenuUi.MainMenu.NotifyOpenForgotPassword();
     }
 
-    void _btnBack_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _btnBack_Clicked(Base sender, ClickedEventArgs arguments)
     {
         Hide();
         _mainMenu.Show();
         Networking.Network.DebounceClose("returning_to_main_menu");
     }
+
     #endregion
 
     public void Update()
@@ -129,9 +148,9 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
     public override void Show()
     {
         base.Show();
-        if (!_btnForgotPasssword.IsHidden)
+        if (!_btnForgotPassword.IsHidden)
         {
-            _btnForgotPasssword.IsHidden = !Options.Instance.SmtpValid;
+            _btnForgotPassword.IsHidden = !Options.Instance.SmtpValid;
         }
 
         // Set focus to the appropriate elements.
