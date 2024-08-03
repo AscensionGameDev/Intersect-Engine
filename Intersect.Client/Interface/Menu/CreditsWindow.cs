@@ -17,14 +17,20 @@ public partial class CreditsWindow : ImagePanel, IMainMenuWindow
     {
         _mainMenu = mainMenu;
 
-        _ = new Label(this, "CreditsHeader") { Text = Strings.Credits.Title };
+        _ = new Label(this, "CreditsHeader")
+        {
+            Text = Strings.Credits.Title,
+        };
 
         var creditsContent = new ScrollControl(this, "CreditsScrollview");
         creditsContent.EnableScroll(false, true);
 
         _richLabel = new RichLabel(creditsContent, "CreditsLabel");
 
-        var btnBack = new Button(this, "BackButton") { Text = Strings.Credits.Back };
+        var btnBack = new Button(this, "BackButton")
+        {
+            Text = Strings.Credits.Back,
+        };
         btnBack.Clicked += BackBtn_Clicked;
 
         LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
@@ -72,10 +78,15 @@ public partial class CreditsWindow : ImagePanel, IMainMenuWindow
             else
             {
                 _richLabel.AddText(
-                    text: line.Text,
-                    color: new Color(line.TextColor?.A ?? 255, line.TextColor?.R ?? 255, line.TextColor?.G ?? 255, line.TextColor?.B ?? 255),
-                    alignment: line.GetAlignment(),
-                    font: GameContentManager.Current.GetFont(line.Font, line.Size)
+                    line.Text,
+                    new Color(
+                        line.TextColor?.A ?? 255,
+                        line.TextColor?.R ?? 255,
+                        line.TextColor?.G ?? 255,
+                        line.TextColor?.B ?? 255
+                    ),
+                    line.GetAlignment(),
+                    GameContentManager.Current.GetFont(line.Font, line.Size)
                 );
 
                 _richLabel.AddLineBreak();

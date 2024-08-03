@@ -45,28 +45,52 @@ public partial class RegistrationWindow : ImagePanel, IMainMenuWindow
 
         //Register Email Label/Textbox
         var emailContainer = new ImagePanel(this, "EmailPanel");
-        _ = new Label(emailContainer, "EmailLabel") { Text = Strings.Registration.Email };
-        _textBoxEmail = new TextBox(emailContainer, "EmailField") { IsTabable = true };
+        _ = new Label(emailContainer, "EmailLabel")
+        {
+            Text = Strings.Registration.Email,
+        };
+        _textBoxEmail = new TextBox(emailContainer, "EmailField")
+        {
+            IsTabable = true,
+        };
         _textBoxEmail.SubmitPressed += (s, e) => TryRegister();
 
         //Register Password Label/Textbox
         var passwordContainer = new ImagePanel(this, "Password1Panel");
-        _ = new Label(passwordContainer, "Password1Label") { Text = Strings.Registration.Password };
-        _textBoxPassword = new TextBoxPassword(passwordContainer, "Password1Field") { IsTabable = true };
+        _ = new Label(passwordContainer, "Password1Label")
+        {
+            Text = Strings.Registration.Password,
+        };
+        _textBoxPassword = new TextBoxPassword(passwordContainer, "Password1Field")
+        {
+            IsTabable = true,
+        };
         _textBoxPassword.SubmitPressed += (s, e) => TryRegister();
 
         //Register Confirm Password Label/Textbox
         var confirmPasswordContainer = new ImagePanel(this, "Password2Panel");
-        _ = new Label(confirmPasswordContainer, "Password2Label") { Text = Strings.Registration.ConfirmPassword };
-        _textBoxConfirmPassword = new TextBoxPassword(confirmPasswordContainer, "Password2Field") { IsTabable = true };
+        _ = new Label(confirmPasswordContainer, "Password2Label")
+        {
+            Text = Strings.Registration.ConfirmPassword,
+        };
+        _textBoxConfirmPassword = new TextBoxPassword(confirmPasswordContainer, "Password2Field")
+        {
+            IsTabable = true,
+        };
         _textBoxConfirmPassword.SubmitPressed += (s, e) => TryRegister();
 
         //Register - Send Registration Button
-        _buttonRegister = new Button(this, "RegisterButton") { Text = Strings.Registration.Register };
+        _buttonRegister = new Button(this, "RegisterButton")
+        {
+            Text = Strings.Registration.Register,
+        };
         _buttonRegister.Clicked += (s, e) => TryRegister();
 
         //Register - Back Button
-        var buttonBack = new Button(this, "BackButton") { Text = Strings.Registration.Back };
+        var buttonBack = new Button(this, "BackButton")
+        {
+            Text = Strings.Registration.Back,
+        };
         buttonBack.Clicked += (s, e) =>
         {
             Hide();
@@ -99,7 +123,7 @@ public partial class RegistrationWindow : ImagePanel, IMainMenuWindow
         _textBoxUsername.Focus();
     }
 
-    void TryRegister()
+    private void TryRegister()
     {
         if (Globals.WaitingOnServer)
         {
