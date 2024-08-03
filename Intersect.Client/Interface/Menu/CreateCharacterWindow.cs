@@ -8,6 +8,7 @@ using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.GameObjects;
+using Intersect.Logging;
 using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Menu;
@@ -54,29 +55,29 @@ public partial class CreateCharacterWindow : ImagePanel
         };
 
         // Character Name Background
-        var _charNameBackground = new ImagePanel(this, "CharacterNamePanel");
+        var charNameBackground = new ImagePanel(this, "CharacterNamePanel");
 
         // Character Name Label
-        _ = new Label(_charNameBackground, "CharacterNameLabel")
+        _ = new Label(charNameBackground, "CharacterNameLabel")
         {
             Text = Strings.CharacterCreation.Name
         };
 
         // Character Name Textbox
-        _charNameTextbox = new TextBox(_charNameBackground, "CharacterNameField");
+        _charNameTextbox = new TextBox(charNameBackground, "CharacterNameField");
         _charNameTextbox.SubmitPressed += (sender, e) => TryCreateCharacter();
 
         // Class Background
-        var _classBackground = new ImagePanel(this, "ClassPanel");
+        var classBackground = new ImagePanel(this, "ClassPanel");
 
         // Class Label
-        _ = new Label(_classBackground, "ClassLabel")
+        _ = new Label(classBackground, "ClassLabel")
         {
             Text = Strings.CharacterCreation.Class
         };
 
         // Class Combobox
-        _classCombobox = new ComboBox(_classBackground, "ClassCombobox");
+        _classCombobox = new ComboBox(classBackground, "ClassCombobox");
         _classCombobox.ItemSelected += classCombobox_ItemSelected;
 
         // Hint Label
@@ -109,16 +110,16 @@ public partial class CreateCharacterWindow : ImagePanel
         _prevSpriteButton.Clicked += _prevSpriteButton_Clicked;
 
         // Class Background
-        var _genderBackground = new ImagePanel(this, "GenderPanel");
+        var genderBackground = new ImagePanel(this, "GenderPanel");
 
         // Gender Label
-        _ = new Label(_genderBackground, "GenderLabel")
+        _ = new Label(genderBackground, "GenderLabel")
         {
             Text = Strings.CharacterCreation.Gender
         };
 
         // Male Checkbox
-        _chkMale = new LabeledCheckBox(_genderBackground, "MaleCheckbox")
+        _chkMale = new LabeledCheckBox(genderBackground, "MaleCheckbox")
         {
             Text = Strings.CharacterCreation.Male,
             IsChecked = true
@@ -127,7 +128,7 @@ public partial class CreateCharacterWindow : ImagePanel
         _chkMale.UnChecked += femaleChk_Checked;
 
         // Female Checkbox
-        _chkFemale = new LabeledCheckBox(_genderBackground, "FemaleCheckbox")
+        _chkFemale = new LabeledCheckBox(genderBackground, "FemaleCheckbox")
         {
             Text = Strings.CharacterCreation.Female
         };
@@ -142,12 +143,12 @@ public partial class CreateCharacterWindow : ImagePanel
         };
         _createButton.Clicked += CreateButton_Clicked;
 
-        var _backButton = new Button(this, "BackButton")
+        var backButton = new Button(this, "BackButton")
         {
             Text = Strings.CharacterCreation.Back,
             IsHidden = true
         };
-        _backButton.Clicked += BackButton_Clicked;
+        backButton.Clicked += BackButton_Clicked;
 
         LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
     }
@@ -158,12 +159,16 @@ public partial class CreateCharacterWindow : ImagePanel
         var classCount = 0;
         foreach (ClassBase cls in ClassBase.Lookup.Values.Cast<ClassBase>())
         {
-            if (!cls.Locked)
+            if (cls.Locked)
             {
-                _ = _classCombobox.AddItem(cls.Name);
-                classCount++;
+                continue;
             }
+
+            _ = _classCombobox.AddItem(cls.Name);
+            classCount++;
         }
+
+        Log.Debug($"Added {classCount} classes to {nameof(CreateCharacterWindow)}");
 
         LoadClass();
         UpdateDisplay();
@@ -240,15 +245,11 @@ public partial class CreateCharacterWindow : ImagePanel
             return null;
         }
 
-        foreach (var cls in ClassBase.Lookup)
-        {
-            if (_classCombobox.SelectedItem.Text == cls.Value.Name && !((ClassBase)cls.Value).Locked)
-            {
-                return (ClassBase)cls.Value;
-            }
-        }
-
-        return null;
+        return ClassBase.Lookup.Values.OfType<ClassBase>().FirstOrDefault(
+            descriptor =>
+                !descriptor.Locked &&
+                string.Equals(_classCombobox.SelectedItem.Text, descriptor.Name, StringComparison.Ordinal)
+        );
     }
 
     private void LoadClass()
