@@ -440,7 +440,7 @@ public partial class Chatbox
         var target = (string)rw.UserData;
         if (!string.IsNullOrWhiteSpace(target))
         {
-            if (mGameUi.AdminWindowOpen())
+            if (mGameUi.IsAdminWindowOpen)
             {
                 mGameUi.AdminWindowSelectName(target);
             }

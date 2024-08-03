@@ -1,5 +1,6 @@
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.Admin;
 using Intersect.Client.Interface.Game.Bag;
 using Intersect.Client.Interface.Game.Bank;
 using Intersect.Client.Interface.Game.Chat;
@@ -159,7 +160,7 @@ public partial class GameInterface : MutableInterface
         {
             mAdminWindow ??= new AdminWindow(GameCanvas);
         }
-        else if (mAdminWindow.IsVisible())
+        else if (IsAdminWindowOpen)
         {
             mAdminWindow.Hide();
         }
@@ -289,15 +290,9 @@ public partial class GameInterface : MutableInterface
         Globals.InTrade = true;
     }
 
-    public bool AdminWindowOpen()
-    {
-        return mAdminWindow?.IsVisible() ?? false;
-    }
+    public bool IsAdminWindowOpen => !mAdminWindow?.IsHidden ?? false;
 
-    public void AdminWindowSelectName(string name)
-    {
-        mAdminWindow?.SetName(name);
-    }
+    public void AdminWindowSelectName(string name) => mAdminWindow?.SetName(name);
 
     public void Update()
     {
