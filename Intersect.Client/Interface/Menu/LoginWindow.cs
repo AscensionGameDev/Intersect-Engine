@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
@@ -7,7 +9,6 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
-using Intersect.Security;
 using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Menu;
@@ -176,7 +177,7 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
         var password = _savedPass;
         if (!_useSavedPass)
         {
-            password = PasswordUtils.ComputePasswordHash(_txtPassword.Text.Trim());
+            password = ComputePasswordHash(_txtPassword.Text.Trim());
         }
 
         Globals.WaitingOnServer = true;
@@ -208,6 +209,9 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
         _chkSavePass.IsChecked = true;
     }
 
+    private static string ComputePasswordHash(string password) =>
+        BitConverter.ToString(SHA256.HashData(Encoding.UTF8.GetBytes(password ?? string.Empty))).Replace("-", string.Empty);
+
     private void SaveCredentials()
     {
         string username = string.Empty, password = string.Empty;
@@ -215,7 +219,7 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
         if (_chkSavePass.IsChecked)
         {
             username = _txtUsername.Text.Trim();
-            password = _useSavedPass ? _savedPass : PasswordUtils.ComputePasswordHash(_txtPassword.Text.Trim());
+            password = _useSavedPass ? _savedPass : ComputePasswordHash(_txtPassword.Text.Trim());
         }
 
         Globals.Database.SavePreference("Username", username);

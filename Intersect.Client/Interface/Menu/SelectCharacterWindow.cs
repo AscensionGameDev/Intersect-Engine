@@ -1,9 +1,9 @@
 using Intersect.Client.Core;
-using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
@@ -12,82 +12,107 @@ using Intersect.Network.Packets.Server;
 
 namespace Intersect.Client.Interface.Menu;
 
-public partial class SelectCharacterWindow : ImagePanel
+
+public partial class SelectCharacterWindow
 {
-    private readonly MainMenu _mainMenu;
 
-    private readonly Label _labelCharname;
-    private readonly Label _labelInfo;
-    private readonly ImagePanel _charContainer;
-    private readonly Button _buttonNextChar;
-    private readonly Button _buttonPrevChar;
-    private readonly Button _buttonPlay;
-    private readonly Button _buttonDelete;
-    private readonly Button _buttonNew;
-    private readonly Button _buttonLogout;
+    public List<Character> Characters = new List<Character>();
 
-    private ImagePanel[]? _renderLayers;
+    private ImagePanel mCharacterContainer;
 
-    public Character[]? Characters;
+    private ImagePanel mCharacterPortrait;
 
+    //Image
+    private string mCharacterPortraitImg = "";
+
+    private Label mCharacterSelectionHeader;
+
+    private ImagePanel mCharacterSelectionPanel;
+
+    private Label mCharnameLabel;
+
+    private Button mDeleteButton;
+
+    private Label mInfoLabel;
+
+    private Button mLogoutButton;
+
+    //Parent
+    private MainMenu mMainMenu;
+
+    private Button mNewButton;
+
+    //Controls
+    private Button mNextCharButton;
+
+    private ImagePanel[] mPaperdollPortraits;
+
+    private Button mPlayButton;
+
+    private Button mPrevCharButton;
+
+    //Selected Char
     public int mSelectedChar = 0;
 
     //Init
-    public SelectCharacterWindow(Canvas parent, MainMenu mainMenu) : base(parent, "CharacterSelectionWindow")
+    public SelectCharacterWindow(Canvas parent, MainMenu mainMenu)
     {
         //Assign References
-        _mainMenu = mainMenu;
+        mMainMenu = mainMenu;
+
+        //Main Menu Window
+        mCharacterSelectionPanel = new ImagePanel(parent, "CharacterSelectionWindow");
 
         //Menu Header
-        _ = new Label(this, "CharacterSelectionHeader") { Text = Strings.CharacterSelection.Title };
+        mCharacterSelectionHeader = new Label(mCharacterSelectionPanel, "CharacterSelectionHeader");
+        mCharacterSelectionHeader.SetText(Strings.CharacterSelection.Title);
 
         //Character Name
-        _labelCharname = new Label(this, "CharacterNameLabel") { Text = Strings.CharacterSelection.Empty };
+        mCharnameLabel = new Label(mCharacterSelectionPanel, "CharacterNameLabel");
+        mCharnameLabel.SetText(Strings.CharacterSelection.Empty);
 
         //Character Info
-        _labelInfo = new Label(this, "CharacterInfoLabel") { Text = Strings.CharacterSelection.New };
+        mInfoLabel = new Label(mCharacterSelectionPanel, "CharacterInfoLabel");
+        mInfoLabel.SetText(Strings.CharacterSelection.New);
 
         //Character Container
-        _charContainer = new ImagePanel(this, "CharacterContainer");
+        mCharacterContainer = new ImagePanel(mCharacterSelectionPanel, "CharacterContainer");
 
         //Next char Button
-        _buttonNextChar = new Button(_charContainer, "NextCharacterButton");
-        _buttonNextChar.Clicked += _buttonNextChar_Clicked;
+        mNextCharButton = new Button(mCharacterContainer, "NextCharacterButton");
+        mNextCharButton.Clicked += _nextCharButton_Clicked;
 
         //Prev Char Button
-        _buttonPrevChar = new Button(_charContainer, "PreviousCharacterButton");
-        _buttonPrevChar.Clicked += _buttonPrevChar_Clicked;
+        mPrevCharButton = new Button(mCharacterContainer, "PreviousCharacterButton");
+        mPrevCharButton.Clicked += _prevCharButton_Clicked;
 
         //Play Button
-        _buttonPlay = new Button(this, "PlayButton")
-        {
-            Text = Strings.CharacterSelection.Play,
-            IsHidden = true
-        };
-        _buttonPlay.Clicked += ButtonPlay_Clicked;
+        mPlayButton = new Button(mCharacterSelectionPanel, "PlayButton");
+        mPlayButton.SetText(Strings.CharacterSelection.Play);
+        mPlayButton.Clicked += PlayButton_Clicked;
+        mPlayButton.Hide();
 
         //Delete Button
-        _buttonDelete = new Button(this, "DeleteButton")
-        {
-            Text = Strings.CharacterSelection.Delete,
-            IsHidden = true
-        };
-        _buttonDelete.Clicked += _buttonDelete_Clicked;
+        mDeleteButton = new Button(mCharacterSelectionPanel, "DeleteButton");
+        mDeleteButton.SetText(Strings.CharacterSelection.Delete);
+        mDeleteButton.Clicked += _deleteButton_Clicked;
+        mDeleteButton.Hide();
 
         //Create new char Button
-        _buttonNew = new Button(this, "NewButton") { Text = Strings.CharacterSelection.New };
-        _buttonNew.Clicked += _buttonNew_Clicked;
+        mNewButton = new Button(mCharacterSelectionPanel, "NewButton");
+        mNewButton.SetText(Strings.CharacterSelection.New);
+        mNewButton.Clicked += _newButton_Clicked;
 
         //Logout Button
-        _buttonLogout = new Button(this, "LogoutButton")
-        {
-            Text = Strings.CharacterSelection.Logout,
-            IsHidden = true
-        };
-        _buttonLogout.Clicked += _buttonLogout_Clicked;
+        mLogoutButton = new Button(mCharacterSelectionPanel, "LogoutButton");
+        mLogoutButton.SetText(Strings.CharacterSelection.Logout);
+        mLogoutButton.IsHidden = true;
+        mLogoutButton.Clicked += mLogoutButton_Clicked;
 
-        LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
+        mCharacterSelectionPanel.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
     }
+
+    public bool IsHidden => mCharacterSelectionPanel.IsHidden;
 
     //Methods
     public void Update()
@@ -95,171 +120,246 @@ public partial class SelectCharacterWindow : ImagePanel
         if (!Networking.Network.IsConnected)
         {
             Hide();
-            _mainMenu.Show();
+            mMainMenu.Show();
         }
 
         // Re-Enable our buttons if we're not waiting for the server anymore with it disabled.
-        _buttonPlay.IsDisabled = Globals.WaitingOnServer;
-        _buttonNew.IsDisabled = Globals.WaitingOnServer;
-        _buttonDelete.IsDisabled = Globals.WaitingOnServer;
-        _buttonLogout.IsDisabled = Globals.WaitingOnServer;
+        if (!Globals.WaitingOnServer)
+        {
+            if (mPlayButton.IsDisabled)
+            {
+                mPlayButton.Enable();
+            }
+
+            if (mNewButton.IsDisabled)
+            {
+                mNewButton.Enable();
+            }
+
+            if (mDeleteButton.IsDisabled)
+            {
+                mDeleteButton.Enable();
+            }
+
+            if (mLogoutButton.IsDisabled)
+            {
+                mLogoutButton.Enable();
+            }
+        }
     }
 
     private void UpdateDisplay()
     {
-        if (_renderLayers == default || Characters == default)
+        var isFace = true;
+
+        //Show and hide Options based on the character count
+        if (Characters.Count > 1)
         {
+            mNextCharButton.Show();
+            mPrevCharButton.Show();
+        }
+
+        if (Characters.Count <= 1)
+        {
+            mNextCharButton.Hide();
+            mPrevCharButton.Hide();
+        }
+
+        if (mPaperdollPortraits == null)
+        {
+            mPaperdollPortraits = new ImagePanel[Options.EquipmentSlots.Count + 1];
+            mCharacterPortrait = new ImagePanel(mCharacterContainer);
+            for (var i = 0; i <= Options.EquipmentSlots.Count; i++)
+            {
+                mPaperdollPortraits[i] = new ImagePanel(mCharacterContainer);
+            }
+
+            mNextCharButton.BringToFront();
+            mPrevCharButton.BringToFront();
+        }
+
+        for (var i = 0; i < mPaperdollPortraits.Length; i++)
+        {
+            mPaperdollPortraits[i]?.Hide();
+        }
+
+        if (Characters[mSelectedChar] == null)
+        {
+            mPlayButton.Hide();
+            mDeleteButton.Hide();
+            mNewButton.Show();
+
+            mCharnameLabel.SetText(Strings.CharacterSelection.Empty);
+            mInfoLabel.SetText("");
+
+            mCharacterPortrait.Texture = null;
             return;
         }
 
-        _buttonNextChar.IsHidden = Characters.Length <= 1;
-        _buttonPrevChar.IsHidden = Characters.Length <= 1;
 
-        if (Characters.Length > 1)
-        {
-            _buttonNextChar.BringToFront();
-            _buttonPrevChar.BringToFront();
-        }
-
-        foreach (var paperdollPortrait in _renderLayers)
-        {
-            paperdollPortrait.Texture = default;
-            paperdollPortrait.Hide();
-        }
-
-        if (Characters[mSelectedChar] == default)
-        {
-            _buttonPlay.Hide();
-            _buttonDelete.Hide();
-            _buttonNew.Show();
-
-            _labelCharname.SetText(Strings.CharacterSelection.Empty);
-            _labelInfo.SetText(string.Empty);
-            return;
-        }
-
-        _labelCharname.SetText(Strings.CharacterSelection.Name.ToString(Characters[mSelectedChar].Name));
-        _labelInfo.SetText(
+        mCharnameLabel.SetText(Strings.CharacterSelection.Name.ToString(Characters[mSelectedChar].Name));
+        mInfoLabel.SetText(
             Strings.CharacterSelection.Info.ToString(
                 Characters[mSelectedChar].Level, Characters[mSelectedChar].Class
             )
         );
 
-        _buttonPlay.Show();
-        _buttonDelete.Show();
-        _buttonNew.Hide();
+        mPlayButton.Show();
+        mDeleteButton.Show();
+        mNewButton.Hide();
 
-        // we are rendering the player facing down, then we need to know the render order of the equipments
-        for (var i = 0; i < Options.Equipment.Paperdoll.Down.Count; i++)
+        for (var i = 0; i <= Options.EquipmentSlots.Count; i++)
         {
-            var equipment = Options.Equipment.Paperdoll.Down[i];
-            var paperdollContainer = _renderLayers[i];
-            var isFace = false;
-
-            // handle player/equip rendering, we just need to find the correct texture
-            if (string.Equals("Player", equipment, StringComparison.Ordinal))
+            if (string.Equals("Player", Characters[mSelectedChar].Equipment[i]?.Name, StringComparison.Ordinal))
             {
-                var faceSource = Characters[mSelectedChar].Face;
-                var spriteSource = Characters[mSelectedChar].Sprite;
+                mCharacterPortrait = mPaperdollPortraits[i];
+            }
+        }
 
-                var faceTex = Globals.ContentManager.GetTexture(TextureType.Face, faceSource);
-                var spriteTex = Globals.ContentManager.GetTexture(TextureType.Entity, spriteSource);
+        if (mCharacterPortrait == null)
+        {
+            mCharacterPortrait = mPaperdollPortraits[0];
+        }
 
-                isFace = faceTex != default;
-                paperdollContainer.Texture = isFace ? faceTex : spriteTex;
+        var portraitTexture = Globals.ContentManager.GetTexture(
+            Framework.Content.TextureType.Face, Characters[mSelectedChar].Face
+        );
+
+        if (portraitTexture == null)
+        {
+            portraitTexture = Globals.ContentManager.GetTexture(
+                Framework.Content.TextureType.Entity, Characters[mSelectedChar].Sprite
+            );
+
+            isFace = false;
+        }
+
+        mCharacterPortrait.Texture = portraitTexture;
+
+        if (portraitTexture != null)
+        {
+            if (isFace)
+            {
+                mCharacterPortrait.SetTextureRect(
+                    0, 0, mCharacterPortrait.Texture.GetWidth(), mCharacterPortrait.Texture.GetHeight()
+                );
+
+                var scale = Math.Min(
+                    mCharacterContainer.InnerWidth / (double)mCharacterPortrait.Texture.GetWidth(),
+                    mCharacterContainer.InnerHeight / (double)mCharacterPortrait.Texture.GetHeight()
+                );
+
+                mCharacterPortrait.SetSize(
+                    (int)(mCharacterPortrait.Texture.GetWidth() * scale),
+                    (int)(mCharacterPortrait.Texture.GetHeight() * scale)
+                );
+
+                mCharacterPortrait.SetPosition(
+                    mCharacterContainer.Width / 2 - mCharacterPortrait.Width / 2,
+                    mCharacterContainer.Height / 2 - mCharacterPortrait.Height / 2
+                );
+
+                mCharacterPortrait.Show();
             }
             else
             {
-                if (i >= Characters[mSelectedChar].Equipment.Length)
+                mCharacterPortrait.SetTextureRect(
+                    0, 0, mCharacterPortrait.Texture.GetWidth() / Options.Instance.Sprites.NormalFrames, mCharacterPortrait.Texture.GetHeight() / Options.Instance.Sprites.Directions
+                );
+
+                mCharacterPortrait.SetSize(
+                    mCharacterPortrait.Texture.GetWidth() / Options.Instance.Sprites.NormalFrames, mCharacterPortrait.Texture.GetHeight() / Options.Instance.Sprites.Directions
+                );
+
+                mCharacterPortrait.SetPosition(
+                    mCharacterContainer.Width / 2 - mCharacterPortrait.Width / 2,
+                    mCharacterContainer.Height / 2 - mCharacterPortrait.Height / 2
+                );
+
+                for (var i = 0; i <= Options.EquipmentSlots.Count; i++)
                 {
-                    continue;
-                }
+                    var equipment = Characters[mSelectedChar].Equipment[i];
+                    var paperdollPortrait = mPaperdollPortraits[i];
 
-                var equipFragment = Characters[mSelectedChar].Equipment[i];
+                    if (paperdollPortrait != mCharacterPortrait)
+                    {
+                        if (equipment == null)
+                        {
+                            paperdollPortrait.Texture = null;
+                            continue;
+                        }
 
-                if (equipFragment == default)
-                {
-                    paperdollContainer.Texture = default;
-                    continue;
-                }
+                        paperdollPortrait.Texture = Globals.ContentManager.GetTexture(
+                            Framework.Content.TextureType.Paperdoll, equipment.Name
+                        );
 
-                paperdollContainer.Texture = Globals.ContentManager.GetTexture(TextureType.Paperdoll, equipFragment.Name);
+                        if (paperdollPortrait.Texture != null)
+                        {
+                            paperdollPortrait
+                                .SetTextureRect(
+                                    0, 0, paperdollPortrait.Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
+                                    paperdollPortrait.Texture.GetHeight() / Options.Instance.Sprites.Directions
+                                );
 
-                if (paperdollContainer.Texture != default)
-                {
-                    paperdollContainer.RenderColor = equipFragment.RenderColor;
+                            paperdollPortrait
+                                .SetSize(
+                                    paperdollPortrait.Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
+                                    paperdollPortrait.Texture.GetHeight() / Options.Instance.Sprites.Directions
+                                );
+
+                            paperdollPortrait
+                                .SetPosition(
+                                    (mCharacterContainer.Width - paperdollPortrait.Width) / 2,
+                                    (mCharacterContainer.Height - paperdollPortrait.Height) / 2
+                                );
+
+                            paperdollPortrait.RenderColor = equipment.RenderColor;
+
+                            paperdollPortrait.Show();
+                        }
+                    }
+                    else if (paperdollPortrait.Texture != null)
+                    {
+                        paperdollPortrait.Show();
+                    }
                 }
             }
-
-            var layerTex = paperdollContainer.Texture;
-            if (layerTex == default)
-            {
-                paperdollContainer.Hide();
-                continue;
-            }
-
-            var imgWidth = layerTex.GetWidth();
-            var imgHeight = layerTex.GetHeight();
-            var textureWidth = isFace ? imgWidth : imgWidth / Options.Instance.Sprites.NormalFrames;
-            var textureHeight = isFace ? imgHeight : imgHeight / Options.Instance.Sprites.Directions;
-
-            paperdollContainer.SetTextureRect(0, 0, textureWidth, textureHeight);
-
-            var scale = Math.Min(_charContainer.InnerWidth / (double)imgWidth, _charContainer.InnerHeight / (double)imgHeight);
-            var sizeX = isFace ? (int)(imgWidth * scale) : textureWidth;
-            var sizeY = isFace ? (int)(imgHeight * scale) : textureHeight;
-            _ = paperdollContainer.SetSize(sizeX, sizeY);
-
-            var centerX = (_charContainer.Width / 2) - (paperdollContainer.Width / 2);
-            var centerY = (_charContainer.Height / 2) - (paperdollContainer.Height / 2);
-            paperdollContainer.SetPosition(centerX, centerY);
-
-            paperdollContainer.Show();
         }
     }
 
-    public override void Show()
+    public void Show()
     {
-        if (_renderLayers == default)
-        {
-            _renderLayers = new ImagePanel[Options.Equipment.Paperdoll.Down.Count];
-            for (var i = 0; i < _renderLayers.Length; i++)
-            {
-                _renderLayers[i] = new ImagePanel(_charContainer);
-            }
-        }
-
-        if (Characters == default)
-        {
-            Characters = new Character[Options.MaxCharacters];
-        }
-
         mSelectedChar = 0;
         UpdateDisplay();
-        base.Show();
+        mCharacterSelectionPanel.Show();
     }
 
-    private void _buttonLogout_Clicked(Base sender, ClickedEventArgs arguments)
+    public void Hide()
+    {
+        mCharacterSelectionPanel.Hide();
+    }
+
+    private void mLogoutButton_Clicked(Base sender, ClickedEventArgs arguments)
     {
         Main.Logout(false, skipFade: true);
-        _mainMenu.Reset();
+        mMainMenu.Reset();
     }
 
-    private void _buttonPrevChar_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _prevCharButton_Clicked(Base sender, ClickedEventArgs arguments)
     {
         mSelectedChar--;
         if (mSelectedChar < 0)
         {
-            mSelectedChar = Characters!.Length - 1;
+            mSelectedChar = Characters.Count - 1;
         }
 
         UpdateDisplay();
     }
 
-    private void _buttonNextChar_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _nextCharButton_Clicked(Base sender, ClickedEventArgs arguments)
     {
         mSelectedChar++;
-        if (mSelectedChar >= Characters!.Length)
+        if (mSelectedChar >= Characters.Count)
         {
             mSelectedChar = 0;
         }
@@ -267,9 +367,26 @@ public partial class SelectCharacterWindow : ImagePanel
         UpdateDisplay();
     }
 
-    private void _buttonDelete_Clicked(Base sender, ClickedEventArgs arguments)
+    public void PlayButton_Clicked(Base? sender, ClickedEventArgs? arguments)
     {
-        if (Globals.WaitingOnServer || Characters == default)
+        if (Globals.WaitingOnServer)
+        {
+            return;
+        }
+
+        ChatboxMsg.ClearMessages();
+        PacketSender.SendSelectCharacter(Characters[mSelectedChar].Id);
+
+        Globals.WaitingOnServer = true;
+        mPlayButton.Disable();
+        mNewButton.Disable();
+        mDeleteButton.Disable();
+        mLogoutButton.Disable();
+    }
+
+    private void _deleteButton_Clicked(Base sender, ClickedEventArgs arguments)
+    {
+        if (Globals.WaitingOnServer)
         {
             return;
         }
@@ -283,24 +400,24 @@ public partial class SelectCharacterWindow : ImagePanel
         );
     }
 
-    private void DeleteCharacter(object? sender, EventArgs e)
+    private void DeleteCharacter(Object? sender, EventArgs e)
     {
         if (sender is InputBox inputBox && inputBox.UserData is Guid charId)
         {
             PacketSender.SendDeleteCharacter(charId);
 
             Globals.WaitingOnServer = true;
-            _buttonPlay.Disable();
-            _buttonNew.Disable();
-            _buttonDelete.Disable();
-            _buttonLogout.Disable();
+            mPlayButton.Disable();
+            mNewButton.Disable();
+            mDeleteButton.Disable();
+            mLogoutButton.Disable();
 
             mSelectedChar = 0;
             UpdateDisplay();
         }
     }
 
-    private void _buttonNew_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _newButton_Clicked(Base sender, ClickedEventArgs arguments)
     {
         if (Globals.WaitingOnServer)
         {
@@ -310,53 +427,66 @@ public partial class SelectCharacterWindow : ImagePanel
         PacketSender.SendNewCharacter();
 
         Globals.WaitingOnServer = true;
-        _buttonPlay.Disable();
-        _buttonNew.Disable();
-        _buttonDelete.Disable();
-        _buttonLogout.Disable();
+        mPlayButton.Disable();
+        mNewButton.Disable();
+        mDeleteButton.Disable();
+        mLogoutButton.Disable();
     }
 
-    public void ButtonPlay_Clicked(Base? sender, ClickedEventArgs? arguments)
-    {
-        if (Globals.WaitingOnServer || Characters == default)
-        {
-            return;
-        }
-
-        ChatboxMsg.ClearMessages();
-        PacketSender.SendSelectCharacter(Characters[mSelectedChar].Id);
-
-        Globals.WaitingOnServer = true;
-        _buttonPlay.Disable();
-        _buttonNew.Disable();
-        _buttonDelete.Disable();
-        _buttonLogout.Disable();
-    }
 }
 
-public partial class Character(
-    Guid id,
-    string name,
-    string sprite,
-    string face,
-    int level,
-    string charClass,
-    EquipmentFragment[] equipment
-    )
+public partial class Character
 {
-    public Guid Id = id;
 
-    public string Class = charClass;
+    public string Class = "";
 
-    public EquipmentFragment?[] Equipment = equipment;
+    public EquipmentFragment[] Equipment = new EquipmentFragment[Options.EquipmentSlots.Count + 1];
 
-    public bool Exists = true;
+    public bool Exists = false;
 
-    public string Face = face;
+    public string Face = "";
 
-    public int Level = level;
+    public Guid Id;
 
-    public string Name = name;
+    public int Level = 1;
 
-    public string Sprite = sprite;
+    public string Name = "";
+
+    public string Sprite = "";
+
+    public Character(Guid id)
+    {
+        Id = id;
+    }
+
+    public Character(
+        Guid id,
+        string name,
+        string sprite,
+        string face,
+        int level,
+        string charClass,
+        EquipmentFragment[] equipment
+    )
+    {
+        Equipment = equipment;
+        Id = id;
+        Name = name;
+        Sprite = sprite;
+        Face = face;
+        Level = level;
+        Class = charClass;
+        Exists = true;
+    }
+
+    public Character()
+    {
+        for (var i = 0; i < Options.EquipmentSlots.Count + 1; i++)
+        {
+            Equipment[i] = default;
+        }
+
+        Equipment[0] = new EquipmentFragment { Name = "Player" };
+    }
+
 }

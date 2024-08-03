@@ -222,7 +222,7 @@ internal sealed partial class DebugWindow : Window
             try
             {
                 return Interface.CurrentInterface?.Children.ToArray().SelectManyRecursive(
-                    x => x != default ? [.. x.Children] : [],
+                    x => [.. x.Children],
                     cancellationToken
                 ).ToArray().Length ?? 0;
             }

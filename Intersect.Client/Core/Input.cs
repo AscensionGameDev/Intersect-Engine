@@ -11,7 +11,6 @@ using Intersect.Client.Interface.Shared;
 using Intersect.Client.Maps;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
-using Intersect.Enums;
 using Intersect.Utilities;
 
 namespace Intersect.Client.Core;
@@ -98,7 +97,7 @@ public static partial class Input
                         var eventWindow = (EventWindow)Interface.Interface.InputBlockingElements[i];
                         if (eventWindow != null && !eventWindow.IsHidden && Globals.EventDialogs.Count > 0)
                         {
-                            eventWindow.CloseEventResponse(EventResponseType.OneOption);
+                            eventWindow.EventResponse1_Clicked(null, null);
                             canFocusChat = false;
 
                             break;
@@ -210,14 +209,14 @@ public static partial class Input
                             break;
 
                         case GameStates.Menu:
-                            var selectCharacterWindow = Interface.Interface.MenuUi.MainMenu.SelectCharacterWindow;
+                            var selectCharacterWindow = Interface.Interface.MenuUi.MainMenu.mSelectCharacterWindow;
 
                             switch (control)
                             {
                                 case Control.Enter:
                                     if (!selectCharacterWindow.IsHidden && selectCharacterWindow.Characters[selectCharacterWindow.mSelectedChar] != null)
                                     {
-                                        selectCharacterWindow.ButtonPlay_Clicked(null, null);
+                                        selectCharacterWindow.PlayButton_Clicked(null, null);
                                         consumeKey = true;
                                     }
 

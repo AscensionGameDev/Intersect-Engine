@@ -51,7 +51,7 @@ internal sealed class Typewriter
         _lastChar = null;
     }
 
-    public void Write(string? voice)
+    public void Write(string voice)
     {
         if (IsDone)
         {
