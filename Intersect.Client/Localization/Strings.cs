@@ -1102,6 +1102,9 @@ public static partial class Strings
     public partial struct Guilds
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Add = @"+";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Bank = @"{00} Guild Bank";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
