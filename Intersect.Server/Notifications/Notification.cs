@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Net;
 using Intersect.Logging;
 using Intersect.Server.Localization;
 using MailKit.Net.Smtp;
@@ -9,10 +8,8 @@ using MimeKit;
 
 namespace Intersect.Server.Notifications
 {
-
     public partial class Notification
     {
-
         public Notification(string to, string subject = "", bool html = false)
         {
             ToAddress = to;
@@ -30,22 +27,29 @@ namespace Intersect.Server.Notifications
 
         public bool Send()
         {
-            //Check and see if smtp is even setup
+            // Check if SMTP is set up
             if (Options.Smtp.IsValid())
             {
-                //Make sure we have a body
+                // Ensure we have a body
                 if (!string.IsNullOrEmpty(Body))
                 {
                     try
                     {
-                        //Send the email
                         var fromAddress = new MailboxAddress(Options.Smtp.FromName, Options.Smtp.FromAddress);
-                        var toAddress = new MailboxAddress(ToAddress, ToAddress);
+                        var toAddress = new MailboxAddress("Recipient", ToAddress);
 
                         using (var client = new SmtpClient())
                         {
-                            client.Connect(Options.Smtp.Host, Options.Smtp.Port, Options.Smtp.UseSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.Auto);
-                            client.Authenticate(Options.Smtp.Username, Options.Smtp.Password);
+                            client.Timeout = 20000; // 20 seconds timeout
+
+                            // Attempt to connect to the SMTP server
+                            client.Connect(Options.Smtp.Host, Options.Smtp.Port, SecureSocketOptions.SslOnConnect);
+
+                            // Authenticate if necessary
+                            if (!string.IsNullOrEmpty(Options.Smtp.Username) && !string.IsNullOrEmpty(Options.Smtp.Password))
+                            {
+                                client.Authenticate(Options.Smtp.Username, Options.Smtp.Password);
+                            }
 
                             var message = new MimeMessage();
                             message.To.Add(toAddress);
@@ -63,6 +67,7 @@ namespace Intersect.Server.Notifications
                             }
                             message.Body = bodyBuilder.ToMessageBody();
 
+                            // Send the message
                             client.Send(message);
                             client.Disconnect(true);
                         }
@@ -90,7 +95,7 @@ namespace Intersect.Server.Notifications
                         Subject +
                         ") to " +
                         ToAddress +
-                        ". Reason: SMTP not configured!"
+                        ". Reason: Body is empty!"
                     );
                     return false;
                 }
@@ -138,7 +143,5 @@ namespace Intersect.Server.Notifications
 
             return false;
         }
-
     }
-
 }
