@@ -163,9 +163,15 @@ public partial class WindowControl : ResizableControl
         get { return Parent.Children.Where(x => x is WindowControl).Last() == this; }
     }
 
+    /// <summary>
+    /// If the shadow under the window should be drawn.
+    /// </summary>
+    public bool DrawShadow { get; set; } = true;
+
     public override JObject GetJson(bool isRoot = default)
     {
         var obj = base.GetJson(isRoot);
+        obj.Add(nameof(DrawShadow), DrawShadow);
         obj.Add("ActiveImage", GetImageFilename(ControlState.Active));
         obj.Add("InactiveImage", GetImageFilename(ControlState.Inactive));
         obj.Add("ActiveColor", Color.ToString(mActiveColor));
@@ -182,6 +188,13 @@ public partial class WindowControl : ResizableControl
     public override void LoadJson(JToken obj, bool isRoot = default)
     {
         base.LoadJson(obj);
+
+        var tokenDrawShadow = obj[nameof(DrawShadow)];
+        if (tokenDrawShadow != null)
+        {
+            DrawShadow = (bool)tokenDrawShadow;
+        }
+
         if (obj["ActiveImage"] != null)
         {
             SetImage(
@@ -333,7 +346,11 @@ public partial class WindowControl : ResizableControl
     protected override void RenderUnder(Skin.Base skin)
     {
         base.RenderUnder(skin);
-        skin.DrawShadow(this);
+
+        if (DrawShadow)
+        {
+            skin.DrawShadow(this);
+        }
     }
 
     public override void Touch()
