@@ -158,7 +158,6 @@ public class Intersect2021 : TexturedBase
             return;
         }
 
-
         GameTexture? renderTexture = null;
         if (windowControl.TryGetTexture(WindowControl.ControlState.Active, out var activeTexture))
         {
@@ -193,7 +192,8 @@ public class Intersect2021 : TexturedBase
 
         Rectangle frameBounds = windowControl.RenderBounds;
 
-        if (titleBar != default)
+        var shouldDrawTitlebarBackground = titleBar != default && windowControl.TitleBar.ShouldDrawBackground;
+        if (shouldDrawTitlebarBackground)
         {
             frameBounds = new Rectangle(
                 0,
@@ -201,11 +201,17 @@ public class Intersect2021 : TexturedBase
                 control.RenderBounds.Width,
                 control.RenderBounds.Height
             );
-
-            titleBar.Draw(Renderer, windowControl.TitleBar.Bounds, windowControl.RenderColor);
         }
 
-        frame.Draw(Renderer, frameBounds, windowControl.RenderColor);
+        if (frame != default && windowControl.ShouldDrawBackground)
+        {
+            frame.Draw(Renderer, frameBounds, windowControl.RenderColor);
+        }
+
+        if (shouldDrawTitlebarBackground)
+        {
+            titleBar.Draw(Renderer, windowControl.TitleBar.Bounds, windowControl.RenderColor);
+        }
     }
 
     #endregion
