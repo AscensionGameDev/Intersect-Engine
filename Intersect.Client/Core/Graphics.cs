@@ -241,7 +241,7 @@ public static partial class Graphics
             return;
         }
 
-        if (Globals.NeedsMaps || Globals.MapGrid == default)
+        if (Globals.NeedsMaps || Globals.MapGrid == null || RenderingEntities == null)
         {
             return;
         }
