@@ -32,36 +32,66 @@ public partial class RegistrationWindow : ImagePanel, IMainMenuWindow
         _registrationHeader.SetText(Strings.Registration.Title);
 
         //Register Username Label/Textbox
-        var _usernameContainer = new ImagePanel(this, "UsernamePanel");
-        _ = new Label(_usernameContainer, "UsernameLabel") { Text = Strings.Registration.Username };
-        _textBoxUsername = new TextBox(_usernameContainer, "UsernameField") { IsTabable = true };
+        var usernameContainer = new ImagePanel(this, "UsernamePanel");
+        _ = new Label(usernameContainer, "UsernameLabel")
+        {
+            Text = Strings.Registration.Username,
+        };
+        _textBoxUsername = new TextBox(usernameContainer, "UsernameField")
+        {
+            IsTabable = true,
+        };
         _textBoxUsername.SubmitPressed += (s, e) => TryRegister();
 
         //Register Email Label/Textbox
-        var _emailContainer = new ImagePanel(this, "EmailPanel");
-        _ = new Label(_emailContainer, "EmailLabel") { Text = Strings.Registration.Email };
-        _textBoxEmail = new TextBox(_emailContainer, "EmailField") { IsTabable = true };
+        var emailContainer = new ImagePanel(this, "EmailPanel");
+        _ = new Label(emailContainer, "EmailLabel")
+        {
+            Text = Strings.Registration.Email,
+        };
+        _textBoxEmail = new TextBox(emailContainer, "EmailField")
+        {
+            IsTabable = true,
+        };
         _textBoxEmail.SubmitPressed += (s, e) => TryRegister();
 
         //Register Password Label/Textbox
-        var _passwordContainer = new ImagePanel(this, "Password1Panel");
-        _ = new Label(_passwordContainer, "Password1Label") { Text = Strings.Registration.Password };
-        _textBoxPassword = new TextBoxPassword(_passwordContainer, "Password1Field") { IsTabable = true };
+        var passwordContainer = new ImagePanel(this, "Password1Panel");
+        _ = new Label(passwordContainer, "Password1Label")
+        {
+            Text = Strings.Registration.Password,
+        };
+        _textBoxPassword = new TextBoxPassword(passwordContainer, "Password1Field")
+        {
+            IsTabable = true,
+        };
         _textBoxPassword.SubmitPressed += (s, e) => TryRegister();
 
         //Register Confirm Password Label/Textbox
-        var _confirmPasswordContainer = new ImagePanel(this, "Password2Panel");
-        _ = new Label(_confirmPasswordContainer, "Password2Label") { Text = Strings.Registration.ConfirmPassword };
-        _textBoxConfirmPassword = new TextBoxPassword(_confirmPasswordContainer, "Password2Field") { IsTabable = true };
+        var confirmPasswordContainer = new ImagePanel(this, "Password2Panel");
+        _ = new Label(confirmPasswordContainer, "Password2Label")
+        {
+            Text = Strings.Registration.ConfirmPassword,
+        };
+        _textBoxConfirmPassword = new TextBoxPassword(confirmPasswordContainer, "Password2Field")
+        {
+            IsTabable = true,
+        };
         _textBoxConfirmPassword.SubmitPressed += (s, e) => TryRegister();
 
         //Register - Send Registration Button
-        _buttonRegister = new Button(this, "RegisterButton") { Text = Strings.Registration.Register };
+        _buttonRegister = new Button(this, "RegisterButton")
+        {
+            Text = Strings.Registration.Register,
+        };
         _buttonRegister.Clicked += (s, e) => TryRegister();
 
         //Register - Back Button
-        var _buttonBack = new Button(this, "BackButton") { Text = Strings.Registration.Back };
-        _buttonBack.Clicked += (s, e) =>
+        var buttonBack = new Button(this, "BackButton")
+        {
+            Text = Strings.Registration.Back,
+        };
+        buttonBack.Clicked += (s, e) =>
         {
             Hide();
             _mainMenu.Show();
@@ -93,7 +123,7 @@ public partial class RegistrationWindow : ImagePanel, IMainMenuWindow
         _textBoxUsername.Focus();
     }
 
-    void TryRegister()
+    private void TryRegister()
     {
         if (Globals.WaitingOnServer)
         {

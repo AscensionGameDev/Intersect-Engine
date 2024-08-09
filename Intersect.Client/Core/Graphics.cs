@@ -78,7 +78,7 @@ public static partial class Graphics
     public static GameRenderer? Renderer;
 
     //Cache the Y based rendering
-    public static HashSet<Entity>[,] RenderingEntities = new HashSet<Entity>[6, Options.MapHeight * 5];
+    public static HashSet<Entity>[,]? RenderingEntities;
 
     private static GameContentManager sContentManager = null!;
 
@@ -135,6 +135,7 @@ public static partial class Graphics
 
     public static void InitInGame()
     {
+        RenderingEntities = new HashSet<Entity>[6, Options.MapHeight * 5];
         for (var z = 0; z < 6; z++)
         {
             for (var i = 0; i < Options.MapHeight * 5; i++)
@@ -240,7 +241,7 @@ public static partial class Graphics
             return;
         }
 
-        if (Globals.NeedsMaps || Globals.MapGrid == default)
+        if (Globals.NeedsMaps || Globals.MapGrid == null || RenderingEntities == null)
         {
             return;
         }

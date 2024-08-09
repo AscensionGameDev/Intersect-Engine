@@ -17,15 +17,21 @@ public partial class CreditsWindow : ImagePanel, IMainMenuWindow
     {
         _mainMenu = mainMenu;
 
-        var _creditsHeader = new Label(this, "CreditsHeader") { Text = Strings.Credits.Title };
+        _ = new Label(this, "CreditsHeader")
+        {
+            Text = Strings.Credits.Title,
+        };
 
-        var _creditsContent = new ScrollControl(this, "CreditsScrollview");
-        _creditsContent.EnableScroll(false, true);
+        var creditsContent = new ScrollControl(this, "CreditsScrollview");
+        creditsContent.EnableScroll(false, true);
 
-        _richLabel = new RichLabel(_creditsContent, "CreditsLabel");
+        _richLabel = new RichLabel(creditsContent, "CreditsLabel");
 
-        var _btnBack = new Button(this, "BackButton") { Text = Strings.Credits.Back };
-        _btnBack.Clicked += BackBtn_Clicked;
+        var btnBack = new Button(this, "BackButton")
+        {
+            Text = Strings.Credits.Back,
+        };
+        btnBack.Clicked += BackBtn_Clicked;
 
         LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
     }
@@ -55,7 +61,7 @@ public partial class CreditsWindow : ImagePanel, IMainMenuWindow
                 Alignment = "center",
                 Size = 12,
                 TextColor = Color.White,
-                Font = "sourcesansproblack"
+                Font = "sourcesansproblack",
             };
 
             credits.Lines.Add(line);
@@ -72,10 +78,15 @@ public partial class CreditsWindow : ImagePanel, IMainMenuWindow
             else
             {
                 _richLabel.AddText(
-                    text: line.Text,
-                    color: new Color(line.TextColor?.A ?? 255, line.TextColor?.R ?? 255, line.TextColor?.G ?? 255, line.TextColor?.B ?? 255),
-                    alignment: line.GetAlignment(),
-                    font: GameContentManager.Current.GetFont(line.Font, line.Size)
+                    line.Text,
+                    new Color(
+                        line.TextColor?.A ?? 255,
+                        line.TextColor?.R ?? 255,
+                        line.TextColor?.G ?? 255,
+                        line.TextColor?.B ?? 255
+                    ),
+                    line.GetAlignment(),
+                    GameContentManager.Current.GetFont(line.Font, line.Size)
                 );
 
                 _richLabel.AddLineBreak();
