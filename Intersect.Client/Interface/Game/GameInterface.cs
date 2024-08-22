@@ -49,6 +49,8 @@ public partial class GameInterface : MutableInterface
 
     private MapItemWindow mMapItemWindow;
 
+    private ButtonsURLLoader buttonsURLLoader;
+
     private bool mShouldCloseBag;
 
     private bool mShouldCloseBank;
@@ -123,6 +125,7 @@ public partial class GameInterface : MutableInterface
         mQuestOfferWindow = new QuestOfferWindow(GameCanvas);
         mMapItemWindow = new MapItemWindow(GameCanvas);
         mBankWindow = new BankWindow(GameCanvas);
+        buttonsURLLoader = new ButtonsURLLoader(GameCanvas);
     }
 
     //Chatbox

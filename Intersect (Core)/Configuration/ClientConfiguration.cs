@@ -93,6 +93,11 @@ public sealed partial class ClientConfiguration : IConfiguration<ClientConfigura
         "octave-beep-tapped.wav"
     };
 
+    public static List<string> DEFAULT_BUTTONS_URL => new()
+    {
+        "example-https://www.google.com"
+    };
+
     #endregion
 
     #region Static Properties and Methods
@@ -118,6 +123,7 @@ public sealed partial class ClientConfiguration : IConfiguration<ClientConfigura
         TypewriterFullStopCharacters = TypewriterFullStopCharacters?.Distinct()?.ToList() ?? new List<char>();
         TypewriterPauseCharacters = TypewriterPauseCharacters?.Distinct()?.ToList() ?? new List<char>();
         TypewriterSounds = new List<string>(TypewriterSounds?.Distinct() ?? new List<string>());
+        ButtonsURL = new List<string>(ButtonsURL?.Distinct() ?? new List<string>());
         UIFont = string.IsNullOrWhiteSpace(UIFont) ? DEFAULT_UI_FONT : UIFont.Trim();
     }
 
@@ -255,6 +261,8 @@ public sealed partial class ClientConfiguration : IConfiguration<ClientConfigura
     public int TypewriterSoundFrequency { get; set; } = DEFAULT_TYPEWRITER_SOUND_FREQUENCY;
 
     public List<string> TypewriterSounds { get; set; } = DEFAULT_TYPEWRITER_SOUNDS;
+
+    public List<string> ButtonsURL { get; set; } = DEFAULT_BUTTONS_URL;
 
     #region Hidden Properties
 
