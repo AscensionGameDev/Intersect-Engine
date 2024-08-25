@@ -3,6 +3,7 @@ using System;
 using Intersect.Server.Database.GameData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intersect.Server.Migrations.MySql.Game
 {
     [DbContext(typeof(MySqlGameContext))]
-    partial class MySqlGameContextModelSnapshot : ModelSnapshot
+    [Migration("20240515000000_LongValueType")]
+    partial class LongValueType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -751,6 +754,9 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.Property<int>("Delay")
                         .HasColumnType("int");
 
+                    b.Property<bool>("DirectShotBehavior")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("Folder")
                         .HasColumnType("longtext");
 
@@ -760,6 +766,9 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.Property<string>("GrappleHookOptionsJson")
                         .HasColumnType("longtext")
                         .HasColumnName("GrappleHookOptions");
+
+                    b.Property<bool>("HomingBehavior")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IgnoreActiveResources")
                         .HasColumnType("tinyint(1)");
