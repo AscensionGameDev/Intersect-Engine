@@ -3,6 +3,7 @@ using System;
 using Intersect.Server.Database.GameData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intersect.Server.Migrations.MySql.Game
 {
     [DbContext(typeof(MySqlGameContext))]
-    partial class MySqlGameContextModelSnapshot : ModelSnapshot
+    [Migration("20240607105636_HomingProjectile")]
+    partial class HomingProjectile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -258,9 +261,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.Property<Guid>("Id")
                         .HasColumnType("char(36)")
                         .UseCollation("ascii_general_ci");
-
-                    b.Property<bool>("CanRunInParallel")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("CommonEvent")
                         .HasColumnType("tinyint(1)");
@@ -1539,8 +1539,8 @@ namespace Intersect.Server.Migrations.MySql.Game
                             b1.Property<byte>("Type")
                                 .HasColumnType("tinyint unsigned");
 
-                            b1.Property<long>("Value")
-                                .HasColumnType("bigint");
+                            b1.Property<int>("Value")
+                                .HasColumnType("int");
 
                             b1.HasKey("ItemBaseId");
 
