@@ -13,6 +13,7 @@ using Intersect.Server.Entities;
 using Intersect.Server.Classes.Maps;
 using MapAttribute = Intersect.Enums.MapAttribute;
 using Intersect.Server.Core.MapInstancing;
+using Intersect.Server.Framework;
 
 namespace Intersect.Server.Maps;
 
@@ -703,7 +704,8 @@ public partial class MapInstance : IDisposable
     /// <param name="x">The X location of this item.</param>
     /// <param name="y">The Y location of this item.</param>
     /// <param name="item">The <see cref="MapItem"/> to add to the map.</param>
-    private void AddItem(MapItem item)
+    /// <param name="source">The source of the item.</param>
+    private void AddItem(IItemSource? source, MapItem item)
     {
         AllMapItems.TryAdd(item.UniqueId, item);
 
@@ -713,26 +715,31 @@ public partial class MapInstance : IDisposable
         }
 
         TileItems[item.TileIndex]?.TryAdd(item.UniqueId, item);
+        
+        //TODO: Invoke the event for the item being added to the map, maybe: 
+        // _mapHelper?.ItemAdded?.Invoke(this, new ItemEventArgs(source, item));
     }
 
     /// <summary>
     /// Spawn an item to this map instance.
     /// </summary>
+    /// <param name="source">The source of the item, which can be an entity or player</param>
     /// <param name="x">The horizontal location of this item</param>
     /// <param name="y">The vertical location of this item.</param>
     /// <param name="item">The <see cref="Item"/> to spawn on the map.</param>
     /// <param name="amount">The amount of times to spawn this item to the map. Set to the <see cref="Item"/> quantity, overwrites quantity if stackable!</param>
-    public void SpawnItem(int x, int y, Item item, int amount) => SpawnItem(x, y, item, amount, Guid.Empty);
+    public void SpawnItem(IItemSource? source,int x, int y, Item item, int amount) => SpawnItem(source, x, y, item, amount, Guid.Empty);
 
     /// <summary>
     /// Spawn an item to this map instance.
     /// </summary>
+    /// <param name="source">The source of the item, which can be an entity or player</param>
     /// <param name="x">The horizontal location of this item</param>
     /// <param name="y">The vertical location of this item.</param>
     /// <param name="item">The <see cref="Item"/> to spawn on the map.</param>
     /// <param name="amount">The amount of times to spawn this item to the map. Set to the <see cref="Item"/> quantity, overwrites quantity if stackable!</param>
     /// <param name="owner">The player Id that will be the temporary owner of this item.</param>
-    public void SpawnItem(int x, int y, Item item, int amount, Guid owner, bool sendUpdate = true)
+    public void SpawnItem(IItemSource? source ,int x, int y, Item item, int amount, Guid owner, bool sendUpdate = true)
     {
         if (item == null)
         {
@@ -792,7 +799,7 @@ public partial class MapInstance : IDisposable
             }
 
             // Drop the new item.
-            AddItem(mapItem);
+            AddItem(source, mapItem);
             if (sendUpdate)
             {
                 PacketSender.SendMapItemUpdate(mMapController.Id, MapInstanceId, mapItem, false);
@@ -822,7 +829,7 @@ public partial class MapInstance : IDisposable
                     return;
                 }
 
-                AddItem(mapItem);
+                AddItem(source, mapItem);
             }
             PacketSender.SendMapItemsToProximity(mMapController.Id, this);
         }
@@ -924,7 +931,7 @@ public partial class MapInstance : IDisposable
             {
                 mapItem.Quantity = 1;
             }
-            AddItem(mapItem);
+            AddItem(null, mapItem);
             PacketSender.SendMapItemUpdate(mMapController.Id, MapInstanceId, mapItem, false);
         }
     }
