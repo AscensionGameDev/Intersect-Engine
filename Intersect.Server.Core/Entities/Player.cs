@@ -19,6 +19,8 @@ using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities.Combat;
 using Intersect.Server.Entities.Events;
+using Intersect.Server.Framework;
+using Intersect.Server.Framework.Entities;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
@@ -35,7 +37,6 @@ public partial class Player : Entity
 {
     [NotMapped, JsonIgnore]
     public Guid PreviousMapInstanceId = Guid.Empty;
-
     //Online Players List
     private static readonly ConcurrentDictionary<Guid, Player> OnlinePlayers = new ConcurrentDictionary<Guid, Player>();
 
@@ -2781,7 +2782,13 @@ public partial class Player : Entity
                     // Do we have any items to spawn to the map?
                     if (spawnAmount > 0 && MapController.TryGetInstanceFromMap(Map.Id, MapInstanceId, out var instance))
                     {
-                        instance.SpawnItem(overflowTileX > -1 ? overflowTileX : X, overflowTileY > -1 ? overflowTileY : Y, item, spawnAmount, Id);
+                        var itemSource = new EntityItemSource
+                        {
+                            EntityType = this.GetEntityType(),
+                            EntityReference = new WeakReference<IEntity>(this),
+                            Id = this.Id,
+                        };
+                        instance.SpawnItem(itemSource, overflowTileX > -1 ? overflowTileX : X, overflowTileY > -1 ? overflowTileY : Y, item, spawnAmount, Id);
                         return spawnAmount != item.Quantity;
                     }
 
@@ -3134,8 +3141,15 @@ public partial class Player : Entity
             );
             return false;
         }
+        
+        var itemSource = new EntityItemSource
+        {
+            EntityType = this.GetEntityType(),
+            EntityReference = new WeakReference<IEntity>(this),
+            Id = this.Id,
+        };
 
-        mapInstance.SpawnItem(X, Y, itemInSlot, itemDescriptor.IsStackable ? amount : 1, Id);
+        mapInstance.SpawnItem(itemSource,X, Y, itemInSlot, itemDescriptor.IsStackable ? amount : 1, Id);
 
         itemInSlot.Quantity = Math.Max(0, itemInSlot.Quantity - amount);
 
@@ -4972,6 +4986,12 @@ public partial class Player : Entity
         {
             return;
         }
+        var itemSource = new EntityItemSource
+        {
+            EntityType = this.GetEntityType(),
+            EntityReference = new WeakReference<IEntity>(this),
+            Id = this.Id,
+        };
 
         foreach (var offer in Trading.Offer)
         {
@@ -4982,7 +5002,7 @@ public partial class Player : Entity
 
             if (!TryGiveItem(offer, -1) && MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
             {
-                instance.SpawnItem(X, Y, offer, offer.Quantity, Id);
+                instance.SpawnItem(itemSource, X, Y, offer, offer.Quantity, Id);
                 PacketSender.SendChatMsg(this, Strings.Trading.ItemsDropped, ChatMessageType.Inventory, CustomColors.Alerts.Error);
             }
 
