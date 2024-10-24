@@ -27,8 +27,8 @@ public abstract partial class Entity : IEntity
 {
     //Instance Values
     private Guid _id = Guid.NewGuid();
-
-    [NotMapped, JsonIgnore] public Guid MapInstanceId { get; set; } = Guid.Empty;
+    
+    public Guid MapInstanceId = Guid.Empty;
 
     [JsonProperty("MaxVitals"), NotMapped] private long[] _maxVital = new long[Enum.GetValues<Vital>().Length];
 
@@ -3058,25 +3058,7 @@ public abstract partial class Entity : IEntity
             // Spawn the actual item!
             if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
             {
-                var itemSource = new EntityItemSource
-                {
-                    EntityType = this.GetEntityType(),
-                    EntityReference = new WeakReference<IEntity>(this)
-                };
-
-                if (this is Player player)
-                {
-                    itemSource.Id = player.Id;
-                }
-                else if (this is Npc npc)
-                {
-                    itemSource.Id = npc.Base.Id;
-                }
-                else if (this is Resource resource)
-                {
-                    itemSource.Id = resource.Base.Id;
-                }
-
+                var itemSource = this.CreateItemSource();
                 instance.SpawnItem(itemSource, X, Y, drop, drop.Quantity, lootOwner, sendUpdate);
             }
 
@@ -3084,6 +3066,8 @@ public abstract partial class Entity : IEntity
             OnDropItem(slot, drop);
         }
     }
+
+    protected abstract EntityItemSource CreateItemSource();
 
     public bool IsDead()
     {

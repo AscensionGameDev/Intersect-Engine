@@ -159,12 +159,7 @@ public partial class Resource : Entity
                 selectedTile = tiles[Randomization.Next(0, tiles.Count)];
             }
             
-            var itemSource = new EntityItemSource
-            {
-                EntityType = this.GetEntityType(),
-                EntityReference = new WeakReference<IEntity>(this),
-                Id = this.Base.Id,
-            };
+            var itemSource = CreateItemSource();
 
             // Drop items
             foreach (var item in Items)
@@ -181,6 +176,16 @@ public partial class Resource : Entity
         }
 
         Items.Clear();
+    }
+    
+    protected override EntityItemSource CreateItemSource()
+    {
+        return new EntityItemSource
+        {
+            EntityType = this.GetEntityType(),
+            EntityReference = new WeakReference<IEntity>(this),
+            Id = this.Base.Id
+        };
     }
 
     public override void ProcessRegen()

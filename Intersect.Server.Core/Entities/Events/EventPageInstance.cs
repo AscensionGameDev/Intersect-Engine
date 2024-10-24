@@ -3,6 +3,7 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Entities.Pathfinding;
+using Intersect.Server.Framework;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
@@ -891,6 +892,11 @@ public partial class EventPageInstance : Entity
         }
 
         return false;
+    }
+    
+    protected override EntityItemSource CreateItemSource()
+    {
+        return null;
     }
 
 }
