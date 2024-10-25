@@ -702,10 +702,8 @@ public partial class MapInstance : IMapInstance
     /// <summary>
     /// Add a map item to this map.
     /// </summary>
-    /// <param name="x">The X location of this item.</param>
-    /// <param name="y">The Y location of this item.</param>
+    /// <param name="source">The source of the item, e.g. a player who dropped it, or a monster who spawned it on death, or the map instance in which it was spawned.</param>
     /// <param name="item">The <see cref="MapItem"/> to add to the map.</param>
-    /// <param name="source">The source of the item.</param>
     private void AddItem(IItemSource? source, MapItem item)
     {
         AllMapItems.TryAdd(item.UniqueId, item);
@@ -724,23 +722,23 @@ public partial class MapInstance : IMapInstance
     /// <summary>
     /// Spawn an item to this map instance.
     /// </summary>
-    /// <param name="source">The source of the item, which can be an entity or player</param>
+    /// <param name="source">The source of the item, e.g. a player who dropped it, or a monster who spawned it on death, or the map instance in which it was spawned</param>
     /// <param name="x">The horizontal location of this item</param>
     /// <param name="y">The vertical location of this item.</param>
     /// <param name="item">The <see cref="Item"/> to spawn on the map.</param>
     /// <param name="amount">The amount of times to spawn this item to the map. Set to the <see cref="Item"/> quantity, overwrites quantity if stackable!</param>
-    public void SpawnItem(IItemSource? source,int x, int y, Item item, int amount) => SpawnItem(source, x, y, item, amount, Guid.Empty);
+    public void SpawnItem(IItemSource? source, int x, int y, Item item, int amount) => SpawnItem(source, x, y, item, amount, Guid.Empty);
 
     /// <summary>
     /// Spawn an item to this map instance.
     /// </summary>
-    /// <param name="source">The source of the item, which can be an entity or player</param>
+    /// <param name="source">The source of the item, e.g. a player who dropped it, or a monster who spawned it on death, or the map instance in which it was spawned</param>
     /// <param name="x">The horizontal location of this item</param>
     /// <param name="y">The vertical location of this item.</param>
     /// <param name="item">The <see cref="Item"/> to spawn on the map.</param>
     /// <param name="amount">The amount of times to spawn this item to the map. Set to the <see cref="Item"/> quantity, overwrites quantity if stackable!</param>
     /// <param name="owner">The player Id that will be the temporary owner of this item.</param>
-    public void SpawnItem(IItemSource? source ,int x, int y, Item item, int amount, Guid owner, bool sendUpdate = true)
+    public void SpawnItem(IItemSource? source, int x, int y, Item item, int amount, Guid owner, bool sendUpdate = true)
     {
         if (item == null)
         {
