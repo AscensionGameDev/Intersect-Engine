@@ -1,7 +1,7 @@
 using Intersect.Enums;
 using Intersect.Server.Framework.Entities;
 
-namespace Intersect.Server.Framework;
+namespace Intersect.Server.Framework.Items;
 
 public interface IItemSource
 {

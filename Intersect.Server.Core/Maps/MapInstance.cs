@@ -13,7 +13,7 @@ using Intersect.Server.Entities;
 using Intersect.Server.Classes.Maps;
 using MapAttribute = Intersect.Enums.MapAttribute;
 using Intersect.Server.Core.MapInstancing;
-using Intersect.Server.Framework;
+using Intersect.Server.Framework.Items;
 
 namespace Intersect.Server.Maps;
 

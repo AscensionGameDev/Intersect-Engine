@@ -4,6 +4,7 @@ using Intersect.GameObjects.Events;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Entities.Pathfinding;
 using Intersect.Server.Framework;
+using Intersect.Server.Framework.Items;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;

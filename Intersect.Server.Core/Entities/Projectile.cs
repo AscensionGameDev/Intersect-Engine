@@ -4,7 +4,7 @@ using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Entities.Combat;
-using Intersect.Server.Framework;
+using Intersect.Server.Framework.Items;
 using Intersect.Server.Maps;
 using Intersect.Utilities;
 using MapAttribute = Intersect.Enums.MapAttribute;

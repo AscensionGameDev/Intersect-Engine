@@ -12,6 +12,7 @@ using Intersect.Server.Entities.Combat;
 using Intersect.Server.Entities.Events;
 using Intersect.Server.Framework;
 using Intersect.Server.Framework.Entities;
+using Intersect.Server.Framework.Items;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
@@ -29,6 +30,7 @@ public abstract partial class Entity : IEntity
     private Guid _id = Guid.NewGuid();
     
     public Guid MapInstanceId = Guid.Empty;
+    Guid IEntity.MapInstanceId => MapInstanceId;
 
     [JsonProperty("MaxVitals"), NotMapped] private long[] _maxVital = new long[Enum.GetValues<Vital>().Length];
 
