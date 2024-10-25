@@ -2782,7 +2782,7 @@ public partial class Player : Entity
                     // Do we have any items to spawn to the map?
                     if (spawnAmount > 0 && MapController.TryGetInstanceFromMap(Map.Id, MapInstanceId, out var instance))
                     {
-                        instance.SpawnItem(CreateItemSource(), overflowTileX > -1 ? overflowTileX : X, overflowTileY > -1 ? overflowTileY : Y, item, spawnAmount, Id);
+                        instance.SpawnItem(GetItemSource(), overflowTileX > -1 ? overflowTileX : X, overflowTileY > -1 ? overflowTileY : Y, item, spawnAmount, Id);
                         return spawnAmount != item.Quantity;
                     }
 
@@ -2826,11 +2826,11 @@ public partial class Player : Entity
     /// Creates an item source for the player entity.
     /// </summary>
     /// <returns>A new <see cref="EntityItemSource"/> object.</returns>
-    protected override EntityItemSource CreateItemSource()
+    protected override EntityItemSource GetItemSource()
     {
         return new EntityItemSource
         {
-            EntityType = this.GetEntityType(),
+            EntityType = GetEntityType(),
             EntityReference = new WeakReference<IEntity>(this),
             Id = this.Id
         };
@@ -3149,7 +3149,7 @@ public partial class Player : Entity
             return false;
         }
 
-        mapInstance.SpawnItem(CreateItemSource(),X, Y, itemInSlot, itemDescriptor.IsStackable ? amount : 1, Id);
+        mapInstance.SpawnItem(GetItemSource(),X, Y, itemInSlot, itemDescriptor.IsStackable ? amount : 1, Id);
 
         itemInSlot.Quantity = Math.Max(0, itemInSlot.Quantity - amount);
 
@@ -4987,7 +4987,7 @@ public partial class Player : Entity
             return;
         }
 
-        var itemSource = CreateItemSource();
+        var itemSource = GetItemSource();
 
         foreach (var offer in Trading.Offer)
         {

@@ -4,5 +4,5 @@ public interface IEntity: IDisposable
 {
     Guid Id { get; }
     string Name { get; }
-    Guid MapInstanceId { get;  }
+    Guid MapInstanceId { get; }
 }

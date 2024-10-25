@@ -159,7 +159,7 @@ public partial class Resource : Entity
                 selectedTile = tiles[Randomization.Next(0, tiles.Count)];
             }
             
-            var itemSource = CreateItemSource();
+            var itemSource = GetItemSource();
 
             // Drop items
             foreach (var item in Items)
@@ -178,11 +178,11 @@ public partial class Resource : Entity
         Items.Clear();
     }
     
-    protected override EntityItemSource CreateItemSource()
+    protected override EntityItemSource GetItemSource()
     {
         return new EntityItemSource
         {
-            EntityType = this.GetEntityType(),
+            EntityType = GetEntityType(),
             EntityReference = new WeakReference<IEntity>(this),
             Id = this.Base.Id
         };

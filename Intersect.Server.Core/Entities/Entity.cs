@@ -10,7 +10,6 @@ using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Entities.Combat;
 using Intersect.Server.Entities.Events;
-using Intersect.Server.Framework;
 using Intersect.Server.Framework.Entities;
 using Intersect.Server.Framework.Items;
 using Intersect.Server.General;
@@ -29,8 +28,8 @@ public abstract partial class Entity : IEntity
     //Instance Values
     private Guid _id = Guid.NewGuid();
     
-    public Guid MapInstanceId = Guid.Empty;
-    Guid IEntity.MapInstanceId => MapInstanceId;
+    [NotMapped] 
+    public Guid MapInstanceId { get; set; } = Guid.Empty;
 
     [JsonProperty("MaxVitals"), NotMapped] private long[] _maxVital = new long[Enum.GetValues<Vital>().Length];
 
@@ -3060,7 +3059,7 @@ public abstract partial class Entity : IEntity
             // Spawn the actual item!
             if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
             {
-                var itemSource = this.CreateItemSource();
+                var itemSource = this.GetItemSource();
                 instance.SpawnItem(itemSource, X, Y, drop, drop.Quantity, lootOwner, sendUpdate);
             }
 
@@ -3069,7 +3068,7 @@ public abstract partial class Entity : IEntity
         }
     }
 
-    protected abstract EntityItemSource CreateItemSource();
+    protected abstract EntityItemSource GetItemSource();
 
     public bool IsDead()
     {

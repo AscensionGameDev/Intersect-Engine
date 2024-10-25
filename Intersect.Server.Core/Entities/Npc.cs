@@ -1674,11 +1674,11 @@ public partial class Npc : Entity
         return pkt;
     }
     
-    protected override EntityItemSource CreateItemSource()
+    protected override EntityItemSource GetItemSource()
     {
         return new EntityItemSource
         {
-            EntityType = this.GetEntityType(),
+            EntityType = GetEntityType(),
             EntityReference = new WeakReference<IEntity>(this),
             Id = this.Base.Id
         };

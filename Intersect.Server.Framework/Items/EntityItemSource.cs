@@ -3,9 +3,10 @@ using Intersect.Server.Framework.Entities;
 
 namespace Intersect.Server.Framework.Items;
 
-public class EntityItemSource: IItemSource
+public partial class EntityItemSource: IItemSource
 {
     public Guid Id { get; init; }
+    public ItemSourceType SourceType => ItemSourceType.Entity;
     public EntityType EntityType { get; init; }
     public WeakReference<IEntity> EntityReference { get; init; }
 }

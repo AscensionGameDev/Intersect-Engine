@@ -656,7 +656,7 @@ public partial class Projectile : Entity
         return EntityType.Projectile;
     }
     
-    protected override EntityItemSource CreateItemSource()
+    protected override EntityItemSource GetItemSource()
     {
         return null;
     }

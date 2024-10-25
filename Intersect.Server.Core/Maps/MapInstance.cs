@@ -14,6 +14,7 @@ using Intersect.Server.Classes.Maps;
 using MapAttribute = Intersect.Enums.MapAttribute;
 using Intersect.Server.Core.MapInstancing;
 using Intersect.Server.Framework.Items;
+using Intersect.Server.Framework.Maps;
 
 namespace Intersect.Server.Maps;
 
@@ -48,7 +49,7 @@ namespace Intersect.Server.Maps;
 /// </para>
 /// </remarks>
 /// </summary>
-public partial class MapInstance : IDisposable
+public partial class MapInstance : IMapInstance
 {
     /// <summary>
     /// Reference to stay consistent/easy-to-read with overworld behavior
@@ -79,7 +80,7 @@ public partial class MapInstance : IDisposable
     /// Note that this is NOT the Instance instance identifier - that is <see cref="MapInstanceId"/>
     /// </remarks>
     /// </summary>
-    public Guid Id;
+    public Guid Id { get; set; }
 
     /// <summary>
     /// An ID referring to which instance this processer belongs to.
@@ -88,7 +89,7 @@ public partial class MapInstance : IDisposable
     /// will be processed and fed packets by that processer.
     /// </remarks>
     /// </summary>
-    public Guid MapInstanceId;
+    public Guid MapInstanceId { get; set; }
 
     /// <summary>
     /// The last time the <see cref="Core.LogicService.LogicThread"/> made a call to <see cref="Update(long)"/>.
@@ -931,7 +932,15 @@ public partial class MapInstance : IDisposable
             {
                 mapItem.Quantity = 1;
             }
-            AddItem(null, mapItem);
+
+            var mapItemSource = new MapItemSource
+            {
+                MapInstanceId = MapInstanceId, 
+                MapInstanceReference = new WeakReference<IMapInstance>(this), 
+                MapControllerId = mMapController.Id,
+            };
+            
+            AddItem(mapItemSource, mapItem);
             PacketSender.SendMapItemUpdate(mMapController.Id, MapInstanceId, mapItem, false);
         }
     }
