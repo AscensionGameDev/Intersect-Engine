@@ -15,6 +15,7 @@ using MapAttribute = Intersect.Enums.MapAttribute;
 using Intersect.Server.Core.MapInstancing;
 using Intersect.Server.Framework.Items;
 using Intersect.Server.Framework.Maps;
+using Intersect.Server.Plugins.Helpers;
 
 namespace Intersect.Server.Maps;
 
@@ -143,6 +144,9 @@ public partial class MapInstance : IMapInstance
     // Animations & Text
     private MapActionMessages mActionMessages = new MapActionMessages();
     private MapAnimations mMapAnimations = new MapAnimations();
+    
+    // Map Helper for this instance - used for invoke itemAdded event
+    private MapHelper _mapHelper = new MapHelper();
 
     public MapInstance(MapController map, Guid mapInstanceId, Player creator)
     {
@@ -715,8 +719,7 @@ public partial class MapInstance : IMapInstance
 
         TileItems[item.TileIndex]?.TryAdd(item.UniqueId, item);
         
-        //TODO: Invoke the event for the item being added to the map, maybe: 
-        // _mapHelper?.ItemAdded?.Invoke(this, new ItemEventArgs(source, item));
+        _mapHelper.InvokeItemAdded(source, item);
     }
 
     /// <summary>
