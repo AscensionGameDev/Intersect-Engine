@@ -895,7 +895,7 @@ public partial class EventPageInstance : Entity
         return false;
     }
     
-    protected override EntityItemSource GetItemSource()
+    protected override EntityItemSource? AsItemSource()
     {
         return null;
     }

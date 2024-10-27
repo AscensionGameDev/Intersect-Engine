@@ -1674,7 +1674,7 @@ public partial class Npc : Entity
         return pkt;
     }
     
-    protected override EntityItemSource GetItemSource()
+    protected override EntityItemSource? AsItemSource()
     {
         return new EntityItemSource
         {

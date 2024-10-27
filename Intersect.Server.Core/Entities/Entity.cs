@@ -3059,7 +3059,7 @@ public abstract partial class Entity : IEntity
             // Spawn the actual item!
             if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
             {
-                var itemSource = this.GetItemSource();
+                var itemSource = this.AsItemSource();
                 instance.SpawnItem(itemSource, X, Y, drop, drop.Quantity, lootOwner, sendUpdate);
             }
 
@@ -3068,7 +3068,7 @@ public abstract partial class Entity : IEntity
         }
     }
 
-    protected abstract EntityItemSource GetItemSource();
+    protected abstract EntityItemSource? AsItemSource();
 
     public bool IsDead()
     {

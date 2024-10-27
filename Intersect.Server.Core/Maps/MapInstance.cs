@@ -933,9 +933,9 @@ public partial class MapInstance : IMapInstance
 
             var mapItemSource = new MapItemSource
             {
-                MapInstanceId = MapInstanceId, 
+                Id = MapInstanceId,
                 MapInstanceReference = new WeakReference<IMapInstance>(this), 
-                MapControllerId = mMapController.Id,
+                DescriptorId = mMapController.Id,
             };
             
             AddItem(mapItemSource, mapItem);
