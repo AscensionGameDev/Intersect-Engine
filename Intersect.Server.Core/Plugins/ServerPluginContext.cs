@@ -38,7 +38,7 @@ internal sealed partial class ServerPluginContext : PluginContext<ServerPluginCo
     public ServerPluginContext(Plugin plugin) : base(plugin)
     {
         Lifecycle = new ServerLifecycleHelper(this);
-        MapHelper = new MapHelper();
+        MapHelper = Helpers.MapHelper.Instance; 
     }
 
     /// <inheritdoc />

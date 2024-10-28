@@ -145,9 +145,6 @@ public partial class MapInstance : IMapInstance
     private MapActionMessages mActionMessages = new MapActionMessages();
     private MapAnimations mMapAnimations = new MapAnimations();
     
-    // Map Helper for this instance - used for invoke itemAdded event
-    private MapHelper _mapHelper = new MapHelper();
-
     public MapInstance(MapController map, Guid mapInstanceId, Player creator)
     {
         mMapController = map;
@@ -719,7 +716,7 @@ public partial class MapInstance : IMapInstance
 
         TileItems[item.TileIndex]?.TryAdd(item.UniqueId, item);
         
-        _mapHelper.InvokeItemAdded(source, item);
+        MapHelper.Instance.InvokeItemAdded(source, item);
     }
 
     /// <summary>
