@@ -161,7 +161,7 @@ jobs:
       uses: actions/upload-artifact@v4.4.3
       with:
         if-no-files-found: error
-        name: engine
+        name: engine-${{ runner.os }}
         path: linux.tar
 
   build-macos:
@@ -229,7 +229,7 @@ jobs:
       uses: actions/upload-artifact@v4.4.3
       with:
         if-no-files-found: error
-        name: engine
+        name: engine-${{ runner.os }}
         path: osx.tar
 
   build-windows:
@@ -300,7 +300,7 @@ jobs:
       uses: actions/upload-artifact@v4.4.3
       with:
         if-no-files-found: error
-        name: engine
+        name: engine-${{ runner.os }}
         path: win.tar
 
   debug-build-artifacts:
