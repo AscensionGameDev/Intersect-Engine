@@ -90,7 +90,7 @@ jobs:
       run: ls -laR .
 
     - name: Upload keys
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4.4.3
       with:
         if-no-files-found: error
         name: keys
@@ -138,7 +138,7 @@ jobs:
       run: dotnet restore Intersect.sln
 
     - name: Download keys
-      uses: actions/download-artifact@v4.1.7
+      uses: actions/download-artifact@v4.1.8
       with:
         name: keys
         path: ./Intersect.Network/bin/Release/keys/
@@ -158,7 +158,7 @@ jobs:
       run: ls -laR .
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4.4.3
       with:
         if-no-files-found: error
         name: engine
@@ -206,7 +206,7 @@ jobs:
       run: dotnet restore Intersect.sln
 
     - name: Download keys
-      uses: actions/download-artifact@v4.1.7
+      uses: actions/download-artifact@v4.1.8
       with:
         name: keys
         path: ./Intersect.Network/bin/Release/keys/
@@ -226,7 +226,7 @@ jobs:
       run: ls -laR .
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4.4.3
       with:
         if-no-files-found: error
         name: engine
@@ -274,7 +274,7 @@ jobs:
       run: dotnet restore Intersect.sln
 
     - name: Download keys
-      uses: actions/download-artifact@v4.1.7
+      uses: actions/download-artifact@v4.1.8
       with:
         name: keys
         path: ./Intersect.Network/bin/Release/keys/
@@ -297,7 +297,7 @@ jobs:
       shell: bash
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4.4.3
       with:
         if-no-files-found: error
         name: engine
@@ -310,7 +310,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v4.1.7
+        uses: actions/download-artifact@v4.1.8
         with:
           name: engine
           path: .
@@ -334,7 +334,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download Artifacts
-        uses: actions/download-artifact@v4.1.7
+        uses: actions/download-artifact@v4.1.8
         with:
           name: engine
           path: .
