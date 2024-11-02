@@ -38,7 +38,7 @@ jobs:
         submodules: recursive
 
     - name: Cache binaries
-      uses: actions/cache@v3
+      uses: actions/cache@v4.1.2
       id: cache-binaries
       with:
         key: ${{ runner.os }}-binaries-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/**/*.cs*') }}
@@ -47,12 +47,12 @@ jobs:
 
     - name: Setup dotnet
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4.1.0
       with:
         dotnet-version: 7.0.x
 
     - name: Cache NuGet dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4.1.2
       id: cache-nuget
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       with:
@@ -85,7 +85,7 @@ jobs:
     #   run: ls -R ./dist
 
     - name: Upload linux-x64 artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4.4.3
       with:
         if-no-files-found: error
         path: "dist/linux-x64/**/*"
@@ -93,7 +93,7 @@ jobs:
         retention-days: 1
 
     - name: Upload osx-x64 artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4.4.3
       with:
         if-no-files-found: error
         path: "dist/osx-x64/**/*"
@@ -101,7 +101,7 @@ jobs:
         retention-days: 1
 
     - name: Upload win-x64 artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4.4.3
       with:
         if-no-files-found: error
         path: "dist/win-x64/**/*"
