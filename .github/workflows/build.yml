@@ -337,7 +337,8 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v4.1.8
         with:
-          name: engine
+          pattern: engine-*
+          merge-multiple: true
           path: .
 
       - name: Extract build archives
