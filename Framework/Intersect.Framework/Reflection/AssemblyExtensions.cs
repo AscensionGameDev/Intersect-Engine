@@ -49,6 +49,12 @@ public static partial class AssemblyExtensions
     public static string GetVersionName(this Assembly assembly)
     {
         var version = assembly.GetName().Version;
+
+        if (version == default)
+        {
+            return "???";
+        }
+
         var versionMajorMinor = $"{version.Major}.{version.Minor}";
         var versionSuffix = version.Major == 0 ? "-beta" : string.Empty;
         return versionMajorMinor + versionSuffix;
@@ -62,6 +68,7 @@ public static partial class AssemblyExtensions
 
     public static IEnumerable<Type> FindDefinedSubtypesOf(this Assembly assembly, Type type) => assembly
         .FindSubtypesOf(type)
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         .Where(subtype => !(subtype == null || subtype.IsAbstract || subtype.IsGenericType || subtype.IsInterface));
 
     public static IEnumerable<Type> FindDefinedSubtypesOf<TParentType>(this Assembly assembly) =>
