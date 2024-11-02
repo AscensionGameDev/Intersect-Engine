@@ -8,6 +8,6 @@ namespace Intersect.Server.Plugins
     /// </summary>
     public interface IServerPluginContext : IPluginContext<IServerPluginContext, IServerLifecycleHelper>
     {
-
+        IMapHelper MapHelper { get; }
     }
 }

@@ -5,13 +5,14 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database.PlayerData.Players;
+using Intersect.Server.Framework.Items;
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Database;
 
-public class Item
+public class Item: IItem
 {
-    [JsonIgnore][NotMapped] public double DropChance = 100;
+    [JsonIgnore][NotMapped] public double DropChance { get; set; } = 100;
 
     public Item()
     {

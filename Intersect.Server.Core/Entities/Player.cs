@@ -19,6 +19,8 @@ using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities.Combat;
 using Intersect.Server.Entities.Events;
+using Intersect.Server.Framework.Entities;
+using Intersect.Server.Framework.Items;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
@@ -35,7 +37,6 @@ public partial class Player : Entity
 {
     [NotMapped, JsonIgnore]
     public Guid PreviousMapInstanceId = Guid.Empty;
-
     //Online Players List
     private static readonly ConcurrentDictionary<Guid, Player> OnlinePlayers = new ConcurrentDictionary<Guid, Player>();
 
@@ -2781,7 +2782,7 @@ public partial class Player : Entity
                     // Do we have any items to spawn to the map?
                     if (spawnAmount > 0 && MapController.TryGetInstanceFromMap(Map.Id, MapInstanceId, out var instance))
                     {
-                        instance.SpawnItem(overflowTileX > -1 ? overflowTileX : X, overflowTileY > -1 ? overflowTileY : Y, item, spawnAmount, Id);
+                        instance.SpawnItem(AsItemSource(), overflowTileX > -1 ? overflowTileX : X, overflowTileY > -1 ? overflowTileY : Y, item, spawnAmount, Id);
                         return spawnAmount != item.Quantity;
                     }
 
@@ -2820,8 +2821,21 @@ public partial class Player : Entity
         var bankInterface = new BankInterface(this, ((IEnumerable<Item>)Bank).ToList(), new object(), null, Options.Instance.Bank.MaxSlots);
         return bankOverflow && bankInterface.TryDepositItem(item, sendUpdate);
     }
-
-
+    
+    /// <summary>
+    /// Creates an item source for the player entity.
+    /// </summary>
+    /// <returns>A new <see cref="EntityItemSource"/> object.</returns>
+    protected override EntityItemSource? AsItemSource()
+    {
+        return new EntityItemSource
+        {
+            EntityType = GetEntityType(),
+            EntityReference = new WeakReference<IEntity>(this),
+            Id = this.Id
+        };
+    }
+    
     /// <summary>
     /// Gives the player an item. NOTE: This method MAKES ZERO CHECKS to see if this is possible!
     /// Use TryGiveItem where possible!
@@ -3135,7 +3149,7 @@ public partial class Player : Entity
             return false;
         }
 
-        mapInstance.SpawnItem(X, Y, itemInSlot, itemDescriptor.IsStackable ? amount : 1, Id);
+        mapInstance.SpawnItem(AsItemSource(),X, Y, itemInSlot, itemDescriptor.IsStackable ? amount : 1, Id);
 
         itemInSlot.Quantity = Math.Max(0, itemInSlot.Quantity - amount);
 
@@ -4973,6 +4987,8 @@ public partial class Player : Entity
             return;
         }
 
+        var itemSource = AsItemSource();
+
         foreach (var offer in Trading.Offer)
         {
             if (offer == null || offer.ItemId == Guid.Empty)
@@ -4982,7 +4998,7 @@ public partial class Player : Entity
 
             if (!TryGiveItem(offer, -1) && MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
             {
-                instance.SpawnItem(X, Y, offer, offer.Quantity, Id);
+                instance.SpawnItem(itemSource, X, Y, offer, offer.Quantity, Id);
                 PacketSender.SendChatMsg(this, Strings.Trading.ItemsDropped, ChatMessageType.Inventory, CustomColors.Alerts.Error);
             }
 

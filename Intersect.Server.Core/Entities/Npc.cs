@@ -8,6 +8,8 @@ using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Entities.Combat;
 using Intersect.Server.Entities.Events;
 using Intersect.Server.Entities.Pathfinding;
+using Intersect.Server.Framework.Entities;
+using Intersect.Server.Framework.Items;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
@@ -1670,6 +1672,16 @@ public partial class Npc : Entity
         pkt.Aggression = GetAggression(forPlayer);
 
         return pkt;
+    }
+    
+    protected override EntityItemSource? AsItemSource()
+    {
+        return new EntityItemSource
+        {
+            EntityType = GetEntityType(),
+            EntityReference = new WeakReference<IEntity>(this),
+            Id = this.Base.Id
+        };
     }
 
 }
