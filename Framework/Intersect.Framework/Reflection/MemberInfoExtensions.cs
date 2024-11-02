@@ -9,7 +9,7 @@ public static partial class MemberInfoExtensions
     {
         if (memberInfo is Type type)
         {
-            return type.FullName;
+            return type.GetName(true);
         }
 
         var declaringType = memberInfo.DeclaringType;
@@ -21,8 +21,8 @@ public static partial class MemberInfoExtensions
     {
         Debug.Assert(methodInfo != null);
 
-        var returnTypeName = fullyQualified ? methodInfo.ReturnType.FullName : methodInfo.ReturnType.Name;
-        var declaringTypeName = fullyQualified ? methodInfo.DeclaringType.FullName : methodInfo.DeclaringType.Name;
+        var returnTypeName = methodInfo.ReturnType.GetName(fullyQualified);
+        var declaringTypeName = methodInfo.DeclaringType?.GetName(fullyQualified) ?? "???";
         var parameterTypes = methodInfo.GetParameters().Select(parameter => parameter.ParameterType);
         var parameterTypeNames = parameterTypes.Select(
             parameterType => fullyQualified ? parameterType.FullName : parameterType.Name

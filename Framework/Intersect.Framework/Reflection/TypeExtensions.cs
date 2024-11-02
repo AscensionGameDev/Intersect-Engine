@@ -80,6 +80,7 @@ public static partial class TypeExtensions
 
                     var parameter = parameters[index];
 
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
                     if (parameter == null)
                     {
                         if (constructorParameter.ParameterType.IsValueType)
@@ -196,7 +197,7 @@ public static partial class TypeExtensions
         return derivedTypes;
     }
 
-    public static Type FindGenericType(this Type type) => type.FindGenericType(true);
+    public static Type? FindGenericType(this Type type) => type.FindGenericType(true);
 
     public static Type? FindGenericType(this Type type, bool throwOnNonGeneric) =>
         type.FindGenericType(default, throwOnNonGeneric);
@@ -296,11 +297,11 @@ public static partial class TypeExtensions
 
     public static Type[] FindGenericTypeParameters(
         this Type type,
-        Type genericTypeDefinition,
+        Type? genericTypeDefinition,
         bool throwOnNonGeneric = true
     )
     {
-        if (genericTypeDefinition != null && !genericTypeDefinition.IsGenericTypeDefinition)
+        if (genericTypeDefinition is { IsGenericTypeDefinition: false })
         {
             throw new ArgumentException(
                 $"Not a valid generic type definition: {genericTypeDefinition.FullName}",
@@ -374,6 +375,9 @@ public static partial class TypeExtensions
         Debug.Assert(type != default);
         return type.Assembly.GetName().Name ?? fallbackIfNull;
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static string GetName(this Type type, bool qualified = false) => qualified ? type.GetQualifiedName() : type.Name;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string GetQualifiedName(this Type type) => type.FullName ?? type.Name;
