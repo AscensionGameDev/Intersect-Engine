@@ -765,7 +765,10 @@ public partial class Base : IDisposable
         Gwen.ToolTip.ControlDeleted(this);
         Animation.Cancel(this);
 
-        mChildren?.ForEach(child => child?.Dispose());
+        // [Fix]: "InvalidOperationException: Collection was modified (during iteration); enumeration operation may not execute".
+        // (Creates a copy of the children list to avoid modifying the collection during iteration).
+        var childrenCopy = new List<Base>(mChildren);
+        childrenCopy.ForEach(child => child.Dispose());
         mChildren?.Clear();
 
         mInnerPanel?.Dispose();

@@ -45,6 +45,7 @@ public partial class SettingsWindow : ImagePanel
     private readonly LabeledCheckBox _showExperienceAsPercentageCheckbox;
     private readonly LabeledCheckBox _showHealthAsPercentageCheckbox;
     private readonly LabeledCheckBox _showManaAsPercentageCheckbox;
+    private readonly LabeledCheckBox _simplifiedEscapeMenu;
 
     // Game Settings - Information.
     private readonly ScrollControl _informationSettings;
@@ -179,6 +180,12 @@ public partial class SettingsWindow : ImagePanel
         _showManaAsPercentageCheckbox = new LabeledCheckBox(_interfaceSettings, "ShowManaAsPercentageCheckbox")
         {
             Text = Strings.Settings.ShowManaAsPercentage
+        };
+        
+        // Game Settings - Interface: simplified escape menu.
+        _simplifiedEscapeMenu = new LabeledCheckBox(_interfaceSettings, "SimplifiedEscapeMenu")
+        {
+            Text = Strings.Settings.SimplifiedEscapeMenu
         };
 
         // Game Settings - Information.
@@ -730,6 +737,7 @@ public partial class SettingsWindow : ImagePanel
         _showHealthAsPercentageCheckbox.IsChecked = Globals.Database.ShowHealthAsPercentage;
         _showManaAsPercentageCheckbox.IsChecked = Globals.Database.ShowManaAsPercentage;
         _showExperienceAsPercentageCheckbox.IsChecked = Globals.Database.ShowExperienceAsPercentage;
+        _simplifiedEscapeMenu.IsChecked = Globals.Database.SimplifiedEscapeMenu;
         _friendOverheadInfoCheckbox.IsChecked = Globals.Database.FriendOverheadInfo;
         _guildMemberOverheadInfoCheckbox.IsChecked = Globals.Database.GuildMemberOverheadInfo;
         _myOverheadInfoCheckbox.IsChecked = Globals.Database.MyOverheadInfo;
@@ -910,6 +918,7 @@ public partial class SettingsWindow : ImagePanel
         Globals.Database.ShowExperienceAsPercentage = _showExperienceAsPercentageCheckbox.IsChecked;
         Globals.Database.ShowHealthAsPercentage = _showHealthAsPercentageCheckbox.IsChecked;
         Globals.Database.ShowManaAsPercentage = _showManaAsPercentageCheckbox.IsChecked;
+        Globals.Database.SimplifiedEscapeMenu = _simplifiedEscapeMenu.IsChecked;
         Globals.Database.FriendOverheadInfo = _friendOverheadInfoCheckbox.IsChecked;
         Globals.Database.GuildMemberOverheadInfo = _guildMemberOverheadInfoCheckbox.IsChecked;
         Globals.Database.MyOverheadInfo = _myOverheadInfoCheckbox.IsChecked;
