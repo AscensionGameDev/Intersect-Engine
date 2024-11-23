@@ -766,9 +766,13 @@ public partial class Base : IDisposable
         Animation.Cancel(this);
 
         // [Fix]: "InvalidOperationException: Collection was modified (during iteration); enumeration operation may not execute".
-        // (Creates a copy of the children list to avoid modifying the collection during iteration).
-        var childrenCopy = new List<Base>(mChildren);
-        childrenCopy.ForEach(child => child.Dispose());
+        // (Creates an array copy of the children to avoid modifying the collection during iteration).
+        var children = mChildren.ToArray();
+        foreach (var child in children)
+        {
+            child.Dispose();
+        }
+
         mChildren?.Clear();
 
         mInnerPanel?.Dispose();

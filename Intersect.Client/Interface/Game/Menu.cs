@@ -359,13 +359,13 @@ public partial class Menu
     {
         var simplifiedEscapeMenuSetting = Globals.Database.SimplifiedEscapeMenu;
 
-        if (!simplifiedEscapeMenuSetting)
+        if (simplifiedEscapeMenuSetting)
         {
-            Interface.GameUi?.EscapeMenu?.ToggleHidden();
+            Interface.GameUi?.SimplifiedEscapeMenu?.ToggleHidden();
         }
         else
         {
-            Interface.GameUi?.SimplifiedEscapeMenu?.ToggleHidden();
+            Interface.GameUi?.EscapeMenu?.ToggleHidden();
         }
     }
 
