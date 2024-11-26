@@ -37,7 +37,7 @@ public partial class Menu
 
     private readonly ImagePanel mMenuBackground;
 
-    public readonly Button mMenuButton;
+    private readonly Button mMenuButton;
 
     //Menu Container
     private readonly ImagePanel mMenuContainer;
@@ -355,13 +355,13 @@ public partial class Menu
     }
 
     //Input Handlers
-    private static void MenuButtonClicked(Base sender, ClickedEventArgs arguments)
+    private void MenuButtonClicked(Base sender, ClickedEventArgs arguments)
     {
         var simplifiedEscapeMenuSetting = Globals.Database.SimplifiedEscapeMenu;
 
         if (simplifiedEscapeMenuSetting)
         {
-            Interface.GameUi?.SimplifiedEscapeMenu?.ToggleHidden();
+            Interface.GameUi?.SimplifiedEscapeMenu?.ToggleHidden(mMenuButton);
         }
         else
         {

@@ -39,9 +39,9 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer?.GetResolutionString());
     }
 
-    public override void ToggleHidden()
+    public void ToggleHidden(Button? target)
     {
-        if (!_settingsWindow.IsHidden)
+        if (!_settingsWindow.IsHidden || target == null)
         {
             return;
         }
@@ -49,14 +49,14 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
         if (this.IsHidden)
         {
             // Position the context menu within the game canvas if near borders.
-            var menuPosX = Interface.GameUi.GameMenu.mMenuButton.LocalPosToCanvas(new Point(0, 0)).X;
-            var menuPosY = Interface.GameUi.GameMenu.mMenuButton.LocalPosToCanvas(new Point(0, 0)).Y;
+            var menuPosX = target.LocalPosToCanvas(new Point(0, 0)).X;
+            var menuPosY = target.LocalPosToCanvas(new Point(0, 0)).Y;
             var newX = menuPosX;
-            var newY = menuPosY + Interface.GameUi.GameMenu.mMenuButton.Height + 6;
+            var newY = menuPosY + target.Height + 6;
 
             if (newX + Width >= Canvas?.Width)
             {
-                newX = menuPosX - Width + Interface.GameUi.GameMenu.mMenuButton.Width;
+                newX = menuPosX - Width + target.Width;
             }
 
             if (newY + Height >= Canvas?.Height)
