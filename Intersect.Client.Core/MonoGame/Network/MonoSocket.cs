@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
@@ -45,7 +45,7 @@ internal partial class MonoSocket : GameSocket
     private const long ServerStatusPingInterval = 15_000;
 #endif
 
-    private const string AsymmetricKeyManifestResourceName = "Intersect.Client.network.handshake.bkey.pub";
+    private const string AsymmetricKeyManifestResourceName = "Intersect.Client.Core.network.handshake.bkey.pub";
 
     private IClient? _network;
 
