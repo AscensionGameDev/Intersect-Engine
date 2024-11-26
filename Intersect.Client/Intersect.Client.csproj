@@ -28,6 +28,12 @@
 	  <ProjectReference Include="..\Intersect.Client.Core\Intersect.Client.Core.csproj" />
 	</ItemGroup>
 
+	<ItemGroup Label="Project Embedded Resources">
+		<EmbeddedResource Include="$(IntersectRepoPath)\assets\intersect-logo-qu.bmp">
+			<LogicalName>Icon.bmp</LogicalName>
+		</EmbeddedResource>
+	</ItemGroup>
+
 	<ItemGroup>
 	  <Compile Update="Properties\Resources.Designer.cs">
 	    <DependentUpon>Resources.resx</DependentUpon>

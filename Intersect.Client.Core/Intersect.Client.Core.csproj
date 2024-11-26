@@ -35,9 +35,6 @@
 
   <ItemGroup Label="Project Embedded Resources">
     <EmbeddedResource Include="$(NetworkHandshakePublicKey)" />
-    <EmbeddedResource Include="$(IntersectRepoPath)\assets\intersect-logo-qu.bmp">
-      <LogicalName>Icon.bmp</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="Resources\MonoGame.Framework.dll.config" />
     <EmbeddedResource Include="Resources\openal32.dll" />
     <EmbeddedResource Include="Resources\Shaders\radialgradient.xnb" />
