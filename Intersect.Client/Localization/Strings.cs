@@ -1932,6 +1932,9 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString ShowPlayerOverheadInformation = @"Show players overhead information";
+        
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString SimplifiedEscapeMenu = @"Simplified escape menu";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString StickyTarget = @"Sticky Target";

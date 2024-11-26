@@ -93,6 +93,7 @@ public partial class GameInterface : MutableInterface
     {
         GameCanvas = canvas;
         EscapeMenu = new EscapeMenu(GameCanvas) {IsHidden = true};
+        SimplifiedEscapeMenu = new SimplifiedEscapeMenu(GameCanvas) {IsHidden = true};
         AnnouncementWindow = new AnnouncementWindow(GameCanvas) { IsHidden = true };
 
         InitGameGui();
@@ -101,6 +102,8 @@ public partial class GameInterface : MutableInterface
     public Canvas GameCanvas { get; }
 
     public EscapeMenu EscapeMenu { get; }
+    
+    public SimplifiedEscapeMenu SimplifiedEscapeMenu { get; }
 
     public AnnouncementWindow AnnouncementWindow { get; }
 

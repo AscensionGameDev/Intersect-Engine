@@ -133,7 +133,16 @@ public static partial class Input
             }
             else
             {
-                Interface.Interface.GameUi?.EscapeMenu?.ToggleHidden();
+                var simplifiedEscapeMenuSetting = Globals.Database.SimplifiedEscapeMenu;
+
+                if (simplifiedEscapeMenuSetting)
+                {
+                    Interface.Interface.GameUi?.SimplifiedEscapeMenu?.ToggleHidden();
+                }
+                else
+                {
+                    Interface.Interface.GameUi?.EscapeMenu?.ToggleHidden();
+                }
             }
         }
 

@@ -355,9 +355,18 @@ public partial class Menu
     }
 
     //Input Handlers
-    private static void MenuButtonClicked(Base sender, ClickedEventArgs arguments)
+    private void MenuButtonClicked(Base sender, ClickedEventArgs arguments)
     {
-        Interface.GameUi?.EscapeMenu?.ToggleHidden();
+        var simplifiedEscapeMenuSetting = Globals.Database.SimplifiedEscapeMenu;
+
+        if (simplifiedEscapeMenuSetting)
+        {
+            Interface.GameUi?.SimplifiedEscapeMenu?.ToggleHidden(mMenuButton);
+        }
+        else
+        {
+            Interface.GameUi?.EscapeMenu?.ToggleHidden();
+        }
     }
 
     private void PartyBtn_Clicked(Base sender, ClickedEventArgs arguments)
