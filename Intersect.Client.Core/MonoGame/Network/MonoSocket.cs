@@ -13,7 +13,7 @@ using Intersect.Utilities;
 using Intersect.Client.Core;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Menu;
-using Intersect.Client.Core.Localization;
+using Intersect.Client.Localization;
 using Intersect.Network.Packets.Unconnected.Client;
 using Intersect.Rsa;
 

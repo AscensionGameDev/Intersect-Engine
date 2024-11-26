@@ -10,7 +10,7 @@ using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Interface.Game.EntityPanel;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Items;
-using Intersect.Client.Core.Localization;
+using Intersect.Client.Localization;
 using Intersect.Client.Maps;
 using Intersect.Client.Networking;
 using Intersect.Config.Guilds;

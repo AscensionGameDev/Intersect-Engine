@@ -4,7 +4,7 @@ using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.Data;
 using Intersect.Client.Framework.Gwen.Control.Layout;
 using Intersect.Client.General;
-using Intersect.Client.Core.Localization;
+using Intersect.Client.Localization;
 using Intersect.Client.Maps;
 using Intersect.Extensions;
 

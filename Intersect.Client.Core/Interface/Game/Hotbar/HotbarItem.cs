@@ -7,7 +7,7 @@ using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Items;
-using Intersect.Client.Core.Localization;
+using Intersect.Client.Localization;
 using Intersect.Client.Spells;
 using Intersect.GameObjects;
 using Intersect.Utilities;

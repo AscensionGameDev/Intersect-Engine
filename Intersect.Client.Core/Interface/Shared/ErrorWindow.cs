@@ -1,4 +1,4 @@
-using Intersect.Client.Core.Localization;
+using Intersect.Client.Localization;
 
 namespace Intersect.Client.Interface.Shared;
 

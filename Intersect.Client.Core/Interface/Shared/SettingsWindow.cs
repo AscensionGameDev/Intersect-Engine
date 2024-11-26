@@ -8,7 +8,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Menu;
-using Intersect.Client.Core.Localization;
+using Intersect.Client.Localization;
 using Intersect.Utilities;
 using static Intersect.Client.Framework.File_Management.GameContentManager;
 using MathHelper = Intersect.Client.Utilities.MathHelper;

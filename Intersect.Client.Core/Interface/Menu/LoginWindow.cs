@@ -5,7 +5,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
-using Intersect.Client.Core.Localization;
+using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Security;
 using Intersect.Utilities;

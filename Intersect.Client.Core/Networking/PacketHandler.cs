@@ -8,7 +8,7 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Interface.Menu;
 using Intersect.Client.Items;
-using Intersect.Client.Core.Localization;
+using Intersect.Client.Localization;
 using Intersect.Client.Maps;
 using Intersect.Configuration;
 using Intersect.Core;

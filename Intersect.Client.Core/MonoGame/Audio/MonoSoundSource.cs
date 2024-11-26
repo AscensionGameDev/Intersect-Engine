@@ -1,7 +1,7 @@
 using Intersect.Client.Framework.Audio;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
-using Intersect.Client.Core.Localization;
+using Intersect.Client.Localization;
 using Intersect.Logging;
 
 using Microsoft.Xna.Framework.Audio;

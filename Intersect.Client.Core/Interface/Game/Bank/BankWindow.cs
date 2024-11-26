@@ -3,7 +3,7 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
-using Intersect.Client.Core.Localization;
+using Intersect.Client.Localization;
 using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Bank;

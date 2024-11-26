@@ -3,7 +3,7 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
-using Intersect.Client.Core.Localization;
+using Intersect.Client.Localization;
 
 namespace Intersect.Client.Interface.Shared;
 

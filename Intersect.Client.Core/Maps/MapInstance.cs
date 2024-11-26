@@ -12,7 +12,7 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Items;
 using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
-using Intersect.Client.Core.Localization;
+using Intersect.Client.Localization;
 using Intersect.Compression;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -801,7 +801,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                     var rarity = itemBase.Rarity;
                     if (tileItems[index].Quantity > 1)
                     {
-                        name = Intersect.Client.Core.Localization.Strings.General.MapItemStackable.ToString(name, Strings.FormatQuantityAbbreviated(quantity));
+                        name = Intersect.Client.Localization.Strings.General.MapItemStackable.ToString(name, Strings.FormatQuantityAbbreviated(quantity));
                     }
                     var color = CustomColors.Items.MapRarities.ContainsKey(rarity)
                         ? CustomColors.Items.MapRarities[rarity]

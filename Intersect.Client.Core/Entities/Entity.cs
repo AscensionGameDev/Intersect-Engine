@@ -9,7 +9,7 @@ using Intersect.Client.Framework.Items;
 using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
 using Intersect.Client.Items;
-using Intersect.Client.Core.Localization;
+using Intersect.Client.Localization;
 using Intersect.Client.Spells;
 using Intersect.Enums;
 using Intersect.GameObjects;

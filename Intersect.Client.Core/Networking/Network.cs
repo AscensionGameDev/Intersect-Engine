@@ -2,7 +2,7 @@ using System.Diagnostics;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Network;
 using Intersect.Client.General;
-using Intersect.Client.Core.Localization;
+using Intersect.Client.Localization;
 using Intersect.Configuration;
 using Intersect.Logging;
 using Intersect.Network;

@@ -1,6 +1,6 @@
 ﻿using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Interface.Game.Chat;
-using Intersect.Client.Core.Localization;
+using Intersect.Client.Localization;
 using Intersect.Compression;
 using Intersect.IO.Files;
 using Intersect.Logging;

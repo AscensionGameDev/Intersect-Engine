@@ -1,6 +1,6 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Gwen.Control;
-using Intersect.Client.Core.Localization;
+using Intersect.Client.Localization;
 using static Intersect.Client.Framework.File_Management.GameContentManager;
 
 namespace Intersect.Client.Interface.Game.Admin;

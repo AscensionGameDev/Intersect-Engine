@@ -7,7 +7,7 @@ using Intersect.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Intersect.Client.Core.Localization;
+namespace Intersect.Client.Localization;
 
 
 public static partial class Strings
@@ -96,8 +96,8 @@ public static partial class Strings
     private static void PostLoad()
     {
 
-        Program.OpenGLLink = Errors.OpenGlLink.ToString();
-        Program.OpenALLink = Errors.OpenAllLink.ToString();
+        Intersect.Client.Core.Program.OpenGLLink = Errors.OpenGlLink.ToString();
+        Intersect.Client.Core.Program.OpenALLink = Errors.OpenAllLink.ToString();
     }
 
     public static void Load()

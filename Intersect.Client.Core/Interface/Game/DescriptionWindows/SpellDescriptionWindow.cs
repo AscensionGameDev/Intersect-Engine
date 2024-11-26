@@ -1,7 +1,7 @@
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Client.General;
-using Intersect.Client.Core.Localization;
+using Intersect.Client.Localization;
 using Intersect.Utilities;
 using Intersect.Client.Framework.Gwen.Control;
 
