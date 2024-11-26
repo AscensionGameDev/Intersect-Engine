@@ -137,7 +137,7 @@ public static partial class Input
 
                 if (simplifiedEscapeMenuSetting)
                 {
-                    Interface.Interface.GameUi?.SimplifiedEscapeMenu?.ToggleHidden();
+                    Interface.Interface.GameUi?.GameMenu?.ToggleSimplifiedEscapeMenu();
                 }
                 else
                 {

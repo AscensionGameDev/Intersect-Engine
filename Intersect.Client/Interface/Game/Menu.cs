@@ -282,6 +282,11 @@ public partial class Menu
         }
     }
 
+    public void ToggleSimplifiedEscapeMenu()
+    {
+        Interface.GameUi?.SimplifiedEscapeMenu?.ToggleHidden(mMenuButton);
+    }
+
     public void ToggleSpellsWindow()
     {
         if (mSpellsWindow.IsVisible())
@@ -361,7 +366,7 @@ public partial class Menu
 
         if (simplifiedEscapeMenuSetting)
         {
-            Interface.GameUi?.SimplifiedEscapeMenu?.ToggleHidden(mMenuButton);
+            ToggleSimplifiedEscapeMenu();
         }
         else
         {
