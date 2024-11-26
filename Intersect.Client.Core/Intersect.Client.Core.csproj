@@ -9,7 +9,7 @@
     <PackageId>AscensionGameDev.Intersect.Client.Core</PackageId>
     <Description>Game Client Core - Part of the Intersect 2D Game Creation Suite</Description>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-    <RootNamespace>Intersect.Client.Core</RootNamespace>
+    <RootNamespace>Intersect.Client</RootNamespace>
     <AssemblyName>Intersect Client Core</AssemblyName>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
