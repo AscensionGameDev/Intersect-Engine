@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using System.Text;
 using Intersect;
 using Intersect.Client.Core;
@@ -57,7 +57,7 @@ try
     Thread serverThread = new(args => Bootstrapper.Start(args as string[]));
     serverThread.Start(args.Append("--migrate-automatically").Distinct().ToArray());
 
-    Intersect.Client.Program.Main(args);
+    Intersect.Client.Core.Program.Main(args);
 }
 finally
 {

@@ -1,119 +1,31 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <OutputType>WinExe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <PropertyGroup Condition="$(Configuration) != 'Debug'">
-    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
-    <PublishSingleFile>true</PublishSingleFile>
-    <SelfContained>true</SelfContained>
-  </PropertyGroup>
+	<PropertyGroup Condition="$(Configuration) != 'Debug'">
+		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+		<PublishSingleFile>true</PublishSingleFile>
+		<SelfContained>true</SelfContained>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <PackageId>AscensionGameDev.Intersect.Client</PackageId>
-    <Description>Game Client - Part of the Intersect 2D Game Creation Suite</Description>
-    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-    <RootNamespace>Intersect.Client</RootNamespace>
-    <AssemblyName>Intersect Client</AssemblyName>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <FileAlignment>512</FileAlignment>
-  </PropertyGroup>
+	<PropertyGroup>
+		<PackageId>AscensionGameDev.Intersect.Client</PackageId>
+		<Description>Game Client - Part of the Intersect 2D Game Creation Suite</Description>
+		<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+		<RootNamespace>Intersect.Client</RootNamespace>
+		<AssemblyName>Intersect Client</AssemblyName>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<FileAlignment>512</FileAlignment>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>Intersect.Tests.Client</_Parameter1>
-    </AssemblyAttribute>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>Intersect.SinglePlayer</_Parameter1>
-    </AssemblyAttribute>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Intersect (Core)\Intersect.Core.csproj" />
-    <ProjectReference Include="..\Intersect.Client.Framework\Intersect.Client.Framework.csproj" />
-    <ProjectReference Include="..\Intersect.Network\Intersect.Network.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup Label="Project Embedded Resources">
-    <EmbeddedResource Include="$(NetworkHandshakePublicKey)" />
-    <EmbeddedResource Include="$(IntersectRepoPath)\assets\intersect-logo-qu.bmp">
-      <LogicalName>Icon.bmp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\MonoGame.Framework.dll.config" />
-    <EmbeddedResource Include="Resources\openal32.dll" />
-    <EmbeddedResource Include="Resources\Shaders\radialgradient.xnb" />
-    <None Include="app.manifest" />
-  </ItemGroup>
-
-  <ItemGroup Label="Package Embedded Resources">
-    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\lib\net6.0\MonoGame.Framework.dll">
-      <Link>Resources\MonoGame.Framework.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\linux-x64\native\libopenal.so.1" WithCulture="false">
-      <Link>Resources\libopenal.so.1</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\osx\native\libopenal.1.dylib">
-      <Link>Resources\libopenal.1.dylib</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\win-x64\native\soft_oal.dll">
-      <Link>Resources\x64\soft_oal.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(PkgMonoGame_Library_SDL)\runtimes\linux-x64\native\libSDL2-2.0.so.0" WithCulture="false">
-      <Link>Resources\libSDL2-2.0.so.0</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(PkgMonoGame_Library_SDL)\runtimes\osx\native\libSDL2.dylib">
-      <Link>Resources\libSDL2.dylib</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(PkgMonoGame_Library_SDL)\runtimes\win-x64\native\SDL2.dll">
-      <Link>Resources\x64\SDL2.dll</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup Label="Steam Resources" Condition="'$(INTERSECT_STEAMWORKS)' != ''">
-    <AssemblyAttribute Include="Intersect.Client.ThirdParty.Steam.Supported" />
-    <Content Include="steam_appid.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <EmbeddedResource Include="Resources\runtimes\linux-x64\native\libsdkencryptedappticket.so" />
-    <EmbeddedResource Include="Resources\runtimes\linux-x64\native\libsteam_api.so" />
-    <EmbeddedResource Include="Resources\runtimes\osx\native\libsdkencryptedappticket.dylib" />
-    <EmbeddedResource Include="Resources\runtimes\osx\native\libsteam_api.dylib" />
-    <EmbeddedResource Include="Resources\runtimes\win-x64\native\sdkencryptedappticket64.dll" />
-    <EmbeddedResource Include="Resources\runtimes\win-x64\native\steam_api64.dll" />
-  </ItemGroup>
-
-  <ItemGroup Label="Steam Resources (Exclusion)" Condition="'$(INTERSECT_STEAMWORKS)' == ''">
-    <None Include="steam_appid.txt" />
-    <None Include="Resources\runtimes\linux-x64\native\libsdkencryptedappticket.so" />
-    <None Include="Resources\runtimes\linux-x64\native\libsteam_api.so" />
-    <None Include="Resources\runtimes\osx\native\libsdkencryptedappticket.dylib" />
-    <None Include="Resources\runtimes\osx\native\libsteam_api.dylib" />
-    <None Include="Resources\runtimes\win-x64\native\sdkencryptedappticket64.dll" />
-    <None Include="Resources\runtimes\win-x64\native\steam_api64.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" GeneratePathProperty="True" />
-    <PackageReference Include="MonoGame.Library.SDL" Version="2.26.5.5" GeneratePathProperty="True" />
-    <PackageReference Include="Steamworks.NET" Version="20.1.0" />
-  </ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\Intersect.Client.Core\Intersect.Client.Core.csproj" />
+	</ItemGroup>
 
 </Project>

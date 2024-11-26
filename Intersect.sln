@@ -4,8 +4,6 @@ VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Core", "Intersect (Core)\Intersect.Core.csproj", "{BC304B43-1F2C-4454-9EDC-48F47357CA94}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Client", "Intersect.Client\Intersect.Client.csproj", "{2240F3DD-3694-4606-B181-F204CBBCB971}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Client.Framework", "Intersect.Client.Framework\Intersect.Client.Framework.csproj", "{40973F13-3339-4548-9008-FF76A0C8CD79}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Editor", "Intersect.Editor\Intersect.Editor.csproj", "{5AC53DF1-8152-466D-B7D0-238657F013F7}"
@@ -84,6 +82,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinFormsUI", "vendor\dockpa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThemeVS2015", "vendor\dockpanelsuite\WinFormsUI\ThemeVS2015.csproj", "{B9678B78-A00D-4765-9380-B1DC4EFD642D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Client", "Intersect.Client\Intersect.Client.csproj", "{250CFACD-95A8-438F-B66E-987279B89576}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Client.Core", "Intersect.Client.Core\Intersect.Client.Core.csproj", "{1456C77A-D0F6-4DAE-8D32-59BF335F5165}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,12 +99,6 @@ Global
 		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.NoFody|Any CPU.Build.0 = Debug|Any CPU
 		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2240F3DD-3694-4606-B181-F204CBBCB971}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2240F3DD-3694-4606-B181-F204CBBCB971}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2240F3DD-3694-4606-B181-F204CBBCB971}.NoFody|Any CPU.ActiveCfg = Debug|Any CPU
-		{2240F3DD-3694-4606-B181-F204CBBCB971}.NoFody|Any CPU.Build.0 = Debug|Any CPU
-		{2240F3DD-3694-4606-B181-F204CBBCB971}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2240F3DD-3694-4606-B181-F204CBBCB971}.Release|Any CPU.Build.0 = Release|Any CPU
 		{40973F13-3339-4548-9008-FF76A0C8CD79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{40973F13-3339-4548-9008-FF76A0C8CD79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40973F13-3339-4548-9008-FF76A0C8CD79}.NoFody|Any CPU.ActiveCfg = Debug|Any CPU
@@ -193,6 +189,18 @@ Global
 		{B9678B78-A00D-4765-9380-B1DC4EFD642D}.NoFody|Any CPU.Build.0 = Debug|Any CPU
 		{B9678B78-A00D-4765-9380-B1DC4EFD642D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9678B78-A00D-4765-9380-B1DC4EFD642D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{250CFACD-95A8-438F-B66E-987279B89576}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{250CFACD-95A8-438F-B66E-987279B89576}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{250CFACD-95A8-438F-B66E-987279B89576}.NoFody|Any CPU.ActiveCfg = Debug|Any CPU
+		{250CFACD-95A8-438F-B66E-987279B89576}.NoFody|Any CPU.Build.0 = Debug|Any CPU
+		{250CFACD-95A8-438F-B66E-987279B89576}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{250CFACD-95A8-438F-B66E-987279B89576}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1456C77A-D0F6-4DAE-8D32-59BF335F5165}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1456C77A-D0F6-4DAE-8D32-59BF335F5165}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1456C77A-D0F6-4DAE-8D32-59BF335F5165}.NoFody|Any CPU.ActiveCfg = Debug|Any CPU
+		{1456C77A-D0F6-4DAE-8D32-59BF335F5165}.NoFody|Any CPU.Build.0 = Debug|Any CPU
+		{1456C77A-D0F6-4DAE-8D32-59BF335F5165}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1456C77A-D0F6-4DAE-8D32-59BF335F5165}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
