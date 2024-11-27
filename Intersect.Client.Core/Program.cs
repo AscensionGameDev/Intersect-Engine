@@ -239,7 +239,7 @@ static class Program
         {
             cleanFolder += '.';
         }
-        var resourceName = $"Intersect.Client.Core.Resources.{cleanFolder}{filename}";
+        var resourceName = $"Intersect.Client.Resources.{cleanFolder}{filename}";
 
         if (assembly.GetManifestResourceNames().Contains(resourceName))
         {
