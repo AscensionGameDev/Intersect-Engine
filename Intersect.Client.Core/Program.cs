@@ -25,7 +25,7 @@ static class Program
     ///     The main entry point for the application.
     /// </summary>
     [STAThread]
-    public static void Main(string[] args)
+    internal static void Main(string[] args)
     {
         var waitForDebugger = args.Contains("--debugger");
 
