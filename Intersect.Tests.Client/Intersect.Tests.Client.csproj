@@ -12,9 +12,9 @@
     <AssemblyName>Intersect.Tests.Client</AssemblyName>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Intersect.Client\Intersect.Client.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Intersect.Client.Core\Intersect.Client.Core.csproj" />
+	</ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="3.1.2" />

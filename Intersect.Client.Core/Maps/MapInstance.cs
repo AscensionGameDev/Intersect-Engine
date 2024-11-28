@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Collections.Concurrent;
 
 using Intersect.Client.Core;
@@ -801,7 +801,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                     var rarity = itemBase.Rarity;
                     if (tileItems[index].Quantity > 1)
                     {
-                        name = Localization.Strings.General.MapItemStackable.ToString(name, Strings.FormatQuantityAbbreviated(quantity));
+                        name = Strings.General.MapItemStackable.ToString(name, Strings.FormatQuantityAbbreviated(quantity));
                     }
                     var color = CustomColors.Items.MapRarities.ContainsKey(rarity)
                         ? CustomColors.Items.MapRarities[rarity]

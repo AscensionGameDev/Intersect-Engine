@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Intersect.Client\Intersect.Client.csproj" />
+      <ProjectReference Include="..\Intersect.Client.Core\Intersect.Client.Core.csproj" />
       <ProjectReference Include="..\Intersect.Server.Core\Intersect.Server.Core.csproj" />
     </ItemGroup>
 
