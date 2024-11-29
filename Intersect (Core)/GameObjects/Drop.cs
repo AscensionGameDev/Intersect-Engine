@@ -7,4 +7,6 @@ public partial class Drop
     public Guid ItemId { get; set; }
 
     public int Quantity { get; set; }
+
+    public int MinQuantity { get; set; } = 1;
 }
