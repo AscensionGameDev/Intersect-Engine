@@ -712,11 +712,6 @@ public class MonoRenderer : GameRenderer
             mFpsTimer = Timing.Global.MillisecondsUtc + 1000;
             mGameWindow.Title = Strings.Main.GameName;
         }
-
-        foreach (var texture in mAllTextures)
-        {
-            texture?.Update();
-        }
     }
 
     public override int GetFps()
@@ -913,12 +908,14 @@ public class MonoRenderer : GameRenderer
         if (packFrame != null)
         {
             var tx = new MonoTexture(mGraphicsDevice, filename, packFrame);
+            tx.LoadTexture();
             mAllTextures.Add(tx);
 
             return tx;
         }
 
         var tex = new MonoTexture(mGraphicsDevice, filename, realFilename);
+        tex.LoadTexture();
         mAllTextures.Add(tex);
 
         return tex;
