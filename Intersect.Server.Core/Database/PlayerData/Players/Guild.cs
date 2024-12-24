@@ -5,6 +5,7 @@ using Intersect.Enums;
 using Intersect.Server.Entities;
 using Intersect.Server.Networking;
 using System.Collections.Concurrent;
+using Intersect.Collections.Slotting;
 using Microsoft.EntityFrameworkCore;
 using Intersect.Network.Packets.Server;
 using Intersect.GameObjects;
@@ -50,7 +51,10 @@ public partial class Guild
     /// Guild bank slots
     /// </summary>
     [JsonIgnore]
-    public virtual List<GuildBankSlot> Bank { get; set; } = new List<GuildBankSlot>();
+    public virtual SlotList<GuildBankSlot> Bank { get; set; } = new SlotList<GuildBankSlot>(
+        Options.Instance.Guild.InitialBankSlots,
+        GuildBankSlot.Create
+    );
 
     /// <summary>
     /// Sets the number of bank slots alotted to this guild. Banks lots can only expand.
@@ -117,8 +121,7 @@ public partial class Guild
                     GuildInstanceId = Guid.NewGuid()
                 };
 
-                SlotHelper.ValidateSlots(guild.Bank, Options.Instance.Guild.InitialBankSlots);
-                guild.Bank = guild.Bank.OrderBy(bankSlot => bankSlot?.Slot).ToList();
+                SlotHelper.ValidateSlotList(guild.Bank, Options.Instance.Guild.InitialBankSlots);
 
                 var player = context.Players.FirstOrDefault(p => p.Id == creator.Id);
                 if (player != null)
@@ -181,8 +184,7 @@ public partial class Guild
                 guild.Members.AddOrUpdate(member.Key, guildMember, (key, oldValue) => guildMember);
             }
 
-            SlotHelper.ValidateSlots(guild.Bank, guild.BankSlotsCount);
-            guild.Bank = guild.Bank.OrderBy(bankSlot => bankSlot?.Slot).ToList();
+            SlotHelper.ValidateSlotList(guild.Bank, guild.BankSlotsCount);
 
             Guilds.AddOrUpdate(id, guild, (key, oldValue) => guild);
 
@@ -310,7 +312,7 @@ public partial class Guild
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public void Update()
     {
@@ -690,14 +692,16 @@ public partial class Guild
     /// <param name="count"></param>
     public void ExpandBankSlots(int count)
     {
-        if (BankSlotsCount < count && count <= Options.Instance.Bank.MaxSlots)
+        if (BankSlotsCount >= count || count > Options.Instance.Bank.MaxSlots)
         {
-            lock (mLock)
-            {
-                BankSlotsCount = count;
-                SlotHelper.ValidateSlots(Bank, BankSlotsCount);
-                DbInterface.Pool.QueueWorkItem(Save);
-            }
+            return;
+        }
+
+        lock (mLock)
+        {
+            BankSlotsCount = count;
+            SlotHelper.ValidateSlotList(Bank, BankSlotsCount);
+            DbInterface.Pool.QueueWorkItem(Save);
         }
     }
 

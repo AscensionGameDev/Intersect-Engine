@@ -6,102 +6,104 @@ using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 using System.Diagnostics;
+using Intersect.Collections.Slotting;
 using Log = Intersect.Logging.Log;
 
 namespace Intersect.Server.Entities;
 
-public partial class BankInterface
+public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, ISlot
 {
-    private Player mPlayer;
+    private readonly Player _player;
 
-    private IList<Item> mBank;
+    private readonly SlotList<TSlot> _bank;
 
-    private Guild mGuild;
+    private readonly Guild _guild;
 
-    private object mLock;
+    private readonly object _lock;
 
-    private int mMaxSlots;
-
-    public BankInterface(Player player, IList<Item> bank, object bankLock, Guild guild, int maxSlots)
+    public BankInterface(Player player, SlotList<TSlot> bank, Guild? guild = default)
     {
-        mPlayer = player;
-        mBank = bank;
-        mGuild = guild;
-        mLock = bankLock;
-        mMaxSlots = maxSlots;
+        _player = player;
+        _bank = bank;
+        _guild = guild;
+        _lock = guild?.Lock ?? new object();
     }
 
     public void SendOpenBank()
     {
-        var items = new List<BankUpdatePacket>();
+        var slotUpdatePackets = new List<BankUpdatePacket>();
 
-        for (var slot = 0; slot < mMaxSlots; slot++)
+        for (var slot = 0; slot < _bank.Capacity; slot++)
         {
-            if (mBank[slot] != null && mBank[slot].ItemId != Guid.Empty && mBank[slot].Quantity > 0)
-            {
-                items.Add(
-                    new BankUpdatePacket(
-                        slot, mBank[slot].ItemId, mBank[slot].Quantity, mBank[slot].BagId,
-                        mBank[slot].Properties
-                    )
-                );
-            }
-            else
-            {
-                items.Add(new BankUpdatePacket(slot, Guid.Empty, 0, null, null));
-            }
+            var slotItem = slot < _bank.Count ? _bank[slot] : default;
+            slotUpdatePackets.Add(
+                new BankUpdatePacket(
+                    slot,
+                    slotItem?.ItemId ?? Guid.Empty,
+                    slotItem?.Quantity ?? 0,
+                    slotItem?.BagId,
+                    slotItem?.Properties
+                )
+            );
         }
 
-        mPlayer?.SendPacket(new BankPacket(false, mGuild != null, mMaxSlots, items.ToArray()));
+        _player?.SendPacket(
+            new BankPacket(
+                false,
+                _guild != null,
+                _bank.Capacity,
+                slotUpdatePackets.ToArray()
+            )
+        );
     }
 
     //BankUpdatePacket
     public void SendBankUpdate(int slot, bool sendToAll = true)
     {
-        if (sendToAll && mGuild != null)
+        if (sendToAll && _guild != null)
         {
-            mGuild.BankSlotUpdated(slot);
+            _guild.BankSlotUpdated(slot);
             return;
         }
 
-        if (mBank[slot] != null && mBank[slot].ItemId != Guid.Empty && mBank[slot].Quantity > 0)
+        if (_bank[slot] != null && _bank[slot].ItemId != Guid.Empty && _bank[slot].Quantity > 0)
         {
-            mPlayer?.SendPacket(
+            _player?.SendPacket(
                 new BankUpdatePacket(
-                    slot, mBank[slot].ItemId, mBank[slot].Quantity, mBank[slot].BagId,
-                    mBank[slot].Properties
+                    slot, _bank[slot].ItemId, _bank[slot].Quantity, _bank[slot].BagId,
+                    _bank[slot].Properties
                 )
             );
         }
         else
         {
-            mPlayer?.SendPacket(new BankUpdatePacket(slot, Guid.Empty, 0, null, null));
+            _player?.SendPacket(new BankUpdatePacket(slot, Guid.Empty, 0, null, null));
         }
     }
 
     public void SendCloseBank()
     {
-        mPlayer?.SendPacket(new BankPacket(true, false, -1, null));
+        _player?.SendPacket(new BankPacket(true, false, -1, null));
     }
 
     public bool TryDepositItem(Item? slot, int inventorySlotIndex, int quantityHint, int bankSlotIndex = -1, bool sendUpdate = true)
     {
         //Permission Check
-        if (mGuild != null)
+        if (_guild != null)
         {
-            var rank = Options.Instance.Guild.Ranks[Math.Max(0, Math.Min(Options.Instance.Guild.Ranks.Length - 1, mPlayer.GuildRank))];
-            if (!rank.Permissions.BankDeposit && mPlayer.GuildRank != 0)
+            var rank = Options.Instance.Guild.Ranks[Math.Max(0, Math.Min(Options.Instance.Guild.Ranks.Length - 1, _player.GuildRank))];
+            if (!rank.Permissions.BankDeposit && _player.GuildRank != 0)
             {
-                PacketSender.SendChatMsg(mPlayer, Strings.Guilds.NotAllowedDeposit.ToString(mGuild.Name), ChatMessageType.Bank, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(_player, Strings.Guilds.NotAllowedDeposit.ToString(_guild.Name), ChatMessageType.Bank, CustomColors.Alerts.Error);
                 return false;
             }
         }
 
-        slot ??= mPlayer.Items[inventorySlotIndex];
+        slot ??= _player.Items[inventorySlotIndex];
         if (!ItemBase.TryGet(slot.ItemId, out var itemDescriptor))
         {
             PacketSender.SendChatMsg(
-                mPlayer,
+                _player,
                 Strings.Banks.DepositInvalid,
                 ChatMessageType.Bank,
                 CustomColors.Alerts.Error
@@ -109,22 +111,22 @@ public partial class BankInterface
             return false;
         }
 
-        var canBank = (itemDescriptor.CanBank && mGuild == default) ||
-                      (itemDescriptor.CanGuildBank && mGuild != default);
+        var canBank = (itemDescriptor.CanBank && _guild == default) ||
+                      (itemDescriptor.CanGuildBank && _guild != default);
 
         if (!canBank)
         {
-            PacketSender.SendChatMsg(mPlayer, Strings.Items.NoBank, ChatMessageType.Bank, CustomColors.Items.Bound);
+            PacketSender.SendChatMsg(_player, Strings.Items.NoBank, ChatMessageType.Bank, CustomColors.Items.Bound);
             return false;
         }
 
-        var sourceSlots = mPlayer.Items.ToArray();
+        var sourceSlots = _player.Items.ToArray();
         var maximumStack = itemDescriptor.Stackable ? itemDescriptor.MaxBankStack : 1;
         var sourceQuantity = Item.FindQuantityOfItem(itemDescriptor.Id, sourceSlots);
 
-        var targetSlots = mBank.ToArray();
+        var targetSlots = _bank.ToArray();
 
-        lock (mLock)
+        lock (_lock)
         {
             var movableQuantity = Item.FindSpaceForItem(
                 itemDescriptor.Id,
@@ -138,7 +140,7 @@ public partial class BankInterface
             if (movableQuantity < 1)
             {
                 PacketSender.SendChatMsg(
-                    mPlayer,
+                    _player,
                     Strings.Items.NoSpaceForItem,
                     ChatMessageType.Bank,
                     CustomColors.Alerts.Error
@@ -164,7 +166,7 @@ public partial class BankInterface
                 ))
             {
                 PacketSender.SendChatMsg(
-                    mPlayer,
+                    _player,
                     Strings.Banks.WithdrawInvalid,
                     ChatMessageType.Bank,
                     CustomColors.Alerts.Error
@@ -178,7 +180,7 @@ public partial class BankInterface
             {
                 if (slotIndicesToRemoveFrom.Length <= nextSlotIndexToRemoveFrom)
                 {
-                    Log.Warn($"Ran out of slots to remove from for {mPlayer.Id}");
+                    Log.Warn($"Ran out of slots to remove from for {_player.Id}");
                     break;
                 }
 
@@ -221,7 +223,7 @@ public partial class BankInterface
             {
                 if (remainingQuantityToRemove < 1)
                 {
-                    Log.Error($"Potential inventory corruption for {mPlayer.Id}");
+                    Log.Error($"Potential inventory corruption for {_player.Id}");
                 }
 
                 var slotToRemoveFrom = sourceSlots[slotIndexToRemoveFrom];
@@ -232,7 +234,7 @@ public partial class BankInterface
                 // If the item is equipped equipment, we need to unequip it before taking it out of the inventory.
                 if (itemDescriptor.ItemType == ItemType.Equipment && slotIndexToRemoveFrom > -1)
                 {
-                    mPlayer.EquipmentProcessItemLoss(slotIndexToRemoveFrom);
+                    _player.EquipmentProcessItemLoss(slotIndexToRemoveFrom);
                 }
 
                 if (slotToRemoveFrom.Quantity < 1)
@@ -246,28 +248,28 @@ public partial class BankInterface
             // ReSharper disable once ConvertIfStatementToSwitchStatement
             if (remainingQuantity < 0)
             {
-                Log.Error($"{mPlayer.Id} was accidentally given {-remainingQuantity}x extra {itemDescriptor.Id}");
+                Log.Error($"{_player.Id} was accidentally given {-remainingQuantity}x extra {itemDescriptor.Id}");
             }
             else if (remainingQuantity > 0)
             {
-                Log.Error($"{mPlayer.Id} was not given {remainingQuantity}x {itemDescriptor.Id}");
+                Log.Error($"{_player.Id} was not given {remainingQuantity}x {itemDescriptor.Id}");
             }
 
             // ReSharper disable once ConvertIfStatementToSwitchStatement
             if (remainingQuantityToRemove < 0)
             {
-                Log.Error($"{mPlayer.Id} was scammed {-remainingQuantity}x {itemDescriptor.Id}");
+                Log.Error($"{_player.Id} was scammed {-remainingQuantity}x {itemDescriptor.Id}");
             }
             else if (remainingQuantityToRemove > 0)
             {
-                Log.Error($"{mPlayer.Id} did not have {remainingQuantity}x {itemDescriptor.Id} taken");
+                Log.Error($"{_player.Id} did not have {remainingQuantity}x {itemDescriptor.Id} taken");
             }
 
             if (sendUpdate)
             {
                 foreach (var slotIndexToUpdate in slotIndicesToRemoveFrom)
                 {
-                    PacketSender.SendInventoryItemUpdate(mPlayer, slotIndexToUpdate);
+                    PacketSender.SendInventoryItemUpdate(_player, slotIndexToUpdate);
                 }
 
                 foreach (var slotIndexToFill in slotIndicesToFill)
@@ -277,20 +279,20 @@ public partial class BankInterface
 
                 if (inventorySlotIndex > -1)
                 {
-                    PacketSender.SendInventoryItemUpdate(mPlayer, inventorySlotIndex);
+                    PacketSender.SendInventoryItemUpdate(_player, inventorySlotIndex);
                 }
             }
 
-            if (mGuild != null)
+            if (_guild != null)
             {
-                DbInterface.Pool.QueueWorkItem(mGuild.Save);
+                DbInterface.Pool.QueueWorkItem(_guild.Save);
             }
 
             var successMessage = movableQuantity > 1
                 ? Strings.Banks.DepositSuccessStackable.ToString(movableQuantity, itemDescriptor.Name)
                 : Strings.Banks.DepositSuccessNonStackable.ToString(itemDescriptor.Name);
 
-            PacketSender.SendChatMsg(mPlayer, successMessage, ChatMessageType.Bank, CustomColors.Alerts.Success);
+            PacketSender.SendChatMsg(_player, successMessage, ChatMessageType.Bank, CustomColors.Alerts.Success);
 
             return true;
         }
@@ -302,14 +304,14 @@ public partial class BankInterface
     public bool TryWithdrawItem(Item? slot, int bankSlotIndex, int quantityHint, int inventorySlotIndex = -1)
     {
         //Permission Check
-        if (mGuild != null)
+        if (_guild != null)
         {
-            var rank = Options.Instance.Guild.Ranks[Math.Max(0, Math.Min(Options.Instance.Guild.Ranks.Length - 1, mPlayer.GuildRank))];
-            if (!rank.Permissions.BankRetrieve && mPlayer.GuildRank != 0)
+            var rank = Options.Instance.Guild.Ranks[Math.Max(0, Math.Min(Options.Instance.Guild.Ranks.Length - 1, _player.GuildRank))];
+            if (!rank.Permissions.BankRetrieve && _player.GuildRank != 0)
             {
                 PacketSender.SendChatMsg(
-                    mPlayer,
-                    Strings.Guilds.NotAllowedWithdraw.ToString(mGuild.Name),
+                    _player,
+                    Strings.Guilds.NotAllowedWithdraw.ToString(_guild.Name),
                     ChatMessageType.Bank,
                     CustomColors.Alerts.Error
                 );
@@ -317,11 +319,11 @@ public partial class BankInterface
             }
         }
 
-        slot ??= mBank[bankSlotIndex];
+        slot ??= _bank[bankSlotIndex];
         if (!ItemBase.TryGet(slot.ItemId, out var itemDescriptor))
         {
             PacketSender.SendChatMsg(
-                mPlayer,
+                _player,
                 Strings.Banks.WithdrawInvalid,
                 ChatMessageType.Bank,
                 CustomColors.Alerts.Error
@@ -330,12 +332,12 @@ public partial class BankInterface
         }
 
         var maximumStack = itemDescriptor.Stackable ? itemDescriptor.MaxInventoryStack : 1;
-        var sourceSlots = mBank.ToArray();
+        var sourceSlots = _bank.ToArray();
         var sourceQuantity = Item.FindQuantityOfItem(itemDescriptor.Id, sourceSlots);
 
-        var targetSlots = mPlayer.Items.ToArray();
+        var targetSlots = _player.Items.ToArray();
 
-        lock (mLock)
+        lock (_lock)
         {
             var movableQuantity = Item.FindSpaceForItem(
                 itemDescriptor.Id,
@@ -349,7 +351,7 @@ public partial class BankInterface
             if (movableQuantity < 1)
             {
                 PacketSender.SendChatMsg(
-                    mPlayer,
+                    _player,
                     Strings.Items.NoSpaceForItem,
                     ChatMessageType.Inventory,
                     CustomColors.Alerts.Error
@@ -375,7 +377,7 @@ public partial class BankInterface
                 ))
             {
                 PacketSender.SendChatMsg(
-                    mPlayer,
+                    _player,
                     Strings.Banks.WithdrawInvalid,
                     ChatMessageType.Bank,
                     CustomColors.Alerts.Error
@@ -389,7 +391,7 @@ public partial class BankInterface
             {
                 if (slotIndicesToRemoveFrom.Length <= nextSlotIndexToRemoveFrom)
                 {
-                    Log.Warn($"Ran out of slots to remove from for {mPlayer.Id}");
+                    Log.Warn($"Ran out of slots to remove from for {_player.Id}");
                     break;
                 }
 
@@ -437,7 +439,7 @@ public partial class BankInterface
             {
                 if (remainingQuantityToRemove < 1)
                 {
-                    Log.Error($"Potential bank corruption for {mPlayer.Id}");
+                    Log.Error($"Potential bank corruption for {_player.Id}");
                 }
 
                 var slotToRemoveFrom = sourceSlots[slotIndexToRemoveFrom];
@@ -455,26 +457,26 @@ public partial class BankInterface
             // ReSharper disable once ConvertIfStatementToSwitchStatement
             if (remainingQuantity < 0)
             {
-                Log.Error($"{mPlayer.Id} was accidentally given {-remainingQuantity}x extra {itemDescriptor.Id}");
+                Log.Error($"{_player.Id} was accidentally given {-remainingQuantity}x extra {itemDescriptor.Id}");
             }
             else if (remainingQuantity > 0)
             {
-                Log.Error($"{mPlayer.Id} was not given {remainingQuantity}x {itemDescriptor.Id}");
+                Log.Error($"{_player.Id} was not given {remainingQuantity}x {itemDescriptor.Id}");
             }
 
             // ReSharper disable once ConvertIfStatementToSwitchStatement
             if (remainingQuantityToRemove < 0)
             {
-                Log.Error($"{mPlayer.Id} was scammed {-remainingQuantity}x {itemDescriptor.Id}");
+                Log.Error($"{_player.Id} was scammed {-remainingQuantity}x {itemDescriptor.Id}");
             }
             else if (remainingQuantityToRemove > 0)
             {
-                Log.Error($"{mPlayer.Id} did not have {remainingQuantity}x {itemDescriptor.Id} taken");
+                Log.Error($"{_player.Id} did not have {remainingQuantity}x {itemDescriptor.Id} taken");
             }
 
             foreach (var slotIndexToUpdate in slotIndicesToFill)
             {
-                PacketSender.SendInventoryItemUpdate(mPlayer, slotIndexToUpdate);
+                PacketSender.SendInventoryItemUpdate(_player, slotIndexToUpdate);
             }
 
             foreach (var slotIndexToUpdate in slotIndicesToRemoveFrom)
@@ -482,16 +484,16 @@ public partial class BankInterface
                 SendBankUpdate(slotIndexToUpdate);
             }
 
-            if (mGuild != null)
+            if (_guild != null)
             {
-                DbInterface.Pool.QueueWorkItem(mGuild.Save);
+                DbInterface.Pool.QueueWorkItem(_guild.Save);
             }
 
             var successMessage = movableQuantity > 1
                 ? Strings.Banks.WithdrawSuccessStackable.ToString(quantityHint, itemDescriptor.Name)
                 : Strings.Banks.WithdrawSuccessNonStackable.ToString(itemDescriptor.Name);
 
-            PacketSender.SendChatMsg(mPlayer, successMessage, ChatMessageType.Bank, CustomColors.Alerts.Success);
+            PacketSender.SendChatMsg(_player, successMessage, ChatMessageType.Bank, CustomColors.Alerts.Success);
 
             return true;
         }
@@ -499,36 +501,36 @@ public partial class BankInterface
 
     public void SwapBankItems(int slotFrom, int slotTo)
     {
-        var bank = mBank;
+        var bank = _bank;
         if (bank == null)
         {
-            Log.Error($"SwapBankItems() called on invalid bank for {mPlayer.Id}");
+            Log.Error($"SwapBankItems() called on invalid bank for {_player.Id}");
             return;
         }
 
-        if (Math.Clamp(slotFrom, 0, bank.Count - 1) != slotFrom || Math.Clamp(slotTo, 0, bank.Count - 1) != slotTo)
+        if (Math.Clamp(slotFrom, 0, bank.Capacity - 1) != slotFrom || Math.Clamp(slotTo, 0, bank.Capacity - 1) != slotTo)
         {
             PacketSender.SendChatMsg(
-                mPlayer,
+                _player,
                 Strings.Banks.InvalidSlotToSwap,
                 ChatMessageType.Bank,
                 CustomColors.Alerts.Error
             );
-            Log.Error($"Invalid slot indices SwapBankItems({slotFrom}, {slotTo}) ({bank.Count}, {mPlayer.Id})");
+            Log.Error($"Invalid slot indices SwapBankItems({slotFrom}, {slotTo}) ({bank.Capacity}, {_player.Id})");
             return;
         }
 
         //Permission Check
-        if (mGuild != null)
+        if (_guild != null)
         {
             var ranks = Options.Instance.Guild.Ranks;
-            var rankIndex = Math.Clamp(mPlayer.GuildRank, 0, ranks.Length - 1);
+            var rankIndex = Math.Clamp(_player.GuildRank, 0, ranks.Length - 1);
             var rank = ranks[rankIndex];
-            if (mPlayer.GuildRank != rankIndex || (!rank.Permissions.BankMove && mPlayer.GuildRank != 0))
+            if (_player.GuildRank != rankIndex || (!rank.Permissions.BankMove && _player.GuildRank != 0))
             {
                 PacketSender.SendChatMsg(
-                    mPlayer,
-                    Strings.Guilds.NotAllowedSwap.ToString(mGuild.Name),
+                    _player,
+                    Strings.Guilds.NotAllowedSwap.ToString(_guild.Name),
                     ChatMessageType.Bank,
                     CustomColors.Alerts.Error
                 );
@@ -536,26 +538,26 @@ public partial class BankInterface
             }
         }
 
-        lock (mLock)
+        lock (_lock)
         {
             try
             {
-                var destinationSlot = (bank[slotTo] ??= Item.None);
-                var sourceSlot = (bank[slotFrom] ??= Item.None);
+                var destinationSlot = bank[slotTo];
+                var sourceSlot = bank[slotFrom];
                 var temporarySlot = destinationSlot.Clone();
 
                 if (destinationSlot.ItemId == sourceSlot.ItemId)
                 {
                     if (sourceSlot.ItemId == default)
                     {
-                        Log.Warn($"SwapBankItems({slotFrom}, {slotTo}) for {mPlayer.Id} with empty item ID");
+                        Log.Warn($"SwapBankItems({slotFrom}, {slotTo}) for {_player.Id} with empty item ID");
                         return;
                     }
 
                     /* Items are the same, move the maximum quantity */
                     if (!ItemBase.TryGet(sourceSlot.ItemId, out var itemDescriptor))
                     {
-                        Log.Error($"SwapBankItems({slotFrom}, {slotTo}) for {mPlayer.Id} failed due to missing item {sourceSlot.ItemId}");
+                        Log.Error($"SwapBankItems({slotFrom}, {slotTo}) for {_player.Id} failed due to missing item {sourceSlot.ItemId}");
                         return;
                     }
 
@@ -591,13 +593,13 @@ public partial class BankInterface
             }
             catch (Exception exception)
             {
-                Log.Error(exception, $"Error in SwapBankItems({slotFrom}, {slotTo}) for {mPlayer.Id}");
+                Log.Error(exception, $"Error in SwapBankItems({slotFrom}, {slotTo}) for {_player.Id}");
                 return;
             }
 
-            if (mGuild != null)
+            if (_guild != null)
             {
-                DbInterface.Pool.QueueWorkItem(mGuild.Save);
+                DbInterface.Pool.QueueWorkItem(_guild.Save);
             }
         }
 
@@ -609,7 +611,7 @@ public partial class BankInterface
     public void Dispose()
     {
         SendCloseBank();
-        mPlayer.GuildBank = false;
-        mPlayer.BankInterface = null;
+        _player.GuildBank = false;
+        _player.BankInterface = null;
     }
 }

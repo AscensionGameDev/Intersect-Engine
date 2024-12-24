@@ -86,7 +86,7 @@ public partial class SpellItem
         else
         {
             Globals.Me.TryForgetSpell(mYindex);
-        }   
+        }
     }
 
     void pnl_HoverLeave(Base sender, EventArgs arguments)
@@ -263,7 +263,7 @@ public partial class SpellItem
                 //Check spell first.
                 if (mSpellWindow.RenderBounds().IntersectsWith(dragRect))
                 {
-                    for (var i = 0; i < Options.MaxInvItems; i++)
+                    for (var i = 0; i < Options.Instance.PlayerOpts.MaxSpells; i++)
                     {
                         if (i < mSpellWindow.Items.Count &&
                             mSpellWindow.Items[i].RenderBounds().IntersectsWith(dragRect))

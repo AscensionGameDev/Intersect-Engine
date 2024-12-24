@@ -1175,7 +1175,7 @@ public static partial class PacketSender
         }
 
         var invItems = new InventoryUpdatePacket[Options.MaxInvItems];
-        if (player.Items.Count < Options.MaxInvItems)
+        if (player.Items.Capacity < Options.Instance.PlayerOpts.MaxInventory)
         {
             throw new InvalidOperationException($"Tried to send inventory before fully loading player {player.Id}");
         }
@@ -1219,8 +1219,8 @@ public static partial class PacketSender
             return;
         }
 
-        var spells = new SpellUpdatePacket[Options.MaxPlayerSkills];
-        for (var i = 0; i < Options.MaxPlayerSkills; i++)
+        var spells = new SpellUpdatePacket[Options.Instance.PlayerOpts.MaxSpells];
+        for (var i = 0; i < Options.Instance.PlayerOpts.MaxSpells; i++)
         {
             spells[i] = new SpellUpdatePacket(i, player.Spells[i].SpellId);
         }

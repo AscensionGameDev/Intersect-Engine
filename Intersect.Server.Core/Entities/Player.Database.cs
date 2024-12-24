@@ -78,10 +78,10 @@ public partial class Player
 
         try
         {
-            using (var context = DbInterface.CreatePlayerContext())
-            {
-                return Validate(QueryPlayerById(context, playerId));
-            }
+            using var context = DbInterface.CreatePlayerContext();
+            player = QueryPlayerById(context, playerId);
+            _ = Validate(player);
+            return player;
         }
         catch (Exception ex)
         {
@@ -105,10 +105,10 @@ public partial class Player
 
         try
         {
-            using (var context = DbInterface.CreatePlayerContext())
-            {
-                return Validate(QueryPlayerByName(context, playerName));
-            }
+            using var context = DbInterface.CreatePlayerContext();
+            player = QueryPlayerByName(context, playerName);
+            _ = Validate(player);
+            return player;
         }
         catch (Exception ex)
         {
@@ -148,14 +148,14 @@ public partial class Player
 
     #region Loading
 
-    public void LoadRelationships(PlayerContext playerContext)
+    public bool LoadRelationships(PlayerContext playerContext)
     {
         lock (_savingLock)
         {
             if (_saving)
             {
                 Log.Warn($"Skipping loading relationships for player {Id} because it is being saved.");
-                return;
+                return false;
             }
         }
 
@@ -166,40 +166,41 @@ public partial class Player
         entityEntry.Collection(p => p.Quests).Load();
         entityEntry.Collection(p => p.Spells).Load();
         entityEntry.Collection(p => p.Variables).Load();
-        Validate(this);
+        return Validate(this, playerContext);
     }
 
     public static Player Load(Guid playerId)
     {
         var player = Find(playerId);
-
-        return Validate(player);
+        _ = Validate(player);
+        return player;
     }
 
     public static Player Load(string playerName)
     {
         var player = Find(playerName);
-
-        return Validate(player);
+        _ = Validate(player);
+        return player;
     }
 
-    public static Player Validate(Player player)
+    public static bool Validate(Player? player, PlayerContext? playerContext = default)
     {
         if (player == null)
         {
-            return null;
+            return false;
         }
 
-        // ReSharper disable once InvertIf
-        if (!player.ValidateLists())
+        if (player.ValidateLists(playerContext))
         {
-            player.Bank = player.Bank.OrderBy(bankSlot => bankSlot?.Slot).ToList();
-            player.Items = player.Items.OrderBy(inventorySlot => inventorySlot?.Slot).ToList();
-            player.Hotbar = player.Hotbar.OrderBy(hotbarSlot => hotbarSlot?.Slot).ToList();
-            player.Spells = player.Spells.OrderBy(spellSlot => spellSlot?.Slot).ToList();
+            return false;
         }
 
-        return player;
+        // player.Bank = player.Bank.OrderBy(bankSlot => bankSlot?.Slot)
+        // player.Items = player.Items.OrderBy(inventorySlot => inventorySlot?.Slot).ToList();
+        // player.Hotbar = player.Hotbar.OrderBy(hotbarSlot => hotbarSlot?.Slot).ToList();
+        // player.Spells = player.Spells.OrderBy(spellSlot => spellSlot?.Slot).ToList();
+
+        return true;
     }
 
     #endregion
@@ -367,7 +368,7 @@ public partial class Player
                         compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Name.ToUpper()) : compiledQuery.OrderByDescending(u => u.Name.ToUpper());
                         break;
                 }
-                
+
                 return compiledQuery.Skip(skip).Take(take).ToList();
             }
         }

@@ -199,7 +199,7 @@ public partial class User
 
                 Players.Add(newCharacter);
 
-                Player.Validate(newCharacter);
+                _ = Player.Validate(newCharacter);
 
                 context.ChangeTracker.DetectChanges();
 

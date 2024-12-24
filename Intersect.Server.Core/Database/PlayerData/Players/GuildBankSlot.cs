@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-
+using Intersect.Collections.Slotting;
 using Newtonsoft.Json;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
@@ -10,6 +10,7 @@ namespace Intersect.Server.Database.PlayerData.Players;
 
 public partial class GuildBankSlot : Item, ISlot
 {
+    public static GuildBankSlot Create(int slotIndex) => new(slotIndex);
 
     public GuildBankSlot()
     {
@@ -23,6 +24,8 @@ public partial class GuildBankSlot : Item, ISlot
     [DatabaseGenerated(DatabaseGeneratedOption.Identity), JsonIgnore]
     public Guid Id { get; private set; }
 
+    public bool IsEmpty => ItemId == default;
+
     [JsonIgnore]
     public Guid GuildId { get; private set; }
 
@@ -30,5 +33,4 @@ public partial class GuildBankSlot : Item, ISlot
     public virtual Guild Guild { get; private set; }
 
     public int Slot { get; private set; }
-
 }

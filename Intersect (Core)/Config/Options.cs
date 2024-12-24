@@ -119,8 +119,6 @@ public partial class Options
 
     public static int MaxInvItems => Instance.PlayerOpts.MaxInventory;
 
-    public static int MaxPlayerSkills => Instance.PlayerOpts.MaxSpells;
-
     public static int MaxCharacters => Instance.PlayerOpts.MaxCharacters;
 
     public static int ItemDropChance => Instance.PlayerOpts.ItemDropChance;

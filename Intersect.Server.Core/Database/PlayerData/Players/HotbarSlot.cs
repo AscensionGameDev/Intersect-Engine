@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-
+using Intersect.Collections.Slotting;
 using Intersect.Enums;
 using Intersect.Server.Entities;
 using Intersect.Utilities;
@@ -14,6 +14,7 @@ namespace Intersect.Server.Database.PlayerData.Players;
 
 public partial class HotbarSlot : ISlot, IPlayerOwned
 {
+    public static HotbarSlot Create(int slotIndex) => new(slotIndex);
 
     public HotbarSlot()
     {
@@ -26,6 +27,8 @@ public partial class HotbarSlot : ISlot, IPlayerOwned
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity), JsonIgnore]
     public Guid Id { get; private set; }
+
+    public bool IsEmpty => ItemOrSpellId == default;
 
     public Guid ItemOrSpellId { get; set; } = Guid.Empty;
 
