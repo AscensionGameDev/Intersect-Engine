@@ -1,4 +1,5 @@
 using System.Diagnostics;
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace Intersect.Framework.Utilities;
 

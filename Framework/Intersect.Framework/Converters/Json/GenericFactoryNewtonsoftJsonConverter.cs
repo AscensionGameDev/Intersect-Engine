@@ -5,7 +5,7 @@ namespace Intersect.Framework.Converters.Json;
 
 public abstract class GenericFactoryNewtonsoftJsonConverter : JsonConverter
 {
-    private static readonly Dictionary<Type, JsonConverter> _converters = new Dictionary<Type, JsonConverter>();
+    private static readonly Dictionary<Type, JsonConverter> Converters = [];
 
     private readonly Type _converterTypeDefinition;
     private readonly Type _serializedGenericTypeDefinition;
@@ -60,7 +60,7 @@ public abstract class GenericFactoryNewtonsoftJsonConverter : JsonConverter
         Type objectType
     )
     {
-        if (_converters.TryGetValue(objectType, out JsonConverter? jsonConverter))
+        if (Converters.TryGetValue(objectType, out JsonConverter? jsonConverter))
         {
             return jsonConverter;
         }
@@ -73,7 +73,7 @@ public abstract class GenericFactoryNewtonsoftJsonConverter : JsonConverter
         var identifiedType = targetType.FindGenericTypeParameters(serializedGenericTypeDefinition);
         var converterType = converterTypeDefinition.MakeGenericType(identifiedType);
         jsonConverter = Activator.CreateInstance(converterType) as JsonConverter;
-        _converters[objectType] = jsonConverter ?? throw new InvalidOperationException();
+        Converters[objectType] = jsonConverter ?? throw new InvalidOperationException();
         return jsonConverter;
     }
 }

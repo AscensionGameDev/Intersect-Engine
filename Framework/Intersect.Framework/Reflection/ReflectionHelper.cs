@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace Intersect.Framework.Reflection;
 

@@ -20,10 +20,10 @@
   <PropertyGroup Label="Language Properties">
     <Deterministic>true</Deterministic>
     <ImplicitUsings>enable</ImplicitUsings>
-    <LangVersion>preview</LangVersion>
+    <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <RuntimeIdentifiers>linux-arm64;linux-x64;osx-arm64;osx-x64;win-x64</RuntimeIdentifiers>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
 </Project>

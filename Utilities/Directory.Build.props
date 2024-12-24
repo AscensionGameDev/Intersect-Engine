@@ -1,4 +1,11 @@
 <Project>
+
+  <PropertyGroup>
+    <IntersectRepoPath Condition="'$(IntersectRepoPath)' == ''">$(MSBuildProjectDirectory)\..\..</IntersectRepoPath>
+  </PropertyGroup>
+
+  <Import Project="../Directory.Build.props" />
+
   <PropertyGroup>
     <IntersectRepoPath>$(MSBuildProjectDirectory)\..\..</IntersectRepoPath>
   </PropertyGroup>

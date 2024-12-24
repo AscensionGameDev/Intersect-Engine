@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Resources;
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace Intersect.Framework.Reflection;
 
@@ -34,7 +35,7 @@ public static partial class AssemblyExtensions
         if (type == default)
         {
             throw new InvalidOperationException(
-                $"Found no matching subtype of {typeof(TParentType).FullName} that can be created."
+                string.Format(ReflectionStrings.AssemblyExtensions_NoMatchingSubtype, typeof(TParentType).FullName)
             );
         }
 
@@ -43,7 +44,9 @@ public static partial class AssemblyExtensions
             return instance;
         }
 
-        throw new InvalidOperationException($"Failed to create instance of {typeof(TParentType).FullName}.");
+        throw new InvalidOperationException(
+            string.Format(ReflectionStrings.AssemblyExtensions_FailedToCreateInstance, typeof(TParentType).FullName)
+        );
     }
 
     public static string GetVersionName(this Assembly assembly)
@@ -61,7 +64,7 @@ public static partial class AssemblyExtensions
     }
 
     public static IEnumerable<Type> FindAbstractSubtypesOf(this Assembly assembly, Type type) =>
-        assembly.FindSubtypesOf(type).Where(subtype => subtype?.IsAbstract ?? false);
+        assembly.FindSubtypesOf(type).Where(subtype => subtype.IsAbstract);
 
     public static IEnumerable<Type> FindAbstractSubtypesOf<TParentType>(this Assembly assembly) =>
         assembly.FindAbstractSubtypesOf(typeof(TParentType));
@@ -75,16 +78,16 @@ public static partial class AssemblyExtensions
         assembly.FindDefinedSubtypesOf(typeof(TParentType));
 
     public static IEnumerable<Type> FindGenericSubtypesOf(this Assembly assembly, Type type) =>
-        assembly.FindSubtypesOf(type).Where(subtype => subtype?.IsGenericType ?? false);
+        assembly.FindSubtypesOf(type).Where(subtype => subtype.IsGenericType);
 
     public static IEnumerable<Type> FindGenericSubtypesOf<TParentType>(this Assembly assembly) =>
         assembly.FindGenericSubtypesOf(typeof(TParentType));
 
     public static IEnumerable<Type> FindInterfaceSubtypesOf(this Assembly assembly, Type type) =>
-        assembly.FindSubtypesOf(type).Where(subtype => subtype?.IsInterface ?? false);
+        assembly.FindSubtypesOf(type).Where(subtype => subtype.IsInterface);
 
     public static IEnumerable<Type> FindInterfaceSubtypesOf<TParentType>(this Assembly assembly) =>
-        assembly.FindInterfaceSubtypesOf(typeof(Type));
+        assembly.FindInterfaceSubtypesOf(typeof(TParentType));
 
     public static IEnumerable<Type> FindSubtypesOf(this Assembly assembly, Type type) =>
         assembly.GetTypes().Where(type.IsAssignableFrom);
@@ -93,10 +96,10 @@ public static partial class AssemblyExtensions
         assembly.FindGenericSubtypesOf(typeof(TParentType));
 
     public static IEnumerable<Type> FindValueSubtypesOf(this Assembly assembly, Type type) =>
-        assembly.FindSubtypesOf(type).Where(subtype => subtype?.IsValueType ?? false);
+        assembly.FindSubtypesOf(type).Where(subtype => subtype.IsValueType);
 
     public static IEnumerable<Type> FindValueSubtypesOf<TParentType>(this Assembly assembly) =>
-        assembly.FindValueSubtypesOf(typeof(Type));
+        assembly.FindValueSubtypesOf(typeof(TParentType));
 
     public static bool TryFindResource(
         this Assembly assembly,
@@ -111,7 +114,7 @@ public static partial class AssemblyExtensions
         }
 
         manifestResourceName = assembly.GetManifestResourceNames()
-            .FirstOrDefault(name => name?.Contains(resourceName, StringComparison.CurrentCulture) ?? false);
+            .FirstOrDefault(name => name.Contains(resourceName, StringComparison.CurrentCulture));
         return manifestResourceName != default;
     }
 

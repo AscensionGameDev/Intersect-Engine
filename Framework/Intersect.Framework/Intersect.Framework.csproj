@@ -1,11 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
-
     <ItemGroup>
       <PackageReference Include="MessagePack.Annotations" Version="2.6.100-alpha" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="7.0.14" />
@@ -16,5 +10,20 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
       <PackageReference Include="System.Text.Json" Version="8.0.5" />
     </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Reflection\ReflectionStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ReflectionStrings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Reflection\ReflectionStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ReflectionStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
 
 </Project>

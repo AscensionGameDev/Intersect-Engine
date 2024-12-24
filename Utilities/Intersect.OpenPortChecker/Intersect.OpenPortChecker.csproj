@@ -3,9 +3,6 @@
   <PropertyGroup>
     <DebugType>embedded</DebugType>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <TargetFramework>net7.0</TargetFramework>
     <TrimMode>partial</TrimMode>
   </PropertyGroup>
 
