@@ -20,7 +20,7 @@
   <PropertyGroup Label="Language Properties">
     <Deterministic>true</Deterministic>
     <ImplicitUsings>enable</ImplicitUsings>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
     <RuntimeIdentifiers>linux-arm64;linux-x64;osx-arm64;osx-x64;win-x64</RuntimeIdentifiers>
     <TargetFramework>net7.0</TargetFramework>
