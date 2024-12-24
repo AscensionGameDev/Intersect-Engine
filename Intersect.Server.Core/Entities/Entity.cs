@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.ComponentModel.DataAnnotations.Schema;
+using Intersect.Collections.Slotting;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
@@ -27,8 +28,8 @@ public abstract partial class Entity : IEntity
 {
     //Instance Values
     private Guid _id = Guid.NewGuid();
-    
-    [NotMapped] 
+
+    [NotMapped]
     public Guid MapInstanceId { get; set; } = Guid.Empty;
 
     [JsonProperty("MaxVitals"), NotMapped] private long[] _maxVital = new long[Enum.GetValues<Vital>().Length];
@@ -138,11 +139,17 @@ public abstract partial class Entity : IEntity
 
     //Inventory
     [JsonIgnore]
-    public virtual List<InventorySlot> Items { get; set; } = new List<InventorySlot>();
+    public virtual SlotList<InventorySlot> Items { get; set; } = new(
+        Options.Instance.PlayerOpts.MaxInventory,
+        InventorySlot.Create
+    );
 
     //Spells
     [JsonIgnore]
-    public virtual List<SpellSlot> Spells { get; set; } = new List<SpellSlot>();
+    public virtual SlotList<SpellSlot> Spells { get; set; } = new(
+        Options.Instance.PlayerOpts.MaxSpells,
+        SpellSlot.Create
+    );
 
     [JsonIgnore, Column(nameof(NameColor))]
     public string NameColorJson
@@ -386,7 +393,7 @@ public abstract partial class Entity : IEntity
     /// </summary>
     public virtual void UpdateSpellCooldown(SpellBase spellBase, int spellSlot)
     {
-        if (spellSlot < 0 || spellSlot >= Options.MaxPlayerSkills)
+        if (spellSlot < 0 || spellSlot >= Options.Instance.PlayerOpts.MaxSpells)
         {
             return;
         }

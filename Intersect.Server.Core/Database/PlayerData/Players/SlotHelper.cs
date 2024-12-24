@@ -1,4 +1,6 @@
-﻿namespace Intersect.Server.Database.PlayerData.Players;
+﻿using Intersect.Collections.Slotting;
+
+namespace Intersect.Server.Database.PlayerData.Players;
 
 
 public static partial class SlotHelper
@@ -41,10 +43,28 @@ public static partial class SlotHelper
         }
     }
 
+    public static bool ValidateSlotList<TSlot>(SlotList<TSlot> slots, int capacity) where TSlot : ISlot
+    {
+        if (slots.Capacity == capacity)
+        {
+            return true;
+        }
+
+        if (slots.Count > capacity)
+        {
+            return false;
+        }
+
+        slots.Capacity = capacity;
+        return true;
+    }
+
     public static bool ValidateSlots<TSlot>(
         List<TSlot> slots,
         int targetCount,
-        Func<int, TSlot> factory = null
+        Func<int, TSlot> factory = null,
+        Action<TSlot, int> onSlotCreated = null,
+        bool createMissing = true
     ) where TSlot : ISlot
     {
         if (slots.Count >= targetCount)
@@ -61,7 +81,14 @@ public static partial class SlotHelper
                 continue;
             }
 
-            slots.Add(factory == null ? ConstructSlot<TSlot>(slotIndex) : factory.Invoke(slotIndex));
+            if (!createMissing)
+            {
+                continue;
+            }
+
+            var createdSlot = factory == null ? ConstructSlot<TSlot>(slotIndex) : factory.Invoke(slotIndex);
+            slots.Add(createdSlot);
+            onSlotCreated?.Invoke(createdSlot, slotIndex);
         }
 
         return true;

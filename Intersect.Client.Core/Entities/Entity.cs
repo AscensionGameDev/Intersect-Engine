@@ -173,7 +173,7 @@ public partial class Entity : IEntity
         }
     }
 
-    public Spell[] Spells { get; set; } = new Spell[Options.MaxPlayerSkills];
+    public Spell[] Spells { get; set; } = new Spell[Options.Instance.PlayerOpts.MaxSpells];
 
     IReadOnlyList<Guid> IEntity.Spells => Spells.Select(x => x.Id).ToList();
 
@@ -233,7 +233,7 @@ public partial class Entity : IEntity
                 Inventory[i] = new Item();
             }
 
-            for (var i = 0; i < Options.MaxPlayerSkills; i++)
+            for (var i = 0; i < Options.Instance.PlayerOpts.MaxSpells; i++)
             {
                 Spells[i] = new Spell();
             }

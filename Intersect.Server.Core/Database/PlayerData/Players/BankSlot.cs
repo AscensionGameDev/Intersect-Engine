@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-
+using Intersect.Collections.Slotting;
 using Intersect.Server.Entities;
 
 using Newtonsoft.Json;
@@ -12,6 +12,7 @@ namespace Intersect.Server.Database.PlayerData.Players;
 
 public partial class BankSlot : Item, ISlot, IPlayerOwned
 {
+    public static BankSlot Create(int slotIndex) => new(slotIndex);
 
     public BankSlot()
     {
@@ -24,6 +25,8 @@ public partial class BankSlot : Item, ISlot, IPlayerOwned
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity), JsonIgnore]
     public Guid Id { get; private set; }
+
+    public bool IsEmpty => ItemId == default;
 
     [JsonIgnore]
     public Guid PlayerId { get; private set; }

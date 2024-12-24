@@ -522,8 +522,7 @@ public static partial class DbInterface
             try
             {
                 using var playerContext = CreatePlayerContext(readOnly: true, explicitLoad: false);
-                player.LoadRelationships(playerContext);
-                _ = Player.Validate(player);
+                _ = player.LoadRelationships(playerContext);
             }
             catch (Exception exception)
             {

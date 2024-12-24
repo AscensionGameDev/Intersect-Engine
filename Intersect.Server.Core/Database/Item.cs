@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.Server.Database;
 
-public class Item: IItem
+public class Item : IItem
 {
     [JsonIgnore][NotMapped] public double DropChance { get; set; } = 100;
 
