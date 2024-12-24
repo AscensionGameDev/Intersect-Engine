@@ -22,8 +22,8 @@
       <group targetFramework="net461">
         <dependency id="Ceras" version="4.0.40" />
         <dependency id="CommandLineParser" version="2.7.82" />
-        <dependency id="MessagePack" version="2.2.85" />
-        <dependency id="MessagePack.Annotations" version="2.2.85" />
+        <dependency id="MessagePack" version="2.5.187" />
+        <dependency id="MessagePack.Annotations" version="2.6.100-alpha" />
         <dependency id="Newtonsoft.Json" version="13.0.1" />
         <dependency id="Semver" version="2.0.6" />
       </group>
