@@ -1,4 +1,6 @@
 <Project>
+  <Import Project="../Directory.Build.props" />
+
   <PropertyGroup>
     <IntersectRepoPath>$(MSBuildProjectDirectory)\..\..</IntersectRepoPath>
   </PropertyGroup>

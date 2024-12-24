@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Intersect.Framework.Eventing;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -33,6 +34,7 @@ public sealed class ExceptionHandlingService : IExceptionHandlingService, IHoste
         isTerminating: isTerminating
     );
 
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public void DispatchUnhandledException(object? sender, Exception exception, bool isTerminating) =>
         HandleUnhandledTaskException(sender: sender, args: new UnhandledExceptionEventArgs(exception: exception, isTerminating: isTerminating));
 

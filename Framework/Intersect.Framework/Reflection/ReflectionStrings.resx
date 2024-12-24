@@ -3,7 +3,7 @@
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:element name="root" msdata:IsDataSet="true">
-      
+
     </xsd:element>
   </xsd:schema>
   <resheader name="resmimetype">
@@ -26,5 +26,20 @@
   </data>
   <data name="ExpectedAnIncompleteTypeButReceivedX" xml:space="preserve">
     <value>Expected an incomplete type but received {0}.</value>
+  </data>
+  <data name="TypeExtensions_FindGenericTypeParameters_NotGeneric" xml:space="preserve">
+    <value>{0} is not a generic type and does not extend from a generic type.</value>
+  </data>
+  <data name="TypeExtensions_FindGenericTypeParameters_NotValidGenericTypeDefinition" xml:space="preserve">
+    <value>Not a valid generic type definition: {0}</value>
+  </data>
+  <data name="TypeExtensions_FindConcreteType_ExpectedAbstractOrInterface" xml:space="preserve">
+    <value>Expected abstract/interface type, received {0}</value>
+  </data>
+  <data name="AssemblyExtensions_NoMatchingSubtype" xml:space="preserve">
+    <value>Found no matching subtype of {0} that can be created.</value>
+  </data>
+  <data name="AssemblyExtensions_FailedToCreateInstance" xml:space="preserve">
+    <value>Failed to create instance of {0}.</value>
   </data>
 </root>

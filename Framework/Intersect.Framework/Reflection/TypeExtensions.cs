@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace Intersect.Framework.Reflection;
 
@@ -35,7 +36,7 @@ public static partial class TypeExtensions
                         {
                             if (propertyInfo.PropertyType.IsValueType)
                             {
-                                return new[] { propertyInfo.Name };
+                                return [propertyInfo.Name];
                             }
 
                             if (!propertyInfo.PropertyType.IsClass ||
@@ -136,16 +137,16 @@ public static partial class TypeExtensions
         bool allLoadedAssemblies = false
     )
     {
-        if (!abstractType.IsAbstract && !abstractType.IsInterface)
+        if (abstractType is { IsAbstract: false, IsInterface: false })
         {
             throw new ArgumentException(
-                $"Expected abstract/interface type, received {abstractType.FullName}",
+                string.Format(ReflectionStrings.TypeExtensions_FindConcreteType_ExpectedAbstractOrInterface, abstractType.FullName),
                 nameof(abstractType)
             );
         }
 
         var assembliesToCheck = allLoadedAssemblies ? AppDomain.CurrentDomain.GetAssemblies()
-            : new[] { abstractType.Assembly };
+            : [abstractType.Assembly];
         var validAssembliesToCheck = assembliesToCheck.Where(assembly => !assembly.IsDynamic);
         var allTypes = validAssembliesToCheck.SelectMany(
             assembly =>
@@ -156,12 +157,13 @@ public static partial class TypeExtensions
                 }
                 catch
                 {
-                    return Enumerable.Empty<Type>();
+                    return [];
                 }
             }
         );
 
-        var allConcreteTypes = allTypes.Where(type => !type.IsAbstract && !type.IsInterface && !type.IsGenericType);
+        var allConcreteTypes =
+            allTypes.Where(type => type is { IsAbstract: false, IsInterface: false, IsGenericType: false });
         var allDescendantTypes = allConcreteTypes.Where(type => type.Extends(abstractType));
         var firstPredicateMatch = allDescendantTypes.FirstOrDefault(predicate);
         return firstPredicateMatch;
@@ -189,7 +191,7 @@ public static partial class TypeExtensions
                     }
                 }
             )
-            .SelectMany(type => type.GetProperties())
+            .SelectMany(assemblyType => assemblyType.GetProperties())
             .Select(propertyInfo => propertyInfo.PropertyType)
             .Where(propertyType => propertyType.Extends(type))
             .Distinct()
@@ -202,12 +204,12 @@ public static partial class TypeExtensions
     public static Type? FindGenericType(this Type type, bool throwOnNonGeneric) =>
         type.FindGenericType(default, throwOnNonGeneric);
 
-    public static Type? FindGenericType(this Type type, Type genericTypeDefinition, bool throwOnNonGeneric)
+    public static Type? FindGenericType(this Type type, Type? genericTypeDefinition, bool throwOnNonGeneric)
     {
-        if (genericTypeDefinition != null && !genericTypeDefinition.IsGenericTypeDefinition)
+        if (genericTypeDefinition is { IsGenericTypeDefinition: false })
         {
             throw new ArgumentException(
-                $"Not a valid generic type definition: {genericTypeDefinition.FullName}",
+                string.Format(ReflectionStrings.TypeExtensions_FindGenericTypeParameters_NotValidGenericTypeDefinition, genericTypeDefinition.FullName),
                 nameof(genericTypeDefinition)
             );
         }
@@ -249,7 +251,7 @@ public static partial class TypeExtensions
         }
 
         throw new ArgumentException(
-            $"{type.FullName} is not a generic type and does not extend from a generic type.",
+            string.Format(ReflectionStrings.TypeExtensions_FindGenericTypeParameters_NotGeneric, type.FullName),
             nameof(type)
         );
     }
@@ -285,7 +287,7 @@ public static partial class TypeExtensions
         }
 
         throw new ArgumentException(
-            $"{type.FullName} is not a generic type and does not extend from a generic type.",
+            string.Format(ReflectionStrings.TypeExtensions_FindGenericTypeParameters_NotGeneric, type.FullName),
             nameof(type)
         );
     }
@@ -304,7 +306,10 @@ public static partial class TypeExtensions
         if (genericTypeDefinition is { IsGenericTypeDefinition: false })
         {
             throw new ArgumentException(
-                $"Not a valid generic type definition: {genericTypeDefinition.FullName}",
+                string.Format(
+                    ReflectionStrings.TypeExtensions_FindGenericTypeParameters_NotValidGenericTypeDefinition,
+                    genericTypeDefinition.FullName
+                ),
                 nameof(genericTypeDefinition)
             );
         }
@@ -342,18 +347,18 @@ public static partial class TypeExtensions
 
         if (!throwOnNonGeneric)
         {
-            return Array.Empty<Type>();
+            return [];
         }
 
         throw new ArgumentException(
-            $"{type.FullName} is not a generic type and does not extend from a generic type.",
+            string.Format(ReflectionStrings.TypeExtensions_FindGenericTypeParameters_NotGeneric, type.FullName),
             nameof(type)
         );
     }
 
     public static Type[] FindImplementationsIn(this Type incompleteType, IEnumerable<Type> types)
     {
-        if (!incompleteType.IsAbstract && !incompleteType.IsInterface)
+        if (incompleteType is { IsAbstract: false, IsInterface: false })
         {
             throw new ArgumentException(
                 string.Format(ReflectionStrings.ExpectedAnIncompleteTypeButReceivedX, incompleteType.FullName),
