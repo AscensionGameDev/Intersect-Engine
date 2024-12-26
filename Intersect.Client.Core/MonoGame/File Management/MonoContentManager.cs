@@ -16,7 +16,7 @@ namespace Intersect.Client.MonoGame.File_Management;
 public partial class MonoContentManager : GameContentManager
 {
 
-    public MonoContentManager()
+    public MonoContentManager(ILogger logger) : base(logger)
     {
         var rootPath = Path.GetFullPath(ClientConfiguration.ResourcesDirectory);
 

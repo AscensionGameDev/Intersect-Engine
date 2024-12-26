@@ -5,7 +5,7 @@ using Intersect.Enums;
 namespace Intersect.Extensions;
 public static class VariableModExtensions
 {
-    public static VariableType GetRelatedVariableType(this VariableMod value)
+    public static VariableType GetRelatedVariableType(this VariableModType value)
     {
         if (!Enum.IsDefined(value))
         {
@@ -18,7 +18,7 @@ public static class VariableModExtensions
             throw new ArgumentOutOfRangeException(nameof(value), value, "Missing enum name");
         }
 
-        FieldInfo fieldInfo = typeof(VariableMod).GetField(name);
+        FieldInfo fieldInfo = typeof(VariableModType).GetField(name);
         if (fieldInfo == null)
         {
             throw new MissingFieldException($"Reflection failed for VariableType enum, value was {value}", nameof(value));

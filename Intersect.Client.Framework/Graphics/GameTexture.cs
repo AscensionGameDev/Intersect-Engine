@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Intersect.Client.Framework.Content;
+using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Logging;
 
@@ -82,7 +83,7 @@ public abstract partial class GameTexture : IAsset
                     break;
 
                 default:
-                    Log.Error(new ArgumentOutOfRangeException(nameof(boundsComparison), boundsComparison.ToString()));
+                    GameContentManager.Current?.Logger.Error(new ArgumentOutOfRangeException(nameof(boundsComparison), boundsComparison.ToString()));
                     break;
             }
 

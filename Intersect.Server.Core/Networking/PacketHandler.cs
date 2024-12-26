@@ -34,7 +34,7 @@ internal sealed partial class PacketHandler
 {
     public IServerContext Context { get; }
 
-    public Logger Logger => Context.Logger;
+    public ILogger Logger => Context.Logger;
 
     public PacketHandlerRegistry Registry { get; }
 

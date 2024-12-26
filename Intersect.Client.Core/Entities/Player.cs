@@ -22,7 +22,6 @@ using Intersect.GameObjects.Maps;
 using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
-using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Client.Entities;
 
@@ -1324,7 +1323,7 @@ public partial class Player : Entity, IPlayer
             {
                 if (Maps.MapInstance.Get(MapId) != null && Maps.MapInstance.Get(MapId).Attributes[X, Y] != null)
                 {
-                    if (Maps.MapInstance.Get(MapId).Attributes[X, Y].Type == MapAttribute.ZDimension)
+                    if (Maps.MapInstance.Get(MapId).Attributes[X, Y].Type == MapAttributeType.ZDimension)
                     {
                         if (((MapZDimensionAttribute)Maps.MapInstance.Get(MapId).Attributes[X, Y]).GatewayTo > 0)
                         {

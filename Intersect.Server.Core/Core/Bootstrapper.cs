@@ -35,7 +35,7 @@ internal static class Bootstrapper
 
     public static IServerContext Context { get; private set; }
 
-    public static LockingActionQueue MainThread { get; private set; }
+    public static ILockingActionQueue MainThread { get; private set; }
 
     public static void Start(params string[] args)
     {
@@ -59,7 +59,7 @@ internal static class Bootstrapper
         Console.WriteLine("Pre-context setup finished.");
 
         var logger = Log.Default;
-        var packetTypeRegistry = new PacketTypeRegistry(logger);
+        var packetTypeRegistry = new PacketTypeRegistry(logger, typeof(SharedConstants).Assembly);
         if (!packetTypeRegistry.TryRegisterBuiltIn())
         {
             logger.Error("[FATAL] Failed to load built-in packet types.");
@@ -73,7 +73,7 @@ internal static class Bootstrapper
 
         FactoryRegistry<IPluginBootstrapContext>.RegisterFactory(
             PluginBootstrapContext.CreateFactory(
-                parsedArguments.Args ?? Array.Empty<string>(),
+                parsedArguments.Args ?? [],
                 parsedArguments.Parser,
                 packetHelper
             )
@@ -81,11 +81,14 @@ internal static class Bootstrapper
 
         Console.WriteLine("Creating server context...");
 
-        Context = ServerContext.ServerContextFactory.Invoke(
+        var context = ServerContext.ServerContextFactory.Invoke(
             parsedArguments.CommandLineOptions,
             logger,
             packetHelper
         );
+
+        Context = context;
+
         var noHaltOnError = Context?.StartupOptions.DoNotHaltOnError ?? false;
 
         if (!PostContextSetup())
@@ -99,9 +102,8 @@ internal static class Bootstrapper
         Console.WriteLine("Finished post-context setup.");
 
         Console.WriteLine("Starting main thread...");
-        MainThread = Context.StartWithActionQueue();
-        Action action;
-        while (null != (action = MainThread.NextAction))
+        MainThread = context.StartWithActionQueue();
+        while (MainThread.NextAction is { } action)
         {
             action.Invoke();
         }
@@ -110,7 +112,8 @@ internal static class Bootstrapper
 
         // At this point dbs should be saved and all threads should be killed. Give a message saying that the server has shutdown and to press any key to exit.
         // Having the message and the console.readline() allows the server to exit properly if the console has crashed, and it allows us to know that the server context has shutdown.
-        if (Context.HasErrors)
+        // ReSharper disable once InvertIf
+        if (context.HasErrors)
         {
             if (noHaltOnError)
             {
@@ -186,6 +189,8 @@ internal static class Bootstrapper
 
             return false;
         }
+
+        Log.Default.Configuration.LogLevel = Options.Instance.Logging.Level;
 
         if (ServerContext.IsDefaultResourceDirectory)
         {

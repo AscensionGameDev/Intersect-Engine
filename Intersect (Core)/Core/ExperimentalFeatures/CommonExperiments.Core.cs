@@ -2,6 +2,7 @@
 using System.Text;
 
 using Intersect.Extensions;
+using Intersect.Framework.Core.Serialization;
 using Intersect.Logging;
 using Intersect.Utilities;
 
@@ -219,7 +220,8 @@ public abstract partial class CommonExperiments<TExperiments> : IFlagProvider
                     Converters = new List<JsonConverter>
                     {
                         new ExperimentalFlagConverter()
-                    }
+                    },
+                    SerializationBinder = new IntersectTypeSerializationBinder(),
                 }
             );
 

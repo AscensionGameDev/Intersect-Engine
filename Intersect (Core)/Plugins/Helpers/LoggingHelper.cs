@@ -48,11 +48,11 @@ internal sealed partial class LoggingHelper : ILoggingHelper
     private readonly IManifestHelper mManifest;
 
     /// <inheritdoc />
-    public Logger Application { get; }
+    public ILogger Application { get; }
 
-    public Logger Plugin { get; }
+    public ILogger Plugin { get; }
 
-    internal LoggingHelper(Logger applicationLogger, IManifestHelper manifest)
+    internal LoggingHelper(ILogger applicationLogger, IManifestHelper manifest)
     {
         mManifest = manifest;
 
@@ -67,6 +67,6 @@ internal sealed partial class LoggingHelper : ILoggingHelper
     }
 
     /// <inheritdoc />
-    public Logger CreateLogger(CreateLoggerOptions createLoggerOptions) =>
+    public ILogger CreateLogger(CreateLoggerOptions createLoggerOptions) =>
         CreateLogger(mManifest, createLoggerOptions);
 }

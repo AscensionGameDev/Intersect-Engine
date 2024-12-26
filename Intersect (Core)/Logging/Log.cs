@@ -1,9 +1,13 @@
 ﻿using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-
+using Intersect.Collections;
+using Intersect.Configuration;
 using Intersect.Logging.Formatting;
 using Intersect.Logging.Output;
+using Intersect.Network;
+using Intersect.Server.Utilities;
+using Intersect.Utilities;
 
 namespace Intersect.Logging;
 
@@ -48,6 +52,8 @@ public static partial class Log
                 Outputs = outputs,
             }
         );
+
+        LegacyLogging.Logger = Default;
     }
 
     public static Logger Pretty { get; internal set; }

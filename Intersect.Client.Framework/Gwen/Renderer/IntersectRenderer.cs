@@ -1,3 +1,4 @@
+using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Configuration;
@@ -340,7 +341,7 @@ public partial class IntersectRenderer : Base, ICacheToTexture
         if (!m_RT.ContainsKey(control))
         {
             var keys = m_RT.Keys.Select(key => key.CanonicalName);
-            Log.Error($"{control.CanonicalName} not found in the list of render targets: {string.Join(", ", keys)}");
+            GameContentManager.Current?.Logger.Error($"{control.CanonicalName} not found in the list of render targets: {string.Join(", ", keys)}");
         }
         mRenderTarget = m_RT[control]; // make cache current RT
         mRenderTarget.Begin();
@@ -358,7 +359,7 @@ public partial class IntersectRenderer : Base, ICacheToTexture
     }
 
     /// <summary>
-    /// Called when gwen wants to draw the cached version of the control. 
+    /// Called when gwen wants to draw the cached version of the control.
     /// </summary>
     /// <param name="control">Control to be rendered.</param>
     public void DrawCachedControlTexture(Control.Base control)
@@ -376,7 +377,7 @@ public partial class IntersectRenderer : Base, ICacheToTexture
     }
 
     /// <summary>
-    /// Called to actually create a cached texture. 
+    /// Called to actually create a cached texture.
     /// </summary>
     /// <param name="control">Control to be rendered.</param>
     public void CreateControlCacheTexture(Control.Base control)

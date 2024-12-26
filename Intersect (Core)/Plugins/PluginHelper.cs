@@ -10,13 +10,13 @@ public abstract partial class PluginHelper
     /// <summary>
     /// The <see cref="Logger"/> for this helper to use.
     /// </summary>
-    protected Logger Logger { get; }
+    protected ILogger Logger { get; }
 
     /// <summary>
     /// Initializes this <see cref="PluginHelper"/>.
     /// </summary>
     /// <param name="logger">The <see cref="Logger"/> for this helper to use.</param>
-    protected PluginHelper(Logger logger)
+    protected PluginHelper(ILogger logger)
     {
         Logger = logger;
     }

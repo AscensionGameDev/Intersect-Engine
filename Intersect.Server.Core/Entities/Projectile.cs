@@ -7,7 +7,6 @@ using Intersect.Server.Entities.Combat;
 using Intersect.Server.Framework.Items;
 using Intersect.Server.Maps;
 using Intersect.Utilities;
-using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Server.Entities;
 
@@ -328,7 +327,7 @@ public partial class Projectile : Entity
             }
 
             //Check for grapplehooks.
-            if (attribute.Type == MapAttribute.GrappleStone &&
+            if (attribute.Type == MapAttributeType.GrappleStone &&
                 Base.GrappleHookOptions.Contains(GrappleOption.MapAttribute) &&
                 !spawn.Parent.HasGrappled &&
                 (spawn.X != Owner.X || spawn.Y != Owner.Y))
@@ -354,7 +353,7 @@ public partial class Projectile : Entity
             }
 
             if (!spawn.ProjectileBase.IgnoreMapBlocks &&
-                ((attribute.Type == MapAttribute.Blocked) || (attribute.Type == MapAttribute.Animation && ((MapAnimationAttribute)attribute).IsBlock)))
+                ((attribute.Type == MapAttributeType.Blocked) || (attribute.Type == MapAttributeType.Animation && ((MapAnimationAttribute)attribute).IsBlock)))
             {
                 killSpawn = true;
             }

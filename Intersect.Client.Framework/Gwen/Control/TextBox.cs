@@ -614,7 +614,7 @@ public partial class TextBox : Label
         }
         catch (Exception exception)
         {
-            Log.Warn(exception);
+            LegacyLogging.Logger?.Warn(exception);
         }
     }
 

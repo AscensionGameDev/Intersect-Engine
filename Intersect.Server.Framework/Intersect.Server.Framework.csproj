@@ -20,8 +20,8 @@
     </AssemblyAttribute>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Intersect (Core)\Intersect.Core.csproj" />
+  <ItemGroup Label="Project References">
+    <ProjectReference Include="..\Framework\Intersect.Framework.Core\Intersect.Framework.Core.csproj" />
   </ItemGroup>
 
 </Project>

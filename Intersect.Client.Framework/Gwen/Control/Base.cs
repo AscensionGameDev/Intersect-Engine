@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Intersect.Logging;
 using Intersect.Client.Framework.Gwen.Renderer;
-using Intersect.Reflection;
+using Intersect.Framework.Reflection;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
@@ -888,13 +888,13 @@ public partial class Base : IDisposable
     {
         if (string.IsNullOrWhiteSpace(Name))
         {
-            Log.Warn($"Attempted to load layout for nameless {GetType().FullName}");
+            GameContentManager.Current?.Logger.Warn($"Attempted to load layout for nameless {GetType().FullName}");
             return;
         }
 
         if (string.IsNullOrWhiteSpace(resolution) || string.IsNullOrEmpty(resolution))
         {
-            Log.Warn($"Attempted to load layout for {Name} with no resolution");
+            GameContentManager.Current?.Logger.Warn($"Attempted to load layout for {Name} with no resolution");
             return;
         }
 

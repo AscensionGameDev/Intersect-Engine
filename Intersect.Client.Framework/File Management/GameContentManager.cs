@@ -13,8 +13,7 @@ namespace Intersect.Client.Framework.File_Management;
 
 public abstract partial class GameContentManager : IContentManager
 {
-
-
+    public ILogger Logger { get; }
 
     public enum UI
     {
@@ -68,19 +67,20 @@ public abstract partial class GameContentManager : IContentManager
     /// <summary>
     /// Contains all indexed files and their caches from sound pack files.
     /// </summary>
-    public AssetPacker SoundPacks { get; set; }
+    public IAssetPacker SoundPacks { get; set; }
 
     /// <summary>
     /// Contains all indexed files and their caches from music pack files.
     /// </summary>
-    public AssetPacker MusicPacks { get; set; }
+    public IAssetPacker MusicPacks { get; set; }
 
     public bool TilesetsLoaded = false;
 
     public ContentWatcher ContentWatcher { get; protected set; }
 
-    protected GameContentManager()
+    protected GameContentManager(ILogger logger)
     {
+        Logger = logger;
         Current = this;
     }
 
@@ -472,7 +472,7 @@ public abstract partial class GameContentManager : IContentManager
                     }
                     catch (Exception exception)
                     {
-                        Log.Debug(exception);
+                        Logger.Debug(exception);
                     }
                 });
                 return;
@@ -489,7 +489,7 @@ public abstract partial class GameContentManager : IContentManager
             }
             catch (Exception exception)
             {
-                Log.Debug(exception);
+                Logger.Debug(exception);
             }
         });
     }

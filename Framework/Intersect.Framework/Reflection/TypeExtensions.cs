@@ -131,6 +131,8 @@ public static partial class TypeExtensions
 
     public static bool ExtendedBy<TChildType>(this Type type) => typeof(TChildType).Extends(type);
 
+    public static bool ExtendedBy(this Type type, Type? childType) => childType?.Extends(type) ?? false;
+
     public static Type? FindConcreteType(
         this Type abstractType,
         Func<Type, bool> predicate,

@@ -32,7 +32,7 @@ internal static partial class Bootstrapper
         );
 
         var logger = Log.Default;
-        var packetTypeRegistry = new PacketTypeRegistry(logger);
+        var packetTypeRegistry = new PacketTypeRegistry(logger, typeof(SharedConstants).Assembly);
         if (!packetTypeRegistry.TryRegisterBuiltIn())
         {
             logger.Error("Failed to register built-in packets.");

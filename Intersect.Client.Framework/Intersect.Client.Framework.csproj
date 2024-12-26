@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup Label="Project References">
-    <ProjectReference Include="..\Intersect (Core)\Intersect.Core.csproj" />
+    <ProjectReference Include="..\Framework\Intersect.Framework.Core\Intersect.Framework.Core.csproj" />
   </ItemGroup>
 
 </Project>

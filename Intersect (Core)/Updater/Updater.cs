@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 
 using Intersect.Configuration;
+using Intersect.Framework.Core.Serialization;
 using Intersect.Logging;
 
 using Newtonsoft.Json;
@@ -143,7 +144,7 @@ public partial class Updater
                         }
                     }
 
-                    //Copy Over 
+                    //Copy Over
                     mCurrentVersion = new Update();
                     foreach (var file in mUpdate.Files)
                     {
@@ -277,8 +278,13 @@ public partial class Updater
         File.WriteAllText(
             mCurrentVersionPath,
             JsonConvert.SerializeObject(
-                mCurrentVersion.Filter(IsClient), Formatting.Indented,
-                new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore }
+                mCurrentVersion.Filter(IsClient),
+                Formatting.Indented,
+                new JsonSerializerSettings
+                {
+                    DefaultValueHandling = DefaultValueHandling.Ignore,
+                    SerializationBinder = new IntersectTypeSerializationBinder(),
+                }
             )
         );
 

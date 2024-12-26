@@ -1,7 +1,7 @@
 ﻿namespace Intersect.Threading;
 
 
-public partial class LockingActionQueue
+public partial class LockingActionQueue : ILockingActionQueue
 {
 
     private readonly object mLockObject;
@@ -17,7 +17,7 @@ public partial class LockingActionQueue
         mLockObject = lockObjectObject;
     }
 
-    public Action NextAction
+    public Action? NextAction
     {
         get
         {
