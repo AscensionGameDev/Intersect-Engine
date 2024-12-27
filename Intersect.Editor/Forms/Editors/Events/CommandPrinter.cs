@@ -1414,82 +1414,82 @@ public static partial class CommandPrinter
         var varvalue = "";
         switch (mod.ModType)
         {
-            case Enums.VariableMod.Set:
+            case VariableModType.Set:
                 varvalue = Strings.EventCommandList.setvariable.ToString(mod.Value);
 
                 break;
-            case Enums.VariableMod.Add:
+            case VariableModType.Add:
                 varvalue = Strings.EventCommandList.addvariable.ToString(mod.Value);
 
                 break;
-            case Enums.VariableMod.Subtract:
+            case VariableModType.Subtract:
                 varvalue = Strings.EventCommandList.subtractvariable.ToString(mod.Value);
 
                 break;
-            case Enums.VariableMod.Multiply:
+            case VariableModType.Multiply:
                 varvalue = Strings.EventCommandList.multiplyvariable.ToString(mod.Value);
 
                 break;
-            case Enums.VariableMod.Divide:
+            case VariableModType.Divide:
                 varvalue = Strings.EventCommandList.dividevariable.ToString(mod.Value);
 
                 break;
-            case Enums.VariableMod.LeftShift:
+            case VariableModType.LeftShift:
                 varvalue = Strings.EventCommandList.leftshiftvariable.ToString(mod.Value);
 
                 break;
-            case Enums.VariableMod.RightShift:
+            case VariableModType.RightShift:
                 varvalue = Strings.EventCommandList.rightshiftvariable.ToString(mod.Value);
 
                 break;
-            case Enums.VariableMod.Random:
+            case VariableModType.Random:
                 varvalue = Strings.EventCommandList.randvariable.ToString(mod.Value, mod.HighValue);
 
                 break;
-            case Enums.VariableMod.SystemTime:
+            case VariableModType.SystemTime:
                 varvalue = Strings.EventCommandList.systemtimevariable;
 
                 break;
 
 
             //Player Variable
-            case Enums.VariableMod.DupPlayerVar:
+            case VariableModType.DupPlayerVar:
                 varvalue = Strings.EventCommandList.dupplayervariable.ToString(
                     PlayerVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.AddPlayerVar:
+            case VariableModType.AddPlayerVar:
                 varvalue = Strings.EventCommandList.addplayervariable.ToString(
                     PlayerVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.SubtractPlayerVar:
+            case VariableModType.SubtractPlayerVar:
                 varvalue = Strings.EventCommandList.subtractplayervariable.ToString(
                     PlayerVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.MultiplyPlayerVar:
+            case VariableModType.MultiplyPlayerVar:
                 varvalue = Strings.EventCommandList.multiplyplayervariable.ToString(
                     PlayerVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.DividePlayerVar:
+            case VariableModType.DividePlayerVar:
                 varvalue = Strings.EventCommandList.divideplayervariable.ToString(
                     PlayerVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.LeftShiftPlayerVar:
+            case VariableModType.LeftShiftPlayerVar:
                 varvalue = Strings.EventCommandList.leftshiftplayervariable.ToString(
                     PlayerVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.RightShiftPlayerVar:
+            case VariableModType.RightShiftPlayerVar:
                 varvalue = Strings.EventCommandList.rightshiftplayervariable.ToString(
                     PlayerVariableBase.GetName(mod.DuplicateVariableId)
                 );
@@ -1498,43 +1498,43 @@ public static partial class CommandPrinter
 
 
             //Global Variable
-            case Enums.VariableMod.DupGlobalVar:
+            case VariableModType.DupGlobalVar:
                 varvalue = Strings.EventCommandList.dupglobalvariable.ToString(
                     ServerVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.AddGlobalVar:
+            case VariableModType.AddGlobalVar:
                 varvalue = Strings.EventCommandList.addglobalvariable.ToString(
                     ServerVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.SubtractGlobalVar:
+            case VariableModType.SubtractGlobalVar:
                 varvalue = Strings.EventCommandList.subtractglobalvariable.ToString(
                     ServerVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.MultiplyGlobalVar:
+            case VariableModType.MultiplyGlobalVar:
                 varvalue = Strings.EventCommandList.multiplyglobalvariable.ToString(
                     ServerVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.DivideGlobalVar:
+            case VariableModType.DivideGlobalVar:
                 varvalue = Strings.EventCommandList.divideglobalvariable.ToString(
                     ServerVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.LeftShiftGlobalVar:
+            case VariableModType.LeftShiftGlobalVar:
                 varvalue = Strings.EventCommandList.leftshiftglobalvariable.ToString(
                     ServerVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.RightShiftGlobalVar:
+            case VariableModType.RightShiftGlobalVar:
                 varvalue = Strings.EventCommandList.rightshiftglobalvariable.ToString(
                     ServerVariableBase.GetName(mod.DuplicateVariableId)
                 );
@@ -1543,43 +1543,43 @@ public static partial class CommandPrinter
 
 
             //Guilds Variable
-            case Enums.VariableMod.DupGuildVar:
+            case VariableModType.DupGuildVar:
                 varvalue = Strings.EventCommandList.dupguildvariable.ToString(
                     GuildVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.AddGuildVar:
+            case VariableModType.AddGuildVar:
                 varvalue = Strings.EventCommandList.addguildvariable.ToString(
                     GuildVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.SubtractGuildVar:
+            case VariableModType.SubtractGuildVar:
                 varvalue = Strings.EventCommandList.subtractguildvariable.ToString(
                     GuildVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.MultiplyGuildVar:
+            case VariableModType.MultiplyGuildVar:
                 varvalue = Strings.EventCommandList.multiplyguildvariable.ToString(
                     GuildVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.DivideGuildVar:
+            case VariableModType.DivideGuildVar:
                 varvalue = Strings.EventCommandList.divideguildvariable.ToString(
                     GuildVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.LeftShiftGuildVar:
+            case VariableModType.LeftShiftGuildVar:
                 varvalue = Strings.EventCommandList.leftshiftguildvariable.ToString(
                     GuildVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.RightShiftGuildVar:
+            case VariableModType.RightShiftGuildVar:
                 varvalue = Strings.EventCommandList.rightshiftguildvariable.ToString(
                     GuildVariableBase.GetName(mod.DuplicateVariableId)
                 );
@@ -1588,49 +1588,49 @@ public static partial class CommandPrinter
 
 
             //User Variable
-            case Enums.VariableMod.DuplicateUserVariable:
+            case VariableModType.DuplicateUserVariable:
                 varvalue = Strings.EventCommandList.DupUserVariable.ToString(
                     Strings.GameObjectStrings.UserVariable,
                     UserVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.AddUserVariable:
+            case VariableModType.AddUserVariable:
                 varvalue = Strings.EventCommandList.AddUserVariable.ToString(
                     Strings.GameObjectStrings.UserVariable,
                     UserVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.SubtractUserVariable:
+            case VariableModType.SubtractUserVariable:
                 varvalue = Strings.EventCommandList.SubtractUserVariable.ToString(
                     Strings.GameObjectStrings.UserVariable,
                     UserVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.MultiplyUserVariable:
+            case VariableModType.MultiplyUserVariable:
                 varvalue = Strings.EventCommandList.MultiplyUserVariable.ToString(
                     Strings.GameObjectStrings.UserVariable,
                     UserVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.DivideUserVariable:
+            case VariableModType.DivideUserVariable:
                 varvalue = Strings.EventCommandList.DivideUserVariable.ToString(
                     Strings.GameObjectStrings.UserVariable,
                     UserVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.LeftShiftUserVariable:
+            case VariableModType.LeftShiftUserVariable:
                 varvalue = Strings.EventCommandList.LeftShiftUserVariable.ToString(
                     Strings.GameObjectStrings.UserVariable,
                     UserVariableBase.GetName(mod.DuplicateVariableId)
                 );
 
                 break;
-            case Enums.VariableMod.RightShiftUserVariable:
+            case VariableModType.RightShiftUserVariable:
                 varvalue = Strings.EventCommandList.RightShiftUserVariable.ToString(
                     Strings.GameObjectStrings.UserVariable,
                     UserVariableBase.GetName(mod.DuplicateVariableId)
@@ -1677,11 +1677,11 @@ public static partial class CommandPrinter
         var varvalue = "";
         switch (mod.ModType)
         {
-            case Enums.VariableMod.Set:
+            case VariableModType.Set:
                 varvalue = Strings.EventCommandList.setvariable.ToString(mod.Value);
 
                 break;
-            case Enums.VariableMod.Replace:
+            case VariableModType.Replace:
                 varvalue = Strings.EventCommandList.replace.ToString(mod.Value, mod.Replace);
 
                 break;

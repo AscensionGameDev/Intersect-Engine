@@ -16,7 +16,6 @@ using Intersect.GameObjects.Maps;
 using Intersect.Logging;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
-using MapAttribute = Intersect.Enums.MapAttribute;
 using Timer = System.Windows.Forms.Timer;
 
 namespace Intersect.Editor.Forms.DockingElements;
@@ -1703,9 +1702,9 @@ public partial class FrmMapEditor : DockContent
         }
     }
 
-    private void SmartEraseAttribute(int x, int y, MapAttribute attribute)
+    private void SmartEraseAttribute(int x, int y, MapAttributeType attribute)
     {
-        var a = MapAttribute.Walkable;
+        var a = MapAttributeType.Walkable;
 
         if (x < 0 || x >= Options.MapWidth || y < 0 || y >= Options.MapHeight)
         {
@@ -1730,7 +1729,7 @@ public partial class FrmMapEditor : DockContent
 
     public void SmartEraseAttributes(int x, int y)
     {
-        var attribute = MapAttribute.Walkable;
+        var attribute = MapAttributeType.Walkable;
 
         if (Globals.CurrentMap.Attributes[x, y] != null)
         {

@@ -14,7 +14,6 @@ using Intersect.Utilities;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Editor.Core;
 
@@ -916,7 +915,7 @@ public static partial class Graphics
                         for (var y = 0; y < Options.MapHeight; y++)
                         {
                             var attr = tmpMap.Attributes[x, y];
-                            if ((attr?.Type ?? MapAttribute.Walkable) == MapAttribute.Walkable)
+                            if ((attr?.Type ?? MapAttributeType.Walkable) == MapAttributeType.Walkable)
                             {
                                 continue;
                             }
@@ -1374,7 +1373,7 @@ public static partial class Graphics
                     continue;
                 }
 
-                if (tmpMap.Attributes[x, y].Type == MapAttribute.Resource && !upper && !alternate)
+                if (tmpMap.Attributes[x, y].Type == MapAttributeType.Resource && !upper && !alternate)
                 {
                     var resource = ResourceBase.Get(((MapResourceAttribute) tmpMap.Attributes[x, y]).ResourceId);
                     if (resource == null)
@@ -1443,7 +1442,7 @@ public static partial class Graphics
                         DrawTexture(res, xpos, ypos, 0, 0, res.Width, res.Height, renderTarget);
                     }
                 }
-                else if (tmpMap.Attributes[x, y].Type == MapAttribute.Animation)
+                else if (tmpMap.Attributes[x, y].Type == MapAttributeType.Animation)
                 {
                     var animation =
                         AnimationBase.Get(((MapAnimationAttribute) tmpMap.Attributes[x, y]).AnimationId);
