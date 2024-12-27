@@ -1,6 +1,7 @@
 using System.Reflection;
 
 using Intersect.Localization;
+using Intersect.Logging;
 
 #if !DEBUG
 using Intersect.Logging;
@@ -46,7 +47,7 @@ public class EditorFormattedAttribute : EditorDisplayAttribute
 #if DEBUG
             throw error;
 #else
-            Log.Error(error);
+            LegacyLogging.Logger?.Error(error);
             return base.Format(stringsType, value);
 #endif
         }
