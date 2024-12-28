@@ -121,11 +121,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Framework\Intersect.Framework.Core\Intersect.Framework.Core.csproj" />
-    <ProjectReference Include="..\Framework\Intersect.Framework\Intersect.Framework.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Configuration\" />
   </ItemGroup>
 
 </Project>
