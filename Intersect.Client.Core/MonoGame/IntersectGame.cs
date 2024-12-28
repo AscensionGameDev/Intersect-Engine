@@ -580,7 +580,7 @@ internal partial class IntersectGame : Game
 
             if (!Sdl2.SDL_SetHint(Sdl2.SDL_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, false))
             {
-                LegacyLogging.Logger?.Warn("Failed to set X11 Compositor hint");
+                Log.Warn("Failed to set X11 Compositor hint");
             }
         }
     }
