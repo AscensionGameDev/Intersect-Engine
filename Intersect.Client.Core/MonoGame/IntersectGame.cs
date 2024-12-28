@@ -559,13 +559,20 @@ internal partial class IntersectGame : Game
         /// <inheritdoc />
         public void Start(IClientContext context, Action postStartupAction)
         {
-            var assemblyMonoGameFramework = AppDomain.CurrentDomain.GetAssemblies()
-                .FirstOrDefault(assembly => assembly.FullName?.StartsWith("MonoGame.Framework") ?? false);
-            var typeInternalSdl = assemblyMonoGameFramework?.GetType("Sdl");
-            var methodSdlInit = typeInternalSdl?.GetMethod("Init");
+            try
+            {
+                var assemblyMonoGameFramework = AppDomain.CurrentDomain.GetAssemblies()
+                    .FirstOrDefault(assembly => assembly.FullName?.StartsWith("MonoGame.Framework") ?? false);
+                var typeInternalSdl = assemblyMonoGameFramework?.GetType("Sdl");
+                var methodSdlInit = typeInternalSdl?.GetMethod("Init");
 
-            var harmonyPatch = new Harmony(typeof(MonoGameRunner).Assembly.FullName ?? "Intersect.Client.Core");
-            harmonyPatch.Patch(methodSdlInit, postfix: SymbolExtensions.GetMethodInfo(() => SdlInitPost()));
+                var harmonyPatch = new Harmony(typeof(MonoGameRunner).Assembly.FullName ?? "Intersect.Client.Core");
+                harmonyPatch.Patch(methodSdlInit, postfix: SymbolExtensions.GetMethodInfo(() => SdlInitPost()));
+            }
+            catch (Exception exception)
+            {
+                Log.Warn(exception, "Error occurred when trying to apply Harmony patch, this is not a fatal error");
+            }
 
             using var game = new IntersectGame(context, postStartupAction);
             game.Run();
