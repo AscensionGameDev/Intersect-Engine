@@ -36,7 +36,7 @@ public static partial class Sdl2
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private unsafe delegate void SDL_free_d(void* ptr);
 
-    private static SDL_free_d? SDL_free_f = Loader.Functions.LoadFunction<SDL_free_d>(nameof(SDL_free_f));
+    private static SDL_free_d? SDL_free_f = Loader.Functions.LoadFunction<SDL_free_d>(nameof(SDL_free));
 
     private static unsafe void SDL_free(void* ptr) => SDL_free_f!(ptr);
 
