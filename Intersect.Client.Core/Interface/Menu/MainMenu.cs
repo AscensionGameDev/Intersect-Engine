@@ -203,8 +203,11 @@ public partial class MainMenu : MutableInterface
 
     public static void SetNetworkStatus(NetworkStatus networkStatus, bool resetStatusCheck = false)
     {
-        ActiveNetworkStatus = networkStatus;
-        NetworkStatusChanged?.Invoke();
+        if (ActiveNetworkStatus != networkStatus)
+        {
+            ActiveNetworkStatus = networkStatus;
+            NetworkStatusChanged?.Invoke();
+        }
         LastNetworkStatusChangeTime = resetStatusCheck ? -1 : Timing.Global.MillisecondsUtc;
     }
 }
