@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Intersect.Enums;
 using Intersect.Logging;
 using Intersect.Server.Database;
@@ -5,22 +6,6 @@ using Intersect.Server.Entities.Events;
 using Intersect.Server.Maps;
 
 namespace Intersect.Server.Entities.Pathfinding;
-
-
-public enum PathfinderResult
-{
-
-    Success,
-
-    OutOfRange,
-
-    NoPathToTarget,
-
-    Failure, //No Map, No Target, Who Knows?
-
-    Wait, //Pathfinder won't run due to recent failures and trying to conserve cpu
-
-}
 
 partial class Pathfinder
 {
@@ -54,7 +39,7 @@ partial class Pathfinder
 
     public PathfinderResult Update(long timeMs)
     {
-        //TODO: Pull this out into server config :) 
+        //TODO: Pull this out into server config :)
         var pathfindingRange = Math.Max(
             Options.MapWidth, Options.MapHeight
         ); //Search as far as 1 map out.. maximum.
@@ -129,20 +114,18 @@ partial class Pathfinder
                                     {
                                         if (mapGrid[x, y] == null)
                                         {
-                                            mapGrid[x, y] = new PathNode(x, y, false);
-                                            
+                                            mapGrid[x, y] = new PathNode(x, y);
                                         }
                                         else
                                         {
                                             mapGrid[x, y].Reset();
                                         }
 
-                                        if (x < sourceX - pathfindingRange ||
-                                                x > sourceX + pathfindingRange ||
-                                                y < sourceY - pathfindingRange ||
-                                                y > sourceY + pathfindingRange)
+                                        var outOfRange = pathfindingRange < Math.Abs(sourceX - x) ||
+                                                         pathfindingRange < Math.Abs(sourceY - y);
+                                        if (outOfRange)
                                         {
-                                            mapGrid[x, y].IsWall = true;
+                                            mapGrid[x, y].BlockType = PathNodeBlockType.OutOfRange;
                                         }
                                     }
                                 }
@@ -155,8 +138,12 @@ partial class Pathfinder
                                         for (var y = 0; y < 3; y++)
                                         {
                                             FillArea(
-                                                mapGrid, (x + 1 - gridX) * Options.MapWidth, y * Options.MapHeight,
-                                                Options.MapWidth, Options.MapHeight
+                                                mapGrid,
+                                                (x + 1 - gridX) * Options.MapWidth,
+                                                y * Options.MapHeight,
+                                                Options.MapWidth,
+                                                Options.MapHeight,
+                                                PathNodeBlockType.InvalidTile
                                             );
                                         }
 
@@ -165,12 +152,18 @@ partial class Pathfinder
 
                                     for (var y = gridY - 1; y <= gridY + 1; y++)
                                     {
+                                        var mx = (x + 1 - gridX) * Options.MapWidth;
+                                        var my = (y + 1 - gridY) * Options.MapHeight;
+
                                         if (y == -1 || y >= grid.Height)
                                         {
                                             FillArea(
-                                                mapGrid, (x + 1 - gridX) * Options.MapWidth,
-                                                (y + 1 - gridY) * Options.MapHeight, Options.MapWidth,
-                                                Options.MapHeight
+                                                mapGrid,
+                                                mx,
+                                                my,
+                                                Options.MapWidth,
+                                                Options.MapHeight,
+                                                PathNodeBlockType.InvalidTile
                                             );
 
                                             continue;
@@ -184,19 +177,29 @@ partial class Pathfinder
 
                                             foreach (var block in blocks)
                                             {
-                                                mapGrid[(x + 1 - gridX) * Options.MapWidth + block.X,
-                                                        (y + 1 - gridY) * Options.MapHeight + block.Y]
-                                                    .IsWall = true;
+                                                mapGrid[mx + block.X, my + block.Y].BlockType =
+                                                    PathNodeBlockType.AttributeBlock;
                                             }
 
                                             //Block of Players, Npcs, and Resources
                                             foreach (var en in instance.GetEntities())
                                             {
+                                                if (en == mEntity)
+                                                {
+                                                    continue;
+                                                }
+
                                                 if (!en.IsPassable() && en.X > -1 && en.X < Options.MapWidth && en.Y > -1 && en.Y < Options.MapHeight)
                                                 {
-                                                    mapGrid[(x + 1 - gridX) * Options.MapWidth + en.X,
-                                                            (y + 1 - gridY) * Options.MapHeight + en.Y]
-                                                        .IsWall = true;
+                                                    mapGrid[mx + en.X, my + en.Y].BlockType = en.GetEntityType() switch
+                                                    {
+                                                        EntityType.GlobalEntity => PathNodeBlockType.Npc,
+                                                        EntityType.Player => PathNodeBlockType.Player,
+                                                        EntityType.Resource => PathNodeBlockType.Entity,
+                                                        EntityType.Projectile => PathNodeBlockType.Entity,
+                                                        EntityType.Event => PathNodeBlockType.Entity,
+                                                        _ => throw new UnreachableException($"{nameof(EntityType)} is not (but should be) handled in this switch expression"),
+                                                    };
                                                 }
                                             }
 
@@ -208,12 +211,8 @@ partial class Pathfinder
                                                     {
                                                         if (!page.Passable)
                                                         {
-                                                            mapGrid[
-                                                                    (x + 1 - gridX) * Options.MapWidth +
-                                                                    en.Value.X,
-                                                                    (y + 1 - gridY) * Options.MapHeight +
-                                                                    en.Value.Y]
-                                                                .IsWall = true;
+                                                            mapGrid[mx + en.Value.X, my + en.Value.Y].BlockType =
+                                                                PathNodeBlockType.Entity;
                                                         }
                                                     }
                                                 }
@@ -242,23 +241,14 @@ partial class Pathfinder
                                                                         eventPage.MapId, mapX, mapY
                                                                     ));
 
-                                                                    if (evt != null)
+                                                                    if (evt?.PageInstance is
+                                                                        not { Passable: false, X: > -1, Y: > -1 })
                                                                     {
-                                                                        if (evt.PageInstance != null &&
-                                                                            !evt.PageInstance.Passable &&
-                                                                            evt.PageInstance.X > -1 &&
-                                                                            evt.PageInstance.Y > -1)
-                                                                        {
-                                                                            mapGrid[
-                                                                                    (x + 1 - gridX) *
-                                                                                    Options.MapWidth +
-                                                                                    evt.X,
-                                                                                    (y + 1 - gridY) *
-                                                                                    Options.MapHeight +
-                                                                                    evt.Y]
-                                                                                .IsWall = true;
-                                                                        }
+                                                                        continue;
                                                                     }
+
+                                                                    mapGrid[mx + evt.X, my + evt.Y].BlockType =
+                                                                        PathNodeBlockType.Entity;
                                                                 }
                                                             }
                                                         }
@@ -267,20 +257,20 @@ partial class Pathfinder
                                                             var playerEvents = player.EventLookup.Values;
                                                             foreach (var evt in playerEvents)
                                                             {
-                                                                if (evt != null &&
-                                                                    evt.PageInstance != null &&
-                                                                    !evt.PageInstance.Passable &&
-                                                                    evt.PageInstance.X > -1 &&
-                                                                    evt.PageInstance.Y > -1)
+                                                                if (evt is not
+                                                                    {
+                                                                        PageInstance:
+                                                                        {
+                                                                            Passable: false, X: > -1, Y: > -1
+                                                                        }
+                                                                    })
                                                                 {
-                                                                    mapGrid[
-                                                                            (x + 1 - gridX) * Options.MapWidth +
-                                                                            evt.PageInstance.X,
-                                                                            (y + 1 - gridY) *
-                                                                            Options.MapHeight +
-                                                                            evt.PageInstance.Y]
-                                                                        .IsWall = true;
+                                                                    continue;
                                                                 }
+
+                                                                mapGrid[mx + evt.PageInstance.X,
+                                                                        my + evt.PageInstance.Y].BlockType =
+                                                                    PathNodeBlockType.Entity;
                                                             }
                                                         }
                                                     }
@@ -294,11 +284,46 @@ partial class Pathfinder
                                 //That would be more processor intensive but would also provide ai that recognize blocks in their path quicker.
 
                                 //Finally done.. let's get a path from the pathfinder.
-                                mapGrid[targetX, targetY].IsWall = false;
+                                mapGrid[targetX, targetY].BlockType = PathNodeBlockType.Nonblocking;
                                 aStar = new SpatialAStar(mapGrid);
                                 path = aStar.Search(new Point(sourceX, sourceY), new Point(targetX, targetY), null);
                                 if (path == null)
                                 {
+                                    // Leaving this code in but commented for debugging purposes
+                                    // just in case the changes broke something
+                                    // var debugGrid = string.Empty;
+                                    // for (var dy = 0; dy < mapGrid.GetLength(1); ++dy)
+                                    // {
+                                    //     for (var dx = 0; dx < mapGrid.GetLength(0); ++dx)
+                                    //     {
+                                    //         if (dx == sourceX && dy == sourceY)
+                                    //         {
+                                    //             debugGrid += "S";
+                                    //         } else
+                                    //         if (dx == targetX && dy == targetY)
+                                    //         {
+                                    //             debugGrid += "T";
+                                    //         }
+                                    //         else
+                                    //         {
+                                    //             debugGrid += mapGrid[dx, dy].BlockType switch
+                                    //             {
+                                    //                 PathNodeBlockType.Nonblocking => " ",
+                                    //                 PathNodeBlockType.InvalidTile => "I",
+                                    //                 PathNodeBlockType.OutOfRange => "X",
+                                    //                 PathNodeBlockType.AttributeBlock => "B",
+                                    //                 PathNodeBlockType.AttributeNpcAvoid => "A",
+                                    //                 PathNodeBlockType.Npc => "N",
+                                    //                 PathNodeBlockType.Player => "P",
+                                    //                 PathNodeBlockType.Entity => "E",
+                                    //                 _ => throw new ArgumentOutOfRangeException(),
+                                    //             };
+                                    //         }
+                                    //     }
+                                    //
+                                    //     debugGrid += "\n";
+                                    // }
+
                                     returnVal = PathfinderResult.NoPathToTarget;
                                 }
                                 else
@@ -328,33 +353,33 @@ partial class Pathfinder
                 returnVal = PathfinderResult.Wait;
             }
 
-            switch (returnVal)
+            switch (returnVal.Type)
             {
-                case PathfinderResult.Success:
+                case PathfinderResultType.Success:
                     //Use the same path for at least a second before trying again.
                     mWaitTime = timeMs + 200;
                     mConsecutiveFails = 0;
 
                     break;
-                case PathfinderResult.OutOfRange:
+                case PathfinderResultType.OutOfRange:
                     //Npc might immediately find a new target. Give it a 500ms wait but make this wait grow if we keep finding targets out of range.
                     mConsecutiveFails++;
                     mWaitTime = timeMs + mConsecutiveFails * 500;
 
                     break;
-                case PathfinderResult.NoPathToTarget:
+                case PathfinderResultType.NoPathToTarget:
                     //Wait 2 seconds and try again. This will move the npc randomly and might allow other npcs or players to get out of the way
                     mConsecutiveFails++;
                     mWaitTime = timeMs + 1000 + mConsecutiveFails * 500;
 
                     break;
-                case PathfinderResult.Failure:
+                case PathfinderResultType.Failure:
                     //Can try again in a second.. we don't waste much processing time on failures
                     mWaitTime = timeMs + 500;
                     mConsecutiveFails = 0;
 
                     break;
-                case PathfinderResult.Wait:
+                case PathfinderResultType.Wait:
                     //Nothing to do here.. we are already waiting.
                     break;
                 default:
@@ -371,13 +396,13 @@ partial class Pathfinder
         return returnVal;
     }
 
-    private void FillArea(PathNode[,] dest, int startX, int startY, int width, int height)
+    private void FillArea(PathNode[,] dest, int startX, int startY, int width, int height, PathNodeBlockType blockType)
     {
         for (var x = startX; x < startX + width; x++)
         {
             for (var y = startY; y < startY + height; y++)
             {
-                dest[x, y].IsWall = true;
+                dest[x, y].BlockType = blockType;
             }
         }
     }

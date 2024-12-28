@@ -929,57 +929,36 @@ public partial class Npc : Entity
                         (mResetting && GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) != 0)
                         )
                         {
-                            switch (mPathFinder.Update(timeMs))
+                            var pathFinderResult = mPathFinder.Update(timeMs);
+                            switch (pathFinderResult.Type)
                             {
-                                case PathfinderResult.Success:
-
-                                    var dir = mPathFinder.GetMove();
-                                    if (dir > Direction.None)
+                                case PathfinderResultType.Success:
+                                    var nextPathDirection = mPathFinder.GetMove();
+                                    if (nextPathDirection > Direction.None)
                                     {
                                         if (fleeing)
                                         {
-                                            switch (dir)
+                                            nextPathDirection = nextPathDirection switch
                                             {
-                                                case Direction.Up:
-                                                    dir = Direction.Down;
-
-                                                    break;
-                                                case Direction.Down:
-                                                    dir = Direction.Up;
-
-                                                    break;
-                                                case Direction.Left:
-                                                    dir = Direction.Right;
-
-                                                    break;
-                                                case Direction.Right:
-                                                    dir = Direction.Left;
-
-                                                    break;
-                                                case Direction.UpLeft:
-                                                    dir = Direction.UpRight;
-
-                                                    break;
-                                                case Direction.UpRight:
-                                                    dir = Direction.UpLeft;
-
-                                                    break;
-                                                case Direction.DownRight:
-                                                    dir = Direction.DownLeft;
-
-                                                    break;
-                                                case Direction.DownLeft:
-                                                    dir = Direction.DownRight;
-
-                                                    break;
-                                            }
+                                                Direction.Up => Direction.Down,
+                                                Direction.Down => Direction.Up,
+                                                Direction.Left => Direction.Right,
+                                                Direction.Right => Direction.Left,
+                                                Direction.UpLeft => Direction.UpRight,
+                                                Direction.UpRight => Direction.UpLeft,
+                                                Direction.DownRight => Direction.DownLeft,
+                                                Direction.DownLeft => Direction.DownRight,
+                                                _ => nextPathDirection,
+                                            };
                                         }
 
-                                        if (CanMoveInDirection(dir, out var blockerType, out _) || blockerType == MovementBlockerType.Slide)
+                                        if (CanMoveInDirection(nextPathDirection, out var blockerType, out var blockingEntityType, out var blockingEntity) || blockerType == MovementBlockerType.Slide)
                                         {
                                             //check if NPC is snared or stunned
+                                            // ReSharper disable once LoopCanBeConvertedToQuery
                                             foreach (var status in CachedStatuses)
                                             {
+                                                // ReSharper disable once MergeIntoLogicalPattern
                                                 if (status.Type == SpellEffect.Stun ||
                                                     status.Type == SpellEffect.Snare ||
                                                     status.Type == SpellEffect.Sleep)
@@ -988,11 +967,30 @@ public partial class Npc : Entity
                                                 }
                                             }
 
-                                            Move(dir, null);
+                                            Move(nextPathDirection, null);
                                         }
                                         else
                                         {
-                                            mPathFinder.PathFailed(timeMs);
+                                            var blockerAttacked = false;
+                                            if (!fleeing && blockerType == MovementBlockerType.Entity &&
+                                                blockingEntityType == EntityType.Player)
+                                            {
+                                                if (!(blockingEntity?.IsDisposed ?? true))
+                                                {
+                                                    if (CanAttack(blockingEntity, default))
+                                                    {
+                                                        Log.Debug($"Trying to attack {blockingEntity.Name} because they're blocking the path to {Target.Name}");
+                                                        ChangeDir(nextPathDirection);
+                                                        TryAttack(blockingEntity);
+                                                        blockerAttacked = true;
+                                                    }
+                                                }
+                                            }
+
+                                            if (!blockerAttacked)
+                                            {
+                                                mPathFinder.PathFailed(timeMs);
+                                            }
                                         }
 
                                         // Are we resetting?
@@ -1013,30 +1011,25 @@ public partial class Npc : Entity
                                             }
                                         }
                                     }
-
                                     break;
-                                case PathfinderResult.OutOfRange:
+
+                                case PathfinderResultType.OutOfRange:
+                                case PathfinderResultType.NoPathToTarget:
                                     TryFindNewTarget(timeMs, tempTarget?.Id ?? Guid.Empty, true);
                                     tempTarget = Target;
                                     targetMap = Guid.Empty;
-
                                     break;
-                                case PathfinderResult.NoPathToTarget:
-                                    TryFindNewTarget(timeMs, tempTarget?.Id ?? Guid.Empty, true);
-                                    tempTarget = Target;
-                                    targetMap = Guid.Empty;
 
-                                    break;
-                                case PathfinderResult.Failure:
+                                case PathfinderResultType.Failure:
                                     targetMap = Guid.Empty;
                                     TryFindNewTarget(timeMs, tempTarget?.Id ?? Guid.Empty, true);
                                     tempTarget = Target;
-
                                     break;
-                                case PathfinderResult.Wait:
+
+                                case PathfinderResultType.Wait:
                                     targetMap = Guid.Empty;
-
                                     break;
+
                                 default:
                                     throw new ArgumentOutOfRangeException();
                             }
@@ -1673,7 +1666,7 @@ public partial class Npc : Entity
 
         return pkt;
     }
-    
+
     protected override EntityItemSource? AsItemSource()
     {
         return new EntityItemSource

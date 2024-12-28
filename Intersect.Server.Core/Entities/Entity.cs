@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using Intersect.Collections.Slotting;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -421,6 +422,28 @@ public abstract partial class Entity : IEntity
         Direction direction,
         out MovementBlockerType blockerType,
         out EntityType entityType
+    ) => CanMoveInDirection(
+        direction,
+        out blockerType,
+        out entityType,
+        out _
+    );
+
+    /// <summary>
+    ///     Determines if this entity can move in the specified <paramref name="direction"/>.
+    /// </summary>
+    /// <param name="direction">The <see cref="Direction"/> the entity is attempting to move in.</param>
+    /// <param name="blockerType">The type of blocker, if any.</param>
+    /// <param name="entityType">
+    ///     The type of entity that is blocking movement, if <paramref name="blockerType"/> is set to <see cref="MovementBlockerType.Entity"/>.
+    /// </param>
+    /// <param name="blockingEntity">The entity (if any) that is blocking movement.</param>
+    /// <returns>If the entity is able to move in the specified direction.</returns>
+    public virtual bool CanMoveInDirection(
+        Direction direction,
+        out MovementBlockerType blockerType,
+        out EntityType entityType,
+        out Entity? blockingEntity
     )
     {
         entityType = default;
@@ -477,12 +500,14 @@ public abstract partial class Entity : IEntity
         if (!tileHelper.Translate(xOffset, yOffset))
         {
             blockerType = MovementBlockerType.OutOfBounds;
+            blockingEntity = default;
             return false;
         }
 
         if (!MapController.TryGet(tileHelper.GetMapId(), out var mapController))
         {
             blockerType = MovementBlockerType.OutOfBounds;
+            blockingEntity = default;
             return false;
         }
 
@@ -491,6 +516,7 @@ public abstract partial class Entity : IEntity
 
         if (IsBlockedByMapAttribute(direction, mapController.Attributes[tileX, tileY], out blockerType))
         {
+            blockingEntity = default;
             return false;
         }
 
@@ -499,18 +525,21 @@ public abstract partial class Entity : IEntity
         {
             MovementBlockerType componentBlockerType = default;
             EntityType componentBlockingEntityType = default;
+            Entity? componentBlockingEntity = default;
 
             if (direction.GetComponentDirections()
                 .All(
                     componentDirection => !CanMoveInDirection(
                         componentDirection,
                         out componentBlockerType,
-                        out componentBlockingEntityType
+                        out componentBlockingEntityType,
+                        out componentBlockingEntity
                     )
                 ))
             {
                 blockerType = componentBlockerType;
                 entityType = componentBlockingEntityType;
+                blockingEntity = componentBlockingEntity;
                 return false;
             }
         }
@@ -523,7 +552,8 @@ public abstract partial class Entity : IEntity
                 tileY,
                 Z,
                 out blockerType,
-                out entityType
+                out entityType,
+                out blockingEntity
             );
         }
 
@@ -542,23 +572,27 @@ public abstract partial class Entity : IEntity
                 case Player _ when !CanPassPlayer(mapController):
                     blockerType = MovementBlockerType.Entity;
                     entityType = EntityType.Player;
+                    blockingEntity = mapEntity;
                     return false;
                 case Npc _:
                     // There should honestly be an Npc EntityType...
                     blockerType = MovementBlockerType.Entity;
                     entityType = EntityType.Player;
+                    blockingEntity = mapEntity;
                     return false;
                 case Resource resource when !resource.IsPassable():
                     blockerType = MovementBlockerType.Entity;
                     entityType = EntityType.Resource;
+                    blockingEntity = mapEntity;
                     return false;
             }
         }
 
-        if (IsBlockedByEvent(mapInstance, tileHelper.GetX(), tileHelper.GetY()))
+        if (IsBlockedByEvent(mapInstance, tileHelper.GetX(), tileHelper.GetY(), out var blockingEvent))
         {
             blockerType = MovementBlockerType.Entity;
             entityType = EntityType.Event;
+            blockingEntity = blockingEvent;
             return false;
         }
 
@@ -568,7 +602,8 @@ public abstract partial class Entity : IEntity
                 tileHelper.GetY(),
                 Z,
                 out blockerType,
-                out entityType
+                out entityType,
+                out blockingEntity
             ))
         {
             return false;
@@ -616,17 +651,24 @@ public abstract partial class Entity : IEntity
 
     protected virtual bool CanPassPlayer(MapController targetMap) => false;
 
-    protected virtual bool IsBlockedByEvent(MapInstance mapInstance, int tileX, int tileY)
+    protected virtual bool IsBlockedByEvent(
+        MapInstance mapInstance,
+        int tileX,
+        int tileY,
+        [NotNullWhen(true)] out EventPageInstance? blockingEvent
+    )
     {
         if (mapInstance == default)
         {
+            blockingEvent = default;
             return false;
         }
 
-        return mapInstance.GlobalEventInstances.Values
+        blockingEvent = mapInstance.GlobalEventInstances.Values
             .SelectMany(globalEventInstance => globalEventInstance.GlobalPageInstance)
-            .Where(instance => instance != default && !instance.Passable)
-            .Any(instance => instance.X == tileX && instance.Y == tileY && instance.Z == Z);
+            .Where(instance => instance is { Passable: false })
+            .FirstOrDefault(instance => instance.X == tileX && instance.Y == tileY && instance.Z == Z);
+        return blockingEvent != default;
     }
 
     protected virtual bool TryGetBlockerOnTile(
@@ -635,11 +677,13 @@ public abstract partial class Entity : IEntity
         int y,
         int z,
         out MovementBlockerType blockerType,
-        out EntityType entityType
+        out EntityType entityType,
+        out Entity? blockingEntity
     )
     {
         blockerType = map == default ? MovementBlockerType.OutOfBounds : MovementBlockerType.NotBlocked;
         entityType = default;
+        blockingEntity = default;
         return blockerType != MovementBlockerType.NotBlocked;
     }
 

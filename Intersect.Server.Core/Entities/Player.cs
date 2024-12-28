@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Intersect.Collections.Slotting;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -7069,14 +7070,29 @@ public partial class Player : Entity
         return Options.Instance.Passability.Passable[(int)targetMap.ZoneType];
     }
 
-    protected override bool IsBlockedByEvent(MapInstance mapInstance, int tileX, int tileY)
+    protected override bool IsBlockedByEvent(
+        MapInstance mapInstance,
+        int tileX,
+        int tileY,
+        [NotNullWhen(true)] out EventPageInstance? blockingEvent
+    )
     {
+        blockingEvent = default;
         return false;
     }
 
-    protected override bool TryGetBlockerOnTile(MapController map, int x, int y, int z, out MovementBlockerType blockerType, out EntityType entityType)
+    protected override bool TryGetBlockerOnTile(MapController map, int x, int y, int z,
+        out MovementBlockerType blockerType, out EntityType entityType, out Entity? blockingEntity)
     {
-        if (base.TryGetBlockerOnTile(map, x, y, z, out blockerType, out entityType))
+        if (base.TryGetBlockerOnTile(
+                map,
+                x,
+                y,
+                z,
+                out blockerType,
+                out entityType,
+                out blockingEntity
+            ))
         {
             return true;
         }

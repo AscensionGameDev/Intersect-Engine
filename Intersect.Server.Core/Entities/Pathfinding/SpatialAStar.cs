@@ -1,63 +1,5 @@
 ﻿namespace Intersect.Server.Entities.Pathfinding;
 
-
-public interface IIndexedObject
-{
-
-    int Index { get; set; }
-
-}
-
-public partial class PathNode : IComparer<PathNode>, IIndexedObject
-{
-
-    public static readonly PathNode Comparer = new PathNode(0, 0, false);
-
-    public PathNode(int inX, int inY, bool isWall)
-    {
-        X = inX;
-        Y = inY;
-        IsWall = isWall;
-    }
-
-    public double G { get; internal set; }
-
-    public double H { get; internal set; }
-
-    public double F { get; internal set; }
-
-    public int X { get; set; }
-
-    public int Y { get; set; }
-
-    public bool IsWall { get; set; }
-
-    public int Compare(PathNode x, PathNode y)
-    {
-        if (x.F < y.F)
-        {
-            return -1;
-        }
-        else if (x.F > y.F)
-        {
-            return 1;
-        }
-
-        return 0;
-    }
-
-    public int Index { get; set; }
-
-    public void Reset()
-    {
-        G = 0.0;
-        H = 0.0;
-        F = 0.0;
-        IsWall = false;
-    }
-
-}
-
 /// <summary>
 ///     Uses about 50 MB for a 1024x1024 grid.
 /// </summary>
@@ -88,7 +30,7 @@ public partial class SpatialAStar
         mOpenSet = new OpenCloseMap(Width, Height);
         mCameFrom = new PathNode[Width, Height];
         mRuntimeGrid = new OpenCloseMap(Width, Height);
-        mOrderedOpenSet = new PriorityQueue<PathNode>(PathNode.Comparer);
+        mOrderedOpenSet = new PriorityQueue<PathNode>(new PathNodeComparer());
     }
 
     public PathNode[,] SearchSpace { get; private set; }
@@ -192,36 +134,49 @@ public partial class SpatialAStar
 
             for (var i = 0; i < neighborNodes.Length; i++)
             {
-                var y = neighborNodes[i];
+                var neighborNode = neighborNodes[i];
                 bool tentativeIsBetter;
 
-                if (y == null)
+                if (neighborNode == null)
                 {
                     continue;
                 }
 
-                if (y.IsWall)
+                switch (neighborNode.BlockType)
                 {
-                    continue;
+                    case PathNodeBlockType.Nonblocking:
+                        break;
+                    case PathNodeBlockType.Player:
+                        // TODO(2119)
+                        break;
+                    case PathNodeBlockType.InvalidTile:
+                    case PathNodeBlockType.OutOfRange:
+                    case PathNodeBlockType.AttributeBlock:
+                    case PathNodeBlockType.AttributeNpcAvoid:
+                    case PathNodeBlockType.Npc:
+                    case PathNodeBlockType.Entity:
+                        continue;
+                    default:
+                        throw new NotImplementedException($"Block type not implemented: {neighborNode.BlockType}");
                 }
 
-                if (mClosedSet.Contains(y))
+                if (mClosedSet.Contains(neighborNode))
                 {
                     continue;
                 }
 
                 nodes++;
 
-                var tentativeGScore = mRuntimeGrid[x].G + NeighborDistance(x, y);
+                var tentativeGScore = mRuntimeGrid[x].G + NeighborDistance(x, neighborNode);
                 var wasAdded = false;
 
-                if (!mOpenSet.Contains(y))
+                if (!mOpenSet.Contains(neighborNode))
                 {
-                    mOpenSet.Add(y);
+                    mOpenSet.Add(neighborNode);
                     tentativeIsBetter = true;
                     wasAdded = true;
                 }
-                else if (tentativeGScore < mRuntimeGrid[y].G)
+                else if (tentativeGScore < mRuntimeGrid[neighborNode].G)
                 {
                     tentativeIsBetter = true;
                 }
@@ -232,29 +187,29 @@ public partial class SpatialAStar
 
                 if (tentativeIsBetter)
                 {
-                    mCameFrom[y.X, y.Y] = x;
+                    mCameFrom[neighborNode.X, neighborNode.Y] = x;
 
-                    if (!mRuntimeGrid.Contains(y))
+                    if (!mRuntimeGrid.Contains(neighborNode))
                     {
-                        mRuntimeGrid.Add(y);
+                        mRuntimeGrid.Add(neighborNode);
                     }
 
-                    mRuntimeGrid[y].G = tentativeGScore;
-                    mRuntimeGrid[y].H = Heuristic(y, endNode);
-                    mRuntimeGrid[y].F = mRuntimeGrid[y].G + mRuntimeGrid[y].H;
+                    mRuntimeGrid[neighborNode].G = tentativeGScore;
+                    mRuntimeGrid[neighborNode].H = Heuristic(neighborNode, endNode);
+                    mRuntimeGrid[neighborNode].F = mRuntimeGrid[neighborNode].G + mRuntimeGrid[neighborNode].H;
 
                     if (wasAdded)
                     {
-                        mOrderedOpenSet.Push(y);
+                        mOrderedOpenSet.Push(neighborNode);
                     }
                     else
                     {
-                        mOrderedOpenSet.Update(y);
+                        mOrderedOpenSet.Update(neighborNode);
                     }
 
-                    if (closestNode == null || closestNode.H > y.H)
+                    if (closestNode == null || closestNode.H > neighborNode.H)
                     {
-                        closestNode = y;
+                        closestNode = neighborNode;
                     }
                 }
             }
