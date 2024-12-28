@@ -47,9 +47,11 @@ We're open to expanding to new platforms (mobile, web, etc) but don't have the c
 
 ### Getting started
 
-After cloning, run `scripts/clone.sh` for non-Windows systems, and `scripts/clone.ps1` for Windows
-- On all platforms this clones any submodules via `git submodule update --init --recursive`
-- Via the .sh file it will also disable the Windows-only editor via `git apply disable-windows-editor.patch`
+After cloning or updating,
+- on all platforms run `git submodule update --init --recursive`
+- on non-Windows platforms, additionally run `git apply disable-windows-editor.patch`
+
+Before updating on non-Windows platforms, run `git apply -R disable-windows-editor.patch`
 
 ### Compiling
 
