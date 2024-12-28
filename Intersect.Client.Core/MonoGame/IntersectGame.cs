@@ -17,6 +17,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
 using System.Reflection;
+using HarmonyLib;
 using Intersect.Client.Framework.Database;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.ThirdParty;
@@ -25,6 +26,7 @@ using Intersect.Utilities;
 using MainMenu = Intersect.Client.Interface.Menu.MainMenu;
 using Intersect.Logging;
 using Intersect.Client.Interface.Shared;
+using Intersect.Client.MonoGame.NativeInterop;
 
 namespace Intersect.Client.MonoGame;
 
@@ -557,9 +559,28 @@ internal partial class IntersectGame : Game
         /// <inheritdoc />
         public void Start(IClientContext context, Action postStartupAction)
         {
-            using (var game = new IntersectGame(context, postStartupAction))
+            var assemblyMonoGameFramework = AppDomain.CurrentDomain.GetAssemblies()
+                .FirstOrDefault(assembly => assembly.FullName?.StartsWith("MonoGame.Framework") ?? false);
+            var typeInternalSdl = assemblyMonoGameFramework?.GetType("Sdl");
+            var methodSdlInit = typeInternalSdl?.GetMethod("Init");
+
+            var harmonyPatch = new Harmony(typeof(MonoGameRunner).Assembly.FullName ?? "Intersect.Client.Core");
+            harmonyPatch.Patch(methodSdlInit, postfix: SymbolExtensions.GetMethodInfo(() => SdlInitPost()));
+
+            using var game = new IntersectGame(context, postStartupAction);
+            game.Run();
+        }
+
+        private static void SdlInitPost()
+        {
+            if (PlatformHelper.CurrentPlatform != Platform.Linux)
             {
-                game.Run();
+                return;
+            }
+
+            if (!Sdl2.SDL_SetHint(Sdl2.SDL_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, false))
+            {
+                LegacyLogging.Logger?.Warn("Failed to set X11 Compositor hint");
             }
         }
     }

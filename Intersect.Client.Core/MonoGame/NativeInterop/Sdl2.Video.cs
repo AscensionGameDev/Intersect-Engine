@@ -12,7 +12,7 @@ public partial class Sdl2
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private unsafe delegate int SDL_GetDisplayBounds_d(int displayIndex, SDL_Rect * rect);
-    
+
     private static SDL_GetDisplayBounds_d SDL_GetDisplayBounds_f =
         Loader.Functions.LoadFunction<SDL_GetDisplayBounds_d>(nameof(SDL_GetDisplayBounds));
 
@@ -33,7 +33,7 @@ public partial class Sdl2
             return SDL_GetDisplayBounds_f(displayIndex, boundsPointer) == 0;
         }
     }
-    
+
     public static SDL_Rect[] GetDisplayBounds()
     {
         var displayCount = SDL_GetNumVideoDisplays();
