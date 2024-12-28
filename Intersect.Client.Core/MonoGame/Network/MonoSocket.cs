@@ -251,7 +251,7 @@ internal partial class MonoSocket : GameSocket
                     );
                 }
 
-                if (MainMenu.LastNetworkStatusChangeTime + ServerStatusPingInterval < now)
+                if (MainMenu.LastNetworkStatusChangeTime + ServerStatusPingInterval * 1.5f < now)
                 {
                     MainMenu.SetNetworkStatus(NetworkStatus.Offline);
                 }
