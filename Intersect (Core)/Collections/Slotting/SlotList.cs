@@ -85,6 +85,25 @@ public class SlotList<TSlot> : IList<TSlot> where TSlot : ISlot
         set => _slots[slotIndex] = value;
     }
 
+    public void Ensure(int slotIndex)
+    {
+        if (_slots.ContainsKey(slotIndex))
+        {
+            return;
+        }
+
+        _slots[slotIndex] = _factory(slotIndex);
+    }
+
+    public void FillToCapacity()
+    {
+        var targetCapacity = Capacity;
+        for (var targetSlotIndex = 0; Count < targetCapacity && targetSlotIndex < targetCapacity; ++targetSlotIndex)
+        {
+            Ensure(targetSlotIndex);
+        }
+    }
+
     public int FindIndex(Func<TSlot, bool> predicate)
     {
         var copy = this.ToArray();

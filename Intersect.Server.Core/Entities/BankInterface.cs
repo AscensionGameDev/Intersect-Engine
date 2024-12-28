@@ -124,6 +124,8 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
         var maximumStack = itemDescriptor.Stackable ? itemDescriptor.MaxBankStack : 1;
         var sourceQuantity = Item.FindQuantityOfItem(itemDescriptor.Id, sourceSlots);
 
+        _bank.FillToCapacity();
+
         var targetSlots = _bank.ToArray();
 
         lock (_lock)
@@ -334,6 +336,8 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
         var maximumStack = itemDescriptor.Stackable ? itemDescriptor.MaxInventoryStack : 1;
         var sourceSlots = _bank.ToArray();
         var sourceQuantity = Item.FindQuantityOfItem(itemDescriptor.Id, sourceSlots);
+
+        _player.Items.FillToCapacity();
 
         var targetSlots = _player.Items.ToArray();
 
