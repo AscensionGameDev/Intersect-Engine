@@ -21,5 +21,6 @@ public partial class UserVariable : Variable
     public Guid UserId { get; protected set; }
 
     [JsonIgnore]
+    [ForeignKey(nameof(UserId))]
     public virtual User User { get; protected set; }
 }

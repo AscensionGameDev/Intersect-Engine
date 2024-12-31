@@ -32,6 +32,7 @@ public partial class SpellSlot : Spell, ISlot, IPlayerOwned
     public Guid PlayerId { get; private set; }
 
     [JsonIgnore]
+    [ForeignKey(nameof(PlayerId))]
     public virtual Player Player { get; private set; }
 
     public int Slot { get; private set; }

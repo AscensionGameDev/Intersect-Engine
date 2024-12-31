@@ -49,6 +49,7 @@ public partial class HotbarSlot : ISlot, IPlayerOwned
     public Guid PlayerId { get; private set; }
 
     [JsonIgnore]
+    [ForeignKey(nameof(PlayerId))]
     public virtual Player Player { get; private set; }
 
     [JsonIgnore]
