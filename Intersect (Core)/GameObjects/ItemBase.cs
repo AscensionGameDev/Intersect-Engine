@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Diagnostics.CodeAnalysis;
 using Intersect.Enums;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
@@ -335,9 +335,6 @@ public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
 
     public EquipmentProperties? EquipmentProperties { get; set; }
 
-    [NotMapped, JsonIgnore]
-    public ItemRange[] StatRanges => EquipmentProperties?.StatRanges?.Values.ToArray();
-
     [Column(nameof(EventTriggers))]
     public string EventTriggersJson
     {
@@ -358,11 +355,10 @@ public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
     [NotMapped, JsonIgnore]
     public Dictionary<ItemEventTriggers, Guid> EventTriggers { get; set; } = new Dictionary<ItemEventTriggers, Guid>();
 
-    public bool TryGetRangeFor(Stat stat, out ItemRange range)
+    public bool TryGetRangeFor(Stat stat, [NotNullWhen(true)] out ItemRange? range)
     {
-        range = null;
+        range = default;
         _ = EquipmentProperties?.StatRanges?.TryGetValue(stat, out range);
-        
         return range != default;
     }
 
@@ -398,12 +394,13 @@ public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
 
     public void ValidateStatRanges()
     {
-        if (StatRanges == default)
+        var ranges = EquipmentProperties?.StatRanges?.Values;
+        if (ranges == default)
         {
             return;
         }
 
-        foreach (var range in StatRanges)
+        foreach (var range in ranges)
         {
             range.Validate();
         }
