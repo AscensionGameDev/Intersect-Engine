@@ -29,8 +29,10 @@ internal sealed class Typewriter
         _nextUpdateTime = Timing.Global.MillisecondsUtc;
         _labels = labels;
         _lines = _labels.Select(l => l.Text).ToArray();
-        _labels.ForEach(l =>
-            l.SetText(string.Empty)); // Clear the text from the labels. The writer is the captain now
+        foreach (var label in _labels)
+        {
+            label.SetText(string.Empty);
+        }
         _lineIndex = 0;
         _charIndex = 0;
         _lastChar = null;
@@ -58,7 +60,7 @@ internal sealed class Typewriter
             return;
         }
 
-        if (_lineIndex >= _lineCount || _labels[_lineIndex] == null)
+        if (_lineIndex != Math.Clamp(_lineIndex, 0, Math.Min(_lineCount, _labels.Count)))
         {
             End();
             return;
@@ -86,7 +88,7 @@ internal sealed class Typewriter
         }
 
         _lastChar = currentLine[_charIndex - 1];
-        var written = currentLine.Substring(0, _charIndex);
+        var written = currentLine[.._charIndex];
         _labels[_lineIndex].SetText(written);
 
         _nextUpdateTime = Timing.Global.MillisecondsUtc + GetTypingDelayFor(currentLine[_charIndex], _lastChar);
