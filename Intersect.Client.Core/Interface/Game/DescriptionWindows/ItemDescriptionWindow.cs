@@ -2,6 +2,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
+using Intersect.GameObjects.Ranges;
 using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
@@ -14,7 +15,7 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
 
     protected int mAmount;
 
-    protected ItemProperties mItemProperties;
+    protected ItemProperties? mItemProperties;
 
     protected string mTitleOverride;
 
@@ -27,7 +28,7 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
         int amount,
         int x,
         int y,
-        ItemProperties itemProperties,
+        ItemProperties? itemProperties,
         string titleOverride = "",
         string valueLabel = ""
     ) : base(Interface.GameUi.GameCanvas, "DescriptionWindow")
@@ -322,50 +323,64 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
 
         // Stats
         var statModifiers = mItemProperties?.StatModifiers;
-        for (var i = 0; i < Enum.GetValues<Stat>().Length; i++)
+        for (var statIndex = 0; statIndex < Enum.GetValues<Stat>().Length; statIndex++)
         {
+            var stat = (Stat)statIndex;
             // Do we have item properties, if so this is a finished item. Otherwise does this item not have growing stats?
-            if (statModifiers != default || mItem.StatRanges?.Length == 0 || (mItem.StatRanges != default && mItem.StatRanges[i].LowRange == 0 && mItem.StatRanges[i].HighRange == 0))
+            var statLabel = Strings.ItemDescription.StatCounts[statIndex];
+            ItemRange? rangeForStat = default;
+            var percentageGivenForStat = mItem.PercentageStatsGiven[statIndex];
+            if (statModifiers != default || !mItem.TryGetRangeFor(stat, out rangeForStat) || rangeForStat.LowRange == rangeForStat.HighRange)
             {
-                var flatStat = mItem.StatsGiven[i];
+                var flatValueGivenForStat = mItem.StatsGiven[statIndex];
                 if (statModifiers != default)
                 {
-                    flatStat += statModifiers[i];
+                    flatValueGivenForStat += statModifiers[statIndex];
                 }
 
-                if (flatStat != 0 && mItem.PercentageStatsGiven[i] != 0)
+                // If the range is something like 1 to 1 then it should just be added into the flat stat
+                flatValueGivenForStat += rangeForStat?.LowRange ?? 0;
+
+                if (flatValueGivenForStat != 0 && percentageGivenForStat != 0)
                 {
-                    rows.AddKeyValueRow(Strings.ItemDescription.StatCounts[i], Strings.ItemDescription.RegularAndPercentage.ToString(flatStat, mItem.PercentageStatsGiven[i]));
+                    rows.AddKeyValueRow(
+                        statLabel,
+                        Strings.ItemDescription.RegularAndPercentage.ToString(flatValueGivenForStat, percentageGivenForStat)
+                    );
                 }
-                else if (flatStat != 0)
+                else if (flatValueGivenForStat != 0)
                 {
-                    rows.AddKeyValueRow(Strings.ItemDescription.StatCounts[i], flatStat.ToString());
+                    rows.AddKeyValueRow(statLabel, flatValueGivenForStat.ToString());
                 }
-                else if (mItem.PercentageStatsGiven[i] != 0)
+                else if (percentageGivenForStat != 0)
                 {
-                    rows.AddKeyValueRow(Strings.ItemDescription.StatCounts[i], Strings.ItemDescription.Percentage.ToString(mItem.PercentageStatsGiven[i]));
+                    rows.AddKeyValueRow(
+                        statLabel,
+                        Strings.ItemDescription.Percentage.ToString(percentageGivenForStat)
+                    );
                 }
             }
             // We do not have item properties and have growing stats! So don't display a finished stat but a range instead.
-            else
+            else if (mItem.TryGetRangeFor(stat, out var range))
             {
-                if (mItem.TryGetRangeFor((Stat)i, out var range))
+                var statGiven = mItem.StatsGiven[statIndex];
+                var percentageStatGiven = percentageGivenForStat;
+                var statLow = statGiven + range.LowRange;
+                var statHigh = statGiven + range.HighRange;
+
+                var statMessage = Strings.ItemDescription.StatGrowthRange.ToString(statLow, statHigh);
+
+                if (percentageStatGiven != 0)
                 {
-                    var statGiven = mItem.StatsGiven[i];
-                    var percentageStatGiven = mItem.PercentageStatsGiven[i];
-                    var statLow = statGiven + range.LowRange;
-                    var statHigh = statGiven + range.HighRange;
-
-                    var statMessage = Strings.ItemDescription.StatGrowthRange.ToString(statLow, statHigh);
-
-                    if (percentageStatGiven != 0)
-                    {
-                        statMessage = Strings.ItemDescription.RegularAndPercentage.ToString(statMessage, percentageStatGiven);
-                    }
-                    rows.AddKeyValueRow(Strings.ItemDescription.StatCounts[i], statMessage);
+                    statMessage = Strings.ItemDescription.RegularAndPercentage.ToString(
+                        statMessage,
+                        percentageStatGiven
+                    );
                 }
+
+                rows.AddKeyValueRow(statLabel, statMessage);
+            }
         }
-    }
 
         // Bonus Effect
         foreach (var effect in mItem.Effects)
