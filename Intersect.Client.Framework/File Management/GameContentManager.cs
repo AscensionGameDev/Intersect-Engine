@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Intersect.Async;
 using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.Content;
@@ -26,37 +27,43 @@ public abstract partial class GameContentManager : IContentManager
         Debug,
     }
 
-    public static GameContentManager Current;
+    public static GameContentManager Current { get; private set; }
 
-    protected Dictionary<string, IAsset> mAnimationDict = new Dictionary<string, IAsset>();
+    protected readonly Dictionary<string, IAsset> mAnimationDict = [];
 
-    protected Dictionary<string, IAsset> mEntityDict = new Dictionary<string, IAsset>();
+    protected readonly Dictionary<string, IAsset> mEntityDict = [];
 
-    protected Dictionary<string, IAsset> mFaceDict = new Dictionary<string, IAsset>();
+    protected readonly Dictionary<string, IAsset> mFaceDict = [];
 
-    protected Dictionary<string, IAsset> mFogDict = new Dictionary<string, IAsset>();
+    protected readonly Dictionary<string, IAsset> mFogDict = [];
 
-    protected List<GameFont> mFontDict = new List<GameFont>();
+    protected readonly List<GameFont> mFontDict = [];
 
-    protected Dictionary<string, IAsset> mGuiDict = new Dictionary<string, IAsset>();
+    protected readonly Dictionary<string, IAsset> mGuiDict = [];
 
-    protected Dictionary<string, IAsset> mImageDict = new Dictionary<string, IAsset>();
+    protected readonly Dictionary<string, IAsset> mImageDict = [];
 
-    protected Dictionary<string, IAsset> mItemDict = new Dictionary<string, IAsset>();
+    protected readonly Dictionary<string, IAsset> mItemDict = [];
 
-    protected Dictionary<string, IAsset> mMiscDict = new Dictionary<string, IAsset>();
+    protected readonly Dictionary<string, IAsset> mMiscDict = [];
 
-    protected Dictionary<string, IAsset> mMusicDict = new Dictionary<string, IAsset>();
+    protected readonly Dictionary<string, IAsset> mMusicDict = [];
 
-    protected Dictionary<string, IAsset> mPaperdollDict = new Dictionary<string, IAsset>();
+    protected readonly Dictionary<string, IAsset> mPaperdollDict = [];
 
-    protected Dictionary<string, IAsset> mResourceDict = new Dictionary<string, IAsset>();
+    protected readonly Dictionary<string, IAsset> mResourceDict = [];
 
-    protected Dictionary<string, GameShader> mShaderDict = new Dictionary<string, GameShader>();
+    protected readonly Dictionary<string, GameShader> mShaderDict = [];
 
-    protected Dictionary<string, IAsset> mSoundDict = new Dictionary<string, IAsset>();
+    protected readonly Dictionary<string, IAsset> mSoundDict = [];
 
-    protected Dictionary<KeyValuePair<UI, string>, string> mUiDict = new Dictionary<KeyValuePair<UI, string>, string>();
+    protected readonly Dictionary<KeyValuePair<UI, string>, string> mUiDict = [];
+
+    protected readonly Dictionary<string, IAsset> mSpellDict = [];
+
+    protected readonly  Dictionary<string, IAsset> mTexturePackDict = [];
+
+    protected readonly Dictionary<string, IAsset> mTilesetDict = [];
 
     /// <summary>
     /// Contains all indexed files and their caches from sound pack files.
@@ -68,20 +75,13 @@ public abstract partial class GameContentManager : IContentManager
     /// </summary>
     public AssetPacker MusicPacks { get; set; }
 
-    protected Dictionary<string, IAsset> mSpellDict = new Dictionary<string, IAsset>();
-
-    protected Dictionary<string, IAsset> mTexturePackDict = new Dictionary<string, IAsset>();
-
-    //Game Content
-    protected Dictionary<string, IAsset> mTilesetDict = new Dictionary<string, IAsset>();
-
     public bool TilesetsLoaded = false;
 
     public ContentWatcher ContentWatcher { get; protected set; }
 
-    public void Init(GameContentManager manager)
+    protected GameContentManager()
     {
-        Current = manager;
+        Current = this;
     }
 
     //Content Loading
@@ -199,8 +199,14 @@ public abstract partial class GameContentManager : IContentManager
         return null;
     }
 
+    public bool TryGetTexture(TextureType textureType, string textureName, [NotNullWhen(true)] out GameTexture? texture)
+    {
+        texture = GetTexture(textureType, textureName);
+        return texture != default;
+    }
+
     //Content Getters
-    public virtual GameTexture GetTexture(TextureType type, string name)
+    public virtual GameTexture? GetTexture(TextureType type, string name)
     {
         if (string.IsNullOrEmpty(name))
         {
@@ -282,19 +288,20 @@ public abstract partial class GameContentManager : IContentManager
         return textureDict.TryGetValue(name.ToLower(), out var asset) ? asset as GameTexture : default;
     }
 
-    public virtual GameShader GetShader(string name)
+    public bool TryGetShader(string shaderName, [NotNullWhen(true)] out GameShader? shader)
+    {
+        shader = GetShader(shaderName);
+        return shader != default;
+    }
+
+    public virtual GameShader? GetShader(string name)
     {
         if (string.IsNullOrEmpty(name))
         {
             return null;
         }
 
-        if (mShaderDict == null)
-        {
-            return null;
-        }
-
-        return mShaderDict.TryGetValue(name.ToLower(), out var effect) ? effect : null;
+        return mShaderDict?.GetValueOrDefault(name.ToLower());
     }
 
     public virtual GameFont GetFont(string name, int size)
