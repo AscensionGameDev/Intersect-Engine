@@ -18,8 +18,6 @@ public partial class MonoContentManager : GameContentManager
 
     public MonoContentManager()
     {
-        Init(this);
-
         var rootPath = Path.GetFullPath(ClientConfiguration.ResourcesDirectory);
 
         if (!Directory.Exists(rootPath))
@@ -288,7 +286,7 @@ public partial class MonoContentManager : GameContentManager
                 }
             }
         }
-        
+
     }
 
     public override void LoadMusic()

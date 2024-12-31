@@ -36,7 +36,7 @@ public static partial class Graphics
             Renderer?.SetView(_currentView);
         }
     }
-    
+
     public static FloatRect WorldViewport => new(CurrentView.Position, CurrentView.Size / (Globals.Database?.WorldZoom ?? 1));
 
     public static GameShader? DefaultShader;
@@ -123,12 +123,14 @@ public static partial class Graphics
     {
         var size = 8;
 
-        if (font.IndexOf(',') > -1)
+        if (font.IndexOf(',') < 0)
         {
-            var parts = font.Split(',');
-            font = parts[0];
-            _ = int.TryParse(parts[1], out size);
+            return sContentManager.GetFont(font, size);
         }
+
+        var parts = font.Split(',');
+        font = parts[0];
+        _ = int.TryParse(parts[1], out size);
 
         return sContentManager.GetFont(font, size);
     }
@@ -147,14 +149,16 @@ public static partial class Graphics
 
     public static void DrawIntro()
     {
-        var imageTex = sContentManager.GetTexture(
-            Framework.Content.TextureType.Image, ClientConfiguration.Instance.IntroImages[Globals.IntroIndex]
-        );
-
-        if (imageTex != null)
+        if (!sContentManager.TryGetTexture(
+                TextureType.Image,
+                ClientConfiguration.Instance.IntroImages[Globals.IntroIndex],
+                out var texture
+            ))
         {
-            DrawFullScreenTextureFitMinimum(imageTex);
+            return;
         }
+
+        DrawFullScreenTextureFitMinimum(texture);
     }
 
     private static void DrawMenu()
@@ -609,8 +613,7 @@ public static partial class Graphics
 
     private static void DrawMap(Guid mapId, int layer = 0)
     {
-        var map = MapInstance.Get(mapId);
-        if (map == null)
+        if (!MapInstance.TryGet(mapId, out var map))
         {
             return;
         }
@@ -631,18 +634,24 @@ public static partial class Graphics
 
     private static void DrawMapPanorama(Guid mapId)
     {
-        var map = MapInstance.Get(mapId);
-        if (map != null)
+        if (!MapInstance.TryGet(mapId, out var map))
         {
-            if (!new FloatRect(
-                map.GetX(), map.GetY(), Options.TileWidth * Options.MapWidth, Options.TileHeight * Options.MapHeight
-            ).IntersectsWith(WorldViewport))
-            {
-                return;
-            }
-
-            map.DrawPanorama();
+            return;
         }
+
+        var mapBounds = new FloatRect(
+            map.GetX(),
+            map.GetY(),
+            Options.TileWidth * Options.MapWidth,
+            Options.TileHeight * Options.MapHeight
+        );
+
+        if (!mapBounds.IntersectsWith(WorldViewport))
+        {
+            return;
+        }
+
+        map.DrawPanorama();
     }
 
     public static void DrawOverlay()
@@ -652,8 +661,7 @@ public static partial class Graphics
             return;
         }
 
-        var map = MapInstance.Get(Globals.Me?.MapId ?? Guid.Empty);
-        if (map != null)
+        if (MapInstance.TryGet(Globals.Me?.MapId ?? default, out var map))
         {
             float ecTime = Timing.Global.MillisecondsUtc - sOverlayUpdate;
 
@@ -1027,14 +1035,28 @@ public static partial class Graphics
 
     private static void GenerateLightMap()
     {
-        // If we're not allowed to draw lighting, exit out.
-        if (!Globals.Database.EnableLighting || Renderer == default || Globals.Me == default)
+        if (Renderer == default)
         {
             return;
         }
 
-        var map = MapInstance.Get(Globals.Me.MapId);
-        if (map == null || sDarknessTexture == null)
+        if (sDarknessTexture == default)
+        {
+            return;
+        }
+
+        var mapId = Globals.Me?.MapId ?? default;
+        if (mapId == default)
+        {
+            return;
+        }
+
+        if (!Globals.Database.EnableLighting)
+        {
+            return;
+        }
+
+        if (!MapInstance.TryGet(mapId, out var map))
         {
             return;
         }
@@ -1159,8 +1181,7 @@ public static partial class Graphics
         }
 
         //Draw Light Around Player
-        var map = MapInstance.Get(Globals.Me.MapId);
-        if (map != null)
+        if (MapInstance.TryGet(Globals.Me.MapId, out var map))
         {
             float ecTime = Timing.Global.MillisecondsUtc - sLightUpdate;
             var valChange = 255 * ecTime / 2000f;
