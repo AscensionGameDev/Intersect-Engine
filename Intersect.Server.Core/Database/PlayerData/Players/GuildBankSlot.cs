@@ -30,6 +30,7 @@ public partial class GuildBankSlot : Item, ISlot
     public Guid GuildId { get; private set; }
 
     [JsonIgnore]
+    [ForeignKey(nameof(GuildId))]
     public virtual Guild Guild { get; private set; }
 
     public int Slot { get; private set; }

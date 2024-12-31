@@ -25,6 +25,7 @@ public partial class PlayerVariable : Variable, IPlayerOwned
     public Guid PlayerId { get; protected set; }
 
     [JsonIgnore]
+    [ForeignKey(nameof(PlayerId))]
     public virtual Player Player { get; protected set; }
 
 }

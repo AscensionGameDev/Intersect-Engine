@@ -21,5 +21,6 @@ public partial class GuildVariable : Variable
     public Guid GuildId { get; protected set; }
 
     [JsonIgnore]
+    [ForeignKey(nameof(GuildId))]
     public virtual Guild Guild { get; protected set; }
 }
