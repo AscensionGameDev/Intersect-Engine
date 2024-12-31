@@ -92,7 +92,10 @@ public static partial class Strings
         public readonly LocalizedString UnbanSuccess = @"{00} has been unbanned!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString UnknownError = @"An unknown error occurred while saving the user.";
+        public readonly LocalizedString UnknownErrorWhileSaving = @"An unknown error occurred while saving the user.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString UnknownServerErrorRetryLogin = @"An unknown server error occurred, please try logging in again.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString UnmuteFail = @"Failed to unmute {00}. The user is not muted!";

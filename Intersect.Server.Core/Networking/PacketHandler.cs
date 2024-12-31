@@ -521,13 +521,26 @@ internal sealed partial class PacketHandler
             return;
         }
 
-        var user = User.TryLogin(packet.Username, packet.Password);
-        if (user == null)
+        if (!User.TryLogin(packet.Username, packet.Password, out var user, out var failureReason))
         {
-            UserActivityHistory.LogActivity(Guid.Empty, Guid.Empty, client?.Ip, UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.FailedLogin, packet.Username);
+            UserActivityHistory.LogActivity(
+                Guid.Empty,
+                Guid.Empty,
+                client?.Ip,
+                UserActivityHistory.PeerType.Client,
+                UserActivityHistory.UserAction.FailedLogin,
+                $"{packet.Username},{failureReason.Type}"
+            );
 
-            client.FailedAttempt();
-            PacketSender.SendError(client, Strings.Account.BadLogin, Strings.General.NoticeError);
+            if (failureReason.Type == LoginFailureType.InvalidCredentials)
+            {
+                client.FailedAttempt();
+                PacketSender.SendError(client, Strings.Account.BadLogin, Strings.General.NoticeError);
+            }
+            else
+            {
+                PacketSender.SendError(client, Strings.Account.UnknownServerErrorRetryLogin, Strings.General.NoticeError);
+            }
 
             return;
         }

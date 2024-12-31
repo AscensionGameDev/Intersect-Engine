@@ -28,7 +28,6 @@ using VariableValue = Intersect.GameObjects.Switches_and_Variables.VariableValue
 
 namespace Intersect.Server.Database.PlayerData;
 
-
 [ApiVisibility(ApiVisibility.Restricted | ApiVisibility.Private)]
 public partial class User
 {
@@ -543,37 +542,73 @@ public partial class User
         return new Tuple<Client, User>(client, client?.User ?? Find(userName));
     }
 
-    public static User TryLogin(string username, string ptPassword)
+    public static bool TryLogin(
+        string username,
+        string ptPassword,
+        [NotNullWhen(true)] out User? user,
+        out LoginFailureReason failureReason
+    )
     {
-        var user = FindOnline(username);
+        user = FindOnline(username);
+        failureReason = default;
+
         if (user != null)
         {
             var hashedPassword = SaltPasswordHash(ptPassword, user.Salt);
-            if (string.Equals(user.Password, hashedPassword, StringComparison.Ordinal))
+            if (!string.Equals(user.Password, hashedPassword, StringComparison.Ordinal))
             {
-                return PostLoad(user);
+                Log.Debug($"Login to {username} failed due invalid credentials");
+                user = default;
+                failureReason = new LoginFailureReason(LoginFailureType.InvalidCredentials);
+                return false;
             }
-        }
-        else
-        {
-            try
+
+            var result = user.Save();
+            if (result != UserSaveResult.Completed)
             {
-                using var context = DbInterface.CreatePlayerContext();
-                var salt = GetUserSalt(username);
-                if (!string.IsNullOrWhiteSpace(salt))
-                {
-                    var pass = SaltPasswordHash(ptPassword, salt);
-                    var queriedUser = QueryUserByNameAndPasswordShallow(context, username, pass);
-                    return PostLoad(queriedUser, context);
-                }
+                Log.Error($"Login to {username} failed due to pre-logged in User save failure: {result}");
+                user = default;
+                failureReason = new LoginFailureReason(LoginFailureType.ServerError);
+                return false;
             }
-            catch (Exception exception)
+
+            user = PostLoad(user);
+            if (user != default)
             {
-                Log.Error(exception);
+                return true;
             }
+
+            Log.Error($"Login to {username} failed due to {nameof(PostLoad)}() returning null.");
+            user = default;
+            failureReason = new LoginFailureReason(LoginFailureType.ServerError);
+            return false;
+
         }
 
-        return null;
+        try
+        {
+            using var context = DbInterface.CreatePlayerContext();
+            var salt = GetUserSalt(username);
+            if (string.IsNullOrWhiteSpace(salt))
+            {
+                Log.Error($"Login to {username} failed because the salt is empty.");
+                user = default;
+                failureReason = new LoginFailureReason(LoginFailureType.ServerError);
+                return false;
+            }
+
+            var pass = SaltPasswordHash(ptPassword, salt);
+            var queriedUser = QueryUserByNameAndPasswordShallow(context, username, pass);
+            user = PostLoad(queriedUser, context);
+            return user != default;
+        }
+        catch (Exception exception)
+        {
+            Log.Error(exception, $"Login to {username} failed due to an exception");
+            user = default;
+            failureReason = new LoginFailureReason(LoginFailureType.ServerError);
+            return false;
+        }
     }
 
     public static User FindById(Guid userId)
@@ -918,7 +953,7 @@ public partial class User
             return true;
         }
 
-        error = Strings.Account.UnknownError;
+        error = Strings.Account.UnknownErrorWhileSaving;
         return false;
     }
 
