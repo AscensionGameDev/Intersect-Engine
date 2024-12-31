@@ -58,10 +58,12 @@ public abstract partial class GameDatabase
     public bool ShowHealthAsPercentage { get; set; }
 
     public bool ShowManaAsPercentage { get; set; }
-    
+
     public bool SimplifiedEscapeMenu { get; set; }
 
     public TypewriterBehavior TypewriterBehavior { get; set; }
+
+    public bool TypewriterEnabled => TypewriterBehavior != TypewriterBehavior.Off;
 
     public float UIScale { get; set; } = 1.0f;
 

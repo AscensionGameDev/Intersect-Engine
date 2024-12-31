@@ -2,11 +2,13 @@ using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Framework.Content;
+using Intersect.Client.Framework.Database;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Typewriting;
 using Intersect.Client.Localization;
+using Intersect.Client.MonoGame.Database;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.Enums;
@@ -28,7 +30,7 @@ public partial class EventWindow : ImagePanel
     private readonly Button _buttonEventResponse3;
     private readonly Button _buttonEventResponse4;
 
-    private readonly Typewriter _writer;
+    private readonly Typewriter? _writer;
     private bool _isTypewriting = false;
     private readonly long _typewriterResponseDelay = ClientConfiguration.Instance.TypewriterResponseDelay;
 
@@ -62,7 +64,7 @@ public partial class EventWindow : ImagePanel
         _buttonEventResponse4 = new Button(this, "Response4Button");
         _buttonEventResponse4.Clicked += (s, e) => CloseEventResponse(EventResponseType.FourOption);
 
-        _writer = new Typewriter();
+        _writer = Globals.Database.TypewriterBehavior == TypewriterBehavior.Off ? default : new Typewriter();
 
         Clicked += (s, e) => SkipTypewriting();
         Hide();
@@ -93,15 +95,15 @@ public partial class EventWindow : ImagePanel
             var voiceIdx = Randomization.Next(0, ClientConfiguration.Instance.TypewriterSounds.Count);
 
             // Always show option 1 ("continue" if options empty)
-            _buttonEventResponse1.IsHidden = !_writer.IsDone;
-            _buttonEventResponse2.IsHidden = !_writer.IsDone || string.IsNullOrEmpty(CurrentDialog.Opt2);
-            _buttonEventResponse3.IsHidden = !_writer.IsDone || string.IsNullOrEmpty(CurrentDialog.Opt3);
-            _buttonEventResponse4.IsHidden = !_writer.IsDone || string.IsNullOrEmpty(CurrentDialog.Opt4);
+            _buttonEventResponse1.IsHidden = !(_writer?.IsDone ?? true);
+            _buttonEventResponse2.IsHidden = !(_writer?.IsDone ?? true) || string.IsNullOrEmpty(CurrentDialog.Opt2);
+            _buttonEventResponse3.IsHidden = !(_writer?.IsDone ?? true) || string.IsNullOrEmpty(CurrentDialog.Opt3);
+            _buttonEventResponse4.IsHidden = !(_writer?.IsDone ?? true) || string.IsNullOrEmpty(CurrentDialog.Opt4);
 
-            _writer.Write(ClientConfiguration.Instance.TypewriterSounds.ElementAtOrDefault(voiceIdx));
-            if (_writer.IsDone)
+            _writer?.Write(ClientConfiguration.Instance.TypewriterSounds.ElementAtOrDefault(voiceIdx));
+            if (_writer?.IsDone ?? true)
             {
-                var disableResponse = Timing.Global.MillisecondsUtc - _writer.DoneAtMilliseconds < _typewriterResponseDelay;
+                var disableResponse = _writer != default && Timing.Global.MillisecondsUtc - _writer.DoneAtMilliseconds < _typewriterResponseDelay;
                 _buttonEventResponse1.IsDisabled = disableResponse;
                 _buttonEventResponse2.IsDisabled = disableResponse;
                 _buttonEventResponse3.IsDisabled = disableResponse;
@@ -205,7 +207,7 @@ public partial class EventWindow : ImagePanel
         // Do this _after_ sizing so we have lines broken up
         if (_isTypewriting)
         {
-            _writer.Initialize(dialogLabel.FormattedLabels);
+            _writer?.Initialize(dialogLabel.FormattedLabels);
             _buttonEventResponse1.Hide();
             _buttonEventResponse2.Hide();
             _buttonEventResponse3.Hide();
@@ -217,7 +219,7 @@ public partial class EventWindow : ImagePanel
 
     public void CloseEventResponse(EventResponseType response)
     {
-        if (!_writer.IsDone)
+        if (!(_writer?.IsDone ?? true))
         {
             SkipTypewriting();
             return;
