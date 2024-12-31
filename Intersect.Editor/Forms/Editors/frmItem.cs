@@ -373,7 +373,7 @@ public partial class FrmItem : EditorForm
             nudAttackSpeedValue.Value = mEditorItem.AttackSpeedValue;
             nudScaling.Value = mEditorItem.Scaling;
             // This will be removed after conversion to a per-stat editor. Reminder that pre-migration LowRange == HighRange - Day
-            nudStatRangeHigh.Value = mEditorItem.StatRanges?.FirstOrDefault()?.HighRange ?? 0;
+            nudStatRangeHigh.Value = mEditorItem.EquipmentProperties?.StatRanges?.Values.FirstOrDefault()?.HighRange ?? 0;
             chkCanDrop.Checked = Convert.ToBoolean(mEditorItem.CanDrop);
             chkCanBank.Checked = Convert.ToBoolean(mEditorItem.CanBank);
             chkCanGuildBank.Checked = Convert.ToBoolean(mEditorItem.CanGuildBank);
