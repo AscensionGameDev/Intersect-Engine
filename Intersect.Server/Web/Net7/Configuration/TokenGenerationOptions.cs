@@ -28,7 +28,7 @@ public class TokenGenerationOptions
     [Required]
     public string Secret
     {
-        get => Convert.ToHexString(SecretData ??= RandomNumberGenerator.GetBytes(32));
+        get => Convert.ToHexString(SecretData ??= RandomNumberGenerator.GetBytes(64));
         set => SecretData = string.IsNullOrWhiteSpace(value) ? default : Convert.FromHexString(value);
     }
 
