@@ -134,9 +134,11 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
         // Set up the item rarity label.
         try
         {
-            var rarityName = Options.Instance.Items.RarityTiers[mItem.Rarity];
-            _ = Strings.ItemDescription.Rarity.TryGetValue(rarityName, out var rarityLabel);
-            header.SetDescription(rarityLabel, rarityColor ?? Color.White);
+            if (Options.Instance.Items.TryGetRarityName(mItem.Rarity, out var rarityName))
+            {
+                _ = Strings.ItemDescription.Rarity.TryGetValue(rarityName, out var rarityLabel);
+                header.SetDescription(rarityLabel, rarityColor ?? Color.White);
+            }
         }
         catch (Exception exception)
         {

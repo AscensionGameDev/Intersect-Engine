@@ -216,10 +216,10 @@ public partial class FrmItem : EditorForm
         lblBankStackLimit.Text = Strings.ItemEditor.BankStackLimit;
 
         cmbRarity.Items.Clear();
-        for (var i = 0; i < Options.Instance.Items.RarityTiers.Count; i++)
+        var keyedRarityTiers = Options.Instance.Items.RarityTiers.Select((rarityName, rarity) => (rarity, rarityName));
+        foreach (var (rarity, rarityName) in keyedRarityTiers)
         {
-            var rarityName = Options.Instance.Items.RarityTiers[i];
-            cmbRarity.Items.Add(Strings.ItemEditor.rarity[rarityName]);
+            cmbRarity.Items.Add(Strings.ItemEditor.rarity.GetValueOrDefault(rarityName, $"{rarity}:{rarityName}"));
         }
 
         grpEvents.Text = Strings.ItemEditor.EventGroup;
@@ -1529,7 +1529,7 @@ public partial class FrmItem : EditorForm
         {
             return;
         }
-        
+
         mEditorItem.EventTriggers[SelectedEventTrigger.Value] = EventBase.IdFromList(cmbEventTriggers.SelectedIndex - 1);
 
         PopulateEventTriggerList(lstEventTriggers.SelectedIndex);
