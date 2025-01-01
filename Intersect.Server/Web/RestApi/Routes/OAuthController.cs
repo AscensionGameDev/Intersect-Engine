@@ -236,13 +236,6 @@ namespace Intersect.Server.Web.RestApi.Routes
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-            var securityKey = _tokenGenerationOptions.Value.SecretData.ToList();
-            var securityKeyOriginalLength = securityKey.Count;
-            for (var securityKeyOffset = 0; securityKey.Count < 512; ++securityKeyOffset)
-            {
-                securityKey.Add(securityKey[securityKeyOffset % securityKeyOriginalLength]);
-            }
-
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Audience = _tokenGenerationOptions.Value.Audience,
@@ -250,7 +243,7 @@ namespace Intersect.Server.Web.RestApi.Routes
                 Subject = new ClaimsIdentity(claims.ToArray()),
                 Expires = DateTime.UtcNow.AddMinutes(_tokenGenerationOptions.Value.AccessTokenLifetime),
                 SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(securityKey.ToArray()),
+                    new SymmetricSecurityKey(_tokenGenerationOptions.Value.SecretData),
                     SecurityAlgorithms.HmacSha512Signature
                 ),
             };
