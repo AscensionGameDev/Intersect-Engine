@@ -83,12 +83,12 @@ public static partial class Strings
             return;
         }
 
-        for (var rarityCode = 0; rarityCode < Options.Instance.Items.RarityTiers.Count; rarityCode++)
+        var keyedRarityTiers = Options.Instance.Items.RarityTiers.Select((rarityName, rarity) => (rarity, rarityName));
+        foreach (var (rarity, rarityName) in keyedRarityTiers)
         {
-            var rarityName = Options.Instance.Items.RarityTiers[rarityCode];
             if (!ItemDescription.Rarity.ContainsKey(rarityName))
             {
-                ItemDescription.Rarity[rarityName] = $"{rarityCode}:{rarityName}";
+                ItemDescription.Rarity[rarityName] = $"{rarity}:{rarityName}";
             }
         }
     }
@@ -1932,7 +1932,7 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString ShowPlayerOverheadInformation = @"Show players overhead information";
-        
+
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString SimplifiedEscapeMenu = @"Simplified escape menu";
 

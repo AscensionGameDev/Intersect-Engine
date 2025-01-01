@@ -494,12 +494,12 @@ public static partial class Strings
             return;
         }
 
-        for (var rarityCode = 0; rarityCode < Intersect.Options.Instance.Items.RarityTiers.Count; rarityCode++)
+        var keyedRarityTiers = Intersect.Options.Instance.Items.RarityTiers.Select((rarityName, rarity) => (rarity, rarityName));
+        foreach (var (rarity, rarityName) in keyedRarityTiers)
         {
-            var rarityName = Intersect.Options.Instance.Items.RarityTiers[rarityCode];
             if (!ItemEditor.rarity.ContainsKey(rarityName))
             {
-                ItemEditor.rarity[rarityName] = $"{rarityCode}:{rarityName}";
+                ItemEditor.rarity[rarityName] = $"{rarity}:{rarityName}";
             }
         }
     }
@@ -825,7 +825,7 @@ public static partial class Strings
         public static LocalizedString sound = @"Sound:";
 
         public static LocalizedString soundcomplete = @"Complete Sound Playback After Anim Dies";
-        
+
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString LoopSoundDuringPreview = @"Loop sound during preview";
 
@@ -1761,7 +1761,7 @@ Tick timer saved in server config.json.";
         public static LocalizedString okay = @"Ok";
 
         public static LocalizedString RemoveBound = @"Remove Bound Spell ?";
-        
+
         public static LocalizedString spell = @"Spell: ";
 
         public static LocalizedString title = @"Change Player Spells";
@@ -4678,7 +4678,7 @@ Tick timer saved in server config.json.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString TextureSize = @"Max Texture Pack Size (Resolution):";
-        
+
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString CursorSprites = @"Enable cursor sprites for map tools.";
     }
