@@ -9,67 +9,67 @@ namespace Intersect.Client.Classes.MonoGame.Graphics;
 
 public partial class MonoTileBuffer : GameTileBuffer
 {
+    private bool _disposed;
 
-    private bool disposed;
+    private IndexBuffer? _indexBuffer;
 
-    private IndexBuffer indexBuffer;
+    private readonly List<short> _indices = [];
 
-    private List<short> indices = new List<short>();
+    private GraphicsDevice _graphicsDevice;
 
-    private GraphicsDevice mGraphicsDevice;
+    private bool _updatesPending;
 
-    private bool updatesPending = false;
+    private VertexBuffer? _vertexBuffer;
 
-    private VertexBuffer vertexBuffer;
+    private int _vertexCount;
 
-    private int vertexCount;
+    private GameTexture? _texture;
 
-    private Dictionary<Tuple<float, float>, int> verticeDict = new Dictionary<Tuple<float, float>, int>();
+    private readonly Dictionary<Tuple<float, float>, int> _tileVertexOffset = [];
 
-    private List<VertexPositionTexture> vertices = new List<VertexPositionTexture>();
+    private readonly List<VertexPositionTexture> _vertices = [];
 
     public MonoTileBuffer(GraphicsDevice device)
     {
-        mGraphicsDevice = device;
+        _graphicsDevice = device;
     }
 
-    public override bool Supported { get; } = true;
+    public override bool Supported => true;
 
-    public override GameTexture Texture { get; protected set; }
-
-    public override bool AddTile(GameTexture tex, float x, float y, int srcX, int srcY, int srcW, int srcH)
+    public override bool AddTile(GameTexture texture, float x, float y, int srcX, int srcY, int srcW, int srcH)
     {
-        var platformTex = tex?.GetTexture();
-        if (platformTex == null)
+        if (_vertexBuffer != null)
         {
             return false;
         }
 
-        if (Texture == null)
-        {
-            Texture = tex;
-        }
-        else if (Texture.GetTexture() != platformTex)
+        var platformTexture = texture.GetTexture<Texture2D>();
+        if (platformTexture == null)
         {
             return false;
         }
 
-        if (vertexBuffer != null)
+        if (_texture == null)
+        {
+            _texture = texture;
+        }
+        else if (_texture.GetTexture() != platformTexture)
         {
             return false;
         }
 
         var rotated = false;
-        var pack = tex.GetTexturePackFrame();
-        if (pack != null)
+        var texturePackFrame = texture.GetTexturePackFrame();
+        if (texturePackFrame != null)
         {
-            if (pack.Rotated)
+            var frameBounds = texturePackFrame.Rect;
+            if (texturePackFrame.Rotated)
             {
                 rotated = true;
 
                 var z = srcX;
-                srcX = pack.Rect.Right - srcY - srcH;
-                srcY = pack.Rect.Top + z;
+                srcX = frameBounds.Right - srcY - srcH;
+                srcY = frameBounds.Top + z;
 
                 z = srcW;
                 srcW = srcH;
@@ -77,117 +77,122 @@ public partial class MonoTileBuffer : GameTileBuffer
             }
             else
             {
-                srcX += pack.Rect.X;
-                srcY += pack.Rect.Y;
+                srcX += frameBounds.X;
+                srcY += frameBounds.Y;
             }
         }
 
-        var texture = (Texture2D) tex.GetTexture();
-
-        var textureSizeX = 1f / texture.Width;
-        var textureSizeY = 1f / texture.Height;
+        var textureSizeX = 1f / platformTexture.Width;
+        var textureSizeY = 1f / platformTexture.Height;
 
         var left = srcX * textureSizeX;
         var right = (srcX + srcW) * textureSizeX;
         var bottom = (srcY + srcH) * textureSizeY;
         var top = srcY * textureSizeY;
 
-        verticeDict.Add(new Tuple<float, float>(x, y), vertices.Count);
+        _tileVertexOffset.Add(new Tuple<float, float>(x, y), _vertices.Count);
 
         if (rotated)
         {
-            vertices.Add(new VertexPositionTexture(new Vector3(x, y + srcH, 0), new Vector2(left, top)));
-            vertices.Add(new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(right, top)));
-            vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y + srcH, 0), new Vector2(left, bottom)));
-            vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, bottom)));
+            _vertices.Add(new VertexPositionTexture(new Vector3(x, y + srcH, 0), new Vector2(left, top)));
+            _vertices.Add(new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(right, top)));
+            _vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y + srcH, 0), new Vector2(left, bottom)));
+            _vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, bottom)));
         }
         else
         {
-            vertices.Add(new VertexPositionTexture(new Vector3(x, y + srcH, 0), new Vector2(left, bottom)));
-            vertices.Add(new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(left, top)));
-            vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y + srcH, 0), new Vector2(right, bottom)));
-            vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, top)));
+            _vertices.Add(new VertexPositionTexture(new Vector3(x, y + srcH, 0), new Vector2(left, bottom)));
+            _vertices.Add(new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(left, top)));
+            _vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y + srcH, 0), new Vector2(right, bottom)));
+            _vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, top)));
         }
 
-        indices.Add((short) vertexCount);
-        indices.Add((short) (vertexCount + 1));
-        indices.Add((short) (vertexCount + 2));
+        _indices.Add((short) _vertexCount);
+        _indices.Add((short) (_vertexCount + 1));
+        _indices.Add((short) (_vertexCount + 2));
 
-        indices.Add((short) (vertexCount + 2));
-        indices.Add((short) (vertexCount + 1));
-        indices.Add((short) (vertexCount + 3));
+        _indices.Add((short) (_vertexCount + 2));
+        _indices.Add((short) (_vertexCount + 1));
+        _indices.Add((short) (_vertexCount + 3));
 
-        vertexCount += 4;
+        _vertexCount += 4;
 
         return true;
     }
 
     public void Draw(BasicEffect basicEffect, FloatRect view)
     {
-        if (vertexBuffer != null && !disposed)
+        if (_vertexBuffer != null && !_disposed)
         {
-            mGraphicsDevice.SetVertexBuffer(vertexBuffer);
-            mGraphicsDevice.Indices = indexBuffer;
+            _graphicsDevice.SetVertexBuffer(_vertexBuffer);
+            _graphicsDevice.Indices = _indexBuffer;
 
-            basicEffect.Texture = (Texture2D) Texture.GetTexture();
+            basicEffect.Texture = (Texture2D) _texture.GetTexture();
             foreach (var pass in basicEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                mGraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, vertexCount / 2);
+                _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _vertexCount / 2);
             }
         }
     }
 
     public override bool SetData()
     {
-        if (vertexBuffer != null && !updatesPending)
+        if (_vertexBuffer != null && !_updatesPending)
         {
             return false;
         }
 
-        if (vertices.Count == 0)
+        if (_vertices.Count == 0)
         {
             return true;
         }
 
         TileBufferCount++;
-        if (vertexBuffer == null)
-        {
-            vertexBuffer = new VertexBuffer(
-                mGraphicsDevice, typeof(VertexPositionTexture), vertices.Count, BufferUsage.WriteOnly
-            );
 
-            indexBuffer = new IndexBuffer(mGraphicsDevice, typeof(short), indices.Count, BufferUsage.WriteOnly);
+        _vertexBuffer ??= new VertexBuffer(
+            _graphicsDevice,
+            typeof(VertexPositionTexture),
+            _vertices.Count,
+            BufferUsage.WriteOnly
+        );
+
+        _vertexBuffer.SetData(_vertices.ToArray());
+
+        _indexBuffer ??= new IndexBuffer(
+            _graphicsDevice,
+            typeof(short),
+            _indices.Count,
+            BufferUsage.WriteOnly
+        );
+
+        if (!_updatesPending)
+        {
+            _indexBuffer.SetData(_indices.ToArray());
         }
 
-        vertexBuffer.SetData(vertices.ToArray());
-        if (!updatesPending)
-        {
-            indexBuffer.SetData(indices.ToArray());
-        }
-
-        updatesPending = false;
+        _updatesPending = false;
 
         return true;
     }
 
     public override void Dispose()
     {
-        vertexBuffer?.Dispose();
-        vertexBuffer = null;
-        indexBuffer?.Dispose();
-        indexBuffer = null;
+        _vertexBuffer?.Dispose();
+        _vertexBuffer = null;
+        _indexBuffer?.Dispose();
+        _indexBuffer = null;
         TileBufferCount--;
-        disposed = true;
+        _disposed = true;
     }
 
     public override bool UpdateTile(GameTexture tex, float x, float y, int srcX, int srcY, int srcW, int srcH)
     {
         var key = new Tuple<float, float>(x, y);
         var vertexIndex = -1;
-        if (verticeDict.ContainsKey(key))
+        if (_tileVertexOffset.TryGetValue(key, out var value))
         {
-            vertexIndex = verticeDict[key];
+            vertexIndex = value;
         }
 
         if (vertexIndex == -1)
@@ -211,7 +216,7 @@ public partial class MonoTileBuffer : GameTileBuffer
             return false;
         }
 
-        if (vertexBuffer == null)
+        if (_vertexBuffer == null)
         {
             return false;
         }
@@ -252,34 +257,31 @@ public partial class MonoTileBuffer : GameTileBuffer
 
         if (rotated)
         {
-            vertices[vertexIndex++] = new VertexPositionTexture(
-                new Vector3(x, y + srcH, 0), new Vector2(left, top)
+            _vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y + srcH, 0), new Vector2(left, top));
+            _vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(right, top));
+            _vertices[vertexIndex++] = new VertexPositionTexture(
+                new Vector3(x + srcW, y + srcH, 0),
+                new Vector2(left, bottom)
             );
-
-            vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(right, top));
-            vertices[vertexIndex++] = new VertexPositionTexture(
-                new Vector3(x + srcW, y + srcH, 0), new Vector2(left, bottom)
-            );
-
-            vertices[vertexIndex] = new VertexPositionTexture(
-                new Vector3(x + srcW, y, 0), new Vector2(right, bottom)
-            );
+            _vertices[vertexIndex] = new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, bottom));
         }
         else
         {
-            vertices[vertexIndex++] = new VertexPositionTexture(
-                new Vector3(x, y + srcH, 0), new Vector2(left, bottom)
+            _vertices[vertexIndex++] = new VertexPositionTexture(
+                new Vector3(x, y + srcH, 0),
+                new Vector2(left, bottom)
             );
 
-            vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(left, top));
-            vertices[vertexIndex++] = new VertexPositionTexture(
-                new Vector3(x + srcW, y + srcH, 0), new Vector2(right, bottom)
+            _vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(left, top));
+            _vertices[vertexIndex++] = new VertexPositionTexture(
+                new Vector3(x + srcW, y + srcH, 0),
+                new Vector2(right, bottom)
             );
 
-            vertices[vertexIndex] = new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, top));
+            _vertices[vertexIndex] = new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, top));
         }
 
-        updatesPending = true;
+        _updatesPending = true;
 
         return true;
     }

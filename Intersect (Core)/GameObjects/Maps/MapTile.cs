@@ -13,5 +13,5 @@ public partial struct Tile
     public byte Autotile;
 
     [JsonIgnore]
-    public object TilesetTex;
+    public object TilesetTexture;
 }

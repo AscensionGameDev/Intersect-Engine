@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Text;
-
+using Intersect.Enums;
 using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Utilities;
@@ -10,6 +10,21 @@ namespace Intersect.Collections;
 
 public partial class DatabaseObjectLookup : IGameObjectLookup<IDatabaseObject>
 {
+    public static readonly Dictionary<Type, DatabaseObjectLookup> LookupMap = Enum.GetValues<GameObjectType>()
+        .Select(gameObjectType => gameObjectType.GetObjectType()).ToArray()
+        .ToDictionary(type => type, type => new DatabaseObjectLookup(type));
+
+    public static DatabaseObjectLookup GetLookup(Type type)
+    {
+        if (!LookupMap.TryGetValue(type, out var lookup))
+        {
+            throw new InvalidOperationException(
+                $"The lookup for {type.FullName ?? type.Name} should have been populated in the initializer, is the {nameof(GameObjectType)} enum not set up with this type?"
+            );
+        }
+
+        return lookup;
+    }
 
     private readonly SortedDictionary<Guid, IDatabaseObject> mIdMap;
 
@@ -134,12 +149,10 @@ public partial class DatabaseObjectLookup : IGameObjectLookup<IDatabaseObject>
         if (TryGetValue(id, out var baseObject))
         {
             value = (TObject) baseObject;
-
             return true;
         }
 
-        value = default(TObject);
-
+        value = default;
         return false;
     }
 
@@ -147,8 +160,7 @@ public partial class DatabaseObjectLookup : IGameObjectLookup<IDatabaseObject>
     {
         if (!IsIdValid(id))
         {
-            value = default(IDatabaseObject);
-
+            value = default;
             return false;
         }
 

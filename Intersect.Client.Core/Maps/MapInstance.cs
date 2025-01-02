@@ -17,6 +17,7 @@ using Intersect.Compression;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
+using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
 
@@ -167,29 +168,45 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
     private void CacheTextures()
     {
-        if (mTexturesFound == false && GameContentManager.Current.TilesetsLoaded)
+        if (mTexturesFound || !GameContentManager.Current.TilesetsLoaded)
         {
-            foreach (var layer in Options.Instance.MapOpts.Layers.All)
-            {
-                for (var x = 0; x < Options.MapWidth; x++)
-                {
-                    for (var y = 0; y < Options.MapHeight; y++)
-                    {
-                        var tileset = TilesetBase.Get(Layers[layer][x, y].TilesetId);
-                        if (tileset != null)
-                        {
-                            var tilesetTex = Globals.ContentManager.GetTexture(
-                                Framework.Content.TextureType.Tileset, tileset.Name
-                            );
+            return;
+        }
 
-                            Layers[layer][x, y].TilesetTex = tilesetTex;
-                        }
-                    }
-                }
+        foreach (var layer in Options.Instance.MapOpts.Layers.All)
+        {
+            if (!Layers.TryGetValue(layer, out var layerTiles))
+            {
+                continue;
             }
 
-            mTexturesFound = true;
+            for (var x = 0; x < Options.MapWidth; x++)
+            {
+                for (var y = 0; y < Options.MapHeight; y++)
+                {
+                    var layerTile = layerTiles[x, y];
+                    if (layerTile.TilesetId == default)
+                    {
+                        continue;
+                    }
+
+                    if (!TilesetBase.TryGet(layerTile.TilesetId, out var tileset))
+                    {
+                        continue;
+                    }
+
+                    var tilesetTexture = Globals.ContentManager.GetTexture(
+                        Framework.Content.TextureType.Tileset,
+                        tileset.Name
+                    );
+
+                    // Tile is a struct, this has to be an array index
+                    layerTiles[x, y].TilesetTexture = tilesetTexture;
+                }
+            }
         }
+
+        mTexturesFound = true;
     }
 
     //Updating
@@ -386,12 +403,12 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 //Find the VBO, update it.
                 var tileBuffer = mTileBufferDict[layer];
                 var tile = Layers[layer][x, y];
-                if (tile.TilesetTex == null)
+                if (tile.TilesetTexture == null)
                 {
                     continue;
                 }
 
-                var tilesetTex = (GameTexture)tile.TilesetTex;
+                var tilesetTex = (GameTexture)tile.TilesetTexture;
                 if (tile.X < 0 || tile.Y < 0)
                 {
                     continue;
@@ -635,18 +652,49 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         ClearMapAttributes();
     }
 
+    private Task? _vboCompute;
+
     public void BuildVBOs()
     {
-        foreach (var layer in Options.Instance.MapOpts.Layers.All)
+        lock (mTileBuffers)
         {
-            mTileBuffers[layer] = DrawMapLayer(layer, GetX(), GetY());
-            for (var y = 0; y < 3; y++)
+            if (_vboCompute != default)
             {
-                for (var z = 0; z < mTileBuffers[layer][y].Length; z++)
-                {
-                    mTileBuffers[layer][y][z].SetData();
-                }
+                return;
             }
+
+            // _vboCompute = Task.Run(
+            //     () =>
+            //     {
+                    var startVbo = DateTime.UtcNow;
+                    Dictionary<string, GameTileBuffer[][]> buffers = [];
+                    foreach (var layer in Options.Instance.MapOpts.Layers.All)
+                    {
+                        buffers[layer] = DrawMapLayer(layer, GetX(), GetY());
+                        for (var y = 0; y < 3; y++)
+                        {
+                            for (var z = 0; z < buffers[layer][y].Length; z++)
+                            {
+                                buffers[layer][y][z].SetData();
+                            }
+                        }
+                    }
+
+                    var endVbo = DateTime.UtcNow;
+                    var elapsedVbo = endVbo - startVbo;
+                    Log.Info($"Built VBO for map instance {Id} in {elapsedVbo.TotalMilliseconds}ms");
+
+                    // lock (mTileBuffers)
+                    // {
+                        foreach (var (layer, layerBuffers) in buffers)
+                        {
+                            mTileBuffers[layer] = layerBuffers;
+                        }
+                    // }
+
+            //         _vboCompute = default;
+            //     }
+            // );
         }
     }
 
@@ -839,43 +887,66 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         int forceFrame,
         GameTexture tileset,
         GameTileBuffer buffer,
-        bool update = false
+        bool update = false,
+        Tile? layerTile = default,
+        QuarterTileCls? layerAutoTile = default
     )
     {
+        if (layerTile == null)
+        {
+            if (!Layers.TryGetValue(layerName, out var layerTiles))
+            {
+                return;
+            }
+
+            layerTile = layerTiles[x, y];
+        }
+
+        if (layerAutoTile == null)
+        {
+            if (!Autotiles.Layers.TryGetValue(layerName, out var layerAutoTiles))
+            {
+                return;
+            }
+
+            layerAutoTile = layerAutoTiles[x, y];
+        }
+
+        var quarterTile = layerAutoTile.QuarterTile[quarterNum];
+
         int yOffset = 0, xOffset = 0;
 
         // calculate the offset
-        switch (Layers[layerName][x, y].Autotile)
+        switch (layerTile.Value.Autotile)
         {
             case MapAutotiles.AUTOTILE_WATERFALL:
                 yOffset = (forceFrame - 1) * Options.TileHeight;
-
                 break;
 
             case MapAutotiles.AUTOTILE_ANIM:
                 xOffset = forceFrame * Options.TileWidth * 2;
-
                 break;
 
             case MapAutotiles.AUTOTILE_ANIM_XP:
                 xOffset = forceFrame * Options.TileWidth * 3;
-
                 break;
 
             case MapAutotiles.AUTOTILE_CLIFF:
                 yOffset = -Options.TileHeight;
-
                 break;
         }
 
         if (update)
         {
             if (!buffer.UpdateTile(
-                tileset, destX, destY,
-                Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].X + xOffset,
-                Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].Y + yOffset,
-                Options.TileWidth / 2, Options.TileHeight / 2
-            ))
+                    tileset,
+                    destX,
+                    destY,
+                    quarterTile.X + xOffset,
+                    quarterTile.Y + yOffset,
+                    Options.TileWidth / 2,
+                    Options.TileHeight / 2
+                ))
             {
                 throw new Exception("Failed to update tile to VBO!");
             }
@@ -883,111 +954,163 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         else
         {
             if (!buffer.AddTile(
-                tileset, destX, destY,
-                Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].X + xOffset,
-                Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].Y + yOffset,
-                Options.TileWidth / 2, Options.TileHeight / 2
-            ))
+                    tileset,
+                    destX,
+                    destY,
+                    quarterTile.X + xOffset,
+                    quarterTile.Y + yOffset,
+                    Options.TileWidth / 2,
+                    Options.TileHeight / 2
+                ))
             {
                 throw new Exception("Failed to add tile to VBO!");
             }
         }
     }
 
-    private GameTileBuffer[][] DrawMapLayer(string layerName, float xoffset = 0, float yoffset = 0)
+    private GameTileBuffer[][]? DrawMapLayer(string layerName, float xOffset = 0, float yOffset = 0)
     {
-        var tileBuffers = new Dictionary<object, GameTileBuffer[]>();
-
-        if (!Layers.ContainsKey(layerName))
+        if (!Layers.TryGetValue(layerName, out var layerTiles))
         {
             return null;
         }
+
+        if (!Autotiles.Layers.TryGetValue(layerName, out var layerAutoTiles))
+        {
+            return null;
+        }
+
+        var tileBuffers = new Dictionary<object, GameTileBuffer[]>();
+        var tileHalfWidth = Options.TileHalfWidth;
+        var tileHalfHeight = Options.TileHalfHeight;
 
         for (var x = 0; x < Options.MapWidth; x++)
         {
             for (var y = 0; y < Options.MapHeight; y++)
             {
-                var tile = Layers[layerName][x, y];
-                if (tile.TilesetTex == null)
+                var layerTile = layerTiles[x, y];
+                if (layerTile.TilesetTexture == null)
                 {
                     continue;
                 }
 
-                var tilesetTex = (GameTexture)tile.TilesetTex;
+                var tilesetTexture = (GameTexture)layerTile.TilesetTexture;
 
-                if (tile.X < 0 || tile.Y < 0)
+                if (layerTile.X < 0 || layerTile.Y < 0)
                 {
                     continue;
                 }
 
-                if (tile.X * Options.TileWidth >= tilesetTex.GetWidth() ||
-                    tile.Y * Options.TileHeight >= tilesetTex.GetHeight())
+                if (layerTile.X * Options.TileWidth >= tilesetTexture.Width ||
+                    layerTile.Y * Options.TileHeight >= tilesetTexture.Height)
                 {
                     continue;
                 }
 
-                var platformTex = tilesetTex.GetTexture();
+                var platformTexture = tilesetTexture.GetTexture();
 
-                GameTileBuffer[] buffers = null;
-                if (tileBuffers.ContainsKey(platformTex))
+                GameTileBuffer[] animationFrameBuffers;
+                if (tileBuffers.TryGetValue(platformTexture, out var tileBuffer))
                 {
-                    buffers = tileBuffers[platformTex];
+                    animationFrameBuffers = tileBuffer;
                 }
                 else
                 {
-                    buffers = new GameTileBuffer[3];
+                    animationFrameBuffers = new GameTileBuffer[3];
                     for (var i = 0; i < 3; i++)
                     {
-                        buffers[i] = Graphics.Renderer.CreateTileBuffer();
+                        animationFrameBuffers[i] = Graphics.Renderer!.CreateTileBuffer();
                     }
 
-                    tileBuffers.Add(platformTex, buffers);
+                    tileBuffers.Add(platformTexture, animationFrameBuffers);
                 }
 
-                switch (Autotiles.Layers[layerName][x, y].RenderState)
+                var tileXOffset = x * Options.TileWidth + xOffset;
+                var tileYOffset = y * Options.TileHeight + yOffset;
+
+                var layerAutoTile = layerAutoTiles[x, y];
+                switch (layerAutoTile.RenderState)
                 {
                     case MapAutotiles.RENDER_STATE_NORMAL:
-                        for (var i = 0; i < 3; i++)
+                        for (var animationFrameIndex = 0; animationFrameIndex < 3; animationFrameIndex++)
                         {
-                            var buffer = buffers[i];
-                            if (!buffer.AddTile(
-                                tilesetTex, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset,
-                                Layers[layerName][x, y].X * Options.TileWidth,
-                                Layers[layerName][x, y].Y * Options.TileHeight, Options.TileWidth,
-                                Options.TileHeight
-                            ))
+                            var animationFrameBuffer = animationFrameBuffers[animationFrameIndex];
+                            var layerTileAtPosition = layerTiles[x, y];
+                            if (!animationFrameBuffer.AddTile(
+                                    tilesetTexture,
+                                    tileXOffset,
+                                    tileYOffset,
+                                    layerTileAtPosition.X * Options.TileWidth,
+                                    layerTileAtPosition.Y * Options.TileHeight,
+                                    Options.TileWidth,
+                                    Options.TileHeight
+                                ))
                             {
                                 throw new Exception("Failed to add VBO!");
                             }
                         }
-
                         break;
+
                     case MapAutotiles.RENDER_STATE_AUTOTILE:
-                        for (var i = 0; i < 3; i++)
+                        for (var animationFrameIndex = 0; animationFrameIndex < 3; animationFrameIndex++)
                         {
+                            var animationFrameBuffer = animationFrameBuffers[animationFrameIndex];
                             DrawAutoTile(
-                                layerName, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, 1, x, y,
-                                i, tilesetTex, buffers[i]
+                                layerName,
+                                tileXOffset,
+                                tileYOffset,
+                                1,
+                                x,
+                                y,
+                                animationFrameIndex,
+                                tilesetTexture,
+                                animationFrameBuffer,
+                                layerTile: layerTile,
+                                layerAutoTile: layerAutoTile
                             );
 
                             DrawAutoTile(
-                                layerName, x * Options.TileWidth + Options.TileWidth / 2 + xoffset,
-                                y * Options.TileHeight + yoffset, 2, x, y, i, tilesetTex, buffers[i]
+                                layerName,
+                                tileXOffset + tileHalfWidth,
+                                tileYOffset,
+                                2,
+                                x,
+                                y,
+                                animationFrameIndex,
+                                tilesetTexture,
+                                animationFrameBuffer,
+                                layerTile: layerTile,
+                                layerAutoTile: layerAutoTile
                             );
 
                             DrawAutoTile(
-                                layerName, x * Options.TileWidth + xoffset,
-                                y * Options.TileHeight + Options.TileHeight / 2 + yoffset, 3, x, y, i, tilesetTex,
-                                buffers[i]
+                                layerName,
+                                tileXOffset,
+                                tileYOffset + tileHalfHeight,
+                                3,
+                                x,
+                                y,
+                                animationFrameIndex,
+                                tilesetTexture,
+                                animationFrameBuffer,
+                                layerTile: layerTile,
+                                layerAutoTile: layerAutoTile
                             );
 
                             DrawAutoTile(
-                                layerName, +x * Options.TileWidth + Options.TileWidth / 2 + xoffset,
-                                y * Options.TileHeight + Options.TileHeight / 2 + yoffset, 4, x, y, i, tilesetTex,
-                                buffers[i]
+                                layerName,
+                                tileXOffset + tileHalfWidth,
+                                tileYOffset + tileHalfHeight,
+                                4,
+                                x,
+                                y,
+                                animationFrameIndex,
+                                tilesetTexture,
+                                animationFrameBuffer,
+                                layerTile: layerTile,
+                                layerAutoTile: layerAutoTile
                             );
                         }
-
                         break;
                 }
             }

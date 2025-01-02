@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Runtime.CompilerServices;
 using Intersect.Collections;
 using Intersect.Enums;
 
@@ -32,16 +32,22 @@ public abstract partial class DatabaseObject<TObject> : IDatabaseObject where TO
         .Select(pair => pair.Value?.Name ?? Deleted)
         .ToArray();
 
-    public static DatabaseObjectLookup Lookup => LookupUtils.GetLookup(typeof(TObject));
+    public static readonly DatabaseObjectLookup Lookup = DatabaseObjectLookup.GetLookup(typeof(TObject));
 
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public Guid Id { get; protected set; } = Guid.NewGuid();
 
     public long TimeCreated { get; set; }
 
-    [JsonIgnore]
-    [NotMapped]
-    public GameObjectType Type => LookupUtils.GetGameObjectType(typeof(TObject));
+    public static readonly GameObjectType ObjectType = typeof(TObject).TryGetGameObjectType(out var gameObjectType)
+        ? gameObjectType
+        : throw new InvalidOperationException($"{typeof(TObject).Name} not set up correctly");
+
+    [JsonIgnore] [NotMapped] public GameObjectType Type
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => ObjectType;
+    }
 
     [JsonIgnore]
     [NotMapped]
@@ -147,8 +153,7 @@ public abstract partial class DatabaseObject<TObject> : IDatabaseObject where TO
 
     public static bool TryGet(Guid id, out TObject databaseObject)
     {
-        databaseObject = Get(id);
-        return databaseObject != default;
+        return Lookup.TryGetValue(id, out databaseObject);
     }
 
 }

@@ -161,7 +161,11 @@ public partial class Options
 
     public static int TileWidth => Instance.MapOpts.TileWidth;
 
+    public static float TileHalfWidth => TileWidth / 2f;
+
     public static int TileHeight => Instance.MapOpts.TileHeight;
+
+    public static float TileHalfHeight => TileHeight / 2f;
 
     public static int EventWatchdogKillThreshhold => Instance.EventKillTheshhold;
 

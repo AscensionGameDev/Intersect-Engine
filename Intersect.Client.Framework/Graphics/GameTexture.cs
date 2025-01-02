@@ -34,13 +34,16 @@ public abstract partial class GameTexture : IAsset
 
     public abstract object GetTexture();
 
+    public TPlatformTexture? GetTexture<TPlatformTexture>() where TPlatformTexture : class =>
+        GetTexture() as TPlatformTexture;
+
     public abstract Color GetPixel(int x1, int y1);
 
-    public abstract GameTexturePackFrame GetTexturePackFrame();
+    public abstract GameTexturePackFrame? GetTexturePackFrame();
 
     public static string ToString(GameTexture tex)
     {
-        return tex?.GetName() ?? "";
+        return tex?.GetName() ?? string.Empty;
     }
 
     public static GameTexture GetBoundingTexture(BoundsComparison boundsComparison, params GameTexture[] textures)
