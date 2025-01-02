@@ -109,19 +109,13 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
     private bool mTexturesFound = false;
 
-    private Dictionary<string, Dictionary<object?, GameTileBuffer[]>> mTileBufferDict = new Dictionary<string, Dictionary<object?, GameTileBuffer[]>>(); //[Layer][?][?]
+    private readonly Dictionary<string, Dictionary<object, GameTileBuffer[]>> _tileBuffersPerTexture = []; // [Layer][Platform Texture][Buffer Index]
 
-    private Dictionary<string, GameTileBuffer[][]> mTileBuffers = new Dictionary<string, GameTileBuffer[][]>(); //[Layer][Autotile Frame][Buffer Index]
+    private readonly Dictionary<string, GameTileBuffer[][]> _tileBuffersPerLayer = []; // [Layer][Autotile Frame][Buffer Index]
 
     //Initialization
     public MapInstance(Guid id) : base(id)
     {
-        mTileBuffers.Clear();
-        foreach (var layer in Options.Instance.MapOpts.Layers.All)
-        {
-            mTileBufferDict.Add(layer, new Dictionary<object?, GameTileBuffer[]>());
-            mTileBuffers.Add(layer, new GameTileBuffer[3][]); //3 autotile frames per layer
-        }
     }
 
     public bool IsLoaded { get; private set; }
@@ -413,7 +407,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             }
 
             // Find the VBO, update it.
-            if (!mTileBufferDict.TryGetValue(layer, out var tileBuffer))
+            if (!_tileBuffersPerTexture.TryGetValue(layer, out var tileBuffer))
             {
                 continue;
             }
@@ -710,7 +704,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
     public void BuildVBOs()
     {
-        lock (mTileBuffers)
+        lock (_tileBuffersPerLayer)
         {
             if (_vboCompute != default)
             {
@@ -742,7 +736,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                     // {
                         foreach (var (layer, layerBuffers) in buffers)
                         {
-                            mTileBuffers[layer] = layerBuffers;
+                            _tileBuffersPerLayer[layer] = layerBuffers;
                         }
                     // }
 
@@ -756,23 +750,28 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     {
         foreach (var layer in Options.Instance.MapOpts.Layers.All)
         {
+            _tileBuffersPerTexture[layer].Clear();
+
+            if (!_tileBuffersPerLayer.TryGetValue(layer, out var layerBuffers))
+            {
+                continue;
+            }
+
             for (var y = 0; y < 3; y++)
             {
-                if (mTileBuffers[layer][y] != null)
+                for (var z = 0; z < layerBuffers[y].Length; z++)
                 {
-                    for (var z = 0; z < mTileBuffers[layer][y].Length; z++)
-                    {
-                        mTileBuffers[layer][y][z].Dispose();
-                    }
+                    layerBuffers[y][z].Dispose();
                 }
             }
-            mTileBufferDict[layer]?.Clear();
         }
-        mTileBuffers = null;
+
+        _tileBuffersPerTexture.Clear();
+        _tileBuffersPerLayer.Clear();
     }
 
     //Rendering/Drawing Code
-    public void Draw(int layer = 0) //Lower, Middle, Upper
+    public void Draw(int layer) //Lower, Middle, Upper
     {
         if (!IsLoaded)
         {
@@ -785,31 +784,34 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             return;
         }
 
-        if (mTileBuffers[Options.Instance.MapOpts.Layers.All[0]][0] == null)
+        if (_tileBuffersPerLayer.Count < 1)
         {
             BuildVBOs();
         }
 
-        var drawLayers = Options.Instance.MapOpts.Layers.LowerLayers;
-
-        if (layer == 1)
+        var drawLayers = layer switch
         {
-            drawLayers = Options.Instance.MapOpts.Layers.MiddleLayers;
-        }
-
-        if (layer == 2)
-        {
-            drawLayers = Options.Instance.MapOpts.Layers.UpperLayers;
-        }
+            1 => Options.Instance.MapOpts.Layers.MiddleLayers,
+            > 1 => Options.Instance.MapOpts.Layers.UpperLayers,
+            < 1 => Options.Instance.MapOpts.Layers.LowerLayers,
+        };
 
         foreach (var drawLayer in drawLayers)
         {
-            if (mTileBuffers[drawLayer][Globals.AnimFrame] != null)
+            if (!_tileBuffersPerLayer.TryGetValue(drawLayer, out var layerBuffers))
             {
-                for (var i = 0; i < mTileBuffers[drawLayer][Globals.AnimFrame].Length; i++)
-                {
-                    Graphics.Renderer.DrawTileBuffer(mTileBuffers[drawLayer][Globals.AnimFrame][i]);
-                }
+                continue;
+            }
+
+            if (layerBuffers[Globals.AnimFrame] == null)
+            {
+                continue;
+            }
+
+            var buffersForFrame = layerBuffers[Globals.AnimFrame];
+            foreach (var buffer in buffersForFrame)
+            {
+                Graphics.Renderer?.DrawTileBuffer(buffer);
             }
         }
     }
@@ -1202,7 +1204,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             }
         }
 
-        mTileBufferDict[layerName] = tileBuffers;
+        _tileBuffersPerTexture[layerName] = tileBuffers;
 
         return outputBuffers;
     }

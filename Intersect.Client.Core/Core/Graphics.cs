@@ -308,14 +308,21 @@ public static partial class Graphics
         {
             for (var y = gridY - 1; y <= gridY + 1; y++)
             {
-                if (x >= 0 &&
-                    x < Globals.MapGridWidth &&
-                    y >= 0 &&
-                    y < Globals.MapGridHeight &&
-                    Globals.MapGrid[x, y] != Guid.Empty)
+                if (x < 0 ||
+                    x >= Globals.MapGridWidth ||
+                    y < 0 ||
+                    y >= Globals.MapGridHeight)
                 {
-                    DrawMap(Globals.MapGrid[x, y], 0);
+                    continue;
                 }
+
+                var mapId = Globals.MapGrid[x, y];
+                if (mapId == default)
+                {
+                    continue;
+                }
+
+                DrawMap(mapId, 0);
             }
         }
 
@@ -611,7 +618,7 @@ public static partial class Graphics
         }
     }
 
-    private static void DrawMap(Guid mapId, int layer = 0)
+    private static void DrawMap(Guid mapId, int layer)
     {
         if (!MapInstance.TryGet(mapId, out var map))
         {
@@ -626,6 +633,7 @@ public static partial class Graphics
         }
 
         map.Draw(layer);
+
         if (layer == 0)
         {
             MapsDrawn++;
