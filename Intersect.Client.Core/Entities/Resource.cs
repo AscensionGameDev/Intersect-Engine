@@ -263,8 +263,8 @@ public partial class Resource : Entity, IResource
             }
             else
             {
-                mSrcRectangle.Width = Texture.GetWidth();
-                mSrcRectangle.Height = Texture.GetHeight();
+                mSrcRectangle.Width = Texture.Width;
+                mSrcRectangle.Height = Texture.Height;
             }
 
             mDestRectangle.Width = mSrcRectangle.Width;

@@ -3,12 +3,32 @@
 
 public abstract partial class GameRenderTexture : GameTexture
 {
+    private static int _nextId;
 
-    public GameRenderTexture(int width, int height)
+    private readonly int _id;
+
+    private bool _disposed;
+
+    protected readonly int _width;
+    protected readonly int _height;
+
+    private GameRenderTexture(int width, int height, int id) : base($"RenderTexture#{id}")
+    {
+        _id = id;
+        RenderTextureCount++;
+        _width = width;
+        _height = height;
+    }
+
+    protected GameRenderTexture(int width, int height) : this(width, height, ++_nextId)
     {
     }
 
-    public static int RenderTextureCount { get; set; } = 0;
+    public static int RenderTextureCount { get; set; }
+
+    public override int Width => _width;
+
+    public override int Height => _height;
 
     /// <summary>
     ///     Called before a frame is drawn, if the renderer must re-created or anything it does it here.
@@ -31,8 +51,14 @@ public abstract partial class GameRenderTexture : GameTexture
     /// </summary>
     public abstract void Clear(Color color);
 
-    public abstract override object GetTexture();
+    public abstract override object? GetTexture();
 
-    public abstract void Dispose();
+    public virtual void Dispose()
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+
+        _disposed = true;
+        RenderTextureCount--;
+    }
 
 }

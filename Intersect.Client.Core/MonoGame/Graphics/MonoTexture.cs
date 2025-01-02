@@ -38,7 +38,7 @@ public partial class MonoTexture : GameTexture
 
     private bool _loadError;
 
-    private MonoTexture(Texture2D texture2D, string assetName)
+    private MonoTexture(Texture2D texture2D, string assetName) : base(assetName)
     {
         _graphicsDevice = texture2D.GraphicsDevice;
         _path = assetName;
@@ -48,7 +48,9 @@ public partial class MonoTexture : GameTexture
         _doNotFree = true;
     }
 
-    public MonoTexture(GraphicsDevice graphicsDevice, string filename, string realPath)
+    public MonoTexture(GraphicsDevice graphicsDevice, string filename, string realPath) : base(
+        Path.GetFileName(filename)
+    )
     {
         _graphicsDevice = graphicsDevice;
         _path = filename;
@@ -56,7 +58,7 @@ public partial class MonoTexture : GameTexture
         _name = Path.GetFileName(filename);
     }
 
-    public MonoTexture(GraphicsDevice graphicsDevice, string assetName, Func<Stream> createStream)
+    public MonoTexture(GraphicsDevice graphicsDevice, string assetName, Func<Stream> createStream) : base(assetName)
     {
         _graphicsDevice = graphicsDevice;
         _path = assetName;
@@ -65,7 +67,9 @@ public partial class MonoTexture : GameTexture
         _createStream = createStream;
     }
 
-    public MonoTexture(GraphicsDevice graphicsDevice, string filename, GameTexturePackFrame packFrame)
+    public MonoTexture(GraphicsDevice graphicsDevice, string filename, GameTexturePackFrame packFrame) : base(
+        Path.GetFileName(filename)
+    )
     {
         _graphicsDevice = graphicsDevice;
         _path = filename;
@@ -162,56 +166,56 @@ public partial class MonoTexture : GameTexture
         _lastAccessTime = Timing.Global.MillisecondsUtc + 15000;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public override string GetName()
+    public override int Width
     {
-        return _name;
-    }
-
-    public override int GetWidth()
-    {
-        ResetAccessTime();
-        if (_width != -1)
+        get
         {
+            ResetAccessTime();
+            if (_width != -1)
+            {
+                return _width;
+            }
+
+            if (_texture == null)
+            {
+                LoadTexture();
+            }
+
+            if (_loadError)
+            {
+                _width = 0;
+            }
+
             return _width;
         }
-
-        if (_texture == null)
-        {
-            LoadTexture();
-        }
-
-        if (_loadError)
-        {
-            _width = 0;
-        }
-
-        return _width;
     }
 
-    public override int GetHeight()
+    public override int Height
     {
-        ResetAccessTime();
-        if (_height != -1)
+        get
         {
+            ResetAccessTime();
+            if (_height != -1)
+            {
+                return _height;
+            }
+
+            if (_texture == null)
+            {
+                LoadTexture();
+            }
+
+            if (_loadError)
+            {
+                _height = 0;
+            }
+
             return _height;
         }
-
-        if (_texture == null)
-        {
-            LoadTexture();
-        }
-
-        if (_loadError)
-        {
-            _height = 0;
-        }
-
-        return _height;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public override object GetTexture()
+    public override object? GetTexture()
     {
         if (_packFrame != null)
         {

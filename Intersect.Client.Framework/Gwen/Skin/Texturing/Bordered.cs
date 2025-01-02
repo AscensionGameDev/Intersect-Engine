@@ -61,8 +61,8 @@ public partial struct Bordered : IEquatable<Bordered>
             return;
         }
 
-        float texw = mTexture.GetWidth();
-        float texh = mTexture.GetHeight();
+        float texw = mTexture.Width;
+        float texh = mTexture.Height;
 
         //x -= 1.0f;
         //y -= 1.0f;

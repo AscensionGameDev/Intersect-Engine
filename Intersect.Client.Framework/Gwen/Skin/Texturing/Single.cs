@@ -25,8 +25,8 @@ public partial struct Single
         float texh = 1;
         if (mTexture != null)
         {
-            texw = mTexture.GetWidth();
-            texh = mTexture.GetHeight();
+            texw = mTexture.Width;
+            texh = mTexture.Height;
         }
 
         mUv = new float[4];

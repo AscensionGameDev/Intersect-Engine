@@ -1,41 +1,31 @@
 ﻿using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
-using Intersect.Collections;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Client.Classes.MonoGame.Graphics;
 
-
-public partial class MonoTileBuffer : GameTileBuffer
+public partial class MonoTileBuffer(GraphicsDevice device) : GameTileBuffer
 {
-    private bool _disposed;
-
-    private IndexBuffer? _indexBuffer;
-
+    private readonly Dictionary<int, int> _tileVertexOffset = [];
     private readonly List<short> _indices = [];
-
-    private GraphicsDevice _graphicsDevice;
-
-    private bool _updatesPending;
-
-    private VertexBuffer? _vertexBuffer;
-
+    private readonly List<VertexPositionTexture> _vertices = [];
     private int _vertexCount;
 
-    private GameTexture? _texture;
+    private IndexBuffer? _indexBuffer;
+    private VertexBuffer? _vertexBuffer;
+
+    private bool _dirty;
+    private bool _disposed;
+
+    internal GameTexture? _texture;
     private Texture2D? _platformTexture;
 
-    private readonly Dictionary<Vector2iKey, int> _tileVertexOffset = new(Options.MapWidth * Options.MapHeight);
-
-    private readonly List<VertexPositionTexture> _vertices = [];
-
-    public MonoTileBuffer(GraphicsDevice device)
-    {
-        _graphicsDevice = device;
-    }
-
     public override bool Supported => true;
+
+    public record struct AddedTile(GameTexture Texture, int SrcX, int SrcY, int SrcW, int SrcH);
+
+    public readonly Dictionary<AddedTile, int> _addedTileCount = [];
 
     public override bool AddTile(GameTexture texture, int x, int y, int srcX, int srcY, int srcW, int srcH)
     {
@@ -60,7 +50,17 @@ public partial class MonoTileBuffer : GameTileBuffer
             return false;
         }
 
+        // var addedTileKey = new AddedTile(
+        //     texture,
+        //     srcX,
+        //     srcY,
+        //     srcW,
+        //     srcH
+        // );
+        // _addedTileCount[addedTileKey] = _addedTileCount.GetValueOrDefault(addedTileKey, 0) + 1;
+
         var rotated = false;
+
         var texturePackFrame = texture.GetTexturePackFrame();
         if (texturePackFrame != null)
         {
@@ -68,14 +68,8 @@ public partial class MonoTileBuffer : GameTileBuffer
             if (texturePackFrame.Rotated)
             {
                 rotated = true;
-
-                var z = srcX;
-                srcX = frameBounds.Right - srcY - srcH;
-                srcY = frameBounds.Top + z;
-
-                z = srcW;
-                srcW = srcH;
-                srcH = z;
+                (srcX, srcY) = (frameBounds.Right - srcY - srcH, frameBounds.Top + srcX);
+                (srcW, srcH) = (srcH, srcW);
             }
             else
             {
@@ -92,7 +86,7 @@ public partial class MonoTileBuffer : GameTileBuffer
         var bottom = (srcY + srcH) * textureSizeY;
         var top = srcY * textureSizeY;
 
-        _tileVertexOffset.Add(new Vector2iKey(x, y), _vertexCount);
+        _tileVertexOffset.Add(x << 16 | y, _vertexCount);
 
         if (rotated)
         {
@@ -122,118 +116,46 @@ public partial class MonoTileBuffer : GameTileBuffer
         return true;
     }
 
-    public void Draw(BasicEffect basicEffect, FloatRect view)
+    public override bool UpdateTile(GameTexture texture, int x, int y, int srcX, int srcY, int srcW, int srcH)
     {
-        if (_vertexBuffer != null && !_disposed)
-        {
-            _graphicsDevice.SetVertexBuffer(_vertexBuffer);
-            _graphicsDevice.Indices = _indexBuffer;
-
-            basicEffect.Texture = (Texture2D) _texture.GetTexture();
-            foreach (var pass in basicEffect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _vertexCount / 2);
-            }
-        }
-    }
-
-    public override bool SetData()
-    {
-        if (_vertexBuffer != null && !_updatesPending)
+        if (_vertexBuffer == default)
         {
             return false;
         }
 
-        if (_vertices.Count == 0)
-        {
-            return true;
-        }
-
-        TileBufferCount++;
-
-        _vertexBuffer ??= new VertexBuffer(
-            _graphicsDevice,
-            typeof(VertexPositionTexture),
-            _vertices.Count,
-            BufferUsage.WriteOnly
-        );
-
-        _vertexBuffer.SetData(_vertices.ToArray());
-
-        _indexBuffer ??= new IndexBuffer(
-            _graphicsDevice,
-            typeof(short),
-            _indices.Count,
-            BufferUsage.WriteOnly
-        );
-
-        if (!_updatesPending)
-        {
-            _indexBuffer.SetData(_indices.ToArray());
-        }
-
-        _updatesPending = false;
-
-        return true;
-    }
-
-    public override void Dispose()
-    {
-        _vertexBuffer?.Dispose();
-        _vertexBuffer = null;
-        _indexBuffer?.Dispose();
-        _indexBuffer = null;
-        TileBufferCount--;
-        _disposed = true;
-    }
-
-    public override bool UpdateTile(GameTexture tex, int x, int y, int srcX, int srcY, int srcW, int srcH)
-    {
-        var vertexIndex = -1;
-        if (_tileVertexOffset.TryGetValue(new Vector2iKey(x, y), out var value))
-        {
-            vertexIndex = value;
-        }
-
-        if (vertexIndex == -1)
+        if (!_tileVertexOffset.TryGetValue(x << 16 | y, out var vertexIndex))
         {
             return false;
         }
 
-        var platformTex = tex?.GetTexture();
-        if (platformTex == null)
+        var platformTexture = (texture == _texture ? _platformTexture : default) ?? texture.GetTexture<Texture2D>();
+        if (platformTexture == null)
         {
             return false;
         }
 
-        if (tex == null)
+        if (_texture == null)
+        {
+            _texture = texture;
+            _platformTexture = platformTexture;
+        }
+        else if (_platformTexture != platformTexture)
         {
             return false;
         }
-
-        if (tex.GetTexture() != platformTex)
-        {
-            return false;
-        }
-
-        if (_vertexBuffer == null)
-        {
-            return false;
-        }
-
-        var pack = tex.GetTexturePackFrame();
 
         var rotated = false;
-        if (pack != null)
+
+        var texturePackFrame = texture.GetTexturePackFrame();
+        if (texturePackFrame != null)
         {
-            if (pack.Rotated)
+            if (texturePackFrame.Rotated)
             {
                 rotated = true;
 
                 var z = srcX;
-                srcX = pack.Rect.Right - srcY - srcH;
-                srcY = pack.Rect.Top + z;
+                srcX = texturePackFrame.Rect.Right - srcY - srcH;
+                srcY = texturePackFrame.Rect.Top + z;
 
                 z = srcW;
                 srcW = srcH;
@@ -241,15 +163,13 @@ public partial class MonoTileBuffer : GameTileBuffer
             }
             else
             {
-                srcX += pack.Rect.X;
-                srcY += pack.Rect.Y;
+                srcX += texturePackFrame.Rect.X;
+                srcY += texturePackFrame.Rect.Y;
             }
         }
 
-        var texture = (Texture2D) tex.GetTexture();
-
-        var textureSizeX = 1f / texture.Width;
-        var textureSizeY = 1f / texture.Height;
+        var textureSizeX = 1f / platformTexture.Width;
+        var textureSizeY = 1f / platformTexture.Height;
 
         var left = srcX * textureSizeX;
         var right = (srcX + srcW) * textureSizeX;
@@ -282,9 +202,83 @@ public partial class MonoTileBuffer : GameTileBuffer
             _vertices[vertexIndex] = new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, top));
         }
 
-        _updatesPending = true;
+        _dirty = true;
 
         return true;
     }
 
+    public void Draw(BasicEffect basicEffect, FloatRect view)
+    {
+        if (_disposed || _vertexBuffer == default)
+        {
+            return;
+        }
+
+        device.SetVertexBuffer(_vertexBuffer);
+        device.Indices = _indexBuffer;
+
+        // If we use _platformTexture directly here it will get marked as "unused" and disposed
+        basicEffect.Texture = _texture?.GetTexture<Texture2D>();
+
+        foreach (var pass in basicEffect.CurrentTechnique.Passes)
+        {
+            pass.Apply();
+            device.DrawIndexedPrimitives(
+                PrimitiveType.TriangleList,
+                0,
+                0,
+                _vertexCount / 2
+            );
+        }
+    }
+
+    public override bool SetData()
+    {
+        if (_vertexBuffer != null && !_dirty)
+        {
+            return false;
+        }
+
+        if (_vertices.Count == 0)
+        {
+            return true;
+        }
+
+        TileBufferCount++;
+
+        _vertexBuffer ??= new VertexBuffer(
+            device,
+            typeof(VertexPositionTexture),
+            _vertices.Count,
+            BufferUsage.WriteOnly
+        );
+
+        _vertexBuffer.SetData(_vertices.ToArray());
+
+        _indexBuffer ??= new IndexBuffer(
+            device,
+            typeof(short),
+            _indices.Count,
+            BufferUsage.WriteOnly
+        );
+
+        if (!_dirty)
+        {
+            _indexBuffer.SetData(_indices.ToArray());
+        }
+
+        _dirty = false;
+
+        return true;
+    }
+
+    public override void Dispose()
+    {
+        _vertexBuffer?.Dispose();
+        _vertexBuffer = null;
+        _indexBuffer?.Dispose();
+        _indexBuffer = null;
+        TileBufferCount--;
+        _disposed = true;
+    }
 }

@@ -161,23 +161,23 @@ public partial class ImagePanel : Base
 
         if (w <= 0)
         {
-            w = mTexture.GetWidth();
+            w = mTexture.Width;
         }
 
         if (h <= 0)
         {
-            h = mTexture.GetHeight();
+            h = mTexture.Height;
         }
 
-        if (x + w > mTexture.GetWidth() || y + h > mTexture.GetHeight())
+        if (x + w > mTexture.Width || y + h > mTexture.Height)
         {
             return;
         }
 
-        mUv[0] = (float) x / (float) mTexture.GetWidth();
-        mUv[1] = (float) y / (float) mTexture.GetHeight();
-        mUv[2] = (float) (x + w) / (float) mTexture.GetWidth();
-        mUv[3] = (float) (y + h) / (float) mTexture.GetHeight();
+        mUv[0] = (float) x / (float) mTexture.Width;
+        mUv[1] = (float) y / (float) mTexture.Height;
+        mUv[2] = (float) (x + w) / (float) mTexture.Width;
+        mUv[3] = (float) (y + h) / (float) mTexture.Height;
     }
 
     public virtual Rectangle GetTextureRect()
@@ -188,8 +188,8 @@ public partial class ImagePanel : Base
         }
 
         return new Rectangle(
-            (int) (mUv[0] * mTexture.GetWidth()), (int) (mUv[1] * mTexture.GetHeight()),
-            (int) ((mUv[2] - mUv[0]) * mTexture.GetWidth()), (int) ((mUv[3] - mUv[1]) * mTexture.GetWidth())
+            (int) (mUv[0] * mTexture.Width), (int) (mUv[1] * mTexture.Height),
+            (int) ((mUv[2] - mUv[0]) * mTexture.Width), (int) ((mUv[3] - mUv[1]) * mTexture.Width)
         );
     }
 
@@ -214,7 +214,7 @@ public partial class ImagePanel : Base
             return;
         }
 
-        SetSize((int) (mTexture.GetWidth() * (mUv[2] - mUv[0])), (int) (mTexture.GetHeight() * (mUv[3] - mUv[1])));
+        SetSize((int) (mTexture.Width * (mUv[2] - mUv[0])), (int) (mTexture.Height * (mUv[3] - mUv[1])));
     }
 
     /// <summary>

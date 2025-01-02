@@ -1117,8 +1117,8 @@ public partial class Entity : IEntity
 
         var spriteRow = PickSpriteRow(Dir);
 
-        var frameWidth = texture.GetWidth() / SpriteFrames;
-        var frameHeight = texture.GetHeight() / Options.Instance.Sprites.Directions;
+        var frameWidth = texture.Width / SpriteFrames;
+        var frameHeight = texture.Height / Options.Instance.Sprites.Directions;
 
         var frame = SpriteFrame;
         if (Options.AnimatedSprites.Contains(sprite.ToLower()))
@@ -1364,8 +1364,8 @@ public partial class Entity : IEntity
 
         // Calculate: direction, frame width and frame height.
         var spriteRow = PickSpriteRow(Dir);
-        var frameWidth = paperdollTex.GetWidth() / spriteFrames;
-        var frameHeight = paperdollTex.GetHeight() / Options.Instance.Sprites.Directions;
+        var frameWidth = paperdollTex.Width / spriteFrames;
+        var frameHeight = paperdollTex.Height / Options.Instance.Sprites.Directions;
 
         // Calculate: source and destination rectangles.
         var frame = SpriteFrame;
@@ -1806,7 +1806,7 @@ public partial class Entity : IEntity
         {
             Graphics.DrawGameTexture(
                 castForeground,
-                new FloatRect(0, 0, castForeground.GetWidth() * fillRatio, castForeground.Height),
+                new FloatRect(0, 0, castForeground.Width * fillRatio, castForeground.Height),
                 new FloatRect(x - castForeground.Width / 2, y - castForeground.Height / 2, castForeground.Width * fillRatio, castForeground.Height), Color.White
             );
         }
@@ -1829,15 +1829,15 @@ public partial class Entity : IEntity
         }
 
         var srcRectangle = new FloatRect(
-            priority * targetTexture.GetWidth() / 2f,
+            priority * targetTexture.Width / 2f,
             0,
-            targetTexture.GetWidth() / 2f,
-            targetTexture.GetHeight()
+            targetTexture.Width / 2f,
+            targetTexture.Height
         );
 
         var destRectangle = new FloatRect(
-            (float)Math.Ceiling(WorldPos.X + (WorldPos.Width - targetTexture.GetWidth() / 2) / 2),
-            (float)Math.Ceiling(WorldPos.Y + (WorldPos.Height - targetTexture.GetHeight()) / 2),
+            (float)Math.Ceiling(WorldPos.X + (WorldPos.Width - targetTexture.Width / 2) / 2),
+            (float)Math.Ceiling(WorldPos.Y + (WorldPos.Height - targetTexture.Height) / 2),
             srcRectangle.Width,
             srcRectangle.Height
         );

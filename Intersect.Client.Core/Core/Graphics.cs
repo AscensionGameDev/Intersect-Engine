@@ -776,7 +776,7 @@ public static partial class Graphics
     {
         return gameTexture == null
             ? new FloatRect()
-            : new FloatRect(0, 0, gameTexture.GetWidth(), gameTexture.GetHeight());
+            : new FloatRect(0, 0, gameTexture.Width, gameTexture.Height);
     }
 
     public static void DrawFullScreenTexture(GameTexture tex, float alpha = 1f)
@@ -786,10 +786,10 @@ public static partial class Graphics
             return;
         }
 
-        var bgx = Renderer.GetScreenWidth() / 2 - tex.GetWidth() / 2;
-        var bgy = Renderer.GetScreenHeight() / 2 - tex.GetHeight() / 2;
-        var bgw = tex.GetWidth();
-        var bgh = tex.GetHeight();
+        var bgx = Renderer.GetScreenWidth() / 2 - tex.Width / 2;
+        var bgy = Renderer.GetScreenHeight() / 2 - tex.Height / 2;
+        var bgw = tex.Width;
+        var bgh = tex.Height;
         int diff;
 
         if (bgw < Renderer.GetScreenWidth())
@@ -820,10 +820,10 @@ public static partial class Graphics
             return;
         }
 
-        var bgx = Renderer.GetScreenWidth() / 2 - tex.GetWidth() / 2;
-        var bgy = Renderer.GetScreenHeight() / 2 - tex.GetHeight() / 2;
-        var bgw = tex.GetWidth();
-        var bgh = tex.GetHeight();
+        var bgx = Renderer.GetScreenWidth() / 2 - tex.Width / 2;
+        var bgy = Renderer.GetScreenHeight() / 2 - tex.Height / 2;
+        var bgw = tex.Width;
+        var bgh = tex.Height;
 
         DrawGameTexture(
             tex, GetSourceRect(tex),
@@ -854,9 +854,9 @@ public static partial class Graphics
             return;
         }
 
-        var scale = Renderer.GetScreenWidth() / (float)tex.GetWidth();
-        var scaledHeight = tex.GetHeight() * scale;
-        var offsetY = (Renderer.GetScreenHeight() - tex.GetHeight()) / 2f;
+        var scale = Renderer.GetScreenWidth() / (float)tex.Width;
+        var scaledHeight = tex.Height * scale;
+        var offsetY = (Renderer.GetScreenHeight() - tex.Height) / 2f;
         DrawGameTexture(
             tex, GetSourceRect(tex),
             new FloatRect(
@@ -872,8 +872,8 @@ public static partial class Graphics
             return;
         }
 
-        var scale = Renderer.GetScreenHeight() / (float)tex.GetHeight();
-        var scaledWidth = tex.GetWidth() * scale;
+        var scale = Renderer.GetScreenHeight() / (float)tex.Height;
+        var scaledWidth = tex.Width * scale;
         var offsetX = (Renderer.GetScreenWidth() - scaledWidth) / 2f;
         DrawGameTexture(
             tex, GetSourceRect(tex),
@@ -1417,8 +1417,8 @@ public static partial class Graphics
         bool drawImmediate = false
     )
     {
-        var destRectangle = new FloatRect(x, y, tex.GetWidth(), tex.GetHeight());
-        var srcRectangle = new FloatRect(0, 0, tex.GetWidth(), tex.GetHeight());
+        var destRectangle = new FloatRect(x, y, tex.Width, tex.Height);
+        var srcRectangle = new FloatRect(0, 0, tex.Width, tex.Height);
 
         DrawGameTexture(
             tex, srcRectangle, destRectangle, Color.White, renderTarget, blendMode, shader, rotationDegrees,
@@ -1451,8 +1451,8 @@ public static partial class Graphics
         bool drawImmediate = false
     )
     {
-        var destRectangle = new FloatRect(x, y, tex.GetWidth(), tex.GetHeight());
-        var srcRectangle = new FloatRect(0, 0, tex.GetWidth(), tex.GetHeight());
+        var destRectangle = new FloatRect(x, y, tex.Width, tex.Height);
+        var srcRectangle = new FloatRect(0, 0, tex.Width, tex.Height);
         DrawGameTexture(
             tex, srcRectangle, destRectangle, renderColor, renderTarget, blendMode, shader, rotationDegrees,
             drawImmediate

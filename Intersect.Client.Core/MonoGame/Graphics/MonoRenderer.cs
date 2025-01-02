@@ -672,7 +672,7 @@ public class MonoRenderer : GameRenderer
         }
         else
         {
-            Draw(new FloatRect(0, 0, renderTarget.GetWidth(), renderTarget.GetHeight()), renderTarget);
+            Draw(new FloatRect(0, 0, renderTarget.Width, renderTarget.Height), renderTarget);
         }
     }
 

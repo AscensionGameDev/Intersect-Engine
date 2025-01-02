@@ -510,7 +510,7 @@ public partial class CraftingWindow
         }
 
         mBar.SetTextureRect(
-            0, 0, Convert.ToInt32(ratio * mBar.Texture?.GetWidth() ?? 0), mBar.Texture?.GetHeight() ?? 0
+            0, 0, Convert.ToInt32(ratio * mBar.Texture?.Width ?? 0), mBar.Texture?.Height ?? 0
         );
 
         mBar.Width = Convert.ToInt32(width);

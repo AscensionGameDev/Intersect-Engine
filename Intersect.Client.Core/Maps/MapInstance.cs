@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using System.Collections.Concurrent;
-
+using Intersect.Client.Classes.MonoGame.Graphics;
 using Intersect.Client.Core;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
@@ -109,7 +109,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
     private bool mTexturesFound = false;
 
-    private Dictionary<string, Dictionary<object, GameTileBuffer[]>> mTileBufferDict = new Dictionary<string, Dictionary<object, GameTileBuffer[]>>(); //[Layer][?][?]
+    private Dictionary<string, Dictionary<object?, GameTileBuffer[]>> mTileBufferDict = new Dictionary<string, Dictionary<object?, GameTileBuffer[]>>(); //[Layer][?][?]
 
     private Dictionary<string, GameTileBuffer[][]> mTileBuffers = new Dictionary<string, GameTileBuffer[][]>(); //[Layer][Autotile Frame][Buffer Index]
 
@@ -119,7 +119,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         mTileBuffers.Clear();
         foreach (var layer in Options.Instance.MapOpts.Layers.All)
         {
-            mTileBufferDict.Add(layer, new Dictionary<object, GameTileBuffer[]>());
+            mTileBufferDict.Add(layer, new Dictionary<object?, GameTileBuffer[]>());
             mTileBuffers.Add(layer, new GameTileBuffer[3][]); //3 autotile frames per layer
         }
     }
@@ -395,66 +395,120 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
     private GameTileBuffer[] CheckAutotile(int x, int y, MapBase[,] surroundingMaps)
     {
+        var mapXOffset = X;
+        var mapYOffset = Y;
+
         var updated = new List<GameTileBuffer>();
+        // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
         foreach (var layer in Options.Instance.MapOpts.Layers.All)
         {
-            if (Autotiles.UpdateAutoTile(x, y, layer, surroundingMaps))
+            if (!Autotiles.UpdateAutoTile(
+                    x,
+                    y,
+                    layer,
+                    surroundingMaps
+                ))
             {
-                //Find the VBO, update it.
-                var tileBuffer = mTileBufferDict[layer];
-                var tile = Layers[layer][x, y];
-                if (tile.TilesetTexture == null)
+                continue;
+            }
+
+            // Find the VBO, update it.
+            if (!mTileBufferDict.TryGetValue(layer, out var tileBuffer))
+            {
+                continue;
+            }
+
+            if (!Layers.TryGetValue(layer, out var layerTiles))
+            {
+                continue;
+            }
+
+            var tile = layerTiles[x, y];
+            if (tile.TilesetTexture == default)
+            {
+                continue;
+            }
+
+            var tilesetTexture = (GameTexture)tile.TilesetTexture;
+            if (tile.X < 0 || tile.Y < 0)
+            {
+                continue;
+            }
+
+            if (tile.X * _tileWidth >= tilesetTexture.Width ||
+                tile.Y * _tileHeight >= tilesetTexture.Height)
+            {
+                continue;
+            }
+
+            var tilesetPlatformTexture = tilesetTexture.GetTexture();
+            if (!tileBuffer.TryGetValue(tilesetPlatformTexture, out var tileBuffersForTexture))
+            {
+                continue;
+            }
+
+            var tileX = x * _tileWidth + mapXOffset;
+            var tileY = y * _tileHeight + mapYOffset;
+
+            for (var animationFrameIndex = 0; animationFrameIndex < 3; animationFrameIndex++)
+            {
+                var buffer = tileBuffersForTexture[animationFrameIndex];
+
+                DrawAutoTile(
+                    layer,
+                    tileX,
+                    tileY,
+                    1,
+                    x,
+                    y,
+                    animationFrameIndex,
+                    tilesetTexture,
+                    buffer,
+                    true
+                );
+
+                DrawAutoTile(
+                    layer,
+                    tileX + _tileHalfWidth,
+                    tileY,
+                    2,
+                    x,
+                    y,
+                    animationFrameIndex,
+                    tilesetTexture,
+                    buffer,
+                    true
+                );
+
+                DrawAutoTile(
+                    layer,
+                    tileX,
+                    tileY + _tileHalfHeight,
+                    3,
+                    x,
+                    y,
+                    animationFrameIndex,
+                    tilesetTexture,
+                    buffer,
+                    true
+                );
+
+                DrawAutoTile(
+                    layer,
+                    tileX + _tileHalfWidth,
+                    tileY + _tileHalfHeight,
+                    4,
+                    x,
+                    y,
+                    animationFrameIndex,
+                    tilesetTexture,
+                    buffer,
+                    true
+                );
+
+                if (!updated.Contains(buffer))
                 {
-                    continue;
-                }
-
-                var tilesetTex = (GameTexture)tile.TilesetTexture;
-                if (tile.X < 0 || tile.Y < 0)
-                {
-                    continue;
-                }
-
-                if (tile.X * _tileWidth >= tilesetTex.GetWidth() ||
-                    tile.Y * _tileHeight >= tilesetTex.GetHeight())
-                {
-                    continue;
-                }
-
-                var platformTex = tilesetTex.GetTexture();
-                if (tileBuffer.ContainsKey(platformTex))
-                {
-                    for (var autotileFrame = 0; autotileFrame < 3; autotileFrame++)
-                    {
-                        var buffer = tileBuffer[platformTex][autotileFrame];
-                        var xoffset = GetX();
-                        var yoffset = GetY();
-                        DrawAutoTile(
-                            layer, x * _tileWidth + xoffset, y * _tileHeight + yoffset, 1, x, y,
-                            autotileFrame, tilesetTex, buffer, true
-                        ); //Top Left
-
-                        DrawAutoTile(
-                            layer, x * _tileWidth + _tileHalfWidth + xoffset,
-                            y * _tileHeight + yoffset, 2, x, y, autotileFrame, tilesetTex, buffer, true
-                        );
-
-                        DrawAutoTile(
-                            layer, x * _tileWidth + xoffset,
-                            y * _tileHeight + _tileHalfHeight + yoffset, 3, x, y, autotileFrame,
-                            tilesetTex, buffer, true
-                        );
-
-                        DrawAutoTile(
-                            layer, +x * _tileWidth + _tileHalfWidth + xoffset,
-                            y * _tileHeight + _tileHalfHeight + yoffset, 4, x, y, autotileFrame,
-                            tilesetTex, buffer, true
-                        );
-
-                        if (!updated.Contains(buffer))
-                        {
-                            updated.Add(buffer);
-                        }
-                    }
+                    updated.Add(buffer);
                 }
             }
         }
@@ -986,7 +1040,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             return null;
         }
 
-        var tileBuffers = new Dictionary<object, GameTileBuffer[]>();
+        var tileBuffers = new Dictionary<object?, GameTileBuffer[]>();
 
         var mapWidth = Options.MapWidth;
         var mapHeight = Options.MapHeight;
@@ -1132,9 +1186,19 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         var valueArrays = tileBuffers.Values.ToArray();
         for (var x = 0; x < valueArrays.Length; x++)
         {
+            var bufferGroup = valueArrays[x];
             for (var i = 0; i < 3; i++)
             {
-                outputBuffers[i][x] = valueArrays[x][i];
+                var bufferForFrame = bufferGroup[i];
+                // if (bufferForFrame is MonoTileBuffer monoTileBuffer)
+                // {
+                //     Log.Info($"[{Name}][{layerName}] Buffer for {monoTileBuffer._texture?.Name} frame {i} has {monoTileBuffer._addedTileCount.Count} unique tiles");
+                //     foreach (var (key, value) in monoTileBuffer._addedTileCount.OrderByDescending(kvp => kvp.Value))
+                //     {
+                //         Log.Info($"[{Name}][{layerName}] {key} has {value} occurrences");
+                //     }
+                // }
+                outputBuffers[i][x] = bufferForFrame;
             }
         }
 
