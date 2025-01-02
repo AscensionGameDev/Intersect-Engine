@@ -109,7 +109,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
     private bool mTexturesFound = false;
 
-    private readonly Dictionary<string, Dictionary<object, GameTileBuffer[]>> _tileBuffersPerTexture = []; // [Layer][Platform Texture][Buffer Index]
+    private readonly Dictionary<string, Dictionary<object, GameTileBuffer[]>> _tileBuffersPerTexturePerLayer = []; // [Layer][Platform Texture][Buffer Index]
 
     private readonly Dictionary<string, GameTileBuffer[][]> _tileBuffersPerLayer = []; // [Layer][Autotile Frame][Buffer Index]
 
@@ -407,7 +407,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             }
 
             // Find the VBO, update it.
-            if (!_tileBuffersPerTexture.TryGetValue(layer, out var tileBuffer))
+            if (!_tileBuffersPerTexturePerLayer.TryGetValue(layer, out var tileBuffer))
             {
                 continue;
             }
@@ -750,7 +750,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     {
         foreach (var layer in Options.Instance.MapOpts.Layers.All)
         {
-            _tileBuffersPerTexture[layer].Clear();
+            _tileBuffersPerTexturePerLayer[layer].Clear();
 
             if (!_tileBuffersPerLayer.TryGetValue(layer, out var layerBuffers))
             {
@@ -766,7 +766,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             }
         }
 
-        _tileBuffersPerTexture.Clear();
+        _tileBuffersPerTexturePerLayer.Clear();
         _tileBuffersPerLayer.Clear();
     }
 
@@ -1000,7 +1000,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
         if (update)
         {
-            if (!buffer.UpdateTile(
+            if (!buffer.TryUpdateTile(
                     tileset,
                     destX,
                     destY,
@@ -1015,7 +1015,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         }
         else
         {
-            if (!buffer.AddTile(
+            if (!buffer.TryAddTile(
                     tileset,
                     destX,
                     destY,
@@ -1042,7 +1042,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             return null;
         }
 
-        var tileBuffers = new Dictionary<object?, GameTileBuffer[]>();
+        var tileBuffersPerTexture = new Dictionary<object, GameTileBuffer[]>();
 
         var mapWidth = Options.MapWidth;
         var mapHeight = Options.MapHeight;
@@ -1052,12 +1052,10 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             for (var y = 0; y < mapHeight; y++)
             {
                 var layerTile = layerTiles[x, y];
-                if (layerTile.TilesetTexture == null)
+                if (layerTile.TilesetTexture is not GameTexture tilesetTexture)
                 {
                     continue;
                 }
-
-                var tilesetTexture = (GameTexture)layerTile.TilesetTexture;
 
                 if (layerTile.X < 0 || layerTile.Y < 0)
                 {
@@ -1071,11 +1069,15 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 }
 
                 var platformTexture = tilesetTexture.GetTexture();
+                if (platformTexture == default)
+                {
+                    continue;
+                }
 
                 GameTileBuffer[] animationFrameBuffers;
-                if (tileBuffers.TryGetValue(platformTexture, out var tileBuffer))
+                if (tileBuffersPerTexture.TryGetValue(platformTexture, out var tileBuffers))
                 {
-                    animationFrameBuffers = tileBuffer;
+                    animationFrameBuffers = tileBuffers;
                 }
                 else
                 {
@@ -1085,7 +1087,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                         animationFrameBuffers[i] = Graphics.Renderer!.CreateTileBuffer();
                     }
 
-                    tileBuffers.Add(platformTexture, animationFrameBuffers);
+                    tileBuffersPerTexture.Add(platformTexture, animationFrameBuffers);
                 }
 
                 var tileXOffset = x * _tileWidth + xOffset;
@@ -1098,13 +1100,12 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                         for (var animationFrameIndex = 0; animationFrameIndex < 3; animationFrameIndex++)
                         {
                             var animationFrameBuffer = animationFrameBuffers[animationFrameIndex];
-                            var layerTileAtPosition = layerTiles[x, y];
-                            if (!animationFrameBuffer.AddTile(
+                            if (!animationFrameBuffer.TryAddTile(
                                     tilesetTexture,
                                     tileXOffset,
                                     tileYOffset,
-                                    layerTileAtPosition.X * _tileWidth,
-                                    layerTileAtPosition.Y * _tileHeight,
+                                    layerTile.X * _tileWidth,
+                                    layerTile.Y * _tileHeight,
                                     _tileWidth,
                                     _tileHeight
                                 ))
@@ -1182,10 +1183,10 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         var outputBuffers = new GameTileBuffer[3][];
         for (var i = 0; i < 3; i++)
         {
-            outputBuffers[i] = new GameTileBuffer[tileBuffers.Count];
+            outputBuffers[i] = new GameTileBuffer[tileBuffersPerTexture.Count];
         }
 
-        var valueArrays = tileBuffers.Values.ToArray();
+        var valueArrays = tileBuffersPerTexture.Values.ToArray();
         for (var x = 0; x < valueArrays.Length; x++)
         {
             var bufferGroup = valueArrays[x];
@@ -1204,7 +1205,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             }
         }
 
-        _tileBuffersPerTexture[layerName] = tileBuffers;
+        _tileBuffersPerTexturePerLayer.Add(layerName, tileBuffersPerTexture);
 
         return outputBuffers;
     }
