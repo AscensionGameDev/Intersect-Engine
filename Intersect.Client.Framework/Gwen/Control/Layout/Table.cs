@@ -454,13 +454,23 @@ public partial class Table : Base, IColorableText
 
         SetSize(width, height);
 
-        //InvalidateParent();
+        InvalidateParent();
     }
 
     public override void Invalidate()
     {
         base.Invalidate();
-        InvalidateChildren(true);
+        // TODO: Remove this commented code if this doesn't cause issues
+        // InvalidateChildren(true);
+    }
+
+    public void Invalidate(bool invalidateChildren, bool invalidateRecursive = true)
+    {
+        Invalidate();
+        if (invalidateChildren)
+        {
+            InvalidateChildren(invalidateRecursive);
+        }
     }
 
 }

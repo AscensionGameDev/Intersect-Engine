@@ -1170,7 +1170,7 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Invoked when control's bounds have been changed.
     /// </summary>
-    public event GwenEventHandler<EventArgs> BoundsChanged;
+    public event GwenEventHandler<EventArgs>? BoundsChanged;
 
     /// <summary>
     ///     Invoked when the control has been left-clicked.
@@ -1221,7 +1221,7 @@ public partial class Base : IDisposable
 
         if (this is ControlInternal.Text)
         {
-            return "[Text: " + (this as ControlInternal.Text).String + "]";
+            return "[Text: " + (this as ControlInternal.Text).DisplayedText + "]";
         }
 
         return GetType().ToString();
@@ -1628,20 +1628,14 @@ public partial class Base : IDisposable
     /// </summary>
     /// <param name="x">X-axis movement.</param>
     /// <param name="y">Y-axis movement.</param>
-    public virtual void MoveBy(int x, int y)
-    {
-        SetBounds(X + x, Y + y, Width, Height);
-    }
+    public virtual void MoveBy(int x, int y) => SetBounds(X + x, Y + y, Width, Height);
 
     /// <summary>
     ///     Moves the control to a specific point.
     /// </summary>
     /// <param name="x">Target x coordinate.</param>
     /// <param name="y">Target y coordinate.</param>
-    public virtual void MoveTo(float x, float y)
-    {
-        MoveTo((int) x, (int) y);
-    }
+    public virtual void MoveTo(float x, float y) => MoveTo((int) x, (int) y);
 
     /// <summary>
     ///     Moves the control to a specific point, clamping on paren't bounds if RestrictToParent is set.
@@ -1710,10 +1704,14 @@ public partial class Base : IDisposable
     /// </summary>
     /// <param name="x">Target x coordinate.</param>
     /// <param name="y">Target y coordinate.</param>
-    public virtual void SetPosition(int x, int y)
-    {
-        SetBounds(x, y, Width, Height);
-    }
+    public virtual void SetPosition(int x, int y) => SetBounds(x, y, Width, Height);
+
+    public virtual void SetPosition(Point point) => SetBounds(
+        point.X,
+        point.Y,
+        Width,
+        Height
+    );
 
     /// <summary>
     ///     Sets the control size.
@@ -1721,20 +1719,21 @@ public partial class Base : IDisposable
     /// <param name="width">New width.</param>
     /// <param name="height">New height.</param>
     /// <returns>True if bounds changed.</returns>
-    public virtual bool SetSize(int width, int height)
-    {
-        return SetBounds(X, Y, width, height);
-    }
+    public virtual bool SetSize(int width, int height) => SetBounds(X, Y, width, height);
 
     /// <summary>
     ///     Sets the control bounds.
     /// </summary>
     /// <param name="bounds">New bounds.</param>
     /// <returns>True if bounds changed.</returns>
-    public virtual bool SetBounds(Rectangle bounds)
-    {
-        return SetBounds(bounds.X, bounds.Y, bounds.Width, bounds.Height);
-    }
+    public virtual bool SetBounds(Rectangle bounds) => SetBounds(bounds.X, bounds.Y, bounds.Width, bounds.Height);
+
+    public virtual bool SetBounds(Point position, Point size) => SetBounds(
+        position.X,
+        position.Y,
+        size.X,
+        size.Y
+    );
 
     /// <summary>
     ///     Sets the control bounds.
@@ -1746,10 +1745,7 @@ public partial class Base : IDisposable
     /// <returns>
     ///     True if bounds changed.
     /// </returns>
-    public virtual bool SetBounds(float x, float y, float width, float height)
-    {
-        return SetBounds((int) x, (int) y, (int) width, (int) height);
-    }
+    public virtual bool SetBounds(float x, float y, float width, float height) => SetBounds((int) x, (int) y, (int) width, (int) height);
 
     /// <summary>
     ///     Sets the control bounds.
@@ -1778,10 +1774,7 @@ public partial class Base : IDisposable
 
         OnBoundsChanged(oldBounds);
 
-        if (BoundsChanged != null)
-        {
-            BoundsChanged.Invoke(this, EventArgs.Empty);
-        }
+        BoundsChanged?.Invoke(this, EventArgs.Empty);
 
         return true;
     }
@@ -1840,11 +1833,7 @@ public partial class Base : IDisposable
     {
         //Anything that needs to update on size changes
         //Iterate my children and tell them I've changed
-        //
-        if (Parent != null)
-        {
-            Parent.OnChildBoundsChanged(oldBounds, this);
-        }
+        Parent?.OnChildBoundsChanged(oldBounds, this);
 
         if (mBounds.Width != oldBounds.Width || mBounds.Height != oldBounds.Height)
         {
@@ -2476,14 +2465,14 @@ public partial class Base : IDisposable
         bounds.Y += mPadding.Top;
         bounds.Height -= mPadding.Top + mPadding.Bottom;
 
-        for (int i = 0; i < mChildren.Count; i++)
+        foreach (var child in mChildren)
         {
-            if (mChildren[i].IsHidden)
+            if (child.IsHidden)
             {
                 continue;
             }
 
-            var dock = mChildren[i].Dock;
+            var dock = child.Dock;
 
             if (dock.HasFlag(Pos.Fill))
             {
@@ -2492,28 +2481,28 @@ public partial class Base : IDisposable
 
             if (dock.HasFlag(Pos.Top))
             {
-                var margin = mChildren[i].Margin;
+                var margin = child.Margin;
 
-                mChildren[i].SetBounds(
+                child.SetBounds(
                     bounds.X + margin.Left, bounds.Y + margin.Top, bounds.Width - margin.Left - margin.Right,
-                    mChildren[i].Height
+                    child.Height
                 );
 
-                var height = margin.Top + margin.Bottom + mChildren[i].Height;
+                var height = margin.Top + margin.Bottom + child.Height;
                 bounds.Y += height;
                 bounds.Height -= height;
             }
 
             if (dock.HasFlag(Pos.Left))
             {
-                var margin = mChildren[i].Margin;
+                var margin = child.Margin;
 
-                mChildren[i].SetBounds(
-                    bounds.X + margin.Left, bounds.Y + margin.Top, mChildren[i].Width,
+                child.SetBounds(
+                    bounds.X + margin.Left, bounds.Y + margin.Top, child.Width,
                     bounds.Height - margin.Top - margin.Bottom
                 );
 
-                var width = margin.Left + margin.Right + mChildren[i].Width;
+                var width = margin.Left + margin.Right + child.Width;
                 bounds.X += width;
                 bounds.Width -= width;
             }
@@ -2521,31 +2510,31 @@ public partial class Base : IDisposable
             if (dock.HasFlag(Pos.Right))
             {
                 // TODO: THIS MARGIN CODE MIGHT NOT BE FULLY FUNCTIONAL
-                var margin = mChildren[i].Margin;
+                var margin = child.Margin;
 
-                mChildren[i].SetBounds(
-                    bounds.X + bounds.Width - mChildren[i].Width - margin.Right, bounds.Y + margin.Top, mChildren[i].Width,
+                child.SetBounds(
+                    bounds.X + bounds.Width - child.Width - margin.Right, bounds.Y + margin.Top, child.Width,
                     bounds.Height - margin.Top - margin.Bottom
                 );
 
-                var width = margin.Left + margin.Right + mChildren[i].Width;
+                var width = margin.Left + margin.Right + child.Width;
                 bounds.Width -= width;
             }
 
             if (dock.HasFlag(Pos.Bottom))
             {
                 // TODO: THIS MARGIN CODE MIGHT NOT BE FULLY FUNCTIONAL
-                var margin = mChildren[i].Margin;
+                var margin = child.Margin;
 
-                mChildren[i].SetBounds(
-                    bounds.X + margin.Left, bounds.Y + bounds.Height - mChildren[i].Height - margin.Bottom,
-                    bounds.Width - margin.Left - margin.Right, mChildren[i].Height
+                child.SetBounds(
+                    bounds.X + margin.Left, bounds.Y + bounds.Height - child.Height - margin.Bottom,
+                    bounds.Width - margin.Left - margin.Right, child.Height
                 );
 
-                bounds.Height -= mChildren[i].Height + margin.Bottom + margin.Top;
+                bounds.Height -= child.Height + margin.Bottom + margin.Top;
             }
 
-            mChildren[i].RecurseLayout(skin);
+            child.RecurseLayout(skin);
         }
 
         mInnerBounds = bounds;
@@ -2553,23 +2542,38 @@ public partial class Base : IDisposable
         //
         // Fill uses the left over space, so do that now.
         //
-        for (int i = 0; i < mChildren.Count; i++)
+        foreach (var child in mChildren)
         {
-            var dock = mChildren[i].Dock;
+            var dock = child.Dock;
 
             if (!dock.HasFlag(Pos.Fill))
             {
                 continue;
             }
 
-            var margin = mChildren[i].Margin;
+            var margin = child.Margin;
 
-            mChildren[i].SetBounds(
-                bounds.X + margin.Left, bounds.Y + margin.Top, bounds.Width - margin.Left - margin.Right,
-                bounds.Height - margin.Top - margin.Bottom
+            var newPosition = new Point(
+                bounds.X + margin.Left,
+                bounds.Y + margin.Top
             );
 
-            mChildren[i].RecurseLayout(skin);
+            if (child is IAutoSizeToContents { AutoSizeToContents: true })
+            {
+                child.SetPosition(newPosition);
+            }
+            else
+            {
+                child.SetBounds(
+                    newPosition,
+                    new Point(
+                        bounds.Width - margin.Left - margin.Right,
+                        bounds.Height - margin.Top - margin.Bottom
+                    )
+                );
+            }
+
+            child.RecurseLayout(skin);
         }
 
         PostLayout(skin);
