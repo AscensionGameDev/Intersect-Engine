@@ -18,7 +18,7 @@ public partial class ActionMessage : IActionMessage
 
     public int X { get; set; }
 
-    public long XOffset { get; set; }
+    public int XOffset { get; set; }
 
     public int Y { get; set; }
 

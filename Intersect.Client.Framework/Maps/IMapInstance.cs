@@ -20,8 +20,8 @@ public interface IMapInstance
 
     MapZone ZoneType { get; }
 
-    float X { get; }
-    float Y { get; }
+    int X { get; }
+    int Y { get; }
     int GridX { get; set; }
     int GridY { get; set; }
     bool IsLoaded { get; }

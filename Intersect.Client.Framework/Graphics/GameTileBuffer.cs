@@ -8,9 +8,9 @@ public abstract partial class GameTileBuffer
 
     public abstract bool Supported { get; }
 
-    public abstract bool AddTile(GameTexture texture, float x, float y, int srcX, int srcY, int srcW, int srcH);
+    public abstract bool AddTile(GameTexture texture, int x, int y, int srcX, int srcY, int srcW, int srcH);
 
-    public abstract bool UpdateTile(GameTexture texture, float x, float y, int srcX, int srcY, int srcW, int srcH);
+    public abstract bool UpdateTile(GameTexture texture, int x, int y, int srcX, int srcY, int srcW, int srcH);
 
     public abstract bool SetData();
 

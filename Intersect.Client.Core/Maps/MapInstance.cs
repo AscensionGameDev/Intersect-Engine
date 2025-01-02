@@ -414,8 +414,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                     continue;
                 }
 
-                if (tile.X * Options.TileWidth >= tilesetTex.GetWidth() ||
-                    tile.Y * Options.TileHeight >= tilesetTex.GetHeight())
+                if (tile.X * _tileWidth >= tilesetTex.GetWidth() ||
+                    tile.Y * _tileHeight >= tilesetTex.GetHeight())
                 {
                     continue;
                 }
@@ -429,24 +429,24 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                         var xoffset = GetX();
                         var yoffset = GetY();
                         DrawAutoTile(
-                            layer, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, 1, x, y,
+                            layer, x * _tileWidth + xoffset, y * _tileHeight + yoffset, 1, x, y,
                             autotileFrame, tilesetTex, buffer, true
                         ); //Top Left
 
                         DrawAutoTile(
-                            layer, x * Options.TileWidth + Options.TileWidth / 2 + xoffset,
-                            y * Options.TileHeight + yoffset, 2, x, y, autotileFrame, tilesetTex, buffer, true
+                            layer, x * _tileWidth + _tileHalfWidth + xoffset,
+                            y * _tileHeight + yoffset, 2, x, y, autotileFrame, tilesetTex, buffer, true
                         );
 
                         DrawAutoTile(
-                            layer, x * Options.TileWidth + xoffset,
-                            y * Options.TileHeight + Options.TileHeight / 2 + yoffset, 3, x, y, autotileFrame,
+                            layer, x * _tileWidth + xoffset,
+                            y * _tileHeight + _tileHalfHeight + yoffset, 3, x, y, autotileFrame,
                             tilesetTex, buffer, true
                         );
 
                         DrawAutoTile(
-                            layer, +x * Options.TileWidth + Options.TileWidth / 2 + xoffset,
-                            y * Options.TileHeight + Options.TileHeight / 2 + yoffset, 4, x, y, autotileFrame,
+                            layer, +x * _tileWidth + _tileHalfWidth + xoffset,
+                            y * _tileHeight + _tileHalfHeight + yoffset, 4, x, y, autotileFrame,
                             tilesetTex, buffer, true
                         );
 
@@ -496,20 +496,20 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         return mapBase;
     }
 
-    public float X => GetX();
+    public int X => GetX();
 
     //Retreives the X Position of the Left side of the map in world space.
-    public float GetX()
+    public int GetX()
     {
-        return GridX * Options.MapWidth * Options.TileWidth;
+        return GridX * Options.MapWidth * _tileWidth;
     }
 
-    public float Y => GetY();
+    public int Y => GetY();
 
     //Retreives the Y Position of the Top side of the map in world space.
-    public float GetY()
+    public int GetY()
     {
-        return GridY * Options.MapHeight * Options.TileHeight;
+        return GridY * Options.MapHeight * _tileHeight;
     }
 
     //Attribute References
@@ -539,8 +539,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                     {
                         var animInstance = new Animation(anim, true);
                         animInstance.SetPosition(
-                            GetX() + x * Options.TileWidth + Options.TileWidth / 2,
-                            GetY() + y * Options.TileHeight + Options.TileHeight / 2, x, y, Id, 0
+                            GetX() + x * _tileWidth + _tileHalfWidth,
+                            GetY() + y * _tileHeight + _tileHalfHeight, x, y, Id, 0
                         );
 
                         mAttributeAnimInstances.Add(att, animInstance);
@@ -636,8 +636,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         var anim = new MapAnimation(animBase, tileX, tileY, dir, owner as Entity);
         LocalAnimations.TryAdd(anim.Id, anim);
         anim.SetPosition(
-            GetX() + tileX * Options.TileWidth + Options.TileWidth / 2,
-            GetY() + tileY * Options.TileHeight + Options.TileHeight / 2, tileX, tileY, Id, dir
+            GetX() + tileX * _tileWidth + _tileHalfWidth,
+            GetY() + tileY * _tileHeight + _tileHalfHeight, tileX, tileY, Id, dir
         );
     }
 
@@ -670,7 +670,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                     Dictionary<string, GameTileBuffer[][]> buffers = [];
                     foreach (var layer in Options.Instance.MapOpts.Layers.All)
                     {
-                        buffers[layer] = DrawMapLayer(layer, GetX(), GetY());
+                        buffers[layer] = DrawMapLayer(layer, X, Y);
                         for (var y = 0; y < 3; y++)
                         {
                             for (var z = 0; z < buffers[layer][y].Length; z++)
@@ -763,8 +763,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     public void DrawItemsAndLights()
     {
         // Calculate tile and map item dimensions.
-        var tileWidth = Options.TileWidth;
-        var tileHeight = Options.TileHeight;
+        var tileWidth = _tileWidth;
+        var tileHeight = _tileHeight;
         var mapItemWidth = Options.Instance.MapOpts.MapItemWidth;
         var mapItemHeight = Options.Instance.MapOpts.MapItemHeight;
 
@@ -827,8 +827,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         var mousePos = Graphics.ConvertToWorldPoint(
                 Globals.InputManager.GetMousePosition()
         );
-        var x = (int)(mousePos.X - (int)GetX()) / Options.TileWidth;
-        var y = (int)(mousePos.Y - (int)GetY()) / Options.TileHeight;
+        var x = (int)(mousePos.X - (int)GetX()) / _tileWidth;
+        var y = (int)(mousePos.Y - (int)GetY()) / _tileHeight;
         var mapId = Id;
 
         // Is this an actual location on this map?
@@ -856,8 +856,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                         : new LabelColor(Color.White, Color.Black, new Color(100, 0, 0, 0));
                     var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
                     var offsetY = (baseOffset * textSize.Y);
-                    var destX = GetX() + (int)Math.Ceiling(((x * Options.TileWidth) + (Options.TileWidth / 2)) - (textSize.X / 2));
-                    var destY = GetY() + (int)Math.Ceiling(((y * Options.TileHeight) - ((Options.TileHeight / 3) + textSize.Y))) - offsetY;
+                    var destX = GetX() + (int)Math.Ceiling(((x * _tileWidth) + (_tileHalfWidth)) - (textSize.X / 2));
+                    var destY = GetY() + (int)Math.Ceiling(((y * _tileHeight) - ((_tileHeight / 3) + textSize.Y))) - offsetY;
 
                     // Do we need to draw a background?
                     if (color.Background != Color.Transparent)
@@ -877,10 +877,15 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         }
     }
 
+    private readonly int _tileWidth = Options.Instance.MapOpts.TileWidth;
+    private readonly int _tileHeight = Options.Instance.MapOpts.TileHeight;
+    private readonly int _tileHalfWidth = Options.Instance.MapOpts.TileWidth / 2;
+    private readonly int _tileHalfHeight = Options.Instance.MapOpts.TileHeight / 2;
+
     private void DrawAutoTile(
         string layerName,
-        float destX,
-        float destY,
+        int destX,
+        int destY,
         int quarterNum,
         int x,
         int y,
@@ -917,22 +922,23 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         int yOffset = 0, xOffset = 0;
 
         // calculate the offset
+
         switch (layerTile.Value.Autotile)
         {
             case MapAutotiles.AUTOTILE_WATERFALL:
-                yOffset = (forceFrame - 1) * Options.TileHeight;
+                yOffset = (forceFrame - 1) * _tileHeight;
                 break;
 
             case MapAutotiles.AUTOTILE_ANIM:
-                xOffset = forceFrame * Options.TileWidth * 2;
+                xOffset = forceFrame * _tileWidth * 2;
                 break;
 
             case MapAutotiles.AUTOTILE_ANIM_XP:
-                xOffset = forceFrame * Options.TileWidth * 3;
+                xOffset = forceFrame * _tileWidth * 3;
                 break;
 
             case MapAutotiles.AUTOTILE_CLIFF:
-                yOffset = -Options.TileHeight;
+                yOffset = -_tileHeight;
                 break;
         }
 
@@ -944,8 +950,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                     destY,
                     quarterTile.X + xOffset,
                     quarterTile.Y + yOffset,
-                    Options.TileWidth / 2,
-                    Options.TileHeight / 2
+                    _tileHalfWidth,
+                    _tileHalfHeight
                 ))
             {
                 throw new Exception("Failed to update tile to VBO!");
@@ -959,8 +965,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                     destY,
                     quarterTile.X + xOffset,
                     quarterTile.Y + yOffset,
-                    Options.TileWidth / 2,
-                    Options.TileHeight / 2
+                    _tileHalfWidth,
+                    _tileHalfHeight
                 ))
             {
                 throw new Exception("Failed to add tile to VBO!");
@@ -968,7 +974,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         }
     }
 
-    private GameTileBuffer[][]? DrawMapLayer(string layerName, float xOffset = 0, float yOffset = 0)
+    private GameTileBuffer[][]? DrawMapLayer(string layerName, int xOffset = 0, int yOffset = 0)
     {
         if (!Layers.TryGetValue(layerName, out var layerTiles))
         {
@@ -981,12 +987,13 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         }
 
         var tileBuffers = new Dictionary<object, GameTileBuffer[]>();
-        var tileHalfWidth = Options.TileHalfWidth;
-        var tileHalfHeight = Options.TileHalfHeight;
 
-        for (var x = 0; x < Options.MapWidth; x++)
+        var mapWidth = Options.MapWidth;
+        var mapHeight = Options.MapHeight;
+
+        for (var x = 0; x < mapWidth; x++)
         {
-            for (var y = 0; y < Options.MapHeight; y++)
+            for (var y = 0; y < mapHeight; y++)
             {
                 var layerTile = layerTiles[x, y];
                 if (layerTile.TilesetTexture == null)
@@ -1001,8 +1008,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                     continue;
                 }
 
-                if (layerTile.X * Options.TileWidth >= tilesetTexture.Width ||
-                    layerTile.Y * Options.TileHeight >= tilesetTexture.Height)
+                if (layerTile.X * _tileWidth >= tilesetTexture.Width ||
+                    layerTile.Y * _tileHeight >= tilesetTexture.Height)
                 {
                     continue;
                 }
@@ -1025,8 +1032,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                     tileBuffers.Add(platformTexture, animationFrameBuffers);
                 }
 
-                var tileXOffset = x * Options.TileWidth + xOffset;
-                var tileYOffset = y * Options.TileHeight + yOffset;
+                var tileXOffset = x * _tileWidth + xOffset;
+                var tileYOffset = y * _tileHeight + yOffset;
 
                 var layerAutoTile = layerAutoTiles[x, y];
                 switch (layerAutoTile.RenderState)
@@ -1040,10 +1047,10 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                                     tilesetTexture,
                                     tileXOffset,
                                     tileYOffset,
-                                    layerTileAtPosition.X * Options.TileWidth,
-                                    layerTileAtPosition.Y * Options.TileHeight,
-                                    Options.TileWidth,
-                                    Options.TileHeight
+                                    layerTileAtPosition.X * _tileWidth,
+                                    layerTileAtPosition.Y * _tileHeight,
+                                    _tileWidth,
+                                    _tileHeight
                                 ))
                             {
                                 throw new Exception("Failed to add VBO!");
@@ -1071,7 +1078,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
                             DrawAutoTile(
                                 layerName,
-                                tileXOffset + tileHalfWidth,
+                                tileXOffset + _tileHalfWidth,
                                 tileYOffset,
                                 2,
                                 x,
@@ -1086,7 +1093,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                             DrawAutoTile(
                                 layerName,
                                 tileXOffset,
-                                tileYOffset + tileHalfHeight,
+                                tileYOffset + _tileHalfHeight,
                                 3,
                                 x,
                                 y,
@@ -1099,8 +1106,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
                             DrawAutoTile(
                                 layerName,
-                                tileXOffset + tileHalfWidth,
-                                tileYOffset + tileHalfHeight,
+                                tileXOffset + _tileHalfWidth,
+                                tileYOffset + _tileHalfHeight,
                                 4,
                                 x,
                                 y,
@@ -1165,8 +1172,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             : Math.Max(0, mCurFogIntensity - elapsedTime / 2000f);
 
         // Calculate the number of times the fog texture needs to be drawn to cover the map area.
-        var xCount = Options.MapWidth * Options.TileWidth * 3 / fogTex.Width;
-        var yCount = Options.MapHeight * Options.TileHeight * 3 / fogTex.Height;
+        var xCount = Options.MapWidth * _tileWidth * 3 / fogTex.Width;
+        var yCount = Options.MapHeight * _tileHeight * 3 / fogTex.Height;
 
         // Update the fog texture's position based on its speed and elapsed time.
         mFogCurrentX += elapsedTime / 1000f * FogXSpeed * 2;
@@ -1187,8 +1194,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 Graphics.DrawGameTexture(
                     fogTex, new FloatRect(0, 0, fogTex.Width, fogTex.Height),
                     new FloatRect(
-                        X - Options.MapWidth * Options.TileWidth * 1f + x * fogTex.Width + drawX,
-                        Y - Options.MapHeight * Options.TileHeight * 1f + y * fogTex.Height + drawY,
+                        X - Options.MapWidth * _tileWidth * 1f + x * fogTex.Width + drawX,
+                        Y - Options.MapHeight * _tileHeight * 1f + y * fogTex.Height + drawY,
                         fogTex.Width, fogTex.Height
                     ), new Color((byte)(FogTransparency * mCurFogIntensity), 255, 255, 255)
                 );
@@ -1355,8 +1362,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             float dy = Y - oldMap.Y;
 
             // Update fog position based on displacement.
-            mFogCurrentX += (Options.TileWidth * Options.MapWidth % fogTex.Width) * -Math.Sign(dx);
-            mFogCurrentY += (Options.TileHeight * Options.MapHeight % fogTex.Height) * -Math.Sign(dy);
+            mFogCurrentX += (_tileWidth * Options.MapWidth % fogTex.Width) * -Math.Sign(dx);
+            mFogCurrentY += (_tileHeight * Options.MapHeight % fogTex.Height) * -Math.Sign(dy);
 
             // Reset fog intensity of old map.
             tempMap.mCurFogIntensity = 0;
@@ -1387,24 +1394,26 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     {
         for (var n = ActionMessages.Count - 1; n > -1; n--)
         {
-            var y = (int)Math.Ceiling(
-                GetY() +
-                ActionMessages[n].Y * Options.TileHeight -
-                Options.TileHeight *
-                2 *
-                (1000 - (ActionMessages[n].TransmissionTimer - Timing.Global.MillisecondsUtc)) /
-                1000
-            );
+            var actionMessage = ActionMessages[n];
+            var x = (Y + actionMessage.X * _tileWidth + actionMessage.XOffset);
+            var y = Y + actionMessage.Y * _tileHeight - _tileHeight * 2 *
+                (1000 - (int)(actionMessage.TransmissionTimer - Timing.Global.MillisecondsUtc)) / 1000;
+            var textWidth = Graphics.Renderer.MeasureText(actionMessage.Msg, Graphics.ActionMsgFont, 1).X;
 
-            var x = (int)Math.Ceiling(GetX() + ActionMessages[n].X * Options.TileWidth + ActionMessages[n].XOffset);
-            var textWidth = Graphics.Renderer.MeasureText(ActionMessages[n].Msg, Graphics.ActionMsgFont, 1).X;
             Graphics.Renderer.DrawString(
-                ActionMessages[n].Msg, Graphics.ActionMsgFont, x - textWidth / 2f, y, 1, ActionMessages[n].Color,
-                true, null, new Color(40, 40, 40)
+                actionMessage.Msg,
+                Graphics.ActionMsgFont,
+                x - textWidth / 2f,
+                y,
+                1,
+                actionMessage.Color,
+                true,
+                null,
+                new Color(40, 40, 40)
             );
 
             //Try to remove
-            ActionMessages[n].TryRemove();
+            actionMessage.TryRemove();
         }
     }
 

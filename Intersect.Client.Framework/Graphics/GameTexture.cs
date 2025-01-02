@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Logging;
@@ -24,7 +25,7 @@ public abstract partial class GameTexture : IAsset
 
     public object PlatformTextureObject => GetTexture();
 
-    public GameTexturePackFrame TexturePackFrame => GetTexturePackFrame();
+    public GameTexturePackFrame? TexturePackFrame => GetTexturePackFrame();
 
     public abstract string GetName();
 
@@ -34,6 +35,7 @@ public abstract partial class GameTexture : IAsset
 
     public abstract object GetTexture();
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public TPlatformTexture? GetTexture<TPlatformTexture>() where TPlatformTexture : class =>
         GetTexture() as TPlatformTexture;
 

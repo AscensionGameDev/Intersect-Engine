@@ -1,6 +1,6 @@
 ﻿using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
-
+using Intersect.Collections;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -24,8 +24,9 @@ public partial class MonoTileBuffer : GameTileBuffer
     private int _vertexCount;
 
     private GameTexture? _texture;
+    private Texture2D? _platformTexture;
 
-    private readonly Dictionary<Tuple<float, float>, int> _tileVertexOffset = [];
+    private readonly Dictionary<Vector2iKey, int> _tileVertexOffset = new(Options.MapWidth * Options.MapHeight);
 
     private readonly List<VertexPositionTexture> _vertices = [];
 
@@ -36,14 +37,14 @@ public partial class MonoTileBuffer : GameTileBuffer
 
     public override bool Supported => true;
 
-    public override bool AddTile(GameTexture texture, float x, float y, int srcX, int srcY, int srcW, int srcH)
+    public override bool AddTile(GameTexture texture, int x, int y, int srcX, int srcY, int srcW, int srcH)
     {
         if (_vertexBuffer != null)
         {
             return false;
         }
 
-        var platformTexture = texture.GetTexture<Texture2D>();
+        var platformTexture = (texture == _texture ? _platformTexture : default) ?? texture.GetTexture<Texture2D>();
         if (platformTexture == null)
         {
             return false;
@@ -52,8 +53,9 @@ public partial class MonoTileBuffer : GameTileBuffer
         if (_texture == null)
         {
             _texture = texture;
+            _platformTexture = platformTexture;
         }
-        else if (_texture.GetTexture() != platformTexture)
+        else if (_platformTexture != platformTexture)
         {
             return false;
         }
@@ -90,7 +92,7 @@ public partial class MonoTileBuffer : GameTileBuffer
         var bottom = (srcY + srcH) * textureSizeY;
         var top = srcY * textureSizeY;
 
-        _tileVertexOffset.Add(new Tuple<float, float>(x, y), _vertices.Count);
+        _tileVertexOffset.Add(new Vector2iKey(x, y), _vertexCount);
 
         if (rotated)
         {
@@ -186,11 +188,10 @@ public partial class MonoTileBuffer : GameTileBuffer
         _disposed = true;
     }
 
-    public override bool UpdateTile(GameTexture tex, float x, float y, int srcX, int srcY, int srcW, int srcH)
+    public override bool UpdateTile(GameTexture tex, int x, int y, int srcX, int srcY, int srcW, int srcH)
     {
-        var key = new Tuple<float, float>(x, y);
         var vertexIndex = -1;
-        if (_tileVertexOffset.TryGetValue(key, out var value))
+        if (_tileVertexOffset.TryGetValue(new Vector2iKey(x, y), out var value))
         {
             vertexIndex = value;
         }
