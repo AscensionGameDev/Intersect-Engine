@@ -33,5 +33,5 @@ public partial class ControlMap
         Bindings = controlMap.Bindings.Select(binding => new ControlValue(binding)).ToList();
     }
 
-    public bool KeyDown() => Bindings.Any(button => button.IsDown() && (!button.IsMouseKey || !Interface.Interface.MouseHitGui()));
+    public bool KeyDown() => Bindings.Any(button => button.IsDown() && (!button.IsMouseKey || !Interface.Interface.DoesMouseHitInterface()));
 }

@@ -128,7 +128,7 @@ public partial class Base : IDisposable
 
     private bool mTabable;
 
-    private Base mToolTip;
+    private Base? _tooltip;
 
     private string mToolTipBackgroundFilename;
 
@@ -300,17 +300,25 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Current tooltip.
     /// </summary>
-    public Base ToolTip
+    public Base? Tooltip
     {
-        get => mToolTip;
+        get => _tooltip;
         set
         {
-            mToolTip = value;
-            if (mToolTip != null)
+            if (value == _tooltip)
             {
-                mToolTip.Parent = this;
-                mToolTip.IsHidden = true;
+                return;
             }
+
+            _tooltip = value;
+
+            if (_tooltip == null)
+            {
+                return;
+            }
+
+            _tooltip.Parent = this;
+            _tooltip.IsHidden = true;
         }
     }
 
@@ -537,7 +545,7 @@ public partial class Base : IDisposable
 
     public Point PositionGlobal => new Point(X, Y) + (Parent?.PositionGlobal ?? Point.Empty);
 
-    public Rectangle BoundsGlobal => new Rectangle(PositionGlobal, Width, Height);
+    public Rectangle BoundsGlobal => new Rectangle(PositionGlobal, Size);
 
     /// <summary>
     ///     Indicates whether the control is tabable (can be focused by pressing Tab).
@@ -676,6 +684,12 @@ public partial class Base : IDisposable
     {
         get => mBounds.Height;
         set => SetSize(Width, value);
+    }
+
+    public Point Size
+    {
+        get => mBounds.Size;
+        set => mBounds.Size = value;
     }
 
     public int InnerWidth => mBounds.Width - (mPadding.Left + mPadding.Right);
@@ -1280,32 +1294,49 @@ public partial class Base : IDisposable
     {
         if (mHideToolTip || string.IsNullOrWhiteSpace(text))
         {
-            if (this.ToolTip != null && this.ToolTip.Parent != null)
+            if (this.Tooltip != null && this.Tooltip.Parent != null)
             {
-                this.ToolTip?.Parent.RemoveChild(this.ToolTip, true);
+                this.Tooltip?.Parent.RemoveChild(this.Tooltip, true);
             }
-            this.ToolTip = null;
+            this.Tooltip = null;
 
             return;
         }
 
-        var tooltip = this.ToolTip != null ? (Label)this.ToolTip : new Label(this);
-        tooltip.Text = text;
-        tooltip.TextColorOverride = mToolTipFontColor ?? Skin.Colors.TooltipText;
-        if (mToolTipFont != null)
+        var tooltip = Tooltip;
+        if (tooltip is not Label labelTooltip)
         {
-            tooltip.Font = mToolTipFont;
+            if (tooltip is not null)
+            {
+                return;
+            }
+
+            labelTooltip = new Label(this)
+            {
+                TextColorOverride = mToolTipFontColor ?? Skin.Colors.TooltipText,
+                ToolTipBackground = mToolTipBackgroundImage,
+                Padding = new Padding(
+                    5,
+                    3,
+                    5,
+                    3
+                ),
+            };
+
+            if (mToolTipFont != default)
+            {
+                labelTooltip.Font = mToolTipFont;
+            }
+
+            Tooltip = labelTooltip;
         }
 
-        tooltip.ToolTipBackground = mToolTipBackgroundImage;
-        tooltip.Padding = new Padding(5, 3, 5, 3);
-        tooltip.SizeToContents();
-        ToolTip = tooltip;
+        labelTooltip.Text = text;
     }
 
     protected virtual void UpdateToolTipProperties()
     {
-        if (ToolTip != null && ToolTip is Label tooltip)
+        if (Tooltip != null && Tooltip is Label tooltip)
         {
             tooltip.TextColorOverride = mToolTipFontColor ?? Skin.Colors.TooltipText;
             if (mToolTipFont != null)
@@ -2244,11 +2275,11 @@ public partial class Base : IDisposable
             HoverEnter.Invoke(this, EventArgs.Empty);
         }
 
-        if (ToolTip != null)
+        if (Tooltip != null)
         {
             Gwen.ToolTip.Enable(this);
         }
-        else if (Parent != null && Parent.ToolTip != null)
+        else if (Parent != null && Parent.Tooltip != null)
         {
             Gwen.ToolTip.Enable(Parent);
         }
@@ -2293,11 +2324,11 @@ public partial class Base : IDisposable
             HoverLeave.Invoke(this, EventArgs.Empty);
         }
 
-        if (ToolTip != null)
+        if (Tooltip != null)
         {
             Gwen.ToolTip.Disable(this);
         }
-        else if (Parent != null && Parent.ToolTip != null)
+        else if (Parent != null && Parent.Tooltip != null)
         {
             Gwen.ToolTip.Disable(Parent);
         }

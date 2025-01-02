@@ -15,7 +15,7 @@ namespace Intersect.Client.Core;
 internal static partial class Main
 {
 
-    private static long _animTimer;
+    private static long _animationTimer;
 
     private static bool _loadedTilesets;
 
@@ -62,7 +62,7 @@ internal static partial class Main
         {
             Networking.Network.Update();
             Fade.Update();
-            Interface.Interface.ToggleInput(Globals.GameState != GameStates.Intro);
+            Interface.Interface.SetHandleInput(Globals.GameState != GameStates.Intro);
 
             switch (Globals.GameState)
             {
@@ -238,32 +238,32 @@ internal static partial class Main
             }
         }
 
-        //Update Game Animations
-        if (_animTimer < Timing.Global.MillisecondsUtc)
-        {
-            Globals.AnimFrame++;
-            if (Globals.AnimFrame == 3)
-            {
-                Globals.AnimFrame = 0;
-            }
+        var millisecondsNow = Timing.Global.MillisecondsUtc;
 
-            _animTimer = Timing.Global.MillisecondsUtc + 500;
+        //Update Game Animations
+        if (_animationTimer < millisecondsNow)
+        {
+            Globals.AnimFrame = (Globals.AnimFrame + 1) % 3;
+
+            _animationTimer = millisecondsNow + 500;
         }
 
         //Remove Event Holds If Invalid
-        var removeHolds = new List<Guid>();
-        foreach (var hold in Globals.EventHolds)
+        var eventHoldIdsToRemove = new List<Guid>();
+        foreach (var (holdId, mapId) in Globals.EventHolds)
         {
-            //If hold.value is empty its a common event, ignore. Otherwise make sure we have the map else the hold doesnt matter
-            if (hold.Value != Guid.Empty && MapInstance.Get(hold.Value) == null)
+            // If mapId is empty its a common event, ignore. Otherwise make sure we have the map else the hold doesnt matter
+            if (mapId == default || !MapInstance.TryGet(mapId, out _))
             {
-                removeHolds.Add(hold.Key);
+                continue;
             }
+
+            eventHoldIdsToRemove.Add(holdId);
         }
 
-        foreach (var hold in removeHolds)
+        foreach (var eventHoldId in eventHoldIdsToRemove)
         {
-            _ = Globals.EventHolds.Remove(hold);
+            _ = Globals.EventHolds.Remove(eventHoldId);
         }
 
         Graphics.UpdatePlayerLight();

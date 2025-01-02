@@ -922,7 +922,7 @@ public partial class Entity : IEntity
             var mousePos = Graphics.ConvertToWorldPoint(Globals.InputManager.MousePosition);
 
             // Entity is considered hovered if the mouse is over its world position and not hovering over the GUI.
-            IsHovered = WorldPos.Contains(mousePos.X, mousePos.Y) && !Interface.Interface.MouseHitGui();
+            IsHovered = WorldPos.Contains(mousePos.X, mousePos.Y) && !Interface.Interface.DoesMouseHitInterface();
 
             // Check the type of entity and return whether its name should be drawn based on settings and conditions.
             switch (this)
@@ -1108,8 +1108,8 @@ public partial class Entity : IEntity
         {
             // We don't have a texture to render, but we still want this to be targetable.
             WorldPos = new FloatRect(
-                map.GetX() + X * Options.TileWidth + OffsetX,
-                map.GetY() + Y * Options.TileHeight + OffsetY,
+                map.X + X * Options.TileWidth + OffsetX,
+                map.Y + Y * Options.TileHeight + OffsetY,
                 Options.TileWidth,
                 Options.TileHeight);
             return;

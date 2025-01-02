@@ -10,7 +10,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal;
 public partial class Text : Base
 {
 
-    private GameFont mFont;
+    private GameFont? _font;
 
     private float mScale = 1f;
 
@@ -29,7 +29,7 @@ public partial class Text : Base
     /// <param name="parent">Parent control.</param>
     public Text(Base parent, string name = "") : base(parent, name)
     {
-        mFont = Skin.DefaultFont;
+        _font = Skin.DefaultFont;
         mString = String.Empty;
         TextColor = Skin.Colors.Label.Default;
         MouseInputEnabled = false;
@@ -42,12 +42,17 @@ public partial class Text : Base
     /// <remarks>
     ///     The font is not being disposed by this class.
     /// </remarks>
-    public GameFont Font
+    public GameFont? Font
     {
-        get => mFont;
+        get => _font;
         set
         {
-            mFont = value;
+            if (value == _font)
+            {
+                return;
+            }
+
+            _font = value;
             SizeToContents();
         }
     }
@@ -168,7 +173,12 @@ public partial class Text : Base
     /// </summary>
     public void SizeToContents()
     {
-        if (String == null || Font == null || Root == null || !HasSkin)
+        if (_font == default)
+        {
+            return;
+        }
+
+        if (String == null || Root == null || !HasSkin)
         {
             return;
         }

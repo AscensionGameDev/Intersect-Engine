@@ -1,40 +1,17 @@
+using System.Runtime.InteropServices;
+
 namespace Intersect.Client.Framework.GenericClasses;
 
-
+[StructLayout(LayoutKind.Explicit)]
 public partial struct Rectangle
 {
+    [FieldOffset(0)] public int X;
+    [FieldOffset(4)] public int Y;
+    [FieldOffset(8)] public int Width;
+    [FieldOffset(12)] public int Height;
 
-    private int mX;
-
-    private int mY;
-
-    private int mWidth;
-
-    private int mHeight;
-
-    public int X
-    {
-        get => mX;
-        set => mX = value;
-    }
-
-    public int Y
-    {
-        get => mY;
-        set => mY = value;
-    }
-
-    public int Width
-    {
-        get => mWidth;
-        set => mWidth = value;
-    }
-
-    public int Height
-    {
-        get => mHeight;
-        set => mHeight = value;
-    }
+    [FieldOffset(0)] public Point Position;
+    [FieldOffset(8)] public Point Size;
 
     public int Left => X;
 
@@ -44,22 +21,20 @@ public partial struct Rectangle
 
     public int Right => X + Width;
 
-    public static Rectangle Empty => new Rectangle();
-
-    public Rectangle(Point position, int width, int height)
-    {
-        mX = position.X;
-        mY = position.Y;
-        mWidth = width;
-        mHeight = height;
-    }
+    public static Rectangle Empty => new();
 
     public Rectangle(int x, int y, int w, int h)
     {
-        mX = x;
-        mY = y;
-        mWidth = w;
-        mHeight = h;
+        X = x;
+        Y = y;
+        Width = w;
+        Height = h;
+    }
+
+    public Rectangle(Point position, Point size)
+    {
+        Position = position;
+        Size = size;
     }
 
     public static Rectangle Intersect(Rectangle a, Rectangle b)
@@ -71,8 +46,10 @@ public partial struct Rectangle
             return Empty;
         }
 
-        return Rectangle.FromLtrb(
-            Math.Max(a.Left, b.Left), Math.Max(a.Top, b.Top), Math.Min(a.Right, b.Right),
+        return FromLtrb(
+            Math.Max(a.Left, b.Left),
+            Math.Max(a.Top, b.Top),
+            Math.Min(a.Right, b.Right),
             Math.Min(a.Bottom, b.Bottom)
         );
     }
@@ -101,14 +78,6 @@ public partial struct Rectangle
     public bool Contains(int x, int y)
     {
         return x >= Left && x < Right && y >= Top && y < Bottom;
-    }
-
-    public void Reset()
-    {
-        X = 0;
-        Y = 0;
-        Width = 0;
-        Height = 0;
     }
 
     /// <summary>
@@ -142,5 +111,4 @@ public partial struct Rectangle
 
         return new Rectangle(parts[0], parts[1], parts[2], parts[3]);
     }
-
 }

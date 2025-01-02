@@ -95,7 +95,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     protected long mFogUpdateTime = -1;
 
     //Update Timer
-    private long mLastUpdateTime;
+    private long _lastUpdateTime;
 
     protected float mOverlayIntensity;
 
@@ -124,12 +124,38 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     public bool[] CameraHolds { get; set; } = new bool[4];
 
     //World Position
-    public int GridX { get; set; }
+    public int GridX
+    {
+        get => _gridX;
+        set
+        {
+            if (value == _gridX)
+            {
+                return;
+            }
 
-    public int GridY { get; set; }
+            _gridX = value;
+            X = _gridX * _width * _tileWidth;
+        }
+    }
+
+    public int GridY
+    {
+        get => _gridY;
+        set
+        {
+            if (value == _gridY)
+            {
+                return;
+            }
+
+            _gridY = value;
+            Y = _gridY * _height * _tileHeight;
+        }
+    }
 
     //Map Sounds
-    public IMapSound BackgroundSound { get; set; }
+    public IMapSound? BackgroundSound { get; set; }
 
     public new static MapControllers Lookup => sLookup ?? (sLookup = new MapControllers(MapBase.Lookup));
 
@@ -155,7 +181,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         {
             if (!Layers.ContainsKey(layer))
             {
-                Layers.Add(layer, new Tile[Options.MapWidth, Options.MapHeight]);
+                Layers.Add(layer, new Tile[_width, _height]);
             }
         }
     }
@@ -174,9 +200,9 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 continue;
             }
 
-            for (var x = 0; x < Options.MapWidth; x++)
+            for (var x = 0; x < _width; x++)
             {
-                for (var y = 0; y < Options.MapHeight; y++)
+                for (var y = 0; y < _height; y++)
                 {
                     var layerTile = layerTiles[x, y];
                     if (layerTile.TilesetId == default)
@@ -206,63 +232,61 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     //Updating
     public void Update(bool isLocal)
     {
-        if (isLocal)
+        var nowMilliseconds = Timing.Global.Milliseconds;
+        if (!isLocal)
         {
-            mLastUpdateTime = Timing.Global.Milliseconds + 10000;
-            UpdateMapAttributes();
-            if (BackgroundSound == null && !TextUtils.IsNone(Sound))
-            {
-                BackgroundSound = Audio.AddMapSound(Sound, -1, -1, Id, true, 0, 10);
-            }
-
-            foreach (var anim in LocalAnimations)
-            {
-                if (anim.Value.Disposed())
-                {
-                    LocalAnimations.TryRemove(anim.Key, out MapAnimation removed);
-                }
-                else
-                {
-                    anim.Value.Update();
-                }
-            }
-
-            foreach (var en in LocalEntities)
-            {
-                if (en.Value == null)
-                {
-                    continue;
-                }
-
-                en.Value.Update();
-            }
-
-            foreach (var critter in mAttributeCritterInstances)
-            {
-                if (critter.Value == null)
-                {
-                    continue;
-                }
-
-                critter.Value.Update();
-            }
-
-            for (var i = 0; i < LocalEntitiesToDispose.Count; i++)
-            {
-                LocalEntities.Remove(LocalEntitiesToDispose[i]);
-            }
-
-            LocalEntitiesToDispose.Clear();
-        }
-        else
-        {
-            if (Timing.Global.Milliseconds > mLastUpdateTime)
+            if (nowMilliseconds > _lastUpdateTime)
             {
                 Dispose();
             }
 
             HideActiveAnimations();
+            return;
         }
+
+        _lastUpdateTime = nowMilliseconds + 10000;
+        UpdateMapAttributes();
+        if (BackgroundSound == null && !string.IsNullOrWhiteSpace(Sound))
+        {
+            BackgroundSound = Audio.AddMapSound(
+                Sound,
+                -1,
+                -1,
+                Id,
+                true,
+                0,
+                10
+            );
+        }
+
+        foreach (var (animationId, animation) in LocalAnimations)
+        {
+            if (animation.Disposed())
+            {
+                LocalAnimations.TryRemove(animationId, out _);
+            }
+            else
+            {
+                animation.Update();
+            }
+        }
+
+        foreach (var (_, entity) in LocalEntities)
+        {
+            entity.Update();
+        }
+
+        foreach (var (_, critter) in mAttributeCritterInstances)
+        {
+            critter.Update();
+        }
+
+        foreach (var localEntityToDispose in LocalEntitiesToDispose)
+        {
+            LocalEntities.Remove(localEntityToDispose);
+        }
+
+        LocalEntitiesToDispose.Clear();
     }
 
     public bool InView()
@@ -309,7 +333,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 else if (map.GridY == GridY)
                 {
                     //Check West
-                    for (var y = 0; y < Options.MapHeight; y++)
+                    for (var y = 0; y < _height; y++)
                     {
                         updatedBuffers.UnionWith(CheckAutotile(0, y, surroundingMaps));
                     }
@@ -317,7 +341,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 else if (map.GridY == GridY + 1)
                 {
                     //Check Southwest
-                    updatedBuffers.UnionWith(CheckAutotile(0, Options.MapHeight - 1, surroundingMaps));
+                    updatedBuffers.UnionWith(CheckAutotile(0, _height - 1, surroundingMaps));
                 }
             }
             else if (map.GridX == GridX)
@@ -325,7 +349,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 if (map.GridY == GridY - 1)
                 {
                     //Check North
-                    for (var x = 0; x < Options.MapWidth; x++)
+                    for (var x = 0; x < _width; x++)
                     {
                         updatedBuffers.UnionWith(CheckAutotile(x, 0, surroundingMaps));
                     }
@@ -333,9 +357,9 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 else if (map.GridY == GridY + 1)
                 {
                     //Check South
-                    for (var x = 0; x < Options.MapWidth; x++)
+                    for (var x = 0; x < _width; x++)
                     {
-                        updatedBuffers.UnionWith(CheckAutotile(x, Options.MapHeight - 1, surroundingMaps));
+                        updatedBuffers.UnionWith(CheckAutotile(x, _height - 1, surroundingMaps));
                     }
                 }
             }
@@ -345,22 +369,22 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 {
                     //Check Northeast
                     updatedBuffers.UnionWith(
-                        CheckAutotile(Options.MapWidth - 1, Options.MapHeight, surroundingMaps)
+                        CheckAutotile(_width - 1, _height, surroundingMaps)
                     );
                 }
                 else if (map.GridY == GridY)
                 {
                     //Check East
-                    for (var y = 0; y < Options.MapHeight; y++)
+                    for (var y = 0; y < _height; y++)
                     {
-                        updatedBuffers.UnionWith(CheckAutotile(Options.MapWidth - 1, y, surroundingMaps));
+                        updatedBuffers.UnionWith(CheckAutotile(_width - 1, y, surroundingMaps));
                     }
                 }
                 else if (map.GridY == GridY + 1)
                 {
                     //Check Southeast
                     updatedBuffers.UnionWith(
-                        CheckAutotile(Options.MapWidth - 1, Options.MapHeight - 1, surroundingMaps)
+                        CheckAutotile(_width - 1, _height - 1, surroundingMaps)
                     );
                 }
             }
@@ -368,9 +392,9 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             //Along with edges we need to recalculate ALL cliffs :(
             foreach (var layer in Options.Instance.MapOpts.Layers.All)
             {
-                for (var x = 0; x < Options.MapWidth; x++)
+                for (var x = 0; x < _width; x++)
                 {
-                    for (var y = 0; y < Options.MapHeight; y++)
+                    for (var y = 0; y < _height; y++)
                     {
                         if (Layers[layer][x, y].Autotile == MapAutotiles.AUTOTILE_CLIFF)
                         {
@@ -544,78 +568,79 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         return mapBase;
     }
 
-    public int X => GetX();
+    /// <summary>
+    /// X coordinate of the map in world space
+    /// </summary>
+    public int X { get; private set; }
 
-    //Retreives the X Position of the Left side of the map in world space.
-    public int GetX()
-    {
-        return GridX * Options.MapWidth * _tileWidth;
-    }
+    /// <summary>
+    /// Y coordinate of the map in world space
+    /// </summary>
+    public int Y { get; private set; }
 
-    public int Y => GetY();
-
-    //Retreives the Y Position of the Top side of the map in world space.
-    public int GetY()
-    {
-        return GridY * Options.MapHeight * _tileHeight;
-    }
-
-    //Attribute References
+    // Attribute References
     private void UpdateMapAttributes()
     {
-        var width = Options.MapWidth;
-        var height = Options.MapHeight;
-        for (var y = 0; y < height; y++)
+        var mapAttributes = Attributes;
+        if (mapAttributes == default)
         {
-            for (var x = 0; x < width; x++)
+            return;
+        }
+
+        for (var y = 0; y < _height; y++)
+        {
+            for (var x = 0; x < _width; x++)
             {
-                var att = Attributes[x, y];
-                if (att == null)
+                var mapAttribute = mapAttributes[x, y];
+                if (mapAttribute == default)
                 {
                     continue;
                 }
 
-                if (att.Type == MapAttribute.Animation)
+                switch (mapAttribute.Type)
                 {
-                    var anim = AnimationBase.Get(((MapAnimationAttribute)att).AnimationId);
-                    if (anim == null)
+                    case MapAttribute.Animation:
                     {
-                        continue;
-                    }
+                        var anim = AnimationBase.Get(((MapAnimationAttribute)mapAttribute).AnimationId);
+                        if (anim == null)
+                        {
+                            continue;
+                        }
 
-                    if (!mAttributeAnimInstances.ContainsKey(att))
+                        if (!mAttributeAnimInstances.ContainsKey(mapAttribute))
+                        {
+                            var animInstance = new Animation(anim, true);
+                            animInstance.SetPosition(
+                                X + x * _tileWidth + _tileHalfWidth,
+                                Y + y * _tileHeight + _tileHalfHeight, x, y, Id, 0
+                            );
+
+                            mAttributeAnimInstances.Add(mapAttribute, animInstance);
+                        }
+
+                        mAttributeAnimInstances[mapAttribute].Update();
+                        break;
+                    }
+                    case MapAttribute.Critter:
                     {
-                        var animInstance = new Animation(anim, true);
-                        animInstance.SetPosition(
-                            GetX() + x * _tileWidth + _tileHalfWidth,
-                            GetY() + y * _tileHeight + _tileHalfHeight, x, y, Id, 0
-                        );
+                        var critterAttribute = ((MapCritterAttribute)mapAttribute);
+                        var sprite = critterAttribute.Sprite;
+                        var anim = AnimationBase.Get(critterAttribute.AnimationId);
+                        if (anim == null && TextUtils.IsNone(sprite))
+                        {
+                            continue;
+                        }
 
-                        mAttributeAnimInstances.Add(att, animInstance);
+                        if (!mAttributeCritterInstances.ContainsKey(mapAttribute))
+                        {
+                            var critter = new Critter(this, (byte)x, (byte)y, critterAttribute);
+                            LocalCritters.Add(critter.Id, critter);
+                            mAttributeCritterInstances.Add(mapAttribute, critter);
+                        }
+
+                        mAttributeCritterInstances[mapAttribute].Update();
+                        break;
                     }
-
-                    mAttributeAnimInstances[att].Update();
-                }
-
-
-                if (att.Type == MapAttribute.Critter)
-                {
-                    var critterAttribute = ((MapCritterAttribute)att);
-                    var sprite = critterAttribute.Sprite;
-                    var anim = AnimationBase.Get(critterAttribute.AnimationId);
-                    if (anim == null && TextUtils.IsNone(sprite))
-                    {
-                        continue;
-                    }
-
-                    if (!mAttributeCritterInstances.ContainsKey(att))
-                    {
-                        var critter = new Critter(this, (byte)x, (byte)y, critterAttribute);
-                        LocalCritters.Add(critter.Id, critter);
-                        mAttributeCritterInstances.Add(att, critter);
-                    }
-
-                    mAttributeCritterInstances[att].Update();
                 }
             }
         }
@@ -642,9 +667,9 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     public void CreateMapSounds()
     {
         ClearAttributeSounds();
-        for (var x = 0; x < Options.MapWidth; ++x)
+        for (var x = 0; x < _width; ++x)
         {
-            for (var y = 0; y < Options.MapHeight; ++y)
+            for (var y = 0; y < _height; ++y)
             {
                 var attribute = Attributes?[x, y];
                 if (attribute?.Type != MapAttribute.Sound)
@@ -684,8 +709,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         var anim = new MapAnimation(animBase, tileX, tileY, dir, owner as Entity);
         LocalAnimations.TryAdd(anim.Id, anim);
         anim.SetPosition(
-            GetX() + tileX * _tileWidth + _tileHalfWidth,
-            GetY() + tileY * _tileHeight + _tileHalfHeight, tileX, tileY, Id, dir
+            X + tileX * _tileWidth + _tileHalfWidth,
+            Y + tileY * _tileHeight + _tileHalfHeight, tileX, tileY, Id, dir
         );
     }
 
@@ -819,8 +844,6 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     public void DrawItemsAndLights()
     {
         // Calculate tile and map item dimensions.
-        var tileWidth = _tileWidth;
-        var tileHeight = _tileHeight;
         var mapItemWidth = Options.Instance.MapOpts.MapItemWidth;
         var mapItemHeight = Options.Instance.MapOpts.MapItemHeight;
 
@@ -828,8 +851,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         foreach (var (key, tileItems) in MapItems)
         {
             // Calculate tile coordinates.
-            var tileX = key % Options.MapWidth;
-            var tileY = (int)Math.Floor(key / (float)Options.MapWidth);
+            var tileX = key % _width;
+            var tileY = (int)Math.Floor(key / (float)_width);
 
             // Loop through this in reverse to match client/server display and pick-up order.
             for (var index = tileItems.Count - 1; index >= 0; index--)
@@ -843,10 +866,10 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                     continue;
                 }
 
-                var x = X + tileX * tileWidth;
-                var y = Y + tileY * tileHeight;
-                var centerX = x + (tileWidth / 2);
-                var centerY = y + (tileHeight / 2);
+                var x = X + tileX * _tileWidth;
+                var y = Y + tileY * _tileHeight;
+                var centerX = x + (_tileWidth / 2);
+                var centerY = y + (_tileHeight / 2);
                 var textureXPosition = centerX - (mapItemWidth / 2);
                 var textureYPosition = centerY - (mapItemHeight / 2);
 
@@ -864,8 +887,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         foreach (var light in Lights)
         {
             double w = light.Size;
-            var x = GetX() + (light.TileX * tileWidth + light.OffsetX) + tileWidth / 2f;
-            var y = GetY() + (light.TileY * tileHeight + light.OffsetY) + tileHeight / 2f;
+            var x = X + (light.TileX * _tileWidth + light.OffsetX) + _tileWidth / 2f;
+            var y = Y + (light.TileY * _tileHeight + light.OffsetY) + _tileHeight / 2f;
             Graphics.AddLight((int)x, (int)y, (int)w, light.Intensity, light.Expand, light.Color);
         }
     }
@@ -875,7 +898,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     /// </summary>
     public void DrawItemNames()
     {
-        if (Interface.Interface.MouseHitGui())
+        if (Interface.Interface.DoesMouseHitInterface())
         {
             return;
         }
@@ -883,8 +906,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         var mousePos = Graphics.ConvertToWorldPoint(
                 Globals.InputManager.GetMousePosition()
         );
-        var x = (int)(mousePos.X - (int)GetX()) / _tileWidth;
-        var y = (int)(mousePos.Y - (int)GetY()) / _tileHeight;
+        var x = (int)(mousePos.X - (int)X) / _tileWidth;
+        var y = (int)(mousePos.Y - (int)Y) / _tileHeight;
         var mapId = Id;
 
         // Is this an actual location on this map?
@@ -892,7 +915,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         {
             // Apparently it is! Do we have any items to render here?
             var tileItems = new List<IMapItemInstance>();
-            if (MapItems.TryGetValue(y * Options.MapWidth + x, out tileItems))
+            if (MapItems.TryGetValue(y * _width + x, out tileItems))
             {
                 var baseOffset = 0;
                 // Loop through this in reverse to match client/server display and pick-up order.
@@ -912,8 +935,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                         : new LabelColor(Color.White, Color.Black, new Color(100, 0, 0, 0));
                     var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
                     var offsetY = (baseOffset * textSize.Y);
-                    var destX = GetX() + (int)Math.Ceiling(((x * _tileWidth) + (_tileHalfWidth)) - (textSize.X / 2));
-                    var destY = GetY() + (int)Math.Ceiling(((y * _tileHeight) - ((_tileHeight / 3) + textSize.Y))) - offsetY;
+                    var destX = X + (int)Math.Ceiling(((x * _tileWidth) + (_tileHalfWidth)) - (textSize.X / 2));
+                    var destY = Y + (int)Math.Ceiling(((y * _tileHeight) - ((_tileHeight / 3) + textSize.Y))) - offsetY;
 
                     // Do we need to draw a background?
                     if (color.Background != Color.Transparent)
@@ -933,10 +956,14 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         }
     }
 
+    private readonly int _width = Options.Instance.MapOpts.MapWidth;
+    private readonly int _height = Options.Instance.MapOpts.MapHeight;
     private readonly int _tileWidth = Options.Instance.MapOpts.TileWidth;
     private readonly int _tileHeight = Options.Instance.MapOpts.TileHeight;
     private readonly int _tileHalfWidth = Options.Instance.MapOpts.TileWidth / 2;
     private readonly int _tileHalfHeight = Options.Instance.MapOpts.TileHeight / 2;
+    private int _gridY;
+    private int _gridX;
 
     private void DrawAutoTile(
         string layerName,
@@ -1044,12 +1071,9 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
         var tileBuffersPerTexture = new Dictionary<object, GameTileBuffer[]>();
 
-        var mapWidth = Options.MapWidth;
-        var mapHeight = Options.MapHeight;
-
-        for (var x = 0; x < mapWidth; x++)
+        for (var x = 0; x < _width; x++)
         {
-            for (var y = 0; y < mapHeight; y++)
+            for (var y = 0; y < _height; y++)
             {
                 var layerTile = layerTiles[x, y];
                 if (layerTile.TilesetTexture is not GameTexture tilesetTexture)
@@ -1239,8 +1263,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             : Math.Max(0, mCurFogIntensity - elapsedTime / 2000f);
 
         // Calculate the number of times the fog texture needs to be drawn to cover the map area.
-        var xCount = Options.MapWidth * _tileWidth * 3 / fogTex.Width;
-        var yCount = Options.MapHeight * _tileHeight * 3 / fogTex.Height;
+        var xCount = _width * _tileWidth * 3 / fogTex.Width;
+        var yCount = _height * _tileHeight * 3 / fogTex.Height;
 
         // Update the fog texture's position based on its speed and elapsed time.
         mFogCurrentX += elapsedTime / 1000f * FogXSpeed * 2;
@@ -1261,8 +1285,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 Graphics.DrawGameTexture(
                     fogTex, new FloatRect(0, 0, fogTex.Width, fogTex.Height),
                     new FloatRect(
-                        X - Options.MapWidth * _tileWidth * 1f + x * fogTex.Width + drawX,
-                        Y - Options.MapHeight * _tileHeight * 1f + y * fogTex.Height + drawY,
+                        X - _width * _tileWidth * 1f + x * fogTex.Width + drawX,
+                        Y - _height * _tileHeight * 1f + y * fogTex.Height + drawY,
                         fogTex.Width, fogTex.Height
                     ), new Color((byte)(FogTransparency * mCurFogIntensity), 255, 255, 255)
                 );
@@ -1429,8 +1453,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             float dy = Y - oldMap.Y;
 
             // Update fog position based on displacement.
-            mFogCurrentX += (_tileWidth * Options.MapWidth % fogTex.Width) * -Math.Sign(dx);
-            mFogCurrentY += (_tileHeight * Options.MapHeight % fogTex.Height) * -Math.Sign(dy);
+            mFogCurrentX += (_tileWidth * _width % fogTex.Width) * -Math.Sign(dx);
+            mFogCurrentY += (_tileHeight * _height % fogTex.Height) * -Math.Sign(dy);
 
             // Reset fog intensity of old map.
             tempMap.mCurFogIntensity = 0;

@@ -8,7 +8,7 @@ public interface ILabel : IColorableText
 
     bool AutoSizeToContents { get; set; }
 
-    GameFont Font { get; set; }
+    GameFont? Font { get; set; }
 
     string FontName { get; set; }
 

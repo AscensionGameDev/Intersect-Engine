@@ -17,7 +17,7 @@ public static partial class ToolTip
     /// <param name="control">Target control.</param>
     public static void Enable(Base control)
     {
-        if (null == control.ToolTip)
+        if (null == control.Tooltip)
         {
             return;
         }
@@ -52,7 +52,7 @@ public static partial class ToolTip
     /// <param name="skin"></param>
     public static void RenderToolTip(Skin.Base skin)
     {
-        if (sG_toolTip == null || sG_toolTip.ToolTip == null)
+        if (sG_toolTip == null || sG_toolTip.Tooltip == null)
         {
             return;
         }
@@ -61,7 +61,7 @@ public static partial class ToolTip
 
         var oldRenderOffset = render.RenderOffset;
         var mousePos = Input.InputHandler.MousePosition;
-        var bounds = sG_toolTip.ToolTip.Bounds;
+        var bounds = sG_toolTip.Tooltip.Bounds;
 
         var offset = Util.FloatRect(
             mousePos.X - bounds.Width * 0.5f, mousePos.Y - bounds.Height - 10, bounds.Width, bounds.Height
@@ -73,8 +73,8 @@ public static partial class ToolTip
         render.AddRenderOffset(offset);
         render.EndClip();
 
-        skin.DrawToolTip(sG_toolTip.ToolTip);
-        sG_toolTip.ToolTip.DoRender(skin);
+        skin.DrawToolTip(sG_toolTip.Tooltip);
+        sG_toolTip.Tooltip.DoRender(skin);
 
         render.RenderOffset = oldRenderOffset;
     }

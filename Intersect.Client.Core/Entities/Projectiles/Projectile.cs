@@ -364,8 +364,8 @@ public partial class Projectile : Entity
                         }
 
                         var spawnMapId = Maps.MapInstance.Get(spawn.SpawnMapId);
-                        var spawnX = spawnMapId.GetX() + spawn.SpawnX * Options.TileWidth + spawn.OffsetX + Options.TileWidth / 2;
-                        var spawnY = spawnMapId.GetY() + spawn.SpawnY * Options.TileHeight + spawn.OffsetY + Options.TileHeight / 2;
+                        var spawnX = spawnMapId.X + spawn.SpawnX * Options.TileWidth + spawn.OffsetX + Options.TileWidth / 2;
+                        var spawnY = spawnMapId.Y + spawn.SpawnY * Options.TileHeight + spawn.OffsetY + Options.TileHeight / 2;
                         var spawnDirection = spawn.AutoRotate ? spawn.Dir : Direction.Up;
 
                         spawn.Anim.SetPosition(spawnX, spawnY, X, Y, MapId, spawnDirection, spawn.Z);

@@ -76,7 +76,23 @@ public partial struct FloatRect
         mHeight = h;
     }
 
-    public FloatRect(Pointf position, Pointf size) : this(position.X, position.Y, size.X, size.Y) { }
+    public FloatRect(Pointf position, Pointf size) : this(
+        position.X,
+        position.Y,
+        size.X,
+        size.Y
+    )
+    {
+    }
+
+    public FloatRect(Rectangle rectangle) : this(
+        rectangle.X,
+        rectangle.Y,
+        rectangle.Width,
+        rectangle.Height
+    )
+    {
+    }
 
     public static FloatRect Intersect(FloatRect a, FloatRect b)
     {
