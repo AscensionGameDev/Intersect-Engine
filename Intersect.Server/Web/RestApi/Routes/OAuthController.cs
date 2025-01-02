@@ -235,6 +235,7 @@ namespace Intersect.Server.Web.RestApi.Routes
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Audience = _tokenGenerationOptions.Value.Audience,

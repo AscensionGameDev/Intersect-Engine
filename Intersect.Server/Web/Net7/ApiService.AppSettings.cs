@@ -87,9 +87,9 @@ internal partial class ApiService
                 TokenGenerationOptions.DefaultRefreshTokenLifetime;
         }
 
-        if (apiConfiguration.TokenGenerationOptions.Secret.Length < 256)
+        if (apiConfiguration.TokenGenerationOptions.SecretData.Length < 64)
         {
-            apiConfiguration.TokenGenerationOptions.Secret = default;
+            apiConfiguration.TokenGenerationOptions.SecretData = default;
             if (apiConfiguration.TokenGenerationOptions.Secret == default)
             {
                 throw new UnreachableException("This should be automatically re-generated.");
