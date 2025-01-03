@@ -52,9 +52,9 @@ public class EditorReferenceAttribute : EditorDisplayAttribute
         else
         {
             var lookup = DescriptorType
-            .GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-            .FirstOrDefault(propertyInfo => propertyInfo.PropertyType == typeof(DatabaseObjectLookup))?
-            .GetValue(null) as DatabaseObjectLookup;
+                .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+                .FirstOrDefault(fieldInfo => fieldInfo.FieldType == typeof(DatabaseObjectLookup))?
+                .GetValue(null) as DatabaseObjectLookup;
 
             if (lookup == default)
             {
