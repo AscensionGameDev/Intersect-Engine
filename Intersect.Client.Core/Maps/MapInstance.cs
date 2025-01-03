@@ -29,6 +29,9 @@ namespace Intersect.Client.Maps;
 
 public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMapInstance
 {
+    public const int MapAnimationFrames = 3;
+    private const int XpAnimationFrameTileWidth = 3;
+    private const int VxAnimationFrameTileWidth = 2;
 
     //Client Only Values
     public delegate void MapLoadedDelegate(MapInstance map);
@@ -468,7 +471,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             var tileX = x * _tileWidth + mapXOffset;
             var tileY = y * _tileHeight + mapYOffset;
 
-            for (var animationFrameIndex = 0; animationFrameIndex < 3; animationFrameIndex++)
+            for (var animationFrameIndex = 0; animationFrameIndex < MapAnimationFrames; animationFrameIndex++)
             {
                 var buffer = tileBuffersForTexture[animationFrameIndex];
 
@@ -743,12 +746,19 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                     Dictionary<string, GameTileBuffer[][]> buffers = [];
                     foreach (var layer in Options.Instance.MapOpts.Layers.All)
                     {
-                        buffers[layer] = DrawMapLayer(layer, X, Y);
-                        for (var y = 0; y < 3; y++)
+                        var layerBuffers = DrawMapLayer(layer, X, Y);
+                        if (layerBuffers == default)
                         {
-                            for (var z = 0; z < buffers[layer][y].Length; z++)
+                            continue;
+                        }
+
+                        buffers[layer] = layerBuffers;
+                        for (var animationFrameIndex = 0; animationFrameIndex < MapAnimationFrames; animationFrameIndex++)
+                        {
+                            var layerBuffersForFrame = layerBuffers[animationFrameIndex];
+                            foreach (var tileBuffer in layerBuffersForFrame)
                             {
-                                buffers[layer][y][z].SetData();
+                                tileBuffer.SetData();
                             }
                         }
                     }
@@ -1016,11 +1026,11 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 break;
 
             case MapAutotiles.AUTOTILE_ANIM:
-                xOffset = forceFrame * _tileWidth * 2;
+                xOffset = forceFrame * _tileWidth * VxAnimationFrameTileWidth;
                 break;
 
             case MapAutotiles.AUTOTILE_ANIM_XP:
-                xOffset = forceFrame * _tileWidth * 3;
+                xOffset = forceFrame * _tileWidth * XpAnimationFrameTileWidth;
                 break;
 
             case MapAutotiles.AUTOTILE_CLIFF:
@@ -1108,10 +1118,10 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 }
                 else
                 {
-                    animationFrameBuffers = new GameTileBuffer[3];
-                    for (var i = 0; i < 3; i++)
+                    animationFrameBuffers = new GameTileBuffer[MapAnimationFrames];
+                    for (var animationFrameIndex = 0; animationFrameIndex < MapAnimationFrames; animationFrameIndex++)
                     {
-                        animationFrameBuffers[i] = Graphics.Renderer!.CreateTileBuffer();
+                        animationFrameBuffers[animationFrameIndex] = Graphics.Renderer!.CreateTileBuffer();
                     }
 
                     tileBuffersPerTexture.Add(platformTexture, animationFrameBuffers);
@@ -1124,7 +1134,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 switch (layerAutoTile.RenderState)
                 {
                     case MapAutotiles.RENDER_STATE_NORMAL:
-                        for (var animationFrameIndex = 0; animationFrameIndex < 3; animationFrameIndex++)
+                        for (var animationFrameIndex = 0; animationFrameIndex < MapAnimationFrames; animationFrameIndex++)
                         {
                             var animationFrameBuffer = animationFrameBuffers[animationFrameIndex];
                             if (!animationFrameBuffer.TryAddTile(
@@ -1143,7 +1153,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                         break;
 
                     case MapAutotiles.RENDER_STATE_AUTOTILE:
-                        for (var animationFrameIndex = 0; animationFrameIndex < 3; animationFrameIndex++)
+                        for (var animationFrameIndex = 0; animationFrameIndex < MapAnimationFrames; animationFrameIndex++)
                         {
                             var animationFrameBuffer = animationFrameBuffers[animationFrameIndex];
                             DrawAutoTile(
@@ -1207,19 +1217,19 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             }
         }
 
-        var outputBuffers = new GameTileBuffer[3][];
-        for (var i = 0; i < 3; i++)
+        var outputBuffers = new GameTileBuffer[MapAnimationFrames][];
+        for (var animationFrameIndex = 0; animationFrameIndex < MapAnimationFrames; animationFrameIndex++)
         {
-            outputBuffers[i] = new GameTileBuffer[tileBuffersPerTexture.Count];
+            outputBuffers[animationFrameIndex] = new GameTileBuffer[tileBuffersPerTexture.Count];
         }
 
         var valueArrays = tileBuffersPerTexture.Values.ToArray();
-        for (var x = 0; x < valueArrays.Length; x++)
+        for (var bufferIndex = 0; bufferIndex < valueArrays.Length; bufferIndex++)
         {
-            var bufferGroup = valueArrays[x];
-            for (var i = 0; i < 3; i++)
+            var bufferGroup = valueArrays[bufferIndex];
+            for (var animationFrameIndex = 0; animationFrameIndex < MapAnimationFrames; animationFrameIndex++)
             {
-                var bufferForFrame = bufferGroup[i];
+                var bufferForFrame = bufferGroup[animationFrameIndex];
                 // if (bufferForFrame is MonoTileBuffer monoTileBuffer)
                 // {
                 //     Log.Info($"[{Name}][{layerName}] Buffer for {monoTileBuffer._texture?.Name} frame {i} has {monoTileBuffer._addedTileCount.Count} unique tiles");
@@ -1228,7 +1238,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 //         Log.Info($"[{Name}][{layerName}] {key} has {value} occurrences");
                 //     }
                 // }
-                outputBuffers[i][x] = bufferForFrame;
+                outputBuffers[animationFrameIndex][bufferIndex] = bufferForFrame;
             }
         }
 
