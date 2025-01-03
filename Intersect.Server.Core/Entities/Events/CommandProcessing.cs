@@ -13,7 +13,6 @@ using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
-using VariableMod = Intersect.Enums.VariableMod;
 
 namespace Intersect.Server.Entities.Events;
 
@@ -1994,51 +1993,51 @@ public static partial class CommandProcessing
 
         switch (mod.ModType)
         {
-            case VariableMod.Set:
+            case VariableModType.Set:
                 value.Integer = mod.Value;
 
                 break;
-            case VariableMod.Add:
+            case VariableModType.Add:
                 value.Integer += mod.Value;
 
                 break;
-            case VariableMod.Subtract:
+            case VariableModType.Subtract:
                 value.Integer -= mod.Value;
 
                 break;
-            case VariableMod.Multiply:
+            case VariableModType.Multiply:
                 value.Integer *= mod.Value;
 
                 break;
-            case VariableMod.Divide:
+            case VariableModType.Divide:
                 if (mod.Value != 0)  //Idiot proofing divide by 0 LOL
                 {
                     value.Integer /= mod.Value;
                 }
 
                 break;
-            case VariableMod.LeftShift:
-                value.Integer = value.Integer << (int)mod.Value;
+            case VariableModType.LeftShift:
+                value.Integer <<= (int)mod.Value;
 
                 break;
-            case VariableMod.RightShift:
-                value.Integer = value.Integer >> (int)mod.Value;
+            case VariableModType.RightShift:
+                value.Integer >>= (int)mod.Value;
 
                 break;
-            case VariableMod.Random:
+            case VariableModType.Random:
                 //TODO: Fix - Random doesnt work with longs lolz
                 value.Integer = Randomization.Next((int)mod.Value, (int)mod.HighValue + 1);
 
                 break;
-            case VariableMod.SystemTime:
+            case VariableModType.SystemTime:
                 value.Integer = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
                 break;
-            case VariableMod.DupPlayerVar:
+            case VariableModType.DupPlayerVar:
                 value.Integer = player.GetVariableValue(mod.DuplicateVariableId).Integer;
 
                 break;
-            case VariableMod.DupGlobalVar:
+            case VariableModType.DupGlobalVar:
                 var dupServerVariable = ServerVariableBase.Get(mod.DuplicateVariableId);
                 if (dupServerVariable != null)
                 {
@@ -2046,11 +2045,11 @@ public static partial class CommandProcessing
                 }
 
                 break;
-            case VariableMod.AddPlayerVar:
+            case VariableModType.AddPlayerVar:
                 value.Integer += player.GetVariableValue(mod.DuplicateVariableId).Integer;
 
                 break;
-            case VariableMod.AddGlobalVar:
+            case VariableModType.AddGlobalVar:
                 var asv = ServerVariableBase.Get(mod.DuplicateVariableId);
                 if (asv != null)
                 {
@@ -2058,11 +2057,11 @@ public static partial class CommandProcessing
                 }
 
                 break;
-            case VariableMod.SubtractPlayerVar:
+            case VariableModType.SubtractPlayerVar:
                 value.Integer -= player.GetVariableValue(mod.DuplicateVariableId).Integer;
 
                 break;
-            case VariableMod.SubtractGlobalVar:
+            case VariableModType.SubtractGlobalVar:
                 var ssv = ServerVariableBase.Get(mod.DuplicateVariableId);
                 if (ssv != null)
                 {
@@ -2070,11 +2069,11 @@ public static partial class CommandProcessing
                 }
 
                 break;
-            case VariableMod.MultiplyPlayerVar:
+            case VariableModType.MultiplyPlayerVar:
                 value.Integer *= player.GetVariableValue(mod.DuplicateVariableId).Integer;
 
                 break;
-            case VariableMod.MultiplyGlobalVar:
+            case VariableModType.MultiplyGlobalVar:
                 var msv = ServerVariableBase.Get(mod.DuplicateVariableId);
                 if (msv != null)
                 {
@@ -2082,14 +2081,14 @@ public static partial class CommandProcessing
                 }
 
                 break;
-            case VariableMod.DividePlayerVar:
+            case VariableModType.DividePlayerVar:
                 if (player.GetVariableValue(mod.DuplicateVariableId).Integer != 0) //Idiot proofing divide by 0 LOL
                 {
                     value.Integer /= player.GetVariableValue(mod.DuplicateVariableId).Integer;
                 }
 
                 break;
-            case VariableMod.DivideGlobalVar:
+            case VariableModType.DivideGlobalVar:
                 var dsv = ServerVariableBase.Get(mod.DuplicateVariableId);
                 if (dsv != null)
                 {
@@ -2100,11 +2099,11 @@ public static partial class CommandProcessing
                 }
 
                 break;
-            case VariableMod.LeftShiftPlayerVar:
+            case VariableModType.LeftShiftPlayerVar:
                 value.Integer = value.Integer << (int)player.GetVariableValue(mod.DuplicateVariableId).Integer;
 
                 break;
-            case VariableMod.LeftShiftGlobalVar:
+            case VariableModType.LeftShiftGlobalVar:
                 var lhsv = ServerVariableBase.Get(mod.DuplicateVariableId);
                 if (lhsv != null)
                 {
@@ -2112,11 +2111,11 @@ public static partial class CommandProcessing
                 }
 
                 break;
-            case VariableMod.RightShiftPlayerVar:
+            case VariableModType.RightShiftPlayerVar:
                 value.Integer = value.Integer >> (int)player.GetVariableValue(mod.DuplicateVariableId).Integer;
 
                 break;
-            case VariableMod.RightShiftGlobalVar:
+            case VariableModType.RightShiftGlobalVar:
                 var rhsv = ServerVariableBase.Get(mod.DuplicateVariableId);
                 if (rhsv != null)
                 {
@@ -2215,11 +2214,11 @@ public static partial class CommandProcessing
 
         switch (mod.ModType)
         {
-            case VariableMod.Set:
+            case VariableModType.Set:
                 value.String = ParseEventText(mod.Value, player, instance);
 
                 break;
-            case VariableMod.Replace:
+            case VariableModType.Replace:
                 var find = ParseEventText(mod.Value, player, instance);
                 var replace = ParseEventText(mod.Replace, player, instance);
                 value.String = value.String.Replace(find, replace);

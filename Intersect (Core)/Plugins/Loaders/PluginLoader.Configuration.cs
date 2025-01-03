@@ -3,6 +3,7 @@
 using Newtonsoft.Json;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using Intersect.Framework.Core.Serialization;
 
 namespace Intersect.Plugins.Loaders;
 
@@ -57,7 +58,8 @@ internal partial class PluginLoader
                                         serializedOldConfiguration, plugin.Reference.ConfigurationType,
                                         new JsonSerializerSettings
                                         {
-                                            DefaultValueHandling = DefaultValueHandling.Include
+                                            DefaultValueHandling = DefaultValueHandling.Include,
+                                            SerializationBinder = new IntersectTypeSerializationBinder(),
                                         }
                                     ) as PluginConfiguration ??
                                     configuration;

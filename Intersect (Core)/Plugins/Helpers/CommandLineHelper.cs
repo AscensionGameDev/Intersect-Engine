@@ -12,7 +12,7 @@ internal sealed partial class CommandLineHelper : PluginHelper, ICommandLineHelp
 
     private readonly string[] mArgs;
 
-    internal CommandLineHelper(Logger logger, string[] args, Parser parser) : base(
+    internal CommandLineHelper(ILogger logger, string[] args, Parser parser) : base(
         logger
     )
     {

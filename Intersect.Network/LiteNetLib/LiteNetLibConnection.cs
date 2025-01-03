@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
+using Intersect.Framework.Reflection;
 using Intersect.Logging;
 using Intersect.Memory;
 using Intersect.Network.Packets;

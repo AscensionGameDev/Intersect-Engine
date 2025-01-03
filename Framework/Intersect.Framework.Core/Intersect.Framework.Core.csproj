@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Nullable>warnings</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Intersect.Framework\Intersect.Framework.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Ceras" Version="4.1.7" />
+      <PackageReference Include="K4os.Compression.LZ4" Version="1.3.6" />
+      <PackageReference Include="MessagePack" Version="2.5.187" />
+      <PackageReference Include="MessagePackAnalyzer" Version="2.6.100-alpha">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="NCalcSync" Version="3.8.0" />
+      <PackageReference Include="Semver" Version="2.3.0" />
+      <PackageReference Include="System.Collections.Immutable" Version="9.0.0" />
+      <PackageReference Include="System.IO.Abstractions" Version="21.1.7" />
+      <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
+      <PackageReference Include="System.IO.Hashing" Version="9.0.0" />
+    </ItemGroup>
+
+</Project>

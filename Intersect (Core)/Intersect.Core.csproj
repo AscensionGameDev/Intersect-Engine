@@ -68,15 +68,8 @@
 
   <ItemGroup>
     <PackageReference Include="AscensionGameDev.Intersect.Rsa" Version="0.8.0.9-beta" />
-    <PackageReference Include="Ceras" Version="4.1.7" />
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
-    <PackageReference Include="K4os.Compression.LZ4" Version="1.3.6" />
     <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
-    <PackageReference Include="MessagePack" Version="2.5.187" />
-    <PackageReference Include="MessagePackAnalyzer" Version="2.6.100-alpha">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="7.0.0" />
     <PackageReference Include="Microsoft.Diagnostics.Runtime" Version="3.0.442202" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="8.0.11" />
@@ -92,9 +85,7 @@
     <PackageReference Include="Microsoft.Extensions.Primitives" Version="8.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Validation" Version="17.8.8" />
     <PackageReference Include="Microsoft.Win32.Primitives" Version="4.3.0" />
-    <PackageReference Include="NCalcSync" Version="3.8.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Semver" Version="2.3.0" />
     <PackageReference Include="Serilog" Version="3.0.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
@@ -106,9 +97,6 @@
     <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="9.0.0" />
     <PackageReference Include="System.Interactive.Async" Version="6.0.1" />
-    <PackageReference Include="System.IO.Abstractions" Version="21.1.7" />
-    <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
-    <PackageReference Include="System.IO.Hashing" Version="9.0.0" />
     <PackageReference Include="System.Linq" Version="4.3.0" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
     <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
@@ -132,7 +120,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Framework\Intersect.Framework\Intersect.Framework.csproj" />
+    <ProjectReference Include="..\Framework\Intersect.Framework.Core\Intersect.Framework.Core.csproj" />
   </ItemGroup>
 
 </Project>

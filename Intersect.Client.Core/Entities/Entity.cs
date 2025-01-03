@@ -17,7 +17,6 @@ using Intersect.GameObjects.Maps;
 using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
-using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Client.Entities;
 
@@ -2385,18 +2384,18 @@ public partial class Entity : IEntity
             {
                 if (gameMap.Attributes[tmpX, tmpY] != null)
                 {
-                    if (gameMap.Attributes[tmpX, tmpY].Type == MapAttribute.Blocked || (gameMap.Attributes[tmpX, tmpY].Type == MapAttribute.Animation && ((MapAnimationAttribute)gameMap.Attributes[tmpX, tmpY]).IsBlock))
+                    if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributeType.Blocked || (gameMap.Attributes[tmpX, tmpY].Type == MapAttributeType.Animation && ((MapAnimationAttribute)gameMap.Attributes[tmpX, tmpY]).IsBlock))
                     {
                         return -2;
                     }
-                    else if (gameMap.Attributes[tmpX, tmpY].Type == MapAttribute.ZDimension)
+                    else if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributeType.ZDimension)
                     {
                         if (((MapZDimensionAttribute)gameMap.Attributes[tmpX, tmpY]).BlockedLevel - 1 == z)
                         {
                             return -3;
                         }
                     }
-                    else if (gameMap.Attributes[tmpX, tmpY].Type == MapAttribute.NpcAvoid)
+                    else if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributeType.NpcAvoid)
                     {
                         if (!ignoreNpcAvoids)
                         {

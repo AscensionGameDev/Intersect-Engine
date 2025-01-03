@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
+using Intersect.Framework.Reflection;
 using Intersect.Logging;
 using Intersect.Memory;
 using Intersect.Network.Events;

@@ -1,6 +1,7 @@
 ﻿using System.IO.Compression;
 
 using Intersect.Enums;
+using Intersect.Framework.Core.Serialization;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Microsoft.Data.Sqlite;
@@ -11,7 +12,6 @@ using MySqlConnector;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using MapAttribute = Intersect.GameObjects.Maps.MapAttribute;
-using VariableMod = Intersect.Enums.VariableMod;
 
 namespace Intersect.Server.Database.GameData.Migrations;
 
@@ -20,6 +20,14 @@ public static partial class Beta6Migration
 {
 
     private static Intersect.Network.Ceras mCeras;
+
+    private static readonly JsonSerializerSettings JsonSerializerSettings = new()
+    {
+        Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
+        DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+        ObjectCreationHandling = ObjectCreationHandling.Replace,
+        SerializationBinder = new IntersectTypeSerializationBinder(),
+    };
 
     public static void Run(GameContext context)
     {
@@ -269,12 +277,7 @@ public static partial class Beta6Migration
 
         var newJson = JsonConvert.SerializeObject(
             cmd, typeof(EventCommand),
-            new JsonSerializerSettings()
-            {
-                Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
-                DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-                ObjectCreationHandling = ObjectCreationHandling.Replace
-            }
+            JsonSerializerSettings
         );
 
         return JObject.Parse(newJson);
@@ -336,17 +339,12 @@ public static partial class Beta6Migration
 
         if (obj.ContainsKey("ModType"))
         {
-            mod.ModType = (VariableMod) int.Parse(obj["ModType"].ToString());
+            mod.ModType = (VariableModType) int.Parse(obj["ModType"].ToString());
         }
 
         var newJson = JsonConvert.SerializeObject(
             cmd, typeof(EventCommand),
-            new JsonSerializerSettings()
-            {
-                Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
-                DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-                ObjectCreationHandling = ObjectCreationHandling.Replace
-            }
+            JsonSerializerSettings
         );
 
         return JObject.Parse(newJson);
@@ -383,12 +381,7 @@ public static partial class Beta6Migration
 
         var newJson = JsonConvert.SerializeObject(
             cmd, typeof(Condition),
-            new JsonSerializerSettings()
-            {
-                Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
-                DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-                ObjectCreationHandling = ObjectCreationHandling.Replace
-            }
+            JsonSerializerSettings
         );
 
         return JObject.Parse(newJson);
@@ -425,12 +418,7 @@ public static partial class Beta6Migration
 
         var newJson = JsonConvert.SerializeObject(
             cmd, typeof(Condition),
-            new JsonSerializerSettings()
-            {
-                Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
-                DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-                ObjectCreationHandling = ObjectCreationHandling.Replace
-            }
+            JsonSerializerSettings
         );
 
         return JObject.Parse(newJson);
@@ -494,12 +482,7 @@ public static partial class Beta6Migration
 
         var newJson = JsonConvert.SerializeObject(
             cmd, typeof(Condition),
-            new JsonSerializerSettings()
-            {
-                Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
-                DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-                ObjectCreationHandling = ObjectCreationHandling.Replace
-            }
+            JsonSerializerSettings
         );
 
         return JObject.Parse(newJson);
@@ -563,12 +546,7 @@ public static partial class Beta6Migration
 
         var newJson = JsonConvert.SerializeObject(
             cmd, typeof(Condition),
-            new JsonSerializerSettings()
-            {
-                Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
-                DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-                ObjectCreationHandling = ObjectCreationHandling.Replace
-            }
+            JsonSerializerSettings
         );
 
         return JObject.Parse(newJson);

@@ -110,8 +110,7 @@ internal sealed partial class PluginService : ApplicationService<IPluginService,
     }
 
     /// <inheritdoc />
-    public Plugin this[string pluginKey] =>
-        Plugins.TryGetValue(pluginKey, out var plugin) ? plugin : null;
+    public IPlugin this[string pluginKey] => Plugins.GetValueOrDefault(pluginKey);
 
     /// <inheritdoc />
     public List<string> PluginDirectories { get; }

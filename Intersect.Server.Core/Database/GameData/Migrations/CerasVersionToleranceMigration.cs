@@ -1,12 +1,12 @@
 ﻿using Intersect.Compression;
 using Intersect.Enums;
+using Intersect.Framework.Core.Serialization;
 using Intersect.GameObjects.Maps;
 using Intersect.Network;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 using Newtonsoft.Json;
-using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Server.Database.GameData.Migrations;
 
@@ -14,6 +14,7 @@ public partial class CerasVersionToleranceMigration
 {
     private static JsonSerializerSettings mJsonSerializerSettings = new JsonSerializerSettings()
     {
+        SerializationBinder = new IntersectTypeSerializationBinder(),
         TypeNameHandling = TypeNameHandling.Auto,
         DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
         ObjectCreationHandling = ObjectCreationHandling.Replace
@@ -192,33 +193,33 @@ public partial class CerasVersionToleranceMigration
 
     private abstract partial class LegacyMapAttribute
     {
-        public abstract MapAttribute Type { get; }
+        public abstract MapAttributeType Type { get; }
 
-        public static LegacyMapAttribute CreateAttribute(MapAttribute type)
+        public static LegacyMapAttribute CreateAttribute(MapAttributeType type)
         {
             switch (type)
             {
-                case MapAttribute.Walkable:
+                case MapAttributeType.Walkable:
                     return null;
-                case MapAttribute.Blocked:
+                case MapAttributeType.Blocked:
                     return new LegacyMapBlockedAttribute();
-                case MapAttribute.Item:
+                case MapAttributeType.Item:
                     return new LegacyMapItemAttribute();
-                case MapAttribute.ZDimension:
+                case MapAttributeType.ZDimension:
                     return new LegacyMapZDimensionAttribute();
-                case MapAttribute.NpcAvoid:
+                case MapAttributeType.NpcAvoid:
                     return new LegacyMapNpcAvoidAttribute();
-                case MapAttribute.Warp:
+                case MapAttributeType.Warp:
                     return new LegacyMapWarpAttribute();
-                case MapAttribute.Sound:
+                case MapAttributeType.Sound:
                     return new LegacyMapSoundAttribute();
-                case MapAttribute.Resource:
+                case MapAttributeType.Resource:
                     return new LegacyMapResourceAttribute();
-                case MapAttribute.Animation:
+                case MapAttributeType.Animation:
                     return new LegacyMapAnimationAttribute();
-                case MapAttribute.GrappleStone:
+                case MapAttributeType.GrappleStone:
                     return new LegacyMapGrappleStoneAttribute();
-                case MapAttribute.Slide:
+                case MapAttributeType.Slide:
                     return new LegacyMapSlideAttribute();
             }
 
@@ -229,14 +230,14 @@ public partial class CerasVersionToleranceMigration
     private partial class LegacyMapBlockedAttribute : LegacyMapAttribute
     {
 
-        public override MapAttribute Type { get; } = MapAttribute.Blocked;
+        public override MapAttributeType Type { get; } = MapAttributeType.Blocked;
 
     }
 
     private partial class LegacyMapItemAttribute : LegacyMapAttribute
     {
 
-        public override MapAttribute Type { get; } = MapAttribute.Item;
+        public override MapAttributeType Type { get; } = MapAttributeType.Item;
 
         public Guid ItemId { get; set; }
 
@@ -247,7 +248,7 @@ public partial class CerasVersionToleranceMigration
     private partial class LegacyMapZDimensionAttribute : LegacyMapAttribute
     {
 
-        public override MapAttribute Type { get; } = MapAttribute.ZDimension;
+        public override MapAttributeType Type { get; } = MapAttributeType.ZDimension;
 
         public byte GatewayTo { get; set; }
 
@@ -258,14 +259,14 @@ public partial class CerasVersionToleranceMigration
     private partial class LegacyMapNpcAvoidAttribute : LegacyMapAttribute
     {
 
-        public override MapAttribute Type { get; } = MapAttribute.NpcAvoid;
+        public override MapAttributeType Type { get; } = MapAttributeType.NpcAvoid;
 
     }
 
     private partial class LegacyMapWarpAttribute : LegacyMapAttribute
     {
 
-        public override MapAttribute Type { get; } = MapAttribute.Warp;
+        public override MapAttributeType Type { get; } = MapAttributeType.Warp;
 
         public Guid MapId { get; set; }
 
@@ -280,7 +281,7 @@ public partial class CerasVersionToleranceMigration
     private partial class LegacyMapSoundAttribute : LegacyMapAttribute
     {
 
-        public override MapAttribute Type { get; } = MapAttribute.Sound;
+        public override MapAttributeType Type { get; } = MapAttributeType.Sound;
 
         public string File { get; set; }
 
@@ -291,7 +292,7 @@ public partial class CerasVersionToleranceMigration
     private partial class LegacyMapResourceAttribute : LegacyMapAttribute
     {
 
-        public override MapAttribute Type { get; } = MapAttribute.Resource;
+        public override MapAttributeType Type { get; } = MapAttributeType.Resource;
 
         public Guid ResourceId { get; set; }
 
@@ -302,7 +303,7 @@ public partial class CerasVersionToleranceMigration
     private partial class LegacyMapAnimationAttribute : LegacyMapAttribute
     {
 
-        public override MapAttribute Type { get; } = MapAttribute.Animation;
+        public override MapAttributeType Type { get; } = MapAttributeType.Animation;
 
         public Guid AnimationId { get; set; }
 
@@ -311,14 +312,14 @@ public partial class CerasVersionToleranceMigration
     private partial class LegacyMapGrappleStoneAttribute : LegacyMapAttribute
     {
 
-        public override MapAttribute Type { get; } = MapAttribute.GrappleStone;
+        public override MapAttributeType Type { get; } = MapAttributeType.GrappleStone;
 
     }
 
     private partial class LegacyMapSlideAttribute : LegacyMapAttribute
     {
 
-        public override MapAttribute Type { get; } = MapAttribute.Slide;
+        public override MapAttributeType Type { get; } = MapAttributeType.Slide;
 
         public byte Direction { get; set; }
 

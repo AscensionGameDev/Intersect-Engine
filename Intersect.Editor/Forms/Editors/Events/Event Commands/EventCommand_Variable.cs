@@ -5,7 +5,6 @@ using Intersect.Extensions;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.Utilities;
-using VariableMod = Intersect.Enums.VariableMod;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands;
 
@@ -263,15 +262,15 @@ public partial class EventCommandVariable : UserControl
 
         switch (integerMod.ModType)
         {
-            case VariableMod.Set:
-            case VariableMod.Add:
-            case VariableMod.Subtract:
-            case VariableMod.Multiply:
-            case VariableMod.Divide:
-            case VariableMod.LeftShift:
-            case VariableMod.RightShift:
-            case VariableMod.Random:
-            case VariableMod.SystemTime:
+            case VariableModType.Set:
+            case VariableModType.Add:
+            case VariableModType.Subtract:
+            case VariableModType.Multiply:
+            case VariableModType.Divide:
+            case VariableModType.LeftShift:
+            case VariableModType.RightShift:
+            case VariableModType.Random:
+            case VariableModType.SystemTime:
                 nudNumericValue.Value = integerMod.Value;
                 ResetSettingVariableSelection();
                 break;
@@ -291,9 +290,9 @@ public partial class EventCommandVariable : UserControl
         optNumericLeftShift.Checked = VariableModUtils.LShiftMods.Contains(integerMod.ModType);
         optNumericRightShift.Checked = VariableModUtils.RShiftMods.Contains(integerMod.ModType);
 
-        optNumericSystemTime.Checked = integerMod.ModType == VariableMod.SystemTime;
+        optNumericSystemTime.Checked = integerMod.ModType == VariableModType.SystemTime;
 
-        if (integerMod.ModType == VariableMod.Random)
+        if (integerMod.ModType == VariableModType.Random)
         {
             optNumericRandom.Checked = true;
             nudLow.Value = integerMod.Value;
@@ -366,35 +365,35 @@ public partial class EventCommandVariable : UserControl
 
         if (optNumericSet.Checked && optNumericStaticVal.Checked)
         {
-            mod.ModType = VariableMod.Set;
+            mod.ModType = VariableModType.Set;
         }
         else if (optNumericAdd.Checked && optNumericStaticVal.Checked)
         {
-            mod.ModType = VariableMod.Add;
+            mod.ModType = VariableModType.Add;
         }
         else if (optNumericSubtract.Checked && optNumericStaticVal.Checked)
         {
-            mod.ModType = VariableMod.Subtract;
+            mod.ModType = VariableModType.Subtract;
         }
         else if (optNumericMultiply.Checked && optNumericStaticVal.Checked)
         {
-            mod.ModType = VariableMod.Multiply;
+            mod.ModType = VariableModType.Multiply;
         }
         else if (optNumericDivide.Checked && optNumericStaticVal.Checked)
         {
-            mod.ModType = VariableMod.Divide;
+            mod.ModType = VariableModType.Divide;
         }
         else if (optNumericLeftShift.Checked && optNumericStaticVal.Checked)
         {
-            mod.ModType = VariableMod.LeftShift;
+            mod.ModType = VariableModType.LeftShift;
         }
         else if (optNumericRightShift.Checked && optNumericStaticVal.Checked)
         {
-            mod.ModType = VariableMod.RightShift;
+            mod.ModType = VariableModType.RightShift;
         }
         else if (optNumericRandom.Checked)
         {
-            mod.ModType = VariableMod.Random;
+            mod.ModType = VariableModType.Random;
             mod.HighValue = (int)nudHigh.Value;
             if (mod.HighValue < mod.Value)
             {
@@ -405,130 +404,130 @@ public partial class EventCommandVariable : UserControl
         }
         else if (optNumericSystemTime.Checked)
         {
-            mod.ModType = VariableMod.SystemTime;
+            mod.ModType = VariableModType.SystemTime;
         }
         else if (mSettingVariableType == VariableType.PlayerVariable)
         {
             if (optNumericSet.Checked)
             {
-                mod.ModType = VariableMod.DupPlayerVar;
+                mod.ModType = VariableModType.DupPlayerVar;
             }
             else if (optNumericAdd.Checked)
             {
-                mod.ModType = VariableMod.AddPlayerVar;
+                mod.ModType = VariableModType.AddPlayerVar;
             }
             else if (optNumericSubtract.Checked)
             {
-                mod.ModType = VariableMod.SubtractPlayerVar;
+                mod.ModType = VariableModType.SubtractPlayerVar;
             }
             else if (optNumericMultiply.Checked)
             {
-                mod.ModType = VariableMod.MultiplyPlayerVar;
+                mod.ModType = VariableModType.MultiplyPlayerVar;
             }
             else if (optNumericDivide.Checked)
             {
-                mod.ModType = VariableMod.DividePlayerVar;
+                mod.ModType = VariableModType.DividePlayerVar;
             }
             else if (optNumericLeftShift.Checked)
             {
-                mod.ModType = VariableMod.LeftShiftPlayerVar;
+                mod.ModType = VariableModType.LeftShiftPlayerVar;
             }
             else
             {
-                mod.ModType = VariableMod.RightShiftPlayerVar;
+                mod.ModType = VariableModType.RightShiftPlayerVar;
             }
         }
         else if (mSettingVariableType == VariableType.ServerVariable)
         {
             if (optNumericSet.Checked)
             {
-                mod.ModType = VariableMod.DupGlobalVar;
+                mod.ModType = VariableModType.DupGlobalVar;
             }
             else if (optNumericAdd.Checked)
             {
-                mod.ModType = VariableMod.AddGlobalVar;
+                mod.ModType = VariableModType.AddGlobalVar;
             }
             else if (optNumericSubtract.Checked)
             {
-                mod.ModType = VariableMod.SubtractGlobalVar;
+                mod.ModType = VariableModType.SubtractGlobalVar;
             }
             else if (optNumericMultiply.Checked)
             {
-                mod.ModType = VariableMod.MultiplyGlobalVar;
+                mod.ModType = VariableModType.MultiplyGlobalVar;
             }
             else if (optNumericDivide.Checked)
             {
-                mod.ModType = VariableMod.DivideGlobalVar;
+                mod.ModType = VariableModType.DivideGlobalVar;
             }
             else if (optNumericLeftShift.Checked)
             {
-                mod.ModType = VariableMod.LeftShiftGlobalVar;
+                mod.ModType = VariableModType.LeftShiftGlobalVar;
             }
             else
             {
-                mod.ModType = VariableMod.RightShiftGlobalVar;
+                mod.ModType = VariableModType.RightShiftGlobalVar;
             }
         }
         else if (mSettingVariableType == VariableType.GuildVariable)
         {
             if (optNumericSet.Checked)
             {
-                mod.ModType = VariableMod.DupGuildVar;
+                mod.ModType = VariableModType.DupGuildVar;
             }
             else if (optNumericAdd.Checked)
             {
-                mod.ModType = VariableMod.AddGuildVar;
+                mod.ModType = VariableModType.AddGuildVar;
             }
             else if (optNumericSubtract.Checked)
             {
-                mod.ModType = VariableMod.SubtractGuildVar;
+                mod.ModType = VariableModType.SubtractGuildVar;
             }
             else if (optNumericMultiply.Checked)
             {
-                mod.ModType = VariableMod.MultiplyGuildVar;
+                mod.ModType = VariableModType.MultiplyGuildVar;
             }
             else if (optNumericDivide.Checked)
             {
-                mod.ModType = VariableMod.DivideGuildVar;
+                mod.ModType = VariableModType.DivideGuildVar;
             }
             else if (optNumericLeftShift.Checked)
             {
-                mod.ModType = VariableMod.LeftShiftGuildVar;
+                mod.ModType = VariableModType.LeftShiftGuildVar;
             }
             else
             {
-                mod.ModType = VariableMod.RightShiftGuildVar;
+                mod.ModType = VariableModType.RightShiftGuildVar;
             }
         }
         else if (mSettingVariableType == VariableType.UserVariable)
         {
             if (optNumericSet.Checked)
             {
-                mod.ModType = VariableMod.DuplicateUserVariable;
+                mod.ModType = VariableModType.DuplicateUserVariable;
             }
             else if (optNumericAdd.Checked)
             {
-                mod.ModType = VariableMod.AddUserVariable;
+                mod.ModType = VariableModType.AddUserVariable;
             }
             else if (optNumericSubtract.Checked)
             {
-                mod.ModType = VariableMod.SubtractUserVariable;
+                mod.ModType = VariableModType.SubtractUserVariable;
             }
             else if (optNumericMultiply.Checked)
             {
-                mod.ModType = VariableMod.MultiplyUserVariable;
+                mod.ModType = VariableModType.MultiplyUserVariable;
             }
             else if (optNumericDivide.Checked)
             {
-                mod.ModType = VariableMod.DivideUserVariable;
+                mod.ModType = VariableModType.DivideUserVariable;
             }
             else if (optNumericLeftShift.Checked)
             {
-                mod.ModType = VariableMod.LeftShiftUserVariable;
+                mod.ModType = VariableModType.LeftShiftUserVariable;
             }
             else
             {
-                mod.ModType = VariableMod.RightShiftUserVariable;
+                mod.ModType = VariableModType.RightShiftUserVariable;
             }
         }
 
@@ -550,12 +549,12 @@ public partial class EventCommandVariable : UserControl
         {
             switch (stringMod.ModType)
             {
-                case VariableMod.Set:
+                case VariableModType.Set:
                     optStaticString.Checked = true;
                     txtStringValue.Text = stringMod.Value;
 
                     break;
-                case VariableMod.Replace:
+                case VariableModType.Replace:
                     optReplaceString.Checked = true;
                     txtStringFind.Text = stringMod.Value;
                     txtStringReplace.Text = stringMod.Replace;
@@ -572,12 +571,12 @@ public partial class EventCommandVariable : UserControl
         var mod = new StringVariableMod();
         if (optStaticString.Checked)
         {
-            mod.ModType = VariableMod.Set;
+            mod.ModType = VariableModType.Set;
             mod.Value = txtStringValue.Text;
         }
         else if (optReplaceString.Checked)
         {
-            mod.ModType = VariableMod.Replace;
+            mod.ModType = VariableModType.Replace;
             mod.Value = txtStringFind.Text;
             mod.Replace = txtStringReplace.Text;
         }

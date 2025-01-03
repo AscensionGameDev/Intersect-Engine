@@ -29,7 +29,6 @@ using Intersect.Server.Networking;
 using Intersect.Utilities;
 
 using Newtonsoft.Json;
-using MapAttribute = Intersect.Enums.MapAttribute;
 using Stat = Intersect.Enums.Stat;
 
 namespace Intersect.Server.Entities;
@@ -7128,7 +7127,7 @@ public partial class Player : Entity
 
             // Check for a warp, if so warp the player.
             var attribute = MapController.Get(MapId).Attributes[X, Y];
-            if (attribute != null && attribute.Type == MapAttribute.Warp)
+            if (attribute != null && attribute.Type == MapAttributeType.Warp)
             {
                 var warpAtt = (MapWarpAttribute)attribute;
                 var dir = Dir;

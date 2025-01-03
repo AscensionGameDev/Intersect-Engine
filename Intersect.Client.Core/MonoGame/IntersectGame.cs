@@ -99,8 +99,8 @@ internal partial class IntersectGame : Game
 
         Content.RootDirectory = "";
         IsMouseVisible = true;
-        Globals.ContentManager = new MonoContentManager();
-        Globals.Database = new JsonDatabase();
+        Globals.ContentManager = new MonoContentManager(Log.Default);
+        Globals.Database = new JsonDatabase(Log.Default);
 
         // Load configuration.
         Globals.Database.LoadPreferences();

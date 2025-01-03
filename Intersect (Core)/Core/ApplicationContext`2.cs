@@ -58,7 +58,7 @@ public abstract partial class ApplicationContext<TContext, TStartupOptions> : IA
     public TStartupOptions StartupOptions { get; }
 
     /// <inheritdoc />
-    public Logger Logger { get; }
+    public ILogger Logger { get; }
 
     /// <inheritdoc />
     public IPacketHelper PacketHelper { get; }
@@ -143,6 +143,7 @@ public abstract partial class ApplicationContext<TContext, TStartupOptions> : IA
         var assemblies = new List<Assembly>
         {
             typeof(IApplicationContext).Assembly,
+            typeof(SharedConstants).Assembly,
             typeof(TContext).Assembly,
         };
 
@@ -277,7 +278,7 @@ public abstract partial class ApplicationContext<TContext, TStartupOptions> : IA
     }
 
     /// <inheritdoc />
-    public LockingActionQueue StartWithActionQueue()
+    public ILockingActionQueue StartWithActionQueue()
     {
         Start(false);
 

@@ -848,18 +848,18 @@ public static partial class Strings
     {
         public static Dictionary<int, LocalizedString> AttributeTypes = new Dictionary<int, LocalizedString>
         {
-            {(int) MapAttribute.Animation, @"Map Animation" },
-            {(int) MapAttribute.Blocked, @"Blocked" },
-            {(int) MapAttribute.Critter, @"Critter" },
-            {(int) MapAttribute.GrappleStone, @"Grapple Stone" },
-            {(int) MapAttribute.Item, @"Item Spawn" },
-            {(int) MapAttribute.NpcAvoid, @"Npc Avoid" },
-            {(int) MapAttribute.Resource, @"Resource Spawn" },
-            {(int) MapAttribute.Slide, @"Slide" },
-            {(int) MapAttribute.Sound, @"Map Sound" },
-            {(int) MapAttribute.Walkable, @"Walkable" },
-            {(int) MapAttribute.Warp, @"Warp" },
-            {(int) MapAttribute.ZDimension, @"Z-Dimension" },
+            {(int) MapAttributeType.Animation, @"Map Animation" },
+            {(int) MapAttributeType.Blocked, @"Blocked" },
+            {(int) MapAttributeType.Critter, @"Critter" },
+            {(int) MapAttributeType.GrappleStone, @"Grapple Stone" },
+            {(int) MapAttributeType.Item, @"Item Spawn" },
+            {(int) MapAttributeType.NpcAvoid, @"Npc Avoid" },
+            {(int) MapAttributeType.Resource, @"Resource Spawn" },
+            {(int) MapAttributeType.Slide, @"Slide" },
+            {(int) MapAttributeType.Sound, @"Map Sound" },
+            {(int) MapAttributeType.Walkable, @"Walkable" },
+            {(int) MapAttributeType.Warp, @"Warp" },
+            {(int) MapAttributeType.ZDimension, @"Z-Dimension" },
         };
 
         public static string FormatSpawnLevel(int level)

@@ -20,7 +20,6 @@ using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
 using Newtonsoft.Json;
-using MapAttribute = Intersect.Enums.MapAttribute;
 using Stat = Intersect.Enums.Stat;
 
 namespace Intersect.Server.Entities;
@@ -1229,13 +1228,13 @@ public abstract partial class Entity : IEntity
 
                 // ReSharper disable once InvertIf
                 //Check for slide tiles
-                if (attribute?.Type == MapAttribute.Slide)
+                if (attribute?.Type == MapAttributeType.Slide)
                 {
                     // If sets direction, set it.
                     if (((MapSlideAttribute)attribute).Direction > 0)
                     {
                         //Check for slide tiles
-                        if (attribute != null && attribute.Type == MapAttribute.Slide)
+                        if (attribute != null && attribute.Type == MapAttributeType.Slide)
                         {
                             if (((MapSlideAttribute)attribute).Direction > 0)
                             {
@@ -1291,7 +1290,7 @@ public abstract partial class Entity : IEntity
             if (Y < Options.MapHeight && Y >= 0)
             {
                 var attribute = MapController.Get(MapId).Attributes[X, Y];
-                if (attribute != null && attribute.Type == MapAttribute.ZDimension)
+                if (attribute != null && attribute.Type == MapAttributeType.ZDimension)
                 {
                     if (((MapZDimensionAttribute)attribute).GatewayTo > 0)
                     {

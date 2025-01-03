@@ -15,6 +15,7 @@ using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Compression;
 using Intersect.Enums;
+using Intersect.Framework.Core.Serialization;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Logging;
@@ -22,7 +23,6 @@ using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
 
 using Newtonsoft.Json;
-using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Client.Maps;
 
@@ -167,7 +167,13 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     {
         LocalEntitiesToDispose.AddRange(LocalEntities.Keys.ToArray());
         JsonConvert.PopulateObject(
-            json, this, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace }
+            json,
+            this,
+            new JsonSerializerSettings
+            {
+                SerializationBinder = new IntersectTypeSerializationBinder(),
+                ObjectCreationHandling = ObjectCreationHandling.Replace,
+            }
         );
 
         IsLoaded = true;
@@ -602,7 +608,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
                 switch (mapAttribute.Type)
                 {
-                    case MapAttribute.Animation:
+                    case MapAttributeType.Animation:
                     {
                         var anim = AnimationBase.Get(((MapAnimationAttribute)mapAttribute).AnimationId);
                         if (anim == null)
@@ -624,7 +630,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                         mAttributeAnimInstances[mapAttribute].Update();
                         break;
                     }
-                    case MapAttribute.Critter:
+                    case MapAttributeType.Critter:
                     {
                         var critterAttribute = ((MapCritterAttribute)mapAttribute);
                         var sprite = critterAttribute.Sprite;
@@ -675,7 +681,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             for (var y = 0; y < _height; ++y)
             {
                 var attribute = Attributes?[x, y];
-                if (attribute?.Type != MapAttribute.Sound)
+                if (attribute?.Type != MapAttributeType.Sound)
                 {
                     continue;
                 }

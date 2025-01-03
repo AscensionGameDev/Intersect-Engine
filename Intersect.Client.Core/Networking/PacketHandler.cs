@@ -23,7 +23,6 @@ using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
 using Intersect.Framework;
 using Intersect.Models;
-using MapAttribute = Intersect.Enums.MapAttribute;
 using Intersect.Client.Interface.Shared;
 using Intersect.Network.Packets.Client;
 
@@ -40,7 +39,7 @@ internal sealed partial class PacketHandler
 
         public VirtualPacketSender(IApplicationContext applicationContext) =>
             ApplicationContext = applicationContext ?? throw new ArgumentNullException(nameof(applicationContext));
-        
+
         #region Implementation of IPacketSender
 
         /// <inheritdoc />
@@ -64,7 +63,7 @@ internal sealed partial class PacketHandler
 
     public IClientContext Context { get; }
 
-    public Logger Logger => Context.Logger;
+    public ILogger Logger => Context.Logger;
 
     public PacketHandlerRegistry Registry { get; }
 
@@ -253,7 +252,7 @@ internal sealed partial class PacketHandler
         }
 
         MapInstance.UpdateMapRequestTime(packet.MapId);
-        
+
         if (MapInstance.TryGet(mapId, out var mapInstance))
         {
             if (packet.Revision == mapInstance.Revision)
@@ -567,7 +566,7 @@ internal sealed partial class PacketHandler
     //AnnouncementPacket
     public void HandlePacket(IPacketSender packetSender, AnnouncementPacket packet)
     {
-        Interface.Interface.GameUi.AnnouncementWindow.ShowAnnouncement(packet.Message, packet.Duration);   
+        Interface.Interface.GameUi.AnnouncementWindow.ShowAnnouncement(packet.Message, packet.Duration);
     }
 
     //ActionMsgPackets
@@ -754,7 +753,7 @@ internal sealed partial class PacketHandler
 
         // Set the Z-Dimension if the player has moved up or down a dimension.
         if (entityMap.Attributes[en.X, en.Y] != null &&
-            entityMap.Attributes[en.X, en.Y].Type == MapAttribute.ZDimension)
+            entityMap.Attributes[en.X, en.Y].Type == MapAttributeType.ZDimension)
         {
             if (((MapZDimensionAttribute) entityMap.Attributes[en.X, en.Y]).GatewayTo > 0)
             {
@@ -1109,7 +1108,7 @@ internal sealed partial class PacketHandler
         var id = packet.Id;
         var type = packet.Type;
         var mapId = packet.MapId;
-        
+
         Entity en = null;
         if (type < EntityType.Event)
         {
@@ -1117,7 +1116,7 @@ internal sealed partial class PacketHandler
             {
                 return;
             }
-            
+
             en = Globals.Entities[id];
         }
         else
@@ -1215,7 +1214,7 @@ internal sealed partial class PacketHandler
         foreach(var item in packet.Items)
         {
             var mapItem = new MapItemInstance(item.TileIndex,item.Id, item.ItemId, item.BagId, item.Quantity, item.Properties);
-            
+
             if (!map.MapItems.ContainsKey(mapItem.TileIndex))
             {
                 map.MapItems.Add(mapItem.TileIndex, new List<IMapItemInstance>());
@@ -1270,7 +1269,7 @@ internal sealed partial class PacketHandler
             {
                 // Reverse the array again to match server, add item.. then  reverse again to get the right render order.
                 map.MapItems[packet.TileIndex].Add(mapItem);
-            } 
+            }
         }
     }
 
@@ -2121,7 +2120,7 @@ internal sealed partial class PacketHandler
     public void HandlePacket(IPacketSender packetSender, TargetOverridePacket packet)
     {
         if (Globals.Entities.ContainsKey(packet.TargetId))
-        { 
+        {
             Globals.Me.TryTarget(Globals.Entities[packet.TargetId], true);
         }
     }

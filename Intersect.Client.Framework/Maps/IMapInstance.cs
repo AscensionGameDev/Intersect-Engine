@@ -26,8 +26,7 @@ public interface IMapInstance
     int GridY { get; set; }
     bool IsLoaded { get; }
 
-    void AddEvent(Guid evtId, EventEntityPacket packet);
-    void AddTileAnimation(Guid animId, int tileX, int tileY, Direction dir = Direction.None, IEntity owner = null);
+    void AddTileAnimation(Guid animId, int tileX, int tileY, Direction dir = Direction.None, IEntity? owner = null);
     void CompareEffects(IMapInstance oldMap);
     bool InView();
     void Load(string json);

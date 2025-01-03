@@ -36,7 +36,7 @@ internal sealed class VirtualApplicationContext : IApplicationContext
 
     public ICommandLineOptions StartupOptions => throw new NotImplementedException();
 
-    public Logger Logger => throw new NotImplementedException();
+    public ILogger Logger => throw new NotImplementedException();
 
     public IPacketHelper PacketHelper { get; }
 
@@ -57,7 +57,7 @@ internal sealed class VirtualApplicationContext : IApplicationContext
         throw new NotImplementedException();
     }
 
-    public LockingActionQueue StartWithActionQueue()
+    public ILockingActionQueue StartWithActionQueue()
     {
         throw new NotImplementedException();
     }
@@ -91,7 +91,7 @@ internal static partial class Network
         if (EditorLidgrenNetwork == null)
         {
             var logger = Log.Default;
-            var packetTypeRegistry = new PacketTypeRegistry(logger);
+            var packetTypeRegistry = new PacketTypeRegistry(logger, typeof(SharedConstants).Assembly);
             if (!packetTypeRegistry.TryRegisterBuiltIn())
             {
                 throw new Exception("Failed to register built-in packets.");
@@ -294,7 +294,7 @@ internal sealed partial class VirtualEditorContext : IApplicationContext
 
     public ICommandLineOptions StartupOptions => default;
 
-    public Logger Logger { get; }
+    public ILogger Logger { get; }
 
     public List<IApplicationService> Services { get; } = new List<IApplicationService>();
 
@@ -306,5 +306,5 @@ internal sealed partial class VirtualEditorContext : IApplicationContext
 
     public void Start(bool lockUntilShutdown = true) { }
 
-    public LockingActionQueue StartWithActionQueue() => default;
+    public ILockingActionQueue StartWithActionQueue() => default;
 }

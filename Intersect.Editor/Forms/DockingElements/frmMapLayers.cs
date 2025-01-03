@@ -14,7 +14,6 @@ using Microsoft.Xna.Framework.Graphics;
 
 using WeifenLuo.WinFormsUI.Docking;
 using Graphics = System.Drawing.Graphics;
-using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Editor.Forms.DockingElements;
 
@@ -576,112 +575,112 @@ public partial class FrmMapLayers : DockContent
     {
         if (rbBlocked.Checked == true)
         {
-            return (int) MapAttribute.Blocked;
+            return (int) MapAttributeType.Blocked;
         }
         else if (rbItem.Checked == true)
         {
-            return (int) MapAttribute.Item;
+            return (int) MapAttributeType.Item;
         }
         else if (rbZDimension.Checked == true)
         {
-            return (int) MapAttribute.ZDimension;
+            return (int) MapAttributeType.ZDimension;
         }
         else if (rbNPCAvoid.Checked == true)
         {
-            return (int) MapAttribute.NpcAvoid;
+            return (int) MapAttributeType.NpcAvoid;
         }
         else if (rbWarp.Checked == true)
         {
-            return (int) MapAttribute.Warp;
+            return (int) MapAttributeType.Warp;
         }
         else if (rbSound.Checked == true)
         {
-            return (int) MapAttribute.Sound;
+            return (int) MapAttributeType.Sound;
         }
         else if (rbResource.Checked == true)
         {
-            return (int) MapAttribute.Resource;
+            return (int) MapAttributeType.Resource;
         }
         else if (rbAnimation.Checked == true)
         {
-            return (int) MapAttribute.Animation;
+            return (int) MapAttributeType.Animation;
         }
         else if (rbGrappleStone.Checked == true)
         {
-            return (int) MapAttribute.GrappleStone;
+            return (int) MapAttributeType.GrappleStone;
         }
         else if (rbSlide.Checked == true)
         {
-            return (int) MapAttribute.Slide;
+            return (int) MapAttributeType.Slide;
         }
         else if (rbCritter.Checked == true)
         {
-            return (int) MapAttribute.Critter;
+            return (int) MapAttributeType.Critter;
         }
 
-        return (int) MapAttribute.Walkable;
+        return (int) MapAttributeType.Walkable;
     }
 
-    private MapAttribute SelectedMapAttributeType
+    private MapAttributeType SelectedMapAttributeType
     {
         get
         {
             if (rbBlocked.Checked)
             {
-                return MapAttribute.Blocked;
+                return MapAttributeType.Blocked;
             }
 
             if (rbItem.Checked)
             {
-                return MapAttribute.Item;
+                return MapAttributeType.Item;
             }
 
             if (rbZDimension.Checked)
             {
-                return MapAttribute.ZDimension;
+                return MapAttributeType.ZDimension;
             }
 
             if (rbNPCAvoid.Checked)
             {
-                return MapAttribute.NpcAvoid;
+                return MapAttributeType.NpcAvoid;
             }
 
             if (rbWarp.Checked)
             {
-                return MapAttribute.Warp;
+                return MapAttributeType.Warp;
             }
 
             if (rbSound.Checked)
             {
-                return MapAttribute.Sound;
+                return MapAttributeType.Sound;
             }
 
             if (rbResource.Checked)
             {
-                return MapAttribute.Resource;
+                return MapAttributeType.Resource;
             }
 
             if (rbAnimation.Checked)
             {
-                return MapAttribute.Animation;
+                return MapAttributeType.Animation;
             }
 
             if (rbGrappleStone.Checked)
             {
-                return MapAttribute.GrappleStone;
+                return MapAttributeType.GrappleStone;
             }
 
             if (rbSlide.Checked)
             {
-                return MapAttribute.Slide;
+                return MapAttributeType.Slide;
             }
 
             if (rbCritter.Checked)
             {
-                return MapAttribute.Critter;
+                return MapAttributeType.Critter;
             }
 
-            return (MapAttribute) byte.MaxValue;
+            return (MapAttributeType) byte.MaxValue;
         }
     }
 
@@ -692,26 +691,26 @@ public partial class FrmMapLayers : DockContent
         var attribute = GameObjects.Maps.MapAttribute.CreateAttribute(attributeType);
         switch (SelectedMapAttributeType)
         {
-            case MapAttribute.Walkable:
-            case MapAttribute.Blocked:
-            case MapAttribute.GrappleStone:
-            case MapAttribute.NpcAvoid:
+            case MapAttributeType.Walkable:
+            case MapAttributeType.Blocked:
+            case MapAttributeType.GrappleStone:
+            case MapAttributeType.NpcAvoid:
                 break;
 
-            case MapAttribute.Item:
+            case MapAttributeType.Item:
                 var itemAttribute = attribute as MapItemAttribute;
                 itemAttribute.ItemId = ItemBase.IdFromList(cmbItemAttribute.SelectedIndex);
                 itemAttribute.Quantity = (int)nudItemQuantity.Value;
                 itemAttribute.RespawnTime = (long)nudItemRespawnTime.Value;
                 break;
 
-            case MapAttribute.ZDimension:
+            case MapAttributeType.ZDimension:
                 var zDimensionAttribute = attribute as MapZDimensionAttribute;
                 zDimensionAttribute.GatewayTo = GetEditorDimensionGateway();
                 zDimensionAttribute.BlockedLevel = GetEditorDimensionBlock();
                 break;
 
-            case MapAttribute.Warp:
+            case MapAttributeType.Warp:
                 var warpAttribute = attribute as MapWarpAttribute;
                 warpAttribute.MapId = MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId;
                 warpAttribute.X = (byte)nudWarpX.Value;
@@ -722,31 +721,31 @@ public partial class FrmMapLayers : DockContent
                 warpAttribute.WarpSound = TextUtils.SanitizeNone(cmbWarpSound.Text);
                 break;
 
-            case MapAttribute.Sound:
+            case MapAttributeType.Sound:
                 var soundAttribute = attribute as MapSoundAttribute;
                 soundAttribute.Distance = (byte)nudSoundDistance.Value;
                 soundAttribute.File = TextUtils.SanitizeNone(cmbMapAttributeSound.Text);
                 soundAttribute.LoopInterval = (int)nudSoundLoopInterval.Value;
                 break;
 
-            case MapAttribute.Resource:
+            case MapAttributeType.Resource:
                 var resourceAttribute = attribute as MapResourceAttribute;
                 resourceAttribute.ResourceId = ResourceBase.IdFromList(cmbResourceAttribute.SelectedIndex);
                 resourceAttribute.SpawnLevel = (byte)(rbLevel1.Checked ? 0 : 1);
                 break;
 
-            case MapAttribute.Animation:
+            case MapAttributeType.Animation:
                 var animationAttribute = attribute as MapAnimationAttribute;
                 animationAttribute.AnimationId = AnimationBase.IdFromList(cmbAnimationAttribute.SelectedIndex);
                 animationAttribute.IsBlock = chkAnimationBlock.Checked;
                 break;
 
-            case MapAttribute.Slide:
+            case MapAttributeType.Slide:
                 var slideAttribute = attribute as MapSlideAttribute;
                 slideAttribute.Direction = (Direction)cmbSlideDir.SelectedIndex;
                 break;
 
-            case MapAttribute.Critter:
+            case MapAttributeType.Critter:
                 var critterAttribute = attribute as MapCritterAttribute;
                 critterAttribute.Sprite = cmbCritterSprite.Text;
                 critterAttribute.AnimationId = AnimationBase.IdFromList(cmbCritterAnimation.SelectedIndex - 1);
@@ -780,7 +779,7 @@ public partial class FrmMapLayers : DockContent
 
     public bool RemoveAttribute(MapBase tmpMap, int x, int y)
     {
-        if (tmpMap.Attributes[x, y] != null && tmpMap.Attributes[x, y].Type != MapAttribute.Walkable)
+        if (tmpMap.Attributes[x, y] != null && tmpMap.Attributes[x, y].Type != MapAttributeType.Walkable)
         {
             tmpMap.Attributes[x, y] = null;
 

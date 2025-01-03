@@ -7,7 +7,7 @@ namespace Intersect.Plugins;
 /// <summary>
 /// Representation of a loaded plugin descriptor.
 /// </summary>
-public sealed partial class Plugin
+public sealed partial class Plugin : IPlugin
 {
     /// <summary>
     /// Create a <see cref="Plugin"/> instance for the given context, manifest and reference.
@@ -56,10 +56,17 @@ public sealed partial class Plugin
     internal PluginReference Reference { get; }
 
     /// <inheritdoc cref="PluginConfiguration.IsEnabled" />
-    public bool IsEnabled
+    internal bool IsEnabled
     {
         get => Configuration.IsEnabled;
-        internal set => Configuration.IsEnabled = value;
+        set => Configuration.IsEnabled = value;
+    }
+
+    /// <inheritdoc cref="PluginConfiguration.IsEnabled" />
+    bool IPlugin.IsEnabled
+    {
+        get => IsEnabled;
+        set => IsEnabled = value;
     }
 
     /// <inheritdoc cref="IManifestHelper.Key" />
