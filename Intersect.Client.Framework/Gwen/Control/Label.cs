@@ -103,7 +103,7 @@ public partial class Label : Base, ILabel
     public virtual string Text
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => _text;
+        get => _text ?? string.Empty;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         set
         {
