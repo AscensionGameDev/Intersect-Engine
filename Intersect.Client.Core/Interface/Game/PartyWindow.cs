@@ -223,8 +223,8 @@ public partial class PartyWindow
 
                         mHpBar[i]
                             .SetTextureRect(
-                                0, 0, Convert.ToInt32(mHpBar[i].Texture.GetWidth() * partyHpWidthRatio),
-                                mHpBar[i].Texture.GetHeight()
+                                0, 0, Convert.ToInt32(mHpBar[i].Texture.Width * partyHpWidthRatio),
+                                mHpBar[i].Texture.Height
                             );
 
                         mHpBar[i]
@@ -251,8 +251,8 @@ public partial class PartyWindow
 
                         mMpBar[i]
                             .SetTextureRect(
-                                0, 0, Convert.ToInt32(mMpBar[i].Texture.GetWidth() * partyMpWidthRatio),
-                                mMpBar[i].Texture.GetHeight()
+                                0, 0, Convert.ToInt32(mMpBar[i].Texture.Width * partyMpWidthRatio),
+                                mMpBar[i].Texture.Height
                             );
 
                         mMpBar[i]

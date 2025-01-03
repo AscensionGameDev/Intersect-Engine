@@ -128,7 +128,7 @@ public partial class Base : IDisposable
 
     private bool mTabable;
 
-    private Base mToolTip;
+    private Base? _tooltip;
 
     private string mToolTipBackgroundFilename;
 
@@ -300,17 +300,25 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Current tooltip.
     /// </summary>
-    public Base ToolTip
+    public Base? Tooltip
     {
-        get => mToolTip;
+        get => _tooltip;
         set
         {
-            mToolTip = value;
-            if (mToolTip != null)
+            if (value == _tooltip)
             {
-                mToolTip.Parent = this;
-                mToolTip.IsHidden = true;
+                return;
             }
+
+            _tooltip = value;
+
+            if (_tooltip == null)
+            {
+                return;
+            }
+
+            _tooltip.Parent = this;
+            _tooltip.IsHidden = true;
         }
     }
 
@@ -537,7 +545,7 @@ public partial class Base : IDisposable
 
     public Point PositionGlobal => new Point(X, Y) + (Parent?.PositionGlobal ?? Point.Empty);
 
-    public Rectangle BoundsGlobal => new Rectangle(PositionGlobal, Width, Height);
+    public Rectangle BoundsGlobal => new Rectangle(PositionGlobal, Size);
 
     /// <summary>
     ///     Indicates whether the control is tabable (can be focused by pressing Tab).
@@ -676,6 +684,12 @@ public partial class Base : IDisposable
     {
         get => mBounds.Height;
         set => SetSize(Width, value);
+    }
+
+    public Point Size
+    {
+        get => mBounds.Size;
+        set => mBounds.Size = value;
     }
 
     public int InnerWidth => mBounds.Width - (mPadding.Left + mPadding.Right);
@@ -1156,7 +1170,7 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Invoked when control's bounds have been changed.
     /// </summary>
-    public event GwenEventHandler<EventArgs> BoundsChanged;
+    public event GwenEventHandler<EventArgs>? BoundsChanged;
 
     /// <summary>
     ///     Invoked when the control has been left-clicked.
@@ -1207,7 +1221,7 @@ public partial class Base : IDisposable
 
         if (this is ControlInternal.Text)
         {
-            return "[Text: " + (this as ControlInternal.Text).String + "]";
+            return "[Text: " + (this as ControlInternal.Text).DisplayedText + "]";
         }
 
         return GetType().ToString();
@@ -1280,32 +1294,49 @@ public partial class Base : IDisposable
     {
         if (mHideToolTip || string.IsNullOrWhiteSpace(text))
         {
-            if (this.ToolTip != null && this.ToolTip.Parent != null)
+            if (this.Tooltip != null && this.Tooltip.Parent != null)
             {
-                this.ToolTip?.Parent.RemoveChild(this.ToolTip, true);
+                this.Tooltip?.Parent.RemoveChild(this.Tooltip, true);
             }
-            this.ToolTip = null;
+            this.Tooltip = null;
 
             return;
         }
 
-        var tooltip = this.ToolTip != null ? (Label)this.ToolTip : new Label(this);
-        tooltip.Text = text;
-        tooltip.TextColorOverride = mToolTipFontColor ?? Skin.Colors.TooltipText;
-        if (mToolTipFont != null)
+        var tooltip = Tooltip;
+        if (tooltip is not Label labelTooltip)
         {
-            tooltip.Font = mToolTipFont;
+            if (tooltip is not null)
+            {
+                return;
+            }
+
+            labelTooltip = new Label(this)
+            {
+                TextColorOverride = mToolTipFontColor ?? Skin.Colors.TooltipText,
+                ToolTipBackground = mToolTipBackgroundImage,
+                Padding = new Padding(
+                    5,
+                    3,
+                    5,
+                    3
+                ),
+            };
+
+            if (mToolTipFont != default)
+            {
+                labelTooltip.Font = mToolTipFont;
+            }
+
+            Tooltip = labelTooltip;
         }
 
-        tooltip.ToolTipBackground = mToolTipBackgroundImage;
-        tooltip.Padding = new Padding(5, 3, 5, 3);
-        tooltip.SizeToContents();
-        ToolTip = tooltip;
+        labelTooltip.Text = text;
     }
 
     protected virtual void UpdateToolTipProperties()
     {
-        if (ToolTip != null && ToolTip is Label tooltip)
+        if (Tooltip != null && Tooltip is Label tooltip)
         {
             tooltip.TextColorOverride = mToolTipFontColor ?? Skin.Colors.TooltipText;
             if (mToolTipFont != null)
@@ -1597,20 +1628,14 @@ public partial class Base : IDisposable
     /// </summary>
     /// <param name="x">X-axis movement.</param>
     /// <param name="y">Y-axis movement.</param>
-    public virtual void MoveBy(int x, int y)
-    {
-        SetBounds(X + x, Y + y, Width, Height);
-    }
+    public virtual void MoveBy(int x, int y) => SetBounds(X + x, Y + y, Width, Height);
 
     /// <summary>
     ///     Moves the control to a specific point.
     /// </summary>
     /// <param name="x">Target x coordinate.</param>
     /// <param name="y">Target y coordinate.</param>
-    public virtual void MoveTo(float x, float y)
-    {
-        MoveTo((int) x, (int) y);
-    }
+    public virtual void MoveTo(float x, float y) => MoveTo((int) x, (int) y);
 
     /// <summary>
     ///     Moves the control to a specific point, clamping on paren't bounds if RestrictToParent is set.
@@ -1679,10 +1704,14 @@ public partial class Base : IDisposable
     /// </summary>
     /// <param name="x">Target x coordinate.</param>
     /// <param name="y">Target y coordinate.</param>
-    public virtual void SetPosition(int x, int y)
-    {
-        SetBounds(x, y, Width, Height);
-    }
+    public virtual void SetPosition(int x, int y) => SetBounds(x, y, Width, Height);
+
+    public virtual void SetPosition(Point point) => SetBounds(
+        point.X,
+        point.Y,
+        Width,
+        Height
+    );
 
     /// <summary>
     ///     Sets the control size.
@@ -1690,20 +1719,21 @@ public partial class Base : IDisposable
     /// <param name="width">New width.</param>
     /// <param name="height">New height.</param>
     /// <returns>True if bounds changed.</returns>
-    public virtual bool SetSize(int width, int height)
-    {
-        return SetBounds(X, Y, width, height);
-    }
+    public virtual bool SetSize(int width, int height) => SetBounds(X, Y, width, height);
 
     /// <summary>
     ///     Sets the control bounds.
     /// </summary>
     /// <param name="bounds">New bounds.</param>
     /// <returns>True if bounds changed.</returns>
-    public virtual bool SetBounds(Rectangle bounds)
-    {
-        return SetBounds(bounds.X, bounds.Y, bounds.Width, bounds.Height);
-    }
+    public virtual bool SetBounds(Rectangle bounds) => SetBounds(bounds.X, bounds.Y, bounds.Width, bounds.Height);
+
+    public virtual bool SetBounds(Point position, Point size) => SetBounds(
+        position.X,
+        position.Y,
+        size.X,
+        size.Y
+    );
 
     /// <summary>
     ///     Sets the control bounds.
@@ -1715,10 +1745,7 @@ public partial class Base : IDisposable
     /// <returns>
     ///     True if bounds changed.
     /// </returns>
-    public virtual bool SetBounds(float x, float y, float width, float height)
-    {
-        return SetBounds((int) x, (int) y, (int) width, (int) height);
-    }
+    public virtual bool SetBounds(float x, float y, float width, float height) => SetBounds((int) x, (int) y, (int) width, (int) height);
 
     /// <summary>
     ///     Sets the control bounds.
@@ -1747,10 +1774,7 @@ public partial class Base : IDisposable
 
         OnBoundsChanged(oldBounds);
 
-        if (BoundsChanged != null)
-        {
-            BoundsChanged.Invoke(this, EventArgs.Empty);
-        }
+        BoundsChanged?.Invoke(this, EventArgs.Empty);
 
         return true;
     }
@@ -1809,11 +1833,7 @@ public partial class Base : IDisposable
     {
         //Anything that needs to update on size changes
         //Iterate my children and tell them I've changed
-        //
-        if (Parent != null)
-        {
-            Parent.OnChildBoundsChanged(oldBounds, this);
-        }
+        Parent?.OnChildBoundsChanged(oldBounds, this);
 
         if (mBounds.Width != oldBounds.Width || mBounds.Height != oldBounds.Height)
         {
@@ -2244,11 +2264,11 @@ public partial class Base : IDisposable
             HoverEnter.Invoke(this, EventArgs.Empty);
         }
 
-        if (ToolTip != null)
+        if (Tooltip != null)
         {
             Gwen.ToolTip.Enable(this);
         }
-        else if (Parent != null && Parent.ToolTip != null)
+        else if (Parent != null && Parent.Tooltip != null)
         {
             Gwen.ToolTip.Enable(Parent);
         }
@@ -2293,11 +2313,11 @@ public partial class Base : IDisposable
             HoverLeave.Invoke(this, EventArgs.Empty);
         }
 
-        if (ToolTip != null)
+        if (Tooltip != null)
         {
             Gwen.ToolTip.Disable(this);
         }
-        else if (Parent != null && Parent.ToolTip != null)
+        else if (Parent != null && Parent.Tooltip != null)
         {
             Gwen.ToolTip.Disable(Parent);
         }
@@ -2445,14 +2465,14 @@ public partial class Base : IDisposable
         bounds.Y += mPadding.Top;
         bounds.Height -= mPadding.Top + mPadding.Bottom;
 
-        for (int i = 0; i < mChildren.Count; i++)
+        foreach (var child in mChildren)
         {
-            if (mChildren[i].IsHidden)
+            if (child.IsHidden)
             {
                 continue;
             }
 
-            var dock = mChildren[i].Dock;
+            var dock = child.Dock;
 
             if (dock.HasFlag(Pos.Fill))
             {
@@ -2461,28 +2481,28 @@ public partial class Base : IDisposable
 
             if (dock.HasFlag(Pos.Top))
             {
-                var margin = mChildren[i].Margin;
+                var margin = child.Margin;
 
-                mChildren[i].SetBounds(
+                child.SetBounds(
                     bounds.X + margin.Left, bounds.Y + margin.Top, bounds.Width - margin.Left - margin.Right,
-                    mChildren[i].Height
+                    child.Height
                 );
 
-                var height = margin.Top + margin.Bottom + mChildren[i].Height;
+                var height = margin.Top + margin.Bottom + child.Height;
                 bounds.Y += height;
                 bounds.Height -= height;
             }
 
             if (dock.HasFlag(Pos.Left))
             {
-                var margin = mChildren[i].Margin;
+                var margin = child.Margin;
 
-                mChildren[i].SetBounds(
-                    bounds.X + margin.Left, bounds.Y + margin.Top, mChildren[i].Width,
+                child.SetBounds(
+                    bounds.X + margin.Left, bounds.Y + margin.Top, child.Width,
                     bounds.Height - margin.Top - margin.Bottom
                 );
 
-                var width = margin.Left + margin.Right + mChildren[i].Width;
+                var width = margin.Left + margin.Right + child.Width;
                 bounds.X += width;
                 bounds.Width -= width;
             }
@@ -2490,31 +2510,31 @@ public partial class Base : IDisposable
             if (dock.HasFlag(Pos.Right))
             {
                 // TODO: THIS MARGIN CODE MIGHT NOT BE FULLY FUNCTIONAL
-                var margin = mChildren[i].Margin;
+                var margin = child.Margin;
 
-                mChildren[i].SetBounds(
-                    bounds.X + bounds.Width - mChildren[i].Width - margin.Right, bounds.Y + margin.Top, mChildren[i].Width,
+                child.SetBounds(
+                    bounds.X + bounds.Width - child.Width - margin.Right, bounds.Y + margin.Top, child.Width,
                     bounds.Height - margin.Top - margin.Bottom
                 );
 
-                var width = margin.Left + margin.Right + mChildren[i].Width;
+                var width = margin.Left + margin.Right + child.Width;
                 bounds.Width -= width;
             }
 
             if (dock.HasFlag(Pos.Bottom))
             {
                 // TODO: THIS MARGIN CODE MIGHT NOT BE FULLY FUNCTIONAL
-                var margin = mChildren[i].Margin;
+                var margin = child.Margin;
 
-                mChildren[i].SetBounds(
-                    bounds.X + margin.Left, bounds.Y + bounds.Height - mChildren[i].Height - margin.Bottom,
-                    bounds.Width - margin.Left - margin.Right, mChildren[i].Height
+                child.SetBounds(
+                    bounds.X + margin.Left, bounds.Y + bounds.Height - child.Height - margin.Bottom,
+                    bounds.Width - margin.Left - margin.Right, child.Height
                 );
 
-                bounds.Height -= mChildren[i].Height + margin.Bottom + margin.Top;
+                bounds.Height -= child.Height + margin.Bottom + margin.Top;
             }
 
-            mChildren[i].RecurseLayout(skin);
+            child.RecurseLayout(skin);
         }
 
         mInnerBounds = bounds;
@@ -2522,23 +2542,38 @@ public partial class Base : IDisposable
         //
         // Fill uses the left over space, so do that now.
         //
-        for (int i = 0; i < mChildren.Count; i++)
+        foreach (var child in mChildren)
         {
-            var dock = mChildren[i].Dock;
+            var dock = child.Dock;
 
             if (!dock.HasFlag(Pos.Fill))
             {
                 continue;
             }
 
-            var margin = mChildren[i].Margin;
+            var margin = child.Margin;
 
-            mChildren[i].SetBounds(
-                bounds.X + margin.Left, bounds.Y + margin.Top, bounds.Width - margin.Left - margin.Right,
-                bounds.Height - margin.Top - margin.Bottom
+            var newPosition = new Point(
+                bounds.X + margin.Left,
+                bounds.Y + margin.Top
             );
 
-            mChildren[i].RecurseLayout(skin);
+            if (child is IAutoSizeToContents { AutoSizeToContents: true })
+            {
+                child.SetPosition(newPosition);
+            }
+            else
+            {
+                child.SetBounds(
+                    newPosition,
+                    new Point(
+                        bounds.Width - margin.Left - margin.Right,
+                        bounds.Height - margin.Top - margin.Bottom
+                    )
+                );
+            }
+
+            child.RecurseLayout(skin);
         }
 
         PostLayout(skin);

@@ -791,7 +791,7 @@ public partial class EntityBox
         {
             EntityFace.Texture = faceTex;
             EntityFace.RenderColor = MyEntity.Color ?? new Color(255, 255, 255, 255);
-            EntityFace.SetTextureRect(0, 0, faceTex.GetWidth(), faceTex.GetHeight());
+            EntityFace.SetTextureRect(0, 0, faceTex.Width, faceTex.Height);
             EntityFace.SizeToContents();
             Align.Center(EntityFace);
             mCurrentSprite = MyEntity.Face;
@@ -821,7 +821,7 @@ public partial class EntityBox
             {
                 EntityFace.Texture = entityTex;
                 EntityFace.RenderColor = MyEntity.Color ?? new Color(255, 255, 255, 255);
-                EntityFace.SetTextureRect(0, 0, entityTex.GetWidth() / Options.Instance.Sprites.NormalFrames, entityTex.GetHeight() / Options.Instance.Sprites.Directions);
+                EntityFace.SetTextureRect(0, 0, entityTex.Width / Options.Instance.Sprites.NormalFrames, entityTex.Height / Options.Instance.Sprites.Directions);
                 EntityFace.SizeToContents();
                 Align.Center(EntityFace);
                 mCurrentSprite = MyEntity.Sprite;
@@ -888,14 +888,14 @@ public partial class EntityBox
                     {
                         paperdollPanel
                             .SetTextureRect(
-                                0, 0, paperdollPanel.Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
-                                paperdollPanel.Texture.GetHeight() / Options.Instance.Sprites.Directions
+                                0, 0, paperdollPanel.Texture.Width / Options.Instance.Sprites.NormalFrames,
+                                paperdollPanel.Texture.Height / Options.Instance.Sprites.Directions
                             );
 
                         paperdollPanel
                             .SetSize(
-                                paperdollPanel.Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
-                                paperdollPanel.Texture.GetHeight() / Options.Instance.Sprites.Directions
+                                paperdollPanel.Texture.Width / Options.Instance.Sprites.NormalFrames,
+                                paperdollPanel.Texture.Height / Options.Instance.Sprites.Directions
                             );
 
                         paperdollPanel

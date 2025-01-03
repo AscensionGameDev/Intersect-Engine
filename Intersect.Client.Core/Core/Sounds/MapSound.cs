@@ -111,8 +111,8 @@ public partial class MapSound : Sound, IMapSound
         var pMap = MapInstance.Get(Globals.Me.MapId);
         if (map != null && pMap != null)
         {
-            var playerx = pMap.GetX() + Globals.Me.X * Options.TileWidth + (Options.TileWidth / 2);
-            var playery = pMap.GetY() + Globals.Me.Y * Options.TileHeight + (Options.TileHeight / 2);
+            var playerx = pMap.X + Globals.Me.X * Options.TileWidth + (Options.TileWidth / 2);
+            var playery = pMap.Y + Globals.Me.Y * Options.TileHeight + (Options.TileHeight / 2);
             if (mX == -1 || mY == -1 || mDistance == -1)
             {
                 var player = new Point() {
@@ -121,7 +121,7 @@ public partial class MapSound : Sound, IMapSound
                 };
 
                 var mapRect = new Rectangle(
-                    (int)map.GetX(), (int)map.GetY(), Options.MapWidth * Options.TileWidth,
+                    (int)map.X, (int)map.Y, Options.MapWidth * Options.TileWidth,
                     Options.MapHeight * Options.TileHeight
                 );
 
@@ -130,8 +130,8 @@ public partial class MapSound : Sound, IMapSound
             }
             else
             {
-                var soundx = map.GetX() + mX * Options.TileWidth + (Options.TileWidth / 2);
-                var soundy = map.GetY() + mY * Options.TileHeight + (Options.TileHeight / 2);
+                var soundx = map.X + mX * Options.TileWidth + (Options.TileWidth / 2);
+                var soundy = map.Y + mY * Options.TileHeight + (Options.TileHeight / 2);
                 distance = (float) Math.Sqrt(Math.Pow(playerx - soundx, 2) + Math.Pow(playery - soundy, 2)) /
                            ((Options.TileHeight + Options.TileWidth) / 2f);
             }

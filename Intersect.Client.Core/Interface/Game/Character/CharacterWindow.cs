@@ -268,7 +268,7 @@ public partial class CharacterWindow
                 {
                     PaperdollPanels[z].Show();
                     PaperdollPanels[z].Texture = entityTex;
-                    PaperdollPanels[z].SetTextureRect(0, 0, entityTex.GetWidth() / Options.Instance.Sprites.NormalFrames, entityTex.GetHeight() / Options.Instance.Sprites.Directions);
+                    PaperdollPanels[z].SetTextureRect(0, 0, entityTex.Width / Options.Instance.Sprites.NormalFrames, entityTex.Height / Options.Instance.Sprites.Directions);
                     PaperdollPanels[z].SizeToContents();
                     PaperdollPanels[z].RenderColor = Globals.Me.Color;
                     Align.Center(PaperdollPanels[z]);
@@ -291,14 +291,14 @@ public partial class CharacterWindow
                     {
                         PaperdollPanels[z]
                             .SetTextureRect(
-                                0, 0, PaperdollPanels[z].Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
-                                PaperdollPanels[z].Texture.GetHeight() / Options.Instance.Sprites.Directions
+                                0, 0, PaperdollPanels[z].Texture.Width / Options.Instance.Sprites.NormalFrames,
+                                PaperdollPanels[z].Texture.Height / Options.Instance.Sprites.Directions
                             );
 
                         PaperdollPanels[z]
                             .SetSize(
-                                PaperdollPanels[z].Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
-                                PaperdollPanels[z].Texture.GetHeight() / Options.Instance.Sprites.Directions
+                                PaperdollPanels[z].Texture.Width / Options.Instance.Sprites.NormalFrames,
+                                PaperdollPanels[z].Texture.Height / Options.Instance.Sprites.Directions
                             );
 
                         PaperdollPanels[z]

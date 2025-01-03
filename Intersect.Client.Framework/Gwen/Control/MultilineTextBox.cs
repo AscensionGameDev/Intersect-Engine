@@ -51,7 +51,7 @@ public partial class MultilineTextBox : Label
         mScrollControl.AutoHideBars = true;
         mScrollControl.Margin = Margin.One;
         mInnerPanel = mScrollControl;
-        mText.Parent = mInnerPanel;
+        _textElement.Parent = mInnerPanel;
         mScrollControl.InnerPanel.BoundsChanged += new GwenEventHandler<EventArgs>(ScrollChanged);
 
         mTextLines.Add(String.Empty);
@@ -1096,11 +1096,11 @@ public partial class MultilineTextBox : Label
     /// <summary>
     ///     Sets the label text.
     /// </summary>
-    /// <param name="str">Text to set.</param>
+    /// <param name="text">Text to set.</param>
     /// <param name="doEvents">Determines whether to invoke "text changed" event.</param>
-    public override void SetText(string str, bool doEvents = true)
+    public override void SetText(string text, bool doEvents = true)
     {
-        var easySplit = str.Replace("\r\n", "\n").Replace("\r", "\n");
+        var easySplit = text.Replace("\r\n", "\n").Replace("\r", "\n");
         var lines = easySplit.Split('\n');
 
         mTextLines = new List<string>(lines);
@@ -1117,9 +1117,9 @@ public partial class MultilineTextBox : Label
     /// </remarks>
     public override void Invalidate()
     {
-        if (mText != null)
+        if (_textElement != null)
         {
-            mText.String = Text;
+            _textElement.DisplayedText = Text;
         }
 
         if (AutoSizeToContents)
@@ -1150,7 +1150,7 @@ public partial class MultilineTextBox : Label
 
         var p = new Point(Skin.Renderer.MeasureText(Font, currLine).X, Skin.Renderer.MeasureText(Font, sub).Y);
 
-        return new Point(p.X + mText.X, p.Y + mText.Y + TextPadding.Top);
+        return new Point(p.X + _textElement.X, p.Y + _textElement.Y + TextPadding.Top);
     }
 
     protected override bool OnMouseWheeled(int delta)

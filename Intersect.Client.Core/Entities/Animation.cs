@@ -160,8 +160,8 @@ public partial class Animation : IAnimation
             {
                 if (MyBase.Lower.XFrames > 0 && MyBase.Lower.YFrames > 0)
                 {
-                    var frameWidth = tex.GetWidth() / MyBase.Lower.XFrames;
-                    var frameHeight = tex.GetHeight() / MyBase.Lower.YFrames;
+                    var frameWidth = tex.Width / MyBase.Lower.XFrames;
+                    var frameHeight = tex.Height / MyBase.Lower.YFrames;
                     Graphics.DrawGameTexture(
                         tex,
                         new FloatRect(
@@ -200,8 +200,8 @@ public partial class Animation : IAnimation
             {
                 if (MyBase.Upper.XFrames > 0 && MyBase.Upper.YFrames > 0)
                 {
-                    var frameWidth = tex.GetWidth() / MyBase.Upper.XFrames;
-                    var frameHeight = tex.GetHeight() / MyBase.Upper.YFrames;
+                    var frameWidth = tex.Width / MyBase.Upper.XFrames;
+                    var frameHeight = tex.Height / MyBase.Upper.YFrames;
 
                     Graphics.DrawGameTexture(
                         tex,
@@ -395,8 +395,8 @@ public partial class Animation : IAnimation
         {
             if (MyBase.Lower.XFrames > 0 && MyBase.Lower.YFrames > 0)
             {
-                var frameWidth = tex.GetWidth() / MyBase.Lower.XFrames;
-                var frameHeight = tex.GetHeight() / MyBase.Lower.YFrames;
+                var frameWidth = tex.Width / MyBase.Lower.XFrames;
+                var frameHeight = tex.Height / MyBase.Lower.YFrames;
                 if (frameWidth > size.X)
                 {
                     size.X = frameWidth;
@@ -414,8 +414,8 @@ public partial class Animation : IAnimation
         {
             if (MyBase.Upper.XFrames > 0 && MyBase.Upper.YFrames > 0)
             {
-                var frameWidth = tex.GetWidth() / MyBase.Upper.XFrames;
-                var frameHeight = tex.GetHeight() / MyBase.Upper.YFrames;
+                var frameWidth = tex.Width / MyBase.Upper.XFrames;
+                var frameHeight = tex.Height / MyBase.Upper.YFrames;
                 if (frameWidth > size.X)
                 {
                     size.X = frameWidth;

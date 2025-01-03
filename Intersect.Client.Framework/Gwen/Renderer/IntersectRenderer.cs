@@ -186,10 +186,10 @@ public partial class IntersectRenderer : Base, ICacheToTexture
             return;
         }
 
-        u1 *= tex.GetWidth();
-        v1 *= tex.GetHeight();
-        u2 *= tex.GetWidth();
-        v2 *= tex.GetHeight();
+        u1 *= tex.Width;
+        v1 *= tex.Height;
+        u2 *= tex.Width;
+        v2 *= tex.Height;
 
         if (mClipping)
         {

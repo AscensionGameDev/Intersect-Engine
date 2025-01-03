@@ -83,13 +83,13 @@ public partial class TextBoxNumeric : TextBox
     /// <summary>
     ///     Sets the control text.
     /// </summary>
-    /// <param name="str">Text to set.</param>
+    /// <param name="text">Text to set.</param>
     /// <param name="doEvents">Determines whether to invoke "text changed" event.</param>
-    public override void SetText(string str, bool doEvents = true)
+    public override void SetText(string text, bool doEvents = true)
     {
-        if (IsTextAllowed(str))
+        if (IsTextAllowed(text))
         {
-            base.SetText(str, doEvents);
+            base.SetText(text, doEvents);
         }
     }
 

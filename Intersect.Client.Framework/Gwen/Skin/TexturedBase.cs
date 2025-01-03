@@ -806,7 +806,7 @@ public partial class TexturedBase : Skin.Base
             //Draw Top Left Corner
             Renderer.DrawTexturedRect(
                 renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Y, 2, 2), control.RenderColor,
-                0, 0, 2f / renderImg.GetWidth(), 2f / renderImg.GetHeight()
+                0, 0, 2f / renderImg.Width, 2f / renderImg.Height
             );
 
             //Draw Top
@@ -814,15 +814,15 @@ public partial class TexturedBase : Skin.Base
                 renderImg,
                 new Rectangle(
                     control.RenderBounds.X + 2, control.RenderBounds.Y, control.RenderBounds.Width - 4, 2
-                ), control.RenderColor, 2f / renderImg.GetWidth(), 0,
-                (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 2f / renderImg.GetHeight()
+                ), control.RenderColor, 2f / renderImg.Width, 0,
+                (renderImg.Width - 2f) / renderImg.Width, 2f / renderImg.Height
             );
 
             //Draw Top Right Corner
             Renderer.DrawTexturedRect(
                 renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Y, 2, 2),
-                control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 0, 1f,
-                2f / renderImg.GetHeight()
+                control.RenderColor, (renderImg.Width - 2f) / renderImg.Width, 0, 1f,
+                2f / renderImg.Height
             );
 
             //Draw Left
@@ -830,8 +830,8 @@ public partial class TexturedBase : Skin.Base
                 renderImg,
                 new Rectangle(
                     control.RenderBounds.X, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                ), control.RenderColor, 0, 2f / renderImg.GetHeight(), 2f / renderImg.GetWidth(),
-                (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                ), control.RenderColor, 0, 2f / renderImg.Height, 2f / renderImg.Width,
+                (renderImg.Height - 2f) / renderImg.Height
             );
 
             //Draw Middle
@@ -840,9 +840,9 @@ public partial class TexturedBase : Skin.Base
                 new Rectangle(
                     control.RenderBounds.X + 2, control.RenderBounds.Y + 2, control.RenderBounds.Width - 4,
                     control.RenderBounds.Height - 4
-                ), control.RenderColor, 2f / renderImg.GetWidth(), 2f / renderImg.GetHeight(),
-                (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                ), control.RenderColor, 2f / renderImg.Width, 2f / renderImg.Height,
+                (renderImg.Width - 2f) / renderImg.Width,
+                (renderImg.Height - 2f) / renderImg.Height
             );
 
             //Draw Right
@@ -850,15 +850,15 @@ public partial class TexturedBase : Skin.Base
                 renderImg,
                 new Rectangle(
                     control.RenderBounds.Width - 2, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                ), control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                2f / renderImg.GetHeight(), 1, (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                ), control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
+                2f / renderImg.Height, 1, (renderImg.Height - 2f) / renderImg.Height
             );
 
             // Draw Bottom Left Corner
             Renderer.DrawTexturedRect(
                 renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Bottom - 2, 2, 2),
-                control.RenderColor, 0, (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
-                2f / renderImg.GetWidth(), 1f
+                control.RenderColor, 0, (renderImg.Height - 2f) / renderImg.Height,
+                2f / renderImg.Width, 1f
             );
 
             //Draw Bottom
@@ -866,16 +866,16 @@ public partial class TexturedBase : Skin.Base
                 renderImg,
                 new Rectangle(
                     control.RenderBounds.X + 2, control.RenderBounds.Bottom - 2, control.RenderBounds.Width - 4, 2
-                ), control.RenderColor, 2f / renderImg.GetWidth(),
-                (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
-                (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 1f
+                ), control.RenderColor, 2f / renderImg.Width,
+                (renderImg.Height - 2f) / renderImg.Height,
+                (renderImg.Width - 2f) / renderImg.Width, 1f
             );
 
             //Draw Bottom Right Corner
             Renderer.DrawTexturedRect(
                 renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Bottom - 2, 2, 2),
-                control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                (renderImg.GetHeight() - 2f) / renderImg.GetHeight(), 1f, 1f
+                control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
+                (renderImg.Height - 2f) / renderImg.Height, 1f, 1f
             );
 
             return;
@@ -1177,7 +1177,7 @@ public partial class TexturedBase : Skin.Base
             //Draw Top Left Corner
             Renderer.DrawTexturedRect(
                 renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Y, 2, 2), control.RenderColor,
-                0, 0, 2f / renderImg.GetWidth(), 2f / renderImg.GetHeight()
+                0, 0, 2f / renderImg.Width, 2f / renderImg.Height
             );
 
             //Draw Top
@@ -1185,15 +1185,15 @@ public partial class TexturedBase : Skin.Base
                 renderImg,
                 new Rectangle(
                     control.RenderBounds.X + 2, control.RenderBounds.Y, control.RenderBounds.Width - 4, 2
-                ), control.RenderColor, 2f / renderImg.GetWidth(), 0,
-                (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 2f / renderImg.GetHeight()
+                ), control.RenderColor, 2f / renderImg.Width, 0,
+                (renderImg.Width - 2f) / renderImg.Width, 2f / renderImg.Height
             );
 
             //Draw Top Right Corner
             Renderer.DrawTexturedRect(
                 renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Y, 2, 2),
-                control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 0, 1f,
-                2f / renderImg.GetHeight()
+                control.RenderColor, (renderImg.Width - 2f) / renderImg.Width, 0, 1f,
+                2f / renderImg.Height
             );
 
             //Draw Left
@@ -1201,8 +1201,8 @@ public partial class TexturedBase : Skin.Base
                 renderImg,
                 new Rectangle(
                     control.RenderBounds.X, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                ), control.RenderColor, 0, 2f / renderImg.GetHeight(), 2f / renderImg.GetWidth(),
-                (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                ), control.RenderColor, 0, 2f / renderImg.Height, 2f / renderImg.Width,
+                (renderImg.Height - 2f) / renderImg.Height
             );
 
             //Draw Middle
@@ -1211,9 +1211,9 @@ public partial class TexturedBase : Skin.Base
                 new Rectangle(
                     control.RenderBounds.X + 2, control.RenderBounds.Y + 2, control.RenderBounds.Width - 4,
                     control.RenderBounds.Height - 4
-                ), control.RenderColor, 2f / renderImg.GetWidth(), 2f / renderImg.GetHeight(),
-                (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                ), control.RenderColor, 2f / renderImg.Width, 2f / renderImg.Height,
+                (renderImg.Width - 2f) / renderImg.Width,
+                (renderImg.Height - 2f) / renderImg.Height
             );
 
             //Draw Right
@@ -1221,15 +1221,15 @@ public partial class TexturedBase : Skin.Base
                 renderImg,
                 new Rectangle(
                     control.RenderBounds.Width - 2, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                ), control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                2f / renderImg.GetHeight(), 1, (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                ), control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
+                2f / renderImg.Height, 1, (renderImg.Height - 2f) / renderImg.Height
             );
 
             // Draw Bottom Left Corner
             Renderer.DrawTexturedRect(
                 renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Bottom - 2, 2, 2),
-                control.RenderColor, 0, (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
-                2f / renderImg.GetWidth(), 1f
+                control.RenderColor, 0, (renderImg.Height - 2f) / renderImg.Height,
+                2f / renderImg.Width, 1f
             );
 
             //Draw Bottom
@@ -1237,16 +1237,16 @@ public partial class TexturedBase : Skin.Base
                 renderImg,
                 new Rectangle(
                     control.RenderBounds.X + 2, control.RenderBounds.Bottom - 2, control.RenderBounds.Width - 4, 2
-                ), control.RenderColor, 2f / renderImg.GetWidth(),
-                (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
-                (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 1f
+                ), control.RenderColor, 2f / renderImg.Width,
+                (renderImg.Height - 2f) / renderImg.Height,
+                (renderImg.Width - 2f) / renderImg.Width, 1f
             );
 
             //Draw Bottom Right Corner
             Renderer.DrawTexturedRect(
                 renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Bottom - 2, 2, 2),
-                control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                (renderImg.GetHeight() - 2f) / renderImg.GetHeight(), 1f, 1f
+                control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
+                (renderImg.Height - 2f) / renderImg.Height, 1f, 1f
             );
 
             return;
@@ -1291,7 +1291,7 @@ public partial class TexturedBase : Skin.Base
                 //Draw Top Left Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Y, 2, 2),
-                    control.RenderColor, 0, 0, 2f / renderImg.GetWidth(), 2f / renderImg.GetHeight()
+                    control.RenderColor, 0, 0, 2f / renderImg.Width, 2f / renderImg.Height
                 );
 
                 //Draw Top
@@ -1299,15 +1299,15 @@ public partial class TexturedBase : Skin.Base
                     renderImg,
                     new Rectangle(
                         control.RenderBounds.X + 2, control.RenderBounds.Y, control.RenderBounds.Width - 4, 2
-                    ), control.RenderColor, 2f / renderImg.GetWidth(), 0,
-                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 2f / renderImg.GetHeight()
+                    ), control.RenderColor, 2f / renderImg.Width, 0,
+                    (renderImg.Width - 2f) / renderImg.Width, 2f / renderImg.Height
                 );
 
                 //Draw Top Right Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Y, 2, 2),
-                    control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 0, 1f,
-                    2f / renderImg.GetHeight()
+                    control.RenderColor, (renderImg.Width - 2f) / renderImg.Width, 0, 1f,
+                    2f / renderImg.Height
                 );
 
                 //Draw Left
@@ -1315,8 +1315,8 @@ public partial class TexturedBase : Skin.Base
                     renderImg,
                     new Rectangle(
                         control.RenderBounds.X, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                    ), control.RenderColor, 0, 2f / renderImg.GetHeight(), 2f / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                    ), control.RenderColor, 0, 2f / renderImg.Height, 2f / renderImg.Width,
+                    (renderImg.Height - 2f) / renderImg.Height
                 );
 
                 //Draw Middle
@@ -1325,9 +1325,9 @@ public partial class TexturedBase : Skin.Base
                     new Rectangle(
                         control.RenderBounds.X + 2, control.RenderBounds.Y + 2, control.RenderBounds.Width - 4,
                         control.RenderBounds.Height - 4
-                    ), control.RenderColor, 2f / renderImg.GetWidth(), 2f / renderImg.GetHeight(),
-                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                    ), control.RenderColor, 2f / renderImg.Width, 2f / renderImg.Height,
+                    (renderImg.Width - 2f) / renderImg.Width,
+                    (renderImg.Height - 2f) / renderImg.Height
                 );
 
                 //Draw Right
@@ -1336,15 +1336,15 @@ public partial class TexturedBase : Skin.Base
                     new Rectangle(
                         control.RenderBounds.Width - 2, control.RenderBounds.Y + 2, 2,
                         control.RenderBounds.Height - 4
-                    ), control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                    2f / renderImg.GetHeight(), 1, (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                    ), control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
+                    2f / renderImg.Height, 1, (renderImg.Height - 2f) / renderImg.Height
                 );
 
                 // Draw Bottom Left Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Bottom - 2, 2, 2),
-                    control.RenderColor, 0, (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
-                    2f / renderImg.GetWidth(), 1f
+                    control.RenderColor, 0, (renderImg.Height - 2f) / renderImg.Height,
+                    2f / renderImg.Width, 1f
                 );
 
                 //Draw Bottom
@@ -1353,16 +1353,16 @@ public partial class TexturedBase : Skin.Base
                     new Rectangle(
                         control.RenderBounds.X + 2, control.RenderBounds.Bottom - 2, control.RenderBounds.Width - 4,
                         2
-                    ), control.RenderColor, 2f / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
-                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 1f
+                    ), control.RenderColor, 2f / renderImg.Width,
+                    (renderImg.Height - 2f) / renderImg.Height,
+                    (renderImg.Width - 2f) / renderImg.Width, 1f
                 );
 
                 //Draw Bottom Right Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Bottom - 2, 2, 2),
-                    control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight(), 1f, 1f
+                    control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
+                    (renderImg.Height - 2f) / renderImg.Height, 1f, 1f
                 );
 
                 return;
@@ -1401,7 +1401,7 @@ public partial class TexturedBase : Skin.Base
             //Draw Top Left Corner
             Renderer.DrawTexturedRect(
                 renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Y, 2, 2), control.RenderColor,
-                0, 0, 2f / renderImg.GetWidth(), 2f / renderImg.GetHeight()
+                0, 0, 2f / renderImg.Width, 2f / renderImg.Height
             );
 
             //Draw Top
@@ -1409,15 +1409,15 @@ public partial class TexturedBase : Skin.Base
                 renderImg,
                 new Rectangle(
                     control.RenderBounds.X + 2, control.RenderBounds.Y, control.RenderBounds.Width - 4, 2
-                ), control.RenderColor, 2f / renderImg.GetWidth(), 0,
-                (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 2f / renderImg.GetHeight()
+                ), control.RenderColor, 2f / renderImg.Width, 0,
+                (renderImg.Width - 2f) / renderImg.Width, 2f / renderImg.Height
             );
 
             //Draw Top Right Corner
             Renderer.DrawTexturedRect(
                 renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Y, 2, 2),
-                control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 0, 1f,
-                2f / renderImg.GetHeight()
+                control.RenderColor, (renderImg.Width - 2f) / renderImg.Width, 0, 1f,
+                2f / renderImg.Height
             );
 
             //Draw Left
@@ -1425,8 +1425,8 @@ public partial class TexturedBase : Skin.Base
                 renderImg,
                 new Rectangle(
                     control.RenderBounds.X, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                ), control.RenderColor, 0, 2f / renderImg.GetHeight(), 2f / renderImg.GetWidth(),
-                (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                ), control.RenderColor, 0, 2f / renderImg.Height, 2f / renderImg.Width,
+                (renderImg.Height - 2f) / renderImg.Height
             );
 
             //Draw Middle
@@ -1435,9 +1435,9 @@ public partial class TexturedBase : Skin.Base
                 new Rectangle(
                     control.RenderBounds.X + 2, control.RenderBounds.Y + 2, control.RenderBounds.Width - 4,
                     control.RenderBounds.Height - 4
-                ), control.RenderColor, 2f / renderImg.GetWidth(), 2f / renderImg.GetHeight(),
-                (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                ), control.RenderColor, 2f / renderImg.Width, 2f / renderImg.Height,
+                (renderImg.Width - 2f) / renderImg.Width,
+                (renderImg.Height - 2f) / renderImg.Height
             );
 
             //Draw Right
@@ -1445,15 +1445,15 @@ public partial class TexturedBase : Skin.Base
                 renderImg,
                 new Rectangle(
                     control.RenderBounds.Width - 2, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                ), control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                2f / renderImg.GetHeight(), 1, (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                ), control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
+                2f / renderImg.Height, 1, (renderImg.Height - 2f) / renderImg.Height
             );
 
             // Draw Bottom Left Corner
             Renderer.DrawTexturedRect(
                 renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Bottom - 2, 2, 2),
-                control.RenderColor, 0, (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
-                2f / renderImg.GetWidth(), 1f
+                control.RenderColor, 0, (renderImg.Height - 2f) / renderImg.Height,
+                2f / renderImg.Width, 1f
             );
 
             //Draw Bottom
@@ -1461,16 +1461,16 @@ public partial class TexturedBase : Skin.Base
                 renderImg,
                 new Rectangle(
                     control.RenderBounds.X + 2, control.RenderBounds.Bottom - 2, control.RenderBounds.Width - 4, 2
-                ), control.RenderColor, 2f / renderImg.GetWidth(),
-                (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
-                (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 1f
+                ), control.RenderColor, 2f / renderImg.Width,
+                (renderImg.Height - 2f) / renderImg.Height,
+                (renderImg.Width - 2f) / renderImg.Width, 1f
             );
 
             //Draw Bottom Right Corner
             Renderer.DrawTexturedRect(
                 renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Bottom - 2, 2, 2),
-                control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                (renderImg.GetHeight() - 2f) / renderImg.GetHeight(), 1f, 1f
+                control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
+                (renderImg.Height - 2f) / renderImg.Height, 1f, 1f
             );
 
             return;
@@ -1742,7 +1742,7 @@ public partial class TexturedBase : Skin.Base
                 //Draw Top Left Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Y, 8, 8),
-                    control.RenderColor, 0, 0, 8f / renderImg.GetWidth(), 8f / renderImg.GetHeight()
+                    control.RenderColor, 0, 0, 8f / renderImg.Width, 8f / renderImg.Height
                 );
 
                 //Draw Top
@@ -1750,15 +1750,15 @@ public partial class TexturedBase : Skin.Base
                     renderImg,
                     new Rectangle(
                         control.RenderBounds.X + 8, control.RenderBounds.Y, control.RenderBounds.Width - 16, 8
-                    ), control.RenderColor, 8f / renderImg.GetWidth(), 0,
-                    (renderImg.GetWidth() - 8f) / renderImg.GetWidth(), 8f / renderImg.GetHeight()
+                    ), control.RenderColor, 8f / renderImg.Width, 0,
+                    (renderImg.Width - 8f) / renderImg.Width, 8f / renderImg.Height
                 );
 
                 //Draw Top Right Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.Right - 8, control.RenderBounds.Y, 8, 8),
-                    control.RenderColor, (renderImg.GetWidth() - 8f) / renderImg.GetWidth(), 0, 1f,
-                    8f / renderImg.GetHeight()
+                    control.RenderColor, (renderImg.Width - 8f) / renderImg.Width, 0, 1f,
+                    8f / renderImg.Height
                 );
 
                 //Draw Left
@@ -1766,8 +1766,8 @@ public partial class TexturedBase : Skin.Base
                     renderImg,
                     new Rectangle(
                         control.RenderBounds.X, control.RenderBounds.Y + 8, 8, control.RenderBounds.Height - 16
-                    ), control.RenderColor, 0, 8f / renderImg.GetHeight(), 8f / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 8f) / renderImg.GetHeight()
+                    ), control.RenderColor, 0, 8f / renderImg.Height, 8f / renderImg.Width,
+                    (renderImg.Height - 8f) / renderImg.Height
                 );
 
                 //Draw Middle
@@ -1776,9 +1776,9 @@ public partial class TexturedBase : Skin.Base
                     new Rectangle(
                         control.RenderBounds.X + 8, control.RenderBounds.Y + 8, control.RenderBounds.Width - 16,
                         control.RenderBounds.Height - 16
-                    ), control.RenderColor, 8f / renderImg.GetWidth(), 8f / renderImg.GetHeight(),
-                    (renderImg.GetWidth() - 8f) / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 8f) / renderImg.GetHeight()
+                    ), control.RenderColor, 8f / renderImg.Width, 8f / renderImg.Height,
+                    (renderImg.Width - 8f) / renderImg.Width,
+                    (renderImg.Height - 8f) / renderImg.Height
                 );
 
                 //Draw Right
@@ -1787,15 +1787,15 @@ public partial class TexturedBase : Skin.Base
                     new Rectangle(
                         control.RenderBounds.Width - 8, control.RenderBounds.Y + 8, 8,
                         control.RenderBounds.Height - 16
-                    ), control.RenderColor, (renderImg.GetWidth() - 8f) / renderImg.GetWidth(),
-                    8f / renderImg.GetHeight(), 1, (renderImg.GetHeight() - 8f) / renderImg.GetHeight()
+                    ), control.RenderColor, (renderImg.Width - 8f) / renderImg.Width,
+                    8f / renderImg.Height, 1, (renderImg.Height - 8f) / renderImg.Height
                 );
 
                 // Draw Bottom Left Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Bottom - 8, 8, 8),
-                    control.RenderColor, 0, (renderImg.GetHeight() - 8f) / renderImg.GetHeight(),
-                    8f / renderImg.GetWidth(), 1f
+                    control.RenderColor, 0, (renderImg.Height - 8f) / renderImg.Height,
+                    8f / renderImg.Width, 1f
                 );
 
                 //Draw Bottom
@@ -1804,16 +1804,16 @@ public partial class TexturedBase : Skin.Base
                     new Rectangle(
                         control.RenderBounds.X + 8, control.RenderBounds.Bottom - 8,
                         control.RenderBounds.Width - 16, 8
-                    ), control.RenderColor, 8f / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 8f) / renderImg.GetHeight(),
-                    (renderImg.GetWidth() - 8f) / renderImg.GetWidth(), 1f
+                    ), control.RenderColor, 8f / renderImg.Width,
+                    (renderImg.Height - 8f) / renderImg.Height,
+                    (renderImg.Width - 8f) / renderImg.Width, 1f
                 );
 
                 //Draw Bottom Right Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.Right - 8, control.RenderBounds.Bottom - 8, 8, 8),
-                    control.RenderColor, (renderImg.GetWidth() - 8f) / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 8f) / renderImg.GetHeight(), 1f, 1f
+                    control.RenderColor, (renderImg.Width - 8f) / renderImg.Width,
+                    (renderImg.Height - 8f) / renderImg.Height, 1f, 1f
                 );
 
                 return;
@@ -2232,7 +2232,7 @@ public partial class TexturedBase : Skin.Base
             //Draw Top Left Corner
             Renderer.DrawTexturedRect(
                 renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Y, 2, 2), control.RenderColor,
-                0, 0, 2f / renderImg.GetWidth(), 2f / renderImg.GetHeight()
+                0, 0, 2f / renderImg.Width, 2f / renderImg.Height
             );
 
             //Draw Top
@@ -2240,15 +2240,15 @@ public partial class TexturedBase : Skin.Base
                 renderImg,
                 new Rectangle(
                     control.RenderBounds.X + 2, control.RenderBounds.Y, control.RenderBounds.Width - 4, 2
-                ), control.RenderColor, 2f / renderImg.GetWidth(), 0,
-                (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 2f / renderImg.GetHeight()
+                ), control.RenderColor, 2f / renderImg.Width, 0,
+                (renderImg.Width - 2f) / renderImg.Width, 2f / renderImg.Height
             );
 
             //Draw Top Right Corner
             Renderer.DrawTexturedRect(
                 renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Y, 2, 2),
-                control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 0, 1f,
-                2f / renderImg.GetHeight()
+                control.RenderColor, (renderImg.Width - 2f) / renderImg.Width, 0, 1f,
+                2f / renderImg.Height
             );
 
             //Draw Left
@@ -2256,8 +2256,8 @@ public partial class TexturedBase : Skin.Base
                 renderImg,
                 new Rectangle(
                     control.RenderBounds.X, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                ), control.RenderColor, 0, 2f / renderImg.GetHeight(), 2f / renderImg.GetWidth(),
-                (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                ), control.RenderColor, 0, 2f / renderImg.Height, 2f / renderImg.Width,
+                (renderImg.Height - 2f) / renderImg.Height
             );
 
             //Draw Middle
@@ -2266,9 +2266,9 @@ public partial class TexturedBase : Skin.Base
                 new Rectangle(
                     control.RenderBounds.X + 2, control.RenderBounds.Y + 2, control.RenderBounds.Width - 4,
                     control.RenderBounds.Height - 4
-                ), control.RenderColor, 2f / renderImg.GetWidth(), 2f / renderImg.GetHeight(),
-                (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                ), control.RenderColor, 2f / renderImg.Width, 2f / renderImg.Height,
+                (renderImg.Width - 2f) / renderImg.Width,
+                (renderImg.Height - 2f) / renderImg.Height
             );
 
             //Draw Right
@@ -2276,15 +2276,15 @@ public partial class TexturedBase : Skin.Base
                 renderImg,
                 new Rectangle(
                     control.RenderBounds.Width - 2, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                ), control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                2f / renderImg.GetHeight(), 1, (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                ), control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
+                2f / renderImg.Height, 1, (renderImg.Height - 2f) / renderImg.Height
             );
 
             // Draw Bottom Left Corner
             Renderer.DrawTexturedRect(
                 renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Bottom - 2, 2, 2),
-                control.RenderColor, 0, (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
-                2f / renderImg.GetWidth(), 1f
+                control.RenderColor, 0, (renderImg.Height - 2f) / renderImg.Height,
+                2f / renderImg.Width, 1f
             );
 
             //Draw Bottom
@@ -2292,16 +2292,16 @@ public partial class TexturedBase : Skin.Base
                 renderImg,
                 new Rectangle(
                     control.RenderBounds.X + 2, control.RenderBounds.Bottom - 2, control.RenderBounds.Width - 4, 2
-                ), control.RenderColor, 2f / renderImg.GetWidth(),
-                (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
-                (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 1f
+                ), control.RenderColor, 2f / renderImg.Width,
+                (renderImg.Height - 2f) / renderImg.Height,
+                (renderImg.Width - 2f) / renderImg.Width, 1f
             );
 
             //Draw Bottom Right Corner
             Renderer.DrawTexturedRect(
                 renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Bottom - 2, 2, 2),
-                control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                (renderImg.GetHeight() - 2f) / renderImg.GetHeight(), 1f, 1f
+                control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
+                (renderImg.Height - 2f) / renderImg.Height, 1f, 1f
             );
 
             return;

@@ -92,7 +92,7 @@ public static partial class Globals
                 }
             }
         }
-        
+
         if (MapGrid != null)
         {
             for (var x = 0; x < MapGridWidth; x++)
@@ -113,7 +113,7 @@ public static partial class Globals
                 }
             }
         }
-        
+
         ClientLifecycleHelpers.ForEach(
             clientLifecycleHelper => clientLifecycleHelper?.OnGameUpdate(GameState, Globals.Me, knownEntities, deltaTime)
         );

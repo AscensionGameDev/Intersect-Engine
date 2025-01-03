@@ -2,13 +2,11 @@ using Intersect.Client.Framework.Graphics;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
-public interface ILabel : IColorableText
+public interface ILabel : IColorableText, IAutoSizeToContents
 {
     Pos Alignment { get; set; }
 
-    bool AutoSizeToContents { get; set; }
-
-    GameFont Font { get; set; }
+    GameFont? Font { get; set; }
 
     string FontName { get; set; }
 

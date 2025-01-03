@@ -198,8 +198,8 @@ public partial class SelectCharacterWindow : ImagePanel
                 continue;
             }
 
-            var imgWidth = layerTex.GetWidth();
-            var imgHeight = layerTex.GetHeight();
+            var imgWidth = layerTex.Width;
+            var imgHeight = layerTex.Height;
             var textureWidth = isFace ? imgWidth : imgWidth / Options.Instance.Sprites.NormalFrames;
             var textureHeight = isFace ? imgHeight : imgHeight / Options.Instance.Sprites.Directions;
 

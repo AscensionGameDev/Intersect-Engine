@@ -221,8 +221,8 @@ public partial class CreateCharacterWindow : ImagePanel
             return;
         }
 
-        var imgWidth = _charPortrait.Texture.GetWidth();
-        var imgHeight = _charPortrait.Texture.GetHeight();
+        var imgWidth = _charPortrait.Texture.Width;
+        var imgHeight = _charPortrait.Texture.Height;
         var textureWidth = isFace ? imgWidth : imgWidth / Options.Instance.Sprites.NormalFrames;
         var textureHeight = isFace ? imgHeight : imgHeight / Options.Instance.Sprites.Directions;
 

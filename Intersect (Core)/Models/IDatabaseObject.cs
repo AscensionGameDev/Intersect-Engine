@@ -1,4 +1,5 @@
-﻿using Intersect.Enums;
+﻿using Intersect.Collections;
+using Intersect.Enums;
 
 namespace Intersect.Models;
 
@@ -34,7 +35,7 @@ public partial class DbList<T> : List<Guid>
         var list = new List<T>();
         foreach (var l in ToArray())
         {
-            list.Add((T) LookupUtils.LookupMap[typeof(T)].Get(l));
+            list.Add((T) DatabaseObjectLookup.LookupMap[typeof(T)].Get(l));
         }
 
         return list;
@@ -42,7 +43,7 @@ public partial class DbList<T> : List<Guid>
 
     public T Get(Guid id)
     {
-        return (T) LookupUtils.LookupMap[typeof(T)].Get(id);
+        return (T) DatabaseObjectLookup.LookupMap[typeof(T)].Get(id);
     }
 
 }

@@ -407,27 +407,22 @@ public partial class TableRow : Base, IColorableText
 
         for (var i = 0; i < mColumnCount; i++)
         {
-            if (null == mColumns[i])
+            var columnLabel = mColumns[i];
+            if (null == columnLabel)
             {
                 continue;
             }
 
-            // Note, more than 1 child here, because the 
-            // label has a child built in ( The Text )
-            if (mColumns[i].Children.Count > 1)
+            if (!columnLabel.AutoSizeToContents)
             {
-                mColumns[i].SizeToChildren();
-            }
-            else
-            {
-                mColumns[i].SizeToContents();
+                columnLabel.SizeToChildren();
             }
 
             //if (i == m_ColumnCount - 1) // last column
             //    m_Columns[i].Width = Parent.Width - width; // fill if not autosized
 
-            width += mColumns[i].Width + mColumns[i].Margin.Left + mColumns[i].Margin.Right;
-            height = Math.Max(height, mColumns[i].Height + mColumns[i].Margin.Top + mColumns[i].Margin.Bottom);
+            width += columnLabel.Width + columnLabel.Margin.Left + columnLabel.Margin.Right;
+            height = Math.Max(height, columnLabel.Height + columnLabel.Margin.Top + columnLabel.Margin.Bottom);
         }
 
         SetSize(width, height);
@@ -493,10 +488,17 @@ public partial class TableRow : Base, IColorableText
         foreach (var columnWidth in columnWidths)
         {
             var column = GetColumn(columnIndex++);
-            if (default != column)
+            if (default == column)
             {
-                column.Width = columnWidth;
+                continue;
             }
+
+            if (column.AutoSizeToContents)
+            {
+                continue;
+            }
+
+            column.Width = columnWidth;
         }
 
         //Invalidate();

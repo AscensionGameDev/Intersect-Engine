@@ -1,75 +1,169 @@
 ﻿using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
-
+using Intersect.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Client.Classes.MonoGame.Graphics;
 
-
-public partial class MonoTileBuffer : GameTileBuffer
+public partial class MonoTileBuffer(GraphicsDevice device) : GameTileBuffer
 {
+    private readonly Dictionary<int, int> _tileVertexOffset = [];
+    private readonly List<short> _indices = [];
+    private readonly List<VertexPositionTexture> _vertices = [];
+    private int _vertexCount;
 
-    private bool disposed;
+    private IndexBuffer? _indexBuffer;
+    private VertexBuffer? _vertexBuffer;
 
-    private IndexBuffer indexBuffer;
+    private bool _dirty;
+    private bool _disposed;
 
-    private List<short> indices = new List<short>();
+    internal GameTexture? _texture;
+    private Texture2D? _platformTexture;
 
-    private GraphicsDevice mGraphicsDevice;
+    public override bool Supported => true;
 
-    private bool updatesPending = false;
+    public record struct AddedTile(GameTexture Texture, int SrcX, int SrcY, int SrcW, int SrcH);
 
-    private VertexBuffer vertexBuffer;
+    public readonly Dictionary<AddedTile, int> _addedTileCount = [];
 
-    private int vertexCount;
-
-    private Dictionary<Tuple<float, float>, int> verticeDict = new Dictionary<Tuple<float, float>, int>();
-
-    private List<VertexPositionTexture> vertices = new List<VertexPositionTexture>();
-
-    public MonoTileBuffer(GraphicsDevice device)
+    public override bool TryAddTile(GameTexture texture, int x, int y, int srcX, int srcY, int srcW, int srcH)
     {
-        mGraphicsDevice = device;
+        if (_vertexBuffer != null)
+        {
+            Log.Error("Unable to add tile to null vertex buffer");
+            return false;
+        }
+
+        var platformTexture = (texture == _texture ? _platformTexture : default) ?? texture.GetTexture<Texture2D>();
+        if (platformTexture == null)
+        {
+            Log.Error("Unable to add tile to vertex buffer because the platform texture is null");
+            return false;
+        }
+
+        if (_texture == null)
+        {
+            _texture = texture;
+            _platformTexture = platformTexture;
+        }
+        else if (_platformTexture != platformTexture)
+        {
+            Log.Error("Mismatched platform texture");
+            return false;
+        }
+
+        // var addedTileKey = new AddedTile(
+        //     texture,
+        //     srcX,
+        //     srcY,
+        //     srcW,
+        //     srcH
+        // );
+        // _addedTileCount[addedTileKey] = _addedTileCount.GetValueOrDefault(addedTileKey, 0) + 1;
+
+        var rotated = false;
+
+        var texturePackFrame = texture.GetTexturePackFrame();
+        if (texturePackFrame != null)
+        {
+            var frameBounds = texturePackFrame.Rect;
+            if (texturePackFrame.Rotated)
+            {
+                rotated = true;
+                (srcX, srcY) = (frameBounds.Right - srcY - srcH, frameBounds.Top + srcX);
+                (srcW, srcH) = (srcH, srcW);
+            }
+            else
+            {
+                srcX += frameBounds.X;
+                srcY += frameBounds.Y;
+            }
+        }
+
+        var textureSizeX = 1f / platformTexture.Width;
+        var textureSizeY = 1f / platformTexture.Height;
+
+        var left = srcX * textureSizeX;
+        var right = (srcX + srcW) * textureSizeX;
+        var bottom = (srcY + srcH) * textureSizeY;
+        var top = srcY * textureSizeY;
+
+        _tileVertexOffset.Add(x << 16 | y, _vertexCount);
+
+        if (rotated)
+        {
+            _vertices.Add(new VertexPositionTexture(new Vector3(x, y + srcH, 0), new Vector2(left, top)));
+            _vertices.Add(new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(right, top)));
+            _vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y + srcH, 0), new Vector2(left, bottom)));
+            _vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, bottom)));
+        }
+        else
+        {
+            _vertices.Add(new VertexPositionTexture(new Vector3(x, y + srcH, 0), new Vector2(left, bottom)));
+            _vertices.Add(new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(left, top)));
+            _vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y + srcH, 0), new Vector2(right, bottom)));
+            _vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, top)));
+        }
+
+        _indices.Add((short) _vertexCount);
+        _indices.Add((short) (_vertexCount + 1));
+        _indices.Add((short) (_vertexCount + 2));
+
+        _indices.Add((short) (_vertexCount + 2));
+        _indices.Add((short) (_vertexCount + 1));
+        _indices.Add((short) (_vertexCount + 3));
+
+        _vertexCount += 4;
+
+        return true;
     }
 
-    public override bool Supported { get; } = true;
-
-    public override GameTexture Texture { get; protected set; }
-
-    public override bool AddTile(GameTexture tex, float x, float y, int srcX, int srcY, int srcW, int srcH)
+    public override bool TryUpdateTile(GameTexture texture, int x, int y, int srcX, int srcY, int srcW, int srcH)
     {
-        var platformTex = tex?.GetTexture();
-        if (platformTex == null)
+        if (_vertexBuffer == default)
         {
+            Log.Error("Unable to update tile on null vertex buffer");
             return false;
         }
 
-        if (Texture == null)
+        if (!_tileVertexOffset.TryGetValue(x << 16 | y, out var vertexIndex))
         {
-            Texture = tex;
-        }
-        else if (Texture.GetTexture() != platformTex)
-        {
+            Log.Error("Unable to update tile that has not been added to the vertex buffer before");
             return false;
         }
 
-        if (vertexBuffer != null)
+        var platformTexture = (texture == _texture ? _platformTexture : default) ?? texture.GetTexture<Texture2D>();
+        if (platformTexture == null)
         {
+            Log.Error("Unable to add tile to vertex buffer because the platform texture is null");
+            return false;
+        }
+
+        if (_texture == null)
+        {
+            _texture = texture;
+            _platformTexture = platformTexture;
+        }
+        else if (_platformTexture != platformTexture)
+        {
+            Log.Error("Mismatched platform texture");
             return false;
         }
 
         var rotated = false;
-        var pack = tex.GetTexturePackFrame();
-        if (pack != null)
+
+        var texturePackFrame = texture.GetTexturePackFrame();
+        if (texturePackFrame != null)
         {
-            if (pack.Rotated)
+            if (texturePackFrame.Rotated)
             {
                 rotated = true;
 
                 var z = srcX;
-                srcX = pack.Rect.Right - srcY - srcH;
-                srcY = pack.Rect.Top + z;
+                srcX = texturePackFrame.Rect.Right - srcY - srcH;
+                srcY = texturePackFrame.Rect.Top + z;
 
                 z = srcW;
                 srcW = srcH;
@@ -77,211 +171,122 @@ public partial class MonoTileBuffer : GameTileBuffer
             }
             else
             {
-                srcX += pack.Rect.X;
-                srcY += pack.Rect.Y;
+                srcX += texturePackFrame.Rect.X;
+                srcY += texturePackFrame.Rect.Y;
             }
         }
 
-        var texture = (Texture2D) tex.GetTexture();
-
-        var textureSizeX = 1f / texture.Width;
-        var textureSizeY = 1f / texture.Height;
+        var textureSizeX = 1f / platformTexture.Width;
+        var textureSizeY = 1f / platformTexture.Height;
 
         var left = srcX * textureSizeX;
         var right = (srcX + srcW) * textureSizeX;
         var bottom = (srcY + srcH) * textureSizeY;
         var top = srcY * textureSizeY;
 
-        verticeDict.Add(new Tuple<float, float>(x, y), vertices.Count);
-
         if (rotated)
         {
-            vertices.Add(new VertexPositionTexture(new Vector3(x, y + srcH, 0), new Vector2(left, top)));
-            vertices.Add(new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(right, top)));
-            vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y + srcH, 0), new Vector2(left, bottom)));
-            vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, bottom)));
+            _vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y + srcH, 0), new Vector2(left, top));
+            _vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(right, top));
+            _vertices[vertexIndex++] = new VertexPositionTexture(
+                new Vector3(x + srcW, y + srcH, 0),
+                new Vector2(left, bottom)
+            );
+            _vertices[vertexIndex] = new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, bottom));
         }
         else
         {
-            vertices.Add(new VertexPositionTexture(new Vector3(x, y + srcH, 0), new Vector2(left, bottom)));
-            vertices.Add(new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(left, top)));
-            vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y + srcH, 0), new Vector2(right, bottom)));
-            vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, top)));
+            _vertices[vertexIndex++] = new VertexPositionTexture(
+                new Vector3(x, y + srcH, 0),
+                new Vector2(left, bottom)
+            );
+
+            _vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(left, top));
+            _vertices[vertexIndex++] = new VertexPositionTexture(
+                new Vector3(x + srcW, y + srcH, 0),
+                new Vector2(right, bottom)
+            );
+
+            _vertices[vertexIndex] = new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, top));
         }
 
-        indices.Add((short) vertexCount);
-        indices.Add((short) (vertexCount + 1));
-        indices.Add((short) (vertexCount + 2));
-
-        indices.Add((short) (vertexCount + 2));
-        indices.Add((short) (vertexCount + 1));
-        indices.Add((short) (vertexCount + 3));
-
-        vertexCount += 4;
+        _dirty = true;
 
         return true;
     }
 
     public void Draw(BasicEffect basicEffect, FloatRect view)
     {
-        if (vertexBuffer != null && !disposed)
+        if (_disposed || _vertexBuffer == default)
         {
-            mGraphicsDevice.SetVertexBuffer(vertexBuffer);
-            mGraphicsDevice.Indices = indexBuffer;
+            return;
+        }
 
-            basicEffect.Texture = (Texture2D) Texture.GetTexture();
-            foreach (var pass in basicEffect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                mGraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, vertexCount / 2);
-            }
+        device.SetVertexBuffer(_vertexBuffer);
+        device.Indices = _indexBuffer;
+
+        // If we use _platformTexture directly here it will get marked as "unused" and disposed
+        basicEffect.Texture = _texture?.GetTexture<Texture2D>();
+
+        foreach (var pass in basicEffect.CurrentTechnique.Passes)
+        {
+            pass.Apply();
+            device.DrawIndexedPrimitives(
+                PrimitiveType.TriangleList,
+                0,
+                0,
+                _vertexCount / 2
+            );
         }
     }
 
     public override bool SetData()
     {
-        if (vertexBuffer != null && !updatesPending)
+        if (_vertexBuffer != null && !_dirty)
         {
             return false;
         }
 
-        if (vertices.Count == 0)
+        if (_vertices.Count == 0)
         {
             return true;
         }
 
         TileBufferCount++;
-        if (vertexBuffer == null)
-        {
-            vertexBuffer = new VertexBuffer(
-                mGraphicsDevice, typeof(VertexPositionTexture), vertices.Count, BufferUsage.WriteOnly
-            );
 
-            indexBuffer = new IndexBuffer(mGraphicsDevice, typeof(short), indices.Count, BufferUsage.WriteOnly);
+        _vertexBuffer ??= new VertexBuffer(
+            device,
+            typeof(VertexPositionTexture),
+            _vertices.Count,
+            BufferUsage.WriteOnly
+        );
+
+        _vertexBuffer.SetData(_vertices.ToArray());
+
+        _indexBuffer ??= new IndexBuffer(
+            device,
+            typeof(short),
+            _indices.Count,
+            BufferUsage.WriteOnly
+        );
+
+        if (!_dirty)
+        {
+            _indexBuffer.SetData(_indices.ToArray());
         }
 
-        vertexBuffer.SetData(vertices.ToArray());
-        if (!updatesPending)
-        {
-            indexBuffer.SetData(indices.ToArray());
-        }
-
-        updatesPending = false;
+        _dirty = false;
 
         return true;
     }
 
     public override void Dispose()
     {
-        vertexBuffer?.Dispose();
-        vertexBuffer = null;
-        indexBuffer?.Dispose();
-        indexBuffer = null;
+        _vertexBuffer?.Dispose();
+        _vertexBuffer = null;
+        _indexBuffer?.Dispose();
+        _indexBuffer = null;
         TileBufferCount--;
-        disposed = true;
+        _disposed = true;
     }
-
-    public override bool UpdateTile(GameTexture tex, float x, float y, int srcX, int srcY, int srcW, int srcH)
-    {
-        var key = new Tuple<float, float>(x, y);
-        var vertexIndex = -1;
-        if (verticeDict.ContainsKey(key))
-        {
-            vertexIndex = verticeDict[key];
-        }
-
-        if (vertexIndex == -1)
-        {
-            return false;
-        }
-
-        var platformTex = tex?.GetTexture();
-        if (platformTex == null)
-        {
-            return false;
-        }
-
-        if (tex == null)
-        {
-            return false;
-        }
-
-        if (tex.GetTexture() != platformTex)
-        {
-            return false;
-        }
-
-        if (vertexBuffer == null)
-        {
-            return false;
-        }
-
-        var pack = tex.GetTexturePackFrame();
-
-        var rotated = false;
-        if (pack != null)
-        {
-            if (pack.Rotated)
-            {
-                rotated = true;
-
-                var z = srcX;
-                srcX = pack.Rect.Right - srcY - srcH;
-                srcY = pack.Rect.Top + z;
-
-                z = srcW;
-                srcW = srcH;
-                srcH = z;
-            }
-            else
-            {
-                srcX += pack.Rect.X;
-                srcY += pack.Rect.Y;
-            }
-        }
-
-        var texture = (Texture2D) tex.GetTexture();
-
-        var textureSizeX = 1f / texture.Width;
-        var textureSizeY = 1f / texture.Height;
-
-        var left = srcX * textureSizeX;
-        var right = (srcX + srcW) * textureSizeX;
-        var bottom = (srcY + srcH) * textureSizeY;
-        var top = srcY * textureSizeY;
-
-        if (rotated)
-        {
-            vertices[vertexIndex++] = new VertexPositionTexture(
-                new Vector3(x, y + srcH, 0), new Vector2(left, top)
-            );
-
-            vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(right, top));
-            vertices[vertexIndex++] = new VertexPositionTexture(
-                new Vector3(x + srcW, y + srcH, 0), new Vector2(left, bottom)
-            );
-
-            vertices[vertexIndex] = new VertexPositionTexture(
-                new Vector3(x + srcW, y, 0), new Vector2(right, bottom)
-            );
-        }
-        else
-        {
-            vertices[vertexIndex++] = new VertexPositionTexture(
-                new Vector3(x, y + srcH, 0), new Vector2(left, bottom)
-            );
-
-            vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(left, top));
-            vertices[vertexIndex++] = new VertexPositionTexture(
-                new Vector3(x + srcW, y + srcH, 0), new Vector2(right, bottom)
-            );
-
-            vertices[vertexIndex] = new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, top));
-        }
-
-        updatesPending = true;
-
-        return true;
-    }
-
 }

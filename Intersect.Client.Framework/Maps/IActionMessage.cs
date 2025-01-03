@@ -7,7 +7,7 @@ public interface IActionMessage
     string Msg { get; set; }
     long TransmissionTimer { get; set; }
     int X { get; set; }
-    long XOffset { get; set; }
+    int XOffset { get; set; }
     int Y { get; set; }
 
     void TryRemove();

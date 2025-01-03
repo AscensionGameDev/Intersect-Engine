@@ -1,6 +1,6 @@
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Input;
-
+using Intersect.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;
@@ -572,23 +572,49 @@ public partial class TextBox : Label
     /// <param name="length">Length in characters.</param>
     public virtual void DeleteText(int startPos, int length, bool playSound = true) => ReplaceText(startPos, length, string.Empty, playSound);
 
-    public virtual void ReplaceText(int startPos, int length, string replacement, bool playSound = true)
+    public virtual void ReplaceText(int startPos, int length, string? replacement, bool playSound = true)
     {
-        var str = Text;
-        str = str.Remove(startPos, length);
-        str = str.Insert(startPos, replacement ?? string.Empty);
-        SetText(str);
-
-        if (mCursorPos > startPos)
+        try
         {
-            CursorPos = mCursorPos + (replacement?.Length ?? 0) - length;
+            var text = Text;
+            if (startPos < 0)
+            {
+                if (length > -startPos)
+                {
+                    length += startPos;
+                    startPos = 0;
+                }
+                else
+                {
+                    length = 0;
+                    startPos = 0;
+                }
+            }
+
+            if (length > 0)
+            {
+                text = text.Remove(startPos, length);
+            }
+
+            text = text.Insert(startPos, replacement ?? string.Empty);
+
+            SetText(text);
+
+            if (mCursorPos > startPos)
+            {
+                CursorPos = Math.Max(0, mCursorPos) + (replacement?.Length ?? 0) - length;
+            }
+
+            CursorEnd = mCursorPos;
+
+            if (length > 0 && playSound)
+            {
+                PlaySound(mRemoveTextSound);
+            }
         }
-
-        CursorEnd = mCursorPos;
-
-        if (length > 0 && playSound)
+        catch (Exception exception)
         {
-            PlaySound(mRemoveTextSound);
+            Log.Warn(exception);
         }
     }
 

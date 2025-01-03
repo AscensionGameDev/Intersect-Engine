@@ -140,8 +140,8 @@ public partial class Event : Entity
 
         var destRectangle = new FloatRect
         {
-            X = map.GetX() + X * Options.TileWidth + OffsetX,
-            Y = map.GetY() + Y * Options.TileHeight + OffsetY,
+            X = map.X + X * Options.TileWidth + OffsetX,
+            Y = map.Y + Y * Options.TileHeight + OffsetY,
             Width = Math.Max(Options.TileWidth, srcRectangle.Width),
             Height = Math.Max(Options.TileHeight, srcRectangle.Height),
         };

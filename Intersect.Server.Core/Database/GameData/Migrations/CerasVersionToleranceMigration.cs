@@ -78,7 +78,7 @@ public partial class CerasVersionToleranceMigration
                                 Y = tileLayers[i].Tiles[x, y].Y,
                                 Autotile = tileLayers[i].Tiles[x, y].Autotile,
                                 TilesetId = tileLayers[i].Tiles[x, y].TilesetId,
-                                TilesetTex = tileLayers[i].Tiles[x, y].TilesetTex
+                                TilesetTexture = tileLayers[i].Tiles[x, y].TilesetTex
                             };
                         }
                     }

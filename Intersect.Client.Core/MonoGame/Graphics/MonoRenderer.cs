@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using Intersect.Client.Classes.MonoGame.Graphics;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
@@ -383,10 +384,8 @@ public class MonoRenderer : GameRenderer
         mSpriteBatchBegan = false;
     }
 
-    public static XNAColor ConvertColor(Color clr)
-    {
-        return new XNAColor(clr.R, clr.G, clr.B, clr.A);
-    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static XNAColor ConvertColor(Color color) => new(color.R, color.G, color.B, color.A);
 
     public override void Clear(Color color)
     {
@@ -457,23 +456,24 @@ public class MonoRenderer : GameRenderer
 
         if (borderColor != null && borderColor != Color.Transparent)
         {
+            var platformBorderColor = ConvertColor(borderColor);
             mSpriteBatch.DrawString(
-                font, text, new Vector2(x, y - 1), ConvertColor(borderColor), 0f, Vector2.Zero,
+                font, text, new Vector2(x, y - 1), platformBorderColor, 0f, Vector2.Zero,
                 new Vector2(fontScale, fontScale), SpriteEffects.None, 0
             );
 
             mSpriteBatch.DrawString(
-                font, text, new Vector2(x - 1, y), ConvertColor(borderColor), 0f, Vector2.Zero,
+                font, text, new Vector2(x - 1, y), platformBorderColor, 0f, Vector2.Zero,
                 new Vector2(fontScale, fontScale), SpriteEffects.None, 0
             );
 
             mSpriteBatch.DrawString(
-                font, text, new Vector2(x + 1, y), ConvertColor(borderColor), 0f, Vector2.Zero,
+                font, text, new Vector2(x + 1, y), platformBorderColor, 0f, Vector2.Zero,
                 new Vector2(fontScale, fontScale), SpriteEffects.None, 0
             );
 
             mSpriteBatch.DrawString(
-                font, text, new Vector2(x, y + 1), ConvertColor(borderColor), 0f, Vector2.Zero,
+                font, text, new Vector2(x, y + 1), platformBorderColor, 0f, Vector2.Zero,
                 new Vector2(fontScale, fontScale), SpriteEffects.None, 0
             );
         }
@@ -529,30 +529,38 @@ public class MonoRenderer : GameRenderer
 
         if (borderColor != null && borderColor != Color.Transparent)
         {
+            var platformBorderColor = ConvertColor(borderColor);
             mSpriteBatch.DrawString(
-                font, text, new Vector2(x, y - 1), ConvertColor(borderColor), 0f, Vector2.Zero,
+                font, text, new Vector2(x, y - 1), platformBorderColor, 0f, Vector2.Zero,
                 new Vector2(fontScale, fontScale), SpriteEffects.None, 0
             );
 
             mSpriteBatch.DrawString(
-                font, text, new Vector2(x - 1, y), ConvertColor(borderColor), 0f, Vector2.Zero,
+                font, text, new Vector2(x - 1, y), platformBorderColor, 0f, Vector2.Zero,
                 new Vector2(fontScale, fontScale), SpriteEffects.None, 0
             );
 
             mSpriteBatch.DrawString(
-                font, text, new Vector2(x + 1, y), ConvertColor(borderColor), 0f, Vector2.Zero,
+                font, text, new Vector2(x + 1, y), platformBorderColor, 0f, Vector2.Zero,
                 new Vector2(fontScale, fontScale), SpriteEffects.None, 0
             );
 
             mSpriteBatch.DrawString(
-                font, text, new Vector2(x, y + 1), ConvertColor(borderColor), 0f, Vector2.Zero,
+                font, text, new Vector2(x, y + 1), platformBorderColor, 0f, Vector2.Zero,
                 new Vector2(fontScale, fontScale), SpriteEffects.None, 0
             );
         }
 
         mSpriteBatch.DrawString(
-            font, text, new Vector2(x, y), clr, 0f, Vector2.Zero, new Vector2(fontScale, fontScale),
-            SpriteEffects.None, 0
+            font,
+            text,
+            new Vector2(x, y),
+            clr,
+            0f,
+            Vector2.Zero,
+            new Vector2(fontScale, fontScale),
+            SpriteEffects.None,
+            0
         );
 
         EndSpriteBatch();
@@ -672,7 +680,7 @@ public class MonoRenderer : GameRenderer
         }
         else
         {
-            Draw(new FloatRect(0, 0, renderTarget.GetWidth(), renderTarget.GetHeight()), renderTarget);
+            Draw(new FloatRect(0, 0, renderTarget.Width, renderTarget.Height), renderTarget);
         }
     }
 

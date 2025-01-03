@@ -422,7 +422,7 @@ public static partial class Input
             return;
         }
 
-        if (Interface.Interface.MouseHitGui())
+        if (Interface.Interface.DoesMouseHitInterface())
         {
             return;
         }
@@ -527,19 +527,19 @@ public static partial class Input
 
         foreach (MapInstance map in MapInstance.Lookup.Values.Cast<MapInstance>())
         {
-            if (!(x >= map.GetX()) || !(x <= map.GetX() + Options.MapWidth * Options.TileWidth))
+            if (!(x >= map.X) || !(x <= map.X + Options.MapWidth * Options.TileWidth))
             {
                 continue;
             }
 
-            if (!(y >= map.GetY()) || !(y <= map.GetY() + Options.MapHeight * Options.TileHeight))
+            if (!(y >= map.Y) || !(y <= map.Y + Options.MapHeight * Options.TileHeight))
             {
                 continue;
             }
 
             //Remove the offsets to just be dealing with pixels within the map selected
-            x -= (int) map.GetX();
-            y -= (int) map.GetY();
+            x -= (int) map.X;
+            y -= (int) map.Y;
 
             //transform pixel format to tile format
             x /= Options.TileWidth;

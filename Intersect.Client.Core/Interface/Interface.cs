@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -9,7 +10,7 @@ using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Menu;
 using Intersect.Client.Interface.Shared;
 using Intersect.Configuration;
-
+using Intersect.Models;
 using Base = Intersect.Client.Framework.Gwen.Renderer.Base;
 
 namespace Intersect.Client.Interface;
@@ -220,57 +221,37 @@ public static partial class Interface
         }
     }
 
-    public static void ToggleInput(bool val)
-    {
-        GwenInput.HandleInput = val;
-    }
+    public static void SetHandleInput(bool val) => GwenInput.HandleInput = val;
 
-    public static bool MouseHitGui()
-    {
-        for (var i = 0; i < sGameCanvas.Children.Count; i++)
-        {
-            if (MouseHitBase(sGameCanvas.Children[i]))
-            {
-                return true;
-            }
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool DoesMouseHitInterface() => DoesMouseHitComponentOrChildren(sGameCanvas);
 
-        return false;
-    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool DoesMouseHitComponentOrChildren(Framework.Gwen.Control.Base component) =>
+        DoesComponentOrChildrenContainMousePoint(component, InputHandler.MousePosition);
 
-    public static bool MouseHitBase(Framework.Gwen.Control.Base obj)
+    public static bool DoesComponentOrChildrenContainMousePoint(Framework.Gwen.Control.Base component, Point position)
     {
-        if (obj.IsHidden == true)
+        if (component.IsHidden)
         {
             return false;
         }
-        else if (!obj.MouseInputEnabled)
-        {
-            // Check if we're hitting a child element.
-            for (var i = 0; i < obj.Children.Count; i++)
-            {
-                if (MouseHitBase(obj.Children[i]))
-                {
-                    return true;
-                }
-            }
 
+        if (!component.Bounds.Contains(position))
+        {
             return false;
         }
-        else
-        {
-            var rect = new FloatRect(
-                obj.LocalPosToCanvas(new Point(0, 0)).X, obj.LocalPosToCanvas(new Point(0, 0)).Y, obj.Width,
-                obj.Height
-            );
 
-            if (rect.Contains(InputHandler.MousePosition.X, InputHandler.MousePosition.Y))
-            {
-                return true;
-            }
+        if (component.MouseInputEnabled)
+        {
+            return true;
         }
 
-        return false;
+        var localPosition = position;
+        localPosition.X -= component.X;
+        localPosition.Y -= component.Y;
+
+        return component.Children.Any(child => DoesComponentOrChildrenContainMousePoint(child, localPosition));
     }
 
     public static string[] WrapText(string input, int width, GameFont font)

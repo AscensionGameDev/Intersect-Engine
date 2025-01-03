@@ -1934,13 +1934,13 @@ public partial class Player : Entity, IPlayer
 
         foreach (MapInstance map in Maps.MapInstance.Lookup.Values.Cast<MapInstance>())
         {
-            if (x >= map.GetX() && x <= map.GetX() + Options.MapWidth * Options.TileWidth)
+            if (x >= map.X && x <= map.X + Options.MapWidth * Options.TileWidth)
             {
-                if (y >= map.GetY() && y <= map.GetY() + Options.MapHeight * Options.TileHeight)
+                if (y >= map.Y && y <= map.Y + Options.MapHeight * Options.TileHeight)
                 {
                     //Remove the offsets to just be dealing with pixels within the map selected
-                    x -= (int)map.GetX();
-                    y -= (int)map.GetY();
+                    x -= (int)map.X;
+                    y -= (int)map.Y;
 
                     //transform pixel format to tile format
                     x /= Options.TileWidth;
@@ -2664,15 +2664,15 @@ public partial class Player : Entity, IPlayer
             }
         }
 
-        if (!Interface.Interface.MouseHitGui())
+        if (!Interface.Interface.DoesMouseHitInterface())
         {
             var mouseInWorld = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
             foreach (MapInstance map in Maps.MapInstance.Lookup.Values.Cast<MapInstance>())
             {
-                if (mouseInWorld.X >= map.GetX() && mouseInWorld.X <= map.GetX() + Options.MapWidth * Options.TileWidth)
+                if (mouseInWorld.X >= map.X && mouseInWorld.X <= map.X + Options.MapWidth * Options.TileWidth)
                 {
-                    if (mouseInWorld.Y >= map.GetY() &&
-                        mouseInWorld.Y <= map.GetY() + Options.MapHeight * Options.TileHeight)
+                    if (mouseInWorld.Y >= map.Y &&
+                        mouseInWorld.Y <= map.Y + Options.MapHeight * Options.TileHeight)
                     {
                         var mapId = map.Id;
 

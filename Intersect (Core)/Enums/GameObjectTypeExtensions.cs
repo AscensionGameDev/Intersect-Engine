@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Intersect.Collections;
 using Intersect.Extensions;
 using Intersect.GameObjects;
@@ -17,8 +18,12 @@ public static partial class GameObjectTypeExtensions
         foreach (GameObjectType gameObjectType in Enum.GetValues(EnumType))
         {
             var memberInfo = EnumType.GetMember(Enum.GetName(EnumType, value: gameObjectType)).FirstOrDefault();
-            AttributeMap[gameObjectType] =
-                (GameObjectInfoAttribute) memberInfo?.GetCustomAttributes(AttributeType, false).FirstOrDefault();
+            var gameObjectInfoAttribute = (GameObjectInfoAttribute) memberInfo?.GetCustomAttributes(AttributeType, false).FirstOrDefault();
+            AttributeMap[gameObjectType] = gameObjectInfoAttribute;
+            if (gameObjectInfoAttribute != default)
+            {
+                _gameObjectTypeLookup[gameObjectInfoAttribute.Type] = gameObjectType;
+            }
         }
     }
 
@@ -27,6 +32,11 @@ public static partial class GameObjectTypeExtensions
     private static Type AttributeType { get; }
 
     private static Dictionary<GameObjectType, GameObjectInfoAttribute> AttributeMap { get; }
+
+    private static readonly Dictionary<Type, GameObjectType> _gameObjectTypeLookup = [];
+
+    public static bool TryGetGameObjectType(this Type type, out GameObjectType gameObjectType) =>
+        _gameObjectTypeLookup.TryGetValue(type, out gameObjectType);
 
     public static Type GetObjectType(this GameObjectType gameObjectType)
     {
@@ -40,12 +50,7 @@ public static partial class GameObjectTypeExtensions
 
     public static DatabaseObjectLookup GetLookup(this GameObjectType gameObjectType)
     {
-        return LookupUtils.GetLookup(GetObjectType(gameObjectType));
-    }
-
-    public static dynamic Get(this GameObjectType gameObjectType, Guid id)
-    {
-        return LookupUtils.GetLookup(GetObjectType(gameObjectType)).Get(id);
+        return DatabaseObjectLookup.GetLookup(GetObjectType(gameObjectType));
     }
 
     public static IDatabaseObject CreateNew(this GameObjectType gameObjectType)
@@ -110,7 +115,7 @@ public static partial class GameObjectTypeExtensions
             .FirstOrDefault();
     }
 
-    public static string[] Names(this GameObjectType gameObjectType, VariableDataType dataTypeFilter = 0) 
+    public static string[] Names(this GameObjectType gameObjectType, VariableDataType dataTypeFilter = 0)
     {
         if (dataTypeFilter == 0)
         {

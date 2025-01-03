@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using System.Collections.Concurrent;
-
+using Intersect.Client.Classes.MonoGame.Graphics;
 using Intersect.Client.Core;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
@@ -17,6 +17,7 @@ using Intersect.Compression;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
+using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
 
@@ -28,6 +29,9 @@ namespace Intersect.Client.Maps;
 
 public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMapInstance
 {
+    public const int MapAnimationFrames = 3;
+    private const int XpAnimationFrameTileWidth = 3;
+    private const int VxAnimationFrameTileWidth = 2;
 
     //Client Only Values
     public delegate void MapLoadedDelegate(MapInstance map);
@@ -94,7 +98,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     protected long mFogUpdateTime = -1;
 
     //Update Timer
-    private long mLastUpdateTime;
+    private long _lastUpdateTime;
 
     protected float mOverlayIntensity;
 
@@ -108,19 +112,13 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
     private bool mTexturesFound = false;
 
-    private Dictionary<string, Dictionary<object, GameTileBuffer[]>> mTileBufferDict = new Dictionary<string, Dictionary<object, GameTileBuffer[]>>(); //[Layer][?][?]
+    private readonly Dictionary<string, Dictionary<object, GameTileBuffer[]>> _tileBuffersPerTexturePerLayer = []; // [Layer][Platform Texture][Buffer Index]
 
-    private Dictionary<string, GameTileBuffer[][]> mTileBuffers = new Dictionary<string, GameTileBuffer[][]>(); //[Layer][Autotile Frame][Buffer Index]
+    private readonly Dictionary<string, GameTileBuffer[][]> _tileBuffersPerLayer = []; // [Layer][Autotile Frame][Buffer Index]
 
     //Initialization
     public MapInstance(Guid id) : base(id)
     {
-        mTileBuffers.Clear();
-        foreach (var layer in Options.Instance.MapOpts.Layers.All)
-        {
-            mTileBufferDict.Add(layer, new Dictionary<object, GameTileBuffer[]>());
-            mTileBuffers.Add(layer, new GameTileBuffer[3][]); //3 autotile frames per layer
-        }
     }
 
     public bool IsLoaded { get; private set; }
@@ -129,12 +127,38 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     public bool[] CameraHolds { get; set; } = new bool[4];
 
     //World Position
-    public int GridX { get; set; }
+    public int GridX
+    {
+        get => _gridX;
+        set
+        {
+            if (value == _gridX)
+            {
+                return;
+            }
 
-    public int GridY { get; set; }
+            _gridX = value;
+            X = _gridX * _width * _tileWidth;
+        }
+    }
+
+    public int GridY
+    {
+        get => _gridY;
+        set
+        {
+            if (value == _gridY)
+            {
+                return;
+            }
+
+            _gridY = value;
+            Y = _gridY * _height * _tileHeight;
+        }
+    }
 
     //Map Sounds
-    public IMapSound BackgroundSound { get; set; }
+    public IMapSound? BackgroundSound { get; set; }
 
     public new static MapControllers Lookup => sLookup ?? (sLookup = new MapControllers(MapBase.Lookup));
 
@@ -160,98 +184,112 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         {
             if (!Layers.ContainsKey(layer))
             {
-                Layers.Add(layer, new Tile[Options.MapWidth, Options.MapHeight]);
+                Layers.Add(layer, new Tile[_width, _height]);
             }
         }
     }
 
     private void CacheTextures()
     {
-        if (mTexturesFound == false && GameContentManager.Current.TilesetsLoaded)
+        if (mTexturesFound || !GameContentManager.Current.TilesetsLoaded)
         {
-            foreach (var layer in Options.Instance.MapOpts.Layers.All)
-            {
-                for (var x = 0; x < Options.MapWidth; x++)
-                {
-                    for (var y = 0; y < Options.MapHeight; y++)
-                    {
-                        var tileset = TilesetBase.Get(Layers[layer][x, y].TilesetId);
-                        if (tileset != null)
-                        {
-                            var tilesetTex = Globals.ContentManager.GetTexture(
-                                Framework.Content.TextureType.Tileset, tileset.Name
-                            );
+            return;
+        }
 
-                            Layers[layer][x, y].TilesetTex = tilesetTex;
-                        }
-                    }
-                }
+        foreach (var layer in Options.Instance.MapOpts.Layers.All)
+        {
+            if (!Layers.TryGetValue(layer, out var layerTiles))
+            {
+                continue;
             }
 
-            mTexturesFound = true;
+            for (var x = 0; x < _width; x++)
+            {
+                for (var y = 0; y < _height; y++)
+                {
+                    var layerTile = layerTiles[x, y];
+                    if (layerTile.TilesetId == default)
+                    {
+                        continue;
+                    }
+
+                    if (!TilesetBase.TryGet(layerTile.TilesetId, out var tileset))
+                    {
+                        continue;
+                    }
+
+                    var tilesetTexture = Globals.ContentManager.GetTexture(
+                        Framework.Content.TextureType.Tileset,
+                        tileset.Name
+                    );
+
+                    // Tile is a struct, this has to be an array index
+                    layerTiles[x, y].TilesetTexture = tilesetTexture;
+                }
+            }
         }
+
+        mTexturesFound = true;
     }
 
     //Updating
     public void Update(bool isLocal)
     {
-        if (isLocal)
+        var nowMilliseconds = Timing.Global.Milliseconds;
+        if (!isLocal)
         {
-            mLastUpdateTime = Timing.Global.Milliseconds + 10000;
-            UpdateMapAttributes();
-            if (BackgroundSound == null && !TextUtils.IsNone(Sound))
-            {
-                BackgroundSound = Audio.AddMapSound(Sound, -1, -1, Id, true, 0, 10);
-            }
-
-            foreach (var anim in LocalAnimations)
-            {
-                if (anim.Value.Disposed())
-                {
-                    LocalAnimations.TryRemove(anim.Key, out MapAnimation removed);
-                }
-                else
-                {
-                    anim.Value.Update();
-                }
-            }
-
-            foreach (var en in LocalEntities)
-            {
-                if (en.Value == null)
-                {
-                    continue;
-                }
-
-                en.Value.Update();
-            }
-
-            foreach (var critter in mAttributeCritterInstances)
-            {
-                if (critter.Value == null)
-                {
-                    continue;
-                }
-
-                critter.Value.Update();
-            }
-
-            for (var i = 0; i < LocalEntitiesToDispose.Count; i++)
-            {
-                LocalEntities.Remove(LocalEntitiesToDispose[i]);
-            }
-
-            LocalEntitiesToDispose.Clear();
-        }
-        else
-        {
-            if (Timing.Global.Milliseconds > mLastUpdateTime)
+            if (nowMilliseconds > _lastUpdateTime)
             {
                 Dispose();
             }
 
             HideActiveAnimations();
+            return;
         }
+
+        _lastUpdateTime = nowMilliseconds + 10000;
+        UpdateMapAttributes();
+        if (BackgroundSound == null && !string.IsNullOrWhiteSpace(Sound))
+        {
+            BackgroundSound = Audio.AddMapSound(
+                Sound,
+                -1,
+                -1,
+                Id,
+                true,
+                0,
+                10
+            );
+        }
+
+        foreach (var (animationId, animation) in LocalAnimations)
+        {
+            if (animation.Disposed())
+            {
+                LocalAnimations.TryRemove(animationId, out _);
+            }
+            else
+            {
+                animation.Update();
+            }
+        }
+
+        foreach (var (_, entity) in LocalEntities)
+        {
+            entity.Update();
+        }
+
+        foreach (var (_, critter) in mAttributeCritterInstances)
+        {
+            critter.Update();
+        }
+
+        foreach (var localEntityToDispose in LocalEntitiesToDispose)
+        {
+            LocalEntities.Remove(localEntityToDispose);
+        }
+
+        LocalEntitiesToDispose.Clear();
     }
 
     public bool InView()
@@ -298,7 +336,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 else if (map.GridY == GridY)
                 {
                     //Check West
-                    for (var y = 0; y < Options.MapHeight; y++)
+                    for (var y = 0; y < _height; y++)
                     {
                         updatedBuffers.UnionWith(CheckAutotile(0, y, surroundingMaps));
                     }
@@ -306,7 +344,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 else if (map.GridY == GridY + 1)
                 {
                     //Check Southwest
-                    updatedBuffers.UnionWith(CheckAutotile(0, Options.MapHeight - 1, surroundingMaps));
+                    updatedBuffers.UnionWith(CheckAutotile(0, _height - 1, surroundingMaps));
                 }
             }
             else if (map.GridX == GridX)
@@ -314,7 +352,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 if (map.GridY == GridY - 1)
                 {
                     //Check North
-                    for (var x = 0; x < Options.MapWidth; x++)
+                    for (var x = 0; x < _width; x++)
                     {
                         updatedBuffers.UnionWith(CheckAutotile(x, 0, surroundingMaps));
                     }
@@ -322,9 +360,9 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 else if (map.GridY == GridY + 1)
                 {
                     //Check South
-                    for (var x = 0; x < Options.MapWidth; x++)
+                    for (var x = 0; x < _width; x++)
                     {
-                        updatedBuffers.UnionWith(CheckAutotile(x, Options.MapHeight - 1, surroundingMaps));
+                        updatedBuffers.UnionWith(CheckAutotile(x, _height - 1, surroundingMaps));
                     }
                 }
             }
@@ -334,22 +372,22 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 {
                     //Check Northeast
                     updatedBuffers.UnionWith(
-                        CheckAutotile(Options.MapWidth - 1, Options.MapHeight, surroundingMaps)
+                        CheckAutotile(_width - 1, _height, surroundingMaps)
                     );
                 }
                 else if (map.GridY == GridY)
                 {
                     //Check East
-                    for (var y = 0; y < Options.MapHeight; y++)
+                    for (var y = 0; y < _height; y++)
                     {
-                        updatedBuffers.UnionWith(CheckAutotile(Options.MapWidth - 1, y, surroundingMaps));
+                        updatedBuffers.UnionWith(CheckAutotile(_width - 1, y, surroundingMaps));
                     }
                 }
                 else if (map.GridY == GridY + 1)
                 {
                     //Check Southeast
                     updatedBuffers.UnionWith(
-                        CheckAutotile(Options.MapWidth - 1, Options.MapHeight - 1, surroundingMaps)
+                        CheckAutotile(_width - 1, _height - 1, surroundingMaps)
                     );
                 }
             }
@@ -357,9 +395,9 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             //Along with edges we need to recalculate ALL cliffs :(
             foreach (var layer in Options.Instance.MapOpts.Layers.All)
             {
-                for (var x = 0; x < Options.MapWidth; x++)
+                for (var x = 0; x < _width; x++)
                 {
-                    for (var y = 0; y < Options.MapHeight; y++)
+                    for (var y = 0; y < _height; y++)
                     {
                         if (Layers[layer][x, y].Autotile == MapAutotiles.AUTOTILE_CLIFF)
                         {
@@ -378,66 +416,120 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
     private GameTileBuffer[] CheckAutotile(int x, int y, MapBase[,] surroundingMaps)
     {
+        var mapXOffset = X;
+        var mapYOffset = Y;
+
         var updated = new List<GameTileBuffer>();
+        // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
         foreach (var layer in Options.Instance.MapOpts.Layers.All)
         {
-            if (Autotiles.UpdateAutoTile(x, y, layer, surroundingMaps))
+            if (!Autotiles.UpdateAutoTile(
+                    x,
+                    y,
+                    layer,
+                    surroundingMaps
+                ))
             {
-                //Find the VBO, update it.
-                var tileBuffer = mTileBufferDict[layer];
-                var tile = Layers[layer][x, y];
-                if (tile.TilesetTex == null)
+                continue;
+            }
+
+            // Find the VBO, update it.
+            if (!_tileBuffersPerTexturePerLayer.TryGetValue(layer, out var tileBuffer))
+            {
+                continue;
+            }
+
+            if (!Layers.TryGetValue(layer, out var layerTiles))
+            {
+                continue;
+            }
+
+            var tile = layerTiles[x, y];
+            if (tile.TilesetTexture == default)
+            {
+                continue;
+            }
+
+            var tilesetTexture = (GameTexture)tile.TilesetTexture;
+            if (tile.X < 0 || tile.Y < 0)
+            {
+                continue;
+            }
+
+            if (tile.X * _tileWidth >= tilesetTexture.Width ||
+                tile.Y * _tileHeight >= tilesetTexture.Height)
+            {
+                continue;
+            }
+
+            var tilesetPlatformTexture = tilesetTexture.GetTexture();
+            if (!tileBuffer.TryGetValue(tilesetPlatformTexture, out var tileBuffersForTexture))
+            {
+                continue;
+            }
+
+            var tileX = x * _tileWidth + mapXOffset;
+            var tileY = y * _tileHeight + mapYOffset;
+
+            for (var animationFrameIndex = 0; animationFrameIndex < MapAnimationFrames; animationFrameIndex++)
+            {
+                var buffer = tileBuffersForTexture[animationFrameIndex];
+
+                DrawAutoTile(
+                    layer,
+                    tileX,
+                    tileY,
+                    1,
+                    x,
+                    y,
+                    animationFrameIndex,
+                    tilesetTexture,
+                    buffer,
+                    true
+                );
+
+                DrawAutoTile(
+                    layer,
+                    tileX + _tileHalfWidth,
+                    tileY,
+                    2,
+                    x,
+                    y,
+                    animationFrameIndex,
+                    tilesetTexture,
+                    buffer,
+                    true
+                );
+
+                DrawAutoTile(
+                    layer,
+                    tileX,
+                    tileY + _tileHalfHeight,
+                    3,
+                    x,
+                    y,
+                    animationFrameIndex,
+                    tilesetTexture,
+                    buffer,
+                    true
+                );
+
+                DrawAutoTile(
+                    layer,
+                    tileX + _tileHalfWidth,
+                    tileY + _tileHalfHeight,
+                    4,
+                    x,
+                    y,
+                    animationFrameIndex,
+                    tilesetTexture,
+                    buffer,
+                    true
+                );
+
+                if (!updated.Contains(buffer))
                 {
-                    continue;
-                }
-
-                var tilesetTex = (GameTexture)tile.TilesetTex;
-                if (tile.X < 0 || tile.Y < 0)
-                {
-                    continue;
-                }
-
-                if (tile.X * Options.TileWidth >= tilesetTex.GetWidth() ||
-                    tile.Y * Options.TileHeight >= tilesetTex.GetHeight())
-                {
-                    continue;
-                }
-
-                var platformTex = tilesetTex.GetTexture();
-                if (tileBuffer.ContainsKey(platformTex))
-                {
-                    for (var autotileFrame = 0; autotileFrame < 3; autotileFrame++)
-                    {
-                        var buffer = tileBuffer[platformTex][autotileFrame];
-                        var xoffset = GetX();
-                        var yoffset = GetY();
-                        DrawAutoTile(
-                            layer, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, 1, x, y,
-                            autotileFrame, tilesetTex, buffer, true
-                        ); //Top Left
-
-                        DrawAutoTile(
-                            layer, x * Options.TileWidth + Options.TileWidth / 2 + xoffset,
-                            y * Options.TileHeight + yoffset, 2, x, y, autotileFrame, tilesetTex, buffer, true
-                        );
-
-                        DrawAutoTile(
-                            layer, x * Options.TileWidth + xoffset,
-                            y * Options.TileHeight + Options.TileHeight / 2 + yoffset, 3, x, y, autotileFrame,
-                            tilesetTex, buffer, true
-                        );
-
-                        DrawAutoTile(
-                            layer, +x * Options.TileWidth + Options.TileWidth / 2 + xoffset,
-                            y * Options.TileHeight + Options.TileHeight / 2 + yoffset, 4, x, y, autotileFrame,
-                            tilesetTex, buffer, true
-                        );
-
-                        if (!updated.Contains(buffer))
-                        {
-                            updated.Add(buffer);
-                        }
-                    }
+                    updated.Add(buffer);
                 }
             }
         }
@@ -479,78 +571,79 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         return mapBase;
     }
 
-    public float X => GetX();
+    /// <summary>
+    /// X coordinate of the map in world space
+    /// </summary>
+    public int X { get; private set; }
 
-    //Retreives the X Position of the Left side of the map in world space.
-    public float GetX()
-    {
-        return GridX * Options.MapWidth * Options.TileWidth;
-    }
+    /// <summary>
+    /// Y coordinate of the map in world space
+    /// </summary>
+    public int Y { get; private set; }
 
-    public float Y => GetY();
-
-    //Retreives the Y Position of the Top side of the map in world space.
-    public float GetY()
-    {
-        return GridY * Options.MapHeight * Options.TileHeight;
-    }
-
-    //Attribute References
+    // Attribute References
     private void UpdateMapAttributes()
     {
-        var width = Options.MapWidth;
-        var height = Options.MapHeight;
-        for (var y = 0; y < height; y++)
+        var mapAttributes = Attributes;
+        if (mapAttributes == default)
         {
-            for (var x = 0; x < width; x++)
+            return;
+        }
+
+        for (var y = 0; y < _height; y++)
+        {
+            for (var x = 0; x < _width; x++)
             {
-                var att = Attributes[x, y];
-                if (att == null)
+                var mapAttribute = mapAttributes[x, y];
+                if (mapAttribute == default)
                 {
                     continue;
                 }
 
-                if (att.Type == MapAttribute.Animation)
+                switch (mapAttribute.Type)
                 {
-                    var anim = AnimationBase.Get(((MapAnimationAttribute)att).AnimationId);
-                    if (anim == null)
+                    case MapAttribute.Animation:
                     {
-                        continue;
-                    }
+                        var anim = AnimationBase.Get(((MapAnimationAttribute)mapAttribute).AnimationId);
+                        if (anim == null)
+                        {
+                            continue;
+                        }
 
-                    if (!mAttributeAnimInstances.ContainsKey(att))
+                        if (!mAttributeAnimInstances.ContainsKey(mapAttribute))
+                        {
+                            var animInstance = new Animation(anim, true);
+                            animInstance.SetPosition(
+                                X + x * _tileWidth + _tileHalfWidth,
+                                Y + y * _tileHeight + _tileHalfHeight, x, y, Id, 0
+                            );
+
+                            mAttributeAnimInstances.Add(mapAttribute, animInstance);
+                        }
+
+                        mAttributeAnimInstances[mapAttribute].Update();
+                        break;
+                    }
+                    case MapAttribute.Critter:
                     {
-                        var animInstance = new Animation(anim, true);
-                        animInstance.SetPosition(
-                            GetX() + x * Options.TileWidth + Options.TileWidth / 2,
-                            GetY() + y * Options.TileHeight + Options.TileHeight / 2, x, y, Id, 0
-                        );
+                        var critterAttribute = ((MapCritterAttribute)mapAttribute);
+                        var sprite = critterAttribute.Sprite;
+                        var anim = AnimationBase.Get(critterAttribute.AnimationId);
+                        if (anim == null && TextUtils.IsNone(sprite))
+                        {
+                            continue;
+                        }
 
-                        mAttributeAnimInstances.Add(att, animInstance);
+                        if (!mAttributeCritterInstances.ContainsKey(mapAttribute))
+                        {
+                            var critter = new Critter(this, (byte)x, (byte)y, critterAttribute);
+                            LocalCritters.Add(critter.Id, critter);
+                            mAttributeCritterInstances.Add(mapAttribute, critter);
+                        }
+
+                        mAttributeCritterInstances[mapAttribute].Update();
+                        break;
                     }
-
-                    mAttributeAnimInstances[att].Update();
-                }
-
-
-                if (att.Type == MapAttribute.Critter)
-                {
-                    var critterAttribute = ((MapCritterAttribute)att);
-                    var sprite = critterAttribute.Sprite;
-                    var anim = AnimationBase.Get(critterAttribute.AnimationId);
-                    if (anim == null && TextUtils.IsNone(sprite))
-                    {
-                        continue;
-                    }
-
-                    if (!mAttributeCritterInstances.ContainsKey(att))
-                    {
-                        var critter = new Critter(this, (byte)x, (byte)y, critterAttribute);
-                        LocalCritters.Add(critter.Id, critter);
-                        mAttributeCritterInstances.Add(att, critter);
-                    }
-
-                    mAttributeCritterInstances[att].Update();
                 }
             }
         }
@@ -577,9 +670,9 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     public void CreateMapSounds()
     {
         ClearAttributeSounds();
-        for (var x = 0; x < Options.MapWidth; ++x)
+        for (var x = 0; x < _width; ++x)
         {
-            for (var y = 0; y < Options.MapHeight; ++y)
+            for (var y = 0; y < _height; ++y)
             {
                 var attribute = Attributes?[x, y];
                 if (attribute?.Type != MapAttribute.Sound)
@@ -619,8 +712,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         var anim = new MapAnimation(animBase, tileX, tileY, dir, owner as Entity);
         LocalAnimations.TryAdd(anim.Id, anim);
         anim.SetPosition(
-            GetX() + tileX * Options.TileWidth + Options.TileWidth / 2,
-            GetY() + tileY * Options.TileHeight + Options.TileHeight / 2, tileX, tileY, Id, dir
+            X + tileX * _tileWidth + _tileHalfWidth,
+            Y + tileY * _tileHeight + _tileHalfHeight, tileX, tileY, Id, dir
         );
     }
 
@@ -635,18 +728,56 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         ClearMapAttributes();
     }
 
+    private Task? _vboCompute;
+
     public void BuildVBOs()
     {
-        foreach (var layer in Options.Instance.MapOpts.Layers.All)
+        lock (_tileBuffersPerLayer)
         {
-            mTileBuffers[layer] = DrawMapLayer(layer, GetX(), GetY());
-            for (var y = 0; y < 3; y++)
+            if (_vboCompute != default)
             {
-                for (var z = 0; z < mTileBuffers[layer][y].Length; z++)
-                {
-                    mTileBuffers[layer][y][z].SetData();
-                }
+                return;
             }
+
+            // _vboCompute = Task.Run(
+            //     () =>
+            //     {
+                    var startVbo = DateTime.UtcNow;
+                    Dictionary<string, GameTileBuffer[][]> buffers = [];
+                    foreach (var layer in Options.Instance.MapOpts.Layers.All)
+                    {
+                        var layerBuffers = DrawMapLayer(layer, X, Y);
+                        if (layerBuffers == default)
+                        {
+                            continue;
+                        }
+
+                        buffers[layer] = layerBuffers;
+                        for (var animationFrameIndex = 0; animationFrameIndex < MapAnimationFrames; animationFrameIndex++)
+                        {
+                            var layerBuffersForFrame = layerBuffers[animationFrameIndex];
+                            foreach (var tileBuffer in layerBuffersForFrame)
+                            {
+                                tileBuffer.SetData();
+                            }
+                        }
+                    }
+
+                    var endVbo = DateTime.UtcNow;
+                    var elapsedVbo = endVbo - startVbo;
+                    Log.Info($"Built VBO for map instance {Id} in {elapsedVbo.TotalMilliseconds}ms");
+
+                    // lock (mTileBuffers)
+                    // {
+                        foreach (var (layer, layerBuffers) in buffers)
+                        {
+                            _tileBuffersPerLayer[layer] = layerBuffers;
+                        }
+                    // }
+
+            //         _vboCompute = default;
+            //     }
+            // );
         }
     }
 
@@ -654,23 +785,31 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     {
         foreach (var layer in Options.Instance.MapOpts.Layers.All)
         {
-            for (var y = 0; y < 3; y++)
+            if (_tileBuffersPerTexturePerLayer.Remove(layer, out var tileBuffersPerTextureForLayer))
             {
-                if (mTileBuffers[layer][y] != null)
+                tileBuffersPerTextureForLayer.Clear();
+            }
+
+            if (!_tileBuffersPerLayer.TryGetValue(layer, out var layerBuffers))
+            {
+                continue;
+            }
+
+            foreach (var layerBuffersForFrame in layerBuffers)
+            {
+                foreach (var tileBuffer in layerBuffersForFrame)
                 {
-                    for (var z = 0; z < mTileBuffers[layer][y].Length; z++)
-                    {
-                        mTileBuffers[layer][y][z].Dispose();
-                    }
+                    tileBuffer.Dispose();
                 }
             }
-            mTileBufferDict[layer]?.Clear();
         }
-        mTileBuffers = null;
+
+        _tileBuffersPerTexturePerLayer.Clear();
+        _tileBuffersPerLayer.Clear();
     }
 
     //Rendering/Drawing Code
-    public void Draw(int layer = 0) //Lower, Middle, Upper
+    public void Draw(int layer) //Lower, Middle, Upper
     {
         if (!IsLoaded)
         {
@@ -683,31 +822,34 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             return;
         }
 
-        if (mTileBuffers[Options.Instance.MapOpts.Layers.All[0]][0] == null)
+        if (_tileBuffersPerLayer.Count < 1)
         {
             BuildVBOs();
         }
 
-        var drawLayers = Options.Instance.MapOpts.Layers.LowerLayers;
-
-        if (layer == 1)
+        var drawLayers = layer switch
         {
-            drawLayers = Options.Instance.MapOpts.Layers.MiddleLayers;
-        }
-
-        if (layer == 2)
-        {
-            drawLayers = Options.Instance.MapOpts.Layers.UpperLayers;
-        }
+            1 => Options.Instance.MapOpts.Layers.MiddleLayers,
+            > 1 => Options.Instance.MapOpts.Layers.UpperLayers,
+            < 1 => Options.Instance.MapOpts.Layers.LowerLayers,
+        };
 
         foreach (var drawLayer in drawLayers)
         {
-            if (mTileBuffers[drawLayer][Globals.AnimFrame] != null)
+            if (!_tileBuffersPerLayer.TryGetValue(drawLayer, out var layerBuffers))
             {
-                for (var i = 0; i < mTileBuffers[drawLayer][Globals.AnimFrame].Length; i++)
-                {
-                    Graphics.Renderer.DrawTileBuffer(mTileBuffers[drawLayer][Globals.AnimFrame][i]);
-                }
+                continue;
+            }
+
+            if (layerBuffers[Globals.AnimFrame] == null)
+            {
+                continue;
+            }
+
+            var buffersForFrame = layerBuffers[Globals.AnimFrame];
+            foreach (var buffer in buffersForFrame)
+            {
+                Graphics.Renderer?.DrawTileBuffer(buffer);
             }
         }
     }
@@ -715,8 +857,6 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     public void DrawItemsAndLights()
     {
         // Calculate tile and map item dimensions.
-        var tileWidth = Options.TileWidth;
-        var tileHeight = Options.TileHeight;
         var mapItemWidth = Options.Instance.MapOpts.MapItemWidth;
         var mapItemHeight = Options.Instance.MapOpts.MapItemHeight;
 
@@ -724,8 +864,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         foreach (var (key, tileItems) in MapItems)
         {
             // Calculate tile coordinates.
-            var tileX = key % Options.MapWidth;
-            var tileY = (int)Math.Floor(key / (float)Options.MapWidth);
+            var tileX = key % _width;
+            var tileY = (int)Math.Floor(key / (float)_width);
 
             // Loop through this in reverse to match client/server display and pick-up order.
             for (var index = tileItems.Count - 1; index >= 0; index--)
@@ -739,10 +879,10 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                     continue;
                 }
 
-                var x = X + tileX * tileWidth;
-                var y = Y + tileY * tileHeight;
-                var centerX = x + (tileWidth / 2);
-                var centerY = y + (tileHeight / 2);
+                var x = X + tileX * _tileWidth;
+                var y = Y + tileY * _tileHeight;
+                var centerX = x + (_tileWidth / 2);
+                var centerY = y + (_tileHeight / 2);
                 var textureXPosition = centerX - (mapItemWidth / 2);
                 var textureYPosition = centerY - (mapItemHeight / 2);
 
@@ -760,8 +900,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         foreach (var light in Lights)
         {
             double w = light.Size;
-            var x = GetX() + (light.TileX * tileWidth + light.OffsetX) + tileWidth / 2f;
-            var y = GetY() + (light.TileY * tileHeight + light.OffsetY) + tileHeight / 2f;
+            var x = X + (light.TileX * _tileWidth + light.OffsetX) + _tileWidth / 2f;
+            var y = Y + (light.TileY * _tileHeight + light.OffsetY) + _tileHeight / 2f;
             Graphics.AddLight((int)x, (int)y, (int)w, light.Intensity, light.Expand, light.Color);
         }
     }
@@ -771,7 +911,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     /// </summary>
     public void DrawItemNames()
     {
-        if (Interface.Interface.MouseHitGui())
+        if (Interface.Interface.DoesMouseHitInterface())
         {
             return;
         }
@@ -779,8 +919,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         var mousePos = Graphics.ConvertToWorldPoint(
                 Globals.InputManager.GetMousePosition()
         );
-        var x = (int)(mousePos.X - (int)GetX()) / Options.TileWidth;
-        var y = (int)(mousePos.Y - (int)GetY()) / Options.TileHeight;
+        var x = (int)(mousePos.X - (int)X) / _tileWidth;
+        var y = (int)(mousePos.Y - (int)Y) / _tileHeight;
         var mapId = Id;
 
         // Is this an actual location on this map?
@@ -788,7 +928,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         {
             // Apparently it is! Do we have any items to render here?
             var tileItems = new List<IMapItemInstance>();
-            if (MapItems.TryGetValue(y * Options.MapWidth + x, out tileItems))
+            if (MapItems.TryGetValue(y * _width + x, out tileItems))
             {
                 var baseOffset = 0;
                 // Loop through this in reverse to match client/server display and pick-up order.
@@ -808,8 +948,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                         : new LabelColor(Color.White, Color.Black, new Color(100, 0, 0, 0));
                     var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
                     var offsetY = (baseOffset * textSize.Y);
-                    var destX = GetX() + (int)Math.Ceiling(((x * Options.TileWidth) + (Options.TileWidth / 2)) - (textSize.X / 2));
-                    var destY = GetY() + (int)Math.Ceiling(((y * Options.TileHeight) - ((Options.TileHeight / 3) + textSize.Y))) - offsetY;
+                    var destX = X + (int)Math.Ceiling(((x * _tileWidth) + (_tileHalfWidth)) - (textSize.X / 2));
+                    var destY = Y + (int)Math.Ceiling(((y * _tileHeight) - ((_tileHeight / 3) + textSize.Y))) - offsetY;
 
                     // Do we need to draw a background?
                     if (color.Background != Color.Transparent)
@@ -829,186 +969,280 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         }
     }
 
+    private readonly int _width = Options.Instance.MapOpts.MapWidth;
+    private readonly int _height = Options.Instance.MapOpts.MapHeight;
+    private readonly int _tileWidth = Options.Instance.MapOpts.TileWidth;
+    private readonly int _tileHeight = Options.Instance.MapOpts.TileHeight;
+    private readonly int _tileHalfWidth = Options.Instance.MapOpts.TileWidth / 2;
+    private readonly int _tileHalfHeight = Options.Instance.MapOpts.TileHeight / 2;
+    private int _gridY;
+    private int _gridX;
+
     private void DrawAutoTile(
         string layerName,
-        float destX,
-        float destY,
+        int destX,
+        int destY,
         int quarterNum,
         int x,
         int y,
         int forceFrame,
         GameTexture tileset,
         GameTileBuffer buffer,
-        bool update = false
+        bool update = false,
+        Tile? layerTile = default,
+        QuarterTileCls? layerAutoTile = default
     )
     {
+        if (layerTile == null)
+        {
+            if (!Layers.TryGetValue(layerName, out var layerTiles))
+            {
+                return;
+            }
+
+            layerTile = layerTiles[x, y];
+        }
+
+        if (layerAutoTile == null)
+        {
+            if (!Autotiles.Layers.TryGetValue(layerName, out var layerAutoTiles))
+            {
+                return;
+            }
+
+            layerAutoTile = layerAutoTiles[x, y];
+        }
+
+        var quarterTile = layerAutoTile.QuarterTile[quarterNum];
+
         int yOffset = 0, xOffset = 0;
 
         // calculate the offset
-        switch (Layers[layerName][x, y].Autotile)
+
+        switch (layerTile.Value.Autotile)
         {
             case MapAutotiles.AUTOTILE_WATERFALL:
-                yOffset = (forceFrame - 1) * Options.TileHeight;
-
+                yOffset = (forceFrame - 1) * _tileHeight;
                 break;
 
             case MapAutotiles.AUTOTILE_ANIM:
-                xOffset = forceFrame * Options.TileWidth * 2;
-
+                xOffset = forceFrame * _tileWidth * VxAnimationFrameTileWidth;
                 break;
 
             case MapAutotiles.AUTOTILE_ANIM_XP:
-                xOffset = forceFrame * Options.TileWidth * 3;
-
+                xOffset = forceFrame * _tileWidth * XpAnimationFrameTileWidth;
                 break;
 
             case MapAutotiles.AUTOTILE_CLIFF:
-                yOffset = -Options.TileHeight;
-
+                yOffset = -_tileHeight;
                 break;
         }
 
         if (update)
         {
-            if (!buffer.UpdateTile(
-                tileset, destX, destY,
-                Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].X + xOffset,
-                Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].Y + yOffset,
-                Options.TileWidth / 2, Options.TileHeight / 2
-            ))
+            if (!buffer.TryUpdateTile(
+                    tileset,
+                    destX,
+                    destY,
+                    quarterTile.X + xOffset,
+                    quarterTile.Y + yOffset,
+                    _tileHalfWidth,
+                    _tileHalfHeight
+                ))
             {
                 throw new Exception("Failed to update tile to VBO!");
             }
         }
         else
         {
-            if (!buffer.AddTile(
-                tileset, destX, destY,
-                Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].X + xOffset,
-                Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].Y + yOffset,
-                Options.TileWidth / 2, Options.TileHeight / 2
-            ))
+            if (!buffer.TryAddTile(
+                    tileset,
+                    destX,
+                    destY,
+                    quarterTile.X + xOffset,
+                    quarterTile.Y + yOffset,
+                    _tileHalfWidth,
+                    _tileHalfHeight
+                ))
             {
                 throw new Exception("Failed to add tile to VBO!");
             }
         }
     }
 
-    private GameTileBuffer[][] DrawMapLayer(string layerName, float xoffset = 0, float yoffset = 0)
+    private GameTileBuffer[][]? DrawMapLayer(string layerName, int xOffset = 0, int yOffset = 0)
     {
-        var tileBuffers = new Dictionary<object, GameTileBuffer[]>();
-
-        if (!Layers.ContainsKey(layerName))
+        if (!Layers.TryGetValue(layerName, out var layerTiles))
         {
             return null;
         }
 
-        for (var x = 0; x < Options.MapWidth; x++)
+        if (!Autotiles.Layers.TryGetValue(layerName, out var layerAutoTiles))
         {
-            for (var y = 0; y < Options.MapHeight; y++)
+            return null;
+        }
+
+        var tileBuffersPerTexture = new Dictionary<object, GameTileBuffer[]>();
+
+        for (var x = 0; x < _width; x++)
+        {
+            for (var y = 0; y < _height; y++)
             {
-                var tile = Layers[layerName][x, y];
-                if (tile.TilesetTex == null)
+                var layerTile = layerTiles[x, y];
+                if (layerTile.TilesetTexture is not GameTexture tilesetTexture)
                 {
                     continue;
                 }
 
-                var tilesetTex = (GameTexture)tile.TilesetTex;
-
-                if (tile.X < 0 || tile.Y < 0)
+                if (layerTile.X < 0 || layerTile.Y < 0)
                 {
                     continue;
                 }
 
-                if (tile.X * Options.TileWidth >= tilesetTex.GetWidth() ||
-                    tile.Y * Options.TileHeight >= tilesetTex.GetHeight())
+                if (layerTile.X * _tileWidth >= tilesetTexture.Width ||
+                    layerTile.Y * _tileHeight >= tilesetTexture.Height)
                 {
                     continue;
                 }
 
-                var platformTex = tilesetTex.GetTexture();
-
-                GameTileBuffer[] buffers = null;
-                if (tileBuffers.ContainsKey(platformTex))
+                var platformTexture = tilesetTexture.GetTexture();
+                if (platformTexture == default)
                 {
-                    buffers = tileBuffers[platformTex];
+                    continue;
+                }
+
+                GameTileBuffer[] animationFrameBuffers;
+                if (tileBuffersPerTexture.TryGetValue(platformTexture, out var tileBuffers))
+                {
+                    animationFrameBuffers = tileBuffers;
                 }
                 else
                 {
-                    buffers = new GameTileBuffer[3];
-                    for (var i = 0; i < 3; i++)
+                    animationFrameBuffers = new GameTileBuffer[MapAnimationFrames];
+                    for (var animationFrameIndex = 0; animationFrameIndex < MapAnimationFrames; animationFrameIndex++)
                     {
-                        buffers[i] = Graphics.Renderer.CreateTileBuffer();
+                        animationFrameBuffers[animationFrameIndex] = Graphics.Renderer!.CreateTileBuffer();
                     }
 
-                    tileBuffers.Add(platformTex, buffers);
+                    tileBuffersPerTexture.Add(platformTexture, animationFrameBuffers);
                 }
 
-                switch (Autotiles.Layers[layerName][x, y].RenderState)
+                var tileXOffset = x * _tileWidth + xOffset;
+                var tileYOffset = y * _tileHeight + yOffset;
+
+                var layerAutoTile = layerAutoTiles[x, y];
+                switch (layerAutoTile.RenderState)
                 {
                     case MapAutotiles.RENDER_STATE_NORMAL:
-                        for (var i = 0; i < 3; i++)
+                        for (var animationFrameIndex = 0; animationFrameIndex < MapAnimationFrames; animationFrameIndex++)
                         {
-                            var buffer = buffers[i];
-                            if (!buffer.AddTile(
-                                tilesetTex, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset,
-                                Layers[layerName][x, y].X * Options.TileWidth,
-                                Layers[layerName][x, y].Y * Options.TileHeight, Options.TileWidth,
-                                Options.TileHeight
-                            ))
+                            var animationFrameBuffer = animationFrameBuffers[animationFrameIndex];
+                            if (!animationFrameBuffer.TryAddTile(
+                                    tilesetTexture,
+                                    tileXOffset,
+                                    tileYOffset,
+                                    layerTile.X * _tileWidth,
+                                    layerTile.Y * _tileHeight,
+                                    _tileWidth,
+                                    _tileHeight
+                                ))
                             {
                                 throw new Exception("Failed to add VBO!");
                             }
                         }
-
                         break;
+
                     case MapAutotiles.RENDER_STATE_AUTOTILE:
-                        for (var i = 0; i < 3; i++)
+                        for (var animationFrameIndex = 0; animationFrameIndex < MapAnimationFrames; animationFrameIndex++)
                         {
+                            var animationFrameBuffer = animationFrameBuffers[animationFrameIndex];
                             DrawAutoTile(
-                                layerName, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, 1, x, y,
-                                i, tilesetTex, buffers[i]
+                                layerName,
+                                tileXOffset,
+                                tileYOffset,
+                                1,
+                                x,
+                                y,
+                                animationFrameIndex,
+                                tilesetTexture,
+                                animationFrameBuffer,
+                                layerTile: layerTile,
+                                layerAutoTile: layerAutoTile
                             );
 
                             DrawAutoTile(
-                                layerName, x * Options.TileWidth + Options.TileWidth / 2 + xoffset,
-                                y * Options.TileHeight + yoffset, 2, x, y, i, tilesetTex, buffers[i]
+                                layerName,
+                                tileXOffset + _tileHalfWidth,
+                                tileYOffset,
+                                2,
+                                x,
+                                y,
+                                animationFrameIndex,
+                                tilesetTexture,
+                                animationFrameBuffer,
+                                layerTile: layerTile,
+                                layerAutoTile: layerAutoTile
                             );
 
                             DrawAutoTile(
-                                layerName, x * Options.TileWidth + xoffset,
-                                y * Options.TileHeight + Options.TileHeight / 2 + yoffset, 3, x, y, i, tilesetTex,
-                                buffers[i]
+                                layerName,
+                                tileXOffset,
+                                tileYOffset + _tileHalfHeight,
+                                3,
+                                x,
+                                y,
+                                animationFrameIndex,
+                                tilesetTexture,
+                                animationFrameBuffer,
+                                layerTile: layerTile,
+                                layerAutoTile: layerAutoTile
                             );
 
                             DrawAutoTile(
-                                layerName, +x * Options.TileWidth + Options.TileWidth / 2 + xoffset,
-                                y * Options.TileHeight + Options.TileHeight / 2 + yoffset, 4, x, y, i, tilesetTex,
-                                buffers[i]
+                                layerName,
+                                tileXOffset + _tileHalfWidth,
+                                tileYOffset + _tileHalfHeight,
+                                4,
+                                x,
+                                y,
+                                animationFrameIndex,
+                                tilesetTexture,
+                                animationFrameBuffer,
+                                layerTile: layerTile,
+                                layerAutoTile: layerAutoTile
                             );
                         }
-
                         break;
                 }
             }
         }
 
-        var outputBuffers = new GameTileBuffer[3][];
-        for (var i = 0; i < 3; i++)
+        var outputBuffers = new GameTileBuffer[MapAnimationFrames][];
+        for (var animationFrameIndex = 0; animationFrameIndex < MapAnimationFrames; animationFrameIndex++)
         {
-            outputBuffers[i] = new GameTileBuffer[tileBuffers.Count];
+            outputBuffers[animationFrameIndex] = new GameTileBuffer[tileBuffersPerTexture.Count];
         }
 
-        var valueArrays = tileBuffers.Values.ToArray();
-        for (var x = 0; x < valueArrays.Length; x++)
+        var valueArrays = tileBuffersPerTexture.Values.ToArray();
+        for (var bufferIndex = 0; bufferIndex < valueArrays.Length; bufferIndex++)
         {
-            for (var i = 0; i < 3; i++)
+            var bufferGroup = valueArrays[bufferIndex];
+            for (var animationFrameIndex = 0; animationFrameIndex < MapAnimationFrames; animationFrameIndex++)
             {
-                outputBuffers[i][x] = valueArrays[x][i];
+                var bufferForFrame = bufferGroup[animationFrameIndex];
+                // if (bufferForFrame is MonoTileBuffer monoTileBuffer)
+                // {
+                //     Log.Info($"[{Name}][{layerName}] Buffer for {monoTileBuffer._texture?.Name} frame {i} has {monoTileBuffer._addedTileCount.Count} unique tiles");
+                //     foreach (var (key, value) in monoTileBuffer._addedTileCount.OrderByDescending(kvp => kvp.Value))
+                //     {
+                //         Log.Info($"[{Name}][{layerName}] {key} has {value} occurrences");
+                //     }
+                // }
+                outputBuffers[animationFrameIndex][bufferIndex] = bufferForFrame;
             }
         }
 
-        mTileBufferDict[layerName] = tileBuffers;
+        _tileBuffersPerTexturePerLayer.Add(layerName, tileBuffersPerTexture);
 
         return outputBuffers;
     }
@@ -1042,8 +1276,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             : Math.Max(0, mCurFogIntensity - elapsedTime / 2000f);
 
         // Calculate the number of times the fog texture needs to be drawn to cover the map area.
-        var xCount = Options.MapWidth * Options.TileWidth * 3 / fogTex.Width;
-        var yCount = Options.MapHeight * Options.TileHeight * 3 / fogTex.Height;
+        var xCount = _width * _tileWidth * 3 / fogTex.Width;
+        var yCount = _height * _tileHeight * 3 / fogTex.Height;
 
         // Update the fog texture's position based on its speed and elapsed time.
         mFogCurrentX += elapsedTime / 1000f * FogXSpeed * 2;
@@ -1064,8 +1298,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 Graphics.DrawGameTexture(
                     fogTex, new FloatRect(0, 0, fogTex.Width, fogTex.Height),
                     new FloatRect(
-                        X - Options.MapWidth * Options.TileWidth * 1f + x * fogTex.Width + drawX,
-                        Y - Options.MapHeight * Options.TileHeight * 1f + y * fogTex.Height + drawY,
+                        X - _width * _tileWidth * 1f + x * fogTex.Width + drawX,
+                        Y - _height * _tileHeight * 1f + y * fogTex.Height + drawY,
                         fogTex.Width, fogTex.Height
                     ), new Color((byte)(FogTransparency * mCurFogIntensity), 255, 255, 255)
                 );
@@ -1232,8 +1466,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             float dy = Y - oldMap.Y;
 
             // Update fog position based on displacement.
-            mFogCurrentX += (Options.TileWidth * Options.MapWidth % fogTex.Width) * -Math.Sign(dx);
-            mFogCurrentY += (Options.TileHeight * Options.MapHeight % fogTex.Height) * -Math.Sign(dy);
+            mFogCurrentX += (_tileWidth * _width % fogTex.Width) * -Math.Sign(dx);
+            mFogCurrentY += (_tileHeight * _height % fogTex.Height) * -Math.Sign(dy);
 
             // Reset fog intensity of old map.
             tempMap.mCurFogIntensity = 0;
@@ -1264,24 +1498,26 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     {
         for (var n = ActionMessages.Count - 1; n > -1; n--)
         {
-            var y = (int)Math.Ceiling(
-                GetY() +
-                ActionMessages[n].Y * Options.TileHeight -
-                Options.TileHeight *
-                2 *
-                (1000 - (ActionMessages[n].TransmissionTimer - Timing.Global.MillisecondsUtc)) /
-                1000
-            );
+            var actionMessage = ActionMessages[n];
+            var x = (Y + actionMessage.X * _tileWidth + actionMessage.XOffset);
+            var y = Y + actionMessage.Y * _tileHeight - _tileHeight * 2 *
+                (1000 - (int)(actionMessage.TransmissionTimer - Timing.Global.MillisecondsUtc)) / 1000;
+            var textWidth = Graphics.Renderer.MeasureText(actionMessage.Msg, Graphics.ActionMsgFont, 1).X;
 
-            var x = (int)Math.Ceiling(GetX() + ActionMessages[n].X * Options.TileWidth + ActionMessages[n].XOffset);
-            var textWidth = Graphics.Renderer.MeasureText(ActionMessages[n].Msg, Graphics.ActionMsgFont, 1).X;
             Graphics.Renderer.DrawString(
-                ActionMessages[n].Msg, Graphics.ActionMsgFont, x - textWidth / 2f, y, 1, ActionMessages[n].Color,
-                true, null, new Color(40, 40, 40)
+                actionMessage.Msg,
+                Graphics.ActionMsgFont,
+                x - textWidth / 2f,
+                y,
+                1,
+                actionMessage.Color,
+                true,
+                null,
+                new Color(40, 40, 40)
             );
 
             //Try to remove
-            ActionMessages[n].TryRemove();
+            actionMessage.TryRemove();
         }
     }
 

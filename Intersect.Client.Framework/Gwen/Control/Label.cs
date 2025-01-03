@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -27,7 +28,7 @@ public partial class Label : Base, ILabel
 
     }
 
-    protected readonly Text mText;
+    protected readonly Text _textElement;
 
     private string fontInfo;
 
@@ -55,7 +56,7 @@ public partial class Label : Base, ILabel
     /// <param name="parent">Parent control.</param>
     public Label(Base parent, string name = default, bool disableText = false) : base(parent, name)
     {
-        mText = new Text(this)
+        _textElement = new Text(this)
         {
             IsHidden = disableText,
         };
@@ -80,38 +81,64 @@ public partial class Label : Base, ILabel
         set => SetAndDoIfChanged(ref mAlign, value, Invalidate);
     }
 
+    public override void Invalidate()
+    {
+        if (string.Equals(
+                _text,
+                "You are an administrator! Press Insert at any time to access",
+                StringComparison.Ordinal
+            ))
+        {
+            _text.ToString();
+        }
+
+        base.Invalidate();
+    }
+
+    private string? _text;
+
     /// <summary>
     ///     Text.
     /// </summary>
     public virtual string Text
     {
-        get => mText?.String;
-        set => SetText(value);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => _text;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        set
+        {
+            if (string.Equals(value, _text, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _text = value;
+            _textElement.DisplayedText = _text;
+        }
     }
 
     /// <summary>
     ///     Font.
     /// </summary>
-    public GameFont Font
+    public GameFont? Font
     {
-        get => mText?.Font;
+        get => _textElement.Font;
         set
         {
-            if (value != null)
+            if (value == _textElement.Font)
             {
-                if (mText != null)
-                {
-                    mText.Font = value;
-                    fontInfo = $"{value?.GetName()},{value?.GetSize()}";
-                }
-
-                if (mAutoSizeToContents)
-                {
-                    SizeToContents();
-                }
-
-                Invalidate();
+                return;
             }
+
+            _textElement.Font = value;
+            fontInfo = $"{value?.GetName()},{value?.GetSize()}";
+
+            if (mAutoSizeToContents)
+            {
+                SizeToContents();
+            }
+
+            Invalidate();
         }
     }
 
@@ -120,7 +147,7 @@ public partial class Label : Base, ILabel
     /// </summary>
     public string FontName
     {
-        get => mText?.Font?.GetName() ?? "arial";
+        get => _textElement.Font.GetName();
         set => Font = GameContentManager.Current?.GetFont(value, FontSize);
     }
 
@@ -129,57 +156,68 @@ public partial class Label : Base, ILabel
     /// </summary>
     public int FontSize
     {
-        get => mText?.Font?.GetSize() ?? 12;
+        get => _textElement?.Font?.GetSize() ?? 12;
         set => Font = GameContentManager.Current?.GetFont(FontName, value);
     }
 
     /// <summary>
     ///     Text color.
     /// </summary>
-    public Color TextColor
+    public Color? TextColor
     {
-        get => mText.TextColor;
-        set => mText.TextColor = value;
+        get => _textElement.Color ?? Color.White;
+        set => _textElement.Color = value;
     }
 
     /// <summary>
     ///     Override text color (used by tooltips).
     /// </summary>
-    public Color TextColorOverride
+    public Color? TextColorOverride
     {
-        get => mText.TextColorOverride;
-        set => mText.TextColorOverride = value;
+        get => _textElement.ColorOverride;
+        set => _textElement.ColorOverride = value;
     }
+
+    private string? _textOverride;
 
     /// <summary>
     ///     Text override - used to display different string.
     /// </summary>
-    public string TextOverride
+    public string? TextOverride
     {
-        get => mText.TextOverride;
-        set => mText.TextOverride = value;
+        get => _textOverride;
+        set
+        {
+            if (string.Equals(value, _textOverride, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _textOverride = value;
+            _textElement.DisplayedText = _textOverride ?? _text;
+        }
     }
 
     /// <summary>
     ///     Width of the text (in pixels).
     /// </summary>
-    public int TextWidth => mText.Width;
+    public int TextWidth => _textElement.Width;
 
     /// <summary>
     ///     Height of the text (in pixels).
     /// </summary>
-    public int TextHeight => mText.Height;
+    public int TextHeight => _textElement.Height;
 
-    public int TextX => mText.X;
+    public int TextX => _textElement.X;
 
-    public int TextY => mText.Y;
+    public int TextY => _textElement.Y;
 
     /// <summary>
     ///     Text length (in characters).
     /// </summary>
-    public int TextLength => mText.Length;
+    public int TextLength => _textElement.Length;
 
-    public int TextRight => mText.Right;
+    public int TextRight => _textElement.Right;
 
     /// <summary>
     ///     Determines if the control should autosize to its text.
@@ -225,7 +263,7 @@ public partial class Label : Base, ILabel
         obj.Add("TextPadding", Padding.ToString(mTextPadding));
         obj.Add("AutoSizeToContents", mAutoSizeToContents);
         obj.Add("Font", fontInfo);
-        obj.Add("TextScale", mText.GetScale());
+        obj.Add("TextScale", _textElement.GetScale());
 
         return base.FixJson(obj);
     }
@@ -274,16 +312,34 @@ public partial class Label : Base, ILabel
             mAutoSizeToContents = (bool)obj["AutoSizeToContents"];
         }
 
-        if (obj["Font"] != null && obj["Font"].Type != JTokenType.Null)
+        var tokenFont = obj["Font"];
+        if (tokenFont != null && tokenFont.Type != JTokenType.Null)
         {
-            var fontArr = ((string)obj["Font"]).Split(',');
-            fontInfo = (string)obj["Font"];
-            Font = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
+            var stringFont = (string)tokenFont;
+            if (!string.IsNullOrWhiteSpace(stringFont))
+            {
+                var fontArr = stringFont.Split(
+                    ',',
+                    StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
+                );
+                if (fontArr.Length > 1)
+                {
+                    fontInfo = stringFont;
+                    try
+                    {
+                        Font = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
+                    }
+                    catch
+                    {
+                        throw;
+                    }
+                }
+            }
         }
 
         if (obj["TextScale"] != null)
         {
-            mText.SetScale((float)obj["TextScale"]);
+            _textElement.SetScale((float)obj["TextScale"]);
         }
     }
 
@@ -387,7 +443,7 @@ public partial class Label : Base, ILabel
     /// <returns></returns>
     protected virtual Point GetClosestCharacter(int x, int y)
     {
-        return new Point(mText.GetClosestCharacter(mText.CanvasPosToLocal(new Point(x, y))), 0);
+        return new Point(_textElement.GetClosestCharacter(_textElement.CanvasPosToLocal(new Point(x, y))), 0);
     }
 
     /// <summary>
@@ -397,7 +453,7 @@ public partial class Label : Base, ILabel
     /// <param name="y"></param>
     protected void SetTextPosition(int x, int y)
     {
-        mText.SetPosition(x, y);
+        _textElement.SetPosition(x, y);
     }
 
     /// <summary>
@@ -427,7 +483,7 @@ public partial class Label : Base, ILabel
 
         if (0 != (align & Pos.Right))
         {
-            x = Width - mText.Width - mTextPadding.Right - Padding.Right;
+            x = Width - _textElement.Width - mTextPadding.Right - Padding.Right;
         }
 
         if (0 != (align & Pos.CenterH))
@@ -435,7 +491,7 @@ public partial class Label : Base, ILabel
             x = (int)(mTextPadding.Left +
                        Padding.Left +
                        (Width -
-                        mText.Width -
+                        _textElement.Width -
                         mTextPadding.Left -
                         Padding.Left -
                         mTextPadding.Right -
@@ -447,32 +503,34 @@ public partial class Label : Base, ILabel
         {
             y = (int)(mTextPadding.Top +
                        Padding.Top +
-                       (Height - mText.Height) * 0.5f -
+                       (Height - _textElement.Height) * 0.5f -
                        mTextPadding.Bottom -
                        Padding.Bottom);
         }
 
         if (0 != (align & Pos.Bottom))
         {
-            y = Height - mText.Height - mTextPadding.Bottom - Padding.Bottom;
+            y = Height - _textElement.Height - mTextPadding.Bottom - Padding.Bottom;
         }
 
-        mText.SetPosition(x, y);
+        _textElement.SetPosition(x, y);
     }
 
     /// <summary>
     ///     Sets the label text.
     /// </summary>
-    /// <param name="str">Text to set.</param>
+    /// <param name="text">Text to set.</param>
     /// <param name="doEvents">Determines whether to invoke "text changed" event.</param>
-    public virtual void SetText(string str, bool doEvents = true)
+    public virtual void SetText(string text, bool doEvents = true)
     {
-        if (Text == str)
+        if (string.Equals(_text, text, StringComparison.Ordinal))
         {
             return;
         }
 
-        mText.String = str;
+        _text = text;
+        _textElement.DisplayedText = text;
+
         if (mAutoSizeToContents)
         {
             SizeToContents();
@@ -489,7 +547,7 @@ public partial class Label : Base, ILabel
 
     public virtual void SetTextScale(float scale)
     {
-        mText.SetScale(scale);
+        _textElement.SetScale(scale);
         if (mAutoSizeToContents)
         {
             SizeToContents();
@@ -501,13 +559,15 @@ public partial class Label : Base, ILabel
 
     public virtual void SizeToContents()
     {
-        mText.SetPosition(mTextPadding.Left + Padding.Left, mTextPadding.Top + Padding.Top);
-        mText.SizeToContents();
+        _textElement.SetPosition(mTextPadding.Left + Padding.Left, mTextPadding.Top + Padding.Top);
 
-        SetSize(
-            mText.Width + Padding.Left + Padding.Right + mTextPadding.Left + mTextPadding.Right,
-            mText.Height + Padding.Top + Padding.Bottom + mTextPadding.Top + mTextPadding.Bottom
-        );
+        if (!SetSize(
+                _textElement.Width + Padding.Left + Padding.Right + mTextPadding.Left + mTextPadding.Right,
+                _textElement.Height + Padding.Top + Padding.Bottom + mTextPadding.Top + mTextPadding.Bottom
+            ))
+        {
+            return;
+        }
 
         ProcessAlignments();
         InvalidateParent();
@@ -520,9 +580,9 @@ public partial class Label : Base, ILabel
     /// <returns>Character coordinates (local).</returns>
     public virtual Point GetCharacterPosition(int index)
     {
-        var p = mText.GetCharacterPosition(index);
+        var p = _textElement.GetCharacterPosition(index);
 
-        return new Point(p.X + mText.X, p.Y + mText.Y);
+        return new Point(p.X + _textElement.X, p.Y + _textElement.Y);
     }
 
     /// <summary>

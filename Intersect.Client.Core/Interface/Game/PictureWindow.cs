@@ -39,7 +39,7 @@ partial class PictureWindow
         mPicture.Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Image, picture);
         if (mPicture.Texture != null)
         {
-            mPicture.SetSize(mPicture.Texture.GetWidth(), mPicture.Texture.GetHeight());
+            mPicture.SetSize(mPicture.Texture.Width, mPicture.Texture.Height);
             Align.Center(mPicture);
 
             if (size != (int) PictureSize.Original) // Don't scale if you want to keep the original size.
