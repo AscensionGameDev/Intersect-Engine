@@ -775,18 +775,21 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     {
         foreach (var layer in Options.Instance.MapOpts.Layers.All)
         {
-            _tileBuffersPerTexturePerLayer[layer].Clear();
+            if (_tileBuffersPerTexturePerLayer.Remove(layer, out var tileBuffersPerTextureForLayer))
+            {
+                tileBuffersPerTextureForLayer.Clear();
+            }
 
             if (!_tileBuffersPerLayer.TryGetValue(layer, out var layerBuffers))
             {
                 continue;
             }
 
-            for (var y = 0; y < 3; y++)
+            foreach (var layerBuffersForFrame in layerBuffers)
             {
-                for (var z = 0; z < layerBuffers[y].Length; z++)
+                foreach (var tileBuffer in layerBuffersForFrame)
                 {
-                    layerBuffers[y][z].Dispose();
+                    tileBuffer.Dispose();
                 }
             }
         }
