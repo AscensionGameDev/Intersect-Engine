@@ -1,19 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
-
-using Intersect.Logging;
 using Intersect.Server.Core;
 using Intersect.Server.Localization;
-
-using Lidgren.Network;
 
 using Newtonsoft.Json;
 
@@ -53,46 +43,46 @@ namespace Intersect.Server.Networking.Helpers
             sb.AppendLine("Internal IP: " + localIP);
             sb.AppendLine("Server Port: " + Options.ServerPort);
             sb.AppendLine();
-            var canConnectVia127 = CheckServerPlayerCount("127.0.0.1", Options.ServerPort) > -1;
-            sb.AppendLine(
-                "Server Status (connecting to self via localhost: 127.0.0.1:" +
-                Options.ServerPort +
-                "): " +
-                (canConnectVia127 ? "Online" : "Offline")
-            );
+            // var canConnectVia127 = CheckServerPlayerCount("127.0.0.1", Options.ServerPort) > -1;
+            // sb.AppendLine(
+            //     "Server Status (connecting to self via localhost: 127.0.0.1:" +
+            //     Options.ServerPort +
+            //     "): " +
+            //     (canConnectVia127 ? "Online" : "Offline")
+            // );
 
-            var canConnectViaInternalIp = CheckServerPlayerCount(localIP, Options.ServerPort) > -1;
-            sb.AppendLine(
-                "Server Status (connecting to self via internal ip: " +
-                localIP +
-                ":" +
-                Options.ServerPort +
-                "): " +
-                (canConnectViaInternalIp ? "Online" : "Offline")
-            );
+            // var canConnectViaInternalIp = CheckServerPlayerCount(localIP, Options.ServerPort) > -1;
+            // sb.AppendLine(
+            //     "Server Status (connecting to self via internal ip: " +
+            //     localIP +
+            //     ":" +
+            //     Options.ServerPort +
+            //     "): " +
+            //     (canConnectViaInternalIp ? "Online" : "Offline")
+            // );
 
-            if (Options.UPnP && !string.IsNullOrEmpty(UpnP.GetExternalIp()))
-            {
-                var canConnectViaRouterIp = CheckServerPlayerCount(UpnP.GetExternalIp(), Options.ServerPort) > -1;
-                sb.AppendLine(
-                    "Server Status (connecting to self via router ip (from UPnP): " +
-                    UpnP.GetExternalIp() +
-                    ":" +
-                    Options.ServerPort +
-                    "): " +
-                    (canConnectViaRouterIp ? "Online" : "Offline")
-                );
-            }
+            // if (Options.UPnP && !string.IsNullOrEmpty(UpnP.GetExternalIp()))
+            // {
+            //     var canConnectViaRouterIp = CheckServerPlayerCount(UpnP.GetExternalIp(), Options.ServerPort) > -1;
+            //     sb.AppendLine(
+            //         "Server Status (connecting to self via router ip (from UPnP): " +
+            //         UpnP.GetExternalIp() +
+            //         ":" +
+            //         Options.ServerPort +
+            //         "): " +
+            //         (canConnectViaRouterIp ? "Online" : "Offline")
+            //     );
+            // }
 
-            var canConnectViaExternalIp = CheckServerPlayerCount(externalIp, Options.ServerPort) > -1;
-            sb.AppendLine(
-                "Server Status (connecting to self via external ip (from AGD): " +
-                externalIp +
-                ":" +
-                Options.ServerPort +
-                "): " +
-                (canConnectViaExternalIp ? "Online" : "Offline")
-            );
+            // var canConnectViaExternalIp = CheckServerPlayerCount(externalIp, Options.ServerPort) > -1;
+            // sb.AppendLine(
+            //     "Server Status (connecting to self via external ip (from AGD): " +
+            //     externalIp +
+            //     ":" +
+            //     Options.ServerPort +
+            //     "): " +
+            //     (canConnectViaExternalIp ? "Online" : "Offline")
+            // );
 
             sb.AppendLine($"Server Status (as seen by AGD): {serverAccessible}");
             sb.AppendLine();
@@ -172,58 +162,58 @@ namespace Intersect.Server.Networking.Helpers
             }
         }
 
-        private static int CheckServerPlayerCount(string ip, int port)
-        {
-            var players = -1;
-            if (string.IsNullOrEmpty(ip))
-            {
-                return -1;
-            }
-
-            var config = new NetPeerConfiguration("AGD_CanYouSeeMee");
-            var client = new NetClient(config);
-            try
-            {
-                config.EnableMessageType(NetIncomingMessageType.UnconnectedData);
-                client.Start();
-                var msg = client.CreateMessage();
-                msg.Write("status");
-
-                var receiver = new IPEndPoint(NetUtility.Resolve(ip), port);
-
-                client.SendUnconnectedMessage(msg, receiver);
-
-                NetIncomingMessage incomingmsg;
-                var watch = new Stopwatch();
-                watch.Start();
-                while (watch.ElapsedMilliseconds < 1250)
-                {
-                    while ((incomingmsg = client.ReadMessage()) != null)
-                    {
-                        switch (incomingmsg.MessageType)
-                        {
-                            case NetIncomingMessageType.UnconnectedData:
-                                players = incomingmsg.ReadVariableInt32();
-
-                                return players;
-                        }
-
-                        client.Recycle(incomingmsg);
-                    }
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.Warn(exception);
-            }
-            finally
-            {
-                client.Shutdown("bye");
-                client = null;
-            }
-
-            return -1;
-        }
+        // private static int CheckServerPlayerCount(string ip, int port)
+        // {
+        //     var players = -1;
+        //     if (string.IsNullOrEmpty(ip))
+        //     {
+        //         return -1;
+        //     }
+        //
+        //     var config = new NetPeerConfiguration("AGD_CanYouSeeMee");
+        //     var client = new NetClient(config);
+        //     try
+        //     {
+        //         config.EnableMessageType(NetIncomingMessageType.UnconnectedData);
+        //         client.Start();
+        //         var msg = client.CreateMessage();
+        //         msg.Write("status");
+        //
+        //         var receiver = new IPEndPoint(NetUtility.Resolve(ip), port);
+        //
+        //         client.SendUnconnectedMessage(msg, receiver);
+        //
+        //         NetIncomingMessage incomingmsg;
+        //         var watch = new Stopwatch();
+        //         watch.Start();
+        //         while (watch.ElapsedMilliseconds < 1250)
+        //         {
+        //             while ((incomingmsg = client.ReadMessage()) != null)
+        //             {
+        //                 switch (incomingmsg.MessageType)
+        //                 {
+        //                     case NetIncomingMessageType.UnconnectedData:
+        //                         players = incomingmsg.ReadVariableInt32();
+        //
+        //                         return players;
+        //                 }
+        //
+        //                 client.Recycle(incomingmsg);
+        //             }
+        //         }
+        //     }
+        //     catch (Exception exception)
+        //     {
+        //         Log.Warn(exception);
+        //     }
+        //     finally
+        //     {
+        //         client.Shutdown("bye");
+        //         client = null;
+        //     }
+        //
+        //     return -1;
+        // }
 
     }
 
