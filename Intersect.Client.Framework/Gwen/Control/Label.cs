@@ -83,15 +83,6 @@ public partial class Label : Base, ILabel
 
     public override void Invalidate()
     {
-        if (string.Equals(
-                _text,
-                "You are an administrator! Press Insert at any time to access",
-                StringComparison.Ordinal
-            ))
-        {
-            _text.ToString();
-        }
-
         base.Invalidate();
     }
 

@@ -2483,16 +2483,7 @@ public partial class Base : IDisposable
             {
                 if (!ToolTip.IsActiveTooltip(child))
                 {
-                    if (child is Label { Name: "Tooltip" } cl1 && cl1.Text.EndsWith('%'))
-                    {
-                        child.ToString();
-                    }
                     continue;
-                }
-
-                if (child is Label { Name: "Tooltip" } cl2 && cl2.Text.EndsWith('%'))
-                {
-                    child.ToString();
                 }
             }
 
@@ -2501,11 +2492,6 @@ public partial class Base : IDisposable
             if (dock.HasFlag(Pos.Fill))
             {
                 continue;
-            }
-
-            if (child is Label label && label.Text.EndsWith('%') && !label.Name.StartsWith("EXP"))
-            {
-                label.ToString();
             }
 
             if (dock.HasFlag(Pos.Top))
@@ -2591,11 +2577,6 @@ public partial class Base : IDisposable
                 bounds.X + margin.Left,
                 bounds.Y + margin.Top
             );
-
-            if (child is Label label && label.Text.EndsWith('%'))
-            {
-                label.ToString();
-            }
 
             if (child is IAutoSizeToContents { AutoSizeToContents: true })
             {
