@@ -43,6 +43,7 @@ public partial class Canvas : Base
         BackgroundColor = Color.White;
         ShouldDrawBackground = false;
         IsTabable = false;
+        MouseInputEnabled = false;
 
         mDisposeQueue = new List<IDisposable>();
     }
@@ -107,7 +108,7 @@ public partial class Canvas : Base
         base.Redraw();
     }
 
-    // Children call parent.GetCanvas() until they get to 
+    // Children call parent.GetCanvas() until they get to
     // this top level function.
     public override Canvas? GetCanvas()
     {
