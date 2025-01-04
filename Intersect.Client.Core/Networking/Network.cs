@@ -99,7 +99,6 @@ internal static partial class Network
 
     private static void OnConnected(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs)
     {
-        Globals.WaitingOnServer = false;
         Globals.SoftLogout = false;
     }
 
