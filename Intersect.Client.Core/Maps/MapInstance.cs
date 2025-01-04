@@ -1505,13 +1505,13 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         for (var n = ActionMessages.Count - 1; n > -1; n--)
         {
             var actionMessage = ActionMessages[n];
-            var x = (Y + actionMessage.X * _tileWidth + actionMessage.XOffset);
+            var x = (X + actionMessage.X * _tileWidth + actionMessage.XOffset);
             var y = Y + actionMessage.Y * _tileHeight - _tileHeight * 2 *
                 (1000 - (int)(actionMessage.TransmissionTimer - Timing.Global.MillisecondsUtc)) / 1000;
-            var textWidth = Graphics.Renderer.MeasureText(actionMessage.Msg, Graphics.ActionMsgFont, 1).X;
+            var textWidth = Graphics.Renderer.MeasureText(actionMessage.Text, Graphics.ActionMsgFont, 1).X;
 
             Graphics.Renderer.DrawString(
-                actionMessage.Msg,
+                actionMessage.Text,
                 Graphics.ActionMsgFont,
                 x - textWidth / 2f,
                 y,
