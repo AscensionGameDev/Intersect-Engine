@@ -2150,9 +2150,49 @@ internal sealed partial class PacketHandler
             return;
         }
 
-        Globals.Me.GuildMembers = packet.Members.OrderByDescending(m => m.Online).ThenBy(m => m.Rank).ThenBy(m => m.Name).ToArray();
+        var updatedGuildMembers = packet.Members.OrderByDescending(m => m.Online).ThenBy(m => m.Rank)
+            .ThenBy(m => m.Name).ToArray();
 
-        Interface.Interface.GameUi.NotifyUpdateGuildList();
+        var currentGuildMembers = Globals.Me.GuildMembers;
+        var hasUpdates = currentGuildMembers?.Length != updatedGuildMembers.Length;
+        if (!hasUpdates)
+        {
+            for (var index = 0; index < currentGuildMembers.Length; ++index)
+            {
+                var currentGuildMember = currentGuildMembers[index];
+                var updatedGuildMember = updatedGuildMembers[index];
+
+                if (currentGuildMember.Id != updatedGuildMember.Id)
+                {
+                    hasUpdates = true;
+                    break;
+                }
+
+                if (currentGuildMember.Online != updatedGuildMember.Online)
+                {
+                    hasUpdates = true;
+                    break;
+                }
+
+                if (currentGuildMember.Rank != updatedGuildMember.Rank)
+                {
+                    hasUpdates = true;
+                    break;
+                }
+
+                if (!string.Equals(currentGuildMember.Name, updatedGuildMember.Name))
+                {
+                    hasUpdates = true;
+                    break;
+                }
+            }
+        }
+
+        if (hasUpdates)
+        {
+            Globals.Me.GuildMembers = updatedGuildMembers;
+            Interface.Interface.GameUi.NotifyUpdateGuildList();
+        }
     }
 
 
