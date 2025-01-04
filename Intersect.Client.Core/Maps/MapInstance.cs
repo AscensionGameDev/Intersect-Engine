@@ -1505,27 +1505,44 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         for (var n = ActionMessages.Count - 1; n > -1; n--)
         {
             var actionMessage = ActionMessages[n];
-            var x = (X + actionMessage.X * _tileWidth + actionMessage.XOffset);
-            var y = Y + actionMessage.Y * _tileHeight - _tileHeight * 2 *
-                (1000 - (int)(actionMessage.TransmissionTimer - Timing.Global.MillisecondsUtc)) / 1000;
-            var textWidth = Graphics.Renderer.MeasureText(actionMessage.Text, Graphics.ActionMsgFont, 1).X;
 
+            // Remaining time and progress (0 to 1)
+            var timeRemaining = actionMessage.TransmissionTimer - Timing.Global.MillisecondsUtc;
+            var progress = Math.Max(0, 1 - timeRemaining / 1000f); // Progress from 0 to 1
+
+            // Vertical movement (upward first, then downward in an inverted U shape)
+            var height = _tileHeight * 2; // Maximum height the message will reach
+            var yOffset = -height * (1 - (progress - 0.5f) * (progress - 0.5f) * 4); // Smooth inverted U movement
+            var y = (float)(Y + actionMessage.Y * _tileHeight + yOffset); // Ensure float
+
+            // Horizontal movement (keeps moving in the launch direction)
+            var xOffset = actionMessage.XOffset * (1 - progress); // Moves in the initial direction and slows down
+            var x = (float)(X + actionMessage.X * _tileWidth + xOffset); // Ensure float
+
+            // Gradual scaling (shrinks progressively)
+            var scale = 1 - progress * 0.5f; // Scale from 1.0 to 0.5 (adjustable)
+
+            // Render the message
+            var textWidth = Graphics.Renderer.MeasureText(actionMessage.Text, Graphics.ActionMsgFont, scale).X;
             Graphics.Renderer.DrawString(
                 actionMessage.Text,
                 Graphics.ActionMsgFont,
-                x - textWidth / 2f,
+                x - (float)(textWidth / 2f), // Center the text
                 y,
-                1,
-                actionMessage.Color,
-                true,
-                null,
-                new Color(40, 40, 40)
+                scale, // Apply scaling to the text
+                actionMessage.Color, // Text color comes directly from actionMessage.Color
+                true, // worldPos
+                null, // renderTexture
+                new Color(
+                    0, 0, 0, 255 // Fixed black border
+                ) // Fixed border color
             );
 
-            //Try to remove
+            // Try to remove the message
             actionMessage.TryRemove();
         }
     }
+
 
     //Events
     public void AddEvent(Guid evtId, EventEntityPacket packet)
