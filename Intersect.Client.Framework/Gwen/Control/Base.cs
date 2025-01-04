@@ -518,7 +518,15 @@ public partial class Base : IDisposable
     public bool MouseInputEnabled
     {
         get => mMouseInputEnabled;
-        set => mMouseInputEnabled = value;
+        set
+        {
+            if (value == mMouseInputEnabled)
+            {
+                return;
+            }
+
+            mMouseInputEnabled = value;
+        }
     }
 
     /// <summary>
