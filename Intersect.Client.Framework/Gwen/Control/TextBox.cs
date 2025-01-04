@@ -589,6 +589,8 @@ public partial class TextBox : Label
                     length = 0;
                     startPos = 0;
                 }
+
+                mCursorPos = Math.Max(startPos, mCursorPos);
             }
 
             if (length > 0)
