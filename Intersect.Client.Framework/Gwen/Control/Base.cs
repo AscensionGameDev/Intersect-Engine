@@ -477,7 +477,7 @@ public partial class Base : IDisposable
     /// </summary>
     public virtual bool IsHidden
     {
-        get => (_inheritParentEnablementProperties && Parent != default) ? Parent.IsHidden : mHidden;
+        get => ((_inheritParentEnablementProperties && Parent is {} parent) ? parent.IsHidden : mHidden);
         set
         {
             if (value == mHidden)
@@ -1298,20 +1298,21 @@ public partial class Base : IDisposable
     ///     Creates a tooltip for the control.
     /// </summary>
     /// <param name="text">Tooltip text.</param>
-    public virtual void SetToolTipText(string text)
+    public virtual void SetToolTipText(string? text)
     {
+        var tooltip = Tooltip;
+
         if (mHideToolTip || string.IsNullOrWhiteSpace(text))
         {
-            if (this.Tooltip != null && this.Tooltip.Parent != null)
+            if (Tooltip is { Parent: not null })
             {
-                this.Tooltip?.Parent.RemoveChild(this.Tooltip, true);
+                Tooltip?.Parent.RemoveChild(Tooltip, true);
             }
-            this.Tooltip = null;
+            Tooltip = null;
 
             return;
         }
 
-        var tooltip = Tooltip;
         if (tooltip is not Label labelTooltip)
         {
             if (tooltip is not null)
@@ -1319,7 +1320,7 @@ public partial class Base : IDisposable
                 return;
             }
 
-            labelTooltip = new Label(this)
+            labelTooltip = new Label(this, name: "Tooltip")
             {
                 TextColorOverride = mToolTipFontColor ?? Skin.Colors.TooltipText,
                 ToolTipBackground = mToolTipBackgroundImage,
@@ -2456,7 +2457,10 @@ public partial class Base : IDisposable
 
         if (IsHidden)
         {
-            return;
+            if (!ToolTip.IsActiveTooltip(this))
+            {
+                return;
+            }
         }
 
         if (mNeedsLayout)
@@ -2477,7 +2481,19 @@ public partial class Base : IDisposable
         {
             if (child.IsHidden)
             {
-                continue;
+                if (!ToolTip.IsActiveTooltip(child))
+                {
+                    if (child is Label { Name: "Tooltip" } cl1 && cl1.Text.EndsWith('%'))
+                    {
+                        child.ToString();
+                    }
+                    continue;
+                }
+
+                if (child is Label { Name: "Tooltip" } cl2 && cl2.Text.EndsWith('%'))
+                {
+                    child.ToString();
+                }
             }
 
             var dock = child.Dock;
@@ -2485,6 +2501,11 @@ public partial class Base : IDisposable
             if (dock.HasFlag(Pos.Fill))
             {
                 continue;
+            }
+
+            if (child is Label label && label.Text.EndsWith('%') && !label.Name.StartsWith("EXP"))
+            {
+                label.ToString();
             }
 
             if (dock.HasFlag(Pos.Top))
@@ -2552,6 +2573,11 @@ public partial class Base : IDisposable
         //
         foreach (var child in mChildren)
         {
+            if (child.IsHidden && !ToolTip.IsActiveTooltip(child))
+            {
+                continue;
+            }
+
             var dock = child.Dock;
 
             if (!dock.HasFlag(Pos.Fill))
@@ -2565,6 +2591,11 @@ public partial class Base : IDisposable
                 bounds.X + margin.Left,
                 bounds.Y + margin.Top
             );
+
+            if (child is Label label && label.Text.EndsWith('%'))
+            {
+                label.ToString();
+            }
 
             if (child is IAutoSizeToContents { AutoSizeToContents: true })
             {

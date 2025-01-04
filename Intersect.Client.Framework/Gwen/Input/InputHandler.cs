@@ -431,7 +431,7 @@ public static partial class InputHandler
     public static bool OnMouseScroll(Base canvas, int deltaX, int deltaY)
     {
 
-        if (canvas == null || 
+        if (canvas == null ||
             HoveredControl == null ||
             HoveredControl.GetCanvas() != canvas ||
             !canvas.IsVisible
@@ -444,7 +444,7 @@ public static partial class InputHandler
         {
             HoveredControl.InputMouseWheeled(deltaY);
         }
-            
+
         if (deltaX != 0)
         {
             HoveredControl.InputMouseHWheeled(deltaX);

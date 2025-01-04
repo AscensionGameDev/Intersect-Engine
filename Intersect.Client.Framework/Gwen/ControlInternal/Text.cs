@@ -178,7 +178,8 @@ public partial class Text : Base
             return;
         }
 
-        if (_font == default)
+        var font = Font;
+        if (font == default)
         {
             return;
         }
@@ -188,16 +189,11 @@ public partial class Text : Base
         if (string.IsNullOrEmpty(_displayedText))
         {
             const string verticalBar = "|";
-            newSize = Skin.Renderer.MeasureText(_font, verticalBar, _scale) with { X = 0 };
+            newSize = Skin.Renderer.MeasureText(font, verticalBar, _scale) with { X = 0 };
         }
         else
         {
-            newSize = Skin.Renderer.MeasureText(_font, _displayedText, _scale);
-        }
-
-        if (newSize.X == Width && newSize.Y == Height)
-        {
-            return;
+            newSize = Skin.Renderer.MeasureText(font, _displayedText, _scale);
         }
 
         if (Size == newSize)
