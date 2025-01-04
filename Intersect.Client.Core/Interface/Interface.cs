@@ -227,11 +227,16 @@ public static partial class Interface
     public static bool DoesMouseHitInterface() => DoesMouseHitComponentOrChildren(sGameCanvas);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool DoesMouseHitComponentOrChildren(Framework.Gwen.Control.Base component) =>
+    public static bool DoesMouseHitComponentOrChildren(Framework.Gwen.Control.Base? component) =>
         DoesComponentOrChildrenContainMousePoint(component, InputHandler.MousePosition);
 
-    public static bool DoesComponentOrChildrenContainMousePoint(Framework.Gwen.Control.Base component, Point position)
+    public static bool DoesComponentOrChildrenContainMousePoint(Framework.Gwen.Control.Base? component, Point position)
     {
+        if (component == default)
+        {
+            return false;
+        }
+
         if (component.IsHidden)
         {
             return false;
