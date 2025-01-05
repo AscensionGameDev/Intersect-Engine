@@ -89,7 +89,7 @@ public partial class EscapeMenu : ImagePanel
         base.Invalidate();
         if (Interface.GameUi?.GameCanvas != null)
         {
-            Interface.GameUi.GameCanvas.MouseInputEnabled = true;
+            Interface.GameUi.GameCanvas.MouseInputEnabled = IsVisible;
         }
     }
 
