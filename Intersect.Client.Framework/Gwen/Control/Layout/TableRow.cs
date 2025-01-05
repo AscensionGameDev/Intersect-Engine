@@ -219,7 +219,7 @@ public partial class TableRow : Base, IColorableText
             mColumns.Add(new Label(this)
             {
                 Font = Font,
-                MouseInputEnabled = true,
+                MouseInputEnabled = false,
                 Padding = Padding.Three,
                 TextColor = TextColor,
                 TextColorOverride = TextColorOverride,
