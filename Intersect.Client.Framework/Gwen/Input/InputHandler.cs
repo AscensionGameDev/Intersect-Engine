@@ -23,7 +23,7 @@ public static partial class InputHandler
     /// <summary>
     ///     Control currently hovered by mouse.
     /// </summary>
-    public static Base HoveredControl;
+    public static Base? HoveredControl { get; set; }
 
     /// <summary>
     ///     Control that corrently has keyboard focus.
