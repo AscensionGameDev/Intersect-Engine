@@ -1,3 +1,4 @@
+using HarmonyLib;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
@@ -150,23 +151,32 @@ public partial class SelectCharacterWindow : ImagePanel
         _buttonNew.Hide();
 
         // we are rendering the player facing down, then we need to know the render order of the equipments
+        var faceTex = Globals.ContentManager.GetTexture(TextureType.Face, Characters[mSelectedChar].Face);
+        if (faceTex != default)
+        {
+            _renderLayers[0].Texture = faceTex;
+            var scale = Math.Min(_charContainer.InnerWidth / (double)faceTex.Width, _charContainer.InnerHeight / (double)faceTex.Height);
+            var sizeX = (int)(faceTex.Width * scale);
+            var sizeY = (int)(faceTex.Height * scale);
+            _ = _renderLayers[0].SetSize(sizeX, sizeY);
+            _renderLayers[0].SetPosition((_charContainer.Width / 2) - (sizeX / 2), (_charContainer.Height / 2) - (sizeY / 2));
+            _renderLayers[0].Show();
+
+            _renderLayers.Skip(1).Do(p => p.Hide());
+            return;
+        }
+
         for (var i = 0; i < Options.Equipment.Paperdoll.Down.Count; i++)
         {
             var equipment = Options.Equipment.Paperdoll.Down[i];
             var paperdollContainer = _renderLayers[i];
-            var isFace = false;
 
             // handle player/equip rendering, we just need to find the correct texture
             if (string.Equals("Player", equipment, StringComparison.Ordinal))
             {
-                var faceSource = Characters[mSelectedChar].Face;
                 var spriteSource = Characters[mSelectedChar].Sprite;
-
-                var faceTex = Globals.ContentManager.GetTexture(TextureType.Face, faceSource);
                 var spriteTex = Globals.ContentManager.GetTexture(TextureType.Entity, spriteSource);
-
-                isFace = faceTex != default;
-                paperdollContainer.Texture = isFace ? faceTex : spriteTex;
+                paperdollContainer.Texture = spriteTex;
             }
             else
             {
@@ -200,15 +210,11 @@ public partial class SelectCharacterWindow : ImagePanel
 
             var imgWidth = layerTex.Width;
             var imgHeight = layerTex.Height;
-            var textureWidth = isFace ? imgWidth : imgWidth / Options.Instance.Sprites.NormalFrames;
-            var textureHeight = isFace ? imgHeight : imgHeight / Options.Instance.Sprites.Directions;
+            var textureWidth = imgWidth / Options.Instance.Sprites.NormalFrames;
+            var textureHeight = imgHeight / Options.Instance.Sprites.Directions;
 
             paperdollContainer.SetTextureRect(0, 0, textureWidth, textureHeight);
-
-            var scale = Math.Min(_charContainer.InnerWidth / (double)imgWidth, _charContainer.InnerHeight / (double)imgHeight);
-            var sizeX = isFace ? (int)(imgWidth * scale) : textureWidth;
-            var sizeY = isFace ? (int)(imgHeight * scale) : textureHeight;
-            _ = paperdollContainer.SetSize(sizeX, sizeY);
+            _ = paperdollContainer.SetSize(textureWidth, textureHeight);
 
             var centerX = (_charContainer.Width / 2) - (paperdollContainer.Width / 2);
             var centerY = (_charContainer.Height / 2) - (paperdollContainer.Height / 2);
