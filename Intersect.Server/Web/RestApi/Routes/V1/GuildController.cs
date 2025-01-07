@@ -331,7 +331,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpPost("{guildId:guid}/variables/{variableId:guid}")]
-        public object GuildVariableSet(Guid guildId, Guid variableId, [FromBody] VariableValue value)
+        public object GuildVariableSet(Guid guildId, Guid variableId, [FromBody] VariableValueAPI valueApi)
         {
             var guild = Guild.LoadGuild(guildId);
 
@@ -350,11 +350,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             var changed = true;
             if (variable?.Value != null)
             {
-                if (variable?.Value?.Value != value.Value)
+                if (variable?.Value?.Value != valueApi.Value)
                 {
                     changed = false;
                 }
-                variable.Value.Value = value.Value;
+                variable.Value.Value = valueApi.Value;
             }
 
             if (changed)

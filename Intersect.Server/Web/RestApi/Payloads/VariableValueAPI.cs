@@ -1,7 +1,7 @@
 ﻿namespace Intersect.Server.Web.RestApi.Payloads
 {
 
-    public partial struct VariableValue
+    public partial struct VariableValueAPI
     {
 
         public dynamic Value { get; set; }

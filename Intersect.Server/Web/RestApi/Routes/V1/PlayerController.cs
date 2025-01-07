@@ -373,7 +373,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpPost("{lookupKey:LookupKey}/variables/{variableId:guid}")]
-        public object PlayerVariableSet(LookupKey lookupKey, Guid variableId, [FromBody] VariableValue value)
+        public object PlayerVariableSet(LookupKey lookupKey, Guid variableId, [FromBody] VariableValueAPI valueApi)
         {
             if (lookupKey.IsInvalid)
             {
@@ -400,11 +400,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             var changed = true;
             if (variable?.Value != null)
             {
-                if (variable?.Value?.Value != value.Value)
+                if (variable?.Value?.Value != valueApi.Value)
                 {
                     changed = false;
                 }
-                variable.Value.Value = value.Value;
+                variable.Value.Value = valueApi.Value;
             }
 
             if (changed)
