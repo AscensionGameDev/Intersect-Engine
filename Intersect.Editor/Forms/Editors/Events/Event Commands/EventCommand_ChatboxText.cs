@@ -35,6 +35,8 @@ public partial class EventCommandChatboxText : UserControl
 
         cmbChannel.SelectedIndex = (int) mMyCommand.Channel;
         chkShowChatBubble.Checked = mMyCommand.ShowChatBubble;
+
+        chkSendToAllPlayers.Checked = mMyCommand.SendToAllPlayers;
     }
 
     private void InitLocalization()
@@ -50,6 +52,7 @@ public partial class EventCommandChatboxText : UserControl
             cmbChannel.Items.Add(Strings.EventChatboxText.channels[i]);
         }
         chkShowChatBubble.Text = Strings.EventChatboxText.ShowChatBubble;
+        chkSendToAllPlayers.Text = Strings.EventChatboxText.SendToAllPlayers;
 
         btnSave.Text = Strings.EventChatboxText.okay;
         btnCancel.Text = Strings.EventChatboxText.cancel;
@@ -61,6 +64,7 @@ public partial class EventCommandChatboxText : UserControl
         mMyCommand.Color = cmbColor.Text;
         mMyCommand.Channel = (ChatboxChannel) cmbChannel.SelectedIndex;
         mMyCommand.ShowChatBubble = chkShowChatBubble.Checked;
+        mMyCommand.SendToAllPlayers = chkSendToAllPlayers.Checked;
         mEventEditor.FinishCommandEdit();
     }
 

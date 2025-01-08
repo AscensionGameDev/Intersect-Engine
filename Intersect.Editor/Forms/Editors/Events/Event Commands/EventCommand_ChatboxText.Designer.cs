@@ -1,4 +1,4 @@
-﻿using DarkUI.Controls;
+using DarkUI.Controls;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
@@ -41,14 +41,24 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.chkShowChatBubble = new DarkUI.Controls.DarkCheckBox();
+            this.chkSendToAllPlayers = new DarkUI.Controls.DarkCheckBox();
             this.grpChatboxText.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // chkchkSendToAllPlayers
+            // 
+            this.chkSendToAllPlayers.Location = new System.Drawing.Point(130, 236);
+            this.chkSendToAllPlayers.Name = "chkSendToAllPlayers";
+            this.chkSendToAllPlayers.Size = new System.Drawing.Size(120, 17);
+            this.chkSendToAllPlayers.TabIndex = 58;
+            this.chkSendToAllPlayers.Text = "Send to All Players";
             // 
             // grpChatboxText
             // 
             this.grpChatboxText.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpChatboxText.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpChatboxText.Controls.Add(this.chkShowChatBubble);
+            this.grpChatboxText.Controls.Add(this.chkSendToAllPlayers);
             this.grpChatboxText.Controls.Add(this.lblCommands);
             this.grpChatboxText.Controls.Add(this.cmbChannel);
             this.grpChatboxText.Controls.Add(this.lblChannel);
@@ -218,5 +228,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private System.Windows.Forms.Label lblChannel;
         private System.Windows.Forms.Label lblCommands;
         private DarkCheckBox chkShowChatBubble;
+        private DarkCheckBox chkSendToAllPlayers;
     }
 }

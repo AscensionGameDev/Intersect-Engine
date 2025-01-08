@@ -180,6 +180,10 @@ public partial class AddChatboxTextCommand : EventCommand
     public ChatboxChannel Channel { get; set; } = ChatboxChannel.Player;
 
     public bool ShowChatBubble { get; set; }
+
+    //Control wheter the bubble is sent to all players
+    public bool SendToAllPlayers { get; set; }
+
 }
 
 public partial class SetVariableCommand : EventCommand

@@ -19,6 +19,8 @@ using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Utilities;
 using Newtonsoft.Json;
+using System.Diagnostics;
+
 
 namespace Intersect.Server.Networking;
 
@@ -2044,9 +2046,15 @@ public static partial class PacketSender
     //ChatBubblePacket
     public static void SendChatBubbleToPlayer(Player player, Guid entityId, EntityType type, string text, Guid mapId)
     {
-        SendDataToProximityOnMapInstance(mapId, player.MapInstanceId, new ChatBubblePacket(entityId, type, mapId, text), null, TransmissionMode.Any);
+        player.SendPacket(new ChatBubblePacket(entityId, type, mapId, text));
     }
 
+    public static void SendChatBubbleToAllPlayers(Player player, Guid entityId, EntityType type, string text, Guid mapId)
+    {
+        {
+            SendDataToProximityOnMapInstance(mapId, player.MapInstanceId, new ChatBubblePacket(entityId, type, mapId, text), null, TransmissionMode.Any);
+        }
+    }
     //QuestOfferPacket
     public static void SendQuestOffer(Player player, Guid questId)
     {
