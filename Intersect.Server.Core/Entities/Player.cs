@@ -69,8 +69,8 @@ public partial class Player : Entity
 
     public static int OnlineCount => OnlinePlayers.Count;
 
-    [JsonProperty("MaxVitals"), NotMapped]
-    public new long[] MaxVitals => GetMaxVitals();
+    [JsonIgnore, NotMapped]
+    public long[] MaxVitals => GetMaxVitals();
 
     //Name, X, Y, Dir, Etc all in the base Entity Class
     public Guid ClassId { get; set; }

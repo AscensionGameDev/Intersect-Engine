@@ -12,7 +12,7 @@ namespace Intersect.GameObjects;
 
 public partial class NpcBase : DatabaseObject<NpcBase>, IFolderable
 {
-    private long[] _maxVital = new long[Enum.GetValues<Vital>().Length];
+    private long[] _maxVitals = new long[Enum.GetValues<Vital>().Length];
     private int[] _stats = new int[Enum.GetValues<Stat>().Length];
     private long[] _vitalRegen = new long[Enum.GetValues<Vital>().Length];
 
@@ -22,12 +22,24 @@ public partial class NpcBase : DatabaseObject<NpcBase>, IFolderable
     [NotMapped]
     public List<Drop> Drops { get; set; }= [];
 
-    [NotMapped]
-    public long[] MaxVital
+    [NotMapped, JsonIgnore]
+    public long[] MaxVitals
     {
-        get => _maxVital;
-        set => _maxVital = value;
+        get => _maxVitals;
+        set => _maxVitals = value;
     }
+
+    [JsonProperty(nameof(MaxVitals)), NotMapped]
+    public IReadOnlyDictionary<Vital, long> MaxVitalsLookup => MaxVitals.Select((value, index) => (value, index))
+        .ToDictionary(t => (Vital)t.index, t => t.value).AsReadOnly();
+
+    [JsonProperty(nameof(VitalRegen)), NotMapped]
+    public IReadOnlyDictionary<Vital, long> VitalRegenLookup => VitalRegen.Select((value, index) => (value, index))
+        .ToDictionary(t => (Vital)t.index, t => t.value).AsReadOnly();
+
+    [JsonProperty(nameof(Stats)), NotMapped]
+    public IReadOnlyDictionary<Stat, int> StatsLookup => Stats.Select((statValue, index) => (statValue, index))
+        .ToDictionary(t => (Stat)t.index, t => t.statValue).AsReadOnly();
 
     [NotMapped]
     public ConditionLists PlayerCanAttackConditions { get; set; } = new();
@@ -35,14 +47,14 @@ public partial class NpcBase : DatabaseObject<NpcBase>, IFolderable
     [NotMapped]
     public ConditionLists PlayerFriendConditions { get; set; } = new();
 
-    [NotMapped]
+    [NotMapped, JsonIgnore]
     public int[] Stats
     {
         get => _stats;
         set => _stats = value;
     }
 
-    [NotMapped]
+    [NotMapped, JsonIgnore]
     public long[] VitalRegen
     {
         get => _vitalRegen;
@@ -198,8 +210,8 @@ public partial class NpcBase : DatabaseObject<NpcBase>, IFolderable
     [JsonIgnore]
     public string JsonMaxVital
     {
-        get => DatabaseUtils.SaveLongArray(_maxVital, Enum.GetValues<Vital>().Length);
-        set => DatabaseUtils.LoadLongArray(ref _maxVital, value, Enum.GetValues<Vital>().Length);
+        get => DatabaseUtils.SaveLongArray(_maxVitals, Enum.GetValues<Vital>().Length);
+        set => DatabaseUtils.LoadLongArray(ref _maxVitals, value, Enum.GetValues<Vital>().Length);
     }
 
     //NPC vs NPC Combat

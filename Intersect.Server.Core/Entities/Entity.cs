@@ -32,9 +32,21 @@ public abstract partial class Entity : IEntity
     [NotMapped]
     public Guid MapInstanceId { get; set; } = Guid.Empty;
 
-    [JsonProperty("MaxVitals"), NotMapped] private long[] _maxVital = new long[Enum.GetValues<Vital>().Length];
+    [NotMapped] private long[] _maxVital = new long[Enum.GetValues<Vital>().Length];
+
+    [JsonProperty("MaxVitals"), NotMapped]
+    public IReadOnlyDictionary<Vital, long> MaxVitalsLookup => GetMaxVitals().Select((value, index) => (value, index))
+        .ToDictionary(t => (Vital)t.index, t => t.value).AsReadOnly();
 
     [NotMapped, JsonIgnore] public Combat.Stat[] Stat = new Combat.Stat[Enum.GetValues<Stat>().Length];
+
+    [JsonProperty("Stats"), NotMapped]
+    public IReadOnlyDictionary<Stat, int> StatsLookup => Stat.Select((computedStat, index) => (computedStat, index))
+        .ToDictionary(t => (Stat)t.index, t => t.computedStat.Value()).AsReadOnly();
+
+    [JsonProperty("Vitals"), NotMapped]
+    public IReadOnlyDictionary<Vital, long> VitalsLookup => _vitals.Select((value, index) => (value, index))
+        .ToDictionary(t => (Vital)t.index, t => t.value).AsReadOnly();
 
     [NotMapped, JsonIgnore] public Entity Target { get; set; } = null;
 
@@ -102,12 +114,12 @@ public abstract partial class Entity : IEntity
     [JsonIgnore, Column("Vitals")]
     public string VitalsJson
     {
-        get => DatabaseUtils.SaveLongArray(mVitals, Enum.GetValues<Vital>().Length);
-        set => mVitals = DatabaseUtils.LoadLongArray(value, Enum.GetValues<Vital>().Length);
+        get => DatabaseUtils.SaveLongArray(_vitals, Enum.GetValues<Vital>().Length);
+        set => _vitals = DatabaseUtils.LoadLongArray(value, Enum.GetValues<Vital>().Length);
     }
 
-    [JsonProperty("Vitals"), NotMapped]
-    private long[] mVitals { get; set; } = new long[Enum.GetValues<Vital>().Length];
+    [NotMapped]
+    private long[] _vitals { get; set; } = new long[Enum.GetValues<Vital>().Length];
 
     [JsonIgnore, NotMapped]
     private long[] mOldVitals { get; set; } = new long[Enum.GetValues<Vital>().Length];
@@ -1402,13 +1414,13 @@ public abstract partial class Entity : IEntity
 
     public long GetVital(int vital)
     {
-        return mVitals[vital];
+        return _vitals[vital];
     }
 
     public long[] GetVitals()
     {
         var vitals = new long[Enum.GetValues<Vital>().Length];
-        Array.Copy(mVitals, 0, vitals, 0, Enum.GetValues<Vital>().Length);
+        Array.Copy(_vitals, 0, vitals, 0, Enum.GetValues<Vital>().Length);
 
         return vitals;
     }
@@ -1430,7 +1442,7 @@ public abstract partial class Entity : IEntity
             value = GetMaxVital(vital);
         }
 
-        mVitals[vital] = value;
+        _vitals[vital] = value;
     }
 
     public void SetVital(Vital vital, long value)

@@ -16,11 +16,31 @@ public partial class ClassBase : DatabaseObject<ClassBase>, IFolderable
 
     public const long DEFAULT_EXPERIENCE_INCREASE = 50;
 
-    [NotMapped]
+    [NotMapped, JsonIgnore]
     public int[] BaseStat { get; set; } = new int[Enum.GetValues<Stat>().Length];
 
-    [NotMapped]
+    [NotMapped, JsonIgnore]
     public long[] BaseVital { get; set; } = new long[Enum.GetValues<Vital>().Length];
+
+    [JsonProperty(nameof(BaseVital)), NotMapped]
+    public IReadOnlyDictionary<Vital, long> BaseVitalLookup => BaseVital.Select((value, index) => (value, index))
+        .ToDictionary(t => (Vital)t.index, t => t.value).AsReadOnly();
+
+    [JsonProperty(nameof(VitalIncrease)), NotMapped]
+    public IReadOnlyDictionary<Vital, long> VitalIncreaseLookup => VitalIncrease.Select((value, index) => (value, index))
+        .ToDictionary(t => (Vital)t.index, t => t.value).AsReadOnly();
+
+    [JsonProperty(nameof(VitalRegen)), NotMapped]
+    public IReadOnlyDictionary<Vital, long> VitalRegenLookup => VitalRegen.Select((value, index) => (value, index))
+        .ToDictionary(t => (Vital)t.index, t => t.value).AsReadOnly();
+
+    [JsonProperty(nameof(BaseStat)), NotMapped]
+    public IReadOnlyDictionary<Stat, int> BaseStatLookup => BaseStat.Select((statValue, index) => (statValue, index))
+        .ToDictionary(t => (Stat)t.index, t => t.statValue).AsReadOnly();
+
+    [JsonProperty(nameof(StatIncrease)), NotMapped]
+    public IReadOnlyDictionary<Stat, int> StatIncreaseLookup => StatIncrease.Select((statValue, index) => (statValue, index))
+        .ToDictionary(t => (Stat)t.index, t => t.statValue).AsReadOnly();
 
     [NotMapped] public Dictionary<int, long> ExperienceOverrides { get; set; } = [];
 
@@ -39,13 +59,13 @@ public partial class ClassBase : DatabaseObject<ClassBase>, IFolderable
     [NotMapped]
     public List<ClassSprite> Sprites { get; set; } = [];
 
-    [NotMapped]
+    [NotMapped, JsonIgnore]
     public int[] StatIncrease { get; set; } = new int[Enum.GetValues<Stat>().Length];
 
-    [NotMapped]
+    [NotMapped, JsonIgnore]
     public long[] VitalIncrease { get; set; } = new long[Enum.GetValues<Vital>().Length];
 
-    [NotMapped]
+    [NotMapped, JsonIgnore]
     public long[] VitalRegen { get; set; } = new long[Enum.GetValues<Vital>().Length];
 
     [JsonConstructor]

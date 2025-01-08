@@ -172,8 +172,7 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                 sgo.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
                 sgo.UseOneOfForPolymorphism();
                 sgo.UseAllOfForInheritance();
-                sgo.MapType(
-                    typeof(LookupKey),
+                sgo.MapType<LookupKey>(
                     () => new OpenApiSchema
                     {
                         Type = "string",
