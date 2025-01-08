@@ -2044,7 +2044,7 @@ public static partial class PacketSender
     //ChatBubblePacket
     public static void SendChatBubbleToPlayer(Player player, Guid entityId, EntityType type, string text, Guid mapId)
     {
-        player.SendPacket(new ChatBubblePacket(entityId, type, mapId, text));
+        SendDataToProximityOnMapInstance(mapId, player.MapInstanceId, new ChatBubblePacket(entityId, type, mapId, text), null, TransmissionMode.Any);
     }
 
     //QuestOfferPacket
