@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using Intersect.Logging;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
@@ -37,23 +38,35 @@ public partial class Player
 
     #region Lookup
 
-    public static Tuple<Client, Player> Fetch(LookupKey lookupKey)
+    public static bool TryFetch(LookupKey lookupKey, [NotNullWhen(true)] out Tuple<Client, Player>? tuple)
     {
-        if (!lookupKey.HasName && !lookupKey.HasId)
+        tuple = Fetch(lookupKey);
+        return tuple != default;
+    }
+
+    public static Tuple<Client, Player> Fetch(LookupKey lookupKey, bool loadRelationships = false,
+        bool loadBags = false)
+    {
+        if (lookupKey is { HasName: false, HasId: false })
         {
             return new Tuple<Client, Player>(null, null);
         }
 
         // HasName checks if null or empty
         // ReSharper disable once AssignNullToNotNullAttribute
-        return lookupKey.HasId ? Fetch(lookupKey.Id) : Fetch(lookupKey.Name);
+        return lookupKey.HasId
+            ? Fetch(lookupKey.Id)
+            : Fetch(lookupKey.Name, loadRelationships: loadRelationships, loadBags: loadBags);
     }
 
-    public static Tuple<Client, Player> Fetch(string playerName)
+    public static Tuple<Client, Player> Fetch(string playerName, bool loadRelationships = false, bool loadBags = false)
     {
         var client = Globals.Clients.Find(queryClient => Entity.CompareName(playerName, queryClient?.Entity?.Name));
 
-        return new Tuple<Client, Player>(client, client?.Entity ?? Player.Find(playerName));
+        return new Tuple<Client, Player>(
+            client,
+            client?.Entity ?? Find(playerName, loadRelationships: loadRelationships, loadBags: loadBags)
+        );
     }
 
     public static Tuple<Client, Player> Fetch(Guid playerId)
@@ -90,7 +103,7 @@ public partial class Player
         }
     }
 
-    public static Player Find(string playerName)
+    public static Player Find(string playerName, bool loadRelationships = false, bool loadBags = false)
     {
         if (string.IsNullOrWhiteSpace(playerName))
         {
@@ -107,6 +120,10 @@ public partial class Player
         {
             using var context = DbInterface.CreatePlayerContext();
             player = QueryPlayerByName(context, playerName);
+            if (loadRelationships)
+            {
+                player.LoadRelationships(context, loadBags);
+            }
             _ = Validate(player);
             return player;
         }
@@ -148,7 +165,7 @@ public partial class Player
 
     #region Loading
 
-    public bool LoadRelationships(PlayerContext playerContext)
+    public bool LoadRelationships(PlayerContext playerContext, bool loadBags = false)
     {
         lock (_savingLock)
         {
@@ -166,6 +183,31 @@ public partial class Player
         entityEntry.Collection(p => p.Quests).Load();
         entityEntry.Collection(p => p.Spells).Load();
         entityEntry.Collection(p => p.Variables).Load();
+
+        if (loadBags)
+        {
+            foreach (var item in Items)
+            {
+                if (item.BagId == default)
+                {
+                    continue;
+                }
+
+                var navigationEntry = playerContext.Entry(item).Navigation(nameof(item.Bag));
+                if (navigationEntry.IsLoaded)
+                {
+                    continue;
+                }
+
+                navigationEntry.Load();
+                if (item.Bag != default)
+                {
+                    item.Bag.ValidateSlots();
+                    playerContext.Bags.Entry(item.Bag).Collection(b => b.Slots).Load();
+                }
+            }
+        }
+
         return Validate(this, playerContext);
     }
 

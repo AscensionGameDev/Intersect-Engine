@@ -56,5 +56,11 @@
     <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.10" GeneratePathProperty="True" />
     <PackageReference Include="SqlKata.Execution" Version="2.4.0" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Include="Swashbuckle.AspNetCore.Annotations">
+      <HintPath>..\..\..\..\.nuget\packages\swashbuckle.aspnetcore.annotations\6.3.1\lib\net6.0\Swashbuckle.AspNetCore.Annotations.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
 </Project>

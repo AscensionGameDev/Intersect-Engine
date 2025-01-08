@@ -24,6 +24,7 @@ public partial class GuildBankSlot : Item, ISlot
     [DatabaseGenerated(DatabaseGeneratedOption.Identity), JsonIgnore]
     public Guid Id { get; private set; }
 
+    [JsonIgnore]
     public bool IsEmpty => ItemId == default;
 
     [JsonIgnore]

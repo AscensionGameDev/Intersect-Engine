@@ -5,6 +5,7 @@ using Intersect.Enums;
 using Intersect.Server.Entities;
 using Intersect.Server.Networking;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using Intersect.Collections.Slotting;
 using Microsoft.EntityFrameworkCore;
 using Intersect.Network.Packets.Server;
@@ -88,6 +89,7 @@ public partial class Guild
     [JsonIgnore]
     public virtual List<GuildVariable> Variables { get; set; } = new List<GuildVariable>();
 
+    [JsonIgnore]
     /// <summary>
     /// Variables that have been updated for this guild which need to be saved to the db
     /// </summary>
@@ -154,6 +156,12 @@ public partial class Guild
         }
         return null;
 
+    }
+
+    public static bool TryGet(Guid guildId, [NotNullWhen(true)] out Guild? guild)
+    {
+        guild = LoadGuild(guildId);
+        return guild != default;
     }
 
     /// <summary>

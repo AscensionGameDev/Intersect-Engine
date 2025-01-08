@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Intersect.Server.Web.Constraints;
 
-public class LookupKeyConstraint : IRouteConstraint
+public class NonNullConstraint : IRouteConstraint
 {
     public bool Match(
         HttpContext httpContext,

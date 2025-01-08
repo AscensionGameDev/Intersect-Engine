@@ -3,17 +3,10 @@
 namespace Intersect.Server.Entities;
 
 
-public partial struct Label
+public partial struct Label(string label, Color color)
 {
+    [JsonProperty(nameof(Label))]
+    public readonly string Text = label;
 
-    [JsonProperty("Label")] public string Text;
-
-    public Color Color;
-
-    public Label(string label, Color color)
-    {
-        Text = label;
-        Color = color;
-    }
-
+    public readonly Color Color = color;
 }

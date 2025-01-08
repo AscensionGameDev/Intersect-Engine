@@ -82,7 +82,7 @@ public class Item : IItem
 
     [NotMapped] public ItemProperties Properties { get; set; }
 
-    [Column("ItemProperties")]
+    [Column(nameof(ItemProperties))]
     [JsonIgnore]
     public string ItemPropertiesJson
     {
@@ -91,7 +91,7 @@ public class Item : IItem
             Properties = JsonConvert.DeserializeObject<ItemProperties>(value ?? string.Empty) ?? new ItemProperties();
     }
 
-    [JsonIgnore][NotMapped] public ItemBase Descriptor => ItemBase.Get(ItemId);
+    [JsonIgnore, NotMapped] public ItemBase Descriptor => ItemBase.Get(ItemId);
 
     public static Item None => new();
 
@@ -397,23 +397,29 @@ public class Item : IItem
             var descriptor = Descriptor;
             if (descriptor?.ItemType == ItemType.Bag)
             {
-                bag = Bag.GetBag(BagId ?? Guid.Empty);
-                bag?.ValidateSlots();
-                Bag = bag;
-            }
-        }
-        else
-        {
-            // Remove any items from this bag that have been removed from the game
-            foreach (var slot in bag.Slots)
-            {
-                if (ItemBase.Get(slot.ItemId) == default)
+                if (!Bag.TryGetBag(BagId ?? default, out bag))
                 {
-                    slot.Set(None);
+                    return false;
                 }
+
+                Bag = bag;
+                return true;
             }
+
+            return false;
         }
 
-        return default != bag;
+        // Remove any items from this bag that have been removed from the game
+        foreach (var slot in bag.Slots)
+        {
+            if (ItemBase.TryGet(slot.ItemId, out _))
+            {
+                continue;
+            }
+
+            slot.Set(None);
+        }
+
+        return true;
     }
 }

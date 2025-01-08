@@ -592,9 +592,17 @@ public partial class User
             var salt = GetUserSalt(username);
             if (string.IsNullOrWhiteSpace(salt))
             {
-                Log.Error($"Login to {username} failed because the salt is empty.");
+                if (UserExists(username))
+                {
+                    Log.Error($"Login to {username} failed because the salt is empty.");
+                    failureReason = new LoginFailureReason(LoginFailureType.ServerError);
+                }
+                else
+                {
+                    failureReason = new LoginFailureReason(LoginFailureType.InvalidCredentials);
+                }
+
                 user = default;
-                failureReason = new LoginFailureReason(LoginFailureType.ServerError);
                 return false;
             }
 
@@ -612,37 +620,116 @@ public partial class User
         }
     }
 
-    public static User FindById(Guid userId)
-    {
-        using var playerContext = DbInterface.CreatePlayerContext();
-        return FindById(userId, playerContext);
-    }
+    public static bool TryFetch(LookupKey lookupKey, [NotNullWhen(true)] out User? user) =>
+        TryFetch(lookupKey, out user, out _);
 
-    public static User FindById(Guid userId, PlayerContext playerContext)
+    public static bool TryFetch(LookupKey lookupKey, [NotNullWhen(true)] out User? user, out Client? client)
     {
-        if (userId == Guid.Empty)
+        if (lookupKey is { HasName: false, HasId: false })
         {
-            return null;
+            user = default;
+            client = default;
+            return false;
         }
 
-        var user = FindOnline(userId);
+        (client, user) = lookupKey.HasId ? Fetch(lookupKey.Id) : Fetch(lookupKey.Name);
+        return user != default;
+    }
+
+    public static bool TryFind(LookupKey lookupKey, [NotNullWhen(true)] out User? user)
+    {
+        using var playerContext = DbInterface.CreatePlayerContext();
+        return TryFind(lookupKey, playerContext, out user);
+    }
+
+    public static bool TryFind(LookupKey lookupKey, PlayerContext playerContext, [NotNullWhen(true)] out User? user)
+    {
+        if (lookupKey.HasId)
+        {
+            return TryFindById(lookupKey.Id, playerContext, out user);
+        }
+
+        if (lookupKey.HasName)
+        {
+            return TryFindByName(lookupKey.Name, playerContext, out user);
+        }
+
+        throw new InvalidOperationException($"Lookup key has neither an id nor a name: '{lookupKey}'");
+    }
+
+    public static bool TryFindByName(string username, [NotNullWhen(true)] out User? user)
+    {
+        using var playerContext = DbInterface.CreatePlayerContext();
+        return TryFindByName(username, playerContext, out user);
+    }
+
+    public static bool TryFindByName(string username, PlayerContext playerContext, [NotNullWhen(true)] out User? user)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            user = default;
+            return false;
+        }
+
+        user = FindOnline(username);
 
         if (user != null)
         {
-            return user;
+            return true;
         }
 
         try
         {
             using var context = DbInterface.CreatePlayerContext();
-            return QueryUserByIdShallow(playerContext, userId);
+            var queriedUser = QueryUserByNameShallow(context, username);
+            if (queriedUser != default)
+            {
+                user = queriedUser;
+                return true;
+            }
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            Log.Error(ex);
-            return null;
+            Log.Error(exception, $"Failed to find user by name '{username}'");
         }
+
+        return false;
     }
+
+    public static bool TryFindById(Guid userId, [NotNullWhen(true)] out User? user)
+    {
+        using var playerContext = DbInterface.CreatePlayerContext();
+        return TryFindById(userId, playerContext, out user);
+    }
+
+    public static bool TryFindById(Guid userId, PlayerContext playerContext, [NotNullWhen(true)] out User? user)
+    {
+        if (userId == default)
+        {
+            user = default;
+            return false;
+        }
+
+        user = FindOnline(userId);
+
+        if (user != null)
+        {
+            return true;
+        }
+
+        try
+        {
+            user = QueryUserByIdShallow(playerContext, userId);
+        }
+        catch (Exception exception)
+        {
+            Log.Error(exception, $"Failed to find user by id '{userId}'");
+        }
+
+        return user != default;
+    }
+
+    public static User? FindById(Guid userId) => TryFindById(userId, out var user) ? user : default;
 
     public static User Find(string username)
     {
@@ -754,10 +841,8 @@ public partial class User
 
         try
         {
-            using (var context = DbInterface.CreatePlayerContext())
-            {
-                return SaltByName(context, userName);
-            }
+            using var context = DbInterface.CreatePlayerContext();
+            return SaltByName(context, userName);
         }
         catch (Exception ex)
         {

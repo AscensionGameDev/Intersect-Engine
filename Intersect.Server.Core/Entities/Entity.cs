@@ -138,7 +138,6 @@ public abstract partial class Entity : IEntity
     public int[] StatPointAllocations { get; set; } = new int[Enum.GetValues<Stat>().Length];
 
     //Inventory
-    [JsonIgnore]
     public virtual SlotList<InventorySlot> Items { get; set; } = new(
         Options.Instance.PlayerOpts.MaxInventory,
         InventorySlot.Create
@@ -225,11 +224,10 @@ public abstract partial class Entity : IEntity
     public bool HideEntity { get; set; } = false;
 
     [NotMapped, JsonIgnore]
-    public List<Guid> Animations { get; set; } = new List<Guid>();
+    public List<Guid> Animations { get; set; } = [];
 
     //DoT/HoT Spells
-    [NotMapped, JsonIgnore]
-    public ConcurrentDictionary<Guid, DoT> DoT { get; set; } = new ConcurrentDictionary<Guid, DoT>();
+    [NotMapped, JsonIgnore] public ConcurrentDictionary<Guid, DoT> DoT { get; } = [];
 
     [NotMapped, JsonIgnore]
     public DoT[] CachedDots { get; set; } = new DoT[0];

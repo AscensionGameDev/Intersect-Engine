@@ -69,7 +69,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpPost("global/{guid:guid}")]
-        public object GlobalVariableSet(Guid guid, [FromBody] VariableValueAPI valueApi)
+        public object GlobalVariableSet(Guid guid, [FromBody] VariableValueBody valueBody)
         {
             if (Guid.Empty == guid)
             {
@@ -84,11 +84,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             var changed = true;
-            if (variable.Value?.Value == valueApi.Value)
+            if (variable.Value?.Value == valueBody.Value)
             {
                 changed = false;
             }
-            variable.Value.Value = valueApi.Value;
+            variable.Value.Value = valueBody.Value;
 
             if (changed)
             {
