@@ -19,7 +19,7 @@
     <ProjectReference Include="..\Intersect.Network\Intersect.Network.csproj" />
     <ProjectReference Include="..\Intersect.Server.Framework\Intersect.Server.Framework.csproj" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <EmbeddedResource Include="$(PkgSQLitePCLRaw_lib_e_sqlite3)\runtimes\linux-arm64\native\libe_sqlite3.so" WithCulture="false">
       <Link>Resources\runtimes\linux-arm64\libe_sqlite3.so</Link>
@@ -40,7 +40,7 @@
       <Link>Resources\runtimes\win-x64\e_sqlite3.dll</Link>
     </EmbeddedResource>
   </ItemGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.11" />
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.11" />
@@ -55,12 +55,7 @@
     <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.10" />
     <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.10" GeneratePathProperty="True" />
     <PackageReference Include="SqlKata.Execution" Version="2.4.0" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Reference Include="Swashbuckle.AspNetCore.Annotations">
-      <HintPath>..\..\..\..\.nuget\packages\swashbuckle.aspnetcore.annotations\6.3.1\lib\net6.0\Swashbuckle.AspNetCore.Annotations.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.2.0" />
   </ItemGroup>
 
 </Project>
