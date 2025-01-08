@@ -162,9 +162,9 @@ public static partial class CommandProcessing
 
         if (command.ShowChatBubble)
         {
-            if (command.SendToAllPlayers) // If "Send to All" is enabled
+            if (command.SendToAllPlayers)
             {
-                // Send the chat bubble to all players in the map instance
+                
                 PacketSender.SendChatBubbleToAllPlayers(
                         player,
                         instance.PageInstance.Id,
@@ -175,7 +175,7 @@ public static partial class CommandProcessing
             }
             else
             {
-                // Send the chat bubble to only the triggering player
+                
                 PacketSender.SendChatBubbleToPlayer(
                     player,
                     instance.PageInstance.Id,

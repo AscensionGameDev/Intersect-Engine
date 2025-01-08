@@ -19,7 +19,6 @@ using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Utilities;
 using Newtonsoft.Json;
-using System.Diagnostics;
 
 
 namespace Intersect.Server.Networking;
