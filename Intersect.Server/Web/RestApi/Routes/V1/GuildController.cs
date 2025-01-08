@@ -269,7 +269,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("{guildId:guid}/bank")]
-        [ProducesResponseType(typeof(NotFoundObjectResult), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
         [ProducesResponseType(typeof(IEnumerable<GuildBankSlot>), (int)HttpStatusCode.OK, "application/json")]
         public IActionResult ItemsListBank(Guid guildId)
         {
@@ -283,7 +283,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("{guildId:guid}/variables")]
-        [ProducesResponseType(typeof(NotFoundObjectResult), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
         [ProducesResponseType(typeof(IEnumerable<GuildVariable>), (int)HttpStatusCode.OK, "application/json")]
         public IActionResult GuildVariablesList(Guid guildId)
         {
@@ -296,8 +296,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("{guildId:guid}/variables/{variableId:guid}")]
-        [ProducesResponseType(typeof(BadRequestObjectResult), (int)HttpStatusCode.BadRequest, "application/json")]
-        [ProducesResponseType(typeof(NotFoundObjectResult), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
         [ProducesResponseType(typeof(GuildVariable), (int)HttpStatusCode.OK, "application/json")]
         public IActionResult GuildVariableGet(Guid guildId, Guid variableId)
         {
@@ -321,8 +321,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("{guildId:guid}/variables/{variableId:guid}/value")]
-        [ProducesResponseType(typeof(BadRequestObjectResult), (int)HttpStatusCode.BadRequest, "application/json")]
-        [ProducesResponseType(typeof(NotFoundObjectResult), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
         [ProducesResponseType(typeof(VariableValueBody), (int)HttpStatusCode.OK, "application/json")]
         public IActionResult GuildVariableGetValue(Guid guildId, Guid variableId)
         {
@@ -349,8 +349,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpPost("{guildId:guid}/variables/{variableId:guid}")]
-        [ProducesResponseType(typeof(BadRequestObjectResult), (int)HttpStatusCode.BadRequest, "application/json")]
-        [ProducesResponseType(typeof(NotFoundObjectResult), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
         [ProducesResponseType(typeof(GuildVariable), (int)HttpStatusCode.OK, "application/json")]
         public IActionResult GuildVariableSet(Guid guildId, Guid variableId, [FromBody] VariableValueBody valueBody)
         {

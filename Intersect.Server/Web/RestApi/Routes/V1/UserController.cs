@@ -868,8 +868,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         #region Variables
 
         [HttpGet("{lookupKey:LookupKey}/variables")]
-        [ProducesResponseType(typeof(BadRequestObjectResult), (int)HttpStatusCode.BadRequest, "application/json")]
-        [ProducesResponseType(typeof(NotFoundObjectResult), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
         [ProducesResponseType(typeof(IEnumerable<UserVariable>), (int)HttpStatusCode.OK, "application/json")]
         public IActionResult UserVariablesList(LookupKey lookupKey)
         {
@@ -887,8 +887,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("{lookupKey:LookupKey}/variables/{variableId:guid}")]
-        [ProducesResponseType(typeof(BadRequestObjectResult), (int)HttpStatusCode.BadRequest, "application/json")]
-        [ProducesResponseType(typeof(NotFoundObjectResult), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
         [ProducesResponseType(typeof(UserVariable), (int)HttpStatusCode.OK, "application/json")]
         public IActionResult UserVariableGet(LookupKey lookupKey, Guid variableId)
         {
@@ -917,8 +917,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("{lookupKey:LookupKey}/variables/{variableId:guid}/value")]
-        [ProducesResponseType(typeof(BadRequestObjectResult), (int)HttpStatusCode.BadRequest, "application/json")]
-        [ProducesResponseType(typeof(NotFoundObjectResult), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
         [ProducesResponseType(typeof(VariableValueBody), (int)HttpStatusCode.OK, "application/json")]
         public IActionResult UserVariableValueGet(LookupKey lookupKey, Guid variableId)
         {
@@ -950,8 +950,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpPost("{lookupKey:LookupKey}/variables/{variableId:guid}")]
-        [ProducesResponseType(typeof(BadRequestObjectResult), (int)HttpStatusCode.BadRequest, "application/json")]
-        [ProducesResponseType(typeof(NotFoundObjectResult), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
         [ProducesResponseType(typeof(UserVariable), (int)HttpStatusCode.OK, "application/json")]
         public IActionResult UserVariableSet(LookupKey lookupKey, Guid variableId, [FromBody] VariableValueBody valueBody)
         {
