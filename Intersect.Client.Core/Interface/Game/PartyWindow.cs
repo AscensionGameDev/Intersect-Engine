@@ -81,7 +81,7 @@ public partial class PartyWindow
             }
             else
             {
-                mLblnames[i].Text = "";
+                mLblnames[i].Text = string.Empty;
             }
 
             //Health bars
@@ -173,7 +173,7 @@ public partial class PartyWindow
             mHpBarContainer[i].Hide();
             mHpLabel[i].Hide();
             mHpValue[i].Hide();
-            mLblnames[i].Text = "";
+            mLblnames[i].Text = string.Empty;
             mMpBarContainer[i].Hide();
             mMpLabel[i].Hide();
             mMpValue[i].Hide();
@@ -285,7 +285,7 @@ public partial class PartyWindow
                         mKickButtons[i].SetToolTipText("");
                     }
 
-                    mLblnames[i].Text = "";
+                    mLblnames[i].Text = string.Empty;
                     mHpBar[i].SetSize(0, mHpBarContainer[i].Height);
                     mHpBarContainer[i].Hide();
                 }

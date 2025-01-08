@@ -10,7 +10,7 @@ public partial class EventPage
 {
     public EventPage()
     {
-        CommandLists.Add(Guid.NewGuid(), new List<EventCommand>());
+        CommandLists.Add(Guid.NewGuid(), []);
     }
 
     [JsonConstructor]
@@ -20,20 +20,19 @@ public partial class EventPage
 
     public Guid AnimationId { get; set; }
 
-    public Dictionary<Guid, List<EventCommand>> CommandLists { get; set; } =
-        new Dictionary<Guid, List<EventCommand>>();
+    public Dictionary<Guid, List<EventCommand>> CommandLists { get; set; } = new();
 
-    public ConditionLists ConditionLists { get; set; } = new ConditionLists();
+    public ConditionLists ConditionLists { get; set; } = new();
 
-    public string Description { get; set; } = "";
+    public string Description { get; set; } = string.Empty;
 
     public bool DirectionFix { get; set; }
 
     public bool DisablePreview { get; set; } = true;
 
-    public string FaceGraphic { get; set; } = "";
+    public string FaceGraphic { get; set; } = string.Empty;
 
-    public EventGraphic Graphic { get; set; } = new EventGraphic();
+    public EventGraphic Graphic { get; set; } = new();
 
     public bool HideName { get; set; }
 
@@ -41,7 +40,7 @@ public partial class EventPage
 
     public EventRenderLayer Layer { get; set; } = EventRenderLayer.SameAsPlayer;
 
-    public EventMovement Movement { get; set; } = new EventMovement();
+    public EventMovement Movement { get; set; } = new();
 
     public bool Passable { get; set; }
 

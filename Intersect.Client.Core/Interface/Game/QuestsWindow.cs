@@ -199,7 +199,7 @@ public partial class QuestsWindow
 
     private void AddQuestToDict(Dictionary<string, List<Tuple<QuestBase, int, Color>>> dict, QuestBase quest)
     {
-        var category = "";
+        var category = string.Empty;
         var add = false;
         var color = Color.White;
         var orderVal = -1;

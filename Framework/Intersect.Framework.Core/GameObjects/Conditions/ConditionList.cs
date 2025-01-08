@@ -7,9 +7,9 @@ namespace Intersect.GameObjects.Conditions;
 
 public partial class ConditionList
 {
-    public List<Condition> Conditions = new List<Condition>(); //Long story.. just go with it.. okay?
+    public List<Condition> Conditions { get; set; } = []; //Long story.. just go with it.. okay?
 
-    public string Name = "New Condition List";
+    public string Name { get; set; } = "New Condition List";
 
     public ConditionList()
     {

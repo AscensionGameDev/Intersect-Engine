@@ -57,7 +57,7 @@ public static partial class GameContentManager
 
     static IDictionary<string, Texture> sEntityDict = new Dictionary<string, Texture>();
 
-    private static string sErrorString = "";
+    private static string sErrorString = string.Empty;
 
     static IDictionary<string, Texture> sFaceDict = new Dictionary<string, Texture>();
 

@@ -197,7 +197,7 @@ public partial class BankWindow
             bankItem.Setup();
 
             var bankLabel = new Label(bankItem.Container, "BankItemValue");
-            bankLabel.Text = "";
+            bankLabel.Text = string.Empty;
 
             bankItem.Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
             

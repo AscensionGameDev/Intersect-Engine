@@ -825,7 +825,7 @@ internal sealed partial class PacketHandler
         }
 
         //If no /command, then use the designated channel.
-        var cmd = "";
+        var cmd = string.Empty;
         if (!msg.StartsWith("/"))
         {
             switch (channel)
@@ -2602,7 +2602,7 @@ internal sealed partial class PacketHandler
             if (user.PasswordResetCode.ToLower().Trim() == packet.ResetCode.ToLower().Trim() &&
                 user.PasswordResetTime > DateTime.UtcNow)
             {
-                user.PasswordResetCode = "";
+                user.PasswordResetCode = string.Empty;
                 user.PasswordResetTime = DateTime.MinValue;
                 DbInterface.ResetPass(user, packet.NewPassword);
                 success = true;

@@ -1,14 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Globalization;
-using System.Runtime.Serialization;
-using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Localization;
 using Intersect.Utilities;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace Intersect.Server.Web.RestApi.Payloads;
 
-
+// TODO: Figure out how to get LookupKey to show up in swagger.json components/schemas despite being a "string", one or more of the following commented out attributes may help
 // [SwaggerSubType(typeof(Guid))]
 // [SwaggerSubType(typeof(string))]
 // [KnownType(typeof(LookupKey))]

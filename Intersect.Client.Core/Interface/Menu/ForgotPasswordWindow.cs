@@ -114,7 +114,7 @@ public partial class ForgotPasswordWindow
     public void Show()
     {
         mResetWindow.IsHidden = false;
-        mInputTextbox.Text = "";
+        mInputTextbox.Text = string.Empty;
     }
 
     void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)

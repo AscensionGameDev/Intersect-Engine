@@ -70,7 +70,7 @@ public partial class EventGraphicSelector : UserControl
 
     private void GraphicTypeUpdated()
     {
-        mTmpGraphic.Filename = "";
+        mTmpGraphic.Filename = string.Empty;
         mTmpGraphic.Type = EventGraphicType.None;
         mTmpGraphic.X = 0;
         mTmpGraphic.Y = 0;

@@ -11,7 +11,7 @@ namespace Intersect.GameObjects.Crafting;
 public partial class CraftBase : DatabaseObject<CraftBase>, IFolderable
 {
     [NotMapped]
-    public List<CraftIngredient> Ingredients = new List<CraftIngredient>();
+    public List<CraftIngredient> Ingredients { get; set; } = [];
 
     [JsonConstructor]
     public CraftBase(Guid id) : base(id)
@@ -49,7 +49,7 @@ public partial class CraftBase : DatabaseObject<CraftBase>, IFolderable
     public int Time { get; set; }
 
     /// <inheritdoc />
-    public string Folder { get; set; } = "";
+    public string Folder { get; set; } = string.Empty;
 
     [Column("Event")]
     [JsonProperty]
@@ -64,7 +64,7 @@ public partial class CraftBase : DatabaseObject<CraftBase>, IFolderable
     }
 
     [NotMapped]
-    public ConditionLists CraftingRequirements = new ConditionLists();
+    public ConditionLists CraftingRequirements { get; set; } = new();
 
     //Requirements
     [Column("CraftingRequirements")]
@@ -78,9 +78,9 @@ public partial class CraftBase : DatabaseObject<CraftBase>, IFolderable
 
 public partial class CraftIngredient
 {
-    public Guid ItemId;
+    public Guid ItemId { get; set; }
 
-    public int Quantity = 1;
+    public int Quantity { get; set; }
 
     public CraftIngredient(Guid itemId, int quantity)
     {

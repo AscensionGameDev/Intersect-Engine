@@ -389,7 +389,7 @@ internal sealed partial class PacketHandler
     {
         var id = packet.Id;
         var deleted = packet.Deleted;
-        var json = "";
+        var json = string.Empty;
         if (!packet.Deleted)
         {
             json = packet.Data;

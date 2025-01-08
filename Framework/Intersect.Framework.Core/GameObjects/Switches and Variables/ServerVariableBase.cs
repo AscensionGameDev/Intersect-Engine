@@ -25,14 +25,14 @@ public partial class ServerVariableBase : VariableDescriptor<ServerVariableBase>
     public string TextId { get; set; }
 
     // TODO(0.8): Rename this to DataType
-    public VariableDataType Type { get; set; } = VariableDataType.Boolean;
+    public new VariableDataType Type { get; set; } = VariableDataType.Boolean;
 
     [NotMapped]
     [JsonIgnore]
-    public VariableValue Value { get; set; } = new VariableValue();
+    public VariableValue Value { get; set; } = new();
 
     [NotMapped]
-    [JsonProperty("Value")]
+    [JsonProperty(nameof(Value))]
     public dynamic ValueData
     {
         get => Value.Value;

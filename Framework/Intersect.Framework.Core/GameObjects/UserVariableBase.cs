@@ -25,8 +25,8 @@ public partial class UserVariableBase : VariableDescriptor<UserVariableBase>, IV
 
     // TODO rename this
     [Column("DataType")]
-    public VariableDataType Type { get; set; } = VariableDataType.Boolean;
+    public new VariableDataType Type { get; set; } = VariableDataType.Boolean;
 
     /// <inheritdoc />
-    public string Folder { get; set; } = "";
+    public string Folder { get; set; } = string.Empty;
 }

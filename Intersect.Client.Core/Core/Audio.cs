@@ -11,7 +11,7 @@ namespace Intersect.Client.Core;
 
 public static partial class Audio
 {
-    private static string sCurrentSong = "";
+    private static string sCurrentSong = string.Empty;
 
     private static int sFadeRate;
 
@@ -29,7 +29,7 @@ public static partial class Audio
     private static bool sQueuedLoop;
 
     //Music
-    private static string? sQueuedMusic = "";
+    private static string? sQueuedMusic = string.Empty;
 
     private static GameAudioInstance? sMyMusic { get; set; }
 
@@ -211,7 +211,7 @@ public static partial class Audio
             sMyMusic.State == GameAudioInstance.AudioInstanceState.Paused ||
             sMyMusic.GetVolume() == 0)
         {
-            sCurrentSong = "";
+            sCurrentSong = string.Empty;
             sMyMusic.Stop();
             sMyMusic.Dispose();
             sMyMusic = null;

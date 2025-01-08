@@ -6,10 +6,10 @@ namespace Intersect.GameObjects;
 
 public partial class TimeBase
 {
-    private static TimeBase sTimeBase = new TimeBase();
+    private static TimeBase sTimeBase = new();
 
     [NotMapped]
-    public Color[] DaylightHues;
+    public Color[]? DaylightHues { get; set; }
 
     public TimeBase()
     {

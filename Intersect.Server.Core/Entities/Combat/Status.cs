@@ -10,7 +10,7 @@ namespace Intersect.Server.Entities.Combat;
 public partial class Status
 {
 
-    public string Data = "";
+    public string Data = string.Empty;
 
     public long Duration;
 

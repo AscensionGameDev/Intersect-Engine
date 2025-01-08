@@ -142,7 +142,7 @@ public partial class EventCommandChangeItems : UserControl
         else
         {
             cmbVariable.SelectedIndex = -1;
-            cmbVariable.Text = "";
+            cmbVariable.Text = string.Empty;
         }
     }
 

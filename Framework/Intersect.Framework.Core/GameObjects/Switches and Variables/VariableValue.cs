@@ -24,7 +24,7 @@ public partial class VariableValue
     [JsonIgnore]
     public JObject Json
     {
-        get => new JObject
+        get => new()
         {
             {nameof(Type), (byte) Type},
             {nameof(Value), Value}

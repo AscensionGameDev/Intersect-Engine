@@ -27,7 +27,7 @@ public partial class EventGraphic
     public EventGraphic()
     {
         Type = EventGraphicType.None;
-        Filename = "";
+        Filename = string.Empty;
         X = -1;
         Y = -1;
         Width = -1;

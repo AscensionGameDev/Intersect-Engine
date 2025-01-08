@@ -16,9 +16,9 @@ namespace Intersect.GameObjects;
 public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
 {
     [NotMapped]
-    public ConditionLists UsageRequirements = new ConditionLists();
+    public ConditionLists UsageRequirements { get; set; } = new();
 
-    public string CannotUseMessage { get; set; } = "";
+    public string CannotUseMessage { get; set; } = string.Empty;
 
     public ItemBase()
     {
@@ -170,15 +170,15 @@ public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
         set => EventId = value?.Id ?? Guid.Empty;
     }
 
-    public string Description { get; set; } = "";
+    public string Description { get; set; } = string.Empty;
 
-    public string FemalePaperdoll { get; set; } = "";
+    public string FemalePaperdoll { get; set; } = string.Empty;
 
     public ItemType ItemType { get; set; }
 
-    public string MalePaperdoll { get; set; } = "";
+    public string MalePaperdoll { get; set; } = string.Empty;
 
-    public string Icon { get; set; } = "";
+    public string Icon { get; set; } = string.Empty;
 
     /// <summary>
     /// The database compatible version of <see cref="Color"/>
@@ -330,7 +330,7 @@ public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
     public string EffectsJson
     {
         get => JsonConvert.SerializeObject(Effects);
-        set => Effects = JsonConvert.DeserializeObject<List<EffectData>>(value ?? "") ?? new List<EffectData>();
+        set => Effects = JsonConvert.DeserializeObject<List<EffectData>>(value ?? "") ?? [];
     }
 
     public EquipmentProperties? EquipmentProperties { get; set; }
@@ -353,7 +353,7 @@ public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
     }
 
     [NotMapped, JsonIgnore]
-    public Dictionary<ItemEventTriggers, Guid> EventTriggers { get; set; } = new Dictionary<ItemEventTriggers, Guid>();
+    public Dictionary<ItemEventTriggers, Guid> EventTriggers { get; set; } = new();
 
     public bool TryGetRangeFor(Stat stat, [NotNullWhen(true)] out ItemRange? range)
     {
@@ -428,7 +428,7 @@ public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
     }
 
     /// <inheritdoc />
-    public string Folder { get; set; } = "";
+    public string Folder { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets an array of all items sharing the provided cooldown group.
@@ -442,7 +442,7 @@ public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
         // No point looking for nothing.
         if (string.IsNullOrWhiteSpace(cooldownGroup))
         {
-            return Array.Empty<ItemBase>();
+            return [];
         }
 
         return Lookup.Values.OfType<ItemBase>()
@@ -482,7 +482,7 @@ public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
         VitalsRegen = new long[Enum.GetValues<Vital>().Length];
         PercentageVitalsGiven = new int[Enum.GetValues<Vital>().Length];
         Consumable = new ConsumableData();
-        Effects = new List<EffectData>();
+        Effects = [];
         Color = new Color(255, 255, 255, 255);
     }
 }

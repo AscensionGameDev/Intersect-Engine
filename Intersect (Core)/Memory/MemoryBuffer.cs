@@ -280,7 +280,7 @@ public partial class MemoryBuffer : MemoryStream, IBuffer
         switch (length)
         {
             case 0:
-                value = "";
+                value = string.Empty;
 
                 break;
 

@@ -12,7 +12,7 @@ public partial class EventBase : DatabaseObject<EventBase>, IFolderable
     private string mCachedPagesData = null;
 
     //Event Pages
-    private List<EventPage> mPages = new List<EventPage>();
+    private List<EventPage> mPages = [];
 
     //EF Parameterless Constructor
     public EventBase()
@@ -33,20 +33,20 @@ public partial class EventBase : DatabaseObject<EventBase>, IFolderable
         SpawnY = y;
         CommonEvent = isCommon;
         Global = isGlobal;
-        Pages = new List<EventPage> { new EventPage() };
+        Pages = [new()];
     }
 
     public EventBase(Guid id, bool isCommon = false) : base(id)
     {
         Name = "New Event";
-        Pages = new List<EventPage>();
+        Pages = [];
         CommonEvent = isCommon;
     }
 
     public EventBase(Guid id, EventBase copy) : base(id)
     {
         Name = "New Event";
-        Pages = new List<EventPage>();
+        Pages = [];
         Load(copy.JsonData);
         CommonEvent = copy.CommonEvent;
     }
@@ -55,7 +55,7 @@ public partial class EventBase : DatabaseObject<EventBase>, IFolderable
     {
         Name = "New Event";
         CommonEvent = isCommon;
-        Pages = new List<EventPage>();
+        Pages = [];
         Load(json);
     }
 
@@ -135,7 +135,7 @@ public partial class EventBase : DatabaseObject<EventBase>, IFolderable
     );
 
     /// <inheritdoc />
-    public string Folder { get; set; } = "";
+    public string Folder { get; set; } = string.Empty;
 
     public static new Guid IdFromList(int listIndex)
     {

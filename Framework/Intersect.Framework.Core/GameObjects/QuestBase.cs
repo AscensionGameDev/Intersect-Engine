@@ -41,14 +41,14 @@ public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
     [NotMapped]
     [JsonIgnore]
     //Events that need to be added for the quest, int is task id
-    public Dictionary<Guid, EventBase> AddEvents = new Dictionary<Guid, EventBase>();
+    public Dictionary<Guid, EventBase> AddEvents { get; set; } = [];
 
     [NotMapped]
     //Events that need to be removed for the quest
-    public List<Guid> RemoveEvents = new List<Guid>();
+    public List<Guid> RemoveEvents { get; set; } = [];
 
     [NotMapped]
-    public List<QuestTask> Tasks = new List<QuestTask>();
+    public List<QuestTask> Tasks { get; set; } = [];
 
     [JsonConstructor]
     public QuestBase(Guid Id) : base(Id)
@@ -63,13 +63,13 @@ public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
     }
 
     //Basic Quest Properties
-    public string StartDescription { get; set; } = "";
+    public string StartDescription { get; set; } = string.Empty;
 
-    public string BeforeDescription { get; set; } = "";
+    public string BeforeDescription { get; set; } = string.Empty;
 
-    public string EndDescription { get; set; } = "";
+    public string EndDescription { get; set; } = string.Empty;
 
-    public string InProgressDescription { get; set; } = "";
+    public string InProgressDescription { get; set; } = string.Empty;
 
     public bool LogAfterComplete { get; set; }
 
@@ -89,7 +89,7 @@ public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
     }
 
     [NotMapped]
-    public ConditionLists Requirements { get; set; } = new ConditionLists();
+    public ConditionLists Requirements { get; set; } = new();
 
     [Column("StartEvent")]
     public Guid StartEventId { get; set; }
@@ -149,10 +149,10 @@ public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
     //Editor Only
     [NotMapped]
     [JsonIgnore]
-    public Dictionary<Guid, Guid> OriginalTaskEventIds { get; set; } = new Dictionary<Guid, Guid>();
+    public Dictionary<Guid, Guid> OriginalTaskEventIds { get; set; } = new();
 
     /// <inheritdoc />
-    public string Folder { get; set; } = "";
+    public string Folder { get; set; } = string.Empty;
 
     /// <summary>
     /// Hides this quest from the quest log if it has not been started and cannot be started due to the requiremetns/conditions
@@ -162,17 +162,17 @@ public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
     /// <summary>
     /// Quest category in the quest log when this quest hasn't been started yet
     /// </summary>
-    public string UnstartedCategory { get; set; } = "";
+    public string UnstartedCategory { get; set; } = string.Empty;
 
     /// <summary>
     /// Quest category in the quest log when this quest is in progress
     /// </summary>
-    public string InProgressCategory { get; set; } = "";
+    public string InProgressCategory { get; set; } = string.Empty;
 
     /// <summary>
     /// Quest category in the quest log when this quest has been completed
     /// </summary>
-    public string CompletedCategory { get; set; } = "";
+    public string CompletedCategory { get; set; } = string.Empty;
 
     /// <summary>
     /// Order priority of this quest within the quest log
@@ -234,11 +234,11 @@ public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
 
         public int Quantity { get; set; }
 
-        public string Description { get; set; } = "";
+        public string Description { get; set; } = string.Empty;
 
         public string GetTaskString(Dictionary<int, LocalizedString> descriptions)
         {
-            var taskString = "";
+            var taskString = string.Empty;
             switch (Objective)
             {
                 case QuestObjective.EventDriven: //Event Driven

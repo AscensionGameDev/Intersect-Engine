@@ -315,9 +315,9 @@ public partial class Dragger : Base
 
     public void ClearSounds()
     {
-        mHoverSound = "";
-        mMouseDownSound = "";
-        mMouseUpSound = "";
+        mHoverSound = string.Empty;
+        mMouseDownSound = string.Empty;
+        mMouseUpSound = string.Empty;
     }
 
 }

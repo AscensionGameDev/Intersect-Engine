@@ -1,7 +1,10 @@
-﻿using Intersect.Enums;
+﻿using System.Net;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
+using Intersect.Models;
 using Intersect.Server.Web.RestApi.Payloads;
+using Intersect.Server.Web.RestApi.Types;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,36 +15,39 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
     public sealed partial class GameObjectController : IntersectController
     {
         [HttpGet("{gameObjectType}")]
-        public object List(GameObjectType gameObjectType, [FromQuery] PagingInfo pageInfo)
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(DataPage<IDatabaseObject>), (int)HttpStatusCode.OK, "application/json")]
+        public IActionResult List(GameObjectType gameObjectType, [FromQuery] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
             pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
 
-            var lookup = GameObjectTypeExtensions.GetLookup(gameObjectType);
-
-            if (lookup != null)
+            if (!gameObjectType.TryGetLookup(out var lookup))
             {
-                var entries = gameObjectType == GameObjectType.Event
-                    ? lookup.Where(obj => ((EventBase) obj.Value).CommonEvent)
-                        .OrderBy(obj => obj.Value.Name)
-                        .Skip(pageInfo.Page * pageInfo.Count)
-                        .Take(pageInfo.Count)
-                    : lookup.OrderBy(obj => obj.Value.Name)
-                        .Skip(pageInfo.Page * pageInfo.Count)
-                        .Take(pageInfo.Count);
-
-                return new
-                {
-                    total = gameObjectType == GameObjectType.Event
-                        ? lookup.Where(obj => ((EventBase) obj.Value).CommonEvent).Count()
-                        : lookup.Count(),
-                    pageInfo.Page,
-                    count = entries.Count(),
-                    entries
-                };
+                return BadRequest($"Invalid {nameof(GameObjectType)} '{gameObjectType}'");
             }
 
-            return BadRequest();
+            var baseEnumerable = gameObjectType == GameObjectType.Event
+                ? lookup.Where(obj => ((EventBase)obj.Value).CommonEvent).Select(pair => pair.Value)
+                : lookup.Values;
+
+            var entries = baseEnumerable.OrderBy(obj => obj.Name)
+                .Skip(pageInfo.Page * pageInfo.Count)
+                .Take(pageInfo.Count)
+                .ToArray();
+
+            return Ok(
+                new DataPage<IDatabaseObject>
+                {
+                    Total = gameObjectType == GameObjectType.Event
+                        ? lookup.Count(obj => ((EventBase)obj.Value).CommonEvent)
+                        : lookup.Count,
+                    Page = pageInfo.Page,
+                    Count = entries.Length,
+                    Values = entries,
+                }
+            );
         }
 
         [HttpGet("{gameObjectType}/names")]

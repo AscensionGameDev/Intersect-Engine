@@ -190,7 +190,7 @@ public partial class MultilineTextBox : Label
     {
         get
         {
-            var ret = "";
+            var ret = string.Empty;
             for (var i = 0; i < TotalLines; i++)
             {
                 ret += mTextLines[i];
@@ -1142,7 +1142,7 @@ public partial class MultilineTextBox : Label
         var currLine = mTextLines[cursorPosition.Y]
             .Substring(0, Math.Min(cursorPosition.X, mTextLines[cursorPosition.Y].Length));
 
-        var sub = "";
+        var sub = string.Empty;
         for (var i = 0; i < cursorPosition.Y; i++)
         {
             sub += mTextLines[i] + "\n";

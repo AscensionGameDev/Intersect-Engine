@@ -303,7 +303,7 @@ public partial class StreamWrapper : Stream, IBuffer
         switch (length)
         {
             case 0:
-                value = "";
+                value = string.Empty;
 
                 break;
 

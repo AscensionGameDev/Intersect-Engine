@@ -181,7 +181,7 @@ public partial class Updater
                             }
 
                             //Otherwise let's compare hashes and potentially add it to the update list
-                            var md5Hash = "";
+                            var md5Hash = string.Empty;
                             using (var md5 = MD5.Create())
                             {
                                 using (var fs = File.OpenRead(file.Path))
@@ -563,7 +563,7 @@ public partial class Updater
         }
 
         //Check MD5
-        var md5Hash = "";
+        var md5Hash = string.Empty;
         using (var md5 = MD5.Create())
         {
             using (var stream = new MemoryStream(fileData))

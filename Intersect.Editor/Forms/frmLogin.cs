@@ -25,7 +25,7 @@ public partial class FrmLogin : Form
 
     private bool mOptionsLoaded = false;
 
-    private string mSavedPassword = "";
+    private string mSavedPassword = string.Empty;
 
     public FrmLogin()
     {
@@ -212,8 +212,8 @@ public partial class FrmLogin : Form
 
         if (mSavedPassword != "")
         {
-            mSavedPassword = "";
-            txtPassword.Text = "";
+            mSavedPassword = string.Empty;
+            txtPassword.Text = string.Empty;
             chkRemember.Checked = false;
         }
     }
@@ -227,9 +227,9 @@ public partial class FrmLogin : Form
 
         if (mSavedPassword != "")
         {
-            mSavedPassword = "";
-            txtUsername.Text = "";
-            txtPassword.Text = "";
+            mSavedPassword = string.Empty;
+            txtUsername.Text = string.Empty;
+            txtPassword.Text = string.Empty;
             chkRemember.Checked = false;
         }
     }

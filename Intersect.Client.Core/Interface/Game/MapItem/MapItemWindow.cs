@@ -167,7 +167,7 @@ public partial class MapItemWindow
             Items[i].Setup();
 
             mValues.Add(new Label(Items[i].Container, "MapItemValue"));
-            mValues[i].Text = "";
+            mValues[i].Text = string.Empty;
 
             Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 

@@ -287,10 +287,10 @@ public partial class Button : Label
 
     public void ClearSounds()
     {
-        mMouseUpSound = "";
-        mMouseDownSound = "";
-        mHoverSound = "";
-        mClickSound = "";
+        mMouseUpSound = string.Empty;
+        mMouseDownSound = string.Empty;
+        mHoverSound = string.Empty;
+        mClickSound = string.Empty;
     }
 
     /// <summary>

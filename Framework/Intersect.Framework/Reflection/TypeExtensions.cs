@@ -55,6 +55,63 @@ public static partial class TypeExtensions
             .ToArray();
     }
 
+    public static bool IsOwnProperty(this Type type, PropertyInfo propertyInfo) =>
+        !propertyInfo.IsPropertyDeclaredInBaseTypeOrInterface(type);
+
+    public static bool TryFindProperty(
+        this Type type,
+        string propertyName,
+        [NotNullWhen(true)] out PropertyInfo? propertyInfo
+    ) => TryFindProperty(
+        type,
+        propertyName,
+        BindingFlags.Instance | BindingFlags.Public,
+        out propertyInfo
+    );
+
+    public static bool TryFindProperty(
+        this Type type,
+        string propertyName,
+        BindingFlags bindingFlags,
+        [NotNullWhen(true)] out PropertyInfo? propertyInfo
+    )
+    {
+        try
+        {
+            propertyInfo = type.GetProperty(propertyName, bindingFlags);
+        }
+        catch (AmbiguousMatchException)
+        {
+            var matchingProperties = type.GetProperties(bindingFlags).Where(
+                propertyInfo => string.Equals(propertyName, propertyInfo.Name, StringComparison.Ordinal)
+            ).ToArray();
+            propertyInfo = matchingProperties.FirstOrDefault(propertyInfo => propertyInfo.DeclaringType == type) ??
+                           matchingProperties.First();
+        }
+
+        if (!type.IsInterface || propertyInfo != default)
+        {
+            return propertyInfo != default;
+        }
+
+        if (!bindingFlags.HasFlag(BindingFlags.Public) || !bindingFlags.HasFlag(BindingFlags.Instance))
+        {
+            return propertyInfo != default;
+        }
+
+        var baseInterfaceTypes = type.GetInterfaces();
+        foreach (var baseInterfaceType in baseInterfaceTypes)
+        {
+            propertyInfo = baseInterfaceType.GetProperty(propertyName);
+            if (propertyInfo != default)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static string QualifiedGenericName(this Type type) =>
         $"{type.Name}<{string.Join(", ", type.GenericTypeArguments.Select(parameterType => parameterType.Name))}>";
 
@@ -292,6 +349,16 @@ public static partial class TypeExtensions
             string.Format(ReflectionStrings.TypeExtensions_FindGenericTypeParameters_NotGeneric, type.FullName),
             nameof(type)
         );
+    }
+
+    public static Type[] GetUniqueInterfaces(this Type type)
+    {
+        var interfaceTypes = type.GetInterfaces().ToHashSet();
+        var duplicateInterfaces =
+            interfaceTypes.SelectMany(interfaceType => interfaceType.GetInterfaces()).Distinct().ToArray();
+        var uniqueInterfaces = interfaceTypes.Except(duplicateInterfaces)
+            .Except(type.BaseType?.GetUniqueInterfaces() ?? []).ToArray();
+        return uniqueInterfaces;
     }
 
     public static Type[] FindGenericTypeParameters(this Type type) => type.FindGenericTypeParameters(true);

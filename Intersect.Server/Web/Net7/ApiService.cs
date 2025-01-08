@@ -5,6 +5,7 @@ using System.Threading.RateLimiting;
 using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Logging;
+using Intersect.Models;
 using Intersect.Server.Core;
 using Intersect.Server.Localization;
 using Intersect.Server.Web.Configuration;
@@ -167,8 +168,7 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                         );
                 sgo.AddDocumentFilterInstance(documentFilterTokenRequest);
                 sgo.AddSchemaFilterInstance(documentFilterTokenRequest.CreateSchemaFilter());
-                // sgo.AddDocumentFilterInstance(new LookupKeyDocumentFilter());
-                // sgo.AddSchemaFilterInstance(new LookupKeySchemaFilter());
+                sgo.AddSchemaFilterInstance(new GameObjectTypeSchemaFilter());
                 sgo.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
                 sgo.UseOneOfForPolymorphism();
                 sgo.UseAllOfForInheritance();
@@ -178,6 +178,7 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                     {
                         Type = "string",
                         Description = $"An id or a name",
+                        // TODO: Multiple examples? It doesn't look like the C# API exposes this but it exists according to the Swagger documentation
                         // Example = new OpenApiString($"test or {new Guid("01234567-89ab-cdef-0123-456789abcdef")}"),
                         Example = new OpenApiString("test"),
                         OneOf =
@@ -195,23 +196,6 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                         ],
                     }
                 );
-                // sgo.SchemaGeneratorOptions.CustomTypeMappings.Add(
-                //     typeof(LookupKey),
-                //     () => new OpenApiSchema
-                //     {
-                //         OneOf =
-                //         [
-                //             new OpenApiSchema
-                //             {
-                //                 Type = "string", Format = "uuid",
-                //             },
-                //             new OpenApiSchema
-                //             {
-                //                 Type = "string", Format = "username",
-                //             },
-                //         ],
-                //     }
-                // );
             });
         builder.Services.AddSwaggerGenNewtonsoftSupport();
 

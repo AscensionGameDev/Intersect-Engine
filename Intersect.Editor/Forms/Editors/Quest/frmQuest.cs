@@ -611,7 +611,7 @@ public partial class FrmQuest : EditorForm
 
     private void btnAddFolder_Click(object sender, EventArgs e)
     {
-        var folderName = "";
+        var folderName = string.Empty;
         var result = DarkInputBox.ShowInformation(
             Strings.QuestEditor.folderprompt, Strings.QuestEditor.foldertitle, ref folderName,
             DarkDialogButton.OkCancel

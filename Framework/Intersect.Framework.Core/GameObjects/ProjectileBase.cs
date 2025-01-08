@@ -11,7 +11,7 @@ public partial class ProjectileBase : DatabaseObject<ProjectileBase>, IFolderabl
     public const int MAX_PROJECTILE_DIRECTIONS = 8;
 
     public static readonly int[] ProjectileRotationDir =
-    {
+    [
         0, 1, 2, 3, 4, 5, 7, 6, // Up
         1, 0, 3, 2, 6, 7, 5, 4, // Down
         2, 3, 1, 0, 7, 4, 6, 5, // Left
@@ -19,18 +19,18 @@ public partial class ProjectileBase : DatabaseObject<ProjectileBase>, IFolderabl
         4, 6, 7, 5, 2, 0, 1, 3, // UpLeft
         5, 7, 4, 6, 0, 3, 2, 1, // UpRight
         6, 4, 5, 7, 3, 1, 0, 2, // DownRight
-        7, 5, 6, 4, 1, 2, 3, 0 // DownLeft
-    };
+        7, 5, 6, 4, 1, 2, 3, 0, // DownLeft
+    ];
 
     public const int SPAWN_LOCATIONS_HEIGHT = 5;
 
     public const int SPAWN_LOCATIONS_WIDTH = 5;
 
     [NotMapped]
-    public List<ProjectileAnimation> Animations = new List<ProjectileAnimation>();
+    public List<ProjectileAnimation> Animations { get; set; } = [];
 
     [NotMapped]
-    public Location[,] SpawnLocations = new Location[
+    public Location[,] SpawnLocations { get; set; } = new Location[
         SPAWN_LOCATIONS_WIDTH,
         SPAWN_LOCATIONS_HEIGHT
     ];
@@ -117,7 +117,7 @@ public partial class ProjectileBase : DatabaseObject<ProjectileBase>, IFolderabl
     }
 
     [NotMapped]
-    public List<GrappleOption> GrappleHookOptions = new List<GrappleOption>();
+    public List<GrappleOption> GrappleHookOptions { get; set; } = [];
 
     [JsonIgnore]
     [Column("GrappleHookOptions")]
@@ -126,7 +126,7 @@ public partial class ProjectileBase : DatabaseObject<ProjectileBase>, IFolderabl
         get => JsonConvert.SerializeObject(GrappleHookOptions);
         set
         {
-            GrappleHookOptions = JsonConvert.DeserializeObject<List<GrappleOption>>(value ?? "") ?? new List<GrappleOption>();
+            GrappleHookOptions = JsonConvert.DeserializeObject<List<GrappleOption>>(value ?? "") ?? [];
         }
     }
 
@@ -144,7 +144,7 @@ public partial class ProjectileBase : DatabaseObject<ProjectileBase>, IFolderabl
     }
 
     /// <inheritdoc />
-    public string Folder { get; set; } = "";
+    public string Folder { get; set; } = string.Empty;
 }
 
 public partial class Location

@@ -1684,7 +1684,7 @@ internal sealed partial class PacketHandler
         var id = packet.Id;
         var another = packet.AnotherFollowing;
         var deleted = packet.Deleted;
-        var json = "";
+        var json = string.Empty;
         if (!deleted)
         {
             json = packet.Data;

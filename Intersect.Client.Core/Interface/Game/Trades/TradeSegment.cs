@@ -62,7 +62,7 @@ public partial class TradeSegment
             Items[i].Setup();
 
             Values.Add(new Label(Items[i].Container, "TradeValue"));
-            Values[i].Text = "";
+            Values[i].Text = string.Empty;
 
             Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
