@@ -30,189 +30,199 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         /// </summary>
         private void InitializeComponent()
         {
-            this.grpChatboxText = new DarkUI.Controls.DarkGroupBox();
-            this.lblCommands = new System.Windows.Forms.Label();
-            this.cmbChannel = new DarkUI.Controls.DarkComboBox();
-            this.lblChannel = new System.Windows.Forms.Label();
-            this.cmbColor = new DarkUI.Controls.DarkComboBox();
-            this.lblColor = new System.Windows.Forms.Label();
-            this.txtAddText = new DarkUI.Controls.DarkTextBox();
-            this.lblText = new System.Windows.Forms.Label();
-            this.btnCancel = new DarkUI.Controls.DarkButton();
-            this.btnSave = new DarkUI.Controls.DarkButton();
-            this.chkShowChatBubble = new DarkUI.Controls.DarkCheckBox();
-            this.chkSendToAllPlayers = new DarkUI.Controls.DarkCheckBox();
-            this.grpChatboxText.SuspendLayout();
-            this.SuspendLayout();
-            // 
-            // chkchkSendToAllPlayers
-            // 
-            this.chkSendToAllPlayers.Location = new System.Drawing.Point(130, 236);
-            this.chkSendToAllPlayers.Name = "chkSendToAllPlayers";
-            this.chkSendToAllPlayers.Size = new System.Drawing.Size(120, 17);
-            this.chkSendToAllPlayers.TabIndex = 58;
-            this.chkSendToAllPlayers.Text = "Send to All Players";
+            grpChatboxText = new DarkGroupBox();
+            chkShowChatBubble = new DarkCheckBox();
+            chkShowChatBubbleInProximity = new DarkCheckBox();
+            lblCommands = new Label();
+            cmbChannel = new DarkComboBox();
+            lblChannel = new Label();
+            cmbColor = new DarkComboBox();
+            lblColor = new Label();
+            txtAddText = new DarkTextBox();
+            lblText = new Label();
+            btnCancel = new DarkButton();
+            btnSave = new DarkButton();
+            grpChatboxText.SuspendLayout();
+            SuspendLayout();
             // 
             // grpChatboxText
             // 
-            this.grpChatboxText.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.grpChatboxText.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpChatboxText.Controls.Add(this.chkShowChatBubble);
-            this.grpChatboxText.Controls.Add(this.chkSendToAllPlayers);
-            this.grpChatboxText.Controls.Add(this.lblCommands);
-            this.grpChatboxText.Controls.Add(this.cmbChannel);
-            this.grpChatboxText.Controls.Add(this.lblChannel);
-            this.grpChatboxText.Controls.Add(this.cmbColor);
-            this.grpChatboxText.Controls.Add(this.lblColor);
-            this.grpChatboxText.Controls.Add(this.txtAddText);
-            this.grpChatboxText.Controls.Add(this.lblText);
-            this.grpChatboxText.Controls.Add(this.btnCancel);
-            this.grpChatboxText.Controls.Add(this.btnSave);
-            this.grpChatboxText.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpChatboxText.Location = new System.Drawing.Point(3, 3);
-            this.grpChatboxText.Name = "grpChatboxText";
-            this.grpChatboxText.Size = new System.Drawing.Size(259, 295);
-            this.grpChatboxText.TabIndex = 17;
-            this.grpChatboxText.TabStop = false;
-            this.grpChatboxText.Text = "Add Chatbox Text";
-            // 
-            // lblCommands
-            // 
-            this.lblCommands.AutoSize = true;
-            this.lblCommands.BackColor = System.Drawing.Color.Transparent;
-            this.lblCommands.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCommands.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.lblCommands.Location = new System.Drawing.Point(157, 22);
-            this.lblCommands.Name = "lblCommands";
-            this.lblCommands.Size = new System.Drawing.Size(84, 13);
-            this.lblCommands.TabIndex = 35;
-            this.lblCommands.Text = "Chat Commands";
-            this.lblCommands.Click += new System.EventHandler(this.lblCommands_Click);
-            // 
-            // cmbChannel
-            // 
-            this.cmbChannel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbChannel.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbChannel.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbChannel.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbChannel.DrawDropdownHoverOutline = false;
-            this.cmbChannel.DrawFocusRectangle = false;
-            this.cmbChannel.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbChannel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbChannel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbChannel.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbChannel.FormattingEnabled = true;
-            this.cmbChannel.Items.AddRange(new object[] {
-            "Player",
-            "Local",
-            "Global"});
-            this.cmbChannel.Location = new System.Drawing.Point(7, 206);
-            this.cmbChannel.Name = "cmbChannel";
-            this.cmbChannel.Size = new System.Drawing.Size(246, 21);
-            this.cmbChannel.TabIndex = 26;
-            this.cmbChannel.Text = "Player";
-            this.cmbChannel.TextPadding = new System.Windows.Forms.Padding(2);
-            // 
-            // lblChannel
-            // 
-            this.lblChannel.AutoSize = true;
-            this.lblChannel.Location = new System.Drawing.Point(6, 190);
-            this.lblChannel.Name = "lblChannel";
-            this.lblChannel.Size = new System.Drawing.Size(49, 13);
-            this.lblChannel.TabIndex = 25;
-            this.lblChannel.Text = "Channel:";
-            // 
-            // cmbColor
-            // 
-            this.cmbColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbColor.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbColor.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbColor.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbColor.DrawDropdownHoverOutline = false;
-            this.cmbColor.DrawFocusRectangle = false;
-            this.cmbColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbColor.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbColor.FormattingEnabled = true;
-            this.cmbColor.Location = new System.Drawing.Point(7, 162);
-            this.cmbColor.Name = "cmbColor";
-            this.cmbColor.Size = new System.Drawing.Size(246, 21);
-            this.cmbColor.TabIndex = 24;
-            this.cmbColor.Text = null;
-            this.cmbColor.TextPadding = new System.Windows.Forms.Padding(2);
-            // 
-            // lblColor
-            // 
-            this.lblColor.AutoSize = true;
-            this.lblColor.Location = new System.Drawing.Point(6, 146);
-            this.lblColor.Name = "lblColor";
-            this.lblColor.Size = new System.Drawing.Size(34, 13);
-            this.lblColor.TabIndex = 23;
-            this.lblColor.Text = "Color:";
-            // 
-            // txtAddText
-            // 
-            this.txtAddText.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.txtAddText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtAddText.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtAddText.Location = new System.Drawing.Point(7, 38);
-            this.txtAddText.Multiline = true;
-            this.txtAddText.Name = "txtAddText";
-            this.txtAddText.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.txtAddText.Size = new System.Drawing.Size(246, 100);
-            this.txtAddText.TabIndex = 22;
-            // 
-            // lblText
-            // 
-            this.lblText.AutoSize = true;
-            this.lblText.Location = new System.Drawing.Point(4, 22);
-            this.lblText.Name = "lblText";
-            this.lblText.Size = new System.Drawing.Size(31, 13);
-            this.lblText.TabIndex = 21;
-            this.lblText.Text = "Text:";
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.Location = new System.Drawing.Point(89, 264);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 20;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-            // 
-            // btnSave
-            // 
-            this.btnSave.Location = new System.Drawing.Point(7, 264);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 19;
-            this.btnSave.Text = "Ok";
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            grpChatboxText.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            grpChatboxText.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpChatboxText.Controls.Add(chkShowChatBubble);
+            grpChatboxText.Controls.Add(chkShowChatBubbleInProximity);
+            grpChatboxText.Controls.Add(lblCommands);
+            grpChatboxText.Controls.Add(cmbChannel);
+            grpChatboxText.Controls.Add(lblChannel);
+            grpChatboxText.Controls.Add(cmbColor);
+            grpChatboxText.Controls.Add(lblColor);
+            grpChatboxText.Controls.Add(txtAddText);
+            grpChatboxText.Controls.Add(lblText);
+            grpChatboxText.Controls.Add(btnCancel);
+            grpChatboxText.Controls.Add(btnSave);
+            grpChatboxText.ForeColor = System.Drawing.Color.Gainsboro;
+            grpChatboxText.Location = new System.Drawing.Point(4, 3);
+            grpChatboxText.Margin = new Padding(4, 3, 4, 3);
+            grpChatboxText.Name = "grpChatboxText";
+            grpChatboxText.Padding = new Padding(4, 3, 4, 3);
+            grpChatboxText.Size = new Size(302, 368);
+            grpChatboxText.TabIndex = 17;
+            grpChatboxText.TabStop = false;
+            grpChatboxText.Text = "Add Chatbox Text";
             // 
             // chkShowChatBubble
             // 
-            this.chkShowChatBubble.Location = new System.Drawing.Point(7, 236);
-            this.chkShowChatBubble.Name = "chkShowChatBubble";
-            this.chkShowChatBubble.Size = new System.Drawing.Size(111, 17);
-            this.chkShowChatBubble.TabIndex = 57;
-            this.chkShowChatBubble.Text = "Show Chat Bubble";
+            chkShowChatBubble.Location = new System.Drawing.Point(8, 272);
+            chkShowChatBubble.Margin = new Padding(4, 3, 4, 3);
+            chkShowChatBubble.Name = "chkShowChatBubble";
+            chkShowChatBubble.Size = new Size(130, 20);
+            chkShowChatBubble.TabIndex = 57;
+            chkShowChatBubble.Text = "Show Chat Bubble";
+            // 
+            // chkShowChatBubbleInProximity
+            // 
+            chkShowChatBubbleInProximity.Location = new System.Drawing.Point(8, 298);
+            chkShowChatBubbleInProximity.Margin = new Padding(4, 3, 4, 3);
+            chkShowChatBubbleInProximity.Name = "chkShowChatBubbleInProximity";
+            chkShowChatBubbleInProximity.Size = new Size(184, 20);
+            chkShowChatBubbleInProximity.TabIndex = 58;
+            chkShowChatBubbleInProximity.Text = "Show Chat Bubble in Proximity";
+            // 
+            // lblCommands
+            // 
+            lblCommands.AutoSize = true;
+            lblCommands.BackColor = System.Drawing.Color.Transparent;
+            lblCommands.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Underline, GraphicsUnit.Point, 0);
+            lblCommands.ForeColor = SystemColors.MenuHighlight;
+            lblCommands.Location = new System.Drawing.Point(183, 25);
+            lblCommands.Margin = new Padding(4, 0, 4, 0);
+            lblCommands.Name = "lblCommands";
+            lblCommands.Size = new Size(84, 13);
+            lblCommands.TabIndex = 35;
+            lblCommands.Text = "Chat Commands";
+            lblCommands.Click += lblCommands_Click;
+            // 
+            // cmbChannel
+            // 
+            cmbChannel.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbChannel.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbChannel.BorderStyle = ButtonBorderStyle.Solid;
+            cmbChannel.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbChannel.DrawDropdownHoverOutline = false;
+            cmbChannel.DrawFocusRectangle = false;
+            cmbChannel.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbChannel.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbChannel.FlatStyle = FlatStyle.Flat;
+            cmbChannel.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbChannel.FormattingEnabled = true;
+            cmbChannel.Items.AddRange(new object[] { "Player", "Local", "Global" });
+            cmbChannel.Location = new System.Drawing.Point(8, 238);
+            cmbChannel.Margin = new Padding(4, 3, 4, 3);
+            cmbChannel.Name = "cmbChannel";
+            cmbChannel.Size = new Size(286, 24);
+            cmbChannel.TabIndex = 26;
+            cmbChannel.Text = "Player";
+            cmbChannel.TextPadding = new Padding(2);
+            // 
+            // lblChannel
+            // 
+            lblChannel.AutoSize = true;
+            lblChannel.Location = new System.Drawing.Point(7, 219);
+            lblChannel.Margin = new Padding(4, 0, 4, 0);
+            lblChannel.Name = "lblChannel";
+            lblChannel.Size = new Size(54, 15);
+            lblChannel.TabIndex = 25;
+            lblChannel.Text = "Channel:";
+            // 
+            // cmbColor
+            // 
+            cmbColor.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbColor.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbColor.BorderStyle = ButtonBorderStyle.Solid;
+            cmbColor.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbColor.DrawDropdownHoverOutline = false;
+            cmbColor.DrawFocusRectangle = false;
+            cmbColor.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbColor.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbColor.FlatStyle = FlatStyle.Flat;
+            cmbColor.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbColor.FormattingEnabled = true;
+            cmbColor.Location = new System.Drawing.Point(8, 187);
+            cmbColor.Margin = new Padding(4, 3, 4, 3);
+            cmbColor.Name = "cmbColor";
+            cmbColor.Size = new Size(286, 24);
+            cmbColor.TabIndex = 24;
+            cmbColor.Text = null;
+            cmbColor.TextPadding = new Padding(2);
+            // 
+            // lblColor
+            // 
+            lblColor.AutoSize = true;
+            lblColor.Location = new System.Drawing.Point(7, 168);
+            lblColor.Margin = new Padding(4, 0, 4, 0);
+            lblColor.Name = "lblColor";
+            lblColor.Size = new Size(39, 15);
+            lblColor.TabIndex = 23;
+            lblColor.Text = "Color:";
+            // 
+            // txtAddText
+            // 
+            txtAddText.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            txtAddText.BorderStyle = BorderStyle.FixedSingle;
+            txtAddText.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            txtAddText.Location = new System.Drawing.Point(8, 44);
+            txtAddText.Margin = new Padding(4, 3, 4, 3);
+            txtAddText.Multiline = true;
+            txtAddText.Name = "txtAddText";
+            txtAddText.ScrollBars = ScrollBars.Horizontal;
+            txtAddText.Size = new Size(287, 115);
+            txtAddText.TabIndex = 22;
+            // 
+            // lblText
+            // 
+            lblText.AutoSize = true;
+            lblText.Location = new System.Drawing.Point(5, 25);
+            lblText.Margin = new Padding(4, 0, 4, 0);
+            lblText.Name = "lblText";
+            lblText.Size = new Size(31, 15);
+            lblText.TabIndex = 21;
+            lblText.Text = "Text:";
+            // 
+            // btnCancel
+            // 
+            btnCancel.Location = new System.Drawing.Point(104, 332);
+            btnCancel.Margin = new Padding(4, 3, 4, 3);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Padding = new Padding(6, 6, 6, 6);
+            btnCancel.Size = new Size(88, 27);
+            btnCancel.TabIndex = 20;
+            btnCancel.Text = "Cancel";
+            btnCancel.Click += btnCancel_Click;
+            // 
+            // btnSave
+            // 
+            btnSave.Location = new System.Drawing.Point(8, 332);
+            btnSave.Margin = new Padding(4, 3, 4, 3);
+            btnSave.Name = "btnSave";
+            btnSave.Padding = new Padding(6, 6, 6, 6);
+            btnSave.Size = new Size(88, 27);
+            btnSave.TabIndex = 19;
+            btnSave.Text = "Ok";
+            btnSave.Click += btnSave_Click;
             // 
             // EventCommandChatboxText
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSize = true;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.Controls.Add(this.grpChatboxText);
-            this.Name = "EventCommandChatboxText";
-            this.Size = new System.Drawing.Size(268, 304);
-            this.grpChatboxText.ResumeLayout(false);
-            this.grpChatboxText.PerformLayout();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            AutoSize = true;
+            BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            Controls.Add(grpChatboxText);
+            Margin = new Padding(4, 3, 4, 3);
+            Name = "EventCommandChatboxText";
+            Size = new Size(313, 374);
+            grpChatboxText.ResumeLayout(false);
+            grpChatboxText.PerformLayout();
+            ResumeLayout(false);
         }
 
         #endregion
@@ -228,6 +238,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private System.Windows.Forms.Label lblChannel;
         private System.Windows.Forms.Label lblCommands;
         private DarkCheckBox chkShowChatBubble;
-        private DarkCheckBox chkSendToAllPlayers;
+        private DarkCheckBox chkShowChatBubbleInProximity;
     }
 }

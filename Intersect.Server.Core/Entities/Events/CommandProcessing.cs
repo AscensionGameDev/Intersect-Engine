@@ -162,10 +162,10 @@ public static partial class CommandProcessing
 
         if (command.ShowChatBubble)
         {
-            if (command.SendToAllPlayers)
+            if (command.ShowChatBubbleInProximity)
             {
                 
-                PacketSender.SendChatBubbleToAllPlayers(
+                PacketSender.SendChatBubbleToProximity(
                         player,
                         instance.PageInstance.Id,
                         instance.PageInstance.GetEntityType(),

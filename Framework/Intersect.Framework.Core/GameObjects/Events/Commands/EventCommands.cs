@@ -181,7 +181,7 @@ public partial class AddChatboxTextCommand : EventCommand
 
     public bool ShowChatBubble { get; set; }
 
-    public bool SendToAllPlayers { get; set; }
+    public bool ShowChatBubbleInProximity { get; set; }
 
 }
 
