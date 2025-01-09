@@ -370,17 +370,18 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
                 var delta = DateTime.UtcNow - start;
 
-                return new DataPage<TradeHistory>(
-                    Total: trades.Count(),
-                    Page: page,
-                    PageSize: pageSize,
-                    Count: values.Count,
-                    Values: values,
-                    Sort: [Sort.From(nameof(TradeHistory.TimeStamp), sortDirection)],
+                return new DataPage<TradeHistory>
+                {
+                    Total = trades.Count(),
+                    Page = page,
+                    PageSize = pageSize,
+                    Count = values.Count,
+                    Values = values,
+                    Sort = [Sort.From(nameof(TradeHistory.TimeStamp), sortDirection)],
 #if DEBUG
-                    Extra: delta
+                    Extra = delta,
 #endif
-                );
+                };
             }
         }
 
