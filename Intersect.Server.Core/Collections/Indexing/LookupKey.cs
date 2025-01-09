@@ -1,10 +1,16 @@
 ﻿using System.ComponentModel;
 using System.Globalization;
+using Intersect.Server.Localization;
+using Intersect.Utilities;
 
 namespace Intersect.Server.Web.RestApi.Payloads;
 
-
-[TypeConverter(typeof(Converter))]
+// TODO: Figure out how to get LookupKey to show up in swagger.json components/schemas despite being a "string", one or more of the following commented out attributes may help
+// [SwaggerSubType(typeof(Guid))]
+// [SwaggerSubType(typeof(string))]
+// [KnownType(typeof(LookupKey))]
+// [SwaggerSchema]
+// [TypeConverter(typeof(Converter))]
 public partial struct LookupKey
 {
 
@@ -27,6 +33,36 @@ public partial struct LookupKey
         return HasId ? Id.ToString() : Name;
     }
 
+    public static bool TryParse(string input, out LookupKey lookupKey)
+    {
+        if (Guid.TryParse(input, out var guid))
+        {
+            lookupKey = new LookupKey
+            {
+                Id = guid,
+            };
+            return true;
+        }
+
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            lookupKey = default;
+            return false;
+        }
+
+        if (!FieldChecking.IsValidUsername(input, Strings.Regex.Username))
+        {
+            lookupKey = default;
+            return false;
+        }
+
+        lookupKey = new LookupKey
+        {
+            Name = input,
+        };
+        return true;
+    }
+
     public partial class Converter : TypeConverter
     {
 
@@ -41,13 +77,13 @@ public partial struct LookupKey
             {
                 return new LookupKey
                 {
-                    Id = guid
+                    Id = guid,
                 };
             }
 
             return new LookupKey
             {
-                Name = value as string
+                Name = value as string,
             };
         }
     }

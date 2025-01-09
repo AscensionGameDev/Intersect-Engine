@@ -28,6 +28,7 @@ public partial class HotbarSlot : ISlot, IPlayerOwned
     [DatabaseGenerated(DatabaseGeneratedOption.Identity), JsonIgnore]
     public Guid Id { get; private set; }
 
+    [JsonIgnore]
     public bool IsEmpty => ItemOrSpellId == default;
 
     public Guid ItemOrSpellId { get; set; } = Guid.Empty;

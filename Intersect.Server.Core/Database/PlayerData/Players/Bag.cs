@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using Intersect.GameObjects;
 using Intersect.Logging;
 using Microsoft.EntityFrameworkCore;
@@ -84,38 +85,6 @@ public partial class Bag
         Slots = slots;
     }
 
-    public static Bag GetBag(Guid id)
-    {
-        try
-        {
-            using (var context = DbInterface.CreatePlayerContext())
-            {
-                var bag = context.Bags.Where(p => p.Id == id).Include(p => p.Slots).SingleOrDefault();
-                if (bag != null)
-                {
-                    bag.Slots = bag.Slots.OrderBy(p => p.Slot).ToList();
-                    bag.ValidateSlots();
-
-                    //Remove any items from this bag that have been removed from the game
-                    foreach (var itm in bag.Slots)
-                    {
-                        if (itm.ItemId != Guid.Empty && ItemBase.Get(itm.ItemId) == null)
-                        {
-                            itm.Set(Item.None);
-                        }
-                    }
-                }
-
-                return bag;
-            }
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex);
-            return null;
-        }
-    }
-
     public void Save (bool create = false)
     {
         try
@@ -197,4 +166,40 @@ public partial class Bag
         return Slots.FindIndex(sl => sl.Id == slot.Id);
     }
 
+    public static bool TryGetBag(Guid bagId, [NotNullWhen(true)] out Bag? bag)
+    {
+        try
+        {
+            using var context = DbInterface.CreatePlayerContext();
+            bag = context.Bags.Where(bag => bag.Id == bagId).Include(bag => bag.Slots).SingleOrDefault();
+            if (bag == null)
+            {
+                return false;
+            }
+
+            bag.Slots = bag.Slots.OrderBy(p => p.Slot).ToList();
+            bag.ValidateSlots();
+
+            // Remove any items from this bag that have been removed from the game
+            // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+            foreach (var bagSlot in bag.Slots)
+            {
+                if (ItemBase.TryGet(bagSlot.ItemId, out _))
+                {
+                    continue;
+                }
+
+                bagSlot.Set(Item.None);
+            }
+
+            return true;
+
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex);
+            bag = null;
+            return false;
+        }
+    }
 }

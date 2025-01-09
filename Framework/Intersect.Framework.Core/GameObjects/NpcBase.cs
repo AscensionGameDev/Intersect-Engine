@@ -12,29 +12,57 @@ namespace Intersect.GameObjects;
 
 public partial class NpcBase : DatabaseObject<NpcBase>, IFolderable
 {
-    [NotMapped]
-    public ConditionLists AttackOnSightConditions = new ConditionLists();
+    private long[] _maxVitals = new long[Enum.GetValues<Vital>().Length];
+    private int[] _stats = new int[Enum.GetValues<Stat>().Length];
+    private long[] _vitalRegen = new long[Enum.GetValues<Vital>().Length];
 
     [NotMapped]
-    public List<Drop> Drops = new List<Drop>();
+    public ConditionLists AttackOnSightConditions { get; set; } = new();
 
     [NotMapped]
-    public long[] MaxVital = new long[Enum.GetValues<Vital>().Length];
+    public List<Drop> Drops { get; set; }= [];
+
+    [NotMapped, JsonIgnore]
+    public long[] MaxVitals
+    {
+        get => _maxVitals;
+        set => _maxVitals = value;
+    }
+
+    [JsonProperty(nameof(MaxVitals)), NotMapped]
+    public IReadOnlyDictionary<Vital, long> MaxVitalsLookup => MaxVitals.Select((value, index) => (value, index))
+        .ToDictionary(t => (Vital)t.index, t => t.value).AsReadOnly();
+
+    [JsonProperty(nameof(VitalRegen)), NotMapped]
+    public IReadOnlyDictionary<Vital, long> VitalRegenLookup => VitalRegen.Select((value, index) => (value, index))
+        .ToDictionary(t => (Vital)t.index, t => t.value).AsReadOnly();
+
+    [JsonProperty(nameof(Stats)), NotMapped]
+    public IReadOnlyDictionary<Stat, int> StatsLookup => Stats.Select((statValue, index) => (statValue, index))
+        .ToDictionary(t => (Stat)t.index, t => t.statValue).AsReadOnly();
 
     [NotMapped]
-    public ConditionLists PlayerCanAttackConditions = new ConditionLists();
+    public ConditionLists PlayerCanAttackConditions { get; set; } = new();
 
     [NotMapped]
-    public ConditionLists PlayerFriendConditions = new ConditionLists();
+    public ConditionLists PlayerFriendConditions { get; set; } = new();
+
+    [NotMapped, JsonIgnore]
+    public int[] Stats
+    {
+        get => _stats;
+        set => _stats = value;
+    }
+
+    [NotMapped, JsonIgnore]
+    public long[] VitalRegen
+    {
+        get => _vitalRegen;
+        set => _vitalRegen = value;
+    }
 
     [NotMapped]
-    public int[] Stats = new int[Enum.GetValues<Stat>().Length];
-
-    [NotMapped]
-    public long[] VitalRegen = new long[Enum.GetValues<Vital>().Length];
-
-    [NotMapped]
-    public List<SpellEffect> Immunities = new List<SpellEffect>();
+    public List<SpellEffect> Immunities { get; set; } = [];
 
     [JsonIgnore]
     [Column("Immunities")]
@@ -43,7 +71,7 @@ public partial class NpcBase : DatabaseObject<NpcBase>, IFolderable
         get => JsonConvert.SerializeObject(Immunities);
         set
         {
-            Immunities = JsonConvert.DeserializeObject<List<SpellEffect>>(value ?? "") ?? new List<SpellEffect>();
+            Immunities = JsonConvert.DeserializeObject<List<SpellEffect>>(value ?? "") ?? [];
         }
     }
 
@@ -68,7 +96,7 @@ public partial class NpcBase : DatabaseObject<NpcBase>, IFolderable
     }
 
     [NotMapped]
-    public List<Guid> AggroList { get; set; } = new List<Guid>();
+    public List<Guid> AggroList { get; set; } = [];
 
     public bool AttackAllies { get; set; }
 
@@ -182,8 +210,8 @@ public partial class NpcBase : DatabaseObject<NpcBase>, IFolderable
     [JsonIgnore]
     public string JsonMaxVital
     {
-        get => DatabaseUtils.SaveLongArray(MaxVital, Enum.GetValues<Vital>().Length);
-        set => DatabaseUtils.LoadLongArray(ref MaxVital, value, Enum.GetValues<Vital>().Length);
+        get => DatabaseUtils.SaveLongArray(_maxVitals, Enum.GetValues<Vital>().Length);
+        set => DatabaseUtils.LoadLongArray(ref _maxVitals, value, Enum.GetValues<Vital>().Length);
     }
 
     //NPC vs NPC Combat
@@ -210,9 +238,9 @@ public partial class NpcBase : DatabaseObject<NpcBase>, IFolderable
     }
 
     [NotMapped]
-    public DbList<SpellBase> Spells { get; set; } = new DbList<SpellBase>();
+    public DbList<SpellBase> Spells { get; set; } = [];
 
-    public string Sprite { get; set; } = "";
+    public string Sprite { get; set; } = string.Empty;
 
     /// <summary>
     /// The database compatible version of <see cref="Color"/>
@@ -229,14 +257,14 @@ public partial class NpcBase : DatabaseObject<NpcBase>, IFolderable
     /// Defines the ARGB color settings for this Npc.
     /// </summary>
     [NotMapped]
-    public Color Color { get; set; } = new Color(255, 255, 255, 255);
+    public Color Color { get; set; } = new(255, 255, 255, 255);
 
     [Column("Stats")]
     [JsonIgnore]
     public string JsonStat
     {
-        get => DatabaseUtils.SaveIntArray(Stats, Enum.GetValues<Stat>().Length);
-        set => DatabaseUtils.LoadIntArray(ref Stats, value, Enum.GetValues<Stat>().Length);
+        get => DatabaseUtils.SaveIntArray(_stats, Enum.GetValues<Stat>().Length);
+        set => DatabaseUtils.LoadIntArray(ref _stats, value, Enum.GetValues<Stat>().Length);
     }
 
     //Vital Regen %
@@ -244,12 +272,12 @@ public partial class NpcBase : DatabaseObject<NpcBase>, IFolderable
     [Column("VitalRegen")]
     public string RegenJson
     {
-        get => DatabaseUtils.SaveLongArray(VitalRegen, Enum.GetValues<Vital>().Length);
-        set => VitalRegen = DatabaseUtils.LoadLongArray(value, Enum.GetValues<Vital>().Length);
+        get => DatabaseUtils.SaveLongArray(_vitalRegen, Enum.GetValues<Vital>().Length);
+        set => DatabaseUtils.LoadLongArray(ref _vitalRegen, value, Enum.GetValues<Vital>().Length);
     }
 
     /// <inheritdoc />
-    public string Folder { get; set; } = "";
+    public string Folder { get; set; } = string.Empty;
 
     public SpellBase GetRandomSpell(Random random)
     {

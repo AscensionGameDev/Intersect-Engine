@@ -672,7 +672,7 @@ public partial class FrmSwitchVariable : EditorForm
 
     private void btnAddFolder_Click(object sender, EventArgs e)
     {
-        var folderName = "";
+        var folderName = string.Empty;
         var result = DarkInputBox.ShowInformation(
             Strings.VariableEditor.folderprompt, Strings.VariableEditor.foldertitle, ref folderName,
             DarkDialogButton.OkCancel

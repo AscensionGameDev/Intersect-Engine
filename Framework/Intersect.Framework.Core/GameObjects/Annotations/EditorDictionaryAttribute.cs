@@ -129,7 +129,7 @@ public class EditorDictionaryAttribute : EditorDisplayAttribute
         var dictionaryType = dictionaryObject.GetType();
         if (!_cachedFormatters.TryGetValue(dictionaryType, out var formatter))
         {
-            var createdDelegate = _methodInfoCreateWeaklyTypedDelegate.MakeGenericMethod(key.GetType()).Invoke(null, Array.Empty<object>());
+            var createdDelegate = _methodInfoCreateWeaklyTypedDelegate.MakeGenericMethod(key.GetType()).Invoke(null, []);
             if (createdDelegate is not GetStringFromLocaleDictionaryGeneric genericFormatter)
             {
                 throw new InvalidOperationException();

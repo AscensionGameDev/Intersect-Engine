@@ -17,7 +17,7 @@ public partial class QuestOfferWindow
 
     private Button mDeclineButton;
 
-    private string mQuestOfferText = "";
+    private string mQuestOfferText = string.Empty;
 
     //Controls
     private WindowControl mQuestOfferWindow;

@@ -248,7 +248,7 @@ public partial class InventoryWindow
             Items[i].Setup();
 
             mValues.Add(new Label(Items[i].Container, "InventoryItemValue"));
-            mValues[i].Text = "";
+            mValues[i].Text = string.Empty;
 
             Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 

@@ -1,8 +1,11 @@
+using System.Net;
 using System.Text.RegularExpressions;
 
 using Intersect.Enums;
+using Intersect.GameObjects;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
@@ -27,32 +30,31 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         public DataPage<User> ListPost([FromBody] PagingInfo pageInfo)
         {
             var page = Math.Max(pageInfo.Page, 0);
-            var pageSize = Math.Max(Math.Min(pageInfo.Count, PAGE_SIZE_MAX), PAGE_SIZE_MIN);
+            var pageSize = Math.Max(Math.Min(pageInfo.PageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
 
-            var values = Database.PlayerData.User.List(null, null, SortDirection.Ascending, pageInfo.Page * pageInfo.Count, pageInfo.Count, out var total);
+            var values = Database.PlayerData.User.List(null, null, SortDirection.Ascending, pageInfo.Page * pageInfo.PageSize, pageInfo.PageSize, out var total);
 
-            return new DataPage<User>
-            {
-                Total = total,
-                Page = page,
-                PageSize = pageSize,
-                Count = values.Count,
-                Values = values
-            };
+            return new DataPage<User>(
+                Total: total,
+                Page: page,
+                PageSize: pageSize,
+                Count: values.Count,
+                Values: values
+            );
         }
 
         [HttpGet]
         public DataPage<User> List(
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
-            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] int limit = PagingInfo.MaxPageSize,
             [FromQuery] string sortBy = null,
             [FromQuery] SortDirection sortDirection = SortDirection.Ascending,
             [FromQuery] string search = null
         )
         {
             page = Math.Max(page, 0);
-            pageSize = Math.Max(Math.Min(pageSize, PAGE_SIZE_MAX), PAGE_SIZE_MIN);
+            pageSize = Math.Max(Math.Min(pageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
             var values = Database.PlayerData.User.List(search?.Length > 2 ? search : null, sortBy, sortDirection, page * pageSize, pageSize, out var total);
@@ -62,14 +64,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 values = values.Take(limit).ToList();
             }
 
-            return new DataPage<User>
-            {
-                Total = total,
-                Page = page,
-                PageSize = pageSize,
-                Count = values.Count,
-                Values = values
-            };
+            return new DataPage<User>(
+                Total: total,
+                Page: page,
+                PageSize: pageSize,
+                Count: values.Count,
+                Values: values
+            );
         }
 
         [HttpGet("{userId:guid}")]
@@ -109,7 +110,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpPost("register")]
-        public object RegisterUser([FromBody] UserInfo user)
+        public IActionResult RegisterUser([FromBody] UserInfo user)
         {
             if (string.IsNullOrEmpty(user.Username) ||
                 string.IsNullOrEmpty(user.Email) ||
@@ -132,23 +133,20 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return BadRequest($@"Account already exists with username '{user.Username}'.");
             }
-            else
-            {
-                if (Database.PlayerData.User.UserExists(user.Email))
-                {
-                    return BadRequest($@"Account already with email '{user.Email}'.");
-                }
-                else
-                {
-                    DbInterface.CreateAccount(null, user.Username, user.Password?.ToUpperInvariant()?.Trim(), user.Email);
 
-                    return new
-                    {
-                        Username = user.Username,
-                        Email = user.Email,
-                    };
-                }
+            if (Database.PlayerData.User.UserExists(user.Email))
+            {
+                return BadRequest($@"Account already with email '{user.Email}'.");
             }
+
+            DbInterface.CreateAccount(null, user.Username, user.Password?.ToUpperInvariant()?.Trim(), user.Email);
+
+            return Ok(
+                new
+                {
+                    user.Username, user.Email,
+                }
+            );
         }
 
         [HttpDelete("{username}")]
@@ -862,64 +860,172 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         #endregion
 
-        #region "Admin Action"
+        #region Variables
 
-        [HttpPost("{userId:guid}/admin/{act}")]
-        public object DoAdminActionOnPlayerById(
-            Guid userId,
-            string act,
-            [FromBody] AdminActionParameters actionParameters
-        )
+        [HttpGet("{lookupKey:LookupKey}/variables")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(IEnumerable<UserVariable>), (int)HttpStatusCode.OK, "application/json")]
+        public IActionResult UserVariablesList(LookupKey lookupKey)
         {
-            if (!Enum.TryParse<AdminAction>(act, true, out var adminAction))
+            if (lookupKey.IsInvalid)
             {
-                return BadRequest(@"Invalid action.");
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid id." : @"Invalid name.");
             }
 
-            if (Guid.Empty == userId)
+            if (!Database.PlayerData.User.TryFind(lookupKey, out var user))
             {
-                return BadRequest($@"Invalid user id '{userId}'.");
+                return NotFound($@"No user found for {lookupKey}");
             }
 
-            Tuple<Client, User> fetchResult;
-            fetchResult = Database.PlayerData.User.Fetch(userId);
-
-            return DoAdminActionOnUser(
-                () => fetchResult,
-                () => NotFound($@"No user with id '{userId}'."),
-                adminAction, actionParameters
-            );
+            return Ok(user.Variables);
         }
 
-        [HttpPost("{userName}/admin/{act}")]
-        public object DoAdminActionOnPlayerByName(
-            string userName,
-            string act,
+        [HttpGet("{lookupKey:LookupKey}/variables/{variableId:guid}")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(UserVariable), (int)HttpStatusCode.OK, "application/json")]
+        public IActionResult UserVariableGet(LookupKey lookupKey, Guid variableId)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid id." : @"Invalid name.");
+            }
+
+            if (!Database.PlayerData.User.TryFind(lookupKey, out var user))
+            {
+                return NotFound($@"No user found for {lookupKey}");
+            }
+
+            if (variableId == Guid.Empty)
+            {
+                return BadRequest($@"Variable id cannot be {variableId}");
+            }
+
+            if (!UserVariableBase.TryGet(variableId, out var variableDescriptor))
+            {
+                return NotFound($@"Variable not found for id {variableId}");
+            }
+
+            var variable = user.GetVariable(variableDescriptor.Id, true);
+            return Ok(variable);
+        }
+
+        [HttpGet("{lookupKey:LookupKey}/variables/{variableId:guid}/value")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(VariableValueBody), (int)HttpStatusCode.OK, "application/json")]
+        public IActionResult UserVariableValueGet(LookupKey lookupKey, Guid variableId)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid id." : @"Invalid name.");
+            }
+
+            if (!Database.PlayerData.User.TryFind(lookupKey, out var user))
+            {
+                return NotFound($@"No user found for {lookupKey}");
+            }
+
+            if (variableId == Guid.Empty)
+            {
+                return BadRequest($@"Variable id cannot be {variableId}");
+            }
+
+            if (!UserVariableBase.TryGet(variableId, out var variableDescriptor))
+            {
+                return NotFound($@"Variable not found for id {variableId}");
+            }
+
+            var variable = user.GetVariable(variableDescriptor.Id, true);
+            return Ok(new VariableValueBody
+            {
+                Value = variable.Value.Value,
+            });
+        }
+
+        [HttpPost("{lookupKey:LookupKey}/variables/{variableId:guid}")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(UserVariable), (int)HttpStatusCode.OK, "application/json")]
+        public IActionResult UserVariableSet(LookupKey lookupKey, Guid variableId, [FromBody] VariableValueBody valueBody)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid id." : @"Invalid name.");
+            }
+
+            if (!Database.PlayerData.User.TryFind(lookupKey, out var user))
+            {
+                return NotFound($@"No user found for {lookupKey}");
+            }
+
+            if (variableId == Guid.Empty)
+            {
+                return BadRequest($@"Variable id cannot be {variableId}");
+            }
+
+            if (!UserVariableBase.TryGet(variableId, out var variableDescriptor))
+            {
+                return NotFound($@"Variable not found for id {variableId}");
+            }
+
+            var variable = user.GetVariable(variableDescriptor.Id, true);
+
+            var changed = false;
+            if (variable?.Value != null)
+            {
+                if (variable.Value.Value != valueBody.Value)
+                {
+                    variable.Value.Value = valueBody.Value;
+                    changed = true;
+                }
+            }
+
+            // ReSharper disable once InvertIf
+            if (changed)
+            {
+                user.StartCommonEventsWithTriggerForAll(CommonEventTrigger.UserVariableChange, string.Empty, variableId.ToString());
+                user.UpdatedVariables.AddOrUpdate(
+                    variableId,
+                    variableDescriptor,
+                    (_, _) => variableDescriptor
+                );
+            }
+
+            return Ok(variable);
+        }
+
+        #endregion Variables
+
+        #region "Admin Action"
+
+        [HttpPost("{lookupKey:LookupKey}/admin/{adminAction:AdminAction}")]
+        public object DoAdminActionOnUserByLookupKey(
+            LookupKey lookupKey,
+            AdminAction adminAction,
             [FromBody] AdminActionParameters actionParameters
         )
         {
-            if (string.IsNullOrWhiteSpace(userName))
+            if (lookupKey.IsInvalid)
             {
-                return BadRequest("Invalid user name.");
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid id." : @"Invalid name.");
             }
 
-            if (!Enum.TryParse<AdminAction>(act, true, out var adminAction))
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user, out var client))
             {
-                return BadRequest(@"Invalid action.");
+                return NotFound($"No user found for lookup key '{lookupKey}'");
             }
-
-            Tuple<Client, User> fetchResult;
-            fetchResult = Database.PlayerData.User.Fetch(userName);
 
             return DoAdminActionOnUser(
-                () => fetchResult,
-                () => NotFound($@"No user with name '{userName}'."),
+                () => (client, user),
+                () => NotFound($@"No user found for lookup key '{lookupKey}'."),
                 adminAction, actionParameters
             );
         }
 
         private IActionResult DoAdminActionOnUser(
-            Func<Tuple<Client, User>> fetch,
+            Func<ValueTuple<Client, User>> fetch,
             Func<IActionResult> onError,
             AdminAction adminAction,
             AdminActionParameters actionParameters

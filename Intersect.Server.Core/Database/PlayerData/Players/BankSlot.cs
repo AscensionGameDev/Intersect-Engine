@@ -26,6 +26,7 @@ public partial class BankSlot : Item, ISlot, IPlayerOwned
     [DatabaseGenerated(DatabaseGeneratedOption.Identity), JsonIgnore]
     public Guid Id { get; private set; }
 
+    [JsonIgnore]
     public bool IsEmpty => ItemId == default;
 
     [JsonIgnore]

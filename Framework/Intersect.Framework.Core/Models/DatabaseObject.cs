@@ -43,7 +43,8 @@ public abstract partial class DatabaseObject<TObject> : IDatabaseObject where TO
         ? gameObjectType
         : throw new InvalidOperationException($"{typeof(TObject).Name} not set up correctly");
 
-    [JsonIgnore] [NotMapped] public GameObjectType Type
+    [NotMapped]
+    public GameObjectType Type
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => ObjectType;

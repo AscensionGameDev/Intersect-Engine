@@ -82,7 +82,7 @@ public static partial class Beta6Migration
             {
                 var i = 0;
                 var currentCount = 0;
-                updateCmd.CommandText = "";
+                updateCmd.CommandText = string.Empty;
                 updateCmd.Transaction = trans;
                 foreach (var update in updates)
                 {
@@ -106,7 +106,7 @@ public static partial class Beta6Migration
                     if (currentCount > 256)
                     {
                         updateCmd.ExecuteNonQuery();
-                        updateCmd.CommandText = "";
+                        updateCmd.CommandText = string.Empty;
                         updateCmd.Parameters.Clear();
                         currentCount = 0;
                     }
@@ -593,7 +593,7 @@ public static partial class Beta6Migration
 
             using (var updateCmd = connection.CreateCommand())
             {
-                updateCmd.CommandText = "";
+                updateCmd.CommandText = string.Empty;
                 updateCmd.Transaction = trans;
                 var i = 0;
                 var currentCount = 0;
@@ -626,7 +626,7 @@ public static partial class Beta6Migration
                     if (currentCount > 256)
                     {
                         updateCmd.ExecuteNonQuery();
-                        updateCmd.CommandText = "";
+                        updateCmd.CommandText = string.Empty;
                         updateCmd.Parameters.Clear();
                         currentCount = 0;
                     }

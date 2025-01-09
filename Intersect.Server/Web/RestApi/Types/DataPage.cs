@@ -1,27 +1,44 @@
-﻿using System.Collections.Generic;
-
+﻿using Intersect.Framework.Core.Serialization;
+using Intersect.Framework.Reflection;
 using Intersect.Server.Web.RestApi.Payloads;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
-namespace Intersect.Server.Web.RestApi.Types
+namespace Intersect.Server.Web.RestApi.Types;
+
+public struct DataPage<TValue>(
+    int Total,
+    int Page,
+    int PageSize,
+    int Count,
+    IEnumerable<TValue> Values,
+    IEnumerable<Sort>? Sort = null,
+    dynamic? Extra = null
+) : IDataPage<TValue>
 {
-
-    public partial struct DataPage<TValue>
+    public DataPage() : this(
+        0,
+        0,
+        0,
+        0,
+        []
+    )
     {
-
-        public int Total { get; set; }
-
-        public int Page { get; set; }
-
-        public int PageSize { get; set; }
-
-        public int Count { get; set; }
-
-        public IEnumerable<TValue> Values { get; set; }
-
-        public IEnumerable<Sort> Sort { get; set; }
-
-        public dynamic Extra { get; set; }
-
     }
 
+    public int Total { get; init; } = Total;
+
+    public int Page { get; init; } = Page;
+
+    public int PageSize { get; init; } = PageSize;
+
+    public int Count { get; init; } = Count;
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public IEnumerable<Sort>? Sort { get; init; } = Sort;
+
+    public IEnumerable<TValue> Values { get; init; } = Values;
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public dynamic? Extra { get; init; } = Extra;
 }

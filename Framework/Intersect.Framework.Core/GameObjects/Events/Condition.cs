@@ -22,7 +22,7 @@ public partial class VariableIsCondition : Condition
 
     public Guid VariableId { get; set; }
 
-    public VariableComparison Comparison { get; set; } = new VariableComparison();
+    public VariableComparison Comparison { get; set; } = new();
 }
 
 public partial class HasItemCondition : Condition

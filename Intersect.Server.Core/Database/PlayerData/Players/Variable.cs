@@ -18,7 +18,7 @@ public partial class Variable
     public VariableValue Value { get; set; } = new();
 
     [NotMapped]
-    [JsonProperty("Value")]
+    [JsonProperty(nameof(Value))]
     public dynamic ValueData => Value.Value;
 
     [Column(nameof(Value))]

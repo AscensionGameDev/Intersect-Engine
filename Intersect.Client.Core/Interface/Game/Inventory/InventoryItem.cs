@@ -58,7 +58,7 @@ public partial class InventoryItem
     //Slot info
     private int mMySlot;
 
-    private string mTexLoaded = "";
+    private string mTexLoaded = string.Empty;
 
     public ImagePanel Pnl;
 
@@ -340,7 +340,7 @@ public partial class InventoryItem
                     Pnl.Texture = null;
                 }
 
-                mTexLoaded = "";
+                mTexLoaded = string.Empty;
             }
 
             if (mDescWindow != null)

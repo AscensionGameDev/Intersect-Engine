@@ -1,6 +1,7 @@
 using System.Net;
 using System.Security.Claims;
 using Intersect.Security.Claims;
+using Intersect.Server.Web.RestApi.Types;
 using Microsoft.AspNetCore.Mvc;
 using IntersectUser = Intersect.Server.Database.PlayerData.User;
 
@@ -8,13 +9,9 @@ namespace Intersect.Server.Web;
 
 public abstract class IntersectController : Controller
 {
-    public const int PAGE_SIZE_MAX = 100;
-
-    public const int PAGE_SIZE_MIN = 5;
-
     private IntersectUser? _intersectUser;
 
-    public IntersectUser? IntersectUser
+    protected IntersectUser? IntersectUser
     {
         get
         {
@@ -37,32 +34,43 @@ public abstract class IntersectController : Controller
     }
 
     [NonAction]
-    public virtual ObjectResult StatusCode(HttpStatusCode statusCode, object? data = default)
-    {
-        return StatusCode((int)statusCode, data);
-    }
+    protected virtual IActionResult StatusCodeMessage(HttpStatusCode statusCode, string message) => StatusCode(
+        (int)statusCode,
+        new StatusMessageResponseBody(message)
+    );
 
     [NonAction]
-    public virtual ObjectResult Forbidden(object? data = default)
-    {
-        return StatusCode(HttpStatusCode.Forbidden, data);
-    }
+    protected virtual IActionResult Forbidden(string message) => StatusCodeMessage(HttpStatusCode.Forbidden, message);
 
     [NonAction]
-    public virtual ObjectResult Gone()
-    {
-        return StatusCode(HttpStatusCode.Gone);
-    }
+    protected virtual IActionResult InternalServerError(string message) =>
+        StatusCodeMessage(HttpStatusCode.InternalServerError, message);
 
     [NonAction]
-    public virtual ObjectResult InternalServerError(object? data = default)
-    {
-        return StatusCode(HttpStatusCode.InternalServerError, data);
-    }
+    protected virtual IActionResult NotImplemented(string message) =>
+        StatusCodeMessage(HttpStatusCode.NotImplemented, message);
 
     [NonAction]
-    public virtual ObjectResult NotImplemented(object? data = default)
-    {
-        return StatusCode(HttpStatusCode.NotImplemented, data);
-    }
+    protected virtual IActionResult BadRequest(string message) => StatusCodeMessage(HttpStatusCode.BadRequest, message);
+
+    [NonAction]
+    protected virtual IActionResult NotFound(string message) => StatusCodeMessage(HttpStatusCode.NotFound, message);
+
+    [NonAction]
+    protected virtual ObjectResult StatusCode(HttpStatusCode statusCode, object? data = default) =>
+        StatusCode((int)statusCode, data);
+
+    [NonAction]
+    protected virtual ObjectResult Forbidden(object? data = default) => StatusCode(HttpStatusCode.Forbidden, data);
+
+    [NonAction]
+    protected virtual ObjectResult Gone() => StatusCode(HttpStatusCode.Gone);
+
+    [NonAction]
+    protected virtual ObjectResult InternalServerError(object? data = default) =>
+        StatusCode(HttpStatusCode.InternalServerError, data);
+
+    [NonAction]
+    protected virtual ObjectResult NotImplemented(object? data = default) =>
+        StatusCode(HttpStatusCode.NotImplemented, data);
 }

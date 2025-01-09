@@ -53,6 +53,13 @@ public static partial class GameObjectTypeExtensions
         return DatabaseObjectLookup.GetLookup(GetObjectType(gameObjectType));
     }
 
+    public static bool TryGetLookup(this GameObjectType gameObjectType,
+        [NotNullWhen(true)] out DatabaseObjectLookup? lookup)
+    {
+        lookup = GetLookup(gameObjectType);
+        return lookup != default;
+    }
+
     public static IDatabaseObject CreateNew(this GameObjectType gameObjectType)
     {
         var instance = Activator.CreateInstance(

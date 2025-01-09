@@ -137,7 +137,7 @@ public static partial class Strings
 
     public static string GetEventConditionalDesc(LevelOrStatCondition condition)
     {
-        var pLvl = "";
+        var pLvl = string.Empty;
         switch (condition.Comparator)
         {
             case VariableComparator.Equal:
@@ -166,7 +166,7 @@ public static partial class Strings
                 break;
         }
 
-        var lvlorstat = "";
+        var lvlorstat = string.Empty;
         if (condition.ComparingLevel)
         {
             lvlorstat = EventConditionDesc.level;
@@ -216,8 +216,8 @@ public static partial class Strings
             timeRanges.Add(addRange);
         }
 
-        var time1 = "";
-        var time2 = "";
+        var time1 = string.Empty;
+        var time2 = string.Empty;
         if (condition.Ranges[0] > -1 && condition.Ranges[0] < timeRanges.Count)
         {
             time1 = timeRanges[condition.Ranges[0]];
@@ -366,8 +366,8 @@ public static partial class Strings
 
     public static string GetVariableComparisonString(BooleanVariableComparison comparison)
     {
-        var value = "";
-        var pVar = "";
+        var value = string.Empty;
+        var pVar = string.Empty;
 
         if (comparison.CompareVariableId == Guid.Empty)
         {
@@ -409,8 +409,8 @@ public static partial class Strings
 
     public static string GetVariableComparisonString(IntegerVariableComparison comparison)
     {
-        var value = "";
-        var pVar = "";
+        var value = string.Empty;
+        var pVar = string.Empty;
 
         if (comparison.CompareVariableId == Guid.Empty)
         {

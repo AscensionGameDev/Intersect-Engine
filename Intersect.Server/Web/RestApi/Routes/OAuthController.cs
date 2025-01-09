@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
+using Swashbuckle.AspNetCore.Annotations;
 using JsonConverter = Newtonsoft.Json.JsonConverter;
 
 namespace Intersect.Server.Web.RestApi.Routes
@@ -99,6 +100,7 @@ namespace Intersect.Server.Web.RestApi.Routes
         }
 
         [Newtonsoft.Json.JsonConverter(typeof(GrantTypeConverter))]
+        [System.Text.Json.Serialization.JsonConverter(typeof(JsonStringEnumConverter<GrantType>))]
         public enum GrantType
         {
             Password,
@@ -161,16 +163,18 @@ namespace Intersect.Server.Web.RestApi.Routes
             }
         }
 
+        [SwaggerDiscriminator("grant_type")]
+        [SwaggerSubType(typeof(TokenRequestPasswordGrant), DiscriminatorValue = "password")]
+        [SwaggerSubType(typeof(TokenRequestRefreshTokenGrant), DiscriminatorValue = "refresh_token")]
         [Newtonsoft.Json.JsonConverter(typeof(TokenRequestConverter))]
         public abstract class TokenRequest
         {
-            [Newtonsoft.Json.JsonIgnore]
+            [JsonProperty("grant_type")]
             public abstract GrantType GrantType { get; }
         }
 
         public class TokenRequestPasswordGrant : TokenRequest
         {
-            [Newtonsoft.Json.JsonIgnore]
             public override GrantType GrantType => GrantType.Password;
 
             [JsonProperty("username")]
@@ -189,13 +193,14 @@ namespace Intersect.Server.Web.RestApi.Routes
         }
 
         [HttpPost("token")]
+        [Consumes(typeof(TokenRequest), "application/json")]
         public async Task<IActionResult> RequestToken([FromBody] TokenRequest tokenRequest)
         {
             return tokenRequest switch
             {
                 TokenRequestPasswordGrant passwordGrant => await RequestTokenFrom(passwordGrant),
                 TokenRequestRefreshTokenGrant refreshTokenGrant => await RequestTokenFrom(refreshTokenGrant),
-                _ => BadRequest()
+                _ => BadRequest(),
             };
         }
 

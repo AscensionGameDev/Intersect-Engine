@@ -1465,7 +1465,7 @@ public partial class FrmClass : EditorForm
 
     private void btnAddFolder_Click(object sender, EventArgs e)
     {
-        var folderName = "";
+        var folderName = string.Empty;
         var result = DarkInputBox.ShowInformation(
             Strings.ClassEditor.folderprompt, Strings.ClassEditor.foldertitle, ref folderName,
             DarkDialogButton.OkCancel

@@ -81,7 +81,7 @@ public partial class Entity : IEntity
     public Animation?[] EquipmentAnimations { get; set; } = new Animation[Options.EquipmentSlots.Count];
 
     //Extras
-    public string Face { get; set; } = "";
+    public string Face { get; set; } = string.Empty;
 
     public Label FooterLabel { get; set; } = new(string.Empty, Color.White);
 
@@ -126,7 +126,7 @@ public partial class Entity : IEntity
 
     private long mLastUpdate;
 
-    protected string mMySprite = "";
+    protected string mMySprite = string.Empty;
 
     public Color Color { get; set; } = new Color(255, 255, 255, 255);
 
@@ -136,13 +136,13 @@ public partial class Entity : IEntity
 
     protected byte mRenderPriority = 1;
 
-    protected string mTransformedSprite = "";
+    protected string mTransformedSprite = string.Empty;
 
     private long mWalkTimer;
 
     public int[] MyEquipment { get; set; } = new int[Options.EquipmentSlots.Count];
 
-    public string Name { get; set; } = "";
+    public string Name { get; set; } = string.Empty;
 
     public Color? NameColor { get; set; } = null;
 
@@ -1056,11 +1056,11 @@ public partial class Entity : IEntity
             return;
         }
 
-        var sprite = "";
+        var sprite = string.Empty;
         // Copy the actual render color, because we'll be editing it later and don't want to overwrite it.
         var renderColor = new Color(Color.A, Color.R, Color.G, Color.B);
 
-        string transformedSprite = "";
+        string transformedSprite = string.Empty;
 
         // Loop through the entity status list.
         for (var n = 0; n < Status.Count; n++)

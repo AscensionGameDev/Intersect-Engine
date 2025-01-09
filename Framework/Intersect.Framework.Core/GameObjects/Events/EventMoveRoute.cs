@@ -4,7 +4,7 @@ namespace Intersect.GameObjects.Events;
 
 public partial class EventMoveRoute
 {
-    public List<MoveRouteAction> Actions { get; set; } = new List<MoveRouteAction>();
+    public List<MoveRouteAction> Actions { get; set; } = [];
 
     public bool IgnoreIfBlocked { get; set; }
 

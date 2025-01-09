@@ -18,11 +18,7 @@ public partial class ChatHistory
 
     public DateTime TimeStamp { get; set; }
 
-    [JsonIgnore]
     public ChatMessageType MessageType { get; set; }
-
-    [JsonProperty("MessageType")]
-    public string MessageTypeName => Enum.GetName(typeof(ChatMessageType), MessageType);
 
     public string MessageText { get; set; }
 

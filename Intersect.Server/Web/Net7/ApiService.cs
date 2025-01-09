@@ -1,15 +1,20 @@
 using System.Net;
 using System.Reflection;
+using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Logging;
+using Intersect.Models;
 using Intersect.Server.Core;
+using Intersect.Server.Localization;
 using Intersect.Server.Web.Configuration;
 using Intersect.Server.Web.Constraints;
 using Intersect.Server.Web.Middleware;
 using Intersect.Server.Web.RestApi.Payloads;
+using Intersect.Server.Web.RestApi.Routes;
 using Intersect.Server.Web.Serialization;
+using Intersect.Server.Web.Swagger.Filters;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -25,6 +30,9 @@ using Microsoft.Extensions.FileProviders.Physical;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Converters;
 
 namespace Intersect.Server.Web;
 
@@ -74,10 +82,10 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
         builder.Services.AddRouting(
             routeOptions =>
             {
-                routeOptions.ConstraintMap.Add(nameof(AdminAction), typeof(AdminActionsConstraint));
+                routeOptions.ConstraintMap.Add(nameof(AdminAction), typeof(EnumConstraint<AdminAction>));
+                routeOptions.ConstraintMap.Add(nameof(GameObjectType), typeof(EnumConstraint<GameObjectType>));
                 routeOptions.ConstraintMap.Add(nameof(ChatMessage), typeof(ChatMessage.RouteConstraint));
-                routeOptions.ConstraintMap.Add(nameof(GameObjectType), typeof(GameObjectTypeConstraint));
-                routeOptions.ConstraintMap.Add(nameof(LookupKey), typeof(LookupKeyConstraint));
+                routeOptions.ConstraintMap.Add(nameof(LookupKey), typeof(NonNullConstraint));
             }
         );
 
@@ -127,6 +135,7 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                 {
                     newtonsoftOptions.SerializerSettings.ContractResolver =
                         new ApiVisibilityContractResolver(new HttpContextAccessor());
+                    newtonsoftOptions.SerializerSettings.Converters.Add(new StringEnumConverter());
                 }
             )
             .AddOData(
@@ -139,9 +148,35 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                     options.RouteOptions.EnableUnqualifiedOperationCall = true;
                 }
             );
+
+        // builder.Services.ConfigureHttpJsonOptions(
+        //     jsonOptions => jsonOptions.SerializerOptions.Converters.Add(new JsonStringEnumConverter())
+        // );
+
         builder.Services.AddEndpointsApiExplorer();
+
         builder.Services.AddHealthChecks();
-        builder.Services.AddSwaggerGen();
+
+        builder.Services.AddSwaggerGen(
+            sgo =>
+            {
+                var documentFilterTokenRequest =
+                    new PolymorphicDocumentFilter<OAuthController.TokenRequest, OAuthController.GrantType>("grant_type")
+                        .WithSubtype<OAuthController.TokenRequestPasswordGrant>(OAuthController.GrantType.Password)
+                        .WithSubtype<OAuthController.TokenRequestRefreshTokenGrant>(
+                            OAuthController.GrantType.RefreshToken
+                        );
+                sgo.AddDocumentFilterInstance(documentFilterTokenRequest);
+                sgo.AddSchemaFilterInstance(documentFilterTokenRequest.CreateSchemaFilter());
+                sgo.SchemaFilter<LookupKeySchemaFilter>();
+                sgo.SchemaFilter<DictionarySchemaFilter>();
+                sgo.SchemaFilter<GameObjectTypeSchemaFilter>();
+                sgo.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
+                sgo.UseOneOfForPolymorphism();
+                sgo.UseAllOfForInheritance();
+            });
+        builder.Services.AddSwaggerGenNewtonsoftSupport();
+
         var tokenGenerationOptionsSection =
             apiConfigurationSection.GetRequiredSection(nameof(TokenGenerationOptions));
         var tokenGenerationOptions = tokenGenerationOptionsSection.Get<TokenGenerationOptions>();
@@ -269,6 +304,11 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
         if (app.Environment.IsDevelopment())
         {
             app.UseODataRouteDebug();
+        }
+
+        // Swagger is always enabled in development, but outside of development it needs to be manually enabled
+        if (configuration.EnableSwaggerUI || app.Environment.IsDevelopment())
+        {
             app.UseSwagger();
             app.UseSwaggerUI();
         }

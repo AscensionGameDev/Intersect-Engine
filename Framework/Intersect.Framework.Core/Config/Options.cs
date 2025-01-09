@@ -8,7 +8,7 @@ namespace Intersect;
 public partial class Options
 {
     //Caching Json
-    private static string optionsCompressed = "";
+    private static string optionsCompressed = string.Empty;
 
     [JsonProperty("AdminOnly", Order = -3)]
     protected bool _adminOnly = false;

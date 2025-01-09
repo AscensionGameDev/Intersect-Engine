@@ -7,7 +7,7 @@ namespace Intersect.GameObjects.Conditions;
 [JsonConverter(typeof(ConditionListsSerializer))]
 public partial class ConditionLists
 {
-    public List<ConditionList> Lists = new List<ConditionList>();
+    public List<ConditionList> Lists { get; set; } = [];
 
     public ConditionLists()
     {

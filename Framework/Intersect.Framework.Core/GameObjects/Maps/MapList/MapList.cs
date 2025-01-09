@@ -12,11 +12,11 @@ public partial class MapList
     public Guid Id { get; protected set; } = Guid.NewGuid();
 
     [NotMapped]
-    public List<MapListItem> Items { get; set; } = new List<MapListItem>();
+    public List<MapListItem> Items { get; set; } = [];
 
-    public static MapList List { get; set; } = new MapList();
+    public static MapList List { get; set; } = new();
 
-    public static List<MapListMap> OrderedMaps { get; } = new List<MapListMap>();
+    public static List<MapListMap> OrderedMaps { get; } = [];
 
     [JsonIgnore]
     [Column("JsonData")]

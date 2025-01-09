@@ -42,12 +42,12 @@ public partial class CharacterWindow
 
     private ImagePanel mCharacterPortrait;
 
-    private string mCharacterPortraitImg = "";
+    private string mCharacterPortraitImg = string.Empty;
 
     //Controls
     private WindowControl mCharacterWindow;
 
-    private string mCurrentSprite = "";
+    private string mCurrentSprite = string.Empty;
 
     Label mDefenseLabel;
 
@@ -126,7 +126,7 @@ public partial class CharacterWindow
         for (var i = 0; i <= Options.EquipmentSlots.Count; i++)
         {
             PaperdollPanels[i] = new ImagePanel(mCharacterContainer);
-            PaperdollTextures[i] = "";
+            PaperdollTextures[i] = string.Empty;
             PaperdollPanels[i].Hide();
         }
 
@@ -244,7 +244,7 @@ public partial class CharacterWindow
         {
             for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
             {
-                var paperdoll = "";
+                var paperdoll = string.Empty;
                 if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1)
                 {
                     var equipment = Globals.Me.MyEquipment;
@@ -278,7 +278,7 @@ public partial class CharacterWindow
                 {
                     PaperdollPanels[z].Texture = null;
                     PaperdollPanels[z].Hide();
-                    PaperdollTextures[z] = "";
+                    PaperdollTextures[z] = string.Empty;
                 }
                 else if (paperdoll != "" && paperdoll != PaperdollTextures[z])
                 {

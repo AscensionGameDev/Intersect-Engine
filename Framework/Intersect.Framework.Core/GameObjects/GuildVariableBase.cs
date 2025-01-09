@@ -23,7 +23,7 @@ public partial class GuildVariableBase : VariableDescriptor<GuildVariableBase>, 
     public string TextId { get; set; }
 
     // TODO(0.8): Rename this to DataType
-    public VariableDataType Type { get; set; } = VariableDataType.Boolean;
+    public new VariableDataType Type { get; set; } = VariableDataType.Boolean;
 
     /// <inheritdoc />
     public string Folder { get; set; } = string.Empty;

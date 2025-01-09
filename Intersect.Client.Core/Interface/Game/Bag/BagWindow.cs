@@ -157,7 +157,7 @@ public partial class BagWindow
             Items[i].Setup();
 
             mValues.Add(new Label(Items[i].Container, "BagItemValue"));
-            mValues[i].Text = "";
+            mValues[i].Text = string.Empty;
             Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
             var xPadding = Items[i].Container.Margin.Left + Items[i].Container.Margin.Right;

@@ -1,4 +1,6 @@
-﻿using Intersect.GameObjects;
+﻿using System.Net;
+using Intersect.Enums;
+using Intersect.GameObjects;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Entities;
 using Intersect.Server.Localization;
@@ -18,31 +20,31 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         public object ListPost([FromBody] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
-            pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
+            pageInfo.PageSize = Math.Max(Math.Min(pageInfo.PageSize, 100), 5);
 
-            var entries = Guild.List(null, null, SortDirection.Ascending, pageInfo.Page * pageInfo.Count, pageInfo.Count, out int entryTotal);
+            var entries = Guild.List(null, null, SortDirection.Ascending, pageInfo.Page * pageInfo.PageSize, pageInfo.PageSize, out int entryTotal);
 
-            return new
-            {
-                total = entryTotal,
-                pageInfo.Page,
-                count = entries.Count,
-                entries
-            };
+            return Ok(new DataPage<KeyValuePair<Guild, int>>(
+                Total: entryTotal,
+                Page: pageInfo.Page,
+                PageSize: pageInfo.PageSize,
+                Count: entries.Count,
+                Values: entries
+            ));
         }
 
         [HttpGet]
         public DataPage<KeyValuePair<Guild, int>> List(
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
-            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] int limit = PagingInfo.MaxPageSize,
             [FromQuery] string sortBy = null,
             [FromQuery] SortDirection sortDirection = SortDirection.Ascending,
             [FromQuery] string search = null
         )
         {
             page = Math.Max(page, 0);
-            pageSize = Math.Max(Math.Min(pageSize, 100), 5);
+            pageSize = Math.Max(Math.Min(pageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
             var values = Guild.List(search?.Length > 2 ? search : null, sortBy, sortDirection, page * pageSize, pageSize, out int total);
@@ -52,14 +54,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 values = values.Take(limit).ToList();
             }
 
-            return new DataPage<KeyValuePair<Guild, int>>
-            {
-                Total = total,
-                Page = page,
-                PageSize = pageSize,
-                Count = values.Count,
-                Values = values
-            };
+            return new DataPage<KeyValuePair<Guild, int>>(
+                Total: total,
+                Page: page,
+                PageSize: pageSize,
+                Count: values.Count,
+                Values: values
+            );
         }
 
         [HttpGet("{guildId:guid}")]
@@ -117,14 +118,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             Guid guildId,
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
-            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] int limit = PagingInfo.MaxPageSize,
             [FromQuery] string sortBy = null,
             [FromQuery] SortDirection sortDirection = SortDirection.Ascending,
             [FromQuery] string search = null
         )
         {
             page = Math.Max(page, 0);
-            pageSize = Math.Max(Math.Min(pageSize, 100), 5);
+            pageSize = Math.Max(Math.Min(pageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
             var values = Player.List(search?.Length > 2 ? search : null, sortBy, sortDirection, page * pageSize, pageSize, out int total, guildId);
@@ -134,26 +135,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 values = values.Take(limit).ToList();
             }
 
-            return new DataPage<Player>
-            {
-                Total = total,
-                Page = page,
-                PageSize = pageSize,
-                Count = values.Count,
-                Values = values
-            };
-        }
-
-        [HttpGet("{guildId:guid}/bank")]
-        public object ItemsListBank(Guid guildId)
-        {
-            var guild = Guild.LoadGuild(guildId);
-            if (guild == null)
-            {
-                return NotFound($@"No guild with id '{guildId}'.");
-            }
-
-            return guild.Bank;
+            return new DataPage<Player>(
+                Total: total,
+                Page: page,
+                PageSize: pageSize,
+                Count: values.Count,
+                Values: values
+            );
         }
 
         [HttpPost("{guildId:guid}/kick/{lookupKey:LookupKey}")]
@@ -166,7 +154,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
 
             var guild = Guild.LoadGuild(guildId);
-            
+
             if (guild == null)
             {
                 return BadRequest($@"Guild does not exist.");
@@ -185,7 +173,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return BadRequest($@"{player.Name} is not a member of {guild.Name}.");
             }
-            
+
             //Cannot kick the owner!
             if (player.GuildRank == 0)
             {
@@ -252,7 +240,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             if (guild == null)
             {
-                return BadRequest($@"Guild does not exist.");
+                return NotFound($@"No guild found with id {guildId}");
             }
 
             var (_, player) = Player.Fetch(lookupKey);
@@ -278,92 +266,131 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             return player;
         }
 
-        [HttpGet("{guildId:guid}/variables")]
-        public object GuildVariablesGet(Guid guildId)
+        [HttpGet("{guildId:guid}/bank")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(IEnumerable<GuildBankSlot>), (int)HttpStatusCode.OK, "application/json")]
+        public IActionResult ItemsListBank(Guid guildId)
         {
             var guild = Guild.LoadGuild(guildId);
-
             if (guild == null)
             {
-                return BadRequest($@"Guild does not exist.");
+                return NotFound($@"No guild found with id {guildId}");
             }
 
-            return guild.Variables;
+            return Ok(guild.Bank.Where(slot => !slot.IsEmpty));
+        }
+
+        [HttpGet("{guildId:guid}/variables")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(IEnumerable<GuildVariable>), (int)HttpStatusCode.OK, "application/json")]
+        public IActionResult GuildVariablesList(Guid guildId)
+        {
+            if (!Guild.TryGet(guildId, out var guild))
+            {
+                return NotFound($@"No guild found with id {guildId}");
+            }
+
+            return Ok(guild.Variables);
         }
 
         [HttpGet("{guildId:guid}/variables/{variableId:guid}")]
-        public object GuildVariableGet(Guid guildId, Guid variableId)
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(GuildVariable), (int)HttpStatusCode.OK, "application/json")]
+        public IActionResult GuildVariableGet(Guid guildId, Guid variableId)
         {
-            var guild = Guild.LoadGuild(guildId);
-
-            if (guild == null)
+            if (!Guild.TryGet(guildId, out var guild))
             {
-                return BadRequest($@"Guild does not exist.");
+                return NotFound($@"No guild found with id {guildId}");
             }
 
-            if (variableId == Guid.Empty || GuildVariableBase.Get(variableId) == null)
+            if (variableId == Guid.Empty)
             {
-                return BadRequest($@"Invalid variable id ${variableId}.");
+                return BadRequest($@"Variable id cannot be {variableId}");
             }
 
-            return guild.GetVariable(variableId, true);
+            if (!GuildVariableBase.TryGet(variableId, out var variableDescriptor))
+            {
+                return NotFound($@"Variable not found for id {variableId}");
+            }
+
+            var variable = guild.GetVariable(variableDescriptor.Id, true);
+            return Ok(variable);
         }
 
         [HttpGet("{guildId:guid}/variables/{variableId:guid}/value")]
-        public object GuildVariableGetValue(Guid guildId, Guid variableId)
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(VariableValueBody), (int)HttpStatusCode.OK, "application/json")]
+        public IActionResult GuildVariableGetValue(Guid guildId, Guid variableId)
         {
-            var guild = Guild.LoadGuild(guildId);
-
-            if (guild == null)
+            if (!Guild.TryGet(guildId, out var guild))
             {
-                return BadRequest($@"Guild does not exist.");
+                return NotFound($@"No guild found with id {guildId}");
             }
 
-            if (variableId == Guid.Empty || GuildVariableBase.Get(variableId) == null)
+            if (variableId == Guid.Empty)
             {
-                return BadRequest($@"Invalid variable id ${variableId}.");
+                return BadRequest($@"Variable id cannot be {variableId}");
             }
 
-            return new
+            if (!GuildVariableBase.TryGet(variableId, out var variableDescriptor))
             {
-                value = guild.GetVariable(variableId, true).Value.Value,
-            };
+                return NotFound($@"Variable not found for id {variableId}");
+            }
+
+            var variable = guild.GetVariable(variableDescriptor.Id, true);
+            return Ok(new VariableValueBody
+            {
+                Value = variable.Value.Value,
+            });
         }
 
         [HttpPost("{guildId:guid}/variables/{variableId:guid}")]
-        public object GuildVariableSet(Guid guildId, Guid variableId, [FromBody] VariableValueAPI valueApi)
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(GuildVariable), (int)HttpStatusCode.OK, "application/json")]
+        public IActionResult GuildVariableSet(Guid guildId, Guid variableId, [FromBody] VariableValueBody valueBody)
         {
-            var guild = Guild.LoadGuild(guildId);
-
-            if (guild == null)
+            if (!Guild.TryGet(guildId, out var guild))
             {
-                return BadRequest($@"Guild does not exist.");
+                return NotFound($@"No guild found with id {guildId}");
             }
 
-            if (variableId == Guid.Empty || GuildVariableBase.Get(variableId) == null)
+            if (variableId == Guid.Empty)
             {
-                return BadRequest($@"Invalid variable id ${variableId}.");
+                return BadRequest($@"Variable id cannot be {variableId}");
             }
 
-            var variable = guild.GetVariable(variableId, true);
+            if (!GuildVariableBase.TryGet(variableId, out var variableDescriptor))
+            {
+                return NotFound($@"Variable not found for id {variableId}");
+            }
 
-            var changed = true;
+            var variable = guild.GetVariable(variableDescriptor.Id, true);
+
+            var changed = false;
             if (variable?.Value != null)
             {
-                if (variable?.Value?.Value != valueApi.Value)
+                if (variable.Value.Value != valueBody.Value)
                 {
-                    changed = false;
+                    variable.Value.Value = valueBody.Value;
+                    changed = true;
                 }
-                variable.Value.Value = valueApi.Value;
             }
 
+            // ReSharper disable once InvertIf
             if (changed)
             {
-                guild.StartCommonEventsWithTriggerForAll(Enums.CommonEventTrigger.GuildVariableChange, "", variableId.ToString());
-                guild.UpdatedVariables.AddOrUpdate(variableId, GuildVariableBase.Get(variableId), (key, oldValue) => GuildVariableBase.Get(variableId));
+                guild.StartCommonEventsWithTriggerForAll(CommonEventTrigger.GuildVariableChange, string.Empty, variableId.ToString());
+                guild.UpdatedVariables.AddOrUpdate(
+                    variableId,
+                    variableDescriptor,
+                    (_, _) => variableDescriptor
+                );
             }
 
-            return variable;
+            return Ok(variable);
         }
     }
 }

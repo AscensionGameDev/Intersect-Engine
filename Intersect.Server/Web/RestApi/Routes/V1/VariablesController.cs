@@ -3,6 +3,7 @@ using Intersect.Server.Database;
 using Intersect.Server.Database.GameData;
 using Intersect.Server.Entities;
 using Intersect.Server.Web.RestApi.Payloads;
+using Intersect.Server.Web.RestApi.Types;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,16 +17,17 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         public object GlobalVariablesGet([FromQuery] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
-            pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
+            pageInfo.PageSize = Math.Max(Math.Min(pageInfo.PageSize, 100), 5);
 
-            var entries = GameContext.Queries.ServerVariables(pageInfo.Page, pageInfo.Count)?.ToList();
+            var entries = GameContext.Queries.ServerVariables(pageInfo.Page, pageInfo.PageSize)?.ToList();
 
-            return new
+            return new DataPage<ServerVariableBase>
             {
-                total = ServerVariableBase.Lookup.Count(),
-                pageInfo.Page,
-                count = entries?.Count ?? 0,
-                entries
+                Total = ServerVariableBase.Lookup.Count(),
+                Page = pageInfo.Page,
+                PageSize = pageInfo.PageSize,
+                Count = entries?.Count ?? 0,
+                Values = entries,
             };
         }
 
@@ -64,12 +66,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             return new
             {
-                value = variable?.Value.Value,
+                value = variable.Value.Value,
             };
         }
 
         [HttpPost("global/{guid:guid}")]
-        public object GlobalVariableSet(Guid guid, [FromBody] VariableValueAPI valueApi)
+        public object GlobalVariableSet(Guid guid, [FromBody] VariableValueBody valueBody)
         {
             if (Guid.Empty == guid)
             {
@@ -84,11 +86,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             var changed = true;
-            if (variable.Value?.Value == valueApi.Value)
+            if (variable.Value?.Value == valueBody.Value)
             {
                 changed = false;
             }
-            variable.Value.Value = valueApi.Value;
+            variable.Value.Value = valueBody.Value;
 
             if (changed)
             {

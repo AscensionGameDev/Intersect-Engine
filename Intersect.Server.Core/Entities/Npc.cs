@@ -139,8 +139,8 @@ public partial class Npc : Entity
 
         for (var i = 0; i < Enum.GetValues<Vital>().Length; i++)
         {
-            SetMaxVital(i, myBase.MaxVital[i]);
-            SetVital(i, myBase.MaxVital[i]);
+            SetMaxVital(i, myBase.MaxVitals[i]);
+            SetVital(i, myBase.MaxVitals[i]);
         }
 
         Range = (byte)myBase.SightRange;

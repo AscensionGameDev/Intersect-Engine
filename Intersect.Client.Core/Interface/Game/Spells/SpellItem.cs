@@ -42,7 +42,7 @@ public partial class SpellItem
     //Drag/Drop References
     private SpellsWindow mSpellWindow;
 
-    private string mTexLoaded = "";
+    private string mTexLoaded = string.Empty;
 
     private int mYindex;
 
@@ -193,7 +193,7 @@ public partial class SpellItem
                     Pnl.Texture = null;
                 }
 
-                mTexLoaded = "";
+                mTexLoaded = string.Empty;
             }
         }
 
@@ -236,7 +236,7 @@ public partial class SpellItem
                                     Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseY, Pnl.Texture, Pnl.RenderColor
                                 );
 
-                                mTexLoaded = "";
+                                mTexLoaded = string.Empty;
                             }
                         }
                     }

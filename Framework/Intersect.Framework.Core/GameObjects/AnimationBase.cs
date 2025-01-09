@@ -77,5 +77,5 @@ public partial class AnimationBase : DatabaseObject<AnimationBase>, IFolderable
     public bool CompleteSound { get; set; }
 
     /// <inheritdoc />
-    public string Folder { get; set; } = "";
+    public string Folder { get; set; } = string.Empty;
 }

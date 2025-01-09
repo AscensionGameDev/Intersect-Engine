@@ -3,6 +3,6 @@
 
 public interface IObject
 {
-    public Guid Id { get; }
+    Guid Id { get; }
 
 }

@@ -67,5 +67,9 @@ public sealed partial class ApiConfiguration
     )]
     public List<StaticFilePathOptions> StaticFilePaths { get; set; }
 
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore)]
+    [DefaultValue(false)]
+    public bool EnableSwaggerUI { get; set; }
+
     #endregion
 }

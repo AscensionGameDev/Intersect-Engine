@@ -24,7 +24,7 @@ public static partial class Strings
         else
         {
             double returnVal = 0;
-            var postfix = "";
+            var postfix = string.Empty;
 
             // hundreds
             if (value <= 999)

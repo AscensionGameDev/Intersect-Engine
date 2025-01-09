@@ -4,7 +4,7 @@ namespace Intersect.GameObjects.Maps.MapList;
 
 public partial class MapListFolder : MapListItem
 {
-    public MapList Children = new MapList();
+    public MapList Children = new();
 
     public Guid FolderId = Guid.Empty;
 

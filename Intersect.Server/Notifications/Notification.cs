@@ -20,11 +20,11 @@ namespace Intersect.Server.Notifications
             IsHtml = html;
         }
 
-        public string ToAddress { get; set; } = "";
+        public string ToAddress { get; set; } = string.Empty;
 
-        public string Subject { get; set; } = "";
+        public string Subject { get; set; } = string.Empty;
 
-        public string Body { get; set; } = "";
+        public string Body { get; set; } = string.Empty;
 
         public bool IsHtml { get; set; } = false;
 

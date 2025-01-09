@@ -20,7 +20,7 @@ namespace Intersect.Server.Networking.Helpers
             var sb = new StringBuilder();
             sb.AppendLine("Intersect Network Diagnostics");
             sb.AppendLine();
-            var externalIp = "";
+            var externalIp = string.Empty;
             var serverAccessible = PortChecker.CanYouSeeMe(Options.ServerPort, out externalIp);
             string localIP;
             using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))

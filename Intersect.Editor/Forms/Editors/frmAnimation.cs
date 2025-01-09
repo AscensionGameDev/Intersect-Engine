@@ -849,7 +849,7 @@ public partial class FrmAnimation : EditorForm
 
     private void btnAddFolder_Click(object sender, EventArgs e)
     {
-        var folderName = "";
+        var folderName = string.Empty;
         var result = DarkInputBox.ShowInformation(
             Strings.AnimationEditor.folderprompt, Strings.AnimationEditor.foldertitle, ref folderName,
             DarkDialogButton.OkCancel

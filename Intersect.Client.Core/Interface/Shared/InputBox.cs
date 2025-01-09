@@ -48,7 +48,7 @@ public partial class InputBox : WindowControl
     private readonly Button _btnOk;
     private readonly Label _promptLabel;
 
-    private readonly string _prompt = "";
+    private readonly string _prompt = string.Empty;
     private bool _initialized = false;
 
     public InputBox(

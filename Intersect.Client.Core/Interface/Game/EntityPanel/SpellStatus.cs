@@ -187,7 +187,7 @@ public partial class SpellStatus
                     _statusIcon.Texture = null;
                 }
 
-                _textureLoaded = "";
+                _textureLoaded = string.Empty;
             }
         }
         else if (remaining <= 0)
@@ -198,7 +198,7 @@ public partial class SpellStatus
             }
 
             _spellStatusContainer.Hide();
-            _textureLoaded = "";
+            _textureLoaded = string.Empty;
         }
     }
 }

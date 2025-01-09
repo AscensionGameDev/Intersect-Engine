@@ -153,7 +153,7 @@ public partial class CerasVersionToleranceMigration
                     if (currentCount > 256)
                     {
                         updateCmd.ExecuteNonQuery();
-                        updateCmd.CommandText = "";
+                        updateCmd.CommandText = string.Empty;
                         updateCmd.Parameters.Clear();
                         currentCount = 0;
                     }

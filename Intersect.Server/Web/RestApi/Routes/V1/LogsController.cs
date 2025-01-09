@@ -18,7 +18,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         public DataPage<ChatHistory> ListChat(
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
-            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] int limit = PagingInfo.MaxPageSize,
             [FromQuery] int messageType = -1,
             [FromQuery] Guid userId = default,
             [FromQuery] Guid playerId = default,
@@ -28,7 +28,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         )
         {
             page = Math.Max(page, 0);
-            pageSize = Math.Max(Math.Min(pageSize, 100), 5);
+            pageSize = Math.Max(Math.Min(pageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
             using (var context = DbInterface.CreateLoggingContext())
@@ -85,14 +85,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     values = values.Take(limit).ToList();
                 }
 
-                return new DataPage<ChatHistory>
-                {
-                    Total = messages.Count(),
-                    Page = page,
-                    PageSize = pageSize,
-                    Count = values.Count,
-                    Values = values
-                };
+                return new DataPage<ChatHistory>(
+                    Total: messages.Count(),
+                    Page: page,
+                    PageSize: pageSize,
+                    Count: values.Count,
+                    Values: values
+                );
             }
         }
 
@@ -102,13 +101,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             [FromQuery] Guid player2Id,
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
-            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] int limit = PagingInfo.MaxPageSize,
             [FromQuery] string search = null,
             [FromQuery] SortDirection sortDirection = SortDirection.Ascending
         )
         {
             page = Math.Max(page, 0);
-            pageSize = Math.Max(Math.Min(pageSize, 100), 5);
+            pageSize = Math.Max(Math.Min(pageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
             using (var context = DbInterface.CreateLoggingContext())
@@ -142,14 +141,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     values = values.Take(limit).ToList();
                 }
 
-                return new DataPage<ChatHistory>
-                {
-                    Total = messages.Count(),
-                    Page = page,
-                    PageSize = pageSize,
-                    Count = values.Count,
-                    Values = values
-                };
+                return new DataPage<ChatHistory>(
+                    Total: messages.Count(),
+                    Page: page,
+                    PageSize: pageSize,
+                    Count: values.Count,
+                    Values: values
+                );
             }
         }
 
@@ -193,11 +191,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             Guid userId,
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
-            [FromQuery] int limit = PAGE_SIZE_MAX
+            [FromQuery] int limit = PagingInfo.MaxPageSize
         )
         {
             page = Math.Max(page, 0);
-            pageSize = Math.Max(Math.Min(pageSize, 100), 5);
+            pageSize = Math.Max(Math.Min(pageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
             using (var context = DbInterface.CreateLoggingContext())
@@ -223,14 +221,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     }
                 }
 
-                return new DataPage<IpAddress>()
-                {
-                    Total = ipAddresses.Count(),
-                    Page = page,
-                    PageSize = pageSize,
-                    Count = addresses.Count,
-                    Values = addresses
-                };
+                return new DataPage<IpAddress>(
+                    Total: ipAddresses.Count(),
+                    Page: page,
+                    PageSize: pageSize,
+                    Count: addresses.Count,
+                    Values: addresses
+                );
 
             }
         }
@@ -241,12 +238,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             Guid userId,
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
-            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] int limit = PagingInfo.MaxPageSize,
             [FromQuery] SortDirection sortDirection = SortDirection.Ascending
         )
         {
             page = Math.Max(page, 0);
-            pageSize = Math.Max(Math.Min(pageSize, 100), 5);
+            pageSize = Math.Max(Math.Min(pageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
             using (var context = DbInterface.CreateLoggingContext())
@@ -264,14 +261,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
                 var values = activity.Skip(page * pageSize).Take(pageSize).ToList();
 
-                return new DataPage<UserActivityHistory>()
-                {
-                    Total = activity.Count(),
-                    Page = page,
-                    PageSize = pageSize,
-                    Count = values.Count,
-                    Values = values
-                };
+                return new DataPage<UserActivityHistory>(
+                    Total: activity.Count(),
+                    Page: page,
+                    PageSize: pageSize,
+                    Count: values.Count,
+                    Values: values
+                );
 
             }
 
@@ -282,12 +278,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             Guid playerId,
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
-            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] int limit = PagingInfo.MaxPageSize,
             [FromQuery] SortDirection sortDirection = SortDirection.Ascending
         )
         {
             page = Math.Max(page, 0);
-            pageSize = Math.Max(Math.Min(pageSize, 100), 5);
+            pageSize = Math.Max(Math.Min(pageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
             using (var context = DbInterface.CreateLoggingContext())
@@ -305,14 +301,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
                 var values = activity.Skip(page * pageSize).Take(pageSize).ToList();
 
-                return new DataPage<UserActivityHistory>()
-                {
-                    Total = activity.Count(),
-                    Page = page,
-                    PageSize = pageSize,
-                    Count = values.Count,
-                    Values = values
-                };
+                return new DataPage<UserActivityHistory>(
+                    Total: activity.Count(),
+                    Page: page,
+                    PageSize: pageSize,
+                    Count: values.Count,
+                    Values: values
+                );
 
             }
 
@@ -322,14 +317,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         public DataPage<TradeHistory> ListTrades(
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
-            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] int limit = PagingInfo.MaxPageSize,
             [FromQuery] Guid userId = default,
             [FromQuery] Guid playerId = default,
             [FromQuery] SortDirection sortDirection = SortDirection.Ascending
         )
         {
             page = Math.Max(page, 0);
-            pageSize = Math.Max(Math.Min(pageSize, 100), 5);
+            pageSize = Math.Max(Math.Min(pageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
             var start = DateTime.UtcNow;
@@ -381,10 +376,10 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     Page = page,
                     PageSize = pageSize,
                     Count = values.Count,
-                    Sort = new[] { Sort.From(nameof(TradeHistory.TimeStamp), sortDirection) },
                     Values = values,
+                    Sort = [Sort.From(nameof(TradeHistory.TimeStamp), sortDirection)],
 #if DEBUG
-                    Extra = delta
+                    Extra = delta,
 #endif
                 };
             }
@@ -431,12 +426,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             Guid guildId,
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
-            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] int limit = PagingInfo.MaxPageSize,
             [FromQuery] SortDirection sortDirection = SortDirection.Ascending
         )
         {
             page = Math.Max(page, 0);
-            pageSize = Math.Max(Math.Min(pageSize, 100), 5);
+            pageSize = Math.Max(Math.Min(pageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
             using (var context = DbInterface.CreateLoggingContext())
@@ -466,14 +461,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     values = values.Take(limit).ToList();
                 }
 
-                return new DataPage<GuildHistory>
-                {
-                    Total = guildActivity.Count(),
-                    Page = page,
-                    PageSize = pageSize,
-                    Count = values.Count,
-                    Values = values
-                };
+                return new DataPage<GuildHistory>(
+                    Total: guildActivity.Count(),
+                    Page: page,
+                    PageSize: pageSize,
+                    Count: values.Count,
+                    Values: values
+                );
             }
         }
 

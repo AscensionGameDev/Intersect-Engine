@@ -37,9 +37,9 @@ public partial class ShowTextCommand : EventCommand
 {
     public override EventCommandType Type { get; } = EventCommandType.ShowText;
 
-    public string Text { get; set; } = "";
+    public string Text { get; set; } = string.Empty;
 
-    public string Face { get; set; } = "";
+    public string Face { get; set; } = string.Empty;
 }
 
 public partial class ShowOptionsCommand : EventCommand
@@ -54,20 +54,20 @@ public partial class ShowOptionsCommand : EventCommand
         for (var i = 0; i < BranchIds.Length; i++)
         {
             BranchIds[i] = Guid.NewGuid();
-            commandLists.Add(BranchIds[i], new List<EventCommand>());
+            commandLists.Add(BranchIds[i], []);
         }
     }
 
     public override EventCommandType Type { get; } = EventCommandType.ShowOptions;
 
-    public string Text { get; set; } = "";
+    public string Text { get; set; } = string.Empty;
 
     public string[] Options { get; set; } = new string[4];
 
     //Id of the command list(s) you follow when a particular option is selected
     public Guid[] BranchIds { get; set; } = new Guid[4];
 
-    public string Face { get; set; } = "";
+    public string Face { get; set; } = string.Empty;
 
     public override string GetCopyData(
         Dictionary<Guid, List<EventCommand>> commandLists,
@@ -113,7 +113,7 @@ public partial class InputVariableCommand : EventCommand
         for (var i = 0; i < BranchIds.Length; i++)
         {
             BranchIds[i] = Guid.NewGuid();
-            commandLists.Add(BranchIds[i], new List<EventCommand>());
+            commandLists.Add(BranchIds[i], []);
         }
     }
 
@@ -121,11 +121,11 @@ public partial class InputVariableCommand : EventCommand
 
     public string Title { get; set; }
 
-    public string Text { get; set; } = "";
+    public string Text { get; set; } = string.Empty;
 
     public VariableType VariableType { get; set; } = VariableType.PlayerVariable;
 
-    public Guid VariableId { get; set; } = new Guid();
+    public Guid VariableId { get; set; } = new();
 
     public long Minimum { get; set; } = 0;
 
@@ -170,12 +170,12 @@ public partial class AddChatboxTextCommand : EventCommand
 {
     public override EventCommandType Type { get; } = EventCommandType.AddChatboxText;
 
-    public string Text { get; set; } = "";
+    public string Text { get; set; } = string.Empty;
 
     // TODO: Expose this option to the user?
     public ChatMessageType MessageType { get; set; } = ChatMessageType.Notice;
 
-    public string Color { get; set; } = "";
+    public string Color { get; set; } = string.Empty;
 
     public ChatboxChannel Channel { get; set; } = ChatboxChannel.Player;
 
@@ -216,7 +216,7 @@ public partial class ConditionalBranchCommand : EventCommand
         for (var i = 0; i < BranchIds.Length; i++)
         {
             BranchIds[i] = Guid.NewGuid();
-            commandLists.Add(BranchIds[i], new List<EventCommand>());
+            commandLists.Add(BranchIds[i], []);
         }
     }
 
@@ -349,7 +349,7 @@ public partial class ChangeSpellsCommand : EventCommand
         for (var i = 0; i < BranchIds.Length; i++)
         {
             BranchIds[i] = Guid.NewGuid();
-            commandLists.Add(BranchIds[i], new List<EventCommand>());
+            commandLists.Add(BranchIds[i], []);
         }
     }
 
@@ -408,7 +408,7 @@ public partial class ChangeItemsCommand : EventCommand
         for (var i = 0; i < BranchIds.Length; i++)
         {
             BranchIds[i] = Guid.NewGuid();
-            commandLists.Add(BranchIds[i], new List<EventCommand>());
+            commandLists.Add(BranchIds[i], []);
         }
     }
 
@@ -495,7 +495,7 @@ public partial class ChangeSpriteCommand : EventCommand
 {
     public override EventCommandType Type { get; } = EventCommandType.ChangeSprite;
 
-    public string Sprite { get; set; } = "";
+    public string Sprite { get; set; } = string.Empty;
 }
 
 public partial class ChangeNameColorCommand : EventCommand
@@ -526,7 +526,7 @@ public partial class ChangeFaceCommand : EventCommand
 {
     public override EventCommandType Type { get; } = EventCommandType.ChangeFace;
 
-    public string Face { get; set; } = "";
+    public string Face { get; set; } = string.Empty;
 }
 
 public partial class ChangeGenderCommand : EventCommand
@@ -570,7 +570,7 @@ public partial class SetMoveRouteCommand : EventCommand
 {
     public override EventCommandType Type { get; } = EventCommandType.SetMoveRoute;
 
-    public EventMoveRoute Route { get; set; } = new EventMoveRoute();
+    public EventMoveRoute Route { get; set; } = new();
 }
 
 public partial class WaitForRouteCommand : EventCommand
@@ -653,7 +653,7 @@ public partial class PlayBgmCommand : EventCommand
 {
     public override EventCommandType Type { get; } = EventCommandType.PlayBgm;
 
-    public string File { get; set; } = "";
+    public string File { get; set; } = string.Empty;
 }
 
 public partial class FadeoutBgmCommand : EventCommand
@@ -665,7 +665,7 @@ public partial class PlaySoundCommand : EventCommand
 {
     public override EventCommandType Type { get; } = EventCommandType.PlaySound;
 
-    public string File { get; set; } = "";
+    public string File { get; set; } = string.Empty;
 }
 
 public partial class StopSoundsCommand : EventCommand
@@ -680,7 +680,7 @@ public partial class ShowPictureCommand : EventCommand
     /// <summary>
     /// Picture filename to show.
     /// </summary>
-    public string File { get; set; } = "";
+    public string File { get; set; } = string.Empty;
 
     /// <summary>
     /// How the picture is rendered on the screen.
@@ -758,7 +758,7 @@ public partial class StartQuestCommand : EventCommand
         for (var i = 0; i < BranchIds.Length; i++)
         {
             BranchIds[i] = Guid.NewGuid();
-            commandLists.Add(BranchIds[i], new List<EventCommand>());
+            commandLists.Add(BranchIds[i], []);
         }
     }
 
@@ -834,7 +834,7 @@ public partial class ChangePlayerColorCommand : EventCommand
     /// <summary>
     /// The <see cref="Color"/> to apply to the player.
     /// </summary>
-    public Color Color { get; set; } = new Color(255, 255, 255, 255);
+    public Color Color { get; set; } = new(255, 255, 255, 255);
 }
 
 public partial class ChangeNameCommand : EventCommand
@@ -849,7 +849,7 @@ public partial class ChangeNameCommand : EventCommand
         for (var i = 0; i < BranchIds.Length; i++)
         {
             BranchIds[i] = Guid.NewGuid();
-            commandLists.Add(BranchIds[i], new List<EventCommand>());
+            commandLists.Add(BranchIds[i], []);
         }
     }
 
@@ -904,7 +904,7 @@ public partial class CreateGuildCommand : EventCommand
         for (var i = 0; i < BranchIds.Length; i++)
         {
             BranchIds[i] = Guid.NewGuid();
-            commandLists.Add(BranchIds[i], new List<EventCommand>());
+            commandLists.Add(BranchIds[i], []);
         }
     }
 
@@ -948,7 +948,7 @@ public partial class DisbandGuildCommand : EventCommand
         for (var i = 0; i < BranchIds.Length; i++)
         {
             BranchIds[i] = Guid.NewGuid();
-            commandLists.Add(BranchIds[i], new List<EventCommand>());
+            commandLists.Add(BranchIds[i], []);
         }
     }
 

@@ -509,7 +509,7 @@ public partial class FrmCrafts : EditorForm
 
     private void btnAddFolder_Click(object sender, EventArgs e)
     {
-        var folderName = "";
+        var folderName = string.Empty;
         var result = DarkInputBox.ShowInformation(
             Strings.CraftsEditor.folderprompt, Strings.CraftsEditor.foldertitle, ref folderName,
             DarkDialogButton.OkCancel

@@ -24,7 +24,7 @@ public partial class MapBase : DatabaseObject<MapBase>
 
     [NotMapped]
     [JsonIgnore]
-    public readonly Dictionary<Guid, EventBase> LocalEvents = new Dictionary<Guid, EventBase>();
+    public readonly Dictionary<Guid, EventBase> LocalEvents = new();
 
     //Client/Editor Only
     [JsonIgnore]
@@ -32,12 +32,12 @@ public partial class MapBase : DatabaseObject<MapBase>
     public MapAutotiles Autotiles;
 
     [NotMapped]
-    public List<Guid> EventIds = new List<Guid>();
+    public List<Guid> EventIds { get; set; } = [];
 
     //Core Data
     [JsonIgnore]
     [NotMapped]
-    public Dictionary<string, Tile[,]> Layers = new Dictionary<string, Tile[,]>();
+    public Dictionary<string, Tile[,]> Layers = new();
 
     //Map Attributes
     private MapAttribute[,] mAttributes = new MapAttribute[Options.MapWidth, Options.MapHeight];
@@ -48,7 +48,7 @@ public partial class MapBase : DatabaseObject<MapBase>
     //SyncLock
     [JsonIgnore]
     [NotMapped]
-    protected object mMapLock = new object();
+    protected object mMapLock = new();
 
     [JsonConstructor]
     public MapBase(Guid id) : base(id)
@@ -151,7 +151,7 @@ public partial class MapBase : DatabaseObject<MapBase>
                 }
 
                 EventIds?.Clear();
-                EventIds?.AddRange(mapBase.EventIds?.ToArray() ?? new Guid[] { });
+                EventIds?.AddRange(mapBase.EventIds?.ToArray() ?? []);
             }
         }
     }
@@ -223,7 +223,7 @@ public partial class MapBase : DatabaseObject<MapBase>
 
     [NotMapped]
     [JsonProperty]
-    public List<LightBase> Lights { get; private set; } = new List<LightBase>();
+    public List<LightBase> Lights { get; private set; } = [];
 
     [Column("Events")]
     [JsonIgnore]
@@ -277,7 +277,7 @@ public partial class MapBase : DatabaseObject<MapBase>
 
     [NotMapped]
     [JsonProperty]
-    public List<NpcSpawn> Spawns { get; private set; } = new List<NpcSpawn>();
+    public List<NpcSpawn> Spawns { get; private set; } = [];
 
     //Properties
     public string Music { get; set; } = null;

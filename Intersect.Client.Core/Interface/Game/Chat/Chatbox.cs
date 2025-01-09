@@ -483,7 +483,7 @@ public partial class Chatbox
     {
         if (mChatboxInput.Text == GetDefaultInputText())
         {
-            mChatboxInput.Text = "";
+            mChatboxInput.Text = string.Empty;
         }
     }
 

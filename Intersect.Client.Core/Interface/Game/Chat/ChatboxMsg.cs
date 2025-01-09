@@ -25,11 +25,11 @@ public partial class ChatboxMsg
             ChatMessageType.Admin } },
     };
 
-    private string mMsg = "";
+    private string mMsg = string.Empty;
 
     private Color mMsgColor;
 
-    private string mTarget = "";
+    private string mTarget = string.Empty;
 
     private ChatMessageType mType;
 

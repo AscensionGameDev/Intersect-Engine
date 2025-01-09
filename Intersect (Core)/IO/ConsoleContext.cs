@@ -216,7 +216,7 @@ public sealed partial class ConsoleContext
             {
                 InputBuffer.Clear();
 
-                var line = "";
+                var line = string.Empty;
                 var finished = false;
                 while (!finished)
                 {

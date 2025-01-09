@@ -1,3 +1,4 @@
+using System.Net;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Server.Database;
@@ -38,65 +39,77 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
     {
 
         [HttpPost]
-        public object ListPost([FromBody] PagingInfo pageInfo)
+        public IActionResult ListPost([FromBody] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
-            pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
+            pageInfo.PageSize = Math.Max(Math.Min(pageInfo.PageSize, 100), 5);
 
-            int entryTotal = 0;
-            var entries = Player.List(null, null, SortDirection.Ascending, pageInfo.Page * pageInfo.Count, pageInfo.Count, out entryTotal);
+            var values = Player.List(
+                null,
+                null,
+                SortDirection.Ascending,
+                pageInfo.Page * pageInfo.PageSize,
+                pageInfo.PageSize,
+                out var entryTotal
+            );
 
-            return new
-            {
-                total = entryTotal,
-                pageInfo.Page,
-                count = entries.Count,
-                entries
-            };
+            return Ok(
+                new DataPage<Player>
+                {
+                    Total = entryTotal,
+                    Page = pageInfo.Page,
+                    PageSize = pageInfo.PageSize,
+                    Count = values.Count,
+                    Values = values,
+                }
+            );
         }
 
         [HttpGet]
-        public DataPage<Player> List(
+        public IActionResult List(
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
-            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] int limit = PagingInfo.MaxPageSize,
             [FromQuery] string sortBy = null,
             [FromQuery] SortDirection sortDirection = SortDirection.Ascending,
             [FromQuery] string search = null
         )
         {
             page = Math.Max(page, 0);
-            pageSize = Math.Max(Math.Min(pageSize, 100), 5);
-            limit = Math.Max(Math.Min(limit, pageSize), 1);
+            limit = Math.Max(limit, 1);
+            pageSize = Math.Clamp(pageSize, PagingInfo.MinPageSize, PagingInfo.MaxPageSize);
 
-            int total = 0;
-            var values = Player.List(search?.Length > 2 ? search : null, sortBy, sortDirection, page * pageSize, pageSize, out total);
+            var take = Math.Min(limit, pageSize);
+            var values = Player.List(
+                search?.Length > 2 ? search : null,
+                sortBy,
+                sortDirection,
+                page * pageSize,
+                take,
+                out var total
+            );
 
-            if (limit != pageSize)
-            {
-                values = values.Take(limit).ToList();
-            }
-
-            return new DataPage<Player>
-            {
-                Total = total,
-                Page = page,
-                PageSize = pageSize,
-                Count = values.Count,
-                Values = values
-            };
+            return Ok(
+                new DataPage<Player>(
+                    Total: total,
+                    Page: page,
+                    PageSize: pageSize,
+                    Count: values.Count,
+                    Values: values
+                )
+            );
         }
 
         [HttpGet("rank")]
         public DataPage<Player> Rank(
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
-            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] int limit = PagingInfo.MaxPageSize,
             [FromQuery] SortDirection sortDirection = SortDirection.Descending
         )
         {
             page = Math.Max(page, 0);
-            pageSize = Math.Max(Math.Min(pageSize, 100), 5);
+            pageSize = Math.Max(Math.Min(pageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
             var values = Player.Rank(page, pageSize, sortDirection).ToList();
@@ -112,10 +125,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 PageSize = pageSize,
                 Count = values.Count,
                 Values = values,
-                Extra = new
+                Sort = [new Sort
                 {
-                    sortDirection
-                }
+                    By = [
+                        nameof(Player.Level),
+                        nameof(Player.Exp),
+                    ],
+                    Direction = sortDirection,
+                }],
             };
         }
 
@@ -123,16 +140,17 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         public object OnlinePost([FromBody] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
-            pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
+            pageInfo.PageSize = Math.Max(Math.Min(pageInfo.PageSize, 100), 5);
 
-            var entries = Globals.OnlineList?.Skip(pageInfo.Page * pageInfo.Count).Take(pageInfo.Count).ToList();
+            var entries = Globals.OnlineList?.Skip(pageInfo.Page * pageInfo.PageSize).Take(pageInfo.PageSize).ToList();
 
-            return new
+            return new DataPage<Player>
             {
-                total = Globals.OnlineList?.Count ?? 0,
-                pageInfo.Page,
-                count = entries?.Count ?? 0,
-                entries
+                Total = Globals.OnlineList?.Count ?? 0,
+                Page = pageInfo.Page,
+                PageSize = pageInfo.PageSize,
+                Count = entries?.Count ?? 0,
+                Values = entries,
             };
         }
 
@@ -140,17 +158,17 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         public DataPage<Player> Online(
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
-            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] int limit = PagingInfo.MaxPageSize,
             [FromQuery] string sortBy = null,
             [FromQuery] SortDirection sortDirection = SortDirection.Ascending,
             [FromQuery] string search = null
         )
         {
             page = Math.Max(page, 0);
-            pageSize = Math.Max(Math.Min(pageSize, 100), 5);
+            pageSize = Math.Max(Math.Min(pageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
-            var sort = Sort.From(sortBy, sortDirection);
+            Sort.From(sortBy, sortDirection);
             IEnumerable<Player> enumerable = Globals.OnlineList ?? new List<Player>();
 
             if (!string.IsNullOrWhiteSpace(search))
@@ -181,14 +199,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 values = values.Take(limit).ToList();
             }
 
-            return new DataPage<Player>
-            {
-                Total = total,
-                Page = page,
-                PageSize = pageSize,
-                Count = values.Count,
-                Values = values
-            };
+            return new DataPage<Player>(
+                Total: total,
+                Page: page,
+                PageSize: pageSize,
+                Count: values.Count,
+                Values: values
+            );
         }
 
         [HttpGet("online/count")]
@@ -201,17 +218,17 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("{lookupKey:LookupKey}")]
-        public object LookupPlayer(LookupKey lookupKey)
+        public IActionResult LookupPlayer(LookupKey lookupKey)
         {
             if (lookupKey.IsInvalid)
             {
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-            var (client, player) = Player.Fetch(lookupKey);
+            var (_, player) = Player.Fetch(lookupKey, loadRelationships: true, loadBags: true);
             if (player != null)
             {
-                return player;
+                return Ok(player);
             }
 
             return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
@@ -275,7 +292,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Name already taken.");
             }
 
-            var (client, player) = Player.Fetch(lookupKey);
+            var (_, player) = Player.Fetch(lookupKey);
             if (player != null)
             {
                 player.Name = change.Name;
@@ -297,15 +314,17 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("{lookupKey:LookupKey}/variables")]
-        public object PlayerVariableGet(LookupKey lookupKey)
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(IEnumerable<PlayerVariable>), (int)HttpStatusCode.OK, "application/json")]
+        public IActionResult PlayerVariablesList(LookupKey lookupKey)
         {
             if (lookupKey.IsInvalid)
             {
-                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid id." : @"Invalid name.");
             }
 
-            var (client, player) = Player.Fetch(lookupKey);
-            if (player == null)
+            if (!Player.TryFetch(lookupKey, out var fetchResult))
             {
                 return NotFound(
                     lookupKey.HasId
@@ -314,24 +333,23 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 );
             }
 
-            return player.Variables;
+            var (_, player) = fetchResult;
+
+            return Ok(player.Variables);
         }
 
         [HttpGet("{lookupKey:LookupKey}/variables/{variableId:guid}")]
-        public object PlayerVariableGet(LookupKey lookupKey, Guid variableId)
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(PlayerVariable), (int)HttpStatusCode.OK, "application/json")]
+        public IActionResult PlayerVariableGet(LookupKey lookupKey, Guid variableId)
         {
             if (lookupKey.IsInvalid)
             {
-                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid id." : @"Invalid name.");
             }
 
-            if (variableId == Guid.Empty || PlayerVariableBase.Get(variableId) == null)
-            {
-                return BadRequest($@"Invalid variable id ${variableId}.");
-            }
-
-            var (client, player) = Player.Fetch(lookupKey);
-            if (player == null)
+            if (!Player.TryFetch(lookupKey, out var fetchResult))
             {
                 return NotFound(
                     lookupKey.HasId
@@ -340,24 +358,29 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 );
             }
 
-            return player.GetVariable(variableId, true);
+            var (_, player) = fetchResult;
+
+            if (!PlayerVariableBase.TryGet(variableId, out var variableDescriptor))
+            {
+                return NotFound($@"Variable not found for id {variableId}");
+            }
+
+            var variable = player.GetVariable(variableDescriptor.Id, true);
+            return Ok(variable);
         }
 
         [HttpGet("{lookupKey:LookupKey}/variables/{variableId:guid}/value")]
-        public object PlayerVariableGetValue(LookupKey lookupKey, Guid variableId)
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(VariableValueBody), (int)HttpStatusCode.OK, "application/json")]
+        public IActionResult PlayerVariableValueGet(LookupKey lookupKey, Guid variableId)
         {
             if (lookupKey.IsInvalid)
             {
-                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid id." : @"Invalid name.");
             }
 
-            if (variableId == Guid.Empty || PlayerVariableBase.Get(variableId) == null)
-            {
-                return BadRequest($@"Invalid variable id ${variableId}.");
-            }
-
-            var (client, player) = Player.Fetch(lookupKey);
-            if (player == null)
+            if (!Player.TryFetch(lookupKey, out var fetchResult))
             {
                 return NotFound(
                     lookupKey.HasId
@@ -366,27 +389,32 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 );
             }
 
-            return new
+            var (_, player) = fetchResult;
+
+            if (!PlayerVariableBase.TryGet(variableId, out var variableDescriptor))
             {
-                value = player.GetVariable(variableId, true).Value.Value,
-            };
+                return NotFound($@"Variable not found for id {variableId}");
+            }
+
+            var variable = player.GetVariable(variableDescriptor.Id, true);
+            return Ok(new VariableValueBody
+            {
+                Value = variable.Value.Value,
+            });
         }
 
         [HttpPost("{lookupKey:LookupKey}/variables/{variableId:guid}")]
-        public object PlayerVariableSet(LookupKey lookupKey, Guid variableId, [FromBody] VariableValueAPI valueApi)
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
+        [ProducesResponseType(typeof(PlayerVariable), (int)HttpStatusCode.OK, "application/json")]
+        public IActionResult PlayerVariableSet(LookupKey lookupKey, Guid variableId, [FromBody] VariableValueBody valueBody)
         {
             if (lookupKey.IsInvalid)
             {
-                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid id." : @"Invalid name.");
             }
 
-            if (variableId == Guid.Empty || PlayerVariableBase.Get(variableId) == null)
-            {
-                return BadRequest($@"Invalid variable id ${variableId}.");
-            }
-
-            var (client, player) = Player.Fetch(lookupKey);
-            if (player == null)
+            if (!Player.TryFetch(lookupKey, out var fetchResult))
             {
                 return NotFound(
                     lookupKey.HasId
@@ -395,34 +423,35 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 );
             }
 
-            var variable = player.GetVariable(variableId, true);
+            var (_, player) = fetchResult;
 
-            var changed = true;
+            if (!PlayerVariableBase.TryGet(variableId, out var variableDescriptor))
+            {
+                return NotFound($@"Variable not found for id {variableId}");
+            }
+
+            var variable = player.GetVariable(variableDescriptor.Id, true);
+
+            var changed = false;
             if (variable?.Value != null)
             {
-                if (variable?.Value?.Value != valueApi.Value)
+                if (variable.Value.Value != valueBody.Value)
                 {
-                    changed = false;
+                    variable.Value.Value = valueBody.Value;
+                    changed = true;
                 }
-                variable.Value.Value = valueApi.Value;
             }
 
+            // ReSharper disable once InvertIf
             if (changed)
             {
-                var plyr = Player.FindOnline(player.Id);
-                if (plyr != null)
-                {
-                    player.StartCommonEventsWithTrigger(CommonEventTrigger.PlayerVariableChange, "", variableId.ToString());
-                }
-            }
-
-            using (var context = DbInterface.CreatePlayerContext(false))
-            {
+                player.StartCommonEventsWithTrigger(CommonEventTrigger.PlayerVariableChange, string.Empty, variableId.ToString());
+                using var context = DbInterface.CreatePlayerContext(false);
                 context.Update(player);
                 context.SaveChanges();
             }
 
-            return variable;
+            return Ok(variable);
         }
 
         [HttpPost("{lookupKey:LookupKey}/class")]
@@ -438,7 +467,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Invalid class id ${change.ClassId}.");
             }
 
-            var (client, player) = Player.Fetch(lookupKey);
+            var (_, player) = Player.Fetch(lookupKey);
             if (player != null)
             {
                 player.ClassId = change.ClassId;
@@ -469,7 +498,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-            var (client, player) = Player.Fetch(lookupKey);
+            var (_, player) = Player.Fetch(lookupKey);
             if (player != null)
             {
                 player.SetLevel(change.Level, true);
@@ -490,25 +519,17 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
         }
 
-        [HttpGet("{lookupKey:LookupKey}/items")]
-        public object ItemsList(LookupKey lookupKey)
+        public struct ItemListResponse
         {
-            return new
-            {
-                inventory = ItemsListInventory(lookupKey),
-                bank = ItemsListBank(lookupKey)
-            };
+            public IEnumerable<BankSlot> Bank { get; init; }
+
+            public IEnumerable<InventorySlot> Inventory { get; init; }
         }
 
-        [HttpGet("{lookupKey:LookupKey}/items/bank")]
-        public object ItemsListBank(LookupKey lookupKey)
+        [HttpGet("{lookupKey:LookupKey}/items")]
+        public IActionResult ItemsList(LookupKey lookupKey)
         {
-            if (lookupKey.IsInvalid)
-            {
-                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
-            }
-
-            var (client, player) = Player.Fetch(lookupKey);
+            var (_, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
                 return NotFound(
@@ -518,38 +539,61 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 );
             }
 
-            return player.Bank;
+            return Ok(
+                new ItemListResponse
+                {
+                    Bank = player.Bank.Where(slot => !slot.IsEmpty),
+                    Inventory = player.Items.Where(slot => !slot.IsEmpty),
+                }
+            );
+        }
+
+        [HttpGet("{lookupKey:LookupKey}/items/bank")]
+        public IActionResult ItemsListBank(LookupKey lookupKey)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+            }
+
+            var (_, player) = Player.Fetch(lookupKey);
+            if (player == null)
+            {
+                return NotFound(
+                    lookupKey.HasId
+                        ? $@"No player with id '{lookupKey.Id}'."
+                        : $@"No player with name '{lookupKey.Name}'."
+                );
+            }
+
+            return Ok(player.Bank.Where(slot => !slot.IsEmpty));
         }
 
         [HttpGet("bag/{bagId:guid}")]
-        public object ItemsListBag(Guid bagId)
+        public IActionResult GetPlayerBag(Guid bagId)
         {
             if (bagId == Guid.Empty)
             {
                 return BadRequest(@"Invalid bag id.");
             }
 
-            var bag = Bag.GetBag(bagId);
+            if (Bag.TryGetBag(bagId, out var bag))
+            {
+                return Ok(bag);
+            }
 
-            if (bag == null)
-            {
-                return NotFound(@"Bag does not exist.");
-            }
-            else
-            {
-                return bag;
-            }
+            return NotFound(@"Bag does not exist.");
         }
 
         [HttpGet("{lookupKey:LookupKey}/items/inventory")]
-        public object ItemsListInventory(LookupKey lookupKey)
+        public IActionResult ItemsListInventory(LookupKey lookupKey)
         {
             if (lookupKey.IsInvalid)
             {
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-            var (client, player) = Player.Fetch(lookupKey);
+            var (_, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
                 return NotFound(
@@ -559,7 +603,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 );
             }
 
-            return player.Items;
+            return Ok(player.Items.Where(slot => !slot.IsEmpty));
         }
 
         [HttpPost("{lookupKey:LookupKey}/items/give")]
@@ -580,7 +624,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest("Cannot give 0, or a negative amount of an item.");
             }
 
-            var (client, player) = Player.Fetch(lookupKey);
+            var (_, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
                 return NotFound(
@@ -629,7 +673,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest("Cannot take 0, or a negative amount of an item.");
             }
 
-            var (client, player) = Player.Fetch(lookupKey);
+            var (_, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
                 return NotFound(
@@ -658,14 +702,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("{lookupKey:LookupKey}/spells")]
-        public object SpellsList(LookupKey lookupKey)
+        public IActionResult SpellsList(LookupKey lookupKey)
         {
             if (lookupKey.IsInvalid)
             {
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-            var (client, player) = Player.Fetch(lookupKey);
+            var (_, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
                 return NotFound(
@@ -675,7 +719,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 );
             }
 
-            return player.Spells;
+            return Ok(player.Spells.Where(s => !s.IsEmpty));
         }
 
         [HttpPost("{lookupKey:LookupKey}/spells/teach")]
@@ -691,7 +735,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(@"Invalid spell id.");
             }
 
-            var (client, player) = Player.Fetch(lookupKey);
+            var (_, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
                 return NotFound(
@@ -728,7 +772,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(@"Invalid spell id.");
             }
 
-            var (client, player) = Player.Fetch(lookupKey);
+            var (_, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
                 return NotFound(
@@ -752,21 +796,16 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             return InternalServerError($@"Failed to remove player spell with id '{spell.SpellId}'.");
         }
 
-        [HttpPost("{lookupKey:LookupKey}/admin/{act}")]
-        public object DoAdminActionOnPlayerByName(
+        [HttpPost("{lookupKey:LookupKey}/admin/{adminAction:AdminAction}")]
+        public object DoAdminActionOnPlayerByLookupKey(
             LookupKey lookupKey,
-            string act,
+            AdminAction adminAction,
             [FromBody] AdminActionParameters actionParameters
         )
         {
-            if (!Enum.TryParse<AdminAction>(act, true, out var adminAction))
-            {
-                return BadRequest(@"Invalid action.");
-            }
-
             if (lookupKey.IsInvalid)
             {
-                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid id." : @"Invalid name.");
             }
 
             Tuple<Client, Player> fetchResult;

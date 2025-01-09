@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -68,8 +69,8 @@ public partial class Player : Entity
 
     public static int OnlineCount => OnlinePlayers.Count;
 
-    [JsonProperty("MaxVitals"), NotMapped]
-    public new long[] MaxVitals => GetMaxVitals();
+    [JsonIgnore, NotMapped]
+    public long[] MaxVitals => GetMaxVitals();
 
     //Name, X, Y, Dir, Etc all in the base Entity Class
     public Guid ClassId { get; set; }
@@ -90,13 +91,21 @@ public partial class Player : Entity
         set => Equipment = DatabaseUtils.LoadIntArray(value, Options.EquipmentSlots.Count);
     }
 
-    [NotMapped]
+    [NotMapped, JsonProperty("EquipmentSlots")]
     public int[] Equipment { get; set; } = new int[Options.EquipmentSlots.Count];
+
+    [NotMapped]
+    public virtual ImmutableArray<Bag> Bags =>
+        [..Items.Where(item => item.BagId.HasValue && item.BagId.Value != default).Select(item => item.Bag)];
+
+    [NotMapped]
+    public virtual ImmutableArray<Guid> BagIds =>
+        [..Items.Where(item => item.BagId.HasValue && item.BagId.Value != default).Select(item => item.BagId ?? default)];
 
     /// <summary>
     /// Returns a list of all equipped <see cref="Item"/>s
     /// </summary>
-    [NotMapped, JsonIgnore]
+    [NotMapped, JsonProperty(nameof(Equipment))]
     public List<Item> EquippedItems
     {
         get
@@ -141,7 +150,6 @@ public partial class Player : Entity
     public DateTime? LoginTime { get; set; }
 
     //Bank
-    [JsonIgnore]
     public virtual SlotList<BankSlot> Bank { get; set; } = new(
         Options.Instance.PlayerOpts.InitialBankslots,
         BankSlot.Create
@@ -149,26 +157,23 @@ public partial class Player : Entity
 
     //Friends -- Not used outside of EF
     [JsonIgnore]
-    public virtual List<Friend> Friends { get; set; } = new List<Friend>();
+    public virtual List<Friend> Friends { get; set; } = [];
 
     //Local Friends
-    [NotMapped, JsonProperty("Friends")]
-    public virtual Dictionary<Guid, string> CachedFriends { get; set; } = new Dictionary<Guid, string>();
+    [NotMapped, JsonProperty(nameof(Friends))]
+    public virtual Dictionary<Guid, string> CachedFriends { get; set; } = [];
 
-    //HotBar
-    [JsonIgnore]
+    // HotBar
     public virtual SlotList<HotbarSlot> Hotbar { get; set; } = new(
         Options.Instance.PlayerOpts.HotbarSlotCount,
         HotbarSlot.Create
     );
 
     //Quests
-    [JsonIgnore]
-    public virtual List<Quest> Quests { get; set; } = new List<Quest>();
+    public virtual List<Quest> Quests { get; set; } = [];
 
     //Variables
-    [JsonIgnore]
-    public virtual List<PlayerVariable> Variables { get; set; } = new List<PlayerVariable>();
+    public virtual List<PlayerVariable> Variables { get; set; } = [];
 
     [JsonIgnore, NotMapped]
     public bool IsValidPlayer => !IsDisposed && Client?.Entity == this;
@@ -7578,7 +7583,7 @@ public partial class Player : Entity
 
     #region Crafting
 
-    [NotMapped, JsonIgnore] public CraftingState CraftingState { get; set; }
+    [NotMapped] public CraftingState? CraftingState { get; set; }
 
     [NotMapped, JsonIgnore] public Guid OpenCraftingTableId { get; set; }
 

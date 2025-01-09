@@ -72,7 +72,7 @@ public partial class EntityBox
 
     private Dictionary<Guid, SpellStatus> mActiveStatuses = new Dictionary<Guid, SpellStatus>();
 
-    private string mCurrentSprite = "";
+    private string mCurrentSprite = string.Empty;
 
     private long mLastUpdateTime;
 
@@ -147,7 +147,7 @@ public partial class EntityBox
             else
             {
                 PaperdollPanels[i] = new ImagePanel(EntityFaceContainer);
-                PaperdollTextures[i] = "";
+                PaperdollTextures[i] = string.Empty;
                 PaperdollPanels[i].Hide();
                 i++;
             }

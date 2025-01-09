@@ -78,7 +78,7 @@ public partial class EventCommandSetGuildBankSlots : UserControl
         else
         {
             cmbVariable.SelectedIndex = -1;
-            cmbVariable.Text = "";
+            cmbVariable.Text = string.Empty;
         }
     }
 

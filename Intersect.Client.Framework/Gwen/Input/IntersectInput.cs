@@ -158,7 +158,7 @@ public partial class GwenInputMessage
 
     public IntersectInput.InputEvent Type;
 
-    public string Unicode = "";
+    public string Unicode = string.Empty;
 
     public GwenInputMessage(
         IntersectInput.InputEvent type,

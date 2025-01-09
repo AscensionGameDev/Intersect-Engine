@@ -84,7 +84,7 @@ public class EditorFormattedAttribute : EditorDisplayAttribute
 
         if (formatterMethodInfo.GetParameters().Length == 1)
         {
-            return formatterMethodInfo.Invoke(default, new[] { value });
+            return formatterMethodInfo.Invoke(default, [value]);
         }
 
         return formatterMethodInfo.Invoke(

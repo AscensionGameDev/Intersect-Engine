@@ -13,8 +13,14 @@ namespace Intersect.GameObjects;
 
 public partial class SpellBase : DatabaseObject<SpellBase>, IFolderable
 {
+    private long[] _vitalCost = new long[Enum.GetValues<Vital>().Length];
+
     [NotMapped]
-    public long[] VitalCost = new long[Enum.GetValues<Vital>().Length];
+    public long[] VitalCost
+    {
+        get => _vitalCost;
+        set => _vitalCost = value;
+    }
 
     [JsonConstructor]
     public SpellBase(Guid id) : base(id)
@@ -29,9 +35,9 @@ public partial class SpellBase : DatabaseObject<SpellBase>, IFolderable
 
     public SpellType SpellType { get; set; }
 
-    public string Description { get; set; } = "";
+    public string Description { get; set; } = string.Empty;
 
-    public string Icon { get; set; } = "";
+    public string Icon { get; set; } = string.Empty;
 
     //Animations
     [Column("CastAnimation")]
@@ -100,20 +106,20 @@ public partial class SpellBase : DatabaseObject<SpellBase>, IFolderable
     }
 
     [NotMapped]
-    public ConditionLists CastingRequirements { get; set; } = new ConditionLists();
+    public ConditionLists CastingRequirements { get; set; } = new();
 
-    public string CannotCastMessage { get; set; } = "";
+    public string CannotCastMessage { get; set; } = string.Empty;
 
     public string CastSpriteOverride { get; set; }
 
     //Combat Info
-    public SpellCombatData Combat { get; set; } = new SpellCombatData();
+    public SpellCombatData Combat { get; set; } = new();
 
     //Warp Info
-    public SpellWarpData Warp { get; set; } = new SpellWarpData();
+    public SpellWarpData Warp { get; set; } = new();
 
     //Dash Info
-    public SpellDashOpts Dash { get; set; } = new SpellDashOpts();
+    public SpellDashOpts Dash { get; set; } = new();
 
     //Event Info
     [Column("Event")]
@@ -132,12 +138,12 @@ public partial class SpellBase : DatabaseObject<SpellBase>, IFolderable
     [JsonIgnore]
     public string VitalCostJson
     {
-        get => DatabaseUtils.SaveLongArray(VitalCost, Enum.GetValues<Vital>().Length);
-        set => VitalCost = DatabaseUtils.LoadLongArray(value, Enum.GetValues<Vital>().Length);
+        get => DatabaseUtils.SaveLongArray(_vitalCost, Enum.GetValues<Vital>().Length);
+        set => DatabaseUtils.LoadLongArray(ref _vitalCost, value, Enum.GetValues<Vital>().Length);
     }
 
     /// <inheritdoc />
-    public string Folder { get; set; } = "";
+    public string Folder { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets an array of all items sharing the provided cooldown group.
@@ -151,7 +157,7 @@ public partial class SpellBase : DatabaseObject<SpellBase>, IFolderable
         // No point looking for nothing.
         if (string.IsNullOrWhiteSpace(cooldownGroup))
         {
-            return Array.Empty<SpellBase>();
+            return [];
         }
 
         return Lookup

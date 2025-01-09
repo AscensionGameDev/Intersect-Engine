@@ -23,6 +23,6 @@ public class EditorBooleanAttribute : EditorDisplayAttribute
             throw new InvalidOperationException($"{stringsType.FullName}.{nameof(stringsType)} is missing.");
         }
 
-        return formatBooleanMethodInfo.Invoke(null, new[] { value, Style })?.ToString();
+        return formatBooleanMethodInfo.Invoke(null, [value, Style])?.ToString();
     }
 }
