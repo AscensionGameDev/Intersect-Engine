@@ -51,7 +51,7 @@ jobs:
         submodules: recursive
 
     - name: Cache binaries
-      uses: actions/cache@v4.1.2
+      uses: actions/cache@v4.2.0
       id: cache-binaries
       with:
         key: ${{ runner.os }}-binaries-keys-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/**/*.cs*') }}
@@ -65,7 +65,7 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Cache NuGet dependencies
-      uses: actions/cache@v4.1.2
+      uses: actions/cache@v4.2.0
       id: cache-nuget
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       with:
@@ -90,7 +90,7 @@ jobs:
       run: ls -laR .
 
     - name: Upload keys
-      uses: actions/upload-artifact@v4.4.3
+      uses: actions/upload-artifact@v4.5.0
       with:
         if-no-files-found: error
         name: keys
@@ -107,7 +107,7 @@ jobs:
         submodules: recursive
 
     - name: Cache binaries
-      uses: actions/cache@v4.1.2
+      uses: actions/cache@v4.2.0
       id: cache-binaries
       with:
         key: ${{ runner.os }}-binaries-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/**/*.cs*') }}
@@ -121,7 +121,7 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Cache NuGet dependencies
-      uses: actions/cache@v4.1.2
+      uses: actions/cache@v4.2.0
       id: cache-nuget
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       with:
@@ -158,7 +158,7 @@ jobs:
       run: ls -laR .
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v4.4.3
+      uses: actions/upload-artifact@v4.5.0
       with:
         if-no-files-found: error
         name: engine-${{ runner.os }}
@@ -175,7 +175,7 @@ jobs:
         submodules: recursive
 
     - name: Cache binaries
-      uses: actions/cache@v4.1.2
+      uses: actions/cache@v4.2.0
       id: cache-binaries
       with:
         key: ${{ runner.os }}-binaries-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/**/*.cs*') }}
@@ -189,7 +189,7 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Cache NuGet dependencies
-      uses: actions/cache@v4.1.2
+      uses: actions/cache@v4.2.0
       id: cache-nuget
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       with:
@@ -226,7 +226,7 @@ jobs:
       run: ls -laR .
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v4.4.3
+      uses: actions/upload-artifact@v4.5.0
       with:
         if-no-files-found: error
         name: engine-${{ runner.os }}
@@ -243,7 +243,7 @@ jobs:
         submodules: recursive
 
     - name: Cache binaries
-      uses: actions/cache@v4.1.2
+      uses: actions/cache@v4.2.0
       id: cache-binaries
       with:
         key: ${{ runner.os }}-binaries-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/**/*.cs*') }}
@@ -257,7 +257,7 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Cache NuGet dependencies
-      uses: actions/cache@v4.1.2
+      uses: actions/cache@v4.2.0
       id: cache-nuget
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       with:
@@ -297,7 +297,7 @@ jobs:
       shell: bash
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v4.4.3
+      uses: actions/upload-artifact@v4.5.0
       with:
         if-no-files-found: error
         name: engine-${{ runner.os }}
