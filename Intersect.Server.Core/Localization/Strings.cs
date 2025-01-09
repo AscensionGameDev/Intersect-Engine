@@ -949,7 +949,7 @@ public static partial class Strings
     public sealed partial class NotificationsNamespace : LocaleNamespace
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString Copyright = @"Copyright (C) 2020-2024 Ascension Game Dev, All Rights Reserved";
+        public readonly LocalizedString Copyright = @"Copyright (c) 2020-2025 Ascension Game Dev, All Rights Reserved";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString Product = @"Intersect Game Engine";

@@ -7,7 +7,7 @@
     <description>Library for the public Intersect Client API</description>
     <authors>Ascension Game Dev</authors>
     <owners>Ascension Game Dev</owners>
-    <copyright>Copyright ©  2020 Ascension Game Dev</copyright>
+    <copyright>Copyright (c) 2020-2025 Ascension Game Dev</copyright>
     <tags>intersect agd client plugin framework</tags>
     <license type="file">LICENSE.md</license>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
