@@ -30,9 +30,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         public DataPage<User> ListPost([FromBody] PagingInfo pageInfo)
         {
             var page = Math.Max(pageInfo.Page, 0);
-            var pageSize = Math.Max(Math.Min(pageInfo.Count, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
+            var pageSize = Math.Max(Math.Min(pageInfo.PageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
 
-            var values = Database.PlayerData.User.List(null, null, SortDirection.Ascending, pageInfo.Page * pageInfo.Count, pageInfo.Count, out var total);
+            var values = Database.PlayerData.User.List(null, null, SortDirection.Ascending, pageInfo.Page * pageInfo.PageSize, pageInfo.PageSize, out var total);
 
             return new DataPage<User>(
                 Total: total,

@@ -20,14 +20,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         public object ListPost([FromBody] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
-            pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
+            pageInfo.PageSize = Math.Max(Math.Min(pageInfo.PageSize, 100), 5);
 
-            var entries = Guild.List(null, null, SortDirection.Ascending, pageInfo.Page * pageInfo.Count, pageInfo.Count, out int entryTotal);
+            var entries = Guild.List(null, null, SortDirection.Ascending, pageInfo.Page * pageInfo.PageSize, pageInfo.PageSize, out int entryTotal);
 
             return Ok(new DataPage<KeyValuePair<Guild, int>>(
                 Total: entryTotal,
                 Page: pageInfo.Page,
-                PageSize: pageInfo.Count,
+                PageSize: pageInfo.PageSize,
                 Count: entries.Count,
                 Values: entries
             ));

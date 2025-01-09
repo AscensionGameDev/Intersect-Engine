@@ -9,5 +9,5 @@ public class PagingInfo
 
     public int Page { get; set; } = 0;
 
-    public int Count { get; set; } = DefaultPageSize;
+    public int PageSize { get; set; } = DefaultPageSize;
 }

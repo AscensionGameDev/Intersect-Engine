@@ -21,7 +21,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         public IActionResult List(GameObjectType gameObjectType, [FromQuery] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
-            pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
+            pageInfo.PageSize = Math.Max(Math.Min(pageInfo.PageSize, 100), 5);
 
             if (!gameObjectType.TryGetLookup(out var lookup))
             {
@@ -33,8 +33,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 : lookup.Values;
 
             var entries = baseEnumerable.OrderBy(obj => obj.Name)
-                .Skip(pageInfo.Page * pageInfo.Count)
-                .Take(pageInfo.Count)
+                .Skip(pageInfo.Page * pageInfo.PageSize)
+                .Take(pageInfo.PageSize)
                 .ToArray();
 
             var total = gameObjectType == GameObjectType.Event
@@ -44,7 +44,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 new DataPage<IDatabaseObject>(
                     Total: total,
                     Page: pageInfo.Page,
-                    PageSize: pageInfo.Count,
+                    PageSize: pageInfo.PageSize,
                     Count: entries.Length,
                     Values: entries
                 )

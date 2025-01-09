@@ -42,14 +42,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         public IActionResult ListPost([FromBody] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
-            pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
+            pageInfo.PageSize = Math.Max(Math.Min(pageInfo.PageSize, 100), 5);
 
             var values = Player.List(
                 null,
                 null,
                 SortDirection.Ascending,
-                pageInfo.Page * pageInfo.Count,
-                pageInfo.Count,
+                pageInfo.Page * pageInfo.PageSize,
+                pageInfo.PageSize,
                 out var entryTotal
             );
 
@@ -58,7 +58,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 {
                     Total = entryTotal,
                     Page = pageInfo.Page,
-                    PageSize = pageInfo.Count,
+                    PageSize = pageInfo.PageSize,
                     Count = values.Count,
                     Values = values,
                 }
@@ -140,15 +140,15 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         public object OnlinePost([FromBody] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
-            pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
+            pageInfo.PageSize = Math.Max(Math.Min(pageInfo.PageSize, 100), 5);
 
-            var entries = Globals.OnlineList?.Skip(pageInfo.Page * pageInfo.Count).Take(pageInfo.Count).ToList();
+            var entries = Globals.OnlineList?.Skip(pageInfo.Page * pageInfo.PageSize).Take(pageInfo.PageSize).ToList();
 
             return new DataPage<Player>
             {
                 Total = Globals.OnlineList?.Count ?? 0,
                 Page = pageInfo.Page,
-                PageSize = pageInfo.Count,
+                PageSize = pageInfo.PageSize,
                 Count = entries?.Count ?? 0,
                 Values = entries,
             };

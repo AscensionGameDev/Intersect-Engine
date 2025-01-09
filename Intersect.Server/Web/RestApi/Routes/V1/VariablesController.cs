@@ -17,15 +17,15 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         public object GlobalVariablesGet([FromQuery] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
-            pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
+            pageInfo.PageSize = Math.Max(Math.Min(pageInfo.PageSize, 100), 5);
 
-            var entries = GameContext.Queries.ServerVariables(pageInfo.Page, pageInfo.Count)?.ToList();
+            var entries = GameContext.Queries.ServerVariables(pageInfo.Page, pageInfo.PageSize)?.ToList();
 
             return new DataPage<ServerVariableBase>
             {
                 Total = ServerVariableBase.Lookup.Count(),
                 Page = pageInfo.Page,
-                PageSize = pageInfo.Count,
+                PageSize = pageInfo.PageSize,
                 Count = entries?.Count ?? 0,
                 Values = entries,
             };
