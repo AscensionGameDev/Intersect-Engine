@@ -24,27 +24,27 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             var entries = Guild.List(null, null, SortDirection.Ascending, pageInfo.Page * pageInfo.Count, pageInfo.Count, out int entryTotal);
 
-            return new
-            {
-                total = entryTotal,
-                pageInfo.Page,
-                count = entries.Count,
-                entries
-            };
+            return Ok(new DataPage<KeyValuePair<Guild, int>>(
+                Total: entryTotal,
+                Page: pageInfo.Page,
+                PageSize: pageInfo.Count,
+                Count: entries.Count,
+                Values: entries
+            ));
         }
 
         [HttpGet]
         public DataPage<KeyValuePair<Guild, int>> List(
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
-            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] int limit = PagingInfo.MaxPageSize,
             [FromQuery] string sortBy = null,
             [FromQuery] SortDirection sortDirection = SortDirection.Ascending,
             [FromQuery] string search = null
         )
         {
             page = Math.Max(page, 0);
-            pageSize = Math.Max(Math.Min(pageSize, 100), 5);
+            pageSize = Math.Max(Math.Min(pageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
             var values = Guild.List(search?.Length > 2 ? search : null, sortBy, sortDirection, page * pageSize, pageSize, out int total);
@@ -54,14 +54,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 values = values.Take(limit).ToList();
             }
 
-            return new DataPage<KeyValuePair<Guild, int>>
-            {
-                Total = total,
-                Page = page,
-                PageSize = pageSize,
-                Count = values.Count,
-                Values = values
-            };
+            return new DataPage<KeyValuePair<Guild, int>>(
+                Total: total,
+                Page: page,
+                PageSize: pageSize,
+                Count: values.Count,
+                Values: values
+            );
         }
 
         [HttpGet("{guildId:guid}")]
@@ -119,14 +118,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             Guid guildId,
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
-            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] int limit = PagingInfo.MaxPageSize,
             [FromQuery] string sortBy = null,
             [FromQuery] SortDirection sortDirection = SortDirection.Ascending,
             [FromQuery] string search = null
         )
         {
             page = Math.Max(page, 0);
-            pageSize = Math.Max(Math.Min(pageSize, 100), 5);
+            pageSize = Math.Max(Math.Min(pageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
             var values = Player.List(search?.Length > 2 ? search : null, sortBy, sortDirection, page * pageSize, pageSize, out int total, guildId);
@@ -136,14 +135,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 values = values.Take(limit).ToList();
             }
 
-            return new DataPage<Player>
-            {
-                Total = total,
-                Page = page,
-                PageSize = pageSize,
-                Count = values.Count,
-                Values = values
-            };
+            return new DataPage<Player>(
+                Total: total,
+                Page: page,
+                PageSize: pageSize,
+                Count: values.Count,
+                Values: values
+            );
         }
 
         [HttpPost("{guildId:guid}/kick/{lookupKey:LookupKey}")]

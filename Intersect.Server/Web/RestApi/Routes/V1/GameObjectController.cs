@@ -37,16 +37,17 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 .Take(pageInfo.Count)
                 .ToArray();
 
+            var total = gameObjectType == GameObjectType.Event
+                ? lookup.Count(obj => ((EventBase)obj.Value).CommonEvent)
+                : lookup.Count;
             return Ok(
-                new DataPage<IDatabaseObject>
-                {
-                    Total = gameObjectType == GameObjectType.Event
-                        ? lookup.Count(obj => ((EventBase)obj.Value).CommonEvent)
-                        : lookup.Count,
-                    Page = pageInfo.Page,
-                    Count = entries.Length,
-                    Values = entries,
-                }
+                new DataPage<IDatabaseObject>(
+                    Total: total,
+                    Page: pageInfo.Page,
+                    PageSize: pageInfo.Count,
+                    Count: entries.Length,
+                    Values: entries
+                )
             );
         }
 

@@ -30,32 +30,31 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         public DataPage<User> ListPost([FromBody] PagingInfo pageInfo)
         {
             var page = Math.Max(pageInfo.Page, 0);
-            var pageSize = Math.Max(Math.Min(pageInfo.Count, PAGE_SIZE_MAX), PAGE_SIZE_MIN);
+            var pageSize = Math.Max(Math.Min(pageInfo.Count, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
 
             var values = Database.PlayerData.User.List(null, null, SortDirection.Ascending, pageInfo.Page * pageInfo.Count, pageInfo.Count, out var total);
 
-            return new DataPage<User>
-            {
-                Total = total,
-                Page = page,
-                PageSize = pageSize,
-                Count = values.Count,
-                Values = values
-            };
+            return new DataPage<User>(
+                Total: total,
+                Page: page,
+                PageSize: pageSize,
+                Count: values.Count,
+                Values: values
+            );
         }
 
         [HttpGet]
         public DataPage<User> List(
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
-            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] int limit = PagingInfo.MaxPageSize,
             [FromQuery] string sortBy = null,
             [FromQuery] SortDirection sortDirection = SortDirection.Ascending,
             [FromQuery] string search = null
         )
         {
             page = Math.Max(page, 0);
-            pageSize = Math.Max(Math.Min(pageSize, PAGE_SIZE_MAX), PAGE_SIZE_MIN);
+            pageSize = Math.Max(Math.Min(pageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
             var values = Database.PlayerData.User.List(search?.Length > 2 ? search : null, sortBy, sortDirection, page * pageSize, pageSize, out var total);
@@ -65,14 +64,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 values = values.Take(limit).ToList();
             }
 
-            return new DataPage<User>
-            {
-                Total = total,
-                Page = page,
-                PageSize = pageSize,
-                Count = values.Count,
-                Values = values
-            };
+            return new DataPage<User>(
+                Total: total,
+                Page: page,
+                PageSize: pageSize,
+                Count: values.Count,
+                Values: values
+            );
         }
 
         [HttpGet("{userId:guid}")]

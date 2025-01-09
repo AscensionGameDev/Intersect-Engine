@@ -60,14 +60,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         public DataPage<Player> List(
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
-            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] int limit = PagingInfo.MaxPageSize,
             [FromQuery] string sortBy = null,
             [FromQuery] SortDirection sortDirection = SortDirection.Ascending,
             [FromQuery] string search = null
         )
         {
             page = Math.Max(page, 0);
-            pageSize = Math.Max(Math.Min(pageSize, 100), 5);
+            pageSize = Math.Clamp(pageSize, PagingInfo.MinPageSize, PagingInfo.MaxPageSize);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
             int total = 0;
@@ -78,26 +78,25 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 values = values.Take(limit).ToList();
             }
 
-            return new DataPage<Player>
-            {
-                Total = total,
-                Page = page,
-                PageSize = pageSize,
-                Count = values.Count,
-                Values = values
-            };
+            return new DataPage<Player>(
+                Total: total,
+                Page: page,
+                PageSize: pageSize,
+                Count: values.Count,
+                Values: values
+            );
         }
 
         [HttpGet("rank")]
         public DataPage<Player> Rank(
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
-            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] int limit = PagingInfo.MaxPageSize,
             [FromQuery] SortDirection sortDirection = SortDirection.Descending
         )
         {
             page = Math.Max(page, 0);
-            pageSize = Math.Max(Math.Min(pageSize, 100), 5);
+            pageSize = Math.Max(Math.Min(pageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
             var values = Player.Rank(page, pageSize, sortDirection).ToList();
@@ -106,18 +105,17 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 values = values.Take(limit).ToList();
             }
 
-            return new DataPage<Player>
-            {
-                Total = Player.Count(),
-                Page = page,
-                PageSize = pageSize,
-                Count = values.Count,
-                Values = values,
-                Extra = new
+            return new DataPage<Player>(
+                Total: Player.Count(),
+                Page: page,
+                PageSize: pageSize,
+                Count: values.Count,
+                Values: values,
+                Extra: new
                 {
                     sortDirection
                 }
-            };
+            );
         }
 
         [HttpPost("online")]
@@ -141,14 +139,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         public DataPage<Player> Online(
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
-            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] int limit = PagingInfo.MaxPageSize,
             [FromQuery] string sortBy = null,
             [FromQuery] SortDirection sortDirection = SortDirection.Ascending,
             [FromQuery] string search = null
         )
         {
             page = Math.Max(page, 0);
-            pageSize = Math.Max(Math.Min(pageSize, 100), 5);
+            pageSize = Math.Max(Math.Min(pageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
             Sort.From(sortBy, sortDirection);
@@ -182,14 +180,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 values = values.Take(limit).ToList();
             }
 
-            return new DataPage<Player>
-            {
-                Total = total,
-                Page = page,
-                PageSize = pageSize,
-                Count = values.Count,
-                Values = values
-            };
+            return new DataPage<Player>(
+                Total: total,
+                Page: page,
+                PageSize: pageSize,
+                Count: values.Count,
+                Values: values
+            );
         }
 
         [HttpGet("online/count")]
