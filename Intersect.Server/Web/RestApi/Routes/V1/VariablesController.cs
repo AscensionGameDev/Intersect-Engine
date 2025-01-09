@@ -3,6 +3,7 @@ using Intersect.Server.Database;
 using Intersect.Server.Database.GameData;
 using Intersect.Server.Entities;
 using Intersect.Server.Web.RestApi.Payloads;
+using Intersect.Server.Web.RestApi.Types;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,12 +21,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             var entries = GameContext.Queries.ServerVariables(pageInfo.Page, pageInfo.Count)?.ToList();
 
-            return new
+            return new DataPage<ServerVariableBase>
             {
-                total = ServerVariableBase.Lookup.Count(),
-                pageInfo.Page,
-                count = entries?.Count ?? 0,
-                entries
+                Total = ServerVariableBase.Lookup.Count(),
+                Page = pageInfo.Page,
+                PageSize = pageInfo.Count,
+                Count = entries?.Count ?? 0,
+                Values = entries,
             };
         }
 
@@ -64,7 +66,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             return new
             {
-                value = variable?.Value.Value,
+                value = variable.Value.Value,
             };
         }
 

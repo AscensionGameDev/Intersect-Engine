@@ -4,7 +4,7 @@
 public partial struct Sort
 {
 
-    public string By { get; set; }
+    public string[] By { get; set; }
 
     public SortDirection Direction { get; set; }
 
@@ -12,7 +12,7 @@ public partial struct Sort
     {
         return new Sort
         {
-            By = sortBy,
+            By = [sortBy],
             Direction = sortDirection
         };
     }

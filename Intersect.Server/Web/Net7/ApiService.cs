@@ -170,6 +170,7 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                 sgo.AddSchemaFilterInstance(documentFilterTokenRequest.CreateSchemaFilter());
                 sgo.SchemaFilter<GameObjectTypeSchemaFilter>();
                 sgo.SchemaFilter<LookupKeySchemaFilter>();
+                sgo.SchemaFilter<DictionarySchemaFilter>();
                 sgo.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
                 sgo.UseOneOfForPolymorphism();
                 sgo.UseAllOfForInheritance();

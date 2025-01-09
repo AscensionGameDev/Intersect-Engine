@@ -110,7 +110,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpPost("register")]
-        public object RegisterUser([FromBody] UserInfo user)
+        public IActionResult RegisterUser([FromBody] UserInfo user)
         {
             if (string.IsNullOrEmpty(user.Username) ||
                 string.IsNullOrEmpty(user.Email) ||
@@ -133,23 +133,20 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return BadRequest($@"Account already exists with username '{user.Username}'.");
             }
-            else
-            {
-                if (Database.PlayerData.User.UserExists(user.Email))
-                {
-                    return BadRequest($@"Account already with email '{user.Email}'.");
-                }
-                else
-                {
-                    DbInterface.CreateAccount(null, user.Username, user.Password?.ToUpperInvariant()?.Trim(), user.Email);
 
-                    return new
-                    {
-                        Username = user.Username,
-                        Email = user.Email,
-                    };
-                }
+            if (Database.PlayerData.User.UserExists(user.Email))
+            {
+                return BadRequest($@"Account already with email '{user.Email}'.");
             }
+
+            DbInterface.CreateAccount(null, user.Username, user.Password?.ToUpperInvariant()?.Trim(), user.Email);
+
+            return Ok(
+                new
+                {
+                    user.Username, user.Email,
+                }
+            );
         }
 
         [HttpDelete("{username}")]

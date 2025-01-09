@@ -52,44 +52,51 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("{gameObjectType}/names")]
-        public object Names(GameObjectType gameObjectType)
+        public IActionResult Names(GameObjectType gameObjectType)
         {
-            var lookup = GameObjectTypeExtensions.GetLookup(gameObjectType);
-
-            if (lookup != null)
+            if (!gameObjectType.TryGetLookup(out var lookup))
             {
-                var entries = gameObjectType == GameObjectType.Event
-                    ? lookup.Where(obj => ((EventBase)obj.Value).CommonEvent).Select(t => new { t.Key, t.Value.Name }).ToDictionary(t => t.Key, t => t.Name)
-                    : lookup.Select(t => new { t.Key, t.Value.Name }).ToDictionary(t => t.Key, t => t.Name);
-
-                return entries;
+                return BadRequest($"Invalid {nameof(GameObjectType)} '{gameObjectType}'");
             }
 
-            return BadRequest();
+            var descriptors = lookup.Values.AsEnumerable();
+            if (gameObjectType == GameObjectType.Event)
+            {
+                descriptors = descriptors.OfType<EventBase>().Where(descriptor => descriptor.CommonEvent);
+            }
+
+            var descriptorNames = descriptors.Select(descriptor => descriptor.Name).ToArray();
+
+            return Ok(
+                new DataPage<string>(
+                    Total: descriptorNames.Length,
+                    Page: 0,
+                    PageSize: descriptorNames.Length,
+                    Count: descriptorNames.Length,
+                    descriptorNames
+                )
+            );
         }
 
-        [HttpGet("{gameObjectType}/{objId:guid}")]
-        public object GameObjectById(GameObjectType gameObjectType, Guid objId)
+        [HttpGet("{gameObjectType}/{objectId:guid}")]
+        public object GameObjectById(GameObjectType gameObjectType, Guid objectId)
         {
-            if (objId == Guid.Empty)
+            if (objectId == default)
             {
-                return BadRequest(@"Object not found!");
+                return BadRequest($@"Invalid id '{objectId}'");
             }
 
-            var obj = GameObjectTypeExtensions.GetLookup(gameObjectType)?.Get(objId);
-
-            if (obj != null)
+            if (!gameObjectType.TryGetLookup(out var lookup))
             {
-                return obj;
+                return BadRequest($"Invalid {nameof(GameObjectType)} '{gameObjectType}'");
             }
 
-            return NotFound(@"Object not found!");
+            return !lookup.TryGetValue(objectId, out var gameObject)
+                ? NotFound($"No {gameObjectType} with id '{objectId}'")
+                : Ok(gameObject);
         }
 
         [HttpGet("time")]
-        public object Time()
-        {
-            return TimeBase.GetTimeBase();
-        }
+        public IActionResult Time() => Ok(TimeBase.GetTimeBase());
     }
 }

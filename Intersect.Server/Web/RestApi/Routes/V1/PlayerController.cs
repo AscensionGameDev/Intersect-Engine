@@ -39,25 +39,34 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
     {
 
         [HttpPost]
-        public object ListPost([FromBody] PagingInfo pageInfo)
+        public IActionResult ListPost([FromBody] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
             pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
 
-            int entryTotal = 0;
-            var entries = Player.List(null, null, SortDirection.Ascending, pageInfo.Page * pageInfo.Count, pageInfo.Count, out entryTotal);
+            var values = Player.List(
+                null,
+                null,
+                SortDirection.Ascending,
+                pageInfo.Page * pageInfo.Count,
+                pageInfo.Count,
+                out var entryTotal
+            );
 
-            return new
-            {
-                total = entryTotal,
-                pageInfo.Page,
-                count = entries.Count,
-                entries
-            };
+            return Ok(
+                new DataPage<Player>
+                {
+                    Total = entryTotal,
+                    Page = pageInfo.Page,
+                    PageSize = pageInfo.Count,
+                    Count = values.Count,
+                    Values = values,
+                }
+            );
         }
 
         [HttpGet]
-        public DataPage<Player> List(
+        public IActionResult List(
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
             [FromQuery] int limit = PagingInfo.MaxPageSize,
@@ -67,23 +76,27 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         )
         {
             page = Math.Max(page, 0);
+            limit = Math.Max(limit, 1);
             pageSize = Math.Clamp(pageSize, PagingInfo.MinPageSize, PagingInfo.MaxPageSize);
-            limit = Math.Max(Math.Min(limit, pageSize), 1);
 
-            int total = 0;
-            var values = Player.List(search?.Length > 2 ? search : null, sortBy, sortDirection, page * pageSize, pageSize, out total);
+            var take = Math.Min(limit, pageSize);
+            var values = Player.List(
+                search?.Length > 2 ? search : null,
+                sortBy,
+                sortDirection,
+                page * pageSize,
+                take,
+                out var total
+            );
 
-            if (limit != pageSize)
-            {
-                values = values.Take(limit).ToList();
-            }
-
-            return new DataPage<Player>(
-                Total: total,
-                Page: page,
-                PageSize: pageSize,
-                Count: values.Count,
-                Values: values
+            return Ok(
+                new DataPage<Player>(
+                    Total: total,
+                    Page: page,
+                    PageSize: pageSize,
+                    Count: values.Count,
+                    Values: values
+                )
             );
         }
 
@@ -105,17 +118,22 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 values = values.Take(limit).ToList();
             }
 
-            return new DataPage<Player>(
-                Total: Player.Count(),
-                Page: page,
-                PageSize: pageSize,
-                Count: values.Count,
-                Values: values,
-                Extra: new
+            return new DataPage<Player>
+            {
+                Total = Player.Count(),
+                Page = page,
+                PageSize = pageSize,
+                Count = values.Count,
+                Values = values,
+                Sort = [new Sort
                 {
-                    sortDirection
-                }
-            );
+                    By = [
+                        nameof(Player.Level),
+                        nameof(Player.Exp),
+                    ],
+                    Direction = sortDirection,
+                }],
+            };
         }
 
         [HttpPost("online")]
@@ -126,12 +144,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             var entries = Globals.OnlineList?.Skip(pageInfo.Page * pageInfo.Count).Take(pageInfo.Count).ToList();
 
-            return new
+            return new DataPage<Player>
             {
-                total = Globals.OnlineList?.Count ?? 0,
-                pageInfo.Page,
-                count = entries?.Count ?? 0,
-                entries
+                Total = Globals.OnlineList?.Count ?? 0,
+                Page = pageInfo.Page,
+                PageSize = pageInfo.Count,
+                Count = entries?.Count ?? 0,
+                Values = entries,
             };
         }
 
