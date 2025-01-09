@@ -180,6 +180,9 @@ public partial class AddChatboxTextCommand : EventCommand
     public ChatboxChannel Channel { get; set; } = ChatboxChannel.Player;
 
     public bool ShowChatBubble { get; set; }
+
+    public bool ShowChatBubbleInProximity { get; set; }
+
 }
 
 public partial class SetVariableCommand : EventCommand
