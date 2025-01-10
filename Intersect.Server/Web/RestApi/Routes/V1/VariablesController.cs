@@ -9,11 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
-    [Route("api/v1/variables")]
+    [Route("api/v1/variables/global")]
     [Authorize]
     public sealed partial class VariablesController : IntersectController
     {
-        [HttpGet("global")]
+        [HttpGet]
         public object GlobalVariablesGet([FromQuery] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
@@ -31,7 +31,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
 
-        [HttpGet("global/{guid:guid}")]
+        [HttpGet("{guid:guid}")]
         public object GlobalVariableGet(Guid guid)
         {
             if (Guid.Empty == guid)
@@ -49,7 +49,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             return variable;
         }
 
-        [HttpGet("global/{guid:guid}/value")]
+        [HttpGet("{guid:guid}/value")]
         public object GlobalVariableGetValue(Guid guid)
         {
             if (Guid.Empty == guid)
@@ -70,7 +70,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
 
-        [HttpPost("global/{guid:guid}")]
+        [HttpPost("{guid:guid}")]
         public object GlobalVariableSet(Guid guid, [FromBody] VariableValueBody valueBody)
         {
             if (Guid.Empty == guid)
