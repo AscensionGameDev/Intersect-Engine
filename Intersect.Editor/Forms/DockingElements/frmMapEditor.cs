@@ -2459,33 +2459,41 @@ public partial class FrmMapEditor : DockContent
     /// </summary>
     private static Cursor? CreateCursorInGrid(Bitmap cursorBitmap, Point cursorClickPoint, string logName)
     {
-        IntPtr bitmapHicon = cursorBitmap.GetHicon();
-        if (bitmapHicon == IntPtr.Zero)
+        try
         {
-            Log.Warn($"Failed to get bitmap icon handle for {logName}");
+            IntPtr bitmapHicon = cursorBitmap.GetHicon();
+            if (bitmapHicon == IntPtr.Zero)
+            {
+                Log.Warn($"Failed to get bitmap icon handle for {logName}");
+                return null;
+            }
+
+            IconInfo cursorIconInfo = new IconInfo();
+            if (!GetIconInfo(bitmapHicon, ref cursorIconInfo))
+            {
+                Log.Warn($"Failed to get icon info for {logName}");
+                return null;
+            }
+
+            cursorIconInfo.XHotspot = cursorClickPoint.X;
+            cursorIconInfo.YHotspot = cursorClickPoint.Y;
+            cursorIconInfo.FIcon = false;
+
+            var cursorIcon = CreateIconIndirect(ref cursorIconInfo);
+            // ReSharper disable once InvertIf
+            if (cursorIcon == IntPtr.Zero)
+            {
+                Log.Warn($"Failed to create cursor icon for {logName}");
+                return null;
+            }
+
+            return new Cursor(cursorIcon);
+        }
+        catch (Exception exception)
+        {
+            Log.Error(exception, $"Error while creating cursor for {logName}");
             return null;
         }
-
-        IconInfo cursorIconInfo = new IconInfo();
-        if (!GetIconInfo(bitmapHicon, ref cursorIconInfo))
-        {
-            Log.Warn($"Failed to get icon info for {logName}");
-            return null;
-        }
-
-        cursorIconInfo.XHotspot = cursorClickPoint.X;
-        cursorIconInfo.YHotspot = cursorClickPoint.Y;
-        cursorIconInfo.FIcon = false;
-
-        var cursorIcon = CreateIconIndirect(ref cursorIconInfo);
-        // ReSharper disable once InvertIf
-        if (cursorIcon == IntPtr.Zero)
-        {
-            Log.Warn($"Failed to create cursor icon for {logName}");
-            return null;
-        }
-
-        return new Cursor(cursorIcon);
     }
 
     private static readonly HashSet<Cursor> _toolCursors = [];
