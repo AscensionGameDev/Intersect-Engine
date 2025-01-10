@@ -1,4 +1,5 @@
-﻿using Intersect.GameObjects;
+﻿using Intersect.Enums;
+using Intersect.GameObjects;
 using Intersect.Server.Database;
 using Intersect.Server.Database.GameData;
 using Intersect.Server.Entities;
@@ -7,98 +8,110 @@ using Intersect.Server.Web.RestApi.Types;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Intersect.Server.Web.RestApi.Routes.V1
+namespace Intersect.Server.Web.RestApi.Routes.V1;
+
+[Route("api/v1/variables/global")]
+[Authorize]
+public sealed partial class VariablesController : IntersectController
 {
-    [Route("api/v1/variables/global")]
-    [Authorize]
-    public sealed partial class VariablesController : IntersectController
+    [HttpGet]
+    public IActionResult GlobalVariablesGet([FromQuery] PagingInfo pageInfo)
     {
-        [HttpGet]
-        public object GlobalVariablesGet([FromQuery] PagingInfo pageInfo)
-        {
-            pageInfo.Page = Math.Max(pageInfo.Page, 0);
-            pageInfo.PageSize = Math.Max(Math.Min(pageInfo.PageSize, 100), 5);
+        pageInfo.Page = Math.Max(pageInfo.Page, 0);
+        pageInfo.PageSize = Math.Max(Math.Min(pageInfo.PageSize, 100), 5);
 
-            var entries = GameContext.Queries.ServerVariables(pageInfo.Page, pageInfo.PageSize)?.ToList();
+        var entries = GameContext.Queries.ServerVariables(pageInfo.Page, pageInfo.PageSize)?.ToList();
 
-            return new DataPage<ServerVariableBase>
+        return Ok(
+            new DataPage<ServerVariableBase>
             {
-                Total = ServerVariableBase.Lookup.Count(),
+                Total = ServerVariableBase.Lookup.Count,
                 Page = pageInfo.Page,
                 PageSize = pageInfo.PageSize,
                 Count = entries?.Count ?? 0,
                 Values = entries,
-            };
-        }
+            }
+        );
+    }
 
-        [HttpGet("{guid:guid}")]
-        public object GlobalVariableGet(Guid guid)
+    [HttpGet("{variableId:guid}")]
+    public IActionResult GlobalVariableGet(Guid variableId)
+    {
+        if (variableId == default)
         {
-            if (Guid.Empty == guid)
-            {
-                return BadRequest(@"Invalid global variable id.");
-            }
-
-            var variable = GameContext.Queries.ServerVariableById(guid);
-
-            if (variable == null)
-            {
-                return NotFound($@"No global variable with id '{guid}'.");
-            }
-
-            return variable;
+            return BadRequest($@"Variable id cannot be {variableId}");
         }
 
-        [HttpGet("{guid:guid}/value")]
-        public object GlobalVariableGetValue(Guid guid)
+        var variable = GameContext.Queries.ServerVariableById(variableId);
+
+        // ReSharper disable once ConvertIfStatementToReturnStatement
+        if (variable == null)
         {
-            if (Guid.Empty == guid)
-            {
-                return BadRequest(@"Invalid global variable id.");
-            }
-
-            var variable = GameContext.Queries.ServerVariableById(guid);
-
-            if (variable == null)
-            {
-                return NotFound($@"No global variable with id '{guid}'.");
-            }
-
-            return new
-            {
-                value = variable.Value.Value,
-            };
+            return NotFound($@"No global variable with id '{variableId}'.");
         }
 
-        [HttpPost("{guid:guid}")]
-        public object GlobalVariableSet(Guid guid, [FromBody] VariableValueBody valueBody)
+        return Ok(variable);
+    }
+
+    [HttpGet("{variableId:guid}/value")]
+    public IActionResult GlobalVariableGetValue(Guid variableId)
+    {
+        if (variableId == default)
         {
-            if (Guid.Empty == guid)
-            {
-                return BadRequest(@"Invalid global variable id.");
-            }
-
-            var variable = GameContext.Queries.ServerVariableById(guid);
-
-            if (variable == null)
-            {
-                return NotFound($@"No global variable with id '{guid}'.");
-            }
-
-            var changed = true;
-            if (variable.Value?.Value == valueBody.Value)
-            {
-                changed = false;
-            }
-            variable.Value.Value = valueBody.Value;
-
-            if (changed)
-            {
-                Player.StartCommonEventsWithTriggerForAll(Enums.CommonEventTrigger.ServerVariableChange, "", guid.ToString());
-            }
-            DbInterface.UpdatedServerVariables.AddOrUpdate(variable.Id, variable, (key, oldValue) => variable);
-
-            return variable;
+            return BadRequest($@"Variable id cannot be {variableId}");
         }
+
+        var variable = GameContext.Queries.ServerVariableById(variableId);
+
+        if (variable == null)
+        {
+            return NotFound($@"No global variable with id '{variableId}'.");
+        }
+
+        return Ok(
+            new VariableValueBody
+            {
+                Value = variable.Value.Value,
+            }
+        );
+    }
+
+    [HttpPost("{variableId:guid}")]
+    public IActionResult GlobalVariableSet(Guid variableId, [FromBody] VariableValueBody variableValue)
+    {
+        if (variableId == default)
+        {
+            return BadRequest($@"Variable id cannot be {variableId}");
+        }
+
+        var variable = GameContext.Queries.ServerVariableById(variableId);
+
+        if (variable == null)
+        {
+            return NotFound($@"No global variable with id '{variableId}'.");
+        }
+
+        var changed = false;
+        if (variable.Value != null)
+        {
+            if (variable.Value.Value != variableValue.Value)
+            {
+                variable.Value.Value = variableValue.Value;
+                changed = true;
+            }
+        }
+
+        // ReSharper disable once InvertIf
+        if (changed)
+        {
+            Player.StartCommonEventsWithTriggerForAll(
+                CommonEventTrigger.ServerVariableChange,
+                "",
+                variableId.ToString()
+            );
+            DbInterface.UpdatedServerVariables.AddOrUpdate(variable.Id, variable, (_, _) => variable);
+        }
+
+        return Ok(variable);
     }
 }
