@@ -5,6 +5,8 @@ namespace Intersect.Editor.Configuration;
 
 public sealed class ToolCursor
 {
+    public const string CursorsFolder = "resources/cursors";
+    
     public Point CursorClickPoint { get; set; }
 
     private static readonly Dictionary<EditingTool, ToolCursor> _toolCursorDict;
@@ -26,33 +28,32 @@ public sealed class ToolCursor
 
     public static void Load()
     {
-        const string cursorFolder = "resources/cursors/";
-
-        if (!Directory.Exists(cursorFolder))
+        if (!Directory.Exists(CursorsFolder))
         {
             return;
         }
 
         foreach (EditingTool tool in Enum.GetValues(typeof(EditingTool)))
         {
-            var fileName = $"{cursorFolder}editor_{tool.ToString().ToLowerInvariant()}.json";
+            var fileName = $"editor_{tool.ToString().ToLowerInvariant()}.json";
+            var filePath = Path.Combine(CursorsFolder, fileName);
             ToolCursor toolCursor;
 
-            if (File.Exists(fileName))
+            if (File.Exists(filePath))
             {
                 if (!_toolCursorDict.TryGetValue(tool, out toolCursor))
                 {
                     continue;
                 }
 
-                var json = File.ReadAllText(fileName);
+                var json = File.ReadAllText(filePath);
                 toolCursor = JsonConvert.DeserializeObject<ToolCursor>(json);
             }
             else
             {
                 toolCursor = new ToolCursor();
                 var json = JsonConvert.SerializeObject(toolCursor);
-                File.WriteAllText(fileName, json);
+                File.WriteAllText(filePath, json);
             }
 
             _toolCursorDict[tool] = toolCursor;

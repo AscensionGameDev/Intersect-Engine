@@ -26,7 +26,6 @@ public partial class FrmOptions : Form
 
         // Load settings for the General tab
         var suppressTilesetWarning = Preferences.LoadPreference("SuppressTextureWarning");
-        var enableCursorSprites = Preferences.LoadPreference("EnableCursorSprites");
 
         if (suppressTilesetWarning == "")
         {
@@ -37,8 +36,7 @@ public partial class FrmOptions : Form
             chkSuppressTilesetWarning.Checked = Convert.ToBoolean(suppressTilesetWarning);
         }
 
-        chkCursorSprites.Checked = !string.IsNullOrEmpty(enableCursorSprites) &&
-                                   Convert.ToBoolean(enableCursorSprites);
+        chkCursorSprites.Checked = Preferences.EnableCursorSprites;
 
         txtGamePath.Text = Preferences.LoadPreference("ClientPath");
 
@@ -95,7 +93,7 @@ public partial class FrmOptions : Form
     private void frmOptions_FormClosing(object sender, FormClosingEventArgs e)
     {
         Preferences.SavePreference("SuppressTextureWarning", chkSuppressTilesetWarning.Checked.ToString());
-        Preferences.SavePreference("EnableCursorSprites", chkCursorSprites.Checked.ToString());
+        Preferences.EnableCursorSprites = chkCursorSprites.Checked;
         Preferences.SavePreference("ClientPath", txtGamePath.Text);
         Preferences.SavePreference("PackageUpdateAssets", chkPackageAssets.Checked.ToString());
         Preferences.SavePreference("SoundPackSize", nudSoundBatch.Value.ToString(CultureInfo.InvariantCulture));
