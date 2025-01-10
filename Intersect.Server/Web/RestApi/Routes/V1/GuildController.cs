@@ -17,6 +17,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
     public sealed partial class GuildController : IntersectController
     {
         [HttpPost]
+        [Obsolete("The appropriate verb for retrieving a list of records is GET not POST")]
         public object ListPost([FromBody] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);

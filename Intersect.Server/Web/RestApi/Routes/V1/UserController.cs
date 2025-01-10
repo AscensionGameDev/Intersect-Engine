@@ -27,6 +27,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
     {
 
         [HttpPost]
+        [Obsolete("The appropriate verb for retrieving a list of records is GET not POST")]
         public DataPage<User> ListPost([FromBody] PagingInfo pageInfo)
         {
             var page = Math.Max(pageInfo.Page, 0);

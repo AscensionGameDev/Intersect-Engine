@@ -39,6 +39,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
     {
 
         [HttpPost]
+        [Obsolete("The appropriate verb for retrieving a list of records is GET not POST")]
         public IActionResult ListPost([FromBody] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
@@ -137,6 +138,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpPost("online")]
+        [Obsolete("The appropriate verb for retrieving a list of records is GET not POST")]
         public object OnlinePost([FromBody] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
