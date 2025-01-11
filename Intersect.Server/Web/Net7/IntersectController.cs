@@ -57,6 +57,9 @@ public abstract class IntersectController : Controller
     protected virtual IActionResult NotFound(string message) => StatusCodeMessage(HttpStatusCode.NotFound, message);
 
     [NonAction]
+    protected virtual IActionResult Gone(string message) => StatusCodeMessage(HttpStatusCode.Gone, message);
+
+    [NonAction]
     protected virtual ObjectResult StatusCode(HttpStatusCode statusCode, object? data = default) =>
         StatusCode((int)statusCode, data);
 

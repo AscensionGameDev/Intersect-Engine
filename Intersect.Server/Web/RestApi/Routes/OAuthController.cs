@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using Intersect.Server.Database.PlayerData.Api;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Web.Authentication;
 using Intersect.Server.Web.Configuration;
 using Intersect.Server.Web.Http;
+using Intersect.Server.Web.RestApi.Types;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -34,10 +36,10 @@ namespace Intersect.Server.Web.RestApi.Routes
         private class UsernameAndTokenResponse
         {
             [System.Text.Json.Serialization.JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-            public Guid TokenId { get; set; } = default;
+            public Guid? TokenId { get; set; } = default;
 
             [System.Text.Json.Serialization.JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-            public string Username { get; set; } = default;
+            public string? Username { get; set; } = default;
         }
 
         private class TokenResponse
@@ -196,6 +198,9 @@ namespace Intersect.Server.Web.RestApi.Routes
 
         [HttpPost("token")]
         [Consumes(typeof(TokenRequest), ContentTypes.Json)]
+        [ProducesResponseType<TokenResponse>((int)HttpStatusCode.OK, ContentTypes.Json)]
+        [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
         public async Task<IActionResult> RequestToken([FromBody] TokenRequest tokenRequest)
         {
             return tokenRequest switch
@@ -208,29 +213,43 @@ namespace Intersect.Server.Web.RestApi.Routes
 
         private async Task<IActionResult> RequestTokenFrom(TokenRequestPasswordGrant passwordGrant)
         {
-            var user = Database.PlayerData.User.Find(passwordGrant.Username);
-            if (!user.IsPasswordValid(passwordGrant.Password))
+            if (!Database.PlayerData.User.TryFindByName(passwordGrant.Username, out var user) ||
+                !user.IsPasswordValid(passwordGrant.Password))
             {
-                return BadRequest();
+                // TODO(i18n): Localized by locale specified in header
+                return BadRequest("Invalid credentials");
             }
 
             var tokenResponse = await IssueTokenFor(user);
+            // ReSharper disable once ConvertIfStatementToReturnStatement
+            if (tokenResponse == null)
+            {
+                // TODO(i18n): Localized by locale specified in header
+                return InternalServerError("Failed to issue token");
+            }
             return Ok(tokenResponse);
         }
 
         private async Task<IActionResult> RequestTokenFrom(TokenRequestRefreshTokenGrant refreshTokenGrant)
         {
-            var refreshTokenId = Guid.TryParse(refreshTokenGrant.RefreshToken, out var parsedId) ? parsedId : default;
-            if (!RefreshToken.TryFind(refreshTokenId, out var refreshToken) || refreshToken?.User == default)
+            if (!Guid.TryParse(refreshTokenGrant.RefreshToken, out var refreshTokenId) ||
+                !RefreshToken.TryFind(refreshTokenId, out var refreshToken) || refreshToken?.User == default)
             {
-                return BadRequest();
+                // TODO(i18n): Localized by locale specified in header
+                return BadRequest("Invalid token");
             }
 
             var tokenResponse = await IssueTokenFor(refreshToken.User);
+            // ReSharper disable once ConvertIfStatementToReturnStatement
+            if (tokenResponse == null)
+            {
+                // TODO(i18n): Localized by locale specified in header
+                return InternalServerError("Failed to issue token");
+            }
             return Ok(tokenResponse);
         }
 
-        private async Task<TokenResponse> IssueTokenFor(User user)
+        private async Task<TokenResponse?> IssueTokenFor(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var ticketId = Guid.NewGuid();
@@ -238,10 +257,7 @@ namespace Intersect.Server.Web.RestApi.Routes
             var claims = user.Claims.ToList();
             claims.Add(new Claim(IntersectClaimTypes.ClientId, clientId.ToString()));
             claims.Add(new Claim(IntersectClaimTypes.TicketId, ticketId.ToString()));
-            foreach (var role in user.Power.Roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
+            claims.AddRange(user.Power.Roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -268,7 +284,12 @@ namespace Intersect.Server.Web.RestApi.Routes
                 TicketId = ticketId,
                 Ticket = serializedAccessToken,
             };
-            await RefreshToken.TryAddAsync(refreshToken);
+
+            if (!await RefreshToken.TryAddAsync(refreshToken))
+            {
+                return null;
+            }
+
             return new TokenResponse
             {
                 AccessToken = serializedAccessToken,
@@ -280,90 +301,169 @@ namespace Intersect.Server.Web.RestApi.Routes
         }
 
         [HttpDelete("tokens/{tokenId:guid}")]
+        [ProducesResponseType<UsernameAndTokenResponse>((int)HttpStatusCode.OK, ContentTypes.Json)]
+        [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.Forbidden, ContentTypes.Json)]
+        [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
+        [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.Unauthorized, ContentTypes.Json)]
         public async Task<IActionResult> DeleteTokenById(Guid tokenId)
         {
             var actor = IntersectUser;
             if (actor == default)
             {
-                return Unauthorized();
+                // TODO(i18n): Localized by locale specified in header
+                return Unauthorized("Request is not authorized");
             }
 
             if (!RefreshToken.TryFind(tokenId, out var refreshToken))
             {
-                return Unauthorized();
+                // TODO(i18n): Localized by locale specified in header
+                return NotFound("Token not found");
             }
 
             if (refreshToken.Id != tokenId)
             {
-                return InternalServerError();
+                // TODO(i18n): Localized by locale specified in header
+                return InternalServerError("Failed to delete token");
             }
 
             if (refreshToken.UserId != actor.Id && !(actor.Power.ApiRoles?.UserManage ?? false))
             {
-                return Unauthorized();
+                // TODO(i18n): Localized by locale specified in header
+                return Forbidden("No authorization to perform this action");
             }
 
-            return RefreshToken.Remove(refreshToken) ? Ok(new UsernameAndTokenResponse { TokenId = tokenId }) : InternalServerError();
+            if (RefreshToken.Remove(refreshToken))
+            {
+                return Ok(
+                    new UsernameAndTokenResponse
+                    {
+                        TokenId = tokenId,
+                    }
+                );
+            }
+
+            // TODO(i18n): Localized by locale specified in header
+            return InternalServerError("Failed to delete token");
         }
 
         [Authorize]
         [HttpDelete("tokens/{username}")]
+        [ProducesResponseType<UsernameAndTokenResponse>((int)HttpStatusCode.OK, ContentTypes.Json)]
+        [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.Forbidden, ContentTypes.Json)]
+        [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.Gone, ContentTypes.Json)]
+        [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
+        [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.Unauthorized, ContentTypes.Json)]
         public async Task<IActionResult> DeleteTokensForUsername(string username, CancellationToken cancellationToken)
         {
             var actor = IntersectUser;
             if (actor == default)
             {
-                return Unauthorized();
+                // TODO(i18n): Localized by locale specified in header
+                return Unauthorized("Request is not authorized");
             }
 
-            var user = Database.PlayerData.User.Find(username);
-
-            if (user == null)
+            if (!Database.PlayerData.User.TryFindByName(username, out var user))
             {
-                return Unauthorized();
+                // ReSharper disable once InvertIf
+                if (!string.Equals(username, actor.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!(actor.Power.ApiRoles?.UserManage ?? false))
+                    {
+                        // TODO(i18n): Localized by locale specified in header
+                        return Forbidden("No authorization to perform this action");
+                    }
+                }
+
+                // TODO(i18n): Localized by locale specified in header
+                return NotFound("The user was not found");
             }
 
-            if (!(actor.Power.ApiRoles?.UserManage ?? false) && actor.Id != user.Id)
+            if (actor.Id != user.Id && !(actor.Power.ApiRoles?.UserManage ?? false))
             {
-                return Unauthorized();
+                // TODO(i18n): Localized by locale specified in header
+                return Forbidden("No authorization to perform this action");
             }
 
             if (!RefreshToken.HasTokens(user))
             {
-                return Gone();
+                // TODO(i18n): Localized by locale specified in header
+                return actor.Id != user.Id
+                    ? NotFound("There are no tokens for the specified user")
+                    : Gone("There are no tokens for the specified user");
             }
 
-            var success = await RefreshToken.RemoveForUserAsync(user.Id, cancellationToken).ConfigureAwait(false);
-            return success ? Ok(new { Username = username }) : Unauthorized();
+            if (await RefreshToken.RemoveForUserAsync(user.Id, cancellationToken).ConfigureAwait(false))
+            {
+                return Ok(
+                    new UsernameAndTokenResponse
+                    {
+                        Username = username,
+                    }
+                );
+            }
+
+            // TODO(i18n): Localized by locale specified in header
+            return InternalServerError("Failed to delete token");
         }
 
         [HttpDelete("tokens/{username}/{tokenId:guid}")]
+        [ProducesResponseType<UsernameAndTokenResponse>((int)HttpStatusCode.OK, ContentTypes.Json)]
+        [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.Forbidden, ContentTypes.Json)]
+        [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
+        [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.Unauthorized, ContentTypes.Json)]
         public async Task<IActionResult> DeleteTokenForUsernameById(string username, Guid tokenId)
         {
-            var intersectUser = IntersectUser;
-            if (intersectUser == default)
+            var actor = IntersectUser;
+            if (actor == default)
             {
-                return Unauthorized();
+                // TODO(i18n): Localized by locale specified in header
+                return Unauthorized("Request is not authorized");
             }
 
-            var user = Database.PlayerData.User.Find(username);
-
-            if (user == null)
+            if (!Database.PlayerData.User.TryFindByName(username, out var user))
             {
-                return Unauthorized();
+                // ReSharper disable once InvertIf
+                if (!string.Equals(username, actor.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!(actor.Power.ApiRoles?.UserManage ?? false))
+                    {
+                        // TODO(i18n): Localized by locale specified in header
+                        return Forbidden("No authorization to perform this action");
+                    }
+                }
+
+                // TODO(i18n): Localized by locale specified in header
+                return NotFound("The user was not found");
             }
 
-            if (intersectUser.Id != user.Id && !(intersectUser.Power.ApiRoles?.UserManage ?? false))
+            if (actor.Id != user.Id && !(actor.Power.ApiRoles?.UserManage ?? false))
             {
-                return Unauthorized();
+                // TODO(i18n): Localized by locale specified in header
+                return Forbidden("No authorization to perform this action");
             }
 
             if (!RefreshToken.TryFind(tokenId, out _))
             {
-                return Gone();
+                // TODO(i18n): Localized by locale specified in header
+                return NotFound("Token not found");
             }
 
-            return !RefreshToken.Remove(tokenId) ? InternalServerError() : Ok(new UsernameAndTokenResponse { TokenId = tokenId, Username = username });
+            if (RefreshToken.Remove(tokenId))
+            {
+                return Ok(
+                    new UsernameAndTokenResponse
+                    {
+                        TokenId = tokenId,
+                        Username = username,
+                    }
+                );
+            }
+
+            // TODO(i18n): Localized by locale specified in header
+            return InternalServerError("Failed to delete token");
         }
     }
 }
