@@ -74,7 +74,7 @@ public abstract partial class GameContentManager : IContentManager
     /// </summary>
     public IAssetPacker MusicPacks { get; set; }
 
-    public bool TilesetsLoaded = false;
+    public bool TilesetsLoaded { get; set; } = false;
 
     public ContentWatcher ContentWatcher { get; protected set; }
 
