@@ -1,14 +1,11 @@
 using System.Net;
 using System.Reflection;
-using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Reflection;
 using Intersect.Logging;
-using Intersect.Models;
 using Intersect.Server.Core;
-using Intersect.Server.Localization;
 using Intersect.Server.Web.Authentication;
 using Intersect.Server.Web.Configuration;
 using Intersect.Server.Web.Constraints;
@@ -33,9 +30,9 @@ using Microsoft.Extensions.FileProviders.Physical;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
 namespace Intersect.Server.Web;
 
@@ -44,6 +41,7 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
     private WebApplication? _app;
     private static readonly Assembly Assembly = typeof(ApiService).Assembly;
 
+    // ReSharper disable once MemberCanBeMadeStatic.Local
     private WebApplication? Configure()
     {
         UnpackAppSettings();
@@ -59,7 +57,7 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
         // I can't get System.Text.Json to deserialize an array as non-null, and it totally ignores
         // the JsonConverter attribute I tried putting on it, so I am just giving up and doing this
         // to make sure the array is not null in the event that it is empty.
-        configuration.StaticFilePaths ??= new List<StaticFilePathOptions>();
+        configuration.StaticFilePaths ??= [];
 
         if (!configuration.Enabled)
         {
@@ -99,12 +97,12 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                     "client_per_second",
                     context => RateLimitPartition.GetSlidingWindowLimiter(
                         partitionKey: context.User.Identity?.Name ?? "__no_api_key__",
-                        factory: partition => new SlidingWindowRateLimiterOptions
+                        factory: _ => new SlidingWindowRateLimiterOptions
                         {
                             AutoReplenishment = true,
                             PermitLimit = 5,
                             QueueLimit = 0,
-                            Window = TimeSpan.FromMinutes(1)
+                            Window = TimeSpan.FromMinutes(1),
                         }
                     )
                 );
@@ -112,27 +110,19 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                     "client_per_minute",
                     context => RateLimitPartition.GetSlidingWindowLimiter(
                         partitionKey: context.User.Identity?.Name ?? "__no_api_key__",
-                        factory: partition => new SlidingWindowRateLimiterOptions
+                        factory: _ => new SlidingWindowRateLimiterOptions
                         {
                             AutoReplenishment = true,
                             PermitLimit = 1,
                             QueueLimit = 0,
-                            Window = TimeSpan.FromSeconds(1)
+                            Window = TimeSpan.FromSeconds(1),
                         }
                     )
                 );
             }
         );
 
-        builder.Services.AddControllers(
-                mvcOptions =>
-                {
-                    mvcOptions.FormatterMappings.ClearMediaTypeMappingForFormat("application/xml");
-                    mvcOptions.FormatterMappings.ClearMediaTypeMappingForFormat("text/xml");
-                    mvcOptions.FormatterMappings.ClearMediaTypeMappingForFormat("text/json");
-                    mvcOptions.FormatterMappings.ClearMediaTypeMappingForFormat("application/xml");
-                }
-            )
+        builder.Services.AddControllers()
             .AddNewtonsoftJson(
                 newtonsoftOptions =>
                 {
@@ -141,14 +131,12 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                     newtonsoftOptions.SerializerSettings.Converters.Add(new StringEnumConverter());
                 }
             )
-            .AddOData(
-                options =>
+            .AddFormatterMappings(
+                formatterMappings =>
                 {
-                    options.Count().Select().OrderBy();
-                    options.RouteOptions.EnableKeyInParenthesis = false;
-                    options.RouteOptions.EnableNonParenthesisForEmptyParameterFunction = true;
-                    options.RouteOptions.EnableQualifiedOperationCall = false;
-                    options.RouteOptions.EnableUnqualifiedOperationCall = true;
+                    formatterMappings.ClearMediaTypeMappingForFormat("application/xml");
+                    formatterMappings.ClearMediaTypeMappingForFormat("text/xml");
+                    formatterMappings.ClearMediaTypeMappingForFormat("text/json");
                 }
             );
 
@@ -263,10 +251,10 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                     options.TokenValidationParameters.ValidIssuer ??= tokenGenerationOptions.Issuer;
                     options.Events = new JwtBearerEvents
                     {
-                        OnAuthenticationFailed = async context => {},
-                        OnChallenge = async context => {},
-                        OnMessageReceived = async context => {},
-                        OnTokenValidated = async context => {},
+                        OnAuthenticationFailed = async _ => {},
+                        OnChallenge = async _ => {},
+                        OnMessageReceived = async _ => {},
+                        OnTokenValidated = async _ => {},
                     };
                     SymmetricSecurityKey issuerKey = new(tokenGenerationOptions.SecretData);
                     options.TokenValidationParameters.IssuerSigningKey = issuerKey;
