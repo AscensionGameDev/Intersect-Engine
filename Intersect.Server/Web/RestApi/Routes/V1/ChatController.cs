@@ -1,6 +1,10 @@
-﻿using Intersect.Server.General;
+using System.Net;
+using Intersect.Server.General;
 using Intersect.Server.Networking;
+using Intersect.Server.Web.Http;
 using Intersect.Server.Web.RestApi.Payloads;
+using Intersect.Server.Web.RestApi.Types;
+using Intersect.Server.Web.RestApi.Types.ChatResponseBody;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,29 +15,18 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
     public sealed partial class ChatController : IntersectController
     {
         [HttpPost]
-        [HttpPost("global")]
-        public object SendGlobal([FromBody] ChatMessage chatMessage)
+        [ProducesResponseType(typeof(ChatMessageResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult SendGlobal([FromBody] ChatMessage chatMessage)
         {
-            try
-            {
-                PacketSender.SendGlobalMsg(
-                    chatMessage.Message, chatMessage.Color ?? CustomColors.Chat.AnnouncementChat, chatMessage.Target
-                );
-
-                return new
-                {
-                    success = true,
-                    chatMessage
-                };
-            }
-            catch (Exception exception)
-            {
-                return InternalServerError(exception.Message);
-            }
+            PacketSender.SendGlobalMsg(chatMessage.Message, chatMessage.Color ?? CustomColors.Chat.AnnouncementChat, chatMessage.Target);
+            return Ok(new ChatMessageResponseBody(true, chatMessage));
         }
 
         [HttpPost("direct/{lookupKey:LookupKey}")]
-        public object SendDirect(LookupKey lookupKey, [FromBody] ChatMessage chatMessage)
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(ChatMessageLookupKeyResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult SendDirect(LookupKey lookupKey, [FromBody] ChatMessage chatMessage)
         {
             if (lookupKey.IsInvalid)
             {
@@ -51,56 +44,42 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return NotFound($@"No player found for '{lookupKey}'.");
             }
 
-            try
-            {
-                PacketSender.SendChatMsg(
-                    client.Entity, chatMessage.Message, Enums.ChatMessageType.PM, chatMessage.Color ?? CustomColors.Chat.PlayerMsg,
-                    chatMessage.Target
-                );
+            PacketSender.SendChatMsg(
+                client.Entity,
+                chatMessage.Message,
+                Enums.ChatMessageType.PM,
+                chatMessage.Color ?? CustomColors.Chat.PlayerMsg,
+                chatMessage.Target
+            );
 
-                return new
-                {
-                    success = true,
-                    lookupKey,
-                    chatMessage
-                };
-            }
-            catch (Exception exception)
-            {
-                return InternalServerError(exception.Message);
-            }
+            return Ok(new ChatMessageLookupKeyResponseBody(lookupKey, true, chatMessage));
         }
 
         [HttpPost("proximity/{mapId:guid}")]
-        public object SendProximity(Guid mapId, [FromBody] ChatMessage chatMessage)
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(ChatMessageMapResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult SendProximity(Guid mapId, [FromBody] ChatMessage chatMessage)
         {
             if (Guid.Empty == mapId)
             {
                 return BadRequest($@"Invalid map id '{mapId}'.");
             }
 
-            try
-            {
-                if (PacketSender.SendProximityMsg(
-                    chatMessage.Message, Enums.ChatMessageType.Local, mapId, chatMessage.Color ?? CustomColors.Chat.ProximityMsg, chatMessage.Target
-                ))
-                {
-                    return new
-                    {
-                        success = true,
-                        mapId,
-                        chatMessage
-                    };
-                }
+            bool sucess = PacketSender.SendProximityMsg(
+                chatMessage.Message,
+                Enums.ChatMessageType.Local,
+                mapId,
+                chatMessage.Color ?? CustomColors.Chat.ProximityMsg,
+                chatMessage.Target
+            );
 
+            if (!sucess)
+            {
                 return NotFound($@"No map found for '{mapId}'.");
             }
-            catch (Exception exception)
-            {
-                return InternalServerError(exception.Message);
-            }
-        }
 
-        // TODO: "party" message endpoint?
+            return Ok(new ChatMessageMapResponseBody(mapId, true, chatMessage));
+        }
     }
 }
