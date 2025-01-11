@@ -36,31 +36,46 @@ public partial class Resource : Entity, IResource
         get => mMySprite;
         set
         {
+            if (value == mMySprite)
+            {
+                return;
+            }
+
             if (BaseResource == null)
             {
                 return;
             }
 
             mMySprite = value;
-            if (IsDead && BaseResource.Exhausted.GraphicFromTileset ||
-                !IsDead && BaseResource.Initial.GraphicFromTileset)
+            ReloadSpriteTexture();
+        }
+    }
+
+    private void ReloadSpriteTexture()
+    {
+        if (BaseResource == null)
+        {
+            return;
+        }
+
+        if (IsDead && BaseResource.Exhausted.GraphicFromTileset ||
+            !IsDead && BaseResource.Initial.GraphicFromTileset)
+        {
+            if (GameContentManager.Current.TilesetsLoaded)
             {
-                if (GameContentManager.Current.TilesetsLoaded)
-                {
-                    Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Tileset, mMySprite);
-                }
-                else
-                {
-                    _waitingForTilesets = true;
-                }
+                Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Tileset, mMySprite);
             }
             else
             {
-                Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Resource, mMySprite);
+                _waitingForTilesets = true;
             }
-
-            mHasRenderBounds = false;
         }
+        else
+        {
+            Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Resource, mMySprite);
+        }
+
+        mHasRenderBounds = false;
     }
 
     public override void Load(EntityPacket? packet)
@@ -114,15 +129,20 @@ public partial class Resource : Entity, IResource
 
             return false;
         }
-        else
-        {
-            var map = Maps.MapInstance.Get(MapId);
-            LatestMap = map;
-            if (map == null || !map.InView())
-            {
-                Globals.EntitiesToDispose.Add(Id);
 
-                return false;
+        if (!Maps.MapInstance.TryGet(MapId, out var map) || !map.InView())
+        {
+            LatestMap = map;
+            Globals.EntitiesToDispose.Add(Id);
+
+            return false;
+        }
+
+        if (_waitingForTilesets)
+        {
+            if (GameContentManager.Current.TilesetsLoaded)
+            {
+                ReloadSpriteTexture();
             }
         }
 
@@ -172,7 +192,17 @@ public partial class Resource : Entity, IResource
             _ = renderList.Remove(this);
         }
 
-        if (map == null || Globals.Me == null || Globals.Me.MapInstance == null || Globals.MapGrid == default)
+        if (map == null)
+        {
+            return null;
+        }
+
+        if (Globals.MapGrid == default)
+        {
+            return null;
+        }
+
+        if (Globals.Me?.MapInstance == null)
         {
             return null;
         }
@@ -227,62 +257,70 @@ public partial class Resource : Entity, IResource
 
     private void CalculateRenderBounds()
     {
-        var map = MapInstance;
-        if (map == null || BaseResource == default)
+        if (BaseResource == default)
         {
             return;
         }
 
-        if (_waitingForTilesets && !GameContentManager.Current.TilesetsLoaded)
+        if (MapInstance is not { } map)
         {
             return;
         }
 
-        if (_waitingForTilesets && GameContentManager.Current.TilesetsLoaded)
+        if (_waitingForTilesets)
         {
-            _waitingForTilesets = false;
-        }
-
-        if (Texture != null)
-        {
-            mSrcRectangle.X = 0;
-            mSrcRectangle.Y = 0;
-            if (IsDead && BaseResource.Exhausted.GraphicFromTileset)
+            if (GameContentManager.Current.TilesetsLoaded)
             {
-                mSrcRectangle.X = BaseResource.Exhausted.X * Options.TileWidth;
-                mSrcRectangle.Y = BaseResource.Exhausted.Y * Options.TileHeight;
-                mSrcRectangle.Width = (BaseResource.Exhausted.Width + 1) * Options.TileWidth;
-                mSrcRectangle.Height = (BaseResource.Exhausted.Height + 1) * Options.TileHeight;
-            }
-            else if (!IsDead && BaseResource.Initial.GraphicFromTileset)
-            {
-                mSrcRectangle.X = BaseResource.Initial.X * Options.TileWidth;
-                mSrcRectangle.Y = BaseResource.Initial.Y * Options.TileHeight;
-                mSrcRectangle.Width = (BaseResource.Initial.Width + 1) * Options.TileWidth;
-                mSrcRectangle.Height = (BaseResource.Initial.Height + 1) * Options.TileHeight;
+                _waitingForTilesets = false;
             }
             else
             {
-                mSrcRectangle.Width = Texture.Width;
-                mSrcRectangle.Height = Texture.Height;
+                return;
             }
-
-            mDestRectangle.Width = mSrcRectangle.Width;
-            mDestRectangle.Height = mSrcRectangle.Height;
-            mDestRectangle.Y = (int) (map.Y + Y * Options.TileHeight + OffsetY);
-            mDestRectangle.X = (int) (map.X + X * Options.TileWidth + OffsetX);
-            if (mSrcRectangle.Height > Options.TileHeight)
-            {
-                mDestRectangle.Y -= mSrcRectangle.Height - Options.TileHeight;
-            }
-
-            if (mSrcRectangle.Width > Options.TileWidth)
-            {
-                mDestRectangle.X -= (mSrcRectangle.Width - Options.TileWidth) / 2;
-            }
-
-            mHasRenderBounds = true;
         }
+
+        if (Texture == null)
+        {
+            return;
+        }
+
+        mSrcRectangle.X = 0;
+        mSrcRectangle.Y = 0;
+        if (IsDead && BaseResource.Exhausted.GraphicFromTileset)
+        {
+            mSrcRectangle.X = BaseResource.Exhausted.X * Options.TileWidth;
+            mSrcRectangle.Y = BaseResource.Exhausted.Y * Options.TileHeight;
+            mSrcRectangle.Width = (BaseResource.Exhausted.Width + 1) * Options.TileWidth;
+            mSrcRectangle.Height = (BaseResource.Exhausted.Height + 1) * Options.TileHeight;
+        }
+        else if (!IsDead && BaseResource.Initial.GraphicFromTileset)
+        {
+            mSrcRectangle.X = BaseResource.Initial.X * Options.TileWidth;
+            mSrcRectangle.Y = BaseResource.Initial.Y * Options.TileHeight;
+            mSrcRectangle.Width = (BaseResource.Initial.Width + 1) * Options.TileWidth;
+            mSrcRectangle.Height = (BaseResource.Initial.Height + 1) * Options.TileHeight;
+        }
+        else
+        {
+            mSrcRectangle.Width = Texture.Width;
+            mSrcRectangle.Height = Texture.Height;
+        }
+
+        mDestRectangle.Width = mSrcRectangle.Width;
+        mDestRectangle.Height = mSrcRectangle.Height;
+        mDestRectangle.Y = (int) (map.Y + Y * Options.TileHeight + OffsetY);
+        mDestRectangle.X = (int) (map.X + X * Options.TileWidth + OffsetX);
+        if (mSrcRectangle.Height > Options.TileHeight)
+        {
+            mDestRectangle.Y -= mSrcRectangle.Height - Options.TileHeight;
+        }
+
+        if (mSrcRectangle.Width > Options.TileWidth)
+        {
+            mDestRectangle.X -= (mSrcRectangle.Width - Options.TileWidth) / 2;
+        }
+
+        mHasRenderBounds = true;
     }
 
     //Rendering Resources
