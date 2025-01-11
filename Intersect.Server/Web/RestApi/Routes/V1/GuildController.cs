@@ -4,6 +4,7 @@ using Intersect.GameObjects;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Entities;
 using Intersect.Server.Localization;
+using Intersect.Server.Web.Http;
 using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.Types;
 using Intersect.Utilities;
@@ -268,8 +269,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("{guildId:guid}/bank")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
-        [ProducesResponseType(typeof(IEnumerable<GuildBankSlot>), (int)HttpStatusCode.OK, "application/json")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(IEnumerable<GuildBankSlot>), (int)HttpStatusCode.OK, ContentTypes.Json)]
         public IActionResult ItemsListBank(Guid guildId)
         {
             var guild = Guild.LoadGuild(guildId);
@@ -282,8 +283,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("{guildId:guid}/variables")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
-        [ProducesResponseType(typeof(IEnumerable<GuildVariable>), (int)HttpStatusCode.OK, "application/json")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(IEnumerable<GuildVariable>), (int)HttpStatusCode.OK, ContentTypes.Json)]
         public IActionResult GuildVariablesList(Guid guildId)
         {
             if (!Guild.TryGet(guildId, out var guild))
@@ -295,9 +296,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("{guildId:guid}/variables/{variableId:guid}")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
-        [ProducesResponseType(typeof(GuildVariable), (int)HttpStatusCode.OK, "application/json")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(GuildVariable), (int)HttpStatusCode.OK, ContentTypes.Json)]
         public IActionResult GuildVariableGet(Guid guildId, Guid variableId)
         {
             if (!Guild.TryGet(guildId, out var guild))
@@ -320,9 +321,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("{guildId:guid}/variables/{variableId:guid}/value")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
-        [ProducesResponseType(typeof(VariableValueBody), (int)HttpStatusCode.OK, "application/json")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(VariableValueBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
         public IActionResult GuildVariableGetValue(Guid guildId, Guid variableId)
         {
             if (!Guild.TryGet(guildId, out var guild))
@@ -348,9 +349,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpPost("{guildId:guid}/variables/{variableId:guid}")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
-        [ProducesResponseType(typeof(GuildVariable), (int)HttpStatusCode.OK, "application/json")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(GuildVariable), (int)HttpStatusCode.OK, ContentTypes.Json)]
         public IActionResult GuildVariableSet(Guid guildId, Guid variableId, [FromBody] VariableValueBody valueBody)
         {
             if (!Guild.TryGet(guildId, out var guild))

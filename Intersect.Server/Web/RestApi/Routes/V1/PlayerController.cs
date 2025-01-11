@@ -8,6 +8,7 @@ using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
+using Intersect.Server.Web.Http;
 using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.Types;
 using Intersect.Utilities;
@@ -316,9 +317,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("{lookupKey:LookupKey}/variables")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
-        [ProducesResponseType(typeof(IEnumerable<PlayerVariable>), (int)HttpStatusCode.OK, "application/json")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(IEnumerable<PlayerVariable>), (int)HttpStatusCode.OK, ContentTypes.Json)]
         public IActionResult PlayerVariablesList(LookupKey lookupKey)
         {
             if (lookupKey.IsInvalid)
@@ -341,9 +342,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("{lookupKey:LookupKey}/variables/{variableId:guid}")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
-        [ProducesResponseType(typeof(PlayerVariable), (int)HttpStatusCode.OK, "application/json")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(PlayerVariable), (int)HttpStatusCode.OK, ContentTypes.Json)]
         public IActionResult PlayerVariableGet(LookupKey lookupKey, Guid variableId)
         {
             if (lookupKey.IsInvalid)
@@ -372,9 +373,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("{lookupKey:LookupKey}/variables/{variableId:guid}/value")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
-        [ProducesResponseType(typeof(VariableValueBody), (int)HttpStatusCode.OK, "application/json")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(VariableValueBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
         public IActionResult PlayerVariableValueGet(LookupKey lookupKey, Guid variableId)
         {
             if (lookupKey.IsInvalid)
@@ -406,9 +407,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpPost("{lookupKey:LookupKey}/variables/{variableId:guid}")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
-        [ProducesResponseType(typeof(PlayerVariable), (int)HttpStatusCode.OK, "application/json")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(PlayerVariable), (int)HttpStatusCode.OK, ContentTypes.Json)]
         public IActionResult PlayerVariableSet(LookupKey lookupKey, Guid variableId, [FromBody] VariableValueBody valueBody)
         {
             if (lookupKey.IsInvalid)

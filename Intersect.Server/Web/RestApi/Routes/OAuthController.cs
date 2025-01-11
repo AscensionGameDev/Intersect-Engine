@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using Intersect.Security.Claims;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Web.Configuration;
+using Intersect.Server.Web.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -193,7 +194,7 @@ namespace Intersect.Server.Web.RestApi.Routes
         }
 
         [HttpPost("token")]
-        [Consumes(typeof(TokenRequest), "application/json")]
+        [Consumes(typeof(TokenRequest), ContentTypes.Json)]
         public async Task<IActionResult> RequestToken([FromBody] TokenRequest tokenRequest)
         {
             return tokenRequest switch

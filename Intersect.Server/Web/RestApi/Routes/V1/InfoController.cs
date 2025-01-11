@@ -1,6 +1,7 @@
 ﻿using Intersect.Enums;
 using Intersect.Server.General;
 using Intersect.Server.Metrics;
+using Intersect.Server.Web.Http;
 using Intersect.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -58,7 +59,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpGet("metrics")]
         public object StatsMetrics()
         {
-            return Content(MetricsRoot.Instance.Metrics, "application/json");
+            return Content(MetricsRoot.Instance.Metrics, ContentTypes.Json);
         }
     }
 }

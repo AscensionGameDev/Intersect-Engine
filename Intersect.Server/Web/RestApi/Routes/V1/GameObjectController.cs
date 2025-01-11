@@ -3,6 +3,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Models;
+using Intersect.Server.Web.Http;
 using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.Types;
 using Microsoft.AspNetCore.Authorization;
@@ -15,9 +16,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
     public sealed partial class GameObjectController : IntersectController
     {
         [HttpGet("{gameObjectType}")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest, "application/json")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound, "application/json")]
-        [ProducesResponseType(typeof(DataPage<IDatabaseObject>), (int)HttpStatusCode.OK, "application/json")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(DataPage<IDatabaseObject>), (int)HttpStatusCode.OK, ContentTypes.Json)]
         public IActionResult List(GameObjectType gameObjectType, [FromQuery] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
