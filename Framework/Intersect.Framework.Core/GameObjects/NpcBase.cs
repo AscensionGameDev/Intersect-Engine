@@ -30,16 +30,52 @@ public partial class NpcBase : DatabaseObject<NpcBase>, IFolderable
     }
 
     [JsonProperty(nameof(MaxVitals)), NotMapped]
-    public IReadOnlyDictionary<Vital, long> MaxVitalsLookup => MaxVitals.Select((value, index) => (value, index))
-        .ToDictionary(t => (Vital)t.index, t => t.value).AsReadOnly();
+    public IReadOnlyDictionary<Vital, long> MaxVitalsLookup
+    {
+        get =>
+            MaxVitals.Select((value, index) => (value, index))
+                .ToDictionary(t => (Vital)t.index, t => t.value)
+                .AsReadOnly();
+        set
+        {
+            foreach (var (key, val) in value)
+            {
+                MaxVitals[(int)key] = val;
+            }
+        }
+    }
 
     [JsonProperty(nameof(VitalRegen)), NotMapped]
-    public IReadOnlyDictionary<Vital, long> VitalRegenLookup => VitalRegen.Select((value, index) => (value, index))
-        .ToDictionary(t => (Vital)t.index, t => t.value).AsReadOnly();
+    public IReadOnlyDictionary<Vital, long> VitalRegenLookup
+    {
+        get =>
+            VitalRegen.Select((value, index) => (value, index))
+                .ToDictionary(t => (Vital)t.index, t => t.value)
+                .AsReadOnly();
+        set
+        {
+            foreach (var (key, val) in value)
+            {
+                VitalRegen[(int)key] = val;
+            }
+        }
+    }
 
     [JsonProperty(nameof(Stats)), NotMapped]
-    public IReadOnlyDictionary<Stat, int> StatsLookup => Stats.Select((statValue, index) => (statValue, index))
-        .ToDictionary(t => (Stat)t.index, t => t.statValue).AsReadOnly();
+    public IReadOnlyDictionary<Stat, int> StatsLookup
+    {
+        get =>
+            Stats.Select((statValue, index) => (statValue, index))
+                .ToDictionary(t => (Stat)t.index, t => t.statValue)
+                .AsReadOnly();
+        set
+        {
+            foreach (var (key, val) in value)
+            {
+                Stats[(int)key] = val;
+            }
+        }
+    }
 
     [NotMapped]
     public ConditionLists PlayerCanAttackConditions { get; set; } = new();

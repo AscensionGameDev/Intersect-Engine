@@ -23,24 +23,84 @@ public partial class ClassBase : DatabaseObject<ClassBase>, IFolderable
     public long[] BaseVital { get; set; } = new long[Enum.GetValues<Vital>().Length];
 
     [JsonProperty(nameof(BaseVital)), NotMapped]
-    public IReadOnlyDictionary<Vital, long> BaseVitalLookup => BaseVital.Select((value, index) => (value, index))
-        .ToDictionary(t => (Vital)t.index, t => t.value).AsReadOnly();
+    public IReadOnlyDictionary<Vital, long> BaseVitalLookup
+    {
+        get =>
+            BaseVital.Select((value, index) => (value, index))
+                .ToDictionary(t => (Vital)t.index, t => t.value)
+                .AsReadOnly();
+        set
+        {
+            foreach (var (key, val) in value)
+            {
+                VitalRegen[(int)key] = val;
+            }
+        }
+    }
 
     [JsonProperty(nameof(VitalIncrease)), NotMapped]
-    public IReadOnlyDictionary<Vital, long> VitalIncreaseLookup => VitalIncrease.Select((value, index) => (value, index))
-        .ToDictionary(t => (Vital)t.index, t => t.value).AsReadOnly();
+    public IReadOnlyDictionary<Vital, long> VitalIncreaseLookup
+    {
+        get =>
+            VitalIncrease.Select((value, index) => (value, index))
+                .ToDictionary(t => (Vital)t.index, t => t.value)
+                .AsReadOnly();
+        set
+        {
+            foreach (var (key, val) in value)
+            {
+                VitalIncrease[(int)key] = val;
+            }
+        }
+    }
 
     [JsonProperty(nameof(VitalRegen)), NotMapped]
-    public IReadOnlyDictionary<Vital, long> VitalRegenLookup => VitalRegen.Select((value, index) => (value, index))
-        .ToDictionary(t => (Vital)t.index, t => t.value).AsReadOnly();
+    public IReadOnlyDictionary<Vital, long> VitalRegenLookup
+    {
+        get =>
+            VitalRegen.Select((value, index) => (value, index))
+                .ToDictionary(t => (Vital)t.index, t => t.value)
+                .AsReadOnly();
+        set
+        {
+            foreach (var (key, val) in value)
+            {
+                VitalRegen[(int)key] = val;
+            }
+        }
+    }
 
     [JsonProperty(nameof(BaseStat)), NotMapped]
-    public IReadOnlyDictionary<Stat, int> BaseStatLookup => BaseStat.Select((statValue, index) => (statValue, index))
-        .ToDictionary(t => (Stat)t.index, t => t.statValue).AsReadOnly();
+    public IReadOnlyDictionary<Stat, int> BaseStatLookup
+    {
+        get =>
+            BaseStat.Select((statValue, index) => (statValue, index))
+                .ToDictionary(t => (Stat)t.index, t => t.statValue)
+                .AsReadOnly();
+        set
+        {
+            foreach (var (key, val) in value)
+            {
+                BaseStat[(int)key] = val;
+            }
+        }
+    }
 
     [JsonProperty(nameof(StatIncrease)), NotMapped]
-    public IReadOnlyDictionary<Stat, int> StatIncreaseLookup => StatIncrease.Select((statValue, index) => (statValue, index))
-        .ToDictionary(t => (Stat)t.index, t => t.statValue).AsReadOnly();
+    public IReadOnlyDictionary<Stat, int> StatIncreaseLookup
+    {
+        get =>
+            StatIncrease.Select((statValue, index) => (statValue, index))
+                .ToDictionary(t => (Stat)t.index, t => t.statValue)
+                .AsReadOnly();
+        set
+        {
+            foreach (var (key, val) in value)
+            {
+                StatIncrease[(int)key] = val;
+            }
+        }
+    }
 
     [NotMapped] public Dictionary<int, long> ExperienceOverrides { get; set; } = [];
 
