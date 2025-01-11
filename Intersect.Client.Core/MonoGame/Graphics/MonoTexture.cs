@@ -26,15 +26,11 @@ public partial class MonoTexture : GameTexture
 
     private readonly GameTexturePackFrame? _packFrame;
 
-    private readonly bool _doNotFree;
-
     private int _width = -1;
 
     private Texture2D? _texture;
 
     private int _height = -1;
-
-    private long _lastAccessTime;
 
     private bool _loadError;
 
@@ -45,7 +41,6 @@ public partial class MonoTexture : GameTexture
         _realPath = string.Empty;
         _name = assetName;
         _texture = texture2D;
-        _doNotFree = true;
     }
 
     public MonoTexture(GraphicsDevice graphicsDevice, string filename, string realPath) : base(
@@ -160,17 +155,10 @@ public partial class MonoTexture : GameTexture
         }
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void ResetAccessTime()
-    {
-        _lastAccessTime = Timing.Global.MillisecondsUtc + 15000;
-    }
-
     public override int Width
     {
         get
         {
-            ResetAccessTime();
             if (_width != -1)
             {
                 return _width;
@@ -194,7 +182,6 @@ public partial class MonoTexture : GameTexture
     {
         get
         {
-            ResetAccessTime();
             if (_height != -1)
             {
                 return _height;
@@ -221,8 +208,6 @@ public partial class MonoTexture : GameTexture
         {
             return _packFrame.PackTexture.GetTexture();
         }
-
-        ResetAccessTime();
 
         if (_texture == null)
         {
@@ -274,17 +259,7 @@ public partial class MonoTexture : GameTexture
 
     public void Update()
     {
-        if (_doNotFree)
-        {
-            return;
-        }
-
         if (_texture == null)
-        {
-            return;
-        }
-
-        if (_lastAccessTime >= Timing.Global.MillisecondsUtc)
         {
             return;
         }
