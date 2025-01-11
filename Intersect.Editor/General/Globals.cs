@@ -49,7 +49,22 @@ public static partial class Globals
 
     public static TilesetBase CurrentTileset = null;
 
-    public static EditingTool CurrentTool = EditingTool.Brush;
+    public static EditingTool _currentTool = EditingTool.Brush;
+
+    public static event EventHandler<EventArgs> ToolChanged;
+    public static EditingTool CurrentTool
+    {
+        get { return _currentTool; }
+        set
+        {
+            _currentTool = value;
+            OnToolChanged(new EventArgs());
+        }
+    }
+    static void OnToolChanged(EventArgs e)
+    {
+        ToolChanged?.Invoke(null, e);
+    }
 
     public static int CurSelH;
 
