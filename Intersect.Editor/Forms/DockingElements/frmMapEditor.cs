@@ -36,9 +36,6 @@ public partial class FrmMapEditor : DockContent
 
     private bool mMapChanged;
 
-    // MapGrid Cursor
-    private Timer cursorUpdateTimer;
-
     public struct IconInfo
     {
         public bool FIcon;
@@ -2359,17 +2356,6 @@ public partial class FrmMapEditor : DockContent
     private void picMap_MouseLeave(object sender, EventArgs e)
     {
         RemoveSpriteCursorInGrid();
-    }
-
-    private void CursorUpdateTimer_Tick(object sender, EventArgs e)
-    {
-        if (Globals.EditingLight != null || Globals.CurrentEditor != -1 ||
-            !Globals.MapEditorWindow.DockPanel.Focused)
-        {
-            return;
-        }
-
-        SetCursorSpriteInGrid();
     }
 
     private void SetCursorSpriteInGrid()
