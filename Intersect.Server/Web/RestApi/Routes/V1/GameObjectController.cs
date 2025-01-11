@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
@@ -17,7 +17,6 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
     {
         [HttpGet("{gameObjectType}")]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
-        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
         [ProducesResponseType(typeof(DataPage<IDatabaseObject>), (int)HttpStatusCode.OK, ContentTypes.Json)]
         public IActionResult List(GameObjectType gameObjectType, [FromQuery] PagingInfo pageInfo)
         {
@@ -41,6 +40,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             var total = gameObjectType == GameObjectType.Event
                 ? lookup.Count(obj => ((EventBase)obj.Value).CommonEvent)
                 : lookup.Count;
+
             return Ok(
                 new DataPage<IDatabaseObject>(
                     Total: total,
@@ -53,6 +53,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("{gameObjectType}/names")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(DataPage<string>), (int)HttpStatusCode.OK, ContentTypes.Json)]
         public IActionResult Names(GameObjectType gameObjectType)
         {
             if (!gameObjectType.TryGetLookup(out var lookup))
@@ -80,7 +82,10 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("{gameObjectType}/{objectId:guid}")]
-        public object GameObjectById(GameObjectType gameObjectType, Guid objectId)
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(IDatabaseObject), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult GameObjectById(GameObjectType gameObjectType, Guid objectId)
         {
             if (objectId == default)
             {
@@ -98,6 +103,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("time")]
+        [ProducesResponseType(typeof(TimeBase), (int)HttpStatusCode.OK, ContentTypes.Json)]
         public IActionResult Time() => Ok(TimeBase.GetTimeBase());
     }
 }
