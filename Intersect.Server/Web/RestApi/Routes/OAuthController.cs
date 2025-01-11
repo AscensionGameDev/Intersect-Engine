@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Intersect.Security.Claims;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Web.Authentication;
 using Intersect.Server.Web.Configuration;
 using Intersect.Server.Web.Http;
 using Microsoft.AspNetCore.Authorization;
@@ -48,7 +49,7 @@ namespace Intersect.Server.Web.RestApi.Routes
             public string RefreshToken { get; set; }
 
             [JsonProperty("token_type")]
-            public string TokenType { get; set; } = "bearer";
+            public string TokenType { get; set; } = TokenTypes.Bearer;
 
             [JsonProperty("expires_in")]
             public int ExpiresIn => (int)(Expires - DateTime.UtcNow).TotalMinutes;
@@ -274,7 +275,7 @@ namespace Intersect.Server.Web.RestApi.Routes
                 RefreshToken = refreshToken.Id.ToString(),
                 Expires = expires,
                 Issued = issued,
-                TokenType = "bearer",
+                TokenType = TokenTypes.Bearer,
             };
         }
 
@@ -297,7 +298,7 @@ namespace Intersect.Server.Web.RestApi.Routes
                 return InternalServerError();
             }
 
-            if (refreshToken.UserId != actor.Id && !actor.Power.ApiRoles.UserManage)
+            if (refreshToken.UserId != actor.Id && !(actor.Power.ApiRoles?.UserManage ?? false))
             {
                 return Unauthorized();
             }
@@ -322,7 +323,7 @@ namespace Intersect.Server.Web.RestApi.Routes
                 return Unauthorized();
             }
 
-            if (!actor.Power.ApiRoles.UserManage && actor.Id != user.Id)
+            if (!(actor.Power.ApiRoles?.UserManage ?? false) && actor.Id != user.Id)
             {
                 return Unauthorized();
             }
@@ -352,7 +353,7 @@ namespace Intersect.Server.Web.RestApi.Routes
                 return Unauthorized();
             }
 
-            if (intersectUser.Id != user.Id && !intersectUser.Power.ApiRoles.UserManage)
+            if (intersectUser.Id != user.Id && !(intersectUser.Power.ApiRoles?.UserManage ?? false))
             {
                 return Unauthorized();
             }

@@ -4,6 +4,7 @@ using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Core.CommandParsing.Arguments;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Localization;
 
 namespace Intersect.Server.Core.Commands
@@ -44,19 +45,21 @@ namespace Intersect.Server.Core.Commands
                 return;
             }
 
-            if (string.Equals("users.query", role, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(nameof(ApiRoles.UserQuery), role, StringComparison.OrdinalIgnoreCase))
             {
+                target.Power.ApiRoles ??= new ApiRoles();
                 target.Power.ApiRoles.UserQuery = true;
             }
-            else if (string.Equals("users.manage", role, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(nameof(ApiRoles.UserManage), role, StringComparison.OrdinalIgnoreCase))
             {
+                target.Power.ApiRoles ??= new ApiRoles();
                 if (target.Power.ApiRoles.UserQuery)
                 {
                     target.Power.ApiRoles.UserManage = true;
                 }
                 else
                 {
-                    Console.WriteLine(Strings.Commandoutput.ApiRolePrerequisite.ToString(role, "users.query"));
+                    Console.WriteLine(Strings.Commandoutput.ApiRolePrerequisite.ToString(role, nameof(ApiRoles.UserQuery)));
 
                     return;
                 }

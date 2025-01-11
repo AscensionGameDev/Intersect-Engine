@@ -4,6 +4,7 @@ using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Core.CommandParsing.Arguments;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Localization;
 
 namespace Intersect.Server.Core.Commands
@@ -37,14 +38,16 @@ namespace Intersect.Server.Core.Commands
 
             var role = result.Find(Role);
 
-            if (role == "users.query")
+            if (string.Equals(nameof(ApiRoles.UserQuery), role, StringComparison.OrdinalIgnoreCase))
             {
-                target.Power.ApiRoles.UserQuery = false;
-                target.Power.ApiRoles.UserManage = false;
+                target.Power.ApiRoles = null;
             }
-            else if (role == "users.manage")
+            else if (string.Equals(nameof(ApiRoles.UserManage), role, StringComparison.OrdinalIgnoreCase))
             {
-                target.Power.ApiRoles.UserManage = false;
+                if (target.Power.ApiRoles != default)
+                {
+                    target.Power.ApiRoles.UserManage = false;
+                }
             }
             else
             {

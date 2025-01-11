@@ -2,6 +2,7 @@
 
 using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Localization;
 
 namespace Intersect.Server.Core.Commands
@@ -29,8 +30,15 @@ namespace Intersect.Server.Core.Commands
             }
 
             Console.WriteLine(Strings.Commandoutput.ApiRoles.ToString(target.Name));
-            Console.WriteLine("users.query: " + target.Power.ApiRoles.UserQuery);
-            Console.WriteLine("users.manage: " + target.Power.ApiRoles.UserManage);
+            if (target.Power.ApiRoles is {} apiRoles)
+            {
+                Console.WriteLine($"{nameof(ApiRoles.UserQuery)}: {apiRoles.UserQuery}");
+                Console.WriteLine($"{nameof(ApiRoles.UserManage)}: {apiRoles.UserManage}");
+            }
+            else
+            {
+                Console.WriteLine(Strings.Commandoutput.ApiRolesNotGranted);
+            }
         }
 
     }

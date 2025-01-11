@@ -376,6 +376,9 @@ public static partial class Strings
         public readonly LocalizedString ApiRoles = @"API roles for {00}:";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ApiRolesNotGranted = @"No API roles have been granted.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString CharacterCount = @" - {00} Characters.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
