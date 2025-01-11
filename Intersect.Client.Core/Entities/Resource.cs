@@ -138,14 +138,6 @@ public partial class Resource : Entity, IResource
             return false;
         }
 
-        if (_waitingForTilesets)
-        {
-            if (GameContentManager.Current.TilesetsLoaded)
-            {
-                ReloadSpriteTexture();
-            }
-        }
-
         if (!mHasRenderBounds)
         {
             CalculateRenderBounds();
@@ -271,10 +263,12 @@ public partial class Resource : Entity, IResource
         {
             if (GameContentManager.Current.TilesetsLoaded)
             {
+                ReloadSpriteTexture();
                 _waitingForTilesets = false;
             }
             else
             {
+                // No textures yet
                 return;
             }
         }
