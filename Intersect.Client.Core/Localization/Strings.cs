@@ -920,9 +920,6 @@ public static partial class Strings
         public static LocalizedString ExpValue = @"{00} / {01}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Friend = "Befriend";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Level = @"Lv. {00}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -933,12 +930,6 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString NameAndLevel = @"{00}    {01}";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Party = @"Party";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Trade = @"Trade";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Vital0 = @"HP:";
@@ -1283,6 +1274,24 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Title = @"Inventory";
+    }
+
+    public partial struct EntityContextMenu
+    {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString AddFriend = @"Add Friend";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString InviteToGuild = @"Invite to Guild";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString InviteToParty = @"Invite to Party";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString PrivateMessage = @"Private Message";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Trade = @"Trade";
     }
 
     public partial struct ItemContextMenu

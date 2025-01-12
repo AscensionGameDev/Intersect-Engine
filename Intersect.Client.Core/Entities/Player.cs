@@ -4,6 +4,7 @@ using Intersect.Client.Entities.Events;
 using Intersect.Client.Entities.Projectiles;
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Input;
 using Intersect.Client.Framework.Items;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
@@ -1720,6 +1721,14 @@ public partial class Player : Entity, IPlayer
         PickLastDirection(Dir);
     }
 
+    private static void ToggleTargetContextMenu(Entity en)
+    {
+        if (Globals.InputManager.MouseButtonDown(MouseButtons.Right))
+        {
+            Interface.Interface.GameUi.TargetContextMenu.ToggleHidden(en);
+        }
+    }
+
     public bool TryBlock()
     {
         var shieldIndex = Options.ShieldIndex;
@@ -2622,6 +2631,7 @@ public partial class Player : Entity, IPlayer
 
             en.Value.DrawTarget((int)Enums.TargetType.Selected);
             AutoTurnToTarget(en.Value);
+            ToggleTargetContextMenu(en.Value);
         }
 
         foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values.Cast<MapInstance>())
@@ -2660,6 +2670,7 @@ public partial class Player : Entity, IPlayer
 
                 en.Value.DrawTarget((int)Enums.TargetType.Selected);
                 AutoTurnToTarget(en.Value);
+                ToggleTargetContextMenu(en.Value);
             }
         }
 
@@ -2693,6 +2704,7 @@ public partial class Player : Entity, IPlayer
                                     if (TargetType != 0 || TargetIndex != en.Value.Id)
                                     {
                                         en.Value.DrawTarget((int)Enums.TargetType.Hover);
+                                        ToggleTargetContextMenu(en.Value);
                                     }
                                 }
                             }
@@ -2717,6 +2729,7 @@ public partial class Player : Entity, IPlayer
                                     if (TargetType != 1 || TargetIndex != en.Value.Id)
                                     {
                                         en.Value.DrawTarget((int)Enums.TargetType.Hover);
+                                        ToggleTargetContextMenu(en.Value);
                                     }
                                 }
                             }
