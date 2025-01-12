@@ -543,6 +543,21 @@ public partial class User
         return new Tuple<Client, User>(client, client?.User ?? Find(userName));
     }
 
+    public static Tuple<Client, User> Fetch(LookupKey lookupKey)
+    {
+        if (lookupKey.HasId)
+        {
+            return Fetch(lookupKey.Id);
+        }
+
+        if (lookupKey.HasName)
+        {
+            return Fetch(lookupKey.Name);
+        }
+
+        return new Tuple<Client, User>(default, default);
+    }
+
     public static bool TryLogin(
         string username,
         string ptPassword,
