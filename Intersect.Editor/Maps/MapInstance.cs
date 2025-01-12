@@ -26,7 +26,12 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>
 
     public MapInstance(Guid id) : base(id)
     {
-        lock (MapLock)
+        if (!Lock.TryAcquireLock(out var lockRef))
+        {
+            throw new InvalidOperationException("Failed to acquire map instance lock");
+        }
+
+        using (lockRef)
         {
             Autotiles = new MapAutotiles(this);
         }
@@ -34,7 +39,12 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>
 
     public MapInstance(MapBase mapStruct) : base(mapStruct)
     {
-        lock (MapLock)
+        if (!Lock.TryAcquireLock(out var lockRef))
+        {
+            throw new InvalidOperationException("Failed to acquire map instance lock");
+        }
+
+        using (lockRef)
         {
             Autotiles = new MapAutotiles(this);
             if (typeof(MapInstance) == mapStruct.GetType())
@@ -56,7 +66,12 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>
 
     public void Load(string mapJson, bool import = false, bool clearEvents = true)
     {
-        lock (MapLock)
+        if (!Lock.TryAcquireLock(out var lockRef))
+        {
+            throw new InvalidOperationException("Failed to acquire map instance lock");
+        }
+
+        using (lockRef)
         {
             var up = Up;
             var down = Down;
@@ -88,7 +103,12 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>
 
     public void LoadTileData(byte[] packet)
     {
-        lock (MapLock)
+        if (!Lock.TryAcquireLock(out var lockRef))
+        {
+            throw new InvalidOperationException("Failed to acquire map instance lock");
+        }
+
+        using (lockRef)
         {
             Layers = JsonConvert.DeserializeObject<Dictionary<string, Tile[,]>>(LZ4.UnPickleString(packet), mJsonSerializerSettings);
             foreach (var layer in Options.Instance.MapOpts.Layers.All)
@@ -271,7 +291,12 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>
 
     public void InitAutotiles()
     {
-        lock (MapLock)
+        if (!Lock.TryAcquireLock(out var lockRef))
+        {
+            throw new InvalidOperationException("Failed to acquire map instance lock");
+        }
+
+        using (lockRef)
         {
             Autotiles.InitAutotiles(GenerateAutotileGrid());
         }
