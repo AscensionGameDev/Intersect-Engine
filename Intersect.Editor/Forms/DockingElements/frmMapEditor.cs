@@ -16,7 +16,6 @@ using Intersect.GameObjects.Maps;
 using Intersect.Logging;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
-using Timer = System.Windows.Forms.Timer;
 
 namespace Intersect.Editor.Forms.DockingElements;
 
@@ -35,9 +34,6 @@ public partial class FrmMapEditor : DockContent
     private SwapChainRenderTarget mChain;
 
     private bool mMapChanged;
-
-    // MapGrid Cursor
-    private Timer cursorUpdateTimer;
 
     public struct IconInfo
     {
@@ -68,11 +64,13 @@ public partial class FrmMapEditor : DockContent
         InitializeComponent();
         Icon = Program.Icon;
         picMap.MouseLeave += (_sender, _args) => tooltipMapAttribute?.Hide();
-        // Initialize cursor timer
-        cursorUpdateTimer = new Timer();
-        cursorUpdateTimer.Interval = 200;
-        cursorUpdateTimer.Tick += CursorUpdateTimer_Tick;
-        cursorUpdateTimer.Start();
+
+        Globals.ToolChanged += Globals_ToolChanged;
+    }
+
+    private void Globals_ToolChanged(object? sender, EventArgs e)
+    {
+        SetCursorSpriteInGrid();
     }
 
     private void InitLocalization()
@@ -2348,28 +2346,22 @@ public partial class FrmMapEditor : DockContent
 
     private void picMap_MouseEnter(object sender, EventArgs e)
     {
-        if (!Globals.MapEditorWindow.DockPanel.Focused && Globals.CurrentEditor == -1)
+        if (Globals.EditingLight != null || Globals.CurrentEditor != -1)
+        {
+            RemoveSpriteCursorInGrid();
+            return;
+        }
+
+        if (!Globals.MapEditorWindow.DockPanel.Focused)
         {
             Globals.MapEditorWindow.DockPanel.Focus();
         }
 
-        RemoveSpriteCursorInGrid();
+        SetCursorSpriteInGrid();
     }
-
     private void picMap_MouseLeave(object sender, EventArgs e)
     {
         RemoveSpriteCursorInGrid();
-    }
-
-    private void CursorUpdateTimer_Tick(object sender, EventArgs e)
-    {
-        if (Globals.EditingLight != null || Globals.CurrentEditor != -1 ||
-            !Globals.MapEditorWindow.DockPanel.Focused)
-        {
-            return;
-        }
-
-        SetCursorSpriteInGrid();
     }
 
     private void SetCursorSpriteInGrid()
