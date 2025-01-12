@@ -1135,7 +1135,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
         if (Autotiles == default)
         {
-            throw new NullReferenceException($"[{Id}] {nameof(Autotiles)} is null {nameof(IsLoaded)}={IsLoaded}");
+            Log.Error($"[{Id}] {nameof(Autotiles)} is null {nameof(IsLoaded)}={IsLoaded}");
+            return null;
         }
 
         if (!Autotiles.TryGetAutoTilesForLayer(layerName, out var layerAutoTiles))
