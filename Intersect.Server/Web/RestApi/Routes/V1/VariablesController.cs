@@ -1,8 +1,10 @@
-﻿using Intersect.Enums;
+using System.Net;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Server.Database;
 using Intersect.Server.Database.GameData;
 using Intersect.Server.Entities;
+using Intersect.Server.Web.Http;
 using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.Types;
 using Microsoft.AspNetCore.Authorization;
@@ -10,16 +12,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1;
 
-[Route("api/v1/variables/global")]
+[Route("api/v1/variables")]
 [Authorize]
 public sealed partial class VariablesController : IntersectController
 {
     [HttpGet]
-    public IActionResult GlobalVariablesGet([FromQuery] PagingInfo pageInfo)
+    [ProducesResponseType(typeof(DataPage<ServerVariableBase>), (int)HttpStatusCode.OK, ContentTypes.Json)]
+    public IActionResult ServerVariablesGet([FromQuery] PagingInfo pageInfo)
     {
         pageInfo.Page = Math.Max(pageInfo.Page, 0);
         pageInfo.PageSize = Math.Max(Math.Min(pageInfo.PageSize, 100), 5);
-
         var entries = GameContext.Queries.ServerVariables(pageInfo.Page, pageInfo.PageSize)?.ToList();
 
         return Ok(
@@ -35,7 +37,10 @@ public sealed partial class VariablesController : IntersectController
     }
 
     [HttpGet("{variableId:guid}")]
-    public IActionResult GlobalVariableGet(Guid variableId)
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+    [ProducesResponseType(typeof(ServerVariableBase), (int)HttpStatusCode.OK, ContentTypes.Json)]
+    public IActionResult ServerVariableGet(Guid variableId)
     {
         if (variableId == default)
         {
@@ -47,14 +52,17 @@ public sealed partial class VariablesController : IntersectController
         // ReSharper disable once ConvertIfStatementToReturnStatement
         if (variable == null)
         {
-            return NotFound($@"No global variable with id '{variableId}'.");
+            return NotFound($@"No server variable with id '{variableId}'.");
         }
 
         return Ok(variable);
     }
 
     [HttpGet("{variableId:guid}/value")]
-    public IActionResult GlobalVariableGetValue(Guid variableId)
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+    [ProducesResponseType(typeof(VariableValueBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
+    public IActionResult ServerVariableGetValue(Guid variableId)
     {
         if (variableId == default)
         {
@@ -65,7 +73,7 @@ public sealed partial class VariablesController : IntersectController
 
         if (variable == null)
         {
-            return NotFound($@"No global variable with id '{variableId}'.");
+            return NotFound($@"No server variable with id '{variableId}'.");
         }
 
         return Ok(
@@ -77,7 +85,10 @@ public sealed partial class VariablesController : IntersectController
     }
 
     [HttpPost("{variableId:guid}")]
-    public IActionResult GlobalVariableSet(Guid variableId, [FromBody] VariableValueBody variableValue)
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+    [ProducesResponseType(typeof(ServerVariableBase), (int)HttpStatusCode.OK, ContentTypes.Json)]
+    public IActionResult ServerVariableSet(Guid variableId, [FromBody] VariableValueBody variableValue)
     {
         if (variableId == default)
         {
@@ -88,17 +99,14 @@ public sealed partial class VariablesController : IntersectController
 
         if (variable == null)
         {
-            return NotFound($@"No global variable with id '{variableId}'.");
+            return NotFound($@"No server variable with id '{variableId}'.");
         }
 
         var changed = false;
-        if (variable.Value != null)
+        if (variable.Value != null && variable.Value.Value != variableValue.Value)
         {
-            if (variable.Value.Value != variableValue.Value)
-            {
-                variable.Value.Value = variableValue.Value;
-                changed = true;
-            }
+            variable.Value.Value = variableValue.Value;
+            changed = true;
         }
 
         // ReSharper disable once InvertIf
@@ -109,7 +117,8 @@ public sealed partial class VariablesController : IntersectController
                 "",
                 variableId.ToString()
             );
-            DbInterface.UpdatedServerVariables.AddOrUpdate(variable.Id, variable, (_, _) => variable);
+
+            _ = DbInterface.UpdatedServerVariables.AddOrUpdate(variable.Id, variable, (_, _) => variable);
         }
 
         return Ok(variable);
