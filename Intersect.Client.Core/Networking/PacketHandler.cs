@@ -190,7 +190,7 @@ internal sealed partial class PacketHandler
     {
         foreach (var map in packet.Maps)
         {
-            HandleMap(packetSender, map);
+            HandleMap(map);
         }
     }
 
@@ -227,11 +227,11 @@ internal sealed partial class PacketHandler
 
         foreach (var cachedMap in loadedCachedMaps)
         {
-            HandleMap(packetSender, cachedMap, skipSave: true);
+            HandleMap(cachedMap, skipSave: true);
         }
     }
 
-    private void HandleMap(IPacketSender packetSender, MapPacket packet, bool skipSave = false)
+    internal static void HandleMap(MapPacket packet, bool skipSave = false)
     {
         var startHandleMap = DateTime.UtcNow;
 
@@ -375,7 +375,7 @@ internal sealed partial class PacketHandler
     //MapPacket
     public void HandlePacket(IPacketSender packetSender, MapPacket packet)
     {
-        HandleMap(packetSender, packet);
+        HandleMap(packet);
         Player.FetchNewMaps();
     }
 

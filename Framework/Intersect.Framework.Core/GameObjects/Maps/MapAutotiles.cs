@@ -957,23 +957,23 @@ public partial class MapAutotiles
         switch (situation)
         {
             case AUTO_TILE_INNER:
-                PlaceAutotile(layerName, x, y, 1, "e");
+                PlaceAutotile(layerName, x, y, 1, 'e');
 
                 break;
             case AUTO_TILE_OUTER:
-                PlaceAutotile(layerName, x, y, 1, "a");
+                PlaceAutotile(layerName, x, y, 1, 'a');
 
                 break;
             case AUTO_TILE_HORIZONTAL:
-                PlaceAutotile(layerName, x, y, 1, "i");
+                PlaceAutotile(layerName, x, y, 1, 'i');
 
                 break;
             case AUTO_TILE_VERTICAL:
-                PlaceAutotile(layerName, x, y, 1, "m");
+                PlaceAutotile(layerName, x, y, 1, 'm');
 
                 break;
             case AUTO_TILE_FILL:
-                PlaceAutotile(layerName, x, y, 1, "q");
+                PlaceAutotile(layerName, x, y, 1, 'q');
 
                 break;
         }
@@ -1036,23 +1036,23 @@ public partial class MapAutotiles
         switch (situation)
         {
             case AUTO_TILE_INNER:
-                PlaceAutotile(layerName, x, y, 2, "j");
+                PlaceAutotile(layerName, x, y, 2, 'j');
 
                 break;
             case AUTO_TILE_OUTER:
-                PlaceAutotile(layerName, x, y, 2, "b");
+                PlaceAutotile(layerName, x, y, 2, 'b');
 
                 break;
             case AUTO_TILE_HORIZONTAL:
-                PlaceAutotile(layerName, x, y, 2, "f");
+                PlaceAutotile(layerName, x, y, 2, 'f');
 
                 break;
             case AUTO_TILE_VERTICAL:
-                PlaceAutotile(layerName, x, y, 2, "r");
+                PlaceAutotile(layerName, x, y, 2, 'r');
 
                 break;
             case AUTO_TILE_FILL:
-                PlaceAutotile(layerName, x, y, 2, "n");
+                PlaceAutotile(layerName, x, y, 2, 'n');
 
                 break;
         }
@@ -1115,23 +1115,23 @@ public partial class MapAutotiles
         switch (situation)
         {
             case AUTO_TILE_INNER:
-                PlaceAutotile(layerName, x, y, 3, "o");
+                PlaceAutotile(layerName, x, y, 3, 'o');
 
                 break;
             case AUTO_TILE_OUTER:
-                PlaceAutotile(layerName, x, y, 3, "c");
+                PlaceAutotile(layerName, x, y, 3, 'c');
 
                 break;
             case AUTO_TILE_HORIZONTAL:
-                PlaceAutotile(layerName, x, y, 3, "s");
+                PlaceAutotile(layerName, x, y, 3, 's');
 
                 break;
             case AUTO_TILE_VERTICAL:
-                PlaceAutotile(layerName, x, y, 3, "g");
+                PlaceAutotile(layerName, x, y, 3, 'g');
 
                 break;
             case AUTO_TILE_FILL:
-                PlaceAutotile(layerName, x, y, 3, "k");
+                PlaceAutotile(layerName, x, y, 3, 'k');
 
                 break;
         }
@@ -1194,23 +1194,23 @@ public partial class MapAutotiles
         switch (situation)
         {
             case AUTO_TILE_INNER:
-                PlaceAutotile(layerName, x, y, 4, "t");
+                PlaceAutotile(layerName, x, y, 4, 't');
 
                 break;
             case AUTO_TILE_OUTER:
-                PlaceAutotile(layerName, x, y, 4, "d");
+                PlaceAutotile(layerName, x, y, 4, 'd');
 
                 break;
             case AUTO_TILE_HORIZONTAL:
-                PlaceAutotile(layerName, x, y, 4, "p");
+                PlaceAutotile(layerName, x, y, 4, 'p');
 
                 break;
             case AUTO_TILE_VERTICAL:
-                PlaceAutotile(layerName, x, y, 4, "l");
+                PlaceAutotile(layerName, x, y, 4, 'l');
 
                 break;
             case AUTO_TILE_FILL:
-                PlaceAutotile(layerName, x, y, 4, "h");
+                PlaceAutotile(layerName, x, y, 4, 'h');
 
                 break;
         }
@@ -1225,12 +1225,12 @@ public partial class MapAutotiles
         if (tmpTile)
         {
             // Extended
-            PlaceAutotile(layerName, x, y, 1, "i");
+            PlaceAutotile(layerName, x, y, 1, 'i');
         }
         else
         {
             // Edge
-            PlaceAutotile(layerName, x, y, 1, "e");
+            PlaceAutotile(layerName, x, y, 1, 'e');
         }
     }
 
@@ -1242,12 +1242,12 @@ public partial class MapAutotiles
         if (tmpTile)
         {
             // Extended
-            PlaceAutotile(layerName, x, y, 2, "f");
+            PlaceAutotile(layerName, x, y, 2, 'f');
         }
         else
         {
             // Edge
-            PlaceAutotile(layerName, x, y, 2, "j");
+            PlaceAutotile(layerName, x, y, 2, 'j');
         }
     }
 
@@ -1259,12 +1259,12 @@ public partial class MapAutotiles
         if (tmpTile)
         {
             // Extended
-            PlaceAutotile(layerName, x, y, 3, "k");
+            PlaceAutotile(layerName, x, y, 3, 'k');
         }
         else
         {
             // Edge
-            PlaceAutotile(layerName, x, y, 3, "g");
+            PlaceAutotile(layerName, x, y, 3, 'g');
         }
     }
 
@@ -1276,12 +1276,12 @@ public partial class MapAutotiles
         if (tmpTile)
         {
             // Extended
-            PlaceAutotile(layerName, x, y, 4, "h");
+            PlaceAutotile(layerName, x, y, 4, 'h');
         }
         else
         {
             // Edge
-            PlaceAutotile(layerName, x, y, 4, "l");
+            PlaceAutotile(layerName, x, y, 4, 'l');
         }
     }
 
@@ -1368,19 +1368,19 @@ public partial class MapAutotiles
         switch (situation)
         {
             case AUTO_TILE_INNER:
-                PlaceAutotile(layerName, x, y, 1, "e");
+                PlaceAutotile(layerName, x, y, 1, 'e');
 
                 break;
             case AUTO_TILE_HORIZONTAL:
-                PlaceAutotile(layerName, x, y, 1, "i");
+                PlaceAutotile(layerName, x, y, 1, 'i');
 
                 break;
             case AUTO_TILE_VERTICAL:
-                PlaceAutotile(layerName, x, y, 1, "m");
+                PlaceAutotile(layerName, x, y, 1, 'm');
 
                 break;
             case AUTO_TILE_FILL:
-                PlaceAutotile(layerName, x, y, 1, "q");
+                PlaceAutotile(layerName, x, y, 1, 'q');
 
                 break;
         }
@@ -1467,19 +1467,19 @@ public partial class MapAutotiles
         switch (situation)
         {
             case AUTO_TILE_INNER:
-                PlaceAutotile(layerName, x, y, 2, "j");
+                PlaceAutotile(layerName, x, y, 2, 'j');
 
                 break;
             case AUTO_TILE_HORIZONTAL:
-                PlaceAutotile(layerName, x, y, 2, "f");
+                PlaceAutotile(layerName, x, y, 2, 'f');
 
                 break;
             case AUTO_TILE_VERTICAL:
-                PlaceAutotile(layerName, x, y, 2, "r");
+                PlaceAutotile(layerName, x, y, 2, 'r');
 
                 break;
             case AUTO_TILE_FILL:
-                PlaceAutotile(layerName, x, y, 2, "n");
+                PlaceAutotile(layerName, x, y, 2, 'n');
 
                 break;
         }
@@ -1573,19 +1573,19 @@ public partial class MapAutotiles
         switch (situation)
         {
             case AUTO_TILE_INNER:
-                PlaceAutotile(layerName, x, y, 3, "o");
+                PlaceAutotile(layerName, x, y, 3, 'o');
 
                 break;
             case AUTO_TILE_HORIZONTAL:
-                PlaceAutotile(layerName, x, y, 3, "s");
+                PlaceAutotile(layerName, x, y, 3, 's');
 
                 break;
             case AUTO_TILE_VERTICAL:
-                PlaceAutotile(layerName, x, y, 3, "g");
+                PlaceAutotile(layerName, x, y, 3, 'g');
 
                 break;
             case AUTO_TILE_FILL:
-                PlaceAutotile(layerName, x, y, 3, "k");
+                PlaceAutotile(layerName, x, y, 3, 'k');
 
                 break;
         }
@@ -1679,19 +1679,19 @@ public partial class MapAutotiles
         switch (situation)
         {
             case AUTO_TILE_INNER:
-                PlaceAutotile(layerName, x, y, 4, "t");
+                PlaceAutotile(layerName, x, y, 4, 't');
 
                 break;
             case AUTO_TILE_HORIZONTAL:
-                PlaceAutotile(layerName, x, y, 4, "p");
+                PlaceAutotile(layerName, x, y, 4, 'p');
 
                 break;
             case AUTO_TILE_VERTICAL:
-                PlaceAutotile(layerName, x, y, 4, "l");
+                PlaceAutotile(layerName, x, y, 4, 'l');
 
                 break;
             case AUTO_TILE_FILL:
-                PlaceAutotile(layerName, x, y, 4, "h");
+                PlaceAutotile(layerName, x, y, 4, 'h');
 
                 break;
         }
@@ -1778,43 +1778,43 @@ public partial class MapAutotiles
         switch (situation)
         {
             case XP_INNER:
-                PlaceAutotileXp(layerName, x, y, 1, "a");
+                PlaceAutotileXp(layerName, x, y, 1, 'a');
 
                 break;
             case XP_FILL:
-                PlaceAutotileXp(layerName, x, y, 1, "A");
+                PlaceAutotileXp(layerName, x, y, 1, 'A');
 
                 break;
             case XP_NW:
-                PlaceAutotileXp(layerName, x, y, 1, "e");
+                PlaceAutotileXp(layerName, x, y, 1, 'e');
 
                 break;
             case XPN:
-                PlaceAutotileXp(layerName, x, y, 1, "E");
+                PlaceAutotileXp(layerName, x, y, 1, 'E');
 
                 break;
             case XP_NE:
-                PlaceAutotileXp(layerName, x, y, 1, "i");
+                PlaceAutotileXp(layerName, x, y, 1, 'i');
 
                 break;
             case XPE:
-                PlaceAutotileXp(layerName, x, y, 1, "I");
+                PlaceAutotileXp(layerName, x, y, 1, 'I');
 
                 break;
             case XP_SE:
-                PlaceAutotileXp(layerName, x, y, 1, "q");
+                PlaceAutotileXp(layerName, x, y, 1, 'q');
 
                 break;
             case XPS:
-                PlaceAutotileXp(layerName, x, y, 1, "Q");
+                PlaceAutotileXp(layerName, x, y, 1, 'Q');
 
                 break;
             case XP_SW:
-                PlaceAutotileXp(layerName, x, y, 1, "m");
+                PlaceAutotileXp(layerName, x, y, 1, 'm');
 
                 break;
             case XPW:
-                PlaceAutotileXp(layerName, x, y, 1, "M");
+                PlaceAutotileXp(layerName, x, y, 1, 'M');
 
                 break;
         }
@@ -1906,43 +1906,43 @@ public partial class MapAutotiles
         switch (situation)
         {
             case XP_INNER:
-                PlaceAutotileXp(layerName, x, y, 2, "b");
+                PlaceAutotileXp(layerName, x, y, 2, 'b');
 
                 break;
             case XP_FILL:
-                PlaceAutotileXp(layerName, x, y, 2, "B");
+                PlaceAutotileXp(layerName, x, y, 2, 'B');
 
                 break;
             case XP_NW:
-                PlaceAutotileXp(layerName, x, y, 2, "f");
+                PlaceAutotileXp(layerName, x, y, 2, 'f');
 
                 break;
             case XPN:
-                PlaceAutotileXp(layerName, x, y, 2, "F");
+                PlaceAutotileXp(layerName, x, y, 2, 'F');
 
                 break;
             case XP_NE:
-                PlaceAutotileXp(layerName, x, y, 2, "j");
+                PlaceAutotileXp(layerName, x, y, 2, 'j');
 
                 break;
             case XPE:
-                PlaceAutotileXp(layerName, x, y, 2, "J");
+                PlaceAutotileXp(layerName, x, y, 2, 'J');
 
                 break;
             case XP_SE:
-                PlaceAutotileXp(layerName, x, y, 2, "r");
+                PlaceAutotileXp(layerName, x, y, 2, 'r');
 
                 break;
             case XPS:
-                PlaceAutotileXp(layerName, x, y, 2, "R");
+                PlaceAutotileXp(layerName, x, y, 2, 'R');
 
                 break;
             case XP_SW:
-                PlaceAutotileXp(layerName, x, y, 2, "n");
+                PlaceAutotileXp(layerName, x, y, 2, 'n');
 
                 break;
             case XPW:
-                PlaceAutotileXp(layerName, x, y, 2, "N");
+                PlaceAutotileXp(layerName, x, y, 2, 'N');
 
                 break;
         }
@@ -2034,43 +2034,43 @@ public partial class MapAutotiles
         switch (situation)
         {
             case XP_INNER:
-                PlaceAutotileXp(layerName, x, y, 3, "c");
+                PlaceAutotileXp(layerName, x, y, 3, 'c');
 
                 break;
             case XP_FILL:
-                PlaceAutotileXp(layerName, x, y, 3, "C");
+                PlaceAutotileXp(layerName, x, y, 3, 'C');
 
                 break;
             case XP_NW:
-                PlaceAutotileXp(layerName, x, y, 3, "g");
+                PlaceAutotileXp(layerName, x, y, 3, 'g');
 
                 break;
             case XPN:
-                PlaceAutotileXp(layerName, x, y, 3, "G");
+                PlaceAutotileXp(layerName, x, y, 3, 'G');
 
                 break;
             case XP_NE:
-                PlaceAutotileXp(layerName, x, y, 3, "k");
+                PlaceAutotileXp(layerName, x, y, 3, 'k');
 
                 break;
             case XPE:
-                PlaceAutotileXp(layerName, x, y, 3, "K");
+                PlaceAutotileXp(layerName, x, y, 3, 'K');
 
                 break;
             case XP_SE:
-                PlaceAutotileXp(layerName, x, y, 3, "s");
+                PlaceAutotileXp(layerName, x, y, 3, 's');
 
                 break;
             case XPS:
-                PlaceAutotileXp(layerName, x, y, 3, "S");
+                PlaceAutotileXp(layerName, x, y, 3, 'S');
 
                 break;
             case XP_SW:
-                PlaceAutotileXp(layerName, x, y, 3, "o");
+                PlaceAutotileXp(layerName, x, y, 3, 'o');
 
                 break;
             case XPW:
-                PlaceAutotileXp(layerName, x, y, 3, "O");
+                PlaceAutotileXp(layerName, x, y, 3, 'O');
 
                 break;
         }
@@ -2174,43 +2174,43 @@ public partial class MapAutotiles
         switch (situation)
         {
             case XP_INNER:
-                PlaceAutotileXp(layerName, x, y, 4, "d");
+                PlaceAutotileXp(layerName, x, y, 4, 'd');
 
                 break;
             case XP_FILL:
-                PlaceAutotileXp(layerName, x, y, 4, "D");
+                PlaceAutotileXp(layerName, x, y, 4, 'D');
 
                 break;
             case XP_NW:
-                PlaceAutotileXp(layerName, x, y, 4, "h");
+                PlaceAutotileXp(layerName, x, y, 4, 'h');
 
                 break;
             case XPN:
-                PlaceAutotileXp(layerName, x, y, 4, "H");
+                PlaceAutotileXp(layerName, x, y, 4, 'H');
 
                 break;
             case XP_NE:
-                PlaceAutotileXp(layerName, x, y, 4, "l");
+                PlaceAutotileXp(layerName, x, y, 4, 'l');
 
                 break;
             case XPE:
-                PlaceAutotileXp(layerName, x, y, 4, "L");
+                PlaceAutotileXp(layerName, x, y, 4, 'L');
 
                 break;
             case XP_SE:
-                PlaceAutotileXp(layerName, x, y, 4, "t");
+                PlaceAutotileXp(layerName, x, y, 4, 't');
 
                 break;
             case XPS:
-                PlaceAutotileXp(layerName, x, y, 4, "T");
+                PlaceAutotileXp(layerName, x, y, 4, 'T');
 
                 break;
             case XP_SW:
-                PlaceAutotileXp(layerName, x, y, 4, "p");
+                PlaceAutotileXp(layerName, x, y, 4, 'p');
 
                 break;
             case XPW:
-                PlaceAutotileXp(layerName, x, y, 4, "P");
+                PlaceAutotileXp(layerName, x, y, 4, 'P');
 
                 break;
         }
@@ -2328,154 +2328,166 @@ public partial class MapAutotiles
             y -= _mapHeight;
         }
 
-        if (surroundingMaps[gridX + 1, gridY + 1] != null)
+        var otherMap = surroundingMaps[gridX + 1, gridY + 1];
+        if (otherMap != null)
         {
-            var layers = surroundingMaps[gridX + 1, gridY + 1].Layers;
-            var tiles = layers[layerName];
-            sourceTile = tiles[x, y];
+            var otherMapLayers = otherMap.Layers;
+            var otherMapTiles = otherMapLayers[layerName];
+            sourceTile = otherMapTiles[x, y];
         }
 
-        if (sourceTile.Autotile == (int) AUTOTILE_CLIFF)
+        if (sourceTile.Autotile != AUTOTILE_CLIFF)
         {
-            var height = 1;
-            var i = y - 1;
-            while (i > -_mapHeight)
-            {
-                if (CheckTileMatch(layerName, x, y, x, i, surroundingMaps, layerTiles))
-                {
-                    height++;
-                    cliffStart--;
-                }
-                else
-                {
-                    break;
-                }
-
-                i--;
-            }
-
-            i = y + 1;
-            while (i < _mapHeight * 2)
-            {
-                if (CheckTileMatch(layerName, x, y, x, i, surroundingMaps, layerTiles))
-                {
-                    height++;
-                }
-                else
-                {
-                    break;
-                }
-
-                i++;
-            }
-
-            return height;
+            return 0;
         }
 
-        return 0;
+        var height = 1;
+        var i = y - 1;
+        while (i > -_mapHeight)
+        {
+            if (!CheckTileMatch(
+                    layerName,
+                    x,
+                    y,
+                    x,
+                    i,
+                    surroundingMaps,
+                    layerTiles
+                ))
+            {
+                break;
+            }
+
+            height++;
+            cliffStart--;
+            i--;
+        }
+
+        i = y + 1;
+        while (i < _mapHeight * 2)
+        {
+            if (!CheckTileMatch(
+                    layerName,
+                    x,
+                    y,
+                    x,
+                    i,
+                    surroundingMaps,
+                    layerTiles
+                ))
+            {
+                break;
+            }
+
+            height++;
+            i++;
+        }
+
+        return height;
+
     }
 
-    public void PlaceAutotile(string layerName, int x, int y, byte tileQuarter, string autoTileLetter)
+    public void PlaceAutotile(string layerName, int x, int y, byte tileQuarter, char autoTileLetter)
     {
         var quarterTile = new PointStruct();
         switch (autoTileLetter)
         {
-            case "a":
+            case 'a':
                 quarterTile.X = AutoInner[1].X;
                 quarterTile.Y = AutoInner[1].Y;
 
                 break;
-            case "b":
+            case 'b':
                 quarterTile.X = AutoInner[2].X;
                 quarterTile.Y = AutoInner[2].Y;
 
                 break;
-            case "c":
+            case 'c':
                 quarterTile.X = AutoInner[3].X;
                 quarterTile.Y = AutoInner[3].Y;
 
                 break;
-            case "d":
+            case 'd':
                 quarterTile.X = AutoInner[4].X;
                 quarterTile.Y = AutoInner[4].Y;
 
                 break;
-            case "e":
+            case 'e':
                 quarterTile.X = AutoNw[1].X;
                 quarterTile.Y = AutoNw[1].Y;
 
                 break;
-            case "f":
+            case 'f':
                 quarterTile.X = AutoNw[2].X;
                 quarterTile.Y = AutoNw[2].Y;
 
                 break;
-            case "g":
+            case 'g':
                 quarterTile.X = AutoNw[3].X;
                 quarterTile.Y = AutoNw[3].Y;
 
                 break;
-            case "h":
+            case 'h':
                 quarterTile.X = AutoNw[4].X;
                 quarterTile.Y = AutoNw[4].Y;
 
                 break;
-            case "i":
+            case 'i':
                 quarterTile.X = AutoNe[1].X;
                 quarterTile.Y = AutoNe[1].Y;
 
                 break;
-            case "j":
+            case 'j':
                 quarterTile.X = AutoNe[2].X;
                 quarterTile.Y = AutoNe[2].Y;
 
                 break;
-            case "k":
+            case 'k':
                 quarterTile.X = AutoNe[3].X;
                 quarterTile.Y = AutoNe[3].Y;
 
                 break;
-            case "l":
+            case 'l':
                 quarterTile.X = AutoNe[4].X;
                 quarterTile.Y = AutoNe[4].Y;
 
                 break;
-            case "m":
+            case 'm':
                 quarterTile.X = AutoSw[1].X;
                 quarterTile.Y = AutoSw[1].Y;
 
                 break;
-            case "n":
+            case 'n':
                 quarterTile.X = AutoSw[2].X;
                 quarterTile.Y = AutoSw[2].Y;
 
                 break;
-            case "o":
+            case 'o':
                 quarterTile.X = AutoSw[3].X;
                 quarterTile.Y = AutoSw[3].Y;
 
                 break;
-            case "p":
+            case 'p':
                 quarterTile.X = AutoSw[4].X;
                 quarterTile.Y = AutoSw[4].Y;
 
                 break;
-            case "q":
+            case 'q':
                 quarterTile.X = AutoSe[1].X;
                 quarterTile.Y = AutoSe[1].Y;
 
                 break;
-            case "r":
+            case 'r':
                 quarterTile.X = AutoSe[2].X;
                 quarterTile.Y = AutoSe[2].Y;
 
                 break;
-            case "s":
+            case 's':
                 quarterTile.X = AutoSe[3].X;
                 quarterTile.Y = AutoSe[3].Y;
 
                 break;
-            case "t":
+            case 't':
                 quarterTile.X = AutoSe[4].X;
                 quarterTile.Y = AutoSe[4].Y;
 
@@ -2484,209 +2496,209 @@ public partial class MapAutotiles
         Layers[layerName][x, y].QuarterTile[tileQuarter] = quarterTile;
     }
 
-    public void PlaceAutotileXp(string layerName, int x, int y, byte tileQuarter, string autoTileLetter)
+    public void PlaceAutotileXp(string layerName, int x, int y, byte tileQuarter, char autoTileLetter)
     {
         var quarterTile = new PointStruct();
         switch (autoTileLetter)
         {
-            case "a":
+            case 'a':
                 quarterTile.X = AutoInnerXp[1].X;
                 quarterTile.Y = AutoInnerXp[1].Y;
 
                 break;
-            case "b":
+            case 'b':
                 quarterTile.X = AutoInnerXp[2].X;
                 quarterTile.Y = AutoInnerXp[2].Y;
 
                 break;
-            case "c":
+            case 'c':
                 quarterTile.X = AutoInnerXp[3].X;
                 quarterTile.Y = AutoInnerXp[3].Y;
 
                 break;
-            case "d":
+            case 'd':
                 quarterTile.X = AutoInnerXp[4].X;
                 quarterTile.Y = AutoInnerXp[4].Y;
 
                 break;
-            case "e":
+            case 'e':
                 quarterTile.X = AutoNwXp[1].X;
                 quarterTile.Y = AutoNwXp[1].Y;
 
                 break;
-            case "f":
+            case 'f':
                 quarterTile.X = AutoNwXp[2].X;
                 quarterTile.Y = AutoNwXp[2].Y;
 
                 break;
-            case "g":
+            case 'g':
                 quarterTile.X = AutoNwXp[3].X;
                 quarterTile.Y = AutoNwXp[3].Y;
 
                 break;
-            case "h":
+            case 'h':
                 quarterTile.X = AutoNwXp[4].X;
                 quarterTile.Y = AutoNwXp[4].Y;
 
                 break;
-            case "i":
+            case 'i':
                 quarterTile.X = AutoNeXp[1].X;
                 quarterTile.Y = AutoNeXp[1].Y;
 
                 break;
-            case "j":
+            case 'j':
                 quarterTile.X = AutoNeXp[2].X;
                 quarterTile.Y = AutoNeXp[2].Y;
 
                 break;
-            case "k":
+            case 'k':
                 quarterTile.X = AutoNeXp[3].X;
                 quarterTile.Y = AutoNeXp[3].Y;
 
                 break;
-            case "l":
+            case 'l':
                 quarterTile.X = AutoNeXp[4].X;
                 quarterTile.Y = AutoNeXp[4].Y;
 
                 break;
-            case "m":
+            case 'm':
                 quarterTile.X = AutoSwXp[1].X;
                 quarterTile.Y = AutoSwXp[1].Y;
 
                 break;
-            case "n":
+            case 'n':
                 quarterTile.X = AutoSwXp[2].X;
                 quarterTile.Y = AutoSwXp[2].Y;
 
                 break;
-            case "o":
+            case 'o':
                 quarterTile.X = AutoSwXp[3].X;
                 quarterTile.Y = AutoSwXp[3].Y;
 
                 break;
-            case "p":
+            case 'p':
                 quarterTile.X = AutoSwXp[4].X;
                 quarterTile.Y = AutoSwXp[4].Y;
 
                 break;
-            case "q":
+            case 'q':
                 quarterTile.X = AutoSeXp[1].X;
                 quarterTile.Y = AutoSeXp[1].Y;
 
                 break;
-            case "r":
+            case 'r':
                 quarterTile.X = AutoSeXp[2].X;
                 quarterTile.Y = AutoSeXp[2].Y;
 
                 break;
-            case "s":
+            case 's':
                 quarterTile.X = AutoSeXp[3].X;
                 quarterTile.Y = AutoSeXp[3].Y;
 
                 break;
-            case "t":
+            case 't':
                 quarterTile.X = AutoSeXp[4].X;
                 quarterTile.Y = AutoSeXp[4].Y;
 
                 break;
 
             //XP Additional Templates
-            case "A":
+            case 'A':
                 quarterTile.X = AutoCxp[1].X;
                 quarterTile.Y = AutoCxp[1].Y;
 
                 break;
-            case "B":
+            case 'B':
                 quarterTile.X = AutoCxp[2].X;
                 quarterTile.Y = AutoCxp[2].Y;
 
                 break;
-            case "C":
+            case 'C':
                 quarterTile.X = AutoCxp[3].X;
                 quarterTile.Y = AutoCxp[3].Y;
 
                 break;
-            case "D":
+            case 'D':
                 quarterTile.X = AutoCxp[4].X;
                 quarterTile.Y = AutoCxp[4].Y;
 
                 break;
-            case "E":
+            case 'E':
                 quarterTile.X = AutoNxp[1].X;
                 quarterTile.Y = AutoNxp[1].Y;
 
                 break;
-            case "F":
+            case 'F':
                 quarterTile.X = AutoNxp[2].X;
                 quarterTile.Y = AutoNxp[2].Y;
 
                 break;
-            case "G":
+            case 'G':
                 quarterTile.X = AutoNxp[3].X;
                 quarterTile.Y = AutoNxp[3].Y;
 
                 break;
-            case "H":
+            case 'H':
                 quarterTile.X = AutoNxp[4].X;
                 quarterTile.Y = AutoNxp[4].Y;
 
                 break;
-            case "I":
+            case 'I':
                 quarterTile.X = AutoExp[1].X;
                 quarterTile.Y = AutoExp[1].Y;
 
                 break;
-            case "J":
+            case 'J':
                 quarterTile.X = AutoExp[2].X;
                 quarterTile.Y = AutoExp[2].Y;
 
                 break;
-            case "K":
+            case 'K':
                 quarterTile.X = AutoExp[3].X;
                 quarterTile.Y = AutoExp[3].Y;
 
                 break;
-            case "L":
+            case 'L':
                 quarterTile.X = AutoExp[4].X;
                 quarterTile.Y = AutoExp[4].Y;
 
                 break;
-            case "M":
+            case 'M':
                 quarterTile.X = AutoWxp[1].X;
                 quarterTile.Y = AutoWxp[1].Y;
 
                 break;
-            case "N":
+            case 'N':
                 quarterTile.X = AutoWxp[2].X;
                 quarterTile.Y = AutoWxp[2].Y;
 
                 break;
-            case "O":
+            case 'O':
                 quarterTile.X = AutoWxp[3].X;
                 quarterTile.Y = AutoWxp[3].Y;
 
                 break;
-            case "P":
+            case 'P':
                 quarterTile.X = AutoWxp[4].X;
                 quarterTile.Y = AutoWxp[4].Y;
 
                 break;
-            case "Q":
+            case 'Q':
                 quarterTile.X = AutoSxp[1].X;
                 quarterTile.Y = AutoSxp[1].Y;
 
                 break;
-            case "R":
+            case 'R':
                 quarterTile.X = AutoSxp[2].X;
                 quarterTile.Y = AutoSxp[2].Y;
 
                 break;
-            case "S":
+            case 'S':
                 quarterTile.X = AutoSxp[3].X;
                 quarterTile.Y = AutoSxp[3].Y;
 
                 break;
-            case "T":
+            case 'T':
                 quarterTile.X = AutoSxp[4].X;
                 quarterTile.Y = AutoSxp[4].Y;
 
