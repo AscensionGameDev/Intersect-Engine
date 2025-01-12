@@ -2346,14 +2346,19 @@ public partial class FrmMapEditor : DockContent
 
     private void picMap_MouseEnter(object sender, EventArgs e)
     {
-        if (Globals.EditingLight != null || Globals.CurrentEditor != -1 || !Globals.MapEditorWindow.DockPanel.Focused)
+        if (Globals.EditingLight != null || Globals.CurrentEditor != -1)
         {
+            RemoveSpriteCursorInGrid();
             return;
+        }
+
+        if (!Globals.MapEditorWindow.DockPanel.Focused)
+        {
+            Globals.MapEditorWindow.DockPanel.Focus();
         }
 
         SetCursorSpriteInGrid();
     }
-
     private void picMap_MouseLeave(object sender, EventArgs e)
     {
         RemoveSpriteCursorInGrid();
