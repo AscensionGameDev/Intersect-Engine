@@ -29,7 +29,7 @@ public interface IMapInstance
     void AddTileAnimation(Guid animId, int tileX, int tileY, Direction dir = Direction.None, IEntity? owner = null);
     void CompareEffects(IMapInstance oldMap);
     bool InView();
-    void Load(string json);
+    void Load(string json, bool markLoaded = true);
     void LoadTileData(byte[] packet);
     void Update(bool isLocal);
 }

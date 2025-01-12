@@ -292,7 +292,7 @@ internal sealed partial class PacketHandler
 
         using (lockRef)
         {
-            mapInstance.Load(packet.Data);
+            mapInstance.Load(packet.Data, markLoaded: false);
             endMapLoad = DateTime.UtcNow;
 
             mapInstance.LoadTileData(packet.TileData);
@@ -329,6 +329,8 @@ internal sealed partial class PacketHandler
                 pendingEventsForMap.Clear();
             }
             endPendingEvents = DateTime.UtcNow;
+
+            mapInstance.MarkLoaded();
         }
 
         var endMapLock = DateTime.UtcNow;

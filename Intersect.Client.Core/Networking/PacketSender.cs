@@ -131,8 +131,14 @@ public static partial class PacketSender
 
     public static void SendNeedMapForGrid(MapInstance? mapInstance = default)
     {
-        if (mapInstance == default && !MapInstance.TryGet(Globals.Me.MapId, out mapInstance))
+        if (Globals.Me is not { } player)
         {
+            return;
+        }
+
+        if (mapInstance == default && !MapInstance.TryGet(player.MapId, out mapInstance))
+        {
+            SendNeedMap(player.MapId);
             return;
         }
 

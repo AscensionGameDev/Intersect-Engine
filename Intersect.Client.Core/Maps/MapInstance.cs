@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Collections.Concurrent;
-using Intersect.Client.Classes.MonoGame.Graphics;
 using Intersect.Client.Core;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
@@ -37,7 +36,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     public delegate void MapLoadedDelegate(MapInstance map);
 
     //Map State Variables
-    public static Dictionary<Guid, long> MapRequests { get; set; } = new Dictionary<Guid, long>();
+    public static ConcurrentDictionary<Guid, long> MapRequests { get; set; } = [];
 
     public static event MapLoadedDelegate? MapLoaded;
 
@@ -174,8 +173,10 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
     public new static MapControllers Lookup => sLookup ?? (sLookup = new MapControllers(MapBase.Lookup));
 
+    public void MarkLoaded() => IsLoaded = true;
+
     //Load
-    public void Load(string json)
+    public void Load(string json, bool markLoaded = true)
     {
         LocalEntitiesToDispose.AddRange(LocalEntities.Keys.ToArray());
         JsonConvert.PopulateObject(
@@ -188,11 +189,11 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             }
         );
 
-        IsLoaded = true;
+        IsLoaded = markLoaded;
         Autotiles = new MapAutotiles(this);
         MapLoaded -= HandleMapLoaded;
         MapLoaded += HandleMapLoaded;
-        MapRequests.Remove(Id);
+        MapRequests.Remove(Id, out _);
     }
 
     public void LoadTileData(byte[] packet)
@@ -813,6 +814,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             //     () =>
             //     {
                     var startVbo = DateTime.UtcNow;
+                    var bufferCount = 0;
                     Dictionary<string, GameTileBuffer[][]> buffers = [];
                     foreach (var layer in _layersAll)
                     {
@@ -822,6 +824,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                             continue;
                         }
 
+                        bufferCount += layerBuffers.Aggregate(0, (sum, lb) => sum + lb.Length);
                         buffers[layer] = layerBuffers;
                         for (var animationFrameIndex = 0; animationFrameIndex < MapAnimationFrames; animationFrameIndex++)
                         {
@@ -835,7 +838,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
                     var endVbo = DateTime.UtcNow;
                     var elapsedVbo = endVbo - startVbo;
-                    Log.Info($"Built VBO for map instance {Id} in {elapsedVbo.TotalMilliseconds}ms ({Name})");
+                    Log.Info($"Built VBO for map instance {Id} in {elapsedVbo.TotalMilliseconds}ms ({Name}) ({bufferCount} buffers)");
 
                     // lock (mTileBuffers)
                     // {
@@ -1130,6 +1133,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     {
         if (!Layers.TryGetValue(layerName, out var layerTiles))
         {
+            Log.Error($"[{Id}][{Name}] No tiles in layer '{layerName}'");
             return null;
         }
 
@@ -1141,6 +1145,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
         if (!Autotiles.TryGetAutoTilesForLayer(layerName, out var layerAutoTiles))
         {
+            Log.Error($"[{Id}][{Name}] No auto tiles in layer '{layerName}'");
             return null;
         }
 

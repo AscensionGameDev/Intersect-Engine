@@ -180,6 +180,17 @@ public partial struct FloatRect
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static FloatRect operator /(FloatRect lhs, Point rhs)
+    {
+        return new FloatRect(
+            lhs.X / rhs.X,
+            lhs.Y / rhs.Y,
+            lhs.Width / rhs.X,
+            lhs.Height / rhs.Y
+        );
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static FloatRect operator /(float lhs, FloatRect rhs) => rhs / lhs;
 
     public override string ToString() => $"{Left},{Top} + {Width},{Height} -> {Right},{Bottom}";
