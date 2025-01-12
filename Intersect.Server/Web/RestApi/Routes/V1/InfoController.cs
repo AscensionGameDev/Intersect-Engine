@@ -1,65 +1,43 @@
-﻿using Intersect.Enums;
+using System.Net;
+using Intersect.Enums;
 using Intersect.Server.General;
 using Intersect.Server.Metrics;
 using Intersect.Server.Web.Http;
+using Intersect.Server.Web.RestApi.Types.InfoResponseBody;
 using Intersect.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
-
     [Route("api/v1/info")]
     [Authorize]
     public sealed partial class InfoController : Controller
     {
+        [HttpGet]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(InfoResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult Default() => Ok(new InfoResponseBody(Options.Instance.GameName, Options.ServerPort));
 
         [HttpGet("authorized")]
         [Authorize]
-        public object Authorized()
-        {
-            return new
-            {
-                authorized = true,
-            };
-        }
-
-        [HttpGet]
-        [AllowAnonymous]
-        public object Default()
-        {
-            return new
-            {
-                name = Options.Instance.GameName,
-                port = Options.ServerPort,
-            };
-        }
+        [ProducesResponseType(typeof(AuthorizedResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult Authorized() => Ok(new AuthorizedResponseBody());
 
         [HttpGet("config")]
-        public object Config()
-        {
-            return Options.Instance;
-        }
+        [ProducesResponseType(typeof(Options), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult Config() => Ok(Options.Instance);
 
         [HttpGet("config/stats")]
-        public object CombatStats() => Enum.GetNames<Stat>();
+        [ProducesResponseType(typeof(IEnumerable<string>), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult CombatStats() => Ok(Enum.GetNames<Stat>());
 
         [HttpGet("stats")]
-        public object Stats()
-        {
-            return new
-            {
-                uptime = Timing.Global.Milliseconds,
-                cps = Globals.Cps,
-                connectedClients = Globals.Clients?.Count,
-                onlineCount = Globals.OnlineList?.Count
-            };
-        }
+        [ProducesResponseType(typeof(InfoStatsResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult Stats() => Ok(new InfoStatsResponseBody(Timing.Global.Milliseconds, Globals.Cps, Globals.Clients?.Count, Globals.OnlineList?.Count));
 
         [HttpGet("metrics")]
-        public object StatsMetrics()
-        {
-            return Content(MetricsRoot.Instance.Metrics, ContentTypes.Json);
-        }
+        [ProducesResponseType(typeof(ContentResult), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult StatsMetrics() => Ok(Content(MetricsRoot.Instance.Metrics, ContentTypes.Json));
     }
 }
