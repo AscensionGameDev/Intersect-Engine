@@ -37,9 +37,6 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
         _me = Globals.Me;
 
         _targetNameMenuItem = AddItem(string.Empty);
-        _targetNameMenuItem.SetText("");
-        _targetNameMenuItem.MouseInputEnabled = false;
-
         AddDivider();
 
         _tradeMenuItem = AddItem(Strings.EntityContextMenu.Trade);
@@ -67,6 +64,8 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
             return;
         }
 
+        bool shouldShowTargetNameMenuItem = false;
+
         float posX, posY, newX, newY;
 
         switch (target)
@@ -91,6 +90,8 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
                 posY = InputHandler.MousePosition.Y;
                 newX = posX;
                 newY = posY;
+
+                shouldShowTargetNameMenuItem = true;
                 break;
 
             default:
@@ -115,11 +116,10 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
             }
         }
 
+
         if (IsHidden)
         {
-
-            _targetNameMenuItem.SetText(_entity.Name);
-            _targetNameMenuItem.Alignment = Pos.Left;
+            TryShowTargetButton(shouldShowTargetNameMenuItem);
             TryShowGuildButton();
             SizeToChildren();
             Open(Pos.None);
@@ -128,6 +128,22 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
         else if (!Globals.InputManager.MouseButtonDown(MouseButtons.Right))
         {
             Close();
+        }
+    }
+
+
+    private void TryShowTargetButton(bool shouldShow)
+    {
+        _targetNameMenuItem.SetText(shouldShow ? _entity.Name : string.Empty);
+        _targetNameMenuItem.MouseInputEnabled = false;
+
+        if (shouldShow && !Children.Contains(_targetNameMenuItem))
+        {
+            Children.Insert(0, _targetNameMenuItem);
+        }
+        else if (!shouldShow && Children.Contains(_targetNameMenuItem))
+        {
+            Children.Remove(_targetNameMenuItem);
         }
     }
 
