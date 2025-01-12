@@ -38,14 +38,14 @@ public partial class TileHelper
         mTileX += xOffset;
         mTileY += yOffset;
 
-        return TryFix();
+        return TryFix(xOffset != 0 && yOffset != 0);
     }
 
-    public bool TryFix()
+    public bool TryFix(bool diagonal = false)
     {
         var oldTileX = mTileX;
         var oldTileY = mTileY;
-        if (Fix())
+        if (Fix(diagonal))
         {
             return true;
         }
@@ -129,47 +129,76 @@ public partial class TileHelper
         }
     }
 
-    private bool Fix()
+    private bool Fix(bool diagonal = false)
     {
         if (!MapController.Lookup.Keys.Contains(mMapId))
         {
             return false;
         }
 
-        var curMap = MapController.Get(mMapId);
+        var transitionFailure = false;
+
         while (mTileX < 0)
         {
-            if (!TransitionMaps((int) Direction.Left))
+            if (TransitionMaps((int)Direction.Left))
+            {
+                continue;
+            }
+
+            if (!diagonal)
             {
                 return false;
             }
+
+            transitionFailure = true;
         }
 
         while (mTileY < 0)
         {
-            if (!TransitionMaps((int) Direction.Up))
+            if (TransitionMaps((int)Direction.Up))
+            {
+                continue;
+            }
+
+            if (!diagonal)
             {
                 return false;
             }
+
+            transitionFailure = true;
         }
 
         while (mTileX >= Options.MapWidth)
         {
-            if (!TransitionMaps((int) Direction.Right))
+            if (TransitionMaps((int)Direction.Right))
+            {
+                continue;
+            }
+
+            if (!diagonal)
             {
                 return false;
             }
+
+            transitionFailure = true;
         }
 
         while (mTileY >= Options.MapHeight)
         {
-            if (!TransitionMaps((int) Direction.Down))
+            if (TransitionMaps((int)Direction.Down))
+            {
+                continue;
+            }
+
+            if (!diagonal)
             {
                 return false;
             }
+
+            transitionFailure = true;
         }
 
-        return true;
+        return !transitionFailure || Fix(false);
     }
 
     public Guid GetMapId()
