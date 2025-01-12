@@ -505,11 +505,25 @@ public static partial class Graphics
                 break;
         }
 
+        if (!map.Autotiles.TryGetAutoTileForLayer(
+                layerName,
+                x,
+                y,
+                out var autoTile
+            ))
+        {
+            return;
+        }
+
         DrawTexture(
-            texture, destX, destY,
-            (int) map.Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].X + xOffset,
-            (int) map.Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].Y + yOffset,
-            Options.TileWidth / 2, Options.TileHeight / 2, target
+            texture,
+            destX,
+            destY,
+            autoTile.QuarterTile[quarterNum].X + xOffset,
+            autoTile.QuarterTile[quarterNum].Y + yOffset,
+            Options.TileWidth / 2,
+            Options.TileHeight / 2,
+            target
         );
     }
 
@@ -805,15 +819,25 @@ public static partial class Graphics
                                 GameContentManager.TextureType.Tileset, tilesetObj.Name
                             );
 
-                            if (tilesetTex == null || tmpMap.Autotiles == null || tmpMap.Autotiles.Layers == null)
+                            if (tilesetTex == null || tmpMap.Autotiles == null)
                             {
                                 continue;
                             }
 
-                            if (tmpMap.Autotiles.Layers[drawLayer][x, y].RenderState !=
+                            if (!tmpMap.Autotiles.TryGetAutoTileForLayer(
+                                    drawLayer,
+                                    x,
+                                    y,
+                                    out var autoTile
+                                ))
+                            {
+                                continue;
+                            }
+                            
+                            if (autoTile.RenderState !=
                                 MapAutotiles.RENDER_STATE_NORMAL)
                             {
-                                if (tmpMap.Autotiles.Layers[drawLayer][x, y].RenderState !=
+                                if (autoTile.RenderState !=
                                     MapAutotiles.RENDER_STATE_AUTOTILE)
                                 {
                                     continue;
