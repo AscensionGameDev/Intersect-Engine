@@ -3185,8 +3185,16 @@ public partial class MapAutotiles
         var otherMap = surroundingMaps[gridX + 1, gridY + 1];
         if (otherMap != null)
         {
-            var otherMapLayers = otherMap.Layers;
-            var otherMapTiles = otherMapLayers[layerName];
+            if (otherMap.Layers is not { } otherMapLayers)
+            {
+                return 0;
+            }
+
+            if (!otherMapLayers.TryGetValue(layerName, out var otherMapTiles))
+            {
+                return 0;
+            }
+
             sourceTile = otherMapTiles[x, y];
         }
 
