@@ -490,7 +490,7 @@ public partial class MapAutotiles
                                 out var autoTile
                             ))
                         {
-
+                            continue;
                         }
 
                         DateTime startCalculateAutotiles = DateTime.UtcNow;
@@ -774,7 +774,7 @@ public partial class MapAutotiles
         }
     }
 
-    public void CalculateAutotile(int x, int y, string layerName, MapBase[,] surroundingMaps, Tile[,] layerTiles, QuarterTileCls? quarterTile)
+    public void CalculateAutotile(int x, int y, string layerName, MapBase[,] surroundingMaps, Tile[,] layerTiles, QuarterTileCls? autoTile)
     {
         // Right, so we//ve split the tile block in to an easy to remember
         // collection of letters. We now need to do the calculations to find
@@ -799,16 +799,16 @@ public partial class MapAutotiles
             case AUTOTILE_NORMAL:
             case AUTOTILE_ANIM:
                 // North West Quarter
-                CalculateNW_Normal(layerName, x, y, surroundingMaps, layerTiles);
+                CalculateNW_Normal(layerName, x, y, surroundingMaps, layerTiles, autoTile);
 
                 // North East Quarter
-                CalculateNE_Normal(layerName, x, y, surroundingMaps, layerTiles);
+                CalculateNE_Normal(layerName, x, y, surroundingMaps, layerTiles, autoTile);
 
                 // South West Quarter
-                CalculateSW_Normal(layerName, x, y, surroundingMaps, layerTiles);
+                CalculateSW_Normal(layerName, x, y, surroundingMaps, layerTiles, autoTile);
 
                 // South East Quarter
-                CalculateSE_Normal(layerName, x, y, surroundingMaps, layerTiles);
+                CalculateSE_Normal(layerName, x, y, surroundingMaps, layerTiles, autoTile);
 
                 break;
 
@@ -941,7 +941,8 @@ public partial class MapAutotiles
                     cliffHeight,
                     leftCliffStart,
                     leftCliffHeight,
-                    assumeInteriorWest
+                    assumeInteriorWest,
+                    autoTile
                 );
 
                 // North East Quarter
@@ -955,7 +956,8 @@ public partial class MapAutotiles
                     cliffHeight,
                     rightCliffStart,
                     rightCliffHeight,
-                    assumeInteriorEast
+                    assumeInteriorEast,
+                    autoTile
                 );
 
                 // South West Quarter
@@ -970,7 +972,8 @@ public partial class MapAutotiles
                     leftCliffStart,
                     leftCliffHeight,
                     assumeInteriorWest,
-                    drawBottom
+                    drawBottom,
+                    autoTile
                 );
 
                 // South East Quarter
@@ -985,7 +988,8 @@ public partial class MapAutotiles
                     rightCliffStart,
                     rightCliffHeight,
                     assumeInteriorEast,
-                    drawBottom
+                    drawBottom,
+                    autoTile
                 );
 
                 break;
@@ -993,16 +997,16 @@ public partial class MapAutotiles
             // Waterfalls
             case AUTOTILE_WATERFALL:
                 // North West Quarter
-                CalculateNW_Waterfall(layerName, x, y, surroundingMaps, layerTiles);
+                CalculateNW_Waterfall(layerName, x, y, surroundingMaps, layerTiles, autoTile);
 
                 // North East Quarter
-                CalculateNE_Waterfall(layerName, x, y, surroundingMaps, layerTiles);
+                CalculateNE_Waterfall(layerName, x, y, surroundingMaps, layerTiles, autoTile);
 
                 // South West Quarter
-                CalculateSW_Waterfall(layerName, x, y, surroundingMaps, layerTiles);
+                CalculateSW_Waterfall(layerName, x, y, surroundingMaps, layerTiles, autoTile);
 
                 // South East Quarter
-                CalculateSE_Waterfall(layerName, x, y, surroundingMaps, layerTiles);
+                CalculateSE_Waterfall(layerName, x, y, surroundingMaps, layerTiles, autoTile);
 
                 break;
 
@@ -1010,41 +1014,72 @@ public partial class MapAutotiles
             case AUTOTILE_XP:
             case AUTOTILE_ANIM_XP:
                 // North West Quarter
-                CalculateNW_XP(layerName, x, y, surroundingMaps, layerTiles);
+                CalculateNW_XP(layerName, x, y, surroundingMaps, layerTiles, autoTile);
 
                 // North East Quarter
-                CalculateNE_XP(layerName, x, y, surroundingMaps, layerTiles);
+                CalculateNE_XP(layerName, x, y, surroundingMaps, layerTiles, autoTile);
 
                 // South West Quarter
-                CalculateSW_XP(layerName, x, y, surroundingMaps, layerTiles);
+                CalculateSW_XP(layerName, x, y, surroundingMaps, layerTiles, autoTile);
 
                 // South East Quarter
-                CalculateSE_XP(layerName, x, y, surroundingMaps, layerTiles);
+                CalculateSE_XP(layerName, x, y, surroundingMaps, layerTiles, autoTile);
 
                 break;
         }
     }
 
     // Normal autotiling
-    public void CalculateNW_Normal(string layerName, int x, int y, MapBase[,] surroundingMaps, Tile[,] layerTiles)
+    public void CalculateNW_Normal(
+        string layerName,
+        int x,
+        int y,
+        MapBase[,] surroundingMaps,
+        Tile[,] layerTiles,
+        QuarterTileCls? autoTile
+    )
     {
         var tmpTile = new bool[4];
         byte situation = 1;
 
         // North West
-        if (CheckTileMatch(layerName, x, y, x - 1, y - 1, surroundingMaps, layerTiles))
+        if (CheckTileMatch(
+                layerName,
+                x,
+                y,
+                x - 1,
+                y - 1,
+                surroundingMaps,
+                layerTiles
+            ))
         {
             tmpTile[1] = true;
         }
 
         // North
-        if (CheckTileMatch(layerName, x, y, x, y - 1, surroundingMaps, layerTiles))
+        if (CheckTileMatch(
+                layerName,
+                x,
+                y,
+                x,
+                y - 1,
+                surroundingMaps,
+                layerTiles
+            ))
         {
             tmpTile[2] = true;
         }
 
         // West
-        if (CheckTileMatch(layerName, x, y, x - 1, y, surroundingMaps, layerTiles))
+        if (CheckTileMatch(
+                layerName,
+                x,
+                y,
+                x - 1,
+                y,
+                surroundingMaps,
+                layerTiles
+            ))
         {
             tmpTile[3] = true;
         }
@@ -1083,47 +1118,113 @@ public partial class MapAutotiles
         switch (situation)
         {
             case AUTO_TILE_INNER:
-                PlaceAutotile(layerName, x, y, 1, 'e');
+                PlaceAutotile(
+                    layerName,
+                    x,
+                    y,
+                    1,
+                    'e',
+                    autoTile
+                );
 
                 break;
             case AUTO_TILE_OUTER:
-                PlaceAutotile(layerName, x, y, 1, 'a');
+                PlaceAutotile(
+                    layerName,
+                    x,
+                    y,
+                    1,
+                    'a',
+                    autoTile
+                );
 
                 break;
             case AUTO_TILE_HORIZONTAL:
-                PlaceAutotile(layerName, x, y, 1, 'i');
+                PlaceAutotile(
+                    layerName,
+                    x,
+                    y,
+                    1,
+                    'i',
+                    autoTile
+                );
 
                 break;
             case AUTO_TILE_VERTICAL:
-                PlaceAutotile(layerName, x, y, 1, 'm');
+                PlaceAutotile(
+                    layerName,
+                    x,
+                    y,
+                    1,
+                    'm',
+                    autoTile
+                );
 
                 break;
             case AUTO_TILE_FILL:
-                PlaceAutotile(layerName, x, y, 1, 'q');
+                PlaceAutotile(
+                    layerName,
+                    x,
+                    y,
+                    1,
+                    'q',
+                    autoTile
+                );
 
                 break;
         }
     }
 
-    public void CalculateNE_Normal(string layerName, int x, int y, MapBase[,] surroundingMaps, Tile[,] layerTiles)
+    public void CalculateNE_Normal(
+        string layerName,
+        int x,
+        int y,
+        MapBase[,] surroundingMaps,
+        Tile[,] layerTiles,
+        QuarterTileCls? autoTile
+    )
     {
         var tmpTile = new bool[4];
         byte situation = 1;
 
         // North
-        if (CheckTileMatch(layerName, x, y, x, y - 1, surroundingMaps, layerTiles))
+        if (CheckTileMatch(
+                layerName,
+                x,
+                y,
+                x,
+                y - 1,
+                surroundingMaps,
+                layerTiles
+            ))
         {
             tmpTile[1] = true;
         }
 
         // North East
-        if (CheckTileMatch(layerName, x, y, x + 1, y - 1, surroundingMaps, layerTiles))
+        if (CheckTileMatch(
+                layerName,
+                x,
+                y,
+                x + 1,
+                y - 1,
+                surroundingMaps,
+                layerTiles
+            ))
         {
             tmpTile[2] = true;
         }
 
         // East
-        if (CheckTileMatch(layerName, x, y, x + 1, y, surroundingMaps, layerTiles))
+        if (CheckTileMatch(
+                layerName,
+                x,
+                y,
+                x + 1,
+                y,
+                surroundingMaps,
+                layerTiles
+            ))
         {
             tmpTile[3] = true;
         }
@@ -1162,47 +1263,113 @@ public partial class MapAutotiles
         switch (situation)
         {
             case AUTO_TILE_INNER:
-                PlaceAutotile(layerName, x, y, 2, 'j');
+                PlaceAutotile(
+                    layerName,
+                    x,
+                    y,
+                    2,
+                    'j',
+                    autoTile
+                );
 
                 break;
             case AUTO_TILE_OUTER:
-                PlaceAutotile(layerName, x, y, 2, 'b');
+                PlaceAutotile(
+                    layerName,
+                    x,
+                    y,
+                    2,
+                    'b',
+                    autoTile
+                );
 
                 break;
             case AUTO_TILE_HORIZONTAL:
-                PlaceAutotile(layerName, x, y, 2, 'f');
+                PlaceAutotile(
+                    layerName,
+                    x,
+                    y,
+                    2,
+                    'f',
+                    autoTile
+                );
 
                 break;
             case AUTO_TILE_VERTICAL:
-                PlaceAutotile(layerName, x, y, 2, 'r');
+                PlaceAutotile(
+                    layerName,
+                    x,
+                    y,
+                    2,
+                    'r',
+                    autoTile
+                );
 
                 break;
             case AUTO_TILE_FILL:
-                PlaceAutotile(layerName, x, y, 2, 'n');
+                PlaceAutotile(
+                    layerName,
+                    x,
+                    y,
+                    2,
+                    'n',
+                    autoTile
+                );
 
                 break;
         }
     }
 
-    public void CalculateSW_Normal(string layerName, int x, int y, MapBase[,] surroundingMaps, Tile[,] layerTiles)
+    public void CalculateSW_Normal(
+        string layerName,
+        int x,
+        int y,
+        MapBase[,] surroundingMaps,
+        Tile[,] layerTiles,
+        QuarterTileCls? autoTile
+    )
     {
         var tmpTile = new bool[4];
         byte situation = 1;
 
         // West
-        if (CheckTileMatch(layerName, x, y, x - 1, y, surroundingMaps, layerTiles))
+        if (CheckTileMatch(
+                layerName,
+                x,
+                y,
+                x - 1,
+                y,
+                surroundingMaps,
+                layerTiles
+            ))
         {
             tmpTile[1] = true;
         }
 
         // South West
-        if (CheckTileMatch(layerName, x, y, x - 1, y + 1, surroundingMaps, layerTiles))
+        if (CheckTileMatch(
+                layerName,
+                x,
+                y,
+                x - 1,
+                y + 1,
+                surroundingMaps,
+                layerTiles
+            ))
         {
             tmpTile[2] = true;
         }
 
         // South
-        if (CheckTileMatch(layerName, x, y, x, y + 1, surroundingMaps, layerTiles))
+        if (CheckTileMatch(
+                layerName,
+                x,
+                y,
+                x,
+                y + 1,
+                surroundingMaps,
+                layerTiles
+            ))
         {
             tmpTile[3] = true;
         }
@@ -1241,47 +1408,113 @@ public partial class MapAutotiles
         switch (situation)
         {
             case AUTO_TILE_INNER:
-                PlaceAutotile(layerName, x, y, 3, 'o');
+                PlaceAutotile(
+                    layerName,
+                    x,
+                    y,
+                    3,
+                    'o',
+                    autoTile
+                );
 
                 break;
             case AUTO_TILE_OUTER:
-                PlaceAutotile(layerName, x, y, 3, 'c');
+                PlaceAutotile(
+                    layerName,
+                    x,
+                    y,
+                    3,
+                    'c',
+                    autoTile
+                );
 
                 break;
             case AUTO_TILE_HORIZONTAL:
-                PlaceAutotile(layerName, x, y, 3, 's');
+                PlaceAutotile(
+                    layerName,
+                    x,
+                    y,
+                    3,
+                    's',
+                    autoTile
+                );
 
                 break;
             case AUTO_TILE_VERTICAL:
-                PlaceAutotile(layerName, x, y, 3, 'g');
+                PlaceAutotile(
+                    layerName,
+                    x,
+                    y,
+                    3,
+                    'g',
+                    autoTile
+                );
 
                 break;
             case AUTO_TILE_FILL:
-                PlaceAutotile(layerName, x, y, 3, 'k');
+                PlaceAutotile(
+                    layerName,
+                    x,
+                    y,
+                    3,
+                    'k',
+                    autoTile
+                );
 
                 break;
         }
     }
 
-    public void CalculateSE_Normal(string layerName, int x, int y, MapBase[,] surroundingMaps, Tile[,] layerTiles)
+    public void CalculateSE_Normal(
+        string layerName,
+        int x,
+        int y,
+        MapBase[,] surroundingMaps,
+        Tile[,] layerTiles,
+        QuarterTileCls? autoTile
+    )
     {
         var tmpTile = new bool[4];
         byte situation = 1;
 
         // South
-        if (CheckTileMatch(layerName, x, y, x, y + 1, surroundingMaps, layerTiles))
+        if (CheckTileMatch(
+                layerName,
+                x,
+                y,
+                x,
+                y + 1,
+                surroundingMaps,
+                layerTiles
+            ))
         {
             tmpTile[1] = true;
         }
 
         // South East
-        if (CheckTileMatch(layerName, x, y, x + 1, y + 1, surroundingMaps, layerTiles))
+        if (CheckTileMatch(
+                layerName,
+                x,
+                y,
+                x + 1,
+                y + 1,
+                surroundingMaps,
+                layerTiles
+            ))
         {
             tmpTile[2] = true;
         }
 
         // East
-        if (CheckTileMatch(layerName, x, y, x + 1, y, surroundingMaps, layerTiles))
+        if (CheckTileMatch(
+                layerName,
+                x,
+                y,
+                x + 1,
+                y,
+                surroundingMaps,
+                layerTiles
+            ))
         {
             tmpTile[3] = true;
         }
@@ -1320,94 +1553,245 @@ public partial class MapAutotiles
         switch (situation)
         {
             case AUTO_TILE_INNER:
-                PlaceAutotile(layerName, x, y, 4, 't');
+                PlaceAutotile(
+                    layerName,
+                    x,
+                    y,
+                    4,
+                    't',
+                    autoTile
+                );
 
                 break;
             case AUTO_TILE_OUTER:
-                PlaceAutotile(layerName, x, y, 4, 'd');
+                PlaceAutotile(
+                    layerName,
+                    x,
+                    y,
+                    4,
+                    'd',
+                    autoTile
+                );
 
                 break;
             case AUTO_TILE_HORIZONTAL:
-                PlaceAutotile(layerName, x, y, 4, 'p');
+                PlaceAutotile(
+                    layerName,
+                    x,
+                    y,
+                    4,
+                    'p',
+                    autoTile
+                );
 
                 break;
             case AUTO_TILE_VERTICAL:
-                PlaceAutotile(layerName, x, y, 4, 'l');
+                PlaceAutotile(
+                    layerName,
+                    x,
+                    y,
+                    4,
+                    'l',
+                    autoTile
+                );
 
                 break;
             case AUTO_TILE_FILL:
-                PlaceAutotile(layerName, x, y, 4, 'h');
+                PlaceAutotile(
+                    layerName,
+                    x,
+                    y,
+                    4,
+                    'h',
+                    autoTile
+                );
 
                 break;
         }
     }
 
     // Waterfall autotiling
-    public void CalculateNW_Waterfall(string layerName, int x, int y, MapBase[,] surroundingMaps, Tile[,] layerTiles)
+    public void CalculateNW_Waterfall(
+        string layerName,
+        int x,
+        int y,
+        MapBase[,] surroundingMaps,
+        Tile[,] layerTiles,
+        QuarterTileCls? autoTile
+    )
     {
-        var tmpTile = CheckTileMatch(layerName, x, y, x - 1, y, surroundingMaps, layerTiles);
+        var tmpTile = CheckTileMatch(
+            layerName,
+            x,
+            y,
+            x - 1,
+            y,
+            surroundingMaps,
+            layerTiles
+        );
 
         // Actually place the subtile
         if (tmpTile)
         {
             // Extended
-            PlaceAutotile(layerName, x, y, 1, 'i');
+            PlaceAutotile(
+                layerName,
+                x,
+                y,
+                1,
+                'i',
+                autoTile
+            );
         }
         else
         {
             // Edge
-            PlaceAutotile(layerName, x, y, 1, 'e');
+            PlaceAutotile(
+                layerName,
+                x,
+                y,
+                1,
+                'e',
+                autoTile
+            );
         }
     }
 
-    public void CalculateNE_Waterfall(string layerName, int x, int y, MapBase[,] surroundingMaps, Tile[,] layerTiles)
+    public void CalculateNE_Waterfall(
+        string layerName,
+        int x,
+        int y,
+        MapBase[,] surroundingMaps,
+        Tile[,] layerTiles,
+        QuarterTileCls? autoTile
+    )
     {
-        var tmpTile = CheckTileMatch(layerName, x, y, x + 1, y, surroundingMaps, layerTiles);
+        var tmpTile = CheckTileMatch(
+            layerName,
+            x,
+            y,
+            x + 1,
+            y,
+            surroundingMaps,
+            layerTiles
+        );
 
         // Actually place the subtile
         if (tmpTile)
         {
             // Extended
-            PlaceAutotile(layerName, x, y, 2, 'f');
+            PlaceAutotile(
+                layerName,
+                x,
+                y,
+                2,
+                'f',
+                autoTile
+            );
         }
         else
         {
             // Edge
-            PlaceAutotile(layerName, x, y, 2, 'j');
+            PlaceAutotile(
+                layerName,
+                x,
+                y,
+                2,
+                'j',
+                autoTile
+            );
         }
     }
 
-    public void CalculateSW_Waterfall(string layerName, int x, int y, MapBase[,] surroundingMaps, Tile[,] layerTiles)
+    public void CalculateSW_Waterfall(
+        string layerName,
+        int x,
+        int y,
+        MapBase[,] surroundingMaps,
+        Tile[,] layerTiles,
+        QuarterTileCls? autoTile
+    )
     {
-        var tmpTile = CheckTileMatch(layerName, x, y, x - 1, y, surroundingMaps, layerTiles);
+        var tmpTile = CheckTileMatch(
+            layerName,
+            x,
+            y,
+            x - 1,
+            y,
+            surroundingMaps,
+            layerTiles
+        );
 
         // Actually place the subtile
         if (tmpTile)
         {
             // Extended
-            PlaceAutotile(layerName, x, y, 3, 'k');
+            PlaceAutotile(
+                layerName,
+                x,
+                y,
+                3,
+                'k',
+                autoTile
+            );
         }
         else
         {
             // Edge
-            PlaceAutotile(layerName, x, y, 3, 'g');
+            PlaceAutotile(
+                layerName,
+                x,
+                y,
+                3,
+                'g',
+                autoTile
+            );
         }
     }
 
-    public void CalculateSE_Waterfall(string layerName, int x, int y, MapBase[,] surroundingMaps, Tile[,] layerTiles)
+    public void CalculateSE_Waterfall(
+        string layerName,
+        int x,
+        int y,
+        MapBase[,] surroundingMaps,
+        Tile[,] layerTiles,
+        QuarterTileCls? autoTile
+    )
     {
-        var tmpTile = CheckTileMatch(layerName, x, y, x + 1, y, surroundingMaps, layerTiles);
+        var tmpTile = CheckTileMatch(
+            layerName,
+            x,
+            y,
+            x + 1,
+            y,
+            surroundingMaps,
+            layerTiles
+        );
 
         // Actually place the subtile
         if (tmpTile)
         {
             // Extended
-            PlaceAutotile(layerName, x, y, 4, 'h');
+            PlaceAutotile(
+                layerName,
+                x,
+                y,
+                4,
+                'h',
+                autoTile
+            );
         }
         else
         {
             // Edge
-            PlaceAutotile(layerName, x, y, 4, 'l');
+            PlaceAutotile(
+                layerName,
+                x,
+                y,
+                4,
+                'l',
+                autoTile
+            );
         }
     }
 
@@ -1422,7 +1806,8 @@ public partial class MapAutotiles
         int cliffHeight,
         int adjacentStart,
         int adjacentHeight,
-        bool assumeInterior
+        bool assumeInterior,
+        QuarterTileCls? autoTile
     )
     {
         var tmpTile = new bool[5];
@@ -1494,19 +1879,19 @@ public partial class MapAutotiles
         switch (situation)
         {
             case AUTO_TILE_INNER:
-                PlaceAutotile(layerName, x, y, 1, 'e');
+                PlaceAutotile(layerName, x, y, 1, 'e', autoTile);
 
                 break;
             case AUTO_TILE_HORIZONTAL:
-                PlaceAutotile(layerName, x, y, 1, 'i');
+                PlaceAutotile(layerName, x, y, 1, 'i', autoTile);
 
                 break;
             case AUTO_TILE_VERTICAL:
-                PlaceAutotile(layerName, x, y, 1, 'm');
+                PlaceAutotile(layerName, x, y, 1, 'm', autoTile);
 
                 break;
             case AUTO_TILE_FILL:
-                PlaceAutotile(layerName, x, y, 1, 'q');
+                PlaceAutotile(layerName, x, y, 1, 'q', autoTile);
 
                 break;
         }
@@ -1522,7 +1907,8 @@ public partial class MapAutotiles
         int cliffHeight,
         int adjacentStart,
         int adjacentHeight,
-        bool assumeInterior
+        bool assumeInterior,
+        QuarterTileCls? autoTile
     )
     {
         var tmpTile = new bool[5];
@@ -1593,19 +1979,19 @@ public partial class MapAutotiles
         switch (situation)
         {
             case AUTO_TILE_INNER:
-                PlaceAutotile(layerName, x, y, 2, 'j');
+                PlaceAutotile(layerName, x, y, 2, 'j', autoTile);
 
                 break;
             case AUTO_TILE_HORIZONTAL:
-                PlaceAutotile(layerName, x, y, 2, 'f');
+                PlaceAutotile(layerName, x, y, 2, 'f', autoTile);
 
                 break;
             case AUTO_TILE_VERTICAL:
-                PlaceAutotile(layerName, x, y, 2, 'r');
+                PlaceAutotile(layerName, x, y, 2, 'r', autoTile);
 
                 break;
             case AUTO_TILE_FILL:
-                PlaceAutotile(layerName, x, y, 2, 'n');
+                PlaceAutotile(layerName, x, y, 2, 'n', autoTile);
 
                 break;
         }
@@ -1622,7 +2008,8 @@ public partial class MapAutotiles
         int adjacentStart,
         int adjacentHeight,
         bool assumeInterior,
-        bool drawBottom
+        bool drawBottom,
+        QuarterTileCls? autoTile
     )
     {
         var tmpTile = new bool[5];
@@ -1699,19 +2086,19 @@ public partial class MapAutotiles
         switch (situation)
         {
             case AUTO_TILE_INNER:
-                PlaceAutotile(layerName, x, y, 3, 'o');
+                PlaceAutotile(layerName, x, y, 3, 'o', autoTile);
 
                 break;
             case AUTO_TILE_HORIZONTAL:
-                PlaceAutotile(layerName, x, y, 3, 's');
+                PlaceAutotile(layerName, x, y, 3, 's', autoTile);
 
                 break;
             case AUTO_TILE_VERTICAL:
-                PlaceAutotile(layerName, x, y, 3, 'g');
+                PlaceAutotile(layerName, x, y, 3, 'g', autoTile);
 
                 break;
             case AUTO_TILE_FILL:
-                PlaceAutotile(layerName, x, y, 3, 'k');
+                PlaceAutotile(layerName, x, y, 3, 'k', autoTile);
 
                 break;
         }
@@ -1728,7 +2115,8 @@ public partial class MapAutotiles
         int adjacentStart,
         int adjacentHeight,
         bool assumeInterior,
-        bool drawBottom
+        bool drawBottom,
+        QuarterTileCls? autoTile
     )
     {
         var tmpTile = new bool[5];
@@ -1805,26 +2193,33 @@ public partial class MapAutotiles
         switch (situation)
         {
             case AUTO_TILE_INNER:
-                PlaceAutotile(layerName, x, y, 4, 't');
+                PlaceAutotile(layerName, x, y, 4, 't', autoTile);
 
                 break;
             case AUTO_TILE_HORIZONTAL:
-                PlaceAutotile(layerName, x, y, 4, 'p');
+                PlaceAutotile(layerName, x, y, 4, 'p', autoTile);
 
                 break;
             case AUTO_TILE_VERTICAL:
-                PlaceAutotile(layerName, x, y, 4, 'l');
+                PlaceAutotile(layerName, x, y, 4, 'l', autoTile);
 
                 break;
             case AUTO_TILE_FILL:
-                PlaceAutotile(layerName, x, y, 4, 'h');
+                PlaceAutotile(layerName, x, y, 4, 'h', autoTile);
 
                 break;
         }
     }
 
     // Normal autotiling
-    public void CalculateNW_XP(string layerName, int x, int y, MapBase[,] surroundingMaps, Tile[,] layerTiles)
+    public void CalculateNW_XP(
+        string layerName,
+        int x,
+        int y,
+        MapBase[,] surroundingMaps,
+        Tile[,] layerTiles,
+        QuarterTileCls? autoTile
+    )
     {
         var tmpTile = new bool[4, 4];
         byte situation = 1;
@@ -1834,7 +2229,15 @@ public partial class MapAutotiles
         {
             for (var i = -1; i < 2; i++)
             {
-                if (CheckTileMatch(layerName, x, y, x + i, y + j, surroundingMaps, layerTiles))
+                if (CheckTileMatch(
+                        layerName,
+                        x,
+                        y,
+                        x + i,
+                        y + j,
+                        surroundingMaps,
+                        layerTiles
+                    ))
                 {
                     tmpTile[i + 2, j + 2] = true;
                 }
@@ -1904,49 +2307,126 @@ public partial class MapAutotiles
         switch (situation)
         {
             case XP_INNER:
-                PlaceAutotileXp(layerName, x, y, 1, 'a');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    1,
+                    'a',
+                    autoTile
+                );
 
                 break;
             case XP_FILL:
-                PlaceAutotileXp(layerName, x, y, 1, 'A');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    1,
+                    'A',
+                    autoTile
+                );
 
                 break;
             case XP_NW:
-                PlaceAutotileXp(layerName, x, y, 1, 'e');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    1,
+                    'e',
+                    autoTile
+                );
 
                 break;
             case XPN:
-                PlaceAutotileXp(layerName, x, y, 1, 'E');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    1,
+                    'E',
+                    autoTile
+                );
 
                 break;
             case XP_NE:
-                PlaceAutotileXp(layerName, x, y, 1, 'i');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    1,
+                    'i',
+                    autoTile
+                );
 
                 break;
             case XPE:
-                PlaceAutotileXp(layerName, x, y, 1, 'I');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    1,
+                    'I',
+                    autoTile
+                );
 
                 break;
             case XP_SE:
-                PlaceAutotileXp(layerName, x, y, 1, 'q');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    1,
+                    'q',
+                    autoTile
+                );
 
                 break;
             case XPS:
-                PlaceAutotileXp(layerName, x, y, 1, 'Q');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    1,
+                    'Q',
+                    autoTile
+                );
 
                 break;
             case XP_SW:
-                PlaceAutotileXp(layerName, x, y, 1, 'm');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    1,
+                    'm',
+                    autoTile
+                );
 
                 break;
             case XPW:
-                PlaceAutotileXp(layerName, x, y, 1, 'M');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    1,
+                    'M',
+                    autoTile
+                );
 
                 break;
         }
     }
 
-    public void CalculateNE_XP(string layerName, int x, int y, MapBase[,] surroundingMaps, Tile[,] layerTiles)
+    public void CalculateNE_XP(
+        string layerName,
+        int x,
+        int y,
+        MapBase[,] surroundingMaps,
+        Tile[,] layerTiles,
+        QuarterTileCls? autoTile
+    )
     {
         var tmpTile = new bool[4, 4];
         byte situation = 1;
@@ -1956,7 +2436,15 @@ public partial class MapAutotiles
         {
             for (var i = -1; i < 2; i++)
             {
-                if (CheckTileMatch(layerName, x, y, x + i, y + j, surroundingMaps, layerTiles))
+                if (CheckTileMatch(
+                        layerName,
+                        x,
+                        y,
+                        x + i,
+                        y + j,
+                        surroundingMaps,
+                        layerTiles
+                    ))
                 {
                     tmpTile[i + 2, j + 2] = true;
                 }
@@ -2032,49 +2520,126 @@ public partial class MapAutotiles
         switch (situation)
         {
             case XP_INNER:
-                PlaceAutotileXp(layerName, x, y, 2, 'b');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    2,
+                    'b',
+                    autoTile
+                );
 
                 break;
             case XP_FILL:
-                PlaceAutotileXp(layerName, x, y, 2, 'B');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    2,
+                    'B',
+                    autoTile
+                );
 
                 break;
             case XP_NW:
-                PlaceAutotileXp(layerName, x, y, 2, 'f');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    2,
+                    'f',
+                    autoTile
+                );
 
                 break;
             case XPN:
-                PlaceAutotileXp(layerName, x, y, 2, 'F');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    2,
+                    'F',
+                    autoTile
+                );
 
                 break;
             case XP_NE:
-                PlaceAutotileXp(layerName, x, y, 2, 'j');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    2,
+                    'j',
+                    autoTile
+                );
 
                 break;
             case XPE:
-                PlaceAutotileXp(layerName, x, y, 2, 'J');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    2,
+                    'J',
+                    autoTile
+                );
 
                 break;
             case XP_SE:
-                PlaceAutotileXp(layerName, x, y, 2, 'r');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    2,
+                    'r',
+                    autoTile
+                );
 
                 break;
             case XPS:
-                PlaceAutotileXp(layerName, x, y, 2, 'R');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    2,
+                    'R',
+                    autoTile
+                );
 
                 break;
             case XP_SW:
-                PlaceAutotileXp(layerName, x, y, 2, 'n');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    2,
+                    'n',
+                    autoTile
+                );
 
                 break;
             case XPW:
-                PlaceAutotileXp(layerName, x, y, 2, 'N');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    2,
+                    'N',
+                    autoTile
+                );
 
                 break;
         }
     }
 
-    public void CalculateSW_XP(string layerName, int x, int y, MapBase[,] surroundingMaps, Tile[,] layerTiles)
+    public void CalculateSW_XP(
+        string layerName,
+        int x,
+        int y,
+        MapBase[,] surroundingMaps,
+        Tile[,] layerTiles,
+        QuarterTileCls? autoTile
+    )
     {
         var tmpTile = new bool[4, 4];
         byte situation = 1;
@@ -2084,7 +2649,15 @@ public partial class MapAutotiles
         {
             for (var i = -1; i < 2; i++)
             {
-                if (CheckTileMatch(layerName, x, y, x + i, y + j, surroundingMaps, layerTiles))
+                if (CheckTileMatch(
+                        layerName,
+                        x,
+                        y,
+                        x + i,
+                        y + j,
+                        surroundingMaps,
+                        layerTiles
+                    ))
                 {
                     tmpTile[i + 2, j + 2] = true;
                 }
@@ -2160,49 +2733,126 @@ public partial class MapAutotiles
         switch (situation)
         {
             case XP_INNER:
-                PlaceAutotileXp(layerName, x, y, 3, 'c');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    3,
+                    'c',
+                    autoTile
+                );
 
                 break;
             case XP_FILL:
-                PlaceAutotileXp(layerName, x, y, 3, 'C');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    3,
+                    'C',
+                    autoTile
+                );
 
                 break;
             case XP_NW:
-                PlaceAutotileXp(layerName, x, y, 3, 'g');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    3,
+                    'g',
+                    autoTile
+                );
 
                 break;
             case XPN:
-                PlaceAutotileXp(layerName, x, y, 3, 'G');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    3,
+                    'G',
+                    autoTile
+                );
 
                 break;
             case XP_NE:
-                PlaceAutotileXp(layerName, x, y, 3, 'k');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    3,
+                    'k',
+                    autoTile
+                );
 
                 break;
             case XPE:
-                PlaceAutotileXp(layerName, x, y, 3, 'K');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    3,
+                    'K',
+                    autoTile
+                );
 
                 break;
             case XP_SE:
-                PlaceAutotileXp(layerName, x, y, 3, 's');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    3,
+                    's',
+                    autoTile
+                );
 
                 break;
             case XPS:
-                PlaceAutotileXp(layerName, x, y, 3, 'S');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    3,
+                    'S',
+                    autoTile
+                );
 
                 break;
             case XP_SW:
-                PlaceAutotileXp(layerName, x, y, 3, 'o');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    3,
+                    'o',
+                    autoTile
+                );
 
                 break;
             case XPW:
-                PlaceAutotileXp(layerName, x, y, 3, 'O');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    3,
+                    'O',
+                    autoTile
+                );
 
                 break;
         }
     }
 
-    public void CalculateSE_XP(string layerName, int x, int y, MapBase[,] surroundingMaps, Tile[,] layerTiles)
+    public void CalculateSE_XP(
+        string layerName,
+        int x,
+        int y,
+        MapBase[,] surroundingMaps,
+        Tile[,] layerTiles,
+        QuarterTileCls? autoTile
+    )
     {
         var tmpTile = new bool[4, 4];
         byte situation = 1;
@@ -2212,7 +2862,15 @@ public partial class MapAutotiles
         {
             for (var i = -1; i < 2; i++)
             {
-                if (CheckTileMatch(layerName, x, y, x + i, y + j, surroundingMaps, layerTiles))
+                if (CheckTileMatch(
+                        layerName,
+                        x,
+                        y,
+                        x + i,
+                        y + j,
+                        surroundingMaps,
+                        layerTiles
+                    ))
                 {
                     tmpTile[i + 2, j + 2] = true;
                 }
@@ -2300,43 +2958,113 @@ public partial class MapAutotiles
         switch (situation)
         {
             case XP_INNER:
-                PlaceAutotileXp(layerName, x, y, 4, 'd');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    4,
+                    'd',
+                    autoTile
+                );
 
                 break;
             case XP_FILL:
-                PlaceAutotileXp(layerName, x, y, 4, 'D');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    4,
+                    'D',
+                    autoTile
+                );
 
                 break;
             case XP_NW:
-                PlaceAutotileXp(layerName, x, y, 4, 'h');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    4,
+                    'h',
+                    autoTile
+                );
 
                 break;
             case XPN:
-                PlaceAutotileXp(layerName, x, y, 4, 'H');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    4,
+                    'H',
+                    autoTile
+                );
 
                 break;
             case XP_NE:
-                PlaceAutotileXp(layerName, x, y, 4, 'l');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    4,
+                    'l',
+                    autoTile
+                );
 
                 break;
             case XPE:
-                PlaceAutotileXp(layerName, x, y, 4, 'L');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    4,
+                    'L',
+                    autoTile
+                );
 
                 break;
             case XP_SE:
-                PlaceAutotileXp(layerName, x, y, 4, 't');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    4,
+                    't',
+                    autoTile
+                );
 
                 break;
             case XPS:
-                PlaceAutotileXp(layerName, x, y, 4, 'T');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    4,
+                    'T',
+                    autoTile
+                );
 
                 break;
             case XP_SW:
-                PlaceAutotileXp(layerName, x, y, 4, 'p');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    4,
+                    'p',
+                    autoTile
+                );
 
                 break;
             case XPW:
-                PlaceAutotileXp(layerName, x, y, 4, 'P');
+                PlaceAutotileXp(
+                    layerName,
+                    x,
+                    y,
+                    4,
+                    'P',
+                    autoTile
+                );
 
                 break;
         }
@@ -2513,7 +3241,14 @@ public partial class MapAutotiles
 
     }
 
-    public void PlaceAutotile(string layerName, int x, int y, byte tileQuarter, char autoTileLetter)
+    public void PlaceAutotile(
+        string layerName,
+        int x,
+        int y,
+        byte tileQuarter,
+        char autoTileLetter,
+        QuarterTileCls? autoTile
+    )
     {
         var quarterTile = new PointStruct();
         switch (autoTileLetter)
@@ -2619,10 +3354,28 @@ public partial class MapAutotiles
 
                 break;
         }
-        Layers[layerName][x, y].QuarterTile[tileQuarter] = quarterTile;
+
+        if (autoTile == null && !TryGetAutoTileForLayer(
+                layerName,
+                x,
+                y,
+                out autoTile
+            ))
+        {
+            return;
+        }
+
+        autoTile.QuarterTile[tileQuarter] = quarterTile;
     }
 
-    public void PlaceAutotileXp(string layerName, int x, int y, byte tileQuarter, char autoTileLetter)
+    public void PlaceAutotileXp(
+        string layerName,
+        int x,
+        int y,
+        byte tileQuarter,
+        char autoTileLetter,
+        QuarterTileCls? autoTile
+    )
     {
         var quarterTile = new PointStruct();
         switch (autoTileLetter)
@@ -2830,7 +3583,18 @@ public partial class MapAutotiles
 
                 break;
         }
-        Layers[layerName][x, y].QuarterTile[tileQuarter] = quarterTile;
+
+        if (autoTile == null && !TryGetAutoTileForLayer(
+                layerName,
+                x,
+                y,
+                out autoTile
+            ))
+        {
+            return;
+        }
+
+        autoTile.QuarterTile[tileQuarter] = quarterTile;
     }
 }
 
