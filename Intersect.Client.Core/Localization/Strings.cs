@@ -1279,13 +1279,13 @@ public static partial class Strings
     public partial struct EntityContextMenu
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Friend = @"Befriend";
+        public static LocalizedString AddFriend = @"Add Friend";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Guild = @"Invite to Guild";
+        public static LocalizedString InviteToGuild = @"Invite to Guild";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Party = @"Invite to Party";
+        public static LocalizedString InviteToParty = @"Invite to Party";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString PrivateMessage = @"Private Message";

@@ -38,13 +38,13 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
         _tradeMenuItem = AddItem(Strings.EntityContextMenu.Trade);
         _tradeMenuItem.Clicked += tradeRequest_Clicked;
 
-        _partyMenuItem = AddItem(Strings.EntityContextMenu.Party);
+        _partyMenuItem = AddItem(Strings.EntityContextMenu.InviteToParty);
         _partyMenuItem.Clicked += invite_Clicked;
 
-        _friendMenuItem = AddItem(Strings.EntityContextMenu.Friend);
+        _friendMenuItem = AddItem(Strings.EntityContextMenu.AddFriend);
         _friendMenuItem.Clicked += friendRequest_Clicked;
 
-        _guildMenuItem = AddItem(Strings.EntityContextMenu.Guild);
+        _guildMenuItem = AddItem(Strings.EntityContextMenu.InviteToGuild);
         _guildMenuItem.Clicked += guildRequest_Clicked;
 
         _privateMessageMenuItem = AddItem(Strings.EntityContextMenu.PrivateMessage);
@@ -65,63 +65,45 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
         switch (target)
         {
             case Button button:
-            {
                 _entity = _me.TargetBox?.MyEntity;
-                posX = button.LocalPosToCanvas(new Point(0, 0)).X;
-                posY = button.LocalPosToCanvas(new Point(0, 0)).Y;
+                posX = button.LocalPosToCanvas(Point.Empty).X;
+                posY = button.LocalPosToCanvas(Point.Empty).Y;
                 newX = posX;
                 newY = posY + button.Height;
-
-                if (newX + Width >= Canvas?.Width)
-                {
-                    newX = posX - Width + button.Width;
-                }
-
-                if (newY + Height >= Canvas?.Height)
-                {
-                    newY = posY - Height;
-                }
-
                 break;
-            }
-            case Entity en:
-            {
-                if (en is not Player || en == _me)
-                {
-                    return;
-                }
 
+            case Player player when player != _me:
                 var mousePos = Graphics.ConvertToWorldPoint(Globals.InputManager.MousePosition);
-                bool isHovered = en.WorldPos.Contains(mousePos.X, mousePos.Y);
-
-                if (!isHovered)
+                if (!player.WorldPos.Contains(mousePos.X, mousePos.Y))
                 {
                     return;
                 }
 
-                _entity = en;
+                _entity = player;
                 posX = InputHandler.MousePosition.X;
                 posY = InputHandler.MousePosition.Y;
                 newX = posX;
                 newY = posY;
-
-                if (newX + Width >= Canvas?.Width)
-                {
-                    newX = posX - Width;
-                }
-
-                if (newY + Height >= Canvas?.Height)
-                {
-                    newY = posY - Height;
-                }
-
                 break;
-            }
+
             default:
                 return;
         }
 
-        if (this.IsHidden)
+        if (Canvas is { } canvas)
+        {
+            if (newX + Width >= canvas.Width)
+            {
+                newX = posX - Width + (target is Button button ? button.Width : 0);
+            }
+
+            if (newY + Height >= canvas.Height)
+            {
+                newY = posY - Height + (target is Button button ? button.Height : 0);
+            }
+        }
+
+        if (IsHidden)
         {
             TryShowGuildButton();
             SizeToChildren();
