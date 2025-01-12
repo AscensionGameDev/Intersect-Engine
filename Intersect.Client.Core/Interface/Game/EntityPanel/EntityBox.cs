@@ -4,10 +4,8 @@ using Intersect.Client.Entities.Events;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
-using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
-using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -96,20 +94,8 @@ public partial class EntityBox
 
     public bool ShouldUpdateStatuses;
 
-    public bool IsHidden;
-
     // Context menu
-    private Button _contextMenuButton;
-    
-    private Framework.Gwen.Control.Menu _contextMenu;
-
-    private MenuItem _tradeMenuItem;
-
-    private MenuItem _partyMenuItem;
-
-    private MenuItem _friendMenuItem;
-
-    private MenuItem _guildMenuItem;
+    private readonly Button _contextMenuButton;
 
     //Init
     public EntityBox(Canvas gameCanvas, EntityType entityType, Entity? myEntity, bool isPlayerBox = false)
@@ -180,35 +166,10 @@ public partial class EntityBox
         // Target context menu with basic options.
         if (!_isPlayerBox)
         {
-            _contextMenu = new Framework.Gwen.Control.Menu(gameCanvas, "TargetContextMenu")
-            {
-                IsHidden = true,
-                IconMarginDisabled = true
-            };
-
-            _contextMenu.Children.Clear();
-
-            _tradeMenuItem = _contextMenu.AddItem(Strings.EntityBox.Trade);
-            _tradeMenuItem.Clicked += tradeRequest_Clicked;
-
-            _partyMenuItem = _contextMenu.AddItem(Strings.EntityBox.Party);
-            _partyMenuItem.Clicked += invite_Clicked;
-
-            _friendMenuItem = _contextMenu.AddItem(Strings.EntityBox.Friend);
-            _friendMenuItem.Clicked += friendRequest_Clicked;
-
-            _guildMenuItem = _contextMenu.AddItem(Strings.Guilds.Guild);
-            _guildMenuItem.Clicked += guildRequest_Clicked;
-
-            _contextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-
             _contextMenuButton = new Button(EntityInfoPanel, "ContextMenuButton");
-            _contextMenuButton.Clicked += (sender, e) =>
+            _contextMenuButton.Clicked += (_, _) =>
             {
-                _contextMenu.SizeToChildren();
-                _contextMenu.Open(Pos.None);
-                _contextMenu.SetPosition(_contextMenuButton.LocalPosToCanvas(new Point(0, 0)).X,
-                _contextMenuButton.LocalPosToCanvas(new Point(0, 0)).Y + _contextMenuButton.Height);
+                Interface.GameUi.TargetContextMenu.ToggleHidden(_contextMenuButton);
             };
 
             EntityStatusWindow = new ImagePanel(EntityWindow, "EntityStatusWindow");
@@ -283,7 +244,6 @@ public partial class EntityBox
 
         if (!_isPlayerBox)
         {
-            TryShowGuildButton();
             _contextMenuButton.Show();
             EventDesc.Show();
         }
@@ -417,7 +377,6 @@ public partial class EntityBox
         //Update the event/entity face.
         UpdateImage();
 
-        IsHidden = true;
         if (EntityType != EntityType.Event)
         {
             EntityName.SetText(MyEntity.Name);
@@ -425,7 +384,6 @@ public partial class EntityBox
             UpdateMap();
             UpdateHpBar(elapsedTime);
             UpdateMpBar(elapsedTime);
-            IsHidden = false;
         }
         else
         {
@@ -449,7 +407,6 @@ public partial class EntityBox
             }
             else if (_contextMenuButton.IsHidden && !_isPlayerBox)
             {
-                TryShowGuildButton();
                 _contextMenuButton.Show();
             }
         }
@@ -937,108 +894,6 @@ public partial class EntityBox
         Interface.GameUi.GameCanvas.RemoveChild(EntityWindow, false);
         EntityWindow.Dispose();
     }
-
-    //Input Handlers
-    void invite_Clicked(Base sender, ClickedEventArgs arguments)
-    {
-        if (Globals.Me.TargetIndex != Guid.Empty && Globals.Me.TargetIndex != Globals.Me.Id)
-        {
-            if (Globals.Me.CombatTimer < Timing.Global.Milliseconds)
-            {
-                PacketSender.SendPartyInvite(Globals.Me.TargetIndex);
-            }
-            else
-            {
-                PacketSender.SendChatMsg(Strings.Parties.InFight.ToString(), 4);
-            }
-        }
-    }
-
-    //Input Handlers
-    void tradeRequest_Clicked(Base sender, ClickedEventArgs arguments)
-    {
-        if (Globals.Me.TargetIndex != Guid.Empty && Globals.Me.TargetIndex != Globals.Me.Id)
-        {
-            if (Globals.Me.CombatTimer < Timing.Global.Milliseconds)
-            {
-                PacketSender.SendTradeRequest(Globals.Me.TargetIndex);
-            }
-            else
-            {
-                PacketSender.SendChatMsg(Strings.Trading.InFight.ToString(), 4);
-            }
-        }
-    }
-
-    //Input Handlers
-    void friendRequest_Clicked(Base sender, ClickedEventArgs arguments)
-    {
-        if (Globals.Me.TargetIndex != Guid.Empty && Globals.Me.TargetIndex != Globals.Me.Id)
-        {
-            if (Globals.Me.CombatTimer < Timing.Global.Milliseconds)
-            {
-                PacketSender.SendAddFriend(MyEntity.Name);
-            }
-            else
-            {
-                PacketSender.SendChatMsg(Strings.Friends.InFight.ToString(), 4);
-            }
-        }
-    }
-
-
-    void guildRequest_Clicked(Base sender, ClickedEventArgs arguments)
-    {
-        if (MyEntity is Player plyr && MyEntity != Globals.Me)
-        {
-            if (string.IsNullOrWhiteSpace(plyr.Guild))
-            {
-                if (Globals.Me?.GuildRank?.Permissions?.Invite ?? false)
-                {
-                    if (Globals.Me.CombatTimer < Timing.Global.Milliseconds)
-                    {
-                        PacketSender.SendInviteGuild(MyEntity.Name);
-                    }
-                    else
-                    {
-                        PacketSender.SendChatMsg(Strings.Friends.InFight.ToString(), 4);
-                    }
-                }
-            }
-            else
-            {
-                Chat.ChatboxMsg.AddMessage(new Chat.ChatboxMsg(Strings.Guilds.InviteAlreadyInGuild, Color.Red, ChatMessageType.Guild));
-            }
-        }
-    }
-
-    void TryShowGuildButton()
-    {
-        var shouldShow = false;
-        if (MyEntity is Player plyr && MyEntity != Globals.Me && string.IsNullOrWhiteSpace(plyr.Guild))
-        {
-            if (Globals.Me?.GuildRank?.Permissions?.Invite ?? false)
-            {
-                shouldShow = true;
-            }
-        }
-
-        if (shouldShow)
-        {
-            if (!_contextMenu.Children.Contains(_guildMenuItem))
-            {
-                _contextMenu.Children.Add(_guildMenuItem);
-            }
-        }
-        else
-        {
-            if (_contextMenu.Children.Contains(_guildMenuItem))
-            {
-                _contextMenu.Children.Remove(_guildMenuItem);
-            }
-        }
-    }
-
 
     public void Hide()
     {
