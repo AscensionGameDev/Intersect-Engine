@@ -64,7 +64,12 @@ public partial class MapController : MapBase
 
         set
         {
-            lock (GetMapLock())
+            if (!Lock.TryAcquireLock($"{nameof(MapController)}.set_{nameof(SurroundingMapIds)}()", out var lockRef))
+            {
+                throw new InvalidOperationException("Failed to acquire map instance lock from MapController.set_SurroundingMapIds()");
+            }
+
+            using (lockRef)
             {
                 mSurroundingMapIds = value;
                 var surroundingMapsIdsWithSelf = new List<Guid>(value);
@@ -85,7 +90,12 @@ public partial class MapController : MapBase
 
         set
         {
-            lock (GetMapLock())
+            if (!Lock.TryAcquireLock($"{nameof(MapController)}.set_{nameof(SurroundingMaps)}()", out var lockRef))
+            {
+                throw new InvalidOperationException("Failed to acquire map instance lock from MapController.set_SurroundingMaps()");
+            }
+
+            using (lockRef)
             {
                 mSurroundingMaps = value;
                 var surroundingMapsWithSelf = new List<MapController>(value);
@@ -195,10 +205,10 @@ public partial class MapController : MapBase
 
     //GameObject Functions
 
-    public object GetMapLock()
-    {
-        return mMapLock;
-    }
+    // public object GetMapLock()
+    // {
+    //     return mMapLock;
+    // }
 
     public override void Load(string json, bool keepCreationTime = true)
     {
@@ -210,7 +220,12 @@ public partial class MapController : MapBase
     /// </summary>
     public void Initialize()
     {
-        lock (mMapLock)
+        if (!Lock.TryAcquireLock($"{nameof(MapController)}.{nameof(Initialize)}()", out var lockRef))
+        {
+            throw new InvalidOperationException("Failed to acquire map instance lock from MapController.Initialize()");
+        }
+
+        using (lockRef)
         {
             DespawnAllInstances();
             RespawnAllInstances();
@@ -224,7 +239,12 @@ public partial class MapController : MapBase
     /// <param name="keepRevision">The revision number</param>
     public void Load(string json, int keepRevision = -1)
     {
-        lock (mMapLock)
+        if (!Lock.TryAcquireLock($"{nameof(MapController)}.{nameof(Load)}()", out var lockRef))
+        {
+            throw new InvalidOperationException("Failed to acquire map instance lock from MapController.Load()");
+        }
+
+        using (lockRef)
         {
             CachedMapClientPacket = default;
             DespawnAllInstances();
@@ -419,7 +439,13 @@ public partial class MapController : MapBase
     public bool TryCreateInstance(Guid instanceId, out MapInstance newLayer, Player creator)
     {
         newLayer = null;
-        lock (GetMapLock())
+
+        if (!Lock.TryAcquireLock($"{nameof(MapController)}.{nameof(TryCreateInstance)}()", out var lockRef))
+        {
+            throw new InvalidOperationException("Failed to acquire map instance lock from MapController.TryCreateInstance()");
+        }
+
+        using (lockRef)
         {
             if (!mInstances.ContainsKey(instanceId))
             {
@@ -465,7 +491,12 @@ public partial class MapController : MapBase
     /// <param name="mapInstanceId">The instance ID to dispose of</param>
     public void DisposeInstanceWithId(Guid mapInstanceId)
     {
-        lock (GetMapLock())
+        if (!Lock.TryAcquireLock($"{nameof(MapController)}.{nameof(DisposeInstanceWithId)}()", out var lockRef))
+        {
+            throw new InvalidOperationException("Failed to acquire map instance lock from MapController.DisposeInstanceWithId()");
+        }
+
+        using (lockRef)
         {
             if (mInstances[mapInstanceId] != null)
             {
@@ -528,7 +559,7 @@ public partial class MapController : MapBase
             }
             TileData = LZ4.PickleString(JsonConvert.SerializeObject(Layers, Formatting.None, mJsonSerializerSettings));
             Layers = null;
-            
+
         }
     }
 

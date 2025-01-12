@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.CompilerServices;
 using Intersect.Collections;
 using Intersect.Compression;
 using Intersect.Enums;
 using Intersect.Framework.Core.Serialization;
 using Intersect.GameObjects.Events;
 using Intersect.Models;
-
+using Intersect.Threading;
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Maps;
@@ -46,14 +47,29 @@ public partial class MapBase : DatabaseObject<MapBase>
     private byte[] mCachedAttributeData = null;
 
     //SyncLock
-    [JsonIgnore]
-    [NotMapped]
-    protected object mMapLock = new();
+    // [JsonIgnore]
+    // [NotMapped]
+    // protected object mMapLock = new();
+
+    // [NotMapped]
+    // [JsonIgnore]
+    // public object MapLock => mMapLock;
+
+    private readonly LockHelper _lock;
+
+    [JsonIgnore, NotMapped]
+    public LockHelper Lock
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => _lock;
+    }
 
     [JsonConstructor]
     public MapBase(Guid id) : base(id)
     {
         Name = "New Map";
+
+        _lock = new LockHelper($"{Name} / {Id}");
 
         //Create empty tile array and then compress it down
         if (Layers == null)
@@ -74,6 +90,7 @@ public partial class MapBase : DatabaseObject<MapBase>
     public MapBase()
     {
         Name = "New Map";
+        _lock = new LockHelper($"{Name} / {Id}");
     }
 
     public MapBase(MapBase mapBase) : base(mapBase?.Id ?? Guid.Empty)
@@ -83,76 +100,96 @@ public partial class MapBase : DatabaseObject<MapBase>
             return;
         }
 
-        lock (MapLock ?? throw new ArgumentNullException(nameof(MapLock), @"this"))
-        {
-            lock (mapBase.MapLock ?? throw new ArgumentNullException(nameof(mapBase.MapLock), nameof(mapBase)))
-            {
-                Name = mapBase.Name;
-                Brightness = mapBase.Brightness;
-                IsIndoors = mapBase.IsIndoors;
-                if (Layers != null && mapBase.Layers != null)
-                {
-                    Layers.Clear();
+        _lock = new LockHelper($"{mapBase.Name} / {Id}");
 
-                    foreach (var layer in mapBase.Layers)
+        try
+        {
+            if (!Lock.TryAcquireLock("MapBase(MapBase) constructor (self)", out var selfLock))
+            {
+                throw new InvalidOperationException("Failed to acquire lock on self");
+            }
+
+            using (selfLock)
+            {
+                if (!mapBase.Lock.TryAcquireLock("MapBase(MapBase) constructor (other)", out var otherLock))
+                {
+                    throw new InvalidOperationException("Failed to acquire lock on other");
+                }
+
+                using (otherLock)
+                {
+                    Name = mapBase.Name;
+                    Brightness = mapBase.Brightness;
+                    IsIndoors = mapBase.IsIndoors;
+                    if (Layers != null && mapBase.Layers != null)
                     {
-                        var tiles = new Tile[Options.MapWidth, Options.MapHeight];
-                        for (var x = 0; x < Options.MapWidth; x++)
+                        Layers.Clear();
+
+                        foreach (var layer in mapBase.Layers)
                         {
-                            for (var y = 0; y < Options.MapHeight; y++)
+                            var tiles = new Tile[Options.MapWidth, Options.MapHeight];
+                            for (var x = 0; x < Options.MapWidth; x++)
                             {
-                                tiles[x, y] = new Tile
+                                for (var y = 0; y < Options.MapHeight; y++)
                                 {
-                                    TilesetId = layer.Value[x, y].TilesetId,
-                                    X = layer.Value[x, y].X,
-                                    Y = layer.Value[x, y].Y,
-                                    Autotile = layer.Value[x, y].Autotile
-                                };
+                                    tiles[x, y] = new Tile
+                                    {
+                                        TilesetId = layer.Value[x, y].TilesetId,
+                                        X = layer.Value[x, y].X,
+                                        Y = layer.Value[x, y].Y,
+                                        Autotile = layer.Value[x, y].Autotile
+                                    };
+                                }
+                            }
+
+                            Layers.Add(layer.Key, tiles);
+                        }
+                    }
+
+                    for (var x = 0; x < Options.MapWidth; x++)
+                    {
+                        for (var y = 0; y < Options.MapHeight; y++)
+                        {
+                            if (Attributes == null)
+                            {
+                                continue;
+                            }
+
+                            if (mapBase.Attributes?[x, y] == null)
+                            {
+                                Attributes[x, y] = null;
+                            }
+                            else
+                            {
+                                Attributes[x, y] = mapBase.Attributes[x, y].Clone();
                             }
                         }
-                        Layers.Add(layer.Key, tiles);
                     }
-                }
 
-                for (var x = 0; x < Options.MapWidth; x++)
-                {
-                    for (var y = 0; y < Options.MapHeight; y++)
+                    for (var i = 0; i < mapBase.Spawns?.Count; i++)
                     {
-                        if (Attributes == null)
-                        {
-                            continue;
-                        }
-
-                        if (mapBase.Attributes?[x, y] == null)
-                        {
-                            Attributes[x, y] = null;
-                        }
-                        else
-                        {
-                            Attributes[x, y] = mapBase.Attributes[x, y].Clone();
-                        }
+                        Spawns.Add(new NpcSpawn(mapBase.Spawns[i]));
                     }
-                }
 
-                for (var i = 0; i < mapBase.Spawns?.Count; i++)
-                {
-                    Spawns.Add(new NpcSpawn(mapBase.Spawns[i]));
-                }
+                    for (var i = 0; i < mapBase.Lights?.Count; i++)
+                    {
+                        Lights.Add(new LightBase(mapBase.Lights[i]));
+                    }
 
-                for (var i = 0; i < mapBase.Lights?.Count; i++)
-                {
-                    Lights.Add(new LightBase(mapBase.Lights[i]));
-                }
+                    foreach (var record in mapBase.LocalEvents)
+                    {
+                        var evt = new EventBase(record.Key, record.Value?.JsonData);
+                        LocalEvents?.Add(record.Key, evt);
+                    }
 
-                foreach (var record in mapBase.LocalEvents)
-                {
-                    var evt = new EventBase(record.Key, record.Value?.JsonData);
-                    LocalEvents?.Add(record.Key, evt);
+                    EventIds?.Clear();
+                    EventIds?.AddRange(mapBase.EventIds?.ToArray() ?? []);
                 }
-
-                EventIds?.Clear();
-                EventIds?.AddRange(mapBase.EventIds?.ToArray() ?? []);
             }
+        }
+        finally
+        {
+            // Nothing to do
         }
     }
 
@@ -347,10 +384,6 @@ public partial class MapBase : DatabaseObject<MapBase>
     public int WeatherIntensity { get; set; }
 
     public bool HideEquipment { get; set; }
-
-    [NotMapped]
-    [JsonIgnore]
-    public object MapLock => mMapLock;
 
     public virtual MapBase[,] GenerateAutotileGrid()
     {

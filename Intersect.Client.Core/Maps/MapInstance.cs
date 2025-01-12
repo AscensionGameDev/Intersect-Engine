@@ -39,7 +39,9 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     //Map State Variables
     public static Dictionary<Guid, long> MapRequests { get; set; } = new Dictionary<Guid, long>();
 
-    public static MapLoadedDelegate OnMapLoaded { get; set; }
+    public static event MapLoadedDelegate? MapLoaded;
+
+    public static void DoMapLoaded(MapInstance mapInstance) => MapLoaded?.Invoke(mapInstance);
 
     private static MapControllers sLookup;
 
@@ -178,21 +180,38 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
         IsLoaded = true;
         Autotiles = new MapAutotiles(this);
-        OnMapLoaded -= HandleMapLoaded;
-        OnMapLoaded += HandleMapLoaded;
+        MapLoaded -= HandleMapLoaded;
+        MapLoaded += HandleMapLoaded;
         MapRequests.Remove(Id);
     }
 
     public void LoadTileData(byte[] packet)
     {
+        var startLoadTileData = DateTime.UtcNow;
+
         Layers = JsonConvert.DeserializeObject<Dictionary<string, Tile[,]>>(LZ4.UnPickleString(packet), mJsonSerializerSettings);
-        foreach (var layer in Options.Instance.MapOpts.Layers.All)
+
+        var endDeserialization = DateTime.UtcNow;
+
+        if (Layers is { } layers)
         {
-            if (!Layers.ContainsKey(layer))
+            foreach (var layer in Options.Instance.MapOpts.Layers.All)
             {
-                Layers.Add(layer, new Tile[_width, _height]);
+                if (!layers.ContainsKey(layer))
+                {
+                    layers.Add(layer, new Tile[_width, _height]);
+                }
             }
         }
+
+        var endLayerAdditions = DateTime.UtcNow;
+
+        Log.Debug($"""
+                   [HandleMap] LoadTileData() {Id} ({Name})
+                       - Full method took {(endLayerAdditions - startLoadTileData).TotalMilliseconds}ms
+                       - Deserialization took {(endDeserialization - startLoadTileData).TotalMilliseconds}ms
+                       - Adding layer buffers took {(endLayerAdditions - endDeserialization).TotalMilliseconds}ms
+                   """);
     }
 
     private void CacheTextures()
@@ -414,10 +433,16 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             }
         }
 
+        var startSetData = DateTime.UtcNow;
+
         foreach (var buffer in updatedBuffers)
         {
             buffer.SetData();
         }
+
+        var elapsedSetData = DateTime.UtcNow - startSetData;
+
+        Log.Debug($"Took {elapsedSetData.TotalMilliseconds}ms to update {updatedBuffers.Count} buffers");
     }
 
     private GameTileBuffer[] CheckAutotile(int x, int y, MapBase[,] surroundingMaps)
@@ -429,11 +454,17 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
         foreach (var layer in Options.Instance.MapOpts.Layers.All)
         {
+            if (!Layers.TryGetValue(layer, out var layerTiles))
+            {
+                continue;
+            }
+
             if (!Autotiles.UpdateAutoTile(
                     x,
                     y,
                     layer,
-                    surroundingMaps
+                    surroundingMaps,
+                    layerTiles
                 ))
             {
                 continue;
@@ -441,11 +472,6 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
             // Find the VBO, update it.
             if (!_tileBuffersPerTexturePerLayer.TryGetValue(layer, out var tileBuffer))
-            {
-                continue;
-            }
-
-            if (!Layers.TryGetValue(layer, out var layerTiles))
             {
                 continue;
             }
@@ -546,35 +572,49 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     //Helper Functions
     public MapBase[,] GenerateAutotileGrid()
     {
-        var mapBase = new MapBase[3, 3];
-        if (Globals.MapGrid != null && Globals.GridMaps.Contains(Id))
+        var generatedGrid = new MapBase[3, 3];
+        if (Globals.MapGrid is {} mapGrid && Globals.GridMaps.Contains(Id))
         {
-            for (var x = -1; x <= 1; x++)
+            var gridX = GridX;
+            var gridY = GridY;
+
+            var lowX = Math.Max(0, GridX - 1);
+            var lowY = Math.Max(0, GridY - 1);
+            var highX = Math.Min(Globals.MapGridWidth - 1, gridX + 1);
+            var highY = Math.Min(Globals.MapGridHeight - 1, gridY + 1);
+            for (var x = lowX; x <= highX; x++)
             {
-                for (var y = -1; y <= 1; y++)
+                for (var y = lowY; y <= highY; y++)
                 {
-                    var x1 = GridX + x;
-                    var y1 = GridY + y;
-                    if (x1 >= 0 && y1 >= 0 && x1 < Globals.MapGridWidth && y1 < Globals.MapGridHeight)
+                    MapBase targetMap;
+                    if (x == gridX && y == gridY)
                     {
-                        if (x == 0 && y == 0)
-                        {
-                            mapBase[x + 1, y + 1] = this;
-                        }
-                        else
-                        {
-                            mapBase[x + 1, y + 1] = Lookup.Get<MapInstance>(Globals.MapGrid[x1, y1]);
-                        }
+                        targetMap = this;
+                    }
+                    else
+                    {
+                        targetMap = Lookup.Get<MapInstance>(mapGrid[x, y]);
+                    }
+
+                    var targetX = x + 1 - gridX;
+                    var targetY = y + 1 - gridY;
+                    try
+                    {
+                        generatedGrid[targetX, targetY] = targetMap;
+                    }
+                    catch
+                    {
+                        targetX.ToString();
                     }
                 }
             }
         }
         else
         {
-            Debug.WriteLine("Returning null mapgrid for map " + Name);
+            Debug.WriteLine($"Returning null mapgrid for map {Name}");
         }
 
-        return mapBase;
+        return generatedGrid;
     }
 
     /// <summary>
@@ -771,7 +811,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
                     var endVbo = DateTime.UtcNow;
                     var elapsedVbo = endVbo - startVbo;
-                    Log.Info($"Built VBO for map instance {Id} in {elapsedVbo.TotalMilliseconds}ms");
+                    Log.Info($"Built VBO for map instance {Id} in {elapsedVbo.TotalMilliseconds}ms ({Name})");
 
                     // lock (mTileBuffers)
                     // {
@@ -1573,7 +1613,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     public void Dispose(bool prep = true, bool killentities = true)
     {
         IsLoaded = false;
-        OnMapLoaded -= HandleMapLoaded;
+        MapLoaded -= HandleMapLoaded;
 
         foreach (var evt in mEvents)
         {

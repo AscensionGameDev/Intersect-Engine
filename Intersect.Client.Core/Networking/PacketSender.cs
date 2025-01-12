@@ -6,6 +6,7 @@ using Intersect.Client.Maps;
 using Intersect.Enums;
 using Intersect.Framework;
 using Intersect.GameObjects.Maps;
+using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Network.Packets.Client;
 using AdminAction = Intersect.Admin.Actions.AdminAction;
@@ -46,6 +47,7 @@ public static partial class PacketSender
             return;
         }
 
+        Log.Debug($"Requesting maps via cache keys:\n{string.Join("\n", validMapCacheKeys.Select(k => $"\t{k}"))}");
         Network.SendPacket(new GetObjectData<MapBase>(validMapCacheKeys));
         MapInstance.UpdateMapRequestTime(validMapCacheKeys.Select(cacheKey => cacheKey.Id.Guid).ToArray());
     }
@@ -61,6 +63,7 @@ public static partial class PacketSender
             return;
         }
 
+        Log.Debug($"Requesting maps via IDs:\n{string.Join("\n", mapIds.Select(k => $"\t{k}"))}");
         Network.SendPacket(
             new GetObjectData<MapBase>(
                 validMapIds.Select(id => new ObjectCacheKey<MapBase>(new Id<MapBase>(id))).ToArray()
@@ -497,7 +500,7 @@ public static partial class PacketSender
     {
         Network.SendPacket(new UpdateGuildMemberPacket(id, null, Enums.GuildMemberUpdateAction.Transfer));
     }
-  
+
     public static void SendClosePicture(Guid eventId)
     {
         if (eventId != Guid.Empty)

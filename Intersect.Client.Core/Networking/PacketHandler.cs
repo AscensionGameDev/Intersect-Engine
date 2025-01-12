@@ -233,6 +233,8 @@ internal sealed partial class PacketHandler
 
     private void HandleMap(IPacketSender packetSender, MapPacket packet, bool skipSave = false)
     {
+        var startHandleMap = DateTime.UtcNow;
+
         var mapId = packet.MapId;
 
         if (!skipSave)
@@ -251,7 +253,11 @@ internal sealed partial class PacketHandler
             }
         }
 
+        var endMapCache = DateTime.UtcNow;
+
         MapInstance.UpdateMapRequestTime(packet.MapId);
+
+        var endUpdateMapRequestTime = DateTime.UtcNow;
 
         if (MapInstance.TryGet(mapId, out var mapInstance))
         {
@@ -263,36 +269,107 @@ internal sealed partial class PacketHandler
             mapInstance.Dispose(false, false);
         }
 
+        var endMapTryGet = DateTime.UtcNow;
+
         mapInstance = new MapInstance(mapId);
         MapInstance.Lookup.Set(mapId, mapInstance);
-        lock (mapInstance.MapLock)
+
+        var endMapLookupSet = DateTime.UtcNow;
+
+        DateTime endMapLoad;
+        DateTime endMapLoadTileData;
+        DateTime endSetAttributeData;
+        DateTime endCreateMapSounds;
+        DateTime endPlayMusic;
+        DateTime endGridXYCameraHolds;
+        DateTime endInitAutotiles;
+        DateTime endPendingEvents;
+
+        if (!mapInstance.Lock.TryAcquireLock("HandleMap packet handler", out var lockRef))
+        {
+            throw new InvalidOperationException("Failed to acquire map instance lock from HandleMap packet handler");
+        }
+
+        using (lockRef)
         {
             mapInstance.Load(packet.Data);
+            endMapLoad = DateTime.UtcNow;
+
             mapInstance.LoadTileData(packet.TileData);
+            endMapLoadTileData = DateTime.UtcNow;
+
             mapInstance.AttributeData = packet.AttributeData;
+            endSetAttributeData = DateTime.UtcNow;
+
             mapInstance.CreateMapSounds();
+            endCreateMapSounds = DateTime.UtcNow;
+
             if (mapId == Globals.Me.MapId)
             {
                 Audio.PlayMusic(mapInstance.Music, ClientConfiguration.Instance.MusicFadeTimer, ClientConfiguration.Instance.MusicFadeTimer, true);
             }
+            endPlayMusic = DateTime.UtcNow;
 
             mapInstance.GridX = packet.GridX;
             mapInstance.GridY = packet.GridY;
             mapInstance.CameraHolds = packet.CameraHolds;
-            mapInstance.Autotiles.InitAutotiles(mapInstance.GenerateAutotileGrid());
+            endGridXYCameraHolds = DateTime.UtcNow;
 
-            if (Globals.PendingEvents.ContainsKey(mapId))
+            mapInstance.Autotiles.InitAutotiles(mapInstance.GenerateAutotileGrid());
+            endInitAutotiles = DateTime.UtcNow;
+
+            if (Globals.PendingEvents.TryGetValue(mapId, out var pendingEventsForMap))
             {
-                foreach (var evt in Globals.PendingEvents[mapId])
+                foreach (var (eventId, stalePendingEvent) in pendingEventsForMap)
                 {
-                    mapInstance.AddEvent(evt.Key, evt.Value);
+                    mapInstance.AddEvent(eventId, stalePendingEvent);
                 }
 
-                Globals.PendingEvents[mapId].Clear();
+                pendingEventsForMap.Clear();
             }
+            endPendingEvents = DateTime.UtcNow;
         }
 
-        MapInstance.OnMapLoaded?.Invoke(mapInstance);
+        var endMapLock = DateTime.UtcNow;
+
+        MapInstance.DoMapLoaded(mapInstance);
+
+        var endDoMapLoadedInvocation = DateTime.UtcNow;
+
+        var elapsedHandleMap = endDoMapLoadedInvocation - startHandleMap;
+        var elapsedMapCache = endMapCache - startHandleMap;
+        var elapsedUpdateMapRequestTime = endUpdateMapRequestTime - endMapCache;
+        var elapsedMapTryGet = endMapTryGet - endUpdateMapRequestTime;
+        var elapsedMapLookupSet = endMapLookupSet - endMapTryGet;
+        var elapsedMapLock = endMapLock - endMapLookupSet;
+        var elapsedDoMapLoadedInvocation = endDoMapLoadedInvocation - endMapLock;
+        var elapsedMapLoad = endMapLoad - endMapLookupSet;
+        var elapsedMapLoadTileData = endMapLoadTileData - endMapLoad;
+        var elapsedSetAttributeData = endSetAttributeData - endMapLoadTileData;
+        var elapsedCreateMapSounds = endCreateMapSounds - endSetAttributeData;
+        var elapsedPlayMusic = endPlayMusic - endCreateMapSounds;
+        var elapsedGridXYCameraHolds = endGridXYCameraHolds - endPlayMusic;
+        var elapsedInitAutotiles = endInitAutotiles - endGridXYCameraHolds;
+        var elapsedPendingEvents = endPendingEvents - endInitAutotiles;
+
+        Log.Debug($"""
+                   [HandleMap] Received map {packet.MapId} ({mapInstance.Name})
+                       - Full method took {elapsedHandleMap.TotalMilliseconds}ms
+                       - Map caching took {elapsedMapCache.TotalMilliseconds}ms
+                       - Update Map Request Time took {elapsedUpdateMapRequestTime.TotalMilliseconds}ms
+                       - Map Try Get took {elapsedMapTryGet.TotalMilliseconds}ms
+                       - Map Lookup Set took {elapsedMapLookupSet.TotalMilliseconds}ms
+                       - Map lock took {elapsedMapLock.TotalMilliseconds}ms
+                           - Map load took {elapsedMapLoad.TotalMilliseconds}ms
+                           - Loading tile data took {elapsedMapLoadTileData.TotalMilliseconds}ms
+                           - Setting attribute data took {elapsedSetAttributeData.TotalMilliseconds}ms
+                           - Creating map sounds took {elapsedCreateMapSounds.TotalMilliseconds}ms
+                           - Starting map music (if it's the current map) took {elapsedPlayMusic.TotalMilliseconds}ms
+                           - Settings GridX, GridY, and CameraHolds took {elapsedGridXYCameraHolds.TotalMilliseconds}ms
+                           - Init autotiles took {elapsedInitAutotiles.TotalMilliseconds}ms
+                           - Pending events took {elapsedPendingEvents.TotalMilliseconds}ms
+                       - MapLoaded event invocation took {elapsedDoMapLoadedInvocation.TotalMilliseconds}ms
+                   """);
     }
 
     //MapPacket
