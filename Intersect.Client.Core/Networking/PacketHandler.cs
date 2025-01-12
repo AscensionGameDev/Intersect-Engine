@@ -316,6 +316,7 @@ internal sealed partial class PacketHandler
             endGridXYCameraHolds = DateTime.UtcNow;
 
             mapInstance.Autotiles.InitAutotiles(mapInstance.GenerateAutotileGrid());
+
             endInitAutotiles = DateTime.UtcNow;
 
             if (Globals.PendingEvents.TryGetValue(mapId, out var pendingEventsForMap))
@@ -375,8 +376,23 @@ internal sealed partial class PacketHandler
     //MapPacket
     public void HandlePacket(IPacketSender packetSender, MapPacket packet)
     {
-        HandleMap(packet);
-        Player.FetchNewMaps();
+        if (Globals.Me?.MapInstance is {} currentMap)
+        {
+            if (currentMap.Id != packet.MapId)
+            {
+                Task.Run(DoHandleMap);
+                return;
+            }
+        }
+
+        DoHandleMap();
+        return;
+
+        void DoHandleMap()
+        {
+            HandleMap(packet);
+            Player.FetchNewMaps();
+        }
     }
 
     //PlayerEntityPacket

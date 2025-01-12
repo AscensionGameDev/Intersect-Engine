@@ -1,6 +1,8 @@
+#if DIAGNOSTIC
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Intersect.Logging;
+#endif
 
 namespace Intersect.Threading;
 
@@ -18,24 +20,32 @@ public sealed class LockHelper(string? name = default)
             return;
         }
 
+#if DIAGNOSTIC
         DateTime takenAt = default;
+#endif
 
         try
         {
+#if DIAGNOSTIC
             var waitStartedAt = DateTime.UtcNow;
+#endif
 
             Monitor.Enter(_lock, ref _lockTaken);
 
+#if DIAGNOSTIC
             var waitElapsed = DateTime.UtcNow - waitStartedAt;
 
             DebugPrint($"[{name}] Waited for {waitElapsed.TotalMilliseconds}ms to acquire the lock [{debugInfo}]");
+#endif
 
             if (!_lockTaken)
             {
                 return;
             }
 
+#if DIAGNOSTIC
             _takenAt = takenAt = DateTime.UtcNow;
+#endif
 
             work();
         }
@@ -46,9 +56,11 @@ public sealed class LockHelper(string? name = default)
                 Monitor.Exit(_lock);
                 _lockTaken = false;
 
+#if DIAGNOSTIC
                 var elapsedTaken = DateTime.UtcNow - takenAt;
 
                 DebugPrint($"[{name}] Held lock for {elapsedTaken.TotalMilliseconds}ms [{debugInfo}]");
+#endif
             }
             else
             {
@@ -68,6 +80,7 @@ public sealed class LockHelper(string? name = default)
     {
         bool lockTaken = false;
 
+#if DIAGNOSTIC
         DebugPrint($"TryAcquireLock from: {debugInfo}");
 
         if (_lockTaken)
@@ -76,14 +89,17 @@ public sealed class LockHelper(string? name = default)
         }
 
         var waitStartedAt = DateTime.UtcNow;
+#endif
 
         Monitor.Enter(_lock, ref lockTaken);
 
+#if DIAGNOSTIC
         var waitElapsed = DateTime.UtcNow - waitStartedAt;
 
         DebugPrint($"[{name}] Waited for {waitElapsed.TotalMilliseconds}ms to acquire the lock [{debugInfo}]");
 
         _takenAt = DateTime.UtcNow;
+#endif
 
         if (lockTaken)
         {
@@ -106,17 +122,19 @@ public sealed class LockHelper(string? name = default)
         Monitor.Exit(_lock);
         _lockTaken = false;
 
+#if DIAGNOSTIC
         var elapsedTaken = DateTime.UtcNow - _takenAt;
 
         DebugPrint($"[{name}] Held lock for {elapsedTaken.TotalMilliseconds}ms [{debugInfo}]");
+#endif
 
         return true;
     }
 
+#if DIAGNOSTIC
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void DebugPrint(string message)
     {
-#if DEBUG
         // if (LegacyLogging.Logger is { } logger)
         // {
         //     logger.Debug(message);
@@ -125,8 +143,8 @@ public sealed class LockHelper(string? name = default)
         // {
         //     Console.WriteLine(message);
         // }
-#endif
     }
+#endif
 
     public ref struct Reference(string name, object lockObject, DateTime takenAt, ref bool lockTaken) : IDisposable
     {
@@ -141,9 +159,11 @@ public sealed class LockHelper(string? name = default)
 
             Monitor.Exit(lockObject);
 
+#if DIAGNOSTIC
             var elapsedTaken = DateTime.UtcNow - takenAt;
 
             DebugPrint($"[{name}] Held lock for {elapsedTaken.TotalMilliseconds}ms [from ref]");
+#endif
         }
     }
 }

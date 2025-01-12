@@ -98,10 +98,15 @@ public static partial class PacketSender
 
         SendNeedMap(cacheKeys.ToArray());
 
-        foreach (var cachedMap in loadedCachedMaps)
-        {
-            PacketHandler.HandleMap(cachedMap, skipSave: true);
-        }
+        Task.Run(
+            () =>
+            {
+                foreach (var cachedMap in loadedCachedMaps)
+                {
+                    PacketHandler.HandleMap(cachedMap, skipSave: true);
+                }
+            }
+        );
     }
 
     // public static void SendNeedMap(params Guid[] mapIds)
