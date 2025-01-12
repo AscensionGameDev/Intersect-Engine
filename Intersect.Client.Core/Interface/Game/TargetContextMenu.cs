@@ -37,6 +37,7 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
         _me = Globals.Me;
 
         _targetNameMenuItem = AddItem(string.Empty);
+        _targetNameMenuItem.MouseInputEnabled = false;
         AddDivider();
 
         _tradeMenuItem = AddItem(Strings.EntityContextMenu.Trade);
@@ -135,7 +136,6 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
     private void TryShowTargetButton(bool shouldShow)
     {
         _targetNameMenuItem.SetText(shouldShow ? _entity.Name : string.Empty);
-        _targetNameMenuItem.MouseInputEnabled = false;
 
         if (shouldShow && !Children.Contains(_targetNameMenuItem))
         {
