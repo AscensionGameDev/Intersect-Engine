@@ -259,20 +259,20 @@ internal sealed partial class PacketHandler
 
         var endUpdateMapRequestTime = DateTime.UtcNow;
 
-        if (MapInstance.TryGet(mapId, out var mapInstance))
+        if (MapInstance.TryGet(mapId, out var map))
         {
-            if (packet.Revision == mapInstance.Revision)
+            if (packet.Revision == map.Revision)
             {
                 return;
             }
 
-            mapInstance.Dispose(false, false);
+            map.Dispose(false, false);
         }
 
         var endMapTryGet = DateTime.UtcNow;
 
-        mapInstance = new MapInstance(mapId);
-        MapInstance.Lookup.Set(mapId, mapInstance);
+        map = new MapInstance(mapId);
+        MapInstance.Lookup.Set(mapId, map);
 
         var endMapLookupSet = DateTime.UtcNow;
 
@@ -285,57 +285,59 @@ internal sealed partial class PacketHandler
         DateTime endInitAutotiles;
         DateTime endPendingEvents;
 
-        if (!mapInstance.Lock.TryAcquireLock("HandleMap packet handler", out var lockRef))
+        if (!map.Lock.TryAcquireLock("HandleMap packet handler", out var lockRef))
         {
             throw new InvalidOperationException("Failed to acquire map instance lock from HandleMap packet handler");
         }
 
         using (lockRef)
         {
-            mapInstance.Load(packet.Data, markLoaded: false);
+            map.Load(packet.Data, markLoaded: false);
             endMapLoad = DateTime.UtcNow;
 
-            mapInstance.LoadTileData(packet.TileData);
+            map.LoadTileData(packet.TileData);
             endMapLoadTileData = DateTime.UtcNow;
 
-            mapInstance.AttributeData = packet.AttributeData;
+            map.AttributeData = packet.AttributeData;
             endSetAttributeData = DateTime.UtcNow;
 
-            mapInstance.CreateMapSounds();
+            map.CreateMapSounds();
             endCreateMapSounds = DateTime.UtcNow;
 
             if (mapId == Globals.Me.MapId)
             {
-                Audio.PlayMusic(mapInstance.Music, ClientConfiguration.Instance.MusicFadeTimer, ClientConfiguration.Instance.MusicFadeTimer, true);
+                Audio.PlayMusic(map.Music, ClientConfiguration.Instance.MusicFadeTimer, ClientConfiguration.Instance.MusicFadeTimer, true);
             }
             endPlayMusic = DateTime.UtcNow;
 
-            mapInstance.GridX = packet.GridX;
-            mapInstance.GridY = packet.GridY;
-            mapInstance.CameraHolds = packet.CameraHolds;
+            map.GridX = packet.GridX;
+            map.GridY = packet.GridY;
+            map.CameraHolds = packet.CameraHolds;
             endGridXYCameraHolds = DateTime.UtcNow;
 
-            mapInstance.Autotiles.InitAutotiles(mapInstance.GenerateAutotileGrid());
+            map.Autotiles.InitAutotiles(map.GenerateAutotileGrid());
 
             endInitAutotiles = DateTime.UtcNow;
 
+            map.MarkLoaded();
+
             if (Globals.PendingEvents.TryGetValue(mapId, out var pendingEventsForMap))
             {
-                foreach (var (eventId, stalePendingEvent) in pendingEventsForMap)
+                Log.Debug($"Received map {map.Name} ({mapId}) has {pendingEventsForMap.Count} pending events");
+
+                foreach (var (eventId, pendingEvent) in pendingEventsForMap)
                 {
-                    mapInstance.AddEvent(eventId, stalePendingEvent);
+                    map.AddEvent(eventId, pendingEvent);
                 }
 
                 pendingEventsForMap.Clear();
             }
             endPendingEvents = DateTime.UtcNow;
-
-            mapInstance.MarkLoaded();
         }
 
         var endMapLock = DateTime.UtcNow;
 
-        MapInstance.DoMapLoaded(mapInstance);
+        MapInstance.DoMapLoaded(map);
 
         var endDoMapLoadedInvocation = DateTime.UtcNow;
 
@@ -356,7 +358,7 @@ internal sealed partial class PacketHandler
         var elapsedPendingEvents = endPendingEvents - endInitAutotiles;
 
         Log.Debug($"""
-                   [HandleMap] Received map {packet.MapId} ({mapInstance.Name})
+                   [HandleMap] Received map {packet.MapId} ({map.Name})
                        - Full method took {elapsedHandleMap.TotalMilliseconds}ms
                        - Map caching took {elapsedMapCache.TotalMilliseconds}ms
                        - Update Map Request Time took {elapsedUpdateMapRequestTime.TotalMilliseconds}ms
@@ -471,30 +473,21 @@ internal sealed partial class PacketHandler
     //EventEntityPacket
     public void HandlePacket(IPacketSender packetSender, EventEntityPacket packet)
     {
-        var map = MapInstance.Get(packet.MapId);
-        if (map != null)
+        if (MapInstance.TryGet(packet.MapId, out var map))
         {
-            map?.AddEvent(packet.EntityId, packet);
+            Log.Debug($"Received event entity '{packet.Name}' ({packet.EntityId}) for map {map.Name} ({map.Id})");
+            map.AddEvent(packet.EntityId, packet);
         }
         else
         {
-            var dict = Globals.PendingEvents.ContainsKey(packet.MapId)
-                ? Globals.PendingEvents[packet.MapId]
-                : new Dictionary<Guid, EventEntityPacket>();
-
-            if (dict.ContainsKey(packet.EntityId))
+            Log.Debug($"Received event entity '{packet.Name}' ({packet.EntityId}) for not-yet-loaded map {packet.MapId}");
+            if (!Globals.PendingEvents.TryGetValue(packet.MapId, out var pendingEventsForMap))
             {
-                dict[packet.EntityId] = packet;
-            }
-            else
-            {
-                dict.Add(packet.EntityId, packet);
+                pendingEventsForMap = [];
+                Globals.PendingEvents[packet.MapId] = pendingEventsForMap;
             }
 
-            if (!Globals.PendingEvents.ContainsKey(packet.MapId))
-            {
-                Globals.PendingEvents.Add(packet.MapId, dict);
-            }
+            pendingEventsForMap[packet.EntityId] = packet;
         }
     }
 
