@@ -1,4 +1,6 @@
-﻿using Intersect.Logging;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+using Intersect.Logging;
 
 namespace Intersect.GameObjects.Maps;
 
@@ -96,7 +98,7 @@ public partial class MapAutotiles
 
     private readonly MapBase mMyMap;
 
-    public Dictionary<string, QuarterTileCls[,]> Layers { get; set; }
+    private Dictionary<string, QuarterTileCls[,]> Layers { get; set; }
 
     private readonly int _mapWidth = Options.MapWidth;
     private readonly int _mapHeight = Options.MapHeight;
@@ -112,6 +114,52 @@ public partial class MapAutotiles
             InitVxAutotileTemplate();
             InitXpAutotileTemplate();
         }
+    }
+
+    public bool TryGetAutoTilesForLayer(string layerName, [NotNullWhen(true)] out QuarterTileCls[,]? quarterTiles)
+    {
+        if (Layers != default)
+        {
+            return Layers.TryGetValue(layerName, out quarterTiles);
+        }
+
+        LegacyLogging.Logger?.Error($"[{mMyMap?.Id.ToString() ?? "No map?"}][AutoTiles] Layers not initialized!");
+        quarterTiles = null;
+        return quarterTiles != null;
+    }
+
+    public bool TryGetAutoTileForLayer(string layerName, int x, int y, [NotNullWhen(true)] out QuarterTileCls? quarterTile)
+    {
+        if (TryGetAutoTilesForLayer(layerName, out var quarterTiles))
+        {
+            return TryGetAutoTile(
+                quarterTiles,
+                x,
+                y,
+                out quarterTile
+            );
+        }
+
+        quarterTile = null;
+        return false;
+
+    }
+
+    private bool TryGetAutoTile(
+        QuarterTileCls[,] quarterTiles,
+        int x,
+        int y,
+        [NotNullWhen(true)] out QuarterTileCls? quarterTile
+    )
+    {
+        if (x < 0 || _mapWidth <= x || y < 0 || _mapHeight <= y)
+        {
+            quarterTile = null;
+            return false;
+        }
+
+        quarterTile = quarterTiles[x, y];
+        return quarterTile != null;
     }
 
     private void InitVxAutotileTemplate()
@@ -375,9 +423,14 @@ public partial class MapAutotiles
         AutoSxp[4].Y = (Int16) (_tileHeight * 3 + _tileHeight / 2);
     }
 
-    private void CreateFields()
+    private Dictionary<string, QuarterTileCls[,]> EnsureLayers()
     {
-        Layers = new Dictionary<string, QuarterTileCls[,]>();
+        if (Layers is {} layers)
+        {
+            return layers;
+        }
+
+        layers = [];
         foreach (var layerName in _layersAll)
         {
             var layerQuarterTiles = new QuarterTileCls[_mapWidth, _mapHeight];
@@ -388,8 +441,11 @@ public partial class MapAutotiles
                     layerQuarterTiles[x, y] = new QuarterTileCls { QuarterTile = new PointStruct[5] };
                 }
             }
-            Layers.Add(layerName, layerQuarterTiles);
+            layers.Add(layerName, layerQuarterTiles);
         }
+
+        Layers = layers;
+        return layers;
     }
 
     public void InitAutotiles(MapBase[,] surroundingMaps)
@@ -408,10 +464,7 @@ public partial class MapAutotiles
 
         using (lockRef)
         {
-            if (Layers == null)
-            {
-                CreateFields();
-            }
+            EnsureLayers();
             endCreateFields = DateTime.UtcNow;
 
             foreach (var layerName in _layersAll)
@@ -421,18 +474,33 @@ public partial class MapAutotiles
                     continue;
                 }
 
+                if (!TryGetAutoTilesForLayer(layerName, out var layerAutoTiles))
+                {
+                    continue;
+                }
+
                 for (var x = 0; x < _mapWidth; x++)
                 {
                     for (var y = 0; y < _mapHeight; y++)
                     {
+                        if (!TryGetAutoTile(
+                                layerAutoTiles,
+                                x,
+                                y,
+                                out var autoTile
+                            ))
+                        {
+
+                        }
+
                         DateTime startCalculateAutotiles = DateTime.UtcNow;
                         // calculate the subtile positions and place them
-                        CalculateAutotile(x, y, layerName, surroundingMaps, layerTiles);
+                        CalculateAutotile(x, y, layerName, surroundingMaps, layerTiles, autoTile);
                         elapsedCalculateAutotile += DateTime.UtcNow - startCalculateAutotiles;
 
                         DateTime startCacheRenderState = DateTime.UtcNow;
                         // cache the rendering state of the tiles and set them
-                        CacheRenderState(x, y, layerName);
+                        CacheRenderState(x, y, layerName, autoTile);
                         elapsedCacheRenderState += DateTime.UtcNow - startCacheRenderState;
                     }
                 }
@@ -468,6 +536,11 @@ public partial class MapAutotiles
                     continue;
                 }
 
+                if (!TryGetAutoTilesForLayer(layer, out var layerAutoTiles))
+                {
+                    continue;
+                }
+
                 for (var x1 = x - 1; x1 < x + 2; x1++)
                 {
                     if (x1 < 0 || x1 >= _mapWidth)
@@ -477,19 +550,24 @@ public partial class MapAutotiles
 
                     for (var y1 = y - 1; y1 < y + 2; y1++)
                     {
-                        if (y1 < 0 || y1 >= _mapHeight)
+                        if (!TryGetAutoTile(
+                                layerAutoTiles,
+                                x,
+                                y,
+                                out var autoTile
+                            ))
                         {
                             continue;
                         }
 
-                        var oldautotile = Layers[layer][x1, y1].Copy();
+                        var oldAutoTile = autoTile.Copy();
                         // calculate the subtile positions and place them
-                        CalculateAutotile(x1, y1, layer, surroundingMaps, layerTiles);
+                        CalculateAutotile(x1, y1, layer, surroundingMaps, layerTiles, autoTile);
 
                         // cache the rendering state of the tiles and set them
-                        CacheRenderState(x1, y1, layer);
+                        CacheRenderState(x1, y1, layer, autoTile);
 
-                        if (!Layers[layer][x1, y1].Equals(oldautotile))
+                        if (!autoTile.Equals(oldAutoTile))
                         {
                             changed = true;
                         }
@@ -515,6 +593,11 @@ public partial class MapAutotiles
                 return;
             }
 
+            if (!TryGetAutoTilesForLayer(layerName, out var layerAutoTiles))
+            {
+                return;
+            }
+
             for (var x1 = x - 1; x1 < x + 2; x1++)
             {
                 if (x1 < 0 || x1 >= _mapWidth)
@@ -529,11 +612,21 @@ public partial class MapAutotiles
                         continue;
                     }
 
+                    if (!TryGetAutoTile(
+                            layerAutoTiles,
+                            x,
+                            y,
+                            out var autoTile
+                        ))
+                    {
+                        continue;
+                    }
+
                     // calculate the subtile positions and place them
-                    CalculateAutotile(x1, y1, layerName, surroundingMaps, layerTiles);
+                    CalculateAutotile(x1, y1, layerName, surroundingMaps, layerTiles, autoTile);
 
                     // cache the rendering state of the tiles and set them
-                    CacheRenderState(x1, y1, layerName);
+                    CacheRenderState(x1, y1, layerName, autoTile);
                 }
             }
         }
@@ -546,20 +639,39 @@ public partial class MapAutotiles
             return;
         }
 
+        if (!TryGetAutoTilesForLayer(layerName, out var layerAutoTiles))
+        {
+            return;
+        }
+
         foreach (var map in curMap.GenerateAutotileGrid())
         {
-            if (map != null)
+            if (map == null)
             {
-                for (var x1 = 0; x1 < _mapWidth; x1++)
+                continue;
+            }
+
+            for (var x = 0; x < _mapWidth; x++)
+            {
+                for (var y = 0; y < _mapHeight; y++)
                 {
-                    for (var y1 = 0; y1 < _mapHeight; y1++)
+                    if (map.Layers[layerName][x, y].Autotile != AUTOTILE_CLIFF)
                     {
-                        if (map.Layers[layerName][x1, y1].Autotile == AUTOTILE_CLIFF)
-                        {
-                            map.Autotiles.CalculateAutotile(x1, y1, layerName, map.GenerateAutotileGrid(), layerTiles);
-                            map.Autotiles.CacheRenderState(x1, y1, layerName);
-                        }
+                        continue;
                     }
+
+                    if (!TryGetAutoTile(
+                            layerAutoTiles,
+                            x,
+                            y,
+                            out var autoTile
+                        ))
+                    {
+                        continue;
+                    }
+
+                    map.Autotiles.CalculateAutotile(x, y, layerName, map.GenerateAutotileGrid(), layerTiles, autoTile);
+                    map.Autotiles.CacheRenderState(x, y, layerName, autoTile);
                 }
             }
         }
@@ -572,7 +684,17 @@ public partial class MapAutotiles
             return false;
         }
 
-        var oldautotile = Layers[layerName][x, y].Copy();
+        if (!TryGetAutoTileForLayer(
+                layerName,
+                x,
+                y,
+                out var autoTile
+            ))
+        {
+            return false;
+        }
+
+        var oldAutoTile = autoTile.Copy();
 
         if (!mMyMap.Lock.TryAcquireLock($"{nameof(MapAutotiles)}.{nameof(UpdateAutoTile)}(int, int, string, {nameof(MapBase)}[,])", out var lockRef))
         {
@@ -582,16 +704,16 @@ public partial class MapAutotiles
         using (lockRef)
         {
             // calculate the subtile positions and place them
-            CalculateAutotile(x, y, layerName, surroundingMaps, layerTiles);
+            CalculateAutotile(x, y, layerName, surroundingMaps, layerTiles, autoTile);
 
             // cache the rendering state of the tiles and set them
-            CacheRenderState(x, y, layerName);
+            CacheRenderState(x, y, layerName, autoTile);
         }
 
-        return !Layers[layerName][x, y].Equals(oldautotile);
+        return !autoTile.Equals(oldAutoTile);
     }
 
-    public void CacheRenderState(int x, int y, string layerName)
+    public void CacheRenderState(int x, int y, string layerName, QuarterTileCls? autoTile = null)
     {
         // exit out early
         if (x < 0 || x > _mapWidth || y < 0 || y > _mapHeight)
@@ -618,37 +740,41 @@ public partial class MapAutotiles
             return;
         }
 
-        if (!Layers.TryGetValue(layerName, out var layerAutotiles))
+        if (autoTile == null && !TryGetAutoTileForLayer(
+                layerName,
+                x,
+                y,
+                out autoTile
+            ))
         {
             return;
         }
 
         var tile = layerTiles[x, y];
-        var autotile = layerAutotiles[x, y];
 
         // check if it needs to be rendered as an autotile
         if (tile.Autotile is AUTOTILE_NONE or AUTOTILE_FAKE)
         {
             // default to... default
-            autotile.RenderState = RENDER_STATE_NORMAL;
+            autoTile.RenderState = RENDER_STATE_NORMAL;
 
             //Autotile[layerName][x, y].QuarterTile = null;
         }
         else
         {
-            autotile.RenderState = RENDER_STATE_AUTOTILE;
+            autoTile.RenderState = RENDER_STATE_AUTOTILE;
 
             // cache tileset positioning
             for (var quarterNum = 1; quarterNum < 5; quarterNum++)
             {
-                var quarterTile = autotile.QuarterTile[quarterNum];
-                autotile.QuarterTile[quarterNum].X = (short) (tile.X * _tileWidth + quarterTile.X);
-                autotile.QuarterTile[quarterNum].Y = (short) (tile.Y * _tileHeight + quarterTile.Y);
+                var quarterTile = autoTile.QuarterTile[quarterNum];
+                autoTile.QuarterTile[quarterNum].X = (short) (tile.X * _tileWidth + quarterTile.X);
+                autoTile.QuarterTile[quarterNum].Y = (short) (tile.Y * _tileHeight + quarterTile.Y);
             }
         }
     }
 
-    public void CalculateAutotile(int x, int y, string layerName, MapBase[,] surroundingMaps, Tile[,] layerTiles)
+    public void CalculateAutotile(int x, int y, string layerName, MapBase[,] surroundingMaps, Tile[,] layerTiles, QuarterTileCls? quarterTile)
     {
         // Right, so we//ve split the tile block in to an easy to remember
         // collection of letters. We now need to do the calculations to find

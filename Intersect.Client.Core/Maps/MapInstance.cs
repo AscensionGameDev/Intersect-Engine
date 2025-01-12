@@ -1064,14 +1064,9 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             layerTile = layerTiles[x, y];
         }
 
-        if (layerAutoTile == null)
+        if (layerAutoTile == null && !Autotiles.TryGetAutoTileForLayer(layerName, x, y, out layerAutoTile))
         {
-            if (!Autotiles.Layers.TryGetValue(layerName, out var layerAutoTiles))
-            {
-                return;
-            }
-
-            layerAutoTile = layerAutoTiles[x, y];
+            return;
         }
 
         var quarterTile = layerAutoTile.QuarterTile[quarterNum];
@@ -1143,12 +1138,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             throw new NullReferenceException($"[{Id}] {nameof(Autotiles)} is null {nameof(IsLoaded)}={IsLoaded}");
         }
 
-        if (Autotiles.Layers == default)
-        {
-            throw new NullReferenceException($"[{Id}] {nameof(Autotiles)}.{nameof(Autotiles.Layers)} is null {nameof(IsLoaded)}={IsLoaded}");
-        }
-
-        if (!Autotiles.Layers.TryGetValue(layerName, out var layerAutoTiles))
+        if (!Autotiles.TryGetAutoTilesForLayer(layerName, out var layerAutoTiles))
         {
             return null;
         }
