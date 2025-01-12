@@ -11,63 +11,21 @@ using Intersect.Server.Networking;
 using Intersect.Server.Web.Http;
 using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.Types;
+using Intersect.Server.Web.RestApi.Types.PlayerResponseBody;
 using Intersect.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
-    public partial struct AdminActionParameters
-    {
-        public string Moderator { get; set; }
-
-        public int Duration { get; set; }
-
-        public bool Ip { get; set; }
-
-        public string Reason { get; set; }
-
-        public byte X { get; set; }
-
-        public byte Y { get; set; }
-
-        public Guid MapId { get; set; }
-    }
-
     [Route("api/v1/players")]
     [Authorize]
     public sealed partial class PlayerController : IntersectController
     {
-
-        [HttpPost]
-        [Obsolete("The appropriate verb for retrieving a list of records is GET not POST")]
-        public IActionResult ListPost([FromBody] PagingInfo pageInfo)
-        {
-            pageInfo.Page = Math.Max(pageInfo.Page, 0);
-            pageInfo.PageSize = Math.Max(Math.Min(pageInfo.PageSize, 100), 5);
-
-            var values = Player.List(
-                null,
-                null,
-                SortDirection.Ascending,
-                pageInfo.Page * pageInfo.PageSize,
-                pageInfo.PageSize,
-                out var entryTotal
-            );
-
-            return Ok(
-                new DataPage<Player>
-                {
-                    Total = entryTotal,
-                    Page = pageInfo.Page,
-                    PageSize = pageInfo.PageSize,
-                    Count = values.Count,
-                    Values = values,
-                }
-            );
-        }
+        #region Lookup
 
         [HttpGet]
+        [ProducesResponseType(typeof(DataPage<Player>), (int)HttpStatusCode.OK, ContentTypes.Json)]
         public IActionResult List(
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
@@ -103,7 +61,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("rank")]
-        public DataPage<Player> Rank(
+        [ProducesResponseType(typeof(DataPage<Player>), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult Rank(
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
             [FromQuery] int limit = PagingInfo.MaxPageSize,
@@ -120,7 +79,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 values = values.Take(limit).ToList();
             }
 
-            return new DataPage<Player>
+            return Ok(new DataPage<Player>
             {
                 Total = Player.Count(),
                 Page = page,
@@ -135,30 +94,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     ],
                     Direction = sortDirection,
                 }],
-            };
-        }
-
-        [HttpPost("online")]
-        [Obsolete("The appropriate verb for retrieving a list of records is GET not POST")]
-        public object OnlinePost([FromBody] PagingInfo pageInfo)
-        {
-            pageInfo.Page = Math.Max(pageInfo.Page, 0);
-            pageInfo.PageSize = Math.Max(Math.Min(pageInfo.PageSize, 100), 5);
-
-            var entries = Globals.OnlineList?.Skip(pageInfo.Page * pageInfo.PageSize).Take(pageInfo.PageSize).ToList();
-
-            return new DataPage<Player>
-            {
-                Total = Globals.OnlineList?.Count ?? 0,
-                Page = pageInfo.Page,
-                PageSize = pageInfo.PageSize,
-                Count = entries?.Count ?? 0,
-                Values = entries,
-            };
+            });
         }
 
         [HttpGet("online")]
-        public DataPage<Player> Online(
+        [ProducesResponseType(typeof(DataPage<Player>), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult Online(
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
             [FromQuery] int limit = PagingInfo.MaxPageSize,
@@ -171,7 +112,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             pageSize = Math.Max(Math.Min(pageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
-            Sort.From(sortBy, sortDirection);
+            _ = Sort.From(sortBy, sortDirection);
             IEnumerable<Player> enumerable = Globals.OnlineList ?? new List<Player>();
 
             if (!string.IsNullOrWhiteSpace(search))
@@ -181,19 +122,18 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             var total = enumerable.Count();
 
-            switch (sortBy?.ToLower() ?? "")
+            enumerable = (sortBy?.ToLower() ?? "") switch
             {
-                case "level":
-                    enumerable = sortDirection == SortDirection.Ascending ? enumerable.OrderBy(u => u.Level).ThenBy(u => u.Exp) : enumerable.OrderByDescending(u => u.Level).ThenByDescending(u => u.Exp);
-                    break;
-                case "onlinetime":
-                    enumerable = sortDirection == SortDirection.Ascending ? enumerable.OrderBy(u => u.OnlineTime) : enumerable.OrderByDescending(u => u.OnlineTime);
-                    break;
-                case "name":
-                default:
-                    enumerable = sortDirection == SortDirection.Ascending ? enumerable.OrderBy(u => u.Name.ToUpper()) : enumerable.OrderByDescending(u => u.Name.ToUpper());
-                    break;
-            }
+                "level" => sortDirection == SortDirection.Ascending
+                    ? enumerable.OrderBy(u => u.Level).ThenBy(u => u.Exp)
+                    : enumerable.OrderByDescending(u => u.Level).ThenByDescending(u => u.Exp),
+                "onlinetime" => sortDirection == SortDirection.Ascending
+                    ? enumerable.OrderBy(u => u.OnlineTime)
+                    : enumerable.OrderByDescending(u => u.OnlineTime),
+                _ => sortDirection == SortDirection.Ascending
+                    ? enumerable.OrderBy(u => u.Name.ToUpper())
+                    : enumerable.OrderByDescending(u => u.Name.ToUpper()),
+            };
 
             var values = enumerable.Skip(page * pageSize).ToList() ?? new List<Player>();
 
@@ -202,25 +142,27 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 values = values.Take(limit).ToList();
             }
 
-            return new DataPage<Player>(
+            return Ok(new DataPage<Player>(
                 Total: total,
                 Page: page,
                 PageSize: pageSize,
                 Count: values.Count,
                 Values: values
-            );
+            ));
         }
 
         [HttpGet("online/count")]
-        public object OnlineCount()
-        {
-            return new
-            {
-                onlineCount = Globals.OnlineList?.Count ?? 0,
-            };
-        }
+        [ProducesResponseType(typeof(OnlineCountResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult OnlineCount() => Ok(new OnlineCountResponseBody(Globals.OnlineList?.Count ?? 0));
+
+        #endregion
+
+        #region Player Basic Operations
 
         [HttpGet("{lookupKey:LookupKey}")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(Player), (int)HttpStatusCode.OK, ContentTypes.Json)]
         public IActionResult LookupPlayer(LookupKey lookupKey)
         {
             if (lookupKey.IsInvalid)
@@ -238,7 +180,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpDelete("{lookupKey:LookupKey}")]
-        public object DeletePlayer(LookupKey lookupKey)
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
+        [ProducesResponseType(typeof(Player), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult DeletePlayer(LookupKey lookupKey)
         {
             if (lookupKey.IsInvalid)
             {
@@ -246,39 +192,36 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             var (client, player) = Player.Fetch(lookupKey);
-            if (player != null)
+            if (player == null)
             {
-                if (Player.FindOnline(player.Id) != null)
-                {
-                    return InternalServerError("Failed to delete player because they are online!");
-                }
-
-                var user = Database.PlayerData.User.FindById(player.UserId);
-                if (user == null)
-                {
-                    return BadRequest($@"Failed to load user for {player.Name}!");
-                }
-
-                var matchingPlayer = user.Players.FirstOrDefault(p => p.Id == player.Id);
-                if (matchingPlayer != default)
-                {
-                    if (!user.TryDeleteCharacter(matchingPlayer))
-                    {
-                        if (client.User == user)
-                        {
-                            client.LogAndDisconnect(player.Id, nameof(Database.PlayerData.User.TryDeleteCharacter));
-                        }
-                    }
-                }
-
-                return player;
+                return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
             }
 
-            return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
+            if (Player.FindOnline(player.Id) != null)
+            {
+                return InternalServerError("Failed to delete player because they are online!");
+            }
+
+            var user = Database.PlayerData.User.FindById(player.UserId);
+            if (user == null)
+            {
+                return BadRequest($@"Failed to load user for {player.Name}!");
+            }
+
+            var matchingPlayer = user.Players.FirstOrDefault(p => p.Id == player.Id);
+            if (matchingPlayer != default && !user.TryDeleteCharacter(matchingPlayer) && client.User == user)
+            {
+                _ = client.LogAndDisconnect(player.Id, nameof(Database.PlayerData.User.TryDeleteCharacter));
+            }
+
+            return Ok(player);
         }
 
         [HttpPost("{lookupKey:LookupKey}/name")]
-        public object ChangeName(LookupKey lookupKey, [FromBody] NameChange change)
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(Player), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult ChangeName(LookupKey lookupKey, [FromBody] NameChange change)
         {
             if (lookupKey.IsInvalid)
             {
@@ -296,25 +239,398 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             var (_, player) = Player.Fetch(lookupKey);
-            if (player != null)
+            if (player == null)
             {
-                player.Name = change.Name;
-                if (player.Online)
-                {
-                    PacketSender.SendEntityDataToProximity(player);
-                }
-
-                using (var context = DbInterface.CreatePlayerContext(false))
-                {
-                    context.Update(player);
-                    context.SaveChanges();
-                }
-
-                return player;
+                return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
             }
 
-            return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
+            player.Name = change.Name;
+            if (player.Online)
+            {
+                PacketSender.SendEntityDataToProximity(player);
+            }
+
+            using (var context = DbInterface.CreatePlayerContext(false))
+            {
+                _ = context.Update(player);
+                _ = context.SaveChanges();
+            }
+
+            return Ok(player);
         }
+
+        #endregion
+
+        #region Player Properties Change
+
+        [HttpPost("{lookupKey:LookupKey}/class")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(Player), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult PlayerClassSet(LookupKey lookupKey, [FromBody] ClassChange change)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+            }
+
+            if (change.ClassId == Guid.Empty || ClassBase.Get(change.ClassId) == null)
+            {
+                return BadRequest($@"Invalid class id ${change.ClassId}.");
+            }
+
+            var (_, player) = Player.Fetch(lookupKey);
+            if (player != null)
+            {
+                return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
+            }
+
+            player.ClassId = change.ClassId;
+            player.RecalculateStatsAndPoints();
+            player.UnequipInvalidItems();
+            if (player.Online)
+            {
+                PacketSender.SendEntityDataToProximity(player);
+            }
+
+            using (var context = DbInterface.CreatePlayerContext(false))
+            {
+                _ = context.Update(player);
+                _ = context.SaveChanges();
+            }
+
+            return Ok(player);
+        }
+
+        [HttpPost("{lookupKey:LookupKey}/level")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(Player), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult PlayerLevelSet(LookupKey lookupKey, [FromBody] LevelChange change)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+            }
+
+            var (_, player) = Player.Fetch(lookupKey);
+            if (player != null)
+            {
+                return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
+            }
+
+            player.SetLevel(change.Level, true);
+            if (player.Online)
+            {
+                PacketSender.SendEntityDataToProximity(player);
+            }
+
+            using (var context = DbInterface.CreatePlayerContext(false))
+            {
+                _ = context.Update(player);
+                _ = context.SaveChanges();
+            }
+
+            return Ok(player);
+        }
+
+        #endregion
+
+        #region Player Items Management
+
+        [HttpGet("{lookupKey:LookupKey}/items")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(ItemListResponse), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult ItemsList(LookupKey lookupKey)
+        {
+            var (_, player) = Player.Fetch(lookupKey);
+            if (player == null)
+            {
+                return NotFound(
+                    lookupKey.HasId
+                        ? $@"No player with id '{lookupKey.Id}'."
+                        : $@"No player with name '{lookupKey.Name}'."
+                );
+            }
+
+            return Ok(new ItemListResponse(player.Bank.Where(slot => !slot.IsEmpty), player.Items.Where(slot => !slot.IsEmpty)));
+        }
+
+        [HttpGet("{lookupKey:LookupKey}/items/bank")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(IEnumerable<BankSlot>), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult ItemsListBank(LookupKey lookupKey)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+            }
+
+            var (_, player) = Player.Fetch(lookupKey);
+            if (player == null)
+            {
+                return NotFound(
+                    lookupKey.HasId
+                        ? $@"No player with id '{lookupKey.Id}'."
+                        : $@"No player with name '{lookupKey.Name}'."
+                );
+            }
+
+            return Ok(player.Bank.Where(slot => !slot.IsEmpty));
+        }
+
+        [HttpGet("bag/{bagId:guid}")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(Bag), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult GetPlayerBag(Guid bagId)
+        {
+            if (bagId == Guid.Empty)
+            {
+                return BadRequest(@"Invalid bag id.");
+            }
+
+            if (!Bag.TryGetBag(bagId, out var bag))
+            {
+                return NotFound(@"Bag does not exist.");
+            }
+
+            return Ok(bag);
+        }
+
+        [HttpGet("{lookupKey:LookupKey}/items/inventory")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(IEnumerable<InventorySlot>), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult ItemsListInventory(LookupKey lookupKey)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+            }
+
+            var (_, player) = Player.Fetch(lookupKey);
+            if (player == null)
+            {
+                return NotFound(
+                    lookupKey.HasId
+                        ? $@"No player with id '{lookupKey.Id}'."
+                        : $@"No player with name '{lookupKey.Name}'."
+                );
+            }
+
+            return Ok(player.Items.Where(slot => !slot.IsEmpty));
+        }
+
+        [HttpPost("{lookupKey:LookupKey}/items/give")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
+        [ProducesResponseType(typeof(ItemsGiveResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult ItemsGive(LookupKey lookupKey, [FromBody] ItemInfo itemInfo)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+            }
+
+            if (ItemBase.Get(itemInfo.ItemId) == null)
+            {
+                return BadRequest(@"Invalid item id.");
+            }
+
+            if (itemInfo.Quantity < 1)
+            {
+                return BadRequest("Cannot give 0, or a negative amount of an item.");
+            }
+
+            var (_, player) = Player.Fetch(lookupKey);
+            if (player == null)
+            {
+                return NotFound(
+                    lookupKey.HasId
+                        ? $@"No player with id '{lookupKey.Id}'."
+                        : $@"No player with name '{lookupKey.Name}'."
+                );
+            }
+
+            if (!player.TryGiveItem(itemInfo.ItemId, itemInfo.Quantity, ItemHandling.Normal, itemInfo.BankOverflow, -1, true))
+            {
+                return InternalServerError($@"Failed to give player {itemInfo.Quantity} of '{itemInfo.ItemId}'.");
+            }
+
+            using (var context = DbInterface.CreatePlayerContext(false))
+            {
+                _ = context.Update(player);
+                _ = context.SaveChanges();
+            }
+
+            var quantityBank = player.CountItems(itemInfo.ItemId, false, true);
+            var quantityInventory = player.CountItems(itemInfo.ItemId, true, false);
+
+            return Ok(
+                new ItemsGiveResponseBody(
+                    itemInfo.ItemId,
+                    new ItemsGiveQuantityData(quantityBank + quantityInventory, quantityBank, quantityInventory)
+                )
+            );
+        }
+
+        [HttpPost("{lookupKey:LookupKey}/items/take")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
+        [ProducesResponseType(typeof(ItemsTakeResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult ItemsTake(LookupKey lookupKey, [FromBody] ItemInfo itemInfo)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+            }
+
+            if (itemInfo.Quantity < 1)
+            {
+                return BadRequest("Cannot take 0, or a negative amount of an item.");
+            }
+
+            var (_, player) = Player.Fetch(lookupKey);
+            if (player == null)
+            {
+                return NotFound(
+                    lookupKey.HasId
+                        ? $@"No player with id '{lookupKey.Id}'."
+                        : $@"No player with name '{lookupKey.Name}'."
+                );
+            }
+
+            if (!player.TryTakeItem(itemInfo.ItemId, itemInfo.Quantity))
+            {
+                return InternalServerError($@"Failed to take {itemInfo.Quantity} of '{itemInfo.ItemId}' from player.");
+            }
+
+            using (var context = DbInterface.CreatePlayerContext(false))
+            {
+                _ = context.Update(player);
+                _ = context.SaveChanges();
+            }
+
+            return Ok(new ItemsTakeResponseBody(itemInfo.ItemId, itemInfo.Quantity));
+        }
+
+        #endregion
+
+        #region Player Spells Management
+
+        [HttpGet("{lookupKey:LookupKey}/spells")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(IEnumerable<SpellSlot>), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult SpellsList(LookupKey lookupKey)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+            }
+
+            var (_, player) = Player.Fetch(lookupKey);
+            if (player == null)
+            {
+                return NotFound(
+                    lookupKey.HasId
+                        ? $@"No player with id '{lookupKey.Id}'."
+                        : $@"No player with name '{lookupKey.Name}'."
+                );
+            }
+
+            return Ok(player.Spells.Where(s => !s.IsEmpty));
+        }
+
+        [HttpPost("{lookupKey:LookupKey}/spells/teach")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
+        [ProducesResponseType(typeof(SpellInfo), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult SpellsTeach(LookupKey lookupKey, [FromBody] SpellInfo spell)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+            }
+
+            if (SpellBase.Get(spell.SpellId) == null)
+            {
+                return BadRequest(@"Invalid spell id.");
+            }
+
+            var (_, player) = Player.Fetch(lookupKey);
+            if (player == null)
+            {
+                return NotFound(
+                    lookupKey.HasId
+                        ? $@"No player with id '{lookupKey.Id}'."
+                        : $@"No player with name '{lookupKey.Name}'."
+                );
+            }
+
+            if (!player.TryTeachSpell(new Spell(spell.SpellId), true))
+            {
+                return InternalServerError($@"Failed to teach player spell with id '{spell.SpellId}'. They might already know it!");
+            }
+
+            using (var context = DbInterface.CreatePlayerContext(false))
+            {
+                _ = context.Update(player);
+                _ = context.SaveChanges();
+            }
+
+            return Ok(spell);
+        }
+
+        [HttpPost("{lookupKey:LookupKey}/spells/forget")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
+        [ProducesResponseType(typeof(SpellInfo), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult SpellsTake(LookupKey lookupKey, [FromBody] SpellInfo spell)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+            }
+
+            if (SpellBase.Get(spell.SpellId) == null)
+            {
+                return BadRequest(@"Invalid spell id.");
+            }
+
+            var (_, player) = Player.Fetch(lookupKey);
+            if (player == null)
+            {
+                return NotFound(
+                    lookupKey.HasId
+                        ? $@"No player with id '{lookupKey.Id}'."
+                        : $@"No player with name '{lookupKey.Name}'."
+                );
+            }
+
+            if (!player.TryForgetSpell(new Spell(spell.SpellId), true))
+            {
+                return InternalServerError($@"Failed to remove player spell with id '{spell.SpellId}'.");
+            }
+
+            using (var context = DbInterface.CreatePlayerContext(false))
+            {
+                _ = context.Update(player);
+                _ = context.SaveChanges();
+            }
+
+            return Ok(spell);
+        }
+
+        #endregion
+
+        #region Player Variables
 
         [HttpGet("{lookupKey:LookupKey}/variables")]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
@@ -450,357 +766,24 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 player.StartCommonEventsWithTrigger(CommonEventTrigger.PlayerVariableChange, string.Empty, variableId.ToString());
                 using var context = DbInterface.CreatePlayerContext(false);
-                context.Update(player);
-                context.SaveChanges();
+                _ = context.Update(player);
+                _ = context.SaveChanges();
             }
 
             return Ok(variable);
         }
 
-        [HttpPost("{lookupKey:LookupKey}/class")]
-        public object PlayerClassSet(LookupKey lookupKey, [FromBody] ClassChange change)
-        {
-            if (lookupKey.IsInvalid)
-            {
-                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
-            }
+        #endregion
 
-            if (change.ClassId == Guid.Empty || ClassBase.Get(change.ClassId) == null)
-            {
-                return BadRequest($@"Invalid class id ${change.ClassId}.");
-            }
-
-            var (_, player) = Player.Fetch(lookupKey);
-            if (player != null)
-            {
-                player.ClassId = change.ClassId;
-                player.RecalculateStatsAndPoints();
-                player.UnequipInvalidItems();
-                if (player.Online)
-                {
-                    PacketSender.SendEntityDataToProximity(player);
-                }
-
-                using (var context = DbInterface.CreatePlayerContext(false))
-                {
-                    context.Update(player);
-                    context.SaveChanges();
-                }
-
-                return player;
-            }
-
-            return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
-        }
-
-        [HttpPost("{lookupKey:LookupKey}/level")]
-        public object PlayerLevelSet(LookupKey lookupKey, [FromBody] LevelChange change)
-        {
-            if (lookupKey.IsInvalid)
-            {
-                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
-            }
-
-            var (_, player) = Player.Fetch(lookupKey);
-            if (player != null)
-            {
-                player.SetLevel(change.Level, true);
-                if (player.Online)
-                {
-                    PacketSender.SendEntityDataToProximity(player);
-                }
-
-                using (var context = DbInterface.CreatePlayerContext(false))
-                {
-                    context.Update(player);
-                    context.SaveChanges();
-                }
-
-                return player;
-            }
-
-            return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
-        }
-
-        public struct ItemListResponse
-        {
-            public IEnumerable<BankSlot> Bank { get; init; }
-
-            public IEnumerable<InventorySlot> Inventory { get; init; }
-        }
-
-        [HttpGet("{lookupKey:LookupKey}/items")]
-        public IActionResult ItemsList(LookupKey lookupKey)
-        {
-            var (_, player) = Player.Fetch(lookupKey);
-            if (player == null)
-            {
-                return NotFound(
-                    lookupKey.HasId
-                        ? $@"No player with id '{lookupKey.Id}'."
-                        : $@"No player with name '{lookupKey.Name}'."
-                );
-            }
-
-            return Ok(
-                new ItemListResponse
-                {
-                    Bank = player.Bank.Where(slot => !slot.IsEmpty),
-                    Inventory = player.Items.Where(slot => !slot.IsEmpty),
-                }
-            );
-        }
-
-        [HttpGet("{lookupKey:LookupKey}/items/bank")]
-        public IActionResult ItemsListBank(LookupKey lookupKey)
-        {
-            if (lookupKey.IsInvalid)
-            {
-                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
-            }
-
-            var (_, player) = Player.Fetch(lookupKey);
-            if (player == null)
-            {
-                return NotFound(
-                    lookupKey.HasId
-                        ? $@"No player with id '{lookupKey.Id}'."
-                        : $@"No player with name '{lookupKey.Name}'."
-                );
-            }
-
-            return Ok(player.Bank.Where(slot => !slot.IsEmpty));
-        }
-
-        [HttpGet("bag/{bagId:guid}")]
-        public IActionResult GetPlayerBag(Guid bagId)
-        {
-            if (bagId == Guid.Empty)
-            {
-                return BadRequest(@"Invalid bag id.");
-            }
-
-            if (Bag.TryGetBag(bagId, out var bag))
-            {
-                return Ok(bag);
-            }
-
-            return NotFound(@"Bag does not exist.");
-        }
-
-        [HttpGet("{lookupKey:LookupKey}/items/inventory")]
-        public IActionResult ItemsListInventory(LookupKey lookupKey)
-        {
-            if (lookupKey.IsInvalid)
-            {
-                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
-            }
-
-            var (_, player) = Player.Fetch(lookupKey);
-            if (player == null)
-            {
-                return NotFound(
-                    lookupKey.HasId
-                        ? $@"No player with id '{lookupKey.Id}'."
-                        : $@"No player with name '{lookupKey.Name}'."
-                );
-            }
-
-            return Ok(player.Items.Where(slot => !slot.IsEmpty));
-        }
-
-        [HttpPost("{lookupKey:LookupKey}/items/give")]
-        public object ItemsGive(LookupKey lookupKey, [FromBody] ItemInfo itemInfo)
-        {
-            if (lookupKey.IsInvalid)
-            {
-                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
-            }
-
-            if (ItemBase.Get(itemInfo.ItemId) == null)
-            {
-                return BadRequest(@"Invalid item id.");
-            }
-
-            if (itemInfo.Quantity < 1)
-            {
-                return BadRequest("Cannot give 0, or a negative amount of an item.");
-            }
-
-            var (_, player) = Player.Fetch(lookupKey);
-            if (player == null)
-            {
-                return NotFound(
-                    lookupKey.HasId
-                        ? $@"No player with id '{lookupKey.Id}'."
-                        : $@"No player with name '{lookupKey.Name}'."
-                );
-            }
-
-            if (!player.TryGiveItem(itemInfo.ItemId, itemInfo.Quantity, ItemHandling.Normal, itemInfo.BankOverflow, -1, true))
-            {
-                return InternalServerError($@"Failed to give player {itemInfo.Quantity} of '{itemInfo.ItemId}'.");
-            }
-
-            using (var context = DbInterface.CreatePlayerContext(false))
-            {
-                context.Update(player);
-                context.SaveChanges();
-            }
-
-            var quantityBank = player.CountItems(itemInfo.ItemId, false, true);
-            var quantityInventory = player.CountItems(itemInfo.ItemId, true, false);
-
-            return new
-            {
-                id = itemInfo.ItemId,
-                quantity = new
-                {
-                    total = quantityBank + quantityInventory,
-                    bank = quantityBank,
-                    inventory = quantityInventory
-                }
-            };
-        }
-
-        [HttpPost("{lookupKey:LookupKey}/items/take")]
-        public object ItemsTake(LookupKey lookupKey, [FromBody] ItemInfo itemInfo)
-        {
-            if (lookupKey.IsInvalid)
-            {
-                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
-            }
-
-            if (itemInfo.Quantity < 1)
-            {
-                return BadRequest("Cannot take 0, or a negative amount of an item.");
-            }
-
-            var (_, player) = Player.Fetch(lookupKey);
-            if (player == null)
-            {
-                return NotFound(
-                    lookupKey.HasId
-                        ? $@"No player with id '{lookupKey.Id}'."
-                        : $@"No player with name '{lookupKey.Name}'."
-                );
-            }
-
-            if (player.TryTakeItem(itemInfo.ItemId, itemInfo.Quantity))
-            {
-                using (var context = DbInterface.CreatePlayerContext(false))
-                {
-                    context.Update(player);
-                    context.SaveChanges();
-                }
-
-                return new
-                {
-                    itemInfo.ItemId,
-                    itemInfo.Quantity
-                };
-            }
-
-            return InternalServerError($@"Failed to take {itemInfo.Quantity} of '{itemInfo.ItemId}' from player.");
-        }
-
-        [HttpGet("{lookupKey:LookupKey}/spells")]
-        public IActionResult SpellsList(LookupKey lookupKey)
-        {
-            if (lookupKey.IsInvalid)
-            {
-                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
-            }
-
-            var (_, player) = Player.Fetch(lookupKey);
-            if (player == null)
-            {
-                return NotFound(
-                    lookupKey.HasId
-                        ? $@"No player with id '{lookupKey.Id}'."
-                        : $@"No player with name '{lookupKey.Name}'."
-                );
-            }
-
-            return Ok(player.Spells.Where(s => !s.IsEmpty));
-        }
-
-        [HttpPost("{lookupKey:LookupKey}/spells/teach")]
-        public object SpellsTeach(LookupKey lookupKey, [FromBody] SpellInfo spell)
-        {
-            if (lookupKey.IsInvalid)
-            {
-                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
-            }
-
-            if (SpellBase.Get(spell.SpellId) == null)
-            {
-                return BadRequest(@"Invalid spell id.");
-            }
-
-            var (_, player) = Player.Fetch(lookupKey);
-            if (player == null)
-            {
-                return NotFound(
-                    lookupKey.HasId
-                        ? $@"No player with id '{lookupKey.Id}'."
-                        : $@"No player with name '{lookupKey.Name}'."
-                );
-            }
-
-            if (player.TryTeachSpell(new Spell(spell.SpellId), true))
-            {
-                using (var context = DbInterface.CreatePlayerContext(false))
-                {
-                    context.Update(player);
-                    context.SaveChanges();
-                }
-
-                return spell;
-            }
-
-            return InternalServerError($@"Failed to teach player spell with id '{spell.SpellId}'. They might already know it!");
-        }
-
-        [HttpPost("{lookupKey:LookupKey}/spells/forget")]
-        public object SpellsTake(LookupKey lookupKey, [FromBody] SpellInfo spell)
-        {
-            if (lookupKey.IsInvalid)
-            {
-                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
-            }
-
-            if (SpellBase.Get(spell.SpellId) == null)
-            {
-                return BadRequest(@"Invalid spell id.");
-            }
-
-            var (_, player) = Player.Fetch(lookupKey);
-            if (player == null)
-            {
-                return NotFound(
-                    lookupKey.HasId
-                        ? $@"No player with id '{lookupKey.Id}'."
-                        : $@"No player with name '{lookupKey.Name}'."
-                );
-            }
-
-            if (player.TryForgetSpell(new Spell(spell.SpellId), true))
-            {
-                using (var context = DbInterface.CreatePlayerContext(false))
-                {
-                    context.Update(player);
-                    context.SaveChanges();
-                }
-
-                return spell;
-            }
-
-            return InternalServerError($@"Failed to remove player spell with id '{spell.SpellId}'.");
-        }
+        #region Admin Actions
 
         [HttpPost("{lookupKey:LookupKey}/admin/{adminAction:AdminAction}")]
-        public object DoAdminActionOnPlayerByLookupKey(
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotImplemented, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult DoAdminActionOnPlayerByLookupKey(
             LookupKey lookupKey,
             AdminAction adminAction,
             [FromBody] AdminActionParameters actionParameters
@@ -824,7 +807,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             );
         }
 
-        private object DoAdminActionOnPlayer(
+        private IActionResult DoAdminActionOnPlayer(
             Func<Tuple<Client, Player>> fetch,
             Func<IActionResult> onError,
             AdminAction adminAction,
@@ -866,7 +849,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     else
                     {
                         // Add ban
-                        Ban.Add(
+                        _ = Ban.Add(
                             userId, actionParameters.Duration, actionParameters.Reason ?? string.Empty,
                             actionParameters.Moderator ?? @"api", actionParameters.Ip ? targetIp : string.Empty
                         );
@@ -882,7 +865,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     }
 
                 case AdminAction.UnBan:
-                    Ban.Remove(userId);
+                    _ = Ban.Remove(userId);
                     PacketSender.SendGlobalMsg(Strings.Account.UnbanSuccess.ToString(player.Name));
 
                     return Ok(Strings.Account.UnbanSuccess.ToString(player.Name));
@@ -904,14 +887,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     {
                         if (user == null)
                         {
-                            Mute.Add(
+                            _ = Mute.Add(
                                 userId, actionParameters.Duration, actionParameters.Reason ?? string.Empty,
                                 actionParameters.Moderator ?? @"api", actionParameters.Ip ? targetIp : string.Empty
                             );
                         }
                         else
                         {
-                            Mute.Add(
+                            _ = Mute.Add(
                                 user, actionParameters.Duration, actionParameters.Reason ?? string.Empty,
                                 actionParameters.Moderator ?? @"api", actionParameters.Ip ? targetIp : string.Empty
                             );
@@ -925,11 +908,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 case AdminAction.UnMute:
                     if (user == null)
                     {
-                        Mute.Remove(userId);
+                        _ = Mute.Remove(userId);
                     }
                     else
                     {
-                        Mute.Remove(user);
+                        _ = Mute.Remove(user);
                     }
 
                     PacketSender.SendGlobalMsg(Strings.Account.UnmuteSuccess.ToString(player.Name));
@@ -1015,5 +998,58 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             return NotFound(Strings.Player.Offline);
         }
+
+        #endregion
+
+        #region Obsolete
+
+        [HttpPost]
+        [Obsolete("The appropriate verb for retrieving a list of records is GET not POST")]
+        public IActionResult ListPost([FromBody] PagingInfo pageInfo)
+        {
+            pageInfo.Page = Math.Max(pageInfo.Page, 0);
+            pageInfo.PageSize = Math.Max(Math.Min(pageInfo.PageSize, 100), 5);
+
+            var values = Player.List(
+                null,
+                null,
+                SortDirection.Ascending,
+                pageInfo.Page * pageInfo.PageSize,
+                pageInfo.PageSize,
+                out var entryTotal
+            );
+
+            return Ok(
+                new DataPage<Player>
+                {
+                    Total = entryTotal,
+                    Page = pageInfo.Page,
+                    PageSize = pageInfo.PageSize,
+                    Count = values.Count,
+                    Values = values,
+                }
+            );
+        }
+
+        [HttpPost("online")]
+        [Obsolete("The appropriate verb for retrieving a list of records is GET not POST")]
+        public object OnlinePost([FromBody] PagingInfo pageInfo)
+        {
+            pageInfo.Page = Math.Max(pageInfo.Page, 0);
+            pageInfo.PageSize = Math.Max(Math.Min(pageInfo.PageSize, 100), 5);
+
+            var entries = Globals.OnlineList?.Skip(pageInfo.Page * pageInfo.PageSize).Take(pageInfo.PageSize).ToList();
+
+            return new DataPage<Player>
+            {
+                Total = Globals.OnlineList?.Count ?? 0,
+                Page = pageInfo.Page,
+                PageSize = pageInfo.PageSize,
+                Count = entries?.Count ?? 0,
+                Values = entries,
+            };
+        }
+
+        #endregion
     }
 }
