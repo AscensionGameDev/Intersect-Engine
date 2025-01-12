@@ -30,7 +30,7 @@ public partial class MapBase : DatabaseObject<MapBase>
     //Client/Editor Only
     [JsonIgnore]
     [NotMapped]
-    public MapAutotiles Autotiles;
+    public MapAutotiles Autotiles { get; set; }
 
     [NotMapped]
     public List<Guid> EventIds { get; set; } = [];

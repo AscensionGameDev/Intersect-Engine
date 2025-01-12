@@ -96,7 +96,7 @@ public partial class MapAutotiles
 
     private readonly MapBase mMyMap;
 
-    public Dictionary<string, QuarterTileCls[,]> Layers;
+    public Dictionary<string, QuarterTileCls[,]> Layers { get; set; }
 
     private readonly int _mapWidth = Options.MapWidth;
     private readonly int _mapHeight = Options.MapHeight;

@@ -1138,6 +1138,16 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             return null;
         }
 
+        if (Autotiles == default)
+        {
+            throw new NullReferenceException($"[{Id}] {nameof(Autotiles)} is null {nameof(IsLoaded)}={IsLoaded}");
+        }
+
+        if (Autotiles.Layers == default)
+        {
+            throw new NullReferenceException($"[{Id}] {nameof(Autotiles)}.{nameof(Autotiles.Layers)} is null {nameof(IsLoaded)}={IsLoaded}");
+        }
+
         if (!Autotiles.Layers.TryGetValue(layerName, out var layerAutoTiles))
         {
             return null;
