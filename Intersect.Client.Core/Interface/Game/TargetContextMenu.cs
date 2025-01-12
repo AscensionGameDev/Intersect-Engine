@@ -19,6 +19,7 @@ namespace Intersect.Client.Interface.Game;
 /// </summary>
 public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
 {
+    private readonly MenuItem _targetNameMenuItem;
     private readonly MenuItem _tradeMenuItem;
     private readonly MenuItem _partyMenuItem;
     private readonly MenuItem _friendMenuItem;
@@ -34,6 +35,12 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
         Children.Clear();
 
         _me = Globals.Me;
+
+        _targetNameMenuItem = AddItem(string.Empty);
+        _targetNameMenuItem.SetText("");
+        _targetNameMenuItem.MouseInputEnabled = false;
+
+        AddDivider();
 
         _tradeMenuItem = AddItem(Strings.EntityContextMenu.Trade);
         _tradeMenuItem.Clicked += tradeRequest_Clicked;
@@ -90,6 +97,11 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
                 return;
         }
 
+        if (_entity == null)
+        {
+            return;
+        }
+
         if (Canvas is { } canvas)
         {
             if (newX + Width >= canvas.Width)
@@ -105,6 +117,9 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
 
         if (IsHidden)
         {
+
+            _targetNameMenuItem.SetText(_entity.Name);
+            _targetNameMenuItem.Alignment = Pos.Left;
             TryShowGuildButton();
             SizeToChildren();
             Open(Pos.None);
