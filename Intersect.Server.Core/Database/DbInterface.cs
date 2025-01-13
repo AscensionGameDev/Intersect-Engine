@@ -1608,7 +1608,12 @@ public static partial class DbInterface
 
             foreach (MapController map in MapController.Lookup.Values)
             {
-                lock (map.GetMapLock())
+                if (!map.Lock.TryAcquireLock($"{nameof(DbInterface)}.{nameof(GenerateMapGrids)}()", out var lockRef))
+                {
+                    throw new InvalidOperationException("Failed to acquire map instance lock from DbInterface.GenerateMapGrids()");
+                }
+
+                using (lockRef)
                 {
                     var gridIndex = map.MapGrid;
                     var grid = mapGrids[gridIndex];

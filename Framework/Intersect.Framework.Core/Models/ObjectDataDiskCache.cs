@@ -11,7 +11,10 @@ using Intersect.Logging;
 namespace Intersect.Models;
 
 public static class ObjectDataDiskCache<TObject>
-{ private static string RootCacheDirectory => Path.Combine(
+{
+    public static bool Enabled { get; set; } = false;
+
+    private static string RootCacheDirectory => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         ".intersect",
         (Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly()).GetName().Name ??
@@ -47,6 +50,12 @@ public static class ObjectDataDiskCache<TObject>
 
     public static bool TryLoad(Guid id, [NotNullWhen(true)] out ObjectCacheData<TObject>? data)
     {
+        if (!Enabled)
+        {
+            data = null;
+            return false;
+        }
+
         try
         {
 #if DEBUG
@@ -135,6 +144,11 @@ public static class ObjectDataDiskCache<TObject>
 
     public static bool TrySave(ObjectCacheData<TObject> objectCacheData)
     {
+        if (!Enabled)
+        {
+            return false;
+        }
+
         try
         {
 #if DEBUG
