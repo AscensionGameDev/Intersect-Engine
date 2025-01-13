@@ -171,13 +171,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-            var (_, player) = Player.Fetch(lookupKey, loadRelationships: true, loadBags: true);
-            if (player != null)
+            if (!Player.TryFetch(lookupKey, out var _, out var player, loadRelationships: true, loadBags: true))
             {
-                return Ok(player);
+                return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
 
-            return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
+            return Ok(player);
         }
 
         [HttpDelete("{lookupKey:LookupKey}")]
@@ -192,10 +191,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-            var (client, player) = Player.Fetch(lookupKey);
-            if (player == null)
+            if (!Player.TryFetch(lookupKey, out var client, out var player))
             {
-                return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
+                return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
 
             if (Player.FindOnline(player.Id) != null)
@@ -239,10 +237,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Name already taken.");
             }
 
-            var (_, player) = Player.Fetch(lookupKey);
-            if (player == null)
+            if (!Player.TryFetch(lookupKey, out var _, out var player))
             {
-                return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
+                return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
 
             player.Name = change.Name;
@@ -280,10 +277,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Invalid class id {change.ClassId}.");
             }
 
-            var (_, player) = Player.Fetch(lookupKey);
-            if (player == default)
+            if (!Player.TryFetch(lookupKey, out var _, out var player))
             {
-                return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
+                return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
 
             player.ClassId = change.ClassId;
@@ -314,10 +310,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-            var (_, player) = Player.Fetch(lookupKey);
-            if (player == default)
+            if (!Player.TryFetch(lookupKey, out var _, out var player))
             {
-                return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
+                return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
 
             player.SetLevel(change.Level, true);
@@ -344,14 +339,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [ProducesResponseType(typeof(ItemListResponse), (int)HttpStatusCode.OK, ContentTypes.Json)]
         public IActionResult ItemsList(LookupKey lookupKey)
         {
-            var (_, player) = Player.Fetch(lookupKey);
-            if (player == null)
+            if (!Player.TryFetch(lookupKey, out var _, out var player))
             {
-                return NotFound(
-                    lookupKey.HasId
-                        ? $@"No player with id '{lookupKey.Id}'."
-                        : $@"No player with name '{lookupKey.Name}'."
-                );
+                return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
 
             return Ok(new ItemListResponse(player.Bank.Where(slot => !slot.IsEmpty), player.Items.Where(slot => !slot.IsEmpty)));
@@ -368,14 +358,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-            var (_, player) = Player.Fetch(lookupKey);
-            if (player == null)
+            if (!Player.TryFetch(lookupKey, out var _, out var player))
             {
-                return NotFound(
-                    lookupKey.HasId
-                        ? $@"No player with id '{lookupKey.Id}'."
-                        : $@"No player with name '{lookupKey.Name}'."
-                );
+                return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
 
             return Ok(player.Bank.Where(slot => !slot.IsEmpty));
@@ -411,14 +396,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-            var (_, player) = Player.Fetch(lookupKey);
-            if (player == null)
+            if (!Player.TryFetch(lookupKey, out var _, out var player))
             {
-                return NotFound(
-                    lookupKey.HasId
-                        ? $@"No player with id '{lookupKey.Id}'."
-                        : $@"No player with name '{lookupKey.Name}'."
-                );
+                return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
 
             return Ok(player.Items.Where(slot => !slot.IsEmpty));
@@ -446,14 +426,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest("Cannot give 0, or a negative amount of an item.");
             }
 
-            var (_, player) = Player.Fetch(lookupKey);
-            if (player == null)
+            if (!Player.TryFetch(lookupKey, out var _, out var player))
             {
-                return NotFound(
-                    lookupKey.HasId
-                        ? $@"No player with id '{lookupKey.Id}'."
-                        : $@"No player with name '{lookupKey.Name}'."
-                );
+                return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
 
             if (!player.TryGiveItem(itemInfo.ItemId, itemInfo.Quantity, ItemHandling.Normal, itemInfo.BankOverflow, -1, true))
@@ -495,14 +470,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest("Cannot take 0, or a negative amount of an item.");
             }
 
-            var (_, player) = Player.Fetch(lookupKey);
-            if (player == null)
+            if (!Player.TryFetch(lookupKey, out var _, out var player))
             {
-                return NotFound(
-                    lookupKey.HasId
-                        ? $@"No player with id '{lookupKey.Id}'."
-                        : $@"No player with name '{lookupKey.Name}'."
-                );
+                return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
 
             if (!player.TryTakeItem(itemInfo.ItemId, itemInfo.Quantity))
@@ -534,14 +504,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-            var (_, player) = Player.Fetch(lookupKey);
-            if (player == null)
+            if (!Player.TryFetch(lookupKey, out var _, out var player))
             {
-                return NotFound(
-                    lookupKey.HasId
-                        ? $@"No player with id '{lookupKey.Id}'."
-                        : $@"No player with name '{lookupKey.Name}'."
-                );
+                return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
 
             return Ok(player.Spells.Where(s => !s.IsEmpty));
@@ -564,14 +529,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(@"Invalid spell id.");
             }
 
-            var (_, player) = Player.Fetch(lookupKey);
-            if (player == null)
+            if (!Player.TryFetch(lookupKey, out var _, out var player))
             {
-                return NotFound(
-                    lookupKey.HasId
-                        ? $@"No player with id '{lookupKey.Id}'."
-                        : $@"No player with name '{lookupKey.Name}'."
-                );
+                return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
 
             if (!player.TryTeachSpell(new Spell(spell.SpellId), true))
@@ -605,14 +565,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(@"Invalid spell id.");
             }
 
-            var (_, player) = Player.Fetch(lookupKey);
-            if (player == null)
+            if (!Player.TryFetch(lookupKey, out var _, out var player))
             {
-                return NotFound(
-                    lookupKey.HasId
-                        ? $@"No player with id '{lookupKey.Id}'."
-                        : $@"No player with name '{lookupKey.Name}'."
-                );
+                return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
 
             if (!player.TryForgetSpell(new Spell(spell.SpellId), true))
@@ -644,16 +599,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid id." : @"Invalid name.");
             }
 
-            if (!Player.TryFetch(lookupKey, out var fetchResult))
+            if (!Player.TryFetch(lookupKey, out var _, out var player))
             {
-                return NotFound(
-                    lookupKey.HasId
-                        ? $@"No player with id '{lookupKey.Id}'."
-                        : $@"No player with name '{lookupKey.Name}'."
-                );
+                return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
 
-            var (_, player) = fetchResult;
             return Ok(player.Variables);
         }
 
@@ -668,16 +618,10 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid id." : @"Invalid name.");
             }
 
-            if (!Player.TryFetch(lookupKey, out var fetchResult))
+            if (!Player.TryFetch(lookupKey, out var _, out var player))
             {
-                return NotFound(
-                    lookupKey.HasId
-                        ? $@"No player with id '{lookupKey.Id}'."
-                        : $@"No player with name '{lookupKey.Name}'."
-                );
+                return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
-
-            var (_, player) = fetchResult;
 
             if (!PlayerVariableBase.TryGet(variableId, out var variableDescriptor))
             {
@@ -699,16 +643,10 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid id." : @"Invalid name.");
             }
 
-            if (!Player.TryFetch(lookupKey, out var fetchResult))
+            if (!Player.TryFetch(lookupKey, out var _, out var player))
             {
-                return NotFound(
-                    lookupKey.HasId
-                        ? $@"No player with id '{lookupKey.Id}'."
-                        : $@"No player with name '{lookupKey.Name}'."
-                );
+                return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
-
-            var (_, player) = fetchResult;
 
             if (!PlayerVariableBase.TryGet(variableId, out var variableDescriptor))
             {
@@ -733,16 +671,10 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid id." : @"Invalid name.");
             }
 
-            if (!Player.TryFetch(lookupKey, out var fetchResult))
+            if (!Player.TryFetch(lookupKey, out var _, out var player))
             {
-                return NotFound(
-                    lookupKey.HasId
-                        ? $@"No player with id '{lookupKey.Id}'."
-                        : $@"No player with name '{lookupKey.Name}'."
-                );
+                return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
-
-            var (_, player) = fetchResult;
 
             if (!PlayerVariableBase.TryGet(variableId, out var variableDescriptor))
             {
@@ -794,29 +726,29 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid id." : @"Invalid name.");
             }
 
-            Tuple<Client, Player> fetchResult;
-            fetchResult = Player.Fetch(lookupKey);
+            if (!Player.TryFetch(lookupKey, out var client, out var player))
+            {
+                return NotFound($@"No player found for lookup key '{lookupKey}'");
+            }
 
             return DoAdminActionOnPlayer(
-                () => fetchResult,
-                () => NotFound(
-                    lookupKey.HasId
-                        ? $@"No player with id '{lookupKey.Id}'."
-                        : $@"No player with name '{lookupKey.Name}'."
-                ), adminAction, actionParameters
+                client,
+                player,
+                () => NotFound($@"No player found for lookup key '{lookupKey}'"),
+                adminAction,
+                actionParameters
             );
         }
 
         private IActionResult DoAdminActionOnPlayer(
-            Func<Tuple<Client, Player>> fetch,
+            Client client,
+            Player player,
             Func<IActionResult> onError,
             AdminAction adminAction,
             AdminActionParameters actionParameters
         )
         {
-            var (client, player) = fetch();
-
-            if (player == null)
+            if (player == default)
             {
                 return onError();
             }
