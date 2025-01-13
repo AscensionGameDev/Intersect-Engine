@@ -1,17 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using Intersect.Logging;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
-using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Utilities;
 
 using Microsoft.EntityFrameworkCore;
 
 using Newtonsoft.Json;
+using Intersect.Server.Web.RestApi.Types;
 
 namespace Intersect.Server.Entities;
 

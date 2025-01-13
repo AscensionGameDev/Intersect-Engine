@@ -1,4 +1,4 @@
-using Intersect.Server.Web.RestApi.Payloads;
+using Intersect.Server.Web.RestApi.Types;
 using Intersect.Server.Web.Swagger.Extensions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;

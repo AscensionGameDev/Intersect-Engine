@@ -19,7 +19,7 @@ using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
-using Intersect.Server.Web.RestApi.Payloads;
+using Intersect.Server.Web.RestApi.Types;
 using Intersect.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;

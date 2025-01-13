@@ -3,7 +3,7 @@ using System.Globalization;
 using Intersect.Server.Localization;
 using Intersect.Utilities;
 
-namespace Intersect.Server.Web.RestApi.Payloads;
+namespace Intersect.Server.Web.RestApi.Types;
 
 // TODO: Figure out how to get LookupKey to show up in swagger.json components/schemas despite being a "string", one or more of the following commented out attributes may help
 // [SwaggerSubType(typeof(Guid))]

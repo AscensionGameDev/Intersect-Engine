@@ -1,6 +1,6 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 
-using Intersect.Server.Web.RestApi.Payloads;
+using Intersect.Server.Web.RestApi.Types;
 
 using Microsoft.EntityFrameworkCore;
 

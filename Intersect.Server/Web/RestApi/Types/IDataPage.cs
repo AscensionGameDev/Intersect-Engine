@@ -1,5 +1,3 @@
-using Intersect.Server.Web.RestApi.Payloads;
-
 namespace Intersect.Server.Web.RestApi.Types;
 
 public interface IDataPage<TValue>

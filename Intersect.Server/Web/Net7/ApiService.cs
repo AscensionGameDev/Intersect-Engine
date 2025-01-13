@@ -10,7 +10,8 @@ using Intersect.Server.Web.Authentication;
 using Intersect.Server.Web.Configuration;
 using Intersect.Server.Web.Constraints;
 using Intersect.Server.Web.Middleware;
-using Intersect.Server.Web.RestApi.Payloads;
+using Intersect.Server.Web.RestApi.Types;
+using Intersect.Server.Web.RestApi.Types.Chat;
 using Intersect.Server.Web.RestApi.Routes;
 using Intersect.Server.Web.Serialization;
 using Intersect.Server.Web.Swagger.Filters;
@@ -251,10 +252,10 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                     options.TokenValidationParameters.ValidIssuer ??= tokenGenerationOptions.Issuer;
                     options.Events = new JwtBearerEvents
                     {
-                        OnAuthenticationFailed = async _ => {},
-                        OnChallenge = async _ => {},
-                        OnMessageReceived = async _ => {},
-                        OnTokenValidated = async _ => {},
+                        OnAuthenticationFailed = async _ => { },
+                        OnChallenge = async _ => { },
+                        OnMessageReceived = async _ => { },
+                        OnTokenValidated = async _ => { },
                     };
                     SymmetricSecurityKey issuerKey = new(tokenGenerationOptions.SecretData);
                     options.TokenValidationParameters.IssuerSigningKey = issuerKey;
