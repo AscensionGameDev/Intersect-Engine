@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using System.Net;
+using Intersect.Server.Web.Http;
+using Intersect.Server.Web.RestApi.Types.Demo;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
@@ -9,16 +12,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
     {
         [HttpGet]
         [AllowAnonymous]
-        public string Default()
-        {
-            return "GET:demo";
-        }
+        [ProducesResponseType(typeof(DemoResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult Default() => Ok(new DemoResponseBody("GET:demo"));
 
         [HttpGet("authorize")]
         [Authorize]
-        public object Authorize()
-        {
-            return "GET:demo/authorize";
-        }
+        [ProducesResponseType(typeof(DemoResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult Authorize() => Ok(new DemoResponseBody("GET:demo/authorize"));
     }
 }

@@ -1,4 +1,4 @@
-using Intersect.Server.Web.RestApi.Payloads;
+using Intersect.Server.Collections.Sorting;
 
 namespace Intersect.Server.Web.RestApi.Types;
 

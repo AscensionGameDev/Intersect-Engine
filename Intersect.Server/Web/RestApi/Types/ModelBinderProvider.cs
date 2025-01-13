@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
-namespace Intersect.Server.Web.RestApi.Payloads;
+namespace Intersect.Server.Web.RestApi.Types;
 
 public partial class ModelBinderProvider<TModel, TModelBinder> : IModelBinderProvider
 {
