@@ -12,6 +12,7 @@ using Intersect.Server.Web.Configuration;
 using Intersect.Server.Web.Http;
 using Intersect.Server.Web.RestApi.Types;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -197,6 +198,8 @@ namespace Intersect.Server.Web.RestApi.Routes
         }
 
         [HttpPost("token")]
+        [EndpointSummary("Request an Access Token")]
+        [EndpointDescription("Request an access token (and a refresh token) with a `password` grant, or a `refresh_token` grant.")]
         [Consumes(typeof(TokenRequest), ContentTypes.Json)]
         [ProducesResponseType<TokenResponse>((int)HttpStatusCode.OK, ContentTypes.Json)]
         [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.BadRequest, ContentTypes.Json)]
@@ -300,7 +303,10 @@ namespace Intersect.Server.Web.RestApi.Routes
             };
         }
 
+        [Authorize]
         [HttpDelete("tokens/{tokenId:guid}")]
+        [EndpointSummary("Delete a Refresh Token by ID")]
+        [EndpointDescription("Delete the Refresh Token specified by the tokenId parameter.")]
         [ProducesResponseType<UsernameAndTokenResponse>((int)HttpStatusCode.OK, ContentTypes.Json)]
         [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.Forbidden, ContentTypes.Json)]
         [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
@@ -349,6 +355,8 @@ namespace Intersect.Server.Web.RestApi.Routes
 
         [Authorize]
         [HttpDelete("tokens/{username}")]
+        [EndpointSummary("Delete all Refresh Tokens for a User")]
+        [EndpointDescription("Delete all refresh tokens for the user specified by the username parameter.")]
         [ProducesResponseType<UsernameAndTokenResponse>((int)HttpStatusCode.OK, ContentTypes.Json)]
         [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.Forbidden, ContentTypes.Json)]
         [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.Gone, ContentTypes.Json)]
@@ -408,7 +416,10 @@ namespace Intersect.Server.Web.RestApi.Routes
             return InternalServerError("Failed to delete token");
         }
 
+        [Authorize]
         [HttpDelete("tokens/{username}/{tokenId:guid}")]
+        [EndpointSummary("Delete a Refresh Token by ID for a User")]
+        [EndpointDescription("Delete the Refresh Token specified by the tokenId parameter for the user specified by the username parameter.")]
         [ProducesResponseType<UsernameAndTokenResponse>((int)HttpStatusCode.OK, ContentTypes.Json)]
         [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.Forbidden, ContentTypes.Json)]
         [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
