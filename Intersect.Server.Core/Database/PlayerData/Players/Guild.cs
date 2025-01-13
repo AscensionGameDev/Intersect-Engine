@@ -16,7 +16,7 @@ using Intersect.Logging;
 using Intersect.Utilities;
 using Intersect.Server.Localization;
 using static Intersect.Server.Database.Logging.Entities.GuildHistory;
-using Intersect.Server.Web.RestApi.Types;
+using Intersect.Server.Collections.Sorting;
 
 namespace Intersect.Server.Database.PlayerData.Players;
 

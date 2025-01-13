@@ -1,3 +1,5 @@
+using Intersect.Server.Collections.Sorting;
+
 namespace Intersect.Server.Web.RestApi.Types;
 
 public interface IDataPage<TValue>

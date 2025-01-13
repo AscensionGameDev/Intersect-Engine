@@ -1,5 +1,6 @@
 using System.Net;
 using Intersect.Enums;
+using Intersect.Server.Collections.Sorting;
 using Intersect.Server.Database;
 using Intersect.Server.Database.Logging.Entities;
 using Intersect.Server.Web.Http;

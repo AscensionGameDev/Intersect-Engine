@@ -1,6 +1,5 @@
 using System.Linq.Expressions;
-
-using Intersect.Server.Web.RestApi.Types;
+using Intersect.Server.Collections.Sorting;
 
 using Microsoft.EntityFrameworkCore;
 

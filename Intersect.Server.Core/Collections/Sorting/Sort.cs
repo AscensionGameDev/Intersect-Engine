@@ -1,9 +1,7 @@
-﻿namespace Intersect.Server.Web.RestApi.Types;
-
+namespace Intersect.Server.Collections.Sorting;
 
 public partial struct Sort
 {
-
     public string[] By { get; set; }
 
     public SortDirection Direction { get; set; }
@@ -21,14 +19,13 @@ public partial struct Sort
     {
         var filteredBy =
             sortBy?.Where(by => !string.IsNullOrWhiteSpace(by)).Take(sortDirections?.Length ?? 0).ToList() ??
-            new List<string>();
+            [];
 
-        var filteredDirections = sortDirections?.Take(filteredBy.Count).ToList() ?? new List<SortDirection>();
+        var filteredDirections = sortDirections?.Take(filteredBy.Count).ToList() ?? [];
 
         return filteredBy.Select(
                 (by, index) => From(by ?? throw new InvalidOperationException(), filteredDirections[index])
             )
             .ToArray();
     }
-
 }

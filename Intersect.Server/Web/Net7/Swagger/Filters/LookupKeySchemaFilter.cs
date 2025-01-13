@@ -1,5 +1,5 @@
+using Intersect.Server.Collections.Indexing;
 using Intersect.Server.Localization;
-using Intersect.Server.Web.RestApi.Types;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
