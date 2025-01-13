@@ -1,3 +1,4 @@
+using Intersect.Server.Collections.Indexing;
 using Intersect.Server.Web.RestApi.Types;
 using Intersect.Server.Web.Swagger.Extensions;
 using Microsoft.AspNetCore.Mvc.Controllers;

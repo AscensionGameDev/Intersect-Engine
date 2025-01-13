@@ -1,4 +1,5 @@
 using System.Net;
+using Intersect.Server.Collections.Indexing;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
 using Intersect.Server.Web.Http;

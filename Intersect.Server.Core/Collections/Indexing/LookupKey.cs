@@ -1,9 +1,9 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Globalization;
 using Intersect.Server.Localization;
 using Intersect.Utilities;
 
-namespace Intersect.Server.Web.RestApi.Types;
+namespace Intersect.Server.Collections.Indexing;
 
 // TODO: Figure out how to get LookupKey to show up in swagger.json components/schemas despite being a "string", one or more of the following commented out attributes may help
 // [SwaggerSubType(typeof(Guid))]
@@ -14,15 +14,15 @@ namespace Intersect.Server.Web.RestApi.Types;
 public partial struct LookupKey
 {
 
-    public bool HasName => !string.IsNullOrWhiteSpace(Name);
+    public readonly bool HasName => !string.IsNullOrWhiteSpace(Name);
 
-    public bool HasId => Guid.Empty != Id;
+    public readonly bool HasId => Guid.Empty != Id;
 
-    public bool IsNameInvalid => !HasId && Name != null;
+    public readonly bool IsNameInvalid => !HasId && Name != null;
 
-    public bool IsIdInvalid => !HasId && Name == null;
+    public readonly bool IsIdInvalid => !HasId && Name == null;
 
-    public bool IsInvalid => !HasId && !HasName;
+    public readonly bool IsInvalid => !HasId && !HasName;
 
     public Guid Id { get; private set; }
 

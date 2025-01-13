@@ -1,4 +1,4 @@
-namespace Intersect.Server.Web.RestApi.Types;
+namespace Intersect.Server.Collections.Sorting;
 
 public enum SortDirection
 {

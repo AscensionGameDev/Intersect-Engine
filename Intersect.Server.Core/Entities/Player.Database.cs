@@ -11,7 +11,8 @@ using Intersect.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 using Newtonsoft.Json;
-using Intersect.Server.Web.RestApi.Types;
+using Intersect.Server.Collections.Indexing;
+using Intersect.Server.Collections.Sorting;
 
 namespace Intersect.Server.Entities;
 
