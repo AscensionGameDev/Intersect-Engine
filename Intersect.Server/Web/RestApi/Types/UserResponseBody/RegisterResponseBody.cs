@@ -1,8 +1,0 @@
-namespace Intersect.Server.Web.RestApi.Types.UserResponseBody;
-
-public struct RegisterResponseBody(string username, string email)
-{
-    public string Username { get; set; } = username;
-
-    public string Email { get; set; } = email;
-}

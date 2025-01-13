@@ -12,9 +12,8 @@ using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 using Intersect.Server.Notifications;
 using Intersect.Server.Web.Http;
-using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.Types;
-using Intersect.Server.Web.RestApi.Types.UserResponseBody;
+using Intersect.Server.Web.RestApi.Types.User;
 using Intersect.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -263,7 +262,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
         [ProducesResponseType(typeof(User), (int)HttpStatusCode.OK, ContentTypes.Json)]
-        public IActionResult ChangeUsername(LookupKey lookupKey, [FromBody] NameChange change)
+        public IActionResult ChangeUsername(LookupKey lookupKey, [FromBody] NameChangePayload change)
         {
             if (lookupKey.IsInvalid)
             {

@@ -2,9 +2,8 @@ using System.Net;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
 using Intersect.Server.Web.Http;
-using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.Types;
-using Intersect.Server.Web.RestApi.Types.ChatResponseBody;
+using Intersect.Server.Web.RestApi.Types.Chat;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

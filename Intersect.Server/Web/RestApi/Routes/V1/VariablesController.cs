@@ -5,7 +5,6 @@ using Intersect.Server.Database;
 using Intersect.Server.Database.GameData;
 using Intersect.Server.Entities;
 using Intersect.Server.Web.Http;
-using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.Types;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

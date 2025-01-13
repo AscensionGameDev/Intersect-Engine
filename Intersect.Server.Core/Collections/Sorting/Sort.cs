@@ -1,4 +1,4 @@
-﻿namespace Intersect.Server.Web.RestApi.Payloads;
+﻿namespace Intersect.Server.Web.RestApi.Types;
 
 
 public partial struct Sort

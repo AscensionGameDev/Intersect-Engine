@@ -9,9 +9,8 @@ using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 using Intersect.Server.Web.Http;
-using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.Types;
-using Intersect.Server.Web.RestApi.Types.PlayerResponseBody;
+using Intersect.Server.Web.RestApi.Types.Player;
 using Intersect.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -221,7 +220,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
         [ProducesResponseType(typeof(Player), (int)HttpStatusCode.OK, ContentTypes.Json)]
-        public IActionResult ChangeName(LookupKey lookupKey, [FromBody] NameChange change)
+        public IActionResult ChangeName(LookupKey lookupKey, [FromBody] NameChangePayload change)
         {
             if (lookupKey.IsInvalid)
             {
@@ -923,7 +922,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     if (client?.Entity != null)
                     {
                         var mapId = actionParameters.MapId == Guid.Empty ? client.Entity.MapId : actionParameters.MapId;
-                        client.Entity.Warp(mapId, (byte) client.Entity.X, (byte) client.Entity.Y);
+                        client.Entity.Warp(mapId, (byte)client.Entity.X, (byte)client.Entity.Y);
 
                         return Ok($@"Warped '{player.Name}' to {mapId} ({client.Entity.X}, {client.Entity.Y}).");
                     }

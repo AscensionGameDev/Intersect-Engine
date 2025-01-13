@@ -5,8 +5,8 @@ using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Entities;
 using Intersect.Server.Localization;
 using Intersect.Server.Web.Http;
-using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.Types;
+using Intersect.Server.Web.RestApi.Types.Guild;
 using Intersect.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -73,7 +73,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
         [ProducesResponseType(typeof(Guild), (int)HttpStatusCode.OK, ContentTypes.Json)]
-        public IActionResult ChangeName(Guid guildId, [FromBody] NameChange change)
+        public IActionResult ChangeName(Guid guildId, [FromBody] NameChangePayload change)
         {
             if (!FieldChecking.IsValidGuildName(change.Name, Strings.Regex.GuildName))
             {
@@ -183,7 +183,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
         [ProducesResponseType(typeof(Player), (int)HttpStatusCode.OK, ContentTypes.Json)]
-        public IActionResult SetRank(Guid guildId, LookupKey lookupKey, [FromBody] GuildRank guildRank)
+        public IActionResult SetRank(Guid guildId, LookupKey lookupKey, [FromBody] GuildRankPayload guildRank)
         {
             if (lookupKey.IsInvalid)
             {
@@ -239,7 +239,6 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             var (_, player) = Player.Fetch(lookupKey);
-
             if (player == null)
             {
                 return BadRequest($@"Player not found.");
@@ -250,13 +249,16 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"{player.Name} is not a member of {guild.Name}.");
             }
 
-            // Cannot kick the owner!
             if (player.GuildRank == 0)
             {
                 return BadRequest($@"Cannot transfer ownership of a guild to ones self.");
             }
 
-            _ = guild.TransferOwnership(player);
+            if (!guild.TransferOwnership(player))
+            {
+                return BadRequest($@"Failed to transfer ownership.");
+            }
+
             return Ok(player);
         }
 

@@ -1,12 +1,9 @@
-﻿using Intersect.Framework.Core.Serialization;
-using Intersect.Framework.Reflection;
-using Intersect.Server.Web.RestApi.Payloads;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 namespace Intersect.Server.Web.RestApi.Types;
 
-public struct DataPage<TValue>(
+public readonly struct DataPage<TValue>(
     int Total,
     int Page,
     int PageSize,
