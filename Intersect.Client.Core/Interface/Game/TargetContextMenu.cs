@@ -53,7 +53,7 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
         _guildMenuItem.Clicked += guildRequest_Clicked;
 
         _privateMessageMenuItem = AddItem(Strings.EntityContextMenu.PrivateMessage);
-        _privateMessageMenuItem.Clicked += privateMessageRequest_Clicked;
+        _privateMessageMenuItem.Clicked += privateMessageRequest_Clicked;   
 
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer?.GetResolutionString());
     }
@@ -132,16 +132,25 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
         }
     }
 
-
     private void TryShowTargetButton(bool shouldShow)
     {
         _targetNameMenuItem.SetText(shouldShow ? _entity.Name : string.Empty);
 
-        if (shouldShow && !Children.Contains(_targetNameMenuItem))
+        if (shouldShow)
         {
-            Children.Insert(0, _targetNameMenuItem);
+            var indexOf = Children.IndexOf(_targetNameMenuItem);
+
+            if (indexOf > 0)
+            {
+                Children.RemoveAt(indexOf);
+            }
+
+            if (indexOf != 0)
+            {
+                Children.Insert(0, _targetNameMenuItem);
+            }
         }
-        else if (!shouldShow && Children.Contains(_targetNameMenuItem))
+        else
         {
             Children.Remove(_targetNameMenuItem);
         }
