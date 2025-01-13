@@ -39,42 +39,45 @@ public partial class Player
 
     #region Lookup
 
-    public static bool TryFetch(LookupKey lookupKey, [NotNullWhen(true)] out Tuple<Client, Player>? tuple)
+    public static bool TryFetch(LookupKey lookupKey, [NotNullWhen(true)] out Client? client)
     {
-        tuple = Fetch(lookupKey);
-        return tuple.Item1 != default || tuple.Item2 != default;
+        return TryFetch(lookupKey, out client, out _);
     }
 
-    public static Tuple<Client, Player> Fetch(LookupKey lookupKey, bool loadRelationships = false,
-        bool loadBags = false)
+    public static bool TryFetch(
+        LookupKey lookupKey,
+        [NotNullWhen(true)] out Client? client,
+        out Player? player,
+        bool loadRelationships = false,
+        bool loadBags = false
+    )
     {
-        if (lookupKey is { HasName: false, HasId: false })
+        if (lookupKey.IsInvalid)
         {
-            return new Tuple<Client, Player>(null, null);
+            client = default;
+            player = default;
+            return false;
         }
 
         // HasName checks if null or empty
         // ReSharper disable once AssignNullToNotNullAttribute
         return lookupKey.HasId
-            ? Fetch(lookupKey.Id)
-            : Fetch(lookupKey.Name, loadRelationships: loadRelationships, loadBags: loadBags);
+            ? Fetch(lookupKey.Id, out client, out player)
+            : Fetch(lookupKey.Name, out client, out player, loadRelationships: loadRelationships, loadBags: loadBags);
     }
 
-    public static Tuple<Client, Player> Fetch(string playerName, bool loadRelationships = false, bool loadBags = false)
+    private static bool Fetch(string playerName, [NotNullWhen(true)] out Client? client, out Player? player, bool loadRelationships = false, bool loadBags = false)
     {
-        var client = Globals.Clients.Find(queryClient => Entity.CompareName(playerName, queryClient?.Entity?.Name));
-
-        return new Tuple<Client, Player>(
-            client,
-            client?.Entity ?? Find(playerName, loadRelationships: loadRelationships, loadBags: loadBags)
-        );
+        client = Globals.Clients.Find(queryClient => CompareName(playerName, queryClient?.Entity?.Name));
+        player = client?.Entity ?? Find(playerName, loadRelationships: loadRelationships, loadBags: loadBags);
+        return player != default;
     }
 
-    public static Tuple<Client, Player> Fetch(Guid playerId)
+    private static bool Fetch(Guid playerId, [NotNullWhen(true)] out Client? client, out Player? player)
     {
-        var client = Globals.Clients.Find(queryClient => playerId == queryClient?.Entity?.Id);
-
-        return new Tuple<Client, Player>(client, client?.Entity ?? Player.Find(playerId));
+        client = Globals.Clients.Find(queryClient => playerId == queryClient?.Entity?.Id);
+        player = client?.Entity ?? Find(playerId);
+        return player != default;
     }
 
     public static Player Find(Guid playerId)
