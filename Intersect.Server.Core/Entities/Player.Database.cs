@@ -41,7 +41,7 @@ public partial class Player
     public static bool TryFetch(LookupKey lookupKey, [NotNullWhen(true)] out Tuple<Client, Player>? tuple)
     {
         tuple = Fetch(lookupKey);
-        return tuple != default;
+        return tuple.Item1 != default || tuple.Item2 != default;
     }
 
     public static Tuple<Client, Player> Fetch(LookupKey lookupKey, bool loadRelationships = false,

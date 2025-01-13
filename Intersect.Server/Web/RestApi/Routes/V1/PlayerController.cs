@@ -273,13 +273,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-            if (change.ClassId == Guid.Empty || ClassBase.Get(change.ClassId) == null)
+            if (!ClassBase.TryGet(change.ClassId, out var _))
             {
-                return BadRequest($@"Invalid class id ${change.ClassId}.");
+                return BadRequest($@"Invalid class id {change.ClassId}.");
             }
 
             var (_, player) = Player.Fetch(lookupKey);
-            if (player != null)
+            if (player == default)
             {
                 return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
             }
@@ -313,7 +313,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             var (_, player) = Player.Fetch(lookupKey);
-            if (player != null)
+            if (player == default)
             {
                 return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
             }
@@ -652,7 +652,6 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             var (_, player) = fetchResult;
-
             return Ok(player.Variables);
         }
 
