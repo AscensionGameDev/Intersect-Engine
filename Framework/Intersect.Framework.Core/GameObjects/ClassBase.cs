@@ -33,7 +33,7 @@ public partial class ClassBase : DatabaseObject<ClassBase>, IFolderable
         {
             foreach (var (key, val) in value)
             {
-                VitalRegen[(int)key] = val;
+                BaseVital[(int)key] = val;
             }
         }
     }
