@@ -66,7 +66,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Invalid map id '{mapId}'.");
             }
 
-            bool sucess = PacketSender.SendProximityMsg(
+            bool success = PacketSender.SendProximityMsg(
                 chatMessage.Message,
                 Enums.ChatMessageType.Local,
                 mapId,
@@ -74,7 +74,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 chatMessage.Target
             );
 
-            if (!sucess)
+            if (!success)
             {
                 return NotFound($@"No map found for '{mapId}'.");
             }

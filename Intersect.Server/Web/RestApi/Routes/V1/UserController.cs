@@ -80,7 +80,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpPost("register")]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
         [ProducesResponseType(typeof(RegisterResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
-        public IActionResult RegisterUser([FromBody] UserInfo user)
+        public IActionResult RegisterUser([FromBody] UserInfoRequestBody user)
         {
             if (string.IsNullOrEmpty(user.Username) ||
                 string.IsNullOrEmpty(user.Email) ||
@@ -292,7 +292,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.Conflict, ContentTypes.Json)]
         [ProducesResponseType(typeof(User), (int)HttpStatusCode.OK, ContentTypes.Json)]
-        public IActionResult ChangeEmail(LookupKey lookupKey, [FromBody] AdminChange authorizedChange)
+        public IActionResult ChangeEmail(LookupKey lookupKey, [FromBody] AdminChangeRequestBody authorizedChange)
         {
             if (lookupKey.IsInvalid)
             {
@@ -331,7 +331,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.Conflict, ContentTypes.Json)]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.Forbidden, ContentTypes.Json)]
         [ProducesResponseType(typeof(User), (int)HttpStatusCode.OK, ContentTypes.Json)]
-        public IActionResult UserChangeEmail(LookupKey lookupKey, [FromBody] AuthorizedChange authorizedChange)
+        public IActionResult UserChangeEmail(LookupKey lookupKey, [FromBody] AuthorizedChangeRequestBody authorizedChange)
         {
             if (lookupKey.IsInvalid)
             {
@@ -373,7 +373,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
-        public IActionResult ValidatePassword(LookupKey lookupKey, [FromBody] PasswordValidation data)
+        public IActionResult ValidatePassword(LookupKey lookupKey, [FromBody] PasswordValidationRequestBody data)
         {
             if (lookupKey.IsInvalid)
             {
@@ -409,7 +409,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.Forbidden, ContentTypes.Json)]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
-        public IActionResult ChangePassword(LookupKey lookupKey, [FromBody] AdminChange authorizedChange)
+        public IActionResult ChangePassword(LookupKey lookupKey, [FromBody] AdminChangeRequestBody authorizedChange)
         {
             if (lookupKey.IsInvalid)
             {
@@ -440,7 +440,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.Forbidden, ContentTypes.Json)]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
-        public IActionResult UserChangePassword(LookupKey lookupKey, [FromBody] AuthorizedChange authorizedChange)
+        public IActionResult UserChangePassword(LookupKey lookupKey, [FromBody] AuthorizedChangeRequestBody authorizedChange)
         {
             if (lookupKey.IsInvalid)
             {

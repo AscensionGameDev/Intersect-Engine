@@ -1,6 +1,6 @@
 namespace Intersect.Server.Web.RestApi.Types.Player;
 
-public partial struct ItemInfo
+public partial struct ItemInfoRequestBody
 {
     public Guid ItemId { get; set; }
 

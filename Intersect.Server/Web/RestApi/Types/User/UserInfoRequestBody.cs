@@ -1,6 +1,6 @@
 namespace Intersect.Server.Web.RestApi.Types.User;
 
-public partial struct UserInfo
+public partial struct UserInfoRequestBody
 {
     public string Username { get; set; }
 
