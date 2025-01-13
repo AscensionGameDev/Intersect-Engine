@@ -69,10 +69,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid user id." : @"Invalid username.");
             }
 
-            var (_, user) = Database.PlayerData.User.Fetch(lookupKey);
-            if (user == null)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound("User not found.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
             return Ok(user);
@@ -125,10 +124,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid user id." : @"Invalid username.");
             }
 
-            var (_, user) = Database.PlayerData.User.Fetch(lookupKey);
-            if (user == null)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound("User not found.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
             foreach (var plyr in user.Players)
@@ -165,10 +163,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid user id." : @"Invalid username.");
             }
 
-            var (_, user) = Database.PlayerData.User.Fetch(lookupKey);
-            if (user == default)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound("User not found.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
             var players = user.Players;
@@ -197,16 +194,15 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest("Invalid player name.");
             }
 
-            var (_, user) = Database.PlayerData.User.Fetch(lookupKey);
-            if (user == default)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound("User not found.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
             var player = user.Players?.FirstOrDefault(p => string.Equals(p?.Name, playerName, StringComparison.Ordinal));
             if (player == default)
             {
-                return NotFound($@"No player exists for with name '{playerName}' for user account '{lookupKey}'");
+                return NotFound($@"No player exists with name '{playerName}' for user with lookup key '{lookupKey}'");
             }
 
             return Ok(player);
@@ -230,10 +226,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Invalid player index {index}.");
             }
 
-            var (_, user) = Database.PlayerData.User.Fetch(lookupKey);
-            if (user == null)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound("User not found.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
             var players = user.Players;
@@ -250,7 +245,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             var player = players.Skip(index).FirstOrDefault();
             if (player == default)
             {
-                return NotFound($@"No player found on user {lookupKey} with index {index}.");
+                return NotFound($@"No player found for user with lookup key {lookupKey} with index {index}.");
             }
 
             return Ok(player);
@@ -281,10 +276,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Name already taken.");
             }
 
-            var (_, user) = Database.PlayerData.User.Fetch(lookupKey);
-            if (user == null)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound("User not found.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
             user.Name = change.Name;
@@ -316,10 +310,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Malformed email address '{email}'.");
             }
 
-            var (_, user) = Database.PlayerData.User.Fetch(lookupKey);
-            if (user == null)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound("User not found.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
             if (Database.PlayerData.User.UserExists(email))
@@ -356,10 +349,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Malformed email address '{email}'.");
             }
 
-            var (_, user) = Database.PlayerData.User.Fetch(lookupKey);
-            if (user == null)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound("User not found.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
             if (!user.IsPasswordValid(authorizedChange.Authorization?.ToUpperInvariant()?.Trim()))
@@ -398,10 +390,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(@"Did not receive a valid password.");
             }
 
-            var (_, user) = Database.PlayerData.User.Fetch(lookupKey);
-            if (user == null)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound("User not found.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
             if (!user.IsPasswordValid(data.Password?.ToUpperInvariant()?.Trim()))
@@ -430,10 +421,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(@"Invalid payload");
             }
 
-            var (_, user) = Database.PlayerData.User.Fetch(lookupKey);
-            if (user == null)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound("User not found.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
             if (!user.TrySetPassword(authorizedChange.New?.ToUpperInvariant()?.Trim()))
@@ -462,10 +452,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(@"Invalid payload");
             }
 
-            var (_, user) = Database.PlayerData.User.Fetch(lookupKey);
-            if (user == null)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound("User not found.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
             var oldPassword = authorizedChange.Authorization?.ToUpperInvariant()?.Trim();
@@ -491,10 +480,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid user id." : @"Invalid username.");
             }
 
-            var (_, user) = Database.PlayerData.User.Fetch(lookupKey);
-            if (user == null)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound("User not found.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
             if (!Options.Smtp.IsValid())
@@ -675,22 +663,23 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             return DoAdminActionOnUser(
-                () => (client, user),
+                client,
+                user,
                 () => NotFound($@"No user found for lookup key '{lookupKey}'."),
-                adminAction, actionParameters
+                adminAction,
+                actionParameters
             );
         }
 
         private IActionResult DoAdminActionOnUser(
-            Func<ValueTuple<Client, User>> fetch,
+            Client client,
+            User user,
             Func<IActionResult> onError,
             AdminAction adminAction,
             AdminActionParameters actionParameters
         )
         {
-            var (client, user) = fetch();
-
-            if (user == null)
+            if (user == default)
             {
                 return onError();
             }

@@ -530,33 +530,38 @@ public partial class User
         return user;
     }
 
-    public static Tuple<Client, User> Fetch(Guid userId)
+    public static bool TryFind(LookupKey lookupKey, [NotNullWhen(true)] out User? user)
     {
-        var client = Globals.Clients.Find(queryClient => userId == queryClient?.User?.Id);
-
-        return new Tuple<Client, User>(client, client?.User ?? FindById(userId));
+        using var playerContext = DbInterface.CreatePlayerContext();
+        return TryFind(lookupKey, playerContext, out user);
     }
 
-    public static Tuple<Client, User> Fetch(string userName)
-    {
-        var client = Globals.Clients.Find(queryClient => Entity.CompareName(userName, queryClient?.User?.Name));
+    public static bool TryFetch(LookupKey lookupKey, [NotNullWhen(true)] out User? user) => TryFetch(lookupKey, out user, out _);
 
-        return new Tuple<Client, User>(client, client?.User ?? Find(userName));
+    public static bool TryFetch(LookupKey lookupKey, [NotNullWhen(true)] out User? user, out Client? client)
+    {
+        if (lookupKey.IsInvalid)
+        {
+            user = default;
+            client = default;
+            return false;
+        }
+
+        return lookupKey.HasId ? Fetch(lookupKey.Id, out user, out client) : Fetch(lookupKey.Name, out user, out client);
     }
 
-    public static Tuple<Client, User> Fetch(LookupKey lookupKey)
+    private static bool Fetch(Guid userId, [NotNullWhen(true)] out User? user, out Client? client)
     {
-        if (lookupKey.HasId)
-        {
-            return Fetch(lookupKey.Id);
-        }
+        client = Globals.Clients.Find(queryClient => userId == queryClient?.User?.Id);
+        user = client?.User ?? FindById(userId);
+        return user != default;
+    }
 
-        if (lookupKey.HasName)
-        {
-            return Fetch(lookupKey.Name);
-        }
-
-        return new Tuple<Client, User>(default, default);
+    private static bool Fetch(string userName, [NotNullWhen(true)] out User? user, out Client? client)
+    {
+        client = Globals.Clients.Find(queryClient => Entity.CompareName(userName, queryClient?.User?.Name));
+        user = client?.User ?? Find(userName);
+        return user != default;
     }
 
     public static bool TryLogin(
@@ -634,28 +639,6 @@ public partial class User
             failureReason = new LoginFailureReason(LoginFailureType.ServerError);
             return false;
         }
-    }
-
-    public static bool TryFetch(LookupKey lookupKey, [NotNullWhen(true)] out User? user) =>
-        TryFetch(lookupKey, out user, out _);
-
-    public static bool TryFetch(LookupKey lookupKey, [NotNullWhen(true)] out User? user, out Client? client)
-    {
-        if (lookupKey is { HasName: false, HasId: false })
-        {
-            user = default;
-            client = default;
-            return false;
-        }
-
-        (client, user) = lookupKey.HasId ? Fetch(lookupKey.Id) : Fetch(lookupKey.Name);
-        return user != default;
-    }
-
-    public static bool TryFind(LookupKey lookupKey, [NotNullWhen(true)] out User? user)
-    {
-        using var playerContext = DbInterface.CreatePlayerContext();
-        return TryFind(lookupKey, playerContext, out user);
     }
 
     public static bool TryFind(LookupKey lookupKey, PlayerContext playerContext, [NotNullWhen(true)] out User? user)
