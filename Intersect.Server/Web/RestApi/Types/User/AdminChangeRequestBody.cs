@@ -3,12 +3,10 @@ using Newtonsoft.Json;
 
 namespace Intersect.Server.Web.RestApi.Types.User;
 
-public partial struct AuthorizedChange
+public partial struct AdminChangeRequestBody
 {
     [JsonIgnore, NotMapped]
-    public bool IsValid => !string.IsNullOrWhiteSpace(Authorization) && !string.IsNullOrWhiteSpace(New);
-
-    public string Authorization { get; set; }
+    public bool IsValid => !string.IsNullOrWhiteSpace(New);
 
     public string New { get; set; }
 }

@@ -265,16 +265,16 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
         [ProducesResponseType(typeof(Player), (int)HttpStatusCode.OK, ContentTypes.Json)]
-        public IActionResult PlayerClassSet(LookupKey lookupKey, [FromBody] ClassChange change)
+        public IActionResult PlayerClassSet(LookupKey lookupKey, [FromBody] IdPayload change)
         {
             if (lookupKey.IsInvalid)
             {
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-            if (!ClassBase.TryGet(change.ClassId, out var _))
+            if (!ClassBase.TryGet(change.Id, out var _))
             {
-                return BadRequest($@"Invalid class id {change.ClassId}.");
+                return BadRequest($@"Invalid class id {change.Id}.");
             }
 
             if (!Player.TryFetch(lookupKey, out var _, out var player))
@@ -282,7 +282,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
 
-            player.ClassId = change.ClassId;
+            player.ClassId = change.Id;
             player.RecalculateStatsAndPoints();
             player.UnequipInvalidItems();
             if (player.Online)
@@ -303,7 +303,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
         [ProducesResponseType(typeof(Player), (int)HttpStatusCode.OK, ContentTypes.Json)]
-        public IActionResult PlayerLevelSet(LookupKey lookupKey, [FromBody] LevelChange change)
+        public IActionResult PlayerLevelSet(LookupKey lookupKey, [FromBody] LevelChangeRequestBody change)
         {
             if (lookupKey.IsInvalid)
             {
@@ -409,7 +409,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
         [ProducesResponseType(typeof(ItemsGiveResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
-        public IActionResult ItemsGive(LookupKey lookupKey, [FromBody] ItemInfo itemInfo)
+        public IActionResult ItemsGive(LookupKey lookupKey, [FromBody] ItemInfoRequestBody itemInfo)
         {
             if (lookupKey.IsInvalid)
             {
@@ -458,7 +458,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
         [ProducesResponseType(typeof(ItemsTakeResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
-        public IActionResult ItemsTake(LookupKey lookupKey, [FromBody] ItemInfo itemInfo)
+        public IActionResult ItemsTake(LookupKey lookupKey, [FromBody] ItemInfoRequestBody itemInfo)
         {
             if (lookupKey.IsInvalid)
             {
@@ -516,15 +516,15 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
-        [ProducesResponseType(typeof(SpellInfo), (int)HttpStatusCode.OK, ContentTypes.Json)]
-        public IActionResult SpellsTeach(LookupKey lookupKey, [FromBody] SpellInfo spell)
+        [ProducesResponseType(typeof(IdPayload), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult SpellsTeach(LookupKey lookupKey, [FromBody] IdPayload spell)
         {
             if (lookupKey.IsInvalid)
             {
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-            if (SpellBase.Get(spell.SpellId) == null)
+            if (SpellBase.Get(spell.Id) == null)
             {
                 return BadRequest(@"Invalid spell id.");
             }
@@ -534,9 +534,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
 
-            if (!player.TryTeachSpell(new Spell(spell.SpellId), true))
+            if (!player.TryTeachSpell(new Spell(spell.Id), true))
             {
-                return InternalServerError($@"Failed to teach player spell with id '{spell.SpellId}'. They might already know it!");
+                return InternalServerError($@"Failed to teach player spell with id '{spell.Id}'. They might already know it!");
             }
 
             using (var context = DbInterface.CreatePlayerContext(false))
@@ -552,15 +552,15 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
-        [ProducesResponseType(typeof(SpellInfo), (int)HttpStatusCode.OK, ContentTypes.Json)]
-        public IActionResult SpellsTake(LookupKey lookupKey, [FromBody] SpellInfo spell)
+        [ProducesResponseType(typeof(IdPayload), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult SpellsTake(LookupKey lookupKey, [FromBody] IdPayload spell)
         {
             if (lookupKey.IsInvalid)
             {
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-            if (SpellBase.Get(spell.SpellId) == null)
+            if (SpellBase.Get(spell.Id) == null)
             {
                 return BadRequest(@"Invalid spell id.");
             }
@@ -570,9 +570,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
 
-            if (!player.TryForgetSpell(new Spell(spell.SpellId), true))
+            if (!player.TryForgetSpell(new Spell(spell.Id), true))
             {
-                return InternalServerError($@"Failed to remove player spell with id '{spell.SpellId}'.");
+                return InternalServerError($@"Failed to remove player spell with id '{spell.Id}'.");
             }
 
             using (var context = DbInterface.CreatePlayerContext(false))

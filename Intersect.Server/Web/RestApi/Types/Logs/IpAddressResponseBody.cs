@@ -1,6 +1,6 @@
 namespace Intersect.Server.Web.RestApi.Types.Logs;
 
-public partial class IpAddress
+public partial class IpAddressResponseBody
 {
     public string Ip { get; set; }
 

@@ -199,7 +199,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("user/{userId:guid}/ip")]
-        [ProducesResponseType(typeof(DataPage<IpAddress>), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        [ProducesResponseType(typeof(DataPage<IpAddressResponseBody>), (int)HttpStatusCode.OK, ContentTypes.Json)]
         public IActionResult ListIpHistory(
             Guid userId,
             [FromQuery] int page = 0,
@@ -216,7 +216,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             var ipAddresses = history.Where(m => m.UserId == userId && m.UserId != Guid.Empty && !string.IsNullOrWhiteSpace(m.Ip))
                 .OrderByDescending(m => m.TimeStamp)
                 .GroupBy(m => m.Ip)
-                .Select(m => new IpAddress { Ip = m.First().Ip, LastUsed = m.First().TimeStamp });
+                .Select(m => new IpAddressResponseBody { Ip = m.First().Ip, LastUsed = m.First().TimeStamp });
 
             var addresses = ipAddresses.Skip(page * pageSize).Take(pageSize).ToList();
 
@@ -240,7 +240,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 }
             }
 
-            return Ok(new DataPage<IpAddress>(
+            return Ok(new DataPage<IpAddressResponseBody>(
                 Total: ipAddresses.Count(),
                 Page: page,
                 PageSize: pageSize,
