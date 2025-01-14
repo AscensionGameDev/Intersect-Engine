@@ -1,8 +1,10 @@
 using System.Net;
 using System.Text.RegularExpressions;
-
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Security;
+using Intersect.Server.Collections.Indexing;
+using Intersect.Server.Collections.Sorting;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Players;
@@ -13,40 +15,23 @@ using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 using Intersect.Server.Notifications;
 using Intersect.Server.Web.Http;
-using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.Types;
+using Intersect.Server.Web.RestApi.Types.User;
 using Intersect.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
-
     [Route("api/v1/users")]
     [Authorize(Roles = nameof(ApiRoles.UserQuery))]
     public sealed partial class UserController : IntersectController
     {
-
-        [HttpPost]
-        [Obsolete("The appropriate verb for retrieving a list of records is GET not POST")]
-        public DataPage<User> ListPost([FromBody] PagingInfo pageInfo)
-        {
-            var page = Math.Max(pageInfo.Page, 0);
-            var pageSize = Math.Max(Math.Min(pageInfo.PageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
-
-            var values = Database.PlayerData.User.List(null, null, SortDirection.Ascending, pageInfo.Page * pageInfo.PageSize, pageInfo.PageSize, out var total);
-
-            return new DataPage<User>(
-                Total: total,
-                Page: page,
-                PageSize: pageSize,
-                Count: values.Count,
-                Values: values
-            );
-        }
+        #region "Basic CRUD Operations"
 
         [HttpGet]
-        public DataPage<User> List(
+        [ProducesResponseType(typeof(DataPage<User>), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult List(
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 0,
             [FromQuery] int limit = PagingInfo.MaxPageSize,
@@ -58,7 +43,6 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             page = Math.Max(page, 0);
             pageSize = Math.Max(Math.Min(pageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
-
             var values = Database.PlayerData.User.List(search?.Length > 2 ? search : null, sortBy, sortDirection, page * pageSize, pageSize, out var total);
 
             if (limit != pageSize)
@@ -66,53 +50,38 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 values = values.Take(limit).ToList();
             }
 
-            return new DataPage<User>(
+            return Ok(new DataPage<User>(
                 Total: total,
                 Page: page,
                 PageSize: pageSize,
                 Count: values.Count,
                 Values: values
-            );
+            ));
         }
 
-        [HttpGet("{userId:guid}")]
-        public object UserById(Guid userId)
+        [HttpGet("{lookupKey:LookupKey}")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(User), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult GetUser(LookupKey lookupKey)
         {
-            if (Guid.Empty == userId)
+            if (lookupKey.IsInvalid)
             {
-                return BadRequest($@"Invalid user id '{userId}'.");
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid user id." : @"Invalid username.");
             }
 
-            var user = Database.PlayerData.User.FindById(userId);
-
-            if (user == null)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound($@"No user with id {userId}.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
-            return user;
-        }
-
-        [HttpGet("{userName}")]
-        public object UserByName(string userName)
-        {
-            if (string.IsNullOrWhiteSpace(userName))
-            {
-                return BadRequest("Invalid user name.");
-            }
-
-            var user = Database.PlayerData.User.Find(userName);
-
-            if (user == null)
-            {
-                return NotFound($@"No user with name '{userName}'.");
-            }
-
-            return user;
+            return Ok(user);
         }
 
         [HttpPost("register")]
-        public IActionResult RegisterUser([FromBody] UserInfo user)
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(RegisterResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult RegisterUser([FromBody] UserInfoRequestBody user)
         {
             if (string.IsNullOrEmpty(user.Username) ||
                 string.IsNullOrEmpty(user.Email) ||
@@ -131,6 +100,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Invalid username '{user.Username}'.");
             }
 
+            var cleanedPassword = user.Password?.Trim();
+            if (!PasswordUtils.IsValidClientPasswordHash(cleanedPassword))
+            {
+                return BadRequest(@"Did not receive a valid password.");
+            }
+
             if (Database.PlayerData.User.UserExists(user.Username))
             {
                 return BadRequest($@"Account already exists with username '{user.Username}'.");
@@ -141,29 +116,24 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Account already with email '{user.Email}'.");
             }
 
-            DbInterface.CreateAccount(null, user.Username, user.Password?.ToUpperInvariant()?.Trim(), user.Email);
-
-            return Ok(
-                new
-                {
-                    user.Username, user.Email,
-                }
-            );
+            DbInterface.CreateAccount(null, user.Username, cleanedPassword, user.Email);
+            return Ok(new RegisterResponseBody(user.Username, user.Email));
         }
 
-        [HttpDelete("{username}")]
-        public object DeleteUserByUsername(string userName)
+        [HttpDelete("{lookupKey:LookupKey}")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(User), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult DeleteUser(LookupKey lookupKey)
         {
-            if (string.IsNullOrWhiteSpace(userName))
+            if (lookupKey.IsInvalid)
             {
-                return BadRequest("Invalid user name.");
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid user id." : @"Invalid username.");
             }
 
-            var user = Database.PlayerData.User.Find(userName);
-
-            if (user == null)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound($@"No user with name '{userName}'.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
             foreach (var plyr in user.Players)
@@ -177,119 +147,32 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             if (!user.TryDelete())
             {
                 var client = Globals.ClientLookup.Values.FirstOrDefault(c => c.User.Id == user.Id);
-                client?.LogAndDisconnect(default, nameof(DeleteUserByUsername));
+                _ = client?.LogAndDisconnect(default, nameof(DeleteUser));
             }
 
-            return user;
+            return Ok(user);
         }
 
-        [HttpDelete("{userId:guid}")]
-        public object DeleteUserById(Guid userId)
-        {
-            if (Guid.Empty == userId)
-            {
-                return BadRequest($@"Invalid user id '{userId}'.");
-            }
+        #endregion
 
-            var user = Database.PlayerData.User.FindById(userId);
+        #region "Player CRUD Operations"
 
-            if (user == null)
-            {
-                return NotFound($@"No user with id '{userId}'.");
-            }
-
-            foreach (var plyr in user.Players)
-            {
-                if (Player.FindOnline(plyr.Id) != null)
-                {
-                    return BadRequest($@"Cannot delete a user is currently online.");
-                }
-            }
-
-            if (!user.TryDelete())
-            {
-                var client = Globals.ClientLookup.Values.FirstOrDefault(c => c.User.Id == user.Id);
-                client?.LogAndDisconnect(default, nameof(DeleteUserById));
-            }
-
-            return user;
-        }
-
-        [HttpPost("{username}/name")]
-        public object ChangeNameByUsername(string userName, [FromBody] NameChange change)
-        {
-            if (string.IsNullOrWhiteSpace(userName))
-            {
-                return BadRequest("Invalid user name.");
-            }
-
-            if (!FieldChecking.IsValidUsername(change.Name, Strings.Regex.Username))
-            {
-                return BadRequest($@"Invalid name.");
-            }
-
-            if (Database.PlayerData.User.UserExists(change.Name))
-            {
-                return BadRequest($@"Name already taken.");
-            }
-
-            var user = Database.PlayerData.User.Find(userName);
-
-            if (user == null)
-            {
-                return NotFound($@"No user with name '{userName}'.");
-            }
-
-            user.Name = change.Name;
-            user.Save();
-
-            return user;
-        }
-
-        [HttpPost("{userId:guid}/name")]
-        public object ChangeNameById(Guid userId, [FromBody] NameChange change)
-        {
-            if (Guid.Empty == userId)
-            {
-                return BadRequest($@"Invalid user id '{userId}'.");
-            }
-
-            if (!FieldChecking.IsValidUsername(change.Name, Strings.Regex.Username))
-            {
-                return BadRequest($@"Invalid name.");
-            }
-
-            if (Database.PlayerData.User.UserExists(change.Name))
-            {
-                return BadRequest($@"Name already taken.");
-            }
-
-            var user = Database.PlayerData.User.FindById(userId);
-
-            if (user == null)
-            {
-                return NotFound($@"No user with id {userId}.");
-            }
-
-            user.Name = change.Name;
-            user.Save();
-
-            return user;
-        }
-
-        [HttpGet("{userName}/players")]
+        [HttpGet("{lookupKey:LookupKey}/players")]
         [Authorize]
-        public object PlayersByUserName(string userName)
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
+        [ProducesResponseType(typeof(IEnumerable<Player>), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult GetPlayers(LookupKey lookupKey)
         {
-            if (string.IsNullOrWhiteSpace(userName))
+            if (lookupKey.IsInvalid)
             {
-                return BadRequest("Invalid user name.");
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid user id." : @"Invalid username.");
             }
 
-            var user = Database.PlayerData.User.Find(userName);
-            if (user == default)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound($@"No user with name '{userName}'.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
             var players = user.Players;
@@ -298,40 +181,19 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return InternalServerError("Unknown error occurred loading players for user.");
             }
 
-            return players;
+            return Ok(players);
         }
 
-        [HttpGet("{userId:guid}/players")]
+        [HttpGet("{lookupKey:LookupKey}/players/{playerName}")]
         [Authorize]
-        public object PlayersByUserId(Guid userId)
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(Player), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult GetPlayer(LookupKey lookupKey, string playerName)
         {
-            if (userId == Guid.Empty)
+            if (lookupKey.IsInvalid)
             {
-                return BadRequest("Invalid user id.");
-            }
-
-            var user = Database.PlayerData.User.FindById(userId);
-            if (user == default)
-            {
-                return NotFound($@"No user with id {userId}.");
-            }
-
-            var players = user.Players;
-            if (players == default)
-            {
-                return InternalServerError("Unknown error occurred loading players for user.");
-            }
-
-            return players;
-        }
-
-        [HttpGet("{userName}/players/{playerName}")]
-        [Authorize]
-        public object PlayerByNameForUserByName(string userName, string playerName)
-        {
-            if (string.IsNullOrWhiteSpace(userName))
-            {
-                return BadRequest("Invalid user name.");
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid user id." : @"Invalid username.");
             }
 
             if (string.IsNullOrWhiteSpace(playerName))
@@ -339,65 +201,31 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest("Invalid player name.");
             }
 
-            var user = Database.PlayerData.User.Find(userName);
-            if (user == default)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound($@"No user with name '{userName}'.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
             var player = user.Players?.FirstOrDefault(p => string.Equals(p?.Name, playerName, StringComparison.Ordinal));
             if (player == default)
             {
-                return NotFound($@"No player exists for '{userName}' with name '{playerName}'.");
+                return NotFound($@"No player exists with name '{playerName}' for user with lookup key '{lookupKey}'");
             }
 
-            return player;
+            return Ok(player);
         }
 
-        [HttpGet("{userId:guid}/players/{playerId:guid}")]
+        [HttpGet("{lookupKey:LookupKey}/players/{index:int}")]
         [Authorize]
-        public object PlayerByIdForUserById(Guid userId, Guid playerId)
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
+        [ProducesResponseType(typeof(Player), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult GetPlayerByIndex(LookupKey lookupKey, int index)
         {
-            if (Guid.Empty == userId)
+            if (lookupKey.IsInvalid)
             {
-                return BadRequest($@"Invalid user id '{userId}'.");
-            }
-
-            if (Guid.Empty == playerId)
-            {
-                return BadRequest($@"Invalid player id '{playerId}'.");
-            }
-
-            var user = Database.PlayerData.User.FindById(userId);
-
-            if (user == default)
-            {
-                return NotFound($@"No user with id '{userId}'.");
-            }
-
-            var players = user.Players;
-            if (players == default)
-            {
-                return InternalServerError("Unknown error occurred loading players for user.");
-            }
-
-            var player = players.FirstOrDefault(p => p?.Id == playerId);
-
-            if (player == default)
-            {
-                return NotFound($@"No player found on user {userId} with id {playerId}.");
-            }
-
-            return player;
-        }
-
-        [HttpGet("{userId:guid}/players/{index:int}")]
-        [Authorize]
-        public object PlayerByIndexForUserById(Guid userId, int index)
-        {
-            if (Guid.Empty == userId)
-            {
-                return BadRequest($@"Invalid user id '{userId}'.");
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid user id." : @"Invalid username.");
             }
 
             if (index < 0)
@@ -405,11 +233,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Invalid player index {index}.");
             }
 
-            var user = Database.PlayerData.User.FindById(userId);
-
-            if (user == null)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound($@"No user with id '{userId}'.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
             var players = user.Players;
@@ -424,28 +250,63 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             var player = players.Skip(index).FirstOrDefault();
-
             if (player == default)
             {
-                return NotFound($@"No player found on user {userId} with index {index}.");
+                return NotFound($@"No player found for user with lookup key {lookupKey} with index {index}.");
             }
 
-            return player;
+            return Ok(player);
         }
 
-        #region "Change Email"
+        #endregion
 
-        [HttpPost("{userName}/manage/email/change")]
-        [Authorize(Roles = nameof(ApiRoles.UserManage))]
-        public object UserChangeEmailByName(string userName, [FromBody] AdminChange authorizedChange)
+        #region "Account Management"
+
+        [HttpPost("{lookupKey:LookupKey}/name")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(User), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult ChangeUsername(LookupKey lookupKey, [FromBody] NameChangePayload change)
         {
-            if (string.IsNullOrWhiteSpace(userName))
+            if (lookupKey.IsInvalid)
             {
-                return BadRequest("Invalid user name.");
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid user id." : @"Invalid username.");
+            }
+
+            if (!FieldChecking.IsValidUsername(change.Name, Strings.Regex.Username))
+            {
+                return BadRequest($@"Invalid name.");
+            }
+
+            if (Database.PlayerData.User.UserExists(change.Name))
+            {
+                return BadRequest($@"Name already taken.");
+            }
+
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
+            {
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
+            }
+
+            user.Name = change.Name;
+            _ = user.Save();
+            return Ok(user);
+        }
+
+        [HttpPost("{lookupKey:LookupKey}/manage/email/change")]
+        [Authorize(Roles = nameof(ApiRoles.UserManage))]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.Conflict, ContentTypes.Json)]
+        [ProducesResponseType(typeof(User), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult ChangeEmail(LookupKey lookupKey, [FromBody] AdminChangeRequestBody authorizedChange)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid user id." : @"Invalid username.");
             }
 
             var email = authorizedChange.New;
-
             if (string.IsNullOrWhiteSpace(email))
             {
                 return BadRequest($@"Malformed email address '{email}'.");
@@ -456,11 +317,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Malformed email address '{email}'.");
             }
 
-            var user = Database.PlayerData.User.Find(userName);
-
-            if (user == null)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound($@"No user with name '{userName}'.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
             if (Database.PlayerData.User.UserExists(email))
@@ -469,22 +328,24 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             user.Email = email;
-            user.Save();
-
-            return user;
+            _ = user.Save();
+            return Ok(user);
         }
 
-        [HttpPost("{userId:guid}/manage/email/change")]
-        [Authorize(Roles = nameof(ApiRoles.UserManage))]
-        public object UserChangeEmailById(Guid userId, [FromBody] AdminChange authorizedChange)
+        [HttpPost("{lookupKey:LookupKey}/email/change")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.Conflict, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.Forbidden, ContentTypes.Json)]
+        [ProducesResponseType(typeof(User), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult UserChangeEmail(LookupKey lookupKey, [FromBody] AuthorizedChangeRequestBody authorizedChange)
         {
-            if (Guid.Empty == userId)
+            if (lookupKey.IsInvalid)
             {
-                return BadRequest($@"Invalid user id '{userId}'.");
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid user id." : @"Invalid username.");
             }
 
             var email = authorizedChange.New;
-
             if (string.IsNullOrWhiteSpace(email))
             {
                 return BadRequest($@"Malformed email address '{email}'.");
@@ -495,49 +356,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Malformed email address '{email}'.");
             }
 
-            var user = Database.PlayerData.User.FindById(userId);
-
-            if (user == null)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound($@"No user with id '{userId}'.");
-            }
-
-            if (Database.PlayerData.User.UserExists(email))
-            {
-                return Conflict(@"Email address already in use.");
-            }
-
-            user.Email = email;
-            user.Save();
-
-            return user;
-        }
-
-        [HttpPost("{userName}/email/change")]
-        public object UserChangeEmailByName(string userName, [FromBody] AuthorizedChange authorizedChange)
-        {
-            if (string.IsNullOrWhiteSpace(userName))
-            {
-                return BadRequest("Invalid user name.");
-            }
-
-            var email = authorizedChange.New;
-
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                return BadRequest($@"Malformed email address '{email}'.");
-            }
-
-            if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.Email))
-            {
-                return BadRequest($@"Malformed email address '{email}'.");
-            }
-
-            var user = Database.PlayerData.User.Find(userName);
-
-            if (user == null)
-            {
-                return NotFound($@"No user with name '{userName}'.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
             if (!user.IsPasswordValid(authorizedChange.Authorization?.ToUpperInvariant()?.Trim()))
@@ -551,147 +372,66 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             user.Email = email;
-            user.Save();
-
-            return user;
+            _ = user.Save();
+            return Ok(user);
         }
 
-        [HttpPost("{userId:guid}/email/change")]
-        public object UserChangeEmailById(Guid userId, [FromBody] AuthorizedChange authorizedChange)
+        [HttpPost("{lookupKey:LookupKey}/password/validate")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult ValidatePassword(LookupKey lookupKey, [FromBody] PasswordValidationRequestBody data)
         {
-            if (Guid.Empty == userId)
+            if (lookupKey.IsInvalid)
             {
-                return BadRequest($@"Invalid user id '{userId}'.");
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid user id." : @"Invalid username.");
             }
 
-            var email = authorizedChange.New;
-
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                return BadRequest($@"Malformed email address '{email}'.");
-            }
-
-            if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.Email))
-            {
-                return BadRequest($@"Malformed email address '{email}'.");
-            }
-
-            var user = Database.PlayerData.User.FindById(userId);
-
-            if (user == null)
-            {
-                return NotFound($@"No user with id '{userId}'.");
-            }
-
-            if (!user.IsPasswordValid(authorizedChange.Authorization?.ToUpperInvariant()?.Trim()))
-            {
-                return Forbidden(@"Invalid credentials.");
-            }
-
-            if (Database.PlayerData.User.UserExists(email))
-            {
-                return Conflict(@"Email address already in use.");
-            }
-
-            user.Email = email;
-            user.Save();
-
-            return user;
-        }
-
-        #endregion
-
-        #region "Validate Password"
-
-        [HttpPost("{userName}/password/validate")]
-        public object UserValidatePasswordByName(string userName, [FromBody] PasswordValidation data)
-        {
-            if (string.IsNullOrWhiteSpace(userName))
-            {
-                return BadRequest("Invalid user name.");
-            }
-
-            if (string.IsNullOrWhiteSpace(data.Password))
+            var cleanedPassword = data.Password?.Trim();
+            if (string.IsNullOrWhiteSpace(cleanedPassword))
             {
                 return BadRequest(@"No password provided.");
             }
 
-            if (!Regex.IsMatch(data.Password?.ToUpperInvariant()?.Trim(), "^[0-9A-Fa-f]{64}$", RegexOptions.Compiled))
+            if (!PasswordUtils.IsValidClientPasswordHash(cleanedPassword))
             {
                 return BadRequest(@"Did not receive a valid password.");
             }
 
-            var user = Database.PlayerData.User.Find(userName);
-
-            if (user == null)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound($@"No user with name '{userName}'.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
-            if (user.IsPasswordValid(data.Password?.ToUpperInvariant()?.Trim()))
+            if (!user.IsPasswordValid(cleanedPassword))
             {
-                return Ok("Password Correct");
+                return BadRequest(@"Invalid credentials.");
             }
 
-            return BadRequest(@"Invalid credentials.");
+            return Ok("Password Correct");
         }
 
-        [HttpPost("{userId:guid}/password/validate")]
-        public object UserValidatePasswordById(Guid userId, [FromBody] PasswordValidation data)
-        {
-            if (Guid.Empty == userId)
-            {
-                return BadRequest($@"Invalid user id '{userId}'.");
-            }
-
-            if (string.IsNullOrWhiteSpace(data.Password))
-            {
-                return BadRequest(@"No password provided.");
-            }
-
-            if (!Regex.IsMatch(data.Password?.ToUpperInvariant()?.Trim(), "^[0-9A-Fa-f]{64}$", RegexOptions.Compiled))
-            {
-                return BadRequest(@"Did not receive a valid password.");
-            }
-
-            var user = Database.PlayerData.User.FindById(userId);
-
-            if (user == null)
-            {
-                return NotFound($@"No user with name '{userId}'.");
-            }
-
-            if (user.IsPasswordValid(data.Password?.ToUpperInvariant()?.Trim()))
-            {
-                return Ok("Password Correct");
-            }
-
-            return BadRequest(@"Invalid credentials.");
-        }
-
-        #endregion
-
-        #region "Change Password"
-
-        [HttpPost("{userName}/manage/password/change")]
+        [HttpPost("{lookupKey:LookupKey}/manage/password/change")]
         [Authorize(Roles = nameof(ApiRoles.UserManage))]
-        public object UserChangePassword(string userName, [FromBody] AdminChange authorizedChange)
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.Forbidden, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult ChangePassword(LookupKey lookupKey, [FromBody] AdminChangeRequestBody authorizedChange)
         {
-            if (string.IsNullOrWhiteSpace(userName))
+            if (lookupKey.IsInvalid)
             {
-                return BadRequest("Invalid user name.");
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid user id." : @"Invalid username.");
             }
 
-            if (!authorizedChange.IsValid)
+            if (string.IsNullOrEmpty(authorizedChange.New))
             {
                 return BadRequest(@"Invalid payload");
             }
 
-            var user = Database.PlayerData.User.Find(userName);
-
-            if (user == null)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound($@"No user with name '{userName}'.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
             if (!user.TrySetPassword(authorizedChange.New?.ToUpperInvariant()?.Trim()))
@@ -699,170 +439,77 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Forbidden(@"Failed to update password.");
             }
 
-            user.Save();
-
+            _ = user.Save();
             return Ok("Password updated.");
         }
 
-        [HttpPost("{userId:guid}/manage/password/change")]
-        [Authorize(Roles = nameof(ApiRoles.UserManage))]
-        public object UserChangePassword(Guid userId, [FromBody] AdminChange authorizedChange)
+        [HttpPost("{lookupKey:LookupKey}/password/change")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.Forbidden, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult UserChangePassword(LookupKey lookupKey, [FromBody] AuthorizedChangeRequestBody authorizedChange)
         {
-            if (Guid.Empty == userId)
+            if (lookupKey.IsInvalid)
             {
-                return BadRequest($@"Invalid user id '{userId}'.");
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid user id." : @"Invalid username.");
             }
 
-            if (!authorizedChange.IsValid)
+            if (string.IsNullOrWhiteSpace(authorizedChange.Authorization) || string.IsNullOrWhiteSpace(authorizedChange.New))
             {
                 return BadRequest(@"Invalid payload");
             }
 
-            var user = Database.PlayerData.User.FindById(userId);
-
-            if (user == null)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return NotFound($@"No user with name '{userId}'.");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
-            if (!user.TrySetPassword(authorizedChange.New?.ToUpperInvariant()?.Trim()))
-            {
-                return Forbidden(@"Failed to update password.");
-            }
-
-            user.Save();
-
-            return Ok("Password Updated.");
-        }
-
-        [HttpPost("{userName}/password/change")]
-        public object UserChangePassword(string userName, [FromBody] AuthorizedChange authorizedChange)
-        {
-            if (string.IsNullOrWhiteSpace(userName))
-            {
-                return BadRequest("Invalid user name.");
-            }
-
-            if (!authorizedChange.IsValid)
-            {
-                return BadRequest(@"Invalid payload");
-            }
-
-            var user = Database.PlayerData.User.Find(userName);
-
-            if (user == null)
-            {
-                return NotFound($@"No user with name '{userName}'.");
-            }
-
-            if (!user.TryChangePassword(
-                authorizedChange.Authorization?.ToUpperInvariant()?.Trim(), authorizedChange.New?.ToUpperInvariant()?.Trim()
-            ))
+            var oldPassword = authorizedChange.Authorization?.ToUpperInvariant()?.Trim();
+            var newPassword = authorizedChange.New?.ToUpperInvariant()?.Trim();
+            if (!user.TryChangePassword(oldPassword, newPassword))
             {
                 return Forbidden(@"Invalid credentials.");
             }
 
-            user.Save();
-
+            _ = user.Save();
             return Ok("Password Updated.");
         }
 
-        [HttpPost("{userId:guid}/password/change")]
-        public object UserChangePassword(Guid userId, [FromBody] AuthorizedChange authorizedChange)
+        [HttpGet("{lookupKey:LookupKey}/password/reset")]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult UserSendPasswordResetEmail(LookupKey lookupKey)
         {
-            if (Guid.Empty == userId)
+            if (lookupKey.IsInvalid)
             {
-                return BadRequest($@"Invalid user id '{userId}'.");
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid user id." : @"Invalid username.");
             }
 
-            if (!authorizedChange.IsValid)
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
-                return BadRequest(@"Invalid payload");
+                return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
-            var user = Database.PlayerData.User.FindById(userId);
-
-            if (user == null)
+            if (!Options.Smtp.IsValid())
             {
-                return NotFound($@"No user with name '{userId}'.");
+                return NotFound("Could not send password reset email, SMTP settings on the server are not configured!");
             }
 
-            if (!user.TryChangePassword(
-                authorizedChange.Authorization?.ToUpperInvariant()?.Trim(), authorizedChange.New?.ToUpperInvariant()?.Trim()
-            ))
+            var email = new PasswordResetEmail(user);
+            if (!email.Send())
             {
-                return Forbidden(@"Invalid credentials.");
+                return InternalServerError("Failed to send reset email.");
             }
 
-            user.Save();
-
-            return "Password updated.";
+            return Ok("Password reset email sent.");
         }
 
         #endregion
 
-        #region "Request Reset Email Password"
-
-        [HttpGet("{userName}/password/reset")]
-        public object UserSendPasswordResetEmailByName(string userName)
-        {
-            if (string.IsNullOrWhiteSpace(userName))
-            {
-                return BadRequest("Invalid user name.");
-            }
-
-            var user = Database.PlayerData.User.Find(userName);
-
-            if (user == null)
-            {
-                return NotFound($@"No user with name '{userName}'.");
-            }
-
-            if (Options.Smtp.IsValid())
-            {
-                var email = new PasswordResetEmail(user);
-                if (email.Send())
-                {
-                    return Ok("Password reset email sent.");
-                }
-
-                return InternalServerError("Failed to send reset email.");
-            }
-            else
-            {
-                return NotFound("Could not send password reset email, SMTP settings on the server are not configured!");
-            }
-        }
-
-        [HttpGet("{userId:guid}/password/reset")]
-        public object UserSendPasswordResetEmailById(Guid userId)
-        {
-            var user = Database.PlayerData.User.FindById(userId);
-
-            if (user == null)
-            {
-                return NotFound($@"No user with name '{userId}'.");
-            }
-
-            if (Options.Smtp.IsValid())
-            {
-                var email = new PasswordResetEmail(user);
-                if (email.Send())
-                {
-                    return Ok("Password reset email sent.");
-                }
-
-                return InternalServerError("Failed to send reset email.");
-            }
-            else
-            {
-                return NotFound("Could not send password reset email, SMTP settings on the server are not configured!");
-            }
-        }
-
-        #endregion
-
-        #region Variables
+        #region User Variables
 
         [HttpGet("{lookupKey:LookupKey}/variables")]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
@@ -988,7 +635,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             if (changed)
             {
                 user.StartCommonEventsWithTriggerForAll(CommonEventTrigger.UserVariableChange, string.Empty, variableId.ToString());
-                user.UpdatedVariables.AddOrUpdate(
+                _ = user.UpdatedVariables.AddOrUpdate(
                     variableId,
                     variableDescriptor,
                     (_, _) => variableDescriptor
@@ -1003,7 +650,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         #region "Admin Action"
 
         [HttpPost("{lookupKey:LookupKey}/admin/{adminAction:AdminAction}")]
-        public object DoAdminActionOnUserByLookupKey(
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotImplemented, ContentTypes.Json)]
+        [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult DoAdminActionOnUserByLookupKey(
             LookupKey lookupKey,
             AdminAction adminAction,
             [FromBody] AdminActionParameters actionParameters
@@ -1020,22 +671,23 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             return DoAdminActionOnUser(
-                () => (client, user),
+                client,
+                user,
                 () => NotFound($@"No user found for lookup key '{lookupKey}'."),
-                adminAction, actionParameters
+                adminAction,
+                actionParameters
             );
         }
 
         private IActionResult DoAdminActionOnUser(
-            Func<ValueTuple<Client, User>> fetch,
+            Client client,
+            User user,
             Func<IActionResult> onError,
             AdminAction adminAction,
             AdminActionParameters actionParameters
         )
         {
-            var (client, user) = fetch();
-
-            if (user == null)
+            if (user == default)
             {
                 return onError();
             }
@@ -1066,7 +718,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     else
                     {
                         // Add ban
-                        Ban.Add(
+                        _ = Ban.Add(
                             user.Id, actionParameters.Duration, actionParameters.Reason ?? string.Empty,
                             actionPerformer.Name, actionParameters.Ip ? targetIp : string.Empty
                         );
@@ -1082,7 +734,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     }
 
                 case AdminAction.UnBan:
-                    Ban.Remove(user.Id, false);
+                    _ = Ban.Remove(user.Id, false);
                     PacketSender.SendGlobalMsg(Strings.Account.UnbanSuccess.ToString(user.Name));
 
                     return Ok(Strings.Account.UnbanSuccess.ToString(user.Name));
@@ -1102,7 +754,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     // If target is online, not yet muted and the action performer has the authority to mute.
                     else
                     {
-                        Mute.Add(
+                        _ = Mute.Add(
                             user, actionParameters.Duration, actionParameters.Reason ?? string.Empty,
                             actionPerformer.Name, actionParameters.Ip ? targetIp : string.Empty
                         );
@@ -1113,7 +765,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     }
 
                 case AdminAction.UnMute:
-                    Mute.Remove(user);
+                    _ = Mute.Remove(user);
                     PacketSender.SendGlobalMsg(Strings.Account.UnmuteSuccess.ToString(user.Name));
 
                     return Ok(Strings.Account.UnmuteSuccess.ToString(user.Name));
@@ -1127,7 +779,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         }
 
                         var mapId = actionParameters.MapId == Guid.Empty ? player.MapId : actionParameters.MapId;
-                        player.Warp(mapId, (byte) player.X, (byte) player.Y);
+                        player.Warp(mapId, (byte)player.X, (byte)player.Y);
 
                         return Ok($@"Warped '{player.Name}' to {mapId} ({player.X}, {player.Y}).");
                     }
@@ -1191,7 +843,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
                 case AdminAction.WarpMeTo:
                 case AdminAction.WarpToMe:
-                    return BadRequest($@"'{adminAction.ToString()}' not supported by the API.");
+                    return BadRequest($@"'{adminAction}' not supported by the API.");
 
                 case AdminAction.SetSprite:
                 case AdminAction.SetFace:
@@ -1205,6 +857,26 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         #endregion
 
-    }
+        #region Obsolete
 
+        [HttpPost]
+        [Obsolete("The appropriate verb for retrieving a list of records is GET not POST")]
+        public IActionResult ListPost([FromBody] PagingInfo pageInfo)
+        {
+            var page = Math.Max(pageInfo.Page, 0);
+            var pageSize = Math.Max(Math.Min(pageInfo.PageSize, PagingInfo.MaxPageSize), PagingInfo.MinPageSize);
+
+            var values = Database.PlayerData.User.List(null, null, SortDirection.Ascending, pageInfo.Page * pageInfo.PageSize, pageInfo.PageSize, out var total);
+
+            return Ok(new DataPage<User>(
+                Total: total,
+                Page: page,
+                PageSize: pageSize,
+                Count: values.Count,
+                Values: values
+            ));
+        }
+
+        #endregion
+    }
 }

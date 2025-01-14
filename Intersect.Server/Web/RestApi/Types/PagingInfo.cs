@@ -1,4 +1,4 @@
-﻿namespace Intersect.Server.Web.RestApi.Payloads;
+namespace Intersect.Server.Web.RestApi.Types;
 
 // TODO: Struct, right now there's an exception when it's a struct and I'm not sure how to fix it
 public class PagingInfo

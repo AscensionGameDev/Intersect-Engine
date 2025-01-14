@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 
-namespace Intersect.Server.Web.RestApi.Payloads;
+namespace Intersect.Server.Web.RestApi.Types;
 
 public static class QueryCollectionExtensions
 {

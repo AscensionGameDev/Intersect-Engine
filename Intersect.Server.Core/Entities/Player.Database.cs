@@ -1,17 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using Intersect.Logging;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
-using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Utilities;
 
 using Microsoft.EntityFrameworkCore;
 
 using Newtonsoft.Json;
+using Intersect.Server.Collections.Indexing;
+using Intersect.Server.Collections.Sorting;
 
 namespace Intersect.Server.Entities;
 
@@ -38,42 +39,39 @@ public partial class Player
 
     #region Lookup
 
-    public static bool TryFetch(LookupKey lookupKey, [NotNullWhen(true)] out Tuple<Client, Player>? tuple)
-    {
-        tuple = Fetch(lookupKey);
-        return tuple != default;
-    }
+    public static bool TryFetch(
+        LookupKey lookupKey,
+        out Player? player,
+        bool loadRelationships = false,
+        bool loadBags = false
+    )
+        => TryFetch(lookupKey, out _, out player, loadRelationships, loadBags);
 
-    public static Tuple<Client, Player> Fetch(LookupKey lookupKey, bool loadRelationships = false,
-        bool loadBags = false)
+    public static bool TryFetch(
+        LookupKey lookupKey,
+        [NotNullWhen(true)] out Client? client,
+        out Player? player,
+        bool loadRelationships = false,
+        bool loadBags = false
+    )
     {
-        if (lookupKey is { HasName: false, HasId: false })
+        if (lookupKey.IsInvalid)
         {
-            return new Tuple<Client, Player>(null, null);
+            client = default;
+            player = default;
+            return false;
         }
 
-        // HasName checks if null or empty
-        // ReSharper disable once AssignNullToNotNullAttribute
-        return lookupKey.HasId
-            ? Fetch(lookupKey.Id)
-            : Fetch(lookupKey.Name, loadRelationships: loadRelationships, loadBags: loadBags);
-    }
+        if (lookupKey.HasId)
+        {
+            client = Globals.Clients.Find(queryClient => lookupKey.Id == queryClient?.Entity?.Id);
+            player = client?.Entity ?? Find(lookupKey.Id);
+            return player != default;
+        }
 
-    public static Tuple<Client, Player> Fetch(string playerName, bool loadRelationships = false, bool loadBags = false)
-    {
-        var client = Globals.Clients.Find(queryClient => Entity.CompareName(playerName, queryClient?.Entity?.Name));
-
-        return new Tuple<Client, Player>(
-            client,
-            client?.Entity ?? Find(playerName, loadRelationships: loadRelationships, loadBags: loadBags)
-        );
-    }
-
-    public static Tuple<Client, Player> Fetch(Guid playerId)
-    {
-        var client = Globals.Clients.Find(queryClient => playerId == queryClient?.Entity?.Id);
-
-        return new Tuple<Client, Player>(client, client?.Entity ?? Player.Find(playerId));
+        client = Globals.Clients.Find(queryClient => CompareName(lookupKey.Name, queryClient?.Entity?.Name));
+        player = client?.Entity ?? Find(lookupKey.Name, loadRelationships: loadRelationships, loadBags: loadBags);
+        return player != default;
     }
 
     public static Player Find(Guid playerId)
