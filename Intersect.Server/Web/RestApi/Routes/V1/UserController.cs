@@ -2,6 +2,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Security;
 using Intersect.Server.Collections.Indexing;
 using Intersect.Server.Collections.Sorting;
 using Intersect.Server.Database;
@@ -99,7 +100,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Invalid username '{user.Username}'.");
             }
 
-            if (!Regex.IsMatch(user.Password?.ToUpperInvariant()?.Trim(), "^[0-9A-Fa-f]{64}$", RegexOptions.Compiled))
+            if (PasswordUtils.IsValidClientPasswordHash(user.Password))
             {
                 return BadRequest(@"Did not receive a valid password.");
             }
@@ -390,7 +391,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(@"No password provided.");
             }
 
-            if (!Regex.IsMatch(data.Password?.ToUpperInvariant()?.Trim(), "^[0-9A-Fa-f]{64}$", RegexOptions.Compiled))
+            if (PasswordUtils.IsValidClientPasswordHash(data.Password))
             {
                 return BadRequest(@"Did not receive a valid password.");
             }

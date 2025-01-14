@@ -9,4 +9,7 @@ public partial class PasswordUtils
     {
         return BitConverter.ToString(SHA256.HashData(Encoding.UTF8.GetBytes(password ?? string.Empty))).Replace("-", string.Empty);
     }
+
+    public static bool IsValidClientPasswordHash(string? hashToValidate) =>
+            hashToValidate is { Length: 64 } && hashToValidate.All(char.IsAsciiHexDigit);
 }
