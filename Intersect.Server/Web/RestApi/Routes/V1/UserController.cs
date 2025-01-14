@@ -101,7 +101,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             var cleanedPassword = user.Password?.Trim();
-            if (PasswordUtils.IsValidClientPasswordHash(cleanedPassword))
+            if (!PasswordUtils.IsValidClientPasswordHash(cleanedPassword))
             {
                 return BadRequest(@"Did not receive a valid password.");
             }
@@ -387,12 +387,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid user id." : @"Invalid username.");
             }
 
-            if (string.IsNullOrWhiteSpace(data.Password))
+            var cleanedPassword = data.Password?.Trim();
+            if (string.IsNullOrWhiteSpace(cleanedPassword))
             {
                 return BadRequest(@"No password provided.");
             }
 
-            if (PasswordUtils.IsValidClientPasswordHash(data.Password))
+            if (!PasswordUtils.IsValidClientPasswordHash(cleanedPassword))
             {
                 return BadRequest(@"Did not receive a valid password.");
             }
@@ -402,7 +403,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
-            if (!user.IsPasswordValid(data.Password?.ToUpperInvariant()?.Trim()))
+            if (!user.IsPasswordValid(cleanedPassword))
             {
                 return BadRequest(@"Invalid credentials.");
             }
