@@ -99,6 +99,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Invalid username '{user.Username}'.");
             }
 
+            if (!Regex.IsMatch(user.Password?.ToUpperInvariant()?.Trim(), "^[0-9A-Fa-f]{64}$", RegexOptions.Compiled))
+            {
+                return BadRequest(@"Did not receive a valid password.");
+            }
+
             if (Database.PlayerData.User.UserExists(user.Username))
             {
                 return BadRequest($@"Account already exists with username '{user.Username}'.");
