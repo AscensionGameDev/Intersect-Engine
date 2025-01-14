@@ -6,5 +6,5 @@ public partial class IpAddressResponseBody
 
     public DateTime LastUsed { get; set; }
 
-    public Dictionary<Guid, string> OtherUsers { get; set; } = new Dictionary<Guid, string>();
+    public Dictionary<Guid, string> OtherUsers { get; set; } = [];
 }
