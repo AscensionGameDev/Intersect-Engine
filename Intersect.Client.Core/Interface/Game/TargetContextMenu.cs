@@ -19,6 +19,7 @@ namespace Intersect.Client.Interface.Game;
 /// </summary>
 public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
 {
+    private readonly MenuItem _targetNameMenuItem;
     private readonly MenuItem _tradeMenuItem;
     private readonly MenuItem _partyMenuItem;
     private readonly MenuItem _friendMenuItem;
@@ -34,6 +35,10 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
         Children.Clear();
 
         _me = Globals.Me;
+
+        _targetNameMenuItem = AddItem(string.Empty);
+        _targetNameMenuItem.MouseInputEnabled = false;
+        AddDivider();
 
         _tradeMenuItem = AddItem(Strings.EntityContextMenu.Trade);
         _tradeMenuItem.Clicked += tradeRequest_Clicked;
@@ -60,6 +65,8 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
             return;
         }
 
+        bool shouldShowTargetNameMenuItem = false;
+
         float posX, posY, newX, newY;
 
         switch (target)
@@ -84,10 +91,17 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
                 posY = InputHandler.MousePosition.Y;
                 newX = posX;
                 newY = posY;
+
+                shouldShowTargetNameMenuItem = true;
                 break;
 
             default:
                 return;
+        }
+
+        if (_entity == null)
+        {
+            return;
         }
 
         if (Canvas is { } canvas)
@@ -103,8 +117,10 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
             }
         }
 
+
         if (IsHidden)
         {
+            TryShowTargetButton(shouldShowTargetNameMenuItem);
             TryShowGuildButton();
             SizeToChildren();
             Open(Pos.None);
@@ -113,6 +129,30 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
         else if (!Globals.InputManager.MouseButtonDown(MouseButtons.Right))
         {
             Close();
+        }
+    }
+
+    private void TryShowTargetButton(bool shouldShow)
+    {
+        _targetNameMenuItem.SetText(shouldShow ? _entity.Name : string.Empty);
+
+        if (shouldShow)
+        {
+            var indexOf = Children.IndexOf(_targetNameMenuItem);
+
+            if (indexOf > 0)
+            {
+                Children.RemoveAt(indexOf);
+            }
+
+            if (indexOf != 0)
+            {
+                Children.Insert(0, _targetNameMenuItem);
+            }
+        }
+        else
+        {
+            Children.Remove(_targetNameMenuItem);
         }
     }
 
