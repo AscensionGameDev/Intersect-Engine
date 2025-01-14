@@ -117,19 +117,24 @@ public static partial class Input
                 return;
             }
 
+            if (Interface.Interface.GameUi is not { } gameUi)
+            {
+                return;
+            }
+
             // First try and unfocus chat then close all UI elements, then untarget our target.. and THEN open the escape menu.
             // Most games do this, why not this?
-            if (Interface.Interface.GameUi != null && Interface.Interface.GameUi.ChatFocussed)
+            if (gameUi.ChatFocussed)
             {
-                Interface.Interface.GameUi.UnfocusChat = true;
+                gameUi.UnfocusChat = true;
             }
-            else if (Interface.Interface.GameUi != null && Interface.Interface.GameUi.CloseAllWindows())
+            else if (gameUi.CloseAllWindows())
             {
                 // We've closed our windows, don't do anything else. :)
             }
-            else if (Globals.Me != null && Globals.Me.TargetIndex != Guid.Empty && !Globals.Me.Status.Any(s => s.Type == Enums.SpellEffect.Taunt))
+            else if (Globals.Me is {} me && me.TargetIndex != default && me.Status.All(s => s.Type != SpellEffect.Taunt))
             {
-                _ = Globals.Me.ClearTarget();
+                _ = me.ClearTarget();
             }
             else
             {
@@ -137,11 +142,18 @@ public static partial class Input
 
                 if (simplifiedEscapeMenuSetting)
                 {
-                    Interface.Interface.GameUi?.GameMenu?.ToggleSimplifiedEscapeMenu();
+                    if (gameUi.EscapeMenu.IsVisible)
+                    {
+                        gameUi.EscapeMenu.ToggleHidden();
+                    }
+                    else
+                    {
+                        gameUi.GameMenu.ToggleSimplifiedEscapeMenu();
+                    }
                 }
                 else
                 {
-                    Interface.Interface.GameUi?.EscapeMenu?.ToggleHidden();
+                    gameUi.EscapeMenu.ToggleHidden();
                 }
             }
         }
