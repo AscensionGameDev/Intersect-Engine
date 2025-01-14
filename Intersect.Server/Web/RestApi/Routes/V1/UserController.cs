@@ -100,7 +100,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Invalid username '{user.Username}'.");
             }
 
-            if (PasswordUtils.IsValidClientPasswordHash(user.Password))
+            var cleanedPassword = user.Password?.Trim();
+            if (PasswordUtils.IsValidClientPasswordHash(cleanedPassword))
             {
                 return BadRequest(@"Did not receive a valid password.");
             }
@@ -115,7 +116,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Account already with email '{user.Email}'.");
             }
 
-            DbInterface.CreateAccount(null, user.Username, user.Password?.ToUpperInvariant()?.Trim(), user.Email);
+            DbInterface.CreateAccount(null, user.Username, cleanedPassword, user.Email);
             return Ok(new RegisterResponseBody(user.Username, user.Email));
         }
 
