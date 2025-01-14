@@ -361,7 +361,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
                 if (doGroupBy)
                 {
-                    trades = trades.GroupBy(t => t.TradeId, (key, group) => group.OrderBy(gt => gt.PlayerId)).Select(t => t.First());
+                    trades = trades.GroupBy(t => t.TradeId)
+                        .Select(group => group.OrderBy(gt => gt.PlayerId).First())
+                        .AsQueryable();
                 }
 
                 var values = trades.ToList();
