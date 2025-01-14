@@ -75,6 +75,8 @@ public abstract partial class PlayerContext : IntersectDbContext<PlayerContext>,
 
         modelBuilder.Entity<User>().HasMany(b => b.Players).WithOne(p => p.User);
 
+        modelBuilder.Entity<Player>().HasOne(p => p.DbGuild).WithMany().OnDelete(DeleteBehavior.SetNull);
+
         modelBuilder.Entity<Player>()
             .HasMany(b => b.Friends)
             .WithOne(p => p.Owner)

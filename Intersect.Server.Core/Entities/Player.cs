@@ -205,12 +205,15 @@ public partial class Player : Entity
 
     [NotMapped][JsonIgnore] public bool IsInGuild => Guild != null;
 
-    [NotMapped] public Guid GuildId => DbGuild?.Id ?? default;
+    [NotMapped] public Guid GuildId => DbGuildId ?? default;
+
+    [JsonIgnore]
+    public Guid? DbGuildId { get; set; }
 
     /// <summary>
     /// This field is used for EF database fields only and should never be assigned to or used, instead the guild instance will be assigned to CachedGuild above
     /// </summary>
-    [JsonIgnore] public Guild DbGuild { get; set; }
+    [JsonIgnore] [ForeignKey(nameof(DbGuildId))] public Guild? DbGuild { get; set; }
 
     [NotMapped]
     [JsonIgnore]

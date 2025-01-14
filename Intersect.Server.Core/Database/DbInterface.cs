@@ -10,6 +10,7 @@ using Amib.Threading;
 using Intersect.Collections;
 using Intersect.Config;
 using Intersect.Enums;
+using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
@@ -18,7 +19,6 @@ using Intersect.GameObjects.Maps.MapList;
 using Intersect.Logging;
 using Intersect.Logging.Output;
 using Intersect.Models;
-using Intersect.Reflection;
 using Intersect.Server.Core;
 using Intersect.Server.Database.GameData;
 using Intersect.Server.Database.Logging;
@@ -249,7 +249,7 @@ public static partial class DbInterface
     {
         if (!context.HasPendingMigrations)
         {
-            Log.Verbose("No pending migrations, skipping...");
+            Log.Verbose($"No pending migrations for {context.GetType().GetName(qualified: true)}, skipping...");
             return;
         }
 
@@ -272,40 +272,43 @@ public static partial class DbInterface
 
     private static bool EnsureUpdated(IServerContext serverContext)
     {
-        Log.Verbose("Creating game context...");
+        var gameDatabaseOptions = Options.Instance.GameDatabase;
+        Log.Info($"Creating game context using {gameDatabaseOptions.Type}...");
         using var gameContext = GameContext.Create(new DatabaseContextOptions
         {
-            ConnectionStringBuilder = Options.Instance.GameDatabase.Type.CreateConnectionStringBuilder(
-                Options.Instance.GameDatabase,
+            ConnectionStringBuilder = gameDatabaseOptions.Type.CreateConnectionStringBuilder(
+                gameDatabaseOptions,
                 GameDbFilename
             ),
-            DatabaseType = Options.Instance.GameDatabase.Type,
+            DatabaseType = gameDatabaseOptions.Type,
             EnableDetailedErrors = true,
             EnableSensitiveDataLogging = true,
             LoggerFactory = new IntersectLoggerFactory(nameof(GameContext)),
         });
 
-        Log.Verbose("Creating player context...");
+        var playerDatabaseOptions = Options.Instance.PlayerDatabase;
+        Log.Info($"Creating player context using {playerDatabaseOptions.Type}...");
         using var playerContext = PlayerContext.Create(new DatabaseContextOptions
         {
-            ConnectionStringBuilder = Options.Instance.PlayerDatabase.Type.CreateConnectionStringBuilder(
-                Options.Instance.PlayerDatabase,
+            ConnectionStringBuilder = playerDatabaseOptions.Type.CreateConnectionStringBuilder(
+                playerDatabaseOptions,
                 PlayersDbFilename
             ),
-            DatabaseType = Options.Instance.PlayerDatabase.Type,
+            DatabaseType = playerDatabaseOptions.Type,
             EnableDetailedErrors = true,
             EnableSensitiveDataLogging = true,
             LoggerFactory = new IntersectLoggerFactory(nameof(PlayerContext)),
         });
 
-        Log.Verbose("Creating logging context...");
+        var loggingDatabaseOptions = Options.Instance.LoggingDatabase;
+        Log.Info($"Creating logging context using {loggingDatabaseOptions.Type}...");
         using var loggingContext = LoggingContext.Create(new DatabaseContextOptions
         {
-            ConnectionStringBuilder = Options.Instance.LoggingDatabase.Type.CreateConnectionStringBuilder(
-                Options.Instance.LoggingDatabase,
+            ConnectionStringBuilder = loggingDatabaseOptions.Type.CreateConnectionStringBuilder(
+                loggingDatabaseOptions,
                 LoggingDbFilename
             ),
-            DatabaseType = Options.Instance.LoggingDatabase.Type,
+            DatabaseType = loggingDatabaseOptions.Type,
             EnableDetailedErrors = true,
             EnableSensitiveDataLogging = true,
             LoggerFactory = new IntersectLoggerFactory(nameof(LoggingContext)),
@@ -397,7 +400,7 @@ public static partial class DbInterface
         }
         else
         {
-            Console.WriteLine("No migrations pending, skipping...");
+            Console.WriteLine("No migrations pending that require user acceptance, skipping prompt...");
         }
 
         var contexts = new List<DbContext> { gameContext, playerContext, loggingContext };

@@ -2,7 +2,7 @@
 
 public enum MigrationType
 {
+    Clean,
     Data,
-
-    Schema
+    Schema,
 }

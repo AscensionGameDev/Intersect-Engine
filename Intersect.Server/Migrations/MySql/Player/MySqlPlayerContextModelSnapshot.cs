@@ -3,6 +3,7 @@ using System;
 using Intersect.Server.Database.PlayerData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -16,8 +17,10 @@ namespace Intersect.Server.Migrations.MySql.Player
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.11")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Api.RefreshToken", b =>
                 {
@@ -910,7 +913,8 @@ namespace Intersect.Server.Migrations.MySql.Player
                 {
                     b.HasOne("Intersect.Server.Database.PlayerData.Players.Guild", "DbGuild")
                         .WithMany()
-                        .HasForeignKey("DbGuildId");
+                        .HasForeignKey("DbGuildId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Intersect.Server.Database.PlayerData.User", "User")
                         .WithMany("Players")

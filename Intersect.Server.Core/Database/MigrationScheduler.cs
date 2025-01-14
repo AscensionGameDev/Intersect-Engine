@@ -1,3 +1,4 @@
+using Intersect.Framework.Reflection;
 using Intersect.Logging;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -43,6 +44,29 @@ public sealed class MigrationScheduler<TContext>
         var migrator = _context.Database.GetService<IMigrator>();
 
         var scheduleSegment = _scheduledMigrations;
+        if (scheduleSegment.Any(migration => migration is CleanDatabaseMigrationMetadata))
+        {
+            if (scheduleSegment.Count != 1)
+            {
+                var migrationTypeNames = string.Join(", ", scheduleSegment.Select(migration => migration.GetType().GetName(qualified: true)));
+                throw new InvalidOperationException(
+                    $"There should only be 1 {nameof(CleanDatabaseMigrationMetadata)} migration if one is present in the schedule but there were {scheduleSegment.Count} migrations scheduled: {migrationTypeNames}"
+                );
+            }
+
+            // If we are just doing a clean database "migration" (really just a creation), invoke once and exit early
+            if (_context.Database.EnsureCreated())
+            {
+                Log.Verbose("Database created successfully.");
+            }
+            else
+            {
+                Log.Verbose("Failed to ensure database was created, using the migrator instead...");
+                migrator.Migrate();
+            }
+            return;
+        }
+
         while (scheduleSegment.Any())
         {
             var targetMigration = scheduleSegment
@@ -80,19 +104,37 @@ public sealed class MigrationScheduler<TContext>
 
             scheduleSegment = scheduleSegment
                 .Skip(1)
-                .ToList();;
+                .ToList();
         }
     }
 
     public MigrationScheduler<TContext> SchedulePendingMigrations()
     {
         var pendingDataMigrations = _context.PendingDataMigrations;
-        List<MigrationMetadata> scheduledMigrations = new();
 
-        var pendingSchemaMigrationNames = _context.PendingSchemaMigrations.ToList();
+        var allSchemaMigrationNames = _context.AllSchemaMigrations.ToArray();
+        var pendingSchemaMigrationNames = _context.PendingSchemaMigrations.ToArray();
+        var isCleanDatabase = allSchemaMigrationNames.Length == pendingSchemaMigrationNames.Length &&
+                              pendingSchemaMigrationNames.Select(
+                                  (name, index) => string.Equals(
+                                      name,
+                                      allSchemaMigrationNames[index],
+                                      StringComparison.Ordinal
+                                  )
+                              ).All(equality => equality);
+
+        if (isCleanDatabase)
+        {
+            // If we're dealing with a totally empty database, just "migrate" cleanly to the latest
+            _scheduledMigrations = [new CleanDatabaseMigrationMetadata()];
+            return this;
+        }
+
         var pendingSchemaMigrations = pendingSchemaMigrationNames
             .Select(pendingMigration => MigrationMetadata.CreateSchemaMigrationMetadata(pendingMigration, typeof(TContext)))
             .ToList();
+
+        List<MigrationMetadata> scheduledMigrations = [];
 
         // Add schema migrations in their order and interleave any data migrations
         foreach (var pendingMigration in pendingSchemaMigrations)
@@ -104,7 +146,7 @@ public sealed class MigrationScheduler<TContext>
                         string.Equals(
                             pendingMigration.Name,
                             dataMigration.SchemaMigrations
-                                .OrderBy(name => pendingSchemaMigrationNames.IndexOf(name))
+                                .OrderBy(name => Array.IndexOf(pendingSchemaMigrationNames, name))
                                 .Last(),
                             StringComparison.Ordinal
                         )
