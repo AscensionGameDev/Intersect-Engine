@@ -182,7 +182,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Cannot kick a guild owner, transfer ownership first.");
             }
 
-            guild.RemoveMember(player.Id, player, default, Database.Logging.Entities.GuildHistory.GuildActivityType.Kicked);
+            guild.TryRemoveMember(player.Id, player, default, Database.Logging.Entities.GuildHistory.GuildActivityType.Kicked);
 
             return player;
         }

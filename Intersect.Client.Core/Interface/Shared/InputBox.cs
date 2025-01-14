@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
@@ -294,6 +295,29 @@ public partial class InputBox : WindowControl
 
         OkayEventHandler?.Invoke(this, EventArgs.Empty);
         Dispose();
+    }
+
+    public override void Focus(bool moveMouse = false)
+    {
+        switch (_inputType)
+        {
+            case InputType.OkayOnly:
+            case InputType.YesNo:
+                break;
+            case InputType.NumericInput:
+                _txtNumeric.Focus(moveMouse);
+                return;
+            case InputType.TextInput:
+                _textbox.Focus(moveMouse);
+                return;
+            case InputType.NumericSliderInput:
+                _txtNumericSlider.Focus(moveMouse);
+                return;
+            default:
+                throw new UnreachableException($"Invalid input type {_inputType}");
+        }
+
+        base.Focus(moveMouse);
     }
 
     public override void Dispose()

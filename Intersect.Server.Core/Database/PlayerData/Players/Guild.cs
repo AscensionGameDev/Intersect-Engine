@@ -7,6 +7,7 @@ using Intersect.Server.Networking;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using Intersect.Collections.Slotting;
+using Intersect.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Intersect.Network.Packets.Server;
 using Intersect.GameObjects;
@@ -24,8 +25,7 @@ namespace Intersect.Server.Database.PlayerData.Players;
 /// </summary>
 public partial class Guild
 {
-
-    public static ConcurrentDictionary<Guid, Guild> Guilds = new ConcurrentDictionary<Guid, Guild>();
+    public static readonly ConcurrentDictionary<Guid, Guild> Guilds = new();
 
     // Entity Framework Garbage.
     public Guild()
@@ -108,54 +108,43 @@ public partial class Guild
     /// </summary>
     /// <param name="creator">The <see cref="Player"/> that created the guild.</param>
     /// <param name="name">The Name of the guild.</param>
-    public static Guild CreateGuild(Player creator, string name)
+    public static Guild? CreateGuild(Player creator, string name)
     {
         name = name.Trim();
 
-        if (creator != null && FieldChecking.IsValidGuildName(name, Strings.Regex.GuildName))
+        if (creator == null || !FieldChecking.IsValidGuildName(name, Strings.Regex.GuildName))
         {
-            using (var context = DbInterface.CreatePlayerContext(readOnly: false))
-            {
-                var guild = new Guild()
-                {
-                    Name = name,
-                    FoundingDate = DateTime.UtcNow,
-                    GuildInstanceId = Guid.NewGuid()
-                };
-
-                SlotHelper.ValidateSlotList(guild.Bank, Options.Instance.Guild.InitialBankSlots);
-
-                var player = context.Players.FirstOrDefault(p => p.Id == creator.Id);
-                if (player != null)
-                {
-                    player.DbGuild = guild;
-                    player.GuildRank = 0;
-                    player.GuildJoinDate = DateTime.UtcNow;
-
-
-                    context.ChangeTracker.DetectChanges();
-                    context.SaveChanges();
-
-                    var member = new GuildMember(player.Id, player.Name, player.GuildRank, player.Level, player.ClassName, player.MapName);
-                    guild.Members.AddOrUpdate(player.Id, member, (key, oldValue) => member);
-
-                    creator.Guild = guild;
-                    creator.GuildRank = 0;
-                    creator.GuildJoinDate = DateTime.UtcNow;
-
-                    // Send our entity data to nearby players.
-                    PacketSender.SendEntityDataToProximity(Player.FindOnline(creator.Id));
-
-                    Guilds.AddOrUpdate(guild.Id, guild, (key, oldValue) => guild);
-
-                    LogActivity(guild.Id, creator, null, GuildActivityType.Created, name);
-
-                    return guild;
-                }
-            }
+            return null;
         }
-        return null;
 
+        using var context = DbInterface.CreatePlayerContext(readOnly: false);
+        var guild = new Guild
+        {
+            Name = name,
+            FoundingDate = DateTime.UtcNow,
+            GuildInstanceId = Guid.NewGuid(),
+        };
+
+        SlotHelper.ValidateSlotList(guild.Bank, Options.Instance.Guild.InitialBankSlots);
+
+        creator.Guild = guild;
+        creator.GuildRank = 0;
+        creator.GuildJoinDate = DateTime.UtcNow;
+
+        context.ChangeTracker.DetectChanges();
+        context.SaveChanges();
+
+        LogActivity(guild.Id, creator, null, GuildActivityType.Created, name);
+
+        Guilds.AddOrUpdate(guild.Id, guild, (_, _) => guild);
+
+        var member = new GuildMember(creator.Id, creator.Name, creator.GuildRank, creator.Level, creator.ClassName, creator.MapName);
+        guild.Members.AddOrUpdate(creator.Id, member, (_, _) => member);
+
+        // Send our entity data to nearby players.
+        PacketSender.SendEntityDataToProximity(Player.FindOnline(creator.Id));
+
+        return guild;
     }
 
     public static bool TryGet(Guid guildId, [NotNullWhen(true)] out Guild? guild)
@@ -171,35 +160,56 @@ public partial class Guild
     /// <returns></returns>
     public static Guild LoadGuild(Guid id)
     {
-        if (!Guilds.TryGetValue(id, out Guild found))
+        if (Guilds.TryGetValue(id, out Guild found))
         {
-            using var context = DbInterface.CreatePlayerContext();
-            var guild = context.Guilds.Where(g => g.Id == id)
-                .Include(g => g.Bank)
-                .Include(g => g.Variables)
-                .AsSplitQuery()
-                .FirstOrDefault();
-            if (guild == default)
-            {
-                return default;
-            }
-
-            // Load Members
-            var members = context.Players.Where(p => p.DbGuild.Id == id).ToDictionary(t => t.Id, t => new Tuple<Guid, string, int, int, Guid, Guid>(t.Id, t.Name, t.GuildRank, t.Level, t.ClassId, t.MapId));
-            foreach (var member in members)
-            {
-                var guildMember = new GuildMember(member.Value.Item1, member.Value.Item2, member.Value.Item3, member.Value.Item4, ClassBase.GetName(member.Value.Item5), MapBase.GetName(member.Value.Item6));
-                guild.Members.AddOrUpdate(member.Key, guildMember, (key, oldValue) => guildMember);
-            }
-
-            SlotHelper.ValidateSlotList(guild.Bank, guild.BankSlotsCount);
-
-            Guilds.AddOrUpdate(id, guild, (key, oldValue) => guild);
-
-            return guild;
+            return found;
         }
 
-        return found;
+        using var context = DbInterface.CreatePlayerContext();
+        var guild = context.Guilds.Where(g => g.Id == id)
+            .Include(g => g.Bank)
+            .Include(g => g.Variables)
+            .AsSplitQuery()
+            .FirstOrDefault();
+        if (guild == default)
+        {
+            return default;
+        }
+
+        // Load Members
+        var members = context.Players.Where(p => p.Guild.Id == id).ToDictionary(
+            player => player.Id,
+            player => new Tuple<string, int, int, Guid, Guid>(
+                player.Name,
+                player.GuildRank,
+                player.Level,
+                player.ClassId,
+                player.MapId
+            )
+        );
+
+        foreach (var (memberId, membership) in members)
+        {
+            var (memberName, memberRank, memberLevel, memberClassId, memberMapId) = membership;
+            var className = ClassBase.GetName(memberClassId);
+            var mapName = MapBase.GetName(memberMapId);
+            var guildMember = new GuildMember(
+                memberId,
+                memberName,
+                memberRank,
+                memberLevel,
+                className,
+                mapName
+            );
+            guild.Members.AddOrUpdate(memberId, guildMember, (_, _) => guildMember);
+        }
+
+        SlotHelper.ValidateSlotList(guild.Bank, guild.BankSlotsCount);
+
+        Guilds.AddOrUpdate(id, guild, (_, _) => guild);
+
+        return guild;
+
     }
 
     /// <summary>
@@ -211,18 +221,20 @@ public partial class Guild
         var online = new List<Player>();
         foreach (var member in Members)
         {
-            var plyr = Player.FindOnline(member.Key);
-            if (plyr != null)
+            var player = Player.FindOnline(member.Key);
+            if (player == null)
             {
-                //Update Cached Member List Values
-                member.Value.Name = plyr.Name;
-                member.Value.Class = plyr.ClassName;
-                member.Value.Level = plyr.Level;
-                member.Value.Map = plyr.MapName;
-                member.Value.Rank = plyr.GuildRank;
-
-                online.Add(plyr);
+                continue;
             }
+
+            //Update Cached Member List Values
+            member.Value.Name = player.Name;
+            member.Value.ClassName = player.ClassName;
+            member.Value.Level = player.Level;
+            member.Value.MapName = player.MapName;
+            member.Value.Rank = player.GuildRank;
+
+            online.Add(player);
         }
 
         return online;
@@ -234,39 +246,67 @@ public partial class Guild
     /// <param name="player">The player to join into the guild.</param>
     /// <param name="rank">Integer index of the rank to give this new member.</param>
     /// <param name="initiator">The player who initiated this change (null if done by the api or some other method).</param>
-    public void AddMember(Player player, int rank, Player initiator = null)
+    public bool TryAddMember(Player player, int rank, Player? initiator = null)
     {
-        if (player != null && !Members.Any(m => m.Key == player.Id))
+        if (player == null)
         {
-            using (var context = DbInterface.CreatePlayerContext(readOnly: false))
-            {
-                var dbPlayer = context.Players.FirstOrDefault(p => p.Id == player.Id);
-                if (dbPlayer != null)
-                {
-                    dbPlayer.DbGuild = this;
-                    dbPlayer.GuildRank = rank;
-                    dbPlayer.GuildJoinDate = DateTime.UtcNow;
-                    context.ChangeTracker.DetectChanges();
-                    DetachGuildFromDbContext(context, this);
-                    context.SaveChanges();
-
-                    player.Guild = this;
-                    player.GuildRank = rank;
-                    player.GuildJoinDate = DateTime.UtcNow;
-
-                    var member = new GuildMember(player.Id, player.Name, player.GuildRank, player.Level, player.ClassName, player.MapName);
-                    Members.AddOrUpdate(player.Id, member, (key, oldValue) => member);
-
-                    // Send our new guild list to everyone that's online.
-                    UpdateMemberList();
-
-                    // Send our entity data to nearby players.
-                    PacketSender.SendEntityDataToProximity(Player.FindOnline(player.Id));
-
-                    LogActivity(Id, player, initiator, GuildActivityType.Joined);
-                }
-            }
+            return false;
         }
+
+        if (Members.ContainsKey(player.Id))
+        {
+            return false;
+        }
+
+        try
+        {
+            // Save the guild before adding a new player
+            Save();
+        }
+        catch (Exception exception)
+        {
+            Log.Error(exception, $"Failed to save guild {Id} before adding player {player.Id}");
+            return false;
+        }
+
+        try
+        {
+            // Save the player before adding them to the guild
+            player.User.Save();
+        }
+        catch (Exception exception)
+        {
+            Log.Error(exception, $"Failed to save player {player.Id} before adding them to guild {Id}");
+            return false;
+        }
+
+        using var context = DbInterface.CreatePlayerContext(readOnly: false);
+        player.Guild = this;
+        player.GuildRank = rank;
+        player.GuildJoinDate = DateTime.UtcNow;
+        context.Update(player);
+        context.ChangeTracker.DetectChanges();
+        context.SaveChanges();
+
+        LogActivity(Id, player, initiator, GuildActivityType.Joined);
+
+        var member = new GuildMember(
+            player.Id,
+            player.Name,
+            player.GuildRank,
+            player.Level,
+            player.ClassName,
+            player.MapName
+        );
+        Members.AddOrUpdate(player.Id, member, (_, _) => member);
+
+        // Send our new guild list to everyone that's online.
+        UpdateMemberList();
+
+        // Send our entity data to nearby players.
+        PacketSender.SendEntityDataToProximity(Player.FindOnline(player.Id));
+
+        return true;
     }
 
     /// <summary>
@@ -275,48 +315,54 @@ public partial class Guild
     /// <param name="targetId">The ID of the player to remove from the guild.</param>
     /// <param name="targetPlayer">The player to remove from the guild.</param>
     /// <param name="initiator">The player who initiated this change (null if done by the api or some other method).</param>
-    public void RemoveMember(Guid targetId, Player targetPlayer, Player initiator = null, GuildActivityType action = GuildActivityType.Left)
+    /// <param name="guildActivityType">The reason the member is being removed.</param>
+    public bool TryRemoveMember(Guid targetId, Player targetPlayer, Player? initiator = null, GuildActivityType guildActivityType = GuildActivityType.Left)
     {
-        if (targetPlayer == default)
+        if (targetId == default)
         {
-            targetPlayer = Player.Find(targetId);
+            return false;
         }
 
-        using (var context = DbInterface.CreatePlayerContext(readOnly: false))
+        targetPlayer ??= Player.Find(targetId);
+
+        if (targetPlayer == null)
         {
-            var dbPlayer = context.Players.Where(p => p.Id == targetId && p.DbGuild.Id == this.Id).Include(p => p.DbGuild).FirstOrDefault();
-            if (dbPlayer != default)
-            {
-                dbPlayer.DbGuild = default;
-                dbPlayer.GuildRank = 0;
-
-                context.ChangeTracker.DetectChanges();
-                context.SaveChanges();
-            }
-
-            if (targetPlayer != default)
-            {
-                targetPlayer.Guild = default;
-                targetPlayer.GuildRank = 0;
-                targetPlayer.GuildInvite = default;
-
-                if (targetPlayer.BankInterface != null && targetPlayer.GuildBank)
-                {
-                    targetPlayer.BankInterface.Dispose();
-                }
-            }
-
-
-            Members.TryRemove(targetId, out GuildMember _);
-
-            // Send our new guild list to everyone that's online.
-            UpdateMemberList();
-
-            // Send our entity data to nearby players.
-            PacketSender.SendEntityDataToProximity(Player.FindOnline(targetId));
-
-            LogActivity(Id, targetPlayer?.UserId ?? default, targetId, targetPlayer?.Client?.Ip ?? string.Empty, initiator, action);
+            Log.Warn($"Failed to remove non-existent player {targetId} from the guild {Id}");
+            return false;
         }
+
+        using var context = DbInterface.CreatePlayerContext(readOnly: false);
+        context.Attach(targetPlayer);
+        targetPlayer.Guild = default;
+        targetPlayer.GuildRank = 0;
+        targetPlayer.GuildJoinDate = default;
+        targetPlayer.PendingGuildInvite = default;
+        context.ChangeTracker.DetectChanges();
+        context.SaveChanges();
+
+        LogActivity(
+            Id,
+            targetPlayer.UserId,
+            targetId,
+            targetPlayer.Client?.Ip ?? string.Empty,
+            initiator,
+            guildActivityType
+        );
+
+        if (targetPlayer.BankInterface != null && targetPlayer.GuildBank)
+        {
+            targetPlayer.BankInterface.Dispose();
+        }
+
+        _ = Members.TryRemove(targetId, out GuildMember _);
+
+        // Send our new guild list to everyone that's online.
+        UpdateMemberList();
+
+        // Send our entity data to nearby players.
+        PacketSender.SendEntityDataToProximity(Player.FindOnline(targetId));
+
+        return true;
     }
 
     /// <summary>
@@ -330,6 +376,28 @@ public partial class Guild
             UpdatedVariables.Clear();
         }
         UpdateMemberList();
+    }
+
+    internal void NotifyPlayerDisposed(Player player)
+    {
+        var onlineCount = FindOnlineMembers().Count;
+        if (onlineCount == 0)
+        {
+            Save();
+
+            if (Guilds.TryRemove(Id, out _))
+            {
+                Log.Info($"[Guild][{Id}] Removed self from {nameof(Guilds)} after player {player.Id} logged out");
+            }
+            else
+            {
+                Log.Warn($"[Guild][{Id}] Failed to remove self from {nameof(Guilds)} after player {player.Id} logged out");
+            }
+        }
+        else
+        {
+            Log.Info($"[Guild][{Id}] Player {player.Id} logged out but there are {onlineCount} members still online");
+        }
     }
 
     /// <summary>
@@ -361,65 +429,41 @@ public partial class Guild
     /// <param name="initiator">The player who initiated this change (null if done by the api or some other method).</param>
     public void SetPlayerRank(Guid targetId, Player targetPlayer, int rank, Player initiator = null)
     {
-        if (targetPlayer == default)
+        targetPlayer ??= Player.Find(targetId);
+
+        if (targetPlayer == null)
         {
-            targetPlayer = Player.Find(targetId);
+            Log.Warn($"Unable to set guild rank to {rank} for non-existent player {targetId} in guild {Id}");
+            return;
         }
 
-        using (var context = DbInterface.CreatePlayerContext(readOnly: false))
+        using var context = DbInterface.CreatePlayerContext(readOnly: false);
+        var originalRank = targetPlayer.GuildRank;
+        targetPlayer.GuildRank = rank;
+        context.Update(targetPlayer);
+        context.ChangeTracker.DetectChanges();
+        context.SaveChanges();
+
+        LogActivity(
+            Id,
+            targetPlayer.UserId,
+            targetId,
+            targetPlayer.Client?.Ip ?? string.Empty,
+            initiator,
+            originalRank < rank ? GuildActivityType.Demoted : GuildActivityType.Promoted,
+            rank.ToString()
+        );
+
+        if (Members.TryGetValue(targetId, out GuildMember val))
         {
-            var dbPlayer = context.Players.FirstOrDefault(p => p.Id == targetId && p.DbGuild.Id == this.Id);
-            var origRank = dbPlayer?.GuildRank;
-            if (dbPlayer != default)
-            {
-                dbPlayer.GuildRank = rank;
-
-                context.ChangeTracker.DetectChanges();
-                context.SaveChanges();
-            }
-
-            if (targetPlayer != default)
-            {
-                targetPlayer.GuildRank = rank;
-            }
-
-            if (Members.TryGetValue(targetId, out GuildMember val))
-            {
-                val.Rank = rank;
-            }
-
-            // Send our new guild list to everyone that's online.
-            UpdateMemberList();
-
-            // Send our entity data to nearby players.
-            PacketSender.SendEntityDataToProximity(Player.FindOnline(targetId));
-
-            //Log this change
-            if (!origRank.HasValue || origRank < rank)
-            {
-                LogActivity(
-                    Id,
-                    targetPlayer?.UserId ?? default,
-                    targetId,
-                    targetPlayer?.Client?.Ip ?? string.Empty,
-                    initiator,
-                    GuildActivityType.Demoted,
-                    rank.ToString()
-                );
-            }
-            else if (origRank > rank)
-            {
-                LogActivity(
-                    Id,
-                    targetPlayer?.UserId ?? default,
-                    targetId,
-                    targetPlayer?.Client?.Ip ?? string.Empty,
-                    initiator,
-                    GuildActivityType.Promoted,
-                    rank.ToString()
-                );
-            }
+            val.Rank = rank;
         }
+
+        // Send our new guild list to everyone that's online.
+        UpdateMemberList();
+
+        // Send our entity data to nearby players.
+        PacketSender.SendEntityDataToProximity(Player.FindOnline(targetId));
     }
 
     /// <summary>
@@ -513,116 +557,104 @@ public partial class Guild
     /// <param name="initiator">The player who initiated this change (null if done by the api or some other method).</param>
     public static void DeleteGuild(Guild guild, Player initiator = null)
     {
-        // Remove our members cleanly before deleting this from our database.
-        using (var context = DbInterface.CreatePlayerContext(readOnly: false))
+        foreach (var member in guild.Members)
         {
-            foreach (var member in guild.Members)
+            var player = Player.FindOnline(member.Key);
+            if (player == null)
             {
-                var plyr = Player.FindOnline(member.Key);
-                if (plyr != null)
-                {
-                    plyr.Guild = null;
-                    plyr.GuildRank = 0;
-
-                    if (plyr.BankInterface != null && plyr.GuildBank)
-                    {
-                        plyr.BankInterface.Dispose();
-                    }
-
-                    PacketSender.SendGuild(plyr);
-
-                    // Send our entity data to nearby players.
-                    PacketSender.SendEntityDataToProximity(plyr);
-                }
+                continue;
             }
 
-            foreach (var member in context.Players.Where(p => p.DbGuild.Id == guild.Id))
+            player.Guild = null;
+            player.GuildRank = 0;
+
+            if (player.BankInterface != null && player.GuildBank)
             {
-                member.DbGuild = null;
-                member.GuildRank = 0;
+                player.BankInterface.Dispose();
             }
 
-            context.Guilds.Remove(guild);
+            PacketSender.SendGuild(player);
 
-            Guilds.TryRemove(guild.Id, out Guild removed);
-
-            context.ChangeTracker.DetectChanges();
-            context.SaveChanges();
-
-            LogActivity(guild.Id, initiator, null, GuildActivityType.Disbanded);
+            // Send our entity data to nearby players.
+            PacketSender.SendEntityDataToProximity(player);
         }
+
+        // Remove our members cleanly before deleting this from our database.
+        using var context = DbInterface.CreatePlayerContext(readOnly: false);
+        context.Guilds.Remove(guild);
+        context.ChangeTracker.DetectChanges();
+        context.SaveChanges();
+
+        LogActivity(guild.Id, initiator, null, GuildActivityType.Disbanded);
+
+        _ = Guilds.TryRemove(guild.Id, out _);
     }
 
 
     /// <summary>
     /// Transfers guild ownership to another member
     /// </summary>
-    /// <param name="newOwnerId">The new owner.</param>
+    /// <param name="newOwner">The new owner.</param>
     /// <param name="initiator">The player who initiated this change (null if done by the api or some other method).</param>
     public bool TransferOwnership(Player newOwner, Player initiator = null)
     {
-        if (newOwner != null)
+        if (newOwner == null)
         {
-            using (var context = DbInterface.CreatePlayerContext(readOnly: false))
-            {
-                //Find the current owner?
-                Player dbOwner = null;
-                var ownerPair = Members.Where(m => m.Value.Rank == 0).FirstOrDefault();
-
-                if (ownerPair.Key != Guid.Empty)
-                {
-                    dbOwner = context.Players.Where(p => p.Id == ownerPair.Key && p.DbGuild.Id == this.Id && p.GuildRank == 0).FirstOrDefault();
-                }
-
-                var dbNewOwner = context.Players.Where(p => p.Id == newOwner.Id && p.DbGuild.Id == this.Id).FirstOrDefault();
-                if (dbNewOwner != null)
-                {
-                    if (dbOwner != null)
-                    {
-                        dbOwner.GuildRank = 1;
-                    }
-                    dbNewOwner.GuildRank = 0;
-
-                    context.ChangeTracker.DetectChanges();
-                    context.SaveChanges();
-
-                    var onlineOwner = Player.FindOnline(ownerPair.Key);
-                    if (onlineOwner != null)
-                    {
-                        onlineOwner.GuildRank = 1;
-                    }
-                    newOwner.GuildRank = 0;
-
-
-                    if (Members.TryGetValue(ownerPair.Key, out GuildMember ownerMem))
-                    {
-                        ownerMem.Rank = 1;
-                    }
-
-                    if (Members.TryGetValue(newOwner.Id, out GuildMember newOwnerMem))
-                    {
-                        newOwnerMem.Rank = 0;
-                    }
-
-                    // Send our new guild list to everyone that's online.
-                    UpdateMemberList();
-
-                    // Send our entity data to nearby players.
-                    PacketSender.SendEntityDataToProximity(Player.FindOnline(newOwner.Id));
-
-                    // Send our entity data to nearby players.
-                    if (onlineOwner != null)
-                    {
-                        PacketSender.SendEntityDataToProximity(onlineOwner);
-                    }
-
-                    LogActivity(Id, newOwner, initiator, GuildActivityType.Transfer);
-
-                    return true;
-                }
-            }
+            return false;
         }
-        return false;
+
+        if (newOwner.GuildId != Id && newOwner.Guild != this)
+        {
+            return false;
+        }
+
+        // Find the current owner?
+        var oldOwnerId = Members.FirstOrDefault(m => m.Value.Rank == 0).Key;
+        var oldOwner = Player.Find(oldOwnerId);
+
+        using var context = DbInterface.CreatePlayerContext(readOnly: false);
+
+        if (oldOwner != null)
+        {
+            oldOwner.GuildRank = 1;
+            context.Update(oldOwner);
+        }
+
+        newOwner.GuildRank = 0;
+        context.Update(newOwner);
+
+        context.ChangeTracker.DetectChanges();
+        context.SaveChanges();
+
+        LogActivity(Id, newOwner, initiator, GuildActivityType.Transfer);
+
+        if (Members.TryGetValue(oldOwnerId, out GuildMember oldOwnerMembership))
+        {
+            oldOwnerMembership.Rank = 1;
+        }
+
+        if (Members.TryGetValue(newOwner.Id, out GuildMember newOwnerMembership))
+        {
+            newOwnerMembership.Rank = 0;
+        }
+
+        // Send our new guild list to everyone that's online.
+        UpdateMemberList();
+
+        if (newOwner.Online)
+        {
+            // Send our entity data to nearby players.
+            PacketSender.SendEntityDataToProximity(newOwner);
+        }
+
+        if (oldOwner?.Online ?? false)
+        {
+            // Send our entity data to nearby players.
+            PacketSender.SendEntityDataToProximity(oldOwner);
+        }
+
+        return true;
+
     }
 
     /// <summary>
@@ -630,31 +662,43 @@ public partial class Guild
     /// </summary>
     public static void WipeStaleGuilds()
     {
-        if (Options.Instance.Guild.DeleteStaleGuildsAfterDays > 0)
+        var guildDeleteStaleGuildsAfterDays = Options.Instance.Guild.DeleteStaleGuildsAfterDays;
+        if (guildDeleteStaleGuildsAfterDays <= 0)
         {
-            using (var context = DbInterface.CreatePlayerContext(readOnly: false))
-            {
-                foreach (var guild in context.Guilds)
-                {
-                    var memberCount = context.Players.Where(p => p.DbGuild.Id == guild.Id).Count();
-                    if (memberCount == 0)
-                    {
-                        context.Entry(guild).State = EntityState.Deleted;
-                        LogActivity(guild.Id, null, null, GuildActivityType.Disbanded, "Stale");
-                    }
-                    else if (context.Players.Where(p => p.DbGuild.Id == guild.Id).Count() == 1)
-                    {
-                        var lastOnline = context.Players.FirstOrDefault(p => p.DbGuild.Id == guild.Id).LastOnline;
-                        if (lastOnline != null && DateTime.UtcNow - lastOnline > TimeSpan.FromDays(Options.Instance.Guild.DeleteStaleGuildsAfterDays))
-                        {
-                            context.Entry(guild).State = EntityState.Deleted;
-                            LogActivity(guild.Id, null, null, GuildActivityType.Disbanded, "Stale");
-                        }
-                    }
-                }
-                context.SaveChanges();
-            }
+            return;
         }
+
+        var now = DateTime.UtcNow;
+        var staleTimeSpan = TimeSpan.FromDays(guildDeleteStaleGuildsAfterDays);
+
+        using var context = DbInterface.CreatePlayerContext(readOnly: false);
+        foreach (var guild in context.Guilds)
+        {
+            var memberCount = context.Players.Count(p => p.Guild.Id == guild.Id);
+            bool stale = false;
+            switch (memberCount)
+            {
+                case 0:
+                    stale = true;
+                    break;
+                case 1:
+                {
+                    var player = context.Players.FirstOrDefault(p => p.Guild.Id == guild.Id);
+                    stale = player?.LastOnline is not { } lastOnline || staleTimeSpan < (now - lastOnline);
+                    break;
+                }
+            }
+
+            if (!stale)
+            {
+                continue;
+            }
+
+            context.Entry(guild).State = EntityState.Deleted;
+            LogActivity(guild.Id, null, null, GuildActivityType.Disbanded, "Stale");
+        }
+
+        context.SaveChanges();
     }
 
 
@@ -663,10 +707,9 @@ public partial class Guild
     /// </summary>
     public object Lock => mLock;
 
-
-    public static void DetachGuildFromDbContext(PlayerContext context, Guild guild)
+    private static void MarkUnchangedForMemberAdd(PlayerContext context, Guild guild)
     {
-        context.Entry(guild).State = EntityState.Detached;
+        context.Entry(guild).State = EntityState.Unchanged;
 
         foreach (var slot in guild.Bank)
         {
@@ -844,21 +887,31 @@ public partial class Guild
 
             total = compiledQuery.Count();
 
-            switch (sortBy?.ToLower() ?? "")
+            switch (sortBy?.ToLower())
             {
                 case "members":
-                    compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(g => context.Players.Where(p => p.DbGuild.Id == g.Id).Count()) : compiledQuery.OrderByDescending(g => context.Players.Where(p => p.DbGuild.Id == g.Id).Count());
+                {
+                    compiledQuery = sortDirection == SortDirection.Ascending
+                        ? compiledQuery.OrderBy(g => context.Players.Count(p => p.Guild.Id == g.Id))
+                        : compiledQuery.OrderByDescending(g => context.Players.Count(p => p.Guild.Id == g.Id));
                     break;
+                }
                 case "foundingdate":
-                    compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.FoundingDate) : compiledQuery.OrderByDescending(u => u.FoundingDate);
+                    compiledQuery = sortDirection == SortDirection.Ascending
+                        ? compiledQuery.OrderBy(g => g.FoundingDate)
+                        : compiledQuery.OrderByDescending(u => u.FoundingDate);
                     break;
                 case "name":
                 default:
-                    compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Name.ToUpper()) : compiledQuery.OrderByDescending(u => u.Name.ToUpper());
+                    compiledQuery = sortDirection == SortDirection.Ascending
+                        ? compiledQuery.OrderBy(g => g.Name.ToUpper())
+                        : compiledQuery.OrderByDescending(u => u.Name.ToUpper());
                     break;
             }
 
-            return compiledQuery.Skip(skip).Take(take).Select(g => new KeyValuePair<Guild, int>(g, context.Players.Where(p => p.DbGuild.Id == g.Id).Count())).ToList();
+            return compiledQuery.Skip(skip).Take(take).Select(
+                g => new KeyValuePair<Guild, int>(g, context.Players.Count(p => p.Guild.Id == g.Id))
+            ).ToList();
         }
         catch (Exception ex)
         {

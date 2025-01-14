@@ -344,7 +344,8 @@ public partial class Player
     {
         using (var context = DbInterface.CreatePlayerContext())
         {
-            var guildId = context.Players.Where(p => p.Id == Id && p.DbGuild.Id != null && p.DbGuild.Id != Guid.Empty).Select(p => p.DbGuild.Id).FirstOrDefault();
+            var guildId = context.Players.Where(p => p.Id == Id && p.Guild != null && p.Guild.Id != Guid.Empty)
+                .Select(p => p.Guild.Id).FirstOrDefault();
             if (guildId != default)
             {
                 Guild = Guild.LoadGuild(guildId);
@@ -386,7 +387,7 @@ public partial class Player
 
                 if (guildId != Guid.Empty)
                 {
-                    compiledQuery = compiledQuery.Where(p => p.DbGuild.Id == guildId);
+                    compiledQuery = compiledQuery.Where(p => p.Guild.Id == guildId);
                 }
 
                 total = compiledQuery.Count();

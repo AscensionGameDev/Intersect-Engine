@@ -676,6 +676,10 @@ public static partial class Strings
         public readonly LocalizedString DisbandGuild = @"{00} has been disbanded!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ErrorWhileAcceptingInvite =
+            @"An error occurred while saving your guild membership, please try again.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString GuildChat = @"[{00}] {01}: {02}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -694,7 +698,13 @@ public static partial class Strings
         public readonly LocalizedString InviteDeclined = @"You have declined the request to join {00}.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString InviteDeclinedMissingGuild = @"You have declined the request to join the guild.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString InviteDeclinedResponse = @"{00} has declined your request for them to join {01}.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString InviteDeclinedResponseMissingGuild = @"{00} has declined your request for them to join the guild.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString InviteNotOnline = @"The player you're trying to invite is either not online or does not exist.";

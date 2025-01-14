@@ -2665,20 +2665,28 @@ internal sealed partial class PacketHandler
                     return;
                 }
 
-                // Does our target player exist online?
                 var target = Player.FindOnline(packet.Name);
                 if (target != null)
                 {
                     // Are we already in a guild? or have a pending invite?
-                    if (target.Guild == null && target.GuildInvite == null)
+                    if (target.Guild == null && target.PendingGuildInvite == default)
                     {
                         // Thank god, we can FINALLY get started!
                         // Set our invite and send our players the relevant messages.
-                        target.GuildInvite = new Tuple<Player, Guild>(player, player.Guild);
+                        target.PendingGuildInvite = new GuildInvite
+                        {
+                            From = player,
+                            FromId = player.Id,
+                            To = player.Guild,
+                            ToId = player.Guild.Id,
+                        };
 
                         PacketSender.SendChatMsg(player, Strings.Guilds.InviteSent.ToString(target.Name, player.Guild.Name), ChatMessageType.Guild, CustomColors.Alerts.Info);
 
-                        PacketSender.SendGuildInvite(target, player);
+                        if (target.Online)
+                        {
+                            PacketSender.SendGuildInvite(target, player);
+                        }
                     }
                     else
                     {
@@ -2705,7 +2713,7 @@ internal sealed partial class PacketHandler
                         mem.StartCommonEventsWithTrigger(CommonEventTrigger.GuildMemberKicked, guild.Name, member.Name);
                     }
 
-                    guild.RemoveMember(packet.Id, default, player, GuildHistory.GuildActivityType.Kicked);
+                    guild.TryRemoveMember(packet.Id, default, player, GuildHistory.GuildActivityType.Kicked);
                 }
                 else
                 {
@@ -2799,39 +2807,75 @@ internal sealed partial class PacketHandler
             return;
         }
 
-        var invitor = player?.GuildInvite?.Item1;
-        var guild = player?.GuildInvite?.Item2;
-
         // Have we received an invite at all?
-        if (guild == null || player.GuildInvite == null)
+        if (player.PendingGuildInvite == default)
         {
-            PacketSender.SendChatMsg(player, Strings.Guilds.NotReceivedInvite, ChatMessageType.Guild, CustomColors.Alerts.Error);
+            PacketSender.SendChatMsg(
+                player,
+                Strings.Guilds.NotReceivedInvite,
+                ChatMessageType.Guild,
+                CustomColors.Alerts.Error
+            );
             return;
         }
 
-        if (Options.Instance.Guild.Ranks[Options.Instance.Guild.Ranks.Length - 1].Limit > -1 && guild.Members.Where(m => m.Value.Rank == Options.Instance.Guild.Ranks.Length - 1).Count() >= Options.Instance.Guild.Ranks[Options.Instance.Guild.Ranks.Length - 1].Limit)
+        if (Options.Instance.Guild is not { } guildOptions)
         {
-            // Inform the inviter that the guild is full
-            if (player.GuildInvite.Item1 != null)
-            {
-                var onlinePlayer = Player.FindOnline(player.GuildInvite.Item1.Id);
-                if (onlinePlayer != null)
-                {
-                    PacketSender.SendChatMsg(onlinePlayer, Strings.Guilds.RankLimitResponse.ToString(Options.Instance.Guild.Ranks[Options.Instance.Guild.Ranks.Length - 1].Title, player.Name), ChatMessageType.Guild, CustomColors.Alerts.Error);
-                }
-            }
-
-            //Inform the acceptor that they are actually not in the guild
-            PacketSender.SendChatMsg(player, Strings.Guilds.RankLimit.ToString(player.GuildInvite.Item2.Name), ChatMessageType.Guild, CustomColors.Alerts.Error);
-
-            player.GuildInvite = null;
-
+            PacketSender.SendChatMsg(
+                player,
+                Strings.Guilds.ErrorWhileAcceptingInvite,
+                ChatMessageType.Guild,
+                CustomColors.Alerts.Error
+            );
+            PacketSender.SendGuildInvite(player, player.PendingGuildInviteFrom);
             return;
+        }
+
+        var inviter = player.PendingGuildInviteFrom ?? Player.FindOnline(player.PendingGuildInviteFromId ?? default);
+        var guild = player.PendingGuildInviteTo ?? Guild.LoadGuild(player.PendingGuildInviteToId ?? default);
+
+        if (guildOptions.Ranks[^1].Limit > -1)
+        {
+            if (guildOptions.Ranks[^1].Limit <= guild.Members.Count(m => m.Value.Rank == guildOptions.Ranks.Length - 1))
+            {
+                // Inform the inviter that the guild is full
+                if (player.PendingGuildInvite.FromId is var inviterId)
+                {
+                    var onlinePlayer = Player.FindOnline(inviterId);
+                    if (onlinePlayer != null)
+                    {
+                        PacketSender.SendChatMsg(
+                            onlinePlayer,
+                            Strings.Guilds.RankLimitResponse.ToString(guildOptions.Ranks[^1].Title, player.Name),
+                            ChatMessageType.Guild,
+                            CustomColors.Alerts.Error
+                        );
+                    }
+                }
+
+                //Inform the acceptor that they are actually not in the guild
+                PacketSender.SendChatMsg(player, Strings.Guilds.RankLimit.ToString(guild.Name), ChatMessageType.Guild, CustomColors.Alerts.Error);
+
+                player.PendingGuildInvite = default;
+
+                return;
+            }
         }
 
         // Accept our invite!
-        guild.AddMember(player, Options.Instance.Guild.Ranks.Length - 1, invitor);
-        player.GuildInvite = null;
+        if (!guild.TryAddMember(player, guildOptions.Ranks.Length - 1, inviter))
+        {
+            PacketSender.SendChatMsg(
+                player,
+                Strings.Guilds.ErrorWhileAcceptingInvite,
+                ChatMessageType.Guild,
+                CustomColors.Alerts.Error
+            );
+            PacketSender.SendGuildInvite(player, inviter);
+            return;
+        }
+
+        player.PendingGuildInvite = default;
 
         // Start common events for all online guild members that this one left
         foreach (var member in guild.FindOnlineMembers())
@@ -2853,27 +2897,41 @@ internal sealed partial class PacketHandler
         }
 
         // Have we received an invite at all?
-        if (player.GuildInvite == null)
+        if (player.PendingGuildInvite == default)
         {
-            PacketSender.SendChatMsg(player, Strings.Guilds.NotReceivedInvite, ChatMessageType.Guild, CustomColors.Alerts.Error);
+            PacketSender.SendChatMsg(
+                player,
+                Strings.Guilds.NotReceivedInvite,
+                ChatMessageType.Guild,
+                CustomColors.Alerts.Error
+            );
             return;
         }
 
-        // Politely decline our invite.
-        if (player.GuildInvite.Item1 != null)
-        {
-            var onlinePlayer = Player.FindOnline(player.GuildInvite.Item1.Id);
-            if (onlinePlayer != null)
-            {
-                PacketSender.SendChatMsg(onlinePlayer, Strings.Guilds.InviteDeclinedResponse.ToString(player.Name, player.GuildInvite.Item2.Name), ChatMessageType.Guild, CustomColors.Alerts.Info);
-                PacketSender.SendChatMsg(player, Strings.Guilds.InviteDeclined.ToString(onlinePlayer.Name, player.GuildInvite.Item2.Name), ChatMessageType.Guild, CustomColors.Alerts.Info);
-            }
-            else
-            {
-                PacketSender.SendChatMsg(player, Strings.Guilds.InviteDeclined.ToString(player.GuildInvite.Item2.Name), ChatMessageType.Guild, CustomColors.Alerts.Info);
-            }
+        var inviter = player.PendingGuildInviteFrom ?? Player.FindOnline(player.PendingGuildInviteFromId ?? default);
+        var guild = player.PendingGuildInviteTo ?? Guild.LoadGuild(player.PendingGuildInviteToId ?? default);
 
-            player.GuildInvite = null;
+        player.PendingGuildInvite = default;
+
+        var messageToPlayer = guild == null
+            ? Strings.Guilds.InviteDeclinedMissingGuild.ToString()
+            : Strings.Guilds.InviteDeclined.ToString(guild.Name);
+
+        PacketSender.SendChatMsg(
+            player,
+            messageToPlayer,
+            ChatMessageType.Guild,
+            CustomColors.Alerts.Info
+        );
+
+        // Politely decline our invite if the inviter is still online
+        // ReSharper disable once InvertIf
+        if (inviter != null)
+        {
+            var messageToInviter = guild == null
+                ? Strings.Guilds.InviteDeclinedResponseMissingGuild.ToString(player.Name)
+                : Strings.Guilds.InviteDeclinedResponse.ToString(player.Name, guild.Name);
+            PacketSender.SendChatMsg(inviter, messageToInviter, ChatMessageType.Guild, CustomColors.Alerts.Info);
         }
     }
 
@@ -2907,7 +2965,7 @@ internal sealed partial class PacketHandler
             member.StartCommonEventsWithTrigger(CommonEventTrigger.GuildMemberLeft, guild.Name, player.Name);
         }
 
-        guild.RemoveMember(player.Id, player, null, GuildHistory.GuildActivityType.Left);
+        guild.TryRemoveMember(player.Id, player, null, GuildHistory.GuildActivityType.Left);
 
         // Send the newly updated player information to their surroundings.
         PacketSender.SendEntityDataToProximity(player);

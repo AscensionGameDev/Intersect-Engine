@@ -79,7 +79,7 @@ partial class GuildWindow : WindowControl
         };
         _buttonAddPopup.Clicked += (s, e) =>
         {
-            _ = new InputBox(
+            new InputBox(
                 title: Strings.Guilds.InviteMemberTitle,
                 prompt: Strings.Guilds.InviteMemberPrompt.ToString(Globals.Me?.Guild),
                 inputType: InputBox.InputType.TextInput,
@@ -90,7 +90,7 @@ partial class GuildWindow : WindowControl
                         PacketSender.SendInviteGuild(inputBox.TextValue);
                     }
                 }
-            );
+            ).Focus();
         };
 
         #endregion
@@ -186,10 +186,10 @@ partial class GuildWindow : WindowControl
         foreach (var member in Globals.Me?.GuildMembers ?? [])
         {
             var str = member.Online ? Strings.Guilds.OnlineListEntry : Strings.Guilds.OfflineListEntry;
-            var row = _listGuildMembers.AddRow(str.ToString(Options.Instance.Guild.Ranks[member.Rank].Title, member.Name, member.Map));
+            var row = _listGuildMembers.AddRow(str.ToString(Options.Instance.Guild.Ranks[member.Rank].Title, member.Name, member.MapName));
             row.Name = "GuildMemberRow";
             row.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer?.GetResolutionString());
-            row.SetToolTipText(Strings.Guilds.Tooltip.ToString(member.Level, member.Class));
+            row.SetToolTipText(Strings.Guilds.Tooltip.ToString(member.Level, member.ClassName));
             row.UserData = member;
             row.Clicked += member_Clicked;
             row.RightClicked += member_RightClicked;
@@ -216,15 +216,13 @@ partial class GuildWindow : WindowControl
         _buttonLeave.IsHidden = Globals.Me != null && Globals.Me.Rank == 0;
     }
 
-    void member_Clicked(Base sender, ClickedEventArgs arguments)
+    private void member_Clicked(Base sender, ClickedEventArgs arguments)
     {
-        if (sender is ListBoxRow row &&
-            row.UserData is GuildMember member &&
-            member.Online &&
+        if (sender is ListBoxRow { UserData: GuildMember { Online: true } member } &&
             member.Id != Globals.Me?.Id
-        )
+           )
         {
-            Interface.GameUi.SetChatboxText("/pm " + member.Name + " ");
+            Interface.GameUi.SetChatboxText($"/pm {member.Name}");
         }
     }
 

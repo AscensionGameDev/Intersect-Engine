@@ -524,9 +524,6 @@ namespace Intersect.Server.Migrations.Sqlite.Player
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("DbGuildId")
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("Dir")
                         .HasColumnType("INTEGER");
 
@@ -546,6 +543,9 @@ namespace Intersect.Server.Migrations.Sqlite.Player
 
                     b.Property<int>("Gender")
                         .HasColumnType("INTEGER");
+
+                    b.Property<Guid?>("GuildId")
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("GuildJoinDate")
                         .HasColumnType("TEXT");
@@ -653,7 +653,7 @@ namespace Intersect.Server.Migrations.Sqlite.Player
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DbGuildId");
+                    b.HasIndex("GuildId");
 
                     b.HasIndex("UserId");
 
@@ -846,9 +846,9 @@ namespace Intersect.Server.Migrations.Sqlite.Player
 
             modelBuilder.Entity("Intersect.Server.Entities.Player", b =>
                 {
-                    b.HasOne("Intersect.Server.Database.PlayerData.Players.Guild", "DbGuild")
+                    b.HasOne("Intersect.Server.Database.PlayerData.Players.Guild", "Guild")
                         .WithMany()
-                        .HasForeignKey("DbGuildId")
+                        .HasForeignKey("GuildId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Intersect.Server.Database.PlayerData.User", "User")
@@ -857,7 +857,7 @@ namespace Intersect.Server.Migrations.Sqlite.Player
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("DbGuild");
+                    b.Navigation("Guild");
 
                     b.Navigation("User");
                 });
