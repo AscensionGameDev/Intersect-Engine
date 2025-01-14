@@ -359,6 +359,44 @@ public partial class Player
     }
     #endregion
 
+    #region Saving
+
+    public void Save(PlayerContext? playerContext = null)
+    {
+        if (User is {} user)
+        {
+            user.Save(playerContext: playerContext);
+            return;
+        }
+
+        PlayerContext? createdPlayerContext = null;
+
+        try
+        {
+            if (playerContext == null || playerContext.IsReadOnly)
+            {
+                playerContext = createdPlayerContext = DbInterface.CreatePlayerContext(readOnly: false);
+            }
+
+            playerContext.Update(this);
+            playerContext.ChangeTracker.DetectChanges();
+            playerContext.SaveChanges();
+        }
+        catch (Exception exception)
+        {
+            Log.Error(
+                exception,
+                $"Error occurred while saving player {Id} ({nameof(playerContext)}={(createdPlayerContext == null ? "not null" : "null")}"
+            );
+        }
+        finally
+        {
+            createdPlayerContext?.Dispose();
+        }
+    }
+
+    #endregion Saving
+
     #region Listing
 
     public static int Count()

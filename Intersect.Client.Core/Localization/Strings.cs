@@ -1129,6 +1129,9 @@ public static partial class Strings
         public static LocalizedString InviteRequestPrompt = @"{00} would like to invite you to join their guild, {01}. Do you accept?";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString InviteRequestPromptMissingGuild = @"{00} would like to invite you to join their guild. Do you accept?";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString InviteRequestTitle = @"Guild Invite";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

@@ -2665,7 +2665,7 @@ internal sealed partial class PacketHandler
                     return;
                 }
 
-                var target = Player.FindOnline(packet.Name);
+                var target = Player.Find(packet.Name);
                 if (target != null)
                 {
                     // Are we already in a guild? or have a pending invite?
@@ -2677,15 +2677,27 @@ internal sealed partial class PacketHandler
                         {
                             From = player,
                             FromId = player.Id,
-                            To = player.Guild,
-                            ToId = player.Guild.Id,
+                            To = guild,
+                            ToId = guild.Id,
                         };
 
-                        PacketSender.SendChatMsg(player, Strings.Guilds.InviteSent.ToString(target.Name, player.Guild.Name), ChatMessageType.Guild, CustomColors.Alerts.Info);
+                        PacketSender.SendChatMsg(
+                            player,
+                            Strings.Guilds.InviteSent.ToString(target.Name, guild.Name),
+                            ChatMessageType.Guild,
+                            CustomColors.Alerts.Info
+                        );
 
                         if (target.Online)
                         {
                             PacketSender.SendGuildInvite(target, player);
+                        }
+                        else
+                        {
+                            Log.Info(
+                                $"[Guild] Player {player.Id} sent an offline guild invite to guild {guild.Id} to player {target.Id}"
+                            );
+                            target.Save();
                         }
                     }
                     else
@@ -2857,6 +2869,7 @@ internal sealed partial class PacketHandler
                 PacketSender.SendChatMsg(player, Strings.Guilds.RankLimit.ToString(guild.Name), ChatMessageType.Guild, CustomColors.Alerts.Error);
 
                 player.PendingGuildInvite = default;
+                player.Save();
 
                 return;
             }
@@ -2876,6 +2889,7 @@ internal sealed partial class PacketHandler
         }
 
         player.PendingGuildInvite = default;
+        player.Save();
 
         // Start common events for all online guild members that this one left
         foreach (var member in guild.FindOnlineMembers())

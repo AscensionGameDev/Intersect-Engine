@@ -214,17 +214,37 @@ public partial class Player : Entity
         }
     }
 
-    [NotMapped]
-    public Guid? PendingGuildInviteFromId { get; private set; }
+    public Guid? PendingGuildInviteFromId
+    {
+        get => _pendingGuildInviteFromId;
+        private set
+        {
+            _pendingGuildInviteFromId = value;
+            if (_pendingGuildInviteFromId != PendingGuildInviteFrom?.Id)
+            {
+                PendingGuildInviteFrom = null;
+            }
+        }
+    }
 
-    [NotMapped]
+    [JsonIgnore]
     [ForeignKey(nameof(PendingGuildInviteFromId))]
     public Player? PendingGuildInviteFrom { get; set; }
 
-    [NotMapped]
-    public Guid? PendingGuildInviteToId { get; private set; }
+    public Guid? PendingGuildInviteToId
+    {
+        get => _pendingGuildInviteToId;
+        private set
+        {
+            _pendingGuildInviteToId = value;
+            if (_pendingGuildInviteToId != PendingGuildInviteTo?.Id)
+            {
+                PendingGuildInviteTo = null;
+            }
+        }
+    }
 
-    [NotMapped]
+    [JsonIgnore]
     [ForeignKey(nameof(PendingGuildInviteToId))]
     public Guild? PendingGuildInviteTo { get; set; }
 
@@ -233,7 +253,8 @@ public partial class Player : Entity
     {
         get => new()
         {
-            FromId = PendingGuildInviteFromId ?? default, ToId = PendingGuildInviteToId ?? default,
+            FromId = PendingGuildInviteFrom?.Id ?? PendingGuildInviteFromId ?? default,
+            ToId = PendingGuildInviteTo?.Id ?? PendingGuildInviteToId ?? default,
         };
         set
         {
@@ -242,8 +263,8 @@ public partial class Player : Entity
                 return;
             }
 
-            PendingGuildInviteFromId = value.FromId;
-            PendingGuildInviteToId = value.ToId;
+            PendingGuildInviteFromId = value.FromId == default ? null : value.FromId;
+            PendingGuildInviteToId = value.ToId == default ? null : value.ToId;
         }
     }
 
@@ -7688,6 +7709,8 @@ public partial class Player : Entity
 
     [JsonIgnore] public ConcurrentDictionary<Guid, long> ItemCooldowns = new ConcurrentDictionary<Guid, long>();
     private Guild _guild;
+    private Guid? _pendingGuildInviteFromId;
+    private Guid? _pendingGuildInviteToId;
 
     #endregion
 

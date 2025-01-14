@@ -153,6 +153,25 @@ public partial class Guild
         return guild != default;
     }
 
+    public static bool TryGetName(Guid guildId, [NotNullWhen(true)] out string? name)
+    {
+        if (guildId == default)
+        {
+            name = null;
+            return false;
+        }
+
+        if (Guilds.TryGetValue(guildId, out var guild))
+        {
+            name = guild.Name;
+            return !string.IsNullOrWhiteSpace(name);
+        }
+
+        using var playerContext = DbInterface.CreatePlayerContext(readOnly: true);
+        name = playerContext.Guilds.FirstOrDefault(g => g.Id == guildId)?.Name;
+        return !string.IsNullOrWhiteSpace(name);
+    }
+
     /// <summary>
     /// Loads a guild and it's members from the database
     /// </summary>

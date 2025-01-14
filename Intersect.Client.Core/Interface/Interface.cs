@@ -45,6 +45,8 @@ public static partial class Interface
 
     public static bool SetupHandlers { get; set; }
 
+    private static Queue<Action> _onCreatedGameUi = [];
+
     public static GameInterface GameUi { get; private set; }
 
     public static MenuGuiBase MenuUi { get; private set; }
@@ -133,6 +135,11 @@ public static partial class Interface
         Globals.OnLifecycleChangeState();
 
         GwenInitialized = true;
+
+        while (GameUi is not null && _onCreatedGameUi.TryDequeue(out var action))
+        {
+            action();
+        }
     }
 
     public static void DestroyGwen(bool exiting = false)
@@ -325,6 +332,17 @@ public static partial class Interface
     }
 
     #endregion
+
+    public static void EnqueueInGame(Action action)
+    {
+        if (GameUi != null)
+        {
+            action();
+            return;
+        }
+
+        _onCreatedGameUi.Enqueue(action);
+    }
 
     public static Framework.Gwen.Control.Base FindControlAtCursor()
     {

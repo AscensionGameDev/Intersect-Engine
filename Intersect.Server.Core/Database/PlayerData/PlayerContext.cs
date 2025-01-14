@@ -77,11 +77,9 @@ public abstract partial class PlayerContext : IntersectDbContext<PlayerContext>,
 
         modelBuilder.Entity<Player>().HasOne(p => p.Guild).WithMany().OnDelete(DeleteBehavior.SetNull);
 
-        // modelBuilder.Entity<Player>().HasOne(p => p.PendingGuildInviteFrom).WithMany()
-        //     .OnDelete(DeleteBehavior.ClientSetNull);
-        //
-        // modelBuilder.Entity<Player>().HasOne(p => p.PendingGuildInviteTo).WithMany()
-        //     .OnDelete(DeleteBehavior.ClientSetNull);
+        modelBuilder.Entity<Player>().HasOne(p => p.PendingGuildInviteFrom).WithMany().OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<Player>().HasOne(p => p.PendingGuildInviteTo).WithMany().OnDelete(DeleteBehavior.SetNull);
 
         modelBuilder.Entity<Player>()
             .HasMany(b => b.Friends)

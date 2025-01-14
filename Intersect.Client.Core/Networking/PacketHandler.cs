@@ -2199,12 +2199,19 @@ internal sealed partial class PacketHandler
     //GuildInvitePacket
     public void HandlePacket(IPacketSender packetSender, GuildInvitePacket packet)
     {
-        _ = new InputBox(
-            title: Strings.Guilds.InviteRequestTitle,
-            prompt: Strings.Guilds.InviteRequestPrompt.ToString(packet.Inviter, packet.GuildName),
-            inputType: InputBox.InputType.YesNo,
-            onSuccess: PacketSender.SendGuildInviteAccept,
-            onCancel: PacketSender.SendGuildInviteDecline
+        Interface.Interface.EnqueueInGame(
+            () =>
+            {
+                _ = new InputBox(
+                    title: Strings.Guilds.InviteRequestTitle,
+                    prompt: (string.IsNullOrWhiteSpace(packet.GuildName)
+                        ? Strings.Guilds.InviteRequestPromptMissingGuild
+                        : Strings.Guilds.InviteRequestPrompt).ToString(packet.Inviter, packet.GuildName),
+                    inputType: InputBox.InputType.YesNo,
+                    onSuccess: PacketSender.SendGuildInviteAccept,
+                    onCancel: PacketSender.SendGuildInviteDecline
+                );
+            }
         );
     }
 

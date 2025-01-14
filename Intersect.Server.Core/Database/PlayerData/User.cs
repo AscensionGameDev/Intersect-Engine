@@ -313,7 +313,7 @@ public partial class User
     private int _saveCounter = 0;
 #endif
 
-    private UserSaveResult Save(PlayerContext? playerContext, bool force = false, bool create = false)
+    public UserSaveResult Save(PlayerContext? playerContext, bool force = false, bool create = false)
     {
         lock (_lastSaveLock)
         {
