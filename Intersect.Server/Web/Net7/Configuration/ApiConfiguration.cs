@@ -1,16 +1,9 @@
 using System.Collections.Immutable;
 using System.ComponentModel;
-using System.Net;
-using System.Reflection;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Intersect.Reflection;
-using Intersect.Server.Web.RestApi.Configuration;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Intersect.Framework.Net;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using JsonConverter = System.Text.Json.Serialization.JsonConverter;
 using LogLevel = Intersect.Logging.LogLevel;
 
 namespace Intersect.Server.Web.Configuration;
@@ -31,7 +24,7 @@ public sealed partial class ApiConfiguration
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public bool Enabled { get; set; }
 
-    [Newtonsoft.Json.JsonIgnore] private ImmutableDictionary<string, CorsPolicy>? _corsPolicies;
+    [JsonIgnore] private ImmutableDictionary<string, CorsPolicy>? _corsPolicies;
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public ImmutableDictionary<string, CorsPolicy>? Cors
