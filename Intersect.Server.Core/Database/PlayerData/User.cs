@@ -547,20 +547,15 @@ public partial class User
             return false;
         }
 
-        return lookupKey.HasId ? Fetch(lookupKey.Id, out user, out client) : Fetch(lookupKey.Name, out user, out client);
-    }
+        if (lookupKey.HasId)
+        {
+            client = Globals.Clients.Find(queryClient => lookupKey.Id == queryClient?.User?.Id);
+            user = client?.User ?? FindById(lookupKey.Id);
+            return user != default;
+        }
 
-    private static bool Fetch(Guid userId, [NotNullWhen(true)] out User? user, out Client? client)
-    {
-        client = Globals.Clients.Find(queryClient => userId == queryClient?.User?.Id);
-        user = client?.User ?? FindById(userId);
-        return user != default;
-    }
-
-    private static bool Fetch(string userName, [NotNullWhen(true)] out User? user, out Client? client)
-    {
-        client = Globals.Clients.Find(queryClient => Entity.CompareName(userName, queryClient?.User?.Name));
-        user = client?.User ?? Find(userName);
+        client = Globals.Clients.Find(queryClient => Entity.CompareName(lookupKey.Name, queryClient?.User?.Name));
+        user = client?.User ?? Find(lookupKey.Name);
         return user != default;
     }
 

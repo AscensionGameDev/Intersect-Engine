@@ -161,7 +161,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return NotFound($@"Guild does not exist with id {guildId}.");
             }
 
-            if (!Player.TryFetch(lookupKey, out var _, out var player))
+            if (!Player.TryFetch(lookupKey, out var player))
             {
                 return NotFound($@"Player not found with lookup key {lookupKey}.");
             }
@@ -202,7 +202,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return NotFound($@"Guild does not exist with id {guildId}.");
             }
 
-            if (!Player.TryFetch(lookupKey, out var _, out var player))
+            if (!Player.TryFetch(lookupKey, out var player))
             {
                 return NotFound($@"Player not found with lookup key {lookupKey}.");
             }
@@ -238,7 +238,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return NotFound($@"No guild found with id {guildId}");
             }
 
-            if (!Player.TryFetch(lookupKey, out var _, out var player))
+            if (!Player.TryFetch(lookupKey, out var player))
             {
                 return BadRequest($@"Player not found with lookup key {lookupKey}.");
             }

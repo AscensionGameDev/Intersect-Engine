@@ -39,10 +39,13 @@ public partial class Player
 
     #region Lookup
 
-    public static bool TryFetch(LookupKey lookupKey, [NotNullWhen(true)] out Client? client)
-    {
-        return TryFetch(lookupKey, out client, out _);
-    }
+    public static bool TryFetch(
+        LookupKey lookupKey,
+        out Player? player,
+        bool loadRelationships = false,
+        bool loadBags = false
+    )
+        => TryFetch(lookupKey, out _, out player, loadRelationships, loadBags);
 
     public static bool TryFetch(
         LookupKey lookupKey,
@@ -59,24 +62,15 @@ public partial class Player
             return false;
         }
 
-        // HasName checks if null or empty
-        // ReSharper disable once AssignNullToNotNullAttribute
-        return lookupKey.HasId
-            ? Fetch(lookupKey.Id, out client, out player)
-            : Fetch(lookupKey.Name, out client, out player, loadRelationships: loadRelationships, loadBags: loadBags);
-    }
+        if (lookupKey.HasId)
+        {
+            client = Globals.Clients.Find(queryClient => lookupKey.Id == queryClient?.Entity?.Id);
+            player = client?.Entity ?? Find(lookupKey.Id);
+            return player != default;
+        }
 
-    private static bool Fetch(string playerName, [NotNullWhen(true)] out Client? client, out Player? player, bool loadRelationships = false, bool loadBags = false)
-    {
-        client = Globals.Clients.Find(queryClient => CompareName(playerName, queryClient?.Entity?.Name));
-        player = client?.Entity ?? Find(playerName, loadRelationships: loadRelationships, loadBags: loadBags);
-        return player != default;
-    }
-
-    private static bool Fetch(Guid playerId, [NotNullWhen(true)] out Client? client, out Player? player)
-    {
-        client = Globals.Clients.Find(queryClient => playerId == queryClient?.Entity?.Id);
-        player = client?.Entity ?? Find(playerId);
+        client = Globals.Clients.Find(queryClient => CompareName(lookupKey.Name, queryClient?.Entity?.Name));
+        player = client?.Entity ?? Find(lookupKey.Name, loadRelationships: loadRelationships, loadBags: loadBags);
         return player != default;
     }
 
