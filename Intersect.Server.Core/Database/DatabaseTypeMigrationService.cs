@@ -52,8 +52,18 @@ public class DatabaseTypeMigrationService
 
         public Type Type => EntityType.ClrType;
 
-        public bool Includes(ModelGraphNode otherNode) =>
-            otherNode.Type == Type || Values.Any(childNode => childNode.Includes(otherNode));
+        public void AddSubgraphTypes(HashSet<IEntityType> knownTypes)
+        {
+            if (!knownTypes.Add(EntityType))
+            {
+                return;
+            }
+
+            foreach (var child in Values)
+            {
+                child.AddSubgraphTypes(knownTypes);
+            }
+        }
     }
 
     private static ModelGraphNode[] GetModelGraph<TContext>(DatabaseContextOptions databaseContextOptions)
@@ -86,16 +96,18 @@ public class DatabaseTypeMigrationService
             }
         }
 
-        List<ModelGraphNode> modelGraphRoots = new();
+        List<ModelGraphNode> modelGraphRoots = [];
+        HashSet<IEntityType> knownTypes = [];
 
         var missingNodes = modelGraphNodes.Values.OrderBy(node => node.IsRoot ? 0 : 1).ToList();
 
         while (missingNodes.Count > 0)
         {
             var currentNode = missingNodes[0];
-            if (!modelGraphRoots.Any(root => root.Includes(currentNode)))
+            if (!knownTypes.Contains(currentNode.EntityType))
             {
                 modelGraphRoots.Add(currentNode);
+                currentNode.AddSubgraphTypes(knownTypes);
             }
             missingNodes.RemoveAt(0);
         }
@@ -105,14 +117,18 @@ public class DatabaseTypeMigrationService
 
     private static Type[] Flatten(ModelGraphNode[] nodes)
     {
-        List<ModelGraphNode> added = new(nodes);
-        for (var index = 0; index < added.Count; ++index)
+        HashSet<ModelGraphNode> addedNodes = [..nodes];
+        List<ModelGraphNode> flattened = [..addedNodes];
+        for (var index = 0; index < flattened.Count; ++index)
         {
-            added.AddRange(added[index].Values);
+            foreach (var child in flattened[index].Values.Where(child => addedNodes.Add(child)))
+            {
+                flattened.Add(child);
+            }
         }
 
-        added = added.Distinct().ToList();
-        return added.Select(node => node.Type).ToArray();
+        flattened = flattened.Distinct().ToList();
+        return flattened.Select(node => node.Type).ToArray();
     }
 
     public async Task<bool> TryMigrate<TContext>(DatabaseContextOptions fromOptions, DatabaseContextOptions toOptions)
