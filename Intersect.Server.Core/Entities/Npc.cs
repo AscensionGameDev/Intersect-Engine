@@ -310,6 +310,16 @@ public partial class Npc : Entity
         return base.CalculateAttackTime();
     }
 
+    public override void ChangeDir(Direction dir)
+    {
+        if (Target.CachedStatuses.Any(s => s.Type == SpellEffect.Stealth))
+        {
+            return;
+        }
+
+        base.ChangeDir(dir);
+    }
+
     public override bool CanAttack(Entity entity, SpellBase spell)
     {
         if (!base.CanAttack(entity, spell))
@@ -333,6 +343,18 @@ public partial class Npc : Entity
 
         if (TargetHasStealth(entity))
         {
+            // if spell is area or projectile, we can attack without knowing the target location
+            if (spell?.Combat is { TargetType: SpellTargetType.AoE or SpellTargetType.Projectile })
+            {
+                return true;
+            }
+
+            // this is for handle aoe when target is single target, we can hit the target if it's in the radius
+            if (spell?.Combat.TargetType == SpellTargetType.Single && spell.Combat.HitRadius > 0 && InRangeOf(entity, spell.Combat.HitRadius))
+            {
+                return true;
+            }
+
             return false;
         }
 
@@ -776,6 +798,7 @@ public partial class Npc : Entity
                 var curMapLink = MapId;
                 base.Update(timeMs);
                 var tempTarget = Target;
+                var targetIsHidden = TargetHasStealth(tempTarget);
 
                 foreach (var status in CachedStatuses)
                 {
@@ -803,6 +826,7 @@ public partial class Npc : Entity
                             {
                                 PacketSender.SendNpcAggressionToProximity(this);
                             }
+
                             return;
                         }
                     }
@@ -836,17 +860,16 @@ public partial class Npc : Entity
                                 mResetDistance = 0;
                             }
                         }
-
                     }
 
-                    if (tempTarget != null && (tempTarget.IsDead() || !InRangeOf(tempTarget, Options.MapWidth * 2)))
+                    if (tempTarget != null && (tempTarget.IsDead() || !InRangeOf(tempTarget, Options.MapWidth * 2) || targetIsHidden))
                     {
-                        TryFindNewTarget(Timing.Global.Milliseconds, tempTarget.Id);
+                        TryFindNewTarget(Timing.Global.Milliseconds, tempTarget.Id, targetIsHidden);
                         tempTarget = Target;
                     }
 
                     //Check if there is a target, if so, run their ass down.
-                    if (tempTarget != null)
+                    if (tempTarget != null && !targetIsHidden)
                     {
                         if (!tempTarget.IsDead() && CanAttack(tempTarget, null))
                         {
@@ -854,16 +877,6 @@ public partial class Npc : Entity
                             targetX = tempTarget.X;
                             targetY = tempTarget.Y;
                             targetZ = tempTarget.Z;
-                            foreach (var targetStatus in tempTarget.CachedStatuses)
-                            {
-                                if (targetStatus.Type == SpellEffect.Stealth)
-                                {
-                                    targetMap = Guid.Empty;
-                                    targetX = 0;
-                                    targetY = 0;
-                                    targetZ = 0;
-                                }
-                            }
                         }
                     }
                     else //Find a target if able

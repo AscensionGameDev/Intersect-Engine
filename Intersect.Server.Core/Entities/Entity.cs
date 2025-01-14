@@ -1261,7 +1261,7 @@ public abstract partial class Entity : IEntity
 
     protected virtual bool CanLookInDirection(Direction direction) => true;
 
-    public void ChangeDir(Direction dir)
+    public virtual void ChangeDir(Direction dir)
     {
         if (!CanLookInDirection(dir))
         {
@@ -2918,6 +2918,11 @@ public abstract partial class Entity : IEntity
     protected Direction DirectionToTarget(Entity en)
     {
         if (en == null || IsTurnAroundWhileCastingDisabled)
+        {
+            return Dir;
+        }
+
+        if (en.CachedStatuses.Any(status => status.Type == SpellEffect.Stealth))
         {
             return Dir;
         }
