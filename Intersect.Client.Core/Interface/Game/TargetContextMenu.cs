@@ -53,7 +53,7 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
         _guildMenuItem.Clicked += guildRequest_Clicked;
 
         _privateMessageMenuItem = AddItem(Strings.EntityContextMenu.PrivateMessage);
-        _privateMessageMenuItem.Clicked += privateMessageRequest_Clicked;   
+        _privateMessageMenuItem.Clicked += privateMessageRequest_Clicked;
 
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer?.GetResolutionString());
     }
