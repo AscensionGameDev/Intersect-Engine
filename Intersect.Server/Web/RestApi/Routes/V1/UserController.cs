@@ -416,7 +416,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid user id." : @"Invalid username.");
             }
 
-            if (!string.IsNullOrEmpty(authorizedChange.New))
+            if (string.IsNullOrEmpty(authorizedChange.New))
             {
                 return BadRequest(@"Invalid payload");
             }
@@ -447,7 +447,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid user id." : @"Invalid username.");
             }
 
-            if (!string.IsNullOrWhiteSpace(authorizedChange.Authorization) && !string.IsNullOrWhiteSpace(authorizedChange.New))
+            if (string.IsNullOrWhiteSpace(authorizedChange.Authorization) || string.IsNullOrWhiteSpace(authorizedChange.New))
             {
                 return BadRequest(@"Invalid payload");
             }
