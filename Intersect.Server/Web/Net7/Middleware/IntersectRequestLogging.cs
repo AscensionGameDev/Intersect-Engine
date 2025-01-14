@@ -6,6 +6,7 @@ using Intersect.Server.Web.RestApi.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.WebUtilities;
+using LogLevel = Intersect.Logging.LogLevel;
 
 namespace Intersect.Server.Web.Middleware;
 

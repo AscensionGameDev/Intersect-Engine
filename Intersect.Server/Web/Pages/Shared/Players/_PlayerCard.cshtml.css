@@ -1,0 +1,81 @@
+article.player {
+	background-color: var(--theme-bg-accent);
+	display: flex;
+	flex-direction: row;
+	justify-content: left;
+	min-width: 50em;
+}
+
+article.player>* {
+	padding: 1em;
+}
+
+article.player>.rank {
+	align-items: center;
+	background-color: var(--theme-bg-accent-hover);
+	display: flex;
+	flex-direction: column;
+	font-size: 1.25em;
+	font-weight: 600;
+	justify-content: center;
+}
+
+article.player>.rank>span {
+	justify-content: center;
+}
+
+article.player>:not(.rank) {
+	flex: 1;
+}
+
+article.player h3 {
+	margin: 0 0 0.5em 0;
+}
+
+article.player .row>:not(.avatar-container) {
+	flex: 1;
+	padding: 0 1em;
+}
+
+article.card .row {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+article.card .column {
+	display: flex;
+	flex-direction: column;
+}
+
+img.avatar {
+	background-color: var(--theme-bg-accent-hover);
+	border: 0.125em solid var(--theme-text);
+	image-rendering: pixelated;
+}
+
+img.avatar, svg {
+	height: 8em;
+	max-height: 8em;
+	max-width: 8em;
+	width: 8em;
+}
+
+img.avatar.hidden {
+	display: none;
+}
+
+img.avatar+svg {
+	display: none;
+}
+
+img.avatar.hidden+svg {
+	border-color: transparent;
+	display: initial;
+	fill: currentColor;
+}
+
+svg>use {
+	height: 100%;
+	width: 100%;
+}

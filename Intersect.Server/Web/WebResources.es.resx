@@ -1,0 +1,47 @@
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Privacy" xml:space="preserve">
+    <value>Privacidad</value>
+  </data>
+  <data name="LevelX" xml:space="preserve">
+    <value>Nivel {0}</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Iniciar sesión</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Cerrar sesión</value>
+  </data>
+  <data name="NPlayers" xml:space="preserve">
+    <value>{0} personajes</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Crear una cuenta</value>
+  </data>
+  <data name="NoGuild" xml:space="preserve">
+    <value>Sin clan</value>
+  </data>
+  <data name="XHasNoPlayers" xml:space="preserve">
+    <value>{0} no tiene personajes</value>
+  </data>
+  <data name="XNotFound" xml:space="preserve">
+    <value>{0} no encontrado!</value>
+  </data>
+  <data name="XsAvatar" xml:space="preserve">
+    <value>Avatar de {0}</value>
+  </data>
+  <data name="Class" xml:space="preserve">
+    <value>Clase</value>
+  </data>
+</root>

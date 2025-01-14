@@ -1,0 +1,40 @@
+@page
+@model LoginModel
+@{
+    ViewData["Title"] = WebResources.Login;
+}
+
+<article>
+    <form hx-post hx-page="./Login" hx-indicator="#login-indicator" hx-target="find #login-alert" hx-swap="innerHTML">
+        <script type="text/javascript" src="~/js/auth.js"></script>
+        <script type="text/javascript">
+            prepareLoginForm(document.currentScript.parentElement);
+        </script>
+
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" name="encoded-password" />
+
+        <section id="login-alert" class="alert">
+        </section>
+
+        <section>
+            <span class="expand">
+                <input asp-for="Username" type="text" id="username" name="username" placeholder="" pattern=".{@(1),}" required/>
+                <label for="username">Username</label>
+            </span>
+            <span class="expand">
+                <input asp-for="Password" type="password" id="password" name="password" placeholder="" pattern=".{@(4),}" required/>
+                <label for="password">Password</label>
+            </span>
+            <span>
+                <input asp-for="StayLoggedIn" type="checkbox" />
+                <label asp-for="StayLoggedIn">Stay Logged In</label>
+            </span>
+            <span>
+                <p id="login-indicator" class="htmx-indicator">Logging in...</p>
+                <button type="submit">@WebResources.Login</button>
+            </span>
+        </section>
+    </form>
+</article>

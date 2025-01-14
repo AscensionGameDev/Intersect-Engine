@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
@@ -72,6 +73,8 @@ public partial class User
     }
 
     [NotMapped] public UserRights Power { get; set; }
+
+    [JsonIgnore, NotMapped] public ImmutableList<string> Roles => Power.Roles;
 
     [JsonIgnore] public virtual List<Player> Players { get; set; } = new();
 
@@ -556,6 +559,51 @@ public partial class User
 
         client = Globals.Clients.Find(queryClient => Entity.CompareName(lookupKey.Name, queryClient?.User?.Name));
         user = client?.User ?? Find(lookupKey.Name);
+        return user != default;
+    }
+
+    public bool TryLoadAvatarName([NotNullWhen(true)] out string? avatarName, out bool isFace)
+    {
+        (avatarName, isFace) = Players
+            .Select(
+                player => player.TryLoadAvatarName(out var avatarName, out var isFace)
+                    ? (Name: avatarName, IsFace: isFace)
+                    : default
+            )
+            .FirstOrDefault(avatarInfo => !string.IsNullOrWhiteSpace(avatarInfo.Name));
+        return !string.IsNullOrWhiteSpace(avatarName);
+    }
+
+    public static bool TryAuthenticate(string username, string password, [NotNullWhen(true)] out User? user)
+    {
+        user = FindOnline(username);
+        if (user != default)
+        {
+            var hashedPassword = SaltPasswordHash(password, user.Salt);
+            if (string.Equals(user.Password, hashedPassword, StringComparison.Ordinal))
+            {
+                return true;
+            }
+
+            user = default;
+            return false;
+        }
+
+        try
+        {
+            using var context = DbInterface.CreatePlayerContext();
+            var salt = GetUserSalt(username);
+            if (!string.IsNullOrWhiteSpace(salt))
+            {
+                var pass = SaltPasswordHash(password, salt);
+                user = QueryUserByNameAndPasswordShallow(context, username, pass);
+            }
+        }
+        catch (Exception exception)
+        {
+            Log.Error(exception);
+        }
+
         return user != default;
     }
 

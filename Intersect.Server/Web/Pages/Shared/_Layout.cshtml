@@ -1,0 +1,79 @@
+﻿@using Intersect.Server.Extensions
+@using Intersect.Server.Database.PlayerData.Security
+@using Intersect.Server.Web.Extensions
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta
+        name="htmx-config"
+        historyCacheSize="20"
+        indicatorClass="htmx-indicator"
+        includeAspNetAntiforgeryToken="true"/>
+    <title>@ViewData["Title"] - @ViewData[nameof(Options.GameName)]</title>
+
+    <!-- prevent loading flash for dark mode users until theme.css and site.css are loaded -->
+    <style>
+        :root.theme-dark {
+            --theme-bg: rgb(26, 26, 26);
+        }
+
+        @@media (prefers-color-scheme: dark) {
+            :root {
+                --theme-bg: rgb(26, 26, 26);
+            }
+        }
+
+        :root, body {
+            background: var(--theme-bg);
+        }
+
+        body {
+            display:  none;
+        }
+    </style>
+
+    <link rel="stylesheet" href="~/css/theme.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    @* ReSharper disable once Html.PathError *@
+    <link rel="stylesheet" href="~/AscensionGameDev.Intersect.Server.styles.css" asp-append-version="true"/>
+    <script src="~/js/utils.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.2" defer></script>
+    <script src="@HtmxAntiforgeryScriptEndpoints.Path" defer></script>
+</head>
+<body>
+<header>
+    <h1>
+        <a href="/">@ViewData[nameof(Options.GameName)]</a>
+    </h1>
+    <nav>
+        <ul>
+            @if (User.IsEditor())
+            {
+                <li>
+                    <a asp-page="/Developer/Index">Developer</a>
+                </li>
+            }
+            <li>
+                <partial name="_LoginPartial"/>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<main role="main">
+    @RenderBody()
+</main>
+
+<footer>
+    <span class="copyright">&copy; @DateTime.Now.Year @ViewData[nameof(Options.GameName)]</span>
+    <span>
+        <a asp-area="" asp-page="/Privacy">@WebResources.Privacy</a>
+    </span>
+</footer>
+
+@await RenderSectionAsync("Scripts", false)
+</body>
+</html>

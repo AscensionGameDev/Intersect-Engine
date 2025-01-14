@@ -1,0 +1,342 @@
+:root {
+	--user-font-scale: 1rem - 1rem;
+	--max-width: calc(100% - 1rem);
+
+	scrollbar-width: thin;
+	text-rendering: optimizespeed;
+}
+
+body {
+	--header-height: 4rem;
+
+	background: var(--theme-bg);
+	color: var(--theme-text);
+	display: flex !important;
+	flex-direction: column;
+	font-family: var(--font-body);
+	font-size: clamp(0.875rem, 0.75rem + 0.375vw + var(--user-font-scale), 1rem);
+	margin: 0;
+	max-width: 100vw;
+	min-height: 100vh;
+	padding: 0;
+}
+
+a,
+a:visited {
+	color: var(--theme-text-accent);
+	font-weight: 400;
+	text-decoration: none;
+	text-underline-offset: 0.08em;
+	transition: color 0.1s ease-out;
+}
+
+a:active,
+a:focus,
+a:hover {
+	color: var(--theme-text-accent-dark);
+	text-decoration: underline;
+}
+
+a[hx-post] {
+	cursor: pointer;
+	user-select: none;
+}
+
+h1>a,
+h1>a:visited {
+	color: var(--theme-text);
+	font-weight: 600;
+	text-decoration: none;
+	transition: color 0.1s ease-out;
+}
+
+h1>a:active,
+h1>a:focus,
+h1>a:hover {
+	color: var(--theme-text-40);
+	text-decoration: none;
+}
+
+.authorized,
+:root.authenticated .anonymous {
+	display: none;
+}
+
+:root.authenticated .authorized {
+	display: initial;
+}
+
+nav ul {
+	list-style: none;
+	padding: 0;
+}
+
+.login-trigger {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	justify-content: center;
+	position: relative;
+}
+
+.login-panel {
+	display: none;
+}
+
+.login-panel>form {
+	margin: 0;
+	padding: 0.5em;
+}
+
+.login-panel>form>:not(:last-child) {
+	margin-block-end: 0.5em;
+}
+
+.login-trigger:focus-within .login-panel {
+	background-color: var(--theme-bg);
+	border: 0.0625rem solid var(--theme-text);
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+
+main > :not(article) {
+	margin: 1em;
+}
+
+input.tab-trigger {
+	display: none;
+}
+
+input.tab-trigger+label {
+	background-color: var(--theme-bg-accent);
+	display: inline-flex;
+	padding: 0.5rem 1.5rem;
+}
+
+input.tab-trigger+label>svg.material {
+	margin-right: 0.5em;
+	min-width: calc(min(1.5em, 24px));
+}
+
+input.tab-trigger:checked+label {
+	background-color: var(--theme-bg-accent-hover);
+}
+
+article.tab-content {
+	border-top: 0.0625rem solid var(--theme-bg-accent-hover);
+	display: none;
+	padding: 1em;
+	padding-bottom: 0;
+}
+
+input.tab-trigger#tab-browse:checked~article.tab-content#tab-browse-content,
+input.tab-trigger#tab-manifests:checked~article.tab-content#tab-manifests-content {
+	display: block;
+}
+
+.list > *:not(:last-child) {
+	margin-block-end: 1em;
+}
+
+svg.material {
+	fill: currentColor;
+	min-width: calc(min(1.5em, 24px));
+}
+
+svg.material {
+	fill: currentColor;
+	max-height: calc(min(1.5em, 24px));
+	max-width: calc(min(1.5em, 24px));
+}
+
+svg.material.button {
+	cursor: pointer;
+}
+
+.not-implemented {
+	display: none;
+}
+
+[data-type=Directory] .only-file,
+[data-type=File] .only-directory {
+	visibility: hidden;
+}
+
+td.actions {
+	display: flex;
+	justify-content: space-evenly;
+}
+
+article[data-tab="browse"]>table {
+	width: 100%;
+}
+
+article[data-tab="browse"]>table>thead {
+	background-color: color-mix(in srgb, var(--theme-bg-accent), #fff 12.5%);
+}
+
+tr[data-type=Directory] input.browse-node-trigger:checked+label>.name::after {
+	content: '/';
+	margin: 0 0.25em;
+}
+
+article[data-tab="browse"]>table>tbody>tr>th {
+	font-family: monospace;
+}
+
+tr[data-parent-collapsed] {
+	display: none;
+}
+
+tr>th>label>.name::before {
+	content: '├─ ';
+}
+
+tr[data-last-child]>th>label>.name::before {
+	content: '└─ ';
+}
+
+th>label {
+	display: block;
+}
+
+td.checksum:not([data-checksum]),
+td.size:not([data-size]) {
+	color: color-mix(in srgb, var(--theme-text), #000 50%);
+	text-align: center;
+}
+
+td.size {
+	text-align: right;
+}
+
+tbody>tr>th {
+	text-align: left;
+}
+
+tbody>tr>* {
+	padding: 0 0.5em;
+}
+
+tbody>tr {
+	background-color: color-mix(in srgb, var(--theme-bg-accent), #000 25%);
+}
+
+tbody>tr:nth-child(2n of :not([data-parent-collapsed])) {
+	background-color: var(--theme-bg-accent);
+}
+
+input.browse-node-trigger {
+	display: none;
+}
+
+section.manifest>.entries {
+	--entries-border: solid color-mix(in srgb, var(--theme-text), #000 33%);
+	border-bottom: 0.0625rem var(--entries-border);
+	border-top: 0.125rem var(--entries-border);
+	max-height: calc((100vh - (10.1875rem + 0.25rem + 2.25rem * 2)) / 2);
+	overflow: scroll;
+}
+
+section.manifest:not(:last-child) {
+	padding-bottom: 0.25rem;
+}
+
+section.manifest>h2 {
+	margin-top: 0;
+	margin-bottom: 0.25rem;
+}
+
+article.manifest-entry {
+	background-color: color-mix(in srgb, var(--theme-bg-accent), #000 25%);
+	display: grid;
+	grid-template-columns: 1fr 0.25fr minmax(12rem, 0.1fr);
+	padding: 0.5rem 1rem;
+}
+
+article.manifest-entry:nth-child(2n) {
+	background-color: var(--theme-bg-accent);
+}
+
+article.manifest-entry>* {
+	position: relative;
+}
+
+article.manifest-entry>* {
+	font-size: 1rem;
+	margin: 0;
+	margin-top: 0.5em;
+}
+
+article.manifest-entry>:not(:last-child) {
+	margin-right: 1rem;
+}
+
+article.manifest-entry [class*='entry-']::before {
+	color: var(--theme-text-accent);
+	font-size: 0.8em;
+	font-weight: normal;
+	position: absolute;
+	top: -1.2em;
+}
+
+article.manifest-entry .entry-name::before {
+	content: 'Path';
+}
+
+article.manifest-entry>.entry-checksum::before {
+	content: 'Checksum';
+}
+
+article.manifest-entry>.entry-size::before {
+	content: 'Size';
+}
+
+/* Form/Input Styling */
+
+form span {
+	/* debugging */
+	/*border: 1px solid #bbb;*/
+	display: block;
+	position: relative;
+	padding-top: 1.5em;
+}
+
+form span > input {
+	border-width: 0;
+	border-bottom-width: 0.0625em;
+}
+
+form span > input:invalid {
+	border-color: var(--theme-accent-error, color-mix(in srgb, red, #777 25%));
+}
+
+form span > input:invalid+label {
+	border-color: var(--theme-accent-error, color-mix(in srgb, red, #777 25%));
+}
+
+form span.expand > * {
+	width: 100%;
+}
+
+form  span > input:not([type=checkbox]) {
+	padding: 0.5em;
+}
+
+form  span > input:not([type=checkbox])+label {
+	left: 0.5em;
+	position: absolute;
+	top: 1.75em;
+	transform-origin: 0 0;
+	transition: transform ease-in-out 0.2s;
+}
+
+input:not(:placeholder-shown)+label,
+input[placeholder]:not([placeholder=""])+label,
+input:focus+label
+{
+	transform: translateY(-1.65em) scale(0.8);
+}

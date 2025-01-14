@@ -1,0 +1,15 @@
+@page
+@using Intersect.Server.Web.Pages.Shared.Players
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+@await Html.PartialAsync(
+    "~/Web/Pages/Shared/Players/_PlayerList.cshtml",
+    new PlayerListModel
+    {
+        Caption = WebResources.Leaderboard,
+        ShowRank = true,
+    }
+)

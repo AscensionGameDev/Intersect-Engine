@@ -1,0 +1,45 @@
+@using Intersect.Extensions
+@using Intersect.Server.Collections.Sorting
+@using Intersect.Server.Entities
+@model PlayerListModel
+
+@{
+    var playerCount = Player.Count();
+    var players = Player.Rank(Model.Page, Model.Count, Model.SortDirection).ToArray();
+
+    var rankBase = Model.Page * Model.Count + 1;
+    var rankScale = rankBase + players.Length;
+
+    if (Model.SortDirection == SortDirection.Ascending)
+    {
+        rankBase = 1 + playerCount - rankBase;
+        rankScale = rankBase;
+    }
+}
+
+<article class="page list">
+    @if (!string.IsNullOrWhiteSpace(Model.Caption))
+    {
+        <h2>@Model.Caption</h2>
+    }
+
+    @if (players.Length < 1)
+    {
+        <h3>@WebResources.XHasNoPlayers.Format(Options.Instance.GameName)</h3>
+    }
+
+    @for (var playerIndex = 0; playerIndex < players.Length; playerIndex++)
+    {
+        var player = players[playerIndex];
+        var rank = rankBase + (Model.SortDirection == SortDirection.Descending ? playerIndex : -playerIndex);
+        @await Html.PartialAsync(
+            "~/Web/Pages/Shared/Players/_PlayerCard.cshtml",
+            new PlayerCardModel
+            {
+                Player = player,
+                Rank = Model.ShowRank ? rank : default,
+                RankScale = rankScale,
+            }
+        )
+    }
+</article>

@@ -24,6 +24,11 @@ public sealed partial class ApiConfiguration
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public bool Enabled { get; set; }
 
+#if DEBUG
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore)]
+    public bool EnableAuthenticationDebugging { get; set; }
+#endif
+
     [JsonIgnore] private ImmutableDictionary<string, CorsPolicy>? _corsPolicies;
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -35,6 +40,9 @@ public sealed partial class ApiConfiguration
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public NetworkTypes AllowedNetworkTypes { get; set; } = NetworkTypes.Loopback;
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public List<string>? AllowedNonHttpOnlyCookies { get; set; }
 
     [JsonProperty(
         NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Include,

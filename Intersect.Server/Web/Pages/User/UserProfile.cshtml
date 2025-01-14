@@ -1,0 +1,33 @@
+@page "~/User/{username}"
+@using Intersect.Extensions
+@using Intersect.Server.Web.Pages.Shared.Players
+@model UserProfileModel
+@{
+    ViewData["Title"] = Model.ViewedUser?.Name ?? WebResources.NotFound;
+}
+
+<article class="page list">
+    @if (Model.ViewedUser == default)
+    {
+        <h2>@WebResources.XNotFound.Format(Model.Username)</h2>
+    }
+    else
+    {
+        @if (Model.ViewedUser.Players.Count < 1)
+        {
+            <h2>@WebResources.XHasNoPlayers.Format(Model.ViewedUser.Name)</h2>
+        }
+        else
+        {
+            <h2>@WebResources.XsPlayers.Format(Model.ViewedUser.Name)</h2>
+        }
+
+        foreach (var player in Model.ViewedUser.Players)
+        {
+            @await Html.PartialAsync(
+                "~/Web/Pages/Shared/Players/_PlayerCard.cshtml",
+                new PlayerCardModel { Player = player }
+            )
+        }
+    }
+</article>

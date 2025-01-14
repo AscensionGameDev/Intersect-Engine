@@ -1,0 +1,11 @@
+@page
+@model LogoutModel
+@{
+    ViewData["Title"] = WebResources.Logout;
+}
+
+<article>
+    <form hx-post hx-page="./Logout" hx-indicator="#login-indicator" hx-target="find #login-alert" hx-swap="innerHTML">
+        <button type="submit">@WebResources.Logout</button>
+    </form>
+</article>

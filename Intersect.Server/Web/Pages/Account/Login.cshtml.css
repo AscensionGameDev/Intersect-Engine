@@ -1,0 +1,12 @@
+article {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+form > section {
+	display: flex;
+	flex-direction: column;
+	max-width: calc(max(37.5rem, 50vw));
+	min-width: 37.5rem;
+}

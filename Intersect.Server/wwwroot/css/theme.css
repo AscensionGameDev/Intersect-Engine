@@ -1,0 +1,155 @@
+:root,
+:root.theme-light {
+	--font-fallback: -apple-system, blinkmacsystemfont, segoe ui, helvetica, arial,
+	sans-serif, apple color emoji, segoe ui emoji;
+	--font-body: system-ui, var(--font-fallback);
+	--font-mono: 'Courier New', courier, 'IBM Plex Mono', consolas,
+	'Andale Mono WT', 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter',
+	'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Liberation Mono',
+	'Nimbus Mono L', monaco, monospace;
+
+	/*
+   * Variables with --color-base prefix define
+   * the hue, and saturation values to be used for
+   * hsla colors.
+   *
+   * ex:
+   *
+   * --color-base-{color}: {hue}, {saturation};
+   *
+   */
+
+	--color-base-white: 0, 0%;
+	--color-base-black: 240, 100%;
+	--color-base-gray: 215, 14%;
+	--color-base-blue: 212, 100%;
+	--color-base-blue-dark: 212, 72%;
+	--color-base-green: 158, 79%;
+	--color-base-orange: 22, 100%;
+	--color-base-purple: 269, 79%;
+	--color-base-red: 351, 100%;
+	--color-base-yellow: 41, 100%;
+
+	/*
+   * Color palettes are made using --color-base
+   * variables, along with a lightness value to
+   * define different variants.
+   *
+   */
+
+	--color-gray-5: var(--color-base-gray), 5%;
+	--color-gray-10: var(--color-base-gray), 10%;
+	--color-gray-20: var(--color-base-gray), 20%;
+	--color-gray-30: var(--color-base-gray), 30%;
+	--color-gray-40: var(--color-base-gray), 40%;
+	--color-gray-50: var(--color-base-gray), 50%;
+	--color-gray-60: var(--color-base-gray), 60%;
+	--color-gray-70: var(--color-base-gray), 70%;
+	--color-gray-75: var(--color-base-gray), 75%;
+	--color-gray-80: var(--color-base-gray), 80%;
+	--color-gray-85: var(--color-base-gray), 85%;
+	--color-gray-90: var(--color-base-gray), 90%;
+	--color-gray-95: var(--color-base-gray), 95%;
+	--color-blue: var(--color-base-blue), 61%;
+	--color-blue-dark: var(--color-base-blue-dark), 39%;
+	--color-green: var(--color-base-green), 42%;
+	--color-orange: var(--color-base-orange), 50%;
+	--color-purple: var(--color-base-purple), 54%;
+	--color-red: var(--color-base-red), 54%;
+	--color-yellow: var(--color-base-yellow), 59%;
+	--base-font-size: 100%;
+	--z-index-top: 9999;
+	--z-index-a11y: 10000;
+
+	--theme-accent: hsl(206deg, 47%, 27%);
+	--theme-accent-secondary: hsl(206deg, 47%, 54%);
+	--theme-accent-error: hsl(351, 50%, 43%);
+	--theme-accent-info: hsl(190, 33%, 65%);
+	--theme-accent-success: hsl(123, 40%, 37%);
+	--theme-accent-warning: hsl(58, 71%, 43%);
+	--theme-text-accent: hsla(var(--color-base-blue), 40%, 1);
+	--theme-accent-opacity: 1;
+	--theme-divider: hsla(var(--color-gray-95), 1);
+	--theme-text: hsla(var(--color-gray-10), 1);
+	--theme-text-light: hsla(var(--color-gray-20), 1);
+	--theme-text-40: hsla(var(--color-gray-40), 1);
+
+	/* @@@: not used anywhere */
+	--theme-text-lighter: hsla(var(--color-gray-40), 1);
+	--theme-bg: hsla(var(--color-base-white), 100%, 1);
+	--theme-bg-hover: hsla(var(--color-gray-90), 1);
+	--theme-bg-offset: hsla(var(--color-gray-70), 1);
+	--theme-bg-accent: hsl(0deg, 0%, 95%);
+	--theme-code-inline-bg: hsla(var(--color-gray-95), 1);
+	--theme-code-inline-text: var(--theme-text);
+	--theme-code-bg: hsla(217deg, 19%, 27%, 100%);
+	--theme-code-text: hsla(var(--color-gray-95), 1);
+	--theme-navbar-bg: hsla(var(--color-base-white), 100%, 1);
+	--theme-navbar-height: 4rem;
+	--theme-selection-color: hsla(var(--color-blue), 1);
+	--theme-selection-bg: hsla(var(--color-blue), var(--theme-accent-opacity));
+
+	color-scheme: light;
+}
+
+:root.theme-dark {
+	--theme-primary: rgb(22, 45, 61);
+	--theme-accent: rgb(36, 72, 100);
+	--theme-accent-secondary: hsl(206deg, 47%, 54%);
+	--theme-accent-opacity: 0.15;
+	--theme-divider: hsla(var(--color-gray-90), 0.25);
+	--theme-text-accent: hsla(var(--color-blue), 1);
+	--theme-text-accent-dark: hsla(var(--color-blue-dark), 1);
+	--theme-text: hsla(var(--color-gray-85), 1);
+	--theme-text-light: hsla(var(--color-gray-75), 1);
+	--theme-text-40: hsla(var(--color-gray-60), 1);
+
+	/* @@@: not used anywhere */
+	--theme-text-lighter: hsla(var(--color-gray-50), 1);
+	--theme-bg: rgb(26, 26, 26);
+	--theme-bg-hover: hsla(var(--color-gray-20), 1);
+	--theme-bg-offset: hsla(var(--color-gray-10), 1);
+	--theme-bg-accent: rgb(38, 38, 38);
+	--theme-bg-accent-hover: hsl(0deg, 0%, 30%);
+	--theme-code-inline-bg: hsla(var(--color-gray-10), 1);
+	--theme-code-inline-text: hsla(var(--color-base-white), 100%, 1);
+	--theme-code-bg: hsla(var(--color-gray-5), 1);
+	--theme-code-text: hsla(var(--color-base-white), 100%, 1);
+	--theme-navbar-bg: hsla(215deg, 28%, 17%, 100%);
+	--theme-selection-color: hsla(var(--color-base-white), 100%, 1);
+	--theme-selection-bg: hsla(var(--color-purple), var(--theme-accent-opacity));
+
+	color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--theme-primary: rgb(22, 45, 61);
+		--theme-accent: rgb(36, 72, 100);
+		--theme-accent-secondary: hsl(206deg, 47%, 54%);
+		--theme-accent-opacity: 0.15;
+		--theme-divider: hsla(var(--color-gray-90), 0.25);
+		--theme-text-accent: hsla(var(--color-blue), 1);
+		--theme-text-accent-dark: hsla(var(--color-blue-dark), 1);
+		--theme-text: hsla(var(--color-gray-85), 1);
+		--theme-text-light: hsla(var(--color-gray-75), 1);
+		--theme-text-40: hsla(var(--color-gray-60), 1);
+
+		/* @@@: not used anywhere */
+		--theme-text-lighter: hsla(var(--color-gray-50), 1);
+		--theme-bg: rgb(26, 26, 26);
+		--theme-bg-hover: hsla(var(--color-gray-20), 1);
+		--theme-bg-offset: hsla(var(--color-gray-10), 1);
+		--theme-bg-accent: rgb(38, 38, 38);
+		--theme-bg-accent-hover: hsl(0deg, 0%, 30%);
+		--theme-code-inline-bg: hsla(var(--color-gray-10), 1);
+		--theme-code-inline-text: hsla(var(--color-base-white), 100%, 1);
+		--theme-code-bg: hsla(var(--color-gray-5), 1);
+		--theme-code-text: hsla(var(--color-base-white), 100%, 1);
+		--theme-navbar-bg: hsla(215deg, 28%, 17%, 100%);
+		--theme-selection-color: hsla(var(--color-base-white), 100%, 1);
+		--theme-selection-bg: hsla(var(--color-purple), var(--theme-accent-opacity));
+
+		color-scheme: dark;
+	}
+}

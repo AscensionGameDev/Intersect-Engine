@@ -1,0 +1,57 @@
+@using Intersect.Extensions
+@model PlayerCardModel
+
+@{
+    var player = Model.Player;
+    if (player == default)
+    {
+        return;
+    }
+
+    var nameColor = player.NameColor.ToArgb();
+    var styleParts = new[] { nameColor != 0 ? $"color: #{nameColor:X6}" : string.Empty };
+    styleParts = styleParts.Where(part => !string.IsNullOrWhiteSpace(part)).ToArray();
+}
+
+<article class="player card">
+    @if (Model.Rank.HasValue)
+    {
+        var rankStyleParts = new List<string>();
+        if (Model.RankScale.HasValue)
+        {
+            rankStyleParts.Add($"width: {(int)Math.Ceiling(1 + Math.Log10(Model.RankScale.Value))}em");
+        }
+        <section class="column rank">
+            <span class="row" style="@string.Join(';', rankStyleParts)">@Model.Rank.Value.ToString()</span>
+        </section>
+    }
+
+    <section class="column body">
+        <h3 style="@string.Join(';', styleParts)">@player.Name</h3>
+        <section class="row">
+            <span class="avatar-container">
+                <img class="avatar hidden"
+                     alt="@string.Format(WebResources.XsAvatar, player.Name)"
+                     src="/avatar/player/@player.Id"
+                     onload="this.classList.remove('hidden')"/>
+                <svg class="material">
+                    <use href="/material/action/account_circle/materialiconssharp/24px.svg#root"/>
+                </svg>
+            </span>
+            <span class="column" style="justify-content: space-around">
+                <span class="row">
+                    @player.ClassName
+                </span>
+                <span class="row">
+                    @WebResources.LevelX.Format(player.Level)
+                </span>
+                <span class="row">
+                    @WebResources.XofYExp.Format(player.Exp, player.ExperienceToNextLevel)
+                </span>
+                <span class="row">
+                    @(player.Guild?.Name ?? WebResources.NoGuild)
+                </span>
+            </span>
+        </section>
+    </section>
+</article>

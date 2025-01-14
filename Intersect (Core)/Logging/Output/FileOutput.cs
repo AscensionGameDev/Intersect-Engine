@@ -126,9 +126,12 @@ public partial class FileOutput : ILogOutput
                 args
             );
 
-            Writer.Write(line);
-            Writer.Write(Spacer);
-            Writer.Flush();
+            lock (Writer)
+            {
+                Writer.Write(line);
+                Writer.Write(Spacer);
+                Writer.Flush();
+            }
         }
         catch (Exception exceptionWhileWriting)
         {

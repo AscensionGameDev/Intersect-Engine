@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
@@ -27,11 +28,11 @@ namespace Intersect.Server.Web.RestApi.Routes
     // [ConfigurableAuthorize]
     public sealed partial class OAuthController : IntersectController
     {
-        private readonly IOptions<TokenGenerationOptions> _tokenGenerationOptions;
+        private readonly IntersectAuthenticationManager _authenticationManager;
 
-        public OAuthController(IOptions<TokenGenerationOptions> tokenGenerationOptions)
+        public OAuthController(IntersectAuthenticationManager authenticationManager)
         {
-            _tokenGenerationOptions = tokenGenerationOptions;
+            _authenticationManager = authenticationManager;
         }
 
         private class UsernameAndTokenResponse
@@ -224,13 +225,7 @@ namespace Intersect.Server.Web.RestApi.Routes
             }
 
             var tokenResponse = await IssueTokenFor(user);
-            // ReSharper disable once ConvertIfStatementToReturnStatement
-            if (tokenResponse == null)
-            {
-                // TODO(i18n): Localized by locale specified in header
-                return InternalServerError("Failed to issue token");
-            }
-            return Ok(tokenResponse);
+            return tokenResponse;
         }
 
         private async Task<IActionResult> RequestTokenFrom(TokenRequestRefreshTokenGrant refreshTokenGrant)
@@ -243,64 +238,44 @@ namespace Intersect.Server.Web.RestApi.Routes
             }
 
             var tokenResponse = await IssueTokenFor(refreshToken.User);
-            // ReSharper disable once ConvertIfStatementToReturnStatement
-            if (tokenResponse == null)
-            {
-                // TODO(i18n): Localized by locale specified in header
-                return InternalServerError("Failed to issue token");
-            }
-            return Ok(tokenResponse);
+            return tokenResponse;
         }
 
-        private async Task<TokenResponse?> IssueTokenFor(User user)
+        private async Task<IActionResult> IssueTokenFor(User user)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var ticketId = Guid.NewGuid();
-            var clientId = Guid.Empty;
-            var claims = user.Claims.ToList();
-            claims.Add(new Claim(IntersectClaimTypes.ClientId, clientId.ToString()));
-            claims.Add(new Claim(IntersectClaimTypes.TicketId, ticketId.ToString()));
-            claims.AddRange(user.Power.Roles.Select(role => new Claim(ClaimTypes.Role, role)));
-
-            var tokenDescriptor = new SecurityTokenDescriptor
+            var authenticationResult = await _authenticationManager.TryAuthenticate(user);
+            switch (authenticationResult.Type)
             {
-                Audience = _tokenGenerationOptions.Value.Audience,
-                Issuer = _tokenGenerationOptions.Value.Issuer,
-                Subject = new ClaimsIdentity(claims.ToArray()),
-                Expires = DateTime.UtcNow.AddMinutes(_tokenGenerationOptions.Value.AccessTokenLifetime),
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(_tokenGenerationOptions.Value.SecretData),
-                    SecurityAlgorithms.HmacSha512Signature
-                ),
-            };
-            var accessToken = tokenHandler.CreateToken(tokenDescriptor);
-            var serializedAccessToken = tokenHandler.WriteToken(accessToken);
-            var issued = DateTime.UtcNow;
-            var expires = issued.AddMinutes(_tokenGenerationOptions.Value.RefreshTokenLifetime);
-            var refreshToken = new RefreshToken
-            {
-                UserId = user.Id,
-                ClientId = clientId,
-                Subject = user.Name,
-                Issued = issued,
-                Expires = expires,
-                TicketId = ticketId,
-                Ticket = serializedAccessToken,
-            };
-
-            if (!await RefreshToken.TryAddAsync(refreshToken))
-            {
-                return null;
+                case AuthenticationResultType.Unknown:
+                    return InternalServerError();
+                case AuthenticationResultType.ErrorOccurred:
+                    return InternalServerError();
+                case AuthenticationResultType.Expired:
+                    return Forbidden();
+                case AuthenticationResultType.Unauthorized:
+                    return Unauthorized();
+                case AuthenticationResultType.Success:
+                    break;
+                default:
+                    throw new UnreachableException();
             }
 
-            return new TokenResponse
+            var claimsIdentity = authenticationResult.Identity;
+            var refreshToken = authenticationResult.RefreshToken;
+            if (claimsIdentity == default || refreshToken == default)
             {
-                AccessToken = serializedAccessToken,
+                return InternalServerError();
+            }
+
+            TokenResponse tokenResponse = new()
+            {
+                AccessToken = refreshToken.Ticket,
                 RefreshToken = refreshToken.Id.ToString(),
-                Expires = expires,
-                Issued = issued,
-                TokenType = TokenTypes.Bearer,
+                Expires = authenticationResult.ExpiresAt,
+                Issued = authenticationResult.IssuedAt,
+                TokenType = "bearer",
             };
+            return Ok(tokenResponse);
         }
 
         [Authorize]
