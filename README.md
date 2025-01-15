@@ -41,9 +41,9 @@ We're open to expanding to new platforms (mobile, web, etc) but don't have the c
 
 #### Required
 
-- [.NET 7 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0), verified for v7.0.11 (SDK 7.0.401)
+- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0), verified for v8.0.12 (SDK 8.0.405)
 - git: required for cloning submodules, if you want to do this manually you don't need this and use the .zip download but that is not supported
-  - Tested on 2.42.0
+  - Tested on 2.47.1
 
 ### Getting started
 
