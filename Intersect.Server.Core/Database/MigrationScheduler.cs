@@ -54,16 +54,9 @@ public sealed class MigrationScheduler<TContext>
                 );
             }
 
-            // If we are just doing a clean database "migration" (really just a creation), invoke once and exit early
-            if (_context.Database.EnsureCreated())
-            {
-                Log.Verbose("Database created successfully.");
-            }
-            else
-            {
-                Log.Verbose("Failed to ensure database was created, using the migrator instead...");
-                migrator.Migrate();
-            }
+            // Migrate to latest, don't run individual schema migrations, and
+            // data migrations aren't needed when there is no data to migrate!
+            migrator.Migrate();
             return;
         }
 
