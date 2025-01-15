@@ -384,6 +384,7 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                 sgo.SchemaFilter<DictionarySchemaFilter>();
                 sgo.SchemaFilter<GameObjectTypeSchemaFilter>();
                 sgo.OperationFilter<MetadataOperationFilter>();
+                sgo.SchemaFilter<MetadataSchemaFilter>();
                 sgo.OperationFilter<AuthorizationOperationFilter>();
                 sgo.DocumentFilter<GeneratorDocumentFilter>();
                 sgo.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);

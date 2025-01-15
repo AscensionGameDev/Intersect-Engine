@@ -1,0 +1,53 @@
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AvatarController_GetPlayerAvatarAsync_Summary" xml:space="preserve">
+    <value>Get Player Avatar</value>
+  </data>
+  <data name="AvatarController_GetPlayerAvatarAsync_Description" xml:space="preserve">
+    <value>Gets the avatar of the Player identified by the specified lookup.</value>
+  </data>
+  <data name="AvatarController_GetUserAvatarAsync_Summary" xml:space="preserve">
+    <value>Get User Avatar</value>
+  </data>
+  <data name="AvatarController_GetUserAvatarAsync_Description" xml:space="preserve">
+    <value>Gets the avatar of the User identified by the specified lookup.</value>
+  </data>
+  <data name="LookupKey_Description" xml:space="preserve">
+    <value>An ID (Guid) or a name (string) used to look up an entity.</value>
+  </data>
+  <data name="OAuthController_RequestToken_Description" xml:space="preserve">
+    <value>Request an access token (and a refresh token) with a `password` grant, or a `refresh_token` grant.</value>
+  </data>
+  <data name="OAuthController_RequestToken_Summary" xml:space="preserve">
+    <value>Request an Access Token</value>
+  </data>
+  <data name="OAuthController_DeleteTokenById_Description" xml:space="preserve">
+    <value>Delete a Refresh Token specified by the tokenId parameter.</value>
+  </data>
+  <data name="OAuthController_DeleteTokenById_Summary" xml:space="preserve">
+    <value>Delete a Refresh Token by ID</value>
+  </data>
+  <data name="OAuthController_DeleteTokensForUser_Description" xml:space="preserve">
+    <value>Delete all refresh tokens for the user specified by the lookupKey parameter.</value>
+  </data>
+  <data name="OAuthController_DeleteTokensForUser_Summary" xml:space="preserve">
+    <value>Delete all Refresh Tokens for a User</value>
+  </data>
+  <data name="OAuthController_DeleteTokenByIdForUser_Description" xml:space="preserve">
+    <value>Delete the Refresh Token specified by the tokenId parameter for the user specified by the lookupKey parameter.</value>
+  </data>
+  <data name="OAuthController_DeleteTokenByIdForUser_Summary" xml:space="preserve">
+    <value>Delete a Refresh Token by ID for a User</value>
+  </data>
+</root>

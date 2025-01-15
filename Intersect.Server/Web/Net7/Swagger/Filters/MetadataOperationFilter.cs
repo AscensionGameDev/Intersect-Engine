@@ -1,3 +1,7 @@
+using System.ComponentModel;
+using System.Globalization;
+using System.Reflection;
+using Intersect.Framework.Resources;
 using Intersect.Server.Collections.Indexing;
 using Intersect.Server.Web.RestApi.Types;
 using Intersect.Server.Web.Swagger.Extensions;
@@ -11,6 +15,46 @@ public sealed class MetadataOperationFilter : IOperationFilter
 {
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
+        if (context.MethodInfo is { } methodInfo)
+        {
+            var description = operation.Description;
+            if (string.IsNullOrWhiteSpace(description))
+            {
+                var descriptionAttribute = methodInfo.GetCustomAttributes<DescriptionAttribute>().FirstOrDefault();
+                var endpointDescriptionAttribute = methodInfo.GetCustomAttributes<EndpointDescriptionAttribute>().FirstOrDefault();
+                description = endpointDescriptionAttribute?.Description ?? descriptionAttribute?.Description;
+            }
+
+            if (!string.IsNullOrWhiteSpace(description))
+            {
+                var resourceString = OpenAPIResources.ResourceManager.GetStringWithFallback(description, CultureInfo.CurrentCulture);
+                if (!string.IsNullOrWhiteSpace(resourceString))
+                {
+                    description = resourceString;
+                }
+            }
+
+            operation.Description = description;
+
+            var summary = operation.Summary;
+            if (string.IsNullOrWhiteSpace(summary))
+            {
+                var endpointSummaryAttribute = methodInfo.GetCustomAttributes<EndpointSummaryAttribute>().FirstOrDefault();
+                summary = endpointSummaryAttribute?.Summary;
+            }
+
+            if (!string.IsNullOrWhiteSpace(summary))
+            {
+                var resourceString = OpenAPIResources.ResourceManager.GetStringWithFallback(summary, CultureInfo.CurrentCulture);
+                if (!string.IsNullOrWhiteSpace(resourceString))
+                {
+                    summary = resourceString;
+                }
+            }
+
+            operation.Summary = summary;
+        }
+
         var api = context.ApiDescription;
         List<string> tags = [];
 

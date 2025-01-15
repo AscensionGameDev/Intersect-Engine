@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Intersect.Security.Claims;
+using Intersect.Server.Collections.Indexing;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Web.Authentication;
 using Intersect.Server.Web.Configuration;
@@ -199,8 +200,8 @@ namespace Intersect.Server.Web.RestApi.Routes
         }
 
         [HttpPost("token")]
-        [EndpointSummary("Request an Access Token")]
-        [EndpointDescription("Request an access token (and a refresh token) with a `password` grant, or a `refresh_token` grant.")]
+        [EndpointSummary($"{nameof(OAuthController)}_{nameof(RequestToken)}_Summary")]
+        [EndpointDescription($"{nameof(OAuthController)}_{nameof(RequestToken)}_Description")]
         [Consumes(typeof(TokenRequest), ContentTypes.Json)]
         [ProducesResponseType<TokenResponse>((int)HttpStatusCode.OK, ContentTypes.Json)]
         [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.BadRequest, ContentTypes.Json)]
@@ -280,8 +281,8 @@ namespace Intersect.Server.Web.RestApi.Routes
 
         [Authorize]
         [HttpDelete("tokens/{tokenId:guid}")]
-        [EndpointSummary("Delete a Refresh Token by ID")]
-        [EndpointDescription("Delete the Refresh Token specified by the tokenId parameter.")]
+        [EndpointSummary($"{nameof(OAuthController)}_{nameof(DeleteTokenById)}_Summary")]
+        [EndpointDescription($"{nameof(OAuthController)}_{nameof(DeleteTokenById)}_Description")]
         [ProducesResponseType<UsernameAndTokenResponse>((int)HttpStatusCode.OK, ContentTypes.Json)]
         [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.Forbidden, ContentTypes.Json)]
         [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
@@ -329,16 +330,16 @@ namespace Intersect.Server.Web.RestApi.Routes
         }
 
         [Authorize]
-        [HttpDelete("tokens/{username}")]
-        [EndpointSummary("Delete all Refresh Tokens for a User")]
-        [EndpointDescription("Delete all refresh tokens for the user specified by the username parameter.")]
+        [HttpDelete("tokens/{lookupKey:LookupKey}")]
+        [EndpointSummary($"{nameof(OAuthController)}_{nameof(DeleteTokensForUser)}_Summary")]
+        [EndpointDescription($"{nameof(OAuthController)}_{nameof(DeleteTokensForUser)}_Description")]
         [ProducesResponseType<UsernameAndTokenResponse>((int)HttpStatusCode.OK, ContentTypes.Json)]
         [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.Forbidden, ContentTypes.Json)]
         [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.Gone, ContentTypes.Json)]
         [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
         [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.NotFound, ContentTypes.Json)]
         [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.Unauthorized, ContentTypes.Json)]
-        public async Task<IActionResult> DeleteTokensForUsername(string username, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteTokensForUser(LookupKey lookupKey, CancellationToken cancellationToken)
         {
             var actor = IntersectUser;
             if (actor == default)
@@ -347,10 +348,10 @@ namespace Intersect.Server.Web.RestApi.Routes
                 return Unauthorized("Request is not authorized");
             }
 
-            if (!Database.PlayerData.User.TryFindByName(username, out var user))
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
                 // ReSharper disable once InvertIf
-                if (!string.Equals(username, actor.Name, StringComparison.OrdinalIgnoreCase))
+                if (!lookupKey.Matches(actor.Id, actor.Name))
                 {
                     if (!(actor.Power.ApiRoles?.UserManage ?? false))
                     {
@@ -382,7 +383,7 @@ namespace Intersect.Server.Web.RestApi.Routes
                 return Ok(
                     new UsernameAndTokenResponse
                     {
-                        Username = username,
+                        Username = user.Name,
                     }
                 );
             }
@@ -392,15 +393,15 @@ namespace Intersect.Server.Web.RestApi.Routes
         }
 
         [Authorize]
-        [HttpDelete("tokens/{username}/{tokenId:guid}")]
-        [EndpointSummary("Delete a Refresh Token by ID for a User")]
-        [EndpointDescription("Delete the Refresh Token specified by the tokenId parameter for the user specified by the username parameter.")]
+        [HttpDelete("tokens/{lookupKey:LookupKey}/{tokenId:guid}")]
+        [EndpointSummary($"{nameof(OAuthController)}_{nameof(DeleteTokenByIdForUser)}_Summary")]
+        [EndpointDescription($"{nameof(OAuthController)}_{nameof(DeleteTokenByIdForUser)}_Description")]
         [ProducesResponseType<UsernameAndTokenResponse>((int)HttpStatusCode.OK, ContentTypes.Json)]
         [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.Forbidden, ContentTypes.Json)]
         [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
         [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.NotFound, ContentTypes.Json)]
         [ProducesResponseType<StatusMessageResponseBody>((int)HttpStatusCode.Unauthorized, ContentTypes.Json)]
-        public async Task<IActionResult> DeleteTokenForUsernameById(string username, Guid tokenId)
+        public async Task<IActionResult> DeleteTokenByIdForUser(LookupKey lookupKey, Guid tokenId)
         {
             var actor = IntersectUser;
             if (actor == default)
@@ -409,10 +410,10 @@ namespace Intersect.Server.Web.RestApi.Routes
                 return Unauthorized("Request is not authorized");
             }
 
-            if (!Database.PlayerData.User.TryFindByName(username, out var user))
+            if (!Database.PlayerData.User.TryFetch(lookupKey, out var user))
             {
                 // ReSharper disable once InvertIf
-                if (!string.Equals(username, actor.Name, StringComparison.OrdinalIgnoreCase))
+                if (!lookupKey.Matches(actor.Id, actor.Name))
                 {
                     if (!(actor.Power.ApiRoles?.UserManage ?? false))
                     {
@@ -443,7 +444,7 @@ namespace Intersect.Server.Web.RestApi.Routes
                     new UsernameAndTokenResponse
                     {
                         TokenId = tokenId,
-                        Username = username,
+                        Username = user.Name,
                     }
                 );
             }

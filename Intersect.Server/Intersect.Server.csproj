@@ -65,6 +65,17 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>WebResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Web\WebResources.*.resx" DependentUpon="WebResources.resx" />
+    <Compile Update="Web\OpenAPIResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>OpenAPIResources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="Web\OpenAPIResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>OpenAPIResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Web\OpenAPIResources.*.resx" DependentUpon="OpenAPIResources.resx" />
   </ItemGroup>
 
   <ItemGroup Label="Embedded Resources">

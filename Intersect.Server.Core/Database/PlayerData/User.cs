@@ -550,7 +550,7 @@ public partial class User
             return false;
         }
 
-        if (lookupKey.HasId)
+        if (lookupKey.IsId)
         {
             client = Globals.Clients.Find(queryClient => lookupKey.Id == queryClient?.User?.Id);
             user = client?.User ?? FindById(lookupKey.Id);
@@ -697,12 +697,12 @@ public partial class User
 
     public static bool TryFind(LookupKey lookupKey, PlayerContext playerContext, [NotNullWhen(true)] out User? user)
     {
-        if (lookupKey.HasId)
+        if (lookupKey.IsId)
         {
             return TryFindById(lookupKey.Id, playerContext, out user);
         }
 
-        if (lookupKey.HasName)
+        if (lookupKey.IsName)
         {
             return TryFindByName(lookupKey.Name, playerContext, out user);
         }

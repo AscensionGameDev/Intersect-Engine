@@ -62,7 +62,7 @@ public partial class Player
             return false;
         }
 
-        if (lookupKey.HasId)
+        if (lookupKey.IsId)
         {
             client = Globals.Clients.Find(queryClient => lookupKey.Id == queryClient?.Entity?.Id);
             player = client?.Entity ?? Find(lookupKey.Id);
