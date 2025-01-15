@@ -4,7 +4,7 @@ namespace Intersect.Client.Framework.Entities;
 
 public interface IResource : IEntity
 {
-    ResourceBase? BaseResource { get; }
+    ResourceBase? Descriptor { get; }
     
     bool IsDepleted { get; }
 }

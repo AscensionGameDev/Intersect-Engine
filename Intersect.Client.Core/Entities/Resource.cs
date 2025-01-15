@@ -12,58 +12,76 @@ namespace Intersect.Client.Entities;
 
 public partial class Resource : Entity, IResource
 {
+    private FloatRect _renderBoundsDest = FloatRect.Empty;
+    private FloatRect _renderBoundsSrc = FloatRect.Empty;
+
+    private bool _recalculateRenderBounds;
     private bool _waitingForTilesets;
 
-    public ResourceBase? BaseResource { get; set; }
-
-    bool IResource.IsDepleted => IsDead;
-
-    public bool IsDead { get; set; }
-
-    FloatRect mDestRectangle = FloatRect.Empty;
-
-    private bool mHasRenderBounds;
-
-    FloatRect mSrcRectangle = FloatRect.Empty;
+    private bool _isDead;
+    private ResourceBase? _descriptor;
 
     public Resource(Guid id, ResourceEntityPacket packet) : base(id, packet, EntityType.Resource)
     {
         mRenderPriority = 0;
     }
 
-    public override string Sprite
+    public ResourceBase? Descriptor
     {
-        get => mMySprite;
+        get => _descriptor;
+        set => _descriptor = value;
+    }
+
+    public bool IsDepleted => IsDead;
+
+    public bool IsDead
+    {
+        get => _isDead;
         set
         {
-            if (value == mMySprite)
+            if (value == _isDead)
             {
                 return;
             }
 
-            if (BaseResource == null)
+            _isDead = value;
+            _recalculateRenderBounds = true;
+        }
+    }
+
+    public override string Sprite
+    {
+        get => _sprite;
+        set
+        {
+            if (value == _sprite)
             {
                 return;
             }
 
-            mMySprite = value;
+            if (Descriptor == null)
+            {
+                return;
+            }
+
+            _sprite = value;
             ReloadSpriteTexture();
         }
     }
 
     private void ReloadSpriteTexture()
     {
-        if (BaseResource == null)
+        if (Descriptor == null)
         {
             return;
         }
 
-        if (IsDead && BaseResource.Exhausted.GraphicFromTileset ||
-            !IsDead && BaseResource.Initial.GraphicFromTileset)
+        if (IsDead && Descriptor.Exhausted.GraphicFromTileset ||
+            !IsDead && Descriptor.Initial.GraphicFromTileset)
         {
             if (GameContentManager.Current.TilesetsLoaded)
             {
-                Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Tileset, mMySprite);
+                Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Tileset, _sprite);
             }
             else
             {
@@ -72,40 +90,43 @@ public partial class Resource : Entity, IResource
         }
         else
         {
-            Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Resource, mMySprite);
+            Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Resource, _sprite);
         }
 
-        mHasRenderBounds = false;
+        _recalculateRenderBounds = true;
     }
 
     public override void Load(EntityPacket? packet)
     {
         base.Load(packet);
-        var pkt = packet as ResourceEntityPacket;
 
-        if (pkt == default)
+        _recalculateRenderBounds = true;
+
+        if (packet is not ResourceEntityPacket resourceEntityPacket)
         {
             return;
         }
 
-        IsDead = pkt.IsDead;
-        var baseId = pkt.ResourceId;
-        BaseResource = ResourceBase.Get(baseId);
+        IsDead = resourceEntityPacket.IsDead;
 
-        if (BaseResource == default)
+        if (!ResourceBase.TryGet(resourceEntityPacket.ResourceId, out _descriptor))
         {
             return;
         }
 
-        HideName = true;
-        if (IsDead)
+        UpdateFromDescriptor(_descriptor);
+    }
+
+    private void UpdateFromDescriptor(ResourceBase? descriptor)
+    {
+        if (descriptor == null)
         {
-            Sprite = BaseResource.Exhausted.Graphic;
+            return;
         }
-        else
-        {
-            Sprite = BaseResource.Initial.Graphic;
-        }
+
+        var updatedSprite = IsDead ? descriptor.Exhausted.Graphic : descriptor.Initial.Graphic;
+        _sprite = updatedSprite;
+        ReloadSpriteTexture();
     }
 
     public override void Dispose()
@@ -130,6 +151,12 @@ public partial class Resource : Entity, IResource
             return false;
         }
 
+        if (Descriptor is { IsDeleted: true } deletedDescriptor)
+        {
+            _ = ResourceBase.TryGet(deletedDescriptor.Id, out _descriptor);
+            UpdateFromDescriptor(_descriptor);
+        }
+
         if (!Maps.MapInstance.TryGet(MapId, out var map) || !map.InView())
         {
             LatestMap = map;
@@ -138,12 +165,12 @@ public partial class Resource : Entity, IResource
             return false;
         }
 
-        if (!mHasRenderBounds)
+        if (_recalculateRenderBounds)
         {
             CalculateRenderBounds();
         }
 
-        if (!Graphics.WorldViewport.IntersectsWith(mDestRectangle))
+        if (!Graphics.WorldViewport.IntersectsWith(_renderBoundsDest))
         {
             if (RenderList != null)
             {
@@ -170,9 +197,9 @@ public partial class Resource : Entity, IResource
 
     public override HashSet<Entity>? DetermineRenderOrder(HashSet<Entity>? renderList, IMapInstance? map)
     {
-        if (BaseResource == default ||
-            (IsDead && !BaseResource.Exhausted.RenderBelowEntities) ||
-            (!IsDead && !BaseResource.Initial.RenderBelowEntities)
+        if (Descriptor == default ||
+            (IsDead && !Descriptor.Exhausted.RenderBelowEntities) ||
+            (!IsDead && !Descriptor.Initial.RenderBelowEntities)
         )
         {
             return base.DetermineRenderOrder(renderList, map);
@@ -249,7 +276,7 @@ public partial class Resource : Entity, IResource
 
     private void CalculateRenderBounds()
     {
-        if (BaseResource == default)
+        if (Descriptor == default)
         {
             return;
         }
@@ -278,43 +305,43 @@ public partial class Resource : Entity, IResource
             return;
         }
 
-        mSrcRectangle.X = 0;
-        mSrcRectangle.Y = 0;
-        if (IsDead && BaseResource.Exhausted.GraphicFromTileset)
+        _renderBoundsSrc.X = 0;
+        _renderBoundsSrc.Y = 0;
+        if (IsDead && Descriptor.Exhausted.GraphicFromTileset)
         {
-            mSrcRectangle.X = BaseResource.Exhausted.X * Options.TileWidth;
-            mSrcRectangle.Y = BaseResource.Exhausted.Y * Options.TileHeight;
-            mSrcRectangle.Width = (BaseResource.Exhausted.Width + 1) * Options.TileWidth;
-            mSrcRectangle.Height = (BaseResource.Exhausted.Height + 1) * Options.TileHeight;
+            _renderBoundsSrc.X = Descriptor.Exhausted.X * Options.TileWidth;
+            _renderBoundsSrc.Y = Descriptor.Exhausted.Y * Options.TileHeight;
+            _renderBoundsSrc.Width = (Descriptor.Exhausted.Width + 1) * Options.TileWidth;
+            _renderBoundsSrc.Height = (Descriptor.Exhausted.Height + 1) * Options.TileHeight;
         }
-        else if (!IsDead && BaseResource.Initial.GraphicFromTileset)
+        else if (!IsDead && Descriptor.Initial.GraphicFromTileset)
         {
-            mSrcRectangle.X = BaseResource.Initial.X * Options.TileWidth;
-            mSrcRectangle.Y = BaseResource.Initial.Y * Options.TileHeight;
-            mSrcRectangle.Width = (BaseResource.Initial.Width + 1) * Options.TileWidth;
-            mSrcRectangle.Height = (BaseResource.Initial.Height + 1) * Options.TileHeight;
+            _renderBoundsSrc.X = Descriptor.Initial.X * Options.TileWidth;
+            _renderBoundsSrc.Y = Descriptor.Initial.Y * Options.TileHeight;
+            _renderBoundsSrc.Width = (Descriptor.Initial.Width + 1) * Options.TileWidth;
+            _renderBoundsSrc.Height = (Descriptor.Initial.Height + 1) * Options.TileHeight;
         }
         else
         {
-            mSrcRectangle.Width = Texture.Width;
-            mSrcRectangle.Height = Texture.Height;
+            _renderBoundsSrc.Width = Texture.Width;
+            _renderBoundsSrc.Height = Texture.Height;
         }
 
-        mDestRectangle.Width = mSrcRectangle.Width;
-        mDestRectangle.Height = mSrcRectangle.Height;
-        mDestRectangle.Y = (int) (map.Y + Y * Options.TileHeight + OffsetY);
-        mDestRectangle.X = (int) (map.X + X * Options.TileWidth + OffsetX);
-        if (mSrcRectangle.Height > Options.TileHeight)
+        _renderBoundsDest.Width = _renderBoundsSrc.Width;
+        _renderBoundsDest.Height = _renderBoundsSrc.Height;
+        _renderBoundsDest.Y = (int) (map.Y + Y * Options.TileHeight + OffsetY);
+        _renderBoundsDest.X = (int) (map.X + X * Options.TileWidth + OffsetX);
+        if (_renderBoundsSrc.Height > Options.TileHeight)
         {
-            mDestRectangle.Y -= mSrcRectangle.Height - Options.TileHeight;
+            _renderBoundsDest.Y -= _renderBoundsSrc.Height - Options.TileHeight;
         }
 
-        if (mSrcRectangle.Width > Options.TileWidth)
+        if (_renderBoundsSrc.Width > Options.TileWidth)
         {
-            mDestRectangle.X -= (mSrcRectangle.Width - Options.TileWidth) / 2;
+            _renderBoundsDest.X -= (_renderBoundsSrc.Width - Options.TileWidth) / 2;
         }
 
-        mHasRenderBounds = true;
+        _recalculateRenderBounds = false;
     }
 
     //Rendering Resources
@@ -327,7 +354,7 @@ public partial class Resource : Entity, IResource
 
         if (Texture != null)
         {
-            Graphics.DrawGameTexture(Texture, mSrcRectangle, mDestRectangle, Intersect.Color.White);
+            Graphics.DrawGameTexture(Texture, _renderBoundsSrc, _renderBoundsDest, Intersect.Color.White);
         }
     }
 }
