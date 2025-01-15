@@ -691,6 +691,12 @@ public partial class Npc : Entity
             Log.Warn($"Combat data missing for {spellBase.Id}.");
         }
 
+        //TODO: try cast spell to find out hidden targets?
+        if (TargetHasStealth(target) /* && spellBase.Combat.TargetType != SpellTargetType.AoE*/)
+        {
+            return;
+        }
+
         // Check if we are even allowed to cast this spell.
         if (!CanCastSpell(spellBase, target, true, out _))
         {
