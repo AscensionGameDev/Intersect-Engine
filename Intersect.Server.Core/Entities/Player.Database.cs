@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using Intersect.Logging;
 using Intersect.Server.Database;
@@ -41,7 +41,7 @@ public partial class Player
 
     public static bool TryFetch(
         LookupKey lookupKey,
-        out Player? player,
+        [NotNullWhen(true)] out Player? player,
         bool loadRelationships = false,
         bool loadBags = false
     )
@@ -49,8 +49,8 @@ public partial class Player
 
     public static bool TryFetch(
         LookupKey lookupKey,
-        [NotNullWhen(true)] out Client? client,
-        out Player? player,
+        out Client? client,
+        [NotNullWhen(true)] out Player? player,
         bool loadRelationships = false,
         bool loadBags = false
     )
