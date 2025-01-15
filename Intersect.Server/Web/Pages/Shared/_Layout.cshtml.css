@@ -51,7 +51,7 @@ main {
 
 ::deep > article {
 	max-width: calc(min(100vw, max(80vw, 100em)));
-	padding: 0 1em;
+	padding: 1em;
 }
 
 ::deep > article > p:first-child {

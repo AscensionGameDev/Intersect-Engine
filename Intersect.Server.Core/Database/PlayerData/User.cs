@@ -562,16 +562,27 @@ public partial class User
         return user != default;
     }
 
-    public bool TryLoadAvatarName([NotNullWhen(true)] out string? avatarName, out bool isFace)
+    public bool TryLoadAvatarName(
+        [NotNullWhen(true)] out Player? playerWithAvatar,
+        [NotNullWhen(true)] out string? avatarName,
+        out bool isFace
+    )
     {
-        (avatarName, isFace) = Players
-            .Select(
-                player => player.TryLoadAvatarName(out var avatarName, out var isFace)
-                    ? (Name: avatarName, IsFace: isFace)
-                    : default
-            )
-            .FirstOrDefault(avatarInfo => !string.IsNullOrWhiteSpace(avatarInfo.Name));
-        return !string.IsNullOrWhiteSpace(avatarName);
+        foreach (var player in Players)
+        {
+            if (!player.TryLoadAvatarName(out avatarName, out isFace) || string.IsNullOrWhiteSpace(avatarName))
+            {
+                continue;
+            }
+
+            playerWithAvatar = player;
+            return true;
+        }
+
+        avatarName = null;
+        isFace = false;
+        playerWithAvatar = null;
+        return false;
     }
 
     public static bool TryAuthenticate(string username, string password, [NotNullWhen(true)] out User? user)

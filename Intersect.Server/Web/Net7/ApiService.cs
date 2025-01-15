@@ -42,6 +42,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using Intersect.Server.Collections.Indexing;
+using Intersect.Server.Web.Controllers;
+
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
 namespace Intersect.Server.Web;
@@ -295,9 +297,13 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                 }
             );
 
+        builder.Services.AddOutputCache(o => o.AddPolicy(nameof(AvatarController), AvatarController.OutputCachePolicy));
+
         builder.Services.AddAuthorization(authOptions => authOptions.AddIntersectPolicies());
 
-        builder.Services.AddMvc()
+        builder.Services.AddResponseCaching();
+
+        builder.Services.AddMvc(o => o.CacheProfiles.Add(nameof(AvatarController), AvatarController.ResponseCacheProfile))
             .WithRazorPagesRoot("/Web/Pages")
             .AddRazorPagesOptions(
                 rpo =>
@@ -529,6 +535,9 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
             app.UseMiddleware<AuthenticationDebugMiddleware>();
         }
 #endif
+
+        app.UseResponseCaching();
+        app.UseOutputCache();
 
         app.UseAuthorization();
 

@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Globalization;
 using Intersect.Server.Localization;
 using Intersect.Utilities;
@@ -30,7 +30,33 @@ public partial struct LookupKey
 
     public override string ToString()
     {
+        if (IsInvalid)
+        {
+            return $"{{ {nameof(IsInvalid)}={true}, {nameof(Id)}={Id}, {nameof(Name)}={Name} }}";
+        }
+
         return HasId ? Id.ToString() : Name;
+    }
+
+    public static implicit operator LookupKey(Guid id) => new()
+    {
+        Id = id,
+    };
+
+    public static implicit operator LookupKey(string name)
+    {
+        if (Guid.TryParse(name, out var id))
+        {
+            return new LookupKey
+            {
+                Id = id,
+            };
+        }
+
+        return new LookupKey
+        {
+            Name = name,
+        };
     }
 
     public static bool TryParse(string input, out LookupKey lookupKey)

@@ -100,7 +100,9 @@ public partial class LoginModel : PageModel
             Response.Headers["HX-Redirect"] = redirectUrl;
         }
 
-        var avatar = user.TryLoadAvatarName(out var avatarName, out _) ? avatarName : default;
+        var avatar = user.TryLoadAvatarName(out _, out var avatarName, out _)
+            ? avatarName
+            : default;
         var userProfile = new UserProfile(user.Name, avatar);
         return new OkObjectResult(userProfile);
     }
