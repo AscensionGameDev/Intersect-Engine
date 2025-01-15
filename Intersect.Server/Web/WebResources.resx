@@ -38,7 +38,7 @@
   <data name="Privacy" xml:space="preserve">
     <value>Privacy</value>
   </data>
-  <data name="NotFound" xml:space="preserve">
+  <data name="UserNotFound" xml:space="preserve">
     <value>Not Found</value>
   </data>
   <data name="XNotFound" xml:space="preserve">

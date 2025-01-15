@@ -21,7 +21,7 @@
     <value>Crea un account</value>
   </data>
   <data name="Logout" xml:space="preserve">
-    <value>Disconnettiti</value>
+    <value>Esci</value>
   </data>
   <data name="LevelX" xml:space="preserve">
     <value>Livello {0}</value>
@@ -46,5 +46,14 @@
   </data>
   <data name="XHasNoPlayers" xml:space="preserve">
     <value>{0} non ha personaggi</value>
+  </data>
+  <data name="XsPlayers" xml:space="preserve">
+    <value>Personaggi di {0}</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>Non trovato</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Inizio</value>
   </data>
 </root>

@@ -18,7 +18,7 @@
     <value>Classe</value>
   </data>
   <data name="Login" xml:space="preserve">
-    <value>Iniciar sessão</value>
+    <value>Login</value>
   </data>
   <data name="Register" xml:space="preserve">
     <value>Cadastrar-se</value>
@@ -36,15 +36,27 @@
     <value>Privacidade</value>
   </data>
   <data name="LevelX" xml:space="preserve">
-    <value>Nível {0}</value>
+    <value>Level {0}</value>
   </data>
   <data name="XofYExp" xml:space="preserve">
-    <value>{0}/{1} XP</value>
+    <value>{0}/{1} EXP</value>
   </data>
   <data name="XNotFound" xml:space="preserve">
     <value>{0} não encontrado</value>
   </data>
   <data name="XHasNoPlayers" xml:space="preserve">
     <value>{0} não tem personagens</value>
+  </data>
+  <data name="XsPlayers" xml:space="preserve">
+    <value>Personagens de {0}</value>
+  </data>
+  <data name="Leaderboard" xml:space="preserve">
+    <value>Classificação</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>Não Encontrado</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Início</value>
   </data>
 </root>

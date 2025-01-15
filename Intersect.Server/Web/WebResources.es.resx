@@ -44,4 +44,10 @@
   <data name="Class" xml:space="preserve">
     <value>Clase</value>
   </data>
+  <data name="XsPlayers" xml:space="preserve">
+    <value>Personajes de {0}</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>No encontrado</value>
+  </data>
 </root>
