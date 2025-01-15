@@ -190,7 +190,7 @@ public partial class Npc : Entity
     }
 
     //Targeting
-    public void AssignTarget(Entity en)
+    public void AssignTarget(Entity? en)
     {
         var oldTarget = Target;
 
@@ -199,16 +199,7 @@ public partial class Npc : Entity
         if (AggroCenterMap != null && pathTarget != null &&
             pathTarget.TargetMapId == AggroCenterMap.Id && pathTarget.TargetX == AggroCenterX && pathTarget.TargetY == AggroCenterY)
         {
-            if (en == null)
-            {
-                return;
-
-            }
-            else
-            {
-                return;
-
-            }
+            return;
         }
 
         //Why are we doing all of this logic if we are assigning a target that we already have?
@@ -229,7 +220,7 @@ public partial class Npc : Entity
 
             if (en is Projectile projectile)
             {
-                if (projectile.Owner != this && !TargetHasStealth(projectile))
+                if (projectile.Owner != this && !projectile.HasStatusEffect(SpellEffect.Stealth))
                 {
                     Target = projectile.Owner;
                 }
@@ -246,21 +237,17 @@ public partial class Npc : Entity
                         }
                     }
                 }
-
-                if (en is Player)
+                else if (en is Player player)
                 {
                     //TODO Make sure that the npc can target the player
-                    if (this != en && !TargetHasStealth(en))
+                    if (CanTarget(player))
                     {
-                        Target = en;
+                        Target = player;
                     }
                 }
-                else
+                else if (CanTarget(en))
                 {
-                    if (this != en && !TargetHasStealth(en))
-                    {
-                        Target = en;
-                    }
+                    Target = en;
                 }
             }
 
@@ -331,8 +318,20 @@ public partial class Npc : Entity
             }
         }
 
-        if (TargetHasStealth(entity))
+        if (entity.HasStatusEffect(SpellEffect.Stealth))
         {
+            // if spell is area or projectile, we can attack without knowing the target location
+            if (spell?.Combat is { TargetType: SpellTargetType.AoE or SpellTargetType.Projectile })
+            {
+                return true;
+            }
+
+            // this is for handle aoe when target is single target, we can hit the target if it's in the radius
+            if (spell?.Combat.TargetType == SpellTargetType.Single && spell.Combat.HitRadius > 0 && InRangeOf(entity, spell.Combat.HitRadius))
+            {
+                return true;
+            }
+
             return false;
         }
 
@@ -669,6 +668,12 @@ public partial class Npc : Entity
             Log.Warn($"Combat data missing for {spellBase.Id}.");
         }
 
+        //TODO: try cast spell to find out hidden targets?
+        // if (target.HasStatusEffect(SpellEffect.Stealth) /* && spellBase.Combat.TargetType != SpellTargetType.AoE*/)
+        // {
+        //     return;
+        // }
+
         // Check if we are even allowed to cast this spell.
         if (!CanCastSpell(spellBase, target, true, out _))
         {
@@ -775,11 +780,12 @@ public partial class Npc : Entity
             {
                 var curMapLink = MapId;
                 base.Update(timeMs);
+
                 var tempTarget = Target;
 
                 foreach (var status in CachedStatuses)
                 {
-                    if (status.Type == SpellEffect.Stun || status.Type == SpellEffect.Sleep)
+                    if (status.Type is SpellEffect.Stun or SpellEffect.Sleep)
                     {
                         return;
                     }
@@ -794,6 +800,12 @@ public partial class Npc : Entity
                     var targetY = 0;
                     var targetZ = 0;
 
+                    if (tempTarget != null && (tempTarget.IsDead() || !InRangeOf(tempTarget, Options.MapWidth * 2) || !CanTarget(tempTarget)))
+                    {
+                        _ = TryFindNewTarget(Timing.Global.Milliseconds, tempTarget.Id, !CanTarget(tempTarget));
+                        tempTarget = Target;
+                    }
+
                     //TODO Clear Damage Map if out of combat (target is null and combat timer is to the point that regen has started)
                     if (tempTarget != null && (Options.Instance.NpcOpts.ResetIfCombatTimerExceeded && Timing.Global.Milliseconds > CombatTimer))
                     {
@@ -803,6 +815,7 @@ public partial class Npc : Entity
                             {
                                 PacketSender.SendNpcAggressionToProximity(this);
                             }
+
                             return;
                         }
                     }
@@ -836,17 +849,10 @@ public partial class Npc : Entity
                                 mResetDistance = 0;
                             }
                         }
-
-                    }
-
-                    if (tempTarget != null && (tempTarget.IsDead() || !InRangeOf(tempTarget, Options.MapWidth * 2)))
-                    {
-                        TryFindNewTarget(Timing.Global.Milliseconds, tempTarget.Id);
-                        tempTarget = Target;
                     }
 
                     //Check if there is a target, if so, run their ass down.
-                    if (tempTarget != null)
+                    if (tempTarget != null && CanTarget(tempTarget))
                     {
                         if (!tempTarget.IsDead() && CanAttack(tempTarget, null))
                         {
@@ -854,16 +860,6 @@ public partial class Npc : Entity
                             targetX = tempTarget.X;
                             targetY = tempTarget.Y;
                             targetZ = tempTarget.Z;
-                            foreach (var targetStatus in tempTarget.CachedStatuses)
-                            {
-                                if (targetStatus.Type == SpellEffect.Stealth)
-                                {
-                                    targetMap = Guid.Empty;
-                                    targetX = 0;
-                                    targetY = 0;
-                                    targetZ = 0;
-                                }
-                            }
                         }
                     }
                     else //Find a target if able
@@ -910,7 +906,7 @@ public partial class Npc : Entity
                         {
                             mPathFinder.SetTarget(new PathfinderTarget(targetMap, targetX, targetY, targetZ));
 
-                            if (tempTarget != Target)
+                            if (tempTarget != null && tempTarget != Target)
                             {
                                 tempTarget = Target;
                             }
@@ -1378,11 +1374,11 @@ public partial class Npc : Entity
         return false;
     }
 
-    public void TryFindNewTarget(long timeMs, Guid avoidId = new Guid(), bool ignoreTimer = false, Entity attackedBy = null)
+    public bool TryFindNewTarget(long timeMs, Guid avoidId = new(), bool ignoreTimer = false, Entity attackedBy = null)
     {
         if (!ignoreTimer && FindTargetWaitTime > timeMs)
         {
-            return;
+            return false;
         }
 
         // Are we resetting? If so, do not allow for a new target.
@@ -1392,16 +1388,14 @@ public partial class Npc : Entity
         {
             if (!Options.Instance.NpcOpts.AllowEngagingWhileResetting || attackedBy == null || attackedBy.GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) > Math.Max(Options.Instance.NpcOpts.ResetRadius, Base.ResetRadius))
             {
-                return;
+                return false;
             }
-            else
-            {
-                //We're resetting and just got attacked, and we allow reengagement.. let's stop resetting and fight!
-                mPathFinder?.SetTarget(null);
-                mResetting = false;
-                AssignTarget(attackedBy);
-                return;
-            }
+
+            //We're resetting and just got attacked, and we allow reengagement.. let's stop resetting and fight!
+            mPathFinder?.SetTarget(null);
+            mResetting = false;
+            AssignTarget(attackedBy);
+            return true;
         }
 
         var possibleTargets = new List<Entity>();
@@ -1538,9 +1532,12 @@ public partial class Npc : Entity
             {
                 CheckForResetLocation(true);
             }
+
+            AssignTarget(null);
         }
 
         FindTargetWaitTime = timeMs + FindTargetDelay;
+        return Target != null;
     }
 
     public override void ProcessRegen()
