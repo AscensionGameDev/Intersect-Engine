@@ -64,6 +64,13 @@ To compile either use an IDE or one of the following commands:
 	- e.g. `dotnet publish -p:Configuration=Release -p:PackageVersion=0.8.0-beta -p:Version=0.8.0 -r linux-x64`
 	- The automated builds use the above command for the RIDs `linux-x64`, `osx-x64` and `win-x64`
 
+### Extended Engine Features
+
+For the extended engine features, please refer to the [Features](./Documentation/Features.md) documentation in the `Documentation` directory.
+
+Extended engine features include things such as:
+- [Built-in Server Website](./Documentation/Features.md#homepage)
+
 ## Intersect Assets
 
 Intersect is distributed with [custom assets](https://github.com/AscensionGameDev/Intersect-Assets) that have been curated from our community and around the net. Assets all match in style and are all safe to use freely in commercial projects.
