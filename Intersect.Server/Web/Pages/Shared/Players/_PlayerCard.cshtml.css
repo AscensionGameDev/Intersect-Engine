@@ -50,11 +50,11 @@ article.card .column {
 
 img.avatar {
 	background-color: var(--theme-bg-accent-hover);
-	border: 0.125em solid var(--theme-text);
 	image-rendering: pixelated;
 }
 
 img.avatar, svg {
+	border: 0.125em solid var(--theme-text);
 	height: 8em;
 	max-height: 8em;
 	max-width: 8em;
