@@ -1095,18 +1095,22 @@ internal sealed partial class NetworkedPacketHandler
                 lock (ServerContext.Instance.LogicService.LogicLock)
                 {
                     ServerContext.Instance.LogicService.LogicPool.WaitForIdle();
+
                     //if Item or Resource, kill all global entities of that kind
-                    if (type == GameObjectType.Item)
+                    switch (obj)
                     {
-                        Globals.KillItemsOf((ItemBase) obj);
-                    }
-                    else if (type == GameObjectType.Npc)
-                    {
-                        Globals.KillNpcsOf((NpcBase) obj);
-                    }
-                    else if (type == GameObjectType.Projectile)
-                    {
-                        Globals.KillProjectilesOf((ProjectileBase) obj);
+                        case ItemBase itemDescriptor:
+                            Globals.KillItemsOf(itemDescriptor);
+                            break;
+                        case NpcBase npcDescriptor:
+                            Globals.KillNpcsOf(npcDescriptor);
+                            break;
+                        case ProjectileBase projectileDescriptor:
+                            Globals.KillProjectilesOf(projectileDescriptor);
+                            break;
+                        case ResourceBase resourceDescriptor:
+                            Globals.KillResourcesOf(resourceDescriptor);
+                            break;
                     }
 
                     obj.Load(packet.Data);

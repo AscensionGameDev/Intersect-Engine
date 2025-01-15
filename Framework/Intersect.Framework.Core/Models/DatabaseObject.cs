@@ -58,6 +58,8 @@ public abstract partial class DatabaseObject<TObject> : IDatabaseObject where TO
     [Column(Order = 0)]
     public string Name { get; set; }
 
+    [NotMapped, JsonIgnore] public bool IsDeleted => !Lookup.TryGetValue(Id, out var descriptor) || descriptor != this;
+
     public virtual void Load(string json, bool keepCreationTime = false)
     {
         var oldTime = TimeCreated;

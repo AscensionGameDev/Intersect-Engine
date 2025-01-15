@@ -126,7 +126,7 @@ public partial class Entity : IEntity
 
     private long mLastUpdate;
 
-    protected string mMySprite = string.Empty;
+    protected string _sprite = string.Empty;
 
     public Color Color { get; set; } = new Color(255, 255, 255, 255);
 
@@ -286,23 +286,23 @@ public partial class Entity : IEntity
 
             mTransformedSprite = value;
 
-            var textureName = string.IsNullOrEmpty(mTransformedSprite) ? mMySprite : mTransformedSprite;
+            var textureName = string.IsNullOrEmpty(mTransformedSprite) ? _sprite : mTransformedSprite;
             LoadTextures(textureName);
         }
     }
 
     public virtual string Sprite
     {
-        get => mMySprite;
+        get => _sprite;
         set
         {
-            if (mMySprite == value)
+            if (_sprite == value)
             {
                 return;
             }
 
-            mMySprite = value;
-            LoadTextures(mMySprite);
+            _sprite = value;
+            LoadTextures(_sprite);
         }
     }
 
@@ -2294,7 +2294,7 @@ public partial class Entity : IEntity
                             switch (en.Value)
                             {
                                 case Resource resource:
-                                    var resourceBase = resource.BaseResource;
+                                    var resourceBase = resource.Descriptor;
                                     if (resourceBase != null)
                                     {
                                         if (projectileTrigger)
