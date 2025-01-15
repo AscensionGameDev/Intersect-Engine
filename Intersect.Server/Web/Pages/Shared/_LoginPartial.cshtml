@@ -8,7 +8,7 @@
         <a class="profile" href="/User/@User.Identity.Name">
             <img class="avatar hidden"
                  alt="@WebResources.XsAvatar.Format(User.Identity.Name)"
-                 src="/avatar/@User.FindFirstValue(ClaimTypes.NameIdentifier)"
+                 src="/avatar/user/@User.FindFirstValue(ClaimTypes.NameIdentifier)"
                  onload="this.classList.remove('hidden')"/>
             <svg class="material">
                 <use href="/material/action/account_circle/materialiconssharp/24px.svg#root"/>

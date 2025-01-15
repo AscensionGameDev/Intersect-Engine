@@ -43,6 +43,8 @@ public class AvatarController : IntersectController
     }
 
     [HttpGet("player/{lookupKey:LookupKey}")]
+    [EndpointSummary($"{nameof(AvatarController)}_{nameof(GetPlayerAvatarAsync)}_Summary")]
+    [EndpointDescription($"{nameof(AvatarController)}_{nameof(GetPlayerAvatarAsync)}_Description")]
     public async Task<IActionResult> GetPlayerAvatarAsync(LookupKey lookupKey)
     {
         DirectoryInfo assetsDirectoryInfo = new("assets/editor/resources");
@@ -97,7 +99,9 @@ public class AvatarController : IntersectController
         return result;
     }
 
-    [HttpGet("{lookupKey:LookupKey}")]
+    [HttpGet("user/{lookupKey:LookupKey}")]
+    [EndpointSummary($"{nameof(AvatarController)}_{nameof(GetUserAvatarAsync)}_Summary")]
+    [EndpointDescription($"{nameof(AvatarController)}_{nameof(GetUserAvatarAsync)}_Description")]
     public async Task<IActionResult> GetUserAvatarAsync(LookupKey lookupKey)
     {
         DirectoryInfo assetsDirectoryInfo = new("assets/editor/resources");
