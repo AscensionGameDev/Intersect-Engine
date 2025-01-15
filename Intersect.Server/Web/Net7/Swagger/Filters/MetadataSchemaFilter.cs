@@ -33,7 +33,11 @@ public sealed class MetadataSchemaFilter : ISchemaFilter
         var title = schema.Title;
         if (string.IsNullOrWhiteSpace(title))
         {
-            title = context.Type.Name;
+            var typeName = context.Type.Name;
+            if (context.Type.IsGenericTypeDefinition)
+            {
+                title = $"{typeName[..typeName.IndexOf('`')]}<{string.Join(", ", context.Type.GetGenericArguments().Select(argType => argType.Name))}>";
+            }
         }
 
         schema.Title = title;
