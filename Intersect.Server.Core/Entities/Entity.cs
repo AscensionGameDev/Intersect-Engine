@@ -48,7 +48,7 @@ public abstract partial class Entity : IEntity
     public IReadOnlyDictionary<Vital, long> VitalsLookup => _vitals.Select((value, index) => (value, index))
         .ToDictionary(t => (Vital)t.index, t => t.value).AsReadOnly();
 
-    [NotMapped, JsonIgnore] public Entity Target { get; set; } = null;
+    [NotMapped, JsonIgnore] public Entity? Target { get; set; }
 
     public Entity() : this(Guid.NewGuid(), Guid.Empty)
     {
@@ -317,6 +317,8 @@ public abstract partial class Entity : IEntity
             IsDisposed = true;
         }
     }
+
+    public bool HasStatusEffect(SpellEffect spellEffect) => CachedStatuses.Any(s => s.Type == spellEffect);
 
     public virtual void Update(long timeMs)
     {
@@ -1261,7 +1263,7 @@ public abstract partial class Entity : IEntity
 
     protected virtual bool CanLookInDirection(Direction direction) => true;
 
-    public virtual void ChangeDir(Direction dir)
+    public void ChangeDir(Direction dir)
     {
         if (!CanLookInDirection(dir))
         {
@@ -1407,6 +1409,24 @@ public abstract partial class Entity : IEntity
     }
 
     public virtual bool CanAttack(Entity entity, SpellBase spell) => !IsCasting;
+
+    public virtual bool CanTarget(Entity? entity)
+    {
+        if (entity == null)
+        {
+            // If it's not an entity we can't target it
+            return false;
+        }
+
+        if (IsAllyOf(entity))
+        {
+            // If it's an ally we can always target them
+            return true;
+        }
+
+        // If it's not an ally we can't target it if it's stealthed
+        return !entity.HasStatusEffect(SpellEffect.Stealth);
+    }
 
     public virtual void ProcessRegen()
     {
