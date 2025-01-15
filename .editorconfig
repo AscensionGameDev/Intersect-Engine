@@ -136,9 +136,12 @@ csharp_preserve_single_line_blocks = true
 csharp_style_namespace_declarations = file_scoped:silent
 
 # ReSharper properties
+resharper_csharp_wrap_after_declaration_lpar = true
 resharper_csharp_wrap_after_invocation_lpar = true
 resharper_csharp_wrap_arguments_style = chop_if_long
+resharper_csharp_wrap_before_declaration_rpar = true
 resharper_csharp_wrap_before_invocation_rpar = true
+resharper_csharp_wrap_parameters_style = chop_if_long
 resharper_keep_existing_invocation_parens_arrangement = false
 resharper_keep_existing_property_patterns_arrangement = false
 resharper_max_invocation_arguments_on_line = 3

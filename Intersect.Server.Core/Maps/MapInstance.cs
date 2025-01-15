@@ -19,7 +19,7 @@ using Intersect.Server.Plugins.Helpers;
 namespace Intersect.Server.Maps;
 
 /// <summary>
-/// A <see cref="MapInstance"/> exists to process map updates, but on a "layered" system, where a single map can be processing 
+/// A <see cref="MapInstance"/> exists to process map updates, but on a "layered" system, where a single map can be processing
 /// differently for each instance that exists upon it.
 /// <remarks>
 /// <para>
@@ -37,7 +37,7 @@ namespace Intersect.Server.Maps;
 /// <list type="number">
 /// <item>
 /// Warps to a new map, or their <see cref="Entity.MapInstanceId"/> has otherwise changed.
-/// </item> 
+/// </item>
 /// <item>
 /// Walks across a map boundary and fetches new maps from <see cref="MapController.GetSurroundingMaps(bool)"/>.
 /// </item>
@@ -85,7 +85,7 @@ public partial class MapInstance : IMapInstance
     /// <summary>
     /// An ID referring to which instance this processer belongs to.
     /// <remarks>
-    /// Entities/Items/Etc with that share an <see cref="Entity.MapInstanceId"/> with <see cref="MapInstance.MapInstanceId"/> 
+    /// Entities/Items/Etc with that share an <see cref="Entity.MapInstanceId"/> with <see cref="MapInstance.MapInstanceId"/>
     /// will be processed and fed packets by that processer.
     /// </remarks>
     /// </summary>
@@ -143,7 +143,7 @@ public partial class MapInstance : IMapInstance
     // Animations & Text
     private MapActionMessages mActionMessages = new MapActionMessages();
     private MapAnimations mMapAnimations = new MapAnimations();
-    
+
     public MapInstance(MapController map, Guid mapInstanceId, Player creator)
     {
         mMapController = map;
@@ -191,15 +191,6 @@ public partial class MapInstance : IMapInstance
     public object GetLock()
     {
         return mMapProcessLock;
-    }
-
-    /// <summary>
-    /// Gets our _parent's_ map lock.
-    /// </summary>
-    /// <returns>The parent map instance's map lock</returns>
-    public object GetControllerLock()
-    {
-        return mMapController.GetMapLock();
     }
 
     public virtual void Dispose()
@@ -714,7 +705,7 @@ public partial class MapInstance : IMapInstance
         }
 
         TileItems[item.TileIndex]?.TryAdd(item.UniqueId, item);
-        
+
         MapHelper.Instance.InvokeItemAdded(source, item);
     }
 
@@ -933,10 +924,10 @@ public partial class MapInstance : IMapInstance
             var mapItemSource = new MapItemSource
             {
                 Id = MapInstanceId,
-                MapInstanceReference = new WeakReference<IMapInstance>(this), 
+                MapInstanceReference = new WeakReference<IMapInstance>(this),
                 DescriptorId = mMapController.Id,
             };
-            
+
             AddItem(mapItemSource, mapItem);
             PacketSender.SendMapItemUpdate(mMapController.Id, MapInstanceId, mapItem, false);
         }
@@ -1453,7 +1444,7 @@ public partial class MapInstance : IMapInstance
         var nearbyPlayers = new HashSet<Player>();
 
         // Get all players in surrounding and current maps
-        foreach (var mapInstance in MapController.GetSurroundingMapInstances(mMapController.Id, MapInstanceId, true)) 
+        foreach (var mapInstance in MapController.GetSurroundingMapInstances(mMapController.Id, MapInstanceId, true))
         {
             foreach (var plyr in mapInstance.GetPlayers())
             {

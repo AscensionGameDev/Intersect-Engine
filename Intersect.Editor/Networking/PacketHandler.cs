@@ -181,11 +181,19 @@ internal sealed partial class PacketHandler
             map.SaveStateAsUnchanged();
             map.InitAutotiles();
             map.UpdateAdjacentAutotiles();
-            if (MapInstance.Get(packet.MapId) != null)
+            if (MapInstance.TryGet(packet.MapId, out var existingMap))
             {
-                lock (MapInstance.Get(packet.MapId).MapLock)
+                if (!existingMap.Lock.TryAcquireLock(
+                        "Editor HandlePacket(IPacketSender, MapPacket)",
+                        out var lockRef
+                    ))
                 {
-                    if (Globals.CurrentMap == MapInstance.Get(packet.MapId))
+                    throw new InvalidOperationException("Failed to acquire map instance lock from Editor HandlePacket(IPacketSender, MapPacket)");
+                }
+
+                using (lockRef)
+                {
+                    if (Globals.CurrentMap == existingMap)
                     {
                         Globals.CurrentMap = map;
                     }

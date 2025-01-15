@@ -6,9 +6,16 @@ using Intersect.Client.Maps;
 using Intersect.Enums;
 using Intersect.Framework;
 using Intersect.GameObjects.Maps;
+using Intersect.Logging;
 using Intersect.Models;
+using Intersect.Network;
 using Intersect.Network.Packets.Client;
+using Intersect.Network.Packets.Server;
 using AdminAction = Intersect.Admin.Actions.AdminAction;
+using ChatMsgPacket = Intersect.Network.Packets.Client.ChatMsgPacket;
+using PartyInvitePacket = Intersect.Network.Packets.Client.PartyInvitePacket;
+using PingPacket = Intersect.Network.Packets.Client.PingPacket;
+using TradeRequestPacket = Intersect.Network.Packets.Client.TradeRequestPacket;
 
 namespace Intersect.Client.Networking;
 
@@ -46,6 +53,7 @@ public static partial class PacketSender
             return;
         }
 
+        Log.Debug($"Requesting maps via cache keys:\n{string.Join("\n", validMapCacheKeys.Select(k => $"\t{k}"))}");
         Network.SendPacket(new GetObjectData<MapBase>(validMapCacheKeys));
         MapInstance.UpdateMapRequestTime(validMapCacheKeys.Select(cacheKey => cacheKey.Id.Guid).ToArray());
     }
@@ -61,18 +69,76 @@ public static partial class PacketSender
             return;
         }
 
-        Network.SendPacket(
-            new GetObjectData<MapBase>(
-                validMapIds.Select(id => new ObjectCacheKey<MapBase>(new Id<MapBase>(id))).ToArray()
-            )
+        // TODO: Background all of this?
+        List<ObjectCacheKey<MapBase>> cacheKeys = new(validMapIds.Length);
+        List<MapPacket> loadedCachedMaps = new(validMapIds.Length);
+        foreach (var mapId in validMapIds)
+        {
+            if (ObjectDataDiskCache<MapBase>.TryLoad(mapId, out var cacheData))
+            {
+                ObjectCacheKey<MapBase> cacheKey = new(cacheData.Id);
+                var deserializedCachedPacket = MessagePacker.Instance.Deserialize<MapPacket>(cacheData.Data, silent: true);
+                if (deserializedCachedPacket != default)
+                {
+                    cacheKey = new ObjectCacheKey<MapBase>(
+                        cacheData.Id,
+                        cacheData.Checksum,
+                        cacheData.Version
+                    );
+                    cacheKeys.Add(cacheKey);
+                    loadedCachedMaps.Add(deserializedCachedPacket);
+                    continue;
+                }
+
+                Log.Warn($"Failed to deserialized cached data for {cacheKey}, will fetch again");
+            }
+
+            cacheKeys.Add(new ObjectCacheKey<MapBase>(new Id<MapBase>(mapId)));
+        }
+
+        SendNeedMap(cacheKeys.ToArray());
+
+        Task.Run(
+            () =>
+            {
+                foreach (var cachedMap in loadedCachedMaps)
+                {
+                    PacketHandler.HandleMap(cachedMap, skipSave: true);
+                }
+            }
         );
-        MapInstance.UpdateMapRequestTime(validMapIds);
     }
+
+    // public static void SendNeedMap(params Guid[] mapIds)
+    // {
+    // var validMapIds = mapIds.Where(
+    //         mapId => mapId != default && !MapInstance.TryGet(mapId, out _) && MapInstance.MapNotRequested(mapId)
+    //     )
+    //     .ToArray();
+    // if (validMapIds.Length < 1)
+    // {
+    //     return;
+    // }
+    //
+    //     Log.Debug($"Requesting maps via IDs:\n{string.Join("\n", mapIds.Select(k => $"\t{k}"))}");
+    //     Network.SendPacket(
+    //         new GetObjectData<MapBase>(
+    //             validMapIds.Select(id => new ObjectCacheKey<MapBase>(new Id<MapBase>(id))).ToArray()
+    //         )
+    //     );
+    //     MapInstance.UpdateMapRequestTime(validMapIds);
+    // }
 
     public static void SendNeedMapForGrid(MapInstance? mapInstance = default)
     {
-        if (mapInstance == default && !MapInstance.TryGet(Globals.Me.MapId, out mapInstance))
+        if (Globals.Me is not { } player)
         {
+            return;
+        }
+
+        if (mapInstance == default && !MapInstance.TryGet(player.MapId, out mapInstance))
+        {
+            SendNeedMap(player.MapId);
             return;
         }
 
@@ -497,7 +563,7 @@ public static partial class PacketSender
     {
         Network.SendPacket(new UpdateGuildMemberPacket(id, null, Enums.GuildMemberUpdateAction.Transfer));
     }
-  
+
     public static void SendClosePicture(Guid eventId)
     {
         if (eventId != Guid.Empty)

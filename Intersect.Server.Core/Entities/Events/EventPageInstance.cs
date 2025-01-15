@@ -1,6 +1,7 @@
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
+using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Entities.Pathfinding;
 using Intersect.Server.Framework;
@@ -237,9 +238,10 @@ public partial class EventPageInstance : Entity
 
     public void SendToPlayer()
     {
-        if (Player != null)
+        if (Player is {} player)
         {
-            PacketSender.SendEntityDataTo(Player, this);
+            Log.Debug($"Sending EventPageInstance '{Name}' to '{player.Name}' ({Id} to {player.Id})");
+            PacketSender.SendEntityDataTo(player, this);
         }
         else
         {
@@ -894,7 +896,7 @@ public partial class EventPageInstance : Entity
 
         return false;
     }
-    
+
     protected override EntityItemSource? AsItemSource()
     {
         return null;

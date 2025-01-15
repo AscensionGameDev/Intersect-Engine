@@ -6915,12 +6915,9 @@ public partial class Player : Entity
 
     public void SendEvents()
     {
-        foreach (var evt in EventLookup)
+        foreach (var (_, eventInstance) in EventLookup)
         {
-            if (evt.Value.PageInstance != null)
-            {
-                evt.Value.PageInstance.SendToPlayer();
-            }
+            eventInstance.PageInstance?.SendToPlayer();
         }
     }
 

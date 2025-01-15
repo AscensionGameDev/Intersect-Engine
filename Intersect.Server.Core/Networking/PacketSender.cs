@@ -329,7 +329,7 @@ public static partial class PacketSender
             if (entity != null)
             {
                 //TODO: INCLUDE EVENTS IN MAP PACKET
-                if (mapId == entity.MapId)
+                if (mapId == entity.MapId || entity.Map.SurroundingMapIds.Contains(mapId))
                 {
                     entity.SendEvents();
                 }
