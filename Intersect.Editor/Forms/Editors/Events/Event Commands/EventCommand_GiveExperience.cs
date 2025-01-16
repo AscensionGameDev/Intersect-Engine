@@ -1,5 +1,6 @@
 ﻿using Intersect.Editor.Localization;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events.Commands;
 
@@ -55,17 +56,17 @@ public partial class EventCommandGiveExperience : UserControl
         if (rdoPlayerVariable.Checked)
         {
             mMyCommand.VariableType = VariableType.PlayerVariable;
-            mMyCommand.VariableId = PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex, VariableDataType.Integer);
+            mMyCommand.VariableId = PlayerVariableDescriptor.IdFromList(cmbVariable.SelectedIndex, VariableDataType.Integer);
         }
         else if (rdoGlobalVariable.Checked)
         {
             mMyCommand.VariableType = VariableType.ServerVariable;
-            mMyCommand.VariableId = ServerVariableBase.IdFromList(cmbVariable.SelectedIndex, VariableDataType.Integer);
+            mMyCommand.VariableId = ServerVariableDescriptor.IdFromList(cmbVariable.SelectedIndex, VariableDataType.Integer);
         }
         else if (rdoGuildVariable.Checked)
         {
             mMyCommand.VariableType = VariableType.GuildVariable;
-            mMyCommand.VariableId = GuildVariableBase.IdFromList(cmbVariable.SelectedIndex, VariableDataType.Integer);
+            mMyCommand.VariableId = GuildVariableDescriptor.IdFromList(cmbVariable.SelectedIndex, VariableDataType.Integer);
         }
         mMyCommand.UseVariable = !rdoManual.Checked;
         mEventEditor.FinishCommandEdit();
@@ -122,11 +123,11 @@ public partial class EventCommandGiveExperience : UserControl
         cmbVariable.Items.Clear();
         if (rdoPlayerVariable.Checked)
         {
-            cmbVariable.Items.AddRange(PlayerVariableBase.GetNamesByType(VariableDataType.Integer));
+            cmbVariable.Items.AddRange(PlayerVariableDescriptor.GetNamesByType(VariableDataType.Integer));
             // Do not update if the wrong type of variable is saved
             if (mMyCommand.VariableType == VariableType.PlayerVariable)
             {
-                var index = PlayerVariableBase.ListIndex(mMyCommand.VariableId, VariableDataType.Integer);
+                var index = PlayerVariableDescriptor.ListIndex(mMyCommand.VariableId, VariableDataType.Integer);
                 if (index > -1)
                 {
                     cmbVariable.SelectedIndex = index;
@@ -143,11 +144,11 @@ public partial class EventCommandGiveExperience : UserControl
         }
         else if (rdoGlobalVariable.Checked)
         {
-            cmbVariable.Items.AddRange(ServerVariableBase.GetNamesByType(VariableDataType.Integer));
+            cmbVariable.Items.AddRange(ServerVariableDescriptor.GetNamesByType(VariableDataType.Integer));
             // Do not update if the wrong type of variable is saved
             if (mMyCommand.VariableType == VariableType.ServerVariable)
             {
-                var index = ServerVariableBase.ListIndex(mMyCommand.VariableId, VariableDataType.Integer);
+                var index = ServerVariableDescriptor.ListIndex(mMyCommand.VariableId, VariableDataType.Integer);
                 if (index > -1)
                 {
                     cmbVariable.SelectedIndex = index;
@@ -164,11 +165,11 @@ public partial class EventCommandGiveExperience : UserControl
         }
         else if (rdoGuildVariable.Checked)
         {
-            cmbVariable.Items.AddRange(GuildVariableBase.GetNamesByType(VariableDataType.Integer));
+            cmbVariable.Items.AddRange(GuildVariableDescriptor.GetNamesByType(VariableDataType.Integer));
             // Do not update if the wrong type of variable is saved
             if (mMyCommand.VariableType == VariableType.GuildVariable)
             {
-                var index = GuildVariableBase.ListIndex(mMyCommand.VariableId, VariableDataType.Integer);
+                var index = GuildVariableDescriptor.ListIndex(mMyCommand.VariableId, VariableDataType.Integer);
                 if (index > -1)
                 {
                     cmbVariable.SelectedIndex = index;

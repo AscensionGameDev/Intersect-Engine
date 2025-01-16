@@ -1,6 +1,7 @@
 using System.Reflection;
 
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
@@ -67,26 +68,26 @@ public static partial class Strings
         if (condition.VariableType == VariableType.PlayerVariable)
         {
             return EventConditionDesc.playervariable.ToString(
-                PlayerVariableBase.GetName(condition.VariableId), pVar
+                PlayerVariableDescriptor.GetName(condition.VariableId), pVar
             );
         }
         else if (condition.VariableType == VariableType.ServerVariable)
         {
             return EventConditionDesc.globalvariable.ToString(
-                ServerVariableBase.GetName(condition.VariableId), pVar
+                ServerVariableDescriptor.GetName(condition.VariableId), pVar
             );
         }
         else if (condition.VariableType == VariableType.GuildVariable)
         {
             return EventConditionDesc.guildvariable.ToString(
-                GuildVariableBase.GetName(condition.VariableId), pVar
+                GuildVariableDescriptor.GetName(condition.VariableId), pVar
             );
         }
         else if (condition.VariableType == VariableType.UserVariable)
         {
             return EventConditionDesc.UserVariable.ToString(
                 Strings.GameObjectStrings.UserVariable,
-                UserVariableBase.GetName(condition.VariableId),
+                UserVariableDescriptor.GetName(condition.VariableId),
                 pVar
             );
         }
@@ -102,13 +103,13 @@ public static partial class Strings
             switch (condition.VariableType)
             {
                 case VariableType.PlayerVariable:
-                    amount = string.Format(@"({0}: {1})", EventConditional.playervariable, PlayerVariableBase.GetName(condition.VariableId));
+                    amount = string.Format(@"({0}: {1})", EventConditional.playervariable, PlayerVariableDescriptor.GetName(condition.VariableId));
                     break;
                 case VariableType.ServerVariable:
-                    amount = string.Format(@"({0}: {1})", EventConditional.globalvariable, ServerVariableBase.GetName(condition.VariableId));
+                    amount = string.Format(@"({0}: {1})", EventConditional.globalvariable, ServerVariableDescriptor.GetName(condition.VariableId));
                     break;
                 case VariableType.GuildVariable:
-                    amount = string.Format(@"({0}: {1})", EventConditional.guildvariable, GuildVariableBase.GetName(condition.VariableId));
+                    amount = string.Format(@"({0}: {1})", EventConditional.guildvariable, GuildVariableDescriptor.GetName(condition.VariableId));
                     break;
             }
 
@@ -331,13 +332,13 @@ public static partial class Strings
             switch (condition.VariableType)
             {
                 case VariableType.PlayerVariable:
-                    amount = string.Format(@"({0}: {1})", EventConditional.playervariable, PlayerVariableBase.GetName(condition.VariableId));
+                    amount = string.Format(@"({0}: {1})", EventConditional.playervariable, PlayerVariableDescriptor.GetName(condition.VariableId));
                     break;
                 case VariableType.ServerVariable:
-                    amount = string.Format(@"({0}: {1})", EventConditional.globalvariable, ServerVariableBase.GetName(condition.VariableId));
+                    amount = string.Format(@"({0}: {1})", EventConditional.globalvariable, ServerVariableDescriptor.GetName(condition.VariableId));
                     break;
                 case VariableType.GuildVariable:
-                    amount = string.Format(@"({0}: {1})", EventConditional.guildvariable, GuildVariableBase.GetName(condition.VariableId));
+                    amount = string.Format(@"({0}: {1})", EventConditional.guildvariable, GuildVariableDescriptor.GetName(condition.VariableId));
                     break;
             }
 
@@ -378,19 +379,19 @@ public static partial class Strings
             if (comparison.CompareVariableType == VariableType.PlayerVariable)
             {
                 value = EventConditionDesc.playervariablevalue.ToString(
-                    PlayerVariableBase.GetName(comparison.CompareVariableId)
+                    PlayerVariableDescriptor.GetName(comparison.CompareVariableId)
                 );
             }
             else if (comparison.CompareVariableType == VariableType.ServerVariable)
             {
                 value = EventConditionDesc.globalvariablevalue.ToString(
-                    ServerVariableBase.GetName(comparison.CompareVariableId)
+                    ServerVariableDescriptor.GetName(comparison.CompareVariableId)
                 );
             }
             else if (comparison.CompareVariableType == VariableType.GuildVariable)
             {
                 value = EventConditionDesc.guildvariablevalue.ToString(
-                    GuildVariableBase.GetName(comparison.CompareVariableId)
+                    GuildVariableDescriptor.GetName(comparison.CompareVariableId)
                 );
             }
         }
@@ -426,19 +427,19 @@ public static partial class Strings
             if (comparison.CompareVariableType == VariableType.PlayerVariable)
             {
                 value = EventConditionDesc.playervariablevalue.ToString(
-                    PlayerVariableBase.GetName(comparison.CompareVariableId)
+                    PlayerVariableDescriptor.GetName(comparison.CompareVariableId)
                 );
             }
             else if (comparison.CompareVariableType == VariableType.ServerVariable)
             {
                 value = EventConditionDesc.globalvariablevalue.ToString(
-                    ServerVariableBase.GetName(comparison.CompareVariableId)
+                    ServerVariableDescriptor.GetName(comparison.CompareVariableId)
                 );
             }
             else if (comparison.CompareVariableType == VariableType.GuildVariable)
             {
                 value = EventConditionDesc.guildvariablevalue.ToString(
-                    GuildVariableBase.GetName(comparison.CompareVariableId)
+                    GuildVariableDescriptor.GetName(comparison.CompareVariableId)
                 );
             }
         }

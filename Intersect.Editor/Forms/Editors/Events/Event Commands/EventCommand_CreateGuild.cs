@@ -1,4 +1,5 @@
 ﻿using Intersect.Editor.Localization;
+using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
@@ -24,11 +25,11 @@ public partial class EventCommandCreateGuild : UserControl
 
         InitLocalization();
         cmbVariable.Items.Clear();
-        cmbVariable.Items.AddRange(PlayerVariableBase.Names);
+        cmbVariable.Items.AddRange(PlayerVariableDescriptor.Names);
 
         if (mMyCommand.VariableId != null && mMyCommand.VariableId != Guid.Empty )
         {
-            cmbVariable.SelectedIndex = PlayerVariableBase.ListIndex(mMyCommand.VariableId);
+            cmbVariable.SelectedIndex = PlayerVariableDescriptor.ListIndex(mMyCommand.VariableId);
         }
         else if (cmbVariable.Items.Count > 0)
         {
@@ -46,7 +47,7 @@ public partial class EventCommandCreateGuild : UserControl
 
     private void btnSave_Click(object sender, EventArgs e)
     {
-        mMyCommand.VariableId = PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex);
+        mMyCommand.VariableId = PlayerVariableDescriptor.IdFromList(cmbVariable.SelectedIndex);
         mEventEditor.FinishCommandEdit();
     }
 

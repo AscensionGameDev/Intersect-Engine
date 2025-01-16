@@ -1,6 +1,7 @@
 ﻿using Intersect.GameObjects;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
+using Intersect.Framework.Core.GameObjects.Variables;
 
 namespace Intersect.Server.Database.PlayerData.Players;
 
@@ -14,7 +15,7 @@ public partial class GuildVariable : Variable
     }
 
     [NotMapped]
-    public string VariableName => GuildVariableBase.GetName(VariableId);
+    public string VariableName => GuildVariableDescriptor.GetName(VariableId);
 
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     [JsonIgnore]

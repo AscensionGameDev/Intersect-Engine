@@ -1,8 +1,8 @@
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
-using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
 
@@ -112,7 +112,7 @@ public static partial class Conditions
         }
         else if (condition.VariableType == VariableType.ServerVariable)
         {
-            value = ServerVariableBase.Get(condition.VariableId)?.Value;
+            value = ServerVariableDescriptor.Get(condition.VariableId)?.Value;
         }
         else if (condition.VariableType == VariableType.GuildVariable)
         {
@@ -148,7 +148,7 @@ public static partial class Conditions
 
                     break;
                 case VariableType.ServerVariable:
-                    quantity = (int)ServerVariableBase.Get(condition.VariableId)?.Value.Integer;
+                    quantity = (int)ServerVariableDescriptor.Get(condition.VariableId)?.Value.Integer;
 
                     break;
                 case VariableType.GuildVariable:
@@ -475,7 +475,7 @@ public static partial class Conditions
 
                     break;
                 case VariableType.ServerVariable:
-                    quantity = (int)ServerVariableBase.Get(condition.VariableId)?.Value.Integer;
+                    quantity = (int)ServerVariableDescriptor.Get(condition.VariableId)?.Value.Integer;
 
                     break;
                 case VariableType.GuildVariable:
@@ -538,7 +538,7 @@ public static partial class Conditions
             }
             else if (comparison.CompareVariableType == VariableType.ServerVariable)
             {
-                compValue = ServerVariableBase.Get(comparison.CompareVariableId)?.Value;
+                compValue = ServerVariableDescriptor.Get(comparison.CompareVariableId)?.Value;
             }
             else if (comparison.CompareVariableType == VariableType.GuildVariable)
             {
@@ -598,7 +598,7 @@ public static partial class Conditions
             }
             else if (comparison.CompareVariableType == VariableType.ServerVariable)
             {
-                compValue = ServerVariableBase.Get(comparison.CompareVariableId)?.Value;
+                compValue = ServerVariableDescriptor.Get(comparison.CompareVariableId)?.Value;
             }
             else if (comparison.CompareVariableType == VariableType.GuildVariable)
             {

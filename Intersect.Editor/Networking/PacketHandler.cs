@@ -5,6 +5,7 @@ using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Maps;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
@@ -612,14 +613,14 @@ internal sealed partial class PacketHandler
             case GameObjectType.PlayerVariable:
                 if (deleted)
                 {
-                    var pvar = PlayerVariableBase.Get(id);
+                    var pvar = PlayerVariableDescriptor.Get(id);
                     pvar.Delete();
                 }
                 else
                 {
-                    var pvar = new PlayerVariableBase(id);
+                    var pvar = new PlayerVariableDescriptor(id);
                     pvar.Load(json);
-                    PlayerVariableBase.Lookup.Set(id, pvar);
+                    PlayerVariableDescriptor.Lookup.Set(id, pvar);
                 }
 
                 break;
@@ -627,14 +628,14 @@ internal sealed partial class PacketHandler
             case GameObjectType.ServerVariable:
                 if (deleted)
                 {
-                    var svar = ServerVariableBase.Get(id);
+                    var svar = ServerVariableDescriptor.Get(id);
                     svar.Delete();
                 }
                 else
                 {
-                    var svar = new ServerVariableBase(id);
+                    var svar = new ServerVariableDescriptor(id);
                     svar.Load(json);
-                    ServerVariableBase.Lookup.Set(id, svar);
+                    ServerVariableDescriptor.Lookup.Set(id, svar);
                 }
 
                 break;
@@ -653,14 +654,14 @@ internal sealed partial class PacketHandler
             case GameObjectType.GuildVariable:
                 if (deleted)
                 {
-                    var pvar = GuildVariableBase.Get(id);
+                    var pvar = GuildVariableDescriptor.Get(id);
                     pvar.Delete();
                 }
                 else
                 {
-                    var pvar = new GuildVariableBase(id);
+                    var pvar = new GuildVariableDescriptor(id);
                     pvar.Load(json);
-                    GuildVariableBase.Lookup.Set(id, pvar);
+                    GuildVariableDescriptor.Lookup.Set(id, pvar);
                 }
 
                 break;
@@ -668,14 +669,14 @@ internal sealed partial class PacketHandler
             case GameObjectType.UserVariable:
                 if (deleted)
                 {
-                    var pvar = UserVariableBase.Get(id);
+                    var pvar = UserVariableDescriptor.Get(id);
                     pvar.Delete();
                 }
                 else
                 {
-                    var pvar = new UserVariableBase(id);
+                    var pvar = new UserVariableDescriptor(id);
                     pvar.Load(json);
-                    UserVariableBase.Lookup.Set(id, pvar);
+                    UserVariableDescriptor.Lookup.Set(id, pvar);
                 }
 
                 break;

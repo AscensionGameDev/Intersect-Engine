@@ -6,7 +6,6 @@ using Intersect.Server.Database.PlayerData.Api;
 using Intersect.Server.Web.Configuration;
 using Intersect.Server.Web.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 

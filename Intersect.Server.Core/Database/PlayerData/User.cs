@@ -6,6 +6,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
 using Intersect.Logging;
@@ -25,7 +26,7 @@ using Intersect.Server.Networking;
 using Intersect.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using VariableValue = Intersect.GameObjects.Switches_and_Variables.VariableValue;
+using VariableValue = Intersect.Framework.Core.GameObjects.Variables.VariableValue;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 
@@ -45,7 +46,7 @@ public partial class User
     ///     Variables that have been updated for this account which need to be saved to the db
     /// </summary>
     [JsonIgnore]
-    public ConcurrentDictionary<Guid, UserVariableBase> UpdatedVariables = new();
+    public ConcurrentDictionary<Guid, UserVariableDescriptor> UpdatedVariables = new();
 
     public static int OnlineCount => OnlineUsers.Count;
 
@@ -985,7 +986,7 @@ public partial class User
     /// <returns></returns>
     private Variable CreateVariable(Guid id)
     {
-        if (UserVariableBase.Get(id) == null)
+        if (UserVariableDescriptor.Get(id) == null)
         {
             return null;
         }

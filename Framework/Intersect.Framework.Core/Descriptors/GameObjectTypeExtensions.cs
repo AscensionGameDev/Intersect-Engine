@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using Intersect.Collections;
 using Intersect.Extensions;
+using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Models;
 
 namespace Intersect.Enums;
@@ -70,7 +70,7 @@ public static partial class GameObjectTypeExtensions
         return instance as IDatabaseObject;
     }
 
-    public static int ListIndex(this GameObjectType gameObjectType, Guid id, VariableDataType dataTypeFilter = 0)
+    public static int ListIndex(this GameObjectType gameObjectType, Guid id, VariableDataType dataTypeFilter = default)
     {
         var lookup = gameObjectType.GetLookup();
 
@@ -82,9 +82,9 @@ public static partial class GameObjectTypeExtensions
         return lookup
             .OrderBy(kv => kv.Value?.Name)
             .Select(kv => kv.Value)
-            .OfType<IVariableBase>()
-            .Where(desc => desc.Type == dataTypeFilter)
-            .Select(desc => desc.Id)
+            .OfType<IVariableDescriptor>()
+            .Where(descriptor => dataTypeFilter == default || descriptor.DataType == dataTypeFilter)
+            .Select(descriptor => descriptor.Id)
             .ToList()
             .IndexOf(id);
     }
@@ -94,11 +94,11 @@ public static partial class GameObjectTypeExtensions
         var lookup = gameObjectType.GetLookup();
 
         return lookup.ValueList
-                .OfType<IVariableBase>()
-                .FirstOrDefault(var => var.Id == variableDescriptorId)?.Type ?? 0;
+            .OfType<IVariableDescriptor>()
+            .FirstOrDefault(descriptor => descriptor.Id == variableDescriptorId)?.DataType ?? default;
     }
 
-    public static Guid IdFromList(this GameObjectType gameObjectType, int listIndex, VariableDataType dataTypeFilter = 0)
+    public static Guid IdFromList(this GameObjectType gameObjectType, int listIndex, VariableDataType dataTypeFilter = default)
     {
         var lookup = gameObjectType.GetLookup();
 
@@ -115,31 +115,31 @@ public static partial class GameObjectTypeExtensions
         return lookup
             .OrderBy(kv => kv.Value?.Name)
             .Select(kv => kv.Value)
-            .OfType<IVariableBase>()
-            .Where(desc => desc.Type == dataTypeFilter)
-            .Select(desc => desc.Id)
+            .OfType<IVariableDescriptor>()
+            .Where(descriptor => dataTypeFilter == default || descriptor.DataType == dataTypeFilter)
+            .Select(descriptor => descriptor.Id)
             .Skip(listIndex)
             .FirstOrDefault();
     }
 
-    public static string[] Names(this GameObjectType gameObjectType, VariableDataType dataTypeFilter = 0)
+    public static string[] Names(this GameObjectType gameObjectType, VariableDataType dataTypeFilter = default)
     {
         if (dataTypeFilter == 0)
         {
             return gameObjectType
                 .GetLookup()
                 .OrderBy(p => p.Value?.Name)
-                .Select(pair => pair.Value?.Name ?? PlayerVariableBase.Deleted)
+                .Select(pair => pair.Value?.Name ?? PlayerVariableDescriptor.Deleted)
                 .ToArray();
         }
 
         return gameObjectType
             .GetLookup()
             .Select(kv => kv.Value)
-            .OfType<IVariableBase>()
-            .Where(desc => desc.Type == dataTypeFilter)
-            .OrderBy(p => p?.Name)
-            .Select(pair => pair?.Name ?? PlayerVariableBase.Deleted)
+            .OfType<IVariableDescriptor>()
+            .Where(descriptor => dataTypeFilter == default || descriptor.DataType == dataTypeFilter)
+            .OrderBy(descriptor => descriptor.Name)
+            .Select(descriptor => descriptor.Name ?? PlayerVariableDescriptor.Deleted)
             .ToArray();
     }
 }

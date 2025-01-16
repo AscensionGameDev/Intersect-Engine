@@ -3,6 +3,7 @@ using System;
 using Intersect.Server.Database.GameData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -16,8 +17,122 @@ namespace Intersect.Server.Migrations.MySql.Game
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.11")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.GuildVariableDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)")
+                        .UseCollation("ascii_general_ci");
+
+                    b.Property<byte>("DataType")
+                        .HasColumnType("tinyint unsigned");
+
+                    b.Property<string>("Folder")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("TextId")
+                        .HasColumnType("longtext");
+
+                    b.Property<long>("TimeCreated")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GuildVariables");
+                });
+
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.PlayerVariableDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)")
+                        .UseCollation("ascii_general_ci");
+
+                    b.Property<byte>("DataType")
+                        .HasColumnType("tinyint unsigned");
+
+                    b.Property<string>("Folder")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("TextId")
+                        .HasColumnType("longtext");
+
+                    b.Property<long>("TimeCreated")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PlayerVariables");
+                });
+
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.ServerVariableDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)")
+                        .UseCollation("ascii_general_ci");
+
+                    b.Property<byte>("DataType")
+                        .HasColumnType("tinyint unsigned");
+
+                    b.Property<string>("Folder")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Json")
+                        .HasColumnType("longtext")
+                        .HasColumnName("Value");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("TextId")
+                        .HasColumnType("longtext");
+
+                    b.Property<long>("TimeCreated")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ServerVariables");
+                });
+
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.UserVariableDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)")
+                        .UseCollation("ascii_general_ci");
+
+                    b.Property<byte>("DataType")
+                        .HasColumnType("tinyint unsigned");
+
+                    b.Property<string>("Folder")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("TextId")
+                        .HasColumnType("longtext");
+
+                    b.Property<long>("TimeCreated")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserVariables");
+                });
 
             modelBuilder.Entity("Intersect.GameObjects.AnimationBase", b =>
                 {
@@ -295,33 +410,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.HasKey("Id");
 
                     b.ToTable("Events");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.GuildVariableBase", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
-
-                    b.Property<string>("Folder")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext")
-                        .HasColumnOrder(0);
-
-                    b.Property<string>("TextId")
-                        .HasColumnType("longtext");
-
-                    b.Property<long>("TimeCreated")
-                        .HasColumnType("bigint");
-
-                    b.Property<byte>("Type")
-                        .HasColumnType("tinyint unsigned");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("GuildVariables");
                 });
 
             modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>
@@ -706,33 +794,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.ToTable("Npcs");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.PlayerVariableBase", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
-
-                    b.Property<string>("Folder")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext")
-                        .HasColumnOrder(0);
-
-                    b.Property<string>("TextId")
-                        .HasColumnType("longtext");
-
-                    b.Property<long>("TimeCreated")
-                        .HasColumnType("bigint");
-
-                    b.Property<byte>("Type")
-                        .HasColumnType("tinyint unsigned");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PlayerVariables");
-                });
-
             modelBuilder.Entity("Intersect.GameObjects.ProjectileBase", b =>
                 {
                     b.Property<Guid>("Id")
@@ -959,37 +1020,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.ToTable("Resources");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.ServerVariableBase", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
-
-                    b.Property<string>("Folder")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Json")
-                        .HasColumnType("longtext")
-                        .HasColumnName("Value");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext")
-                        .HasColumnOrder(0);
-
-                    b.Property<string>("TextId")
-                        .HasColumnType("longtext");
-
-                    b.Property<long>("TimeCreated")
-                        .HasColumnType("bigint");
-
-                    b.Property<byte>("Type")
-                        .HasColumnType("tinyint unsigned");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ServerVariables");
-                });
-
             modelBuilder.Entity("Intersect.GameObjects.ShopBase", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1154,34 +1184,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.HasKey("Id");
 
                     b.ToTable("Time");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.UserVariableBase", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
-
-                    b.Property<string>("Folder")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext")
-                        .HasColumnOrder(0);
-
-                    b.Property<string>("TextId")
-                        .HasColumnType("longtext");
-
-                    b.Property<long>("TimeCreated")
-                        .HasColumnType("bigint");
-
-                    b.Property<byte>("Type")
-                        .HasColumnType("tinyint unsigned")
-                        .HasColumnName("DataType");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserVariables");
                 });
 
             modelBuilder.Entity("Intersect.Server.Maps.MapController", b =>

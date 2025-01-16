@@ -15,7 +15,115 @@ namespace Intersect.Server.Migrations.Sqlite.Game
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.11");
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
+
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.GuildVariableDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte>("DataType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Folder")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("TextId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("TimeCreated")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GuildVariables");
+                });
+
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.PlayerVariableDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte>("DataType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Folder")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("TextId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("TimeCreated")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PlayerVariables");
+                });
+
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.ServerVariableDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte>("DataType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Folder")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Json")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Value");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("TextId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("TimeCreated")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ServerVariables");
+                });
+
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.UserVariableDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte>("DataType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Folder")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("TextId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("TimeCreated")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserVariables");
+                });
 
             modelBuilder.Entity("Intersect.GameObjects.AnimationBase", b =>
                 {
@@ -282,32 +390,6 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.HasKey("Id");
 
                     b.ToTable("Events");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.GuildVariableBase", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Folder")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT")
-                        .HasColumnOrder(0);
-
-                    b.Property<string>("TextId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<byte>("Type")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("GuildVariables");
                 });
 
             modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>
@@ -680,32 +762,6 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.ToTable("Npcs");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.PlayerVariableBase", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Folder")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT")
-                        .HasColumnOrder(0);
-
-                    b.Property<string>("TextId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<byte>("Type")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PlayerVariables");
-                });
-
             modelBuilder.Entity("Intersect.GameObjects.ProjectileBase", b =>
                 {
                     b.Property<Guid>("Id")
@@ -923,36 +979,6 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.ToTable("Resources");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.ServerVariableBase", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Folder")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Json")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("Value");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT")
-                        .HasColumnOrder(0);
-
-                    b.Property<string>("TextId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<byte>("Type")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ServerVariables");
-                });
-
             modelBuilder.Entity("Intersect.GameObjects.ShopBase", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1108,33 +1134,6 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.HasKey("Id");
 
                     b.ToTable("Time");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.UserVariableBase", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Folder")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT")
-                        .HasColumnOrder(0);
-
-                    b.Property<string>("TextId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<byte>("Type")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("DataType");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserVariables");
                 });
 
             modelBuilder.Entity("Intersect.Server.Maps.MapController", b =>

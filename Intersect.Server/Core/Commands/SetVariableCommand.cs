@@ -7,6 +7,7 @@ using System;
 using Intersect.Server.Database.GameData;
 using Intersect.Server.Entities;
 using System.Globalization;
+using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 
 namespace Intersect.Server.Core.Commands
@@ -39,7 +40,7 @@ namespace Intersect.Server.Core.Commands
                 throw new ArgumentNullException(Strings.Commands.Arguments.VariableValue.Name, $"No value specified for server variable '{serverVariableNameOrId}'");
             }
 
-            ServerVariableBase variable;
+            ServerVariableDescriptor variable;
             if (Guid.TryParse(serverVariableNameOrId, out Guid serverVariableId))
             {
                 variable = GameContext.Queries.ServerVariableById(serverVariableId);

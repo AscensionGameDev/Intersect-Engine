@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using Serilog;
 using ILogger = Serilog.ILogger;
 

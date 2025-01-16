@@ -5,12 +5,12 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Intersect.Collections.Slotting;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Maps;
-using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets.Server;
@@ -6509,7 +6509,7 @@ public partial class Player : Entity
 
     private PlayerVariable CreateVariable(Guid id)
     {
-        if (PlayerVariableBase.Get(id) == null)
+        if (PlayerVariableDescriptor.Get(id) == null)
         {
             return null;
         }
@@ -6758,40 +6758,40 @@ public partial class Player : Entity
                         var type = VariableDataType.Boolean;
                         if (cmd.VariableType == VariableType.PlayerVariable)
                         {
-                            var variable = PlayerVariableBase.Get(cmd.VariableId);
+                            var variable = PlayerVariableDescriptor.Get(cmd.VariableId);
                             if (variable != null)
                             {
-                                type = variable.Type;
+                                type = variable.DataType;
                             }
 
                             value = GetVariableValue(cmd.VariableId);
                         }
                         else if (cmd.VariableType == VariableType.ServerVariable)
                         {
-                            var variable = ServerVariableBase.Get(cmd.VariableId);
+                            var variable = ServerVariableDescriptor.Get(cmd.VariableId);
                             if (variable != null)
                             {
-                                type = variable.Type;
+                                type = variable.DataType;
                             }
 
-                            value = ServerVariableBase.Get(cmd.VariableId)?.Value;
+                            value = ServerVariableDescriptor.Get(cmd.VariableId)?.Value;
                         }
                         else if (cmd.VariableType == VariableType.GuildVariable)
                         {
-                            var variable = GuildVariableBase.Get(cmd.VariableId);
+                            var variable = GuildVariableDescriptor.Get(cmd.VariableId);
                             if (variable != null)
                             {
-                                type = variable.Type;
+                                type = variable.DataType;
                             }
 
                             value = Guild?.GetVariableValue(cmd.VariableId) ?? new VariableValue();
                         }
                         else if (cmd.VariableType == VariableType.UserVariable)
                         {
-                            var variable = UserVariableBase.Get(cmd.VariableId);
+                            var variable = UserVariableDescriptor.Get(cmd.VariableId);
                             if (variable != null)
                             {
-                                type = variable.Type;
+                                type = variable.DataType;
                             }
 
                             value = User.GetVariableValue(cmd.VariableId) ?? new VariableValue();
@@ -6870,7 +6870,7 @@ public partial class Player : Entity
                         }
                         else if (cmd.VariableType == VariableType.ServerVariable)
                         {
-                            var variable = ServerVariableBase.Get(cmd.VariableId);
+                            var variable = ServerVariableDescriptor.Get(cmd.VariableId);
                             if (changed)
                             {
                                 variable.Value = value;
@@ -6887,7 +6887,7 @@ public partial class Player : Entity
                                 {
                                     variable.Value = value;
                                     Guild.StartCommonEventsWithTriggerForAll(Enums.CommonEventTrigger.GuildVariableChange, "", cmd.VariableId.ToString());
-                                    Guild.UpdatedVariables.AddOrUpdate(cmd.VariableId, GuildVariableBase.Get(cmd.VariableId), (key, oldValue) => GuildVariableBase.Get(cmd.VariableId));
+                                    Guild.UpdatedVariables.AddOrUpdate(cmd.VariableId, GuildVariableDescriptor.Get(cmd.VariableId), (key, oldValue) => GuildVariableDescriptor.Get(cmd.VariableId));
                                 }
                             }
                         }
@@ -6898,7 +6898,7 @@ public partial class Player : Entity
                             {
                                 variable.Value = value;
                                 User.StartCommonEventsWithTriggerForAll(CommonEventTrigger.UserVariableChange, "", cmd.VariableId.ToString());
-                                User.UpdatedVariables.AddOrUpdate(cmd.VariableId, UserVariableBase.Get(cmd.VariableId), (key, oldValue) => UserVariableBase.Get(cmd.VariableId));
+                                User.UpdatedVariables.AddOrUpdate(cmd.VariableId, UserVariableDescriptor.Get(cmd.VariableId), (key, oldValue) => UserVariableDescriptor.Get(cmd.VariableId));
                             }
                         }
 
