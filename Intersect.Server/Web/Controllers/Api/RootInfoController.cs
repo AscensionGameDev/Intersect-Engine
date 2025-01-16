@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Intersect.Server.Web.RestApi.Routes
+namespace Intersect.Server.Web.Controllers.Api
 {
     [Route("api/info")]
     public partial class RootInfoController : Controller
@@ -15,6 +15,7 @@ namespace Intersect.Server.Web.RestApi.Routes
                 .Select(ns => ns.Substring(Math.Min(ns.Length, rootNamespace.Length + 1)).ToLowerInvariant())
                 .Where(ns => !string.IsNullOrWhiteSpace(ns))
                 .ToArray();
+            DiscoveredVersions.ToString();
         }
 
         private static string[] DiscoveredVersions { get; }

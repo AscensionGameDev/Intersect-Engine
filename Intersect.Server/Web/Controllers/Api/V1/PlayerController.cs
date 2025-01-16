@@ -17,7 +17,7 @@ using Intersect.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Intersect.Server.Web.RestApi.Routes.V1
+namespace Intersect.Server.Web.Controllers.Api.V1
 {
     [Route("api/v1/players")]
     [Authorize]

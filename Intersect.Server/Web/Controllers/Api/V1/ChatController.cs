@@ -8,7 +8,7 @@ using Intersect.Server.Web.RestApi.Types.Chat;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Intersect.Server.Web.RestApi.Routes.V1
+namespace Intersect.Server.Web.Controllers.Api.V1
 {
     [Route("api/v1/chat")]
     [Authorize]

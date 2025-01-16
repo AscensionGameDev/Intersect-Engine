@@ -1,22 +1,22 @@
 using System.Diagnostics;
 using System.Net;
-using Intersect.Server.Database.PlayerData.Api;
-using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Intersect.Server.Collections.Indexing;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Api;
 using Intersect.Server.Web.Authentication;
 using Intersect.Server.Web.Http;
 using Intersect.Server.Web.RestApi.Types;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Annotations;
 using JsonConverter = Newtonsoft.Json.JsonConverter;
 
-namespace Intersect.Server.Web.RestApi.Routes
+namespace Intersect.Server.Web.Controllers.Api
 {
     [Route("api/oauth")]
     // [ConfigurableAuthorize]

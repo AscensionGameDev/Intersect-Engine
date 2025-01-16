@@ -16,7 +16,6 @@ using Intersect.Server.Web.Configuration;
 using Intersect.Server.Web.Constraints;
 using Intersect.Server.Web.Middleware;
 using Intersect.Server.Web.RestApi.Types.Chat;
-using Intersect.Server.Web.RestApi.Routes;
 using Intersect.Server.Web.Serialization;
 using Intersect.Server.Web.Swagger.Filters;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -36,6 +35,7 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using Intersect.Server.Collections.Indexing;
 using Intersect.Server.Web.Controllers;
+using Intersect.Server.Web.Controllers.Api;
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
