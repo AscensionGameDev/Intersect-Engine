@@ -1164,23 +1164,12 @@ internal sealed partial class PacketHandler
     //InputVariablePacket
     public void HandlePacket(IPacketSender packetSender, InputVariablePacket packet)
     {
-        var type = InputBox.InputType.NumericInput;
-        switch (packet.Type)
+        var type = packet.Type switch
         {
-            case VariableDataType.String:
-                type = InputBox.InputType.TextInput;
-
-                break;
-            case VariableDataType.Integer:
-            case VariableDataType.Number:
-                type = InputBox.InputType.NumericInput;
-
-                break;
-            case VariableDataType.Boolean:
-                type = InputBox.InputType.YesNo;
-
-                break;
-        }
+            VariableDataType.String => InputBox.InputType.TextInput,
+            VariableDataType.Boolean => InputBox.InputType.YesNoCancel,
+            _ => InputBox.InputType.NumericInput,
+        };
 
         _ = new InputBox(
             title: packet.Title,

@@ -6730,7 +6730,7 @@ public partial class Player : Entity
         }
     }
 
-    public void RespondToEventInput(Guid eventId, int newValue, string newValueString, bool canceled = false)
+    public void RespondToEventInput(Guid eventId, bool newValueBool, int newValue, string newValueString, bool canceled = false)
     {
         lock (mEventLock)
         {
@@ -6847,11 +6847,11 @@ public partial class Player : Entity
 
                                     break;
                                 case VariableDataType.Boolean:
-                                    if (value.Boolean != newValue > 0)
+                                    if (value.Boolean != newValueBool)
                                     {
                                         changed = true;
                                     }
-                                    value.Boolean = newValue > 0;
+                                    value.Boolean = newValueBool;
                                     success = true;
 
                                     break;
