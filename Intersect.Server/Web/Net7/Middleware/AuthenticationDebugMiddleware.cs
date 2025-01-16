@@ -28,7 +28,7 @@ public class AuthenticationDebugMiddleware
     public async Task Invoke(HttpContext context)
     {
         var handlers = context.RequestServices.GetRequiredService<IAuthenticationHandlerProvider>();
-        var schemes = await Schemes.GetRequestHandlerSchemesAsync();
+        var schemes = (await Schemes.GetRequestHandlerSchemesAsync()).ToArray();
         foreach (var scheme in schemes)
         {
             if (await handlers.GetHandlerAsync(context, scheme.Name) is IAuthenticationRequestHandler handler &&

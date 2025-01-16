@@ -43,6 +43,7 @@ namespace Intersect.Server.Web;
 
 internal partial class ApiService : ApplicationService<ServerContext, IApiService, ApiService>, IApiService
 {
+    private const string BearerCookieFallbackAuthenticationScheme = "BearerCookieFallback";
     private WebApplication? _app;
     private static readonly Assembly Assembly = typeof(ApiService).Assembly;
 
@@ -153,14 +154,7 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
 
         builder.Services.AddSingleton<IntersectAuthenticationManager>();
 
-        builder.Services.AddAuthentication(
-                options =>
-                {
-                    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                }
-            )
+        builder.Services.AddAuthentication(BearerCookieFallbackAuthenticationScheme)
             .AddCookie(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 options =>
@@ -287,6 +281,15 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                     };
                     SymmetricSecurityKey issuerKey = new(tokenGenerationOptions.SecretData);
                     options.TokenValidationParameters.IssuerSigningKey = issuerKey;
+                }
+            ).AddPolicyScheme(
+                BearerCookieFallbackAuthenticationScheme,
+                "Bearer-to-Cookie Fallback",
+                pso =>
+                {
+                    pso.ForwardDefaultSelector = context => context.Request.Headers.Authorization.Count > 0
+                        ? JwtBearerDefaults.AuthenticationScheme
+                        : CookieAuthenticationDefaults.AuthenticationScheme;
                 }
             );
 
