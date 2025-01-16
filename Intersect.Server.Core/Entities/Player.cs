@@ -493,6 +493,11 @@ public partial class Player : Entity
     {
         lock (_savingLock)
         {
+            lock (_pendingLogoutLock)
+            {
+                _pendingLogouts.Add(Id);
+            }
+
             _saving = true;
         }
 
@@ -591,14 +596,17 @@ public partial class Player : Entity
         var stackTrace = default(string);
 #endif
         var logoutOperationId = Guid.NewGuid();
-        DbInterface.Pool.QueueWorkItem(CompleteLogout, logoutOperationId, stackTrace);
+        DbInterface.Pool.QueueWorkItem(CompleteLogout, logoutOperationId, softLogout, stackTrace);
     }
 
 #if DIAGNOSTIC
     private int _logoutCounter = 0;
 #endif
 
-    public void CompleteLogout(Guid logoutOperationId, string? stackTrace = default)
+    private static readonly HashSet<Guid> _pendingLogouts = [];
+    private static readonly object _pendingLogoutLock = new();
+
+    public void CompleteLogout(Guid logoutOperationId, bool softLogout, string? stackTrace = default)
     {
         if (logoutOperationId != default)
         {
@@ -648,10 +656,20 @@ public partial class Player : Entity
 
         lock (_savingLock)
         {
+            var logoutType = softLogout ? "soft" : "hard";
+            Log.Info($"[Player.CompleteLogout] Done saving {Name} ({logoutType} logout, {Id})");
             _saving = false;
-        }
 
-        Dispose();
+            if (!softLogout)
+            {
+                Dispose();
+            }
+
+            lock (_pendingLogoutLock)
+            {
+                _pendingLogouts.Remove(Id);
+            }
+        }
 
 #if DIAGNOSTIC
         Log.Debug($"Finished {nameof(CompleteLogout)}() #{currentExecutionId} on {Name} ({User?.Name})");
