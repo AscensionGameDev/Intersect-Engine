@@ -1,12 +1,10 @@
 using System.ComponentModel.DataAnnotations.Schema;
-
 using Intersect.Enums;
 using Intersect.Logging;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Intersect.GameObjects.Switches_and_Variables;
+namespace Intersect.Framework.Core.GameObjects.Variables;
 
 public partial class VariableValue
 {
@@ -32,7 +30,7 @@ public partial class VariableValue
 
         set
         {
-            // I'm not sure what to do in null case here but we should handle it
+            // I'm not sure what to do in null case here, but we should handle it
 
             if (!value.TryGetValue(nameof(Type), out var typeToken))
             {
@@ -93,24 +91,23 @@ public partial class VariableValue
             {
                 case VariableDataType.Boolean:
                     Boolean = false;
-
                     break;
+
                 case VariableDataType.Integer:
                     Integer = 0L;
-
                     break;
+
                 case VariableDataType.Number:
                     Number = 0.0;
-
                     break;
+
                 case VariableDataType.String:
                     String = string.Empty;
-
                     break;
             }
         }
 
-        return Value.ToString();
+        return Value?.ToString();
     }
 
     public static bool TryParse(string value, out JObject jObject)
@@ -119,7 +116,7 @@ public partial class VariableValue
         {
             jObject = JObject.Parse(value);
 
-            if (jObject != null)
+            if (jObject is { Type: not JTokenType.Null })
             {
                 return true;
             }
@@ -175,29 +172,27 @@ public partial class VariableValue
     }
 
     [JsonIgnore]
-    public string String
+    public string? String
     {
         get => CanConvertTo<string>(Value) ? Convert.ToString(Value) : "";
         set
         {
             Type = VariableDataType.String;
-            mValue = value ?? "";
+            mValue = value;
         }
     }
 
     public static bool CanConvertTo<T>(object input)
     {
-        Object result = null;
         try
         {
-            result = Convert.ChangeType(input, typeof(T));
+            _ = Convert.ChangeType(input, typeof(T));
+            return true;
         }
         catch
         {
             return false;
         }
-
-        return true;
     }
 
     #endregion

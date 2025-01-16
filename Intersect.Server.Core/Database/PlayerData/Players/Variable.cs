@@ -1,6 +1,6 @@
-﻿using Intersect.GameObjects.Switches_and_Variables;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
+using Intersect.Framework.Core.GameObjects.Variables;
 
 namespace Intersect.Server.Database.PlayerData.Players;
 

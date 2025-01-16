@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.Server.Entities;
 

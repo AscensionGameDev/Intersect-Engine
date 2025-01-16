@@ -18,9 +18,9 @@ public abstract partial class DatabaseObject<TObject> : IDatabaseObject where TO
     protected DatabaseObject() { }
 
     [JsonConstructor]
-    protected DatabaseObject(Guid guid)
+    protected DatabaseObject(Guid descriptorId)
     {
-        Id = guid;
+        Id = descriptorId;
         TimeCreated = DateTime.Now.ToBinary();
     }
 

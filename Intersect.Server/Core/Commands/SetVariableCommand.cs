@@ -7,6 +7,7 @@ using System;
 using Intersect.Server.Database.GameData;
 using Intersect.Server.Entities;
 using System.Globalization;
+using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 
 namespace Intersect.Server.Core.Commands

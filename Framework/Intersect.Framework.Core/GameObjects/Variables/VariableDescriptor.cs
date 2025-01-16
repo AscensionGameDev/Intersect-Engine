@@ -1,20 +1,28 @@
 using Intersect.Enums;
-using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Models;
 using Newtonsoft.Json;
 
-namespace Intersect.GameObjects;
-public abstract class VariableDescriptor<TObject> : DatabaseObject<TObject> where TObject : VariableDescriptor<TObject>, IVariableBase
+namespace Intersect.Framework.Core.GameObjects.Variables;
+
+public abstract class VariableDescriptor<TObject> : DatabaseObject<TObject> where TObject : VariableDescriptor<TObject>, IVariableDescriptor
 {
+    protected VariableDescriptor()
+    {
+    }
+
     [JsonConstructor]
-    protected VariableDescriptor(Guid guid) : base(guid)
+    protected VariableDescriptor(Guid descriptorId) : base(descriptorId)
     {
     }
 
-    public VariableDescriptor() : base()
-    {
+    /// <inheritdoc cref="IVariableDescriptor.DataType" />
+    public VariableDataType DataType { get; set; } = VariableDataType.Boolean;
 
-    }
+    /// <inheritdoc cref="IFolderable.Folder"/>
+    public string? Folder { get; set; }
+
+    /// <inheritdoc cref="IVariableDescriptor.TextId" />
+    public string TextId { get; set; }
 
     /// <summary>
     /// Retrieve an array of variable names of the supplied data type.
@@ -23,30 +31,30 @@ public abstract class VariableDescriptor<TObject> : DatabaseObject<TObject> wher
     /// <returns>Returns an array of names.</returns>
     public static string[] GetNamesByType(VariableDataType dataType) =>
         Lookup
-            .Where(pair => pair.Value is IVariableBase descriptor && descriptor.Type == dataType)
+            .Where(pair => pair.Value is IVariableDescriptor descriptor && descriptor.DataType == dataType)
             .OrderBy(pair => pair.Value.TimeCreated)
             .Select(pair => pair.Value.Name)
             .ToArray();
 
     /// <summary>
-    /// Retrieve the list index of an Id within a specific data type list.
+    /// Retrieve the list index of an ID within a specific data type list.
     /// </summary>
-    /// <param name="id">The Id to look up.</param>
+    /// <param name="id">The ID to look up.</param>
     /// <param name="dataType">The data type to search up.</param>
-    /// <returns>Returns the list Index of the provided Id.</returns>
+    /// <returns>Returns the list Index of the provided ID.</returns>
     public static int ListIndex(Guid id, VariableDataType dataType) =>
         Lookup
-            .Where(pair => pair.Value is IVariableBase descriptor && descriptor.Type == dataType)
+            .Where(pair => pair.Value is IVariableDescriptor descriptor && descriptor.DataType == dataType)
             .OrderBy(pair => pair.Value.TimeCreated)
             .ToList()
             .FindIndex(pair => pair.Value.Id == id);
 
     /// <summary>
-    /// Retrieve the Id associated with a list index of a specific data type.
+    /// Retrieve the ID associated with a list index of a specific data type.
     /// </summary>
     /// <param name="listIndex">The list index to retrieve.</param>
     /// <param name="dataType">The data type to search up.</param>
-    /// <returns>Returns the Id of the provided index.</returns>
+    /// <returns>Returns the ID of the provided index.</returns>
     public static Guid IdFromList(int listIndex, VariableDataType dataType)
     {
         if (listIndex < 0 || listIndex > GetNamesByType(dataType).Length)
@@ -55,7 +63,7 @@ public abstract class VariableDescriptor<TObject> : DatabaseObject<TObject> wher
         }
 
         return Lookup
-            .Where(pair => pair.Value is IVariableBase descriptor && descriptor.Type == dataType)
+            .Where(pair => pair.Value is IVariableDescriptor descriptor && descriptor.DataType == dataType)
             .OrderBy(pair => pair.Value.TimeCreated)
             .Skip(listIndex)
             .First()

@@ -4,6 +4,7 @@ using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.Models;
 
@@ -273,7 +274,7 @@ public partial class FrmSwitchVariable : EditorForm
                 txtObjectName.Text = ((PlayerVariableBase) mEditorItem).Name;
                 txtId.Text = ((PlayerVariableBase) mEditorItem).TextId;
                 cmbFolder.Text = ((PlayerVariableBase) mEditorItem).Folder;
-                cmbVariableType.SelectedIndex = (int) (((PlayerVariableBase) mEditorItem).Type - 1);
+                cmbVariableType.SelectedIndex = (int) (((PlayerVariableBase) mEditorItem).DataType - 1);
             }
             else if (rdoGlobalVariables.Checked)
             {
@@ -281,7 +282,7 @@ public partial class FrmSwitchVariable : EditorForm
                 txtObjectName.Text = ((ServerVariableBase) mEditorItem).Name;
                 txtId.Text = ((ServerVariableBase) mEditorItem).TextId;
                 cmbFolder.Text = ((ServerVariableBase) mEditorItem).Folder;
-                cmbVariableType.SelectedIndex = (int) (((ServerVariableBase) mEditorItem).Type - 1);
+                cmbVariableType.SelectedIndex = (int) (((ServerVariableBase) mEditorItem).DataType - 1);
                 grpValue.Show();
             }
             else if (rdoGuildVariables.Checked)
@@ -290,7 +291,7 @@ public partial class FrmSwitchVariable : EditorForm
                 txtObjectName.Text = ((GuildVariableBase)mEditorItem).Name;
                 txtId.Text = ((GuildVariableBase)mEditorItem).TextId;
                 cmbFolder.Text = ((GuildVariableBase)mEditorItem).Folder;
-                cmbVariableType.SelectedIndex = (int)(((GuildVariableBase)mEditorItem).Type - 1);
+                cmbVariableType.SelectedIndex = (int)(((GuildVariableBase)mEditorItem).DataType - 1);
             }
             else if (rdoUserVariables.Checked)
             {
@@ -298,7 +299,7 @@ public partial class FrmSwitchVariable : EditorForm
                 txtObjectName.Text = ((UserVariableBase)mEditorItem).Name;
                 txtId.Text = ((UserVariableBase)mEditorItem).TextId;
                 cmbFolder.Text = ((UserVariableBase)mEditorItem).Folder;
-                cmbVariableType.SelectedIndex = (int)(((UserVariableBase)mEditorItem).Type - 1);
+                cmbVariableType.SelectedIndex = (int)(((UserVariableBase)mEditorItem).DataType - 1);
             }
 
             InitValueGroup();
@@ -325,7 +326,7 @@ public partial class FrmSwitchVariable : EditorForm
             else if (rdoGlobalVariables.Checked)
             {
                 var obj = ServerVariableBase.Get((Guid) lstGameObjects.SelectedNode.Tag);
-                lstGameObjects.SelectedNode.Text = obj.Name + " = " + obj.Value.ToString(obj.Type);
+                lstGameObjects.SelectedNode.Text = obj.Name + " = " + obj.Value.ToString(obj.DataType);
             }
             else if (rdoPlayerVariables.Checked)
             {
@@ -414,22 +415,22 @@ public partial class FrmSwitchVariable : EditorForm
             if (rdoPlayerVariables.Checked)
             {
                 var obj = PlayerVariableBase.Get((Guid) lstGameObjects.SelectedNode.Tag);
-                obj.Type = (VariableDataType) (cmbVariableType.SelectedIndex + 1);
+                obj.DataType = (VariableDataType) (cmbVariableType.SelectedIndex + 1);
             }
             else if (rdoGlobalVariables.Checked)
             {
                 var obj = ServerVariableBase.Get((Guid) lstGameObjects.SelectedNode.Tag);
-                obj.Type = (VariableDataType) (cmbVariableType.SelectedIndex + 1);
+                obj.DataType = (VariableDataType) (cmbVariableType.SelectedIndex + 1);
             }
             else if (rdoGuildVariables.Checked)
             {
                 var obj = GuildVariableBase.Get((Guid)lstGameObjects.SelectedNode.Tag);
-                obj.Type = (VariableDataType)(cmbVariableType.SelectedIndex + 1);
+                obj.DataType = (VariableDataType)(cmbVariableType.SelectedIndex + 1);
             }
             else if (rdoUserVariables.Checked)
             {
                 var obj = UserVariableBase.Get((Guid)lstGameObjects.SelectedNode.Tag);
-                obj.Type = (VariableDataType)(cmbVariableType.SelectedIndex + 1);
+                obj.DataType = (VariableDataType)(cmbVariableType.SelectedIndex + 1);
             }
 
             InitValueGroup();
@@ -451,7 +452,7 @@ public partial class FrmSwitchVariable : EditorForm
                 cmbBooleanValue.Hide();
                 nudVariableValue.Hide();
                 txtStringValue.Hide();
-                switch (obj.Type)
+                switch (obj.DataType)
                 {
                     case VariableDataType.Boolean:
                         cmbBooleanValue.Show();
@@ -652,7 +653,7 @@ public partial class FrmSwitchVariable : EditorForm
         else if (rdoGlobalVariables.Checked)
         {
             items = ServerVariableBase.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
-                new KeyValuePair<string, string>(((ServerVariableBase)pair.Value)?.Name ?? DatabaseObject<ServerVariableBase>.Deleted + " = " + ((ServerVariableBase)pair.Value)?.Value.ToString(((ServerVariableBase)pair.Value).Type) ?? "", ((ServerVariableBase)pair.Value)?.Folder ?? ""))).ToArray();
+                new KeyValuePair<string, string>(((ServerVariableBase)pair.Value)?.Name ?? DatabaseObject<ServerVariableBase>.Deleted + " = " + ((ServerVariableBase)pair.Value)?.Value.ToString(((ServerVariableBase)pair.Value).DataType) ?? "", ((ServerVariableBase)pair.Value)?.Folder ?? ""))).ToArray();
         }
         else if (rdoGuildVariables.Checked)
         {

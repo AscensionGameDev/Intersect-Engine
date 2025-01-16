@@ -1,8 +1,8 @@
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
-using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
 

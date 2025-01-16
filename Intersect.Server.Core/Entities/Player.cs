@@ -5,12 +5,12 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Intersect.Collections.Slotting;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Maps;
-using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets.Server;
@@ -6761,7 +6761,7 @@ public partial class Player : Entity
                             var variable = PlayerVariableBase.Get(cmd.VariableId);
                             if (variable != null)
                             {
-                                type = variable.Type;
+                                type = variable.DataType;
                             }
 
                             value = GetVariableValue(cmd.VariableId);
@@ -6771,7 +6771,7 @@ public partial class Player : Entity
                             var variable = ServerVariableBase.Get(cmd.VariableId);
                             if (variable != null)
                             {
-                                type = variable.Type;
+                                type = variable.DataType;
                             }
 
                             value = ServerVariableBase.Get(cmd.VariableId)?.Value;
@@ -6781,7 +6781,7 @@ public partial class Player : Entity
                             var variable = GuildVariableBase.Get(cmd.VariableId);
                             if (variable != null)
                             {
-                                type = variable.Type;
+                                type = variable.DataType;
                             }
 
                             value = Guild?.GetVariableValue(cmd.VariableId) ?? new VariableValue();
@@ -6791,7 +6791,7 @@ public partial class Player : Entity
                             var variable = UserVariableBase.Get(cmd.VariableId);
                             if (variable != null)
                             {
-                                type = variable.Type;
+                                type = variable.DataType;
                             }
 
                             value = User.GetVariableValue(cmd.VariableId) ?? new VariableValue();

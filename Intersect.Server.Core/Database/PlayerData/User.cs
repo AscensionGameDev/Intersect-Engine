@@ -6,6 +6,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
 using Intersect.Logging;
@@ -25,7 +26,7 @@ using Intersect.Server.Networking;
 using Intersect.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using VariableValue = Intersect.GameObjects.Switches_and_Variables.VariableValue;
+using VariableValue = Intersect.Framework.Core.GameObjects.Variables.VariableValue;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 

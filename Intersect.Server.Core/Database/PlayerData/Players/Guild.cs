@@ -8,6 +8,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using Intersect.Collections.Slotting;
 using Intersect.Extensions;
+using Intersect.Framework.Core.GameObjects.Variables;
 using Microsoft.EntityFrameworkCore;
 using Intersect.Network.Packets.Server;
 using Intersect.GameObjects;
@@ -846,7 +847,7 @@ public partial class Guild
     /// </summary>
     /// <param name="id">Variable id</param>
     /// <returns></returns>
-    public GameObjects.Switches_and_Variables.VariableValue GetVariableValue(Guid id)
+    public VariableValue GetVariableValue(Guid id)
     {
         var v = GetVariable(id);
         if (v == null)
@@ -856,7 +857,7 @@ public partial class Guild
 
         if (v == null)
         {
-            return new GameObjects.Switches_and_Variables.VariableValue();
+            return new VariableValue();
         }
 
         return v.Value;

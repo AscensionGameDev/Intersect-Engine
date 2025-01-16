@@ -1,9 +1,9 @@
 using System.Text;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
-using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Server.Core.MapInstancing;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
@@ -86,7 +86,7 @@ public static partial class CommandProcessing
             var variable = PlayerVariableBase.Get(command.VariableId);
             if (variable != null)
             {
-                type = (int)variable.Type;
+                type = (int)variable.DataType;
             }
         }
         else if (command.VariableType == VariableType.ServerVariable)
@@ -94,18 +94,18 @@ public static partial class CommandProcessing
             var variable = ServerVariableBase.Get(command.VariableId);
             if (variable != null)
             {
-                type = (int)variable.Type;
+                type = (int)variable.DataType;
             }
         }
         else if (command.VariableType == VariableType.GuildVariable)
         {
             var variable = GuildVariableBase.Get(command.VariableId);
-            type = (int)variable.Type;
+            type = (int)variable.DataType;
         }
         else if (command.VariableType == VariableType.UserVariable)
         {
             var variable = UserVariableBase.Get(command.VariableId);
-            type = (int)variable.Type;
+            type = (int)variable.DataType;
         }
         else if (type == -1)
         {
@@ -164,7 +164,7 @@ public static partial class CommandProcessing
         {
             if (command.ShowChatBubbleInProximity)
             {
-                
+
                 PacketSender.SendChatBubbleToProximity(
                         player,
                         instance.PageInstance.Id,
@@ -175,7 +175,7 @@ public static partial class CommandProcessing
             }
             else
             {
-                
+
                 PacketSender.SendChatBubbleToPlayer(
                     player,
                     instance.PageInstance.Id,
@@ -1380,7 +1380,7 @@ public static partial class CommandProcessing
         var variable = PlayerVariableBase.Get(command.VariableId);
         if (variable != null)
         {
-            if (variable.Type == VariableDataType.String)
+            if (variable.DataType == VariableDataType.String)
             {
                 var data = player.GetVariable(variable.Id)?.Value;
                 if (data != null)
@@ -1423,7 +1423,7 @@ public static partial class CommandProcessing
         var playerVariable = PlayerVariableBase.Get(command.VariableId);
 
         // We only accept Strings as our Guild Names!
-        if (playerVariable.Type == VariableDataType.String)
+        if (playerVariable.DataType == VariableDataType.String)
         {
             // Get our intended guild name
             var gname = player.GetVariable(playerVariable.Id)?.Value.String?.Trim();
@@ -1796,25 +1796,25 @@ public static partial class CommandProcessing
             foreach (var val in DbInterface.ServerVariableEventTextLookup)
             {
                 if (input.Contains(val.Key))
-                    sb.Replace(val.Key, (val.Value).Value.ToString((val.Value).Type));
+                    sb.Replace(val.Key, (val.Value).Value.ToString((val.Value).DataType));
             }
 
             foreach (var val in DbInterface.PlayerVariableEventTextLookup)
             {
                 if (input.Contains(val.Key))
-                    sb.Replace(val.Key, player.GetVariableValue(val.Value.Id).ToString((val.Value).Type));
+                    sb.Replace(val.Key, player.GetVariableValue(val.Value.Id).ToString((val.Value).DataType));
             }
 
             foreach (var val in DbInterface.GuildVariableEventTextLookup)
             {
                 if (input.Contains(val.Key))
-                    sb.Replace(val.Key, (player.Guild?.GetVariableValue(val.Value.Id) ?? new VariableValue()).ToString((val.Value).Type));
+                    sb.Replace(val.Key, (player.Guild?.GetVariableValue(val.Value.Id) ?? new VariableValue()).ToString((val.Value).DataType));
             }
 
             foreach (var val in DbInterface.UserVariableEventTextLookup)
             {
                 if (input.Contains(val.Key))
-                    sb.Replace(val.Key, (player.User.GetVariableValue(val.Value.Id) ?? new VariableValue()).ToString((val.Value).Type));
+                    sb.Replace(val.Key, (player.User.GetVariableValue(val.Value.Id) ?? new VariableValue()).ToString((val.Value).DataType));
             }
 
             if (instance != null)

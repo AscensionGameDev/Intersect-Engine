@@ -1,5 +1,6 @@
 using Intersect.Editor.Localization;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
@@ -727,7 +728,7 @@ public partial class EventCommandConditionalBranch : UserControl
                 var playerVar = PlayerVariableBase.FromList(cmbVariable.SelectedIndex);
                 if (playerVar != null)
                 {
-                    varType = (byte)playerVar.Type;
+                    varType = (byte)playerVar.DataType;
                 }
             }
             else if (rdoGlobalVariable.Checked)
@@ -735,7 +736,7 @@ public partial class EventCommandConditionalBranch : UserControl
                 var serverVar = ServerVariableBase.FromList(cmbVariable.SelectedIndex);
                 if (serverVar != null)
                 {
-                    varType = (byte)serverVar.Type;
+                    varType = (byte)serverVar.DataType;
                 }
             }
             else if (rdoGuildVariable.Checked)
@@ -743,7 +744,7 @@ public partial class EventCommandConditionalBranch : UserControl
                 var guildVar = GuildVariableBase.FromList(cmbVariable.SelectedIndex);
                 if (guildVar != null)
                 {
-                    varType = (byte)guildVar.Type;
+                    varType = (byte)guildVar.DataType;
                 }
             }
             else if (rdoUserVariable.Checked)
@@ -751,7 +752,7 @@ public partial class EventCommandConditionalBranch : UserControl
                 var userVar = UserVariableBase.FromList(cmbVariable.SelectedIndex);
                 if (userVar != null)
                 {
-                    varType = (byte)userVar.Type;
+                    varType = (byte)userVar.DataType;
                 }
             }
         }

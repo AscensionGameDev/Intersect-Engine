@@ -1,13 +1,9 @@
 using System.ComponentModel.DataAnnotations.Schema;
-
-using Intersect.Enums;
-using Intersect.GameObjects.Switches_and_Variables;
-
 using Newtonsoft.Json;
 
-namespace Intersect.GameObjects;
+namespace Intersect.Framework.Core.GameObjects.Variables;
 
-public partial class ServerVariableBase : VariableDescriptor<ServerVariableBase>, IVariableBase
+public partial class ServerVariableBase : VariableDescriptor<ServerVariableBase>, IVariableDescriptor
 {
     [JsonConstructor]
     public ServerVariableBase(Guid id) : base(id)
@@ -19,13 +15,6 @@ public partial class ServerVariableBase : VariableDescriptor<ServerVariableBase>
     {
         Name = "New Global Variable";
     }
-
-    //Identifier used for event chat variables to display the value of this variable/switch.
-    //See https://www.ascensiongamedev.com/topic/749-event-text-variables/ for usage info.
-    public string TextId { get; set; }
-
-    // TODO(0.8): Rename this to DataType
-    public new VariableDataType Type { get; set; } = VariableDataType.Boolean;
 
     [NotMapped]
     [JsonIgnore]
@@ -52,7 +41,4 @@ public partial class ServerVariableBase : VariableDescriptor<ServerVariableBase>
             }
         }
     }
-
-    /// <inheritdoc />
-    public string Folder { get; set; } = string.Empty;
 }

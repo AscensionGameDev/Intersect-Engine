@@ -1,5 +1,6 @@
 using Intersect.Editor.Localization;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.Utilities;
@@ -75,7 +76,7 @@ public partial class EventCommandInput : UserControl
             if (cmbVariable.SelectedIndex != -1)
             {
                 UpdateMinMaxValues(
-                    PlayerVariableBase.Get(PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex)).Type
+                    PlayerVariableBase.Get(PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex)).DataType
                 );
             }
         }
@@ -87,7 +88,7 @@ public partial class EventCommandInput : UserControl
             if (cmbVariable.SelectedIndex != -1)
             {
                 UpdateMinMaxValues(
-                    ServerVariableBase.Get(ServerVariableBase.IdFromList(cmbVariable.SelectedIndex)).Type
+                    ServerVariableBase.Get(ServerVariableBase.IdFromList(cmbVariable.SelectedIndex)).DataType
                 );
             }
         }
@@ -98,7 +99,7 @@ public partial class EventCommandInput : UserControl
             if (cmbVariable.SelectedIndex != -1)
             {
                 UpdateMinMaxValues(
-                    GuildVariableBase.Get(GuildVariableBase.IdFromList(cmbVariable.SelectedIndex)).Type
+                    GuildVariableBase.Get(GuildVariableBase.IdFromList(cmbVariable.SelectedIndex)).DataType
                 );
             }
         }
@@ -109,7 +110,7 @@ public partial class EventCommandInput : UserControl
             if (cmbVariable.SelectedIndex != -1 && UserVariableBase.TryGet(UserVariableBase.IdFromList(cmbVariable.SelectedIndex), out var userVar))
             {
                 UpdateMinMaxValues(
-                   userVar.Type
+                   userVar.DataType
                 );
             }
         }
@@ -220,19 +221,19 @@ public partial class EventCommandInput : UserControl
         var idx = cmbVariable.SelectedIndex;
         if (rdoPlayerVariables.Checked && PlayerVariableBase.TryGet(PlayerVariableBase.IdFromList(idx), out var playerVar))
         {
-            UpdateMinMaxValues(playerVar.Type);
+            UpdateMinMaxValues(playerVar.DataType);
         }
         else if (rdoGlobalVariables.Checked && ServerVariableBase.TryGet(ServerVariableBase.IdFromList(idx), out var serverVar))
         {
-            UpdateMinMaxValues(serverVar.Type);
+            UpdateMinMaxValues(serverVar.DataType);
         }
         else if (rdoGuildVariables.Checked && GuildVariableBase.TryGet(GuildVariableBase.IdFromList(idx), out var guildVar))
         {
-            UpdateMinMaxValues(guildVar.Type);
+            UpdateMinMaxValues(guildVar.DataType);
         }
         else if (rdoUserVariables.Checked && UserVariableBase.TryGet(UserVariableBase.IdFromList(idx), out var userVar))
         {
-            UpdateMinMaxValues(userVar.Type);
+            UpdateMinMaxValues(userVar.DataType);
         }
     }
 
