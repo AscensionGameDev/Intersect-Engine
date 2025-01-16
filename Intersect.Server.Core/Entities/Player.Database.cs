@@ -495,11 +495,12 @@ public partial class Player
                 .Skip(offset)
                 .Take(count)
                 .Include(p => p.Bank)
+                .Include(p => p.Guild)
                 .Include(p => p.Hotbar)
-                .Include(p => p.Quests)
-                .Include(p => p.Variables)
                 .Include(p => p.Items)
+                .Include(p => p.Quests)
                 .Include(p => p.Spells)
+                .Include(p => p.Variables)
                 .AsSplitQuery()
         ) ??
         throw new InvalidOperationException();
@@ -512,11 +513,12 @@ public partial class Player
                 .Skip(offset)
                 .Take(count)
                 .Include(p => p.Bank)
+                .Include(p => p.Guild)
                 .Include(p => p.Hotbar)
-                .Include(p => p.Quests)
-                .Include(p => p.Variables)
                 .Include(p => p.Items)
+                .Include(p => p.Quests)
                 .Include(p => p.Spells)
+                .Include(p => p.Variables)
                 .AsSplitQuery()
         ) ??
         throw new InvalidOperationException();

@@ -50,4 +50,7 @@
   <data name="UserNotFound" xml:space="preserve">
     <value>No encontrado</value>
   </data>
+  <data name="GuildX" xml:space="preserve">
+    <value>Clan: {0}</value>
+  </data>
 </root>

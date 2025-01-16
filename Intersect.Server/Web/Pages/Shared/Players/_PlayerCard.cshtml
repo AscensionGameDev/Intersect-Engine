@@ -49,7 +49,7 @@
                     @WebResources.XofYExp.Format(player.Exp, player.ExperienceToNextLevel)
                 </span>
                 <span class="row">
-                    @(player.Guild?.Name ?? WebResources.NoGuild)
+                    @(string.IsNullOrWhiteSpace(player.Guild?.Name) ? WebResources.NoGuild : WebResources.GuildX.Format(player.Guild.Name))
                 </span>
             </span>
         </section>

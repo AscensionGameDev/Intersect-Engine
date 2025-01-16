@@ -59,4 +59,7 @@
   <data name="Home" xml:space="preserve">
     <value>Início</value>
   </data>
+  <data name="GuildX" xml:space="preserve">
+    <value>Guilda: {0}</value>
+  </data>
 </root>

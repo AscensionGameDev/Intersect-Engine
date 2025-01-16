@@ -71,4 +71,7 @@
   <data name="XsPlayers" xml:space="preserve">
     <value>{0}'s Characters</value>
   </data>
+  <data name="GuildX" xml:space="preserve">
+    <value>Guild: {0}</value>
+  </data>
 </root>

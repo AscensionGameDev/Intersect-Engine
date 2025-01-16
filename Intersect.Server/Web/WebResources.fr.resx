@@ -44,4 +44,7 @@
   <data name="NoGuild" xml:space="preserve">
     <value>Pas en guilde</value>
   </data>
+  <data name="GuildX" xml:space="preserve">
+    <value>Guilde: {0}</value>
+  </data>
 </root>
