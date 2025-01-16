@@ -143,6 +143,15 @@ public static partial class Strings
         public readonly LocalizedString InvalidSlotToSwap = @"Invalid slots to swap!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString NotEnoughInInventory = @"There are not {00} of {01} in your inventory to deposit.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString NotEnoughBankSpaceForItem = @"There is not enough space in the bank to store {00} of {01}!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString NotEnoughBankSpaceForOneOfItem = @"There is not enough space in the bank to store a {00}!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString WithdrawInvalid = @"Invalid item selected to withdraw!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

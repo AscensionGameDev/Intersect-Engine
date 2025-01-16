@@ -416,9 +416,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-            if (ItemBase.Get(itemInfo.ItemId) == null)
+            if (!ItemBase.TryGet(itemInfo.ItemId, out var descriptor))
             {
-                return BadRequest(@"Invalid item id.");
+                return NotFound($"No item found with ID '{itemInfo.ItemId}'");
             }
 
             if (itemInfo.Quantity < 1)
@@ -433,7 +433,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             if (!player.TryGiveItem(itemInfo.ItemId, itemInfo.Quantity, ItemHandling.Normal, itemInfo.BankOverflow, -1, true))
             {
-                return InternalServerError($@"Failed to give player {itemInfo.Quantity} of '{itemInfo.ItemId}'.");
+                return InternalServerError($@"Failed to give player {itemInfo.Quantity} of '{descriptor.Name}'.");
             }
 
             using (var context = DbInterface.CreatePlayerContext(false))
@@ -475,9 +475,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
 
+            if (!ItemBase.TryGet(itemInfo.ItemId, out var descriptor))
+            {
+                return NotFound($"No item found with ID '{itemInfo.ItemId}'");
+            }
+
             if (!player.TryTakeItem(itemInfo.ItemId, itemInfo.Quantity))
             {
-                return InternalServerError($@"Failed to take {itemInfo.Quantity} of '{itemInfo.ItemId}' from player.");
+                return InternalServerError($@"Failed to take {itemInfo.Quantity} of '{descriptor.Name}' from player.");
             }
 
             using (var context = DbInterface.CreatePlayerContext(false))

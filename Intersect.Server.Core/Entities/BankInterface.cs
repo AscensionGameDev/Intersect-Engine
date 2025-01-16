@@ -86,7 +86,7 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
         _player?.SendPacket(new BankPacket(true, false, -1, null));
     }
 
-    public bool TryDepositItem(Item? slot, int inventorySlotIndex, int quantityHint, int bankSlotIndex = -1, bool sendUpdate = true)
+    public bool TryDepositItem(Item? slot, int inventorySlotIndex, int quantityHint, int bankSlotIndex = -1, bool sendUpdate = true, bool giveItem = false)
     {
         //Permission Check
         if (_guild != null)
@@ -122,7 +122,7 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
 
         var sourceSlots = _player.Items.ToArray();
         var maximumStack = itemDescriptor.Stackable ? itemDescriptor.MaxBankStack : 1;
-        var sourceQuantity = Item.FindQuantityOfItem(itemDescriptor.Id, sourceSlots);
+        var sourceQuantity = giveItem ? quantityHint : Item.FindQuantityOfItem(itemDescriptor.Id, sourceSlots);
 
         _bank.FillToCapacity();
 
@@ -139,11 +139,22 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
                 targetSlots
             );
 
+            if (giveItem && slot.Quantity != movableQuantity)
+            {
+                PacketSender.SendChatMsg(
+                    _player,
+                    Strings.Banks.NotEnoughBankSpaceForItem.ToString(slot.Quantity, itemDescriptor.Name),
+                    ChatMessageType.Bank,
+                    CustomColors.Alerts.Error
+                );
+                return false;
+            }
+
             if (movableQuantity < 1)
             {
                 PacketSender.SendChatMsg(
                     _player,
-                    Strings.Items.NoSpaceForItem,
+                    Strings.Banks.NotEnoughBankSpaceForOneOfItem.ToString(itemDescriptor.Name),
                     ChatMessageType.Bank,
                     CustomColors.Alerts.Error
                 );
@@ -159,31 +170,39 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
                 targetSlots
             );
 
-            if (!Item.TryFindSourceSlotsForItem(
-                    itemDescriptor.Id,
-                    inventorySlotIndex,
-                    movableQuantity,
-                    sourceSlots,
-                    out var slotIndicesToRemoveFrom
-                ))
+            int[] slotIndicesToRemoveFrom = [];
+
+            if (!giveItem)
             {
-                PacketSender.SendChatMsg(
-                    _player,
-                    Strings.Banks.WithdrawInvalid,
-                    ChatMessageType.Bank,
-                    CustomColors.Alerts.Error
-                );
-                return false;
+                if (!Item.TryFindSourceSlotsForItem(
+                        itemDescriptor.Id,
+                        inventorySlotIndex,
+                        movableQuantity,
+                        sourceSlots,
+                        out slotIndicesToRemoveFrom
+                    ))
+                {
+                    PacketSender.SendChatMsg(
+                        _player,
+                        Strings.Banks.NotEnoughInInventory.ToString(movableQuantity, itemDescriptor.Name),
+                        ChatMessageType.Bank,
+                        CustomColors.Alerts.Error
+                    );
+                    return false;
+                }
             }
 
             var nextSlotIndexToRemoveFrom = 0;
             var remainingQuantity = movableQuantity;
             foreach (var slotIndexToFill in slotIndicesToFill)
             {
-                if (slotIndicesToRemoveFrom.Length <= nextSlotIndexToRemoveFrom)
+                if (!giveItem)
                 {
-                    Log.Warn($"Ran out of slots to remove from for {_player.Id}");
-                    break;
+                    if (slotIndicesToRemoveFrom.Length <= nextSlotIndexToRemoveFrom)
+                    {
+                        Log.Warn($"Ran out of slots to remove from for {_player.Id}");
+                        break;
+                    }
                 }
 
                 if (remainingQuantity < 1)
@@ -197,14 +216,21 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
 
                 if (slotToFill.ItemId == default && maximumStack <= 1)
                 {
-                    if (slotIndicesToRemoveFrom.Length <= nextSlotIndexToRemoveFrom)
+                    if (giveItem)
                     {
-                        break;
+                        slotToFill.Set(new Item(slot.ItemId, quantityToStoreInSlot));
                     }
+                    else
+                    {
+                        if (slotIndicesToRemoveFrom.Length <= nextSlotIndexToRemoveFrom)
+                        {
+                            break;
+                        }
 
-                    var slotIndexToRemoveFrom = slotIndicesToRemoveFrom[nextSlotIndexToRemoveFrom++];
-                    var sourceSlot = sourceSlots[slotIndexToRemoveFrom];
-                    slotToFill.Set(sourceSlot);
+                        var slotIndexToRemoveFrom = slotIndicesToRemoveFrom[nextSlotIndexToRemoveFrom++];
+                        var sourceSlot = sourceSlots[slotIndexToRemoveFrom];
+                        slotToFill.Set(sourceSlot);
+                    }
                     remainingQuantity -= 1;
                     continue;
                 }
@@ -220,31 +246,39 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
                 remainingQuantity -= quantityToStoreInSlot;
             }
 
-            var remainingQuantityToRemove = movableQuantity;
-            foreach (var slotIndexToRemoveFrom in slotIndicesToRemoveFrom)
+            int remainingQuantityToRemove;
+            if (giveItem)
             {
-                if (remainingQuantityToRemove < 1)
+                remainingQuantityToRemove = 0;
+            }
+            else
+            {
+                remainingQuantityToRemove = movableQuantity;
+                foreach (var slotIndexToRemoveFrom in slotIndicesToRemoveFrom)
                 {
-                    Log.Error($"Potential inventory corruption for {_player.Id}");
+                    if (remainingQuantityToRemove < 1)
+                    {
+                        Log.Error($"Potential inventory corruption for {_player.Id}");
+                    }
+
+                    var slotToRemoveFrom = sourceSlots[slotIndexToRemoveFrom];
+                    Debug.Assert(slotToRemoveFrom != default);
+                    var quantityToRemoveFromSlot = Math.Min(remainingQuantityToRemove, slotToRemoveFrom.Quantity);
+                    slotToRemoveFrom.Quantity -= quantityToRemoveFromSlot;
+
+                    // If the item is equipped equipment, we need to unequip it before taking it out of the inventory.
+                    if (itemDescriptor.ItemType == ItemType.Equipment && slotIndexToRemoveFrom > -1)
+                    {
+                        _player.EquipmentProcessItemLoss(slotIndexToRemoveFrom);
+                    }
+
+                    if (slotToRemoveFrom.Quantity < 1)
+                    {
+                        slotToRemoveFrom.Set(Item.None);
+                    }
+
+                    remainingQuantityToRemove -= quantityToRemoveFromSlot;
                 }
-
-                var slotToRemoveFrom = sourceSlots[slotIndexToRemoveFrom];
-                Debug.Assert(slotToRemoveFrom != default);
-                var quantityToRemoveFromSlot = Math.Min(remainingQuantityToRemove, slotToRemoveFrom.Quantity);
-                slotToRemoveFrom.Quantity -= quantityToRemoveFromSlot;
-
-                // If the item is equipped equipment, we need to unequip it before taking it out of the inventory.
-                if (itemDescriptor.ItemType == ItemType.Equipment && slotIndexToRemoveFrom > -1)
-                {
-                    _player.EquipmentProcessItemLoss(slotIndexToRemoveFrom);
-                }
-
-                if (slotToRemoveFrom.Quantity < 1)
-                {
-                    slotToRemoveFrom.Set(Item.None);
-                }
-
-                remainingQuantityToRemove -= quantityToRemoveFromSlot;
             }
 
             // ReSharper disable once ConvertIfStatementToSwitchStatement
@@ -300,10 +334,17 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
         }
     }
 
-    public bool TryDepositItem(Item item, bool sendUpdate = true) =>
-        TryDepositItem(item, -1, item.Quantity, -1, sendUpdate);
+    public bool TryDepositItem(Item item, bool sendUpdate = true, bool giveItem = false) =>
+        TryDepositItem(
+            slot: item,
+            inventorySlotIndex: -1,
+            quantityHint: item.Quantity,
+            bankSlotIndex: -1,
+            sendUpdate: sendUpdate,
+            giveItem: giveItem
+        );
 
-    public bool TryWithdrawItem(Item? slot, int bankSlotIndex, int quantityHint, int inventorySlotIndex = -1)
+    public bool TryWithdrawItem(Item? slot, int bankSlotIndex, int quantityHint, int inventorySlotIndex = -1, bool takeItem = false)
     {
         //Permission Check
         if (_guild != null)

@@ -43,8 +43,7 @@ public class Item : IItem
         Bag = bag;
         Properties = properties ?? new ItemProperties();
 
-        var descriptor = ItemBase.Get(ItemId);
-        if (descriptor == null || properties != null)
+        if (!ItemBase.TryGet(itemId, out var descriptor) || properties != null)
         {
             return;
         }
