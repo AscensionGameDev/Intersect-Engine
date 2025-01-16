@@ -68,6 +68,9 @@ public static partial class Strings
         public readonly LocalizedString LoadFail = @"Failed to load account. Please try logging in again.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString PlayerSavingTryAgainLater = @"'{00}' is currently being saved, please try again later.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString MaxCharacters = @"You have already created the maximum number of characters. Delete one before creating a new one.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

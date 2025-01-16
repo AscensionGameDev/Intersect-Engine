@@ -2508,13 +2508,33 @@ internal sealed partial class PacketHandler
             return;
         }
 
+        if (character.IsSaving)
+        {
+            PacketSender.SendError(
+                client,
+                Strings.Account.PlayerSavingTryAgainLater.ToString(character.Name),
+                Strings.General.NoticeError
+            );
+            return;
+        }
+
+        ObjectDisposedException.ThrowIf(character.IsDisposed, character);
+
         client.LoadCharacter(character);
 
-        UserActivityHistory.LogActivity(client.User?.Id ?? Guid.Empty, client?.Entity?.Id ?? Guid.Empty, client?.Ip, UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.SelectPlayer, $"{client?.Name},{client?.Entity?.Name}");
+        UserActivityHistory.LogActivity(
+            client.User?.Id ?? Guid.Empty,
+            client?.Entity?.Id ?? Guid.Empty,
+            client?.Ip,
+            UserActivityHistory.PeerType.Client,
+            UserActivityHistory.UserAction.SelectPlayer,
+            $"{client?.Name},{client?.Entity?.Name}"
+        );
 
         try
         {
             client.Entity?.SetOnline();
+
             PacketSender.SendJoinGame(client);
         }
         catch (Exception exception)

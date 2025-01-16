@@ -33,6 +33,26 @@ public partial class Player
     [NotMapped, JsonIgnore]
     public long SaveTimer { get; set; } = Timing.Global.Milliseconds + Options.Instance.Processing.PlayerSaveInterval;
 
+    [NotMapped, JsonIgnore]
+    public bool IsSaving
+    {
+        get
+        {
+            lock (_pendingLogoutLock)
+            {
+                if (_pendingLogouts.Contains(Id))
+                {
+                    return true;
+                }
+            }
+
+            lock (_savingLock)
+            {
+                return _saving;
+            }
+        }
+    }
+
     #endregion
 
     #region Entity Framework
@@ -165,15 +185,6 @@ public partial class Player
 
     public bool LoadRelationships(PlayerContext playerContext, bool loadBags = false)
     {
-        lock (_savingLock)
-        {
-            if (_saving)
-            {
-                Log.Warn($"Skipping loading relationships for player {Id} because it is being saved.");
-                return false;
-            }
-        }
-
         var entityEntry = playerContext.Players.Attach(this);
         entityEntry.Collection(p => p.Bank).Load();
         entityEntry.Collection(p => p.Hotbar).Load();
