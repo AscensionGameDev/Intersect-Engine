@@ -5265,19 +5265,30 @@ public partial class Player : Entity
 
         string partyMessage = currentParty.Count > 1
             ? Strings.Parties.MemberLeft.ToString(Name)
-            : Strings.Parties.Disbanded;
+            : Strings.Parties.Disbanded.ToString();
 
         // Update all members of the party with the new list
         foreach (var partyMember in currentParty)
         {
             partyMember.Party = currentParty.ToList();
             PacketSender.SendParty(partyMember);
-            PacketSender.SendChatMsg(
-                partyMember,
-                partyMessage,
-                ChatMessageType.Party,
-                CustomColors.Alerts.Error
-            );
+            if (partyMessage != Strings.Parties.Disbanded.ToString())
+            {
+                PacketSender.SendChatMsg(
+                    partyMember,
+                    partyMessage,
+                    ChatMessageType.Party,
+                    CustomColors.Alerts.Error
+                );
+            }
+        }
+        // If theres only one player left, lets disband the party
+        if (currentParty.Count == 1)
+        {
+            var remainingMember = currentParty[0];
+            remainingMember.Party.Clear();
+            PacketSender.SendParty(remainingMember);
+            PacketSender.SendChatMsg(remainingMember, Strings.Parties.Disbanded, ChatMessageType.Party, CustomColors.Alerts.Error);
         }
 
         Party = new List<Player>();
