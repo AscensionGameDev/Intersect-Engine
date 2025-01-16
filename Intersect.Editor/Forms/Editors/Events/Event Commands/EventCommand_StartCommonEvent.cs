@@ -4,10 +4,8 @@ using Intersect.GameObjects.Events.Commands;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands;
 
-
 public partial class EventCommandStartCommonEvent : UserControl
 {
-
     private readonly FrmEvent mEventEditor;
 
     private StartCommmonEventCommand mMyCommand;
@@ -51,6 +49,7 @@ public partial class EventCommandStartCommonEvent : UserControl
     {
         mMyCommand.EventId = EventBase.IdFromList(cmbEvent.SelectedIndex);
         mMyCommand.AllInInstance = chkAllInInstance.Checked;
+        mMyCommand.AllowInOverworld = chkAllInInstance.Checked && chkOverworldOverride.Checked;
         mEventEditor.FinishCommandEdit();
     }
 
@@ -65,6 +64,7 @@ public partial class EventCommandStartCommonEvent : UserControl
         {
             chkOverworldOverride.Checked = false;
         }
+
         chkOverworldOverride.Enabled = chkAllInInstance.Checked;
     }
 }
