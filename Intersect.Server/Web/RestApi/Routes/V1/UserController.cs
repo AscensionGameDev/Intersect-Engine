@@ -1,5 +1,4 @@
 using System.Net;
-using System.Text.RegularExpressions;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Security;
