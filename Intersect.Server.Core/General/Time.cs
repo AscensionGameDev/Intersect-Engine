@@ -1,4 +1,5 @@
 using Intersect.GameObjects;
+using Intersect.Logging;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
 
@@ -54,9 +55,22 @@ public static partial class Time
             }
             else
             {
-                sGameTime = sGameTime.Add(new TimeSpan(0, 0, 0, 0, (int)(1000 * timeBase.Rate)));
+                var timeWas = sGameTime;
+                var timeRate = timeBase.Rate;
+                var addedTime = new TimeSpan(0, 0, 0, 0, (int)(1000 * timeRate));
 
-                //Not sure if Rate is negative if time will go backwards but we can hope!
+                // Not sure if Rate is negative if time will go backwards but we can hope!
+                try
+                {
+                    sGameTime = sGameTime.Add(addedTime);
+                }
+                catch (ArgumentOutOfRangeException exception)
+                {
+                    // Log the error with the value of timeBase.Rate and pass the exception
+                    Log.Error(exception, $"Failed to update game time. Time was {timeWas}, Added Rate was {timeRate}, Added time span was {addedTime}");
+                    // Rethrow the exception to crash the server o_o !!!
+                    throw;
+                }
             }
 
             //Calculate what "timeRange" we should be in, if we're not then switch and notify the world
