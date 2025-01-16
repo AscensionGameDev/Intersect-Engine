@@ -1406,7 +1406,11 @@ internal sealed partial class PacketHandler
     public void HandlePacket(Client client, EventInputVariablePacket packet)
     {
         client.Entity.RespondToEventInput(
-            packet.EventId, packet.Value, packet.StringValue, packet.Canceled
+            packet.EventId,
+            packet.BooleanValue,
+            packet.Value,
+            packet.StringValue,
+            packet.Canceled
         );
     }
 

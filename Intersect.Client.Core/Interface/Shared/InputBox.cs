@@ -16,6 +16,8 @@ public partial class InputBox : WindowControl
 
         YesNo,
 
+        YesNoCancel,
+
         NumericInput,
 
         TextInput,
@@ -29,9 +31,11 @@ public partial class InputBox : WindowControl
 
     public double Value { get; set; }
 
+    public bool BooleanValue { get; set; }
+
     // Events
-    private event EventHandler? OkayEventHandler;
-    private event EventHandler? CancelEventHandler;
+    private event EventHandler? Cancelled;
+    private event EventHandler? Submitted;
 
     // Types
     private readonly InputType _inputType;
@@ -46,6 +50,7 @@ public partial class InputBox : WindowControl
     private readonly TextBoxNumeric _txtNumericSlider;
     private readonly Button _btnYes;
     private readonly Button _btnNo;
+    private readonly Button _btnCancel;
     private readonly Button _btnOk;
     private readonly Label _promptLabel;
 
@@ -63,8 +68,8 @@ public partial class InputBox : WindowControl
         int maxQuantity = int.MaxValue
     ) : base(Interface.CurrentInterface.Root, title, true, "InputBox")
     {
-        OkayEventHandler = onSuccess;
-        CancelEventHandler = onCancel;
+        Submitted = onSuccess;
+        Cancelled = onCancel;
         UserData = userData;
         _inputType = inputType;
         _prompt = prompt;
@@ -134,17 +139,23 @@ public partial class InputBox : WindowControl
         {
             Text = Strings.InputBox.Okay
         };
-        _btnYes.Clicked += (sender, e) => SubmitInput();
+        _btnYes.Clicked += btnYes_Clicked;
+
+        _btnCancel = new Button(this, "CancelButton")
+        {
+            Text = Strings.InputBox.Cancel,
+        };
+        _btnCancel.Clicked += btnCancel_Clicked;
 
         _btnNo = new Button(this, "NoButton")
         {
-            Text = Strings.InputBox.Cancel
+            Text = Strings.InputBox.No,
         };
-        _btnNo.Clicked += cancelBtn_Clicked;
+        _btnNo.Clicked += btnNo_Clicked;
 
         _btnOk = new Button(this, "OkayButton")
         {
-            Text = Strings.InputBox.Okay
+            Text = Strings.InputBox.Okay,
         };
         _btnOk.Clicked += (sender, e) => SubmitInput();
 
@@ -202,51 +213,74 @@ public partial class InputBox : WindowControl
             {
                 case InputType.YesNo:
                     _btnYes.Text = Strings.InputBox.Yes;
-                    _btnNo.Text = Strings.InputBox.No;
+                    _btnCancel.Text = Strings.InputBox.No;
                     _btnOk.Hide();
+                    _btnNo.Hide();
                     _btnYes.Show();
-                    _btnNo.Show();
+                    _btnCancel.Show();
                     _txtNumericBg.Hide();
                     _numericSliderBg.Hide();
                     _textboxBg.Hide();
-
                     break;
+
+                case InputType.YesNoCancel:
+                    _btnYes.Text = Strings.InputBox.Yes;
+                    _btnYes.Show();
+
+                    _btnCancel.Text = Strings.InputBox.Cancel;
+                    _btnCancel.Show();
+
+                    _btnNo.Text = Strings.InputBox.No;
+                    _btnNo.Show();
+
+                    _btnOk.Hide();
+                    _txtNumericBg.Hide();
+                    _numericSliderBg.Hide();
+                    _textboxBg.Hide();
+                    break;
+
                 case InputType.OkayOnly:
                     _btnOk.Show();
                     _btnYes.Hide();
                     _btnNo.Hide();
+                    _btnCancel.Hide();
                     _txtNumericBg.Hide();
                     _numericSliderBg.Hide();
                     _textboxBg.Hide();
-
                     break;
+
                 case InputType.NumericInput:
                     _btnOk.Hide();
                     _btnYes.Show();
-                    _btnNo.Show();
+                    _btnNo.Hide();
+                    _btnCancel.Show();
                     _txtNumericBg.Show();
                     _numericSliderBg.Hide();
                     _textboxBg.Hide();
-
                     break;
+
                 case InputType.NumericSliderInput:
                     _btnOk.Hide();
                     _btnYes.Show();
-                    _btnNo.Show();
+                    _btnNo.Hide();
+                    _btnCancel.Show();
                     _txtNumericBg.Hide();
                     _numericSliderBg.Show();
                     _textboxBg.Hide();
-
                     break;
+
                 case InputType.TextInput:
                     _btnOk.Hide();
                     _btnYes.Show();
-                    _btnNo.Show();
+                    _btnNo.Hide();
+                    _btnCancel.Show();
                     _txtNumericBg.Hide();
                     _numericSliderBg.Hide();
                     _textboxBg.Show();
-
                     break;
+
+                default:
+                    throw new NotImplementedException($"{_inputType} not yet implemented");
             }
 
             Show();
@@ -255,7 +289,27 @@ public partial class InputBox : WindowControl
         }
     }
 
-    void cancelBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    void btnNo_Clicked(Base sender, ClickedEventArgs arguments)
+    {
+        if (_inputType == InputType.YesNoCancel)
+        {
+            BooleanValue = false;
+        }
+
+        SubmitInput();
+    }
+
+    void btnYes_Clicked(Base sender, ClickedEventArgs arguments)
+    {
+        if (_inputType == InputType.YesNoCancel)
+        {
+            BooleanValue = true;
+        }
+
+        SubmitInput();
+    }
+
+    void btnCancel_Clicked(Base sender, ClickedEventArgs arguments)
     {
         if (_inputType == InputType.NumericInput)
         {
@@ -272,7 +326,7 @@ public partial class InputBox : WindowControl
             Value = _numericSlider.Value;
         }
 
-        CancelEventHandler?.Invoke(this, EventArgs.Empty);
+        Cancelled?.Invoke(this, EventArgs.Empty);
         Dispose();
     }
 
@@ -293,7 +347,7 @@ public partial class InputBox : WindowControl
             Value = _numericSlider.Value;
         }
 
-        OkayEventHandler?.Invoke(this, EventArgs.Empty);
+        Submitted?.Invoke(this, EventArgs.Empty);
         Dispose();
     }
 
@@ -303,6 +357,7 @@ public partial class InputBox : WindowControl
         {
             case InputType.OkayOnly:
             case InputType.YesNo:
+            case InputType.YesNoCancel:
                 break;
             case InputType.NumericInput:
                 _txtNumeric.Focus(moveMouse);
