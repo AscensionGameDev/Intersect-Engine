@@ -1,7 +1,10 @@
 using System.Collections.Concurrent;
+using System.Net;
 using Intersect.Framework.IO;
 using Intersect.Server.Collections.Indexing;
 using Intersect.Server.Entities;
+using Intersect.Server.Web.Http;
+using Intersect.Server.Web.RestApi.Types;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
@@ -15,7 +18,7 @@ namespace Intersect.Server.Web.Controllers;
 [Route("avatar")]
 [ResponseCache(CacheProfileName = nameof(AvatarController))]
 [OutputCache(PolicyName = nameof(AvatarController))]
-public class AvatarController : IntersectController
+public class AvatarController(ILogger<AvatarController> logger) : IntersectController
 {
 #if DEBUG
     private const int CacheSeconds = 30;
@@ -35,18 +38,16 @@ public class AvatarController : IntersectController
 
     private static readonly ConcurrentDictionary<string, Task<CachingResult>> CachingTasks = new();
 
-    private readonly DirectoryInfo _cacheDirectoryInfo;
-    private readonly ILogger<AvatarController> _logger;
-
-    public AvatarController(ILogger<AvatarController> logger)
-    {
-        _cacheDirectoryInfo = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, ".cache", "avatars"));
-        _logger = logger;
-    }
+    private readonly DirectoryInfo _cacheDirectoryInfo =
+        new(Path.Combine(Environment.CurrentDirectory, ".cache", "avatars"));
 
     [HttpGet("player/{lookupKey:LookupKey}")]
     [EndpointSummary($"{nameof(AvatarController)}_{nameof(GetPlayerAvatarAsync)}_Summary")]
     [EndpointDescription($"{nameof(AvatarController)}_{nameof(GetPlayerAvatarAsync)}_Description")]
+    [ProducesResponseType(typeof(byte[]), (int)HttpStatusCode.OK, ContentTypes.Png)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
     public async Task<IActionResult> GetPlayerAvatarAsync(LookupKey lookupKey)
     {
         DirectoryInfo assetsDirectoryInfo = new("assets/editor/resources");
@@ -75,7 +76,7 @@ public class AvatarController : IntersectController
         {
             if (fileInfo != null)
             {
-                _logger.LogWarning(
+                logger.LogWarning(
                     "Avatar '{AvatarName}' was found in {AssetsDirectory} but failed to be loaded and should be located at {AvatarFilePath}",
                     avatarName,
                     assetsDirectoryInfo.FullName,
@@ -84,7 +85,7 @@ public class AvatarController : IntersectController
             }
             else
             {
-                _logger.LogWarning(
+                logger.LogWarning(
                     "Avatar '{AvatarName}' was not found in {AssetsDirectory}",
                     avatarName,
                     assetsDirectoryInfo.FullName
@@ -104,6 +105,10 @@ public class AvatarController : IntersectController
     [HttpGet("user/{lookupKey:LookupKey}")]
     [EndpointSummary($"{nameof(AvatarController)}_{nameof(GetUserAvatarAsync)}_Summary")]
     [EndpointDescription($"{nameof(AvatarController)}_{nameof(GetUserAvatarAsync)}_Description")]
+    [ProducesResponseType(typeof(byte[]), (int)HttpStatusCode.OK, ContentTypes.Png)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
     public async Task<IActionResult> GetUserAvatarAsync(LookupKey lookupKey)
     {
         DirectoryInfo assetsDirectoryInfo = new("assets/editor/resources");
@@ -132,7 +137,7 @@ public class AvatarController : IntersectController
         {
             if (fileInfo != null)
             {
-                _logger.LogWarning(
+                logger.LogWarning(
                     "Avatar '{AvatarName}' was found in {AssetsDirectory} but failed to be loaded and should be located at {AvatarFilePath}",
                     avatarName,
                     assetsDirectoryInfo.FullName,
@@ -141,7 +146,7 @@ public class AvatarController : IntersectController
             }
             else
             {
-                _logger.LogWarning(
+                logger.LogWarning(
                     "Avatar '{AvatarName}' was not found in {AssetsDirectory}",
                     avatarName,
                     assetsDirectoryInfo.FullName
