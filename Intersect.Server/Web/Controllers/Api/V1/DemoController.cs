@@ -1,6 +1,6 @@
 using System.Net;
 using Intersect.Server.Web.Http;
-using Intersect.Server.Web.RestApi.Types.Demo;
+using Intersect.Server.Web.Types.Demo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

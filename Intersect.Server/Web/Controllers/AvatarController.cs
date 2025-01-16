@@ -4,7 +4,7 @@ using Intersect.Framework.IO;
 using Intersect.Server.Collections.Indexing;
 using Intersect.Server.Entities;
 using Intersect.Server.Web.Http;
-using Intersect.Server.Web.RestApi.Types;
+using Intersect.Server.Web.Types;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;

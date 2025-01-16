@@ -1,20 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Htmx;
-using Intersect.Security.Claims;
-using Intersect.Server.Database.PlayerData.Api;
 using Intersect.Server.Localization;
 using Intersect.Server.Web.Authentication;
-using Intersect.Server.Web.Configuration;
 using Intersect.Server.Web.Pages.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using WebSocketSharp.Net;
 
 namespace Intersect.Server.Web.Pages.Account;

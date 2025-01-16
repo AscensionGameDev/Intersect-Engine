@@ -4,7 +4,7 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Models;
 using Intersect.Server.Web.Http;
-using Intersect.Server.Web.RestApi.Types;
+using Intersect.Server.Web.Types;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

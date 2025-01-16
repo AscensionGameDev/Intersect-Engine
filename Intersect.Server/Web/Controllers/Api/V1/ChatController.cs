@@ -3,8 +3,8 @@ using Intersect.Server.Collections.Indexing;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
 using Intersect.Server.Web.Http;
-using Intersect.Server.Web.RestApi.Types;
-using Intersect.Server.Web.RestApi.Types.Chat;
+using Intersect.Server.Web.Types;
+using Intersect.Server.Web.Types.Chat;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
