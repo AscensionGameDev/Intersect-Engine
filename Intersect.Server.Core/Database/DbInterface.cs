@@ -68,15 +68,15 @@ public static partial class DbInterface
 
     private static Logger _playerDatabaseLogger { get; set; }
 
-    public static Dictionary<string, ServerVariableBase> ServerVariableEventTextLookup = new();
+    public static Dictionary<string, ServerVariableDescriptor> ServerVariableEventTextLookup = new();
 
-    public static Dictionary<string, PlayerVariableBase> PlayerVariableEventTextLookup = new();
+    public static Dictionary<string, PlayerVariableDescriptor> PlayerVariableEventTextLookup = new();
 
-    public static Dictionary<string, GuildVariableBase> GuildVariableEventTextLookup = new();
+    public static Dictionary<string, GuildVariableDescriptor> GuildVariableEventTextLookup = new();
 
-    public static Dictionary<string, UserVariableBase> UserVariableEventTextLookup = new();
+    public static Dictionary<string, UserVariableDescriptor> UserVariableEventTextLookup = new();
 
-    public static ConcurrentDictionary<Guid, ServerVariableBase> UpdatedServerVariables = new();
+    public static ConcurrentDictionary<Guid, ServerVariableDescriptor> UpdatedServerVariables = new();
 
     private static List<MapGrid> mapGrids = new();
 
@@ -717,11 +717,11 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.PlayerVariable:
-                PlayerVariableBase.Lookup.Clear();
+                PlayerVariableDescriptor.Lookup.Clear();
 
                 break;
             case GameObjectType.ServerVariable:
-                ServerVariableBase.Lookup.Clear();
+                ServerVariableDescriptor.Lookup.Clear();
 
                 break;
             case GameObjectType.Tileset:
@@ -731,11 +731,11 @@ public static partial class DbInterface
             case GameObjectType.Time:
                 break;
             case GameObjectType.GuildVariable:
-                GuildVariableBase.Lookup.Clear();
+                GuildVariableDescriptor.Lookup.Clear();
 
                 break;
             case GameObjectType.UserVariable:
-                UserVariableBase.Lookup.Clear();
+                UserVariableDescriptor.Lookup.Clear();
 
                 break;
             default:
@@ -854,14 +854,14 @@ public static partial class DbInterface
                     case GameObjectType.PlayerVariable:
                         foreach (var psw in context.PlayerVariables)
                         {
-                            PlayerVariableBase.Lookup.Set(psw.Id, psw);
+                            PlayerVariableDescriptor.Lookup.Set(psw.Id, psw);
                         }
 
                         break;
                     case GameObjectType.ServerVariable:
                         foreach (var psw in context.ServerVariables)
                         {
-                            ServerVariableBase.Lookup.Set(psw.Id, psw);
+                            ServerVariableDescriptor.Lookup.Set(psw.Id, psw);
                         }
 
                         break;
@@ -877,14 +877,14 @@ public static partial class DbInterface
                     case GameObjectType.GuildVariable:
                         foreach (var psw in context.GuildVariables)
                         {
-                            GuildVariableBase.Lookup.Set(psw.Id, psw);
+                            GuildVariableDescriptor.Lookup.Set(psw.Id, psw);
                         }
 
                         break;
                     case GameObjectType.UserVariable:
                         foreach (var psw in context.UserVariables)
                         {
-                            UserVariableBase.Lookup.Set(psw.Id, psw);
+                            UserVariableDescriptor.Lookup.Set(psw.Id, psw);
                         }
 
                         break;
@@ -964,11 +964,11 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.PlayerVariable:
-                dbObj = new PlayerVariableBase(predefinedid);
+                dbObj = new PlayerVariableDescriptor(predefinedid);
 
                 break;
             case GameObjectType.ServerVariable:
-                dbObj = new ServerVariableBase(predefinedid);
+                dbObj = new ServerVariableDescriptor(predefinedid);
 
                 break;
             case GameObjectType.Tileset:
@@ -988,12 +988,12 @@ public static partial class DbInterface
                 break;
 
             case GameObjectType.GuildVariable:
-                dbObj = new GuildVariableBase(predefinedid);
+                dbObj = new GuildVariableDescriptor(predefinedid);
 
                 break;
 
             case GameObjectType.UserVariable:
-                dbObj = new UserVariableBase(predefinedid);
+                dbObj = new UserVariableDescriptor(predefinedid);
 
                 break;
             default:
@@ -1090,14 +1090,14 @@ public static partial class DbInterface
                         break;
 
                     case GameObjectType.PlayerVariable:
-                        context.PlayerVariables.Add((PlayerVariableBase)dbObj);
-                        PlayerVariableBase.Lookup.Set(dbObj.Id, dbObj);
+                        context.PlayerVariables.Add((PlayerVariableDescriptor)dbObj);
+                        PlayerVariableDescriptor.Lookup.Set(dbObj.Id, dbObj);
 
                         break;
 
                     case GameObjectType.ServerVariable:
-                        context.ServerVariables.Add((ServerVariableBase)dbObj);
-                        ServerVariableBase.Lookup.Set(dbObj.Id, dbObj);
+                        context.ServerVariables.Add((ServerVariableDescriptor)dbObj);
+                        ServerVariableDescriptor.Lookup.Set(dbObj.Id, dbObj);
 
                         break;
 
@@ -1111,14 +1111,14 @@ public static partial class DbInterface
                         break;
 
                     case GameObjectType.GuildVariable:
-                        context.GuildVariables.Add((GuildVariableBase)dbObj);
-                        GuildVariableBase.Lookup.Set(dbObj.Id, dbObj);
+                        context.GuildVariables.Add((GuildVariableDescriptor)dbObj);
+                        GuildVariableDescriptor.Lookup.Set(dbObj.Id, dbObj);
 
                         break;
 
                     case GameObjectType.UserVariable:
-                        context.UserVariables.Add((UserVariableBase)dbObj);
-                        UserVariableBase.Lookup.Set(dbObj.Id, dbObj);
+                        context.UserVariables.Add((UserVariableDescriptor)dbObj);
+                        UserVariableDescriptor.Lookup.Set(dbObj.Id, dbObj);
 
                         break;
 
@@ -1236,11 +1236,11 @@ public static partial class DbInterface
 
                         break;
                     case GameObjectType.PlayerVariable:
-                        context.PlayerVariables.Remove((PlayerVariableBase)gameObject);
+                        context.PlayerVariables.Remove((PlayerVariableDescriptor)gameObject);
 
                         break;
                     case GameObjectType.ServerVariable:
-                        context.ServerVariables.Remove((ServerVariableBase)gameObject);
+                        context.ServerVariables.Remove((ServerVariableDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Tileset:
@@ -1250,11 +1250,11 @@ public static partial class DbInterface
                     case GameObjectType.Time:
                         break;
                     case GameObjectType.GuildVariable:
-                        context.GuildVariables.Remove((GuildVariableBase)gameObject);
+                        context.GuildVariables.Remove((GuildVariableDescriptor)gameObject);
 
                         break;
                     case GameObjectType.UserVariable:
-                        context.UserVariables.Remove((UserVariableBase)gameObject);
+                        context.UserVariables.Remove((UserVariableDescriptor)gameObject);
 
                         break;
                 }
@@ -1385,11 +1385,11 @@ public static partial class DbInterface
 
                         break;
                     case GameObjectType.PlayerVariable:
-                        context.PlayerVariables.Update((PlayerVariableBase)gameObject);
+                        context.PlayerVariables.Update((PlayerVariableDescriptor)gameObject);
 
                         break;
                     case GameObjectType.ServerVariable:
-                        context.ServerVariables.Update((ServerVariableBase)gameObject);
+                        context.ServerVariables.Update((ServerVariableDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Tileset:
@@ -1399,11 +1399,11 @@ public static partial class DbInterface
                     case GameObjectType.Time:
                         break;
                     case GameObjectType.GuildVariable:
-                        context.GuildVariables.Update((GuildVariableBase)gameObject);
+                        context.GuildVariables.Update((GuildVariableDescriptor)gameObject);
 
                         break;
                     case GameObjectType.UserVariable:
-                        context.UserVariables.Update((UserVariableBase)gameObject);
+                        context.UserVariables.Update((UserVariableDescriptor)gameObject);
 
                         break;
                 }
@@ -1474,9 +1474,9 @@ public static partial class DbInterface
 
     public static void CachePlayerVariableEventTextLookups()
     {
-        var lookup = new Dictionary<string, PlayerVariableBase>();
+        var lookup = new Dictionary<string, PlayerVariableDescriptor>();
         var addedIds = new HashSet<string>();
-        foreach (PlayerVariableBase variable in PlayerVariableBase.Lookup.Values)
+        foreach (PlayerVariableDescriptor variable in PlayerVariableDescriptor.Lookup.Values)
         {
             if (!string.IsNullOrWhiteSpace(variable.TextId) && !addedIds.Contains(variable.TextId))
             {
@@ -1490,9 +1490,9 @@ public static partial class DbInterface
 
     public static void CacheServerVariableEventTextLookups()
     {
-        var lookup = new Dictionary<string, ServerVariableBase>();
+        var lookup = new Dictionary<string, ServerVariableDescriptor>();
         var addedIds = new HashSet<string>();
-        foreach (ServerVariableBase variable in ServerVariableBase.Lookup.Values)
+        foreach (ServerVariableDescriptor variable in ServerVariableDescriptor.Lookup.Values)
         {
             if (!string.IsNullOrWhiteSpace(variable.TextId) && !addedIds.Contains(variable.TextId))
             {
@@ -1506,9 +1506,9 @@ public static partial class DbInterface
 
     public static void CacheGuildVariableEventTextLookups()
     {
-        var lookup = new Dictionary<string, GuildVariableBase>();
+        var lookup = new Dictionary<string, GuildVariableDescriptor>();
         var addedIds = new HashSet<string>();
-        foreach (GuildVariableBase variable in GuildVariableBase.Lookup.Values)
+        foreach (GuildVariableDescriptor variable in GuildVariableDescriptor.Lookup.Values)
         {
             if (!string.IsNullOrWhiteSpace(variable.TextId) && !addedIds.Contains(variable.TextId))
             {
@@ -1521,9 +1521,9 @@ public static partial class DbInterface
 
     public static void CacheUserVariableEventTextLookups()
     {
-        var lookup = new Dictionary<string, UserVariableBase>();
+        var lookup = new Dictionary<string, UserVariableDescriptor>();
         var addedIds = new HashSet<string>();
-        foreach (UserVariableBase variable in UserVariableBase.Lookup.Values)
+        foreach (UserVariableDescriptor variable in UserVariableDescriptor.Lookup.Values)
         {
             if (!string.IsNullOrWhiteSpace(variable.TextId) && !addedIds.Contains(variable.TextId))
             {
@@ -1788,7 +1788,7 @@ public static partial class DbInterface
                     {
                         context.ServerVariables.Update(variable.Value);
                     }
-                    UpdatedServerVariables.TryRemove(variable.Key, out ServerVariableBase obj);
+                    UpdatedServerVariables.TryRemove(variable.Key, out ServerVariableDescriptor obj);
                 }
                 context.SaveChanges();
             }

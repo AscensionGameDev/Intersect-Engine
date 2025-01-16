@@ -933,12 +933,12 @@ internal sealed partial class NetworkedPacketHandler
                     break;
 
                 case GameObjectType.PlayerVariable:
-                    obj = PlayerVariableBase.Get(id);
+                    obj = PlayerVariableDescriptor.Get(id);
 
                     break;
 
                 case GameObjectType.ServerVariable:
-                    obj = ServerVariableBase.Get(id);
+                    obj = ServerVariableDescriptor.Get(id);
 
                     break;
 
@@ -949,12 +949,12 @@ internal sealed partial class NetworkedPacketHandler
                     break;
 
                 case GameObjectType.GuildVariable:
-                    obj = GuildVariableBase.Get(id);
+                    obj = GuildVariableDescriptor.Get(id);
 
                     break;
 
                 case GameObjectType.UserVariable:
-                    obj = UserVariableBase.Get(id);
+                    obj = UserVariableDescriptor.Get(id);
 
                     break;
 
@@ -1062,12 +1062,12 @@ internal sealed partial class NetworkedPacketHandler
                     break;
 
                 case GameObjectType.PlayerVariable:
-                    obj = PlayerVariableBase.Get(id);
+                    obj = PlayerVariableDescriptor.Get(id);
 
                     break;
 
                 case GameObjectType.ServerVariable:
-                    obj = ServerVariableBase.Get(id);
+                    obj = ServerVariableDescriptor.Get(id);
 
                     break;
 
@@ -1078,12 +1078,12 @@ internal sealed partial class NetworkedPacketHandler
                     break;
 
                 case GameObjectType.GuildVariable:
-                    obj = GuildVariableBase.Get(id);
+                    obj = GuildVariableDescriptor.Get(id);
 
                     break;
 
                 case GameObjectType.UserVariable:
-                    obj = UserVariableBase.Get(id);
+                    obj = UserVariableDescriptor.Get(id);
 
                     break;
 

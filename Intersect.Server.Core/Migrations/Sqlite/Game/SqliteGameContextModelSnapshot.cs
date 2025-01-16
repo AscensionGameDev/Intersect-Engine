@@ -17,7 +17,7 @@ namespace Intersect.Server.Migrations.Sqlite.Game
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
 
-            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.GuildVariableBase", b =>
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.GuildVariableDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("TEXT");
@@ -43,7 +43,7 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.ToTable("GuildVariables");
                 });
 
-            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.PlayerVariableBase", b =>
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.PlayerVariableDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("TEXT");
@@ -69,7 +69,7 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.ToTable("PlayerVariables");
                 });
 
-            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.ServerVariableBase", b =>
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.ServerVariableDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("TEXT");
@@ -99,7 +99,7 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.ToTable("ServerVariables");
                 });
 
-            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.UserVariableBase", b =>
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.UserVariableDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("TEXT");

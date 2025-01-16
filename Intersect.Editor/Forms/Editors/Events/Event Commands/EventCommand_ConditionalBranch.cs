@@ -437,22 +437,22 @@ public partial class EventCommandConditionalBranch : UserControl
                 grpVariable.Show();
 
                 cmbCompareGlobalVar.Items.Clear();
-                cmbCompareGlobalVar.Items.AddRange(ServerVariableBase.Names);
+                cmbCompareGlobalVar.Items.AddRange(ServerVariableDescriptor.Names);
                 cmbComparePlayerVar.Items.Clear();
-                cmbComparePlayerVar.Items.AddRange(PlayerVariableBase.Names);
+                cmbComparePlayerVar.Items.AddRange(PlayerVariableDescriptor.Names);
                 cmbCompareGuildVar.Items.Clear();
-                cmbCompareGuildVar.Items.AddRange(GuildVariableBase.Names);
+                cmbCompareGuildVar.Items.AddRange(GuildVariableDescriptor.Names);
                 cmbCompareUserVar.Items.Clear();
-                cmbCompareUserVar.Items.AddRange(UserVariableBase.Names);
+                cmbCompareUserVar.Items.AddRange(UserVariableDescriptor.Names);
 
                 cmbBooleanGlobalVariable.Items.Clear();
-                cmbBooleanGlobalVariable.Items.AddRange(ServerVariableBase.Names);
+                cmbBooleanGlobalVariable.Items.AddRange(ServerVariableDescriptor.Names);
                 cmbBooleanPlayerVariable.Items.Clear();
-                cmbBooleanPlayerVariable.Items.AddRange(PlayerVariableBase.Names);
+                cmbBooleanPlayerVariable.Items.AddRange(PlayerVariableDescriptor.Names);
                 cmbBooleanGuildVariable.Items.Clear();
-                cmbBooleanGuildVariable.Items.AddRange(GuildVariableBase.Names);
+                cmbBooleanGuildVariable.Items.AddRange(GuildVariableDescriptor.Names);
                 cmbBooleanUserVariable.Items.Clear();
-                cmbBooleanUserVariable.Items.AddRange(UserVariableBase.Names);
+                cmbBooleanUserVariable.Items.AddRange(UserVariableDescriptor.Names);
 
                 break;
             case ConditionTypes.HasItem:
@@ -725,7 +725,7 @@ public partial class EventCommandConditionalBranch : UserControl
             //Determine Variable Type
             if (rdoPlayerVariable.Checked)
             {
-                var playerVar = PlayerVariableBase.FromList(cmbVariable.SelectedIndex);
+                var playerVar = PlayerVariableDescriptor.FromList(cmbVariable.SelectedIndex);
                 if (playerVar != null)
                 {
                     varType = (byte)playerVar.DataType;
@@ -733,7 +733,7 @@ public partial class EventCommandConditionalBranch : UserControl
             }
             else if (rdoGlobalVariable.Checked)
             {
-                var serverVar = ServerVariableBase.FromList(cmbVariable.SelectedIndex);
+                var serverVar = ServerVariableDescriptor.FromList(cmbVariable.SelectedIndex);
                 if (serverVar != null)
                 {
                     varType = (byte)serverVar.DataType;
@@ -741,7 +741,7 @@ public partial class EventCommandConditionalBranch : UserControl
             }
             else if (rdoGuildVariable.Checked)
             {
-                var guildVar = GuildVariableBase.FromList(cmbVariable.SelectedIndex);
+                var guildVar = GuildVariableDescriptor.FromList(cmbVariable.SelectedIndex);
                 if (guildVar != null)
                 {
                     varType = (byte)guildVar.DataType;
@@ -749,7 +749,7 @@ public partial class EventCommandConditionalBranch : UserControl
             }
             else if (rdoUserVariable.Checked)
             {
-                var userVar = UserVariableBase.FromList(cmbVariable.SelectedIndex);
+                var userVar = UserVariableDescriptor.FromList(cmbVariable.SelectedIndex);
                 if (userVar != null)
                 {
                     varType = (byte)userVar.DataType;
@@ -812,22 +812,22 @@ public partial class EventCommandConditionalBranch : UserControl
             if (booleanComparison.CompareVariableType == VariableType.PlayerVariable)
             {
                 optBooleanPlayerVariable.Checked = true;
-                cmbBooleanPlayerVariable.SelectedIndex = PlayerVariableBase.ListIndex(booleanComparison.CompareVariableId);
+                cmbBooleanPlayerVariable.SelectedIndex = PlayerVariableDescriptor.ListIndex(booleanComparison.CompareVariableId);
             }
             else if (booleanComparison.CompareVariableType == VariableType.ServerVariable)
             {
                 optBooleanGlobalVariable.Checked = true;
-                cmbBooleanGlobalVariable.SelectedIndex = ServerVariableBase.ListIndex(booleanComparison.CompareVariableId);
+                cmbBooleanGlobalVariable.SelectedIndex = ServerVariableDescriptor.ListIndex(booleanComparison.CompareVariableId);
             }
             else if (booleanComparison.CompareVariableType == VariableType.GuildVariable)
             {
                 optBooleanGuildVariable.Checked = true;
-                cmbBooleanGuildVariable.SelectedIndex = GuildVariableBase.ListIndex(booleanComparison.CompareVariableId);
+                cmbBooleanGuildVariable.SelectedIndex = GuildVariableDescriptor.ListIndex(booleanComparison.CompareVariableId);
             }
             else if (booleanComparison.CompareVariableType == VariableType.UserVariable)
             {
                 optBooleanUserVariable.Checked = true;
-                cmbBooleanUserVariable.SelectedIndex = UserVariableBase.ListIndex(booleanComparison.CompareVariableId);
+                cmbBooleanUserVariable.SelectedIndex = UserVariableDescriptor.ListIndex(booleanComparison.CompareVariableId);
             }
         }
     }
@@ -851,22 +851,22 @@ public partial class EventCommandConditionalBranch : UserControl
             if (integerComparison.CompareVariableType == VariableType.PlayerVariable)
             {
                 rdoVarComparePlayerVar.Checked = true;
-                cmbComparePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(integerComparison.CompareVariableId);
+                cmbComparePlayerVar.SelectedIndex = PlayerVariableDescriptor.ListIndex(integerComparison.CompareVariableId);
             }
             else if (integerComparison.CompareVariableType == VariableType.ServerVariable)
             {
                 rdoVarCompareGlobalVar.Checked = true;
-                cmbCompareGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(integerComparison.CompareVariableId);
+                cmbCompareGlobalVar.SelectedIndex = ServerVariableDescriptor.ListIndex(integerComparison.CompareVariableId);
             }
             else if (integerComparison.CompareVariableType == VariableType.GuildVariable)
             {
                 rdoVarCompareGuildVar.Checked = true;
-                cmbCompareGuildVar.SelectedIndex = GuildVariableBase.ListIndex(integerComparison.CompareVariableId);
+                cmbCompareGuildVar.SelectedIndex = GuildVariableDescriptor.ListIndex(integerComparison.CompareVariableId);
             }
             else if (integerComparison.CompareVariableType == VariableType.UserVariable)
             {
                 rdoVarCompareUserVar.Checked = true;
-                cmbCompareUserVar.SelectedIndex = UserVariableBase.ListIndex(integerComparison.CompareVariableId);
+                cmbCompareUserVar.SelectedIndex = UserVariableDescriptor.ListIndex(integerComparison.CompareVariableId);
             }
         }
         else if (integerComparison.TimeSystem)
@@ -905,23 +905,23 @@ public partial class EventCommandConditionalBranch : UserControl
         cmbVariable.Items.Clear();
         if (rdoPlayerVariable.Checked)
         {
-            cmbVariable.Items.AddRange(PlayerVariableBase.Names);
-            cmbVariable.SelectedIndex = PlayerVariableBase.ListIndex(variableId);
+            cmbVariable.Items.AddRange(PlayerVariableDescriptor.Names);
+            cmbVariable.SelectedIndex = PlayerVariableDescriptor.ListIndex(variableId);
         }
         else if (rdoGlobalVariable.Checked)
         {
-            cmbVariable.Items.AddRange(ServerVariableBase.Names);
-            cmbVariable.SelectedIndex = ServerVariableBase.ListIndex(variableId);
+            cmbVariable.Items.AddRange(ServerVariableDescriptor.Names);
+            cmbVariable.SelectedIndex = ServerVariableDescriptor.ListIndex(variableId);
         }
         else if (rdoGuildVariable.Checked)
         {
-            cmbVariable.Items.AddRange(GuildVariableBase.Names);
-            cmbVariable.SelectedIndex = GuildVariableBase.ListIndex(variableId);
+            cmbVariable.Items.AddRange(GuildVariableDescriptor.Names);
+            cmbVariable.SelectedIndex = GuildVariableDescriptor.ListIndex(variableId);
         }
         else if (rdoUserVariable.Checked)
         {
-            cmbVariable.Items.AddRange(UserVariableBase.Names);
-            cmbVariable.SelectedIndex = UserVariableBase.ListIndex(variableId);
+            cmbVariable.Items.AddRange(UserVariableDescriptor.Names);
+            cmbVariable.SelectedIndex = UserVariableDescriptor.ListIndex(variableId);
         }
 
         mLoading = false;
@@ -943,22 +943,22 @@ public partial class EventCommandConditionalBranch : UserControl
         if (optBooleanGlobalVariable.Checked)
         {
             comparison.CompareVariableType = VariableType.ServerVariable;
-            comparison.CompareVariableId = ServerVariableBase.IdFromList(cmbBooleanGlobalVariable.SelectedIndex);
+            comparison.CompareVariableId = ServerVariableDescriptor.IdFromList(cmbBooleanGlobalVariable.SelectedIndex);
         }
         else if (optBooleanPlayerVariable.Checked)
         {
             comparison.CompareVariableType = VariableType.PlayerVariable;
-            comparison.CompareVariableId = PlayerVariableBase.IdFromList(cmbBooleanPlayerVariable.SelectedIndex);
+            comparison.CompareVariableId = PlayerVariableDescriptor.IdFromList(cmbBooleanPlayerVariable.SelectedIndex);
         }
         else if (optBooleanGuildVariable.Checked)
         {
             comparison.CompareVariableType = VariableType.GuildVariable;
-            comparison.CompareVariableId = GuildVariableBase.IdFromList(cmbBooleanGuildVariable.SelectedIndex);
+            comparison.CompareVariableId = GuildVariableDescriptor.IdFromList(cmbBooleanGuildVariable.SelectedIndex);
         }
         else if (optBooleanUserVariable.Checked)
         {
             comparison.CompareVariableType = VariableType.UserVariable;
-            comparison.CompareVariableId = UserVariableBase.IdFromList(cmbBooleanUserVariable.SelectedIndex);
+            comparison.CompareVariableId = UserVariableDescriptor.IdFromList(cmbBooleanUserVariable.SelectedIndex);
         }
 
         return comparison;
@@ -985,22 +985,22 @@ public partial class EventCommandConditionalBranch : UserControl
         else if (rdoVarCompareGlobalVar.Checked)
         {
             comparison.CompareVariableType = VariableType.ServerVariable;
-            comparison.CompareVariableId = ServerVariableBase.IdFromList(cmbCompareGlobalVar.SelectedIndex);
+            comparison.CompareVariableId = ServerVariableDescriptor.IdFromList(cmbCompareGlobalVar.SelectedIndex);
         }
         else if (rdoVarComparePlayerVar.Checked)
         {
             comparison.CompareVariableType = VariableType.PlayerVariable;
-            comparison.CompareVariableId = PlayerVariableBase.IdFromList(cmbComparePlayerVar.SelectedIndex);
+            comparison.CompareVariableId = PlayerVariableDescriptor.IdFromList(cmbComparePlayerVar.SelectedIndex);
         }
         else if (rdoVarCompareGuildVar.Checked)
         {
             comparison.CompareVariableType = VariableType.GuildVariable;
-            comparison.CompareVariableId = GuildVariableBase.IdFromList(cmbCompareGuildVar.SelectedIndex);
+            comparison.CompareVariableId = GuildVariableDescriptor.IdFromList(cmbCompareGuildVar.SelectedIndex);
         }
         else if (rdoVarCompareUserVar.Checked)
         {
             comparison.CompareVariableType = VariableType.UserVariable;
-            comparison.CompareVariableId = UserVariableBase.IdFromList(cmbCompareUserVar.SelectedIndex);
+            comparison.CompareVariableId = UserVariableDescriptor.IdFromList(cmbCompareUserVar.SelectedIndex);
         }
         else
         {
@@ -1068,19 +1068,19 @@ public partial class EventCommandConditionalBranch : UserControl
 
         if (rdoPlayerVariable.Checked)
         {
-            InitVariableElements(PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex));
+            InitVariableElements(PlayerVariableDescriptor.IdFromList(cmbVariable.SelectedIndex));
         }
         else if (rdoGlobalVariable.Checked)
         {
-            InitVariableElements(ServerVariableBase.IdFromList(cmbVariable.SelectedIndex));
+            InitVariableElements(ServerVariableDescriptor.IdFromList(cmbVariable.SelectedIndex));
         }
         else if (rdoGuildVariable.Checked)
         {
-            InitVariableElements(GuildVariableBase.IdFromList(cmbVariable.SelectedIndex));
+            InitVariableElements(GuildVariableDescriptor.IdFromList(cmbVariable.SelectedIndex));
         }
         else if (rdoUserVariable.Checked)
         {
-            InitVariableElements(UserVariableBase.IdFromList(cmbVariable.SelectedIndex));
+            InitVariableElements(UserVariableDescriptor.IdFromList(cmbVariable.SelectedIndex));
         }
 
         UpdateVariableElements();
@@ -1152,11 +1152,11 @@ public partial class EventCommandConditionalBranch : UserControl
         cmbInvVariable.Items.Clear();
         if (rdoInvPlayerVariable.Checked)
         {
-            cmbInvVariable.Items.AddRange(PlayerVariableBase.GetNamesByType(VariableDataType.Integer));
+            cmbInvVariable.Items.AddRange(PlayerVariableDescriptor.GetNamesByType(VariableDataType.Integer));
             // Do not update if the wrong type of variable is saved
             if (conditionVariableType == VariableType.PlayerVariable)
             {
-                var index = PlayerVariableBase.ListIndex(conditionVariableId, VariableDataType.Integer);
+                var index = PlayerVariableDescriptor.ListIndex(conditionVariableId, VariableDataType.Integer);
                 if (index > -1)
                 {
                     cmbInvVariable.SelectedIndex = index;
@@ -1173,11 +1173,11 @@ public partial class EventCommandConditionalBranch : UserControl
         }
         else if (rdoInvGlobalVariable.Checked)
         {
-            cmbInvVariable.Items.AddRange(ServerVariableBase.GetNamesByType(VariableDataType.Integer));
+            cmbInvVariable.Items.AddRange(ServerVariableDescriptor.GetNamesByType(VariableDataType.Integer));
             // Do not update if the wrong type of variable is saved
             if (conditionVariableType == VariableType.ServerVariable)
             {
-                var index = ServerVariableBase.ListIndex(conditionVariableId, VariableDataType.Integer);
+                var index = ServerVariableDescriptor.ListIndex(conditionVariableId, VariableDataType.Integer);
                 if (index > -1)
                 {
                     cmbInvVariable.SelectedIndex = index;
@@ -1194,11 +1194,11 @@ public partial class EventCommandConditionalBranch : UserControl
         }
         else if (rdoInvGuildVariable.Checked)
         {
-            cmbInvVariable.Items.AddRange(GuildVariableBase.GetNamesByType(VariableDataType.Integer));
+            cmbInvVariable.Items.AddRange(GuildVariableDescriptor.GetNamesByType(VariableDataType.Integer));
             // Do not update if the wrong type of variable is saved
             if (conditionVariableType == VariableType.GuildVariable)
             {
-                var index = GuildVariableBase.ListIndex(conditionVariableId, VariableDataType.Integer);
+                var index = GuildVariableDescriptor.ListIndex(conditionVariableId, VariableDataType.Integer);
                 if (index > -1)
                 {
                     cmbInvVariable.SelectedIndex = index;
@@ -1406,22 +1406,22 @@ public partial class EventCommandConditionalBranch : UserControl
         if (rdoGlobalVariable.Checked)
         {
             condition.VariableType = VariableType.ServerVariable;
-            condition.VariableId = ServerVariableBase.IdFromList(cmbVariable.SelectedIndex);
+            condition.VariableId = ServerVariableDescriptor.IdFromList(cmbVariable.SelectedIndex);
         }
         else if (rdoPlayerVariable.Checked)
         {
             condition.VariableType = VariableType.PlayerVariable;
-            condition.VariableId = PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex);
+            condition.VariableId = PlayerVariableDescriptor.IdFromList(cmbVariable.SelectedIndex);
         }
         else if (rdoGuildVariable.Checked)
         {
             condition.VariableType = VariableType.GuildVariable;
-            condition.VariableId = GuildVariableBase.IdFromList(cmbVariable.SelectedIndex);
+            condition.VariableId = GuildVariableDescriptor.IdFromList(cmbVariable.SelectedIndex);
         }
         else if (rdoUserVariable.Checked)
         {
             condition.VariableType = VariableType.UserVariable;
-            condition.VariableId = UserVariableBase.IdFromList(cmbVariable.SelectedIndex);
+            condition.VariableId = UserVariableDescriptor.IdFromList(cmbVariable.SelectedIndex);
         }
 
         if (grpBooleanVariable.Visible)
@@ -1449,17 +1449,17 @@ public partial class EventCommandConditionalBranch : UserControl
         if (rdoInvPlayerVariable.Checked)
         {
             condition.VariableType = VariableType.PlayerVariable;
-            condition.VariableId = PlayerVariableBase.IdFromList(cmbInvVariable.SelectedIndex, VariableDataType.Integer);
+            condition.VariableId = PlayerVariableDescriptor.IdFromList(cmbInvVariable.SelectedIndex, VariableDataType.Integer);
         }
         else if (rdoInvGlobalVariable.Checked)
         {
             condition.VariableType = VariableType.ServerVariable;
-            condition.VariableId = ServerVariableBase.IdFromList(cmbInvVariable.SelectedIndex, VariableDataType.Integer);
+            condition.VariableId = ServerVariableDescriptor.IdFromList(cmbInvVariable.SelectedIndex, VariableDataType.Integer);
         }
         else if (rdoInvGuildVariable.Checked)
         {
             condition.VariableType = VariableType.GuildVariable;
-            condition.VariableId = GuildVariableBase.IdFromList(cmbInvVariable.SelectedIndex, VariableDataType.Integer);
+            condition.VariableId = GuildVariableDescriptor.IdFromList(cmbInvVariable.SelectedIndex, VariableDataType.Integer);
         }
         condition.UseVariable = !rdoManual.Checked;
         condition.CheckBank = chkBank.Checked;
@@ -1561,17 +1561,17 @@ public partial class EventCommandConditionalBranch : UserControl
         if (rdoInvPlayerVariable.Checked)
         {
             condition.VariableType = VariableType.PlayerVariable;
-            condition.VariableId = PlayerVariableBase.IdFromList(cmbInvVariable.SelectedIndex, VariableDataType.Integer);
+            condition.VariableId = PlayerVariableDescriptor.IdFromList(cmbInvVariable.SelectedIndex, VariableDataType.Integer);
         }
         else if (rdoInvGlobalVariable.Checked)
         {
             condition.VariableType = VariableType.ServerVariable;
-            condition.VariableId = ServerVariableBase.IdFromList(cmbInvVariable.SelectedIndex, VariableDataType.Integer);
+            condition.VariableId = ServerVariableDescriptor.IdFromList(cmbInvVariable.SelectedIndex, VariableDataType.Integer);
         }
         else if (rdoInvGuildVariable.Checked)
         {
             condition.VariableType = VariableType.GuildVariable;
-            condition.VariableId = GuildVariableBase.IdFromList(cmbInvVariable.SelectedIndex, VariableDataType.Integer);
+            condition.VariableId = GuildVariableDescriptor.IdFromList(cmbInvVariable.SelectedIndex, VariableDataType.Integer);
         }
         condition.UseVariable = !rdoManual.Checked;
     }

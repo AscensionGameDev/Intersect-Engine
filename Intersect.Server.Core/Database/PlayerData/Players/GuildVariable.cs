@@ -15,7 +15,7 @@ public partial class GuildVariable : Variable
     }
 
     [NotMapped]
-    public string VariableName => GuildVariableBase.GetName(VariableId);
+    public string VariableName => GuildVariableDescriptor.GetName(VariableId);
 
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     [JsonIgnore]

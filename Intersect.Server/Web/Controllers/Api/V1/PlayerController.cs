@@ -629,7 +629,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
                 return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
 
-            if (!PlayerVariableBase.TryGet(variableId, out var variableDescriptor))
+            if (!PlayerVariableDescriptor.TryGet(variableId, out var variableDescriptor))
             {
                 return NotFound($@"Variable not found for id {variableId}");
             }
@@ -654,7 +654,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
                 return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
 
-            if (!PlayerVariableBase.TryGet(variableId, out var variableDescriptor))
+            if (!PlayerVariableDescriptor.TryGet(variableId, out var variableDescriptor))
             {
                 return NotFound($@"Variable not found for id {variableId}");
             }
@@ -682,7 +682,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
                 return NotFound($@"No player found for lookup key '{lookupKey}'");
             }
 
-            if (!PlayerVariableBase.TryGet(variableId, out var variableDescriptor))
+            if (!PlayerVariableDescriptor.TryGet(variableId, out var variableDescriptor))
             {
                 return NotFound($@"Variable not found for id {variableId}");
             }

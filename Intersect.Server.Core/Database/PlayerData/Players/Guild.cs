@@ -94,7 +94,7 @@ public partial class Guild
     /// <summary>
     /// Variables that have been updated for this guild which need to be saved to the db
     /// </summary>
-    public ConcurrentDictionary<Guid, GuildVariableBase> UpdatedVariables = new ConcurrentDictionary<Guid, GuildVariableBase>();
+    public ConcurrentDictionary<Guid, GuildVariableDescriptor> UpdatedVariables = new ConcurrentDictionary<Guid, GuildVariableDescriptor>();
 
     /// <summary>
     /// Locking context to prevent saving this guild to the db twice at the same time, and to prevent bank items from being withdrawed/deposited into by 2 threads at the same time
@@ -831,7 +831,7 @@ public partial class Guild
     /// <returns></returns>
     private Variable CreateVariable(Guid id)
     {
-        if (GuildVariableBase.Get(id) == null)
+        if (GuildVariableDescriptor.Get(id) == null)
         {
             return null;
         }

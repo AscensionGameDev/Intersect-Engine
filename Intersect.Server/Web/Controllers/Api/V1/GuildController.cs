@@ -309,7 +309,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
                 return BadRequest($@"Variable id cannot be {variableId}");
             }
 
-            if (!GuildVariableBase.TryGet(variableId, out var variableDescriptor))
+            if (!GuildVariableDescriptor.TryGet(variableId, out var variableDescriptor))
             {
                 return NotFound($@"Variable not found for id {variableId}");
             }
@@ -334,7 +334,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
                 return BadRequest($@"Variable id cannot be {variableId}");
             }
 
-            if (!GuildVariableBase.TryGet(variableId, out var variableDescriptor))
+            if (!GuildVariableDescriptor.TryGet(variableId, out var variableDescriptor))
             {
                 return NotFound($@"Variable not found for id {variableId}");
             }
@@ -362,7 +362,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
                 return BadRequest($@"Variable id cannot be {variableId}");
             }
 
-            if (!GuildVariableBase.TryGet(variableId, out var variableDescriptor))
+            if (!GuildVariableDescriptor.TryGet(variableId, out var variableDescriptor))
             {
                 return NotFound($@"Variable not found for id {variableId}");
             }

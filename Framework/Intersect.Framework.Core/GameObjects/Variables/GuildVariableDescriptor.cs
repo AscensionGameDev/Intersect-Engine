@@ -2,15 +2,15 @@ using Newtonsoft.Json;
 
 namespace Intersect.Framework.Core.GameObjects.Variables;
 
-public partial class GuildVariableBase : VariableDescriptor<GuildVariableBase>, IVariableDescriptor
+public partial class GuildVariableDescriptor : VariableDescriptor<GuildVariableDescriptor>, IVariableDescriptor
 {
     [JsonConstructor]
-    public GuildVariableBase(Guid id) : base(id)
+    public GuildVariableDescriptor(Guid id) : base(id)
     {
         Name = "New Guild Variable";
     }
 
-    public GuildVariableBase()
+    public GuildVariableDescriptor()
     {
         Name = "New Guild Variable";
     }

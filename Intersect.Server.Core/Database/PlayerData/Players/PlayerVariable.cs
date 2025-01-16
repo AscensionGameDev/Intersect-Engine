@@ -19,7 +19,7 @@ public partial class PlayerVariable : Variable, IPlayerOwned
     }
 
     [NotMapped]
-    public string VariableName => PlayerVariableBase.GetName(VariableId);
+    public string VariableName => PlayerVariableDescriptor.GetName(VariableId);
 
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     [JsonIgnore]

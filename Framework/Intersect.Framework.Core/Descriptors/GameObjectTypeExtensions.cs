@@ -129,7 +129,7 @@ public static partial class GameObjectTypeExtensions
             return gameObjectType
                 .GetLookup()
                 .OrderBy(p => p.Value?.Name)
-                .Select(pair => pair.Value?.Name ?? PlayerVariableBase.Deleted)
+                .Select(pair => pair.Value?.Name ?? PlayerVariableDescriptor.Deleted)
                 .ToArray();
         }
 
@@ -139,7 +139,7 @@ public static partial class GameObjectTypeExtensions
             .OfType<IVariableDescriptor>()
             .Where(descriptor => dataTypeFilter == default || descriptor.DataType == dataTypeFilter)
             .OrderBy(descriptor => descriptor.Name)
-            .Select(descriptor => descriptor.Name ?? PlayerVariableBase.Deleted)
+            .Select(descriptor => descriptor.Name ?? PlayerVariableDescriptor.Deleted)
             .ToArray();
     }
 }

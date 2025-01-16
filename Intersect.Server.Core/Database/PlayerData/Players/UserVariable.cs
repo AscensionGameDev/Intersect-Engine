@@ -15,7 +15,7 @@ public partial class UserVariable : Variable
     }
 
     [NotMapped]
-    public string VariableName => UserVariableBase.GetName(VariableId);
+    public string VariableName => UserVariableDescriptor.GetName(VariableId);
 
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     [JsonIgnore]

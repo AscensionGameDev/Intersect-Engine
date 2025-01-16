@@ -2,15 +2,15 @@ using Newtonsoft.Json;
 
 namespace Intersect.Framework.Core.GameObjects.Variables;
 
-public partial class PlayerVariableBase : VariableDescriptor<PlayerVariableBase>, IVariableDescriptor
+public partial class PlayerVariableDescriptor : VariableDescriptor<PlayerVariableDescriptor>, IVariableDescriptor
 {
     [JsonConstructor]
-    public PlayerVariableBase(Guid id) : base(id)
+    public PlayerVariableDescriptor(Guid id) : base(id)
     {
         Name = "New Player Variable";
     }
 
-    public PlayerVariableBase()
+    public PlayerVariableDescriptor()
     {
         Name = "New Player Variable";
     }

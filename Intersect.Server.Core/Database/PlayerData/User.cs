@@ -46,7 +46,7 @@ public partial class User
     ///     Variables that have been updated for this account which need to be saved to the db
     /// </summary>
     [JsonIgnore]
-    public ConcurrentDictionary<Guid, UserVariableBase> UpdatedVariables = new();
+    public ConcurrentDictionary<Guid, UserVariableDescriptor> UpdatedVariables = new();
 
     public static int OnlineCount => OnlineUsers.Count;
 
@@ -986,7 +986,7 @@ public partial class User
     /// <returns></returns>
     private Variable CreateVariable(Guid id)
     {
-        if (UserVariableBase.Get(id) == null)
+        if (UserVariableDescriptor.Get(id) == null)
         {
             return null;
         }

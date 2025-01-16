@@ -48,10 +48,10 @@ public enum GameObjectType
     [GameObjectInfo(typeof(EventBase), "events")]
     Event,
 
-    [GameObjectInfo(typeof(PlayerVariableBase), "player_variables")]
+    [GameObjectInfo(typeof(PlayerVariableDescriptor), "player_variables")]
     PlayerVariable,
 
-    [GameObjectInfo(typeof(ServerVariableBase), "server_variables")]
+    [GameObjectInfo(typeof(ServerVariableDescriptor), "server_variables")]
     ServerVariable,
 
     [GameObjectInfo(typeof(TilesetBase), "tilesets")]
@@ -60,9 +60,9 @@ public enum GameObjectType
     [GameObjectInfo(typeof(TimeBase), "")]
     Time,
 
-    [GameObjectInfo(typeof(GuildVariableBase), "guild_variables")]
+    [GameObjectInfo(typeof(GuildVariableDescriptor), "guild_variables")]
     GuildVariable,
 
-    [GameObjectInfo(typeof(UserVariableBase), "user_variables")]
+    [GameObjectInfo(typeof(UserVariableDescriptor), "user_variables")]
     UserVariable,
 }

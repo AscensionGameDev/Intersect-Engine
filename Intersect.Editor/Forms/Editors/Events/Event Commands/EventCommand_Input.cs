@@ -70,44 +70,44 @@ public partial class EventCommandInput : UserControl
         cmbVariable.Items.Clear();
         if (rdoPlayerVariables.Checked)
         {
-            cmbVariable.Items.AddRange(PlayerVariableBase.Names);
-            cmbVariable.SelectedIndex = PlayerVariableBase.ListIndex(mMyCommand.VariableId);
+            cmbVariable.Items.AddRange(PlayerVariableDescriptor.Names);
+            cmbVariable.SelectedIndex = PlayerVariableDescriptor.ListIndex(mMyCommand.VariableId);
 
             if (cmbVariable.SelectedIndex != -1)
             {
                 UpdateMinMaxValues(
-                    PlayerVariableBase.Get(PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex)).DataType
+                    PlayerVariableDescriptor.Get(PlayerVariableDescriptor.IdFromList(cmbVariable.SelectedIndex)).DataType
                 );
             }
         }
         else if (rdoGlobalVariables.Checked)
         {
-            cmbVariable.Items.AddRange(ServerVariableBase.Names);
-            cmbVariable.SelectedIndex = ServerVariableBase.ListIndex(mMyCommand.VariableId);
+            cmbVariable.Items.AddRange(ServerVariableDescriptor.Names);
+            cmbVariable.SelectedIndex = ServerVariableDescriptor.ListIndex(mMyCommand.VariableId);
 
             if (cmbVariable.SelectedIndex != -1)
             {
                 UpdateMinMaxValues(
-                    ServerVariableBase.Get(ServerVariableBase.IdFromList(cmbVariable.SelectedIndex)).DataType
+                    ServerVariableDescriptor.Get(ServerVariableDescriptor.IdFromList(cmbVariable.SelectedIndex)).DataType
                 );
             }
         }
         else if (rdoGuildVariables.Checked)
         {
-            cmbVariable.Items.AddRange(GuildVariableBase.Names);
-            cmbVariable.SelectedIndex = GuildVariableBase.ListIndex(mMyCommand.VariableId);
+            cmbVariable.Items.AddRange(GuildVariableDescriptor.Names);
+            cmbVariable.SelectedIndex = GuildVariableDescriptor.ListIndex(mMyCommand.VariableId);
             if (cmbVariable.SelectedIndex != -1)
             {
                 UpdateMinMaxValues(
-                    GuildVariableBase.Get(GuildVariableBase.IdFromList(cmbVariable.SelectedIndex)).DataType
+                    GuildVariableDescriptor.Get(GuildVariableDescriptor.IdFromList(cmbVariable.SelectedIndex)).DataType
                 );
             }
         }
         else if (rdoUserVariables.Checked)
         {
-            cmbVariable.Items.AddRange(UserVariableBase.Names);
-            cmbVariable.SelectedIndex = UserVariableBase.ListIndex(mMyCommand.VariableId);
-            if (cmbVariable.SelectedIndex != -1 && UserVariableBase.TryGet(UserVariableBase.IdFromList(cmbVariable.SelectedIndex), out var userVar))
+            cmbVariable.Items.AddRange(UserVariableDescriptor.Names);
+            cmbVariable.SelectedIndex = UserVariableDescriptor.ListIndex(mMyCommand.VariableId);
+            if (cmbVariable.SelectedIndex != -1 && UserVariableDescriptor.TryGet(UserVariableDescriptor.IdFromList(cmbVariable.SelectedIndex), out var userVar))
             {
                 UpdateMinMaxValues(
                    userVar.DataType
@@ -156,22 +156,22 @@ public partial class EventCommandInput : UserControl
         if (rdoPlayerVariables.Checked)
         {
             mMyCommand.VariableType = VariableType.PlayerVariable;
-            mMyCommand.VariableId = PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex);
+            mMyCommand.VariableId = PlayerVariableDescriptor.IdFromList(cmbVariable.SelectedIndex);
         }
         else if (rdoGlobalVariables.Checked)
         {
             mMyCommand.VariableType = VariableType.ServerVariable;
-            mMyCommand.VariableId = ServerVariableBase.IdFromList(cmbVariable.SelectedIndex);
+            mMyCommand.VariableId = ServerVariableDescriptor.IdFromList(cmbVariable.SelectedIndex);
         }
         else if (rdoGuildVariables.Checked)
         {
             mMyCommand.VariableType = VariableType.GuildVariable;
-            mMyCommand.VariableId = GuildVariableBase.IdFromList(cmbVariable.SelectedIndex);
+            mMyCommand.VariableId = GuildVariableDescriptor.IdFromList(cmbVariable.SelectedIndex);
         }
         else if (rdoUserVariables.Checked)
         {
             mMyCommand.VariableType = VariableType.UserVariable;
-            mMyCommand.VariableId = UserVariableBase.IdFromList(cmbVariable.SelectedIndex);
+            mMyCommand.VariableId = UserVariableDescriptor.IdFromList(cmbVariable.SelectedIndex);
         }
 
         mEventEditor.FinishCommandEdit();
@@ -219,19 +219,19 @@ public partial class EventCommandInput : UserControl
     private void cmbVariable_SelectedIndexChanged(object sender, EventArgs e)
     {
         var idx = cmbVariable.SelectedIndex;
-        if (rdoPlayerVariables.Checked && PlayerVariableBase.TryGet(PlayerVariableBase.IdFromList(idx), out var playerVar))
+        if (rdoPlayerVariables.Checked && PlayerVariableDescriptor.TryGet(PlayerVariableDescriptor.IdFromList(idx), out var playerVar))
         {
             UpdateMinMaxValues(playerVar.DataType);
         }
-        else if (rdoGlobalVariables.Checked && ServerVariableBase.TryGet(ServerVariableBase.IdFromList(idx), out var serverVar))
+        else if (rdoGlobalVariables.Checked && ServerVariableDescriptor.TryGet(ServerVariableDescriptor.IdFromList(idx), out var serverVar))
         {
             UpdateMinMaxValues(serverVar.DataType);
         }
-        else if (rdoGuildVariables.Checked && GuildVariableBase.TryGet(GuildVariableBase.IdFromList(idx), out var guildVar))
+        else if (rdoGuildVariables.Checked && GuildVariableDescriptor.TryGet(GuildVariableDescriptor.IdFromList(idx), out var guildVar))
         {
             UpdateMinMaxValues(guildVar.DataType);
         }
-        else if (rdoUserVariables.Checked && UserVariableBase.TryGet(UserVariableBase.IdFromList(idx), out var userVar))
+        else if (rdoUserVariables.Checked && UserVariableDescriptor.TryGet(UserVariableDescriptor.IdFromList(idx), out var userVar))
         {
             UpdateMinMaxValues(userVar.DataType);
         }

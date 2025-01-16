@@ -30,7 +30,7 @@ namespace Intersect.Server.Core.Commands
                 throw new ArgumentNullException(Strings.Commands.Arguments.VariableId.Name, "No server variable specified.");
             }
 
-            ServerVariableBase variable;
+            ServerVariableDescriptor variable;
             if (Guid.TryParse(serverVariableNameOrId, out Guid serverVariableId))
             {
                 variable = GameContext.Queries.ServerVariableById(serverVariableId);

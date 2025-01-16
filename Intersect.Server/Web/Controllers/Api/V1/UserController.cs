@@ -551,7 +551,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
                 return BadRequest($@"Variable id cannot be {variableId}");
             }
 
-            if (!UserVariableBase.TryGet(variableId, out var variableDescriptor))
+            if (!UserVariableDescriptor.TryGet(variableId, out var variableDescriptor))
             {
                 return NotFound($@"Variable not found for id {variableId}");
             }
@@ -581,7 +581,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
                 return BadRequest($@"Variable id cannot be {variableId}");
             }
 
-            if (!UserVariableBase.TryGet(variableId, out var variableDescriptor))
+            if (!UserVariableDescriptor.TryGet(variableId, out var variableDescriptor))
             {
                 return NotFound($@"Variable not found for id {variableId}");
             }
@@ -614,7 +614,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
                 return BadRequest($@"Variable id cannot be {variableId}");
             }
 
-            if (!UserVariableBase.TryGet(variableId, out var variableDescriptor))
+            if (!UserVariableDescriptor.TryGet(variableId, out var variableDescriptor))
             {
                 return NotFound($@"Variable not found for id {variableId}");
             }

@@ -40,7 +40,7 @@ namespace Intersect.Server.Core.Commands
                 throw new ArgumentNullException(Strings.Commands.Arguments.VariableValue.Name, $"No value specified for server variable '{serverVariableNameOrId}'");
             }
 
-            ServerVariableBase variable;
+            ServerVariableDescriptor variable;
             if (Guid.TryParse(serverVariableNameOrId, out Guid serverVariableId))
             {
                 variable = GameContext.Queries.ServerVariableById(serverVariableId);

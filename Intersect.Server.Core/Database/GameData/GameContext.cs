@@ -62,13 +62,13 @@ public abstract partial class GameContext : IntersectDbContext<GameContext>, IGa
     public DbSet<SpellBase> Spells { get; set; }
 
     //Variables
-    public DbSet<PlayerVariableBase> PlayerVariables { get; set; }
+    public DbSet<PlayerVariableDescriptor> PlayerVariables { get; set; }
 
-    public DbSet<ServerVariableBase> ServerVariables { get; set; }
+    public DbSet<ServerVariableDescriptor> ServerVariables { get; set; }
 
-    public DbSet<GuildVariableBase> GuildVariables { get; set; }
+    public DbSet<GuildVariableDescriptor> GuildVariables { get; set; }
 
-    public DbSet<UserVariableBase> UserVariables { get; set; }
+    public DbSet<UserVariableDescriptor> UserVariables { get; set; }
 
     //Tilesets
     public DbSet<TilesetBase> Tilesets { get; set; }
@@ -110,13 +110,13 @@ public abstract partial class GameContext : IntersectDbContext<GameContext>, IGa
 
     internal static partial class Queries
     {
-        internal static readonly Func<Guid, ServerVariableBase> ServerVariableById =
-            (Guid id) => (ServerVariableBase)ServerVariableBase.Lookup.FirstOrDefault(variable => variable.Key == id).Value;
+        internal static readonly Func<Guid, ServerVariableDescriptor> ServerVariableById =
+            (Guid id) => (ServerVariableDescriptor)ServerVariableDescriptor.Lookup.FirstOrDefault(variable => variable.Key == id).Value;
 
-        internal static readonly Func<string, ServerVariableBase> ServerVariableByName =
-            (string name) => (ServerVariableBase)ServerVariableBase.Lookup.FirstOrDefault(variable => string.Equals(variable.Value.Name, name, StringComparison.OrdinalIgnoreCase)).Value;
+        internal static readonly Func<string, ServerVariableDescriptor> ServerVariableByName =
+            (string name) => (ServerVariableDescriptor)ServerVariableDescriptor.Lookup.FirstOrDefault(variable => string.Equals(variable.Value.Name, name, StringComparison.OrdinalIgnoreCase)).Value;
 
-        internal static readonly Func<int, int, IEnumerable<ServerVariableBase>> ServerVariables =
-            (int page, int count) => ServerVariableBase.Lookup.Select(v => (ServerVariableBase)v.Value).OrderBy(v => v.Id.ToString()).Skip(page * count).Take(count);
+        internal static readonly Func<int, int, IEnumerable<ServerVariableDescriptor>> ServerVariables =
+            (int page, int count) => ServerVariableDescriptor.Lookup.Select(v => (ServerVariableDescriptor)v.Value).OrderBy(v => v.Id.ToString()).Skip(page * count).Take(count);
     }
 }

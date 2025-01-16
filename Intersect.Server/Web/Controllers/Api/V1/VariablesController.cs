@@ -17,7 +17,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1;
 public sealed partial class VariablesController : IntersectController
 {
     [HttpGet]
-    [ProducesResponseType(typeof(DataPage<ServerVariableBase>), (int)HttpStatusCode.OK, ContentTypes.Json)]
+    [ProducesResponseType(typeof(DataPage<ServerVariableDescriptor>), (int)HttpStatusCode.OK, ContentTypes.Json)]
     public IActionResult ServerVariablesGet([FromQuery] PagingInfo pageInfo)
     {
         pageInfo.Page = Math.Max(pageInfo.Page, 0);
@@ -25,9 +25,9 @@ public sealed partial class VariablesController : IntersectController
         var entries = GameContext.Queries.ServerVariables(pageInfo.Page, pageInfo.PageSize)?.ToList();
 
         return Ok(
-            new DataPage<ServerVariableBase>
+            new DataPage<ServerVariableDescriptor>
             {
-                Total = ServerVariableBase.Lookup.Count,
+                Total = ServerVariableDescriptor.Lookup.Count,
                 Page = pageInfo.Page,
                 PageSize = pageInfo.PageSize,
                 Count = entries?.Count ?? 0,
@@ -39,7 +39,7 @@ public sealed partial class VariablesController : IntersectController
     [HttpGet("{variableId:guid}")]
     [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
     [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
-    [ProducesResponseType(typeof(ServerVariableBase), (int)HttpStatusCode.OK, ContentTypes.Json)]
+    [ProducesResponseType(typeof(ServerVariableDescriptor), (int)HttpStatusCode.OK, ContentTypes.Json)]
     public IActionResult ServerVariableGet(Guid variableId)
     {
         if (variableId == default)
@@ -87,7 +87,7 @@ public sealed partial class VariablesController : IntersectController
     [HttpPost("{variableId:guid}")]
     [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
     [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
-    [ProducesResponseType(typeof(ServerVariableBase), (int)HttpStatusCode.OK, ContentTypes.Json)]
+    [ProducesResponseType(typeof(ServerVariableDescriptor), (int)HttpStatusCode.OK, ContentTypes.Json)]
     public IActionResult ServerVariableSet(Guid variableId, [FromBody] VariableValueBody variableValue)
     {
         if (variableId == default)

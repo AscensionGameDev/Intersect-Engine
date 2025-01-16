@@ -3,15 +3,15 @@ using Newtonsoft.Json;
 
 namespace Intersect.Framework.Core.GameObjects.Variables;
 
-public partial class ServerVariableBase : VariableDescriptor<ServerVariableBase>, IVariableDescriptor
+public partial class ServerVariableDescriptor : VariableDescriptor<ServerVariableDescriptor>, IVariableDescriptor
 {
     [JsonConstructor]
-    public ServerVariableBase(Guid id) : base(id)
+    public ServerVariableDescriptor(Guid id) : base(id)
     {
         Name = "New Global Variable";
     }
 
-    public ServerVariableBase()
+    public ServerVariableDescriptor()
     {
         Name = "New Global Variable";
     }

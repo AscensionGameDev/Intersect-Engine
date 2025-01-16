@@ -41,7 +41,7 @@ public interface IGameContext : IDbContext
 
     DbSet<SpellBase> Spells { get; set; }
 
-    DbSet<ServerVariableBase> ServerVariables { get; set; }
+    DbSet<ServerVariableDescriptor> ServerVariables { get; set; }
 
     DbSet<TilesetBase> Tilesets { get; set; }
 
