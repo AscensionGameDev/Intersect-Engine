@@ -1,11 +1,16 @@
+using System.Globalization;
 using System.Net;
 using System.Reflection;
+using System.Security.Claims;
 using System.Threading.RateLimiting;
+using Htmx.TagHelpers;
 using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Reflection;
 using Intersect.Logging;
+using Intersect.Security.Claims;
 using Intersect.Server.Core;
+using Intersect.Server.Database.PlayerData.Api;
 using Intersect.Server.Web.Authentication;
 using Intersect.Server.Web.Configuration;
 using Intersect.Server.Web.Constraints;
@@ -16,23 +21,22 @@ using Intersect.Server.Web.Serialization;
 using Intersect.Server.Web.Swagger.Filters;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.OData;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.FileProviders.Physical;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using Intersect.Server.Collections.Indexing;
+using Intersect.Server.Web.Controllers;
+
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
 namespace Intersect.Server.Web;
@@ -41,6 +45,8 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
 {
     private WebApplication? _app;
     private static readonly Assembly Assembly = typeof(ApiService).Assembly;
+
+    private static string GetOptionsName<TOptions>() => typeof(TOptions).Name.Replace("Options", string.Empty);
 
     // ReSharper disable once MemberCanBeMadeStatic.Local
     private WebApplication? Configure()
@@ -55,17 +61,28 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
         var configuration = apiConfigurationSection.Get<ApiConfiguration>();
         builder.Services.Configure<ApiConfiguration>(apiConfigurationSection);
 
-        // I can't get System.Text.Json to deserialize an array as non-null, and it totally ignores
-        // the JsonConverter attribute I tried putting on it, so I am just giving up and doing this
-        // to make sure the array is not null in the event that it is empty.
-        configuration.StaticFilePaths ??= [];
-
         if (!configuration.Enabled)
         {
             return default;
         }
 
         Log.Info($"Launching Intersect REST API in '{builder.Environment.EnvironmentName}' mode...");
+
+        // I can't get System.Text.Json to deserialize an array as non-null, and it totally ignores
+        // the JsonConverter attribute I tried putting on it, so I am just giving up and doing this
+        // to make sure the array is not null in the event that it is empty.
+        configuration.StaticFilePaths ??= new List<StaticFilePathOptions>();
+
+        var tokenGenerationOptionsSection =
+            apiConfigurationSection.GetRequiredSection(nameof(TokenGenerationOptions));
+        var tokenGenerationOptions = tokenGenerationOptionsSection.Get<TokenGenerationOptions>();
+
+        builder.Services.Configure<TokenGenerationOptions>(tokenGenerationOptionsSection);
+
+        var responseCompressionSection = builder.Configuration.GetSection(GetOptionsName<ResponseCompressionOptions>());
+        builder.Services.Configure<ResponseCompressionOptions>(responseCompressionSection);
+
+        builder.Services.AddResponseCompression();
 
         var corsPolicies = builder.Configuration.GetValue<Dictionary<string, CorsPolicy>>("Cors");
         if (corsPolicies != default)
@@ -123,7 +140,170 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
             }
         );
 
-        builder.Services.AddControllers()
+        builder.Services.Configure<SecurityStampValidatorOptions>(
+            options =>
+            {
+                options.ValidationInterval = TimeSpan.FromSeconds(10);
+            }
+        );
+
+#if DEBUG
+        IdentityModelEventSource.ShowPII = true;
+#endif
+
+        builder.Services.AddSingleton<IntersectAuthenticationManager>();
+
+        builder.Services.AddAuthentication(
+                options =>
+                {
+                    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                }
+            )
+            .AddCookie(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                options =>
+                {
+                    options.ForwardChallenge = JwtBearerDefaults.AuthenticationScheme;
+                    options.Events.OnSignedIn += async (context) => { };
+                    options.Events.OnSigningIn += async (context) => { };
+                    options.Events.OnSigningOut += async (context) => { };
+                    options.Events.OnCheckSlidingExpiration += async (context) => { };
+                    options.Events.OnValidatePrincipal += async context =>
+                    {
+                        var authenticationManager = context.HttpContext.RequestServices
+                            .GetRequiredService<IntersectAuthenticationManager>();
+                        var authenticationResult = await authenticationManager.UpdatePrincipal(
+                            context.Principal,
+                            context.ShouldRenew
+                        );
+                        var (result, _, updatedPrincipal) = authenticationResult;
+                        if (result != AuthenticationResultType.Success || updatedPrincipal == default)
+                        {
+                            context.RejectPrincipal();
+                            return;
+                        }
+
+                        if (updatedPrincipal == context.Principal)
+                        {
+                            return;
+                        }
+
+                        var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<ApiService>>();
+                        logger.LogInformation(
+                            "Renewing cookie for {UserId}",
+                            updatedPrincipal.FindFirstValue(ClaimTypes.NameIdentifier)
+                        );
+                        context.ShouldRenew = true;
+                        context.ReplacePrincipal(updatedPrincipal);
+                    };
+                    options.Events.OnRedirectToLogin += async (context) => { };
+                    options.Events.OnRedirectToAccessDenied += async (context) => { };
+                    options.Events.OnRedirectToLogout += async (context) => { };
+                    options.Events.OnRedirectToReturnUrl += async (context) => { };
+                    options.ExpireTimeSpan = TimeSpan.FromSeconds(10);
+                    options.SlidingExpiration = true;
+                    builder.Configuration.Bind(nameof(CookieAuthenticationOptions), options);
+                }
+            )
+            .AddJwtBearer(
+                JwtBearerDefaults.AuthenticationScheme,
+                options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ClockSkew = TimeSpan.FromSeconds(5),
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = false,
+                        ValidateIssuerSigningKey = true,
+                    };
+                    builder.Configuration.Bind($"Api.{nameof(JwtBearerOptions)}", options);
+                    options.TokenValidationParameters.ValidAudience ??= tokenGenerationOptions.Audience;
+                    options.TokenValidationParameters.ValidIssuer ??= tokenGenerationOptions.Issuer;
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = async context =>
+                        {
+                        },
+                        OnChallenge = async context =>
+                        {
+                        },
+                        OnMessageReceived = async context => { },
+                        OnTokenValidated = async context =>
+                        {
+                            var rawTicketId = context.Principal?.FindFirstValue(IntersectClaimTypes.TicketId);
+                            if (rawTicketId == default)
+                            {
+                                context.Fail("expired_token");
+                                return;
+                            }
+
+                            if (!Guid.TryParse(rawTicketId, out var ticketId))
+                            {
+                                context.Fail("expired_token");
+                                return;
+                            }
+
+                            if (!RefreshToken.TryFindForTicket(ticketId, out var refreshToken, includeUser: true))
+                            {
+                                context.Fail("expired_token");
+                                return;
+                            }
+
+                            var authenticationManager = context.HttpContext.RequestServices
+                                .GetRequiredService<IntersectAuthenticationManager>();
+                            var authenticationResult = await authenticationManager.UpdatePrincipal(
+                                context.Principal,
+                                force: false,
+                                user: refreshToken.User,
+                                ignoreMidpoint: true
+                            );
+                            var (result, _, updatedPrincipal) = authenticationResult;
+                            if (result != AuthenticationResultType.Success || updatedPrincipal == default)
+                            {
+                                context.Fail("expired_token");
+                                return;
+                            }
+
+                            if (updatedPrincipal == context.Principal)
+                            {
+                                // context.NoResult();
+                                context.Success();
+                                return;
+                            }
+
+                            context.Fail("expired_token");
+
+                            // var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<ApiService>>();
+                            // logger.LogInformation(
+                            //     "Changing token for {UserId}",
+                            //     updatedPrincipal.FindFirstValue(ClaimTypes.NameIdentifier)
+                            // );
+                            // context.Principal = updatedPrincipal;
+                            // context.Success();
+                        },
+                    };
+                    SymmetricSecurityKey issuerKey = new(tokenGenerationOptions.SecretData);
+                    options.TokenValidationParameters.IssuerSigningKey = issuerKey;
+                }
+            );
+
+        builder.Services.AddOutputCache(o => o.AddPolicy(nameof(AvatarController), AvatarController.OutputCachePolicy));
+
+        builder.Services.AddAuthorization(authOptions => authOptions.AddIntersectPolicies());
+
+        builder.Services.AddResponseCaching();
+
+        builder.Services.AddMvc(o => o.CacheProfiles.Add(nameof(AvatarController), AvatarController.ResponseCacheProfile))
+            .WithRazorPagesRoot("/Web/Pages")
+            .AddRazorPagesOptions(
+                rpo =>
+                {
+                    rpo.Conventions.AuthorizeFolder("/Developer", policy: "Developer");
+                }
+            )
             .AddNewtonsoftJson(
                 newtonsoftOptions =>
                 {
@@ -140,10 +320,6 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                     formatterMappings.ClearMediaTypeMappingForFormat("text/json");
                 }
             );
-
-        // builder.Services.ConfigureHttpJsonOptions(
-        //     jsonOptions => jsonOptions.SerializerOptions.Converters.Add(new JsonStringEnumConverter())
-        // );
 
         builder.Services.AddEndpointsApiExplorer();
 
@@ -201,6 +377,7 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                 sgo.SchemaFilter<DictionarySchemaFilter>();
                 sgo.SchemaFilter<GameObjectTypeSchemaFilter>();
                 sgo.OperationFilter<MetadataOperationFilter>();
+                sgo.SchemaFilter<MetadataSchemaFilter>();
                 sgo.OperationFilter<AuthorizationOperationFilter>();
                 sgo.DocumentFilter<GeneratorDocumentFilter>();
                 sgo.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
@@ -219,74 +396,6 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                 );
             });
         builder.Services.AddSwaggerGenNewtonsoftSupport();
-
-        var tokenGenerationOptionsSection =
-            apiConfigurationSection.GetRequiredSection(nameof(TokenGenerationOptions));
-        var tokenGenerationOptions = tokenGenerationOptionsSection.Get<TokenGenerationOptions>();
-
-        builder.Services.Configure<TokenGenerationOptions>(tokenGenerationOptionsSection);
-
-        IdentityModelEventSource.ShowPII = true;
-        builder.Services.AddAuthentication(
-                options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                }
-            )
-            .AddJwtBearer(
-                JwtBearerDefaults.AuthenticationScheme,
-                options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ClockSkew = TimeSpan.FromSeconds(5),
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = false,
-                        ValidateIssuerSigningKey = true,
-                    };
-                    builder.Configuration.Bind($"Api.{nameof(JwtBearerOptions)}", options);
-                    options.TokenValidationParameters.ValidAudience ??= tokenGenerationOptions.Audience;
-                    options.TokenValidationParameters.ValidIssuer ??= tokenGenerationOptions.Issuer;
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnAuthenticationFailed = async _ => { },
-                        OnChallenge = async _ => { },
-                        OnMessageReceived = async _ => { },
-                        OnTokenValidated = async _ => { },
-                    };
-                    SymmetricSecurityKey issuerKey = new(tokenGenerationOptions.SecretData);
-                    options.TokenValidationParameters.IssuerSigningKey = issuerKey;
-                }
-            )
-            .AddCookie(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                options =>
-                {
-                    builder.Configuration.Bind(nameof(CookieAuthenticationOptions), options);
-                }
-            );
-
-        builder.Services.AddAuthorization(
-            authOptions =>
-            {
-                authOptions.DefaultPolicy = new AuthorizationPolicyBuilder(authOptions.DefaultPolicy)
-                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-                    .Build();
-            }
-        );
-
-        //builder.Services
-        //    .AddIdentity<User, UserRole>(
-        //        identityOptions =>
-        //        {
-        //            identityOptions.Stores.ProtectPersonalData = true;
-        //        }
-        //    )
-        //    .AddUserStore<IntersectUserStore>()
-        //    .AddRoleStore<IntersectRoleStore>();
 
         if (builder.Environment.IsDevelopment())
         {
@@ -338,22 +447,11 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
 
         var app = builder.Build();
 
+        app.UseNetworkFilterMiddleware(configuration.AllowedNetworkTypes);
+
         if (knownProxies?.Any() ?? false)
         {
             app.UseForwardedHeaders();
-        }
-        app.UseNetworkFilterMiddleware(configuration.AllowedNetworkTypes);
-
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseODataRouteDebug();
-        }
-
-        // Swagger is always enabled in development, but outside of development it needs to be manually enabled
-        if (configuration.EnableSwaggerUI || app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
         }
 
         if (app.Environment.IsProduction())
@@ -361,6 +459,20 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
             app.UseHttpsRedirection();
             app.UseHsts();
         }
+
+        app.UseResponseCompression();
+
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseODataRouteDebug();
+        }
+
+        if (configuration.RequestLogging)
+        {
+            app.UseIntersectRequestLogging(configuration.RequestLogLevel);
+        }
+
+        app.UseStaticFiles();
 
         // Unreadable if it LINQs it...
         // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
@@ -384,25 +496,88 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
             );
         }
 
-        if (configuration.RequestLogging)
-        {
-            app.UseIntersectRequestLogging(configuration.RequestLogLevel);
-        }
-
         app.UseRouting();
 
         app.UseAuthentication();
+
+        app.UseRequestLocalization(
+            new RequestLocalizationOptions
+            {
+                ApplyCurrentCultureToResponseHeaders = true,
+                FallBackToParentCultures = true,
+                FallBackToParentUICultures = true,
+                SupportedCultures = new List<CultureInfo>
+                {
+                    CultureInfo.GetCultureInfo("en-US"),
+                    CultureInfo.GetCultureInfo("es"),
+                    CultureInfo.GetCultureInfo("it"),
+                    CultureInfo.GetCultureInfo("pt-BR"),
+                },
+                SupportedUICultures = new List<CultureInfo>
+                {
+                    CultureInfo.GetCultureInfo("en-US"),
+                    CultureInfo.GetCultureInfo("es"),
+                    CultureInfo.GetCultureInfo("it"),
+                    CultureInfo.GetCultureInfo("pt-BR"),
+                },
+            }
+        );
+
+#if DEBUG
+        if (configuration.EnableAuthenticationDebugging && app.Environment.IsDevelopment())
+        {
+            app.UseMiddleware<AuthenticationDebugMiddleware>();
+        }
+#endif
+
+        app.UseResponseCaching();
+        app.UseOutputCache();
+
         app.UseAuthorization();
 
-        app.MapControllers();
+        app.MapHtmxAntiforgeryScript();
 
-        // app.MapControllers();
+        app.UseCookiePolicy(
+            new CookiePolicyOptions
+            {
+                /* Because OnAppendCookie is called after the HttpOnly is overwritten we need to set this to None
+                 * and then manually force it if it isn't excluded. */
+                HttpOnly = HttpOnlyPolicy.None,
+                MinimumSameSitePolicy = SameSiteMode.Strict,
+                OnAppendCookie = appendCookieContext =>
+                {
+                    if (appendCookieContext.CookieOptions.HttpOnly)
+                    {
+                        return;
+                    }
+
+                    appendCookieContext.CookieOptions.HttpOnly =
+                        !(configuration.AllowedNonHttpOnlyCookies?.Contains(appendCookieContext.CookieName) ?? false);
+                },
+#if DEBUG
+                Secure = CookieSecurePolicy.SameAsRequest,
+#else
+                Secure = CookieSecurePolicy.Always,
+#endif
+            }
+        );
+
+        // Swagger is always enabled in development, but outside of development it needs to be manually enabled
+        if (configuration.EnableSwaggerUI || app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
 
         var healthChecksBuilder = app.MapHealthChecks("/health");
+
         if (app.Environment.IsProduction())
         {
             healthChecksBuilder.RequireAuthorization();
         }
+
+        app.MapRazorPages();
+        app.MapControllers();
 
         return app;
     }

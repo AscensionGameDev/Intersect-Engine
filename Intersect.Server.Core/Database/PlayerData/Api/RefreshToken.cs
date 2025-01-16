@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using Intersect.Logging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -118,34 +119,44 @@ public partial class RefreshToken
         }
     }
 
-    public static RefreshToken FindForTicket(Guid ticketId)
+    public static bool TryFindForTicket(
+        Guid ticketId,
+        [NotNullWhen(true)] out RefreshToken? refreshToken,
+        bool includeUser = false
+    )
     {
         if (ticketId == Guid.Empty)
         {
-            return null;
+            refreshToken = null;
+            return true;
         }
 
         try
         {
-            using (var context = DbInterface.CreatePlayerContext())
+            using var context = DbInterface.CreatePlayerContext();
+
+            IQueryable<RefreshToken> refreshTokens = context.RefreshTokens;
+            if (includeUser)
             {
-                var refreshToken = context?.RefreshTokens.FirstOrDefault(queryToken => queryToken.TicketId == ticketId);
-
-                if (refreshToken == null || DateTime.UtcNow < refreshToken.Expires)
-                {
-                    return refreshToken;
-                }
-
-                _ = Remove(refreshToken);
-
-                return null;
+                refreshTokens = refreshTokens.Include(t => t.User);
             }
+
+            refreshToken = refreshTokens.FirstOrDefault(queryToken => queryToken.TicketId == ticketId);
+
+            if (refreshToken == null || DateTime.UtcNow < refreshToken.Expires)
+            {
+                return refreshToken != null;
+            }
+
+            _ = Remove(refreshToken);
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            Log.Error(ex);
-            return null;
+            Log.Error(exception, $"Failed to load RefreshToken for {ticketId}");
         }
+
+        refreshToken = null;
+        return false;
     }
 
     public static IEnumerable<RefreshToken> FindForClient(Guid clientId)

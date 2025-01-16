@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Globalization;
 using Intersect.Server.Localization;
 using Intersect.Utilities;
@@ -11,36 +11,84 @@ namespace Intersect.Server.Collections.Indexing;
 // [KnownType(typeof(LookupKey))]
 // [SwaggerSchema]
 // [TypeConverter(typeof(Converter))]
-public partial struct LookupKey
+/// <summary>
+/// An ID (<see cref="Guid"/>) or a name (<see cref="string"/>) used to look up an entity.
+/// </summary>
+[Description($"{nameof(LookupKey)}_Description")]
+public readonly record struct LookupKey
 {
+    // ReSharper disable once MemberCanBePrivate.Global
+    public LookupKey(Guid id)
+    {
+        Id = id;
+    }
 
-    public readonly bool HasName => !string.IsNullOrWhiteSpace(Name);
+    // ReSharper disable once MemberCanBePrivate.Global
+    public LookupKey(string name)
+    {
+        Name = name;
+    }
 
-    public readonly bool HasId => Guid.Empty != Id;
+    /// <summary>
+    /// The ID of the entity, if this <see cref="LookupKey"/> is a <see cref="Guid"/>.
+    /// </summary>
+    /// <seealso cref="IsId"/>
+    /// <seealso cref="IsIdInvalid"/>
+    public readonly Guid Id;
 
-    public readonly bool IsNameInvalid => !HasId && Name != null;
+    /// <summary>
+    /// The name of the entity, if this <see cref="LookupKey"/> is a <see cref="string"/>.
+    /// </summary>
+    /// <seealso cref="IsName"/>
+    /// <seealso cref="IsNameInvalid"/>
+    public readonly string Name;
 
-    public readonly bool IsIdInvalid => !HasId && Name == null;
+    /// <summary>
+    /// If this <see cref="LookupKey"/> is a <see cref="string"/>.
+    /// </summary>
+    public bool IsName => !string.IsNullOrWhiteSpace(Name);
 
-    public readonly bool IsInvalid => !HasId && !HasName;
+    /// <summary>
+    /// If this <see cref="LookupKey"/> is a <see cref="Guid"/>.
+    /// </summary>
+    public bool IsId => Guid.Empty != Id;
 
-    public Guid Id { get; private set; }
+    public bool IsNameInvalid => !IsId && Name != null;
 
-    public string Name { get; private set; }
+    public bool IsIdInvalid => !IsId && Name == null;
+
+    public bool IsInvalid => !IsId && !IsName;
+
+    public bool Matches(Guid id, string name) => (IsId && Id == id) ||
+                                                 (IsName && string.Equals(
+                                                     Name,
+                                                     name,
+                                                     StringComparison.OrdinalIgnoreCase
+                                                 ));
 
     public override string ToString()
     {
-        return HasId ? Id.ToString() : Name;
+        if (IsInvalid)
+        {
+            return $"{{ {nameof(IsInvalid)}={true}, {nameof(Id)}={Id}, {nameof(Name)}={Name} }}";
+        }
+
+        return IsId ? Id.ToString() : Name;
     }
 
+    public static implicit operator LookupKey(Guid id) => new(id);
+
+    public static implicit operator LookupKey(string input) =>
+        TryParse(input, out var lookupKey)
+            ? lookupKey
+            : throw new InvalidCastException($"'{input}' is not a valid {nameof(LookupKey)} representation");
+
+    // ReSharper disable once MemberCanBePrivate.Global
     public static bool TryParse(string input, out LookupKey lookupKey)
     {
         if (Guid.TryParse(input, out var guid))
         {
-            lookupKey = new LookupKey
-            {
-                Id = guid,
-            };
+            lookupKey = new LookupKey(guid);
             return true;
         }
 
@@ -56,10 +104,7 @@ public partial struct LookupKey
             return false;
         }
 
-        lookupKey = new LookupKey
-        {
-            Name = input,
-        };
+        lookupKey = new LookupKey(input);
         return true;
     }
 
@@ -73,18 +118,8 @@ public partial struct LookupKey
 
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
-            if (Guid.TryParse(value as string, out var guid))
-            {
-                return new LookupKey
-                {
-                    Id = guid,
-                };
-            }
-
-            return new LookupKey
-            {
-                Name = value as string,
-            };
+            LookupKey lookupKey = value as string;
+            return lookupKey;
         }
     }
 }

@@ -1,3 +1,6 @@
+using System.ComponentModel;
+using System.Globalization;
+using System.Reflection;
 using Intersect.Server.Collections.Indexing;
 using Intersect.Server.Localization;
 using Microsoft.OpenApi.Any;
@@ -16,7 +19,6 @@ public sealed class LookupKeySchemaFilter : ISchemaFilter
         }
 
         schema.Type = "string";
-        schema.Description = "An id or a name";
 
         // TODO: Multiple examples? It doesn't look like the C# API exposes this but it exists according to the Swagger documentation
         // Example = new OpenApiString($"test or {new Guid("01234567-89ab-cdef-0123-456789abcdef")}"),

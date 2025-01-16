@@ -1,0 +1,48 @@
+img.avatar {
+	--size: 2em;
+
+	background-color: var(--theme-bg-accent-hover);
+	border: 0.125em solid var(--theme-text);
+	height: var(--size);
+	max-height: var(--size);
+	max-width: var(--size);
+	width: var(--size);
+}
+
+img.avatar, svg {
+    border-radius: 4.5em;
+}
+
+img.avatar.hidden {
+	display: none;
+}
+
+img.avatar+svg {
+	--size: 2.25em;
+
+	display: none;
+	height: var(--size);
+	max-height: var(--size);
+	max-width: var(--size);
+	width: var(--size);
+}
+
+img.avatar.hidden+svg {
+	border-color: transparent;
+	display: initial;
+	fill: currentColor;
+}
+
+svg>use {
+	height: 100%;
+	width: 100%;
+}
+
+div, div>* {
+	align-items: center;
+	display: flex;
+}
+
+div>*:not(:nth-child(1 of :not(.hidden))), div>*>*:not(:nth-child(1 of :not(.hidden))) {
+	margin-left: 0.5em;
+}

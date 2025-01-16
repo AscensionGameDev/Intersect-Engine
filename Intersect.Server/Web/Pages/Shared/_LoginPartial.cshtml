@@ -1,0 +1,33 @@
+﻿@using System.Security.Claims
+@using Intersect.Config
+@using Intersect.Extensions
+
+@if (User.Identity?.IsAuthenticated ?? false)
+{
+    <div>
+        <a class="profile" href="/User/@User.Identity.Name">
+            <img class="avatar hidden"
+                 alt="@WebResources.XsAvatar.Format(User.Identity.Name)"
+                 src="/avatar/user/@User.FindFirstValue(ClaimTypes.NameIdentifier)"
+                 onload="this.classList.remove('hidden')"/>
+            <svg class="material">
+                <use href="/material/action/account_circle/materialiconssharp/24px.svg#root"/>
+            </svg>
+            <span>@User.Identity?.Name</span>
+        </a>
+        <span>
+            <a hx-post="/Account/Logout" hx-swap="none">@WebResources.Logout</a>
+        </span>
+    </div>
+}
+else
+{
+    <div>
+        <a href="/Account/Login">@WebResources.Login</a>
+        @* TODO: Registration page not implemented *@
+        @* @if (Options.Instance.PlayerOpts.Registration.HasFlag(RegistrationMode.Web)) *@
+        @* { *@
+        @*     <a href="/Account/Register">@WebResources.Register</a> *@
+        @* } *@
+    </div>
+}

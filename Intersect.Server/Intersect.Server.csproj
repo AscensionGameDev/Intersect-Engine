@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <Nullable>disable</Nullable>
@@ -41,21 +41,44 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="wwwroot\favicon.ico" CopyToOutputDirectory="PreserveNewest" />
+    <Content Update="wwwroot\css\theme.css" CopyToOutputDirectory="PreserveNewest" />
+    <Content Update="wwwroot\css\site.css" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup Label="Resources (ResX)">
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Compile Update="Web\WebResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>WebResources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="Web\WebResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>WebResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Web\WebResources.*.resx" DependentUpon="WebResources.resx" />
+    <Compile Update="Web\OpenAPIResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>OpenAPIResources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="Web\OpenAPIResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>OpenAPIResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Web\OpenAPIResources.*.resx" DependentUpon="OpenAPIResources.resx" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Label="Embedded Resources">
     <EmbeddedResource Include="$(NetworkHandshakePublicKey)" />
     <EmbeddedResource Include="$(NetworkHandshakePrivateKey)" />
     <EmbeddedResource Include="appsettings.json">
@@ -78,10 +101,12 @@
     <EmbeddedResource Include="Resources\e_sqlite3x86.dll" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Label="Package References">
     <PackageReference Include="AscensionGameDev.Open.NAT" Version="3.0.0.7" />
     <PackageReference Include="AscensionGameDev.WebSocketSharp" Version="1.0.0.7-beta" />
     <PackageReference Include="Asp.Versioning.OData.ApiExplorer" Version="8.1.0" />
+    <PackageReference Include="Htmx" Version="1.8.1" />
+    <PackageReference Include="Htmx.TagHelpers" Version="1.8.1" />
     <PackageReference Include="MailKit" Version="4.9.0" />
     <PackageReference Include="Markdown" Version="2.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />
@@ -101,6 +126,7 @@
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
     <PackageReference Include="Pomelo.JsonObject" Version="2.2.1" />
     <PackageReference Include="Remotion.Linq" Version="2.2.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.0.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="7.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen.ConventionalRouting" Version="4.3.0" />

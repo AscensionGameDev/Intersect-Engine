@@ -11,6 +11,7 @@ using Intersect.Network.LiteNetLib;
 using Intersect.Server.Core;
 using Intersect.Server.Networking.Helpers;
 using LiteNetLib.Utils;
+using LogLevel = Intersect.Logging.LogLevel;
 
 namespace Intersect.Server.Networking.LiteNetLib;
 

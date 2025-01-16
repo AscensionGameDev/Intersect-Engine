@@ -16,6 +16,11 @@ public static partial class ConfigurationHelper
     {
         if (!File.Exists(filePath))
         {
+            if (failQuietly)
+            {
+                return configuration;
+            }
+
             throw new FileNotFoundException("Missing configuration file.", filePath);
         }
 

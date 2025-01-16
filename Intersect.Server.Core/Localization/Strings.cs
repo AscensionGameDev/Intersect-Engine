@@ -662,6 +662,9 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString NoticeError = @"Error Notice";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString UnknownErrorPleaseTryAgain = @"An unknown error occurred, please try again.";
     }
 
     public sealed partial class GuildsNamespace : LocaleNamespace

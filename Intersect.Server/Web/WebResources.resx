@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
+                xmlns="">
+        <xsd:element name="root" msdata:IsDataSet="true">
+
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+  <data name="XsAvatar" xml:space="preserve">
+    <value>{0}'s Avatar</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="Privacy" xml:space="preserve">
+    <value>Privacy</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>Not Found</value>
+  </data>
+  <data name="XNotFound" xml:space="preserve">
+    <value>{0} not found!</value>
+  </data>
+  <data name="NPlayers" xml:space="preserve">
+    <value>{0} players</value>
+  </data>
+  <data name="XHasNoPlayers" xml:space="preserve">
+    <value>{0} has no players</value>
+  </data>
+  <data name="Class" xml:space="preserve">
+    <value>Class</value>
+  </data>
+  <data name="NoGuild" xml:space="preserve">
+    <value>No guild</value>
+  </data>
+  <data name="XofYExp" xml:space="preserve">
+    <value>{0}/{1} EXP</value>
+  </data>
+  <data name="LevelX" xml:space="preserve">
+    <value>Level {0}</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Leaderboard" xml:space="preserve">
+    <value>Leaderboard</value>
+  </data>
+  <data name="XsPlayers" xml:space="preserve">
+    <value>{0}'s Characters</value>
+  </data>
+</root>

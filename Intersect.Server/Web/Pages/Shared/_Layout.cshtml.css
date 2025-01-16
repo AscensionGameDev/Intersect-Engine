@@ -1,0 +1,70 @@
+﻿header, footer {
+	background-color: var(--theme-bg-accent);
+	display: flex;
+	flex-direction: row;
+}
+
+header {
+	justify-content: space-between;
+	padding: 0 1rem;
+	position: sticky;
+	top: 0;
+}
+
+footer {
+	justify-content: center;
+	padding: 0.5rem 1rem;
+}
+
+footer > :not(:last-child) {
+	margin-right: 1rem;
+}
+
+header > * {
+	margin: 0;
+	padding: 0.5rem 1rem;
+}
+
+header nav > ul {
+	display: flex;
+	flex-direction: row;
+	height: 100%;
+	margin: 0;
+}
+
+header nav > ul > li {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+header nav > ul > li:not(:last-child) {
+	margin-right: 1em;
+}
+
+main {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	align-items: center;
+}
+
+::deep > article {
+	max-width: calc(min(100vw, max(80vw, 100em)));
+	padding: 1em;
+}
+
+::deep > article > p:first-child {
+	margin-block-start: 0;
+}
+
+::deep > article > p:last-child {
+	margin-block-end: 0;
+}
+
+
+::deep > article.page {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}

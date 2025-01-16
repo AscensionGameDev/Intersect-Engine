@@ -1,0 +1,26 @@
+@page "/Developer"
+@model DeveloperIndexModel
+@{
+    ViewData["Title"] = DeveloperWebResources.DeveloperPortal;
+    var enabledFeatures = Model.EnabledFeatures.ToArray();
+}
+
+<article class="page">
+    <h1>@DeveloperWebResources.DeveloperPortal</h1>
+
+    <section>
+        @if (enabledFeatures.Length < 1)
+        {
+            <span>@DeveloperWebResources.NoEnabledDeveloperFeatures</span>
+        }
+        else
+        {
+            @foreach (var feature in Model.EnabledFeatures)
+            {
+                <span>
+                    <a href="@feature.Link">@feature.Label</a>
+                </span>
+            }
+        }
+    </section>
+</article>

@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
@@ -72,6 +73,8 @@ public partial class User
     }
 
     [NotMapped] public UserRights Power { get; set; }
+
+    [JsonIgnore, NotMapped] public ImmutableList<string> Roles => Power.Roles;
 
     [JsonIgnore] public virtual List<Player> Players { get; set; } = new();
 
@@ -547,7 +550,7 @@ public partial class User
             return false;
         }
 
-        if (lookupKey.HasId)
+        if (lookupKey.IsId)
         {
             client = Globals.Clients.Find(queryClient => lookupKey.Id == queryClient?.User?.Id);
             user = client?.User ?? FindById(lookupKey.Id);
@@ -556,6 +559,62 @@ public partial class User
 
         client = Globals.Clients.Find(queryClient => Entity.CompareName(lookupKey.Name, queryClient?.User?.Name));
         user = client?.User ?? Find(lookupKey.Name);
+        return user != default;
+    }
+
+    public bool TryLoadAvatarName(
+        [NotNullWhen(true)] out Player? playerWithAvatar,
+        [NotNullWhen(true)] out string? avatarName,
+        out bool isFace
+    )
+    {
+        foreach (var player in Players)
+        {
+            if (!player.TryLoadAvatarName(out avatarName, out isFace) || string.IsNullOrWhiteSpace(avatarName))
+            {
+                continue;
+            }
+
+            playerWithAvatar = player;
+            return true;
+        }
+
+        avatarName = null;
+        isFace = false;
+        playerWithAvatar = null;
+        return false;
+    }
+
+    public static bool TryAuthenticate(string username, string password, [NotNullWhen(true)] out User? user)
+    {
+        user = FindOnline(username);
+        if (user != default)
+        {
+            var hashedPassword = SaltPasswordHash(password, user.Salt);
+            if (string.Equals(user.Password, hashedPassword, StringComparison.Ordinal))
+            {
+                return true;
+            }
+
+            user = default;
+            return false;
+        }
+
+        try
+        {
+            using var context = DbInterface.CreatePlayerContext();
+            var salt = GetUserSalt(username);
+            if (!string.IsNullOrWhiteSpace(salt))
+            {
+                var pass = SaltPasswordHash(password, salt);
+                user = QueryUserByNameAndPasswordShallow(context, username, pass);
+            }
+        }
+        catch (Exception exception)
+        {
+            Log.Error(exception);
+        }
+
         return user != default;
     }
 
@@ -638,12 +697,12 @@ public partial class User
 
     public static bool TryFind(LookupKey lookupKey, PlayerContext playerContext, [NotNullWhen(true)] out User? user)
     {
-        if (lookupKey.HasId)
+        if (lookupKey.IsId)
         {
             return TryFindById(lookupKey.Id, playerContext, out user);
         }
 
-        if (lookupKey.HasName)
+        if (lookupKey.IsName)
         {
             return TryFindByName(lookupKey.Name, playerContext, out user);
         }
