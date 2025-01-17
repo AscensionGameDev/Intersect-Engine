@@ -1,6 +1,7 @@
 name: Bug Report
 description: Report a bug for us to look into
 labels: ["bug", "needs verification"]
+type: Bug
 title: 'bug: '
 assignees: []
 body:
