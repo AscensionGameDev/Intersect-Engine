@@ -53,7 +53,6 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
             UnsyncedEvents = true,
             UnsyncedDeliveryEvent = true,
             UnsyncedReceiveEvent = true,
-            UseSafeMtu = true,
         };
 
         _asymmetricServer = RSA.Create(asymmetricParameters);
@@ -185,7 +184,7 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
 
     public void OnPeerConnected(NetPeer peer)
     {
-        Log.Debug($"CONN {peer.EndPoint}");
+        Log.Debug($"CONN {peer}");
         if (peer.Tag is not Guid guid)
         {
             Log.Diagnostic("Peer tag is not a guid");
@@ -209,7 +208,7 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
     {
         if (disconnectInfo.Reason == DisconnectReason.Reconnect)
         {
-            Log.Debug($"RECONNECT: {peer.EndPoint}");
+            Log.Debug($"RECONNECT: {peer}");
             return;
         }
 
@@ -223,12 +222,12 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
                     message = disconnectInfo.AdditionalData.GetString();
                 }
                 Log.Debug(
-                    $"DCON: {peer.EndPoint} \"{disconnectInfo.Reason}\" ({disconnectInfo.SocketErrorCode}): {message ?? "N/A"}"
+                    $"DCON: {peer} \"{disconnectInfo.Reason}\" ({disconnectInfo.SocketErrorCode}): {message ?? "N/A"}"
                 );
             }
             catch (Exception exception)
             {
-                Log.Debug($"DCON[ERR]: {peer.EndPoint} \"{disconnectInfo.Reason}\" ({disconnectInfo.SocketErrorCode}): {exception.Message}");
+                Log.Debug($"DCON[ERR]: {peer} \"{disconnectInfo.Reason}\" ({disconnectInfo.SocketErrorCode}): {exception.Message}");
             }
         }
 
@@ -282,7 +281,7 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
     {
         if (!_connectionIdLookup.TryGetValue(peer.Id, out var connectionId))
         {
-            Log.Warn($"RNIP: {peer.EndPoint} ({channelNumber}, {deliveryMethod})");
+            Log.Warn($"RNIP: {peer} ({channelNumber}, {deliveryMethod})");
             return;
         }
 
@@ -290,21 +289,21 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
         if (genericConnection is not LiteNetLibConnection connection)
         {
             Log.Warn(
-                $"RNCP: {peer.EndPoint} ({channelNumber}, {deliveryMethod}) ({genericConnection?.Guid} / {genericConnection?.GetFullishName()}"
+                $"RNCP: {peer} ({channelNumber}, {deliveryMethod}) ({genericConnection?.Guid} / {genericConnection?.GetFullishName()}"
             );
             return;
         }
 
         if (!reader.TryGetByte(out var packetCode))
         {
-            Log.Warn($"No packet code from {peer.EndPoint} / {connection.Guid}");
+            Log.Warn($"No packet code from {peer} / {connection.Guid}");
             return;
         }
 
         // ReSharper disable once ConvertIfStatementToSwitchStatement
         if (packetCode > 1)
         {
-            Log.Warn($"Invalid packet code from {peer.EndPoint} / {connection.Guid}");
+            Log.Warn($"Invalid packet code from {peer} / {connection.Guid}");
             return;
         }
 
@@ -325,7 +324,7 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
             }
             else
             {
-                Log.Warn($"Failed to process approval from {peer.EndPoint} / {connection.Guid}");
+                Log.Warn($"Failed to process approval from {peer} / {connection.Guid}");
             }
 
             return;
@@ -333,7 +332,7 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
 
         if (!connection.TryProcessInboundMessage(peer, reader, channelNumber, deliveryMethod, out var buffer))
         {
-            Log.Warn($"FPIM: {peer.EndPoint} / {connection.Guid}");
+            Log.Warn($"FPIM: {peer} / {connection.Guid}");
             return;
         }
 
@@ -469,7 +468,7 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
         }
 #endif
 
-        Log.Verbose($"LTNC {peer.EndPoint} {latency}ms");
+        Log.Verbose($"LTNC {peer} {latency}ms");
     }
 
     public void OnConnectionRequest(ConnectionRequest request)
@@ -518,7 +517,7 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
 
         if (!(OnConnectionRequested?.Invoke(this, connection) ?? true))
         {
-            Log.Debug($"Rejecting (ban) {peer.EndPoint} ({connection.Guid})");
+            Log.Debug($"Rejecting (ban) {peer} ({connection.Guid})");
             response.Put((ushort)403);
             response.Put(NetworkStatus.Failed.ToString());
             peer.Disconnect(response);
@@ -527,7 +526,7 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
 
         if (!_network.AddConnection(connection))
         {
-            Log.Debug($"Rejecting (error connection map) {peer.EndPoint} ({connection.Guid})");
+            Log.Debug($"Rejecting (error connection map) {peer} ({connection.Guid})");
             response.Put((ushort)500);
             response.Put(NetworkStatus.Failed.ToString());
             peer.Disconnect(response);
@@ -536,7 +535,7 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
 
         if (!_connectionIdLookup.TryAdd(peer.Id, connection.Guid))
         {
-            Log.Debug($"Rejecting (error connection id lookup) {peer.EndPoint} ({connection.Guid})");
+            Log.Debug($"Rejecting (error connection id lookup) {peer} ({connection.Guid})");
             response.Put((ushort)500);
             response.Put(NetworkStatus.Failed.ToString());
             peer.Disconnect(response);
@@ -571,6 +570,6 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
             }
         );
 
-        Log.Debug($"Approved {peer.EndPoint} ({connection.Guid})");
+        Log.Debug($"Approved {peer} ({connection.Guid})");
     }
 }

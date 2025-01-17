@@ -5,7 +5,6 @@ using Intersect.Framework.Reflection;
 using Intersect.Logging;
 using Intersect.Memory;
 using Intersect.Network.Packets;
-using Intersect.Reflection;
 using LiteNetLib;
 using LiteNetLib.Utils;
 
@@ -36,7 +35,7 @@ public sealed class LiteNetLibConnection : AbstractConnection
         _peer = peer;
         _peer.Tag = Guid;
         _symmetric = SymmetricAlgorithm.PickForVersion(symmetricVersion, symmetricKey);
-        Log.Debug($"Created {_symmetric.GetFullishName()} for {_peer.EndPoint} ({Guid})");
+        Log.Debug($"Created {_symmetric.GetFullishName()} for {_peer} ({Guid})");
     }
 
     internal LiteNetLibConnection(INetwork network, NetManager manager, RSA interfaceAsymmetric)
@@ -62,12 +61,12 @@ public sealed class LiteNetLibConnection : AbstractConnection
         _peer = manager.Connect(network.Configuration.Host, network.Configuration.Port, connectionData);
         _peer.Tag = Guid;
         _symmetric = SymmetricAlgorithm.PickForPlatform();
-        Log.Debug($"Created {_symmetric.GetFullishName()} for {_peer.EndPoint} ({Guid})");
+        Log.Debug($"Created {_symmetric.GetFullishName()} for {_peer} ({Guid})");
     }
 
-    public override string Ip => _peer.EndPoint.Address.ToString();
+    public override string Ip => _peer.Address.ToString();
 
-    public override int Port => _peer.EndPoint.Port;
+    public override int Port => _peer.Port;
 
     internal bool TryProcessApproval(
         NetPeer peer,
