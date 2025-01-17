@@ -118,7 +118,7 @@ public partial class Client : IPacketSender
         }
     }
 
-    public User User { get; private set; }
+    public User? User { get; private set; }
 
     public List<Player> Characters => User?.Players;
 
@@ -166,22 +166,32 @@ public partial class Client : IPacketSender
         }
     }
 
-    public void Disconnect(string? reason = default, bool shutdown = false, bool loggingOut = false)
+    public void Disconnect(
+        string? reason = default,
+        bool shutdown = false,
+        bool loggingOut = false,
+        TaskCompletionSource? logoutCompletionSource = null
+    )
     {
         lock (Globals.ClientLock)
         {
             if (Connection == null)
             {
+                logoutCompletionSource?.TrySetResult();
                 return;
             }
 
             if (!loggingOut)
             {
-                Logout(shutdown);
+                Logout(force: shutdown, logoutCompletionSource: logoutCompletionSource);
+            }
+            else
+            {
+                logoutCompletionSource?.TrySetResult();
             }
 
             Globals.Clients.Remove(this);
-            Globals.ClientArray = Globals.Clients.ToArray();
+
             if (Connection != default)
             {
                 Globals.ClientLookup.Remove(Connection.Guid);
@@ -225,20 +235,25 @@ public partial class Client : IPacketSender
         lock (Globals.ClientLock)
         {
             Globals.Clients.Add(client);
-            Globals.ClientArray = Globals.Clients.ToArray();
             Globals.ClientLookup.Add(connection.Guid, client);
         }
 
         return client;
     }
 
-    public void Logout(bool force = false)
+    public void Logout(bool force = false, TaskCompletionSource? logoutCompletionSource = null)
     {
-        var entity = Entity;
-        entity?.TryLogout();
-        Entity = null;
+        if (Entity is { } entity)
+        {
+            entity.TryLogout(logoutCompletionSource: logoutCompletionSource);
+            Entity = null;
+        }
+        else
+        {
+            logoutCompletionSource?.TrySetResult();
+        }
 
-        if (User != null && User.LoginTime != null)
+        if (User is { LoginTime: not null })
         {
             User.PlayTimeSeconds += (ulong)(DateTime.UtcNow - (DateTime)User.LoginTime).TotalSeconds;
             User.LoginTime = null;

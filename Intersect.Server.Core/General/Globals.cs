@@ -11,11 +11,9 @@ public static partial class Globals
 
     public static readonly object ClientLock = new object();
 
-    public static readonly IDictionary<Guid, Client> ClientLookup = new Dictionary<Guid, Client>();
+    public static readonly Dictionary<Guid, Client> ClientLookup = [];
 
-    public static readonly List<Client> Clients = new List<Client>();
-
-    public static Client[] ClientArray = new Client[0];
+    public static readonly List<Client> Clients = [];
 
     public static long Cps = 0;
 

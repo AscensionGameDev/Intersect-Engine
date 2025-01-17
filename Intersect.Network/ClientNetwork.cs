@@ -42,13 +42,13 @@ public partial class ClientNetwork : AbstractNetwork, IClient
         StartInterfaces();
     }
 
-    public override event HandleConnectionEvent OnConnected;
-    public override event HandleConnectionEvent OnConnectionApproved;
-    public override event HandleConnectionEvent OnConnectionDenied;
-    public override event HandleConnectionRequest OnConnectionRequested;
-    public override event HandleConnectionEvent OnDisconnected;
-    public override event HandlePacketAvailable OnPacketAvailable;
-    public override event HandleUnconnectedMessage OnUnconnectedMessage;
+    public override event HandleConnectionEvent? OnConnected;
+    public override event HandleConnectionEvent? OnConnectionApproved;
+    public override event HandleConnectionEvent? OnConnectionDenied;
+    public override event HandleConnectionRequest? OnConnectionRequested;
+    public override event HandleConnectionEvent? OnDisconnected;
+    public override event HandlePacketAvailable? OnPacketAvailable;
+    public override event HandleUnconnectedMessage? OnUnconnectedMessage;
 
     public IConnection Connection => Connections.FirstOrDefault();
 

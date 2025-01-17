@@ -521,7 +521,8 @@ internal sealed partial class PacketHandler
             return;
         }
 
-        if (!User.TryLogin(packet.Username, packet.Password, out var user, out var failureReason))
+        var username = packet.Username;
+        if (!User.TryLogin(username, packet.Password, out var user, out var failureReason))
         {
             UserActivityHistory.LogActivity(
                 Guid.Empty,
@@ -529,7 +530,7 @@ internal sealed partial class PacketHandler
                 client?.Ip,
                 UserActivityHistory.PeerType.Client,
                 UserActivityHistory.UserAction.FailedLogin,
-                $"{packet.Username},{failureReason.Type}"
+                $"{username},{failureReason.Type}"
             );
 
             if (failureReason.Type == LoginFailureType.InvalidCredentials)
@@ -545,26 +546,77 @@ internal sealed partial class PacketHandler
             return;
         }
 
+        List<TaskCompletionSource> logoutCompletionSources = [];
+
+        var disconnectedClients = false;
         lock (Globals.ClientLock)
         {
-            foreach (var cli in Globals.Clients.ToArray())
+            foreach (var otherClient in Globals.Clients.ToArray())
             {
-                if (cli == client)
+                if (otherClient == null)
                 {
                     continue;
                 }
 
-                if (cli?.IsEditor ?? false)
+                if (otherClient == client)
                 {
                     continue;
                 }
 
-                if (!string.Equals(cli?.Name, packet.Username, StringComparison.InvariantCultureIgnoreCase))
+                if (otherClient.IsEditor)
                 {
                     continue;
                 }
 
-                cli?.Disconnect();
+                if (!string.Equals(otherClient.Name, username, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    continue;
+                }
+
+                TaskCompletionSource logoutCompletionSource = new();
+                otherClient.Disconnect(logoutCompletionSource: logoutCompletionSource);
+                logoutCompletionSources.Add(logoutCompletionSource);
+
+                disconnectedClients = true;
+            }
+        }
+
+        if (disconnectedClients)
+        {
+            var disconnectionCount = logoutCompletionSources.Count;
+            Log.Info($"Login of {username} waiting on {disconnectionCount} clients before continuing...");
+
+            Task.WaitAll(logoutCompletionSources.Select(source => source.Task).ToArray());
+
+            Log.Info($"Continuing login of {username}...");
+
+            if (!User.TryLogin(
+                    username,
+                    packet.Password,
+                    out user,
+                    out failureReason
+                ))
+            {
+                UserActivityHistory.LogActivity(
+                    Guid.Empty,
+                    Guid.Empty,
+                    client?.Ip,
+                    UserActivityHistory.PeerType.Client,
+                    UserActivityHistory.UserAction.FailedLogin,
+                    $"{username},{failureReason.Type}"
+                );
+
+                if (failureReason.Type == LoginFailureType.InvalidCredentials)
+                {
+                    client.FailedAttempt();
+                    PacketSender.SendError(client, Strings.Account.BadLogin, Strings.General.NoticeError);
+                }
+                else
+                {
+                    PacketSender.SendError(client, Strings.Account.UnknownServerErrorRetryLogin, Strings.General.NoticeError);
+                }
+
+                return;
             }
         }
 

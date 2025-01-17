@@ -659,7 +659,6 @@ public partial class User
             user = default;
             failureReason = new LoginFailureReason(LoginFailureType.ServerError);
             return false;
-
         }
 
         try
