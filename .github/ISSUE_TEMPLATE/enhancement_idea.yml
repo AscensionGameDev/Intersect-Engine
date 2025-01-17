@@ -1,6 +1,7 @@
 name: Enhancement idea
 description: Suggest a minor enhancement or quality of life change
 labels: ["enhancement"]
+type: Task
 title: 'enhancement: '
 assignees: []
 body:
