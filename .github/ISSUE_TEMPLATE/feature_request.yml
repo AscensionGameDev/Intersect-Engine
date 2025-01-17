@@ -1,15 +1,18 @@
 name: Feature Request
 description: Suggest a new feature to be added to the engine
 labels: ["feature request"]
+type: 'Feature'
 title: 'feature: '
 assignees: []
 body:
   - type: markdown
     attributes:
       value: |
+        **Please post Feature Requests in [Discussions](https://github.com/AscensionGameDev/Intersect-Engine/discussions), and approved Feature Requests will be made into Issues**
+
         Thank you for your interest Intersect! We welcome any and all ideas for features or improvements that you might have. All we ask is to fill in this template with some detail. A detailed description, perhaps supported with some screenshots, mockups, and reasoning would be very much appreciated and will help get your proposal reviewed sooner.
         
-        Keep in mind that Intersect is intended to be a base 2d orpg engine. Consider if your feature request fits the overall goals of this project. As we are volunteers with limited time we are very picky about the features we add knowing we have to support them long term.
+        Keep in mind that Intersect is intended to be a base 2D ORPG engine. Consider if your feature request fits the overall goals of this project. As we are volunteers with limited time we are very picky about the features we add knowing we have to support them long term.
   - type: textarea
     id: description
     attributes:
