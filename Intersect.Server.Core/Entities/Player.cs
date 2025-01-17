@@ -5254,23 +5254,28 @@ public partial class Player : Entity
             WarpToLastOverworldLocation(false);
         }
 
-        Party ??= new List<Player>();
+        Party ??= [];
         if (Party.Count < 1 || !Party.Contains(this))
         {
             return;
         }
 
-        var currentParty = Party.ToList();
-        currentParty.Remove(this);
+        var remainingPartyMembers = Party.Except([this]).ToList();
 
-        string partyMessage = currentParty.Count > 1
-            ? Strings.Parties.MemberLeft.ToString(Name)
-            : Strings.Parties.Disbanded;
+        var partyIsDisbanding = remainingPartyMembers.Count <= 1;
+        string partyMessage = partyIsDisbanding ? Strings.Parties.Disbanded : Strings.Parties.MemberLeft.ToString(Name);
+
+        var playersToNotify = remainingPartyMembers.ToArray();
+
+        if (partyIsDisbanding)
+        {
+            remainingPartyMembers = [];
+        }
 
         // Update all members of the party with the new list
-        foreach (var partyMember in currentParty)
+        foreach (var partyMember in playersToNotify)
         {
-            partyMember.Party = currentParty.ToList();
+            partyMember.Party = remainingPartyMembers.ToList();
             PacketSender.SendParty(partyMember);
             PacketSender.SendChatMsg(
                 partyMember,
@@ -5280,7 +5285,7 @@ public partial class Player : Entity
             );
         }
 
-        Party = new List<Player>();
+        Party = [];
         PacketSender.SendParty(this);
         PacketSender.SendChatMsg(this, Strings.Parties.Left, ChatMessageType.Party, CustomColors.Alerts.Error);
     }
@@ -7672,7 +7677,7 @@ public partial class Player : Entity
         pair => pair.Key?.Id ?? Guid.Empty, pair => pair.Value
     );
 
-    [JsonIgnore, NotMapped] public List<Player> Party = new List<Player>();
+    [JsonIgnore, NotMapped] public List<Player> Party { get; set; } = [];
 
     [JsonIgnore, NotMapped] public Player PartyLeader => Party.FirstOrDefault();
 
