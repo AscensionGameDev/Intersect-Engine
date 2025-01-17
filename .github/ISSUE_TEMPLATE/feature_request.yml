@@ -1,6 +1,7 @@
 name: Feature Request
 description: Suggest a new feature to be added to the engine
 labels: ["feature request"]
+type: 'Feature'
 title: 'feature: '
 assignees: []
 body:
