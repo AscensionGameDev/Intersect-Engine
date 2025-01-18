@@ -226,7 +226,12 @@ public static partial class Graphics
 
                                 if (map != null)
                                 {
-                                    lock (map.MapLock)
+                                    if (!map.Lock.TryAcquireLock(out var lockRef))
+                                    {
+                                        throw new InvalidOperationException("Failed to acquire map instance lock");
+                                    }
+
+                                    using (lockRef)
                                     {
                                         //Draw this map
                                         DrawMap(
@@ -265,7 +270,12 @@ public static partial class Graphics
                                     continue;
                                 }
 
-                                lock (map.MapLock)
+                                if (!map.Lock.TryAcquireLock(out var lockRef))
+                                {
+                                    throw new InvalidOperationException("Failed to acquire map instance lock");
+                                }
+
+                                using (lockRef)
                                 {
                                     DrawMapAttributes(
                                         map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
@@ -294,15 +304,22 @@ public static partial class Graphics
                             if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                             {
                                 var map = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
-                                if (map != null)
+                                if (map == null)
                                 {
-                                    lock (map.MapLock)
-                                    {
-                                        DrawMapEvents(
-                                            map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
-                                            false, null
-                                        );
-                                    }
+                                    continue;
+                                }
+
+                                if (!map.Lock.TryAcquireLock(out var lockRef))
+                                {
+                                    throw new InvalidOperationException("Failed to acquire map instance lock");
+                                }
+
+                                using (lockRef)
+                                {
+                                    DrawMapEvents(
+                                        map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
+                                        false, null
+                                    );
                                 }
                             }
                         }
@@ -316,16 +333,23 @@ public static partial class Graphics
                             if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                             {
                                 var map = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
-                                if (map != null)
+                                if (map == null)
                                 {
-                                    lock (map.MapLock)
-                                    {
-                                        //Draw this map
-                                        DrawMap(
-                                            map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
-                                            false, 1, null
-                                        );
-                                    }
+                                    continue;
+                                }
+
+                                if (!map.Lock.TryAcquireLock(out var lockRef))
+                                {
+                                    throw new InvalidOperationException("Failed to acquire map instance lock");
+                                }
+
+                                using (lockRef)
+                                {
+                                    //Draw this map
+                                    DrawMap(
+                                        map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
+                                        false, 1, null
+                                    );
                                 }
                             }
                         }
@@ -339,15 +363,22 @@ public static partial class Graphics
                             if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                             {
                                 var map = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
-                                if (map != null)
+                                if (map == null)
                                 {
-                                    lock (map.MapLock)
-                                    {
-                                        DrawMapAttributes(
-                                            map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
-                                            false, null, true, false
-                                        );
-                                    }
+                                    continue;
+                                }
+
+                                if (!map.Lock.TryAcquireLock(out var lockRef))
+                                {
+                                    throw new InvalidOperationException("Failed to acquire map instance lock");
+                                }
+
+                                using (lockRef)
+                                {
+                                    DrawMapAttributes(
+                                        map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
+                                        false, null, true, false
+                                    );
                                 }
                             }
                         }
@@ -474,11 +505,25 @@ public static partial class Graphics
                 break;
         }
 
+        if (!map.Autotiles.TryGetAutoTileForLayer(
+                layerName,
+                x,
+                y,
+                out var autoTile
+            ))
+        {
+            return;
+        }
+
         DrawTexture(
-            texture, destX, destY,
-            (int) map.Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].X + xOffset,
-            (int) map.Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].Y + yOffset,
-            Options.TileWidth / 2, Options.TileHeight / 2, target
+            texture,
+            destX,
+            destY,
+            autoTile.QuarterTile[quarterNum].X + xOffset,
+            autoTile.QuarterTile[quarterNum].Y + yOffset,
+            Options.TileWidth / 2,
+            Options.TileHeight / 2,
+            target
         );
     }
 
@@ -574,9 +619,14 @@ public static partial class Graphics
                 tmpMap = TilePreviewStruct;
                 if (TilePreviewUpdated || TilePreviewStruct == null)
                 {
-                    if (Globals.CurrentMap != null)
+                    if (Globals.CurrentMap is {} currentMap)
                     {
-                        lock (Globals.CurrentMap.MapLock)
+                        if (!currentMap.Lock.TryAcquireLock(out var lockRef))
+                        {
+                            throw new InvalidOperationException("Failed to acquire map instance lock");
+                        }
+
+                        using (lockRef)
                         {
                             TilePreviewStruct = new MapInstance(Globals.CurrentMap);
                         }
@@ -769,15 +819,25 @@ public static partial class Graphics
                                 GameContentManager.TextureType.Tileset, tilesetObj.Name
                             );
 
-                            if (tilesetTex == null || tmpMap.Autotiles == null || tmpMap.Autotiles.Layers == null)
+                            if (tilesetTex == null || tmpMap.Autotiles == null)
                             {
                                 continue;
                             }
 
-                            if (tmpMap.Autotiles.Layers[drawLayer][x, y].RenderState !=
+                            if (!tmpMap.Autotiles.TryGetAutoTileForLayer(
+                                    drawLayer,
+                                    x,
+                                    y,
+                                    out var autoTile
+                                ))
+                            {
+                                continue;
+                            }
+                            
+                            if (autoTile.RenderState !=
                                 MapAutotiles.RENDER_STATE_NORMAL)
                             {
-                                if (tmpMap.Autotiles.Layers[drawLayer][x, y].RenderState !=
+                                if (autoTile.RenderState !=
                                     MapAutotiles.RENDER_STATE_AUTOTILE)
                                 {
                                     continue;
@@ -1651,7 +1711,12 @@ public static partial class Graphics
                         continue;
                     }
 
-                    lock (map.MapLock)
+                    if (!map.Lock.TryAcquireLock(out var lockRef))
+                    {
+                        throw new InvalidOperationException("Failed to acquire map instance lock");
+                    }
+
+                    using (lockRef)
                     {
                         //Draw this map
                         DrawMap(
@@ -1670,25 +1735,32 @@ public static partial class Graphics
                     if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                     {
                         var map = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
-                        if (map != null)
+                        if (map == null)
                         {
-                            lock (map.MapLock)
-                            {
-                                DrawMapAttributes(
-                                    map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true,
-                                    sScreenShotRenderTexture, false, false
-                                );
+                            continue;
+                        }
 
-                                DrawMapAttributes(
-                                    map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true,
-                                    sScreenShotRenderTexture, false, true
-                                );
+                        if (!map.Lock.TryAcquireLock(out var lockRef))
+                        {
+                            throw new InvalidOperationException("Failed to acquire map instance lock");
+                        }
 
-                                DrawMapAttributes(
-                                    map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true,
-                                    sScreenShotRenderTexture, true, true
-                                );
-                            }
+                        using (lockRef)
+                        {
+                            DrawMapAttributes(
+                                map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true,
+                                sScreenShotRenderTexture, false, false
+                            );
+
+                            DrawMapAttributes(
+                                map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true,
+                                sScreenShotRenderTexture, false, true
+                            );
+
+                            DrawMapAttributes(
+                                map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true,
+                                sScreenShotRenderTexture, true, true
+                            );
                         }
                     }
                 }
@@ -1702,15 +1774,22 @@ public static partial class Graphics
                     if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                     {
                         var map = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
-                        if (map != null)
+                        if (map == null)
                         {
-                            lock (map.MapLock)
-                            {
-                                DrawMapEvents(
-                                    map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
-                                    true, sScreenShotRenderTexture
-                                );
-                            }
+                            continue;
+                        }
+
+                        if (!map.Lock.TryAcquireLock(out var lockRef))
+                        {
+                            throw new InvalidOperationException("Failed to acquire map instance lock");
+                        }
+
+                        using (lockRef)
+                        {
+                            DrawMapEvents(
+                                map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
+                                true, sScreenShotRenderTexture
+                            );
                         }
                     }
                 }
@@ -1724,16 +1803,23 @@ public static partial class Graphics
                     if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                     {
                         var map = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
-                        if (map != null)
+                        if (map == null)
                         {
-                            lock (map.MapLock)
-                            {
-                                //Draw this map
-                                DrawMap(
-                                    map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true, 1,
-                                    sScreenShotRenderTexture
-                                );
-                            }
+                            continue;
+                        }
+
+                        if (!map.Lock.TryAcquireLock(out var lockRef))
+                        {
+                            throw new InvalidOperationException("Failed to acquire map instance lock");
+                        }
+
+                        using (lockRef)
+                        {
+                            //Draw this map
+                            DrawMap(
+                                map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true, 1,
+                                sScreenShotRenderTexture
+                            );
                         }
                     }
                 }
@@ -1747,15 +1833,22 @@ public static partial class Graphics
                     if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                     {
                         var map = MapInstance.Get(Globals.MapGrid.Grid?[x, y]?.MapId ?? Guid.Empty);
-                        if (map != null)
+                        if (map == null)
                         {
-                            lock (map.MapLock)
-                            {
-                                DrawMapAttributes(
-                                    map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true,
-                                    sScreenShotRenderTexture, true, false
-                                );
-                            }
+                            continue;
+                        }
+
+                        if (!map.Lock.TryAcquireLock(out var lockRef))
+                        {
+                            throw new InvalidOperationException("Failed to acquire map instance lock");
+                        }
+
+                        using (lockRef)
+                        {
+                            DrawMapAttributes(
+                                map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true,
+                                sScreenShotRenderTexture, true, false
+                            );
                         }
                     }
                 }
@@ -1763,7 +1856,12 @@ public static partial class Graphics
         }
         else
         {
-            lock (Globals.CurrentMap.MapLock)
+            if (!Globals.CurrentMap.Lock.TryAcquireLock(out var lockRef))
+            {
+                throw new InvalidOperationException("Failed to acquire map instance lock");
+            }
+
+            using (lockRef)
             {
                 //Draw this map
                 DrawMap(Globals.CurrentMap, 0, 0, true, 0, sScreenShotRenderTexture);

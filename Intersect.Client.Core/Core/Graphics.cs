@@ -302,7 +302,7 @@ public static partial class Graphics
                     continue;
                 }
 
-                DrawMapPanorama(Globals.MapGrid[x, y]);
+                DrawMapPanorama(mapId);
             }
         }
 
@@ -619,10 +619,24 @@ public static partial class Graphics
             return;
         }
 
-        if (!new FloatRect(
-            map.X, map.Y, Options.TileWidth * Options.MapWidth, Options.TileHeight * Options.MapHeight
-        ).IntersectsWith(WorldViewport))
+        var mapBounds = new FloatRect(
+            map.X,
+            map.Y,
+            Options.TileWidth * Options.MapWidth,
+            Options.TileHeight * Options.MapHeight
+        );
+        if (!mapBounds.IntersectsWith(WorldViewport))
         {
+            var scaledMapBounds = new FloatRect(
+                map.GridX,
+                map.GridY,
+                1,
+                1
+            );
+            var scaledWorldViewport = WorldViewport / new Point(
+                Options.TileWidth * Options.MapWidth,
+                Options.TileHeight * Options.MapHeight
+            );
             return;
         }
 
