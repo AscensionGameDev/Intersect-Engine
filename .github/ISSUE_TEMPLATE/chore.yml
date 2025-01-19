@@ -1,0 +1,29 @@
+name: Chore
+description: Suggest a change that involves 
+labels: ["chore"]
+type: Task
+title: 'chore: '
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Please post chore suggestions in [Discussions](https://github.com/AscensionGameDev/Intersect-Engine/discussions), and only thoroughly defined chores will be created as issues by a maintainer**
+        
+        Chores are exclusively meant to be some form of cleaning up the code, and often involves using automated refactoring tools. Other examples include "replacing `Get` usages with `TryGet`", "correcting or improving usage of nullability", "adding documentation", or "updating translations"
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Please thoroughly describe the task that needs to be completed such that a contributor and reviewer can unambiguously make and review changes
+      placeholder: E.g. Remove unsued usings, fixing warnings in X file
+    validations:
+      required: true
+  - type: checkboxes
+    id: dup-check
+    attributes:
+      label: Duplicate Check
+      description: In order to keep our issue tracker free from clutter please take just a moment to check and see if this task has already had an issue opened for it. If you see that this idea has already been posted and you can add more information or context please do so as a comment within the existing thread.
+      options:
+        - label: This task is not a duplicate to the best of my knowledge.
+          required: true
