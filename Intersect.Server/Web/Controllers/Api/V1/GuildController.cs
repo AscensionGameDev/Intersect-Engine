@@ -1,7 +1,6 @@
 using System.Net;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Variables;
-using Intersect.GameObjects;
 using Intersect.Server.Collections.Indexing;
 using Intersect.Server.Collections.Sorting;
 using Intersect.Server.Database.PlayerData.Players;

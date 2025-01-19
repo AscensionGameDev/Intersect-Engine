@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using Intersect.Collections;
 using Intersect.Extensions;
 using Intersect.Framework.Core.GameObjects.Variables;
-using Intersect.GameObjects;
 using Intersect.Models;
 
 namespace Intersect.Enums;

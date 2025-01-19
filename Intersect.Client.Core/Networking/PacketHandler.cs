@@ -24,7 +24,6 @@ using Intersect.Utilities;
 using Intersect.Framework;
 using Intersect.Models;
 using Intersect.Client.Interface.Shared;
-using Intersect.Network.Packets.Client;
 
 namespace Intersect.Client.Networking;
 

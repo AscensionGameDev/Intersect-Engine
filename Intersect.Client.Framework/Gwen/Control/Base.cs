@@ -10,7 +10,6 @@ using Intersect.Client.Framework.Gwen.Input;
 #endif
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Intersect.Logging;
 using Intersect.Client.Framework.Gwen.Renderer;
 using Intersect.Framework.Reflection;
 

@@ -7,9 +7,6 @@ using Intersect.Server.Database;
 using Intersect.Server.Networking;
 using Intersect.Server.Networking.LiteNetLib;
 using Microsoft.Data.Sqlite;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using MySqlConnector;
 
 namespace Intersect.Server;

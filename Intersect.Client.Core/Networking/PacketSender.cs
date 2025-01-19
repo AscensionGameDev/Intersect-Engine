@@ -1,6 +1,5 @@
 using Intersect.Client.Entities.Events;
 using Intersect.Client.General;
-using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Maps;
 using Intersect.Enums;

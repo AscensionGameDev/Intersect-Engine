@@ -1,8 +1,6 @@
 ﻿using Intersect.Utilities;
 
 using NUnit.Framework;
-
-using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Intersect.Plugins.Manifests.Types

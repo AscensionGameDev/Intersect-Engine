@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Intersect.Server.Core.CommandParsing.Tokenization
+﻿namespace Intersect.Server.Core.CommandParsing.Tokenization
 {
 
     public partial class Tokenizer

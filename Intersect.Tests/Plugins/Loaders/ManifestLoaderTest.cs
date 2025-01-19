@@ -6,10 +6,6 @@ using Moq;
 using NUnit.Framework;
 
 using Semver;
-
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
 
 using Intersect.Plugins.Interfaces;

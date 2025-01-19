@@ -2,7 +2,6 @@ using Intersect.Client.Framework.Core.Sounds;
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.Items;
 using Intersect.Enums;
-using Intersect.Network.Packets.Server;
 
 namespace Intersect.Client.Framework.Maps;
 

@@ -9,7 +9,6 @@ using Intersect.Logging;
 using Intersect.Memory;
 using Intersect.Network.Events;
 using Intersect.Network.Packets;
-using Intersect.Reflection;
 using Intersect.Utilities;
 using LiteNetLib;
 using LiteNetLib.Utils;

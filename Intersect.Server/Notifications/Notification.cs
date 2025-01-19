@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using System.Net;
 using Intersect.Logging;
 using Intersect.Server.Localization;
 using MailKit.Net.Smtp;

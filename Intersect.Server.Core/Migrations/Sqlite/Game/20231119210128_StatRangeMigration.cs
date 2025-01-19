@@ -1,12 +1,6 @@
-using System;
-using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database;
 using Microsoft.EntityFrameworkCore.Migrations;
-using SqlKata;
-using Intersect.Server.Database.GameData;
 using Intersect.Server.Migrations.SqlOnlyDataMigrations;
-using SqlKata.Extensions;
-using SqlKata.Compilers;
 
 #nullable disable
 

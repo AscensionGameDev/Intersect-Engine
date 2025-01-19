@@ -1,5 +1,4 @@
-﻿using System;
-using Intersect.Server.Database;
+﻿using Intersect.Server.Database;
 using Intersect.Server.Migrations.SqlOnlyDataMigrations;
 using Microsoft.EntityFrameworkCore.Migrations;
 

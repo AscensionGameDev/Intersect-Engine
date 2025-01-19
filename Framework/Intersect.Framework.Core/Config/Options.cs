@@ -1,6 +1,5 @@
 using Intersect.Config;
 using Intersect.Config.Guilds;
-using Intersect.Logging;
 using Newtonsoft.Json;
 
 namespace Intersect;

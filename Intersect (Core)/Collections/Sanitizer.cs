@@ -1,6 +1,4 @@
-﻿using Intersect.Extensions;
-
-namespace Intersect.Collections;
+﻿namespace Intersect.Collections;
 
 
 public partial struct Sanitizer

@@ -1,7 +1,6 @@
 using System.Reflection;
 
 using Intersect.Localization;
-using Intersect.Logging;
 
 #if !DEBUG
 using Intersect.Logging;

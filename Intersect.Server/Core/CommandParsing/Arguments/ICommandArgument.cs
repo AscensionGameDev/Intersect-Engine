@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Server.Core.CommandParsing.Arguments
+﻿namespace Intersect.Server.Core.CommandParsing.Arguments
 {
 
     public interface ICommandArgument

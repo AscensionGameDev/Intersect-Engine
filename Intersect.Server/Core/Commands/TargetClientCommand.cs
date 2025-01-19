@@ -1,6 +1,4 @@
-﻿using System;
-
-using Intersect.Localization;
+﻿using Intersect.Localization;
 using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Core.CommandParsing.Arguments;
 using Intersect.Server.General;

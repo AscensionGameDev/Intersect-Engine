@@ -1,4 +1,3 @@
-using Intersect.GameObjects;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Framework.Core.GameObjects.Variables;

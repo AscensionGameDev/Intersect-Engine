@@ -1,7 +1,6 @@
 using System.Net;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Variables;
-using Intersect.GameObjects;
 using Intersect.Server.Database;
 using Intersect.Server.Database.GameData;
 using Intersect.Server.Entities;

@@ -1,6 +1,4 @@
-﻿using System;
-
-using Intersect.Extensions;
+﻿using Intersect.Extensions;
 
 using NUnit.Framework;
 

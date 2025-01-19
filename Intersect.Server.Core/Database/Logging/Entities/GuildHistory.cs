@@ -1,5 +1,4 @@
 ﻿using Intersect.Server.Entities;
-using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Intersect.Server.Database.Logging.Entities;

@@ -3,7 +3,6 @@ using System.Runtime.Serialization;
 
 using Intersect.Enums;
 using Intersect.Logging;
-using Intersect.Models;
 using Intersect.Utilities;
 using Newtonsoft.Json;
 

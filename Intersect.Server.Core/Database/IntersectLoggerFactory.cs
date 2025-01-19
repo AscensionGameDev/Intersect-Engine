@@ -4,7 +4,6 @@ using Intersect.Framework.Reflection;
 using Intersect.Logging;
 using Intersect.Logging.Formatting;
 using Intersect.Logging.Output;
-using Intersect.Reflection;
 using Microsoft.Extensions.Logging;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using IntersectLogLevel = Intersect.Logging.LogLevel;
