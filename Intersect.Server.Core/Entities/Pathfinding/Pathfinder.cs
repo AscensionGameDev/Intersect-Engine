@@ -1,9 +1,10 @@
 using System.Diagnostics;
+using Intersect.Core;
 using Intersect.Enums;
-using Intersect.Logging;
 using Intersect.Server.Database;
 using Intersect.Server.Entities.Events;
 using Intersect.Server.Maps;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Server.Entities.Pathfinding;
 
@@ -390,7 +391,12 @@ partial class Pathfinder
         }
         catch (Exception exception)
         {
-            Log.Error(exception);
+            ApplicationContext.Context.Value?.Logger.LogError(
+                exception,
+                "Error updating pathfinder for '{Name}' ({Id})",
+                mEntity.Name,
+                mEntity.Id
+            );
         }
 
         return returnVal;

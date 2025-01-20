@@ -1,9 +1,9 @@
 ﻿using Intersect.Core;
-
 using Newtonsoft.Json;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Intersect.Framework.Core.Serialization;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Plugins.Loaders;
 
@@ -67,7 +67,7 @@ internal partial class PluginLoader
             }
             catch (Exception exception)
             {
-                applicationContext.Logger.Warn(
+                applicationContext.Logger.LogWarning(
                     exception,
                     $"Failed to load plugin configuration from '{configurationFilePath}', using default values."
                 );
@@ -93,7 +93,7 @@ internal partial class PluginLoader
             }
             catch (Exception exception)
             {
-                applicationContext.Logger.Warn(
+                applicationContext.Logger.LogWarning(
                     exception,
                     $"Failed to backup existing configuration from {configurationFilePath} to {backupConfigurationFilePath}"
                 );
@@ -103,7 +103,7 @@ internal partial class PluginLoader
         }
         catch (Exception exception)
         {
-            applicationContext.Logger.Warn(
+            applicationContext.Logger.LogWarning(
                 exception, $"Failed to save plugin configuration to '{configurationFilePath}'."
             );
         }

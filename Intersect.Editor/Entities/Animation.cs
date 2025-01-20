@@ -1,7 +1,6 @@
 ﻿using Intersect.Editor.Content;
 using Intersect.GameObjects;
 using Intersect.Utilities;
-
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Editor.Entities;

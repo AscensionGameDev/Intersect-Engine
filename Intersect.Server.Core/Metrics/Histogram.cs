@@ -1,5 +1,4 @@
 ﻿using Intersect.Server.Metrics.Controllers;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Metrics;

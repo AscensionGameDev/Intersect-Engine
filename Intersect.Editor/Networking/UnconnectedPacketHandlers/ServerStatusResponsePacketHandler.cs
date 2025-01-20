@@ -1,5 +1,4 @@
 using Intersect.Editor.General;
-using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets.Unconnected.Server;
 
@@ -17,7 +16,7 @@ public class ServerStatusResponsePacketHandler : AbstractPacketHandler<ServerSta
         }
         catch (Exception exception)
         {
-            Log.Debug(exception);
+            ApplicationContext.Context.Value?.Logger.LogDebug(exception);
             return false;
         }
     }

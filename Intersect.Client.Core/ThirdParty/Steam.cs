@@ -1,7 +1,8 @@
 using System.Reflection;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.MonoGame.NativeInterop;
-using Intersect.Logging;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 using Steamworks;
 
 namespace Intersect.Client.ThirdParty;
@@ -57,7 +58,10 @@ public static partial class Steam
         }
         catch (Exception exception)
         {
-            Log.Error(exception);
+            ApplicationContext.Context.Value?.Logger.LogError(
+                exception,
+                "Error during Steam integration initialization"
+            );
             Initialized = false;
         }
     }

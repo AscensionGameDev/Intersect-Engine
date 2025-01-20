@@ -1,9 +1,9 @@
 using System.Reflection;
 using Intersect.Configuration;
+using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Localization;
-using Intersect.Logging;
-
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -141,7 +141,7 @@ public static partial class Strings
                             var jsonString = (string)serializedValue;
                             if (jsonString == default)
                             {
-                                Log.Warn($"{groupType.Name}.{fieldInfo.Name} is null.");
+                                ApplicationContext.Context.Value?.Logger.LogWarning($"{groupType.Name}.{fieldInfo.Name} is null.");
                                 missingStrings.Add($"{groupType.Name}.{fieldInfo.Name} (string)");
                                 serializedGroup[fieldInfo.Name] = (string)localizedString;
                             }
@@ -164,7 +164,13 @@ public static partial class Strings
                                 var fieldType = fieldInfo.FieldType;
                                 if (!fieldType.IsGenericType || typeof(Dictionary<,>) != fieldType.GetGenericTypeDefinition())
                                 {
-                                    Log.Error(new NotSupportedException($"Unsupported localization type for {groupType.Name}.{fieldInfo.Name}: {fieldInfo.FieldType.FullName}"));
+                                    ApplicationContext.Context.Value?.Logger.LogError(
+                                        new NotSupportedException(
+                                            $"Unsupported localization type for {groupType.Name}.{fieldInfo.Name}: {fieldInfo.FieldType.FullName}"
+                                        ),
+                                        "Invalid field type {Type}",
+                                        fieldType
+                                    );
                                     break;
                                 }
 
@@ -172,7 +178,15 @@ public static partial class Strings
                                 var localizedParameterType = parameters.Last();
                                 if (localizedParameterType != typeof(LocalizedString))
                                 {
-                                    Log.Error(new NotSupportedException($"Unsupported localization dictionary value type for {groupType.Name}.{fieldInfo.Name}: {localizedParameterType.FullName}"));
+                                    ApplicationContext.Context.Value?.Logger.LogError(
+                                        new NotSupportedException(
+                                            $"Unsupported localization dictionary value type for {groupType.Name}.{fieldInfo.Name}: {localizedParameterType.FullName}"
+                                        ),
+                                        "Unsupported localization dictionary value type for {GroupName}.{FieldName}: {ParameterTypeName}",
+                                        groupType.Name,
+                                        fieldInfo.Name,
+                                        localizedParameterType.FullName
+                                    );
                                     break;
                                 }
 
@@ -194,13 +208,13 @@ public static partial class Strings
 
             if (missingStrings.Count > 0)
             {
-                Log.Warn($"Missing strings, overwriting strings file:\n\t{string.Join(",\n\t", missingStrings)}");
+                ApplicationContext.Context.Value?.Logger.LogWarning($"Missing strings, overwriting strings file:\n\t{string.Join(",\n\t", missingStrings)}");
                 SaveSerialized(serialized);
             }
         }
         catch (Exception exception)
         {
-            Log.Warn(exception);
+            ApplicationContext.Context.Value?.Logger.LogWarning(exception, "Error occurred while loading strings");
             Save();
         }
 

@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Security.Cryptography;
-using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets.Reflectable;
 using Intersect.Server.Classes.Networking;
@@ -34,20 +33,20 @@ namespace Intersect.Server.Network
 
         protected virtual void HandleInterfaceOnConnected(INetworkLayerInterface sender, IConnection connection)
         {
-            Log.Info($"Connected [{connection?.Guid}].");
+            ApplicationContext.Context.Value?.Logger.LogInformation($"Connected [{connection?.Guid}].");
             new IntersectNetworkSocket(connection).CreateClient();
             OnConnected?.Invoke(sender, connection);
         }
 
         protected virtual void HandleInterfaceOnConnectonApproved(INetworkLayerInterface sender, IConnection connection)
         {
-            Log.Info($"Connection approved [{connection?.Guid}].");
+            ApplicationContext.Context.Value?.Logger.LogInformation($"Connection approved [{connection?.Guid}].");
             OnConnectionApproved?.Invoke(sender, connection);
         }
 
         protected virtual void HandleInterfaceOnDisconnected(INetworkLayerInterface sender, IConnection connection)
         {
-            Log.Info($"Disconnected [{connection?.Guid}].");
+            ApplicationContext.Context.Value?.Logger.LogInformation($"Disconnected [{connection?.Guid}].");
             ((Client) connection.UserData).Disconnect();
             OnDisconnected?.Invoke(sender, connection);
         }

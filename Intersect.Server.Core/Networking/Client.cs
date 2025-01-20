@@ -1,8 +1,6 @@
 using System.Collections.Concurrent;
 using Intersect.ErrorHandling;
-
 using Intersect.Core;
-using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets;
 using Intersect.Server.Database.Logging.Entities;
@@ -12,6 +10,7 @@ using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Metrics;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 using Strings = Intersect.Server.Localization.Strings;
 
 namespace Intersect.Server.Networking;
@@ -223,7 +222,7 @@ public partial class Client : IPacketSender
             }
             catch (Exception exception)
             {
-                Log.Warn(exception, $"Failed to get IP for user {User.Id}");
+                ApplicationContext.Logger.LogWarning(exception, $"Failed to get IP for user {User.Id}");
                 return default;
             }
         }
@@ -286,7 +285,7 @@ public partial class Client : IPacketSender
             return;
         }
 
-        Log.Debug(
+        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogDebug(
             string.IsNullOrWhiteSpace(client.Name)
 
                 //? $"Client disconnected ({(client.IsEditor ? "[editor]" : "[client]")})"
@@ -356,15 +355,15 @@ public partial class Client : IPacketSender
                         $"Sending Packet Error! [Packet: {packetType} | User: {this.Name ?? ""} | Player: {this.Entity?.Name ?? ""} | IP {this.Ip}]";
 
                     // TODO: Re-combine these once we figure out how to prevent the OutOfMemoryException that happens occasionally
-                    Log.Error(packetMessage);
-                    Log.Error(new ExceptionInfo(exception));
+                    ApplicationContext.Logger.LogError(packetMessage);
+                    ApplicationContext.Logger.LogError(new ExceptionInfo(exception));
                     if (exception.InnerException != null)
                     {
-                        Log.Error(new ExceptionInfo(exception.InnerException));
+                        ApplicationContext.Logger.LogError(new ExceptionInfo(exception.InnerException));
                     }
 
                     // Make the call that triggered the OOME in the first place so that we know when it stops happening
-                    Log.Error(exception, packetMessage);
+                    ApplicationContext.Logger.LogError(exception, packetMessage);
 
 #if DIAGNOSTIC
                         this.Disconnect($"Error processing packet type '{packetType}'.");
@@ -443,15 +442,15 @@ public partial class Client : IPacketSender
                         $"Client Packet Error! [Packet: {packetType} | User: {this.Name ?? ""} | Player: {this.Entity?.Name ?? ""} | IP {this.Ip}]";
 
                     // TODO: Re-combine these once we figure out how to prevent the OutOfMemoryException that happens occasionally
-                    Log.Error(packetMessage);
-                    Log.Error(new ExceptionInfo(exception));
+                    ApplicationContext.Logger.LogError(packetMessage);
+                    ApplicationContext.Logger.LogError(new ExceptionInfo(exception));
                     if (exception.InnerException != null)
                     {
-                        Log.Error(new ExceptionInfo(exception.InnerException));
+                        ApplicationContext.Logger.LogError(new ExceptionInfo(exception.InnerException));
                     }
 
                     // Make the call that triggered the OOME in the first place so that we know when it stops happening
-                    Log.Error(exception, packetMessage);
+                    ApplicationContext.Logger.LogError(exception, packetMessage);
 
 #if DIAGNOSTIC
                         this.Disconnect($"Error processing packet type '{packetType}'.");
@@ -485,7 +484,7 @@ public partial class Client : IPacketSender
         var message = history?.Id.ToString();
         if (message == default)
         {
-            Log.Error($"Failed to record crash for {User?.Id.ToString() ?? "N/A"}");
+            ApplicationContext.Logger.LogError($"Failed to record crash for {User?.Id.ToString() ?? "N/A"}");
         }
 
         Disconnect(message ?? Strings.Networking.ServerFull, loggingOut: true);

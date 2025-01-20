@@ -1,5 +1,4 @@
 ﻿using System.IO.Abstractions.TestingHelpers;
-
 using NUnit.Framework;
 
 namespace Intersect.IO.Files

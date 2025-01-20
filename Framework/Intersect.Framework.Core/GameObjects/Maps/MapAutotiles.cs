@@ -1,4 +1,5 @@
-﻿using Intersect.Logging;
+﻿using Intersect.Core;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.GameObjects.Maps;
 
@@ -536,14 +537,14 @@ public partial class MapAutotiles
 
         if (mMyMap == null)
         {
-            LegacyLogging.Logger?.Error($"{nameof(mMyMap)}=null");
+            ApplicationContext.Context.Value?.Logger.LogError($"{nameof(mMyMap)}=null");
 
             return;
         }
 
         if (mMyMap.Layers == null)
         {
-            LegacyLogging.Logger?.Error($"{nameof(mMyMap.Layers)}=null");
+            ApplicationContext.Context.Value?.Logger.LogError($"{nameof(mMyMap.Layers)}=null");
 
             return;
         }
@@ -556,7 +557,7 @@ public partial class MapAutotiles
         var layer = mMyMap.Layers[layerName];
         if (mMyMap.Layers[layerName] == null)
         {
-            LegacyLogging.Logger?.Error($"{nameof(layer)}=null");
+            ApplicationContext.Context.Value?.Logger.LogError($"{nameof(layer)}=null");
 
             return;
         }
@@ -601,14 +602,14 @@ public partial class MapAutotiles
         // Exit out if we don//t have an auatotile
         if (mMyMap == null)
         {
-            LegacyLogging.Logger?.Error($"{nameof(mMyMap)}=null");
+            ApplicationContext.Context.Value?.Logger.LogError($"{nameof(mMyMap)}=null");
 
             return;
         }
 
         if (mMyMap.Layers == null)
         {
-            LegacyLogging.Logger?.Error($"{nameof(mMyMap.Layers)}=null");
+            ApplicationContext.Context.Value?.Logger.LogError($"{nameof(mMyMap.Layers)}=null");
 
             return;
         }
@@ -621,7 +622,7 @@ public partial class MapAutotiles
         var layer = mMyMap.Layers[layerName];
         if (mMyMap.Layers[layerName] == null)
         {
-            LegacyLogging.Logger?.Error($"{nameof(layer)}=null");
+            ApplicationContext.Context.Value?.Logger.LogError($"{nameof(layer)}=null");
 
             return;
         }

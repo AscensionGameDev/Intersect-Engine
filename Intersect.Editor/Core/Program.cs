@@ -1,9 +1,8 @@
 using System.Diagnostics;
 using System.Reflection;
-
 using Intersect.Editor.Forms;
 using Intersect.Editor.General;
-using Intersect.Logging;
+
 
 namespace Intersect.Editor.Core;
 
@@ -33,7 +32,7 @@ public static partial class Program
     [STAThread]
     public static void Main()
     {
-        Log.Diagnostic("Starting editor...");
+        ApplicationContext.Context.Value?.Logger.LogTrace("Starting editor...");
 
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         Application.ThreadException += Application_ThreadException;
@@ -41,7 +40,7 @@ public static partial class Program
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
 
-        Log.Diagnostic("Unpacking libraries...");
+        ApplicationContext.Context.Value?.Logger.LogTrace("Unpacking libraries...");
 
         //Place sqlite3.dll where it's needed.
         var dllname = Environment.Is64BitProcess ? "sqlite3x64.dll" : "sqlite3x86.dll";
@@ -57,15 +56,15 @@ public static partial class Program
             }
         }
 
-        Log.Diagnostic("Libraries unpacked.");
+        ApplicationContext.Context.Value?.Logger.LogTrace("Libraries unpacked.");
 
-        Log.Diagnostic("Creating forms...");
+        ApplicationContext.Context.Value?.Logger.LogTrace("Creating forms...");
         Globals.UpdateForm = new FrmUpdate();
         Globals.LoginForm = new FrmLogin();
         Globals.MainForm = new FrmMain();
-        Log.Diagnostic("Forms created.");
+        ApplicationContext.Context.Value?.Logger.LogTrace("Forms created.");
 
-        Log.Diagnostic("Starting application.");
+        ApplicationContext.Context.Value?.Logger.LogTrace("Starting application.");
         Application.Run(Globals.UpdateForm);
     }
 
@@ -77,7 +76,7 @@ public static partial class Program
     //Really basic error handler for debugging purposes
     public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs exception)
     {
-        Log.Error((Exception) exception?.ExceptionObject);
+        ApplicationContext.Context.Value?.Logger.LogError(Exception) exception?.ExceptionObject);
         MessageBox.Show(
             @"The Intersect Editor has encountered an error and must close. Error information can be found in logs/errors.log"
         );

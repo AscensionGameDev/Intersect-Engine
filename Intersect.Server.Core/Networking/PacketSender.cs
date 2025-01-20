@@ -1,11 +1,11 @@
 using System.Collections.Concurrent;
+using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Network;
 using Intersect.Network.Packets.Server;
@@ -19,6 +19,7 @@ using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 
@@ -159,7 +160,7 @@ public static partial class PacketSender
     {
         if (client == null)
         {
-            Log.Error("Attempted to send packet to null client.");
+            ApplicationContext.Context.Value?.Logger.LogError("Attempted to send packet to null client.");
 
             return null;
         }
@@ -239,7 +240,7 @@ public static partial class PacketSender
     {
         if (client == null)
         {
-            Log.Error("Attempted to send packet to null client.");
+            ApplicationContext.Context.Value?.Logger.LogError("Attempted to send packet to null client.");
 
             return default;
         }
@@ -288,10 +289,13 @@ public static partial class PacketSender
             }
             catch (Exception exception)
             {
-                Log.Error($"Current Map #: {mapId}");
-                Log.Error($"# Sent maps: {sentMaps.Count}");
-                Log.Error($"# Maps: {MapController.Lookup.Count}");
-                Log.Error(exception);
+                ApplicationContext.Context.Value?.Logger.LogError(
+                    exception,
+                    "Current map: {MapId}\nSent Maps: {SentMapCount}\nMaps: {MapCount}",
+                    mapId,
+                    sentMaps.Count,
+                    MapController.Lookup.Count
+                );
 
                 throw;
             }
@@ -1327,21 +1331,21 @@ public static partial class PacketSender
     {
         if (client == default)
         {
-            Log.Warn($"Tried to {nameof(SendPlayerCharacters)}() to a null client?");
+            ApplicationContext.Context.Value?.Logger.LogWarning($"Tried to {nameof(SendPlayerCharacters)}() to a null client?");
             return;
         }
 
         var user = client.User;
         if (user == default)
         {
-            Log.Warn($"Tried to {nameof(SendPlayerCharacters)}() to client with no user? ({client.Id})");
+            ApplicationContext.Context.Value?.Logger.LogWarning($"Tried to {nameof(SendPlayerCharacters)}() to client with no user? ({client.Id})");
             return;
         }
 
         var clientCharacters = client.Characters;
         if (clientCharacters == default)
         {
-            Log.Warn($"Tried to {nameof(SendPlayerCharacters)}() to client with no characters? (client {client.Id}/user {user.Id})");
+            ApplicationContext.Context.Value?.Logger.LogWarning($"Tried to {nameof(SendPlayerCharacters)}() to client with no characters? (client {client.Id}/user {user.Id})");
             return;
         }
 
@@ -1368,7 +1372,7 @@ public static partial class PacketSender
 
             if (!client.Send(emptyBulkCharactersPacket))
             {
-                Log.Error($"Failed to send empty bulk characters packet to {client.Id}");
+                ApplicationContext.Context.Value?.Logger.LogError($"Failed to send empty bulk characters packet to {client.Id}");
             }
 
             return;
@@ -1439,7 +1443,7 @@ public static partial class PacketSender
 
         if (!client.Send(bulkCharactersPacket))
         {
-            Log.Error($"Failed to send {bulkCharactersPacket.Characters.Length} characters to {client.Id}");
+            ApplicationContext.Context.Value?.Logger.LogError($"Failed to send {bulkCharactersPacket.Characters.Length} characters to {client.Id}");
         }
     }
 

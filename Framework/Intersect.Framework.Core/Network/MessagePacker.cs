@@ -1,6 +1,7 @@
-﻿using Intersect.Logging;
+﻿using Intersect.Core;
 using MessagePack;
 using Intersect.Memory;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Network;
 
@@ -45,7 +46,7 @@ public partial class MessagePacker
 
             if (!silent)
             {
-                LegacyLogging.Logger?.Error(exception);
+                ApplicationContext.Context.Value?.Logger.LogError(exception, "Failed to deserialize packet data");
             }
 
             return null;

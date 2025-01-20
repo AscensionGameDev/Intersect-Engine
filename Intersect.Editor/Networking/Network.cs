@@ -1,9 +1,7 @@
 using System.Diagnostics;
 using System.Reflection;
-
 using Intersect.Configuration;
 using Intersect.Editor.General;
-using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Events;
 using Intersect.Core;
@@ -83,7 +81,7 @@ internal static partial class Network
             return;
         }
 
-        Log.Warn("Failed to connect to server.");
+        ApplicationContext.Context.Value?.Logger.LogWarning("Failed to connect to server.");
     }
 
     public static void InitNetwork()
@@ -199,7 +197,7 @@ internal static partial class Network
                     var network = EditorLidgrenNetwork;
                     if (network == default)
                     {
-                        Log.Info("No network created to poll for server status.");
+                        ApplicationContext.Context.Value?.Logger.LogInformation("No network created to poll for server status.");
                     }
                     else
                     {
@@ -209,7 +207,7 @@ internal static partial class Network
                 }
                 else
                 {
-                    Log.Info($"Unable to resolve '{_lastHost}:{_lastPort}'");
+                    ApplicationContext.Context.Value?.Logger.LogInformation($"Unable to resolve '{_lastHost}:{_lastPort}'");
                 }
 
                 if (Globals.LoginForm.LastNetworkStatusChangeTime + ServerStatusPingInterval + ServerStatusPingInterval / 2 < now)

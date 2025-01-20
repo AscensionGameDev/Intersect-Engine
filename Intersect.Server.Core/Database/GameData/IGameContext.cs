@@ -4,7 +4,6 @@ using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Server.Maps;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.Server.Database.GameData;

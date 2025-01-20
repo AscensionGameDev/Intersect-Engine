@@ -1,5 +1,4 @@
 using Intersect.Configuration;
-
 using Microsoft.Win32;
 
 namespace Intersect.Editor.Core;

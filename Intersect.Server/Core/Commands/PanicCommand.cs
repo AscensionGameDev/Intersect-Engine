@@ -1,12 +1,12 @@
-using Intersect.Logging;
+
 using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Core.CommandParsing.Arguments;
 using Intersect.Server.Localization;
-
 using Microsoft.Diagnostics.Runtime;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using Intersect.Core;
 using Intersect.Reflection;
 
 namespace Intersect.Server.Core.Commands
@@ -34,7 +34,7 @@ namespace Intersect.Server.Core.Commands
                     break;
 
                 default:
-                    Log.Warn($"'{PanicType}' is not an implemented panic type.", panicType);
+                    ApplicationContext.Context.Value?.Logger.LogWarning($"'{PanicType}' is not an implemented panic type.", panicType);
                     break;
             }
         }
@@ -132,7 +132,7 @@ namespace Intersect.Server.Core.Commands
                 }
             }
 
-            Log.Warn(dumpBuilder.ToString());
+            ApplicationContext.Context.Value?.Logger.LogWarning(dumpBuilder.ToString());
         }
     }
 }

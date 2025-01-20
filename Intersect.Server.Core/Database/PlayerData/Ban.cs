@@ -1,12 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
-using Intersect.Logging;
+using Intersect.Core;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
-
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
@@ -83,7 +82,7 @@ public partial class Ban
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to add ban for user " + ban.User?.Name);
+            ApplicationContext.Context.Value?.Logger.LogError(ex, "Failed to add ban for user " + ban.User?.Name);
             //ServerContext.DispatchUnhandledException(new Exception("Failed to save user, shutting down to prevent rollbacks!"), true);
         }
         return false;
@@ -134,7 +133,7 @@ public partial class Ban
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to remove ban " + ban?.Id);
+            ApplicationContext.Context.Value?.Logger.LogError(ex, "Failed to remove ban " + ban?.Id);
             //ServerContext.DispatchUnhandledException(new Exception("Failed to save user, shutting down to prevent rollbacks!"), true);
         }
         return false;
@@ -163,7 +162,7 @@ public partial class Ban
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to remove bans for ip " + ip);
+            ApplicationContext.Context.Value?.Logger.LogError(ex, "Failed to remove bans for ip " + ip);
             //ServerContext.DispatchUnhandledException(new Exception("Failed to save user, shutting down to prevent rollbacks!"), true);
         }
         return false;
@@ -192,7 +191,7 @@ public partial class Ban
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to remove bans for user with id " + userId);
+            ApplicationContext.Context.Value?.Logger.LogError(ex, "Failed to remove bans for user with id " + userId);
             //ServerContext.DispatchUnhandledException(new Exception("Failed to save user, shutting down to prevent rollbacks!"), true);
         }
         return false;
@@ -245,7 +244,7 @@ public partial class Ban
         message = CheckBan(ipAddress.ToString());
         return message != default;
     }
-    
+
     public static string CheckBan(string ip) => CheckBan(null, ip);
 
     public static Ban Find(User user) => Find(user.Id);
@@ -259,9 +258,9 @@ public partial class Ban
                 return ByUser(context, userId)?.FirstOrDefault();
             }
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            Log.Error(ex);
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Error loading ban for {UserId}", userId);
             return null;
         }
     }
@@ -280,9 +279,9 @@ public partial class Ban
                 return ByIp(context, ip)?.FirstOrDefault();
             }
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            Log.Error(ex);
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Error loading ban for {IPAddress}", ip);
             return null;
         }
     }

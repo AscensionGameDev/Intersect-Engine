@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using System.Collections.Immutable;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -9,6 +8,7 @@ using System.Text;
 using Amib.Threading;
 using Intersect.Collections;
 using Intersect.Config;
+using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Reflection;
@@ -17,8 +17,6 @@ using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect.Logging;
-using Intersect.Logging.Output;
 using Intersect.Models;
 using Intersect.Server.Core;
 using Intersect.Server.Database.GameData;
@@ -31,12 +29,10 @@ using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
-
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.Extensions.Logging;
 using MySqlConnector;
-using LogLevel = Intersect.Logging.LogLevel;
 
 namespace Intersect.Server.Database;
 
@@ -64,9 +60,9 @@ public static partial class DbInterface
 
     private static string PlayersDbFilename => Path.Combine(ServerContext.ResourceDirectory, "playerdata.db");
 
-    private static Logger _gameDatabaseLogger { get; set; }
+    private static ILogger<GameContext> _gameDatabaseLogger { get; set; }
 
-    private static Logger _playerDatabaseLogger { get; set; }
+    private static ILogger<PlayerContext> _playerDatabaseLogger { get; set; }
 
     public static Dictionary<string, ServerVariableDescriptor> ServerVariableEventTextLookup = new();
 
@@ -161,30 +157,12 @@ public static partial class DbInterface
     {
         if (Options.Instance.GameDatabase.LogLevel > LogLevel.None)
         {
-            _gameDatabaseLogger = new Logger(
-                new LogConfiguration
-                {
-                    Tag = "GAMEDB",
-                    LogLevel = Options.Instance.GameDatabase.LogLevel,
-                    Outputs = ImmutableList.Create<ILogOutput>(
-                        new FileOutput(Log.SuggestFilename(null, "gamedb"), LogLevel.Debug)
-                    )
-                }
-            );
+            _gameDatabaseLogger = new IntersectLoggerFactory(nameof(GameContext)).CreateLogger<GameContext>();
         }
 
         if (Options.Instance.PlayerDatabase.LogLevel > LogLevel.None)
         {
-            _playerDatabaseLogger = new Logger(
-                new LogConfiguration
-                {
-                    Tag = "PLAYERDB",
-                    LogLevel = Options.Instance.PlayerDatabase.LogLevel,
-                    Outputs = ImmutableList.Create<ILogOutput>(
-                        new FileOutput(Log.SuggestFilename(null, "playerdb"), LogLevel.Debug)
-                    )
-                }
-            );
+            _playerDatabaseLogger = new IntersectLoggerFactory(nameof(PlayerContext)).CreateLogger<PlayerContext>();
         }
     }
 
@@ -250,18 +228,18 @@ public static partial class DbInterface
     {
         if (!context.HasPendingMigrations)
         {
-            Log.Verbose($"No pending migrations for {context.GetType().GetName(qualified: true)}, skipping...");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"No pending migrations for {context.GetType().GetName(qualified: true)}, skipping...");
             return;
         }
 
-        Log.Verbose($"Pending schema migrations for {typeof(TContext).Name}:\n\t{string.Join("\n\t", context.PendingSchemaMigrations)}");
-        Log.Verbose($"Pending data migrations for {typeof(TContext).Name}:\n\t{string.Join("\n\t", context.PendingDataMigrationNames)}");
+        ApplicationContext.Context.Value?.Logger.LogDebug($"Pending schema migrations for {typeof(TContext).Name}:\n\t{string.Join("\n\t", context.PendingSchemaMigrations)}");
+        ApplicationContext.Context.Value?.Logger.LogDebug($"Pending data migrations for {typeof(TContext).Name}:\n\t{string.Join("\n\t", context.PendingDataMigrationNames)}");
 
         var migrationScheduler = new MigrationScheduler<TContext>(context);
-        Log.Verbose("Scheduling pending migrations...");
+        ApplicationContext.Context.Value?.Logger.LogDebug("Scheduling pending migrations...");
         migrationScheduler.SchedulePendingMigrations();
 
-        Log.Verbose("Applying scheduled migrations...");
+        ApplicationContext.Context.Value?.Logger.LogDebug("Applying scheduled migrations...");
         migrationScheduler.ApplyScheduledMigrations();
 
         var remainingPendingSchemaMigrations = context.PendingSchemaMigrations.ToList();
@@ -274,7 +252,7 @@ public static partial class DbInterface
     private static bool EnsureUpdated(IServerContext serverContext)
     {
         var gameDatabaseOptions = Options.Instance.GameDatabase;
-        Log.Info($"Creating game context using {gameDatabaseOptions.Type}...");
+        ApplicationContext.Context.Value?.Logger.LogInformation($"Creating game context using {gameDatabaseOptions.Type}...");
         using var gameContext = GameContext.Create(new DatabaseContextOptions
         {
             ConnectionStringBuilder = gameDatabaseOptions.Type.CreateConnectionStringBuilder(
@@ -288,7 +266,7 @@ public static partial class DbInterface
         });
 
         var playerDatabaseOptions = Options.Instance.PlayerDatabase;
-        Log.Info($"Creating player context using {playerDatabaseOptions.Type}...");
+        ApplicationContext.Context.Value?.Logger.LogInformation($"Creating player context using {playerDatabaseOptions.Type}...");
         using var playerContext = PlayerContext.Create(new DatabaseContextOptions
         {
             ConnectionStringBuilder = playerDatabaseOptions.Type.CreateConnectionStringBuilder(
@@ -302,7 +280,7 @@ public static partial class DbInterface
         });
 
         var loggingDatabaseOptions = Options.Instance.LoggingDatabase;
-        Log.Info($"Creating logging context using {loggingDatabaseOptions.Type}...");
+        ApplicationContext.Context.Value?.Logger.LogInformation($"Creating logging context using {loggingDatabaseOptions.Type}...");
         using var loggingContext = LoggingContext.Create(new DatabaseContextOptions
         {
             ConnectionStringBuilder = loggingDatabaseOptions.Type.CreateConnectionStringBuilder(
@@ -357,7 +335,9 @@ public static partial class DbInterface
             if (serverContext.StartupOptions.MigrateAutomatically)
             {
                 Console.WriteLine(Strings.Database.MigratingAutomatically);
-                Log.Default.Write("Skipping user prompt for database migration...");
+                ApplicationContext.Context.Value?.Logger.LogInformation(
+                    "Skipping user prompt for database migration..."
+                );
             }
             else
             {
@@ -531,7 +511,12 @@ public static partial class DbInterface
             catch (Exception exception)
             {
                 Debugger.Break();
-                Log.Error(exception);
+                ApplicationContext.Context.Value?.Logger.LogError(
+                    exception,
+                    "Failed to load relationships for user {UserId}'s player {PlayerId}",
+                    user.Id,
+                    playerId
+                );
                 throw new Exception($"Error during explicit load of player {BitConverter.ToString(playerId.ToByteArray()).Replace("-", string.Empty)}", exception);
             }
 
@@ -575,7 +560,11 @@ public static partial class DbInterface
         }
         catch (Exception exception)
         {
-            Log.Error(exception);
+            ApplicationContext.Context.Value?.Logger.LogError(
+                exception,
+                "Error while registering '{Username}'",
+                username
+            );
             user = default;
             return false;
         }
@@ -893,9 +882,13 @@ public static partial class DbInterface
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            Log.Error(ex);
+            ApplicationContext.Context.Value?.Logger.LogError(
+                exception,
+                "Error while loading game objects of type {GameObjectType}",
+                gameObjectType
+            );
             throw;
         }
     }
@@ -1133,9 +1126,13 @@ public static partial class DbInterface
 
             return dbObj;
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            Log.Error(ex);
+            ApplicationContext.Context.Value?.Logger.LogError(
+                exception,
+                "Error adding a {GameObjectType}",
+                gameObjectType
+            );
             throw;
         }
     }
@@ -1272,9 +1269,15 @@ public static partial class DbInterface
                 context.SaveChanges();
             }
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            Log.Error(ex);
+            ApplicationContext.Context.Value?.Logger.LogError(
+                exception,
+                "Error deleting {GameObjectType} {GameObjectId} '{GameObjectName}'",
+                gameObject.Type,
+                gameObject.Id,
+                gameObject.Name
+            );
             throw;
         }
     }
@@ -1412,9 +1415,15 @@ public static partial class DbInterface
                 context.SaveChanges();
             }
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            Log.Error(ex);
+            ApplicationContext.Context.Value?.Logger.LogError(
+                exception,
+                "Error saving {GameObjectType} {GameObjectId} '{GameObjectName}'",
+                gameObject.Type,
+                gameObject.Id,
+                gameObject.Name
+            );
             throw;
         }
     }
@@ -1693,9 +1702,9 @@ public static partial class DbInterface
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            Log.Error(ex);
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Error loading map folders");
             throw;
         }
 
@@ -1722,9 +1731,9 @@ public static partial class DbInterface
                 context.SaveChanges();
             }
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            Log.Error(ex);
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Error saving map list");
             throw;
         }
     }
@@ -1750,9 +1759,9 @@ public static partial class DbInterface
             }
             Time.Init();
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            Log.Error(ex);
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Error loading time objects");
             throw;
         }
     }
@@ -1768,9 +1777,9 @@ public static partial class DbInterface
                 context.SaveChanges();
             }
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            Log.Error(ex);
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Error saving time objects");
             throw;
         }
     }
@@ -1910,7 +1919,11 @@ public static partial class DbInterface
         }
         catch (Exception exception)
         {
-            Log.Error(exception);
+            ApplicationContext.Context.Value?.Logger.LogError(
+                exception,
+                "Error processing migration for {SelectedContextType}",
+                selectedContextType
+            );
             throw;
         }
     }
@@ -2022,7 +2035,7 @@ public static partial class DbInterface
                         }
                         catch (Exception exception)
                         {
-                            Log.Error(Strings.Migration.MySqlConnectionError.ToString(exception));
+                            ApplicationContext.Context.Value?.Logger.LogError(Strings.Migration.MySqlConnectionError.ToString(exception));
                             Console.WriteLine();
                             Console.WriteLine(Strings.Migration.MySqlTryAgain);
                             var input = Console.ReadLine();
@@ -2040,7 +2053,7 @@ public static partial class DbInterface
                                 continue;
                             }
 
-                            Log.Info(Strings.Migration.MigrationCanceled);
+                            ApplicationContext.Context.Value?.Logger.LogInformation(Strings.Migration.MigrationCanceled);
                             return;
                         }
                     }
@@ -2073,13 +2086,13 @@ public static partial class DbInterface
                     {
                         // If it does, check if it is OK to overwrite
                         Console.WriteLine();
-                        Log.Error(Strings.Migration.DatabaseFileAlreadyExists.ToString(dbFileName));
+                        ApplicationContext.Context.Value?.Logger.LogError(Strings.Migration.DatabaseFileAlreadyExists.ToString(dbFileName));
                         var input = Console.ReadLine();
                         var key = input.Length > 0 ? input[0] : ' ';
                         Console.WriteLine();
                         if (key.ToString() != Strings.Migration.ConfirmCharacter)
                         {
-                            Log.Info(Strings.Migration.MigrationCanceled);
+                            ApplicationContext.Context.Value?.Logger.LogInformation(Strings.Migration.MigrationCanceled);
                             return;
                         }
 
@@ -2104,7 +2117,7 @@ public static partial class DbInterface
         }
 
         // Shut down server, start migration.
-        Log.Info(Strings.Migration.StoppingServer);
+        ApplicationContext.Context.Value?.Logger.LogInformation(Strings.Migration.StoppingServer);
 
         //This variable will end the server loop and save any pending changes
         ServerContext.Instance.DisposeWithoutExiting = true;
@@ -2115,7 +2128,7 @@ public static partial class DbInterface
             Thread.Sleep(100);
         }
 
-        Log.Info(Strings.Migration.StartingMigration);
+        ApplicationContext.Context.Value?.Logger.LogInformation(Strings.Migration.StartingMigration);
         var migrationService = new DatabaseTypeMigrationService();
         if (await migrationService.TryMigrate<TContext>(fromContextOptions, toContextOptions))
         {
@@ -2138,13 +2151,13 @@ public static partial class DbInterface
 
             Options.SaveToDisk();
 
-            Log.Info(Strings.Migration.MigrationComplete);
+            ApplicationContext.Context.Value?.Logger.LogInformation(Strings.Migration.MigrationComplete);
             Bootstrapper.Context.WaitForConsole();
             ServerContext.Exit(0);
         }
         else
         {
-            Log.Error($"Error migrating context type: {typeof(TContext).FullName}");
+            ApplicationContext.Context.Value?.Logger.LogError($"Error migrating context type: {typeof(TContext).FullName}");
             ServerContext.Exit(1);
         }
     }

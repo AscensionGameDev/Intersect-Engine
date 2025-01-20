@@ -1,7 +1,7 @@
 using Intersect.Editor.Core;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
-using Intersect.Logging;
+
 
 namespace Intersect.Editor.Forms.Editors;
 
@@ -44,7 +44,7 @@ public partial class EditorForm : Form
             }
             catch (Exception e)
             {
-                Log.Debug(e);
+                ApplicationContext.Context.Value?.Logger.LogDebug(e);
             }
         };
 

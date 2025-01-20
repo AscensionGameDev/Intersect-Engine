@@ -1,4 +1,4 @@
-﻿using Intersect.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace Intersect.Plugins.Interfaces;
 
@@ -23,4 +23,11 @@ public interface ILoggingHelper
     /// <param name="createLoggerOptions">options to configure the <see cref="Microsoft.Extensions.Logging.Logger{T}"/></param>
     /// <returns>a specialized <see cref="Microsoft.Extensions.Logging.Logger{T}"/> instance</returns>
     ILogger CreateLogger(CreateLoggerOptions createLoggerOptions);
+
+    /// <summary>
+    /// Creates specialized <see cref="Microsoft.Extensions.Logging.Logger{T}"/>s for the active plugin.
+    /// </summary>
+    /// <param name="createLoggerOptions">options to configure the <see cref="Microsoft.Extensions.Logging.Logger{T}"/></param>
+    /// <returns>a specialized <see cref="Microsoft.Extensions.Logging.Logger{T}"/> instance</returns>
+    ILogger<TContext> CreateLogger<TContext>(CreateLoggerOptions createLoggerOptions);
 }

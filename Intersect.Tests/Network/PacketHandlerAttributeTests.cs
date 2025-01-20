@@ -1,5 +1,4 @@
 ﻿using Intersect.Collections;
-
 using NUnit.Framework;
 using System.Reflection;
 

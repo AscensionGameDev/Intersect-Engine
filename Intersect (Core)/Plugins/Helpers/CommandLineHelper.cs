@@ -1,7 +1,7 @@
 ﻿using CommandLine;
-
-using Intersect.Logging;
+using Intersect.Framework.Reflection;
 using Intersect.Plugins.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Plugins.Helpers;
 
@@ -40,11 +40,19 @@ internal sealed partial class CommandLineHelper : PluginHelper, ICommandLineHelp
 
         if (fatalParsingError)
         {
-            Logger.Error(exception);
+            Logger.LogCritical(
+                exception,
+                "Failed to parse {ArgumentsType}",
+                typeof(TArguments).GetName(qualified: true)
+            );
         }
         else
         {
-            Logger.Warn(exception);
+            Logger.LogWarning(
+                exception,
+                "Failed to parse {ArgumentsType}",
+                typeof(TArguments).GetName(qualified: true)
+            );
         }
 
         return default;

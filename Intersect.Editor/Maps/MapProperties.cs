@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-
 using Intersect.Editor.Content;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
@@ -7,7 +6,6 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Utilities;
-
 using Graphics = Intersect.Editor.Core.Graphics;
 
 namespace Intersect.Editor.Maps;

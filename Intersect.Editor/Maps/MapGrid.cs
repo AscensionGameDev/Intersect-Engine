@@ -1,5 +1,4 @@
 using DarkUI.Forms;
-
 using Hjg.Pngcs;
 using Intersect.Editor.Core;
 using Intersect.Editor.Forms;
@@ -7,9 +6,7 @@ using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.GameObjects.Maps.MapList;
-
 using Microsoft.Xna.Framework.Graphics;
-
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Editor.Maps;

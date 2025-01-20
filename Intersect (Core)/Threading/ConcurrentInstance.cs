@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
-
-using Intersect.Logging;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Threading;
 
@@ -25,24 +25,24 @@ public partial class ConcurrentInstance<TInstance> where TInstance : class
     {
         var stopwatch = new Stopwatch();
         stopwatch.Start();
-        Log.Info($@"Acquiring context lock... ({stopwatch.ElapsedMilliseconds}ms)");
+        ApplicationContext.Context.Value?.Logger.LogInformation($@"Acquiring context lock... ({stopwatch.ElapsedMilliseconds}ms)");
         Acquire();
-        Log.Info($@"Acquired. ({stopwatch.ElapsedMilliseconds}ms)");
+        ApplicationContext.Context.Value?.Logger.LogInformation($@"Acquired. ({stopwatch.ElapsedMilliseconds}ms)");
 
         if (mInstance != instance)
         {
-            Log.Info($@"Exiting lock... ({stopwatch.ElapsedMilliseconds}ms)");
+            ApplicationContext.Context.Value?.Logger.LogInformation($@"Exiting lock... ({stopwatch.ElapsedMilliseconds}ms)");
             Monitor.Exit(mLock);
         }
 
         action.Invoke();
 
-        Log.Info($@"Clearing instance... ({stopwatch.ElapsedMilliseconds}ms)");
+        ApplicationContext.Context.Value?.Logger.LogInformation($@"Clearing instance... ({stopwatch.ElapsedMilliseconds}ms)");
         Clear(instance);
 
-        Log.Info($@"Releasing context lock... ({stopwatch.ElapsedMilliseconds}ms)");
+        ApplicationContext.Context.Value?.Logger.LogInformation($@"Releasing context lock... ({stopwatch.ElapsedMilliseconds}ms)");
         Release();
-        Log.Info($@"Released. ({stopwatch.ElapsedMilliseconds}ms)");
+        ApplicationContext.Context.Value?.Logger.LogInformation($@"Released. ({stopwatch.ElapsedMilliseconds}ms)");
     }
 
     public void Acquire()

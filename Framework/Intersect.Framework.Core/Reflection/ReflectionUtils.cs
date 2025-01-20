@@ -1,8 +1,8 @@
 ﻿using System.IO.Compression;
 using System.Reflection;
 using System.Text;
-
-using Intersect.Logging;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Utilities;
 
@@ -117,7 +117,11 @@ public static partial class ReflectionUtils
         }
         catch (Exception exception)
         {
-            LegacyLogging.Logger?.Error(exception, $"resourceName: '{resourceName}'");
+            ApplicationContext.Context.Value?.Logger.LogError(
+                exception,
+                "resourceName: '{ResourceName}'",
+                resourceName
+            );
 
             return false;
         }
@@ -145,7 +149,11 @@ public static partial class ReflectionUtils
         }
         catch (Exception exception)
         {
-            LegacyLogging.Logger?.Error(exception, $"resourceName: '{resourceName}'");
+            ApplicationContext.Context.Value?.Logger.LogError(
+                exception,
+                "resourceName: '{ResourceName}'",
+                resourceName
+            );
 
             return false;
         }

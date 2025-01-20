@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
+using Intersect.Core;
 using Intersect.GameObjects;
-using Intersect.Logging;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
@@ -103,9 +103,9 @@ public partial class Bag
                 context.SaveChanges();
             }
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            Log.Error(ex);
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Failed to save bag {BagId}", Id);
         }
     }
 
@@ -195,9 +195,9 @@ public partial class Bag
             return true;
 
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            Log.Error(ex);
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Failed to get bag {BagId}", bagId);
             bag = null;
             return false;
         }

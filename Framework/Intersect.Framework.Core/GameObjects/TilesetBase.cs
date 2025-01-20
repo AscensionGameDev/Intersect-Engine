@@ -1,5 +1,4 @@
 ﻿using Intersect.Models;
-
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects;

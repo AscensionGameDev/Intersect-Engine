@@ -93,14 +93,6 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString ExperimentalFlagNotFound = @"Experimental flag '{00}' was not found!";
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocaleCommand Experiments = new LocaleCommand
-        {
-            Name = @"experiments",
-            Description = @"Sets the enablement of an experimental feature. true is enabled, false is disabled",
-            Help = @"enables or disables an experimental feature"
-        };
-
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString FlagInfo = @"(flag)";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

@@ -1,10 +1,11 @@
 ﻿using System.Collections.Concurrent;
 using System.Net;
 using Intersect.Core;
-using Intersect.Logging;
+using Intersect.Framework.Reflection;
 using Intersect.Memory;
 using Intersect.Plugins.Interfaces;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Network;
 
@@ -99,7 +100,7 @@ public abstract partial class AbstractNetwork : INetwork
 
         if (!Disconnect(NetworkStatus.Quitting.ToString()))
         {
-            Log.Error("Error disconnecting while disposing.");
+            ApplicationContext.Logger.LogError("Error disconnecting while disposing.");
         }
 
         mNetworkLayerInterfaces?.ForEach(networkLayerInterface => networkLayerInterface?.Dispose());
@@ -189,7 +190,7 @@ public abstract partial class AbstractNetwork : INetwork
             return connection;
         }
 
-        Log.Diagnostic($"Could not find connection {guid}.");
+        ApplicationContext.Logger.LogTrace($"Could not find connection {guid}.");
 
         return null;
     }
@@ -232,9 +233,13 @@ public abstract partial class AbstractNetwork : INetwork
             return mNetworkLayerInterfaces.OfType<TNetworkLayerInterface>().Any(action);
         }
 
-        Log.Error(new ArgumentNullException(nameof(action)));
-        return false;
+        ApplicationContext.Logger.LogError(
+            new ArgumentNullException(nameof(action)),
+            "Failed to run action on {NetworkLayerInterfaceType}",
+            typeof(TNetworkLayerInterface).GetName(qualified: true)
+        );
 
+        return false;
     }
 
     private void HandleInboundMessageAvailable(INetworkLayerInterface sender)
@@ -246,7 +251,7 @@ public abstract partial class AbstractNetwork : INetwork
 
         if (!sender.TryGetInboundBuffer(out var buffer, out var connection))
         {
-            //Log.Error("Failed to obtain packet when told a packet was available.");
+            //ApplicationContext.Logger.LogError("Failed to obtain packet when told a packet was available.");
 
             return;
         }
@@ -304,7 +309,7 @@ public abstract partial class AbstractNetwork : INetwork
             }
             else
             {
-                Log.Error("Handler == null, this shouldn't happen! Tell JC");
+                ApplicationContext.Logger.LogError("Handler == null, this shouldn't happen! Tell JC");
                 Disconnect(connection, NetworkStatus.Unknown.ToString());
             }
         }

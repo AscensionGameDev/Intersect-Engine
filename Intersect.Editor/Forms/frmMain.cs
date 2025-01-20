@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Security.Cryptography;
-
 using DarkUI.Controls;
 using DarkUI.Forms;
 using Intersect.Compression;
@@ -24,7 +23,6 @@ using Intersect.Updater;
 using Intersect.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect.Editor.Forms;

@@ -3,9 +3,7 @@ using Intersect.Server.Core;
 using Intersect.Server.Entities;
 using Intersect.Server.Localization;
 using Intersect.Utilities;
-
 using NCalc;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Server.General;

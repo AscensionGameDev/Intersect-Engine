@@ -1,17 +1,16 @@
 using System.Net;
-using Intersect.Logging;
+using Intersect.Core;
 using Intersect.Server.Database;
 using Intersect.Server.Database.Logging;
 using Intersect.Server.Web.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.WebUtilities;
-using LogLevel = Intersect.Logging.LogLevel;
 
 namespace Intersect.Server.Web.Middleware;
 
 public static class IntersectRequestLogging
 {
-    public static void UseIntersectRequestLogging(this WebApplication app, LogLevel logLevel = LogLevel.Info)
+    public static void UseIntersectRequestLogging(this WebApplication app, LogLevel logLevel = LogLevel.Information)
     {
         app.Use(
             async (httpContext, next) =>
@@ -39,7 +38,7 @@ public static class IntersectRequestLogging
                     }
                     catch (Exception exception)
                     {
-                        Log.Error(exception);
+                        ApplicationContext.Context.Value?.Logger.LogError(exception, "Error invoking next handler");
                         internalServerError = true;
                     }
 
@@ -99,7 +98,7 @@ public static class IntersectRequestLogging
                 }
                 catch (Exception exception)
                 {
-                    Log.Error(exception);
+                    ApplicationContext.Context.Value?.Logger.LogError(exception, "Error processing request");
 
                     throw;
                 }

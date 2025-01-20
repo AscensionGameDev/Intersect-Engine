@@ -1,9 +1,7 @@
 ﻿using Intersect.Server.Database.Logging.Entities;
 using Intersect.Server.Database.Logging.Seed;
-
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-
 using System.Data.Common;
 
 namespace Intersect.Server.Database.Logging;

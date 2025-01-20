@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Text;
+using Intersect.Core;
 using Intersect.Enums;
-using Intersect.Logging;
+using Intersect.Framework.Reflection;
 using Intersect.Models;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Collections;
 
@@ -73,9 +75,12 @@ public partial class DatabaseObjectLookup : IGameObjectLookup<IDatabaseObject>
                 }
                 catch (Exception exception)
                 {
-                    LegacyLogging.Logger?.Warn(
+                    ApplicationContext.Context.Value?.Logger.LogWarning(
                         exception,
-                        $@"{StoredType.Name}[Count={mIdMap.Count},NullCount={mIdMap.Count(pair => pair.Value == null)}]"
+                        "{StoredType}[Count={Count}, Null={NullCount}]",
+                        StoredType.GetName(qualified: true),
+                        mIdMap.Count,
+                        mIdMap.Count(pair => pair.Value == null)
                     );
 
                     throw;

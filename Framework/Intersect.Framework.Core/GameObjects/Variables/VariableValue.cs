@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Intersect.Core;
 using Intersect.Enums;
-using Intersect.Logging;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -121,7 +122,11 @@ public partial class VariableValue
                 return true;
             }
 
-            LegacyLogging.Logger?.Warn(new ArgumentNullException(nameof(jObject), @"Invalid variable value stored in the database."));
+            ApplicationContext.Context.Value?.Logger.LogWarning(
+                new ArgumentNullException(nameof(jObject), @"Invalid variable value stored in the database."),
+                "Invalid variable value stored in the database:\n{Value}",
+                value
+            );
         }
         catch (Exception exception)
         {
@@ -129,7 +134,7 @@ public partial class VariableValue
 #if DEBUG
             /* Only log in DEBUG in case the variable contains
              * sensitive information. */
-            LegacyLogging.Logger?.Warn(exception);
+            ApplicationContext.Context.Value?.Logger.LogWarning(exception, "Error while parsing:\n{Value}", value);
 #endif
         }
 

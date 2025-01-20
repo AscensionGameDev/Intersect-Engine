@@ -1,11 +1,12 @@
+using Intersect.Core;
 using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
-using Intersect.Logging;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Server.Entities.Events;
 
@@ -126,11 +127,11 @@ public partial class Event
                     var curStack = CallStack.Peek();
                     if (curStack == null)
                     {
-                        Log.Error("Curstack variable in event update is null.. not sure how nor how to recover so just gonna let this crash now..");
+                        ApplicationContext.Context.Value?.Logger.LogError("Curstack variable in event update is null.. not sure how nor how to recover so just gonna let this crash now..");
                     }
                     if (Player == null)
                     {
-                        Log.Error("Player variable in event update is null.. not sure how nor how to recover so just gonna let this crash now..");
+                        ApplicationContext.Context.Value?.Logger.LogError("Player variable in event update is null.. not sure how nor how to recover so just gonna let this crash now..");
                     }
                     if (curStack.WaitingForResponse == CommandInstance.EventResponse.Shop && Player.InShop == null)
                     {
@@ -248,7 +249,7 @@ public partial class Event
                         CallStack.Clear(); //Killing this event, we're over it.
                         if (this.BaseEvent.MapId == Guid.Empty)
                         {
-                            Log.Error(Strings.Events.WatchdogKillCommon.ToString(BaseEvent.Name));
+                            ApplicationContext.Context.Value?.Logger.LogError(Strings.Events.WatchdogKillCommon.ToString(BaseEvent.Name));
                             if (Player.Power.IsModerator)
                             {
                                 PacketSender.SendChatMsg(
@@ -258,7 +259,7 @@ public partial class Event
                         }
                         else
                         {
-                            Log.Error(Strings.Events.WatchdogKill.ToString(map.Name, BaseEvent.Name));
+                            ApplicationContext.Context.Value?.Logger.LogError(Strings.Events.WatchdogKill.ToString(map.Name, BaseEvent.Name));
                             if (Player.Power.IsModerator)
                             {
                                 PacketSender.SendChatMsg(

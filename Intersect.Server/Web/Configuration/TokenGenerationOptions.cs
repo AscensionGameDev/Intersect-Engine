@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
-using Intersect.Logging;
+using Intersect.Core;
+
 
 namespace Intersect.Server.Web.Configuration;
 
@@ -44,7 +45,7 @@ public class TokenGenerationOptions
             }
             catch (Exception exception)
             {
-                Log.Error(exception, $"Failed to parse secret (should be hex), value was {value.Length} characters long");
+                ApplicationContext.Context.Value?.Logger.LogError(exception, $"Failed to parse secret (should be hex), value was {value.Length} characters long");
                 SecretData = default;
             }
         }

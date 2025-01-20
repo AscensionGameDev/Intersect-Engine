@@ -1,7 +1,9 @@
 ﻿using Ceras;
-using Intersect.Logging;
+using Intersect.Core;
+using Intersect.Framework.Reflection;
 
 using K4os.Compression.LZ4;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Network;
 
@@ -97,7 +99,7 @@ public partial class Ceras
         }
         catch (Exception exception)
         {
-            LegacyLogging.Logger?.Error(exception);
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Failed to deserialize Ceras packet");
 
             return null;
         }
@@ -114,7 +116,11 @@ public partial class Ceras
         }
         catch (Exception exception)
         {
-            LegacyLogging.Logger?.Error(exception);
+            ApplicationContext.Context.Value?.Logger.LogError(
+                exception,
+                "Failed to deserialize Ceras packet to a {Type}",
+                typeof(T).GetName(qualified: true)
+            );
 
             return default;
         }

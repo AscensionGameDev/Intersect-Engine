@@ -1,22 +1,22 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
-
 using Intersect.Enums;
 using Intersect.Server.Entities;
 using Intersect.Server.Networking;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using Intersect.Collections.Slotting;
+using Intersect.Core;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Microsoft.EntityFrameworkCore;
 using Intersect.Network.Packets.Server;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
-using Intersect.Logging;
 using Intersect.Utilities;
 using Intersect.Server.Localization;
 using static Intersect.Server.Database.Logging.Entities.GuildHistory;
 using Intersect.Server.Collections.Sorting;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Server.Database.PlayerData.Players;
 
@@ -284,7 +284,7 @@ public partial class Guild
         }
         catch (Exception exception)
         {
-            Log.Error(exception, $"Failed to save guild {Id} before adding player {player.Id}");
+            ApplicationContext.Context.Value?.Logger.LogError(exception, $"Failed to save guild {Id} before adding player {player.Id}");
             return false;
         }
 
@@ -295,7 +295,7 @@ public partial class Guild
         }
         catch (Exception exception)
         {
-            Log.Error(exception, $"Failed to save player {player.Id} before adding them to guild {Id}");
+            ApplicationContext.Context.Value?.Logger.LogError(exception, $"Failed to save player {player.Id} before adding them to guild {Id}");
             return false;
         }
 
@@ -346,7 +346,7 @@ public partial class Guild
 
         if (targetPlayer == null)
         {
-            Log.Warn($"Failed to remove non-existent player {targetId} from the guild {Id}");
+            ApplicationContext.Context.Value?.Logger.LogWarning($"Failed to remove non-existent player {targetId} from the guild {Id}");
             return false;
         }
 
@@ -406,16 +406,16 @@ public partial class Guild
 
             if (Guilds.TryRemove(Id, out _))
             {
-                Log.Info($"[Guild][{Id}] Removed self from {nameof(Guilds)} after player {player.Id} logged out");
+                ApplicationContext.Context.Value?.Logger.LogInformation($"[Guild][{Id}] Removed self from {nameof(Guilds)} after player {player.Id} logged out");
             }
             else
             {
-                Log.Warn($"[Guild][{Id}] Failed to remove self from {nameof(Guilds)} after player {player.Id} logged out");
+                ApplicationContext.Context.Value?.Logger.LogWarning($"[Guild][{Id}] Failed to remove self from {nameof(Guilds)} after player {player.Id} logged out");
             }
         }
         else
         {
-            Log.Info($"[Guild][{Id}] Player {player.Id} logged out but there are {onlineCount} members still online");
+            ApplicationContext.Context.Value?.Logger.LogInformation($"[Guild][{Id}] Player {player.Id} logged out but there are {onlineCount} members still online");
         }
     }
 
@@ -452,7 +452,7 @@ public partial class Guild
 
         if (targetPlayer == null)
         {
-            Log.Warn($"Unable to set guild rank to {rank} for non-existent player {targetId} in guild {Id}");
+            ApplicationContext.Context.Value?.Logger.LogWarning($"Unable to set guild rank to {rank} for non-existent player {targetId} in guild {Id}");
             return;
         }
 
@@ -932,9 +932,9 @@ public partial class Guild
                 g => new KeyValuePair<Guild, int>(g, context.Players.Count(p => p.Guild.Id == g.Id))
             ).ToList();
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            Log.Error(ex);
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Failed to list guilds");
             total = 0;
             return null;
         }

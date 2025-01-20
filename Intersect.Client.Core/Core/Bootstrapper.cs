@@ -1,18 +1,21 @@
+using System.Diagnostics;
+using System.Reflection;
 using CommandLine;
-
+using Intersect.Core;
 using Intersect.Factories;
-using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Plugins;
 using Intersect.Plugins.Contexts;
 using Intersect.Plugins.Helpers;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Events;
+using Serilog.Extensions.Logging;
 
 namespace Intersect.Client.Core;
 
 internal static partial class Bootstrapper
 {
-    public static ClientContext? Context { get; private set; }
-
     public static void Start(params string[] args)
     {
         var parser = new Parser(
@@ -31,20 +34,36 @@ internal static partial class Bootstrapper
             }
         );
 
-        var logger = Log.Default;
+        var commandLineOptions = parser.ParseArguments<ClientCommandLineOptions>(args)
+            .MapResult(HandleParsedArguments, HandleParserErrors);
+
+        var executableName = Path.GetFileNameWithoutExtension(
+            Process.GetCurrentProcess().MainModule?.FileName ?? Assembly.GetExecutingAssembly().GetName().Name
+        );
+        var loggerConfiguration = new LoggerConfiguration().MinimumLevel
+            .Is(Debugger.IsAttached ? LogEventLevel.Debug : LogEventLevel.Information).Enrich.FromLogContext().WriteTo
+            .Console().WriteTo.File(
+                Path.Combine(
+                    "logs",
+                    $"{executableName}-{Process.GetCurrentProcess().StartTime:yyyy_MM_dd-HH_mm_ss_fff}.log"
+                )
+            ).WriteTo.File(
+                Path.Combine("logs", $"errors-{executableName}.log"),
+                restrictedToMinimumLevel: LogEventLevel.Error
+            );
+
+        var logger = new SerilogLoggerFactory(loggerConfiguration.CreateLogger()).CreateLogger("Client");
+
         var packetTypeRegistry = new PacketTypeRegistry(logger, typeof(SharedConstants).Assembly);
         if (!packetTypeRegistry.TryRegisterBuiltIn())
         {
-            logger.Error("Failed to register built-in packets.");
+            logger.LogError("Failed to register built-in packets.");
             return;
         }
 
         var packetHandlerRegistry = new PacketHandlerRegistry(packetTypeRegistry, logger);
         var packetHelper = new PacketHelper(packetTypeRegistry, packetHandlerRegistry);
         _ = FactoryRegistry<IPluginBootstrapContext>.RegisterFactory(PluginBootstrapContext.CreateFactory(args, parser, packetHelper));
-
-        var commandLineOptions = parser.ParseArguments<ClientCommandLineOptions>(args)
-            .MapResult(HandleParsedArguments, HandleParserErrors);
 
         if (!string.IsNullOrWhiteSpace(commandLineOptions.WorkingDirectory))
         {
@@ -56,12 +75,13 @@ internal static partial class Bootstrapper
             }
             else
             {
-                Log.Warn($"Failed to set working directory to '{workingDirectory}', path does not exist: {resolvedWorkingDirectory}");
+                ApplicationContext.Context.Value?.Logger.LogWarning($"Failed to set working directory to '{workingDirectory}', path does not exist: {resolvedWorkingDirectory}");
             }
         }
 
-        Context = new ClientContext(commandLineOptions, logger, packetHelper);
-        Context.Start();
+        var context = new ClientContext(commandLineOptions, logger, packetHelper);
+        ApplicationContext.Context.Value = context;
+        context.Start();
     }
 
     private static ClientCommandLineOptions HandleParsedArguments(ClientCommandLineOptions clientCommandLineOptions) =>
@@ -79,11 +99,17 @@ internal static partial class Bootstrapper
 
         if (fatalParsingError)
         {
-            Log.Error(exception);
+            ApplicationContext.Context.Value?.Logger.LogCritical(
+                exception,
+                "Critical error during command line argument parsing"
+            );
         }
         else
         {
-            Log.Warn(exception);
+            ApplicationContext.Context.Value?.Logger.LogWarning(
+                exception,
+                "Error occurred during command line argument parsing"
+            );
         }
 
         return default;

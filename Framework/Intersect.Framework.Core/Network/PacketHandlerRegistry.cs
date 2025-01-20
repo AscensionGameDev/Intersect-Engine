@@ -1,7 +1,7 @@
 ﻿using Intersect.Collections;
-using Intersect.Logging;
 using System.Reflection;
 using Intersect.Framework.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Network;
 
@@ -262,13 +262,13 @@ public partial class PacketHandlerRegistry : IDisposable
                 var packetType = PacketHandlerAttribute.GetPacketType(methodInfo);
                 if (!PacketTypeRegistry.IsRegistered(packetType))
                 {
-                    Logger.Error($"The packet type '{packetType.FullName}' has not been registered, a handler cannot be added.");
+                    Logger.LogError($"The packet type '{packetType.FullName}' has not been registered, a handler cannot be added.");
                     return false;
                 }
 
                 if (HasHandler(packetType))
                 {
-                    Logger.Error($"There is already a packet handler for '{packetType.FullName}'.");
+                    Logger.LogError($"There is already a packet handler for '{packetType.FullName}'.");
                     return false;
                 }
 
@@ -279,7 +279,12 @@ public partial class PacketHandlerRegistry : IDisposable
             catch (Exception exception)
 #pragma warning restore CA1031 // Do not catch general exception types
             {
-                Logger.Error(exception);
+                Logger.LogError(
+                    exception,
+                    "Error registering handler for {Method} on {Type}",
+                    methodInfo.Name,
+                    methodInfo.DeclaringType?.GetName(qualified: true)
+                );
 
                 return false;
             }
@@ -300,13 +305,13 @@ public partial class PacketHandlerRegistry : IDisposable
             var packetType = PacketHandlerAttribute.GetPacketType(type);
             if (!PacketTypeRegistry.IsRegistered(packetType))
             {
-                Logger.Error($"The packet type '{packetType.FullName}' has not been registered, a handler cannot be added.");
+                Logger.LogError($"The packet type \'{packetType.FullName}\' has not been registered, a handler cannot be added.");
                 return false;
             }
 
             if (HasHandler(packetType))
             {
-                Logger.Error($"There is already a packet handler for '{packetType.FullName}'.");
+                Logger.LogError($"There is already a packet handler for '{packetType.FullName}'.");
                 return false;
             }
 
@@ -329,13 +334,13 @@ public partial class PacketHandlerRegistry : IDisposable
         var realPacketType = PacketHandlerAttribute.GetPacketType(handlerType);
         if (packetType != realPacketType)
         {
-            Logger.Error($"Handler {handlerType.FullName} is incompatible with {packetType.FullName}, expected {realPacketType.FullName}.");
+            Logger.LogError($"Handler {handlerType.FullName} is incompatible with {packetType.FullName}, expected {realPacketType.FullName}.");
             return false;
         }
 
         if (!PacketTypeRegistry.IsRegistered(realPacketType))
         {
-            Logger.Error($"The packet type '{packetType.FullName}' has not been registered, a handler cannot be added.");
+            Logger.LogError($"The packet type '{packetType.FullName}' has not been registered, a handler cannot be added.");
             return false;
         }
 
@@ -395,13 +400,13 @@ public partial class PacketHandlerRegistry : IDisposable
         var packetType = PacketHandlerAttribute.GetPacketType(handlerType);
         if (!PacketTypeRegistry.IsRegistered(packetType))
         {
-            Logger.Error($"The packet type '{packetType.FullName}' has not been registered, a handler cannot be added.");
+            Logger.LogError($"The packet type '{packetType.FullName}' has not been registered, a handler cannot be added.");
             return false;
         }
 
         if (HasHandler(packetType))
         {
-            Logger.Error($"There is already a packet handler for '{packetType.FullName}'.");
+            Logger.LogError($"There is already a packet handler for '{packetType.FullName}'.");
             return false;
         }
 

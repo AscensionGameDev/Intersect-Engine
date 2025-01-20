@@ -1,9 +1,8 @@
 using System.Reflection;
-
 using Intersect.Localization;
 
 #if !DEBUG
-using Intersect.Logging;
+
 #endif
 
 namespace Intersect.GameObjects.Annotations;

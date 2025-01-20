@@ -1,10 +1,12 @@
+using System.Diagnostics;
 using Dapper;
 using Intersect.Config;
+using Intersect.Core;
 using Intersect.Framework.Reflection;
-using Intersect.Logging;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Logging;
 using SqlKata.Execution;
 
 namespace Intersect.Server.Database;
@@ -196,7 +198,7 @@ public sealed class SqliteNetCoreGuidPatch
                     // Only debug logging below here in this loop
                     // If more logic needs to be added this should be inverted
                     // and the logging logic put back inside the if statement
-                    if (Log.Default.Configuration.LogLevel < LogLevel.Debug)
+                    if (!Debugger.IsAttached)
                     {
                         continue;
                     }
@@ -215,22 +217,24 @@ public sealed class SqliteNetCoreGuidPatch
                         searchValues.Select(searchValue => searchValue?.GetFullishName())
                     );
 
-                    Log.Debug($"Processed row {convertedRowCount++}/{numberOfRows} in '{entityTable}' (segment {segmentConvertedRowCount++}/{convertedRows.Count}) ({searchValuesString} was {searchValuesTypeString}), {result} rows changed.");
+                    ApplicationContext.Context.Value?.Logger.LogDebug(
+                        $"Processed row {convertedRowCount++}/{numberOfRows} in '{entityTable}' (segment {segmentConvertedRowCount++}/{convertedRows.Count}) ({searchValuesString} was {searchValuesTypeString}), {result} rows changed."
+                    );
                 }
                 transaction.Commit();
                 dbConnection.Close();
 
-                if (Log.Default.Configuration.LogLevel >= LogLevel.Debug)
+                if (Debugger.IsAttached)
                 {
-                    Log.Debug(
+                    ApplicationContext.Context.Value?.Logger.LogDebug(
                         $"Completed updating segment in {(DateTime.UtcNow - startTimeSegment).TotalMilliseconds}ms ('{entityTable}', {convertedRows.Count} rows updated)"
                     );
                 }
             }
 
-            Log.Verbose($"Completed updating table in {(DateTime.UtcNow - startTimeTable).TotalMilliseconds}ms  ('{entityTable}', {numberOfRows} rows updated)");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"Completed updating table in {(DateTime.UtcNow - startTimeTable).TotalMilliseconds}ms  ('{entityTable}', {numberOfRows} rows updated)");
         }
 
-        Log.Verbose($"Completed updating database in {(DateTime.UtcNow - startTimeDatabase).TotalMilliseconds}ms");
+        ApplicationContext.Context.Value?.Logger.LogDebug($"Completed updating database in {(DateTime.UtcNow - startTimeDatabase).TotalMilliseconds}ms");
     }
 }

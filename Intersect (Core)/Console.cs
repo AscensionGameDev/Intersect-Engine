@@ -1,9 +1,7 @@
 ﻿using System.Text;
-
 using Intersect.IO;
 
 namespace Intersect;
-
 
 using SystemConsole = System.Console;
 

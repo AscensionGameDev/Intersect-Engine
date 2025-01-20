@@ -1,9 +1,7 @@
 ﻿using System.Reflection;
 using System.Runtime.Serialization;
-
 using Intersect.Extensions;
 using Intersect.Properties;
-
 using Microsoft;
 
 namespace Intersect.Plugins.Loaders;

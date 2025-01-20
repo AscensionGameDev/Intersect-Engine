@@ -1,7 +1,6 @@
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.GameObjects;
-
 using Graphics = Intersect.Editor.Core.Graphics;
 
 namespace Intersect.Editor.Forms.Controls;

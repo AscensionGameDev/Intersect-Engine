@@ -1,13 +1,14 @@
 ﻿using Intersect.Core;
 using Intersect.Network;
 using Intersect.Plugins.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Plugins.Helpers;
 
 public sealed partial class PluginPacketSender : IPacketSender
 {
     private static IPacketSender? VirtualSender => Networking.Network.PacketHandler?.VirtualSender;
-    
+
     private readonly IPacketHelper mPluginPluginPacketHelper;
 
     public PluginPacketSender(IPacketHelper pluginPacketHelper)
@@ -27,7 +28,7 @@ public sealed partial class PluginPacketSender : IPacketSender
         {
             throw new ArgumentNullException(nameof(packet));
         }
-        
+
         var packetType = packet.GetType();
         var packetTypeRegisteredByPlugin = mPluginPluginPacketHelper.AllPluginPacketTypes.Contains(packetType);
 
@@ -37,7 +38,7 @@ public sealed partial class PluginPacketSender : IPacketSender
         }
 
 #if DEBUG
-        ApplicationContext?.Logger.Error(
+        ApplicationContext?.Logger.LogError(
             $"Tried to send packet of type {packetType.FullName} but it was not registered by this plugin.\n" +
             "Available packet types:\n" +
             $"{string.Join("\n", mPluginPluginPacketHelper.AllPluginPacketTypes.Select(type => type.FullName))}"

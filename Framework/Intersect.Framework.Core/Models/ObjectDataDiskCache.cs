@@ -5,8 +5,9 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using Intersect.Configuration;
+using Intersect.Core;
 using Intersect.Framework;
-using Intersect.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Models;
 
@@ -127,7 +128,7 @@ public static class ObjectDataDiskCache<TObject>
         }
         catch (Exception exception)
         {
-            LegacyLogging.Logger?.Error(exception);
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Failed to load cache item {ID}", id);
             data = default;
             return false;
         }
@@ -195,7 +196,11 @@ public static class ObjectDataDiskCache<TObject>
         }
         catch (Exception exception)
         {
-            LegacyLogging.Logger?.Error(exception);
+            ApplicationContext.Context.Value?.Logger.LogError(
+                exception,
+                "Failed to save cache item {CacheKey}",
+                objectCacheData.GetKey()
+            );
             return false;
         }
     }

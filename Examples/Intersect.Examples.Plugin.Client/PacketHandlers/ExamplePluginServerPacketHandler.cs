@@ -1,8 +1,6 @@
 ﻿using Intersect.Examples.Plugin.Packets.Client;
 using Intersect.Examples.Plugin.Packets.Server;
-using Intersect.Logging;
 using Intersect.Network;
-
 using System;
 
 namespace Intersect.Examples.Plugin.Client.PacketHandlers
@@ -21,15 +19,15 @@ namespace Intersect.Examples.Plugin.Client.PacketHandlers
                 throw new ArgumentNullException(nameof(packet));
             }
 
-            Log.Info($"Received server packet! The server said '{packet.ExamplePluginMessage}'.");
+            ApplicationContext.Context.Value?.Logger.LogInformation($"Received server packet! The server said '{packet.ExamplePluginMessage}'.");
             
             var packetSent = packetSender.Send(new ExamplePluginClientPacket("A message from the client!"));
             if (packetSent)
             {
-                Log.Info("Sent response back to the server!");
+                ApplicationContext.Context.Value?.Logger.LogInformation("Sent response back to the server!");
             } else
             {
-                Log.Error("Failed to send response back to the server!");
+                ApplicationContext.Context.Value?.Logger.LogError("Failed to send response back to the server!");
             }
 
             return packetSent;

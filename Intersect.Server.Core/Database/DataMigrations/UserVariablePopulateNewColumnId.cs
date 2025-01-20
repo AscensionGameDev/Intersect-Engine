@@ -1,8 +1,9 @@
 using System.Diagnostics;
 using Intersect.Config;
-using Intersect.Logging;
+using Intersect.Core;
 using Intersect.Server.Database.PlayerData;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SqlKata.Execution;
 using SqlKata.Extensions;
 
@@ -39,7 +40,7 @@ public abstract class UserVariablePopulateNewColumnId : IDataMigration<PlayerCon
 
         if (numberOfTables < 1)
         {
-            Log.Warn($"No 'User_Variables' table.");
+            ApplicationContext.Context.Value?.Logger.LogWarning($"No 'User_Variables' table.");
             return;
         }
 
@@ -81,9 +82,9 @@ public abstract class UserVariablePopulateNewColumnId : IDataMigration<PlayerCon
 
                     var result = query.Update(convertedRow, transaction: transaction);
 
-                    if (Log.Default.Configuration.LogLevel >= LogLevel.Debug)
+                    if (Debugger.IsAttached)
                     {
-                        Log.Debug(
+                        ApplicationContext.Context.Value?.Logger.LogDebug(
                             $"Processed row {++convertedRowCount}/{numberOfRows} in '{tableName}' (segment {indexInSegment++}/{rowsToConvert.Length}), {result} rows changed."
                         );
                     }
@@ -98,15 +99,15 @@ public abstract class UserVariablePopulateNewColumnId : IDataMigration<PlayerCon
             transaction.Commit();
             dbConnection.Close();
 
-            if (Log.Default.Configuration.LogLevel >= LogLevel.Debug)
+            if (Debugger.IsAttached)
             {
-                Log.Debug(
+                ApplicationContext.Context.Value?.Logger.LogDebug(
                     $"Completed updating segment {segmentNumber}/{numberOfSegments} in {(DateTime.UtcNow - startTimeSegment).TotalMilliseconds}ms ('{tableName}', {rowsToConvert.Length} rows updated)"
                 );
             }
         }
 
-        Log.Verbose($"Completed updating table in {(DateTime.UtcNow - startTimeTable).TotalMilliseconds}ms  ('{tableName}', {convertedRowCount} rows updated)");
+        ApplicationContext.Context.Value?.Logger.LogDebug($"Completed updating table in {(DateTime.UtcNow - startTimeTable).TotalMilliseconds}ms  ('{tableName}', {convertedRowCount} rows updated)");
     }
 
     private sealed class PseudoUserVariable

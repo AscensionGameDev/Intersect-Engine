@@ -4,6 +4,7 @@ using Intersect.Plugins.Loaders;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Plugins;
 
@@ -72,7 +73,7 @@ internal sealed partial class PluginService : ApplicationService<IPluginService,
             // Discover plugins
             var discoveredPlugins = Loader.DiscoverPlugins(applicationContext, PluginDirectories);
 
-            applicationContext.Logger.Info(
+            applicationContext.Logger.LogInformation(
                 $"Discovered {discoveredPlugins.Count} plugins:\n{string.Join("\n", discoveredPlugins.Select(plugin => plugin.Key))}"
             );
 
@@ -201,7 +202,7 @@ internal sealed partial class PluginService : ApplicationService<IPluginService,
                         //     applicationContext.Strings.Errors.PluginLifecycleFailed.ToString(lifecycleState)
                         // );
 
-                        applicationContext.Logger.Error(
+                        applicationContext.Logger.LogError(
                             exception, $"Failed to invoke {action.Method?.Name} for {pair.Key.Key}."
                         );
                     }

@@ -1,7 +1,8 @@
 using System.Runtime.CompilerServices;
 using Intersect.Client.Framework.Content;
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Framework.Graphics;
 
@@ -81,7 +82,10 @@ public abstract partial class GameTexture : IAsset
                     break;
 
                 default:
-                    GameContentManager.Current?.Logger.Error(new ArgumentOutOfRangeException(nameof(boundsComparison), boundsComparison.ToString()));
+                    ApplicationContext.Context.Value?.Logger.LogError(
+                        new ArgumentOutOfRangeException(nameof(boundsComparison), boundsComparison.ToString()),
+                        "Failed to get bounding texture"
+                    );
                     break;
             }
 

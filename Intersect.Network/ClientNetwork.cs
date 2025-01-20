@@ -3,9 +3,9 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using Intersect.Core;
-using Intersect.Logging;
 using Intersect.Network.Events;
 using Intersect.Network.LiteNetLib;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Network;
 
@@ -93,26 +93,26 @@ public partial class ClientNetwork : AbstractNetwork, IClient
 
     protected virtual void HandleInterfaceOnConnected(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs)
     {
-        Log.Info($"Connected [{connectionEventArgs.Connection?.Guid}].");
+        ApplicationContext.Logger.LogInformation($"Connected [{connectionEventArgs.Connection?.Guid}].");
         _isConnected = true;
         OnConnected?.Invoke(sender, connectionEventArgs);
     }
 
     protected virtual void HandleInterfaceOnConnectonApproved(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs)
     {
-        Log.Info($"Connection approved [{connectionEventArgs.Connection?.Guid}].");
+        ApplicationContext.Logger.LogInformation($"Connection approved [{connectionEventArgs.Connection?.Guid}].");
         OnConnectionApproved?.Invoke(sender, connectionEventArgs);
     }
 
     protected virtual void HandleInterfaceOnConnectonDenied(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs)
     {
-        Log.Info($"Connection denied [{connectionEventArgs.Connection?.Guid}].");
+        ApplicationContext.Logger.LogInformation($"Connection denied [{connectionEventArgs.Connection?.Guid}].");
         OnConnectionDenied?.Invoke(sender, connectionEventArgs);
     }
 
     protected virtual void HandleInterfaceOnDisconnected(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs)
     {
-        Log.Info($"Disconnected [{connectionEventArgs.Connection?.Guid ?? Guid.Empty}].");
+        ApplicationContext.Logger.LogInformation($"Disconnected [{connectionEventArgs.Connection?.Guid ?? Guid.Empty}].");
         _isConnected = false;
         OnDisconnected?.Invoke(sender, connectionEventArgs);
     }

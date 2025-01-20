@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.Serialization;
-
 using Intersect.Properties;
 
 namespace Intersect.Core;

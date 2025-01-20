@@ -1,5 +1,4 @@
 ﻿using Intersect.Utilities;
-
 using NUnit.Framework;
 using System.Diagnostics.CodeAnalysis;
 

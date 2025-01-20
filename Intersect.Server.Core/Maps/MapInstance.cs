@@ -1,9 +1,9 @@
 using System.Collections.Concurrent;
+using Intersect.Core;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
-using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Entities.Events;
@@ -15,6 +15,7 @@ using Intersect.Server.Core.MapInstancing;
 using Intersect.Server.Framework.Items;
 using Intersect.Server.Framework.Maps;
 using Intersect.Server.Plugins.Helpers;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Server.Maps;
 
@@ -741,7 +742,7 @@ public partial class MapInstance : IMapInstance
     {
         if (item == null)
         {
-            Log.Warn($"Tried to spawn {amount} of a null item at ({x}, {y}) in map {Id}.");
+            ApplicationContext.Context.Value?.Logger.LogWarning($"Tried to spawn {amount} of a null item at ({x}, {y}) in map {Id}.");
 
             return;
         }
@@ -749,7 +750,7 @@ public partial class MapInstance : IMapInstance
         var itemDescriptor = ItemBase.Get(item.ItemId);
         if (itemDescriptor == null)
         {
-            Log.Warn($"No item found for {item.ItemId}.");
+            ApplicationContext.Context.Value?.Logger.LogWarning($"No item found for {item.ItemId}.");
 
             return;
         }

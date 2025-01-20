@@ -1,7 +1,5 @@
 ﻿using CommandLine;
-
 using Intersect.Utilities;
-
 using System;
 
 namespace Intersect.Examples.Plugin.Client

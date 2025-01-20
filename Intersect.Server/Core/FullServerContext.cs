@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using System.Resources;
-using Intersect.Logging;
+using Intersect.Core;
 using Intersect.Plugins.Interfaces;
 using Intersect.Rsa;
 using Intersect.Server.Core.Services;
@@ -9,6 +9,7 @@ using Intersect.Server.Networking;
 using Intersect.Server.Networking.Helpers;
 using Intersect.Server.Web;
 using Open.Nat;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Intersect.Server.Core;
 
@@ -22,7 +23,7 @@ internal class FullServerContext : ServerContext, IFullServerContext
 
     internal FullServerContext(
         ServerCommandLineOptions startupOptions,
-        Logger logger,
+        ILogger logger,
         IPacketHelper packetHelper
     ) : base(startupOptions, logger, packetHelper)
     {
@@ -68,7 +69,7 @@ internal class FullServerContext : ServerContext, IFullServerContext
             return;
         }
 
-        Log.Info("Shutting down the console thread..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
+        ApplicationContext.Context.Value?.Logger.LogInformation("Shutting down the console thread..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
         if (!ThreadConsole.Join(1000))
         {
             try
@@ -77,7 +78,7 @@ internal class FullServerContext : ServerContext, IFullServerContext
             }
             catch (ThreadAbortException threadAbortException)
             {
-                Log.Error(threadAbortException, $"{nameof(ThreadConsole)} aborted.");
+                ApplicationContext.Context.Value?.Logger.LogError(threadAbortException, $"{nameof(ThreadConsole)} aborted.");
             }
         }
     }
@@ -87,7 +88,7 @@ internal class FullServerContext : ServerContext, IFullServerContext
         base.OnDisposing(stopwatch);
 
 #if WEBSOCKETS
-                Log.Info("Shutting down websockets..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
+                ApplicationContext.Context.Value?.Logger.LogInformation("Shutting down websockets..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
                 WebSocketNetwork.Stop();
 #endif
     }
@@ -98,7 +99,7 @@ internal class FullServerContext : ServerContext, IFullServerContext
 
 #if WEBSOCKETS
             WebSocketNetwork.Init(Options.ServerPort);
-            Log.Pretty.Info(Strings.Intro.websocketstarted.ToString(Options.ServerPort));
+            ApplicationContext.Context.Value?.Logger.LogInformation(Strings.Intro.websocketstarted.ToString(Options.ServerPort));
             Console.WriteLine();
 #endif
 
@@ -122,7 +123,7 @@ internal class FullServerContext : ServerContext, IFullServerContext
 
                 if (Options.UPnP && !StartupOptions.NoNatPunchthrough)
                 {
-                    Log.Pretty.Info(Strings.Portchecking.PortNotOpenTryingUpnp.ToString(Options.ServerPort));
+                    ApplicationContext.Context.Value?.Logger.LogInformation(Strings.Portchecking.PortNotOpenTryingUpnp.ToString(Options.ServerPort));
                     Console.WriteLine();
 
                     if (TryUPnP())
@@ -132,35 +133,35 @@ internal class FullServerContext : ServerContext, IFullServerContext
                             return;
                         }
 
-                        Log.Pretty.Warn(Strings.Portchecking.ProbablyFirewall.ToString(Options.ServerPort));
+                        ApplicationContext.Context.Value?.Logger.LogWarning(Strings.Portchecking.ProbablyFirewall.ToString(Options.ServerPort));
                     }
                     else
                     {
-                        Log.Pretty.Warn(Strings.Portchecking.RouterUpnpFailed);
+                        ApplicationContext.Context.Value?.Logger.LogWarning(Strings.Portchecking.RouterUpnpFailed);
                     }
                 }
                 else
                 {
-                    Log.Pretty.Warn(Strings.Portchecking.PortNotOpenUpnpDisabled.ToString(Options.ServerPort));
+                    ApplicationContext.Context.Value?.Logger.LogWarning(Strings.Portchecking.PortNotOpenUpnpDisabled.ToString(Options.ServerPort));
                 }
             }
             else if (Options.UPnP)
             {
-                Log.Pretty.Info(Strings.Portchecking.TryingUpnp);
+                ApplicationContext.Context.Value?.Logger.LogInformation(Strings.Portchecking.TryingUpnp);
                 Console.WriteLine();
 
                 if (TryUPnP())
                 {
-                    Log.Pretty.Info(Strings.Portchecking.UpnpSucceededPortCheckerDisabled);
+                    ApplicationContext.Context.Value?.Logger.LogInformation(Strings.Portchecking.UpnpSucceededPortCheckerDisabled);
                 }
                 else
                 {
-                    Log.Pretty.Warn(Strings.Portchecking.RouterUpnpFailed);
+                    ApplicationContext.Context.Value?.Logger.LogWarning(Strings.Portchecking.RouterUpnpFailed);
                 }
             }
             else
             {
-                Log.Pretty.Warn(Strings.Portchecking.PortCheckerAndUpnpDisabled);
+                ApplicationContext.Context.Value?.Logger.LogWarning(Strings.Portchecking.PortCheckerAndUpnpDisabled);
             }
         }
 
@@ -195,7 +196,7 @@ internal class FullServerContext : ServerContext, IFullServerContext
                 portCheckResultMessage = portCheckResult.ToString();
             }
 
-            Log.Pretty.Info(portCheckResultMessage.ToString(Strings.Portchecking.DocumentationUrl));
+            ApplicationContext.Context.Value?.Logger.LogInformation(portCheckResultMessage.ToString(Strings.Portchecking.DocumentationUrl));
 
             if (!string.IsNullOrEmpty(externalIp))
             {

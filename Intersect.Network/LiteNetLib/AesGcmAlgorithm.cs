@@ -1,7 +1,8 @@
 using System.Buffers;
 using System.Buffers.Binary;
 using System.Security.Cryptography;
-using Intersect.Logging;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Network.LiteNetLib;
 
@@ -130,14 +131,14 @@ public sealed class AesGcmAlgorithm : SymmetricAlgorithm
         catch (Exception exception)
         {
 #if DIAGNOSTIC
-            Log.Debug($"cipherdata({cipherdata.Length})=[nonce={Convert.ToHexString(nonce)}, tag={Convert.ToHexString(tag)}]");
-            Log.Debug($"cipherdataView({cipherdataView.Length})={Convert.ToHexString(cipherdataView)}");
-            Log.Debug($"key={Convert.ToHexString(_key.Span)}");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"cipherdata({cipherdata.Length})=[nonce={Convert.ToHexString(nonce)}, tag={Convert.ToHexString(tag)}]");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"cipherdataView({cipherdataView.Length})={Convert.ToHexString(cipherdataView)}");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"key={Convert.ToHexString(_key.Span)}");
 #endif
-            var configuredLogLevel = Options.Instance?.Logging.Level ?? LogLevel.Diagnostic;
+            var configuredLogLevel = Options.Instance?.Logging.Level ?? LogLevel.Trace;
             if (configuredLogLevel >= LogLevel.Debug)
             {
-                Log.Error(exception);
+                ApplicationContext.Context.Value?.Logger.LogError(exception, "Error decrypting cipherdata");
             }
             plaindata = default;
             return EncryptionResult.Error;
@@ -201,9 +202,9 @@ public sealed class AesGcmAlgorithm : SymmetricAlgorithm
 #if DIAGNOSTIC
             if (plaindata.Length > 1000)
             {
-                Log.Debug($"cipherdata({cipherdata.Length})=[nonce={Convert.ToHexString(nonce)}, tag={Convert.ToHexString(tag)}]");
-                Log.Debug($"cipherdataView({cipherdataView.Length})={Convert.ToHexString(cipherdataView)}");
-                Log.Debug($"key={Convert.ToHexString(_key.Span)}");
+                ApplicationContext.Context.Value?.Logger.LogDebug($"cipherdata({cipherdata.Length})=[nonce={Convert.ToHexString(nonce)}, tag={Convert.ToHexString(tag)}]");
+                ApplicationContext.Context.Value?.Logger.LogDebug($"cipherdataView({cipherdataView.Length})={Convert.ToHexString(cipherdataView)}");
+                ApplicationContext.Context.Value?.Logger.LogDebug($"key={Convert.ToHexString(_key.Span)}");
             }
 #endif
 
@@ -211,10 +212,10 @@ public sealed class AesGcmAlgorithm : SymmetricAlgorithm
         }
         catch (Exception exception)
         {
-            var configuredLogLevel = Options.Instance?.Logging.Level ?? LogLevel.Diagnostic;
+            var configuredLogLevel = Options.Instance?.Logging.Level ?? LogLevel.Trace;
             if (configuredLogLevel >= LogLevel.Debug)
             {
-                Log.Error(exception);
+                ApplicationContext.Context.Value?.Logger.LogError(exception, "Error encrypting plaindata");
             }
             cipherdata = default;
             return EncryptionResult.Error;

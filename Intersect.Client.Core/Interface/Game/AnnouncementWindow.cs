@@ -1,7 +1,6 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
-
 using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game;

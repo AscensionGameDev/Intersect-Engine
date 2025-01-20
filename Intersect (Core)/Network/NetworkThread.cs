@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
-
-using Intersect.Logging;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Network;
 
@@ -75,10 +75,10 @@ public sealed partial class NetworkThread
                 continue;
             }
 
-            //Log.Debug($"Dispatching packet '{packet.GetType().Name}' (size={(packet as BinaryPacket)?.Buffer?.Length() ?? -1}).");
+            //ApplicationContext.Context.Value?.Logger.LogDebug($"Dispatching packet '{packet.GetType().Name}' (size={(packet as BinaryPacket)?.Buffer?.Length() ?? -1}).");
             if (!mDispatcher.Dispatch(packet))
             {
-                Log.Warn($"Failed to dispatch packet '{packet}'.");
+                ApplicationContext.Context.Value?.Logger.LogWarning($"Failed to dispatch packet '{packet}'.");
             }
 
 #if DIAGNOSTIC
@@ -96,7 +96,7 @@ public sealed partial class NetworkThread
 
         sw.Stop();
 
-        Log.Debug($"Exiting network thread ({Name}).");
+        ApplicationContext.Context.Value?.Logger.LogDebug($"Exiting network thread ({Name}).");
     }
 
 }

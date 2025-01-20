@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using LogLevel = Intersect.Logging.LogLevel;
 
 namespace Intersect.Server.Web.Http
 {
@@ -12,7 +11,7 @@ namespace Intersect.Server.Web.Http
             // 1xx
             if (httpStatusCode < HttpStatusCode.OK)
             {
-                return LogLevel.Diagnostic;
+                return LogLevel.Trace;
             }
 
             // 2xx
@@ -23,13 +22,13 @@ namespace Intersect.Server.Web.Http
                     return LogLevel.Debug;
                 }
 
-                return LogLevel.Info;
+                return LogLevel.Information;
             }
 
             // 3xx
             if (httpStatusCode < HttpStatusCode.BadRequest)
             {
-                return LogLevel.Info;
+                return LogLevel.Information;
             }
 
             // ReSharper disable once SwitchStatementMissingSomeCases
@@ -45,10 +44,10 @@ namespace Intersect.Server.Web.Http
                         httpMethod == HttpMethod.Head ||
                         httpMethod == HttpMethod.Options)
                     {
-                        return LogLevel.Info;
+                        return LogLevel.Information;
                     }
 
-                    return LogLevel.Warn;
+                    return LogLevel.Warning;
 
                 case HttpStatusCode.Unauthorized:
                 case HttpStatusCode.Forbidden:
@@ -60,7 +59,7 @@ namespace Intersect.Server.Web.Http
                         httpMethod == HttpMethod.Head ||
                         httpMethod == HttpMethod.Options)
                     {
-                        return LogLevel.Warn;
+                        return LogLevel.Warning;
                     }
 
                     return LogLevel.Error;

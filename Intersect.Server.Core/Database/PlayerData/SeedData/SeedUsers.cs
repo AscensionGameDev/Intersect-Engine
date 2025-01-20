@@ -1,10 +1,8 @@
 using System.Security.Cryptography;
 using System.Text;
-
 using Intersect.Enums;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.Server.Database.PlayerData.SeedData;

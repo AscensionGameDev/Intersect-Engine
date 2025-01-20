@@ -145,7 +145,7 @@ public sealed class PortChecker : INetEventListener, INetLogger
         request.Reject();
     }
 
-    public void WriteNet(NetLogLevel level, string str, params object[] args)
+    public void WriteNet(NetLogLevel level, string format, params object[] args)
     {
         var logLevel = level switch
         {
@@ -155,7 +155,7 @@ public sealed class PortChecker : INetEventListener, INetLogger
             NetLogLevel.Info => LogLevel.Information,
             _ => throw new ArgumentOutOfRangeException(nameof(level), level, null),
         };
-        _logger.Log(logLevel, str, args);
+        _logger.Log(logLevel, format, args);
     }
 
     public void PruneTasks(bool onlyExpired = true)

@@ -1,5 +1,4 @@
 using System.Diagnostics;
-
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Input;
@@ -7,8 +6,8 @@ using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.MonoGame.Graphics;
 using Intersect.Client.ThirdParty;
-using Intersect.Logging;
-
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Keys = Intersect.Client.Framework.GenericClasses.Keys;
@@ -347,7 +346,7 @@ public partial class MonoInput : GameInput
             {
                 if (keyboardState.IsKeyDown(key.Value) && !mLastKeyboardState.IsKeyDown(key.Value))
                 {
-                    Log.Diagnostic("{0} -> {1}", key.Key, key.Value);
+                    ApplicationContext.Context.Value?.Logger.LogTrace("{0} -> {1}", key.Key, key.Value);
                     Interface.Interface.GwenInput.ProcessMessage(
                         new GwenInputMessage(
                             IntersectInput.InputEvent.KeyDown, GetMousePosition(), (int) MouseButtons.None, key.Key

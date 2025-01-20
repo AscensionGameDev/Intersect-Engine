@@ -9,9 +9,7 @@ using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
 using Intersect.Utilities;
-
 using Microsoft.Xna.Framework.Graphics;
-
 using WeifenLuo.WinFormsUI.Docking;
 using Graphics = System.Drawing.Graphics;
 

@@ -3,7 +3,6 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
-using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets;
 using Intersect.Network.Packets.Client;
@@ -20,8 +19,10 @@ using Intersect.Utilities;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text;
+using Intersect.Core;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Core;
+using Microsoft.Extensions.Logging;
 using ChatMsgPacket = Intersect.Network.Packets.Client.ChatMsgPacket;
 using LoginPacket = Intersect.Network.Packets.Client.LoginPacket;
 using PartyInvitePacket = Intersect.Network.Packets.Client.PartyInvitePacket;
@@ -112,7 +113,7 @@ internal sealed partial class PacketHandler
 
         if (pSize > thresholds.MaxPacketSize)
         {
-            Log.Error(
+            ApplicationContext.Context.Value?.Logger.LogError(
                 Strings.Errors.ErrorFloodSize.ToString(
                     pSize, client?.User?.Name ?? "", client?.Entity?.Name ?? "", client.Ip
                 )
@@ -129,7 +130,7 @@ internal sealed partial class PacketHandler
             client.PacketCount++;
             if (client.PacketCount > thresholds.MaxPacketPerSec)
             {
-                Log.Error(
+                ApplicationContext.Context.Value?.Logger.LogError(
                     Strings.Errors.ErrorFloodBurst.ToString(
                         client.PacketCount, client?.User?.Name ?? "", client?.Entity?.Name ?? "", client.Ip
                     )
@@ -148,7 +149,7 @@ internal sealed partial class PacketHandler
 
                 if (client.FloodDetects > 3)
                 {
-                    //Log.Error(
+                    //ApplicationContext.Context.Value?.Logger.LogError(
                     //    Strings.Errors.floodaverage.ToString(
                     //        client.TotalFloodDetects, client?.User?.Name ?? "", client?.Entity?.Name ?? "",
                     //        client.GetIp()
@@ -164,7 +165,7 @@ internal sealed partial class PacketHandler
                 //TODO: Make this check a rolling average somehow to prevent constant flooding right below the threshholds.
                 if (client.TotalFloodDetects > 10)
                 {
-                    //Log.Error(string.Format("[Flood]: Total Detections: {00} [User: {01} | Player: {02} | IP {03}]", client.TotalFloodDetects, client?.User?.Name ?? "", client?.Entity?.Name ?? "", client.GetIp()));
+                    //ApplicationContext.Context.Value?.Logger.LogError(string.Format("[Flood]: Total Detections: {00} [User: {01} | Player: {02} | IP {03}]", client.TotalFloodDetects, client?.User?.Name ?? "", client?.Entity?.Name ?? "", client.GetIp()));
                     //client.Disconnect("Flooding detected.");
                     //return false;
                 }
@@ -181,7 +182,7 @@ internal sealed partial class PacketHandler
         {
             if (client.PacketFloodDetect)
             {
-                Log.Diagnostic(string.Format("Possible Flood Detected: Packets in last second {00} [User: {01} | Player: {02} | IP {03}]", client.PacketCount, client?.User?.Name ?? "", client?.Entity?.Name ?? "", client.Ip));
+                ApplicationContext.Context.Value?.Logger.LogTrace(string.Format("Possible Flood Detected: Packets in last second {00} [User: {01} | Player: {02} | IP {03}]", client.PacketCount, client?.User?.Name ?? "", client?.Entity?.Name ?? "", client.Ip));
             }
 
             client.PacketCount = 0;
@@ -199,7 +200,7 @@ internal sealed partial class PacketHandler
         var client = Client.FindBeta4Client(connection);
         if (client == null)
         {
-            Log.Error("Client was null when packet was being handled.");
+            ApplicationContext.Context.Value?.Logger.LogError("Client was null when packet was being handled.");
             return false;
         }
 
@@ -221,7 +222,7 @@ internal sealed partial class PacketHandler
                 return false;
 
             case null:
-                Log.Error($@"Received null packet from {client.Id} ({client.Name}).");
+                ApplicationContext.Context.Value?.Logger.LogError($@"Received null packet from {client.Id} ({client.Name}).");
                 client.Disconnect("Error processing packet.");
 
                 return true;
@@ -256,16 +257,16 @@ internal sealed partial class PacketHandler
                     sanitizationBuilder.AppendLine();
                 }
 
-                Log.Warn(sanitizationBuilder.ToString());
+                ApplicationContext.Context.Value?.Logger.LogWarning(sanitizationBuilder.ToString());
             }
         }
         catch (Exception exception)
         {
-            Log.Error(
+            ApplicationContext.Context.Value?.Logger.LogError(
                 $"Client Packet Error! [Packet: {packet.GetType().Name} | User: {client.Name ?? ""} | Player: {client.Entity?.Name ?? ""} | IP {client.Ip}]"
             );
 
-            Log.Error(exception);
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Client packet error");
             client.Disconnect("Error processing packet.");
 
             return false;
@@ -343,7 +344,7 @@ internal sealed partial class PacketHandler
 
             if (logDiagnostics)
             {
-                Log.Debug(
+                ApplicationContext.Context.Value?.Logger.LogDebug(
                     "\n\t" +
                     $"Ping[Connection={ping}, Error={Math.Abs(ping)}]\n\t" +
                     $"Error[G={Math.Abs(localAdjustedMs - remoteAdjustedMs)}, R={Math.Abs(localUtcMs - remoteUtcMs)}, O={Math.Abs(localOffsetMs - remoteOffsetMs)}]\n\t" +
@@ -365,7 +366,7 @@ internal sealed partial class PacketHandler
                 {
                     //if (!(packet is PingPacket))
                     //{
-                    //    Log.Warn(
+                    //    ApplicationContext.Context.Value?.Logger.LogWarning(
                     //        "Dropping Packet. Time desync? Debug Info:\n\t" +
                     //        $"Ping[Connection={ping}, NetConnection={ncPing}, Error={Math.Abs(ncPing - ping)}]\n\t" +
                     //        $"Server Time[Ticks={Timing.Global.Ticks}, AdjustedMs={localAdjustedMs}, TicksUTC={Timing.Global.TicksUTC}, Offset={Timing.Global.TicksOffset}]\n\t" +
@@ -384,7 +385,7 @@ internal sealed partial class PacketHandler
                     }
                     catch (Exception exception)
                     {
-                        Log.Debug(
+                        ApplicationContext.Context.Value?.Logger.LogDebug(
                             exception,
                             $"Exception thrown dropping packet ({packet.GetType().Name}/{client.Ip}/{client.Name ?? ""}/{client.Entity?.Name ?? ""})"
                         );
@@ -434,7 +435,7 @@ internal sealed partial class PacketHandler
     {
         if (!Registry.TryGetHandler(packet, out HandlePacketGeneric handler))
         {
-            Logger.Error($"No registered handler for {packet.GetType().FullName}!");
+            Logger.LogError($"No registered handler for {packet.GetType().FullName}!");
 
             return false;
         }
@@ -453,7 +454,7 @@ internal sealed partial class PacketHandler
             if (!preHooks.All(hook => hook.Handle(client, packet)))
             {
                 // Hooks should not fail, if they do that's an error
-                Logger.Error($"PreHook handler failed for {packet.GetType().FullName}.");
+                Logger.LogError($"PreHook handler failed for {packet.GetType().FullName}.");
                 return false;
             }
         }
@@ -468,7 +469,7 @@ internal sealed partial class PacketHandler
             if (!postHooks.All(hook => hook.Handle(client, packet)))
             {
                 // Hooks should not fail, if they do that's an error
-                Logger.Error($"PostHook handler failed for {packet.GetType().FullName}.");
+                Logger.LogError($"PostHook handler failed for {packet.GetType().FullName}.");
                 return false;
             }
         }
@@ -584,11 +585,11 @@ internal sealed partial class PacketHandler
         if (disconnectedClients)
         {
             var disconnectionCount = logoutCompletionSources.Count;
-            Log.Info($"Login of {username} waiting on {disconnectionCount} clients before continuing...");
+            ApplicationContext.Context.Value?.Logger.LogInformation($"Login of {username} waiting on {disconnectionCount} clients before continuing...");
 
             Task.WaitAll(logoutCompletionSources.Select(source => source.Task).ToArray());
 
-            Log.Info($"Continuing login of {username}...");
+            ApplicationContext.Context.Value?.Logger.LogInformation($"Continuing login of {username}...");
 
             if (!User.TryLogin(
                     username,
@@ -718,7 +719,7 @@ internal sealed partial class PacketHandler
         if (packet.ReturningToCharSelect &&
             (Options.MaxCharacters > 1 || !Options.Instance.PlayerOpts.SkipCharacterSelect))
         {
-            Log.Debug($"[{nameof(LogoutPacket)}] Returning to character select from player {client.Entity?.Id} ({client.User?.Id})");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"[{nameof(LogoutPacket)}] Returning to character select from player {client.Entity?.Id} ({client.User?.Id})");
             client.Entity?.TryLogout(false, true);
             client.Entity = default;
             PacketSender.SendPlayerCharacters(client, skipLoadingRelationships: true);
@@ -1985,13 +1986,13 @@ internal sealed partial class PacketHandler
 
             if (!CraftBase.TryGet(packet.CraftId, out var craftDescriptor))
             {
-                Log.Warn($"Player {player.Id} tried to craft {packet.CraftId} which does not exist.");
+                ApplicationContext.Context.Value?.Logger.LogWarning($"Player {player.Id} tried to craft {packet.CraftId} which does not exist.");
                 return;
             }
 
             if (player.OpenCraftingTableId == default)
             {
-                Log.Warn($"Player {player.Id} tried to craft {packet.CraftId} without having opened a table yet.");
+                ApplicationContext.Context.Value?.Logger.LogWarning($"Player {player.Id} tried to craft {packet.CraftId} without having opened a table yet.");
                 return;
             }
 
@@ -2595,7 +2596,10 @@ internal sealed partial class PacketHandler
         }
         catch (Exception exception)
         {
-            Log.Warn(exception);
+            ApplicationContext.Context.Value?.Logger.LogWarning(
+                exception,
+                "Failed to set player as online or send JoinGame packet"
+            );
             PacketSender.SendError(client, Strings.Account.LoadFail, Strings.General.NoticeError);
             client.Logout();
         }
@@ -2770,7 +2774,7 @@ internal sealed partial class PacketHandler
                         }
                         else
                         {
-                            Log.Info(
+                            ApplicationContext.Context.Value?.Logger.LogInformation(
                                 $"[Guild] Player {player.Id} sent an offline guild invite to guild {guild.Id} to player {target.Id}"
                             );
                             target.Save();

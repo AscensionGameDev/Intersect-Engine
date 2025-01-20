@@ -1,11 +1,8 @@
 using System.ComponentModel.DataAnnotations.Schema;
-
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
 using Intersect.Models;
-
 using Microsoft.EntityFrameworkCore;
-
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects;

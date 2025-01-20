@@ -1,5 +1,4 @@
 using System.Reflection;
-
 using Intersect.Localization;
 
 namespace Intersect.GameObjects.Annotations;

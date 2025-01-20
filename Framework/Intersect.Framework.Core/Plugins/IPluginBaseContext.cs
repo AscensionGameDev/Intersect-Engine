@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-
 using Intersect.Plugins.Interfaces;
 
 namespace Intersect.Plugins;

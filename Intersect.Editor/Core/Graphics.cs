@@ -9,9 +9,7 @@ using Intersect.Editor.Maps;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
-using Intersect.Logging;
 using Intersect.Utilities;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -217,11 +215,11 @@ public static partial class Graphics
                                 }
                                 catch (Exception exception)
                                 {
-                                    Log.Error(
+                                    ApplicationContext.Context.Value?.Logger.LogError(
                                         $"{Globals.MapGrid.Grid.GetLength(0)}x{Globals.MapGrid.Grid.GetLength(1)} -- {x},{y}"
                                     );
 
-                                    Log.Error(exception);
+                                    ApplicationContext.Context.Value?.Logger.LogError(exception);
                                 }
 
                                 if (map != null)
@@ -759,8 +757,8 @@ public static partial class Graphics
                             }
                             catch (Exception exception)
                             {
-                                Log.Error($"map={tmpMap != null},layer{drawLayer}.tiles={tmpMap.Layers[drawLayer] != null}");
-                                Log.Error(exception);
+                                ApplicationContext.Context.Value?.Logger.LogError($"map={tmpMap != null},layer{drawLayer}.tiles={tmpMap.Layers[drawLayer] != null}");
+                                ApplicationContext.Context.Value?.Logger.LogError(exception);
 
                                 continue;
                             }

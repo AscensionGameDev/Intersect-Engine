@@ -8,7 +8,6 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Newtonsoft.Json;
-
 using Graphics = Intersect.Editor.Core.Graphics;
 
 namespace Intersect.Editor.Maps;

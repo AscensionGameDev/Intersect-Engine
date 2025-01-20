@@ -4,7 +4,6 @@ using Intersect.Framework.Net;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using LogLevel = Intersect.Logging.LogLevel;
 
 namespace Intersect.Server.Web.Configuration;
 

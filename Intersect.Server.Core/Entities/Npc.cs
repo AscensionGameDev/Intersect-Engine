@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
+using Intersect.Core;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
@@ -13,6 +13,7 @@ using Intersect.Server.Framework.Items;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 using Stat = Intersect.Enums.Stat;
 
 namespace Intersect.Server.Entities;
@@ -665,7 +666,7 @@ public partial class Npc : Entity
 
         if (spellBase.Combat == null)
         {
-            Log.Warn($"Combat data missing for {spellBase.Id}.");
+            ApplicationContext.Context.Value?.Logger.LogWarning($"Combat data missing for {spellBase.Id}.");
         }
 
         //TODO: try cast spell to find out hidden targets?
@@ -975,7 +976,7 @@ public partial class Npc : Entity
                                                 {
                                                     if (CanAttack(blockingEntity, default))
                                                     {
-                                                        Log.Debug($"Trying to attack {blockingEntity.Name} because they're blocking the path to {Target.Name}");
+                                                        ApplicationContext.Context.Value?.Logger.LogDebug($"Trying to attack {blockingEntity.Name} because they're blocking the path to {Target.Name}");
                                                         ChangeDir(nextPathDirection);
                                                         TryAttack(blockingEntity);
                                                         blockerAttacked = true;

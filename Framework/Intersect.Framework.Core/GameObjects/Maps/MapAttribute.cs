@@ -1,7 +1,6 @@
 using Intersect.Enums;
 using Intersect.GameObjects.Annotations;
 using Intersect.Localization;
-
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Maps;

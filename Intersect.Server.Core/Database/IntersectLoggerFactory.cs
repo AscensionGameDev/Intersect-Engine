@@ -1,51 +1,45 @@
-using System.Collections.Immutable;
 using System.Diagnostics;
+using Intersect.Core;
 using Intersect.Framework.Reflection;
-using Intersect.Logging;
-using Intersect.Logging.Formatting;
-using Intersect.Logging.Output;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Core;
+using Serilog.Events;
+using Serilog.Extensions.Logging;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
-using IntersectLogLevel = Intersect.Logging.LogLevel;
 
 namespace Intersect.Server.Database;
 
 internal sealed class IntersectLoggerFactory : ILoggerFactory
 {
-    private static readonly Dictionary<string, ImmutableArray<ILogOutput>> _cachedOutputs = new();
+    private static readonly Dictionary<string, Logger> LoggersByName = new();
 
-    private readonly DbLoggerProvider _loggerProvider;
+    private readonly ILoggerFactory _loggerFactory;
 
     internal IntersectLoggerFactory(string name)
     {
-        if (!_cachedOutputs.TryGetValue(name, out var outputs))
+        if (!LoggersByName.TryGetValue(name, out var logger))
         {
-            outputs = ImmutableArray.Create<ILogOutput>(
-                new FileOutput(Log.SuggestFilename(prefix: $"db-{name}-")),
-                new FileOutput(Log.SuggestFilename(prefix: $"db_errors-{name}-"), IntersectLogLevel.Error),
-                new ConciseConsoleOutput(Debugger.IsAttached ? IntersectLogLevel.Warn : IntersectLogLevel.Error)
-            );
-            _cachedOutputs[name] = outputs;
+            var configuration = new LoggerConfiguration().Enrich.FromLogContext().WriteTo
+                .Console(restrictedToMinimumLevel: Debugger.IsAttached ? LogEventLevel.Warning : LogEventLevel.Error)
+                .WriteTo.File(path: $"db-{name}.log").WriteTo.File(
+                    path: $"db-errors-{name}.log",
+                    restrictedToMinimumLevel: LogEventLevel.Error
+                );
+            LoggersByName[name] = configuration.CreateLogger();
         }
 
-        _loggerProvider = new DbLoggerProvider(
-            new Logger(
-                new LogConfiguration
-                {
-                    Formatters = ImmutableList.Create(new DefaultFormatter()),
-                    LogLevel = IntersectLogLevel.Debug,
-                    Outputs = outputs,
-                }
-            )
-        );
+        _loggerFactory = new SerilogLoggerFactory(logger);
     }
 
     public void AddProvider(ILoggerProvider provider)
     {
-        Log.Warn($"Tried to add provider but this is not implemented: {provider.GetFullishName()}");
+        ApplicationContext.Context.Value?.Logger.LogWarning($"Tried to add provider but this is not implemented: {provider.GetFullishName()}");
     }
 
-    public ILogger CreateLogger(string categoryName) => _loggerProvider.CreateLogger(categoryName);
+    public ILogger<T> CreateLogger<T>() => _loggerFactory.CreateLogger<T>();
+
+    public ILogger CreateLogger(string categoryName) => _loggerFactory.CreateLogger(categoryName);
 
     public void Dispose()
     {

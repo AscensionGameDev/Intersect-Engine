@@ -1,9 +1,8 @@
 using System.ComponentModel;
 using System.Runtime.Serialization;
-
 using Intersect.Enums;
-using Intersect.Logging;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Intersect.Configuration;
@@ -264,8 +263,8 @@ public sealed partial class ClientConfiguration : IConfiguration<ClientConfigura
     #region Hidden Properties
 
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-    [DefaultValue(LogLevel.Info)]
-    public LogLevel LogLevel { get; set; } = LogLevel.Info;
+    [DefaultValue(LogLevel.Information)]
+    public LogLevel LogLevel { get; set; } = LogLevel.Information;
 
     #endregion
 

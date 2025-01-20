@@ -1,9 +1,7 @@
 ﻿using Intersect.Plugins.Interfaces;
 using Intersect.Plugins.Manifests.Types;
 using Intersect.Utilities;
-
 using Semver;
-
 using System;
 using System.Collections.Generic;
 

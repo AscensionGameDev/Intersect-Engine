@@ -1,5 +1,4 @@
 ﻿using System.Data;
-
 using Intersect.Enums;
 
 namespace Intersect.Utilities;

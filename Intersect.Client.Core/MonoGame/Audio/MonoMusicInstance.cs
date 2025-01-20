@@ -1,5 +1,4 @@
 ﻿using Intersect.Client.General;
-
 using Microsoft.Xna.Framework.Audio;
 
 namespace Intersect.Client.MonoGame.Audio;

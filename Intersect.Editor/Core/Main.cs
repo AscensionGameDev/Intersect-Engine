@@ -156,7 +156,7 @@ public static partial class Main
                         }
                         catch (Exception ex)
                         {
-                            Logging.Log.Error(
+                            ApplicationContext.Context.Value?.Logger.LogError(
                                 ex, "JC's Solution for UpdateMaps collection was modified bug did not work!"
                             );
                         }

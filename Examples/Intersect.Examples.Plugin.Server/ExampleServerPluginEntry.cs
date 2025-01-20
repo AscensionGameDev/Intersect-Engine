@@ -5,7 +5,6 @@ using Intersect.Examples.Plugin.Server.Networking.Hooks;
 using Intersect.Network.Packets.Client;
 using Intersect.Plugins;
 using Intersect.Server.Plugins;
-
 using System;
 
 namespace Intersect.Examples.Plugin.Server

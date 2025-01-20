@@ -1,12 +1,12 @@
-using Intersect.Logging;
+
 using Intersect.Threading;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Reflection;
-
 using Intersect.Properties;
 using Intersect.Plugins.Interfaces;
 using Intersect.Network;
+using Microsoft.Extensions.Logging;
 using AssemblyExtensions = Intersect.Reflection.AssemblyExtensions;
 
 namespace Intersect.Core;
@@ -38,7 +38,7 @@ public abstract partial class ApplicationContext<TContext, TStartupOptions> : IA
     /// <param name="startupOptions">the <typeparamref name="TStartupOptions"/> the application was started with</param>
     /// <param name="logger">the application-level <see cref="Logger"/></param>
     /// <param name="packetHelper"></param>
-    protected ApplicationContext(TStartupOptions startupOptions, Logger logger, IPacketHelper packetHelper)
+    protected ApplicationContext(TStartupOptions startupOptions, ILogger logger, IPacketHelper packetHelper)
     {
         mDisposeLock = new object();
         mShutdownLock = new object();
@@ -177,7 +177,7 @@ public abstract partial class ApplicationContext<TContext, TStartupOptions> : IA
 
         foreach (var serviceType in serviceTypes)
         {
-            Log.Info($"Discovered service type: {serviceType.FullName}");
+            ApplicationContext.Context.Value?.Logger.LogInformation($"Discovered service type: {serviceType.FullName}");
             Debug.Assert(serviceType != null, nameof(serviceType) + " != null");
             if (!(Activator.CreateInstance(serviceType) is IApplicationService service))
             {
@@ -233,7 +233,7 @@ public abstract partial class ApplicationContext<TContext, TStartupOptions> : IA
             }
             catch (Exception exception)
             {
-                Logger.Error(exception);
+                Logger.LogError(exception, "Failed to start application context");
                 return;
             }
 
@@ -249,7 +249,7 @@ public abstract partial class ApplicationContext<TContext, TStartupOptions> : IA
         }
         catch (ServiceLifecycleFailureException serviceLifecycleFailureException)
         {
-            Logger.Error(serviceLifecycleFailureException);
+            Logger.LogError(serviceLifecycleFailureException, "Error occurred during application startup");
             return;
         }
 
@@ -265,7 +265,7 @@ public abstract partial class ApplicationContext<TContext, TStartupOptions> : IA
         lock (mShutdownLock)
         {
             Monitor.Wait(mShutdownLock);
-            Log.Diagnostic(DeveloperStrings.ApplicationContextExited);
+            ApplicationContext.Context.Value?.Logger.LogTrace(DeveloperStrings.ApplicationContextExited);
         }
 
         #endregion Wait for application thread
@@ -367,17 +367,11 @@ public abstract partial class ApplicationContext<TContext, TStartupOptions> : IA
 
     internal static void ProcessUnhandledException(object sender, Exception exception)
     {
-        var currentException = exception;
-        var innerException = false;
-
-        while (currentException != null)
-        {
-            Log.Error(innerException ? "Caused by:" : $"Received unhandled exception from {sender}: {currentException.Message}");
-            Log.Error(currentException);
-
-            currentException = currentException.InnerException;
-            innerException = true;
-        }
+        ApplicationContext.Context.Value?.Logger.LogError(
+            exception,
+            "Received an unhandled exception from {Sender}",
+            sender
+        );
     }
 
     private void SafeAbort(bool hasErrors)
@@ -540,16 +534,19 @@ public abstract partial class ApplicationContext<TContext, TStartupOptions> : IA
         }
         catch (ServiceLifecycleFailureException serviceLifecycleFailureException)
         {
-            Logger.Error(serviceLifecycleFailureException);
+            Logger.LogError(
+                serviceLifecycleFailureException,
+                "Error occurred while stopping services during context disposal"
+            );
         }
 
         var stopwatch = new Stopwatch();
         stopwatch.Start();
-        Log.Info($@"Beginning context dispose. ({stopwatch.ElapsedMilliseconds}ms)");
+        ApplicationContext.Context.Value?.Logger.LogInformation($@"Beginning context dispose. ({stopwatch.ElapsedMilliseconds}ms)");
         Dispose(true);
-        Log.Info($@"GC.SuppressFinalize ({stopwatch.ElapsedMilliseconds}ms)");
+        ApplicationContext.Context.Value?.Logger.LogInformation($@"GC.SuppressFinalize ({stopwatch.ElapsedMilliseconds}ms)");
         GC.SuppressFinalize(this);
-        Log.Info($@"InternalDispose() completed. ({stopwatch.ElapsedMilliseconds}ms)");
+        ApplicationContext.Context.Value?.Logger.LogInformation($@"InternalDispose() completed. ({stopwatch.ElapsedMilliseconds}ms)");
 
         IsDisposed = true;
     }

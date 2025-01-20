@@ -1,4 +1,4 @@
-using Intersect.Logging;
+
 using Intersect.Utilities;
 using System.Diagnostics;
 using System.Globalization;
@@ -6,7 +6,9 @@ using System.Reflection;
 using System.Resources;
 using Intersect.Client.ThirdParty;
 using Intersect.Configuration;
+using Intersect.Core;
 using Intersect.Extensions;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -149,7 +151,11 @@ static class Program
         }
         catch (Exception exception)
         {
-            Log.Warn(exception);
+            ApplicationContext.Context.Value?.Logger.LogWarning(
+                exception,
+                "Error reading process output from '{Name}'",
+                name
+            );
             return string.Empty;
         }
     }
@@ -253,7 +259,7 @@ static class Program
         }
         else
         {
-            Log.Warn($"Was looking for '{resourceName}' but only the following resources were found:\n{string.Join("\n\t", assembly.GetManifestResourceNames())}");
+            ApplicationContext.Context.Value?.Logger.LogWarning($"Was looking for '{resourceName}' but only the following resources were found:\n{string.Join("\n\t", assembly.GetManifestResourceNames())}");
             var resourceStream = assembly.GetManifestResourceStream("Intersect Client.g.resources");
             Debug.Assert(resourceStream != null, "resourceStream != null");
             var resources = new ResourceSet(resourceStream);

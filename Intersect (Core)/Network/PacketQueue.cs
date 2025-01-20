@@ -77,12 +77,12 @@ public sealed partial class PacketQueue : IDisposable
             throw new ArgumentNullException();
         }
 
-        //Log.Debug("Waiting on queue lock...");
+        //ApplicationContext.Context.Value?.Logger.LogDebug("Waiting on queue lock...");
         lock (mQueueLock)
         {
             mQueue.Enqueue(packet);
 
-            //Log.Debug($"enqueuedSize={mQueue.Count}");
+            //ApplicationContext.Context.Value?.Logger.LogDebug($"enqueuedSize={mQueue.Count}");
             Monitor.Pulse(mQueueLock);
         }
 
@@ -106,17 +106,17 @@ public sealed partial class PacketQueue : IDisposable
             throw new ArgumentNullException();
         }
 
-        //Log.Debug("Waiting on deque lock...");
+        //ApplicationContext.Context.Value?.Logger.LogDebug("Waiting on deque lock...");
         lock (mDequeLock)
         {
-            //Log.Debug("Waiting on queue lock...");
+            //ApplicationContext.Context.Value?.Logger.LogDebug("Waiting on queue lock...");
             lock (mQueueLock)
             {
-                //Log.Debug("Checking if blocked...");
+                //ApplicationContext.Context.Value?.Logger.LogDebug("Checking if blocked...");
 
                 if (mQueue.Count < 1)
                 {
-                    //Log.Debug("Blocked... waiting for new packets...");
+                    //ApplicationContext.Context.Value?.Logger.LogDebug("Blocked... waiting for new packets...");
                     Monitor.Wait(mQueueLock);
                 }
 
@@ -127,7 +127,7 @@ public sealed partial class PacketQueue : IDisposable
                     return false;
                 }
 
-                //Log.Debug($"size={mQueue.Count}");
+                //ApplicationContext.Context.Value?.Logger.LogDebug($"size={mQueue.Count}");
                 packet = mQueue.Dequeue();
                 if (mQueue.Count > 0)
                 {

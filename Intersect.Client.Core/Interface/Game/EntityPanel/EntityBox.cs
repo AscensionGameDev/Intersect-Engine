@@ -7,10 +7,11 @@ using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Configuration;
+using Intersect.Core;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Logging;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Interface.Game.EntityPanel;
 
@@ -760,11 +761,11 @@ public partial class EntityBox
                 {
                     if (PaperdollPanels == null)
                     {
-                        Log.Warn($@"{nameof(PaperdollPanels)} is null.");
+                        ApplicationContext.Context.Value?.Logger.LogWarning($@"{nameof(PaperdollPanels)} is null.");
                     }
                     else if (PaperdollPanels[i] == null)
                     {
-                        Log.Warn($@"{nameof(PaperdollPanels)}[{i}] is null.");
+                        ApplicationContext.Context.Value?.Logger.LogWarning($@"{nameof(PaperdollPanels)}[{i}] is null.");
                     }
 
                     PaperdollPanels?[i]?.Hide();

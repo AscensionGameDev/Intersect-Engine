@@ -2,11 +2,11 @@ using System.Collections.Concurrent;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using Intersect.Collections.Slotting;
+using Intersect.Core;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
-using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
@@ -19,6 +19,7 @@ using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Stat = Intersect.Enums.Stat;
 
@@ -357,7 +358,7 @@ public abstract partial class Entity : IEntity
                         if (stat == default)
                         {
                             var allStats = string.Join(",\n", Stat.Select(s => s == default ? "\tnull" : $"\t{s}"));
-                            Log.Error($"Stat[{i}] == default for '{GetType().FullName}', Stat=[\n{allStats}\n]");
+                            ApplicationContext.Context.Value?.Logger.LogError($"Stat[{i}] == default for '{GetType().FullName}', Stat=[\n{allStats}\n]");
                         }
                         statsUpdated |= stat.Update(statTime);
                     }
@@ -1108,8 +1109,13 @@ public abstract partial class Entity : IEntity
                     break;
 
                 default:
-                    Log.Warn(
-                        new ArgumentOutOfRangeException(nameof(moveDir), $@"Bogus move attempt in direction {moveDir}.")
+                    ApplicationContext.Context.Value?.Logger.LogWarning(
+                        new ArgumentOutOfRangeException(
+                            nameof(moveDir),
+                            $@"Bogus move attempt in direction {moveDir}."
+                        ),
+                        "Invalid move in {Direction}",
+                        moveDir
                     );
 
                     return;

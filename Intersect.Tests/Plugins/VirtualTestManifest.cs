@@ -1,6 +1,5 @@
 ﻿using Intersect.Plugins.Interfaces;
 using Intersect.Plugins.Manifests.Types;
-
 using Semver;
 
 namespace Intersect.Plugins

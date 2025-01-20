@@ -1,8 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
-
 using Intersect.Models;
 using Intersect.GameObjects.Events;
-
 using Newtonsoft.Json;
 using Intersect.GameObjects.Conditions;
 

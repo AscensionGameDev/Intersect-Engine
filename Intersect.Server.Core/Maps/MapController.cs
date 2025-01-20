@@ -2,15 +2,15 @@ using System.Collections.Concurrent;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using Intersect.Compression;
+using Intersect.Core;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
-using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Entities;
 using Intersect.Server.Networking;
-
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Maps;
@@ -423,7 +423,7 @@ public partial class MapController : MapBase
         {
             if (!mInstances.ContainsKey(instanceId))
             {
-                Log.Debug($"Creating new instance with ID {instanceId} for map {Name}");
+                ApplicationContext.Context.Value?.Logger.LogDebug($"Creating new instance with ID {instanceId} for map {Name}");
                 newLayer = new MapInstance(this, instanceId, creator);
                 newLayer.Initialize();
                 mInstances[instanceId] = newLayer;
@@ -472,7 +472,7 @@ public partial class MapController : MapBase
                 if (mInstances.TryRemove(mapInstanceId, out var removedInstance))
                 {
                     removedInstance.Dispose();
-                    Log.Debug($"Cleaning up Instance {mapInstanceId} for map: {Name}");
+                    ApplicationContext.Context.Value?.Logger.LogDebug($"Cleaning up Instance {mapInstanceId} for map: {Name}");
                 }
             }
         }

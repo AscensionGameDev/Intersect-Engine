@@ -1,12 +1,10 @@
 using System.Diagnostics;
 using System.Globalization;
-
 using Intersect.Configuration;
 using Intersect.Editor.Content;
 using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
-using Intersect.Logging;
 using Intersect.Updater;
 
 namespace Intersect.Editor.Forms;
@@ -33,7 +31,7 @@ public partial class FrmUpdate : Form
         }
         catch (Exception exception)
         {
-            Log.Error(exception);
+            ApplicationContext.Context.Value?.Logger.LogError(exception);
             throw;
         }
         GameContentManager.CheckForResources();

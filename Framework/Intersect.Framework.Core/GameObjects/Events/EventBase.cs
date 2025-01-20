@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Framework.Core.Serialization;
 using Intersect.Models;
-
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Events;

@@ -7,7 +7,6 @@ var builder = WebApplication.CreateBuilder(args);
 var portCheckerOptionsSection = builder.Configuration.GetSection("PortChecker");
 var portCheckerOptions = portCheckerOptionsSection.Get<PortCheckerOptions>();
 builder.Services.Configure<PortCheckerOptions>(portCheckerOptionsSection);
-
 using var loggerFactory = LoggerFactory.Create(loggingBuilder => loggingBuilder.AddConsole());
 
 var startupLogger = loggerFactory.CreateLogger<Program>();

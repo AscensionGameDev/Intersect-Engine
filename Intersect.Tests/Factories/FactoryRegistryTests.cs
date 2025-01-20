@@ -1,10 +1,8 @@
 ﻿using System.Diagnostics;
-using Intersect.Logging;
 
 using Moq;
-
 using NUnit.Framework;
-
+using Serilog;
 using Assert = NUnit.Framework.Assert;
 
 namespace Intersect.Factories

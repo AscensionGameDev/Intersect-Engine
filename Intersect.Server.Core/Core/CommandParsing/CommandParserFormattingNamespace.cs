@@ -1,5 +1,4 @@
 ﻿using Intersect.Localization;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Core.CommandParsing;

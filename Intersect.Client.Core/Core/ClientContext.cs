@@ -2,10 +2,10 @@ using Intersect.Client.Networking;
 using Intersect.Client.Plugins.Contexts;
 using Intersect.Core;
 using Intersect.Factories;
-using Intersect.Logging;
 using Intersect.Plugins;
 using Intersect.Plugins.Interfaces;
 using Intersect.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Core;
 
@@ -18,7 +18,7 @@ internal sealed partial class ClientContext : ApplicationContext<ClientContext, 
 
     private IPlatformRunner? mPlatformRunner;
 
-    internal ClientContext(ClientCommandLineOptions startupOptions, Logger logger, IPacketHelper packetHelper) : base(
+    internal ClientContext(ClientCommandLineOptions startupOptions, ILogger logger, IPacketHelper packetHelper) : base(
         startupOptions, logger, packetHelper
     )
     {

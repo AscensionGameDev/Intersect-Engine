@@ -4,8 +4,9 @@ using Intersect.Client.Framework.Core.Sounds;
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.General;
-using Intersect.Logging;
+using Intersect.Core;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Core;
 
@@ -182,7 +183,7 @@ public static partial class Audio
 
         if (sMyMusic != null)
         {
-            Log.Warn($"Trying to start '{filename}' without properly closing '{sCurrentSong}'.");
+            ApplicationContext.Context.Value?.Logger.LogTrace($"Trying to start '{filename}' without properly closing '{sCurrentSong}'.");
         }
 
         sMyMusic = music.CreateInstance();

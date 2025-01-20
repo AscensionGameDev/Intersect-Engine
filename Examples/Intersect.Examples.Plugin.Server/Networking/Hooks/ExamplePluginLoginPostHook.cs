@@ -1,5 +1,4 @@
 ﻿using Intersect.Examples.Plugin.Packets.Server;
-using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets.Client;
 
@@ -12,11 +11,11 @@ namespace Intersect.Examples.Plugin.Server.Networking.Hooks
             var packetSent = packetSender.Send(new ExamplePluginServerPacket($"Login packet received: {packet.Username}"));
             if (packetSent)
             {
-                Log.Info("Sent a message to the client!");
+                ApplicationContext.Context.Value?.Logger.LogInformation("Sent a message to the client!");
             }
             else
             {
-                Log.Error("Failed to send a message to the client!");
+                ApplicationContext.Context.Value?.Logger.LogError("Failed to send a message to the client!");
             }
 
             return packetSent;

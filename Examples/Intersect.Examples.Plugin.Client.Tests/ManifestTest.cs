@@ -1,7 +1,6 @@
 ﻿// NUnit 3 tests
 // See documentation : https://github.com/nunit/docs/wiki/NUnit-Documentation
 using Intersect.Plugins.Loaders;
-
 using NUnit.Framework;
 
 namespace Intersect.Examples.Plugin.Client
