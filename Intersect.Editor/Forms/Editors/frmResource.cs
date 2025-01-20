@@ -196,7 +196,7 @@ public partial class FrmResource : EditorForm
 
         grpDrops.Text = Strings.ResourceEditor.drops;
         lblDropItem.Text = Strings.ResourceEditor.dropitem;
-        lblDropAmount.Text = Strings.ResourceEditor.DropMaxAmount;
+        lblDropMaxAmount.Text = Strings.ResourceEditor.DropMaxAmount;
         lblDropMinAmount.Text = Strings.ResourceEditor.DropMinAmount;
         lblDropChance.Text = Strings.ResourceEditor.dropchance;
         btnDropAdd.Text = Strings.ResourceEditor.dropadd;
@@ -295,7 +295,7 @@ public partial class FrmResource : EditorForm
                     Strings.ResourceEditor.dropdisplay.ToString(
                         ItemBase.GetName(mEditorItem.Drops[i].ItemId),
                         mEditorItem.Drops[i].MinQuantity,
-                        mEditorItem.Drops[i].Quantity,
+                        mEditorItem.Drops[i].MaxQuantity,
                         mEditorItem.Drops[i].Chance
                     )
                 );
@@ -605,14 +605,14 @@ public partial class FrmResource : EditorForm
         UpdateDropValues(true);
     }
 
-    private void nudDropAmount_ValueChanged(object sender, EventArgs e)
+    private void nudDropMaxAmount_ValueChanged(object sender, EventArgs e)
     {
         if (lstDrops.SelectedIndex < 0 || lstDrops.SelectedIndex > lstDrops.Items.Count)
         {
             return;
         }
 
-        mEditorItem.Drops[lstDrops.SelectedIndex].Quantity = (int)nudDropAmount.Value;
+        mEditorItem.Drops[lstDrops.SelectedIndex].MaxQuantity = (int)nudDropMaxAmount.Value;
         UpdateDropValues(true);
     }
 
@@ -632,7 +632,7 @@ public partial class FrmResource : EditorForm
         if (lstDrops.SelectedIndex > -1)
         {
             cmbDropItem.SelectedIndex = ItemBase.ListIndex(mEditorItem.Drops[lstDrops.SelectedIndex].ItemId) + 1;
-            nudDropAmount.Value = mEditorItem.Drops[lstDrops.SelectedIndex].Quantity;
+            nudDropMaxAmount.Value = mEditorItem.Drops[lstDrops.SelectedIndex].MaxQuantity;
             nudDropMinAmount.Value = mEditorItem.Drops[lstDrops.SelectedIndex].MinQuantity;
             nudDropChance.Value = (decimal)mEditorItem.Drops[lstDrops.SelectedIndex].Chance;
         }
@@ -641,10 +641,10 @@ public partial class FrmResource : EditorForm
     private void btnDropAdd_Click(object sender, EventArgs e)
     {
         mEditorItem.Drops.Add(new Drop());
-        mEditorItem.Drops[mEditorItem.Drops.Count - 1].ItemId = ItemBase.IdFromList(cmbDropItem.SelectedIndex - 1);
-        mEditorItem.Drops[mEditorItem.Drops.Count - 1].Quantity = (int)nudDropAmount.Value;
-        mEditorItem.Drops[mEditorItem.Drops.Count - 1].MinQuantity = (int)nudDropMinAmount.Value;
-        mEditorItem.Drops[mEditorItem.Drops.Count - 1].Chance = (double)nudDropChance.Value;
+        mEditorItem.Drops[^1].ItemId = ItemBase.IdFromList(cmbDropItem.SelectedIndex - 1);
+        mEditorItem.Drops[^1].MaxQuantity = (int)nudDropMaxAmount.Value;
+        mEditorItem.Drops[^1].MinQuantity = (int)nudDropMinAmount.Value;
+        mEditorItem.Drops[^1].Chance = (double)nudDropChance.Value;
 
         UpdateDropValues();
     }
