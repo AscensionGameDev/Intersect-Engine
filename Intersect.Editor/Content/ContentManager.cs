@@ -4,6 +4,7 @@ using Intersect.Editor.Networking;
 using Intersect.GameObjects;
 using Intersect.IO.Files;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -220,13 +221,18 @@ public static partial class GameContentManager
                 }
                 catch (Exception exception)
                 {
-                    ApplicationContext.Context.Value?.Logger.LogError($"Fake methods! ({tileset.Name})");
+                    Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(
+                        exception,
+                        $"Fake methods! ({tileset.Name})"
+                    );
+                    
                     if (exception.InnerException != null)
                     {
-                        ApplicationContext.Context.Value?.Logger.LogError(exception.InnerException);
+                        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(
+                            exception.InnerException,
+                            "Caused by"
+                        );
                     }
-
-                    ApplicationContext.Context.Value?.Logger.LogError(exception);
 
                     throw;
                 }
@@ -467,7 +473,7 @@ public static partial class GameContentManager
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            ApplicationContext.Context.Value?.Logger.LogError("Tried to load shader with null name.");
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError("Tried to load shader with null name.");
 
             return null;
         }
@@ -484,7 +490,7 @@ public static partial class GameContentManager
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            ApplicationContext.Context.Value?.Logger.LogError("Tried to load music with null name.");
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError("Tried to load music with null name.");
 
             return null;
         }
@@ -501,7 +507,7 @@ public static partial class GameContentManager
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            ApplicationContext.Context.Value?.Logger.LogError("Tried to load sound with null name.");
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError("Tried to load sound with null name.");
 
             return null;
         }

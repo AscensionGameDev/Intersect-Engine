@@ -1,6 +1,7 @@
 using Intersect.Editor.General;
 using Intersect.Network;
 using Intersect.Network.Packets.Unconnected.Server;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Editor.Networking.UnconnectedPacketHandlers;
 
@@ -16,7 +17,11 @@ public class ServerStatusResponsePacketHandler : AbstractPacketHandler<ServerSta
         }
         catch (Exception exception)
         {
-            ApplicationContext.Context.Value?.Logger.LogDebug(exception);
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogDebug(
+                exception,
+                "Error setting login form network status to {NetworkStatus}",
+                packet.Status
+            );
             return false;
         }
     }

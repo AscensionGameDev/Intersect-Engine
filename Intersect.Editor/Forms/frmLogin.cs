@@ -9,6 +9,7 @@ using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Network;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Editor.Forms;
 
@@ -41,7 +42,7 @@ public partial class FrmLogin : Form
         }
         catch (Exception exception)
         {
-            ApplicationContext.Context.Value?.Logger.LogError(exception);
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(exception, "Error loading strings");
             throw;
         }
         GameContentManager.CheckForResources();

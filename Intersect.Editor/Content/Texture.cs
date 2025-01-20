@@ -1,5 +1,6 @@
 ﻿using Intersect.IO.Files;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework.Graphics;
 using Graphics = Intersect.Editor.Core.Graphics;
 
@@ -30,7 +31,7 @@ public partial class Texture
         mLoadError = true;
         if (string.IsNullOrWhiteSpace(mPath))
         {
-            ApplicationContext.Context.Value?.Logger.LogError("Invalid texture path (empty/null).");
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError("Invalid texture path (empty/null).");
 
             return;
         }
@@ -39,7 +40,7 @@ public partial class Texture
 
         if (!File.Exists(mPath))
         {
-            ApplicationContext.Context.Value?.Logger.LogError($"Texture does not exist: {relativePath}");
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError($"Texture does not exist: {relativePath}");
 
             return;
         }
@@ -51,7 +52,7 @@ public partial class Texture
                 mTexture = Texture2D.FromStream(Graphics.GetGraphicsDevice(), fileStream);
                 if (mTexture == null)
                 {
-                    ApplicationContext.Context.Value?.Logger.LogError($"Failed to load texture due to unknown error: {relativePath}");
+                    Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError($"Failed to load texture due to unknown error: {relativePath}");
 
                     return;
                 }
@@ -62,7 +63,7 @@ public partial class Texture
             }
             catch (Exception exception)
             {
-                ApplicationContext.Context.Value?.Logger.LogError(
+                Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(
                     exception,
                     $"Failed to load texture ({FileSystemHelper.FormatSize(fileStream.Length)}): {relativePath}"
                 );
@@ -135,7 +136,7 @@ public partial class Texture
         mLoadError = true;
         if (string.IsNullOrWhiteSpace(mPath))
         {
-            ApplicationContext.Context.Value?.Logger.LogError("Invalid texture path (empty/null).");
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError("Invalid texture path (empty/null).");
 
             return;
         }
@@ -144,7 +145,7 @@ public partial class Texture
 
         if (!File.Exists(mPath))
         {
-            ApplicationContext.Context.Value?.Logger.LogError($"Texture does not exist: {relativePath}");
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError($"Texture does not exist: {relativePath}");
 
             return;
         }
@@ -156,7 +157,7 @@ public partial class Texture
                 var img = System.Drawing.Image.FromStream(fileStream, false, false);
                 if (img == null)
                 {
-                    ApplicationContext.Context.Value?.Logger.LogError($"Failed to load texture due to unknown error: {relativePath}");
+                    Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError($"Failed to load texture due to unknown error: {relativePath}");
 
                     return;
                 }
@@ -167,7 +168,7 @@ public partial class Texture
             }
             catch (Exception exception)
             {
-                ApplicationContext.Context.Value?.Logger.LogError(
+                Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(
                     exception,
                     $"Failed to load texture ({FileSystemHelper.FormatSize(fileStream.Length)}): {relativePath}"
                 );

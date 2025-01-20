@@ -13,6 +13,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -1003,7 +1004,10 @@ public partial class FrmMapEditor : DockContent
 
         if (currentMap == null)
         {
-            ApplicationContext.Context.Value?.Logger.LogError(new ArgumentNullException(nameof(currentMap)));
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(
+                new ArgumentNullException(nameof(currentMap)),
+                "Current map unset"
+            );
 
             return;
         }
@@ -2396,7 +2400,7 @@ public partial class FrmMapEditor : DockContent
         if (!ToolCursor.ToolCursorDict.TryGetValue(editingTool, out var toolCursorInfo))
         {
             var loadedClickPointKeys = string.Join(", ", ToolCursor.ToolCursorDict.Keys);
-            ApplicationContext.Context.Value?.Logger.LogError(
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(
                 $"Unable to load click point for {editingTool}, click points only exist for: {loadedClickPointKeys}"
             );
             return null;
@@ -2416,7 +2420,7 @@ public partial class FrmMapEditor : DockContent
 #endif
         if (!File.Exists(cursorAbsolutePath))
         {
-            ApplicationContext.Context.Value?.Logger.LogError(
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(
                 $"Custom cursor texture '{cursorFileName}' does not exist in {ToolCursor.CursorsFolder} resolved to {loggingCursorPath}"
             );
             return null;
@@ -2429,7 +2433,10 @@ public partial class FrmMapEditor : DockContent
         }
         catch (Exception exception)
         {
-            ApplicationContext.Context.Value?.Logger.LogError(exception, $"Failed to load custom cursor for {editingTool} resolved to {loggingCursorPath}");
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(
+                exception,
+                $"Failed to load custom cursor for {editingTool} resolved to {loggingCursorPath}"
+            );
             return null;
         }
 
@@ -2455,14 +2462,14 @@ public partial class FrmMapEditor : DockContent
             IntPtr bitmapHicon = cursorBitmap.GetHicon();
             if (bitmapHicon == IntPtr.Zero)
             {
-                ApplicationContext.Context.Value?.Logger.LogWarning($"Failed to get bitmap icon handle for {logName}");
+                Intersect.Core.ApplicationContext.Context.Value?.Logger.LogWarning($"Failed to get bitmap icon handle for {logName}");
                 return null;
             }
 
             IconInfo cursorIconInfo = new IconInfo();
             if (!GetIconInfo(bitmapHicon, ref cursorIconInfo))
             {
-                ApplicationContext.Context.Value?.Logger.LogWarning($"Failed to get icon info for {logName}");
+                Intersect.Core.ApplicationContext.Context.Value?.Logger.LogWarning($"Failed to get icon info for {logName}");
                 return null;
             }
 
@@ -2474,7 +2481,7 @@ public partial class FrmMapEditor : DockContent
             // ReSharper disable once InvertIf
             if (cursorIcon == IntPtr.Zero)
             {
-                ApplicationContext.Context.Value?.Logger.LogWarning($"Failed to create cursor icon for {logName}");
+                Intersect.Core.ApplicationContext.Context.Value?.Logger.LogWarning($"Failed to create cursor icon for {logName}");
                 return null;
             }
 
@@ -2482,7 +2489,7 @@ public partial class FrmMapEditor : DockContent
         }
         catch (Exception exception)
         {
-            ApplicationContext.Context.Value?.Logger.LogError(exception, $"Error while creating cursor for {logName}");
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(exception, $"Error while creating cursor for {logName}");
             return null;
         }
     }

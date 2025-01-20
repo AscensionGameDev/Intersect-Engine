@@ -1,6 +1,7 @@
 using System.Reflection;
 using Intersect.GameObjects.Annotations;
 using Intersect.Localization;
+using Microsoft.Extensions.Logging;
 
 
 namespace Intersect.Editor.Localization;
@@ -95,7 +96,7 @@ public class Localizer
 
         if (_indexedAssemblies.Contains(assembly))
         {
-            ApplicationContext.Context.Value?.Logger.LogDebug($"Skipping re-index of {assembly.FullName}");
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogDebug($"Skipping re-index of {assembly.FullName}");
             return;
         }
 
@@ -103,7 +104,7 @@ public class Localizer
         {
             if (_indexedTypes.Contains(type))
             {
-                ApplicationContext.Context.Value?.Logger.LogDebug($"Skipping re-index of {type.FullName}");
+                Intersect.Core.ApplicationContext.Context.Value?.Logger.LogDebug($"Skipping re-index of {type.FullName}");
                 continue;
             }
 

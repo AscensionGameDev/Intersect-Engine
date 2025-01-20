@@ -2,6 +2,11 @@ using System.Diagnostics;
 using System.Reflection;
 using Intersect.Editor.Forms;
 using Intersect.Editor.General;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Events;
+using Serilog.Extensions.Logging;
+using ApplicationContext = Intersect.Core.ApplicationContext;
 
 
 namespace Intersect.Editor.Core;
@@ -14,6 +19,25 @@ public static partial class Program
 
     static Program()
     {
+        var executableName = Path.GetFileNameWithoutExtension(
+            Process.GetCurrentProcess().MainModule?.FileName ?? Assembly.GetExecutingAssembly().GetName().Name
+        );
+        var loggerConfiguration = new LoggerConfiguration().MinimumLevel
+            .Is(Debugger.IsAttached ? LogEventLevel.Debug : LogEventLevel.Information).Enrich.FromLogContext().WriteTo
+            .Console().WriteTo.File(
+                Path.Combine(
+                    "logs",
+                    $"{executableName}-{Process.GetCurrentProcess().StartTime:yyyy_MM_dd-HH_mm_ss_fff}.log"
+                )
+            ).WriteTo.File(
+                Path.Combine("logs", $"errors-{executableName}.log"),
+                restrictedToMinimumLevel: LogEventLevel.Error
+            );
+
+        var logger = new SerilogLoggerFactory(loggerConfiguration.CreateLogger()).CreateLogger("Client");
+        ApplicationContext.Context.Value =
+            new FakeApplicationContextForThisGarbageWinFormsEditorThatIHateAndWishItWouldBurnInAFireContext(logger);
+        
         var iconStream = typeof(Program).Assembly.GetManifestResourceStream(IconManifestResourceName);
         if (iconStream == default)
         {
@@ -32,7 +56,7 @@ public static partial class Program
     [STAThread]
     public static void Main()
     {
-        ApplicationContext.Context.Value?.Logger.LogTrace("Starting editor...");
+        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogTrace("Starting editor...");
 
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         Application.ThreadException += Application_ThreadException;
@@ -40,7 +64,7 @@ public static partial class Program
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
 
-        ApplicationContext.Context.Value?.Logger.LogTrace("Unpacking libraries...");
+        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogTrace("Unpacking libraries...");
 
         //Place sqlite3.dll where it's needed.
         var dllname = Environment.Is64BitProcess ? "sqlite3x64.dll" : "sqlite3x86.dll";
@@ -56,15 +80,15 @@ public static partial class Program
             }
         }
 
-        ApplicationContext.Context.Value?.Logger.LogTrace("Libraries unpacked.");
+        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogTrace("Libraries unpacked.");
 
-        ApplicationContext.Context.Value?.Logger.LogTrace("Creating forms...");
+        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogTrace("Creating forms...");
         Globals.UpdateForm = new FrmUpdate();
         Globals.LoginForm = new FrmLogin();
         Globals.MainForm = new FrmMain();
-        ApplicationContext.Context.Value?.Logger.LogTrace("Forms created.");
+        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogTrace("Forms created.");
 
-        ApplicationContext.Context.Value?.Logger.LogTrace("Starting application.");
+        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogTrace("Starting application.");
         Application.Run(Globals.UpdateForm);
     }
 
@@ -76,7 +100,10 @@ public static partial class Program
     //Really basic error handler for debugging purposes
     public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs exception)
     {
-        ApplicationContext.Context.Value?.Logger.LogError(Exception) exception?.ExceptionObject);
+        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(
+            (Exception)exception?.ExceptionObject,
+            "Unhandled exception"
+        );
         MessageBox.Show(
             @"The Intersect Editor has encountered an error and must close. Error information can be found in logs/errors.log"
         );

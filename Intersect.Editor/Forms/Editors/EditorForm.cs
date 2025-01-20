@@ -1,6 +1,7 @@
 using Intersect.Editor.Core;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
+using Microsoft.Extensions.Logging;
 
 
 namespace Intersect.Editor.Forms.Editors;
@@ -44,7 +45,7 @@ public partial class EditorForm : Form
             }
             catch (Exception e)
             {
-                ApplicationContext.Context.Value?.Logger.LogDebug(e);
+                Intersect.Core.ApplicationContext.Context.Value?.Logger.LogDebug(e, "Error updating game object");
             }
         };
 

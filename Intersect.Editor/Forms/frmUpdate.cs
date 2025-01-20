@@ -6,6 +6,7 @@ using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Updater;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Editor.Forms;
 
@@ -31,7 +32,7 @@ public partial class FrmUpdate : Form
         }
         catch (Exception exception)
         {
-            ApplicationContext.Context.Value?.Logger.LogError(exception);
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(exception, "Error loading strings");
             throw;
         }
         GameContentManager.CheckForResources();

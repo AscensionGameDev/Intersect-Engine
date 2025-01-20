@@ -13,6 +13,8 @@ using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Network;
 using Intersect.Network.Packets.Server;
+using Intersect.Plugins.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Editor.Networking;
 
@@ -55,7 +57,7 @@ internal sealed partial class PacketHandler
 
     public IApplicationContext Context { get; }
 
-    public Logger Logger { get; }
+    public ILogger Logger { get; }
 
     public PacketHandlerRegistry Registry { get; }
 
@@ -143,7 +145,7 @@ internal sealed partial class PacketHandler
             Strings.Load();
         } catch (Exception exception)
         {
-            ApplicationContext.Context.Value?.Logger.LogError(exception);
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(exception, "Failed to load server options");
             throw;
         }
     }
@@ -413,14 +415,14 @@ internal sealed partial class PacketHandler
                     }
                     catch (Exception exception)
                     {
-                        ApplicationContext.Context.Value?.Logger.LogError($"Another mystery NPE. [Lookup={AnimationBase.Lookup}]");
+                        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError($"Another mystery NPE. [Lookup={AnimationBase.Lookup}]");
                         if (exception.InnerException != null)
                         {
-                            ApplicationContext.Context.Value?.Logger.LogError(exception.InnerException);
+                            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(exception.InnerException, "Mystery NPE");
                         }
 
-                        ApplicationContext.Context.Value?.Logger.LogError(exception);
-                        ApplicationContext.Context.Value?.Logger.LogError($"{nameof(id)}={id},{nameof(anim)}={anim}");
+                        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(exception, "Failed to load animation base");
+                        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError($"{nameof(id)}={id},{nameof(anim)}={anim}");
 
                         throw;
                     }

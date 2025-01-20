@@ -13,6 +13,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using Intersect.Utilities;
 using Intersect.Network.Packets.Unconnected.Client;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Editor.Networking;
 
@@ -34,7 +35,8 @@ internal sealed class VirtualApplicationContext : IApplicationContext
 
     public ICommandLineOptions StartupOptions => throw new NotImplementedException();
 
-    public ILogger Logger => throw new NotImplementedException();
+    public ILogger Logger => Intersect.Core.ApplicationContext.Context.Value?.Logger ??
+                             throw new InvalidOperationException("Application context not yet initialized");
 
     public IPacketHelper PacketHelper { get; }
 
@@ -81,25 +83,27 @@ internal static partial class Network
             return;
         }
 
-        ApplicationContext.Context.Value?.Logger.LogWarning("Failed to connect to server.");
+        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogWarning("Failed to connect to server.");
     }
 
     public static void InitNetwork()
     {
         if (EditorLidgrenNetwork == null)
         {
-            var logger = Log.Default;
-            var packetTypeRegistry = new PacketTypeRegistry(logger, typeof(SharedConstants).Assembly);
+            var packetTypeRegistry = new PacketTypeRegistry(
+                Intersect.Core.ApplicationContext.Context.Value?.Logger,
+                typeof(SharedConstants).Assembly
+            );
             if (!packetTypeRegistry.TryRegisterBuiltIn())
             {
                 throw new Exception("Failed to register built-in packets.");
             }
 
-            var packetHandlerRegistry = new PacketHandlerRegistry(packetTypeRegistry, logger);
+            var packetHandlerRegistry = new PacketHandlerRegistry(packetTypeRegistry, Intersect.Core.ApplicationContext.Context.Value?.Logger);
             packetHandlerRegistry.TryRegisterAvailableTypeHandlers(typeof(Network).Assembly, requireAttribute: true);
             var packetHelper = new PacketHelper(packetTypeRegistry, packetHandlerRegistry);
             PackedIntersectPacket.AddKnownTypes(packetHelper.AvailablePacketTypes);
-            var virtualEditorContext = new VirtualEditorContext(packetHelper, logger);
+            var virtualEditorContext = new VirtualEditorContext(packetHelper, Intersect.Core.ApplicationContext.Context.Value?.Logger);
             PacketHandler = new PacketHandler(virtualEditorContext, packetHandlerRegistry);
 
             var config = new NetworkConfiguration(
@@ -197,7 +201,7 @@ internal static partial class Network
                     var network = EditorLidgrenNetwork;
                     if (network == default)
                     {
-                        ApplicationContext.Context.Value?.Logger.LogInformation("No network created to poll for server status.");
+                        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogInformation("No network created to poll for server status.");
                     }
                     else
                     {
@@ -207,7 +211,7 @@ internal static partial class Network
                 }
                 else
                 {
-                    ApplicationContext.Context.Value?.Logger.LogInformation($"Unable to resolve '{_lastHost}:{_lastPort}'");
+                    Intersect.Core.ApplicationContext.Context.Value?.Logger.LogInformation($"Unable to resolve '{_lastHost}:{_lastPort}'");
                 }
 
                 if (Globals.LoginForm.LastNetworkStatusChangeTime + ServerStatusPingInterval + ServerStatusPingInterval / 2 < now)
@@ -276,7 +280,7 @@ internal static partial class Network
 
 internal sealed partial class VirtualEditorContext : IApplicationContext
 {
-    internal VirtualEditorContext(PacketHelper packetHelper, Logger logger)
+    internal VirtualEditorContext(PacketHelper packetHelper, ILogger logger)
     {
         PacketHelper = packetHelper;
         Logger = logger;
