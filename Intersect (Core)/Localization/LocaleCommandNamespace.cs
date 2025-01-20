@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
 using System.Reflection;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Localization;

@@ -1,4 +1,4 @@
-using Intersect.Logging;
+using Intersect.Core;
 using Intersect.Server.Localization;
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -68,7 +68,7 @@ namespace Intersect.Server.Notifications
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(
+                        ApplicationContext.Context.Value?.Logger.LogError(
                             "Failed to send email (Subject: " +
                             Subject +
                             ") to " +
@@ -82,7 +82,7 @@ namespace Intersect.Server.Notifications
                 }
                 else
                 {
-                    Log.Warn(
+                    ApplicationContext.Context.Value?.Logger.LogWarning(
                         "Failed to send email (Subject: " +
                         Subject +
                         ") to " +
@@ -94,7 +94,7 @@ namespace Intersect.Server.Notifications
             }
             else
             {
-                Log.Warn(
+                ApplicationContext.Context.Value?.Logger.LogWarning(
                     "Failed to send email (Subject: " + Subject + ") to " + ToAddress + ". Reason: SMTP not configured!"
                 );
                 return false;
@@ -122,7 +122,7 @@ namespace Intersect.Server.Notifications
             }
             else
             {
-                Log.Warn(
+                ApplicationContext.Context.Value?.Logger.LogWarning(
                     "Failed to load email template (Subject: " +
                     Subject +
                     ") for " +

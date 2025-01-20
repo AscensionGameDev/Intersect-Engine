@@ -1,5 +1,5 @@
-﻿using Intersect.Logging;
-
+﻿using Intersect.Core;
+using Microsoft.Extensions.Logging;
 using NCalc;
 
 namespace Intersect.Server.Utilities;
@@ -45,7 +45,7 @@ public partial class ExperienceCurve
     {
         if (args.Parameters == null || args.Parameters.Length < 3)
         {
-            LegacyLogging.Logger?.Error("Tried to execute Exp with fewer than three arguments.");
+            ApplicationContext.Context.Value?.Logger.LogError("Tried to execute Exp with fewer than three arguments.");
             args.Result = 0L;
         }
 

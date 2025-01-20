@@ -11,12 +11,13 @@ using Intersect.Client.General;
 using Intersect.Client.Items;
 using Intersect.Client.Localization;
 using Intersect.Client.Spells;
+using Intersect.Core;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
-using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Entities;
 
@@ -404,7 +405,7 @@ public partial class Entity : IEntity
 
         if (packet.StatusEffects == null)
         {
-            Log.Warn($"'{nameof(packet)}.{nameof(packet.StatusEffects)}' is null.");
+            ApplicationContext.Context.Value?.Logger.LogWarning($"'{nameof(packet)}.{nameof(packet.StatusEffects)}' is null.");
         }
         else
         {
@@ -431,7 +432,7 @@ public partial class Entity : IEntity
         //Status effects box update
         if (Globals.Me == null)
         {
-            Log.Warn($"'{nameof(Globals.Me)}' is null.");
+            ApplicationContext.Context.Value?.Logger.LogWarning($"'{nameof(Globals.Me)}' is null.");
         }
         else
         {
@@ -439,13 +440,13 @@ public partial class Entity : IEntity
             {
                 if (Interface.Interface.GameUi == null)
                 {
-                    Log.Warn($"'{nameof(Interface.Interface.GameUi)}' is null.");
+                    ApplicationContext.Context.Value?.Logger.LogWarning($"'{nameof(Interface.Interface.GameUi)}' is null.");
                 }
                 else
                 {
                     if (Interface.Interface.GameUi.PlayerStatusWindow == null)
                     {
-                        Log.Warn($"'{nameof(Interface.Interface.GameUi.PlayerStatusWindow)}' is null.");
+                        ApplicationContext.Context.Value?.Logger.LogWarning($"'{nameof(Interface.Interface.GameUi.PlayerStatusWindow)}' is null.");
                     }
                     else
                     {
@@ -457,7 +458,7 @@ public partial class Entity : IEntity
             {
                 if (Globals.Me.TargetBox == null)
                 {
-                    Log.Warn($"'{nameof(Globals.Me.TargetBox)}' is null.");
+                    ApplicationContext.Context.Value?.Logger.LogWarning($"'{nameof(Globals.Me.TargetBox)}' is null.");
                 }
                 else
                 {

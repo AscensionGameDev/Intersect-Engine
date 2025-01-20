@@ -1,10 +1,12 @@
 using System.Globalization;
 using System.Reflection;
+using Intersect.Core;
 using Intersect.Framework.Reflection;
 using Intersect.Localization;
+using Microsoft.Extensions.Logging;
 
 #if !DEBUG
-using Intersect.Logging;
+
 #endif
 
 namespace Intersect.GameObjects.Annotations;
@@ -43,11 +45,16 @@ public class EditorDictionaryAttribute : EditorDisplayAttribute
 
         if (fieldInfo == default)
         {
-            var error = new InvalidOperationException($"{parentType.FullName}.{Name} does not exist.");
+            var exception = new InvalidOperationException($"{parentType.FullName}.{Name} does not exist.");
 #if DEBUG
-            throw error;
+            throw exception;
 #else
-            LegacyLogging.Logger?.Error(error);
+            ApplicationContext.Context.Value?.Logger.LogError(
+                exception,
+                "{ParentTypeName}.{Name} does not exist.",
+                parentType.GetName(qualified: true),
+                Name
+            );
             return base.Format(stringsType, value);
 #endif
         }

@@ -1,4 +1,4 @@
-using Intersect.Logging;
+using Intersect.Core;
 using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Core.CommandParsing.Commands;
 using Intersect.Server.Core.CommandParsing.Errors;
@@ -33,7 +33,6 @@ namespace Intersect.Server.Core
                 Parser.Register<BanCommand>();
                 Parser.Register<CpsCommand>();
                 Parser.Register<ExitCommand>();
-                Parser.Register<ExperimentsCommand>();
                 Parser.Register<GetVariableCommand>();
                 Parser.Register<HelpCommand>(Parser.Settings);
                 Parser.Register<KickCommand>();
@@ -125,7 +124,7 @@ namespace Intersect.Server.Core
 
                                     if (error.Exception != null)
                                     {
-                                        Log.Warn(error.Exception);
+                                        ApplicationContext.Context.Value?.Logger.LogWarning(error.Exception, "Command parser error");
                                     }
 
                                     Console.WriteLine(error.Message);
@@ -143,7 +142,10 @@ namespace Intersect.Server.Core
                                     }
                                     catch (Exception exception)
                                     {
-                                        Log.Error(exception);
+                                        ApplicationContext.Context.Value?.Logger.LogError(
+                                            exception,
+                                            "Command handler error"
+                                        );
                                     }
 #pragma warning restore CA1031 // Do not catch general exception types
 

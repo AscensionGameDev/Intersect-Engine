@@ -16,7 +16,6 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets;
 using Intersect.Network.Packets.Server;
@@ -24,6 +23,7 @@ using Intersect.Utilities;
 using Intersect.Framework;
 using Intersect.Models;
 using Intersect.Client.Interface.Shared;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Networking;
 
@@ -105,7 +105,7 @@ internal sealed partial class PacketHandler
 
         if (!Registry.TryGetHandler(packet, out HandlePacketGeneric handler))
         {
-            Logger.Error($"No registered handler for {packet.GetType().FullName}!");
+            Logger.LogError($"No registered handler for {packet.GetType().FullName}!");
 
             return false;
         }
@@ -124,7 +124,7 @@ internal sealed partial class PacketHandler
             if (!preHooks.All(hook => hook.Handle(VirtualSender, packet)))
             {
                 // Hooks should not fail, if they do that's an error
-                Logger.Error($"PreHook handler failed for {packet.GetType().FullName}.");
+                Logger.LogError($"PreHook handler failed for {packet.GetType().FullName}.");
                 return false;
             }
         }
@@ -139,7 +139,7 @@ internal sealed partial class PacketHandler
             if (!postHooks.All(hook => hook.Handle(VirtualSender, packet)))
             {
                 // Hooks should not fail, if they do that's an error
-                Logger.Error($"PostHook handler failed for {packet.GetType().FullName}.");
+                Logger.LogError($"PostHook handler failed for {packet.GetType().FullName}.");
                 return false;
             }
         }
@@ -162,7 +162,7 @@ internal sealed partial class PacketHandler
     //ConfigPacket
     public void HandlePacket(IPacketSender packetSender, ConfigPacket packet)
     {
-        Log.Debug("Received configuration from server.");
+        ApplicationContext.Context.Value?.Logger.LogDebug("Received configuration from server.");
         Options.LoadFromServer(packet.Config);
         Globals.WaitingOnServer = false;
         MainMenu.HandleReceivedConfiguration();
@@ -172,7 +172,7 @@ internal sealed partial class PacketHandler
         }
         catch (Exception exception)
         {
-            Log.Error(exception);
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Error loading strings");
             throw;
         }
         Graphics.InitInGame();
@@ -216,7 +216,7 @@ internal sealed partial class PacketHandler
                     continue;
                 }
 
-                Log.Warn($"Failed to deserialized cached data for {cacheKey}, will fetch again");
+                ApplicationContext.Context.Value?.Logger.LogWarning($"Failed to deserialized cached data for {cacheKey}, will fetch again");
             }
 
             cacheKeys.Add(new ObjectCacheKey<MapBase>(new Id<MapBase>(mapId)));
@@ -246,7 +246,7 @@ internal sealed partial class PacketHandler
 
             if (!ObjectDataDiskCache<MapBase>.TrySave(cacheData))
             {
-                Log.Warn($"Failed to save cache for {cacheKey}");
+                ApplicationContext.Context.Value?.Logger.LogWarning($"Failed to save cache for {cacheKey}");
             }
         }
 
@@ -494,7 +494,7 @@ internal sealed partial class PacketHandler
 
         if (en == Globals.Me)
         {
-            Log.Debug($"received epp: {Timing.Global.Milliseconds}");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"received epp: {Timing.Global.Milliseconds}");
         }
 
         if (en == Globals.Me &&
@@ -1335,14 +1335,14 @@ internal sealed partial class PacketHandler
         {
             if (Globals.Me == null)
             {
-                Log.Debug("Can't set hotbar, Globals.Me is null!");
+                ApplicationContext.Context.Value?.Logger.LogDebug("Can't set hotbar, Globals.Me is null!");
 
                 break;
             }
 
             if (Globals.Me.Hotbar == null)
             {
-                Log.Debug("Can't set hotbar, hotbar is null!");
+                ApplicationContext.Context.Value?.Logger.LogDebug("Can't set hotbar, hotbar is null!");
 
                 break;
             }

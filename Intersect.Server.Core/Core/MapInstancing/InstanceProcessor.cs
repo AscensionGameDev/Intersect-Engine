@@ -1,6 +1,8 @@
+using Intersect.Core;
 using Intersect.Server.Core.MapInstancing.Controllers;
 using Intersect.Server.Entities;
 using Intersect.Server.Maps;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Server.Core.MapInstancing;
 public static class InstanceProcessor
@@ -24,7 +26,7 @@ public static class InstanceProcessor
         foreach (var id in processingInstances)
         {
             InstanceControllers.Remove(id);
-            Logging.Log.Debug($"Removing instance controller {id}");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"Removing instance controller {id}");
         }
     }
 

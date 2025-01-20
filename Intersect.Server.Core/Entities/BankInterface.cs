@@ -7,7 +7,8 @@ using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 using System.Diagnostics;
 using Intersect.Collections.Slotting;
-using Log = Intersect.Logging.Log;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Server.Entities;
 
@@ -200,7 +201,7 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
                 {
                     if (slotIndicesToRemoveFrom.Length <= nextSlotIndexToRemoveFrom)
                     {
-                        Log.Warn($"Ran out of slots to remove from for {_player.Id}");
+                        ApplicationContext.Context.Value?.Logger.LogWarning($"Ran out of slots to remove from for {_player.Id}");
                         break;
                     }
                 }
@@ -237,7 +238,7 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
 
                 if (itemDescriptor.ItemType == ItemType.Equipment || maximumStack <= 1)
                 {
-                    Log.Warn($"{nameof(Item.FindCompatibleSlotsForItem)}() returned incompatible slots for {nameof(ItemBase)} {itemDescriptor.Id}");
+                    ApplicationContext.Context.Value?.Logger.LogWarning($"{nameof(Item.FindCompatibleSlotsForItem)}() returned incompatible slots for {nameof(ItemBase)} {itemDescriptor.Id}");
                     break;
                 }
 
@@ -258,7 +259,7 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
                 {
                     if (remainingQuantityToRemove < 1)
                     {
-                        Log.Error($"Potential inventory corruption for {_player.Id}");
+                        ApplicationContext.Context.Value?.Logger.LogError($"Potential inventory corruption for {_player.Id}");
                     }
 
                     var slotToRemoveFrom = sourceSlots[slotIndexToRemoveFrom];
@@ -284,21 +285,21 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
             // ReSharper disable once ConvertIfStatementToSwitchStatement
             if (remainingQuantity < 0)
             {
-                Log.Error($"{_player.Id} was accidentally given {-remainingQuantity}x extra {itemDescriptor.Id}");
+                ApplicationContext.Context.Value?.Logger.LogError($"{_player.Id} was accidentally given {-remainingQuantity}x extra {itemDescriptor.Id}");
             }
             else if (remainingQuantity > 0)
             {
-                Log.Error($"{_player.Id} was not given {remainingQuantity}x {itemDescriptor.Id}");
+                ApplicationContext.Context.Value?.Logger.LogError($"{_player.Id} was not given {remainingQuantity}x {itemDescriptor.Id}");
             }
 
             // ReSharper disable once ConvertIfStatementToSwitchStatement
             if (remainingQuantityToRemove < 0)
             {
-                Log.Error($"{_player.Id} was scammed {-remainingQuantity}x {itemDescriptor.Id}");
+                ApplicationContext.Context.Value?.Logger.LogError($"{_player.Id} was scammed {-remainingQuantity}x {itemDescriptor.Id}");
             }
             else if (remainingQuantityToRemove > 0)
             {
-                Log.Error($"{_player.Id} did not have {remainingQuantity}x {itemDescriptor.Id} taken");
+                ApplicationContext.Context.Value?.Logger.LogError($"{_player.Id} did not have {remainingQuantity}x {itemDescriptor.Id} taken");
             }
 
             if (sendUpdate)
@@ -436,7 +437,7 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
             {
                 if (slotIndicesToRemoveFrom.Length <= nextSlotIndexToRemoveFrom)
                 {
-                    Log.Warn($"Ran out of slots to remove from for {_player.Id}");
+                    ApplicationContext.Context.Value?.Logger.LogWarning($"Ran out of slots to remove from for {_player.Id}");
                     break;
                 }
 
@@ -470,7 +471,7 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
 
                 if (itemDescriptor.ItemType == ItemType.Equipment || maximumStack <= 1)
                 {
-                    Log.Warn($"{nameof(Item.FindCompatibleSlotsForItem)}() returned incompatible slots for {nameof(ItemBase)} {itemDescriptor.Id}");
+                    ApplicationContext.Context.Value?.Logger.LogWarning($"{nameof(Item.FindCompatibleSlotsForItem)}() returned incompatible slots for {nameof(ItemBase)} {itemDescriptor.Id}");
                     break;
                 }
 
@@ -484,7 +485,7 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
             {
                 if (remainingQuantityToRemove < 1)
                 {
-                    Log.Error($"Potential bank corruption for {_player.Id}");
+                    ApplicationContext.Context.Value?.Logger.LogError($"Potential bank corruption for {_player.Id}");
                 }
 
                 var slotToRemoveFrom = sourceSlots[slotIndexToRemoveFrom];
@@ -502,21 +503,21 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
             // ReSharper disable once ConvertIfStatementToSwitchStatement
             if (remainingQuantity < 0)
             {
-                Log.Error($"{_player.Id} was accidentally given {-remainingQuantity}x extra {itemDescriptor.Id}");
+                ApplicationContext.Context.Value?.Logger.LogError($"{_player.Id} was accidentally given {-remainingQuantity}x extra {itemDescriptor.Id}");
             }
             else if (remainingQuantity > 0)
             {
-                Log.Error($"{_player.Id} was not given {remainingQuantity}x {itemDescriptor.Id}");
+                ApplicationContext.Context.Value?.Logger.LogError($"{_player.Id} was not given {remainingQuantity}x {itemDescriptor.Id}");
             }
 
             // ReSharper disable once ConvertIfStatementToSwitchStatement
             if (remainingQuantityToRemove < 0)
             {
-                Log.Error($"{_player.Id} was scammed {-remainingQuantity}x {itemDescriptor.Id}");
+                ApplicationContext.Context.Value?.Logger.LogError($"{_player.Id} was scammed {-remainingQuantity}x {itemDescriptor.Id}");
             }
             else if (remainingQuantityToRemove > 0)
             {
-                Log.Error($"{_player.Id} did not have {remainingQuantity}x {itemDescriptor.Id} taken");
+                ApplicationContext.Context.Value?.Logger.LogError($"{_player.Id} did not have {remainingQuantity}x {itemDescriptor.Id} taken");
             }
 
             foreach (var slotIndexToUpdate in slotIndicesToFill)
@@ -549,7 +550,7 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
         var bank = _bank;
         if (bank == null)
         {
-            Log.Error($"SwapBankItems() called on invalid bank for {_player.Id}");
+            ApplicationContext.Context.Value?.Logger.LogError($"SwapBankItems() called on invalid bank for {_player.Id}");
             return;
         }
 
@@ -561,7 +562,7 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
                 ChatMessageType.Bank,
                 CustomColors.Alerts.Error
             );
-            Log.Error($"Invalid slot indices SwapBankItems({slotFrom}, {slotTo}) ({bank.Capacity}, {_player.Id})");
+            ApplicationContext.Context.Value?.Logger.LogError($"Invalid slot indices SwapBankItems({slotFrom}, {slotTo}) ({bank.Capacity}, {_player.Id})");
             return;
         }
 
@@ -595,14 +596,14 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
                 {
                     if (sourceSlot.ItemId == default)
                     {
-                        Log.Warn($"SwapBankItems({slotFrom}, {slotTo}) for {_player.Id} with empty item ID");
+                        ApplicationContext.Context.Value?.Logger.LogWarning($"SwapBankItems({slotFrom}, {slotTo}) for {_player.Id} with empty item ID");
                         return;
                     }
 
                     /* Items are the same, move the maximum quantity */
                     if (!ItemBase.TryGet(sourceSlot.ItemId, out var itemDescriptor))
                     {
-                        Log.Error($"SwapBankItems({slotFrom}, {slotTo}) for {_player.Id} failed due to missing item {sourceSlot.ItemId}");
+                        ApplicationContext.Context.Value?.Logger.LogError($"SwapBankItems({slotFrom}, {slotTo}) for {_player.Id} failed due to missing item {sourceSlot.ItemId}");
                         return;
                     }
 
@@ -638,7 +639,7 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
             }
             catch (Exception exception)
             {
-                Log.Error(exception, $"Error in SwapBankItems({slotFrom}, {slotTo}) for {_player.Id}");
+                ApplicationContext.Context.Value?.Logger.LogError(exception, $"Error in SwapBankItems({slotFrom}, {slotTo}) for {_player.Id}");
                 return;
             }
 

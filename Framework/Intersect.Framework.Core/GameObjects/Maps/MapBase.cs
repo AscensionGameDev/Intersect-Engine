@@ -5,7 +5,6 @@ using Intersect.Enums;
 using Intersect.Framework.Core.Serialization;
 using Intersect.GameObjects.Events;
 using Intersect.Models;
-
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Maps;

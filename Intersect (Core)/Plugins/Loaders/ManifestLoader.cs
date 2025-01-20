@@ -1,11 +1,12 @@
-﻿using Intersect.Logging;
+﻿
 using Intersect.Plugins.Interfaces;
 using Intersect.Plugins.Manifests;
-
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Plugins.Loaders;
 
@@ -66,7 +67,7 @@ public static partial class ManifestLoader
         }
         catch (Exception exception)
         {
-            Log.Error(exception, "Exception thrown by manifest loader delegate.");
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Exception thrown by manifest loader delegate.");
         }
 
         return default;
@@ -132,14 +133,14 @@ public static partial class ManifestLoader
 
             if (mismatchedType != null)
             {
-                Log.Debug($"Expected: {ManifestType.AssemblyQualifiedName} in {ManifestType.Assembly.Location}");
-                Log.Debug($"Loaded: {mismatchedType.AssemblyQualifiedName} in {mismatchedType.Assembly.Location}");
+                ApplicationContext.Context.Value?.Logger.LogDebug($"Expected: {ManifestType.AssemblyQualifiedName} in {ManifestType.Assembly.Location}");
+                ApplicationContext.Context.Value?.Logger.LogDebug($"Loaded: {mismatchedType.AssemblyQualifiedName} in {mismatchedType.Assembly.Location}");
 
                 if (!string.Equals(
                     ManifestType.Assembly.Location, mismatchedType.Assembly.Location, StringComparison.Ordinal
                 ))
                 {
-                    Log.Warn(
+                    ApplicationContext.Context.Value?.Logger.LogWarning(
                         $"Manifest loaded the core library from the wrong location." +
                         $"\n\tExpected: {ManifestType.Assembly.Location}" +
                         $"\n\t  Actual: {mismatchedType.Assembly.Location}"
@@ -161,7 +162,7 @@ public static partial class ManifestLoader
             return true;
         }
 
-        Log.Debug($"'{type.Name}' is missing a default constructor.");
+        ApplicationContext.Context.Value?.Logger.LogDebug($"'{type.Name}' is missing a default constructor.");
         return false;
     }
 

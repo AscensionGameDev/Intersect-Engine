@@ -1,6 +1,5 @@
 using System.Diagnostics.Contracts;
 using Intersect.Server.Database;
-
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Server.Maps;

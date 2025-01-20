@@ -3,7 +3,6 @@ using Intersect.Collections.Slotting;
 using Intersect.Enums;
 using Intersect.Server.Entities;
 using Intersect.Utilities;
-
 using Newtonsoft.Json;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local

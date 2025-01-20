@@ -1,5 +1,4 @@
 using Intersect.Client.Framework.GenericClasses;
-
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;

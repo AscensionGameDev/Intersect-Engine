@@ -1,5 +1,4 @@
 using DarkUI.Controls;
-
 using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.GameObjects.Events.Commands;

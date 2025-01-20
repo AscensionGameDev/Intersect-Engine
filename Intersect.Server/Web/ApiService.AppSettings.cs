@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using Intersect.Logging;
+using Intersect.Core;
 using Intersect.Server.Web.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -16,7 +16,7 @@ internal partial class ApiService
 
     private static void UnpackAppSettings()
     {
-        Log.Info("Unpacking appsettings...");
+        ApplicationContext.Context.Value?.Logger.LogInformation("Unpacking appsettings...");
         var hostBuilder = Host.CreateApplicationBuilder();
 
         var names = new[] { "appsettings.json", $"appsettings.{hostBuilder.Environment.EnvironmentName}.json" };
@@ -29,24 +29,24 @@ internal partial class ApiService
         {
             if (string.IsNullOrWhiteSpace(mrn) || string.IsNullOrWhiteSpace(name))
             {
-                Log.Warn($"Manifest resource name or file name is null/empty: ({mrn}, {name})");
+                ApplicationContext.Context.Value?.Logger.LogWarning($"Manifest resource name or file name is null/empty: ({mrn}, {name})");
                 continue;
             }
 
             if (File.Exists(name))
             {
-                Log.Debug($"'{name}' already exists, not unpacking '{mrn}'");
+                ApplicationContext.Context.Value?.Logger.LogDebug($"'{name}' already exists, not unpacking '{mrn}'");
                 continue;
             }
 
             using var mrs = Assembly.GetManifestResourceStream(mrn);
             if (mrs == default)
             {
-                Log.Warn($"Unable to open stream for embedded content: '{mrn}'");
+                ApplicationContext.Context.Value?.Logger.LogWarning($"Unable to open stream for embedded content: '{mrn}'");
                 continue;
             }
 
-            Log.Info($"Unpacking '{name}' in {Environment.CurrentDirectory}");
+            ApplicationContext.Context.Value?.Logger.LogInformation($"Unpacking '{name}' in {Environment.CurrentDirectory}");
 
             using var fs = File.OpenWrite(name);
             mrs.CopyTo(fs);
@@ -209,7 +209,10 @@ internal partial class ApiService
             }
             catch (Exception exception)
             {
-                Log.Warn(exception);
+                ApplicationContext.Context.Value?.Logger.LogWarning(
+                    exception,
+                    "Error creating self-signed certificate"
+                );
             }
         }
     }

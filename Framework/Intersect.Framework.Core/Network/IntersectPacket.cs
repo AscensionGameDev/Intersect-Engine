@@ -1,7 +1,7 @@
 ﻿using Intersect.Collections;
 using Intersect.Framework.Reflection;
 #if DIAGNOSTIC
-using Intersect.Logging;
+
 #endif
 using MessagePack;
 
@@ -31,7 +31,7 @@ public abstract partial class IntersectPacket : IPacket
                                    throw new Exception($"Failed to serialize {this.GetFullishName()}");
 
 #if DIAGNOSTIC
-            Log.Debug($"{GetType().FullName}({mCachedData.Length})={Convert.ToHexString(mCachedData)}");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"{GetType().FullName}({mCachedData.Length})={Convert.ToHexString(mCachedData)}");
 #endif
             return mCachedData;
         }

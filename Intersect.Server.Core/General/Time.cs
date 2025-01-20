@@ -1,7 +1,8 @@
+using Intersect.Core;
 using Intersect.GameObjects;
-using Intersect.Logging;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Server.General;
 
@@ -67,7 +68,7 @@ public static partial class Time
                 catch (ArgumentOutOfRangeException exception)
                 {
                     // Log the error with the value of timeBase.Rate and pass the exception
-                    Log.Error(exception, $"Failed to update game time. Time was {timeWas}, Added Rate was {timeRate}, Added time span was {addedTime}");
+                    ApplicationContext.Context.Value?.Logger.LogError(exception, $"Failed to update game time. Time was {timeWas}, Added Rate was {timeRate}, Added time span was {addedTime}");
                     // Rethrow the exception to crash the server o_o !!!
                     throw;
                 }

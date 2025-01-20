@@ -1,7 +1,8 @@
 using Intersect.Client.Interface.Menu;
-using Intersect.Logging;
+using Intersect.Core;
 using Intersect.Network;
 using Intersect.Network.Packets.Unconnected.Server;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Networking.UnconnectedPacketHandlers;
 
@@ -17,7 +18,7 @@ public class ServerStatusResponsePacketHandler : AbstractPacketHandler<ServerSta
         }
         catch (Exception exception)
         {
-            Log.Debug(exception);
+            ApplicationContext.Context.Value?.Logger.LogDebug(exception, "Failed to set main menu network status");
             return false;
         }
     }

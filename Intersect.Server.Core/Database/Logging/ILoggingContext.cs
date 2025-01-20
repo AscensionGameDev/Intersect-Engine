@@ -1,5 +1,4 @@
 ﻿using Intersect.Server.Database.Logging.Entities;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.Server.Database.Logging;

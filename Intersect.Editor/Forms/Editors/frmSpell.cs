@@ -1,6 +1,5 @@
 using DarkUI.Controls;
 using DarkUI.Forms;
-
 using Intersect.Editor.Content;
 using Intersect.Editor.Core;
 using Intersect.Editor.General;

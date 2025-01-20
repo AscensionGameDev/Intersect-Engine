@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
-
 using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows.Components;
 
@@ -69,7 +70,7 @@ public partial class RowContainerComponent : ComponentBase
         }
         catch (Exception ex)
         {
-            Logging.Log.Error(ex, $"An error occured while loading KeyvalueRowComponent Json for {mName}");
+            ApplicationContext.Context.Value?.Logger.LogError(ex, $"An error occured while loading {nameof(KeyValueRowComponent)} Json for {mName}");
         }
 
         row.SizeToChildren(true, false);

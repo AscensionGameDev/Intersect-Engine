@@ -1,8 +1,6 @@
 ﻿
 using Newtonsoft.Json;
-
 using NUnit.Framework;
-
 using Semver;
 
 namespace Intersect.Plugins.Manifests

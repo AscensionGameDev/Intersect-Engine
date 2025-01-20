@@ -1,8 +1,8 @@
 using System.Reflection;
-
 using Intersect.GameObjects.Annotations;
 using Intersect.Localization;
-using Intersect.Logging;
+using Microsoft.Extensions.Logging;
+
 
 namespace Intersect.Editor.Localization;
 
@@ -57,7 +57,7 @@ public class EditorProperty : IComparable<EditorProperty>
         if (labelAttribute == default || displayAttribute == default)
         {
             // TODO: Re-enable this, disabled for spamming the logs
-            // Log.Warn($"{propertyInfo.DeclaringType.FullName}.{propertyInfo.Name} must have both a label and display attribute.");
+            // ApplicationContext.Context.Value?.Logger.LogWarning($"{propertyInfo.DeclaringType.FullName}.{propertyInfo.Name} must have both a label and display attribute.");
             editorProperty = default;
             return false;
         }
@@ -96,7 +96,7 @@ public class Localizer
 
         if (_indexedAssemblies.Contains(assembly))
         {
-            Log.Debug($"Skipping re-index of {assembly.FullName}");
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogDebug($"Skipping re-index of {assembly.FullName}");
             return;
         }
 
@@ -104,7 +104,7 @@ public class Localizer
         {
             if (_indexedTypes.Contains(type))
             {
-                Log.Debug($"Skipping re-index of {type.FullName}");
+                Intersect.Core.ApplicationContext.Context.Value?.Logger.LogDebug($"Skipping re-index of {type.FullName}");
                 continue;
             }
 

@@ -1,5 +1,6 @@
 ﻿using Intersect.Core;
 using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Plugins.Loaders;
 
@@ -38,7 +39,7 @@ internal partial class PluginLoader
             var key = discoveredPlugin.Manifest.Key;
             if (!plugins.TryGetValue(discoveredPlugin.Manifest.Key, out var existingPlugin) ||
                 existingPlugin == default ||
-                existingPlugin.Manifest.Version < discoveredPlugin.Manifest.Version)
+                existingPlugin.Manifest.Version.ComparePrecedenceTo(discoveredPlugin.Manifest.Version) < 0)
             {
                 plugins[key] = discoveredPlugin;
             }
@@ -79,7 +80,7 @@ internal partial class PluginLoader
                 .Where(plugin => plugin != default);
         }
 
-        applicationContext.Logger.Warn(
+        applicationContext.Logger.LogWarning(
             $@"Directory was specified as a plugin directory but does not exist: '{pluginDirectory}'"
         );
 

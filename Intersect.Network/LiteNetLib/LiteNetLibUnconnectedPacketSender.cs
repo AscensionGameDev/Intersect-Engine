@@ -1,6 +1,7 @@
 using System.Net;
 using Intersect.Core;
-using Intersect.Logging;
+using Microsoft.Extensions.Logging;
+
 
 namespace Intersect.Network.LiteNetLib;
 
@@ -32,7 +33,7 @@ public sealed class LiteNetLibUnconnectedPacketSender : IPacketSender
             return _networkLayerInterface.SendUnconnectedPacket(_endPoint, unconnectedPacket);
         }
 
-        Log.Error($"Expected a {nameof(UnconnectedPacket)} but tried to send a {packet.GetType().FullName}");
+        ApplicationContext.Logger.LogError($"Expected a {nameof(UnconnectedPacket)} but tried to send a {packet.GetType().FullName}");
         return false;
 
     }

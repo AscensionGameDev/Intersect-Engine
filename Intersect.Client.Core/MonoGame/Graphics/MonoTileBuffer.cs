@@ -1,6 +1,7 @@
 ﻿using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
-using Intersect.Logging;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -32,14 +33,14 @@ public partial class MonoTileBuffer(GraphicsDevice device) : GameTileBuffer
     {
         if (_vertexBuffer != null)
         {
-            Log.Error("Unable to add tile to null vertex buffer");
+            ApplicationContext.Context.Value?.Logger.LogError("Unable to add tile to null vertex buffer");
             return false;
         }
 
         var platformTexture = (texture == _texture ? _platformTexture : default) ?? texture.GetTexture<Texture2D>();
         if (platformTexture == null)
         {
-            Log.Error("Unable to add tile to vertex buffer because the platform texture is null");
+            ApplicationContext.Context.Value?.Logger.LogError("Unable to add tile to vertex buffer because the platform texture is null");
             return false;
         }
 
@@ -50,7 +51,7 @@ public partial class MonoTileBuffer(GraphicsDevice device) : GameTileBuffer
         }
         else if (_platformTexture != platformTexture)
         {
-            Log.Error("Mismatched platform texture");
+            ApplicationContext.Context.Value?.Logger.LogError("Mismatched platform texture");
             return false;
         }
 
@@ -124,20 +125,20 @@ public partial class MonoTileBuffer(GraphicsDevice device) : GameTileBuffer
     {
         if (_vertexBuffer == default)
         {
-            Log.Error("Unable to update tile on null vertex buffer");
+            ApplicationContext.Context.Value?.Logger.LogError("Unable to update tile on null vertex buffer");
             return false;
         }
 
         if (!_tileVertexOffset.TryGetValue(x << 16 | y, out var vertexIndex))
         {
-            Log.Error("Unable to update tile that has not been added to the vertex buffer before");
+            ApplicationContext.Context.Value?.Logger.LogError("Unable to update tile that has not been added to the vertex buffer before");
             return false;
         }
 
         var platformTexture = (texture == _texture ? _platformTexture : default) ?? texture.GetTexture<Texture2D>();
         if (platformTexture == null)
         {
-            Log.Error("Unable to add tile to vertex buffer because the platform texture is null");
+            ApplicationContext.Context.Value?.Logger.LogError("Unable to add tile to vertex buffer because the platform texture is null");
             return false;
         }
 
@@ -148,7 +149,7 @@ public partial class MonoTileBuffer(GraphicsDevice device) : GameTileBuffer
         }
         else if (_platformTexture != platformTexture)
         {
-            Log.Error("Mismatched platform texture");
+            ApplicationContext.Context.Value?.Logger.LogError("Mismatched platform texture");
             return false;
         }
 

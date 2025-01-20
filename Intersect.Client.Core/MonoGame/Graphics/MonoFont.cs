@@ -1,7 +1,7 @@
 ﻿using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
-using Intersect.Logging;
-
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -25,7 +25,13 @@ public partial class MonoFont : GameFont
         }
         catch (Exception ex)
         {
-            Log.Trace(ex);
+            ApplicationContext.Context.Value?.Logger.LogTrace(
+                ex,
+                "Error occurred loading {FontName}, {FontSize} from {FileName}",
+                fontName,
+                fontSize,
+                fileName
+            );
         }
     }
 

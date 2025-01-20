@@ -1,5 +1,4 @@
 ﻿using Intersect.Network;
-
 using MessagePack;
 
 namespace Intersect.Examples.Plugin.Packets.Client

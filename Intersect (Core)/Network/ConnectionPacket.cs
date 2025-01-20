@@ -1,11 +1,10 @@
 ﻿using System.Security.Cryptography;
 using Intersect.Network.Packets;
 using Intersect.Utilities;
-
 using MessagePack;
 
 #if INTERSECT_DIAGNOSTIC
-using Intersect.Logging;
+
 #endif
 
 namespace Intersect.Network;
@@ -85,16 +84,16 @@ public abstract partial class ConnectionPacket : IntersectPacket
     protected static void DumpKey(RSAParameters parameters, bool isPublic)
     {
 #if INTERSECT_DIAGNOSTIC
-        Log.Diagnostic($"Exponent: {BitConverter.ToString(parameters.Exponent)}");
-        Log.Diagnostic($"Modulus: {BitConverter.ToString(parameters.Modulus)}");
+        ApplicationContext.Context.Value?.Logger.LogTrace($"Exponent: {BitConverter.ToString(parameters.Exponent)}");
+        ApplicationContext.Context.Value?.Logger.LogTrace($"Modulus: {BitConverter.ToString(parameters.Modulus)}");
 
         if (isPublic) return;
-        Log.Diagnostic($"D: {BitConverter.ToString(parameters.D)}");
-        Log.Diagnostic($"DP: {BitConverter.ToString(parameters.DP)}");
-        Log.Diagnostic($"DQ: {BitConverter.ToString(parameters.DQ)}");
-        Log.Diagnostic($"InverseQ: {BitConverter.ToString(parameters.InverseQ)}");
-        Log.Diagnostic($"P: {BitConverter.ToString(parameters.P)}");
-        Log.Diagnostic($"Q: {BitConverter.ToString(parameters.Q)}");
+        ApplicationContext.Context.Value?.Logger.LogTrace($"D: {BitConverter.ToString(parameters.D)}");
+        ApplicationContext.Context.Value?.Logger.LogTrace($"DP: {BitConverter.ToString(parameters.DP)}");
+        ApplicationContext.Context.Value?.Logger.LogTrace($"DQ: {BitConverter.ToString(parameters.DQ)}");
+        ApplicationContext.Context.Value?.Logger.LogTrace($"InverseQ: {BitConverter.ToString(parameters.InverseQ)}");
+        ApplicationContext.Context.Value?.Logger.LogTrace($"P: {BitConverter.ToString(parameters.P)}");
+        ApplicationContext.Context.Value?.Logger.LogTrace($"Q: {BitConverter.ToString(parameters.Q)}");
 #endif
     }
 }

@@ -4,9 +4,10 @@ using Intersect.Client.Framework.Network;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Configuration;
-using Intersect.Logging;
+using Intersect.Core;
 using Intersect.Network;
 using Intersect.Network.Events;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Networking;
 
@@ -38,7 +39,7 @@ internal static partial class Network
         }
         catch (Exception exception)
         {
-            Log.Trace(exception);
+            ApplicationContext.Context.Value?.Logger.LogTrace(exception, "Error closing socket");
         }
     }
 
@@ -53,7 +54,7 @@ internal static partial class Network
         {
             if (_closeTask != default)
             {
-                Log.Debug("Disconnect already queued, skipping");
+                ApplicationContext.Context.Value?.Logger.LogDebug("Disconnect already queued, skipping");
                 return;
             }
 
@@ -65,7 +66,7 @@ internal static partial class Network
                     {
                         if (_closeTask != task)
                         {
-                            Log.Debug("Disconnect interrupted, skipping");
+                            ApplicationContext.Context.Value?.Logger.LogDebug("Disconnect interrupted, skipping");
                             return;
                         }
 

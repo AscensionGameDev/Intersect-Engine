@@ -3,11 +3,11 @@ using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
 using CommandLine;
+using Intersect.Core;
 using Intersect.Factories;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
-using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Plugins;
 using Intersect.Plugins.Contexts;
@@ -21,6 +21,10 @@ using Intersect.Server.Metrics;
 using Intersect.Server.Networking;
 using Intersect.Threading;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Events;
+using Serilog.Extensions.Logging;
 
 namespace Intersect.Server.Core;
 
@@ -58,11 +62,27 @@ internal static class Bootstrapper
 
         Console.WriteLine("Pre-context setup finished.");
 
-        var logger = Log.Default;
+        var executableName = Path.GetFileNameWithoutExtension(
+            Process.GetCurrentProcess().MainModule?.FileName ?? Assembly.GetExecutingAssembly().GetName().Name
+        );
+        var loggerConfiguration = new LoggerConfiguration().MinimumLevel
+            .Is(LevelConvert.ToSerilogLevel(Options.Instance.Logging.Level))
+            .Enrich.FromLogContext().WriteTo
+            .Console().WriteTo.File(
+                Path.Combine(
+                    "logs",
+                    $"{executableName}-{Process.GetCurrentProcess().StartTime:yyyy_MM_dd-HH_mm_ss_fff}.log"
+                )
+            ).WriteTo.File(
+                Path.Combine("logs", $"errors-{executableName}.log"),
+                restrictedToMinimumLevel: LogEventLevel.Error
+            );
+
+        var logger = new SerilogLoggerFactory(loggerConfiguration.CreateLogger()).CreateLogger("Client");
         var packetTypeRegistry = new PacketTypeRegistry(logger, typeof(SharedConstants).Assembly);
         if (!packetTypeRegistry.TryRegisterBuiltIn())
         {
-            logger.Error("[FATAL] Failed to load built-in packet types.");
+            logger.LogCritical("[FATAL] Failed to load built-in packet types.");
             return;
         }
 
@@ -108,7 +128,7 @@ internal static class Bootstrapper
             action.Invoke();
         }
 
-        Log.Diagnostic("Bootstrapper exited.");
+        ApplicationContext.Context.Value?.Logger.LogTrace("Bootstrapper exited.");
 
         // At this point dbs should be saved and all threads should be killed. Give a message saying that the server has shutdown and to press any key to exit.
         // Having the message and the console.readline() allows the server to exit properly if the console has crashed, and it allows us to know that the server context has shutdown.
@@ -189,8 +209,6 @@ internal static class Bootstrapper
 
             return false;
         }
-
-        Log.Default.Configuration.LogLevel = Options.Instance.Logging.Level;
 
         if (ServerContext.IsDefaultResourceDirectory)
         {
@@ -436,7 +454,7 @@ internal static class Bootstrapper
             return;
         }
 
-        Log.Error($"Failed to extract {sqliteFileName} library, terminating startup.");
+        ApplicationContext.Context.Value?.Logger.LogError($"Failed to extract {sqliteFileName} library, terminating startup.");
         Environment.Exit(-0x1000);
     }
 

@@ -6,8 +6,8 @@ using Intersect.Client.Localization;
 using Intersect.Client.MonoGame.Audio;
 using Intersect.Compression;
 using Intersect.Configuration;
-using Intersect.Logging;
-
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.MonoGame.File_Management;
@@ -16,13 +16,13 @@ namespace Intersect.Client.MonoGame.File_Management;
 public partial class MonoContentManager : GameContentManager
 {
 
-    public MonoContentManager(ILogger logger) : base(logger)
+    public MonoContentManager()
     {
         var rootPath = Path.GetFullPath(ClientConfiguration.ResourcesDirectory);
 
         if (!Directory.Exists(rootPath))
         {
-            Log.Error(Strings.Errors.ResourcesNotFound);
+            ApplicationContext.Context.Value?.Logger.LogError(Strings.Errors.ResourcesNotFound);
 
             Environment.Exit(1);
         }

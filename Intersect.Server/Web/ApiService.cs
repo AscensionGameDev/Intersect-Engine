@@ -7,7 +7,6 @@ using Htmx.TagHelpers;
 using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Reflection;
-using Intersect.Logging;
 using Intersect.Security.Claims;
 using Intersect.Server.Core;
 using Intersect.Server.Database.PlayerData.Api;
@@ -67,7 +66,7 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
             return default;
         }
 
-        Log.Info($"Launching Intersect REST API in '{builder.Environment.EnvironmentName}' mode...");
+        ApplicationContext.Context.Value?.Logger.LogInformation($"Launching Intersect REST API in '{builder.Environment.EnvironmentName}' mode...");
 
         // I can't get System.Text.Json to deserialize an array as non-null, and it totally ignores
         // the JsonConverter attribute I tried putting on it, so I am just giving up and doing this
@@ -416,11 +415,11 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                 {
                     if (string.IsNullOrWhiteSpace(rawProxyAddress))
                     {
-                        Log.Debug($"Invalid address '{rawProxyAddress}'");
+                        ApplicationContext.Context.Value?.Logger.LogDebug($"Invalid address '{rawProxyAddress}'");
                     }
                     else if (IPAddress.TryParse(rawProxyAddress.Trim(), out IPAddress? proxyAddress))
                     {
-                        Log.Debug($"Added {proxyAddress} as a known good proxy for forwarded headers");
+                        ApplicationContext.Context.Value?.Logger.LogDebug($"Added {proxyAddress} as a known good proxy for forwarded headers");
                         options.KnownProxies.Add(proxyAddress);
                     }
                     else
@@ -430,18 +429,18 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                             var addresses = Dns.GetHostAddresses(rawProxyAddress.Trim());
                             foreach (var address in addresses)
                             {
-                                Log.Debug($"Added {address} as a known good proxy for forwarded headers");
+                                ApplicationContext.Context.Value?.Logger.LogDebug($"Added {address} as a known good proxy for forwarded headers");
                                 options.KnownProxies.Add(address);
                             }
 
                             if (addresses.Length < 1)
                             {
-                                Log.Warn($"Failed to resolve {rawProxyAddress.Trim()}, unable to add as known proxy");
+                                ApplicationContext.Context.Value?.Logger.LogWarning($"Failed to resolve {rawProxyAddress.Trim()}, unable to add as known proxy");
                             }
                         }
                         catch (Exception exception)
                         {
-                            Log.Debug(exception, $"Failed to resolve {rawProxyAddress.Trim()}");
+                            ApplicationContext.Context.Value?.Logger.LogDebug(exception, $"Failed to resolve {rawProxyAddress.Trim()}");
                         }
                     }
                 }
@@ -600,7 +599,7 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
         }
         catch (Exception exception)
         {
-            Log.Error(exception);
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Error starting API service");
             throw;
         }
     }

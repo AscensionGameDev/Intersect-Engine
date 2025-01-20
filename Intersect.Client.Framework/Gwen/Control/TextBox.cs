@@ -1,6 +1,7 @@
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Input;
-using Intersect.Logging;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;
@@ -616,7 +617,14 @@ public partial class TextBox : Label
         }
         catch (Exception exception)
         {
-            LegacyLogging.Logger?.Warn(exception);
+            ApplicationContext.Context.Value?.Logger.LogWarning(
+                exception,
+                "Failed to replace {Length} characters in '{Text}' starting at {StartPosition} with '{ReplacementText}",
+                length,
+                Text,
+                startPos,
+                replacement
+            );
         }
     }
 

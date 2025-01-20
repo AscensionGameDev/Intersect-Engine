@@ -1,6 +1,5 @@
 ﻿using Intersect.Framework.Core.Serialization;
 using Intersect.GameObjects.Events;
-
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Conditions;

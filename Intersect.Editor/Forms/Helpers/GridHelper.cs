@@ -1,5 +1,4 @@
 namespace Intersect.Editor.Forms.Helpers;
-
 using Color = System.Drawing.Color;
 using Graphics = System.Drawing.Graphics;
 

@@ -1,10 +1,13 @@
-using Intersect.Logging;
+using Intersect.Framework.Core.Serialization;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Intersect.Config;
 
 public partial class LoggingOptions
 {
-    public LogLevel Level { get; set; } = LogLevel.Info;
+    [JsonConverter(typeof(SafeStringEnumConverter))]
+    public LogLevel Level { get; set; } = LogLevel.Information;
 
     /// <summary>
     /// Determines whether chat logs should be written into the logging database

@@ -1,8 +1,8 @@
 using System.Runtime.InteropServices;
-
 using Intersect.Editor.Networking;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect.Logging;
+using Microsoft.Extensions.Logging;
+
 
 namespace Intersect.Editor.Forms.Controls;
 
@@ -258,7 +258,7 @@ public partial class MapTreeList : UserControl
 
     public void UpdateMapList(Guid selectMapId = default, List<Guid>? restrictMaps = null)
     {
-        Log.Info("Updating list");
+        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogInformation("Updating list");
         var selectedMapListMap = selectMapId == default ? default : MapList.List.FindMap(selectMapId);
         if (selectedMapListMap != default && _nodeLookup.TryGetValue(selectedMapListMap, out var treeNode))
         {

@@ -2,6 +2,7 @@
 using Intersect.Properties;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Plugins.Loaders;
 
@@ -30,7 +31,7 @@ internal sealed partial class PluginLoader
         }
         catch (Exception exception)
         {
-            applicationContext.Logger.Error(exception);
+            applicationContext.Logger.LogError(exception, "Error loading plugin from {AssemblyPath}", assemblyPath);
             return default;
         }
     }
@@ -46,11 +47,11 @@ internal sealed partial class PluginLoader
         var manifest = ManifestLoader.FindManifest(assembly);
         if (manifest == null)
         {
-            applicationContext.Logger.Warn($"Unable to find a manifest in '{assembly.FullName}' ({assembly.Location})");
+            applicationContext.Logger.LogWarning($"Unable to find a manifest in '{assembly.FullName}' ({assembly.Location})");
             return default;
         }
 
-        applicationContext.Logger.Info($"Loading plugin {manifest.Name} v{manifest.Version} ({manifest.Key}).");
+        applicationContext.Logger.LogInformation($"Loading plugin {manifest.Name} v{manifest.Version} ({manifest.Key}).");
 
         var pluginReference = CreatePluginReference(assembly);
         if (pluginReference != null)
@@ -58,7 +59,7 @@ internal sealed partial class PluginLoader
             return Plugin.Create(applicationContext, manifest, pluginReference);
         }
 
-        applicationContext.Logger.Error($"Unable to find a plugin entry point in '{assembly.FullName}' ({assembly.Location})");
+        applicationContext.Logger.LogError($"Unable to find a plugin entry point in '{assembly.FullName}' ({assembly.Location})");
         return default;
     }
 }

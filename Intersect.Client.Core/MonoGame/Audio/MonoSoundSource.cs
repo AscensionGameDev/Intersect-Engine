@@ -2,8 +2,8 @@ using Intersect.Client.Framework.Audio;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
-using Intersect.Logging;
-
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework.Audio;
 
 namespace Intersect.Client.MonoGame.Audio;
@@ -93,7 +93,7 @@ public partial class MonoSoundSource : GameAudioSource
         }
         catch (Exception exception)
         {
-            Log.Error(exception, $"Error loading '{mPath}'.");
+            ApplicationContext.Context.Value?.Logger.LogError(exception, $"Error loading '{mPath}'.");
             ChatboxMsg.AddMessage(
                 new ChatboxMsg(
                     $"{Strings.Errors.LoadFile.ToString(Strings.Words.LcaseSound)} [{mPath}]",

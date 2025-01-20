@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-
 using Intersect.Models;
-
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects;

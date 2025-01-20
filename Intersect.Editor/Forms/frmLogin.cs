@@ -2,15 +2,14 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
-
 using Intersect.Editor.Content;
 using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
-using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Editor.Forms;
 
@@ -43,7 +42,7 @@ public partial class FrmLogin : Form
         }
         catch (Exception exception)
         {
-            Log.Error(exception);
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(exception, "Error loading strings");
             throw;
         }
         GameContentManager.CheckForResources();

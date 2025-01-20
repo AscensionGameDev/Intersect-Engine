@@ -13,14 +13,14 @@ using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Compression;
+using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core.Serialization;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
-using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
-
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Intersect.Client.Maps;
@@ -770,7 +770,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
                     var endVbo = DateTime.UtcNow;
                     var elapsedVbo = endVbo - startVbo;
-                    Log.Info($"Built VBO for map instance {Id} in {elapsedVbo.TotalMilliseconds}ms");
+                    ApplicationContext.Context.Value?.Logger.LogInformation($"Built VBO for map instance {Id} in {elapsedVbo.TotalMilliseconds}ms");
 
                     // lock (mTileBuffers)
                     // {
@@ -1237,10 +1237,10 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 var bufferForFrame = bufferGroup[animationFrameIndex];
                 // if (bufferForFrame is MonoTileBuffer monoTileBuffer)
                 // {
-                //     Log.Info($"[{Name}][{layerName}] Buffer for {monoTileBuffer._texture?.Name} frame {i} has {monoTileBuffer._addedTileCount.Count} unique tiles");
+                //     ApplicationContext.Context.Value?.Logger.LogInformation($"[{Name}][{layerName}] Buffer for {monoTileBuffer._texture?.Name} frame {i} has {monoTileBuffer._addedTileCount.Count} unique tiles");
                 //     foreach (var (key, value) in monoTileBuffer._addedTileCount.OrderByDescending(kvp => kvp.Value))
                 //     {
-                //         Log.Info($"[{Name}][{layerName}] {key} has {value} occurrences");
+                //         ApplicationContext.Context.Value?.Logger.LogInformation($"[{Name}][{layerName}] {key} has {value} occurrences");
                 //     }
                 // }
                 outputBuffers[animationFrameIndex][bufferIndex] = bufferForFrame;

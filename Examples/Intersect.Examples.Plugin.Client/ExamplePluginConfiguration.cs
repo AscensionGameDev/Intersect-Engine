@@ -1,5 +1,4 @@
 using Intersect.Plugins;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Examples.Plugin.Client

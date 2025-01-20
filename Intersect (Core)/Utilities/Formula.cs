@@ -1,5 +1,5 @@
-﻿using Intersect.Logging;
-
+﻿using Intersect.Core;
+using Microsoft.Extensions.Logging;
 using NCalc;
 
 namespace Intersect.Utilities;
@@ -76,11 +76,11 @@ public partial class Formula
 
             if (!Load())
             {
-                Log.Warn($"Error loading formula from {mSource}.");
+                ApplicationContext.Context.Value?.Logger.LogWarning($"Error loading formula from {mSource}.");
             }
             else
             {
-                Log.Debug($"Loaded new formula from {mSource}.");
+                ApplicationContext.Context.Value?.Logger.LogDebug($"Loaded new formula from {mSource}.");
             }
         }
     }
@@ -109,14 +109,14 @@ public partial class Formula
 
             if (!Parameters.TryGetValue(name, out var formulaParameter))
             {
-                Log.Error($"Tried to access non-existent parameter '{name}' in a formula.");
+                ApplicationContext.Context.Value?.Logger.LogError($"Tried to access non-existent parameter '{name}' in a formula.");
 
                 return;
             }
 
             if (args == null)
             {
-                Log.Error($"Formula parameter '{name}' arguments were null.");
+                ApplicationContext.Context.Value?.Logger.LogError($"Formula parameter '{name}' arguments were null.");
 
                 return;
             }
@@ -137,7 +137,7 @@ public partial class Formula
             {
                 if (!SYSTEM_MATH_FUNCTIONS.Contains(name))
                 {
-                    Log.Error($"Tried to access non-existent function '{name}' in a formula.");
+                    ApplicationContext.Context.Value?.Logger.LogError($"Tried to access non-existent function '{name}' in a formula.");
                 }
 
                 return;
@@ -145,7 +145,7 @@ public partial class Formula
 
             if (args == null)
             {
-                Log.Error($"Formula function '{name}' arguments were null.");
+                ApplicationContext.Context.Value?.Logger.LogError($"Formula function '{name}' arguments were null.");
 
                 return;
             }
@@ -168,7 +168,7 @@ public partial class Formula
         {
             if (!shouldOverride)
             {
-                Log.Debug($"Formula function '{name}' already exists, not overriding.");
+                ApplicationContext.Context.Value?.Logger.LogDebug($"Formula function '{name}' already exists, not overriding.");
 
                 return false;
             }
@@ -200,7 +200,7 @@ public partial class Formula
         {
             if (!shouldOverride)
             {
-                Log.Debug($"Formula parameter '{name}' already exists, not overriding.");
+                ApplicationContext.Context.Value?.Logger.LogDebug($"Formula parameter '{name}' already exists, not overriding.");
 
                 return false;
             }
@@ -217,7 +217,7 @@ public partial class Formula
         {
             if (!shouldOverride)
             {
-                Log.Debug($"Formula evaluated parameter '{name}' already exists,not overriding.");
+                ApplicationContext.Context.Value?.Logger.LogDebug($"Formula evaluated parameter '{name}' already exists,not overriding.");
 
                 return false;
             }
@@ -228,7 +228,7 @@ public partial class Formula
             {
                 if (args == null)
                 {
-                    Log.Error($"Formula function '{name}' arguments were null.");
+                    ApplicationContext.Context.Value?.Logger.LogError($"Formula function '{name}' arguments were null.");
 
                     return;
                 }

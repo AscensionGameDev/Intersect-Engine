@@ -1,6 +1,7 @@
 ﻿using Intersect.Collections;
-using Intersect.Logging;
 using System.Reflection;
+using Intersect.Framework.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Network;
 
@@ -76,7 +77,11 @@ public sealed partial class PacketTypeRegistry
                 case ArgumentNullException _:
                 case ArgumentException _:
                 case InvalidOperationException _:
-                    Logger.Error(exception);
+                    Logger.LogError(
+                        exception,
+                        "Failed to register packet type {Type}",
+                        packetType.GetName(qualified: true)
+                    );
                     return false;
 
                 default:

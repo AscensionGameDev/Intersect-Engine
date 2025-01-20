@@ -1,6 +1,5 @@
 using System.Runtime.CompilerServices;
 using Intersect.Client.Framework.Graphics;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 

@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-
-using Intersect.Logging;
+using Intersect.Core;
+using Intersect.Framework.Reflection;
 using Intersect.Properties;
-using Intersect.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Factories;
 
@@ -59,11 +59,15 @@ public static partial class FactoryRegistry<TValue>
         }
         catch (InvalidOperationException exception)
         {
-            Log.Warn(exception);
+            ApplicationContext.Context.Value?.Logger.LogWarning(
+                exception,
+                "Failed to create {TypeName}",
+                typeof(TValue).GetName(qualified: true)
+            );
         }
         catch (Exception exception)
         {
-            Log.Error(
+            ApplicationContext.Context.Value?.Logger.LogError(
                 exception,
                 string.Format(
                     CultureInfo.CurrentCulture, ExceptionMessages.SwallowingExceptionFromWithQualifiedName,

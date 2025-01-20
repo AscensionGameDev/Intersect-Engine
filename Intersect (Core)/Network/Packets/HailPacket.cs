@@ -1,12 +1,12 @@
 ﻿using System.Diagnostics;
 using System.Security.Cryptography;
-
-using Intersect.Logging;
+using Intersect.Core;
 using Intersect.Memory;
 using MessagePack;
+using Microsoft.Extensions.Logging;
 
 #if INTERSECT_DIAGNOSTIC
-using Intersect.Logging;
+
 #endif
 
 namespace Intersect.Network.Packets;
@@ -75,8 +75,8 @@ public partial class HailPacket : ConnectionPacket
 #endif
 
 #if INTERSECT_DIAGNOSTIC
-            Log.Debug($"VersionData: {BitConverter.ToString(VersionData)}");
-            Log.Debug($"Handshake secret: {BitConverter.ToString(HandshakeSecret)}.");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"VersionData: {BitConverter.ToString(VersionData)}");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"Handshake secret: {BitConverter.ToString(HandshakeSecret)}.");
 #endif
 
             Debug.Assert(RsaParameters.Modulus != null, "RsaParameters.Modulus != null");
@@ -141,8 +141,8 @@ public partial class HailPacket : ConnectionPacket
 #endif
 
 #if INTERSECT_DIAGNOSTIC
-                Log.Debug($"VersionData: {BitConverter.ToString(VersionData)}");
-                Log.Debug($"Handshake secret: {BitConverter.ToString(HandshakeSecret)}.");
+                ApplicationContext.Context.Value?.Logger.LogDebug($"VersionData: {BitConverter.ToString(VersionData)}");
+                ApplicationContext.Context.Value?.Logger.LogDebug($"Handshake secret: {BitConverter.ToString(HandshakeSecret)}.");
 #endif
 
                 if (!buffer.Read(out ushort bits))
@@ -175,7 +175,7 @@ public partial class HailPacket : ConnectionPacket
         }
         catch (Exception exception)
         {
-            Log.Warn(exception);
+            ApplicationContext.Context.Value?.Logger.LogWarning(exception, "Error decrypting hail packet");
             return false;
         }
     }

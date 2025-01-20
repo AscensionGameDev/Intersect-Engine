@@ -4,7 +4,6 @@ using System.Net.Sockets;
 using System.Text;
 using Intersect.Server.Core;
 using Intersect.Server.Localization;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Networking.Helpers
@@ -204,7 +203,7 @@ namespace Intersect.Server.Networking.Helpers
         //     }
         //     catch (Exception exception)
         //     {
-        //         Log.Warn(exception);
+        //         ApplicationContext.Context.Value?.Logger.LogWarning(exception);
         //     }
         //     finally
         //     {

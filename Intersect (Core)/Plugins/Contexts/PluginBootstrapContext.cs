@@ -1,5 +1,4 @@
 ﻿using CommandLine;
-
 using Intersect.Factories;
 using Intersect.Plugins.Helpers;
 using Intersect.Plugins.Interfaces;

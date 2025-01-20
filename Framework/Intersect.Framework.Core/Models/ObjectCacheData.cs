@@ -28,6 +28,8 @@ public sealed class ObjectCacheData<TObject>
 
     public string Version { get; init; }
 
+    public ObjectCacheKey<TObject> GetKey() => new(Id: Id, Checksum: Checksum, Version: Version);
+
     public static string? GetCacheFileName(Id<TObject> id)
     {
         var hashData = new byte[32];

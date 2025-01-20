@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -31,8 +30,8 @@ public partial class DatabaseOptions
         NullValueHandling = NullValueHandling.Ignore,
         DefaultValueHandling = DefaultValueHandling.Populate
     )]
-    [DefaultValue(Logging.LogLevel.Error)]
-    public Logging.LogLevel LogLevel { get; set; } = Logging.LogLevel.Error;
+    [DefaultValue(Microsoft.Extensions.Logging.LogLevel.Error)]
+    public Microsoft.Extensions.Logging.LogLevel LogLevel { get; set; } = Microsoft.Extensions.Logging.LogLevel.Error;
 
     public bool KillServerOnConcurrencyException { get; set; } = DefaultKillServerOnConcurrencyException;
 }

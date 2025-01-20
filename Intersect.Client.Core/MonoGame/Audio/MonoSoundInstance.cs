@@ -1,5 +1,6 @@
 ﻿using Intersect.Client.General;
-
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework.Audio;
 
 namespace Intersect.Client.MonoGame.Audio;
@@ -53,7 +54,7 @@ public partial class MonoSoundInstance : MonoAudioInstance<MonoSoundSource>
         }
         catch (Exception ex)
         {
-            Logging.Log.Debug(ex, "Error trying to play sound in MonoSoundInstance.Play()");
+            ApplicationContext.Context.Value?.Logger.LogDebug(ex, "Error trying to play sound in MonoSoundInstance.Play()");
         }
     }
 

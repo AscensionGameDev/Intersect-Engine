@@ -1,7 +1,9 @@
 using System.Buffers;
 using System.Buffers.Binary;
 using System.Security.Cryptography;
-using Intersect.Logging;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
+
 
 namespace Intersect.Network.LiteNetLib;
 
@@ -103,14 +105,14 @@ public sealed class AesAlgorithm : SymmetricAlgorithm
             plaindata = plaindataBuffer;
 
 #if DIAGNOSTIC
-            Log.Debug($"Decrypting {plaindata.Length} bytes:\nKey={Convert.ToHexString(aes.Key)} Nonce={Convert.ToHexString(aes.IV)}\nplaindata={Convert.ToHexString(plaindata)}\ncipherdata={Convert.ToHexString(cipherdata)}");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"Decrypting {plaindata.Length} bytes:\nKey={Convert.ToHexString(aes.Key)} Nonce={Convert.ToHexString(aes.IV)}\nplaindata={Convert.ToHexString(plaindata)}\ncipherdata={Convert.ToHexString(cipherdata)}");
 #endif
 
             return EncryptionResult.Success;
         }
         catch (Exception exception)
         {
-            Log.Debug(exception);
+            ApplicationContext.Context.Value?.Logger.LogDebug(exception, "Error decrypting cipherdata");
             return EncryptionResult.Error;
         }
     }
@@ -152,14 +154,14 @@ public sealed class AesAlgorithm : SymmetricAlgorithm
             cipherdata = memoryStream.ToArray();
 
 #if DIAGNOSTIC
-            Log.Debug($"Encrypting {plaindata.Length} bytes:\nKey={Convert.ToHexString(aes.Key)} Nonce={Convert.ToHexString(aes.IV)}\nplaindata={Convert.ToHexString(plaindata)}\ncipherdata={Convert.ToHexString(cipherdata[^plaindata.Length..])}");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"Encrypting {plaindata.Length} bytes:\nKey={Convert.ToHexString(aes.Key)} Nonce={Convert.ToHexString(aes.IV)}\nplaindata={Convert.ToHexString(plaindata)}\ncipherdata={Convert.ToHexString(cipherdata[^plaindata.Length..])}");
 #endif
 
             return EncryptionResult.Success;
         }
         catch (Exception exception)
         {
-            Log.Debug(exception);
+            ApplicationContext.Context.Value?.Logger.LogDebug(exception, "Error encrypting plaindata");
             return EncryptionResult.Error;
         }
     }

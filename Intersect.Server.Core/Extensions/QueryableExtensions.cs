@@ -1,5 +1,4 @@
 using Intersect.Server.Collections.Sorting;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.Server.Extensions;

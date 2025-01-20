@@ -1,5 +1,4 @@
 using CommandLine;
-
 using Intersect.Client.Framework.Graphics;
 using Intersect.Core;
 

@@ -3,10 +3,10 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
 using Intersect.Compression;
+using Intersect.Core;
 using Intersect.IO.Files;
-using Intersect.Logging;
 using Intersect.Utilities;
-
+using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -117,7 +117,7 @@ public partial class MonoTexture : GameTexture
         _loadError = true;
         if (string.IsNullOrWhiteSpace(_realPath))
         {
-            Log.Error("Invalid texture path (empty/null).");
+            ApplicationContext.Context.Value?.Logger.LogError("Invalid texture path (empty/null).");
 
             return;
         }
@@ -126,7 +126,7 @@ public partial class MonoTexture : GameTexture
 
         if (!File.Exists(_realPath))
         {
-            Log.Error($"Texture does not exist: {relativePath}");
+            ApplicationContext.Context.Value?.Logger.LogError($"Texture does not exist: {relativePath}");
 
             return;
         }
@@ -146,7 +146,7 @@ public partial class MonoTexture : GameTexture
         }
         catch (Exception exception)
         {
-            Log.Error(
+            ApplicationContext.Context.Value?.Logger.LogError(
                 exception,
                 $"Failed to load texture ({FileSystemHelper.FormatSize(fileStream.Length)}): {relativePath}"
             );

@@ -1,5 +1,4 @@
 ﻿using Intersect.Enums;
-
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Events;

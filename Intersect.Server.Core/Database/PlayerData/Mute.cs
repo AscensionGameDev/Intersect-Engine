@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using Intersect.Logging;
+using Intersect.Core;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
-
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
@@ -88,7 +87,7 @@ public partial class Mute
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to add mute for user " + mute.User?.Name);
+            ApplicationContext.Context.Value?.Logger.LogError(ex, "Failed to add mute for user " + mute.User?.Name);
         }
         return false;
     }
@@ -137,7 +136,7 @@ public partial class Mute
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to delete mute for user " + mute.User?.Name);
+            ApplicationContext.Context.Value?.Logger.LogError(ex, "Failed to delete mute for user " + mute.User?.Name);
         }
         return false;
     }
@@ -163,7 +162,7 @@ public partial class Mute
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to remove mutes for ip " + ip);
+            ApplicationContext.Context.Value?.Logger.LogError(ex, "Failed to remove mutes for ip " + ip);
         }
         return false;
     }
@@ -191,7 +190,7 @@ public partial class Mute
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to remove mutes user with id " + userId);
+            ApplicationContext.Context.Value?.Logger.LogError(ex, "Failed to remove mutes user with id " + userId);
         }
         return false;
     }
@@ -211,7 +210,7 @@ public partial class Mute
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to remove mutes user " + user?.Id);
+            ApplicationContext.Context.Value?.Logger.LogError(ex, "Failed to remove mutes user " + user?.Id);
         }
         return false;
     }
@@ -238,9 +237,14 @@ public partial class Mute
                 ? null
                 : Strings.Account.MuteStatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason);
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            Log.Error(ex);
+            ApplicationContext.Context.Value?.Logger.LogError(
+                exception,
+                "Failed to find/remove mute for {UserId} for {IPAddress}",
+                userId,
+                ip
+            );
             return null;
         }
     }
@@ -272,9 +276,14 @@ public partial class Mute
                 ? null
                 : Strings.Account.MuteStatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason);
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            Log.Error(ex);
+            ApplicationContext.Context.Value?.Logger.LogError(
+                exception,
+                "Error during removal of stale mute reason for {UserId} for {IPAddress}",
+                user.Id,
+                ip
+            );
             return null;
         }
     }
@@ -290,9 +299,9 @@ public partial class Mute
                 return ByUser(context, userId)?.FirstOrDefault();
             }
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            Log.Error(ex);
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Error loading Mute for {UserId}", userId);
             return null;
         }
     }
@@ -311,9 +320,9 @@ public partial class Mute
                 return ByIp(context, ip)?.FirstOrDefault();
             }
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            Log.Error(ex);
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Error loading mute for {IPAddress}", ip);
             return null;
         }
     }

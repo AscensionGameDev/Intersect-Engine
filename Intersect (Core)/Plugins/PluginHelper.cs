@@ -1,4 +1,6 @@
-﻿using Intersect.Logging;
+﻿
+
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Plugins;
 

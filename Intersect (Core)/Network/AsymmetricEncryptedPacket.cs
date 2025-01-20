@@ -1,8 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
+using Intersect.Core;
 using Intersect.Framework.Reflection;
-using Intersect.Logging;
 using MessagePack;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Network;
 
@@ -61,11 +62,11 @@ public sealed class AsymmetricEncryptedPacket : IntersectPacket
         {
             using var rsa = RSA.Create(parameters.Value);
 #if DIAGNOSTIC
-            Log.Debug($"{nameof(TryDecrypt)} {nameof(encryptedData)}({encryptedData.Length})={Convert.ToHexString(encryptedData)}");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"{nameof(TryDecrypt)} {nameof(encryptedData)}({encryptedData.Length})={Convert.ToHexString(encryptedData)}");
 #endif
             var innerPacketData = rsa.Decrypt(encryptedData, RSAEncryptionPadding.OaepSHA256);
 #if DIAGNOSTIC
-            Log.Debug($"innerPacketData({innerPacketData.Length})={Convert.ToHexString(innerPacketData)}");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"innerPacketData({innerPacketData.Length})={Convert.ToHexString(innerPacketData)}");
 #endif
             var deserializedObject = MessagePacker.Instance.Deserialize(innerPacketData);
             innerPacket = deserializedObject as IntersectPacket;
@@ -77,18 +78,18 @@ public sealed class AsymmetricEncryptedPacket : IntersectPacket
 
             if (deserializedObject == default)
             {
-                Log.Debug("Null packet");
+                ApplicationContext.Context.Value?.Logger.LogDebug("Null packet");
                 return false;
             }
 
-            Log.Debug($"Expected {nameof(InnerPacket)}, received {deserializedObject.GetFullishName()}");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"Expected {nameof(InnerPacket)}, received {deserializedObject.GetFullishName()}");
         }
         catch (Exception exception)
         {
-            Log.Warn(exception);
+            ApplicationContext.Context.Value?.Logger.LogWarning(exception, "Error decrypting packet");
 
 // #if DIAGNOSTIC
-            Log.Debug($"{nameof(TryDecrypt)} {nameof(encryptedData)}({encryptedData.Length})={Convert.ToHexString(encryptedData)}");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"{nameof(TryDecrypt)} {nameof(encryptedData)}({encryptedData.Length})={Convert.ToHexString(encryptedData)}");
 // #endif
         }
 
@@ -111,17 +112,17 @@ public sealed class AsymmetricEncryptedPacket : IntersectPacket
             using var rsa = RSA.Create(parameters.Value);
             var innerPacketData = innerPacket.Data;
 #if DIAGNOSTIC
-            Log.Debug($"innerPacketData({innerPacketData.Length})={Convert.ToHexString(innerPacketData)}");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"innerPacketData({innerPacketData.Length})={Convert.ToHexString(innerPacketData)}");
 #endif
             encryptedData = rsa.Encrypt(innerPacketData, RSAEncryptionPadding.OaepSHA256);
 #if DIAGNOSTIC
-            Log.Debug($"encryptedData({encryptedData.Length})={Convert.ToHexString(encryptedData)}");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"encryptedData({encryptedData.Length})={Convert.ToHexString(encryptedData)}");
 #endif
             return true;
         }
         catch (Exception exception)
         {
-            Log.Warn(exception);
+            ApplicationContext.Context.Value?.Logger.LogWarning(exception, "Error encrypting packet");
             return false;
         }
     }

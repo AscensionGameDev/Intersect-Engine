@@ -1,11 +1,11 @@
 using System.Net;
 using Intersect.Core;
-using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets.Client;
 using Intersect.Network.Packets.Unconnected.Client;
 using Intersect.Network.Packets.Unconnected.Server;
 using Intersect.Plugins.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.SinglePlayer.Networking;
 
@@ -49,7 +49,7 @@ internal sealed class SinglePlayerNetwork : INetwork
 
     public void Close()
     {
-        Log.Debug($"Disposing {nameof(SinglePlayerNetwork)}");
+        ApplicationContext.Logger.LogDebug($"Disposing {nameof(SinglePlayerNetwork)}");
     }
 
     public bool Connect()
@@ -77,7 +77,7 @@ internal sealed class SinglePlayerNetwork : INetwork
 
     public bool Disconnect(string? message = default)
     {
-        Log.Info(message);
+        ApplicationContext.Logger.LogInformation(message);
         return true;
     }
 
@@ -91,7 +91,7 @@ internal sealed class SinglePlayerNetwork : INetwork
 
     public void Dispose()
     {
-        Log.Debug($"Disposing {nameof(SinglePlayerNetwork)}");
+        ApplicationContext.Logger.LogDebug($"Disposing {nameof(SinglePlayerNetwork)}");
     }
 
     private bool Handle(IPacket packet)

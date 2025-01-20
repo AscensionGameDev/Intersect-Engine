@@ -1,5 +1,4 @@
 using System.Text;
-
 using Intersect.Editor.Localization;
 using Intersect.Editor.Maps;
 using Intersect.Enums;
@@ -8,7 +7,7 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect.Logging;
+using Microsoft.Extensions.Logging;
 using VariableMod = Intersect.GameObjects.Events.VariableMod;
 
 namespace Intersect.Editor.Forms.Editors.Events;
@@ -185,12 +184,12 @@ public static partial class CommandPrinter
 
                         if ((cnd.BranchIds?.Length ?? 0) < 2)
                         {
-                            Log.Error("Missing branch ids in conditional branch.");
+                            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError("Missing branch ids in conditional branch.");
                         }
 
                         if (!page.CommandLists.TryGetValue(cnd.BranchIds[0], out var branchCommandList))
                         {
-                            Log.Error($"Missing command list for branch {cnd.BranchIds[0]}");
+                            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError($"Missing command list for branch {cnd.BranchIds[0]}");
                         }
 
                         PrintCommandList(
@@ -213,7 +212,7 @@ public static partial class CommandPrinter
 
                             if (!page.CommandLists.TryGetValue(cnd.BranchIds[1], out branchCommandList))
                             {
-                                Log.Error($"Missing command list for branch {cnd.BranchIds[1]}");
+                                Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError($"Missing command list for branch {cnd.BranchIds[1]}");
                             }
 
                             PrintCommandList(

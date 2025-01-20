@@ -1,11 +1,9 @@
 using System.ComponentModel.DataAnnotations.Schema;
-
 using Intersect.Enums;
 using Intersect.GameObjects.Maps;
 using Intersect.Models;
 using Intersect.Server.Utilities;
 using Intersect.Utilities;
-
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects;

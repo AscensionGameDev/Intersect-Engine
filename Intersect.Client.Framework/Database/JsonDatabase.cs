@@ -1,7 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Intersect.Configuration;
-using Intersect.Logging;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -10,13 +11,11 @@ namespace Intersect.Client.Framework.Database;
 public class JsonDatabase : GameDatabase
 {
     private readonly string _instancePath;
-    private readonly ILogger _logger;
     private JObject? _instance;
 
-    public JsonDatabase(ILogger logger)
+    public JsonDatabase()
     {
         _instancePath = GetInstancePath(ClientConfiguration.Instance);
-        _logger = logger;
         _ = TryOpenOrCreate(_instancePath, out _instance);
     }
 
@@ -52,7 +51,10 @@ public class JsonDatabase : GameDatabase
         }
         catch (Exception exception)
         {
-            _logger.Error(exception, $"Failed to open or create part or all of the path: {instancePath}");
+            ApplicationContext.Context.Value?.Logger.LogError(
+                exception,
+                $"Failed to open or create part or all of the path: {instancePath}"
+            );
             instance = default;
             return false;
         }
@@ -85,8 +87,10 @@ public class JsonDatabase : GameDatabase
         }
         catch (Exception exception)
         {
-            _logger.Error(exception,
-                $"Failed to open or create part or all of the path, or failed while writing to: {instancePath}");
+            ApplicationContext.Context.Value?.Logger.LogError(
+                exception,
+                $"Failed to open or create part or all of the path, or failed while writing to: {instancePath}"
+            );
             instance = default;
             return false;
         }
@@ -128,7 +132,9 @@ public class JsonDatabase : GameDatabase
             return token.Value<string>();
         }
 
-        _logger.Warn($"Found invalid type {token.Type} stored in {key} instead of {JTokenType.String}.");
+        ApplicationContext.Context.Value?.Logger.LogWarning(
+            $"Found invalid type {token.Type} stored in {key} instead of {JTokenType.String}."
+        );
         return string.Empty;
     }
 

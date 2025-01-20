@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Plugins.Manifests.Types;

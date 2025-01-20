@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Net;
 using System.Security.Cryptography;
-using Intersect.Logging;
+using Intersect.Core;
 using Microsoft.AspNetCore.WebUtilities;
 
 namespace Intersect.Server.Networking.Helpers;
@@ -53,7 +53,7 @@ public static class PortChecker
             if (responseMessage.StatusCode != HttpStatusCode.OK)
             {
                 var statusCodePrefix = (int)responseMessage.StatusCode / 100;
-                Log.Debug($"Received {statusCodePrefix} from port checker service");
+                ApplicationContext.Context.Value?.Logger.LogDebug($"Received {statusCodePrefix} from port checker service");
                 return statusCodePrefix switch
                 {
                     1 => PortCheckResult.PortCheckerServerUnexpectedResponse,
@@ -67,7 +67,7 @@ public static class PortChecker
 
             if (!responseMessage.Headers.Any())
             {
-                Log.Debug("Received no headers from port checker service.");
+                ApplicationContext.Context.Value?.Logger.LogDebug("Received no headers from port checker service.");
                 return PortCheckResult.Inaccessible;
             }
 
@@ -89,33 +89,33 @@ public static class PortChecker
                 responseTime = DateTimeFrom(responseTimeValues);
             }
 
-            Log.Verbose($"Port checker service received request after {(requestTime - time).TotalMilliseconds}ms.");
-            Log.Verbose($"Port checker service responded to the request after {(responseTime - requestTime).TotalMilliseconds}ms.");
-            Log.Verbose($"Port checker service response was received after {(receivedResponseTime - responseTime).TotalMilliseconds}ms.");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"Port checker service received request after {(requestTime - time).TotalMilliseconds}ms.");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"Port checker service responded to the request after {(responseTime - requestTime).TotalMilliseconds}ms.");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"Port checker service response was received after {(receivedResponseTime - responseTime).TotalMilliseconds}ms.");
 
             if (!responseMessage.Headers.TryGetValues("ip", out var ipValues))
             {
-                Log.Debug("Received no 'ip' header from port checker service.");
+                ApplicationContext.Context.Value?.Logger.LogDebug("Received no 'ip' header from port checker service.");
                 return PortCheckResult.InvalidPortCheckerResponse;
             }
 
             externalIp = ipValues.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value));
             if (string.IsNullOrWhiteSpace(externalIp))
             {
-                Log.Debug("Received empty 'ip' header from port checker service.");
+                ApplicationContext.Context.Value?.Logger.LogDebug("Received empty 'ip' header from port checker service.");
                 return PortCheckResult.InvalidPortCheckerResponse;
             }
 
             if (!responseMessage.Headers.TryGetValues("secret", out var portCheckerSecretValues))
             {
-                Log.Debug("Received no 'secret' header from port checker service.");
+                ApplicationContext.Context.Value?.Logger.LogDebug("Received no 'secret' header from port checker service.");
                 return PortCheckResult.InvalidPortCheckerResponse;
             }
 
             var portCheckerSecret = portCheckerSecretValues.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value));
             if (string.IsNullOrWhiteSpace(portCheckerSecret))
             {
-                Log.Debug("Received empty 'secret' header from port checker service.");
+                ApplicationContext.Context.Value?.Logger.LogDebug("Received empty 'secret' header from port checker service.");
                 return PortCheckResult.InvalidPortCheckerResponse;
             }
 
@@ -124,12 +124,12 @@ public static class PortChecker
                 return PortCheckResult.Open;
             }
 
-            Log.Debug($"Received invalid 'secret' header from port checker service: {portCheckerSecret}");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"Received invalid 'secret' header from port checker service: {portCheckerSecret}");
             return PortCheckResult.InvalidPortCheckerResponse;
         }
         catch (HttpRequestException httpRequestException)
         {
-            Log.Debug(httpRequestException);
+            ApplicationContext.Context.Value?.Logger.LogDebug(httpRequestException, "HTTP request failed");
 
             return httpRequestException.StatusCode.HasValue
                 ? PortCheckResult.PortCheckerServerError
@@ -137,12 +137,12 @@ public static class PortChecker
         }
         catch (TaskCanceledException taskCanceledException)
         {
-            Log.Debug(taskCanceledException.Message);
+            ApplicationContext.Context.Value?.Logger.LogDebug(taskCanceledException.Message);
             return PortCheckResult.PortCheckerServerError;
         }
         catch (Exception exception)
         {
-            Log.Debug(exception);
+            ApplicationContext.Context.Value?.Logger.LogDebug(exception, "General error occurred");
             return PortCheckResult.PortCheckerServerError;
         }
     }

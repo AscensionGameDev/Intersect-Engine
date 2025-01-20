@@ -11,9 +11,9 @@ using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets.Server;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Editor.Networking;
 
@@ -56,7 +56,7 @@ internal sealed partial class PacketHandler
 
     public IApplicationContext Context { get; }
 
-    public Logger Logger { get; }
+    public ILogger Logger { get; }
 
     public PacketHandlerRegistry Registry { get; }
 
@@ -84,7 +84,7 @@ internal sealed partial class PacketHandler
 
         if (!Registry.TryGetHandler(packet, out HandlePacketGeneric handler))
         {
-            Logger.Error($"No registered handler for {packet.GetType().FullName}!");
+            Logger.LogError($"No registered handler for {packet.GetType().FullName}!");
 
             return false;
         }
@@ -103,7 +103,7 @@ internal sealed partial class PacketHandler
             if (!preHooks.All(hook => hook.Handle(VirtualSender, packet)))
             {
                 // Hooks should not fail, if they do that's an error
-                Logger.Error($"PreHook handler failed for {packet.GetType().FullName}.");
+                Logger.LogError($"PreHook handler failed for {packet.GetType().FullName}.");
                 return false;
             }
         }
@@ -118,7 +118,7 @@ internal sealed partial class PacketHandler
             if (!postHooks.All(hook => hook.Handle(VirtualSender, packet)))
             {
                 // Hooks should not fail, if they do that's an error
-                Logger.Error($"PostHook handler failed for {packet.GetType().FullName}.");
+                Logger.LogError($"PostHook handler failed for {packet.GetType().FullName}.");
                 return false;
             }
         }
@@ -144,7 +144,7 @@ internal sealed partial class PacketHandler
             Strings.Load();
         } catch (Exception exception)
         {
-            Log.Error(exception);
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(exception, "Failed to load server options");
             throw;
         }
     }
@@ -414,14 +414,14 @@ internal sealed partial class PacketHandler
                     }
                     catch (Exception exception)
                     {
-                        Log.Error($"Another mystery NPE. [Lookup={AnimationBase.Lookup}]");
+                        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError($"Another mystery NPE. [Lookup={AnimationBase.Lookup}]");
                         if (exception.InnerException != null)
                         {
-                            Log.Error(exception.InnerException);
+                            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(exception.InnerException, "Mystery NPE");
                         }
 
-                        Log.Error(exception);
-                        Log.Error($"{nameof(id)}={id},{nameof(anim)}={anim}");
+                        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(exception, "Failed to load animation base");
+                        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError($"{nameof(id)}={id},{nameof(anim)}={anim}");
 
                         throw;
                     }

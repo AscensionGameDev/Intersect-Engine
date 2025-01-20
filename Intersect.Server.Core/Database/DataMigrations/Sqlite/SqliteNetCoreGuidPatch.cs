@@ -1,10 +1,11 @@
 using System.Diagnostics;
 using Dapper;
 using Intersect.Config;
-using Intersect.Logging;
+using Intersect.Core;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Logging;
 using SqlKata.Execution;
 
 namespace Intersect.Server.Database.DataMigrations.Sqlite;
@@ -217,7 +218,7 @@ public sealed class SqliteNetCoreGuidPatch
                             {
                                 if (skippedKeys.Contains(columnName))
                                 {
-                                    Log.Warn($"Dropping '{columnName}' as a query constraint while updating '{entityTable}'");
+                                    ApplicationContext.Context.Value?.Logger.LogWarning($"Dropping '{columnName}' as a query constraint while updating '{entityTable}'");
                                     continue;
                                 }
 
@@ -226,9 +227,9 @@ public sealed class SqliteNetCoreGuidPatch
 
                             var result = query.Update(convertedRow, transaction: transaction);
 
-                            if (Log.Default.Configuration.LogLevel >= LogLevel.Debug)
+                            if (Debugger.IsAttached)
                             {
-                                Log.Debug($"Processed row {convertedRowCount++}/{numberOfRows} in '{entityTable}' (segment {segmentConvertedRowCount++}/{convertedRows.Length}), {result} rows changed.");
+                                ApplicationContext.Context.Value?.Logger.LogDebug($"Processed row {convertedRowCount++}/{numberOfRows} in '{entityTable}' (segment {segmentConvertedRowCount++}/{convertedRows.Length}), {result} rows changed.");
                             }
                         }
                         catch
@@ -241,22 +242,22 @@ public sealed class SqliteNetCoreGuidPatch
                     transaction.Commit();
                     dbConnection.Close();
 
-                    if (Log.Default.Configuration.LogLevel >= LogLevel.Debug)
+                    if (Debugger.IsAttached)
                     {
-                        Log.Debug(
+                        ApplicationContext.Context.Value?.Logger.LogDebug(
                             $"Completed updating segment {segmentNumber}/{numberOfSegments} in {(DateTime.UtcNow - startTimeSegment).TotalMilliseconds}ms ('{entityTable}', {convertedRows.Length} rows updated)"
                         );
                     }
                 }
                 else
                 {
-                    Log.Debug($"Skipped segment {segmentNumber}/{numberOfSegments} because it has no changed rows ('{entityTable}')");
+                    ApplicationContext.Context.Value?.Logger.LogDebug($"Skipped segment {segmentNumber}/{numberOfSegments} because it has no changed rows ('{entityTable}')");
                 }
             }
 
-            Log.Verbose($"Completed updating table in {(DateTime.UtcNow - startTimeTable).TotalMilliseconds}ms  ('{entityTable}', {convertedRowCount} rows updated)");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"Completed updating table in {(DateTime.UtcNow - startTimeTable).TotalMilliseconds}ms  ('{entityTable}', {convertedRowCount} rows updated)");
         }
 
-        Log.Verbose($"Completed updating database in {(DateTime.UtcNow - startTimeDatabase).TotalMilliseconds}ms");
+        ApplicationContext.Context.Value?.Logger.LogDebug($"Completed updating database in {(DateTime.UtcNow - startTimeDatabase).TotalMilliseconds}ms");
     }
 }

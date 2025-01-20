@@ -1,14 +1,11 @@
 ﻿using System.IO.Compression;
-
 using Intersect.Enums;
 using Intersect.Framework.Core.Serialization;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-
 using MySqlConnector;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using MapAttribute = Intersect.GameObjects.Maps.MapAttribute;

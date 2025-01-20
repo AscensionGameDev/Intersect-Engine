@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-
 using Intersect.Core;
 using Intersect.Server.Core.CommandParsing.Arguments;
 

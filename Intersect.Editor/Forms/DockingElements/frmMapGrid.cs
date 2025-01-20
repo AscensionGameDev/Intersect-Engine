@@ -2,11 +2,8 @@ using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Maps;
-
 using Microsoft.Xna.Framework.Graphics;
-
 using WeifenLuo.WinFormsUI.Docking;
-
 using Graphics = Intersect.Editor.Core.Graphics;
 
 namespace Intersect.Editor.Forms.DockingElements;

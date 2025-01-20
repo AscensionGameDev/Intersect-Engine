@@ -1,7 +1,7 @@
 using Intersect.Client.Framework.Database;
 using Intersect.Configuration;
-using Intersect.Logging;
-
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 
 namespace Intersect.Client.MonoGame.Database;
@@ -27,9 +27,11 @@ public partial class MonoDatabase : GameDatabase
         }
         catch (Exception exception)
         {
-#if DEBUG
-            Log.Error(exception);
-#endif
+            ApplicationContext.Context.Value?.Logger.LogError(
+                exception,
+                "Error occurred deleting preference {Key}",
+                key
+            );
         }
     }
 
@@ -44,7 +46,7 @@ public partial class MonoDatabase : GameDatabase
         }
         catch (UnauthorizedAccessException)
         {
-            Log.Error($"Unable to save preference {key} in the registry.");
+            ApplicationContext.Context.Value?.Logger.LogError($"Unable to save preference {key} in the registry.");
             throw;
         }
     }

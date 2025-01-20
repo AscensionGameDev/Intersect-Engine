@@ -3,7 +3,8 @@ using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Logging;
+using Microsoft.Extensions.Logging;
+
 
 namespace Intersect.Editor.Forms.Editors.Quest;
 
@@ -23,12 +24,12 @@ public partial class QuestTaskEditor : UserControl
     {
         if (refQuest == null)
         {
-            Log.Warn($@"{nameof(refQuest)} is null.");
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogWarning($@"{nameof(refQuest)} is null.");
         }
 
         if (refTask == null)
         {
-            Log.Warn($@"{nameof(refTask)} is null.");
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogWarning($@"{nameof(refTask)} is null.");
         }
 
         InitializeComponent();
@@ -37,7 +38,7 @@ public partial class QuestTaskEditor : UserControl
 
         if (mMyTask?.EditingEvent == null)
         {
-            Log.Warn($@"{nameof(mMyTask.EditingEvent)} is null.");
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogWarning($@"{nameof(mMyTask.EditingEvent)} is null.");
         }
 
         mEventBackup = mMyTask?.EditingEvent?.JsonData;

@@ -1,5 +1,4 @@
 ﻿using Intersect.Examples.Plugin.Packets.Client;
-using Intersect.Logging;
 using Intersect.Network;
 
 namespace Intersect.Examples.Plugin.Server.Networking.Handlers
@@ -8,7 +7,7 @@ namespace Intersect.Examples.Plugin.Server.Networking.Handlers
     {
         public bool Handle(IPacketSender packetSender, ExamplePluginClientPacket packet)
         {
-            Log.Info($"Received example plugin response from the client: {packet.ExamplePluginMessage}");
+            ApplicationContext.Context.Value?.Logger.LogInformation($"Received example plugin response from the client: {packet.ExamplePluginMessage}");
             return true;
         }
 

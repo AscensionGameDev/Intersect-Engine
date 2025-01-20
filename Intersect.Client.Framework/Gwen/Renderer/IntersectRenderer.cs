@@ -1,7 +1,8 @@
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Configuration;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Framework.Gwen.Renderer;
 
@@ -340,7 +341,7 @@ public partial class IntersectRenderer : Base, ICacheToTexture
         if (!m_RT.ContainsKey(control))
         {
             var keys = m_RT.Keys.Select(key => key.CanonicalName);
-            GameContentManager.Current?.Logger.Error($"{control.CanonicalName} not found in the list of render targets: {string.Join(", ", keys)}");
+            ApplicationContext.Context.Value?.Logger.LogError($"{control.CanonicalName} not found in the list of render targets: {string.Join(", ", keys)}");
         }
         mRenderTarget = m_RT[control]; // make cache current RT
         mRenderTarget.Begin();

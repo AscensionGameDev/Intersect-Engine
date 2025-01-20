@@ -1,6 +1,7 @@
-﻿using Intersect.Logging;
+﻿
 using Intersect.Plugins.Interfaces;
 using Intersect.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Core;
 
@@ -63,8 +64,8 @@ public interface IApplicationContext : IDisposable
     void Start(bool lockUntilShutdown = true);
 
     /// <summary>
-    /// Start the application with a <see cref="LockingActionQueue"/>.
+    /// Start the application with a <see cref="ILockingActionQueue"/>.
     /// </summary>
-    /// <returns>the <see cref="LockingActionQueue"/> instance being used</returns>
+    /// <returns>the <see cref="ILockingActionQueue"/> instance being used</returns>
     ILockingActionQueue StartWithActionQueue();
 }

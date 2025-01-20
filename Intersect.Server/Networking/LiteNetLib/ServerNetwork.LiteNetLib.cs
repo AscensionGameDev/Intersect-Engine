@@ -3,7 +3,6 @@ using System.Net;
 using System.Security.Cryptography;
 using Amib.Threading;
 using Intersect.Core;
-using Intersect.Logging;
 using Intersect.Memory;
 using Intersect.Network;
 using Intersect.Network.Events;
@@ -11,7 +10,6 @@ using Intersect.Network.LiteNetLib;
 using Intersect.Server.Core;
 using Intersect.Server.Networking.Helpers;
 using LiteNetLib.Utils;
-using LogLevel = Intersect.Logging.LogLevel;
 
 namespace Intersect.Server.Networking.LiteNetLib;
 
@@ -67,7 +65,7 @@ public class ServerNetwork : AbstractNetwork, IServer
         ConnectionEventArgs connectionEventArgs
     )
     {
-        Log.Info($"Connected [{connectionEventArgs.Connection?.Guid}].");
+        ApplicationContext.Logger.LogInformation($"Connected [{connectionEventArgs.Connection?.Guid}].");
         var client = Client.CreateBeta4Client(Context, this, connectionEventArgs.Connection);
         PacketSender.SendPing(client);
         OnConnected?.Invoke(sender, connectionEventArgs);
@@ -78,7 +76,7 @@ public class ServerNetwork : AbstractNetwork, IServer
         ConnectionEventArgs connectionEventArgs
     )
     {
-        Log.Info($"Connection approved [{connectionEventArgs.Connection?.Guid}].");
+        ApplicationContext.Logger.LogInformation($"Connection approved [{connectionEventArgs.Connection?.Guid}].");
         OnConnectionApproved?.Invoke(sender, connectionEventArgs);
     }
 
@@ -87,7 +85,7 @@ public class ServerNetwork : AbstractNetwork, IServer
         ConnectionEventArgs connectionEventArgs
     )
     {
-        Log.Info($"Disconnected [{connectionEventArgs.Connection?.Guid}].");
+        ApplicationContext.Logger.LogInformation($"Disconnected [{connectionEventArgs.Connection?.Guid}].");
         Client.RemoveBeta4Client(connectionEventArgs.Connection);
         OnDisconnected?.Invoke(sender, connectionEventArgs);
     }
@@ -112,17 +110,14 @@ public class ServerNetwork : AbstractNetwork, IServer
                     NetDataWriter checkPortResponse = new();
                     checkPortResponse.Put(PortChecker.Secret);
                     checkPortResponse.Put(guidData);
-                    Log.Debug($"Responding to port checker service with {new Guid(guidData)}");
+                    ApplicationContext.Logger.LogDebug($"Responding to port checker service with {new Guid(guidData)}");
                     sender.Reply(checkPortResponse.CopyData());
                     break;
             }
         }
         catch (Exception exception)
         {
-            if (Log.Default.Configuration.LogLevel > LogLevel.Info)
-            {
-                Log.Error(exception);
-            }
+            ApplicationContext.Logger.LogError(exception, "Error on unconnected message");
         }
     }
 

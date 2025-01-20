@@ -1,5 +1,4 @@
 ﻿using DarkUI.Controls;
-
 using Intersect.Collections;
 using Intersect.Models;
 

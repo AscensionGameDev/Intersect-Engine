@@ -1,4 +1,5 @@
-﻿using Intersect.Logging;
+﻿using Intersect.Core;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Network;
 
@@ -46,19 +47,19 @@ public abstract partial class AbstractConnection : IConnection
     {
         IsConnected = true;
 
-        Log.Debug($"Connection established to remote [{Guid}/{Ip}:{Port}].");
+        ApplicationContext.Context.Value?.Logger.LogDebug($"Connection established to remote [{Guid}/{Ip}:{Port}].");
     }
 
     public void HandleApproved()
     {
-        Log.Debug($"Connection approved to remote [{Guid}/{Ip}:{Port}].");
+        ApplicationContext.Context.Value?.Logger.LogDebug($"Connection approved to remote [{Guid}/{Ip}:{Port}].");
     }
 
     public virtual void HandleDisconnected()
     {
         IsConnected = false;
 
-        Log.Debug($"Connection terminated to remote [{Guid}/{Ip}:{Port}].");
+        ApplicationContext.Context.Value?.Logger.LogDebug($"Connection terminated to remote [{Guid}/{Ip}:{Port}].");
     }
 
     public abstract void Disconnect(string message = default);

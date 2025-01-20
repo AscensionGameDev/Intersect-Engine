@@ -7,7 +7,6 @@ using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Maps;
 using Intersect.Extensions;
-
 using static Intersect.Client.Framework.File_Management.GameContentManager;
 
 namespace Intersect.Client.Interface.Debugging;

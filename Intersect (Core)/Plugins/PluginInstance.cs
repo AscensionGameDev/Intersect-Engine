@@ -1,6 +1,5 @@
 ﻿
 using Intersect.Factories;
-
 using Microsoft;
 
 namespace Intersect.Plugins;

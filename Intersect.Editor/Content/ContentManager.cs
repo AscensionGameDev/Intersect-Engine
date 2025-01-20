@@ -3,9 +3,8 @@ using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.GameObjects;
 using Intersect.IO.Files;
-using Intersect.Logging;
 using Intersect.Utilities;
-
+using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -222,13 +221,18 @@ public static partial class GameContentManager
                 }
                 catch (Exception exception)
                 {
-                    Log.Error($"Fake methods! ({tileset.Name})");
+                    Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(
+                        exception,
+                        $"Fake methods! ({tileset.Name})"
+                    );
+                    
                     if (exception.InnerException != null)
                     {
-                        Log.Error(exception.InnerException);
+                        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(
+                            exception.InnerException,
+                            "Caused by"
+                        );
                     }
-
-                    Log.Error(exception);
 
                     throw;
                 }
@@ -469,7 +473,7 @@ public static partial class GameContentManager
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            Log.Error("Tried to load shader with null name.");
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError("Tried to load shader with null name.");
 
             return null;
         }
@@ -486,7 +490,7 @@ public static partial class GameContentManager
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            Log.Error("Tried to load music with null name.");
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError("Tried to load music with null name.");
 
             return null;
         }
@@ -503,7 +507,7 @@ public static partial class GameContentManager
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            Log.Error("Tried to load sound with null name.");
+            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError("Tried to load sound with null name.");
 
             return null;
         }

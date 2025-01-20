@@ -1,7 +1,5 @@
 ﻿using System.Reflection;
-
 using DarkUI.Controls;
-
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;

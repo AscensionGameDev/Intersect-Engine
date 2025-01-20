@@ -1,8 +1,8 @@
 using System.Text;
-
-using Intersect.Logging;
+using Intersect.Core;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Server.Database;
 
@@ -31,6 +31,6 @@ internal static class DbUpdateConcurrencyExceptionExtensions
                 .AppendLine()
                 .AppendLine();
         }
-        Log.Error(concurrencyErrors.ToString());
+        ApplicationContext.Context.Value?.Logger.LogError(concurrencyErrors.ToString());
     }
 }

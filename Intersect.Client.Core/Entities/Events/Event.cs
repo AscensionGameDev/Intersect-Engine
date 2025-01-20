@@ -3,10 +3,11 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
+using Intersect.Core;
 using Intersect.Enums;
 using Intersect.GameObjects.Events;
-using Intersect.Logging;
 using Intersect.Network.Packets.Server;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Entities.Events;
 
@@ -44,7 +45,7 @@ public partial class Event : Entity
                     return Pointf.UnitY * Options.TileHeight * (Graphic.Height + 1) / 2f;
 
                 default:
-                    Log.Error($"Unimplemented graphic type: {Graphic.Type}");
+                    ApplicationContext.Context.Value?.Logger.LogError($"Unimplemented graphic type: {Graphic.Type}");
                     return Pointf.Empty;
             }
         }
@@ -59,7 +60,7 @@ public partial class Event : Entity
     {
         if (packet is not EventEntityPacket eventEntityPacket)
         {
-            Log.Error($"Received invalid packet for {nameof(Event)}: {packet?.GetType()?.FullName}");
+            ApplicationContext.Context.Value?.Logger.LogError($"Received invalid packet for {nameof(Event)}: {packet?.GetType()?.FullName}");
             return;
         }
 

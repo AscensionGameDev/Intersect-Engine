@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using System.Text;
-
 using Intersect.Core;
 using Intersect.Localization;
 using Intersect.Reflection;

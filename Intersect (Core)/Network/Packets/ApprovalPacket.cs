@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Security.Cryptography;
-using Intersect.Logging;
+using Intersect.Core;
 using Intersect.Memory;
 using MessagePack;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Network.Packets;
 
@@ -48,9 +49,9 @@ public class ApprovalPacket : ConnectionPacket
         using (var buffer = new MemoryBuffer())
         {
 #if INTERSECT_DIAGNOSTIC
-                Log.Debug($"Handshake secret: {BitConverter.ToString(HandshakeSecret)}.");
-                Log.Debug($"Specified AES Key: {BitConverter.ToString(AesKey)}");
-                Log.Debug($"Assigning UUID: {Guid}).");
+                ApplicationContext.Context.Value?.Logger.LogDebug($"Handshake secret: {BitConverter.ToString(HandshakeSecret)}.");
+                ApplicationContext.Context.Value?.Logger.LogDebug($"Specified AES Key: {BitConverter.ToString(AesKey)}");
+                ApplicationContext.Context.Value?.Logger.LogDebug($"Assigning UUID: {Guid}).");
 #endif
             buffer.Write(HandshakeSecret, SIZE_HANDSHAKE_SECRET);
             buffer.Write(AesKey, SIZE_AES_KEY);
@@ -65,7 +66,7 @@ public class ApprovalPacket : ConnectionPacket
             EncryptedData = mRsa.Encrypt(buffer.ToArray(), RSAEncryptionPadding.OaepSHA256) ??
                             throw new InvalidOperationException("Failed to encrypt the buffer.");
 #if DIAGNOSTIC
-            Log.Debug($"ApprovalPacket.Encrypt() [{mRsa.KeySize}] EncryptedData({EncryptedData.Length})={Convert.ToHexString(EncryptedData)}");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"ApprovalPacket.Encrypt() [{mRsa.KeySize}] EncryptedData({EncryptedData.Length})={Convert.ToHexString(EncryptedData)}");
 #endif
             return true;
         }
@@ -83,7 +84,7 @@ public class ApprovalPacket : ConnectionPacket
         try
         {
 #if DIAGNOSTIC
-            Log.Debug(
+            ApplicationContext.Context.Value?.Logger.LogDebug(
                 $"ApprovalPacket.Decrypt() [{rsa.KeySize}] EncryptedData({EncryptedData.Length})={Convert.ToHexString(EncryptedData)}"
             );
 #endif
@@ -125,9 +126,9 @@ public class ApprovalPacket : ConnectionPacket
 #endif
 
 #if INTERSECT_DIAGNOSTIC
-                Log.Debug($"Handshake secret: {BitConverter.ToString(HandshakeSecret)}.");
-                Log.Debug($"Assigned AES Key: {BitConverter.ToString(AesKey)}");
-                Log.Debug($"Assigned UUID: {Guid}).");
+                ApplicationContext.Context.Value?.Logger.LogDebug($"Handshake secret: {BitConverter.ToString(HandshakeSecret)}.");
+                ApplicationContext.Context.Value?.Logger.LogDebug($"Assigned AES Key: {BitConverter.ToString(AesKey)}");
+                ApplicationContext.Context.Value?.Logger.LogDebug($"Assigned UUID: {Guid}).");
 #endif
 
                 return true;
@@ -135,7 +136,7 @@ public class ApprovalPacket : ConnectionPacket
         }
         catch (Exception exception)
         {
-            Log.Error(exception);
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Error decrypting approval packet");
             return false;
         }
     }

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Intersect.Collections.Slotting;
+using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
@@ -11,7 +12,6 @@ using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Maps;
-using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Core.MapInstancing;
@@ -28,7 +28,7 @@ using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
-
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Stat = Intersect.Enums.Stat;
 
@@ -620,39 +620,39 @@ public partial class Player : Entity
     {
         if (logoutOperationId != default)
         {
-            Log.Debug($"Completing logout {logoutOperationId}");
+            ApplicationContext.Context.Value?.Logger.LogDebug($"Completing logout {logoutOperationId}");
         }
 
         if (stackTrace != default)
         {
-            Log.Debug(stackTrace);
+            ApplicationContext.Context.Value?.Logger.LogDebug(stackTrace);
         }
 
 #if DIAGNOSTIC
         var currentExecutionId = _logoutCounter++;
-        Log.Debug($"Started {nameof(CompleteLogout)}() #{currentExecutionId} on {Name} ({User?.Name})");
+        ApplicationContext.Context.Value?.Logger.LogDebug($"Started {nameof(CompleteLogout)}() #{currentExecutionId} on {Name} ({User?.Name})");
 #endif
 
         try
         {
-            Log.Diagnostic($"Starting save for logout {logoutOperationId}");
+            ApplicationContext.Context.Value?.Logger.LogTrace($"Starting save for logout {logoutOperationId}");
             var saveResult = User?.Save();
             switch (saveResult)
             {
                 case UserSaveResult.Completed:
-                    Log.Diagnostic($"Completed save for logout {logoutOperationId}");
+                    ApplicationContext.Context.Value?.Logger.LogTrace($"Completed save for logout {logoutOperationId}");
                     break;
                 case UserSaveResult.SkippedCouldNotTakeLock:
-                    Log.Debug($"Skipped save for logout {logoutOperationId}");
+                    ApplicationContext.Context.Value?.Logger.LogDebug($"Skipped save for logout {logoutOperationId}");
                     break;
                 case UserSaveResult.Failed:
-                    Log.Warn($"Save failed for logout {logoutOperationId}");
+                    ApplicationContext.Context.Value?.Logger.LogWarning($"Save failed for logout {logoutOperationId}");
                     break;
                 case UserSaveResult.DatabaseFailure:
                     Client?.LogAndDisconnect(Id, stackTrace ?? nameof(CompleteLogout));
                     break;
                 case null:
-                    Log.Warn($"Skipped save because {nameof(User)} is null.");
+                    ApplicationContext.Context.Value?.Logger.LogWarning($"Skipped save because {nameof(User)} is null.");
                     break;
                 default:
                     throw new UnreachableException();
@@ -660,7 +660,7 @@ public partial class Player : Entity
         }
         catch (Exception exception)
         {
-            Log.Warn($"Crashed while saving for logout {logoutOperationId}");
+            ApplicationContext.Context.Value?.Logger.LogWarning($"Crashed while saving for logout {logoutOperationId}");
             logoutCompletionSource?.TrySetException(exception);
             throw;
         }
@@ -668,7 +668,7 @@ public partial class Player : Entity
         lock (_savingLock)
         {
             var logoutType = softLogout ? "soft" : "hard";
-            Log.Info($"[Player.CompleteLogout] Done saving {Name} ({logoutType} logout, {Id})");
+            ApplicationContext.Context.Value?.Logger.LogInformation($"[Player.CompleteLogout] Done saving {Name} ({logoutType} logout, {Id})");
             _saving = false;
 
             if (!softLogout)
@@ -685,7 +685,7 @@ public partial class Player : Entity
         }
 
 #if DIAGNOSTIC
-        Log.Debug($"Finished {nameof(CompleteLogout)}() #{currentExecutionId} on {Name} ({User?.Name})");
+        ApplicationContext.Context.Value?.Logger.LogDebug($"Finished {nameof(CompleteLogout)}() #{currentExecutionId} on {Name} ({User?.Name})");
 #endif
     }
 
@@ -707,7 +707,7 @@ public partial class Player : Entity
                 {
                     if (CombatTimer < Timing.Global.Milliseconds)
                     {
-                        Log.Debug($"Combat timer expired for player {Id}, logging out.");
+                        ApplicationContext.Context.Value?.Logger.LogDebug($"Combat timer expired for player {Id}, logging out.");
                         Logout();
                         return;
                     }
@@ -721,7 +721,7 @@ public partial class Player : Entity
                         {
                             if (Client.IsEditor)
                             {
-                                Log.Debug($"Editor saving user: {user.Name}");
+                                ApplicationContext.Context.Value?.Logger.LogDebug($"Editor saving user: {user.Name}");
                             }
 
                             DbInterface.Pool.QueueWorkItem(user.Save, false);
@@ -2032,7 +2032,7 @@ public partial class Player : Entity
         // An instance of the map MUST exist. Otherwise, head to spawn.
         if (newMapInstance == null)
         {
-            Log.Error($"Player {Name} requested a new map Instance with ID {MapInstanceId} and failed to get it.");
+            ApplicationContext.Context.Value?.Logger.LogError($"Player {Name} requested a new map Instance with ID {MapInstanceId} and failed to get it.");
             WarpToSpawn();
 
             return;
@@ -2380,8 +2380,8 @@ public partial class Player : Entity
         EventTileLookup.Clear();
         EventLookup.Clear();
         EventBaseIdLookup.Clear();
-        Log.Debug($"Player {Name} has joined instance {MapInstanceId} of map: {newMap.Name}");
-        Log.Info($"Previous instance was {PreviousMapInstanceId}");
+        ApplicationContext.Context.Value?.Logger.LogDebug($"Player {Name} has joined instance {MapInstanceId} of map: {newMap.Name}");
+        ApplicationContext.Context.Value?.Logger.LogInformation($"Previous instance was {PreviousMapInstanceId}");
         // We changed maps AND instance layers - remove from the old instance
         PacketSender.SendEntityLeaveInstanceOfMap(this, oldMap?.Id ?? MapId, PreviousMapInstanceId);
         // Remove any trace of our player from the old instance's processing
@@ -2443,7 +2443,7 @@ public partial class Player : Entity
                 }
                 else
                 {
-                    Log.Error($"Player {Name} requested a guild warp with no guild, and proceeded to warp to map anyway");
+                    ApplicationContext.Context.Value?.Logger.LogError($"Player {Name} requested a guild warp with no guild, and proceeded to warp to map anyway");
                     newMapLayerId = Guid.Empty;
                 }
                 break;
@@ -2506,7 +2506,7 @@ public partial class Player : Entity
 
                 break;
             default:
-                Log.Error($"Player {Name} requested an instance type that is not supported. Their map instance settings will not change.");
+                ApplicationContext.Context.Value?.Logger.LogError($"Player {Name} requested an instance type that is not supported. Their map instance settings will not change.");
                 break;
         }
 
@@ -2734,7 +2734,7 @@ public partial class Player : Entity
         if (default == slot && createSlotIfNull)
         {
             var createdSlot = new InventorySlot(slotIndex);
-            Log.Error("Creating inventory slot " + slotIndex + " for player " + Name + Environment.NewLine + Environment.StackTrace);
+            ApplicationContext.Context.Value?.Logger.LogError("Creating inventory slot " + slotIndex + " for player " + Name + Environment.NewLine + Environment.StackTrace);
             Items[slotIndex] = createdSlot;
             slot = createdSlot;
         }
@@ -3227,7 +3227,7 @@ public partial class Player : Entity
 
         if (!MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var mapInstance))
         {
-            Log.Error(
+            ApplicationContext.Context.Value?.Logger.LogError(
                 Map == default
                     ? $"Could not find map {MapId} for player '{Name}'."
                     : $"Could not find map instance {MapInstanceId} for player '{Name}' on map {Map.Name}."
@@ -4068,12 +4068,12 @@ public partial class Player : Entity
                 if (!TryTakeItem(itemSlot, quantityToRemove))
                 {
                     success = false;
-                    Log.Warn(Strings.Shops.FailedToRemoveItem.ToString(itemSlot, Id, quantityToRemove, "BuyItem(int slot, int amount)"));
+                    ApplicationContext.Context.Value?.Logger.LogWarning(Strings.Shops.FailedToRemoveItem.ToString(itemSlot, Id, quantityToRemove, "BuyItem(int slot, int amount)"));
                     break;
                 }
 
                 removedItems.Add(itemSlot.Id, quantityToRemove);
-                Log.Warn(Strings.Shops.SuccessfullyRemovedItem.ToString(quantityToRemove, itemSlot, Id, "BuyItem(int slot, int amount)"));
+                ApplicationContext.Context.Value?.Logger.LogWarning(Strings.Shops.SuccessfullyRemovedItem.ToString(quantityToRemove, itemSlot, Id, "BuyItem(int slot, int amount)"));
                 remainingCost -= quantityToRemove;
 
                 if (remainingCost <= 0)
@@ -4301,7 +4301,7 @@ public partial class Player : Entity
         if (!ItemBase.TryGet(craftDescriptor.ItemId, out var craftItem))
         {
             PacketSender.SendChatMsg(this, Strings.Errors.UnknownErrorTryAgain, ChatMessageType.Error, CustomColors.Alerts.Error);
-            Log.Error($"Unable to find item descriptor {craftItem?.Id} for craft {craftDescriptor?.Id}.");
+            ApplicationContext.Context.Value?.Logger.LogError($"Unable to find item descriptor {craftItem?.Id} for craft {craftDescriptor?.Id}.");
             return true;
         }
 

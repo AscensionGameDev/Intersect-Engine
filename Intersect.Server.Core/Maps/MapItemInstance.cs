@@ -1,6 +1,5 @@
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Maps;

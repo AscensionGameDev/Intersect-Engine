@@ -1,7 +1,8 @@
+using Intersect.Core;
 using Intersect.Enums;
-using Intersect.Logging;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Server.Entities.Combat;
 
@@ -54,11 +55,12 @@ public partial class Dash
         Range = 0;
         if (en == default)
         {
-            Log.Error(
+            ApplicationContext.Context.Value?.Logger.LogError(
                 new ArgumentNullException(
                     nameof(en),
                     "Entity was null when calling CalcuateRange(), this isn't supported."
-                )
+                ),
+                "Error calculating range"
             );
             return;
         }
@@ -72,7 +74,7 @@ public partial class Dash
                 {
                     case MovementBlockerType.OutOfBounds:
                         return;
-                    
+
                     case MovementBlockerType.MapAttribute:
                         if (!blockPass)
                         {
@@ -80,7 +82,7 @@ public partial class Dash
                         }
 
                         break;
-                    
+
                     case MovementBlockerType.ZDimension:
                         if (!zDimensionPass)
                         {
@@ -88,7 +90,7 @@ public partial class Dash
                         }
 
                         break;
-                    
+
                     case MovementBlockerType.Entity:
                         switch (blockingEntityType)
                         {

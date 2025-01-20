@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets.Reflectable;
 using Intersect.Server.Classes.General;
@@ -49,7 +48,7 @@ namespace Intersect.Server.Classes.Networking
             }
             catch (Exception ex)
             {
-                Log.Trace(ex);
+                ApplicationContext.Context.Value?.Logger.LogTrace(ex);
                 HandleDisconnect();
             }
         }

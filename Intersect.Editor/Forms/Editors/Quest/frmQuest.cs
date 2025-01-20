@@ -7,7 +7,8 @@ using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
-using Intersect.Logging;
+using Microsoft.Extensions.Logging;
+
 
 namespace Intersect.Editor.Forms.Editors.Quest;
 
@@ -126,18 +127,18 @@ public partial class FrmQuest : EditorForm
         {
             if (item == null)
             {
-                Log.Warn($"Unexpected null: {nameof(FrmQuest)}.{nameof(btnCancel_Click)}() {nameof(item)}");
+                Intersect.Core.ApplicationContext.Context.Value?.Logger.LogWarning($"Unexpected null: {nameof(FrmQuest)}.{nameof(btnCancel_Click)}() {nameof(item)}");
             }
             else
             {
                 if (item.StartEvent == null)
                 {
-                    Log.Warn($"Unexpected null: {nameof(FrmQuest)}.{nameof(btnCancel_Click)}() {nameof(item)}.{nameof(item.StartEvent)}");
+                    Intersect.Core.ApplicationContext.Context.Value?.Logger.LogWarning($"Unexpected null: {nameof(FrmQuest)}.{nameof(btnCancel_Click)}() {nameof(item)}.{nameof(item.StartEvent)}");
                 }
 
                 if (item.EndEvent == null)
                 {
-                    Log.Warn($"Unexpected null: {nameof(FrmQuest)}.{nameof(btnCancel_Click)}() {nameof(item)}.{nameof(item.EndEvent)}");
+                    Intersect.Core.ApplicationContext.Context.Value?.Logger.LogWarning($"Unexpected null: {nameof(FrmQuest)}.{nameof(btnCancel_Click)}() {nameof(item)}.{nameof(item.EndEvent)}");
                 }
             }
 

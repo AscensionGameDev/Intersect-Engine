@@ -108,7 +108,7 @@ public partial class Base : IDisposable
 #if DIAGNOSTIC
     ~Base()
     {
-        Log.Debug($"IDisposable object finalized: {GetType()}");
+        ApplicationContext.Context.Value?.Logger.LogDebug($"IDisposable object finalized: {GetType()}");
     }
 #endif
 
