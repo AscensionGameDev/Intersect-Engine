@@ -5,7 +5,6 @@ using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Variables;
-using Intersect.GameObjects;
 using Intersect.Models;
 
 namespace Intersect.Editor.Forms.Editors;

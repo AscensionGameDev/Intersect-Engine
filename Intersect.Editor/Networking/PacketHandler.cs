@@ -13,7 +13,6 @@ using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Network;
 using Intersect.Network.Packets.Server;
-using Intersect.Plugins.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace Intersect.Editor.Networking;
