@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Collections;
 using Intersect.Compression;
+using Intersect.Config;
 using Intersect.Enums;
 using Intersect.Framework.Core.Serialization;
 using Intersect.GameObjects.Events;
@@ -39,7 +40,10 @@ public partial class MapBase : DatabaseObject<MapBase>
     public Dictionary<string, Tile[,]> Layers = new();
 
     //Map Attributes
-    private MapAttribute[,] mAttributes = new MapAttribute[Options.Instance.Map.MapWidth, Options.Instance.Map.MapHeight];
+    private MapAttribute[,] mAttributes = new MapAttribute[
+        Options.Instance?.Map.MapWidth ?? MapOptions.DefaultMapWidth,
+        Options.Instance?.Map.MapHeight ?? MapOptions.DefaultMapHeight
+    ];
 
     //Cached Att Data
     private byte[] mCachedAttributeData = null;
