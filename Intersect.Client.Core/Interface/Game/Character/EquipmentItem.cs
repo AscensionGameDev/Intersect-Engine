@@ -46,7 +46,7 @@ public partial class EquipmentItem
 
         ContentPanel = new ImagePanel(Pnl, "EquipmentIcon");
         ContentPanel.MouseInputEnabled = false;
-        Pnl.SetToolTipText(Options.EquipmentSlots[mYindex]);
+        Pnl.SetToolTipText(Options.Instance.Equipment.Slots[mYindex]);
     }
 
     void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
@@ -57,7 +57,7 @@ public partial class EquipmentItem
             if (window != null)
             {
                 var invSlot = Globals.Me.MyEquipment[mYindex];
-                if (invSlot >= 0 && invSlot < Options.MaxInvItems)
+                if (invSlot >= 0 && invSlot < Options.Instance.Player.MaxInventory)
                 {
                     window.OpenContextMenu(invSlot);
                 }

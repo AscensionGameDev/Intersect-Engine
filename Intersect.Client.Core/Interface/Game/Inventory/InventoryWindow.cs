@@ -207,7 +207,7 @@ public partial class InventoryWindow
 
         mInventoryWindow.IsClosable = Globals.CanCloseInventory;
 
-        for (var i = 0; i < Options.MaxInvItems; i++)
+        for (var i = 0; i < Options.Instance.Player.MaxInventory; i++)
         {
             var item = ItemBase.Get(Globals.Me.Inventory[i].ItemId);
             if (item != null)
@@ -241,7 +241,7 @@ public partial class InventoryWindow
 
     private void InitItemContainer()
     {
-        for (var i = 0; i < Options.MaxInvItems; i++)
+        for (var i = 0; i < Options.Instance.Player.MaxInventory; i++)
         {
             Items.Add(new InventoryItem(this, i));
             Items[i].Container = new ImagePanel(mItemContainer, "InventoryItem");

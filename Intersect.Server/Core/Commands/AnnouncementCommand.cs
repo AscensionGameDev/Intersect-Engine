@@ -22,9 +22,9 @@ namespace Intersect.Server.Core.Commands
         {
             PacketSender.SendGlobalMsg(result.Find(Message));
 
-            if (Options.Chat.ShowAnnouncementBanners)
+            if (Options.Instance.Chat.ShowAnnouncementBanners)
             {
-                PacketSender.SendGameAnnouncement(result.Find(Message), Options.Chat.AnnouncementDisplayDuration);
+                PacketSender.SendGameAnnouncement(result.Find(Message), Options.Instance.Chat.AnnouncementDisplayDuration);
             }
         }
 

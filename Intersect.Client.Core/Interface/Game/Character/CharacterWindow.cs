@@ -121,9 +121,9 @@ public partial class CharacterWindow
 
         mCharacterPortrait = new ImagePanel(mCharacterContainer);
 
-        PaperdollPanels = new ImagePanel[Options.EquipmentSlots.Count + 1];
-        PaperdollTextures = new string[Options.EquipmentSlots.Count + 1];
-        for (var i = 0; i <= Options.EquipmentSlots.Count; i++)
+        PaperdollPanels = new ImagePanel[Options.Instance.Equipment.Slots.Count + 1];
+        PaperdollTextures = new string[Options.Instance.Equipment.Slots.Count + 1];
+        for (var i = 0; i <= Options.Instance.Equipment.Slots.Count; i++)
         {
             PaperdollPanels[i] = new ImagePanel(mCharacterContainer);
             PaperdollTextures[i] = string.Empty;
@@ -159,7 +159,7 @@ public partial class CharacterWindow
 
         mPointsLabel = new Label(mCharacterWindow, "PointsLabel");
 
-        for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+        for (var i = 0; i < Options.Instance.Equipment.Slots.Count; i++)
         {
             Items.Add(new EquipmentItem(i, mCharacterWindow));
             Items[i].Pnl = new ImagePanel(mCharacterWindow, "EquipmentItem" + i);
@@ -234,7 +234,7 @@ public partial class CharacterWindow
              _characterPortrait.SizeToContents();
              Align.Center(_characterPortrait);
              _characterPortrait.IsHidden = false;
-             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+             for (int i = 0; i < Options.Instance.Equipment.Slots.Count; i++)
              {
                  _paperdollPanels[i].Hide();
              }
@@ -242,18 +242,18 @@ public partial class CharacterWindow
          else */
         if (!string.IsNullOrWhiteSpace(Globals.Me.Sprite) && Globals.Me.Sprite != mCurrentSprite && entityTex != null)
         {
-            for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
+            for (var z = 0; z < Options.Instance.Equipment.Paperdoll.Directions[1].Count; z++)
             {
                 var paperdoll = string.Empty;
-                if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1)
+                if (Options.Instance.Equipment.Slots.IndexOf(Options.Instance.Equipment.Paperdoll.Directions[1][z]) > -1)
                 {
                     var equipment = Globals.Me.MyEquipment;
-                    if (equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] > -1 &&
-                        equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] <
-                        Options.MaxInvItems)
+                    if (equipment[Options.Instance.Equipment.Slots.IndexOf(Options.Instance.Equipment.Paperdoll.Directions[1][z])] > -1 &&
+                        equipment[Options.Instance.Equipment.Slots.IndexOf(Options.Instance.Equipment.Paperdoll.Directions[1][z])] <
+                        Options.Instance.Player.MaxInventory)
                     {
                         var itemNum = Globals.Me
-                            .Inventory[equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])]]
+                            .Inventory[equipment[Options.Instance.Equipment.Slots.IndexOf(Options.Instance.Equipment.Paperdoll.Directions[1][z])]]
                             .ItemId;
 
                         if (ItemBase.TryGet(itemNum, out var itemDescriptor))
@@ -264,7 +264,7 @@ public partial class CharacterWindow
                         }
                     }
                 }
-                else if (Options.PaperdollOrder[1][z] == "Player")
+                else if (Options.Instance.Equipment.Paperdoll.Directions[1][z] == "Player")
                 {
                     PaperdollPanels[z].Show();
                     PaperdollPanels[z].Texture = entityTex;
@@ -274,7 +274,7 @@ public partial class CharacterWindow
                     Align.Center(PaperdollPanels[z]);
                 }
 
-                if (string.IsNullOrWhiteSpace(paperdoll) && !string.IsNullOrWhiteSpace(PaperdollTextures[z]) && Options.PaperdollOrder[1][z] != "Player")
+                if (string.IsNullOrWhiteSpace(paperdoll) && !string.IsNullOrWhiteSpace(PaperdollTextures[z]) && Options.Instance.Equipment.Paperdoll.Directions[1][z] != "Player")
                 {
                     PaperdollPanels[z].Texture = null;
                     PaperdollPanels[z].Hide();
@@ -316,7 +316,7 @@ public partial class CharacterWindow
         else if (Globals.Me.Sprite != mCurrentSprite && Globals.Me.Face != mCurrentSprite)
         {
             mCharacterPortrait.IsHidden = true;
-            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+            for (var i = 0; i < Options.Instance.Equipment.Slots.Count; i++)
             {
                 PaperdollPanels[i].Hide();
             }
@@ -344,25 +344,25 @@ public partial class CharacterWindow
 
         mPointsLabel.SetText(Strings.Character.Points.ToString(Globals.Me.StatPoints));
         mAddAbilityPwrBtn.IsHidden = Globals.Me.StatPoints == 0 ||
-                                     Globals.Me.Stat[(int) Stat.AbilityPower] == Options.MaxStatValue;
+                                     Globals.Me.Stat[(int) Stat.AbilityPower] == Options.Instance.Player.MaxStat;
 
         mAddAttackBtn.IsHidden =
-            Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int) Stat.Attack] == Options.MaxStatValue;
+            Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int) Stat.Attack] == Options.Instance.Player.MaxStat;
 
         mAddDefenseBtn.IsHidden = Globals.Me.StatPoints == 0 ||
-                                  Globals.Me.Stat[(int) Stat.Defense] == Options.MaxStatValue;
+                                  Globals.Me.Stat[(int) Stat.Defense] == Options.Instance.Player.MaxStat;
 
         mAddMagicResistBtn.IsHidden = Globals.Me.StatPoints == 0 ||
-                                      Globals.Me.Stat[(int) Stat.MagicResist] == Options.MaxStatValue;
+                                      Globals.Me.Stat[(int) Stat.MagicResist] == Options.Instance.Player.MaxStat;
 
         mAddSpeedBtn.IsHidden =
-            Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int) Stat.Speed] == Options.MaxStatValue;
+            Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int) Stat.Speed] == Options.Instance.Player.MaxStat;
 
         UpdateExtraBuffs();
 
-        for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+        for (var i = 0; i < Options.Instance.Equipment.Slots.Count; i++)
         {
-            if (Globals.Me.MyEquipment[i] > -1 && Globals.Me.MyEquipment[i] < Options.MaxInvItems)
+            if (Globals.Me.MyEquipment[i] > -1 && Globals.Me.MyEquipment[i] < Options.Instance.Player.MaxInventory)
             {
                 if (Globals.Me.Inventory[Globals.Me.MyEquipment[i]].ItemId != Guid.Empty)
                 {

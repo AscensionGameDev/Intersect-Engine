@@ -37,10 +37,10 @@ public partial class FrmItem : EditorForm
         Icon = Program.Icon;
 
         cmbEquipmentSlot.Items.Clear();
-        cmbEquipmentSlot.Items.AddRange(Options.EquipmentSlots.ToArray());
+        cmbEquipmentSlot.Items.AddRange(Options.Instance.Equipment.Slots.ToArray());
         cmbToolType.Items.Clear();
         cmbToolType.Items.Add(Strings.General.None);
-        cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
+        cmbToolType.Items.AddRange(Options.Instance.Equipment.ToolTypes.ToArray());
 
         cmbProjectile.Items.Clear();
         cmbProjectile.Items.Add(Strings.General.None);
@@ -155,17 +155,17 @@ public partial class FrmItem : EditorForm
             cmbFemalePaperdoll.Items.Add(paperdollnames[i]);
         }
 
-        nudStr.Maximum = Options.MaxStatValue;
-        nudMag.Maximum = Options.MaxStatValue;
-        nudDef.Maximum = Options.MaxStatValue;
-        nudMR.Maximum = Options.MaxStatValue;
-        nudSpd.Maximum = Options.MaxStatValue;
+        nudStr.Maximum = Options.Instance.PlayerOpts.MaxStat;
+        nudMag.Maximum = Options.Instance.PlayerOpts.MaxStat;
+        nudDef.Maximum = Options.Instance.PlayerOpts.MaxStat;
+        nudMR.Maximum = Options.Instance.PlayerOpts.MaxStat;
+        nudSpd.Maximum = Options.Instance.PlayerOpts.MaxStat;
 
-        nudStr.Minimum = -Options.MaxStatValue;
-        nudMag.Minimum = -Options.MaxStatValue;
-        nudDef.Minimum = -Options.MaxStatValue;
-        nudMR.Minimum = -Options.MaxStatValue;
-        nudSpd.Minimum = -Options.MaxStatValue;
+        nudStr.Minimum = -Options.Instance.PlayerOpts.MaxStat;
+        nudMag.Minimum = -Options.Instance.PlayerOpts.MaxStat;
+        nudDef.Minimum = -Options.Instance.PlayerOpts.MaxStat;
+        nudMR.Minimum = -Options.Instance.PlayerOpts.MaxStat;
+        nudSpd.Minimum = -Options.Instance.PlayerOpts.MaxStat;
 
         InitLocalization();
         UpdateEditor();
@@ -634,12 +634,12 @@ public partial class FrmItem : EditorForm
     private void cmbEquipmentSlot_SelectedIndexChanged(object sender, EventArgs e)
     {
         mEditorItem.EquipmentSlot = cmbEquipmentSlot.SelectedIndex;
-        if (cmbEquipmentSlot.SelectedIndex == Options.WeaponIndex)
+        if (cmbEquipmentSlot.SelectedIndex == Options.Instance.Equipment.WeaponSlot)
         {
             grpShieldProperties.Hide();
             grpWeaponProperties.Show();
         }
-        else if (cmbEquipmentSlot.SelectedIndex == Options.ShieldIndex)
+        else if (cmbEquipmentSlot.SelectedIndex == Options.Instance.Equipment.ShieldSlot)
         {
             grpWeaponProperties.Hide();
             grpShieldProperties.Show();
@@ -1264,7 +1264,7 @@ public partial class FrmItem : EditorForm
         }
 
         // Do we add spell cooldown groups as well?
-        if (Options.Combat.LinkSpellAndItemCooldowns)
+        if (Options.Instance.Combat.LinkSpellAndItemCooldowns)
         {
             foreach (var itm in SpellBase.Lookup)
             {

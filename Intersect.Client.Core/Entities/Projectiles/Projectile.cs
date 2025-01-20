@@ -286,7 +286,7 @@ public partial class Projectile : Entity
     /// <summary>
     /// Gets the displacement of the projectile during projection
     /// </summary>
-    /// <returns>The displacement from the co-ordinates if placed on a Options.TileHeight grid.</returns>
+    /// <returns>The displacement from the co-ordinates if placed on a Options.Instance.Map.TileHeight grid.</returns>
     private float GetDisplacement(long spawnTime)
     {
         if (_myBase == default)
@@ -296,10 +296,10 @@ public partial class Projectile : Entity
 
         var elapsedTime = Timing.Global.Milliseconds - spawnTime;
         var displacementPercent = elapsedTime / (float)_myBase.Speed;
-        var calculatedDisplacement = displacementPercent * Options.TileHeight * _myBase.Range;
+        var calculatedDisplacement = displacementPercent * Options.Instance.Map.TileHeight * _myBase.Range;
 
         // Ensure displacement does not exceed the maximum range of the projectile
-        var maxDisplacement = Options.TileHeight * _myBase.Range;
+        var maxDisplacement = Options.Instance.Map.TileHeight * _myBase.Range;
         return Math.Min(calculatedDisplacement, maxDisplacement);
     }
 
@@ -363,8 +363,8 @@ public partial class Projectile : Entity
                         }
 
                         var spawnMapId = Maps.MapInstance.Get(spawn.SpawnMapId);
-                        var spawnX = spawnMapId.X + spawn.SpawnX * Options.TileWidth + spawn.OffsetX + Options.TileWidth / 2;
-                        var spawnY = spawnMapId.Y + spawn.SpawnY * Options.TileHeight + spawn.OffsetY + Options.TileHeight / 2;
+                        var spawnX = spawnMapId.X + spawn.SpawnX * Options.Instance.Map.TileWidth + spawn.OffsetX + Options.Instance.Map.TileWidth / 2;
+                        var spawnY = spawnMapId.Y + spawn.SpawnY * Options.Instance.Map.TileHeight + spawn.OffsetY + Options.Instance.Map.TileHeight / 2;
                         var spawnDirection = spawn.AutoRotate ? spawn.Dir : Direction.Up;
 
                         spawn.Anim.SetPosition(spawnX, spawnY, X, Y, MapId, spawnDirection, spawn.Z);
@@ -417,12 +417,12 @@ public partial class Projectile : Entity
 
                     if (leftSide)
                     {
-                        return _lastTargetX - Options.MapWidth - spawn.SpawnX;
+                        return _lastTargetX - Options.Instance.Map.MapWidth - spawn.SpawnX;
                     }
 
                     if (rightSide)
                     {
-                        return _lastTargetX + Options.MapWidth - spawn.SpawnX;
+                        return _lastTargetX + Options.Instance.Map.MapWidth - spawn.SpawnX;
                     }
                 }
                 else // Vertical (Y) calculation
@@ -432,12 +432,12 @@ public partial class Projectile : Entity
 
                     if (topSide)
                     {
-                        return _lastTargetY + Options.MapHeight - spawn.SpawnY;
+                        return _lastTargetY + Options.Instance.Map.MapHeight - spawn.SpawnY;
                     }
 
                     if (bottomSide)
                     {
-                        return _lastTargetY - Options.MapHeight - spawn.SpawnY;
+                        return _lastTargetY - Options.Instance.Map.MapHeight - spawn.SpawnY;
                     }
                 }
             }
@@ -472,7 +472,7 @@ public partial class Projectile : Entity
         var valueToLerp = (isXAxis ? directionX : directionY) / distance;
         var offset = isXAxis ? spawn.OffsetX : spawn.OffsetY;
         var desiredValue = GetDisplacement(spawn.SpawnTime + Options.Instance.Processing.ProjectileUpdateInterval) * valueToLerp;
-        var totalDuration = (float)_myBase.Range * (_myBase.Speed / Options.TileHeight);
+        var totalDuration = (float)_myBase.Range * (_myBase.Speed / Options.Instance.Map.TileHeight);
         var elapsedTime = Timing.Global.Milliseconds - spawn.SpawnTime;
         var lerpFactor = Utilities.MathHelper.Clamp(elapsedTime / totalDuration, 0f, 1f);
 
@@ -546,8 +546,8 @@ public partial class Projectile : Entity
             projectileSpawn.TransmissionTimer = Timing.Global.MillisecondsOffset + (long)(_myBase.Speed / (float)_myBase.Range);
 
             var killSpawn = Collided(i) || projectileSpawn.Distance >= _myBase.Range ||
-                            newx < 0 || newx >= Options.MapWidth || newy < 0 ||
-                            newy >= Options.MapHeight;
+                            newx < 0 || newx >= Options.Instance.Map.MapWidth || newy < 0 ||
+                            newy >= Options.Instance.Map.MapHeight;
 
             // Check for map boundaries and remove the spawn if it goes out of bounds.
             if (killSpawn)
@@ -607,8 +607,8 @@ public partial class Projectile : Entity
     /// </remarks>
     private static void AdjustPositionOnMapBoundaries(ref float newx, ref float newy, ref Maps.MapInstance spawnMap)
     {
-        int MapWidth = Options.MapWidth;
-        int MapHeight = Options.MapHeight;
+        int MapWidth = Options.Instance.Map.MapWidth;
+        int MapHeight = Options.Instance.Map.MapHeight;
 
         // Determine if the projectile crosses any of the map boundaries.
         bool crossesLeftBoundary = MathF.Floor(newx) < 0;

@@ -142,7 +142,7 @@ public partial class TradingWindow
 
         for (var n = 0; n < 2; n++)
         {
-            for (var i = 0; i < Options.MaxInvItems; i++)
+            for (var i = 0; i < Options.Instance.Player.MaxInventory; i++)
             {
                 if (Globals.Trade[n, i] != null && Globals.Trade[n, i].ItemId != Guid.Empty)
                 {

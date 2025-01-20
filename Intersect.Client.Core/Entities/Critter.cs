@@ -147,7 +147,7 @@ public partial class Critter : Entity
                             );
             var playerOnTile = PlayerOnTile(MapId, newX, newY);
 
-            if (isBlocked && newX >= 0 && newX < Options.MapWidth && newY >= 0 && newY < Options.MapHeight &&
+            if (isBlocked && newX >= 0 && newX < Options.Instance.Map.MapWidth && newY >= 0 && newY < Options.Instance.Map.MapHeight &&
                 (!mAttribute.BlockPlayers || !playerOnTile))
             {
                 tmpX += (sbyte)deltaX;
@@ -161,7 +161,7 @@ public partial class Critter : Entity
                 }
                 else
                 {
-                    OffsetX = deltaX > 0 ? -Options.TileWidth : Options.TileWidth;
+                    OffsetX = deltaX > 0 ? -Options.Instance.Map.TileWidth : Options.Instance.Map.TileWidth;
                 }
 
                 if (deltaY == 0)
@@ -170,7 +170,7 @@ public partial class Critter : Entity
                 }
                 else
                 {
-                    OffsetY = deltaY > 0 ? -Options.TileHeight : Options.TileHeight;
+                    OffsetY = deltaY > 0 ? -Options.Instance.Map.TileHeight : Options.Instance.Map.TileHeight;
                 }
             }
         }
@@ -261,19 +261,19 @@ public partial class Critter : Entity
                         }
                         else if (y == gridY - 1)
                         {
-                            renderSet = Graphics.RenderingEntities[priority, Options.MapHeight + Y];
+                            renderSet = Graphics.RenderingEntities[priority, Options.Instance.Map.MapHeight + Y];
                         }
                         else if (y == gridY)
                         {
-                            renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
+                            renderSet = Graphics.RenderingEntities[priority, Options.Instance.Map.MapHeight * 2 + Y];
                         }
                         else if (y == gridY + 1)
                         {
-                            renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 3 + Y];
+                            renderSet = Graphics.RenderingEntities[priority, Options.Instance.Map.MapHeight * 3 + Y];
                         }
                         else if (y == gridY + 2)
                         {
-                            renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 4 + Y];
+                            renderSet = Graphics.RenderingEntities[priority, Options.Instance.Map.MapHeight * 4 + Y];
                         }
 
                         _ = (renderSet?.Add(this));

@@ -106,8 +106,8 @@ public static partial class Graphics
         {
             //Create the Graphics Device
             sPresentationParams.IsFullScreen = false;
-            sPresentationParams.BackBufferWidth = (Options.TileWidth + 2) * Options.MapWidth;
-            sPresentationParams.BackBufferHeight = (Options.TileHeight + 2) * Options.MapHeight;
+            sPresentationParams.BackBufferWidth = (Options.Instance.Map.TileWidth + 2) * Options.Instance.Map.MapWidth;
+            sPresentationParams.BackBufferHeight = (Options.Instance.Map.TileHeight + 2) * Options.Instance.Map.MapHeight;
             sPresentationParams.RenderTargetUsage = RenderTargetUsage.DiscardContents;
             sPresentationParams.PresentationInterval = PresentInterval.Immediate;
 
@@ -383,24 +383,24 @@ public static partial class Graphics
 
     private static void DrawGridOverlay()
     {
-        for (var x = 0; x < Options.MapWidth; x++)
+        for (var x = 0; x < Options.Instance.Map.MapWidth; x++)
         {
             DrawTexture(
                 sWhiteTex, new RectangleF(0, 0, 1, 1),
                 new RectangleF(
-                    CurrentView.Left + x * Options.TileWidth, CurrentView.Top, 1,
-                    Options.MapHeight * Options.TileHeight
+                    CurrentView.Left + x * Options.Instance.Map.TileWidth, CurrentView.Top, 1,
+                    Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight
                 ), null
             );
         }
 
-        for (var y = 0; y < Options.MapHeight; y++)
+        for (var y = 0; y < Options.Instance.Map.MapHeight; y++)
         {
             DrawTexture(
                 sWhiteTex, new RectangleF(0, 0, 1, 1),
                 new RectangleF(
-                    CurrentView.Left, CurrentView.Top + y * Options.TileHeight,
-                    Options.MapWidth * Options.TileWidth, 1
+                    CurrentView.Left, CurrentView.Top + y * Options.Instance.Map.TileHeight,
+                    Options.Instance.Map.MapWidth * Options.Instance.Map.TileWidth, 1
                 ), null
             );
         }
@@ -414,22 +414,22 @@ public static partial class Graphics
             return;
         }
 
-        var xoffset = CurrentView.Left + gridX * Options.TileWidth * Options.MapWidth;
-        var yoffset = CurrentView.Top + gridY * Options.TileHeight * Options.MapHeight;
-        for (var x = 0; x < Options.MapWidth; x++)
+        var xoffset = CurrentView.Left + gridX * Options.Instance.Map.TileWidth * Options.Instance.Map.MapWidth;
+        var yoffset = CurrentView.Top + gridY * Options.Instance.Map.TileHeight * Options.Instance.Map.MapHeight;
+        for (var x = 0; x < Options.Instance.Map.MapWidth; x++)
         {
-            for (var y = 0; y < Options.MapHeight; y++)
+            for (var y = 0; y < Options.Instance.Map.MapHeight; y++)
             {
                 if (new System.Drawing.Rectangle(
-                    x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, Options.TileWidth,
-                    Options.TileHeight
+                    x * Options.Instance.Map.TileWidth + xoffset, y * Options.Instance.Map.TileHeight + yoffset, Options.Instance.Map.TileWidth,
+                    Options.Instance.Map.TileHeight
                 ).IntersectsWith(new System.Drawing.Rectangle(0, 0, CurrentView.Width, CurrentView.Height)))
                 {
                     DrawTexture(
                         transTex, new RectangleF(0, 0, transTex.Width, transTex.Height),
                         new RectangleF(
-                            xoffset + x * Options.TileWidth, yoffset + y * Options.TileHeight, Options.TileWidth,
-                            Options.TileHeight
+                            xoffset + x * Options.Instance.Map.TileWidth, yoffset + y * Options.Instance.Map.TileHeight, Options.Instance.Map.TileWidth,
+                            Options.Instance.Map.TileHeight
                         ), System.Drawing.Color.White, null
                     );
                 }
@@ -455,19 +455,19 @@ public static partial class Graphics
         switch (map.Layers[layerName][x, y].Autotile)
         {
             case MapAutotiles.AUTOTILE_WATERFALL:
-                yOffset = (Globals.WaterfallFrame - 1) * Options.TileHeight;
+                yOffset = (Globals.WaterfallFrame - 1) * Options.Instance.Map.TileHeight;
 
                 break;
             case MapAutotiles.AUTOTILE_ANIM:
-                xOffset = Globals.AutotileFrame * Options.TileWidth * 2;
+                xOffset = Globals.AutotileFrame * Options.Instance.Map.TileWidth * 2;
 
                 break;
             case MapAutotiles.AUTOTILE_ANIM_XP:
-                xOffset = Globals.AutotileFrame * Options.TileWidth * 3;
+                xOffset = Globals.AutotileFrame * Options.Instance.Map.TileWidth * 3;
 
                 break;
             case MapAutotiles.AUTOTILE_CLIFF:
-                yOffset = -Options.TileHeight;
+                yOffset = -Options.Instance.Map.TileHeight;
 
                 break;
         }
@@ -476,7 +476,7 @@ public static partial class Graphics
             texture, destX, destY,
             (int) map.Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].X + xOffset,
             (int) map.Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].Y + yOffset,
-            Options.TileWidth / 2, Options.TileHeight / 2, target
+            Options.Instance.Map.TileWidth / 2, Options.Instance.Map.TileHeight / 2, target
         );
     }
 
@@ -530,11 +530,11 @@ public static partial class Graphics
         }
 
         x1 = 0;
-        x2 = Options.MapWidth;
+        x2 = Options.Instance.Map.MapWidth;
         y1 = 0;
-        y2 = Options.MapHeight;
-        xoffset = CurrentView.Left + gridX * Options.TileWidth * Options.MapWidth;
-        yoffset = CurrentView.Top + gridY * Options.TileHeight * Options.MapHeight;
+        y2 = Options.Instance.Map.MapHeight;
+        xoffset = CurrentView.Left + gridX * Options.Instance.Map.TileWidth * Options.Instance.Map.MapWidth;
+        yoffset = CurrentView.Top + gridY * Options.Instance.Map.TileHeight * Options.Instance.Map.MapHeight;
         if (gridX != 0 || gridY != 0)
         {
             tmpMap = map;
@@ -619,7 +619,7 @@ public static partial class Graphics
                         else if (Globals.CurrentLayer == LayerOptions.Events)
                         {
                         }
-                        else if (Globals.CurrentLayer == LayerOptions.Npcs)
+                        else if (Globals.CurrentLayer == LayerOptions.Instance.Npcs)
                         {
                         }
                         else if (Globals.CurrentTileset != null)
@@ -633,9 +633,9 @@ public static partial class Graphics
                                         for (var y = 0; y <= Globals.CurSelH; y++)
                                         {
                                             if (Globals.CurTileX + x >= 0 &&
-                                                Globals.CurTileX + x < Options.MapWidth &&
+                                                Globals.CurTileX + x < Options.Instance.Map.MapWidth &&
                                                 Globals.CurTileY + y >= 0 &&
-                                                Globals.CurTileY + y < Options.MapHeight)
+                                                Globals.CurTileY + y < Options.Instance.Map.MapHeight)
                                             {
                                                 tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX + x, Globals.CurTileY + y].TilesetId = Globals.CurrentTileset.Id;
                                                 tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX + x, Globals.CurTileY + y].X = Globals.CurSelX + x;
@@ -670,9 +670,9 @@ public static partial class Graphics
                                         if (Globals.Autotilemode == 0)
                                         {
                                             if (x0 >= 0 &&
-                                                x0 < Options.MapWidth &&
+                                                x0 < Options.Instance.Map.MapWidth &&
                                                 y0 >= 0 &&
-                                                y0 < Options.MapHeight &&
+                                                y0 < Options.Instance.Map.MapHeight &&
                                                 x0 < selX + selW + 1 &&
                                                 y0 < selY + selH + 1)
                                             {
@@ -743,8 +743,8 @@ public static partial class Graphics
                     if (screenShotting || Globals.MapLayersWindow.LayerVisibility[drawLayer])
                     {
                         if (new System.Drawing.Rectangle(
-                            x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, Options.TileWidth,
-                            Options.TileHeight
+                            x * Options.Instance.Map.TileWidth + xoffset, y * Options.Instance.Map.TileHeight + yoffset, Options.Instance.Map.TileWidth,
+                            Options.Instance.Map.TileHeight
                         ).IntersectsWith(new System.Drawing.Rectangle(0, 0, CurrentView.Width, CurrentView.Height)))
                         {
                             var tilesetObj = TilesetBase.Get(tmpMap.Layers[drawLayer][x, y].TilesetId);
@@ -784,34 +784,34 @@ public static partial class Graphics
                                 }
 
                                 DrawAutoTile(
-                                    tilesetTex, drawLayer, x * Options.TileWidth + xoffset,
-                                    y * Options.TileHeight + yoffset, 1, x, y, tmpMap, renderTarget2D
+                                    tilesetTex, drawLayer, x * Options.Instance.Map.TileWidth + xoffset,
+                                    y * Options.Instance.Map.TileHeight + yoffset, 1, x, y, tmpMap, renderTarget2D
                                 );
 
                                 DrawAutoTile(
-                                    tilesetTex, drawLayer, x * Options.TileWidth + Options.TileWidth / 2 + xoffset,
-                                    y * Options.TileHeight + yoffset, 2, x, y, tmpMap, renderTarget2D
+                                    tilesetTex, drawLayer, x * Options.Instance.Map.TileWidth + Options.Instance.Map.TileWidth / 2 + xoffset,
+                                    y * Options.Instance.Map.TileHeight + yoffset, 2, x, y, tmpMap, renderTarget2D
                                 );
 
                                 DrawAutoTile(
-                                    tilesetTex, drawLayer, x * Options.TileWidth + xoffset,
-                                    y * Options.TileHeight + Options.TileHeight / 2 + yoffset, 3, x, y, tmpMap,
+                                    tilesetTex, drawLayer, x * Options.Instance.Map.TileWidth + xoffset,
+                                    y * Options.Instance.Map.TileHeight + Options.Instance.Map.TileHeight / 2 + yoffset, 3, x, y, tmpMap,
                                     renderTarget2D
                                 );
 
                                 DrawAutoTile(
-                                    tilesetTex, drawLayer, x * Options.TileWidth + Options.TileWidth / 2 + xoffset,
-                                    y * Options.TileHeight + Options.TileHeight / 2 + yoffset, 4, x, y, tmpMap,
+                                    tilesetTex, drawLayer, x * Options.Instance.Map.TileWidth + Options.Instance.Map.TileWidth / 2 + xoffset,
+                                    y * Options.Instance.Map.TileHeight + Options.Instance.Map.TileHeight / 2 + yoffset, 4, x, y, tmpMap,
                                     renderTarget2D
                                 );
                             }
                             else
                             {
                                 DrawTexture(
-                                    tilesetTex, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset,
-                                    tmpMap.Layers[drawLayer][x, y].X * Options.TileWidth,
-                                    tmpMap.Layers[drawLayer][x, y].Y * Options.TileHeight, Options.TileWidth,
-                                    Options.TileHeight, renderTarget2D
+                                    tilesetTex, x * Options.Instance.Map.TileWidth + xoffset, y * Options.Instance.Map.TileHeight + yoffset,
+                                    tmpMap.Layers[drawLayer][x, y].X * Options.Instance.Map.TileWidth,
+                                    tmpMap.Layers[drawLayer][x, y].Y * Options.Instance.Map.TileHeight, Options.Instance.Map.TileWidth,
+                                    Options.Instance.Map.TileHeight, renderTarget2D
                                 );
                             }
                         }
@@ -826,18 +826,18 @@ public static partial class Graphics
             {
                 double w = light.Size;
                 var x = xoffset +
-                        Options.MapWidth * Options.TileWidth -
+                        Options.Instance.Map.MapWidth * Options.Instance.Map.TileWidth -
                         CurrentView.Left +
-                        light.TileX * Options.TileWidth +
+                        light.TileX * Options.Instance.Map.TileWidth +
                         light.OffsetX +
-                        Options.TileWidth / 2;
+                        Options.Instance.Map.TileWidth / 2;
 
                 var y = yoffset +
-                        Options.MapHeight * Options.TileHeight -
+                        Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight -
                         CurrentView.Top +
-                        light.TileY * Options.TileHeight +
+                        light.TileY * Options.Instance.Map.TileHeight +
                         light.OffsetY +
-                        Options.TileHeight / 2;
+                        Options.Instance.Map.TileHeight / 2;
 
                 if (!HideDarkness)
                 {
@@ -910,9 +910,9 @@ public static partial class Graphics
                     );
 
                     //Draw attributes
-                    for (var x = 0; x < Options.MapWidth; x++)
+                    for (var x = 0; x < Options.Instance.Map.MapWidth; x++)
                     {
-                        for (var y = 0; y < Options.MapHeight; y++)
+                        for (var y = 0; y < Options.Instance.Map.MapHeight; y++)
                         {
                             var attr = tmpMap.Attributes[x, y];
                             if ((attr?.Type ?? MapAttributeType.Walkable) == MapAttributeType.Walkable)
@@ -921,10 +921,10 @@ public static partial class Graphics
                             }
 
                             var tileBounds = new RectangleF(
-                                CurrentView.Left + x * Options.TileWidth,
-                                CurrentView.Top + y * Options.TileHeight,
-                                Options.TileWidth,
-                                Options.TileHeight
+                                CurrentView.Left + x * Options.Instance.Map.TileWidth,
+                                CurrentView.Top + y * Options.Instance.Map.TileHeight,
+                                Options.Instance.Map.TileWidth,
+                                Options.Instance.Map.TileHeight
                             );
 
                             if (attributesTex != null)
@@ -952,9 +952,9 @@ public static partial class Graphics
             }
             else if (Globals.CurrentLayer == LayerOptions.Events) //Events
             {
-                for (var x = 0; x < Options.MapWidth; x++)
+                for (var x = 0; x < Options.Instance.Map.MapWidth; x++)
                 {
-                    for (var y = 0; y < Options.MapHeight; y++)
+                    for (var y = 0; y < Options.Instance.Map.MapHeight; y++)
                     {
                         if (tmpMap.FindEventAt(x, y) == null)
                         {
@@ -970,15 +970,15 @@ public static partial class Graphics
                             DrawTexture(
                                 eventTex, new RectangleF(0, 0, eventTex.Width, eventTex.Height),
                                 new RectangleF(
-                                    CurrentView.Left + x * Options.TileWidth,
-                                    CurrentView.Top + y * Options.TileHeight, Options.TileWidth, Options.TileHeight
+                                    CurrentView.Left + x * Options.Instance.Map.TileWidth,
+                                    CurrentView.Top + y * Options.Instance.Map.TileHeight, Options.Instance.Map.TileWidth, Options.Instance.Map.TileHeight
                                 ), System.Drawing.Color.White, null
                             );
                         }
                     }
                 }
             }
-            else if (Globals.CurrentLayer == LayerOptions.Npcs) //NPCS
+            else if (Globals.CurrentLayer == LayerOptions.Instance.Npcs) //NPCS
             {
                 for (var i = 0; i < tmpMap.Spawns.Count; i++)
                 {
@@ -1020,9 +1020,9 @@ public static partial class Graphics
                     DrawTexture(
                         spawnTex, new RectangleF(0, 0, spawnTex.Width, spawnTex.Height),
                         new RectangleF(
-                            CurrentView.Left + tmpMap.Spawns[i].X * Options.TileWidth,
-                            CurrentView.Top + tmpMap.Spawns[i].Y * Options.TileHeight, Options.TileWidth,
-                            Options.TileHeight
+                            CurrentView.Left + tmpMap.Spawns[i].X * Options.Instance.Map.TileWidth,
+                            CurrentView.Top + tmpMap.Spawns[i].Y * Options.Instance.Map.TileHeight, Options.Instance.Map.TileWidth,
+                            Options.Instance.Map.TileHeight
                         ), spawnColor
                     );
                 }
@@ -1032,8 +1032,8 @@ public static partial class Graphics
         if (Globals.CurrentTool == EditingTool.Selection && Globals.Dragging)
         {
             DrawBoxOutline(
-                CurrentView.Left + Globals.CurTileX * Options.TileWidth,
-                CurrentView.Top + Globals.CurTileY * Options.TileHeight, Options.TileWidth, Options.TileHeight,
+                CurrentView.Left + Globals.CurTileX * Options.Instance.Map.TileWidth,
+                CurrentView.Top + Globals.CurTileY * Options.Instance.Map.TileHeight, Options.Instance.Map.TileWidth, Options.Instance.Map.TileHeight,
                 System.Drawing.Color.White, null
             );
         }
@@ -1042,16 +1042,16 @@ public static partial class Graphics
             Globals.CurrentTool == EditingTool.Selection)
         {
             DrawBoxOutline(
-                CurrentView.Left + (selX + dragxoffset) * Options.TileWidth,
-                CurrentView.Top + (selY + dragyoffset) * Options.TileHeight, (selW + 1) * Options.TileWidth,
-                (selH + 1) * Options.TileHeight, System.Drawing.Color.Blue, null
+                CurrentView.Left + (selX + dragxoffset) * Options.Instance.Map.TileWidth,
+                CurrentView.Top + (selY + dragyoffset) * Options.Instance.Map.TileHeight, (selW + 1) * Options.Instance.Map.TileWidth,
+                (selH + 1) * Options.Instance.Map.TileHeight, System.Drawing.Color.Blue, null
             );
         }
         else
         {
             DrawBoxOutline(
-                CurrentView.Left + Globals.CurTileX * Options.TileWidth,
-                CurrentView.Top + Globals.CurTileY * Options.TileHeight, Options.TileWidth, Options.TileHeight,
+                CurrentView.Left + Globals.CurTileX * Options.Instance.Map.TileWidth,
+                CurrentView.Top + Globals.CurTileY * Options.Instance.Map.TileHeight, Options.Instance.Map.TileWidth, Options.Instance.Map.TileHeight,
                 System.Drawing.Color.White, null
             );
         }
@@ -1239,8 +1239,8 @@ public static partial class Graphics
                 }
 
                 DrawBoxOutline(
-                    selX * Options.TileWidth, selY * Options.TileHeight,
-                    Options.TileWidth + selW * Options.TileWidth, Options.TileHeight + selH * Options.TileHeight,
+                    selX * Options.Instance.Map.TileWidth, selY * Options.Instance.Map.TileHeight,
+                    Options.Instance.Map.TileWidth + selW * Options.Instance.Map.TileWidth, Options.Instance.Map.TileHeight + selH * Options.Instance.Map.TileHeight,
                     System.Drawing.Color.White, sTilesetChain
                 );
             }
@@ -1261,7 +1261,7 @@ public static partial class Graphics
         //Horizontal Buttom
         DrawTexture(
             sWhiteTex, new RectangleF(0, 0, 1, 1),
-            new RectangleF(0, CurrentView.Y + Options.TileHeight * Options.MapHeight - 1, CurrentView.Width, 3),
+            new RectangleF(0, CurrentView.Y + Options.Instance.Map.TileHeight * Options.Instance.Map.MapHeight - 1, CurrentView.Width, 3),
             System.Drawing.Color.DimGray
         );
 
@@ -1274,14 +1274,14 @@ public static partial class Graphics
         //Vertical Right
         DrawTexture(
             sWhiteTex, new RectangleF(0, 0, 1, 1),
-            new RectangleF(CurrentView.Left + Options.TileWidth * Options.MapWidth - 1, 0, 3, CurrentView.Height),
+            new RectangleF(CurrentView.Left + Options.Instance.Map.TileWidth * Options.Instance.Map.MapWidth - 1, 0, 3, CurrentView.Height),
             System.Drawing.Color.DimGray
         );
 
         //Horizontal Top
         DrawTexture(
             sWhiteTex, new RectangleF(0, 0, 1, 1),
-            new RectangleF(CurrentView.Left, CurrentView.Y - 1, Options.TileWidth * Options.MapWidth, 3),
+            new RectangleF(CurrentView.Left, CurrentView.Y - 1, Options.Instance.Map.TileWidth * Options.Instance.Map.MapWidth, 3),
             System.Drawing.Color.DimGray
         );
 
@@ -1289,15 +1289,15 @@ public static partial class Graphics
         DrawTexture(
             sWhiteTex, new RectangleF(0, 0, 1, 1),
             new RectangleF(
-                CurrentView.Left, CurrentView.Y + Options.TileHeight * Options.MapHeight - 1,
-                Options.TileWidth * Options.MapWidth, 3
+                CurrentView.Left, CurrentView.Y + Options.Instance.Map.TileHeight * Options.Instance.Map.MapHeight - 1,
+                Options.Instance.Map.TileWidth * Options.Instance.Map.MapWidth, 3
             ), System.Drawing.Color.DimGray
         );
 
         //Vertical Left
         DrawTexture(
             sWhiteTex, new RectangleF(0, 0, 1, 1),
-            new RectangleF(CurrentView.Left - 1, CurrentView.Y, 3, Options.MapHeight * Options.TileHeight),
+            new RectangleF(CurrentView.Left - 1, CurrentView.Y, 3, Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight),
             System.Drawing.Color.DimGray
         );
 
@@ -1305,8 +1305,8 @@ public static partial class Graphics
         DrawTexture(
             sWhiteTex, new RectangleF(0, 0, 1, 1),
             new RectangleF(
-                CurrentView.Left + Options.TileWidth * Options.MapWidth - 1, CurrentView.Y, 3,
-                Options.MapHeight * Options.TileHeight
+                CurrentView.Left + Options.Instance.Map.TileWidth * Options.Instance.Map.MapWidth - 1, CurrentView.Y, 3,
+                Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight
             ), System.Drawing.Color.DimGray
         );
     }
@@ -1338,11 +1338,11 @@ public static partial class Graphics
         }
 
         var x1 = 0;
-        var x2 = Options.MapWidth;
+        var x2 = Options.Instance.Map.MapWidth;
         var y1 = 0;
-        var y2 = Options.MapHeight;
-        var xoffset = CurrentView.Left + gridX * Options.TileWidth * Options.MapWidth;
-        var yoffset = CurrentView.Top + gridY * Options.TileHeight * Options.MapHeight;
+        var y2 = Options.Instance.Map.MapHeight;
+        var xoffset = CurrentView.Left + gridX * Options.Instance.Map.TileWidth * Options.Instance.Map.MapWidth;
+        var yoffset = CurrentView.Top + gridY * Options.Instance.Map.TileHeight * Options.Instance.Map.MapHeight;
 
         if (screenShotting)
         {
@@ -1397,23 +1397,23 @@ public static partial class Graphics
                             continue;
                         }
 
-                        float xpos = x * Options.TileWidth + xoffset;
-                        float ypos = y * Options.TileHeight + yoffset;
-                        if ((resource.Initial.Height + 1) * Options.TileHeight > Options.TileHeight)
+                        float xpos = x * Options.Instance.Map.TileWidth + xoffset;
+                        float ypos = y * Options.Instance.Map.TileHeight + yoffset;
+                        if ((resource.Initial.Height + 1) * Options.Instance.Map.TileHeight > Options.Instance.Map.TileHeight)
                         {
-                            ypos -= (resource.Initial.Height + 1) * Options.TileHeight - Options.TileHeight;
+                            ypos -= (resource.Initial.Height + 1) * Options.Instance.Map.TileHeight - Options.Instance.Map.TileHeight;
                         }
 
-                        if ((resource.Initial.Width + 1) * Options.TileWidth > Options.TileWidth)
+                        if ((resource.Initial.Width + 1) * Options.Instance.Map.TileWidth > Options.Instance.Map.TileWidth)
                         {
-                            xpos -= ((resource.Initial.Width + 1) * Options.TileWidth - Options.TileWidth) / 2;
+                            xpos -= ((resource.Initial.Width + 1) * Options.Instance.Map.TileWidth - Options.Instance.Map.TileWidth) / 2;
                         }
 
                         DrawTexture(
-                            res, xpos, ypos, resource.Initial.X * Options.TileWidth,
-                            resource.Initial.Y * Options.TileHeight,
-                            (resource.Initial.Width + 1) * Options.TileWidth,
-                            (resource.Initial.Height + 1) * Options.TileHeight, renderTarget
+                            res, xpos, ypos, resource.Initial.X * Options.Instance.Map.TileWidth,
+                            resource.Initial.Y * Options.Instance.Map.TileHeight,
+                            (resource.Initial.Width + 1) * Options.Instance.Map.TileWidth,
+                            (resource.Initial.Height + 1) * Options.Instance.Map.TileHeight, renderTarget
                         );
                     }
                     else
@@ -1427,16 +1427,16 @@ public static partial class Graphics
                             continue;
                         }
 
-                        float xpos = x * Options.TileWidth + xoffset;
-                        float ypos = y * Options.TileHeight + yoffset;
-                        if (res.Height > Options.TileHeight)
+                        float xpos = x * Options.Instance.Map.TileWidth + xoffset;
+                        float ypos = y * Options.Instance.Map.TileHeight + yoffset;
+                        if (res.Height > Options.Instance.Map.TileHeight)
                         {
-                            ypos -= res.Height - Options.TileHeight;
+                            ypos -= res.Height - Options.Instance.Map.TileHeight;
                         }
 
-                        if (res.Width > Options.TileWidth)
+                        if (res.Width > Options.Instance.Map.TileWidth)
                         {
-                            xpos -= (res.Width - Options.TileWidth) / 2;
+                            xpos -= (res.Width - Options.Instance.Map.TileWidth) / 2;
                         }
 
                         DrawTexture(res, xpos, ypos, 0, 0, res.Width, res.Height, renderTarget);
@@ -1449,8 +1449,8 @@ public static partial class Graphics
 
                     if (animation != null)
                     {
-                        float xpos = x * Options.TileWidth + xoffset + Options.TileWidth / 2;
-                        float ypos = y * Options.TileHeight + yoffset + Options.TileHeight / 2;
+                        float xpos = x * Options.Instance.Map.TileWidth + xoffset + Options.Instance.Map.TileWidth / 2;
+                        float ypos = y * Options.Instance.Map.TileHeight + yoffset + Options.Instance.Map.TileHeight / 2;
                         if (tmpMap.Attributes[x, y] != null)
                         {
                             var animInstance = tmpMap.GetAttributeAnimation(tmpMap.Attributes[x, y], animation.Id);
@@ -1500,11 +1500,11 @@ public static partial class Graphics
         int x1 = 0, y1 = 0, x2 = 0, y2 = 0, xoffset = 0, yoffset = 0;
 
         x1 = 0;
-        x2 = Options.MapWidth;
+        x2 = Options.Instance.Map.MapWidth;
         y1 = 0;
-        y2 = Options.MapHeight;
-        xoffset = CurrentView.Left + gridX * Options.TileWidth * Options.MapWidth;
-        yoffset = CurrentView.Top + gridY * Options.TileHeight * Options.MapHeight;
+        y2 = Options.Instance.Map.MapHeight;
+        xoffset = CurrentView.Left + gridX * Options.Instance.Map.TileWidth * Options.Instance.Map.MapWidth;
+        yoffset = CurrentView.Top + gridY * Options.Instance.Map.TileHeight * Options.Instance.Map.MapHeight;
         if (gridX != 0 || gridY != 0)
         {
             tmpMap = map;
@@ -1551,8 +1551,8 @@ public static partial class Graphics
                 }
 
                 Texture2D eventTex = null;
-                var destinationX = x * Options.TileWidth + xoffset;
-                var destinationY = y * Options.TileHeight + yoffset;
+                var destinationX = x * Options.Instance.Map.TileWidth + xoffset;
+                var destinationY = y * Options.Instance.Map.TileHeight + yoffset;
                 var sourceX = 0;
                 var sourceY = 0;
                 var width = 0;
@@ -1584,22 +1584,22 @@ public static partial class Graphics
                             continue;
                         }
 
-                        sourceX = (int)tmpGraphic.X * Options.TileWidth;
-                        sourceY = (int)tmpGraphic.Y * Options.TileHeight;
-                        width = (tmpGraphic.Width + 1) * Options.TileWidth;
-                        height = (tmpGraphic.Height + 1) * Options.TileHeight;
+                        sourceX = (int)tmpGraphic.X * Options.Instance.Map.TileWidth;
+                        sourceY = (int)tmpGraphic.Y * Options.Instance.Map.TileHeight;
+                        width = (tmpGraphic.Width + 1) * Options.Instance.Map.TileWidth;
+                        height = (tmpGraphic.Height + 1) * Options.Instance.Map.TileHeight;
 
                         break;
                 }
 
-                if (height > Options.TileHeight)
+                if (height > Options.Instance.Map.TileHeight)
                 {
-                    destinationY -= (height - Options.TileHeight);
+                    destinationY -= (height - Options.Instance.Map.TileHeight);
                 }
 
-                if (width > Options.TileWidth)
+                if (width > Options.Instance.Map.TileWidth)
                 {
-                    destinationX -= (width  - Options.TileWidth) / 2;
+                    destinationX -= (width  - Options.Instance.Map.TileWidth) / 2;
                 }
 
                 DrawTexture(eventTex, destinationX, destinationY, sourceX, sourceY, width, height, renderTarget);
@@ -1621,7 +1621,7 @@ public static partial class Graphics
         if (sScreenShotRenderTexture == null)
         {
             sScreenShotRenderTexture = CreateRenderTexture(
-                Options.MapWidth * Options.TileWidth, Options.MapHeight * Options.TileHeight
+                Options.Instance.Map.MapWidth * Options.Instance.Map.TileWidth, Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight
             );
         }
 
@@ -1857,8 +1857,8 @@ public static partial class Graphics
         sFogUpdateTime = Timing.Global.MillisecondsUtc;
 
         // Calculate the number of times the fog texture needs to be drawn to cover the map area.
-        var xCount = Globals.MapEditorWindow.picMap.Width * Options.TileWidth / fogTex.Width;
-        var yCount = Globals.MapEditorWindow.picMap.Height * Options.TileHeight / fogTex.Height;
+        var xCount = Globals.MapEditorWindow.picMap.Width * Options.Instance.Map.TileWidth / fogTex.Width;
+        var yCount = Globals.MapEditorWindow.picMap.Height * Options.Instance.Map.TileHeight / fogTex.Height;
 
         // Update the fog texture's position based on its speed and elapsed time.
         sFogCurrentX += elapsedTime / 1000f * currentMap.FogXSpeed * 2;
@@ -1879,8 +1879,8 @@ public static partial class Graphics
                 DrawTexture(
                     fogTex, new RectangleF(0, 0, fogTex.Width, fogTex.Height),
                     new RectangleF(
-                        0 - Options.MapWidth * Options.TileWidth * 1f + x * fogTex.Width + drawX,
-                        0 - Options.MapHeight * Options.TileHeight * 1f + y * fogTex.Height + drawY, fogTex.Width,
+                        0 - Options.Instance.Map.MapWidth * Options.Instance.Map.TileWidth * 1f + x * fogTex.Width + drawX,
+                        0 - Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight * 1f + y * fogTex.Height + drawY, fogTex.Width,
                         fogTex.Height
                     ), System.Drawing.Color.FromArgb(currentMap.FogTransparency, 255, 255, 255), target
                 );
@@ -1894,7 +1894,7 @@ public static partial class Graphics
         if (DarknessTexture == null)
         {
             DarknessTexture = CreateRenderTexture(
-                Options.TileWidth * Options.MapWidth * 3, Options.TileHeight * Options.MapHeight * 3
+                Options.Instance.Map.TileWidth * Options.Instance.Map.MapWidth * 3, Options.Instance.Map.TileHeight * Options.Instance.Map.MapHeight * 3
             );
         }
 
@@ -2018,8 +2018,8 @@ public static partial class Graphics
         DrawTexture(
             DarknessTexture, new RectangleF(0, 0, DarknessTexture.Width, DarknessTexture.Height),
             new RectangleF(
-                CurrentView.Left - Options.MapWidth * Options.TileWidth,
-                CurrentView.Top - Options.MapHeight * Options.TileHeight, DarknessTexture.Width,
+                CurrentView.Left - Options.Instance.Map.MapWidth * Options.Instance.Map.TileWidth,
+                CurrentView.Top - Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight, DarknessTexture.Width,
                 DarknessTexture.Height
             ), System.Drawing.Color.FromArgb(255, 255, 255, 255), target, MultiplyState
         );
@@ -2032,9 +2032,9 @@ public static partial class Graphics
 
         if (!screenShotting)
         {
-            for (var x = 0; x < Options.MapWidth; x++)
+            for (var x = 0; x < Options.Instance.Map.MapWidth; x++)
             {
-                for (var y = 0; y < Options.MapHeight; y++)
+                for (var y = 0; y < Options.Instance.Map.MapHeight; y++)
                 {
                     if (tmpMap.FindLightAt(x, y) == null)
                     {
@@ -2050,10 +2050,10 @@ public static partial class Graphics
                         DrawTexture(
                             lightTex, new RectangleF(0, 0, lightTex.Width, lightTex.Height),
                             new RectangleF(
-                                x * Options.TileWidth + Options.MapWidth * Options.TileWidth * 0 + CurrentView.Left,
-                                y * Options.TileHeight +
-                                Options.MapHeight * Options.TileHeight * 0 +
-                                CurrentView.Top, Options.TileWidth, Options.TileHeight
+                                x * Options.Instance.Map.TileWidth + Options.Instance.Map.MapWidth * Options.Instance.Map.TileWidth * 0 + CurrentView.Left,
+                                y * Options.Instance.Map.TileHeight +
+                                Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight * 0 +
+                                CurrentView.Top, Options.Instance.Map.TileWidth, Options.Instance.Map.TileHeight
                             ), System.Drawing.Color.White, target
                         );
                     }
@@ -2061,8 +2061,8 @@ public static partial class Graphics
             }
 
             DrawBoxOutline(
-                CurrentView.Left + Globals.CurTileX * Options.TileWidth,
-                CurrentView.Top + Globals.CurTileY * Options.TileHeight, Options.TileWidth, Options.TileHeight,
+                CurrentView.Left + Globals.CurTileX * Options.Instance.Map.TileWidth,
+                CurrentView.Top + Globals.CurTileY * Options.Instance.Map.TileHeight, Options.Instance.Map.TileWidth, Options.Instance.Map.TileHeight,
                 System.Drawing.Color.White, target
             );
         }

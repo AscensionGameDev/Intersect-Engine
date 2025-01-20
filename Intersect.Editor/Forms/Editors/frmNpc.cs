@@ -112,11 +112,11 @@ public partial class FrmNpc : EditorForm
             cmbScalingStat.Items.Add(Globals.GetStatName(x));
         }
 
-        nudStr.Maximum = Options.MaxStatValue;
-        nudMag.Maximum = Options.MaxStatValue;
-        nudDef.Maximum = Options.MaxStatValue;
-        nudMR.Maximum = Options.MaxStatValue;
-        nudSpd.Maximum = Options.MaxStatValue;
+        nudStr.Maximum = Options.Instance.PlayerOpts.MaxStat;
+        nudMag.Maximum = Options.Instance.PlayerOpts.MaxStat;
+        nudDef.Maximum = Options.Instance.PlayerOpts.MaxStat;
+        nudMR.Maximum = Options.Instance.PlayerOpts.MaxStat;
+        nudSpd.Maximum = Options.Instance.PlayerOpts.MaxStat;
         InitLocalization();
         UpdateEditor();
     }
@@ -936,8 +936,8 @@ public partial class FrmNpc : EditorForm
     private void nudResetRadius_ValueChanged(object sender, EventArgs e)
     {
         // So, the pathfinder on the server maintains a set max distance of whichever the largest value is, map height or width. Limit ourselves to this!
-        var maxPathFindingDistance = Math.Max(Options.MapWidth, Options.MapHeight);
-        var maxUserEnteredValue = Math.Max(Options.Npc.ResetRadius, nudResetRadius.Value);
+        var maxPathFindingDistance = Math.Max(Options.Instance.Map.MapWidth, Options.Instance.Map.MapHeight);
+        var maxUserEnteredValue = Math.Max(Options.Instance.Npc.ResetRadius, nudResetRadius.Value);
 
         // Use whatever is the lowest, either the maximum path find distance or the user entered value.
         nudResetRadius.Value = Math.Min(maxPathFindingDistance, maxUserEnteredValue);

@@ -4,11 +4,11 @@ namespace Intersect.Config;
 
 public partial class EquipmentOptions
 {
-    public PaperdollOptions Paperdoll = new PaperdollOptions();
+    public PaperdollOptions Paperdoll = new();
 
     public int ShieldSlot = 3;
 
-    public List<string> Slots = new List<string>()
+    public List<string> Slots = new()
     {
         "Helmet",
         "Armor",
@@ -17,7 +17,7 @@ public partial class EquipmentOptions
         "Boots",
     };
 
-    public List<string> ToolTypes = new List<string>()
+    public List<string> ToolTypes = new()
     {
         "Axe",
         "Pickaxe",

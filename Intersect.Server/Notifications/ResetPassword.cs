@@ -14,9 +14,9 @@ namespace Intersect.Server.Notifications
             Subject = Strings.PasswordResetNotification.Subject;
             var resetCode = GenerateResetCode(6);
             Body = Body.Replace("{{code}}", resetCode);
-            Body = Body.Replace("{{expiration}}", Options.PasswordResetExpirationMinutes.ToString());
+            Body = Body.Replace("{{expiration}}", Options.Instance.ValidPasswordResetTimeMinutes.ToString());
             user.PasswordResetCode = resetCode;
-            user.PasswordResetTime = DateTime.UtcNow.AddMinutes(Options.PasswordResetExpirationMinutes);
+            user.PasswordResetTime = DateTime.UtcNow.AddMinutes(Options.Instance.ValidPasswordResetTimeMinutes);
             user.Save();
         }
 

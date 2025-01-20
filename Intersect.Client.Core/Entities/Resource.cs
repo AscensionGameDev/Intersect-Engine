@@ -254,11 +254,11 @@ public partial class Resource : Entity, IResource
                         }
                         else if (y == gridY)
                         {
-                            renderSet = Graphics.RenderingEntities[priority, Options.MapHeight + Y];
+                            renderSet = Graphics.RenderingEntities[priority, Options.Instance.Map.MapHeight + Y];
                         }
                         else
                         {
-                            renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
+                            renderSet = Graphics.RenderingEntities[priority, Options.Instance.Map.MapHeight * 2 + Y];
                         }
 
                         _ = renderSet.Add(this);
@@ -309,17 +309,17 @@ public partial class Resource : Entity, IResource
         _renderBoundsSrc.Y = 0;
         if (IsDead && Descriptor.Exhausted.GraphicFromTileset)
         {
-            _renderBoundsSrc.X = Descriptor.Exhausted.X * Options.TileWidth;
-            _renderBoundsSrc.Y = Descriptor.Exhausted.Y * Options.TileHeight;
-            _renderBoundsSrc.Width = (Descriptor.Exhausted.Width + 1) * Options.TileWidth;
-            _renderBoundsSrc.Height = (Descriptor.Exhausted.Height + 1) * Options.TileHeight;
+            _renderBoundsSrc.X = Descriptor.Exhausted.X * Options.Instance.Map.TileWidth;
+            _renderBoundsSrc.Y = Descriptor.Exhausted.Y * Options.Instance.Map.TileHeight;
+            _renderBoundsSrc.Width = (Descriptor.Exhausted.Width + 1) * Options.Instance.Map.TileWidth;
+            _renderBoundsSrc.Height = (Descriptor.Exhausted.Height + 1) * Options.Instance.Map.TileHeight;
         }
         else if (!IsDead && Descriptor.Initial.GraphicFromTileset)
         {
-            _renderBoundsSrc.X = Descriptor.Initial.X * Options.TileWidth;
-            _renderBoundsSrc.Y = Descriptor.Initial.Y * Options.TileHeight;
-            _renderBoundsSrc.Width = (Descriptor.Initial.Width + 1) * Options.TileWidth;
-            _renderBoundsSrc.Height = (Descriptor.Initial.Height + 1) * Options.TileHeight;
+            _renderBoundsSrc.X = Descriptor.Initial.X * Options.Instance.Map.TileWidth;
+            _renderBoundsSrc.Y = Descriptor.Initial.Y * Options.Instance.Map.TileHeight;
+            _renderBoundsSrc.Width = (Descriptor.Initial.Width + 1) * Options.Instance.Map.TileWidth;
+            _renderBoundsSrc.Height = (Descriptor.Initial.Height + 1) * Options.Instance.Map.TileHeight;
         }
         else
         {
@@ -329,16 +329,16 @@ public partial class Resource : Entity, IResource
 
         _renderBoundsDest.Width = _renderBoundsSrc.Width;
         _renderBoundsDest.Height = _renderBoundsSrc.Height;
-        _renderBoundsDest.Y = (int) (map.Y + Y * Options.TileHeight + OffsetY);
-        _renderBoundsDest.X = (int) (map.X + X * Options.TileWidth + OffsetX);
-        if (_renderBoundsSrc.Height > Options.TileHeight)
+        _renderBoundsDest.Y = (int) (map.Y + Y * Options.Instance.Map.TileHeight + OffsetY);
+        _renderBoundsDest.X = (int) (map.X + X * Options.Instance.Map.TileWidth + OffsetX);
+        if (_renderBoundsSrc.Height > Options.Instance.Map.TileHeight)
         {
-            _renderBoundsDest.Y -= _renderBoundsSrc.Height - Options.TileHeight;
+            _renderBoundsDest.Y -= _renderBoundsSrc.Height - Options.Instance.Map.TileHeight;
         }
 
-        if (_renderBoundsSrc.Width > Options.TileWidth)
+        if (_renderBoundsSrc.Width > Options.Instance.Map.TileWidth)
         {
-            _renderBoundsDest.X -= (_renderBoundsSrc.Width - Options.TileWidth) / 2;
+            _renderBoundsDest.X -= (_renderBoundsSrc.Width - Options.Instance.Map.TileWidth) / 2;
         }
 
         _recalculateRenderBounds = false;

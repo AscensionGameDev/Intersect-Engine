@@ -118,12 +118,12 @@ public partial class EntityBox
 
         EntityMap = new Label(EntityInfoPanel, "EntityMapLabel");
 
-        PaperdollPanels = new ImagePanel[Options.EquipmentSlots.Count];
-        PaperdollTextures = new string[Options.EquipmentSlots.Count];
+        PaperdollPanels = new ImagePanel[Options.Instance.Equipment.Slots.Count];
+        PaperdollTextures = new string[Options.Instance.Equipment.Slots.Count];
         var i = 0;
-        for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
+        for (var z = 0; z < Options.Instance.Equipment.Paperdoll.Directions[1].Count; z++)
         {
-            if (Options.PaperdollOrder[1][z] == "Player")
+            if (Options.Instance.Equipment.Paperdoll.Directions[1][z] == "Player")
             {
                 EntityFaceContainer = new ImagePanel(EntityInfoPanel, "EntityGraphicContainer");
 
@@ -182,9 +182,9 @@ public partial class EntityBox
         SetEntity(myEntity);
 
         i = 0;
-        for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
+        for (var z = 0; z < Options.Instance.Equipment.Paperdoll.Directions[1].Count; z++)
         {
-            if (Options.PaperdollOrder[1][z] == "Player")
+            if (Options.Instance.Equipment.Paperdoll.Directions[1][z] == "Player")
             {
                 EntityFace.RenderColor = EntityFaceContainer.RenderColor;
             }
@@ -755,9 +755,9 @@ public partial class EntityBox
             mCurrentSprite = MyEntity.Face;
             EntityFace.IsHidden = false;
             var i = 0;
-            for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
+            for (var z = 0; z < Options.Instance.Equipment.Paperdoll.Directions[1].Count; z++)
             {
-                if (Options.PaperdollOrder[1][z] != "Player")
+                if (Options.Instance.Equipment.Paperdoll.Directions[1][z] != "Player")
                 {
                     if (PaperdollPanels == null)
                     {
@@ -792,7 +792,7 @@ public partial class EntityBox
                 for (var i = 0; i < MyEntity.MyEquipment.Length; i++)
                 {
                     var eqp = MyEntity.MyEquipment[i];
-                    if (eqp > -1 && eqp < Options.MaxInvItems)
+                    if (eqp > -1 && eqp < Options.Instance.Player.MaxInventory)
                     {
                         equipment[i] = MyEntity.Inventory[eqp].ItemId;
                     }
@@ -804,16 +804,16 @@ public partial class EntityBox
             }
 
             var n = 0;
-            for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
+            for (var z = 0; z < Options.Instance.Equipment.Paperdoll.Directions[1].Count; z++)
             {
                 var paperdollPanel = PaperdollPanels[n];
                 var paperdoll = string.Empty;
-                if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1 &&
-                    equipment.Length == Options.EquipmentSlots.Count)
+                if (Options.Instance.Equipment.Slots.IndexOf(Options.Instance.Equipment.Paperdoll.Directions[1][z]) > -1 &&
+                    equipment.Length == Options.Instance.Equipment.Slots.Count)
                 {
-                    if (equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] != Guid.Empty)
+                    if (equipment[Options.Instance.Equipment.Slots.IndexOf(Options.Instance.Equipment.Paperdoll.Directions[1][z])] != Guid.Empty)
                     {
-                        var itemId = equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])];
+                        var itemId = equipment[Options.Instance.Equipment.Slots.IndexOf(Options.Instance.Equipment.Paperdoll.Directions[1][z])];
                         if (ItemBase.TryGet(itemId, out var itemDescriptor))
                         {
                             paperdoll = MyEntity.Gender == 0
@@ -824,7 +824,7 @@ public partial class EntityBox
                 }
 
                 //Check for Player layer
-                if (Options.PaperdollOrder[1][z] == "Player")
+                if (Options.Instance.Equipment.Paperdoll.Directions[1][z] == "Player")
                 {
                     continue;
                 }
@@ -868,7 +868,7 @@ public partial class EntityBox
                 }
 
                 //Check for Player layer
-                if (Options.PaperdollOrder[1][z] != "Player")
+                if (Options.Instance.Equipment.Paperdoll.Directions[1][z] != "Player")
                 {
                     n++;
                 }
@@ -877,7 +877,7 @@ public partial class EntityBox
         else if (MyEntity.Sprite != mCurrentSprite && MyEntity.Face != mCurrentSprite)
         {
             EntityFace.IsHidden = true;
-            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+            for (var i = 0; i < Options.Instance.Equipment.Slots.Count; i++)
             {
                 PaperdollPanels[i]?.Hide();
             }
@@ -903,7 +903,7 @@ public partial class EntityBox
 
     public void Show()
     {
-        if (!Options.Instance.CombatOpts.EnableTargetWindow && !_isPlayerBox)
+        if (!Options.Instance.Combat.EnableTargetWindow && !_isPlayerBox)
         {
             return;
         }

@@ -52,8 +52,8 @@ public partial class EventCommandSpawnNpc : UserControl
             cmbConditionType.SelectedIndex = 1;
         }
 
-        nudWarpX.Maximum = Options.MapWidth;
-        nudWarpY.Maximum = Options.MapHeight;
+        nudWarpX.Maximum = Options.Instance.Map.MapWidth;
+        nudWarpY.Maximum = Options.Instance.Map.MapHeight;
         UpdateFormElements();
         switch (cmbConditionType.SelectedIndex)
         {

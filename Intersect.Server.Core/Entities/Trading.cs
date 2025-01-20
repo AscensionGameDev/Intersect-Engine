@@ -26,7 +26,7 @@ public partial struct Trading : IDisposable
 
         Accepted = false;
         Counterparty = null;
-        Offer = new Item[Options.MaxInvItems];
+        Offer = new Item[Options.Instance.Player.MaxInventory];
         Requester = null;
         Requests = new Dictionary<Player, long>();
     }

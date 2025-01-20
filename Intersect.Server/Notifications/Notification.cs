@@ -28,7 +28,7 @@ namespace Intersect.Server.Notifications
         public bool Send()
         {
             //Check and see if smtp is even setup
-            if (Options.Smtp.IsValid())
+            if (Options.Instance.SmtpSettings.IsValid())
             {
                 //Make sure we have a body
                 if (!string.IsNullOrEmpty(Body))
@@ -36,13 +36,13 @@ namespace Intersect.Server.Notifications
                     try
                     {
                         //Send the email
-                        var fromAddress = new MailboxAddress(Options.Smtp.FromName, Options.Smtp.FromAddress);
+                        var fromAddress = new MailboxAddress(Options.Instance.SmtpSettings.FromName, Options.Instance.SmtpSettings.FromAddress);
                         var toAddress = new MailboxAddress(ToAddress, ToAddress);
 
                         using (var client = new SmtpClient())
                         {
-                            client.Connect(Options.Smtp.Host, Options.Smtp.Port, Options.Smtp.UseSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.Auto);
-                            client.Authenticate(Options.Smtp.Username, Options.Smtp.Password);
+                            client.Connect(Options.Instance.SmtpSettings.Host, Options.Instance.SmtpSettings.Port, Options.Instance.SmtpSettings.UseSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.Auto);
+                            client.Authenticate(Options.Instance.SmtpSettings.Username, Options.Instance.SmtpSettings.Password);
 
                             var message = new MimeMessage();
                             message.To.Add(toAddress);

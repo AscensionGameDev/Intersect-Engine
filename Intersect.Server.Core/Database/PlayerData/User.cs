@@ -1057,7 +1057,7 @@ public partial class User
         error = default;
         user = default;
 
-        if (Options.BlockClientRegistrations)
+        if (Options.Instance.BlockClientRegistrations)
         {
             error = Strings.Account.RegistrationsBlocked;
             return false;

@@ -44,7 +44,7 @@ public partial class MapItemIcon
 
     void pnl_Clicked(Base sender, ClickedEventArgs arguments)
     {
-        if (MyItem == null || TileIndex < 0 || TileIndex >= Options.MapWidth * Options.MapHeight)
+        if (MyItem == null || TileIndex < 0 || TileIndex >= Options.Instance.Map.MapWidth * Options.Instance.Map.MapHeight)
         {
             return;
         }

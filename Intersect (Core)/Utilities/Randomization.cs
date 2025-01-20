@@ -72,7 +72,7 @@ public static partial class Randomization
     {
         lock (mRandom)
         {
-            return (Direction)mRandom.Next(Options.Instance.MapOpts.MovementDirections);
+            return (Direction)mRandom.Next(Options.Instance.Map.MovementDirections);
         }
     }
 

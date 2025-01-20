@@ -36,11 +36,11 @@ public partial class Dash
         } //Remove dash instance if no where to dash
 
         PacketSender.SendEntityDash(
-            en, en.MapId, (byte) en.X, (byte) en.Y, (int) (Options.MaxDashSpeed * (Range / 10f)),
+            en, en.MapId, (byte) en.X, (byte) en.Y, (int) (Options.Instance.Combat.MaxDashSpeed * (Range / 10f)),
             Direction == Facing ? Direction : Direction.None
         );
 
-        en.MoveTimer = Timing.Global.Milliseconds + Options.MaxDashSpeed;
+        en.MoveTimer = Timing.Global.Milliseconds + Options.Instance.Combat.MaxDashSpeed;
     }
 
     public void CalculateRange(

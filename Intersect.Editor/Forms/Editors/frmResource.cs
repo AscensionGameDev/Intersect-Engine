@@ -45,7 +45,7 @@ public partial class FrmResource : EditorForm
 
         cmbToolType.Items.Clear();
         cmbToolType.Items.Add(Strings.General.None);
-        cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
+        cmbToolType.Items.AddRange(Options.Instance.Equipment.ToolTypes.ToArray());
         cmbEvent.Items.Clear();
         cmbEvent.Items.Add(Strings.General.None);
         cmbEvent.Items.AddRange(EventBase.Names);
@@ -425,8 +425,8 @@ public partial class FrmResource : EditorForm
             gfx.DrawRectangle(
                 new Pen(System.Drawing.Color.White, 2f),
                 new Rectangle(
-                    selX * Options.TileWidth, selY * Options.TileHeight,
-                    Options.TileWidth + selW * Options.TileWidth, Options.TileHeight + selH * Options.TileHeight
+                    selX * Options.Instance.Map.TileWidth, selY * Options.Instance.Map.TileHeight,
+                    Options.Instance.Map.TileWidth + selW * Options.Instance.Map.TileWidth, Options.Instance.Map.TileHeight + selH * Options.Instance.Map.TileHeight
                 )
             );
         }
@@ -469,8 +469,8 @@ public partial class FrmResource : EditorForm
             gfx.DrawRectangle(
                 new Pen(System.Drawing.Color.White, 2f),
                 new Rectangle(
-                    selX * Options.TileWidth, selY * Options.TileHeight,
-                    Options.TileWidth + selW * Options.TileWidth, Options.TileHeight + selH * Options.TileHeight
+                    selX * Options.Instance.Map.TileWidth, selY * Options.Instance.Map.TileHeight,
+                    Options.Instance.Map.TileWidth + selW * Options.Instance.Map.TileWidth, Options.Instance.Map.TileHeight + selH * Options.Instance.Map.TileHeight
                 )
             );
         }
@@ -683,8 +683,8 @@ public partial class FrmResource : EditorForm
         }
 
         mMouseDown = true;
-        mEditorItem.Initial.X = (int) Math.Floor((double) e.X / Options.TileWidth);
-        mEditorItem.Initial.Y = (int) Math.Floor((double) e.Y / Options.TileHeight);
+        mEditorItem.Initial.X = (int) Math.Floor((double) e.X / Options.Instance.Map.TileWidth);
+        mEditorItem.Initial.Y = (int) Math.Floor((double) e.Y / Options.Instance.Map.TileHeight);
         mEditorItem.Initial.Width = 0;
         mEditorItem.Initial.Height = 0;
         if (mEditorItem.Initial.X < 0)
@@ -750,8 +750,8 @@ public partial class FrmResource : EditorForm
 
         if (mMouseDown)
         {
-            var tmpX = (int) Math.Floor((double) e.X / Options.TileWidth);
-            var tmpY = (int) Math.Floor((double) e.Y / Options.TileHeight);
+            var tmpX = (int) Math.Floor((double) e.X / Options.Instance.Map.TileWidth);
+            var tmpY = (int) Math.Floor((double) e.Y / Options.Instance.Map.TileHeight);
             mEditorItem.Initial.Width = tmpX - mEditorItem.Initial.X;
             mEditorItem.Initial.Height = tmpY - mEditorItem.Initial.Y;
         }
@@ -772,8 +772,8 @@ public partial class FrmResource : EditorForm
         }
 
         mMouseDown = true;
-        mEditorItem.Exhausted.X = (int) Math.Floor((double) e.X / Options.TileWidth);
-        mEditorItem.Exhausted.Y = (int) Math.Floor((double) e.Y / Options.TileHeight);
+        mEditorItem.Exhausted.X = (int) Math.Floor((double) e.X / Options.Instance.Map.TileWidth);
+        mEditorItem.Exhausted.Y = (int) Math.Floor((double) e.Y / Options.Instance.Map.TileHeight);
         mEditorItem.Exhausted.Width = 0;
         mEditorItem.Exhausted.Height = 0;
         if (mEditorItem.Exhausted.X < 0)
@@ -839,8 +839,8 @@ public partial class FrmResource : EditorForm
 
         if (mMouseDown)
         {
-            var tmpX = (int) Math.Floor((double) e.X / Options.TileWidth);
-            var tmpY = (int) Math.Floor((double) e.Y / Options.TileHeight);
+            var tmpX = (int) Math.Floor((double) e.X / Options.Instance.Map.TileWidth);
+            var tmpY = (int) Math.Floor((double) e.Y / Options.Instance.Map.TileHeight);
             mEditorItem.Exhausted.Width = tmpX - mEditorItem.Exhausted.X;
             mEditorItem.Exhausted.Height = tmpY - mEditorItem.Exhausted.Y;
         }

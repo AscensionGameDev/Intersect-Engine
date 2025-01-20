@@ -253,10 +253,10 @@ public partial class Npc : Entity
             }
 
             // Are we configured to handle resetting NPCs after they chase a target for a specified amount of tiles?
-            if (Options.Npc.AllowResetRadius)
+            if (Options.Instance.Npc.AllowResetRadius)
             {
                 // Are we configured to allow new reset locations before they move to their original location, or do we simply not have an original location yet?
-                if (Options.Npc.AllowNewResetLocationBeforeFinish || AggroCenterMap == null)
+                if (Options.Instance.Npc.AllowNewResetLocationBeforeFinish || AggroCenterMap == null)
                 {
                     AggroCenterMap = Map;
                     AggroCenterX = X;
@@ -272,7 +272,7 @@ public partial class Npc : Entity
 
         if (Target != oldTarget)
         {
-            CombatTimer = Timing.Global.Milliseconds + Options.CombatTime;
+            CombatTimer = Timing.Global.Milliseconds + Options.Instance.Combat.CombatTime;
             PacketSender.SendNpcAggressionToProximity(this);
         }
         mTargetFailCounter = 0;
@@ -533,7 +533,7 @@ public partial class Npc : Entity
         if (
             !base.CanMoveInDirection(direction, out blockerType, out entityType)
             && blockerType == MovementBlockerType.Entity
-            && Options.Instance.NpcOpts.IntangibleDuringReset
+            && Options.Instance.Npc.IntangibleDuringReset
         )
         {
             if (mResetting)
@@ -544,7 +544,7 @@ public partial class Npc : Entity
 
         if ((blockerType != MovementBlockerType.NotBlocked && blockerType != MovementBlockerType.Slide) ||
             !IsFleeing() ||
-            !Options.Instance.NpcOpts.AllowResetRadius)
+            !Options.Instance.Npc.AllowResetRadius)
         {
             return blockerType == MovementBlockerType.NotBlocked;
         }
@@ -609,7 +609,7 @@ public partial class Npc : Entity
             );
 
             // ReSharper disable once InvertIf
-            if (dist > Math.Max(Options.Npc.ResetRadius, Base.ResetRadius))
+            if (dist > Math.Max(Options.Instance.Npc.ResetRadius, Base.ResetRadius))
             {
                 blockerType = MovementBlockerType.MapAttribute;
                 return false;
@@ -801,14 +801,14 @@ public partial class Npc : Entity
                     var targetY = 0;
                     var targetZ = 0;
 
-                    if (tempTarget != null && (tempTarget.IsDead() || !InRangeOf(tempTarget, Options.MapWidth * 2) || !CanTarget(tempTarget)))
+                    if (tempTarget != null && (tempTarget.IsDead() || !InRangeOf(tempTarget, Options.Instance.Map.MapWidth * 2) || !CanTarget(tempTarget)))
                     {
                         _ = TryFindNewTarget(Timing.Global.Milliseconds, tempTarget.Id, !CanTarget(tempTarget));
                         tempTarget = Target;
                     }
 
                     //TODO Clear Damage Map if out of combat (target is null and combat timer is to the point that regen has started)
-                    if (tempTarget != null && (Options.Instance.NpcOpts.ResetIfCombatTimerExceeded && Timing.Global.Milliseconds > CombatTimer))
+                    if (tempTarget != null && (Options.Instance.Npc.ResetIfCombatTimerExceeded && Timing.Global.Milliseconds > CombatTimer))
                     {
                         if (CheckForResetLocation(true))
                         {
@@ -831,7 +831,7 @@ public partial class Npc : Entity
                             ResetAggroCenter(out targetMap);
                         }
 
-                        Reset(Options.Instance.NpcOpts.ContinuouslyResetVitalsAndStatuses);
+                        Reset(Options.Instance.Npc.ContinuouslyResetVitalsAndStatuses);
                         tempTarget = Target;
 
                         if (distance != mResetDistance)
@@ -1226,9 +1226,9 @@ public partial class Npc : Entity
     {
         // Check if we've moved out of our range we're allowed to move from after being "aggro'd" by something.
         // If so, remove target and move back to the origin point.
-        if (Options.Npc.AllowResetRadius && AggroCenterMap != null && (GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) > Math.Max(Options.Npc.ResetRadius, Math.Min(Base.ResetRadius, Math.Max(Options.MapWidth, Options.MapHeight))) || forceDistance))
+        if (Options.Instance.Npc.AllowResetRadius && AggroCenterMap != null && (GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) > Math.Max(Options.Instance.Npc.ResetRadius, Math.Min(Base.ResetRadius, Math.Max(Options.Instance.Map.MapWidth, Options.Instance.Map.MapHeight))) || forceDistance))
         {
-            Reset(Options.Npc.ResetVitalsAndStatusses);
+            Reset(Options.Instance.Npc.ResetVitalsAndStatusses);
 
             mResetCounter = 0;
             mResetDistance = 0;
@@ -1387,7 +1387,7 @@ public partial class Npc : Entity
         if (AggroCenterMap != null && pathTarget != null &&
             pathTarget.TargetMapId == AggroCenterMap.Id && pathTarget.TargetX == AggroCenterX && pathTarget.TargetY == AggroCenterY)
         {
-            if (!Options.Instance.NpcOpts.AllowEngagingWhileResetting || attackedBy == null || attackedBy.GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) > Math.Max(Options.Instance.NpcOpts.ResetRadius, Base.ResetRadius))
+            if (!Options.Instance.Npc.AllowEngagingWhileResetting || attackedBy == null || attackedBy.GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) > Math.Max(Options.Instance.Npc.ResetRadius, Base.ResetRadius))
             {
                 return false;
             }

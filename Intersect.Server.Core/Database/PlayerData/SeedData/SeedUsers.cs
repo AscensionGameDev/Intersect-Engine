@@ -110,7 +110,7 @@ public partial class SeedUsers : SeedData<User>
                     Face = null
                 };
 
-                for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+                for (var i = 0; i < Options.Instance.Equipment.Slots.Count; i++)
                 {
                     player.Equipment[i] = -1;
                 }

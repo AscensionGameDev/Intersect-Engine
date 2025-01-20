@@ -25,7 +25,7 @@ internal static class Program
 
             ServerContext.NetworkFactory = (context, parameters, handlePacket, shouldProcessPacket) =>
             {
-                var config = new NetworkConfiguration(Options.ServerPort);
+                var config = new NetworkConfiguration(Options.Instance.ServerPort);
                 return new ServerNetwork(context as IServerContext, context, config, parameters)
                 {
                     Handler = handlePacket,

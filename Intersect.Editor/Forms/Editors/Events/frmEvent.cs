@@ -226,16 +226,16 @@ public partial class FrmEvent : Form
                     sourceBitmap,
                     new Rectangle(
                         pnlPreview.Width / 2 -
-                        (Options.TileWidth + CurrentPage.Graphic.Width * Options.TileWidth) / 2,
+                        (Options.Instance.Map.TileWidth + CurrentPage.Graphic.Width * Options.Instance.Map.TileWidth) / 2,
                         pnlPreview.Height / 2 -
-                        (Options.TileHeight + CurrentPage.Graphic.Height * Options.TileHeight) / 2,
-                        Options.TileWidth + CurrentPage.Graphic.Width * Options.TileWidth,
-                        Options.TileHeight + CurrentPage.Graphic.Height * Options.TileHeight
+                        (Options.Instance.Map.TileHeight + CurrentPage.Graphic.Height * Options.Instance.Map.TileHeight) / 2,
+                        Options.Instance.Map.TileWidth + CurrentPage.Graphic.Width * Options.Instance.Map.TileWidth,
+                        Options.Instance.Map.TileHeight + CurrentPage.Graphic.Height * Options.Instance.Map.TileHeight
                     ),
                     new Rectangle(
-                        CurrentPage.Graphic.X * Options.TileWidth, CurrentPage.Graphic.Y * Options.TileHeight,
-                        Options.TileWidth + CurrentPage.Graphic.Width * Options.TileWidth,
-                        Options.TileHeight + CurrentPage.Graphic.Height * Options.TileHeight
+                        CurrentPage.Graphic.X * Options.Instance.Map.TileWidth, CurrentPage.Graphic.Y * Options.Instance.Map.TileHeight,
+                        Options.Instance.Map.TileWidth + CurrentPage.Graphic.Width * Options.Instance.Map.TileWidth,
+                        Options.Instance.Map.TileHeight + CurrentPage.Graphic.Height * Options.Instance.Map.TileHeight
                     ), GraphicsUnit.Pixel
                 );
             }

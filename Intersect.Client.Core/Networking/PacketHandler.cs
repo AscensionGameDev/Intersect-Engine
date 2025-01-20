@@ -676,7 +676,7 @@ internal sealed partial class PacketHandler
             return;
         }
 
-        if (en is Player && Options.Combat.MovementCancelsCast)
+        if (en is Player && Options.Instance.Combat.MovementCancelsCast)
         {
             en.CastTime = 0;
         }
@@ -708,43 +708,43 @@ internal sealed partial class PacketHandler
             switch (en.Dir)
             {
                 case Direction.Up:
-                    en.OffsetY = Options.TileWidth;
+                    en.OffsetY = Options.Instance.Map.TileWidth;
                     en.OffsetX = 0;
 
                     break;
                 case Direction.Down:
-                    en.OffsetY = -Options.TileWidth;
+                    en.OffsetY = -Options.Instance.Map.TileWidth;
                     en.OffsetX = 0;
 
                     break;
                 case Direction.Left:
                     en.OffsetY = 0;
-                    en.OffsetX = Options.TileWidth;
+                    en.OffsetX = Options.Instance.Map.TileWidth;
 
                     break;
                 case Direction.Right:
                     en.OffsetY = 0;
-                    en.OffsetX = -Options.TileWidth;
+                    en.OffsetX = -Options.Instance.Map.TileWidth;
 
                     break;
                 case Direction.UpLeft:
-                    en.OffsetY = Options.TileHeight;
-                    en.OffsetX = Options.TileWidth;
+                    en.OffsetY = Options.Instance.Map.TileHeight;
+                    en.OffsetX = Options.Instance.Map.TileWidth;
 
                     break;
                 case Direction.UpRight:
-                    en.OffsetY = Options.TileHeight;
-                    en.OffsetX = -Options.TileWidth;
+                    en.OffsetY = Options.Instance.Map.TileHeight;
+                    en.OffsetX = -Options.Instance.Map.TileWidth;
 
                     break;
                 case Direction.DownLeft:
-                    en.OffsetY = -Options.TileHeight;
-                    en.OffsetX = Options.TileWidth;
+                    en.OffsetY = -Options.Instance.Map.TileHeight;
+                    en.OffsetX = Options.Instance.Map.TileWidth;
 
                     break;
                 case Direction.DownRight:
-                    en.OffsetY = -Options.TileHeight;
-                    en.OffsetX = -Options.TileWidth;
+                    en.OffsetY = -Options.Instance.Map.TileHeight;
+                    en.OffsetX = -Options.Instance.Map.TileWidth;
 
                     break;
             }
@@ -1331,7 +1331,7 @@ internal sealed partial class PacketHandler
     //HotbarPacket
     public void HandlePacket(IPacketSender packetSender, HotbarPacket packet)
     {
-        for (var i = 0; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
+        for (var i = 0; i < Options.Instance.Player.HotbarSlotCount; i++)
         {
             if (Globals.Me == null)
             {
@@ -1907,12 +1907,12 @@ internal sealed partial class PacketHandler
     {
         if (!string.IsNullOrEmpty(packet.TradePartner))
         {
-            Globals.Trade = new Item[2, Options.MaxInvItems];
+            Globals.Trade = new Item[2, Options.Instance.Player.MaxInventory];
 
             //Gotta initialize the trade values
             for (var x = 0; x < 2; x++)
             {
-                for (var y = 0; y < Options.MaxInvItems; y++)
+                for (var y = 0; y < Options.Instance.Player.MaxInventory; y++)
                 {
                     Globals.Trade[x, y] = new Item();
                 }

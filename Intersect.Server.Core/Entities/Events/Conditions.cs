@@ -453,7 +453,7 @@ public static partial class Conditions
             return false;
         }
 
-        var equipmentIndex = Options.EquipmentSlots.IndexOf(condition.Name);
+        var equipmentIndex = Options.Instance.Equipment.Slots.IndexOf(condition.Name);
         return player.TryGetEquipmentSlot(equipmentIndex, out _);
     }
 

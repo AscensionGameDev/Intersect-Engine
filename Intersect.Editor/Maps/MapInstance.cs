@@ -94,7 +94,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>
             {
                 if (!Layers.ContainsKey(layer))
                 {
-                    Layers.Add(layer, new Tile[Options.MapWidth, Options.MapHeight]);
+                    Layers.Add(layer, new Tile[Options.Instance.Map.MapWidth, Options.Instance.Map.MapHeight]);
                 }
             }
         }

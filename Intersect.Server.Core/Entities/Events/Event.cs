@@ -170,7 +170,7 @@ public partial class Event
                     var commandsExecuted = 0;
                     while (curStack != null && curStack.WaitingForResponse == CommandInstance.EventResponse.None &&
                            !(PageInstance?.ShouldDespawn(map) ?? false) &&
-                           commandsExecuted < Options.EventWatchdogKillThreshhold)
+                           commandsExecuted < Options.Instance.EventWatchdogKillThreshold)
                     {
                         if (curStack.WaitingForRoute != Guid.Empty)
                         {
@@ -244,7 +244,7 @@ public partial class Event
                         curStack = CallStack.Peek();
                     }
 
-                    if (commandsExecuted >= Options.EventWatchdogKillThreshhold)
+                    if (commandsExecuted >= Options.Instance.EventWatchdogKillThreshold)
                     {
                         CallStack.Clear(); //Killing this event, we're over it.
                         if (this.BaseEvent.MapId == Guid.Empty)

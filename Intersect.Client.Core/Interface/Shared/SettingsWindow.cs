@@ -534,7 +534,7 @@ public partial class SettingsWindow : ImagePanel
         _interfaceSettings.Hide();
         _informationSettings.Hide();
         _targetingSettings.Show();
-        _autoTurnToTarget.IsDisabled = !(Options.Instance?.PlayerOpts?.EnableAutoTurnToTarget ?? false);
+        _autoTurnToTarget.IsDisabled = !(Options.Instance?.Player?.EnableAutoTurnToTarget ?? false);
     }
 
     private void VideoSettingsTab_Clicked(Base sender, ClickedEventArgs arguments)

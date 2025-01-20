@@ -21,7 +21,7 @@ partial class Pathfinder
 
     private long mWaitTime;
 
-    private PathNode[,] mGrid = new PathNode[Options.MapWidth * 3, Options.MapHeight * 3];
+    private PathNode[,] mGrid = new PathNode[Options.Instance.Map.MapWidth * 3, Options.Instance.Map.MapHeight * 3];
 
     public Pathfinder(Entity parent)
     {
@@ -42,7 +42,7 @@ partial class Pathfinder
     {
         //TODO: Pull this out into server config :)
         var pathfindingRange = Math.Max(
-            Options.MapWidth, Options.MapHeight
+            Options.Instance.Map.MapWidth, Options.Instance.Map.MapHeight
         ); //Search as far as 1 map out.. maximum.
 
         //Do lots of logic eventually leading up to an A* pathfinding run if needed.
@@ -64,8 +64,8 @@ partial class Pathfinder
                     var targetFound = false;
                     var targetX = -1;
                     var targetY = -1;
-                    var sourceX = Options.MapWidth + mEntity.X;
-                    var sourceY = Options.MapHeight + mEntity.Y;
+                    var sourceX = Options.Instance.Map.MapWidth + mEntity.X;
+                    var sourceY = Options.Instance.Map.MapHeight + mEntity.Y;
 
                     //Loop through surrouding maps to see if our target is even around.
                     for (var x = gridX - 1; x <= gridX + 1; x++)
@@ -86,8 +86,8 @@ partial class Pathfinder
                             {
                                 if (grid.MapIdGrid[x, y] == mTarget.TargetMapId)
                                 {
-                                    targetX = (x - gridX + 1) * Options.MapWidth + mTarget.TargetX;
-                                    targetY = (y - gridY + 1) * Options.MapHeight + mTarget.TargetY;
+                                    targetX = (x - gridX + 1) * Options.Instance.Map.MapWidth + mTarget.TargetX;
+                                    targetY = (y - gridY + 1) * Options.Instance.Map.MapHeight + mTarget.TargetY;
                                     targetFound = true;
                                 }
                             }
@@ -109,9 +109,9 @@ partial class Pathfinder
                                 //Doing good...
                                 mapGrid = mGrid;
 
-                                for (var x = 0; x < Options.MapWidth * 3; x++)
+                                for (var x = 0; x < Options.Instance.Map.MapWidth * 3; x++)
                                 {
-                                    for (var y = 0; y < Options.MapHeight * 3; y++)
+                                    for (var y = 0; y < Options.Instance.Map.MapHeight * 3; y++)
                                     {
                                         if (mapGrid[x, y] == null)
                                         {
@@ -140,10 +140,10 @@ partial class Pathfinder
                                         {
                                             FillArea(
                                                 mapGrid,
-                                                (x + 1 - gridX) * Options.MapWidth,
-                                                y * Options.MapHeight,
-                                                Options.MapWidth,
-                                                Options.MapHeight,
+                                                (x + 1 - gridX) * Options.Instance.Map.MapWidth,
+                                                y * Options.Instance.Map.MapHeight,
+                                                Options.Instance.Map.MapWidth,
+                                                Options.Instance.Map.MapHeight,
                                                 PathNodeBlockType.InvalidTile
                                             );
                                         }
@@ -153,8 +153,8 @@ partial class Pathfinder
 
                                     for (var y = gridY - 1; y <= gridY + 1; y++)
                                     {
-                                        var mx = (x + 1 - gridX) * Options.MapWidth;
-                                        var my = (y + 1 - gridY) * Options.MapHeight;
+                                        var mx = (x + 1 - gridX) * Options.Instance.Map.MapWidth;
+                                        var my = (y + 1 - gridY) * Options.Instance.Map.MapHeight;
 
                                         if (y == -1 || y >= grid.Height)
                                         {
@@ -162,8 +162,8 @@ partial class Pathfinder
                                                 mapGrid,
                                                 mx,
                                                 my,
-                                                Options.MapWidth,
-                                                Options.MapHeight,
+                                                Options.Instance.Map.MapWidth,
+                                                Options.Instance.Map.MapHeight,
                                                 PathNodeBlockType.InvalidTile
                                             );
 
@@ -190,7 +190,7 @@ partial class Pathfinder
                                                     continue;
                                                 }
 
-                                                if (!en.IsPassable() && en.X > -1 && en.X < Options.MapWidth && en.Y > -1 && en.Y < Options.MapHeight)
+                                                if (!en.IsPassable() && en.X > -1 && en.X < Options.Instance.Map.MapWidth && en.Y > -1 && en.Y < Options.Instance.Map.MapHeight)
                                                 {
                                                     mapGrid[mx + en.X, my + en.Y].BlockType = en.GetEntityType() switch
                                                     {
@@ -206,7 +206,7 @@ partial class Pathfinder
 
                                             foreach (var en in instance.GlobalEventInstances)
                                             {
-                                                if (en.Value != null && en.Value.X > -1 && en.Value.X < Options.MapWidth && en.Value.Y > -1 && en.Value.Y < Options.MapHeight)
+                                                if (en.Value != null && en.Value.X > -1 && en.Value.X < Options.Instance.Map.MapWidth && en.Value.Y > -1 && en.Value.Y < Options.Instance.Map.MapHeight)
                                                 {
                                                     foreach (var page in en.Value.GlobalPageInstance)
                                                     {
@@ -229,13 +229,13 @@ partial class Pathfinder
                                                     if (player != null)
                                                     {
                                                         if (player.EventLookup.Values.Count >
-                                                            Options.MapWidth * Options.MapHeight)
+                                                            Options.Instance.Map.MapWidth * Options.Instance.Map.MapHeight)
                                                         {
                                                             //Find all events on this map (since events can't switch maps)
-                                                            for (var mapX = 0; mapX < Options.MapWidth; mapX++)
+                                                            for (var mapX = 0; mapX < Options.Instance.Map.MapWidth; mapX++)
                                                             {
                                                                 for (var mapY = 0;
-                                                                    mapY < Options.MapHeight;
+                                                                    mapY < Options.Instance.Map.MapHeight;
                                                                     mapY++)
                                                                 {
                                                                     var evt = player.EventExists(new MapTileLoc(
@@ -424,7 +424,7 @@ partial class Pathfinder
         var enm = path.GetEnumerator();
         while (enm.MoveNext())
         {
-            if (enm.Current.X - Options.MapWidth == mEntity.X && enm.Current.Y - Options.MapHeight == mEntity.Y)
+            if (enm.Current.X - Options.Instance.Map.MapWidth == mEntity.X && enm.Current.Y - Options.Instance.Map.MapHeight == mEntity.Y)
             {
                 foundUs = true;
             }
@@ -473,7 +473,7 @@ partial class Pathfinder
         {
             while (enm.MoveNext())
             {
-                if (enm.Current.X - Options.MapWidth != mEntity.X || enm.Current.Y - Options.MapHeight != mEntity.Y)
+                if (enm.Current.X - Options.Instance.Map.MapWidth != mEntity.X || enm.Current.Y - Options.Instance.Map.MapHeight != mEntity.Y)
                 {
                     continue;
                 }
@@ -483,8 +483,8 @@ partial class Pathfinder
                     continue;
                 }
 
-                var newX = enm.Current.X - Options.MapWidth;
-                var newY = enm.Current.Y - Options.MapHeight;
+                var newX = enm.Current.X - Options.Instance.Map.MapWidth;
+                var newY = enm.Current.Y - Options.Instance.Map.MapHeight;
 
                 if (mEntity.Y > newY && mEntity.X == newX)
                 {
@@ -506,7 +506,7 @@ partial class Pathfinder
                     return Direction.Right;
                 }
 
-                if (Options.Instance.MapOpts.EnableDiagonalMovement)
+                if (Options.Instance.Map.EnableDiagonalMovement)
                 {
                     if (mEntity.Y > newY && mEntity.X > newX)
                     {

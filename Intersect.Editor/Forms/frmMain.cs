@@ -392,27 +392,27 @@ public partial class FrmMain : Form
 
                 Core.Graphics.CurrentView.X -= xDiff;
                 Core.Graphics.CurrentView.Y -= yDiff;
-                if (Core.Graphics.CurrentView.X > Options.MapWidth * Options.TileWidth)
+                if (Core.Graphics.CurrentView.X > Options.Instance.Map.MapWidth * Options.Instance.Map.TileWidth)
                 {
-                    Core.Graphics.CurrentView.X = Options.MapWidth * Options.TileWidth;
+                    Core.Graphics.CurrentView.X = Options.Instance.Map.MapWidth * Options.Instance.Map.TileWidth;
                 }
 
-                if (Core.Graphics.CurrentView.Y > Options.MapHeight * Options.TileHeight)
+                if (Core.Graphics.CurrentView.Y > Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight)
                 {
-                    Core.Graphics.CurrentView.Y = Options.MapHeight * Options.TileHeight;
+                    Core.Graphics.CurrentView.Y = Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight;
                 }
 
                 if (Core.Graphics.CurrentView.X - Globals.MapEditorWindow.picMap.Width <
-                    -Options.TileWidth * Options.MapWidth * 2)
+                    -Options.Instance.Map.TileWidth * Options.Instance.Map.MapWidth * 2)
                 {
-                    Core.Graphics.CurrentView.X = -Options.TileWidth * Options.MapWidth * 2 +
+                    Core.Graphics.CurrentView.X = -Options.Instance.Map.TileWidth * Options.Instance.Map.MapWidth * 2 +
                                                   Globals.MapEditorWindow.picMap.Width;
                 }
 
                 if (Core.Graphics.CurrentView.Y - Globals.MapEditorWindow.picMap.Height <
-                    -Options.TileHeight * Options.MapHeight * 2)
+                    -Options.Instance.Map.TileHeight * Options.Instance.Map.MapHeight * 2)
                 {
-                    Core.Graphics.CurrentView.Y = -Options.TileHeight * Options.MapHeight * 2 +
+                    Core.Graphics.CurrentView.Y = -Options.Instance.Map.TileHeight * Options.Instance.Map.MapHeight * 2 +
                                                   Globals.MapEditorWindow.picMap.Height;
                 }
             }
@@ -620,7 +620,7 @@ public partial class FrmMain : Form
         {
             Globals.CurrentTool = EditingTool.Selection;
         }
-        else if (Globals.CurrentLayer == LayerOptions.Npcs)
+        else if (Globals.CurrentLayer == LayerOptions.Instance.Npcs)
         {
             Globals.CurrentTool = EditingTool.Selection;
         }

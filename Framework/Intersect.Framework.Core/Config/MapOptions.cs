@@ -52,7 +52,7 @@ public partial class MapOptions
     /// <summary>
     /// The options for the map's layers.
     /// </summary>
-    public LayerOptions Layers { get; set; } = new LayerOptions();
+    public LayerOptions Layers { get; set; } = new();
 
     /// <summary>
     /// The height of the map in tiles.

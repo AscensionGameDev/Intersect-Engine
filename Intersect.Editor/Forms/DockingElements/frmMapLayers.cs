@@ -111,8 +111,8 @@ public partial class FrmMapLayers : DockContent
             SetTileset(cmbTilesets.Items[0].ToString());
         }
 
-        rbZDimension.Visible = Options.ZDimensionVisible;
-        grpZResource.Visible = Options.ZDimensionVisible;
+        rbZDimension.Visible = Options.Instance.Map.ZDimensionVisible;
+        grpZResource.Visible = Options.Instance.Map.ZDimensionVisible;
         grpInstanceSettings.Visible = chkChangeInstance.Checked;
 
         cmbInstanceType.Items.Clear();
@@ -141,8 +141,8 @@ public partial class FrmMapLayers : DockContent
         }
 
         mTMouseDown = true;
-        Globals.CurSelX = (int) Math.Floor((double) e.X / Options.TileWidth);
-        Globals.CurSelY = (int) Math.Floor((double) e.Y / Options.TileHeight);
+        Globals.CurSelX = (int) Math.Floor((double) e.X / Options.Instance.Map.TileWidth);
+        Globals.CurSelY = (int) Math.Floor((double) e.Y / Options.Instance.Map.TileHeight);
         Globals.CurSelW = 0;
         Globals.CurSelH = 0;
         if (Globals.CurSelX < 0)
@@ -200,8 +200,8 @@ public partial class FrmMapLayers : DockContent
 
         if (mTMouseDown && Globals.Autotilemode == 0)
         {
-            var tmpX = (int) Math.Floor((double) e.X / Options.TileWidth);
-            var tmpY = (int) Math.Floor((double) e.Y / Options.TileHeight);
+            var tmpX = (int) Math.Floor((double) e.X / Options.Instance.Map.TileWidth);
+            var tmpY = (int) Math.Floor((double) e.Y / Options.Instance.Map.TileHeight);
             Globals.CurSelW = tmpX - Globals.CurSelX;
             Globals.CurSelH = tmpY - Globals.CurSelY;
         }
@@ -492,8 +492,8 @@ public partial class FrmMapLayers : DockContent
 
     private void rbWarp_CheckedChanged(object sender, EventArgs e)
     {
-        nudWarpX.Maximum = Options.MapWidth;
-        nudWarpY.Maximum = Options.MapHeight;
+        nudWarpX.Maximum = Options.Instance.Map.MapWidth;
+        nudWarpY.Maximum = Options.Instance.Map.MapHeight;
         cmbWarpMap.Items.Clear();
         for (var i = 0; i < MapList.OrderedMaps.Count; i++)
         {
@@ -1303,7 +1303,7 @@ public partial class FrmMapLayers : DockContent
 
     public void btnLightsHeader_Click(object sender, EventArgs e)
     {
-        if (Globals.CurrentLayer != LayerOptions.Lights && Globals.CurrentLayer != LayerOptions.Events && Globals.CurrentLayer != LayerOptions.Npcs)
+        if (Globals.CurrentLayer != LayerOptions.Lights && Globals.CurrentLayer != LayerOptions.Events && Globals.CurrentLayer != LayerOptions.Instance.Npcs)
         {
             Globals.SavedTool = Globals.CurrentTool;
         }
@@ -1318,7 +1318,7 @@ public partial class FrmMapLayers : DockContent
 
     private void btnEventsHeader_Click(object sender, EventArgs e)
     {
-        if (Globals.CurrentLayer != LayerOptions.Lights && Globals.CurrentLayer != LayerOptions.Events && Globals.CurrentLayer != LayerOptions.Npcs)
+        if (Globals.CurrentLayer != LayerOptions.Lights && Globals.CurrentLayer != LayerOptions.Events && Globals.CurrentLayer != LayerOptions.Instance.Npcs)
         {
             Globals.SavedTool = Globals.CurrentTool;
         }
@@ -1333,13 +1333,13 @@ public partial class FrmMapLayers : DockContent
 
     private void btnNpcsHeader_Click(object sender, EventArgs e)
     {
-        if (Globals.CurrentLayer != LayerOptions.Lights && Globals.CurrentLayer != LayerOptions.Events && Globals.CurrentLayer != LayerOptions.Npcs)
+        if (Globals.CurrentLayer != LayerOptions.Lights && Globals.CurrentLayer != LayerOptions.Events && Globals.CurrentLayer != LayerOptions.Instance.Npcs)
         {
             Globals.SavedTool = Globals.CurrentTool;
         }
 
         ChangeTab();
-        Globals.CurrentLayer = LayerOptions.Npcs;
+        Globals.CurrentLayer = LayerOptions.Instance.Npcs;
         Core.Graphics.TilePreviewUpdated = true;
         RefreshNpcList();
         btnNpcsHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);

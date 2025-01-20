@@ -89,11 +89,11 @@ public partial class Animation
                 }
 
                 Core.Graphics.AddLight(
-                    Options.MapWidth * Options.TileWidth -
+                    Options.Instance.Map.MapWidth * Options.Instance.Map.TileWidth -
                     Core.Graphics.CurrentView.Left +
                     (int) mRenderX +
                     MyBase.Lower.Lights[mLowerFrame].OffsetX,
-                    Options.MapHeight * Options.TileHeight -
+                    Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight -
                     Core.Graphics.CurrentView.Top +
                     (int) mRenderY +
                     MyBase.Lower.Lights[mLowerFrame].OffsetY, MyBase.Lower.Lights[mLowerFrame]
@@ -132,11 +132,11 @@ public partial class Animation
                 }
 
                 Core.Graphics.AddLight(
-                    Options.MapWidth * Options.TileWidth -
+                    Options.Instance.Map.MapWidth * Options.Instance.Map.TileWidth -
                     Core.Graphics.CurrentView.Left +
                     (int) mRenderX +
                     MyBase.Upper.Lights[mUpperFrame].OffsetX,
-                    Options.MapHeight * Options.TileHeight -
+                    Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight -
                     Core.Graphics.CurrentView.Top +
                     (int) mRenderY +
                     MyBase.Upper.Lights[mUpperFrame].OffsetY, MyBase.Upper.Lights[mUpperFrame]

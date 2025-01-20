@@ -240,8 +240,8 @@ public partial class EventGraphicSelector : UserControl
                 graphics.DrawRectangle(
                     new Pen(System.Drawing.Color.White, 2f),
                     new Rectangle(
-                        selX * Options.TileWidth, selY * Options.TileHeight,
-                        Options.TileWidth + selW * Options.TileWidth, Options.TileHeight + selH * Options.TileHeight
+                        selX * Options.Instance.Map.TileWidth, selY * Options.Instance.Map.TileHeight,
+                        Options.Instance.Map.TileWidth + selW * Options.Instance.Map.TileWidth, Options.Instance.Map.TileHeight + selH * Options.Instance.Map.TileHeight
                     )
                 );
             }
@@ -285,8 +285,8 @@ public partial class EventGraphicSelector : UserControl
         else
         {
             mMouseDown = true;
-            mTmpGraphic.X = (int) Math.Floor((double) e.X / Options.TileWidth);
-            mTmpGraphic.Y = (int) Math.Floor((double) e.Y / Options.TileHeight);
+            mTmpGraphic.X = (int) Math.Floor((double) e.X / Options.Instance.Map.TileWidth);
+            mTmpGraphic.Y = (int) Math.Floor((double) e.Y / Options.Instance.Map.TileHeight);
         }
 
         mTmpGraphic.Width = 0;
@@ -354,8 +354,8 @@ public partial class EventGraphicSelector : UserControl
 
         if (mMouseDown)
         {
-            var tmpX = (int) Math.Floor((double) e.X / Options.TileWidth);
-            var tmpY = (int) Math.Floor((double) e.Y / Options.TileHeight);
+            var tmpX = (int) Math.Floor((double) e.X / Options.Instance.Map.TileWidth);
+            var tmpY = (int) Math.Floor((double) e.Y / Options.Instance.Map.TileHeight);
             mTmpGraphic.Width = tmpX - mTmpGraphic.X;
             mTmpGraphic.Height = tmpY - mTmpGraphic.Y;
         }

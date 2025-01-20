@@ -45,7 +45,7 @@ public partial class Entity : IEntity
 
     public bool IsCasting => CastTime > Timing.Global.Milliseconds;
 
-    public bool IsTurnAroundWhileCastingDisabled => !Options.Instance.CombatOpts.EnableTurnAroundWhileCasting && IsCasting;
+    public bool IsTurnAroundWhileCastingDisabled => !Options.Instance.Combat.EnableTurnAroundWhileCasting && IsCasting;
 
     public bool IsDashing => Dashing != null;
 
@@ -60,7 +60,7 @@ public partial class Entity : IEntity
 
     public float elapsedtime { get; set; } //to be removed
 
-    private Guid[] _equipment = new Guid[Options.EquipmentSlots.Count];
+    private Guid[] _equipment = new Guid[Options.Instance.Equipment.Slots.Count];
 
     public Guid[] Equipment
     {
@@ -79,7 +79,7 @@ public partial class Entity : IEntity
 
     IReadOnlyList<int> IEntity.EquipmentSlots => [.. MyEquipment];
 
-    public Animation?[] EquipmentAnimations { get; set; } = new Animation[Options.EquipmentSlots.Count];
+    public Animation?[] EquipmentAnimations { get; set; } = new Animation[Options.Instance.Equipment.Slots.Count];
 
     //Extras
     public string Face { get; set; } = string.Empty;
@@ -98,7 +98,7 @@ public partial class Entity : IEntity
     public Guid Id { get; set; }
 
     //Inventory/Spells/Equipment
-    public IItem[] Inventory { get; set; } = new IItem[Options.MaxInvItems];
+    public IItem[] Inventory { get; set; } = new IItem[Options.Instance.Player.MaxInventory];
 
     IReadOnlyList<IItem> IEntity.Items => [.. Inventory];
 
@@ -141,7 +141,7 @@ public partial class Entity : IEntity
 
     private long mWalkTimer;
 
-    public int[] MyEquipment { get; set; } = new int[Options.EquipmentSlots.Count];
+    public int[] MyEquipment { get; set; } = new int[Options.Instance.Equipment.Slots.Count];
 
     public string Name { get; set; } = string.Empty;
 
@@ -173,7 +173,7 @@ public partial class Entity : IEntity
         }
     }
 
-    public Spell[] Spells { get; set; } = new Spell[Options.Instance.PlayerOpts.MaxSpells];
+    public Spell[] Spells { get; set; } = new Spell[Options.Instance.Player.MaxSpells];
 
     IReadOnlyList<Guid> IEntity.Spells => Spells.Select(x => x.Id).ToList();
 
@@ -228,17 +228,17 @@ public partial class Entity : IEntity
 
         if (Id != Guid.Empty && Type != EntityType.Event)
         {
-            for (var i = 0; i < Options.MaxInvItems; i++)
+            for (var i = 0; i < Options.Instance.Player.MaxInventory; i++)
             {
                 Inventory[i] = new Item();
             }
 
-            for (var i = 0; i < Options.Instance.PlayerOpts.MaxSpells; i++)
+            for (var i = 0; i < Options.Instance.Player.MaxSpells; i++)
             {
                 Spells[i] = new Spell();
             }
 
-            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+            for (var i = 0; i < Options.Instance.Equipment.Slots.Count; i++)
             {
                 Equipment[i] = Guid.Empty;
                 MyEquipment[i] = -1;
@@ -248,7 +248,7 @@ public partial class Entity : IEntity
         AnimationTimer = Timing.Global.MillisecondsUtc + Globals.Random.Next(0, 500);
 
         //TODO Remove because fixed orrrrr change the exception text
-        if (Options.EquipmentSlots.Count == 0)
+        if (Options.Instance.Equipment.Slots.Count == 0)
         {
             throw new Exception("What the fuck is going on!?!?!?!?!?!");
         }
@@ -270,7 +270,7 @@ public partial class Entity : IEntity
     public Direction Dir
     {
         get => mDir;
-        set => mDir = (Direction)((int)(value + Options.Instance.MapOpts.MovementDirections) % Options.Instance.MapOpts.MovementDirections);
+        set => mDir = (Direction)((int)(value + Options.Instance.Map.MovementDirections) % Options.Instance.Map.MovementDirections);
     }
 
     private Direction mLastDirection = Direction.Down;
@@ -545,7 +545,7 @@ public partial class Entity : IEntity
 
         if (IsBlocking)
         {
-            time += time * Options.BlockingSlow;
+            time += time * Options.Instance.Combat.BlockingSlow;
         }
 
         return Math.Min(1000f, time);
@@ -593,7 +593,7 @@ public partial class Entity : IEntity
                 Dashing.Start(this);
                 OffsetX = 0;
                 OffsetY = 0;
-                DashTimer = Timing.Global.Milliseconds + Options.MaxDashSpeed;
+                DashTimer = Timing.Global.Milliseconds + Options.Instance.Combat.MaxDashSpeed;
             }
             else
             {
@@ -636,7 +636,7 @@ public partial class Entity : IEntity
         }
         else if (IsMoving)
         {
-            var displacementTime = ecTime * Options.TileHeight / GetMovementTime();
+            var displacementTime = ecTime * Options.Instance.Map.TileHeight / GetMovementTime();
 
             PickLastDirection(Dir);
 
@@ -746,11 +746,11 @@ public partial class Entity : IEntity
         }
 
         //Check to see if we should start or stop equipment animations
-        if (Equipment.Length == Options.EquipmentSlots.Count)
+        if (Equipment.Length == Options.Instance.Equipment.Slots.Count)
         {
-            for (var z = 0; z < Options.EquipmentSlots.Count; z++)
+            for (var z = 0; z < Options.Instance.Equipment.Slots.Count; z++)
             {
-                if (Equipment[z] != Guid.Empty && (this != Globals.Me || MyEquipment[z] < Options.MaxInvItems))
+                if (Equipment[z] != Guid.Empty && (this != Globals.Me || MyEquipment[z] < Options.Instance.Player.MaxInventory))
                 {
                     var itemId = Guid.Empty;
                     if (this == Globals.Me)
@@ -889,10 +889,10 @@ public partial class Entity : IEntity
         }
 
         //Otherwise return the legacy attack speed calculation
-        return (int)(Options.MaxAttackRate +
-                      (Options.MinAttackRate - Options.MaxAttackRate) *
-                      (((float)Options.MaxStatValue - Stat[(int)Enums.Stat.Speed]) /
-                       Options.MaxStatValue));
+        return (int)(Options.Instance.Combat.MaxAttackRate +
+                     (Options.Instance.Combat.MinAttackRate - Options.Instance.Combat.MaxAttackRate) *
+                     (((float)Options.Instance.Player.MaxStat - Stat[(int)Enums.Stat.Speed]) /
+                      Options.Instance.Player.MaxStat));
     }
 
     /// <summary>
@@ -1013,18 +1013,18 @@ public partial class Entity : IEntity
 
                 if (y == gridY - 1)
                 {
-                    entityY = Options.MapHeight + Y;
+                    entityY = Options.Instance.Map.MapHeight + Y;
                 }
                 else if (y == gridY)
                 {
-                    entityY = Options.MapHeight * 2 + Y;
+                    entityY = Options.Instance.Map.MapHeight * 2 + Y;
                 }
                 else
                 {
-                    entityY = Options.MapHeight * 3 + Y;
+                    entityY = Options.Instance.Map.MapHeight * 3 + Y;
                 }
 
-                entityY = (int)Math.Floor(entityY + OffsetY / Options.TileHeight);
+                entityY = (int)Math.Floor(entityY + OffsetY / Options.Instance.Map.TileHeight);
 
                 var renderingEntities = Graphics.RenderingEntities;
                 if (priority >= renderingEntities.GetLength(0) || entityY >= renderingEntities.GetLength(1))
@@ -1108,10 +1108,10 @@ public partial class Entity : IEntity
         {
             // We don't have a texture to render, but we still want this to be targetable.
             WorldPos = new FloatRect(
-                map.X + X * Options.TileWidth + OffsetX,
-                map.Y + Y * Options.TileHeight + OffsetY,
-                Options.TileWidth,
-                Options.TileHeight);
+                map.X + X * Options.Instance.Map.TileWidth + OffsetX,
+                map.Y + Y * Options.Instance.Map.TileHeight + OffsetY,
+                Options.Instance.Map.TileWidth,
+                Options.Instance.Map.TileHeight);
             return;
         }
 
@@ -1121,7 +1121,7 @@ public partial class Entity : IEntity
         var frameHeight = texture.Height / Options.Instance.Sprites.Directions;
 
         var frame = SpriteFrame;
-        if (Options.AnimatedSprites.Contains(sprite.ToLower()))
+        if (Options.Instance.AnimatedSprites.Contains(sprite.ToLower()))
         {
             frame = AnimationFrame;
         }
@@ -1141,10 +1141,10 @@ public partial class Entity : IEntity
         WorldPos = destRectangle;
 
         //Order the layers of paperdolls and sprites
-        for (var z = 0; z < Options.PaperdollOrder[(int)mLastDirection].Count; z++)
+        for (var z = 0; z < Options.Instance.Equipment.Paperdoll.Directions[(int)mLastDirection].Count; z++)
         {
-            var paperdoll = Options.PaperdollOrder[(int)mLastDirection][z];
-            var equipSlot = Options.EquipmentSlots.IndexOf(paperdoll);
+            var paperdoll = Options.Instance.Equipment.Paperdoll.Directions[(int)mLastDirection][z];
+            var equipSlot = Options.Instance.Equipment.Slots.IndexOf(paperdoll);
 
             //Check for player
             if (string.Equals("Player", paperdoll, StringComparison.Ordinal))
@@ -1154,10 +1154,10 @@ public partial class Entity : IEntity
             else if (equipSlot > -1)
             {
                 //Don't render the paperdolls if they have transformed.
-                if (sprite == Sprite && Equipment.Length == Options.EquipmentSlots.Count)
+                if (sprite == Sprite && Equipment.Length == Options.Instance.Equipment.Slots.Count)
                 {
                     if (Equipment[equipSlot] != Guid.Empty && this != Globals.Me ||
-                        MyEquipment[equipSlot] < Options.MaxInvItems)
+                        MyEquipment[equipSlot] < Options.Instance.Player.MaxInventory)
                     {
                         var itemId = Guid.Empty;
                         if (this == Globals.Me)
@@ -1395,8 +1395,8 @@ public partial class Entity : IEntity
         }
 
         mOrigin = new Pointf(
-            LatestMap.X + X * Options.TileWidth + OffsetX + Options.TileWidth / 2,
-            LatestMap.Y + Y * Options.TileHeight + OffsetY + Options.TileHeight
+            LatestMap.X + X * Options.Instance.Map.TileWidth + OffsetX + Options.Instance.Map.TileWidth / 2,
+            LatestMap.Y + Y * Options.Instance.Map.TileHeight + OffsetY + Options.Instance.Map.TileHeight
         );
     }
 
@@ -1516,7 +1516,7 @@ public partial class Entity : IEntity
         }
 
         var name = Name;
-        if ((this is Player && Options.Player.ShowLevelByName) || (Type == EntityType.GlobalEntity && Options.Npc.ShowLevelByName))
+        if ((this is Player && Options.Instance.Player.ShowLevelByName) || (Type == EntityType.GlobalEntity && Options.Instance.Npc.ShowLevelByName))
         {
             name = Strings.GameWindow.EntityNameAndLevel.ToString(Name, Level);
         }
@@ -1932,15 +1932,15 @@ public partial class Entity : IEntity
                 SpriteAnimation = SpriteAnimations.Attack;
             }
 
-            if (Options.WeaponIndex > -1 && Options.WeaponIndex < Equipment.Length)
+            if (Options.Instance.Equipment.WeaponSlot > -1 && Options.Instance.Equipment.WeaponSlot < Equipment.Length)
             {
-                if (Equipment[Options.WeaponIndex] != Guid.Empty && this != Globals.Me ||
-                    MyEquipment[Options.WeaponIndex] < Options.MaxInvItems)
+                if (Equipment[Options.Instance.Equipment.WeaponSlot] != Guid.Empty && this != Globals.Me ||
+                    MyEquipment[Options.Instance.Equipment.WeaponSlot] < Options.Instance.Player.MaxInventory)
                 {
                     var itemId = Guid.Empty;
                     if (this == Globals.Me)
                     {
-                        var slot = MyEquipment[Options.WeaponIndex];
+                        var slot = MyEquipment[Options.Instance.Equipment.WeaponSlot];
                         if (slot > -1)
                         {
                             itemId = Inventory[slot].ItemId;
@@ -1948,7 +1948,7 @@ public partial class Entity : IEntity
                     }
                     else
                     {
-                        itemId = Equipment[Options.WeaponIndex];
+                        itemId = Equipment[Options.Instance.Equipment.WeaponSlot];
                     }
 
                     var item = ItemBase.Get(itemId);
@@ -2059,7 +2059,7 @@ public partial class Entity : IEntity
     {
         SpriteAnimations spriteAnimationOveride = spriteAnimation;
         var textureOverride = string.Empty;
-        var weaponId = Equipment[Options.WeaponIndex];
+        var weaponId = Equipment[Options.Instance.Equipment.WeaponSlot];
 
         switch (spriteAnimation)
         {
@@ -2078,7 +2078,7 @@ public partial class Entity : IEntity
                 break;
 
             case SpriteAnimations.Shoot:
-                if (Equipment.Length <= Options.WeaponIndex)
+                if (Equipment.Length <= Options.Instance.Equipment.WeaponSlot)
                 {
                     break;
                 }
@@ -2109,7 +2109,7 @@ public partial class Entity : IEntity
                 break;
 
             case SpriteAnimations.Weapon:
-                if (Equipment.Length <= Options.WeaponIndex)
+                if (Equipment.Length <= Options.Instance.Equipment.WeaponSlot)
                 {
                     break;
                 }
@@ -2173,10 +2173,10 @@ public partial class Entity : IEntity
             return Dir;
         }
 
-        var originY = Y + originMapController.GridY * Options.MapHeight;
-        var originX = X + originMapController.GridX * Options.MapWidth;
-        var targetY = en.Y + targetMapController.GridY * Options.MapHeight;
-        var targetX = en.X + targetMapController.GridX * Options.MapWidth;
+        var originY = Y + originMapController.GridY * Options.Instance.Map.MapHeight;
+        var originX = X + originMapController.GridX * Options.Instance.Map.MapWidth;
+        var targetY = en.Y + targetMapController.GridY * Options.Instance.Map.MapHeight;
+        var targetX = en.X + targetMapController.GridX * Options.Instance.Map.MapWidth;
 
         // Calculate the offset between origin and target along both of their axis.
         var yDiff = originY - targetY;
@@ -2189,7 +2189,7 @@ public partial class Entity : IEntity
         }
 
         // If X offset is 0 or If diagonal movement is disabled, direction is determined by Y offset.
-        if (xDiff == 0 || !Options.Instance.MapOpts.EnableDiagonalMovement)
+        if (xDiff == 0 || !Options.Instance.Map.EnableDiagonalMovement)
         {
             return yDiff > 0 ? Direction.Up : Direction.Down;
         }
@@ -2244,25 +2244,25 @@ public partial class Entity : IEntity
             if (delta.X < 0)
             {
                 gridX--;
-                tmpX = Options.MapWidth - delta.X * -1;
+                tmpX = Options.Instance.Map.MapWidth - delta.X * -1;
             }
 
             if (delta.Y < 0)
             {
                 gridY--;
-                tmpY = Options.MapHeight - delta.Y * -1;
+                tmpY = Options.Instance.Map.MapHeight - delta.Y * -1;
             }
 
-            if (delta.X > Options.MapWidth - 1)
+            if (delta.X > Options.Instance.Map.MapWidth - 1)
             {
                 gridX++;
-                tmpX = delta.X - Options.MapWidth;
+                tmpX = delta.X - Options.Instance.Map.MapWidth;
             }
 
-            if (delta.Y > Options.MapHeight - 1)
+            if (delta.Y > Options.Instance.Map.MapHeight - 1)
             {
                 gridY++;
-                tmpY = delta.Y - Options.MapHeight;
+                tmpY = delta.Y - Options.Instance.Map.MapHeight;
             }
 
             if (Globals.MapGrid == default || gridX < 0 || gridY < 0 || gridX >= Globals.MapGridWidth || gridY >= Globals.MapGridHeight)

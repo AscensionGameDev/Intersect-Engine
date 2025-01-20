@@ -260,7 +260,7 @@ public partial class SpatialAStar
         inNeighbors[4] = x < Width - 1 ? mSearchSpace[x + 1, y] : null; // Right
         inNeighbors[6] = y < Height - 1 ? mSearchSpace[x, y + 1] : null; // Down
 
-        if (Options.Instance.MapOpts.EnableDiagonalMovement)
+        if (Options.Instance.Map.EnableDiagonalMovement)
         {
             inNeighbors[0] = y > 0 && x > 0 ? mSearchSpace[x - 1, y - 1] : null; // UpLeft
             inNeighbors[2] = y > 0 && x < Width - 1 ? mSearchSpace[x + 1, y - 1] : null; // UpRight
