@@ -521,12 +521,12 @@ public static partial class Graphics
         var drawLayers = new List<string>();
         if (layer == 0)
         {
-            drawLayers.AddRange(Options.Instance.MapOpts.Layers.LowerLayers);
+            drawLayers.AddRange(Options.Instance.Map.Layers.LowerLayers);
         }
         else
         {
-            drawLayers.AddRange(Options.Instance.MapOpts.Layers.MiddleLayers);
-            drawLayers.AddRange(Options.Instance.MapOpts.Layers.UpperLayers);
+            drawLayers.AddRange(Options.Instance.Map.Layers.MiddleLayers);
+            drawLayers.AddRange(Options.Instance.Map.Layers.UpperLayers);
         }
 
         x1 = 0;
@@ -619,7 +619,7 @@ public static partial class Graphics
                         else if (Globals.CurrentLayer == LayerOptions.Events)
                         {
                         }
-                        else if (Globals.CurrentLayer == LayerOptions.Instance.Npcs)
+                        else if (Globals.CurrentLayer == LayerOptions.Npcs)
                         {
                         }
                         else if (Globals.CurrentTileset != null)
@@ -978,7 +978,7 @@ public static partial class Graphics
                     }
                 }
             }
-            else if (Globals.CurrentLayer == LayerOptions.Instance.Npcs) //NPCS
+            else if (Globals.CurrentLayer == LayerOptions.Npcs) //NPCS
             {
                 for (var i = 0; i < tmpMap.Spawns.Count; i++)
                 {

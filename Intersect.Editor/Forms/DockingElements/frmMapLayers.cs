@@ -69,16 +69,16 @@ public partial class FrmMapLayers : DockContent
         NpcPulseColor = ColorTranslator.FromHtml(Preferences.LoadPreference("NpcPulseColor"));
         
         //See if we can use the old style icons instead of a combobox
-        if (Options.Instance.MapOpts.Layers.All.Count <= mMapLayers.Count)
+        if (Options.Instance.Map.Layers.All.Count <= mMapLayers.Count)
         {
             //Hide combobox...
             cmbMapLayer.Hide();
             for (int i = 0; i < mMapLayers.Count; i++)
             {
-                if (i < Options.Instance.MapOpts.Layers.All.Count)
+                if (i < Options.Instance.Map.Layers.All.Count)
                 {
-                    Strings.Tiles.maplayers.TryGetValue(Options.Instance.MapOpts.Layers.All[i].ToLower(), out LocalizedString layerName);
-                    if (layerName == null) layerName = Options.Instance.MapOpts.Layers.All[i];
+                    Strings.Tiles.maplayers.TryGetValue(Options.Instance.Map.Layers.All[i].ToLower(), out LocalizedString layerName);
+                    if (layerName == null) layerName = Options.Instance.Map.Layers.All[i];
                     mMapLayers[i].Text = layerName;
                     mMapLayers[i].Show();
                 }
@@ -96,16 +96,16 @@ public partial class FrmMapLayers : DockContent
             }
             //Show Combobox
             cmbMapLayer.Show();
-            cmbMapLayer.Items.AddRange(Options.Instance.MapOpts.Layers.All.ToArray());
+            cmbMapLayer.Items.AddRange(Options.Instance.Map.Layers.All.ToArray());
             cmbMapLayer.SelectedIndex = 0;
         }
 
-        foreach (var layer in Options.Instance.MapOpts.Layers.All)
+        foreach (var layer in Options.Instance.Map.Layers.All)
         {
             LayerVisibility.Add(layer, true);
         }
 
-        SetLayer(Options.Instance.MapOpts.Layers.All[0]);
+        SetLayer(Options.Instance.Map.Layers.All[0]);
         if (cmbTilesets.Items.Count > 0)
         {
             SetTileset(cmbTilesets.Items[0].ToString());
@@ -351,7 +351,7 @@ public partial class FrmMapLayers : DockContent
     {
         Globals.CurrentLayer = name;
 
-        var index = Options.Instance.MapOpts.Layers.All.IndexOf(name);
+        var index = Options.Instance.Map.Layers.All.IndexOf(name);
 
         if (!cmbMapLayer.Visible)
         {
@@ -362,7 +362,7 @@ public partial class FrmMapLayers : DockContent
                     mMapLayers[i].BackgroundImage.Dispose();
                     mMapLayers[i].BackgroundImage = null;
                 }
-                mMapLayers[i].BackgroundImage = DrawLayerImage(i, i == index, !LayerVisibility[Options.Instance.MapOpts.Layers.All[i]]);
+                mMapLayers[i].BackgroundImage = DrawLayerImage(i, i == index, !LayerVisibility[Options.Instance.Map.Layers.All[i]]);
             }
         }
         else
@@ -395,7 +395,7 @@ public partial class FrmMapLayers : DockContent
         var drawIndex = 0;
 
         //Draw Lower & Middle Layers
-        foreach (var l in Options.Instance.MapOpts.Layers.LowerLayers)
+        foreach (var l in Options.Instance.Map.Layers.LowerLayers)
         {
             var drawImg = layer;
             if (drawIndex == layerIndex)
@@ -408,15 +408,15 @@ public partial class FrmMapLayers : DockContent
 
 
         //If this image for is an upper layer, render the face below the next layers
-        if (!Options.Instance.MapOpts.Layers.LowerLayers.Contains(Options.Instance.MapOpts.Layers.All[layerIndex]))
+        if (!Options.Instance.Map.Layers.LowerLayers.Contains(Options.Instance.Map.Layers.All[layerIndex]))
         {
             g.DrawImage(drawFace, new PointF(13, 13));
         }
 
 
         //Draw Upper Layers
-        var middleUpperLayers = Options.Instance.MapOpts.Layers.LowerLayers.ToList();
-        middleUpperLayers.AddRange(Options.Instance.MapOpts.Layers.MiddleLayers);
+        var middleUpperLayers = Options.Instance.Map.Layers.LowerLayers.ToList();
+        middleUpperLayers.AddRange(Options.Instance.Map.Layers.MiddleLayers);
         foreach (var l in middleUpperLayers)
         {
             var drawImg = layer;
@@ -429,7 +429,7 @@ public partial class FrmMapLayers : DockContent
         }
 
         //If this image for is a lower layer, render the face above everything
-        if (Options.Instance.MapOpts.Layers.LowerLayers.Contains(Options.Instance.MapOpts.Layers.All[layerIndex]))
+        if (Options.Instance.Map.Layers.LowerLayers.Contains(Options.Instance.Map.Layers.All[layerIndex]))
         {
             g.DrawImage(drawFace, new PointF(13, 13));
         }
@@ -1303,7 +1303,7 @@ public partial class FrmMapLayers : DockContent
 
     public void btnLightsHeader_Click(object sender, EventArgs e)
     {
-        if (Globals.CurrentLayer != LayerOptions.Lights && Globals.CurrentLayer != LayerOptions.Events && Globals.CurrentLayer != LayerOptions.Instance.Npcs)
+        if (Globals.CurrentLayer != LayerOptions.Lights && Globals.CurrentLayer != LayerOptions.Events && Globals.CurrentLayer != LayerOptions.Npcs)
         {
             Globals.SavedTool = Globals.CurrentTool;
         }
@@ -1318,7 +1318,7 @@ public partial class FrmMapLayers : DockContent
 
     private void btnEventsHeader_Click(object sender, EventArgs e)
     {
-        if (Globals.CurrentLayer != LayerOptions.Lights && Globals.CurrentLayer != LayerOptions.Events && Globals.CurrentLayer != LayerOptions.Instance.Npcs)
+        if (Globals.CurrentLayer != LayerOptions.Lights && Globals.CurrentLayer != LayerOptions.Events && Globals.CurrentLayer != LayerOptions.Npcs)
         {
             Globals.SavedTool = Globals.CurrentTool;
         }
@@ -1333,13 +1333,13 @@ public partial class FrmMapLayers : DockContent
 
     private void btnNpcsHeader_Click(object sender, EventArgs e)
     {
-        if (Globals.CurrentLayer != LayerOptions.Lights && Globals.CurrentLayer != LayerOptions.Events && Globals.CurrentLayer != LayerOptions.Instance.Npcs)
+        if (Globals.CurrentLayer != LayerOptions.Lights && Globals.CurrentLayer != LayerOptions.Events && Globals.CurrentLayer != LayerOptions.Npcs)
         {
             Globals.SavedTool = Globals.CurrentTool;
         }
 
         ChangeTab();
-        Globals.CurrentLayer = LayerOptions.Instance.Npcs;
+        Globals.CurrentLayer = LayerOptions.Npcs;
         Core.Graphics.TilePreviewUpdated = true;
         RefreshNpcList();
         btnNpcsHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
@@ -1352,9 +1352,9 @@ public partial class FrmMapLayers : DockContent
         if (e.Button == MouseButtons.Left)
         {
             var index = mMapLayers.IndexOf((PictureBox)sender);
-            if (index > -1 && index < Options.Instance.MapOpts.Layers.All.Count)
+            if (index > -1 && index < Options.Instance.Map.Layers.All.Count)
             {
-                SetLayer(Options.Instance.MapOpts.Layers.All[index]);
+                SetLayer(Options.Instance.Map.Layers.All[index]);
             }
         }
         else
@@ -1365,9 +1365,9 @@ public partial class FrmMapLayers : DockContent
 
     private void ToggleLayerVisibility(int index)
     {
-        if (index > -1 && index < Options.Instance.MapOpts.Layers.All.Count)
+        if (index > -1 && index < Options.Instance.Map.Layers.All.Count)
         {
-            LayerVisibility[Options.Instance.MapOpts.Layers.All[index]] = !LayerVisibility[Options.Instance.MapOpts.Layers.All[index]];
+            LayerVisibility[Options.Instance.Map.Layers.All[index]] = !LayerVisibility[Options.Instance.Map.Layers.All[index]];
             SetLayer(Globals.CurrentLayer);
         }
 
@@ -1376,7 +1376,7 @@ public partial class FrmMapLayers : DockContent
     private void picMapLayer_MouseHover(object sender, EventArgs e)
     {
         var tt = new ToolTip();
-        tt.SetToolTip((PictureBox) sender, Options.Instance.MapOpts.Layers.All[mMapLayers.IndexOf((PictureBox)sender)]);
+        tt.SetToolTip((PictureBox) sender, Options.Instance.Map.Layers.All[mMapLayers.IndexOf((PictureBox)sender)]);
     }
 
     private void cmbTilesets_MouseDown(object sender, MouseEventArgs e)
@@ -1401,7 +1401,7 @@ public partial class FrmMapLayers : DockContent
     {
         if (cmbMapLayer.SelectedIndex > -1)
         {
-            SetLayer(Options.Instance.MapOpts.Layers.All[cmbMapLayer.SelectedIndex]);
+            SetLayer(Options.Instance.Map.Layers.All[cmbMapLayer.SelectedIndex]);
         }
     }
 

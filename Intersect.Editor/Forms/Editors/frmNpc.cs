@@ -112,11 +112,11 @@ public partial class FrmNpc : EditorForm
             cmbScalingStat.Items.Add(Globals.GetStatName(x));
         }
 
-        nudStr.Maximum = Options.Instance.PlayerOpts.MaxStat;
-        nudMag.Maximum = Options.Instance.PlayerOpts.MaxStat;
-        nudDef.Maximum = Options.Instance.PlayerOpts.MaxStat;
-        nudMR.Maximum = Options.Instance.PlayerOpts.MaxStat;
-        nudSpd.Maximum = Options.Instance.PlayerOpts.MaxStat;
+        nudStr.Maximum = Options.Instance.Player.MaxStat;
+        nudMag.Maximum = Options.Instance.Player.MaxStat;
+        nudDef.Maximum = Options.Instance.Player.MaxStat;
+        nudMR.Maximum = Options.Instance.Player.MaxStat;
+        nudSpd.Maximum = Options.Instance.Player.MaxStat;
         InitLocalization();
         UpdateEditor();
     }

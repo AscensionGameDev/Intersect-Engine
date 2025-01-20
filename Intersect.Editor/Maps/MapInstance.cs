@@ -90,7 +90,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>
         lock (MapLock)
         {
             Layers = JsonConvert.DeserializeObject<Dictionary<string, Tile[,]>>(LZ4.UnPickleString(packet), mJsonSerializerSettings);
-            foreach (var layer in Options.Instance.MapOpts.Layers.All)
+            foreach (var layer in Options.Instance.Map.Layers.All)
             {
                 if (!Layers.ContainsKey(layer))
                 {

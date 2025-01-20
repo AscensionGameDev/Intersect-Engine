@@ -128,16 +128,16 @@ public partial class FrmSpell : EditorForm
         cmbWarpMap.Items.AddRange(MapList.OrderedMaps.Select(map => map?.Name).ToArray());
         cmbWarpMap.SelectedIndex = 0;
 
-        nudStr.Maximum = Options.Instance.PlayerOpts.MaxStat;
-        nudMag.Maximum = Options.Instance.PlayerOpts.MaxStat;
-        nudDef.Maximum = Options.Instance.PlayerOpts.MaxStat;
-        nudMR.Maximum = Options.Instance.PlayerOpts.MaxStat;
-        nudSpd.Maximum = Options.Instance.PlayerOpts.MaxStat;
-        nudStr.Minimum = -Options.Instance.PlayerOpts.MaxStat;
-        nudMag.Minimum = -Options.Instance.PlayerOpts.MaxStat;
-        nudDef.Minimum = -Options.Instance.PlayerOpts.MaxStat;
-        nudMR.Minimum = -Options.Instance.PlayerOpts.MaxStat;
-        nudSpd.Minimum = -Options.Instance.PlayerOpts.MaxStat;
+        nudStr.Maximum = Options.Instance.Player.MaxStat;
+        nudMag.Maximum = Options.Instance.Player.MaxStat;
+        nudDef.Maximum = Options.Instance.Player.MaxStat;
+        nudMR.Maximum = Options.Instance.Player.MaxStat;
+        nudSpd.Maximum = Options.Instance.Player.MaxStat;
+        nudStr.Minimum = -Options.Instance.Player.MaxStat;
+        nudMag.Minimum = -Options.Instance.Player.MaxStat;
+        nudDef.Minimum = -Options.Instance.Player.MaxStat;
+        nudMR.Minimum = -Options.Instance.Player.MaxStat;
+        nudSpd.Minimum = -Options.Instance.Player.MaxStat;
 
         nudCastDuration.Maximum = Int32.MaxValue;
         nudCooldownDuration.Maximum = Int32.MaxValue;

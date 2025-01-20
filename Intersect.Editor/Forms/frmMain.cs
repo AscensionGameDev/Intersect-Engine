@@ -438,7 +438,7 @@ public partial class FrmMain : Form
         UpdateRunState();
 
         //Init layer visibility buttons
-        foreach (var layer in Options.Instance.MapOpts.Layers.All)
+        foreach (var layer in Options.Instance.Map.Layers.All)
         {
             Strings.Tiles.maplayers.TryGetValue(layer.ToLower(), out LocalizedString layerName);
             if (layerName == null) layerName = layer;
@@ -587,7 +587,7 @@ public partial class FrmMain : Form
         }
 
         //Process the Fill/Erase Buttons, these should display for all valid map layers as well as Attributes.
-        if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer) || Globals.CurrentLayer == LayerOptions.Attributes)
+        if (Options.Instance.Map.Layers.All.Contains(Globals.CurrentLayer) || Globals.CurrentLayer == LayerOptions.Attributes)
         {
             toolStripBtnFill.Enabled = true;
             fillToolStripMenuItem.Enabled = true;
@@ -620,7 +620,7 @@ public partial class FrmMain : Form
         {
             Globals.CurrentTool = EditingTool.Selection;
         }
-        else if (Globals.CurrentLayer == LayerOptions.Instance.Npcs)
+        else if (Globals.CurrentLayer == LayerOptions.Npcs)
         {
             Globals.CurrentTool = EditingTool.Selection;
         }
@@ -1125,7 +1125,7 @@ public partial class FrmMain : Form
     //Edit
     private void fillToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
+        if (Options.Instance.Map.Layers.All.Contains(Globals.CurrentLayer))
         {
             Globals.MapEditorWindow.FillLayer();
         }
@@ -1133,7 +1133,7 @@ public partial class FrmMain : Form
 
     private void eraseLayerToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
+        if (Options.Instance.Map.Layers.All.Contains(Globals.CurrentLayer))
         {
             Globals.MapEditorWindow.EraseLayer();
         }

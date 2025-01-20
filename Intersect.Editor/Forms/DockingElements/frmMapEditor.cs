@@ -242,7 +242,7 @@ public partial class FrmMapEditor : DockContent
                 Globals.MouseButton = 0;
                 if (Globals.CurrentTool == EditingTool.Dropper)
                 {
-                    foreach (var layer in Enumerable.Reverse(Options.Instance.MapOpts.Layers.All))
+                    foreach (var layer in Enumerable.Reverse(Options.Instance.Map.Layers.All))
                     {
                         if (tmpMap.Layers[layer][Globals.CurTileX, Globals.CurTileY].TilesetId != Guid.Empty)
                         {
@@ -322,7 +322,7 @@ public partial class FrmMapEditor : DockContent
                     {
                         Globals.MapEditorWindow.SmartFillAttributes(Globals.CurTileX, Globals.CurTileY);
                     }
-                    else if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
+                    else if (Options.Instance.Map.Layers.All.Contains(Globals.CurrentLayer))
                     {
                         Globals.MapEditorWindow.SmartFillLayer(Globals.CurTileX, Globals.CurTileY);
                     }
@@ -335,7 +335,7 @@ public partial class FrmMapEditor : DockContent
                     {
                         Globals.MapEditorWindow.SmartEraseAttributes(Globals.CurTileX, Globals.CurTileY);
                     }
-                    else if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
+                    else if (Options.Instance.Map.Layers.All.Contains(Globals.CurrentLayer))
                     {
                         Globals.MapEditorWindow.SmartEraseLayer(Globals.CurTileX, Globals.CurTileY);
                     }
@@ -358,7 +358,7 @@ public partial class FrmMapEditor : DockContent
                     else if (Globals.CurrentLayer == LayerOptions.Events) //Events
                     {
                     }
-                    else if (Globals.CurrentLayer == LayerOptions.Instance.Npcs) //NPCS
+                    else if (Globals.CurrentLayer == LayerOptions.Npcs) //NPCS
                     {
                     }
                     else
@@ -420,7 +420,7 @@ public partial class FrmMapEditor : DockContent
 
                 if (Globals.CurrentTool == EditingTool.Fill)
                 {
-                    if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
+                    if (Options.Instance.Map.Layers.All.Contains(Globals.CurrentLayer))
                     {
                         Globals.MapEditorWindow.FillLayer();
                     }
@@ -429,7 +429,7 @@ public partial class FrmMapEditor : DockContent
                 }
                 else if (Globals.CurrentTool == EditingTool.Erase)
                 {
-                    if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
+                    if (Options.Instance.Map.Layers.All.Contains(Globals.CurrentLayer))
                     {
                         Globals.MapEditorWindow.EraseLayer();
                     }
@@ -475,7 +475,7 @@ public partial class FrmMapEditor : DockContent
                         mMapChanged = true;
                     }
                 }
-                else if (Globals.CurrentLayer == LayerOptions.Instance.Npcs)
+                else if (Globals.CurrentLayer == LayerOptions.Npcs)
                 {
                 }
                 else
@@ -676,7 +676,7 @@ public partial class FrmMapEditor : DockContent
                     else if (Globals.CurrentLayer == LayerOptions.Events)
                     {
                     }
-                    else if (Globals.CurrentLayer == LayerOptions.Instance.Npcs)
+                    else if (Globals.CurrentLayer == LayerOptions.Npcs)
                     {
                         if (Globals.MapLayersWindow.rbDeclared.Checked == true && Globals.MapLayersWindow.lstMapNpcs.Items.Count > 0)
                         {
@@ -778,7 +778,7 @@ public partial class FrmMapEditor : DockContent
                     {
                         Globals.MapLayersWindow.RemoveAttribute(tmpMap, Globals.CurTileX, Globals.CurTileY);
                     }
-                    else if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
+                    else if (Options.Instance.Map.Layers.All.Contains(Globals.CurrentLayer))
                     {
                         if (Globals.CurrentTool == EditingTool.Brush)
                         {
@@ -891,7 +891,7 @@ public partial class FrmMapEditor : DockContent
             else if (Globals.CurrentLayer == LayerOptions.Events)
             {
             }
-            else if (Globals.CurrentLayer == LayerOptions.Instance.Npcs)
+            else if (Globals.CurrentLayer == LayerOptions.Npcs)
             {
             }
             else
@@ -1244,7 +1244,7 @@ public partial class FrmMapEditor : DockContent
                 }
 
             //NPCS
-            case LayerOptions.Instance.Npcs:
+            case LayerOptions.Npcs:
                 {
                     var spawnIndex = Globals.MapLayersWindow.lstMapNpcs.SelectedIndex;
                     var spawn = -1 < spawnIndex && spawnIndex < currentMap.Spawns.Count
@@ -1320,7 +1320,7 @@ public partial class FrmMapEditor : DockContent
                             Globals.CurrentMap, Globals.CurTileX, Globals.CurTileY
                         );
                     }
-                    else if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
+                    else if (Options.Instance.Map.Layers.All.Contains(Globals.CurrentLayer))
                     {
                         if (Globals.Autotilemode == 0)
                         {
@@ -1407,7 +1407,7 @@ public partial class FrmMapEditor : DockContent
                             Globals.CurrentMap, Globals.CurTileX, Globals.CurTileY
                         );
                     }
-                    else if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
+                    else if (Options.Instance.Map.Layers.All.Contains(Globals.CurrentLayer))
                     {
                         tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX, Globals.CurTileY].TilesetId =
                             Guid.Empty;
@@ -1810,10 +1810,10 @@ public partial class FrmMapEditor : DockContent
             }
         }
 
-        var layers = Options.Instance.MapOpts.Layers.All;
+        var layers = Options.Instance.Map.Layers.All;
         if (Globals.SelectionType == (int)SelectionTypes.CurrentLayer)
         {
-            layers = Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer) ? new List<string>() { Globals.CurrentLayer } : new List<string>();
+            layers = Options.Instance.Map.Layers.All.Contains(Globals.CurrentLayer) ? new List<string>() { Globals.CurrentLayer } : new List<string>();
         }
 
         //Finish by copying the source tiles over
@@ -1861,7 +1861,7 @@ public partial class FrmMapEditor : DockContent
                     //Spawns
                     NpcSpawn spawnCopy;
                     if (Globals.SelectionType != (int)SelectionTypes.CurrentLayer ||
-                        Globals.CurrentLayer == LayerOptions.Instance.Npcs)
+                        Globals.CurrentLayer == LayerOptions.Npcs)
                     {
                         if (Globals.SelectionSource.FindSpawnAt(x0 - dragxoffset, y0 - dragyoffset) != null)
                         {
@@ -1962,10 +1962,10 @@ public partial class FrmMapEditor : DockContent
             }
         }
 
-        var layers = Options.Instance.MapOpts.Layers.All;
+        var layers = Options.Instance.Map.Layers.All;
         if (Globals.SelectionType == (int)SelectionTypes.CurrentLayer)
         {
-            layers = Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer) ? new List<string>() { Globals.CurrentLayer } : new List<string>();
+            layers = Options.Instance.Map.Layers.All.Contains(Globals.CurrentLayer) ? new List<string>() { Globals.CurrentLayer } : new List<string>();
         }
 
         //start by deleting the source tiles
@@ -2018,7 +2018,7 @@ public partial class FrmMapEditor : DockContent
 
                     //Spawns
                     if (Globals.SelectionType != (int)SelectionTypes.CurrentLayer ||
-                        Globals.CurrentLayer == LayerOptions.Instance.Npcs)
+                        Globals.CurrentLayer == LayerOptions.Npcs)
                     {
                         for (var w = 0; w < tmpMap.Spawns.Count; w++)
                         {
@@ -2107,7 +2107,7 @@ public partial class FrmMapEditor : DockContent
             {
                 for (var y = 0; y <= selH; y++)
                 {
-                    foreach (var layer in Options.Instance.MapOpts.Layers.All)
+                    foreach (var layer in Options.Instance.Map.Layers.All)
                     {
                         Globals.CurrentMap.Layers[layer][selX + x, selY + y] = tmpMap.Layers[layer][selX + x, selY + selH - y];
                     }
@@ -2181,7 +2181,7 @@ public partial class FrmMapEditor : DockContent
             {
                 for (var y = 0; y <= selH; y++)
                 {
-                    foreach (var layer in Options.Instance.MapOpts.Layers.All)
+                    foreach (var layer in Options.Instance.Map.Layers.All)
                     {
                         Globals.CurrentMap.Layers[layer][selX + x, selY + y] = tmpMap.Layers[layer][selX + selW - x, selY + y];
                     }
