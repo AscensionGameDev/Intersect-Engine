@@ -37,10 +37,11 @@ Example:
 
 `dotnet ef migrations add Net7Upgrade --context MySqlLoggingContext --namespace Intersect.Server.Migrations.MySql.Logging --output-dir Migrations/MySql/Logging/ -- --databaseType MySql --connectionString "Username=<username>;Password=<password>;Database=<a db that exists>"`
 
+**Additionally, when trying to generate a migration on Windows you may need to include `Server=localhost` in your connection string.**
 
 **_A connection string is required for generating MariaDB/MySQL migrations_**, if you fail to provide one (or provide an invalid one) it will crash and fail with something like the following:
 
-`Unable to create an object of type 'MySqlPlayerContext'. For the different patterns supported at design time, see https://go.microsoft.com/fwlink/?linkid=851728`
+`Unable to create a 'DbContext' of type 'MySqlGameContext'. For the different patterns supported at design time, see https://go.microsoft.com/fwlink/?linkid=851728`
 
 <details>
 	<summary>
