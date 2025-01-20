@@ -566,7 +566,7 @@ public partial class EventCommandConditionalBranch : UserControl
             case ConditionTypes.CheckEquipment:
                 grpCheckEquippedSlot.Show();
                 cmbCheckEquippedSlot.Items.Clear();
-                foreach (var slot in Options.EquipmentSlots)
+                foreach (var slot in Options.Instance.Equipment.Slots)
                 {
                     cmbCheckEquippedSlot.Items.Add(slot);
                 }
@@ -1393,7 +1393,7 @@ public partial class EventCommandConditionalBranch : UserControl
 
     private void SetupFormValues(CheckEquippedSlot condition)
     {
-        cmbCheckEquippedSlot.SelectedIndex = Options.EquipmentSlots.IndexOf(condition.Name);
+        cmbCheckEquippedSlot.SelectedIndex = Options.Instance.Equipment.Slots.IndexOf(condition.Name);
     }
 
 
@@ -1591,7 +1591,7 @@ public partial class EventCommandConditionalBranch : UserControl
 
     private void SaveFormValues(CheckEquippedSlot condition)
     {
-        condition.Name = Options.EquipmentSlots[cmbCheckEquippedSlot.SelectedIndex];
+        condition.Name = Options.Instance.Equipment.Slots[cmbCheckEquippedSlot.SelectedIndex];
     }
     #endregion
 

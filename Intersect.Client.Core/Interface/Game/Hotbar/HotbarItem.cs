@@ -496,7 +496,7 @@ public partial class HotbarItem
 
                     if (Interface.GameUi.Hotbar.RenderBounds().IntersectsWith(dragRect))
                     {
-                        for (var i = 0; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
+                        for (var i = 0; i < Options.Instance.Player.HotbarSlotCount; i++)
                         {
                             if (Interface.GameUi.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {

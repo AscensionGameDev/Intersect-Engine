@@ -69,7 +69,7 @@ public partial class EscapeMenu : ImagePanel
 
         container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer?.GetResolutionString());
 
-        if (Options.Player.MaxCharacters <= 1)
+        if (Options.Instance.Player.MaxCharacters <= 1)
         {
             _buttonCharacterSelect.IsDisabled = true;
         }

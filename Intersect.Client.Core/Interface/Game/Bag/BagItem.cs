@@ -272,7 +272,7 @@ public partial class BagItem
 
                     if (invWindow.RenderBounds().IntersectsWith(dragRect))
                     {
-                        for (var i = 0; i < Options.MaxInvItems; i++)
+                        for (var i = 0; i < Options.Instance.Player.MaxInventory; i++)
                         {
                             if (invWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {

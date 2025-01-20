@@ -35,7 +35,7 @@ public partial class HotBarWindow
 
     private void InitHotbarItems()
     {
-        for (var i = 0; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
+        for (var i = 0; i < Options.Instance.Player.HotbarSlotCount; i++)
         {
             Items.Add(new HotbarItem((byte) i, HotbarWindow));
             Items[i].HotbarIcon = new ImagePanel(HotbarWindow, "HotbarContainer" + i);
@@ -51,7 +51,7 @@ public partial class HotBarWindow
             return;
         }
 
-        for (var i = 0; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
+        for (var i = 0; i < Options.Instance.Player.HotbarSlotCount; i++)
         {
             Items[i].Update();
         }

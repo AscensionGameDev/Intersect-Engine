@@ -17,7 +17,7 @@ public partial struct MapTileLoc
     {
         unchecked
         {
-            return MapId.GetHashCode() + (Y * Options.MapHeight) + X;
+            return MapId.GetHashCode() + (Y * Options.Instance.Map.MapHeight) + X;
         }
     }
 

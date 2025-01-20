@@ -445,7 +445,7 @@ public partial class CreateCharacterWindow : ImagePanel
     private void BackButton_Clicked(Base sender, ClickedEventArgs arguments)
     {
         Hide();
-        if (Options.Player.MaxCharacters <= 1)
+        if (Options.Instance.Player.MaxCharacters <= 1)
         {
             //Logout
             _mainMenu.Show();

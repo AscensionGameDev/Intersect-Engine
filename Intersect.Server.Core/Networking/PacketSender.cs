@@ -57,7 +57,7 @@ public static partial class PacketSender
     //ConfigPacket
     public static void SendServerConfig(Client client)
     {
-        client.Send(new ConfigPacket(Options.OptionsData));
+        client.Send(new ConfigPacket(Options.Instance.OptionsData));
     }
 
     //EnteringGamePacket
@@ -203,7 +203,7 @@ public static partial class PacketSender
         }
         else
         {
-            switch (Options.GameBorderStyle)
+            switch (Options.Instance.Map.GameBorderStyle)
             {
                 case 1:
                     mapPacket.CameraHolds = new bool[4] { true, true, true, true };
@@ -1196,13 +1196,13 @@ public static partial class PacketSender
             return;
         }
 
-        var invItems = new InventoryUpdatePacket[Options.MaxInvItems];
-        if (player.Items.Capacity < Options.Instance.PlayerOpts.MaxInventory)
+        var invItems = new InventoryUpdatePacket[Options.Instance.Player.MaxInventory];
+        if (player.Items.Capacity < Options.Instance.Player.MaxInventory)
         {
             throw new InvalidOperationException($"Tried to send inventory before fully loading player {player.Id}");
         }
 
-        for (var i = 0; i < Options.MaxInvItems; i++)
+        for (var i = 0; i < Options.Instance.Player.MaxInventory; i++)
         {
             var playerItem = player.Items[i];
             invItems[i] = new InventoryUpdatePacket(
@@ -1241,8 +1241,8 @@ public static partial class PacketSender
             return;
         }
 
-        var spells = new SpellUpdatePacket[Options.Instance.PlayerOpts.MaxSpells];
-        for (var i = 0; i < Options.Instance.PlayerOpts.MaxSpells; i++)
+        var spells = new SpellUpdatePacket[Options.Instance.Player.MaxSpells];
+        for (var i = 0; i < Options.Instance.Player.MaxSpells; i++)
         {
             spells[i] = new SpellUpdatePacket(i, player.Spells[i].SpellId);
         }
@@ -1270,9 +1270,9 @@ public static partial class PacketSender
         }
         else
         {
-            var equipment = new Guid[Options.EquipmentSlots.Count];
+            var equipment = new Guid[Options.Instance.Equipment.Slots.Count];
 
-            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+            for (var i = 0; i < Options.Instance.Equipment.Slots.Count; i++)
             {
                 if (en.Equipment[i] == -1 || en.Items[en.Equipment[i]].ItemId == Guid.Empty)
                 {
@@ -1311,8 +1311,8 @@ public static partial class PacketSender
     //HotbarPacket
     public static void SendHotbarSlots(Player player)
     {
-        var hotbarData = new string[Options.Instance.PlayerOpts.HotbarSlotCount];
-        for (var i = 0; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
+        var hotbarData = new string[Options.Instance.Player.HotbarSlotCount];
+        for (var i = 0; i < Options.Instance.Player.HotbarSlotCount; i++)
         {
             hotbarData[i] = player.Hotbar[i].Data();
         }
@@ -1360,14 +1360,14 @@ public static partial class PacketSender
 
         var characterPackets = new List<CharacterPacket>();
 
-        var equipmentSlotsOptions = Options.EquipmentSlots;
-        var paperdollOrderOptions = Options.PaperdollOrder;
+        var equipmentSlotsOptions = Options.Instance.Equipment.Slots;
+        var paperdollOrderOptions = Options.Instance.Equipment.Paperdoll.Directions;
 
         if (clientCharacters.Count < 1)
         {
             CharactersPacket emptyBulkCharactersPacket = new(
                 Array.Empty<CharacterPacket>(),
-                client.Characters.Count < Options.MaxCharacters
+                client.Characters.Count < Options.Instance.Player.MaxCharacters
             );
 
             if (!client.Send(emptyBulkCharactersPacket))
@@ -1387,11 +1387,11 @@ public static partial class PacketSender
             var paperdollOrderOptionLayer1 = paperdollOrderOptions[1];
             for (var z = 0; z < paperdollOrderOptionLayer1.Count; z++)
             {
-                var indexOfPaperdoll = equipmentSlotsOptions.IndexOf(Options.PaperdollOrder[1][z]);
+                var indexOfPaperdoll = equipmentSlotsOptions.IndexOf(Options.Instance.Equipment.Paperdoll.Directions[1][z]);
                 if (indexOfPaperdoll < 0)
                 {
                     const string equipmentFragmentNamePlayer = "Player";
-                    if (Options.PaperdollOrder[1][z] == equipmentFragmentNamePlayer)
+                    if (Options.Instance.Equipment.Paperdoll.Directions[1][z] == equipmentFragmentNamePlayer)
                     {
                         equipment[z] = new EquipmentFragment { Name = equipmentFragmentNamePlayer };
                     }
@@ -1400,7 +1400,7 @@ public static partial class PacketSender
                 }
 
                 var inventoryIndexOfEquip = equipmentArray[indexOfPaperdoll];
-                if (inventoryIndexOfEquip <= -1 || inventoryIndexOfEquip >= Options.MaxInvItems)
+                if (inventoryIndexOfEquip <= -1 || inventoryIndexOfEquip >= Options.Instance.Player.MaxInventory)
                 {
                     continue;
                 }
@@ -1438,7 +1438,7 @@ public static partial class PacketSender
 
         CharactersPacket bulkCharactersPacket = new(
             characterPackets.ToArray(),
-            client.Characters.Count < Options.MaxCharacters
+            client.Characters.Count < Options.Instance.Player.MaxCharacters
         );
 
         if (!client.Send(bulkCharactersPacket))

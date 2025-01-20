@@ -55,8 +55,8 @@ public partial class Dash : IDash
             mStartTime = Timing.Global.Milliseconds;
             mStartXCoord = en.OffsetX;
             mStartYCoord = en.OffsetY;
-            mEndXCoord = endMap.X + mEndX * Options.TileWidth - (startMap.X + en.X * Options.TileWidth);
-            mEndYCoord = endMap.Y + mEndY * Options.TileHeight - (startMap.Y + en.Y * Options.TileHeight);
+            mEndXCoord = endMap.X + mEndX * Options.Instance.Map.TileWidth - (startMap.X + en.X * Options.Instance.Map.TileWidth);
+            mEndYCoord = endMap.Y + mEndY * Options.Instance.Map.TileHeight - (startMap.Y + en.Y * Options.Instance.Map.TileHeight);
             if (mChangeDirection > Direction.None)
             {
                 en.Dir = mChangeDirection;

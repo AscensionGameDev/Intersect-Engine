@@ -14,7 +14,7 @@ namespace Intersect.Server.Core.Commands
         protected override void HandleValue(ServerContext context, ParserResult result)
         {
             Console.WriteLine($@"    {Strings.Commands.madepublic}");
-            Options.AdminOnly = false;
+            Options.Instance.AdminOnly = false;
             Options.SaveToDisk();
         }
 

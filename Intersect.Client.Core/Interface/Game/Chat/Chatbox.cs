@@ -124,7 +124,7 @@ public partial class Chatbox
         mChatboxInput.Text = GetDefaultInputText();
         mChatboxInput.Clicked += ChatboxInput_Clicked;
         mChatboxInput.IsTabable = false;
-        mChatboxInput.SetMaxLength(Options.MaxChatLength);
+        mChatboxInput.SetMaxLength(Options.Instance.Chat.MaxChatLength);
         Interface.FocusElements.Add(mChatboxInput);
 
         mChannelLabel = new Label(mChatboxWindow, "ChannelLabel");
@@ -557,12 +557,12 @@ public partial class Chatbox
         if (mLastChatTime > Timing.Global.MillisecondsUtc)
         {
             ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Chatbox.TooFast, Color.Red, ChatMessageType.Error));
-            mLastChatTime = Timing.Global.MillisecondsUtc + Options.MinChatInterval;
+            mLastChatTime = Timing.Global.MillisecondsUtc + Options.Instance.Chat.MinIntervalBetweenChats;
 
             return;
         }
 
-        mLastChatTime = Timing.Global.MillisecondsUtc + Options.MinChatInterval;
+        mLastChatTime = Timing.Global.MillisecondsUtc + Options.Instance.Chat.MinIntervalBetweenChats;
 
         PacketSender.SendChatMsg(
             msg, byte.Parse(mChannelCombobox.SelectedItem.UserData.ToString())

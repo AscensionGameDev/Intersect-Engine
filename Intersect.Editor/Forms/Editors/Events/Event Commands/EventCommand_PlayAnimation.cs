@@ -54,8 +54,8 @@ public partial class EventCommandPlayAnimation : UserControl
 
         chkInstanceToPlayer.Checked = mMyCommand.InstanceToPlayer;
 
-        nudWarpX.Maximum = Options.MapWidth;
-        nudWarpY.Maximum = Options.MapHeight;
+        nudWarpX.Maximum = Options.Instance.Map.MapWidth;
+        nudWarpY.Maximum = Options.Instance.Map.MapHeight;
         UpdateFormElements();
         switch (cmbConditionType.SelectedIndex)
         {

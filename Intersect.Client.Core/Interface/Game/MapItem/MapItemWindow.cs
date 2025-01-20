@@ -61,7 +61,7 @@ public partial class MapItemWindow
     public void Update()
     {
         // Is this disabled from the server config? If so, skip doing anything.
-        if (!Options.Loot.EnableLootWindow)
+        if (!Options.Instance.Loot.EnableLootWindow)
         {
             mMapItemWindow.Hide();
             return;
@@ -75,7 +75,7 @@ public partial class MapItemWindow
 
             // Find all valid locations near our location and iterate through them to find items we can display.
             var itemSlot = 0;
-            foreach (var map in FindSurroundingTiles(Globals.Me.X, Globals.Me.Y, Options.Loot.MaximumLootWindowDistance))
+            foreach (var map in FindSurroundingTiles(Globals.Me.X, Globals.Me.Y, Options.Instance.Loot.MaximumLootWindowDistance))
             {
                 var mapItems = map.Key.MapItems;
                 var tiles = map.Value;
@@ -93,7 +93,7 @@ public partial class MapItemWindow
                     foreach (var mapItem in mapItems[tileIndex])
                     {
                         // Skip rendering this item if we're already past the cap we are allowed to display.
-                        if (itemSlot > Options.Loot.MaximumLootWindowItems - 1)
+                        if (itemSlot > Options.Instance.Loot.MaximumLootWindowItems - 1)
                         {
                             continue;
                         }
@@ -130,7 +130,7 @@ public partial class MapItemWindow
             }
 
             // Update our UI and hide our unused icons.
-            for (var slot = 0; slot < Options.Loot.MaximumLootWindowItems; slot++)
+            for (var slot = 0; slot < Options.Instance.Loot.MaximumLootWindowItems; slot++)
             {
                 if (slot > itemSlot - 1)
                 {
@@ -160,7 +160,7 @@ public partial class MapItemWindow
 
     private void CreateItemContainer()
     {
-        for (var i = 0; i < Options.Loot.MaximumLootWindowItems; i++)
+        for (var i = 0; i < Options.Instance.Loot.MaximumLootWindowItems; i++)
         {
             Items.Add(new MapItemIcon(this));
             Items[i].Container = new ImagePanel(mItemContainer, "MapItemIcon");
@@ -202,7 +202,7 @@ public partial class MapItemWindow
             return;
         }
 
-        _ = Player.TryPickupItem(currentMap.Id, Globals.Me.Y * Options.MapWidth + Globals.Me.X);
+        _ = Player.TryPickupItem(currentMap.Id, Globals.Me.Y * Options.Instance.Map.MapWidth + Globals.Me.X);
         
     }
 
@@ -238,12 +238,12 @@ public partial class MapItemWindow
                             continue;
                         }
 
-                        currentX = (Options.MapWidth + 1) + x;
+                        currentX = (Options.Instance.Map.MapWidth + 1) + x;
                     }
                 }
 
                 // Are we going to the map on our right?
-                if (currentX >= Options.MapWidth)
+                if (currentX >= Options.Instance.Map.MapWidth)
                 {
                     var oldMap = currentMap;
                     if (currentMap.Right != Guid.Empty)
@@ -272,12 +272,12 @@ public partial class MapItemWindow
                             continue;
                         }
 
-                        currentY = (Options.MapHeight + 1) + y;
+                        currentY = (Options.Instance.Map.MapHeight + 1) + y;
                     }
                 }
 
                 // Are we going to the map down from us?
-                if (currentY >= Options.MapHeight)
+                if (currentY >= Options.Instance.Map.MapHeight)
                 {
                     var oldMap = currentMap;
                     if (currentMap.Down != Guid.Empty)
@@ -297,7 +297,7 @@ public partial class MapItemWindow
                 {
                     locations.Add(currentMap, new List<int>());
                 }
-                locations[currentMap].Add(currentY * Options.MapWidth + currentX);
+                locations[currentMap].Add(currentY * Options.Instance.Map.MapWidth + currentX);
             }
         }
 

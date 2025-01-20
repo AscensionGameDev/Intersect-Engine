@@ -86,7 +86,7 @@ public partial class EventCommandEquipItems : UserControl
     private void UpdateUnequipOptions()
     {
         cmbItem.Items.Clear();
-        cmbItem.Items.AddRange(optUnequipItem.Checked || !chkUnequip.Checked ? ItemBase.Names : Options.EquipmentSlots.ToArray());
+        cmbItem.Items.AddRange(optUnequipItem.Checked || !chkUnequip.Checked ? ItemBase.Names : Options.Instance.Equipment.Slots.ToArray());
         cmbItem.SelectedIndex = cmbItem.Items.Count > 0 ? 0 : -1;
         lblItem.Text = optUnequipItem.Checked || !chkUnequip.Checked ? Strings.EventEquipItems.item : Strings.EventEquipItems.slot;
     }

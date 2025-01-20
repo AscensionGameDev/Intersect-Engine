@@ -137,7 +137,7 @@ internal sealed partial class NetworkedPacketHandler
             if (client.IsEditor)
             {
                 //Is Editor
-                client.PacketFloodingThreshholds = Options.Instance.SecurityOpts.PacketOpts.EditorThreshholds;
+                client.PacketFloodingThreshholds = Options.Instance.Security.PacketOpts.EditorThreshholds;
             }
 
 
@@ -819,7 +819,7 @@ internal sealed partial class NetworkedPacketHandler
 
                     break;
                 case GameObjectType.Item:
-                    ((ItemBase)obj).DropChanceOnDeath = Options.ItemDropChance;
+                    ((ItemBase)obj).DropChanceOnDeath = Options.Instance.Player.ItemDropChance;
                     changed = true;
 
                     break;

@@ -18,7 +18,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
         [HttpGet]
         [AllowAnonymous]
         [ProducesResponseType(typeof(InfoResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
-        public IActionResult Default() => Ok(new InfoResponseBody(Options.Instance.GameName, Options.ServerPort));
+        public IActionResult Default() => Ok(new InfoResponseBody(Options.Instance.GameName, Options.Instance.ServerPort));
 
         [HttpGet("authorized")]
         [Authorize]

@@ -492,7 +492,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
                 return NotFound($@"No user found for lookup key '{lookupKey}'.");
             }
 
-            if (!Options.Smtp.IsValid())
+            if (!Options.Instance.SmtpSettings.IsValid())
             {
                 return NotFound("Could not send password reset email, SMTP settings on the server are not configured!");
             }

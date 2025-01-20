@@ -4,10 +4,10 @@ namespace Intersect.Config;
 
 public partial class SecurityOptions
 {
-    public List<string> IpBlacklist = new List<string>();
+    public List<string> IpBlacklist = new();
 
     [JsonProperty("Packets")]
-    public PacketSecurityOptions PacketOpts = new PacketSecurityOptions();
+    public PacketSecurityOptions PacketOpts = new();
 
     public bool CheckIp(string ip)
     {

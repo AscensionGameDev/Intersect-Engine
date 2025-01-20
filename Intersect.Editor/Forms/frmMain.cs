@@ -392,27 +392,27 @@ public partial class FrmMain : Form
 
                 Core.Graphics.CurrentView.X -= xDiff;
                 Core.Graphics.CurrentView.Y -= yDiff;
-                if (Core.Graphics.CurrentView.X > Options.MapWidth * Options.TileWidth)
+                if (Core.Graphics.CurrentView.X > Options.Instance.Map.MapWidth * Options.Instance.Map.TileWidth)
                 {
-                    Core.Graphics.CurrentView.X = Options.MapWidth * Options.TileWidth;
+                    Core.Graphics.CurrentView.X = Options.Instance.Map.MapWidth * Options.Instance.Map.TileWidth;
                 }
 
-                if (Core.Graphics.CurrentView.Y > Options.MapHeight * Options.TileHeight)
+                if (Core.Graphics.CurrentView.Y > Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight)
                 {
-                    Core.Graphics.CurrentView.Y = Options.MapHeight * Options.TileHeight;
+                    Core.Graphics.CurrentView.Y = Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight;
                 }
 
                 if (Core.Graphics.CurrentView.X - Globals.MapEditorWindow.picMap.Width <
-                    -Options.TileWidth * Options.MapWidth * 2)
+                    -Options.Instance.Map.TileWidth * Options.Instance.Map.MapWidth * 2)
                 {
-                    Core.Graphics.CurrentView.X = -Options.TileWidth * Options.MapWidth * 2 +
+                    Core.Graphics.CurrentView.X = -Options.Instance.Map.TileWidth * Options.Instance.Map.MapWidth * 2 +
                                                   Globals.MapEditorWindow.picMap.Width;
                 }
 
                 if (Core.Graphics.CurrentView.Y - Globals.MapEditorWindow.picMap.Height <
-                    -Options.TileHeight * Options.MapHeight * 2)
+                    -Options.Instance.Map.TileHeight * Options.Instance.Map.MapHeight * 2)
                 {
-                    Core.Graphics.CurrentView.Y = -Options.TileHeight * Options.MapHeight * 2 +
+                    Core.Graphics.CurrentView.Y = -Options.Instance.Map.TileHeight * Options.Instance.Map.MapHeight * 2 +
                                                   Globals.MapEditorWindow.picMap.Height;
                 }
             }
@@ -438,7 +438,7 @@ public partial class FrmMain : Form
         UpdateRunState();
 
         //Init layer visibility buttons
-        foreach (var layer in Options.Instance.MapOpts.Layers.All)
+        foreach (var layer in Options.Instance.Map.Layers.All)
         {
             Strings.Tiles.maplayers.TryGetValue(layer.ToLower(), out LocalizedString layerName);
             if (layerName == null) layerName = layer;
@@ -587,7 +587,7 @@ public partial class FrmMain : Form
         }
 
         //Process the Fill/Erase Buttons, these should display for all valid map layers as well as Attributes.
-        if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer) || Globals.CurrentLayer == LayerOptions.Attributes)
+        if (Options.Instance.Map.Layers.All.Contains(Globals.CurrentLayer) || Globals.CurrentLayer == LayerOptions.Attributes)
         {
             toolStripBtnFill.Enabled = true;
             fillToolStripMenuItem.Enabled = true;
@@ -1125,7 +1125,7 @@ public partial class FrmMain : Form
     //Edit
     private void fillToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
+        if (Options.Instance.Map.Layers.All.Contains(Globals.CurrentLayer))
         {
             Globals.MapEditorWindow.FillLayer();
         }
@@ -1133,7 +1133,7 @@ public partial class FrmMain : Form
 
     private void eraseLayerToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
+        if (Options.Instance.Map.Layers.All.Contains(Globals.CurrentLayer))
         {
             Globals.MapEditorWindow.EraseLayer();
         }

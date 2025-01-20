@@ -98,8 +98,8 @@ internal class FullServerContext : ServerContext, IFullServerContext
         base.InternalStartNetworking();
 
 #if WEBSOCKETS
-            WebSocketNetwork.Init(Options.ServerPort);
-            ApplicationContext.Context.Value?.Logger.LogInformation(Strings.Intro.websocketstarted.ToString(Options.ServerPort));
+            WebSocketNetwork.Init(Options.Instance.ServerPort);
+            ApplicationContext.Context.Value?.Logger.LogInformation(Strings.Intro.websocketstarted.ToString(Options.Instance.ServerPort));
             Console.WriteLine();
 #endif
 
@@ -114,16 +114,16 @@ internal class FullServerContext : ServerContext, IFullServerContext
         {
             Console.WriteLine();
 
-            if (Options.OpenPortChecker && !StartupOptions.NoNetworkCheck)
+            if (Options.Instance.OpenPortChecker && !StartupOptions.NoNetworkCheck)
             {
                 if (CheckPort())
                 {
                     return;
                 }
 
-                if (Options.UPnP && !StartupOptions.NoNatPunchthrough)
+                if (Options.Instance.UPnP && !StartupOptions.NoNatPunchthrough)
                 {
-                    ApplicationContext.Context.Value?.Logger.LogInformation(Strings.Portchecking.PortNotOpenTryingUpnp.ToString(Options.ServerPort));
+                    ApplicationContext.Context.Value?.Logger.LogInformation(Strings.Portchecking.PortNotOpenTryingUpnp.ToString(Options.Instance.ServerPort));
                     Console.WriteLine();
 
                     if (TryUPnP())
@@ -133,7 +133,7 @@ internal class FullServerContext : ServerContext, IFullServerContext
                             return;
                         }
 
-                        ApplicationContext.Context.Value?.Logger.LogWarning(Strings.Portchecking.ProbablyFirewall.ToString(Options.ServerPort));
+                        ApplicationContext.Context.Value?.Logger.LogWarning(Strings.Portchecking.ProbablyFirewall.ToString(Options.Instance.ServerPort));
                     }
                     else
                     {
@@ -142,10 +142,10 @@ internal class FullServerContext : ServerContext, IFullServerContext
                 }
                 else
                 {
-                    ApplicationContext.Context.Value?.Logger.LogWarning(Strings.Portchecking.PortNotOpenUpnpDisabled.ToString(Options.ServerPort));
+                    ApplicationContext.Context.Value?.Logger.LogWarning(Strings.Portchecking.PortNotOpenUpnpDisabled.ToString(Options.Instance.ServerPort));
                 }
             }
-            else if (Options.UPnP)
+            else if (Options.Instance.UPnP)
             {
                 ApplicationContext.Context.Value?.Logger.LogInformation(Strings.Portchecking.TryingUpnp);
                 Console.WriteLine();
@@ -169,9 +169,9 @@ internal class FullServerContext : ServerContext, IFullServerContext
         {
             UpnP.ConnectNatDevice().Wait(5000);
 #if WEBSOCKETS
-            UpnP.OpenServerPort(Options.ServerPort, Protocol.Tcp).Wait(5000);
+            UpnP.OpenServerPort(Options.Instance.ServerPort, Protocol.Tcp).Wait(5000);
 #endif
-            UpnP.OpenServerPort(Options.ServerPort, Protocol.Udp).Wait(5000);
+            UpnP.OpenServerPort(Options.Instance.ServerPort, Protocol.Udp).Wait(5000);
 
             if (UpnP.ForwardingSucceeded())
             {
@@ -184,12 +184,12 @@ internal class FullServerContext : ServerContext, IFullServerContext
 
         private bool CheckPort()
         {
-            if (!Options.OpenPortChecker || StartupOptions.NoNetworkCheck)
+            if (!Options.Instance.OpenPortChecker || StartupOptions.NoNetworkCheck)
             {
                 return false;
             }
 
-            var portCheckResult = PortChecker.CanYouSeeMe(Options.ServerPort, out var externalIp);
+            var portCheckResult = PortChecker.CanYouSeeMe(Options.Instance.ServerPort, out var externalIp);
 
             if (!Strings.Portchecking.PortCheckerResults.TryGetValue(portCheckResult, out var portCheckResultMessage))
             {
@@ -202,7 +202,7 @@ internal class FullServerContext : ServerContext, IFullServerContext
             {
                 Console.WriteLine(Strings.Portchecking.ConnectionInfo);
                 Console.WriteLine(Strings.Portchecking.PublicIp, externalIp);
-                Console.WriteLine(Strings.Portchecking.PublicPort, Options.ServerPort);
+                Console.WriteLine(Strings.Portchecking.PublicPort, Options.Instance.ServerPort);
             }
 
             if (portCheckResult == PortCheckResult.Inaccessible)

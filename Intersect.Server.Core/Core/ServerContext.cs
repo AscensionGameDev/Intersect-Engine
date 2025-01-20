@@ -48,7 +48,7 @@ internal partial class ServerContext : ApplicationContext<ServerContext, ServerC
 
         if (startupOptions.Port > 0)
         {
-            Options.ServerPort = startupOptions.Port;
+            Options.Instance.ServerPort = startupOptions.Port;
         }
 
         Network = CreateNetwork();
@@ -218,7 +218,7 @@ internal partial class ServerContext : ApplicationContext<ServerContext, ServerC
     {
         #region Apply CLI Options
 
-        //Options.ServerPort = StartupOptions.ValidPort(Options.ServerPort);
+        //Options.Instance.ServerPort = StartupOptions.ValidPort(Options.Instance.ServerPort);
 
         #endregion
 
@@ -252,7 +252,7 @@ internal partial class ServerContext : ApplicationContext<ServerContext, ServerC
         }
         else
         {
-            Console.WriteLine(Strings.Intro.ServerStarted.ToString(Options.ServerPort));
+            Console.WriteLine(Strings.Intro.ServerStarted.ToString(Options.Instance.ServerPort));
         }
     }
 

@@ -69,7 +69,7 @@ public partial class PartyWindow
         mHpBarContainer.Clear();
         mHpBar.Clear();
 
-        for (var i = 0; i < Options.Party.MaximumMembers; i++)
+        for (var i = 0; i < Options.Instance.Party.MaximumMembers; i++)
         {
             //Labels
             mLblnames.Add(new Label(mPartyWindow, "MemberName" + i));
@@ -168,7 +168,7 @@ public partial class PartyWindow
         mLeader.Hide();
         mLeaderText.Hide();
         mLeaveButton.Hide();
-        for (var i = 0; i < Options.Instance.PartyOpts.MaximumMembers; i++)
+        for (var i = 0; i < Options.Instance.Party.MaximumMembers; i++)
         {
             mHpBarContainer[i].Hide();
             mHpLabel[i].Hide();
@@ -189,7 +189,7 @@ public partial class PartyWindow
             mLeaderText.Show();
             mLeaveButton.Show();
 
-            for (var i = 0; i < Options.Instance.PartyOpts.MaximumMembers; i++)
+            for (var i = 0; i < Options.Instance.Party.MaximumMembers; i++)
             {
                 if (i < Globals.Me.Party.Count)
                 {

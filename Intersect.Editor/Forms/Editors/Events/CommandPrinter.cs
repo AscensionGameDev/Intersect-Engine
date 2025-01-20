@@ -875,7 +875,7 @@ public static partial class CommandPrinter
             }
             else
             {
-                commandText = Strings.EventCommandList.unequipslot.ToString(Options.EquipmentSlots[command.Slot]);
+                commandText = Strings.EventCommandList.unequipslot.ToString(Options.Instance.Equipment.Slots[command.Slot]);
             }
         }
 

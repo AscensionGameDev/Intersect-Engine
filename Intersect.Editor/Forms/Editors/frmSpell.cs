@@ -121,23 +121,23 @@ public partial class FrmSpell : EditorForm
             GameContentManager.GetOverridesFor(GameContentManager.TextureType.Entity, "cast").ToArray()
         );
 
-        nudWarpX.Maximum = (int)Options.MapWidth;
-        nudWarpY.Maximum = (int)Options.MapHeight;
+        nudWarpX.Maximum = (int)Options.Instance.Map.MapWidth;
+        nudWarpY.Maximum = (int)Options.Instance.Map.MapHeight;
 
         cmbWarpMap.Items.Clear();
         cmbWarpMap.Items.AddRange(MapList.OrderedMaps.Select(map => map?.Name).ToArray());
         cmbWarpMap.SelectedIndex = 0;
 
-        nudStr.Maximum = Options.MaxStatValue;
-        nudMag.Maximum = Options.MaxStatValue;
-        nudDef.Maximum = Options.MaxStatValue;
-        nudMR.Maximum = Options.MaxStatValue;
-        nudSpd.Maximum = Options.MaxStatValue;
-        nudStr.Minimum = -Options.MaxStatValue;
-        nudMag.Minimum = -Options.MaxStatValue;
-        nudDef.Minimum = -Options.MaxStatValue;
-        nudMR.Minimum = -Options.MaxStatValue;
-        nudSpd.Minimum = -Options.MaxStatValue;
+        nudStr.Maximum = Options.Instance.Player.MaxStat;
+        nudMag.Maximum = Options.Instance.Player.MaxStat;
+        nudDef.Maximum = Options.Instance.Player.MaxStat;
+        nudMR.Maximum = Options.Instance.Player.MaxStat;
+        nudSpd.Maximum = Options.Instance.Player.MaxStat;
+        nudStr.Minimum = -Options.Instance.Player.MaxStat;
+        nudMag.Minimum = -Options.Instance.Player.MaxStat;
+        nudDef.Minimum = -Options.Instance.Player.MaxStat;
+        nudMR.Minimum = -Options.Instance.Player.MaxStat;
+        nudSpd.Minimum = -Options.Instance.Player.MaxStat;
 
         nudCastDuration.Maximum = Int32.MaxValue;
         nudCooldownDuration.Maximum = Int32.MaxValue;
@@ -989,7 +989,7 @@ public partial class FrmSpell : EditorForm
         }
 
         // Do we add item cooldown groups as well?
-        if (Options.Combat.LinkSpellAndItemCooldowns)
+        if (Options.Instance.Combat.LinkSpellAndItemCooldowns)
         {
             foreach (var itm in ItemBase.Lookup)
             {

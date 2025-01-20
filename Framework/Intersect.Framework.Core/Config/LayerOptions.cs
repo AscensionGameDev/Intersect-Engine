@@ -11,16 +11,16 @@ public partial class LayerOptions
     public const string Events = nameof(Events);
 
     [JsonProperty]
-    public List<string> LowerLayers { get; private set; } = new List<string>() { "Ground", "Mask 1", "Mask 2" };
+    public List<string> LowerLayers { get; private set; } = new() { "Ground", "Mask 1", "Mask 2" };
 
     [JsonProperty]
-    public List<string> MiddleLayers { get; private set; } = new List<string>() { "Fringe 1" };
+    public List<string> MiddleLayers { get; private set; } = new() { "Fringe 1" };
 
     [JsonProperty]
-    public List<string> UpperLayers { get; private set; } = new List<string>() { "Fringe 2" };
+    public List<string> UpperLayers { get; private set; } = new() { "Fringe 2" };
 
     [JsonIgnore]
-    public List<string> All { get; private set; } = new List<string>();
+    public List<string> All { get; private set; } = new();
 
     [JsonProperty]
     public bool DestroyOrphanedLayers { get; private set; } = false;

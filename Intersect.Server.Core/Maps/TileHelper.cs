@@ -88,7 +88,7 @@ public partial class TileHelper
                 if (gridY > 0 && grid.MapIdGrid[gridX, gridY - 1] != Guid.Empty)
                 {
                     mMapId = grid.MapIdGrid[gridX, gridY - 1];
-                    mTileY += Options.MapHeight;
+                    mTileY += Options.Instance.Map.MapHeight;
 
                     return true;
                 }
@@ -98,7 +98,7 @@ public partial class TileHelper
                 if (gridY + 1 < grid.Height && grid.MapIdGrid[gridX, gridY + 1] != Guid.Empty)
                 {
                     mMapId = grid.MapIdGrid[gridX, gridY + 1];
-                    mTileY -= Options.MapHeight;
+                    mTileY -= Options.Instance.Map.MapHeight;
 
                     return true;
                 }
@@ -108,7 +108,7 @@ public partial class TileHelper
                 if (gridX > 0 && grid.MapIdGrid[gridX - 1, gridY] != Guid.Empty)
                 {
                     mMapId = grid.MapIdGrid[gridX - 1, gridY];
-                    mTileX += Options.MapWidth;
+                    mTileX += Options.Instance.Map.MapWidth;
 
                     return true;
                 }
@@ -118,7 +118,7 @@ public partial class TileHelper
                 if (gridX + 1 < grid.Width && grid.MapIdGrid[gridX + 1, gridY] != Guid.Empty)
                 {
                     mMapId = grid.MapIdGrid[gridX + 1, gridY];
-                    mTileX -= Options.MapWidth;
+                    mTileX -= Options.Instance.Map.MapWidth;
 
                     return true;
                 }
@@ -153,7 +153,7 @@ public partial class TileHelper
             }
         }
 
-        while (mTileX >= Options.MapWidth)
+        while (mTileX >= Options.Instance.Map.MapWidth)
         {
             if (!TransitionMaps((int) Direction.Right))
             {
@@ -161,7 +161,7 @@ public partial class TileHelper
             }
         }
 
-        while (mTileY >= Options.MapHeight)
+        while (mTileY >= Options.Instance.Map.MapHeight)
         {
             if (!TransitionMaps((int) Direction.Down))
             {
@@ -199,12 +199,12 @@ public partial class TileHelper
             return false;
         }
 
-        if (tileX < 0 || tileX >= Options.MapWidth)
+        if (tileX < 0 || tileX >= Options.Instance.Map.MapWidth)
         {
             return false;
         }
 
-        if (tileY < 0 || tileY >= Options.MapHeight)
+        if (tileY < 0 || tileY >= Options.Instance.Map.MapHeight)
         {
             return false;
         }

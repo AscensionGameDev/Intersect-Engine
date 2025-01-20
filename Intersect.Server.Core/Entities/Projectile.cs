@@ -287,8 +287,8 @@ public partial class Projectile : Entity
         var roundedY = MathF.Round(spawn.Y);
 
         //Checking if the coordinates are within the map boundaries
-        if (roundedX < 0 || roundedX >= Options.MapWidth ||
-            roundedY < 0 || roundedY >= Options.MapHeight)
+        if (roundedX < 0 || roundedX >= Options.Instance.Map.MapWidth ||
+            roundedY < 0 || roundedY >= Options.Instance.Map.MapHeight)
         {
             return false;
         }
@@ -334,7 +334,7 @@ public partial class Projectile : Entity
             {
                 // Grapple hooks are only allowed in the default projectile behavior
                 if (!spawn.ProjectileBase.HomingBehavior && !spawn.ProjectileBase.DirectShotBehavior &&
-                    (spawn.Dir <= Direction.Right || (spawn.Dir != Direction.None && Options.Instance.MapOpts.EnableDiagonalMovement)))
+                    (spawn.Dir <= Direction.Right || (spawn.Dir != Direction.None && Options.Instance.Map.EnableDiagonalMovement)))
                 {
                     spawn.Parent.HasGrappled = true;
 
@@ -421,12 +421,12 @@ public partial class Projectile : Entity
 
                     if (leftSide)
                     {
-                        return _lastTargetX - Options.MapWidth - spawn.X;
+                        return _lastTargetX - Options.Instance.Map.MapWidth - spawn.X;
                     }
 
                     if (rightSide)
                     {
-                        return _lastTargetX + Options.MapWidth - spawn.X;
+                        return _lastTargetX + Options.Instance.Map.MapWidth - spawn.X;
                     }
                 }
                 else
@@ -436,12 +436,12 @@ public partial class Projectile : Entity
 
                     if (topSide)
                     {
-                        return _lastTargetY - Options.MapHeight - spawn.Y;
+                        return _lastTargetY - Options.Instance.Map.MapHeight - spawn.Y;
                     }
 
                     if (bottomSide)
                     {
-                        return _lastTargetY + Options.MapHeight - spawn.Y;
+                        return _lastTargetY + Options.Instance.Map.MapHeight - spawn.Y;
                     }
                 }
             }
@@ -506,7 +506,7 @@ public partial class Projectile : Entity
         AdjustPositionOnMapBoundaries(ref spawn.X, ref spawn.Y, ref spawn);
 
         // Check for map boundaries and remove the spawn if the projectile has gone out of bounds after moving.
-        return spawn.X < 0 || spawn.X >= Options.MapWidth || spawn.Y < 0 || spawn.Y >= Options.MapHeight;
+        return spawn.X < 0 || spawn.X >= Options.Instance.Map.MapWidth || spawn.Y < 0 || spawn.Y >= Options.Instance.Map.MapHeight;
     }
 
     /// <summary>
@@ -522,8 +522,8 @@ public partial class Projectile : Entity
     {
         // Retrieve the current map based on the projectile's spawn information.
         var map = MapController.Get(spawn.MapId);
-        int MapWidth = Options.MapWidth;
-        int MapHeight = Options.MapHeight;
+        int MapWidth = Options.Instance.Map.MapWidth;
+        int MapHeight = Options.Instance.Map.MapHeight;
 
         // Determine if the projectile crosses any of the map's boundaries.
         bool crossesLeftBoundary = MathF.Floor(newx) < 0;

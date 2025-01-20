@@ -53,7 +53,7 @@ public partial class MainMenuWindow : Window
 
         _buttonRegister = new Button(this, nameof(_buttonRegister))
         {
-            IsDisabled = MainMenu.ActiveNetworkStatus != NetworkStatus.Online || (Options.Loaded && Options.BlockClientRegistrations),
+            IsDisabled = MainMenu.ActiveNetworkStatus != NetworkStatus.Online || (Options.IsLoaded && Options.Instance.BlockClientRegistrations),
             IsHidden = ClientContext.IsSinglePlayer,
             IsTabable = true,
             Text = Strings.MainMenu.Register,
@@ -198,6 +198,6 @@ public partial class MainMenuWindow : Window
     {
         var isOffline = MainMenu.ActiveNetworkStatus != NetworkStatus.Online;
         _buttonLogin.IsDisabled = isOffline;
-        _buttonRegister.IsDisabled = isOffline || (Options.Loaded && Options.BlockClientRegistrations);
+        _buttonRegister.IsDisabled = isOffline || (Options.IsLoaded && Options.Instance.BlockClientRegistrations);
     }
 }

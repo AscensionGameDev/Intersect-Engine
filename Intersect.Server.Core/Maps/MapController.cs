@@ -521,7 +521,7 @@ public partial class MapController : MapBase
             Layers = JsonConvert.DeserializeObject<Dictionary<string, Tile[,]>>(LZ4.UnPickleString(TileData), mJsonSerializerSettings);
             foreach (var key in Layers.Keys.ToArray())
             {
-                if (!Options.Instance.MapOpts.Layers.All.Contains(key))
+                if (!Options.Instance.Map.Layers.All.Contains(key))
                 {
                     Layers.Remove(key);
                 }
@@ -578,12 +578,12 @@ public partial class MapController : MapBase
                             continue;
                         }
 
-                        currentX = (Options.MapWidth + 1) + x;
+                        currentX = (Options.Instance.Map.MapWidth + 1) + x;
                     }
                 }
 
                 // Are we going to the map on our right?
-                if (currentX >= Options.MapWidth)
+                if (currentX >= Options.Instance.Map.MapWidth)
                 {
                     var oldMap = currentMap;
                     if (currentMap.Right != Guid.Empty)
@@ -612,12 +612,12 @@ public partial class MapController : MapBase
                             continue;
                         }
 
-                        currentY = (Options.MapHeight + 1) + y;
+                        currentY = (Options.Instance.Map.MapHeight + 1) + y;
                     }
                 }
 
                 // Are we going to the map down from us?
-                if (currentY >= Options.MapHeight)
+                if (currentY >= Options.Instance.Map.MapHeight)
                 {
                     var oldMap = currentMap;
                     if (currentMap.Down != Guid.Empty)
@@ -633,7 +633,7 @@ public partial class MapController : MapBase
                     }
                 }
 
-                if (currentX < 0 || currentY < 0 || currentX >= Options.MapWidth || currentY >= Options.MapHeight)
+                if (currentX < 0 || currentY < 0 || currentX >= Options.Instance.Map.MapWidth || currentY >= Options.Instance.Map.MapHeight)
                 {
                     continue;
                 }
@@ -642,7 +642,7 @@ public partial class MapController : MapBase
                 {
                     locations.Add(currentMap, new List<int>());
                 }
-                locations[currentMap].Add(currentY * Options.MapWidth + currentX);
+                locations[currentMap].Add(currentY * Options.Instance.Map.MapWidth + currentX);
             }
         }
 

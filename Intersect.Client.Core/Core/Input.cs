@@ -280,7 +280,7 @@ public static partial class Input
                                     {
                                         _ = Player.TryPickupItem(
                                                 Globals.Me.MapInstance.Id,
-                                                Globals.Me.Y * Options.MapWidth + Globals.Me.X
+                                                Globals.Me.Y * Options.Instance.Map.MapWidth + Globals.Me.X
                                             );
                                     }
 
@@ -452,7 +452,7 @@ public static partial class Input
         if (Controls.Controls.ControlHasKey(Control.PickUp, modifier, key))
         {
             if (Globals.Me.MapInstance != default &&
-                Player.TryPickupItem(Globals.Me.MapInstance.Id, Globals.Me.Y * Options.MapWidth + Globals.Me.X, Guid.Empty, true)
+                Player.TryPickupItem(Globals.Me.MapInstance.Id, Globals.Me.Y * Options.Instance.Map.MapWidth + Globals.Me.X, Guid.Empty, true)
             )
             {
                 return;
@@ -539,12 +539,12 @@ public static partial class Input
 
         foreach (MapInstance map in MapInstance.Lookup.Values.Cast<MapInstance>())
         {
-            if (!(x >= map.X) || !(x <= map.X + Options.MapWidth * Options.TileWidth))
+            if (!(x >= map.X) || !(x <= map.X + Options.Instance.Map.MapWidth * Options.Instance.Map.TileWidth))
             {
                 continue;
             }
 
-            if (!(y >= map.Y) || !(y <= map.Y + Options.MapHeight * Options.TileHeight))
+            if (!(y >= map.Y) || !(y <= map.Y + Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight))
             {
                 continue;
             }
@@ -554,8 +554,8 @@ public static partial class Input
             y -= (int) map.Y;
 
             //transform pixel format to tile format
-            x /= Options.TileWidth;
-            y /= Options.TileHeight;
+            x /= Options.Instance.Map.TileWidth;
+            y /= Options.Instance.Map.TileHeight;
             var mapNum = map.Id;
 
             if (Globals.Me.TryGetRealLocation(ref x, ref y, ref mapNum))

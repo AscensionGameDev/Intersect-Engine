@@ -292,7 +292,7 @@ public partial class FrmClass : EditorForm
         cmbSpawnItem.Items.AddRange(ItemBase.Names);
         cmbSpell.Items.Clear();
         cmbSpell.Items.AddRange(SpellBase.Names);
-        nudLevel.Maximum = Options.MaxLevel;
+        nudLevel.Maximum = Options.Instance.Player.MaxLevel;
         cmbAttackAnimation.Items.Clear();
         cmbAttackAnimation.Items.Add(Strings.General.None);
         cmbAttackAnimation.Items.AddRange(AnimationBase.Names);
@@ -307,11 +307,11 @@ public partial class FrmClass : EditorForm
             cmbScalingStat.Items.Add(Globals.GetStatName(x));
         }
 
-        nudAttack.Maximum = Options.MaxStatValue;
-        nudMag.Maximum = Options.MaxStatValue;
-        nudDef.Maximum = Options.MaxStatValue;
-        nudMR.Maximum = Options.MaxStatValue;
-        nudSpd.Maximum = Options.MaxStatValue;
+        nudAttack.Maximum = Options.Instance.Player.MaxStat;
+        nudMag.Maximum = Options.Instance.Player.MaxStat;
+        nudDef.Maximum = Options.Instance.Player.MaxStat;
+        nudMR.Maximum = Options.Instance.Player.MaxStat;
+        nudSpd.Maximum = Options.Instance.Player.MaxStat;
 
         InitLocalization();
         UpdateEditor();
@@ -757,11 +757,11 @@ public partial class FrmClass : EditorForm
         {
             nudHpIncrease.Maximum = 10000;
             nudMpIncrease.Maximum = 10000;
-            nudStrengthIncrease.Maximum = Options.MaxStatValue;
-            nudArmorIncrease.Maximum = Options.MaxStatValue;
-            nudMagicIncrease.Maximum = Options.MaxStatValue;
-            nudMagicResistIncrease.Maximum = Options.MaxStatValue;
-            nudSpeedIncrease.Maximum = Options.MaxStatValue;
+            nudStrengthIncrease.Maximum = Options.Instance.Player.MaxStat;
+            nudArmorIncrease.Maximum = Options.Instance.Player.MaxStat;
+            nudMagicIncrease.Maximum = Options.Instance.Player.MaxStat;
+            nudMagicResistIncrease.Maximum = Options.Instance.Player.MaxStat;
+            nudSpeedIncrease.Maximum = Options.Instance.Player.MaxStat;
         }
         else
         {
@@ -1205,7 +1205,7 @@ public partial class FrmClass : EditorForm
 
         expGrid.Rows.Clear();
 
-        for (var i = 1; i <= Options.MaxLevel; i++)
+        for (var i = 1; i <= Options.Instance.Player.MaxLevel; i++)
         {
             var index = expGrid.Rows.Add(i.ToString(), "", "");
             var row = expGrid.Rows[index];
@@ -1220,7 +1220,7 @@ public partial class FrmClass : EditorForm
     {
         if (end == -1)
         {
-            end = Options.MaxLevel;
+            end = Options.Instance.Player.MaxLevel;
         }
 
         if (start > end)
@@ -1235,7 +1235,7 @@ public partial class FrmClass : EditorForm
 
         for (var i = start; i <= end; i++)
         {
-            if (i < Options.MaxLevel)
+            if (i < Options.Instance.Player.MaxLevel)
             {
                 if (mEditorItem.ExperienceOverrides.ContainsKey(i))
                 {

@@ -61,7 +61,7 @@ public partial class PacketSecurityOptions
     /// Might need to be adjusted if there is a lot of high paceed actions/movement/combat in your game.
     /// </summary>
     [JsonProperty("PlayerFloodThreshholds")]
-    public FloodThreshholds PlayerThreshholds = new FloodThreshholds();
+    public FloodThreshholds PlayerThreshholds = new();
 
     /// <summary>
     /// Packet flooding detection thresholds for mods/admins. Hopefully you trust these guys.

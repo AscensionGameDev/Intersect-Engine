@@ -36,13 +36,13 @@ public partial class Event : Entity
             switch (Graphic.Type)
             {
                 case EventGraphicType.None:
-                    return Animations.Count == 0 ? Pointf.Empty : Pointf.UnitY * Options.TileHeight / 2f;
+                    return Animations.Count == 0 ? Pointf.Empty : Pointf.UnitY * Options.Instance.Map.TileHeight / 2f;
 
                 case EventGraphicType.Sprite:
                     return base.CenterOffset;
 
                 case EventGraphicType.Tileset:
-                    return Pointf.UnitY * Options.TileHeight * (Graphic.Height + 1) / 2f;
+                    return Pointf.UnitY * Options.Instance.Map.TileHeight * (Graphic.Height + 1) / 2f;
 
                 default:
                     ApplicationContext.Context.Value?.Logger.LogError($"Unimplemented graphic type: {Graphic.Type}");
@@ -123,11 +123,11 @@ public partial class Event : Entity
                 return;
 
             case EventGraphicType.Tileset: //Tile
-                var width = (Graphic.Width + 1) * Options.TileWidth;
-                var height = (Graphic.Height + 1) * Options.TileHeight;
+                var width = (Graphic.Width + 1) * Options.Instance.Map.TileWidth;
+                var height = (Graphic.Height + 1) * Options.Instance.Map.TileHeight;
                 srcRectangle = new FloatRect(
-                    Graphic.X * Options.TileWidth,
-                    Graphic.Y * Options.TileHeight,
+                    Graphic.X * Options.Instance.Map.TileWidth,
+                    Graphic.Y * Options.Instance.Map.TileHeight,
                     width,
                     height
                 );
@@ -141,20 +141,20 @@ public partial class Event : Entity
 
         var destRectangle = new FloatRect
         {
-            X = map.X + X * Options.TileWidth + OffsetX,
-            Y = map.Y + Y * Options.TileHeight + OffsetY,
-            Width = Math.Max(Options.TileWidth, srcRectangle.Width),
-            Height = Math.Max(Options.TileHeight, srcRectangle.Height),
+            X = map.X + X * Options.Instance.Map.TileWidth + OffsetX,
+            Y = map.Y + Y * Options.Instance.Map.TileHeight + OffsetY,
+            Width = Math.Max(Options.Instance.Map.TileWidth, srcRectangle.Width),
+            Height = Math.Max(Options.Instance.Map.TileHeight, srcRectangle.Height),
         };
 
-        if (srcRectangle.Width > Options.TileWidth)
+        if (srcRectangle.Width > Options.Instance.Map.TileWidth)
         {
-            destRectangle.X -= (srcRectangle.Width - Options.TileWidth) / 2;
+            destRectangle.X -= (srcRectangle.Width - Options.Instance.Map.TileWidth) / 2;
         }
 
-        if (srcRectangle.Height > Options.TileHeight)
+        if (srcRectangle.Height > Options.Instance.Map.TileHeight)
         {
-            destRectangle.Y -= srcRectangle.Height - Options.TileHeight;
+            destRectangle.Y -= srcRectangle.Height - Options.Instance.Map.TileHeight;
         }
 
         destRectangle.X = (int)Math.Ceiling(destRectangle.X);
@@ -235,7 +235,7 @@ public partial class Event : Entity
                     }
 
                     var maps = y - (gridY - 2);
-                    var renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * maps + Y];
+                    var renderSet = Graphics.RenderingEntities[priority, Options.Instance.Map.MapHeight * maps + Y];
 
                     _ = (renderSet?.Add(this));
                     if(renderSet != default)
@@ -272,7 +272,7 @@ public partial class Event : Entity
         }
 
         var top = base.GetTop(0);
-        var offset = heightScale * Options.TileHeight;
+        var offset = heightScale * Options.Instance.Map.TileHeight;
         return top - offset;
     }
 

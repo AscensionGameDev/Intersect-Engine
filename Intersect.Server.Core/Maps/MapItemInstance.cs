@@ -12,7 +12,7 @@ public partial class MapItem : Item
 
     [JsonIgnore] public int AttributeSpawnY = -1;
 
-    [JsonIgnore] public long AttributeRespawnTime = Options.Instance.MapOpts.ItemAttributeRespawnTime;
+    [JsonIgnore] public long AttributeRespawnTime = Options.Instance.Map.ItemAttributeRespawnTime;
 
     [JsonIgnore] public long DespawnTime;
 
@@ -20,7 +20,7 @@ public partial class MapItem : Item
 
     public int Y { get; private set; } 
 
-    [JsonIgnore] public int TileIndex => Y * Options.MapWidth + X;
+    [JsonIgnore] public int TileIndex => Y * Options.Instance.Map.MapWidth + X;
 
     /// <summary>
     /// The Unique Id of this particular MapItemInstance so we can refer to it elsewhere.

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Collections;
 using Intersect.Compression;
+using Intersect.Config;
 using Intersect.Enums;
 using Intersect.Framework.Core.Serialization;
 using Intersect.GameObjects.Events;
@@ -39,7 +40,10 @@ public partial class MapBase : DatabaseObject<MapBase>
     public Dictionary<string, Tile[,]> Layers = new();
 
     //Map Attributes
-    private MapAttribute[,] mAttributes = new MapAttribute[Options.MapWidth, Options.MapHeight];
+    private MapAttribute[,] mAttributes = new MapAttribute[
+        Options.Instance?.Map.MapWidth ?? MapOptions.DefaultMapWidth,
+        Options.Instance?.Map.MapHeight ?? MapOptions.DefaultMapHeight
+    ];
 
     //Cached Att Data
     private byte[] mCachedAttributeData = null;
@@ -95,10 +99,10 @@ public partial class MapBase : DatabaseObject<MapBase>
 
                     foreach (var layer in mapBase.Layers)
                     {
-                        var tiles = new Tile[Options.MapWidth, Options.MapHeight];
-                        for (var x = 0; x < Options.MapWidth; x++)
+                        var tiles = new Tile[Options.Instance.Map.MapWidth, Options.Instance.Map.MapHeight];
+                        for (var x = 0; x < Options.Instance.Map.MapWidth; x++)
                         {
-                            for (var y = 0; y < Options.MapHeight; y++)
+                            for (var y = 0; y < Options.Instance.Map.MapHeight; y++)
                             {
                                 tiles[x, y] = new Tile
                                 {
@@ -113,9 +117,9 @@ public partial class MapBase : DatabaseObject<MapBase>
                     }
                 }
 
-                for (var x = 0; x < Options.MapWidth; x++)
+                for (var x = 0; x < Options.Instance.Map.MapWidth; x++)
                 {
-                    for (var y = 0; y < Options.MapHeight; y++)
+                    for (var y = 0; y < Options.Instance.Map.MapHeight; y++)
                     {
                         if (Attributes == null)
                         {
@@ -189,7 +193,7 @@ public partial class MapBase : DatabaseObject<MapBase>
     [JsonIgnore]
     public MapAttribute[,] Attributes
     {
-        get => mAttributes ?? (mAttributes = new MapAttribute[Options.MapWidth, Options.MapHeight]);
+        get => mAttributes ?? (mAttributes = new MapAttribute[Options.Instance.Map.MapWidth, Options.Instance.Map.MapHeight]);
 
         set
         {

@@ -166,9 +166,9 @@ public partial class SelectCharacterWindow : ImagePanel
             return;
         }
 
-        for (var i = 0; i < Options.Equipment.Paperdoll.Down.Count; i++)
+        for (var i = 0; i < Options.Instance.Equipment.Paperdoll.Down.Count; i++)
         {
-            var equipment = Options.Equipment.Paperdoll.Down[i];
+            var equipment = Options.Instance.Equipment.Paperdoll.Down[i];
             var paperdollContainer = _renderLayers[i];
 
             // handle player/equip rendering, we just need to find the correct texture
@@ -228,7 +228,7 @@ public partial class SelectCharacterWindow : ImagePanel
     {
         if (_renderLayers == default)
         {
-            _renderLayers = new ImagePanel[Options.Equipment.Paperdoll.Down.Count];
+            _renderLayers = new ImagePanel[Options.Instance.Equipment.Paperdoll.Down.Count];
             for (var i = 0; i < _renderLayers.Length; i++)
             {
                 _renderLayers[i] = new ImagePanel(_charContainer);
@@ -237,7 +237,7 @@ public partial class SelectCharacterWindow : ImagePanel
 
         if (Characters == default)
         {
-            Characters = new Character[Options.MaxCharacters];
+            Characters = new Character[Options.Instance.Player.MaxCharacters];
         }
 
         mSelectedChar = 0;

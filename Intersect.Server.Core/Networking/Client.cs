@@ -42,7 +42,7 @@ public partial class Client : IPacketSender
     public ConcurrentQueue<IPacket> RecentPackets = new ConcurrentQueue<IPacket>();
     public bool PacketHandlingQueued = false;
     public bool PacketSendingQueued = false;
-    public Config.FloodThreshholds PacketFloodingThreshholds { get; set; } = Options.Instance.SecurityOpts?.PacketOpts.Threshholds;
+    public Config.FloodThreshholds PacketFloodingThreshholds { get; set; } = Options.Instance.Security?.PacketOpts.Threshholds;
     public long LastPing { get; set; } = -1;
 
     protected long mTimeout = 20000; //20 seconds
@@ -396,7 +396,7 @@ public partial class Client : IPacketSender
                 {
                     banned = true;
                 }
-                if (!banned && !string.IsNullOrEmpty(Database.PlayerData.Ban.CheckBan(Connection.Ip.Trim())) && Options.Instance.SecurityOpts.CheckIp(Connection.Ip.Trim()))
+                if (!banned && !string.IsNullOrEmpty(Database.PlayerData.Ban.CheckBan(Connection.Ip.Trim())) && Options.Instance.Security.CheckIp(Connection.Ip.Trim()))
                 {
                     banned = true;
                 }

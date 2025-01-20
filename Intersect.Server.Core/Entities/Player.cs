@@ -87,12 +87,12 @@ public partial class Player : Entity
     [Column("Equipment"), JsonIgnore]
     public string EquipmentJson
     {
-        get => DatabaseUtils.SaveIntArray(Equipment, Options.EquipmentSlots.Count);
-        set => Equipment = DatabaseUtils.LoadIntArray(value, Options.EquipmentSlots.Count);
+        get => DatabaseUtils.SaveIntArray(Equipment, Options.Instance.Equipment.Slots.Count);
+        set => Equipment = DatabaseUtils.LoadIntArray(value, Options.Instance.Equipment.Slots.Count);
     }
 
     [NotMapped, JsonProperty("EquipmentSlots")]
-    public int[] Equipment { get; set; } = new int[Options.EquipmentSlots.Count];
+    public int[] Equipment { get; set; } = new int[Options.Instance.Equipment.Slots.Count];
 
     [NotMapped]
     public virtual ImmutableArray<Bag> Bags =>
@@ -111,7 +111,7 @@ public partial class Player : Entity
         get
         {
             var equippedItems = new List<Item>();
-            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+            for (var i = 0; i < Options.Instance.Equipment.Slots.Count; i++)
             {
                 if (!TryGetEquippedItem(i, out var item))
                 {
@@ -151,7 +151,7 @@ public partial class Player : Entity
 
     //Bank
     public virtual SlotList<BankSlot> Bank { get; set; } = new(
-        Options.Instance.PlayerOpts.InitialBankslots,
+        Options.Instance.Player.InitialBankslots,
         BankSlot.Create
     );
 
@@ -165,7 +165,7 @@ public partial class Player : Entity
 
     // HotBar
     public virtual SlotList<HotbarSlot> Hotbar { get; set; } = new(
-        Options.Instance.PlayerOpts.HotbarSlotCount,
+        Options.Instance.Player.HotbarSlotCount,
         HotbarSlot.Create
     );
 
@@ -355,17 +355,17 @@ public partial class Player : Entity
     {
         var changes = false;
 
-        changes |= SlotHelper.ValidateSlotList(Spells, Options.Instance.PlayerOpts.MaxSpells);
-        changes |= SlotHelper.ValidateSlotList(Items, Options.Instance.PlayerOpts.MaxInventory);
-        changes |= SlotHelper.ValidateSlotList(Bank, Options.Instance.PlayerOpts.InitialBankslots);
-        changes |= SlotHelper.ValidateSlotList(Hotbar, Options.Instance.PlayerOpts.HotbarSlotCount);
+        changes |= SlotHelper.ValidateSlotList(Spells, Options.Instance.Player.MaxSpells);
+        changes |= SlotHelper.ValidateSlotList(Items, Options.Instance.Player.MaxInventory);
+        changes |= SlotHelper.ValidateSlotList(Bank, Options.Instance.Player.InitialBankslots);
+        changes |= SlotHelper.ValidateSlotList(Hotbar, Options.Instance.Player.HotbarSlotCount);
 
         return changes;
     }
 
     private long GetExperienceToNextLevel(int level)
     {
-        if (level >= Options.MaxLevel)
+        if (level >= Options.Instance.Player.MaxLevel)
         {
             return -1;
         }
@@ -432,7 +432,7 @@ public partial class Player : Entity
         Guild?.UpdateMemberList();
 
         // If we are configured to do so, send a notification of us logging in to all online friends.
-        if (Options.Player.EnableFriendLoginNotifications)
+        if (Options.Instance.Player.EnableFriendLoginNotifications)
         {
             foreach (var friend in CachedFriends)
             {
@@ -998,7 +998,7 @@ public partial class Player : Entity
     /// </summary>
     public override void UpdateSpellCooldown(SpellBase spellBase, int spellSlot)
     {
-        if (spellSlot < 0 || spellSlot >= Options.Instance.PlayerOpts.MaxSpells)
+        if (spellSlot < 0 || spellSlot >= Options.Instance.Player.MaxSpells)
         {
             return;
         }
@@ -1149,16 +1149,16 @@ public partial class Player : Entity
         // EXP Loss - don't lose in shared instance, or in an Arena zone
         if (InstanceType != MapInstanceType.Shared || Options.Instance.Instancing.LoseExpOnInstanceDeath)
         {
-            if (Options.Instance.PlayerOpts.ExpLossOnDeathPercent > 0)
+            if (Options.Instance.Player.ExpLossOnDeathPercent > 0)
             {
-                if (Options.Instance.PlayerOpts.ExpLossFromCurrentExp)
+                if (Options.Instance.Player.ExpLossFromCurrentExp)
                 {
-                    var ExpLoss = (this.Exp * (Options.Instance.PlayerOpts.ExpLossOnDeathPercent / 100.0));
+                    var ExpLoss = (this.Exp * (Options.Instance.Player.ExpLossOnDeathPercent / 100.0));
                     TakeExperience((long)ExpLoss);
                 }
                 else
                 {
-                    var ExpLoss = (GetExperienceToNextLevel(this.Level) * (Options.Instance.PlayerOpts.ExpLossOnDeathPercent / 100.0));
+                    var ExpLoss = (GetExperienceToNextLevel(this.Level) * (Options.Instance.Player.ExpLossOnDeathPercent / 100.0));
                     TakeExperience((long)ExpLoss);
                 }
             }
@@ -1263,7 +1263,7 @@ public partial class Player : Entity
             return;
         }
 
-        Level = Math.Min(Options.MaxLevel, level);
+        Level = Math.Min(Options.Instance.Player.MaxLevel, level);
         if (resetExperience)
         {
             Exp = 0;
@@ -1278,7 +1278,7 @@ public partial class Player : Entity
     public void LevelUp(bool resetExperience = true, int levels = 1)
     {
         var messages = new List<string>();
-        if (Level < Options.MaxLevel)
+        if (Level < Options.Instance.Player.MaxLevel)
         {
             for (var i = 0; i < levels; i++)
             {
@@ -1349,7 +1349,7 @@ public partial class Player : Entity
 
     public void TakeExperience(long amount)
     {
-        if (this is Player && Options.Instance.MapOpts.DisableExpLossInArenaMaps && Map.ZoneType == MapZone.Arena)
+        if (this is Player && Options.Instance.Map.DisableExpLossInArenaMaps && Map.ZoneType == MapZone.Arena)
         {
             return;
         }
@@ -1397,8 +1397,8 @@ public partial class Player : Entity
                     // If in party, split the exp.
                     if (Party != null && Party.Count > 0)
                     {
-                        var partyMembersInXpRange = Party.Where(partyMember => partyMember.InRangeOf(this, Options.Party.SharedXpRange)).ToArray();
-                        float bonusExp = Options.Instance.PartyOpts.BonusExperiencePercentPerMember / 100;
+                        var partyMembersInXpRange = Party.Where(partyMember => partyMember.InRangeOf(this, Options.Instance.Party.SharedXpRange)).ToArray();
+                        float bonusExp = Options.Instance.Party.BonusExperiencePercentPerMember / 100;
                         var multiplier = 1.0f + (partyMembersInXpRange.Length * bonusExp);
                         var partyExperience = (int)(descriptor.Experience * multiplier) / partyMembersInXpRange.Length;
                         foreach (var partyMember in partyMembersInXpRange)
@@ -1411,7 +1411,7 @@ public partial class Player : Entity
                         {
                             foreach (var partyMember in Party)
                             {
-                                if ((Options.Party.NpcDeathCommonEventStartRange <= 0 || partyMember.InRangeOf(this, Options.Party.NpcDeathCommonEventStartRange)) && !(partyMember == this && playerEvent != null))
+                                if ((Options.Instance.Party.NpcDeathCommonEventStartRange <= 0 || partyMember.InRangeOf(this, Options.Instance.Party.NpcDeathCommonEventStartRange)) && !(partyMember == this && playerEvent != null))
                                 {
                                     partyMember.EnqueueStartCommonEvent(partyEvent);
                                 }
@@ -1533,12 +1533,12 @@ public partial class Player : Entity
                 return;
             }
 
-            if (descriptor.Tool > -1 && descriptor.Tool < Options.ToolTypes.Count)
+            if (descriptor.Tool > -1 && descriptor.Tool < Options.Instance.Equipment.ToolTypes.Count)
             {
                 if (parentItem == null || descriptor.Tool != parentItem.Tool)
                 {
                     PacketSender.SendChatMsg(
-                        this, Strings.Combat.ToolRequired.ToString(Options.ToolTypes[descriptor.Tool]), ChatMessageType.Error
+                        this, Strings.Combat.ToolRequired.ToString(Options.Instance.Equipment.ToolTypes[descriptor.Tool]), ChatMessageType.Error
                     );
 
                     return;
@@ -1629,7 +1629,7 @@ public partial class Player : Entity
     {
         if (IsCasting)
         {
-            if (Options.Combat.EnableCombatChatMessages)
+            if (Options.Instance.Combat.EnableCombatChatMessages)
             {
                 PacketSender.SendChatMsg(this, Strings.Combat.ChannelingNoAttack, ChatMessageType.Combat);
             }
@@ -1652,7 +1652,7 @@ public partial class Player : Entity
             return;
         }
 
-        var weapon = TryGetEquippedItem(Options.WeaponIndex, out var item) ? item.Descriptor : null;
+        var weapon = TryGetEquippedItem(Options.Instance.Equipment.WeaponSlot, out var item) ? item.Descriptor : null;
 
         //If Entity is resource, check for the correct tool and make sure its not a spell cast.
         if (target is Resource resource)
@@ -1680,12 +1680,12 @@ public partial class Player : Entity
                 return;
             }
 
-            if (descriptor.Tool > -1 && descriptor.Tool < Options.ToolTypes.Count)
+            if (descriptor.Tool > -1 && descriptor.Tool < Options.Instance.Equipment.ToolTypes.Count)
             {
                 if (weapon == null || descriptor.Tool != weapon.Tool)
                 {
                     PacketSender.SendChatMsg(
-                        this, Strings.Combat.ToolRequired.ToString(Options.ToolTypes[descriptor.Tool]), ChatMessageType.Error
+                        this, Strings.Combat.ToolRequired.ToString(Options.Instance.Equipment.ToolTypes[descriptor.Tool]), ChatMessageType.Error
                     );
 
                     return;
@@ -1820,7 +1820,7 @@ public partial class Player : Entity
             attackTime = cls.AttackSpeedValue;
         }
 
-        var weapon = TryGetEquippedItem(Options.WeaponIndex, out var item) ? item.Descriptor : null;
+        var weapon = TryGetEquippedItem(Options.Instance.Equipment.WeaponSlot, out var item) ? item.Descriptor : null;
 
         if (weapon != null)
         {
@@ -3120,7 +3120,7 @@ public partial class Player : Entity
     public List<InventorySlot> FindOpenInventorySlots()
     {
         var slots = new List<InventorySlot>();
-        for (var i = 0; i < Options.MaxInvItems; i++)
+        for (var i = 0; i < Options.Instance.Player.MaxInventory; i++)
         {
             var inventorySlot = Items[i];
 
@@ -3728,7 +3728,7 @@ public partial class Player : Entity
         }
 
         long itemCount = 0;
-        for (var i = 0; i < Options.MaxInvItems; i++)
+        for (var i = 0; i < Options.Instance.Player.MaxInventory; i++)
         {
             var item = Items[i];
             if (item.ItemId == itemId)
@@ -3773,7 +3773,7 @@ public partial class Player : Entity
             return slots;
         }
 
-        for (var i = 0; i < Options.MaxInvItems; i++)
+        for (var i = 0; i < Options.Instance.Player.MaxInventory; i++)
         {
             var item = Items[i];
             if (item?.ItemId != itemId)
@@ -3821,7 +3821,7 @@ public partial class Player : Entity
 
     public override int GetWeaponDamage()
     {
-        if (!TryGetEquippedItem(Options.WeaponIndex, out var item))
+        if (!TryGetEquippedItem(Options.Instance.Equipment.WeaponSlot, out var item))
         {
             return 0;
         }
@@ -4939,7 +4939,7 @@ public partial class Player : Entity
                 //Find a spot in the trade for it!
                 if (itemBase.IsStackable)
                 {
-                    for (var i = 0; i < Options.MaxInvItems; i++)
+                    for (var i = 0; i < Options.Instance.Player.MaxInventory; i++)
                     {
                         if (Trading.Offer[i] != null && Trading.Offer[i].ItemId == Items[slot].ItemId)
                         {
@@ -4967,7 +4967,7 @@ public partial class Player : Entity
                 }
 
                 //Either a non stacking item, or we couldn't find the item already existing in the players inventory
-                for (var i = 0; i < Options.MaxInvItems; i++)
+                for (var i = 0; i < Options.Instance.Player.MaxInventory; i++)
                 {
                     if (Trading.Offer[i] == null || Trading.Offer[i].ItemId == Guid.Empty)
                     {
@@ -5191,7 +5191,7 @@ public partial class Player : Entity
             }
         }
 
-        if (Party.Count >= Options.Party.MaximumMembers)
+        if (Party.Count >= Options.Instance.Party.MaximumMembers)
         {
             PacketSender.SendChatMsg(this, Strings.Parties.LimitReached, ChatMessageType.Party, CustomColors.Alerts.Error);
             return false;
@@ -5320,10 +5320,10 @@ public partial class Player : Entity
         target.Trading.Counterparty = this;
         Trading.Accepted = false;
         target.Trading.Accepted = false;
-        Trading.Offer = new Item[Options.MaxInvItems];
-        target.Trading.Offer = new Item[Options.MaxInvItems];
+        Trading.Offer = new Item[Options.Instance.Player.MaxInventory];
+        target.Trading.Offer = new Item[Options.Instance.Player.MaxInventory];
 
-        for (var i = 0; i < Options.MaxInvItems; i++)
+        for (var i = 0; i < Options.Instance.Player.MaxInventory; i++)
         {
             Trading.Offer[i] = new Item();
             target.Trading.Offer[i] = new Item();
@@ -5352,7 +5352,7 @@ public partial class Player : Entity
             return false;
         }
 
-        for (var i = 0; i < Options.Instance.PlayerOpts.MaxSpells; i++)
+        for (var i = 0; i < Options.Instance.Player.MaxSpells; i++)
         {
             if (Spells[i].SpellId == Guid.Empty)
             {
@@ -5374,7 +5374,7 @@ public partial class Player : Entity
 
     public bool KnowsSpell(Guid spellId)
     {
-        for (var i = 0; i < Options.Instance.PlayerOpts.MaxSpells; i++)
+        for (var i = 0; i < Options.Instance.Player.MaxSpells; i++)
         {
             if (Spells[i].SpellId == spellId)
             {
@@ -5387,7 +5387,7 @@ public partial class Player : Entity
 
     public int FindSpell(Guid spellId)
     {
-        for (var i = 0; i < Options.Instance.PlayerOpts.MaxSpells; i++)
+        for (var i = 0; i < Options.Instance.Player.MaxSpells; i++)
         {
             if (Spells[i].SpellId == spellId)
             {
@@ -5496,7 +5496,7 @@ public partial class Player : Entity
             return true;
         }
 
-        return Map?.ZoneType == MapZone.Safe && Options.Instance.CombatOpts.EnableAllPlayersFriendlyInSafeZone;
+        return Map?.ZoneType == MapZone.Safe && Options.Instance.Combat.EnableAllPlayersFriendlyInSafeZone;
     }
 
     public override bool CanCastSpell(SpellBase spell, Entity target, bool checkVitalReqs, out SpellCastFailureReason reason)
@@ -5505,7 +5505,7 @@ public partial class Player : Entity
         if (!base.CanCastSpell(spell, target, checkVitalReqs, out reason))
         {
             // Let our user know the reason if configured.
-            if (Options.Combat.EnableCombatChatMessages)
+            if (Options.Instance.Combat.EnableCombatChatMessages)
             {
                 switch (reason)
                 {
@@ -5581,7 +5581,7 @@ public partial class Player : Entity
             {
                 if (FindInventoryItemSlot(projectileBase.AmmoItemId, projectileBase.AmmoRequired) == null)
                 {
-                    if (Options.Combat.EnableCombatChatMessages)
+                    if (Options.Instance.Combat.EnableCombatChatMessages)
                     {
                         PacketSender.SendChatMsg(
                             this, Strings.Items.NotEnough.ToString(ItemBase.GetName(projectileBase.AmmoItemId)),
@@ -5617,7 +5617,7 @@ public partial class Player : Entity
                 return;
             }
 
-            if (!Options.Instance.CombatOpts.EnableAutoSelfCastFriendlySpellsWhenTargetingHostile)
+            if (!Options.Instance.Combat.EnableAutoSelfCastFriendlySpellsWhenTargetingHostile)
             {
                 return;
             }
@@ -5672,7 +5672,7 @@ public partial class Player : Entity
         }
         else
         {
-            if (Options.Combat.EnableCombatChatMessages)
+            if (Options.Instance.Combat.EnableCombatChatMessages)
             {
                 PacketSender.SendChatMsg(this, Strings.Combat.Channeling, ChatMessageType.Combat);
             }
@@ -5815,7 +5815,7 @@ public partial class Player : Entity
         // Find the appropriate slot if not passed in
         if (slot == -1)
         {
-            for (var i = 0; i < Options.MaxInvItems; i++)
+            for (var i = 0; i < Options.Instance.Player.MaxInventory; i++)
             {
                 if (itemBase == Items[i].Descriptor)
                 {
@@ -5827,20 +5827,20 @@ public partial class Player : Entity
 
         if (slot != -1)
         {
-            if (itemBase.EquipmentSlot == Options.WeaponIndex)
+            if (itemBase.EquipmentSlot == Options.Instance.Equipment.WeaponSlot)
             {
                 //If we are equipping a 2hand weapon, remove the shield
                 if (itemBase.TwoHanded)
                 {
-                    UnequipItem(Options.ShieldIndex, false);
+                    UnequipItem(Options.Instance.Equipment.ShieldSlot, false);
                 }
             }
-            else if (itemBase.EquipmentSlot == Options.ShieldIndex)
+            else if (itemBase.EquipmentSlot == Options.Instance.Equipment.ShieldSlot)
             {
                 // If we are equipping a shield, remove any 2-handed weapon
-                if (TryGetEquippedItem(Options.WeaponIndex, out Item weapon) && weapon.Descriptor.TwoHanded)
+                if (TryGetEquippedItem(Options.Instance.Equipment.WeaponSlot, out Item weapon) && weapon.Descriptor.TwoHanded)
                 {
-                    UnequipItem(Options.WeaponIndex, false);
+                    UnequipItem(Options.Instance.Equipment.WeaponSlot, false);
                 }
             }
 
@@ -5860,7 +5860,7 @@ public partial class Player : Entity
     public void UnequipItem(Guid itemId, bool sendUpdate = true)
     {
         var updated = false;
-        for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+        for (int i = 0; i < Options.Instance.Equipment.Slots.Count; i++)
         {
             var itemSlot = Equipment[i];
             if (Items.ElementAtOrDefault(itemSlot)?.ItemId == itemId)
@@ -5922,7 +5922,7 @@ public partial class Player : Entity
         CachedEquipmentOnHitTriggers.Clear();
         CachedEquipmentOnDamageTriggers.Clear();
 
-        for (var slot = 0; slot < Options.EquipmentSlots.Count; slot++)
+        for (var slot = 0; slot < Options.Instance.Equipment.Slots.Count; slot++)
         {
             if (!TryGetEquippedItem(slot, out var equippedItem) || equippedItem == null || equippedItem.Descriptor == null)
             {
@@ -5934,7 +5934,7 @@ public partial class Player : Entity
 
             // We have special logic for handling weapons, so the player can't hot-swap their weapon and get a different on-hit event to proc
             // As a result, don't cache them, instead use property "LastAttackingWeapon"
-            if (onHit != null && slot != Options.WeaponIndex)
+            if (onHit != null && slot != Options.Instance.Equipment.WeaponSlot)
             {
                 CachedEquipmentOnHitTriggers.Add(onHit);
             }
@@ -5948,7 +5948,7 @@ public partial class Player : Entity
 
     public void EquipmentProcessItemSwap(int item1, int item2)
     {
-        for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+        for (var i = 0; i < Options.Instance.Equipment.Slots.Count; i++)
         {
             if (Equipment[i] == item1)
             {
@@ -6025,7 +6025,7 @@ public partial class Player : Entity
     //Stats
     public void UpgradeStat(int statIndex)
     {
-        if (Stat[statIndex].BaseStat + StatPointAllocations[statIndex] < Options.MaxStatValue && StatPoints > 0)
+        if (Stat[statIndex].BaseStat + StatPointAllocations[statIndex] < Options.Instance.Player.MaxStat && StatPoints > 0)
         {
             StatPointAllocations[statIndex]++;
             StatPoints--;
@@ -7397,14 +7397,14 @@ public partial class Player : Entity
     public void UpdateGlobalCooldown()
     {
         // Are we allowed to execute this code?
-        if (!Options.Combat.EnableGlobalCooldowns)
+        if (!Options.Instance.Combat.EnableGlobalCooldowns)
         {
             return;
         }
 
         // Calculate our global cooldown and set it.
         var cooldownReduction = 1 - GetEquipmentBonusEffect(ItemEffect.CooldownReduction) / 100f;
-        mGlobalCooldownTimer = Timing.Global.MillisecondsUtc + (long)(Options.Combat.GlobalCooldownDuration * cooldownReduction);
+        mGlobalCooldownTimer = Timing.Global.MillisecondsUtc + (long)(Options.Instance.Combat.GlobalCooldownDuration * cooldownReduction);
 
 
         // Send these cooldowns to the user!
@@ -7434,18 +7434,18 @@ public partial class Player : Entity
         var itemsUpdated = false;
         var spellsUpdated = false;
 
-        if (type == GameObjectType.Item || Options.Combat.LinkSpellAndItemCooldowns)
+        if (type == GameObjectType.Item || Options.Instance.Combat.LinkSpellAndItemCooldowns)
         {
             matchingItems = ItemBase.GetCooldownGroup(group);
         }
-        if (type == GameObjectType.Spell || Options.Combat.LinkSpellAndItemCooldowns)
+        if (type == GameObjectType.Spell || Options.Instance.Combat.LinkSpellAndItemCooldowns)
         {
             matchingSpells = SpellBase.GetCooldownGroup(group);
         }
 
         // Set our matched cooldown, should we need to use it.
         var matchedCooldowntime = cooldown;
-        if (Options.Combat.MatchGroupCooldownHighest)
+        if (Options.Instance.Combat.MatchGroupCooldownHighest)
         {
             // Get our highest cooldown value from all available options.
             matchedCooldowntime = Math.Max(
@@ -7455,12 +7455,12 @@ public partial class Player : Entity
 
         // Set the cooldown for all items matching this cooldown group.
         var baseTime = Timing.Global.MillisecondsUtc;
-        if (type == GameObjectType.Item || Options.Combat.LinkSpellAndItemCooldowns)
+        if (type == GameObjectType.Item || Options.Instance.Combat.LinkSpellAndItemCooldowns)
         {
             foreach (var item in matchingItems)
             {
                 // Do we have to match our cooldown times, or do we use each individual item cooldown?
-                var tempCooldown = Options.Combat.MatchGroupCooldowns ? matchedCooldowntime : item.Cooldown;
+                var tempCooldown = Options.Instance.Combat.MatchGroupCooldowns ? matchedCooldowntime : item.Cooldown;
 
                 // Asign it! Assuming our cooldown isn't already going..
                 if (!ItemCooldowns.ContainsKey(item.Id) || ItemCooldowns[item.Id] < Timing.Global.MillisecondsUtc)
@@ -7472,12 +7472,12 @@ public partial class Player : Entity
         }
 
         // Set the cooldown for all Spells matching this cooldown group.
-        if (type == GameObjectType.Spell || Options.Combat.LinkSpellAndItemCooldowns)
+        if (type == GameObjectType.Spell || Options.Instance.Combat.LinkSpellAndItemCooldowns)
         {
             foreach (var spell in matchingSpells)
             {
                 // Do we have to match our cooldown times, or do we use each individual item cooldown?
-                var tempCooldown = Options.Combat.MatchGroupCooldowns ? matchedCooldowntime : spell.CooldownDuration;
+                var tempCooldown = Options.Instance.Combat.MatchGroupCooldowns ? matchedCooldowntime : spell.CooldownDuration;
 
                 // Asign it! Assuming our cooldown isn't already going...
                 if (!SpellCooldowns.ContainsKey(spell.Id) || SpellCooldowns[spell.Id] < Timing.Global.MillisecondsUtc)

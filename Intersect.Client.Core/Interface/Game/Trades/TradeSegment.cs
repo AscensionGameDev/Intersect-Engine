@@ -55,7 +55,7 @@ public partial class TradeSegment
             prefix = "Their";
         }
 
-        for (var i = 0; i < Options.MaxInvItems; i++)
+        for (var i = 0; i < Options.Instance.Player.MaxInventory; i++)
         {
             Items.Add(new TradeItem(mParent, i, index));
             Items[i].Container = new ImagePanel(ItemContainer, prefix + "TradeItem");

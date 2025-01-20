@@ -37,7 +37,7 @@ public partial class BoundItemExtensionMigration
                 item.CanGuildBank = true;
 
                 // Set item drop chance to the default configuration option.
-                item.DropChanceOnDeath = Options.ItemDropChance;
+                item.DropChanceOnDeath = Options.Instance.Player.ItemDropChance;
             }
         }
 

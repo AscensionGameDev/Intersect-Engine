@@ -20,7 +20,7 @@ namespace Intersect.Server.Networking.Helpers
             sb.AppendLine("Intersect Network Diagnostics");
             sb.AppendLine();
             var externalIp = string.Empty;
-            var serverAccessible = PortChecker.CanYouSeeMe(Options.ServerPort, out externalIp);
+            var serverAccessible = PortChecker.CanYouSeeMe(Options.Instance.ServerPort, out externalIp);
             string localIP;
             using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
             {
@@ -30,7 +30,7 @@ namespace Intersect.Server.Networking.Helpers
             }
 
             sb.AppendLine("External IP (from AGD): " + externalIp);
-            if (Options.UPnP && !string.IsNullOrEmpty(UpnP.GetExternalIp()))
+            if (Options.Instance.UPnP && !string.IsNullOrEmpty(UpnP.GetExternalIp()))
             {
                 sb.AppendLine("Routers IP (from UPnP): " + UpnP.GetExternalIp());
                 if (string.IsNullOrEmpty(externalIp))
@@ -40,52 +40,52 @@ namespace Intersect.Server.Networking.Helpers
             }
 
             sb.AppendLine("Internal IP: " + localIP);
-            sb.AppendLine("Server Port: " + Options.ServerPort);
+            sb.AppendLine("Server Port: " + Options.Instance.ServerPort);
             sb.AppendLine();
-            // var canConnectVia127 = CheckServerPlayerCount("127.0.0.1", Options.ServerPort) > -1;
+            // var canConnectVia127 = CheckServerPlayerCount("127.0.0.1", Options.Instance.ServerPort) > -1;
             // sb.AppendLine(
             //     "Server Status (connecting to self via localhost: 127.0.0.1:" +
-            //     Options.ServerPort +
+            //     Options.Instance.ServerPort +
             //     "): " +
             //     (canConnectVia127 ? "Online" : "Offline")
             // );
 
-            // var canConnectViaInternalIp = CheckServerPlayerCount(localIP, Options.ServerPort) > -1;
+            // var canConnectViaInternalIp = CheckServerPlayerCount(localIP, Options.Instance.ServerPort) > -1;
             // sb.AppendLine(
             //     "Server Status (connecting to self via internal ip: " +
             //     localIP +
             //     ":" +
-            //     Options.ServerPort +
+            //     Options.Instance.ServerPort +
             //     "): " +
             //     (canConnectViaInternalIp ? "Online" : "Offline")
             // );
 
-            // if (Options.UPnP && !string.IsNullOrEmpty(UpnP.GetExternalIp()))
+            // if (Options.Instance.UPnP && !string.IsNullOrEmpty(UpnP.GetExternalIp()))
             // {
-            //     var canConnectViaRouterIp = CheckServerPlayerCount(UpnP.GetExternalIp(), Options.ServerPort) > -1;
+            //     var canConnectViaRouterIp = CheckServerPlayerCount(UpnP.GetExternalIp(), Options.Instance.ServerPort) > -1;
             //     sb.AppendLine(
             //         "Server Status (connecting to self via router ip (from UPnP): " +
             //         UpnP.GetExternalIp() +
             //         ":" +
-            //         Options.ServerPort +
+            //         Options.Instance.ServerPort +
             //         "): " +
             //         (canConnectViaRouterIp ? "Online" : "Offline")
             //     );
             // }
 
-            // var canConnectViaExternalIp = CheckServerPlayerCount(externalIp, Options.ServerPort) > -1;
+            // var canConnectViaExternalIp = CheckServerPlayerCount(externalIp, Options.Instance.ServerPort) > -1;
             // sb.AppendLine(
             //     "Server Status (connecting to self via external ip (from AGD): " +
             //     externalIp +
             //     ":" +
-            //     Options.ServerPort +
+            //     Options.Instance.ServerPort +
             //     "): " +
             //     (canConnectViaExternalIp ? "Online" : "Offline")
             // );
 
             sb.AppendLine($"Server Status (as seen by AGD): {serverAccessible}");
             sb.AppendLine();
-            if (Options.UPnP)
+            if (Options.Instance.UPnP)
             {
                 sb.AppendLine("UPnP Log:");
                 sb.AppendLine(UpnP.GetLog());
