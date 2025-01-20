@@ -72,10 +72,14 @@ internal static class Bootstrapper
                 Path.Combine(
                     "logs",
                     $"{executableName}-{Process.GetCurrentProcess().StartTime:yyyy_MM_dd-HH_mm_ss_fff}.log"
-                )
+                ),
+                rollOnFileSizeLimit: true,
+                retainedFileTimeLimit: TimeSpan.FromDays(30)
             ).WriteTo.File(
                 Path.Combine("logs", $"errors-{executableName}.log"),
-                restrictedToMinimumLevel: LogEventLevel.Error
+                restrictedToMinimumLevel: LogEventLevel.Error,
+                rollOnFileSizeLimit: true,
+                retainedFileTimeLimit: TimeSpan.FromDays(30)
             );
 
         var logger = new SerilogLoggerFactory(loggerConfiguration.CreateLogger()).CreateLogger("Client");

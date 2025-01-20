@@ -28,7 +28,9 @@ internal sealed partial class LoggingHelper : ILoggingHelper
             var pluginLogPath = Path.Combine(BasePluginLogPath, $"{logName}.log");
             loggerConfiguration = loggerConfiguration.WriteTo.File(
                 path: pluginLogPath,
-                restrictedToMinimumLevel: LevelConvert.ToSerilogLevel(createLoggerOptions.File)
+                restrictedToMinimumLevel: LevelConvert.ToSerilogLevel(createLoggerOptions.File),
+                rollOnFileSizeLimit: true,
+                retainedFileTimeLimit: TimeSpan.FromDays(30)
             );
         }
 

@@ -22,9 +22,11 @@ internal sealed class IntersectLoggerFactory : ILoggerFactory
         {
             var configuration = new LoggerConfiguration().Enrich.FromLogContext().WriteTo
                 .Console(restrictedToMinimumLevel: Debugger.IsAttached ? LogEventLevel.Warning : LogEventLevel.Error)
-                .WriteTo.File(path: $"db-{name}.log").WriteTo.File(
-                    path: $"db-errors-{name}.log",
-                    restrictedToMinimumLevel: LogEventLevel.Error
+                .WriteTo.File(path: $"logs/db-{name}.log").WriteTo.File(
+                    path: $"logs/db-errors-{name}.log",
+                    restrictedToMinimumLevel: LogEventLevel.Error,
+                    rollOnFileSizeLimit: true,
+                    retainedFileTimeLimit: TimeSpan.FromDays(30)
                 );
             LoggersByName[name] = configuration.CreateLogger();
         }
