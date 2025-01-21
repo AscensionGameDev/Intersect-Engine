@@ -1618,7 +1618,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             nudDropMinAmount.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
             nudDropMinAmount.ForeColor = System.Drawing.Color.Gainsboro;
-            nudDropMinAmount.Location = new System.Drawing.Point(18, 176);
+            nudDropMinAmount.Location = new System.Drawing.Point(20, 176);
             nudDropMinAmount.Margin = new Padding(4, 3, 4, 3);
             nudDropMinAmount.Maximum = new decimal(new int[] { 10000000, 0, 0, 0 });
             nudDropMinAmount.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
@@ -1631,7 +1631,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblDropMinAmount
             // 
             lblDropMinAmount.AutoSize = true;
-            lblDropMinAmount.Location = new System.Drawing.Point(14, 156);
+            lblDropMinAmount.Location = new System.Drawing.Point(16, 156);
             lblDropMinAmount.Margin = new Padding(4, 0, 4, 0);
             lblDropMinAmount.Name = "lblDropMinAmount";
             lblDropMinAmount.Size = new Size(78, 15);
@@ -1748,7 +1748,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblDropChance
             // 
             lblDropChance.AutoSize = true;
-            lblDropChance.Location = new System.Drawing.Point(16, 209);
+            lblDropChance.Location = new System.Drawing.Point(18, 207);
             lblDropChance.Margin = new Padding(4, 0, 4, 0);
             lblDropChance.Name = "lblDropChance";
             lblDropChance.Size = new Size(71, 15);
@@ -1758,7 +1758,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblDropItem
             // 
             lblDropItem.AutoSize = true;
-            lblDropItem.Location = new System.Drawing.Point(14, 107);
+            lblDropItem.Location = new System.Drawing.Point(14, 106);
             lblDropItem.Margin = new Padding(4, 0, 4, 0);
             lblDropItem.Name = "lblDropItem";
             lblDropItem.Size = new Size(34, 15);
