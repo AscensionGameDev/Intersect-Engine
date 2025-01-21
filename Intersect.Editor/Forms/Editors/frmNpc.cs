@@ -786,6 +786,8 @@ public partial class FrmNpc : EditorForm
             MaxQuantity = drop.MaxQuantity,
             Chance = drop.Chance
         });
+
+        lstDrops.SelectedIndex = _dropList.Count - 1;
     }
 
     private void btnDropRemove_Click(object sender, EventArgs e)
