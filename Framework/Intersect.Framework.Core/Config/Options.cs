@@ -8,37 +8,98 @@ namespace Intersect;
 
 public partial class Options
 {
+    #region Transient Properties
+
     [JsonIgnore]
     public string OptionsData { get; private set; } = string.Empty;
 
     [JsonIgnore]
     public bool SendingToClient { get; set; } = true;
 
-    [JsonProperty(Order = -3)]
+    #endregion Transient Properties
+
+    #region Configuration Properties
+
+    #region Game Core
+
+    [JsonProperty(Order = -100)]
+    public string GameName { get; set; } = DEFAULT_GAME_NAME;
+
+    [JsonProperty(Order = -100)]
+    public ushort ServerPort { get; set; } = DEFAULT_SERVER_PORT;
+
+    #endregion Game Core
+
+    #region Game Access
+
+    [JsonProperty(Order = -99)]
     public bool AdminOnly { get; set; }
 
-    public List<string> AnimatedSprites { get; set; } = [];
-
-    [JsonProperty(Order = -2)]
+    [JsonProperty(Order = -99)]
     public bool BlockClientRegistrations { get; set; }
 
-    public ushort ValidPasswordResetTimeMinutes { get; set; } = 30;
-
-    [JsonProperty(Order = 0)]
-    public bool OpenPortChecker { get; set; } = true;
-
-    [JsonProperty(NullValueHandling = NullValueHandling.Include)]
-    public string? PortCheckerUrl { get; set; }
-
+    [JsonProperty(Order = -99)]
     public int MaxClientConnections { get; set; } = 100;
 
     /// <summary>
     /// Defines the maximum amount of logged-in users our server is allowed to handle.
     /// </summary>
+    [JsonProperty(Order = -99)]
     public int MaximumLoggedInUsers { get; set; } = 50;
 
-    [JsonProperty(Order = -1)]
+    #endregion Game Access
+
+    #region Network Visibility
+
+    [JsonProperty(Order = -91)]
     public bool UPnP { get; set; } = true;
+
+    [JsonProperty(Order = -91)]
+    public bool OpenPortChecker { get; set; } = true;
+
+    [JsonProperty(Order = -91, NullValueHandling = NullValueHandling.Include)]
+    public string? PortCheckerUrl { get; set; }
+
+    #endregion Network Visibility
+
+    #region Logging and Metrics
+
+    [JsonProperty(Order = -80)]
+    public LoggingOptions Logging = new();
+
+    [JsonProperty(Order = -80)]
+    public MetricsOptions Metrics = new();
+
+    #endregion Logging and Metrics
+
+    #region Database
+
+    [JsonProperty(Order = -70)]
+    public DatabaseOptions GameDatabase = new();
+
+    [JsonProperty(Order = -70)]
+    public DatabaseOptions LoggingDatabase = new();
+
+    [JsonProperty(Order = -70)]
+    public DatabaseOptions PlayerDatabase = new();
+
+    #endregion Database
+
+    #region Security
+
+    [JsonProperty(Order = -60)]
+    public SecurityOptions Security = new();
+
+    [JsonProperty(Order = -60)]
+    public SmtpSettings SmtpSettings = new();
+
+    #endregion Security
+
+    #region Other Game Properties
+
+    public List<string> AnimatedSprites { get; set; } = [];
+
+    public PacketOptions Packets = new();
 
     public ChatOptions Chat = new();
 
@@ -48,30 +109,18 @@ public partial class Options
 
     public int EventWatchdogKillThreshold { get; set; } = 5000;
 
-    [JsonProperty(Order = -5)]
-    public string GameName { get; set; } = DEFAULT_GAME_NAME;
-
-    [JsonProperty(Order = -4)]
-    public ushort ServerPort { get; set; } = DEFAULT_SERVER_PORT;
-
     /// <summary>
     /// Passability configuration by map zone
     /// </summary>
     public Passability Passability { get; } = new();
 
+    public ushort ValidPasswordResetTimeMinutes { get; set; } = 30;
+
     public MapOptions Map = new();
-
-    public DatabaseOptions GameDatabase = new();
-
-    public DatabaseOptions LoggingDatabase = new();
-
-    public DatabaseOptions PlayerDatabase = new();
 
     public PlayerOptions Player = new();
 
     public PartyOptions Party = new();
-
-    public SecurityOptions Security = new();
 
     public LootOptions Loot = new();
 
@@ -81,23 +130,19 @@ public partial class Options
 
     public NpcOptions Npc = new();
 
-    public MetricsOptions Metrics = new();
-
-    public PacketOptions Packets = new();
-
-    public SmtpSettings SmtpSettings = new();
-
     public QuestOptions Quest = new();
 
     public GuildOptions Guild = new();
-
-    public LoggingOptions Logging = new();
 
     public BankOptions Bank = new();
 
     public InstancingOptions Instancing = new();
 
     public ItemOptions Items = new();
+
+    #endregion Other Game Properties
+
+    #endregion Configuration Properties
 
     public static Options Instance { get; private set; }
 
