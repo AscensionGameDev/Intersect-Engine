@@ -12,6 +12,27 @@ namespace Intersect.Server.Migrations.MySql.Player
         {
             migrationBuilder.Sql("SET FOREIGN_KEY_CHECKS=0;");
 
+            migrationBuilder.DropForeignKey(name: "FK_RefreshTokens_Users_UserId", table: "RefreshTokens");
+            migrationBuilder.DropForeignKey(name: "FK_Player_Hotbar_Players_PlayerId", table: "Player_Hotbar");
+            migrationBuilder.DropForeignKey(name: "FK_Player_Quests_Players_PlayerId", table: "Player_Quests");
+            migrationBuilder.DropForeignKey(name: "FK_Player_Variables_Players_PlayerId", table: "Player_Variables");
+            migrationBuilder.DropForeignKey(name: "FK_Bans_Users_PlayerId", table: "Bans");
+            migrationBuilder.DropForeignKey(name: "FK_Mutes_Users_PlayerId", table: "Mutes");
+            migrationBuilder.DropForeignKey(name: "FK_Player_Friends_Players_OwnerId", table: "Player_Friends");
+            migrationBuilder.DropForeignKey(name: "FK_Player_Friends_Players_TargetId", table: "Player_Friends");
+            migrationBuilder.DropForeignKey(name: "FK_Guild_Variables_Guilds_GuildId", table: "Guild_Variables");
+            migrationBuilder.DropForeignKey(name: "FK_User_Variables_Users_UserId", table: "User_Variables");
+            migrationBuilder.DropForeignKey(name: "FK_Player_Spells_Players_PlayerId", table: "Player_Spells");
+            migrationBuilder.DropForeignKey(name: "FK_Players_Users_UserId", table: "Players");
+            migrationBuilder.DropForeignKey(name: "FK_Player_Items_Bags_BagId", table: "Player_Items");
+            migrationBuilder.DropForeignKey(name: "FK_Player_Items_Players_PlayerId", table: "Player_Items");
+            migrationBuilder.DropForeignKey(name: "FK_Player_Bank_Bags_BagId", table: "Player_Bank");
+            migrationBuilder.DropForeignKey(name: "FK_Player_Bank_Players_PlayerId", table: "Player_Bank");
+            migrationBuilder.DropForeignKey(name: "FK_Guild_Bank_Bags_BagId", table: "Guild_Bank");
+            migrationBuilder.DropForeignKey(name: "FK_Guild_Bank_Guilds_GuildId", table: "Guild_Bank");
+            migrationBuilder.DropForeignKey(name: "FK_Bag_Items_Bags_BagId", table: "Bag_Items");
+            migrationBuilder.DropForeignKey(name: "FK_Bag_Items_Bags_ParentBagId", table: "Bag_Items");
+
             migrationBuilder.AlterColumn<string>(
                 name: "Salt",
                 table: "Users",
@@ -1373,6 +1394,166 @@ namespace Intersect.Server.Migrations.MySql.Player
                 oldClrType: typeof(string),
                 oldType: "TEXT")
                 .OldAnnotation("MySql:CharSet", "utf8mb4");
+            migrationBuilder.AddForeignKey(
+                name: "FK_RefreshTokens_Users_UserId",
+                table: "RefreshTokens",
+                column: "UserId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade
+            );
+            migrationBuilder.AddForeignKey(
+                name: "FK_Player_Hotbar_Players_PlayerId",
+                table: "Player_Hotbar",
+                column: "PlayerId",
+                principalTable: "Players",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade
+            );
+            migrationBuilder.AddForeignKey(
+                name: "FK_Player_Quests_Players_PlayerId",
+                table: "Player_Quests",
+                column: "PlayerId",
+                principalTable: "Players",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade
+            );
+            migrationBuilder.AddForeignKey(
+                name: "FK_Player_Variables_Players_PlayerId",
+                table: "Player_Variables",
+                column: "PlayerId",
+                principalTable: "Players",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade
+            );
+            migrationBuilder.AddForeignKey(
+                name: "FK_Bans_Users_PlayerId",
+                table: "Bans",
+                column: "PlayerId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade
+            );
+            migrationBuilder.AddForeignKey(
+                name: "FK_Mutes_Users_PlayerId",
+                table: "Mutes",
+                column: "PlayerId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade
+            );
+            migrationBuilder.AddForeignKey(
+                name: "FK_Player_Friends_Players_OwnerId",
+                table: "Player_Friends",
+                column: "OwnerId",
+                principalTable: "Players",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade
+            );
+            migrationBuilder.AddForeignKey(
+                name: "FK_Player_Friends_Players_TargetId",
+                table: "Player_Friends",
+                column: "TargetId",
+                principalTable: "Players",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade
+            );
+            migrationBuilder.AddForeignKey(
+                name: "FK_Guild_Variables_Guilds_GuildId",
+                table: "Guild_Variables",
+                column: "GuildId",
+                principalTable: "Guilds",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade
+            );
+            migrationBuilder.AddForeignKey(
+                name: "FK_User_Variables_Users_UserId",
+                table: "User_Variables",
+                column: "UserId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade
+            );
+            migrationBuilder.AddForeignKey(
+                name: "FK_Player_Spells_Players_PlayerId",
+                table: "Player_Spells",
+                column: "PlayerId",
+                principalTable: "Players",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade
+            );
+            migrationBuilder.AddForeignKey(
+                name: "FK_Players_Users_UserId",
+                table: "Players",
+                column: "UserId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict
+            );
+            migrationBuilder.AddForeignKey(
+                name: "FK_Player_Items_Bags_BagId",
+                table: "Player_Items",
+                column: "BagId",
+                principalTable: "Bags",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict
+            );
+            migrationBuilder.AddForeignKey(
+                name: "FK_Player_Items_Players_PlayerId",
+                table: "Player_Items",
+                column: "PlayerId",
+                principalTable: "Players",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade
+            );
+            migrationBuilder.AddForeignKey(
+                name: "FK_Player_Bank_Bags_BagId",
+                table: "Player_Bank",
+                column: "BagId",
+                principalTable: "Bags",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict
+            );
+            migrationBuilder.AddForeignKey(
+                name: "FK_Player_Bank_Players_PlayerId",
+                table: "Player_Bank",
+                column: "PlayerId",
+                principalTable: "Players",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade
+            );
+            migrationBuilder.AddForeignKey(
+                name: "FK_Guild_Bank_Bags_BagId",
+                table: "Guild_Bank",
+                column: "BagId",
+                principalTable: "Bags",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict
+            );
+            migrationBuilder.AddForeignKey(
+                name: "FK_Guild_Bank_Guilds_GuildId",
+                table: "Guild_Bank",
+                column: "GuildId",
+                principalTable: "Guilds",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade
+            );
+            migrationBuilder.AddForeignKey(
+                name: "FK_Bag_Items_Bags_BagId",
+                table: "Bag_Items",
+                column: "BagId",
+                principalTable: "Bags",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict
+            );
+            migrationBuilder.AddForeignKey(
+                name: "FK_Bag_Items_Bags_ParentBagId",
+                table: "Bag_Items",
+                column: "ParentBagId",
+                principalTable: "Bags",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade
+            );
 
             migrationBuilder.Sql("SET FOREIGN_KEY_CHECKS=1;");
         }
