@@ -67,7 +67,7 @@ public partial class FrmProgress : Form
         if (!InvokeRequired)
         {
             lblStatus.Text = mStatusText;
-            progressBar.Value = mProgressVal;
+            progressBar.Value = Math.Min(100, mProgressVal);
             btnCancel.Visible = mShowCancelBtn;
             if (mShouldClose)
             {
