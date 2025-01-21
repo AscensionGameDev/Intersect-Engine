@@ -1,4 +1,4 @@
-﻿using DarkUI.Controls;
+using DarkUI.Controls;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
@@ -167,7 +167,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.rdoGlobalVariable.Size = new System.Drawing.Size(96, 17);
             this.rdoGlobalVariable.TabIndex = 37;
             this.rdoGlobalVariable.Text = "Global Variable";
-            this.rdoGlobalVariable.CheckedChanged += new System.EventHandler(this.rdoGlobalVariable_CheckedChanged);
+            this.rdoGlobalVariable.CheckedChanged += new System.EventHandler(this.SetupAmountInput);
             // 
             // rdoGuildVariable
             // 
@@ -177,7 +177,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.rdoGuildVariable.Size = new System.Drawing.Size(90, 17);
             this.rdoGuildVariable.TabIndex = 37;
             this.rdoGuildVariable.Text = "Guild Variable";
-            this.rdoGuildVariable.CheckedChanged += new System.EventHandler(this.rdoGuildVariable_CheckedChanged);
+            this.rdoGuildVariable.CheckedChanged += new System.EventHandler(this.SetupAmountInput);
             // 
             // rdoPlayerVariable
             // 
@@ -189,7 +189,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.rdoPlayerVariable.TabIndex = 36;
             this.rdoPlayerVariable.TabStop = true;
             this.rdoPlayerVariable.Text = "Player Variable";
-            this.rdoPlayerVariable.CheckedChanged += new System.EventHandler(this.rdoPlayerVariable_CheckedChanged);
+            this.rdoPlayerVariable.CheckedChanged += new System.EventHandler(this.SetupAmountInput);
             // 
             // grpAmountType
             // 
@@ -213,7 +213,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.rdoVariable.Size = new System.Drawing.Size(63, 17);
             this.rdoVariable.TabIndex = 36;
             this.rdoVariable.Text = "Variable";
-            this.rdoVariable.CheckedChanged += new System.EventHandler(this.rdoVariable_CheckedChanged);
+            this.rdoVariable.CheckedChanged += new System.EventHandler(this.SetupAmountInput);
             // 
             // rdoManual
             // 
@@ -225,7 +225,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.rdoManual.TabIndex = 35;
             this.rdoManual.TabStop = true;
             this.rdoManual.Text = "Manual";
-            this.rdoManual.CheckedChanged += new System.EventHandler(this.rdoManual_CheckedChanged);
+            this.rdoManual.CheckedChanged += new System.EventHandler(this.SetupAmountInput);
             // 
             // btnCancel
             // 

@@ -1,30 +1,28 @@
-﻿using Intersect.Editor.Localization;
+using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects.Events.Commands;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands;
 
-
 public partial class EventCommandGiveExperience : UserControl
 {
+    private readonly FrmEvent _eventEditor;
 
-    private readonly FrmEvent mEventEditor;
-
-    private GiveExperienceCommand mMyCommand;
+    private readonly GiveExperienceCommand _command;
 
     public EventCommandGiveExperience(GiveExperienceCommand refCommand, FrmEvent editor)
     {
         InitializeComponent();
-        mMyCommand = refCommand;
-        mEventEditor = editor;
+        _command = refCommand;
+        _eventEditor = editor;
         InitLocalization();
 
-        rdoVariable.Checked = mMyCommand.UseVariable;
-        rdoGlobalVariable.Checked = mMyCommand.VariableType == VariableType.ServerVariable;
-        rdoGuildVariable.Checked = mMyCommand.VariableType == VariableType.GuildVariable;
+        rdoVariable.Checked = _command.UseVariable;
+        rdoGlobalVariable.Checked = _command.VariableType == VariableType.ServerVariable;
+        rdoGuildVariable.Checked = _command.VariableType == VariableType.GuildVariable;
 
-        SetupAmountInput();
+        SetupAmountInput(default, default);
     }
 
     private void InitLocalization()
@@ -51,54 +49,31 @@ public partial class EventCommandGiveExperience : UserControl
 
     private void btnSave_Click(object sender, EventArgs e)
     {
-        mMyCommand.Exp = (long) nudExperience.Value;
+        _command.Exp = (long) nudExperience.Value;
+
         if (rdoPlayerVariable.Checked)
         {
-            mMyCommand.VariableType = VariableType.PlayerVariable;
-            mMyCommand.VariableId = PlayerVariableDescriptor.IdFromList(cmbVariable.SelectedIndex, VariableDataType.Integer);
+            _command.VariableType = VariableType.PlayerVariable;
+            _command.VariableId = PlayerVariableDescriptor.IdFromList(cmbVariable.SelectedIndex, VariableDataType.Integer);
         }
         else if (rdoGlobalVariable.Checked)
         {
-            mMyCommand.VariableType = VariableType.ServerVariable;
-            mMyCommand.VariableId = ServerVariableDescriptor.IdFromList(cmbVariable.SelectedIndex, VariableDataType.Integer);
+            _command.VariableType = VariableType.ServerVariable;
+            _command.VariableId = ServerVariableDescriptor.IdFromList(cmbVariable.SelectedIndex, VariableDataType.Integer);
         }
         else if (rdoGuildVariable.Checked)
         {
-            mMyCommand.VariableType = VariableType.GuildVariable;
-            mMyCommand.VariableId = GuildVariableDescriptor.IdFromList(cmbVariable.SelectedIndex, VariableDataType.Integer);
+            _command.VariableType = VariableType.GuildVariable;
+            _command.VariableId = GuildVariableDescriptor.IdFromList(cmbVariable.SelectedIndex, VariableDataType.Integer);
         }
-        mMyCommand.UseVariable = !rdoManual.Checked;
-        mEventEditor.FinishCommandEdit();
+
+        _command.UseVariable = !rdoManual.Checked;
+        _eventEditor.FinishCommandEdit();
     }
 
     private void btnCancel_Click(object sender, EventArgs e)
     {
-        mEventEditor.CancelCommandEdit();
-    }
-
-    private void rdoManual_CheckedChanged(object sender, EventArgs e)
-    {
-        SetupAmountInput();
-    }
-
-    private void rdoVariable_CheckedChanged(object sender, EventArgs e)
-    {
-        SetupAmountInput();
-    }
-
-    private void rdoPlayerVariable_CheckedChanged(object sender, EventArgs e)
-    {
-        SetupAmountInput();
-    }
-
-    private void rdoGlobalVariable_CheckedChanged(object sender, EventArgs e)
-    {
-        SetupAmountInput();
-    }
-
-    private void rdoGuildVariable_CheckedChanged(object sender, EventArgs e)
-    {
-        SetupAmountInput();
+        _eventEditor.CancelCommandEdit();
     }
 
     private void VariableBlank()
@@ -114,7 +89,7 @@ public partial class EventCommandGiveExperience : UserControl
         }
     }
 
-    private void SetupAmountInput()
+    private void SetupAmountInput(object? sender, EventArgs? e)
     {
         grpManualAmount.Visible = rdoManual.Checked;
         grpVariableAmount.Visible = !rdoManual.Checked;
@@ -124,9 +99,9 @@ public partial class EventCommandGiveExperience : UserControl
         {
             cmbVariable.Items.AddRange(PlayerVariableDescriptor.GetNamesByType(VariableDataType.Integer));
             // Do not update if the wrong type of variable is saved
-            if (mMyCommand.VariableType == VariableType.PlayerVariable)
+            if (_command.VariableType == VariableType.PlayerVariable)
             {
-                var index = PlayerVariableDescriptor.ListIndex(mMyCommand.VariableId, VariableDataType.Integer);
+                var index = PlayerVariableDescriptor.ListIndex(_command.VariableId, VariableDataType.Integer);
                 if (index > -1)
                 {
                     cmbVariable.SelectedIndex = index;
@@ -145,9 +120,9 @@ public partial class EventCommandGiveExperience : UserControl
         {
             cmbVariable.Items.AddRange(ServerVariableDescriptor.GetNamesByType(VariableDataType.Integer));
             // Do not update if the wrong type of variable is saved
-            if (mMyCommand.VariableType == VariableType.ServerVariable)
+            if (_command.VariableType == VariableType.ServerVariable)
             {
-                var index = ServerVariableDescriptor.ListIndex(mMyCommand.VariableId, VariableDataType.Integer);
+                var index = ServerVariableDescriptor.ListIndex(_command.VariableId, VariableDataType.Integer);
                 if (index > -1)
                 {
                     cmbVariable.SelectedIndex = index;
@@ -166,9 +141,9 @@ public partial class EventCommandGiveExperience : UserControl
         {
             cmbVariable.Items.AddRange(GuildVariableDescriptor.GetNamesByType(VariableDataType.Integer));
             // Do not update if the wrong type of variable is saved
-            if (mMyCommand.VariableType == VariableType.GuildVariable)
+            if (_command.VariableType == VariableType.GuildVariable)
             {
-                var index = GuildVariableDescriptor.ListIndex(mMyCommand.VariableId, VariableDataType.Integer);
+                var index = GuildVariableDescriptor.ListIndex(_command.VariableId, VariableDataType.Integer);
                 if (index > -1)
                 {
                     cmbVariable.SelectedIndex = index;
@@ -184,6 +159,6 @@ public partial class EventCommandGiveExperience : UserControl
             }
         }
 
-        nudExperience.Value = Math.Max(1, mMyCommand.Exp);
+        nudExperience.Value = Math.Max(1, _command.Exp);
     }
 }
