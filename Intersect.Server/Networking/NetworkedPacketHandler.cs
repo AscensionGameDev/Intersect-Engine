@@ -137,7 +137,7 @@ internal sealed partial class NetworkedPacketHandler
             if (client.IsEditor)
             {
                 //Is Editor
-                client.PacketFloodingThreshholds = Options.Instance.Security.PacketOpts.EditorThreshholds;
+                client.PacketFloodingThresholds = Options.Instance.Security.Packets.EditorThreshholds;
             }
 
 

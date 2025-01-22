@@ -1,7 +1,9 @@
 using System.Runtime.Serialization;
+using Intersect.Framework.Annotations;
 
 namespace Intersect.Config;
 
+[RequiresRestart]
 public partial class InstancingOptions
 {
     /// <summary>

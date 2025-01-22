@@ -6,49 +6,48 @@
 public partial class NpcOptions
 {
     /// <summary>
-    /// Configures whether or not Npcs are allowed to reset after moving out of a specified radius when starting to fight another entity.
+    /// If NPCs are allowed to reset after moving out of a specified radius when starting to fight another entity.
     /// </summary>
-    public bool AllowResetRadius = false;
+    public bool AllowResetRadius { get; set; } = false;
 
     /// <summary>
     /// Configures the radius in which an NPC is allowed to move after starting to fight another entity.
     /// </summary>
-    public int ResetRadius = 8;
+    public int ResetRadius { get; set; } = 8;
 
     /// <summary>
-    /// Configures whether or not the NPC is allowed to gain a new reset center point while it is still busy moving to its original reset point.
-    /// NOTE: Can be used to allow the NPCs to be dragged far far away, as it constantly resets the center of its radius!!!
+    /// If the NPC is allowed to gain a new reset center point while it is still busy moving to its original reset point.
+    /// NOTE: Can be used to allow the NPCs to be dragged very far away, as it constantly resets the center of its radius!!!
     /// </summary>
-
-    public bool AllowNewResetLocationBeforeFinish = false;
-
-    /// <summary>
-    /// Configures whether or not the NPC should completely restore its vitals and statusses once it starts resetting.
-    /// </summary>
-    public bool ResetVitalsAndStatusses = false;
+    public bool AllowNewResetLocationBeforeFinish { get; set; } = false;
 
     /// <summary>
-    /// Configures whether or not the NPCs health should continue to reset to full and clear statuses while working its way to the reset location
+    /// If the NPC should completely restore its vitals and statusses once it starts resetting.
     /// </summary>
-    public bool ContinuouslyResetVitalsAndStatuses = false;
+    public bool ResetVitalsAndStatusses { get; set; } = false;
+
+    /// <summary>
+    /// If the NPCs health should continue to reset to full and clear statuses while working its way to the reset location
+    /// </summary>
+    public bool ContinuouslyResetVitalsAndStatuses { get; set; } = false;
 
     /// <summary>
     /// If true, a NPC can be attacked while they are resetting. Their new attacker will become a target if they are within the reset radius
     /// </summary>
-    public bool AllowEngagingWhileResetting = false;
+    public bool AllowEngagingWhileResetting { get; set; } = false;
 
     /// <summary>
-    /// Configures whether or not the level of an Npc is shown next to their name.
+    /// If the level of an NPC is shown next to their name.
     /// </summary>
-    public bool ShowLevelByName = false;
+    public bool ShowLevelByName { get; set; } = false;
 
     /// <summary>
-    /// If true, NPCs that are resetting will walkthrough players
+    /// If true, NPCs that are resetting will walk through players
     /// </summary>
-    public bool IntangibleDuringReset = true;
+    public bool IntangibleDuringReset { get; set; } = true;
 
     /// <summary>
     /// If true, NPCs will go to reset state if their combat timer is exceeded
     /// </summary>
-    public bool ResetIfCombatTimerExceeded = true;
+    public bool ResetIfCombatTimerExceeded { get; set; } = true;
 }

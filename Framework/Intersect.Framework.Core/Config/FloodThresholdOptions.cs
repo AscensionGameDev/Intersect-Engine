@@ -1,6 +1,6 @@
 namespace Intersect.Config;
 
-public partial class FloodThreshholds
+public partial class FloodThresholdOptions
 {
     /// <summary>
     /// The largest a single packet should be before it's considered flooding.
@@ -17,9 +17,9 @@ public partial class FloodThreshholds
     /// </summary>
     public int KickAvgPacketPerSec { get; set; } = 30;
 
-    public static FloodThreshholds Editor()
+    public static FloodThresholdOptions Editor()
     {
-        return new FloodThreshholds()
+        return new FloodThresholdOptions()
         {
             MaxPacketSize = int.MaxValue,
             MaxPacketPerSec = int.MaxValue,
@@ -27,9 +27,9 @@ public partial class FloodThreshholds
         };
     }
 
-    public static FloodThreshholds NotLoggedIn()
+    public static FloodThresholdOptions NotLoggedIn()
     {
-        return new FloodThreshholds()
+        return new FloodThresholdOptions()
         {
             MaxPacketSize = 10240,
             MaxPacketPerSec = 5,

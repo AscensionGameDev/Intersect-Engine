@@ -1,5 +1,8 @@
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using Intersect.Framework.Annotations;
+
 // ReSharper disable MemberCanBePrivate.Global
 
 namespace Intersect.Framework.Reflection;
@@ -33,4 +36,7 @@ public static partial class MemberInfoExtensions
     }
 
     public static string GetFullSignature(this MethodInfo methodInfo) => methodInfo.GetSignature(true);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsIgnored(this MemberInfo memberInfo) => IgnoreAttribute.IsIgnored(memberInfo);
 }

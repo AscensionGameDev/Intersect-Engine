@@ -1,6 +1,8 @@
+using System.ComponentModel;
 using Intersect.Config;
 using Intersect.Config.Guilds;
 using Intersect.Core;
+using Intersect.Framework.Annotations;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -8,13 +10,38 @@ namespace Intersect;
 
 public partial class Options
 {
+    #region Constants
+
+    public const string DefaultGameName = "Intersect";
+
+    public const int DefaultServerPort = 5400;
+
+    #endregion
+
+    #region Static Properties
+
+    public static string ResourcesDirectory { get; set; } = "resources";
+
+    public static Options Instance { get; private set; }
+
+    public static Options? PendingChanges { get; private set; }
+
+    public static bool IsLoaded => Instance != null;
+
+    #endregion Static Properties
+
     #region Transient Properties
 
+    [Ignore]
     [JsonIgnore]
     public string OptionsData { get; private set; } = string.Empty;
 
+    [Ignore]
     [JsonIgnore]
     public bool SendingToClient { get; set; } = true;
+
+    [Ignore]
+    public bool SmtpValid { get; private set; }
 
     #endregion Transient Properties
 
@@ -23,10 +50,12 @@ public partial class Options
     #region Game Core
 
     [JsonProperty(Order = -100)]
-    public string GameName { get; set; } = DEFAULT_GAME_NAME;
+    [RequiresRestart]
+    public string GameName { get; set; } = DefaultGameName;
 
     [JsonProperty(Order = -100)]
-    public ushort ServerPort { get; set; } = DEFAULT_SERVER_PORT;
+    [RequiresRestart]
+    public ushort ServerPort { get; set; } = DefaultServerPort;
 
     #endregion Game Core
 
@@ -52,12 +81,15 @@ public partial class Options
     #region Network Visibility
 
     [JsonProperty(Order = -91)]
+    [RequiresRestart]
     public bool UPnP { get; set; } = true;
 
     [JsonProperty(Order = -91)]
+    [RequiresRestart]
     public bool OpenPortChecker { get; set; } = true;
 
     [JsonProperty(Order = -91, NullValueHandling = NullValueHandling.Include)]
+    [RequiresRestart]
     public string? PortCheckerUrl { get; set; }
 
     #endregion Network Visibility
@@ -75,12 +107,15 @@ public partial class Options
     #region Database
 
     [JsonProperty(Order = -70)]
+    [RequiresRestart]
     public DatabaseOptions GameDatabase = new();
 
     [JsonProperty(Order = -70)]
+    [RequiresRestart]
     public DatabaseOptions LoggingDatabase = new();
 
     [JsonProperty(Order = -70)]
+    [RequiresRestart]
     public DatabaseOptions PlayerDatabase = new();
 
     #endregion Database
@@ -88,31 +123,38 @@ public partial class Options
     #region Security
 
     [JsonProperty(Order = -60)]
+    [RequiresRestart]
     public SecurityOptions Security = new();
 
     [JsonProperty(Order = -60)]
+    [RequiresRestart]
     public SmtpSettings SmtpSettings = new();
 
     #endregion Security
 
     #region Other Game Properties
 
+    [RequiresRestart]
     public List<string> AnimatedSprites { get; set; } = [];
 
+    [RequiresRestart]
     public PacketOptions Packets = new();
 
     public ChatOptions Chat = new();
 
+    [RequiresRestart]
     public CombatOptions Combat = new();
 
+    [RequiresRestart]
     public EquipmentOptions Equipment = new();
 
+    [RequiresRestart]
     public int EventWatchdogKillThreshold { get; set; } = 5000;
 
     /// <summary>
     /// Passability configuration by map zone
     /// </summary>
-    public Passability Passability { get; } = new();
+    public PassabilityOptions Passability { get; } = new();
 
     public ushort ValidPasswordResetTimeMinutes { get; set; } = 30;
 
@@ -144,12 +186,6 @@ public partial class Options
 
     #endregion Configuration Properties
 
-    public static Options Instance { get; private set; }
-
-    public static bool IsLoaded => Instance != null;
-
-    public bool SmtpValid { get; set; }
-
     public void FixAnimatedSprites()
     {
         for (var i = 0; i < AnimatedSprites.Count; i++)
@@ -157,8 +193,6 @@ public partial class Options
             AnimatedSprites[i] = AnimatedSprites[i].ToLower();
         }
     }
-
-    public static string ResourcesDirectory { get; set; } = "resources";
 
     public static bool LoadFromDisk()
     {
@@ -265,15 +299,4 @@ public partial class Options
     {
         return !SendingToClient;
     }
-
-    #region Constants
-
-    // TODO: Clean these up
-    //Values that cannot easily be changed:
-
-    public const string DEFAULT_GAME_NAME = "Intersect";
-
-    public const int DEFAULT_SERVER_PORT = 5400;
-
-    #endregion
 }

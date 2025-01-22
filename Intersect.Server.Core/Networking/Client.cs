@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using Intersect.Config;
 using Intersect.ErrorHandling;
 using Intersect.Core;
 using Intersect.Network;
@@ -42,7 +43,7 @@ public partial class Client : IPacketSender
     public ConcurrentQueue<IPacket> RecentPackets = new ConcurrentQueue<IPacket>();
     public bool PacketHandlingQueued = false;
     public bool PacketSendingQueued = false;
-    public Config.FloodThreshholds PacketFloodingThreshholds { get; set; } = Options.Instance.Security?.PacketOpts.Threshholds;
+    public FloodThresholdOptions PacketFloodingThresholds { get; set; } = Options.Instance.Security?.Packets.Threshholds;
     public long LastPing { get; set; } = -1;
 
     protected long mTimeout = 20000; //20 seconds

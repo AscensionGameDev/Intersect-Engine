@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using Intersect.Framework.Annotations;
 using Newtonsoft.Json;
 
 namespace Intersect.Config;
@@ -6,6 +7,7 @@ namespace Intersect.Config;
 /// <summary>
 ///  Options for the game map.
 /// </summary>
+[RequiresRestart]
 public partial class MapOptions
 {
     public const int DefaultMapWidth = 32;
@@ -29,7 +31,7 @@ public partial class MapOptions
     public bool EnableCrossingDiagonalBlocks { get; set; }
 
     /// <summary>
-    /// Indicates whether or not diagonal movement is enabled for entities within the map.
+    /// Indicates whether diagonal movement is enabled for entities within the map.
     /// </summary>
     public bool EnableDiagonalMovement
     {
