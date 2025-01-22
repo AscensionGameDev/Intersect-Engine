@@ -39,4 +39,6 @@ public enum CommonEventTrigger
     MapChanged,
 
     UserVariableChange,
+
+    LevelDown,
 }

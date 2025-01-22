@@ -1255,7 +1255,8 @@ public partial class Player : Entity
         SetVital(Vital.Mana, GetVital(Vital.Mana));
     }
 
-    //Leveling
+    #region Leveling
+
     public void SetLevel(int level, bool resetExperience = false)
     {
         if (level < 1)
@@ -1275,72 +1276,100 @@ public partial class Player : Entity
         PacketSender.SendExperience(this);
     }
 
-    public void LevelUp(bool resetExperience = true, int levels = 1)
+    public void AddLevels(int levels = 1, bool resetExperience = true)
     {
-        var messages = new List<string>();
-
-        var maxLevel = Options.Instance.Player.MaxLevel;
         if (levels > 0)
         {
-            while (Level < maxLevel)
+            while (levels > 0)
             {
-                SetLevel(Level + 1, resetExperience);
+                if (Level >= Options.Instance.Player.MaxLevel)
+                {
+                    break;
+                }
 
-                // level up logic (like spells)
+                SetLevel(Level + 1, resetExperience);
+                StartCommonEventsWithTrigger(CommonEventTrigger.LevelUp);
+
+                PacketSender.SendChatMsg(
+                    this,
+                    Strings.Player.LevelUp.ToString(Level),
+                    ChatMessageType.Experience,
+                    CustomColors.Combat.LevelUp,
+                    Name
+                );
+
+                if (ClassBase.TryGet(ClassId, out var classDescriptor) && classDescriptor?.Spells != default)
+                {
+                    foreach (var spell in classDescriptor.Spells)
+                    {
+                        if (spell.Level != Level)
+                        {
+                            continue;
+                        }
+
+                        var spellInstance = new Spell(spell.Id);
+                        _ = TryTeachSpell(spellInstance, true);
+                    }
+                }
+
+                PacketSender.SendActionMsg(this, Strings.Combat.LevelUp, CustomColors.Combat.LevelUp);
+                levels--;
             }
         }
         else if (levels < 0)
         {
-            while (1 < Level)
+            while (levels < 0)
             {
-                SetLevel(Level - 1, resetExperience);
-
-                // level down logic (like spells)
-            }
-        }
-
-        if (Level < Options.Instance.Player.MaxLevel)
-        {
-            for (var i = 0; i < levels; i++)
-            {
-                SetLevel(Level + 1, resetExperience);
-
-                //Let's pull up class - leveling info
-                var classDescriptor = ClassBase.Get(ClassId);
-                if (classDescriptor?.Spells == null)
+                if (Level <= 1)
                 {
-                    continue;
+                    Level = 1;
+                    break;
                 }
 
-                foreach (var spell in classDescriptor.Spells)
-                {
-                    if (spell.Level != Level)
-                    {
-                        continue;
-                    }
+                SetLevel(Level - 1);
+                StartCommonEventsWithTrigger(CommonEventTrigger.LevelDown);
 
-                    var spellInstance = new Spell(spell.Id);
-                    if (TryTeachSpell(spellInstance, true))
+                PacketSender.SendChatMsg(
+                    this,
+                    Strings.Player.LevelDown.ToString(Level),
+                    ChatMessageType.Experience,
+                    CustomColors.Combat.LevelDown,
+                    Name
+                );
+
+                if (ClassBase.TryGet(ClassId, out var classDescriptor) && classDescriptor?.Spells != default)
+                {
+                    foreach (var spell in classDescriptor.Spells)
                     {
-                        messages.Add(
-                            Strings.Player.SpellTaughtLevelUp.ToString(SpellBase.GetName(spellInstance.SpellId))
+                        if (spell.Level != Level + 1)
+                        {
+                            continue;
+                        }
+
+                        ForgetSpell(FindSpell(spell.Id), true);
+                        PacketSender.SendChatMsg(
+                            this,
+                            Strings.Player.SpellForgottenLevelDown.ToString(SpellBase.GetName(spell.Id)),
+                            ChatMessageType.Experience,
+                            CustomColors.Alerts.Info,
+                            Name
                         );
                     }
                 }
-            }
-        }
 
-        PacketSender.SendChatMsg(this, Strings.Player.LevelUp.ToString(Level), ChatMessageType.Experience, CustomColors.Combat.LevelUp, Name);
-        PacketSender.SendActionMsg(this, Strings.Combat.LevelUp, CustomColors.Combat.LevelUp);
-        foreach (var message in messages)
-        {
-            PacketSender.SendChatMsg(this, message, ChatMessageType.Experience, CustomColors.Alerts.Info, Name);
+                PacketSender.SendActionMsg(this, Strings.Combat.LevelDown, CustomColors.Combat.LevelDown);
+                levels++;
+            }
         }
 
         if (StatPoints > 0)
         {
             PacketSender.SendChatMsg(
-                this, Strings.Player.StatPoints.ToString(StatPoints), ChatMessageType.Experience, CustomColors.Combat.StatPoints, Name
+                this,
+                Strings.Player.StatPoints.ToString(StatPoints),
+                ChatMessageType.Experience,
+                CustomColors.Combat.StatPoints,
+                Name
             );
         }
 
@@ -1349,9 +1378,6 @@ public partial class Player : Entity
         PacketSender.SendExperience(this);
         PacketSender.SendPointsTo(this);
         PacketSender.SendEntityDataToProximity(this);
-
-        //Search for level up activated events and run them
-        StartCommonEventsWithTrigger(CommonEventTrigger.LevelUp);
     }
 
     public void GiveExperience(long amount)
@@ -1368,9 +1394,9 @@ public partial class Player : Entity
         }
     }
 
-    public void TakeExperience(long amount)
+    public void TakeExperience(long amount, bool enableLevelDown = false)
     {
-        if (this is Player && Options.Instance.Map.DisableExpLossInArenaMaps && Map.ZoneType == MapZone.Arena)
+        if (Options.Instance.Map.DisableExpLossInArenaMaps && Map.ZoneType == MapZone.Arena)
         {
             return;
         }
@@ -1378,10 +1404,29 @@ public partial class Player : Entity
         Exp -= amount;
         if (Exp < 0)
         {
-            Exp = 0;
-        }
+            if (!enableLevelDown || Level == 1)
+            {
+                Exp = 0;
+                PacketSender.SendExperience(this);
+            }
+            else
+            {
+                var levelCount = 0;
+                while (Exp < 0 && Level - levelCount > 1)
+                {
+                    Exp += GetExperienceToNextLevel(Level - levelCount - 1);
+                    levelCount++;
+                }
 
-        PacketSender.SendExperience(this);
+                AddLevels(-levelCount);
+
+                if (Exp < 0)
+                {
+                    Exp = 0;
+                    PacketSender.SendExperience(this);
+                }
+            }
+        }
     }
 
     private bool CheckLevelUp()
@@ -1399,10 +1444,11 @@ public partial class Player : Entity
             return false;
         }
 
-        LevelUp(false, levelCount);
-
+        AddLevels(levelCount, false);
         return true;
     }
+
+    #endregion
 
     //Combat
     public override void KilledEntity(Entity entity)

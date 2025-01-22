@@ -2800,6 +2800,7 @@ Tick timer saved in server config.json.";
             {16, @"Inventory Changed"},
             {17, @"Map Changed"},
             {18, @"User Variable Changed"},
+            {19, @"Level Down"},
         };
 
         public static LocalizedString conditions = @"Conditions";
@@ -2947,20 +2948,17 @@ Tick timer saved in server config.json.";
 
     public partial struct EventGiveExperience
     {
-
-        public static LocalizedString cancel = @"Cancel";
-
-        public static LocalizedString label = @"Give Experience:";
-
-        public static LocalizedString okay = @"Ok";
-
-        public static LocalizedString title = @"Give Experience";
-
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString AmountType = @"Amount Type";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Variable = @"Variable";
+        public static LocalizedString EnableLevelDown = @"Enable Level Down?";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString GuildVariable = @"Guild Variable";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Label = @"Give Experience:";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Manual = @"Manual";
@@ -2972,8 +2970,10 @@ Tick timer saved in server config.json.";
         public static LocalizedString ServerVariable = @"Global Variable";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString GuildVariable = @"Guild Variable";
+        public static LocalizedString Title = @"Give Experience";
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Variable = @"Variable";
     }
 
     public partial struct EventGotoLabel

@@ -22,13 +22,18 @@ public partial class EventCommandGiveExperience : UserControl
         rdoGlobalVariable.Checked = _command.VariableType == VariableType.ServerVariable;
         rdoGuildVariable.Checked = _command.VariableType == VariableType.GuildVariable;
 
+        nudExperience.Minimum = -long.MaxValue;
+        nudExperience.Maximum = long.MaxValue;
+
+        chkEnableLevelDown.Checked = _command.EnableLevelDown;
+
         SetupAmountInput(default, default);
     }
 
     private void InitLocalization()
     {
-        grpGiveExperience.Text = Strings.EventGiveExperience.title;
-        lblExperience.Text = Strings.EventGiveExperience.label;
+        grpGiveExperience.Text = Strings.EventGiveExperience.Title;
+        lblExperience.Text = Strings.EventGiveExperience.Label;
 
         lblVariable.Text = Strings.EventGiveExperience.Variable;
 
@@ -43,13 +48,15 @@ public partial class EventCommandGiveExperience : UserControl
         rdoGlobalVariable.Text = Strings.EventGiveExperience.ServerVariable;
         rdoGuildVariable.Text = Strings.EventGiveExperience.GuildVariable;
 
-        btnSave.Text = Strings.EventGiveExperience.okay;
-        btnCancel.Text = Strings.EventGiveExperience.cancel;
+        chkEnableLevelDown.Text = Strings.EventGiveExperience.EnableLevelDown;
+
+        btnSave.Text = Strings.General.Okay;
+        btnCancel.Text = Strings.General.Cancel;
     }
 
     private void btnSave_Click(object sender, EventArgs e)
     {
-        _command.Exp = (long) nudExperience.Value;
+        _command.Exp = (long)nudExperience.Value;
 
         if (rdoPlayerVariable.Checked)
         {
@@ -68,6 +75,7 @@ public partial class EventCommandGiveExperience : UserControl
         }
 
         _command.UseVariable = !rdoManual.Checked;
+        _command.EnableLevelDown = chkEnableLevelDown.Checked;
         _eventEditor.FinishCommandEdit();
     }
 
@@ -159,6 +167,6 @@ public partial class EventCommandGiveExperience : UserControl
             }
         }
 
-        nudExperience.Value = Math.Max(1, _command.Exp);
+        nudExperience.Value = _command.Exp;
     }
 }
