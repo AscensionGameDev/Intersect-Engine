@@ -107,8 +107,8 @@ internal sealed partial class PacketHandler
             return false;
         }
 
-        var packetOptions = Options.Instance.Security?.PacketOpts;
-        var thresholds = client.PacketFloodingThreshholds;
+        var packetOptions = Options.Instance.Security?.Packets;
+        var thresholds = client.PacketFloodingThresholds;
 
 
         if (pSize > thresholds.MaxPacketSize)
@@ -289,17 +289,17 @@ internal sealed partial class PacketHandler
             var deltaAdjusted = localAdjustedMs - remoteAdjustedMs;
             var deltaWithPing = deltaAdjusted - ping;
 
-            var configurableMininumPing = Options.Instance.Security.PacketOpts.MinimumPing;
-            var configurableErrorMarginFactor = Options.Instance.Security.PacketOpts.ErrorMarginFactor;
-            var configurableNaturalLowerMargin = Options.Instance.Security.PacketOpts.NaturalLowerMargin;
-            var configurableNaturalUpperMargin = Options.Instance.Security.PacketOpts.NaturalUpperMargin;
-            var configurableAllowedSpikePackets = Options.Instance.Security.PacketOpts.AllowedSpikePackets;
-            var configurableBaseDesyncForgiveness = Options.Instance.Security.PacketOpts.BaseDesyncForegiveness;
+            var configurableMininumPing = Options.Instance.Security.Packets.MinimumPing;
+            var configurableErrorMarginFactor = Options.Instance.Security.Packets.ErrorMarginFactor;
+            var configurableNaturalLowerMargin = Options.Instance.Security.Packets.NaturalLowerMargin;
+            var configurableNaturalUpperMargin = Options.Instance.Security.Packets.NaturalUpperMargin;
+            var configurableAllowedSpikePackets = Options.Instance.Security.Packets.AllowedSpikePackets;
+            var configurableBaseDesyncForgiveness = Options.Instance.Security.Packets.BaseDesyncForegiveness;
             var configurablePingDesyncForgivenessFactor =
-                Options.Instance.Security.PacketOpts.DesyncForgivenessFactor;
+                Options.Instance.Security.Packets.DesyncForgivenessFactor;
 
             var configurablePacketDesyncForgivenessInternal =
-                Options.Instance.Security.PacketOpts.DesyncForgivenessInterval;
+                Options.Instance.Security.Packets.DesyncForgivenessInterval;
 
             var errorMargin = Math.Max(ping, configurableMininumPing) * configurableErrorMarginFactor;
             var errorRangeMinimum = ping - errorMargin;
@@ -626,11 +626,11 @@ internal sealed partial class PacketHandler
         if (client.User != null)
         {
             //Logged In
-            client.PacketFloodingThreshholds = Options.Instance.Security.PacketOpts.PlayerThreshholds;
+            client.PacketFloodingThresholds = Options.Instance.Security.Packets.PlayerThreshholds;
 
             if (client.User.Power.IsAdmin || client.User.Power.IsModerator)
             {
-                client.PacketFloodingThreshholds = Options.Instance.Security.PacketOpts.ModAdminThreshholds;
+                client.PacketFloodingThresholds = Options.Instance.Security.Packets.ModAdminThreshholds;
             }
         }
 
@@ -1530,11 +1530,11 @@ internal sealed partial class PacketHandler
                 if (client.User != null)
                 {
                     //Logged In
-                    client.PacketFloodingThreshholds = Options.Instance.Security.PacketOpts.PlayerThreshholds;
+                    client.PacketFloodingThresholds = Options.Instance.Security.Packets.PlayerThreshholds;
 
                     if (client.User.Power.IsAdmin || client.User.Power.IsModerator)
                     {
-                        client.PacketFloodingThreshholds = Options.Instance.Security.PacketOpts.ModAdminThreshholds;
+                        client.PacketFloodingThresholds = Options.Instance.Security.Packets.ModAdminThreshholds;
                     }
                 }
 

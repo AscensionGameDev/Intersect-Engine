@@ -1,10 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using Intersect.Framework.Annotations;
+using Newtonsoft.Json;
 
 namespace Intersect.Config;
 
 /// <summary>
 /// Contains configurable options pertaining to the way sprites are rendered within the engine
 /// </summary>
+[RequiresRestart]
 public partial class SpriteOptions
 {
     /// <summary>
@@ -25,11 +27,13 @@ public partial class SpriteOptions
     /// <summary>
     /// Defines the duration (in milliseconds) for transitioning between consecutive idling frames.
     /// </summary>
+    [DoesNotRequireRestart]
     public int IdleFrameDuration { get; set; } = 200;
 
     /// <summary>
     /// Defines how long (in milliseconds) a player must idle before the idling sprite starts to render.
     /// </summary>
+    [DoesNotRequireRestart]
     public int IdleStartDelay { get; set; } = 4000;
 
     /// <summary>
@@ -60,6 +64,7 @@ public partial class SpriteOptions
     /// <summary>
     /// Defines the duration (in milliseconds) for transitioning between consecutive walking frames.
     /// </summary>
+    [DoesNotRequireRestart]
     public int MovingFrameDuration { get; set; } = 200;
 
     /// <summary>

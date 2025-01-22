@@ -1278,6 +1278,27 @@ public partial class Player : Entity
     public void LevelUp(bool resetExperience = true, int levels = 1)
     {
         var messages = new List<string>();
+
+        var maxLevel = Options.Instance.Player.MaxLevel;
+        if (levels > 0)
+        {
+            while (Level < maxLevel)
+            {
+                SetLevel(Level + 1, resetExperience);
+
+                // level up logic (like spells)
+            }
+        }
+        else if (levels < 0)
+        {
+            while (1 < Level)
+            {
+                SetLevel(Level - 1, resetExperience);
+
+                // level down logic (like spells)
+            }
+        }
+
         if (Level < Options.Instance.Player.MaxLevel)
         {
             for (var i = 0; i < levels; i++)

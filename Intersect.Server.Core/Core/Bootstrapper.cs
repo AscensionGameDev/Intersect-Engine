@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
 using CommandLine;
+using Intersect.Config;
 using Intersect.Core;
 using Intersect.Factories;
 using Intersect.GameObjects;
@@ -23,6 +24,7 @@ using Intersect.Threading;
 using Intersect.Utilities;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using Serilog.Core;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
 
@@ -66,7 +68,7 @@ internal static class Bootstrapper
             Process.GetCurrentProcess().MainModule?.FileName ?? Assembly.GetExecutingAssembly().GetName().Name
         );
         var loggerConfiguration = new LoggerConfiguration().MinimumLevel
-            .Is(LevelConvert.ToSerilogLevel(Options.Instance.Logging.Level))
+            .ControlledBy(LoggingOptions.LoggingLevelSwitch)
             .Enrich.FromLogContext().WriteTo
             .Console().WriteTo.File(
                 Path.Combine(
