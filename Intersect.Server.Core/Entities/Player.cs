@@ -1278,6 +1278,7 @@ public partial class Player : Entity
 
     public void AddLevels(int levels = 1, bool resetExperience = true)
     {
+        ClassBase? classDescriptor = null;
         if (levels > 0)
         {
             while (levels > 0)
@@ -1289,7 +1290,7 @@ public partial class Player : Entity
 
                 SetLevel(Level + 1, resetExperience);
 
-                if (ClassBase.TryGet(ClassId, out var classDescriptor) && classDescriptor?.Spells != default)
+                if ((classDescriptor?.Id == ClassId || ClassBase.TryGet(ClassId, out classDescriptor)) && classDescriptor?.Spells != default)
                 {
                     foreach (var spell in classDescriptor.Spells)
                     {
@@ -1328,7 +1329,7 @@ public partial class Player : Entity
 
                 SetLevel(Level - 1);
 
-                if (ClassBase.TryGet(ClassId, out var classDescriptor) && classDescriptor?.Spells != default)
+                if ((classDescriptor?.Id == ClassId || ClassBase.TryGet(ClassId, out classDescriptor)) && classDescriptor?.Spells != default)
                 {
                     foreach (var spell in classDescriptor.Spells)
                     {
