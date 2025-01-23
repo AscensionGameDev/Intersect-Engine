@@ -1349,7 +1349,7 @@ public partial class Player : Entity
                         ForgetSpell(FindSpell(spell.Id), true);
                         PacketSender.SendChatMsg(
                             this,
-                            Strings.Player.SpellForgottenLevelDown.ToString(SpellBase.GetName(spell.Id)),
+                            Strings.Player.ForgotSpell.ToString(SpellBase.GetName(spell.Id)),
                             ChatMessageType.Experience,
                             CustomColors.Alerts.Info,
                             Name
@@ -5428,7 +5428,7 @@ public partial class Player : Entity
                 {
                     PacketSender.SendPlayerSpellUpdate(this, i);
                     PacketSender.SendChatMsg(this,
-                        Strings.Player.SpellTaughtLevelUp.ToString(SpellBase.GetName(spell.SpellId)),
+                        Strings.Player.LearnedSpell.ToString(SpellBase.GetName(spell.SpellId)),
                         ChatMessageType.Experience, CustomColors.Alerts.Info, Name);
                 }
 
