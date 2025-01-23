@@ -460,7 +460,7 @@ public static partial class CommandProcessing
         }
         else if (quantity < 0)
         {
-            player.TakeExperience(Math.Abs(quantity), command.EnableLevelDown);
+            player.TakeExperience(Math.Abs(quantity), command.EnableLosingLevels);
         }
     }
 

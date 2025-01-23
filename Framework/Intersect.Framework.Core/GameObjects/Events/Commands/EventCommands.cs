@@ -335,7 +335,7 @@ public partial class GiveExperienceCommand : EventCommand
     /// <summary>
     /// If true, when a player have their experience reduced, they will be able to level down.
     /// </summary>
-    public bool EnableLevelDown { get; set; } = false;
+    public bool EnableLosingLevels { get; set; } = false;
 }
 
 public partial class ChangeLevelCommand : EventCommand

@@ -25,7 +25,7 @@ public partial class EventCommandGiveExperience : UserControl
         nudExperience.Minimum = -long.MaxValue;
         nudExperience.Maximum = long.MaxValue;
 
-        chkEnableLevelDown.Checked = _command.EnableLevelDown;
+        chkEnableLevelDown.Checked = _command.EnableLosingLevels;
 
         SetupAmountInput(default, default);
     }
@@ -75,7 +75,7 @@ public partial class EventCommandGiveExperience : UserControl
         }
 
         _command.UseVariable = !rdoManual.Checked;
-        _command.EnableLevelDown = chkEnableLevelDown.Checked;
+        _command.EnableLosingLevels = chkEnableLevelDown.Checked;
         _eventEditor.FinishCommandEdit();
     }
 
