@@ -1395,9 +1395,9 @@ public partial class Player : Entity
         }
     }
 
-    public void TakeExperience(long amount, bool enableLevelDown = false)
+    public void TakeExperience(long amount, bool enableLevelDown = false, bool force = false)
     {
-        if (Options.Instance.Map.DisableExpLossInArenaMaps && Map.ZoneType == MapZone.Arena)
+        if (force || (Options.Instance.Map.DisableExpLossInArenaMaps && Map.ZoneType == MapZone.Arena))
         {
             return;
         }
