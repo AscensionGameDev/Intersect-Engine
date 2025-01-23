@@ -1381,7 +1381,7 @@ public partial class Player : Entity
 
     public void TakeExperience(long amount, bool enableLosingLevels = false, bool force = false)
     {
-        if (!force || (Options.Instance.Map.DisableExpLossInArenaMaps && Map.ZoneType == MapZone.Arena))
+        if (!force && Options.Instance.Map.DisableExpLossInArenaMaps && Map.ZoneType == MapZone.Arena)
         {
             return;
         }
