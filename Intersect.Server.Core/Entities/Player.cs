@@ -1279,16 +1279,15 @@ public partial class Player : Entity
     public void AddLevels(int levels = 1, bool resetExperience = true)
     {
         ClassBase? classDescriptor = null;
+        var messageList = new List<string>();
+        int targetLevel = Math.Clamp(Level + levels, 1, Options.Instance.Player.MaxLevel);
+
         if (levels > 0)
         {
-            while (levels > 0)
+            while (Level < targetLevel)
             {
-                if (Level >= Options.Instance.Player.MaxLevel)
-                {
-                    break;
-                }
-
                 SetLevel(Level + 1, resetExperience);
+                messageList.Add(Strings.Player.LevelUp.ToString(Level));
 
                 if ((classDescriptor?.Id == ClassId || ClassBase.TryGet(ClassId, out classDescriptor)) && classDescriptor?.Spells != default)
                 {
@@ -1300,34 +1299,21 @@ public partial class Player : Entity
                         }
 
                         var spellInstance = new Spell(spell.Id);
-                        _ = TryTeachSpell(spellInstance, true);
+                        _ = TryTeachSpell(spellInstance, false);
+                        messageList.Add(Strings.Player.LearnedSpell.ToString(spellInstance.SpellName));
                     }
                 }
 
                 StartCommonEventsWithTrigger(CommonEventTrigger.LevelUp);
-
-                PacketSender.SendChatMsg(
-                    this,
-                    Strings.Player.LevelUp.ToString(Level),
-                    ChatMessageType.Experience,
-                    CustomColors.Combat.LevelUp,
-                    Name
-                );
                 PacketSender.SendActionMsg(this, Strings.Combat.LevelUp, CustomColors.Combat.LevelUp);
-                levels--;
             }
         }
         else if (levels < 0)
         {
-            while (levels < 0)
+            while (targetLevel < Level)
             {
-                if (Level <= 1)
-                {
-                    Level = 1;
-                    break;
-                }
-
                 SetLevel(Level - 1);
+                messageList.Add(Strings.Player.LevelLost.ToString(Level));
 
                 if ((classDescriptor?.Id == ClassId || ClassBase.TryGet(ClassId, out classDescriptor)) && classDescriptor?.Spells != default)
                 {
@@ -1339,28 +1325,25 @@ public partial class Player : Entity
                         }
 
                         ForgetSpell(FindSpell(spell.Id), true);
-                        PacketSender.SendChatMsg(
-                            this,
-                            Strings.Player.ForgotSpell.ToString(SpellBase.GetName(spell.Id)),
-                            ChatMessageType.Experience,
-                            CustomColors.Alerts.Info,
-                            Name
-                        );
+                        messageList.Add(Strings.Player.ForgotSpell.ToString(SpellBase.GetName(spell.Id)));
                     }
                 }
 
                 StartCommonEventsWithTrigger(CommonEventTrigger.LevelDown);
-
-                PacketSender.SendChatMsg(
-                    this,
-                    Strings.Player.LevelLost.ToString(Level),
-                    ChatMessageType.Experience,
-                    CustomColors.Combat.LevelDown,
-                    Name
-                );
                 PacketSender.SendActionMsg(this, Strings.Combat.LevelDown, CustomColors.Combat.LevelDown);
                 levels++;
             }
+        }
+
+        foreach (var message in messageList)
+        {
+            PacketSender.SendChatMsg(
+                this,
+                message,
+                ChatMessageType.Experience,
+                levels > 0 ? CustomColors.Combat.LevelUp : CustomColors.Combat.LevelDown,
+                Name
+            );
         }
 
         if (StatPoints > 0)
@@ -1378,6 +1361,7 @@ public partial class Player : Entity
         UnequipInvalidItems();
         PacketSender.SendExperience(this);
         PacketSender.SendPointsTo(this);
+        PacketSender.SendPlayerSpells(this);
         PacketSender.SendEntityDataToProximity(this);
     }
 
@@ -1395,9 +1379,9 @@ public partial class Player : Entity
         }
     }
 
-    public void TakeExperience(long amount, bool enableLevelDown = false, bool force = false)
+    public void TakeExperience(long amount, bool enableLosingLevels = false, bool force = false)
     {
-        if (force || (Options.Instance.Map.DisableExpLossInArenaMaps && Map.ZoneType == MapZone.Arena))
+        if (!force || (Options.Instance.Map.DisableExpLossInArenaMaps && Map.ZoneType == MapZone.Arena))
         {
             return;
         }
@@ -1405,7 +1389,7 @@ public partial class Player : Entity
         Exp -= amount;
         if (Exp < 0)
         {
-            if (!enableLevelDown || Level == 1)
+            if (!enableLosingLevels || Level == 1)
             {
                 Exp = 0;
                 PacketSender.SendExperience(this);
