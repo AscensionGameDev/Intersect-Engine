@@ -1288,15 +1288,6 @@ public partial class Player : Entity
                 }
 
                 SetLevel(Level + 1, resetExperience);
-                StartCommonEventsWithTrigger(CommonEventTrigger.LevelUp);
-
-                PacketSender.SendChatMsg(
-                    this,
-                    Strings.Player.LevelUp.ToString(Level),
-                    ChatMessageType.Experience,
-                    CustomColors.Combat.LevelUp,
-                    Name
-                );
 
                 if (ClassBase.TryGet(ClassId, out var classDescriptor) && classDescriptor?.Spells != default)
                 {
@@ -1312,6 +1303,15 @@ public partial class Player : Entity
                     }
                 }
 
+                StartCommonEventsWithTrigger(CommonEventTrigger.LevelUp);
+
+                PacketSender.SendChatMsg(
+                    this,
+                    Strings.Player.LevelUp.ToString(Level),
+                    ChatMessageType.Experience,
+                    CustomColors.Combat.LevelUp,
+                    Name
+                );
                 PacketSender.SendActionMsg(this, Strings.Combat.LevelUp, CustomColors.Combat.LevelUp);
                 levels--;
             }
@@ -1327,15 +1327,6 @@ public partial class Player : Entity
                 }
 
                 SetLevel(Level - 1);
-                StartCommonEventsWithTrigger(CommonEventTrigger.LevelDown);
-
-                PacketSender.SendChatMsg(
-                    this,
-                    Strings.Player.LevelLost.ToString(Level),
-                    ChatMessageType.Experience,
-                    CustomColors.Combat.LevelDown,
-                    Name
-                );
 
                 if (ClassBase.TryGet(ClassId, out var classDescriptor) && classDescriptor?.Spells != default)
                 {
@@ -1357,6 +1348,15 @@ public partial class Player : Entity
                     }
                 }
 
+                StartCommonEventsWithTrigger(CommonEventTrigger.LevelDown);
+
+                PacketSender.SendChatMsg(
+                    this,
+                    Strings.Player.LevelLost.ToString(Level),
+                    ChatMessageType.Experience,
+                    CustomColors.Combat.LevelDown,
+                    Name
+                );
                 PacketSender.SendActionMsg(this, Strings.Combat.LevelDown, CustomColors.Combat.LevelDown);
                 levels++;
             }
