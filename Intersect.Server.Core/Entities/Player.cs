@@ -1358,6 +1358,18 @@ public partial class Player : Entity
 
     public void GiveExperience(long amount)
     {
+        // ReSharper disable once ConvertIfStatementToSwitchStatement
+        if (amount == 0)
+        {
+            return;
+        }
+
+        if (amount < 0)
+        {
+            TakeExperience(-amount);
+            return;
+        }
+        
         Exp += (int)Math.Round(amount + (amount * (GetEquipmentBonusEffect(ItemEffect.EXP) / 100f)));
         if (Exp < 0)
         {
@@ -1372,6 +1384,18 @@ public partial class Player : Entity
 
     public void TakeExperience(long amount, bool enableLosingLevels = false, bool force = false)
     {
+        // ReSharper disable once ConvertIfStatementToSwitchStatement
+        if (amount == 0)
+        {
+            return;
+        }
+
+        if (amount < 0)
+        {
+            GiveExperience(-amount);
+            return;
+        }
+        
         if (!force && Options.Instance.Map.DisableExpLossInArenaMaps && Map.ZoneType == MapZone.Arena)
         {
             return;
