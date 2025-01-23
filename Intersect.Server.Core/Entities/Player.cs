@@ -1279,15 +1279,15 @@ public partial class Player : Entity
     public void AddLevels(int levels = 1, bool resetExperience = true)
     {
         ClassBase? classDescriptor = null;
-        var messageList = new List<string>();
-        int targetLevel = Math.Clamp(Level + levels, 1, Options.Instance.Player.MaxLevel);
-
+        List<(string, Color)> messageList = [];
+        
+        var targetLevel = Math.Clamp(Level + levels, 1, Options.Instance.Player.MaxLevel);
         if (levels > 0)
         {
             while (Level < targetLevel)
             {
                 SetLevel(Level + 1, resetExperience);
-                messageList.Add(Strings.Player.LevelUp.ToString(Level));
+                messageList.Add((Strings.Player.LevelUp.ToString(Level), CustomColors.Combat.LevelUp));
 
                 if ((classDescriptor?.Id == ClassId || ClassBase.TryGet(ClassId, out classDescriptor)) && classDescriptor?.Spells != default)
                 {
@@ -1300,7 +1300,9 @@ public partial class Player : Entity
 
                         var spellInstance = new Spell(spell.Id);
                         _ = TryTeachSpell(spellInstance, false);
-                        messageList.Add(Strings.Player.LearnedSpell.ToString(spellInstance.SpellName));
+                        messageList.Add(
+                            (Strings.Player.LearnedSpell.ToString(spellInstance.SpellName), CustomColors.Alerts.Info)
+                        );
                     }
                 }
 
@@ -1313,7 +1315,7 @@ public partial class Player : Entity
             while (targetLevel < Level)
             {
                 SetLevel(Level - 1);
-                messageList.Add(Strings.Player.LevelLost.ToString(Level));
+                messageList.Add((Strings.Player.LevelLost.ToString(Level), CustomColors.Combat.LevelLost));
 
                 if ((classDescriptor?.Id == ClassId || ClassBase.TryGet(ClassId, out classDescriptor)) && classDescriptor?.Spells != default)
                 {
@@ -1325,36 +1327,15 @@ public partial class Player : Entity
                         }
 
                         ForgetSpell(FindSpell(spell.Id), true);
-                        messageList.Add(Strings.Player.ForgotSpell.ToString(SpellBase.GetName(spell.Id)));
+                        messageList.Add(
+                            (Strings.Player.ForgotSpell.ToString(SpellBase.GetName(spell.Id)), CustomColors.Alerts.Info)
+                        );
                     }
                 }
 
                 StartCommonEventsWithTrigger(CommonEventTrigger.LevelDown);
-                PacketSender.SendActionMsg(this, Strings.Combat.LevelDown, CustomColors.Combat.LevelDown);
-                levels++;
+                PacketSender.SendActionMsg(this, Strings.Combat.LevelDown, CustomColors.Combat.LevelLost);
             }
-        }
-
-        foreach (var message in messageList)
-        {
-            PacketSender.SendChatMsg(
-                this,
-                message,
-                ChatMessageType.Experience,
-                levels > 0 ? CustomColors.Combat.LevelUp : CustomColors.Combat.LevelDown,
-                Name
-            );
-        }
-
-        if (StatPoints > 0)
-        {
-            PacketSender.SendChatMsg(
-                this,
-                Strings.Player.StatPoints.ToString(StatPoints),
-                ChatMessageType.Experience,
-                CustomColors.Combat.StatPoints,
-                Name
-            );
         }
 
         RecalculateStatsAndPoints();
@@ -1363,6 +1344,22 @@ public partial class Player : Entity
         PacketSender.SendPointsTo(this);
         PacketSender.SendPlayerSpells(this);
         PacketSender.SendEntityDataToProximity(this);
+
+        if (StatPoints > 0)
+        {
+            messageList.Add((Strings.Player.StatPoints.ToString(StatPoints), CustomColors.Combat.StatPoints));
+        }
+
+        foreach (var (message, color) in messageList)
+        {
+            PacketSender.SendChatMsg(
+                this,
+                message,
+                ChatMessageType.Experience,
+                color,
+                Name
+            );
+        }
     }
 
     public void GiveExperience(long amount)
@@ -5459,17 +5456,24 @@ public partial class Player : Entity
         PacketSender.SendPlayerSpellUpdate(this, spell2);
     }
 
-    public void ForgetSpell(int spellSlot, bool removeBoundSpell = false)
+    public bool ForgetSpell(int spellSlot, bool removeBoundSpell = false)
     {
+        if (spellSlot < 0 || Spells.Count <= spellSlot)
+        {
+            return false;
+        }
+        
         if (!SpellBase.Get(Spells[spellSlot].SpellId).Bound || removeBoundSpell)
         {
             Spells[spellSlot].Set(Spell.None);
             PacketSender.SendPlayerSpellUpdate(this, spellSlot);
             UnequipInvalidItems();
+            return true;
         }
         else
         {
             PacketSender.SendChatMsg(this, Strings.Combat.TryForgetBoundSpell, ChatMessageType.Spells);
+            return false;
         }
     }
 

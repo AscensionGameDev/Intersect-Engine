@@ -2952,7 +2952,7 @@ Tick timer saved in server config.json.";
         public static LocalizedString AmountType = @"Amount Type";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString EnableLevelDown = @"Enable losing levels?";
+        public static LocalizedString EnableLosingLevels = @"Enable losing levels?";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString GuildVariable = @"Guild Variable";

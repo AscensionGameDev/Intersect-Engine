@@ -1,4 +1,4 @@
-using Intersect.Editor.Localization;
+﻿using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects.Events.Commands;
@@ -48,7 +48,7 @@ public partial class EventCommandGiveExperience : UserControl
         rdoGlobalVariable.Text = Strings.EventGiveExperience.ServerVariable;
         rdoGuildVariable.Text = Strings.EventGiveExperience.GuildVariable;
 
-        chkEnableLevelDown.Text = Strings.EventGiveExperience.EnableLevelDown;
+        chkEnableLevelDown.Text = Strings.EventGiveExperience.EnableLosingLevels;
 
         btnSave.Text = Strings.General.Okay;
         btnCancel.Text = Strings.General.Cancel;

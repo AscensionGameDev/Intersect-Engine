@@ -194,7 +194,7 @@ public static partial class CustomColors
 
         public Color LevelUp = Color.Cyan;
 
-        public Color LevelDown = Color.Red;
+        public Color LevelLost = Color.Red;
 
         public Color MagicDamage = new Color(255, 255, 0, 255);
 
