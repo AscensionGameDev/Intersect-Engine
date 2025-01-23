@@ -1151,16 +1151,10 @@ public partial class Player : Entity
         {
             if (Options.Instance.Player.ExpLossOnDeathPercent > 0)
             {
-                if (Options.Instance.Player.ExpLossFromCurrentExp)
-                {
-                    var ExpLoss = (this.Exp * (Options.Instance.Player.ExpLossOnDeathPercent / 100.0));
-                    TakeExperience((long)ExpLoss);
-                }
-                else
-                {
-                    var ExpLoss = (GetExperienceToNextLevel(this.Level) * (Options.Instance.Player.ExpLossOnDeathPercent / 100.0));
-                    TakeExperience((long)ExpLoss);
-                }
+                var baseExp = Options.Instance.Player.ExpLossFromCurrentExp ? Exp : GetExperienceToNextLevel(Level);
+                var expRatioLost = Options.Instance.Player.ExpLossOnDeathPercent / 100.0;
+                var expLost = (long)(baseExp * expRatioLost);
+                TakeExperience(expLost);
             }
         }
         PacketSender.SendEntityDie(this);
