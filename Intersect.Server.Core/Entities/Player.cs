@@ -1412,13 +1412,13 @@ public partial class Player : Entity
             else
             {
                 var levelCount = 0;
-                while (Exp < 0 && Level - levelCount > 1)
+                while (Exp < 0 && Level + levelCount > 1)
                 {
-                    Exp += GetExperienceToNextLevel(Level - levelCount - 1);
-                    levelCount++;
+                    --levelCount;
+                    Exp += GetExperienceToNextLevel(Level + levelCount);
                 }
 
-                AddLevels(-levelCount);
+                AddLevels(levelCount);
 
                 if (Exp < 0)
                 {
