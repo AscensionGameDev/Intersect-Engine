@@ -1151,16 +1151,10 @@ public partial class Player : Entity
         {
             if (Options.Instance.Player.ExpLossOnDeathPercent > 0)
             {
-                if (Options.Instance.Player.ExpLossFromCurrentExp)
-                {
-                    var ExpLoss = (this.Exp * (Options.Instance.Player.ExpLossOnDeathPercent / 100.0));
-                    TakeExperience((long)ExpLoss);
-                }
-                else
-                {
-                    var ExpLoss = (GetExperienceToNextLevel(this.Level) * (Options.Instance.Player.ExpLossOnDeathPercent / 100.0));
-                    TakeExperience((long)ExpLoss);
-                }
+                var baseExp = Options.Instance.Player.ExpLossFromCurrentExp ? Exp : GetExperienceToNextLevel(Level);
+                var expRatioLost = Options.Instance.Player.ExpLossOnDeathPercent / 100.0;
+                var expLost = (long)(baseExp * expRatioLost);
+                TakeExperience(expLost);
             }
         }
         PacketSender.SendEntityDie(this);
@@ -1255,7 +1249,8 @@ public partial class Player : Entity
         SetVital(Vital.Mana, GetVital(Vital.Mana));
     }
 
-    //Leveling
+    #region Leveling
+
     public void SetLevel(int level, bool resetExperience = false)
     {
         if (level < 1)
@@ -1275,87 +1270,106 @@ public partial class Player : Entity
         PacketSender.SendExperience(this);
     }
 
-    public void LevelUp(bool resetExperience = true, int levels = 1)
+    public void AddLevels(int levels = 1, bool resetExperience = true)
     {
-        var messages = new List<string>();
-
-        var maxLevel = Options.Instance.Player.MaxLevel;
+        ClassBase? classDescriptor = null;
+        List<(string, Color)> messageList = [];
+        
+        var targetLevel = Math.Clamp(Level + levels, 1, Options.Instance.Player.MaxLevel);
         if (levels > 0)
         {
-            while (Level < maxLevel)
+            while (Level < targetLevel)
             {
                 SetLevel(Level + 1, resetExperience);
+                messageList.Add((Strings.Player.LevelUp.ToString(Level), CustomColors.Combat.LevelUp));
 
-                // level up logic (like spells)
+                if ((classDescriptor?.Id == ClassId || ClassBase.TryGet(ClassId, out classDescriptor)) && classDescriptor?.Spells != default)
+                {
+                    foreach (var spell in classDescriptor.Spells)
+                    {
+                        if (spell.Level != Level)
+                        {
+                            continue;
+                        }
+
+                        var spellInstance = new Spell(spell.Id);
+                        _ = TryTeachSpell(spellInstance, false);
+                        messageList.Add(
+                            (Strings.Player.LearnedSpell.ToString(spellInstance.SpellName), CustomColors.Alerts.Info)
+                        );
+                    }
+                }
+
+                StartCommonEventsWithTrigger(CommonEventTrigger.LevelUp);
+                PacketSender.SendActionMsg(this, Strings.Combat.LevelUp, CustomColors.Combat.LevelUp);
             }
         }
         else if (levels < 0)
         {
-            while (1 < Level)
+            while (targetLevel < Level)
             {
-                SetLevel(Level - 1, resetExperience);
+                SetLevel(Level - 1);
+                messageList.Add((Strings.Player.LevelLost.ToString(Level), CustomColors.Combat.LevelLost));
 
-                // level down logic (like spells)
-            }
-        }
-
-        if (Level < Options.Instance.Player.MaxLevel)
-        {
-            for (var i = 0; i < levels; i++)
-            {
-                SetLevel(Level + 1, resetExperience);
-
-                //Let's pull up class - leveling info
-                var classDescriptor = ClassBase.Get(ClassId);
-                if (classDescriptor?.Spells == null)
+                if ((classDescriptor?.Id == ClassId || ClassBase.TryGet(ClassId, out classDescriptor)) && classDescriptor?.Spells != default)
                 {
-                    continue;
-                }
-
-                foreach (var spell in classDescriptor.Spells)
-                {
-                    if (spell.Level != Level)
+                    foreach (var spell in classDescriptor.Spells)
                     {
-                        continue;
-                    }
+                        if (spell.Level != Level + 1)
+                        {
+                            continue;
+                        }
 
-                    var spellInstance = new Spell(spell.Id);
-                    if (TryTeachSpell(spellInstance, true))
-                    {
-                        messages.Add(
-                            Strings.Player.SpellTaughtLevelUp.ToString(SpellBase.GetName(spellInstance.SpellId))
+                        ForgetSpell(FindSpell(spell.Id), true);
+                        messageList.Add(
+                            (Strings.Player.ForgotSpell.ToString(SpellBase.GetName(spell.Id)), CustomColors.Alerts.Info)
                         );
                     }
                 }
+
+                StartCommonEventsWithTrigger(CommonEventTrigger.LevelDown);
+                PacketSender.SendActionMsg(this, Strings.Combat.LevelDown, CustomColors.Combat.LevelLost);
             }
-        }
-
-        PacketSender.SendChatMsg(this, Strings.Player.LevelUp.ToString(Level), ChatMessageType.Experience, CustomColors.Combat.LevelUp, Name);
-        PacketSender.SendActionMsg(this, Strings.Combat.LevelUp, CustomColors.Combat.LevelUp);
-        foreach (var message in messages)
-        {
-            PacketSender.SendChatMsg(this, message, ChatMessageType.Experience, CustomColors.Alerts.Info, Name);
-        }
-
-        if (StatPoints > 0)
-        {
-            PacketSender.SendChatMsg(
-                this, Strings.Player.StatPoints.ToString(StatPoints), ChatMessageType.Experience, CustomColors.Combat.StatPoints, Name
-            );
         }
 
         RecalculateStatsAndPoints();
         UnequipInvalidItems();
         PacketSender.SendExperience(this);
         PacketSender.SendPointsTo(this);
+        PacketSender.SendPlayerSpells(this);
         PacketSender.SendEntityDataToProximity(this);
 
-        //Search for level up activated events and run them
-        StartCommonEventsWithTrigger(CommonEventTrigger.LevelUp);
+        if (StatPoints > 0)
+        {
+            messageList.Add((Strings.Player.StatPoints.ToString(StatPoints), CustomColors.Combat.StatPoints));
+        }
+
+        foreach (var (message, color) in messageList)
+        {
+            PacketSender.SendChatMsg(
+                this,
+                message,
+                ChatMessageType.Experience,
+                color,
+                Name
+            );
+        }
     }
 
     public void GiveExperience(long amount)
     {
+        // ReSharper disable once ConvertIfStatementToSwitchStatement
+        if (amount == 0)
+        {
+            return;
+        }
+
+        if (amount < 0)
+        {
+            TakeExperience(-amount);
+            return;
+        }
+        
         Exp += (int)Math.Round(amount + (amount * (GetEquipmentBonusEffect(ItemEffect.EXP) / 100f)));
         if (Exp < 0)
         {
@@ -1368,9 +1382,21 @@ public partial class Player : Entity
         }
     }
 
-    public void TakeExperience(long amount)
+    public void TakeExperience(long amount, bool enableLosingLevels = false, bool force = false)
     {
-        if (this is Player && Options.Instance.Map.DisableExpLossInArenaMaps && Map.ZoneType == MapZone.Arena)
+        // ReSharper disable once ConvertIfStatementToSwitchStatement
+        if (amount == 0)
+        {
+            return;
+        }
+
+        if (amount < 0)
+        {
+            GiveExperience(-amount);
+            return;
+        }
+        
+        if (!force && Options.Instance.Map.DisableExpLossInArenaMaps && Map.ZoneType == MapZone.Arena)
         {
             return;
         }
@@ -1378,10 +1404,29 @@ public partial class Player : Entity
         Exp -= amount;
         if (Exp < 0)
         {
-            Exp = 0;
-        }
+            if (!enableLosingLevels || Level == 1)
+            {
+                Exp = 0;
+                PacketSender.SendExperience(this);
+            }
+            else
+            {
+                var levelCount = 0;
+                while (Exp < 0 && Level + levelCount > 1)
+                {
+                    --levelCount;
+                    Exp += GetExperienceToNextLevel(Level + levelCount);
+                }
 
-        PacketSender.SendExperience(this);
+                AddLevels(levelCount);
+
+                if (Exp < 0)
+                {
+                    Exp = 0;
+                    PacketSender.SendExperience(this);
+                }
+            }
+        }
     }
 
     private bool CheckLevelUp()
@@ -1399,10 +1444,11 @@ public partial class Player : Entity
             return false;
         }
 
-        LevelUp(false, levelCount);
-
+        AddLevels(levelCount, false);
         return true;
     }
+
+    #endregion
 
     //Combat
     public override void KilledEntity(Entity entity)
@@ -5382,7 +5428,7 @@ public partial class Player : Entity
                 {
                     PacketSender.SendPlayerSpellUpdate(this, i);
                     PacketSender.SendChatMsg(this,
-                        Strings.Player.SpellTaughtLevelUp.ToString(SpellBase.GetName(spell.SpellId)),
+                        Strings.Player.LearnedSpell.ToString(SpellBase.GetName(spell.SpellId)),
                         ChatMessageType.Experience, CustomColors.Alerts.Info, Name);
                 }
 
@@ -5428,17 +5474,24 @@ public partial class Player : Entity
         PacketSender.SendPlayerSpellUpdate(this, spell2);
     }
 
-    public void ForgetSpell(int spellSlot, bool removeBoundSpell = false)
+    public bool ForgetSpell(int spellSlot, bool removeBoundSpell = false)
     {
+        if (spellSlot < 0 || Spells.Count <= spellSlot)
+        {
+            return false;
+        }
+        
         if (!SpellBase.Get(Spells[spellSlot].SpellId).Bound || removeBoundSpell)
         {
             Spells[spellSlot].Set(Spell.None);
             PacketSender.SendPlayerSpellUpdate(this, spellSlot);
             UnequipInvalidItems();
+            return true;
         }
         else
         {
             PacketSender.SendChatMsg(this, Strings.Combat.TryForgetBoundSpell, ChatMessageType.Spells);
+            return false;
         }
     }
 

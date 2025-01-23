@@ -421,7 +421,7 @@ public static partial class CommandProcessing
         Stack<CommandInstance> callStack
     )
     {
-        player.LevelUp();
+        player.AddLevels();
     }
 
     //Give Experience Command
@@ -454,7 +454,14 @@ public static partial class CommandProcessing
             }
         }
 
-        player.GiveExperience(quantity);
+        if(quantity > 0)
+        {
+            player.GiveExperience(quantity);
+        }
+        else if (quantity < 0)
+        {
+            player.TakeExperience(Math.Abs(quantity), command.EnableLosingLevels, force: true);
+        }
     }
 
     //Change Level Command
