@@ -1101,7 +1101,7 @@ public static partial class Strings
         public readonly LocalizedString Left = @"{00} has left {01}.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString LevelDown = @"You have leveled down! You are now level {00}!";
+        public readonly LocalizedString LevelLost = @"You have lost a level! You are now level {00}!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString LevelUp = @"You have leveled up! You are now level {00}!";

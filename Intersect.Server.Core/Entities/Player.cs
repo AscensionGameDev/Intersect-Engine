@@ -1331,7 +1331,7 @@ public partial class Player : Entity
 
                 PacketSender.SendChatMsg(
                     this,
-                    Strings.Player.LevelDown.ToString(Level),
+                    Strings.Player.LevelLost.ToString(Level),
                     ChatMessageType.Experience,
                     CustomColors.Combat.LevelDown,
                     Name
