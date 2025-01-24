@@ -1,62 +1,64 @@
 ﻿using System.Runtime.Serialization;
+using Intersect.Framework.Annotations;
 using Newtonsoft.Json;
 
 namespace Intersect.Config;
 
 public partial class PaperdollOptions
 {
+    [Ignore]
     [JsonIgnore]
     public List<string>[] Directions;
 
-    public List<string> Down = new()
-    {
+    public List<string> Down { get; set; } =
+    [
         "Player",
         "Armor",
         "Helmet",
         "Weapon",
         "Shield",
-        "Boots"
-    };
+        "Boots",
+    ];
 
-    public List<string> Left = new()
-    {
+    public List<string> Left { get; set; } =
+    [
         "Player",
         "Armor",
         "Helmet",
         "Weapon",
         "Shield",
-        "Boots"
-    };
+        "Boots",
+    ];
 
-    public List<string> Right = new()
-    {
+    public List<string> Right { get; set; } =
+    [
         "Player",
         "Armor",
         "Helmet",
         "Weapon",
         "Shield",
-        "Boots"
-    };
+        "Boots",
+    ];
 
-    public List<string> Up = new()
-    {
+    public List<string> Up { get; set; } =
+    [
         "Player",
         "Armor",
         "Helmet",
         "Weapon",
         "Shield",
-        "Boots"
-    };
+        "Boots",
+    ];
 
     public PaperdollOptions()
     {
-        Directions = new List<string>[]
-        {
+        Directions =
+        [
             Up,
             Down,
             Left,
-            Right
-        };
+            Right,
+        ];
     }
 
     [OnDeserializing]
@@ -71,17 +73,17 @@ public partial class PaperdollOptions
     [OnDeserialized]
     internal void OnDeserializedMethod(StreamingContext context)
     {
-        Up = new List<string>(Up.Distinct());
-        Down = new List<string>(Down.Distinct());
-        Left = new List<string>(Left.Distinct());
-        Right = new List<string>(Right.Distinct());
-        Directions = new List<string>[]
-        {
+        Up = [..Up.Distinct()];
+        Down = [..Down.Distinct()];
+        Left = [..Left.Distinct()];
+        Right = [..Right.Distinct()];
+        Directions =
+        [
             Up,
             Down,
             Left,
-            Right
-        };
+            Right,
+        ];
     }
 
     public void Validate(EquipmentOptions equipment)
