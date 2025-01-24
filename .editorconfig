@@ -150,6 +150,7 @@ resharper_place_simple_initializer_on_single_line = false
 resharper_trailing_comma_in_multiline_lists = true
 resharper_wrap_array_initializer_style = chop_if_long
 resharper_wrap_before_primary_constructor_declaration_rpar = true
+resharper_wrap_chained_binary_expressions = chop_if_long
 ###############################
 # VB Coding Conventions       #
 ###############################
