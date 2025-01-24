@@ -4,7 +4,7 @@ public partial class SecurityOptions
 {
     public List<string> IpBlacklist { get; set; } = [];
 
-    public PacketSecurityOptions Packets = new();
+    public PacketSecurityOptions Packets { get; set; } = new();
 
     public bool CheckIp(string ip)
     {
