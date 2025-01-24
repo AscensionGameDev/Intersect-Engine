@@ -11,19 +11,19 @@ public partial class LayerOptions
     public const string Events = nameof(Events);
 
     [JsonProperty]
-    public List<string> LowerLayers { get; private set; } = new() { "Ground", "Mask 1", "Mask 2" };
+    public List<string> LowerLayers { get; private set; } = ["Ground", "Mask 1", "Mask 2"];
 
     [JsonProperty]
-    public List<string> MiddleLayers { get; private set; } = new() { "Fringe 1" };
+    public List<string> MiddleLayers { get; private set; } = ["Fringe 1"];
 
     [JsonProperty]
-    public List<string> UpperLayers { get; private set; } = new() { "Fringe 2" };
+    public List<string> UpperLayers { get; private set; } = ["Fringe 2"];
 
     [JsonIgnore]
-    public List<string> All { get; private set; } = new();
+    public List<string> All { get; private set; } = [];
 
     [JsonProperty]
-    public bool DestroyOrphanedLayers { get; private set; } = false;
+    public bool DestroyOrphanedLayers { get; private set; }
 
     [OnDeserializing]
     internal void OnDeserializingMethod(StreamingContext context)
@@ -42,9 +42,9 @@ public partial class LayerOptions
 
     public void Validate()
     {
-        LowerLayers = new List<string>(LowerLayers.Distinct());
-        MiddleLayers = new List<string>(MiddleLayers.Distinct());
-        UpperLayers = new List<string>(UpperLayers.Distinct());
+        LowerLayers = [..LowerLayers.Distinct()];
+        MiddleLayers = [..MiddleLayers.Distinct()];
+        UpperLayers = [..UpperLayers.Distinct()];
 
         var reservedLayers = new string[] { Attributes, Npcs, Lights, Events };
         All.Clear();
