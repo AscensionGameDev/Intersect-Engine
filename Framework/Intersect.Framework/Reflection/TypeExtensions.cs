@@ -55,6 +55,18 @@ public static partial class TypeExtensions
             .ToArray();
     }
 
+    public static bool IsIntegral(this Type type) =>
+        type == typeof(int) ||
+        type == typeof(long) ||
+        type == typeof(short) ||
+        type == typeof(byte) ||
+        type == typeof(uint) ||
+        type == typeof(ulong) ||
+        type == typeof(ushort) ||
+        type == typeof(sbyte);
+
+    public static bool IsFloatingPoint(this Type type) => type == typeof(float) || type == typeof(double);
+
     public static bool IsOwnProperty(this Type type, PropertyInfo propertyInfo) =>
         !propertyInfo.IsPropertyDeclaredInBaseTypeOrInterface(type);
 
