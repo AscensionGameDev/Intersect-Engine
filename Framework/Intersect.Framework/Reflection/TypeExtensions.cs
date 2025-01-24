@@ -468,6 +468,61 @@ public static partial class TypeExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string GetQualifiedName(this Type type) => type.FullName ?? type.Name;
 
+    public static IEnumerable<object> GetValues(this Type type, bool excludeIgnored = false)
+    {
+        if (!type.IsEnum)
+        {
+            throw new ArgumentException($"Expected an enum but received {type.GetName(qualified: true)}", nameof(type));
+        }
+
+        var enumValues = Enum.GetValues(type);
+        var values = enumValues.OfType<Enum>().Distinct().ToArray();
+
+        // ReSharper disable once InvertIf
+        if (excludeIgnored)
+        {
+            var ignoredValues = type.GetFields(BindingFlags.Public | BindingFlags.Static)
+                .Where(field => field.FieldType == type && field.IsIgnored())
+                .Select(field => field.GetValue(null))
+                .OfType<Enum>()
+                .ToHashSet();
+            values = values.Where(value => !ignoredValues.Contains(value)).ToArray();
+        }
+
+        return values;
+    }
+
+    public static IEnumerable<TEnum> GetValues<TEnum>(this Type type, bool excludeIgnored = false) where TEnum : struct, Enum
+    {
+        if (typeof(TEnum) != type)
+        {
+            throw new ArgumentException(
+                $"The generic type argument {typeof(TEnum).GetName(qualified: true)} does not match the argument {type.GetName(qualified: true)}",
+                nameof(type)
+            );
+        }
+
+        if (!type.IsEnum)
+        {
+            throw new ArgumentException($"Expected an enum but received {type.GetName(qualified: true)}", nameof(type));
+        }
+
+        var values = Enum.GetValues<TEnum>();
+
+        // ReSharper disable once InvertIf
+        if (excludeIgnored)
+        {
+            var ignoredValues = type.GetFields(BindingFlags.Public | BindingFlags.Static)
+                .Where(field => field.FieldType == type && field.IsIgnored())
+                .Select(field => field.GetValue(null))
+                .OfType<Enum>()
+                .ToHashSet();
+            values = values.Where(value => !ignoredValues.Contains(value)).ToArray();
+        }
+
+        return values;
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsBitflags(this Type type) => type.IsEnum && type.GetCustomAttribute<FlagsAttribute>() != null;
 
