@@ -16,17 +16,17 @@ public partial class MapOptions
     private bool _enableDiagonalMovement = true;
 
     /// <summary>
-    /// option to dont loss exp in arena type maps
+    /// If experience can be lost in arena type maps.
     /// </summary>
     public bool DisableExpLossInArenaMaps { get; set; } = false;
 
     /// <summary>
-    /// option to drop items on arena type maps
+    /// If items can be dropped in arena type maps.
     /// </summary>
     public bool DisablePlayerDropsInArenaMaps { get; set; } = false;
 
     /// <summary>
-    /// Controls whether two block attributes placed diagonally block or not.
+    /// If two block attributes placed diagonally block diagonal movement.
     /// </summary>
     public bool EnableCrossingDiagonalBlocks { get; set; }
 
