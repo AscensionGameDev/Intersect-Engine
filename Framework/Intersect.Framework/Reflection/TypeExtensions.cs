@@ -227,12 +227,16 @@ public static partial class TypeExtensions
         if (abstractType is { IsAbstract: false, IsInterface: false })
         {
             throw new ArgumentException(
-                string.Format(ReflectionStrings.TypeExtensions_FindConcreteType_ExpectedAbstractOrInterface, abstractType.FullName),
+                string.Format(
+                    ReflectionStrings.TypeExtensions_FindConcreteType_ExpectedAbstractOrInterface,
+                    abstractType.FullName
+                ),
                 nameof(abstractType)
             );
         }
 
-        var assembliesToCheck = allLoadedAssemblies ? AppDomain.CurrentDomain.GetAssemblies()
+        var assembliesToCheck = allLoadedAssemblies
+            ? AppDomain.CurrentDomain.GetAssemblies()
             : [abstractType.Assembly];
         var validAssembliesToCheck = assembliesToCheck.Where(assembly => !assembly.IsDynamic);
         var allTypes = validAssembliesToCheck.SelectMany(
@@ -296,7 +300,10 @@ public static partial class TypeExtensions
         if (genericTypeDefinition is { IsGenericTypeDefinition: false })
         {
             throw new ArgumentException(
-                string.Format(ReflectionStrings.TypeExtensions_FindGenericTypeParameters_NotValidGenericTypeDefinition, genericTypeDefinition.FullName),
+                string.Format(
+                    ReflectionStrings.TypeExtensions_FindGenericTypeParameters_NotValidGenericTypeDefinition,
+                    genericTypeDefinition.FullName
+                ),
                 nameof(genericTypeDefinition)
             );
         }
@@ -479,7 +486,8 @@ public static partial class TypeExtensions
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string GetName(this Type type, bool qualified = false) => qualified ? type.GetQualifiedName() : type.Name;
+    public static string GetName(this Type type, bool qualified = false) =>
+        qualified ? type.GetQualifiedName() : type.Name;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string GetQualifiedName(this Type type) => type.FullName ?? type.Name;
