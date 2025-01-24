@@ -1,0 +1,73 @@
+<!--suppress CssUnresolvedCustomProperty -->
+<template id="custom-element-tab-content">
+    <div class="content" role="tabpanel" aria-labelledby="manifests" aria-hidden="true">
+        <slot></slot>
+    </div>
+</template>
+
+<template id="custom-element-tab-set">
+    <style>
+        :host {
+            display: block;
+        }
+
+        .container,
+        input,
+        label,
+        ::slotted(tab-content) {
+            border-collapse: var(--tabs-border-collapse, collapse);
+        }
+
+        .container {
+            border: var(--tabs-border-width_container, var(--tabs-border-width, 0)) solid var(--tabs-border-color_container, var(--tabs-border-color));
+        }
+
+        input.trigger {
+            display: none;
+        }
+
+        label {
+            background-color: var(--tabs-trigger-color);
+            display: inline-flex;
+            padding: var(--tabs-trigger-padding, 0.5em 2em);
+        }
+
+        input.trigger:checked+label {
+            background-color: var(--tabs-trigger-color-selected, #bbb);
+        }
+
+        input.trigger+label>svg.material {
+            fill: currentColor;
+            margin-right: 0.5em;
+            min-width: calc(min(1.5em, 24px));
+        }
+
+        svg.hidden {
+            display: none;
+        }
+
+        ::slotted(tab-content) {
+            border-top: var(--tabs-trigger-border-width, 0.0625rem) solid var(--tabs-trigger-color-selected, #bbb);
+            display: none;
+        }
+
+        ::slotted(tab-content.selected) {
+            display: block;
+        }
+    </style>
+    <div class="container" role="tablist" data-tab-group="asset-management">
+        <template id="trigger">
+            <input type="radio" class="trigger" name="tabs"/>
+            <label role="tab" aria-controls="panel-browse" tabindex="0">
+                <svg class="material hidden" viewBox="0 0 24 24" aria-hidden="true">
+                    <use/>
+                </svg>
+                <span>Tab Label</span>
+            </label>
+        </template>
+        <div class="triggers"></div>
+        <slot></slot>
+    </div>
+</template>
+
+<script src="~/js/components/tabset/tabset.js"></script>
