@@ -13,7 +13,7 @@ public partial class GuildOptions
     public const int DefaultBankSlots = 50;
 
     /// <summary>
-    /// Configures whether or not to allow guild members to attack eachother.
+    /// If guild members are allowed to attack each other.
     /// </summary>
     public bool AllowGuildMemberPvp { get; set; } = false;
 
@@ -25,7 +25,7 @@ public partial class GuildOptions
     /// <summary>
     /// How often to send guild updates to members, these updates are alongside updates whenever people log in or out
     /// </summary>
-    public int GuildUpdateInterval = 10000;
+    public int GuildUpdateInterval { get; set; } = 10000;
 
     /// <summary>
     /// If set to a value > 0 then upon server boot any guilds with only 1 member that hasn't played in this number of days will be deleted
@@ -40,8 +40,8 @@ public partial class GuildOptions
     /// <summary>
     /// Array of guild ranks that are available in this game
     /// </summary>
-    public GuildRank[] Ranks { get; set; } = new GuildRank[]
-    {
+    public GuildRank[] Ranks { get; set; } =
+    [
         new()
         {
             Title = "Master",
@@ -101,9 +101,9 @@ public partial class GuildOptions
                 BankMove = false,
                 BankRetrieve = false
             }
-        }
+        },
 
-    };
+    ];
 
     [OnDeserialized]
     internal void OnDeserializedMethod(StreamingContext context)
