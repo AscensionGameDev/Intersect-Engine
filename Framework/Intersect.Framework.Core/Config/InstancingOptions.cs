@@ -12,7 +12,7 @@ public partial class InstancingOptions
     public const int DefaultInstanceLives = 3;
 
     /// <summary>
-    /// Whether or not dieing in a shared instance "respawns" you at the instance entrance. Useful for dungeon implementations
+    /// Whether dying in a shared instance "respawns" you at the instance entrance. Useful for dungeon implementations
     /// </summary>
     public bool SharedInstanceRespawnInInstance { get; set; } = true;
 
@@ -27,12 +27,12 @@ public partial class InstancingOptions
     public int MaxSharedInstanceLives { get; set; } = DefaultInstanceLives;
 
     /// <summary>
-    /// Whether or not all party members get booted out of an instance on lives reaching -1
+    /// Whether all party members get booted out of an instance on lives reaching -1
     /// </summary>
     public bool BootAllFromInstanceWhenOutOfLives { get; set; } = true;
 
     /// <summary>
-    /// Whether or not you lose experience on death in a shared instance
+    /// Whether you lose experience on death in a shared instance
     /// </summary>
     public bool LoseExpOnInstanceDeath { get; set; } = false;
 
