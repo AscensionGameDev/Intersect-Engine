@@ -457,5 +457,8 @@ public static partial class TypeExtensions
     public static string GetQualifiedName(this Type type) => type.FullName ?? type.Name;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsBitflags(this Type type) => type.IsEnum && type.GetCustomAttribute<FlagsAttribute>() != null;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsConcrete(this Type type) => type is { IsInterface: false, IsAbstract: false, IsClass: true };
 }
