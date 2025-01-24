@@ -130,16 +130,25 @@ public partial class MapItemWindow
             }
 
             // Update our UI and hide our unused icons.
-            for (var slot = 0; slot < Options.Instance.Loot.MaximumLootWindowItems; slot++)
+            var slotLimit = Math.Min(Items.Count, mValues.Count);
+            for (var slot = 0; slot < slotLimit; slot++)
             {
+                var mapItemIcon = Items[slot];
                 if (slot > itemSlot - 1)
                 {
-                    Items[slot].MyItem = null;
-                    Items[slot].Pnl.IsHidden = true;
-                    mValues[slot].IsHidden = true;
+                    mapItemIcon.MyItem = null;
+                    if (mapItemIcon.Pnl is { IsHidden: false } mapItemIconPanel)
+                    {
+                        mapItemIconPanel.IsHidden = true;
+                    }
+
+                    if (mValues[slot] is { IsHidden: false } slotLabel)
+                    {
+                        slotLabel.IsHidden = true;
+                    }
                 }
 
-                Items[slot].Update();
+                mapItemIcon.Update();
             }
 
             // Set up our timer
@@ -147,15 +156,10 @@ public partial class MapItemWindow
         }
 
         // Do we display our window?
-        if (!mFoundItems)
+        if (mFoundItems != mMapItemWindow.IsVisible)
         {
-            mMapItemWindow.Hide();
+            mMapItemWindow.IsVisible = mFoundItems;
         }
-        else
-        {
-            mMapItemWindow.Show();
-        }
-
     }
 
     private void CreateItemContainer()
@@ -203,7 +207,7 @@ public partial class MapItemWindow
         }
 
         _ = Player.TryPickupItem(currentMap.Id, Globals.Me.Y * Options.Instance.Map.MapWidth + Globals.Me.X);
-        
+
     }
 
     private Dictionary<MapInstance, List<int>> FindSurroundingTiles(int myX, int myY, int distance)

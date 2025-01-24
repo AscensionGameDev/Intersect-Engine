@@ -79,7 +79,7 @@ public partial class Base : IDisposable
 
     private Cursor mCursor;
 
-    private bool mDisabled;
+    private bool _disabled;
 
     private bool mDisposed;
 
@@ -101,7 +101,7 @@ public partial class Base : IDisposable
     ///     If the innerpanel exists our children will automatically become children of that
     ///     instead of us - allowing us to move them all around by moving that panel (useful for scrolling etc).
     /// </summary>
-    protected Base mInnerPanel;
+    protected Base? _innerPanel;
 
     private bool mKeyboardInputEnabled;
 
@@ -174,7 +174,7 @@ public partial class Base : IDisposable
         //ToolTip = null;
         IsTabable = false;
         ShouldDrawBackground = true;
-        mDisabled = false;
+        _disabled = false;
         mCacheTextureDirty = true;
         mCacheToTexture = false;
 
@@ -207,7 +207,7 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Logical list of children. If InnerPanel is not null, returns InnerPanel's children.
     /// </summary>
-    public List<Base> Children => mInnerPanel?.Children ?? mChildren;
+    public List<Base> Children => _innerPanel?.Children ?? mChildren;
 
     /// <summary>
     ///     The logical parent. It's usually what you expect, the control you've parented it to.
@@ -452,21 +452,21 @@ public partial class Base : IDisposable
     /// </summary>
     public virtual bool IsDisabled
     {
-        get => (_inheritParentEnablementProperties && Parent != default) ? Parent.IsDisabled : mDisabled;
+        get => (_inheritParentEnablementProperties && Parent != default) ? Parent.IsDisabled : _disabled;
         set
         {
-            if (value == mDisabled)
+            if (value == _disabled)
             {
                 return;
             }
 
             if (_inheritParentEnablementProperties)
             {
-                mDisabled = Parent?.IsDisabled ?? value;
+                _disabled = Parent?.IsDisabled ?? value;
             }
             else
             {
-                mDisabled = value;
+                _disabled = value;
             }
 
             Invalidate();
@@ -483,26 +483,39 @@ public partial class Base : IDisposable
         {
             if (value == mHidden)
             {
+                ApplicationContext.CurrentContext.Logger.LogTrace(
+                    "{ComponentTypeName} (\"{ComponentName}\") set to same visibility ({Visibility})",
+                    GetType().GetName(qualified: true),
+                    CanonicalName,
+                    !value
+                );
                 return;
             }
 
-            if (_inheritParentEnablementProperties)
+            var hidden = _inheritParentEnablementProperties ? (Parent?.IsHidden ?? value) : value;
+            mHidden = hidden;
+
+            VisibilityChangedEventArgs eventArgs = new()
             {
-                mHidden = Parent?.IsHidden ?? value;
-            }
-            else
-            {
-                mHidden = value;
-            }
+                IsVisible = !hidden,
+            };
+
+            OnVisibilityChanged(this, eventArgs);
+            VisibilityChanged?.Invoke(this, eventArgs);
 
             Invalidate();
             InvalidateParent();
         }
     }
 
+    protected virtual void OnVisibilityChanged(object? sender, VisibilityChangedEventArgs eventArgs)
+    {
+
+    }
+
     public virtual bool IsHiddenByTree => mHidden || (Parent?.IsHidden ?? false);
 
-    public virtual bool IsDisabledByTree => mDisabled || (Parent?.IsDisabled ?? false);
+    public virtual bool IsDisabledByTree => _disabled || (Parent?.IsDisabled ?? false);
 
     /// <summary>
     ///     Determines whether the control's position should be restricted to parent's bounds.
@@ -630,9 +643,9 @@ public partial class Base : IDisposable
         set
         {
             mMaximumSize = value;
-            if (mInnerPanel != null)
+            if (_innerPanel != null)
             {
-                mInnerPanel.MaximumSize = value;
+                _innerPanel.MaximumSize = value;
             }
         }
     }
@@ -798,7 +811,7 @@ public partial class Base : IDisposable
 
         mChildren?.Clear();
 
-        mInnerPanel?.Dispose();
+        _innerPanel?.Dispose();
 
         mDisposed = true;
         GC.SuppressFinalize(this);
@@ -856,7 +869,7 @@ public partial class Base : IDisposable
             new JProperty("Alignments", string.Join(",", alignments.ToArray())),
             new JProperty("DrawBackground", mDrawBackground),
             new JProperty("MinimumSize", Point.ToString(mMinimumSize)),
-            new JProperty("MaximumSize", Point.ToString(mMaximumSize)), new JProperty("Disabled", mDisabled),
+            new JProperty("MaximumSize", Point.ToString(mMaximumSize)), new JProperty("Disabled", _disabled),
             new JProperty("Hidden", mHidden), new JProperty("RestrictToParent", mRestrictToParent),
             new JProperty("MouseInputEnabled", mMouseInputEnabled), new JProperty("HideToolTip", mHideToolTip),
             new JProperty("ToolTipBackground", mToolTipBackgroundFilename),
@@ -1170,6 +1183,8 @@ public partial class Base : IDisposable
         return mChildren?.Any(ctrl => !string.IsNullOrEmpty(ctrl?.Name)) ?? false;
     }
 
+    public event GwenEventHandler<VisibilityChangedEventArgs>? VisibilityChanged;
+
     /// <summary>
     ///     Invoked when mouse pointer enters the control.
     /// </summary>
@@ -1377,9 +1392,9 @@ public partial class Base : IDisposable
             }
         }
 
-        if (mInnerPanel != null)
+        if (_innerPanel != null)
         {
-            foreach (var child in mInnerPanel.mChildren)
+            foreach (var child in _innerPanel.mChildren)
             {
                 child?.Invalidate();
                 if (recursive)
@@ -1541,9 +1556,9 @@ public partial class Base : IDisposable
     /// <param name="child">Control to be added as a child.</param>
     public virtual void AddChild(Base child)
     {
-        if (mInnerPanel != null)
+        if (_innerPanel != null)
         {
-            mInnerPanel.AddChild(child);
+            _innerPanel.AddChild(child);
         }
         else
         {
@@ -1564,18 +1579,18 @@ public partial class Base : IDisposable
     {
         // If we removed our innerpanel
         // remove our pointer to it
-        if (mInnerPanel == child)
+        if (_innerPanel == child)
         {
-            mChildren.Remove(mInnerPanel);
-            mInnerPanel.DelayedDelete();
-            mInnerPanel = null;
+            mChildren.Remove(_innerPanel);
+            _innerPanel.DelayedDelete();
+            _innerPanel = null;
 
             return;
         }
 
-        if (mInnerPanel != null && mInnerPanel.Children.Contains(child))
+        if (_innerPanel != null && _innerPanel.Children.Contains(child))
         {
-            mInnerPanel.RemoveChild(child, dispose);
+            _innerPanel.RemoveChild(child, dispose);
 
             return;
         }
@@ -2646,10 +2661,10 @@ public partial class Base : IDisposable
 
         // If our parent has an innerpanel and we're a child of it
         // add its offset onto us.
-        if (mParent.mInnerPanel != null && mParent.mInnerPanel.IsChild(this))
+        if (mParent._innerPanel != null && mParent._innerPanel.IsChild(this))
         {
-            x += mParent.mInnerPanel.X;
-            y += mParent.mInnerPanel.Y;
+            x += mParent._innerPanel.X;
+            y += mParent._innerPanel.Y;
         }
 
         return mParent.LocalPosToCanvas(new Point(x, y));
@@ -2672,10 +2687,10 @@ public partial class Base : IDisposable
 
         // If our parent has an innerpanel and we're a child of it
         // add its offset onto us.
-        if (mParent.mInnerPanel != null && mParent.mInnerPanel.IsChild(this))
+        if (mParent._innerPanel != null && mParent._innerPanel.IsChild(this))
         {
-            x -= mParent.mInnerPanel.X;
-            y -= mParent.mInnerPanel.Y;
+            x -= mParent._innerPanel.X;
+            y -= mParent._innerPanel.Y;
         }
 
         return mParent.CanvasPosToLocal(new Point(x, y));

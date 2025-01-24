@@ -11,8 +11,10 @@ using Intersect.Client.Interface.Game.Inventory;
 using Intersect.Client.Interface.Game.Shop;
 using Intersect.Client.Interface.Game.Trades;
 using Intersect.Client.Networking;
+using Intersect.Core;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Interface.Game;
 
@@ -318,14 +320,21 @@ public partial class GameInterface : MutableInterface
         AnnouncementWindow?.Update();
         mPictureWindow?.Update();
 
-        if (Globals.QuestOffers.Count > 0)
+        var questDescriptorId = Globals.QuestOffers.FirstOrDefault();
+        if (questDescriptorId == default)
         {
-            var quest = QuestBase.Get(Globals.QuestOffers[0]);
-            mQuestOfferWindow.Update(quest);
+            if (mQuestOfferWindow.IsVisible())
+            {
+                mQuestOfferWindow.Hide();
+            }
+        }
+        else if (QuestBase.TryGet(questDescriptorId, out var questDescriptor))
+        {
+            mQuestOfferWindow.Update(questDescriptor);
         }
         else
         {
-            mQuestOfferWindow.Hide();
+            ApplicationContext.CurrentContext.Logger.LogWarning("Failed to get quest {QuestId}", questDescriptorId);
         }
 
         if (Globals.Picture != null)

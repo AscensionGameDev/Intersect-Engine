@@ -877,7 +877,7 @@ internal sealed partial class PacketHandler
                 {
                     Interface.Interface.GameUi.PlayerStatusWindow.ShouldUpdateStatuses = true;
                 }
-                else if (en.Id == Globals.Me.TargetIndex && Globals.Me.TargetBox != null)
+                else if (en.Id == Globals.Me.TargetId && Globals.Me.TargetBox != null)
                 {
                     Globals.Me.TargetBox.ShouldUpdateStatuses = true;
                 }
@@ -962,7 +962,7 @@ internal sealed partial class PacketHandler
             {
                 Interface.Interface.GameUi.PlayerStatusWindow.ShouldUpdateStatuses = true;
             }
-            else if (id == Globals.Me.TargetIndex && Globals.Me.TargetBox != null)
+            else if (id == Globals.Me.TargetId && Globals.Me.TargetBox != null)
             {
                 Globals.Me.TargetBox.ShouldUpdateStatuses = true;
             }

@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Newtonsoft.Json.Linq;
 
@@ -53,12 +54,12 @@ public partial class WindowControl : ResizableControl
 
     public Padding InnerPanelPadding
     {
-        get => mInnerPanel?.Padding ?? default;
+        get => _innerPanel?.Padding ?? default;
         set
         {
-            if (mInnerPanel != default)
+            if (_innerPanel != default)
             {
-                mInnerPanel.Padding = value;
+                _innerPanel.Padding = value;
             }
         }
     }
@@ -93,8 +94,8 @@ public partial class WindowControl : ResizableControl
         mCloseButton.IsTabable = false;
 
         //Create a blank content control, dock it to the top - Should this be a ScrollControl?
-        mInnerPanel = new Base(this);
-        mInnerPanel.Dock = Pos.Fill;
+        _innerPanel = new Base(this);
+        _innerPanel.Dock = Pos.Fill;
         GetResizer(8).Hide();
         BringToFront();
         IsTabable = false;
@@ -136,20 +137,13 @@ public partial class WindowControl : ResizableControl
         set => mDeleteOnClose = value;
     }
 
-    /// <summary>
-    ///     Indicates whether the control is hidden.
-    /// </summary>
-    public override bool IsHidden
+    protected override void OnVisibilityChanged(object? sender, VisibilityChangedEventArgs eventArgs)
     {
-        get => base.IsHidden;
-        set
-        {
-            if (!value)
-            {
-                BringToFront();
-            }
+        base.OnVisibilityChanged(sender, eventArgs);
 
-            base.IsHidden = value;
+        if (eventArgs.IsVisible)
+        {
+            BringToFront();
         }
     }
 
@@ -178,7 +172,7 @@ public partial class WindowControl : ResizableControl
         obj.Add("Titlebar", mTitleBar.GetJson());
         obj.Add("Title", mTitle.GetJson());
         obj.Add("CloseButton", mCloseButton.GetJson());
-        obj.Add("InnerPanel", mInnerPanel.GetJson());
+        obj.Add("InnerPanel", _innerPanel.GetJson());
 
         return base.FixJson(obj);
     }
@@ -245,7 +239,7 @@ public partial class WindowControl : ResizableControl
 
         if (obj["InnerPanel"] != null)
         {
-            mInnerPanel.LoadJson(obj["InnerPanel"]);
+            _innerPanel.LoadJson(obj["InnerPanel"]);
         }
     }
 

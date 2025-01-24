@@ -41,11 +41,11 @@ public partial class TreeNode : Base
         mTitle.DoubleClicked += OnDoubleClickName;
         mTitle.Clicked += OnClickName;
 
-        mInnerPanel = new Base(this);
-        mInnerPanel.Dock = Pos.Top;
-        mInnerPanel.Height = 100;
-        mInnerPanel.Margin = new Margin(TREE_INDENTATION, 1, 0, 0);
-        mInnerPanel.Hide();
+        _innerPanel = new Base(this);
+        _innerPanel.Dock = Pos.Top;
+        _innerPanel.Height = 100;
+        _innerPanel.Margin = new Margin(TREE_INDENTATION, 1, 0, 0);
+        _innerPanel.Hide();
 
         mRoot = parent is TreeControl;
         mSelected = false;
@@ -220,8 +220,8 @@ public partial class TreeNode : Base
 
         // Draw the tree node using the specified skin.
         skin.DrawTreeNode(
-            this, mInnerPanel.IsVisible, IsSelected, treeNodeHeight, mTitle.TextRight,
-            (int)(mToggleButton.Y + mToggleButton.Height * 0.5f), mInnerPanel.Bottom, mTreeControl == Parent
+            this, _innerPanel.IsVisible, IsSelected, treeNodeHeight, mTitle.TextRight,
+            (int)(mToggleButton.Y + mToggleButton.Height * 0.5f), _innerPanel.Bottom, mTreeControl == Parent
         ); // IsRoot
 
         // Invalidate the tree node.
@@ -235,13 +235,13 @@ public partial class TreeNode : Base
     {
         var height = mTitle.Height;
 
-        if (mInnerPanel.Children.Count > 0)
+        if (_innerPanel.Children.Count > 0)
         {
-            height = mInnerPanel.Children.Last().Y + height;
+            height = _innerPanel.Children.Last().Y + height;
         }
         else if (height == 0)
         {
-            height = mInnerPanel.Height;
+            height = _innerPanel.Height;
         }
 
         return height;
@@ -260,16 +260,16 @@ public partial class TreeNode : Base
                 mToggleButton.SetPosition(0, (mTitle.Height - mToggleButton.Height) * 0.5f);
             }
 
-            if (mInnerPanel.Children.Count == 0)
+            if (_innerPanel.Children.Count == 0)
             {
                 mToggleButton.Hide();
                 mToggleButton.ToggleState = false;
-                mInnerPanel.Hide();
+                _innerPanel.Hide();
             }
             else
             {
                 mToggleButton.Show();
-                mInnerPanel.SizeToChildren(false, true);
+                _innerPanel.SizeToChildren(false, true);
             }
         }
 
@@ -306,7 +306,7 @@ public partial class TreeNode : Base
     /// </summary>
     public void Open()
     {
-        mInnerPanel.Show();
+        _innerPanel.Show();
         if (mToggleButton != null)
         {
             mToggleButton.ToggleState = true;
@@ -330,7 +330,7 @@ public partial class TreeNode : Base
     /// </summary>
     public void Close()
     {
-        mInnerPanel.Hide();
+        _innerPanel.Hide();
         if (mToggleButton != null)
         {
             mToggleButton.ToggleState = false;

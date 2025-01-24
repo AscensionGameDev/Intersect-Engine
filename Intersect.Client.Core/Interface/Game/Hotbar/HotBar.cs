@@ -35,12 +35,16 @@ public partial class HotBarWindow
 
     private void InitHotbarItems()
     {
-        for (var i = 0; i < Options.Instance.Player.HotbarSlotCount; i++)
+        var hotbarSlotCount = Options.Instance.Player.HotbarSlotCount;
+        for (var hotbarSlotIndex = 0; hotbarSlotIndex < hotbarSlotCount; hotbarSlotIndex++)
         {
-            Items.Add(new HotbarItem((byte) i, HotbarWindow));
-            Items[i].HotbarIcon = new ImagePanel(HotbarWindow, "HotbarContainer" + i);
-            Items[i].Setup();
-            Items[i].KeyLabel = new Label(Items[i].HotbarIcon, "HotbarLabel" + i);
+            var hotbarItem = new HotbarItem(hotbarSlotIndex, HotbarWindow)
+            {
+                HotbarIcon = new ImagePanel(HotbarWindow, $"HotbarContainer{hotbarSlotIndex}"),
+            };
+            hotbarItem.KeyLabel = new Label(hotbarItem.HotbarIcon, $"HotbarLabel{hotbarSlotIndex}");
+            hotbarItem.Setup();
+            Items.Add(hotbarItem);
         }
     }
 
@@ -51,18 +55,18 @@ public partial class HotBarWindow
             return;
         }
 
-        for (var i = 0; i < Options.Instance.Player.HotbarSlotCount; i++)
+        foreach (var slot in Items)
         {
-            Items[i].Update();
+            slot.Update();
         }
     }
 
     public FloatRect RenderBounds()
     {
-        var rect = new FloatRect()
+        var rect = new FloatRect
         {
-            X = HotbarWindow.LocalPosToCanvas(new Point(0, 0)).X,
-            Y = HotbarWindow.LocalPosToCanvas(new Point(0, 0)).Y,
+            X = HotbarWindow.LocalPosToCanvas(default).X,
+            Y = HotbarWindow.LocalPosToCanvas(default).Y,
             Width = HotbarWindow.Width,
             Height = HotbarWindow.Height
         };

@@ -9,79 +9,79 @@ namespace Intersect.Client.Framework.Gwen.Control;
 /// </summary>
 public partial class ScrollControl : Base
 {
+    private bool _autoHideBars;
 
-    protected readonly ScrollBar mHorizontalScrollBar;
+    private bool _canScrollH;
 
-    protected readonly ScrollBar mVerticalScrollBar;
-
-    private bool mAutoHideBars;
-
-    private bool mCanScrollH;
-
-    private bool mCanScrollV;
+    private bool _canScrollV;
 
     private bool mUpdatingScrollbars;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ScrollControl" /> class.
     /// </summary>
-    /// <param name="parent">Parent control.</param>
-    public ScrollControl(Base parent, string name = default) : base(parent, name)
+    /// <param name="parent">The parent control.</param>
+    /// <param name="name">The name of the control.</param>
+    public ScrollControl(Base parent, string? name = default) : base(parent, name ?? nameof(ScrollControl))
     {
-        MouseInputEnabled = false;
-
-        mVerticalScrollBar = new VerticalScrollBar(this)
+        VerticalScrollBar = new VerticalScrollBar(this)
         {
             Dock = Pos.Right,
             NudgeAmount = 30,
         };
-        mVerticalScrollBar.BarMoved += VBarMoved;
-        mCanScrollV = true;
+        VerticalScrollBar.BarMoved += VBarMoved;
 
-        mHorizontalScrollBar = new HorizontalScrollBar(this)
+        HorizontalScrollBar = new HorizontalScrollBar(this)
         {
             Dock = Pos.Bottom,
             NudgeAmount = 30,
         };
-        mHorizontalScrollBar.BarMoved += HBarMoved;
-        mCanScrollH = true;
+        HorizontalScrollBar.BarMoved += HBarMoved;
 
-        mInnerPanel = new Base(this)
+        _innerPanel = new Base(this)
         {
             X = 0,
             Y = 0,
             Margin = Margin.Five,
             MouseInputEnabled = false,
         };
-        mInnerPanel.SendToBack();
+        _innerPanel.SendToBack();
 
-        mAutoHideBars = false;
+        _autoHideBars = false;
+        _canScrollH = true;
+        _canScrollV = true;
+        MouseInputEnabled = false;
     }
 
-    public int VerticalScroll => mInnerPanel.Y;
+    public int VerticalScroll => _innerPanel?.Y ?? 0;
 
-    public int HorizontalScroll => mInnerPanel.X;
+    public int HorizontalScroll => _innerPanel?.X ?? 0;
 
-    public Base InnerPanel => mInnerPanel;
+    public Base InnerPanel => _innerPanel ??
+                              throw new InvalidOperationException($"{nameof(ScrollControl)} had the inner panel unset");
 
     /// <summary>
     ///     Indicates whether the control can be scrolled horizontally.
     /// </summary>
-    public bool CanScrollH => mCanScrollH;
+    public bool CanScrollH => _canScrollH;
 
     /// <summary>
     ///     Indicates whether the control can be scrolled vertically.
     /// </summary>
-    public bool CanScrollV => mCanScrollV;
+    public bool CanScrollV => _canScrollV;
 
     /// <summary>
     ///     Determines whether the scroll bars should be hidden if not needed.
     /// </summary>
     public bool AutoHideBars
     {
-        get => mAutoHideBars;
-        set => mAutoHideBars = value;
+        get => _autoHideBars;
+        set => _autoHideBars = value;
     }
+
+    public ScrollBar VerticalScrollBar { get; }
+
+    public ScrollBar HorizontalScrollBar { get; }
 
     protected bool HScrollRequired
     {
@@ -89,17 +89,17 @@ public partial class ScrollControl : Base
         {
             if (value)
             {
-                mHorizontalScrollBar.SetScrollAmount(0, true);
-                mHorizontalScrollBar.IsDisabled = true;
-                if (mAutoHideBars)
+                HorizontalScrollBar.SetScrollAmount(0, true);
+                HorizontalScrollBar.IsDisabled = true;
+                if (_autoHideBars)
                 {
-                    mHorizontalScrollBar.IsHidden = true;
+                    HorizontalScrollBar.IsHidden = true;
                 }
             }
             else
             {
-                mHorizontalScrollBar.IsHidden = false;
-                mHorizontalScrollBar.IsDisabled = false;
+                HorizontalScrollBar.IsHidden = false;
+                HorizontalScrollBar.IsDisabled = false;
             }
         }
     }
@@ -110,17 +110,19 @@ public partial class ScrollControl : Base
         {
             if (value)
             {
-                mVerticalScrollBar.SetScrollAmount(0, true);
-                mVerticalScrollBar.IsDisabled = true;
-                if (mAutoHideBars)
+                if (!VerticalScrollBar.IsVisible)
                 {
-                    mVerticalScrollBar.IsHidden = true;
+                    return;
                 }
+
+                VerticalScrollBar.SetScrollAmount(0, true);
+                VerticalScrollBar.IsDisabled = true;
+                VerticalScrollBar.IsHidden = _autoHideBars;
             }
             else
             {
-                mVerticalScrollBar.IsHidden = false;
-                mVerticalScrollBar.IsDisabled = false;
+                VerticalScrollBar.IsHidden = false;
+                VerticalScrollBar.IsDisabled = false;
             }
         }
     }
@@ -128,12 +130,12 @@ public partial class ScrollControl : Base
     public override JObject GetJson(bool isRoot = default)
     {
         var obj = base.GetJson(isRoot);
-        obj.Add("CanScrollH", mCanScrollH);
-        obj.Add("CanScrollV", mCanScrollV);
-        obj.Add("AutoHideBars", mAutoHideBars);
-        obj.Add("InnerPanel", mInnerPanel.GetJson());
-        obj.Add("HorizontalScrollBar", mHorizontalScrollBar.GetJson());
-        obj.Add("VerticalScrollBar", mVerticalScrollBar.GetJson());
+        obj.Add("CanScrollH", _canScrollH);
+        obj.Add("CanScrollV", _canScrollV);
+        obj.Add("AutoHideBars", _autoHideBars);
+        obj.Add("InnerPanel", _innerPanel.GetJson());
+        obj.Add("HorizontalScrollBar", HorizontalScrollBar.GetJson());
+        obj.Add("VerticalScrollBar", VerticalScrollBar.GetJson());
 
         return base.FixJson(obj);
     }
@@ -143,32 +145,32 @@ public partial class ScrollControl : Base
         base.LoadJson(obj);
         if (obj["CanScrollH"] != null)
         {
-            mCanScrollH = (bool)obj["CanScrollH"];
+            _canScrollH = (bool)obj["CanScrollH"];
         }
 
         if (obj["CanScrollV"] != null)
         {
-            mCanScrollV = (bool)obj["CanScrollV"];
+            _canScrollV = (bool)obj["CanScrollV"];
         }
 
         if (obj["AutoHideBars"] != null)
         {
-            mAutoHideBars = (bool)obj["AutoHideBars"];
+            _autoHideBars = (bool)obj["AutoHideBars"];
         }
 
         if (obj["InnerPanel"] != null)
         {
-            mInnerPanel.LoadJson(obj["InnerPanel"]);
+            _innerPanel.LoadJson(obj["InnerPanel"]);
         }
 
         if (obj["HorizontalScrollBar"] != null)
         {
-            mHorizontalScrollBar.LoadJson(obj["HorizontalScrollBar"]);
+            HorizontalScrollBar.LoadJson(obj["HorizontalScrollBar"]);
         }
 
         if (obj["VerticalScrollBar"] != null)
         {
-            mVerticalScrollBar.LoadJson(obj["VerticalScrollBar"]);
+            VerticalScrollBar.LoadJson(obj["VerticalScrollBar"]);
         }
     }
 
@@ -179,15 +181,15 @@ public partial class ScrollControl : Base
     /// <param name="vertical">Determines whether the vertical scrollbar should be enabled.</param>
     public virtual void EnableScroll(bool horizontal, bool vertical)
     {
-        mCanScrollV = vertical;
-        mCanScrollH = horizontal;
-        mVerticalScrollBar.IsHidden = !mCanScrollV;
-        mHorizontalScrollBar.IsHidden = !mCanScrollH;
+        _canScrollV = vertical;
+        _canScrollH = horizontal;
+        VerticalScrollBar.IsHidden = !_canScrollV;
+        HorizontalScrollBar.IsHidden = !_canScrollH;
     }
 
     public virtual void SetInnerSize(int width, int height)
     {
-        mInnerPanel.SetSize(width, height);
+        _innerPanel.SetSize(width, height);
     }
 
     protected virtual void VBarMoved(Base control, EventArgs args)
@@ -227,27 +229,24 @@ public partial class ScrollControl : Base
     /// <returns></returns>
     protected override bool OnMouseWheeled(int delta)
     {
-        if (CanScrollV && mVerticalScrollBar.IsVisible)
+        if (CanScrollV && VerticalScrollBar.IsVisible)
         {
-            if (mVerticalScrollBar.SetScrollAmount(
-                mVerticalScrollBar.ScrollAmount - mVerticalScrollBar.NudgeAmount * (delta / 60.0f), true
+            if (VerticalScrollBar.SetScrollAmount(
+                VerticalScrollBar.ScrollAmount - VerticalScrollBar.NudgeAmount * (delta / 60.0f), true
             ))
             {
                 return true;
             }
         }
 
-        if (CanScrollH && mHorizontalScrollBar.IsVisible)
+        if (!CanScrollH || !HorizontalScrollBar.IsVisible)
         {
-            if (mHorizontalScrollBar.SetScrollAmount(
-                mHorizontalScrollBar.ScrollAmount - mHorizontalScrollBar.NudgeAmount * (delta / 60.0f), true
-            ))
-            {
-                return true;
-            }
+            return false;
         }
 
-        return false;
+        return HorizontalScrollBar.SetScrollAmount(
+            HorizontalScrollBar.ScrollAmount - HorizontalScrollBar.NudgeAmount * (delta / 60.0f), true
+        );
     }
 
     /// <summary>
@@ -257,17 +256,13 @@ public partial class ScrollControl : Base
     /// <returns></returns>
     protected override bool OnMouseHWheeled(int delta)
     {
-
-        if (CanScrollH && mHorizontalScrollBar.IsVisible)
+        if (!CanScrollH || !HorizontalScrollBar.IsVisible)
         {
-            var scrollValue = mHorizontalScrollBar.ScrollAmount - mHorizontalScrollBar.NudgeAmount * (delta / 60.0f);
-            if (mHorizontalScrollBar.SetScrollAmount(scrollValue, true))
-            {
-                return true;
-            }
+            return false;
         }
 
-        return false;
+        var scrollValue = HorizontalScrollBar.ScrollAmount - HorizontalScrollBar.NudgeAmount * (delta / 60.0f);
+        return HorizontalScrollBar.SetScrollAmount(scrollValue, true);
     }
 
     /// <summary>
@@ -292,88 +287,86 @@ render->RenderText( skin->GetDefaultFont(), Gwen::Point( 0, 0 ), Utility::Format
 
     public virtual void UpdateScrollBars()
     {
-        if (!mUpdatingScrollbars)
+        if (_innerPanel == null)
         {
-            if (mInnerPanel == null)
-            {
-                return;
-            }
-
-            mUpdatingScrollbars = true;
-
-            //Get the max size of all our children together
-            var childrenWidth = Children.Count > 0 ? Children.Max(x => x.Right) : 0;
-            var childrenHeight = Children.Count > 0 ? Children.Max(x => x.Bottom) : 0;
-
-            if (mCanScrollH)
-            {
-                mInnerPanel.SetSize(Math.Max(Width, childrenWidth), Math.Max(Height, childrenHeight));
-            }
-            else
-            {
-                mInnerPanel.SetSize(
-                    Width - (mVerticalScrollBar.IsHidden ? 0 : mVerticalScrollBar.Width),
-                    Math.Max(Height, childrenHeight)
-                );
-            }
-
-            var wPercent = Width /
-                           (float)(childrenWidth + (mVerticalScrollBar.IsHidden ? 0 : mVerticalScrollBar.Width));
-
-            var hPercent = Height /
-                           (float)(childrenHeight +
-                                    (mHorizontalScrollBar.IsHidden ? 0 : mHorizontalScrollBar.Height));
-
-            if (mCanScrollV)
-            {
-                VScrollRequired = hPercent >= 1;
-            }
-            else
-            {
-                mVerticalScrollBar.IsHidden = true;
-            }
-
-            if (mCanScrollH)
-            {
-                HScrollRequired = wPercent >= 1;
-            }
-            else
-            {
-                mHorizontalScrollBar.IsHidden = true;
-            }
-
-            mVerticalScrollBar.ContentSize = mInnerPanel.Height;
-            mVerticalScrollBar.ViewableContentSize =
-                Height - (mHorizontalScrollBar.IsHidden ? 0 : mHorizontalScrollBar.Height);
-
-            mHorizontalScrollBar.ContentSize = mInnerPanel.Width;
-            mHorizontalScrollBar.ViewableContentSize =
-                Width - (mVerticalScrollBar.IsHidden ? 0 : mVerticalScrollBar.Width);
-
-            var newInnerPanelPosX = 0;
-            var newInnerPanelPosY = 0;
-
-            if (CanScrollV && !mVerticalScrollBar.IsHidden)
-            {
-                newInnerPanelPosY =
-                    (int)(-(mInnerPanel.Height -
-                             Height +
-                             (mHorizontalScrollBar.IsHidden ? 0 : mHorizontalScrollBar.Height)) *
-                           mVerticalScrollBar.ScrollAmount);
-            }
-
-            if (CanScrollH && !mHorizontalScrollBar.IsHidden)
-            {
-                newInnerPanelPosX =
-                    (int)(-(mInnerPanel.Width -
-                             Width +
-                             (mVerticalScrollBar.IsHidden ? 0 : mVerticalScrollBar.Width)) *
-                           mHorizontalScrollBar.ScrollAmount);
-            }
-
-            mInnerPanel.SetPosition(newInnerPanelPosX, newInnerPanelPosY);
-            mUpdatingScrollbars = false;
+            return;
         }
+
+        if (mUpdatingScrollbars)
+        {
+            return;
+        }
+
+        mUpdatingScrollbars = true;
+
+        //Get the max size of all our children together
+        var childrenWidth = Children.Count > 0 ? Children.Max(x => x.Right) : 0;
+        var childrenHeight = Children.Count > 0 ? Children.Max(x => x.Bottom) : 0;
+
+
+        var updatedWidth = _canScrollH
+            ? Math.Max(Width, childrenWidth)
+            : Width - (VerticalScrollBar.IsHidden ? 0 : VerticalScrollBar.Width);
+        var updatedHeight = Math.Max(Height, childrenHeight);
+
+        _innerPanel.SetSize(updatedWidth, updatedHeight);
+
+        var wPercent = Width /
+                       (float)(childrenWidth + (VerticalScrollBar.IsHidden ? 0 : VerticalScrollBar.Width));
+
+        var hPercent = Height /
+                       (float)(childrenHeight +
+                               (HorizontalScrollBar.IsHidden ? 0 : HorizontalScrollBar.Height));
+
+        if (_canScrollV)
+        {
+            VScrollRequired = hPercent >= 1;
+        }
+        else
+        {
+            VerticalScrollBar.IsHidden = true;
+        }
+
+        if (_canScrollH)
+        {
+            HScrollRequired = wPercent >= 1;
+        }
+        else
+        {
+            HorizontalScrollBar.IsHidden = true;
+        }
+
+        VerticalScrollBar.ContentSize = _innerPanel.Height;
+        VerticalScrollBar.ViewableContentSize =
+            Height - (HorizontalScrollBar.IsHidden ? 0 : HorizontalScrollBar.Height);
+
+        HorizontalScrollBar.ContentSize = _innerPanel.Width;
+        HorizontalScrollBar.ViewableContentSize =
+            Width - (VerticalScrollBar.IsHidden ? 0 : VerticalScrollBar.Width);
+
+        var newInnerPanelPosX = 0;
+        var newInnerPanelPosY = 0;
+
+        if (CanScrollV && !VerticalScrollBar.IsHidden)
+        {
+            newInnerPanelPosY =
+                (int)(-(_innerPanel.Height -
+                        Height +
+                        (HorizontalScrollBar.IsHidden ? 0 : HorizontalScrollBar.Height)) *
+                      VerticalScrollBar.ScrollAmount);
+        }
+
+        if (CanScrollH && !HorizontalScrollBar.IsHidden)
+        {
+            newInnerPanelPosX =
+                (int)(-(_innerPanel.Width -
+                        Width +
+                        (VerticalScrollBar.IsHidden ? 0 : VerticalScrollBar.Width)) *
+                      HorizontalScrollBar.ScrollAmount);
+        }
+
+        _innerPanel.SetPosition(newInnerPanelPosX, newInnerPanelPosY);
+        mUpdatingScrollbars = false;
     }
 
     public virtual void ScrollToBottom()
@@ -384,49 +377,44 @@ render->RenderText( skin->GetDefaultFont(), Gwen::Point( 0, 0 ), Utility::Format
         }
 
         UpdateScrollBars();
-        mVerticalScrollBar.ScrollToBottom();
+        VerticalScrollBar.ScrollToBottom();
     }
 
     public virtual void ScrollToTop()
     {
-        if (CanScrollV)
+        if (!CanScrollV)
         {
-            UpdateScrollBars();
-            mVerticalScrollBar.ScrollToTop();
+            return;
         }
+
+        UpdateScrollBars();
+        VerticalScrollBar.ScrollToTop();
     }
 
     public virtual void ScrollToLeft()
     {
-        if (CanScrollH)
+        if (!CanScrollH)
         {
-            UpdateScrollBars();
-            mVerticalScrollBar.ScrollToLeft();
+            return;
         }
+
+        UpdateScrollBars();
+        VerticalScrollBar.ScrollToLeft();
     }
 
     public virtual void ScrollToRight()
     {
-        if (CanScrollH)
+        if (!CanScrollH)
         {
-            UpdateScrollBars();
-            mVerticalScrollBar.ScrollToRight();
+            return;
         }
+
+        UpdateScrollBars();
+        VerticalScrollBar.ScrollToRight();
     }
 
     public virtual void DeleteAll()
     {
-        mInnerPanel.DeleteAllChildren();
+        _innerPanel?.DeleteAllChildren();
     }
-
-    public ScrollBar GetVerticalScrollBar()
-    {
-        return mVerticalScrollBar;
-    }
-
-    public ScrollBar GetHorizontalScrollBar()
-    {
-        return mHorizontalScrollBar;
-    }
-
 }

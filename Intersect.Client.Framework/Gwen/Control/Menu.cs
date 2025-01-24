@@ -159,41 +159,33 @@ public partial class Menu : ScrollControl
         GameFont font = null
     )
     {
-        var item = new MenuItem(this);
-        item.Padding = Padding.Four;
-        item.SetText(text);
-        item.SetImage(iconTexture, textureFilename, Button.ControlState.Normal);
-        item.SetAccelerator(accelerator);
-        if (font != null)
+        var newMenuItem = new MenuItem(this)
         {
-            item.Font = font;
-        }
+            Padding = Padding.Four,
+            Text = text,
+            Font = font,
+        };
+        newMenuItem.SetImage(iconTexture, textureFilename, Button.ControlState.Normal);
+        newMenuItem.SetAccelerator(accelerator);
 
-        OnAddItem(item);
+        OnAddItem(newMenuItem);
 
-        return item;
+        return newMenuItem;
     }
 
     /// <summary>
     ///     Add item handler.
     /// </summary>
-    /// <param name="item">Item added.</param>
-    protected virtual void OnAddItem(MenuItem item)
+    /// <param name="menuItem">Item added.</param>
+    protected virtual void OnAddItem(MenuItem menuItem)
     {
-        item.TextPadding = new Padding(IconMarginDisabled ? 0 : 24, 0, 16, 0);
-        item.Dock = Pos.Top;
-        item.SizeToContents();
-        item.Alignment = Pos.CenterV | Pos.Left;
-        item.HoverEnter += OnHoverItem;
+        menuItem.TextPadding = new Padding(IconMarginDisabled ? 0 : 24, 0, 16, 0);
+        menuItem.Dock = Pos.Top;
+        menuItem.SizeToContents();
+        menuItem.Alignment = Pos.CenterV | Pos.Left;
+        menuItem.HoverEnter += OnHoverItem;
 
-        // Do this here - after Top Docking these values mean nothing in layout
-        var w = item.Width + 10 + 32;
-        if (w < Width)
-        {
-            w = Width;
-        }
-
-        SetSize(w, Height);
+        Width = Math.Max(Width, menuItem.Width + 10 + 32);
 
         UpdateItemStyles();
     }
@@ -203,16 +195,10 @@ public partial class Menu : ScrollControl
     /// </summary>
     public virtual void CloseAll()
     {
-        //System.Diagnostics.//debug.print("Menu.CloseAll: {0}", this);
-        Children.ForEach(
-            child =>
-            {
-                if (child is MenuItem)
-                {
-                    (child as MenuItem).CloseMenu();
-                }
-            }
-        );
+        foreach (var menuItem in Children.OfType<MenuItem>())
+        {
+            menuItem.CloseMenu();
+        }
     }
 
     /// <summary>
@@ -265,7 +251,11 @@ public partial class Menu : ScrollControl
     /// </summary>
     public virtual void Close()
     {
-        //System.Diagnostics.//debug.print("Menu.Close: {0}", this);
+        if (IsHidden)
+        {
+            return;
+        }
+
         IsHidden = true;
         if (DeleteOnClose)
         {
@@ -278,7 +268,6 @@ public partial class Menu : ScrollControl
     /// </summary>
     public override void CloseMenus()
     {
-        //System.Diagnostics.//debug.print("Menu.CloseMenus: {0}", this);
         base.CloseMenus();
         CloseAll();
         Close();

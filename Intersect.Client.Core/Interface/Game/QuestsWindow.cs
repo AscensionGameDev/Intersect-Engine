@@ -410,7 +410,7 @@ public partial class QuestsWindow
             mQuestTitle.IsHidden = false;
             mQuestTitle.Text = mSelectedQuest.Name;
             mQuestDescArea.IsHidden = false;
-            mQuestDescLabel.Width = mQuestDescArea.Width - mQuestDescArea.GetVerticalScrollBar().Width;
+            mQuestDescLabel.Width = mQuestDescArea.Width - mQuestDescArea.VerticalScrollBar.Width;
             mQuestDescLabel.SizeToChildren(false, true);
             mQuestStatus.Show();
             mBackButton.Show();

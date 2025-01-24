@@ -1,5 +1,6 @@
 using Intersect.Client.Core;
 using Intersect.Client.Entities;
+using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
@@ -26,7 +27,7 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
     private readonly MenuItem _guildMenuItem;
     private readonly MenuItem _privateMessageMenuItem;
     private readonly Player? _me;
-    private Entity? _entity;
+    private IEntity? _entity;
 
     public TargetContextMenu(Canvas gameCanvas) : base(gameCanvas, nameof(TargetContextMenu))
     {

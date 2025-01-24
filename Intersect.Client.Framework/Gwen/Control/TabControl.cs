@@ -40,9 +40,9 @@ public partial class TabControl : Base
         mScroll[1].Clicked += ScrollPressedRight;
         mScroll[1].SetSize(14, 16);
 
-        mInnerPanel = new TabControlInner(this);
-        mInnerPanel.Dock = Pos.Fill;
-        mInnerPanel.SendToBack();
+        _innerPanel = new TabControlInner(this);
+        _innerPanel.Dock = Pos.Fill;
+        _innerPanel.SendToBack();
 
         IsTabable = false;
     }

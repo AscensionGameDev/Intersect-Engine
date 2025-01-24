@@ -19,6 +19,7 @@ using Intersect.Configuration;
 using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Extensions;
+using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
@@ -97,7 +98,7 @@ public partial class Player : Entity, IPlayer
 
     public PlayerStatusWindow? StatusWindow { get; set; }
 
-    public Guid TargetIndex { get; set; }
+    public Guid TargetId { get; set; }
 
     TargetType IPlayer.TargetType => (TargetType)TargetType;
 
@@ -284,11 +285,11 @@ public partial class Player : Entity, IPlayer
             TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityType.Player, null);
             TargetBox.Hide();
         }
-        else if (TargetIndex != default)
+        else if (TargetId != default)
         {
-            if (!Globals.Entities.TryGetValue(TargetIndex, out var foundEntity))
+            if (!Globals.Entities.TryGetValue(TargetId, out var foundEntity))
             {
-                foundEntity = TargetBox?.MyEntity?.MapInstance?.Entities.FirstOrDefault(entity => entity.Id == TargetIndex) as Entity;
+                foundEntity = TargetBox?.MyEntity?.MapInstance?.Entities.FirstOrDefault(entity => entity.Id == TargetId) as Entity;
             }
 
             if (foundEntity == default || foundEntity.IsHidden || foundEntity.IsStealthed)
@@ -487,7 +488,7 @@ public partial class Player : Entity, IPlayer
         if (!IsItemOnCooldown(index) &&
             index >= 0 && index < Globals.Me?.Inventory.Length && Globals.Me.Inventory[index]?.Quantity > 0)
         {
-            PacketSender.SendUseItem(index, TargetIndex);
+            PacketSender.SendUseItem(index, TargetId);
         }
     }
 
@@ -1224,7 +1225,7 @@ public partial class Player : Entity, IPlayer
                 return;
             }
 
-            PacketSender.SendUseSpell(index, TargetIndex);
+            PacketSender.SendUseSpell(index, TargetId);
         }
     }
 
@@ -1639,39 +1640,43 @@ public partial class Player : Entity, IPlayer
 
         mLastEntitySelected = targetedEntity;
 
-        if (TargetIndex != targetedEntity.Id)
+        if (TargetId != targetedEntity.Id)
         {
-            SetTargetBox(targetedEntity);
-            TargetIndex = targetedEntity.Id;
-            TargetType = 0;
+            Target = targetedEntity;
         }
     }
 
-    private void SetTargetBox(Entity? en)
+    private void SetTargetBox(IEntity? targetEntity)
     {
-        if (en == null)
+        switch (targetEntity)
         {
-            TargetBox?.SetEntity(null);
-            TargetBox?.Hide();
-            PacketSender.SendTarget(Guid.Empty);
-            return;
-        }
+            case null:
+            {
+                // ReSharper disable once InvertIf
+                if (TargetBox is { } targetBox)
+                {
+                    TargetBox.SetEntity(null);
+                    if (targetBox.IsVisible)
+                    {
+                        TargetBox.Hide();
+                    }
+                }
+                return;
+            }
 
-        if (en is Player)
-        {
-            TargetBox?.SetEntity(en, EntityType.Player);
-        }
-        else if (en is Event)
-        {
-            TargetBox?.SetEntity(en, EntityType.Event);
-        }
-        else
-        {
-            TargetBox?.SetEntity(en, EntityType.GlobalEntity);
+            case Player:
+                TargetBox?.SetEntity(targetEntity, EntityType.Player);
+                break;
+            case Event:
+                TargetBox?.SetEntity(targetEntity, EntityType.Event);
+                break;
+            default:
+                TargetBox?.SetEntity(targetEntity, EntityType.GlobalEntity);
+                break;
         }
 
         TargetBox?.Show();
-        PacketSender.SendTarget(en.Id);
+        PacketSender.SendTarget(targetEntity.Id);
     }
 
     private void AutoTurnToTarget(Entity en)
@@ -1999,23 +2004,15 @@ public partial class Player : Entity, IPlayer
                             }
                         }
 
-                        if (bestMatch != null && bestMatch.Id != TargetIndex)
+                        if (bestMatch != null && bestMatch.Id != TargetId)
                         {
-                            var targetType = bestMatch is Event ? 1 : 0;
+                            Target = bestMatch;
 
-                            SetTargetBox(bestMatch as Entity);
-
-                            if (bestMatch is Player)
+                            if (bestMatch is Player && Interface.Interface.GameUi.IsAdminWindowOpen)
                             {
-                                //Select in admin window if open
-                                if (Interface.Interface.GameUi.IsAdminWindowOpen)
-                                {
-                                    Interface.Interface.GameUi.AdminWindowSelectName(bestMatch.Name);
-                                }
+                                // Select in admin window if open
+                                Interface.Interface.GameUi.AdminWindowSelectName(bestMatch.Name);
                             }
-
-                            TargetType = targetType;
-                            TargetIndex = bestMatch.Id;
 
                             return true;
                         }
@@ -2068,27 +2065,58 @@ public partial class Player : Entity, IPlayer
             }
         }
 
-        if (TargetIndex != entity.Id)
+        if (TargetId != entity.Id)
         {
-            SetTargetBox(entity as Entity);
-            TargetType = targetType;
-            TargetIndex = entity.Id;
+            Target = entity;
         }
 
         return true;
 
     }
 
+    private IEntity? _target;
+
+    public IEntity? Target
+    {
+        get => _target;
+        set
+        {
+            if (value == _target)
+            {
+                return;
+            }
+
+            _target = value;
+
+            if (value == null)
+            {
+                TargetId = default;
+                TargetType = 0;
+            }
+            else
+            {
+                TargetId = value.Id;
+                TargetType = value is Event ? 1 : 0;
+            }
+
+            SetTargetBox(value as Entity);
+        }
+    }
+
     public bool ClearTarget()
     {
-        SetTargetBox(null);
-
-        if (TargetIndex == default && TargetType == -1)
+        if (TargetId == default && TargetType == -1)
         {
             return false;
         }
 
-        TargetIndex = Guid.Empty;
+        if (TargetId != default)
+        {
+            PacketSender.SendTarget(default);
+            SetTargetBox(null);
+        }
+
+        TargetId = default;
         TargetType = -1;
         return true;
     }
@@ -2629,7 +2657,7 @@ public partial class Player : Entity, IPlayer
                 continue;
             }
 
-            if (TargetType != 0 || TargetIndex != en.Value.Id)
+            if (TargetType != 0 || TargetId != en.Value.Id)
             {
                 continue;
             }
@@ -2668,7 +2696,7 @@ public partial class Player : Entity, IPlayer
                     continue;
                 }
 
-                if (TargetType != 1 || TargetIndex != en.Value.Id)
+                if (TargetType != 1 || TargetId != en.Value.Id)
                 {
                     continue;
                 }
@@ -2706,7 +2734,7 @@ public partial class Player : Entity, IPlayer
                             {
                                 if (en.Value is not (Projectile or Resource))
                                 {
-                                    if (TargetType != 0 || TargetIndex != en.Value.Id)
+                                    if (TargetType != 0 || TargetId != en.Value.Id)
                                     {
                                         en.Value.DrawTarget((int)Enums.TargetType.Hover);
                                         ToggleTargetContextMenu(en.Value);
@@ -2731,7 +2759,7 @@ public partial class Player : Entity, IPlayer
                                      en.Value is Player player && Globals.Me?.IsInMyParty(player) == true) &&
                                     en.Value.WorldPos.Contains(mouseInWorld.X, mouseInWorld.Y))
                                 {
-                                    if (TargetType != 1 || TargetIndex != en.Value.Id)
+                                    if (TargetType != 1 || TargetId != en.Value.Id)
                                     {
                                         en.Value.DrawTarget((int)Enums.TargetType.Hover);
                                         ToggleTargetContextMenu(en.Value);

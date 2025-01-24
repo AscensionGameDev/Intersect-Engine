@@ -196,7 +196,7 @@ public partial class EventWindow : ImagePanel
         }
 
         dialogLabel.ClearText();
-        dialogLabel.Width = dialogArea.Width - dialogArea.GetVerticalScrollBar().Width;
+        dialogLabel.Width = dialogArea.Width - dialogArea.VerticalScrollBar.Width;
 
         dialogLabel.AddText(prompt, dialogLabelTemplate);
 

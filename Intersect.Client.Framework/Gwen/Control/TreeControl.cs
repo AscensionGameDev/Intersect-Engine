@@ -25,8 +25,8 @@ public partial class TreeControl : TreeNode
         mToggleButton = null;
         RemoveChild(mTitle, true);
         mTitle = null;
-        RemoveChild(mInnerPanel, true);
-        mInnerPanel = null;
+        RemoveChild(_innerPanel, true);
+        _innerPanel = null;
 
         mMultiSelect = false;
 
@@ -36,7 +36,7 @@ public partial class TreeControl : TreeNode
         mScrollControl.AutoHideBars = true;
         mScrollControl.Margin = Margin.One;
 
-        mInnerPanel = mScrollControl;
+        _innerPanel = mScrollControl;
 
         mScrollControl.SetInnerSize(1000, 1000); // todo: why such arbitrary numbers?
 

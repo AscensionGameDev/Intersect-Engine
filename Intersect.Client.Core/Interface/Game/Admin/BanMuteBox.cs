@@ -115,7 +115,7 @@ public partial class BanMuteBox : WindowControl
         LoadJsonUi(UI.InGame, Graphics.Renderer?.GetResolutionString(), true);
 
         richLabelPrompt.ClearText();
-        richLabelPrompt.Width = promptContainer.Width - promptContainer.GetVerticalScrollBar().Width;
+        richLabelPrompt.Width = promptContainer.Width - promptContainer.VerticalScrollBar.Width;
         richLabelPrompt.AddText(prompt, labelPrompt);
         _ = richLabelPrompt.SizeToChildren(false, true);
     }

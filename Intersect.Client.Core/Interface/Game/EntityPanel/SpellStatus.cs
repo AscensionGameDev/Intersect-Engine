@@ -1,11 +1,13 @@
 ﻿using Intersect.Client.Core;
 using Intersect.Client.Entities;
+using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.GameObjects;
 using Intersect.Utilities;
+using Label = Intersect.Client.Framework.Gwen.Control.Label;
 
 namespace Intersect.Client.Interface.Game.EntityPanel;
 
@@ -68,12 +70,12 @@ public partial class SpellStatus
     }
 
     public static void UpdateSpellStatus(
-    Entity myEntity,
-    ScrollControl spellStatusControl,
-    Dictionary<Guid, SpellStatus> activeStatuses
+        IEntity myEntity,
+        ScrollControl spellStatusControl,
+        Dictionary<Guid, SpellStatus> activeStatuses
     )
     {
-        if (myEntity == null)
+        if (myEntity is not Entity entity)
         {
             return;
         }
@@ -82,7 +84,7 @@ public partial class SpellStatus
         var statuses = activeStatuses.Keys.ToArray();
         foreach (var status in statuses)
         {
-            if (!myEntity.StatusActive(status))
+            if (!entity.StatusActive(status))
             {
                 var s = activeStatuses[status];
                 s._statusIcon.Texture = null;
@@ -94,7 +96,7 @@ public partial class SpellStatus
             }
             else
             {
-                activeStatuses[status].UpdateStatus(myEntity.GetStatus(status) as Status);
+                activeStatuses[status].UpdateStatus(entity.GetStatus(status) as Status);
             }
         }
 
@@ -111,7 +113,10 @@ public partial class SpellStatus
                 };
 
                 itm.Setup();
-                itm._spellStatusContainer.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+                itm._spellStatusContainer.LoadJsonUi(
+                    GameContentManager.UI.InGame,
+                    Graphics.Renderer.GetResolutionString()
+                );
                 itm._spellStatusContainer.Name = string.Empty;
                 activeStatuses.Add(id, itm);
             }

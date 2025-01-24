@@ -245,7 +245,7 @@ public partial class CraftingWindow
             var xPadding = mItems[i].Container.Margin.Left + mItems[i].Container.Margin.Right;
             var yPadding = mItems[i].Container.Margin.Top + mItems[i].Container.Margin.Bottom;
 
-            var sizeFactor = (mItemContainer.Width - mItemContainer.GetVerticalScrollBar().Width) /
+            var sizeFactor = (mItemContainer.Width - mItemContainer.VerticalScrollBar.Width) /
                              (mItems[i].Container.Width + xPadding);
 
             mItems[i].Container.SetPosition(

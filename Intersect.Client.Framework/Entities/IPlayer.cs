@@ -13,7 +13,7 @@ public interface IPlayer : IEntity
     bool IsInParty { get; }
     IReadOnlyList<IPartyMember> PartyMembers { get; }
     long CombatTimer { get; }
-    Guid TargetIndex { get; }
+    Guid TargetId { get; }
     TargetType TargetType { get; }
     IReadOnlyList<IFriendInstance> Friends { get; }
     IReadOnlyList<IHotbarInstance> HotbarSlots { get; }

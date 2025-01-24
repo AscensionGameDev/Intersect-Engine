@@ -21,7 +21,10 @@ public partial class MenuGuiBase : IMutableInterface
         _menuCanvas = myCanvas;
 
         MainMenu = new MainMenu(_menuCanvas);
-        _serverStatusArea = new ImagePanel(_menuCanvas, "ServerStatusArea");
+        _serverStatusArea = new ImagePanel(_menuCanvas, "ServerStatusArea")
+        {
+            IsHidden = ClientContext.IsSinglePlayer,
+        };
         _serverStatusLabel = new Label(_serverStatusArea, "ServerStatusLabel")
         {
             IsHidden = ClientContext.IsSinglePlayer,
@@ -51,7 +54,6 @@ public partial class MenuGuiBase : IMutableInterface
             _shouldReset = false;
         }
 
-        _serverStatusArea.IsHidden = ClientContext.IsSinglePlayer;
         MainMenu.Update();
     }
 

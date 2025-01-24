@@ -40,9 +40,9 @@ public interface IEntity : IDisposable
     byte Y { get; }
     byte Z { get; }
     int Level { get; }
-    IReadOnlyList<int> Stats { get; }
-    IReadOnlyList<long> Vitals { get; }
-    IReadOnlyList<long> MaxVitals { get; }
+    IReadOnlyDictionary<Stat, int> Stats { get; }
+    IReadOnlyDictionary<Vital, long> Vitals { get; }
+    IReadOnlyDictionary<Vital, long> MaxVitals { get; }
     IReadOnlyList<IItem> Items { get; }
     IReadOnlyList<int> EquipmentSlots { get; }
     IReadOnlyList<Guid> Spells { get; }
@@ -52,4 +52,8 @@ public interface IEntity : IDisposable
     void AddChatBubble(string text);
     float GetLabelLocation(LabelType type);
     float GetTop(int overrideHeight = 0);
+
+    long ShieldSize { get; }
+
+    bool IsDisposed { get; }
 }

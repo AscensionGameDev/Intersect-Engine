@@ -624,7 +624,7 @@ public partial class ListBox : ScrollControl
 
     public ScrollBar GetVerticalScrollBar()
     {
-        return base.mVerticalScrollBar;
+        return base.VerticalScrollBar;
     }
 
 }

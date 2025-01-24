@@ -90,7 +90,7 @@ public partial class QuestOfferWindow
             if (mQuestOfferText != quest.StartDescription)
             {
                 mQuestPromptLabel.ClearText();
-                mQuestPromptLabel.Width = mQuestPromptArea.Width - mQuestPromptArea.GetVerticalScrollBar().Width;
+                mQuestPromptLabel.Width = mQuestPromptArea.Width - mQuestPromptArea.VerticalScrollBar.Width;
                 mQuestPromptLabel.AddText(quest.StartDescription, mQuestPromptTemplate);
 
                 mQuestPromptLabel.SizeToChildren(false, true);
