@@ -18,11 +18,11 @@ internal static class DatabaseTypeExtensions
         DatabaseType.SQLite => new SqliteConnectionStringBuilder($"Data Source={filename}"),
         DatabaseType.MySQL => new MySqlConnectionStringBuilder
         {
-            Server = databaseOptions.Server,
+            Server = databaseOptions.Server ?? "localhost",
             Port = databaseOptions.Port,
-            Database = databaseOptions.Database,
-            UserID = databaseOptions.Username,
-            Password = databaseOptions.Password,
+            Database = databaseOptions.Database ?? throw new InvalidOperationException($"{nameof(DatabaseOptions.Database)} cannot be null"),
+            UserID = databaseOptions.Username ?? "root",
+            Password = databaseOptions.Password ?? throw new InvalidOperationException($"{nameof(DatabaseOptions.Password)} cannot be null"),
         },
         DatabaseType.Unknown => throw new DatabaseTypeInvalidException(databaseType),
         _ => throw new ArgumentOutOfRangeException(nameof(databaseType)),
