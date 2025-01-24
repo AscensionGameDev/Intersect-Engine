@@ -91,12 +91,12 @@ public partial class PlayerOptions
     public int RequestTimeout { get; set; } = 300000;
 
     /// <summary>
-    /// Configures whether or not the level of a player is shown next to their name.
+    /// If the level of a player is shown next to their name.
     /// </summary>
     public bool ShowLevelByName { get; set; } = false;
 
     /// <summary>
-    /// Configures whether or not the game client skips the character select window upon login or going back
+    /// If the game client skips the character select window upon login or going back
     /// to characters when the max number of characters allowed per account is one.
     /// </summary>
     public bool SkipCharacterSelect { get; set; } = false;
