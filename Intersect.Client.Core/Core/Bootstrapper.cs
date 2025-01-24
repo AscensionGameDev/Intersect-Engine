@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using CommandLine;
+using Intersect.Configuration;
 using Intersect.Core;
 using Intersect.Factories;
 using Intersect.Network;
@@ -9,6 +10,7 @@ using Intersect.Plugins.Contexts;
 using Intersect.Plugins.Helpers;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using Serilog.Core;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
 
@@ -40,16 +42,23 @@ internal static partial class Bootstrapper
         var executableName = Path.GetFileNameWithoutExtension(
             Process.GetCurrentProcess().MainModule?.FileName ?? Assembly.GetExecutingAssembly().GetName().Name
         );
-        var loggerConfiguration = new LoggerConfiguration().MinimumLevel
-            .Is(Debugger.IsAttached ? LogEventLevel.Debug : LogEventLevel.Information).Enrich.FromLogContext().WriteTo
-            .Console().WriteTo.File(
+
+        LoggingLevelSwitch loggingLevelSwitch =
+            new(Debugger.IsAttached ? LogEventLevel.Debug : LogEventLevel.Information);
+
+        var loggerConfiguration = new LoggerConfiguration()
+            .MinimumLevel.ControlledBy(loggingLevelSwitch)
+            .Enrich.FromLogContext()
+            .WriteTo.Console()
+            .WriteTo.File(
                 Path.Combine(
                     "logs",
                     $"{executableName}-{Process.GetCurrentProcess().StartTime:yyyy_MM_dd-HH_mm_ss_fff}.log"
                 ),
                 rollOnFileSizeLimit: true,
                 retainedFileTimeLimit: TimeSpan.FromDays(30)
-            ).WriteTo.File(
+            )
+            .WriteTo.File(
                 Path.Combine("logs", $"errors-{executableName}.log"),
                 restrictedToMinimumLevel: LogEventLevel.Error,
                 rollOnFileSizeLimit: true,
@@ -82,6 +91,9 @@ internal static partial class Bootstrapper
                 ApplicationContext.Context.Value?.Logger.LogWarning($"Failed to set working directory to '{workingDirectory}', path does not exist: {resolvedWorkingDirectory}");
             }
         }
+
+        var clientConfiguration = ClientConfiguration.LoadAndSave();
+        loggingLevelSwitch.MinimumLevel = LevelConvert.ToSerilogLevel(clientConfiguration.LogLevel);
 
         var context = new ClientContext(commandLineOptions, logger, packetHelper);
         context.Start();
