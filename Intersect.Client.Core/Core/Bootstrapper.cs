@@ -84,7 +84,6 @@ internal static partial class Bootstrapper
         }
 
         var context = new ClientContext(commandLineOptions, logger, packetHelper);
-        ApplicationContext.Context.Value = context;
         context.Start();
     }
 
