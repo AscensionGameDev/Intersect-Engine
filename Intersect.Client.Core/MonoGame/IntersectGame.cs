@@ -93,8 +93,6 @@ internal partial class IntersectGame : Game
             args.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount = 8;
         };
 
-        ClientConfiguration.LoadAndSave(ClientConfiguration.DefaultPath);
-
         Content.RootDirectory = string.Empty;
         IsMouseVisible = true;
         Globals.ContentManager = new MonoContentManager();
