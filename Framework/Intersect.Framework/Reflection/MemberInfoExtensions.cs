@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -39,4 +40,13 @@ public static partial class MemberInfoExtensions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsIgnored(this MemberInfo memberInfo) => IgnoreAttribute.IsIgnored(memberInfo);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsPassword(this MemberInfo memberInfo) =>
+        PasswordAttribute.IsPassword(memberInfo) ||
+        memberInfo.GetCustomAttributes<PasswordPropertyTextAttribute>().Any(attribute => attribute.Password);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsReadOnly(this MemberInfo memberInfo) =>
+        memberInfo.GetCustomAttributes<ReadOnlyAttribute>().Any(attribute => attribute.IsReadOnly);
 }
