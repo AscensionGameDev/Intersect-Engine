@@ -191,10 +191,8 @@ public partial class Npc : Entity
     }
 
     //Targeting
-    public void AssignTarget(Entity? en)
+    public void AssignTarget(Entity? entity)
     {
-        var oldTarget = Target;
-
         // Are we resetting? If so, do not allow for a new target.
         var pathTarget = mPathFinder?.GetTarget();
         if (AggroCenterMap != null && pathTarget != null &&
@@ -203,8 +201,10 @@ public partial class Npc : Entity
             return;
         }
 
+        var oldTarget = Target;
+
         //Why are we doing all of this logic if we are assigning a target that we already have?
-        if (en != null && en != Target)
+        if (entity != null && entity != Target)
         {
             // Can't assign a new target if taunted, unless we're resetting their target somehow.
             // Also make sure the taunter is in range.. If they're dead or gone, we go for someone else!
@@ -212,44 +212,43 @@ public partial class Npc : Entity
             {
                 foreach (var status in CachedStatuses)
                 {
-                    if (status.Type == SpellEffect.Taunt && en != status.Attacker && GetDistanceTo(status.Attacker) != 9999)
+                    if (status.Type == SpellEffect.Taunt && entity != status.Attacker && GetDistanceTo(status.Attacker) != 9999)
                     {
                         return;
                     }
                 }
             }
 
-            if (en is Projectile projectile)
+            if (entity is Projectile projectile)
             {
                 if (projectile.Owner != this && !projectile.HasStatusEffect(SpellEffect.Stealth))
                 {
                     Target = projectile.Owner;
                 }
             }
-            else
+            else if (entity is Npc npc)
             {
-                if (en is Npc npc)
+                if (!Base.NpcVsNpcEnabled || (Base == npc.Base && !Base.AttackAllies))
                 {
-                    if (npc.Base == Base)
-                    {
-                        if (Base.AttackAllies == false)
-                        {
-                            return;
-                        }
-                    }
+                    return;
                 }
-                else if (en is Player player)
+
+                if (CanTarget(entity))
                 {
-                    //TODO Make sure that the npc can target the player
-                    if (CanTarget(player))
-                    {
-                        Target = player;
-                    }
+                    Target = entity;
                 }
-                else if (CanTarget(en))
+            }
+            else if (entity is Player player)
+            {
+                //TODO Make sure that the npc can target the player
+                if (CanTarget(player))
                 {
-                    Target = en;
+                    Target = player;
                 }
+            }
+            else if (CanTarget(entity))
+            {
+                Target = entity;
             }
 
             // Are we configured to handle resetting NPCs after they chase a target for a specified amount of tiles?
@@ -267,7 +266,7 @@ public partial class Npc : Entity
         }
         else
         {
-            Target = en;
+            Target = entity;
         }
 
         if (Target != oldTarget)
@@ -276,6 +275,26 @@ public partial class Npc : Entity
             PacketSender.SendNpcAggressionToProximity(this);
         }
         mTargetFailCounter = 0;
+    }
+
+    public override bool CanTarget(Entity entity)
+    {
+        // ReSharper disable once InvertIf
+        if (entity is Npc npc)
+        {
+            if (!Base.NpcVsNpcEnabled)
+            {
+                return false;
+            }
+
+            // ReSharper disable once InvertIf
+            if (Base == npc.Base && !Base.AttackAllies)
+            {
+                return false;
+            }
+        }
+
+        return base.CanTarget(entity);
     }
 
     public void RemoveFromDamageMap(Entity en)
@@ -1228,7 +1247,7 @@ public partial class Npc : Entity
         // If so, remove target and move back to the origin point.
         if (Options.Instance.Npc.AllowResetRadius && AggroCenterMap != null && (GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) > Math.Max(Options.Instance.Npc.ResetRadius, Math.Min(Base.ResetRadius, Math.Max(Options.Instance.Map.MapWidth, Options.Instance.Map.MapHeight))) || forceDistance))
         {
-            Reset(Options.Instance.Npc.ResetVitalsAndStatusses);
+            Reset(Options.Instance.Npc.ResetVitalsAndStatuses);
 
             mResetCounter = 0;
             mResetDistance = 0;
