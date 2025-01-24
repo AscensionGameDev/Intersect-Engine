@@ -49,6 +49,7 @@ public abstract partial class ApplicationContext<TContext, TStartupOptions> : IA
         Logger = logger;
         PacketHelper = packetHelper;
 
+        ApplicationContext.Context.Value = this;
         ConcurrentInstance.Set(This);
     }
 
