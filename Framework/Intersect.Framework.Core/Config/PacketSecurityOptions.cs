@@ -54,26 +54,26 @@ public partial class PacketSecurityOptions
     /// Packet flooding detection thresholds for the game editor. (No Restrictions.)
     /// </summary>
     [JsonProperty("EditorFloodThreshholds")]
-    public FloodThresholdOptions EditorThreshholds = FloodThresholdOptions.Editor();
+    public FloodThresholdOptions EditorThreshholds { get; set; } = FloodThresholdOptions.Editor();
 
     /// <summary>
     /// Packet flooding detection thresholds for general players. Pretty strict.
     /// Might need to be adjusted if there is a lot of high paceed actions/movement/combat in your game.
     /// </summary>
     [JsonProperty("PlayerFloodThreshholds")]
-    public FloodThresholdOptions PlayerThreshholds = new();
+    public FloodThresholdOptions PlayerThreshholds { get; set; } = new();
 
     /// <summary>
     /// Packet flooding detection thresholds for mods/admins. Hopefully you trust these guys.
     /// Limits need to be higher than general players since they can warp quickly around the world with shift click.
     /// </summary>
     [JsonProperty("ModAdminFloodThreshholds")]
-    public FloodThresholdOptions ModAdminThreshholds = FloodThresholdOptions.Editor();
+    public FloodThresholdOptions ModAdminThreshholds { get; set; } = FloodThresholdOptions.Editor();
 
     /// <summary>
     /// Packet flooding detection threshholds for all users who are not yet logged in.
     /// </summary>
     [JsonProperty("FloodThreshholds")]
-    public FloodThresholdOptions Threshholds = FloodThresholdOptions.NotLoggedIn();
+    public FloodThresholdOptions Threshholds { get; set; } = FloodThresholdOptions.NotLoggedIn();
     #endregion
 }
