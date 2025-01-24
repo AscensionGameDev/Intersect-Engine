@@ -8,13 +8,25 @@ using Newtonsoft.Json;
 
 namespace Intersect;
 
-public partial class Options
+public partial record Options
 {
     #region Constants
 
     public const string DefaultGameName = "Intersect";
 
     public const int DefaultServerPort = 5400;
+
+    public const string CategoryCore = nameof(CategoryCore);
+
+    public const string CategoryDatabase = nameof(CategoryDatabase);
+
+    public const string CategoryGameAccess = nameof(CategoryGameAccess);
+
+    public const string CategoryLoggingAndMetrics = nameof(CategoryLoggingAndMetrics);
+
+    public const string CategoryNetworkVisibility = nameof(CategoryNetworkVisibility);
+
+    public const string CategorySecurity = nameof(CategorySecurity);
 
     #endregion
 
@@ -49,10 +61,12 @@ public partial class Options
 
     #region Game Core
 
+    [Category(CategoryCore)]
     [JsonProperty(Order = -100)]
     [RequiresRestart]
     public string GameName { get; set; } = DefaultGameName;
 
+    [Category(CategoryCore)]
     [JsonProperty(Order = -100)]
     [RequiresRestart]
     public ushort ServerPort { get; set; } = DefaultServerPort;
@@ -61,18 +75,24 @@ public partial class Options
 
     #region Game Access
 
+    [Category(CategoryGameAccess)]
     [JsonProperty(Order = -99)]
     public bool AdminOnly { get; set; }
 
+
+    [Category(CategoryGameAccess)]
     [JsonProperty(Order = -99)]
     public bool BlockClientRegistrations { get; set; }
 
+
+    [Category(CategoryGameAccess)]
     [JsonProperty(Order = -99)]
     public int MaxClientConnections { get; set; } = 100;
 
     /// <summary>
     /// Defines the maximum amount of logged-in users our server is allowed to handle.
     /// </summary>
+    [Category(CategoryGameAccess)]
     [JsonProperty(Order = -99)]
     public int MaximumLoggedInUsers { get; set; } = 50;
 
@@ -80,14 +100,17 @@ public partial class Options
 
     #region Network Visibility
 
+    [Category(CategoryNetworkVisibility)]
     [JsonProperty(Order = -91)]
     [RequiresRestart]
     public bool UPnP { get; set; } = true;
 
+    [Category(CategoryNetworkVisibility)]
     [JsonProperty(Order = -91)]
     [RequiresRestart]
     public bool OpenPortChecker { get; set; } = true;
 
+    [Category(CategoryNetworkVisibility)]
     [JsonProperty(Order = -91, NullValueHandling = NullValueHandling.Include)]
     [RequiresRestart]
     public string? PortCheckerUrl { get; set; }
@@ -96,39 +119,46 @@ public partial class Options
 
     #region Logging and Metrics
 
+    [Category(CategoryLoggingAndMetrics)]
     [JsonProperty(Order = -80)]
-    public LoggingOptions Logging = new();
+    public LoggingOptions Logging { get; set; } = new();
 
+    [Category(CategoryLoggingAndMetrics)]
     [JsonProperty(Order = -80)]
-    public MetricsOptions Metrics = new();
+    public MetricsOptions Metrics { get; set; } = new();
 
     #endregion Logging and Metrics
 
     #region Database
 
+    [Category(CategoryDatabase)]
     [JsonProperty(Order = -70)]
     [RequiresRestart]
-    public DatabaseOptions GameDatabase = new();
+    public DatabaseOptions GameDatabase { get; set; } = new();
 
+    [Category(CategoryDatabase)]
     [JsonProperty(Order = -70)]
     [RequiresRestart]
-    public DatabaseOptions LoggingDatabase = new();
+    public DatabaseOptions LoggingDatabase { get; set; } = new();
 
+    [Category(CategoryDatabase)]
     [JsonProperty(Order = -70)]
     [RequiresRestart]
-    public DatabaseOptions PlayerDatabase = new();
+    public DatabaseOptions PlayerDatabase { get; set; } = new();
 
     #endregion Database
 
     #region Security
 
+    [Category(CategorySecurity)]
     [JsonProperty(Order = -60)]
     [RequiresRestart]
-    public SecurityOptions Security = new();
+    public SecurityOptions Security { get; set; } = new();
 
+    [Category(CategorySecurity)]
     [JsonProperty(Order = -60)]
     [RequiresRestart]
-    public SmtpSettings SmtpSettings = new();
+    public SmtpSettings SmtpSettings { get; set; } = new();
 
     #endregion Security
 
@@ -138,15 +168,15 @@ public partial class Options
     public List<string> AnimatedSprites { get; set; } = [];
 
     [RequiresRestart]
-    public PacketOptions Packets = new();
+    public PacketOptions Packets { get; set; } = new();
 
-    public ChatOptions Chat = new();
-
-    [RequiresRestart]
-    public CombatOptions Combat = new();
+    public ChatOptions Chat { get; set; } = new();
 
     [RequiresRestart]
-    public EquipmentOptions Equipment = new();
+    public CombatOptions Combat { get; set; } = new();
+
+    [RequiresRestart]
+    public EquipmentOptions Equipment { get; set; } = new();
 
     [RequiresRestart]
     public int EventWatchdogKillThreshold { get; set; } = 5000;
@@ -154,33 +184,33 @@ public partial class Options
     /// <summary>
     /// Passability configuration by map zone
     /// </summary>
-    public PassabilityOptions Passability { get; } = new();
+    public PassabilityOptions Passability { get; set; } = new();
 
     public ushort ValidPasswordResetTimeMinutes { get; set; } = 30;
 
-    public MapOptions Map = new();
+    public MapOptions Map { get; set; } = new();
 
-    public PlayerOptions Player = new();
+    public PlayerOptions Player { get; set; } = new();
 
-    public PartyOptions Party = new();
+    public PartyOptions Party { get; set; } = new();
 
-    public LootOptions Loot = new();
+    public LootOptions Loot { get; set; } = new();
 
-    public ProcessingOptions Processing = new();
+    public ProcessingOptions Processing { get; set; } = new();
 
-    public SpriteOptions Sprites = new();
+    public SpriteOptions Sprites { get; set; } = new();
 
-    public NpcOptions Npc = new();
+    public NpcOptions Npc { get; set; } = new();
 
-    public QuestOptions Quest = new();
+    public QuestOptions Quest { get; set; } = new();
 
-    public GuildOptions Guild = new();
+    public GuildOptions Guild { get; set; } = new();
 
-    public BankOptions Bank = new();
+    public BankOptions Bank { get; set; } = new();
 
-    public InstancingOptions Instancing = new();
+    public InstancingOptions Instancing { get; set; } = new();
 
-    public ItemOptions Items = new();
+    public ItemOptions Items { get; set; } = new();
 
     #endregion Other Game Properties
 
@@ -299,4 +329,6 @@ public partial class Options
     {
         return !SendingToClient;
     }
+
+    public Options DeepClone() => JsonConvert.DeserializeObject<Options>(JsonConvert.SerializeObject(this with { SendingToClient = false }));
 }
