@@ -43,7 +43,7 @@ public partial class Client : IPacketSender
     public ConcurrentQueue<IPacket> RecentPackets = new ConcurrentQueue<IPacket>();
     public bool PacketHandlingQueued = false;
     public bool PacketSendingQueued = false;
-    public FloodThresholdOptions PacketFloodingThresholds { get; set; } = Options.Instance.Security?.Packets.Threshholds;
+    public FloodThresholdOptions PacketFloodingThresholds { get; set; } = Options.Instance.Security?.Packets.DefaultThresholds;
     public long LastPing { get; set; } = -1;
 
     protected long mTimeout = 20000; //20 seconds

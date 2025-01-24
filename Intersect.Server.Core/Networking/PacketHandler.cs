@@ -626,11 +626,11 @@ internal sealed partial class PacketHandler
         if (client.User != null)
         {
             //Logged In
-            client.PacketFloodingThresholds = Options.Instance.Security.Packets.PlayerThreshholds;
+            client.PacketFloodingThresholds = Options.Instance.Security.Packets.PlayerThresholds;
 
             if (client.User.Power.IsAdmin || client.User.Power.IsModerator)
             {
-                client.PacketFloodingThresholds = Options.Instance.Security.Packets.ModAdminThreshholds;
+                client.PacketFloodingThresholds = Options.Instance.Security.Packets.ModAdminThresholds;
             }
         }
 
@@ -1530,11 +1530,11 @@ internal sealed partial class PacketHandler
                 if (client.User != null)
                 {
                     //Logged In
-                    client.PacketFloodingThresholds = Options.Instance.Security.Packets.PlayerThreshholds;
+                    client.PacketFloodingThresholds = Options.Instance.Security.Packets.PlayerThresholds;
 
                     if (client.User.Power.IsAdmin || client.User.Power.IsModerator)
                     {
-                        client.PacketFloodingThresholds = Options.Instance.Security.Packets.ModAdminThreshholds;
+                        client.PacketFloodingThresholds = Options.Instance.Security.Packets.ModAdminThresholds;
                     }
                 }
 
