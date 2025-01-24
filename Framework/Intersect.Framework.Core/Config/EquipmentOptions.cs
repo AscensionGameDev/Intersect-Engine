@@ -4,26 +4,26 @@ namespace Intersect.Config;
 
 public partial class EquipmentOptions
 {
-    public PaperdollOptions Paperdoll = new();
+    public PaperdollOptions Paperdoll { get; set; } = new();
 
-    public int ShieldSlot = 3;
+    public int ShieldSlot { get; set; } = 3;
 
-    public List<string> Slots = new()
-    {
+    public List<string> Slots { get; set; } =
+    [
         "Helmet",
         "Armor",
         "Weapon",
         "Shield",
         "Boots",
-    };
+    ];
 
-    public List<string> ToolTypes = new()
-    {
+    public List<string> ToolTypes { get; set; } =
+    [
         "Axe",
         "Pickaxe",
         "Shovel",
-        "Fishing Rod"
-    };
+        "Fishing Rod",
+    ];
 
     public int WeaponSlot = 2;
 
@@ -42,8 +42,8 @@ public partial class EquipmentOptions
 
     public void Validate()
     {
-        Slots = new List<string>(Slots.Distinct());
-        ToolTypes = new List<string>(ToolTypes.Distinct());
+        Slots = [..Slots.Distinct()];
+        ToolTypes = [..ToolTypes.Distinct()];
         if (WeaponSlot < -1 || WeaponSlot > Slots.Count - 1)
         {
             throw new Exception("Config Error: (WeaponSlot) was out of bounds!");
