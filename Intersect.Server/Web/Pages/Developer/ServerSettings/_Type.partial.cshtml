@@ -1,0 +1,14 @@
+@using Intersect.Framework.Reflection
+@model TypePartialPageModel
+
+@if (Model.IsRoot)
+{
+    <partial name="_TypeBody.partial" model="@(new TypeBodyPartialPageModel(Model.Logger, target: Model.Target, Model.Type, isEditing: Model.IsEditing && !Model.Type.IsReadOnly(), parentId: Model.ParentId))"/>
+}
+else
+{
+    <fieldset>
+        <legend>@(Model.SectionName ?? Model.Info.Name)</legend>
+        <partial name="_TypeBody.partial" model="@(new TypeBodyPartialPageModel(Model.Logger, target: Model.Target, Model.Type, isEditing: Model.IsEditing && !Model.Type.IsReadOnly(), parentId: Model.ParentId))"/>
+    </fieldset>
+}
