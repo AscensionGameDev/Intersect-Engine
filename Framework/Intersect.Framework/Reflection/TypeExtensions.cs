@@ -179,18 +179,34 @@ public static partial class TypeExtensions
             return baseType.IsAssignableFrom(childType);
         }
 
+        if (childType.IsGenericType)
+        {
+            if (baseType.MakeGenericType(childType.GenericTypeArguments).IsAssignableFrom(childType))
+            {
+                return true;
+            }
+        }
+
+        if (baseType.IsInterface)
+        {
+            return false;
+        }
+
         var currentType = childType;
         while (currentType != default)
         {
             if (currentType.IsGenericType)
             {
-                if (currentType.GetGenericTypeDefinition() == baseType)
+                currentType = currentType.GetGenericTypeDefinition();
+                if (currentType == baseType)
                 {
                     return true;
                 }
             }
-
-            currentType = currentType.BaseType;
+            else
+            {
+                currentType = currentType.BaseType;
+            }
         }
 
         return false;
