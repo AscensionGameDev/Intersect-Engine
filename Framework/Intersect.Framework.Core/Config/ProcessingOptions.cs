@@ -10,7 +10,7 @@ namespace Intersect.Config;
 public partial class ProcessingOptions
 {
     /// <summary>
-    /// Determined whether or not the server logic thread sleeps after each sloop by default
+    /// If the server logic thread sleeps after each loop iteration by default.
     /// </summary>
     public bool CpsLock { get; set; } = true;
 
