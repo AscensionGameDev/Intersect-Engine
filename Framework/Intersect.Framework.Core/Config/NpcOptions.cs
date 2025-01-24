@@ -1,4 +1,6 @@
-﻿namespace Intersect.Config;
+﻿using Newtonsoft.Json;
+
+namespace Intersect.Config;
 
 /// <summary>
 /// Contains configurable options pertaining to the way Npcs are handled by the engine.
@@ -21,10 +23,17 @@ public partial class NpcOptions
     /// </summary>
     public bool AllowNewResetLocationBeforeFinish { get; set; } = false;
 
+    [JsonProperty]
+    [Obsolete($"Use {nameof(ResetVitalsAndStatuses)} instead, the ResetVitalsAndStatusses property will be removed in 0.9-beta", error: true)]
+    private bool ResetVitalsAndStatusses
+    {
+        set => ResetVitalsAndStatuses = value;
+    }
+
     /// <summary>
     /// If the NPC should completely restore its vitals and statusses once it starts resetting.
     /// </summary>
-    public bool ResetVitalsAndStatusses { get; set; } = false;
+    public bool ResetVitalsAndStatuses { get; set; }
 
     /// <summary>
     /// If the NPCs health should continue to reset to full and clear statuses while working its way to the reset location
