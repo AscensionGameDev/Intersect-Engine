@@ -265,15 +265,7 @@ public partial class Animation : IAnimation
         Hidden = false;
     }
 
-    public bool ParentGone()
-    {
-        if (mParent != null && mParent.IsDisposed())
-        {
-            return true;
-        }
-
-        return false;
-    }
+    public bool ParentGone() => mParent is { IsDisposed: true };
 
     public void Dispose()
     {

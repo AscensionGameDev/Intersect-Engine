@@ -108,7 +108,7 @@ public partial class Properties : Base
     /// </summary>
     public void DeleteAll()
     {
-        mInnerPanel.DeleteAllChildren();
+        _innerPanel.DeleteAllChildren();
     }
 
 }

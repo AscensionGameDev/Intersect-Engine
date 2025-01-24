@@ -9,18 +9,13 @@ namespace Intersect.Client.Framework.Gwen.Control;
 /// </summary>
 public partial class MenuItem : Button
 {
+    private bool _checkable;
+    private bool _checked;
+    private bool _onStrip;
 
-    private Label mAccelerator;
-
-    private bool mCheckable;
-
-    private bool mChecked;
-
-    private Menu mMenu;
-
-    private bool mOnStrip;
-
-    private Base mSubmenuArrow;
+    private Label? _accelerator;
+    private Menu? _submenu;
+    private Base? _submenuArrow;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MenuItem" /> class.
@@ -29,12 +24,12 @@ public partial class MenuItem : Button
     public MenuItem(Base parent) : base(parent)
     {
         AutoSizeToContents = true;
-        mOnStrip = false;
+        _onStrip = false;
         IsTabable = false;
         IsCheckable = false;
         IsChecked = false;
 
-        mAccelerator = new Label(this);
+        _accelerator = new Label(this);
     }
 
     /// <summary>
@@ -42,8 +37,8 @@ public partial class MenuItem : Button
     /// </summary>
     public bool IsOnStrip
     {
-        get => mOnStrip;
-        set => mOnStrip = value;
+        get => _onStrip;
+        set => _onStrip = value;
     }
 
     /// <summary>
@@ -51,8 +46,8 @@ public partial class MenuItem : Button
     /// </summary>
     public bool IsCheckable
     {
-        get => mCheckable;
-        set => mCheckable = value;
+        get => _checkable;
+        set => _checkable = value;
     }
 
     /// <summary>
@@ -62,12 +57,12 @@ public partial class MenuItem : Button
     {
         get
         {
-            if (mMenu == null)
+            if (_submenu == null)
             {
                 return false;
             }
 
-            return !mMenu.IsHidden;
+            return !_submenu.IsHidden;
         }
     }
 
@@ -76,15 +71,15 @@ public partial class MenuItem : Button
     /// </summary>
     public bool IsChecked
     {
-        get => mChecked;
+        get => _checked;
         set
         {
-            if (value == mChecked)
+            if (value == _checked)
             {
                 return;
             }
 
-            mChecked = value;
+            _checked = value;
 
             if (CheckChanged != null)
             {
@@ -115,48 +110,46 @@ public partial class MenuItem : Button
     {
         get
         {
-            if (null == mMenu)
+            if (null != _submenu)
             {
-                mMenu = new Menu(GetCanvas());
-                mMenu.IsHidden = true;
-
-                if (!mOnStrip)
-                {
-                    if (mSubmenuArrow != null)
-                    {
-                        mSubmenuArrow.Dispose();
-                    }
-
-                    mSubmenuArrow = new RightArrow(this);
-                    mSubmenuArrow.SetSize(15, 15);
-                }
-
-                Invalidate();
+                return _submenu;
             }
 
-            return mMenu;
+            _submenu = new Menu(Canvas ?? throw new InvalidOperationException("No canvas"));
+            _submenu.IsHidden = true;
+
+            if (!_onStrip)
+            {
+                _submenuArrow?.Dispose();
+                _submenuArrow = new RightArrow(this);
+                _submenuArrow.SetSize(15, 15);
+            }
+
+            Invalidate();
+
+            return _submenu;
         }
     }
 
     /// <summary>
     ///     Invoked when the item is selected.
     /// </summary>
-    public event GwenEventHandler<ItemSelectedEventArgs> Selected;
+    public event GwenEventHandler<ItemSelectedEventArgs>? Selected;
 
     /// <summary>
     ///     Invoked when the item is checked.
     /// </summary>
-    public event GwenEventHandler<EventArgs> Checked;
+    public event GwenEventHandler<EventArgs>? Checked;
 
     /// <summary>
     ///     Invoked when the item is unchecked.
     /// </summary>
-    public event GwenEventHandler<EventArgs> UnChecked;
+    public event GwenEventHandler<EventArgs>? UnChecked;
 
     /// <summary>
     ///     Invoked when the item's check value is changed.
     /// </summary>
-    public event GwenEventHandler<EventArgs> CheckChanged;
+    public event GwenEventHandler<EventArgs>? CheckChanged;
 
     /// <summary>
     ///     Renders the control using specified skin.
@@ -164,7 +157,7 @@ public partial class MenuItem : Button
     /// <param name="skin">Skin to use.</param>
     protected override void Render(Skin.Base skin)
     {
-        skin.DrawMenuItem(this, IsMenuOpen, mCheckable ? mChecked : false);
+        skin.DrawMenuItem(this, IsMenuOpen, _checkable ? _checked : false);
     }
 
     /// <summary>
@@ -173,10 +166,7 @@ public partial class MenuItem : Button
     /// <param name="skin">Skin to use.</param>
     protected override void Layout(Skin.Base skin)
     {
-        if (mSubmenuArrow != null)
-        {
-            mSubmenuArrow.Position(Pos.Right | Pos.CenterV, 4, 0);
-        }
+        _submenuArrow?.Position(Pos.Right | Pos.CenterV, 4, 0);
 
         base.Layout(skin);
     }
@@ -186,19 +176,15 @@ public partial class MenuItem : Button
     /// </summary>
     protected override void OnClicked(int x, int y)
     {
-        if (mMenu != null)
+        if (_submenu != null)
         {
             ToggleMenu();
         }
-        else if (!mOnStrip)
+        else if (!_onStrip)
         {
             IsChecked = !IsChecked;
-            if (Selected != null)
-            {
-                Selected.Invoke(this, new ItemSelectedEventArgs(this));
-            }
-
-            GetCanvas().CloseMenus();
+            Selected?.Invoke(this, new ItemSelectedEventArgs(this));
+            Canvas?.CloseMenus();
         }
 
         base.OnClicked(x, y);
@@ -224,30 +210,30 @@ public partial class MenuItem : Button
     /// </summary>
     public void OpenMenu()
     {
-        if (null == mMenu)
+        if (null == _submenu)
         {
             return;
         }
 
-        mMenu.IsHidden = false;
-        mMenu.BringToFront();
+        _submenu.IsHidden = false;
+        _submenu.BringToFront();
 
         var p = LocalPosToCanvas(Point.Empty);
 
         // Strip menus open downwards
-        if (mOnStrip)
+        if (_onStrip)
         {
-            mMenu.SetPosition(p.X, p.Y + Height + 1);
+            _submenu.SetPosition(p.X, p.Y + Height + 1);
         }
 
         // Submenus open sidewards
         else
         {
-            mMenu.SetPosition(p.X + Width, p.Y);
+            _submenu.SetPosition(p.X + Width, p.Y);
         }
 
         // TODO: Option this.
-        // TODO: Make sure on screen, open the other side of the 
+        // TODO: Make sure on screen, open the other side of the
         // parent if it's better...
     }
 
@@ -256,29 +242,26 @@ public partial class MenuItem : Button
     /// </summary>
     public void CloseMenu()
     {
-        if (null == mMenu)
+        if (null == _submenu)
         {
             return;
         }
 
-        mMenu.Close();
-        mMenu.CloseAll();
+        _submenu.Close();
+        _submenu.CloseAll();
     }
 
     public override void SizeToContents()
     {
         base.SizeToContents();
-        if (mAccelerator != null)
+        if (_accelerator != null)
         {
-            mAccelerator.SizeToContents();
-            Width = Width + mAccelerator.Width;
-            mAccelerator.Alignment = Pos.Left;
+            _accelerator.SizeToContents();
+            Width = Width + _accelerator.Width;
+            _accelerator.Alignment = Pos.Left;
         }
 
-        if (Width < Parent.Width)
-        {
-            Width = Parent.Width;
-        }
+        Width = Math.Max(Width, Parent?.Width ?? Width);
     }
 
     public MenuItem SetAction(
@@ -286,9 +269,9 @@ public partial class MenuItem : Button
         GwenEventHandler<ItemSelectedEventArgs> selHandler
     )
     {
-        if (mAccelerator != null)
+        if (_accelerator != null)
         {
-            AddAccelerator(mAccelerator.Text, handler);
+            AddAccelerator(_accelerator.Text, handler);
         }
 
         Selected += selHandler;
@@ -296,26 +279,30 @@ public partial class MenuItem : Button
         return this;
     }
 
-    public void SetAccelerator(string acc)
+    public void SetAccelerator(string accelerator)
     {
-        if (mAccelerator != null)
+        if (_accelerator != null)
         {
-            //m_Accelerator.DelayedDelete(); // to prevent double disposing
-            mAccelerator = null;
+            // _accelerator?.DelayedDelete();
+            _accelerator = null;
         }
 
-        if (acc == String.Empty)
+        if (string.IsNullOrEmpty(accelerator))
         {
             return;
         }
 
-        mAccelerator = new Label(this);
-        mAccelerator.Dock = Pos.Right;
-        mAccelerator.Alignment = Pos.Right | Pos.CenterV;
-        mAccelerator.Text = acc;
-        mAccelerator.Margin = new Margin(0, 0, 16, 0);
-
-        // todo
+        _accelerator = new Label(this)
+        {
+            Alignment = Pos.Right | Pos.CenterV,
+            Dock = Pos.Right,
+            Margin = new Margin(
+                0,
+                0,
+                16,
+                0
+            ),
+            Text = accelerator,
+        };
     }
-
 }

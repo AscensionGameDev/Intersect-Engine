@@ -225,7 +225,7 @@ public static partial class Globals
         {
             var entity = Entities[id];
 
-            if (!entity.IsDisposed() && entity.Type == type)
+            if (!entity.IsDisposed && entity.Type == type)
             {
                 EntitiesToDispose.Remove(entity.Id);
 

@@ -26,9 +26,9 @@ public partial class GroupBox : Label
         Alignment = Pos.Top | Pos.Left;
         Invalidate();
 
-        mInnerPanel = new Base(this);
-        mInnerPanel.Dock = Pos.Fill;
-        mInnerPanel.Margin = new Margin(5, TextHeight + 5, 5, 5);
+        _innerPanel = new Base(this);
+        _innerPanel.Dock = Pos.Fill;
+        _innerPanel.Margin = new Margin(5, TextHeight + 5, 5, 5);
 
         //Margin = new Margin(5, 5, 5, 5);
     }
@@ -66,7 +66,7 @@ public partial class GroupBox : Label
 
     protected virtual void DoSizeToContents()
     {
-        mInnerPanel.SizeToChildren();
+        _innerPanel.SizeToChildren();
         SizeToChildren();
         if (Width < TextWidth + TextPadding.Right + TextPadding.Left)
         {

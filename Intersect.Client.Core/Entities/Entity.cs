@@ -73,11 +73,14 @@ public partial class Entity : IEntity
             }
 
             _equipment = value;
-            LoadAnimationTexture(string.IsNullOrWhiteSpace(TransformedSprite) ? Sprite : TransformedSprite, SpriteAnimations.Weapon);
+            LoadAnimationTexture(
+                string.IsNullOrWhiteSpace(TransformedSprite) ? Sprite : TransformedSprite,
+                SpriteAnimations.Weapon
+            );
         }
     }
 
-    IReadOnlyList<int> IEntity.EquipmentSlots => [.. MyEquipment];
+    IReadOnlyList<int> IEntity.EquipmentSlots => [..MyEquipment];
 
     public Animation?[] EquipmentAnimations { get; set; } = new Animation[Options.Instance.Equipment.Slots.Count];
 
@@ -114,7 +117,8 @@ public partial class Entity : IEntity
     //Vitals & Stats
     public long[] MaxVital { get; set; } = new long[Enum.GetValues<Vital>().Length];
 
-    IReadOnlyList<long> IEntity.MaxVitals => [.. MaxVital];
+    IReadOnlyDictionary<Vital, long> IEntity.MaxVitals =>
+        Enum.GetValues<Vital>().ToDictionary(vital => vital, vital => MaxVital[(int)vital]);
 
     protected Pointf mOrigin = Pointf.Empty;
 
@@ -179,7 +183,8 @@ public partial class Entity : IEntity
 
     public int[] Stat { get; set; } = new int[Enum.GetValues<Stat>().Length];
 
-    IReadOnlyList<int> IEntity.Stats => [.. Stat];
+    IReadOnlyDictionary<Stat, int> IEntity.Stats =>
+        Enum.GetValues<Stat>().ToDictionary(stat => stat, stat => Stat[(int)stat]);
 
     public GameTexture? Texture { get; set; }
 
@@ -205,7 +210,8 @@ public partial class Entity : IEntity
 
     public long[] Vital { get; set; } = new long[Enum.GetValues<Vital>().Length];
 
-    IReadOnlyList<long> IEntity.Vitals => [.. Vital];
+    IReadOnlyDictionary<Vital, long> IEntity.Vitals =>
+        Enum.GetValues<Vital>().ToDictionary(vital => vital, vital => Vital[(int)vital]);
 
     public int WalkFrame { get; set; }
 
@@ -454,7 +460,7 @@ public partial class Entity : IEntity
                     }
                 }
             }
-            else if (Id != Guid.Empty && Id == Globals.Me.TargetIndex)
+            else if (Id != Guid.Empty && Id == Globals.Me.TargetId)
             {
                 if (Globals.Me.TargetBox == null)
                 {
@@ -517,10 +523,7 @@ public partial class Entity : IEntity
         }
     }
 
-    public virtual bool IsDisposed()
-    {
-        return mDisposed;
-    }
+    public bool IsDisposed => mDisposed;
 
     public virtual void Dispose()
     {
@@ -1617,19 +1620,8 @@ public partial class Entity : IEntity
         return y;
     }
 
-    public long GetShieldSize()
-    {
-        long shieldSize = 0;
-        foreach (var status in Status)
-        {
-            if (status.Type == SpellEffect.Shield)
-            {
-                shieldSize += status.Shield[(int)Enums.Vital.Health];
-            }
-        }
-
-        return shieldSize;
-    }
+    public long ShieldSize =>
+        Status.Sum(status => status.Type == SpellEffect.Shield ? status.Shield[(int)Enums.Vital.Health] : 0);
 
     protected virtual bool ShouldDrawHpBar
     {
@@ -1645,7 +1637,7 @@ public partial class Entity : IEntity
                 return true;
             }
 
-            if (GetShieldSize() > 0)
+            if (ShieldSize > 0)
             {
                 return true;
             }
@@ -1700,7 +1692,7 @@ public partial class Entity : IEntity
 
         // Check for shields
         var maxVital = MaxVital[(int)Enums.Vital.Health];
-        var shieldSize = GetShieldSize();
+        var shieldSize = ShieldSize;
 
         if (shieldSize + Vital[(int)Enums.Vital.Health] > maxVital)
         {

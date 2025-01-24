@@ -50,8 +50,8 @@ public partial class MultilineTextBox : Label
         mScrollControl.EnableScroll(true, true);
         mScrollControl.AutoHideBars = true;
         mScrollControl.Margin = Margin.One;
-        mInnerPanel = mScrollControl;
-        _textElement.Parent = mInnerPanel;
+        _innerPanel = mScrollControl;
+        _textElement.Parent = _innerPanel;
         mScrollControl.InnerPanel.BoundsChanged += new GwenEventHandler<EventArgs>(ScrollChanged);
 
         mTextLines.Add(String.Empty);

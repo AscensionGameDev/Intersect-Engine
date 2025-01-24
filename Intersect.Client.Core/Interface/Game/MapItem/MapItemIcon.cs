@@ -17,7 +17,7 @@ public partial class MapItemIcon
 
     public ImagePanel Container;
 
-    public MapItemInstance MyItem;
+    public MapItemInstance? MyItem;
 
     public Guid MapId;
 

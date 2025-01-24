@@ -9,8 +9,12 @@ using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Items;
 using Intersect.Client.Localization;
 using Intersect.Client.Spells;
+using Intersect.Core;
+using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
+using Intersect.Localization;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Interface.Game.Hotbar;
 
@@ -33,7 +37,7 @@ public partial class HotbarItem
     private bool _isEquipped;
     private bool _isFaded;
     private readonly Base _hotbarWindow;
-    private readonly byte _hotbarSlotIndex;
+    private readonly int _hotbarSlotIndex;
     private ControlValue? _hotKey;
     private Item? _inventoryItem = null;
     private int _inventoryItemIndex = -1;
@@ -48,7 +52,7 @@ public partial class HotbarItem
     public Label KeyLabel;
     public ImagePanel HotbarIcon;
 
-    public HotbarItem(byte index, Base hotbarWindow)
+    public HotbarItem(int index, Base hotbarWindow)
     {
         _hotbarSlotIndex = index;
         _hotbarWindow = hotbarWindow;
@@ -57,7 +61,7 @@ public partial class HotbarItem
     public void Setup()
     {
         // Content Panel is layered on top of the container (shows the Item or Spell Icon).
-        _contentPanel = new ImagePanel(HotbarIcon, nameof(HotbarIcon) + _hotbarSlotIndex);
+        _contentPanel = new ImagePanel(HotbarIcon, $"{nameof(HotbarIcon)}{_hotbarSlotIndex}");
         _contentPanel.HoverEnter += hotbarIcon_HoverEnter;
         _contentPanel.HoverLeave += hotbarIcon_HoverLeave;
         _contentPanel.RightClicked += hotbarIcon_RightClicked;
@@ -208,10 +212,25 @@ public partial class HotbarItem
         var keybind = Controls.ActiveControls.ControlMapping[Control.Hotkey1 + _hotbarSlotIndex].Bindings[0];
         if (_hotKey == null || _hotKey.Modifier != keybind.Modifier || _hotKey.Key != keybind.Key)
         {
-            string modifierText = keybind.Modifier != Keys.None ? $"{Strings.Keys.KeyDictionary[Enum.GetName(typeof(Keys), keybind.Modifier)!.ToLower()]} + " : "";
-            string keyText = Strings.Keys.KeyDictionary[Enum.GetName(typeof(Keys), keybind.Key)!.ToLower()];
+            var keyName = keybind.Key.GetName(isModifier: false).ToLowerInvariant();
+            if (!Strings.Keys.KeyDictionary.TryGetValue(keyName, out var localizedKeyString))
+            {
+                localizedKeyString = keyName;
+            }
 
-            KeyLabel.SetText($"{modifierText}{keyText}");
+            string assembledKeyText = localizedKeyString;
+
+            var modifier = keybind.Modifier;
+            if (modifier is not Keys.None)
+            {
+                var modifierName = modifier.GetName(isModifier: true).ToLowerInvariant();
+                string modifierText = Strings.Keys.KeyDictionary.TryGetValue(modifierName, out var localizedModifierString)
+                    ? localizedModifierString
+                    : modifierName;
+                assembledKeyText = Strings.Keys.KeyNameWithModifier.ToString(modifierText, assembledKeyText);
+            }
+
+            KeyLabel.SetText(assembledKeyText);
 
             _hotKey = keybind;
         }
@@ -429,9 +448,22 @@ public partial class HotbarItem
         {
             if (!_isDragging)
             {
-                _contentPanel.IsHidden = false;
-                _equipLabel.IsHidden = _currentItem == null || !Globals.Me.IsEquipped(_inventoryItemIndex) || _inventoryItemIndex < 0;
-                _quantityLabel.IsHidden = _currentItem == null || !_currentItem.Stackable || _inventoryItemIndex < 0;
+                if (_contentPanel.IsHidden)
+                {
+                    _contentPanel.IsHidden = false;
+                }
+
+                var equipLabelIsHidden = _currentItem == null || !Globals.Me.IsEquipped(_inventoryItemIndex) || _inventoryItemIndex < 0;
+                if (_equipLabel.IsHidden != equipLabelIsHidden)
+                {
+                    _equipLabel.IsHidden = equipLabelIsHidden;
+                }
+
+                var quantityLabelIsHidden = _currentItem is not { Stackable: true } || _inventoryItemIndex < 0;
+                if (_quantityLabel.IsHidden != quantityLabelIsHidden)
+                {
+                    _quantityLabel.IsHidden = quantityLabelIsHidden;
+                }
 
                 if (_mouseOver)
                 {

@@ -9,26 +9,26 @@ namespace Intersect.Client.Interface.Game.EntityPanel;
 
 public partial class PlayerStatusWindow : ImagePanel
 {
-    private readonly Dictionary<Guid, SpellStatus> _activeStatuses = new Dictionary<Guid, SpellStatus>();
-
-    public Player MyEntity;
-
-    public bool ShouldUpdateStatuses;
+    private readonly Dictionary<Guid, SpellStatus> _activeStatuses = [];
 
     public readonly ImagePanel _playerStatusWindow;
 
     public readonly ScrollControl _playerStatusControl;
 
-    public PlayerStatusWindow(Canvas gameCanvas) : base(gameCanvas, "PlayerStatusWindow")
+    public Player? MyEntity;
+
+    public bool ShouldUpdateStatuses { get; set; }
+
+    public PlayerStatusWindow(Canvas gameCanvas, string? name = default) : base(gameCanvas, name ?? nameof(PlayerStatusWindow))
     {
-        MyEntity = Globals.Me;
         _playerStatusControl = new ScrollControl(this, "PlayerStatusControl");
+        MyEntity = Globals.Me;
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
     }
 
     public void Update()
     {
-        if (MyEntity == null || MyEntity.IsDisposed())
+        if (MyEntity?.IsDisposed ?? true)
         {
             if (!IsHidden)
             {
@@ -38,7 +38,7 @@ public partial class PlayerStatusWindow : ImagePanel
             return;
         }
 
-        if (MyEntity.IsDisposed())
+        if (MyEntity.IsDisposed)
         {
             Dispose();
             return;
@@ -48,20 +48,20 @@ public partial class PlayerStatusWindow : ImagePanel
         {
             SpellStatus.UpdateSpellStatus(MyEntity, _playerStatusControl, _activeStatuses);
 
-            foreach (var itm in _activeStatuses)
+            foreach (var (_, activeStatus) in _activeStatuses)
             {
-                itm.Value.Update();
+                activeStatus.Update();
             }
 
-            ShouldUpdateStatuses = false;
+            ShouldUpdateStatuses = _activeStatuses.Count > 0;
+            if (!IsVisible)
+            {
+                IsVisible = ShouldUpdateStatuses;
+            }
         }
-
-        IsHidden = _activeStatuses.Count < 1;
-
-        if (!IsHidden)
+        else if (IsVisible)
         {
-            ShouldUpdateStatuses = true;
-            Show();
+            IsVisible = false;
         }
     }
 }
