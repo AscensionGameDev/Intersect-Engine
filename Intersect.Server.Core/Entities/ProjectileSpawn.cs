@@ -121,7 +121,7 @@ public partial class ProjectileSpawn
             }
             else if (targetEntity is Resource targetResource)
             {
-                if (targetResource.IsDead())
+                if (targetResource.IsDead)
                 {
                     if (!ProjectileBase.IgnoreExhaustedResources)
                     {
