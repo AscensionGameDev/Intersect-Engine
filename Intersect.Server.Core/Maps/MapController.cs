@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using Intersect.Compression;
 using Intersect.Core;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
@@ -94,10 +95,10 @@ public partial class MapController : MapBase
     {
         switch (Options.Instance.Map.GameBorderStyle)
         {
-            case 1:
+            case GameBorderStyle.Seamed:
                 return [true, true, true, true];
 
-            case 0:
+            case GameBorderStyle.Seamless:
                 var grid = DbInterface.GetGrid(MapGrid);
                 if (grid != null)
                 {
@@ -109,8 +110,13 @@ public partial class MapController : MapBase
                         grid.XMax - 1 == MapGridX,
                     ];
                 }
-
                 break;
+
+            case GameBorderStyle.SeamlessUnbounded:
+                break;
+
+            default:
+                throw new ArgumentOutOfRangeException();
         }
 
         return null;

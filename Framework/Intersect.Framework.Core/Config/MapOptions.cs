@@ -1,6 +1,8 @@
 ﻿using System.Runtime.Serialization;
 using Intersect.Framework.Annotations;
+using Intersect.Framework.Core.GameObjects.Maps;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Intersect.Config;
 
@@ -45,9 +47,9 @@ public partial class MapOptions
 
     /// <summary>
     /// The style of the game's border.
-    /// 0: Smart borders, 1: Non-seamless, 2: Black borders
     /// </summary>
-    public int GameBorderStyle { get; set; }
+    [JsonConverter(typeof(StringEnumConverter))]
+    public GameBorderStyle GameBorderStyle { get; set; }
 
     /// <summary>
     /// The time, in milliseconds, until item attributes respawn on the map.
