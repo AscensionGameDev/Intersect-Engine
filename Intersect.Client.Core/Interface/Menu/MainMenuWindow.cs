@@ -192,11 +192,17 @@ public partial class MainMenuWindow : Window
             _buttonLogin.IsDisabled = Globals.WaitingOnServer;
             _buttonRegister.IsDisabled = Globals.WaitingOnServer;
         }
+        else
+        {
+            UpdateDisabled();
+        }
     }
+
 
     internal void UpdateDisabled()
     {
-        var isOffline = MainMenu.ActiveNetworkStatus != NetworkStatus.Online;
+        var networkStatus = MainMenu.ActiveNetworkStatus;
+        var isOffline = networkStatus != NetworkStatus.Online;
         _buttonLogin.IsDisabled = isOffline;
         _buttonRegister.IsDisabled = isOffline || (Options.IsLoaded && Options.Instance.BlockClientRegistrations);
     }
