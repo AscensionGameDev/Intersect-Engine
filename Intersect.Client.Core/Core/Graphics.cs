@@ -8,6 +8,7 @@ using Intersect.Client.General;
 using Intersect.Client.Maps;
 using Intersect.Configuration;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 
@@ -1000,6 +1001,10 @@ public static partial class Graphics
                 newView.X = restrictView.Right - newView.Width;
             }
         }
+        else if (Options.Instance.Map.GameBorderStyle == GameBorderStyle.Seamed)
+        {
+            newView.X = restrictView.X - (newView.Width - restrictView.Width) / 2;
+        }
 
         if (restrictView.Height >= newView.Height)
         {
@@ -1012,6 +1017,10 @@ public static partial class Graphics
             {
                 newView.Y = restrictView.Bottom - newView.Height;
             }
+        }
+        else if (Options.Instance.Map.GameBorderStyle == GameBorderStyle.Seamed)
+        {
+            newView.Y = restrictView.Y - (newView.Height - restrictView.Height) / 2;
         }
 
         CurrentView = new FloatRect(
