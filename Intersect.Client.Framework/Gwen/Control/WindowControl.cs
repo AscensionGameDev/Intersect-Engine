@@ -125,7 +125,15 @@ public partial class WindowControl : ResizableControl
     public bool IsClosable
     {
         get => !mCloseButton.IsHidden;
-        set => mCloseButton.IsHidden = !value;
+        set
+        {
+            if (value == mCloseButton.IsVisible)
+            {
+                return;
+            }
+
+            mCloseButton.IsVisible = value;
+        }
     }
 
     /// <summary>

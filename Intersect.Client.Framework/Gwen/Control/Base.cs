@@ -483,12 +483,12 @@ public partial class Base : IDisposable
         {
             if (value == mHidden)
             {
-                ApplicationContext.CurrentContext.Logger.LogTrace(
-                    "{ComponentTypeName} (\"{ComponentName}\") set to same visibility ({Visibility})",
-                    GetType().GetName(qualified: true),
-                    CanonicalName,
-                    !value
-                );
+                // ApplicationContext.CurrentContext.Logger.LogTrace(
+                //     "{ComponentTypeName} (\"{ComponentName}\") set to same visibility ({Visibility})",
+                //     GetType().GetName(qualified: true),
+                //     CanonicalName,
+                //     !value
+                // );
                 return;
             }
 
