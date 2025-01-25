@@ -1,7 +1,10 @@
 @page "/Developer/ServerSettings"
 @using System.Reflection
+@using Intersect.Framework.Core.Config
 @using Intersect.Framework.Reflection
+@using Intersect.Framework.Resources
 @using Microsoft.AspNetCore.Html
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model ServerSettingsIndexModel
 
 @{
@@ -14,11 +17,11 @@
     <h1>Server Config</h1>
 
     <form>
-        <tab-set style="--tabs-trigger-color: var(--theme-bg-accent); --tabs-trigger-color-selected: var(--theme-bg-accent-hover); --tabs-trigger-border-width: 0.125em;">
+        <tab-set nav-style="side" style="--tabs-trigger-color: var(--theme-bg-accent); --tabs-trigger-color-selected: var(--theme-bg-accent-hover); --tabs-trigger-border-width: 0.125em;">
             @foreach (var (groupKey, propertyInfos) in ServerSettingsIndexModel.PropertyGroups)
             {
-                <tab-content tab-id="@groupKey" tab-label="KEY_@groupKey"
-                             tab-icon="/material/notification/account_tree/materialiconsoutlined/24px.svg#root">
+                <tab-content tab-id="@groupKey" tab-label="@OptionsStrings.ResourceManager.GetStringWithFallback(groupKey, fallbackToResourceName: true)"
+                             @*tab-icon="/material/notification/account_tree/materialiconsoutlined/24px.svg#root"*@>
                     @foreach (var propertyInfo in propertyInfos)
                     {
                         <partial name="_Property.partial" model="@(Model.GetModelFor(propertyInfo))"/>

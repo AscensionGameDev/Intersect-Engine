@@ -55,6 +55,10 @@ public static partial class TypeExtensions
             .ToArray();
     }
 
+    public static bool IsEnumerable(this Type type) => typeof(IEnumerable<>).ExtendedBy(type);
+
+    public static bool IsEnumerable<TValue>(this Type type) => typeof(IEnumerable<TValue>).ExtendedBy(type);
+
     public static bool IsIntegral(this Type type) =>
         type == typeof(int) ||
         type == typeof(long) ||

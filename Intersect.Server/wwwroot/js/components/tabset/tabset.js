@@ -131,7 +131,9 @@ class TabContentElement extends HTMLElement {
 customElements.define('tab-content', TabContentElement);
 
 class TabSetElement extends HTMLElement {
-	static observedAttributes = [];
+	static observedAttributes = [
+		'nav-style'
+	];
 
 	/** @type {HTMLElement} */
 	#elementContainer;

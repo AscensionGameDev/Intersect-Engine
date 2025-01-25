@@ -1,0 +1,11 @@
+::deep form {
+	width: 100%;
+}
+
+::deep form tab-content.selected,
+::deep span.field > fieldset {
+	display: grid;
+	grid-gap: 0.5em;
+	grid-template-columns: minmax(min-content, 20em) minmax(min-content, 20em);
+	grid-auto-rows: min-content;
+}

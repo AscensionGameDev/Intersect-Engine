@@ -8,10 +8,13 @@ public static class ResourceManagerExtensions
     public static string? GetStringWithFallback(
         this ResourceManager resourceManager,
         string name,
-        CultureInfo? cultureInfo
+        CultureInfo? cultureInfo = null,
+        bool fallbackToResourceName = false
     )
     {
-        while (cultureInfo != null && cultureInfo.LCID != CultureInfo.InvariantCulture.LCID)
+        cultureInfo ??= CultureInfo.CurrentCulture;
+
+        while (cultureInfo.LCID != CultureInfo.InvariantCulture.LCID)
         {
             var value = resourceManager.GetString(name, cultureInfo);
             if (!string.IsNullOrWhiteSpace(value))
@@ -22,6 +25,6 @@ public static class ResourceManagerExtensions
             cultureInfo = cultureInfo.Parent;
         }
 
-        return null;
+        return fallbackToResourceName ? name : null;
     }
 }
