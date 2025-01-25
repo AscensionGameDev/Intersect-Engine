@@ -344,7 +344,14 @@ public partial class FrmItem : EditorForm
             nudRgbaA.Value = mEditorItem.Color.A;
             cmbEquipmentAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.EquipmentAnimationId) + 1;
             nudPrice.Value = mEditorItem.Price;
-            cmbRarity.Select(mEditorItem.Rarity, 1);
+            if (mEditorItem.Rarity < cmbRarity.Items.Count)
+            {
+                cmbRarity.SelectedIndex = mEditorItem.Rarity;
+            }
+            else if (cmbRarity.Items.Count > 0)
+            {
+                cmbRarity.SelectedIndex = 0;
+            }
 
             nudStr.Value = mEditorItem.StatsGiven[0];
             nudMag.Value = mEditorItem.StatsGiven[1];
