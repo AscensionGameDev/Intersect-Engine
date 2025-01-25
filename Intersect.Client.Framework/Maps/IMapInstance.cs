@@ -2,6 +2,7 @@ using Intersect.Client.Framework.Core.Sounds;
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.Items;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Animations;
 
 namespace Intersect.Client.Framework.Maps;
 
@@ -26,7 +27,15 @@ public interface IMapInstance
     bool IsDisposed { get; }
     bool IsLoaded { get; }
 
-    void AddTileAnimation(Guid animId, int tileX, int tileY, Direction dir = Direction.None, IEntity? owner = null);
+    void AddTileAnimation(
+        Guid animId,
+        int tileX,
+        int tileY,
+        Direction dir = Direction.None,
+        IEntity? owner = null,
+        AnimationSource source = default
+    );
+
     void CompareEffects(IMapInstance oldMap);
     bool InView();
     void Load(string json);

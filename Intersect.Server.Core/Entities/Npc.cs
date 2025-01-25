@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using Intersect.Core;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Animations;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
@@ -767,7 +768,18 @@ public partial class Npc : Entity
 
         if (spellBase.CastAnimationId != Guid.Empty)
         {
-            PacketSender.SendAnimationToProximity(spellBase.CastAnimationId, 1, Id, MapId, 0, 0, Dir, MapInstanceId);
+            PacketSender.SendAnimationToProximity(
+                spellBase.CastAnimationId,
+                1,
+                Id,
+                MapId,
+                0,
+                0,
+                Dir,
+                MapInstanceId,
+                AnimationSourceType.SpellCast,
+                spellBase.Id
+            );
 
             //Target Type 1 will be global entity
         }

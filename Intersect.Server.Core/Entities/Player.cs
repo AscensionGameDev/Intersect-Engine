@@ -8,6 +8,7 @@ using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Animations;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
@@ -1274,7 +1275,7 @@ public partial class Player : Entity
     {
         ClassBase? classDescriptor = null;
         List<(string, Color)> messageList = [];
-        
+
         var targetLevel = Math.Clamp(Level + levels, 1, Options.Instance.Player.MaxLevel);
         if (levels > 0)
         {
@@ -1369,7 +1370,7 @@ public partial class Player : Entity
             TakeExperience(-amount);
             return;
         }
-        
+
         Exp += (int)Math.Round(amount + (amount * (GetEquipmentBonusEffect(ItemEffect.EXP) / 100f)));
         if (Exp < 0)
         {
@@ -1395,7 +1396,7 @@ public partial class Player : Entity
             GiveExperience(-amount);
             return;
         }
-        
+
         if (!force && Options.Instance.Map.DisableExpLossInArenaMaps && Map.ZoneType == MapZone.Arena)
         {
             return;
@@ -5480,7 +5481,7 @@ public partial class Player : Entity
         {
             return false;
         }
-        
+
         if (!SpellBase.Get(Spells[spellSlot].SpellId).Bound || removeBoundSpell)
         {
             Spells[spellSlot].Set(Spell.None);
@@ -5734,7 +5735,16 @@ public partial class Player : Entity
             if (spell.CastAnimationId != Guid.Empty)
             {
                 PacketSender.SendAnimationToProximity(
-                    spell.CastAnimationId, 1, base.Id, MapId, 0, 0, Dir, MapInstanceId
+                    spell.CastAnimationId,
+                    1,
+                    base.Id,
+                    MapId,
+                    0,
+                    0,
+                    Dir,
+                    MapInstanceId,
+                    AnimationSourceType.SpellCast,
+                    spell.Id
                 ); //Target Type 1 will be global entity
             }
 

@@ -14,7 +14,9 @@ using Intersect.Client.Maps;
 using Intersect.Client.Spells;
 using Intersect.Core;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Animations;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
@@ -27,7 +29,9 @@ public partial class Entity : IEntity
     public int AnimationFrame { get; set; }
 
     //Entity Animations
-    public List<Animation> Animations { get; set; } = [];
+    public readonly List<Animation> Animations = [];
+
+    public readonly Dictionary<AnimationSource, Animation> AnimationsBySource = [];
 
     //Animation Timer (for animated sprites)
     public long AnimationTimer { get; set; }
