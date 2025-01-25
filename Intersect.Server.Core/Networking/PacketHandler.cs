@@ -763,7 +763,13 @@ internal sealed partial class PacketHandler
                 continue;
             }
 
-            var version = MapPacket.ComputeCacheVersion(descriptor.Id, descriptor.Revision);
+            var version = MapPacket.ComputeCacheVersion(
+                descriptor.Id,
+                descriptor.Revision,
+                descriptor.MapGridX,
+                descriptor.MapGridY,
+                descriptor.GetCameraHolds()
+            );
 
             var checksumToCompare = string.Equals(cacheKey.Version, version, StringComparison.Ordinal)
                 ? cacheKey.Checksum

@@ -110,7 +110,7 @@ public partial class Event : Entity
     public override void Draw()
     {
         WorldPos.Reset();
-        if (MapInstance == default || !Globals.GridMaps.Contains(MapId) || !TryEnsureTexture(out var texture))
+        if (MapInstance == default || !Globals.GridMaps.ContainsKey(MapId) || !TryEnsureTexture(out var texture))
         {
             return;
         }

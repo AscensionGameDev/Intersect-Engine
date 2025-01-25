@@ -236,6 +236,16 @@ internal sealed partial class PacketHandler
 
         if (!skipSave)
         {
+            ApplicationContext.CurrentContext.Logger.LogDebug(
+                "Saving map {Id} @ ({GridX}, {GridY}) revision {Revision} version {Version} holds {CameraHolds}",
+                packet.MapId,
+                packet.GridX,
+                packet.GridY,
+                packet.Revision,
+                packet.CacheVersion,
+                $"[{string.Join(", ", packet.CameraHolds)}]"
+            );
+
             ObjectCacheData<MapBase> cacheData = new()
             {
                 Id = new Id<MapBase>(mapId),
@@ -246,7 +256,7 @@ internal sealed partial class PacketHandler
 
             if (!ObjectDataDiskCache<MapBase>.TrySave(cacheData))
             {
-                ApplicationContext.Context.Value?.Logger.LogWarning($"Failed to save cache for {cacheKey}");
+                ApplicationContext.CurrentContext.Logger.LogWarning("Failed to save cache for {CacheKey}", cacheKey);
             }
         }
 
@@ -254,7 +264,7 @@ internal sealed partial class PacketHandler
 
         if (MapInstance.TryGet(mapId, out var mapInstance))
         {
-            if (packet.Revision == mapInstance.Revision)
+            if (skipSave && packet.Revision == mapInstance.Revision)
             {
                 return;
             }
@@ -270,28 +280,56 @@ internal sealed partial class PacketHandler
             mapInstance.LoadTileData(packet.TileData);
             mapInstance.AttributeData = packet.AttributeData;
             mapInstance.CreateMapSounds();
-            if (mapId == Globals.Me.MapId)
+
+            if (mapId == Globals.Me?.MapId)
             {
-                Audio.PlayMusic(mapInstance.Music, ClientConfiguration.Instance.MusicFadeTimer, ClientConfiguration.Instance.MusicFadeTimer, true);
+                Audio.PlayMusic(
+                    mapInstance.Music,
+                    ClientConfiguration.Instance.MusicFadeTimer,
+                    ClientConfiguration.Instance.MusicFadeTimer,
+                    true
+                );
             }
 
-            mapInstance.GridX = packet.GridX;
-            mapInstance.GridY = packet.GridY;
+            if (!Globals.GridMaps.TryGetValue(packet.MapId, out var gridPosition))
+            {
+                ApplicationContext.CurrentContext.Logger.LogDebug(
+                    "Falling back to packet position for map '{MapName}' ({MapId})",
+                    mapInstance.Name,
+                    mapInstance.Id
+                );
+                gridPosition = new Point(packet.GridX, packet.GridY);
+            }
+
+            mapInstance.GridX = gridPosition.X;
+            mapInstance.GridY = gridPosition.Y;
             mapInstance.CameraHolds = packet.CameraHolds;
+
+            ApplicationContext.CurrentContext.Logger.LogDebug(
+                "Loading map {Id} ({Name}) @ ({GridX}, {GridY}) revision {Revision} version {Version} holds {CameraHolds}",
+                mapInstance.Id,
+                mapInstance.Name,
+                gridPosition.X,
+                gridPosition.Y,
+                mapInstance.Revision,
+                packet.CacheVersion,
+                $"[{string.Join(", ", mapInstance.CameraHolds)}]"
+            );
+
             mapInstance.Autotiles.InitAutotiles(mapInstance.GenerateAutotileGrid());
 
-            if (Globals.PendingEvents.ContainsKey(mapId))
+            if (Globals.PendingEvents.TryGetValue(mapId, out var pendingEventsForMap))
             {
-                foreach (var evt in Globals.PendingEvents[mapId])
+                foreach (var (eventId, eventEntityPacket) in pendingEventsForMap)
                 {
-                    mapInstance.AddEvent(evt.Key, evt.Value);
+                    mapInstance.AddEvent(eventId, eventEntityPacket);
                 }
 
-                Globals.PendingEvents[mapId].Clear();
+                pendingEventsForMap.Clear();
             }
         }
 
-        MapInstance.OnMapLoaded?.Invoke(mapInstance);
+        mapInstance.MarkLoadFinished();
     }
 
     //MapPacket
@@ -403,32 +441,35 @@ internal sealed partial class PacketHandler
     }
 
     //MapEntitiesPacket
-    public void HandlePacket(IPacketSender packetSender, MapEntitiesPacket packet)
+    public void HandlePacket(IPacketSender packetSender, MapEntitiesPacket entitiesPacket)
     {
-        var mapEntities = new Dictionary<Guid, List<Guid>>();
-        foreach (var pkt in packet.MapEntities)
+        Dictionary<Guid, HashSet<Guid>> entitiesByMapId = [];
+        foreach (var entityPacket in entitiesPacket.MapEntities)
         {
-            HandlePacket(pkt);
+            HandlePacket(entityPacket);
 
-            if (!mapEntities.ContainsKey(pkt.MapId))
+            if (!entitiesByMapId.TryGetValue(entityPacket.MapId, out var value))
             {
-                mapEntities.Add(pkt.MapId, new List<Guid>());
+                value = [];
+                entitiesByMapId.Add(entityPacket.MapId, value);
             }
 
-            mapEntities[pkt.MapId].Add(pkt.EntityId);
+            value.Add(entityPacket.EntityId);
         }
 
-        //Remove any entities on the map that shouldn't be there anymore!
-        foreach (var entities in mapEntities)
+        // Remove any entities on the map that shouldn't be there anymore!
+        foreach (var (mapId, entitiesOnMap) in entitiesByMapId)
         {
-            foreach (var entity in Globals.Entities)
+            foreach (var (entityId, entity) in Globals.Entities)
             {
-                if (entity.Value.MapId == entities.Key && !entities.Value.Contains(entity.Key))
+                if (entity.MapId != mapId || entitiesOnMap.Contains(entityId))
                 {
-                    if (!Globals.EntitiesToDispose.Contains(entity.Key) && entity.Value != Globals.Me && !(entity.Value is Projectile))
-                    {
-                        Globals.EntitiesToDispose.Add(entity.Key);
-                    }
+                    continue;
+                }
+
+                if (!Globals.EntitiesToDispose.Contains(entityId) && entity != Globals.Me && entity is not Projectile)
+                {
+                    Globals.EntitiesToDispose.Add(entityId);
                 }
             }
         }
@@ -1755,7 +1796,7 @@ internal sealed partial class PacketHandler
                 Globals.MapGrid[x, y] = packet.Grid[x, y];
                 if (Globals.MapGrid[x, y] != Guid.Empty)
                 {
-                    Globals.GridMaps.Add(Globals.MapGrid[x, y]);
+                    Globals.GridMaps[Globals.MapGrid[x, y]] = new Point(x, y);
                     // MapInstance.UpdateMapRequestTime(Globals.MapGrid[x, y]);
                 }
             }

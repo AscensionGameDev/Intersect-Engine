@@ -34,22 +34,98 @@ namespace Intersect.Server.Maps;
 /// </summary>
 public partial class MapController : MapBase
 {
-    private ConcurrentDictionary<Guid, MapInstance> mInstances = new ConcurrentDictionary<Guid, MapInstance>();
+    private readonly ConcurrentDictionary<Guid, MapInstance> mInstances = [];
 
     private static MapControllers sLookup;
 
     //Location of Map in the current grid
-    [JsonIgnore] [NotMapped] public int MapGrid;
+    [JsonIgnore]
+    [NotMapped]
+    public int MapGrid
+    {
+        get => _mapGridId;
+        set
+        {
+            if (value == _mapGridId)
+            {
+                return;
+            }
 
-    [JsonIgnore] [NotMapped] public int MapGridX = -1;
+            _mapGridId = value;
+            CachedMapClientPacket = null;
+        }
+    }
 
-    [JsonIgnore] [NotMapped] public int MapGridY = -1;
+    [JsonIgnore]
+    [NotMapped]
+    public int MapGridX
+    {
+        get => _mapGridX;
+        set
+        {
+            if (value == _mapGridX)
+            {
+                return;
+            }
+
+            _mapGridX = value;
+            CachedMapClientPacket = null;
+        }
+    }
+
+    [JsonIgnore]
+    [NotMapped]
+    public int MapGridY
+    {
+        get => _mapGridY;
+        set
+        {
+            if (value == _mapGridY)
+            {
+                return;
+            }
+
+            _mapGridY = value;
+            CachedMapClientPacket = null;
+        }
+    }
+
+    public bool[] GetCameraHolds()
+    {
+        switch (Options.Instance.Map.GameBorderStyle)
+        {
+            case 1:
+                return [true, true, true, true];
+
+                break;
+
+            case 0:
+                var grid = DbInterface.GetGrid(MapGrid);
+                if (grid != null)
+                {
+                    return
+                    [
+                        0 == MapGridY,
+                        grid.YMax - 1 == MapGridY,
+                        0 == MapGridX,
+                        grid.XMax - 1 == MapGridX,
+                    ];
+                }
+
+                break;
+        }
+
+        return [true, true, true, true];
+    }
 
     //Temporary Values
     private Guid[] mSurroundingMapIds = new Guid[0];
     private Guid[] mSurroundingMapsIdsWithSelf = new Guid[0];
     private MapController[] mSurroundingMaps = new MapController[0];
     private MapController[] mSurroundingMapsWithSelf = new MapController[0];
+    private int _mapGridId;
+    private int _mapGridX = -1;
+    private int _mapGridY = -1;
 
     [NotMapped, JsonIgnore] public MapPacket? CachedMapClientPacket { get; set; }
 
@@ -528,7 +604,7 @@ public partial class MapController : MapBase
             }
             TileData = LZ4.PickleString(JsonConvert.SerializeObject(Layers, Formatting.None, mJsonSerializerSettings));
             Layers = null;
-            
+
         }
     }
 
