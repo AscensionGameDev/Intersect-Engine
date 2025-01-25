@@ -3,6 +3,7 @@ using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Animations;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps.MapList;
@@ -1580,19 +1581,24 @@ public static partial class PacketSender
         int x,
         int y,
         Direction direction,
-        Guid mapInstanceId
+        Guid mapInstanceId,
+        AnimationSourceType animationSourceType = AnimationSourceType.Any,
+        Guid animationSourceId = default
     )
     {
-        if (MapController.TryGetInstanceFromMap(mapId, mapInstanceId, out var mapInstance))
+        if (!MapController.TryGetInstanceFromMap(mapId, mapInstanceId, out var mapInstance))
         {
-            if (Options.Instance.Packets.BatchAnimationPackets)
-            {
-                mapInstance.AddBatchedAnimation(new PlayAnimationPacket(animId, targetType, entityId, mapId, x, y, direction));
-            }
-            else
-            {
-                SendDataToProximityOnMapInstance(mapId, mapInstanceId, new PlayAnimationPacket(animId, targetType, entityId, mapId, x, y, direction), null, TransmissionMode.Any);
-            }
+            return;
+        }
+
+        PlayAnimationPacket playAnimationPacket = new(animId, targetType, entityId, mapId, x, y, direction, animationSourceType, animationSourceId);
+        if (Options.Instance.Packets.BatchAnimationPackets)
+        {
+            mapInstance.AddBatchedAnimation(playAnimationPacket);
+        }
+        else
+        {
+            SendDataToProximityOnMapInstance(mapId, mapInstanceId, playAnimationPacket, null, TransmissionMode.Any);
         }
     }
 

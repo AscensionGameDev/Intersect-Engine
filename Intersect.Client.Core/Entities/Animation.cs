@@ -5,7 +5,9 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Animations;
 using Intersect.Utilities;
 
 namespace Intersect.Client.Entities;
@@ -26,7 +28,7 @@ public partial class Animation : IAnimation
 
     private readonly int mLowerLoop;
 
-    private readonly Entity? mParent;
+    private readonly IEntity? mParent;
 
     private Direction mRenderDir;
 
@@ -52,6 +54,8 @@ public partial class Animation : IAnimation
 
     public AnimationBase? MyBase { get; set; }
 
+    public AnimationSource Source { get; }
+
     public Point Size => CalculateAnimationSize();
 
     private int mZDimension = -1;
@@ -61,10 +65,12 @@ public partial class Animation : IAnimation
         bool loopForever,
         bool autoRotate = false,
         int zDimension = -1,
-        Entity? parent = null
+        IEntity? parent = null,
+        AnimationSource source = default
     )
     {
         MyBase = animBase;
+        Source = source;
         mParent = parent;
         if (MyBase != null)
         {

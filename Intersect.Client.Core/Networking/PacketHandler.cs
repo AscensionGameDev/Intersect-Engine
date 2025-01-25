@@ -23,6 +23,8 @@ using Intersect.Utilities;
 using Intersect.Framework;
 using Intersect.Models;
 using Intersect.Client.Interface.Shared;
+using Intersect.Framework.Core.GameObjects.Animations;
+using Intersect.GameObjects.Animations;
 using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Networking;
@@ -1506,66 +1508,142 @@ internal sealed partial class PacketHandler
     public void HandlePacket(IPacketSender packetSender, PlayAnimationPacket packet)
     {
         var mapId = packet.MapId;
-        var animId = packet.AnimationId;
+        var animationDescriptorId = packet.AnimationId;
         var targetType = packet.TargetType;
         var entityId = packet.EntityId;
-        if (targetType == -1)
+
+        AnimationSource animationSource = new(packet.SourceType, packet.SourceId);
+
+        switch (targetType)
         {
-            var map = MapInstance.Get(mapId);
-            if (map != null)
+            case -1:
             {
-                map.AddTileAnimation(animId, packet.X, packet.Y, packet.Direction);
-            }
-        }
-        else if (targetType == 1)
-        {
-            if (Globals.Entities.ContainsKey(entityId))
-            {
-                if (Globals.Entities[entityId] != null && !Globals.EntitiesToDispose.Contains(entityId))
+                if (!MapInstance.TryGet(mapId, out var map))
                 {
-                    var animBase = AnimationBase.Get(animId);
-                    if (animBase != null)
-                    {
-                        var animInstance = new Animation(
-                            animBase, false, packet.Direction != Direction.None, -1, Globals.Entities[entityId]
-                        );
-
-                        if (packet.Direction > Direction.None)
-                        {
-                            animInstance.SetDir(packet.Direction);
-                        }
-
-                        Globals.Entities[entityId].Animations.Add(animInstance);
-                    }
+                    return;
                 }
+
+                map.AddTileAnimation(
+                    animationDescriptorId,
+                    packet.X,
+                    packet.Y,
+                    packet.Direction,
+                    source: animationSource
+                );
+
+                break;
             }
-        }
-        else if (targetType == 2)
-        {
-            var map = MapInstance.Get(mapId);
-            if (map != null)
+
+            case 1:
             {
-                if (map.LocalEntities.ContainsKey(entityId))
+                if (Globals.EntitiesToDispose.Contains(entityId))
                 {
-                    if (map.LocalEntities[entityId] != null)
-                    {
-                        var animBase = AnimationBase.Get(animId);
-                        if (animBase != null)
-                        {
-                            var animInstance = new Animation(
-                                animBase, false, packet.Direction == Direction.None, -1,
-                                map.LocalEntities[entityId]
-                            );
-
-                            if (packet.Direction > Direction.None)
-                            {
-                                animInstance.SetDir(packet.Direction);
-                            }
-
-                            map.LocalEntities[entityId].Animations.Add(animInstance);
-                        }
-                    }
+                    return;
                 }
+
+                if (!Globals.Entities.TryGetValue(entityId, out var entity))
+                {
+                    return;
+                }
+
+                if (!AnimationBase.TryGet(animationDescriptorId, out var animationDescriptor))
+                {
+                    return;
+                }
+
+                if (animationSource == default ||
+                    !entity.AnimationsBySource.TryGetValue(animationSource, out var existingAnimation) ||
+                    entity.Animations.Remove(existingAnimation))
+                {
+                    var animationInstance = new Animation(
+                        animationDescriptor,
+                        false,
+                        packet.Direction != Direction.None,
+                        -1,
+                        entity,
+                        source: animationSource
+                    );
+
+                    if (packet.Direction > Direction.None)
+                    {
+                        animationInstance.SetDir(packet.Direction);
+                    }
+
+                    if (animationSource != default)
+                    {
+                        entity.AnimationsBySource[animationSource] = animationInstance;
+                    }
+
+                    entity.Animations.Add(animationInstance);
+                }
+                else
+                {
+                    ApplicationContext.CurrentContext.Logger.LogDebug(
+                        "Unable to add new instance of animation {AnimationId} to entity {EntityId} ({EntityName})  because one already exists for the animation source {AnimationSource} and it could not be removed",
+                        animationDescriptorId,
+                        entity.Id,
+                        entity.Name,
+                        animationSource
+                    );
+                }
+
+                break;
+            }
+
+            case 2:
+            {
+                if (!MapInstance.TryGet(mapId, out var map))
+                {
+                    return;
+                }
+
+                if (!map.LocalEntities.TryGetValue(entityId, out var entity))
+                {
+                    return;
+                }
+
+                if (!AnimationBase.TryGet(animationDescriptorId, out var animationDescriptor))
+                {
+                    return;
+                }
+
+                if (animationSource == default ||
+                    !entity.AnimationsBySource.TryGetValue(animationSource, out var existingAnimation) ||
+                    entity.Animations.Remove(existingAnimation))
+                {
+                    var animationInstance = new Animation(
+                        animationDescriptor,
+                        false,
+                        packet.Direction == Direction.None,
+                        -1,
+                        entity,
+                        source: animationSource
+                    );
+
+                    if (packet.Direction > Direction.None)
+                    {
+                        animationInstance.SetDir(packet.Direction);
+                    }
+
+                    if (animationSource != default)
+                    {
+                        entity.AnimationsBySource[animationSource] = animationInstance;
+                    }
+
+                    entity.Animations.Add(animationInstance);
+                }
+                else
+                {
+                    ApplicationContext.CurrentContext.Logger.LogDebug(
+                        "Unable to add new instance of animation {AnimationId} to entity {EntityId} ({EntityName}) because one already exists for the animation source {AnimationSource} and it could not be removed",
+                        animationDescriptorId,
+                        entity.Id,
+                        entity.Name,
+                        animationSource
+                    );
+                }
+
+                break;
             }
         }
     }
@@ -2167,11 +2245,27 @@ internal sealed partial class PacketHandler
     //CancelCastPacket
     public void HandlePacket(IPacketSender packetSender, CancelCastPacket packet)
     {
-        if (Globals.Entities.ContainsKey(packet.EntityId))
+        if (!Globals.Entities.TryGetValue(packet.EntityId, out var entity))
         {
-            Globals.Entities[packet.EntityId].CastTime = 0;
-            Globals.Entities[packet.EntityId].SpellCast = Guid.Empty;
+            return;
         }
+
+        AnimationSource animationSource = new(AnimationSourceType.SpellCast, entity.SpellCast);
+
+        if (entity.AnimationsBySource.Remove(animationSource, out var removedAnimation))
+        {
+            _ = entity.Animations.Remove(removedAnimation);
+            removedAnimation.Dispose();
+
+            ApplicationContext.CurrentContext.Logger.LogDebug(
+                "Removing cancelled spell cast animation {AnimationId} ({AnimationName})",
+                removedAnimation.MyBase?.Id,
+                removedAnimation.MyBase?.Name
+            );
+        }
+
+        entity.CastTime = 0;
+        entity.SpellCast = default;
     }
 
     //GuildPacket
