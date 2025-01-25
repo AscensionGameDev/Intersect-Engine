@@ -328,7 +328,7 @@ public partial class Projectile : Entity
                 for (var s = 0; s < _spawnedAmount; s++)
                 {
                     var spawn = _spawns[s];
-                    
+
                     if (spawn != null && Maps.MapInstance.Get(spawn.SpawnMapId) != null)
                     {
                         if (_targetId != Guid.Empty && _targetId != _owner &&
@@ -774,7 +774,7 @@ public partial class Projectile : Entity
     /// </summary>
     public override void Draw()
     {
-        if (Maps.MapInstance.Get(MapId) == null || !Globals.GridMaps.Contains(MapId))
+        if (Maps.MapInstance.Get(MapId) == null || !Globals.GridMaps.ContainsKey(MapId))
         {
             return;
         }

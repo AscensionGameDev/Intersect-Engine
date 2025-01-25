@@ -146,7 +146,7 @@ public static partial class Globals
         }
     }
 
-    public static List<Guid> GridMaps = new List<Guid>();
+    public static Dictionary<Guid, Point> GridMaps = [];
 
     public static bool HasGameData = false;
 

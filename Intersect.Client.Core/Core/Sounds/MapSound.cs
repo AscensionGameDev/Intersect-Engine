@@ -82,7 +82,7 @@ public partial class MapSound : Sound, IMapSound
         }
         else
         {
-            if (mDistance > 0 && Globals.GridMaps.Contains(mMapId))
+            if (mDistance > 0 && Globals.GridMaps.ContainsKey(mMapId))
             {
                 var volume = 100 - 100 / (mDistance + 1) * CalculateSoundDistance();
                 if (volume < 0)

@@ -23,6 +23,7 @@ public interface IMapInstance
     int Y { get; }
     int GridX { get; set; }
     int GridY { get; set; }
+    bool IsDisposed { get; }
     bool IsLoaded { get; }
 
     void AddTileAnimation(Guid animId, int tileX, int tileY, Direction dir = Direction.None, IEntity? owner = null);

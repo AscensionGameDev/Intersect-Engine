@@ -203,26 +203,7 @@ public static partial class PacketSender
         }
         else
         {
-            switch (Options.Instance.Map.GameBorderStyle)
-            {
-                case 1:
-                    mapPacket.CameraHolds = new bool[4] { true, true, true, true };
-
-                    break;
-
-                case 0:
-                    var grid = DbInterface.GetGrid(map.MapGrid);
-                    if (grid != null)
-                    {
-                        mapPacket.CameraHolds = new bool[4]
-                        {
-                            0 == map.MapGridY, grid.YMax - 1 == map.MapGridY,
-                            0 == map.MapGridX, grid.XMax - 1 == map.MapGridX
-                        };
-                    }
-
-                    break;
-            }
+            mapPacket.CameraHolds = map.GetCameraHolds();
         }
 
         if (client.IsEditor)

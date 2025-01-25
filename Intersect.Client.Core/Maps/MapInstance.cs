@@ -38,7 +38,19 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     //Map State Variables
     public static Dictionary<Guid, long> MapRequests { get; set; } = new Dictionary<Guid, long>();
 
-    public static MapLoadedDelegate OnMapLoaded { get; set; }
+    public static event MapLoadedDelegate? MapLoaded;
+
+    public void MarkLoadFinished()
+    {
+        ApplicationContext.CurrentContext.Logger.LogDebug(
+            "Done loading map {Id} ({Name}) @ ({GridX}, {GridY})",
+            Id,
+            Name,
+            GridX,
+            GridY
+        );
+        MapLoaded?.Invoke(this);
+    }
 
     private static MapControllers sLookup;
 
@@ -120,6 +132,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     {
     }
 
+    public bool IsDisposed { get; private set; }
+
     public bool IsLoaded { get; private set; }
 
     //Camera Locking Variables
@@ -177,8 +191,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
         IsLoaded = true;
         Autotiles = new MapAutotiles(this);
-        OnMapLoaded -= HandleMapLoaded;
-        OnMapLoaded += HandleMapLoaded;
+        MapLoaded -= HandleMapLoaded;
+        MapLoaded += HandleMapLoaded;
         MapRequests.Remove(Id);
     }
 
@@ -328,7 +342,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     {
         //See if this new map is on the same grid as us
         var updatedBuffers = new HashSet<GameTileBuffer>();
-        if (map != this && Globals.GridMaps.Contains(map.Id) && Globals.GridMaps.Contains(Id) && IsLoaded)
+        if (map != this && Globals.GridMaps.ContainsKey(map.Id) && Globals.GridMaps.ContainsKey(Id) && IsLoaded)
         {
             var surroundingMaps = GenerateAutotileGrid();
             if (map.GridX == GridX - 1)
@@ -546,7 +560,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     public MapBase[,] GenerateAutotileGrid()
     {
         var mapBase = new MapBase[3, 3];
-        if (Globals.MapGrid != null && Globals.GridMaps.Contains(Id))
+        if (Globals.MapGrid != null && Globals.GridMaps.ContainsKey(Id))
         {
             for (var x = -1; x <= 1; x++)
             {
@@ -770,7 +784,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
                     var endVbo = DateTime.UtcNow;
                     var elapsedVbo = endVbo - startVbo;
-                    ApplicationContext.Context.Value?.Logger.LogInformation($"Built VBO for map instance {Id} in {elapsedVbo.TotalMilliseconds}ms");
+                    ApplicationContext.Context.Value?.Logger.LogInformation($"Built VBO for map {Id} '{Name}' in {elapsedVbo.TotalMilliseconds}ms");
 
                     // lock (mTileBuffers)
                     // {
@@ -1571,8 +1585,18 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     //Dispose
     public void Dispose(bool prep = true, bool killentities = true)
     {
+        IsDisposed = true;
+
+        ApplicationContext.CurrentContext.Logger.LogDebug(
+            "Disposing map {Id} ({Name}) @ ({GridX}, {GridY})",
+            Id,
+            Name,
+            GridX,
+            GridY
+        );
+
         IsLoaded = false;
-        OnMapLoaded -= HandleMapLoaded;
+        MapLoaded -= HandleMapLoaded;
 
         foreach (var evt in mEvents)
         {

@@ -10,6 +10,7 @@ using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
 using Intersect.Client.Items;
 using Intersect.Client.Localization;
+using Intersect.Client.Maps;
 using Intersect.Client.Spells;
 using Intersect.Core;
 using Intersect.Enums;
@@ -1054,8 +1055,8 @@ public partial class Entity : IEntity
         }
 
         WorldPos.Reset();
-        var map = Maps.MapInstance.Get(MapId);
-        if (map == null || !Globals.GridMaps.Contains(MapId))
+
+        if (!Globals.GridMaps.ContainsKey(MapId) || !Maps.MapInstance.TryGet(MapId, out var map))
         {
             return;
         }
@@ -1391,6 +1392,11 @@ public partial class Entity : IEntity
 
     protected virtual void CalculateOrigin()
     {
+        if (LatestMap?.IsDisposed ?? false)
+        {
+            LatestMap = Maps.MapInstance.TryGet(MapId, out MapInstance updatedInstance) ? updatedInstance : null;
+        }
+
         if (LatestMap == default)
         {
             mOrigin = default;
