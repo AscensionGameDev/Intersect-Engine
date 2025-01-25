@@ -31,7 +31,7 @@ public partial class MapPacket : IntersectPacket
         int revision = -1,
         int gridX = -1,
         int gridY = -1,
-        bool[] borders = null
+        bool[]? borders = null
     )
     {
         MapId = mapId;
@@ -70,7 +70,7 @@ public partial class MapPacket : IntersectPacket
     public int GridY { get; set; }
 
     [Key(8)]
-    public bool[] CameraHolds { get; set; }
+    public bool[]? CameraHolds { get; set; }
 
     [IgnoreMember]
     public string? CacheChecksum
@@ -102,13 +102,13 @@ public partial class MapPacket : IntersectPacket
         }
     }
 
-    public static string ComputeCacheVersion(Guid id, int revision, int gridX, int gridY, bool[] cameraHolds)
+    public static string ComputeCacheVersion(Guid id, int revision, int gridX, int gridY, bool[]? cameraHolds)
     {
         var hashInputData = id.ToByteArray()
             .Concat(BitConverter.GetBytes(revision))
             .Concat(BitConverter.GetBytes(gridX))
             .Concat(BitConverter.GetBytes(gridY))
-            .Concat(cameraHolds.SelectMany(BitConverter.GetBytes))
+            .Concat(cameraHolds?.SelectMany(BitConverter.GetBytes) ?? [])
             .ToArray();
         var versionData = SHA256.HashData(hashInputData);
         var version = Convert.ToBase64String(versionData);

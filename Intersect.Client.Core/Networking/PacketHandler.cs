@@ -245,7 +245,7 @@ internal sealed partial class PacketHandler
                 packet.GridY,
                 packet.Revision,
                 packet.CacheVersion,
-                $"[{string.Join(", ", packet.CameraHolds)}]"
+                $"[{string.Join(", ", packet.CameraHolds ?? [])}]"
             );
 
             ObjectCacheData<MapBase> cacheData = new()
@@ -305,7 +305,7 @@ internal sealed partial class PacketHandler
 
             mapInstance.GridX = gridPosition.X;
             mapInstance.GridY = gridPosition.Y;
-            mapInstance.CameraHolds = packet.CameraHolds;
+            mapInstance.CameraHolds = packet.CameraHolds ?? [false, false, false, false];
 
             ApplicationContext.CurrentContext.Logger.LogDebug(
                 "Loading map {Id} ({Name}) @ ({GridX}, {GridY}) revision {Revision} version {Version} holds {CameraHolds}",
