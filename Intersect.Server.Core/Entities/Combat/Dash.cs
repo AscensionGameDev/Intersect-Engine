@@ -17,7 +17,7 @@ public partial class Dash
     public int Range;
 
     public Dash(
-        Entity en,
+        Entity entity,
         int range,
         Direction direction,
         bool blockPass = false,
@@ -27,20 +27,30 @@ public partial class Dash
     )
     {
         Direction = direction;
-        Facing = en.Dir;
+        Facing = entity.Dir;
 
-        CalculateRange(en, range, blockPass, activeResourcePass, deadResourcePass, zdimensionPass);
+        CalculateRange(entity, range, blockPass, activeResourcePass, deadResourcePass, zdimensionPass);
         if (Range <= 0)
         {
             return;
         } //Remove dash instance if no where to dash
 
+        var endX = entity.X;
+        var endY = entity.Y;
+
+        var dashLengthMilliseconds = (int)(Options.Instance.Combat.MaxDashSpeed);// * (Range / 10f));
+        var dashEndMilliseconds = Timing.Global.Milliseconds + dashLengthMilliseconds;
+        entity.MoveTimer = dashEndMilliseconds;
+
         PacketSender.SendEntityDash(
-            en, en.MapId, (byte) en.X, (byte) en.Y, (int) (Options.Instance.Combat.MaxDashSpeed * (Range / 10f)),
+            entity,
+            entity.MapId,
+            endX,
+            endY,
+            dashEndMilliseconds,
+            dashLengthMilliseconds,
             Direction == Facing ? Direction : Direction.None
         );
-
-        en.MoveTimer = Timing.Global.Milliseconds + Options.Instance.Combat.MaxDashSpeed;
     }
 
     public void CalculateRange(
