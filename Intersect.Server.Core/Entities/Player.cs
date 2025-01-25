@@ -1091,23 +1091,16 @@ public partial class Player : Entity
     //Spawning/Dying
     private void Respawn()
     {
-        //Remove any damage over time effects
-        DoT.Clear();
-        CachedDots = new DoT[0];
-        Statuses.Clear();
-        CachedStatuses = new Status[0];
-
-        CombatTimer = 0;
-
-        var cls = ClassBase.Get(ClassId);
-        if (cls != null)
+        if (ClassBase.TryGet(ClassId, out _))
         {
             WarpToSpawn();
         }
         else
         {
-            Warp(Guid.Empty, 0, 0, 0);
+            Warp(default, 0, 0, 0);
         }
+
+        Reset();
 
         PacketSender.SendEntityDataToProximity(this);
 
@@ -1159,7 +1152,6 @@ public partial class Player : Entity
             }
         }
         PacketSender.SendEntityDie(this);
-        Reset();
         Respawn();
         PacketSender.SendInventory(this);
     }
@@ -1572,7 +1564,7 @@ public partial class Player : Entity
         //If Entity is resource, check for the correct tool and make sure its not a spell cast.
         if (target is Resource resource)
         {
-            if (resource.IsDead())
+            if (resource.IsDead)
             {
                 return;
             }
@@ -1625,7 +1617,7 @@ public partial class Player : Entity
 
     protected override void ReactToDamage(Vital vital)
     {
-        if (IsDead() || IsDisposed)
+        if (IsDead || IsDisposed)
         {
             base.ReactToDamage(vital);
             return;
@@ -1725,7 +1717,7 @@ public partial class Player : Entity
         //If Entity is resource, check for the correct tool and make sure its not a spell cast.
         if (target is Resource resource)
         {
-            if (resource.IsDead())
+            if (resource.IsDead)
             {
                 return;
             }

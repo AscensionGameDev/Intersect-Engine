@@ -198,7 +198,7 @@ public abstract partial class Entity : IEntity
     }
 
     [NotMapped]
-    public bool Dead { get; set; }
+    public bool IsDead { get; set; }
 
     //Combat
     [NotMapped, JsonIgnore]
@@ -1667,7 +1667,7 @@ public abstract partial class Entity : IEntity
             }
         }
 
-        if (targetPlayer == null && !(target is Npc) || target.IsDead())
+        if (targetPlayer == null && !(target is Npc) || target.IsDead)
         {
             return;
         }
@@ -2309,7 +2309,7 @@ public abstract partial class Entity : IEntity
             else
             {
                 //PVP Kill common events
-                if (!enemy.Dead && enemy is Player enemyPlayer && this is Player)
+                if (!enemy.IsDead && enemy is Player enemyPlayer && this is Player)
                 {
                     thisPlayer.StartCommonEventsWithTrigger(CommonEventTrigger.PVPKill, "", enemy.Name);
                     enemyPlayer.StartCommonEventsWithTrigger(CommonEventTrigger.PVPDeath, "", this.Name);
@@ -2352,7 +2352,7 @@ public abstract partial class Entity : IEntity
 
     protected virtual void CheckForOnhitAttack(Entity enemy, bool isAutoAttack)
     {
-        if (isAutoAttack && !enemy.IsDead()) //Ignore spell damage.
+        if (isAutoAttack && !enemy.IsDead) //Ignore spell damage.
         {
             foreach (var status in CachedStatuses)
             {
@@ -3022,7 +3022,7 @@ public abstract partial class Entity : IEntity
     //Spawning/Dying
     public virtual void Die(bool dropItems = true, Entity killer = null)
     {
-        if (IsDead() || Items == null)
+        if (IsDead || Items == null)
         {
             return;
         }
@@ -3095,7 +3095,7 @@ public abstract partial class Entity : IEntity
         CachedStatuses = new Status[0];
         Stat?.ToList().ForEach(stat => stat?.Reset());
 
-        Dead = true;
+        IsDead = true;
     }
 
     protected virtual bool ShouldDropItem(Entity killer, ItemBase itemDescriptor, Item item, float dropRateModifier, out Guid lootOwner)
@@ -3161,11 +3161,6 @@ public abstract partial class Entity : IEntity
 
     protected abstract EntityItemSource? AsItemSource();
 
-    public bool IsDead()
-    {
-        return Dead;
-    }
-
     public virtual void Reset()
     {
         for (var i = 0; i < Enum.GetValues<Vital>().Length; i++)
@@ -3173,7 +3168,15 @@ public abstract partial class Entity : IEntity
             RestoreVital((Vital)i);
         }
 
-        Dead = false;
+        // Remove any damage over time effects
+        DoT.Clear();
+        CachedDots = [];
+        Statuses.Clear();
+        CachedStatuses = [];
+
+        CombatTimer = 0;
+
+        IsDead = false;
     }
 
     //Empty virtual functions for players

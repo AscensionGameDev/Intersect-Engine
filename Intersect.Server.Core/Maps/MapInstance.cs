@@ -283,21 +283,43 @@ public partial class MapInstance : IMapInstance
     /// <summary>
     /// Adds an entity to the MapInstance so that the instance knows to process them.
     /// </summary>
-    /// <param name="en">The entity to add.</param>
-    public void AddEntity(Entity en)
+    /// <param name="entity">The entity to add.</param>
+    public void AddEntity(Entity? entity)
     {
-        if (en != null && !en.IsDead() && en.MapInstanceId == MapInstanceId)
+        if (entity == null)
         {
-            if (!mEntities.ContainsKey(en.Id))
+            return;
+        }
+
+        if (entity is not Player && entity.IsDead)
+        {
+            return;
+        }
+
+        if (entity.MapInstanceId != MapInstanceId)
+        {
+            return;
+        }
+
+        if (!mEntities.TryAdd(entity.Id, entity))
+        {
+            return;
+        }
+
+        if (entity is Player player)
+        {
+            if (!mPlayers.TryAdd(player.Id, player))
             {
-                mEntities.TryAdd(en.Id, en);
-                if (en is Player plyr)
-                {
-                    mPlayers.TryAdd(plyr.Id, plyr);
-                }
-                mCachedEntities = mEntities.Values.ToArray();
+                ApplicationContext.CurrentContext.Logger.LogWarning(
+                    "Failed to add player {PlayerId} to map instance {MapInstanceId} of map {MapDescriptorId}",
+                    player.Id,
+                    MapInstanceId,
+                    mMapController.Id
+                );
             }
         }
+
+        mCachedEntities = mEntities.Values.ToArray();
     }
 
     /// <summary>
@@ -530,7 +552,7 @@ public partial class MapInstance : IMapInstance
                 lock (npcSpawn.Value.Entity.EntityLock)
                 {
                     var npc = npcSpawn.Value.Entity as Npc;
-                    if (!npc.Dead)
+                    if (!npc.IsDead)
                     {
                         // If we keep track of reset radiuses, just reset it to that value.
                         if (Options.Instance.Npc.AllowResetRadius)
@@ -1309,7 +1331,7 @@ public partial class MapInstance : IMapInstance
         for (var i = 0; i < spawns.Count; i++)
         {
             var spawn = spawns[i];
-            if (!NpcSpawnInstances.TryGetValue(spawn, out var spawnInstance) || spawnInstance?.Entity?.Base == default || !spawnInstance.Entity.Dead)
+            if (!NpcSpawnInstances.TryGetValue(spawn, out var spawnInstance) || spawnInstance?.Entity?.Base == default || !spawnInstance.Entity.IsDead)
             {
                 continue;
             }
@@ -1330,7 +1352,7 @@ public partial class MapInstance : IMapInstance
     {
         foreach (var spawn in ResourceSpawns)
         {
-            if (!ResourceSpawnInstances.TryGetValue(spawn.Value, out var spawnInstance) || spawnInstance?.Entity?.Base == default || !spawnInstance.Entity.Dead)
+            if (!ResourceSpawnInstances.TryGetValue(spawn.Value, out var spawnInstance) || spawnInstance?.Entity?.Base == default || !spawnInstance.Entity.IsDead)
             {
                 continue;
             }

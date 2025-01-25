@@ -832,7 +832,7 @@ public partial class Npc : Entity
                     var targetY = 0;
                     var targetZ = 0;
 
-                    if (tempTarget != null && (tempTarget.IsDead() || !InRangeOf(tempTarget, Options.Instance.Map.MapWidth * 2) || !CanTarget(tempTarget)))
+                    if (tempTarget != null && (tempTarget.IsDead || !InRangeOf(tempTarget, Options.Instance.Map.MapWidth * 2) || !CanTarget(tempTarget)))
                     {
                         _ = TryFindNewTarget(Timing.Global.Milliseconds, tempTarget.Id, !CanTarget(tempTarget));
                         tempTarget = Target;
@@ -886,7 +886,7 @@ public partial class Npc : Entity
                     //Check if there is a target, if so, run their ass down.
                     if (tempTarget != null && CanTarget(tempTarget))
                     {
-                        if (!tempTarget.IsDead() && CanAttack(tempTarget, null))
+                        if (!tempTarget.IsDead && CanAttack(tempTarget, null))
                         {
                             targetMap = tempTarget.MapId;
                             targetX = tempTarget.X;
@@ -1448,7 +1448,7 @@ public partial class Npc : Entity
                 }
 
                 // Is this entry dead?, if so skip it.
-                if (en.Key.IsDead())
+                if (en.Key.IsDead)
                 {
                     continue;
                 }
@@ -1480,7 +1480,7 @@ public partial class Npc : Entity
         {
             foreach (var entity in instance.GetCachedEntities())
             {
-                if (entity != null && !entity.IsDead() && entity != this && entity.Id != avoidId)
+                if (entity != null && !entity.IsDead && entity != this && entity.Id != avoidId)
                 {
                     //TODO Check if NPC is allowed to attack player with new conditions
                     if (entity is Player player)
