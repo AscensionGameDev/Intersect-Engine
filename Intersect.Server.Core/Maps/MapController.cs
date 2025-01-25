@@ -90,14 +90,12 @@ public partial class MapController : MapBase
         }
     }
 
-    public bool[] GetCameraHolds()
+    public bool[]? GetCameraHolds()
     {
         switch (Options.Instance.Map.GameBorderStyle)
         {
             case 1:
                 return [true, true, true, true];
-
-                break;
 
             case 0:
                 var grid = DbInterface.GetGrid(MapGrid);
@@ -115,7 +113,7 @@ public partial class MapController : MapBase
                 break;
         }
 
-        return [true, true, true, true];
+        return null;
     }
 
     //Temporary Values
