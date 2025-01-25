@@ -1,5 +1,6 @@
 ﻿using MessagePack;
 using Intersect.Enums;
+using Intersect.GameObjects.Animations;
 
 namespace Intersect.Network.Packets.Server;
 
@@ -18,7 +19,9 @@ public partial class PlayAnimationPacket : IntersectPacket
         Guid mapId,
         int x,
         int y,
-        Direction direction
+        Direction direction,
+        AnimationSourceType sourceType = AnimationSourceType.Any,
+        Guid sourceId = default
     )
     {
         AnimationId = animId;
@@ -28,6 +31,8 @@ public partial class PlayAnimationPacket : IntersectPacket
         X = x;
         Y = y;
         Direction = direction;
+        SourceType = sourceType;
+        SourceId = sourceId;
     }
 
     [Key(0)]
@@ -50,5 +55,11 @@ public partial class PlayAnimationPacket : IntersectPacket
 
     [Key(6)]
     public Direction Direction { get; set; }
+
+    [Key(7)]
+    public AnimationSourceType SourceType { get; set; }
+
+    [Key(8)]
+    public Guid SourceId { get; set; }
 
 }

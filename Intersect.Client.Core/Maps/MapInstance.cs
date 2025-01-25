@@ -15,6 +15,7 @@ using Intersect.Client.Localization;
 using Intersect.Compression;
 using Intersect.Core;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.Serialization;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
@@ -720,7 +721,14 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     }
 
     //Animations
-    public void AddTileAnimation(Guid animId, int tileX, int tileY, Direction dir = Direction.None, IEntity owner = null)
+    public void AddTileAnimation(
+        Guid animId,
+        int tileX,
+        int tileY,
+        Direction dir = Direction.None,
+        IEntity? owner = null,
+        AnimationSource source = default
+    )
     {
         var animBase = AnimationBase.Get(animId);
         if (animBase == null)
@@ -728,11 +736,22 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             return;
         }
 
-        var anim = new MapAnimation(animBase, tileX, tileY, dir, owner as Entity);
+        var anim = new MapAnimation(
+            animBase,
+            tileX,
+            tileY,
+            dir,
+            owner as Entity,
+            source: source
+        );
         LocalAnimations.TryAdd(anim.Id, anim);
         anim.SetPosition(
             X + tileX * _tileWidth + _tileHalfWidth,
-            Y + tileY * _tileHeight + _tileHalfHeight, tileX, tileY, Id, dir
+            Y + tileY * _tileHeight + _tileHalfHeight,
+            tileX,
+            tileY,
+            Id,
+            dir
         );
     }
 
