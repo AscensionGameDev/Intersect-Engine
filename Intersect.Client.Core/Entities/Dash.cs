@@ -1,7 +1,9 @@
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.Maps;
+using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Entities;
 
@@ -9,7 +11,11 @@ public partial class Dash : IDash
 {
     private readonly Direction mChangeDirection = Direction.None;
 
-    private readonly int mDashTime;
+    private readonly long _serverDashEndMilliseconds;
+
+    private readonly long _dashLengthMilliseconds;
+
+    private long _dashEndMilliseconds;
 
     private readonly Guid mEndMapId;
 
@@ -31,75 +37,99 @@ public partial class Dash : IDash
 
     public float OffsetY => GetYOffset();
 
-    public Dash(Guid endMapId, byte endX, byte endY, int dashTime, Direction changeDirection = Direction.None)
+    public Dash(
+        Guid endMapId,
+        byte endX,
+        byte endY,
+        long dashEndMilliseconds,
+        long dashLengthMilliseconds,
+        Direction changeDirection = Direction.None
+    )
     {
         mChangeDirection = changeDirection;
         mEndMapId = endMapId;
         mEndX = endX;
         mEndY = endY;
-        mDashTime = dashTime;
+        _serverDashEndMilliseconds = dashEndMilliseconds;
+        _dashLengthMilliseconds = dashLengthMilliseconds;
     }
 
-    public void Start(Entity en)
+    public void Start(Entity entity)
     {
-        if (MapInstance.Get(en.MapId) == null ||
-            MapInstance.Get(mEndMapId) == null ||
-            mEndMapId == en.MapId && mEndX == en.X && mEndY == en.Y)
+        var now = Timing.Global.Milliseconds;
+
+        if (_serverDashEndMilliseconds < now)
         {
-            en.Dashing = null;
+            ApplicationContext.CurrentContext.Logger.LogDebug("Skipping already-expired dash");
+            entity.Dashing = null;
+            return;
         }
-        else
+
+        if (mEndMapId == entity.MapId && mEndX == entity.X && mEndY == entity.Y)
         {
-            var startMap = MapInstance.Get(en.MapId);
-            var endMap = MapInstance.Get(mEndMapId);
-            mStartTime = Timing.Global.Milliseconds;
-            mStartXCoord = en.OffsetX;
-            mStartYCoord = en.OffsetY;
-            mEndXCoord = endMap.X + mEndX * Options.Instance.Map.TileWidth - (startMap.X + en.X * Options.Instance.Map.TileWidth);
-            mEndYCoord = endMap.Y + mEndY * Options.Instance.Map.TileHeight - (startMap.Y + en.Y * Options.Instance.Map.TileHeight);
-            if (mChangeDirection > Direction.None)
-            {
-                en.Dir = mChangeDirection;
-            }
+            entity.Dashing = null;
+            return;
+        }
+
+        if (!MapInstance.TryGet(entity.MapId, out var currentMap) || !MapInstance.TryGet(mEndMapId, out var targetMap))
+        {
+            entity.Dashing = null;
+            return;
+        }
+
+        mStartTime = now;
+        _dashEndMilliseconds = Math.Min(_serverDashEndMilliseconds, mStartTime + _dashLengthMilliseconds);
+
+        ApplicationContext.CurrentContext.Logger.LogDebug(
+            "Starting dash that is {DashLength}ms long, and there are {RemainingTime}ms before it is completed on the server",
+            _dashLengthMilliseconds,
+            _serverDashEndMilliseconds - now
+        );
+
+        mStartXCoord = entity.X;
+        mStartYCoord = entity.Y;
+        mEndXCoord = targetMap.X + mEndX * Options.Instance.Map.TileWidth - (currentMap.X + entity.X * Options.Instance.Map.TileWidth);
+        mEndYCoord = targetMap.Y + mEndY * Options.Instance.Map.TileHeight - (currentMap.Y + entity.Y * Options.Instance.Map.TileHeight);
+        if (mChangeDirection > Direction.None)
+        {
+            entity.Dir = mChangeDirection;
         }
     }
 
     public float GetXOffset()
     {
-        if (Timing.Global.Milliseconds > mStartTime + mDashTime)
+        if (Timing.Global.Milliseconds > mStartTime + _dashLengthMilliseconds)
         {
             return mEndXCoord;
         }
-        else
-        {
-            return (mEndXCoord - mStartXCoord) * ((Timing.Global.Milliseconds - mStartTime) / (float)mDashTime);
-        }
+
+        return (mEndXCoord - mStartXCoord) * ((Timing.Global.Milliseconds - mStartTime) / (float)_dashLengthMilliseconds);
     }
 
     public float GetYOffset()
     {
-        if (Timing.Global.Milliseconds > mStartTime + mDashTime)
+        if (Timing.Global.Milliseconds > mStartTime + _dashLengthMilliseconds)
         {
             return mEndYCoord;
         }
-        else
-        {
-            return (mEndYCoord - mStartYCoord) * ((Timing.Global.Milliseconds - mStartTime) / (float)mDashTime);
-        }
+
+        return (mEndYCoord - mStartYCoord) * ((Timing.Global.Milliseconds - mStartTime) / (float)_dashLengthMilliseconds);
     }
 
-    public bool Update(Entity en)
+    public bool Update(Entity entity)
     {
-        if (Timing.Global.Milliseconds > mStartTime + mDashTime)
+        if (Timing.Global.Milliseconds <= _dashEndMilliseconds)
         {
-            en.Dashing = null;
-            en.OffsetX = 0;
-            en.OffsetY = 0;
-            en.MapId = mEndMapId;
-            en.X = mEndX;
-            en.Y = mEndY;
+            return entity.Dashing != null;
         }
 
-        return en.Dashing != null;
+        ApplicationContext.CurrentContext.Logger.LogDebug("Dash finished");
+        entity.Dashing = null;
+        entity.OffsetX = 0;
+        entity.OffsetY = 0;
+        entity.MapId = mEndMapId;
+        entity.X = mEndX;
+        entity.Y = mEndY;
+        return false;
     }
 }

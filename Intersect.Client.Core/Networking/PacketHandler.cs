@@ -1838,16 +1838,21 @@ internal sealed partial class PacketHandler
     //EntityDashPacket
     public void HandlePacket(IPacketSender packetSender, EntityDashPacket packet)
     {
-        if (Globals.Entities.ContainsKey(packet.EntityId))
+        if (!Globals.Entities.TryGetValue(packet.EntityId, out var value))
         {
-            Globals.Entities[packet.EntityId]
-                .DashQueue.Enqueue(
-                    new Dash(
-                        packet.EndMapId, packet.EndX, packet.EndY,
-                        packet.DashTime, packet.Direction
-                    )
-                );
+            return;
         }
+
+        value.DashQueue.Enqueue(
+            new Dash(
+                packet.EndMapId,
+                packet.EndX,
+                packet.EndY,
+                packet.DashEndMilliseconds,
+                packet.DashLengthMilliseconds,
+                packet.Direction
+            )
+        );
     }
 
     //MapGridPacket

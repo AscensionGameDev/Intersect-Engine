@@ -285,7 +285,15 @@ public partial record Options
 
     public static void LoadFromServer(string data)
     {
-        Instance = JsonConvert.DeserializeObject<Options>(data);
+        try
+        {
+            Instance = JsonConvert.DeserializeObject<Options>(data);
+        }
+        catch (Exception exception)
+        {
+            ApplicationContext.CurrentContext.Logger.LogError(exception, "Failed to load options from server");
+            throw;
+        }
     }
 
     // ReSharper disable once UnusedMember.Global

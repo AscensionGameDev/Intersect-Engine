@@ -1922,9 +1922,29 @@ public static partial class PacketSender
     }
 
     //EntityDashPacket
-    public static void SendEntityDash(Entity en, Guid endMapId, byte endX, byte endY, int dashTime, Direction direction)
+    public static void SendEntityDash(
+        Entity en,
+        Guid endMapId,
+        int endX,
+        int endY,
+        long dashEndMilliseconds,
+        int dashLengthMilliseconds,
+        Direction direction
+    )
     {
-        SendDataToProximityOnMapInstance(en.MapId, en.MapInstanceId, new EntityDashPacket(en.Id, endMapId, endX, endY, dashTime, direction));
+        SendDataToProximityOnMapInstance(
+            en.MapId,
+            en.MapInstanceId,
+            new EntityDashPacket(
+                en.Id,
+                endMapId,
+                endX,
+                endY,
+                dashEndMilliseconds,
+                dashLengthMilliseconds,
+                direction
+            )
+        );
     }
 
     /// <summary>

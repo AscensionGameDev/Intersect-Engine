@@ -11,13 +11,14 @@ public partial class EntityDashPacket : IntersectPacket
     {
     }
 
-    public EntityDashPacket(Guid entityId, Guid endMapId, byte endX, byte endY, int dashTime, Direction direction)
+    public EntityDashPacket(Guid entityId, Guid endMapId, int endX, int endY, long dashEndMilliseconds, int dashLengthMilliseconds, Direction direction)
     {
         EntityId = entityId;
         EndMapId = endMapId;
-        EndX = endX;
-        EndY = endY;
-        DashTime = dashTime;
+        EndX = (byte)endX;
+        EndY = (byte)endY;
+        DashEndMilliseconds = dashEndMilliseconds;
+        DashLengthMilliseconds = dashLengthMilliseconds;
         Direction = direction;
     }
 
@@ -34,9 +35,12 @@ public partial class EntityDashPacket : IntersectPacket
     public byte EndY { get; set; }
 
     [Key(4)]
-    public int DashTime { get; set; }
+    public long DashEndMilliseconds { get; set; }
 
     [Key(5)]
+    public int DashLengthMilliseconds { get; set; }
+
+    [Key(6)]
     public Direction Direction { get; set; }
 
 }
