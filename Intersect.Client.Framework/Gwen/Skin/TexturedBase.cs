@@ -1641,7 +1641,7 @@ public partial class TexturedBase : Skin.Base
         else
         {
             var rect = control.RenderBounds;
-            Renderer.DrawColor = control.RenderColor;
+            Renderer.DrawColor = control.IsDisabled ? Colors.Button.Disabled : control.RenderColor;
 
             if (horizontal)
             {

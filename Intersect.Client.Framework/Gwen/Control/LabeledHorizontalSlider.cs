@@ -126,10 +126,28 @@ public partial class LabeledHorizontalSlider : Base
         }
     }
 
+    public override bool IsDisabled
+    {
+        get => base.IsDisabled;
+        set
+        {
+            base.IsDisabled = value;
+            _label.IsDisabled = value;
+            _slider.IsDisabled = value;
+            _sliderValue.IsDisabled = value;
+            _sliderBackground.IsDisabled = value;
+        }
+    }
+
     /// <summary>
     ///     Invoked when the value has been changed.
     /// </summary>
     public event GwenEventHandler<EventArgs> ValueChanged;
+
+    public void SetRange(double min, double max)
+    {
+        _slider.SetRange(min, max);
+    }
 
     public override JObject GetJson(bool isRoot = default)
     {
@@ -141,5 +159,13 @@ public partial class LabeledHorizontalSlider : Base
     public override void LoadJson(JToken obj, bool isRoot = default)
     {
         base.LoadJson(obj);
+    }
+
+    public override void SetToolTipText(string? text)
+    {
+        _label.SetToolTipText(text);
+        _slider.SetToolTipText(text);
+        _sliderValue.SetToolTipText(text);
+        _sliderBackground.SetToolTipText(text);
     }
 }

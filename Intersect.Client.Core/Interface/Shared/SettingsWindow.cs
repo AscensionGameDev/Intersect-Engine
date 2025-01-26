@@ -181,7 +181,7 @@ public partial class SettingsWindow : ImagePanel
         {
             Text = Strings.Settings.ShowManaAsPercentage
         };
-        
+
         // Game Settings - Interface: simplified escape menu.
         _simplifiedEscapeMenu = new LabeledCheckBox(_interfaceSettings, "SimplifiedEscapeMenu")
         {
@@ -321,17 +321,11 @@ public partial class SettingsWindow : ImagePanel
             }
         );
 
-        Globals.Database.WorldZoom = MathHelper.Clamp(Globals.Database.WorldZoom, 1, 4);
-
-        var worldScaleNotches = new double[] { 1, 2, 4 }.Select(n => n * Graphics.BaseWorldScale).ToArray();
         _worldScale = new LabeledHorizontalSlider(_videoSettingsContainer, "WorldScale")
         {
+            IsDisabled = !Options.IsLoaded,
             Label = Strings.Settings.WorldScale,
-            Min = worldScaleNotches.Min(),
-            Max = worldScaleNotches.Max(),
-            Notches = worldScaleNotches,
             SnapToNotches = false,
-            Value = Globals.Database.WorldZoom,
         };
 
         // Video Settings - FPS Background.
@@ -429,7 +423,7 @@ public partial class SettingsWindow : ImagePanel
         };
         _keybindingRestoreBtn.Clicked += KeybindingsRestoreBtn_Clicked;
 
-        // Keybinding Settings - Controls 
+        // Keybinding Settings - Controls
         var row = 0;
         var defaultFont = Current.GetFont("sourcesansproblack", 10);
         foreach (Control control in Enum.GetValues(typeof(Control)))
@@ -491,6 +485,46 @@ public partial class SettingsWindow : ImagePanel
 
         LoadJsonUi(UI.Shared, Graphics.Renderer?.GetResolutionString());
         IsHidden = true;
+    }
+
+    protected override void OnVisibilityChanged(object? sender, VisibilityChangedEventArgs eventArgs)
+    {
+        base.OnVisibilityChanged(sender, eventArgs);
+
+        if (eventArgs.IsVisible)
+        {
+            UpdateWorldScaleControls();
+        }
+    }
+
+    private void UpdateWorldScaleControls()
+    {
+        var worldScaleNotches = new double[] { 1, 2, 4 }.Select(n => n * Graphics.MinimumWorldScale).ToList();
+        while (worldScaleNotches.Last() < Graphics.MaximumWorldScale)
+        {
+            worldScaleNotches.Add(worldScaleNotches.Last() * 2);
+        }
+
+        if (Options.IsLoaded)
+        {
+            _worldScale.IsDisabled = false;
+            _worldScale.SetToolTipText(null);
+
+            Globals.Database.WorldZoom = (float)MathHelper.Clamp(
+                Globals.Database.WorldZoom,
+                worldScaleNotches.Min(),
+                worldScaleNotches.Max()
+            );
+        }
+        else
+        {
+            _worldScale.SetToolTipText(Strings.Settings.WorldScaleTooltip);
+            _worldScale.IsDisabled = true;
+        }
+
+        _worldScale.SetRange(worldScaleNotches.Min(), worldScaleNotches.Max());
+        _worldScale.Notches = worldScaleNotches.ToArray();
+        _worldScale.Value = Globals.Database.WorldZoom;
     }
 
     private void GameSettingsTab_Clicked(Base sender, ClickedEventArgs arguments)
@@ -642,16 +676,7 @@ public partial class SettingsWindow : ImagePanel
         _settingsCancelBtn.Show();
         _keybindingRestoreBtn.Hide();
 
-        var worldScaleNotches = new double[] { 1, 2, 4 }.Select(n => n * Graphics.BaseWorldScale).ToArray();
-
-        Globals.Database.WorldZoom = (float)MathHelper.Clamp(
-            Globals.Database.WorldZoom,
-            worldScaleNotches.Min(),
-            worldScaleNotches.Max()
-        );
-        _worldScale.Min = worldScaleNotches.Min();
-        _worldScale.Max = worldScaleNotches.Max();
-        _worldScale.Value = Globals.Database.WorldZoom;
+        UpdateWorldScaleControls();
     }
 
     private readonly HashSet<Keys> _keysDown = [];
@@ -759,7 +784,6 @@ public partial class SettingsWindow : ImagePanel
         _lightingEnabledCheckbox.IsChecked = Globals.Database.EnableLighting;
 
         // _uiScale.Value = Globals.Database.UIScale;
-        _worldScale.Value = Globals.Database.WorldZoom;
 
         if (Graphics.Renderer?.GetValidVideoModes().Count > 0)
         {

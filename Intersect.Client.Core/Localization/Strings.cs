@@ -1991,6 +1991,10 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString WorldScale = @"World Scale";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString WorldScaleTooltip =
+            @"World Scale is only available after connecting to the server.";
     }
 
     public partial struct Parties

@@ -105,7 +105,9 @@ public static partial class Graphics
 
     public static GameFont? UIFont;
 
-    public static float BaseWorldScale => Options.Instance?.Map?.TileScale ?? 1;
+    public static float MinimumWorldScale => Options.Instance?.Map?.MinimumWorldScale ?? 1;
+
+    public static float MaximumWorldScale => Options.Instance?.Map?.MaximumWorldScale ?? 1;
 
     //Init Functions
     public static void InitGraphics()

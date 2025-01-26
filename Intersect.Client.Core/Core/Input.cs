@@ -39,18 +39,18 @@ public static partial class Input
     private static void HandleZoomOut()
     {
         Globals.Database.WorldZoom /= 2;
-        if (Globals.Database.WorldZoom < Graphics.BaseWorldScale)
+        if (Globals.Database.WorldZoom < Graphics.MinimumWorldScale)
         {
-            Globals.Database.WorldZoom = Graphics.BaseWorldScale * 4;
+            Globals.Database.WorldZoom = Graphics.MaximumWorldScale;
         }
     }
 
     private static void HandleZoomIn()
     {
         Globals.Database.WorldZoom *= 2;
-        if (Globals.Database.WorldZoom > Graphics.BaseWorldScale * 4)
+        if (Globals.Database.WorldZoom > Graphics.MaximumWorldScale)
         {
-            Globals.Database.WorldZoom = Graphics.BaseWorldScale;
+            Globals.Database.WorldZoom = Graphics.MinimumWorldScale;
         }
     }
 
