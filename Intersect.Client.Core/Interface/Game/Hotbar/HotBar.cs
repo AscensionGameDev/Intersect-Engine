@@ -38,12 +38,7 @@ public partial class HotBarWindow
         var hotbarSlotCount = Options.Instance.Player.HotbarSlotCount;
         for (var hotbarSlotIndex = 0; hotbarSlotIndex < hotbarSlotCount; hotbarSlotIndex++)
         {
-            var hotbarItem = new HotbarItem(hotbarSlotIndex, HotbarWindow)
-            {
-                HotbarIcon = new ImagePanel(HotbarWindow, $"HotbarContainer{hotbarSlotIndex}"),
-            };
-            hotbarItem.KeyLabel = new Label(hotbarItem.HotbarIcon, $"HotbarLabel{hotbarSlotIndex}");
-            hotbarItem.Setup();
+            var hotbarItem = new HotbarItem(hotbarSlotIndex, HotbarWindow);
             Items.Add(hotbarItem);
         }
     }

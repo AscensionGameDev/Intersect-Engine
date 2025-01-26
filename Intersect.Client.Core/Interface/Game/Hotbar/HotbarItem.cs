@@ -24,15 +24,18 @@ public partial class HotbarItem
     private const int ItemXPadding = 4;
     private const int ItemYPadding = 4;
 
+    private readonly ImagePanel _contentPanel;
+    private readonly Label _cooldownLabel;
+    private readonly Label _equipLabel;
+    private readonly ImagePanel _icon;
+    private readonly Label _keyLabel;
+
     private bool _canDrag;
     private long _clickTime;
-    private ImagePanel _contentPanel;
-    private Label _cooldownLabel;
     private Guid _currentId = Guid.Empty;
     private ItemBase? _currentItem = null;
     private SpellBase? _currentSpell = null;
     private Draggable _dragIcon;
-    private Label _equipLabel;
     private bool _isDragging;
     private bool _isEquipped;
     private bool _isFaded;
@@ -49,17 +52,14 @@ public partial class HotbarItem
     private Spell? _spellBookItem = null;
     private SpellDescriptionWindow? _spellDescWindow;
     private bool _textureLoaded;
-    public Label KeyLabel;
-    public ImagePanel HotbarIcon;
 
-    public HotbarItem(int index, Base hotbarWindow)
+    public HotbarItem(int hotbarSlotIndex, Base hotbarWindow)
     {
-        _hotbarSlotIndex = index;
+        _hotbarSlotIndex = hotbarSlotIndex;
         _hotbarWindow = hotbarWindow;
-    }
 
-    public void Setup()
-    {
+        _icon = new ImagePanel(hotbarWindow, $"HotbarContainer{hotbarSlotIndex}");
+
         // Content Panel is layered on top of the container (shows the Item or Spell Icon).
         _contentPanel = new ImagePanel(HotbarIcon, $"{nameof(HotbarIcon)}{_hotbarSlotIndex}");
         _contentPanel.HoverEnter += hotbarIcon_HoverEnter;
@@ -67,25 +67,29 @@ public partial class HotbarItem
         _contentPanel.RightClicked += hotbarIcon_RightClicked;
         _contentPanel.Clicked += hotbarIcon_Clicked;
 
-        _equipLabel = new Label(HotbarIcon, nameof(_equipLabel) + _hotbarSlotIndex)
+        _equipLabel = new Label(_icon, nameof(_equipLabel) + _hotbarSlotIndex)
         {
             IsHidden = true,
             Text = Strings.Inventory.EquippedSymbol,
             TextColor = new Color(255, 255, 255, 255)
         };
 
-        _quantityLabel = new Label(HotbarIcon, nameof(_quantityLabel) + _hotbarSlotIndex)
+        _quantityLabel = new Label(_icon, nameof(_quantityLabel) + _hotbarSlotIndex)
         {
             IsHidden = true,
             TextColor = new Color(255, 255, 255, 255)
         };
 
-        _cooldownLabel = new Label(HotbarIcon, nameof(_cooldownLabel) + _hotbarSlotIndex)
+        _cooldownLabel = new Label(_icon, nameof(_cooldownLabel) + _hotbarSlotIndex)
         {
             IsHidden = true,
             TextColor = new Color(255, 255, 255, 255)
         };
+
+        _keyLabel = new Label(_icon, $"HotbarLabel{hotbarSlotIndex}");
     }
+
+    public ImagePanel HotbarIcon => _icon;
 
     public void Activate()
     {
@@ -230,7 +234,7 @@ public partial class HotbarItem
                 assembledKeyText = Strings.Keys.KeyNameWithModifier.ToString(modifierText, assembledKeyText);
             }
 
-            KeyLabel.SetText(assembledKeyText);
+            _keyLabel.SetText(assembledKeyText);
 
             _hotKey = keybind;
         }
@@ -448,22 +452,13 @@ public partial class HotbarItem
         {
             if (!_isDragging)
             {
-                if (_contentPanel.IsHidden)
-                {
-                    _contentPanel.IsHidden = false;
-                }
+                _contentPanel.IsHidden = false;
 
                 var equipLabelIsHidden = _currentItem == null || !Globals.Me.IsEquipped(_inventoryItemIndex) || _inventoryItemIndex < 0;
-                if (_equipLabel.IsHidden != equipLabelIsHidden)
-                {
-                    _equipLabel.IsHidden = equipLabelIsHidden;
-                }
+                _equipLabel.IsHidden = equipLabelIsHidden;
 
                 var quantityLabelIsHidden = _currentItem is not { Stackable: true } || _inventoryItemIndex < 0;
-                if (_quantityLabel.IsHidden != quantityLabelIsHidden)
-                {
-                    _quantityLabel.IsHidden = quantityLabelIsHidden;
-                }
+                _quantityLabel.IsHidden = quantityLabelIsHidden;
 
                 if (_mouseOver)
                 {
