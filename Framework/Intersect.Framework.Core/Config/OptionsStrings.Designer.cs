@@ -104,5 +104,11 @@ namespace Intersect.Framework.Core.Config {
                 return ResourceManager.GetString("Category_Packets", resourceCulture);
             }
         }
+        
+        internal static string Category_Combat {
+            get {
+                return ResourceManager.GetString("Category_Combat", resourceCulture);
+            }
+        }
     }
 }

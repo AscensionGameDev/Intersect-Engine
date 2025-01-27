@@ -3,7 +3,7 @@
 
 @if (Model.Info.PropertyType.IsPrimitive || Model.Info.PropertyType == typeof(string))
 {
-    <span class="field @Model.ClassString">
+    <span class="@Model.ClassString">
         <label for="@Model.OwnId">@Model.Info.Name</label>
         @if (Model.Info.PropertyType.IsIntegral())
         {
@@ -33,14 +33,14 @@ else if (Model.Info.PropertyType.IsEnum)
 {
     @if (Model.Info.PropertyType.IsBitflags())
     {
-        <span class="field @Model.ClassString">
+        <span class="@Model.ClassString">
             <label for="@Model.OwnId">@Model.Info.Name</label>
             STUB_BITFLAGS
         </span>
     }
     else
     {
-        <span class="field @Model.ClassString">
+        <span class="@Model.ClassString">
             <label for="@Model.OwnId">@Model.Info.Name</label>
             <select id="@Model.OwnId" name="@Model.OwnId" disabled=@Model.IsReadOnly>
                 @foreach (var enumValue in Model.Info.PropertyType.GetValues(excludeIgnored: true))
@@ -53,7 +53,7 @@ else if (Model.Info.PropertyType.IsEnum)
 }
 else if (typeof(IEnumerable<>).ExtendedBy(Model.Info.PropertyType))
 {
-    <span class="field @Model.ClassString">
+    <span class="@Model.ClassString">
         <label for="@Model.OwnId">@Model.Info.Name</label>
         STUB_ENUMERABLE
     </span>
@@ -64,7 +64,7 @@ else if (Model.IsRoot)
 }
 else
 {
-    <span class="field @Model.ClassString">
+    <span class="@Model.ClassString">
         <partial name="_Type.partial" model="@(new TypePartialPageModel(Model.Logger, target: Model.Info.GetValue(Model.Target), Model.Info.PropertyType, isEditing: Model.IsEditing, parentId: Model.OwnId, sectionName: Model.Info.Name))"/>
     </span>
 }

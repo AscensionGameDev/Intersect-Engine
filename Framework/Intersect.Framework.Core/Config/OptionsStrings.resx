@@ -48,4 +48,49 @@
   <data name="Category_Packets" xml:space="preserve">
     <value>Packets</value>
   </data>
+  <data name="Category_Combat" xml:space="preserve">
+    <value>Combat</value>
+  </data>
+  <data name="Category_Equipment" xml:space="preserve">
+    <value>Equipment</value>
+  </data>
+  <data name="Category_Passability" xml:space="preserve">
+    <value>Passability</value>
+  </data>
+  <data name="Category_Map" xml:space="preserve">
+    <value>Map</value>
+  </data>
+  <data name="Category_Player" xml:space="preserve">
+    <value>Player</value>
+  </data>
+  <data name="Category_Party" xml:space="preserve">
+    <value>Party</value>
+  </data>
+  <data name="Category_Loot" xml:space="preserve">
+    <value>Loot</value>
+  </data>
+  <data name="Category_Processing" xml:space="preserve">
+    <value>Processing</value>
+  </data>
+  <data name="Category_Sprites" xml:space="preserve">
+    <value>Sprites</value>
+  </data>
+  <data name="Category_Npc" xml:space="preserve">
+    <value>NPC</value>
+  </data>
+  <data name="Category_Quest" xml:space="preserve">
+    <value>Quest</value>
+  </data>
+  <data name="Category_Guild" xml:space="preserve">
+    <value>Guild</value>
+  </data>
+  <data name="Category_Bank" xml:space="preserve">
+    <value>Bank</value>
+  </data>
+  <data name="Category_Instancing" xml:space="preserve">
+    <value>Instancing</value>
+  </data>
+  <data name="Category_Items" xml:space="preserve">
+    <value>Items</value>
+  </data>
 </root>
