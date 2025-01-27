@@ -11,7 +11,7 @@ public class DeveloperIndexModel : PageModel
             "ServerSettings",
             "/Developer/ServerSettings",
             () => "STUBServerSettings",
-            context => true
+            context => false
         ),
     ];
 
