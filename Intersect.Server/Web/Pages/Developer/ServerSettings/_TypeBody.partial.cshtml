@@ -1,0 +1,22 @@
+@using System.Reflection
+@using Intersect.Framework.Reflection
+
+@model TypeBodyPartialPageModel
+
+@foreach (var memberInfo in Model.Members)
+{
+    switch (memberInfo)
+    {
+        case FieldInfo fieldInfo:
+            Model.Logger.LogDebug("Unsupported member field: {FieldType} {FieldName}", fieldInfo.FieldType.GetName(qualified: true), fieldInfo.Name);
+            <span>Unsupported member field: @(string.IsNullOrWhiteSpace(Model.OwnId) ? fieldInfo.Name : $"{Model.OwnId}.{fieldInfo.Name}")</span>
+            break;
+        case PropertyInfo propertyInfo:
+            <partial name="_Property.partial" model="@(new PropertyPartialPageModel(Model.Logger, target: Model.Target, Model.OwnId, propertyInfo, isEditing: Model.IsEditing))"/>
+            break;
+        default:
+            Model.Logger.LogDebug("Unsupported member: {MemberType} {MemberName}", memberInfo.MemberType, memberInfo.Name);
+            <span>Unsupported member @memberInfo.MemberType: @(string.IsNullOrWhiteSpace(Model.OwnId) ? memberInfo.Name : $"{Model.OwnId}.{memberInfo.Name}")</span>
+            break;
+    }
+}

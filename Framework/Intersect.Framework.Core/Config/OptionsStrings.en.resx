@@ -1,0 +1,89 @@
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Category_General" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="Category_Chat" xml:space="preserve">
+    <value>Chat</value>
+  </data>
+  <data name="Category_GameDatabase" xml:space="preserve">
+    <value>Database (Game)</value>
+  </data>
+  <data name="Category_Logging" xml:space="preserve">
+    <value>Logging</value>
+  </data>
+  <data name="Category_LoggingDatabase" xml:space="preserve">
+    <value>Database (Logging)</value>
+  </data>
+  <data name="Category_Metrics" xml:space="preserve">
+    <value>Metrics</value>
+  </data>
+  <data name="Category_Packets" xml:space="preserve">
+    <value>Packets</value>
+  </data>
+  <data name="Category_PlayerDatabase" xml:space="preserve">
+    <value>Database (Player)</value>
+  </data>
+  <data name="Category_Security" xml:space="preserve">
+    <value>Security</value>
+  </data>
+  <data name="Category_SmtpSettings" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Category_Combat" xml:space="preserve">
+    <value>Combat</value>
+  </data>
+  <data name="Category_Equipment" xml:space="preserve">
+    <value>Equipment</value>
+  </data>
+  <data name="Category_Passability" xml:space="preserve">
+    <value>Passability</value>
+  </data>
+  <data name="Category_Map" xml:space="preserve">
+    <value>Map</value>
+  </data>
+  <data name="Category_Player" xml:space="preserve">
+    <value>Player</value>
+  </data>
+  <data name="Category_Party" xml:space="preserve">
+    <value>Party</value>
+  </data>
+  <data name="Category_Loot" xml:space="preserve">
+    <value>Loot</value>
+  </data>
+  <data name="Category_Processing" xml:space="preserve">
+    <value>Processing</value>
+  </data>
+  <data name="Category_Sprites" xml:space="preserve">
+    <value>Sprites</value>
+  </data>
+  <data name="Category_Npc" xml:space="preserve">
+    <value>NPC</value>
+  </data>
+  <data name="Category_Quest" xml:space="preserve">
+    <value>Quest</value>
+  </data>
+  <data name="Category_Guild" xml:space="preserve">
+    <value>Guild</value>
+  </data>
+  <data name="Category_Bank" xml:space="preserve">
+    <value>Bank</value>
+  </data>
+  <data name="Category_Instancing" xml:space="preserve">
+    <value>Instancing</value>
+  </data>
+  <data name="Category_Items" xml:space="preserve">
+    <value>Items</value>
+  </data>
+</root>

@@ -1,0 +1,70 @@
+@using Intersect.Framework.Reflection
+@model PropertyPartialPageModel
+
+@if (Model.Info.PropertyType.IsPrimitive || Model.Info.PropertyType == typeof(string))
+{
+    <span class="@Model.ClassString">
+        <label for="@Model.OwnId">@Model.Info.Name</label>
+        @if (Model.Info.PropertyType.IsIntegral())
+        {
+            <input id="@Model.OwnId" name="@Model.OwnId" disabled=@Model.IsReadOnly readonly=@Model.IsReadOnly type="number" value="@Model.Info.GetValue(Model.Target)" />
+        }
+        else if (Model.Info.PropertyType.IsFloatingPoint())
+        {
+            <input id="@Model.OwnId" name="@Model.OwnId" disabled=@Model.IsReadOnly readonly=@Model.IsReadOnly type="number" value="@Model.Info.GetValue(Model.Target)" />
+        }
+        else if (Model.Info.PropertyType == typeof(string))
+        {
+            <input id="@Model.OwnId" name="@Model.OwnId" disabled=@Model.IsReadOnly readonly=@Model.IsReadOnly type="@(Model.Info.IsPassword() ? "password" : "text")"
+                   value="@Model.Info.GetValue(Model.Target)" />
+        }
+        else if (Model.Info.PropertyType == typeof(bool))
+        {
+            <input id="@Model.OwnId" name="@Model.OwnId" disabled=@Model.IsReadOnly type="checkbox"
+                   checked=@Model.Info.GetValue(Model.Target)/>
+        }
+        else
+        {
+            <span>STUB_@Model.Info.PropertyType.GetName(qualified: true)</span>
+        }
+    </span>
+}
+else if (Model.Info.PropertyType.IsEnum)
+{
+    @if (Model.Info.PropertyType.IsBitflags())
+    {
+        <span class="@Model.ClassString">
+            <label for="@Model.OwnId">@Model.Info.Name</label>
+            STUB_BITFLAGS
+        </span>
+    }
+    else
+    {
+        <span class="@Model.ClassString">
+            <label for="@Model.OwnId">@Model.Info.Name</label>
+            <select id="@Model.OwnId" name="@Model.OwnId" disabled=@Model.IsReadOnly>
+                @foreach (var enumValue in Model.Info.PropertyType.GetValues(excludeIgnored: true))
+                {
+                    <option value="@enumValue" selected=@(Model.Info.GetValue(Model.Target)?.Equals(enumValue) ?? false)>@enumValue</option>
+                }
+            </select>
+        </span>
+    }
+}
+else if (typeof(IEnumerable<>).ExtendedBy(Model.Info.PropertyType))
+{
+    <span class="@Model.ClassString">
+        <label for="@Model.OwnId">@Model.Info.Name</label>
+        STUB_ENUMERABLE
+    </span>
+}
+else if (Model.IsRoot)
+{
+    <partial name="_Type.partial" model="@(new TypePartialPageModel(Model.Logger, target: Model.Info.GetValue(Model.Target), Model.Info.PropertyType, isEditing: Model.IsEditing, parentId: Model.OwnId, sectionName: Model.Info.Name, isRoot: true))"/>
+}
+else
+{
+    <span class="@Model.ClassString">
+        <partial name="_Type.partial" model="@(new TypePartialPageModel(Model.Logger, target: Model.Info.GetValue(Model.Target), Model.Info.PropertyType, isEditing: Model.IsEditing, parentId: Model.OwnId, sectionName: Model.Info.Name))"/>
+    </span>
+}

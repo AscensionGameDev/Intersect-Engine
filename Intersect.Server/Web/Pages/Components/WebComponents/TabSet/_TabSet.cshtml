@@ -1,0 +1,121 @@
+<!--suppress CssUnresolvedCustomProperty -->
+<template id="custom-element-tab-content">
+    <style>
+        :host > .content {
+            display:  contents;
+        }
+    </style>
+    <div class="content" role="tabpanel" aria-labelledby="manifests" aria-hidden="true">
+        <slot></slot>
+    </div>
+</template>
+
+<template id="custom-element-tab-set">
+    <style>
+        :host {
+            display: block;
+        }
+
+        :host > .container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        :host([nav-style=side]) > .container {
+            flex-direction: row;
+        }
+
+        :host > .container > .triggers {
+            flex-direction: row;
+        }
+
+        :host([nav-style=side]) > .container > .triggers {
+            display: flex;
+            flex-direction: column;
+            max-height: 100%;
+            overflow-y: auto;
+        }
+
+        .container,
+        input,
+        label,
+        ::slotted(tab-content) {
+            border-collapse: var(--tabs-border-collapse, collapse);
+        }
+
+        .container {
+            border: var(--tabs-border-width_container, var(--tabs-border-width, 0)) solid var(--tabs-border-color_container, var(--tabs-border-color));
+        }
+
+        input.trigger {
+            display: none;
+        }
+
+        input.trigger+label {
+            background-color: var(--tabs-trigger-color);
+            border-style: solid;
+            border-width: 0 0.1em;
+            border-color: var(--tabs-trigger-color-selected, #bbb);
+            display: inline-flex;
+            padding: var(--tabs-trigger-padding, 0.5em 2em);
+        }
+
+        input.trigger:checked+label,
+        input.trigger+label:hover {
+            background-color: var(--tabs-trigger-color-selected, #bbb);
+        }
+
+        :host([nav-style=side]) input.trigger+label {
+            border-width: 0.1em 0 0 0;
+            padding: var(--tabs-trigger-padding, 0.5em 1em);
+        }
+
+        input.trigger+label:hover {
+            filter:  brightness(125%);
+        }
+
+        input.trigger+label>svg {
+            max-height: 1.25lh;
+        }
+
+        input.trigger+label>svg.material {
+            fill: currentColor;
+            margin-right: 0.5em;
+            min-width: calc(min(1.5em, 24px));
+        }
+
+        input.trigger+label>span {
+            min-width: fit-content;
+        }
+
+        svg.hidden {
+            display: none;
+        }
+
+        ::slotted(tab-content) {
+            border-top: var(--tabs-trigger-border-width, 0.0625rem) solid var(--tabs-trigger-color-selected, #bbb);
+            display: none;
+            flex: 1;
+            padding: 1em;
+        }
+
+        ::slotted(tab-content.selected) {
+            display: block;
+        }
+    </style>
+    <div class="container" role="tablist" data-tab-group="asset-management">
+        <template id="trigger">
+            <input type="radio" class="trigger" name="tabs"/>
+            <label role="tab" aria-controls="panel-browse" tabindex="0">
+                <svg class="material hidden" viewBox="0 0 24 24" aria-hidden="true">
+                    <use/>
+                </svg>
+                <span>Tab Label</span>
+            </label>
+        </template>
+        <div class="triggers"></div>
+        <slot></slot>
+    </div>
+</template>
+
+<script src="~/js/components/tabset/tabset.js"></script>

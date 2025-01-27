@@ -1,0 +1,34 @@
+@page "/Developer/ServerSettings"
+@using System.Reflection
+@using Intersect.Framework.Core.Config
+@using Intersect.Framework.Reflection
+@using Intersect.Framework.Resources
+@using Microsoft.AspNetCore.Html
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model ServerSettingsIndexModel
+
+@{
+    ViewData["Title"] = DeveloperWebResources.DeveloperPortal;
+}
+
+@await Html.PartialAsync("~/Web/Pages/Components/WebComponents/TabSet/_TabSet.cshtml")
+
+<article class="page">
+    <h1>Server Config</h1>
+
+    <form>
+        <tab-set nav-style="side" style="--tabs-trigger-color: var(--theme-bg-accent); --tabs-trigger-color-selected: var(--theme-bg-accent-hover); --tabs-trigger-border-width: 0.125em;">
+            @foreach (var (groupKey, propertyInfos) in ServerSettingsIndexModel.PropertyGroups)
+            {
+                <tab-content tab-id="@groupKey" tab-label="@OptionsStrings.ResourceManager.GetStringWithFallback(groupKey, fallbackToResourceName: true)"
+                             @*tab-icon="/material/notification/account_tree/materialiconsoutlined/24px.svg#root"*@>
+                    @foreach (var propertyInfo in propertyInfos)
+                    {
+                        <partial name="_Property.partial" model="@(Model.GetModelFor(propertyInfo))"/>
+                    }
+                </tab-content>
+            }
+        </tab-set>
+        @* <partial name="_Type.partial" model="@(new TypePartialPageModel(Model.Logger, target: Options.Instance.DeepClone(), typeof(Options), isEditing: true, isRoot: true))"/> *@
+    </form>
+</article>

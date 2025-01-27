@@ -5,6 +5,7 @@ using Newtonsoft.Json.Converters;
 
 namespace Intersect.Config;
 
+[RequiresRestart]
 public partial class DatabaseOptions
 {
 #if DEBUG
