@@ -1982,7 +1982,7 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString AutoSoftRetargetOnSelfCastTooltip =
-            @"When this is enabled and an enemy is targeted and a self-cast spell is used, the spell will be self-cast without removing the target on the enemy.";
+            @"When this is enabled and an enemy is targeted and a single-target friendly spell is used, the spell will be self-cast without removing the target on the enemy.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Title = @"Settings";
