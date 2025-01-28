@@ -117,13 +117,18 @@ public partial class Guild
             return null;
         }
 
+
         using var context = DbInterface.CreatePlayerContext(readOnly: false);
+
+        creator.Save(context);
+
         var guild = new Guild
         {
             Name = name,
             FoundingDate = DateTime.UtcNow,
             GuildInstanceId = Guid.NewGuid(),
         };
+        context.Guilds.Add(guild);
 
         SlotHelper.ValidateSlotList(guild.Bank, Options.Instance.Guild.InitialBankSlots);
 

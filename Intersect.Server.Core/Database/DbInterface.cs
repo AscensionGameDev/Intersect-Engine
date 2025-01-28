@@ -33,6 +33,9 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MySqlConnector;
+using Serilog;
+using Serilog.Events;
+using Serilog.Extensions.Logging;
 
 namespace Intersect.Server.Database;
 
@@ -59,10 +62,6 @@ public static partial class DbInterface
     private static string LoggingDbFilename => Path.Combine(ServerContext.ResourceDirectory, "logging.db");
 
     private static string PlayersDbFilename => Path.Combine(ServerContext.ResourceDirectory, "playerdata.db");
-
-    private static ILogger<GameContext> _gameDatabaseLogger { get; set; }
-
-    private static ILogger<PlayerContext> _playerDatabaseLogger { get; set; }
 
     public static Dictionary<string, ServerVariableDescriptor> ServerVariableEventTextLookup = new();
 
@@ -93,9 +92,7 @@ public static partial class DbInterface
         ExplicitLoad = explicitLoad,
         KillServerOnConcurrencyException = Options.Instance.GameDatabase.KillServerOnConcurrencyException,
         LazyLoading = lazyLoading,
-#if DEBUG
-        LoggerFactory = new IntersectLoggerFactory(nameof(GameContext)),
-#endif
+        LoggerFactory = CreateLoggerFactory<GameContext>(Options.Instance.GameDatabase),
         QueryTrackingBehavior = queryTrackingBehavior,
         ReadOnly = readOnly,
     });
@@ -117,9 +114,7 @@ public static partial class DbInterface
         ExplicitLoad = explicitLoad,
         KillServerOnConcurrencyException = Options.Instance.LoggingDatabase.KillServerOnConcurrencyException,
         LazyLoading = lazyLoading,
-#if DEBUG
-        LoggerFactory = new IntersectLoggerFactory(nameof(LoggingContext)),
-#endif
+        LoggerFactory = CreateLoggerFactory<LoggingContext>(Options.Instance.LoggingDatabase),
         QueryTrackingBehavior = queryTrackingBehavior,
         ReadOnly = readOnly,
     });
@@ -146,25 +141,10 @@ public static partial class DbInterface
         ExplicitLoad = explicitLoad,
         KillServerOnConcurrencyException = Options.Instance.PlayerDatabase.KillServerOnConcurrencyException,
         LazyLoading = lazyLoading,
-#if DEBUG
-        LoggerFactory = new IntersectLoggerFactory(nameof(PlayerContext)),
-#endif
+        LoggerFactory = CreateLoggerFactory<PlayerContext>(Options.Instance.PlayerDatabase),
         QueryTrackingBehavior = queryTrackingBehavior,
         ReadOnly = readOnly,
     });
-
-    public static void InitializeDbLoggers()
-    {
-        if (Options.Instance.GameDatabase.LogLevel > LogLevel.None)
-        {
-            _gameDatabaseLogger = new IntersectLoggerFactory(nameof(GameContext)).CreateLogger<GameContext>();
-        }
-
-        if (Options.Instance.PlayerDatabase.LogLevel > LogLevel.None)
-        {
-            _playerDatabaseLogger = new IntersectLoggerFactory(nameof(PlayerContext)).CreateLogger<PlayerContext>();
-        }
-    }
 
     //Check Directories
     public static void CheckDirectories()
@@ -249,6 +229,24 @@ public static partial class DbInterface
         context.OnSchemaMigrationsProcessed(processedSchemaMigrations.ToArray());
     }
 
+    internal static ILoggerFactory CreateLoggerFactory<TDBContext>(DatabaseOptions databaseOptions)
+        where TDBContext : IntersectDbContext<TDBContext>
+    {
+        var contextName = typeof(TDBContext).Name;
+        var configuration = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .MinimumLevel.Is(LevelConvert.ToSerilogLevel(databaseOptions.LogLevel))
+            .WriteTo.Console(restrictedToMinimumLevel: Debugger.IsAttached ? LogEventLevel.Warning : LogEventLevel.Error)
+            .WriteTo.File(path: $"logs/db-{contextName}.log").WriteTo.File(
+                path: $"logs/db-errors-{contextName}.log",
+                restrictedToMinimumLevel: LogEventLevel.Error,
+                rollOnFileSizeLimit: true,
+                retainedFileTimeLimit: TimeSpan.FromDays(30)
+            );
+
+        return new SerilogLoggerFactory(configuration.CreateLogger());
+    }
+
     private static bool EnsureUpdated(IServerContext serverContext)
     {
         var gameDatabaseOptions = Options.Instance.GameDatabase;
@@ -262,7 +260,7 @@ public static partial class DbInterface
             DatabaseType = gameDatabaseOptions.Type,
             EnableDetailedErrors = true,
             EnableSensitiveDataLogging = true,
-            LoggerFactory = new IntersectLoggerFactory(nameof(GameContext)),
+            LoggerFactory = CreateLoggerFactory<GameContext>(gameDatabaseOptions),
         });
 
         var playerDatabaseOptions = Options.Instance.PlayerDatabase;
@@ -276,7 +274,7 @@ public static partial class DbInterface
             DatabaseType = playerDatabaseOptions.Type,
             EnableDetailedErrors = true,
             EnableSensitiveDataLogging = true,
-            LoggerFactory = new IntersectLoggerFactory(nameof(PlayerContext)),
+            LoggerFactory = CreateLoggerFactory<PlayerContext>(playerDatabaseOptions),
         });
 
         var loggingDatabaseOptions = Options.Instance.LoggingDatabase;
@@ -290,7 +288,7 @@ public static partial class DbInterface
             DatabaseType = loggingDatabaseOptions.Type,
             EnableDetailedErrors = true,
             EnableSensitiveDataLogging = true,
-            LoggerFactory = new IntersectLoggerFactory(nameof(LoggingContext)),
+            LoggerFactory = CreateLoggerFactory<LoggingContext>(loggingDatabaseOptions),
         });
 
         // We don't want anyone running the old migration tool accidentally
@@ -1957,9 +1955,9 @@ public static partial class DbInterface
             DatabaseType = fromDatabaseOptions.Type,
             ExplicitLoad = false,
             LazyLoading = false,
-            LoggerFactory = default,
+            LoggerFactory = CreateLoggerFactory<TContext>(fromDatabaseOptions),
             QueryTrackingBehavior = default,
-            ReadOnly = false
+            ReadOnly = false,
         };
 
         DatabaseOptions toDatabaseOptions;
@@ -2017,7 +2015,8 @@ public static partial class DbInterface
                             Port = port,
                             Database = database,
                             Username = username,
-                            Password = password
+                            Password = password,
+                            LogLevel = fromDatabaseOptions.LogLevel,
                         };
                         toContextOptions = new()
                         {
@@ -2025,7 +2024,8 @@ public static partial class DbInterface
                                 toDatabaseOptions,
                                 default
                             ),
-                            DatabaseType = toDatabaseType
+                            DatabaseType = toDatabaseType,
+                            LoggerFactory = CreateLoggerFactory<TContext>(toDatabaseOptions),
                         };
 
                         try
@@ -2099,14 +2099,19 @@ public static partial class DbInterface
                         File.Delete(dbFileName);
                     }
 
-                    toDatabaseOptions = new() { Type = toDatabaseType };
+                    toDatabaseOptions = new()
+                    {
+                        LogLevel = fromDatabaseOptions.LogLevel,
+                        Type = toDatabaseType,
+                    };
                     toContextOptions = new()
                     {
                         ConnectionStringBuilder = toDatabaseType.CreateConnectionStringBuilder(
                             toDatabaseOptions,
                             dbFileName
                         ),
-                        DatabaseType = toDatabaseType
+                        DatabaseType = toDatabaseType,
+                        LoggerFactory = CreateLoggerFactory<TContext>(toDatabaseOptions),
                     };
 
                     break;
