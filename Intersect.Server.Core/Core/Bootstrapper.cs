@@ -232,7 +232,6 @@ internal static class Bootstrapper
             }
         }
 
-        DbInterface.InitializeDbLoggers();
         DbInterface.CheckDirectories();
 
         PrintIntroduction();

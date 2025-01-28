@@ -209,14 +209,12 @@ public class DatabaseTypeMigrationService
         await using var fromContext = IntersectDbContext<TContext>.Create(fromOptions with
         {
             DisableAutoInclude = true,
-            LoggerFactory = new IntersectLoggerFactory(typeof(TContext).Name),
         });
         await using var toContext = IntersectDbContext<TContext>.Create(toOptions with
         {
             DisableAutoInclude = true,
             EnableDetailedErrors = true,
             EnableSensitiveDataLogging = true,
-            LoggerFactory = new IntersectLoggerFactory(typeof(TContext).Name),
         });
 
         if (dbSetInfo.GetValue(fromContext) is not DbSet<T> fromDbSet)

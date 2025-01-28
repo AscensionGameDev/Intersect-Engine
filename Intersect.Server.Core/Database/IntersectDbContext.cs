@@ -6,9 +6,6 @@ using Intersect.Config;
 using Intersect.Core;
 using Intersect.Framework.Reflection;
 using Intersect.Server.Core;
-#if DIAGNOSTIC
-using Intersect.Server.Database.PlayerData;
-#endif
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -91,21 +88,15 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
 #endif
 
         var loggerFactory = ContextOptions.LoggerFactory;
-#if DIAGNOSTIC
-        if (this is PlayerContext)
-        {
-            loggerFactory ??= new IntersectLoggerFactory(GetType().GetName(qualified: true));
-        }
-#endif
 
         var enableSensitiveDataLogging = ContextOptions.EnableSensitiveDataLogging;
-#if DIAGNOSTIC
-        enableSensitiveDataLogging = this is PlayerContext;
+#if DEBUG
+        enableSensitiveDataLogging = Debugger.IsAttached;
 #endif
 
         var enableDetailedErrors = ContextOptions.EnableDetailedErrors;
-#if DIAGNOSTIC
-        enableDetailedErrors = this is PlayerContext;
+#if DEBUG
+        enableDetailedErrors = Debugger.IsAttached;
 #endif
 
         _ = optionsBuilder
