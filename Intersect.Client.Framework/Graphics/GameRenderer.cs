@@ -3,7 +3,7 @@ using Intersect.Client.Framework.GenericClasses;
 namespace Intersect.Client.Framework.Graphics;
 
 
-public abstract partial class GameRenderer : IGameRenderer
+public abstract partial class GameRenderer : IGameRenderer, ITextHelper
 {
 
     public GameRenderer()

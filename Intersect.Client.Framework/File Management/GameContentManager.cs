@@ -302,7 +302,7 @@ public abstract partial class GameContentManager : IContentManager
         return mShaderDict?.GetValueOrDefault(name.ToLower());
     }
 
-    public virtual GameFont GetFont(string name, int size)
+    public virtual GameFont GetFont(string? name, int size)
     {
         if (name == null)
         {

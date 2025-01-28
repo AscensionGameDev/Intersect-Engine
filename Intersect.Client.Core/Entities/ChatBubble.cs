@@ -2,6 +2,7 @@ using Intersect.Client.Core;
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.General;
 using Intersect.Utilities;
 
@@ -52,7 +53,12 @@ public partial class ChatBubble
     {
         if (mText == null && mSourceText?.Trim().Length > 0 && Graphics.ChatBubbleFont != default)
         {
-            mText = Interface.Interface.WrapText(mSourceText, 200, Graphics.ChatBubbleFont);
+            mText = Text.WrapText(
+                mSourceText,
+                200,
+                Graphics.ChatBubbleFont,
+                Graphics.Renderer ?? throw new InvalidOperationException("No renderer")
+            );
         }
 
         if (mText == null || Graphics.Renderer == default || mOwner == default)

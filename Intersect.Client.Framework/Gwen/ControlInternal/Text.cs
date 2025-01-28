@@ -15,6 +15,8 @@ public partial class Text : Base
     private float _scale = 1f;
 
     private string? _displayedText;
+    private string[] _lines = [];
+    private WrappingBehavior _wrappingBehavior;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Text" /> class.
@@ -24,7 +26,6 @@ public partial class Text : Base
     public Text(Base parent, string? name = default) : base(parent, name)
     {
         _font = Skin.DefaultFont;
-        _displayedText = String.Empty;
         Color = Skin.Colors.Label.Default;
         MouseInputEnabled = false;
         ColorOverride = Color.FromArgb(0, 255, 255, 255); // A==0, override disabled
@@ -47,7 +48,7 @@ public partial class Text : Base
             }
 
             _font = value;
-            SizeToContents();
+            RecalculateLines();
         }
     }
 
@@ -65,8 +66,40 @@ public partial class Text : Base
             }
 
             _displayedText = value;
-            SizeToContents();
+            RecalculateLines();
         }
+    }
+
+    public WrappingBehavior WrappingBehavior
+    {
+        get => _wrappingBehavior;
+        set
+        {
+            if (value == _wrappingBehavior)
+            {
+                return;
+            }
+
+            _wrappingBehavior = value;
+            RecalculateLines();
+        }
+    }
+
+    private void RecalculateLines()
+    {
+        var wrappingBehavior = ((Parent as Label)?.WrappingBehavior ?? WrappingBehavior.NoWrap);
+        _lines = wrappingBehavior switch
+        {
+            WrappingBehavior.Wrapped => WrapText(
+                _displayedText,
+                Parent?.MaximumSize.X ?? 0,
+                Font,
+                Skin.Renderer
+            ),
+            WrappingBehavior.NoWrap => _displayedText == null ? [] : [_displayedText],
+            _ => throw new NotImplementedException($"{nameof(WrappingBehavior)} '{wrappingBehavior}' not implemented"),
+        };
+        SizeToContents();
     }
 
     /// <summary>
@@ -116,7 +149,18 @@ public partial class Text : Base
             skin.Renderer.DrawColor = colorOverride;
         }
 
-        skin.Renderer.RenderText(font, Point.Empty, _displayedText, _scale);
+        Point cursor = default;
+        foreach (var line in _lines)
+        {
+            skin.Renderer.RenderText(font, cursor, line, _scale);
+
+            if (_lines.Length <= 1)
+            {
+                break;
+            }
+
+            cursor.Y += skin.Renderer.MeasureText(text: line, font: font, scale: _scale).Y;
+        }
 
 #if DEBUG_TEXT_MEASURE
         {
@@ -193,7 +237,16 @@ public partial class Text : Base
         }
         else
         {
-            newSize = Skin.Renderer.MeasureText(font, _displayedText, _scale);
+            newSize = default;
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            foreach (var line in _lines)
+            {
+                var lineSize = Skin.Renderer.MeasureText(font, _displayedText, _scale);
+                newSize = new Point(
+                    Math.Max(newSize.X, lineSize.X),
+                    newSize.Y + lineSize.Y
+                );
+            }
         }
 
         if (Size == newSize)
@@ -256,7 +309,7 @@ public partial class Text : Base
             return -1;
         }
 
-        var closestDistance = MAX_COORD;
+        var closestDistance = 0;
         var closestIndex = 0;
 
         for (var characterIndex = 0; characterIndex < displayedText.Length + 1; characterIndex++)
@@ -278,4 +331,69 @@ public partial class Text : Base
         return closestIndex;
     }
 
+    public static string[] WrapText(string? input, int width, GameFont font, ITextHelper textHelper)
+    {
+        var sanitizedInput = input?.ReplaceLineEndings("\n");
+        var inputLines = (sanitizedInput ?? string.Empty).Split('\n', StringSplitOptions.TrimEntries);
+
+        if (string.IsNullOrWhiteSpace(sanitizedInput) || width < 1)
+        {
+            return inputLines;
+        }
+
+        List<string> lines = [];
+
+        foreach (var inputLine in inputLines)
+        {
+            if (inputLine.Length < 1)
+            {
+                lines.Add(inputLine);
+                continue;
+            }
+
+            var lastSpace = 0;
+            var curPos = 0;
+            var curLen = 1;
+            var lastOk = 0;
+            var lastCut = 0;
+            float measured;
+            string line;
+            while (curPos + curLen < inputLine.Length)
+            {
+                line = inputLine.Substring(curPos, curLen);
+                measured = textHelper.MeasureText(line, font, 1).X;
+                if (measured < width)
+                {
+                    lastOk = lastSpace;
+                    lastSpace = inputLine[curPos + curLen] switch
+                    {
+                        ' ' or '-' => curLen,
+                        _ => lastSpace
+                    };
+                }
+                else
+                {
+                    if (lastOk == 0)
+                    {
+                        lastOk = curLen - 1;
+                    }
+
+                    line = inputLine.Substring(curPos, lastOk).Trim();
+                    lines.Add(line);
+
+                    curPos += lastOk;
+                    lastOk = 0;
+                    lastSpace = 0;
+                    curLen = 1;
+                }
+
+                curLen++;
+            }
+
+            var newLine = inputLine.Substring(curPos, inputLine.Length - curPos).Trim();
+            lines.Add(newLine);
+        }
+
+        return lines.ToArray();
+    }
 }

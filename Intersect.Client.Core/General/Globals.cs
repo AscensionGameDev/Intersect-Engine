@@ -190,6 +190,11 @@ public static partial class Globals
     //Local player information
     public static Player? Me;
 
+    public static bool HoldToSoftRetargetOnSelfCast { get; set; }
+
+    public static bool ShouldSoftRetargetOnSelfCast =>
+        HoldToSoftRetargetOnSelfCast || Database.AutoSoftRetargetOnSelfCast;
+
     public static bool MoveRouteActive = false;
 
     public static bool NeedsMaps = true;

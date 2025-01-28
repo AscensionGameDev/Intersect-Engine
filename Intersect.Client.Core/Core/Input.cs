@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Intersect.Admin.Actions;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Entities;
@@ -61,14 +62,16 @@ public static partial class Input
             return;
         }
 
+        var currentGameState = Globals.GameState;
         var consumeKey = false;
         bool canFocusChat = true;
 
         KeyDown?.Invoke(modifier, key);
+
         switch (key)
         {
             case Keys.Escape:
-                if (Globals.GameState != GameStates.Intro)
+                if (currentGameState != GameStates.Intro)
                 {
                     break;
                 }
@@ -112,7 +115,7 @@ public static partial class Input
 
         if (Controls.Controls.ControlHasKey(Control.OpenMenu, modifier, key))
         {
-            if (Globals.GameState != GameStates.InGame)
+            if (currentGameState != GameStates.InGame)
             {
                 return;
             }
@@ -163,211 +166,184 @@ public static partial class Input
             return;
         }
 
-        Controls.Controls.GetControlsFor(modifier, key)
-            ?.ForEach(
-                control =>
-                {
-                    if (consumeKey)
+        // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+        foreach (var control in Controls.Controls.GetControlsFor(modifier, key))
+        {
+            if (consumeKey)
+            {
+                continue;
+            }
+
+            switch (control)
+            {
+                case Control.Screenshot:
+                    Graphics.Renderer?.RequestScreenshot();
+                    break;
+
+                case Control.ToggleGui:
+                    if (currentGameState == GameStates.InGame)
                     {
-                        return;
+                        Interface.Interface.HideUi = !Interface.Interface.HideUi;
+                    }
+                    break;
+
+                case Control.HoldToZoomIn:
+                case Control.ToggleZoomIn:
+                {
+                    HandleZoomIn();
+                    break;
+                }
+
+                case Control.HoldToZoomOut:
+                case Control.ToggleZoomOut:
+                {
+                    HandleZoomOut();
+                    break;
+                }
+
+                case Control.ToggleFullscreen:
+                {
+                    if (Graphics.Renderer == default)
+                    {
+                        break;
                     }
 
-                    if (IsModifier(key))
-                    {
-                        return;
-                    }
+                    Globals.Database.FullScreen = !Globals.Database.FullScreen;
+                    Globals.Database.SavePreferences();
+                    Graphics.Renderer.OverrideResolution = Resolution.Empty;
+                    Graphics.Renderer.Init();
+                    break;
+                }
+
+                case Control.OpenDebugger:
+                    _ = MutableInterface.ToggleDebug();
+                    break;
+            }
+
+            switch (currentGameState)
+            {
+                case GameStates.Intro:
+                    break;
+
+                case GameStates.Menu:
+                    var selectCharacterWindow = Interface.Interface.MenuUi.MainMenu.SelectCharacterWindow;
 
                     switch (control)
                     {
-                        case Control.Screenshot:
-                            Graphics.Renderer?.RequestScreenshot();
-
-                            break;
-
-                        case Control.ToggleGui:
-                            if (Globals.GameState == GameStates.InGame)
+                        case Control.Enter:
+                            if (!selectCharacterWindow.IsHidden && selectCharacterWindow.Characters[selectCharacterWindow.mSelectedChar] != null)
                             {
-                                Interface.Interface.HideUi = !Interface.Interface.HideUi;
+                                selectCharacterWindow.ButtonPlay_Clicked(null, null);
+                                consumeKey = true;
                             }
-
-                            break;
-
-                        case Control.HoldToZoomIn:
-                        case Control.ToggleZoomIn:
-                        {
-                            HandleZoomIn();
-                            break;
-                        }
-
-                        case Control.HoldToZoomOut:
-                        case Control.ToggleZoomOut:
-                        {
-                            HandleZoomOut();
-                            break;
-                        }
-
-                        case Control.ToggleFullscreen:
-                        {
-                            if (Graphics.Renderer == default)
-                            {
-                                break;
-                            }
-
-                            Globals.Database.FullScreen = !Globals.Database.FullScreen;
-                            Globals.Database.SavePreferences();
-                            Graphics.Renderer.OverrideResolution = Resolution.Empty;
-                            Graphics.Renderer.Init();
-                            break;
-                        }
-
-                        case Control.OpenDebugger:
-                            _ = MutableInterface.ToggleDebug();
                             break;
                     }
+                    break;
 
-                    switch (Globals.GameState)
+                case GameStates.InGame:
+                    switch (control)
                     {
-                        case GameStates.Intro:
+                        case Control.MoveUp:
+                        case Control.MoveLeft:
+                        case Control.MoveDown:
+                        case Control.MoveRight:
+                        case Control.AttackInteract:
+                        case Control.Hotkey1:
+                        case Control.Hotkey2:
+                        case Control.Hotkey3:
+                        case Control.Hotkey4:
+                        case Control.Hotkey5:
+                        case Control.Hotkey6:
+                        case Control.Hotkey7:
+                        case Control.Hotkey8:
+                        case Control.Hotkey9:
+                        case Control.Hotkey0:
                             break;
 
-                        case GameStates.Menu:
-                            var selectCharacterWindow = Interface.Interface.MenuUi.MainMenu.SelectCharacterWindow;
+                        case Control.Block:
+                            _ = (Globals.Me?.TryBlock());
+                            break;
 
-                            switch (control)
+                        case Control.AutoTarget:
+                            Globals.Me?.AutoTarget();
+                            break;
+
+                        case Control.HoldToSoftRetargetOnSelfCast:
+                            Globals.HoldToSoftRetargetOnSelfCast = true;
+                            break;
+
+                        case Control.ToggleAutoSoftRetargetOnSelfCast:
+                            Globals.Database.AutoSoftRetargetOnSelfCast = !Globals.Database.AutoSoftRetargetOnSelfCast;
+                            break;
+
+                        case Control.PickUp:
+                            if (Globals.Me != default && Globals.Me.MapInstance != default)
                             {
-                                case Control.Enter:
-                                    if (!selectCharacterWindow.IsHidden && selectCharacterWindow.Characters[selectCharacterWindow.mSelectedChar] != null)
-                                    {
-                                        selectCharacterWindow.ButtonPlay_Clicked(null, null);
-                                        consumeKey = true;
-                                    }
-
-                                    break;
+                                _ = Player.TryPickupItem(
+                                    Globals.Me.MapInstance.Id,
+                                    Globals.Me.Y * Options.Instance.Map.MapWidth + Globals.Me.X
+                                );
                             }
-
                             break;
 
-                        case GameStates.InGame:
-                            switch (control)
+                        case Control.Enter:
+                            if (canFocusChat && Interface.Interface.GameUi != default)
                             {
-                                case Control.MoveUp:
-                                    break;
-
-                                case Control.MoveLeft:
-                                    break;
-
-                                case Control.MoveDown:
-                                    break;
-
-                                case Control.MoveRight:
-                                    break;
-
-                                case Control.AttackInteract:
-                                    break;
-
-                                case Control.Block:
-                                    _ = (Globals.Me?.TryBlock());
-
-                                    break;
-
-                                case Control.AutoTarget:
-                                    Globals.Me?.AutoTarget();
-
-                                    break;
-
-                                case Control.PickUp:
-                                    if (Globals.Me != default && Globals.Me.MapInstance != default)
-                                    {
-                                        _ = Player.TryPickupItem(
-                                                Globals.Me.MapInstance.Id,
-                                                Globals.Me.Y * Options.Instance.Map.MapWidth + Globals.Me.X
-                                            );
-                                    }
-
-                                    break;
-
-                                case Control.Enter:
-                                    if (canFocusChat && Interface.Interface.GameUi != default)
-                                    {
-                                        Interface.Interface.GameUi.FocusChat = true;
-                                        consumeKey = true;
-                                    }
-
-                                    return;
-
-                                case Control.Hotkey1:
-                                case Control.Hotkey2:
-                                case Control.Hotkey3:
-                                case Control.Hotkey4:
-                                case Control.Hotkey5:
-                                case Control.Hotkey6:
-                                case Control.Hotkey7:
-                                case Control.Hotkey8:
-                                case Control.Hotkey9:
-                                case Control.Hotkey0:
-                                    break;
-
-                                case Control.OpenInventory:
-                                    Interface.Interface.GameUi?.GameMenu?.ToggleInventoryWindow();
-
-                                    break;
-
-                                case Control.OpenQuests:
-                                    Interface.Interface.GameUi?.GameMenu?.ToggleQuestsWindow();
-
-                                    break;
-
-                                case Control.OpenCharacterInfo:
-                                    Interface.Interface.GameUi?.GameMenu?.ToggleCharacterWindow();
-
-                                    break;
-
-                                case Control.OpenParties:
-                                    Interface.Interface.GameUi?.GameMenu?.TogglePartyWindow();
-
-                                    break;
-
-                                case Control.OpenSpells:
-                                    Interface.Interface.GameUi?.GameMenu?.ToggleSpellsWindow();
-
-                                    break;
-
-                                case Control.OpenFriends:
-                                    _ = (Interface.Interface.GameUi?.GameMenu?.ToggleFriendsWindow());
-
-                                    break;
-
-                                case Control.OpenSettings:
-                                    Interface.Interface.GameUi?.EscapeMenu?.OpenSettingsWindow();
-
-                                    break;
-
-                                case Control.OpenAdminPanel:
-                                    PacketSender.SendOpenAdminWindow();
-
-                                    break;
-
-                                case Control.OpenGuild:
-                                    _ = (Interface.Interface.GameUi?.GameMenu.ToggleGuildWindow());
-
-                                    break;
+                                Interface.Interface.GameUi.FocusChat = true;
+                                consumeKey = true;
                             }
+                            continue;
 
+                        case Control.OpenInventory:
+                            Interface.Interface.GameUi?.GameMenu?.ToggleInventoryWindow();
                             break;
 
-                        case GameStates.Loading:
+                        case Control.OpenQuests:
+                            Interface.Interface.GameUi?.GameMenu?.ToggleQuestsWindow();
                             break;
 
-                        case GameStates.Error:
+                        case Control.OpenCharacterInfo:
+                            Interface.Interface.GameUi?.GameMenu?.ToggleCharacterWindow();
                             break;
 
-                        default:
-                            throw new ArgumentOutOfRangeException(
-                                nameof(Globals.GameState), Globals.GameState, null
-                            );
+                        case Control.OpenParties:
+                            Interface.Interface.GameUi?.GameMenu?.TogglePartyWindow();
+                            break;
+
+                        case Control.OpenSpells:
+                            Interface.Interface.GameUi?.GameMenu?.ToggleSpellsWindow();
+                            break;
+
+                        case Control.OpenFriends:
+                            _ = (Interface.Interface.GameUi?.GameMenu?.ToggleFriendsWindow());
+                            break;
+
+                        case Control.OpenSettings:
+                            Interface.Interface.GameUi?.EscapeMenu?.OpenSettingsWindow();
+                            break;
+
+                        case Control.OpenAdminPanel:
+                            PacketSender.SendOpenAdminWindow();
+                            break;
+
+                        case Control.OpenGuild:
+                            _ = Interface.Interface.GameUi?.GameMenu?.ToggleGuildWindow();
+                            break;
                     }
-                }
-            );
+                    break;
+
+                case GameStates.Loading:
+                    break;
+
+                case GameStates.Error:
+                    break;
+
+                default:
+                    throw new NotImplementedException(
+                        $"{nameof(GameStates)} '{currentGameState}' not yet implemented"
+                    );
+            }
+        }
     }
 
     public static void OnKeyReleased(Keys modifier, Keys key)
@@ -386,6 +362,11 @@ public static partial class Input
         if (Controls.Controls.ControlHasKey(Control.HoldToZoomOut, modifier, key))
         {
             HandleZoomIn();
+        }
+
+        if (Controls.Controls.ControlHasKey(Control.HoldToSoftRetargetOnSelfCast, modifier, key))
+        {
+            Globals.HoldToSoftRetargetOnSelfCast = false;
         }
 
         if (Globals.Me == null)

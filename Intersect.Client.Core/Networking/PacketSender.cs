@@ -200,7 +200,7 @@ public static partial class PacketSender
 
     public static void SendUseSpell(int slot, Guid targetId)
     {
-        Network.SendPacket(new UseSpellPacket(slot, targetId));
+        Network.SendPacket(new UseSpellPacket(slot, targetId, Globals.ShouldSoftRetargetOnSelfCast));
     }
 
     public static void SendUnequipItem(int slot)

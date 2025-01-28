@@ -16,6 +16,10 @@ public enum Control
 
     AutoTarget,
 
+    HoldToSoftRetargetOnSelfCast,
+
+    ToggleAutoSoftRetargetOnSelfCast,
+
     PickUp,
 
     Enter,

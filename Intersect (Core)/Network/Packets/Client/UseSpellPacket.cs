@@ -10,10 +10,11 @@ public partial class UseSpellPacket : IntersectPacket
     {
     }
 
-    public UseSpellPacket(int slot, Guid targetId)
+    public UseSpellPacket(int slot, Guid targetId, bool softRetargetOnSelfCast)
     {
         Slot = slot;
         TargetId = targetId;
+        SoftRetargetOnSelfCast = softRetargetOnSelfCast;
     }
 
     [Key(0)]
@@ -22,4 +23,6 @@ public partial class UseSpellPacket : IntersectPacket
     [Key(1)]
     public Guid TargetId { get; set; }
 
+    [Key(2)]
+    public bool SoftRetargetOnSelfCast { get; init; }
 }

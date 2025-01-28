@@ -1855,7 +1855,7 @@ internal sealed partial class PacketHandler
                 {
                     if (en.Id == packet.TargetId)
                     {
-                        player.UseSpell(packet.Slot, en);
+                        player.UseSpell(packet.Slot, en, packet.SoftRetargetOnSelfCast);
                         casted = true;
 
                         break;
@@ -1866,7 +1866,7 @@ internal sealed partial class PacketHandler
 
         if (!casted)
         {
-            player.UseSpell(packet.Slot, null);
+            player.UseSpell(packet.Slot, null, packet.SoftRetargetOnSelfCast);
         }
     }
 
