@@ -64,7 +64,7 @@ public partial class MonoInput : GameInput
                         break;
                     }
 
-                    if (key == Keys.Control || key == Keys.LControlKey)
+                    if (key is Keys.Control or Keys.LControlKey)
                     {
                         mKeyDictionary.Add(key, Microsoft.Xna.Framework.Input.Keys.LeftControl);
 
@@ -78,21 +78,34 @@ public partial class MonoInput : GameInput
                         break;
                     }
 
+                    if (key is Keys.Alt or Keys.LMenu)
+                    {
+                        mKeyDictionary.Add(key, Microsoft.Xna.Framework.Input.Keys.LeftAlt);
+                        break;
+                    }
+
+                    if (key == Keys.RMenu)
+                    {
+                        mKeyDictionary.Add(key, Microsoft.Xna.Framework.Input.Keys.RightAlt);
+
+                        break;
+                    }
+
                     if (key == Keys.Return)
                     {
                         mKeyDictionary.Add(key, Microsoft.Xna.Framework.Input.Keys.Enter);
 
                         break;
                     }
-                    else
-                    {
-                        if (key.ToString() == monoKey.ToString())
-                        {
-                            mKeyDictionary.Add(key, monoKey);
 
-                            break;
-                        }
+                    if (key.ToString() != monoKey.ToString())
+                    {
+                        continue;
                     }
+
+                    mKeyDictionary.Add(key, monoKey);
+
+                    break;
                 }
             }
 

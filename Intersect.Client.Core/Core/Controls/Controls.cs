@@ -67,6 +67,8 @@ public partial class Controls
         CreateControlMap(Control.AttackInteract, new ControlValue(Keys.None, Keys.E), new ControlValue(Keys.None, Keys.LButton));
         CreateControlMap(Control.Block, new ControlValue(Keys.None, Keys.Q), new ControlValue(Keys.None, Keys.RButton));
         CreateControlMap(Control.AutoTarget, new ControlValue(Keys.None, Keys.Tab), ControlValue.Default);
+        CreateControlMap(Control.HoldToSoftRetargetOnSelfCast, new ControlValue(Keys.None, Keys.LMenu), ControlValue.Default);
+        CreateControlMap(Control.ToggleAutoSoftRetargetOnSelfCast, ControlValue.Default, ControlValue.Default);
         CreateControlMap(Control.PickUp, new ControlValue(Keys.None, Keys.Space), ControlValue.Default);
         CreateControlMap(Control.Enter, new ControlValue(Keys.None, Keys.Enter), ControlValue.Default);
         CreateControlMap(Control.Hotkey1, new ControlValue(Keys.None, Keys.D1), ControlValue.Default);
@@ -123,9 +125,9 @@ public partial class Controls
 
     public void Save()
     {
-        foreach (Control control in Enum.GetValues(typeof(Control)))
+        foreach (var control in Enum.GetValues<Control>())
         {
-            var name = Enum.GetName(typeof(Control), control);
+            var name = Enum.GetName(control);
             var bindings = ControlMapping[control].Bindings;
             for (var bindingIndex = 0; bindingIndex < bindings.Count; bindingIndex++)
             {
@@ -163,6 +165,11 @@ public partial class Controls
         if (key == Keys.None)
         {
             return false;
+        }
+
+        if (modifier == Keys.Alt && key is Keys.LMenu or Keys.RMenu)
+        {
+            return ControlHasKey(control, Keys.None, key);
         }
 
         if (!(ActiveControls?.ControlMapping.ContainsKey(control) ?? false))

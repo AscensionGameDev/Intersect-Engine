@@ -44,8 +44,6 @@ public partial class Base : IDisposable
     /// <param name="args">Additional arguments. May be empty (EventArgs.Empty).</param>
     public delegate void GwenEventHandler<in T>(Base sender, T arguments) where T : System.EventArgs;
 
-    public const int MAX_COORD = 4096; // added here from various places in code
-
     /// <summary>
     ///     Accelerator map.
     /// </summary>
@@ -107,7 +105,7 @@ public partial class Base : IDisposable
 
     private Margin mMargin;
 
-    private Point mMaximumSize = new Point(MAX_COORD, MAX_COORD);
+    private Point mMaximumSize = default;
 
     private Point mMinimumSize = new Point(1, 1);
 
@@ -131,13 +129,88 @@ public partial class Base : IDisposable
 
     private Base? _tooltip;
 
-    private string mToolTipBackgroundFilename;
+    private string? _tooltipBackgroundName;
 
-    private GameTexture mToolTipBackgroundImage;
+    private GameTexture? _tooltipBackground { get; set; }
+
+    private Color _tooltipTextColor = Color.White;
+
+    public virtual string? TooltipFontName
+    {
+        get => mToolTipFont?.Name;
+        set
+        {
+            if (value == TooltipFontName)
+            {
+                return;
+            }
+
+            ToolTipFont = GameContentManager.Current.GetFont(value, ToolTipFont?.Size ?? 10);
+        }
+    }
+
+    public virtual int TooltipFontSize
+    {
+        get => mToolTipFont?.Size ?? 10;
+        set
+        {
+            if (value == TooltipFontSize)
+            {
+                return;
+            }
+
+            ToolTipFont = GameContentManager.Current.GetFont(ToolTipFont?.Name, value);
+        }
+    }
+
+    public virtual string? TooltipBackgroundName
+    {
+        get => _tooltipBackgroundName;
+        set
+        {
+            if (value == _tooltipBackgroundName)
+            {
+                return;
+            }
+
+            _tooltipBackgroundName = value;
+            GameTexture? texture = null;
+            if (!string.IsNullOrWhiteSpace(_tooltipBackgroundName))
+            {
+                texture = GameContentManager.Current.GetTexture(
+                    Content.TextureType.Gui,
+                    _tooltipBackgroundName
+                );
+            }
+
+            _tooltipBackground = texture;
+
+            if (Tooltip is Label label)
+            {
+                label.ToolTipBackground = _tooltipBackground;
+            }
+        }
+    }
+
+    public virtual Color TooltipTextColor
+    {
+        get => _tooltipTextColor;
+        set
+        {
+            if (value == _tooltipTextColor)
+            {
+                return;
+            }
+
+            _tooltipTextColor = value;
+            if (Tooltip is Label label)
+            {
+                label.TextColorOverride = _tooltipTextColor;
+            }
+        }
+    }
 
     private GameFont mToolTipFont;
-
-    private Color mToolTipFontColor;
 
     private string mToolTipFontInfo;
 
@@ -320,6 +393,38 @@ public partial class Base : IDisposable
 
             _tooltip.Parent = this;
             _tooltip.IsHidden = true;
+        }
+    }
+
+    public virtual string? TooltipText
+    {
+        get => (_tooltip as Label)?.Text;
+        set
+        {
+            if (value == TooltipText)
+            {
+                return;
+            }
+
+            if (_tooltip is not Label label)
+            {
+                if (_tooltip is not null)
+                {
+                    ApplicationContext.CurrentContext.Logger.LogWarning(
+                        "Unable to set tooltip text of {ControlName} to '{TooltipText}' because it is set to an incompatible control type {ControlType}",
+                        CanonicalName,
+                        value,
+                        _tooltip.GetType().GetName(qualified: true)
+                    );
+                    return;
+                }
+
+                SetToolTipText(value);
+            }
+            else
+            {
+                label.Text = value ?? string.Empty;
+            }
         }
     }
 
@@ -872,9 +977,9 @@ public partial class Base : IDisposable
             new JProperty("MaximumSize", Point.ToString(mMaximumSize)), new JProperty("Disabled", _disabled),
             new JProperty("Hidden", mHidden), new JProperty("RestrictToParent", mRestrictToParent),
             new JProperty("MouseInputEnabled", mMouseInputEnabled), new JProperty("HideToolTip", mHideToolTip),
-            new JProperty("ToolTipBackground", mToolTipBackgroundFilename),
+            new JProperty("ToolTipBackground", _tooltipBackgroundName),
             new JProperty("ToolTipFont", mToolTipFontInfo),
-            new JProperty("ToolTipTextColor", Color.ToString(mToolTipFontColor))
+            new JProperty("ToolTipTextColor", Color.ToString(_tooltipTextColor))
         );
 
         if (HasNamedChildren())
@@ -882,6 +987,11 @@ public partial class Base : IDisposable
             var children = new JObject();
             foreach (var ctrl in mChildren)
             {
+                if (ctrl == Tooltip)
+                {
+                    continue;
+                }
+
                 if (!string.IsNullOrEmpty(ctrl.Name) && children[ctrl.Name] == null)
                 {
                     children.Add(ctrl.Name, ctrl.GetJson());
@@ -1080,17 +1190,17 @@ public partial class Base : IDisposable
             SetToolTipText(null);
         }
 
-        if (obj["ToolTipBackground"] != null)
+        if (obj["ToolTipBackground"] is JValue { Type: JTokenType.String } tooltipBackgroundName)
         {
-            var fileName = (string) obj["ToolTipBackground"];
+            var fileName = tooltipBackgroundName.Value<string>();
             GameTexture texture = null;
             if (!string.IsNullOrWhiteSpace(fileName))
             {
                 texture = GameContentManager.Current?.GetTexture(Framework.Content.TextureType.Gui, fileName);
             }
 
-            mToolTipBackgroundFilename = fileName;
-            mToolTipBackgroundImage = texture;
+            _tooltipBackgroundName = fileName;
+            _tooltipBackground = texture;
         }
 
         if (obj["ToolTipFont"] != null && obj["ToolTipFont"].Type != JTokenType.Null)
@@ -1100,9 +1210,13 @@ public partial class Base : IDisposable
             mToolTipFont = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
         }
 
-        if (obj["ToolTipTextColor"] != null)
+        if (obj["ToolTipTextColor"] is JValue { Type: JTokenType.String } tooltipTextColorValue)
         {
-            mToolTipFontColor = Color.FromString((string) obj["ToolTipTextColor"]);
+            var tooltipTextColorString = tooltipTextColorValue.Value<string>();
+            if (!string.IsNullOrWhiteSpace(tooltipTextColorString))
+            {
+                _tooltipTextColor = Color.FromString(tooltipTextColorString);
+            }
         }
 
         UpdateToolTipProperties();
@@ -1342,19 +1456,26 @@ public partial class Base : IDisposable
 
             labelTooltip = new Label(this, name: "Tooltip")
             {
-                TextColorOverride = mToolTipFontColor ?? Skin.Colors.TooltipText,
-                ToolTipBackground = mToolTipBackgroundImage,
+                AutoSizeToContents = true,
+                MaximumSize = new Point(300, 0),
                 Padding = new Padding(
                     5,
                     3,
                     5,
                     3
                 ),
+                ToolTipBackground = _tooltipBackground,
+                WrappingBehavior = WrappingBehavior.Wrapped,
             };
 
             if (mToolTipFont != default)
             {
                 labelTooltip.Font = mToolTipFont;
+            }
+
+            if (_tooltipTextColor != default)
+            {
+                labelTooltip.TextColorOverride = _tooltipTextColor;
             }
 
             Tooltip = labelTooltip;
@@ -1367,13 +1488,13 @@ public partial class Base : IDisposable
     {
         if (Tooltip != null && Tooltip is Label tooltip)
         {
-            tooltip.TextColorOverride = mToolTipFontColor ?? Skin.Colors.TooltipText;
+            tooltip.TextColorOverride = _tooltipTextColor ?? Skin.Colors.TooltipText;
             if (mToolTipFont != null)
             {
                 tooltip.Font = mToolTipFont;
             }
 
-            tooltip.ToolTipBackground = mToolTipBackgroundImage;
+            tooltip.ToolTipBackground = _tooltipBackground;
         }
     }
 
@@ -1798,8 +1919,9 @@ public partial class Base : IDisposable
         mBounds.X = x;
         mBounds.Y = y;
 
-        mBounds.Width = Math.Min(MaximumSize.X, width);
-        mBounds.Height = Math.Min(MaximumSize.Y, height);
+        var maximumSize = MaximumSize;
+        mBounds.Width = maximumSize.X > 0 ? Math.Min(MaximumSize.X, width) : width;
+        mBounds.Height = maximumSize.Y > 0 ? Math.Min(MaximumSize.Y, height) : height;
 
         OnBoundsChanged(oldBounds);
 

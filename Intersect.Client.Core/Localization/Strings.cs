@@ -1,4 +1,5 @@
 using System.Reflection;
+using Intersect.Client.Core.Controls;
 using Intersect.Configuration;
 using Intersect.Core;
 using Intersect.Enums;
@@ -780,12 +781,13 @@ public static partial class Strings
     {
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static Dictionary<string, LocalizedString> KeyDictionary = new Dictionary<string, LocalizedString>
+        public static Dictionary<string, LocalizedString> KeyDictionary = new()
         {
             {"attackinteract", @"Attack/Interact:"},
             {"block", @"Block:"},
             {"autotarget", @"Auto Target:"},
             {"enter", @"Chat:"},
+            {nameof(Control.HoldToSoftRetargetOnSelfCast).ToLowerInvariant(), @"Hold to Soft-Retarget on Self-Cast:"},
             {"hotkey0", @"Hot Key 0:"},
             {"hotkey1", @"Hot Key 1:"},
             {"hotkey2", @"Hot Key 2:"},
@@ -820,6 +822,7 @@ public static partial class Strings
             {"togglezoomout", "Toggle Zoom Out:"},
             {"holdtozoomout", "Hold to Zoom Out:"},
             {"togglefullscreen", "Toggle Fullscreen:"},
+            {nameof(Control.ToggleAutoSoftRetargetOnSelfCast).ToLowerInvariant(), "Toggle Auto Soft-Retarget on Self-Cast:"},
         };
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1692,7 +1695,7 @@ public static partial class Strings
             {"lcontrolkey", @"L Control"},
             {"left", @"Left"},
             {"linefeed", @"LineFeed"},
-            {"lmenu", @"L Menu"},
+            {"lmenu", @"L Alt"},
             {"lshiftkey", @"L Shift"},
             {"lwin", @"LWin"},
             {"m", @"M"},
@@ -1759,7 +1762,7 @@ public static partial class Strings
             {"rcontrolkey", @"R Control"},
             {"return", @"Return"},
             {"right", @"Right"},
-            {"rmenu", @"R Menu"},
+            {"rmenu", @"R Alt"},
             {"rshiftkey", @"R Shift"},
             {"rwin", @"RWin"},
             {"s", @"S"},
@@ -1973,6 +1976,13 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString AutoTurnToTarget = @"Auto-turn to target";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString AutoSoftRetargetOnSelfCast = @"Auto Soft-Retarget on Self-Cast";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString AutoSoftRetargetOnSelfCastTooltip =
+            @"When this is enabled and an enemy is targeted and a self-cast spell is used, the spell will be self-cast without removing the target on the enemy.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Title = @"Settings";

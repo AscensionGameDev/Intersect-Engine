@@ -67,6 +67,7 @@ public partial class SettingsWindow : ImagePanel
     private readonly ScrollControl _targetingSettings;
     private readonly LabeledCheckBox _stickyTarget;
     private readonly LabeledCheckBox _autoTurnToTarget;
+    private readonly LabeledCheckBox _autoSoftRetargetOnSelfCast;
 
     // Video Settings.
     private readonly ComboBox _resolutionList;
@@ -277,7 +278,17 @@ public partial class SettingsWindow : ImagePanel
         // Game Settings - Targeting: Auto-turn to Target.
         _autoTurnToTarget = new LabeledCheckBox(_targetingSettings, "AutoTurnToTargetCheckbox")
         {
-            Text = Strings.Settings.AutoTurnToTarget
+            Text = Strings.Settings.AutoTurnToTarget,
+        };
+
+        // Game Settings - Targeting: Auto-turn to Target.
+        _autoSoftRetargetOnSelfCast = new LabeledCheckBox(_targetingSettings, "AutoSoftRetargetOnSelfCast")
+        {
+            Text = Strings.Settings.AutoSoftRetargetOnSelfCast,
+            TooltipText = Strings.Settings.AutoSoftRetargetOnSelfCastTooltip,
+            TooltipBackgroundName = "tooltip.png",
+            TooltipFontName = "sourcesansproblack",
+            TooltipTextColor = Color.White,
         };
 
         // Game Settings - Typewriter Text
@@ -426,15 +437,16 @@ public partial class SettingsWindow : ImagePanel
         // Keybinding Settings - Controls
         var row = 0;
         var defaultFont = Current.GetFont("sourcesansproblack", 10);
-        foreach (Control control in Enum.GetValues(typeof(Control)))
+        foreach (var control in Enum.GetValues<Control>())
         {
             var offset = row++ * 32;
-            var name = Enum.GetName(typeof(Control), control)?.ToLower() ?? string.Empty;
+            var controlName = Enum.GetName(control);
+            var name = controlName?.ToLower() ?? string.Empty;
 
-            var prefix = $"Control{Enum.GetName(typeof(Control), control)}";
+            var prefix = $"Control{controlName}";
             var label = new Label(_keybindingSettingsContainer, $"{prefix}Label")
             {
-                Text = Strings.Controls.KeyDictionary[name],
+                Text = Strings.Controls.KeyDictionary.TryGetValue(name, out var localizedControlName) ? localizedControlName : $"ControlName:{controlName}",
                 AutoSizeToContents = true,
                 Font = defaultFont,
             };
@@ -635,8 +647,7 @@ public partial class SettingsWindow : ImagePanel
             // Restore Default KeybindingSettings Button.
             _keybindingRestoreBtn.Show();
 
-            // KeybindingBtns.
-            foreach (Control control in Enum.GetValues(typeof(Control)))
+            foreach (var control in Enum.GetValues<Control>())
             {
                 var controlMapping = _keybindingEditControls.ControlMapping[control];
                 for (var bindingIndex = 0; bindingIndex < controlMapping.Bindings.Count; bindingIndex++)
@@ -777,6 +788,7 @@ public partial class SettingsWindow : ImagePanel
         _playerOverheadHpBarCheckbox.IsChecked = Globals.Database.PlayerOverheadHpBar;
         _stickyTarget.IsChecked = Globals.Database.StickyTarget;
         _autoTurnToTarget.IsChecked = Globals.Database.AutoTurnToTarget;
+        _autoSoftRetargetOnSelfCast.IsChecked = Globals.Database.AutoSoftRetargetOnSelfCast;
         _typewriterCheckbox.IsChecked = Globals.Database.TypewriterBehavior == Enums.TypewriterBehavior.Word;
 
         // Video Settings.
@@ -957,6 +969,7 @@ public partial class SettingsWindow : ImagePanel
         Globals.Database.PlayerOverheadHpBar = _playerOverheadHpBarCheckbox.IsChecked;
         Globals.Database.StickyTarget = _stickyTarget.IsChecked;
         Globals.Database.AutoTurnToTarget = _autoTurnToTarget.IsChecked;
+        Globals.Database.AutoSoftRetargetOnSelfCast = _autoSoftRetargetOnSelfCast.IsChecked;
         Globals.Database.TypewriterBehavior = _typewriterCheckbox.IsChecked ? Enums.TypewriterBehavior.Word : Enums.TypewriterBehavior.Off;
 
         // Video Settings.

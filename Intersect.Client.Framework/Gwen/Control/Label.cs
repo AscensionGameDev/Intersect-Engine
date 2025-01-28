@@ -69,7 +69,34 @@ public partial class Label : Base, ILabel
         mAutoSizeToContents = true;
     }
 
-    public GameTexture ToolTipBackground { get; set; }
+    public WrappingBehavior WrappingBehavior
+    {
+        get => _wrappingBehavior;
+        set
+        {
+            if (value == _wrappingBehavior)
+            {
+                return;
+            }
+
+            _wrappingBehavior = value;
+            _textElement.WrappingBehavior = value;
+        }
+    }
+
+    public GameTexture ToolTipBackground
+    {
+        get => _tooltipBackground;
+        set
+        {
+            if (value == _tooltipBackground)
+            {
+                return;
+            }
+
+            _tooltipBackground = value;
+        }
+    }
 
     /// <summary>
     ///     Text alignment.
@@ -169,6 +196,8 @@ public partial class Label : Base, ILabel
     }
 
     private string? _textOverride;
+    private WrappingBehavior _wrappingBehavior;
+    private GameTexture _tooltipBackground;
 
     /// <summary>
     ///     Text override - used to display different string.

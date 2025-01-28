@@ -211,6 +211,9 @@ public abstract partial class Entity : IEntity
     public Entity CastTarget { get; set; }
 
     [NotMapped, JsonIgnore]
+    public bool SoftRetargetOnSelfCast { get; set; }
+
+    [NotMapped, JsonIgnore]
     public Guid CollisionIndex { get; set; }
 
     [NotMapped, JsonIgnore]
@@ -2369,7 +2372,13 @@ public abstract partial class Entity : IEntity
     {
     }
 
-    public virtual bool CanCastSpell(SpellBase spell, Entity target, bool checkVitalReqs, out SpellCastFailureReason reason)
+    public virtual bool CanCastSpell(
+        SpellBase spell,
+        Entity target,
+        bool checkVitalReqs,
+        bool softRetargetOnSelfCast,
+        out SpellCastFailureReason reason
+    )
     {
         // Is this a valid spell?
         if (spell == null)
@@ -2483,7 +2492,7 @@ public abstract partial class Entity : IEntity
             return;
         }
 
-        if (!CanCastSpell(spellBase, CastTarget, false, out _))
+        if (!CanCastSpell(spellBase, CastTarget, false, SoftRetargetOnSelfCast, out _))
         {
             return;
         }

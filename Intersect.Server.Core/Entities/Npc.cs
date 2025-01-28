@@ -696,7 +696,7 @@ public partial class Npc : Entity
         // }
 
         // Check if we are even allowed to cast this spell.
-        if (!CanCastSpell(spellBase, target, true, out _))
+        if (!CanCastSpell(spellBase, target, true, SoftRetargetOnSelfCast, out _))
         {
             return;
         }

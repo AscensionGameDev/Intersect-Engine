@@ -52,6 +52,36 @@ public partial class LabeledCheckBox : Base
         set => mCheckBox.IsChecked = value;
     }
 
+    public override string? TooltipText
+    {
+        get => mLabel.TooltipText;
+        set => mLabel.TooltipText = value;
+    }
+
+    public override string? TooltipBackgroundName
+    {
+        get => mLabel.TooltipBackgroundName;
+        set => mLabel.TooltipBackgroundName = value;
+    }
+
+    public override string? TooltipFontName
+    {
+        get => mLabel.TooltipFontName;
+        set => mLabel.TooltipFontName = value;
+    }
+
+    public override int TooltipFontSize
+    {
+        get => mLabel.TooltipFontSize;
+        set => mLabel.TooltipFontSize = value;
+    }
+
+    public override Color TooltipTextColor
+    {
+        get => mLabel.TooltipTextColor;
+        set => mLabel.TooltipTextColor = value;
+    }
+
     /// <summary>
     ///     Label text.
     /// </summary>

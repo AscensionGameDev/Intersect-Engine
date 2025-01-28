@@ -5,6 +5,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
@@ -365,10 +366,11 @@ public partial class Chatbox
         for (var i = mMessageIndex; i < messages.Count; i++)
         {
             var msg = messages[i];
-            var myText = Interface.WrapText(
+            var myText = Text.WrapText(
                 msg.Message,
                 mChatboxMessages.Width - vScrollBar.Width - 8,
-                mChatboxText.Font
+                mChatboxText.Font,
+                Graphics.Renderer ?? throw new InvalidOperationException("No renderer")
             );
 
             foreach (var t in myText)

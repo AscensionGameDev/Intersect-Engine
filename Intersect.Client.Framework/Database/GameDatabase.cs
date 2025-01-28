@@ -29,6 +29,8 @@ public abstract partial class GameDatabase
 
     public bool AutoTurnToTarget { get; set; }
 
+    public bool AutoSoftRetargetOnSelfCast { get; set; }
+
     public bool FriendOverheadInfo { get; set; }
 
     public bool FriendOverheadHpBar { get; set; }
@@ -119,6 +121,7 @@ public abstract partial class GameDatabase
         TargetAccountDirection = LoadPreference(nameof(TargetAccountDirection), false);
         StickyTarget = LoadPreference(nameof(StickyTarget), false);
         AutoTurnToTarget = LoadPreference(nameof(AutoTurnToTarget), false);
+        AutoSoftRetargetOnSelfCast = LoadPreference(nameof(AutoSoftRetargetOnSelfCast), false);
         FriendOverheadInfo = LoadPreference(nameof(FriendOverheadInfo), true);
         FriendOverheadHpBar = LoadPreference(nameof(FriendOverheadHpBar), false);
         GuildMemberOverheadInfo = LoadPreference(nameof(GuildMemberOverheadInfo), true);
@@ -156,6 +159,7 @@ public abstract partial class GameDatabase
         SavePreference(nameof(TargetAccountDirection), TargetAccountDirection);
         SavePreference(nameof(StickyTarget), StickyTarget);
         SavePreference(nameof(AutoTurnToTarget), AutoTurnToTarget);
+        SavePreference(nameof(AutoSoftRetargetOnSelfCast), AutoSoftRetargetOnSelfCast);
         SavePreference(nameof(FriendOverheadInfo), FriendOverheadInfo);
         SavePreference(nameof(FriendOverheadHpBar), FriendOverheadHpBar);
         SavePreference(nameof(GuildMemberOverheadInfo), GuildMemberOverheadInfo);

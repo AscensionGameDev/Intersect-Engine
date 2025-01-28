@@ -119,7 +119,7 @@ public partial class Menu : ScrollControl
     {
         var childrenHeight = Children.Sum(child => child != null ? child.Height : 0);
 
-        if (childrenHeight > InnerPanel.MaximumSize.Y)
+        if (InnerPanel.MaximumSize.Y > 0 && childrenHeight > InnerPanel.MaximumSize.Y)
         {
             InnerPanel.MaximumSize = new Point(InnerPanel.MaximumSize.X, childrenHeight);
         }

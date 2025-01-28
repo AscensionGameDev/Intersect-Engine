@@ -4,6 +4,7 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Localization;
 
 namespace Intersect.Client.Interface.Shared;
@@ -192,7 +193,12 @@ public partial class InputBox : WindowControl
         {
             LoadJsonUi(GameContentManager.UI.Shared, Graphics.Renderer?.GetResolutionString());
 
-            var text = Interface.WrapText(_prompt, _promptLabel.Width, _promptLabel.Font);
+            var text = Text.WrapText(
+                _prompt,
+                _promptLabel.Width,
+                _promptLabel.Font,
+                Graphics.Renderer ?? throw new InvalidOperationException("No renderer")
+            );
             var y = _promptLabel.Y;
 
             foreach (var s in text)

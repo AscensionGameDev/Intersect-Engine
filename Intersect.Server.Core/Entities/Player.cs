@@ -3507,7 +3507,7 @@ public partial class Player : Entity
 
                     if (itemBase.QuickCast)
                     {
-                        if (!CanCastSpell(itemBase.Spell, target, false, out var _))
+                        if (!CanCastSpell(itemBase.Spell, target, false, SoftRetargetOnSelfCast, out var _))
                         {
                             return;
                         }
@@ -5566,10 +5566,16 @@ public partial class Player : Entity
         return Map?.ZoneType == MapZone.Safe && Options.Instance.Combat.EnableAllPlayersFriendlyInSafeZone;
     }
 
-    public override bool CanCastSpell(SpellBase spell, Entity target, bool checkVitalReqs, out SpellCastFailureReason reason)
+    public override bool CanCastSpell(
+        SpellBase spell,
+        Entity target,
+        bool checkVitalReqs,
+        bool softRetargetOnSelfCast,
+        out SpellCastFailureReason reason
+    )
     {
         // Do we fail our base class check? If so cancel out with a reason!
-        if (!base.CanCastSpell(spell, target, checkVitalReqs, out reason))
+        if (!base.CanCastSpell(spell, target, checkVitalReqs, softRetargetOnSelfCast, out reason))
         {
             // Let our user know the reason if configured.
             if (Options.Instance.Combat.EnableCombatChatMessages)
@@ -5667,24 +5673,24 @@ public partial class Player : Entity
         return true;
     }
 
-    public void UseSpell(int spellSlot, Entity target)
+    public void UseSpell(int spellSlot, Entity target, bool softRetargetOnSelfCast)
     {
-        var spellNum = Spells[spellSlot].SpellId;
+        var spellDescriptorId = Spells[spellSlot].SpellId;
         Target = target;
-        var spell = SpellBase.Get(spellNum);
-        if (spell == null)
+        if (!SpellBase.TryGet(spellDescriptorId, out var spellDescriptor))
         {
             return;
         }
 
-        if (!CanCastSpell(spell, target, true, out _))
+        if (!CanCastSpell(spellDescriptor, target, true, softRetargetOnSelfCast, out _))
         {
-            if (!spell.Combat.Friendly)
+            if (!spellDescriptor.Combat.Friendly)
             {
                 return;
             }
 
-            if (!Options.Instance.Combat.EnableAutoSelfCastFriendlySpellsWhenTargetingHostile)
+            if (!Options.Instance.Combat.EnableAutoSelfCastFriendlySpellsWhenTargetingHostile ||
+                !softRetargetOnSelfCast)
             {
                 return;
             }
@@ -5696,7 +5702,8 @@ public partial class Player : Entity
 
             // Since it's a friendly spell and we have auto-retarget enabled,
             // check if we can cast the spell on ourselves
-            if (!CanCastSpell(spell, this, true, out _))
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (!CanCastSpell(spellDescriptor, this, true, softRetargetOnSelfCast, out _))
             {
                 return;
             }
@@ -5707,7 +5714,7 @@ public partial class Player : Entity
 
         if (CastTime == 0)
         {
-            CastTime = Timing.Global.Milliseconds + spell.CastDuration;
+            CastTime = Timing.Global.Milliseconds + spellDescriptor.CastDuration;
 
             //Remove stealth status.
             foreach (var status in CachedStatuses)
@@ -5724,10 +5731,12 @@ public partial class Player : Entity
             // retargeting for auto self-cast on friendly when targeting hostile
             CastTarget = target;
 
-            if (spell.CastAnimationId != Guid.Empty)
+            SoftRetargetOnSelfCast = softRetargetOnSelfCast;
+
+            if (spellDescriptor.CastAnimationId != Guid.Empty)
             {
                 PacketSender.SendAnimationToProximity(
-                    spell.CastAnimationId,
+                    spellDescriptor.CastAnimationId,
                     1,
                     base.Id,
                     MapId,
@@ -5736,14 +5745,14 @@ public partial class Player : Entity
                     Dir,
                     MapInstanceId,
                     AnimationSourceType.SpellCast,
-                    spell.Id
+                    spellDescriptor.Id
                 ); //Target Type 1 will be global entity
             }
 
             //Tell the client we are channeling the spell
             if (IsCasting)
             {
-                PacketSender.SendEntityCastTime(this, spellNum);
+                PacketSender.SendEntityCastTime(this, spellDescriptorId);
             }
         }
         else

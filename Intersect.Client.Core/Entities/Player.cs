@@ -1215,18 +1215,36 @@ public partial class Player : Entity, IPlayer
 
     public void TryUseSpell(int index)
     {
-        if (Spells[index].Id != Guid.Empty &&
-            (GetSpellRemainingCooldown(index) < Timing.Global.Milliseconds))
+        if (index < 0 || Spells.Length <= index)
         {
-            var spellBase = SpellBase.Get(Spells[index].Id);
+            return;
+        }
 
-            if (spellBase.CastDuration > 0 && (Options.Instance.Combat.MovementCancelsCast && Globals.Me?.IsMoving == true))
+        var spell = Spells[index];
+        if (spell.Id == default)
+        {
+            return;
+        }
+
+        if (GetSpellRemainingCooldown(index) > Timing.Global.Milliseconds)
+        {
+            return;
+        }
+
+        if (!SpellBase.TryGet(spell.Id, out var spellDescriptor))
+        {
+            return;
+        }
+
+        if (spellDescriptor.CastDuration > 0)
+        {
+            if (Options.Instance.Combat.MovementCancelsCast && Globals.Me?.IsMoving == true)
             {
                 return;
             }
-
-            PacketSender.SendUseSpell(index, TargetId);
         }
+
+        PacketSender.SendUseSpell(index, TargetId);
     }
 
     public long GetSpellCooldown(Guid id)
@@ -1435,10 +1453,7 @@ public partial class Player : Entity, IPlayer
         var castInput = -1;
         for (var barSlot = 0; barSlot < Options.Instance.Player.HotbarSlotCount; barSlot++)
         {
-            if (!mLastHotbarUseTime.ContainsKey(barSlot))
-            {
-                mLastHotbarUseTime.Add(barSlot, 0);
-            }
+            mLastHotbarUseTime.TryAdd(barSlot, 0);
 
             if (Controls.KeyDown((Control)barSlot + (int)Control.Hotkey1))
             {
@@ -1446,13 +1461,11 @@ public partial class Player : Entity, IPlayer
             }
         }
 
-        if (castInput != -1)
+        // ReSharper disable once InvertIf
+        if (0 <= castInput && castInput < Interface.Interface.GameUi?.Hotbar?.Items?.Count && mLastHotbarUseTime[castInput] < Timing.Global.Milliseconds)
         {
-            if (0 <= castInput && castInput < Interface.Interface.GameUi?.Hotbar?.Items?.Count && mLastHotbarUseTime[castInput] < Timing.Global.Milliseconds)
-            {
-                Interface.Interface.GameUi?.Hotbar?.Items?[castInput]?.Activate();
-                mLastHotbarUseTime[castInput] = Timing.Global.Milliseconds + mHotbarUseDelay;
-            }
+            Interface.Interface.GameUi?.Hotbar?.Items?[castInput]?.Activate();
+            mLastHotbarUseTime[castInput] = Timing.Global.Milliseconds + mHotbarUseDelay;
         }
     }
 
