@@ -24,7 +24,12 @@ public record struct CreateLoggerOptions
     public string Name { get; init; }
 
     /// <summary>
-    /// The context type of the logger.
+    /// The context name of the logger. This takes priority over <see cref="ContextType"/>.
     /// </summary>
-    public Type ContextType { get; init; }
+    public string? ContextName { get; init; }
+
+    /// <summary>
+    /// The context type of the logger. This will be ignored if <see cref="ContextName"/> is set.
+    /// </summary>
+    public Type? ContextType { get; init; }
 }
