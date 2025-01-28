@@ -581,6 +581,8 @@ public partial class SettingsWindow : ImagePanel
         _informationSettings.Hide();
         _targetingSettings.Show();
         _autoTurnToTarget.IsDisabled = !(Options.Instance?.Player?.EnableAutoTurnToTarget ?? false);
+        _autoSoftRetargetOnSelfCast.IsDisabled =
+            !(Options.Instance?.Combat?.EnableAutoSelfCastFriendlySpellsWhenTargetingHostile ?? false);
     }
 
     private void VideoSettingsTab_Clicked(Base sender, ClickedEventArgs arguments)
