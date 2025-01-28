@@ -51,7 +51,7 @@ internal sealed partial class LoggingHelper : ILoggingHelper
 
     public ILogger Plugin { get; }
 
-    internal LoggingHelper(ILogger applicationLogger, IManifestHelper manifest)
+    internal LoggingHelper(ILogger applicationLogger, IManifestHelper manifest, PluginReference pluginReference)
     {
         mManifest = manifest;
 
@@ -60,15 +60,28 @@ internal sealed partial class LoggingHelper : ILoggingHelper
             new CreateLoggerOptions
             {
                 Console = Debugger.IsAttached ? LogLevel.Debug : LogLevel.None, File = LogLevel.Information,
+                ContextName = manifest.Name,
+                ContextType = pluginReference.EntryType,
             }
         );
     }
 
     /// <inheritdoc />
-    public ILogger CreateLogger(CreateLoggerOptions createLoggerOptions) =>
-        new SerilogLoggerFactory(CreateLogger(mManifest, createLoggerOptions)).CreateLogger(
-            createLoggerOptions.ContextType
-        );
+    public ILogger CreateLogger(CreateLoggerOptions createLoggerOptions)
+    {
+        var factory = new SerilogLoggerFactory(CreateLogger(mManifest, createLoggerOptions));
+        if (createLoggerOptions.ContextName is { } contextName && !string.IsNullOrWhiteSpace(contextName))
+        {
+            return factory.CreateLogger(contextName);
+        }
+
+        if (createLoggerOptions.ContextType is { } contextType)
+        {
+            return factory.CreateLogger(contextType);
+        }
+
+        return factory.CreateLogger("Plugin");
+    }
 
     /// <inheritdoc />
     public ILogger<TContext> CreateLogger<TContext>(CreateLoggerOptions createLoggerOptions) =>

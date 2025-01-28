@@ -20,7 +20,7 @@ public sealed partial class Plugin : IPlugin
         IApplicationContext applicationContext,
         IManifestHelper manifest,
         PluginReference reference
-    ) => new Plugin(manifest, new LoggingHelper(applicationContext.Logger, manifest), reference);
+    ) => new Plugin(manifest, new LoggingHelper(applicationContext.Logger, manifest, reference), reference);
 
     // ReSharper disable once NotNullMemberIsNotInitialized
     // Plugin instance is created at the Discovery phase and Configuration is loaded afterwards
