@@ -1,4 +1,5 @@
-﻿using Intersect.Utilities;
+﻿using Intersect.Framework.Core;
+using Intersect.Utilities;
 
 namespace Intersect.Client.General;
 
@@ -37,10 +38,12 @@ public static partial class Time
 
         float ecTime = Timing.Global.MillisecondsUtc - sColorUpdate;
         var valChange = 255 * ecTime / 10000f;
-        sCurrentColor.A = LerpVal(sCurrentColor.A, sTargetColor.A, valChange);
-        sCurrentColor.R = LerpVal(sCurrentColor.R, sTargetColor.R, valChange);
-        sCurrentColor.G = LerpVal(sCurrentColor.G, sTargetColor.G, valChange);
-        sCurrentColor.B = LerpVal(sCurrentColor.B, sTargetColor.B, valChange);
+        sCurrentColor = new ColorF(
+            r: LerpVal(sCurrentColor.R, sTargetColor.R, valChange),
+            g: LerpVal(sCurrentColor.G, sTargetColor.G, valChange),
+            b: LerpVal(sCurrentColor.B, sTargetColor.B, valChange),
+            a: LerpVal(sCurrentColor.A, sTargetColor.A, valChange)
+        );
 
         sColorUpdate = Timing.Global.MillisecondsUtc;
     }
