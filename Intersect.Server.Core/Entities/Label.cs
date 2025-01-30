@@ -6,7 +6,7 @@ namespace Intersect.Server.Entities;
 public partial struct Label(string label, Color color)
 {
     [JsonProperty(nameof(Label))]
-    public readonly string Text = label;
+    public string Text = label;
 
-    public readonly Color Color = color;
+    public Color Color = color;
 }
