@@ -55,13 +55,15 @@ public sealed partial class PluginBootstrapContext : IPluginBootstrapContext
                 throw new ArgumentOutOfRangeException(nameof(args), $"{nameof(args)} should have 1 argument.");
             }
 
-            if (!(args[0] is Plugin plugin))
+            if (args[0] is not Plugin plugin)
             {
                 throw new ArgumentException(
                     string.Format(
-                        CultureInfo.CurrentCulture, ExceptionMessages.PluginBootstrapContextMissingPluginArgument,
+                        CultureInfo.CurrentUICulture,
+                        ExceptionMessages.PluginBootstrapContextMissingPluginArgument,
                         nameof(Plugin)
-                    ), nameof(args)
+                    ),
+                    nameof(args)
                 );
             }
 
