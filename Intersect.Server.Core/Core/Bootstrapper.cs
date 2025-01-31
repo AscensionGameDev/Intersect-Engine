@@ -84,7 +84,11 @@ internal static class Bootstrapper
                 retainedFileTimeLimit: TimeSpan.FromDays(30)
             );
 
-        var logger = new SerilogLoggerFactory(loggerConfiguration.CreateLogger()).CreateLogger("Client");
+        var logger = new SerilogLoggerFactory(loggerConfiguration.CreateLogger()).CreateLogger("Server");
+
+        var assemblyName = Assembly.GetExecutingAssembly().GetName();
+        logger.LogCritical("Starting {AssemblyName} v{Version}", assemblyName.Name, assemblyName.Version);
+
         var packetTypeRegistry = new PacketTypeRegistry(logger, typeof(SharedConstants).Assembly);
         if (!packetTypeRegistry.TryRegisterBuiltIn())
         {

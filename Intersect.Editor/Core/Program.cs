@@ -38,7 +38,11 @@ public static partial class Program
                 retainedFileTimeLimit: TimeSpan.FromDays(30)
             );
 
-        var logger = new SerilogLoggerFactory(loggerConfiguration.CreateLogger()).CreateLogger("Client");
+        var logger = new SerilogLoggerFactory(loggerConfiguration.CreateLogger()).CreateLogger("Editor");
+
+        var assemblyName = Assembly.GetExecutingAssembly().GetName();
+        logger.LogCritical("Starting {AssemblyName} v{Version}", assemblyName.Name, assemblyName.Version);
+
         ApplicationContext.Context.Value =
             new FakeApplicationContextForThisGarbageWinFormsEditorThatIHateAndWishItWouldBurnInAFireContext(logger);
 
