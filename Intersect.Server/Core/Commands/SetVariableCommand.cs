@@ -65,11 +65,11 @@ namespace Intersect.Server.Core.Commands
                     break;
 
                 case VariableDataType.Integer:
-                    variable.Value.Integer = int.Parse(rawServerVariableValue, NumberStyles.Integer, CultureInfo.CurrentCulture);
+                    variable.Value.Integer = int.Parse(rawServerVariableValue, NumberStyles.Integer, CultureInfo.CurrentUICulture);
                     break;
 
                 case VariableDataType.Number:
-                    variable.Value.Number = double.Parse(rawServerVariableValue, NumberStyles.Float, CultureInfo.CurrentCulture);
+                    variable.Value.Number = double.Parse(rawServerVariableValue, NumberStyles.Float, CultureInfo.CurrentUICulture);
                     break;
 
                 case VariableDataType.String:

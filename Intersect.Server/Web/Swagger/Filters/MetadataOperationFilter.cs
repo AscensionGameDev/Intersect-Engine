@@ -27,7 +27,7 @@ public sealed class MetadataOperationFilter : IOperationFilter
 
             if (!string.IsNullOrWhiteSpace(description))
             {
-                var resourceString = OpenAPIResources.ResourceManager.GetStringWithFallback(description, CultureInfo.CurrentCulture);
+                var resourceString = OpenAPIResources.ResourceManager.GetStringWithFallback(description, CultureInfo.CurrentUICulture);
                 if (!string.IsNullOrWhiteSpace(resourceString))
                 {
                     description = resourceString;
@@ -45,7 +45,7 @@ public sealed class MetadataOperationFilter : IOperationFilter
 
             if (!string.IsNullOrWhiteSpace(summary))
             {
-                var resourceString = OpenAPIResources.ResourceManager.GetStringWithFallback(summary, CultureInfo.CurrentCulture);
+                var resourceString = OpenAPIResources.ResourceManager.GetStringWithFallback(summary, CultureInfo.CurrentUICulture);
                 if (!string.IsNullOrWhiteSpace(resourceString))
                 {
                     summary = resourceString;
