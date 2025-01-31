@@ -30,6 +30,8 @@ public partial struct Padding : IEquatable<Padding>
 
     public static Padding Five = new Padding(5, 5, 5, 5);
 
+    public static Padding FourH = new(4, 0, 4, 0);
+
     public Padding(int left, int top, int right, int bottom)
     {
         Top = top;

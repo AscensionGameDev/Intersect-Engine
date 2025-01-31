@@ -1,26 +1,44 @@
-using Intersect.Core;
-using Intersect.Framework.Reflection;
-using Microsoft.Extensions.Logging;
+using Intersect.Client.Framework.Input;
 
 namespace Intersect.Client.Framework.GenericClasses;
 
 public static class KeysExtensions
 {
-    public static string GetName(this Keys key, bool isModifier = false)
+    public static bool TryGetMouseButton(this Keys key, out MouseButtons mouseButton)
     {
-        var name = Enum.GetName(key);
-        if (!string.IsNullOrWhiteSpace(name))
+        // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+        switch (key)
         {
-            return name;
+            case Keys.LButton:
+                mouseButton = MouseButtons.Left;
+                return true;
+
+            case Keys.RButton:
+                mouseButton = MouseButtons.Right;
+                return true;
+
+            case Keys.MButton:
+                mouseButton = MouseButtons.Middle;
+                return true;
+
+            case Keys.XButton1:
+                mouseButton = MouseButtons.X1;
+                return true;
+
+            case Keys.XButton2:
+                mouseButton = MouseButtons.X2;
+                return true;
+
+            default:
+                mouseButton = default;
+                return false;
         }
-
-        ApplicationContext.CurrentContext.Logger.LogWarning(
-            "Invalid {KeyType} {Modifier}, no name found in {TypeName}",
-            isModifier ? "modifier key" : "key",
-            key,
-            typeof(Keys).GetName(qualified: true)
-        );
-
-        return "Unknown Key";
     }
+
+    public static string GetKeyId(this Keys key, bool isModifier = false) =>
+        Enum.GetName(key) ??
+        throw new ArgumentException(
+            $"No name found for {(isModifier ? "modifier" : "key")} value {(int)key}",
+            nameof(key)
+        );
 }

@@ -95,7 +95,7 @@ public partial class InventoryItem
         }
         else if (Globals.InBank)
         {
-            if (Globals.InputManager.KeyDown(Keys.Shift))
+            if (Globals.InputManager.IsKeyDown(Keys.Shift))
             {
                 Globals.Me.TryDepositItem(
                     mMySlot,

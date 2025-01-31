@@ -77,7 +77,7 @@ public partial class ComboBox : Button
             }
 
             mSelectedItem = value;
-            OnItemSelected(mSelectedItem, new ItemSelectedEventArgs(value, true));
+            OnItemSelected(mSelectedItem, new ItemSelectedEventArgs(value, true, mSelectedItem.UserData));
         }
     }
 
@@ -199,7 +199,7 @@ public partial class ComboBox : Button
 
         if (mSelectedItem == null)
         {
-            OnItemSelected(item, new ItemSelectedEventArgs(null, true));
+            OnItemSelected(item, new ItemSelectedEventArgs(null, true, selectedUserData: null));
         }
 
         return item;
@@ -387,14 +387,19 @@ public partial class ComboBox : Button
     /// </returns>
     protected override bool OnKeyDown(bool down)
     {
-        if (down)
+        if (!down)
         {
-            var it = mMenu.Children.FindIndex(x => x == mSelectedItem);
-            if (it + 1 < mMenu.Children.Count)
-            {
-                OnItemSelected(this, new ItemSelectedEventArgs(mMenu.Children[it + 1]));
-            }
+            return true;
         }
+
+        var it = mMenu.Children.FindIndex(x => x == mSelectedItem);
+        if (it + 1 >= mMenu.Children.Count)
+        {
+            return true;
+        }
+
+        var selectedItem = mMenu.Children[it + 1];
+        OnItemSelected(this, new ItemSelectedEventArgs(selectedItem, selectedUserData: selectedItem.UserData));
 
         return true;
     }
@@ -408,14 +413,19 @@ public partial class ComboBox : Button
     /// </returns>
     protected override bool OnKeyUp(bool down)
     {
-        if (down)
+        if (!down)
         {
-            var it = mMenu.Children.FindLastIndex(x => x == mSelectedItem);
-            if (it - 1 >= 0)
-            {
-                OnItemSelected(this, new ItemSelectedEventArgs(mMenu.Children[it - 1]));
-            }
+            return true;
         }
+
+        var it = mMenu.Children.FindLastIndex(x => x == mSelectedItem);
+        if (it - 1 < 0)
+        {
+            return true;
+        }
+
+        var selectedItem = mMenu.Children[it - 1];
+        OnItemSelected(this, new ItemSelectedEventArgs(selectedItem, selectedUserData: selectedItem.UserData));
 
         return true;
     }
@@ -472,7 +482,7 @@ public partial class ComboBox : Button
     ///     The UserData to look for. The equivalency check uses "param.Equals(item.UserData)".
     ///     If null is passed in, it will look for null/unset UserData.
     /// </param>
-    public void SelectByUserData(object userdata)
+    public virtual bool SelectByUserData(object? userdata)
     {
         foreach (MenuItem item in mMenu.Children)
         {
@@ -482,16 +492,18 @@ public partial class ComboBox : Button
                 {
                     SelectedItem = item;
 
-                    return;
+                    return true;
                 }
             }
             else if (userdata.Equals(item.UserData))
             {
                 SelectedItem = item;
 
-                return;
+                return true;
             }
         }
+
+        return false;
     }
 
     public void SetMenuBackgroundColor(Color clr)

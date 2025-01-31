@@ -2,6 +2,7 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.ControlInternal;
+using Intersect.Client.Framework.Gwen.Skin.Texturing;
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;
@@ -30,6 +31,9 @@ public partial class ImagePanel : Base
 
     private string mTextureFilename;
 
+    private Margin? _textureNinePatchMargin;
+    private Bordered? _ninepatchRenderer;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="ImagePanel" /> class.
     /// </summary>
@@ -46,6 +50,21 @@ public partial class ImagePanel : Base
         this.HoverEnter += ImagePanel_HoverEnter;
     }
 
+    public Margin? TextureNinePatchMargin
+    {
+        get => _textureNinePatchMargin;
+        set
+        {
+            if (value == _textureNinePatchMargin)
+            {
+                return;
+            }
+
+            _textureNinePatchMargin = value;
+            _ninepatchRenderer = null;
+        }
+    }
+
     /// <summary>
     ///     Assign Existing Texture
     /// </summary>
@@ -55,6 +74,7 @@ public partial class ImagePanel : Base
         set
         {
             mTexture = value;
+            _ninepatchRenderer = null;
             this.InvalidateParent();
         }
     }
@@ -91,7 +111,9 @@ public partial class ImagePanel : Base
     public override JObject GetJson(bool isRoot = default)
     {
         var obj = base.GetJson(isRoot);
-        obj.Add("Texture", TextureFilename);
+
+        obj.Add(nameof(Texture), TextureFilename);
+        obj.Add(nameof(TextureNinePatchMargin), TextureNinePatchMargin?.ToString());
         obj.Add("HoverSound", mHoverSound);
         obj.Add("LeftMouseClickSound", mLeftMouseClickSound);
         obj.Add("RightMouseClickSound", mRightMouseClickSound);
@@ -99,9 +121,15 @@ public partial class ImagePanel : Base
         return base.FixJson(obj);
     }
 
-    public override void LoadJson(JToken obj, bool isRoot = default)
+    public override void LoadJson(JToken token, bool isRoot = default)
     {
-        base.LoadJson(obj);
+        base.LoadJson(token);
+
+        if (token is not JObject obj)
+        {
+            return;
+        }
+
         if (obj["Texture"] != null)
         {
             Texture = GameContentManager.Current.GetTexture(
@@ -109,6 +137,26 @@ public partial class ImagePanel : Base
             );
 
             TextureFilename = (string) obj["Texture"];
+        }
+
+        if (obj.TryGetValue(nameof(TextureNinePatchMargin), out var textureNinePatchMarginToken))
+        {
+            if (textureNinePatchMarginToken is JValue { Type: JTokenType.String } textureNinePatchMarginValue)
+            {
+                if (textureNinePatchMarginValue.Value<string>() is { } textureNinePatchMarginString &&
+                    !string.IsNullOrWhiteSpace(textureNinePatchMarginString))
+                {
+                    TextureNinePatchMargin = Margin.FromString(textureNinePatchMarginString);
+                }
+                else
+                {
+                    TextureNinePatchMargin = null;
+                }
+            }
+            else
+            {
+                TextureNinePatchMargin = null;
+            }
         }
 
         if (obj["HoverSound"] != null)
@@ -136,6 +184,8 @@ public partial class ImagePanel : Base
         mUv[1] = v1;
         mUv[2] = u2;
         mUv[3] = v2;
+
+        _ninepatchRenderer = null;
     }
 
     /// <summary>
@@ -173,10 +223,12 @@ public partial class ImagePanel : Base
             return;
         }
 
-        mUv[0] = (float) x / (float) mTexture.Width;
-        mUv[1] = (float) y / (float) mTexture.Height;
-        mUv[2] = (float) (x + w) / (float) mTexture.Width;
-        mUv[3] = (float) (y + h) / (float) mTexture.Height;
+        SetUv(
+            x / (float)mTexture.Width,
+            y / (float)mTexture.Height,
+            (x + w) / (float)mTexture.Width,
+            (y + h) / (float)mTexture.Height
+        );
     }
 
     public virtual Rectangle GetTextureRect()
@@ -200,7 +252,37 @@ public partial class ImagePanel : Base
     {
         base.Render(skin);
         skin.Renderer.DrawColor = base.RenderColor;
-        skin.Renderer.DrawTexturedRect(mTexture, RenderBounds, base.RenderColor, mUv[0], mUv[1], mUv[2], mUv[3]);
+
+        var renderBounds = RenderBounds;
+
+        if (TextureNinePatchMargin is { } textureNinePatchMargin)
+        {
+            _ninepatchRenderer ??= new Bordered(
+                mTexture,
+                mUv[0] * mTexture.Width,
+                mUv[1] * mTexture.Height,
+                mUv[2] * mTexture.Width,
+                mUv[3] * mTexture.Height,
+                textureNinePatchMargin
+            );
+
+            if (_ninepatchRenderer is { } ninepatchRenderer)
+            {
+                ninepatchRenderer.Draw(skin.Renderer, renderBounds, Color.White);
+            }
+        }
+        else
+        {
+            skin.Renderer.DrawTexturedRect(
+                mTexture,
+                renderBounds,
+                base.RenderColor,
+                mUv[0],
+                mUv[1],
+                mUv[2],
+                mUv[3]
+            );
+        }
     }
 
     /// <summary>

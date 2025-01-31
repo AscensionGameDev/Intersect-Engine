@@ -4,14 +4,17 @@
 public partial class ItemSelectedEventArgs : EventArgs
 {
 
-    internal ItemSelectedEventArgs(Base selecteditem, bool automated = false)
+    internal ItemSelectedEventArgs(Base selectedItem, bool automated = false, object? selectedUserData = null)
     {
-        this.SelectedItem = selecteditem;
-        this.Automated = automated;
+        SelectedItem = selectedItem;
+        Automated = automated;
+        SelectedUserData = selectedUserData;
     }
 
     public Base SelectedItem { get; private set; }
 
     public bool Automated { get; private set; }
+
+    public object? SelectedUserData { get; init; }
 
 }

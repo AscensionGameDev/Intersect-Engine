@@ -5,10 +5,12 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Menu;
 using Intersect.Client.Localization;
+using Intersect.Config;
 using Intersect.Utilities;
 using static Intersect.Client.Framework.File_Management.GameContentManager;
 using MathHelper = Intersect.Client.Utilities.MathHelper;
@@ -87,7 +89,7 @@ public partial class SettingsWindow : ImagePanel
 
     // Keybinding Settings.
     private Control _keybindingEditControl;
-    private Controls _keybindingEditControls = default!;
+    private Controls? _keybindingEditControls;
     private Button? _keybindingEditBtn;
     private readonly Button _keybindingRestoreBtn;
     private long _keybindingListeningTimer;
@@ -436,17 +438,54 @@ public partial class SettingsWindow : ImagePanel
 
         // Keybinding Settings - Controls
         var row = 0;
-        var defaultFont = Current.GetFont("sourcesansproblack", 10);
-        foreach (var control in Enum.GetValues<Control>())
+        foreach (var control in (_keybindingEditControls ?? Controls.ActiveControls).Mappings.Keys)
         {
+            AddControlKeybindRow(control, ref row, out _);
+        }
+
+        Input.KeyDown += OnKeyDown;
+        Input.MouseDown += OnKeyDown;
+        Input.KeyUp += OnKeyUp;
+        Input.MouseUp += OnKeyUp;
+
+        #endregion
+
+        LoadJsonUi(UI.Shared, Graphics.Renderer?.GetResolutionString());
+        IsHidden = true;
+    }
+
+    private bool AddControlKeybindRow(Control control, ref int row, out Button[] keyButtons)
+    {
+        if (mKeybindingBtns.TryGetValue(control, out var existingButtons))
+        {
+            keyButtons = existingButtons;
+            return false;
+        }
+
+        GameFont? defaultFont = Current.GetFont("sourcesansproblack", 10);
+
             var offset = row++ * 32;
-            var controlName = Enum.GetName(control);
+        var controlName = control.GetControlId();
             var name = controlName?.ToLower() ?? string.Empty;
+
+        if (!Strings.Controls.KeyDictionary.TryGetValue(name, out var localizedControlName))
+        {
+            var hotbarSlotCount = Options.Instance?.Player.HotbarSlotCount ?? PlayerOptions.DefaultHotbarSlotCount;
+            var hotkeySlotHumanNumber = control - Control.HotkeyOffset;
+            if (0 < hotkeySlotHumanNumber && hotkeySlotHumanNumber <= hotbarSlotCount)
+            {
+                localizedControlName = Strings.Controls.HotkeyXLabel.ToString(hotkeySlotHumanNumber);
+            }
+            else
+            {
+                localizedControlName = $"ControlName:{controlName}";
+            }
+        }
 
             var prefix = $"Control{controlName}";
             var label = new Label(_keybindingSettingsContainer, $"{prefix}Label")
             {
-                Text = Strings.Controls.KeyDictionary.TryGetValue(name, out var localizedControlName) ? localizedControlName : $"ControlName:{controlName}",
+            Text = localizedControlName,
                 AutoSizeToContents = true,
                 Font = defaultFont,
             };
@@ -485,18 +524,9 @@ public partial class SettingsWindow : ImagePanel
             _ = key2.SetBounds(309, 6 + offset, 120, 28);
             key2.Clicked += Key_Clicked;
 
-            mKeybindingBtns.Add(control, [key1, key2]);
-        }
-
-        Input.KeyDown += OnKeyDown;
-        Input.MouseDown += OnKeyDown;
-        Input.KeyUp += OnKeyUp;
-        Input.MouseUp += OnKeyUp;
-
-        #endregion
-
-        LoadJsonUi(UI.Shared, Graphics.Renderer?.GetResolutionString());
-        IsHidden = true;
+        keyButtons = [key1, key2];
+        mKeybindingBtns.Add(control, keyButtons);
+        return true;
     }
 
     protected override void OnVisibilityChanged(object? sender, VisibilityChangedEventArgs eventArgs)
@@ -649,14 +679,27 @@ public partial class SettingsWindow : ImagePanel
             // Restore Default KeybindingSettings Button.
             _keybindingRestoreBtn.Show();
 
-            foreach (var control in Enum.GetValues<Control>())
+            bool controlsAdded = false;
+
+            var row = mKeybindingBtns.Count;
+            foreach (var (control, mapping) in (_keybindingEditControls ?? Controls.ActiveControls).Mappings)
             {
-                var controlMapping = _keybindingEditControls.ControlMapping[control];
-                for (var bindingIndex = 0; bindingIndex < controlMapping.Bindings.Count; bindingIndex++)
+                if (!mKeybindingBtns.TryGetValue(control, out var controlButtons))
                 {
-                    var binding = controlMapping.Bindings[bindingIndex];
-                    mKeybindingBtns[control][bindingIndex].Text = Strings.Keys.FormatKeyName(binding.Modifier, binding.Key);
+                    controlsAdded |= AddControlKeybindRow(control, ref row, out controlButtons);
                 }
+
+                var bindings = mapping.Bindings;
+                for (var bindingIndex = 0; bindingIndex < bindings.Count; bindingIndex++)
+                {
+                    var binding = bindings[bindingIndex];
+                    controlButtons[bindingIndex].Text = Strings.Keys.FormatKeyName(binding.Modifier, binding.Key);
+                }
+            }
+
+            if (controlsAdded)
+            {
+                Current.SaveUIJson(UI.Shared, Name, GetJsonUI(true), Graphics.Renderer?.GetResolutionString());
             }
         }
     }
@@ -719,7 +762,7 @@ public partial class SettingsWindow : ImagePanel
 
         if (key != Keys.None)
         {
-            foreach (var control in _keybindingEditControls.ControlMapping)
+            foreach (var control in _keybindingEditControls.Mappings)
             {
                 if (control.Key == _keybindingEditControl)
                 {
@@ -934,13 +977,22 @@ public partial class SettingsWindow : ImagePanel
 
     private void KeybindingsRestoreBtn_Clicked(Base sender, ClickedEventArgs arguments)
     {
-        _keybindingEditControls.ResetDefaults();
-        foreach (Control control in Enum.GetValues(typeof(Control)))
+        if (_keybindingEditControls is not {} controls)
         {
-            var controlMapping = _keybindingEditControls.ControlMapping[control];
-            for (var bindingIndex = 0; bindingIndex < controlMapping.Bindings.Count; bindingIndex++)
+            return;
+        }
+
+        controls.ResetDefaults();
+        foreach (Control control in GameInput.Current.AllControls)
+        {
+            if (!controls.TryGetMappingFor(control, out var mapping))
             {
-                var binding = controlMapping.Bindings[bindingIndex];
+                continue;
+            }
+
+            for (var bindingIndex = 0; bindingIndex < mapping.Bindings.Count; bindingIndex++)
+            {
+                var binding = mapping.Bindings[bindingIndex];
                 mKeybindingBtns[control][bindingIndex].Text = Strings.Keys.FormatKeyName(binding.Modifier, binding.Key);
             }
         }
@@ -1029,8 +1081,9 @@ public partial class SettingsWindow : ImagePanel
         Audio.UpdateGlobalVolume();
 
         // Control Settings.
-        Controls.ActiveControls = _keybindingEditControls;
-        Controls.ActiveControls.Save();
+        var activeControls = _keybindingEditControls ?? Controls.ActiveControls;
+        Controls.ActiveControls = activeControls;
+        activeControls.TrySave();
 
         // Save Preferences.
         Globals.Database.SavePreferences();

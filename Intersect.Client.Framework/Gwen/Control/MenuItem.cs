@@ -183,7 +183,7 @@ public partial class MenuItem : Button
         else if (!_onStrip)
         {
             IsChecked = !IsChecked;
-            Selected?.Invoke(this, new ItemSelectedEventArgs(this));
+            Selected?.Invoke(this, new ItemSelectedEventArgs(this, selectedUserData: UserData));
             Canvas?.CloseMenus();
         }
 

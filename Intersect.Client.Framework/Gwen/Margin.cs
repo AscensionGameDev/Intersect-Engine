@@ -1,42 +1,45 @@
-﻿namespace Intersect.Client.Framework.Gwen;
+﻿using System.Runtime.InteropServices;
+
+#pragma warning disable CS0660, CS0661
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
+namespace Intersect.Client.Framework.Gwen;
 
 
 /// <summary>
 ///     Represents outer spacing.
 /// </summary>
+[StructLayout(LayoutKind.Sequential)]
 public partial struct Margin : IEquatable<Margin>
 {
-
     public int Top;
-
+    public int Right;
     public int Bottom;
-
     public int Left;
 
-    public int Right;
-
     // common values
-    public static Margin Zero = new Margin(0, 0, 0, 0);
+    public static Margin Zero = new(0, 0, 0, 0);
 
-    public static Margin One = new Margin(1, 1, 1, 1);
+    public static Margin One = new(1, 1, 1, 1);
 
-    public static Margin Two = new Margin(2, 2, 2, 2);
+    public static Margin Two = new(2, 2, 2, 2);
 
-    public static Margin Three = new Margin(3, 3, 3, 3);
+    public static Margin Three = new(3, 3, 3, 3);
 
-    public static Margin Four = new Margin(4, 4, 4, 4);
+    public static Margin Four = new(4, 4, 4, 4);
 
-    public static Margin Five = new Margin(5, 5, 5, 5);
+    public static Margin Five = new(5, 5, 5, 5);
 
-    public static Margin Six = new Margin(6, 6, 6, 6);
+    public static Margin Six = new(6, 6, 6, 6);
 
-    public static Margin Seven = new Margin(7, 7, 7, 7);
+    public static Margin Seven = new(7, 7, 7, 7);
 
-    public static Margin Eight = new Margin(8, 8, 8, 8);
+    public static Margin Eight = new(8, 8, 8, 8);
 
-    public static Margin Nine = new Margin(9, 9, 9, 9);
+    public static Margin Nine = new(9, 9, 9, 9);
 
-    public static Margin Ten = new Margin(10, 10, 10, 10);
+    public static Margin Ten = new(10, 10, 10, 10);
+
+    public Margin(int size) : this(size, size, size, size) { }
 
     public Margin(int left, int top, int right, int bottom)
     {
@@ -46,69 +49,33 @@ public partial struct Margin : IEquatable<Margin>
         Right = right;
     }
 
-    public bool Equals(Margin other)
-    {
-        return other.Top == Top && other.Bottom == Bottom && other.Left == Left && other.Right == Right;
-    }
+    public bool Equals(Margin other) =>
+        other.Top == Top && other.Bottom == Bottom && other.Left == Left && other.Right == Right;
 
-    public static bool operator ==(Margin lhs, Margin rhs)
-    {
-        return lhs.Equals(rhs);
-    }
+    public static bool operator ==(Margin lhs, Margin rhs) => lhs.Equals(rhs);
 
-    public static bool operator !=(Margin lhs, Margin rhs)
-    {
-        return !lhs.Equals(rhs);
-    }
+    public static bool operator !=(Margin lhs, Margin rhs) => !lhs.Equals(rhs);
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? other) => other is Margin margin && Equals(margin);
+
+    public override string ToString() => string.Join(',', Left, Top, Right, Bottom);
+
+    public static Margin FromString(string rawMargin)
     {
-        if (ReferenceEquals(null, obj))
+        if (string.IsNullOrEmpty(rawMargin))
         {
-            return false;
+            return default;
         }
 
-        if (obj.GetType() != typeof(Margin))
+        var parts = rawMargin.Split(',').Select(rawPart => int.TryParse(rawPart, out var part) ? part : 0).ToArray();
+
+        return parts.Length switch
         {
-            return false;
-        }
-
-        return Equals((Margin) obj);
+            < 1 => new Margin(),
+            1 => new Margin(parts[0]),
+            2 => new Margin(parts[0], parts[1], parts[0], parts[1]),
+            3 => new Margin(parts[0], parts[1], parts[2], parts[1]),
+            _ => new Margin(parts[0], parts[1], parts[2], parts[3]),
+        };
     }
-
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var result = Top;
-            result = (result * 397) ^ Bottom;
-            result = (result * 397) ^ Left;
-            result = (result * 397) ^ Right;
-
-            return result;
-        }
-    }
-
-    public static string ToString(Margin mar)
-    {
-        return mar.Left + "," + mar.Top + "," + mar.Right + "," + mar.Bottom;
-    }
-
-    public static Margin FromString(string val)
-    {
-        if (string.IsNullOrEmpty(val))
-        {
-            return Margin.Zero;
-        }
-
-        var strs = val.Split(",".ToCharArray());
-        var parts = new int[strs.Length];
-        for (var i = 0; i < strs.Length; i++)
-        {
-            parts[i] = int.Parse(strs[i]);
-        }
-
-        return new Margin(parts[0], parts[1], parts[2], parts[3]);
-    }
-
 }

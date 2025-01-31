@@ -133,7 +133,7 @@ public partial class Base : IDisposable
 
     private GameTexture? _tooltipBackground { get; set; }
 
-    private Color _tooltipTextColor = Color.White;
+    private Color? _tooltipTextColor;
 
     public virtual string? TooltipFontName
     {
@@ -192,7 +192,7 @@ public partial class Base : IDisposable
         }
     }
 
-    public virtual Color TooltipTextColor
+    public virtual Color? TooltipTextColor
     {
         get => _tooltipTextColor;
         set
@@ -327,6 +327,16 @@ public partial class Base : IDisposable
     }
 
     // todo: ParentChanged event?
+
+    public Alignments[] AlignmentsInParent
+    {
+        get => mAlignments.ToArray();
+        set
+        {
+            mAlignments = value.ToList();
+            ProcessAlignments();
+        }
+    }
 
     /// <summary>
     ///     Dock position.
@@ -965,43 +975,57 @@ public partial class Base : IDisposable
         var boundsToWrite = isRoot
             ? new Rectangle(mBoundsOnDisk.X, mBoundsOnDisk.Y, mBounds.Width, mBounds.Height)
             : mBounds;
-        var o = new JObject(
+
+        var serializedProperties = new JObject(
             new JProperty("Bounds", Rectangle.ToString(boundsToWrite)),
             new JProperty("Padding", Padding.ToString(mPadding)),
             new JProperty("AlignmentEdgeDistances", Padding.ToString(mAlignmentDistance)),
             new JProperty("AlignmentTransform", Point.ToString(mAlignmentTransform)),
-            new JProperty("Margin", Margin.ToString(mMargin)), new JProperty("RenderColor", Color.ToString(mColor)),
+            new JProperty("Margin", mMargin.ToString()),
+            new JProperty("RenderColor", Color.ToString(mColor)),
             new JProperty("Alignments", string.Join(",", alignments.ToArray())),
             new JProperty("DrawBackground", mDrawBackground),
             new JProperty("MinimumSize", Point.ToString(mMinimumSize)),
-            new JProperty("MaximumSize", Point.ToString(mMaximumSize)), new JProperty("Disabled", _disabled),
-            new JProperty("Hidden", mHidden), new JProperty("RestrictToParent", mRestrictToParent),
-            new JProperty("MouseInputEnabled", mMouseInputEnabled), new JProperty("HideToolTip", mHideToolTip),
+            new JProperty("MaximumSize", Point.ToString(mMaximumSize)),
+            new JProperty("Disabled", _disabled),
+            new JProperty("Hidden", mHidden),
+            new JProperty("RestrictToParent", mRestrictToParent),
+            new JProperty("MouseInputEnabled", mMouseInputEnabled),
+            new JProperty("HideToolTip", mHideToolTip),
             new JProperty("ToolTipBackground", _tooltipBackgroundName),
             new JProperty("ToolTipFont", mToolTipFontInfo),
-            new JProperty("ToolTipTextColor", Color.ToString(_tooltipTextColor))
+            new JProperty(
+                nameof(TooltipTextColor),
+                _tooltipTextColor == null ? JValue.CreateNull() : Color.ToString(_tooltipTextColor)
+            )
         );
 
+        // ReSharper disable once InvertIf
         if (HasNamedChildren())
         {
-            var children = new JObject();
-            foreach (var ctrl in mChildren)
+            JObject children = new();
+
+            // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+            foreach (var component in mChildren)
             {
-                if (ctrl == Tooltip)
+                if (component == Tooltip)
                 {
                     continue;
                 }
 
-                if (!string.IsNullOrEmpty(ctrl.Name) && children[ctrl.Name] == null)
+                if (!string.IsNullOrEmpty(component.Name) && children[component.Name] == null)
                 {
-                    children.Add(ctrl.Name, ctrl.GetJson());
+                    children.Add(component.Name, component.GetJson());
                 }
             }
 
-            o.Add("Children", children);
+            if (children.HasValues)
+            {
+                serializedProperties.Add(nameof(Children), children);
+            }
         }
 
-        return FixJson(o);
+        return FixJson(serializedProperties);
     }
 
     public virtual JObject FixJson(JObject json)
@@ -1210,16 +1234,17 @@ public partial class Base : IDisposable
             mToolTipFont = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
         }
 
-        if (obj["ToolTipTextColor"] is JValue { Type: JTokenType.String } tooltipTextColorValue)
+        if (obj[nameof(TooltipTextColor)] is JValue { Type: JTokenType.String } tooltipTextColorValue)
         {
             var tooltipTextColorString = tooltipTextColorValue.Value<string>();
             if (!string.IsNullOrWhiteSpace(tooltipTextColorString))
             {
-                _tooltipTextColor = Color.FromString(tooltipTextColorString);
+                TooltipTextColor = Color.FromString(tooltipTextColorString);
             }
         }
 
         UpdateToolTipProperties();
+
         if (HasNamedChildren())
         {
             if (obj["Children"] != null)
@@ -1242,54 +1267,48 @@ public partial class Base : IDisposable
 
     public virtual void ProcessAlignments()
     {
-        mAlignments?.ForEach(
-            alignment =>
+        foreach (var alignment in mAlignments)
+        {
+            switch (alignment)
             {
-                switch (alignment)
-                {
-                    case Alignments.Top:
-                        Align.AlignTop(this);
+                case Alignments.Top:
+                    Align.AlignTop(this);
+                    break;
 
-                        break;
+                case Alignments.Bottom:
+                    Align.AlignBottom(this);
+                    break;
 
-                    case Alignments.Bottom:
-                        Align.AlignBottom(this);
+                case Alignments.Left:
+                    Align.AlignLeft(this);
+                    break;
 
-                        break;
+                case Alignments.Right:
+                    Align.AlignRight(this);
+                    break;
 
-                    case Alignments.Left:
-                        Align.AlignLeft(this);
+                case Alignments.Center:
+                    Align.Center(this);
+                    break;
 
-                        break;
+                case Alignments.CenterH:
+                    Align.CenterHorizontally(this);
+                    break;
 
-                    case Alignments.Right:
-                        Align.AlignRight(this);
+                case Alignments.CenterV:
+                    Align.CenterVertically(this);
+                    break;
 
-                        break;
-
-                    case Alignments.Center:
-                        Align.Center(this);
-
-                        break;
-
-                    case Alignments.CenterH:
-                        Align.CenterHorizontally(this);
-
-                        break;
-
-                    case Alignments.CenterV:
-                        Align.CenterVertically(this);
-
-                        break;
-
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(alignment), alignment, null);
-                }
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(alignment), alignment, null);
             }
-        );
+        }
 
         MoveTo(X + mAlignmentTransform.X, Y + mAlignmentTransform.Y, true);
-        Children?.ForEach(child => child?.ProcessAlignments());
+        foreach (var child in Children)
+        {
+            child?.ProcessAlignments();
+        }
     }
 
     private bool HasNamedChildren()
@@ -1464,6 +1483,8 @@ public partial class Base : IDisposable
                     5,
                     3
                 ),
+                TextColor = Skin.Colors.TooltipText,
+                TextColorOverride = Skin.Colors.TooltipText,
                 ToolTipBackground = _tooltipBackground,
                 WrappingBehavior = WrappingBehavior.Wrapped,
             };

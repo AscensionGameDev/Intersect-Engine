@@ -542,7 +542,7 @@ public partial class TexturedBase : Skin.Base
 
         Colors.ModalBackground = Renderer.PixelColor(mTexture, 4 + 8 * 18, 508, Color.Yellow);
 
-        Colors.TooltipText = Renderer.PixelColor(mTexture, 4 + 8 * 19, 508, Color.Yellow);
+        Colors.TooltipText = Renderer.PixelColor(mTexture, 4 + 8 * 9, 508, Color.Yellow);
 
         Colors.Category.Header = Renderer.PixelColor(mTexture, 4 + 8 * 18, 500, Color.Yellow);
         Colors.Category.HeaderClosed = Renderer.PixelColor(mTexture, 4 + 8 * 19, 500, Color.Yellow);
@@ -2222,88 +2222,131 @@ public partial class TexturedBase : Skin.Base
 
     public override void DrawLabel(Control.Base control)
     {
-        if (((Label) control).GetTemplate() != null)
+        if (control is not Label label)
         {
-            var renderImg = ((Label) control).GetTemplate();
-            Renderer.DrawColor = control.RenderColor;
-
-            //Draw Top Left Corner
-            Renderer.DrawTexturedRect(
-                renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Y, 2, 2), control.RenderColor,
-                0, 0, 2f / renderImg.Width, 2f / renderImg.Height
-            );
-
-            //Draw Top
-            Renderer.DrawTexturedRect(
-                renderImg,
-                new Rectangle(
-                    control.RenderBounds.X + 2, control.RenderBounds.Y, control.RenderBounds.Width - 4, 2
-                ), control.RenderColor, 2f / renderImg.Width, 0,
-                (renderImg.Width - 2f) / renderImg.Width, 2f / renderImg.Height
-            );
-
-            //Draw Top Right Corner
-            Renderer.DrawTexturedRect(
-                renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Y, 2, 2),
-                control.RenderColor, (renderImg.Width - 2f) / renderImg.Width, 0, 1f,
-                2f / renderImg.Height
-            );
-
-            //Draw Left
-            Renderer.DrawTexturedRect(
-                renderImg,
-                new Rectangle(
-                    control.RenderBounds.X, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                ), control.RenderColor, 0, 2f / renderImg.Height, 2f / renderImg.Width,
-                (renderImg.Height - 2f) / renderImg.Height
-            );
-
-            //Draw Middle
-            Renderer.DrawTexturedRect(
-                renderImg,
-                new Rectangle(
-                    control.RenderBounds.X + 2, control.RenderBounds.Y + 2, control.RenderBounds.Width - 4,
-                    control.RenderBounds.Height - 4
-                ), control.RenderColor, 2f / renderImg.Width, 2f / renderImg.Height,
-                (renderImg.Width - 2f) / renderImg.Width,
-                (renderImg.Height - 2f) / renderImg.Height
-            );
-
-            //Draw Right
-            Renderer.DrawTexturedRect(
-                renderImg,
-                new Rectangle(
-                    control.RenderBounds.Width - 2, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                ), control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
-                2f / renderImg.Height, 1, (renderImg.Height - 2f) / renderImg.Height
-            );
-
-            // Draw Bottom Left Corner
-            Renderer.DrawTexturedRect(
-                renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Bottom - 2, 2, 2),
-                control.RenderColor, 0, (renderImg.Height - 2f) / renderImg.Height,
-                2f / renderImg.Width, 1f
-            );
-
-            //Draw Bottom
-            Renderer.DrawTexturedRect(
-                renderImg,
-                new Rectangle(
-                    control.RenderBounds.X + 2, control.RenderBounds.Bottom - 2, control.RenderBounds.Width - 4, 2
-                ), control.RenderColor, 2f / renderImg.Width,
-                (renderImg.Height - 2f) / renderImg.Height,
-                (renderImg.Width - 2f) / renderImg.Width, 1f
-            );
-
-            //Draw Bottom Right Corner
-            Renderer.DrawTexturedRect(
-                renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Bottom - 2, 2, 2),
-                control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
-                (renderImg.Height - 2f) / renderImg.Height, 1f, 1f
-            );
-
             return;
         }
+
+        if (label.GetTemplate() is not { } templateTexture)
+        {
+            return;
+        }
+
+        Renderer.DrawColor = control.RenderColor;
+
+        //Draw Top Left Corner
+        Renderer.DrawTexturedRect(
+            templateTexture,
+            new Rectangle(control.RenderBounds.X, control.RenderBounds.Y, 2, 2),
+            control.RenderColor,
+            0,
+            0,
+            2f / templateTexture.Width,
+            2f / templateTexture.Height
+        );
+
+        //Draw Top
+        Renderer.DrawTexturedRect(
+            templateTexture,
+            new Rectangle(control.RenderBounds.X + 2, control.RenderBounds.Y, control.RenderBounds.Width - 4, 2),
+            control.RenderColor,
+            2f / templateTexture.Width,
+            0,
+            (templateTexture.Width - 2f) / templateTexture.Width,
+            2f / templateTexture.Height
+        );
+
+        //Draw Top Right Corner
+        Renderer.DrawTexturedRect(
+            templateTexture,
+            new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Y, 2, 2),
+            control.RenderColor,
+            (templateTexture.Width - 2f) / templateTexture.Width,
+            0,
+            1f,
+            2f / templateTexture.Height
+        );
+
+        //Draw Left
+        Renderer.DrawTexturedRect(
+            templateTexture,
+            new Rectangle(control.RenderBounds.X, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4),
+            control.RenderColor,
+            0,
+            2f / templateTexture.Height,
+            2f / templateTexture.Width,
+            (templateTexture.Height - 2f) / templateTexture.Height
+        );
+
+        //Draw Middle
+        Renderer.DrawTexturedRect(
+            templateTexture,
+            new Rectangle(
+                control.RenderBounds.X + 2,
+                control.RenderBounds.Y + 2,
+                control.RenderBounds.Width - 4,
+                control.RenderBounds.Height - 4
+            ),
+            control.RenderColor,
+            2f / templateTexture.Width,
+            2f / templateTexture.Height,
+            (templateTexture.Width - 2f) / templateTexture.Width,
+            (templateTexture.Height - 2f) / templateTexture.Height
+        );
+
+        //Draw Right
+        Renderer.DrawTexturedRect(
+            templateTexture,
+            new Rectangle(
+                control.RenderBounds.Width - 2,
+                control.RenderBounds.Y + 2,
+                2,
+                control.RenderBounds.Height - 4
+            ),
+            control.RenderColor,
+            (templateTexture.Width - 2f) / templateTexture.Width,
+            2f / templateTexture.Height,
+            1,
+            (templateTexture.Height - 2f) / templateTexture.Height
+        );
+
+        // Draw Bottom Left Corner
+        Renderer.DrawTexturedRect(
+            templateTexture,
+            new Rectangle(control.RenderBounds.X, control.RenderBounds.Bottom - 2, 2, 2),
+            control.RenderColor,
+            0,
+            (templateTexture.Height - 2f) / templateTexture.Height,
+            2f / templateTexture.Width,
+            1f
+        );
+
+        //Draw Bottom
+        Renderer.DrawTexturedRect(
+            templateTexture,
+            new Rectangle(
+                control.RenderBounds.X + 2,
+                control.RenderBounds.Bottom - 2,
+                control.RenderBounds.Width - 4,
+                2
+            ),
+            control.RenderColor,
+            2f / templateTexture.Width,
+            (templateTexture.Height - 2f) / templateTexture.Height,
+            (templateTexture.Width - 2f) / templateTexture.Width,
+            1f
+        );
+
+        //Draw Bottom Right Corner
+        Renderer.DrawTexturedRect(
+            templateTexture,
+            new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Bottom - 2, 2, 2),
+            control.RenderColor,
+            (templateTexture.Width - 2f) / templateTexture.Width,
+            (templateTexture.Height - 2f) / templateTexture.Height,
+            1f,
+            1f
+        );
     }
 
     #endregion

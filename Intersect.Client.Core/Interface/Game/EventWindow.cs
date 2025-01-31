@@ -4,6 +4,7 @@ using Intersect.Client.Entities.Events;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Typewriting;
 using Intersect.Client.Localization;
@@ -107,7 +108,7 @@ public partial class EventWindow : ImagePanel
                 _buttonEventResponse3.IsDisabled = disableResponse;
                 _buttonEventResponse4.IsDisabled = disableResponse;
             }
-            else if (Controls.KeyDown(Control.AttackInteract))
+            else if (Controls.IsControlPressed(Control.AttackInteract))
             {
                 SkipTypewriting();
             }

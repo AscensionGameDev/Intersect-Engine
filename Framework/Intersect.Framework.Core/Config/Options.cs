@@ -287,7 +287,9 @@ public partial record Options
     {
         try
         {
-            Instance = JsonConvert.DeserializeObject<Options>(data);
+            var loadedOptions = JsonConvert.DeserializeObject<Options>(data);
+            Instance = loadedOptions;
+            OptionsLoaded?.Invoke(loadedOptions);
         }
         catch (Exception exception)
         {
@@ -295,6 +297,8 @@ public partial record Options
             throw;
         }
     }
+
+    public static event OptionsLoadedEventHandler? OptionsLoaded;
 
     // ReSharper disable once UnusedMember.Global
     public bool ShouldSerializeGameDatabase()

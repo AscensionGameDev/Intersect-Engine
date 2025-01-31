@@ -251,7 +251,7 @@ public partial class Player : Entity, IPlayer
                 ProcessDirectionalInput();
             }
 
-            if (Controls.KeyDown(Control.AttackInteract))
+            if (Controls.IsControlPressed(Control.AttackInteract))
             {
                 if (IsCasting)
                 {
@@ -273,7 +273,7 @@ public partial class Player : Entity, IPlayer
             }
 
             //Holding block button for "auto blocking"
-            if (Controls.KeyDown(Control.Block))
+            if (Controls.IsControlPressed(Control.Block))
             {
                 _ = TryBlock();
             }
@@ -1373,22 +1373,22 @@ public partial class Player : Entity, IPlayer
             return;
         }
 
-        if (Controls.KeyDown(Control.MoveUp))
+        if (Controls.IsControlPressed(Control.MoveUp))
         {
             inputY += 1;
         }
 
-        if (Controls.KeyDown(Control.MoveDown))
+        if (Controls.IsControlPressed(Control.MoveDown))
         {
             inputY -= 1;
         }
 
-        if (Controls.KeyDown(Control.MoveLeft))
+        if (Controls.IsControlPressed(Control.MoveLeft))
         {
             inputX -= 1;
         }
 
-        if (Controls.KeyDown(Control.MoveRight))
+        if (Controls.IsControlPressed(Control.MoveRight))
         {
             inputX += 1;
         }
@@ -1451,14 +1451,37 @@ public partial class Player : Entity, IPlayer
         TurnAround();
 
         var castInput = -1;
-        for (var barSlot = 0; barSlot < Options.Instance.Player.HotbarSlotCount; barSlot++)
-        {
-            mLastHotbarUseTime.TryAdd(barSlot, 0);
 
-            if (Controls.KeyDown((Control)barSlot + (int)Control.Hotkey1))
-            {
-                castInput = barSlot;
-            }
+        // Yes we unfortunately need to do all of this extra logic because multiple hotbar slots could get triggered
+        // because one has no modifier (e.g. 1) but another has the same key but a different modifier (e.g. Alt + 1)
+        // - Select -> finds out if a hotbar slot is pressed or not
+        // - Where -> filters out hotbar slots that are not pressed
+        // - OrderByDescending -> prioritizes hotbar slots with modifiers over those without (e.g. Alt + 1 over 1)
+        // - GroupBy -> groups hotbar slots that have a colliding key, maintaining the order (e.g. Alt + 1 and 1 will be grouped)
+        var activeHotbarSlotIndicesGroupedByKey = Enumerable.Range(0, Options.Instance.Player.HotbarSlotCount)
+            .Select(
+                slotIndex => Controls.IsControlPressed(
+                    Control.HotkeyOffset + slotIndex + 1,
+                    out _,
+                    out var activeBinding
+                )
+                    ? (slotIndex, activeBinding)
+                    : default
+            )
+            .Where(controlHit => controlHit != default)
+            .OrderByDescending(controlHit => controlHit.activeBinding.Modifier)
+            .GroupBy(controlHit => controlHit.activeBinding.Key)
+            .ToArray();
+
+        // This grabs the first active slot per key group, so if slot 11 is mapped to Alt + 1 and slot 1 is mapped to 1,
+        // then slot 11 will be returned here instead of both slot 1 and 11
+        var activeHotbarSlotIndices =
+            activeHotbarSlotIndicesGroupedByKey.Select(group => group.FirstOrDefault().slotIndex).ToArray();
+
+        foreach (var slotIndex in activeHotbarSlotIndices)
+        {
+            mLastHotbarUseTime.TryAdd(slotIndex, 0);
+            castInput = slotIndex;
         }
 
         // ReSharper disable once InvertIf
@@ -1709,7 +1732,7 @@ public partial class Player : Entity, IPlayer
             return;
         }
 
-        if (Controls.KeyDown(Control.TurnAround))
+        if (Controls.IsControlPressed(Control.TurnAround))
         {
             return;
         }
@@ -2805,7 +2828,7 @@ public partial class Player : Entity, IPlayer
         // If players hold the 'TurnAround' Control Key and tap to any direction, they will turn on their own axis.
         for (var direction = 0; direction < Options.Instance.Map.MovementDirections; direction++)
         {
-            if (!Controls.KeyDown(Control.TurnAround) || direction != (int)Globals.Me.MoveDir || IsTurnAroundWhileCastingDisabled)
+            if (!Controls.IsControlPressed(Control.TurnAround) || direction != (int)Globals.Me.MoveDir || IsTurnAroundWhileCastingDisabled)
             {
                 continue;
             }
