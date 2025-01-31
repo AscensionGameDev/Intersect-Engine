@@ -67,6 +67,9 @@ internal static partial class Bootstrapper
 
         var logger = new SerilogLoggerFactory(loggerConfiguration.CreateLogger()).CreateLogger("Client");
 
+        var assemblyName = Assembly.GetExecutingAssembly().GetName();
+        logger.LogCritical("Starting {AssemblyName} v{Version}", assemblyName.Name, assemblyName.Version);
+
         var packetTypeRegistry = new PacketTypeRegistry(logger, typeof(SharedConstants).Assembly);
         if (!packetTypeRegistry.TryRegisterBuiltIn())
         {
