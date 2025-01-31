@@ -395,150 +395,166 @@ public partial class InventoryItem
                 }
             }
         }
-        else
+        else if (mDragIcon.Update())
         {
-            if (mDragIcon.Update())
+            //Drug the item and now we stopped
+            IsDragging = false;
+
+            var dragRect = new FloatRect(
+                mDragIcon.X - (Container.Padding.Left + Container.Padding.Right) / 2f,
+                mDragIcon.Y - (Container.Padding.Top + Container.Padding.Bottom) / 2f,
+                (Container.Padding.Left + Container.Padding.Right) / 2f + Pnl.Width,
+                (Container.Padding.Top + Container.Padding.Bottom) / 2f + Pnl.Height
+            );
+
+            float bestIntersect = 0;
+            var bestIntersectIndex = -1;
+
+            //So we picked up an item and then dropped it. Lets see where we dropped it to.
+            //Check inventory first.
+            if (mInventoryWindow.RenderBounds().IntersectsWith(dragRect))
             {
-                //Drug the item and now we stopped
-                IsDragging = false;
-                var dragRect = new FloatRect(
-                    mDragIcon.X - (Container.Padding.Left + Container.Padding.Right) / 2,
-                    mDragIcon.Y - (Container.Padding.Top + Container.Padding.Bottom) / 2,
-                    (Container.Padding.Left + Container.Padding.Right) / 2 + Pnl.Width,
-                    (Container.Padding.Top + Container.Padding.Bottom) / 2 + Pnl.Height
-                );
-
-                float bestIntersect = 0;
-                var bestIntersectIndex = -1;
-
-                //So we picked up an item and then dropped it. Lets see where we dropped it to.
-                //Check inventory first.
-                if (mInventoryWindow.RenderBounds().IntersectsWith(dragRect))
+                var inventorySlotComponents = mInventoryWindow.Items.ToArray();
+                var inventorySlotLimit = Math.Min(Options.Instance.Player.MaxInventory, inventorySlotComponents.Length);
+                for (var inventoryIndex = 0; inventoryIndex < inventorySlotLimit; inventoryIndex++)
                 {
-                    for (var i = 0; i < Options.Instance.Player.MaxInventory; i++)
-                    {
-                        if (mInventoryWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
-                        {
-                            if (FloatRect.Intersect(mInventoryWindow.Items[i].RenderBounds(), dragRect).Width *
-                                FloatRect.Intersect(mInventoryWindow.Items[i].RenderBounds(), dragRect).Height >
-                                bestIntersect)
-                            {
-                                bestIntersect =
-                                    FloatRect.Intersect(mInventoryWindow.Items[i].RenderBounds(), dragRect).Width *
-                                    FloatRect.Intersect(mInventoryWindow.Items[i].RenderBounds(), dragRect).Height;
+                    var inventorySlotComponent = inventorySlotComponents[inventoryIndex];
+                    var inventoryRenderBounds = inventorySlotComponent.RenderBounds();
 
-                                bestIntersectIndex = i;
-                            }
-                        }
+                    if (!inventoryRenderBounds.IntersectsWith(dragRect))
+                    {
+                        continue;
                     }
 
-                    if (bestIntersectIndex > -1)
+                    var intersection = FloatRect.Intersect(inventoryRenderBounds, dragRect);
+                    if (!(intersection.Width * intersection.Height > bestIntersect))
                     {
-                        if (mMySlot != bestIntersectIndex)
-                        {
-                            Globals.Me.SwapItems(mMySlot, bestIntersectIndex);
-                        }
-                    }
-                }
-                else if (Interface.GameUi.Hotbar.RenderBounds().IntersectsWith(dragRect))
-                {
-                    for (var i = 0; i < Options.Instance.Player.HotbarSlotCount; i++)
-                    {
-                        if (Interface.GameUi.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
-                        {
-                            if (FloatRect.Intersect(
-                                        Interface.GameUi.Hotbar.Items[i].RenderBounds(), dragRect
-                                    )
-                                    .Width *
-                                FloatRect.Intersect(Interface.GameUi.Hotbar.Items[i].RenderBounds(), dragRect)
-                                    .Height >
-                                bestIntersect)
-                            {
-                                bestIntersect =
-                                    FloatRect.Intersect(Interface.GameUi.Hotbar.Items[i].RenderBounds(), dragRect)
-                                        .Width *
-                                    FloatRect.Intersect(Interface.GameUi.Hotbar.Items[i].RenderBounds(), dragRect)
-                                        .Height;
-
-                                bestIntersectIndex = i;
-                            }
-                        }
+                        continue;
                     }
 
-                    if (bestIntersectIndex > -1)
-                    {
-                        Globals.Me.AddToHotbar((byte) bestIntersectIndex, 0, mMySlot);
-                    }
-                }
-                else if (Globals.InBag)
-                {
-                    var bagWindow = Interface.GameUi.GetBagWindow();
-                    if (bagWindow.RenderBounds().IntersectsWith(dragRect))
-                    {
-                        for (var i = 0; i < Globals.Bag.Length; i++)
-                        {
-                            if (bagWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
-                            {
-                                if (FloatRect.Intersect(bagWindow.Items[i].RenderBounds(), dragRect).Width *
-                                    FloatRect.Intersect(bagWindow.Items[i].RenderBounds(), dragRect).Height >
-                                    bestIntersect)
-                                {
-                                    bestIntersect =
-                                        FloatRect.Intersect(bagWindow.Items[i].RenderBounds(), dragRect).Width *
-                                        FloatRect.Intersect(bagWindow.Items[i].RenderBounds(), dragRect).Height;
-
-                                    bestIntersectIndex = i;
-                                }
-                            }
-                        }
-
-                        if (bestIntersectIndex > -1)
-                        {
-                            Globals.Me.TryStoreBagItem(mMySlot, bestIntersectIndex);
-                        }
-                    }
-                }
-                else if (Globals.InBank)
-                {
-                    var bankWindow = Interface.GameUi.GetBankWindow();
-                    if (bankWindow.RenderBounds().IntersectsWith(dragRect))
-                    {
-                        for (var i = 0; i < Globals.Bank.Length; i++)
-                        {
-                            if (bankWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
-                            {
-                                if (FloatRect.Intersect(bankWindow.Items[i].RenderBounds(), dragRect).Width *
-                                    FloatRect.Intersect(bankWindow.Items[i].RenderBounds(), dragRect).Height >
-                                    bestIntersect)
-                                {
-                                    bestIntersect =
-                                        FloatRect.Intersect(bankWindow.Items[i].RenderBounds(), dragRect).Width *
-                                        FloatRect.Intersect(bankWindow.Items[i].RenderBounds(), dragRect).Height;
-
-                                    bestIntersectIndex = i;
-                                }
-                            }
-                        }
-
-                        if (bestIntersectIndex > -1)
-                        {
-                            var slot = Globals.Me.Inventory[mMySlot];
-                            Globals.Me.TryDepositItem(
-                                mMySlot,
-                                bankSlotIndex: bestIntersectIndex,
-                                quantityHint: slot.Quantity,
-                                skipPrompt: true
-                            );
-                        }
-                    }
-                }
-                else if (!Globals.Me.IsBusy)
-                {
-                    PacketSender.SendDropItem(mMySlot, Globals.Me.Inventory[mMySlot].Quantity);
+                    bestIntersect = intersection.Width * intersection.Height;
+                    bestIntersectIndex = inventoryIndex;
                 }
 
-                mDragIcon.Dispose();
+                if (bestIntersectIndex > -1)
+                {
+                    if (mMySlot != bestIntersectIndex)
+                    {
+                        Globals.Me.SwapItems(mMySlot, bestIntersectIndex);
+                    }
+                }
             }
+            else if (Interface.GameUi.Hotbar.RenderBounds().IntersectsWith(dragRect))
+            {
+                var hotbarSlotComponents = Interface.GameUi.Hotbar.Items.ToArray();
+                var hotbarSlotLimit = Math.Min(
+                    Options.Instance.Player.HotbarSlotCount,
+                    hotbarSlotComponents.Length
+                );
+                for (var hotbarSlotIndex = 0; hotbarSlotIndex < hotbarSlotLimit; hotbarSlotIndex++)
+                {
+                    var hotbarSlotComponent = hotbarSlotComponents[hotbarSlotIndex];
+                    var hotbarSlotRenderBounds = hotbarSlotComponent.RenderBounds();
+                    if (!hotbarSlotRenderBounds.IntersectsWith(dragRect))
+                    {
+                        continue;
+                    }
+
+                    var intersection = FloatRect.Intersect(hotbarSlotRenderBounds, dragRect);
+                    if (intersection.Width * intersection.Height <= bestIntersect)
+                    {
+                        continue;
+                    }
+
+                    bestIntersect = intersection.Width * intersection.Height;
+                    bestIntersectIndex = hotbarSlotIndex;
+                }
+
+                if (bestIntersectIndex > -1)
+                {
+                    Globals.Me.AddToHotbar((byte)bestIntersectIndex, 0, mMySlot);
+                }
+            }
+            else if (Globals.InBag)
+            {
+                var bagWindow = Interface.GameUi.GetBagWindow();
+                if (bagWindow.RenderBounds().IntersectsWith(dragRect))
+                {
+                    var bagSlotComponents = bagWindow.Items.ToArray();
+                    var bagSlotLimit = Math.Min(Globals.Bag.Length, bagSlotComponents.Length);
+                    for (var bagSlotIndex = 0; bagSlotIndex < bagSlotLimit; bagSlotIndex++)
+                    {
+                        var bagSlotComponent = bagSlotComponents[bagSlotIndex];
+                        var bagSlotRenderBounds = bagSlotComponent.RenderBounds();
+                        if (!bagSlotRenderBounds.IntersectsWith(dragRect))
+                        {
+                            continue;
+                        }
+
+                        var intersection = FloatRect.Intersect(bagSlotRenderBounds, dragRect);
+                        if (intersection.Width * intersection.Height <= bestIntersect)
+                        {
+                            continue;
+                        }
+
+                        bestIntersect = intersection.Width * intersection.Height;
+                        bestIntersectIndex = bagSlotIndex;
+                    }
+
+                    if (bestIntersectIndex > -1)
+                    {
+                        Globals.Me.TryStoreBagItem(mMySlot, bestIntersectIndex);
+                    }
+                }
+            }
+            else if (Globals.InBank)
+            {
+                var bankWindow = Interface.GameUi.GetBankWindow();
+                if (bankWindow.RenderBounds().IntersectsWith(dragRect))
+                {
+                    var bankSlotComponents = bankWindow.Items.ToArray();
+                    var bankSlotLimit = Math.Min(
+                        Math.Min(Globals.Bank.Length, Globals.BankSlots),
+                        bankSlotComponents.Length
+                    );
+
+                    for (var bankSlotIndex = 0; bankSlotIndex < bankSlotLimit; bankSlotIndex++)
+                    {
+                        var bankSlotComponent = bankSlotComponents[bankSlotIndex];
+                        var bankSlotRenderBounds = bankSlotComponent.RenderBounds();
+                        if (!bankSlotRenderBounds.IntersectsWith(dragRect))
+                        {
+                            continue;
+                        }
+
+                        var intersection = FloatRect.Intersect(bankSlotRenderBounds, dragRect);
+                        if (!(intersection.Width * intersection.Height > bestIntersect))
+                        {
+                            continue;
+                        }
+
+                        bestIntersect = intersection.Width * intersection.Height;
+                        bestIntersectIndex = bankSlotIndex;
+                    }
+
+                    if (bestIntersectIndex > -1)
+                    {
+                        var slot = Globals.Me.Inventory[mMySlot];
+                        Globals.Me.TryDepositItem(
+                            mMySlot,
+                            bankSlotIndex: bestIntersectIndex,
+                            quantityHint: slot.Quantity,
+                            skipPrompt: true
+                        );
+                    }
+                }
+            }
+            else if (!Globals.Me.IsBusy)
+            {
+                PacketSender.SendDropItem(mMySlot, Globals.Me.Inventory[mMySlot].Quantity);
+            }
+
+            mDragIcon.Dispose();
         }
     }
 

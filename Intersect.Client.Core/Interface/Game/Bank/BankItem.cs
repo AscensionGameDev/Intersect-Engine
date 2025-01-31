@@ -260,8 +260,8 @@ public partial class BankItem
             if (mBankWindow.RenderBounds().IntersectsWith(dragRect))
             {
                 var bankSlotComponents = mBankWindow.Items.ToArray();
-                var slotLimit = Math.Min(Globals.BankSlots, bankSlotComponents.Length);
-                for (var bankSlotIndex = 0; bankSlotIndex < slotLimit; bankSlotIndex++)
+                var bankSlotLimit = Math.Min(Globals.BankSlots, bankSlotComponents.Length);
+                for (var bankSlotIndex = 0; bankSlotIndex < bankSlotLimit; bankSlotIndex++)
                 {
                     var bankSlotComponent = bankSlotComponents[bankSlotIndex];
                     var bankSlotRenderBounds = bankSlotComponent.RenderBounds();
@@ -271,7 +271,7 @@ public partial class BankItem
                     }
 
                     var intersection = FloatRect.Intersect(bankSlotRenderBounds, dragRect);
-                    if (!(intersection.Width * intersection.Height > bestIntersect))
+                    if (intersection.Width * intersection.Height <= bestIntersect)
                     {
                         continue;
                     }
@@ -319,11 +319,11 @@ public partial class BankItem
                 if (invWindow.RenderBounds().IntersectsWith(dragRect))
                 {
                     var inventorySlots = invWindow.Items.ToArray();
-                    var inventoryLimit = Math.Min(
+                    var inventorySlotLimit = Math.Min(
                         Globals.Me?.Inventory.Length ?? inventorySlots.Length,
                         inventorySlots.Length
                     );
-                    for (var inventoryIndex = 0; inventoryIndex < inventoryLimit; inventoryIndex++)
+                    for (var inventoryIndex = 0; inventoryIndex < inventorySlotLimit; inventoryIndex++)
                     {
                         var inventorySlotComponent = inventorySlots[inventoryIndex];
                         var inventorySlotRenderBounds = inventorySlotComponent.RenderBounds();
@@ -333,7 +333,7 @@ public partial class BankItem
                         }
 
                         var intersection = FloatRect.Intersect(inventorySlotRenderBounds, dragRect);
-                        if (!(intersection.Width * intersection.Height > bestIntersect))
+                        if (intersection.Width * intersection.Height <= bestIntersect)
                         {
                             continue;
                         }
