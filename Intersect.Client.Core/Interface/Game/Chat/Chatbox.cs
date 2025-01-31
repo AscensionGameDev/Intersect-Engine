@@ -567,33 +567,38 @@ public partial class Chatbox
         mChatboxInput.Text = GetDefaultInputText();
     }
 
-    string GetDefaultInputText()
+    private static string GetDefaultInputText()
     {
-        var key1 = Controls.ActiveControls.ControlMapping[Control.Enter].Bindings[0];
-        var key2 = Controls.ActiveControls.ControlMapping[Control.Enter].Bindings[1];
-        if (key1.Key == Keys.None && key2.Key != Keys.None)
+        if (!Controls.ActiveControls.TryGetMappingFor(Control.Enter, out var mapping))
+        {
+            return Strings.Chatbox.EnterChat;
+        }
+
+        var key1 = mapping.Bindings.FirstOrDefault();
+        var key2 = mapping.Bindings.Skip(1).FirstOrDefault();
+
+        if (key1?.Key is null or Keys.None)
+        {
+            if (key2?.Key is null or Keys.None)
+            {
+                return Strings.Chatbox.EnterChat;
+            }
+
+            return Strings.Chatbox.EnterChat1.ToString(
+                Strings.Keys.KeyDictionary[key2.Key.GetKeyId().ToLowerInvariant()]
+            );
+        }
+
+        if (key2?.Key is null or Keys.None)
         {
             return Strings.Chatbox.EnterChat1.ToString(
-                Strings.Keys.KeyDictionary[Enum.GetName(typeof(Keys), key2.Key).ToLower()]
+                Strings.Keys.KeyDictionary[key1.Key.GetKeyId().ToLowerInvariant()]
             );
         }
 
-        if (key1.Key != Keys.None && key2.Key == Keys.None)
-        {
-            return Strings.Chatbox.EnterChat1.ToString(
-                Strings.Keys.KeyDictionary[Enum.GetName(typeof(Keys), key1.Key).ToLower()]
-            );
-        }
-
-        if (key1.Key != Keys.None && key2.Key != Keys.None)
-        {
-            return Strings.Chatbox.EnterChat2.ToString(
-                Strings.Keys.KeyDictionary[Enum.GetName(typeof(Keys), key1.Key).ToLower()],
-                Strings.Keys.KeyDictionary[Enum.GetName(typeof(Keys), key2.Key).ToLower()]
-            );
-        }
-
-        return Strings.Chatbox.EnterChat;
+        return Strings.Chatbox.EnterChat2.ToString(
+            Strings.Keys.KeyDictionary[key1.Key.GetKeyId().ToLowerInvariant()],
+            Strings.Keys.KeyDictionary[key2.Key.GetKeyId().ToLowerInvariant()]
+        );
     }
-
 }

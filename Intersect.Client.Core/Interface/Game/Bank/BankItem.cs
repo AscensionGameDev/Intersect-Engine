@@ -85,7 +85,7 @@ public partial class BankItem
     {
         if (Globals.InBank)
         {
-            if (Globals.InputManager.KeyDown(Keys.Shift))
+            if (Globals.InputManager.IsKeyDown(Keys.Shift))
             {
                 Globals.Me.TryWithdrawItem(
                     mMySlot,

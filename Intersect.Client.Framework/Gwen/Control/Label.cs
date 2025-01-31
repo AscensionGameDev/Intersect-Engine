@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -35,9 +36,9 @@ public partial class Label : Base, ILabel
 
     private bool mAutoSizeToContents;
 
-    private string mBackgroundTemplateFilename;
+    private string? mBackgroundTemplateFilename;
 
-    private GameTexture mBackgroundTemplateTex;
+    private GameTexture? mBackgroundTemplateTex;
 
     protected Color mClickedTextColor;
 
@@ -84,7 +85,7 @@ public partial class Label : Base, ILabel
         }
     }
 
-    public GameTexture ToolTipBackground
+    public GameTexture? ToolTipBackground
     {
         get => _tooltipBackground;
         set
@@ -197,7 +198,7 @@ public partial class Label : Base, ILabel
 
     private string? _textOverride;
     private WrappingBehavior _wrappingBehavior;
-    private GameTexture _tooltipBackground;
+    private GameTexture? _tooltipBackground;
 
     /// <summary>
     ///     Text override - used to display different string.
@@ -365,6 +366,24 @@ public partial class Label : Base, ILabel
     public GameTexture GetTemplate()
     {
         return mBackgroundTemplateTex;
+    }
+
+    public string? BackgroundTemplateName
+    {
+        get => mBackgroundTemplateFilename;
+        set
+        {
+            var newFileName = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+            if (newFileName == mBackgroundTemplateFilename?.Trim())
+            {
+                return;
+            }
+
+            mBackgroundTemplateFilename = newFileName;
+            mBackgroundTemplateTex = newFileName == null
+                ? null
+                : GameContentManager.Current?.GetTexture(TextureType.Gui, newFileName);
+        }
     }
 
     public void SetBackgroundTemplate(GameTexture texture, string fileName)

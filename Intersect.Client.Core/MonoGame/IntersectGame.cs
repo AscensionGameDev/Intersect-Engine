@@ -115,7 +115,6 @@ internal partial class IntersectGame : Game
 
         Interface.Interface.GwenRenderer = new IntersectRenderer(null, Core.Graphics.Renderer);
         Interface.Interface.GwenInput = new IntersectInput();
-        Controls.Init();
 
         // Windows
         Window.Position = new Microsoft.Xna.Framework.Point(

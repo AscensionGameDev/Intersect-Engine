@@ -10,6 +10,8 @@ public partial class PlayerOptions
     /// </summary>
     private const int DefaultInitialBankSlots = 100;
 
+    public const int DefaultHotbarSlotCount = 10;
+
     /// <summary>
     /// Unlinks the timers for combat and movement to facilitate complex combat (e.g. kiting)
     /// </summary>
@@ -48,7 +50,7 @@ public partial class PlayerOptions
     /// <summary>
     /// Number of hotbar slots a player has.
     /// </summary>
-    public int HotbarSlotCount { get; set; } = 10;
+    public int HotbarSlotCount { get; set; } = DefaultHotbarSlotCount;
 
     /// <summary>
     /// Number of bank slots a player has.

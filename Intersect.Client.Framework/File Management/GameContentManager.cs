@@ -445,7 +445,7 @@ public abstract partial class GameContentManager : IContentManager
         return GetLayout(stage, name, resolution, false, out cacheHit);
     }
 
-    public virtual void SaveUIJson(UI stage, string name, string json, string resolution)
+    public virtual void SaveUIJson(UI stage, string name, string json, string? resolution)
     {
         var stageName = stage.ToString().ToLowerInvariant();
         if (stage == UI.InGame)
@@ -455,10 +455,12 @@ public abstract partial class GameContentManager : IContentManager
 
         var stagePartialPath = Path.Combine("gui", "layouts", stageName);
 
+        resolution = resolution?.Trim();
+
         string resourceName;
-        if (resolution != null)
+        if (!string.IsNullOrWhiteSpace(resolution))
         {
-            resourceName = Path.Combine(stagePartialPath, $"{name}.{resolution}.json");
+            resourceName = Path.Combine(stagePartialPath, $"{name}.{resolution?.Trim()}.json");
             var resourcePath = Path.Combine(ClientConfiguration.ResourcesDirectory, resourceName);
             if (File.Exists(resourcePath))
             {

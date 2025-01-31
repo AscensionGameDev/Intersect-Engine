@@ -1,8 +1,10 @@
 using System.Reflection;
 using Intersect.Client.Core.Controls;
+using Intersect.Client.Framework.Input;
 using Intersect.Configuration;
 using Intersect.Core;
 using Intersect.Enums;
+using Intersect.Framework.Reflection;
 using Intersect.Localization;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -101,6 +103,16 @@ public static partial class Strings
         Intersect.Client.Core.Program.OpenALLink = Errors.OpenAllLink.ToString();
     }
 
+    private class OrdinalComparer : IComparer<string>
+    {
+        public int Compare(string? x, string? y) => string.CompareOrdinal(x, y);
+    }
+
+    private class OrdinalComparer<T> : IComparer<T>
+    {
+        public int Compare(T? x, T? y) => string.CompareOrdinal(x?.ToString(), y?.ToString());
+    }
+
     public static void Load()
     {
         SynchronizeConfigurableStrings();
@@ -116,7 +128,7 @@ public static partial class Strings
             var groupTypes = rootType.GetNestedTypes(BindingFlags.Static | BindingFlags.Public);
             List<string> missingStrings = [];
             List<string> argumentCountMismatch = [];
-            foreach (var groupType in groupTypes)
+            foreach (var groupType in groupTypes.OrderBy(t => t.Name, new OrdinalComparer()))
             {
                 if (!serialized.TryGetValue(groupType.Name, out var serializedGroup))
                 {
@@ -210,17 +222,20 @@ public static partial class Strings
                                     break;
                                 }
 
-                                _ = _methodInfoDeserializeDictionary.MakeGenericMethod(parameters.First()).Invoke(default,
-                                [
-                                    missingStrings,
+                                var genericDeserializeDictionary = _methodInfoDeserializeDictionary.MakeGenericMethod(parameters.First());
+                                _ = genericDeserializeDictionary
+                                    .Invoke(
+                                        default,
+                                        [
+                                            missingStrings,
                                             groupType,
                                             fieldInfo,
                                             fieldValue,
                                             serializedGroup,
                                             serializedValue,
                                             fieldValue,
-                                ]
-                                );
+                                        ]
+                                    );
                                 break;
                             }
                     }
@@ -255,49 +270,59 @@ public static partial class Strings
     }
 
     private static readonly MethodInfo _methodInfoDeserializeDictionary = typeof(Strings).GetMethod(
-                                            nameof(DeserializeDictionary),
-                                            BindingFlags.NonPublic | BindingFlags.Static
-                                        ) ?? throw new InvalidOperationException();
+        nameof(DeserializeDictionary),
+        BindingFlags.NonPublic | BindingFlags.Static
+    ) ?? throw new InvalidOperationException();
+
+    private static readonly MethodInfo _methodInfoSerializeDictionary = typeof(Strings).GetMethod(
+        nameof(SerializeDictionary),
+        BindingFlags.NonPublic | BindingFlags.Static
+    ) ?? throw new InvalidOperationException();
 
     private static void DeserializeDictionary<TKey>(
         List<string> missingStrings,
         Type groupType,
         FieldInfo fieldInfo,
-        object fieldValue,
+        object? fieldValue,
         Dictionary<string, object> serializedGroup,
-        object serializedValue,
+        object? serializedValue,
         Dictionary<TKey, LocalizedString> dictionary
     )
     {
-        var serializedDictionary = serializedValue as JObject;
-        var serializedField = JToken.FromObject(fieldValue);
-        if (serializedValue == default)
+        switch (serializedValue)
         {
-            missingStrings.Add($"{groupType.Name}.{fieldInfo.Name} (string dictionary)");
-            serializedGroup[fieldInfo.Name] = serializedField;
-        }
-        else
-        {
-            var keys = dictionary.Keys.ToList();
-            foreach (var key in keys)
-            {
-                var stringKey = key.ToString();
-                if (!serializedDictionary.TryGetValue(stringKey, out var token) || token?.Type != JTokenType.String)
-                {
-                    missingStrings.Add($"{groupType.Name}.{fieldInfo.Name}[{key}]");
-                    serializedDictionary[stringKey] = (string)dictionary[key];
-                    continue;
-                }
+            case null:
+                missingStrings.Add($"{groupType.Name}.{fieldInfo.Name} (string dictionary)");
+                serializedGroup[fieldInfo.Name] = fieldValue is null ? JValue.CreateNull() : JToken.FromObject(fieldValue);
+                break;
 
-                dictionary[key] = new LocalizedString((string)token);
+            case JObject serializedDictionary:
+            {
+                var keys = dictionary.Keys.ToList();
+                foreach (var key in keys)
+                {
+                    var stringKey = key?.ToString() ??
+                                    throw new InvalidOperationException(
+                                        $"{key}.{nameof(key.ToString)}() returned null"
+                                    );
+                    if (!serializedDictionary.TryGetValue(stringKey, out var token) || token?.Type != JTokenType.String)
+                    {
+                        missingStrings.Add($"{groupType.Name}.{fieldInfo.Name}[{key}]");
+                        serializedDictionary[stringKey] = (string)dictionary[key];
+                        continue;
+                    }
+
+                    dictionary[key] = token.Value<string>();
+                }
+                break;
             }
         }
     }
 
-    private static Dictionary<string, string> SerializeDictionary<TKey>(Dictionary<TKey, LocalizedString> localizedDictionary)
+    private static Dictionary<string, string> SerializeDictionary<TKey>(Dictionary<TKey, LocalizedString> localizedDictionary) where TKey : notnull
     {
-        return localizedDictionary.ToDictionary(
-            pair => pair.Key.ToString(),
+        return localizedDictionary.OrderBy(pair => pair.Key, new OrdinalComparer<TKey>()).ToDictionary(
+            pair => pair.Key.ToString() ?? throw new InvalidOperationException($"Failed to use {pair.Key} as a key"),
             pair => pair.Value.ToString()
         );
     }
@@ -305,9 +330,10 @@ public static partial class Strings
     private static Dictionary<string, object> SerializeGroup(Type groupType)
     {
         var serializedGroup = new Dictionary<string, object>();
-        foreach (var fieldInfo in groupType.GetFields(BindingFlags.Static | BindingFlags.Public))
+        foreach (var fieldInfo in groupType.GetFields(BindingFlags.Static | BindingFlags.Public).OrderBy(f => f.Name, new OrdinalComparer()))
         {
-            switch (fieldInfo.GetValue(null))
+            var fieldValue = fieldInfo.GetValue(null);
+            switch (fieldValue)
             {
                 case LocalizedString localizedString:
                     serializedGroup.Add(fieldInfo.Name, localizedString.ToString());
@@ -323,6 +349,20 @@ public static partial class Strings
 
                 case Dictionary<ChatboxTab, LocalizedString> localizedChatboxTabKeyDictionary:
                     serializedGroup.Add(fieldInfo.Name, SerializeDictionary(localizedChatboxTabKeyDictionary));
+                    break;
+
+                default:
+                    if (fieldValue?.GetType() is {} fieldType && typeof(Dictionary<,>).ExtendedBy(fieldType))
+                    {
+                        var fieldTypeGenericTypeArguments = fieldType.GenericTypeArguments;
+                        var genericMethod =
+                            _methodInfoSerializeDictionary.MakeGenericMethod(fieldTypeGenericTypeArguments);
+                        var serializationResult = genericMethod.Invoke(null, [fieldValue]);
+                        if (serializationResult is Dictionary<string, string> serializedGenericDictionary)
+                        {
+                            serializedGroup.Add(fieldInfo.Name, serializedGenericDictionary);
+                        }
+                    }
                     break;
             }
         }
@@ -347,27 +387,9 @@ public static partial class Strings
         var rootType = typeof(Strings);
         var groupTypes = rootType.GetNestedTypes(BindingFlags.Static | BindingFlags.Public);
 
-        foreach (var groupType in groupTypes)
+        foreach (var groupType in groupTypes.OrderBy(g => g.Name, new OrdinalComparer()))
         {
-            var serializedGroup = new Dictionary<string, object>();
-            foreach (var fieldInfo in groupType.GetFields(BindingFlags.Static | BindingFlags.Public))
-            {
-                switch (fieldInfo.GetValue(null))
-                {
-                    case LocalizedString localizedString:
-                        serializedGroup.Add(fieldInfo.Name, localizedString.ToString());
-                        break;
-
-                    case Dictionary<int, LocalizedString> localizedIntKeyDictionary:
-                        serializedGroup.Add(fieldInfo.Name, localizedIntKeyDictionary.ToDictionary(pair => pair.Key, pair => pair.Value.ToString()));
-                        break;
-
-                    case Dictionary<string, LocalizedString> localizedStringKeyDictionary:
-                        serializedGroup.Add(fieldInfo.Name, localizedStringKeyDictionary.ToDictionary(pair => pair.Key, pair => pair.Value.ToString()));
-                        break;
-                }
-            }
-
+            var serializedGroup = SerializeGroup(groupType);
             serialized.Add(groupType.Name, serializedGroup);
         }
 
@@ -608,19 +630,7 @@ public static partial class Strings
         public static LocalizedString Points = @"Points: {00}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Stat0 = @"{00}: {01}";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Stat1 = @"{00}: {01}";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Stat2 = @"{00}: {01}";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Stat3 = @"{00}: {01}";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Stat4 = @"{00}: {01}";
+        public static LocalizedString StatLabelValue = @"{00}: {01}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Stats = @"Stats:";
@@ -756,45 +766,19 @@ public static partial class Strings
         public static LocalizedString UnableToCopy = @"It appears you are not able to copy/paste on this platform. Please make sure you have either the 'xclip' or 'wl-clipboard' packages installed if you are running Linux.";
     }
 
-    public partial struct Colors
-    {
-
-        public static Dictionary<int, LocalizedString> presets = new Dictionary<int, LocalizedString>
-        {
-            {0, @"Black"},
-            {1, @"White"},
-            {2, @"Pink"},
-            {3, @"Blue"},
-            {4, @"Red"},
-            {5, @"Green"},
-            {6, @"Yellow"},
-            {7, @"Orange"},
-            {8, @"Purple"},
-            {9, @"Gray"},
-            {10, @"Cyan"}
-        };
-
-    }
-
     public partial struct Combat
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString AttackWhileCastingDeny = @"You cannot attack while casting a spell.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Stat0 = @"Attack";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Stat1 = @"Ability Power";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Stat2 = @"Defense";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Stat3 = @"Magic Resist";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Stat4 = @"Speed";
+        public static Dictionary<Stat, LocalizedString> Stats = new() {
+            { Stat.Attack, @"Attack" },
+            { Stat.AbilityPower, @"Ability Power" },
+            { Stat.Defense, @"Defense" },
+            { Stat.MagicResist, @"Magic Resist" },
+            { Stat.Speed, @"Speed" },
+        };
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString WarningCharacterSelect = @"You are attempting to logout while in combat! Your character will remain in-game until combat has ended. Are you sure you want to logout now?";
@@ -811,6 +795,8 @@ public static partial class Strings
 
     public partial struct Controls
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString HotkeyXLabel = @"Hot Key {00}:";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static Dictionary<string, LocalizedString> KeyDictionary = new()
@@ -820,7 +806,6 @@ public static partial class Strings
             {"autotarget", @"Auto Target:"},
             {"enter", @"Chat:"},
             {nameof(Control.HoldToSoftRetargetOnSelfCast).ToLowerInvariant(), @"Hold to Soft-Retarget on Self-Cast:"},
-            {"hotkey0", @"Hot Key 0:"},
             {"hotkey1", @"Hot Key 1:"},
             {"hotkey2", @"Hot Key 2:"},
             {"hotkey3", @"Hot Key 3:"},
@@ -830,6 +815,7 @@ public static partial class Strings
             {"hotkey7", @"Hot Key 7:"},
             {"hotkey8", @"Hot Key 8:"},
             {"hotkey9", @"Hot Key 9:"},
+            {"hotkey10", @"Hot Key 10:"},
             {"movedown", @"Down:"},
             {"moveleft", @"Left:"},
             {"moveright", @"Right:"},
@@ -1037,12 +1023,6 @@ public static partial class Strings
 
     public partial struct Words
     {
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString LcaseAnimation = @"animation";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString LcaseMusic = @"soundtrack";
-
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString LcaseSound = @"sound";
 
@@ -1857,7 +1837,7 @@ public static partial class Strings
     public partial struct Main
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString GameName = @"Intersect Client";
+        public static LocalizedString GameName = @"Intersect";
     }
 
     public partial struct MainMenu
@@ -2021,6 +2001,9 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString TypewriterText = @"Typewriter Text";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString UIScale = @"UI Scale";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString UnlimitedFps = @"No Limit";

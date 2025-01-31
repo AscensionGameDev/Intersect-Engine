@@ -243,23 +243,6 @@ public static partial class Input
                 case GameStates.InGame:
                     switch (control)
                     {
-                        case Control.MoveUp:
-                        case Control.MoveLeft:
-                        case Control.MoveDown:
-                        case Control.MoveRight:
-                        case Control.AttackInteract:
-                        case Control.Hotkey1:
-                        case Control.Hotkey2:
-                        case Control.Hotkey3:
-                        case Control.Hotkey4:
-                        case Control.Hotkey5:
-                        case Control.Hotkey6:
-                        case Control.Hotkey7:
-                        case Control.Hotkey8:
-                        case Control.Hotkey9:
-                        case Control.Hotkey0:
-                            break;
-
                         case Control.Block:
                             _ = (Globals.Me?.TryBlock());
                             break;
@@ -509,7 +492,7 @@ public static partial class Input
             return;
         }
 
-        if (Globals.InputManager.KeyDown(Keys.Shift) != true)
+        if (Globals.InputManager.IsKeyDown(Keys.Shift) != true)
         {
             return;
         }

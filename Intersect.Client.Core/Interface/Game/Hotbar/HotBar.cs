@@ -1,6 +1,7 @@
 ﻿using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 
@@ -11,17 +12,19 @@ public partial class HotBarWindow
 {
 
     //Controls
-    public ImagePanel HotbarWindow;
+    public readonly ImagePanel HotbarWindow;
 
     //Item List
-    public List<HotbarItem> Items = new List<HotbarItem>();
+    public readonly List<HotbarItem> Items = [];
 
     //Init
     public HotBarWindow(Canvas gameCanvas)
     {
         HotbarWindow = new ImagePanel(gameCanvas, "HotbarWindow")
         {
-            ShouldCacheToTexture = true
+            TextureFilename = "hotbar.png",
+            TextureNinePatchMargin = Margin.Three,
+            ShouldCacheToTexture = true,
         };
 
         if (Graphics.Renderer == null)
@@ -31,6 +34,8 @@ public partial class HotBarWindow
 
         InitHotbarItems();
         HotbarWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+        HotbarWindow.SizeToChildren();
     }
 
     private void InitHotbarItems()

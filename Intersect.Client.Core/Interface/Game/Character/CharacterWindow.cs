@@ -323,23 +323,38 @@ public partial class CharacterWindow
         }
 
         mAttackLabel.SetText(
-            Strings.Character.Stat0.ToString(Strings.Combat.Stat0, Globals.Me.Stat[(int) Stat.Attack])
-        );
-
-        mDefenseLabel.SetText(
-            Strings.Character.Stat2.ToString(Strings.Combat.Stat2, Globals.Me.Stat[(int) Stat.Defense])
-        );
-
-        mSpeedLabel.SetText(
-            Strings.Character.Stat4.ToString(Strings.Combat.Stat4, Globals.Me.Stat[(int) Stat.Speed])
+            Strings.Character.StatLabelValue.ToString(
+                Strings.Combat.Stats[Stat.Attack],
+                Globals.Me.Stat[(int)Stat.Attack]
+            )
         );
 
         mAbilityPwrLabel.SetText(
-            Strings.Character.Stat1.ToString(Strings.Combat.Stat1, Globals.Me.Stat[(int) Stat.AbilityPower])
+            Strings.Character.StatLabelValue.ToString(
+                Strings.Combat.Stats[Stat.AbilityPower],
+                Globals.Me.Stat[(int)Stat.AbilityPower]
+            )
+        );
+
+        mDefenseLabel.SetText(
+            Strings.Character.StatLabelValue.ToString(
+                Strings.Combat.Stats[Stat.Defense],
+                Globals.Me.Stat[(int)Stat.Defense]
+            )
         );
 
         mMagicRstLabel.SetText(
-            Strings.Character.Stat3.ToString(Strings.Combat.Stat3, Globals.Me.Stat[(int) Stat.MagicResist])
+            Strings.Character.StatLabelValue.ToString(
+                Strings.Combat.Stats[Stat.MagicResist],
+                Globals.Me.Stat[(int)Stat.MagicResist]
+            )
+        );
+
+        mSpeedLabel.SetText(
+            Strings.Character.StatLabelValue.ToString(
+                Strings.Combat.Stats[Stat.Speed],
+                Globals.Me.Stat[(int)Stat.Speed]
+            )
         );
 
         mPointsLabel.SetText(Strings.Character.Points.ToString(Globals.Me.StatPoints));
