@@ -242,108 +242,120 @@ public partial class BankItem
                 }
             }
         }
-        else
+        else if (mDragIcon.Update())
         {
-            if (mDragIcon.Update())
+            //Drug the item and now we stopped
+            IsDragging = false;
+            var dragRect = new FloatRect(
+                mDragIcon.X - sItemXPadding / 2,
+                mDragIcon.Y - sItemYPadding / 2,
+                sItemXPadding / 2 + 32,
+                sItemYPadding / 2 + 32
+            );
+
+            float bestIntersect = 0;
+            var bestIntersectIndex = -1;
+
+            // So we picked up an item and then dropped it. Lets see where we dropped it to.
+            if (mBankWindow.RenderBounds().IntersectsWith(dragRect))
             {
-                //Drug the item and now we stopped
-                IsDragging = false;
-                var dragRect = new FloatRect(
-                    mDragIcon.X - sItemXPadding / 2, mDragIcon.Y - sItemYPadding / 2, sItemXPadding / 2 + 32,
-                    sItemYPadding / 2 + 32
-                );
-
-                float bestIntersect = 0;
-                var bestIntersectIndex = -1;
-
-                //So we picked up an item and then dropped it. Lets see where we dropped it to.
-                //Check inventory first.
-                if (mBankWindow.RenderBounds().IntersectsWith(dragRect))
+                var bankSlotComponents = mBankWindow.Items.ToArray();
+                var slotLimit = Math.Min(Globals.BankSlots, bankSlotComponents.Length);
+                for (var bankSlotIndex = 0; bankSlotIndex < slotLimit; bankSlotIndex++)
                 {
-                    for (var i = 0; i < Globals.BankSlots; i++)
+                    var bankSlotComponent = bankSlotComponents[bankSlotIndex];
+                    var bankSlotRenderBounds = bankSlotComponent.RenderBounds();
+                    if (!bankSlotRenderBounds.IntersectsWith(dragRect))
                     {
-                        if (mBankWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
-                        {
-                            if (FloatRect.Intersect(mBankWindow.Items[i].RenderBounds(), dragRect).Width *
-                                FloatRect.Intersect(mBankWindow.Items[i].RenderBounds(), dragRect).Height >
-                                bestIntersect)
-                            {
-                                bestIntersect =
-                                    FloatRect.Intersect(mBankWindow.Items[i].RenderBounds(), dragRect).Width *
-                                    FloatRect.Intersect(mBankWindow.Items[i].RenderBounds(), dragRect).Height;
+                        continue;
+                    }
 
-                                bestIntersectIndex = i;
+                    var intersection = FloatRect.Intersect(bankSlotRenderBounds, dragRect);
+                    if (!(intersection.Width * intersection.Height > bestIntersect))
+                    {
+                        continue;
+                    }
+
+                    bestIntersect = intersection.Width * intersection.Height;
+                    bestIntersectIndex = bankSlotIndex;
+                }
+
+                if (bestIntersectIndex > -1)
+                {
+                    if (mMySlot != bestIntersectIndex)
+                    {
+                        var allowed = true;
+
+                        //Permission Check
+                        if (Globals.GuildBank)
+                        {
+                            var rank = Globals.Me.GuildRank;
+                            if (string.IsNullOrWhiteSpace(Globals.Me.Guild) ||
+                                (!rank.Permissions.BankDeposit && Globals.Me.Rank != 0))
+                            {
+                                ChatboxMsg.AddMessage(
+                                    new ChatboxMsg(
+                                        Strings.Guilds.NotAllowedSwap.ToString(Globals.Me.Guild),
+                                        CustomColors.Alerts.Error,
+                                        ChatMessageType.Bank
+                                    )
+                                );
+                                allowed = false;
                             }
                         }
+
+                        if (allowed)
+                        {
+                            PacketSender.SendMoveBankItems(mMySlot, bestIntersectIndex);
+                        }
+
+                        //Globals.Me.SwapItems(bestIntersectIndex, _mySlot);
+                    }
+                }
+            }
+            else
+            {
+                var invWindow = Interface.GameUi.GameMenu.GetInventoryWindow();
+                if (invWindow.RenderBounds().IntersectsWith(dragRect))
+                {
+                    var inventorySlots = invWindow.Items.ToArray();
+                    var inventoryLimit = Math.Min(
+                        Globals.Me?.Inventory.Length ?? inventorySlots.Length,
+                        inventorySlots.Length
+                    );
+                    for (var inventoryIndex = 0; inventoryIndex < inventoryLimit; inventoryIndex++)
+                    {
+                        var inventorySlotComponent = inventorySlots[inventoryIndex];
+                        var inventorySlotRenderBounds = inventorySlotComponent.RenderBounds();
+                        if (!inventorySlotRenderBounds.IntersectsWith(dragRect))
+                        {
+                            continue;
+                        }
+
+                        var intersection = FloatRect.Intersect(inventorySlotRenderBounds, dragRect);
+                        if (!(intersection.Width * intersection.Height > bestIntersect))
+                        {
+                            continue;
+                        }
+
+                        bestIntersect = intersection.Width * intersection.Height;
+                        bestIntersectIndex = inventoryIndex;
                     }
 
                     if (bestIntersectIndex > -1)
                     {
-                        if (mMySlot != bestIntersectIndex)
-                        {
-                            var allowed = true;
-
-                            //Permission Check
-                            if (Globals.GuildBank)
-                            {
-                                var rank = Globals.Me.GuildRank;
-                                if (string.IsNullOrWhiteSpace(Globals.Me.Guild) || (!rank.Permissions.BankDeposit && Globals.Me.Rank != 0))
-                                {
-                                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedSwap.ToString(Globals.Me.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
-                                    allowed = false;
-                                }
-                            }
-
-                            if (allowed)
-                            {
-                                PacketSender.SendMoveBankItems(mMySlot, bestIntersectIndex);
-                            }
-
-                            //Globals.Me.SwapItems(bestIntersectIndex, _mySlot);
-                        }
+                        var slot = Globals.Bank[mMySlot];
+                        Globals.Me.TryWithdrawItem(
+                            mMySlot,
+                            inventorySlotIndex: bestIntersectIndex,
+                            quantityHint: slot.Quantity,
+                            skipPrompt: true
+                        );
                     }
                 }
-                else
-                {
-                    var invWindow = Interface.GameUi.GameMenu.GetInventoryWindow();
-                    if (invWindow.RenderBounds().IntersectsWith(dragRect))
-                    {
-                        var inventorySlots = invWindow.Items.ToArray();
-                        var inventoryLimit = Math.Min(Globals.Me?.Inventory.Length ?? inventorySlots.Length, inventorySlots.Length);
-                        for (var inventoryIndex = 0; inventoryIndex < inventoryLimit; inventoryIndex++)
-                        {
-                            var inventorySlotComponent = inventorySlots[inventoryIndex];
-                            var inventorySlotRenderBounds = inventorySlotComponent.RenderBounds();
-                            if (!inventorySlotRenderBounds.IntersectsWith(dragRect))
-                            {
-                                continue;
-                            }
-
-                            var intersection = FloatRect.Intersect(inventorySlotRenderBounds, dragRect);
-                            if (!(intersection.Width * intersection.Height > bestIntersect))
-                            {
-                                continue;
-                            }
-
-                            bestIntersect = intersection.Width * intersection.Height;
-                            bestIntersectIndex = inventoryIndex;
-                        }
-
-                        if (bestIntersectIndex > -1)
-                        {
-                            var slot = Globals.Bank[mMySlot];
-                            Globals.Me.TryWithdrawItem(
-                                mMySlot,
-                                inventorySlotIndex: bestIntersectIndex,
-                                quantityHint: slot.Quantity,
-                                skipPrompt: true
-                            );
-                        }
-                    }
-                }
-
-                mDragIcon.Dispose();
             }
+
+            mDragIcon.Dispose();
         }
     }
 
