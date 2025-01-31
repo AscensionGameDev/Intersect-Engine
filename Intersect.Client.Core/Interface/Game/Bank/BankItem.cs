@@ -308,21 +308,23 @@ public partial class BankItem
                     var invWindow = Interface.GameUi.GameMenu.GetInventoryWindow();
                     if (invWindow.RenderBounds().IntersectsWith(dragRect))
                     {
-                        for (var i = 0; i < Globals.Me.Inventory.Length; i++)
+                        for (var inventoryIndex = 0; inventoryIndex < Math.Min(Globals.Me?.Inventory.Length ?? invWindow.Items.Count, invWindow.Items.Count); inventoryIndex++)
                         {
-                            if (invWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
+                            var inventorySlotComponent = invWindow.Items[inventoryIndex];
+                            var inventorySlotRenderBounds = inventorySlotComponent.RenderBounds();
+                            if (!inventorySlotRenderBounds.IntersectsWith(dragRect))
                             {
-                                if (FloatRect.Intersect(invWindow.Items[i].RenderBounds(), dragRect).Width *
-                                    FloatRect.Intersect(invWindow.Items[i].RenderBounds(), dragRect).Height >
-                                    bestIntersect)
-                                {
-                                    bestIntersect =
-                                        FloatRect.Intersect(invWindow.Items[i].RenderBounds(), dragRect).Width *
-                                        FloatRect.Intersect(invWindow.Items[i].RenderBounds(), dragRect).Height;
-
-                                    bestIntersectIndex = i;
-                                }
+                                continue;
                             }
+
+                            var intersection = FloatRect.Intersect(inventorySlotRenderBounds, dragRect);
+                            if (!(intersection.Width * intersection.Height > bestIntersect))
+                            {
+                                continue;
+                            }
+
+                            bestIntersect = intersection.Width * intersection.Height;
+                            bestIntersectIndex = inventoryIndex;
                         }
 
                         if (bestIntersectIndex > -1)
