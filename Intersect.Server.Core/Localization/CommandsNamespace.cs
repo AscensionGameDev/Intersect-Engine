@@ -32,16 +32,16 @@ public static partial class Strings
         public readonly LocaleCommand ApiGrant = new LocaleCommand
         {
             Name = @"apigrant",
-            Description = @"Grants extra api access roles for a user. (Options: users.query, users.manage)",
-            Help = @"enables extra api access roles for a account. (Options: users.query, users.manage)"
+            Description = @"Grants extra api access roles for a user. (Options: UserQuery, UserManage)",
+            Help = @"enables extra api access roles for a account. (Options: UserQuery, UserManage)"
         };
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocaleCommand ApiRevoke = new LocaleCommand
         {
             Name = @"apirevoke",
-            Description = @"Revokes extra api access roles for a account. (Options: users.query, users.manage)",
-            Help = @"revokes extra api access roles for a account. (Options: users.query, users.manage)"
+            Description = @"Revokes extra api access roles for a account. (Options: UserQuery, UserManage)",
+            Help = @"revokes extra api access roles for a account. (Options: UserQuery, UserManage)"
         };
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -49,7 +49,7 @@ public static partial class Strings
         {
             Name = @"apiroles",
             Description = @"Lists extra api access roles assigned to a user.",
-            Help = @"lists extra api access roles for an account (Options: users.query, users.manage)"
+            Help = @"lists extra api access roles for an account (Options: UserQuery, UserManage)"
         };
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly ArgumentsNamespace Arguments = new ArgumentsNamespace();
@@ -279,7 +279,7 @@ public static partial class Strings
             public readonly LocaleArgument ApiRole = new LocaleArgument
             {
                 Name = @"role",
-                Description = @"role to grant or revoke (users.query or users.manage)"
+                Description = @"role to grant or revoke (UserQuery or UserManage)"
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
