@@ -308,9 +308,11 @@ public partial class BankItem
                     var invWindow = Interface.GameUi.GameMenu.GetInventoryWindow();
                     if (invWindow.RenderBounds().IntersectsWith(dragRect))
                     {
-                        for (var inventoryIndex = 0; inventoryIndex < Math.Min(Globals.Me?.Inventory.Length ?? invWindow.Items.Count, invWindow.Items.Count); inventoryIndex++)
+                        var inventorySlots = invWindow.Items.ToArray();
+                        var inventoryLimit = Math.Min(Globals.Me?.Inventory.Length ?? inventorySlots.Length, inventorySlots.Length);
+                        for (var inventoryIndex = 0; inventoryIndex < inventoryLimit; inventoryIndex++)
                         {
-                            var inventorySlotComponent = invWindow.Items[inventoryIndex];
+                            var inventorySlotComponent = inventorySlots[inventoryIndex];
                             var inventorySlotRenderBounds = inventorySlotComponent.RenderBounds();
                             if (!inventorySlotRenderBounds.IntersectsWith(dragRect))
                             {
