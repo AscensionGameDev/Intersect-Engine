@@ -70,8 +70,10 @@ public static partial class FactoryRegistry<TValue>
             ApplicationContext.Context.Value?.Logger.LogError(
                 exception,
                 string.Format(
-                    CultureInfo.CurrentCulture, ExceptionMessages.SwallowingExceptionFromWithQualifiedName,
-                    typeof(FactoryRegistry<TValue>).QualifiedGenericName(), nameof(Create)
+                    CultureInfo.CurrentUICulture,
+                    ExceptionMessages.SwallowingExceptionFromWithQualifiedName,
+                    typeof(FactoryRegistry<TValue>).QualifiedGenericName(),
+                    nameof(Create)
                 )
             );
         }
