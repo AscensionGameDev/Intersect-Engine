@@ -15,7 +15,7 @@ public static partial class StringExtensions
     /// <returns>a formatted string</returns>
     /// <seealso cref="string.Format(IFormatProvider, string, object[])"/>
     public static string Format(this string format, params object[] args) =>
-        Format(format, CultureInfo.CurrentCulture, args);
+        Format(format, CultureInfo.CurrentUICulture, args);
 
     /// <summary>
     /// Formats the string with the provided <see cref="IFormatProvider"/> and arguments.
