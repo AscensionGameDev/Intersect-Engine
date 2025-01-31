@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
 namespace Intersect.Localization;
 
@@ -7,6 +8,7 @@ public partial class LocalizedString(string value) : Localized
 {
     private readonly string _value = value;
 
+    [JsonIgnore]
     public int ArgumentCount { get; } = CountArguments(value);
 
     public static implicit operator LocalizedString(string value) => new(value);
