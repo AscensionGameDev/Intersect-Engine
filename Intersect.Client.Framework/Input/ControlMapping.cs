@@ -42,7 +42,7 @@ public partial class ControlMapping
                 return true;
             }
 
-            if (!GameInput.Current.MouseHitInterface)
+            if (GameInput.Current.MouseHitInterface)
             {
                 continue;
             }
