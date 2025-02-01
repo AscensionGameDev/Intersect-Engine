@@ -145,7 +145,8 @@ public class DatabaseTypeMigrationService
             var modelGraphRoots = GetModelGraph<TContext>(fromOptions);
             var modelGraphSortedTypes = Flatten(modelGraphRoots);
 
-            var dbSetInfos = typeof(TContext).GetProperties()
+            var contextPropertyInfos = typeof(TContext).GetProperties();
+            var dbSetInfos = contextPropertyInfos
                 .Where(propertyInfo => propertyInfo.PropertyType.Extends(typeof(DbSet<>)))
                 .ToArray();
 
@@ -169,7 +170,7 @@ public class DatabaseTypeMigrationService
                         MethodInfoMigrateDbSet.MakeGenericMethod(typeof(TContext), dbSetContainedType);
                     var migrateTask = migrateDbSetMethod.Invoke(
                         null,
-                        new object[] { fromOptions, toOptions, dbSetInfo }
+                        [fromOptions, toOptions, dbSetInfo]
                     ) as Task;
                     await (migrateTask ?? throw new InvalidOperationException());
                 }

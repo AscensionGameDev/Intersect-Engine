@@ -201,7 +201,13 @@ public static partial class TypeExtensions
         {
             if (currentType.IsGenericType)
             {
-                currentType = currentType.GetGenericTypeDefinition();
+                var currentTypeGenericTypeDefinition = currentType.GetGenericTypeDefinition();
+                if (currentType == currentTypeGenericTypeDefinition)
+                {
+                    break;
+                }
+
+                currentType = currentTypeGenericTypeDefinition;
                 if (currentType == baseType)
                 {
                     return true;
