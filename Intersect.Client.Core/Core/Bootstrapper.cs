@@ -5,7 +5,6 @@ using Intersect.Configuration;
 using Intersect.Core;
 using Intersect.Factories;
 using Intersect.Framework.Logging;
-using Intersect.Framework.Reflection;
 using Intersect.Network;
 using Intersect.Plugins;
 using Intersect.Plugins.Contexts;
@@ -15,7 +14,6 @@ using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Intersect.Client.Core;
 
