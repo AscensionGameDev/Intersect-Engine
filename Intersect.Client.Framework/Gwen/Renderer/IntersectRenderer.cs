@@ -167,7 +167,7 @@ public partial class IntersectRenderer : Base, ICacheToTexture
     }
 
     public override void DrawTexturedRect(
-        GameTexture tex,
+        GameTexture? tex,
         Rectangle targetRect,
         Color clr,
         float u1 = 0,
@@ -176,16 +176,18 @@ public partial class IntersectRenderer : Base, ICacheToTexture
         float v2 = 1
     )
     {
-        var rect = new FloatRect(
-            Translate(targetRect).X, Translate(targetRect).Y, Translate(targetRect).Width,
-            Translate(targetRect).Height
-        );
-
         if (null == tex)
         {
             //DrawMissingImage(targetRect);
             return;
         }
+
+        var rect = new FloatRect(
+            Translate(targetRect).X,
+            Translate(targetRect).Y,
+            Translate(targetRect).Width,
+            Translate(targetRect).Height
+        );
 
         u1 *= tex.Width;
         v1 *= tex.Height;

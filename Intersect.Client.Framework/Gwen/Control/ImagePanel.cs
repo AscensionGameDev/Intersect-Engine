@@ -1,3 +1,4 @@
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -27,9 +28,8 @@ public partial class ImagePanel : Base
 
     protected string mRightMouseClickSound;
 
-    private GameTexture mTexture;
-
-    private string mTextureFilename;
+    private GameTexture? mTexture;
+    private string? mTextureFilename;
 
     private Margin? _textureNinePatchMargin;
     private Bordered? _ninepatchRenderer;
@@ -79,10 +79,22 @@ public partial class ImagePanel : Base
         }
     }
 
-    public string TextureFilename
+    public string? TextureFilename
     {
         get => mTextureFilename;
-        set => mTextureFilename = value;
+        set
+        {
+            var textureFilename = value?.Trim();
+            if (string.Equals(textureFilename, mTextureFilename, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            mTextureFilename = textureFilename;
+            mTexture = mTextureFilename == null
+                ? null
+                : GameContentManager.Current?.GetTexture(TextureType.Gui, mTextureFilename);
+        }
     }
 
     private void ImagePanel_HoverEnter(Base sender, System.EventArgs arguments)
@@ -244,6 +256,29 @@ public partial class ImagePanel : Base
         );
     }
 
+    protected override void Layout(Skin.Base skin)
+    {
+        base.Layout(skin);
+
+        EnsureTextureLoaded();
+    }
+
+    private void EnsureTextureLoaded()
+    {
+        if (mTexture != null)
+        {
+            return;
+        }
+
+        var textureFilename = mTextureFilename;
+        if (string.IsNullOrWhiteSpace(textureFilename))
+        {
+            return;
+        }
+
+        mTexture = GameContentManager.Current?.GetTexture(TextureType.Gui, textureFilename);
+    }
+
     /// <summary>
     ///     Renders the control using specified skin.
     /// </summary>
@@ -251,6 +286,12 @@ public partial class ImagePanel : Base
     protected override void Render(Skin.Base skin)
     {
         base.Render(skin);
+
+        if (mTexture is not { } texture)
+        {
+            return;
+        }
+
         skin.Renderer.DrawColor = base.RenderColor;
 
         var renderBounds = RenderBounds;
@@ -258,11 +299,11 @@ public partial class ImagePanel : Base
         if (TextureNinePatchMargin is { } textureNinePatchMargin)
         {
             _ninepatchRenderer ??= new Bordered(
-                mTexture,
-                mUv[0] * mTexture.Width,
-                mUv[1] * mTexture.Height,
-                mUv[2] * mTexture.Width,
-                mUv[3] * mTexture.Height,
+                texture,
+                mUv[0] * texture.Width,
+                mUv[1] * texture.Height,
+                mUv[2] * texture.Width,
+                mUv[3] * texture.Height,
                 textureNinePatchMargin
             );
 
@@ -274,7 +315,7 @@ public partial class ImagePanel : Base
         else
         {
             skin.Renderer.DrawTexturedRect(
-                mTexture,
+                texture,
                 renderBounds,
                 base.RenderColor,
                 mUv[0],

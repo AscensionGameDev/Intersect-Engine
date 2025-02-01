@@ -2962,7 +2962,14 @@ public partial class Base : IDisposable
         size.X += Padding.Right;
         size.Y += Padding.Bottom;
 
-        return SetSize(width ? size.X : Width, height ? size.Y : Height);
+        if (!SetSize(width ? size.X : Width, height ? size.Y : Height))
+        {
+            return false;
+        }
+
+        ProcessAlignments();
+
+        return true;
     }
 
     /// <summary>

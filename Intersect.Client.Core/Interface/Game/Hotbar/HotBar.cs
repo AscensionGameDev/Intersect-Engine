@@ -22,6 +22,9 @@ public partial class HotBarWindow
     {
         HotbarWindow = new ImagePanel(gameCanvas, "HotbarWindow")
         {
+            AlignmentDistance = new Padding { Top = 4, Right = 4 },
+            AlignmentsInParent = [Alignments.Top, Alignments.Right],
+            RestrictToParent = true,
             TextureFilename = "hotbar.png",
             TextureNinePatchMargin = Margin.Three,
             ShouldCacheToTexture = true,

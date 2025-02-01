@@ -190,7 +190,7 @@ public partial class Base : IDisposable, ITextHelper
     /// <param name="u2">Texture coordinate u2.</param>
     /// <param name="v2">Texture coordinate v2.</param>
     public virtual void DrawTexturedRect(
-        GameTexture t,
+        GameTexture? t,
         Rectangle targetRect,
         Color clr,
         float u1 = 0,
@@ -394,7 +394,10 @@ public partial class Base : IDisposable, ITextHelper
     public Rectangle Translate(Rectangle rect)
     {
         return new Rectangle(
-            TranslateX(rect.X), TranslateY(rect.Y), Util.Ceil(rect.Width * Scale), Util.Ceil(rect.Height * Scale)
+            TranslateX(rect.X),
+            TranslateY(rect.Y),
+            Util.Ceil(rect.Width * Scale),
+            Util.Ceil(rect.Height * Scale)
         );
     }
 

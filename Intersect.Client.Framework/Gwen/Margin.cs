@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Globalization;
+using System.Runtime.InteropServices;
 
 #pragma warning disable CS0660, CS0661
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
@@ -67,7 +68,9 @@ public partial struct Margin : IEquatable<Margin>
             return default;
         }
 
-        var parts = rawMargin.Split(',').Select(rawPart => int.TryParse(rawPart, out var part) ? part : 0).ToArray();
+        var parts = rawMargin.Split(',')
+            .Select(rawPart => int.TryParse(rawPart, CultureInfo.InvariantCulture, out var part) ? part : 0)
+            .ToArray();
 
         return parts.Length switch
         {
