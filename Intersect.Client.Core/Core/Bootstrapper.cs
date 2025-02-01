@@ -4,6 +4,8 @@ using CommandLine;
 using Intersect.Configuration;
 using Intersect.Core;
 using Intersect.Factories;
+using Intersect.Framework.Logging;
+using Intersect.Framework.Reflection;
 using Intersect.Network;
 using Intersect.Plugins;
 using Intersect.Plugins.Contexts;
@@ -13,6 +15,7 @@ using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Intersect.Client.Core;
 
@@ -39,36 +42,15 @@ internal static partial class Bootstrapper
         var commandLineOptions = parser.ParseArguments<ClientCommandLineOptions>(args)
             .MapResult(HandleParsedArguments, HandleParserErrors);
 
-        var executableName = Path.GetFileNameWithoutExtension(
-            Process.GetCurrentProcess().MainModule?.FileName ?? Assembly.GetExecutingAssembly().GetName().Name
-        );
-
         LoggingLevelSwitch loggingLevelSwitch =
             new(Debugger.IsAttached ? LogEventLevel.Debug : LogEventLevel.Information);
 
-        var loggerConfiguration = new LoggerConfiguration()
-            .MinimumLevel.ControlledBy(loggingLevelSwitch)
-            .Enrich.FromLogContext()
-            .WriteTo.Console()
-            .WriteTo.File(
-                Path.Combine(
-                    "logs",
-                    $"{executableName}-{Process.GetCurrentProcess().StartTime:yyyy_MM_dd-HH_mm_ss_fff}.log"
-                ),
-                rollOnFileSizeLimit: true,
-                retainedFileTimeLimit: TimeSpan.FromDays(30)
-            )
-            .WriteTo.File(
-                Path.Combine("logs", $"errors-{executableName}.log"),
-                restrictedToMinimumLevel: LogEventLevel.Error,
-                rollOnFileSizeLimit: true,
-                retainedFileTimeLimit: TimeSpan.FromDays(30)
-            );
-
-        var logger = new SerilogLoggerFactory(loggerConfiguration.CreateLogger()).CreateLogger("Client");
-
-        var assemblyName = Assembly.GetExecutingAssembly().GetName();
-        logger.LogCritical("Starting {AssemblyName} v{Version}", assemblyName.Name, assemblyName.Version);
+        var executingAssembly = Assembly.GetExecutingAssembly();
+        var (_, logger) = new LoggerConfiguration().CreateLoggerForIntersect(
+            executingAssembly,
+            "Client",
+            loggingLevelSwitch
+        );
 
         var packetTypeRegistry = new PacketTypeRegistry(logger, typeof(SharedConstants).Assembly);
         if (!packetTypeRegistry.TryRegisterBuiltIn())

@@ -44,11 +44,7 @@ static class Program
 
         try
         {
-            var type = Type.GetType("Intersect.Client.Core.Bootstrapper", true);
-            Debug.Assert(type != null, "type != null");
-            var method = type.GetMethod("Start");
-            Debug.Assert(method != null, "method != null");
-            method.Invoke(null, new object[] { args });
+            Bootstrapper.Start(args);
         }
         catch (NoSuitableGraphicsDeviceException noSuitableGraphicsDeviceException)
         {

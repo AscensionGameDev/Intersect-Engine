@@ -1,6 +1,8 @@
 using System.Data.Common;
 using System.Globalization;
+using System.Reflection;
 using Intersect.Config;
+using Intersect.Framework.Reflection;
 using Intersect.Network;
 using Intersect.Server.Core;
 using Intersect.Server.Database;
@@ -20,6 +22,8 @@ internal static class Program
 
         try
         {
+            Console.WriteLine($"Starting {Assembly.GetExecutingAssembly().GetMetadataName()}...");
+
             ServerContext.ServerContextFactory = (options, logger, packetHelper) =>
                 new FullServerContext(options, logger, packetHelper);
 

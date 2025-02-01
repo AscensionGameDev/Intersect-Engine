@@ -3,12 +3,17 @@
     <ItemGroup>
       <PackageReference Include="MessagePack.Annotations" Version="2.6.100-alpha" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="7.0.14" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
-      <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+      <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+      <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+      <PackageReference Include="Serilog" Version="4.2.0" />
+      <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
       <PackageReference Include="System.IO.Hashing" Version="9.0.1" />
+      <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+      <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
+      <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
       <PackageReference Include="System.Text.Json" Version="8.0.5" />
     </ItemGroup>
 

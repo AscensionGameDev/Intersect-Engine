@@ -19,29 +19,15 @@ public static partial class Program
 
     static Program()
     {
-        var executableName = Path.GetFileNameWithoutExtension(
-            Process.GetCurrentProcess().MainModule?.FileName ?? Assembly.GetExecutingAssembly().GetName().Name
+        LoggingLevelSwitch loggingLevelSwitch =
+            new(Debugger.IsAttached ? LogEventLevel.Debug : LogEventLevel.Information);
+
+        var executingAssembly = Assembly.GetExecutingAssembly();
+        var (_, logger) = new LoggerConfiguration().CreateLoggerForIntersect(
+            executingAssembly,
+            "Editor",
+            loggingLevelSwitch
         );
-        var loggerConfiguration = new LoggerConfiguration().MinimumLevel
-            .Is(Debugger.IsAttached ? LogEventLevel.Debug : LogEventLevel.Information).Enrich.FromLogContext().WriteTo
-            .Console().WriteTo.File(
-                Path.Combine(
-                    "logs",
-                    $"{executableName}-{Process.GetCurrentProcess().StartTime:yyyy_MM_dd-HH_mm_ss_fff}.log"
-                ),
-                rollOnFileSizeLimit: true,
-                retainedFileTimeLimit: TimeSpan.FromDays(30)
-            ).WriteTo.File(
-                Path.Combine("logs", $"errors-{executableName}.log"),
-                restrictedToMinimumLevel: LogEventLevel.Error,
-                rollOnFileSizeLimit: true,
-                retainedFileTimeLimit: TimeSpan.FromDays(30)
-            );
-
-        var logger = new SerilogLoggerFactory(loggerConfiguration.CreateLogger()).CreateLogger("Editor");
-
-        var assemblyName = Assembly.GetExecutingAssembly().GetName();
-        logger.LogCritical("Starting {AssemblyName} v{Version}", assemblyName.Name, assemblyName.Version);
 
         ApplicationContext.Context.Value =
             new FakeApplicationContextForThisGarbageWinFormsEditorThatIHateAndWishItWouldBurnInAFireContext(logger);

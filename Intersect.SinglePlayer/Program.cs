@@ -1,14 +1,19 @@
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using Intersect;
 using Intersect.Client.Core;
 using Intersect.Client.MonoGame.Network;
 using Intersect.Configuration;
+using Intersect.Framework.Reflection;
 using Intersect.Server.Core;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
 using Intersect.SinglePlayer.Networking;
 using Bootstrapper = Intersect.Server.Core.Bootstrapper;
+using Console = System.Console;
+
+Console.WriteLine($"Starting {Assembly.GetExecutingAssembly().GetMetadataName()}...");
 
 const string singleplayer = "singleplayer";
 var singleplayerPassword = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(singleplayer)));

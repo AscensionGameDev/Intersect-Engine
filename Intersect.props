@@ -24,8 +24,58 @@
     <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
   </PropertyGroup>
 
-  <ItemGroup>
+  <PropertyGroup Label="Embedded Assembly Metadata Properties">
+    <VersionNameSuffix Condition="'$(VersionNameSuffix)' == ''">custom</VersionNameSuffix>
+  </PropertyGroup>
+
+  <ItemGroup Label="Embedded Resources">
     <None Include="$(IntersectRepoPath)\assets\intersect-logo-qu.png" Pack="true" PackagePath="\" />
     <EmbeddedResource Include="$(IntersectRepoPath)\assets\intersect-logo-qu.ico" Pack="true" PackagePath="\" />
   </ItemGroup>
+
+  <ItemGroup Label="Embedded Assembly Metadata">
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>BuildNumber</_Parameter1>
+      <_Parameter2>$(BuildNumber)</_Parameter2>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'$(CommitSha)' != ''">
+      <_Parameter1>CommitSha</_Parameter1>
+      <_Parameter2>$(CommitSha)</_Parameter2>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>VersionNameSuffix</_Parameter1>
+      <_Parameter2>$(VersionNameSuffix)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <Target Name="GetGitCommit" Condition="'$(CommitSha)' == ''" BeforeTargets="GetAssemblyAttributes">
+    <Exec Command="git --version" IgnoreExitCode="true">
+      <Output TaskParameter="ExitCode" PropertyName="GitVersionExitCode" />
+    </Exec>
+    <Exec Condition="'$(GitVersionExitCode)' == '0'" Command="git diff-index --quiet HEAD --" IgnoreExitCode="true">
+      <Output TaskParameter="ExitCode" PropertyName="DiffIndexExitCode" />
+    </Exec>
+    <Exec Condition="'$(GitVersionExitCode)' == '0'" Command="git rev-parse --verify HEAD" ConsoleToMsBuild="true" IgnoreExitCode="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="RevParseOutput" />
+      <Output TaskParameter="ExitCode" PropertyName="RevParseExitCode" />
+    </Exec>
+    <PropertyGroup>
+      <RevParseOutput Condition="'$(RevParseExitCode)' == ''">unknowncommit</RevParseOutput>
+      <_GitCommitSha>$(RevParseOutput)</_GitCommitSha>
+      <_GitCommitShaSuffix>dirty</_GitCommitShaSuffix>
+      <_GitCommitShaSuffix Condition="'$(DiffIndexExitCode)' == ''">gitnotfound</_GitCommitShaSuffix>
+      <_GitCommitSha Condition="'$(DiffIndexExitCode)' != '0'">$(_GitCommitSha)-$(_GitCommitShaSuffix)</_GitCommitSha>
+      <CommitSha Condition="'$(CommitSha)' == ''">$(_GitCommitSha)</CommitSha>
+    </PropertyGroup>
+    <CreateProperty Value="$(CommitSha)">
+      <Output TaskParameter="Value" PropertyName="CommitSha" />
+    </CreateProperty>
+    <ItemGroup>
+      <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+        <_Parameter1>CommitSha</_Parameter1>
+        <_Parameter2>$(CommitSha)</_Parameter2>
+      </AssemblyAttribute>
+    </ItemGroup>
+    <Message Importance="high" Text="CommitSha=$(CommitSha)"/>
+  </Target>
 </Project>
