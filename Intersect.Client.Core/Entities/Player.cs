@@ -2141,6 +2141,8 @@ public partial class Player : Entity, IPlayer
 
     public bool ClearTarget()
     {
+        _target = null;
+
         if (TargetId == default && TargetType == -1)
         {
             return false;
