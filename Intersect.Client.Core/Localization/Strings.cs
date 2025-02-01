@@ -354,9 +354,15 @@ public static partial class Strings
                 default:
                     if (fieldValue?.GetType() is {} fieldType && typeof(Dictionary<,>).ExtendedBy(fieldType))
                     {
-                        var fieldTypeGenericTypeArguments = fieldType.GenericTypeArguments;
-                        var genericMethod =
-                            _methodInfoSerializeDictionary.MakeGenericMethod(fieldTypeGenericTypeArguments);
+                        var typeArguments = fieldType.GenericTypeArguments;
+                        var keyType = typeArguments.First();
+                        if (keyType == typeof(LocalizedString))
+                        {
+                            throw new InvalidOperationException(
+                                $"Expected a type that is not a {typeof(LocalizedString).GetName(qualified: true)}"
+                            );
+                        }
+                        var genericMethod = _methodInfoSerializeDictionary.MakeGenericMethod(keyType);
                         var serializationResult = genericMethod.Invoke(null, [fieldValue]);
                         if (serializationResult is Dictionary<string, string> serializedGenericDictionary)
                         {
