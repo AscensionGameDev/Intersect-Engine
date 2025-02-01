@@ -32,6 +32,8 @@ public static class LoggerConfigurationExtensions
         {
             parentLoggingLevelSwitch.MinimumLevelChanged +=
                 (_, args) => loggingLevelSwitch.MinimumLevel = args.NewLevel;
+
+            loggingLevelSwitch.MinimumLevel = parentLoggingLevelSwitch.MinimumLevel;
         }
 
         LoggingLevelSwitch errorLevelSwitch = new();
