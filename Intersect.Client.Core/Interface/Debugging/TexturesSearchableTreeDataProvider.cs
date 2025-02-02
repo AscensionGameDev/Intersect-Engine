@@ -5,6 +5,9 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.Utility;
 using Intersect.Client.Localization;
+using Intersect.Core;
+using Intersect.Framework.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Interface.Debugging;
 
@@ -12,6 +15,7 @@ public sealed class TexturesSearchableTreeDataProvider : ISearchableTreeDataProv
 {
     private readonly GameContentManager _contentManager;
     private readonly Dictionary<string, SearchableTreeDataEntry> _entries;
+    private readonly Dictionary<IAsset, ContentType> _contentTypeByAsset;
     private readonly Dictionary<string, Dictionary<string, SearchableTreeDataEntry>> _entriesByParent;
     private readonly Base _parent;
 
@@ -19,6 +23,22 @@ public sealed class TexturesSearchableTreeDataProvider : ISearchableTreeDataProv
     {
         _contentManager = contentManager;
         _parent = parent;
+
+        var allContent = _contentManager.Content.ToArray();
+        _contentTypeByAsset = allContent.SelectMany(
+            pair =>
+            {
+                var (contentType, contentTypeAssets) = pair;
+                return contentTypeAssets.Select(asset => new KeyValuePair<IAsset, ContentType>(asset, contentType));
+            }
+        ).ToDictionary();
+
+        foreach (var (asset, _) in _contentTypeByAsset)
+        {
+            asset.Disposed += OnAssetStateChanged;
+            asset.Loaded += OnAssetStateChanged;
+            asset.Unloaded += OnAssetStateChanged;
+        }
 
         _entries = _contentManager.Content.SelectMany(
             contentTypeEntry =>
@@ -30,6 +50,7 @@ public sealed class TexturesSearchableTreeDataProvider : ISearchableTreeDataProv
                     contentTypeName = contentType.ToString();
                 }
 
+                var assets = contentTypeEntry.Value.ToArray();
                 SearchableTreeDataEntry[] entriesForTextureType =
                 [
                     new(
@@ -37,8 +58,7 @@ public sealed class TexturesSearchableTreeDataProvider : ISearchableTreeDataProv
                         DisplayText: contentTypeName,
                         DisplayColor: parent.Skin.Colors.Label.Default
                     ),
-                    ..contentTypeEntry.Value.OfType<GameTexture>()
-                        .Select(texture => EntryForAsset(contentTypeId, texture)),
+                    ..assets.Select(asset => EntryForAsset(contentTypeId, asset)),
                 ];
 
                 return entriesForTextureType;
@@ -52,6 +72,43 @@ public sealed class TexturesSearchableTreeDataProvider : ISearchableTreeDataProv
                 group => group.Key,
                 group => group.ToDictionary(tuple => tuple.entry.Id, tuple => tuple.entry)
             );
+    }
+
+    private void OnAssetStateChanged(IAsset changedAsset)
+    {
+        if (!_contentTypeByAsset.TryGetValue(changedAsset, out var contentType))
+        {
+            ApplicationContext.Context.Value?.Logger.LogWarning(
+                "Asset {AssetType} '{AssetId}' not indexed, unable to get content type",
+                changedAsset.GetType().GetName(qualified: true),
+                changedAsset.Id
+            );
+            return;
+        }
+
+        var contentTypeId = $"{nameof(ContentType)}:{contentType}";
+        var updatedEntry = EntryForAsset(contentTypeId, changedAsset);
+        _entries[updatedEntry.Id] = updatedEntry;
+        var ancestorIds = GetAncestorIds(updatedEntry.ParentId);
+
+        foreach (var ancestorId in ancestorIds)
+        {
+            if (!_entriesByParent.TryGetValue(ancestorId, out var entriesForAncestor))
+            {
+                entriesForAncestor = [];
+                _entriesByParent[ancestorId] = entriesForAncestor;
+            }
+
+            entriesForAncestor[updatedEntry.Id] = updatedEntry;
+        }
+
+        EntriesChanged?.Invoke(
+            _parent,
+            new SearchableTreeDataEntriesEventArgs
+            {
+                Entries = [updatedEntry],
+            }
+        );
     }
 
     private string[] GetAncestorIds(string? firstAncestorId)
@@ -80,7 +137,7 @@ public sealed class TexturesSearchableTreeDataProvider : ISearchableTreeDataProv
         return ancestorIds.ToArray();
     }
 
-    private SearchableTreeDataEntry EntryForAsset(string parentId, IAsset asset)
+    private static SearchableTreeDataEntry EntryForAsset(string parentId, IAsset asset)
     {
         Color displayColor = Color.Green;
         if (asset.IsDisposed)
@@ -91,10 +148,6 @@ public sealed class TexturesSearchableTreeDataProvider : ISearchableTreeDataProv
         {
             displayColor = Color.White;
         }
-
-        asset.Disposed += OnAssetStateChanged;
-        asset.Loaded += OnAssetStateChanged;
-        asset.Unloaded += OnAssetStateChanged;
 
         var assetName = asset.Name ?? asset.Id;
 
@@ -112,32 +165,6 @@ public sealed class TexturesSearchableTreeDataProvider : ISearchableTreeDataProv
             ParentId: parentId,
             UserData: asset
         );
-
-        void OnAssetStateChanged(IAsset changedAsset)
-        {
-            var updatedEntry = EntryForAsset(parentId, changedAsset);
-            _entries[updatedEntry.Id] = updatedEntry;
-            var ancestorIds = GetAncestorIds(updatedEntry.ParentId);
-
-            foreach (var ancestorId in ancestorIds)
-            {
-                if (!_entriesByParent.TryGetValue(ancestorId, out var entriesForAncestor))
-                {
-                    entriesForAncestor = [];
-                    _entriesByParent[ancestorId] = entriesForAncestor;
-                }
-
-                entriesForAncestor[updatedEntry.Id] = updatedEntry;
-            }
-
-            EntriesChanged?.Invoke(
-                _parent,
-                new SearchableTreeDataEntriesEventArgs
-                {
-                    Entries = [updatedEntry],
-                }
-            );
-        }
     }
 
     public event Base.GwenEventHandler<SearchableTreeDataEntriesEventArgs>? EntriesAdded;
