@@ -19,7 +19,8 @@ public partial class TreeNode : Base
 
     private bool mSelected;
 
-    protected Button mTitle;
+    protected Button? _label;
+    private GameFont? _font;
 
     protected Button mToggleButton;
 
@@ -29,17 +30,18 @@ public partial class TreeNode : Base
     ///     Initializes a new instance of the <see cref="TreeNode" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public TreeNode(Base parent) : base(parent)
+    /// <param name="name"></param>
+    public TreeNode(Base parent, string? name = default) : base(parent: parent, name: name)
     {
         mToggleButton = new TreeToggleButton(this);
         mToggleButton.SetBounds(0, 0, 15, 15);
         mToggleButton.Toggled += OnToggleButtonPress;
 
-        mTitle = new TreeNodeLabel(this);
-        mTitle.Dock = Pos.Top;
-        mTitle.Margin = new Margin(16, 0, 0, 0);
-        mTitle.DoubleClicked += OnDoubleClickName;
-        mTitle.Clicked += OnClickName;
+        _label = new TreeNodeLabel(this);
+        _label.Dock = Pos.Top;
+        _label.Margin = new Margin(16, 0, 0, 0);
+        _label.DoubleClicked += OnDoubleClickName;
+        _label.Clicked += OnClickName;
 
         _innerPanel = new Base(this);
         _innerPanel.Dock = Pos.Top;
@@ -52,6 +54,23 @@ public partial class TreeNode : Base
         mSelectable = true;
 
         Dock = Pos.Top;
+    }
+
+    public virtual GameFont? Font
+    {
+        get => _label?.Font ?? _font;
+        set
+        {
+            if (_label is {} label)
+            {
+                label.Font = value;
+            }
+
+            foreach (var node in Children.OfType<TreeNode>())
+            {
+                node.Font = value;
+            }
+        }
     }
 
     /// <summary>
@@ -101,9 +120,9 @@ public partial class TreeNode : Base
 
             mSelected = value;
 
-            if (mTitle != null)
+            if (_label != null)
             {
-                mTitle.ToggleState = value;
+                _label.ToggleState = value;
             }
 
             if (SelectionChanged != null)
@@ -147,10 +166,22 @@ public partial class TreeNode : Base
     /// <summary>
     ///     Node's label.
     /// </summary>
-    public string Text
+    public string? Text
     {
-        get => mTitle.Text;
-        set => mTitle.Text = value;
+        get => _label.Text;
+        set => _label.Text = value;
+    }
+
+    public Color? TextColor
+    {
+        get => _label.TextColor;
+        set => _label.TextColor = value;
+    }
+
+    public Color? TextColorOverride
+    {
+        get => _label.TextColorOverride;
+        set => _label.TextColorOverride = value;
     }
 
     public IEnumerable<TreeNode> SelectedChildren
@@ -216,13 +247,21 @@ public partial class TreeNode : Base
     protected override void Render(Skin.Base skin)
     {
         // Calculate the height of the tree node
-        var treeNodeHeight = CalculateTreeNodeHeight();
+        var isOpen = _innerPanel?.IsVisible ?? false;
+        var treeNodeHeight = CalculateTreeNodeHeight(isOpen);
 
         // Draw the tree node using the specified skin.
         skin.DrawTreeNode(
-            this, _innerPanel.IsVisible, IsSelected, treeNodeHeight, mTitle.TextRight,
-            (int)(mToggleButton.Y + mToggleButton.Height * 0.5f), _innerPanel.Bottom, mTreeControl == Parent
-        ); // IsRoot
+            this,
+            isOpen,
+            IsSelected,
+            treeNodeHeight,
+            _label?.Height ?? treeNodeHeight,
+            _label?.TextRight ?? 0,
+            (int)(mToggleButton.Y + mToggleButton.Height * 0.5f),
+            treeNodeHeight,
+            mTreeControl == Parent
+        );
 
         // Invalidate the tree node.
         this.Invalidate();
@@ -231,20 +270,30 @@ public partial class TreeNode : Base
     /// <summary>
     /// Calculates the height of tree node.
     /// </summary>
-    private int CalculateTreeNodeHeight()
+    private int CalculateTreeNodeHeight(bool isOpen)
     {
-        var height = mTitle.Height;
-
-        if (_innerPanel.Children.Count > 0)
+        if (_label is not { } label)
         {
-            height = _innerPanel.Children.Last().Y + height;
-        }
-        else if (height == 0)
-        {
-            height = _innerPanel.Height;
+            return 0;
         }
 
-        return height;
+        var height = label.Height;
+
+        if (_innerPanel is not { } innerPanel)
+        {
+            return height;
+        }
+
+        // ReSharper disable once InvertIf
+        if (isOpen)
+        {
+            if (innerPanel.Children.OfType<TreeNode>().LastOrDefault(child => child.IsVisible) is { } lastVisibleChild)
+            {
+                return height + lastVisibleChild.Y;
+            }
+        }
+
+        return height == 0 ? innerPanel.Height : height;
     }
 
     /// <summary>
@@ -255,9 +304,9 @@ public partial class TreeNode : Base
     {
         if (mToggleButton != null)
         {
-            if (mTitle != null)
+            if (_label != null)
             {
-                mToggleButton.SetPosition(0, (mTitle.Height - mToggleButton.Height) * 0.5f);
+                mToggleButton.SetPosition(0, (_label.Height - mToggleButton.Height) * 0.5f);
             }
 
             if (_innerPanel.Children.Count == 0)
@@ -295,8 +344,11 @@ public partial class TreeNode : Base
     /// <returns>Newly created control.</returns>
     public TreeNode AddNode(string label)
     {
-        var node = new TreeNode(this);
-        node.Text = label;
+        TreeNode node = new(this)
+        {
+            Font = Font,
+            Text = label,
+        };
 
         return node;
     }
@@ -373,9 +425,9 @@ public partial class TreeNode : Base
     public void UnselectAll()
     {
         IsSelected = false;
-        if (mTitle != null)
+        if (_label != null)
         {
-            mTitle.ToggleState = false;
+            _label.ToggleState = false;
         }
 
         foreach (var child in Children)
@@ -436,7 +488,7 @@ public partial class TreeNode : Base
 
     public void SetImage(GameTexture texture, string fileName = "")
     {
-        mTitle.SetImage(texture, fileName, Button.ControlState.Normal);
+        _label.SetImage(texture, fileName, Button.ControlState.Normal);
     }
 
     protected override void OnChildAdded(Base child)
@@ -457,8 +509,8 @@ public partial class TreeNode : Base
 
     public override event GwenEventHandler<ClickedEventArgs> Clicked
     {
-        add { mTitle.Clicked += delegate(Base sender, ClickedEventArgs args) { value(this, args); }; }
-        remove { mTitle.Clicked -= delegate(Base sender, ClickedEventArgs args) { value(this, args); }; }
+        add { _label.Clicked += delegate(Base sender, ClickedEventArgs args) { value(this, args); }; }
+        remove { _label.Clicked -= delegate(Base sender, ClickedEventArgs args) { value(this, args); }; }
     }
 
     public override event GwenEventHandler<ClickedEventArgs> DoubleClicked
@@ -467,16 +519,16 @@ public partial class TreeNode : Base
         {
             if (value != null)
             {
-                mTitle.DoubleClicked += delegate(Base sender, ClickedEventArgs args) { value(this, args); };
+                _label.DoubleClicked += delegate(Base sender, ClickedEventArgs args) { value(this, args); };
             }
         }
-        remove { mTitle.DoubleClicked -= delegate(Base sender, ClickedEventArgs args) { value(this, args); }; }
+        remove { _label.DoubleClicked -= delegate(Base sender, ClickedEventArgs args) { value(this, args); }; }
     }
 
     public override event GwenEventHandler<ClickedEventArgs> RightClicked
     {
-        add { mTitle.RightClicked += delegate(Base sender, ClickedEventArgs args) { value(this, args); }; }
-        remove { mTitle.RightClicked -= delegate(Base sender, ClickedEventArgs args) { value(this, args); }; }
+        add { _label.RightClicked += delegate(Base sender, ClickedEventArgs args) { value(this, args); }; }
+        remove { _label.RightClicked -= delegate(Base sender, ClickedEventArgs args) { value(this, args); }; }
     }
 
     public override event GwenEventHandler<ClickedEventArgs> DoubleRightClicked
@@ -485,12 +537,12 @@ public partial class TreeNode : Base
         {
             if (value != null)
             {
-                mTitle.DoubleRightClicked += delegate(Base sender, ClickedEventArgs args) { value(this, args); };
+                _label.DoubleRightClicked += delegate(Base sender, ClickedEventArgs args) { value(this, args); };
             }
         }
         remove
         {
-            mTitle.DoubleRightClicked -= delegate(Base sender, ClickedEventArgs args) { value(this, args); };
+            _label.DoubleRightClicked -= delegate(Base sender, ClickedEventArgs args) { value(this, args); };
         }
     }
 

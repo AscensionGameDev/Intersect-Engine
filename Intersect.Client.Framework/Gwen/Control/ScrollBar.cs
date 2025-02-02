@@ -131,7 +131,7 @@ public partial class ScrollBar : Base
         {
             SetBackgroundTemplate(
                 GameContentManager.Current.GetTexture(
-                    Framework.Content.TextureType.Gui, (string)obj["BackgroundTemplate"]
+                    Content.TextureType.Gui, (string)obj["BackgroundTemplate"]
                 ), (string)obj["BackgroundTemplate"]
             );
         }
@@ -161,7 +161,7 @@ public partial class ScrollBar : Base
     {
         if (texture == null && !string.IsNullOrWhiteSpace(fileName))
         {
-            texture = GameContentManager.Current?.GetTexture(Framework.Content.TextureType.Gui, fileName);
+            texture = GameContentManager.Current?.GetTexture(Content.TextureType.Gui, fileName);
         }
 
         mBackgroundTemplateFilename = fileName;

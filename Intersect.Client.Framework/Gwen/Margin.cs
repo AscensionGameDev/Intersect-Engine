@@ -42,6 +42,8 @@ public partial struct Margin : IEquatable<Margin>
 
     public Margin(int size) : this(size, size, size, size) { }
 
+    public Margin(int horizontal, int vertical) : this(horizontal, vertical, horizontal, vertical) { }
+
     public Margin(int left, int top, int right, int bottom)
     {
         Top = top;

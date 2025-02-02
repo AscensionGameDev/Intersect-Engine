@@ -1,8 +1,11 @@
 using Intersect.Async;
 using Intersect.Client.Core;
+using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.Data;
 using Intersect.Client.Framework.Gwen.Control.Layout;
+using Intersect.Client.Framework.Gwen.Control.Utility;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Maps;
@@ -14,6 +17,7 @@ namespace Intersect.Client.Interface.Debugging;
 internal sealed partial class DebugWindow : Window
 {
     private readonly List<IDisposable> _disposables;
+    private readonly GameFont? _defaultFont;
     private bool _wasParentDrawDebugOutlinesEnabled;
     private bool _drawDebugOutlinesEnabled;
 
@@ -21,24 +25,63 @@ internal sealed partial class DebugWindow : Window
     {
         _disposables = [];
         DisableResizing();
+        MinimumSize = new Point(320, 320);
 
-        CheckboxDrawDebugOutlines = CreateCheckboxDrawDebugOutlines();
-        CheckboxEnableLayoutHotReloading = CreateCheckboxEnableLayoutHotReloading();
-        ButtonShutdownServer = CreateButtonShutdownServer();
-        ButtonShutdownServerAndExit = CreateButtonShutdownServerAndExit();
-        TableDebugStats = CreateTableDebugStats();
+        _defaultFont = Current?.GetFont("sourcesansproblack", 10);
+
+        Tabs = CreateTabs();
+
+        TabInfo = Tabs.AddPage(Strings.Debug.TabLabelInfo);
+        CheckboxDrawDebugOutlines = CreateInfoCheckboxDrawDebugOutlines(TabInfo.Page);
+        CheckboxEnableLayoutHotReloading = CreateInfoCheckboxEnableLayoutHotReloading(TabInfo.Page);
+        ButtonShutdownServer = CreateInfoButtonShutdownServer(TabInfo.Page);
+        ButtonShutdownServerAndExit = CreateInfoButtonShutdownServerAndExit(TabInfo.Page);
+        TableDebugStats = CreateInfoTableDebugStats(TabInfo.Page);
+
+        TabAssets = Tabs.AddPage(Strings.Debug.TabLabelAssets);
+        AssetsList = CreateAssetsList(TabAssets.Page);
+        AssetsToolsTable = CreateAssetsToolsTable(TabAssets.Page);
+
         IsHidden = true;
     }
 
-    private LabeledCheckBox CheckboxDrawDebugOutlines { get; set; }
+    private SearchableTree CreateAssetsList(Base parent)
+    {
+        var dataProvider = new TexturesSearchableTreeDataProvider(Current, this);
+        SearchableTree textureList = new(parent, dataProvider)
+        {
+            Dock = Pos.Fill,
+            FontSearch = _defaultFont,
+            FontTree = _defaultFont,
+        };
 
-    private LabeledCheckBox CheckboxEnableLayoutHotReloading { get; set; }
+        return textureList;
+    }
 
-    private Button ButtonShutdownServer { get; set; }
+    private Table CreateAssetsToolsTable(Base assetsTabPage)
+    {
+        return new Table(assetsTabPage, nameof(AssetsToolsTable));
+    }
 
-    private Button ButtonShutdownServerAndExit { get; set; }
+    private TabControl Tabs { get; }
 
-    private Table TableDebugStats { get; set; }
+    private TabButton TabInfo { get; }
+
+    private TabButton TabAssets { get; }
+
+    private SearchableTree AssetsList { get; }
+
+    private Table AssetsToolsTable { get; }
+
+    private LabeledCheckBox CheckboxDrawDebugOutlines { get; }
+
+    private LabeledCheckBox CheckboxEnableLayoutHotReloading { get; }
+
+    private Button ButtonShutdownServer { get; }
+
+    private Button ButtonShutdownServerAndExit { get; }
+
+    private Table TableDebugStats { get; }
 
     protected override void EnsureInitialized()
     {
@@ -79,32 +122,47 @@ internal sealed partial class DebugWindow : Window
         base.Dispose();
     }
 
-    private LabeledCheckBox CreateCheckboxDrawDebugOutlines()
+    private TabControl CreateTabs()
     {
-        var checkbox = new LabeledCheckBox(this, nameof(CheckboxDrawDebugOutlines))
+        return new TabControl(this, name: "DebugTabs")
         {
-            IsChecked = Root?.DrawDebugOutlines ?? false,
+            Dock = Pos.Fill,
+        };
+    }
+
+    private LabeledCheckBox CreateInfoCheckboxDrawDebugOutlines(Base parent)
+    {
+        _drawDebugOutlinesEnabled = Root?.DrawDebugOutlines ?? false;
+
+        var checkbox = new LabeledCheckBox(parent, nameof(CheckboxDrawDebugOutlines))
+        {
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            IsChecked = _drawDebugOutlinesEnabled,
             Text = Strings.Debug.DrawDebugOutlines,
         };
 
-        checkbox.CheckChanged += (sender, args) =>
+        checkbox.CheckChanged += (_, _) =>
         {
             _drawDebugOutlinesEnabled = checkbox.IsChecked;
-            if (Root != default)
+            if (Root is { } root)
             {
-                Root.DrawDebugOutlines = _drawDebugOutlinesEnabled;
+                root.DrawDebugOutlines = _drawDebugOutlinesEnabled;
             }
         };
 
         return checkbox;
     }
 
-    private LabeledCheckBox CreateCheckboxEnableLayoutHotReloading()
+    private LabeledCheckBox CreateInfoCheckboxEnableLayoutHotReloading(Base parent)
     {
-        var checkbox = new LabeledCheckBox(this, nameof(CheckboxEnableLayoutHotReloading))
+        var checkbox = new LabeledCheckBox(parent, nameof(CheckboxEnableLayoutHotReloading))
         {
+            Dock = Pos.Top,
+            Font = _defaultFont,
             IsChecked = Globals.ContentManager.ContentWatcher.Enabled,
             Text = Strings.Debug.EnableLayoutHotReloading,
+            TextColorOverride = Color.Yellow,
         };
 
         checkbox.CheckChanged += (sender, args) => Globals.ContentManager.ContentWatcher.Enabled = checkbox.IsChecked;
@@ -115,10 +173,12 @@ internal sealed partial class DebugWindow : Window
         return checkbox;
     }
 
-    private Button CreateButtonShutdownServer()
+    private Button CreateInfoButtonShutdownServer(Base parent)
     {
-        var button = new Button(this, nameof(ButtonShutdownServer))
+        var button = new Button(parent, nameof(ButtonShutdownServer))
         {
+            Dock = Pos.Top,
+            Font = _defaultFont,
             IsHidden = true,
             Text = Strings.Debug.ShutdownServer,
         };
@@ -131,10 +191,12 @@ internal sealed partial class DebugWindow : Window
         return button;
     }
 
-    private Button CreateButtonShutdownServerAndExit()
+    private Button CreateInfoButtonShutdownServerAndExit(Base parent)
     {
-        var button = new Button(this, nameof(ButtonShutdownServerAndExit))
+        var button = new Button(parent, nameof(ButtonShutdownServerAndExit))
         {
+            Dock = Pos.Top,
+            Font = _defaultFont,
             IsHidden = true,
             Text = Strings.Debug.ShutdownServerAndExit,
         };
@@ -147,11 +209,13 @@ internal sealed partial class DebugWindow : Window
         return button;
     }
 
-    private Table CreateTableDebugStats()
+    private Table CreateInfoTableDebugStats(Base parent)
     {
-        var table = new Table(this, nameof(TableDebugStats))
+        var table = new Table(parent, nameof(TableDebugStats))
         {
             ColumnCount = 2,
+            Dock = Pos.Fill,
+            Font = _defaultFont,
         };
 
         var fpsProvider = new ValueTableCellDataProvider<int>(() => Graphics.Renderer?.GetFps() ?? 0);

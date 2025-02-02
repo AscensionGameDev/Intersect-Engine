@@ -1,13 +1,13 @@
 ﻿namespace Intersect.Client.Framework.Graphics;
 
 
-public abstract partial class GameRenderTexture : GameTexture
+public abstract partial class GameRenderTexture : GameTexture, IDisposable
 {
+    public static int RenderTextureCount { get; set; }
+
     private static int _nextId;
 
     private readonly int _id;
-
-    private bool _disposed;
 
     protected readonly int _width;
     protected readonly int _height;
@@ -23,8 +23,6 @@ public abstract partial class GameRenderTexture : GameTexture
     protected GameRenderTexture(int width, int height) : this(width, height, ++_nextId)
     {
     }
-
-    public static int RenderTextureCount { get; set; }
 
     public override int Width => _width;
 
@@ -53,12 +51,9 @@ public abstract partial class GameRenderTexture : GameTexture
 
     public abstract override object? GetTexture();
 
-    public virtual void Dispose()
+    public override void Dispose()
     {
-        ObjectDisposedException.ThrowIf(_disposed, this);
-
-        _disposed = true;
+        base.Dispose();
         RenderTextureCount--;
     }
-
 }

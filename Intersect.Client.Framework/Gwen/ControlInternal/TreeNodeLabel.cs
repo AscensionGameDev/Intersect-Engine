@@ -15,7 +15,7 @@ public partial class TreeNodeLabel : Button
     /// <param name="parent">Parent control.</param>
     public TreeNodeLabel(Base parent) : base(parent)
     {
-        Alignment = Pos.Left | Pos.CenterV;
+        TextAlign = Pos.Left | Pos.CenterV;
         ShouldDrawBackground = false;
         Height = 16;
         TextPadding = new Padding(3, 0, 3, 0);

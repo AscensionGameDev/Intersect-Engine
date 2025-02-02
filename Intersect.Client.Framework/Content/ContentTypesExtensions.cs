@@ -4,13 +4,13 @@
 public static partial class ContentTypesExtensions
 {
 
-    public static Type GetAssetType(this ContentTypes contentType)
+    public static Type GetAssetType(this ContentType contentType)
     {
         var memberName = contentType.ToString();
-        var memberInfo = typeof(ContentTypes).GetMember(memberName).FirstOrDefault();
+        var memberInfo = typeof(ContentType).GetMember(memberName).FirstOrDefault();
         if (memberInfo == null)
         {
-            throw new InvalidOperationException($@"{nameof(ContentTypes)} missing expected member: {memberName}");
+            throw new InvalidOperationException($@"{nameof(ContentType)} missing expected member: {memberName}");
         }
 
         var attribute = memberInfo.GetCustomAttributes(typeof(AssetTypeAttribute), true).FirstOrDefault();
@@ -20,7 +20,7 @@ public static partial class ContentTypesExtensions
         }
 
         throw new InvalidOperationException(
-            $@"{nameof(ContentTypes)} missing {nameof(AssetTypeAttribute)} on member: {memberName}"
+            $@"{nameof(ContentType)} missing {nameof(AssetTypeAttribute)} on member: {memberName}"
         );
     }
 

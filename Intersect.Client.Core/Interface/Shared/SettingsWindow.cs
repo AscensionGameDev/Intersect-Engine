@@ -330,7 +330,7 @@ public partial class SettingsWindow : ImagePanel
             t =>
             {
                 var item = _resolutionList.AddItem(t);
-                item.Alignment = Pos.Left;
+                item.TextAlign = Pos.Left;
             }
         );
 

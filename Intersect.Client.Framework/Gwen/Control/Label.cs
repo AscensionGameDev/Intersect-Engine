@@ -40,13 +40,13 @@ public partial class Label : Base, ILabel
 
     private GameTexture? mBackgroundTemplateTex;
 
-    protected Color mClickedTextColor;
+    protected Color? mClickedTextColor;
 
-    protected Color mDisabledTextColor;
+    protected Color? mDisabledTextColor;
 
-    protected Color mHoverTextColor;
+    protected Color? mHoverTextColor;
 
-    protected Color mNormalTextColor;
+    protected Color? mNormalTextColor;
 
     private Padding mTextPadding;
 
@@ -54,7 +54,7 @@ public partial class Label : Base, ILabel
     ///     Initializes a new instance of the <see cref="Label" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public Label(Base parent, string name = default, bool disableText = false) : base(parent, name)
+    public Label(Base parent, string? name = default, bool disableText = false) : base(parent, name)
     {
         _textElement = new Text(this)
         {
@@ -65,7 +65,7 @@ public partial class Label : Base, ILabel
 
         MouseInputEnabled = false;
         SetSize(100, 10);
-        Alignment = Pos.Left | Pos.Top;
+        TextAlign = Pos.Left | Pos.Top;
 
         mAutoSizeToContents = true;
     }
@@ -102,7 +102,7 @@ public partial class Label : Base, ILabel
     /// <summary>
     ///     Text alignment.
     /// </summary>
-    public Pos Alignment
+    public Pos TextAlign
     {
         get => mAlign;
         set => SetAndDoIfChanged(ref mAlign, value, Invalidate);
@@ -118,10 +118,10 @@ public partial class Label : Base, ILabel
     /// <summary>
     ///     Text.
     /// </summary>
-    public virtual string Text
+    public virtual string? Text
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => _text ?? string.Empty;
+        get => _text;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         set
         {
@@ -295,7 +295,7 @@ public partial class Label : Base, ILabel
         {
             SetBackgroundTemplate(
                 GameContentManager.Current.GetTexture(
-                    Framework.Content.TextureType.Gui, (string)obj["BackgroundTemplate"]
+                    TextureType.Gui, (string)obj["BackgroundTemplate"]
                 ), (string)obj["BackgroundTemplate"]
             );
         }
@@ -390,7 +390,7 @@ public partial class Label : Base, ILabel
     {
         if (texture == null && !string.IsNullOrWhiteSpace(fileName))
         {
-            texture = GameContentManager.Current?.GetTexture(Framework.Content.TextureType.Gui, fileName);
+            texture = GameContentManager.Current?.GetTexture(TextureType.Gui, fileName);
         }
 
         mBackgroundTemplateFilename = fileName;
@@ -417,7 +417,7 @@ public partial class Label : Base, ILabel
         TextColor = Skin.Colors.Label.Highlight;
     }
 
-    public override event Base.GwenEventHandler<ClickedEventArgs> Clicked
+    public override event GwenEventHandler<ClickedEventArgs> Clicked
     {
         add
         {
@@ -431,7 +431,7 @@ public partial class Label : Base, ILabel
         }
     }
 
-    public override event Base.GwenEventHandler<ClickedEventArgs> DoubleClicked
+    public override event GwenEventHandler<ClickedEventArgs> DoubleClicked
     {
         add
         {
@@ -445,7 +445,7 @@ public partial class Label : Base, ILabel
         }
     }
 
-    public override event Base.GwenEventHandler<ClickedEventArgs> RightClicked
+    public override event GwenEventHandler<ClickedEventArgs> RightClicked
     {
         add
         {
@@ -459,7 +459,7 @@ public partial class Label : Base, ILabel
         }
     }
 
-    public override event Base.GwenEventHandler<ClickedEventArgs> DoubleRightClicked
+    public override event GwenEventHandler<ClickedEventArgs> DoubleRightClicked
     {
         add
         {
@@ -478,10 +478,14 @@ public partial class Label : Base, ILabel
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
+    /// <param name="localCoordinates"></param>
     /// <returns></returns>
     protected virtual Point GetClosestCharacter(int x, int y)
     {
-        return new Point(_textElement.GetClosestCharacter(_textElement.CanvasPosToLocal(new Point(x, y))), 0);
+        var coordinates = new Point(x, y);
+        coordinates = _textElement.CanvasPosToLocal(coordinates);
+        var closestCharacterIndex = _textElement.GetClosestCharacter(coordinates);
+        return new Point(closestCharacterIndex, 0);
     }
 
     /// <summary>
@@ -599,10 +603,13 @@ public partial class Label : Base, ILabel
     {
         _textElement.SetPosition(mTextPadding.Left + Padding.Left, mTextPadding.Top + Padding.Top);
 
-        if (!SetSize(
-                _textElement.Width + Padding.Left + Padding.Right + mTextPadding.Left + mTextPadding.Right,
-                _textElement.Height + Padding.Top + Padding.Bottom + mTextPadding.Top + mTextPadding.Bottom
-            ))
+        var newWidth = _textElement.Width + Padding.Left + Padding.Right + mTextPadding.Left + mTextPadding.Right;
+        newWidth = Math.Max(newWidth, MinimumSize.X);
+
+        var newHeight = _textElement.Height + Padding.Top + Padding.Bottom + mTextPadding.Top + mTextPadding.Bottom;
+        newHeight = Math.Max(newHeight, MinimumSize.Y);
+
+        if (!SetSize(newWidth, newHeight))
         {
             return;
         }

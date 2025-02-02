@@ -4,7 +4,7 @@ using Intersect.Client.Framework.Graphics;
 namespace Intersect.Client.Framework.Content;
 
 
-public enum ContentTypes
+public enum ContentType
 {
     [AssetType(typeof(GameTexture))]
     Animation,
@@ -52,10 +52,10 @@ public enum ContentTypes
     Spell,
 
     [AssetType(typeof(GameTexture))]
-    TexturePack,
+    TextureAtlas,
 
     [AssetType(typeof(GameTexture))]
-    TileSet,
+    Tileset,
 
     [Obsolete] Gui = Interface
 

@@ -77,12 +77,12 @@ public partial class Button : Label
     ///     Control constructor.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public Button(Base parent, string name = default, bool disableText = false) : base(parent, name, disableText)
+    public Button(Base parent, string? name = default, bool disableText = false) : base(parent, name, disableText)
     {
         AutoSizeToContents = false;
         SetSize(100, 20);
         MouseInputEnabled = true;
-        Alignment = Pos.Center;
+        TextAlign = Pos.Center;
         TextPadding = new Padding(3, 3, 3, 3);
         Name = name;
     }
@@ -213,7 +213,7 @@ public partial class Button : Label
         {
             SetImage(
                 GameContentManager.Current.GetTexture(
-                    Framework.Content.TextureType.Gui, (string)obj["NormalImage"]
+                    TextureType.Gui, (string)obj["NormalImage"]
                 ), (string)obj["NormalImage"], ControlState.Normal
             );
         }
@@ -222,7 +222,7 @@ public partial class Button : Label
         {
             SetImage(
                 GameContentManager.Current.GetTexture(
-                    Framework.Content.TextureType.Gui, (string)obj["HoveredImage"]
+                    TextureType.Gui, (string)obj["HoveredImage"]
                 ), (string)obj["HoveredImage"], ControlState.Hovered
             );
         }
@@ -231,7 +231,7 @@ public partial class Button : Label
         {
             SetImage(
                 GameContentManager.Current.GetTexture(
-                    Framework.Content.TextureType.Gui, (string)obj["ClickedImage"]
+                    TextureType.Gui, (string)obj["ClickedImage"]
                 ), (string)obj["ClickedImage"], ControlState.Clicked
             );
         }
@@ -240,7 +240,7 @@ public partial class Button : Label
         {
             SetImage(
                 GameContentManager.Current.GetTexture(
-                    Framework.Content.TextureType.Gui, (string)obj["DisabledImage"]
+                    TextureType.Gui, (string)obj["DisabledImage"]
                 ), (string)obj["DisabledImage"], ControlState.Disabled
             );
         }
@@ -495,7 +495,7 @@ public partial class Button : Label
     {
         if (texture == null && !string.IsNullOrWhiteSpace(fileName))
         {
-            texture = GameContentManager.Current?.GetTexture(Framework.Content.TextureType.Gui, fileName);
+            texture = GameContentManager.Current?.GetTexture(TextureType.Gui, fileName);
         }
 
         switch (state)

@@ -26,7 +26,7 @@ public partial class PropertyRow : Base
     {
         var label = new PropertyRowLabel(this);
         label.Dock = Pos.Left;
-        label.Alignment = Pos.Left | Pos.Top;
+        label.TextAlign = Pos.Left | Pos.Top;
         label.Margin = new Margin(2, 2, 0, 0);
         mLabel = label;
 

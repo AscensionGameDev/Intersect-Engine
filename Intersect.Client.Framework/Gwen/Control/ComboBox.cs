@@ -49,7 +49,7 @@ public partial class ComboBox : Button
         var arrow = new DownArrow(this);
         mButton = arrow;
 
-        Alignment = Pos.Left | Pos.CenterV;
+        TextAlign = Pos.Left | Pos.CenterV;
         Text = string.Empty;
         Margin = new Margin(3, 0, 0, 0);
 

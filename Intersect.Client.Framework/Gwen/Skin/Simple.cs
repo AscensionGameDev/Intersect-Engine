@@ -536,7 +536,7 @@ public partial class Simple : Skin.Base
         }
         else
         {
-            //Background 
+            //Background
             mRenderer.DrawColor = mColControlDark;
             mRenderer.DrawFilledRect(new Rectangle(1, 1, rect.Width - 2, rect.Height - 2));
 
@@ -768,6 +768,7 @@ public partial class Simple : Skin.Base
         Control.Base ctrl,
         bool open,
         bool selected,
+        int treeNodeHeight,
         int labelHeight,
         int labelWidth,
         int halfWay,
@@ -778,12 +779,22 @@ public partial class Simple : Skin.Base
         if (selected)
         {
             Renderer.DrawColor = Color.FromArgb(100, 0, 150, 255);
-            Renderer.DrawFilledRect(new Rectangle(17, 0, labelWidth + 2, labelHeight - 1));
+            Renderer.DrawFilledRect(new Rectangle(17, 0, labelWidth + 2, treeNodeHeight - 1));
             Renderer.DrawColor = Color.FromArgb(200, 0, 150, 255);
-            Renderer.DrawLinedRect(new Rectangle(17, 0, labelWidth + 2, labelHeight - 1));
+            Renderer.DrawLinedRect(new Rectangle(17, 0, labelWidth + 2, treeNodeHeight - 1));
         }
 
-        base.DrawTreeNode(ctrl, open, selected, labelHeight, labelWidth, halfWay, lastBranch, isRoot);
+        base.DrawTreeNode(
+            ctrl,
+            open,
+            selected,
+            treeNodeHeight,
+            labelHeight,
+            labelWidth,
+            halfWay,
+            lastBranch,
+            isRoot
+        );
     }
 
     public override void DrawStatusBar(Control.Base control)

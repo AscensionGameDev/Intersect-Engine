@@ -13,7 +13,7 @@ public partial class LabeledCheckBox : Base
 
     private readonly CheckBox mCheckBox;
 
-    private readonly Label mLabel;
+    private readonly Label _label;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="LabeledCheckBox" /> class.
@@ -21,24 +21,27 @@ public partial class LabeledCheckBox : Base
     /// <param name="parent">Parent control.</param>
     public LabeledCheckBox(Base parent, string name = "") : base(parent, name)
     {
-        _ = SetSize(200, 19);
+        _ = SetSize(208, 26);
 
         mCheckBox = new CheckBox(this)
         {
             InheritParentEnablementProperties = true,
             Dock = Pos.Left,
             Margin = new Margin(0, 2, 2, 2),
-            IsTabable = false
+            IsTabable = false,
         };
         mCheckBox.CheckChanged += OnCheckChanged;
 
-        mLabel = new Label(this)
+        _label = new Label(this)
         {
-            InheritParentEnablementProperties = true,
+            AutoSizeToContents = false,
             Dock = Pos.Fill,
-            IsTabable = false
+            InheritParentEnablementProperties = true,
+            IsTabable = false,
+            Padding = new Padding(2, 0, 0, 0),
+            TextAlign = Pos.CenterV | Pos.Left,
         };
-        mLabel.Clicked += delegate (Base control, ClickedEventArgs args) { mCheckBox.Press(control); };
+        _label.Clicked += delegate (Base control, ClickedEventArgs args) { mCheckBox.Press(control); };
 
         IsTabable = false;
     }
@@ -52,34 +55,64 @@ public partial class LabeledCheckBox : Base
         set => mCheckBox.IsChecked = value;
     }
 
+    public GameFont? Font
+    {
+        get => _label.Font;
+        set => _label.Font = value;
+    }
+
+    public string FontName
+    {
+        get => _label.FontName;
+        set => _label.FontName = value;
+    }
+
+    public int FontSize
+    {
+        get => _label.FontSize;
+        set => _label.FontSize = value;
+    }
+
+    public Color? TextColor
+    {
+        get => _label.TextColor;
+        set => _label.TextColor = value;
+    }
+
+    public Color? TextColorOverride
+    {
+        get => _label.TextColor;
+        set => _label.TextColorOverride = value;
+    }
+
     public override string? TooltipText
     {
-        get => mLabel.TooltipText;
-        set => mLabel.TooltipText = value;
+        get => _label.TooltipText;
+        set => _label.TooltipText = value;
     }
 
     public override string? TooltipBackgroundName
     {
-        get => mLabel.TooltipBackgroundName;
-        set => mLabel.TooltipBackgroundName = value;
+        get => _label.TooltipBackgroundName;
+        set => _label.TooltipBackgroundName = value;
     }
 
     public override string? TooltipFontName
     {
-        get => mLabel.TooltipFontName;
-        set => mLabel.TooltipFontName = value;
+        get => _label.TooltipFontName;
+        set => _label.TooltipFontName = value;
     }
 
     public override int TooltipFontSize
     {
-        get => mLabel.TooltipFontSize;
-        set => mLabel.TooltipFontSize = value;
+        get => _label.TooltipFontSize;
+        set => _label.TooltipFontSize = value;
     }
 
     public override Color TooltipTextColor
     {
-        get => mLabel.TooltipTextColor;
-        set => mLabel.TooltipTextColor = value;
+        get => _label.TooltipTextColor;
+        set => _label.TooltipTextColor = value;
     }
 
     /// <summary>
@@ -87,8 +120,8 @@ public partial class LabeledCheckBox : Base
     /// </summary>
     public string Text
     {
-        get => mLabel.Text;
-        set => mLabel.Text = value;
+        get => _label.Text;
+        set => _label.Text = value;
     }
 
     /// <summary>
@@ -109,7 +142,7 @@ public partial class LabeledCheckBox : Base
     public override JObject GetJson(bool isRoot = default)
     {
         var obj = base.GetJson(isRoot);
-        obj.Add("Label", mLabel.GetJson());
+        obj.Add("Label", _label.GetJson());
         obj.Add("Checkbox", mCheckBox.GetJson());
 
         return base.FixJson(obj);
@@ -120,8 +153,8 @@ public partial class LabeledCheckBox : Base
         base.LoadJson(obj);
         if (obj["Label"] != null)
         {
-            mLabel.Dock = Pos.None;
-            mLabel.LoadJson(obj["Label"]);
+            _label.Dock = Pos.None;
+            _label.LoadJson(obj["Label"]);
         }
 
         if (obj["Checkbox"] != null)
@@ -169,7 +202,7 @@ public partial class LabeledCheckBox : Base
 
     public void SetTextColor(Color clr, Label.ControlState state)
     {
-        mLabel.SetTextColor(clr, state);
+        _label.SetTextColor(clr, state);
     }
 
     public void SetLabelDistance(int dist)
@@ -179,7 +212,7 @@ public partial class LabeledCheckBox : Base
 
     public void SetFont(GameFont font)
     {
-        mLabel.Font = font;
+        _label.Font = font;
     }
 
     /// <summary>

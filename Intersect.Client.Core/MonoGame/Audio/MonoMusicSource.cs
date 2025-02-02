@@ -16,9 +16,31 @@ public partial class MonoMusicSource : GameAudioSource
     private readonly string mPath;
     private readonly string mRealPath;
     private readonly Func<Stream> mCreateStream;
+    private DynamicSoundEffectInstance? _instance;
 
     public VorbisReader Reader { get; set; }
-    public DynamicSoundEffectInstance Instance { get; set; }
+
+    public DynamicSoundEffectInstance? Instance
+    {
+        get => _instance;
+        set
+        {
+            if (value == _instance)
+            {
+                return;
+            }
+
+            _instance = value;
+            if (value == null)
+            {
+                EmitUnloaded();
+            }
+            else
+            {
+                EmitLoaded();
+            }
+        }
+    }
 
 
     private static Thread mUnderlyingThread;
@@ -55,6 +77,8 @@ public partial class MonoMusicSource : GameAudioSource
         //    mUnderlyingThread.Start();
         //}
     }
+
+    public override bool IsLoaded => Instance != null;
 
     public override GameAudioInstance CreateInstance()
     {

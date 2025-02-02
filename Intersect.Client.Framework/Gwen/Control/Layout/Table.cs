@@ -30,11 +30,11 @@ public partial class Table : Base, IColorableText
 
     private bool mSizeToContents;
 
-    private GameFont mFont;
+    private GameFont? _font;
 
-    private Color mTextColor;
+    private Color? _textColor;
 
-    private Color mTextColorOverride;
+    private Color? _textColorOverride;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Table" /> class.
@@ -47,8 +47,6 @@ public partial class Table : Base, IColorableText
         mColumnWidths = new List<int>(ColumnCount);
         mDefaultRowHeight = 22;
         mSizeToContents = false;
-        mTextColor = Color.Black;
-        mTextColorOverride = Color.Transparent;
 
         for (var i = 0; i < ColumnCount; i++)
         {
@@ -84,17 +82,14 @@ public partial class Table : Base, IColorableText
         });
     }
 
-    public GameFont Font
+    public GameFont? Font
     {
-        get => mFont;
-        set => SetAndDoIfChanged(ref mFont, value, () =>
+        get => _font;
+        set => SetAndDoIfChanged(ref _font, value, () =>
         {
-            foreach (TableRow child in Children.Where(child => child is TableRow))
+            foreach (var row in Children.OfType<TableRow>())
             {
-                if (child != default)
-                {
-                    child.Font = value;
-                }
+                row.Font = value;
             }
         });
     }
@@ -104,10 +99,10 @@ public partial class Table : Base, IColorableText
     /// </summary>
     public int RowCount => Children.Count;
 
-    public Color TextColor
+    public Color? TextColor
     {
-        get => mTextColor;
-        set => SetAndDoIfChanged(ref mTextColor, value, () =>
+        get => _textColor;
+        set => SetAndDoIfChanged(ref _textColor, value, () =>
         {
             foreach (IColorableText colorableText in Children)
             {
@@ -116,10 +111,10 @@ public partial class Table : Base, IColorableText
         });
     }
 
-    public Color TextColorOverride
+    public Color? TextColorOverride
     {
-        get => mTextColorOverride;
-        set => SetAndDoIfChanged(ref mTextColorOverride, value, () =>
+        get => _textColorOverride;
+        set => SetAndDoIfChanged(ref _textColorOverride, value, () =>
         {
             foreach (IColorableText colorableText in Children)
             {
@@ -280,6 +275,8 @@ public partial class Table : Base, IColorableText
             Dock = Pos.Top,
             Font = Font,
             Height = mDefaultRowHeight,
+            TextColor = TextColor,
+            TextColorOverride = TextColorOverride,
         };
 
         return row;

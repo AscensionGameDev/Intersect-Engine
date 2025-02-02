@@ -44,6 +44,8 @@ public partial struct Pointf
 
     public static implicit operator Pointf(Point point) => new(point.X, point.Y);
 
+    public static implicit operator Point(Pointf point) => new((int)point.X, (int)point.Y);
+
     public static bool operator !=(Pointf left, Pointf right)
     {
         return Math.Abs(left.X - right.X) > TOLERANCE || Math.Abs(left.Y - right.Y) > TOLERANCE;

@@ -148,7 +148,7 @@ public partial class Slider : Base
         {
             SetImage(
                 GameContentManager.Current.GetTexture(
-                    Framework.Content.TextureType.Gui, (string)obj["BackgroundImage"]
+                    Content.TextureType.Gui, (string)obj["BackgroundImage"]
                 ), (string)obj["BackgroundImage"]
             );
         }

@@ -182,7 +182,7 @@ public partial class Menu : ScrollControl
         menuItem.TextPadding = new Padding(IconMarginDisabled ? 0 : 24, 0, 16, 0);
         menuItem.Dock = Pos.Top;
         menuItem.SizeToContents();
-        menuItem.Alignment = Pos.CenterV | Pos.Left;
+        menuItem.TextAlign = Pos.CenterV | Pos.Left;
         menuItem.HoverEnter += OnHoverItem;
 
         Width = Math.Max(Width, menuItem.Width + 10 + 32);
@@ -324,7 +324,7 @@ public partial class Menu : ScrollControl
         {
             SetBackgroundTemplate(
                 GameContentManager.Current.GetTexture(
-                    Framework.Content.TextureType.Gui, (string)obj["BackgroundTemplate"]
+                    Content.TextureType.Gui, (string)obj["BackgroundTemplate"]
                 ), (string)obj["BackgroundTemplate"]
             );
         }
@@ -374,7 +374,7 @@ public partial class Menu : ScrollControl
     {
         if (texture == null && !string.IsNullOrWhiteSpace(fileName))
         {
-            texture = GameContentManager.Current?.GetTexture(Framework.Content.TextureType.Gui, fileName);
+            texture = GameContentManager.Current?.GetTexture(Content.TextureType.Gui, fileName);
         }
 
         mBackgroundTemplateFilename = fileName;

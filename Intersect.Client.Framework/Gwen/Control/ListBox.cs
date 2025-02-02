@@ -291,7 +291,7 @@ public partial class ListBox : ScrollControl
             row.RightClickSound = mItemRightClickSound;
             if (mFont != null)
             {
-                row.SetTextFont(mFont);
+                row.Font = mFont;
             }
         }
     }
@@ -438,7 +438,7 @@ public partial class ListBox : ScrollControl
 
         if (mFont != null)
         {
-            row.SetTextFont(mFont);
+            row.Font = mFont;
         }
 
         mTable.SizeToContents(Width);

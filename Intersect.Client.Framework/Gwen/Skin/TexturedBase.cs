@@ -509,14 +509,14 @@ public partial class TexturedBase : Skin.Base
         Colors.Button.Down = Renderer.PixelColor(mTexture, 4 + 8 * 2, 500, Color.Yellow);
         Colors.Button.Disabled = Renderer.PixelColor(mTexture, 4 + 8 * 3, 500, Color.Yellow);
 
-        Colors.Tab.Active.Normal = Renderer.PixelColor(mTexture, 4 + 8 * 4, 508, Color.Yellow);
-        Colors.Tab.Active.Hover = Renderer.PixelColor(mTexture, 4 + 8 * 5, 508, Color.Yellow);
-        Colors.Tab.Active.Down = Renderer.PixelColor(mTexture, 4 + 8 * 4, 500, Color.Yellow);
-        Colors.Tab.Active.Disabled = Renderer.PixelColor(mTexture, 4 + 8 * 5, 500, Color.Yellow);
-        Colors.Tab.Inactive.Normal = Renderer.PixelColor(mTexture, 4 + 8 * 6, 508, Color.Yellow);
-        Colors.Tab.Inactive.Hover = Renderer.PixelColor(mTexture, 4 + 8 * 7, 508, Color.Yellow);
-        Colors.Tab.Inactive.Down = Renderer.PixelColor(mTexture, 4 + 8 * 6, 500, Color.Yellow);
-        Colors.Tab.Inactive.Disabled = Renderer.PixelColor(mTexture, 4 + 8 * 7, 500, Color.Yellow);
+        Colors.Tab.Active.Normal = Renderer.PixelColor(mTexture, 4 + 8 * 2, 508, Color.Yellow);
+        Colors.Tab.Active.Hover = Renderer.PixelColor(mTexture, 4 + 8 * 3, 508, Color.Yellow);
+        Colors.Tab.Active.Down = Renderer.PixelColor(mTexture, 4 + 8 * 2, 500, Color.Yellow);
+        Colors.Tab.Active.Disabled = Renderer.PixelColor(mTexture, 4 + 8 * 3, 500, Color.Yellow);
+        Colors.Tab.Inactive.Normal = Renderer.PixelColor(mTexture, 4 + 8 * 2, 508, Color.Yellow);
+        Colors.Tab.Inactive.Hover = Renderer.PixelColor(mTexture, 4 + 8 * 3, 508, Color.Yellow);
+        Colors.Tab.Inactive.Down = Renderer.PixelColor(mTexture, 4 + 8 * 2, 500, Color.Yellow);
+        Colors.Tab.Inactive.Disabled = Renderer.PixelColor(mTexture, 4 + 8 * 3, 500, Color.Yellow);
 
         Colors.Label.Default = Renderer.PixelColor(mTexture, 4 + 8 * 8, 508, Color.Yellow);
         Colors.Label.Bright = Renderer.PixelColor(mTexture, 4 + 8 * 9, 508, Color.Yellow);
@@ -1075,40 +1075,36 @@ public partial class TexturedBase : Skin.Base
 
     private void DrawActiveTabButton(Control.Base control, Pos dir)
     {
-        if (dir == Pos.Top)
+        switch (dir)
         {
-            mTextures.Tab.Top.Active.Draw(
-                Renderer, control.RenderBounds.Add(new Rectangle(0, 0, 0, 8)), control.RenderColor
-            );
-
-            return;
-        }
-
-        if (dir == Pos.Left)
-        {
-            mTextures.Tab.Left.Active.Draw(
-                Renderer, control.RenderBounds.Add(new Rectangle(0, 0, 8, 0)), control.RenderColor
-            );
-
-            return;
-        }
-
-        if (dir == Pos.Bottom)
-        {
-            mTextures.Tab.Bottom.Active.Draw(
-                Renderer, control.RenderBounds.Add(new Rectangle(0, -8, 0, 8)), control.RenderColor
-            );
-
-            return;
-        }
-
-        if (dir == Pos.Right)
-        {
-            mTextures.Tab.Right.Active.Draw(
-                Renderer, control.RenderBounds.Add(new Rectangle(-8, 0, 8, 0)), control.RenderColor
-            );
-
-            return;
+            case Pos.Top:
+                mTextures.Tab.Top.Active.Draw(
+                    Renderer,
+                    control.RenderBounds.Add(new Rectangle(0, 0, 0, 0)),
+                    control.RenderColor
+                );
+                return;
+            case Pos.Left:
+                mTextures.Tab.Left.Active.Draw(
+                    Renderer,
+                    control.RenderBounds.Add(new Rectangle(0, 0, 0, 0)),
+                    control.RenderColor
+                );
+                return;
+            case Pos.Bottom:
+                mTextures.Tab.Bottom.Active.Draw(
+                    Renderer,
+                    control.RenderBounds.Add(new Rectangle(0, 0, 0, 0)),
+                    control.RenderColor
+                );
+                return;
+            case Pos.Right:
+                mTextures.Tab.Right.Active.Draw(
+                    Renderer,
+                    control.RenderBounds.Add(new Rectangle(0, 0, 0, 0)),
+                    control.RenderColor
+                );
+                return;
         }
     }
 
@@ -2009,6 +2005,7 @@ public partial class TexturedBase : Skin.Base
         Control.Base ctrl,
         bool open,
         bool selected,
+        int treeNodeHeight,
         int labelHeight,
         int labelWidth,
         int halfWay,
@@ -2018,12 +2015,10 @@ public partial class TexturedBase : Skin.Base
     {
         if (selected)
         {
-            mTextures.Selection.Draw(
-                Renderer, new Rectangle(17, 0, labelWidth + 2, labelHeight - 1), ctrl.RenderColor
-            );
+            mTextures.Selection.Draw(Renderer, new Rectangle(17, 0, labelWidth + 2, labelHeight - 1), ctrl.RenderColor);
         }
 
-        base.DrawTreeNode(ctrl, open, selected, labelHeight, labelWidth, halfWay, lastBranch, isRoot);
+        base.DrawTreeNode(ctrl, open, selected, treeNodeHeight, labelHeight, labelWidth, halfWay, lastBranch, isRoot);
     }
 
     public override void DrawColorDisplay(Control.Base control, Color color)

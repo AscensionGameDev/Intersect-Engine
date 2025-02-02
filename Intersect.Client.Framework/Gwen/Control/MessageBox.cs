@@ -30,7 +30,7 @@ public partial class MessageBox : WindowControl
         mLabel.Text = text;
         mLabel.Margin = Margin.Five;
         mLabel.Dock = Pos.Top;
-        mLabel.Alignment = Pos.Center;
+        mLabel.TextAlign = Pos.Center;
 
         mButton = new Button(_innerPanel);
         mButton.Text = "OK"; // todo: parametrize buttons

@@ -25,7 +25,7 @@ public partial class ProgressBar : Label
         TextPadding = Padding.Three;
         IsHorizontal = true;
 
-        Alignment = Pos.Center;
+        TextAlign = Pos.Center;
         mProgress = 0;
         mAutoLabel = true;
     }

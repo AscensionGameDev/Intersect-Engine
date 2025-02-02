@@ -51,9 +51,12 @@ public partial class CheckBox : Button
     ///     Initializes a new instance of the <see cref="CheckBox" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public CheckBox(Base parent, string name = default, bool disableText = true) : base(parent, name, disableText)
+    /// <param name="name"></param>
+    /// <param name="disableText"></param>
+    public CheckBox(Base parent, string? name = default, bool disableText = true) : base(parent, name, disableText)
     {
-        SetSize(15, 15);
+        MinimumSize = new Point(22, 22);
+        Size = new Point(22, 22);
         IsToggle = true;
     }
 
@@ -100,7 +103,7 @@ public partial class CheckBox : Button
         {
             SetImage(
                 GameContentManager.Current.GetTexture(
-                    Framework.Content.TextureType.Gui, (string)obj["NormalImage"]
+                    Content.TextureType.Gui, (string)obj["NormalImage"]
                 ), (string)obj["NormalImage"], ControlState.Normal
             );
         }
@@ -109,7 +112,7 @@ public partial class CheckBox : Button
         {
             SetImage(
                 GameContentManager.Current.GetTexture(
-                    Framework.Content.TextureType.Gui, (string)obj["CheckedImage"]
+                    Content.TextureType.Gui, (string)obj["CheckedImage"]
                 ), (string)obj["CheckedImage"], ControlState.CheckedNormal
             );
         }
@@ -118,7 +121,7 @@ public partial class CheckBox : Button
         {
             SetImage(
                 GameContentManager.Current.GetTexture(
-                    Framework.Content.TextureType.Gui, (string)obj["DisabledImage"]
+                    Content.TextureType.Gui, (string)obj["DisabledImage"]
                 ), (string)obj["DisabledImage"], ControlState.Disabled
             );
         }
@@ -127,7 +130,7 @@ public partial class CheckBox : Button
         {
             SetImage(
                 GameContentManager.Current.GetTexture(
-                    Framework.Content.TextureType.Gui, (string)obj["CheckedDisabledImage"]
+                    Content.TextureType.Gui, (string)obj["CheckedDisabledImage"]
                 ), (string)obj["CheckedDisabledImage"], ControlState.CheckedDisabled
             );
         }

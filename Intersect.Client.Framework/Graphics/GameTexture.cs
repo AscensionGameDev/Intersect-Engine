@@ -7,14 +7,79 @@ using Microsoft.Extensions.Logging;
 namespace Intersect.Client.Framework.Graphics;
 
 
-public abstract partial class GameTexture : IAsset
+public abstract partial class GameTexture : IAsset, IDisposable
 {
+    private static ulong _nextId;
+
+    private readonly ulong _id = ++_nextId;
+
+    private bool _disposed;
+
+    public event Action<IAsset>? Disposed;
+    public event Action<IAsset>? Loaded;
+    public event Action<IAsset>? Unloaded;
+
     protected GameTexture(string name)
     {
         Name = name;
     }
 
-    public string Name { get; }
+    private void EmitDisposed()
+    {
+        try
+        {
+            Disposed?.Invoke(this);
+        }
+        catch (Exception exception)
+        {
+            ApplicationContext.Context.Value?.Logger.LogWarning(
+                exception,
+                "Exception thrown in event handlers registered for {EventName}()",
+                nameof(Disposed)
+            );
+        }
+    }
+
+    protected void EmitLoaded()
+    {
+        try
+        {
+            Loaded?.Invoke(this);
+        }
+        catch (Exception exception)
+        {
+            ApplicationContext.Context.Value?.Logger.LogWarning(
+                exception,
+                "Exception thrown in event handlers registered for {EventName}()",
+                nameof(Loaded)
+            );
+        }
+    }
+
+    protected void EmitUnloaded()
+    {
+        try
+        {
+            Unloaded?.Invoke(this);
+        }
+        catch (Exception exception)
+        {
+            ApplicationContext.Context.Value?.Logger.LogWarning(
+                exception,
+                "Exception thrown in event handlers registered for {EventName}()",
+                nameof(Unloaded)
+            );
+        }
+    }
+
+    // ReSharper disable once ConvertToAutoPropertyWithPrivateSetter
+    public bool IsDisposed => _disposed;
+
+    public virtual bool IsLoaded => !_disposed;
+
+    public string Id => Name ?? _id.ToString();
+
+    public string? Name { get; }
 
     public int Area => Width * Height;
 
@@ -99,4 +164,13 @@ public abstract partial class GameTexture : IAsset
     }
 
     public override string ToString() => $"{GetType().Name} ({Name})";
+
+    public virtual void Dispose()
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+
+        _disposed = true;
+
+        EmitDisposed();
+    }
 }

@@ -254,6 +254,11 @@ public partial class Text : Base
             return;
         }
 
+        if (Parent is TextBox)
+        {
+            Parent?.ToString();
+        }
+
         Size = newSize;
         InvalidateParent();
     }
@@ -309,7 +314,7 @@ public partial class Text : Base
             return -1;
         }
 
-        var closestDistance = 0;
+        var closestDistance = int.MaxValue;
         var closestIndex = 0;
 
         for (var characterIndex = 0; characterIndex < displayedText.Length + 1; characterIndex++)

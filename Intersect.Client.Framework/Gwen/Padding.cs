@@ -23,15 +23,19 @@ public partial struct Padding : IEquatable<Padding>
 
     public static Padding Two = new Padding(2, 2, 2, 2);
 
+    public static Padding TwoV = new Padding(0, 2);
+
     public static Padding Three = new Padding(3, 3, 3, 3);
 
     public static Padding Four = new Padding(4, 4, 4, 4);
 
     public static Padding Five = new Padding(5, 5, 5, 5);
 
-    public static Padding FourH = new(4, 0, 4, 0);
+    public static Padding FourH = new(4, 0);
 
     public Padding(int size) : this(size, size, size, size) { }
+
+    public Padding(int horizontal, int vertical) : this(horizontal, vertical, horizontal, vertical) { }
 
     public Padding(int left, int top, int right, int bottom)
     {
@@ -45,6 +49,34 @@ public partial struct Padding : IEquatable<Padding>
     {
         return other.Top == Top && other.Bottom == Bottom && other.Left == Left && other.Right == Right;
     }
+
+    public static Padding operator +(Padding lhs, Padding rhs) => new(
+        lhs.Left + rhs.Left,
+        lhs.Top + rhs.Top,
+        lhs.Right + rhs.Right,
+        lhs.Bottom + rhs.Bottom
+    );
+
+    public static Padding operator -(Padding lhs, Padding rhs) => new(
+        lhs.Left - rhs.Left,
+        lhs.Top - rhs.Top,
+        lhs.Right - rhs.Right,
+        lhs.Bottom - rhs.Bottom
+    );
+
+    public static Padding operator *(Padding lhs, int rhs) => new(
+        lhs.Left * rhs,
+        lhs.Top * rhs,
+        lhs.Right * rhs,
+        lhs.Bottom * rhs
+    );
+
+    public static Padding operator /(Padding lhs, int rhs) => new(
+        lhs.Left / rhs,
+        lhs.Top / rhs,
+        lhs.Right / rhs,
+        lhs.Bottom / rhs
+    );
 
     public static bool operator ==(Padding lhs, Padding rhs)
     {

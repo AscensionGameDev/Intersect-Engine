@@ -20,13 +20,13 @@ public partial class TableRow : Base, IColorableText
 
     private bool mEvenRow;
 
-    private GameFont mFont;
-
     private int mMaximumColumns;
 
-    private Color mTextColor;
+    private GameFont? _font;
 
-    private Color mTextColorOverride;
+    private Color? _textColor;
+
+    private Color? _textColorOverride;
 
     //Sound Effects
     protected string mHoverSound;
@@ -48,10 +48,8 @@ public partial class TableRow : Base, IColorableText
     /// <param name="columns">the number of columns this row has</param>
     public TableRow(Base parent, int columns) : base(parent)
     {
-        mDisposalActions = new List<Action>();
+        mDisposalActions = [];
         mColumns = new List<Label>(columns);
-        mTextColor = Color.Black;
-        mTextColorOverride = Color.Transparent;
 
         ColumnCount = columns;
         MaximumColumns = columns;
@@ -97,18 +95,22 @@ public partial class TableRow : Base, IColorableText
         set => mEvenRow = value;
     }
 
-    public GameFont Font
+    public GameFont? Font
     {
-        get => mFont;
+        get => _font;
         set
         {
-            if (mFont == value)
+            if (_font == value)
             {
                 return;
             }
 
-            mFont = value;
-            SetTextFont(value);
+            _font = value;
+
+            foreach (var column in mColumns)
+            {
+                column.Font = _font;
+            }
         }
     }
 
@@ -127,26 +129,26 @@ public partial class TableRow : Base, IColorableText
         set => SetCellText(0, value);
     }
 
-    public Color TextColor
+    public Color? TextColor
     {
-        get => mTextColor;
-        set => SetAndDoIfChanged(ref mTextColor, value, () =>
+        get => _textColor;
+        set => SetAndDoIfChanged(ref _textColor, value, () =>
         {
             foreach (var column in mColumns)
             {
-                column.TextColor = mTextColor;
+                column.TextColor = _textColor;
             }
         });
     }
 
-    public Color TextColorOverride
+    public Color? TextColorOverride
     {
-        get => mTextColorOverride;
-        set => SetAndDoIfChanged(ref mTextColorOverride, value, () =>
+        get => _textColorOverride;
+        set => SetAndDoIfChanged(ref _textColorOverride, value, () =>
         {
             foreach (var column in mColumns)
             {
-                column.TextColorOverride = mTextColorOverride;
+                column.TextColorOverride = TextColorOverride;
             }
         });
     }
@@ -443,19 +445,6 @@ public partial class TableRow : Base, IColorableText
         }
     }
 
-    public void SetTextFont(GameFont font)
-    {
-        for (var i = 0; i < mColumnCount; i++)
-        {
-            if (null == mColumns[i])
-            {
-                continue;
-            }
-
-            mColumns[i].Font = font;
-        }
-    }
-
     /// <summary>
     ///     Returns text of a specified row cell (default first).
     /// </summary>
@@ -511,7 +500,7 @@ public partial class TableRow : Base, IColorableText
         {
             var column = mColumns[columnIndex];
             column.Dock = columnIndex == mColumnCount - 1 ? Pos.Fill : Pos.Left;
-            column.Alignment = (columnAlignments == default || columnAlignments.Count <= columnIndex) ? column.Alignment : columnAlignments[columnIndex];
+            column.TextAlign = (columnAlignments == default || columnAlignments.Count <= columnIndex) ? column.TextAlign : columnAlignments[columnIndex];
         }
     }
 }

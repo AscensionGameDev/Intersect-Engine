@@ -23,7 +23,7 @@ public partial class GroupBox : Label
         KeyboardInputEnabled = true;
 
         TextPadding = new Padding(10, 0, 10, 0);
-        Alignment = Pos.Top | Pos.Left;
+        TextAlign = Pos.Top | Pos.Left;
         Invalidate();
 
         _innerPanel = new Base(this);

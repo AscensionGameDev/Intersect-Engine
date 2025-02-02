@@ -237,7 +237,7 @@ public partial class RichLabel : Base
         label.Font = font;
         label.RestrictToParent = false;
         label.SizeToContents();
-        label.Alignment = Pos.None;
+        label.TextAlign = Pos.None;
         label.SetPosition(x, y);
         label.RemoveAlignments();
         label.AddAlignment(block.Alignment);

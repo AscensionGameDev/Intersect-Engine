@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Framework.Gwen.Input;
+﻿using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Gwen.Input;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
@@ -9,9 +10,9 @@ namespace Intersect.Client.Framework.Gwen.Control;
 public partial class TabButton : Button
 {
 
-    private TabControl mControl;
+    private TabControl? _tabControl;
 
-    private Base mPage;
+    private Base _page;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="TabButton" /> class.
@@ -20,34 +21,31 @@ public partial class TabButton : Button
     public TabButton(Base parent) : base(parent)
     {
         DragAndDrop_SetPackage(true, "TabButtonMove");
-        Alignment = Pos.Top | Pos.Left;
-        TextPadding = new Padding(5, 3, 3, 3);
-        Padding = Padding.Two;
+        Font = GameContentManager.Current?.GetFont("sourcesansproblack", 10);
         KeyboardInputEnabled = true;
+        Padding = Padding.Two;
+        TextAlign = Pos.Top | Pos.Left;
+        TextPadding = new Padding(4, 2);
     }
 
     /// <summary>
     ///     Indicates whether the tab is active.
     /// </summary>
-    public bool IsActive => mPage != null && mPage.IsVisible;
+    public bool IsActive => _page is { IsVisible: true };
 
     // todo: remove public access
-    public TabControl TabControl
+    public TabControl? TabControl
     {
-        get => mControl;
+        get => _tabControl;
         set
         {
-            if (value == mControl)
+            if (value == _tabControl)
             {
                 return;
             }
 
-            if (mControl != null)
-            {
-                mControl.OnLoseTab(this);
-            }
-
-            mControl = value;
+            _tabControl?.OnLoseTab(this);
+            _tabControl = value;
         }
     }
 
@@ -56,8 +54,8 @@ public partial class TabButton : Button
     /// </summary>
     public Base Page
     {
-        get => mPage;
-        set => mPage = value;
+        get => _page;
+        set => _page = value;
     }
 
     /// <summary>
@@ -76,10 +74,7 @@ public partial class TabButton : Button
         IsDepressed = false;
     }
 
-    public override bool DragAndDrop_ShouldStartDrag()
-    {
-        return mControl.AllowReorder;
-    }
+    public override bool DragAndDrop_ShouldStartDrag() => _tabControl?.AllowReorder ?? false;
 
     /// <summary>
     ///     Renders the control using specified skin.
@@ -87,7 +82,7 @@ public partial class TabButton : Button
     /// <param name="skin">Skin to use.</param>
     protected override void Render(Skin.Base skin)
     {
-        skin.DrawTabButton(this, IsActive, mControl.TabStrip.Dock);
+        skin.DrawTabButton(this, IsActive, _tabControl.TabStrip.Dock);
     }
 
     /// <summary>
