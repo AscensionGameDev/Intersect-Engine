@@ -47,7 +47,7 @@ public sealed partial class ClientConfiguration : IConfiguration<ClientConfigura
 
     public const string DefaultFont = "sourcesansproblack";
 
-    public const string DefaultUIFont = "sourcesanspro,8";
+    public const string DefaultUIFont = "sourcesanspro,10";
 
     public const int DefaultChatLines = 100;
 
