@@ -23,4 +23,9 @@
     <ProjectReference Include="..\Framework\Intersect.Framework.Core\Intersect.Framework.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Gwen\Skin\skin-intersect.png" />
+    <EmbeddedResource Include="Gwen\Skin\skin-intersect.png" />
+  </ItemGroup>
+
 </Project>

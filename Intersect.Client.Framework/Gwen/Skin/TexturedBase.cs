@@ -5,6 +5,9 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.Skin.Texturing;
+using Intersect.Core;
+using Intersect.Framework.Reflection;
+using Microsoft.Extensions.Logging;
 using Single = Intersect.Client.Framework.Gwen.Skin.Texturing.Single;
 
 namespace Intersect.Client.Framework.Gwen.Skin;
@@ -437,24 +440,49 @@ public partial struct SkinTextures
 /// </summary>
 public partial class TexturedBase : Skin.Base
 {
-
     public static TexturedBase FindSkin(Renderer.Base renderer, GameContentManager contentManager, string skinName)
     {
+        if (string.Equals("Intersect2021", skinName, StringComparison.InvariantCultureIgnoreCase))
+        {
+            return new Intersect2021(renderer, contentManager);
+        }
+
+        var skinNameParts = skinName.Split(':');
+        var skinClassName = skinNameParts.FirstOrDefault() ?? nameof(IntersectSkin);
+        var skinTextureName = skinNameParts.Skip(1).FirstOrDefault();
+
+        if (string.Equals(nameof(IntersectSkin), skinClassName, StringComparison.InvariantCultureIgnoreCase))
+        {
+            return string.IsNullOrWhiteSpace(skinTextureName)
+                ? new IntersectSkin(renderer, contentManager)
+                : new IntersectSkin(renderer, contentManager, skinTextureName);
+        }
+
         var skinMap = typeof(TexturedBase).Assembly.GetTypes()
             .Where(type => !type.IsAbstract && typeof(TexturedBase).IsAssignableFrom(type))
             .ToDictionary(type => type.Name.ToLowerInvariant(), type => type);
 
-        if (skinMap.TryGetValue(skinName.ToLowerInvariant(), out var skinType))
+        if (!skinMap.TryGetValue(skinClassName.ToLowerInvariant(), out var skinType))
         {
-            try
+            return new TexturedBase(renderer, contentManager, skinName);
+        }
+
+        try
+        {
+            var skin = Activator.CreateInstance(skinType, renderer, contentManager, skinTextureName) as TexturedBase;
+            if (skin != null)
             {
-                var skin = Activator.CreateInstance(skinType, renderer, contentManager) as TexturedBase;
                 return skin;
             }
-            catch
-            {
-                // ignore
-            }
+
+            ApplicationContext.Context.Value?.Logger.LogError(
+                "Failed to create instance of '{SkinTypeName}'",
+                skinType.GetName(qualified: true)
+            );
+        }
+        catch
+        {
+            // ignore
         }
 
         return new TexturedBase(renderer, contentManager, skinName);
