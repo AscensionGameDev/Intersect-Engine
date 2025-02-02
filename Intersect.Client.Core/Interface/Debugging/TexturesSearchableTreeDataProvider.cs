@@ -109,7 +109,8 @@ public sealed class TexturesSearchableTreeDataProvider : ISearchableTreeDataProv
             DisplayText: displayText,
             DisplayColor: displayColor,
             Name: assetName,
-            ParentId: parentId
+            ParentId: parentId,
+            UserData: asset
         );
 
         void OnAssetStateChanged(IAsset changedAsset)

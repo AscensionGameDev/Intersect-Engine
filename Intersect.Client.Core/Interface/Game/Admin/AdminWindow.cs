@@ -36,6 +36,7 @@ public partial class AdminWindow : WindowControl
     )
     {
         DisableResizing();
+        MinimumSize = new Point(320, 320);
         Margin = Margin.Zero;
         Padding = Padding.Zero;
 
@@ -280,19 +281,17 @@ public partial class AdminWindow : WindowControl
     private void UpdateMapList()
     {
         _mapList?.Dispose();
-        _mapList = new TreeControl(this)
+        var mapListY = 330;
+        var mapListHeight = (_innerPanel?.Height ?? Height) - (mapListY + 4);
+        _mapList = new TreeControl(this, nameof(_mapList))
         {
             X = 4,
-            Y = 330,
+            Y = mapListY,
             Width = Width - 8,
-            Height = 80,
-            RenderColor = Color.FromArgb(
-                255,
-                255,
-                255,
-                255
-            ),
+            Height = mapListHeight,
             MaximumSize = new Point(4096, 999999),
+            Font = Current?.GetFont("sourcesansproblack", 10),
+            TextColorOverride = Color.White,
         };
         _mapList.SelectionChanged += MapList_SelectionChanged;
 

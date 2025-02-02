@@ -1,5 +1,6 @@
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Framework.Gwen.Control.EventArguments;
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal;
 
@@ -119,6 +120,16 @@ public partial class Text : Base
     ///     Text color override - used by tooltips.
     /// </summary>
     public Color? ColorOverride { get; set; }
+
+    protected override void OnVisibilityChanged(object? sender, VisibilityChangedEventArgs eventArgs)
+    {
+        base.OnVisibilityChanged(sender, eventArgs);
+
+        if (_displayedText == "This feature is experimental and may cause issues when enabled.")
+        {
+            this.ToString();
+        }
+    }
 
     /// <summary>
     ///     Renders the control using specified skin.

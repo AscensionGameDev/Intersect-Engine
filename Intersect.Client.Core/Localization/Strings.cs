@@ -985,6 +985,12 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString TabLabelAssets = @"Assets";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString ReloadAsset = @"Reload Asset";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString AssetsSearchPlaceholder = @"Filter assets...";
     }
 
     public partial struct EntityBox

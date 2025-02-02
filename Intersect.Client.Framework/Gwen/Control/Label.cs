@@ -54,14 +54,14 @@ public partial class Label : Base, ILabel
     ///     Initializes a new instance of the <see cref="Label" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
+    /// <param name="name"></param>
+    /// <param name="disableText"></param>
     public Label(Base parent, string? name = default, bool disableText = false) : base(parent, name)
     {
         _textElement = new Text(this)
         {
             IsHidden = disableText,
         };
-
-        //m_Text.Font = Skin.DefaultFont;
 
         MouseInputEnabled = false;
         SetSize(100, 10);
@@ -138,7 +138,7 @@ public partial class Label : Base, ILabel
     /// <summary>
     ///     Font.
     /// </summary>
-    public GameFont? Font
+    public virtual GameFont? Font
     {
         get => _textElement.Font;
         set
@@ -163,9 +163,9 @@ public partial class Label : Base, ILabel
     /// <summary>
     /// Font Name
     /// </summary>
-    public string FontName
+    public string? FontName
     {
-        get => _textElement.Font.GetName();
+        get => _textElement.Font?.GetName();
         set => Font = GameContentManager.Current?.GetFont(value, FontSize);
     }
 
@@ -513,49 +513,54 @@ public partial class Label : Base, ILabel
     {
         base.Layout(skin);
 
-        var align = mAlign;
-
         if (mAutoSizeToContents)
         {
             SizeToContents();
         }
+
+        AlignTextElement(_textElement);
+    }
+
+    protected void AlignTextElement(Text textElement)
+    {
+        var align = mAlign;
 
         var x = mTextPadding.Left + Padding.Left;
         var y = mTextPadding.Top + Padding.Top;
 
         if (0 != (align & Pos.Right))
         {
-            x = Width - _textElement.Width - mTextPadding.Right - Padding.Right;
+            x = Width - textElement.Width - mTextPadding.Right - Padding.Right;
         }
 
         if (0 != (align & Pos.CenterH))
         {
             x = (int)(mTextPadding.Left +
-                       Padding.Left +
-                       (Width -
-                        _textElement.Width -
-                        mTextPadding.Left -
-                        Padding.Left -
-                        mTextPadding.Right -
-                        Padding.Right) *
-                       0.5f);
+                      Padding.Left +
+                      (Width -
+                       textElement.Width -
+                       mTextPadding.Left -
+                       Padding.Left -
+                       mTextPadding.Right -
+                       Padding.Right) *
+                      0.5f);
         }
 
         if (0 != (align & Pos.CenterV))
         {
             y = (int)(mTextPadding.Top +
-                       Padding.Top +
-                       (Height - _textElement.Height) * 0.5f -
-                       mTextPadding.Bottom -
-                       Padding.Bottom);
+                      Padding.Top +
+                      (Height - textElement.Height) * 0.5f -
+                      mTextPadding.Bottom -
+                      Padding.Bottom);
         }
 
         if (0 != (align & Pos.Bottom))
         {
-            y = Height - _textElement.Height - mTextPadding.Bottom - Padding.Bottom;
+            y = Height - textElement.Height - mTextPadding.Bottom - Padding.Bottom;
         }
 
-        _textElement.SetPosition(x, y);
+        textElement.SetPosition(x, y);
     }
 
     /// <summary>

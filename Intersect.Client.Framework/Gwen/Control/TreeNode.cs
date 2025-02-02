@@ -61,6 +61,8 @@ public partial class TreeNode : Base
         get => _label?.Font ?? _font;
         set
         {
+            _font = value;
+
             if (_label is {} label)
             {
                 label.Font = value;
@@ -168,45 +170,68 @@ public partial class TreeNode : Base
     /// </summary>
     public string? Text
     {
-        get => _label.Text;
-        set => _label.Text = value;
+        get => _label?.Text;
+        set
+        {
+            if (_label is { } label)
+            {
+                label.Text = value;
+            }
+        }
     }
+
+    private Color? _textColor;
 
     public Color? TextColor
     {
-        get => _label.TextColor;
-        set => _label.TextColor = value;
+        get => _label?.TextColor ?? _textColor;
+        set
+        {
+            _textColor = value;
+            if (_label is { } label)
+            {
+                label.TextColor = value;
+            }
+        }
     }
+
+    private Color? _textColorOverride;
 
     public Color? TextColorOverride
     {
-        get => _label.TextColorOverride;
-        set => _label.TextColorOverride = value;
+        get => _label?.TextColorOverride ?? _textColorOverride;
+        set
+        {
+            _textColorOverride = value;
+            if (_label is { } label)
+            {
+                label.TextColorOverride = value;
+            }
+        }
     }
 
     public IEnumerable<TreeNode> SelectedChildren
     {
         get
         {
-            var trees = new List<TreeNode>();
+            List<TreeNode> selectedChildren = [];
 
             foreach (var child in Children)
             {
-                var node = child as TreeNode;
-                if (node == null)
+                if (child is not TreeNode node)
                 {
                     continue;
                 }
 
-                trees.AddRange(node.SelectedChildren);
+                selectedChildren.AddRange(node.SelectedChildren);
             }
 
             if (this.IsSelected)
             {
-                trees.Add(this);
+                selectedChildren.Add(this);
             }
 
-            return trees;
+            return selectedChildren;
         }
     }
 
@@ -348,6 +373,8 @@ public partial class TreeNode : Base
         {
             Font = Font,
             Text = label,
+            TextColor = _textColor,
+            TextColorOverride = _textColorOverride,
         };
 
         return node;

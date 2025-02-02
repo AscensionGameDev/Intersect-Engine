@@ -5,5 +5,6 @@ public record struct SearchableTreeDataEntry(
     string DisplayText,
     Color? DisplayColor = null,
     string? Name = default,
-    string? ParentId = default
+    string? ParentId = default,
+    object? UserData = default
 );

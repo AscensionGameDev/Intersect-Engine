@@ -39,10 +39,7 @@ public abstract partial class GameRenderTexture : GameTexture, IDisposable
     /// </summary>
     public abstract void End();
 
-    public bool SetActive(bool active)
-    {
-        return true;
-    }
+    public override void Reload() { }
 
     /// <summary>
     ///     Clears everything off the render target with a specified color.

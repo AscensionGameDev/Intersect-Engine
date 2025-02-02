@@ -15,25 +15,31 @@ public sealed class SearchableTree : Base
 
     private ListSortDirection? _sortDirection;
 
+    private bool _dirty;
+
+    public event GwenEventHandler<EventArgs>? SelectionChanged;
+
     public SearchableTree(Base parent, ISearchableTreeDataProvider dataProvider, string? name = default) : base(parent: parent, name: name)
     {
         _searchInput = new TextBox(this, nameof(_searchInput))
         {
             Dock = Pos.Top,
+            Margin = new Margin(0, 0, 0, 4),
         };
-        _searchInput.TextChanged += SearchInput_TextChanged;
+        _searchInput.TextChanged += SearchInputOnTextChanged;
 
         _tree = new TreeControl(this, nameof(_tree))
         {
             Dock = Pos.Fill,
         };
+        _tree.SelectionChanged += TreeOnSelectionChanged;
 
         _dataProvider = dataProvider;
         _dataProvider.EntriesAdded += DataProvider_EntriesAdded;
         _dataProvider.EntriesChanged += DataProviderOnEntriesChanged;
         _dataProvider.EntriesRemoved += DataProviderOnEntriesRemoved;
 
-        FetchEntries(FilterCriteria, [], initial: true);
+        _dirty = true;
     }
 
     public SearchableTreeFilterCriteria FilterCriteria
@@ -63,6 +69,14 @@ public sealed class SearchableTree : Base
         set => _tree.Font = value;
     }
 
+    public string? SearchPlaceholderText
+    {
+        get => _searchInput.PlaceholderText;
+        set => _searchInput.PlaceholderText = value;
+    }
+
+    public TreeNode[] SelectedNodes => _tree.SelectedChildren.ToArray();
+
     public ListSortDirection? SortDirection
     {
         get => _sortDirection;
@@ -76,6 +90,19 @@ public sealed class SearchableTree : Base
             _sortDirection = value;
             FetchEntries(FilterCriteria, [], sortDirection: value);
         }
+    }
+
+    protected override void Render(Skin.Base skin)
+    {
+        base.Render(skin);
+
+        if (!_dirty)
+        {
+            return;
+        }
+
+        _dirty = false;
+        FetchEntries(FilterCriteria, [], initial: _displayedNodes.Count < 1);
     }
 
     private void DataProvider_EntriesAdded(Base sender, SearchableTreeDataEntriesEventArgs arguments)
@@ -212,8 +239,13 @@ public sealed class SearchableTree : Base
         }
     }
 
-    private void SearchInput_TextChanged(Base sender, EventArgs arguments)
+    private void SearchInputOnTextChanged(Base sender, EventArgs arguments)
     {
         FetchEntries(FilterCriteria, []);
+    }
+
+    private void TreeOnSelectionChanged(Base sender, EventArgs arguments)
+    {
+        SelectionChanged?.Invoke(sender, arguments);
     }
 }

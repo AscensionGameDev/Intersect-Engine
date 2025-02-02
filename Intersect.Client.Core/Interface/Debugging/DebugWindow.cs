@@ -1,5 +1,6 @@
 using Intersect.Async;
 using Intersect.Client.Core;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
@@ -39,8 +40,11 @@ internal sealed partial class DebugWindow : Window
         TableDebugStats = CreateInfoTableDebugStats(TabInfo.Page);
 
         TabAssets = Tabs.AddPage(Strings.Debug.TabLabelAssets);
-        AssetsList = CreateAssetsList(TabAssets.Page);
         AssetsToolsTable = CreateAssetsToolsTable(TabAssets.Page);
+        AssetsList = CreateAssetsList(TabAssets.Page);
+        AssetsButtonReloadAsset = CreateAssetsButtonReloadAsset(AssetsToolsTable, AssetsList);
+
+        AssetsToolsTable.SizeToChildren();
 
         IsHidden = true;
     }
@@ -48,19 +52,71 @@ internal sealed partial class DebugWindow : Window
     private SearchableTree CreateAssetsList(Base parent)
     {
         var dataProvider = new TexturesSearchableTreeDataProvider(Current, this);
-        SearchableTree textureList = new(parent, dataProvider)
+        SearchableTree assetList = new(parent, dataProvider)
         {
             Dock = Pos.Fill,
             FontSearch = _defaultFont,
             FontTree = _defaultFont,
+            Margin = new Margin(0, 4, 0, 0),
+            SearchPlaceholderText = Strings.Debug.AssetsSearchPlaceholder,
         };
 
-        return textureList;
+        return assetList;
     }
 
     private Table CreateAssetsToolsTable(Base assetsTabPage)
     {
-        return new Table(assetsTabPage, nameof(AssetsToolsTable));
+        Table table = new(assetsTabPage, nameof(AssetsToolsTable))
+        {
+            ColumnCount = 2,
+            Dock = Pos.Top,
+        };
+
+        return table;
+    }
+
+    private Button CreateAssetsButtonReloadAsset(Table table, SearchableTree assetList)
+    {
+        var row = table.AddRow();
+
+        Button buttonReloadAsset = new(row, name: nameof(AssetsButtonReloadAsset))
+        {
+            IsDisabled = assetList.SelectedNodes.Length < 1,
+            Font = _defaultFont,
+            Text = Strings.Debug.ReloadAsset,
+        };
+
+        assetList.SelectionChanged += (_, _) =>
+            buttonReloadAsset.IsDisabled = assetList.SelectedNodes.All(
+                node => node.UserData is not SearchableTreeDataEntry { UserData: GameTexture }
+            );
+
+        buttonReloadAsset.Clicked += (_, _) =>
+        {
+            foreach (var node in assetList.SelectedNodes)
+            {
+                if (node.UserData is not SearchableTreeDataEntry entry)
+                {
+                    continue;
+                }
+
+                if (entry.UserData is not IAsset asset)
+                {
+                    continue;
+                }
+
+                // TODO: Audio reloading?
+                if (asset is not GameTexture texture)
+                {
+                    continue;
+                }
+
+                texture.Reload();
+            }
+        };
+        row.SetCellContents(0, buttonReloadAsset, enableMouseInput: true);
+
+        return buttonReloadAsset;
     }
 
     private TabControl Tabs { get; }
@@ -72,6 +128,8 @@ internal sealed partial class DebugWindow : Window
     private SearchableTree AssetsList { get; }
 
     private Table AssetsToolsTable { get; }
+
+    private Button AssetsButtonReloadAsset { get; }
 
     private LabeledCheckBox CheckboxDrawDebugOutlines { get; }
 

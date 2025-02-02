@@ -84,6 +84,8 @@ public partial class MonoTexture : GameTexture
 
     private void Load(Stream stream)
     {
+        _texture?.Dispose();
+
         _texture = Texture2D.FromStream(_graphicsDevice, stream);
         if (_texture == null)
         {
@@ -97,9 +99,9 @@ public partial class MonoTexture : GameTexture
         EmitLoaded();
     }
 
-    public void LoadTexture()
+    public void LoadTexture(bool force = false)
     {
-        if (_texture != null)
+        if (!force && _texture != null)
         {
             return;
         }
@@ -113,7 +115,7 @@ public partial class MonoTexture : GameTexture
 
         if (_packFrame != null)
         {
-            ((MonoTexture) _packFrame.PackTexture)?.LoadTexture();
+            ((MonoTexture) _packFrame.PackTexture)?.LoadTexture(force: force);
 
             return;
         }
@@ -235,6 +237,8 @@ public partial class MonoTexture : GameTexture
 
         return _texture;
     }
+
+    public override void Reload() => LoadTexture(force: true);
 
     public override Color GetPixel(int x1, int y1)
     {

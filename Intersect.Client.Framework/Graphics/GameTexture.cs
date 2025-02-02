@@ -107,6 +107,8 @@ public abstract partial class GameTexture : IAsset, IDisposable
 
     public abstract object? GetTexture();
 
+    public abstract void Reload();
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public TPlatformTexture? GetTexture<TPlatformTexture>() where TPlatformTexture : class =>
         GetTexture() as TPlatformTexture;

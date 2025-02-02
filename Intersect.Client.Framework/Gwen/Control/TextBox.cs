@@ -1,4 +1,6 @@
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Core;
 using Microsoft.Extensions.Logging;
@@ -34,11 +36,14 @@ public partial class TextBox : Label
 
     private string mSubmitSound;
 
+    private readonly Text _placeholder;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="TextBox" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public TextBox(Base parent, string name = "") : base(parent, name)
+    /// <param name="name"></param>
+    public TextBox(Base parent, string? name = default) : base(parent: parent, name: name)
     {
         AutoSizeToContents = false;
         SetSize(200, 20);
@@ -66,6 +71,12 @@ public partial class TextBox : Label
         AddAccelerator("Ctrl+X", OnCut);
         AddAccelerator("Ctrl+V", OnPaste);
         AddAccelerator("Ctrl+A", OnSelectAll);
+
+        _placeholder = new Text(this)
+        {
+            ColorOverride = new Color(255, 143, 143, 143),
+            IsVisible = false,
+        };
     }
 
     protected override bool AccelOnlyFocus => true;
@@ -126,7 +137,23 @@ public partial class TextBox : Label
         }
     }
 
+    public override GameFont? Font
+    {
+        get => base.Font;
+        set
+        {
+            base.Font = value;
+            _placeholder.Font = Font;
+        }
+    }
+
     public int MaximumLength { get => mMaxmimumLength; set => mMaxmimumLength = value; }
+
+    public string? PlaceholderText
+    {
+        get => _placeholder.DisplayedText;
+        set => _placeholder.DisplayedText = value;
+    }
 
     /// <summary>
     ///     Invoked when the text has changed.
@@ -797,7 +824,15 @@ public partial class TextBox : Label
     {
         base.Layout(skin);
 
+        UpdatePlaceholder();
+
         RefreshCursorBounds();
+    }
+
+    private void UpdatePlaceholder()
+    {
+        _placeholder.IsVisible = !string.IsNullOrWhiteSpace(PlaceholderText) && string.IsNullOrEmpty(Text);
+        AlignTextElement(_placeholder);
     }
 
     /// <summary>

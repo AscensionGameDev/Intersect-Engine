@@ -789,7 +789,7 @@ public partial class Base : IDisposable
                 return false;
             }
 
-            return Parent == null || Parent.IsVisible;
+            return Parent == null || Parent.IsVisible || ToolTip.IsActiveTooltip(Parent);
         }
         set => IsHidden = !value;
     }
@@ -1479,6 +1479,7 @@ public partial class Base : IDisposable
             labelTooltip = new Label(this, name: "Tooltip")
             {
                 AutoSizeToContents = true,
+                Font = mToolTipFont ?? GameContentManager.Current?.GetFont("sourcesansproblack", 10),
                 MaximumSize = new Point(300, 0),
                 Padding = new Padding(
                     5,
@@ -1487,20 +1488,10 @@ public partial class Base : IDisposable
                     3
                 ),
                 TextColor = Skin.Colors.TooltipText,
-                TextColorOverride = Skin.Colors.TooltipText,
+                TextColorOverride = _tooltipTextColor ?? Skin.Colors.TooltipText,
                 ToolTipBackground = _tooltipBackground,
                 WrappingBehavior = WrappingBehavior.Wrapped,
             };
-
-            if (mToolTipFont != default)
-            {
-                labelTooltip.Font = mToolTipFont;
-            }
-
-            if (_tooltipTextColor != default)
-            {
-                labelTooltip.TextColorOverride = _tooltipTextColor;
-            }
 
             Tooltip = labelTooltip;
         }
@@ -2357,6 +2348,11 @@ public partial class Base : IDisposable
 
         foreach (var child in childrenToRender)
         {
+            if (!child.IsVisible)
+            {
+                continue;
+            }
+
             child.DoRender(skin);
         }
 
@@ -2734,6 +2730,8 @@ public partial class Base : IDisposable
     /// <param name="skin">Skin to use.</param>
     protected virtual void Layout(Skin.Base skin)
     {
+        UpdateColors();
+
         if (skin?.Renderer.Ctt != null && ShouldCacheToTexture)
         {
             skin.Renderer.Ctt.CreateControlCacheTexture(this);
