@@ -15,7 +15,7 @@ namespace Intersect.Client.Framework.Gwen.Control;
 public partial class ImagePanel : Base
 {
 
-    private readonly float[] mUv;
+    private readonly float[] _uv;
 
     //Sound Effects
     protected string mHoverSound;
@@ -28,7 +28,7 @@ public partial class ImagePanel : Base
 
     protected string mRightMouseClickSound;
 
-    private GameTexture? mTexture;
+    private GameTexture? mTexture { get; set; }
     private string? mTextureFilename;
 
     private Margin? _textureNinePatchMargin;
@@ -38,16 +38,16 @@ public partial class ImagePanel : Base
     ///     Initializes a new instance of the <see cref="ImagePanel" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public ImagePanel(Base parent, string name = "") : base(parent)
+    /// <param name="name"></param>
+    public ImagePanel(Base parent, string? name = default) : base(parent, name: name)
     {
-        mUv = new float[4];
-        mTexture = null;
-        SetUv(0, 0, 1, 1);
+        _uv = [0, 0, 1, 1];
+
         MouseInputEnabled = true;
-        Name = name;
-        this.Clicked += ImagePanel_Clicked;
-        this.RightClicked += ImagePanel_RightClicked;
-        this.HoverEnter += ImagePanel_HoverEnter;
+
+        Clicked += ImagePanel_Clicked;
+        RightClicked += ImagePanel_RightClicked;
+        HoverEnter += ImagePanel_HoverEnter;
     }
 
     public Margin? TextureNinePatchMargin
@@ -73,11 +73,23 @@ public partial class ImagePanel : Base
         get => mTexture;
         set
         {
+            if (value == mTexture)
+            {
+                return;
+            }
+
             mTexture = value;
+            if (mTexture != null)
+            {
+                TextureLoaded?.Invoke(this, EventArgs.Empty);
+            }
+
             _ninepatchRenderer = null;
             this.InvalidateParent();
         }
     }
+
+    public event GwenEventHandler<EventArgs>? TextureLoaded;
 
     public string? TextureFilename
     {
@@ -91,13 +103,13 @@ public partial class ImagePanel : Base
             }
 
             mTextureFilename = textureFilename;
-            mTexture = mTextureFilename == null
+            Texture = mTextureFilename == null
                 ? null
                 : GameContentManager.Current?.GetTexture(TextureType.Gui, mTextureFilename);
         }
     }
 
-    private void ImagePanel_HoverEnter(Base sender, System.EventArgs arguments)
+    private void ImagePanel_HoverEnter(Base sender, EventArgs arguments)
     {
         PlaySound(mHoverSound);
     }
@@ -145,7 +157,7 @@ public partial class ImagePanel : Base
         if (obj["Texture"] != null)
         {
             Texture = GameContentManager.Current.GetTexture(
-                Framework.Content.TextureType.Gui, (string) obj["Texture"]
+                TextureType.Gui, (string) obj["Texture"]
             );
 
             TextureFilename = (string) obj["Texture"];
@@ -192,10 +204,10 @@ public partial class ImagePanel : Base
     /// </summary>
     public virtual void SetUv(float u1, float v1, float u2, float v2)
     {
-        mUv[0] = u1;
-        mUv[1] = v1;
-        mUv[2] = u2;
-        mUv[3] = v2;
+        _uv[0] = u1;
+        _uv[1] = v1;
+        _uv[2] = u2;
+        _uv[3] = v2;
 
         _ninepatchRenderer = null;
     }
@@ -251,14 +263,21 @@ public partial class ImagePanel : Base
         }
 
         return new Rectangle(
-            (int) (mUv[0] * mTexture.Width), (int) (mUv[1] * mTexture.Height),
-            (int) ((mUv[2] - mUv[0]) * mTexture.Width), (int) ((mUv[3] - mUv[1]) * mTexture.Width)
+            (int) (_uv[0] * mTexture.Width), (int) (_uv[1] * mTexture.Height),
+            (int) ((_uv[2] - _uv[0]) * mTexture.Width), (int) ((_uv[3] - _uv[1]) * mTexture.Width)
         );
     }
 
     protected override void Layout(Skin.Base skin)
     {
         base.Layout(skin);
+
+        EnsureTextureLoaded();
+    }
+
+    protected override void Prelayout(Skin.Base skin)
+    {
+        base.Prelayout(skin);
 
         EnsureTextureLoaded();
     }
@@ -276,7 +295,7 @@ public partial class ImagePanel : Base
             return;
         }
 
-        mTexture = GameContentManager.Current?.GetTexture(TextureType.Gui, textureFilename);
+        Texture = GameContentManager.Current?.GetTexture(TextureType.Gui, textureFilename);
     }
 
     /// <summary>
@@ -300,10 +319,10 @@ public partial class ImagePanel : Base
         {
             _ninepatchRenderer ??= new Bordered(
                 texture,
-                mUv[0] * texture.Width,
-                mUv[1] * texture.Height,
-                mUv[2] * texture.Width,
-                mUv[3] * texture.Height,
+                _uv[0] * texture.Width,
+                _uv[1] * texture.Height,
+                _uv[2] * texture.Width,
+                _uv[3] * texture.Height,
                 textureNinePatchMargin
             );
 
@@ -318,10 +337,10 @@ public partial class ImagePanel : Base
                 texture,
                 renderBounds,
                 base.RenderColor,
-                mUv[0],
-                mUv[1],
-                mUv[2],
-                mUv[3]
+                _uv[0],
+                _uv[1],
+                _uv[2],
+                _uv[3]
             );
         }
     }
@@ -336,7 +355,7 @@ public partial class ImagePanel : Base
             return;
         }
 
-        SetSize((int) (mTexture.Width * (mUv[2] - mUv[0])), (int) (mTexture.Height * (mUv[3] - mUv[1])));
+        SetSize((int) (mTexture.Width * (_uv[2] - _uv[0])), (int) (mTexture.Height * (_uv[3] - _uv[1])));
     }
 
     /// <summary>

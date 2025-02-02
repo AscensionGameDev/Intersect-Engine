@@ -17,7 +17,7 @@ public partial class CategoryButton : Button
     /// <param name="parent">Parent control.</param>
     public CategoryButton(Base parent) : base(parent)
     {
-        Alignment = Pos.Left | Pos.CenterV;
+        TextAlign = Pos.Left | Pos.CenterV;
         mAlt = false;
         IsToggle = true;
         TextPadding = new Padding(3, 0, 3, 0);

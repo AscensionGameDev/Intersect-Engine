@@ -47,7 +47,7 @@ public sealed partial class ClientConfiguration : IConfiguration<ClientConfigura
 
     public const string DefaultFont = "sourcesansproblack";
 
-    public const string DefaultUIFont = "sourcesanspro,8";
+    public const string DefaultUIFont = "sourcesanspro,10";
 
     public const int DefaultChatLines = 100;
 
@@ -226,7 +226,7 @@ public sealed partial class ClientConfiguration : IConfiguration<ClientConfigura
     /// <summary>
     /// Configures the name of the skin or skin texture (must end in .png) to use.
     /// </summary>
-    public string UiSkin { get; set; } = "Intersect2021";
+    public string UiSkin { get; set; } = "IntersectSkin";
 
     /// <summary>
     /// Configures the rendering direction of entity bars, vitals in their order, then experience

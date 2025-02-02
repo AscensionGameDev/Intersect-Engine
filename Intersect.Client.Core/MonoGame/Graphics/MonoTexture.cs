@@ -80,8 +80,12 @@ public partial class MonoTexture : GameTexture
         _height = packFrame.SourceRect.Height;
     }
 
+    public override bool IsLoaded => base.IsLoaded && _texture != null;
+
     private void Load(Stream stream)
     {
+        _texture?.Dispose();
+
         _texture = Texture2D.FromStream(_graphicsDevice, stream);
         if (_texture == null)
         {
@@ -91,11 +95,13 @@ public partial class MonoTexture : GameTexture
         _width = _texture.Width;
         _height = _texture.Height;
         _loadError = false;
+
+        EmitLoaded();
     }
 
-    public void LoadTexture()
+    public void LoadTexture(bool force = false)
     {
-        if (_texture != null)
+        if (!force && _texture != null)
         {
             return;
         }
@@ -109,7 +115,7 @@ public partial class MonoTexture : GameTexture
 
         if (_packFrame != null)
         {
-            ((MonoTexture) _packFrame.PackTexture)?.LoadTexture();
+            ((MonoTexture) _packFrame.PackTexture)?.LoadTexture(force: force);
 
             return;
         }
@@ -232,6 +238,8 @@ public partial class MonoTexture : GameTexture
         return _texture;
     }
 
+    public override void Reload() => LoadTexture(force: true);
+
     public override Color GetPixel(int x1, int y1)
     {
         if (_texture == null)
@@ -289,6 +297,8 @@ public partial class MonoTexture : GameTexture
             return;
         }
 
+        EmitUnloaded();
+
         _texture.Dispose();
         _texture = null;
     }
@@ -297,5 +307,13 @@ public partial class MonoTexture : GameTexture
     public static MonoTexture CreateFromTexture2D(Texture2D texture2D, string assetName)
     {
         return new MonoTexture(texture2D, assetName);
+    }
+
+    public override void Dispose()
+    {
+        base.Dispose();
+
+        _texture?.Dispose();
+        _texture = null;
     }
 }

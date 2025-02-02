@@ -150,7 +150,7 @@ public partial class Canvas : Base
 
         DragAndDrop.RenderOverlay(this, Skin);
 
-        Gwen.ToolTip.RenderToolTip(Skin);
+        ToolTip.RenderToolTip(Skin);
 
         render.EndClip();
 

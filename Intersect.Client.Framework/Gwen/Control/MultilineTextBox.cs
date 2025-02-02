@@ -33,7 +33,7 @@ public partial class MultilineTextBox : Label
         MouseInputEnabled = true;
         KeyboardInputEnabled = true;
 
-        Alignment = Pos.Left | Pos.Top;
+        TextAlign = Pos.Left | Pos.Top;
         TextPadding = new Padding(4, 2, 4, 2);
 
         mCursorPos = new Point(0, 0);
@@ -628,7 +628,7 @@ public partial class MultilineTextBox : Label
             mCursorPos.Y -= 1;
         }
 
-        if (!Input.InputHandler.IsShiftDown)
+        if (!InputHandler.IsShiftDown)
         {
             mCursorEnd = mCursorPos;
         }
@@ -658,7 +658,7 @@ public partial class MultilineTextBox : Label
             mCursorPos.Y += 1;
         }
 
-        if (!Input.InputHandler.IsShiftDown)
+        if (!InputHandler.IsShiftDown)
         {
             mCursorEnd = mCursorPos;
         }
@@ -696,7 +696,7 @@ public partial class MultilineTextBox : Label
             }
         }
 
-        if (!Input.InputHandler.IsShiftDown)
+        if (!InputHandler.IsShiftDown)
         {
             mCursorEnd = mCursorPos;
         }
@@ -734,7 +734,7 @@ public partial class MultilineTextBox : Label
             }
         }
 
-        if (!Input.InputHandler.IsShiftDown)
+        if (!InputHandler.IsShiftDown)
         {
             mCursorEnd = mCursorPos;
         }
@@ -761,7 +761,7 @@ public partial class MultilineTextBox : Label
 
         mCursorPos.X = 0;
 
-        if (!Input.InputHandler.IsShiftDown)
+        if (!InputHandler.IsShiftDown)
         {
             mCursorEnd = mCursorPos;
         }
@@ -788,7 +788,7 @@ public partial class MultilineTextBox : Label
 
         mCursorPos.X = mTextLines[mCursorPos.Y].Length;
 
-        if (!Input.InputHandler.IsShiftDown)
+        if (!InputHandler.IsShiftDown)
         {
             mCursorEnd = mCursorPos;
         }
@@ -951,7 +951,7 @@ public partial class MultilineTextBox : Label
         {
             CursorPosition = coords;
 
-            if (!Input.InputHandler.IsShiftDown)
+            if (!InputHandler.IsShiftDown)
             {
                 CursorEnd = coords;
             }

@@ -4,7 +4,7 @@ namespace Intersect.Client.Framework.Gwen.Control;
 
 public interface ILabel : IColorableText, IAutoSizeToContents
 {
-    Pos Alignment { get; set; }
+    Pos TextAlign { get; set; }
 
     GameFont? Font { get; set; }
 

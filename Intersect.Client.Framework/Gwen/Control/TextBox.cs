@@ -1,4 +1,6 @@
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Core;
 using Microsoft.Extensions.Logging;
@@ -34,11 +36,14 @@ public partial class TextBox : Label
 
     private string mSubmitSound;
 
+    private readonly Text _placeholder;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="TextBox" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public TextBox(Base parent, string name = "") : base(parent, name)
+    /// <param name="name"></param>
+    public TextBox(Base parent, string? name = default) : base(parent: parent, name: name)
     {
         AutoSizeToContents = false;
         SetSize(200, 20);
@@ -46,7 +51,7 @@ public partial class TextBox : Label
         MouseInputEnabled = true;
         KeyboardInputEnabled = true;
 
-        Alignment = Pos.Left | Pos.CenterV;
+        TextAlign = Pos.Left | Pos.CenterV;
         TextPadding = new Padding(4, 2, 4, 2);
 
         mCursorPos = 0;
@@ -66,6 +71,12 @@ public partial class TextBox : Label
         AddAccelerator("Ctrl+X", OnCut);
         AddAccelerator("Ctrl+V", OnPaste);
         AddAccelerator("Ctrl+A", OnSelectAll);
+
+        _placeholder = new Text(this)
+        {
+            ColorOverride = new Color(255, 143, 143, 143),
+            IsVisible = false,
+        };
     }
 
     protected override bool AccelOnlyFocus => true;
@@ -126,7 +137,23 @@ public partial class TextBox : Label
         }
     }
 
+    public override GameFont? Font
+    {
+        get => base.Font;
+        set
+        {
+            base.Font = value;
+            _placeholder.Font = Font;
+        }
+    }
+
     public int MaximumLength { get => mMaxmimumLength; set => mMaxmimumLength = value; }
+
+    public string? PlaceholderText
+    {
+        get => _placeholder.DisplayedText;
+        set => _placeholder.DisplayedText = value;
+    }
 
     /// <summary>
     ///     Invoked when the text has changed.
@@ -250,7 +277,7 @@ public partial class TextBox : Label
 
         if (time % 1.0f <= 0.5f)
         {
-            skin.Renderer.DrawColor = mNormalTextColor != null ? mNormalTextColor : TextColorOverride;
+            skin.Renderer.DrawColor = mNormalTextColor ?? TextColor ?? TextColorOverride;
             skin.Renderer.DrawFilledRect(mCaretBounds);
         }
     }
@@ -458,7 +485,7 @@ public partial class TextBox : Label
             mCursorPos--;
         }
 
-        if (!Input.InputHandler.IsShiftDown)
+        if (!InputHandler.IsShiftDown)
         {
             mCursorEnd = mCursorPos;
         }
@@ -488,7 +515,7 @@ public partial class TextBox : Label
             mCursorPos++;
         }
 
-        if (!Input.InputHandler.IsShiftDown)
+        if (!InputHandler.IsShiftDown)
         {
             mCursorEnd = mCursorPos;
         }
@@ -515,7 +542,7 @@ public partial class TextBox : Label
 
         mCursorPos = 0;
 
-        if (!Input.InputHandler.IsShiftDown)
+        if (!InputHandler.IsShiftDown)
         {
             mCursorEnd = mCursorPos;
         }
@@ -537,7 +564,7 @@ public partial class TextBox : Label
         base.OnKeyEnd(down);
         mCursorPos = TextLength;
 
-        if (!Input.InputHandler.IsShiftDown)
+        if (!InputHandler.IsShiftDown)
         {
             mCursorEnd = mCursorPos;
         }
@@ -577,19 +604,19 @@ public partial class TextBox : Label
     {
         try
         {
-            var text = Text;
+            var text = Text ?? string.Empty;
             if (startPos < 0)
             {
                 if (length > -startPos)
                 {
                     length += startPos;
-                    startPos = 0;
                 }
                 else
                 {
                     length = 0;
-                    startPos = 0;
                 }
+
+                startPos = 0;
 
                 mCursorPos = Math.Max(startPos, mCursorPos);
             }
@@ -628,19 +655,22 @@ public partial class TextBox : Label
         }
     }
 
-    public virtual void ReplaceSelection(string replacement, bool playSound = true)
+    public virtual void ReplaceSelection(string? replacement, bool playSound = true)
     {
         ValidateCursor();
 
+        var text = Text ?? string.Empty;
+
         var start = Math.Min(mCursorPos, mCursorEnd);
 
-        if (Text.Length > 0 && start < 0)
+        var currentLength = text.Length;
+        if (currentLength > 0 && start < 0)
         {
             // Make sure that start is not more negative than the text length
-            start = Math.Max(-Text.Length, start);
+            start = Math.Max(-currentLength, start);
 
             // Treat the negative start as an offset from the end
-            start += Text.Length;
+            start += currentLength;
         }
 
         // Bound the end to no earlier than the start
@@ -650,7 +680,7 @@ public partial class TextBox : Label
         var deletionLength = end - start;
 
         // How long is the remaining text going to be after deletion?
-        var textLength = Text.Length - deletionLength;
+        var textLength = currentLength - deletionLength;
 
         // What is the string length limit (below 0 maximum length is "unlimited")
         var maximumLength = MaximumLength < 0 ? int.MaxValue : MaximumLength;
@@ -668,7 +698,7 @@ public partial class TextBox : Label
         replacementLength = Math.Min(replacementLength, maximumReplacementLength);
 
         // Get the replacement substring
-        var actualReplacement = replacement.Substring(0, replacementLength);
+        var actualReplacement = replacement?[..replacementLength];
 
         ReplaceText(start, deletionLength, actualReplacement, playSound);
 
@@ -718,7 +748,7 @@ public partial class TextBox : Label
         {
             CursorPos = c;
 
-            if (!Input.InputHandler.IsShiftDown)
+            if (!InputHandler.IsShiftDown)
             {
                 CursorEnd = c;
             }
@@ -794,7 +824,15 @@ public partial class TextBox : Label
     {
         base.Layout(skin);
 
+        UpdatePlaceholder();
+
         RefreshCursorBounds();
+    }
+
+    private void UpdatePlaceholder()
+    {
+        _placeholder.IsVisible = !string.IsNullOrWhiteSpace(PlaceholderText) && string.IsNullOrEmpty(Text);
+        AlignTextElement(_placeholder);
     }
 
     /// <summary>

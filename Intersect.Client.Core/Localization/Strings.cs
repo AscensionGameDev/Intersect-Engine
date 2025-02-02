@@ -1,5 +1,6 @@
 using System.Reflection;
 using Intersect.Client.Core.Controls;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Input;
 using Intersect.Configuration;
 using Intersect.Core;
@@ -99,8 +100,8 @@ public static partial class Strings
     private static void PostLoad()
     {
 
-        Intersect.Client.Core.Program.OpenGLLink = Errors.OpenGlLink.ToString();
-        Intersect.Client.Core.Program.OpenALLink = Errors.OpenAllLink.ToString();
+        Core.Program.OpenGLLink = Errors.OpenGlLink.ToString();
+        Core.Program.OpenALLink = Errors.OpenAllLink.ToString();
     }
 
     private class OrdinalComparer : IComparer<string>
@@ -799,6 +800,31 @@ public static partial class Strings
         public static LocalizedString WarningTitle = @"Combat Warning!";
     }
 
+    public partial struct Content
+    {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static Dictionary<ContentType, LocalizedString> Types = new()
+        {
+            { ContentType.Animation, @"Animation" },
+            { ContentType.Entity, @"Entity" },
+            { ContentType.Face, @"Face" },
+            { ContentType.Fog, @"Fog" },
+            { ContentType.Font, @"Font" },
+            { ContentType.Image, @"Image" },
+            { ContentType.Interface, @"Interface (gui)" },
+            { ContentType.Item, @"Item" },
+            { ContentType.Miscellaneous, @"Miscellaneous" },
+            { ContentType.Music, @"Music" },
+            { ContentType.Paperdoll, @"Paperdoll" },
+            { ContentType.Resource, @"Resource" },
+            { ContentType.Shader, @"Shader" },
+            { ContentType.Sound, @"Sound" },
+            { ContentType.Spell, @"Spell" },
+            { ContentType.TextureAtlas, @"Texture Atlas" },
+            { ContentType.Tileset, @"Tileset" },
+        };
+    }
+
     public partial struct Controls
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -946,10 +972,25 @@ public static partial class Strings
         public static LocalizedString ShutdownServerAndExit = @"Shutdown Server and Exit";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString FormatTextureFromAtlas = @"{00} (from atlas)";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Time = @"Time";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Title = @"Debug";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString TabLabelInfo = @"Info";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString TabLabelAssets = @"Assets";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString ReloadAsset = @"Reload Asset";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString AssetsSearchPlaceholder = @"Filter assets...";
     }
 
     public partial struct EntityBox

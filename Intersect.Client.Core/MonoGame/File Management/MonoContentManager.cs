@@ -330,42 +330,42 @@ public partial class MonoContentManager : GameContentManager
     /// <inheritdoc />
     protected override TAsset Load<TAsset>(
         Dictionary<string, IAsset> lookup,
-        ContentTypes contentType,
+        ContentType contentType,
         string name,
         Func<Stream> createStream
     )
     {
         switch (contentType)
         {
-            case ContentTypes.Animation:
-            case ContentTypes.Entity:
-            case ContentTypes.Face:
-            case ContentTypes.Fog:
-            case ContentTypes.Image:
-            case ContentTypes.Interface:
-            case ContentTypes.Item:
-            case ContentTypes.Miscellaneous:
-            case ContentTypes.Paperdoll:
-            case ContentTypes.Resource:
-            case ContentTypes.Spell:
-            case ContentTypes.TexturePack:
-            case ContentTypes.TileSet:
+            case ContentType.Animation:
+            case ContentType.Entity:
+            case ContentType.Face:
+            case ContentType.Fog:
+            case ContentType.Image:
+            case ContentType.Interface:
+            case ContentType.Item:
+            case ContentType.Miscellaneous:
+            case ContentType.Paperdoll:
+            case ContentType.Resource:
+            case ContentType.Spell:
+            case ContentType.TextureAtlas:
+            case ContentType.Tileset:
                 var asset = Core.Graphics.Renderer.LoadTexture(name, createStream) as TAsset;
                 lookup?.Add(name, asset);
                 return asset;
 
-            case ContentTypes.Font:
+            case ContentType.Font:
                 throw new NotImplementedException();
 
-            case ContentTypes.Shader:
+            case ContentType.Shader:
                 throw new NotImplementedException();
 
-            case ContentTypes.Music:
+            case ContentType.Music:
                 var music = new MonoMusicSource(createStream) as TAsset;
                 lookup?.Add(RemoveExtension(name), music);
                 return music;
 
-            case ContentTypes.Sound:
+            case ContentType.Sound:
                 var sound = new MonoSoundSource(createStream, name) as TAsset;
                 lookup?.Add(RemoveExtension(name), sound);
                 return sound;

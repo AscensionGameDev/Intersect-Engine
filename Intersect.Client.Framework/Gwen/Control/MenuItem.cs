@@ -258,7 +258,7 @@ public partial class MenuItem : Button
         {
             _accelerator.SizeToContents();
             Width = Width + _accelerator.Width;
-            _accelerator.Alignment = Pos.Left;
+            _accelerator.TextAlign = Pos.Left;
         }
 
         Width = Math.Max(Width, Parent?.Width ?? Width);
@@ -294,7 +294,7 @@ public partial class MenuItem : Button
 
         _accelerator = new Label(this)
         {
-            Alignment = Pos.Right | Pos.CenterV,
+            TextAlign = Pos.Right | Pos.CenterV,
             Dock = Pos.Right,
             Margin = new Margin(
                 0,

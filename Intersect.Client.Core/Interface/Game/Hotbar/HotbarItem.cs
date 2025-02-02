@@ -86,7 +86,7 @@ public partial class HotbarItem
 
         _equipLabel = new Label(_icon, $"EquipLabel{hotbarSlotIndex}")
         {
-            AlignmentsInParent = [Alignments.Top, Alignments.Left],
+            Alignment = [Alignments.Top, Alignments.Left],
             X = 26,
             Y = 0,
             Width = 10,
@@ -101,7 +101,7 @@ public partial class HotbarItem
 
         _quantityLabel = new Label(_icon, $"QuantityLabel{hotbarSlotIndex}")
         {
-            AlignmentsInParent = [Alignments.Top, Alignments.Right],
+            Alignment = [Alignments.Top, Alignments.Right],
             X = 32,
             Y = 0,
             Width = 4,
@@ -115,8 +115,8 @@ public partial class HotbarItem
 
         _cooldownLabel = new Label(_icon, $"CooldownLabel{hotbarSlotIndex}")
         {
-            AlignmentsInParent = [Alignments.Center],
-            Alignment = Pos.Center,
+            Alignment = [Alignments.Center],
+            TextAlign = Pos.Center,
             X = 16,
             Y = 12,
             Width = 4,
@@ -130,7 +130,7 @@ public partial class HotbarItem
 
         _keyLabel = new Label(_icon, $"KeyLabel{hotbarSlotIndex}")
         {
-            AlignmentsInParent = [Alignments.Bottom, Alignments.Right],
+            Alignment = [Alignments.Bottom, Alignments.Right],
             X = 31,
             Y = 25,
             Width = 5,

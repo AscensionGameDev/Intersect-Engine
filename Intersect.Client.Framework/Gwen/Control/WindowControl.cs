@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -24,11 +25,13 @@ public partial class WindowControl : ResizableControl
 
     }
 
-    private readonly CloseButton mCloseButton;
+    private readonly ImagePanel _iconContainer;
 
-    private readonly Label mTitle;
+    private readonly CloseButton _closeButton;
 
-    private readonly Dragger mTitleBar;
+    private readonly Label _titleLabel;
+
+    private readonly Dragger _titlebar;
 
     private Color? mActiveColor;
 
@@ -48,9 +51,11 @@ public partial class WindowControl : ResizableControl
 
     private Base mOldParent;
 
-    public Dragger TitleBar => mTitleBar;
+    public ImagePanel IconContainer => _iconContainer;
 
-    public Label TitleLabel => mTitle;
+    public Dragger Titlebar => _titlebar;
+
+    public Label TitleLabel => _titleLabel;
 
     public Padding InnerPanelPadding
     {
@@ -73,36 +78,75 @@ public partial class WindowControl : ResizableControl
     /// <param name="name">name of this control</param>
     public WindowControl(Base? parent, string? title = default, bool modal = false, string? name = default) : base(parent, name)
     {
-        mTitleBar = new Dragger(this);
-        mTitleBar.Height = 24;
-        mTitleBar.Padding = Gwen.Padding.Zero;
-        mTitleBar.Margin = new Margin(0, 0, 0, 0);
-        mTitleBar.Target = this;
-        mTitleBar.Dock = Pos.Top;
+        ClipContents = false;
 
-        mTitle = new Label(mTitleBar);
-        mTitle.Alignment = Pos.Left | Pos.CenterV;
-        mTitle.Text = title ?? string.Empty;
-        mTitle.Dock = Pos.Fill;
-        mTitle.Padding = new Padding(8, 4, 0, 0);
-        mTitle.TextColor = Skin.Colors.Window.TitleInactive;
+        var titleLabelFont = GameContentManager.Current?.GetFont("sourcesansproblack", 12);
 
-        mCloseButton = new CloseButton(mTitleBar, this);
-        mCloseButton.SetSize(24, 24);
-        mCloseButton.Dock = Pos.Top | Pos.Right;
-        mCloseButton.Clicked += CloseButtonPressed;
-        mCloseButton.IsTabable = false;
+        _titlebar = new Dragger(this)
+        {
+            ClipContents = false,
+            Dock = Pos.Top,
+            Height = 24,
+            Margin = default,
+            Padding = default,
+            Target = this,
+        };
 
-        //Create a blank content control, dock it to the top - Should this be a ScrollControl?
+        _iconContainer = new ImagePanel(_titlebar, name: "WindowIcon")
+        {
+            Dock = Pos.Left,
+            IsVisible = false,
+            Margin = Margin.Four,
+            MaximumSize = new Point(24, 24),
+            RestrictToParent = false,
+            Size = new Point(24, 24),
+        };
+        _iconContainer.TextureLoaded += (_, _) =>
+        {
+            var iconContainerTexture = _iconContainer.Texture;
+            _iconContainer.IsVisible = iconContainerTexture != null;
+            if (iconContainerTexture is null)
+            {
+                return;
+            }
+
+            _iconContainer.MinimumSize = iconContainerTexture.Dimensions;
+            _iconContainer.MaximumSize = iconContainerTexture.Dimensions;
+            _iconContainer.Size = iconContainerTexture.Dimensions;
+            _titlebar.Height = _iconContainer.Size.Y + _iconContainer.Margin.Bottom + _iconContainer.Margin.Top;
+        };
+
+        _titleLabel = new Label(_titlebar, name: nameof(Title))
+        {
+            Dock = Pos.Fill | Pos.CenterV,
+            Font = titleLabelFont,
+            MouseInputEnabled = true,
+            Padding = new Padding(8, 4, 4, 4),
+            Text = title,
+            TextAlign = Pos.Left | Pos.Bottom,
+            TextColor = Skin.Colors.Window.TitleInactive,
+        };
+
+        _closeButton = new CloseButton(_titlebar, this, name: nameof(CloseButton))
+        {
+            Alignment = [Alignments.Top, Alignments.Right],
+            IsTabable = false,
+            Size = new Point(24, 24),
+        };
+        _closeButton.Clicked += CloseButtonPressed;
+
+        // Create a blank content control, dock it to the top - Should this be a ScrollControl?
         _innerPanel = new Base(this);
         _innerPanel.Dock = Pos.Fill;
+
+        ClampMovement = true;
+        IsTabable = false;
+        KeyboardInputEnabled = false;
+        MinimumSize = new Point(100, 40);
+
         GetResizer(8).Hide();
         BringToFront();
-        IsTabable = false;
         Focus();
-        MinimumSize = new Point(100, 40);
-        ClampMovement = true;
-        KeyboardInputEnabled = false;
 
         if (modal)
         {
@@ -113,10 +157,10 @@ public partial class WindowControl : ResizableControl
     /// <summary>
     ///     Window caption.
     /// </summary>
-    public string Title
+    public string? Title
     {
-        get => mTitle.Text;
-        set => mTitle.Text = value;
+        get => _titleLabel.Text;
+        set => _titleLabel.Text = value;
     }
 
     /// <summary>
@@ -124,16 +168,28 @@ public partial class WindowControl : ResizableControl
     /// </summary>
     public bool IsClosable
     {
-        get => !mCloseButton.IsHidden;
+        get => !_closeButton.IsHidden;
         set
         {
-            if (value == mCloseButton.IsVisible)
+            if (value == _closeButton.IsVisible)
             {
                 return;
             }
 
-            mCloseButton.IsVisible = value;
+            _closeButton.IsVisible = value;
         }
+    }
+
+    public GameTexture? Icon
+    {
+        get => _iconContainer.Texture;
+        set => _iconContainer.Texture = value;
+    }
+
+    public string? IconName
+    {
+        get => _iconContainer.TextureFilename;
+        set => _iconContainer.TextureFilename = value;
     }
 
     /// <summary>
@@ -171,23 +227,31 @@ public partial class WindowControl : ResizableControl
     public override JObject GetJson(bool isRoot = default)
     {
         var obj = base.GetJson(isRoot);
+
         obj.Add(nameof(DrawShadow), DrawShadow);
         obj.Add("ActiveImage", GetImageFilename(ControlState.Active));
         obj.Add("InactiveImage", GetImageFilename(ControlState.Inactive));
         obj.Add("ActiveColor", Color.ToString(mActiveColor));
         obj.Add("InactiveColor", Color.ToString(mInactiveColor));
-        obj.Add("Closable", IsClosable);
-        obj.Add("Titlebar", mTitleBar.GetJson());
-        obj.Add("Title", mTitle.GetJson());
-        obj.Add("CloseButton", mCloseButton.GetJson());
-        obj.Add("InnerPanel", _innerPanel.GetJson());
+        obj.Add(nameof(IsClosable), IsClosable);
+        obj.Add(nameof(Titlebar), _titlebar.GetJson());
+
+        if (_innerPanel is { Children.Count: > 0 } innerPanel)
+        {
+            obj.Add("InnerPanel", innerPanel.GetJson());
+        }
 
         return base.FixJson(obj);
     }
 
-    public override void LoadJson(JToken obj, bool isRoot = default)
+    public override void LoadJson(JToken token, bool isRoot = default)
     {
-        base.LoadJson(obj);
+        base.LoadJson(token);
+
+        if (token is not JObject obj)
+        {
+            return;
+        }
 
         var tokenDrawShadow = obj[nameof(DrawShadow)];
         if (tokenDrawShadow != null)
@@ -198,18 +262,18 @@ public partial class WindowControl : ResizableControl
         if (obj["ActiveImage"] != null)
         {
             SetImage(
-                GameContentManager.Current.GetTexture(
-                    Framework.Content.TextureType.Gui, (string)obj["ActiveImage"]
-                ), (string)obj["ActiveImage"], ControlState.Active
+                GameContentManager.Current.GetTexture(TextureType.Gui, (string)obj["ActiveImage"]),
+                (string)obj["ActiveImage"],
+                ControlState.Active
             );
         }
 
         if (obj["InactiveImage"] != null)
         {
             SetImage(
-                GameContentManager.Current.GetTexture(
-                    Framework.Content.TextureType.Gui, (string)obj["InactiveImage"]
-                ), (string)obj["InactiveImage"], ControlState.Inactive
+                GameContentManager.Current.GetTexture(TextureType.Gui, (string)obj["InactiveImage"]),
+                (string)obj["InactiveImage"],
+                ControlState.Inactive
             );
         }
 
@@ -223,38 +287,27 @@ public partial class WindowControl : ResizableControl
             mInactiveColor = Color.FromString((string)obj["InactiveColor"]);
         }
 
-        if (obj["Closable"] != null)
+        if (obj.TryGetValue(nameof(IsClosable), out var tokenIsClosable) &&
+            tokenIsClosable is JValue { Type: JTokenType.Boolean } valueIsClosable)
         {
-            IsClosable = (bool)obj["Closable"];
+            IsClosable = valueIsClosable.Value<bool>();
         }
 
-        if (obj["Titlebar"] != null)
+        if (obj.TryGetValue(nameof(Titlebar), out var tokenTitlebar))
         {
-            mTitleBar.LoadJson(obj["Titlebar"]);
+            _titlebar.LoadJson(tokenTitlebar);
         }
 
-        if (obj["Title"] != null)
+        if (obj.TryGetValue("InnerPanel", out var tokenInnerPanel))
         {
-            mTitle.LoadJson(obj["Title"]);
-        }
-
-        if (obj["CloseButton"] != null)
-        {
-            mCloseButton.Alignment = Pos.None;
-            mCloseButton.Dock = Pos.None;
-            mCloseButton.LoadJson(obj["CloseButton"]);
-        }
-
-        if (obj["InnerPanel"] != null)
-        {
-            _innerPanel.LoadJson(obj["InnerPanel"]);
+            _innerPanel?.LoadJson(tokenInnerPanel);
         }
     }
 
     public override void ProcessAlignments()
     {
         base.ProcessAlignments();
-        mTitleBar.ProcessAlignments();
+        _titlebar.ProcessAlignments();
     }
 
     public override void DisableResizing()
@@ -334,9 +387,9 @@ public partial class WindowControl : ResizableControl
 
         textColor ??= Skin.Colors.Window.TitleInactive;
 
-        mTitle.TextColor = textColor;
+        _titleLabel.TextColor = textColor;
 
-        skin.DrawWindow(this, mTitleBar.Bottom, hasFocus);
+        skin.DrawWindow(this, _titlebar.Bottom, hasFocus);
     }
 
     /// <summary>
@@ -367,32 +420,7 @@ public partial class WindowControl : ResizableControl
     {
     }
 
-    public Rectangle TitleBarBounds => mTitleBar?.Bounds ?? default;
-
-    public void SetTitleBarHeight(int h)
-    {
-        mTitleBar.SetSize(mTitleBar.Width, h);
-        mTitle.Padding = new Padding(8, (h - Skin.Renderer.MeasureText(mTitle.Font, "L", 1).Y) / 2, 0, 0);
-    }
-
-    public void SetCloseButtonSize(int w, int h)
-    {
-        mCloseButton.SetSize(w, h);
-        mCloseButton.MaximumSize = new Point(w, h);
-    }
-
-    public void SetCloseButtonImage(GameTexture texture, string fileName, Button.ControlState state)
-    {
-        mCloseButton.SetImage(texture, fileName, state);
-    }
-
-    public void SetFont(GameFont font)
-    {
-        mTitle.Font = font;
-        mTitle.Padding = new Padding(
-            8, (mTitleBar.Height - Skin.Renderer.MeasureText(mTitle.Font, "L", 1).Y) / 2, 0, 0
-        );
-    }
+    public Rectangle TitleBarBounds => _titlebar?.Bounds ?? default;
 
     public void SetTextColor(Color clr, ControlState state)
     {

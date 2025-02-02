@@ -1,4 +1,5 @@
 ﻿using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
@@ -17,14 +18,15 @@ public partial class TreeControl : TreeNode
     ///     Initializes a new instance of the <see cref="TreeControl" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public TreeControl(Base parent) : base(parent)
+    /// <param name="name"></param>
+    public TreeControl(Base parent, string? name = default) : base(parent: parent, name: name)
     {
         mTreeControl = this;
 
         RemoveChild(mToggleButton, true);
         mToggleButton = null;
-        RemoveChild(mTitle, true);
-        mTitle = null;
+        RemoveChild(_label, true);
+        _label = null;
         RemoveChild(_innerPanel, true);
         _innerPanel = null;
 

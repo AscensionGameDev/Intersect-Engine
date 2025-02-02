@@ -27,25 +27,6 @@ public enum Alignments
 /// </summary>
 public static partial class Align
 {
-
-    /// <summary>
-    ///     Centers the control inside its parent.
-    /// </summary>
-    /// <param name="control">Control to center.</param>
-    public static void Center(Base control)
-    {
-        var parent = control.Parent;
-        if (parent == null)
-        {
-            return;
-        }
-
-        control.SetPosition(
-            parent.Padding.Left + (parent.Width - parent.Padding.Left - parent.Padding.Right - control.Width) / 2 + control.AlignmentDistance.Left,
-            (parent.Height - control.Height) / 2 + control.AlignmentDistance.Top
-        );
-    }
-
     /// <summary>
     ///     Moves the control to the left of its parent.
     /// </summary>
@@ -58,25 +39,7 @@ public static partial class Align
             return;
         }
 
-        control.SetPosition(parent.Padding.Left + control.Margin.Left, control.Y);
-    }
-
-    /// <summary>
-    ///     Centers the control horizontally inside its parent.
-    /// </summary>
-    /// <param name="control"></param>
-    public static void CenterHorizontally(Base control)
-    {
-        var parent = control.Parent;
-        if (null == parent)
-        {
-            return;
-        }
-
-        control.SetPosition(
-            parent.Padding.Left + (parent.Width - parent.Padding.Left - parent.Padding.Right - control.Width) / 2,
-            control.Y
-        );
+        control.SetPosition(parent.Padding.Left + control.Margin.Left + control.AlignmentDistance.Left, control.Y);
     }
 
     /// <summary>
@@ -91,7 +54,8 @@ public static partial class Align
             return;
         }
 
-        control.SetPosition(parent.Width - control.Width - parent.Padding.Right - control.Margin.Right, control.Y);
+        var offsetRight = control.Width + control.Margin.Right + control.AlignmentDistance.Right + parent.Padding.Right;
+        control.SetPosition(parent.Width - offsetRight, control.Y);
     }
 
     /// <summary>
@@ -100,22 +64,13 @@ public static partial class Align
     /// <param name="control"></param>
     public static void AlignTop(Base control)
     {
-        control.SetPosition(control.X, control.Margin.Top);
-    }
-
-    /// <summary>
-    ///     Centers the control vertically inside its parent.
-    /// </summary>
-    /// <param name="control"></param>
-    public static void CenterVertically(Base control)
-    {
         var parent = control.Parent;
         if (null == parent)
         {
             return;
         }
 
-        control.SetPosition(control.X, (parent.Height - control.Height) / 2);
+        control.SetPosition(control.X, control.Margin.Top + parent.Padding.Top + control.AlignmentDistance.Top);
     }
 
     /// <summary>
@@ -130,7 +85,89 @@ public static partial class Align
             return;
         }
 
-        control.SetPosition(control.X, parent.Height - control.Height - control.Margin.Bottom);
+        var offsetBottom = control.Height +
+                           control.Margin.Bottom +
+                           control.AlignmentDistance.Bottom +
+                           parent.Padding.Bottom;
+        control.SetPosition(control.X, parent.Height - offsetBottom);
+    }
+
+    /// <summary>
+    ///     Centers the control inside its parent.
+    /// </summary>
+    /// <param name="control">Control to center.</param>
+    public static void Center(Base control)
+    {
+        var parent = control.Parent;
+        if (parent == null)
+        {
+            return;
+        }
+
+        var parentPadding = parent.Padding;
+        var parentPaddingH = parentPadding.Left + parentPadding.Right;
+        var parentPaddingV = parentPadding.Top + parentPadding.Bottom;
+
+        Point offset = new(control.AlignmentDistance.Left, control.AlignmentDistance.Top);
+        offset.X += parentPadding.Left;
+        offset.Y += parentPadding.Top;
+
+        var availableHeight = parent.Height - parentPaddingV;
+        var availableWidth = parent.Width - parentPaddingH;
+
+        Point alignedPosition = new(availableWidth - control.Width, availableHeight - control.Height);
+        alignedPosition /= 2;
+        control.SetPosition(offset + alignedPosition);
+    }
+
+    /// <summary>
+    ///     Centers the control horizontally inside its parent.
+    /// </summary>
+    /// <param name="control"></param>
+    public static void CenterHorizontally(Base control)
+    {
+        var parent = control.Parent;
+        if (null == parent)
+        {
+            return;
+        }
+
+        var parentPadding = parent.Padding;
+        var parentPaddingH = parentPadding.Left + parentPadding.Right;
+
+        Point offset = new(control.AlignmentDistance.Left, control.Y);
+        offset.X += parentPadding.Left;
+
+        var availableWidth = parent.Width - parentPaddingH;
+
+        Point alignedPosition = new(availableWidth - control.Width, 0);
+        alignedPosition /= 2;
+        control.SetPosition(offset + alignedPosition);
+    }
+
+    /// <summary>
+    ///     Centers the control vertically inside its parent.
+    /// </summary>
+    /// <param name="control"></param>
+    public static void CenterVertically(Base control)
+    {
+        var parent = control.Parent;
+        if (null == parent)
+        {
+            return;
+        }
+
+        var parentPadding = parent.Padding;
+        var parentPaddingV = parentPadding.Top + parentPadding.Bottom;
+
+        Point offset = new(control.X, control.AlignmentDistance.Top);
+        offset.Y += parentPadding.Top;
+
+        var availableHeight = parent.Height - parentPaddingV;
+
+        Point alignedPosition = new(0, availableHeight - control.Height);
+        alignedPosition /= 2;
+        control.SetPosition(offset + alignedPosition);
     }
 
     /// <summary>

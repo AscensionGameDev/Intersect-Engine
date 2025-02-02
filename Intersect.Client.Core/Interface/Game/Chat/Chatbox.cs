@@ -366,22 +366,22 @@ public partial class Chatbox
         for (var i = mMessageIndex; i < messages.Count; i++)
         {
             var msg = messages[i];
-            var myText = Text.WrapText(
+            var lines = Text.WrapText(
                 msg.Message,
                 mChatboxMessages.Width - vScrollBar.Width - 8,
                 mChatboxText.Font,
                 Graphics.Renderer ?? throw new InvalidOperationException("No renderer")
             );
 
-            foreach (var t in myText)
+            foreach (var line in lines)
             {
-                var rw = mChatboxMessages.AddRow(t.Trim());
-                rw.SetTextFont(mChatboxText.Font);
-                rw.SetTextColor(msg.Color);
-                rw.ShouldDrawBackground = false;
-                rw.UserData = msg.Target;
-                rw.Clicked += ChatboxRow_Clicked;
-                rw.RightClicked += ChatboxRow_RightClicked;
+                var row = mChatboxMessages.AddRow(line.Trim());
+                row.Font = mChatboxText.Font;
+                row.SetTextColor(msg.Color);
+                row.ShouldDrawBackground = false;
+                row.UserData = msg.Target;
+                row.Clicked += ChatboxRow_Clicked;
+                row.RightClicked += ChatboxRow_RightClicked;
                 mReceivedMessage = true;
 
                 while (mChatboxMessages.RowCount > ClientConfiguration.Instance.ChatLines)

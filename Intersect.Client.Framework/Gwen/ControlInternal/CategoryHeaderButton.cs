@@ -17,7 +17,7 @@ public partial class CategoryHeaderButton : Button
     {
         ShouldDrawBackground = false;
         IsToggle = true;
-        Alignment = Pos.Center;
+        TextAlign = Pos.Center;
         TextPadding = new Padding(3, 0, 3, 0);
     }
 

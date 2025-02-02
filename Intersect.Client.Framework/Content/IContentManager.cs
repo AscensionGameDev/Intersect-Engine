@@ -12,7 +12,7 @@ public interface IContentManager
     /// <param name="contentType">The type of asset to try and search for.</param>
     /// <param name="assetName">The name/alias of the asset to try and search for.</param>
     /// <returns>Returns the specified <see cref="TAsset"/> if it exists, if not returns <see langword="null" /></returns>
-    TAsset Find<TAsset>(ContentTypes contentType, string assetName) where TAsset : class, IAsset;
+    TAsset Find<TAsset>(ContentType contentType, string assetName) where TAsset : class, IAsset;
 
     /// <summary>
     /// Load an asset from disk by the specified file.
@@ -22,7 +22,7 @@ public interface IContentManager
     /// <param name="assetPath">The path of the asset file to load.</param>
     /// <param name="assetAlias">The alias to give to the asset for future reference.</param>
     /// <returns>Returns an instance of <see cref="TAsset"/></returns>
-    TAsset Load<TAsset>(ContentTypes contentType, string assetPath, string assetAlias) where TAsset : class, IAsset;
+    TAsset Load<TAsset>(ContentType contentType, string assetPath, string assetAlias) where TAsset : class, IAsset;
 
     /// <summary>
     /// Load an asset embedded from within the binary.
@@ -34,7 +34,7 @@ public interface IContentManager
     /// <returns>Returns an instance of <see cref="TAsset"/></returns>
     TAsset LoadEmbedded<TAsset>(
         IPluginContext context,
-        ContentTypes contentType,
+        ContentType contentType,
         string assetName
     ) where TAsset : class, IAsset;
 
@@ -49,7 +49,7 @@ public interface IContentManager
     /// <returns>Returns an instance of <see cref="TAsset"/></returns>
     TAsset LoadEmbedded<TAsset>(
         IPluginContext context,
-        ContentTypes contentType,
+        ContentType contentType,
         string assetName,
         string assetAlias
     ) where TAsset : class, IAsset;

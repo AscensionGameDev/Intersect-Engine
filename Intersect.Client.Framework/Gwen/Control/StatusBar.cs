@@ -20,7 +20,7 @@ public partial class StatusBar : Label
         Padding = Padding.Two;
 
         //Text = "Status Bar"; // [omeg] todo i18n
-        Alignment = Pos.Left | Pos.CenterV;
+        TextAlign = Pos.Left | Pos.CenterV;
     }
 
     /// <summary>

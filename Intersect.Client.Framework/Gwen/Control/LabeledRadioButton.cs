@@ -34,7 +34,7 @@ public partial class LabeledRadioButton : Base
 
         mLabel = new Label(this)
         {
-            Alignment = Pos.CenterV | Pos.Left,
+            TextAlign = Pos.CenterV | Pos.Left,
             InheritParentEnablementProperties = true,
             IsTabable = false,
             KeyboardInputEnabled = false,

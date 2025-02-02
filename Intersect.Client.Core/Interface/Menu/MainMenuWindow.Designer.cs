@@ -17,7 +17,7 @@ public partial class MainMenuWindow
         DisableResizing();
         Padding = Padding.Zero;
         InnerPanelPadding = new Padding(8, 8, 8, 8);
-        TitleBar.MouseInputEnabled = false;
+        Titlebar.MouseInputEnabled = false;
 
         Button[] visibleButtons = new []
         {
@@ -42,7 +42,7 @@ public partial class MainMenuWindow
             innerHeight + TitleBarBounds.Bottom + InnerPanelPadding.Top + InnerPanelPadding.Bottom
         );
 
-        AddAlignment(Alignments.Center);
+        AddAlignment(Framework.Gwen.Alignments.Center);
         AlignmentDistance = new Padding(0, 40, 0, 0);
         ProcessAlignments();
 
@@ -53,7 +53,7 @@ public partial class MainMenuWindow
         TitleLabel.TextPadding = new Padding(8, 4, 8, 4);
         TitleLabel.SizeToContents();
 
-        TitleBar.SetBounds(0, 0, Width, TitleLabel.Height);
+        Titlebar.SetBounds(0, 0, Width, TitleLabel.Height);
 
         var x = InnerPanelPadding.Left;
         foreach (var button in visibleButtons)

@@ -7,7 +7,7 @@
 public partial class Check : Base
 {
 
-    protected readonly Control.CheckBox mCheckBox;
+    protected readonly CheckBox mCheckBox;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Check" /> class.
@@ -15,7 +15,7 @@ public partial class Check : Base
     /// <param name="parent">Parent control.</param>
     public Check(Control.Base parent) : base(parent)
     {
-        mCheckBox = new Control.CheckBox(this);
+        mCheckBox = new CheckBox(this);
         mCheckBox.ShouldDrawBackground = false;
         mCheckBox.CheckChanged += OnValueChanged;
         mCheckBox.IsTabable = true;

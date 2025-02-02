@@ -1,5 +1,6 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Interface.Shared;
 using Intersect.Network;
@@ -49,7 +50,10 @@ public partial class MainMenu : MutableInterface
         _resetPasswordWindow = new ResetPasswordWindow(_menuCanvas, this);
         SelectCharacterWindow = new SelectCharacterWindow(_menuCanvas, this);
         _createCharacterWindow = new CreateCharacterWindow(_menuCanvas, this, SelectCharacterWindow);
-        _settingsWindow = new SettingsWindow(_menuCanvas, this, null);
+        _settingsWindow = new SettingsWindow(_menuCanvas, this, null)
+        {
+            AlignmentDistance = new Padding(0, 140, 0, 0),
+        };
         _creditsWindow = new CreditsWindow(_menuCanvas, this);
     }
 

@@ -1,5 +1,6 @@
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Framework.Gwen.Control.EventArguments;
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal;
 
@@ -119,6 +120,16 @@ public partial class Text : Base
     ///     Text color override - used by tooltips.
     /// </summary>
     public Color? ColorOverride { get; set; }
+
+    protected override void OnVisibilityChanged(object? sender, VisibilityChangedEventArgs eventArgs)
+    {
+        base.OnVisibilityChanged(sender, eventArgs);
+
+        if (_displayedText == "This feature is experimental and may cause issues when enabled.")
+        {
+            this.ToString();
+        }
+    }
 
     /// <summary>
     ///     Renders the control using specified skin.
@@ -254,6 +265,11 @@ public partial class Text : Base
             return;
         }
 
+        if (Parent is TextBox)
+        {
+            Parent?.ToString();
+        }
+
         Size = newSize;
         InvalidateParent();
     }
@@ -309,7 +325,7 @@ public partial class Text : Base
             return -1;
         }
 
-        var closestDistance = 0;
+        var closestDistance = int.MaxValue;
         var closestIndex = 0;
 
         for (var characterIndex = 0; characterIndex < displayedText.Length + 1; characterIndex++)

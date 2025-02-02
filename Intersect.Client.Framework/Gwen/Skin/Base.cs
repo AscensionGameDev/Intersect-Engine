@@ -240,6 +240,7 @@ public partial class Base : IDisposable
         Control.Base ctrl,
         bool open,
         bool selected,
+        int treeNodeHeight,
         int labelHeight,
         int labelWidth,
         int halfWay,
