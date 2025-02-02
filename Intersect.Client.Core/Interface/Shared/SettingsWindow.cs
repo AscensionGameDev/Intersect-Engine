@@ -11,13 +11,17 @@ using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Menu;
 using Intersect.Client.Localization;
 using Intersect.Config;
+using Intersect.Core;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 using static Intersect.Client.Framework.File_Management.GameContentManager;
 using MathHelper = Intersect.Client.Utilities.MathHelper;
 
+using static Intersect.Client.Framework.File_Management.GameContentManager;
+
 namespace Intersect.Client.Interface.Shared;
 
-public partial class SettingsWindow : ImagePanel
+public partial class SettingsWindow : WindowControl
 {
     // Parent Window.
     private readonly MainMenu? _mainMenu;
@@ -25,8 +29,8 @@ public partial class SettingsWindow : ImagePanel
 
     // Settings Window.
     private readonly Label _settingsHeader;
-    private readonly Button _settingsApplyBtn;
-    private readonly Button _settingsCancelBtn;
+    private readonly Button _applyPendingChangesButton;
+    private readonly Button _cancelPendingChangesButton;
 
     // Settings Containers.
     private readonly ScrollControl _gameSettingsContainer;
@@ -91,43 +95,74 @@ public partial class SettingsWindow : ImagePanel
     private Control _keybindingEditControl;
     private Controls? _keybindingEditControls;
     private Button? _keybindingEditBtn;
-    private readonly Button _keybindingRestoreBtn;
+    private readonly Button _restoreDefaultKeybindingsButton;
     private long _keybindingListeningTimer;
     private int _keyEdit = -1;
     private readonly Dictionary<Control, Button[]> mKeybindingBtns = [];
+
+    private ImagePanel _bottomBar;
+    private TabControl _tabs;
 
     // Open Settings.
     private bool _returnToMenu;
 
     // Initialize.
-    public SettingsWindow(Base parent, MainMenu? mainMenu, EscapeMenu? escapeMenu) : base(parent, nameof(SettingsWindow))
+    public SettingsWindow(Base parent, MainMenu? mainMenu, EscapeMenu? escapeMenu) : base(parent, Strings.Settings.Title, modal: false, nameof(SettingsWindow))
     {
-        // Assign References.
         _mainMenu = mainMenu;
         _escapeMenu = escapeMenu;
 
-        // Main Menu Window.
         Interface.InputBlockingElements.Add(this);
 
-        // Menu Header.
-        _settingsHeader = new Label(this, "SettingsHeader")
+        IconName = "SettingsWindow.icon.png";
+
+        MinimumSize = new Point(600, 400);
+        DisableResizing();
+        IsClosable = false;
+
+        Titlebar.MouseInputEnabled = false;
+
+        TitleLabel.FontSize = 14;
+        TitleLabel.TextColorOverride = Color.White;
+
+        var fontNormal = Current?.GetFont(TitleLabel.FontName, 12);
+
+        _bottomBar = new ImagePanel(this, "BottomBar")
         {
-            Text = Strings.Settings.Title
+            Dock = Pos.Bottom,
+            MinimumSize = new Point(0, 40),
+            Padding = new Padding(8, 4),
+        };
+
+        _tabs = new TabControl(this)
+        {
+            Dock = Pos.Fill,
+            Margin = Margin.Four,
         };
 
         // Apply Button.
-        _settingsApplyBtn = new Button(this, "SettingsApplyBtn")
+        _applyPendingChangesButton = new Button(_bottomBar, nameof(_applyPendingChangesButton))
         {
-            Text = Strings.Settings.Apply
+            Alignment = [Alignments.Center],
+            AutoSizeToContents = true,
+            Font = fontNormal,
+            MinimumSize = new Point(96, 24),
+            TextPadding = new Padding(16, 2),
+            Text = Strings.Settings.Apply,
         };
-        _settingsApplyBtn.Clicked += SettingsApplyBtn_Clicked;
+        _applyPendingChangesButton.Clicked += SettingsApplyBtn_Clicked;
 
         // Cancel Button.
-        _settingsCancelBtn = new Button(this, "SettingsCancelBtn")
+        _cancelPendingChangesButton = new Button(_bottomBar, nameof(_cancelPendingChangesButton))
         {
-            Text = Strings.Settings.Cancel
+            Alignment = [Alignments.Right, Alignments.CenterV],
+            AutoSizeToContents = true,
+            Font = fontNormal,
+            MinimumSize = new Point(96, 24),
+            TextPadding = new Padding(16, 2),
+            Text = Strings.Settings.Cancel,
         };
-        _settingsCancelBtn.Clicked += SettingsCancelBtn_Clicked;
+        _cancelPendingChangesButton.Clicked += CancelPendingChangesButton_Clicked;
 
         #region InitGameSettings
 
@@ -430,11 +465,16 @@ public partial class SettingsWindow : ImagePanel
         _keybindingSettingsContainer.EnableScroll(false, true);
 
         // Keybinding Settings - Restore Default Keys Button.
-        _keybindingRestoreBtn = new Button(this, "KeybindingsRestoreBtn")
+        _restoreDefaultKeybindingsButton = new Button(_bottomBar, nameof(_restoreDefaultKeybindingsButton))
         {
-            Text = Strings.Settings.Restore
+            Alignment = [Alignments.Left, Alignments.CenterV],
+            AutoSizeToContents = true,
+            Font = fontNormal,
+            MinimumSize = new Point(96, 24),
+            TextPadding = new Padding(16, 2),
+            Text = Strings.Settings.Restore,
         };
-        _keybindingRestoreBtn.Clicked += KeybindingsRestoreBtn_Clicked;
+        _restoreDefaultKeybindingsButton.Clicked += RestoreDefaultKeybindingsButton_Clicked;
 
         // Keybinding Settings - Controls
         var row = 0;
@@ -449,6 +489,11 @@ public partial class SettingsWindow : ImagePanel
         Input.MouseUp += OnKeyUp;
 
         #endregion
+
+        _tabs.AddPage(Strings.Settings.GameSettingsTab, _gameSettingsContainer);
+        _tabs.AddPage(Strings.Settings.VideoSettingsTab, _videoSettingsContainer);
+        _tabs.AddPage(Strings.Settings.AudioSettingsTab, _audioSettingsContainer);
+        _tabs.AddPage(Strings.Settings.KeyBindingSettingsTab, _keybindingSettingsContainer);
 
         LoadJsonUi(UI.Shared, Graphics.Renderer?.GetResolutionString());
         IsHidden = true;
@@ -587,7 +632,7 @@ public partial class SettingsWindow : ImagePanel
             _keybindingSettingsContainer.Hide();
 
             // Restore Default KeybindingSettings Button.
-            _keybindingRestoreBtn.Hide();
+            _restoreDefaultKeybindingsButton.Hide();
         }
     }
 
@@ -633,7 +678,7 @@ public partial class SettingsWindow : ImagePanel
             _keybindingSettingsContainer.Hide();
 
             // Restore Default KeybindingSettings Button.
-            _keybindingRestoreBtn.Hide();
+            _restoreDefaultKeybindingsButton.Hide();
         }
     }
 
@@ -655,7 +700,7 @@ public partial class SettingsWindow : ImagePanel
             _keybindingSettingsContainer.Hide();
 
             // Restore Default KeybindingSettings Button.
-            _keybindingRestoreBtn.Hide();
+            _restoreDefaultKeybindingsButton.Hide();
         }
     }
 
@@ -677,7 +722,7 @@ public partial class SettingsWindow : ImagePanel
             _keybindingSettingsContainer.Show();
 
             // Restore Default KeybindingSettings Button.
-            _keybindingRestoreBtn.Show();
+            _restoreDefaultKeybindingsButton.Show();
 
             bool controlsAdded = false;
 
@@ -706,8 +751,7 @@ public partial class SettingsWindow : ImagePanel
 
     private void LoadSettingsWindow()
     {
-        // Settings Window Title.
-        _settingsHeader.SetText(Strings.Settings.Title);
+        Title = Strings.Settings.Title;
 
         // Containers.
         _gameSettingsContainer.Show();
@@ -728,9 +772,9 @@ public partial class SettingsWindow : ImagePanel
         _keybindingSettingsTab.Enable();
 
         // Buttons.
-        _settingsApplyBtn.Show();
-        _settingsCancelBtn.Show();
-        _keybindingRestoreBtn.Hide();
+        _applyPendingChangesButton.Show();
+        _cancelPendingChangesButton.Show();
+        _restoreDefaultKeybindingsButton.Hide();
 
         UpdateWorldScaleControls();
     }
@@ -975,7 +1019,7 @@ public partial class SettingsWindow : ImagePanel
         }
     }
 
-    private void KeybindingsRestoreBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    private void RestoreDefaultKeybindingsButton_Clicked(Base sender, ClickedEventArgs arguments)
     {
         if (_keybindingEditControls is not {} controls)
         {
@@ -1099,7 +1143,7 @@ public partial class SettingsWindow : ImagePanel
         Hide();
     }
 
-    private void SettingsCancelBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    private void CancelPendingChangesButton_Clicked(Base sender, ClickedEventArgs arguments)
     {
         // Update previously saved values in order to discard changes.
         Globals.Database.MusicVolume = _previousMusicVolume;
