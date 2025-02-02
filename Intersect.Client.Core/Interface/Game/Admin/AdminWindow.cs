@@ -8,7 +8,10 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Core;
+using Intersect.Framework.Reflection;
 using Intersect.GameObjects.Maps.MapList;
+using Microsoft.Extensions.Logging;
 using static Intersect.Client.Framework.File_Management.GameContentManager;
 
 namespace Intersect.Client.Interface.Game.Admin;
@@ -291,6 +294,7 @@ public partial class AdminWindow : WindowControl
             ),
             MaximumSize = new Point(4096, 999999),
         };
+        _mapList.SelectionChanged += MapList_SelectionChanged;
 
         AddMapListToTree(MapList.List, null);
     }
@@ -309,8 +313,6 @@ public partial class AdminWindow : WindowControl
             {
                 tmpNode = _mapList.AddNode(MapList.OrderedMaps[i].Name);
                 tmpNode.UserData = MapList.OrderedMaps[i].MapId;
-                tmpNode.Clicked += tmpNode_Clicked;
-                tmpNode.DoubleClicked += tmpNode_Clicked;
             }
 
             return;
@@ -328,8 +330,6 @@ public partial class AdminWindow : WindowControl
                 case MapListMap map:
                     tmpNode = parent?.AddNode(item.Name) ?? _mapList.AddNode(item.Name);
                     tmpNode.UserData = map.MapId;
-                    tmpNode.Clicked += tmpNode_Clicked;
-                    tmpNode.DoubleClicked += tmpNode_Clicked;
                     break;
             }
         }
@@ -443,12 +443,56 @@ public partial class AdminWindow : WindowControl
         Align.Center(_facePanel);
     }
 
-    private void tmpNode_Clicked(Base sender, ClickedEventArgs arguments)
+    private void MapList_SelectionChanged(Base sender, EventArgs arguments)
     {
-        if (sender is TreeNode treeNode && treeNode.UserData is Guid mapId)
+        if (sender is not TreeNode treeNode)
         {
-            PacketSender.SendAdminAction(new WarpToMapAction(mapId));
+            ApplicationContext.Context.Value?.Logger.LogDebug(
+                "MapList selection triggered by a sender of type {SenderType} instead of a {TreeNodeType}",
+                sender?.GetType().GetName(qualified: true) ?? "null",
+                typeof(TreeNode).GetName(qualified: true)
+            );
+            return;
         }
+
+        if (!treeNode.IsSelected)
+        {
+            // We don't care about unselected nodes
+            return;
+        }
+
+        if (treeNode is not { UserData: Guid mapId } || mapId == default)
+        {
+            if (treeNode.UserData is MapListFolder folder)
+            {
+                ApplicationContext.Context.Value?.Logger.LogInformation(
+                    "Selected map list folder '{FolderName}' ({FolderId}) ({ChildrenCount} direct children)",
+                    folder.Name,
+                    folder.FolderId,
+                    folder.Children.Items.Count
+                );
+            }
+            else
+            {
+                ApplicationContext.Context.Value?.Logger.LogDebug(
+                    "Selected non-map map list node '{TreeNodeText}'",
+                    treeNode.Text
+                );
+            }
+            return;
+        }
+
+        if (Globals.Me?.MapId == mapId)
+        {
+            ApplicationContext.CurrentContext.Logger.LogInformation(
+                "Ignoring warp to map '{MapName}' ({MapId}) because the player is already on the map",
+                treeNode.Text,
+                mapId
+            );
+            return;
+        }
+
+        PacketSender.SendAdminAction(new WarpToMapAction(mapId));
     }
 
     #endregion
