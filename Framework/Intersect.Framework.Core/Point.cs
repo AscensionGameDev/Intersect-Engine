@@ -37,10 +37,7 @@ public partial struct Point
         return X.GetHashCode() ^ Y.GetHashCode();
     }
 
-    public static string ToString(Point pnt)
-    {
-        return pnt.X + "," + pnt.Y;
-    }
+    public override string ToString() => $"{X},{Y}";
 
     public static Point FromString(string val)
     {
@@ -59,7 +56,7 @@ public partial struct Point
         return new Point(parts[0], parts[1]);
     }
 
-    public static Point Empty => new Point();
+    public static Point Empty => new();
 
     public static bool operator !=(Point left, Point right)
     {
@@ -71,12 +68,12 @@ public partial struct Point
         return left.X == right.X && left.Y == right.Y;
     }
 
-    public static Point operator +(Point left, Point right) => new Point(left.X + right.X, left.Y + right.Y);
+    public static Point operator +(Point left, Point right) => new(left.X + right.X, left.Y + right.Y);
 
-    public static Point operator -(Point left, Point right) => new Point(left.X + right.X, left.Y + right.Y);
+    public static Point operator -(Point left, Point right) => new(left.X - right.X, left.Y - right.Y);
 
-    public static Point operator *(Point point, float scalar) => new Point((int)(point.X * scalar), (int)(point.Y * scalar));
+    public static Point operator *(Point point, float scalar) => new((int)(point.X * scalar), (int)(point.Y * scalar));
 
-    public static Point operator /(Point point, float scalar) => new Point((int)(point.X / scalar), (int)(point.Y / scalar));
+    public static Point operator /(Point point, float scalar) => new((int)(point.X / scalar), (int)(point.Y / scalar));
 
 }
