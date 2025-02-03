@@ -4,35 +4,68 @@ namespace Intersect.Client.Framework.Gwen.Control.Data;
 
 public partial class ValueTableCellDataProvider<TValue> : ITableCellDataProvider
 {
-    public ValueTableCellDataProvider(Func<TValue> provideValue, int delay = 100)
+    public ValueTableCellDataProvider(
+        Func<TValue> provideValue,
+        int delay = 100,
+        Func<Task<bool>>? waitPredicate = default
+    ) : this(
+        _ => provideValue(),
+        delay: delay,
+        waitPredicate: waitPredicate
+    )
     {
-        AsyncValueGenerator<TValue> CreateValueGenerator(CancellationToken cancellationToken)
-        {
-            return new AsyncValueGenerator<TValue>(
-                () => Task.Delay(delay).ContinueWith((_) => cancellationToken.IsCancellationRequested ? default : provideValue(), TaskScheduler.Current),
-                value => DataChanged?.Invoke(this, new CellDataChangedEventArgs(default, value)),
-                cancellationToken
-            );
-        }
+    }
 
+    public ValueTableCellDataProvider(
+        Func<CancellationToken, TValue> provideValue,
+        int delay = 100,
+        Func<Task<bool>>? waitPredicate = default
+    )
+    {
+        _delay = delay;
+        _providerValue = provideValue;
+        _waitPredicate = waitPredicate;
         Generator = new CancellableGenerator<TValue>(CreateValueGenerator);
     }
 
-    public ValueTableCellDataProvider(Func<CancellationToken, TValue> provideValue)
+    private AsyncValueGenerator<TValue> CreateValueGenerator(CancellationToken cancellationToken)
     {
-        AsyncValueGenerator<TValue> CreateValueGenerator(CancellationToken cancellationToken)
-        {
-            return new AsyncValueGenerator<TValue>(
-                () => Task.Delay(100).ContinueWith((_) => cancellationToken.IsCancellationRequested ? default : provideValue(cancellationToken), TaskScheduler.Current),
-                value => DataChanged?.Invoke(this, new CellDataChangedEventArgs(default, value)),
-                cancellationToken
-            );
-        }
-
-        Generator = new CancellableGenerator<TValue>(CreateValueGenerator);
+        return new AsyncValueGenerator<TValue>(
+            () => WaitAndProvideValue(cancellationToken),
+            value => DataChanged?.Invoke(this, new CellDataChangedEventArgs(default, value)),
+            cancellationToken
+        );
     }
 
-    public event TableCellDataChangedEventHandler DataChanged;
+    private async Task<TValue> WaitAndProvideValue(CancellationToken cancellationToken)
+    {
+        if (_waitPredicate != null)
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                await Task.Delay(_delay, cancellationToken);
+
+                if (await _waitPredicate())
+                {
+                    break;
+                }
+            }
+        }
+        else
+        {
+            await Task.Delay(_delay, cancellationToken);
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        return _providerValue(cancellationToken);
+    }
+
+    public event TableCellDataChangedEventHandler? DataChanged;
+
+    private readonly int _delay;
+    private readonly Func<CancellationToken, TValue> _providerValue;
+    private readonly Func<Task<bool>>? _waitPredicate;
 
     public CancellableGenerator<TValue> Generator { get; }
 }

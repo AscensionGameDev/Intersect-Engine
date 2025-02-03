@@ -1,6 +1,6 @@
 namespace Intersect.Async;
 
-public partial class CancellableGenerator<TValue> : IDisposable
+public partial class CancellableGenerator<TValue> : ICancellableGenerator<TValue>
 {
     private readonly CancellationTokenSource _cancellationTokenSource;
 
@@ -17,7 +17,7 @@ public partial class CancellableGenerator<TValue> : IDisposable
 
     public AsyncValueGenerator<TValue> Generator { get; }
 
-    public CancellableGenerator<TValue> Start()
+    public ICancellableGenerator<TValue> Start()
     {
         _ = Generator.Start();
         return this;

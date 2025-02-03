@@ -17,14 +17,14 @@ namespace Intersect.Client.Interface.Debugging;
 
 internal sealed partial class DebugWindow : Window
 {
-    private readonly List<IDisposable> _disposables;
+    private readonly List<ICancellableGenerator> _generators;
     private readonly GameFont? _defaultFont;
     private bool _wasParentDrawDebugOutlinesEnabled;
     private bool _drawDebugOutlinesEnabled;
 
     public DebugWindow(Base parent) : base(parent, Strings.Debug.Title, false, nameof(DebugWindow))
     {
-        _disposables = [];
+        _generators = [];
         DisableResizing();
         MinimumSize = new Point(320, 320);
 
@@ -144,6 +144,11 @@ internal sealed partial class DebugWindow : Window
     protected override void EnsureInitialized()
     {
         LoadJsonUi(UI.Debug, Graphics.Renderer?.GetResolutionString());
+
+        foreach (var generator in _generators)
+        {
+            generator.Start();
+        }
     }
 
     protected override void OnAttached(Base parent)
@@ -172,9 +177,9 @@ internal sealed partial class DebugWindow : Window
 
     public override void Dispose()
     {
-        foreach (var disposable in _disposables)
+        foreach (var generator in _generators)
         {
-            disposable?.Dispose();
+            generator.Dispose();
         }
 
         base.Dispose();
@@ -276,17 +281,17 @@ internal sealed partial class DebugWindow : Window
             Font = _defaultFont,
         };
 
-        var fpsProvider = new ValueTableCellDataProvider<int>(() => Graphics.Renderer?.GetFps() ?? 0);
+        var fpsProvider = new ValueTableCellDataProvider<int>(() => Graphics.Renderer?.GetFps() ?? 0, waitPredicate: () => Task.FromResult(IsVisible));
         table.AddRow(Strings.Debug.Fps).Listen(fpsProvider, 1);
-        _disposables.Add(fpsProvider.Generator.Start());
+        _generators.Add(fpsProvider.Generator);
 
-        var pingProvider = new ValueTableCellDataProvider<int>(() => Networking.Network.Ping);
+        var pingProvider = new ValueTableCellDataProvider<int>(() => Networking.Network.Ping, waitPredicate: () => Task.FromResult(IsVisible));
         table.AddRow(Strings.Debug.Ping).Listen(pingProvider, 1);
-        _disposables.Add(pingProvider.Generator.Start());
+        _generators.Add(pingProvider.Generator);
 
-        var drawCallsProvider = new ValueTableCellDataProvider<int>(() => Graphics.DrawCalls);
+        var drawCallsProvider = new ValueTableCellDataProvider<int>(() => Graphics.DrawCalls, waitPredicate: () => Task.FromResult(IsVisible));
         table.AddRow(Strings.Debug.Draws).Listen(drawCallsProvider, 1);
-        _disposables.Add(drawCallsProvider.Generator.Start());
+        _generators.Add(drawCallsProvider.Generator);
 
         var mapNameProvider = new ValueTableCellDataProvider<string>(() =>
         {
@@ -298,47 +303,47 @@ internal sealed partial class DebugWindow : Window
             }
 
             return MapInstance.Get(mapId)?.Name ?? Strings.Internals.NotApplicable;
-        });
+        }, waitPredicate: () => Task.FromResult(IsVisible));
         table.AddRow(Strings.Debug.Map).Listen(mapNameProvider, 1);
-        _disposables.Add(mapNameProvider.Generator.Start());
+        _generators.Add(mapNameProvider.Generator);
 
-        var coordinateXProvider = new ValueTableCellDataProvider<int>(() => Globals.Me?.X ?? -1);
+        var coordinateXProvider = new ValueTableCellDataProvider<int>(() => Globals.Me?.X ?? -1, waitPredicate: () => Task.FromResult(IsVisible));
         table.AddRow(Strings.Internals.CoordinateX).Listen(coordinateXProvider, 1);
-        _disposables.Add(coordinateXProvider.Generator.Start());
+        _generators.Add(coordinateXProvider.Generator);
 
-        var coordinateYProvider = new ValueTableCellDataProvider<int>(() => Globals.Me?.Y ?? -1);
+        var coordinateYProvider = new ValueTableCellDataProvider<int>(() => Globals.Me?.Y ?? -1, waitPredicate: () => Task.FromResult(IsVisible));
         table.AddRow(Strings.Internals.CoordinateY).Listen(coordinateYProvider, 1);
-        _disposables.Add(coordinateYProvider.Generator.Start());
+        _generators.Add(coordinateYProvider.Generator);
 
-        var coordinateZProvider = new ValueTableCellDataProvider<int>(() => Globals.Me?.Z ?? -1);
+        var coordinateZProvider = new ValueTableCellDataProvider<int>(() => Globals.Me?.Z ?? -1, waitPredicate: () => Task.FromResult(IsVisible));
         table.AddRow(Strings.Internals.CoordinateZ).Listen(coordinateZProvider, 1);
-        _disposables.Add(coordinateZProvider.Generator.Start());
+        _generators.Add(coordinateZProvider.Generator);
 
-        var knownEntitiesProvider = new ValueTableCellDataProvider<int>(() => Graphics.DrawCalls);
+        var knownEntitiesProvider = new ValueTableCellDataProvider<int>(() => Graphics.DrawCalls, waitPredicate: () => Task.FromResult(IsVisible));
         table.AddRow(Strings.Debug.KnownEntities).Listen(knownEntitiesProvider, 1);
-        _disposables.Add(knownEntitiesProvider.Generator.Start());
+        _generators.Add(knownEntitiesProvider.Generator);
 
-        var knownMapsProvider = new ValueTableCellDataProvider<int>(() => MapInstance.Lookup.Count);
+        var knownMapsProvider = new ValueTableCellDataProvider<int>(() => MapInstance.Lookup.Count, waitPredicate: () => Task.FromResult(IsVisible));
         table.AddRow(Strings.Debug.KnownMaps).Listen(knownMapsProvider, 1);
-        _disposables.Add(knownMapsProvider.Generator.Start());
+        _generators.Add(knownMapsProvider.Generator);
 
-        var mapsDrawnProvider = new ValueTableCellDataProvider<int>(() => Graphics.MapsDrawn);
+        var mapsDrawnProvider = new ValueTableCellDataProvider<int>(() => Graphics.MapsDrawn, waitPredicate: () => Task.FromResult(IsVisible));
         table.AddRow(Strings.Debug.MapsDrawn).Listen(mapsDrawnProvider, 1);
-        _disposables.Add(mapsDrawnProvider.Generator.Start());
+        _generators.Add(mapsDrawnProvider.Generator);
 
-        var entitiesDrawnProvider = new ValueTableCellDataProvider<int>(() => Graphics.EntitiesDrawn);
+        var entitiesDrawnProvider = new ValueTableCellDataProvider<int>(() => Graphics.EntitiesDrawn, waitPredicate: () => Task.FromResult(IsVisible));
         table.AddRow(Strings.Debug.EntitiesDrawn).Listen(entitiesDrawnProvider, 1);
-        _disposables.Add(entitiesDrawnProvider.Generator.Start());
+        _generators.Add(entitiesDrawnProvider.Generator);
 
-        var lightsDrawnProvider = new ValueTableCellDataProvider<int>(() => Graphics.LightsDrawn);
+        var lightsDrawnProvider = new ValueTableCellDataProvider<int>(() => Graphics.LightsDrawn, waitPredicate: () => Task.FromResult(IsVisible));
         table.AddRow(Strings.Debug.LightsDrawn).Listen(lightsDrawnProvider, 1);
-        _disposables.Add(lightsDrawnProvider.Generator.Start());
+        _generators.Add(lightsDrawnProvider.Generator);
 
-        var timeProvider = new ValueTableCellDataProvider<string>(Time.GetTime);
+        var timeProvider = new ValueTableCellDataProvider<string>(Time.GetTime, waitPredicate: () => Task.FromResult(IsVisible));
         table.AddRow(Strings.Debug.Time).Listen(timeProvider, 1);
-        _disposables.Add(timeProvider.Generator.Start());
+        _generators.Add(timeProvider.Generator);
 
-        var interfaceObjectsProvider = new ValueTableCellDataProvider<int>((cancellationToken) =>
+        var interfaceObjectsProvider = new ValueTableCellDataProvider<int>(cancellationToken =>
         {
             try
             {
@@ -355,28 +360,49 @@ internal sealed partial class DebugWindow : Window
             {
                 return 0;
             }
-        });
+        }, waitPredicate: () => Task.FromResult(IsVisible));
         table.AddRow(Strings.Debug.InterfaceObjects).Listen(interfaceObjectsProvider, 1);
-        _disposables.Add(interfaceObjectsProvider.Generator.Start());
+        _generators.Add(interfaceObjectsProvider.Generator);
 
-        _ = table.AddRow(Strings.Debug.ControlUnderCursor, 1);
+        _ = table.AddRow(Strings.Debug.ControlUnderCursor, 2);
 
-        var controlUnderCursorProvider = new ControlUnderCursorProvider();
+        var controlUnderCursorProvider = new ControlUnderCursorProvider(this);
+        // var controlUnderCursorProvider = new ValueTableCellDataProvider<Base>(
+        //     Interface.FindControlAtCursor,
+        //     waitPredicate: () => Task.FromResult(IsVisible)
+        // );
         table.AddRow(Strings.Internals.Type).Listen(controlUnderCursorProvider, 0);
         table.AddRow(Strings.Internals.Name).Listen(controlUnderCursorProvider, 1);
         table.AddRow(Strings.Internals.LocalItem.ToString(Strings.Internals.Bounds)).Listen(controlUnderCursorProvider, 2);
         table.AddRow(Strings.Internals.GlobalItem.ToString(Strings.Internals.Bounds)).Listen(controlUnderCursorProvider, 3);
         table.AddRow(Strings.Internals.Color).Listen(controlUnderCursorProvider, 4);
         table.AddRow(Strings.Internals.ColorOverride).Listen(controlUnderCursorProvider, 5);
-        _disposables.Add(controlUnderCursorProvider.Generator.Start());
+        table.AddRow(Strings.Internals.InnerBounds).Listen(controlUnderCursorProvider, 6);
+        table.AddRow(Strings.Internals.Margin).Listen(controlUnderCursorProvider, 7);
+        table.AddRow(Strings.Internals.Padding).Listen(controlUnderCursorProvider, 8);
+        // table.AddRow(Strings.Internals.ColorOverride).Listen(controlUnderCursorProvider, 9);
+        // table.AddRow(Strings.Internals.ColorOverride).Listen(controlUnderCursorProvider, 10);
+        _generators.Add(controlUnderCursorProvider.Generator);
+
+        var rows = table.Children.OfType<TableRow>().ToArray();
+        foreach (var row in rows)
+        {
+            if (row.GetCellContents(0) is Label label)
+            {
+                label.TextAlign = Pos.Right | Pos.CenterV;
+            }
+        }
 
         return table;
     }
 
     private partial class ControlUnderCursorProvider : ITableDataProvider
     {
-        public ControlUnderCursorProvider()
+        private readonly Base _owner;
+
+        public ControlUnderCursorProvider(Base owner)
         {
+            _owner = owner;
             Generator = new CancellableGenerator<Base>(CreateControlUnderCursorGenerator);
         }
 
@@ -386,21 +412,87 @@ internal sealed partial class DebugWindow : Window
 
         public void Start()
         {
-            _ = Generator.Start();
+            _ = Generator;
         }
 
-        private AsyncValueGenerator<Base> CreateControlUnderCursorGenerator(CancellationToken cancellationToken)
-        {
-            return new AsyncValueGenerator<Base>(() => Task.Delay(100).ContinueWith((completedTask) => Interface.FindControlAtCursor(), TaskScheduler.Current), (component) =>
-            {
-                DataChanged?.Invoke(this, new TableDataChangedEventArgs(0, 1, default, component?.GetType().Name ?? Strings.Internals.NotApplicable));
-                DataChanged?.Invoke(this, new TableDataChangedEventArgs(1, 1, default, component?.CanonicalName ?? string.Empty));
-                DataChanged?.Invoke(this, new TableDataChangedEventArgs(2, 1, default, component?.Bounds.ToString() ?? string.Empty));
-                DataChanged?.Invoke(this, new TableDataChangedEventArgs(3, 1, default, component?.BoundsGlobal.ToString() ?? string.Empty));
-                DataChanged?.Invoke(this, new TableDataChangedEventArgs(4, 1, default, (component as IColorableText)?.TextColor ?? string.Empty));
-                DataChanged?.Invoke(this, new TableDataChangedEventArgs(5, 1, default, (component as IColorableText)?.TextColorOverride ?? string.Empty));
+        private AsyncValueGenerator<Base> CreateControlUnderCursorGenerator(CancellationToken cancellationToken) => new(
+            () => WaitForOwnerVisible(cancellationToken).ContinueWith(CreateValue, TaskScheduler.Current),
+            HandleValue,
+            cancellationToken
+        );
 
-            }, cancellationToken);
+        private async Task WaitForOwnerVisible(CancellationToken cancellationToken)
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                await Task.Delay(100, cancellationToken);
+
+                if (_owner.IsVisible)
+                {
+                    return;
+                }
+
+                await Task.Yield();
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+        }
+
+        private static Base CreateValue(Task _) => Interface.FindControlAtCursor();
+
+        private void HandleValue(Base component)
+            {
+            DataChanged?.Invoke(
+                this,
+                new TableDataChangedEventArgs(
+                    0,
+                    1,
+                    default,
+                    component?.GetType().Name ?? Strings.Internals.NotApplicable
+                )
+            );
+            DataChanged?.Invoke(
+                this,
+                new TableDataChangedEventArgs(1, 1, default, component?.CanonicalName ?? string.Empty)
+            );
+            DataChanged?.Invoke(
+                this,
+                new TableDataChangedEventArgs(2, 1, default, component?.Bounds.ToString() ?? string.Empty)
+            );
+            DataChanged?.Invoke(
+                this,
+                new TableDataChangedEventArgs(3, 1, default, component?.BoundsGlobal.ToString() ?? string.Empty)
+            );
+            DataChanged?.Invoke(
+                this,
+                new TableDataChangedEventArgs(
+                    4,
+                    1,
+                    default,
+                    (component as IColorableText)?.TextColor ?? string.Empty
+                )
+            );
+            DataChanged?.Invoke(
+                this,
+                new TableDataChangedEventArgs(
+                    5,
+                    1,
+                    default,
+                    (component as IColorableText)?.TextColorOverride ?? string.Empty
+                )
+            );
+            DataChanged?.Invoke(
+                this,
+                new TableDataChangedEventArgs(6, 1, default, component?.InnerBounds.ToString() ?? string.Empty)
+            );
+            DataChanged?.Invoke(
+                this,
+                new TableDataChangedEventArgs(7, 1, default, component?.Margin.ToString() ?? string.Empty)
+            );
+            DataChanged?.Invoke(
+                this,
+                new TableDataChangedEventArgs(8, 1, default, component?.Padding.ToString() ?? string.Empty)
+            );
         }
     }
 }
