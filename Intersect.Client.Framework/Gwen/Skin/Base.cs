@@ -170,14 +170,14 @@ public partial class Base : IDisposable
     {
     }
 
-    public virtual void DrawSlider(Control.Base control, bool horizontal, double[] notches, int numNotches, int barSize)
+    public virtual void DrawSlider(Control.Base control, bool horizontal, double[]? notches, int numNotches, int barSize)
     {
     }
 
     public virtual void DrawSlider(
         Slider slider,
         Orientation orientation,
-        double[] notches,
+        double[]? notches,
         int numNotches,
         int barSize
     ) => DrawSlider(

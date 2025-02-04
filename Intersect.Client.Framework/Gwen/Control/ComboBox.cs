@@ -1,10 +1,12 @@
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
+using Intersect.Core;
+using Intersect.Framework.Reflection;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;
-
 
 /// <summary>
 ///     ComboBox control.
@@ -27,7 +29,7 @@ public partial class ComboBox : Button
     //Sound Effects
     private string mOpenMenuSound;
 
-    private MenuItem mSelectedItem;
+    private MenuItem? mSelectedItem;
 
     private string mSelectItemSound;
 
@@ -66,18 +68,39 @@ public partial class ComboBox : Button
     ///     Selected item.
     /// </summary>
     /// <remarks>Not just String property, because items also have internal names.</remarks>
-    public MenuItem SelectedItem
+    public MenuItem? SelectedItem
     {
         get => mSelectedItem;
         set
         {
-            if (value == null || value.Parent != mMenu)
+            if (value == mSelectedItem)
             {
                 return;
             }
 
-            mSelectedItem = value;
-            OnItemSelected(mSelectedItem, new ItemSelectedEventArgs(value, true, mSelectedItem.UserData));
+            if (value == null)
+            {
+                mSelectedItem = null;
+                // TODO: Event?
+                return;
+            }
+
+            if (value.Parent == mMenu)
+            {
+                mSelectedItem = value;
+                OnItemSelected(mSelectedItem, new ItemSelectedEventArgs(value, true, mSelectedItem.UserData));
+                return;
+            }
+
+            ApplicationContext.CurrentContext.Logger.LogWarning(
+                "Tried to set selected item of {ComponentTypeName} '{ComponentName}' to '{SelectionName}' ({SelectionType})",
+                GetType().GetName(qualified: true),
+                CanonicalName,
+                value.Name,
+                value.GetType().GetName(qualified: true)
+            );
+
+            mSelectedItem = null;
         }
     }
 
@@ -185,9 +208,9 @@ public partial class ComboBox : Button
     /// <param name="label">Item label (displayed).</param>
     /// <param name="name">Item name.</param>
     /// <returns>Newly created control.</returns>
-    public virtual MenuItem AddItem(string label, string name = "", object userData = null)
+    public virtual MenuItem AddItem(string label, string? name = default, object? userData = default)
     {
-        var item = mMenu.AddItem(label, null, "", "", this.Font);
+        var item = mMenu.AddItem(label, null, "", "", Font);
         item.Name = name;
         item.Selected += OnItemSelected;
         item.UserData = userData;
@@ -443,7 +466,7 @@ public partial class ComboBox : Button
     ///     If a menu item can not be found that matches input, nothing happens.
     /// </summary>
     /// <param name="label">The label to look for, this is what is shown to the user.</param>
-    public void SelectByText(string text)
+    public bool SelectByText(string text)
     {
         foreach (MenuItem item in mMenu.Children)
         {
@@ -451,9 +474,11 @@ public partial class ComboBox : Button
             {
                 SelectedItem = item;
 
-                return;
+                return true;
             }
         }
+
+        return false;
     }
 
     /// <summary>
@@ -461,7 +486,7 @@ public partial class ComboBox : Button
     ///     If a menu item can not be found that matches input, nothing happens.
     /// </summary>
     /// <param name="name">The internal name to look for. To select by what is displayed to the user, use "SelectByText".</param>
-    public void SelectByName(string name)
+    public bool SelectByName(string name)
     {
         foreach (MenuItem item in mMenu.Children)
         {
@@ -469,9 +494,11 @@ public partial class ComboBox : Button
             {
                 SelectedItem = item;
 
-                return;
+                return true;
             }
         }
+
+        return false;
     }
 
     /// <summary>

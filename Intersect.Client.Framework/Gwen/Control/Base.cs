@@ -2170,7 +2170,7 @@ public partial class Base : IDisposable
 
         if (mBounds.Width != oldBounds.Width || mBounds.Height != oldBounds.Height)
         {
-            Invalidate(alsoInvalidateParent: true);
+            Invalidate();
         }
 
         Redraw();
@@ -2886,11 +2886,15 @@ public partial class Base : IDisposable
 
             if (childDock.HasFlag(Pos.Right))
             {
+                var height = childFitsContents
+                    ? child.Height
+                    : availableHeight;
+
                 child.SetBounds(
                     remainingBounds.X + remainingBounds.Width - child.Width - childMargin.Right,
                     remainingBounds.Y + childMargin.Top,
                     child.Width,
-                    availableHeight
+                    height
                 );
 
                 remainingBounds.Width -= childOuterWidth;
@@ -2898,10 +2902,14 @@ public partial class Base : IDisposable
 
             if (childDock.HasFlag(Pos.Top) && !childDock.HasFlag(Pos.Left) && !childDock.HasFlag(Pos.Right))
             {
+                var width = childFitsContents
+                    ? child.Width
+                    : availableWidth;
+
                 child.SetBounds(
                     remainingBounds.X + childMargin.Left,
                     remainingBounds.Y + childMargin.Top,
-                    availableWidth,
+                    width,
                     child.Height
                 );
 
@@ -2911,10 +2919,14 @@ public partial class Base : IDisposable
 
             if (childDock.HasFlag(Pos.Bottom) && !childDock.HasFlag(Pos.Left) && !childDock.HasFlag(Pos.Right))
             {
+                var width = childFitsContents
+                    ? child.Width
+                    : availableWidth;
+
                 child.SetBounds(
                     remainingBounds.Left + childMargin.Left,
                     remainingBounds.Bottom - (child.Height + childMargin.Bottom),
-                    availableWidth,
+                    width,
                     child.Height
                 );
 
@@ -3298,9 +3310,14 @@ public partial class Base : IDisposable
     /// </summary>
     /// <param name="accelerator">Accelerator text.</param>
     /// <param name="handler">Handler.</param>
-    public void AddAccelerator(string accelerator, GwenEventHandler<EventArgs> handler)
+    public void AddAccelerator(string? accelerator, GwenEventHandler<EventArgs> handler)
     {
-        accelerator = accelerator.Trim().ToUpperInvariant();
+        accelerator = accelerator?.Trim().ToUpperInvariant();
+        if (string.IsNullOrWhiteSpace(accelerator))
+        {
+            return;
+        }
+
         mAccelerators[accelerator] = handler;
     }
 

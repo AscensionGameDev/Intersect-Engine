@@ -1944,6 +1944,12 @@ public static partial class Strings
         public static LocalizedString EnableLighting = @"Enable Light Effects";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString FormatResolution = @"{00}x{01}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString FormatZoom = @"{00}x";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Fps120 = @"120";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1983,7 +1989,7 @@ public static partial class Strings
         public static LocalizedString VolumeSoundEffects = @"Sound Effects";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Resolution = @"Resolution:";
+        public static LocalizedString Resolution = @"Resolution";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString ResolutionCustom = @"Custom Resolution";
@@ -2046,7 +2052,7 @@ public static partial class Strings
         public static LocalizedString StickyTarget = @"Sticky Target";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString TargetFps = @"Target FPS:";
+        public static LocalizedString FPS = @"FPS";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString TargetingSettings = @"Targeting";

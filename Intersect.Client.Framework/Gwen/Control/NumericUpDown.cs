@@ -11,15 +11,9 @@ namespace Intersect.Client.Framework.Gwen.Control;
 public partial class NumericUpDown : TextBoxNumeric
 {
 
-    private readonly UpDownButtonDown mDown;
-
-    private readonly Splitter mSplitter;
-
-    private readonly UpDownButtonUp mUp;
-
-    private int mMax;
-
-    private int mMin;
+    private readonly UpDownButtonDown _downButton;
+    private readonly UpDownButtonUp _upButton;
+    private readonly Splitter _splitter;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="NumericUpDown" /> class.
@@ -29,76 +23,25 @@ public partial class NumericUpDown : TextBoxNumeric
     {
         SetSize(100, 20);
 
-        mSplitter = new Splitter(this);
-        mSplitter.Dock = Pos.Right;
-        mSplitter.SetSize(13, 13);
+        _splitter = new Splitter(this);
+        _splitter.Dock = Pos.Right;
+        _splitter.SetSize(13, 13);
 
-        mUp = new UpDownButtonUp(mSplitter);
-        mUp.Clicked += OnButtonUp;
-        mUp.IsTabable = false;
-        mSplitter.SetPanel(0, mUp, false);
+        _upButton = new UpDownButtonUp(_splitter);
+        _upButton.Clicked += UpButtonOnClicked;
+        _upButton.IsTabable = false;
+        _splitter.SetPanel(0, _upButton, false);
 
-        mDown = new UpDownButtonDown(mSplitter);
-        mDown.Clicked += OnButtonDown;
-        mDown.IsTabable = false;
-        mDown.Padding = new Padding(0, 1, 1, 0);
-        mSplitter.SetPanel(1, mDown, false);
+        _downButton = new UpDownButtonDown(_splitter);
+        _downButton.Clicked += DownButtonOnClicked;
+        _downButton.IsTabable = false;
+        _downButton.Padding = new Padding(0, 1, 1, 0);
+        _splitter.SetPanel(1, _downButton, false);
 
-        mMax = 100;
-        mMin = 0;
-        _value = 0f;
-        Text = "0";
+        SetRange(0, 100, skipEvents: true);
     }
 
-    /// <summary>
-    ///     Minimum value.
-    /// </summary>
-    public int Min
-    {
-        get => mMin;
-        set => mMin = value;
-    }
-
-    /// <summary>
-    ///     Maximum value.
-    /// </summary>
-    public int Max
-    {
-        get => mMax;
-        set => mMax = value;
-    }
-
-    /// <summary>
-    ///     Numeric value of the control.
-    /// </summary>
-    public override double Value
-    {
-        get => base.Value;
-        set
-        {
-            if (value < mMin)
-            {
-                value = mMin;
-            }
-
-            if (value > mMax)
-            {
-                value = mMax;
-            }
-
-            if (value == _value)
-            {
-                return;
-            }
-
-            base.Value = value;
-        }
-    }
-
-    /// <summary>
-    ///     Invoked when the value has been changed.
-    /// </summary>
-    public event GwenEventHandler<EventArgs> ValueChanged;
+    public double Step { get; set; }
 
     /// <summary>
     ///     Handler for Up Arrow keyboard event.
@@ -111,7 +54,7 @@ public partial class NumericUpDown : TextBoxNumeric
     {
         if (down)
         {
-            OnButtonUp(null, EventArgs.Empty);
+            UpButtonOnClicked(null, EventArgs.Empty);
         }
 
         return true;
@@ -128,7 +71,7 @@ public partial class NumericUpDown : TextBoxNumeric
     {
         if (down)
         {
-            OnButtonDown(null, new ClickedEventArgs(0, 0, true));
+            DownButtonOnClicked(null, new ClickedEventArgs(0, 0, true));
         }
 
         return true;
@@ -138,56 +81,17 @@ public partial class NumericUpDown : TextBoxNumeric
     ///     Handler for the button up event.
     /// </summary>
     /// <param name="control">Event source.</param>
-    protected virtual void OnButtonUp(Base control, EventArgs args)
+    protected virtual void UpButtonOnClicked(Base control, EventArgs args)
     {
-        Value = _value + 1;
+        Value += Step;
     }
 
     /// <summary>
     ///     Handler for the button down event.
     /// </summary>
     /// <param name="control">Event source.</param>
-    protected virtual void OnButtonDown(Base control, ClickedEventArgs args)
+    protected virtual void DownButtonOnClicked(Base control, ClickedEventArgs args)
     {
-        Value = _value - 1;
+        Value -= Step;
     }
-
-    /// <summary>
-    ///     Determines whether the text can be assighed to the control.
-    /// </summary>
-    /// <param name="str">Text to evaluate.</param>
-    /// <returns>True if the text is allowed.</returns>
-    protected override bool IsTextAllowed(string str)
-    {
-        float d;
-        if (!float.TryParse(str, out d))
-        {
-            return false;
-        }
-
-        if (d < mMin)
-        {
-            return false;
-        }
-
-        if (d > mMax)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    /// <summary>
-    ///     Handler for the text changed event.
-    /// </summary>
-    protected override void OnTextChanged()
-    {
-        base.OnTextChanged();
-        if (ValueChanged != null)
-        {
-            ValueChanged.Invoke(this, EventArgs.Empty);
-        }
-    }
-
 }

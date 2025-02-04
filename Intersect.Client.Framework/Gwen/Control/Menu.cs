@@ -146,15 +146,17 @@ public partial class Menu : ScrollControl
     ///     Adds a new menu item.
     /// </summary>
     /// <param name="text">Item text.</param>
-    /// <param name="iconName">Icon texture.</param>
+    /// <param name="iconTexture"></param>
+    /// <param name="textureFilename"></param>
     /// <param name="accelerator">Accelerator for this item.</param>
+    /// <param name="font"></param>
     /// <returns>Newly created control.</returns>
     public virtual MenuItem AddItem(
         string text,
-        GameTexture iconTexture,
-        string textureFilename = "",
-        string accelerator = "",
-        GameFont font = null
+        GameTexture? iconTexture,
+        string? textureFilename = default,
+        string? accelerator = default,
+        GameFont? font = default
     )
     {
         var newMenuItem = new MenuItem(this)

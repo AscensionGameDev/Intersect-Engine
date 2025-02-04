@@ -376,6 +376,11 @@ render->RenderText( skin->GetDefaultFont(), Gwen::Point( 0, 0 ), Utility::Format
         );
     }
 
+    public override void Invalidate()
+    {
+        base.Invalidate();
+    }
+
     public virtual void ScrollToBottom()
     {
         if (!CanScrollV)

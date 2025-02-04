@@ -8,13 +8,15 @@ using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
-public partial class LabeledSlider : Base
+public partial class LabeledSlider : Base, IAutoSizeToContents
 {
     private readonly Label _label;
     private readonly Slider _slider;
     private readonly TextBoxNumeric _sliderValue;
     private double _scale = 1.0;
     private int _rounding = -1;
+    private bool _autoSizeToContents;
+    private bool _recomputeValueMinimumSize = true;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="LabeledSlider" /> class.
@@ -34,7 +36,6 @@ public partial class LabeledSlider : Base
         {
             Alignment = [Alignments.CenterV],
             AutoSizeToContents = true,
-            MinimumSize = ComputeMinimumSizeForSliderValue(100),
         };
 
         _slider.ValueChanged += (sender, arguments) =>
@@ -62,7 +63,12 @@ public partial class LabeledSlider : Base
             }
 
             var newValue = _sliderValue.Value / _scale;
-            _slider.Value = newValue;
+            var clampedValue = Math.Clamp(newValue, Min, Max);
+            if (!clampedValue.Equals(newValue))
+            {
+                _sliderValue.Value = clampedValue;
+            }
+            _slider.Value = clampedValue;
             ValueChanged?.Invoke(
                 sender,
                 new ValueChangedEventArgs<double>
@@ -72,6 +78,7 @@ public partial class LabeledSlider : Base
             );
         };
 
+        _autoSizeToContents = true;
         KeyboardInputEnabled = true;
         IsTabable = true;
     }
@@ -172,7 +179,11 @@ public partial class LabeledSlider : Base
     public double Min
     {
         get => _slider.Min;
-        set => _slider.Min = value;
+        set
+        {
+            _slider.Min = value;
+            _sliderValue.Minimum = value;
+        }
     }
 
     /// <summary>
@@ -184,15 +195,23 @@ public partial class LabeledSlider : Base
         set
         {
             _slider.Max = value;
+            _sliderValue.Maximum = value;
             _sliderValue.MinimumSize = ComputeMinimumSizeForSliderValue(value);
         }
     }
 
     private Point ComputeMinimumSizeForSliderValue(double? value = null)
     {
-        return Skin.Renderer.MeasureText(_sliderValue?.Font, (value ?? Max).ToString(CultureInfo.CurrentUICulture)) +
-               (_sliderValue?.Padding ?? Padding.Zero) +
-               (_sliderValue?.TextPadding ?? Padding.Zero);
+        var valueString = (value ?? Max).ToString(CultureInfo.CurrentUICulture);
+        var valueFormatString = ValueFormatString;
+        if (!string.IsNullOrWhiteSpace(valueFormatString))
+        {
+            valueString = string.Format(valueFormatString, valueString);
+        }
+
+        return Skin.Renderer.MeasureText(_sliderValue.Font, valueString) +
+               _sliderValue.Padding +
+               _sliderValue.TextPadding;
     }
 
     public double Scale
@@ -251,6 +270,12 @@ public partial class LabeledSlider : Base
         _slider.SetSound(sound, state);
     }
 
+    public string? ValueFormatString
+    {
+        get => _sliderValue.FormatString;
+        set => _sliderValue.FormatString = value;
+    }
+
     /// <summary>
     ///     Invoked when the value has been changed.
     /// </summary>
@@ -258,7 +283,15 @@ public partial class LabeledSlider : Base
 
     protected override void Layout(Skin.Base skin)
     {
-        SizeToChildren();
+        if (_recomputeValueMinimumSize)
+        {
+            _sliderValue.MinimumSize = ComputeMinimumSizeForSliderValue(Max);
+        }
+
+        if (_autoSizeToContents)
+        {
+            SizeToChildren();
+        }
 
         var orientation = _slider.Orientation;
         switch (orientation)
@@ -318,5 +351,13 @@ public partial class LabeledSlider : Base
     protected override void OnBoundsChanged(Rectangle oldBounds)
     {
         base.OnBoundsChanged(oldBounds);
+    }
+
+    public void SetRange(double min, double max) => (Min, Max) = (min, max);
+
+    public bool AutoSizeToContents
+    {
+        get => _autoSizeToContents;
+        set => SetAndDoIfChanged(ref _autoSizeToContents, value, Invalidate);
     }
 }

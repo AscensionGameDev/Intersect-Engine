@@ -42,32 +42,24 @@ public partial class Button : Label
 
     private bool mCenterImage;
 
-    private GameTexture mClickedImage;
-
-    private string mClickedImageFilename;
-
-    protected string mClickSound;
+    private string mClickSound;
 
     private bool mDepressed;
 
-    private GameTexture mDisabledImage;
-
-    private string mDisabledImageFilename;
-
-    private GameTexture mHoverImage;
-
-    private string mHoverImageFilename;
-
     //Sound Effects
-    protected string mHoverSound;
+    private string? mHoverSound;
+    private string? mMouseDownSound;
+    private string? mMouseUpSound;
 
-    protected string mMouseDownSound;
+    private GameTexture? mNormalImage;
+    private GameTexture? mHoverImage;
+    private GameTexture? mDisabledImage;
+    private GameTexture? mClickedImage;
 
-    protected string mMouseUpSound;
-
-    private GameTexture mNormalImage;
-
-    private string mNormalImageFilename;
+    private string? mNormalImageFilename;
+    private string? mHoverImageFilename;
+    private string? mDisabledImageFilename;
+    private string? mClickedImageFilename;
 
     private bool mToggle;
 
@@ -491,7 +483,7 @@ public partial class Button : Label
     ///     Sets the button's image.
     /// </summary>
     /// <param name="textureName">Texture name. Null to remove.</param>
-    public void SetImage(GameTexture texture, string fileName, ControlState state)
+    public void SetImage(GameTexture? texture, string? fileName, ControlState state)
     {
         if (texture == null && !string.IsNullOrWhiteSpace(fileName))
         {

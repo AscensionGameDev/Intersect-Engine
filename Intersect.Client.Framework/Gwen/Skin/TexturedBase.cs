@@ -1646,7 +1646,7 @@ public partial class TexturedBase : Skin.Base
         Orientation orientation
     )
     {
-        if (numNotches == 0)
+        if (numNotches == 0 && notches is not { Length: > 0 })
         {
             return;
         }
@@ -1771,7 +1771,7 @@ public partial class TexturedBase : Skin.Base
         }
     }
 
-    public override void DrawSlider(Control.Base control, bool horizontal, double[] notches, int numNotches, int barSize)
+    public override void DrawSlider(Control.Base control, bool horizontal, double[]? notches, int numNotches, int barSize)
     {
         if (control is not Slider slider)
         {
@@ -1834,7 +1834,7 @@ public partial class TexturedBase : Skin.Base
         }
     }
 
-    public override void DrawSlider(Slider slider, Orientation orientation, double[] notches, int numNotches, int barSize)
+    public override void DrawSlider(Slider slider, Orientation orientation, double[]? notches, int numNotches, int barSize)
     {
         var bounds = slider.RenderBounds;
         var renderColor = slider.RenderColor;
