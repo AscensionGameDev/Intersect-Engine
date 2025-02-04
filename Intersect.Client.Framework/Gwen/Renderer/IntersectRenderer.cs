@@ -182,11 +182,12 @@ public partial class IntersectRenderer : Base, ICacheToTexture
             return;
         }
 
+        var translatedTarget = Translate(targetRect);
         var rect = new FloatRect(
-            Translate(targetRect).X,
-            Translate(targetRect).Y,
-            Translate(targetRect).Width,
-            Translate(targetRect).Height
+            translatedTarget.X,
+            translatedTarget.Y,
+            translatedTarget.Width,
+            translatedTarget.Height
         );
 
         u1 *= tex.Width;

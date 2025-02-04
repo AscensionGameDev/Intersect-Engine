@@ -99,6 +99,12 @@ public partial class Label : Base, ILabel
         }
     }
 
+    public bool IsTextDisabled
+    {
+        get => _textElement.IsHidden;
+        set => _textElement.IsHidden = value;
+    }
+
     /// <summary>
     ///     Text alignment.
     /// </summary>

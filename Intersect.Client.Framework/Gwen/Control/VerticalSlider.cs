@@ -13,17 +13,17 @@ public partial class VerticalSlider : Slider
     /// <param name="parent">Parent control.</param>
     public VerticalSlider(Base parent) : base(parent)
     {
-        mSliderBar.IsHorizontal = false;
+        _sliderBar.IsHorizontal = false;
     }
 
     protected override float CalculateValue()
     {
-        return 1 - mSliderBar.Y / (float) (Height - mSliderBar.Height);
+        return 1 - _sliderBar.Y / (float) (Height - _sliderBar.Height);
     }
 
     protected override void UpdateBarFromValue()
     {
-        mSliderBar.MoveTo(mSliderBar.X, (int) ((Height - mSliderBar.Height) * (1 - mValue)));
+        _sliderBar.MoveTo(_sliderBar.X, (int) ((Height - _sliderBar.Height) * (1 - _value)));
     }
 
     /// <summary>
@@ -35,9 +35,9 @@ public partial class VerticalSlider : Slider
     protected override void OnMouseClickedLeft(int x, int y, bool down, bool automated = false)
     {
         base.OnMouseClickedLeft(x, y, down);
-        mSliderBar.MoveTo(mSliderBar.X, (int) (CanvasPosToLocal(new Point(x, y)).Y - mSliderBar.Height * 0.5));
-        mSliderBar.InputMouseClickedLeft(x, y, down);
-        OnMoved(mSliderBar, EventArgs.Empty);
+        _sliderBar.MoveTo(_sliderBar.X, (int) (CanvasPosToLocal(new Point(x, y)).Y - _sliderBar.Height * 0.5));
+        _sliderBar.InputMouseClickedLeft(x, y, down);
+        SliderBarOnDragged(_sliderBar, EventArgs.Empty);
     }
 
     /// <summary>
@@ -46,7 +46,7 @@ public partial class VerticalSlider : Slider
     /// <param name="skin">Skin to use.</param>
     protected override void Layout(Skin.Base skin)
     {
-        mSliderBar.SetSize(Width, 15);
+        _sliderBar.SetSize(Width, 15);
         UpdateBarFromValue();
     }
 
@@ -56,7 +56,7 @@ public partial class VerticalSlider : Slider
     /// <param name="skin">Skin to use.</param>
     protected override void Render(Skin.Base skin)
     {
-        skin.DrawSlider(this, false, Notches, mSnapToNotches ? mNotchCount : 0, mSliderBar.Height);
+        skin.DrawSlider(this, false, Notches, _snapToNotches ? _notchCount : 0, _sliderBar.Height);
     }
 
 }

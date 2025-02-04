@@ -826,6 +826,10 @@ public partial class Base : IDisposable
         set => SetSize(Width, value);
     }
 
+    public int OuterWidth => Width + Margin.Left + Margin.Right;
+
+    public int OuterHeight => Height + Margin.Top + Margin.Bottom;
+
     public Point Size
     {
         get => mBounds.Size;
@@ -1545,8 +1549,15 @@ public partial class Base : IDisposable
     /// </remarks>
     public virtual void Invalidate()
     {
-        mNeedsLayout = true;
-        mCacheTextureDirty = true;
+        if (!mNeedsLayout)
+        {
+            mNeedsLayout = true;
+        }
+
+        if (!mCacheTextureDirty)
+        {
+            mCacheTextureDirty = true;
+        }
     }
 
     public virtual void MoveBefore(Base other)
@@ -1920,47 +1931,59 @@ public partial class Base : IDisposable
     public virtual void MoveTo(float x, float y) => MoveTo((int) x, (int) y);
 
     /// <summary>
-    ///     Moves the control to a specific point, clamping on paren't bounds if RestrictToParent is set.
+    ///     Moves the control to a specific point, clamping on parent bounds if RestrictToParent is set.
     /// </summary>
     /// <param name="x">Target x coordinate.</param>
     /// <param name="y">Target y coordinate.</param>
+    /// <param name="aligning"></param>
     public virtual void MoveTo(int x, int y, bool aligning = false)
     {
-        if (RestrictToParent && Parent != null)
+        var ownWidth = Width;
+        var ownHeight = Height;
+        var ownMargin = Margin;
+
+        if (RestrictToParent && Parent is {} parent)
         {
-            var parent = Parent;
-            if (x - Padding.Left - (aligning ? mAlignmentDistance.Left : 0) < parent.Margin.Left)
+            var ownPadding = Parent.Padding;
+
+            var alignmentDistanceLeft = aligning ? mAlignmentDistance.Left : 0;
+            var alignmentDistanceTop = aligning ? mAlignmentDistance.Top : 0;
+            var alignmentDistanceRight = aligning ? mAlignmentDistance.Right : 0;
+            var alignmentDistanceBottom = aligning ? mAlignmentDistance.Bottom : 0;
+            var parentWidth = parent.Width;
+            var parentHeight = parent.Height;
+
+            var xFromLeft = ownMargin.Left + ownPadding.Left + alignmentDistanceLeft;
+            var xFromRight = parentWidth - ownMargin.Right - ownWidth - ownPadding.Right - alignmentDistanceRight;
+
+            if (xFromLeft > xFromRight)
             {
-                x = parent.Margin.Left + Padding.Left + (aligning ? mAlignmentDistance.Left : 0);
+                x = (int)((xFromLeft + xFromRight) / 2f);
+            }
+            else
+            {
+                x = Math.Clamp(x, xFromLeft, xFromRight);
             }
 
-            if (y - Padding.Top - (aligning ? mAlignmentDistance.Top : 0) < parent.Margin.Top)
-            {
-                y = parent.Margin.Top + Padding.Top + (aligning ? mAlignmentDistance.Top : 0);
-            }
+            var yFromTop = ownMargin.Top + ownPadding.Top + alignmentDistanceTop;
+            var yFromBottom = parentHeight - ownMargin.Bottom - ownHeight - ownPadding.Bottom - alignmentDistanceBottom;
 
-            if (x + Width + Padding.Right + (aligning ? mAlignmentDistance.Right : 0) >
-                parent.Width - parent.Margin.Right)
+            if (yFromTop > yFromBottom)
             {
-                x = parent.Width -
-                    parent.Margin.Right -
-                    Width -
-                    Padding.Right -
-                    (aligning ? mAlignmentDistance.Right : 0);
+                y = (int)((yFromTop + yFromBottom) / 2f);
             }
-
-            if (y + Height + Padding.Bottom + (aligning ? mAlignmentDistance.Bottom : 0) >
-                parent.Height - parent.Margin.Bottom)
+            else
             {
-                y = parent.Height -
-                    parent.Margin.Bottom -
-                    Height -
-                    Padding.Bottom -
-                    (aligning ? mAlignmentDistance.Bottom : 0);
+                y = Math.Clamp(y, yFromTop, yFromBottom);
             }
         }
+        else
+        {
+            x = Math.Max(x, ownMargin.Left);
+            y = Math.Max(y, ownMargin.Top);
+        }
 
-        SetBounds(x, y, Width, Height);
+        SetBounds(x, y, ownWidth, ownHeight);
     }
 
     /// <summary>
@@ -2041,6 +2064,9 @@ public partial class Base : IDisposable
     /// </returns>
     public virtual bool SetBounds(int x, int y, int width, int height)
     {
+        width = Math.Max(0, width);
+        height = Math.Max(0, height);
+
         if (mBounds.X == x && mBounds.Y == y && mBounds.Width == width && mBounds.Height == height)
         {
             return false;
@@ -2048,14 +2074,24 @@ public partial class Base : IDisposable
 
         var oldBounds = Bounds;
 
-        mBounds.X = x;
-        mBounds.Y = y;
+        var newBounds = mBounds with
+        {
+            X = x,
+            Y = y,
+        };
 
         var maximumSize = MaximumSize;
-        mBounds.Width = maximumSize.X > 0 ? Math.Min(MaximumSize.X, width) : width;
-        mBounds.Height = maximumSize.Y > 0 ? Math.Min(MaximumSize.Y, height) : height;
+        newBounds.Width = maximumSize.X > 0 ? Math.Min(MaximumSize.X, width) : width;
+        newBounds.Height = maximumSize.Y > 0 ? Math.Min(MaximumSize.Y, height) : height;
 
-        if (oldBounds.Size != mBounds.Size)
+        if (newBounds.Width > 10000 || newBounds.Height > 10000)
+        {
+            newBounds.ToString();
+        }
+
+        mBounds = newBounds;
+
+        if (oldBounds.Size != newBounds.Size)
         {
             ProcessAlignments();
         }
@@ -2774,13 +2810,13 @@ public partial class Base : IDisposable
             Layout(skin);
         }
 
-        var ownBounds = RenderBounds;
+        var remainingBounds = RenderBounds;
 
         // Adjust bounds for padding
-        ownBounds.X += mPadding.Left;
-        ownBounds.Width -= mPadding.Left + mPadding.Right;
-        ownBounds.Y += mPadding.Top;
-        ownBounds.Height -= mPadding.Top + mPadding.Bottom;
+        remainingBounds.X += mPadding.Left;
+        remainingBounds.Width -= mPadding.Left + mPadding.Right;
+        remainingBounds.Y += mPadding.Top;
+        remainingBounds.Height -= mPadding.Top + mPadding.Bottom;
 
         foreach (var child in mChildren)
         {
@@ -2803,65 +2839,83 @@ public partial class Base : IDisposable
             var childOuterWidth = childMarginH + child.Width;
             var childOuterHeight = childMarginV + child.Height;
 
-            if (childDock.HasFlag(Pos.Top))
-            {
-                child.SetBounds(
-                    ownBounds.X + childMargin.Left,
-                    ownBounds.Y + childMargin.Top,
-                    ownBounds.Width - childMarginH,
-                    child.Height
-                );
+            var availableWidth = remainingBounds.Width - childMarginH;
+            var availableHeight = remainingBounds.Height - childMarginV;
 
-                ownBounds.Y += childOuterHeight;
-                ownBounds.Height -= childOuterHeight;
-            }
+            var childFitsContents = child is IAutoSizeToContents { AutoSizeToContents: true };
 
             if (childDock.HasFlag(Pos.Left))
             {
+                var height = childFitsContents
+                    ? child.Height
+                    : availableHeight;
+
+                var y = remainingBounds.Y + childMargin.Top;
+                if (childDock.HasFlag(Pos.Bottom))
+                {
+                    y = remainingBounds.Bottom - (childMargin.Bottom + child.Height);
+                }
+                else if (!childDock.HasFlag(Pos.Top))
+                {
+                    var extraY = Math.Max(0, availableHeight - height) / 2;
+                    if (extraY != 0)
+                    {
+                        y += extraY;
+                    }
+                }
+
                 child.SetBounds(
-                    ownBounds.X + childMargin.Left,
-                    ownBounds.Y + childMargin.Top,
+                    remainingBounds.X + childMargin.Left,
+                    y,
                     child.Width,
-                    ownBounds.Height - childMarginV
+                    height
                 );
 
-                ownBounds.X += childOuterWidth;
-                ownBounds.Width -= childOuterWidth;
+                remainingBounds.X += childOuterWidth;
+                remainingBounds.Width -= childOuterWidth;
             }
 
             if (childDock.HasFlag(Pos.Right))
             {
                 child.SetBounds(
-                    ownBounds.X + ownBounds.Width - child.Width - childMargin.Right,
-                    ownBounds.Y + childMargin.Top,
+                    remainingBounds.X + remainingBounds.Width - child.Width - childMargin.Right,
+                    remainingBounds.Y + childMargin.Top,
                     child.Width,
-                    ownBounds.Height - childMarginV
+                    availableHeight
                 );
 
-                ownBounds.Width -= childOuterWidth;
+                remainingBounds.Width -= childOuterWidth;
             }
 
-            if (childDock.HasFlag(Pos.Bottom))
+            if (childDock.HasFlag(Pos.Top) && !childDock.HasFlag(Pos.Left) && !childDock.HasFlag(Pos.Right))
             {
-                if (child.Name?.StartsWith("BottomBar") ?? false)
-                {
-                    child.Margin.ToString();
-                }
-
                 child.SetBounds(
-                    ownBounds.Left + childMargin.Left,
-                    ownBounds.Bottom - (child.Height + childMargin.Bottom),
-                    ownBounds.Width - childMarginH,
+                    remainingBounds.X + childMargin.Left,
+                    remainingBounds.Y + childMargin.Top,
+                    availableWidth,
                     child.Height
                 );
 
-                ownBounds.Height -= childOuterHeight;
+                remainingBounds.Y += childOuterHeight;
+                remainingBounds.Height -= childOuterHeight;
+            }
+
+            if (childDock.HasFlag(Pos.Bottom) && !childDock.HasFlag(Pos.Left) && !childDock.HasFlag(Pos.Right))
+            {
+                child.SetBounds(
+                    remainingBounds.Left + childMargin.Left,
+                    remainingBounds.Bottom - (child.Height + childMargin.Bottom),
+                    availableWidth,
+                    child.Height
+                );
+
+                remainingBounds.Height -= childOuterHeight;
             }
 
             child.RecurseLayout(skin);
         }
 
-        mInnerBounds = ownBounds;
+        mInnerBounds = remainingBounds;
 
         //
         // Fill uses the left over space, so do that now.
@@ -2885,30 +2939,30 @@ public partial class Base : IDisposable
             var childMarginV = childMargin.Top + childMargin.Bottom;
 
             Point newPosition = new(
-                ownBounds.X + childMargin.Left,
-                ownBounds.Y + childMargin.Top
+                remainingBounds.X + childMargin.Left,
+                remainingBounds.Y + childMargin.Top
             );
 
             if (child is IAutoSizeToContents { AutoSizeToContents: true })
             {
                 if (Pos.Right == (dock & (Pos.Right | Pos.Left)))
                 {
-                    newPosition.X = ownBounds.Right - (childMargin.Right + child.Width);
+                    newPosition.X = remainingBounds.Right - (childMargin.Right + child.Width);
                 }
 
                 if (Pos.Bottom == (dock & (Pos.Bottom | Pos.Top)))
                 {
-                    newPosition.Y = ownBounds.Bottom - (childMargin.Bottom + child.Height);
+                    newPosition.Y = remainingBounds.Bottom - (childMargin.Bottom + child.Height);
                 }
 
                 if (dock.HasFlag(Pos.CenterH))
                 {
-                    newPosition.X = ownBounds.X + (ownBounds.Width - (childMarginH + child.Width)) / 2;
+                    newPosition.X = remainingBounds.X + (remainingBounds.Width - (childMarginH + child.Width)) / 2;
                 }
 
                 if (dock.HasFlag(Pos.CenterV))
                 {
-                    newPosition.Y = ownBounds.Y + (ownBounds.Height - (childMarginV + child.Height)) / 2;
+                    newPosition.Y = remainingBounds.Y + (remainingBounds.Height - (childMarginV + child.Height)) / 2;
                 }
 
                 child.SetPosition(newPosition);
@@ -2916,8 +2970,8 @@ public partial class Base : IDisposable
             else
             {
                 Point newSize = new(
-                    ownBounds.Width - childMarginH,
-                    ownBounds.Height - childMarginV
+                    remainingBounds.Width - childMarginH,
+                    remainingBounds.Height - childMarginV
                 );
 
                 child.SetBounds(newPosition, newSize);
@@ -2983,27 +3037,50 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Converts canvas coordinates to local coordinates.
     /// </summary>
-    /// <param name="pnt">Canvas coordinates.</param>
+    /// <param name="globalCoordinates">Canvas coordinates.</param>
     /// <returns>Local coordinates.</returns>
-    public virtual Point CanvasPosToLocal(Point pnt)
+    public virtual Point CanvasPosToLocal(Point globalCoordinates) => ToLocal(globalCoordinates.X, globalCoordinates.Y);
+
+    public virtual bool HasChild(Base component) => IsChild(component);
+
+    public Point ToGlobal(Point point) => ToGlobal(point.X, point.Y);
+
+    public virtual Point ToGlobal(int x, int y)
     {
-        if (mParent == null)
+        if (mParent is not { } parent)
         {
-            return pnt;
+            return new Point(x, y);
         }
 
-        var x = pnt.X - X;
-        var y = pnt.Y - Y;
+        x += X;
+        y += Y;
 
-        // If our parent has an innerpanel and we're a child of it
-        // add its offset onto us.
-        if (mParent._innerPanel != null && mParent._innerPanel.IsChild(this))
+        if (parent._innerPanel is not { } innerPanel || !innerPanel.HasChild(this))
         {
-            x -= mParent._innerPanel.X;
-            y -= mParent._innerPanel.Y;
+            return parent.ToGlobal(x, y);
         }
 
-        return mParent.CanvasPosToLocal(new Point(x, y));
+        return innerPanel.ToGlobal(x, y);
+    }
+
+    public Point ToLocal(Point point) => ToLocal(point.X, point.Y);
+
+    public virtual Point ToLocal(int x, int y)
+    {
+        if (mParent is not {} parent)
+        {
+            return new Point(x, y);
+        }
+
+        x -= X;
+        y -= Y;
+
+        if (parent._innerPanel is not { } innerPanel || !innerPanel.HasChild(this))
+        {
+            return parent.ToLocal(x, y);
+        }
+
+        return innerPanel.ToLocal(x, y);
     }
 
     /// <summary>
@@ -3149,20 +3226,42 @@ public partial class Base : IDisposable
     /// <returns></returns>
     public virtual Point GetChildrenSize()
     {
-        var size = Point.Empty;
+        Point min = new(int.MaxValue, int.MaxValue);
+        Point max = default;
 
-        for (int i = 0; i < mChildren.Count; i++)
+        var children = mChildren.ToArray();
+        foreach (var child in children)
         {
-            if (mChildren[i].IsHidden)
+            if (!child.IsVisible)
             {
                 continue;
             }
 
-            size.X = Math.Max(size.X, mChildren[i].Right);
-            size.Y = Math.Max(size.Y, mChildren[i].Bottom);
+            var childBounds = child.Bounds;
+            min.X = Math.Min(min.X, childBounds.Left);
+            min.Y = Math.Min(min.Y, childBounds.Top);
+            max.X = Math.Max(max.X, childBounds.Right);
+            max.Y = Math.Max(max.Y, childBounds.Bottom);
         }
 
-        return size;
+        var delta = max - min;
+        return delta;
+    }
+
+    public virtual Point MeasureContent()
+    {
+        var contentSize = GetChildrenSize();
+        contentSize.X += Padding.Left + Padding.Right;
+        contentSize.Y += Padding.Top + Padding.Bottom;
+
+        // ReSharper disable once InvertIf
+        if (_innerPanel is { } innerPanel)
+        {
+            contentSize.X += innerPanel.Padding.Left + innerPanel.Padding.Right;
+            contentSize.Y += innerPanel.Padding.Top + innerPanel.Padding.Bottom;
+        }
+
+        return contentSize;
     }
 
     /// <summary>

@@ -1,5 +1,6 @@
 using System.Globalization;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.Data;
 using Intersect.Configuration;
@@ -14,61 +15,98 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout;
 public partial class Table : Base, IColorableText
 {
 
-    private readonly List<int> mColumnWidths;
+    private readonly List<int?> _columnWidths;
+    private readonly List<Pos> _columnTextAlignments;
 
-    private readonly List<Pos> mColumnAlignments;
+    private int _columnCount;
+    private int _defaultRowHeight;
+    private Point _cellSpacing;
+    private bool _sizeToContents;
 
-    private int mColumnCount;
-
-    private int mDefaultRowHeight;
-
-    private ITableDataProvider mDataProvider;
-
-    private int mMaxWidth; // for autosizing, if nonzero - fills last cell up to this size
-
-    // only children of this control should be TableRow.
-
-    private bool mSizeToContents;
+    private ITableDataProvider? _dataProvider;
 
     private GameFont? _font;
-
     private Color? _textColor;
-
     private Color? _textColorOverride;
+    private bool _fitRowHeightToContents = true;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Table" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public Table(Base parent, string name = default) : base(parent, name)
+    /// <param name="name"></param>
+    public Table(Base parent, string? name = default) : base(parent, name)
     {
-        mColumnCount = 1;
-        mColumnAlignments = new List<Pos>(ColumnCount);
-        mColumnWidths = new List<int>(ColumnCount);
-        mDefaultRowHeight = 22;
-        mSizeToContents = false;
+        _cellSpacing = new Point(2, 4);
+        _columnCount = 1;
+        _defaultRowHeight = 22;
+        _sizeToContents = false;
 
-        for (var i = 0; i < ColumnCount; i++)
+        _columnTextAlignments = new List<Pos>(_columnCount);
+        _columnWidths = new List<int?>(_columnCount);
+
+        while (_columnWidths.Count < _columnCount)
         {
-            mColumnWidths.Add(20);
+            _columnWidths.Add(null);
+        }
+
+        while (_columnTextAlignments.Count < _columnCount)
+        {
+            _columnTextAlignments.Add(Pos.Left | Pos.CenterV);
         }
     }
 
-    public IReadOnlyList<Pos> ColumnAlignments => mColumnAlignments.ToList();
+    public IReadOnlyList<Pos> ColumnAlignments
+    {
+        get => _columnTextAlignments.ToList();
+        set
+        {
+            var columnCount = Math.Min(value.Count, _columnTextAlignments.Count);
+            for (var column = 0; column < columnCount; ++column)
+            {
+                _columnTextAlignments[column] = value[column];
+            }
+
+            var tableRows = Children.OfType<TableRow>().ToArray();
+            foreach (var row in tableRows)
+            {
+                row.ColumnTextAlignments = value;
+            }
+        }
+    }
 
     /// <summary>
     ///     Column count (default 1).
     /// </summary>
     public int ColumnCount
     {
-        get => mColumnCount;
-        set => SetAndDoIfChanged(ref mColumnCount, value, SetColumnCount);
+        get => _columnCount;
+        set => SetAndDoIfChanged(ref _columnCount, value, SetColumnCount);
     }
 
-    public ITableDataProvider DataProvider
+    public Point CellSpacing
     {
-        get => mDataProvider;
-        set => SetAndDoIfChanged(ref mDataProvider, value, (oldValue, newValue) =>
+        get => _cellSpacing;
+        set
+        {
+            if (value == _cellSpacing)
+            {
+                return;
+            }
+
+            _cellSpacing = value;
+            var rows = Children.OfType<TableRow>().ToArray();
+            foreach (var row in rows)
+            {
+                row.Margin = new Margin(0, 0, _cellSpacing.X, _cellSpacing.Y);
+            }
+        }
+    }
+
+    public ITableDataProvider? DataProvider
+    {
+        get => _dataProvider;
+        set => SetAndDoIfChanged(ref _dataProvider, value, (oldValue, newValue) =>
         {
             if (oldValue != default)
             {
@@ -128,16 +166,28 @@ public partial class Table : Base, IColorableText
     /// </summary>
     public int DefaultRowHeight
     {
-        get => mDefaultRowHeight;
-        set => mDefaultRowHeight = value;
+        get => _defaultRowHeight;
+        set => _defaultRowHeight = value;
+    }
+
+    public IReadOnlyList<int?> ColumnWidths
+    {
+        get => _columnWidths.ToArray();
+        set
+        {
+            for (var columnIndex = 0; columnIndex < _columnWidths.Count; ++columnIndex)
+            {
+                _columnWidths[columnIndex] = columnIndex < value.Count ? value[columnIndex] : null;
+            }
+        }
     }
 
     /// <summary>
     ///     Returns specific row of the table.
     /// </summary>
-    /// <param name="index">Row index.</param>
+    /// <param name="row">Row index.</param>
     /// <returns>Row at the specified index.</returns>
-    public TableRow this[int index] => Children[index] as TableRow;
+    public TableRow? this[int row] => Children.OfType<TableRow>().Skip(row).FirstOrDefault();
 
     protected virtual void OnDataChanged(object sender, TableDataChangedEventArgs args)
     {
@@ -153,9 +203,8 @@ public partial class Table : Base, IColorableText
     public override JObject GetJson(bool isRoot = default)
     {
         var obj = base.GetJson(isRoot);
-        obj.Add("SizeToContents", mSizeToContents);
-        obj.Add("DefaultRowHeight", mDefaultRowHeight);
-        obj.Add(nameof(ColumnAlignments), new JArray(ColumnAlignments.Select(alignment => alignment.ToString() as object).ToArray()));
+        obj.Add("SizeToContents", _sizeToContents);
+        obj.Add("DefaultRowHeight", _defaultRowHeight);
         obj.Add(nameof(Font), Font?.ToString());
         obj.Add(nameof(TextColor), TextColor.ToString());
         obj.Add(nameof(TextColorOverride), TextColorOverride.ToString());
@@ -166,28 +215,14 @@ public partial class Table : Base, IColorableText
     public override void LoadJson(JToken obj, bool isRoot = default)
     {
         base.LoadJson(obj);
-        if (obj[nameof(SizeToContents)] != null)
+        if (obj[nameof(FitContents)] != null)
         {
-            mSizeToContents = (bool)obj[nameof(SizeToContents)];
+            _sizeToContents = (bool)obj[nameof(FitContents)];
         }
 
         if (obj[nameof(DefaultRowHeight)] != null)
         {
-            mDefaultRowHeight = (int)obj[nameof(DefaultRowHeight)];
-        }
-
-        if (obj[nameof(ColumnAlignments)] != null)
-        {
-            var jColumnAlignments = (JArray)obj[nameof(ColumnAlignments)];
-            for (var columnIndex = 0; columnIndex < Math.Min(ColumnCount, jColumnAlignments.Count); columnIndex++)
-            {
-                while (mColumnAlignments.Count <= columnIndex)
-                {
-                    mColumnAlignments.Add(default);
-                }
-
-                mColumnAlignments[columnIndex] = (Pos)Enum.Parse(typeof(Pos), (string)jColumnAlignments[columnIndex]);
-            }
+            _defaultRowHeight = (int)obj[nameof(DefaultRowHeight)];
         }
 
         if (obj[nameof(Font)] != null)
@@ -219,14 +254,22 @@ public partial class Table : Base, IColorableText
     /// <param name="count">Number of columns.</param>
     protected virtual void SetColumnCount()
     {
-        while (mColumnWidths.Count < ColumnCount)
+        var columnCount = ColumnCount;
+
+        while (_columnWidths.Count < columnCount)
         {
-            mColumnWidths.Add(20);
+            _columnWidths.Add(null);
         }
 
-        foreach (var row in Children.OfType<TableRow>())
+        while (_columnTextAlignments.Count < columnCount)
         {
-            row.ColumnCount = Math.Min(row.ColumnCount, ColumnCount);
+            _columnTextAlignments.Add(Pos.Left | Pos.CenterV);
+        }
+
+        var rows = Children.OfType<TableRow>().ToArray();
+        foreach (var row in rows)
+        {
+            row.ColumnCount = Math.Min(row.ColumnCount, columnCount);
         }
     }
 
@@ -237,28 +280,13 @@ public partial class Table : Base, IColorableText
     /// <param name="width">Column width.</param>
     public void SetColumnWidth(int column, int width)
     {
-        if (mColumnWidths[column] == width)
+        if (_columnWidths[column] == width)
         {
             return;
         }
 
-        mColumnWidths[column] = width;
+        _columnWidths[column] = width;
         Invalidate();
-    }
-
-    protected virtual void SynchronizeColumnAlignments()
-    {
-        InvalidateChildren(false);
-    }
-
-    /// <summary>
-    ///     Gets the column width (in pixels).
-    /// </summary>
-    /// <param name="column">Column index.</param>
-    /// <returns>Column width.</returns>
-    public int GetColumnWidth(int column)
-    {
-        return mColumnWidths[column];
     }
 
     /// <summary>
@@ -267,14 +295,30 @@ public partial class Table : Base, IColorableText
     /// <returns>Newly created row.</returns>
     public TableRow AddRow() => AddRow(ColumnCount);
 
+    public TableRow AddRow(params Base[] cellContents)
+    {
+        var row = AddRow();
+        var columnLimit = Math.Min(cellContents.Length, row.ColumnCount);
+        for (var columnIndex = 0; columnIndex < columnLimit; ++columnIndex)
+        {
+            var control = cellContents[columnIndex];
+            row.SetCellContents(columnIndex, control);
+        }
+
+        return row;
+    }
+
     public TableRow AddRow(int columnCount)
     {
         var row = new TableRow(this)
         {
+            CellSpacing = _cellSpacing,
             ColumnCount = columnCount,
+            ColumnTextAlignments = _columnTextAlignments,
             Dock = Pos.Top,
             Font = Font,
-            Height = mDefaultRowHeight,
+            Height = _defaultRowHeight,
+            Margin = new Margin(0, 0, 0, _cellSpacing.Y),
             TextColor = TextColor,
             TextColorOverride = TextColorOverride,
         };
@@ -295,12 +339,12 @@ public partial class Table : Base, IColorableText
 
         row.Parent = this;
 
-        row.ColumnCount = Math.Min(mColumnCount, row.ColumnCount);
+        row.ColumnCount = Math.Min(_columnCount, row.ColumnCount);
         row.Dock = Pos.Top;
         row.Font = row.Font ?? Font;
-        row.Height = mDefaultRowHeight;
+        row.Height = _defaultRowHeight;
 
-        row.SetColumnWidths(mColumnWidths);
+        row.SetColumnWidths(_columnWidths);
     }
 
     /// <summary>
@@ -373,10 +417,10 @@ public partial class Table : Base, IColorableText
     {
         base.Layout(skin);
 
-        if (mSizeToContents)
+        if (_sizeToContents)
         {
             DoSizeToContents();
-            mSizeToContents = false;
+            _sizeToContents = false;
         }
         else
         {
@@ -384,12 +428,11 @@ public partial class Table : Base, IColorableText
         }
 
         var even = false;
-        foreach (TableRow row in Children)
+        var rows = Children.OfType<TableRow>().ToArray();
+        foreach (TableRow row in rows)
         {
             row.EvenRow = even;
             even = ClientConfiguration.Instance.EnableZebraStripedRows && !even;
-
-            row.SetColumnWidths(mColumnWidths);
         }
     }
 
@@ -398,57 +441,162 @@ public partial class Table : Base, IColorableText
         base.PostLayout(skin);
     }
 
+    public bool FitRowHeightToContents
+    {
+        get => _fitRowHeightToContents;
+        set
+        {
+            if (value == _fitRowHeightToContents)
+            {
+                return;
+            }
+
+            _fitRowHeightToContents = value;
+            Invalidate();
+        }
+    }
+
+    public bool SizeToContents
+    {
+        get => _sizeToContents;
+        set
+        {
+            if (value == _sizeToContents)
+            {
+                return;
+            }
+
+            _sizeToContents = true;
+            Invalidate();
+        }
+    }
+
     /// <summary>
     ///     Sizes to fit contents.
     /// </summary>
-    public void SizeToContents(int maxWidth)
+    public void FitContents(int maxWidth)
     {
-        mMaxWidth = maxWidth;
-        mSizeToContents = true;
+        MaximumSize = MaximumSize with { X = maxWidth };
+        _sizeToContents = true;
         Invalidate();
     }
 
-    protected virtual (int width, int height) ComputeColumnWidths()
+    protected virtual Point ComputeColumnWidths(TableRow[]? rows = null)
     {
-        var height = 0;
-        var width = 0;
+        rows ??= Children.OfType<TableRow>().ToArray();
 
-        foreach (TableRow row in Children)
-        {
-            row.SizeToContents(); // now all columns fit but only in this particular row
+        var columnCount = ColumnCount;
+        var measuredContentWidths = rows.Select(row => row.CalculateColumnContentWidths())
+            .Aggregate(
+                new int[columnCount],
+                (widths, rowWidths) => widths.Select(
+                        (columnWidth, columnIndex) => Math.Max(
+                            columnWidth,
+                            rowWidths.Length > columnIndex ? rowWidths[columnIndex] : 0
+                        )
+                    )
+                    .ToArray()
+            );
 
-            for (var i = 0; i < ColumnCount; i++)
-            {
-                Base cell = row.GetColumn(i);
-                if (null != cell && row.ColumnCount == ColumnCount)
+        var availableWidth = InnerWidth - _cellSpacing.X * Math.Max(0, _columnCount - 1);
+
+        var requestedWidths = _columnWidths.ToArray();
+        requestedWidths = measuredContentWidths.Select(
+                (measuredWidth, columnIndex) =>
                 {
-                    if (i < ColumnCount - 1 || mMaxWidth == 0)
+                    if (requestedWidths.Length <= columnIndex)
                     {
-                        mColumnWidths[i] = Math.Max(
-                            mColumnWidths[i], cell.Width + cell.Margin.Left + cell.Margin.Right
-                        );
+                        return measuredWidth;
                     }
-                    else
-                    {
-                        mColumnWidths[i] = mMaxWidth - width; // last cell - fill
-                    }
-                }
-            }
 
-            height += row.Height;
+                    var requestedWidth = requestedWidths[columnIndex];
+                    if (!requestedWidth.HasValue)
+                    {
+                        return requestedWidth;
+                    }
+
+                    return requestedWidth.Value < 0 ? measuredWidth : requestedWidth.Value;
+                }
+            )
+            .ToArray();
+
+        int flexColumnWidthSum = requestedWidths.Select(
+                (requestedWidth, columnIndex) => requestedWidth.HasValue ? 0 : measuredContentWidths[columnIndex]
+            )
+            .Sum();
+        var columnWidthRatios = requestedWidths.Select(
+                (requestedWidth, columnIndex) =>
+                    requestedWidth.HasValue ? float.NaN : measuredContentWidths[columnIndex] / (float)flexColumnWidthSum
+            )
+            .ToArray();
+
+        var fixedColumnCount = requestedWidths.Count(requestedWidth => requestedWidth.HasValue);
+        var fixedColumnWidthSum = requestedWidths.Sum(requestedWidth => requestedWidth ?? 0);
+        availableWidth -= fixedColumnWidthSum;
+
+        if (flexColumnWidthSum < availableWidth)
+        {
+            var extraSpace = availableWidth - flexColumnWidthSum;
+            var extraSpacePerColumn = (int)Math.Floor(extraSpace / (float)fixedColumnCount);
+
+            for (var columnIndex = 0; columnIndex < requestedWidths.Length; ++columnIndex)
+            {
+                var requestedWidth = requestedWidths[columnIndex];
+                if (requestedWidth is not < 1)
+                {
+                    continue;
+                }
+
+                requestedWidths[columnIndex] += extraSpacePerColumn;
+                availableWidth -= extraSpacePerColumn;
+            }
         }
 
-        // sum all column widths
-        width += mColumnWidths.Take(ColumnCount).Sum();
+        var flexColumnWidths = columnWidthRatios.Select(
+                ratio => float.IsNaN(ratio) ? 0 : (int)MathF.Ceiling(Math.Max(10f / ratio, availableWidth * ratio))
+            )
+            .ToArray();
 
-        return (width, height);
+        var actualWidth = 0;
+        var actualHeight = 0;
+        var columnLimit = Math.Min(columnCount, requestedWidths.Length);
+        foreach (var row in rows)
+        {
+            var rowWidth = 0;
+            for (var columnIndex = 0; columnIndex < columnLimit; ++columnIndex)
+            {
+                var requestedWidth = requestedWidths[columnIndex];
+                var flexColumnWidth = flexColumnWidths[columnIndex];
+                var cellWidth = requestedWidth ?? flexColumnWidth;
+                var cell = row.GetColumn(columnIndex);
+                if (cell is not null)
+                {
+                    cell.Width = cellWidth;
+                }
+                rowWidth += cellWidth;
+            }
+
+            actualWidth = Math.Max(actualWidth, rowWidth);
+            actualHeight += row.OuterHeight;
+        }
+
+        return new Point(actualWidth, actualHeight);
     }
 
     public void DoSizeToContents()
     {
-        var (width, height) = ComputeColumnWidths();
+        var rows = Children.OfType<TableRow>().ToArray();
+        if (_fitRowHeightToContents)
+        {
+            foreach (var row in rows)
+            {
+                row.SizeToChildren(width: false, height: true);
+            }
+        }
 
-        SetSize(width, height);
+        var size = ComputeColumnWidths(rows);
+
+        SetSize(size.X, size.Y);
 
         InvalidateParent();
     }
@@ -469,4 +617,13 @@ public partial class Table : Base, IColorableText
         }
     }
 
+    protected override void OnBoundsChanged(Rectangle oldBounds)
+    {
+        if (Bounds.Height == 800)
+        {
+            Bounds.ToString();
+        }
+
+        base.OnBoundsChanged(oldBounds);
+    }
 }

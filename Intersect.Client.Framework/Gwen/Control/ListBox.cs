@@ -441,7 +441,7 @@ public partial class ListBox : ScrollControl
             row.Font = mFont;
         }
 
-        mTable.SizeToContents(Width);
+        mTable.FitContents(Width);
         mTable.DoSizeToContents();
 
         return row;
@@ -542,7 +542,7 @@ public partial class ListBox : ScrollControl
         // docking interferes with autosizing so we disable it until sizing is done
         mOldDock = mTable.Dock;
         mTable.Dock = Pos.None;
-        mTable.SizeToContents(0); // autosize without constraints
+        mTable.FitContents(0); // autosize without constraints
     }
 
     private void TableResized(Base control, EventArgs args)

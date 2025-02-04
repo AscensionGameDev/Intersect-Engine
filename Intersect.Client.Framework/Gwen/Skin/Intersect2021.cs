@@ -46,6 +46,7 @@ public class Intersect2021 : TexturedBase
         mTextures.Window.CloseDisabled = new Single(_texture, 60, 48, 24, 24);
         mTextures.Window.CloseHover = new Single(_texture, 60, 72, 24, 24);
 
+        mTextures.Panel.Control = new Bordered(_texture, 32, 0, 16, 16, Margin.Four);
         mTextures.Panel.Normal = new Bordered(_texture, 32, 0, 16, 16, Margin.Four);
         mTextures.Panel.Highlight = new Bordered(_texture, 32, 16, 16, 16, Margin.Four);
         mTextures.Panel.Bright = new Bordered(_texture, 32, 32, 16, 16, Margin.Four);

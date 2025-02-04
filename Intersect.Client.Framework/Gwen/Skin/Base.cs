@@ -1,5 +1,6 @@
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen.Control;
 
 #if DEBUG || DIAGNOSTIC
 #endif
@@ -64,6 +65,10 @@ public partial class Base : IDisposable
     #region UI elements
 
     public virtual void DrawButton(Control.Base control, bool depressed, bool hovered, bool disabled, bool focused)
+    {
+    }
+
+    public virtual void DrawPanel(Panel panel)
     {
     }
 
@@ -169,9 +174,30 @@ public partial class Base : IDisposable
     {
     }
 
+    public virtual void DrawSlider(
+        Slider slider,
+        Orientation orientation,
+        double[] notches,
+        int numNotches,
+        int barSize
+    ) => DrawSlider(
+        slider,
+        orientation is Orientation.LeftToRight or Orientation.RightToLeft,
+        notches,
+        numNotches,
+        barSize
+    );
+
     public virtual void DrawSliderButton(Control.Base control, bool depressed, bool horizontal)
     {
     }
+
+    public virtual void DrawSliderButton(Control.Base control, bool depressed, Orientation orientation) =>
+        DrawSliderButton(
+            control,
+            depressed,
+            orientation is Orientation.LeftToRight or Orientation.RightToLeft
+        );
 
     public virtual void DrawComboBox(Control.Base control, bool down, bool isMenuOpen)
     {
@@ -215,25 +241,40 @@ public partial class Base : IDisposable
         }
 
         mRenderer.DrawColor = control.PaddingOutlineColor;
-        var inner = new Rectangle(
+        var paddingRect = new Rectangle(
             control.Bounds.Left + control.Padding.Left, control.Bounds.Top + control.Padding.Top,
             control.Bounds.Width - control.Padding.Right - control.Padding.Left,
             control.Bounds.Height - control.Padding.Bottom - control.Padding.Top
         );
 
-        mRenderer.DrawLinedRect(inner);
+        DrawRectStroke(paddingRect, control.PaddingOutlineColor);
 
-        mRenderer.DrawColor = control.MarginOutlineColor;
-        var outer = new Rectangle(
+        var marginRect = new Rectangle(
             control.Bounds.Left - control.Margin.Left, control.Bounds.Top - control.Margin.Top,
             control.Bounds.Width + control.Margin.Right + control.Margin.Left,
             control.Bounds.Height + control.Margin.Bottom + control.Margin.Top
         );
 
-        mRenderer.DrawLinedRect(outer);
+        DrawRectStroke(marginRect, control.MarginOutlineColor);
 
-        mRenderer.DrawColor = control.BoundsOutlineColor;
-        mRenderer.DrawLinedRect(control.Bounds);
+        DrawRectStroke(control.Bounds, control.BoundsOutlineColor);
+    }
+
+    public virtual void DrawRectStroke(Rectangle rect, Color color) => DrawRect(rect, color, filled: false);
+
+    public virtual void DrawRectFill(Rectangle rect, Color color) => DrawRect(rect, color, filled: true);
+
+    public virtual void DrawRect(Rectangle rect, Color color, bool filled)
+    {
+        mRenderer.DrawColor = color;
+        if (filled)
+        {
+            mRenderer.DrawFilledRect(rect);
+        }
+        else
+        {
+            mRenderer.DrawLinedRect(rect);
+        }
     }
 
     public virtual void DrawTreeNode(

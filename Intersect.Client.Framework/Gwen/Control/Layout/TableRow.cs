@@ -1,6 +1,7 @@
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.Data;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Gwen.ControlInternal;
 
 namespace Intersect.Client.Framework.Gwen.Control.Layout;
 
@@ -11,12 +12,12 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout;
 public partial class TableRow : Base, IColorableText
 {
     private readonly List<Action> mDisposalActions;
-
-    private readonly List<Label> mColumns;
+    private readonly List<Label> _columns;
+    private readonly List<Pos> _columnTextAlignments;
 
     protected string mClickSound;
 
-    private int mColumnCount;
+    private int _columnCount;
 
     private bool mEvenRow;
 
@@ -32,6 +33,7 @@ public partial class TableRow : Base, IColorableText
     protected string mHoverSound;
 
     protected string mRightClickSound;
+    private Point _cellSpacing;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="TableRow" /> class.
@@ -45,14 +47,15 @@ public partial class TableRow : Base, IColorableText
     ///     Initializes a new instance of the <see cref="TableRow" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    /// <param name="columns">the number of columns this row has</param>
-    public TableRow(Base parent, int columns) : base(parent)
+    /// <param name="columnCount">the number of columns this row has</param>
+    public TableRow(Base parent, int columnCount) : base(parent)
     {
         mDisposalActions = [];
-        mColumns = new List<Label>(columns);
+        _columns = new List<Label>(columnCount);
+        _columnTextAlignments = new List<Pos>(columnCount);
 
-        ColumnCount = columns;
-        MaximumColumns = columns;
+        ColumnCount = columnCount;
+        MaximumColumns = columnCount;
         KeyboardInputEnabled = true;
         Clicked += TableRow_Clicked;
         RightClicked += TableRow_RightClicked;
@@ -77,13 +80,29 @@ public partial class TableRow : Base, IColorableText
         set => mRightClickSound = value;
     }
 
+    public IReadOnlyList<Pos> ColumnTextAlignments
+    {
+        get => _columns.Select(column => column.TextAlign).ToArray();
+        set
+        {
+            _columnTextAlignments.Clear();
+            _columnTextAlignments.AddRange(value.Take(_columnCount));
+
+            var limit = Math.Min(_columns.Count, value.Count);
+            for (var column = 0; column < limit; ++column)
+            {
+                _columns[column].TextAlign = value[column];
+            }
+        }
+    }
+
     /// <summary>
     ///     Column count.
     /// </summary>
     public int ColumnCount
     {
-        get => mColumnCount;
-        set => SetAndDoIfChanged(ref mColumnCount, value, ComputeColumns);
+        get => _columnCount;
+        set => SetAndDoIfChanged(ref _columnCount, value, ComputeColumns);
     }
 
     /// <summary>
@@ -107,7 +126,7 @@ public partial class TableRow : Base, IColorableText
 
             _font = value;
 
-            foreach (var column in mColumns)
+            foreach (var column in _columns)
             {
                 column.Font = _font;
             }
@@ -134,7 +153,7 @@ public partial class TableRow : Base, IColorableText
         get => _textColor;
         set => SetAndDoIfChanged(ref _textColor, value, () =>
         {
-            foreach (var column in mColumns)
+            foreach (var column in _columns)
             {
                 column.TextColor = _textColor;
             }
@@ -146,7 +165,7 @@ public partial class TableRow : Base, IColorableText
         get => _textColorOverride;
         set => SetAndDoIfChanged(ref _textColorOverride, value, () =>
         {
-            foreach (var column in mColumns)
+            foreach (var column in _columns)
             {
                 column.TextColorOverride = TextColorOverride;
             }
@@ -155,12 +174,12 @@ public partial class TableRow : Base, IColorableText
 
     public IEnumerable<string> TextColumns
     {
-        get => mColumns.Select(column => column.Text);
+        get => _columns.Select(column => column.Text);
         set
         {
             if (value == default)
             {
-                foreach (var column in mColumns)
+                foreach (var column in _columns)
                 {
                     column.Text = string.Empty;
                 }
@@ -175,6 +194,33 @@ public partial class TableRow : Base, IColorableText
                 }
 
                 SetCellText(columnIndex++, cellText);
+            }
+        }
+    }
+
+    public Point CellSpacing
+    {
+        get => _cellSpacing;
+        set
+        {
+            if (value == _cellSpacing)
+            {
+                return;
+            }
+
+            _cellSpacing = value;
+            var columns = _columns.ToArray();
+            var lastColumn = columns.LastOrDefault();
+            var otherColumns = columns.TakeWhile(c => c != lastColumn).ToArray();
+
+            if (lastColumn is not null)
+            {
+                lastColumn.Margin = default;
+            }
+
+            foreach (var column in otherColumns)
+            {
+                column.Margin = new Margin(0, 0, _cellSpacing.X, 0);
             }
         }
     }
@@ -194,19 +240,10 @@ public partial class TableRow : Base, IColorableText
         PlaySound(mClickSound);
     }
 
-    internal Label GetColumn(int columnIndex)
+    internal Label? GetColumn(int columnIndex)
     {
-        if (columnIndex < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(columnIndex));
-        }
-
-        if (columnIndex >= mColumnCount)
-        {
-            return default;
-        }
-
-        return mColumns[columnIndex];
+        ArgumentOutOfRangeException.ThrowIfNegative(columnIndex, nameof(columnIndex));
+        return columnIndex >= _columnCount ? default : _columns[columnIndex];
     }
 
     /// <summary>
@@ -214,27 +251,46 @@ public partial class TableRow : Base, IColorableText
     /// </summary>
     public event GwenEventHandler<ItemSelectedEventArgs> Selected;
 
+    public override bool SizeToChildren(bool width = true, bool height = true)
+    {
+        var columns = _columns.ToArray();
+        foreach (var column in columns)
+        {
+            column.SizeToChildren(width: width, height: height);
+        }
+
+        return base.SizeToChildren(width: width, height: height);
+    }
+
     protected virtual void ComputeColumns()
     {
-        while (mColumns.Count < ColumnCount)
+        while (_columns.Count < ColumnCount)
         {
-            mColumns.Add(new Label(this)
+            var column = new Label(this, name: $"Column{_columns.Count}")
             {
+                AutoSizeToContents = false,
                 Font = Font,
                 MouseInputEnabled = false,
-                Padding = Padding.Three,
+                Padding = default,
                 TextColor = TextColor,
                 TextColorOverride = TextColorOverride,
-            });
+            };
+
+            if (_columnTextAlignments.Count > _columns.Count)
+            {
+                column.TextAlign = _columnTextAlignments[_columns.Count];
+            }
+
+            _columns.Add(column);
         }
 
         var lastColumnIndex = ColumnCount - 1;
         for (var columnIndex = 0; columnIndex < ColumnCount; columnIndex++)
         {
-            var column = mColumns[columnIndex];
+            var column = _columns[columnIndex];
             var isLastColumn = columnIndex == lastColumnIndex;
 
-            column.AutoSizeToContents = isLastColumn;
+            column.AutoSizeToContents = false;
             if (isLastColumn)
             {
                 column.Dock = Pos.Fill;
@@ -243,15 +299,15 @@ public partial class TableRow : Base, IColorableText
             else
             {
                 column.Dock = Pos.Left;
-                column.Margin = new Margin(0, 0, 2, 0);
+                column.Margin = new Margin(0, 0, _cellSpacing.X, 0);
             }
         }
 
-        while (mColumns.Count > MaximumColumns)
+        while (_columns.Count > MaximumColumns)
         {
-            var column = mColumns[mColumns.Count - 1];
+            var column = _columns[^1];
             column.Parent = default;
-            mColumns.RemoveAt(mColumns.Count - 1);
+            _columns.RemoveAt(_columns.Count - 1);
         }
     }
 
@@ -352,34 +408,53 @@ public partial class TableRow : Base, IColorableText
     /// <param name="text">Text to set.</param>
     public void SetCellText(int column, string text)
     {
-        if (null == mColumns[column])
+        if (null == _columns[column])
         {
             return;
         }
 
-        mColumns[column].Text = text;
+        _columns[column].Text = text;
     }
 
     /// <summary>
     ///     Sets the contents of a specified cell.
     /// </summary>
-    /// <param name="column">Column number.</param>
+    /// <param name="columnIndex">Column number.</param>
     /// <param name="control">Cell contents.</param>
     /// <param name="enableMouseInput">Determines whether mouse input should be enabled for the cell.</param>
-    public void SetCellContents(int column, Base control, bool enableMouseInput = false)
+    public void SetCellContents(int columnIndex, Base? control, bool enableMouseInput = false)
     {
-        if (null == mColumns[column])
+        if (_columns[columnIndex] is not {} column)
         {
             return;
         }
 
-        control.Parent = mColumns[column];
-        mColumns[column].MouseInputEnabled = enableMouseInput;
+        var textElement = column.Children.OfType<Text>().FirstOrDefault();
+        if (textElement is not null)
+        {
+            textElement.IsVisible = control is null;
+        }
+
+        var controlsToRemove = column.Children.Where(child => child is not ControlInternal.Text && child != control)
+            .ToArray();
+
+        foreach (var controlToRemove in controlsToRemove)
+        {
+            controlToRemove.Parent = null;
+        }
+
+        if (control is null)
+        {
+            return;
+        }
+
+        control.Parent = column;
+        column.MouseInputEnabled = enableMouseInput;
     }
 
     private Label GetCellLabel(int column)
     {
-        return mColumns[column];
+        return _columns[column];
     }
 
     /// <summary>
@@ -405,9 +480,9 @@ public partial class TableRow : Base, IColorableText
         var width = 0;
         var height = 0;
 
-        for (var i = 0; i < mColumnCount; i++)
+        for (var i = 0; i < _columnCount; i++)
         {
-            var columnLabel = mColumns[i];
+            var columnLabel = _columns[i];
             if (null == columnLabel)
             {
                 continue;
@@ -428,20 +503,23 @@ public partial class TableRow : Base, IColorableText
         SetSize(width, height);
     }
 
+    public int[] CalculateColumnContentWidths() =>
+        _columns.ToArray().Select(column => column.MeasureContent().X).ToArray();
+
     /// <summary>
     ///     Sets the text color for all cells.
     /// </summary>
     /// <param name="color">Text color.</param>
     public void SetTextColor(Color color)
     {
-        for (var i = 0; i < mColumnCount; i++)
+        for (var i = 0; i < _columnCount; i++)
         {
-            if (null == mColumns[i])
+            if (null == _columns[i])
             {
                 continue;
             }
 
-            mColumns[i].TextColorOverride = color;
+            _columns[i].TextColorOverride = color;
         }
     }
 
@@ -452,7 +530,7 @@ public partial class TableRow : Base, IColorableText
     /// <returns>Column cell text.</returns>
     public string GetText(int column = 0)
     {
-        return mColumns[column].Text;
+        return _columns[column].Text;
     }
 
     /// <summary>
@@ -464,7 +542,7 @@ public partial class TableRow : Base, IColorableText
         Platform.Neutral.SetClipboardText(Text);
     }
 
-    public virtual void SetColumnWidths(IEnumerable<int> columnWidths)
+    public virtual void SetColumnWidths(IEnumerable<int?> columnWidths)
     {
         if (default == columnWidths)
         {
@@ -485,7 +563,11 @@ public partial class TableRow : Base, IColorableText
                 continue;
             }
 
-            column.Width = columnWidth;
+            if (columnWidth.HasValue)
+            {
+                column.Width = columnWidth.Value;
+            }
+
         }
 
         //Invalidate();
@@ -494,13 +576,5 @@ public partial class TableRow : Base, IColorableText
     protected override void Layout(Skin.Base skin)
     {
         base.Layout(skin);
-
-        var columnAlignments = (Parent as Table)?.ColumnAlignments;
-        for (var columnIndex = 0; columnIndex < mColumnCount; columnIndex++)
-        {
-            var column = mColumns[columnIndex];
-            column.Dock = columnIndex == mColumnCount - 1 ? Pos.Fill : Pos.Left;
-            column.TextAlign = (columnAlignments == default || columnAlignments.Count <= columnIndex) ? column.TextAlign : columnAlignments[columnIndex];
-        }
     }
 }

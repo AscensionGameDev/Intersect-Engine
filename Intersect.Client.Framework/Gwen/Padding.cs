@@ -78,6 +78,11 @@ public partial struct Padding : IEquatable<Padding>
         lhs.Bottom / rhs
     );
 
+    public static Point operator +(Point point, Padding padding) => new(
+        point.X + padding.Left + padding.Right,
+        point.Y + padding.Top + padding.Bottom
+    );
+
     public static bool operator ==(Padding lhs, Padding rhs)
     {
         return lhs.Equals(rhs);

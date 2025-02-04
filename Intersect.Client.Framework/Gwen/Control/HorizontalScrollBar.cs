@@ -81,7 +81,7 @@ public partial class HorizontalScrollBar : ScrollBar
         mScrollButton[1].Dock = Pos.Right;
 
         mBar.Height = ButtonSize;
-        mBar.Padding = new Padding(ButtonSize, 0, ButtonSize, 0);
+        mBar.Margin = new Margin(ButtonSize, 0, ButtonSize, 0);
 
         var barWidth = mViewableContentSize / mContentSize * (Width - ButtonSize * 2);
 

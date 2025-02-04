@@ -26,7 +26,7 @@ public partial class ScrollBar : Base
 
     protected float mNudgeAmount;
 
-    protected float mScrollAmount;
+    protected float _scrollAmount;
 
     protected float mViewableContentSize;
 
@@ -45,7 +45,7 @@ public partial class ScrollBar : Base
         SetBounds(0, 0, 15, 15);
         mDepressed = false;
 
-        mScrollAmount = 0;
+        _scrollAmount = 0;
         mContentSize = 0;
         mViewableContentSize = 0;
 
@@ -73,7 +73,7 @@ public partial class ScrollBar : Base
         set => mNudgeAmount = value;
     }
 
-    public float ScrollAmount => mScrollAmount;
+    public float ScrollAmount => _scrollAmount;
 
     public float ContentSize
     {
@@ -176,12 +176,13 @@ public partial class ScrollBar : Base
     /// <returns>True if control state changed.</returns>
     public virtual bool SetScrollAmount(float value, bool forceUpdate = false)
     {
-        if (mScrollAmount == value && !forceUpdate)
+        if (_scrollAmount == value && !forceUpdate)
         {
             return false;
         }
 
-        mScrollAmount = value;
+        var oldValue = _scrollAmount;
+        _scrollAmount = value;
         Invalidate();
         OnBarMoved(this, EventArgs.Empty);
 

@@ -1,10 +1,13 @@
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Gwen.Control.Layout;
+using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
@@ -23,6 +26,8 @@ namespace Intersect.Client.Interface.Shared;
 
 public partial class SettingsWindow : WindowControl
 {
+    private readonly GameFont? _defaultFont;
+
     // Parent Window.
     private readonly MainMenu? _mainMenu;
     private readonly EscapeMenu? _escapeMenu;
@@ -36,13 +41,16 @@ public partial class SettingsWindow : WindowControl
     private readonly ScrollControl _gameSettingsContainer;
     private readonly ScrollControl _videoSettingsContainer;
     private readonly ScrollControl _audioSettingsContainer;
+    private readonly Table _audioTable;
+
     private readonly ScrollControl _keybindingSettingsContainer;
+    private readonly Table _controlsTable;
 
     // Tabs.
-    private readonly Button _gameSettingsTab;
-    private readonly Button _videoSettingsTab;
-    private readonly Button _audioSettingsTab;
-    private readonly Button _keybindingSettingsTab;
+    private readonly TabButton _gameSettingsTab;
+    private readonly TabButton _videoSettingsTab;
+    private readonly TabButton _audioSettingsTab;
+    private readonly TabButton _keybindingSettingsTab;
 
     // Game Settings - Interface.
     private readonly ScrollControl _interfaceSettings;
@@ -84,12 +92,10 @@ public partial class SettingsWindow : WindowControl
     private readonly LabeledCheckBox _lightingEnabledCheckbox;
 
     // Audio Settings.
-    private readonly HorizontalSlider _musicSlider;
+    private readonly LabeledSlider _musicSlider;
+    private readonly LabeledSlider _soundEffectsSlider;
     private int _previousMusicVolume;
-    private readonly Label _musicLabel;
-    private readonly HorizontalSlider _soundSlider;
     private int _previousSoundVolume;
-    private readonly Label _soundLabel;
 
     // Keybinding Settings.
     private Control _keybindingEditControl;
@@ -100,24 +106,24 @@ public partial class SettingsWindow : WindowControl
     private int _keyEdit = -1;
     private readonly Dictionary<Control, Button[]> mKeybindingBtns = [];
 
-    private ImagePanel _bottomBar;
+    private Panel _bottomBar;
     private TabControl _tabs;
 
     // Open Settings.
     private bool _returnToMenu;
 
     // Initialize.
-    public SettingsWindow(Base parent, MainMenu? mainMenu, EscapeMenu? escapeMenu) : base(parent, Strings.Settings.Title, modal: false, nameof(SettingsWindow))
+    public SettingsWindow(Base parent, MainMenu? mainMenu, EscapeMenu? escapeMenu) : base(parent: parent, title: Strings.Settings.Title, modal: false, name: nameof(SettingsWindow))
     {
         _mainMenu = mainMenu;
         _escapeMenu = escapeMenu;
 
-        Interface.InputBlockingElements.Add(this);
+        Interface.InputBlockingElements.Add(item: this);
 
         IconName = "SettingsWindow.icon.png";
 
-        MinimumSize = new Point(600, 400);
-        DisableResizing();
+        MinimumSize = new Point(x: 640, y: 400);
+        IsResizable = false;
         IsClosable = false;
 
         Titlebar.MouseInputEnabled = false;
@@ -125,201 +131,201 @@ public partial class SettingsWindow : WindowControl
         TitleLabel.FontSize = 14;
         TitleLabel.TextColorOverride = Color.White;
 
-        var fontNormal = Current?.GetFont(TitleLabel.FontName, 12);
+        var fontNormal = Current?.GetFont(name: TitleLabel.FontName, size: 12);
+        _defaultFont = Current?.GetFont(name: TitleLabel.FontName, 10);
 
-        _bottomBar = new ImagePanel(this, "BottomBar")
+        _bottomBar = new Panel(parent: this, name: "BottomBar")
         {
             Dock = Pos.Bottom,
-            MinimumSize = new Point(0, 40),
-            Padding = new Padding(8, 4),
+            MinimumSize = new Point(x: 0, y: 40),
+            Margin = Margin.Four,
+            Padding = new Padding(horizontal: 8, vertical: 4),
         };
 
-        _tabs = new TabControl(this)
+        _tabs = new TabControl(parent: this)
         {
             Dock = Pos.Fill,
-            Margin = Margin.Four,
+            Margin = new Margin(left: 4, top: 4, right: 4, bottom: 0),
         };
 
         // Apply Button.
-        _applyPendingChangesButton = new Button(_bottomBar, nameof(_applyPendingChangesButton))
+        _applyPendingChangesButton = new Button(parent: _bottomBar, name: nameof(_applyPendingChangesButton))
         {
             Alignment = [Alignments.Center],
             AutoSizeToContents = true,
             Font = fontNormal,
-            MinimumSize = new Point(96, 24),
-            TextPadding = new Padding(16, 2),
+            MinimumSize = new Point(x: 96, y: 24),
+            TextPadding = new Padding(horizontal: 16, vertical: 2),
             Text = Strings.Settings.Apply,
         };
         _applyPendingChangesButton.Clicked += SettingsApplyBtn_Clicked;
+        _applyPendingChangesButton.SetHoverSound("octave-tap-resonant.wav");
 
         // Cancel Button.
-        _cancelPendingChangesButton = new Button(_bottomBar, nameof(_cancelPendingChangesButton))
+        _cancelPendingChangesButton = new Button(parent: _bottomBar, name: nameof(_cancelPendingChangesButton))
         {
             Alignment = [Alignments.Right, Alignments.CenterV],
             AutoSizeToContents = true,
             Font = fontNormal,
-            MinimumSize = new Point(96, 24),
-            TextPadding = new Padding(16, 2),
+            MinimumSize = new Point(x: 96, y: 24),
+            TextPadding = new Padding(horizontal: 16, vertical: 2),
             Text = Strings.Settings.Cancel,
         };
         _cancelPendingChangesButton.Clicked += CancelPendingChangesButton_Clicked;
+        _cancelPendingChangesButton.SetHoverSound("octave-tap-resonant.wav");
 
         #region InitGameSettings
 
-        // Init GameSettings Tab.
-        _gameSettingsTab = new Button(this, "GameSettingsTab")
-        {
-            Text = Strings.Settings.GameSettingsTab
-        };
-        _gameSettingsTab.Clicked += GameSettingsTab_Clicked;
-
         // Game Settings are stored in the GameSettings Scroll Control.
-        _gameSettingsContainer = new ScrollControl(this, "GameSettingsContainer");
-        _gameSettingsContainer.EnableScroll(false, false);
+        _gameSettingsContainer = new ScrollControl(parent: this, name: "GameSettingsContainer")
+        {
+            Dock = Pos.Fill,
+        };
+        _gameSettingsContainer.EnableScroll(horizontal: false, vertical: false);
 
         // Game Settings subcategories are stored in the GameSettings List.
-        var gameSettingsList = new ListBox(_gameSettingsContainer, "GameSettingsList");
-        _ = gameSettingsList.AddRow(Strings.Settings.InterfaceSettings);
-        _ = gameSettingsList.AddRow(Strings.Settings.InformationSettings);
-        _ = gameSettingsList.AddRow(Strings.Settings.TargetingSettings);
-        gameSettingsList.EnableScroll(false, true);
+        var gameSettingsList = new ListBox(parent: _gameSettingsContainer, name: "GameSettingsList");
+        _ = gameSettingsList.AddRow(label: Strings.Settings.InterfaceSettings);
+        _ = gameSettingsList.AddRow(label: Strings.Settings.InformationSettings);
+        _ = gameSettingsList.AddRow(label: Strings.Settings.TargetingSettings);
+        gameSettingsList.EnableScroll(horizontal: false, vertical: true);
         gameSettingsList.SelectedRowIndex = 0;
-        gameSettingsList[0].Clicked += InterfaceSettings_Clicked;
-        gameSettingsList[1].Clicked += InformationSettings_Clicked;
-        gameSettingsList[2].Clicked += TargetingSettings_Clicked;
+        gameSettingsList[index: 0].Clicked += InterfaceSettings_Clicked;
+        gameSettingsList[index: 1].Clicked += InformationSettings_Clicked;
+        gameSettingsList[index: 2].Clicked += TargetingSettings_Clicked;
 
         // Game Settings - Interface.
-        _interfaceSettings = new ScrollControl(_gameSettingsContainer, "InterfaceSettings");
-        _interfaceSettings.EnableScroll(false, true);
+        _interfaceSettings = new ScrollControl(parent: _gameSettingsContainer, name: "InterfaceSettings");
+        _interfaceSettings.EnableScroll(horizontal: false, vertical: true);
 
         // Game Settings - Interface: Auto-close Windows.
-        _autoCloseWindowsCheckbox = new LabeledCheckBox(_interfaceSettings, "AutoCloseWindowsCheckbox")
+        _autoCloseWindowsCheckbox = new LabeledCheckBox(parent: _interfaceSettings, name: "AutoCloseWindowsCheckbox")
         {
             Text = Strings.Settings.AutoCloseWindows
         };
 
         // Game Settings - Interface: Auto-toggle chat log visibility.
-        _autoToggleChatLogCheckbox = new LabeledCheckBox(_interfaceSettings, "AutoToggleChatLogCheckbox")
+        _autoToggleChatLogCheckbox = new LabeledCheckBox(parent: _interfaceSettings, name: "AutoToggleChatLogCheckbox")
         {
             Text = Strings.Settings.AutoToggleChatLog
         };
 
         // Game Settings - Interface: Show EXP/HP/MP as Percentage.
-        _showExperienceAsPercentageCheckbox = new LabeledCheckBox(_interfaceSettings, "ShowExperienceAsPercentageCheckbox")
+        _showExperienceAsPercentageCheckbox = new LabeledCheckBox(parent: _interfaceSettings, name: "ShowExperienceAsPercentageCheckbox")
         {
             Text = Strings.Settings.ShowExperienceAsPercentage
         };
 
-        _showHealthAsPercentageCheckbox = new LabeledCheckBox(_interfaceSettings, "ShowHealthAsPercentageCheckbox")
+        _showHealthAsPercentageCheckbox = new LabeledCheckBox(parent: _interfaceSettings, name: "ShowHealthAsPercentageCheckbox")
         {
             Text = Strings.Settings.ShowHealthAsPercentage
         };
 
-        _showManaAsPercentageCheckbox = new LabeledCheckBox(_interfaceSettings, "ShowManaAsPercentageCheckbox")
+        _showManaAsPercentageCheckbox = new LabeledCheckBox(parent: _interfaceSettings, name: "ShowManaAsPercentageCheckbox")
         {
             Text = Strings.Settings.ShowManaAsPercentage
         };
 
         // Game Settings - Interface: simplified escape menu.
-        _simplifiedEscapeMenu = new LabeledCheckBox(_interfaceSettings, "SimplifiedEscapeMenu")
+        _simplifiedEscapeMenu = new LabeledCheckBox(parent: _interfaceSettings, name: "SimplifiedEscapeMenu")
         {
             Text = Strings.Settings.SimplifiedEscapeMenu
         };
 
         // Game Settings - Information.
-        _informationSettings = new ScrollControl(_gameSettingsContainer, "InformationSettings");
-        _informationSettings.EnableScroll(false, true);
+        _informationSettings = new ScrollControl(parent: _gameSettingsContainer, name: "InformationSettings");
+        _informationSettings.EnableScroll(horizontal: false, vertical: true);
 
         // Game Settings - Information: Friends.
-        _friendOverheadInfoCheckbox = new LabeledCheckBox(_informationSettings, "FriendOverheadInfoCheckbox")
+        _friendOverheadInfoCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "FriendOverheadInfoCheckbox")
         {
             Text = Strings.Settings.ShowFriendOverheadInformation
         };
 
         // Game Settings - Information: Guild Members.
-        _guildMemberOverheadInfoCheckbox = new LabeledCheckBox(_informationSettings, "GuildMemberOverheadInfoCheckbox")
+        _guildMemberOverheadInfoCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "GuildMemberOverheadInfoCheckbox")
         {
             Text = Strings.Settings.ShowGuildOverheadInformation
         };
 
         // Game Settings - Information: Myself.
-        _myOverheadInfoCheckbox = new LabeledCheckBox(_informationSettings, "MyOverheadInfoCheckbox")
+        _myOverheadInfoCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "MyOverheadInfoCheckbox")
         {
             Text = Strings.Settings.ShowMyOverheadInformation
         };
 
         // Game Settings - Information: NPCs.
-        _npcOverheadInfoCheckbox = new LabeledCheckBox(_informationSettings, "NpcOverheadInfoCheckbox")
+        _npcOverheadInfoCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "NpcOverheadInfoCheckbox")
         {
             Text = Strings.Settings.ShowNpcOverheadInformation
         };
 
         // Game Settings - Information: Party Members.
-        _partyMemberOverheadInfoCheckbox = new LabeledCheckBox(_informationSettings, "PartyMemberOverheadInfoCheckbox")
+        _partyMemberOverheadInfoCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "PartyMemberOverheadInfoCheckbox")
         {
             Text = Strings.Settings.ShowPartyOverheadInformation
         };
 
         // Game Settings - Information: Players.
-        _playerOverheadInfoCheckbox = new LabeledCheckBox(_informationSettings, "PlayerOverheadInfoCheckbox")
+        _playerOverheadInfoCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "PlayerOverheadInfoCheckbox")
         {
             Text = Strings.Settings.ShowPlayerOverheadInformation
         };
 
         // Game Settings - Information: friends overhead hp bar.
-        _friendOverheadHpBarCheckbox = new LabeledCheckBox(_informationSettings, "FriendOverheadHpBarCheckbox")
+        _friendOverheadHpBarCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "FriendOverheadHpBarCheckbox")
         {
             Text = Strings.Settings.ShowFriendOverheadHpBar
         };
 
         // Game Settings - Information: guild members overhead hp bar.
-        _guildMemberOverheadHpBarCheckbox = new LabeledCheckBox(_informationSettings, "GuildMemberOverheadHpBarCheckbox")
+        _guildMemberOverheadHpBarCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "GuildMemberOverheadHpBarCheckbox")
         {
             Text = Strings.Settings.ShowGuildOverheadHpBar
         };
 
         // Game Settings - Information: my overhead hp bar.
-        _myOverheadHpBarCheckbox = new LabeledCheckBox(_informationSettings, "MyOverheadHpBarCheckbox")
+        _myOverheadHpBarCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "MyOverheadHpBarCheckbox")
         {
             Text = Strings.Settings.ShowMyOverheadHpBar
         };
 
         // Game Settings - Information: NPC overhead hp bar.
-        _mpcOverheadHpBarCheckbox = new LabeledCheckBox(_informationSettings, "NpcOverheadHpBarCheckbox")
+        _mpcOverheadHpBarCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "NpcOverheadHpBarCheckbox")
         {
             Text = Strings.Settings.ShowNpcOverheadHpBar
         };
 
         // Game Settings - Information: party members overhead hp bar.
-        _partyMemberOverheadHpBarCheckbox = new LabeledCheckBox(_informationSettings, "PartyMemberOverheadHpBarCheckbox")
+        _partyMemberOverheadHpBarCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "PartyMemberOverheadHpBarCheckbox")
         {
             Text = Strings.Settings.ShowPartyOverheadHpBar
         };
 
         // Game Settings - Information: players overhead hp bar.
-        _playerOverheadHpBarCheckbox = new LabeledCheckBox(_informationSettings, "PlayerOverheadHpBarCheckbox")
+        _playerOverheadHpBarCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "PlayerOverheadHpBarCheckbox")
         {
             Text = Strings.Settings.ShowPlayerOverheadHpBar
         };
 
         // Game Settings - Targeting.
-        _targetingSettings = new ScrollControl(_gameSettingsContainer, "TargetingSettings");
-        _targetingSettings.EnableScroll(false, false);
+        _targetingSettings = new ScrollControl(parent: _gameSettingsContainer, name: "TargetingSettings");
+        _targetingSettings.EnableScroll(horizontal: false, vertical: false);
 
         // Game Settings - Targeting: Sticky Target.
-        _stickyTarget = new LabeledCheckBox(_targetingSettings, "StickyTargetCheckbox")
+        _stickyTarget = new LabeledCheckBox(parent: _targetingSettings, name: "StickyTargetCheckbox")
         {
             Text = Strings.Settings.StickyTarget
         };
 
         // Game Settings - Targeting: Auto-turn to Target.
-        _autoTurnToTarget = new LabeledCheckBox(_targetingSettings, "AutoTurnToTargetCheckbox")
+        _autoTurnToTarget = new LabeledCheckBox(parent: _targetingSettings, name: "AutoTurnToTargetCheckbox")
         {
             Text = Strings.Settings.AutoTurnToTarget,
         };
 
         // Game Settings - Targeting: Auto-turn to Target.
-        _autoSoftRetargetOnSelfCast = new LabeledCheckBox(_targetingSettings, "AutoSoftRetargetOnSelfCast")
+        _autoSoftRetargetOnSelfCast = new LabeledCheckBox(parent: _targetingSettings, name: "AutoSoftRetargetOnSelfCast")
         {
             Text = Strings.Settings.AutoSoftRetargetOnSelfCast,
             TooltipText = Strings.Settings.AutoSoftRetargetOnSelfCastTooltip,
@@ -329,7 +335,7 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Typewriter Text
-        _typewriterCheckbox = new LabeledCheckBox(_interfaceSettings, "TypewriterCheckbox")
+        _typewriterCheckbox = new LabeledCheckBox(parent: _interfaceSettings, name: "TypewriterCheckbox")
         {
             Text = Strings.Settings.TypewriterText
         };
@@ -338,38 +344,34 @@ public partial class SettingsWindow : WindowControl
 
         #region InitVideoSettings
 
-        // Init VideoSettings Tab.
-        _videoSettingsTab = new Button(this, "VideoSettingsTab")
-        {
-            Text = Strings.Settings.VideoSettingsTab
-        };
-        _videoSettingsTab.Clicked += VideoSettingsTab_Clicked;
-
         // Video Settings Get Stored in the VideoSettings Scroll Control.
-        _videoSettingsContainer = new ScrollControl(this, "VideoSettingsContainer");
-        _videoSettingsContainer.EnableScroll(false, false);
+        _videoSettingsContainer = new ScrollControl(parent: this, name: "VideoSettingsContainer")
+        {
+            Dock = Pos.Fill,
+        };
+        _videoSettingsContainer.EnableScroll(horizontal: false, vertical: false);
 
         // Video Settings - Resolution Background.
-        var resolutionBackground = new ImagePanel(_videoSettingsContainer, "ResolutionPanel");
+        var resolutionBackground = new ImagePanel(parent: _videoSettingsContainer, name: "ResolutionPanel");
 
         // Video Settings - Resolution Label.
-        var resolutionLabel = new Label(resolutionBackground, "ResolutionLabel")
+        var resolutionLabel = new Label(parent: resolutionBackground, name: "ResolutionLabel")
         {
             Text = Strings.Settings.Resolution
         };
 
         // Video Settings - Resolution List.
-        _resolutionList = new ComboBox(resolutionBackground, "ResolutionCombobox");
+        _resolutionList = new ComboBox(parent: resolutionBackground, name: "ResolutionCombobox");
         var myModes = Graphics.Renderer?.GetValidVideoModes();
         myModes?.ForEach(
-            t =>
+            action: t =>
             {
-                var item = _resolutionList.AddItem(t);
+                var item = _resolutionList.AddItem(label: t);
                 item.TextAlign = Pos.Left;
             }
         );
 
-        _worldScale = new LabeledHorizontalSlider(_videoSettingsContainer, "WorldScale")
+        _worldScale = new LabeledHorizontalSlider(parent: _videoSettingsContainer, name: "WorldScale")
         {
             IsDisabled = !Options.IsLoaded,
             Label = Strings.Settings.WorldScale,
@@ -377,31 +379,31 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Video Settings - FPS Background.
-        var fpsBackground = new ImagePanel(_videoSettingsContainer, "FPSPanel");
+        var fpsBackground = new ImagePanel(parent: _videoSettingsContainer, name: "FPSPanel");
 
         // Video Settings - FPS Label.
-        var fpsLabel = new Label(fpsBackground, "FPSLabel")
+        var fpsLabel = new Label(parent: fpsBackground, name: "FPSLabel")
         {
             Text = Strings.Settings.TargetFps
         };
 
         // Video Settings - FPS List.
-        _fpsList = new ComboBox(fpsBackground, "FPSCombobox");
-        _ = _fpsList.AddItem(Strings.Settings.Vsync);
-        _ = _fpsList.AddItem(Strings.Settings.Fps30);
-        _ = _fpsList.AddItem(Strings.Settings.Fps60);
-        _ = _fpsList.AddItem(Strings.Settings.Fps90);
-        _ = _fpsList.AddItem(Strings.Settings.Fps120);
-        _ = _fpsList.AddItem(Strings.Settings.UnlimitedFps);
+        _fpsList = new ComboBox(parent: fpsBackground, name: "FPSCombobox");
+        _ = _fpsList.AddItem(label: Strings.Settings.Vsync);
+        _ = _fpsList.AddItem(label: Strings.Settings.Fps30);
+        _ = _fpsList.AddItem(label: Strings.Settings.Fps60);
+        _ = _fpsList.AddItem(label: Strings.Settings.Fps90);
+        _ = _fpsList.AddItem(label: Strings.Settings.Fps120);
+        _ = _fpsList.AddItem(label: Strings.Settings.UnlimitedFps);
 
         // Video Settings - Fullscreen Checkbox.
-        _fullscreenCheckbox = new LabeledCheckBox(_videoSettingsContainer, "FullscreenCheckbox")
+        _fullscreenCheckbox = new LabeledCheckBox(parent: _videoSettingsContainer, name: "FullscreenCheckbox")
         {
             Text = Strings.Settings.Fullscreen
         };
 
         // Video Settings - Enable Lighting Checkbox
-        _lightingEnabledCheckbox = new LabeledCheckBox(_videoSettingsContainer, "EnableLightingCheckbox")
+        _lightingEnabledCheckbox = new LabeledCheckBox(parent: _videoSettingsContainer, name: "EnableLightingCheckbox")
         {
             Text = Strings.Settings.EnableLighting
         };
@@ -410,77 +412,117 @@ public partial class SettingsWindow : WindowControl
 
         #region InitAudioSettings
 
-        // Init AudioSettingsTab.
-        _audioSettingsTab = new Button(this, "AudioSettingsTab")
-        {
-            Text = Strings.Settings.AudioSettingsTab
-        };
-        _audioSettingsTab.Clicked += AudioSettingsTab_Clicked;
-
         // Audio Settings Get Stored in the AudioSettings Scroll Control.
-        _audioSettingsContainer = new ScrollControl(this, "AudioSettingsContainer");
-        _audioSettingsContainer.EnableScroll(false, false);
-
-        // Audio Settings - Sound Label
-        _soundLabel = new Label(_audioSettingsContainer, "SoundLabel")
+        _audioSettingsContainer = new ScrollControl(parent: this, name: "AudioSettingsContainer")
         {
-            Text = Strings.Settings.SoundVolume.ToString(100)
+            Dock = Pos.Fill,
+        };
+        _audioSettingsContainer.EnableScroll(horizontal: false, vertical: false);
+
+        _audioTable = new Table(parent: _audioSettingsContainer, name: nameof(_audioTable))
+        {
+            ColumnCount = 2,
+            CellSpacing = new Point(4, 4),
+            Dock = Pos.Fill,
+            SizeToContents = true,
         };
 
-        // Audio Settings - Sound Slider
-        _soundSlider = new HorizontalSlider(_audioSettingsContainer, "SoundSlider")
-        {
-            Min = 0,
-            Max = 100
-        };
-        _soundSlider.ValueChanged += SoundSlider_ValueChanged;
-
-        // Audio Settings - Music Label
-        _musicLabel = new Label(_audioSettingsContainer, "MusicLabel")
-        {
-            Text = Strings.Settings.MusicVolume.ToString(100)
-        };
+        var textureVolumeSlider = Current?.GetTexture(TextureType.Gui, "volume_slider.png");
+        var textureVolumeSliderHovered = Current?.GetTexture(TextureType.Gui, "volume_slider_hovered.png");
 
         // Audio Settings - Music Slider
-        _musicSlider = new HorizontalSlider(_audioSettingsContainer, "MusicSlider")
+        _musicSlider = new LabeledSlider(parent: _audioSettingsContainer, name: nameof(_musicSlider))
         {
+            BackgroundImageName = "volume_bar.png",
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            Orientation = Orientation.LeftToRight,
+            Height = 35,
+            DraggerSize = new Point(9, 35),
+            SliderSize =  new Point(200, 35),
+            Label = Strings.Settings.VolumeMusic,
+            LabelMinimumSize = new Point(100, 0),
+            Rounding = 0,
             Min = 0,
-            Max = 100
+            Max = 100,
+            NotchCount = 5,
+            SnapToNotches = false,
+            ShouldDrawBackground = true,
         };
-        _musicSlider.ValueChanged += MusicSlider_ValueChanged;
+
+        _musicSlider.ValueChanged += MusicSliderOnValueChanged;
+        _musicSlider.SetDraggerImage(textureVolumeSlider, Dragger.ControlState.Normal);
+        _musicSlider.SetDraggerImage(textureVolumeSliderHovered, Dragger.ControlState.Hovered);
+        _musicSlider.SetDraggerImage(textureVolumeSlider, Dragger.ControlState.Clicked);
+        _musicSlider.SetSound("octave-tap-resonant.wav", Dragger.ControlSoundState.Hover);
+        _musicSlider.SetSound("octave-tap-professional.wav", Dragger.ControlSoundState.MouseDown);
+        _musicSlider.SetSound("octave-tap-professional.wav", Dragger.ControlSoundState.MouseUp);
+
+        // Audio Settings - Sound Slider
+        _soundEffectsSlider = new LabeledSlider(parent: _audioSettingsContainer, name: nameof(_soundEffectsSlider))
+        {
+            BackgroundImageName = "volume_bar.png",
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            Orientation = Orientation.LeftToRight,
+            Height = 35,
+            DraggerSize = new Point(9, 35),
+            SliderSize =  new Point(200, 35),
+            Label = Strings.Settings.VolumeSoundEffects,
+            LabelMinimumSize = new Point(100, 0),
+            Rounding = 0,
+            Min = 0,
+            Max = 100,
+            NotchCount = 5,
+            SnapToNotches = false,
+            ShouldDrawBackground = true,
+        };
+
+        _soundEffectsSlider.ValueChanged += SoundEffectsSliderOnValueChanged;
+        _soundEffectsSlider.SetDraggerImage(textureVolumeSlider, Dragger.ControlState.Normal);
+        _soundEffectsSlider.SetDraggerImage(textureVolumeSliderHovered, Dragger.ControlState.Hovered);
+        _soundEffectsSlider.SetDraggerImage(textureVolumeSlider, Dragger.ControlState.Clicked);
+        _soundEffectsSlider.SetSound("octave-tap-resonant.wav", Dragger.ControlSoundState.Hover);
+        _soundEffectsSlider.SetSound("octave-tap-professional.wav", Dragger.ControlSoundState.MouseDown);
+        _soundEffectsSlider.SetSound("octave-tap-professional.wav", Dragger.ControlSoundState.MouseUp);
 
         #endregion
 
         #region InitKeybindingSettings
 
-        // Init KeybindingsSettings Tab.
-        _keybindingSettingsTab = new Button(this, "KeybindingSettingsTab")
-        {
-            Text = Strings.Settings.KeyBindingSettingsTab
-        };
-        _keybindingSettingsTab.Clicked += KeybindingSettingsTab_Clicked;
-
         // KeybindingSettings Get Stored in the KeybindingSettings Scroll Control
-        _keybindingSettingsContainer = new ScrollControl(this, "KeybindingSettingsContainer");
-        _keybindingSettingsContainer.EnableScroll(false, true);
+        _keybindingSettingsContainer = new ScrollControl(parent: this, name: "KeybindingSettingsContainer")
+        {
+            Dock = Pos.Fill,
+        };
+        _keybindingSettingsContainer.EnableScroll(horizontal: false, vertical: true);
+
+        _controlsTable = new Table(parent: _keybindingSettingsContainer, name: nameof(_controlsTable))
+        {
+            Dock = Pos.Top,
+            ColumnCount = 3,
+            SizeToContents = true,
+        };
 
         // Keybinding Settings - Restore Default Keys Button.
-        _restoreDefaultKeybindingsButton = new Button(_bottomBar, nameof(_restoreDefaultKeybindingsButton))
+        _restoreDefaultKeybindingsButton = new Button(parent: _bottomBar, name: nameof(_restoreDefaultKeybindingsButton))
         {
             Alignment = [Alignments.Left, Alignments.CenterV],
             AutoSizeToContents = true,
             Font = fontNormal,
-            MinimumSize = new Point(96, 24),
-            TextPadding = new Padding(16, 2),
+            IsVisible = false,
+            MinimumSize = new Point(x: 96, y: 24),
+            TextPadding = new Padding(horizontal: 16, vertical: 2),
             Text = Strings.Settings.Restore,
         };
         _restoreDefaultKeybindingsButton.Clicked += RestoreDefaultKeybindingsButton_Clicked;
+        _restoreDefaultKeybindingsButton.SetHoverSound("octave-tap-resonant.wav");
 
         // Keybinding Settings - Controls
         var row = 0;
         foreach (var control in (_keybindingEditControls ?? Controls.ActiveControls).Mappings.Keys)
         {
-            AddControlKeybindRow(control, ref row, out _);
+            AddControlKeybindRow(control: control, row: ref row, keyButtons: out _);
         }
 
         Input.KeyDown += OnKeyDown;
@@ -490,13 +532,51 @@ public partial class SettingsWindow : WindowControl
 
         #endregion
 
-        _tabs.AddPage(Strings.Settings.GameSettingsTab, _gameSettingsContainer);
-        _tabs.AddPage(Strings.Settings.VideoSettingsTab, _videoSettingsContainer);
-        _tabs.AddPage(Strings.Settings.AudioSettingsTab, _audioSettingsContainer);
-        _tabs.AddPage(Strings.Settings.KeyBindingSettingsTab, _keybindingSettingsContainer);
+        _gameSettingsTab = _tabs.AddPage(label: Strings.Settings.GameSettingsTab, page: _gameSettingsContainer);
+        _videoSettingsTab = _tabs.AddPage(label: Strings.Settings.VideoSettingsTab, page: _videoSettingsContainer);
+        _audioSettingsTab = _tabs.AddPage(label: Strings.Settings.AudioSettingsTab, page: _audioSettingsContainer);
+        _keybindingSettingsTab = _tabs.AddPage(label: Strings.Settings.KeyBindingSettingsTab, page: _keybindingSettingsContainer);
+        _tabs.TabChanged += TabsOnTabChanged;
 
-        LoadJsonUi(UI.Shared, Graphics.Renderer?.GetResolutionString());
+        LoadJsonUi(stage: UI.Shared, resolution: Graphics.Renderer?.GetResolutionString());
         IsHidden = true;
+    }
+
+    private void TabsOnTabChanged(Base @base, TabChangeEventArgs tabChangeEventArgs)
+    {
+        if (_keybindingSettingsTab.IsActive)
+        {
+            _restoreDefaultKeybindingsButton.IsVisible = true;
+
+            bool controlsAdded = false;
+
+            _controlsTable.SizeToContents = true;
+
+            var row = mKeybindingBtns.Count;
+            foreach (var (control, mapping) in (_keybindingEditControls ?? Controls.ActiveControls).Mappings)
+            {
+                if (!mKeybindingBtns.TryGetValue(control, out var controlButtons))
+                {
+                    controlsAdded |= AddControlKeybindRow(control, ref row, out controlButtons);
+                }
+
+                var bindings = mapping.Bindings;
+                for (var bindingIndex = 0; bindingIndex < bindings.Count; bindingIndex++)
+                {
+                    var binding = bindings[bindingIndex];
+                    controlButtons[bindingIndex].Text = Strings.Keys.FormatKeyName(binding.Modifier, binding.Key);
+                }
+            }
+
+            if (controlsAdded)
+            {
+                // Current.SaveUIJson(UI.Shared, Name, GetJsonUI(true), Graphics.Renderer?.GetResolutionString());
+            }
+        }
+        else
+        {
+            _restoreDefaultKeybindingsButton.IsVisible = false;
+        }
     }
 
     private bool AddControlKeybindRow(Control control, ref int row, out Button[] keyButtons)
@@ -527,47 +607,54 @@ public partial class SettingsWindow : WindowControl
             }
         }
 
-            var prefix = $"Control{controlName}";
-            var label = new Label(_keybindingSettingsContainer, $"{prefix}Label")
-            {
+        var controlRow = _controlsTable.AddRow();
+
+        var prefix = $"Control{controlName}";
+        var label = new Label(controlRow, $"{prefix}Label")
+        {
+            Alignment = [Alignments.CenterV, Alignments.Right],
+            Margin = new Margin(0, 0, 8, 0),
             Text = localizedControlName,
-                AutoSizeToContents = true,
-                Font = defaultFont,
-            };
-            _ = label.SetBounds(14, 11 + offset, 21, 16);
-            label.SetTextColor(new Color(255, 255, 255, 255), Label.ControlState.Normal);
+            AutoSizeToContents = true,
+            MouseInputEnabled = false,
+            Font = defaultFont,
+        };
 
-            var key1 = new Button(_keybindingSettingsContainer, $"{prefix}Button1")
-            {
-                AutoSizeToContents = false,
-                Font = defaultFont,
-                Text = string.Empty,
-                UserData = new KeyValuePair<Control, int>(control, 0),
-            };
-            key1.SetTextColor(Color.White, Label.ControlState.Normal);
-            key1.SetImage("control_button.png", Button.ControlState.Normal);
-            key1.SetImage("control_button_hovered.png", Button.ControlState.Hovered);
-            key1.SetImage("control_button_clicked.png", Button.ControlState.Clicked);
-            key1.SetHoverSound("octave-tap-resonant.wav");
-            key1.SetMouseDownSound("octave-tap-warm.wav");
-            _ = key1.SetBounds(181, 6 + offset, 120, 28);
-            key1.Clicked += Key_Clicked;
+        controlRow.SetCellContents(0, label, enableMouseInput: false);
+        // _ = label.SetBounds(14, 11 + offset, 21, 16);
+        label.SetTextColor(new Color(255, 255, 255, 255), Label.ControlState.Normal);
 
-            var key2 = new Button(_keybindingSettingsContainer, $"{prefix}Button2")
-            {
-                AutoSizeToContents = false,
-                Font = defaultFont,
-                Text = string.Empty,
-                UserData = new KeyValuePair<Control, int>(control, 1),
-            };
-            key2.SetTextColor(Color.White, Label.ControlState.Normal);
-            key2.SetImage("control_button.png", Button.ControlState.Normal);
-            key2.SetImage("control_button_hovered.png", Button.ControlState.Hovered);
-            key2.SetImage("control_button_clicked.png", Button.ControlState.Clicked);
-            key2.SetHoverSound("octave-tap-resonant.wav");
-            key2.SetMouseDownSound("octave-tap-warm.wav");
-            _ = key2.SetBounds(309, 6 + offset, 120, 28);
-            key2.Clicked += Key_Clicked;
+        var key1 = new Button(controlRow, $"{prefix}Button1")
+        {
+            Alignment = [Alignments.Center],
+            AutoSizeToContents = false,
+            Font = defaultFont,
+            MinimumSize = new Point(150, 20),
+            Text = string.Empty,
+            UserData = new KeyValuePair<Control, int>(control, 0),
+        };
+        key1.SetTextColor(Color.White, Label.ControlState.Normal);
+        key1.SetHoverSound("octave-tap-resonant.wav");
+        key1.SetMouseDownSound("octave-tap-warm.wav");
+        controlRow.SetCellContents(1, key1, enableMouseInput: true);
+        // _ = key1.SetBounds(181, 6 + offset, 120, 28);
+        key1.Clicked += Key_Clicked;
+
+        var key2 = new Button(controlRow, $"{prefix}Button2")
+        {
+            Alignment = [Alignments.Center],
+            AutoSizeToContents = false,
+            Font = defaultFont,
+            MinimumSize = new Point(150, 20),
+            Text = string.Empty,
+            UserData = new KeyValuePair<Control, int>(control, 1),
+        };
+        key2.SetTextColor(Color.White, Label.ControlState.Normal);
+        key2.SetHoverSound("octave-tap-resonant.wav");
+        key2.SetMouseDownSound("octave-tap-warm.wav");
+        controlRow.SetCellContents(2, key2, enableMouseInput: true);
+        // _ = key2.SetBounds(309, 6 + offset, 120, 28);
+        key2.Clicked += Key_Clicked;
 
         keyButtons = [key1, key2];
         mKeybindingBtns.Add(control, keyButtons);
@@ -614,28 +701,6 @@ public partial class SettingsWindow : WindowControl
         _worldScale.Value = Globals.Database.WorldZoom;
     }
 
-    private void GameSettingsTab_Clicked(Base sender, ClickedEventArgs arguments)
-    {
-        // Determine if GameSettingsContainer is currently being shown or not.
-        if (!_gameSettingsContainer.IsVisible)
-        {
-            // Disable the GameSettingsTab to fake it being selected visually.
-            _gameSettingsTab.Disable();
-            _videoSettingsTab.Enable();
-            _audioSettingsTab.Enable();
-            _keybindingSettingsTab.Enable();
-
-            // Containers.
-            _gameSettingsContainer.Show();
-            _videoSettingsContainer.Hide();
-            _audioSettingsContainer.Hide();
-            _keybindingSettingsContainer.Hide();
-
-            // Restore Default KeybindingSettings Button.
-            _restoreDefaultKeybindingsButton.Hide();
-        }
-    }
-
     void InterfaceSettings_Clicked(Base sender, ClickedEventArgs arguments)
     {
         _interfaceSettings.Show();
@@ -660,121 +725,11 @@ public partial class SettingsWindow : WindowControl
             !(Options.Instance?.Combat?.EnableAutoSelfCastFriendlySpellsWhenTargetingHostile ?? false);
     }
 
-    private void VideoSettingsTab_Clicked(Base sender, ClickedEventArgs arguments)
-    {
-        // Determine if VideoSettingsContainer is currently being shown or not.
-        if (!_videoSettingsContainer.IsVisible)
-        {
-            // Disable the VideoSettingsTab to fake it being selected visually.
-            _gameSettingsTab.Enable();
-            _videoSettingsTab.Disable();
-            _audioSettingsTab.Enable();
-            _keybindingSettingsTab.Enable();
-
-            // Containers.
-            _gameSettingsContainer.Hide();
-            _videoSettingsContainer.Show();
-            _audioSettingsContainer.Hide();
-            _keybindingSettingsContainer.Hide();
-
-            // Restore Default KeybindingSettings Button.
-            _restoreDefaultKeybindingsButton.Hide();
-        }
-    }
-
-    private void AudioSettingsTab_Clicked(Base sender, ClickedEventArgs arguments)
-    {
-        // Determine if AudioSettingsContainer is currently being shown or not.
-        if (!_audioSettingsContainer.IsVisible)
-        {
-            // Disable the AudioSettingsTab to fake it being selected visually.
-            _gameSettingsTab.Enable();
-            _videoSettingsTab.Enable();
-            _audioSettingsTab.Disable();
-            _keybindingSettingsTab.Enable();
-
-            // Containers.
-            _gameSettingsContainer.Hide();
-            _videoSettingsContainer.Hide();
-            _audioSettingsContainer.Show();
-            _keybindingSettingsContainer.Hide();
-
-            // Restore Default KeybindingSettings Button.
-            _restoreDefaultKeybindingsButton.Hide();
-        }
-    }
-
-    private void KeybindingSettingsTab_Clicked(Base sender, ClickedEventArgs arguments)
-    {
-        // Determine if controls are currently being shown or not.
-        if (!_keybindingSettingsContainer.IsVisible)
-        {
-            // Disable the KeybindingSettingsTab to fake it being selected visually.
-            _gameSettingsTab.Enable();
-            _videoSettingsTab.Enable();
-            _audioSettingsTab.Enable();
-            _keybindingSettingsTab.Disable();
-
-            // Containers.
-            _gameSettingsContainer.Hide();
-            _videoSettingsContainer.Hide();
-            _audioSettingsContainer.Hide();
-            _keybindingSettingsContainer.Show();
-
-            // Restore Default KeybindingSettings Button.
-            _restoreDefaultKeybindingsButton.Show();
-
-            bool controlsAdded = false;
-
-            var row = mKeybindingBtns.Count;
-            foreach (var (control, mapping) in (_keybindingEditControls ?? Controls.ActiveControls).Mappings)
-            {
-                if (!mKeybindingBtns.TryGetValue(control, out var controlButtons))
-                {
-                    controlsAdded |= AddControlKeybindRow(control, ref row, out controlButtons);
-                }
-
-                var bindings = mapping.Bindings;
-                for (var bindingIndex = 0; bindingIndex < bindings.Count; bindingIndex++)
-                {
-                    var binding = bindings[bindingIndex];
-                    controlButtons[bindingIndex].Text = Strings.Keys.FormatKeyName(binding.Modifier, binding.Key);
-                }
-            }
-
-            if (controlsAdded)
-            {
-                Current.SaveUIJson(UI.Shared, Name, GetJsonUI(true), Graphics.Renderer?.GetResolutionString());
-            }
-        }
-    }
-
-    private void LoadSettingsWindow()
+    private void Reset()
     {
         Title = Strings.Settings.Title;
 
-        // Containers.
-        _gameSettingsContainer.Show();
-        _videoSettingsContainer.Hide();
-        _audioSettingsContainer.Hide();
-        _keybindingSettingsContainer.Hide();
-
-        // Tabs.
-        _gameSettingsTab.Show();
-        _videoSettingsTab.Show();
-        _audioSettingsTab.Show();
-        _keybindingSettingsTab.Show();
-
-        // Disable the GameSettingsTab to fake it being selected visually by default.
-        _gameSettingsTab.Disable();
-        _videoSettingsTab.Enable();
-        _audioSettingsTab.Enable();
-        _keybindingSettingsTab.Enable();
-
-        // Buttons.
-        _applyPendingChangesButton.Show();
-        _cancelPendingChangesButton.Show();
-        _restoreDefaultKeybindingsButton.Hide();
+        _gameSettingsTab.Select();
 
         UpdateWorldScaleControls();
     }
@@ -942,9 +897,7 @@ public partial class SettingsWindow : WindowControl
         _previousMusicVolume = Globals.Database.MusicVolume;
         _previousSoundVolume = Globals.Database.SoundVolume;
         _musicSlider.Value = Globals.Database.MusicVolume;
-        _soundSlider.Value = Globals.Database.SoundVolume;
-        _musicLabel.Text = Strings.Settings.MusicVolume.ToString((int)_musicSlider.Value);
-        _soundLabel.Text = Strings.Settings.SoundVolume.ToString((int)_soundSlider.Value);
+        _soundEffectsSlider.Value = Globals.Database.SoundVolume;
 
         // Control Settings.
         _keybindingEditControls = new Controls(Controls.ActiveControls);
@@ -953,7 +906,7 @@ public partial class SettingsWindow : WindowControl
         base.Show();
 
         // Load every GUI element to their default state when showing up the settings window (pressed tabs, containers, etc.)
-        LoadSettingsWindow();
+        Reset();
 
         // Set up whether we're supposed to return to the previous menu.
         _returnToMenu = returnToMenu;
@@ -987,17 +940,17 @@ public partial class SettingsWindow : WindowControl
     }
 
     // Input Handlers
-    private void MusicSlider_ValueChanged(Base sender, EventArgs arguments)
+    private void MusicSliderOnValueChanged(Base sender, ValueChangedEventArgs<double> arguments)
     {
-        _musicLabel.Text = Strings.Settings.MusicVolume.ToString((int)_musicSlider.Value);
-        Globals.Database.MusicVolume = (int)_musicSlider.Value;
+        Globals.Database.MusicVolume = (int)arguments.Value;
+        ApplicationContext.CurrentContext.Logger.LogInformation("Music volume set to {MusicVolume}", arguments.Value);
         Audio.UpdateGlobalVolume();
     }
 
-    private void SoundSlider_ValueChanged(Base sender, EventArgs arguments)
+    private void SoundEffectsSliderOnValueChanged(Base sender, ValueChangedEventArgs<double> arguments)
     {
-        _soundLabel.Text = Strings.Settings.SoundVolume.ToString((int)_soundSlider.Value);
-        Globals.Database.SoundVolume = (int)_soundSlider.Value;
+        Globals.Database.SoundVolume = (int)arguments.Value;
+        ApplicationContext.CurrentContext.Logger.LogInformation("Sound volume set to {SoundVolume}", arguments.Value);
         Audio.UpdateGlobalVolume();
     }
 
@@ -1121,7 +1074,7 @@ public partial class SettingsWindow : WindowControl
 
         // Audio Settings.
         Globals.Database.MusicVolume = (int)_musicSlider.Value;
-        Globals.Database.SoundVolume = (int)_soundSlider.Value;
+        Globals.Database.SoundVolume = (int)_soundEffectsSlider.Value;
         Audio.UpdateGlobalVolume();
 
         // Control Settings.

@@ -46,7 +46,7 @@ public partial class NumericUpDown : TextBoxNumeric
 
         mMax = 100;
         mMin = 0;
-        mValue = 0f;
+        _value = 0f;
         Text = "0";
     }
 
@@ -86,7 +86,7 @@ public partial class NumericUpDown : TextBoxNumeric
                 value = mMax;
             }
 
-            if (value == mValue)
+            if (value == _value)
             {
                 return;
             }
@@ -140,7 +140,7 @@ public partial class NumericUpDown : TextBoxNumeric
     /// <param name="control">Event source.</param>
     protected virtual void OnButtonUp(Base control, EventArgs args)
     {
-        Value = mValue + 1;
+        Value = _value + 1;
     }
 
     /// <summary>
@@ -149,7 +149,7 @@ public partial class NumericUpDown : TextBoxNumeric
     /// <param name="control">Event source.</param>
     protected virtual void OnButtonDown(Base control, ClickedEventArgs args)
     {
-        Value = mValue - 1;
+        Value = _value - 1;
     }
 
     /// <summary>

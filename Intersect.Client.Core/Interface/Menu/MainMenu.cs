@@ -52,7 +52,7 @@ public partial class MainMenu : MutableInterface
         _createCharacterWindow = new CreateCharacterWindow(_menuCanvas, this, SelectCharacterWindow);
         _settingsWindow = new SettingsWindow(_menuCanvas, this, null)
         {
-            AlignmentDistance = new Padding(0, 140, 0, 0),
+            AlignmentDistance = new Padding(0, 100, 0, 0),
         };
         _creditsWindow = new CreditsWindow(_menuCanvas, this);
     }

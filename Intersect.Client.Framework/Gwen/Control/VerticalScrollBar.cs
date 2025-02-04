@@ -76,7 +76,7 @@ public partial class VerticalScrollBar : ScrollBar
         mScrollButton[1].Dock = Pos.Bottom;
 
         mBar.Width = ButtonSize;
-        mBar.Padding = new Padding(0, ButtonSize, 0, ButtonSize);
+        mBar.Margin = new Margin(0, ButtonSize, 0, ButtonSize);
 
         var barHeight = 0.0f;
         if (mContentSize > 0.0f)
@@ -93,11 +93,16 @@ public partial class VerticalScrollBar : ScrollBar
         mBar.IsHidden = Height - ButtonSize * 2 <= barHeight;
 
         //Based on our last scroll amount, produce a position for the bar
-        if (!mBar.IsHeld)
+        var isHeld = mBar.IsHeld;
+        if (!isHeld)
         {
-            SetScrollAmount(ScrollAmount, true);
+            SetScrollAmount(ScrollAmount, _wasHeld != isHeld);
         }
+
+        _wasHeld = isHeld;
     }
+
+    private bool _wasHeld;
 
     public virtual void NudgeUp(Base control, EventArgs args)
     {

@@ -55,6 +55,11 @@ public partial struct Margin : IEquatable<Margin>
     public bool Equals(Margin other) =>
         other.Top == Top && other.Bottom == Bottom && other.Left == Left && other.Right == Right;
 
+    public static Point operator +(Point point, Margin margin) => new(
+        point.X + margin.Left + margin.Right,
+        point.Y + margin.Top + margin.Bottom
+    );
+
     public static bool operator ==(Margin lhs, Margin rhs) => lhs.Equals(rhs);
 
     public static bool operator !=(Margin lhs, Margin rhs) => !lhs.Equals(rhs);

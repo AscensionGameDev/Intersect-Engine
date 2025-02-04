@@ -99,6 +99,7 @@ public class IntersectSkin : TexturedBase
         mTextures.CheckBox.Disabled.Box = new Single(_texture, 84, 66, 22, 22);
         mTextures.CheckBox.Disabled.Fill = new Single(_texture, 106, 66, 22, 22);
 
+        mTextures.Panel.Control = new Bordered(_texture, 64, 112, 16, 16, Margin.Four);
         mTextures.Panel.Normal = new Bordered(_texture, 32, 0, 16, 16, Margin.Four);
         mTextures.Panel.Highlight = new Bordered(_texture, 32, 16, 16, 16, Margin.Four);
         mTextures.Panel.Bright = new Bordered(_texture, 32, 32, 16, 16, Margin.Four);

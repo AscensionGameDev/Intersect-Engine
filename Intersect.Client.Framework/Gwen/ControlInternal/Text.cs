@@ -260,6 +260,9 @@ public partial class Text : Base
             }
         }
 
+        newSize.X = Math.Clamp(newSize.X, MinimumSize.X, MaximumSize.X > 0 ? MaximumSize.X : int.MaxValue);
+        newSize.Y = Math.Clamp(newSize.Y, MinimumSize.Y, MaximumSize.Y > 0 ? MaximumSize.Y : int.MaxValue);
+
         if (Size == newSize)
         {
             return;

@@ -6,6 +6,7 @@ using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.Skin.Texturing;
 using Intersect.Core;
+using Intersect.Framework;
 using Intersect.Framework.Reflection;
 using Microsoft.Extensions.Logging;
 using Single = Intersect.Client.Framework.Gwen.Skin.Texturing.Single;
@@ -28,6 +29,7 @@ public partial struct SkinTextures
 
     public partial struct _Panel
     {
+        public Bordered Control;
 
         public Bordered Normal;
 
@@ -596,6 +598,7 @@ public partial class TexturedBase : Skin.Base
         mTextures.StatusBar = new Bordered(_texture, 128, 288, 127, 31, Margin.Eight);
         mTextures.Selection = new Bordered(_texture, 384, 32, 31, 31, Margin.Four);
 
+        mTextures.Panel.Control = new Bordered(_texture, 256, 0, 63, 63, new Margin(16, 16, 16, 16));
         mTextures.Panel.Normal = new Bordered(_texture, 256, 0, 63, 63, new Margin(16, 16, 16, 16));
         mTextures.Panel.Bright = new Bordered(_texture, 256 + 64, 0, 63, 63, new Margin(16, 16, 16, 16));
         mTextures.Panel.Dark = new Bordered(_texture, 256, 64, 63, 63, new Margin(16, 16, 16, 16));
@@ -1137,6 +1140,11 @@ public partial class TexturedBase : Skin.Base
         }
     }
 
+    public override void DrawPanel(Panel panel)
+    {
+        mTextures.Panel.Control.Draw(Renderer, panel.RenderBounds, panel.RenderColor);
+    }
+
     public override void DrawTabControl(Control.Base control)
     {
         mTextures.Tab.Control.Draw(Renderer, control.RenderBounds, control.RenderColor);
@@ -1586,6 +1594,93 @@ public partial class TexturedBase : Skin.Base
         mTextures.Input.ListBox.OddLine.Draw(Renderer, control.RenderBounds, control.RenderColor);
     }
 
+    public void DrawSliderNotches(
+        Rectangle rect,
+        double[]? notches,
+        int numNotches,
+        float thickness,
+        float notchLength,
+        Orientation orientation
+    )
+    {
+        if (numNotches == 0)
+        {
+            return;
+        }
+
+        var positionLimit = orientation switch
+        {
+            Orientation.LeftToRight => rect.Width,
+            Orientation.RightToLeft => rect.Width,
+            Orientation.TopToBottom => rect.Height,
+            Orientation.BottomToTop => rect.Height,
+            _ => throw Exceptions.UnreachableInvalidEnum(orientation),
+        };
+
+        Rectangle notchBaseRect = default;
+        notchBaseRect.X = rect.X;
+        notchBaseRect.Y = rect.Y;
+        switch (orientation)
+        {
+            case Orientation.LeftToRight:
+            case Orientation.RightToLeft:
+                notchBaseRect.Width = (int)thickness;
+                notchBaseRect.Height = (int)(notchLength + thickness);
+                break;
+            case Orientation.TopToBottom:
+            case Orientation.BottomToTop:
+                notchBaseRect.Width = (int)(notchLength + thickness);
+                notchBaseRect.Height = (int)thickness;
+                break;
+            default:
+                throw Exceptions.UnreachableInvalidEnum(orientation);
+        }
+
+        if (notches == null)
+        {
+            var spacing = positionLimit / (float) numNotches;
+
+            for (var notchIndex = 0; notchIndex <= numNotches; ++notchIndex)
+            {
+                Renderer.DrawFilledRect(
+                    orientation is Orientation.LeftToRight or Orientation.RightToLeft
+                        ? notchBaseRect with
+                        {
+                            X = (int)(notchBaseRect.X + spacing * notchIndex),
+                        }
+                        : notchBaseRect with
+                        {
+                            Y = (int)(notchBaseRect.Y + spacing * notchIndex),
+                        }
+                );
+            }
+
+            return;
+        }
+
+        var notchMin = notches.Min();
+        var notchMax = notches.Max();
+        var notchRange = notchMax - notchMin;
+        if (notchRange == 0)
+        {
+            notchRange = 1;
+        }
+
+        var notchPositions = notches.Select(notch => positionLimit * (notch - notchMin) / notchRange).ToArray();
+        foreach (var notchPosition in notchPositions)
+        {
+            Rectangle notchRect = orientation switch
+            {
+                Orientation.LeftToRight => notchBaseRect with { X = (int)(notchBaseRect.X + notchPosition) },
+                Orientation.RightToLeft => notchBaseRect with { X = (int)(notchBaseRect.X + positionLimit - notchPosition) },
+                Orientation.TopToBottom => notchBaseRect with { Y = (int)(notchBaseRect.Y + notchPosition) },
+                Orientation.BottomToTop => notchBaseRect with { Y = (int)(notchBaseRect.Y + positionLimit - notchPosition) },
+                _ => throw Exceptions.UnreachableInvalidEnum(orientation),
+            };
+            Renderer.DrawFilledRect(notchRect);
+        }
+    }
+
     public void DrawSliderNotchesH(Rectangle rect, double[] notches, int numNotches, float thickness, float notchLength)
     {
         if (numNotches == 0)
@@ -1635,11 +1730,15 @@ public partial class TexturedBase : Skin.Base
 
     public override void DrawSlider(Control.Base control, bool horizontal, double[] notches, int numNotches, int barSize)
     {
-        if (((Slider) control).GetImage() != null)
+        if (control is not Slider slider)
         {
-            var renderImg = ((Slider) control).GetImage();
-            var rect = control.RenderBounds;
-            Renderer.DrawColor = control.RenderColor;
+            return;
+        }
+
+        var rect = control.RenderBounds;
+
+        if (slider.BackgroundImage is {} backgroundTexture)
+        {
             if (horizontal)
             {
                 //rect.X += (int) (barSize * 0.5);
@@ -1648,24 +1747,27 @@ public partial class TexturedBase : Skin.Base
                 //rect.Height = 1;
                 //DrawSliderNotchesH(rect, numNotches, barSize * 0.5f);
                 //Renderer.DrawFilledRect(rect);
-                Renderer.DrawColor = control.RenderColor;
-                Renderer.DrawTexturedRect(renderImg, rect, control.RenderColor);
-
-                return;
+            }
+            else
+            {
+                //rect.Y += (int) (barSize * 0.5);
+                //rect.Height -= barSize;
+                //rect.X += (int) (rect.Width * 0.5 - 1);
+                //rect.Width = 1;
+                //DrawSliderNotchesV(rect, numNotches, barSize * 0.4f);
+                //Renderer.DrawFilledRect(rect);
             }
 
-            //rect.Y += (int) (barSize * 0.5);
-            //rect.Height -= barSize;
-            //rect.X += (int) (rect.Width * 0.5 - 1);
-            //rect.Width = 1;
-            //DrawSliderNotchesV(rect, numNotches, barSize * 0.4f);
-            //Renderer.DrawFilledRect(rect);
             Renderer.DrawColor = control.RenderColor;
-            Renderer.DrawTexturedRect(renderImg, rect, control.RenderColor);
+            Renderer.DrawTexturedRect(backgroundTexture, rect, control.RenderColor);
+
+            if (control.DrawDebugOutlines)
+            {
+                DrawRectStroke(rect, Color.Yellow);
+            }
         }
         else
         {
-            var rect = control.RenderBounds;
             Renderer.DrawColor = control.IsDisabled ? Colors.Button.Disabled : control.RenderColor;
 
             if (horizontal)
@@ -1675,17 +1777,73 @@ public partial class TexturedBase : Skin.Base
                 rect.Y += (int) (rect.Height * 0.5 - 1);
                 rect.Height = 1;
                 DrawSliderNotchesH(rect, notches, numNotches, rect.Height, barSize * 0.5f);
-                Renderer.DrawFilledRect(rect);
-
-                return;
+            }
+            else
+            {
+                rect.Y += (int) (barSize * 0.5);
+                rect.Height -= barSize;
+                rect.X += (int) (rect.Width * 0.5 - 1);
+                rect.Width = 1;
+                DrawSliderNotchesV(rect, numNotches, barSize * 0.4f);
             }
 
-            rect.Y += (int) (barSize * 0.5);
-            rect.Height -= barSize;
-            rect.X += (int) (rect.Width * 0.5 - 1);
-            rect.Width = 1;
-            DrawSliderNotchesV(rect, numNotches, barSize * 0.4f);
             Renderer.DrawFilledRect(rect);
+        }
+    }
+
+    public override void DrawSlider(Slider slider, Orientation orientation, double[] notches, int numNotches, int barSize)
+    {
+        var bounds = slider.RenderBounds;
+        var renderColor = slider.RenderColor;
+
+        if (slider.BackgroundImage is {} backgroundTexture)
+        {
+            Renderer.DrawColor = renderColor;
+
+            // TODO: Orientation
+
+            Renderer.DrawTexturedRect(backgroundTexture, bounds, renderColor);
+
+            if (slider.DrawDebugOutlines)
+            {
+                DrawRectStroke(bounds, Color.Yellow);
+            }
+        }
+        else
+        {
+            if (slider.IsDisabled)
+            {
+                renderColor = Colors.Button.Disabled;
+            }
+
+            Renderer.DrawColor = renderColor;
+
+            float thickness;
+            switch (orientation)
+            {
+                case Orientation.LeftToRight:
+                case Orientation.RightToLeft:
+                    bounds.X += (int) (barSize * 0.5);
+                    bounds.Width -= barSize;
+                    bounds.Y += (int) (bounds.Height * 0.5 - 1);
+                    bounds.Height = 1;
+                    thickness = bounds.Height;
+                    break;
+                case Orientation.TopToBottom:
+                case Orientation.BottomToTop:
+                    bounds.Y += (int) (barSize * 0.5);
+                    bounds.Height -= barSize;
+                    bounds.X += (int) (bounds.Width * 0.5 - 1);
+                    bounds.Width = 1;
+                    thickness = bounds.Width;
+                    break;
+                default:
+                    throw Exceptions.UnreachableInvalidEnum(orientation);
+            }
+
+            DrawSliderNotches(bounds, notches, numNotches, thickness, barSize * 0.5f, orientation);
+
+            Renderer.DrawFilledRect(bounds);
         }
     }
 

@@ -276,7 +276,9 @@ internal sealed partial class DebugWindow : Window
     {
         var table = new Table(parent, nameof(TableDebugStats))
         {
+            CellSpacing = new Point(8, 2),
             ColumnCount = 2,
+            ColumnWidths = [150, null],
             Dock = Pos.Fill,
             Font = _defaultFont,
         };
@@ -441,7 +443,7 @@ internal sealed partial class DebugWindow : Window
         private static Base CreateValue(Task _) => Interface.FindControlAtCursor();
 
         private void HandleValue(Base component)
-            {
+        {
             DataChanged?.Invoke(
                 this,
                 new TableDataChangedEventArgs(
