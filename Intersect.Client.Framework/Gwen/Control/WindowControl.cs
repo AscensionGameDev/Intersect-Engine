@@ -310,12 +310,6 @@ public partial class WindowControl : ResizableControl
         _titlebar.ProcessAlignments();
     }
 
-    public override void DisableResizing()
-    {
-        base.DisableResizing();
-        Padding = new Padding(6, 0, 6, 0);
-    }
-
     public void Close()
     {
         CloseButtonPressed(this, EventArgs.Empty);

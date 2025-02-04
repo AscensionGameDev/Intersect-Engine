@@ -1,57 +1,76 @@
+using System.Diagnostics;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.Input;
+using Intersect.Framework;
+using Intersect.Framework.Reflection;
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;
-
 
 /// <summary>
 ///     Base slider.
 /// </summary>
 public partial class Slider : Base
 {
+    protected readonly SliderBar _sliderBar;
 
-    protected readonly SliderBar mSliderBar;
+    private GameTexture? _backgroundImage;
+    private string? _backgroundImageName;
+    private double _maximumValue;
+    private double _minimumValue;
+    private double[]? _notches;
+    private Orientation _orientation;
 
-    private GameTexture mBackgroundImage;
-
-    private string mBackgroundImageFilename;
-
-    protected double mMax;
-
-    protected double mMin;
-
-    protected int mNotchCount;
-
-    protected double[] _notches;
-
-    protected bool mSnapToNotches;
-
-    protected double mValue;
+    protected int _notchCount;
+    protected bool _snapToNotches;
+    protected double _value;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Slider" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    protected Slider(Base parent, string name = "") : base(parent, name)
+    /// <param name="name"></param>
+    public Slider(Base parent, string? name = default) : base(parent, name)
     {
-        SetBounds(new Rectangle(0, 0, 32, 128));
+        Size = new Point(32, 128);
 
-        mSliderBar = new SliderBar(this);
-        mSliderBar.Dragged += OnMoved;
+        _sliderBar = new SliderBar(this);
+        _sliderBar.Dragged += SliderBarOnDragged;
 
-        mMin = 0.0f;
-        mMax = 1.0f;
+        _minimumValue = 0.0f;
+        _maximumValue = 1.0f;
 
-        mSnapToNotches = false;
-        mNotchCount = 5;
-        mValue = 0.0f;
+        _snapToNotches = false;
+        _notchCount = 5;
+        _value = 0.0f;
 
         KeyboardInputEnabled = true;
         IsTabable = true;
+    }
+
+    /// <summary>
+    ///     Invoked when the value has been changed.
+    /// </summary>
+    public event GwenEventHandler<ValueChangedEventArgs<double>>? ValueChanged;
+
+    public Orientation Orientation
+    {
+        get => _orientation;
+        set
+        {
+            if (value == _orientation)
+            {
+                return;
+            }
+
+            _orientation = value;
+            _sliderBar.IsHorizontal = value is Orientation.LeftToRight or Orientation.RightToLeft;
+            Invalidate();
+        }
     }
 
     /// <summary>
@@ -59,11 +78,12 @@ public partial class Slider : Base
     /// </summary>
     public int NotchCount
     {
-        get => mNotchCount;
-        set => mNotchCount = value;
+        get => _notchCount;
+        set => _notchCount = value;
     }
 
-    public double[] Notches
+    // ReSharper disable once ConvertToAutoPropertyWhenPossible
+    public double[]? Notches
     {
         get => _notches;
         set => _notches = value;
@@ -74,8 +94,8 @@ public partial class Slider : Base
     /// </summary>
     public bool SnapToNotches
     {
-        get => mSnapToNotches;
-        set => mSnapToNotches = value;
+        get => _snapToNotches;
+        set => _snapToNotches = value;
     }
 
     /// <summary>
@@ -83,8 +103,8 @@ public partial class Slider : Base
     /// </summary>
     public double Min
     {
-        get => mMin;
-        set => SetRange(value, mMax);
+        get => _minimumValue;
+        set => SetRange(value, _maximumValue);
     }
 
     /// <summary>
@@ -92,8 +112,8 @@ public partial class Slider : Base
     /// </summary>
     public double Max
     {
-        get => mMax;
-        set => SetRange(mMin, value);
+        get => _maximumValue;
+        set => SetRange(_minimumValue, value);
     }
 
     /// <summary>
@@ -101,86 +121,109 @@ public partial class Slider : Base
     /// </summary>
     public double Value
     {
-        get => mMin + mValue * (mMax - mMin);
+        get => ScaleValueToExternal(_value);
         set
         {
-            if (value < mMin)
+            if (value < _minimumValue)
             {
-                value = mMin;
+                value = _minimumValue;
             }
 
-            if (value > mMax)
+            if (value > _maximumValue)
             {
-                value = mMax;
+                value = _maximumValue;
             }
 
             // Normalize Value
-            value = (value - mMin) / Math.Max(1, mMax - mMin);
+            value = (value - _minimumValue) / Math.Max(1, _maximumValue - _minimumValue);
             SetValueInternal(value);
             Redraw();
         }
     }
 
-    /// <summary>
-    ///     Invoked when the value has been changed.
-    /// </summary>
-    public event GwenEventHandler<EventArgs> ValueChanged;
+    private double ScaleValueToExternal(double value)
+    {
+        var minimumValue = _minimumValue;
+        return minimumValue + value * (_maximumValue - minimumValue);
+    }
+
+    public GameTexture? BackgroundImage
+    {
+        get => _backgroundImage;
+        set
+        {
+            if (value == _backgroundImage)
+            {
+                return;
+            }
+
+            _backgroundImage = value;
+            _backgroundImageName = value?.Name;
+        }
+    }
+
+    public string? BackgroundImageName
+    {
+        get => _backgroundImageName;
+        set
+        {
+            if (string.Equals(value, _backgroundImageName, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _backgroundImageName = value;
+            _backgroundImage = string.IsNullOrWhiteSpace(_backgroundImageName)
+                ? null
+                : GameContentManager.Current.GetTexture(Content.TextureType.Gui, _backgroundImageName);
+        }
+    }
+
+    public Point DraggerSize
+    {
+        get => _sliderBar.Size;
+        set => _sliderBar.Size = value;
+    }
+
+    protected override void OnBoundsChanged(Rectangle oldBounds)
+    {
+        base.OnBoundsChanged(oldBounds);
+
+        // ReSharper disable once InlineTemporaryVariable
+        if (_sliderBar is not { } sliderBar)
+        {
+            return;
+        }
+
+        var orientation = _orientation;
+        switch (orientation)
+        {
+            case Orientation.LeftToRight:
+            case Orientation.RightToLeft:
+                sliderBar.Height = InnerHeight;
+                break;
+            case Orientation.TopToBottom:
+            case Orientation.BottomToTop:
+                sliderBar.Width = InnerWidth;
+                break;
+            default:
+                throw Exceptions.UnreachableInvalidEnum(orientation);
+        }
+    }
 
     public override JObject GetJson(bool isRoot = default)
     {
         var obj = base.GetJson(isRoot);
-        obj.Add("BackgroundImage", GetImageFilename());
-        obj.Add("SnapToNotches", mSnapToNotches);
-        obj.Add("NotchCount", mNotchCount);
+        obj.Add("BackgroundImage", _backgroundImageName);
+        obj.Add("SnapToNotches", _snapToNotches);
+        obj.Add("NotchCount", _notchCount);
         var notches = (Notches == default || Notches.Length < 1)
             ? default
             : new JArray(Notches.Cast<object>().ToArray());
         obj.Add(nameof(Notches), notches);
-        obj.Add("SliderBar", mSliderBar.GetJson());
+        obj.Add("SliderBar", _sliderBar.GetJson());
 
         return base.FixJson(obj);
-    }
-
-    public override void LoadJson(JToken obj, bool isRoot = default)
-    {
-        base.LoadJson(obj);
-        if (obj["BackgroundImage"] != null)
-        {
-            SetImage(
-                GameContentManager.Current.GetTexture(
-                    Content.TextureType.Gui, (string)obj["BackgroundImage"]
-                ), (string)obj["BackgroundImage"]
-            );
-        }
-
-        if (obj["SnapToNotches"] != null)
-        {
-            mSnapToNotches = (bool)obj["SnapToNotches"];
-        }
-
-        if (obj["NotchCount"] != null)
-        {
-            mNotchCount = (int)obj["NotchCount"];
-        }
-
-        var notches = obj[nameof(Notches)];
-        if (notches != null && notches.Type != JTokenType.Null)
-        {
-            Notches = ((JArray)notches).Select(token => (double)token).ToArray();
-            if (Notches.Length < 1)
-            {
-                Notches = default;
-            }
-        }
-        else
-        {
-            Notches = default;
-        }
-
-        if (obj["SliderBar"] != null)
-        {
-            mSliderBar.LoadJson(obj["SliderBar"]);
-        }
     }
 
     /// <summary>
@@ -262,7 +305,7 @@ public partial class Slider : Base
     {
         if (down)
         {
-            Value = mMin;
+            Value = _minimumValue;
         }
 
         return true;
@@ -279,10 +322,15 @@ public partial class Slider : Base
     {
         if (down)
         {
-            Value = mMax;
+            Value = _maximumValue;
         }
 
         return true;
+    }
+
+    protected virtual void SliderBarOnDragged(Base control, EventArgs args)
+    {
+        SetValueInternal(CalculateValue());
     }
 
     /// <summary>
@@ -291,50 +339,142 @@ public partial class Slider : Base
     /// <param name="x">X coordinate.</param>
     /// <param name="y">Y coordinate.</param>
     /// <param name="down">If set to <c>true</c> mouse button is down.</param>
+    /// <param name="automated"></param>
     protected override void OnMouseClickedLeft(int x, int y, bool down, bool automated = false)
     {
-    }
+        base.OnMouseClickedLeft(x: x, y: y, down: down, automated: automated);
 
-    protected virtual void OnMoved(Base control, EventArgs args)
-    {
-        SetValueInternal(CalculateValue());
+        var localCoordinates = ToLocal(x, y);
+
+        int newX = _sliderBar.X;
+        int newY = _sliderBar.Y;
+
+        var orientation = _orientation;
+        switch (orientation)
+        {
+            case Orientation.LeftToRight:
+            case Orientation.RightToLeft:
+                newX = (int)(localCoordinates.X - _sliderBar.Width * 0.5);
+                break;
+            case Orientation.TopToBottom:
+            case Orientation.BottomToTop:
+                newY = (int)(localCoordinates.Y - _sliderBar.Height * 0.5);
+                break;
+            default:
+                throw Exceptions.UnreachableInvalidEnum(orientation);
+        }
+
+        _sliderBar.MoveTo(newX, newY);
+        _sliderBar.InputMouseClickedLeft(x, y, down, true);
+        SliderBarOnDragged(_sliderBar, EventArgs.Empty);
     }
 
     protected virtual float CalculateValue()
     {
-        return 0;
+        var orientation = _orientation;
+        return orientation switch
+        {
+            Orientation.LeftToRight => _sliderBar.X / (float)(Width - _sliderBar.Width),
+            Orientation.RightToLeft => 1 - _sliderBar.X / (float)(Width - _sliderBar.Width),
+            Orientation.TopToBottom => 1 - _sliderBar.Y / (float)(Height - _sliderBar.Height),
+            Orientation.BottomToTop => _sliderBar.Y / (float)(Height - _sliderBar.Height),
+            _ => throw Exceptions.UnreachableInvalidEnum(orientation),
+        };
     }
 
     protected virtual void UpdateBarFromValue()
     {
+        var orientation = _orientation;
+        switch (orientation)
+        {
+            case Orientation.LeftToRight:
+            {
+                var x = (int) ((Width - _sliderBar.Width) * _value);
+                _sliderBar.MoveTo(x, _sliderBar.Y);
+                break;
+            }
+            case Orientation.RightToLeft:
+            {
+                var x = (int) ((Width - _sliderBar.Width) * (1 - _value));
+                _sliderBar.MoveTo(x, _sliderBar.Y);
+                break;
+            }
+            case Orientation.TopToBottom:
+                _sliderBar.MoveTo(_sliderBar.X, (int) ((Height - _sliderBar.Height) * (1 - _value)));
+                break;
+            case Orientation.BottomToTop:
+                _sliderBar.MoveTo(_sliderBar.X, (int) ((Height - _sliderBar.Height) * _value));
+                break;
+            default:
+                throw Exceptions.UnreachableInvalidEnum(orientation);
+        }
     }
 
-    protected virtual void SetValueInternal(double val)
+    /// <summary>
+    ///     Lays out the control's interior according to alignment, padding, dock etc.
+    /// </summary>
+    /// <param name="skin">Skin to use.</param>
+    protected override void Layout(Skin.Base skin)
     {
-        if (mSnapToNotches)
+        UpdateBarFromValue();
+    }
+
+    /// <summary>
+    ///     Renders the control using specified skin.
+    /// </summary>
+    /// <param name="skin">Skin to use.</param>
+    protected override void Render(Skin.Base skin)
+    {
+        var orientation = _orientation;
+        var barSize = orientation is Orientation.LeftToRight or Orientation.RightToLeft
+            ? _sliderBar.Width
+            : _sliderBar.Height;
+        skin.DrawSlider(
+            this,
+            orientation,
+            Notches,
+            _snapToNotches ? _notchCount : 0,
+            barSize
+        );
+    }
+
+    protected virtual void SetValueInternal(double newInternalValue, bool forceUpdate = false)
+    {
+        if (_snapToNotches)
         {
             if (_notches == default || _notches.Length < 1)
             {
-                val = Math.Floor(val * mNotchCount + 0.5f);
-                val /= mNotchCount;
+                newInternalValue = Math.Floor(newInternalValue * _notchCount + 0.5f);
+                newInternalValue /= _notchCount;
             }
             else
             {
                 var notchMin = _notches.Min();
                 var notchMax = _notches.Max();
                 var notchRange = notchMax - notchMin;
-                var sorted = _notches.OrderBy(notchValue => Math.Abs(notchMin + val * notchRange - notchValue)).ToArray();
-                val = (sorted.First() - notchMin) / notchRange;
+                var sorted = _notches
+                    .OrderBy(notchValue => Math.Abs(notchMin + newInternalValue * notchRange - notchValue))
+                    .ToArray();
+                var closestNotch = sorted.First();
+                newInternalValue = (closestNotch - notchMin) / notchRange;
             }
         }
 
-        if (mValue != val)
+        if (!_value.Equals(newInternalValue))
         {
-            mValue = val;
-            if (ValueChanged != null)
-            {
-                ValueChanged.Invoke(this, EventArgs.Empty);
-            }
+            _value = newInternalValue;
+            var externalValue = Value;
+            ValueChanged?.Invoke(
+                this,
+                new ValueChangedEventArgs<double>
+                {
+                    Value = ScaleValueToExternal(newInternalValue),
+                }
+            );
+        }
+        else if (!forceUpdate)
+        {
+            return;
         }
 
         UpdateBarFromValue();
@@ -347,8 +487,8 @@ public partial class Slider : Base
     /// <param name="max">Maximum value.</param>
     public void SetRange(double min, double max)
     {
-        mMin = min;
-        mMax = max;
+        _minimumValue = min;
+        _maximumValue = max;
     }
 
     /// <summary>
@@ -370,35 +510,76 @@ public partial class Slider : Base
         //skin.DrawKeyboardHighlight(this, RenderBounds, 0);
     }
 
-    public void SetImage(GameTexture img, string fileName)
+    public void SetDraggerImage(GameTexture? texture, string fileName, Dragger.ControlState state)
     {
-        mBackgroundImage = img;
-        mBackgroundImageFilename = fileName;
+        _sliderBar.SetImage(texture, fileName, state);
     }
 
-    public GameTexture GetImage()
+    public void SetDraggerImage(GameTexture? texture, Dragger.ControlState state)
     {
-        return mBackgroundImage;
+        _sliderBar.SetImage(texture, texture?.Name, state);
     }
 
-    public string GetImageFilename()
+    public GameTexture? GetDraggerImage(Dragger.ControlState state)
     {
-        return mBackgroundImageFilename;
+        return _sliderBar.GetImage(state);
     }
 
-    public void SetDraggerImage(GameTexture img, string fileName, Dragger.ControlState state)
+    public void SetSound(string? sound, Dragger.ControlSoundState state)
     {
-        mSliderBar.SetImage(img, fileName, state);
+        _sliderBar.SetSound(sound, state);
     }
 
-    public GameTexture GetDraggerImage(Dragger.ControlState state)
+    public override void LoadJson(JToken token, bool isRoot = default)
     {
-        return mSliderBar.GetImage(state);
-    }
+        base.LoadJson(token);
 
-    public void SetDraggerSize(int w, int h)
-    {
-        mSliderBar.SetSize(w, h);
-    }
+        if (token is not JObject obj)
+        {
+            return;
+        }
 
+        if (obj.TryGetValue(nameof(BackgroundImage), out var tokenBackgroundImage) &&
+            tokenBackgroundImage is JValue { Type: JTokenType.String } valueBackgroundImage &&
+            valueBackgroundImage.Value<string>() is { } backgroundImageName)
+        {
+            BackgroundImage = GameContentManager.Current.GetTexture(
+                Content.TextureType.Gui,
+                backgroundImageName
+            );
+        }
+        else
+        {
+            BackgroundImage = null;
+        }
+
+        if (obj["SnapToNotches"] != null)
+        {
+            _snapToNotches = (bool)obj["SnapToNotches"];
+        }
+
+        if (obj["NotchCount"] != null)
+        {
+            _notchCount = (int)obj["NotchCount"];
+        }
+
+        var notches = obj[nameof(Notches)];
+        if (notches != null && notches.Type != JTokenType.Null)
+        {
+            Notches = ((JArray)notches).Select(token => (double)token).ToArray();
+            if (Notches.Length < 1)
+            {
+                Notches = default;
+            }
+        }
+        else
+        {
+            Notches = default;
+        }
+
+        if (obj["SliderBar"] != null)
+        {
+            _sliderBar.LoadJson(obj["SliderBar"]);
+        }
+    }
 }

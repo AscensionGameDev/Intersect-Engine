@@ -1,29 +1,28 @@
 ﻿namespace Intersect.Client.Framework.Gwen.Control;
 
-
 /// <summary>
 ///     Horizontal slider.
 /// </summary>
 public partial class HorizontalSlider : Slider
 {
-
     /// <summary>
     ///     Initializes a new instance of the <see cref="HorizontalSlider" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public HorizontalSlider(Base parent, string name = "") : base(parent, name)
+    /// <param name="name"></param>
+    public HorizontalSlider(Base parent, string? name = default) : base(parent, name)
     {
-        mSliderBar.IsHorizontal = true;
+        _sliderBar.IsHorizontal = true;
     }
 
     protected override float CalculateValue()
     {
-        return (float) mSliderBar.X / (Width - mSliderBar.Width);
+        return (float) _sliderBar.X / (Width - _sliderBar.Width);
     }
 
     protected override void UpdateBarFromValue()
     {
-        mSliderBar.MoveTo((int) ((Width - mSliderBar.Width) * mValue), mSliderBar.Y);
+        _sliderBar.MoveTo((int) ((Width - _sliderBar.Width) * _value), _sliderBar.Y);
     }
 
     /// <summary>
@@ -35,9 +34,9 @@ public partial class HorizontalSlider : Slider
     protected override void OnMouseClickedLeft(int x, int y, bool down, bool automated = false)
     {
         base.OnMouseClickedLeft(x, y, down);
-        mSliderBar.MoveTo((int) (CanvasPosToLocal(new Point(x, y)).X - mSliderBar.Width * 0.5), mSliderBar.Y);
-        mSliderBar.InputMouseClickedLeft(x, y, down, true);
-        OnMoved(mSliderBar, EventArgs.Empty);
+        _sliderBar.MoveTo((int) (CanvasPosToLocal(new Point(x, y)).X - _sliderBar.Width * 0.5), _sliderBar.Y);
+        _sliderBar.InputMouseClickedLeft(x, y, down, true);
+        SliderBarOnDragged(_sliderBar, EventArgs.Empty);
     }
 
     /// <summary>
@@ -56,7 +55,7 @@ public partial class HorizontalSlider : Slider
     /// <param name="skin">Skin to use.</param>
     protected override void Render(Skin.Base skin)
     {
-        skin.DrawSlider(this, true, Notches, mSnapToNotches ? mNotchCount : 0, mSliderBar.Width);
+        skin.DrawSlider(this, true, Notches, _snapToNotches ? _notchCount : 0, _sliderBar.Width);
     }
 
 }

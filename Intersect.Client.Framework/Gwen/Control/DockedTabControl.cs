@@ -44,12 +44,12 @@ public partial class DockedTabControl : TabControl
 
     private void UpdateTitleBar()
     {
-        if (CurrentButton == null)
+        if (SelectedTab == null)
         {
             return;
         }
 
-        mTitleBar.UpdateFromTab(CurrentButton);
+        mTitleBar.UpdateFromTab(SelectedTab);
     }
 
     public override void DragAndDrop_StartDragging(DragDrop.Package package, int x, int y)

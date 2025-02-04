@@ -59,7 +59,7 @@ public partial class TabControl : Base
     /// <summary>
     ///     Currently active tab button.
     /// </summary>
-    public TabButton CurrentButton => _activeButton;
+    public TabButton SelectedTab => _activeButton;
 
     /// <summary>
     ///     Current tab strip position.
@@ -83,12 +83,14 @@ public partial class TabControl : Base
     /// <summary>
     ///     Invoked when a tab has been added.
     /// </summary>
-    public event GwenEventHandler<EventArgs> TabAdded;
+    public event GwenEventHandler<EventArgs>? TabAdded;
 
     /// <summary>
     ///     Invoked when a tab has been removed.
     /// </summary>
-    public event GwenEventHandler<EventArgs> TabRemoved;
+    public event GwenEventHandler<EventArgs>? TabRemoved;
+
+    public event GwenEventHandler<TabChangeEventArgs>? TabChanged;
 
     /// <summary>
     ///     Adds a new page/tab.
@@ -144,10 +146,7 @@ public partial class TabControl : Base
             button.Press();
         }
 
-        if (TabAdded != null)
-        {
-            TabAdded.Invoke(this, EventArgs.Empty);
-        }
+        TabAdded?.Invoke(this, EventArgs.Empty);
 
         Invalidate();
     }
@@ -164,34 +163,44 @@ public partial class TabControl : Base
     /// <param name="args"></param>
     internal virtual void OnTabPressed(Base control, EventArgs args)
     {
-        if (control is not TabButton button)
+        if (control is not TabButton nextTab)
         {
             return;
         }
 
-        if (button.Page is not {} page)
+        if (nextTab.Page is not {} page)
         {
             return;
         }
 
-        if (_activeButton == button)
+        if (_activeButton == nextTab)
         {
             return;
         }
 
-        if (null != _activeButton)
+        if (_activeButton is {} previousTab)
         {
-            if (_activeButton.Page is {} nextPage)
+            if (_activeButton.Page is {} previousTabPage)
             {
-                nextPage.IsHidden = true;
+                previousTabPage.IsVisible = false;
             }
 
             _activeButton.Redraw();
         }
+        else
+        {
+            previousTab = null;
+        }
 
-        _activeButton = button;
+        _activeButton = nextTab;
 
-        page.IsHidden = false;
+        page.IsVisible = true;
+
+        TabChanged?.Invoke(control, new TabChangeEventArgs
+        {
+            PreviousTab = previousTab,
+            ActiveTab = nextTab,
+        });
 
         _tabStrip.Invalidate();
         Invalidate();

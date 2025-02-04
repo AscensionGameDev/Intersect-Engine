@@ -3,7 +3,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
-
 /// <summary>
 ///     Base slider.
 /// </summary>

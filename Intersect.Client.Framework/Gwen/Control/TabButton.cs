@@ -113,6 +113,8 @@ public partial class TabButton : Button
         return true;
     }
 
+    public virtual void Select() => TabControl?.OnTabPressed(this, EventArgs.Empty);
+
     /// <summary>
     ///     Handler for Right Arrow keyboard event.
     /// </summary>

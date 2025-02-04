@@ -1974,6 +1974,15 @@ public static partial class Strings
         public static LocalizedString MusicVolume = @"Music Volume: {00}%";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString SectionVolume = @"Volume";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString VolumeMusic = @"Music";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString VolumeSoundEffects = @"Sound Effects";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Resolution = @"Resolution:";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

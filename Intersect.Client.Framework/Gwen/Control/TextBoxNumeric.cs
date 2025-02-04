@@ -1,4 +1,6 @@
-﻿namespace Intersect.Client.Framework.Gwen.Control;
+﻿using System.Globalization;
+
+namespace Intersect.Client.Framework.Gwen.Control;
 
 
 /// <summary>
@@ -10,13 +12,14 @@ public partial class TextBoxNumeric : TextBox
     /// <summary>
     ///     Current numeric value.
     /// </summary>
-    protected double mValue;
+    protected double _value;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="TextBoxNumeric" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public TextBoxNumeric(Base parent, string name = "") : base(parent, name)
+    /// <param name="name"></param>
+    public TextBoxNumeric(Base parent, string? name = default) : base(parent, name)
     {
         AutoSizeToContents = false;
         SetText("0", false);
@@ -27,24 +30,17 @@ public partial class TextBoxNumeric : TextBox
     /// </summary>
     public virtual double Value
     {
-        get => mValue;
+        get => _value;
         set
         {
-            mValue = value;
-            Text = value.ToString();
+            _value = value;
+            Text = value.ToString(CultureInfo.CurrentCulture);
         }
     }
 
     protected virtual bool IsTextAllowed(string str)
     {
-        if (str == "" || str == "-")
-        {
-            return true; // annoying if single - is not allowed
-        }
-
-        float d;
-
-        return float.TryParse(str, out d);
+        return str is "" or "-" || double.TryParse(str, out _);
     }
 
     /// <summary>
@@ -55,9 +51,9 @@ public partial class TextBoxNumeric : TextBox
     /// <returns>True if allowed.</returns>
     protected override bool IsTextAllowed(string text, int position)
     {
-        var newText = Text.Insert(position, text);
+        var newText = Text?.Insert(position, text);
 
-        return IsTextAllowed(newText);
+        return IsTextAllowed(newText ?? string.Empty);
     }
 
     // text -> value
@@ -66,15 +62,13 @@ public partial class TextBoxNumeric : TextBox
     /// </summary>
     protected override void OnTextChanged()
     {
-        if (String.IsNullOrEmpty(Text) || Text == "-")
+        if (string.IsNullOrEmpty(Text) || Text == "-")
         {
-            mValue = 0;
-
-            //SetText("0");
+            _value = 0;
         }
         else
         {
-            mValue = float.Parse(Text);
+            _value = double.Parse(Text);
         }
 
         base.OnTextChanged();
@@ -92,5 +86,4 @@ public partial class TextBoxNumeric : TextBox
             base.SetText(text, doEvents);
         }
     }
-
 }

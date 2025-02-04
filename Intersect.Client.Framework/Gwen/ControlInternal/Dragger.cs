@@ -26,6 +26,14 @@ public partial class Dragger : Base
 
     }
 
+    public enum ControlSoundState
+    {
+        None,
+        Hover,
+        MouseDown,
+        MouseUp,
+    }
+
     private GameTexture mClickedImage;
 
     private string mClickedImageFilename;
@@ -59,7 +67,8 @@ public partial class Dragger : Base
     ///     Initializes a new instance of the <see cref="Dragger" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public Dragger(Base parent, string name = "") : base(parent, name)
+    /// <param name="name"></param>
+    public Dragger(Base parent, string? name = default) : base(parent, name)
     {
         MouseInputEnabled = true;
         mHeld = false;
@@ -136,20 +145,13 @@ public partial class Dragger : Base
             return;
         }
 
-        var p = new Point(x - mHoldPos.X, y - mHoldPos.Y);
-
-        // Translate to parent
-        if (mTarget.Parent != null)
+        Point position = new(x - mHoldPos.X, y - mHoldPos.Y);
+        if (mTarget.Parent is { } parent)
         {
-            p = mTarget.Parent.CanvasPosToLocal(p);
+            position = parent.ToLocal(position.X, position.Y);
         }
-
-        //m_Target->SetPosition( p.x, p.y );
-        mTarget.MoveTo(p.X, p.Y);
-        if (Dragged != null)
-        {
-            Dragged.Invoke(this, EventArgs.Empty);
-        }
+        mTarget.MoveTo(position.X, position.Y);
+        Dragged?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -317,6 +319,26 @@ public partial class Dragger : Base
         mHoverSound = string.Empty;
         mMouseDownSound = string.Empty;
         mMouseUpSound = string.Empty;
+    }
+
+    public void SetSound(string sound, ControlSoundState state)
+    {
+        switch (state)
+        {
+            case ControlSoundState.None:
+                break;
+            case ControlSoundState.Hover:
+                mHoverSound = sound;
+                break;
+            case ControlSoundState.MouseDown:
+                mMouseDownSound = sound;
+                break;
+            case ControlSoundState.MouseUp:
+                mMouseUpSound = sound;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(state), state, null);
+        }
     }
 
 }

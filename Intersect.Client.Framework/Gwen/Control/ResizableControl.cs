@@ -13,6 +13,7 @@ public partial class ResizableControl : Base
     private readonly Resizer[] mResizer;
 
     private bool mClampMovement;
+    private bool _resizable;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ResizableControl" /> class.
@@ -21,6 +22,8 @@ public partial class ResizableControl : Base
     /// <param name="name">name of this control</param>
     public ResizableControl(Base? parent, string? name) : base(parent, name)
     {
+        _resizable = true;
+
         mResizer = new Resizer[10];
         MinimumSize = new Point(5, 5);
         mClampMovement = false;
@@ -122,6 +125,28 @@ public partial class ResizableControl : Base
         return mResizer[i];
     }
 
+    public bool IsResizable
+    {
+        get => _resizable;
+        set
+        {
+            if (value == _resizable)
+            {
+                return;
+            }
+
+            _resizable = value;
+            if (value)
+            {
+                EnableResizing();
+            }
+            else
+            {
+                DisableResizing();
+            }
+        }
+    }
+
     /// <summary>
     ///     Disables resizing.
     /// </summary>
@@ -136,7 +161,6 @@ public partial class ResizableControl : Base
 
             mResizer[i].MouseInputEnabled = false;
             mResizer[i].IsHidden = true;
-            Padding = new Padding(mResizer[i].Width, mResizer[i].Width, mResizer[i].Width, mResizer[i].Width);
         }
     }
 

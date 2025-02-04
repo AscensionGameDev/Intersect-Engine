@@ -15,7 +15,8 @@ public partial class SliderBar : Dragger
     ///     Initializes a new instance of the <see cref="SliderBar" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public SliderBar(Base parent) : base(parent)
+    /// <param name="name"></param>
+    public SliderBar(Base parent, string? name = default) : base(parent, name: name)
     {
         Target = this;
         RestrictToParent = true;

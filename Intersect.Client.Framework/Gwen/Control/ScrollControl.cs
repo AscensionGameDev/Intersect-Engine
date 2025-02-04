@@ -42,7 +42,7 @@ public partial class ScrollControl : Base
         {
             X = 0,
             Y = 0,
-            Margin = Margin.Five,
+            Margin = Margin.Four,
             MouseInputEnabled = false,
         };
         _innerPanel.SendToBack();
