@@ -1,6 +1,9 @@
 ﻿using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.ControlInternal;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;
@@ -214,9 +217,26 @@ public partial class ScrollBar : Base
     /// <param name="control">The control.</param>
     protected virtual void OnBarMoved(Base control, EventArgs args)
     {
-        if (BarMoved != null)
+        BarMoved?.Invoke(this, args);
+    }
+
+    protected override void Layout(Skin.Base skin)
+    {
+        base.Layout(skin);
+
+        var displayedScrollAmount = CalculateScrolledAmount();
+        var scrollAmount = _scrollAmount;
+        ApplicationContext.CurrentContext.Logger.LogDebug(
+            "Scrollbar '{ScrollbarName}' at {DisplayedScrollAmount} but should be at {ActualScrollAmount} Size={Size}",
+            CanonicalName,
+            displayedScrollAmount,
+            scrollAmount,
+            mBar.Size
+        );
+
+        if (!scrollAmount.Equals(displayedScrollAmount))
         {
-            BarMoved.Invoke(this, EventArgs.Empty);
+            SetScrollAmount(scrollAmount, forceUpdate: true);
         }
     }
 

@@ -396,9 +396,11 @@ public partial class Chatbox
         // ReSharper disable once InvertIf
         if (mReceivedMessage)
         {
-            mChatboxMessages.InnerPanel.SizeToChildren(false, true);
-            mChatboxMessages.UpdateScrollBars();
-            vScrollBar.SetScrollAmount(scrollToBottom ? 1 : scrollAmount);
+            if (scrollToBottom)
+            {
+                mChatboxMessages.ScrollToBottom();
+            }
+            // vScrollBar.SetScrollAmount(scrollToBottom ? 1 : scrollAmount);
             mReceivedMessage = false;
         }
     }

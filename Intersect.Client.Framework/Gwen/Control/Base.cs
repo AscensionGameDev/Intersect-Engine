@@ -1560,6 +1560,15 @@ public partial class Base : IDisposable
         }
     }
 
+    public void Invalidate(bool alsoInvalidateParent)
+    {
+        Invalidate();
+        if (alsoInvalidateParent)
+        {
+            InvalidateParent();
+        }
+    }
+
     public virtual void MoveBefore(Base other)
     {
         if (other == this)
@@ -2161,7 +2170,7 @@ public partial class Base : IDisposable
 
         if (mBounds.Width != oldBounds.Width || mBounds.Height != oldBounds.Height)
         {
-            Invalidate();
+            Invalidate(alsoInvalidateParent: true);
         }
 
         Redraw();
@@ -3335,11 +3344,7 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Invalidates control's parent.
     /// </summary>
-    public void InvalidateParent()
-    {
-        mParent?.Invalidate();
-        mParent?.InvalidateParent();
-    }
+    public void InvalidateParent() => mParent?.Invalidate(alsoInvalidateParent: true);
 
     /// <summary>
     ///     Handler for keyboard events.

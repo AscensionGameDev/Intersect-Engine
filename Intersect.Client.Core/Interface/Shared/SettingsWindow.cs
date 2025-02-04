@@ -32,8 +32,6 @@ public partial class SettingsWindow : WindowControl
     private readonly MainMenu? _mainMenu;
     private readonly EscapeMenu? _escapeMenu;
 
-    // Settings Window.
-    private readonly Label _settingsHeader;
     private readonly Button _applyPendingChangesButton;
     private readonly Button _cancelPendingChangesButton;
 
@@ -181,22 +179,23 @@ public partial class SettingsWindow : WindowControl
         {
             Dock = Pos.Fill,
         };
-        _gameSettingsContainer.EnableScroll(horizontal: false, vertical: false);
 
         // Game Settings subcategories are stored in the GameSettings List.
-        var gameSettingsList = new ListBox(parent: _gameSettingsContainer, name: "GameSettingsList");
+        var gameSettingsList = new ListBox(parent: _gameSettingsContainer, name: "GameSettingsList")
+        {
+        };
         _ = gameSettingsList.AddRow(label: Strings.Settings.InterfaceSettings);
         _ = gameSettingsList.AddRow(label: Strings.Settings.InformationSettings);
         _ = gameSettingsList.AddRow(label: Strings.Settings.TargetingSettings);
-        gameSettingsList.EnableScroll(horizontal: false, vertical: true);
         gameSettingsList.SelectedRowIndex = 0;
         gameSettingsList[index: 0].Clicked += InterfaceSettings_Clicked;
         gameSettingsList[index: 1].Clicked += InformationSettings_Clicked;
         gameSettingsList[index: 2].Clicked += TargetingSettings_Clicked;
 
         // Game Settings - Interface.
-        _interfaceSettings = new ScrollControl(parent: _gameSettingsContainer, name: "InterfaceSettings");
-        _interfaceSettings.EnableScroll(horizontal: false, vertical: true);
+        _interfaceSettings = new ScrollControl(parent: _gameSettingsContainer, name: "InterfaceSettings")
+        {
+        };
 
         // Game Settings - Interface: Auto-close Windows.
         _autoCloseWindowsCheckbox = new LabeledCheckBox(parent: _interfaceSettings, name: "AutoCloseWindowsCheckbox")
@@ -233,8 +232,9 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Information.
-        _informationSettings = new ScrollControl(parent: _gameSettingsContainer, name: "InformationSettings");
-        _informationSettings.EnableScroll(horizontal: false, vertical: true);
+        _informationSettings = new ScrollControl(parent: _gameSettingsContainer, name: "InformationSettings")
+        {
+        };
 
         // Game Settings - Information: Friends.
         _friendOverheadInfoCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "FriendOverheadInfoCheckbox")
@@ -309,8 +309,9 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Targeting.
-        _targetingSettings = new ScrollControl(parent: _gameSettingsContainer, name: "TargetingSettings");
-        _targetingSettings.EnableScroll(horizontal: false, vertical: false);
+        _targetingSettings = new ScrollControl(parent: _gameSettingsContainer, name: "TargetingSettings")
+        {
+        };
 
         // Game Settings - Targeting: Sticky Target.
         _stickyTarget = new LabeledCheckBox(parent: _targetingSettings, name: "StickyTargetCheckbox")
@@ -349,7 +350,6 @@ public partial class SettingsWindow : WindowControl
         {
             Dock = Pos.Fill,
         };
-        _videoSettingsContainer.EnableScroll(horizontal: false, vertical: false);
 
         // Video Settings - Resolution Background.
         var resolutionBackground = new ImagePanel(parent: _videoSettingsContainer, name: "ResolutionPanel");
@@ -417,7 +417,6 @@ public partial class SettingsWindow : WindowControl
         {
             Dock = Pos.Fill,
         };
-        _audioSettingsContainer.EnableScroll(horizontal: false, vertical: false);
 
         _audioTable = new Table(parent: _audioSettingsContainer, name: nameof(_audioTable))
         {
@@ -495,7 +494,6 @@ public partial class SettingsWindow : WindowControl
         {
             Dock = Pos.Fill,
         };
-        _keybindingSettingsContainer.EnableScroll(horizontal: false, vertical: true);
 
         _controlsTable = new Table(parent: _keybindingSettingsContainer, name: nameof(_controlsTable))
         {
