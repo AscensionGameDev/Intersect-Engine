@@ -47,8 +47,7 @@ public partial class MultilineTextBox : Label
 
         mScrollControl = new ScrollControl(this);
         mScrollControl.Dock = Pos.Fill;
-        mScrollControl.EnableScroll(true, true);
-        mScrollControl.AutoHideBars = true;
+        mScrollControl.SetOverflow(OverflowBehavior.Auto, OverflowBehavior.Auto);
         mScrollControl.Margin = Margin.One;
         _innerPanel = mScrollControl;
         _textElement.Parent = _innerPanel;
@@ -919,7 +918,7 @@ public partial class MultilineTextBox : Label
             mTextLines.RemoveAt(StartPoint.Y + 1);
         }
 
-        // Move the cursor to the start of the selection, 
+        // Move the cursor to the start of the selection,
         // since the end is probably outside of the string now.
         mCursorPos = StartPoint;
         mCursorEnd = StartPoint;

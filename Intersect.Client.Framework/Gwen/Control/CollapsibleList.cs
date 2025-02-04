@@ -16,8 +16,6 @@ public partial class CollapsibleList : ScrollControl
     public CollapsibleList(Base parent) : base(parent)
     {
         MouseInputEnabled = true;
-        EnableScroll(false, true);
-        AutoHideBars = true;
     }
 
     /// <summary>

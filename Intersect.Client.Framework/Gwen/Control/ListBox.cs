@@ -14,7 +14,7 @@ namespace Intersect.Client.Framework.Gwen.Control;
 public partial class ListBox : ScrollControl
 {
 
-    private readonly List<ListBoxRow> mSelectedRows;
+    private readonly List<ListBoxRow> mSelectedRows = [];
 
     private readonly Table mTable;
 
@@ -47,12 +47,8 @@ public partial class ListBox : ScrollControl
     /// <param name="parent">Parent control.</param>
     public ListBox(Base parent, string name = "") : base(parent, name)
     {
-        mSelectedRows = new List<ListBoxRow>();
-
-        MouseInputEnabled = true;
-        EnableScroll(false, true);
-        AutoHideBars = true;
         Margin = Margin.One;
+        MouseInputEnabled = true;
 
         mTextColor = Color.White;
         mTextColorOverride = Color.Transparent;

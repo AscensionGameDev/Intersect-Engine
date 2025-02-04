@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Framework.Gwen.Control;
+﻿using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Gwen.Control;
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal;
 
@@ -73,9 +74,10 @@ public partial class ScrollBarBar : Dragger
     /// <param name="x">X coordinate.</param>
     /// <param name="y">Y coordinate.</param>
     /// <param name="down">If set to <c>true</c> mouse button is down.</param>
+    /// <param name="automated"></param>
     protected override void OnMouseClickedLeft(int x, int y, bool down, bool automated = false)
     {
-        base.OnMouseClickedLeft(x, y, down);
+        base.OnMouseClickedLeft(x, y, down, automated);
         InvalidateParent();
     }
 
@@ -93,5 +95,4 @@ public partial class ScrollBarBar : Dragger
         //Move to our current position to force clamping - is this a hack?
         MoveTo(X, Y);
     }
-
 }

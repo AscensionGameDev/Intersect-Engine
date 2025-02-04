@@ -39,8 +39,6 @@ public partial class Menu : ScrollControl
         Padding = Padding.Two;
         IconMarginDisabled = false;
 
-        AutoHideBars = true;
-        EnableScroll(false, true);
         DeleteOnClose = false;
         Name = name;
     }

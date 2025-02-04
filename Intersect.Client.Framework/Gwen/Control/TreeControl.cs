@@ -10,7 +10,7 @@ namespace Intersect.Client.Framework.Gwen.Control;
 public partial class TreeControl : TreeNode
 {
 
-    private readonly ScrollControl mScrollControl;
+    private readonly ScrollControl _scrollControl;
 
     private bool mMultiSelect;
 
@@ -32,15 +32,15 @@ public partial class TreeControl : TreeNode
 
         mMultiSelect = false;
 
-        mScrollControl = new ScrollControl(this);
-        mScrollControl.Dock = Pos.Fill;
-        mScrollControl.EnableScroll(false, true);
-        mScrollControl.AutoHideBars = true;
-        mScrollControl.Margin = Margin.One;
+        _scrollControl = new ScrollControl(this)
+        {
+            Dock = Pos.Fill,
+            Margin = Margin.One,
+        };
 
-        _innerPanel = mScrollControl;
+        _innerPanel = _scrollControl;
 
-        mScrollControl.SetInnerSize(1000, 1000); // todo: why such arbitrary numbers?
+        _scrollControl.SetInnerSize(1000, 1000); // todo: why such arbitrary numbers?
 
         Dock = Pos.None;
     }
@@ -73,9 +73,9 @@ public partial class TreeControl : TreeNode
     /// <param name="child"></param>
     protected override void OnChildBoundsChanged(Rectangle oldChildBounds, Base child)
     {
-        if (mScrollControl != null)
+        if (_scrollControl != null)
         {
-            mScrollControl.UpdateScrollBars();
+            _scrollControl.UpdateScrollBars();
         }
     }
 
@@ -84,7 +84,7 @@ public partial class TreeControl : TreeNode
     /// </summary>
     public virtual void RemoveAll()
     {
-        mScrollControl.DeleteAll();
+        _scrollControl.DeleteAll();
     }
 
     /// <summary>
