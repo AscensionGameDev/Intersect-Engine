@@ -19,7 +19,7 @@ public partial class LabeledCheckBox : Base
     ///     Initializes a new instance of the <see cref="LabeledCheckBox" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public LabeledCheckBox(Base parent, string name = "") : base(parent, name)
+    public LabeledCheckBox(Base parent, string? name = default) : base(parent: parent, name: name)
     {
         _ = SetSize(208, 26);
 

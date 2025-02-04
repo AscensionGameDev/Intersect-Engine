@@ -82,10 +82,10 @@ public partial class SettingsWindow : WindowControl
     private readonly LabeledCheckBox _autoSoftRetargetOnSelfCast;
 
     // Video Settings.
-    private readonly ComboBox _resolutionList;
+    private readonly LabeledComboBox _resolutionList;
     private MenuItem? _customResolutionMenuItem;
-    private readonly ComboBox _fpsList;
-    private readonly LabeledHorizontalSlider _worldScale;
+    private readonly LabeledComboBox _fpsList;
+    private readonly LabeledSlider _worldScale;
     private readonly LabeledCheckBox _fullscreenCheckbox;
     private readonly LabeledCheckBox _lightingEnabledCheckbox;
 
@@ -351,44 +351,42 @@ public partial class SettingsWindow : WindowControl
             Dock = Pos.Fill,
         };
 
-        // Video Settings - Resolution Background.
-        var resolutionBackground = new ImagePanel(parent: _videoSettingsContainer, name: "ResolutionPanel");
-
-        // Video Settings - Resolution Label.
-        var resolutionLabel = new Label(parent: resolutionBackground, name: "ResolutionLabel")
-        {
-            Text = Strings.Settings.Resolution
-        };
-
         // Video Settings - Resolution List.
-        _resolutionList = new ComboBox(parent: resolutionBackground, name: "ResolutionCombobox");
-        var myModes = Graphics.Renderer?.GetValidVideoModes();
-        myModes?.ForEach(
-            action: t =>
-            {
-                var item = _resolutionList.AddItem(label: t);
-                item.TextAlign = Pos.Left;
-            }
-        );
-
-        _worldScale = new LabeledHorizontalSlider(parent: _videoSettingsContainer, name: "WorldScale")
+        _resolutionList = new LabeledComboBox(parent: _videoSettingsContainer, name: "ResolutionCombobox")
         {
-            IsDisabled = !Options.IsLoaded,
-            Label = Strings.Settings.WorldScale,
-            SnapToNotches = false,
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            Label = Strings.Settings.Resolution,
         };
 
-        // Video Settings - FPS Background.
-        var fpsBackground = new ImagePanel(parent: _videoSettingsContainer, name: "FPSPanel");
-
-        // Video Settings - FPS Label.
-        var fpsLabel = new Label(parent: fpsBackground, name: "FPSLabel")
+        var availableVideoModes = Graphics.Renderer?.GetValidVideoModes().ToArray() ?? [];
+        for (var videoModeIndex = 0; videoModeIndex < availableVideoModes.Length; videoModeIndex++)
         {
-            Text = Strings.Settings.TargetFps
+            var availableVideoMode = availableVideoModes[videoModeIndex];
+            var resolutionParts = availableVideoMode.Split(',');
+            var resolutionLabel = Strings.Settings.FormatResolution.ToString(resolutionParts.Cast<object>().ToArray());
+            var addedItem = _resolutionList.AddItem(label: resolutionLabel, userData: videoModeIndex);
+            addedItem.TextAlign = Pos.Left;
+        }
+
+        _worldScale = new LabeledSlider(parent: _videoSettingsContainer, name: "WorldScale")
+        {
+            Dock = Pos.Top,
+            IsDisabled = !Options.IsLoaded,
+            Font = _defaultFont,
+            Label = Strings.Settings.WorldScale,
+            Orientation = Orientation.LeftToRight,
+            SnapToNotches = true,
+            ValueFormatString = Strings.Settings.FormatZoom,
         };
 
         // Video Settings - FPS List.
-        _fpsList = new ComboBox(parent: fpsBackground, name: "FPSCombobox");
+        _fpsList = new LabeledComboBox(parent: _videoSettingsContainer, name: "FPSCombobox")
+        {
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            Label = Strings.Settings.FPS,
+        };
         _ = _fpsList.AddItem(label: Strings.Settings.Vsync);
         _ = _fpsList.AddItem(label: Strings.Settings.Fps30);
         _ = _fpsList.AddItem(label: Strings.Settings.Fps60);
@@ -399,13 +397,17 @@ public partial class SettingsWindow : WindowControl
         // Video Settings - Fullscreen Checkbox.
         _fullscreenCheckbox = new LabeledCheckBox(parent: _videoSettingsContainer, name: "FullscreenCheckbox")
         {
-            Text = Strings.Settings.Fullscreen
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            Text = Strings.Settings.Fullscreen,
         };
 
         // Video Settings - Enable Lighting Checkbox
         _lightingEnabledCheckbox = new LabeledCheckBox(parent: _videoSettingsContainer, name: "EnableLightingCheckbox")
         {
-            Text = Strings.Settings.EnableLighting
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            Text = Strings.Settings.EnableLighting,
         };
 
         #endregion
@@ -841,22 +843,19 @@ public partial class SettingsWindow : WindowControl
 
         if (Graphics.Renderer?.GetValidVideoModes().Count > 0)
         {
-            string resolutionLabel;
             if (Graphics.Renderer.HasOverrideResolution)
             {
-                resolutionLabel = Strings.Settings.ResolutionCustom;
-
-                _customResolutionMenuItem ??= _resolutionList.AddItem(Strings.Settings.ResolutionCustom);
+                _customResolutionMenuItem ??= _resolutionList.AddItem(
+                    label: Strings.Settings.ResolutionCustom,
+                    userData: -1
+                );
                 _customResolutionMenuItem.Show();
+                _resolutionList.SelectedItem = _customResolutionMenuItem;
             }
             else
             {
-                var validVideoModes = Graphics.Renderer.GetValidVideoModes();
-                var targetResolution = Globals.Database.TargetResolution;
-                resolutionLabel = targetResolution < 0 || validVideoModes.Count <= targetResolution ? Strings.Settings.ResolutionCustom : validVideoModes[Globals.Database.TargetResolution];
+                _resolutionList.SelectByUserData(Globals.Database.TargetResolution);
             }
-
-            _resolutionList.SelectByText(resolutionLabel);
         }
 
         switch (Globals.Database.TargetFps)
@@ -1024,9 +1023,8 @@ public partial class SettingsWindow : WindowControl
         // Video Settings.
         Globals.Database.WorldZoom = (float)_worldScale.Value;
 
-        var resolution = _resolutionList.SelectedItem;
-        var validVideoModes = Graphics.Renderer?.GetValidVideoModes();
-        var targetResolution = validVideoModes?.FindIndex(videoMode => string.Equals(videoMode, resolution.Text)) ?? -1;
+        var resolutionItem = _resolutionList.SelectedItem;
+        var targetResolution = resolutionItem?.UserData as int? ?? -1;
         var newFps = 0;
 
         Globals.Database.EnableLighting = _lightingEnabledCheckbox.IsChecked;

@@ -36,17 +36,20 @@ public partial class Slider : Base
     /// <param name="name"></param>
     public Slider(Base parent, string? name = default) : base(parent, name)
     {
-        Size = new Point(32, 128);
-
-        _sliderBar = new SliderBar(this);
-        _sliderBar.Dragged += SliderBarOnDragged;
+        Size = new Point(120, 20);
 
         _minimumValue = 0.0f;
         _maximumValue = 1.0f;
-
-        _snapToNotches = false;
         _notchCount = 5;
+        _orientation = Orientation.LeftToRight;
+        _snapToNotches = false;
         _value = 0.0f;
+
+        _sliderBar = new SliderBar(this)
+        {
+            IsHorizontal = true,
+        };
+        _sliderBar.Dragged += SliderBarOnDragged;
 
         KeyboardInputEnabled = true;
         IsTabable = true;
@@ -330,7 +333,7 @@ public partial class Slider : Base
 
     protected virtual void SliderBarOnDragged(Base control, EventArgs args)
     {
-        SetValueInternal(CalculateValue());
+        SetValueInternal(CalculateValue(), forceUpdate: true);
     }
 
     /// <summary>
@@ -463,7 +466,6 @@ public partial class Slider : Base
         if (!_value.Equals(newInternalValue))
         {
             _value = newInternalValue;
-            var externalValue = Value;
             ValueChanged?.Invoke(
                 this,
                 new ValueChangedEventArgs<double>

@@ -582,15 +582,13 @@ public partial class TextBox : Label
     {
         if (!HasSelection)
         {
-            return String.Empty;
+            return string.Empty;
         }
 
         var start = Math.Min(mCursorPos, mCursorEnd);
         var end = Math.Max(mCursorPos, mCursorEnd);
 
-        var str = Text;
-
-        return str.Substring(start, end - start);
+        return Text?.Substring(start, end - start) ?? string.Empty;
     }
 
     /// <summary>

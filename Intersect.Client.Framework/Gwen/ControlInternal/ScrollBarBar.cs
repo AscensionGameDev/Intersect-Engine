@@ -95,4 +95,11 @@ public partial class ScrollBarBar : Dragger
         //Move to our current position to force clamping - is this a hack?
         MoveTo(X, Y);
     }
+
+    protected override void OnBoundsChanged(Rectangle oldBounds)
+    {
+        base.OnBoundsChanged(oldBounds);
+
+        InvalidateParent();
+    }
 }

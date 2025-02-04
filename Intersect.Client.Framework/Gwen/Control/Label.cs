@@ -50,6 +50,11 @@ public partial class Label : Base, ILabel
 
     private Padding mTextPadding;
 
+    private string? _displayedText;
+    private string? _text;
+    private string? _formatString;
+    private Range _replacementRange;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="Label" /> class.
     /// </summary>
@@ -69,6 +74,112 @@ public partial class Label : Base, ILabel
 
         mAutoSizeToContents = true;
     }
+
+    public string? FormatString
+    {
+        get => _formatString;
+        set
+        {
+            if (string.Equals(value, _formatString, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _replacementRange = GetRangeForFormatArgument(value, 0);
+            _formatString = value;
+        }
+    }
+
+    private static Range GetRangeForFormatArgument(string? format, int argumentIndex)
+    {
+        const char charStartArgument = '{';
+        const char charEndArgument = '}';
+
+        if (argumentIndex < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(argumentIndex), argumentIndex, "Must be non-negative");
+        }
+
+        if (string.IsNullOrEmpty(format))
+        {
+            return default;
+        }
+
+        var minimumDigits = argumentIndex < 10 ? 1 : (int)Math.Floor(Math.Log10(argumentIndex));
+        if (format.Length < 2 + minimumDigits)
+        {
+            return default;
+        }
+
+        char searchChar = charStartArgument;
+        int? formatSplit = null;
+        Range argumentIndexCharacterRange = default;
+        for (var characterIndex = 0; characterIndex < format.Length; ++characterIndex)
+        {
+            var currentChar = format[characterIndex];
+            switch (currentChar)
+            {
+                case charStartArgument:
+                    searchChar = charEndArgument;
+                    formatSplit = null;
+                    argumentIndexCharacterRange = new Range(characterIndex + 1, characterIndex + 1);
+                    continue;
+
+                case charEndArgument:
+                {
+                    if (searchChar == charStartArgument)
+                    {
+                        continue;
+                    }
+
+                    searchChar = charStartArgument;
+                    formatSplit = null;
+                    argumentIndexCharacterRange = new Range(
+                        argumentIndexCharacterRange.Start,
+                        (formatSplit ?? characterIndex)
+                    );
+
+                    if (IsArgument(format, argumentIndexCharacterRange, argumentIndex))
+                    {
+                        return new Range(
+                            argumentIndexCharacterRange.Start.Value - 1,
+                            ^(format.Length - (argumentIndexCharacterRange.End.Value + 1))
+                        );
+                    }
+
+                    argumentIndexCharacterRange = default;
+
+                    continue;
+                }
+
+                case ':':
+                    formatSplit = characterIndex;
+
+                    Range offsetRange = new(argumentIndexCharacterRange.Start, characterIndex);
+                    if (IsArgument(format, offsetRange, argumentIndex))
+                    {
+                        continue;
+                    }
+
+                    searchChar = charStartArgument;
+                    formatSplit = null;
+                    continue;
+
+                default:
+                    if (formatSplit == null && !char.IsAsciiDigit(currentChar))
+                    {
+                        searchChar = charStartArgument;
+                    }
+
+                    break;
+            }
+        }
+
+        return argumentIndexCharacterRange;
+    }
+
+    private static bool IsArgument(string format, Range range, int argumentIndex) =>
+        int.TryParse(format[range], out var index) && index == argumentIndex;
 
     public WrappingBehavior WrappingBehavior
     {
@@ -119,8 +230,6 @@ public partial class Label : Base, ILabel
         base.Invalidate();
     }
 
-    private string? _text;
-
     /// <summary>
     ///     Text.
     /// </summary>
@@ -129,16 +238,7 @@ public partial class Label : Base, ILabel
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => _text;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        set
-        {
-            if (string.Equals(value, _text, StringComparison.Ordinal))
-            {
-                return;
-            }
-
-            _text = value;
-            _textElement.DisplayedText = _text;
-        }
+        set => SetText(value, doEvents: true);
     }
 
     /// <summary>
@@ -241,7 +341,7 @@ public partial class Label : Base, ILabel
     /// <summary>
     ///     Text length (in characters).
     /// </summary>
-    public int TextLength => _textElement.Length;
+    public int TextLength => _text?.Length ?? 0;
 
     public int TextRight => _textElement.Right;
 
@@ -484,14 +584,35 @@ public partial class Label : Base, ILabel
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    /// <param name="localCoordinates"></param>
     /// <returns></returns>
-    protected virtual Point GetClosestCharacter(int x, int y)
+    protected virtual Point GetClosestCharacter(int x, int y) => GetClosestCharacter(new Point(x, y));
+
+    protected Point GetClosestCharacter(Point point)
     {
-        var coordinates = new Point(x, y);
-        coordinates = _textElement.CanvasPosToLocal(coordinates);
-        var closestCharacterIndex = _textElement.GetClosestCharacter(coordinates);
-        return new Point(closestCharacterIndex, 0);
+        point = _textElement.CanvasPosToLocal(point);
+        var closestCharacterIndex = _textElement.GetClosestCharacter(point);
+        Point closestCharacterPoint = new(closestCharacterIndex, 0);
+
+        var replacementRange = _replacementRange;
+        if (_textOverride != null || _displayedText is not { } displayedText || replacementRange.Equals(default))
+        {
+            return closestCharacterPoint;
+        }
+
+        var startIndex = replacementRange.Start.Value;
+        var endIndex = replacementRange.End.Value;
+        if (replacementRange.End.IsFromEnd)
+        {
+            endIndex = displayedText.Length - endIndex;
+        }
+
+        closestCharacterPoint.X = Math.Clamp(
+            closestCharacterPoint.X,
+            startIndex,
+            endIndex
+        );
+
+        return closestCharacterPoint;
     }
 
     /// <summary>
@@ -574,7 +695,7 @@ public partial class Label : Base, ILabel
     /// </summary>
     /// <param name="text">Text to set.</param>
     /// <param name="doEvents">Determines whether to invoke "text changed" event.</param>
-    public virtual void SetText(string text, bool doEvents = true)
+    public virtual void SetText(string? text, bool doEvents = true)
     {
         if (string.Equals(_text, text, StringComparison.Ordinal))
         {
@@ -582,7 +703,8 @@ public partial class Label : Base, ILabel
         }
 
         _text = text;
-        _textElement.DisplayedText = text;
+        _displayedText = string.IsNullOrWhiteSpace(_formatString) ? _text : string.Format(_formatString, _text);
+        _textElement.DisplayedText = _displayedText;
 
         if (mAutoSizeToContents)
         {

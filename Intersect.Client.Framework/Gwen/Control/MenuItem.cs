@@ -279,16 +279,11 @@ public partial class MenuItem : Button
         return this;
     }
 
-    public void SetAccelerator(string accelerator)
+    public void SetAccelerator(string? accelerator)
     {
-        if (_accelerator != null)
+        if (string.IsNullOrWhiteSpace(accelerator))
         {
-            // _accelerator?.DelayedDelete();
             _accelerator = null;
-        }
-
-        if (string.IsNullOrEmpty(accelerator))
-        {
             return;
         }
 
