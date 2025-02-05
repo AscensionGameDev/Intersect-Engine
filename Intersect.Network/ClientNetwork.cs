@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Security.Cryptography;
 using Intersect.Core;
 using Intersect.Network.Events;
@@ -11,6 +12,7 @@ namespace Intersect.Network;
 
 public partial class ClientNetwork : AbstractNetwork, IClient
 {
+    private static readonly HashSet<string> UnresolvableHostNames = [];
     private static readonly NetworkLayerInterfaceFactory DefaultNetworkLayerInterfaceFactory =
         (network, parameters) => new LiteNetLibInterface(network, parameters);
 
@@ -60,11 +62,47 @@ public partial class ClientNetwork : AbstractNetwork, IClient
     {
         get
         {
-            // Send a ping to the server. Timeout: 5000ms (5 seconds). Packet size: 32 bytes. TTL: 64. Don't fragment.
-            var reply = new Ping().Send(Configuration.Host, 5000, [], new PingOptions(64, true));
+            if (Configuration.Host is not { } hostNameOrAddress)
+            {
+                return -1;
+            }
 
-            // Return the roundtrip time in milliseconds (ms) as an integer value (no decimals).
-            return reply?.Status == IPStatus.Success ? (int)reply.RoundtripTime : 999999;
+            try
+            {
+                if (!UnresolvableHostNames.Contains(hostNameOrAddress))
+                {
+                    // Send a ping to the server. Timeout: 5000ms (5 seconds). Packet size: 32 bytes. TTL: 64. Don't fragment.
+                    Ping ping = new();
+                    var reply = ping.Send(hostNameOrAddress, 5000, [], new PingOptions(64, true));
+                    if (reply is { Status: IPStatus.Success })
+                    {
+                        // Return the roundtrip time in milliseconds (ms) as an integer value (no decimals).
+                        return (int)reply.RoundtripTime;
+                    }
+                }
+            }
+            catch (PingException pingException)
+            {
+                if (pingException.InnerException is SocketException { SocketErrorCode: SocketError.HostNotFound })
+                {
+                    UnresolvableHostNames.Add(hostNameOrAddress);
+                    ApplicationContext.Logger.LogWarning(
+                        pingException,
+                        "Invalid hostname '{HostNameOrAddress}' will not be pinged again",
+                        hostNameOrAddress
+                    );
+                }
+                else
+                {
+                    ApplicationContext.Logger.LogWarning(pingException, "Error sending ping request");
+                }
+            }
+            catch (Exception exception)
+            {
+                ApplicationContext.Logger.LogWarning(exception, "Unknown error sending ping request");
+            }
+
+            return -1;
         }
     }
 

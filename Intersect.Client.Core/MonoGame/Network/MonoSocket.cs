@@ -96,7 +96,7 @@ internal partial class MonoSocket : GameSocket
     private IPEndPoint? _lastEndpoint;
     private volatile bool _resolvingHost;
 
-    private static readonly HashSet<string> UnresolvableHostNames = new();
+    private static readonly HashSet<string> UnresolvableHostNames = [];
 
     public static MonoSocket Instance { get; private set; } = default!;
 
