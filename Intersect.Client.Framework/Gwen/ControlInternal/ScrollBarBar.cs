@@ -96,9 +96,9 @@ public partial class ScrollBarBar : Dragger
         MoveTo(X, Y);
     }
 
-    protected override void OnBoundsChanged(Rectangle oldBounds)
+    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
     {
-        base.OnBoundsChanged(oldBounds);
+        base.OnBoundsChanged(oldBounds, newBounds);
 
         InvalidateParent();
     }

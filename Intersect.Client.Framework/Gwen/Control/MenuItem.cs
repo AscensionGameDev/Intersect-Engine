@@ -251,17 +251,22 @@ public partial class MenuItem : Button
         _submenu.CloseAll();
     }
 
-    public override void SizeToContents()
+    public override bool SizeToContents()
     {
-        base.SizeToContents();
+        var sizeChanged = base.SizeToContents();
         if (_accelerator != null)
         {
             _accelerator.SizeToContents();
-            Width = Width + _accelerator.Width;
+            sizeChanged &= _accelerator.Width != 0;
+            Width += _accelerator.Width;
             _accelerator.TextAlign = Pos.Left;
         }
 
-        Width = Math.Max(Width, Parent?.Width ?? Width);
+        var width = Width;
+        var clampedWidth = Math.Max(width, Parent?.Width ?? width);
+        sizeChanged &= width != clampedWidth;
+        Width = clampedWidth;
+        return sizeChanged;
     }
 
     public MenuItem SetAction(

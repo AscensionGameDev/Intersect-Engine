@@ -274,7 +274,7 @@ public partial class Text : Base
         }
 
         Size = newSize;
-        InvalidateParent();
+        Invalidate();
     }
 
     /// <summary>

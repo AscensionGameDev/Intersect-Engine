@@ -16,7 +16,7 @@ public partial class GroupBox : Label
     {
         AutoSizeToContents = false;
 
-        // Set to true, because it's likely that our  
+        // Set to true, because it's likely that our
         // children will want mouse input, and they
         // can't get it without us..
         MouseInputEnabled = true;
@@ -58,20 +58,22 @@ public partial class GroupBox : Label
     /// <summary>
     ///     Sizes to contents.
     /// </summary>
-    public override void SizeToContents()
-    {
-        // we inherit from Label and shouldn't use its method.
-        DoSizeToContents();
-    }
+    public override bool SizeToContents() => DoSizeToContents();
 
-    protected virtual void DoSizeToContents()
+    protected virtual bool DoSizeToContents()
     {
-        _innerPanel.SizeToChildren();
-        SizeToChildren();
-        if (Width < TextWidth + TextPadding.Right + TextPadding.Left)
+        var sizeChanged = _innerPanel?.SizeToChildren() ?? false;
+        sizeChanged &= SizeToChildren();
+
+        var textWidth = TextWidth + TextPadding.Right + TextPadding.Left;
+
+        // ReSharper disable once InvertIf
+        if (Width < textWidth)
         {
-            Width = TextWidth + TextPadding.Right + TextPadding.Left;
+            Width = textWidth;
+            sizeChanged = true;
         }
-    }
 
+        return sizeChanged;
+    }
 }
