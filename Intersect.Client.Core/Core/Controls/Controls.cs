@@ -84,49 +84,6 @@ public partial class Controls : IControlSet
                 }
             }
         }
-
-        TryAdd(Control.MoveUp, new ControlBinding(Keys.None, Keys.Up), new ControlBinding(Keys.None, Keys.W));
-        TryAdd(Control.MoveDown, new ControlBinding(Keys.None, Keys.Down), new ControlBinding(Keys.None, Keys.S));
-        TryAdd(Control.MoveLeft, new ControlBinding(Keys.None, Keys.Left), new ControlBinding(Keys.None, Keys.A));
-        TryAdd(Control.MoveRight, new ControlBinding(Keys.None, Keys.Right), new ControlBinding(Keys.None, Keys.D));
-        TryAdd(Control.AttackInteract, new ControlBinding(Keys.None, Keys.E), new ControlBinding(Keys.None, Keys.LButton));
-        TryAdd(Control.Block, new ControlBinding(Keys.None, Keys.Q), new ControlBinding(Keys.None, Keys.RButton));
-        TryAdd(Control.AutoTarget, new ControlBinding(Keys.None, Keys.Tab), ControlBinding.Default);
-        TryAdd(Control.HoldToSoftRetargetOnSelfCast, new ControlBinding(Keys.None, Keys.LMenu), ControlBinding.Default);
-        TryAdd(Control.ToggleAutoSoftRetargetOnSelfCast, ControlBinding.Default, ControlBinding.Default);
-        TryAdd(Control.PickUp, new ControlBinding(Keys.None, Keys.Space), ControlBinding.Default);
-        TryAdd(Control.Enter, new ControlBinding(Keys.None, Keys.Enter), ControlBinding.Default);
-        TryAdd(Control.Screenshot, new ControlBinding(Keys.None, Keys.F12), ControlBinding.Default);
-        TryAdd(Control.OpenMenu, new ControlBinding(Keys.None, Keys.Escape), ControlBinding.Default);
-        TryAdd(Control.OpenInventory, new ControlBinding(Keys.None, Keys.I), ControlBinding.Default);
-        TryAdd(Control.OpenQuests, new ControlBinding(Keys.None, Keys.L), ControlBinding.Default);
-        TryAdd(Control.OpenCharacterInfo, new ControlBinding(Keys.None, Keys.C), ControlBinding.Default);
-        TryAdd(Control.OpenParties, new ControlBinding(Keys.None, Keys.P), ControlBinding.Default);
-        TryAdd(Control.OpenSpells, new ControlBinding(Keys.None, Keys.K), ControlBinding.Default);
-        TryAdd(Control.OpenFriends, new ControlBinding(Keys.None, Keys.F), ControlBinding.Default);
-        TryAdd(Control.OpenGuild, new ControlBinding(Keys.None, Keys.G), ControlBinding.Default);
-        TryAdd(Control.OpenSettings, new ControlBinding(Keys.None, Keys.O), ControlBinding.Default);
-        TryAdd(Control.OpenDebugger, new ControlBinding(Keys.None, Keys.F2), ControlBinding.Default);
-        TryAdd(Control.OpenAdminPanel, new ControlBinding(Keys.None, Keys.Insert), ControlBinding.Default);
-        TryAdd(Control.ToggleGui, new ControlBinding(Keys.None, Keys.F11), ControlBinding.Default);
-        TryAdd(Control.TurnAround, new ControlBinding(Keys.None, Keys.Control), ControlBinding.Default);
-        TryAdd(Control.ToggleZoomIn, ControlBinding.Default, ControlBinding.Default);
-        TryAdd(Control.ToggleZoomOut, ControlBinding.Default, ControlBinding.Default);
-        TryAdd(Control.HoldToZoomIn, ControlBinding.Default, ControlBinding.Default);
-        TryAdd(Control.HoldToZoomOut, ControlBinding.Default, ControlBinding.Default);
-        TryAdd(Control.ToggleFullscreen, new ControlBinding(Keys.Alt, Keys.Enter), ControlBinding.Default);
-
-        // Hotkeys should be at the end of the list
-        TryAdd(Control.Hotkey1, new ControlBinding(Keys.None, Keys.D1), ControlBinding.Default);
-        TryAdd(Control.Hotkey2, new ControlBinding(Keys.None, Keys.D2), ControlBinding.Default);
-        TryAdd(Control.Hotkey3, new ControlBinding(Keys.None, Keys.D3), ControlBinding.Default);
-        TryAdd(Control.Hotkey4, new ControlBinding(Keys.None, Keys.D4), ControlBinding.Default);
-        TryAdd(Control.Hotkey5, new ControlBinding(Keys.None, Keys.D5), ControlBinding.Default);
-        TryAdd(Control.Hotkey6, new ControlBinding(Keys.None, Keys.D6), ControlBinding.Default);
-        TryAdd(Control.Hotkey7, new ControlBinding(Keys.None, Keys.D7), ControlBinding.Default);
-        TryAdd(Control.Hotkey8, new ControlBinding(Keys.None, Keys.D8), ControlBinding.Default);
-        TryAdd(Control.Hotkey9, new ControlBinding(Keys.None, Keys.D9), ControlBinding.Default);
-        TryAdd(Control.Hotkey10, new ControlBinding(Keys.None, Keys.D0), ControlBinding.Default);
     }
 
     private static void MigrateControlBindings(Control control)
