@@ -376,9 +376,9 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         return row;
     }
 
-    public TableRow AddRow(string text, int columnCount)
+    public TableRow AddRow(string text, int columnCount, string? name = null)
     {
-        var row = AddRow(columnCount);
+        var row = AddRow(columnCount, name: name);
         row.SetCellText(0, text);
 
         return row;

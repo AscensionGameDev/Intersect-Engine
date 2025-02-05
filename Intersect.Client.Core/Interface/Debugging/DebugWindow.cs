@@ -294,15 +294,15 @@ internal sealed partial class DebugWindow : Window
         table.BoundsChanged += (_, _) => table.SizeToChildren(width: false, height: true);
 
         var fpsProvider = new ValueTableCellDataProvider<int>(() => Graphics.Renderer?.GetFps() ?? 0, waitPredicate: () => Task.FromResult(IsVisible));
-        table.AddRow(Strings.Debug.Fps).Listen(fpsProvider, 1);
+        table.AddRow(Strings.Debug.Fps, name: "FPSRow").Listen(fpsProvider, 1);
         _generators.Add(fpsProvider.Generator);
 
         var pingProvider = new ValueTableCellDataProvider<int>(() => Networking.Network.Ping, waitPredicate: () => Task.FromResult(IsVisible));
-        table.AddRow(Strings.Debug.Ping).Listen(pingProvider, 1);
+        table.AddRow(Strings.Debug.Ping, name: "PingRow").Listen(pingProvider, 1);
         _generators.Add(pingProvider.Generator);
 
         var drawCallsProvider = new ValueTableCellDataProvider<int>(() => Graphics.DrawCalls, waitPredicate: () => Task.FromResult(IsVisible));
-        table.AddRow(Strings.Debug.Draws).Listen(drawCallsProvider, 1);
+        table.AddRow(Strings.Debug.Draws, name: "DrawsRow").Listen(drawCallsProvider, 1);
         _generators.Add(drawCallsProvider.Generator);
 
         var mapNameProvider = new ValueTableCellDataProvider<string>(() =>
@@ -316,43 +316,43 @@ internal sealed partial class DebugWindow : Window
 
             return MapInstance.Get(mapId)?.Name ?? Strings.Internals.NotApplicable;
         }, waitPredicate: () => Task.FromResult(IsVisible));
-        table.AddRow(Strings.Debug.Map).Listen(mapNameProvider, 1);
+        table.AddRow(Strings.Debug.Map, name: "MapRow").Listen(mapNameProvider, 1);
         _generators.Add(mapNameProvider.Generator);
 
         var coordinateXProvider = new ValueTableCellDataProvider<int>(() => Globals.Me?.X ?? -1, waitPredicate: () => Task.FromResult(IsVisible));
-        table.AddRow(Strings.Internals.CoordinateX).Listen(coordinateXProvider, 1);
+        table.AddRow(Strings.Internals.CoordinateX, name: "PlayerXRow").Listen(coordinateXProvider, 1);
         _generators.Add(coordinateXProvider.Generator);
 
         var coordinateYProvider = new ValueTableCellDataProvider<int>(() => Globals.Me?.Y ?? -1, waitPredicate: () => Task.FromResult(IsVisible));
-        table.AddRow(Strings.Internals.CoordinateY).Listen(coordinateYProvider, 1);
+        table.AddRow(Strings.Internals.CoordinateY, name: "PlayerYRow").Listen(coordinateYProvider, 1);
         _generators.Add(coordinateYProvider.Generator);
 
         var coordinateZProvider = new ValueTableCellDataProvider<int>(() => Globals.Me?.Z ?? -1, waitPredicate: () => Task.FromResult(IsVisible));
-        table.AddRow(Strings.Internals.CoordinateZ).Listen(coordinateZProvider, 1);
+        table.AddRow(Strings.Internals.CoordinateZ, name: "PlayerZRow").Listen(coordinateZProvider, 1);
         _generators.Add(coordinateZProvider.Generator);
 
         var knownEntitiesProvider = new ValueTableCellDataProvider<int>(() => Graphics.DrawCalls, waitPredicate: () => Task.FromResult(IsVisible));
-        table.AddRow(Strings.Debug.KnownEntities).Listen(knownEntitiesProvider, 1);
+        table.AddRow(Strings.Debug.KnownEntities, name: "KnownEntitiesRow").Listen(knownEntitiesProvider, 1);
         _generators.Add(knownEntitiesProvider.Generator);
 
         var knownMapsProvider = new ValueTableCellDataProvider<int>(() => MapInstance.Lookup.Count, waitPredicate: () => Task.FromResult(IsVisible));
-        table.AddRow(Strings.Debug.KnownMaps).Listen(knownMapsProvider, 1);
+        table.AddRow(Strings.Debug.KnownMaps, name: "KnownMapsRow").Listen(knownMapsProvider, 1);
         _generators.Add(knownMapsProvider.Generator);
 
         var mapsDrawnProvider = new ValueTableCellDataProvider<int>(() => Graphics.MapsDrawn, waitPredicate: () => Task.FromResult(IsVisible));
-        table.AddRow(Strings.Debug.MapsDrawn).Listen(mapsDrawnProvider, 1);
+        table.AddRow(Strings.Debug.MapsDrawn, name: "MapsDrawnRow").Listen(mapsDrawnProvider, 1);
         _generators.Add(mapsDrawnProvider.Generator);
 
         var entitiesDrawnProvider = new ValueTableCellDataProvider<int>(() => Graphics.EntitiesDrawn, waitPredicate: () => Task.FromResult(IsVisible));
-        table.AddRow(Strings.Debug.EntitiesDrawn).Listen(entitiesDrawnProvider, 1);
+        table.AddRow(Strings.Debug.EntitiesDrawn, name: "EntitiesDrawnRow").Listen(entitiesDrawnProvider, 1);
         _generators.Add(entitiesDrawnProvider.Generator);
 
         var lightsDrawnProvider = new ValueTableCellDataProvider<int>(() => Graphics.LightsDrawn, waitPredicate: () => Task.FromResult(IsVisible));
-        table.AddRow(Strings.Debug.LightsDrawn).Listen(lightsDrawnProvider, 1);
+        table.AddRow(Strings.Debug.LightsDrawn, name: "LightsDrawnRow").Listen(lightsDrawnProvider, 1);
         _generators.Add(lightsDrawnProvider.Generator);
 
         var timeProvider = new ValueTableCellDataProvider<string>(Time.GetTime, waitPredicate: () => Task.FromResult(IsVisible));
-        table.AddRow(Strings.Debug.Time).Listen(timeProvider, 1);
+        table.AddRow(Strings.Debug.Time, name: "TimeRow").Listen(timeProvider, 1);
         _generators.Add(timeProvider.Generator);
 
         var interfaceObjectsProvider = new ValueTableCellDataProvider<int>(cancellationToken =>
@@ -373,27 +373,27 @@ internal sealed partial class DebugWindow : Window
                 return 0;
             }
         }, waitPredicate: () => Task.FromResult(IsVisible));
-        table.AddRow(Strings.Debug.InterfaceObjects).Listen(interfaceObjectsProvider, 1);
+        table.AddRow(Strings.Debug.InterfaceObjects, name: "InterfaceObjectsRow").Listen(interfaceObjectsProvider, 1);
         _generators.Add(interfaceObjectsProvider.Generator);
 
-        _ = table.AddRow(Strings.Debug.ControlUnderCursor, 2);
+        _ = table.AddRow(Strings.Debug.ControlUnderCursor, columnCount: 2, name: "ControlUnderCursorRow");
 
         var controlUnderCursorProvider = new ControlUnderCursorProvider(this);
         // var controlUnderCursorProvider = new ValueTableCellDataProvider<Base>(
         //     Interface.FindControlAtCursor,
         //     waitPredicate: () => Task.FromResult(IsVisible)
         // );
-        table.AddRow(Strings.Internals.Type).Listen(controlUnderCursorProvider, 0);
-        table.AddRow(Strings.Internals.Name).Listen(controlUnderCursorProvider, 1);
-        table.AddRow(Strings.Internals.LocalItem.ToString(Strings.Internals.Bounds)).Listen(controlUnderCursorProvider, 2);
-        table.AddRow(Strings.Internals.GlobalItem.ToString(Strings.Internals.Bounds)).Listen(controlUnderCursorProvider, 3);
-        table.AddRow(Strings.Internals.Color).Listen(controlUnderCursorProvider, 4);
-        table.AddRow(Strings.Internals.ColorOverride).Listen(controlUnderCursorProvider, 5);
-        table.AddRow(Strings.Internals.InnerBounds).Listen(controlUnderCursorProvider, 6);
-        table.AddRow(Strings.Internals.Margin).Listen(controlUnderCursorProvider, 7);
-        table.AddRow(Strings.Internals.Padding).Listen(controlUnderCursorProvider, 8);
-        // table.AddRow(Strings.Internals.ColorOverride).Listen(controlUnderCursorProvider, 9);
-        // table.AddRow(Strings.Internals.ColorOverride).Listen(controlUnderCursorProvider, 10);
+        table.AddRow(Strings.Internals.Type, name: "TypeRow").Listen(controlUnderCursorProvider, 0);
+        table.AddRow(Strings.Internals.Name, name: "NameRow").Listen(controlUnderCursorProvider, 1);
+        table.AddRow(Strings.Internals.LocalItem.ToString(Strings.Internals.Bounds), name: "LocalBoundsRow").Listen(controlUnderCursorProvider, 2);
+        table.AddRow(Strings.Internals.GlobalItem.ToString(Strings.Internals.Bounds), name: "GlobalBoundsRow").Listen(controlUnderCursorProvider, 3);
+        table.AddRow(Strings.Internals.Color, name: "ColorRow").Listen(controlUnderCursorProvider, 4);
+        table.AddRow(Strings.Internals.ColorOverride, name: "ColorOverrideRow").Listen(controlUnderCursorProvider, 5);
+        table.AddRow(Strings.Internals.InnerBounds, name: "InnerBoundsRow").Listen(controlUnderCursorProvider, 6);
+        table.AddRow(Strings.Internals.Margin, name: "MarginRow").Listen(controlUnderCursorProvider, 7);
+        table.AddRow(Strings.Internals.Padding, name: "PaddingRow").Listen(controlUnderCursorProvider, 8);
+        // table.AddRow(Strings.Internals.ColorOverride, name: "ControlUnderCursorRow").Listen(controlUnderCursorProvider, 9);
+        // table.AddRow(Strings.Internals.ColorOverride, name: "ControlUnderCursorRow").Listen(controlUnderCursorProvider, 10);
         _generators.Add(controlUnderCursorProvider.Generator);
 
         var rows = table.Children.OfType<TableRow>().ToArray();
