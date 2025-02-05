@@ -32,14 +32,14 @@ internal sealed partial class DebugWindow : Window
 
         Tabs = CreateTabs();
 
-        TabInfo = Tabs.AddPage(Strings.Debug.TabLabelInfo);
+        TabInfo = Tabs.AddPage(Strings.Debug.TabLabelInfo, nameof(TabInfo));
         CheckboxDrawDebugOutlines = CreateInfoCheckboxDrawDebugOutlines(TabInfo.Page);
         CheckboxEnableLayoutHotReloading = CreateInfoCheckboxEnableLayoutHotReloading(TabInfo.Page);
         ButtonShutdownServer = CreateInfoButtonShutdownServer(TabInfo.Page);
         ButtonShutdownServerAndExit = CreateInfoButtonShutdownServerAndExit(TabInfo.Page);
         TableDebugStats = CreateInfoTableDebugStats(TabInfo.Page);
 
-        TabAssets = Tabs.AddPage(Strings.Debug.TabLabelAssets);
+        TabAssets = Tabs.AddPage(Strings.Debug.TabLabelAssets, nameof(TabAssets));
         AssetsToolsTable = CreateAssetsToolsTable(TabAssets.Page);
         AssetsList = CreateAssetsList(TabAssets.Page);
         AssetsButtonReloadAsset = CreateAssetsButtonReloadAsset(AssetsToolsTable, AssetsList);
@@ -52,7 +52,7 @@ internal sealed partial class DebugWindow : Window
     private SearchableTree CreateAssetsList(Base parent)
     {
         var dataProvider = new TexturesSearchableTreeDataProvider(Current, this);
-        SearchableTree assetList = new(parent, dataProvider)
+        SearchableTree assetList = new(parent, dataProvider, name: nameof(AssetsList))
         {
             Dock = Pos.Fill,
             FontSearch = _defaultFont,
@@ -77,7 +77,7 @@ internal sealed partial class DebugWindow : Window
 
     private Button CreateAssetsButtonReloadAsset(Table table, SearchableTree assetList)
     {
-        var row = table.AddRow();
+        var row = table.AddNamedRow($"{nameof(AssetsButtonReloadAsset)}Row");
 
         Button buttonReloadAsset = new(row, name: nameof(AssetsButtonReloadAsset))
         {

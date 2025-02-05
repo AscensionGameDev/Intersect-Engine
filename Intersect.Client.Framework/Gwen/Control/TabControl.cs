@@ -92,19 +92,20 @@ public partial class TabControl : Base
 
     public event GwenEventHandler<TabChangeEventArgs>? TabChanged;
 
-    /// <summary>
-    ///     Adds a new page/tab.
-    /// </summary>
-    /// <param name="label">Tab label.</param>
-    /// <param name="page">Page contents.</param>
-    /// <returns>Newly created control.</returns>
-    public TabButton AddPage(string label, Base? page = null)
+    public TabButton AddPage(string label, string? tabName, Base? page = null)
     {
-        page ??= new Base(this)
+        if (page == null)
         {
-            Dock = Pos.Fill,
-        };
-        page.Parent = this;
+            page = new Base(this, name: tabName)
+            {
+                Dock = Pos.Fill,
+            };
+        }
+        else
+        {
+            page.Name = tabName;
+            page.Parent = this;
+        }
 
         TabButton button = new(_tabStrip)
         {
@@ -117,6 +118,14 @@ public partial class TabControl : Base
 
         return button;
     }
+
+    /// <summary>
+    ///     Adds a new page/tab.
+    /// </summary>
+    /// <param name="label">Tab label.</param>
+    /// <param name="page">Page contents.</param>
+    /// <returns>Newly created control.</returns>
+    public TabButton AddPage(string label, Base? page = null) => AddPage(label, null, page);
 
     /// <summary>
     ///     Adds a page/tab.
@@ -133,13 +142,17 @@ public partial class TabControl : Base
         button.Parent = _tabStrip;
         button.Dock = Pos.Left;
         button.SizeToContents();
-        if (button.TabControl != null)
-        {
-            button.TabControl.UnsubscribeTabEvent(button);
-        }
 
-        button.TabControl = this;
-        button.Clicked += OnTabPressed;
+        if (button.TabControl != this)
+        {
+            if (button.TabControl is { } otherTabControl)
+            {
+                button.Clicked -= otherTabControl.OnTabPressed;
+            }
+
+            button.TabControl = this;
+            button.Clicked += OnTabPressed;
+        }
 
         if (null == _activeButton)
         {
@@ -149,11 +162,6 @@ public partial class TabControl : Base
         TabAdded?.Invoke(this, EventArgs.Empty);
 
         Invalidate();
-    }
-
-    private void UnsubscribeTabEvent(TabButton button)
-    {
-        button.Clicked -= OnTabPressed;
     }
 
     /// <summary>

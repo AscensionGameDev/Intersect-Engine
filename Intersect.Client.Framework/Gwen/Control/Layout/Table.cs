@@ -304,6 +304,12 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
     /// <returns>Newly created row.</returns>
     public TableRow AddRow() => AddRow(ColumnCount);
 
+    /// <summary>
+    ///     Adds a new empty row.
+    /// </summary>
+    /// <returns>Newly created row.</returns>
+    public TableRow AddNamedRow(string? name) => AddRow(ColumnCount, name);
+
     public TableRow AddRow(params Base[] cellContents)
     {
         var row = AddRow();
@@ -317,9 +323,9 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         return row;
     }
 
-    public TableRow AddRow(int columnCount)
+    public TableRow AddRow(int columnCount, string? name = null)
     {
-        var row = new TableRow(this)
+        var row = new TableRow(this, name: name)
         {
             CellSpacing = _cellSpacing,
             ColumnCount = columnCount,
@@ -360,10 +366,11 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
     ///     Adds a new row with specified text in first column.
     /// </summary>
     /// <param name="text">Text to add.</param>
+    /// <param name="name"></param>
     /// <returns>New row.</returns>
-    public TableRow AddRow(string text)
+    public TableRow AddRow(string text, string? name = null)
     {
-        var row = AddRow();
+        var row = AddNamedRow(name: name);
         row.SetCellText(0, text);
 
         return row;

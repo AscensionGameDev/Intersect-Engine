@@ -18,7 +18,8 @@ public partial class TabButton : Button
     ///     Initializes a new instance of the <see cref="TabButton" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public TabButton(Base parent) : base(parent)
+    /// <param name="name"></param>
+    public TabButton(Base parent, string? name = null) : base(parent: parent, name: name)
     {
         DragAndDrop_SetPackage(true, "TabButtonMove");
         Font = GameContentManager.Current?.GetFont("sourcesansproblack", 10);
