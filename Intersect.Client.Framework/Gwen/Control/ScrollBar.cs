@@ -226,7 +226,7 @@ public partial class ScrollBar : Base
 
         var displayedScrollAmount = CalculateScrolledAmount();
         var scrollAmount = _scrollAmount;
-        ApplicationContext.CurrentContext.Logger.LogDebug(
+        ApplicationContext.CurrentContext.Logger.LogTrace(
             "Scrollbar '{ScrollbarName}' at {DisplayedScrollAmount} but should be at {ActualScrollAmount} Size={Size}",
             CanonicalName,
             displayedScrollAmount,

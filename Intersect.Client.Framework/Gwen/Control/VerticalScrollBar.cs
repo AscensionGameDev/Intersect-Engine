@@ -67,8 +67,6 @@ public partial class VerticalScrollBar : ScrollBar
     /// <param name="skin">Skin to use.</param>
     protected override void Layout(Skin.Base skin)
     {
-        base.Layout(skin);
-
         mScrollButton[0].Height = Width;
         mScrollButton[0].Dock = Pos.Top;
 
@@ -100,6 +98,8 @@ public partial class VerticalScrollBar : ScrollBar
         }
 
         _wasHeld = isHeld;
+
+        base.Layout(skin);
     }
 
     private bool _wasHeld;
