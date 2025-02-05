@@ -148,13 +148,6 @@ public partial class LabeledHorizontalSlider : Base
         _slider.SetRange(min, max);
     }
 
-    public override JObject GetJson(bool isRoot = default)
-    {
-        var obj = base.GetJson(isRoot);
-
-        return base.FixJson(obj);
-    }
-
     public override void LoadJson(JToken obj, bool isRoot = default)
     {
         base.LoadJson(obj);

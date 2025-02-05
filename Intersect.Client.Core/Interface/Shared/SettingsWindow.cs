@@ -550,7 +550,7 @@ public partial class SettingsWindow : WindowControl
 
             bool controlsAdded = false;
 
-            _controlsTable.SizeToContents = true;
+            _controlsTable.FitContents();
 
             var row = mKeybindingBtns.Count;
             foreach (var (control, mapping) in (_keybindingEditControls ?? Controls.ActiveControls).Mappings)

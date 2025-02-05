@@ -213,20 +213,25 @@ public partial class ListBox : ScrollControl
         });
     }
 
-    public override JObject GetJson(bool isRoot = default)
+    public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
-        var obj = base.GetJson(isRoot);
-        obj.Add("SizeToContents", mSizeToContents);
-        obj.Add("MultiSelect", AllowMultiSelect);
-        obj.Add("IsToggle", IsToggle);
-        obj.Add("Font", mFontInfo);
-        obj.Add("ItemHoverSound", mItemHoverSound);
-        obj.Add("ItemClickSound", mItemClickSound);
-        obj.Add("ItemRightClickSound", mItemRightClickSound);
-        obj.Add(nameof(TextColor), TextColor.ToString());
-        obj.Add(nameof(TextColorOverride), TextColorOverride.ToString());
+        var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);
+        if (serializedProperties is null)
+        {
+            return null;
+        }
 
-        return base.FixJson(obj);
+        serializedProperties.Add("SizeToContents", mSizeToContents);
+        serializedProperties.Add("MultiSelect", AllowMultiSelect);
+        serializedProperties.Add("IsToggle", IsToggle);
+        serializedProperties.Add("Font", mFontInfo);
+        serializedProperties.Add("ItemHoverSound", mItemHoverSound);
+        serializedProperties.Add("ItemClickSound", mItemClickSound);
+        serializedProperties.Add("ItemRightClickSound", mItemRightClickSound);
+        serializedProperties.Add(nameof(TextColor), TextColor.ToString());
+        serializedProperties.Add(nameof(TextColorOverride), TextColorOverride.ToString());
+
+        return base.FixJson(serializedProperties);
     }
 
     public override void LoadJson(JToken obj, bool isRoot = default)

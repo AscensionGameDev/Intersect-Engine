@@ -75,7 +75,7 @@ public partial class ScrollBar : Base
         get => _nudgeAmount;
         set => _nudgeAmount = value;
     }
-    
+
     public virtual float NudgeAmount
     {
         get => _nudgeAmount / mContentSize;
@@ -122,15 +122,20 @@ public partial class ScrollBar : Base
     /// </summary>
     public event GwenEventHandler<EventArgs> BarMoved;
 
-    public override JObject GetJson(bool isRoot = default)
+    public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
-        var obj = base.GetJson(isRoot);
-        obj.Add("BackgroundTemplate", mBackgroundTemplateFilename);
-        obj.Add("UpOrLeftButton", mScrollButton[0].GetJson());
-        obj.Add("Bar", mBar.GetJson());
-        obj.Add("DownOrRightButton", mScrollButton[1].GetJson());
+        var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);
+        if (serializedProperties is null)
+        {
+            return null;
+        }
 
-        return base.FixJson(obj);
+        serializedProperties.Add("BackgroundTemplate", mBackgroundTemplateFilename);
+        serializedProperties.Add("UpOrLeftButton", mScrollButton[0].GetJson());
+        serializedProperties.Add("Bar", mBar.GetJson());
+        serializedProperties.Add("DownOrRightButton", mScrollButton[1].GetJson());
+
+        return base.FixJson(serializedProperties);
     }
 
     public override void LoadJson(JToken obj, bool isRoot = default)

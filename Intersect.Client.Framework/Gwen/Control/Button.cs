@@ -175,27 +175,33 @@ public partial class Button : Label
     /// </summary>
     public event GwenEventHandler<EventArgs> ToggledOff;
 
-    public override JObject GetJson(bool isRoot = default)
+    public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
-        var obj = base.GetJson(isRoot);
-        if (this.GetType() != typeof(CheckBox))
+        var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);
+        if (serializedProperties is null)
         {
-            obj.Add("NormalImage", GetImageFilename(ControlState.Normal));
-            obj.Add("HoveredImage", GetImageFilename(ControlState.Hovered));
-            obj.Add("ClickedImage", GetImageFilename(ControlState.Clicked));
-            obj.Add("DisabledImage", GetImageFilename(ControlState.Disabled));
+            return null;
         }
 
-        obj.Add("CenterImage", mCenterImage);
-        if (this.GetType() != typeof(ComboBox))
+        if (this is not CheckBox)
         {
-            obj.Add("HoverSound", mHoverSound);
-            obj.Add("MouseUpSound", mMouseUpSound);
-            obj.Add("MouseDownSound", mMouseDownSound);
-            obj.Add("ClickSound", mClickSound);
+            serializedProperties.Add("NormalImage", GetImageFilename(ControlState.Normal));
+            serializedProperties.Add("HoveredImage", GetImageFilename(ControlState.Hovered));
+            serializedProperties.Add("ClickedImage", GetImageFilename(ControlState.Clicked));
+            serializedProperties.Add("DisabledImage", GetImageFilename(ControlState.Disabled));
         }
 
-        return base.FixJson(obj);
+        if (this is not ComboBox)
+        {
+            serializedProperties.Add("HoverSound", mHoverSound);
+            serializedProperties.Add("MouseUpSound", mMouseUpSound);
+            serializedProperties.Add("MouseDownSound", mMouseDownSound);
+            serializedProperties.Add("ClickSound", mClickSound);
+        }
+
+        serializedProperties.Add("CenterImage", mCenterImage);
+
+        return base.FixJson(serializedProperties);
     }
 
     public override void LoadJson(JToken obj, bool isRoot = default)

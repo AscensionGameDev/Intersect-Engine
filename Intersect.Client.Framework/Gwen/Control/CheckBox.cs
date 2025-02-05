@@ -83,17 +83,22 @@ public partial class CheckBox : Button
     /// </summary>
     protected virtual bool AllowUncheck => true;
 
-    public override JObject GetJson(bool isRoot = default)
+    public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
-        var obj = base.GetJson(isRoot);
-        obj.Add("NormalImage", GetImageFilename(ControlState.Normal));
-        obj.Add("CheckedImage", GetImageFilename(ControlState.CheckedNormal));
-        obj.Add("DisabledImage", GetImageFilename(ControlState.Disabled));
-        obj.Add("CheckedDisabledImage", GetImageFilename(ControlState.CheckedDisabled));
-        obj.Add("CheckedSound", mCheckSound);
-        obj.Add("UncheckedSound", mUncheckedSound);
+        var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);
+        if (serializedProperties is null)
+        {
+            return null;
+        }
 
-        return base.FixJson(obj);
+        serializedProperties.Add("NormalImage", GetImageFilename(ControlState.Normal));
+        serializedProperties.Add("CheckedImage", GetImageFilename(ControlState.CheckedNormal));
+        serializedProperties.Add("DisabledImage", GetImageFilename(ControlState.Disabled));
+        serializedProperties.Add("CheckedDisabledImage", GetImageFilename(ControlState.CheckedDisabled));
+        serializedProperties.Add("CheckedSound", mCheckSound);
+        serializedProperties.Add("UncheckedSound", mUncheckedSound);
+
+        return base.FixJson(serializedProperties);
     }
 
     public override void LoadJson(JToken obj, bool isRoot = default)

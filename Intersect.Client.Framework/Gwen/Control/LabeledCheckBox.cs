@@ -139,13 +139,18 @@ public partial class LabeledCheckBox : Base
     /// </summary>
     public event GwenEventHandler<EventArgs> CheckChanged;
 
-    public override JObject GetJson(bool isRoot = default)
+    public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
-        var obj = base.GetJson(isRoot);
-        obj.Add("Label", _label.GetJson());
-        obj.Add("Checkbox", mCheckBox.GetJson());
+        var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);
+        if (serializedProperties is null)
+        {
+            return null;
+        }
 
-        return base.FixJson(obj);
+        serializedProperties.Add("Label", _label.GetJson());
+        serializedProperties.Add("Checkbox", mCheckBox.GetJson());
+
+        return base.FixJson(serializedProperties);
     }
 
     public override void LoadJson(JToken obj, bool isRoot = default)

@@ -224,24 +224,23 @@ public partial class WindowControl : ResizableControl
     /// </summary>
     public bool DrawShadow { get; set; } = true;
 
-    public override JObject GetJson(bool isRoot = default)
+    public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
-        var obj = base.GetJson(isRoot);
-
-        obj.Add(nameof(DrawShadow), DrawShadow);
-        obj.Add("ActiveImage", GetImageFilename(ControlState.Active));
-        obj.Add("InactiveImage", GetImageFilename(ControlState.Inactive));
-        obj.Add("ActiveColor", Color.ToString(mActiveColor));
-        obj.Add("InactiveColor", Color.ToString(mInactiveColor));
-        obj.Add(nameof(IsClosable), IsClosable);
-        obj.Add(nameof(Titlebar), _titlebar.GetJson());
-
-        if (_innerPanel is { Children.Count: > 0 } innerPanel)
+        var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);
+        if (serializedProperties is null)
         {
-            obj.Add("InnerPanel", innerPanel.GetJson());
+            return null;
         }
 
-        return base.FixJson(obj);
+        serializedProperties.Add(nameof(DrawShadow), DrawShadow);
+        serializedProperties.Add("ActiveImage", GetImageFilename(ControlState.Active));
+        serializedProperties.Add("InactiveImage", GetImageFilename(ControlState.Inactive));
+        serializedProperties.Add("ActiveColor", Color.ToString(mActiveColor));
+        serializedProperties.Add("InactiveColor", Color.ToString(mInactiveColor));
+        serializedProperties.Add(nameof(IsClosable), IsClosable);
+        serializedProperties.Add(nameof(Titlebar), _titlebar.GetJson());
+
+        return base.FixJson(serializedProperties);
     }
 
     public override void LoadJson(JToken token, bool isRoot = default)

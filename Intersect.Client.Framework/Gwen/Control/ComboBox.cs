@@ -129,9 +129,14 @@ public partial class ComboBox : Button
         }
     }
 
-    public override JObject GetJson(bool isRoot = default)
+    public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
-        var obj = base.GetJson(isRoot);
+        var obj = base.GetJson(isRoot, onlySerializeIfNotEmpty);
+        if (obj is null)
+        {
+            return null;
+        }
+
         obj.Add("MenuAbove", mMenuAbove);
         obj.Add("Menu", mMenu.GetJson());
         obj.Add("DropDownButton", mButton.GetJson());

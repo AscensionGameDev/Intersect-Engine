@@ -57,13 +57,19 @@ public partial class RichLabel : Base
     }
 
     /// <param name="isRoot"></param>
+    /// <param name="onlySerializeIfNotEmpty"></param>
     /// <inheritdoc />
-    public override JObject GetJson(bool isRoot = default)
+    public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
-        var obj = base.GetJson(isRoot);
-        obj.Add("Font", mFontInfo);
+        var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);
+        if (serializedProperties is null)
+        {
+            return null;
+        }
 
-        return base.FixJson(obj);
+        serializedProperties.Add("Font", mFontInfo);
+
+        return base.FixJson(serializedProperties);
     }
 
     /// <summary>

@@ -303,18 +303,20 @@ public partial class Menu : ScrollControl
         return true;
     }
 
-    public override JObject GetJson(bool isRoot = default)
+    public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
-        var obj = base.GetJson(isRoot);
-        if (!(this is CheckBox))
+        var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);
+        if (serializedProperties is null)
         {
-            obj.Add("BackgroundTemplate", mBackgroundTemplateFilename);
-            obj.Add("ItemTextColor", Color.ToString(mItemNormalTextColor));
-            obj.Add("ItemHoveredTextColor", Color.ToString(mItemHoverTextColor));
-            obj.Add("ItemFont", mItemFontInfo);
+            return null;
         }
 
-        return base.FixJson(obj);
+        serializedProperties.Add("BackgroundTemplate", mBackgroundTemplateFilename);
+        serializedProperties.Add("ItemTextColor", Color.ToString(mItemNormalTextColor));
+        serializedProperties.Add("ItemHoveredTextColor", Color.ToString(mItemHoverTextColor));
+        serializedProperties.Add("ItemFont", mItemFontInfo);
+
+        return base.FixJson(serializedProperties);
     }
 
     public override void LoadJson(JToken obj, bool isRoot = default)

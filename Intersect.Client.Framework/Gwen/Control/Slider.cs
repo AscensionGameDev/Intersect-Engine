@@ -214,19 +214,24 @@ public partial class Slider : Base
         }
     }
 
-    public override JObject GetJson(bool isRoot = default)
+    public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
-        var obj = base.GetJson(isRoot);
-        obj.Add("BackgroundImage", _backgroundImageName);
-        obj.Add("SnapToNotches", _snapToNotches);
-        obj.Add("NotchCount", _notchCount);
+        var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);
+        if (serializedProperties is null)
+        {
+            return null;
+        }
+
+        serializedProperties.Add("BackgroundImage", _backgroundImageName);
+        serializedProperties.Add("SnapToNotches", _snapToNotches);
+        serializedProperties.Add("NotchCount", _notchCount);
         var notches = (Notches == default || Notches.Length < 1)
             ? default
             : new JArray(Notches.Cast<object>().ToArray());
-        obj.Add(nameof(Notches), notches);
-        obj.Add("SliderBar", _sliderBar.GetJson());
+        serializedProperties.Add(nameof(Notches), notches);
+        serializedProperties.Add("SliderBar", _sliderBar.GetJson());
 
-        return base.FixJson(obj);
+        return base.FixJson(serializedProperties);
     }
 
     /// <summary>
