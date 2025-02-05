@@ -1003,29 +1003,25 @@ public partial class Base : IDisposable
             )
         );
 
-        // ReSharper disable once InvertIf
-        if (HasNamedChildren())
+        JObject children = new();
+
+        // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+        foreach (var component in mChildren)
         {
-            JObject children = new();
-
-            // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
-            foreach (var component in mChildren)
+            if (component == Tooltip)
             {
-                if (component == Tooltip)
-                {
-                    continue;
-                }
-
-                if (!string.IsNullOrEmpty(component.Name) && children[component.Name] == null)
-                {
-                    children.Add(component.Name, component.GetJson());
-                }
+                continue;
             }
 
-            if (children.HasValues)
+            if (!string.IsNullOrEmpty(component.Name) && children[component.Name] == null)
             {
-                serializedProperties.Add(nameof(Children), children);
+                children.Add(component.Name, component.GetJson());
             }
+        }
+
+        if (children.HasValues)
+        {
+            serializedProperties.Add(nameof(Children), children);
         }
 
         return FixJson(serializedProperties);
