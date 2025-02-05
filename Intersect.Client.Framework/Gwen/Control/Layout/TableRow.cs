@@ -39,7 +39,8 @@ public partial class TableRow : Base, IColorableText
     ///     Initializes a new instance of the <see cref="TableRow" /> class.
     /// </summary>
     /// <param name="parent">parent table</param>
-    public TableRow(Table parent) : this(parent, parent.ColumnCount)
+    /// <param name="name"></param>
+    public TableRow(Table parent, string? name = null) : this(parent: parent, columnCount: parent.ColumnCount, name: name)
     {
     }
 
@@ -48,7 +49,8 @@ public partial class TableRow : Base, IColorableText
     /// </summary>
     /// <param name="parent">Parent control.</param>
     /// <param name="columnCount">the number of columns this row has</param>
-    public TableRow(Base parent, int columnCount) : base(parent)
+    /// <param name="name"></param>
+    public TableRow(Base parent, int columnCount, string? name = null) : base(parent: parent, name: name)
     {
         mDisposalActions = [];
         _columns = new List<Label>(columnCount);

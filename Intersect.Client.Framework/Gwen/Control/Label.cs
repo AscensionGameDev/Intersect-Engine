@@ -31,7 +31,7 @@ public partial class Label : Base, ILabel
 
     protected readonly Text _textElement;
 
-    private string fontInfo;
+    private string? _fontInfo;
 
     private Pos mAlign;
 
@@ -256,7 +256,7 @@ public partial class Label : Base, ILabel
             }
 
             _textElement.Font = value;
-            fontInfo = $"{value?.GetName()},{value?.GetSize()}";
+            _fontInfo = value == null ? null : $"{value.GetName()},{value.GetSize()}";
 
             if (_autoSizeToContents)
             {
@@ -387,14 +387,14 @@ public partial class Label : Base, ILabel
             serializedProperties.Add("BackgroundTemplate", mBackgroundTemplateFilename);
         }
 
-        serializedProperties.Add("TextColor", Color.ToString(TextColor));
+        serializedProperties.Add(nameof(TextColor), Color.ToString(TextColor));
         serializedProperties.Add("HoveredTextColor", Color.ToString(mHoverTextColor));
         serializedProperties.Add("ClickedTextColor", Color.ToString(mClickedTextColor));
         serializedProperties.Add("DisabledTextColor", Color.ToString(mDisabledTextColor));
-        serializedProperties.Add("TextAlign", mAlign.ToString());
-        serializedProperties.Add("TextPadding", Padding.ToString(mTextPadding));
-        serializedProperties.Add("AutoSizeToContents", _autoSizeToContents);
-        serializedProperties.Add("Font", fontInfo);
+        serializedProperties.Add(nameof(TextAlign), mAlign.ToString());
+        serializedProperties.Add(nameof(TextPadding), Padding.ToString(mTextPadding));
+        serializedProperties.Add(nameof(AutoSizeToContents), _autoSizeToContents);
+        serializedProperties.Add(nameof(Font), _fontInfo);
         serializedProperties.Add("TextScale", _textElement.GetScale());
 
         return base.FixJson(serializedProperties);
@@ -456,7 +456,7 @@ public partial class Label : Base, ILabel
                 );
                 if (fontArr.Length > 1)
                 {
-                    fontInfo = stringFont;
+                    _fontInfo = stringFont;
                     try
                     {
                         Font = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
