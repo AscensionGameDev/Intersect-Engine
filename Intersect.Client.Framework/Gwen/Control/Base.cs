@@ -23,6 +23,7 @@ namespace Intersect.Client.Framework.Gwen.Control;
 /// </summary>
 public partial class Base : IDisposable
 {
+    private const string PropertyNameInnerPanel = "InnerPanel";
 
     private bool _inheritParentEnablementProperties;
 
@@ -969,12 +970,32 @@ public partial class Base : IDisposable
         return JsonConvert.SerializeObject(GetJson(isRoot), Formatting.Indented);
     }
 
-    public virtual JObject GetJson(bool isRoot = false)
+    public virtual JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
-        var alignments = new List<string>();
-        foreach (var alignment in mAlignments)
+        JObject children = new();
+
+        // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+        foreach (var component in mChildren)
         {
-            alignments.Add(alignment.ToString());
+            if (component == _innerPanel)
+            {
+                continue;
+            }
+
+            if (component == Tooltip)
+            {
+                continue;
+            }
+
+            if (!string.IsNullOrEmpty(component.Name) && children[component.Name] == null)
+            {
+                children.Add(component.Name, component.GetJson());
+            }
+        }
+
+        if (onlySerializeIfNotEmpty && !children.HasValues)
+        {
+            return null;
         }
 
         isRoot |= Parent == default;
@@ -990,7 +1011,7 @@ public partial class Base : IDisposable
             new JProperty("AlignmentTransform", mAlignmentTransform.ToString()),
             new JProperty("Margin", mMargin.ToString()),
             new JProperty("RenderColor", Color.ToString(mColor)),
-            new JProperty("Alignments", string.Join(",", alignments.ToArray())),
+            new JProperty("Alignments", string.Join(",", mAlignments.ToArray())),
             new JProperty("DrawBackground", mDrawBackground),
             new JProperty("MinimumSize", mMinimumSize.ToString()),
             new JProperty("MaximumSize", mMaximumSize.ToString()),
@@ -1007,19 +1028,11 @@ public partial class Base : IDisposable
             )
         );
 
-        JObject children = new();
-
-        // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
-        foreach (var component in mChildren)
+        if (_innerPanel is { } innerPanel)
         {
-            if (component == Tooltip)
+            if (innerPanel.GetJson(onlySerializeIfNotEmpty: true) is {} serializedInnerPanel)
             {
-                continue;
-            }
-
-            if (!string.IsNullOrEmpty(component.Name) && children[component.Name] == null)
-            {
-                children.Add(component.Name, component.GetJson());
+                serializedProperties.Add(PropertyNameInnerPanel, serializedInnerPanel);
             }
         }
 
@@ -1033,11 +1046,14 @@ public partial class Base : IDisposable
 
     public virtual JObject FixJson(JObject json)
     {
-        var children = json.Property("Children");
-        if (children != null)
+        if (json.Remove(PropertyNameInnerPanel, out var tokenInnerPanel))
         {
-            json.Remove("Children");
-            json.Add(children);
+            json.Add(PropertyNameInnerPanel, tokenInnerPanel);
+        }
+
+        if (json.Remove(nameof(Children), out var tokenChildren))
+        {
+            json.Add(nameof(Children), tokenChildren);
         }
 
         return json;
@@ -1089,8 +1105,13 @@ public partial class Base : IDisposable
         });
     }
 
-    public virtual void LoadJson(JToken obj, bool isRoot = default)
+    public virtual void LoadJson(JToken token, bool isRoot = default)
     {
+        if (token is not JObject obj)
+        {
+            return;
+        }
+
         if (obj["Alignments"] != null)
         {
             RemoveAlignments();
@@ -1248,20 +1269,22 @@ public partial class Base : IDisposable
 
         UpdateToolTipProperties();
 
-        if (HasNamedChildren())
+        if (_innerPanel is { } innerPanel && obj.TryGetValue(PropertyNameInnerPanel, out var tokenInnerPanel))
         {
-            if (obj["Children"] != null)
+            innerPanel.LoadJson(tokenInnerPanel);
+        }
+
+        if (obj["Children"] != null)
+        {
+            var children = obj["Children"];
+            foreach (JProperty tkn in children)
             {
-                var children = obj["Children"];
-                foreach (JProperty tkn in children)
+                var name = tkn.Name;
+                foreach (var ctrl in mChildren)
                 {
-                    var name = tkn.Name;
-                    foreach (var ctrl in mChildren)
+                    if (ctrl.Name == name)
                     {
-                        if (ctrl.Name == name)
-                        {
-                            ctrl.LoadJson(tkn.First);
-                        }
+                        ctrl.LoadJson(tkn.First);
                     }
                 }
             }

@@ -204,16 +204,21 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         row.SetCellText(args.Column, args.NewValue?.ToString());
     }
 
-    public override JObject GetJson(bool isRoot = default)
+    public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
-        var obj = base.GetJson(isRoot);
-        obj.Add("SizeToContents", _sizeToContents);
-        obj.Add("DefaultRowHeight", _defaultRowHeight);
-        obj.Add(nameof(Font), Font?.ToString());
-        obj.Add(nameof(TextColor), TextColor.ToString());
-        obj.Add(nameof(TextColorOverride), TextColorOverride.ToString());
+        var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);
+        if (serializedProperties is null)
+        {
+            return null;
+        }
 
-        return base.FixJson(obj);
+        serializedProperties.Add(nameof(SizeToContents), _sizeToContents);
+        serializedProperties.Add(nameof(DefaultRowHeight), _defaultRowHeight);
+        serializedProperties.Add(nameof(Font), Font?.ToString());
+        serializedProperties.Add(nameof(TextColor), TextColor?.ToString());
+        serializedProperties.Add(nameof(TextColorOverride), TextColorOverride?.ToString());
+
+        return base.FixJson(serializedProperties);
     }
 
     public override void LoadJson(JToken obj, bool isRoot = default)
@@ -491,9 +496,9 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
     /// <summary>
     ///     Sizes to fit contents.
     /// </summary>
-    public void FitContents(int maxWidth)
+    public void FitContents(int? maxWidth = null)
     {
-        MaximumSize = MaximumSize with { X = maxWidth };
+        MaximumSize = MaximumSize with { X = maxWidth ?? MaximumSize.X };
         _sizeToContents = true;
         Invalidate();
     }

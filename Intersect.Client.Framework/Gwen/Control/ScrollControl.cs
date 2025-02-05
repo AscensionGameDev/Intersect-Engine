@@ -117,20 +117,20 @@ public partial class ScrollControl : Base
         Invalidate();
     }
 
-    public override JObject GetJson(bool isRoot = default)
+    public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
-        var obj = base.GetJson(isRoot);
-
-        obj.Add(nameof(OverflowX), _overflowX.ToString());
-        obj.Add(nameof(OverflowY), _overflowY.ToString());
-        if (_innerPanel is { } innerPanel)
+        var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);
+        if (serializedProperties is null)
         {
-            obj.Add(nameof(InnerPanel), innerPanel.GetJson());
+            return null;
         }
-        obj.Add(nameof(HorizontalScrollBar), HorizontalScrollBar.GetJson());
-        obj.Add(nameof(VerticalScrollBar), VerticalScrollBar.GetJson());
 
-        return base.FixJson(obj);
+        serializedProperties.Add(nameof(OverflowX), _overflowX.ToString());
+        serializedProperties.Add(nameof(OverflowY), _overflowY.ToString());
+        serializedProperties.Add(nameof(HorizontalScrollBar), HorizontalScrollBar.GetJson());
+        serializedProperties.Add(nameof(VerticalScrollBar), VerticalScrollBar.GetJson());
+
+        return base.FixJson(serializedProperties);
     }
 
     public override void LoadJson(JToken token, bool isRoot = default)
@@ -157,11 +157,6 @@ public partial class ScrollControl : Base
         }
 
         SetOverflow(overflowX, overflowY);
-
-        if (_innerPanel is { } innerPanel && obj.TryGetValue(nameof(InnerPanel), out var tokenInnerPanel))
-        {
-            innerPanel.LoadJson(tokenInnerPanel);
-        }
 
         if (obj[nameof(HorizontalScrollBar)] is {} horizontalScrollbarToken)
         {

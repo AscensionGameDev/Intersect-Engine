@@ -334,13 +334,6 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
         base.Layout(skin);
     }
 
-    public override JObject GetJson(bool isRoot = default)
-    {
-        var obj = base.GetJson(isRoot);
-
-        return base.FixJson(obj);
-    }
-
     public override void SetToolTipText(string? text)
     {
         _label.SetToolTipText(text);

@@ -374,25 +374,30 @@ public partial class Label : Base, ILabel
         }
     }
 
-    public override JObject GetJson(bool isRoot = default)
+    public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
-        var obj = base.GetJson(isRoot);
-        if (typeof(Label) == GetType())
+        var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);
+        if (serializedProperties is null)
         {
-            obj.Add("BackgroundTemplate", mBackgroundTemplateFilename);
+            return null;
         }
 
-        obj.Add("TextColor", Color.ToString(TextColor));
-        obj.Add("HoveredTextColor", Color.ToString(mHoverTextColor));
-        obj.Add("ClickedTextColor", Color.ToString(mClickedTextColor));
-        obj.Add("DisabledTextColor", Color.ToString(mDisabledTextColor));
-        obj.Add("TextAlign", mAlign.ToString());
-        obj.Add("TextPadding", Padding.ToString(mTextPadding));
-        obj.Add("AutoSizeToContents", _autoSizeToContents);
-        obj.Add("Font", fontInfo);
-        obj.Add("TextScale", _textElement.GetScale());
+        if (typeof(Label) == GetType())
+        {
+            serializedProperties.Add("BackgroundTemplate", mBackgroundTemplateFilename);
+        }
 
-        return base.FixJson(obj);
+        serializedProperties.Add("TextColor", Color.ToString(TextColor));
+        serializedProperties.Add("HoveredTextColor", Color.ToString(mHoverTextColor));
+        serializedProperties.Add("ClickedTextColor", Color.ToString(mClickedTextColor));
+        serializedProperties.Add("DisabledTextColor", Color.ToString(mDisabledTextColor));
+        serializedProperties.Add("TextAlign", mAlign.ToString());
+        serializedProperties.Add("TextPadding", Padding.ToString(mTextPadding));
+        serializedProperties.Add("AutoSizeToContents", _autoSizeToContents);
+        serializedProperties.Add("Font", fontInfo);
+        serializedProperties.Add("TextScale", _textElement.GetScale());
+
+        return base.FixJson(serializedProperties);
     }
 
     public override void LoadJson(JToken obj, bool isRoot = default)

@@ -850,14 +850,19 @@ public partial class TextBox : Label
         MaximumLength = val;
     }
 
-    public override JObject GetJson(bool isRoot = default)
+    public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
-        var obj = base.GetJson(isRoot);
-        obj.Add("AddTextSound", mAddTextSound);
-        obj.Add("RemoveTextSound", mRemoveTextSound);
-        obj.Add("SubmitSound", mSubmitSound);
+        var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);
+        if (serializedProperties is null)
+        {
+            return null;
+        }
 
-        return base.FixJson(obj);
+        serializedProperties.Add("AddTextSound", mAddTextSound);
+        serializedProperties.Add("RemoveTextSound", mRemoveTextSound);
+        serializedProperties.Add("SubmitSound", mSubmitSound);
+
+        return base.FixJson(serializedProperties);
     }
 
     public override void LoadJson(JToken obj, bool isRoot = default)

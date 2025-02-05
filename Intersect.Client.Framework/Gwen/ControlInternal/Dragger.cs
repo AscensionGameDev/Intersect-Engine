@@ -162,18 +162,23 @@ public partial class Dragger : Base
     {
     }
 
-    public override JObject GetJson(bool isRoot = default)
+    public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
-        var obj = base.GetJson(isRoot);
-        obj.Add("NormalImage", GetImageFilename(ControlState.Normal));
-        obj.Add("HoveredImage", GetImageFilename(ControlState.Hovered));
-        obj.Add("ClickedImage", GetImageFilename(ControlState.Clicked));
-        obj.Add("DisabledImage", GetImageFilename(ControlState.Disabled));
-        obj.Add("HoverSound", mHoverSound);
-        obj.Add("MouseUpSound", mMouseUpSound);
-        obj.Add("MouseDownSound", mMouseDownSound);
+        var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);
+        if (serializedProperties is null)
+        {
+            return null;
+        }
 
-        return base.FixJson(obj);
+        serializedProperties.Add("NormalImage", GetImageFilename(ControlState.Normal));
+        serializedProperties.Add("HoveredImage", GetImageFilename(ControlState.Hovered));
+        serializedProperties.Add("ClickedImage", GetImageFilename(ControlState.Clicked));
+        serializedProperties.Add("DisabledImage", GetImageFilename(ControlState.Disabled));
+        serializedProperties.Add("HoverSound", mHoverSound);
+        serializedProperties.Add("MouseUpSound", mMouseUpSound);
+        serializedProperties.Add("MouseDownSound", mMouseDownSound);
+
+        return base.FixJson(serializedProperties);
     }
 
     public override void LoadJson(JToken obj, bool isRoot = default)

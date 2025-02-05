@@ -132,17 +132,21 @@ public partial class ImagePanel : Base
         base.Dispose();
     }
 
-    public override JObject GetJson(bool isRoot = default)
+    public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
-        var obj = base.GetJson(isRoot);
+        var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);
+        if (serializedProperties is null)
+        {
+            return null;
+        }
 
-        obj.Add(nameof(Texture), TextureFilename);
-        obj.Add(nameof(TextureNinePatchMargin), TextureNinePatchMargin?.ToString());
-        obj.Add("HoverSound", mHoverSound);
-        obj.Add("LeftMouseClickSound", mLeftMouseClickSound);
-        obj.Add("RightMouseClickSound", mRightMouseClickSound);
+        serializedProperties.Add(nameof(Texture), TextureFilename);
+        serializedProperties.Add(nameof(TextureNinePatchMargin), TextureNinePatchMargin?.ToString());
+        serializedProperties.Add("HoverSound", mHoverSound);
+        serializedProperties.Add("LeftMouseClickSound", mLeftMouseClickSound);
+        serializedProperties.Add("RightMouseClickSound", mRightMouseClickSound);
 
-        return base.FixJson(obj);
+        return base.FixJson(serializedProperties);
     }
 
     public override void LoadJson(JToken token, bool isRoot = default)
