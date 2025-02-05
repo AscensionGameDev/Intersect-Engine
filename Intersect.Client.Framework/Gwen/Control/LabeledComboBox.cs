@@ -106,9 +106,9 @@ public partial class LabeledComboBox : Base, IAutoSizeToContents
         base.Layout(skin);
     }
 
-    protected override void OnChildBoundsChanged(Rectangle oldChildBounds, Base child)
+    protected override void OnChildBoundsChanged(Base child, Rectangle oldChildBounds, Rectangle newChildBounds)
     {
-        base.OnChildBoundsChanged(oldChildBounds, child);
+        base.OnChildBoundsChanged(child, oldChildBounds, newChildBounds);
 
         Invalidate();
     }

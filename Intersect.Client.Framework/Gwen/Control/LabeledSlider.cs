@@ -348,9 +348,9 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
         _sliderValue.SetToolTipText(text);
     }
 
-    protected override void OnBoundsChanged(Rectangle oldBounds)
+    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
     {
-        base.OnBoundsChanged(oldBounds);
+        base.OnBoundsChanged(oldBounds, newBounds);
     }
 
     public void SetRange(double min, double max) => (Min, Max) = (min, max);

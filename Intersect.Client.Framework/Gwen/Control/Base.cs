@@ -969,7 +969,7 @@ public partial class Base : IDisposable
         return JsonConvert.SerializeObject(GetJson(isRoot), Formatting.Indented);
     }
 
-    public virtual JObject GetJson(bool isRoot = default)
+    public virtual JObject GetJson(bool isRoot = false)
     {
         var alignments = new List<string>();
         foreach (var alignment in mAlignments)
@@ -2105,7 +2105,7 @@ public partial class Base : IDisposable
             ProcessAlignments();
         }
 
-        OnBoundsChanged(oldBounds);
+        OnBoundsChanged(oldBounds, newBounds);
 
         BoundsChanged?.Invoke(this, EventArgs.Empty);
 
@@ -2162,11 +2162,12 @@ public partial class Base : IDisposable
     ///     Handler invoked when control's bounds change.
     /// </summary>
     /// <param name="oldBounds">Old bounds.</param>
-    protected virtual void OnBoundsChanged(Rectangle oldBounds)
+    /// <param name="newBounds"></param>
+    protected virtual void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
     {
         //Anything that needs to update on size changes
         //Iterate my children and tell them I've changed
-        Parent?.OnChildBoundsChanged(oldBounds, this);
+        Parent?.OnChildBoundsChanged(this, oldBounds, newBounds);
 
         if (mBounds.Width != oldBounds.Width || mBounds.Height != oldBounds.Height)
         {
@@ -2191,7 +2192,7 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Handler invoked when control children's bounds change.
     /// </summary>
-    protected virtual void OnChildBoundsChanged(Rectangle oldChildBounds, Base child)
+    protected virtual void OnChildBoundsChanged(Base child, Rectangle oldChildBounds, Rectangle newChildBounds)
     {
     }
 

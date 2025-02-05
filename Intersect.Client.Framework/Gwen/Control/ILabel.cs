@@ -18,7 +18,11 @@ public interface ILabel : IColorableText, IAutoSizeToContents
 
     Padding TextPadding { get; set; }
 
-    void SizeToContents();
+    /// <summary>
+    /// Resizes the component to fit the contents.
+    /// </summary>
+    /// <returns>If the size was changed.</returns>
+    bool SizeToContents();
 
     void UpdateColors();
 }

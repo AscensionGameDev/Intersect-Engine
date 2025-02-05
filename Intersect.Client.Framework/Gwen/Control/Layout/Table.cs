@@ -12,7 +12,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout;
 /// <summary>
 ///     Base class for multi-column tables.
 /// </summary>
-public partial class Table : Base, IColorableText
+public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
 {
 
     private readonly List<int?> _columnWidths;
@@ -29,6 +29,10 @@ public partial class Table : Base, IColorableText
     private Color? _textColor;
     private Color? _textColorOverride;
     private bool _fitRowHeightToContents = true;
+    private bool _autoSizeToContentWidth;
+    private bool _autoSizeToContentHeight;
+    private bool _autoSizeToContentWidthOnChildResize;
+    private bool _autoSizeToContentHeightOnChildResize;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Table" /> class.
@@ -424,15 +428,28 @@ public partial class Table : Base, IColorableText
         }
         else
         {
-            ComputeColumnWidths();
+            var autoSizeToContentWidth = _autoSizeToContentWidth;
+            var autoSizeToContentHeight = _autoSizeToContentHeight;
+            if (autoSizeToContentWidth || autoSizeToContentHeight)
+            {
+                DoSizeToContents(autoSizeToContentWidth, autoSizeToContentHeight);
+            }
+            else
+            {
+                ComputeColumnWidths();
+            }
         }
 
-        var even = false;
-        var rows = Children.OfType<TableRow>().ToArray();
-        foreach (TableRow row in rows)
+        // ReSharper disable once InvertIf
+        if (ClientConfiguration.Instance.EnableZebraStripedRows)
         {
-            row.EvenRow = even;
-            even = ClientConfiguration.Instance.EnableZebraStripedRows && !even;
+            var even = false;
+            var rows = Children.OfType<TableRow>().ToArray();
+            foreach (TableRow row in rows)
+            {
+                row.EvenRow = even;
+                even = !even;
+            }
         }
     }
 
@@ -583,14 +600,14 @@ public partial class Table : Base, IColorableText
         return new Point(actualWidth, actualHeight);
     }
 
-    public void DoSizeToContents()
+    public void DoSizeToContents(bool width = false, bool height = true)
     {
         var rows = Children.OfType<TableRow>().ToArray();
         if (_fitRowHeightToContents)
         {
             foreach (var row in rows)
             {
-                row.SizeToChildren(width: false, height: true);
+                row.SizeToChildren(width: width, height: height);
             }
         }
 
@@ -617,13 +634,52 @@ public partial class Table : Base, IColorableText
         }
     }
 
-    protected override void OnBoundsChanged(Rectangle oldBounds)
+    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
     {
         if (Bounds.Height == 800)
         {
             Bounds.ToString();
         }
 
-        base.OnBoundsChanged(oldBounds);
+        base.OnBoundsChanged(oldBounds, newBounds);
+    }
+
+    protected override void OnChildBoundsChanged(Base child, Rectangle oldChildBounds, Rectangle newChildBounds)
+    {
+        base.OnChildBoundsChanged(child, oldChildBounds, newChildBounds);
+
+        if (_autoSizeToContentWidthOnChildResize && oldChildBounds.Width != newChildBounds.Width)
+        {
+            Invalidate();
+        }
+
+        if (_autoSizeToContentHeightOnChildResize && oldChildBounds.Height != newChildBounds.Height)
+        {
+            Invalidate();
+        }
+    }
+
+    public bool AutoSizeToContentWidth
+    {
+        get => _autoSizeToContentWidth;
+        set => _autoSizeToContentWidth = value;
+    }
+
+    public bool AutoSizeToContentHeight
+    {
+        get => _autoSizeToContentHeight;
+        set => _autoSizeToContentHeight = value;
+    }
+
+    public bool AutoSizeToContentWidthOnChildResize
+    {
+        get => _autoSizeToContentWidthOnChildResize;
+        set => _autoSizeToContentWidthOnChildResize = value;
+    }
+
+    public bool AutoSizeToContentHeightOnChildResize
+    {
+        get => _autoSizeToContentHeightOnChildResize;
+        set => _autoSizeToContentHeightOnChildResize = value;
     }
 }

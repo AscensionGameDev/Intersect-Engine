@@ -274,14 +274,24 @@ internal sealed partial class DebugWindow : Window
 
     private Table CreateInfoTableDebugStats(Base parent)
     {
-        var table = new Table(parent, nameof(TableDebugStats))
+        ScrollControl debugStatsScroller = new(parent, nameof(debugStatsScroller))
         {
+            Dock = Pos.Fill,
+        };
+
+        debugStatsScroller.VerticalScrollBar.BaseNudgeAmount *= 2;
+
+        var table = new Table(debugStatsScroller, nameof(TableDebugStats))
+        {
+            AutoSizeToContentHeightOnChildResize = true,
+            AutoSizeToContentWidthOnChildResize = true,
             CellSpacing = new Point(8, 2),
             ColumnCount = 2,
             ColumnWidths = [150, null],
             Dock = Pos.Fill,
             Font = _defaultFont,
         };
+        table.BoundsChanged += (_, _) => table.SizeToChildren(width: false, height: true);
 
         var fpsProvider = new ValueTableCellDataProvider<int>(() => Graphics.Renderer?.GetFps() ?? 0, waitPredicate: () => Task.FromResult(IsVisible));
         table.AddRow(Strings.Debug.Fps).Listen(fpsProvider, 1);
@@ -394,6 +404,8 @@ internal sealed partial class DebugWindow : Window
                 label.TextAlign = Pos.Right | Pos.CenterV;
             }
         }
+
+        table.SizeToChildren();
 
         return table;
     }

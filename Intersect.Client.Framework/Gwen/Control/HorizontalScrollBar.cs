@@ -52,17 +52,7 @@ public partial class HorizontalScrollBar : ScrollBar
 
     public override float NudgeAmount
     {
-        get
-        {
-            if (mDepressed)
-            {
-                return mViewableContentSize / mContentSize;
-            }
-            else
-            {
-                return base.NudgeAmount;
-            }
-        }
+        get => mDepressed ? mViewableContentSize / mContentSize : base.NudgeAmount;
         set => base.NudgeAmount = value;
     }
 

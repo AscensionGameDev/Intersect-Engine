@@ -172,9 +172,10 @@ public partial class Canvas : Base
     ///     Handler invoked when control's bounds change.
     /// </summary>
     /// <param name="oldBounds">Old bounds.</param>
-    protected override void OnBoundsChanged(Rectangle oldBounds)
+    /// <param name="newBounds"></param>
+    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
     {
-        base.OnBoundsChanged(oldBounds);
+        base.OnBoundsChanged(oldBounds, newBounds);
         InvalidateChildren(true);
     }
 

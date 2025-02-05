@@ -202,9 +202,10 @@ public partial class ScrollControl : Base
     /// <summary>
     ///     Handler invoked when control children's bounds change.
     /// </summary>
-    /// <param name="oldChildBounds"></param>
     /// <param name="child"></param>
-    protected override void OnChildBoundsChanged(Rectangle oldChildBounds, Base child)
+    /// <param name="oldChildBounds"></param>
+    /// <param name="newChildBounds"></param>
+    protected override void OnChildBoundsChanged(Base child, Rectangle oldChildBounds, Rectangle newChildBounds)
     {
         UpdateScrollBars();
     }

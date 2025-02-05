@@ -188,9 +188,9 @@ public partial class Slider : Base
         set => _sliderBar.Size = value;
     }
 
-    protected override void OnBoundsChanged(Rectangle oldBounds)
+    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
     {
-        base.OnBoundsChanged(oldBounds);
+        base.OnBoundsChanged(oldBounds, newBounds);
 
         // ReSharper disable once InlineTemporaryVariable
         if (_sliderBar is not { } sliderBar)

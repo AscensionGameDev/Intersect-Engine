@@ -27,7 +27,7 @@ public partial class ScrollBar : Base
 
     protected bool mDepressed;
 
-    protected float mNudgeAmount;
+    protected float _nudgeAmount;
 
     protected float _scrollAmount;
 
@@ -70,10 +70,16 @@ public partial class ScrollBar : Base
     /// </summary>
     public virtual int ButtonSize => 0;
 
+    public float BaseNudgeAmount
+    {
+        get => _nudgeAmount;
+        set => _nudgeAmount = value;
+    }
+    
     public virtual float NudgeAmount
     {
-        get => mNudgeAmount / mContentSize;
-        set => mNudgeAmount = value;
+        get => _nudgeAmount / mContentSize;
+        set => _nudgeAmount = value;
     }
 
     public float ScrollAmount => _scrollAmount;

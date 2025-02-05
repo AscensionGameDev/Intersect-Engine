@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
@@ -34,7 +35,7 @@ public partial class Label : Base, ILabel
 
     private Pos mAlign;
 
-    private bool mAutoSizeToContents;
+    private bool _autoSizeToContents;
 
     private string? mBackgroundTemplateFilename;
 
@@ -72,7 +73,7 @@ public partial class Label : Base, ILabel
         SetSize(100, 10);
         TextAlign = Pos.Left | Pos.Top;
 
-        mAutoSizeToContents = true;
+        _autoSizeToContents = true;
     }
 
     public string? FormatString
@@ -257,7 +258,7 @@ public partial class Label : Base, ILabel
             _textElement.Font = value;
             fontInfo = $"{value?.GetName()},{value?.GetSize()}";
 
-            if (mAutoSizeToContents)
+            if (_autoSizeToContents)
             {
                 SizeToContents();
             }
@@ -350,10 +351,10 @@ public partial class Label : Base, ILabel
     /// </summary>
     public bool AutoSizeToContents
     {
-        get => mAutoSizeToContents;
+        get => _autoSizeToContents;
         set
         {
-            mAutoSizeToContents = value;
+            _autoSizeToContents = value;
             Invalidate();
             InvalidateParent();
         }
@@ -387,7 +388,7 @@ public partial class Label : Base, ILabel
         obj.Add("DisabledTextColor", Color.ToString(mDisabledTextColor));
         obj.Add("TextAlign", mAlign.ToString());
         obj.Add("TextPadding", Padding.ToString(mTextPadding));
-        obj.Add("AutoSizeToContents", mAutoSizeToContents);
+        obj.Add("AutoSizeToContents", _autoSizeToContents);
         obj.Add("Font", fontInfo);
         obj.Add("TextScale", _textElement.GetScale());
 
@@ -435,7 +436,7 @@ public partial class Label : Base, ILabel
 
         if (obj["AutoSizeToContents"] != null)
         {
-            mAutoSizeToContents = (bool)obj["AutoSizeToContents"];
+            _autoSizeToContents = (bool)obj["AutoSizeToContents"];
         }
 
         var tokenFont = obj["Font"];
@@ -640,7 +641,7 @@ public partial class Label : Base, ILabel
     {
         base.Layout(skin);
 
-        if (mAutoSizeToContents)
+        if (_autoSizeToContents)
         {
             SizeToContents();
         }
@@ -706,13 +707,12 @@ public partial class Label : Base, ILabel
         _displayedText = string.IsNullOrWhiteSpace(_formatString) ? _text : string.Format(_formatString, _text);
         _textElement.DisplayedText = _displayedText;
 
-        if (mAutoSizeToContents)
+        var sizeChanged = _autoSizeToContents && SizeToContents();
+        if (sizeChanged)
         {
-            SizeToContents();
+            Invalidate();
+            InvalidateParent();
         }
-
-        Invalidate();
-        InvalidateParent();
 
         if (doEvents)
         {
@@ -720,10 +720,20 @@ public partial class Label : Base, ILabel
         }
     }
 
+    protected override void OnChildBoundsChanged(Base child, Rectangle oldChildBounds, Rectangle newChildBounds)
+    {
+        base.OnChildBoundsChanged(child, oldChildBounds, newChildBounds);
+
+        if (_autoSizeToContents)
+        {
+            Invalidate();
+        }
+    }
+
     public virtual void SetTextScale(float scale)
     {
         _textElement.SetScale(scale);
-        if (mAutoSizeToContents)
+        if (_autoSizeToContents)
         {
             SizeToContents();
         }
@@ -732,7 +742,7 @@ public partial class Label : Base, ILabel
         InvalidateParent();
     }
 
-    public virtual void SizeToContents()
+    public virtual bool SizeToContents()
     {
         _textElement.SetPosition(mTextPadding.Left + Padding.Left, mTextPadding.Top + Padding.Top);
 
@@ -744,11 +754,13 @@ public partial class Label : Base, ILabel
 
         if (!SetSize(newWidth, newHeight))
         {
-            return;
+            return false;
         }
 
         ProcessAlignments();
         InvalidateParent();
+
+        return true;
     }
 
     /// <summary>
