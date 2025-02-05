@@ -228,9 +228,8 @@ public partial class ScrollControl : Base
     {
         if (CanScrollV && VerticalScrollBar.IsVisible)
         {
-            if (VerticalScrollBar.SetScrollAmount(
-                VerticalScrollBar.ScrollAmount - VerticalScrollBar.NudgeAmount * (delta / 60.0f), true
-            ))
+            var scrollAmount = VerticalScrollBar.ScrollAmount - VerticalScrollBar.NudgeAmount * (delta / 60.0f);
+            if (VerticalScrollBar.SetScrollAmount(scrollAmount))
             {
                 return true;
             }
