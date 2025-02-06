@@ -964,18 +964,21 @@ internal sealed partial class NetworkedPacketHandler
 
             if (obj != null)
             {
-                //if Item or Resource, kill all global entities of that kind
-                if (type == GameObjectType.Item)
+                switch (obj)
                 {
-                    Globals.DespawnInstancesOf((ItemBase) obj);
-                }
-                else if (type == GameObjectType.Resource)
-                {
-                    Globals.DespawnInstancesOf((ResourceBase) obj);
-                }
-                else if (type == GameObjectType.Npc)
-                {
-                    Globals.DespawnInstancesOf((NpcBase) obj);
+                    //if Item or Resource, kill all global entities of that kind
+                    case ItemBase itemDescriptor:
+                        MapController.DespawnInstancesOf(itemDescriptor);
+                        break;
+                    case NpcBase npcDescriptor:
+                        MapController.DespawnInstancesOf(npcDescriptor);
+                        break;
+                    case ProjectileBase projectileDescriptor:
+                        MapController.DespawnInstancesOf(projectileDescriptor);
+                        break;
+                    case ResourceBase resourceDescriptor:
+                        MapController.DespawnInstancesOf(resourceDescriptor);
+                        break;
                 }
 
                 DbInterface.DeleteGameObject(obj);
@@ -1101,16 +1104,16 @@ internal sealed partial class NetworkedPacketHandler
                     switch (obj)
                     {
                         case ItemBase itemDescriptor:
-                            Globals.DespawnInstancesOf(itemDescriptor);
+                            MapController.DespawnInstancesOf(itemDescriptor);
                             break;
                         case NpcBase npcDescriptor:
-                            Globals.DespawnInstancesOf(npcDescriptor);
+                            MapController.DespawnInstancesOf(npcDescriptor);
                             break;
                         case ProjectileBase projectileDescriptor:
-                            Globals.DespawnInstancesOf(projectileDescriptor);
+                            MapController.DespawnInstancesOf(projectileDescriptor);
                             break;
                         case ResourceBase resourceDescriptor:
-                            Globals.DespawnInstancesOf(resourceDescriptor);
+                            MapController.DespawnInstancesOf(resourceDescriptor);
                             break;
                     }
 

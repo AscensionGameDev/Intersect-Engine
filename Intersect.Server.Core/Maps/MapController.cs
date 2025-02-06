@@ -35,6 +35,42 @@ namespace Intersect.Server.Maps;
 /// </summary>
 public partial class MapController : MapBase
 {
+    public static void DespawnInstancesOf(ResourceBase resource)
+    {
+        var allMapControllers = Lookup.Values.OfType<MapController>().ToArray();
+        foreach (var map in allMapControllers)
+        {
+            map?.DespawnResourceAcrossInstances(resource);
+        }
+    }
+
+    public static void DespawnInstancesOf(NpcBase npc)
+    {
+        var allMapControllers = Lookup.Values.OfType<MapController>().ToArray();
+        foreach (var map in allMapControllers)
+        {
+            map?.DespawnNpcAcrossInstances(npc);
+        }
+    }
+
+    public static void DespawnInstancesOf(ProjectileBase projectile)
+    {
+        var allMapControllers = Lookup.Values.OfType<MapController>().ToArray();
+        foreach (var map in allMapControllers)
+        {
+            map?.DespawnProjectileAcrossInstances(projectile);
+        }
+    }
+
+    public static void DespawnInstancesOf(ItemBase item)
+    {
+        var allMapControllers = Lookup.Values.OfType<MapController>().ToArray();
+        foreach (var map in allMapControllers)
+        {
+            map?.DespawnItemAcrossInstances(item);
+        }
+    }
+
     private readonly ConcurrentDictionary<Guid, MapInstance> mInstances = [];
 
     private static MapControllers sLookup;
@@ -651,7 +687,7 @@ public partial class MapController : MapBase
                     var oldMap = currentMap;
                     if (currentMap.Left != Guid.Empty)
                     {
-                        currentMap = MapController.Get(currentMap.Left);
+                        currentMap = Get(currentMap.Left);
                         if (currentMap == null)
                         {
                             currentMap = oldMap;
@@ -668,7 +704,7 @@ public partial class MapController : MapBase
                     var oldMap = currentMap;
                     if (currentMap.Right != Guid.Empty)
                     {
-                        currentMap = MapController.Get(currentMap.Right);
+                        currentMap = Get(currentMap.Right);
                         if (currentMap == null)
                         {
                             currentMap = oldMap;
@@ -685,7 +721,7 @@ public partial class MapController : MapBase
                     var oldMap = currentMap;
                     if (currentMap.Up != Guid.Empty)
                     {
-                        currentMap = MapController.Get(currentMap.Up);
+                        currentMap = Get(currentMap.Up);
                         if (currentMap == null)
                         {
                             currentMap = oldMap;
@@ -702,7 +738,7 @@ public partial class MapController : MapBase
                     var oldMap = currentMap;
                     if (currentMap.Down != Guid.Empty)
                     {
-                        currentMap = MapController.Get(currentMap.Down);
+                        currentMap = Get(currentMap.Down);
                         if (currentMap == null)
                         {
                             currentMap = oldMap;
