@@ -24,7 +24,7 @@ public partial class UpDownButtonUp : Button
     /// <param name="skin">Skin to use.</param>
     protected override void Render(Skin.Base skin)
     {
-        skin.DrawNumericUpDownButton(this, IsDepressed, true);
+        skin.DrawNumericUpDownButton(this, IsActive, true);
     }
 
 }

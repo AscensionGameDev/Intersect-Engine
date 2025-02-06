@@ -360,7 +360,7 @@ public partial class Menu
     }
 
     //Input Handlers
-    private void MenuButtonClicked(Base sender, ClickedEventArgs arguments)
+    private void MenuButtonClicked(Base sender, MouseButtonState arguments)
     {
         var simplifiedEscapeMenuSetting = Globals.Database.SimplifiedEscapeMenu;
 
@@ -374,17 +374,17 @@ public partial class Menu
         }
     }
 
-    private void PartyBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    private void PartyBtn_Clicked(Base sender, MouseButtonState arguments)
     {
         TogglePartyWindow();
     }
 
-    private void FriendsBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    private void FriendsBtn_Clicked(Base sender, MouseButtonState arguments)
     {
         ToggleFriendsWindow();
     }
 
-    private void GuildBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    private void GuildBtn_Clicked(Base sender, MouseButtonState arguments)
     {
         if (!string.IsNullOrEmpty(Globals.Me.Guild))
         {
@@ -396,22 +396,22 @@ public partial class Menu
         }
     }
 
-    private void QuestBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    private void QuestBtn_Clicked(Base sender, MouseButtonState arguments)
     {
         ToggleQuestsWindow();
     }
 
-    private void InventoryButton_Clicked(Base sender, ClickedEventArgs arguments)
+    private void InventoryButton_Clicked(Base sender, MouseButtonState arguments)
     {
         ToggleInventoryWindow();
     }
 
-    private void SpellsButton_Clicked(Base sender, ClickedEventArgs arguments)
+    private void SpellsButton_Clicked(Base sender, MouseButtonState arguments)
     {
         ToggleSpellsWindow();
     }
 
-    private void CharacterButton_Clicked(Base sender, ClickedEventArgs arguments)
+    private void CharacterButton_Clicked(Base sender, MouseButtonState arguments)
     {
         ToggleCharacterWindow();
     }

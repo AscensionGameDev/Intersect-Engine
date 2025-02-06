@@ -1,5 +1,6 @@
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Input;
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;
@@ -8,7 +9,7 @@ namespace Intersect.Client.Framework.Gwen.Control;
 /// <summary>
 ///     CheckBox control.
 /// </summary>
-public partial class CheckBox : Button
+public partial class Checkbox : Button
 {
 
     public enum ControlState
@@ -48,12 +49,12 @@ public partial class CheckBox : Button
     private string mUncheckedSound;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="CheckBox" /> class.
+    ///     Initializes a new instance of the <see cref="Checkbox" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
     /// <param name="name"></param>
     /// <param name="disableText"></param>
-    public CheckBox(Base parent, string? name = default, bool disableText = true) : base(parent, name, disableText)
+    public Checkbox(Base parent, string? name = default, bool disableText = true) : base(parent, name, disableText)
     {
         MinimumSize = new Point(22, 22);
         Size = new Point(22, 22);
@@ -216,7 +217,7 @@ public partial class CheckBox : Button
     protected override void Render(Skin.Base skin)
     {
         //base.Render(skin);
-        skin.DrawCheckBox(this, mChecked, IsHovered, IsDepressed);
+        skin.DrawCheckBox(this, mChecked, IsHovered, IsActive);
     }
 
     public void SetCheckSize(int w, int h)
@@ -226,7 +227,7 @@ public partial class CheckBox : Button
     /// <summary>
     ///     Internal OnPressed implementation.
     /// </summary>
-    protected override void OnClicked(int x, int y)
+    protected override void OnMouseClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
         if (IsDisabled)
         {
@@ -238,7 +239,7 @@ public partial class CheckBox : Button
             return;
         }
 
-        base.OnClicked(x, y);
+        base.OnMouseClicked(mouseButton, mousePosition, userAction);
     }
 
     public void SetImage(GameTexture texture, string fileName, ControlState state)

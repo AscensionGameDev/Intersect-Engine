@@ -242,25 +242,25 @@ public partial class Chatbox
         mContextMenu.Open(Framework.Gwen.Pos.None);
     }
 
-    private void MGuildInviteContextItem_Clicked(Base sender, ClickedEventArgs arguments)
+    private void MGuildInviteContextItem_Clicked(Base sender, MouseButtonState arguments)
     {
         var name = (string)sender.Parent.UserData;
         PacketSender.SendInviteGuild(name);
     }
 
-    private void MPartyInviteContextItem_Clicked(Base sender, ClickedEventArgs arguments)
+    private void MPartyInviteContextItem_Clicked(Base sender, MouseButtonState arguments)
     {
         var name = (string)sender.Parent.UserData;
         PacketSender.SendPartyInvite(name);
     }
 
-    private void MFriendInviteContextItem_Clicked(Base sender, ClickedEventArgs arguments)
+    private void MFriendInviteContextItem_Clicked(Base sender, MouseButtonState arguments)
     {
         var name = (string)sender.Parent.UserData;
         PacketSender.SendAddFriend(name);
     }
 
-    private void MPMContextItem_Clicked(Base sender, ClickedEventArgs arguments)
+    private void MPMContextItem_Clicked(Base sender, MouseButtonState arguments)
     {
         var name = (string)sender.Parent.UserData;
         SetChatboxText($"/pm {name} ");
@@ -295,7 +295,7 @@ public partial class Chatbox
     /// </summary>
     /// <param name="sender">The button that was clicked.</param>
     /// <param name="arguments">The arguments passed by the event.</param>
-    private void TabButtonClicked(Base sender, ClickedEventArgs arguments)
+    private void TabButtonClicked(Base sender, MouseButtonState arguments)
     {
         // Enable all buttons again!
         EnableChatTabs();
@@ -381,7 +381,6 @@ public partial class Chatbox
                 row.ShouldDrawBackground = false;
                 row.UserData = msg.Target;
                 row.Clicked += ChatboxRow_Clicked;
-                row.RightClicked += ChatboxRow_RightClicked;
                 mReceivedMessage = true;
 
                 while (mChatboxMessages.RowCount > ClientConfiguration.Instance.ChatLines)
@@ -405,25 +404,6 @@ public partial class Chatbox
         }
     }
 
-    private void ChatboxRow_RightClicked(Base sender, ClickedEventArgs arguments)
-    {
-        var rw = (ListBoxRow)sender;
-        var target = (string)rw.UserData;
-
-        if (!string.IsNullOrWhiteSpace(target) && target != Globals.Me.Name)
-        {
-            if (ClientConfiguration.Instance.EnableContextMenus)
-            {
-                OpenContextMenu(target);
-            }
-            else
-            {
-                SetChatboxText($"/pm {target} ");
-            }
-
-        }
-    }
-
     public void SetChatboxText(string msg)
     {
         mChatboxInput.Text = msg;
@@ -432,10 +412,39 @@ public partial class Chatbox
         mChatboxInput.CursorPos = mChatboxInput.Text.Length;
     }
 
-    private void ChatboxRow_Clicked(Base sender, ClickedEventArgs arguments)
+    private void ChatboxRow_Clicked(Base sender, MouseButtonState arguments)
     {
-        var rw = (ListBoxRow)sender;
-        var target = (string)rw.UserData;
+        if (sender is not ListBoxRow row)
+        {
+            return;
+        }
+
+        if (row.UserData is not string target || string.IsNullOrWhiteSpace(target))
+        {
+            return;
+        }
+
+        switch (arguments.MouseButton)
+        {
+            case MouseButton.Left:
+                if (mGameUi.IsAdminWindowOpen)
+                {
+                    mGameUi.AdminWindowSelectName(target);
+                }
+                break;
+
+            case MouseButton.Right:
+                if (ClientConfiguration.Instance.EnableContextMenus)
+                {
+                    OpenContextMenu(target);
+                }
+                else
+                {
+                    SetChatboxText($"/pm {target} ");
+                }
+                break;
+        }
+
         if (!string.IsNullOrWhiteSpace(target))
         {
             if (mGameUi.IsAdminWindowOpen)
@@ -477,7 +486,7 @@ public partial class Chatbox
 
     //Input Handlers
     //Chatbox Window
-    void ChatboxInput_Clicked(Base sender, ClickedEventArgs arguments)
+    void ChatboxInput_Clicked(Base sender, MouseButtonState arguments)
     {
         if (mChatboxInput.Text == GetDefaultInputText())
         {
@@ -490,12 +499,12 @@ public partial class Chatbox
         TrySendMessage();
     }
 
-    void ChatboxSendBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    void ChatboxSendBtn_Clicked(Base sender, MouseButtonState arguments)
     {
         TrySendMessage();
     }
 
-    void ChatboxClearLogBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    void ChatboxClearLogBtn_Clicked(Base sender, MouseButtonState arguments)
     {
         ChatboxMsg.ClearMessages();
         mChatboxMessages.Clear();
@@ -505,7 +514,7 @@ public partial class Chatbox
         mLastTab = mCurrentTab;
     }
 
-    void ChatboxToggleLogBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    void ChatboxToggleLogBtn_Clicked(Base sender, MouseButtonState arguments)
     {
         if (mChatboxWindow.Texture != null)
         {

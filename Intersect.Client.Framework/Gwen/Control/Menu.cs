@@ -175,7 +175,7 @@ public partial class Menu : ScrollControl
             Text = text,
             Font = font,
         };
-        newMenuItem.SetImage(iconTexture, textureFilename, Button.ControlState.Normal);
+        newMenuItem.SetStateTexture(iconTexture, textureFilename, Button.ControlState.Normal);
         newMenuItem.SetAccelerator(accelerator);
 
         OnAddItem(newMenuItem);

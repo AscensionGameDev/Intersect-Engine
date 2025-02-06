@@ -1,4 +1,5 @@
 using Intersect.Client.Framework.Gwen.Control.Layout;
+using Intersect.Client.Framework.Input;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
@@ -39,20 +40,10 @@ public partial class ListBoxRow : TableRow
         skin.DrawListBoxLine(this, IsSelected, EvenRow);
     }
 
-    /// <summary>
-    ///     Handler invoked on mouse click (left) event.
-    /// </summary>
-    /// <param name="x">X coordinate.</param>
-    /// <param name="y">Y coordinate.</param>
-    /// <param name="down">If set to <c>true</c> mouse button is down.</param>
-    protected override void OnMouseClickedLeft(int x, int y, bool down, bool automated = false)
+    protected override void OnMouseDown(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
-        base.OnMouseClickedLeft(x, y, down);
-        if (down)
-        {
-            //IsSelected = true; // [omeg] ListBox manages that
-            OnRowSelected();
-        }
+        base.OnMouseDown(mouseButton, mousePosition, userAction);
+        OnRowSelected();
     }
 
 }

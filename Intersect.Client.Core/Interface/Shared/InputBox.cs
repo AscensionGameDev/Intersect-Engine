@@ -295,7 +295,7 @@ public partial class InputBox : WindowControl
         }
     }
 
-    void btnNo_Clicked(Base sender, ClickedEventArgs arguments)
+    void btnNo_Clicked(Base sender, MouseButtonState arguments)
     {
         if (_inputType == InputType.YesNoCancel)
         {
@@ -305,7 +305,7 @@ public partial class InputBox : WindowControl
         SubmitInput();
     }
 
-    void btnYes_Clicked(Base sender, ClickedEventArgs arguments)
+    void btnYes_Clicked(Base sender, MouseButtonState arguments)
     {
         if (_inputType == InputType.YesNoCancel)
         {
@@ -315,7 +315,7 @@ public partial class InputBox : WindowControl
         SubmitInput();
     }
 
-    void btnCancel_Clicked(Base sender, ClickedEventArgs arguments)
+    void btnCancel_Clicked(Base sender, MouseButtonState arguments)
     {
         if (_inputType == InputType.NumericInput)
         {

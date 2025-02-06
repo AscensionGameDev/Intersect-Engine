@@ -4,6 +4,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.Skin.Texturing;
+using Intersect.Client.Framework.Input;
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;
@@ -44,10 +45,6 @@ public partial class ImagePanel : Base
         _uv = [0, 0, 1, 1];
 
         MouseInputEnabled = true;
-
-        Clicked += ImagePanel_Clicked;
-        RightClicked += ImagePanel_RightClicked;
-        HoverEnter += ImagePanel_HoverEnter;
     }
 
     public Margin? TextureNinePatchMargin
@@ -109,19 +106,23 @@ public partial class ImagePanel : Base
         }
     }
 
-    private void ImagePanel_HoverEnter(Base sender, EventArgs arguments)
+    protected override void OnMouseEntered()
     {
+        base.OnMouseEntered();
         PlaySound(mHoverSound);
     }
 
-    private void ImagePanel_RightClicked(Base sender, EventArguments.ClickedEventArgs arguments)
+    protected override void OnMouseClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
-        PlaySound(mRightMouseClickSound);
-    }
-
-    private void ImagePanel_Clicked(Base sender, EventArguments.ClickedEventArgs arguments)
-    {
-        PlaySound(mLeftMouseClickSound);
+        base.OnMouseClicked(mouseButton, mousePosition, userAction);
+        PlaySound(
+            mouseButton switch
+            {
+                MouseButton.Left => mLeftMouseClickSound,
+                MouseButton.Right => mRightMouseClickSound,
+                _ => null,
+            }
+        );
     }
 
     /// <summary>
@@ -381,7 +382,7 @@ public partial class ImagePanel : Base
     {
         if (down)
         {
-            base.OnMouseClickedLeft(0, 0, true);
+            base.OnMouseDown(MouseButton.Left, default);
         }
 
         return true;

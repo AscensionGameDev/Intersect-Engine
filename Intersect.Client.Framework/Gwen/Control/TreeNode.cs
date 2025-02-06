@@ -19,7 +19,7 @@ public partial class TreeNode : Base
 
     private bool mSelected;
 
-    protected Button? _label;
+    protected Button? _label { get; set; }
     private GameFont? _font;
 
     protected Button mToggleButton;
@@ -515,7 +515,7 @@ public partial class TreeNode : Base
 
     public void SetImage(GameTexture texture, string fileName = "")
     {
-        _label.SetImage(texture, fileName, Button.ControlState.Normal);
+        _label.SetStateTexture(texture, fileName, Button.ControlState.Normal);
     }
 
     protected override void OnChildAdded(Base child)
@@ -534,43 +534,93 @@ public partial class TreeNode : Base
         base.OnChildAdded(child);
     }
 
-    public override event GwenEventHandler<ClickedEventArgs> Clicked
-    {
-        add { _label.Clicked += delegate(Base sender, ClickedEventArgs args) { value(this, args); }; }
-        remove { _label.Clicked -= delegate(Base sender, ClickedEventArgs args) { value(this, args); }; }
-    }
+    private readonly Dictionary<GwenEventHandler<MouseButtonState>, GwenEventHandler<MouseButtonState>>
+        _wrappedMouseButtonStateDelegates = [];
 
-    public override event GwenEventHandler<ClickedEventArgs> DoubleClicked
+    public override event GwenEventHandler<MouseButtonState>? Clicked
     {
         add
         {
-            if (value != null)
+            if (_label is not { } label)
             {
-                _label.DoubleClicked += delegate(Base sender, ClickedEventArgs args) { value(this, args); };
+                base.Clicked += value;
+                return;
             }
-        }
-        remove { _label.DoubleClicked -= delegate(Base sender, ClickedEventArgs args) { value(this, args); }; }
-    }
 
-    public override event GwenEventHandler<ClickedEventArgs> RightClicked
-    {
-        add { _label.RightClicked += delegate(Base sender, ClickedEventArgs args) { value(this, args); }; }
-        remove { _label.RightClicked -= delegate(Base sender, ClickedEventArgs args) { value(this, args); }; }
-    }
-
-    public override event GwenEventHandler<ClickedEventArgs> DoubleRightClicked
-    {
-        add
-        {
-            if (value != null)
+            if (value == null)
             {
-                _label.DoubleRightClicked += delegate(Base sender, ClickedEventArgs args) { value(this, args); };
+                label.Clicked += value;
+                return;
             }
+
+            GwenEventHandler<MouseButtonState> wrappedDelegate = delegate(Base _, MouseButtonState args)
+            {
+                value.Invoke(this, args);
+            };
+            _wrappedMouseButtonStateDelegates[value] = wrappedDelegate;
+            label.Clicked += wrappedDelegate;
         }
         remove
         {
-            _label.DoubleRightClicked -= delegate(Base sender, ClickedEventArgs args) { value(this, args); };
+            if (_label is not { } label)
+            {
+                base.Clicked -= value;
+                return;
+            }
+
+            if (value == null)
+            {
+                label.Clicked -= value;
+                return;
+            }
+
+            if (_wrappedMouseButtonStateDelegates.Remove(value, out var wrappedDelegate))
+            {
+                label.Clicked -= wrappedDelegate;
+            }
         }
     }
+    public override event GwenEventHandler<MouseButtonState>? DoubleClicked
+    {
+        add
+        {
+            if (_label is not { } label)
+            {
+                base.DoubleClicked += value;
+                return;
+            }
 
+            if (value == null)
+            {
+                label.DoubleClicked += value;
+                return;
+            }
+
+            GwenEventHandler<MouseButtonState> wrappedDelegate = delegate(Base _, MouseButtonState args)
+            {
+                value.Invoke(this, args);
+            };
+            _wrappedMouseButtonStateDelegates[value] = wrappedDelegate;
+            label.DoubleClicked += wrappedDelegate;
+        }
+        remove
+        {
+            if (_label is not { } label)
+            {
+                base.DoubleClicked -= value;
+                return;
+            }
+
+            if (value == null)
+            {
+                label.DoubleClicked -= value;
+                return;
+            }
+
+            if (_wrappedMouseButtonStateDelegates.Remove(value, out var wrappedDelegate))
+            {
+                label.DoubleClicked -= wrappedDelegate;
+            }
+        }
+    }
 }

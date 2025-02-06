@@ -22,7 +22,10 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
     {
         IsHidden = true;
         IconMarginDisabled = true;
-        _settingsWindow = new SettingsWindow(gameCanvas, null, null);
+        _settingsWindow = new SettingsWindow(gameCanvas, null, null)
+        {
+            IsVisible = false,
+        };
 
         Children.Clear();
 
@@ -74,7 +77,7 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
         }
     }
 
-    private void LogoutToCharacterSelectSelectClicked(Base sender, ClickedEventArgs arguments)
+    private void LogoutToCharacterSelectSelectClicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.Me?.CombatTimer > Timing.Global.Milliseconds)
         {
@@ -91,7 +94,7 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
         }
     }
 
-    private void LogoutToMainToMainMenuClicked(Base sender, ClickedEventArgs arguments)
+    private void LogoutToMainToMainMenuClicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.Me?.CombatTimer > Timing.Global.Milliseconds)
         {
@@ -108,7 +111,7 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
         }
     }
 
-    private void ExitToDesktopToDesktopClicked(Base sender, ClickedEventArgs arguments)
+    private void ExitToDesktopToDesktopClicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.Me?.CombatTimer > Timing.Global.Milliseconds)
         {

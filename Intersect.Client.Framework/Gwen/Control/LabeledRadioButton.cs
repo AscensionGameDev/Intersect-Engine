@@ -39,7 +39,7 @@ public partial class LabeledRadioButton : Base
             IsTabable = false,
             KeyboardInputEnabled = false,
         };
-        mLabel.Clicked += delegate (Base control, ClickedEventArgs args) { mRadioButton.Press(control); };
+        mLabel.Clicked += delegate (Base control, MouseButtonState args) { mRadioButton.Press(control); };
     }
 
     /// <summary>

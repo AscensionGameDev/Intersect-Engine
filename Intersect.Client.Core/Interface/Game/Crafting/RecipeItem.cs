@@ -101,7 +101,7 @@ public partial class RecipeItem
 
         mMouseOver = true;
         mCanDrag = true;
-        if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
+        if (Globals.InputManager.MouseButtonDown(MouseButton.Left))
         {
             mCanDrag = false;
 

@@ -54,17 +54,22 @@ public partial class ShopItem
         Pnl = new ImagePanel(Container, "ShopItemIcon");
         Pnl.HoverEnter += pnl_HoverEnter;
         Pnl.HoverLeave += pnl_HoverLeave;
-        Pnl.RightClicked += Pnl_RightClicked;
+        Pnl.Clicked += Pnl_RightClicked;
         Pnl.DoubleClicked += Pnl_DoubleClicked;
     }
 
-    private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
+    private void Pnl_DoubleClicked(Base sender, MouseButtonState arguments)
     {
-        Globals.Me.TryBuyItem(mMySlot);
+        Globals.Me?.TryBuyItem(mMySlot);
     }
 
-    private void Pnl_RightClicked(Base sender, ClickedEventArgs arguments)
+    private void Pnl_RightClicked(Base sender, MouseButtonState arguments)
     {
+        if (arguments.MouseButton != MouseButton.Right)
+        {
+            return;
+        }
+
         if (ClientConfiguration.Instance.EnableContextMenus)
         {
             mShopWindow.OpenContextMenu(mMySlot);
@@ -89,7 +94,7 @@ public partial class ShopItem
         }
     }
 
-    
+
 
     void pnl_HoverLeave(Base sender, EventArgs arguments)
     {
@@ -110,7 +115,7 @@ public partial class ShopItem
             return;
         }
 
-        if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
+        if (Globals.InputManager.MouseButtonDown(MouseButton.Left))
         {
             return;
         }

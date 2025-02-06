@@ -2,6 +2,7 @@ using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
@@ -192,7 +193,6 @@ partial class GuildWindow : WindowControl
             row.SetToolTipText(Strings.Guilds.Tooltip.ToString(member.Level, member.ClassName));
             row.UserData = member;
             row.Clicked += member_Clicked;
-            row.RightClicked += member_RightClicked;
 
             //Row Render color (red = offline, green = online)
             if (member.Online == true)
@@ -216,8 +216,19 @@ partial class GuildWindow : WindowControl
         _buttonLeave.IsHidden = Globals.Me != null && Globals.Me.Rank == 0;
     }
 
-    private void member_Clicked(Base sender, ClickedEventArgs arguments)
+    private void member_Clicked(Base sender, MouseButtonState arguments)
     {
+        if (arguments.MouseButton == MouseButton.Right)
+        {
+            member_RightClicked(sender, arguments);
+            return;
+        }
+
+        if (arguments.MouseButton != MouseButton.Left)
+        {
+            return;
+        }
+
         if (sender is ListBoxRow { UserData: GuildMember { Online: true } member } &&
             member.Id != Globals.Me?.Id
            )
@@ -226,7 +237,7 @@ partial class GuildWindow : WindowControl
         }
     }
 
-    private void member_RightClicked(Base sender, ClickedEventArgs arguments)
+    private void member_RightClicked(Base sender, MouseButtonState arguments)
     {
         if (sender is not ListBoxRow row || row.UserData is not GuildMember member)
         {
@@ -304,7 +315,7 @@ partial class GuildWindow : WindowControl
 
     #region Guild Actions
 
-    private void promoteOption_Clicked(Base sender, ClickedEventArgs arguments)
+    private void promoteOption_Clicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.Me == default || Globals.Me.GuildRank == default || _selectedMember == default)
         {
@@ -337,7 +348,7 @@ partial class GuildWindow : WindowControl
         );
     }
 
-    private void demoteOption_Clicked(Base sender, ClickedEventArgs arguments)
+    private void demoteOption_Clicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.Me == default || Globals.Me.GuildRank == default || _selectedMember == default)
         {
@@ -370,7 +381,7 @@ partial class GuildWindow : WindowControl
         );
     }
 
-    private void kickOption_Clicked(Base sender, ClickedEventArgs arguments)
+    private void kickOption_Clicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.Me == default || Globals.Me.GuildRank == default || _selectedMember == default)
         {
@@ -401,7 +412,7 @@ partial class GuildWindow : WindowControl
         );
     }
 
-    private void transferOption_Clicked(Base sender, ClickedEventArgs arguments)
+    private void transferOption_Clicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.Me == default || Globals.Me.GuildRank == default || _selectedMember == default)
         {

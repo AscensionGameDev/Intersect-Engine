@@ -56,7 +56,7 @@ public sealed class TexturesSearchableTreeDataProvider : ISearchableTreeDataProv
                     new(
                         Id: contentTypeId,
                         DisplayText: contentTypeName,
-                        DisplayColor: parent.Skin.Colors.Label.Default
+                        DisplayColor: parent.Skin.Colors.Label.Normal
                     ),
                     ..assets.Select(asset => EntryForAsset(contentTypeId, asset)),
                 ];

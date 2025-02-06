@@ -69,7 +69,7 @@ public partial class QuestsWindow
         mQuestsWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
     }
 
-    private void _quitButton_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _quitButton_Clicked(Base sender, MouseButtonState arguments)
     {
         if (mSelectedQuest != null)
         {
@@ -94,7 +94,7 @@ public partial class QuestsWindow
         PacketSender.SendAbandonQuest((Guid) ((InputBox) sender).UserData);
     }
 
-    private void _backButton_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _backButton_Clicked(Base sender, MouseButtonState arguments)
     {
         mSelectedQuest = null;
         UpdateSelectedQuest();
@@ -281,7 +281,7 @@ public partial class QuestsWindow
         mQuestList.UnselectAll();
     }
 
-    private void QuestListItem_Clicked(Base sender, ClickedEventArgs arguments)
+    private void QuestListItem_Clicked(Base sender, MouseButtonState arguments)
     {
         var questNum = (Guid) ((ListBoxRow) sender).UserData;
         var quest = QuestBase.Get(questNum);

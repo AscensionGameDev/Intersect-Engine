@@ -1,5 +1,6 @@
 ﻿using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Framework.Input;
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal;
 
@@ -68,17 +69,14 @@ public partial class ScrollBarBar : Dragger
         InvalidateParent();
     }
 
-    /// <summary>
-    ///     Handler invoked on mouse click (left) event.
-    /// </summary>
-    /// <param name="x">X coordinate.</param>
-    /// <param name="y">Y coordinate.</param>
-    /// <param name="down">If set to <c>true</c> mouse button is down.</param>
-    /// <param name="automated"></param>
-    protected override void OnMouseClickedLeft(int x, int y, bool down, bool automated = false)
+    protected override void OnMouseClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
-        base.OnMouseClickedLeft(x, y, down, automated);
-        InvalidateParent();
+        base.OnMouseClicked(mouseButton, mousePosition, userAction);
+
+        if (mouseButton == MouseButton.Left)
+        {
+            InvalidateParent();
+        }
     }
 
     /// <summary>

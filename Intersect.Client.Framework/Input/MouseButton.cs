@@ -1,6 +1,6 @@
 ﻿namespace Intersect.Client.Framework.Input;
 
-public enum MouseButtons
+public enum MouseButton
 {
 
     None = -1,

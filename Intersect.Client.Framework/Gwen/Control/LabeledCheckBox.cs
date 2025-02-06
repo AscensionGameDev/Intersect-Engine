@@ -10,8 +10,7 @@ namespace Intersect.Client.Framework.Gwen.Control;
 /// </summary>
 public partial class LabeledCheckBox : Base
 {
-
-    private readonly CheckBox mCheckBox;
+    private readonly Checkbox _checkbox;
 
     private readonly Label _label;
 
@@ -19,29 +18,31 @@ public partial class LabeledCheckBox : Base
     ///     Initializes a new instance of the <see cref="LabeledCheckBox" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
+    /// <param name="name"></param>
     public LabeledCheckBox(Base parent, string? name = default) : base(parent: parent, name: name)
     {
-        _ = SetSize(208, 26);
+        Size = new Point(208, 26);
 
-        mCheckBox = new CheckBox(this)
+        _checkbox = new Checkbox(this, name: nameof(_checkbox))
         {
             InheritParentEnablementProperties = true,
             Dock = Pos.Left,
             Margin = new Margin(0, 2, 2, 2),
             IsTabable = false,
         };
-        mCheckBox.CheckChanged += OnCheckChanged;
+        _checkbox.CheckChanged += OnCheckChanged;
 
-        _label = new Label(this)
+        _label = new Label(this, name: nameof(_label))
         {
-            AutoSizeToContents = false,
+            Alignment = [Alignments.CenterV],
+            AutoSizeToContents = true,
             Dock = Pos.Fill,
             InheritParentEnablementProperties = true,
             IsTabable = false,
             Padding = new Padding(2, 0, 0, 0),
             TextAlign = Pos.CenterV | Pos.Left,
         };
-        _label.Clicked += delegate (Base control, ClickedEventArgs args) { mCheckBox.Press(control); };
+        _label.Clicked += delegate (Base control, MouseButtonState _) { _checkbox.Press(control); };
 
         IsTabable = false;
     }
@@ -51,8 +52,8 @@ public partial class LabeledCheckBox : Base
     /// </summary>
     public bool IsChecked
     {
-        get => mCheckBox.IsChecked;
-        set => mCheckBox.IsChecked = value;
+        get => _checkbox.IsChecked;
+        set => _checkbox.IsChecked = value;
     }
 
     public GameFont? Font
@@ -61,7 +62,7 @@ public partial class LabeledCheckBox : Base
         set => _label.Font = value;
     }
 
-    public string FontName
+    public string? FontName
     {
         get => _label.FontName;
         set => _label.FontName = value;
@@ -109,7 +110,7 @@ public partial class LabeledCheckBox : Base
         set => _label.TooltipFontSize = value;
     }
 
-    public override Color TooltipTextColor
+    public override Color? TooltipTextColor
     {
         get => _label.TooltipTextColor;
         set => _label.TooltipTextColor = value;
@@ -118,7 +119,7 @@ public partial class LabeledCheckBox : Base
     /// <summary>
     ///     Label text.
     /// </summary>
-    public string Text
+    public string? Text
     {
         get => _label.Text;
         set => _label.Text = value;
@@ -127,12 +128,12 @@ public partial class LabeledCheckBox : Base
     /// <summary>
     ///     Invoked when the control has been checked.
     /// </summary>
-    public event GwenEventHandler<EventArgs> Checked;
+    public event GwenEventHandler<EventArgs>? Checked;
 
     /// <summary>
     ///     Invoked when the control has been unchecked.
     /// </summary>
-    public event GwenEventHandler<EventArgs> UnChecked;
+    public event GwenEventHandler<EventArgs>? Unchecked;
 
     /// <summary>
     ///     Invoked when the control's check has been changed.
@@ -148,7 +149,7 @@ public partial class LabeledCheckBox : Base
         }
 
         serializedProperties.Add("Label", _label.GetJson());
-        serializedProperties.Add("Checkbox", mCheckBox.GetJson());
+        serializedProperties.Add("Checkbox", _checkbox.GetJson());
 
         return base.FixJson(serializedProperties);
     }
@@ -158,14 +159,12 @@ public partial class LabeledCheckBox : Base
         base.LoadJson(obj);
         if (obj["Label"] != null)
         {
-            _label.Dock = Pos.None;
             _label.LoadJson(obj["Label"]);
         }
 
         if (obj["Checkbox"] != null)
         {
-            mCheckBox.Dock = Pos.None;
-            mCheckBox.LoadJson(obj["Checkbox"]);
+            _checkbox.LoadJson(obj["Checkbox"]);
         }
     }
 
@@ -174,35 +173,26 @@ public partial class LabeledCheckBox : Base
     /// </summary>
     protected virtual void OnCheckChanged(Base control, EventArgs args)
     {
-        if (mCheckBox.IsChecked)
+        if (_checkbox.IsChecked)
         {
-            if (Checked != null)
-            {
-                Checked.Invoke(this, EventArgs.Empty);
-            }
+            Checked?.Invoke(this, EventArgs.Empty);
         }
         else
         {
-            if (UnChecked != null)
-            {
-                UnChecked.Invoke(this, EventArgs.Empty);
-            }
+            Unchecked?.Invoke(this, EventArgs.Empty);
         }
 
-        if (CheckChanged != null)
-        {
-            CheckChanged.Invoke(this, EventArgs.Empty);
-        }
+        CheckChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public void SetCheckSize(int w, int h)
     {
-        mCheckBox.SetSize(w, h);
+        _checkbox.SetSize(w, h);
     }
 
-    public void SetImage(GameTexture texture, string fileName, CheckBox.ControlState state)
+    public void SetImage(GameTexture texture, string fileName, Checkbox.ControlState state)
     {
-        mCheckBox.SetImage(texture, fileName, state);
+        _checkbox.SetImage(texture, fileName, state);
     }
 
     public void SetTextColor(Color clr, Label.ControlState state)
@@ -212,7 +202,7 @@ public partial class LabeledCheckBox : Base
 
     public void SetLabelDistance(int dist)
     {
-        mCheckBox.Margin = new Margin(0, 2, dist, 2);
+        _checkbox.Margin = new Margin(0, 2, dist, 2);
     }
 
     public void SetFont(GameFont font)
@@ -232,7 +222,7 @@ public partial class LabeledCheckBox : Base
         base.OnKeySpace(down);
         if (!down)
         {
-            mCheckBox.IsChecked = !mCheckBox.IsChecked;
+            _checkbox.IsChecked = !_checkbox.IsChecked;
         }
 
         return true;

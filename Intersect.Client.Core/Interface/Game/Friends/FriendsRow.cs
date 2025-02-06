@@ -87,7 +87,7 @@ public partial class FriendsRow
 
     }
 
-    private void MRemove_Clicked(Base sender, ClickedEventArgs arguments)
+    private void MRemove_Clicked(Base sender, MouseButtonState arguments)
     {
         var iBox = new InputBox(
             title: Strings.Friends.RemoveFriend,
@@ -97,7 +97,7 @@ public partial class FriendsRow
         );
     }
 
-    private void MTell_Clicked(Base sender, ClickedEventArgs arguments)
+    private void MTell_Clicked(Base sender, MouseButtonState arguments)
     {
         Interface.GameUi.SetChatboxText($"/pm {mMyName} ");
     }

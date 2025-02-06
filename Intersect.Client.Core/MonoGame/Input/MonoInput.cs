@@ -149,7 +149,7 @@ public partial class MonoInput : GameInput
         Mouse.SetPosition((int)center.X, (int)center.Y);
         var mouseState = Mouse.GetState();
         Interface.Interface.GwenInput.ProcessMessage(
-            new GwenInputMessage(IntersectInput.InputEvent.MouseMove, new Pointf(mouseState.X, mouseState.Y), (int)MouseButtons.None, Keys.Alt)
+            new GwenInputMessage(IntersectInput.InputEvent.MouseMove, new Pointf(mouseState.X, mouseState.Y), MouseButton.None, Keys.Alt)
         );
     }
 
@@ -157,25 +157,25 @@ public partial class MonoInput : GameInput
     {
         Interface.Interface.GwenInput.ProcessMessage(
             new GwenInputMessage(
-                IntersectInput.InputEvent.TextEntered, GetMousePosition(), (int) MouseButtons.None, Keys.Alt, false,
+                IntersectInput.InputEvent.TextEntered, GetMousePosition(), MouseButton.None, Keys.Alt, false,
                 false, false, e.Character.ToString()
             )
         );
     }
 
-    public override bool MouseButtonDown(MouseButtons mb)
+    public override bool MouseButtonDown(MouseButton mb)
     {
         switch (mb)
         {
-            case MouseButtons.Left:
+            case MouseButton.Left:
                 return mLastMouseState.LeftButton == ButtonState.Pressed;
-            case MouseButtons.Right:
+            case MouseButton.Right:
                 return mLastMouseState.RightButton == ButtonState.Pressed;
-            case MouseButtons.Middle:
+            case MouseButton.Middle:
                 return mLastMouseState.MiddleButton == ButtonState.Pressed;
-            case MouseButtons.X1:
+            case MouseButton.X1:
                 return mLastMouseState.XButton1 == ButtonState.Pressed;
-            case MouseButtons.X2:
+            case MouseButton.X2:
                 return mLastMouseState.XButton2 == ButtonState.Pressed;
             default:
                 throw new ArgumentOutOfRangeException(nameof(mb), mb, null);
@@ -190,7 +190,7 @@ public partial class MonoInput : GameInput
         return new Pointf(mMouseX, mMouseY);
     }
 
-    private void CheckMouseButton(Keys modifier, ButtonState bs, MouseButtons mb)
+    private void CheckMouseButton(Keys modifier, ButtonState bs, MouseButton mb)
     {
         if (Globals.GameState == GameStates.Intro)
         {
@@ -200,7 +200,7 @@ public partial class MonoInput : GameInput
         if (bs == ButtonState.Pressed && !MouseButtonDown(mb))
         {
             Interface.Interface.GwenInput.ProcessMessage(
-                new GwenInputMessage(IntersectInput.InputEvent.MouseDown, GetMousePosition(), (int) mb, Keys.Alt)
+                new GwenInputMessage(IntersectInput.InputEvent.MouseDown, GetMousePosition(), mb, Keys.Alt)
             );
 
             Core.Input.OnMouseDown(modifier, mb);
@@ -208,7 +208,7 @@ public partial class MonoInput : GameInput
         else if (bs == ButtonState.Released && MouseButtonDown(mb))
         {
             Interface.Interface.GwenInput.ProcessMessage(
-                new GwenInputMessage(IntersectInput.InputEvent.MouseUp, GetMousePosition(), (int) mb, Keys.Alt)
+                new GwenInputMessage(IntersectInput.InputEvent.MouseUp, GetMousePosition(), mb, Keys.Alt)
             );
 
             Core.Input.OnMouseUp(modifier, mb);
@@ -224,7 +224,7 @@ public partial class MonoInput : GameInput
             p = new Pointf(scrlHValue - mMouseHScroll, scrlVValue - mMouseVScroll);
 
             Interface.Interface.GwenInput.ProcessMessage(
-                new GwenInputMessage(IntersectInput.InputEvent.MouseScroll, p, (int)MouseButtons.Middle, Keys.Alt)
+                new GwenInputMessage(IntersectInput.InputEvent.MouseScroll, p, MouseButton.Middle, Keys.Alt)
             );
 
             mMouseVScroll = scrlVValue;
@@ -275,7 +275,7 @@ public partial class MonoInput : GameInput
                 mMouseY = (int)(mouseState.Y * ((MonoRenderer)Core.Graphics.Renderer).GetMouseOffset().Y);
                 Interface.Interface.GwenInput.ProcessMessage(
                     new GwenInputMessage(
-                        IntersectInput.InputEvent.MouseMove, GetMousePosition(), (int)MouseButtons.None, Keys.Alt
+                        IntersectInput.InputEvent.MouseMove, GetMousePosition(), MouseButton.None, Keys.Alt
                     )
                 );
             }
@@ -348,11 +348,11 @@ public partial class MonoInput : GameInput
             var modifier = GetPressedModifier(keyboardState);
 
             //Check for state changes in the left mouse button
-            CheckMouseButton(modifier, mouseState.LeftButton, MouseButtons.Left);
-            CheckMouseButton(modifier, mouseState.RightButton, MouseButtons.Right);
-            CheckMouseButton(modifier, mouseState.MiddleButton, MouseButtons.Middle);
-            CheckMouseButton(modifier, mouseState.XButton1, MouseButtons.X1);
-            CheckMouseButton(modifier, mouseState.XButton2, MouseButtons.X2);
+            CheckMouseButton(modifier, mouseState.LeftButton, MouseButton.Left);
+            CheckMouseButton(modifier, mouseState.RightButton, MouseButton.Right);
+            CheckMouseButton(modifier, mouseState.MiddleButton, MouseButton.Middle);
+            CheckMouseButton(modifier, mouseState.XButton1, MouseButton.X1);
+            CheckMouseButton(modifier, mouseState.XButton2, MouseButton.X2);
 
             CheckMouseScrollWheel(mouseState.ScrollWheelValue, mouseState.HorizontalScrollWheelValue);
 
@@ -363,7 +363,7 @@ public partial class MonoInput : GameInput
                     ApplicationContext.Context.Value?.Logger.LogTrace("{0} -> {1}", key.Key, key.Value);
                     Interface.Interface.GwenInput.ProcessMessage(
                         new GwenInputMessage(
-                            IntersectInput.InputEvent.KeyDown, GetMousePosition(), (int) MouseButtons.None, key.Key
+                            IntersectInput.InputEvent.KeyDown, GetMousePosition(), MouseButton.None, key.Key
                         )
                     );
 
@@ -373,7 +373,7 @@ public partial class MonoInput : GameInput
                 {
                     Interface.Interface.GwenInput.ProcessMessage(
                         new GwenInputMessage(
-                            IntersectInput.InputEvent.KeyUp, GetMousePosition(), (int) MouseButtons.None, key.Key
+                            IntersectInput.InputEvent.KeyUp, GetMousePosition(), MouseButton.None, key.Key
                         )
                     );
 
@@ -395,7 +395,7 @@ public partial class MonoInput : GameInput
                 {
                     Interface.Interface.GwenInput.ProcessMessage(
                         new GwenInputMessage(
-                            IntersectInput.InputEvent.KeyUp, GetMousePosition(), (int) MouseButtons.None, key.Key
+                            IntersectInput.InputEvent.KeyUp, GetMousePosition(), MouseButton.None, key.Key
                         )
                     );
 
@@ -403,11 +403,11 @@ public partial class MonoInput : GameInput
                 }
             }
 
-            CheckMouseButton(modifier, ButtonState.Released, MouseButtons.Left);
-            CheckMouseButton(modifier, ButtonState.Released, MouseButtons.Right);
-            CheckMouseButton(modifier, ButtonState.Released, MouseButtons.Middle);
-            CheckMouseButton(modifier, ButtonState.Released, MouseButtons.X1);
-            CheckMouseButton(modifier, ButtonState.Released, MouseButtons.X2);
+            CheckMouseButton(modifier, ButtonState.Released, MouseButton.Left);
+            CheckMouseButton(modifier, ButtonState.Released, MouseButton.Right);
+            CheckMouseButton(modifier, ButtonState.Released, MouseButton.Middle);
+            CheckMouseButton(modifier, ButtonState.Released, MouseButton.X1);
+            CheckMouseButton(modifier, ButtonState.Released, MouseButton.X2);
             mLastKeyboardState = new KeyboardState();
             mLastMouseState = new MouseState();
         }

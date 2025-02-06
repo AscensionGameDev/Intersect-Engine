@@ -2,6 +2,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
+using Intersect.Client.Framework.Input;
 using Intersect.Core;
 using Intersect.Framework.Reflection;
 using Microsoft.Extensions.Logging;
@@ -224,7 +225,7 @@ public partial class ComboBox : Button
         item.UserData = userData;
         item.SetTextColor(GetTextColor(Label.ControlState.Normal), Label.ControlState.Normal);
         item.SetTextColor(GetTextColor(Label.ControlState.Hovered), Label.ControlState.Hovered);
-        item.SetTextColor(GetTextColor(Label.ControlState.Clicked), Label.ControlState.Clicked);
+        item.SetTextColor(GetTextColor(Label.ControlState.Active), Label.ControlState.Active);
         item.SetTextColor(GetTextColor(Label.ControlState.Disabled), Label.ControlState.Disabled);
         item.SetHoverSound(mHoverItemSound);
 
@@ -260,7 +261,7 @@ public partial class ComboBox : Button
     /// <param name="skin">Skin to use.</param>
     protected override void Render(Skin.Base skin)
     {
-        skin.DrawComboBox(this, IsDepressed, IsOpen);
+        skin.DrawComboBox(this, IsActive, IsOpen);
     }
 
     public override void Disable()
@@ -272,25 +273,26 @@ public partial class ComboBox : Button
     /// <summary>
     ///     Internal Pressed implementation.
     /// </summary>
-    protected override void OnClicked(int x, int y)
+    protected override void OnMouseClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
+        var canvas = Canvas;
+
         if (IsOpen)
         {
-            GetCanvas().CloseMenus();
+            canvas?.CloseMenus();
 
             return;
         }
 
         var wasMenuHidden = _menu.IsHidden;
-
-        GetCanvas().CloseMenus();
+        canvas?.CloseMenus();
 
         if (wasMenuHidden)
         {
             Open();
         }
 
-        base.OnClicked(x, y);
+        base.OnMouseClicked(mouseButton, mousePosition, userAction);
     }
 
     /// <summary>

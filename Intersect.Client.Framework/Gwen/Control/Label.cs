@@ -5,6 +5,8 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;
@@ -23,7 +25,7 @@ public partial class Label : Base, ILabel
 
         Hovered,
 
-        Clicked,
+        Active,
 
         Disabled,
 
@@ -409,12 +411,12 @@ public partial class Label : Base, ILabel
             serializedProperties.Add("BackgroundTemplate", mBackgroundTemplateFilename);
         }
 
-        serializedProperties.Add(nameof(TextColor), Color.ToString(TextColor));
-        serializedProperties.Add("HoveredTextColor", Color.ToString(mHoverTextColor));
-        serializedProperties.Add("ClickedTextColor", Color.ToString(mClickedTextColor));
-        serializedProperties.Add("DisabledTextColor", Color.ToString(mDisabledTextColor));
+        serializedProperties.Add(nameof(TextColor), mNormalTextColor?.ToString());
+        serializedProperties.Add("HoveredTextColor", mHoverTextColor?.ToString());
+        serializedProperties.Add("ClickedTextColor", mClickedTextColor?.ToString());
+        serializedProperties.Add("DisabledTextColor", mDisabledTextColor?.ToString());
         serializedProperties.Add(nameof(TextAlign), mAlign.ToString());
-        serializedProperties.Add(nameof(TextPadding), Padding.ToString(_textPadding));
+        serializedProperties.Add(nameof(TextPadding), _textPadding.ToString());
         serializedProperties.Add(nameof(AutoSizeToContents), _autoSizeToContents);
         serializedProperties.Add(nameof(Font), _fontInfo);
         serializedProperties.Add("TextScale", _textElement.GetScale());
@@ -450,7 +452,11 @@ public partial class Label : Base, ILabel
             mClickedTextColor = Color.FromString((string)obj["ClickedTextColor"]);
         }
 
-        mDisabledTextColor = Color.FromString((string)obj["DisabledTextColor"], new Color(255, 90, 90, 90));
+        if (obj["DisabledTextColor"] != null)
+        {
+            mDisabledTextColor = Color.FromString((string)obj["DisabledTextColor"]);
+        }
+
         if (obj["TextAlign"] != null)
         {
             mAlign = (Pos)Enum.Parse(typeof(Pos), (string)obj["TextAlign"]);
@@ -533,25 +539,25 @@ public partial class Label : Base, ILabel
 
     public virtual void MakeColorNormal()
     {
-        TextColor = Skin.Colors.Label.Default;
+        TextColor = Skin.Colors.Label.Normal;
     }
 
     public virtual void MakeColorBright()
     {
-        TextColor = Skin.Colors.Label.Bright;
+        TextColor = Skin.Colors.Label.Hover;
     }
 
     public virtual void MakeColorDark()
     {
-        TextColor = Skin.Colors.Label.Dark;
+        TextColor = Skin.Colors.Label.Disabled;
     }
 
     public virtual void MakeColorHighlight()
     {
-        TextColor = Skin.Colors.Label.Highlight;
+        TextColor = Skin.Colors.Label.Active;
     }
 
-    public override event GwenEventHandler<ClickedEventArgs> Clicked
+    public override event GwenEventHandler<MouseButtonState> Clicked
     {
         add
         {
@@ -565,7 +571,7 @@ public partial class Label : Base, ILabel
         }
     }
 
-    public override event GwenEventHandler<ClickedEventArgs> DoubleClicked
+    public override event GwenEventHandler<MouseButtonState> DoubleClicked
     {
         add
         {
@@ -575,34 +581,6 @@ public partial class Label : Base, ILabel
         remove
         {
             base.DoubleClicked -= value;
-            MouseInputEnabled = ClickEventAssigned;
-        }
-    }
-
-    public override event GwenEventHandler<ClickedEventArgs> RightClicked
-    {
-        add
-        {
-            base.RightClicked += value;
-            MouseInputEnabled = ClickEventAssigned;
-        }
-        remove
-        {
-            base.RightClicked -= value;
-            MouseInputEnabled = ClickEventAssigned;
-        }
-    }
-
-    public override event GwenEventHandler<ClickedEventArgs> DoubleRightClicked
-    {
-        add
-        {
-            base.DoubleRightClicked += value;
-            MouseInputEnabled = ClickEventAssigned;
-        }
-        remove
-        {
-            base.DoubleRightClicked -= value;
             MouseInputEnabled = ClickEventAssigned;
         }
     }
@@ -751,7 +729,7 @@ public partial class Label : Base, ILabel
     {
         base.OnChildBoundsChanged(child, oldChildBounds, newChildBounds);
 
-        if (_autoSizeToContents)
+        if (_autoSizeToContents && oldChildBounds.Size != newChildBounds.Size)
         {
             Invalidate();
         }
@@ -775,6 +753,32 @@ public partial class Label : Base, ILabel
 
     public virtual bool SizeToContents()
     {
+        var newSize = MeasureShrinkToContents();
+
+        var oldSize = Size;
+        if (!SetSize(newSize))
+        {
+            return false;
+        }
+
+        ProcessAlignments();
+        InvalidateParent();
+
+        SizedToContents?.Invoke(
+            this,
+            new ValueChangedEventArgs<Point>
+            {
+                Value = newSize, OldValue = oldSize,
+            }
+        );
+
+        return true;
+    }
+
+    public GwenEventHandler<ValueChangedEventArgs<Point>>? SizedToContents;
+
+    public virtual Point MeasureShrinkToContents()
+    {
         var contentPadding = GetContentPadding();
         _textElement.SetPosition(contentPadding.Left, contentPadding.Top);
 
@@ -786,15 +790,7 @@ public partial class Label : Base, ILabel
         var newHeight = contentSize.Y + contentPadding.Top + contentPadding.Bottom;
         newHeight = Math.Max(newHeight, MinimumSize.Y);
 
-        if (!SetSize(newWidth, newHeight))
-        {
-            return false;
-        }
-
-        ProcessAlignments();
-        InvalidateParent();
-
-        return true;
+        return new Point(newWidth, newHeight);
     }
 
     /// <summary>
@@ -823,38 +819,35 @@ public partial class Label : Base, ILabel
     /// </summary>
     public override void UpdateColors()
     {
-        var textColor = GetTextColor(ControlState.Normal);
-        if (IsDisabled && GetTextColor(ControlState.Disabled) != null)
-        {
-            textColor = GetTextColor(ControlState.Disabled);
-        }
-        else if (IsHovered && GetTextColor(ControlState.Hovered) != null)
-        {
-            textColor = GetTextColor(ControlState.Hovered);
-        }
-
-        if (textColor != null)
-        {
-            TextColor = textColor;
-
-            return;
-        }
-
+        var textColor = GetTextColor(ControlState.Normal) ?? Skin.Colors.Label.Normal;
         if (IsDisabled)
         {
-            TextColor = Skin.Colors.Button.Disabled;
-
-            return;
+            textColor = GetTextColor(ControlState.Disabled) ?? Skin.Colors.Label.Disabled;
         }
-
-        if (IsHovered && ClickEventAssigned)
+        else if (IsActive)
         {
-            TextColor = Skin.Colors.Button.Hover;
-
-            return;
+            textColor = GetTextColor(ControlState.Active) ?? Skin.Colors.Label.Active;
+        }
+        else if (IsHovered)
+        {
+            textColor = GetTextColor(ControlState.Hovered) ?? Skin.Colors.Label.Hover;
         }
 
-        TextColor = Skin.Colors.Button.Normal;
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (textColor == null)
+        {
+            ApplicationContext.CurrentContext.Logger.LogError(
+                "Text color for the current control state of '{ComponentName}' is somehow null IsDisabled={IsDisabled} IsActive={IsActive} IsHovered={IsHovered}",
+                CanonicalName,
+                IsDisabled,
+                IsActive,
+                IsHovered
+            );
+
+            textColor = new Color(r: 255, g: 0, b: 255);
+        }
+
+        TextColor = textColor;
     }
 
     public virtual void SetTextColor(Color clr, ControlState state)
@@ -869,7 +862,7 @@ public partial class Label : Base, ILabel
                 mHoverTextColor = clr;
 
                 break;
-            case ControlState.Clicked:
+            case ControlState.Active:
                 mClickedTextColor = clr;
 
                 break;
@@ -892,7 +885,7 @@ public partial class Label : Base, ILabel
                 return mNormalTextColor;
             case ControlState.Hovered:
                 return mHoverTextColor;
-            case ControlState.Clicked:
+            case ControlState.Active:
                 return mClickedTextColor;
             case ControlState.Disabled:
                 return mDisabledTextColor;

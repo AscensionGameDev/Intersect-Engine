@@ -74,7 +74,7 @@ public partial class BagWindow
         mContextMenu.Open(Framework.Gwen.Pos.None);
     }
 
-    private void MWithdrawContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.ClickedEventArgs arguments)
+    private void MWithdrawContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.MouseButtonState arguments)
     {
         if (Globals.InBag)
         {

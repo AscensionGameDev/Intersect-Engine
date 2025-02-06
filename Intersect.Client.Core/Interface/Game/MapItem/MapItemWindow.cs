@@ -191,7 +191,7 @@ public partial class MapItemWindow
         }
     }
 
-    private void MBtnLootAll_Clicked(Base sender, ClickedEventArgs arguments)
+    private void MBtnLootAll_Clicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.Me.MapInstance == null)
         {

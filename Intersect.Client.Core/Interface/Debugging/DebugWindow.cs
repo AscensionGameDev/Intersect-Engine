@@ -401,7 +401,7 @@ internal sealed partial class DebugWindow : Window
         table.AddRow(Strings.Internals.InnerBounds, name: "InnerBoundsRow").Listen(controlUnderCursorProvider, 6);
         table.AddRow(Strings.Internals.Margin, name: "MarginRow").Listen(controlUnderCursorProvider, 7);
         table.AddRow(Strings.Internals.Padding, name: "PaddingRow").Listen(controlUnderCursorProvider, 8);
-        // table.AddRow(Strings.Internals.ColorOverride, name: "ControlUnderCursorRow").Listen(controlUnderCursorProvider, 9);
+        table.AddRow(Strings.Internals.Dock, name: "Dock").Listen(controlUnderCursorProvider, 9);
         // table.AddRow(Strings.Internals.ColorOverride, name: "ControlUnderCursorRow").Listen(controlUnderCursorProvider, 10);
         _generators.Add(controlUnderCursorProvider.Generator);
 
@@ -515,6 +515,10 @@ internal sealed partial class DebugWindow : Window
             DataChanged?.Invoke(
                 this,
                 new TableDataChangedEventArgs(8, 1, default, component?.Padding.ToString() ?? string.Empty)
+            );
+            DataChanged?.Invoke(
+                this,
+                new TableDataChangedEventArgs(9, 1, default, component?.Dock.ToString() ?? string.Empty)
             );
         }
     }

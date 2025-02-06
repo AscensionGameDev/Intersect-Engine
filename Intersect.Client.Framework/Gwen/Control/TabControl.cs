@@ -177,10 +177,7 @@ public partial class TabControl : Base
             button.Clicked += OnTabPressed;
         }
 
-        if (null == _activeButton)
-        {
-            button.Press();
-        }
+        _activeButton ??= button;
 
         TabAdded?.Invoke(this, EventArgs.Empty);
 
@@ -224,6 +221,7 @@ public partial class TabControl : Base
         }
 
         _activeButton = nextTab;
+        nextTab.Redraw();
 
         page.IsVisible = true;
 

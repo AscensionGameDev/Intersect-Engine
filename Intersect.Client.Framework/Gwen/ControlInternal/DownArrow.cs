@@ -30,7 +30,7 @@ public partial class DownArrow : Base
     protected override void Render(Skin.Base skin)
     {
         skin.DrawComboBoxArrow(
-            this, mComboBox.IsHovered, mComboBox.IsDepressed, mComboBox.IsOpen, mComboBox.IsDisabled
+            this, mComboBox.IsHovered, mComboBox.IsActive, mComboBox.IsOpen, mComboBox.IsDisabled
         );
     }
 

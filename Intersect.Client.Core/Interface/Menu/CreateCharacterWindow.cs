@@ -126,7 +126,7 @@ public partial class CreateCharacterWindow : ImagePanel
             IsChecked = true
         };
         _chkMale.Checked += maleChk_Checked;
-        _chkMale.UnChecked += femaleChk_Checked;
+        _chkMale.Unchecked += femaleChk_Checked;
 
         // Female Checkbox
         _chkFemale = new LabeledCheckBox(genderBackground, "FemaleCheckbox")
@@ -135,7 +135,7 @@ public partial class CreateCharacterWindow : ImagePanel
         };
 
         _chkFemale.Checked += femaleChk_Checked;
-        _chkFemale.UnChecked += maleChk_Checked;
+        _chkFemale.Unchecked += maleChk_Checked;
 
         // Register - Send Registration Button
         _createButton = new Button(this, "CreateButton")
@@ -316,7 +316,7 @@ public partial class CreateCharacterWindow : ImagePanel
         }
     }
 
-    private void _prevSpriteButton_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _prevSpriteButton_Clicked(Base sender, MouseButtonState arguments)
     {
         _displaySpriteIndex--;
         if (_chkMale.IsChecked)
@@ -351,7 +351,7 @@ public partial class CreateCharacterWindow : ImagePanel
         UpdateDisplay();
     }
 
-    private void _nextSpriteButton_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _nextSpriteButton_Clicked(Base sender, MouseButtonState arguments)
     {
         _displaySpriteIndex++;
         if (_chkMale.IsChecked)
@@ -432,7 +432,7 @@ public partial class CreateCharacterWindow : ImagePanel
         UpdateDisplay();
     }
 
-    void CreateButton_Clicked(Base sender, ClickedEventArgs arguments)
+    void CreateButton_Clicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.WaitingOnServer)
         {
@@ -442,7 +442,7 @@ public partial class CreateCharacterWindow : ImagePanel
         TryCreateCharacter();
     }
 
-    private void BackButton_Clicked(Base sender, ClickedEventArgs arguments)
+    private void BackButton_Clicked(Base sender, MouseButtonState arguments)
     {
         Hide();
         if (Options.Instance.Player.MaxCharacters <= 1)

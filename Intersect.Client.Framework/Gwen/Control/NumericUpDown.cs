@@ -71,7 +71,7 @@ public partial class NumericUpDown : TextBoxNumeric
     {
         if (down)
         {
-            DownButtonOnClicked(null, new ClickedEventArgs(0, 0, true));
+            DownButtonOnClicked(this, new MouseButtonState(default, 0, 0, true));
         }
 
         return true;
@@ -90,7 +90,7 @@ public partial class NumericUpDown : TextBoxNumeric
     ///     Handler for the button down event.
     /// </summary>
     /// <param name="control">Event source.</param>
-    protected virtual void DownButtonOnClicked(Base control, ClickedEventArgs args)
+    protected virtual void DownButtonOnClicked(Base control, MouseButtonState args)
     {
         Value -= Step;
     }

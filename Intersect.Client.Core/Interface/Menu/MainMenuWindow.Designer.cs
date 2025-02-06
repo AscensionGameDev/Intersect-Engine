@@ -69,19 +69,19 @@ public partial class MainMenuWindow
             button.SetHoverSound("octave-tap-resonant.wav");
 
             var buttonName = button.Name;
-            button.SetImage(
+            button.SetStateTexture(
                 $"mainmenu{buttonName}.png",
                 Button.ControlState.Normal
             );
-            button.SetImage(
+            button.SetStateTexture(
                 $"mainmenu{buttonName}_clicked.png",
-                Button.ControlState.Clicked
+                Button.ControlState.Active
             );
-            button.SetImage(
+            button.SetStateTexture(
                 $"mainmenu{buttonName}_disabled.png",
                 Button.ControlState.Disabled
             );
-            button.SetImage(
+            button.SetStateTexture(
                 $"mainmenu{buttonName}_hovered.png",
                 Button.ControlState.Hovered
             );

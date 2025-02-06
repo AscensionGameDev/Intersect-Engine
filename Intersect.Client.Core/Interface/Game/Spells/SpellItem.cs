@@ -59,7 +59,6 @@ public partial class SpellItem
         Pnl = new ImagePanel(Container, "SpellIcon");
         Pnl.HoverEnter += pnl_HoverEnter;
         Pnl.HoverLeave += pnl_HoverLeave;
-        Pnl.RightClicked += pnl_RightClicked;
         Pnl.Clicked += pnl_Clicked;
         Pnl.DoubleClicked += Pnl_DoubleClicked;
         mCooldownLabel = new Label(Pnl, "SpellCooldownLabel");
@@ -67,26 +66,31 @@ public partial class SpellItem
         mCooldownLabel.TextColor = new Color(0, 255, 255, 255);
     }
 
-    private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
+    private void Pnl_DoubleClicked(Base sender, MouseButtonState arguments)
     {
         Globals.Me.TryUseSpell(mYindex);
     }
 
-    void pnl_Clicked(Base sender, ClickedEventArgs arguments)
+    void pnl_Clicked(Base sender, MouseButtonState arguments)
     {
-        mClickTime = Timing.Global.MillisecondsUtc + 500;
-    }
+        switch (arguments.MouseButton)
+        {
+            case MouseButton.Left:
+                mClickTime = Timing.Global.MillisecondsUtc + 500;
+                break;
 
-    void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
-    {
-        if (ClientConfiguration.Instance.EnableContextMenus)
-        {
-            mSpellWindow.OpenContextMenu(mYindex);
+            case MouseButton.Right:
+                if (ClientConfiguration.Instance.EnableContextMenus)
+                {
+                    mSpellWindow.OpenContextMenu(mYindex);
+                }
+                else
+                {
+                    Globals.Me?.TryForgetSpell(mYindex);
+                }
+                break;
         }
-        else
-        {
-            Globals.Me.TryForgetSpell(mYindex);
-        }
+
     }
 
     void pnl_HoverLeave(Base sender, EventArgs arguments)
@@ -110,7 +114,7 @@ public partial class SpellItem
 
         mMouseOver = true;
         mCanDrag = true;
-        if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
+        if (Globals.InputManager.MouseButtonDown(MouseButton.Left))
         {
             mCanDrag = false;
 
@@ -201,7 +205,7 @@ public partial class SpellItem
         {
             if (mMouseOver)
             {
-                if (!Globals.InputManager.MouseButtonDown(MouseButtons.Left))
+                if (!Globals.InputManager.MouseButtonDown(MouseButton.Left))
                 {
                     mCanDrag = true;
                     mMouseX = -1;

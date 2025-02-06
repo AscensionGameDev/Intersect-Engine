@@ -25,7 +25,7 @@ public partial class AdminWindow : WindowControl
     public ImagePanel _spritePanel;
     private readonly ComboBox _dropdownFace;
     public ImagePanel _facePanel;
-    private readonly CheckBox _checkboxChronological;
+    private readonly Checkbox _checkboxChronological;
     private TreeControl? _mapList;
 
     public AdminWindow(Base gameCanvas) : base(
@@ -261,7 +261,7 @@ public partial class AdminWindow : WindowControl
         {
             Text = Strings.Admin.MapList,
         };
-        _checkboxChronological = new CheckBox(this, "CheckboxChronological");
+        _checkboxChronological = new Checkbox(this, "CheckboxChronological");
         _checkboxChronological.SetToolTipText(Strings.Admin.ChronologicalTip);
         _checkboxChronological.CheckChanged += (s, e) => UpdateMapList();
         _ = new Label(this, "LabelChronological")
@@ -336,7 +336,7 @@ public partial class AdminWindow : WindowControl
 
     #region Action Handlers
 
-    private void banButton_Clicked(Base sender, ClickedEventArgs arguments)
+    private void banButton_Clicked(Base sender, MouseButtonState arguments)
     {
         if (string.IsNullOrWhiteSpace(_textboxName.Text))
         {
@@ -368,7 +368,7 @@ public partial class AdminWindow : WindowControl
         );
     }
 
-    private void muteButton_Clicked(Base sender, ClickedEventArgs arguments)
+    private void muteButton_Clicked(Base sender, MouseButtonState arguments)
     {
         if (string.IsNullOrWhiteSpace(_textboxName.Text))
         {

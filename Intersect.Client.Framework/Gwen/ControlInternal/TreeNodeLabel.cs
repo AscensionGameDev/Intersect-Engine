@@ -33,7 +33,7 @@ public partial class TreeNodeLabel : Button
             return;
         }
 
-        if (IsDepressed || ToggleState)
+        if (IsActive || ToggleState)
         {
             TextColor = Skin.Colors.Tree.Selected;
 

@@ -81,9 +81,9 @@ public partial class MainMenuWindow : Window
         _buttonStart.Clicked += _buttonStart_Clicked;
     }
 
-    private void _buttonCredits_Clicked(Base sender, ClickedEventArgs arguments) => _mainMenu.SwitchToWindow<CreditsWindow>();
+    private void _buttonCredits_Clicked(Base sender, MouseButtonState arguments) => _mainMenu.SwitchToWindow<CreditsWindow>();
 
-    private static void _buttonExit_Clicked(Base sender, ClickedEventArgs arguments)
+    private static void _buttonExit_Clicked(Base sender, MouseButtonState arguments)
     {
         ApplicationContext.Context.Value?.Logger.LogInformation("User clicked exit button.");
         Globals.IsRunning = false;
@@ -91,7 +91,7 @@ public partial class MainMenuWindow : Window
 
     #region Login
 
-    private void _buttonLogin_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _buttonLogin_Clicked(Base sender, MouseButtonState arguments)
     {
         if (Networking.Network.InterruptDisconnectsIfConnected())
         {
@@ -133,7 +133,7 @@ public partial class MainMenuWindow : Window
 
     #region Register
 
-    private void _buttonRegister_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _buttonRegister_Clicked(Base sender, MouseButtonState arguments)
     {
         if (Networking.Network.InterruptDisconnectsIfConnected())
         {
@@ -173,9 +173,9 @@ public partial class MainMenuWindow : Window
 
     #endregion Register
 
-    private void _buttonSettings_Clicked(Base sender, ClickedEventArgs arguments) => _mainMenu.SettingsButton_Clicked();
+    private void _buttonSettings_Clicked(Base sender, MouseButtonState arguments) => _mainMenu.SettingsButton_Clicked();
 
-    private void _buttonStart_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _buttonStart_Clicked(Base sender, MouseButtonState arguments)
     {
         Hide();
         Networking.Network.TryConnect();

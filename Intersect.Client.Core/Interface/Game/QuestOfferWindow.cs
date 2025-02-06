@@ -59,7 +59,7 @@ public partial class QuestOfferWindow
         Interface.InputBlockingElements.Add(mQuestOfferWindow);
     }
 
-    private void _declineButton_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _declineButton_Clicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.QuestOffers.Count > 0)
         {
@@ -68,7 +68,7 @@ public partial class QuestOfferWindow
         }
     }
 
-    private void _acceptButton_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _acceptButton_Clicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.QuestOffers.Count > 0)
         {

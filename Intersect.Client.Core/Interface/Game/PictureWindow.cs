@@ -91,7 +91,7 @@ partial class PictureWindow
         }
     }
 
-    private void MPicture_Clicked(Base sender, ClickedEventArgs arguments)
+    private void MPicture_Clicked(Base sender, MouseButtonState arguments)
     {
         if (Clickable)
         {

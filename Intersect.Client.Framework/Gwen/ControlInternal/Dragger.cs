@@ -2,6 +2,7 @@
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Input;
+using Intersect.Client.Framework.Input;
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal;
@@ -61,7 +62,7 @@ public partial class Dragger : Base
 
     private string mNormalImageFilename;
 
-    protected Base mTarget;
+    protected Base? _target;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Dragger" /> class.
@@ -76,8 +77,8 @@ public partial class Dragger : Base
 
     internal Base Target
     {
-        get => mTarget;
-        set => mTarget = value;
+        get => _target;
+        set => _target = value;
     }
 
     /// <summary>
@@ -90,40 +91,38 @@ public partial class Dragger : Base
     /// </summary>
     public event GwenEventHandler<EventArgs> Dragged;
 
-    /// <summary>
-    ///     Handler invoked on mouse click (left) event.
-    /// </summary>
-    /// <param name="x">X coordinate.</param>
-    /// <param name="y">Y coordinate.</param>
-    /// <param name="down">If set to <c>true</c> mouse button is down.</param>
-    protected override void OnMouseClickedLeft(int x, int y, bool down, bool automated = false)
+    protected override void OnMouseDown(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
-        if (null == mTarget)
+        base.OnMouseDown(mouseButton, mousePosition, userAction);
+
+        if (_target is null)
         {
             return;
         }
 
-        if (down)
+        mHeld = true;
+
+        if (userAction)
         {
-            mHeld = true;
-
-            //Play Mouse Down Sound
-            if (!automated)
-            {
-                base.PlaySound(mMouseDownSound);
-            }
-
-            mHoldPos = mTarget.CanvasPosToLocal(new Point(x, y));
-            InputHandler.MouseFocus = this;
+            base.PlaySound(mMouseDownSound);
         }
-        else
-        {
-            mHeld = false;
 
-            //Play Mouse Up Sound
+        mHoldPos = _target.CanvasPosToLocal(mousePosition);
+        InputHandler.MouseFocus = this;
+    }
+
+    protected override void OnMouseUp(MouseButton mouseButton, Point mousePosition, bool userAction = true)
+    {
+        base.OnMouseUp(mouseButton, mousePosition, userAction);
+
+        mHeld = false;
+
+        if (userAction)
+        {
             base.PlaySound(mMouseUpSound);
-            InputHandler.MouseFocus = null;
         }
+
+        InputHandler.MouseFocus = null;
     }
 
     /// <summary>
@@ -135,7 +134,7 @@ public partial class Dragger : Base
     /// <param name="dy">Y change.</param>
     protected override void OnMouseMoved(int x, int y, int dx, int dy)
     {
-        if (null == mTarget)
+        if (null == _target)
         {
             return;
         }
@@ -146,11 +145,11 @@ public partial class Dragger : Base
         }
 
         Point position = new(x - mHoldPos.X, y - mHoldPos.Y);
-        if (mTarget.Parent is { } parent)
+        if (_target.Parent is { } parent)
         {
             position = parent.ToLocal(position.X, position.Y);
         }
-        mTarget.MoveTo(position.X, position.Y);
+        _target.MoveTo(position.X, position.Y);
         Dragged?.Invoke(this, EventArgs.Empty);
     }
 

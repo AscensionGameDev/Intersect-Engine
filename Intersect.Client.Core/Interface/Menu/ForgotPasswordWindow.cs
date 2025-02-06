@@ -85,7 +85,7 @@ public partial class ForgotPasswordWindow
 
     public bool IsHidden => mResetWindow.IsHidden;
 
-    private void Textbox_Clicked(Base sender, ClickedEventArgs arguments)
+    private void Textbox_Clicked(Base sender, MouseButtonState arguments)
     {
         Globals.InputManager.OpenKeyboard(KeyboardType.Normal, mInputTextbox.Text, false, false, false);
     }
@@ -117,7 +117,7 @@ public partial class ForgotPasswordWindow
         mInputTextbox.Text = string.Empty;
     }
 
-    void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    void BackBtn_Clicked(Base sender, MouseButtonState arguments)
     {
         Hide();
         Interface.MenuUi.MainMenu.NotifyOpenLogin();
@@ -128,7 +128,7 @@ public partial class ForgotPasswordWindow
         TrySendCode();
     }
 
-    void SubmitBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    void SubmitBtn_Clicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.WaitingOnServer)
         {

@@ -89,7 +89,7 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
 
     #region Input Handling
 
-    private void _txtUsername_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _txtUsername_Clicked(Base sender, MouseButtonState arguments)
     {
         Globals.InputManager.OpenKeyboard(
             KeyboardType.Normal,
@@ -105,7 +105,7 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
         _useSavedPass = false;
     }
 
-    private void _txtPassword_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _txtPassword_Clicked(Base sender, MouseButtonState arguments)
     {
         Globals.InputManager.OpenKeyboard(
             KeyboardType.Password,
@@ -115,12 +115,12 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
         );
     }
 
-    private static void _btnForgotPassword_Clicked(Base sender, ClickedEventArgs arguments)
+    private static void _btnForgotPassword_Clicked(Base sender, MouseButtonState arguments)
     {
         Interface.MenuUi.MainMenu.NotifyOpenForgotPassword();
     }
 
-    private void _btnBack_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _btnBack_Clicked(Base sender, MouseButtonState arguments)
     {
         Hide();
         _mainMenu.Show();

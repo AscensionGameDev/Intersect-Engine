@@ -3,6 +3,7 @@ using Intersect.Client.Framework.Gwen.Anim;
 using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Audio;
+using Intersect.Client.Framework.Input;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
@@ -315,15 +316,8 @@ public partial class Canvas : Base
     ///     Handles mouse button events. Called from Input subsystems.
     /// </summary>
     /// <returns>True if handled.</returns>
-    public bool Input_MouseButton(int button, bool down)
-    {
-        if (IsHidden)
-        {
-            return false;
-        }
-
-        return InputHandler.OnMouseClicked(this, button, down);
-    }
+    public bool Input_MouseButton(MouseButton button, bool down) =>
+        !IsHidden && InputHandler.OnMouseButtonStateChanged(this, button, down);
 
     /// <summary>
     ///     Handles mouse button events. Called from Input subsystems.

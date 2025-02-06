@@ -79,7 +79,6 @@ public partial class HotbarItem
         };
         _contentPanel.HoverEnter += hotbarIcon_HoverEnter;
         _contentPanel.HoverLeave += hotbarIcon_HoverLeave;
-        _contentPanel.RightClicked += hotbarIcon_RightClicked;
         _contentPanel.Clicked += hotbarIcon_Clicked;
 
         var font = GameContentManager.Current.GetFont("sourcesansproblack", 8);
@@ -162,19 +161,18 @@ public partial class HotbarItem
         }
     }
 
-    private void hotbarIcon_RightClicked(Base sender, ClickedEventArgs arguments)
+    private void hotbarIcon_Clicked(Base sender, MouseButtonState arguments)
     {
-        if (Globals.Me == null)
+        switch (arguments.MouseButton)
         {
-            return;
+            case MouseButton.Left:
+                _clickTime = Timing.Global.MillisecondsUtc + 500;
+                break;
+
+            case MouseButton.Right:
+                Globals.Me?.AddToHotbar(_hotbarSlotIndex, -1, -1);
+                break;
         }
-
-        Globals.Me.AddToHotbar(_hotbarSlotIndex, -1, -1);
-    }
-
-    private void hotbarIcon_Clicked(Base sender, ClickedEventArgs arguments)
-    {
-        _clickTime = Timing.Global.MillisecondsUtc + 500;
     }
 
     private void hotbarIcon_HoverLeave(Base sender, EventArgs arguments)
@@ -204,7 +202,7 @@ public partial class HotbarItem
 
         _mouseOver = true;
         _canDrag = true;
-        if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
+        if (Globals.InputManager.MouseButtonDown(MouseButton.Left))
         {
             _canDrag = false;
 
@@ -529,7 +527,7 @@ public partial class HotbarItem
 
                 if (_mouseOver)
                 {
-                    if (!Globals.InputManager.MouseButtonDown(MouseButtons.Left))
+                    if (!Globals.InputManager.MouseButtonDown(MouseButton.Left))
                     {
                         _canDrag = true;
                         _mouseX = -1;

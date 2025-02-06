@@ -42,15 +42,20 @@ public partial class EquipmentItem
     {
         Pnl.HoverEnter += pnl_HoverEnter;
         Pnl.HoverLeave += pnl_HoverLeave;
-        Pnl.RightClicked += pnl_RightClicked;
+        Pnl.Clicked += pnl_RightClicked;
 
         ContentPanel = new ImagePanel(Pnl, "EquipmentIcon");
         ContentPanel.MouseInputEnabled = false;
         Pnl.SetToolTipText(Options.Instance.Equipment.Slots[mYindex]);
     }
 
-    void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
+    void pnl_RightClicked(Base sender, MouseButtonState arguments)
     {
+        if (arguments.MouseButton != MouseButton.Right)
+        {
+            return;
+        }
+
         if (ClientConfiguration.Instance.EnableContextMenus)
         {
             var window = Interface.GameUi.GameMenu.GetInventoryWindow();
@@ -67,7 +72,7 @@ public partial class EquipmentItem
         {
             PacketSender.SendUnequipItem(mYindex);
         }
-        
+
     }
 
     void pnl_HoverLeave(Base sender, EventArgs arguments)
@@ -86,7 +91,7 @@ public partial class EquipmentItem
             return;
         }
 
-        if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
+        if (Globals.InputManager.MouseButtonDown(MouseButton.Left))
         {
             return;
         }
