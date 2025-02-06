@@ -515,7 +515,7 @@ public partial class TreeNode : Base
 
     public void SetImage(GameTexture texture, string fileName = "")
     {
-        _label.SetStateTexture(texture, fileName, Button.ControlState.Normal);
+        _label.SetStateTexture(texture, fileName, ComponentState.Normal);
     }
 
     protected override void OnChildAdded(Base child)

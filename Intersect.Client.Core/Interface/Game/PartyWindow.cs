@@ -54,7 +54,7 @@ public partial class PartyWindow
         mLeader.Hide();
 
         mLeaderText = new Label(mPartyWindow, "LeaderText");
-        mLeaderText.SetTextColor(new Color(0, 0, 0, 0), Label.ControlState.Normal);
+        mLeaderText.SetTextColor(new Color(0, 0, 0, 0), ComponentState.Normal);
         mLeaderText.Text = Strings.Parties.Leader;
         mLeaderText.Hide();
 
@@ -89,11 +89,11 @@ public partial class PartyWindow
             mHpBarContainer[i].Hide();
             mHpLabel.Add(new Label(mPartyWindow, "HealthLabel" + i));
             mHpLabel[i].Hide();
-            mHpLabel[i].SetTextColor(new Color(0, 0, 0, 0), Label.ControlState.Normal);
+            mHpLabel[i].SetTextColor(new Color(0, 0, 0, 0), ComponentState.Normal);
             mHpLabel[i].Text = Strings.Parties.Vital0;
             mHpValue.Add(new Label(mPartyWindow, "HealthValue" + i));
             mHpValue[i].Hide();
-            mHpValue[i].SetTextColor(new Color(0, 0, 0, 0), Label.ControlState.Normal);
+            mHpValue[i].SetTextColor(new Color(0, 0, 0, 0), ComponentState.Normal);
             if (i < Globals.Me.Party.Count)
             {
                 mHpBarContainer[i].Show();
@@ -107,11 +107,11 @@ public partial class PartyWindow
             mMpBarContainer[i].RenderColor = new Color(0, 0, 0, 0);
             mMpLabel.Add(new Label(mPartyWindow, "ManaLabel" + i));
             mMpLabel[i].Hide();
-            mMpLabel[i].SetTextColor(new Color(0, 0, 0, 0), Label.ControlState.Normal);
+            mMpLabel[i].SetTextColor(new Color(0, 0, 0, 0), ComponentState.Normal);
             mMpLabel[i].Text = Strings.Parties.Vital1;
             mMpValue.Add(new Label(mPartyWindow, "ManaValue" + i));
             mMpValue[i].Hide();
-            mMpValue[i].SetTextColor(new Color(0, 0, 0, 0), Label.ControlState.Normal);
+            mMpValue[i].SetTextColor(new Color(0, 0, 0, 0), ComponentState.Normal);
             mMpBar.Add(new ImagePanel(mMpBarContainer[i], "ManaBar" + i));
             mMpBar[i].RenderColor = new Color(0, 0, 0, 0);
 

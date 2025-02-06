@@ -112,7 +112,7 @@ public partial class CharacterWindow
         mCharacterWindow.DisableResizing();
 
         mCharacterName = new Label(mCharacterWindow, "CharacterNameLabel");
-        mCharacterName.SetTextColor(Color.White, Label.ControlState.Normal);
+        mCharacterName.SetTextColor(Color.White, ComponentState.Normal);
 
         mCharacterLevelAndClass = new Label(mCharacterWindow, "ChatacterInfoLabel");
         mCharacterLevelAndClass.SetText("");

@@ -277,22 +277,10 @@ public static partial class Interface
         _onCreatedGameUi.Enqueue(action);
     }
 
-    public static Framework.Gwen.Control.Base FindControlAtCursor()
+    public static Framework.Gwen.Control.Base? FindComponentUnderCursor(ComponentStateFilters filters = default)
     {
-        var currentElement = CurrentInterface?.Root;
         var cursor = new Point(InputHandler.MousePosition.X, InputHandler.MousePosition.Y);
-
-        while (default != currentElement)
-        {
-            var elementAt = currentElement.GetControlAt(cursor);
-            if (elementAt == currentElement || elementAt == default)
-            {
-                break;
-}
-
-            currentElement = elementAt;
-        }
-
-        return currentElement;
+        var componentUnderCursor = CurrentInterface?.Root.GetComponentAt(cursor, filters);
+        return componentUnderCursor;
     }
 }

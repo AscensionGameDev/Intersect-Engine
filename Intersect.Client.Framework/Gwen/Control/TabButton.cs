@@ -174,18 +174,18 @@ public partial class TabButton : Button
     {
         var colorSource = IsTabActive ? Skin.Colors.Tab.Active : Skin.Colors.Tab.Inactive;
 
-        var textColor = GetTextColor(ControlState.Normal) ?? colorSource.Normal;
+        var textColor = GetTextColor(ComponentState.Normal) ?? colorSource.Normal;
         if (IsDisabled)
         {
-            textColor = GetTextColor(ControlState.Disabled) ?? colorSource.Disabled;
+            textColor = GetTextColor(ComponentState.Disabled) ?? colorSource.Disabled;
         }
         else if (IsActive)
         {
-            textColor = GetTextColor(ControlState.Active) ?? colorSource.Active;
+            textColor = GetTextColor(ComponentState.Active) ?? colorSource.Active;
         }
         else if (IsHovered)
         {
-            textColor = GetTextColor(ControlState.Hovered) ?? colorSource.Hover;
+            textColor = GetTextColor(ComponentState.Hovered) ?? colorSource.Hover;
         }
 
         // ApplicationContext.CurrentContext.Logger.LogInformation(

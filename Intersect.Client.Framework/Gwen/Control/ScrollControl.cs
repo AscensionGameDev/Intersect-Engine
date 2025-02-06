@@ -366,15 +366,15 @@ render->RenderText( skin->GetDefaultFont(), Gwen::Point( 0, 0 ), Utility::Format
         _innerPanel.SetPosition(newInnerPanelPosX, newInnerPanelPosY);
         _updatingScrollbars = false;
 
-        ApplicationContext.CurrentContext.Logger.LogDebug(
-            "Updated {ControlTypeName} '{ControlCanonicalName}' scrollbars Available=({AvailableSize}) Content=({ContentSize}) Show Scrollbars ({ShowScrollbarX}, {ShowScrollbarY})",
-            GetType().GetName(qualified: true),
-            CanonicalName,
-            new Point(availableWidth, availableHeight),
-            new Point(updatedWidth, updatedHeight),
-            showScrollH,
-            showScrollV
-        );
+        // ApplicationContext.CurrentContext.Logger.LogTrace(
+        //     "Updated {ControlTypeName} '{ControlCanonicalName}' scrollbars Available=({AvailableSize}) Content=({ContentSize}) Show Scrollbars ({ShowScrollbarX}, {ShowScrollbarY})",
+        //     GetType().GetName(qualified: true),
+        //     CanonicalName,
+        //     new Point(availableWidth, availableHeight),
+        //     new Point(updatedWidth, updatedHeight),
+        //     showScrollH,
+        //     showScrollV
+        // );
     }
 
     public override void Invalidate()

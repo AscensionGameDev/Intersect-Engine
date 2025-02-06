@@ -118,13 +118,14 @@ public partial class WindowControl : ResizableControl
 
         _titleLabel = new Label(_titlebar, name: nameof(Title))
         {
+            AutoSizeToContents = false,
             Dock = Pos.Fill | Pos.CenterV,
             Font = titleLabelFont,
-            MouseInputEnabled = true,
-            Padding = new Padding(8, 4, 4, 4),
+            MouseInputEnabled = false,
             Text = title,
             TextAlign = Pos.Left | Pos.Bottom,
             TextColor = Skin.Colors.Window.TitleInactive,
+            TextPadding = new Padding(8, 0, 8, 0),
         };
 
         _closeButton = new CloseButton(_titlebar, this, name: nameof(CloseButton))
@@ -308,7 +309,7 @@ public partial class WindowControl : ResizableControl
     public override void ProcessAlignments()
     {
         base.ProcessAlignments();
-        _titlebar.ProcessAlignments();
+        // _titlebar.ProcessAlignments();
     }
 
     public void Close()

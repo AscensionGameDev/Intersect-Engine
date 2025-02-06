@@ -19,7 +19,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
-
 /// <summary>
 ///     Base control class.
 /// </summary>
@@ -647,9 +646,9 @@ public partial class Base : IDisposable
 
     protected virtual Point InnerPanelSizeFrom(Point size) => size;
 
-    public virtual bool IsHiddenByTree => mHidden || (Parent?.IsHidden ?? false);
+    public virtual bool IsHiddenByTree => mHidden || (Parent?.IsHiddenByTree ?? false);
 
-    public virtual bool IsDisabledByTree => _disabled || (Parent?.IsDisabled ?? false);
+    public virtual bool IsDisabledByTree => _disabled || (Parent?.IsDisabledByTree ?? false);
 
     /// <summary>
     ///     Determines whether the control's position should be restricted to parent's bounds.
@@ -1029,20 +1028,21 @@ public partial class Base : IDisposable
             : mBounds;
 
         var serializedProperties = new JObject(
-            new JProperty("Bounds", Rectangle.ToString(boundsToWrite)),
-            new JProperty("Padding", Padding.ToString(mPadding)),
+            new JProperty(nameof(Bounds), Rectangle.ToString(boundsToWrite)),
+            new JProperty(nameof(Dock), Dock.ToString()),
+            new JProperty(nameof(Padding), Padding.ToString(mPadding)),
             new JProperty("AlignmentEdgeDistances", Padding.ToString(mAlignmentDistance)),
             new JProperty("AlignmentTransform", mAlignmentTransform.ToString()),
-            new JProperty("Margin", mMargin.ToString()),
-            new JProperty("RenderColor", Color.ToString(mColor)),
-            new JProperty("Alignments", string.Join(",", mAlignments.ToArray())),
+            new JProperty(nameof(Margin), mMargin.ToString()),
+            new JProperty(nameof(RenderColor), Color.ToString(mColor)),
+            new JProperty(nameof(Alignments), string.Join(",", mAlignments.ToArray())),
             new JProperty("DrawBackground", mDrawBackground),
-            new JProperty("MinimumSize", _minimumSize.ToString()),
-            new JProperty("MaximumSize", _maximumSize.ToString()),
+            new JProperty(nameof(MinimumSize), _minimumSize.ToString()),
+            new JProperty(nameof(MaximumSize), _maximumSize.ToString()),
             new JProperty("Disabled", _disabled),
             new JProperty("Hidden", mHidden),
-            new JProperty("RestrictToParent", mRestrictToParent),
-            new JProperty("MouseInputEnabled", mMouseInputEnabled),
+            new JProperty(nameof(RestrictToParent), mRestrictToParent),
+            new JProperty(nameof(MouseInputEnabled), mMouseInputEnabled),
             new JProperty("HideToolTip", mHideToolTip),
             new JProperty("ToolTipBackground", _tooltipBackgroundName),
             new JProperty("ToolTipFont", _tooltipFontInfo),
@@ -1136,10 +1136,10 @@ public partial class Base : IDisposable
             return;
         }
 
-        if (obj["Alignments"] != null)
+        if (obj[nameof(Alignments)] != null)
         {
             RemoveAlignments();
-            var alignments = ((string) obj["Alignments"]).Split(',');
+            var alignments = ((string) obj[nameof(Alignments)]).Split(',');
             foreach (var alignment in alignments)
             {
                 switch (alignment.ToLower())
@@ -1182,9 +1182,9 @@ public partial class Base : IDisposable
             }
         }
 
-        if (obj["Bounds"] != null)
+        if (obj[nameof(Bounds)] != null)
         {
-            mBoundsOnDisk = Rectangle.FromString((string)obj["Bounds"]);
+            mBoundsOnDisk = Rectangle.FromString((string)obj[nameof(Bounds)]);
             isRoot = isRoot || Parent == default;
             if (isRoot)
             {
@@ -1201,9 +1201,9 @@ public partial class Base : IDisposable
             Dock = dock;
         }
 
-        if (obj["Padding"] != null)
+        if (obj[nameof(Padding)] != null)
         {
-            Padding = Padding.FromString((string) obj["Padding"]);
+            Padding = Padding.FromString((string) obj[nameof(Padding)]);
         }
 
         if (obj["AlignmentEdgeDistances"] != null)
@@ -1216,14 +1216,14 @@ public partial class Base : IDisposable
             mAlignmentTransform = Point.FromString((string) obj["AlignmentTransform"]);
         }
 
-        if (obj["Margin"] != null)
+        if (obj[nameof(Margin)] != null)
         {
-            Margin = Margin.FromString((string) obj["Margin"]);
+            Margin = Margin.FromString((string) obj[nameof(Margin)]);
         }
 
-        if (obj["RenderColor"] != null)
+        if (obj[nameof(RenderColor)] != null)
         {
-            RenderColor = Color.FromString((string) obj["RenderColor"]);
+            RenderColor = Color.FromString((string) obj[nameof(RenderColor)]);
         }
 
         if (obj["DrawBackground"] != null)
@@ -1231,14 +1231,14 @@ public partial class Base : IDisposable
             ShouldDrawBackground = (bool) obj["DrawBackground"];
         }
 
-        if (obj["MinimumSize"] != null)
+        if (obj[nameof(MinimumSize)] != null)
         {
-            MinimumSize = Point.FromString((string) obj["MinimumSize"]);
+            MinimumSize = Point.FromString((string) obj[nameof(MinimumSize)]);
         }
 
-        if (obj["MaximumSize"] != null)
+        if (obj[nameof(MaximumSize)] != null)
         {
-            MaximumSize = Point.FromString((string) obj["MaximumSize"]);
+            MaximumSize = Point.FromString((string) obj[nameof(MaximumSize)]);
         }
 
         if (obj["Disabled"] != null)
@@ -1251,14 +1251,14 @@ public partial class Base : IDisposable
             IsHidden = (bool) obj["Hidden"];
         }
 
-        if (obj["RestrictToParent"] != null)
+        if (obj[nameof(RestrictToParent)] != null)
         {
-            RestrictToParent = (bool) obj["RestrictToParent"];
+            RestrictToParent = (bool) obj[nameof(RestrictToParent)];
         }
 
-        if (obj["MouseInputEnabled"] != null)
+        if (obj[nameof(MouseInputEnabled)] != null)
         {
-            MouseInputEnabled = (bool) obj["MouseInputEnabled"];
+            MouseInputEnabled = (bool) obj[nameof(MouseInputEnabled)];
         }
 
         if (obj["HideToolTip"] != null && (bool) obj["HideToolTip"])
@@ -1314,9 +1314,9 @@ public partial class Base : IDisposable
             innerPanel.LoadJson(tokenInnerPanel);
         }
 
-        if (obj["Children"] != null)
+        if (obj[nameof(Children)] != null)
         {
-            var children = obj["Children"];
+            var children = obj[nameof(Children)];
             foreach (JProperty tkn in children)
             {
                 var name = tkn.Name;
@@ -1335,6 +1335,11 @@ public partial class Base : IDisposable
 
     public virtual void ProcessAlignments()
     {
+        if (this is Label { Text: "Debug" })
+        {
+            this.ToString();
+        }
+
         foreach (var alignment in mAlignments)
         {
             switch (alignment)
@@ -1535,7 +1540,7 @@ public partial class Base : IDisposable
                 return;
             }
 
-            labelTooltip = new Label(this, name: "Tooltip")
+            labelTooltip = new Label(this, name: nameof(Tooltip))
             {
                 AutoSizeToContents = true,
                 Font = _tooltipFont ?? GameContentManager.Current?.GetFont("sourcesansproblack", 10),
@@ -2524,6 +2529,11 @@ public partial class Base : IDisposable
     /// </summary>
     internal bool InputMouseWheeled(int delta)
     {
+        if (IsDisabledByTree)
+        {
+            return false;
+        }
+
         return OnMouseWheeled(delta);
     }
 
@@ -2546,6 +2556,11 @@ public partial class Base : IDisposable
     /// </summary>
     internal bool InputMouseHWheeled(int delta)
     {
+        if (IsDisabledByTree)
+        {
+            return false;
+        }
+
         return OnMouseHWheeled(delta);
     }
 
@@ -2565,17 +2580,32 @@ public partial class Base : IDisposable
     /// </summary>
     internal void InputMouseMoved(int x, int y, int dx, int dy)
     {
+        if (IsDisabledByTree)
+        {
+            return;
+        }
+
         OnMouseMoved(x, y, dx, dy);
     }
 
     internal void InputNonUserMouseClicked(MouseButton mouseButton, Point mousePosition, bool isPressed)
     {
+        if (IsDisabledByTree)
+        {
+            return;
+        }
+
         OnMouseDoubleClicked(mouseButton, mousePosition, userAction: false);
         Clicked?.Invoke(this, new MouseButtonState(mouseButton, mousePosition, isPressed: isPressed));
     }
 
     internal void InputMouseDoubleClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
+        if (IsDisabledByTree)
+        {
+            return;
+        }
+
         OnMouseDoubleClicked(mouseButton, mousePosition, userAction);
         DoubleClicked?.Invoke(this, new MouseButtonState(mouseButton, mousePosition, true));
     }
@@ -2658,6 +2688,7 @@ public partial class Base : IDisposable
 
     internal void InputMouseButtonState(MouseButton mouseButton, Point mousePosition, bool pressed, bool userAction = true)
     {
+        var emitsEvents = !IsDisabledByTree;
         var mouseButtonStateArgs = new MouseButtonState(mouseButton, mousePosition.X, mousePosition.Y, pressed);
         var wasActive = IsMouseButtonActive(mouseButton);
         if (pressed)
@@ -2668,7 +2699,10 @@ public partial class Base : IDisposable
             if (!wasActive)
             {
                 OnMouseDown(mouseButton, mousePosition, userAction);
-                MouseDown?.Invoke(this, mouseButtonStateArgs);
+                if (emitsEvents)
+                {
+                    MouseDown?.Invoke(this, mouseButtonStateArgs);
+                }
             }
         }
         else
@@ -2676,7 +2710,10 @@ public partial class Base : IDisposable
             if (IsHovered && wasActive)
             {
                 OnMouseClicked(mouseButton, mousePosition, userAction);
-                Clicked?.Invoke(this, mouseButtonStateArgs);
+                if (emitsEvents)
+                {
+                    Clicked?.Invoke(this, mouseButtonStateArgs);
+                }
             }
 
             _mouseButtonPressed[mouseButton] = false;
@@ -2685,7 +2722,10 @@ public partial class Base : IDisposable
             if (wasActive)
             {
                 OnMouseUp(mouseButton, mousePosition, userAction);
-                MouseUp?.Invoke(this, mouseButtonStateArgs);
+                if (emitsEvents)
+                {
+                    MouseUp?.Invoke(this, mouseButtonStateArgs);
+                }
             }
         }
 
@@ -2700,6 +2740,11 @@ public partial class Base : IDisposable
     /// </summary>
     internal void InputMouseEntered()
     {
+        if (IsDisabledByTree)
+        {
+            return;
+        }
+
         OnMouseEntered();
     }
 
@@ -2729,6 +2774,11 @@ public partial class Base : IDisposable
     /// </summary>
     internal void InputMouseLeft()
     {
+        if (IsDisabledByTree)
+        {
+            return;
+        }
+
         OnMouseLeft();
 
         IsActive = false;
@@ -2796,33 +2846,48 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Gets a child by its coordinates.
     /// </summary>
-    /// <param name="x">Child X.</param>
-    /// <param name="y">Child Y.</param>
+    /// <param name="x">The local X coordinate to check.</param>
+    /// <param name="y">The local Y coordinate to check.</param>
+    /// <param name="filters"></param>
     /// <returns>Control or null if not found.</returns>
-    public virtual Base? GetControlAt(int x, int y)
+    public Base? GetComponentAt(int x, int y, ComponentStateFilters filters = default)
     {
-        // Return null if control is hidden or coordinates are outside the control's bounds.
-        if (IsHidden || x < 0 || y < 0 || x >= Width || y >= Height)
+        // If it's out of our bounds, return null
+        if (x < 0 || Width <= x || y < 0 || Height <= y)
         {
             return null;
         }
 
-        // Check children in reverse order (last added first).
-        for (int i = mChildren.Count - 1; i >= 0; i--)
+        // If we and/or an ancestor are hidden, return null if we aren't explicitly allowing hidden components
+        if (IsHidden)
         {
-            var child = mChildren[i];
-            var found = child.GetControlAt(x - child.X, y - child.Y);
-            if (found != null)
+            if (!filters.HasFlag(ComponentStateFilters.IncludeHidden))
             {
-                return found;
+                return null;
             }
         }
 
-        // Return control if it is mouse input enabled, otherwise return null.
-        return MouseInputEnabled ? this : null;
+        // Check children in reverse order (last added first).
+        for (int childIndex = mChildren.Count - 1; childIndex >= 0; childIndex--)
+        {
+            var child = mChildren[childIndex];
+            if (child.GetComponentAt(x - child.X, y - child.Y, filters) is { } descendant)
+            {
+                return descendant;
+            }
+        }
+
+        // By default, we only return components that are mouse-input enabled, but if the filters include
+        // those components explicitly, we can return them too. This is particularly useful for debugging.
+        if (MouseInputEnabled || filters.HasFlag(ComponentStateFilters.IncludeMouseInputDisabled))
+        {
+            return this;
+        }
+
+        return null;
     }
 
-    public virtual Base GetControlAt(Point point) => GetControlAt(point.X, point.Y);
+    public Base? GetComponentAt(Point point, ComponentStateFilters filters = default) => GetComponentAt(point.X, point.Y, filters);
 
     /// <summary>
     ///     Lays out the control's interior according to alignment, padding, dock etc.
@@ -3526,6 +3591,11 @@ public partial class Base : IDisposable
     /// </summary>
     internal bool InputKeyPressed(Key key, bool down = true)
     {
+        if (IsDisabledByTree)
+        {
+            return false;
+        }
+
         return OnKeyPressed(key, down);
     }
 
@@ -3536,6 +3606,11 @@ public partial class Base : IDisposable
     /// <returns>True if handled.</returns>
     protected virtual bool OnKeyReleaseed(Key key)
     {
+        if (IsDisabledByTree)
+        {
+            return false;
+        }
+
         return OnKeyPressed(key, false);
     }
 
@@ -3767,11 +3842,22 @@ public partial class Base : IDisposable
 
     internal void InputPaste(Base from)
     {
+        if (IsDisabledByTree)
+        {
+            return;
+        }
+
         OnPaste(from, EventArgs.Empty);
     }
 
     internal void InputCut(Base from)
     {
+        if (IsDisabledByTree)
+        {
+            OnCopy(from, EventArgs.Empty);
+            return;
+        }
+
         OnCut(from, EventArgs.Empty);
     }
 
@@ -3848,6 +3934,11 @@ public partial class Base : IDisposable
 
     internal bool InputChar(Char chr)
     {
+        if (IsDisabledByTree)
+        {
+            return false;
+        }
+
         return OnChar(chr);
     }
 

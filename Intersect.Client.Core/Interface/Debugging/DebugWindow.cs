@@ -152,7 +152,7 @@ internal sealed partial class DebugWindow : Window
 
     protected override void EnsureInitialized()
     {
-        LoadJsonUi(UI.Debug, Graphics.Renderer?.GetResolutionString());
+        // LoadJsonUi(UI.Debug, Graphics.Renderer?.GetResolutionString());
 
         foreach (var generator in _generators)
         {
@@ -402,7 +402,11 @@ internal sealed partial class DebugWindow : Window
         table.AddRow(Strings.Internals.Margin, name: "MarginRow").Listen(controlUnderCursorProvider, 7);
         table.AddRow(Strings.Internals.Padding, name: "PaddingRow").Listen(controlUnderCursorProvider, 8);
         table.AddRow(Strings.Internals.Dock, name: "Dock").Listen(controlUnderCursorProvider, 9);
-        // table.AddRow(Strings.Internals.ColorOverride, name: "ControlUnderCursorRow").Listen(controlUnderCursorProvider, 10);
+        table.AddRow(Strings.Internals.Alignment, name: "Alignment").Listen(controlUnderCursorProvider, 10);
+        table.AddRow(Strings.Internals.TextAlign, name: "TextAlign").Listen(controlUnderCursorProvider, 11);
+        table.AddRow(Strings.Internals.TextPadding, name: "TextPadding").Listen(controlUnderCursorProvider, 12);
+        table.AddRow(Strings.Internals.Font, name: "Font").Listen(controlUnderCursorProvider, 13);
+        table.AddRow(Strings.Internals.AutoSizeToContents, name: "AutoSizeToContents").Listen(controlUnderCursorProvider, 14);
         _generators.Add(controlUnderCursorProvider.Generator);
 
         var rows = table.Children.OfType<TableRow>().ToArray();
@@ -426,19 +430,19 @@ internal sealed partial class DebugWindow : Window
         public ControlUnderCursorProvider(Base owner)
         {
             _owner = owner;
-            Generator = new CancellableGenerator<Base>(CreateControlUnderCursorGenerator);
+            Generator = new CancellableGenerator<Base?>(CreateControlUnderCursorGenerator);
         }
 
         public event TableDataChangedEventHandler? DataChanged;
 
-        public CancellableGenerator<Base> Generator { get; }
+        public CancellableGenerator<Base?> Generator { get; }
 
         public void Start()
         {
             _ = Generator;
         }
 
-        private AsyncValueGenerator<Base> CreateControlUnderCursorGenerator(CancellationToken cancellationToken) => new(
+        private AsyncValueGenerator<Base?> CreateControlUnderCursorGenerator(CancellationToken cancellationToken) => new(
             () => WaitForOwnerVisible(cancellationToken).ContinueWith(CreateValue, TaskScheduler.Current),
             HandleValue,
             cancellationToken
@@ -461,9 +465,10 @@ internal sealed partial class DebugWindow : Window
             cancellationToken.ThrowIfCancellationRequested();
         }
 
-        private static Base CreateValue(Task _) => Interface.FindControlAtCursor();
+        private static Base? CreateValue(Task _) =>
+            Interface.FindComponentUnderCursor(ComponentStateFilters.IncludeMouseInputDisabled);
 
-        private void HandleValue(Base component)
+        private void HandleValue(Base? component)
         {
             DataChanged?.Invoke(
                 this,
@@ -519,6 +524,28 @@ internal sealed partial class DebugWindow : Window
             DataChanged?.Invoke(
                 this,
                 new TableDataChangedEventArgs(9, 1, default, component?.Dock.ToString() ?? string.Empty)
+            );
+            DataChanged?.Invoke(
+                this,
+                new TableDataChangedEventArgs(10, 1, default, string.Join(", ", component?.Alignment ?? []))
+            );
+
+            var label = component as Label;
+            DataChanged?.Invoke(
+                this,
+                new TableDataChangedEventArgs(11, 1, default, label?.TextAlign.ToString() ?? string.Empty)
+            );
+            DataChanged?.Invoke(
+                this,
+                new TableDataChangedEventArgs(12, 1, default, label?.TextPadding.ToString() ?? string.Empty)
+            );
+            DataChanged?.Invoke(
+                this,
+                new TableDataChangedEventArgs(13, 1, default, label?.Font?.ToString() ?? string.Empty)
+            );
+            DataChanged?.Invoke(
+                this,
+                new TableDataChangedEventArgs(14, 1, default, (component as IAutoSizeToContents)?.AutoSizeToContents.ToString() ?? string.Empty)
             );
         }
     }

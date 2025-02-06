@@ -447,8 +447,8 @@ public partial class SettingsWindow : WindowControl
             InnerPanelPadding = new Padding(4),
         };
 
-        var textureVolumeSlider = Current.GetTexture(TextureType.Gui, "volume_slider.png");
-        var textureVolumeSliderHovered = Current.GetTexture(TextureType.Gui, "volume_slider_hovered.png");
+        var textureVolumeSlider = default(GameTexture);//Current.GetTexture(TextureType.Gui, "volume_slider.png");
+        var textureVolumeSliderHovered = default(GameTexture);//Current.GetTexture(TextureType.Gui, "volume_slider_hovered.png");
 
         // Audio Settings - Music Slider
         _musicSlider = new LabeledSlider(parent: _audioContainer, name: nameof(_musicSlider))
@@ -471,9 +471,9 @@ public partial class SettingsWindow : WindowControl
         };
 
         _musicSlider.ValueChanged += MusicSliderOnValueChanged;
-        _musicSlider.SetDraggerImage(textureVolumeSlider, Dragger.ControlState.Normal);
-        _musicSlider.SetDraggerImage(textureVolumeSliderHovered, Dragger.ControlState.Hovered);
-        _musicSlider.SetDraggerImage(textureVolumeSlider, Dragger.ControlState.Clicked);
+        _musicSlider.SetDraggerImage(textureVolumeSlider, ComponentState.Normal);
+        _musicSlider.SetDraggerImage(textureVolumeSliderHovered, ComponentState.Hovered);
+        _musicSlider.SetDraggerImage(textureVolumeSlider, ComponentState.Active);
         _musicSlider.SetSound("octave-tap-resonant.wav", Dragger.ControlSoundState.Hover);
         _musicSlider.SetSound("octave-tap-professional.wav", Dragger.ControlSoundState.MouseDown);
         _musicSlider.SetSound("octave-tap-professional.wav", Dragger.ControlSoundState.MouseUp);
@@ -499,9 +499,9 @@ public partial class SettingsWindow : WindowControl
         };
 
         _soundEffectsSlider.ValueChanged += SoundEffectsSliderOnValueChanged;
-        _soundEffectsSlider.SetDraggerImage(textureVolumeSlider, Dragger.ControlState.Normal);
-        _soundEffectsSlider.SetDraggerImage(textureVolumeSliderHovered, Dragger.ControlState.Hovered);
-        _soundEffectsSlider.SetDraggerImage(textureVolumeSlider, Dragger.ControlState.Clicked);
+        _soundEffectsSlider.SetDraggerImage(textureVolumeSlider, ComponentState.Normal);
+        _soundEffectsSlider.SetDraggerImage(textureVolumeSliderHovered, ComponentState.Hovered);
+        _soundEffectsSlider.SetDraggerImage(textureVolumeSlider, ComponentState.Active);
         _soundEffectsSlider.SetSound("octave-tap-resonant.wav", Dragger.ControlSoundState.Hover);
         _soundEffectsSlider.SetSound("octave-tap-professional.wav", Dragger.ControlSoundState.MouseDown);
         _soundEffectsSlider.SetSound("octave-tap-professional.wav", Dragger.ControlSoundState.MouseUp);

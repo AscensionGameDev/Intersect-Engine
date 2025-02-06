@@ -108,13 +108,13 @@ public partial class KeyValueRowComponent : ComponentBase
     /// Set the <see cref="Color"/> of the key text.
     /// </summary>
     /// <param name="color">The <see cref="Color"/> to draw the key text in.</param>
-    public void SetKeyTextColor(Color color) => mKeyLabel.SetTextColor(color, Label.ControlState.Normal);
+    public void SetKeyTextColor(Color color) => mKeyLabel.SetTextColor(color, ComponentState.Normal);
 
     /// <summary>
     /// Set the <see cref="Color"/> of the value text.
     /// </summary>
     /// <param name="color">The <see cref="Color"/> to draw the value text in.</param>
-    public void SetValueTextColor(Color color) => mValueLabel.SetTextColor(color, Label.ControlState.Normal);
+    public void SetValueTextColor(Color color) => mValueLabel.SetTextColor(color, ComponentState.Normal);
 
     /// <summary>
     /// Get the Json layout of the current component.

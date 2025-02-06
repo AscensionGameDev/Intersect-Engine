@@ -175,7 +175,7 @@ public partial class Menu : ScrollControl
             Text = text,
             Font = font,
         };
-        newMenuItem.SetStateTexture(iconTexture, textureFilename, Button.ControlState.Normal);
+        newMenuItem.SetStateTexture(iconTexture, textureFilename, ComponentState.Normal);
         newMenuItem.SetAccelerator(accelerator);
 
         OnAddItem(newMenuItem);
@@ -372,8 +372,8 @@ public partial class Menu : ScrollControl
                 itm.Font = mItemFont;
             }
 
-            itm.SetTextColor(mItemNormalTextColor, Label.ControlState.Normal);
-            itm.SetTextColor(mItemHoverTextColor, Label.ControlState.Hovered);
+            itm.SetTextColor(mItemNormalTextColor, ComponentState.Normal);
+            itm.SetTextColor(mItemHoverTextColor, ComponentState.Hovered);
         }
     }
 

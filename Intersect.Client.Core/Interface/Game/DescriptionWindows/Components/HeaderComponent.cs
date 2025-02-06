@@ -53,7 +53,7 @@ public partial class HeaderComponent : ComponentBase
     public void SetTitle(string title, Color color)
     {
         mTitle.SetText(title);
-        mTitle.SetTextColor(color, Label.ControlState.Normal);
+        mTitle.SetTextColor(color, ComponentState.Normal);
     }
 
     /// <summary>
@@ -64,7 +64,7 @@ public partial class HeaderComponent : ComponentBase
     public void SetSubtitle(string subtitle, Color color)
     {
         mSubtitle.SetText(subtitle);
-        mSubtitle.SetTextColor(color, Label.ControlState.Normal);
+        mSubtitle.SetTextColor(color, ComponentState.Normal);
     }
 
     /// <summary>
@@ -75,6 +75,6 @@ public partial class HeaderComponent : ComponentBase
     public void SetDescription(string description, Color color)
     {
         mDescription.SetText(description);
-        mDescription.SetTextColor(color, Label.ControlState.Normal);
+        mDescription.SetTextColor(color, ComponentState.Normal);
     }
 }

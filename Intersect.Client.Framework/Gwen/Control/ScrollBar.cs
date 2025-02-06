@@ -227,13 +227,13 @@ public partial class ScrollBar : Base
 
         var displayedScrollAmount = CalculateScrolledAmount();
         var scrollAmount = _scrollAmount;
-        ApplicationContext.CurrentContext.Logger.LogTrace(
-            "Scrollbar '{ScrollbarName}' at {DisplayedScrollAmount} but should be at {ActualScrollAmount} Size={Size}",
-            CanonicalName,
-            displayedScrollAmount,
-            scrollAmount,
-            mBar.Size
-        );
+        // ApplicationContext.CurrentContext.Logger.LogTrace(
+        //     "Scrollbar '{ScrollbarName}' at {DisplayedScrollAmount} but should be at {ActualScrollAmount} Size={Size}",
+        //     CanonicalName,
+        //     displayedScrollAmount,
+        //     scrollAmount,
+        //     mBar.Size
+        // );
 
         if (!scrollAmount.Equals(displayedScrollAmount))
         {
@@ -280,12 +280,12 @@ public partial class ScrollBar : Base
         return null;
     }
 
-    public void SetScrollBarImage(GameTexture texture, string fileName, Dragger.ControlState state)
+    public void SetScrollBarImage(GameTexture texture, string fileName, ComponentState state)
     {
         mBar.SetImage(texture, fileName, state);
     }
 
-    public GameTexture GetScrollBarImage(Dragger.ControlState state)
+    public GameTexture GetScrollBarImage(ComponentState state)
     {
         return mBar.GetImage(state);
     }

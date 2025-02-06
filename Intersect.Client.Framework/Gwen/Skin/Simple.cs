@@ -1,4 +1,5 @@
 ﻿using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Gwen.ControlInternal;
 
 namespace Intersect.Client.Framework.Gwen.Skin;
 
@@ -850,9 +851,9 @@ public partial class Simple : Skin.Base
         DrawArrowRight(control.RenderBounds);
     }
 
-    public override void DrawSliderButton(Control.Base control, bool depressed, bool horizontal)
+    public override void DrawSliderButton(SliderBar sliderBar)
     {
-        DrawButton(control, depressed, control.IsHovered, control.IsDisabled, control.HasFocus);
+        DrawButton(sliderBar, sliderBar.IsActive, sliderBar.IsHovered, sliderBar.IsDisabled, sliderBar.HasFocus);
     }
 
     public override void DrawCategoryHolder(Control.Base control)

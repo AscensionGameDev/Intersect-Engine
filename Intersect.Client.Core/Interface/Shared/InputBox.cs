@@ -47,7 +47,7 @@ public partial class InputBox : WindowControl
     private readonly ImagePanel _textboxBg;
     private readonly TextBox _textbox;
     private readonly ImagePanel _numericSliderBg;
-    private readonly HorizontalSlider _numericSlider;
+    private readonly Slider _numericSlider;
     private readonly TextBoxNumeric _txtNumericSlider;
     private readonly Button _btnYes;
     private readonly Button _btnNo;
@@ -90,8 +90,9 @@ public partial class InputBox : WindowControl
         _textbox.SubmitPressed += (sender, e) => SubmitInput();
 
         _numericSliderBg = new ImagePanel(this, "Sliderbox");
-        _numericSlider = new HorizontalSlider(_numericSliderBg, "Slider")
+        _numericSlider = new Slider(_numericSliderBg, "Slider")
         {
+            Orientation = Orientation.LeftToRight,
             NotchCount = maxQuantity,
             SnapToNotches = true,
             Min = 1,
@@ -168,7 +169,7 @@ public partial class InputBox : WindowControl
 
     private void _numericSliderTextbox_TextChanged(Base sender, EventArgs arguments)
     {
-        if (sender is HorizontalSlider box && box == _numericSlider)
+        if (sender == _numericSlider)
         {
             return;
         }
