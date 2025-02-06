@@ -17,25 +17,11 @@ namespace Intersect.Client.Framework.Gwen.Control;
 /// </summary>
 public partial class Label : Base, ILabel
 {
-
-    public enum ControlState
-    {
-
-        Normal = 0,
-
-        Hovered,
-
-        Active,
-
-        Disabled,
-
-    }
-
     protected readonly Text _textElement;
 
     private string? _fontInfo;
 
-    private Pos mAlign;
+    private Pos _textAlign;
 
     private bool _autoSizeToContents;
 
@@ -224,8 +210,8 @@ public partial class Label : Base, ILabel
     /// </summary>
     public Pos TextAlign
     {
-        get => mAlign;
-        set => SetAndDoIfChanged(ref mAlign, value, Invalidate);
+        get => _textAlign;
+        set => SetAndDoIfChanged(ref _textAlign, value, Invalidate);
     }
 
     public override void Invalidate()
@@ -415,7 +401,7 @@ public partial class Label : Base, ILabel
         serializedProperties.Add("HoveredTextColor", mHoverTextColor?.ToString());
         serializedProperties.Add("ClickedTextColor", mClickedTextColor?.ToString());
         serializedProperties.Add("DisabledTextColor", mDisabledTextColor?.ToString());
-        serializedProperties.Add(nameof(TextAlign), mAlign.ToString());
+        serializedProperties.Add(nameof(TextAlign), TextAlign.ToString());
         serializedProperties.Add(nameof(TextPadding), _textPadding.ToString());
         serializedProperties.Add(nameof(AutoSizeToContents), _autoSizeToContents);
         serializedProperties.Add(nameof(Font), _fontInfo);
@@ -459,7 +445,7 @@ public partial class Label : Base, ILabel
 
         if (obj["TextAlign"] != null)
         {
-            mAlign = (Pos)Enum.Parse(typeof(Pos), (string)obj["TextAlign"]);
+            TextAlign = (Pos)Enum.Parse(typeof(Pos), (string)obj["TextAlign"]);
         }
 
         if (obj["TextPadding"] != null)
@@ -656,41 +642,33 @@ public partial class Label : Base, ILabel
 
     protected void AlignTextElement(Text textElement)
     {
-        var align = mAlign;
+        var align = TextAlign;
+        var textOuterWidth = textElement.OuterWidth;
+        var textOuterHeight = textElement.OuterHeight;
+        var textPadding = TextPadding;
 
-        var x = _textPadding.Left + Padding.Left;
-        var y = _textPadding.Top + Padding.Top;
+        var availableWidth = Width - (textPadding.Left + textPadding.Right);
+        var availableHeight = Height - (textPadding.Top + textPadding.Bottom);
 
-        if (0 != (align & Pos.Right))
+        var x = textPadding.Left;
+        var y = textPadding.Top;
+
+        if (align.HasFlag(Pos.CenterH))
         {
-            x = Width - textElement.Width - _textPadding.Right - Padding.Right;
+            x = textPadding.Left + (int)((availableWidth - textOuterWidth) / 2f);
+        }
+        else if (align.HasFlag(Pos.Right))
+        {
+            x = availableWidth - textOuterWidth;
         }
 
-        if (0 != (align & Pos.CenterH))
+        if (align.HasFlag(Pos.CenterV))
         {
-            x = (int)(_textPadding.Left +
-                      Padding.Left +
-                      (Width -
-                       textElement.Width -
-                       _textPadding.Left -
-                       Padding.Left -
-                       _textPadding.Right -
-                       Padding.Right) *
-                      0.5f);
+            y = textPadding.Top + (int)((availableHeight - textOuterHeight) / 2f);
         }
-
-        if (0 != (align & Pos.CenterV))
+        else if (align.HasFlag(Pos.Bottom))
         {
-            y = (int)(_textPadding.Top +
-                      Padding.Top +
-                      (Height - textElement.Height) * 0.5f -
-                      _textPadding.Bottom -
-                      Padding.Bottom);
-        }
-
-        if (0 != (align & Pos.Bottom))
-        {
-            y = Height - textElement.Height - _textPadding.Bottom - Padding.Bottom;
+            y = availableHeight - textOuterHeight;
         }
 
         textElement.SetPosition(x, y);
@@ -819,18 +797,18 @@ public partial class Label : Base, ILabel
     /// </summary>
     public override void UpdateColors()
     {
-        var textColor = GetTextColor(ControlState.Normal) ?? Skin.Colors.Label.Normal;
+        var textColor = GetTextColor(ComponentState.Normal) ?? Skin.Colors.Label.Normal;
         if (IsDisabled)
         {
-            textColor = GetTextColor(ControlState.Disabled) ?? Skin.Colors.Label.Disabled;
+            textColor = GetTextColor(ComponentState.Disabled) ?? Skin.Colors.Label.Disabled;
         }
         else if (IsActive)
         {
-            textColor = GetTextColor(ControlState.Active) ?? Skin.Colors.Label.Active;
+            textColor = GetTextColor(ComponentState.Active) ?? Skin.Colors.Label.Active;
         }
         else if (IsHovered)
         {
-            textColor = GetTextColor(ControlState.Hovered) ?? Skin.Colors.Label.Hover;
+            textColor = GetTextColor(ComponentState.Hovered) ?? Skin.Colors.Label.Hover;
         }
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
@@ -850,23 +828,23 @@ public partial class Label : Base, ILabel
         TextColor = textColor;
     }
 
-    public virtual void SetTextColor(Color clr, ControlState state)
+    public virtual void SetTextColor(Color clr, ComponentState state)
     {
         switch (state)
         {
-            case ControlState.Normal:
+            case ComponentState.Normal:
                 mNormalTextColor = clr;
 
                 break;
-            case ControlState.Hovered:
+            case ComponentState.Hovered:
                 mHoverTextColor = clr;
 
                 break;
-            case ControlState.Active:
+            case ComponentState.Active:
                 mClickedTextColor = clr;
 
                 break;
-            case ControlState.Disabled:
+            case ComponentState.Disabled:
                 mDisabledTextColor = clr;
 
                 break;
@@ -877,17 +855,17 @@ public partial class Label : Base, ILabel
         UpdateColors();
     }
 
-    public virtual Color? GetTextColor(ControlState state)
+    public virtual Color? GetTextColor(ComponentState state)
     {
         switch (state)
         {
-            case ControlState.Normal:
+            case ComponentState.Normal:
                 return mNormalTextColor;
-            case ControlState.Hovered:
+            case ComponentState.Hovered:
                 return mHoverTextColor;
-            case ControlState.Active:
+            case ComponentState.Active:
                 return mClickedTextColor;
-            case ControlState.Disabled:
+            case ComponentState.Disabled:
                 return mDisabledTextColor;
             default:
                 return null;

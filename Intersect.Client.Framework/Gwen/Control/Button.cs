@@ -23,8 +23,8 @@ public partial class Button : Label
     private string? mMouseDownSound;
     private string? mMouseUpSound;
 
-    private readonly Dictionary<ControlState, GameTexture> _stateTextures = [];
-    private readonly Dictionary<ControlState, string> _stateTextureNames = [];
+    private readonly Dictionary<ComponentState, GameTexture> _stateTextures = [];
+    private readonly Dictionary<ComponentState, string> _stateTextureNames = [];
 
     private bool mToggle;
 
@@ -122,10 +122,10 @@ public partial class Button : Label
 
         if (this is not Checkbox)
         {
-            serializedProperties.Add("NormalImage", GetStateTextureName(ControlState.Normal));
-            serializedProperties.Add("HoveredImage", GetStateTextureName(ControlState.Hovered));
-            serializedProperties.Add("ClickedImage", GetStateTextureName(ControlState.Active));
-            serializedProperties.Add("DisabledImage", GetStateTextureName(ControlState.Disabled));
+            serializedProperties.Add("NormalImage", GetStateTextureName(ComponentState.Normal));
+            serializedProperties.Add("HoveredImage", GetStateTextureName(ComponentState.Hovered));
+            serializedProperties.Add("ClickedImage", GetStateTextureName(ComponentState.Active));
+            serializedProperties.Add("DisabledImage", GetStateTextureName(ComponentState.Disabled));
         }
 
         if (this is not ComboBox)
@@ -149,7 +149,7 @@ public partial class Button : Label
             SetStateTexture(
                 GameContentManager.Current.GetTexture(TextureType.Gui, (string)obj["NormalImage"]),
                 (string)obj["NormalImage"],
-                ControlState.Normal
+                ComponentState.Normal
             );
         }
 
@@ -158,7 +158,7 @@ public partial class Button : Label
             SetStateTexture(
                 GameContentManager.Current.GetTexture(TextureType.Gui, (string)obj["HoveredImage"]),
                 (string)obj["HoveredImage"],
-                ControlState.Hovered
+                ComponentState.Hovered
             );
         }
 
@@ -167,7 +167,7 @@ public partial class Button : Label
             SetStateTexture(
                 GameContentManager.Current.GetTexture(TextureType.Gui, (string)obj["ClickedImage"]),
                 (string)obj["ClickedImage"],
-                ControlState.Active
+                ComponentState.Active
             );
         }
 
@@ -176,7 +176,7 @@ public partial class Button : Label
             SetStateTexture(
                 GameContentManager.Current.GetTexture(TextureType.Gui, (string)obj["DisabledImage"]),
                 (string)obj["DisabledImage"],
-                ControlState.Disabled
+                ComponentState.Disabled
             );
         }
 
@@ -325,18 +325,18 @@ public partial class Button : Label
     /// </summary>
     public override void UpdateColors()
     {
-        var textColor = GetTextColor(ControlState.Normal) ?? Skin.Colors.Button.Normal;
+        var textColor = GetTextColor(ComponentState.Normal) ?? Skin.Colors.Button.Normal;
         if (IsDisabled)
         {
-            textColor = GetTextColor(ControlState.Disabled) ?? Skin.Colors.Button.Disabled;
+            textColor = GetTextColor(ComponentState.Disabled) ?? Skin.Colors.Button.Disabled;
         }
         else if (IsActive)
         {
-            textColor = GetTextColor(ControlState.Active) ?? Skin.Colors.Button.Active;
+            textColor = GetTextColor(ComponentState.Active) ?? Skin.Colors.Button.Active;
         }
         else if (IsHovered)
         {
-            textColor = GetTextColor(ControlState.Hovered) ?? Skin.Colors.Button.Hover;
+            textColor = GetTextColor(ComponentState.Hovered) ?? Skin.Colors.Button.Hover;
         }
 
         // ApplicationContext.CurrentContext.Logger.LogInformation(
@@ -372,10 +372,10 @@ public partial class Button : Label
         OnMouseClicked(mouseButton, mousePosition, userAction);
     }
 
-    public void SetStateTexture(string textureName, ControlState controlState)
+    public void SetStateTexture(string textureName, ComponentState componentState)
     {
         var texture = GameContentManager.Current.GetTexture(TextureType.Gui, textureName);
-        SetStateTexture(texture, textureName, controlState);
+        SetStateTexture(texture, textureName, componentState);
     }
 
     /// <summary>
@@ -384,7 +384,7 @@ public partial class Button : Label
     /// <param name="texture"></param>
     /// <param name="name"></param>
     /// <param name="state"></param>
-    public void SetStateTexture(GameTexture? texture, string? name, ControlState state)
+    public void SetStateTexture(GameTexture? texture, string? name, ComponentState state)
     {
         if (texture == null && !string.IsNullOrWhiteSpace(name))
         {
@@ -410,9 +410,9 @@ public partial class Button : Label
         }
     }
 
-    public GameTexture? GetStateTexture(ControlState state) => _stateTextures.GetValueOrDefault(state);
+    public GameTexture? GetStateTexture(ComponentState state) => _stateTextures.GetValueOrDefault(state);
 
-    public string? GetStateTextureName(ControlState state) => _stateTextureNames.GetValueOrDefault(state);
+    public string? GetStateTextureName(ComponentState state) => _stateTextureNames.GetValueOrDefault(state);
 
     protected override void OnMouseEntered()
     {

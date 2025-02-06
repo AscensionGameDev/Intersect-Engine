@@ -71,19 +71,19 @@ public partial class MainMenuWindow
             var buttonName = button.Name;
             button.SetStateTexture(
                 $"mainmenu{buttonName}.png",
-                Button.ControlState.Normal
+                ComponentState.Normal
             );
             button.SetStateTexture(
                 $"mainmenu{buttonName}_clicked.png",
-                Button.ControlState.Active
+                ComponentState.Active
             );
             button.SetStateTexture(
                 $"mainmenu{buttonName}_disabled.png",
-                Button.ControlState.Disabled
+                ComponentState.Disabled
             );
             button.SetStateTexture(
                 $"mainmenu{buttonName}_hovered.png",
-                Button.ControlState.Hovered
+                ComponentState.Hovered
             );
         }
 

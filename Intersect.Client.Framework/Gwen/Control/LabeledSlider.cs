@@ -4,7 +4,6 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Framework;
-using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
@@ -255,12 +254,12 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
         set => _label.MinimumSize = value;
     }
 
-    public void SetDraggerImage(GameTexture? texture, Dragger.ControlState state)
+    public void SetDraggerImage(GameTexture? texture, ComponentState state)
     {
         _slider.SetDraggerImage(texture, state);
     }
 
-    public GameTexture? GetDraggerImage(Dragger.ControlState state)
+    public GameTexture? GetDraggerImage(ComponentState state)
     {
         return _slider.GetDraggerImage(state);
     }

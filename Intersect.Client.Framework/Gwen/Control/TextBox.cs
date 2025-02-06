@@ -312,6 +312,12 @@ public partial class TextBox : Label
     protected override void OnPaste(Base from, EventArgs args)
     {
         base.OnPaste(from, args);
+
+        if (IsDisabledByTree)
+        {
+            return;
+        }
+
         InsertText(Platform.Neutral.GetClipboardText());
     }
 
@@ -337,6 +343,12 @@ public partial class TextBox : Label
     /// <param name="from">Source control.</param>
     protected override void OnCut(Base from, EventArgs args)
     {
+        if (IsDisabledByTree)
+        {
+            OnCopy(from, args);
+            return;
+        }
+
         if (!HasSelection)
         {
             return;
@@ -443,6 +455,7 @@ public partial class TextBox : Label
     protected override bool OnKeyDelete(bool down)
     {
         base.OnKeyDelete(down);
+
         if (!down)
         {
             return true;

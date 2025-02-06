@@ -248,36 +248,17 @@ public partial struct SkinTextures
 
         public partial struct _Slider
         {
-
-            public partial struct _H
+            public partial struct _SliderSource
             {
-
                 public Single Normal;
-
                 public Single Hover;
-
                 public Single Down;
-
                 public Single Disabled;
-
             }
 
-            public partial struct _V
-            {
+            public _SliderSource H;
 
-                public Single Normal;
-
-                public Single Hover;
-
-                public Single Down;
-
-                public Single Disabled;
-
-            }
-
-            public _H H;
-
-            public _V V;
+            public _SliderSource V;
 
         }
 
@@ -734,32 +715,32 @@ public partial class TexturedBase : Skin.Base
             return;
         }
 
-        Button.ControlState controlState = Button.ControlState.Normal;
+        ComponentState componentState = ComponentState.Normal;
         if (disabled)
         {
-            controlState = Button.ControlState.Disabled;
+            componentState = ComponentState.Disabled;
         }
         else if (depressed)
         {
-            controlState = Button.ControlState.Active;
+            componentState = ComponentState.Active;
         }
         else if (hovered)
         {
-            controlState = Button.ControlState.Hovered;
+            componentState = ComponentState.Hovered;
         }
 
-        var controlStateTexture = button.GetStateTexture(controlState);
-        controlStateTexture ??= button.GetStateTexture(Button.ControlState.Normal);
+        var controlStateTexture = button.GetStateTexture(componentState);
+        controlStateTexture ??= button.GetStateTexture(ComponentState.Normal);
 
         if (controlStateTexture == null)
         {
             var buttonTextureGroup = mTextures.Input.Button;
-            var target = controlState switch
+            var target = componentState switch
             {
-                Button.ControlState.Normal => buttonTextureGroup.Normal,
-                Button.ControlState.Hovered => buttonTextureGroup.Hovered,
-                Button.ControlState.Active => buttonTextureGroup.Pressed,
-                Button.ControlState.Disabled => buttonTextureGroup.Disabled,
+                ComponentState.Normal => buttonTextureGroup.Normal,
+                ComponentState.Hovered => buttonTextureGroup.Hovered,
+                ComponentState.Active => buttonTextureGroup.Pressed,
+                ComponentState.Disabled => buttonTextureGroup.Disabled,
                 _ => throw new UnreachableException(),
             };
 
@@ -1374,21 +1355,21 @@ public partial class TexturedBase : Skin.Base
     public override void DrawScrollBarBar(Control.Base control, bool depressed, bool hovered, bool horizontal)
     {
         GameTexture renderImg = null;
-        if (control.IsDisabled && ((ScrollBarBar) control).GetImage(Dragger.ControlState.Disabled) != null)
+        if (control.IsDisabled && ((ScrollBarBar) control).GetImage(ComponentState.Disabled) != null)
         {
-            renderImg = ((ScrollBarBar) control).GetImage(Dragger.ControlState.Disabled);
+            renderImg = ((ScrollBarBar) control).GetImage(ComponentState.Disabled);
         }
-        else if (depressed && ((ScrollBarBar) control).GetImage(Dragger.ControlState.Clicked) != null)
+        else if (depressed && ((ScrollBarBar) control).GetImage(ComponentState.Active) != null)
         {
-            renderImg = ((ScrollBarBar) control).GetImage(Dragger.ControlState.Clicked);
+            renderImg = ((ScrollBarBar) control).GetImage(ComponentState.Active);
         }
-        else if (hovered && ((ScrollBarBar) control).GetImage(Dragger.ControlState.Hovered) != null)
+        else if (hovered && ((ScrollBarBar) control).GetImage(ComponentState.Hovered) != null)
         {
-            renderImg = ((ScrollBarBar) control).GetImage(Dragger.ControlState.Hovered);
+            renderImg = ((ScrollBarBar) control).GetImage(ComponentState.Hovered);
         }
-        else if (((ScrollBarBar) control).GetImage(Dragger.ControlState.Normal) != null)
+        else if (((ScrollBarBar) control).GetImage(ComponentState.Normal) != null)
         {
-            renderImg = ((ScrollBarBar) control).GetImage(Dragger.ControlState.Normal);
+            renderImg = ((ScrollBarBar) control).GetImage(ComponentState.Normal);
         }
 
         if (!horizontal)
@@ -2113,21 +2094,21 @@ public partial class TexturedBase : Skin.Base
 
         GameTexture renderImg = null;
 
-        if (disabled && button.GetStateTexture(Button.ControlState.Disabled) != null)
+        if (disabled && button.GetStateTexture(ComponentState.Disabled) != null)
         {
-            renderImg = button.GetStateTexture(Button.ControlState.Disabled);
+            renderImg = button.GetStateTexture(ComponentState.Disabled);
         }
-        else if (depressed && button.GetStateTexture(Button.ControlState.Active) != null)
+        else if (depressed && button.GetStateTexture(ComponentState.Active) != null)
         {
-            renderImg = button.GetStateTexture(Button.ControlState.Active);
+            renderImg = button.GetStateTexture(ComponentState.Active);
         }
-        else if (hovered && button.GetStateTexture(Button.ControlState.Hovered) != null)
+        else if (hovered && button.GetStateTexture(ComponentState.Hovered) != null)
         {
-            renderImg = button.GetStateTexture(Button.ControlState.Hovered);
+            renderImg = button.GetStateTexture(ComponentState.Hovered);
         }
-        else if (button.GetStateTexture(Button.ControlState.Normal) != null)
+        else if (button.GetStateTexture(ComponentState.Normal) != null)
         {
-            renderImg = button.GetStateTexture(Button.ControlState.Normal);
+            renderImg = button.GetStateTexture(ComponentState.Normal);
         }
 
         if (renderImg != null)
@@ -2337,21 +2318,21 @@ public partial class TexturedBase : Skin.Base
         }
 
         GameTexture renderImg = null;
-        if (disabled && button.GetStateTexture(Button.ControlState.Disabled) != null)
+        if (disabled && button.GetStateTexture(ComponentState.Disabled) != null)
         {
-            renderImg = button.GetStateTexture(Button.ControlState.Disabled);
+            renderImg = button.GetStateTexture(ComponentState.Disabled);
         }
-        else if (depressed && button.GetStateTexture(Button.ControlState.Active) != null)
+        else if (depressed && button.GetStateTexture(ComponentState.Active) != null)
         {
-            renderImg = button.GetStateTexture(Button.ControlState.Active);
+            renderImg = button.GetStateTexture(ComponentState.Active);
         }
-        else if (hovered && button.GetStateTexture(Button.ControlState.Hovered) != null)
+        else if (hovered && button.GetStateTexture(ComponentState.Hovered) != null)
         {
-            renderImg = button.GetStateTexture(Button.ControlState.Hovered);
+            renderImg = button.GetStateTexture(ComponentState.Hovered);
         }
-        else if (button.GetStateTexture(Button.ControlState.Normal) != null)
+        else if (button.GetStateTexture(ComponentState.Normal) != null)
         {
-            renderImg = button.GetStateTexture(Button.ControlState.Normal);
+            renderImg = button.GetStateTexture(ComponentState.Normal);
         }
 
         if (renderImg != null)
@@ -2386,81 +2367,48 @@ public partial class TexturedBase : Skin.Base
         mTextures.Window.Close.Draw(Renderer, button.RenderBounds);
     }
 
-    public override void DrawSliderButton(Control.Base control, bool depressed, bool horizontal)
+    public override void DrawSliderButton(SliderBar sliderBar)
     {
-        GameTexture renderImg = null;
-        renderImg = ((Dragger) control).GetImage(Dragger.ControlState.Normal);
-        if (control.IsDisabled && ((Dragger) control).GetImage(Dragger.ControlState.Disabled) != null)
+        var overrideTexture = sliderBar.GetImage(ComponentState.Normal);
+        if (sliderBar.IsDisabled)
         {
-            renderImg = ((Dragger) control).GetImage(Dragger.ControlState.Disabled);
+            overrideTexture = sliderBar.GetImage(ComponentState.Disabled);
         }
-        else if (depressed && ((Dragger) control).GetImage(Dragger.ControlState.Clicked) != null)
+        else if (sliderBar.IsActive)
         {
-            renderImg = ((Dragger) control).GetImage(Dragger.ControlState.Clicked);
+            overrideTexture = sliderBar.GetImage(ComponentState.Active);
         }
-        else if (control.IsHovered && ((Dragger) control).GetImage(Dragger.ControlState.Hovered) != null)
+        else if (sliderBar.IsHovered)
         {
-            renderImg = ((Dragger) control).GetImage(Dragger.ControlState.Hovered);
+            overrideTexture = sliderBar.GetImage(ComponentState.Hovered);
         }
 
-        if (renderImg != null)
+        if (overrideTexture != null)
         {
-            Renderer.DrawColor = control.RenderColor;
-            Renderer.DrawTexturedRect(renderImg, control.RenderBounds, control.RenderColor);
-
+            Renderer.DrawColor = sliderBar.RenderColor;
+            Renderer.DrawTexturedRect(overrideTexture, sliderBar.RenderBounds, sliderBar.RenderColor);
             return;
         }
 
-        if (!horizontal)
+        var textureSource = sliderBar.Orientation is Orientation.LeftToRight or Orientation.RightToLeft
+            ? mTextures.Input.Slider.H
+            : mTextures.Input.Slider.V;
+
+        var stateSource = textureSource.Normal;
+        if (sliderBar.IsDisabled)
         {
-            if (control.IsDisabled)
-            {
-                mTextures.Input.Slider.V.Disabled.DrawCenter(Renderer, control.RenderBounds);
-
-                return;
-            }
-
-            if (depressed)
-            {
-                mTextures.Input.Slider.V.Down.DrawCenter(Renderer, control.RenderBounds);
-
-                return;
-            }
-
-            if (control.IsHovered)
-            {
-                mTextures.Input.Slider.V.Hover.DrawCenter(Renderer, control.RenderBounds);
-
-                return;
-            }
-
-            mTextures.Input.Slider.V.Normal.DrawCenter(Renderer, control.RenderBounds);
-
-            return;
+            stateSource = textureSource.Disabled;
+        }
+        else if (sliderBar.IsActive)
+        {
+            stateSource = textureSource.Down;
+        }
+        else if (sliderBar.IsHovered)
+        {
+            stateSource = textureSource.Hover;
         }
 
-        if (control.IsDisabled)
-        {
-            mTextures.Input.Slider.H.Disabled.DrawCenter(Renderer, control.RenderBounds);
-
-            return;
-        }
-
-        if (depressed)
-        {
-            mTextures.Input.Slider.H.Down.DrawCenter(Renderer, control.RenderBounds);
-
-            return;
-        }
-
-        if (control.IsHovered)
-        {
-            mTextures.Input.Slider.H.Hover.DrawCenter(Renderer, control.RenderBounds);
-
-            return;
-        }
-
-        mTextures.Input.Slider.H.Normal.DrawCenter(Renderer, control.RenderBounds);
+        stateSource.DrawCenter(Renderer, sliderBar.RenderBounds);
     }
 
     public override void DrawCategoryHolder(Control.Base control)

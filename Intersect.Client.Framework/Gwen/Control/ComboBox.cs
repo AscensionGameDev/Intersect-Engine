@@ -223,10 +223,10 @@ public partial class ComboBox : Button
         item.Name = name;
         item.Selected += OnItemSelected;
         item.UserData = userData;
-        item.SetTextColor(GetTextColor(Label.ControlState.Normal), Label.ControlState.Normal);
-        item.SetTextColor(GetTextColor(Label.ControlState.Hovered), Label.ControlState.Hovered);
-        item.SetTextColor(GetTextColor(Label.ControlState.Active), Label.ControlState.Active);
-        item.SetTextColor(GetTextColor(Label.ControlState.Disabled), Label.ControlState.Disabled);
+        item.SetTextColor(GetTextColor(ComponentState.Normal), ComponentState.Normal);
+        item.SetTextColor(GetTextColor(ComponentState.Hovered), ComponentState.Hovered);
+        item.SetTextColor(GetTextColor(ComponentState.Active), ComponentState.Active);
+        item.SetTextColor(GetTextColor(ComponentState.Disabled), ComponentState.Disabled);
         item.SetHoverSound(mHoverItemSound);
 
         UpdateItemMaximumSize(label);
@@ -356,9 +356,9 @@ public partial class ComboBox : Button
     /// </summary>
     protected override void OnLostKeyboardFocus()
     {
-        if (GetTextColor(Label.ControlState.Normal) != null)
+        if (GetTextColor(ComponentState.Normal) != null)
         {
-            TextColor = GetTextColor(Label.ControlState.Normal);
+            TextColor = GetTextColor(ComponentState.Normal);
 
             return;
         }
@@ -372,9 +372,9 @@ public partial class ComboBox : Button
     protected override void OnKeyboardFocus()
     {
         //Until we add the blue highlighting again
-        if (GetTextColor(Label.ControlState.Normal) != null)
+        if (GetTextColor(ComponentState.Normal) != null)
         {
-            TextColor = GetTextColor(Label.ControlState.Normal);
+            TextColor = GetTextColor(ComponentState.Normal);
 
             return;
         }
@@ -583,7 +583,7 @@ public partial class ComboBox : Button
         return padding;
     }
 
-    public override void SetTextColor(Color clr, Label.ControlState state)
+    public override void SetTextColor(Color clr, ComponentState state)
     {
         base.SetTextColor(clr, state);
         foreach (MenuItem itm in _menu.Children)

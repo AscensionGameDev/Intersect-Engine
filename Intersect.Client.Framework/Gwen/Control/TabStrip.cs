@@ -84,7 +84,7 @@ public partial class TabStrip : Base
             }
         }
 
-        var droppedOn = GetControlAt(localPos.X, localPos.Y);
+        var droppedOn = GetComponentAt(localPos.X, localPos.Y);
         if (droppedOn != null)
         {
             var dropPos = droppedOn.CanvasPosToLocal(new Point(x, y));
@@ -201,7 +201,7 @@ public partial class TabStrip : Base
     {
         var localPos = CanvasPosToLocal(new Point(x, y));
 
-        var droppedOn = GetControlAt(localPos.X, localPos.Y);
+        var droppedOn = GetComponentAt(localPos.X, localPos.Y);
         if (droppedOn != null && droppedOn != this)
         {
             var dropPos = droppedOn.CanvasPosToLocal(new Point(x, y));

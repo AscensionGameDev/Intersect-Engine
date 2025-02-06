@@ -13,20 +13,6 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal;
 /// </summary>
 public partial class Dragger : Base
 {
-
-    public enum ControlState
-    {
-
-        Normal = 0,
-
-        Hovered,
-
-        Clicked,
-
-        Disabled,
-
-    }
-
     public enum ControlSoundState
     {
         None,
@@ -35,32 +21,23 @@ public partial class Dragger : Base
         MouseUp,
     }
 
-    private GameTexture mClickedImage;
-
-    private string mClickedImageFilename;
-
-    private GameTexture mDisabledImage;
-
-    private string mDisabledImageFilename;
 
     protected bool mHeld;
-
     protected Point mHoldPos;
 
-    private GameTexture mHoverImage;
-
-    private string mHoverImageFilename;
-
     //Sound Effects
-    private string mHoverSound;
+    private string? mHoverSound;
+    private string? mMouseDownSound;
+    private string? mMouseUpSound;
 
-    private string mMouseDownSound;
-
-    private string mMouseUpSound;
-
-    private GameTexture mNormalImage;
-
-    private string mNormalImageFilename;
+    private GameTexture? mClickedImage;
+    private string? mClickedImageFilename;
+    private GameTexture? mDisabledImage;
+    private string? mDisabledImageFilename;
+    private GameTexture? mHoverImage;
+    private string? mHoverImageFilename;
+    private GameTexture? mNormalImage;
+    private string? mNormalImageFilename;
 
     protected Base? _target;
 
@@ -169,10 +146,10 @@ public partial class Dragger : Base
             return null;
         }
 
-        serializedProperties.Add("NormalImage", GetImageFilename(ControlState.Normal));
-        serializedProperties.Add("HoveredImage", GetImageFilename(ControlState.Hovered));
-        serializedProperties.Add("ClickedImage", GetImageFilename(ControlState.Clicked));
-        serializedProperties.Add("DisabledImage", GetImageFilename(ControlState.Disabled));
+        serializedProperties.Add("NormalImage", GetImageFilename(ComponentState.Normal));
+        serializedProperties.Add("HoveredImage", GetImageFilename(ComponentState.Hovered));
+        serializedProperties.Add("ClickedImage", GetImageFilename(ComponentState.Active));
+        serializedProperties.Add("DisabledImage", GetImageFilename(ComponentState.Disabled));
         serializedProperties.Add("HoverSound", mHoverSound);
         serializedProperties.Add("MouseUpSound", mMouseUpSound);
         serializedProperties.Add("MouseDownSound", mMouseDownSound);
@@ -188,7 +165,7 @@ public partial class Dragger : Base
             SetImage(
                 GameContentManager.Current.GetTexture(
                     Framework.Content.TextureType.Gui, (string) obj["NormalImage"]
-                ), (string) obj["NormalImage"], ControlState.Normal
+                ), (string) obj["NormalImage"], ComponentState.Normal
             );
         }
 
@@ -197,7 +174,7 @@ public partial class Dragger : Base
             SetImage(
                 GameContentManager.Current.GetTexture(
                     Framework.Content.TextureType.Gui, (string) obj["HoveredImage"]
-                ), (string) obj["HoveredImage"], ControlState.Hovered
+                ), (string) obj["HoveredImage"], ComponentState.Hovered
             );
         }
 
@@ -206,7 +183,7 @@ public partial class Dragger : Base
             SetImage(
                 GameContentManager.Current.GetTexture(
                     Framework.Content.TextureType.Gui, (string) obj["ClickedImage"]
-                ), (string) obj["ClickedImage"], ControlState.Clicked
+                ), (string) obj["ClickedImage"], ComponentState.Active
             );
         }
 
@@ -215,7 +192,7 @@ public partial class Dragger : Base
             SetImage(
                 GameContentManager.Current.GetTexture(
                     Framework.Content.TextureType.Gui, (string) obj["DisabledImage"]
-                ), (string) obj["DisabledImage"], ControlState.Disabled
+                ), (string) obj["DisabledImage"], ComponentState.Disabled
             );
         }
 
@@ -244,27 +221,27 @@ public partial class Dragger : Base
     ///     Sets the button's image.
     /// </summary>
     /// <param name="textureName">Texture name. Null to remove.</param>
-    public virtual void SetImage(GameTexture texture, string fileName, ControlState state)
+    public virtual void SetImage(GameTexture? texture, string? name, ComponentState state)
     {
         switch (state)
         {
-            case ControlState.Normal:
-                mNormalImageFilename = fileName;
+            case ComponentState.Normal:
+                mNormalImageFilename = name;
                 mNormalImage = texture;
 
                 break;
-            case ControlState.Hovered:
-                mHoverImageFilename = fileName;
+            case ComponentState.Hovered:
+                mHoverImageFilename = name;
                 mHoverImage = texture;
 
                 break;
-            case ControlState.Clicked:
-                mClickedImageFilename = fileName;
+            case ComponentState.Active:
+                mClickedImageFilename = name;
                 mClickedImage = texture;
 
                 break;
-            case ControlState.Disabled:
-                mDisabledImageFilename = fileName;
+            case ComponentState.Disabled:
+                mDisabledImageFilename = name;
                 mDisabledImage = texture;
 
                 break;
@@ -273,34 +250,34 @@ public partial class Dragger : Base
         }
     }
 
-    public virtual GameTexture GetImage(ControlState state)
+    public virtual GameTexture? GetImage(ComponentState state)
     {
         switch (state)
         {
-            case ControlState.Normal:
+            case ComponentState.Normal:
                 return mNormalImage;
-            case ControlState.Hovered:
+            case ComponentState.Hovered:
                 return mHoverImage;
-            case ControlState.Clicked:
+            case ComponentState.Active:
                 return mClickedImage;
-            case ControlState.Disabled:
+            case ComponentState.Disabled:
                 return mDisabledImage;
             default:
                 return null;
         }
     }
 
-    public virtual string GetImageFilename(ControlState state)
+    public virtual string GetImageFilename(ComponentState state)
     {
         switch (state)
         {
-            case ControlState.Normal:
+            case ComponentState.Normal:
                 return mNormalImageFilename;
-            case ControlState.Hovered:
+            case ComponentState.Hovered:
                 return mHoverImageFilename;
-            case ControlState.Clicked:
+            case ComponentState.Active:
                 return mClickedImageFilename;
-            case ControlState.Disabled:
+            case ComponentState.Disabled:
                 return mDisabledImageFilename;
             default:
                 return null;

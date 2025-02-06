@@ -118,7 +118,10 @@ public partial class ColorPicker : Base, IColorPicker
         numeric.SelectAllOnFocus = true;
         numeric.TextChanged += NumericTyped;
 
-        var slider = new HorizontalSlider(colorGroup);
+        var slider = new Slider(colorGroup)
+        {
+            Orientation = Orientation.LeftToRight,
+        };
         slider.SetPosition(colorSize + 5, 10);
         slider.SetRange(0, 255);
         slider.SetSize(80, colorSize);
@@ -198,16 +201,22 @@ public partial class ColorPicker : Base, IColorPicker
         //UpdateControls();
     }
 
-    private void UpdateColorControls(string name, Color col, int sliderVal)
+    private void UpdateColorControls(string name, Color color, int value)
     {
-        var disp = FindChildByName(name, true) as ColorDisplay;
-        disp.Color = col;
+        if (FindChildByName(name, true) is ColorDisplay colorDisplay)
+        {
+            colorDisplay.Color = color;
+        }
 
-        var slider = FindChildByName(name + "Slider", true) as HorizontalSlider;
-        slider.Value = sliderVal;
+        if (FindChildByName(name + "Slider", true) is Slider slider)
+        {
+            slider.Value = value;
+        }
 
-        var box = FindChildByName(name + "Box", true) as TextBoxNumeric;
-        box.Value = sliderVal;
+        if (FindChildByName(name + "Box", true) is TextBoxNumeric numberBox)
+        {
+            numberBox.Value = value;
+        }
     }
 
     private void UpdateControls()
@@ -236,10 +245,10 @@ public partial class ColorPicker : Base, IColorPicker
         HorizontalSlider* alphaSlider	= gwen_cast<HorizontalSlider>(	FindChildByName( "AlphaSlider", true ) );
         */
 
-        var slider = control as HorizontalSlider;
-        if (slider != null)
+        if (control is Slider slider)
         {
-            SetColorByName(GetColorFromName(slider.Name), (int) slider.Value);
+            var color = GetColorFromName(slider.Name);
+            SetColorByName(color, (int) slider.Value);
         }
 
         UpdateControls();
@@ -292,8 +301,13 @@ public partial class ColorPicker : Base, IColorPicker
         return 0;
     }
 
-    private static string GetColorFromName(string name)
+    private static string GetColorFromName(string? name)
     {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return string.Empty;
+        }
+
         if (name.Contains("Red"))
         {
             return "Red";
@@ -314,7 +328,7 @@ public partial class ColorPicker : Base, IColorPicker
             return "Alpha";
         }
 
-        return String.Empty;
+        return string.Empty;
     }
 
     private void SetColorByName(string colorName, int colorValue)

@@ -137,9 +137,7 @@ public partial class TabControl : Base
             Text = label,
         };
 
-        AddPage(button);
-
-        return button;
+        return AddPage(button);
     }
 
     /// <summary>
@@ -154,7 +152,7 @@ public partial class TabControl : Base
     ///     Adds a page/tab.
     /// </summary>
     /// <param name="button">Page to add. (well, it's a TabButton which is a parent to the page).</param>
-    public void AddPage(TabButton button)
+    public TabButton AddPage(TabButton button)
     {
         var page = button.Page;
         page.Parent = this;
@@ -177,11 +175,17 @@ public partial class TabControl : Base
             button.Clicked += OnTabPressed;
         }
 
-        _activeButton ??= button;
+        if (_activeButton is null)
+        {
+            _activeButton = button;
+            button.Page.IsVisible = true;
+        }
 
         TabAdded?.Invoke(this, EventArgs.Empty);
 
         Invalidate();
+
+        return button;
     }
 
     /// <summary>

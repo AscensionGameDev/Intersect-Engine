@@ -318,8 +318,8 @@ public partial class QuestsWindow
                 {
                     //In Progress
                     mQuestStatus.SetText(Strings.QuestLog.InProgress);
-                    mQuestStatus.SetTextColor(CustomColors.QuestWindow.InProgress, Label.ControlState.Normal);
-                    mQuestDescTemplateLabel.SetTextColor(CustomColors.QuestWindow.QuestDesc, Label.ControlState.Normal);
+                    mQuestStatus.SetTextColor(CustomColors.QuestWindow.InProgress, ComponentState.Normal);
+                    mQuestDescTemplateLabel.SetTextColor(CustomColors.QuestWindow.QuestDesc, ComponentState.Normal);
                     
                     if (mSelectedQuest.InProgressDescription.Length > 0)
                     {    
@@ -377,7 +377,7 @@ public partial class QuestsWindow
                         if (mSelectedQuest.LogAfterComplete)
                         {
                             mQuestStatus.SetText(Strings.QuestLog.Completed);
-                            mQuestStatus.SetTextColor(CustomColors.QuestWindow.Completed, Label.ControlState.Normal);
+                            mQuestStatus.SetTextColor(CustomColors.QuestWindow.Completed, ComponentState.Normal);
                             mQuestDescLabel.AddText(mSelectedQuest.EndDescription, mQuestDescTemplateLabel);
                         }
                     }
@@ -387,7 +387,7 @@ public partial class QuestsWindow
                         if (mSelectedQuest.LogBeforeOffer)
                         {
                             mQuestStatus.SetText(Strings.QuestLog.NotStarted);
-                            mQuestStatus.SetTextColor(CustomColors.QuestWindow.NotStarted, Label.ControlState.Normal);
+                            mQuestStatus.SetTextColor(CustomColors.QuestWindow.NotStarted, ComponentState.Normal);
                             mQuestDescLabel.AddText(mSelectedQuest.BeforeDescription, mQuestDescTemplateLabel);
 
                             mQuitButton?.Hide();
@@ -401,7 +401,7 @@ public partial class QuestsWindow
                 if (mSelectedQuest.LogBeforeOffer)
                 {
                     mQuestStatus.SetText(Strings.QuestLog.NotStarted);
-                    mQuestStatus.SetTextColor(CustomColors.QuestWindow.NotStarted, Label.ControlState.Normal);
+                    mQuestStatus.SetTextColor(CustomColors.QuestWindow.NotStarted, ComponentState.Normal);
                     mQuestDescLabel.AddText(mSelectedQuest.BeforeDescription, mQuestDescTemplateLabel);
                 }
             }

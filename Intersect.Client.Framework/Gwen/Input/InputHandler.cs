@@ -322,24 +322,26 @@ public static partial class InputHandler
     /// <returns>True if handled.</returns>
     public static bool OnMouseButtonStateChanged(Base canvas, MouseButton mouseButton, bool pressed)
     {
+        var hoveredControl = HoveredControl;
+
         // If we click on a control that isn't a menu we want to close
         // all the open menus. Menus are children of the canvas.
-        if (pressed && HoveredControl is not { IsMenuComponent: true })
+        if (pressed && hoveredControl is not { IsMenuComponent: true })
         {
             canvas.CloseMenus();
         }
 
-        if (HoveredControl == null || HoveredControl == canvas)
+        if (hoveredControl == null || hoveredControl == canvas)
         {
             return false;
         }
 
-        if (HoveredControl.Canvas != canvas)
+        if (hoveredControl.Canvas != canvas)
         {
             return false;
         }
 
-        if (!HoveredControl.IsVisible)
+        if (!hoveredControl.IsVisible)
         {
             return false;
         }
@@ -353,7 +355,7 @@ public static partial class InputHandler
 
         if (KeyData.SetMouseButtonState(mouseButton, pressed))
         {
-            HoveredControl.InputMouseButtonState(MouseButton.Left, mousePosition, pressed);
+            hoveredControl.InputMouseButtonState(MouseButton.Left, mousePosition, pressed);
         }
 
         // Double click.
@@ -370,10 +372,10 @@ public static partial class InputHandler
                 _lastClickPosition = mousePosition;
             }
 
-            FindKeyboardFocus(HoveredControl);
+            FindKeyboardFocus(hoveredControl);
         }
 
-        HoveredControl.UpdateCursor();
+        hoveredControl.UpdateCursor();
 
         // This tells the child it has been touched, which
         // in turn tells its parents, who tell their parents.
@@ -381,12 +383,12 @@ public static partial class InputHandler
         // to the top when one of their children have been clicked.
         if (pressed)
         {
-            HoveredControl.Touch();
+            hoveredControl.Touch();
         }
 
         if (mouseButton == MouseButton.Left)
         {
-            if (DragAndDrop.OnMouseButton(HoveredControl, mousePosition.X, mousePosition.Y, pressed))
+            if (DragAndDrop.OnMouseButton(hoveredControl, mousePosition.X, mousePosition.Y, pressed))
             {
                 return true;
             }
@@ -394,7 +396,7 @@ public static partial class InputHandler
 
         if (isDoubleClick)
         {
-            HoveredControl.InputMouseDoubleClicked(mouseButton, mousePosition);
+            hoveredControl.InputMouseDoubleClicked(mouseButton, mousePosition);
         }
 
 #if GWEN_HOOKSYSTEM
@@ -499,7 +501,7 @@ public static partial class InputHandler
 
     private static void UpdateHoveredControl(Base inCanvas)
     {
-        Base? componentAtPosition = inCanvas.GetControlAt(MousePosition.X, MousePosition.Y);
+        Base? componentAtPosition = inCanvas.GetComponentAt(MousePosition.X, MousePosition.Y);
 
         var mouseFocusedControl = MouseFocus;
         if (mouseFocusedControl?.Canvas != inCanvas)

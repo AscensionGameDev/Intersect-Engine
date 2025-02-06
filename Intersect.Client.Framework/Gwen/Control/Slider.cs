@@ -7,7 +7,6 @@ using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Framework;
-using Intersect.Framework.Reflection;
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;
@@ -17,18 +16,17 @@ namespace Intersect.Client.Framework.Gwen.Control;
 /// </summary>
 public partial class Slider : Base
 {
-    protected readonly SliderBar _sliderBar;
+    private readonly SliderBar _sliderBar;
 
     private GameTexture? _backgroundImage;
     private string? _backgroundImageName;
     private double _maximumValue;
     private double _minimumValue;
+    private int _notchCount;
     private double[]? _notches;
     private Orientation _orientation;
-
-    protected int _notchCount;
-    protected bool _snapToNotches;
-    protected double _value;
+    private bool _snapToNotches;
+    private double _value;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Slider" /> class.
@@ -46,10 +44,7 @@ public partial class Slider : Base
         _snapToNotches = false;
         _value = 0.0f;
 
-        _sliderBar = new SliderBar(this)
-        {
-            IsHorizontal = true,
-        };
+        _sliderBar = new SliderBar(this, name: nameof(_sliderBar));
         _sliderBar.Dragged += SliderBarOnDragged;
 
         KeyboardInputEnabled = true;
@@ -72,7 +67,7 @@ public partial class Slider : Base
             }
 
             _orientation = value;
-            _sliderBar.IsHorizontal = value is Orientation.LeftToRight or Orientation.RightToLeft;
+            _sliderBar.Orientation = value;
             Invalidate();
         }
     }
@@ -347,6 +342,11 @@ public partial class Slider : Base
     {
         base.OnMouseClicked(mouseButton, mousePosition, userAction);
 
+        if (IsDisabledByTree)
+        {
+            return;
+        }
+
         var localCoordinates = ToLocal(mousePosition);
 
         int newX = _sliderBar.X;
@@ -512,17 +512,12 @@ public partial class Slider : Base
         //skin.DrawKeyboardHighlight(this, RenderBounds, 0);
     }
 
-    public void SetDraggerImage(GameTexture? texture, string fileName, Dragger.ControlState state)
-    {
-        _sliderBar.SetImage(texture, fileName, state);
-    }
-
-    public void SetDraggerImage(GameTexture? texture, Dragger.ControlState state)
+    public void SetDraggerImage(GameTexture? texture, ComponentState state)
     {
         _sliderBar.SetImage(texture, texture?.Name, state);
     }
 
-    public GameTexture? GetDraggerImage(Dragger.ControlState state)
+    public GameTexture? GetDraggerImage(ComponentState state)
     {
         return _sliderBar.GetImage(state);
     }

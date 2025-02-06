@@ -1,6 +1,7 @@
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Framework.Gwen.ControlInternal;
 
 #if DEBUG || DIAGNOSTIC
 #endif
@@ -188,16 +189,9 @@ public partial class Base : IDisposable
         barSize
     );
 
-    public virtual void DrawSliderButton(Control.Base control, bool depressed, bool horizontal)
+    public virtual void DrawSliderButton(SliderBar sliderBar)
     {
     }
-
-    public virtual void DrawSliderButton(Control.Base control, bool depressed, Orientation orientation) =>
-        DrawSliderButton(
-            control,
-            depressed,
-            orientation is Orientation.LeftToRight or Orientation.RightToLeft
-        );
 
     public virtual void DrawComboBox(Control.Base control, bool down, bool isMenuOpen)
     {

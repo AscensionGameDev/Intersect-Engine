@@ -39,10 +39,14 @@ public partial class LabeledCheckBox : Base
             Dock = Pos.Fill,
             InheritParentEnablementProperties = true,
             IsTabable = false,
-            Padding = new Padding(2, 0, 0, 0),
             TextAlign = Pos.CenterV | Pos.Left,
+            TextPadding = new Padding(2/*, 0, 0, 0*/),
         };
-        _label.Clicked += delegate (Base control, MouseButtonState _) { _checkbox.Press(control); };
+        _label.Clicked += delegate(Base control, MouseButtonState _)
+        {
+            _label.ProcessAlignments();
+            _checkbox.Press(control);
+        };
 
         IsTabable = false;
     }
@@ -140,34 +144,6 @@ public partial class LabeledCheckBox : Base
     /// </summary>
     public event GwenEventHandler<EventArgs> CheckChanged;
 
-    public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
-    {
-        var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);
-        if (serializedProperties is null)
-        {
-            return null;
-        }
-
-        serializedProperties.Add("Label", _label.GetJson());
-        serializedProperties.Add("Checkbox", _checkbox.GetJson());
-
-        return base.FixJson(serializedProperties);
-    }
-
-    public override void LoadJson(JToken obj, bool isRoot = default)
-    {
-        base.LoadJson(obj);
-        if (obj["Label"] != null)
-        {
-            _label.LoadJson(obj["Label"]);
-        }
-
-        if (obj["Checkbox"] != null)
-        {
-            _checkbox.LoadJson(obj["Checkbox"]);
-        }
-    }
-
     /// <summary>
     ///     Handler for CheckChanged event.
     /// </summary>
@@ -195,7 +171,7 @@ public partial class LabeledCheckBox : Base
         _checkbox.SetImage(texture, fileName, state);
     }
 
-    public void SetTextColor(Color clr, Label.ControlState state)
+    public void SetTextColor(Color clr, ComponentState state)
     {
         _label.SetTextColor(clr, state);
     }
