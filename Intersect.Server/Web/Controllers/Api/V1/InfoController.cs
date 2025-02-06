@@ -2,6 +2,7 @@ using System.Net;
 using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Server.Core;
+using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Metrics;
 using Intersect.Server.Networking;
@@ -46,7 +47,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
                     Timing.Global.Milliseconds,
                     cyclesPerSecond,
                     Client.Instances?.Count,
-                    Globals.OnlineList?.Count
+                    Player.ConnectedPlayers.Length
                 )
             );
         }

@@ -21,6 +21,11 @@ public partial class Player
     private volatile bool _saving;
     private readonly object _savingLock = new();
 
+    public static Player[] ConnectedPlayers =>
+    [
+        ..Client.Instances.Where(client => client?.Entity is not null).Select(client => client.Entity),
+    ];
+
     #region Account
 
     [ForeignKey(nameof(User))]

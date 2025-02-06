@@ -115,7 +115,8 @@ namespace Intersect.Server.Web.Controllers.Api.V1
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
             _ = Sort.From(sortBy, sortDirection);
-            IEnumerable<Player> enumerable = Globals.OnlineList ?? new List<Player>();
+            var connectedPlayers = Player.ConnectedPlayers;
+            IEnumerable<Player> enumerable = connectedPlayers;
 
             if (!string.IsNullOrWhiteSpace(search))
             {
@@ -155,7 +156,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
 
         [HttpGet("online/count")]
         [ProducesResponseType(typeof(OnlineCountResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
-        public IActionResult OnlineCount() => Ok(new OnlineCountResponseBody(Globals.OnlineList?.Count ?? 0));
+        public IActionResult OnlineCount() => Ok(new OnlineCountResponseBody(Player.ConnectedPlayers.Length));
 
         #endregion
 
@@ -976,11 +977,12 @@ namespace Intersect.Server.Web.Controllers.Api.V1
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
             pageInfo.PageSize = Math.Max(Math.Min(pageInfo.PageSize, 100), 5);
 
-            var entries = Globals.OnlineList?.Skip(pageInfo.Page * pageInfo.PageSize).Take(pageInfo.PageSize).ToList();
+            var connectedPlayers = Player.ConnectedPlayers;
+            var entries = connectedPlayers.Skip(pageInfo.Page * pageInfo.PageSize).Take(pageInfo.PageSize).ToList();
 
             return new DataPage<Player>
             {
-                Total = Globals.OnlineList?.Count ?? 0,
+                Total = connectedPlayers.Length,
                 Page = pageInfo.Page,
                 PageSize = pageInfo.PageSize,
                 Count = entries?.Count ?? 0,

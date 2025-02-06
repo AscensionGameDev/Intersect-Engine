@@ -829,7 +829,7 @@ public static partial class PacketSender
     /// <param name="target">The sender of this message, should we decide to respond from the client.</param>
     public static void SendAdminMsg(string message, Color color, string target = "")
     {
-        foreach (var player in Globals.OnlineList)
+        foreach (var player in Player.ConnectedPlayers)
         {
             if (player != null)
             {

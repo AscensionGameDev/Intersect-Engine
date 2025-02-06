@@ -7,10 +7,6 @@ namespace Intersect.Server.General;
 
 public static partial class Globals
 {
-    public static List<Player> OnlineList => Client.Instances.FindAll(client => client?.Entity != null)
-        .Select(client => client.Entity)
-        .ToList();
-
     public static void DespawnInstancesOf(ResourceBase resource)
     {
         var allMapControllers = MapController.Lookup.Values.OfType<MapController>().ToArray();

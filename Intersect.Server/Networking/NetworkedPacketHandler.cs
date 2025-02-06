@@ -1174,7 +1174,7 @@ internal sealed partial class NetworkedPacketHandler
 
                 if (type == GameObjectType.Item)
                 {
-                    foreach (var player in Globals.OnlineList)
+                    foreach (var player in Player.ConnectedPlayers)
                     {
                         player.CacheEquipmentTriggers();
                     }
