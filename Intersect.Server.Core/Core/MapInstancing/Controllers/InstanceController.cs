@@ -15,7 +15,7 @@ public class InstanceController
 
     public void AddPlayer(Player player)
     {
-        if (player == null || !player.Online)
+        if (player == null || !player.IsOnline)
         {
             return;
         }

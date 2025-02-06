@@ -3,7 +3,6 @@ using System.Diagnostics.CodeAnalysis;
 using Intersect.Core;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
-using Intersect.Server.General;
 using Intersect.Server.Networking;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Utilities;
@@ -20,11 +19,6 @@ public partial class Player
 {
     private volatile bool _saving;
     private readonly object _savingLock = new();
-
-    public static Player[] ConnectedPlayers =>
-    [
-        ..Client.Instances.Where(client => client?.Entity is not null).Select(client => client.Entity),
-    ];
 
     #region Account
 

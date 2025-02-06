@@ -21,7 +21,6 @@ using Intersect.Server.Database.Logging.Entities;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
-using Intersect.Server.Entities.Combat;
 using Intersect.Server.Entities.Events;
 using Intersect.Server.Framework.Entities;
 using Intersect.Server.Framework.Items;
@@ -40,13 +39,6 @@ public partial class Player : Entity
 {
     [NotMapped, JsonIgnore]
     public Guid PreviousMapInstanceId = Guid.Empty;
-    //Online Players List
-    private static readonly ConcurrentDictionary<Guid, Player> OnlinePlayers = new ConcurrentDictionary<Guid, Player>();
-
-    public static Player[] OnlineList { get; private set; } = new Player[0];
-
-    [NotMapped]
-    public bool Online => OnlinePlayers.ContainsKey(Id);
 
     #region Chat
 
@@ -67,8 +59,6 @@ public partial class Player : Entity
     [JsonIgnore][NotMapped] public List<Npc> SpawnedNpcs = new List<Npc>();
 
     #endregion
-
-    public static int OnlineCount => OnlinePlayers.Count;
 
     [JsonIgnore, NotMapped]
     public long[] MaxVitals => GetMaxVitals();
@@ -344,12 +334,12 @@ public partial class Player : Entity
 
     public static Player FindOnline(Guid id)
     {
-        return OnlinePlayers.ContainsKey(id) ? OnlinePlayers[id] : null;
+        return OnlinePlayersById.ContainsKey(id) ? OnlinePlayersById[id] : null;
     }
 
     public static Player FindOnline(string charName)
     {
-        return OnlinePlayers.Values.FirstOrDefault(s => s.Name.ToLower().Trim() == charName.ToLower().Trim());
+        return OnlinePlayersById.Values.FirstOrDefault(s => s.Name.ToLower().Trim() == charName.ToLower().Trim());
     }
 
     public bool ValidateLists(PlayerContext? playerContext = default)
@@ -380,7 +370,7 @@ public partial class Player : Entity
     {
         IsDisposed = false;
         mSentMap = false;
-        if (OnlinePlayers.TryGetValue(Id, out var player))
+        if (OnlinePlayersById.TryGetValue(Id, out var player))
         {
             if (player != this)
             {
@@ -426,8 +416,8 @@ public partial class Player : Entity
             }
         }
 
-        OnlinePlayers[Id] = this;
-        OnlineList = OnlinePlayers.Values.ToArray();
+        OnlinePlayersById[Id] = this;
+        _onlinePlayers.Add(this);
 
         //Send guild list update to all members when coming online
         Guild?.UpdateMemberList();
@@ -579,10 +569,10 @@ public partial class Player : Entity
         }
 
         // Remove this player from the online list
-        if (OnlinePlayers?.ContainsKey(Id) ?? false)
+        if (OnlinePlayersById?.ContainsKey(Id) ?? false)
         {
-            OnlinePlayers.TryRemove(Id, out Player _);
-            OnlineList = OnlinePlayers.Values.ToArray();
+            OnlinePlayersById.TryRemove(Id, out Player _);
+            _onlinePlayers.Remove(this);
         }
 
         //Send guild update to all members when logging out
@@ -6094,7 +6084,7 @@ public partial class Player : Entity
 
     public static void StartCommonEventsWithTriggerForAll(CommonEventTrigger trigger, string command = "", string param = "")
     {
-        var players = Player.OnlineList;
+        var players = OnlinePlayers.ToArray();
         foreach (var value in EventBase.Lookup.Values)
         {
             if (value is EventBase eventDescriptor && eventDescriptor.Pages.Any(p => p.CommonTrigger == trigger))

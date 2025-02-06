@@ -515,7 +515,7 @@ internal sealed partial class PacketHandler
         client.ResetTimeout();
 
         // Are we at capacity yet, or can this user still log in?
-        if (Player.ConnectedPlayers.Length >= Options.Instance.MaximumLoggedInUsers)
+        if (Player.OnlinePlayers.Count >= Options.Instance.MaximumLoggedInUsers)
         {
             PacketSender.SendError(client, Strings.Networking.ServerFull, Strings.General.NoticeError);
 
@@ -2774,7 +2774,7 @@ internal sealed partial class PacketHandler
                             CustomColors.Alerts.Info
                         );
 
-                        if (target.Online)
+                        if (target.IsOnline)
                         {
                             PacketSender.SendGuildInvite(target, player);
                         }

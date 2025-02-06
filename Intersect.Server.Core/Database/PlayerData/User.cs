@@ -1174,7 +1174,7 @@ public partial class User
         {
             using (var context = DbInterface.CreatePlayerContext())
             {
-                foreach (var user in Player.ConnectedPlayers.Select(p => p.User))
+                foreach (var user in Player.OnlinePlayers.Select(p => p.User))
                 {
                     if (user != default)
                     {

@@ -84,6 +84,8 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
 
         builder.Services.AddResponseCompression();
 
+        builder.Services.AddSingleton(ApplicationContext.CurrentContext);
+
         var corsPolicies = builder.Configuration.GetValue<Dictionary<string, CorsPolicy>>("Cors");
         if (corsPolicies != default)
         {
@@ -531,6 +533,8 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
             app.UseMiddleware<AuthenticationDebugMiddleware>();
         }
 #endif
+
+        app.UseMiddleware<ApplicationContextMiddleware>();
 
         app.UseResponseCaching();
         app.UseOutputCache();

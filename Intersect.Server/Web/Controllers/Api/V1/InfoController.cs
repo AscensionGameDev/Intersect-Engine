@@ -47,7 +47,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
                     Timing.Global.Milliseconds,
                     cyclesPerSecond,
                     Client.Instances?.Count,
-                    Player.ConnectedPlayers.Length
+                    Player.OnlinePlayers.Count
                 )
             );
         }

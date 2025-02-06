@@ -43,13 +43,14 @@ public abstract partial class ApplicationContext<TContext, TStartupOptions> : IA
         mDisposeLock = new object();
         mShutdownLock = new object();
 
+        ApplicationContext.Context.Value = this;
+
         mServices = new ConcurrentDictionary<Type, IApplicationService>();
 
         StartupOptions = startupOptions;
         Logger = logger;
         PacketHelper = packetHelper;
 
-        ApplicationContext.Context.Value = this;
         ConcurrentInstance.Set(This);
     }
 

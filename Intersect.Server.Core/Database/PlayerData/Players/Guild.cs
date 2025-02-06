@@ -665,13 +665,13 @@ public partial class Guild
         // Send our new guild list to everyone that's online.
         UpdateMemberList();
 
-        if (newOwner.Online)
+        if (newOwner.IsOnline)
         {
             // Send our entity data to nearby players.
             PacketSender.SendEntityDataToProximity(newOwner);
         }
 
-        if (oldOwner?.Online ?? false)
+        if (oldOwner?.IsOnline ?? false)
         {
             // Send our entity data to nearby players.
             PacketSender.SendEntityDataToProximity(oldOwner);

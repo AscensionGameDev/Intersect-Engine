@@ -118,7 +118,8 @@ internal sealed partial class LogicService
                         var eventsProcessing = 0;
                         var autorunEvents = 0;
 
-                        foreach (var player in Player.OnlineList)
+                        var onlinePlayers = Player.OnlinePlayers;
+                        foreach (var player in onlinePlayers)
                         {
                             if (player != null)
                             {

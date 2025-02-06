@@ -347,7 +347,7 @@ public static partial class CommandProcessing
         {
             foreach (var instanceMember in instanceController.Players.ToArray())
             {
-                if (instanceMember.Id == player.Id || !instanceMember.Online)
+                if (instanceMember.Id == player.Id || !instanceMember.IsOnline)
                 {
                     continue;
                 }
@@ -1619,7 +1619,7 @@ public static partial class CommandProcessing
        Stack<CommandInstance> callStack
    )
     {
-        if (player == null || !player.Online)
+        if (player == null || !player.IsOnline)
         {
             return;
         }
@@ -1643,7 +1643,7 @@ public static partial class CommandProcessing
 
         foreach (var affectedPlayer in affectedPlayers.DistinctBy(pl => pl.Id))
         {
-            if (!affectedPlayer.Online)
+            if (!affectedPlayer.IsOnline)
             {
                 continue;
             }
@@ -1660,7 +1660,7 @@ public static partial class CommandProcessing
        Stack<CommandInstance> callStack
     )
     {
-        if (player == null || !player.Online)
+        if (player == null || !player.IsOnline)
         {
             return;
         }
@@ -1787,7 +1787,7 @@ public static partial class CommandProcessing
                 { Strings.Events.TimeSecond, Time.Second },
                 { Strings.Events.TimePeriod, time.Hour >= 12 ? Strings.Events.PeriodEvening : Strings.Events.PeriodMorning },
                 { Strings.Events.OnlineCountCommand, Player.OnlineCount.ToString() },
-                { Strings.Events.OnlineListCommand, input.Contains(Strings.Events.OnlineListCommand) ? string.Join(", ", Player.OnlineList.Select(p => p.Name).ToList()) : "" },
+                { Strings.Events.OnlineListCommand, input.Contains(Strings.Events.OnlineListCommand) ? string.Join(", ", Player.OnlinePlayers.ToArray().Select(p => p.Name)) : string.Empty },
                 { Strings.Events.EventNameCommand, instance?.PageInstance?.Name ?? "" },
                 { Strings.Events.CommandParameter, instance?.PageInstance?.Param ?? "" },
                 { Strings.Events.EventParameters, (instance != null && input.Contains(Strings.Events.EventParameters)) ? instance.FormatParameters(player) : "" },
