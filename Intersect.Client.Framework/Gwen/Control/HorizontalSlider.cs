@@ -1,4 +1,6 @@
-﻿namespace Intersect.Client.Framework.Gwen.Control;
+﻿using Intersect.Client.Framework.Input;
+
+namespace Intersect.Client.Framework.Gwen.Control;
 
 /// <summary>
 ///     Horizontal slider.
@@ -25,17 +27,18 @@ public partial class HorizontalSlider : Slider
         _sliderBar.MoveTo((int) ((Width - _sliderBar.Width) * _value), _sliderBar.Y);
     }
 
-    /// <summary>
-    ///     Handler invoked on mouse click (left) event.
-    /// </summary>
-    /// <param name="x">X coordinate.</param>
-    /// <param name="y">Y coordinate.</param>
-    /// <param name="down">If set to <c>true</c> mouse button is down.</param>
-    protected override void OnMouseClickedLeft(int x, int y, bool down, bool automated = false)
+    protected override void OnMouseClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
-        base.OnMouseClickedLeft(x, y, down);
-        _sliderBar.MoveTo((int) (CanvasPosToLocal(new Point(x, y)).X - _sliderBar.Width * 0.5), _sliderBar.Y);
-        _sliderBar.InputMouseClickedLeft(x, y, down, true);
+        base.OnMouseClicked(mouseButton, mousePosition, userAction);
+
+        if (mouseButton != MouseButton.Left)
+        {
+            return;
+        }
+
+        var localCoordinates = CanvasPosToLocal(mousePosition);
+        _sliderBar.MoveTo((int) (localCoordinates.X - _sliderBar.Width * 0.5), _sliderBar.Y);
+        _sliderBar.InputNonUserMouseClicked(mouseButton, mousePosition, true);
         SliderBarOnDragged(_sliderBar, EventArgs.Empty);
     }
 

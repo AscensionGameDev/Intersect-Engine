@@ -2,6 +2,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.Input;
+using Intersect.Client.Framework.Input;
 using Intersect.Core;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
@@ -360,15 +361,14 @@ public partial class TextBox : Label
         RefreshCursorBounds();
     }
 
-    /// <summary>
-    ///     Handler invoked on mouse double click (left) event.
-    /// </summary>
-    /// <param name="x">X coordinate.</param>
-    /// <param name="y">Y coordinate.</param>
-    protected override void OnMouseDoubleClickedLeft(int x, int y)
+    protected override void OnMouseDoubleClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
-        //base.OnMouseDoubleClickedLeft(x, y);
-        OnSelectAll(this, EventArgs.Empty);
+        base.OnMouseDoubleClicked(mouseButton, mousePosition, userAction);
+
+        if (mouseButton == MouseButton.Left)
+        {
+            OnSelectAll(this, EventArgs.Empty);
+        }
     }
 
     /// <summary>
@@ -723,15 +723,15 @@ public partial class TextBox : Label
         mCursorEnd = start;
     }
 
-    /// <summary>
-    ///     Handler invoked on mouse click (left) event.
-    /// </summary>
-    /// <param name="x">X coordinate.</param>
-    /// <param name="y">Y coordinate.</param>
-    /// <param name="down">If set to <c>true</c> mouse button is down.</param>
-    protected override void OnMouseClickedLeft(int x, int y, bool down, bool automated = false)
+    protected override void OnMouseDown(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
-        base.OnMouseClickedLeft(x, y, down);
+        base.OnMouseDown(mouseButton, mousePosition, userAction);
+
+        if (mouseButton != MouseButton.Left)
+        {
+            return;
+        }
+
         if (mSelectAll)
         {
             OnSelectAll(this, EventArgs.Empty);
@@ -740,27 +740,35 @@ public partial class TextBox : Label
             return;
         }
 
-        var c = GetClosestCharacter(x, y).X;
+        var closestCharacterCursor = GetClosestCharacter(mousePosition).X;
+        CursorPos = closestCharacterCursor;
 
-        if (down)
+        if (!InputHandler.IsShiftDown)
         {
-            CursorPos = c;
-
-            if (!InputHandler.IsShiftDown)
-            {
-                CursorEnd = c;
-            }
-
-            InputHandler.MouseFocus = this;
+            CursorEnd = closestCharacterCursor;
         }
-        else
+
+        InputHandler.MouseFocus = this;
+    }
+
+    protected override void OnMouseUp(MouseButton mouseButton, Point mousePosition, bool userAction = true)
+    {
+        base.OnMouseUp(mouseButton, mousePosition, userAction);
+
+        if (mouseButton != MouseButton.Left)
         {
-            if (InputHandler.MouseFocus == this)
-            {
-                CursorPos = c;
-                InputHandler.MouseFocus = null;
-            }
+            return;
         }
+
+        if (InputHandler.MouseFocus != this)
+        {
+            return;
+        }
+
+        var closestCharacterCursor = GetClosestCharacter(mousePosition).X;
+
+        CursorPos = closestCharacterCursor;
+        InputHandler.MouseFocus = null;
     }
 
     /// <summary>

@@ -1,5 +1,8 @@
 ﻿using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Input;
+using Intersect.Core;
+using Intersect.Framework.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
@@ -32,7 +35,7 @@ public partial class TabButton : Button
     /// <summary>
     ///     Indicates whether the tab is active.
     /// </summary>
-    public bool IsActive => _page is { IsVisible: true };
+    public bool IsTabActive => _page is { IsVisible: true };
 
     // todo: remove public access
     public TabControl? TabControl
@@ -72,7 +75,7 @@ public partial class TabButton : Button
     public override void DragAndDrop_EndDragging(bool success, int x, int y)
     {
         IsHidden = false;
-        IsDepressed = false;
+        IsActive = false;
     }
 
     public override bool DragAndDrop_ShouldStartDrag() => _tabControl?.AllowReorder ?? false;
@@ -83,7 +86,7 @@ public partial class TabButton : Button
     /// <param name="skin">Skin to use.</param>
     protected override void Render(Skin.Base skin)
     {
-        skin.DrawTabButton(this, IsActive, _tabControl.TabStrip.Dock);
+        skin.DrawTabButton(this, IsTabActive, _tabControl.TabStrip.Dock);
     }
 
     /// <summary>
@@ -169,54 +172,47 @@ public partial class TabButton : Button
     /// </summary>
     public override void UpdateColors()
     {
-        if (IsActive)
-        {
-            if (IsDisabled)
-            {
-                TextColor = Skin.Colors.Tab.Active.Disabled;
+        var colorSource = IsTabActive ? Skin.Colors.Tab.Active : Skin.Colors.Tab.Inactive;
 
-                return;
-            }
-
-            if (IsDepressed)
-            {
-                TextColor = Skin.Colors.Tab.Active.Down;
-
-                return;
-            }
-
-            if (IsHovered)
-            {
-                TextColor = Skin.Colors.Tab.Active.Hover;
-
-                return;
-            }
-
-            TextColor = Skin.Colors.Tab.Active.Normal;
-        }
-
+        var textColor = GetTextColor(ControlState.Normal) ?? colorSource.Normal;
         if (IsDisabled)
         {
-            TextColor = Skin.Colors.Tab.Inactive.Disabled;
-
-            return;
+            textColor = GetTextColor(ControlState.Disabled) ?? colorSource.Disabled;
         }
-
-        if (IsDepressed)
+        else if (IsActive)
         {
-            TextColor = Skin.Colors.Tab.Inactive.Down;
-
-            return;
+            textColor = GetTextColor(ControlState.Active) ?? colorSource.Active;
         }
-
-        if (IsHovered)
+        else if (IsHovered)
         {
-            TextColor = Skin.Colors.Tab.Inactive.Hover;
-
-            return;
+            textColor = GetTextColor(ControlState.Hovered) ?? colorSource.Hover;
         }
 
-        TextColor = Skin.Colors.Tab.Inactive.Normal;
+        // ApplicationContext.CurrentContext.Logger.LogInformation(
+        //     "'{ComponentName}' IsDisabled={IsDisabled} IsActive={IsActive} IsHovered={IsHovered} TextColor={TextColor}",
+        //     CanonicalName,
+        //     IsDisabled,
+        //     IsActive,
+        //     IsHovered,
+        //     textColor
+        // );
+
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (textColor == null)
+        {
+            ApplicationContext.CurrentContext.Logger.LogError(
+                "Text color for the current control state of {ComponentType} '{ComponentName}' is somehow null IsDisabled={IsDisabled} IsActive={IsActive} IsHovered={IsHovered}",
+                GetType().GetName(qualified: true),
+                CanonicalName,
+                IsDisabled,
+                IsActive,
+                IsHovered
+            );
+
+            textColor = new Color(r: 255, g: 0, b: 255);
+        }
+
+        TextColor = textColor;
     }
 
 }

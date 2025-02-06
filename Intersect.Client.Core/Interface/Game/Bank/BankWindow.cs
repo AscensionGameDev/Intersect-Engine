@@ -93,7 +93,7 @@ public partial class BankWindow
         mContextMenu.Open(Framework.Gwen.Pos.None);
     }
 
-    private void MWithdrawContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.ClickedEventArgs arguments)
+    private void MWithdrawContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.MouseButtonState arguments)
     {
         var slot = (int)sender.Parent.UserData;
         Globals.Me.TryWithdrawItem(slot);

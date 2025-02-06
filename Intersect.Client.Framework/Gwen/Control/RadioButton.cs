@@ -4,7 +4,7 @@ namespace Intersect.Client.Framework.Gwen.Control;
 /// <summary>
 ///     Radio button.
 /// </summary>
-public partial class RadioButton : CheckBox
+public partial class RadioButton : Checkbox
 {
 
     /// <summary>
@@ -30,7 +30,7 @@ public partial class RadioButton : CheckBox
     /// <param name="skin">Skin to use.</param>
     protected override void Render(Skin.Base skin)
     {
-        skin.DrawRadioButton(this, IsChecked, IsHovered, IsDepressed);
+        skin.DrawRadioButton(this, IsChecked, IsHovered, IsActive);
     }
 
 }

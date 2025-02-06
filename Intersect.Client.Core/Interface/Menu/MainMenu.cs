@@ -53,6 +53,7 @@ public partial class MainMenu : MutableInterface
         _settingsWindow = new SettingsWindow(_menuCanvas, this, null)
         {
             AlignmentDistance = new Padding(0, 100, 0, 0),
+            IsVisible = false,
         };
         _creditsWindow = new CreditsWindow(_menuCanvas, this);
     }

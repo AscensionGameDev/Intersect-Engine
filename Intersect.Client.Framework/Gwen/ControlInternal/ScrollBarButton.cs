@@ -51,7 +51,7 @@ public partial class ScrollBarButton : Button
     /// <param name="skin">Skin to use.</param>
     protected override void Render(Skin.Base skin)
     {
-        skin.DrawScrollButton(this, mDirection, IsDepressed, IsHovered, IsDisabled);
+        skin.DrawScrollButton(this, mDirection, IsActive, IsHovered, IsDisabled);
     }
 
 }

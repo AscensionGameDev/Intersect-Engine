@@ -97,7 +97,7 @@ partial class FriendsWindow
         }
     }
 
-    void addButton_Clicked(Base sender, ClickedEventArgs arguments)
+    void addButton_Clicked(Base sender, MouseButtonState arguments)
     {
         _ = new InputBox(
             title: Strings.Friends.AddFriend,

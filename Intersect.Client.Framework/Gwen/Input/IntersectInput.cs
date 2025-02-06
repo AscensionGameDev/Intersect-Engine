@@ -1,5 +1,6 @@
 ﻿using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Framework.Input;
 
 namespace Intersect.Client.Framework.Gwen.Input;
 
@@ -109,9 +110,9 @@ public partial class IntersectInput : InputBase
 
                 return mCanvas.Input_MouseMoved(mMouseX, mMouseY, dx, dy);
             case InputEvent.MouseDown:
-                return mCanvas.Input_MouseButton((int) msg.MouseBtn, true);
+                return mCanvas.Input_MouseButton(msg.MouseBtn, true);
             case InputEvent.MouseUp:
-                return mCanvas.Input_MouseButton((int) msg.MouseBtn, false);
+                return mCanvas.Input_MouseButton(msg.MouseBtn, false);
             case InputEvent.TextEntered:
                 return mCanvas.Input_Character((char) msg.Unicode[0]);
             case InputEvent.KeyDown:
@@ -150,7 +151,7 @@ public partial class GwenInputMessage
 
     public Keys Key;
 
-    public int MouseBtn;
+    public MouseButton MouseBtn;
 
     public Pointf MousePosition;
 
@@ -163,7 +164,7 @@ public partial class GwenInputMessage
     public GwenInputMessage(
         IntersectInput.InputEvent type,
         Pointf mousePos,
-        int mousebtn,
+        MouseButton mousebtn,
         Keys keyAction,
         bool alt = false,
         bool control = false,

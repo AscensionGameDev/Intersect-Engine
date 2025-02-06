@@ -537,22 +537,22 @@ public partial class TexturedBase : Skin.Base
 
         Colors.Button.Normal = Renderer.PixelColor(_texture, 4 + 8 * 2, 508, Color.Yellow);
         Colors.Button.Hover = Renderer.PixelColor(_texture, 4 + 8 * 3, 508, Color.Yellow);
-        Colors.Button.Down = Renderer.PixelColor(_texture, 4 + 8 * 2, 500, Color.Yellow);
+        Colors.Button.Active = Renderer.PixelColor(_texture, 4 + 8 * 2, 500, Color.Yellow);
         Colors.Button.Disabled = Renderer.PixelColor(_texture, 4 + 8 * 3, 500, Color.Yellow);
 
         Colors.Tab.Active.Normal = Renderer.PixelColor(_texture, 4 + 8 * 2, 508, Color.Yellow);
         Colors.Tab.Active.Hover = Renderer.PixelColor(_texture, 4 + 8 * 3, 508, Color.Yellow);
-        Colors.Tab.Active.Down = Renderer.PixelColor(_texture, 4 + 8 * 2, 500, Color.Yellow);
+        Colors.Tab.Active.Active = Renderer.PixelColor(_texture, 4 + 8 * 2, 500, Color.Yellow);
         Colors.Tab.Active.Disabled = Renderer.PixelColor(_texture, 4 + 8 * 3, 500, Color.Yellow);
         Colors.Tab.Inactive.Normal = Renderer.PixelColor(_texture, 4 + 8 * 2, 508, Color.Yellow);
         Colors.Tab.Inactive.Hover = Renderer.PixelColor(_texture, 4 + 8 * 3, 508, Color.Yellow);
-        Colors.Tab.Inactive.Down = Renderer.PixelColor(_texture, 4 + 8 * 2, 500, Color.Yellow);
+        Colors.Tab.Inactive.Active = Renderer.PixelColor(_texture, 4 + 8 * 2, 500, Color.Yellow);
         Colors.Tab.Inactive.Disabled = Renderer.PixelColor(_texture, 4 + 8 * 3, 500, Color.Yellow);
 
-        Colors.Label.Default = Renderer.PixelColor(_texture, 4 + 8 * 8, 508, Color.Yellow);
-        Colors.Label.Bright = Renderer.PixelColor(_texture, 4 + 8 * 9, 508, Color.Yellow);
-        Colors.Label.Dark = Renderer.PixelColor(_texture, 4 + 8 * 8, 500, Color.Yellow);
-        Colors.Label.Highlight = Renderer.PixelColor(_texture, 4 + 8 * 9, 500, Color.Yellow);
+        Colors.Label.Normal = Renderer.PixelColor(_texture, 4 + 8 * 8, 508, Color.Yellow);
+        Colors.Label.Hover = Renderer.PixelColor(_texture, 4 + 8 * 9, 508, Color.Yellow);
+        Colors.Label.Disabled = Renderer.PixelColor(_texture, 4 + 8 * 8, 500, Color.Yellow);
+        Colors.Label.Active = Renderer.PixelColor(_texture, 4 + 8 * 9, 500, Color.Yellow);
 
         Colors.Tree.Lines = Renderer.PixelColor(_texture, 4 + 8 * 10, 508, Color.Yellow);
         Colors.Tree.Normal = Renderer.PixelColor(_texture, 4 + 8 * 11, 508, Color.Yellow);
@@ -741,23 +741,15 @@ public partial class TexturedBase : Skin.Base
         }
         else if (depressed)
         {
-            controlState = Button.ControlState.Clicked;
+            controlState = Button.ControlState.Active;
         }
         else if (hovered)
         {
             controlState = Button.ControlState.Hovered;
         }
 
-        var textColor = button.GetTextColor(controlState.ToLabelControlState()) ??
-                        button.GetTextColor(Label.ControlState.Normal);
-
-        if (textColor != null)
-        {
-            button.TextColorOverride = textColor;
-        }
-
-        var controlStateTexture = button.GetImage(controlState);
-        controlStateTexture ??= button.GetImage(Button.ControlState.Normal);
+        var controlStateTexture = button.GetStateTexture(controlState);
+        controlStateTexture ??= button.GetStateTexture(Button.ControlState.Normal);
 
         if (controlStateTexture == null)
         {
@@ -766,7 +758,7 @@ public partial class TexturedBase : Skin.Base
             {
                 Button.ControlState.Normal => buttonTextureGroup.Normal,
                 Button.ControlState.Hovered => buttonTextureGroup.Hovered,
-                Button.ControlState.Clicked => buttonTextureGroup.Pressed,
+                Button.ControlState.Active => buttonTextureGroup.Pressed,
                 Button.ControlState.Disabled => buttonTextureGroup.Disabled,
                 _ => throw new UnreachableException(),
             };
@@ -976,7 +968,7 @@ public partial class TexturedBase : Skin.Base
 
     public override void DrawRadioButton(Control.Base control, bool selected, bool depressed)
     {
-        if (TryGetOverrideTexture(control as CheckBox, selected, depressed, out var overrideTexture))
+        if (TryGetOverrideTexture(control as Checkbox, selected, depressed, out var overrideTexture))
         {
             Renderer.DrawColor = control.RenderColor;
             Renderer.DrawTexturedRect(overrideTexture, control.RenderBounds, control.RenderColor, 0, 0);
@@ -1007,16 +999,16 @@ public partial class TexturedBase : Skin.Base
         }
     }
 
-    protected bool TryGetOverrideTexture(CheckBox control, bool selected, bool pressed, out GameTexture overrideTexture)
+    protected bool TryGetOverrideTexture(Checkbox control, bool selected, bool pressed, out GameTexture overrideTexture)
     {
-        CheckBox.ControlState controlState = CheckBox.ControlState.Normal;
+        Checkbox.ControlState controlState = Checkbox.ControlState.Normal;
         if (selected)
         {
-            controlState = control.IsDisabled ? CheckBox.ControlState.CheckedDisabled : CheckBox.ControlState.CheckedNormal;
+            controlState = control.IsDisabled ? Checkbox.ControlState.CheckedDisabled : Checkbox.ControlState.CheckedNormal;
         }
         else if (control.IsDisabled)
         {
-            controlState = CheckBox.ControlState.Disabled;
+            controlState = Checkbox.ControlState.Disabled;
         }
 
         overrideTexture = control.GetImage(controlState);
@@ -1025,7 +1017,7 @@ public partial class TexturedBase : Skin.Base
 
     public override void DrawCheckBox(Control.Base control, bool selected, bool depressed)
     {
-        if (TryGetOverrideTexture(control as CheckBox, selected, depressed, out var overrideTexture))
+        if (TryGetOverrideTexture(control as Checkbox, selected, depressed, out var overrideTexture))
         {
             Renderer.DrawColor = control.RenderColor;
             Renderer.DrawTexturedRect(overrideTexture, control.RenderBounds, control.RenderColor, 0, 0);
@@ -2121,21 +2113,21 @@ public partial class TexturedBase : Skin.Base
 
         GameTexture renderImg = null;
 
-        if (disabled && button.GetImage(Button.ControlState.Disabled) != null)
+        if (disabled && button.GetStateTexture(Button.ControlState.Disabled) != null)
         {
-            renderImg = button.GetImage(Button.ControlState.Disabled);
+            renderImg = button.GetStateTexture(Button.ControlState.Disabled);
         }
-        else if (depressed && button.GetImage(Button.ControlState.Clicked) != null)
+        else if (depressed && button.GetStateTexture(Button.ControlState.Active) != null)
         {
-            renderImg = button.GetImage(Button.ControlState.Clicked);
+            renderImg = button.GetStateTexture(Button.ControlState.Active);
         }
-        else if (hovered && button.GetImage(Button.ControlState.Hovered) != null)
+        else if (hovered && button.GetStateTexture(Button.ControlState.Hovered) != null)
         {
-            renderImg = button.GetImage(Button.ControlState.Hovered);
+            renderImg = button.GetStateTexture(Button.ControlState.Hovered);
         }
-        else if (button.GetImage(Button.ControlState.Normal) != null)
+        else if (button.GetStateTexture(Button.ControlState.Normal) != null)
         {
-            renderImg = button.GetImage(Button.ControlState.Normal);
+            renderImg = button.GetStateTexture(Button.ControlState.Normal);
         }
 
         if (renderImg != null)
@@ -2345,21 +2337,21 @@ public partial class TexturedBase : Skin.Base
         }
 
         GameTexture renderImg = null;
-        if (disabled && button.GetImage(Button.ControlState.Disabled) != null)
+        if (disabled && button.GetStateTexture(Button.ControlState.Disabled) != null)
         {
-            renderImg = button.GetImage(Button.ControlState.Disabled);
+            renderImg = button.GetStateTexture(Button.ControlState.Disabled);
         }
-        else if (depressed && button.GetImage(Button.ControlState.Clicked) != null)
+        else if (depressed && button.GetStateTexture(Button.ControlState.Active) != null)
         {
-            renderImg = button.GetImage(Button.ControlState.Clicked);
+            renderImg = button.GetStateTexture(Button.ControlState.Active);
         }
-        else if (hovered && button.GetImage(Button.ControlState.Hovered) != null)
+        else if (hovered && button.GetStateTexture(Button.ControlState.Hovered) != null)
         {
-            renderImg = button.GetImage(Button.ControlState.Hovered);
+            renderImg = button.GetStateTexture(Button.ControlState.Hovered);
         }
-        else if (button.GetImage(Button.ControlState.Normal) != null)
+        else if (button.GetStateTexture(Button.ControlState.Normal) != null)
         {
-            renderImg = button.GetImage(Button.ControlState.Normal);
+            renderImg = button.GetStateTexture(Button.ControlState.Normal);
         }
 
         if (renderImg != null)

@@ -1344,6 +1344,9 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Padding = @"Padding";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Dock = @"Dock";
     }
 
     public partial struct Inventory

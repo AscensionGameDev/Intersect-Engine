@@ -27,7 +27,7 @@ public partial class Text : Base
     public Text(Base parent, string? name = default) : base(parent, name)
     {
         _font = Skin.DefaultFont;
-        Color = Skin.Colors.Label.Default;
+        Color = Skin.Colors.Label.Normal;
         MouseInputEnabled = false;
         ColorOverride = Color.FromArgb(0, 255, 255, 255); // A==0, override disabled
     }

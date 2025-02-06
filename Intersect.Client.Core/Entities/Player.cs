@@ -1769,7 +1769,7 @@ public partial class Player : Entity, IPlayer
 
     private static void ToggleTargetContextMenu(Entity en)
     {
-        if (Globals.InputManager.MouseButtonDown(MouseButtons.Right))
+        if (Globals.InputManager.MouseButtonDown(MouseButton.Right))
         {
             Interface.Interface.GameUi.TargetContextMenu.ToggleHidden(en);
         }

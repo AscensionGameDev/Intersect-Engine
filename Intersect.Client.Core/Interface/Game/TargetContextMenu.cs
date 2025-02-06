@@ -127,7 +127,7 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
             Open(Pos.None);
             SetPosition(newX, newY);
         }
-        else if (!Globals.InputManager.MouseButtonDown(MouseButtons.Right))
+        else if (!Globals.InputManager.MouseButtonDown(MouseButton.Right))
         {
             Close();
         }
@@ -157,7 +157,7 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
         }
     }
 
-    void invite_Clicked(Base sender, ClickedEventArgs arguments)
+    void invite_Clicked(Base sender, MouseButtonState arguments)
     {
         if (_me == null || _entity is not Player || _entity == _me)
         {
@@ -174,7 +174,7 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
         }
     }
 
-    void tradeRequest_Clicked(Base sender, ClickedEventArgs arguments)
+    void tradeRequest_Clicked(Base sender, MouseButtonState arguments)
     {
         if (_me == null || _entity is not Player || _entity == _me)
         {
@@ -191,7 +191,7 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
         }
     }
 
-    void friendRequest_Clicked(Base sender, ClickedEventArgs arguments)
+    void friendRequest_Clicked(Base sender, MouseButtonState arguments)
     {
         if (_me == null || _entity is not Player || _entity == _me)
         {
@@ -208,7 +208,7 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
         }
     }
 
-    void guildRequest_Clicked(Base sender, ClickedEventArgs arguments)
+    void guildRequest_Clicked(Base sender, MouseButtonState arguments)
     {
         if (_me == null || _entity is not Player plyr || _entity == _me)
         {
@@ -237,7 +237,7 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
         }
     }
 
-    void privateMessageRequest_Clicked(Base sender, ClickedEventArgs arguments)
+    void privateMessageRequest_Clicked(Base sender, MouseButtonState arguments)
     {
         if (_me == null || _entity is not Player || _entity == _me)
         {

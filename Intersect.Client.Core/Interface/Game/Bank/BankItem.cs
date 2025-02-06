@@ -64,24 +64,11 @@ public partial class BankItem
         Pnl = new ImagePanel(Container, "BankItemIcon");
         Pnl.HoverEnter += pnl_HoverEnter;
         Pnl.HoverLeave += pnl_HoverLeave;
-        Pnl.RightClicked += Pnl_RightClicked;
         Pnl.DoubleClicked += Pnl_DoubleClicked;
         Pnl.Clicked += pnl_Clicked;
     }
 
-    private void Pnl_RightClicked(Base sender, ClickedEventArgs arguments)
-    {
-        if (ClientConfiguration.Instance.EnableContextMenus)
-        {
-            mBankWindow.OpenContextMenu(mMySlot);
-        }
-        else
-        {
-            Pnl_DoubleClicked(sender, arguments);
-        }
-    }
-
-    private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
+    private void Pnl_DoubleClicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.InBank)
         {
@@ -105,9 +92,25 @@ public partial class BankItem
         }
     }
 
-    void pnl_Clicked(Base sender, ClickedEventArgs arguments)
+    void pnl_Clicked(Base sender, MouseButtonState arguments)
     {
-        mClickTime = Timing.Global.MillisecondsUtc + 500;
+        switch (arguments.MouseButton)
+        {
+            case MouseButton.Left:
+                mClickTime = Timing.Global.MillisecondsUtc + 500;
+                break;
+
+            case MouseButton.Right:
+                if (ClientConfiguration.Instance.EnableContextMenus)
+                {
+                    mBankWindow.OpenContextMenu(mMySlot);
+                }
+                else
+                {
+                    Pnl_DoubleClicked(sender, arguments);
+                }
+                break;
+        }
     }
 
     void pnl_HoverLeave(Base sender, EventArgs arguments)
@@ -131,7 +134,7 @@ public partial class BankItem
 
         mMouseOver = true;
         mCanDrag = true;
-        if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
+        if (Globals.InputManager.MouseButtonDown(MouseButton.Left))
         {
             mCanDrag = false;
 
@@ -201,7 +204,7 @@ public partial class BankItem
         {
             if (mMouseOver)
             {
-                if (!Globals.InputManager.MouseButtonDown(MouseButtons.Left))
+                if (!Globals.InputManager.MouseButtonDown(MouseButton.Left))
                 {
                     mCanDrag = true;
                     mMouseX = -1;

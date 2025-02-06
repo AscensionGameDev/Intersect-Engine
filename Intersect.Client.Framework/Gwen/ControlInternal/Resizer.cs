@@ -79,7 +79,7 @@ public partial class Resizer : Dragger
     /// <param name="dy">Y change.</param>
     protected override void OnMouseMoved(int x, int y, int dx, int dy)
     {
-        if (null == mTarget)
+        if (null == _target)
         {
             return;
         }
@@ -89,14 +89,14 @@ public partial class Resizer : Dragger
             return;
         }
 
-        var oldBounds = mTarget.Bounds;
-        var bounds = mTarget.Bounds;
+        var oldBounds = _target.Bounds;
+        var bounds = _target.Bounds;
 
-        var min = mTarget.MinimumSize;
+        var min = _target.MinimumSize;
 
-        var pCursorPos = mTarget.CanvasPosToLocal(new Point(x, y));
+        var pCursorPos = _target.CanvasPosToLocal(new Point(x, y));
 
-        var delta = mTarget.LocalPosToCanvas(mHoldPos);
+        var delta = _target.LocalPosToCanvas(mHoldPos);
         delta.X -= x;
         delta.Y -= y;
 
@@ -168,7 +168,7 @@ public partial class Resizer : Dragger
             mHoldPos.Y -= diff;
         }
 
-        mTarget.SetBounds(bounds);
+        _target.SetBounds(bounds);
 
         if (Resized != null)
         {

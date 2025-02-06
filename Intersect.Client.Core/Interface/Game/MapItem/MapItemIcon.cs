@@ -42,7 +42,7 @@ public partial class MapItemIcon
         Pnl.Clicked += pnl_Clicked;
     }
 
-    void pnl_Clicked(Base sender, ClickedEventArgs arguments)
+    void pnl_Clicked(Base sender, MouseButtonState arguments)
     {
         if (MyItem == null || TileIndex < 0 || TileIndex >= Options.Instance.Map.MapWidth * Options.Instance.Map.MapHeight)
         {
@@ -73,7 +73,7 @@ public partial class MapItemIcon
             return;
         }
 
-        if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
+        if (Globals.InputManager.MouseButtonDown(MouseButton.Left))
         {
             return;
         }

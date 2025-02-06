@@ -82,7 +82,7 @@ public partial class TradingWindow
         mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
     }
 
-    private void MWithdrawContextItem_Clicked(Base sender, ClickedEventArgs arguments)
+    private void MWithdrawContextItem_Clicked(Base sender, MouseButtonState arguments)
     {
         var slot = (int) sender.Parent.UserData;
         Globals.Me.TryRevokeItem(slot);
@@ -193,7 +193,7 @@ public partial class TradingWindow
     }
 
     //Trade the item
-    void trade_Clicked(Base sender, ClickedEventArgs arguments)
+    void trade_Clicked(Base sender, MouseButtonState arguments)
     {
         mTrade.Text = Strings.Trading.Pending;
         mTrade.IsDisabled = true;

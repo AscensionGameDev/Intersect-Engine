@@ -26,7 +26,7 @@ public partial class CategoryHeaderButton : Button
     /// </summary>
     public override void UpdateColors()
     {
-        if (IsDepressed || ToggleState)
+        if (IsActive || ToggleState)
         {
             TextColor = Skin.Colors.Category.HeaderClosed;
         }

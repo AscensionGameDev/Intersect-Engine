@@ -61,24 +61,11 @@ public partial class BagItem
         Pnl = new ImagePanel(Container, "BagItemIcon");
         Pnl.HoverEnter += pnl_HoverEnter;
         Pnl.HoverLeave += pnl_HoverLeave;
-        Pnl.RightClicked += Pnl_RightClicked;
         Pnl.DoubleClicked += Pnl_DoubleClicked;
         Pnl.Clicked += pnl_Clicked;
     }
 
-    private void Pnl_RightClicked(Base sender, ClickedEventArgs arguments)
-    {
-        if (ClientConfiguration.Instance.EnableContextMenus)
-        {
-            mBagWindow.OpenContextMenu(mMySlot);
-        }
-        else
-        {
-            Pnl_DoubleClicked(sender, arguments);
-        }    
-    }
-
-    private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
+    private void Pnl_DoubleClicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.InBag)
         {
@@ -86,9 +73,26 @@ public partial class BagItem
         }
     }
 
-    void pnl_Clicked(Base sender, ClickedEventArgs arguments)
+    void pnl_Clicked(Base sender, MouseButtonState arguments)
     {
-        mClickTime = Timing.Global.MillisecondsUtc + 500;
+        // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
+        switch (arguments.MouseButton)
+        {
+            case MouseButton.Right:
+                if (ClientConfiguration.Instance.EnableContextMenus)
+                {
+                    mBagWindow.OpenContextMenu(mMySlot);
+                }
+                else
+                {
+                    Pnl_DoubleClicked(sender, arguments);
+                }
+                break;
+
+            case MouseButton.Left:
+                mClickTime = Timing.Global.MillisecondsUtc + 500;
+                break;
+        }
     }
 
     void pnl_HoverLeave(Base sender, EventArgs arguments)
@@ -112,7 +116,7 @@ public partial class BagItem
 
         mMouseOver = true;
         mCanDrag = true;
-        if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
+        if (Globals.InputManager.MouseButtonDown(MouseButton.Left))
         {
             mCanDrag = false;
 
@@ -182,7 +186,7 @@ public partial class BagItem
         {
             if (mMouseOver)
             {
-                if (!Globals.InputManager.MouseButtonDown(MouseButtons.Left))
+                if (!Globals.InputManager.MouseButtonDown(MouseButton.Left))
                 {
                     mCanDrag = true;
                     mMouseX = -1;

@@ -11,8 +11,10 @@ using Intersect.Client.Framework.Gwen.Input;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Intersect.Client.Framework.Gwen.Renderer;
+using Intersect.Client.Framework.Input;
 using Intersect.Core;
 using Intersect.Framework.Reflection;
+using Intersect.Framework.Serialization;
 using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Framework.Gwen.Control;
@@ -276,8 +278,7 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Returns true if any on click events are set.
     /// </summary>
-    internal bool ClickEventAssigned =>
-        Clicked != null || RightClicked != null || DoubleClicked != null || DoubleRightClicked != null;
+    internal bool ClickEventAssigned => Clicked != null || DoubleClicked != null;
 
     /// <summary>
     ///     Logical list of children. If InnerPanel is not null, returns InnerPanel's children.
@@ -644,6 +645,8 @@ public partial class Base : IDisposable
 
     }
 
+    protected virtual Point InnerPanelSizeFrom(Point size) => size;
+
     public virtual bool IsHiddenByTree => mHidden || (Parent?.IsHidden ?? false);
 
     public virtual bool IsDisabledByTree => _disabled || (Parent?.IsDisabled ?? false);
@@ -769,7 +772,7 @@ public partial class Base : IDisposable
             _minimumSize = value;
             if (_innerPanel != null)
             {
-                _innerPanel.MinimumSize = value;
+                _innerPanel.MinimumSize = InnerPanelSizeFrom(value);
             }
         }
     }
@@ -785,7 +788,7 @@ public partial class Base : IDisposable
             _maximumSize = value;
             if (_innerPanel != null)
             {
-                _innerPanel.MaximumSize = value;
+                _innerPanel.MaximumSize = InnerPanelSizeFrom(value);
             }
         }
     }
@@ -1193,6 +1196,11 @@ public partial class Base : IDisposable
             }
         }
 
+        if (obj.TryGet<Pos>(nameof(Dock), out var dock))
+        {
+            Dock = dock;
+        }
+
         if (obj["Padding"] != null)
         {
             Padding = Padding.FromString((string) obj["Padding"]);
@@ -1321,6 +1329,8 @@ public partial class Base : IDisposable
                 }
             }
         }
+
+        Invalidate(alsoInvalidateParent: true);
     }
 
     public virtual void ProcessAlignments()
@@ -1379,37 +1389,31 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Invoked when mouse pointer enters the control.
     /// </summary>
-    public event GwenEventHandler<EventArgs> HoverEnter;
+    public event GwenEventHandler<EventArgs>? HoverEnter;
 
     /// <summary>
     ///     Invoked when mouse pointer leaves the control.
     /// </summary>
-    public event GwenEventHandler<EventArgs> HoverLeave;
+    public event GwenEventHandler<EventArgs>? HoverLeave;
 
     /// <summary>
     ///     Invoked when control's bounds have been changed.
     /// </summary>
     public event GwenEventHandler<EventArgs>? BoundsChanged;
 
+    public virtual event GwenEventHandler<MouseButtonState>? MouseDown;
+
+    public virtual event GwenEventHandler<MouseButtonState>? MouseUp;
+
     /// <summary>
     ///     Invoked when the control has been left-clicked.
     /// </summary>
-    public virtual event GwenEventHandler<ClickedEventArgs> Clicked;
+    public virtual event GwenEventHandler<MouseButtonState>? Clicked;
 
     /// <summary>
     ///     Invoked when the control has been double-left-clicked.
     /// </summary>
-    public virtual event GwenEventHandler<ClickedEventArgs> DoubleClicked;
-
-    /// <summary>
-    ///     Invoked when the control has been right-clicked.
-    /// </summary>
-    public virtual event GwenEventHandler<ClickedEventArgs> RightClicked;
-
-    /// <summary>
-    ///     Invoked when the control has been double-right-clicked.
-    /// </summary>
-    public virtual event GwenEventHandler<ClickedEventArgs> DoubleRightClicked;
+    public virtual event GwenEventHandler<MouseButtonState>? DoubleClicked;
 
 #if DIAGNOSTIC
     ~Base()
@@ -2090,6 +2094,8 @@ public partial class Base : IDisposable
     /// <returns>True if bounds changed.</returns>
     public virtual bool SetSize(int width, int height) => SetBounds(X, Y, width, height);
 
+    public bool SetSize(Point point) => SetSize(point.X, point.Y);
+
     /// <summary>
     ///     Sets the control bounds.
     /// </summary>
@@ -2148,9 +2154,14 @@ public partial class Base : IDisposable
         newBounds.Width = maximumSize.X > 0 ? Math.Min(MaximumSize.X, width) : width;
         newBounds.Height = maximumSize.Y > 0 ? Math.Min(MaximumSize.Y, height) : height;
 
-        if (newBounds.Width > 10000 || newBounds.Height > 10000)
+        if (newBounds.Width > 100000 || newBounds.Height > 100000)
         {
-            newBounds.ToString();
+            ApplicationContext.CurrentContext.Logger.LogWarning(
+                "Extremely large component resize '{ComponentName}' {OldBounds} => {NewBounds}",
+                CanonicalName,
+                oldBounds.Size,
+                newBounds.Size
+            );
         }
 
         mBounds = newBounds;
@@ -2557,94 +2568,17 @@ public partial class Base : IDisposable
         OnMouseMoved(x, y, dx, dy);
     }
 
-    /// <summary>
-    ///     Handler invoked on mouse click (left) event.
-    /// </summary>
-    /// <param name="x">X coordinate.</param>
-    /// <param name="y">Y coordinate.</param>
-    /// <param name="down">If set to <c>true</c> mouse button is down.</param>
-    protected virtual void OnMouseClickedLeft(int x, int y, bool down, bool automated = false)
+    internal void InputNonUserMouseClicked(MouseButton mouseButton, Point mousePosition, bool isPressed)
     {
-        if (down && Clicked != null)
-        {
-            Clicked(this, new ClickedEventArgs(x, y, down));
-        }
+        OnMouseDoubleClicked(mouseButton, mousePosition, userAction: false);
+        Clicked?.Invoke(this, new MouseButtonState(mouseButton, mousePosition, isPressed: isPressed));
     }
 
-    /// <summary>
-    ///     Invokes left mouse click event (used by input system).
-    /// </summary>
-    internal void InputMouseClickedLeft(int x, int y, bool down, bool automated = false)
+    internal void InputMouseDoubleClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
-        OnMouseClickedLeft(x, y, down, automated);
+        OnMouseDoubleClicked(mouseButton, mousePosition, userAction);
+        DoubleClicked?.Invoke(this, new MouseButtonState(mouseButton, mousePosition, true));
     }
-
-    /// <summary>
-    ///     Handler invoked on mouse click (right) event.
-    /// </summary>
-    /// <param name="x">X coordinate.</param>
-    /// <param name="y">Y coordinate.</param>
-    /// <param name="down">If set to <c>true</c> mouse button is down.</param>
-    protected virtual void OnMouseClickedRight(int x, int y, bool down)
-    {
-        if (down && RightClicked != null)
-        {
-            RightClicked(this, new ClickedEventArgs(x, y, down));
-        }
-    }
-
-    /// <summary>
-    ///     Invokes right mouse click event (used by input system).
-    /// </summary>
-    internal void InputMouseClickedRight(int x, int y, bool down)
-    {
-        OnMouseClickedRight(x, y, down);
-    }
-
-    /// <summary>
-    ///     Handler invoked on mouse double click (left) event.
-    /// </summary>
-    /// <param name="x">X coordinate.</param>
-    /// <param name="y">Y coordinate.</param>
-    protected virtual void OnMouseDoubleClickedLeft(int x, int y)
-    {
-        // [omeg] should this be called?
-        // [halfofastaple] Maybe. Technically, a double click is still technically a single click. However, this shouldn't be called here, and
-        //					Should be called by the event handler.
-        OnMouseClickedLeft(x, y, true);
-
-        DoubleClicked?.Invoke(this, new ClickedEventArgs(x, y, true));
-    }
-
-    /// <summary>
-    ///     Invokes left double mouse click event (used by input system).
-    /// </summary>
-    internal void InputMouseDoubleClickedLeft(int x, int y)
-    {
-        OnMouseDoubleClickedLeft(x, y);
-    }
-
-    /// <summary>
-    ///     Handler invoked on mouse double click (right) event.
-    /// </summary>
-    /// <param name="x">X coordinate.</param>
-    /// <param name="y">Y coordinate.</param>
-    protected virtual void OnMouseDoubleClickedRight(int x, int y)
-    {
-        // [halfofastaple] See: OnMouseDoubleClicked for discussion on triggering single clicks in a double click event
-        OnMouseClickedRight(x, y, true);
-
-        DoubleRightClicked?.Invoke(this, new ClickedEventArgs(x, y, true));
-    }
-
-    /// <summary>
-    ///     Invokes right double mouse click event (used by input system).
-    /// </summary>
-    internal void InputMouseDoubleClickedRight(int x, int y)
-    {
-        OnMouseDoubleClickedRight(x, y);
-    }
-
     /// <summary>
     ///     Handler invoked on mouse cursor entering control's bounds.
     /// </summary>
@@ -2667,22 +2601,97 @@ public partial class Base : IDisposable
         Redraw();
     }
 
-    protected void PlaySound(string filename)
+    protected void PlaySound(string? name)
     {
-        if (filename == null || this.IsDisabled)
+        if (name == null || this.IsDisabled)
         {
             return;
         }
 
-        filename = GameContentManager.RemoveExtension(filename).ToLower();
-        var sound = GameContentManager.Current.GetSound(filename);
-        if (sound != null)
+        if (Canvas is not { } canvas)
         {
-            var soundInstance = sound.CreateInstance();
-            if (soundInstance != null)
+            return;
+        }
+
+        name = GameContentManager.RemoveExtension(name).ToLower();
+        if (GameContentManager.Current.GetSound(name) is not { } sound)
+        {
+            return;
+        }
+
+        if (sound.CreateInstance() is not { } soundInstance)
+        {
+            return;
+        }
+
+        canvas.PlayAndAddSound(soundInstance);
+    }
+
+    public bool IsActive
+    {
+        get => _mouseButtonPressed.GetValueOrDefault(MouseButton.Left, false);
+        set => _mouseButtonPressed[MouseButton.Left] = value;
+    }
+
+    public bool IsMouseButtonActive(MouseButton mouseButton) =>
+        _mouseButtonPressed.GetValueOrDefault(mouseButton, false);
+
+    private readonly Dictionary<MouseButton, bool> _mouseButtonPressed = [];
+
+    public IReadOnlyDictionary<MouseButton, bool> MouseButtonPressed => _mouseButtonPressed;
+
+    protected virtual void OnMouseClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
+    {
+    }
+
+    protected virtual void OnMouseDoubleClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
+    {
+    }
+
+    protected virtual void OnMouseDown(MouseButton mouseButton, Point mousePosition, bool userAction = true)
+    {
+    }
+
+    protected virtual void OnMouseUp(MouseButton mouseButton, Point mousePosition, bool userAction = true)
+    {
+    }
+
+    internal void InputMouseButtonState(MouseButton mouseButton, Point mousePosition, bool pressed, bool userAction = true)
+    {
+        var mouseButtonStateArgs = new MouseButtonState(mouseButton, mousePosition.X, mousePosition.Y, pressed);
+        var wasActive = IsMouseButtonActive(mouseButton);
+        if (pressed)
+        {
+            _mouseButtonPressed[mouseButton] = true;
+            InputHandler.MouseFocus = this;
+
+            if (!wasActive)
             {
-                Canvas.PlayAndAddSound(soundInstance);
+                OnMouseDown(mouseButton, mousePosition, userAction);
+                MouseDown?.Invoke(this, mouseButtonStateArgs);
             }
+        }
+        else
+        {
+            if (IsHovered && wasActive)
+            {
+                OnMouseClicked(mouseButton, mousePosition, userAction);
+                Clicked?.Invoke(this, mouseButtonStateArgs);
+            }
+
+            _mouseButtonPressed[mouseButton] = false;
+            InputHandler.MouseFocus = null;
+
+            if (wasActive)
+            {
+                OnMouseUp(mouseButton, mousePosition, userAction);
+                MouseUp?.Invoke(this, mouseButtonStateArgs);
+            }
+        }
+
+        if (wasActive != pressed)
+        {
+            Redraw();
         }
     }
 
@@ -2699,10 +2708,9 @@ public partial class Base : IDisposable
     /// </summary>
     protected virtual void OnMouseLeft()
     {
-        if (HoverLeave != null)
-        {
-            HoverLeave.Invoke(this, EventArgs.Empty);
-        }
+        IsActive = false;
+
+        HoverLeave?.Invoke(this, EventArgs.Empty);
 
         if (Tooltip != null)
         {
@@ -2722,6 +2730,8 @@ public partial class Base : IDisposable
     internal void InputMouseLeft()
     {
         OnMouseLeft();
+
+        IsActive = false;
     }
 
     /// <summary>
@@ -2789,7 +2799,7 @@ public partial class Base : IDisposable
     /// <param name="x">Child X.</param>
     /// <param name="y">Child Y.</param>
     /// <returns>Control or null if not found.</returns>
-    public virtual Base GetControlAt(int x, int y)
+    public virtual Base? GetControlAt(int x, int y)
     {
         // Return null if control is hidden or coordinates are outside the control's bounds.
         if (IsHidden || x < 0 || y < 0 || x >= Width || y >= Height)

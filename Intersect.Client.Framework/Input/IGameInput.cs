@@ -8,7 +8,7 @@ public interface IGameInput
 
     Pointf MousePosition { get; }
     bool IsKeyDown(Keys key);
-    bool MouseButtonDown(MouseButtons mb);
+    bool MouseButtonDown(MouseButton mb);
 
     /// <summary>
     /// The available controls providers for this input instance.

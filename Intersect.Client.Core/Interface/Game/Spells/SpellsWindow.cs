@@ -92,13 +92,13 @@ public partial class SpellsWindow
         mContextMenu.Open(Framework.Gwen.Pos.None);
     }
 
-    private void MForgetSpellContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.ClickedEventArgs arguments)
+    private void MForgetSpellContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.MouseButtonState arguments)
     {
         var slot = (int)sender.Parent.UserData;
         Globals.Me.TryForgetSpell(slot);
     }
 
-    private void MUseSpellContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.ClickedEventArgs arguments)
+    private void MUseSpellContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.MouseButtonState arguments)
     {
         var slot = (int)sender.Parent.UserData;
         Globals.Me.TryUseSpell(slot);

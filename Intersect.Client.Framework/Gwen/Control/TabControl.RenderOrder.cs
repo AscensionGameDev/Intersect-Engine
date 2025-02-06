@@ -16,7 +16,7 @@ public partial class TabControl
                 return -1;
             }
 
-            return xTabButton.IsActive ? 1 : -1;
+            return xTabButton.IsTabActive ? 1 : -1;
         }
     }
 

@@ -125,7 +125,7 @@ public partial class ResetPasswordWindow
     //The username or email of the acc we are resetting the pass for
     public string Target { set; get; } = string.Empty;
 
-    private void Textbox_Clicked(Base sender, ClickedEventArgs arguments)
+    private void Textbox_Clicked(Base sender, MouseButtonState arguments)
     {
         Globals.InputManager.OpenKeyboard(
             KeyboardType.Normal, mCodeInputTextbox.Text, false, false, false
@@ -156,7 +156,7 @@ public partial class ResetPasswordWindow
         mPasswordTextbox2.Text = string.Empty;
     }
 
-    void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    void BackBtn_Clicked(Base sender, MouseButtonState arguments)
     {
         Hide();
         Interface.MenuUi.MainMenu.NotifyOpenLogin();
@@ -167,7 +167,7 @@ public partial class ResetPasswordWindow
         TrySendCode();
     }
 
-    void SubmitBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    void SubmitBtn_Clicked(Base sender, MouseButtonState arguments)
     {
         TrySendCode();
     }

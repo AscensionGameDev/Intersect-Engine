@@ -154,13 +154,13 @@ public partial class InventoryWindow
         }
     }
 
-    private void MUseItemContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.ClickedEventArgs arguments)
+    private void MUseItemContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.MouseButtonState arguments)
     {
         var slot = (int)sender.Parent.UserData;
         Globals.Me.TryUseItem(slot);
     }
 
-    private void MActionItemContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.ClickedEventArgs arguments)
+    private void MActionItemContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.MouseButtonState arguments)
     {
         var slot = (int)sender.Parent.UserData;
         if (Globals.GameShop != null)
@@ -181,7 +181,7 @@ public partial class InventoryWindow
         }
     }
 
-    private void MDropItemContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.ClickedEventArgs arguments)
+    private void MDropItemContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.MouseButtonState arguments)
     {
         var slot = (int) sender.Parent.UserData;
         Globals.Me.TryDropItem(slot);

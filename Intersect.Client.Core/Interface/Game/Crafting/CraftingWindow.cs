@@ -328,7 +328,7 @@ public partial class CraftingWindow
     }
 
     //Load new recepie
-    void tmpNode_DoubleClicked(Base sender, ClickedEventArgs arguments)
+    void tmpNode_DoubleClicked(Base sender, MouseButtonState arguments)
     {
         if (IsCrafting == false)
         {
@@ -414,10 +414,10 @@ public partial class CraftingWindow
     }
 
     //Craft the item
-    void craft_Clicked(Base sender, ClickedEventArgs arguments) => DoCraft(1);
+    void craft_Clicked(Base sender, MouseButtonState arguments) => DoCraft(1);
 
     //Craft all the items
-    void craftAll_Clicked(Base sender, ClickedEventArgs arguments)
+    void craftAll_Clicked(Base sender, MouseButtonState arguments)
     {
         if (CanCraft())
         {

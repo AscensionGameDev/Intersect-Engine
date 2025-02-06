@@ -293,7 +293,7 @@ public partial class PartyWindow
         }
     }
 
-    private void PartyWindow_Clicked(Base sender, ClickedEventArgs arguments)
+    private void PartyWindow_Clicked(Base sender, MouseButtonState arguments)
     {
         var memberId = (Guid)((Label)sender).UserData;
 
@@ -319,7 +319,7 @@ public partial class PartyWindow
     }
 
     //Input Handlers
-    void kick_Clicked(Base sender, ClickedEventArgs arguments)
+    void kick_Clicked(Base sender, MouseButtonState arguments)
     {
         for (var i = 1; i < Globals.Me.Party.Count; i++)
         {
@@ -332,7 +332,7 @@ public partial class PartyWindow
         }
     }
 
-    void leave_Clicked(Base sender, ClickedEventArgs arguments)
+    void leave_Clicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.Me.Party.Count > 0)
         {

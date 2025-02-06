@@ -245,13 +245,13 @@ public partial class SelectCharacterWindow : ImagePanel
         base.Show();
     }
 
-    private void _buttonLogout_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _buttonLogout_Clicked(Base sender, MouseButtonState arguments)
     {
         Main.Logout(false, skipFade: true);
         _mainMenu.Reset();
     }
 
-    private void _buttonPrevChar_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _buttonPrevChar_Clicked(Base sender, MouseButtonState arguments)
     {
         mSelectedChar--;
         if (mSelectedChar < 0)
@@ -262,7 +262,7 @@ public partial class SelectCharacterWindow : ImagePanel
         UpdateDisplay();
     }
 
-    private void _buttonNextChar_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _buttonNextChar_Clicked(Base sender, MouseButtonState arguments)
     {
         mSelectedChar++;
         if (mSelectedChar >= Characters!.Length)
@@ -273,7 +273,7 @@ public partial class SelectCharacterWindow : ImagePanel
         UpdateDisplay();
     }
 
-    private void _buttonDelete_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _buttonDelete_Clicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.WaitingOnServer || Characters == default)
         {
@@ -306,7 +306,7 @@ public partial class SelectCharacterWindow : ImagePanel
         }
     }
 
-    private void _buttonNew_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _buttonNew_Clicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.WaitingOnServer)
         {
@@ -322,7 +322,7 @@ public partial class SelectCharacterWindow : ImagePanel
         _buttonLogout.Disable();
     }
 
-    public void ButtonPlay_Clicked(Base? sender, ClickedEventArgs? arguments)
+    public void ButtonPlay_Clicked(Base? sender, MouseButtonState? arguments)
     {
         if (Globals.WaitingOnServer || Characters == default)
         {

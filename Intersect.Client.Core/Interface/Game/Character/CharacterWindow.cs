@@ -183,27 +183,27 @@ public partial class CharacterWindow
     }
 
     //Update Button Event Handlers
-    void _addMagicResistBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    void _addMagicResistBtn_Clicked(Base sender, MouseButtonState arguments)
     {
         PacketSender.SendUpgradeStat((int) Stat.MagicResist);
     }
 
-    void _addAbilityPwrBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    void _addAbilityPwrBtn_Clicked(Base sender, MouseButtonState arguments)
     {
         PacketSender.SendUpgradeStat((int) Stat.AbilityPower);
     }
 
-    void _addSpeedBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    void _addSpeedBtn_Clicked(Base sender, MouseButtonState arguments)
     {
         PacketSender.SendUpgradeStat((int) Stat.Speed);
     }
 
-    void _addDefenseBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    void _addDefenseBtn_Clicked(Base sender, MouseButtonState arguments)
     {
         PacketSender.SendUpgradeStat((int) Stat.Defense);
     }
 
-    void _addAttackBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    void _addAttackBtn_Clicked(Base sender, MouseButtonState arguments)
     {
         PacketSender.SendUpgradeStat((int) Stat.Attack);
     }

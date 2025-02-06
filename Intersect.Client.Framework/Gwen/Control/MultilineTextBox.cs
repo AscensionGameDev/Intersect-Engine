@@ -1,5 +1,6 @@
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Input;
+using Intersect.Client.Framework.Input;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
@@ -446,14 +447,15 @@ public partial class MultilineTextBox : Label
         RefreshCursorBounds();
     }
 
-    /// <summary>
-    ///     Handler invoked on mouse double click (left) event.
-    /// </summary>
-    /// <param name="x">X coordinate.</param>
-    /// <param name="y">Y coordinate.</param>
-    protected override void OnMouseDoubleClickedLeft(int x, int y)
+    protected override void OnMouseDoubleClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
-        //base.OnMouseDoubleClickedLeft(x, y);
+        base.OnMouseDoubleClicked(mouseButton, mousePosition, userAction);
+
+        if (mouseButton != MouseButton.Left)
+        {
+            return;
+        }
+
         OnSelectAll(this, EventArgs.Empty);
     }
 
@@ -914,15 +916,10 @@ public partial class MultilineTextBox : Label
         RefreshCursorBounds();
     }
 
-    /// <summary>
-    ///     Handler invoked on mouse click (left) event.
-    /// </summary>
-    /// <param name="x">X coordinate.</param>
-    /// <param name="y">Y coordinate.</param>
-    /// <param name="down">If set to <c>true</c> mouse button is down.</param>
-    protected override void OnMouseClickedLeft(int x, int y, bool down, bool automated = false)
+    protected override void OnMouseDown(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
-        base.OnMouseClickedLeft(x, y, down);
+        base.OnMouseDown(mouseButton, mousePosition, userAction);
+
         if (mSelectAll)
         {
             OnSelectAll(this, EventArgs.Empty);
@@ -931,26 +928,37 @@ public partial class MultilineTextBox : Label
             return;
         }
 
-        var coords = GetClosestCharacter(x, y);
+        var closestCharacterCursorPosition = GetClosestCharacter(mousePosition);
+        CursorPosition = closestCharacterCursorPosition;
 
-        if (down)
+        if (!InputHandler.IsShiftDown)
         {
-            CursorPosition = coords;
-
-            if (!InputHandler.IsShiftDown)
-            {
-                CursorEnd = coords;
-            }
-
-            InputHandler.MouseFocus = this;
+            CursorEnd = closestCharacterCursorPosition;
         }
-        else
+
+        InputHandler.MouseFocus = this;
+
+        Invalidate();
+        RefreshCursorBounds();
+    }
+
+    protected override void OnMouseUp(MouseButton mouseButton, Point mousePosition, bool userAction = true)
+    {
+        base.OnMouseUp(mouseButton, mousePosition, userAction);
+
+        if (mSelectAll)
         {
-            if (InputHandler.MouseFocus == this)
-            {
-                CursorPosition = coords;
-                InputHandler.MouseFocus = null;
-            }
+            OnSelectAll(this, EventArgs.Empty);
+
+            //m_SelectAll = false;
+            return;
+        }
+
+        var closestCharacterCursorPosition = GetClosestCharacter(mousePosition);
+        if (InputHandler.MouseFocus == this)
+        {
+            CursorPosition = closestCharacterCursorPosition;
+            InputHandler.MouseFocus = null;
         }
 
         Invalidate();

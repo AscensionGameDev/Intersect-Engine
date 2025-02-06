@@ -25,7 +25,11 @@ public abstract partial class GameContentManager : IContentManager
         Debug,
     }
 
-    public static GameContentManager Current { get; private set; }
+    public static GameContentManager Current
+    {
+        get => _current ?? throw new InvalidOperationException("Content manager not initialized");
+        private set => _current = value;
+    }
 
     protected readonly Dictionary<string, IAsset> mAnimationDict = [];
 
@@ -62,6 +66,7 @@ public abstract partial class GameContentManager : IContentManager
     protected readonly  Dictionary<string, IAsset> mTexturePackDict = [];
 
     protected readonly Dictionary<string, IAsset> mTilesetDict = [];
+    private static GameContentManager? _current;
 
     public Dictionary<ContentType, ICollection<IAsset>> Content => Textures;
 
@@ -320,7 +325,7 @@ public abstract partial class GameContentManager : IContentManager
         return mShaderDict?.GetValueOrDefault(name.ToLower());
     }
 
-    public virtual GameFont GetFont(string? name, int size)
+    public virtual GameFont? GetFont(string? name, int size)
     {
         if (name == null)
         {
@@ -332,7 +337,7 @@ public abstract partial class GameContentManager : IContentManager
             .FirstOrDefault(t => t.GetSize() == size);
     }
 
-    public virtual GameAudioSource GetMusic(string name)
+    public virtual GameAudioSource? GetMusic(string name)
     {
         if (string.IsNullOrEmpty(name))
         {
@@ -347,7 +352,7 @@ public abstract partial class GameContentManager : IContentManager
         return mMusicDict.TryGetValue(name.ToLower(), out var music) ? music as GameAudioSource : default;
     }
 
-    public virtual GameAudioSource GetSound(string name)
+    public virtual GameAudioSource? GetSound(string name)
     {
         if (string.IsNullOrEmpty(name))
         {

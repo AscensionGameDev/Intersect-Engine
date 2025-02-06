@@ -83,7 +83,7 @@ public class Intersect2021 : TexturedBase
 
     public override void DrawCheckBox(Control.Base control, bool selected, bool hovered, bool depressed)
     {
-        if (!(control is CheckBox checkBox))
+        if (!(control is Checkbox checkBox))
         {
             return;
         }

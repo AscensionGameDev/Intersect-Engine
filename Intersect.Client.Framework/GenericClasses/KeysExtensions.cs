@@ -4,29 +4,29 @@ namespace Intersect.Client.Framework.GenericClasses;
 
 public static class KeysExtensions
 {
-    public static bool TryGetMouseButton(this Keys key, out MouseButtons mouseButton)
+    public static bool TryGetMouseButton(this Keys key, out MouseButton mouseButton)
     {
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (key)
         {
             case Keys.LButton:
-                mouseButton = MouseButtons.Left;
+                mouseButton = MouseButton.Left;
                 return true;
 
             case Keys.RButton:
-                mouseButton = MouseButtons.Right;
+                mouseButton = MouseButton.Right;
                 return true;
 
             case Keys.MButton:
-                mouseButton = MouseButtons.Middle;
+                mouseButton = MouseButton.Middle;
                 return true;
 
             case Keys.XButton1:
-                mouseButton = MouseButtons.X1;
+                mouseButton = MouseButton.X1;
                 return true;
 
             case Keys.XButton2:
-                mouseButton = MouseButtons.X2;
+                mouseButton = MouseButton.X2;
                 return true;
 
             default:

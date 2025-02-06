@@ -21,60 +21,32 @@ public partial struct SkinColors
 
         public Color Normal;
 
-        public Color Hover;
-
-        public Color Down;
-
         public Color Disabled;
 
-    }
+        public Color Hover;
 
-    public partial struct _Tab
-    {
-
-        public partial struct _Inactive
-        {
-
-            public Color Normal;
-
-            public Color Hover;
-
-            public Color Down;
-
-            public Color Disabled;
-
-        }
-
-        public partial struct _Active
-        {
-
-            public Color Normal;
-
-            public Color Hover;
-
-            public Color Down;
-
-            public Color Disabled;
-
-        }
-
-        public _Inactive Inactive;
-
-        public _Active Active;
+        public Color Active;
 
     }
 
     public partial struct _Label
     {
 
-        public Color Default;
+        public Color Normal;
 
-        public Color Bright;
+        public Color Disabled;
 
-        public Color Dark;
+        public Color Hover;
 
-        public Color Highlight;
+        public Color Active;
 
+    }
+
+    public partial struct _Tab
+    {
+        public _Label Inactive;
+
+        public _Label Active;
     }
 
     public partial struct _Tree

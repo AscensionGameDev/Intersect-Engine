@@ -2,6 +2,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
+using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Configuration;
@@ -54,12 +55,17 @@ public partial class TradeItem
         Pnl = new ImagePanel(Container, "TradeIcon");
         Pnl.HoverEnter += pnl_HoverEnter;
         Pnl.HoverLeave += pnl_HoverLeave;
-        Pnl.RightClicked += Pnl_RightClicked;
+        Pnl.Clicked += Pnl_RightClicked;
         Pnl.DoubleClicked += Pnl_DoubleClicked;
     }
 
-    private void Pnl_RightClicked(Base sender, ClickedEventArgs arguments)
+    private void Pnl_RightClicked(Base sender, MouseButtonState arguments)
     {
+        if (arguments.MouseButton != MouseButton.Right)
+        {
+            return;
+        }
+
         // Are we operating our own side? if not ignore it.
         if (mMySide != 0)
         {
@@ -76,7 +82,7 @@ public partial class TradeItem
         }
     }
 
-    private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
+    private void Pnl_DoubleClicked(Base sender, MouseButtonState arguments)
     {
         // Are we operating our own side? if not ignore it.
         if (mMySide != 0)

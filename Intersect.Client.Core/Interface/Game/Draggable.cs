@@ -47,7 +47,7 @@ partial class Draggable
             InputHandler.MousePosition.X - mPnl.Width / 2, InputHandler.MousePosition.Y - mPnl.Height / 2
         );
 
-        if (!Globals.InputManager.MouseButtonDown(MouseButtons.Left))
+        if (!Globals.InputManager.MouseButtonDown(MouseButton.Left))
         {
             return true;
         }

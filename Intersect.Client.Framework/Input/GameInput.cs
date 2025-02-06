@@ -106,7 +106,7 @@ public abstract partial class GameInput : IGameInput
         return success;
     }
 
-    public abstract bool MouseButtonDown(MouseButtons mb);
+    public abstract bool MouseButtonDown(MouseButton mb);
 
     public abstract bool IsKeyDown(Keys key);
 

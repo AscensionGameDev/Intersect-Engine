@@ -36,7 +36,7 @@ public partial class CreditsWindow : ImagePanel, IMainMenuWindow
         LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
     }
 
-    private void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    private void BackBtn_Clicked(Base sender, MouseButtonState arguments)
     {
         Hide();
         _mainMenu.Show();

@@ -81,6 +81,30 @@ public class IntersectSkin : TexturedBase
 
     #region Initialization
 
+    protected override void InitializeColors()
+    {
+        base.InitializeColors();
+
+        Colors.Button.Normal = Renderer.PixelColor(_texture, 0, 480, Color.Yellow);
+        Colors.Button.Disabled = Renderer.PixelColor(_texture, 8, 480, Color.Yellow);
+        Colors.Button.Hover = Renderer.PixelColor(_texture, 16, 480, Color.Yellow);
+        Colors.Button.Active = Renderer.PixelColor(_texture, 24, 480, Color.Yellow);
+
+        Colors.Label.Normal = Renderer.PixelColor(_texture, 32, 480, Color.Yellow);
+        Colors.Label.Disabled = Renderer.PixelColor(_texture, 40, 480, Color.Yellow);
+        Colors.Label.Hover = Renderer.PixelColor(_texture, 48, 480, Color.Yellow);
+        Colors.Label.Active = Renderer.PixelColor(_texture, 56, 480, Color.Yellow);
+
+        Colors.Tab.Active.Normal = Renderer.PixelColor(_texture, 0, 480, Color.Yellow);
+        Colors.Tab.Active.Disabled = Renderer.PixelColor(_texture, 8, 480, Color.Yellow);
+        Colors.Tab.Active.Hover = Renderer.PixelColor(_texture, 16, 480, Color.Yellow);
+        Colors.Tab.Active.Active = Renderer.PixelColor(_texture, 24, 480, Color.Yellow);
+        Colors.Tab.Inactive.Normal = Renderer.PixelColor(_texture, 0, 480, Color.Yellow);
+        Colors.Tab.Inactive.Disabled = Renderer.PixelColor(_texture, 8, 480, Color.Yellow);
+        Colors.Tab.Inactive.Hover = Renderer.PixelColor(_texture, 16, 480, Color.Yellow);
+        Colors.Tab.Inactive.Active = Renderer.PixelColor(_texture, 24, 480, Color.Yellow);
+    }
+
     protected override void InitializeTextures()
     {
         base.InitializeTextures();
@@ -168,7 +192,7 @@ public class IntersectSkin : TexturedBase
 
     public override void DrawCheckBox(Control.Base control, bool selected, bool hovered, bool depressed)
     {
-        if (!(control is CheckBox checkBox))
+        if (!(control is Checkbox checkBox))
         {
             return;
         }

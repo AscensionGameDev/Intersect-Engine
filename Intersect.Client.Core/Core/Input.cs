@@ -358,30 +358,30 @@ public static partial class Input
         }
     }
 
-    public static void OnMouseDown(Keys modifier, MouseButtons btn)
+    public static void OnMouseDown(Keys modifier, MouseButton btn)
     {
         var key = Keys.None;
         switch (btn)
         {
-            case MouseButtons.Left:
+            case MouseButton.Left:
                 key = Keys.LButton;
 
                 break;
 
-            case MouseButtons.Right:
+            case MouseButton.Right:
                 key = Keys.RButton;
 
                 break;
 
-            case MouseButtons.Middle:
+            case MouseButton.Middle:
                 key = Keys.MButton;
 
                 break;
-            case MouseButtons.X1:
+            case MouseButton.X1:
                 key = Keys.XButton1;
 
                 break;
-            case MouseButtons.X2:
+            case MouseButton.X2:
                 key = Keys.XButton2;
 
                 break;
@@ -408,7 +408,7 @@ public static partial class Input
             return;
         }
 
-        if (modifier == Keys.None && btn == MouseButtons.Left && Globals.Me.TryTarget())
+        if (modifier == Keys.None && btn == MouseButton.Left && Globals.Me.TryTarget())
         {
             return;
         }
@@ -442,25 +442,25 @@ public static partial class Input
         }
     }
 
-    public static void OnMouseUp(Keys modifier, MouseButtons btn)
+    public static void OnMouseUp(Keys modifier, MouseButton btn)
     {
         var key = Keys.LButton;
         switch (btn)
         {
-            case MouseButtons.Right:
+            case MouseButton.Right:
                 key = Keys.RButton;
 
                 break;
 
-            case MouseButtons.Middle:
+            case MouseButton.Middle:
                 key = Keys.MButton;
 
                 break;
-            case MouseButtons.X1:
+            case MouseButton.X1:
                 key = Keys.XButton1;
 
                 break;
-            case MouseButtons.X2:
+            case MouseButton.X2:
                 key = Keys.XButton2;
 
                 break;
@@ -487,7 +487,7 @@ public static partial class Input
             return;
         }
 
-        if (btn != MouseButtons.Right)
+        if (btn != MouseButton.Right)
         {
             return;
         }

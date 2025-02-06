@@ -204,16 +204,6 @@ public partial class ScrollBar : Base
     }
 
     /// <summary>
-    ///     Handler invoked on mouse click (left) event.
-    /// </summary>
-    /// <param name="x">X coordinate.</param>
-    /// <param name="y">Y coordinate.</param>
-    /// <param name="down">If set to <c>true</c> mouse button is down.</param>
-    protected override void OnMouseClickedLeft(int x, int y, bool down, bool automated = false)
-    {
-    }
-
-    /// <summary>
     ///     Renders the control using specified skin.
     /// </summary>
     /// <param name="skin">Skin to use.</param>

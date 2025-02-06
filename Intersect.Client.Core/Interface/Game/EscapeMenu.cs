@@ -31,7 +31,10 @@ public partial class EscapeMenu : ImagePanel
         };
 
         // Settings Window and Button
-        _settingsWindow = new SettingsWindow(gameCanvas, null, this);
+        _settingsWindow = new SettingsWindow(gameCanvas, null, this)
+        {
+            IsVisible = false,
+        };
 
         var buttonSettings = new Button(container, "SettingsButton")
         {
@@ -120,7 +123,7 @@ public partial class EscapeMenu : ImagePanel
         Interface.GameUi?.EscapeMenu?.Hide();
     }
 
-    private void _buttonCharacterSelect_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _buttonCharacterSelect_Clicked(Base sender, MouseButtonState arguments)
     {
         ToggleHidden();
         if (Globals.Me?.CombatTimer > Timing.Global.Milliseconds)
@@ -149,7 +152,7 @@ public partial class EscapeMenu : ImagePanel
         Main.Logout(true);
     }
 
-    private void buttonLogout_Clicked(Base sender, ClickedEventArgs arguments)
+    private void buttonLogout_Clicked(Base sender, MouseButtonState arguments)
     {
         ToggleHidden();
         if (Globals.Me?.CombatTimer > Timing.Global.Milliseconds)
@@ -178,7 +181,7 @@ public partial class EscapeMenu : ImagePanel
         Main.Logout(false);
     }
 
-    private void buttonQuit_Clicked(Base sender, ClickedEventArgs arguments)
+    private void buttonQuit_Clicked(Base sender, MouseButtonState arguments)
     {
         ToggleHidden();
         if (Globals.Me?.CombatTimer > Timing.Global.Milliseconds)

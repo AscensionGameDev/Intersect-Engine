@@ -154,6 +154,8 @@ public partial class WindowControl : ResizableControl
         }
     }
 
+    protected override Point InnerPanelSizeFrom(Point size) => size - new Point(0, _titlebar.Height);
+
     /// <summary>
     ///     Window caption.
     /// </summary>

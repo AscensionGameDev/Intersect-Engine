@@ -1,4 +1,5 @@
 ﻿using Intersect.Client.Framework.Gwen.Input;
+using Intersect.Client.Framework.Input;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
@@ -122,35 +123,40 @@ public partial class VerticalScrollBar : ScrollBar
         SetScrollAmount(1, true);
     }
 
-    /// <summary>
-    ///     Handler invoked on mouse click (left) event.
-    /// </summary>
-    /// <param name="x">X coordinate.</param>
-    /// <param name="y">Y coordinate.</param>
-    /// <param name="down">If set to <c>true</c> mouse button is down.</param>
-    protected override void OnMouseClickedLeft(int x, int y, bool down, bool automated = false)
+    protected override void OnMouseDown(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
-        base.OnMouseClickedLeft(x, y, down);
-        if (down)
-        {
-            mDepressed = true;
-            InputHandler.MouseFocus = this;
-        }
-        else
-        {
-            var clickPos = CanvasPosToLocal(new Point(x, y));
-            if (clickPos.Y < mBar.Y)
-            {
-                NudgeUp(this, EventArgs.Empty);
-            }
-            else if (clickPos.Y > mBar.Y + mBar.Height)
-            {
-                NudgeDown(this, EventArgs.Empty);
-            }
+        base.OnMouseDown(mouseButton, mousePosition, userAction);
 
-            mDepressed = false;
-            InputHandler.MouseFocus = null;
+        if (mouseButton != MouseButton.Left)
+        {
+            return;
         }
+
+        mDepressed = true;
+        InputHandler.MouseFocus = this;
+    }
+
+    protected override void OnMouseUp(MouseButton mouseButton, Point mousePosition, bool userAction = true)
+    {
+        base.OnMouseUp(mouseButton, mousePosition, userAction);
+
+        if (mouseButton != MouseButton.Left)
+        {
+            return;
+        }
+
+        var localCoordinates = CanvasPosToLocal(mousePosition);
+        if (localCoordinates.Y < mBar.Y)
+        {
+            NudgeUp(this, EventArgs.Empty);
+        }
+        else if (localCoordinates.Y > mBar.Y + mBar.Height)
+        {
+            NudgeDown(this, EventArgs.Empty);
+        }
+
+        mDepressed = false;
+        InputHandler.MouseFocus = null;
     }
 
     protected override float CalculateScrolledAmount()

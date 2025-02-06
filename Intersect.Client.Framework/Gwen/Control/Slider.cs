@@ -5,6 +5,7 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.Input;
+using Intersect.Client.Framework.Input;
 using Intersect.Framework;
 using Intersect.Framework.Reflection;
 using Newtonsoft.Json.Linq;
@@ -341,18 +342,12 @@ public partial class Slider : Base
         SetValueInternal(CalculateValue(), forceUpdate: true);
     }
 
-    /// <summary>
-    ///     Handler invoked on mouse click (left) event.
-    /// </summary>
-    /// <param name="x">X coordinate.</param>
-    /// <param name="y">Y coordinate.</param>
-    /// <param name="down">If set to <c>true</c> mouse button is down.</param>
-    /// <param name="automated"></param>
-    protected override void OnMouseClickedLeft(int x, int y, bool down, bool automated = false)
-    {
-        base.OnMouseClickedLeft(x: x, y: y, down: down, automated: automated);
 
-        var localCoordinates = ToLocal(x, y);
+    protected override void OnMouseClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
+    {
+        base.OnMouseClicked(mouseButton, mousePosition, userAction);
+
+        var localCoordinates = ToLocal(mousePosition);
 
         int newX = _sliderBar.X;
         int newY = _sliderBar.Y;
@@ -373,7 +368,7 @@ public partial class Slider : Base
         }
 
         _sliderBar.MoveTo(newX, newY);
-        _sliderBar.InputMouseClickedLeft(x, y, down, true);
+        _sliderBar.InputNonUserMouseClicked(mouseButton, mousePosition, true);
         SliderBarOnDragged(_sliderBar, EventArgs.Empty);
     }
 

@@ -1,5 +1,6 @@
 ﻿using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
+using Intersect.Client.Framework.Input;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
@@ -174,7 +175,7 @@ public partial class MenuItem : Button
     /// <summary>
     ///     Internal OnPressed implementation.
     /// </summary>
-    protected override void OnClicked(int x, int y)
+    protected override void OnMouseClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
         if (_submenu != null)
         {
@@ -187,7 +188,7 @@ public partial class MenuItem : Button
             Canvas?.CloseMenus();
         }
 
-        base.OnClicked(x, y);
+        base.OnMouseClicked(mouseButton, mousePosition, userAction);
     }
 
     /// <summary>

@@ -256,5 +256,4 @@ public partial class ResizableControl : Base
 
         return changed;
     }
-
 }

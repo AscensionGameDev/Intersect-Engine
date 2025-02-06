@@ -2,6 +2,7 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.Data;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
+using Intersect.Client.Framework.Input;
 
 namespace Intersect.Client.Framework.Gwen.Control.Layout;
 
@@ -59,9 +60,6 @@ public partial class TableRow : Base, IColorableText
         ColumnCount = columnCount;
         MaximumColumns = columnCount;
         KeyboardInputEnabled = true;
-        Clicked += TableRow_Clicked;
-        RightClicked += TableRow_RightClicked;
-        HoverEnter += TableRow_HoverEnter;
     }
 
     public string HoverSound
@@ -227,19 +225,25 @@ public partial class TableRow : Base, IColorableText
         }
     }
 
-    private void TableRow_HoverEnter(Base sender, EventArgs arguments)
+    protected override void OnMouseClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
+        base.OnMouseClicked(mouseButton, mousePosition, userAction);
+
+        PlaySound(
+            mouseButton switch
+            {
+                MouseButton.Left => mClickSound,
+                MouseButton.Right => mRightClickSound,
+                _ => null,
+            }
+        );
+    }
+
+    protected override void OnMouseEntered()
+    {
+        base.OnMouseEntered();
+
         PlaySound(mHoverSound);
-    }
-
-    private void TableRow_RightClicked(Base sender, ClickedEventArgs arguments)
-    {
-        PlaySound(mRightClickSound);
-    }
-
-    private void TableRow_Clicked(Base sender, ClickedEventArgs arguments)
-    {
-        PlaySound(mClickSound);
     }
 
     internal Label? GetColumn(int columnIndex)

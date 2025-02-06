@@ -73,7 +73,6 @@ public partial class InventoryItem
         Pnl = new ImagePanel(Container, "InventoryItemIcon");
         Pnl.HoverEnter += pnl_HoverEnter;
         Pnl.HoverLeave += pnl_HoverLeave;
-        Pnl.RightClicked += pnl_RightClicked;
         Pnl.Clicked += pnl_Clicked;
         Pnl.DoubleClicked += Pnl_DoubleClicked;
         EquipPanel = new ImagePanel(Pnl, "InventoryItemEquippedIcon");
@@ -87,7 +86,7 @@ public partial class InventoryItem
         mCooldownLabel.TextColor = new Color(0, 255, 255, 255);
     }
 
-    private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
+    private void Pnl_DoubleClicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.GameShop != null)
         {
@@ -127,39 +126,43 @@ public partial class InventoryItem
         }
     }
 
-    void pnl_Clicked(Base sender, ClickedEventArgs arguments)
+    void pnl_Clicked(Base sender, MouseButtonState arguments)
     {
-        mClickTime = Timing.Global.MillisecondsUtc + 500;
-    }
+        switch (arguments.MouseButton)
+        {
+            case MouseButton.Left:
+                mClickTime = Timing.Global.MillisecondsUtc + 500;
+                break;
 
-    void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
-    {
-        if (ClientConfiguration.Instance.EnableContextMenus)
-        {
-            mInventoryWindow.OpenContextMenu(mMySlot);
-        }
-        else
-        {
-            if (Globals.GameShop != null)
-            {
-                Globals.Me.TrySellItem(mMySlot);
-            }
-            else if (Globals.InBank)
-            {
-                Globals.Me.TryDepositItem(mMySlot);
-            }
-            else if (Globals.InBag)
-            {
-                Globals.Me.TryStoreBagItem(mMySlot, -1);
-            }
-            else if (Globals.InTrade)
-            {
-                Globals.Me.TryTradeItem(mMySlot);
-            }
-            else
-            {
-                Globals.Me.TryDropItem(mMySlot);
-            }
+            case MouseButton.Right:
+                if (ClientConfiguration.Instance.EnableContextMenus)
+                {
+                    mInventoryWindow.OpenContextMenu(mMySlot);
+                }
+                else
+                {
+                    if (Globals.GameShop != null)
+                    {
+                        Globals.Me?.TrySellItem(mMySlot);
+                    }
+                    else if (Globals.InBank)
+                    {
+                        Globals.Me?.TryDepositItem(mMySlot);
+                    }
+                    else if (Globals.InBag)
+                    {
+                        Globals.Me?.TryStoreBagItem(mMySlot, -1);
+                    }
+                    else if (Globals.InTrade)
+                    {
+                        Globals.Me?.TryTradeItem(mMySlot);
+                    }
+                    else
+                    {
+                        Globals.Me?.TryDropItem(mMySlot);
+                    }
+                }
+                break;
         }
     }
 
@@ -184,7 +187,7 @@ public partial class InventoryItem
 
         mMouseOver = true;
         mCanDrag = true;
-        if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
+        if (Globals.InputManager.MouseButtonDown(MouseButton.Left))
         {
             mCanDrag = false;
 
@@ -355,7 +358,7 @@ public partial class InventoryItem
         {
             if (mMouseOver)
             {
-                if (!Globals.InputManager.MouseButtonDown(MouseButtons.Left))
+                if (!Globals.InputManager.MouseButtonDown(MouseButton.Left))
                 {
                     mCanDrag = true;
                     mMouseX = -1;

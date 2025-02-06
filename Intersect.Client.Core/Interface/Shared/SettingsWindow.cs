@@ -20,8 +20,6 @@ using Microsoft.Extensions.Logging;
 using static Intersect.Client.Framework.File_Management.GameContentManager;
 using MathHelper = Intersect.Client.Utilities.MathHelper;
 
-using static Intersect.Client.Framework.File_Management.GameContentManager;
-
 namespace Intersect.Client.Interface.Shared;
 
 using BottomBarItems = (Panel BottomBar, Button RestoreDefaultControlsButton, Button ApplyPendingChangesButton, Button CancelPendingChangesButton);
@@ -65,7 +63,7 @@ public partial class SettingsWindow : WindowControl
     private readonly LabeledCheckBox _friendOverheadHpBarCheckbox;
     private readonly LabeledCheckBox _guildMemberOverheadHpBarCheckbox;
     private readonly LabeledCheckBox _myOverheadHpBarCheckbox;
-    private readonly LabeledCheckBox _mpcOverheadHpBarCheckbox;
+    private readonly LabeledCheckBox _npcOverheadHpBarCheckbox;
     private readonly LabeledCheckBox _partyMemberOverheadHpBarCheckbox;
     private readonly LabeledCheckBox _playerOverheadHpBarCheckbox;
     private readonly LabeledCheckBox _typewriterCheckbox;
@@ -124,6 +122,7 @@ public partial class SettingsWindow : WindowControl
 
         IconName = "SettingsWindow.icon.png";
 
+        Alignment = [Alignments.Center];
         MinimumSize = new Point(x: 640, y: 400);
         IsResizable = false;
         IsClosable = false;
@@ -133,12 +132,12 @@ public partial class SettingsWindow : WindowControl
         TitleLabel.FontSize = 14;
         TitleLabel.TextColorOverride = Color.White;
 
-        _defaultFont = Current?.GetFont(name: TitleLabel.FontName, 12);
+        _defaultFont = Current.GetFont(name: TitleLabel.FontName, 12);
 
 #region Game
 
         // Game Settings are stored in the GameSettings Scroll Control.
-        _gameContainer = new TabControl(parent: this, name: "GameSettingsContainer")
+        _gameContainer = new TabControl(parent: this, name: nameof(_gameContainer))
         {
             Dock = Pos.Fill,
             DockChildSpacing = new Padding(0, 4, 0, 0),
@@ -186,7 +185,7 @@ public partial class SettingsWindow : WindowControl
         // Game Settings - Interface.
 
         // Game Settings - Interface: Auto-close Windows.
-        _autoCloseWindowsCheckbox = new LabeledCheckBox(parent: _interfaceSettings, name: "AutoCloseWindowsCheckbox")
+        _autoCloseWindowsCheckbox = new LabeledCheckBox(parent: _interfaceSettings, name: nameof(_autoCloseWindowsCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -194,7 +193,7 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Interface: Auto-toggle chat log visibility.
-        _autoToggleChatLogCheckbox = new LabeledCheckBox(parent: _interfaceSettings, name: "AutoToggleChatLogCheckbox")
+        _autoToggleChatLogCheckbox = new LabeledCheckBox(parent: _interfaceSettings, name: nameof(_autoToggleChatLogCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -202,21 +201,21 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Interface: Show EXP/HP/MP as Percentage.
-        _showExperienceAsPercentageCheckbox = new LabeledCheckBox(parent: _interfaceSettings, name: "ShowExperienceAsPercentageCheckbox")
+        _showExperienceAsPercentageCheckbox = new LabeledCheckBox(parent: _interfaceSettings, name: nameof(_showExperienceAsPercentageCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
             Text = Strings.Settings.ShowExperienceAsPercentage,
         };
 
-        _showHealthAsPercentageCheckbox = new LabeledCheckBox(parent: _interfaceSettings, name: "ShowHealthAsPercentageCheckbox")
+        _showHealthAsPercentageCheckbox = new LabeledCheckBox(parent: _interfaceSettings, name: nameof(_showHealthAsPercentageCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
             Text = Strings.Settings.ShowHealthAsPercentage,
         };
 
-        _showManaAsPercentageCheckbox = new LabeledCheckBox(parent: _interfaceSettings, name: "ShowManaAsPercentageCheckbox")
+        _showManaAsPercentageCheckbox = new LabeledCheckBox(parent: _interfaceSettings, name: nameof(_showManaAsPercentageCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -224,7 +223,7 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Interface: simplified escape menu.
-        _simplifiedEscapeMenu = new LabeledCheckBox(parent: _interfaceSettings, name: "SimplifiedEscapeMenu")
+        _simplifiedEscapeMenu = new LabeledCheckBox(parent: _interfaceSettings, name: nameof(_simplifiedEscapeMenu))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -232,7 +231,7 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Typewriter Text
-        _typewriterCheckbox = new LabeledCheckBox(parent: _interfaceSettings, name: "TypewriterCheckbox")
+        _typewriterCheckbox = new LabeledCheckBox(parent: _interfaceSettings, name: nameof(_typewriterCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -240,7 +239,7 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Information: Friends.
-        _friendOverheadInfoCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "FriendOverheadInfoCheckbox")
+        _friendOverheadInfoCheckbox = new LabeledCheckBox(parent: _informationSettings, name: nameof(_friendOverheadInfoCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -248,7 +247,7 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Information: Guild Members.
-        _guildMemberOverheadInfoCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "GuildMemberOverheadInfoCheckbox")
+        _guildMemberOverheadInfoCheckbox = new LabeledCheckBox(parent: _informationSettings, name: nameof(_guildMemberOverheadInfoCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -256,7 +255,7 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Information: Myself.
-        _myOverheadInfoCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "MyOverheadInfoCheckbox")
+        _myOverheadInfoCheckbox = new LabeledCheckBox(parent: _informationSettings, name: nameof(_myOverheadInfoCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -264,7 +263,7 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Information: NPCs.
-        _npcOverheadInfoCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "NpcOverheadInfoCheckbox")
+        _npcOverheadInfoCheckbox = new LabeledCheckBox(parent: _informationSettings, name: nameof(_npcOverheadInfoCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -272,7 +271,7 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Information: Party Members.
-        _partyMemberOverheadInfoCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "PartyMemberOverheadInfoCheckbox")
+        _partyMemberOverheadInfoCheckbox = new LabeledCheckBox(parent: _informationSettings, name: nameof(_partyMemberOverheadInfoCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -280,7 +279,7 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Information: Players.
-        _playerOverheadInfoCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "PlayerOverheadInfoCheckbox")
+        _playerOverheadInfoCheckbox = new LabeledCheckBox(parent: _informationSettings, name: nameof(_playerOverheadInfoCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -288,7 +287,7 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Information: friends overhead hp bar.
-        _friendOverheadHpBarCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "FriendOverheadHpBarCheckbox")
+        _friendOverheadHpBarCheckbox = new LabeledCheckBox(parent: _informationSettings, name: nameof(_friendOverheadHpBarCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -296,7 +295,7 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Information: guild members overhead hp bar.
-        _guildMemberOverheadHpBarCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "GuildMemberOverheadHpBarCheckbox")
+        _guildMemberOverheadHpBarCheckbox = new LabeledCheckBox(parent: _informationSettings, name: nameof(_guildMemberOverheadHpBarCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -304,7 +303,7 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Information: my overhead hp bar.
-        _myOverheadHpBarCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "MyOverheadHpBarCheckbox")
+        _myOverheadHpBarCheckbox = new LabeledCheckBox(parent: _informationSettings, name: nameof(_myOverheadHpBarCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -312,7 +311,7 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Information: NPC overhead hp bar.
-        _mpcOverheadHpBarCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "NpcOverheadHpBarCheckbox")
+        _npcOverheadHpBarCheckbox = new LabeledCheckBox(parent: _informationSettings, name: nameof(_npcOverheadHpBarCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -320,7 +319,7 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Information: party members overhead hp bar.
-        _partyMemberOverheadHpBarCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "PartyMemberOverheadHpBarCheckbox")
+        _partyMemberOverheadHpBarCheckbox = new LabeledCheckBox(parent: _informationSettings, name: nameof(_partyMemberOverheadHpBarCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -328,7 +327,7 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Information: players overhead hp bar.
-        _playerOverheadHpBarCheckbox = new LabeledCheckBox(parent: _informationSettings, name: "PlayerOverheadHpBarCheckbox")
+        _playerOverheadHpBarCheckbox = new LabeledCheckBox(parent: _informationSettings, name: nameof(_playerOverheadHpBarCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -336,7 +335,7 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Targeting: Sticky Target.
-        _stickyTarget = new LabeledCheckBox(parent: _targetingSettings, name: "StickyTargetCheckbox")
+        _stickyTarget = new LabeledCheckBox(parent: _targetingSettings, name: nameof(_stickyTarget))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -344,7 +343,7 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Targeting: Auto-turn to Target.
-        _autoTurnToTarget = new LabeledCheckBox(parent: _targetingSettings, name: "AutoTurnToTargetCheckbox")
+        _autoTurnToTarget = new LabeledCheckBox(parent: _targetingSettings, name: nameof(_autoTurnToTarget))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -352,7 +351,7 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Game Settings - Targeting: Auto-turn to Target.
-        _autoSoftRetargetOnSelfCast = new LabeledCheckBox(parent: _targetingSettings, name: "AutoSoftRetargetOnSelfCast")
+        _autoSoftRetargetOnSelfCast = new LabeledCheckBox(parent: _targetingSettings, name: nameof(_autoSoftRetargetOnSelfCast))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -368,7 +367,7 @@ public partial class SettingsWindow : WindowControl
 #region Video
 
         // Video Settings Get Stored in the VideoSettings Scroll Control.
-        _videoContainer = new ScrollControl(parent: this, name: "VideoSettingsContainer")
+        _videoContainer = new ScrollControl(parent: this, name: nameof(_videoContainer))
         {
             Dock = Pos.Fill,
             DockChildSpacing = new Padding(0, 4, 0, 0),
@@ -376,7 +375,7 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Video Settings - Resolution List.
-        _resolutionList = new LabeledComboBox(parent: _videoContainer, name: "ResolutionCombobox")
+        _resolutionList = new LabeledComboBox(parent: _videoContainer, name: nameof(_resolutionList))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -395,7 +394,7 @@ public partial class SettingsWindow : WindowControl
         }
 
         // Video Settings - FPS List.
-        _fpsList = new LabeledComboBox(parent: _videoContainer, name: "FPSCombobox")
+        _fpsList = new LabeledComboBox(parent: _videoContainer, name: nameof(_fpsList))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -410,7 +409,7 @@ public partial class SettingsWindow : WindowControl
         _ = _fpsList.AddItem(label: Strings.Settings.UnlimitedFps);
 
         // Video Settings - Fullscreen Checkbox.
-        _fullscreenCheckbox = new LabeledCheckBox(parent: _videoContainer, name: "FullscreenCheckbox")
+        _fullscreenCheckbox = new LabeledCheckBox(parent: _videoContainer, name: nameof(_fullscreenCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
@@ -418,14 +417,14 @@ public partial class SettingsWindow : WindowControl
         };
 
         // Video Settings - Enable Lighting Checkbox
-        _lightingEnabledCheckbox = new LabeledCheckBox(parent: _videoContainer, name: "EnableLightingCheckbox")
+        _lightingEnabledCheckbox = new LabeledCheckBox(parent: _videoContainer, name: nameof(_lightingEnabledCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
             Text = Strings.Settings.EnableLighting,
         };
 
-        _worldScale = new LabeledSlider(parent: _videoContainer, name: "WorldScale")
+        _worldScale = new LabeledSlider(parent: _videoContainer, name: nameof(_worldScale))
         {
             Dock = Pos.Top,
             IsDisabled = !Options.IsLoaded,
@@ -441,15 +440,15 @@ public partial class SettingsWindow : WindowControl
 #region Audio
 
         // Audio Settings Get Stored in the AudioSettings Scroll Control.
-        _audioContainer = new ScrollControl(parent: this, name: "AudioSettingsContainer")
+        _audioContainer = new ScrollControl(parent: this, name: nameof(_audioContainer))
         {
             Dock = Pos.Fill,
             DockChildSpacing = new Padding(0, 4, 0, 0),
             InnerPanelPadding = new Padding(4),
         };
 
-        var textureVolumeSlider = Current?.GetTexture(TextureType.Gui, "volume_slider.png");
-        var textureVolumeSliderHovered = Current?.GetTexture(TextureType.Gui, "volume_slider_hovered.png");
+        var textureVolumeSlider = Current.GetTexture(TextureType.Gui, "volume_slider.png");
+        var textureVolumeSliderHovered = Current.GetTexture(TextureType.Gui, "volume_slider_hovered.png");
 
         // Audio Settings - Music Slider
         _musicSlider = new LabeledSlider(parent: _audioContainer, name: nameof(_musicSlider))
@@ -512,7 +511,7 @@ public partial class SettingsWindow : WindowControl
 #region Controls
 
         // KeybindingSettings Get Stored in the KeybindingSettings Scroll Control
-        _controlsContainer = new ScrollControl(parent: this, name: "KeybindingSettingsContainer")
+        _controlsContainer = new ScrollControl(parent: this, name: nameof(_controlsContainer))
         {
             Dock = Pos.Fill,
             InnerPanelPadding = new Padding(4),
@@ -574,7 +573,6 @@ public partial class SettingsWindow : WindowControl
             CreateBottomBar(this);
 
         LoadJsonUi(stage: UI.Shared, resolution: Graphics.Renderer?.GetResolutionString());
-        IsHidden = true;
     }
 
     private BottomBarItems CreateBottomBar(Base parent)
@@ -648,7 +646,7 @@ public partial class SettingsWindow : WindowControl
 
     private void TabsOnTabChanged(Base @base, TabChangeEventArgs tabChangeEventArgs)
     {
-        if (_controlsTab.IsActive)
+        if (_controlsTab.IsTabActive)
         {
             _restoreDefaultsButton.IsVisible = true;
 
@@ -714,7 +712,7 @@ public partial class SettingsWindow : WindowControl
         var controlRow = _controlsTable.AddRow();
 
         var prefix = $"Control{controlName}";
-        var label = new Label(controlRow, $"{prefix}Label")
+        var controlLabel = new Label(controlRow, $"{prefix}Label")
         {
             Alignment = [Alignments.CenterV, Alignments.Right],
             Margin = new Margin(0, 0, 8, 0),
@@ -724,9 +722,7 @@ public partial class SettingsWindow : WindowControl
             Font = defaultFont,
         };
 
-        controlRow.SetCellContents(0, label, enableMouseInput: false);
-        // _ = label.SetBounds(14, 11 + offset, 21, 16);
-        label.SetTextColor(new Color(255, 255, 255, 255), Label.ControlState.Normal);
+        controlRow.SetCellContents(0, controlLabel, enableMouseInput: false);
 
         var key1 = new Button(controlRow, $"{prefix}Button1")
         {
@@ -737,11 +733,9 @@ public partial class SettingsWindow : WindowControl
             Text = string.Empty,
             UserData = new KeyValuePair<Control, int>(control, 0),
         };
-        key1.SetTextColor(Color.White, Label.ControlState.Normal);
         key1.SetHoverSound("octave-tap-resonant.wav");
         key1.SetMouseDownSound("octave-tap-warm.wav");
         controlRow.SetCellContents(1, key1, enableMouseInput: true);
-        // _ = key1.SetBounds(181, 6 + offset, 120, 28);
         key1.Clicked += Key_Clicked;
 
         var key2 = new Button(controlRow, $"{prefix}Button2")
@@ -753,11 +747,9 @@ public partial class SettingsWindow : WindowControl
             Text = string.Empty,
             UserData = new KeyValuePair<Control, int>(control, 1),
         };
-        key2.SetTextColor(Color.White, Label.ControlState.Normal);
         key2.SetHoverSound("octave-tap-resonant.wav");
         key2.SetMouseDownSound("octave-tap-warm.wav");
         controlRow.SetCellContents(2, key2, enableMouseInput: true);
-        // _ = key2.SetBounds(309, 6 + offset, 120, 28);
         key2.Clicked += Key_Clicked;
 
         keyButtons = [key1, key2];
@@ -805,21 +797,21 @@ public partial class SettingsWindow : WindowControl
         _worldScale.Value = Globals.Database.WorldZoom;
     }
 
-    void InterfaceSettings_Clicked(Base sender, ClickedEventArgs arguments)
+    void InterfaceSettings_Clicked(Base sender, MouseButtonState arguments)
     {
         _interfaceSettings.Show();
         _informationSettings.Hide();
         _targetingSettings.Hide();
     }
 
-    void InformationSettings_Clicked(Base sender, ClickedEventArgs arguments)
+    void InformationSettings_Clicked(Base sender, MouseButtonState arguments)
     {
         _interfaceSettings.Hide();
         _informationSettings.Show();
         _targetingSettings.Hide();
     }
 
-    void TargetingSettings_Clicked(Base sender, ClickedEventArgs arguments)
+    void TargetingSettings_Clicked(Base sender, MouseButtonState arguments)
     {
         _interfaceSettings.Hide();
         _informationSettings.Hide();
@@ -929,7 +921,7 @@ public partial class SettingsWindow : WindowControl
         _friendOverheadHpBarCheckbox.IsChecked = Globals.Database.FriendOverheadHpBar;
         _guildMemberOverheadHpBarCheckbox.IsChecked = Globals.Database.GuildMemberOverheadHpBar;
         _myOverheadHpBarCheckbox.IsChecked = Globals.Database.MyOverheadHpBar;
-        _mpcOverheadHpBarCheckbox.IsChecked = Globals.Database.NpcOverheadHpBar;
+        _npcOverheadHpBarCheckbox.IsChecked = Globals.Database.NpcOverheadHpBar;
         _partyMemberOverheadHpBarCheckbox.IsChecked = Globals.Database.PartyMemberOverheadHpBar;
         _playerOverheadHpBarCheckbox.IsChecked = Globals.Database.PlayerOverheadHpBar;
         _stickyTarget.IsChecked = Globals.Database.StickyTarget;
@@ -1053,7 +1045,7 @@ public partial class SettingsWindow : WindowControl
         Audio.UpdateGlobalVolume();
     }
 
-    private void Key_Clicked(Base sender, ClickedEventArgs arguments)
+    private void Key_Clicked(Base sender, MouseButtonState arguments)
     {
         EditKeyPressed((Button)sender);
     }
@@ -1071,7 +1063,7 @@ public partial class SettingsWindow : WindowControl
         }
     }
 
-    private void RestoreDefaultKeybindingsButton_Clicked(Base sender, ClickedEventArgs arguments)
+    private void RestoreDefaultKeybindingsButton_Clicked(Base sender, MouseButtonState arguments)
     {
         if (_keybindingEditControls is not {} controls)
         {
@@ -1094,7 +1086,7 @@ public partial class SettingsWindow : WindowControl
         }
     }
 
-    private void SettingsApplyBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    private void SettingsApplyBtn_Clicked(Base sender, MouseButtonState arguments)
     {
         var shouldReset = false;
 
@@ -1114,7 +1106,7 @@ public partial class SettingsWindow : WindowControl
         Globals.Database.FriendOverheadHpBar = _friendOverheadHpBarCheckbox.IsChecked;
         Globals.Database.GuildMemberOverheadHpBar = _guildMemberOverheadHpBarCheckbox.IsChecked;
         Globals.Database.MyOverheadHpBar = _myOverheadHpBarCheckbox.IsChecked;
-        Globals.Database.NpcOverheadHpBar = _mpcOverheadHpBarCheckbox.IsChecked;
+        Globals.Database.NpcOverheadHpBar = _npcOverheadHpBarCheckbox.IsChecked;
         Globals.Database.PartyMemberOverheadHpBar = _partyMemberOverheadHpBarCheckbox.IsChecked;
         Globals.Database.PlayerOverheadHpBar = _playerOverheadHpBarCheckbox.IsChecked;
         Globals.Database.StickyTarget = _stickyTarget.IsChecked;
@@ -1194,7 +1186,7 @@ public partial class SettingsWindow : WindowControl
         Hide();
     }
 
-    private void CancelPendingChangesButton_Clicked(Base sender, ClickedEventArgs arguments)
+    private void CancelPendingChangesButton_Clicked(Base sender, MouseButtonState arguments)
     {
         // Update previously saved values in order to discard changes.
         Globals.Database.MusicVolume = _previousMusicVolume;
