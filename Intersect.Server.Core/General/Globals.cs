@@ -7,8 +7,6 @@ namespace Intersect.Server.General;
 
 public static partial class Globals
 {
-    public static long Cps = 0;
-
     public static List<Player> OnlineList => Client.Instances.FindAll(client => client?.Entity != null)
         .Select(client => client.Entity)
         .ToList();

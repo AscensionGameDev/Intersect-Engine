@@ -11,8 +11,10 @@ internal sealed partial class LogicService : ApplicationService<IServerContext, 
 
     public LogicService()
     {
-        mLogicThread = new LogicThread();
+        mLogicThread = new LogicThread(this);
     }
+
+    public long CyclesPerSecond { get; private set; }
 
     public Thread Thread { get; private set; }
 

@@ -6,6 +6,7 @@ using System.Diagnostics;
 using Intersect.Server.Entities;
 using Amib.Threading;
 using System.Collections.Concurrent;
+using Intersect.Core;
 using Intersect.Server.Metrics;
 using Intersect.Server.Networking;
 using Intersect.Server.Database.PlayerData.Players;
@@ -22,6 +23,7 @@ internal sealed partial class LogicService
 
     internal sealed partial class LogicThread : Threaded<ServerContext>
     {
+        private readonly LogicService _logicService;
         private long _nextClearExpiredTokens;
 
         /// <summary>
@@ -30,7 +32,7 @@ internal sealed partial class LogicService
         public readonly object LogicLock = new object();
 
         /// <summary>
-        /// This is our thread pool for handling server/game logic. This includes npcs, event processing, map updating, projectiles, spell casting, etc. 
+        /// This is our thread pool for handling server/game logic. This includes npcs, event processing, map updating, projectiles, spell casting, etc.
         /// Min/Max Number of Threads & Idle Timeouts are set via server config.
         /// </summary>
         public readonly SmartThreadPool LogicPool = new SmartThreadPool(
@@ -43,8 +45,9 @@ internal sealed partial class LogicService
             }
         );
 
-        public LogicThread() : base("ServerLogic")
+        public LogicThread(LogicService logicService) : base("ServerLogic")
         {
+            _logicService = logicService;
         }
 
         /// <summary>
@@ -53,7 +56,7 @@ internal sealed partial class LogicService
         public readonly ConcurrentQueue<MapInstance> MapInstanceUpdateQueue = new ConcurrentQueue<MapInstance>();
 
         /// <summary>
-        /// Queue of active maps which maps are added to after being updated. Once a map makes it to the front of the queue they are updated again. 
+        /// Queue of active maps which maps are added to after being updated. Once a map makes it to the front of the queue they are updated again.
         /// This queue is only used for projectile updates if the projectile update interval does not match the map update interval in the server config.
         /// </summary>
         public readonly ConcurrentQueue<MapInstance> MapInstanceProjectileQueue = new ConcurrentQueue<MapInstance>();
@@ -129,7 +132,7 @@ internal sealed partial class LogicService
                             }
 
                             var plyrMap = player?.MapId ?? Guid.Empty;
-                            if (plyrMap != Guid.Empty 
+                            if (plyrMap != Guid.Empty
                                 && !sourceMapInstances.Contains(plyrMap))
                             {
                                 // Queue up each surrounding map instance of the given player
@@ -219,7 +222,7 @@ internal sealed partial class LogicService
                                 }
                                 LogicPool.QueueWorkItem(UpdateMap, sameResult, false);
                             }
-                        }                            
+                        }
                     }
 
                     Time.Update();
@@ -228,10 +231,11 @@ internal sealed partial class LogicService
                     var endTime = Timing.Global.Milliseconds;
                     if (Timing.Global.Milliseconds > swCpsTimer)
                     {
-                        Globals.Cps = swCps;
+                        _logicService.CyclesPerSecond = swCps;
                         swCps = 0;
-                        
-                        Console.Title = $"Intersect Server - CPS: {Globals.Cps}, Players: {players}, Active Maps: {ActiveMapInstances.Count}, Logic Threads: {LogicPool.ActiveThreads} ({LogicPool.InUseThreads} In Use), Pool Queue: {LogicPool.CurrentWorkItemsCount}, Idle: {LogicPool.IsIdle}";
+
+                        var cyclesPerSecond = ApplicationContext.GetCurrentContext<IServerContext>().LogicService.CyclesPerSecond;
+                        Console.Title = $"Intersect Server - CPS: {cyclesPerSecond}, Players: {players}, Active Maps: {ActiveMapInstances.Count}, Logic Threads: {LogicPool.ActiveThreads} ({LogicPool.InUseThreads} In Use), Pool Queue: {LogicPool.CurrentWorkItemsCount}, Idle: {LogicPool.IsIdle}";
 
                         if (Options.Instance.Metrics.Enable)
                         {
@@ -245,7 +249,7 @@ internal sealed partial class LogicService
                             MetricsRoot.Instance.Application.Cpu.Record((int)cpuUsageTotal);
                             MetricsRoot.Instance.Application.Memory.Record(Process.GetCurrentProcess().PrivateMemorySize64);
 
-                            MetricsRoot.Instance.Game.Cps.Record(Globals.Cps);
+                            MetricsRoot.Instance.Game.Cps.Record(cyclesPerSecond);
 
 
                             //Also Update Networking Metrics
@@ -321,7 +325,7 @@ internal sealed partial class LogicService
                     {
                         Thread.Sleep(1);
                     }
-        
+
                 }
                 LogicPool.Shutdown();
             }
@@ -360,7 +364,7 @@ internal sealed partial class LogicService
             try
             {
                 if (onlyProjectiles)
-                {   
+                {
                     mapInstance.UpdateProjectiles(Timing.Global.Milliseconds);
                     if (ActiveMapInstances.Keys.Contains(mapInstance.Id))
                     {

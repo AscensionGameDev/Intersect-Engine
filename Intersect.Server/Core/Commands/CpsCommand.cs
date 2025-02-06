@@ -1,4 +1,5 @@
-﻿using Intersect.Server.Core.CommandParsing;
+﻿using Intersect.Core;
+using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Core.CommandParsing.Arguments;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
@@ -42,8 +43,9 @@ namespace Intersect.Server.Core.Commands
             //        ? Strings.Commandoutput.cpslocked
             //        : Strings.Commandoutput.cpsunlocked);
             //}
+            var cyclesPerSecond = ApplicationContext.GetCurrentContext<IServerContext>().LogicService.CyclesPerSecond;
             // TODO: Rethink what messages we want to display here. Confirmation of the change is ideal. To reuse code we effectively don't need to really handle status.
-            Console.WriteLine(Options.Instance.Processing.CpsLock ? (Strings.Commandoutput.CpsLocked.ToString() + " (" + Globals.Cps + ")") : Strings.Commandoutput.CpsUnlocked.ToString() + " (" + Globals.Cps + ")");
+            Console.WriteLine(Options.Instance.Processing.CpsLock ? (Strings.Commandoutput.CpsLocked.ToString() + " (" + cyclesPerSecond + ")") : Strings.Commandoutput.CpsUnlocked.ToString() + " (" + cyclesPerSecond + ")");
         }
 
     }

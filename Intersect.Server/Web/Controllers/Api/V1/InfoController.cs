@@ -1,5 +1,7 @@
 using System.Net;
+using Intersect.Core;
 using Intersect.Enums;
+using Intersect.Server.Core;
 using Intersect.Server.General;
 using Intersect.Server.Metrics;
 using Intersect.Server.Networking;
@@ -36,7 +38,18 @@ namespace Intersect.Server.Web.Controllers.Api.V1
 
         [HttpGet("stats")]
         [ProducesResponseType(typeof(InfoStatsResponseBody), (int)HttpStatusCode.OK, ContentTypes.Json)]
-        public IActionResult Stats() => Ok(new InfoStatsResponseBody(Timing.Global.Milliseconds, Globals.Cps, Client.Instances?.Count, Globals.OnlineList?.Count));
+        public IActionResult Stats()
+        {
+            var cyclesPerSecond = ApplicationContext.GetContext<IServerContext>()?.LogicService.CyclesPerSecond ?? -1;
+            return Ok(
+                new InfoStatsResponseBody(
+                    Timing.Global.Milliseconds,
+                    cyclesPerSecond,
+                    Client.Instances?.Count,
+                    Globals.OnlineList?.Count
+                )
+            );
+        }
 
         [HttpGet("metrics")]
         [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
