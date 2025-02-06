@@ -1443,7 +1443,7 @@ public static partial class PacketSender
     public static void SendMapGridToAll(MapGrid grid)
     {
         if (grid == null) return;
-        var clients = Globals.Clients.ToArray();
+        var clients = Client.Instances.ToArray();
         foreach (var client in clients)
         {
             if (client == default)
@@ -1909,7 +1909,7 @@ public static partial class PacketSender
     //GameObjectPacket
     public static void SendGameObjectToAll(IDatabaseObject obj, bool deleted = false, bool another = false)
     {
-        foreach (var client in Globals.Clients)
+        foreach (var client in Client.Instances)
         {
             SendGameObject(client, obj, deleted, another);
         }
@@ -2366,9 +2366,9 @@ public static partial class PacketSender
 
     public static void SendDataToEditors(IPacket packet)
     {
-        lock (Globals.ClientLock)
+        lock (Client.GlobalLock)
         {
-            foreach (var client in Globals.Clients)
+            foreach (var client in Client.Instances)
             {
                 if (client.IsEditor)
                 {
@@ -2380,9 +2380,9 @@ public static partial class PacketSender
 
     public static void SendDataToAllPlayers(IPacket packet, TransmissionMode mode = TransmissionMode.All)
     {
-        lock (Globals.ClientLock)
+        lock (Client.GlobalLock)
         {
-            foreach (var client in Globals.Clients)
+            foreach (var client in Client.Instances)
             {
                 if (client?.Entity != null)
                 {
@@ -2394,9 +2394,9 @@ public static partial class PacketSender
 
     public static void SendDataToAll(IPacket packet, TransmissionMode mode = TransmissionMode.All)
     {
-        lock (Globals.ClientLock)
+        lock (Client.GlobalLock)
         {
-            foreach (var client in Globals.Clients)
+            foreach (var client in Client.Instances)
             {
                 if ((client?.IsEditor ?? false) || client?.Entity != null)
                 {

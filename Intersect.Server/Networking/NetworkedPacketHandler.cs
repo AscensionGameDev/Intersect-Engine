@@ -143,9 +143,9 @@ internal sealed partial class NetworkedPacketHandler
 
             client.SetUser(user);
 
-            lock (Globals.ClientLock)
+            lock (Client.GlobalLock)
             {
-                var clients = Globals.Clients.ToArray();
+                var clients = Client.Instances.ToArray();
                 foreach (var cli in clients)
                 {
                     if (cli.Name != null &&
@@ -967,15 +967,15 @@ internal sealed partial class NetworkedPacketHandler
                 //if Item or Resource, kill all global entities of that kind
                 if (type == GameObjectType.Item)
                 {
-                    Globals.KillItemsOf((ItemBase) obj);
+                    Globals.DespawnInstancesOf((ItemBase) obj);
                 }
                 else if (type == GameObjectType.Resource)
                 {
-                    Globals.KillResourcesOf((ResourceBase) obj);
+                    Globals.DespawnInstancesOf((ResourceBase) obj);
                 }
                 else if (type == GameObjectType.Npc)
                 {
-                    Globals.KillNpcsOf((NpcBase) obj);
+                    Globals.DespawnInstancesOf((NpcBase) obj);
                 }
 
                 DbInterface.DeleteGameObject(obj);
@@ -1101,16 +1101,16 @@ internal sealed partial class NetworkedPacketHandler
                     switch (obj)
                     {
                         case ItemBase itemDescriptor:
-                            Globals.KillItemsOf(itemDescriptor);
+                            Globals.DespawnInstancesOf(itemDescriptor);
                             break;
                         case NpcBase npcDescriptor:
-                            Globals.KillNpcsOf(npcDescriptor);
+                            Globals.DespawnInstancesOf(npcDescriptor);
                             break;
                         case ProjectileBase projectileDescriptor:
-                            Globals.KillProjectilesOf(projectileDescriptor);
+                            Globals.DespawnInstancesOf(projectileDescriptor);
                             break;
                         case ResourceBase resourceDescriptor:
-                            Globals.KillResourcesOf(resourceDescriptor);
+                            Globals.DespawnInstancesOf(resourceDescriptor);
                             break;
                     }
 

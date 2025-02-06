@@ -25,7 +25,7 @@ namespace Intersect.Server.Core.Commands
                 return null;
             }
 
-            return Globals.Clients.Find(
+            return Client.Instances.Find(
                 client =>
                 {
                     var playerName = client?.Entity?.Name;

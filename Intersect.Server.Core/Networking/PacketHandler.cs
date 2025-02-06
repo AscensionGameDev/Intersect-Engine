@@ -550,9 +550,9 @@ internal sealed partial class PacketHandler
         List<TaskCompletionSource> logoutCompletionSources = [];
 
         var disconnectedClients = false;
-        lock (Globals.ClientLock)
+        lock (Client.GlobalLock)
         {
-            foreach (var otherClient in Globals.Clients.ToArray())
+            foreach (var otherClient in Client.Instances.ToArray())
             {
                 if (otherClient == null)
                 {

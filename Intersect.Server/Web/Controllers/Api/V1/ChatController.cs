@@ -33,7 +33,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-            var client = Globals.Clients.Find(
+            var client = Client.Instances.Find(
                 lookupClient => string.Equals(
                     lookupKey.Name, lookupClient?.Entity?.Name, StringComparison.OrdinalIgnoreCase
                 )

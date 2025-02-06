@@ -1,7 +1,7 @@
 ﻿using Intersect.Network;
 using Intersect.Server.Core.CommandParsing;
-using Intersect.Server.General;
 using Intersect.Server.Localization;
+using Intersect.Server.Networking;
 
 namespace Intersect.Server.Core.Commands
 {
@@ -55,7 +55,7 @@ namespace Intersect.Server.Core.Commands
 
             var formatLine = string.Join("| ", columnWidths.Select((width, column) => $"{{{column},{-width}}}"));
 
-            var clients = Globals.Clients.ToArray();
+            var clients = Client.Instances.ToArray();
 
             HashSet<IConnection> seenConnections = new();
 
@@ -75,7 +75,7 @@ namespace Intersect.Server.Core.Commands
 
                 Console.WriteLine(new string('-', bufferWidth));
 
-                foreach (var client in Globals.Clients.ToArray())
+                foreach (var client in Client.Instances.ToArray())
                 {
                     if (client == default)
                     {

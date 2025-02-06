@@ -186,7 +186,7 @@ internal sealed partial class LogicService
                             MetricsRoot.Instance.Game.AutorunEvents.Record(autorunEvents);
                             MetricsRoot.Instance.Game.ActiveMaps.Record(ActiveMapInstances.Count);
                             MetricsRoot.Instance.Game.Players.Record(players);
-                            MetricsRoot.Instance.Network.Clients.Record(Globals.Clients?.Count ?? 0);
+                            MetricsRoot.Instance.Network.Clients.Record(Client.Instances?.Count ?? 0);
                         }
 
                         //End Resync of Active Maps

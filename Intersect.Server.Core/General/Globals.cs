@@ -5,52 +5,47 @@ using Intersect.Server.Networking;
 
 namespace Intersect.Server.General;
 
-
 public static partial class Globals
 {
-
-    public static readonly object ClientLock = new object();
-
-    public static readonly Dictionary<Guid, Client> ClientLookup = [];
-
-    public static readonly List<Client> Clients = [];
-
     public static long Cps = 0;
 
-    public static List<Player> OnlineList => Clients.FindAll(client => client?.Entity != null)
+    public static List<Player> OnlineList => Client.Instances.FindAll(client => client?.Entity != null)
         .Select(client => client.Entity)
         .ToList();
 
-    public static void KillResourcesOf(ResourceBase resource)
+    public static void DespawnInstancesOf(ResourceBase resource)
     {
-        foreach (MapController map in MapController.Lookup.Values)
+        var allMapControllers = MapController.Lookup.Values.OfType<MapController>().ToArray();
+        foreach (var map in allMapControllers)
         {
             map?.DespawnResourceAcrossInstances(resource);
         }
     }
 
-    public static void KillNpcsOf(NpcBase npc)
+    public static void DespawnInstancesOf(NpcBase npc)
     {
-        foreach (MapController map in MapController.Lookup.Values)
+        var allMapControllers = MapController.Lookup.Values.OfType<MapController>().ToArray();
+        foreach (var map in allMapControllers)
         {
             map?.DespawnNpcAcrossInstances(npc);
         }
     }
 
-    public static void KillProjectilesOf(ProjectileBase projectile)
+    public static void DespawnInstancesOf(ProjectileBase projectile)
     {
-        foreach (MapController map in MapController.Lookup.Values)
+        var allMapControllers = MapController.Lookup.Values.OfType<MapController>().ToArray();
+        foreach (var map in allMapControllers)
         {
             map?.DespawnProjectileAcrossInstances(projectile);
         }
     }
 
-    public static void KillItemsOf(ItemBase item)
+    public static void DespawnInstancesOf(ItemBase item)
     {
-        foreach (MapController map in MapController.Lookup.Values)
+        var allMapControllers = MapController.Lookup.Values.OfType<MapController>().ToArray();
+        foreach (var map in allMapControllers)
         {
             map?.DespawnItemAcrossInstances(item);
         }
     }
-
 }

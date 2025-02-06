@@ -417,24 +417,6 @@ public static partial class DbInterface
         return true;
     }
 
-    public static Client GetPlayerClient(string username)
-    {
-        //Try to fetch a player entity by username, online or offline.
-        //Check Online First
-        lock (Globals.ClientLock)
-        {
-            foreach (var client in Globals.Clients)
-            {
-                if (client.Entity != null && client.Name.ToLower() == username.ToLower())
-                {
-                    return client;
-                }
-            }
-        }
-
-        return null;
-    }
-
     public static void SetPlayerPower(string username, UserRights power)
     {
         var user = User.Find(username);

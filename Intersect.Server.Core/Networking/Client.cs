@@ -19,6 +19,11 @@ namespace Intersect.Server.Networking;
 
 public partial class Client : IPacketSender
 {
+    public static readonly object GlobalLock = new();
+
+    public static readonly Dictionary<Guid, Client> LookupByConnectionId = [];
+
+    public static readonly List<Client> Instances = [];
 
     public Guid EditorMap = Guid.Empty;
 
@@ -173,39 +178,39 @@ public partial class Client : IPacketSender
         TaskCompletionSource? logoutCompletionSource = null
     )
     {
-        lock (Globals.ClientLock)
+        if (Connection == null)
         {
-            if (Connection == null)
-            {
-                logoutCompletionSource?.TrySetResult();
-                return;
-            }
+            logoutCompletionSource?.TrySetResult();
+            return;
+        }
 
-            if (!loggingOut)
-            {
-                Logout(force: shutdown, logoutCompletionSource: logoutCompletionSource);
-            }
-            else
-            {
-                logoutCompletionSource?.TrySetResult();
-            }
+        if (!loggingOut)
+        {
+            Logout(force: shutdown, logoutCompletionSource: logoutCompletionSource);
+        }
+        else
+        {
+            logoutCompletionSource?.TrySetResult();
+        }
 
-            Globals.Clients.Remove(this);
+        lock (GlobalLock)
+        {
+            Instances.Remove(this);
 
             if (Connection != default)
             {
-                Globals.ClientLookup.Remove(Connection.Guid);
+                LookupByConnectionId.Remove(Connection.Guid);
 
                 if (!Connection.CanDisconnect)
                 {
                     return;
                 }
             }
-
-            Connection?.Disconnect(reason);
-            Connection?.Dispose();
-            Connection = default;
         }
+
+        Connection?.Disconnect(reason);
+        Connection?.Dispose();
+        Connection = default;
     }
 
     public bool IsConnected()
@@ -232,10 +237,10 @@ public partial class Client : IPacketSender
     public static Client CreateBeta4Client(IApplicationContext context, INetwork network, IConnection connection)
     {
         var client = new Client(context, network, connection);
-        lock (Globals.ClientLock)
+        lock (GlobalLock)
         {
-            Globals.Clients.Add(client);
-            Globals.ClientLookup.Add(connection.Guid, client);
+            Instances.Add(client);
+            LookupByConnectionId.Add(connection.Guid, client);
         }
 
         return client;
@@ -300,9 +305,9 @@ public partial class Client : IPacketSender
 
     public static Client FindBeta4Client(IConnection connection)
     {
-        lock (Globals.ClientLock)
+        lock (GlobalLock)
         {
-            return Globals.Clients.Find(client => client?.Connection == connection);
+            return Instances.Find(client => client?.Connection == connection);
         }
     }
 
@@ -397,7 +402,7 @@ public partial class Client : IPacketSender
                 {
                     banned = true;
                 }
-                if (!banned && !string.IsNullOrEmpty(Database.PlayerData.Ban.CheckBan(Connection.Ip.Trim())) && Options.Instance.Security.CheckIp(Connection.Ip.Trim()))
+                if (!banned && !string.IsNullOrEmpty(Ban.CheckBan(Connection.Ip.Trim())) && Options.Instance.Security.CheckIp(Connection.Ip.Trim()))
                 {
                     banned = true;
                 }

@@ -25,18 +25,18 @@ namespace Intersect.Server.Classes.Networking
         {
             base.CreateClient();
             _connection.UserData = base._myClient;
-            lock (Globals.ClientLock)
+            lock (Client.GlobalLock)
             {
-                Globals.ClientLookup.Add(_connection.Guid, base._myClient);
+                Client.LookupByConnectionId.Add(_connection.Guid, base._myClient);
             }
         }
 
         public override void OnClientRemoved()
         {
             base.OnClientRemoved();
-            lock (Globals.ClientLock)
+            lock (Client.GlobalLock)
             {
-                Globals.ClientLookup.Remove(_connection.Guid);
+                Client.LookupByConnectionId.Remove(_connection.Guid);
             }
         }
 
