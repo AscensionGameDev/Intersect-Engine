@@ -3343,8 +3343,9 @@ public partial class Base : IDisposable
     public virtual bool SizeToChildren(bool width = true, bool height = true)
     {
         var size = GetChildrenSize();
-        size.X += Padding.Right;
-        size.Y += Padding.Bottom;
+        var padding = Padding;
+        size.X += padding.Right + padding.Left;
+        size.Y += padding.Bottom + padding.Top;
 
         if (!SetSize(width ? size.X : Width, height ? size.Y : Height))
         {
