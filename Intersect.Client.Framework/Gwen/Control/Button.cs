@@ -365,6 +365,11 @@ public partial class Button : Label
             textColor = new Color(r: 255, g: 0, b: 255);
         }
 
+        if ((textColor.ToArgb() & 0xffffff) == 0)
+        {
+            textColor.ToString();
+        }
+
         TextColor = textColor;
     }
 
