@@ -73,13 +73,13 @@ public partial class EventWindow : ImagePanel
     {
         if (IsHidden)
         {
-            _ = Interface.InputBlockingElements.Remove(this);
+            _ = Interface.InputBlockingComponents.Remove(this);
         }
         else
         {
-            if (!Interface.InputBlockingElements.Contains(this))
+            if (!Interface.InputBlockingComponents.Contains(this))
             {
-                Interface.InputBlockingElements.Add(this);
+                Interface.InputBlockingComponents.Add(this);
             }
         }
 

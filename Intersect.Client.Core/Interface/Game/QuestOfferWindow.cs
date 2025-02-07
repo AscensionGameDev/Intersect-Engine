@@ -56,7 +56,7 @@ public partial class QuestOfferWindow
         mDeclineButton.Clicked += _declineButton_Clicked;
 
         mQuestOfferWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-        Interface.InputBlockingElements.Add(mQuestOfferWindow);
+        Interface.InputBlockingComponents.Add(mQuestOfferWindow);
     }
 
     private void _declineButton_Clicked(Base sender, MouseButtonState arguments)

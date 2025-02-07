@@ -46,7 +46,7 @@ public partial class AdminWindow : WindowControl
             Text = Strings.Admin.Name,
         };
         _textboxName = new TextBox(this, "TextboxName");
-        Interface.FocusElements.Add(_textboxName);
+        Interface.FocusComponents.Add(_textboxName);
 
         // Access label, dropdown and set power button
         _ = new Label(this, "LabelAccess")

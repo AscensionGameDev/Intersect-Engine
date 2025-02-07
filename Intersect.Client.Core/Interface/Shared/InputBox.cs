@@ -162,7 +162,7 @@ public partial class InputBox : WindowControl
         _btnOk.Clicked += (sender, e) => SubmitInput();
 
         _promptLabel = new Label(this, "PromptLabel");
-        Interface.InputBlockingElements.Add(this);
+        Interface.InputBlockingComponents.Add(this);
 
         Value = quantity;
     }

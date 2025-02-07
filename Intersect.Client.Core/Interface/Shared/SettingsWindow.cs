@@ -118,7 +118,7 @@ public partial class SettingsWindow : WindowControl
         _mainMenu = mainMenu;
         _escapeMenu = escapeMenu;
 
-        Interface.InputBlockingElements.Add(item: this);
+        Interface.InputBlockingComponents.Add(item: this);
 
         IconName = "SettingsWindow.icon.png";
 
@@ -561,6 +561,8 @@ public partial class SettingsWindow : WindowControl
 
         LoadJsonUi(stage: UI.Shared, resolution: Graphics.Renderer?.GetResolutionString());
     }
+
+    public override bool IsBlockingInput => _keybindingEditBtn is not null;
 
     private BottomBarItems CreateBottomBar(Base parent)
     {

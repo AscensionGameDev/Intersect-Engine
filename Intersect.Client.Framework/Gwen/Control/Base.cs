@@ -341,6 +341,8 @@ public partial class Base : IDisposable
         }
     }
 
+    public virtual bool IsBlockingInput => true;
+
     /// <summary>
     ///     Dock position.
     /// </summary>

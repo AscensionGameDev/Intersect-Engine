@@ -35,7 +35,7 @@ public partial class BagWindow
     {
         mBagWindow = new WindowControl(gameCanvas, Strings.Bags.Title, false, "BagWindow");
         mBagWindow.DisableResizing();
-        Interface.InputBlockingElements.Add(mBagWindow);
+        Interface.InputBlockingComponents.Add(mBagWindow);
 
         mItemContainer = new ScrollControl(mBagWindow, "ItemContainer");
         mItemContainer.EnableScroll(false, true);

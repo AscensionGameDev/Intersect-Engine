@@ -37,7 +37,7 @@ partial class GuildWindow : WindowControl
         // Textbox Search
         _textboxContainer = new ImagePanel(this, "SearchContainer");
         _textboxSearch = new TextBox(_textboxContainer, "SearchTextbox");
-        Interface.FocusElements.Add(_textboxSearch);
+        Interface.FocusComponents.Add(_textboxSearch);
 
         // List of Guild Members
         _listGuildMembers = new ListBox(this, "GuildMembers");

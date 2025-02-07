@@ -43,7 +43,7 @@ public partial class TradingWindow
         );
 
         mTradeWindow.DisableResizing();
-        Interface.InputBlockingElements.Add(mTradeWindow);
+        Interface.InputBlockingComponents.Add(mTradeWindow);
 
         mYourOffer = new Label(mTradeWindow, "YourOfferLabel")
         {

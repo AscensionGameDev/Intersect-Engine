@@ -49,7 +49,7 @@ public partial class BankWindow
 
         // Disable resizing and add to the list of input-blocking elements.
         mBankWindow.DisableResizing();
-        Interface.InputBlockingElements.Add(mBankWindow);
+        Interface.InputBlockingComponents.Add(mBankWindow);
 
         // Create a new scroll control for the items in the bank.
         mItemContainer = new ScrollControl(mBankWindow, "ItemContainer");
