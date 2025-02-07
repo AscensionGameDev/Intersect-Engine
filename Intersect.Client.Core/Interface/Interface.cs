@@ -54,9 +54,9 @@ public static partial class Interface
     public static TexturedBase Skin { get; set; }
 
     //Input Handling
-    public static List<Framework.Gwen.Control.Base> FocusElements { get; set; }
+    public static readonly List<Framework.Gwen.Control.Base> FocusComponents = [];
 
-    public static List<Framework.Gwen.Control.Base> InputBlockingElements { get; set; }
+    public static readonly List<Framework.Gwen.Control.Base> InputBlockingComponents = [];
 
     #region "Gwen Setup and Input"
 
@@ -115,8 +115,8 @@ public static partial class Interface
             GwenInput.Initialize(sGameCanvas);
         }
 
-        FocusElements = new List<Framework.Gwen.Control.Base>();
-        InputBlockingElements = new List<Framework.Gwen.Control.Base>();
+        FocusComponents.Clear();
+        InputBlockingComponents.Clear();
         ErrorMsgHandler = new ErrorHandler();
 
         if (Globals.GameState == GameStates.Intro || Globals.GameState == GameStates.Menu)
@@ -166,15 +166,9 @@ public static partial class Interface
         }
     }
 
-    public static bool HasInputFocus()
-    {
-        if (FocusElements == null || InputBlockingElements == null)
-        {
-            return false;
-        }
-
-        return FocusElements.Any(t => t.MouseInputEnabled && (t?.HasFocus ?? false)) || InputBlockingElements.Any(t => t?.IsHidden == false);
-    }
+    public static bool HasInputFocus() =>
+        FocusComponents.Any(component => component is { MouseInputEnabled: true, HasFocus: true }) ||
+        InputBlockingComponents.Any(component => component is { IsVisible: true, IsBlockingInput: true });
 
     #endregion
 

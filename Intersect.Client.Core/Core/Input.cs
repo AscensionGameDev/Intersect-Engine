@@ -82,12 +82,12 @@ public static partial class Input
                 return;
 
             case Keys.Enter:
-
-                for (int i = Interface.Interface.InputBlockingElements.Count - 1; i >= 0; i--)
+                for (int i = Interface.Interface.InputBlockingComponents.Count - 1; i >= 0; i--)
                 {
+                    var inputBlockingComponent = Interface.Interface.InputBlockingComponents[i];
                     try
                     {
-                        if (Interface.Interface.InputBlockingElements[i] is InputBox inputBox && !inputBox.IsHidden)
+                        if (inputBlockingComponent is InputBox { IsHidden: false } inputBox)
                         {
                             inputBox.SubmitInput();
                             canFocusChat = false;
@@ -98,8 +98,7 @@ public static partial class Input
 
                     try
                     {
-                        var eventWindow = (EventWindow)Interface.Interface.InputBlockingElements[i];
-                        if (eventWindow != null && !eventWindow.IsHidden && Globals.EventDialogs.Count > 0)
+                        if (inputBlockingComponent is EventWindow { IsHidden: false } eventWindow && Globals.EventDialogs.Count > 0)
                         {
                             eventWindow.CloseEventResponse(EventResponseType.OneOption);
                             canFocusChat = false;
@@ -109,7 +108,6 @@ public static partial class Input
                     }
                     catch { }
                 }
-
                 break;
         }
 

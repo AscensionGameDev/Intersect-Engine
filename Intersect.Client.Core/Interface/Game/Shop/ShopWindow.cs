@@ -32,7 +32,7 @@ public partial class ShopWindow
     {
         mShopWindow = new WindowControl(gameCanvas, Globals.GameShop.Name, false, "ShopWindow");
         mShopWindow.DisableResizing();
-        Interface.InputBlockingElements.Add(mShopWindow);
+        Interface.InputBlockingComponents.Add(mShopWindow);
 
         mItemContainer = new ScrollControl(mShopWindow, "ItemContainer");
         mItemContainer.EnableScroll(false, true);
