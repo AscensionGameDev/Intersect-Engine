@@ -96,7 +96,7 @@ public partial class WindowControl : ResizableControl
         {
             Dock = Pos.Left,
             IsVisible = false,
-            Margin = Margin.Four,
+            Margin = new Margin(4, 4, 0, 4),
             MaximumSize = new Point(24, 24),
             RestrictToParent = false,
             Size = new Point(24, 24),
@@ -130,7 +130,7 @@ public partial class WindowControl : ResizableControl
 
         _closeButton = new CloseButton(_titlebar, this, name: nameof(CloseButton))
         {
-            Alignment = [Alignments.Top, Alignments.Right],
+            Alignment = [Alignments.Bottom, Alignments.Right],
             IsTabable = false,
             Size = new Point(24, 24),
         };
