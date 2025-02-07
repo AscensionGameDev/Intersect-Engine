@@ -613,6 +613,8 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
             actualHeight += row.OuterHeight;
         }
 
+        actualHeight += Math.Max(0, rows.Length - 1) * CellSpacing.Y;
+
         return new Point(actualWidth, actualHeight);
     }
 

@@ -734,6 +734,20 @@ public partial class Base : IDisposable
     /// </summary>
     public Rectangle Bounds => mBounds;
 
+    public Rectangle OuterBounds
+    {
+        get
+        {
+            var margin = mMargin;
+            Rectangle outerBounds = new(mBounds);
+            outerBounds.X -= margin.Left;
+            outerBounds.Y -= margin.Top;
+            outerBounds.Width += margin.Left + margin.Right;
+            outerBounds.Height += margin.Top + margin.Bottom;
+            return outerBounds;
+        }
+    }
+
     public bool ClipContents { get; set; } = true;
 
     /// <summary>
@@ -3378,7 +3392,7 @@ public partial class Base : IDisposable
                 continue;
             }
 
-            var childBounds = child.Bounds;
+            var childBounds = child.OuterBounds;
             min.X = Math.Min(min.X, childBounds.Left);
             min.Y = Math.Min(min.Y, childBounds.Top);
             max.X = Math.Max(max.X, childBounds.Right);

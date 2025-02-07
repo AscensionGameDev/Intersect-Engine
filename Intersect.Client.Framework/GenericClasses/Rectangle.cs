@@ -37,6 +37,14 @@ public partial struct Rectangle
         Size = size;
     }
 
+    public Rectangle(Rectangle other)
+    {
+        X = other.X;
+        Y = other.Y;
+        Width = other.Width;
+        Height = other.Height;
+    }
+
     public static Rectangle Intersect(Rectangle a, Rectangle b)
     {
         // MS.NET returns a non-empty rectangle if the two rectangles
