@@ -18,14 +18,15 @@ namespace Intersect.Client.Interface.Game.Admin;
 
 public partial class AdminWindow : WindowControl
 {
-    private readonly TextBox _textboxName;
-    private readonly ComboBox _dropdownAccess;
-    private BanMuteBox? _banOrMuteWindow;
-    private readonly ComboBox _dropdownSprite;
-    public ImagePanel _spritePanel;
-    private readonly ComboBox _dropdownFace;
-    public ImagePanel _facePanel;
     private readonly Checkbox _checkboxChronological;
+    private readonly ComboBox _dropdownAccess;
+    private readonly ComboBox _dropdownSprite;
+    private readonly ComboBox _dropdownFace;
+    private readonly ImagePanel _facePanel;
+    private readonly ImagePanel _spritePanel;
+    private readonly TextBox _textboxName;
+
+    private BanMuteBox? _banOrMuteWindow;
     private TreeControl? _mapList;
 
     public AdminWindow(Base gameCanvas) : base(
@@ -35,7 +36,7 @@ public partial class AdminWindow : WindowControl
         nameof(AdminWindow)
     )
     {
-        DisableResizing();
+        IsResizable = false;
         MinimumSize = new Point(320, 320);
         Margin = Margin.Zero;
         Padding = Padding.Zero;
@@ -53,25 +54,16 @@ public partial class AdminWindow : WindowControl
         {
             Text = Strings.Admin.Access,
         };
-        _dropdownAccess = new ComboBox(this, "DropdownAccess");
+        _dropdownAccess = new ComboBox(this, name: nameof(_dropdownAccess));
         _ = _dropdownAccess.AddItem(Strings.Admin.Access0, userData: "None");
         _ = _dropdownAccess.AddItem(Strings.Admin.Access1, userData: "Moderator");
         _ = _dropdownAccess.AddItem(Strings.Admin.Access2, userData: "Admin");
+
         var buttonSetPower = new Button(this, "ButtonSetPower")
         {
             Text = Strings.Admin.SetPower,
         };
-        buttonSetPower.Clicked += (s, e) =>
-        {
-            if (_textboxName.Text.Trim().Length > 0)
-            {
-                var power = _dropdownAccess.SelectedItem.UserData.ToString();
-                if (!string.IsNullOrEmpty(power) && power.Trim().Length > 0)
-                {
-                    PacketSender.SendAdminAction(new SetAccessAction(_textboxName.Text, power));
-                }
-            }
-        };
+        buttonSetPower.Clicked += OnButtonSetPowerOnClicked;
 
         #region Quick Admin Actions
 
@@ -80,9 +72,9 @@ public partial class AdminWindow : WindowControl
         {
             Text = Strings.Admin.Warp2Me,
         };
-        buttonWarpToMe.Clicked += (s, e) =>
+        buttonWarpToMe.Clicked += (_, _) =>
         {
-            if (_textboxName.Text.Trim().Length > 0)
+            if (_textboxName.Text?.Trim().Length > 0)
             {
                 PacketSender.SendAdminAction(new WarpToMeAction(_textboxName.Text));
             }
@@ -93,9 +85,9 @@ public partial class AdminWindow : WindowControl
         {
             Text = Strings.Admin.WarpMe2,
         };
-        buttonWarpMeTo.Clicked += (s, e) =>
+        buttonWarpMeTo.Clicked += (_, _) =>
         {
-            if (_textboxName.Text.Trim().Length > 0)
+            if (_textboxName.Text?.Trim().Length > 0)
             {
                 PacketSender.SendAdminAction(new WarpMeToAction(_textboxName.Text));
             }
@@ -106,7 +98,7 @@ public partial class AdminWindow : WindowControl
         {
             Text = Strings.Admin.OverworldReturn,
         };
-        buttonOverworldReturn.Clicked += (s, e) =>
+        buttonOverworldReturn.Clicked += (_, _) =>
         {
             if (!string.IsNullOrEmpty(_textboxName.Text))
             {
@@ -119,9 +111,9 @@ public partial class AdminWindow : WindowControl
         {
             Text = Strings.Admin.Kick,
         };
-        buttonKick.Clicked += (s, e) =>
+        buttonKick.Clicked += (_, _) =>
         {
-            if (_textboxName.Text.Trim().Length > 0)
+            if (_textboxName.Text?.Trim().Length > 0)
             {
                 PacketSender.SendAdminAction(new KickAction(_textboxName.Text));
             }
@@ -132,9 +124,9 @@ public partial class AdminWindow : WindowControl
         {
             Text = Strings.Admin.Kill,
         };
-        buttonKill.Clicked += (s, e) =>
+        buttonKill.Clicked += (_, _) =>
         {
-            if (_textboxName.Text.Trim().Length > 0)
+            if (_textboxName.Text?.Trim().Length > 0)
             {
                 PacketSender.SendAdminAction(new KillAction(_textboxName.Text));
             }
@@ -153,13 +145,13 @@ public partial class AdminWindow : WindowControl
         };
         buttonUnban.Clicked += (s, e) =>
         {
-            if (_textboxName.Text.Trim().Length > 0)
+            if (_textboxName.Text?.Trim().Length > 0)
             {
                 _ = new InputBox(
                     Strings.Admin.UnbanCaption.ToString(_textboxName.Text),
                     Strings.Admin.UnbanPrompt.ToString(_textboxName.Text),
                     InputBox.InputType.YesNo,
-                    (s, e) => PacketSender.SendAdminAction(new UnbanAction(_textboxName.Text))
+                    (_, _) => PacketSender.SendAdminAction(new UnbanAction(_textboxName.Text))
                 );
             }
         };
@@ -177,13 +169,13 @@ public partial class AdminWindow : WindowControl
         };
         buttonUnmute.Clicked += (s, e) =>
         {
-            if (_textboxName.Text.Trim().Length > 0)
+            if (_textboxName.Text?.Trim().Length > 0)
             {
                 _ = new InputBox(
                     Strings.Admin.UnmuteCaption.ToString(_textboxName.Text),
                     Strings.Admin.UnmutePrompt.ToString(_textboxName.Text),
                     InputBox.InputType.YesNo,
-                    (s, e) => PacketSender.SendAdminAction(new UnmuteAction(_textboxName.Text))
+                    (_, _) => PacketSender.SendAdminAction(new UnmuteAction(_textboxName.Text))
                 );
             }
         };
@@ -212,9 +204,9 @@ public partial class AdminWindow : WindowControl
         {
             Text = Strings.Admin.SetSprite,
         };
-        buttonSetSprite.Clicked += (s, e) =>
+        buttonSetSprite.Clicked += (_, _) =>
         {
-            if (_textboxName.Text.Trim().Length > 0)
+            if (_textboxName.Text?.Trim().Length > 0)
             {
                 PacketSender.SendAdminAction(new SetSpriteAction(_textboxName.Text, _dropdownSprite.Text));
             }
@@ -243,9 +235,9 @@ public partial class AdminWindow : WindowControl
         {
             Text = Strings.Admin.SetFace,
         };
-        buttonSetFace.Clicked += (s, e) =>
+        buttonSetFace.Clicked += (_, _) =>
         {
-            if (_textboxName.Text.Trim().Length > 0)
+            if (_textboxName.Text?.Trim().Length > 0)
             {
                 PacketSender.SendAdminAction(new SetFaceAction(_textboxName.Text, _dropdownFace.Text));
             }
@@ -263,14 +255,31 @@ public partial class AdminWindow : WindowControl
         };
         _checkboxChronological = new Checkbox(this, "CheckboxChronological");
         _checkboxChronological.SetToolTipText(Strings.Admin.ChronologicalTip);
-        _checkboxChronological.CheckChanged += (s, e) => UpdateMapList();
+        _checkboxChronological.CheckChanged += (_, _) => UpdateMapList();
         _ = new Label(this, "LabelChronological")
         {
             Text = Strings.Admin.Chronological,
         };
 
-        LoadJsonUi(UI.InGame, Graphics.Renderer?.GetResolutionString(), true);
+        LoadJsonUi(UI.InGame, Graphics.Renderer?.GetResolutionString(), saveOutput: true);
         UpdateMapList();
+    }
+
+    private void OnButtonSetPowerOnClicked(Base @base, MouseButtonState mouseButtonState)
+    {
+        var name = _textboxName.Text?.Trim();
+        if (name is null or { Length: < 1 })
+        {
+            return;
+        }
+
+        var power = _dropdownAccess.SelectedItem?.UserData.ToString()?.Trim();
+        if (power is null or { Length: < 1 })
+        {
+            return;
+        }
+
+        PacketSender.SendAdminAction(new SetAccessAction(name, power));
     }
 
     public void SetName(string name)
@@ -290,7 +299,7 @@ public partial class AdminWindow : WindowControl
             Width = Width - 8,
             Height = mapListHeight,
             MaximumSize = new Point(4096, 999999),
-            Font = Current?.GetFont("sourcesansproblack", 10),
+            Font = Current.GetFont("sourcesansproblack", 10),
             TextColorOverride = Color.White,
         };
         _mapList.SelectionChanged += MapList_SelectionChanged;
@@ -343,7 +352,7 @@ public partial class AdminWindow : WindowControl
             return;
         }
 
-        var name = _textboxName.Text.Trim();
+        var name = _textboxName.Text?.Trim();
         if (string.Equals(name, Globals.Me?.Name, StringComparison.CurrentCultureIgnoreCase))
         {
             return;
@@ -352,7 +361,7 @@ public partial class AdminWindow : WindowControl
         _banOrMuteWindow = new BanMuteBox(
             Strings.Admin.BanCaption.ToString(name),
             Strings.Admin.BanPrompt.ToString(_textboxName.Text),
-            (s, e) =>
+            (_, _) =>
             {
                 PacketSender.SendAdminAction(
                     new BanAction(
@@ -375,7 +384,7 @@ public partial class AdminWindow : WindowControl
             return;
         }
 
-        var name = _textboxName.Text.Trim();
+        var name = _textboxName.Text?.Trim();
         if (string.Equals(name, Globals.Me?.Name, StringComparison.CurrentCultureIgnoreCase))
         {
             return;
@@ -384,7 +393,7 @@ public partial class AdminWindow : WindowControl
         _banOrMuteWindow = new BanMuteBox(
             Strings.Admin.MuteCaption.ToString(name),
             Strings.Admin.MutePrompt.ToString(_textboxName.Text),
-            (s, e) =>
+            (_, _) =>
             {
                 PacketSender.SendAdminAction(
                     new MuteAction(
@@ -402,15 +411,20 @@ public partial class AdminWindow : WindowControl
 
     private void _dropdownSprite_ItemSelected(Base sender, ItemSelectedEventArgs arguments)
     {
-        _spritePanel.Texture = Globals.ContentManager.GetTexture(TextureType.Entity, _dropdownSprite.Text);
-
-        if (_spritePanel.Texture == null)
+        if (_dropdownSprite.Text is not { } spriteName)
         {
             return;
         }
 
-        var textFrameWidth = _spritePanel.Texture.Width / Options.Instance.Sprites.NormalFrames;
-        var textFrameHeight = _spritePanel.Texture.Height / Options.Instance.Sprites.Directions;
+        var spriteTexture = Globals.ContentManager.GetTexture(TextureType.Entity, spriteName);
+
+        if (spriteTexture == null)
+        {
+            return;
+        }
+
+        var textFrameWidth = spriteTexture.Width / Options.Instance.Sprites.NormalFrames;
+        var textFrameHeight = spriteTexture.Height / Options.Instance.Sprites.Directions;
         _spritePanel.SetTextureRect(
             0,
             0,
@@ -423,15 +437,21 @@ public partial class AdminWindow : WindowControl
 
     private void _dropdownFace_ItemSelected(Base sender, ItemSelectedEventArgs arguments)
     {
-        _facePanel.Texture = Globals.ContentManager.GetTexture(TextureType.Face, _dropdownFace.Text);
-
-        if (_facePanel.Texture == null)
+        if (_dropdownFace.Text is not { } faceName)
         {
             return;
         }
 
-        var textFrameWidth = _facePanel.Texture.Width;
-        var textFrameHeight = _facePanel.Texture.Height;
+        var faceTexture = Globals.ContentManager.GetTexture(TextureType.Face, faceName);
+        _facePanel.Texture = faceTexture;
+
+        if (faceTexture == null)
+        {
+            return;
+        }
+
+        var textFrameWidth = faceTexture.Width;
+        var textFrameHeight = faceTexture.Height;
         _facePanel.SetTextureRect(
             0,
             0,
@@ -448,7 +468,7 @@ public partial class AdminWindow : WindowControl
         {
             ApplicationContext.Context.Value?.Logger.LogDebug(
                 "MapList selection triggered by a sender of type {SenderType} instead of a {TreeNodeType}",
-                sender?.GetType().GetName(qualified: true) ?? "null",
+                sender.GetType().GetName(qualified: true),
                 typeof(TreeNode).GetName(qualified: true)
             );
             return;
