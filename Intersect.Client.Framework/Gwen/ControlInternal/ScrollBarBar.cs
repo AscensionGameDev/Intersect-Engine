@@ -47,7 +47,7 @@ public partial class ScrollBarBar : Dragger
     /// <param name="skin">Skin to use.</param>
     protected override void Render(Skin.Base skin)
     {
-        skin.DrawScrollBarBar(this, mHeld, IsHovered, mHorizontal);
+        skin.DrawScrollBarBar(this);
         base.Render(skin);
     }
 
@@ -61,7 +61,7 @@ public partial class ScrollBarBar : Dragger
     protected override void OnMouseMoved(int x, int y, int dx, int dy)
     {
         base.OnMouseMoved(x, y, dx, dy);
-        if (!mHeld)
+        if (!IsActive)
         {
             return;
         }

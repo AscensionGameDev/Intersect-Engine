@@ -109,11 +109,6 @@ public class IntersectSkin : TexturedBase
     {
         base.InitializeTextures();
 
-        mTextures.Input.Button.Normal = new Bordered(_texture, 48, 0, 12, 12, Margin.Four);
-        mTextures.Input.Button.Disabled = new Bordered(_texture, 48, 24, 12, 12, Margin.Four);
-        mTextures.Input.Button.Hovered = new Bordered(_texture, 48, 12, 12, 12, Margin.Four);
-        mTextures.Input.Button.Pressed = new Bordered(_texture, 48, 36, 12, 12, Margin.Four);
-
         mTextures.CheckBox.Default.Box = new Single(_texture, 84, 0, 22, 22);
         mTextures.CheckBox.Default.Fill = new Single(_texture, 106, 0, 22, 22);
         mTextures.CheckBox.Active.Box = new Single(_texture, 84, 22, 22, 22);
@@ -145,15 +140,37 @@ public class IntersectSkin : TexturedBase
         mTextures.RadioButton.Disabled.Box = new Single(_texture, 128, 66, 22, 22);
         mTextures.RadioButton.Disabled.Fill = new Single(_texture, 150, 66, 22, 22);
 
-        mTextures.Input.Slider.H.Normal = new Single(_texture, 176, 0, 8, 16);
-        mTextures.Input.Slider.H.Hover = new Single(_texture, 176, 16, 8, 16);
-        mTextures.Input.Slider.H.Down = new Single(_texture, 176, 32, 8, 16);
-        mTextures.Input.Slider.H.Disabled = new Single(_texture, 176, 48, 8, 16);
+        mTextures.Input.Button.Normal = new Bordered(_texture, 48, 0, 12, 12, Margin.Four);
+        mTextures.Input.Button.Disabled = new Bordered(_texture, 48, 12, 12, 12, Margin.Four);
+        mTextures.Input.Button.Hovered = new Bordered(_texture, 48, 24, 12, 12, Margin.Four);
+        mTextures.Input.Button.Active = new Bordered(_texture, 48, 36, 12, 12, Margin.Four);
 
-        mTextures.Input.Slider.V.Normal = new Single(_texture, 192, 0, 16, 8);
-        mTextures.Input.Slider.V.Hover = new Single(_texture, 192, 16, 16, 8);
-        mTextures.Input.Slider.V.Down = new Single(_texture, 192, 32, 16, 8);
-        mTextures.Input.Slider.V.Disabled = new Single(_texture, 192, 48, 16, 8);
+        mTextures.Input.Slider.H.Normal = new Bordered(_texture, 176, 0, 7, 7, new Margin(3, 2, 3, 4));
+        mTextures.Input.Slider.H.Disabled = new Bordered(_texture, 176, 8, 7, 7, new Margin(3, 2, 3, 4));
+        mTextures.Input.Slider.H.Hover = new Bordered(_texture, 176, 16, 7, 7, new Margin(3, 2, 3, 4));
+        mTextures.Input.Slider.H.Active = new Bordered(_texture, 176, 24, 7, 7, new Margin(3, 2, 3, 4));
+
+        mTextures.Input.Slider.V.Normal = new Bordered(_texture, 192, 0, 7, 7, new Margin(3, 2, 3, 4));
+        mTextures.Input.Slider.V.Disabled = new Bordered(_texture, 192, 8, 7, 7, new Margin(3, 2, 3, 4));
+        mTextures.Input.Slider.V.Hover = new Bordered(_texture, 192, 16, 7, 7, new Margin(3, 2, 3, 4));
+        mTextures.Input.Slider.V.Active = new Bordered(_texture, 192, 24, 7, 7, new Margin(3, 2, 3, 4));
+
+        mTextures.Scroller.TrackV = new Bordered(_texture, 176, 32, 15, 15, Margin.Four);
+        mTextures.Scroller.BarV.Normal = new Bordered(_texture, 192, 32, 15, 15, Margin.Four);
+        mTextures.Scroller.BarV.Disabled = new Bordered(_texture, 208, 32, 15, 15, Margin.Four);
+        mTextures.Scroller.BarV.Hovered = new Bordered(_texture, 224, 32, 15, 15, Margin.Four);
+        mTextures.Scroller.BarV.Active = new Bordered(_texture, 240, 32, 15, 15, Margin.Four);
+        mTextures.Scroller.TrackH = new Bordered(_texture, 176, 80, 15, 15, Margin.Four);
+        mTextures.Scroller.BarH.Normal = new Bordered(_texture, 192, 80, 15, 15, Margin.Four);
+        mTextures.Scroller.BarH.Disabled = new Bordered(_texture, 208, 80, 15, 15, Margin.Four);
+        mTextures.Scroller.BarH.Hovered = new Bordered(_texture, 224, 80, 15, 15, Margin.Four);
+        mTextures.Scroller.BarH.Active = new Bordered(_texture, 240, 80, 15, 15, Margin.Four);
+
+        int[] scrollerArrowButtonY = [96, 48, 112, 64];
+        mTextures.Scroller.Button.Normal = scrollerArrowButtonY.Select(y => new Bordered(_texture, 192, y, 15, 15, Margin.Four)).ToArray();
+        mTextures.Scroller.Button.Disabled = scrollerArrowButtonY.Select(y => new Bordered(_texture, 208, y, 15, 15, Margin.Four)).ToArray();
+        mTextures.Scroller.Button.Hovered = scrollerArrowButtonY.Select(y => new Bordered(_texture, 224, y, 15, 15, Margin.Four)).ToArray();
+        mTextures.Scroller.Button.Active = scrollerArrowButtonY.Select(y => new Bordered(_texture, 240, y, 15, 15, Margin.Four)).ToArray();
 
         mTextures.Tab.Control = new Bordered(_texture, 0, 48, 16, 16, Margin.Four);
         mTextures.Tab.Top.Active = new Bordered(_texture, 0, 64, 16, 10, new Margin(4, 4, 4, 2));

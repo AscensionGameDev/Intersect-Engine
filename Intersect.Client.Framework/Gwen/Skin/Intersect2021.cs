@@ -55,7 +55,7 @@ public class Intersect2021 : TexturedBase
         mTextures.Input.Button.Normal = new Bordered(_texture, 48, 0, 12, 12, Margin.Four);
         mTextures.Input.Button.Disabled = new Bordered(_texture, 48, 24, 12, 12, Margin.Four);
         mTextures.Input.Button.Hovered = new Bordered(_texture, 48, 12, 12, 12, Margin.Four);
-        mTextures.Input.Button.Pressed = new Bordered(_texture, 48, 36, 12, 12, Margin.Four);
+        mTextures.Input.Button.Active = new Bordered(_texture, 48, 36, 12, 12, Margin.Four);
 
         mTextures.CheckBox.Default.Box = new Single(_texture, 84, 0, 22, 22);
         mTextures.CheckBox.Default.Fill = new Single(_texture, 106, 0, 22, 22);

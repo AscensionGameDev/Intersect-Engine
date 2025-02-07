@@ -387,7 +387,7 @@ public partial class ComboBox : Button
     /// </summary>
     public virtual void Open()
     {
-        if (IsDisabled)
+        if (IsDisabledByTree)
         {
             return;
         }

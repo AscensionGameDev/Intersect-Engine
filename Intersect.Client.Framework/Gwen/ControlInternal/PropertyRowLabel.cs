@@ -27,7 +27,7 @@ public partial class PropertyRowLabel : Label
     /// </summary>
     public override void UpdateColors()
     {
-        if (IsDisabled)
+        if (IsDisabledByTree)
         {
             TextColor = Skin.Colors.Button.Disabled;
 

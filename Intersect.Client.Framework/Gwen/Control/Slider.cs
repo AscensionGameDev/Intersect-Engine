@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -44,7 +43,10 @@ public partial class Slider : Base
         _snapToNotches = false;
         _value = 0.0f;
 
-        _sliderBar = new SliderBar(this, name: nameof(_sliderBar));
+        _sliderBar = new SliderBar(this, name: nameof(_sliderBar))
+        {
+            AnchorAxis = new Pointf(0, 0.5f),
+        };
         _sliderBar.Dragged += SliderBarOnDragged;
 
         KeyboardInputEnabled = true;
@@ -184,32 +186,6 @@ public partial class Slider : Base
         set => _sliderBar.Size = value;
     }
 
-    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
-    {
-        base.OnBoundsChanged(oldBounds, newBounds);
-
-        // ReSharper disable once InlineTemporaryVariable
-        if (_sliderBar is not { } sliderBar)
-        {
-            return;
-        }
-
-        var orientation = _orientation;
-        switch (orientation)
-        {
-            case Orientation.LeftToRight:
-            case Orientation.RightToLeft:
-                sliderBar.Height = InnerHeight;
-                break;
-            case Orientation.TopToBottom:
-            case Orientation.BottomToTop:
-                sliderBar.Width = InnerWidth;
-                break;
-            default:
-                throw Exceptions.UnreachableInvalidEnum(orientation);
-        }
-    }
-
     public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
         var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);
@@ -218,14 +194,13 @@ public partial class Slider : Base
             return null;
         }
 
-        serializedProperties.Add("BackgroundImage", _backgroundImageName);
-        serializedProperties.Add("SnapToNotches", _snapToNotches);
-        serializedProperties.Add("NotchCount", _notchCount);
+        serializedProperties.Add(nameof(BackgroundImage), BackgroundImageName);
+        serializedProperties.Add(nameof(SnapToNotches), SnapToNotches);
+        serializedProperties.Add(nameof(NotchCount), NotchCount);
         var notches = (Notches == default || Notches.Length < 1)
             ? default
             : new JArray(Notches.Cast<object>().ToArray());
         serializedProperties.Add(nameof(Notches), notches);
-        serializedProperties.Add("SliderBar", _sliderBar.GetJson());
 
         return base.FixJson(serializedProperties);
     }
@@ -436,7 +411,7 @@ public partial class Slider : Base
             this,
             orientation,
             Notches,
-            _snapToNotches ? _notchCount : 0,
+            NotchCount,
             barSize
         );
     }
@@ -550,14 +525,14 @@ public partial class Slider : Base
             BackgroundImage = null;
         }
 
-        if (obj["SnapToNotches"] != null)
+        if (obj[nameof(SnapToNotches)] != null)
         {
-            _snapToNotches = (bool)obj["SnapToNotches"];
+            _snapToNotches = (bool)obj[nameof(SnapToNotches)];
         }
 
-        if (obj["NotchCount"] != null)
+        if (obj[nameof(NotchCount)] != null)
         {
-            _notchCount = (int)obj["NotchCount"];
+            _notchCount = (int)obj[nameof(NotchCount)];
         }
 
         var notches = obj[nameof(Notches)];
@@ -574,9 +549,9 @@ public partial class Slider : Base
             Notches = default;
         }
 
-        if (obj["SliderBar"] != null)
+        if (obj[nameof(SliderBar)] != null)
         {
-            _sliderBar.LoadJson(obj["SliderBar"]);
+            _sliderBar.LoadJson(obj[nameof(SliderBar)]);
         }
     }
 }

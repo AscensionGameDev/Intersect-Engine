@@ -141,7 +141,7 @@ public partial class Base : IDisposable
     {
     }
 
-    public virtual void DrawScrollBarBar(Control.Base control, bool depressed, bool hovered, bool horizontal)
+    public virtual void DrawScrollBarBar(ScrollBarBar scrollBarBar)
     {
     }
 

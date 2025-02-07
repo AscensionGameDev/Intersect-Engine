@@ -82,7 +82,7 @@ public partial class VerticalScrollBar : ScrollBar
         mBar.IsHidden = Height - ButtonSize * 2 <= barHeight;
 
         //Based on our last scroll amount, produce a position for the bar
-        var isHeld = mBar.IsHeld;
+        var isHeld = mBar.IsActive;
         if (!isHeld)
         {
             SetScrollAmount(ScrollAmount, _wasHeld != isHeld);
@@ -194,7 +194,7 @@ public partial class VerticalScrollBar : ScrollBar
     /// <param name="control">The control.</param>
     protected override void OnBarMoved(Base control, EventArgs args)
     {
-        if (mBar.IsHeld)
+        if (mBar.IsActive)
         {
             SetScrollAmount(CalculateScrolledAmount(), false);
             base.OnBarMoved(control, EventArgs.Empty);

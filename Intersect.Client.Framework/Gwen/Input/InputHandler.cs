@@ -3,6 +3,8 @@ using System.Text;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Input;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Framework.Gwen.Input;
 
@@ -525,9 +527,21 @@ public static partial class InputHandler
             }
 
             nextHoveredControl?.Redraw();
+
+            ApplicationContext.CurrentContext.Logger.LogDebug(
+                "Updating hovered component from {PreviousComponentName} to {NextComponentName} (Mouse focused component is '{MouseFocusedComponentName}')",
+                previouslyHoveredControl?.CanonicalName ?? "N/A",
+                nextHoveredControl?.CanonicalName ?? "N/A",
+                mouseFocusedControl?.CanonicalName ?? "N/A"
+            );
         }
 
         if (nextHoveredControl is null)
+        {
+            return;
+        }
+
+        if (nextHoveredControl.KeepFocusOnMouseExit)
         {
             return;
         }

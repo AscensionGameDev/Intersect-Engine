@@ -97,10 +97,14 @@ public partial struct Bordered : IEquatable<Bordered>
 
         SetRect(3, x, y + mMargin.Top, mMargin.Left, h - mMargin.Top - mMargin.Bottom);
         SetRect(
-            4, x + mMargin.Left, y + mMargin.Top, w - mMargin.Left - mMargin.Right, h - mMargin.Top - mMargin.Bottom
+            4,
+            x + mMargin.Left,
+            y + mMargin.Top,
+            w - mMargin.Left - mMargin.Right,
+            h - mMargin.Top - mMargin.Bottom
         );
 
-        SetRect(5, x + w - mMargin.Right, y + mMargin.Top, mMargin.Right, h - mMargin.Top - mMargin.Bottom - 1);
+        SetRect(5, x + w - mMargin.Right, y + mMargin.Top, mMargin.Right, h - mMargin.Top - mMargin.Bottom);
 
         SetRect(6, x, y + h - mMargin.Bottom, mMargin.Left, mMargin.Bottom);
         SetRect(7, x + mMargin.Left, y + h - mMargin.Bottom, w - mMargin.Left - mMargin.Right, mMargin.Bottom);

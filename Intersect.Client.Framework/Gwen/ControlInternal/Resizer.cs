@@ -84,7 +84,7 @@ public partial class Resizer : Dragger
             return;
         }
 
-        if (!mHeld)
+        if (!IsActive)
         {
             return;
         }

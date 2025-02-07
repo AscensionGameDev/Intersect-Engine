@@ -21,8 +21,6 @@ public partial class Dragger : Base
         MouseUp,
     }
 
-
-    protected bool mHeld;
     protected Point mHoldPos;
 
     //Sound Effects
@@ -49,7 +47,7 @@ public partial class Dragger : Base
     public Dragger(Base parent, string? name = default) : base(parent, name)
     {
         MouseInputEnabled = true;
-        mHeld = false;
+        KeepFocusOnMouseExit = true;
     }
 
     internal Base Target
@@ -57,11 +55,6 @@ public partial class Dragger : Base
         get => _target;
         set => _target = value;
     }
-
-    /// <summary>
-    ///     Indicates if the control is being dragged.
-    /// </summary>
-    public bool IsHeld => mHeld;
 
     /// <summary>
     ///     Event invoked when the control position has been changed.
@@ -77,8 +70,6 @@ public partial class Dragger : Base
             return;
         }
 
-        mHeld = true;
-
         if (userAction)
         {
             base.PlaySound(mMouseDownSound);
@@ -91,8 +82,6 @@ public partial class Dragger : Base
     protected override void OnMouseUp(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
         base.OnMouseUp(mouseButton, mousePosition, userAction);
-
-        mHeld = false;
 
         if (userAction)
         {
@@ -116,7 +105,7 @@ public partial class Dragger : Base
             return;
         }
 
-        if (!mHeld)
+        if (!IsActive)
         {
             return;
         }
@@ -321,5 +310,4 @@ public partial class Dragger : Base
                 throw new ArgumentOutOfRangeException(nameof(state), state, null);
         }
     }
-
 }

@@ -229,7 +229,7 @@ public partial class Checkbox : Button
     /// </summary>
     protected override void OnMouseClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
-        if (IsDisabled)
+        if (IsDisabledByTree)
         {
             return;
         }

@@ -13,6 +13,7 @@ using Newtonsoft.Json.Linq;
 using Intersect.Client.Framework.Gwen.Renderer;
 using Intersect.Client.Framework.Input;
 using Intersect.Core;
+using Intersect.Framework;
 using Intersect.Framework.Reflection;
 using Intersect.Framework.Serialization;
 using Microsoft.Extensions.Logging;
@@ -581,27 +582,10 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Indicates whether the control is disabled.
     /// </summary>
-    public virtual bool IsDisabled
+    public bool IsDisabled
     {
         get => (_inheritParentEnablementProperties && Parent != default) ? Parent.IsDisabled : _disabled;
-        set
-        {
-            if (value == _disabled)
-            {
-                return;
-            }
-
-            if (_inheritParentEnablementProperties)
-            {
-                _disabled = Parent?.IsDisabled ?? value;
-            }
-            else
-            {
-                _disabled = value;
-            }
-
-            Invalidate();
-        }
+        set => SetAndDoIfChanged(ref _disabled, value, Invalidate);
     }
 
     /// <summary>
@@ -1464,6 +1448,7 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Enables the control.
     /// </summary>
+    // TODO: Remove
     public void Enable()
     {
         IsDisabled = false;
@@ -1472,6 +1457,7 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Disables the control.
     /// </summary>
+    // TODO: Remove
     public virtual void Disable()
     {
         IsDisabled = true;
@@ -2609,27 +2595,6 @@ public partial class Base : IDisposable
         OnMouseDoubleClicked(mouseButton, mousePosition, userAction);
         DoubleClicked?.Invoke(this, new MouseButtonState(mouseButton, mousePosition, true));
     }
-    /// <summary>
-    ///     Handler invoked on mouse cursor entering control's bounds.
-    /// </summary>
-    protected virtual void OnMouseEntered()
-    {
-        if (HoverEnter != null)
-        {
-            HoverEnter.Invoke(this, EventArgs.Empty);
-        }
-
-        if (Tooltip != null)
-        {
-            ToolTip.Enable(this);
-        }
-        else if (Parent != null && Parent.Tooltip != null)
-        {
-            ToolTip.Enable(Parent);
-        }
-
-        Redraw();
-    }
 
     protected void PlaySound(string? name)
     {
@@ -2686,6 +2651,8 @@ public partial class Base : IDisposable
     {
     }
 
+    public bool KeepFocusOnMouseExit { get; set; }
+
     internal void InputMouseButtonState(MouseButton mouseButton, Point mousePosition, bool pressed, bool userAction = true)
     {
         var emitsEvents = !IsDisabledByTree;
@@ -2736,10 +2703,29 @@ public partial class Base : IDisposable
     }
 
     /// <summary>
+    ///     Handler invoked on mouse cursor entering control's bounds.
+    /// </summary>
+    protected virtual void OnMouseEntered()
+    {
+        HoverEnter?.Invoke(this, EventArgs.Empty);
+
+        Redraw();
+    }
+
+    /// <summary>
     ///     Invokes mouse enter event (used by input system).
     /// </summary>
     internal void InputMouseEntered()
     {
+        if (Tooltip != null)
+        {
+            ToolTip.Enable(this);
+        }
+        else if (Parent is { Tooltip: not null })
+        {
+            ToolTip.Enable(Parent);
+        }
+
         if (IsDisabledByTree)
         {
             return;
@@ -2757,15 +2743,6 @@ public partial class Base : IDisposable
 
         HoverLeave?.Invoke(this, EventArgs.Empty);
 
-        if (Tooltip != null)
-        {
-            ToolTip.Disable(this);
-        }
-        else if (Parent != null && Parent.Tooltip != null)
-        {
-            ToolTip.Disable(Parent);
-        }
-
         Redraw();
     }
 
@@ -2774,6 +2751,15 @@ public partial class Base : IDisposable
     /// </summary>
     internal void InputMouseLeft()
     {
+        if (Tooltip != null)
+        {
+            ToolTip.Disable(this);
+        }
+        else if (Parent is { Tooltip: not null })
+        {
+            ToolTip.Disable(Parent);
+        }
+
         if (IsDisabledByTree)
         {
             return;

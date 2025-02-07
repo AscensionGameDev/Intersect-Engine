@@ -499,10 +499,10 @@ public partial class Simple : Skin.Base
         mRenderer.DrawFilledRect(rect);
     }
 
-    public override void DrawScrollBarBar(Control.Base control, bool depressed, bool hovered, bool horizontal)
+    public override void DrawScrollBarBar(ScrollBarBar scrollBarBar)
     {
         //TODO: something specialized
-        DrawButton(control, depressed, hovered, false, control.HasFocus);
+        DrawButton(scrollBarBar, scrollBarBar.IsActive, scrollBarBar.IsHovered, scrollBarBar.IsDisabledByTree, scrollBarBar.HasFocus);
     }
 
     public override void DrawTabTitleBar(Control.Base control)
