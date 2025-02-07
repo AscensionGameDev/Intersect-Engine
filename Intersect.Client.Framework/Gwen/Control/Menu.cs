@@ -171,9 +171,9 @@ public partial class Menu : ScrollControl
     {
         var newMenuItem = new MenuItem(this)
         {
-            Padding = Padding.Four,
-            Text = text,
             Font = font,
+            Text = text,
+            TextPadding = new Padding(8),
         };
         newMenuItem.SetStateTexture(iconTexture, textureFilename, ComponentState.Normal);
         newMenuItem.SetAccelerator(accelerator);
@@ -189,7 +189,7 @@ public partial class Menu : ScrollControl
     /// <param name="menuItem">Item added.</param>
     protected virtual void OnAddItem(MenuItem menuItem)
     {
-        menuItem.TextPadding = new Padding(IconMarginDisabled ? 0 : 24, 0, 16, 0);
+        menuItem.TextPadding = new Padding(IconMarginDisabled ? 8 : 32, 4, 8, 4);
         menuItem.Dock = Pos.Top;
         menuItem.SizeToContents();
         menuItem.TextAlign = Pos.CenterV | Pos.Left;

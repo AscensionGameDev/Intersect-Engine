@@ -15,7 +15,8 @@ public partial class DownArrow : Base
     ///     Initializes a new instance of the <see cref="DownArrow" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public DownArrow(ComboBox parent) : base(parent) // or Base?
+    /// <param name="name"></param>
+    public DownArrow(ComboBox parent, string? name = default) : base(parent: parent, name: name) // or Base?
     {
         MouseInputEnabled = false;
         SetSize(15, 15);

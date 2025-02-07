@@ -42,15 +42,16 @@ public partial class ComboBox : Button
     /// <param name="name"></param>
     public ComboBox(Base parent, string? name = default) : base(parent, name)
     {
-        SetSize(100, 20);
-        _menu = new Menu(this)
+        Size = new Point(100, 20);
+        _menu = new Menu(this, name: nameof(_menu))
         {
             IsHidden = true,
             IconMarginDisabled = true,
             IsTabable = false,
+            MaximumSize = new Point(100, 200),
         };
 
-        _arrowIcon = new DownArrow(this)
+        _arrowIcon = new DownArrow(this, name: nameof(_arrowIcon))
         {
             Margin = new Margin(4, 0, 0, 0),
         };
@@ -66,7 +67,7 @@ public partial class ComboBox : Button
     /// <summary>
     ///     Indicates whether the combo menu is open.
     /// </summary>
-    public bool IsOpen => _menu != null && !_menu.IsHidden;
+    public bool IsOpen => _menu.IsVisible;
 
     /// <summary>
     ///     Selected item.
@@ -113,7 +114,7 @@ public partial class ComboBox : Button
     /// <summary>
     ///     Invoked when the selected item has changed.
     /// </summary>
-    public event GwenEventHandler<ItemSelectedEventArgs> ItemSelected;
+    public event GwenEventHandler<ItemSelectedEventArgs>? ItemSelected;
 
     public void SetMenuAbove()
     {
@@ -142,7 +143,6 @@ public partial class ComboBox : Button
         }
 
         obj.Add("MenuAbove", mMenuAbove);
-        obj.Add("Menu", _menu.GetJson());
         obj.Add("DropDownButton", _arrowIcon.GetJson());
         obj.Add("OpenMenuSound", mOpenMenuSound);
         obj.Add("CloseMenuSound", mCloseMenuSound);
@@ -267,7 +267,7 @@ public partial class ComboBox : Button
     public override void Disable()
     {
         base.Disable();
-        GetCanvas().CloseMenus();
+        Canvas?.CloseMenus();
     }
 
     /// <summary>
@@ -300,10 +300,8 @@ public partial class ComboBox : Button
     /// </summary>
     public virtual void DeleteAll()
     {
-        if (_menu != null)
-        {
-            _menu.DeleteAll();
-        }
+        _itemMaximumSize = default;
+        _menu.DeleteAll();
     }
 
     /// <summary>
@@ -325,10 +323,7 @@ public partial class ComboBox : Button
             Text = mSelectedItem.Text;
             _menu.IsHidden = true;
 
-            if (ItemSelected != null)
-            {
-                ItemSelected.Invoke(this, args);
-            }
+            ItemSelected?.Invoke(this, args);
 
             if (!args.Automated)
             {
@@ -392,26 +387,23 @@ public partial class ComboBox : Button
             return;
         }
 
-        if (null == _menu)
-        {
-            return;
-        }
-
         _menu.Parent = GetCanvas();
         _menu.IsHidden = false;
         _menu.BringToFront();
 
         var p = LocalPosToCanvas(Point.Empty);
+        var height = _menu.Children.OfType<MenuItem>().Sum(child => child.Height);
+        var width = Width;
+        _menu.MaximumSize = _menu.MaximumSize with { X = width };
         if (mMenuAbove)
         {
             _menu.RestrictToParent = false;
-            _menu.Height = _menu.Children.Sum(child => child != null ? child.Height : 0);
-            _menu.SetBounds(new Rectangle(p.X, p.Y - _menu.Height, Width, _menu.Height));
+            _menu.SetBounds(new Rectangle(p.X, p.Y - _menu.Height, width, height));
             _menu.RestrictToParent = true;
         }
         else
         {
-            _menu.SetBounds(new Rectangle(p.X, p.Y + Height, Width, _menu.Height));
+            _menu.SetBounds(new Rectangle(p.X, p.Y + Height, width, height));
         }
 
         base.PlaySound(mOpenMenuSound);
@@ -422,11 +414,6 @@ public partial class ComboBox : Button
     /// </summary>
     public virtual void Close()
     {
-        if (_menu == null)
-        {
-            return;
-        }
-
         _menu.Hide();
 
         base.PlaySound(mCloseMenuSound);
@@ -574,7 +561,7 @@ public partial class ComboBox : Button
         _menu.MaximumSize = new Point(w, h);
     }
 
-    protected override Point GetContentSize() => _itemMaximumSize == default ? base.GetContentSize() : _itemMaximumSize;
+    protected override Point GetContentSize() => _itemMaximumSize == default ? base.GetContentSize() : _itemMaximumSize + new Point(4, 0);
 
     protected override Padding GetContentPadding()
     {
