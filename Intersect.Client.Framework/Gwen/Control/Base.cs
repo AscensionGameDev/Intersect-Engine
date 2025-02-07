@@ -1533,9 +1533,7 @@ public partial class Base : IDisposable
                 AutoSizeToContents = true,
                 Font = _tooltipFont ?? GameContentManager.Current?.GetFont("sourcesansproblack", 10),
                 MaximumSize = new Point(300, 0),
-                Padding = new Padding(
-                    5,
-                    3,
+                TextPadding = new Padding(
                     5,
                     3
                 ),
