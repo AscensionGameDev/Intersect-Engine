@@ -34,10 +34,12 @@ public partial class Button : Label
     ///     Control constructor.
     /// </summary>
     /// <param name="parent">Parent control.</param>
+    /// <param name="name"></param>
+    /// <param name="disableText"></param>
     public Button(Base parent, string? name = default, bool disableText = false) : base(parent, name, disableText)
     {
         AutoSizeToContents = false;
-        SetSize(100, 20);
+        Size = new Point(100, 20);
         MouseInputEnabled = true;
         TextAlign = Pos.Center;
         TextPadding = new Padding(3, 3, 3, 3);
