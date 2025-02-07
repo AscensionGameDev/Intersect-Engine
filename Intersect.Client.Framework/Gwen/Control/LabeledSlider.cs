@@ -31,6 +31,7 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
         };
 
         _slider = new Slider(this, nameof(_slider));
+
         _sliderValue = new TextBoxNumeric(this, nameof(_sliderValue))
         {
             Alignment = [Alignments.CenterV],
@@ -284,20 +285,20 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
         switch (orientation)
         {
             case Orientation.LeftToRight:
-                _label.Dock = Pos.Left | Pos.Bottom;
+                _label.Dock = Pos.Left;
                 _label.Alignment = [Alignments.CenterV];
-                _slider.Dock = Pos.Left | Pos.Bottom;
+                _slider.Dock = Pos.Left;
                 _slider.Alignment = [Alignments.CenterV];
                 _slider.Margin = new Margin(4, 0, 0, 0);
-                _sliderValue.Dock = Pos.Left | Pos.Bottom;
+                _sliderValue.Dock = Pos.Left;
                 _sliderValue.Alignment = [Alignments.CenterV];
                 _sliderValue.Margin = new Margin(4, 0, 0, 0);
                 break;
             case Orientation.RightToLeft:
-                _label.Dock = Pos.Right | Pos.Bottom;
-                _slider.Dock = Pos.Right | Pos.Bottom;
+                _label.Dock = Pos.Right | Pos.CenterV;
+                _slider.Dock = Pos.Right | Pos.CenterV;
                 _slider.Margin = new Margin(0, 0, 4, 0);
-                _sliderValue.Dock = Pos.Right | Pos.Bottom;
+                _sliderValue.Dock = Pos.Right;
                 _sliderValue.Margin = new Margin(0, 0, 4, 0);
                 break;
             case Orientation.TopToBottom:
