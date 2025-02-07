@@ -1,5 +1,6 @@
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen.Control.EventArguments;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
@@ -8,6 +9,8 @@ public partial class LabeledComboBox : Base, IAutoSizeToContents
     private readonly ComboBox _comboBox;
     private readonly Label _label;
     private bool _autoSizeToContents;
+
+    public event GwenEventHandler<ItemSelectedEventArgs>? ItemSelected;
 
     public LabeledComboBox(Base parent, string? name = default) : base(parent: parent, name: name)
     {
@@ -24,7 +27,10 @@ public partial class LabeledComboBox : Base, IAutoSizeToContents
             Alignment = [Alignments.CenterV],
             Dock = Pos.Left,
             Margin = new Margin(4, 0, 0, 0),
+            TextPadding = Padding.Two,
         };
+
+        _comboBox.ItemSelected += (sender, args) => ItemSelected?.Invoke(sender, args);
     }
 
     public GameFont? Font
@@ -35,6 +41,18 @@ public partial class LabeledComboBox : Base, IAutoSizeToContents
             _label.Font = value;
             _comboBox.Font = value;
         }
+    }
+
+    public GameFont? LabelFont
+    {
+        get => _label.Font;
+        set => _label.Font = value;
+    }
+
+    public GameFont? ItemFont
+    {
+        get => _comboBox.Font;
+        set => _comboBox.Font = value;
     }
 
     public string? Label
@@ -64,6 +82,18 @@ public partial class LabeledComboBox : Base, IAutoSizeToContents
     {
         get => _autoSizeToContents;
         set => _autoSizeToContents = value;
+    }
+
+    public Padding LabelTextPadding
+    {
+        get => _label.TextPadding;
+        set => _label.TextPadding = value;
+    }
+
+    public Padding TextPadding
+    {
+        get => _comboBox.TextPadding;
+        set => _comboBox.TextPadding = value;
     }
 
     protected override void Layout(Skin.Base skin)
