@@ -871,5 +871,4 @@ public partial class Label : Base, ILabel
                 return null;
         }
     }
-
 }

@@ -36,7 +36,7 @@ public partial class LabeledCheckBox : Base
         {
             Alignment = [Alignments.CenterV],
             AutoSizeToContents = true,
-            Dock = Pos.Fill,
+            Dock = Pos.Fill | Pos.CenterV,
             InheritParentEnablementProperties = true,
             IsTabable = false,
             TextAlign = Pos.CenterV | Pos.Left,
