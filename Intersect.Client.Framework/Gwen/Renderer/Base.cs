@@ -235,11 +235,9 @@ public partial class Base : IDisposable, ITextHelper
     /// </summary>
     /// <param name="font">Font to use.</param>
     /// <param name="text">Text to measure.</param>
+    /// <param name="scale"></param>
     /// <returns>Width and height of the rendered text.</returns>
-    public virtual Point MeasureText(GameFont font, string text, float scale = 1f)
-    {
-        return Point.Empty;
-    }
+    public virtual Point MeasureText(GameFont? font, string? text, float scale = 1f) => default;
 
     /// <summary>
     ///     Renders text using specified font.

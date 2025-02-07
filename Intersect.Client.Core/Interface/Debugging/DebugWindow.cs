@@ -27,6 +27,10 @@ internal sealed partial class DebugWindow : Window
         _generators = [];
         DisableResizing();
         MinimumSize = new Point(320, 320);
+        Size = new Point(400, 600);
+        MaximumSize = new Point(800, 600);
+
+        InnerPanelPadding = new Padding(4);
 
         _defaultFont = Current?.GetFont("sourcesansproblack", 10);
 
@@ -57,7 +61,6 @@ internal sealed partial class DebugWindow : Window
             Dock = Pos.Fill,
             FontSearch = _defaultFont,
             FontTree = _defaultFont,
-            Margin = new Margin(0, 4, 0, 0),
             SearchPlaceholderText = Strings.Debug.AssetsSearchPlaceholder,
         };
 
@@ -68,8 +71,13 @@ internal sealed partial class DebugWindow : Window
     {
         Table table = new(assetsTabPage, nameof(AssetsToolsTable))
         {
+            AutoSizeToContentHeightOnChildResize = true,
+            AutoSizeToContentWidthOnChildResize = true,
+            CellSpacing = new Point(4, 4),
             ColumnCount = 2,
+            ColumnWidths = [null, null],
             Dock = Pos.Top,
+            SizeToContents = true,
         };
 
         return table;
@@ -85,6 +93,7 @@ internal sealed partial class DebugWindow : Window
             Font = _defaultFont,
             Text = Strings.Debug.ReloadAsset,
         };
+        row.SetCellContents(0, buttonReloadAsset);
 
         assetList.SelectionChanged += (_, _) =>
             buttonReloadAsset.IsDisabled = assetList.SelectedNodes.All(
@@ -231,7 +240,7 @@ internal sealed partial class DebugWindow : Window
         checkbox.CheckChanged += (sender, args) => Globals.ContentManager.ContentWatcher.Enabled = checkbox.IsChecked;
 
         checkbox.SetToolTipText(Strings.Internals.ExperimentalFeatureTooltip);
-        checkbox.ToolTipFont = Skin.DefaultFont;
+        checkbox.TooltipFont = Skin.DefaultFont;
 
         return checkbox;
     }

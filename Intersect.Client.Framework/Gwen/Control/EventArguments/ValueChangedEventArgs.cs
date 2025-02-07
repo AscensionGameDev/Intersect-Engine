@@ -5,4 +5,6 @@ public class ValueChangedEventArgs<TValue> : EventArgs
     public ValueChangedEventArgs() { }
 
     public required TValue Value { get; init; }
+
+    public TValue OldValue { get; init; }
 }

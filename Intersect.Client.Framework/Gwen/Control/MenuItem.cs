@@ -251,21 +251,35 @@ public partial class MenuItem : Button
         _submenu.CloseAll();
     }
 
+    protected override Point GetContentSize()
+    {
+        var contentSize = base.GetContentSize();
+        if (_accelerator is { } accelerator)
+        {
+            contentSize.X += accelerator.Width;
+        }
+
+        if (Parent is not { } parent)
+        {
+            return contentSize;
+        }
+
+        var parentWidth = parent.Width;
+        contentSize.X = Math.Max(contentSize.X, parentWidth);
+        return contentSize;
+    }
+
     public override bool SizeToContents()
     {
+        _accelerator?.SizeToContents();
+
         var sizeChanged = base.SizeToContents();
+
         if (_accelerator != null)
         {
-            _accelerator.SizeToContents();
-            sizeChanged &= _accelerator.Width != 0;
-            Width += _accelerator.Width;
             _accelerator.TextAlign = Pos.Left;
         }
 
-        var width = Width;
-        var clampedWidth = Math.Max(width, Parent?.Width ?? width);
-        sizeChanged &= width != clampedWidth;
-        Width = clampedWidth;
         return sizeChanged;
     }
 

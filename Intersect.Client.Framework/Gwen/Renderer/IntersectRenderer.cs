@@ -69,14 +69,15 @@ public partial class IntersectRenderer : Base, ICacheToTexture
     /// </summary>
     /// <param name="font">Font to use.</param>
     /// <param name="text">Text to measure.</param>
+    /// <param name="scale"></param>
     /// <returns>
     ///     Width and height of the rendered text.
     /// </returns>
-    public override Point MeasureText(GameFont font, string text, float scale = 1f)
+    public override Point MeasureText(GameFont? font, string? text, float scale = 1f)
     {
-        if (font == null)
+        if (font == null || string.IsNullOrEmpty(text))
         {
-            return Point.Empty;
+            return default;
         }
 
         var size = mRenderer.MeasureText(text, font, scale * Scale);

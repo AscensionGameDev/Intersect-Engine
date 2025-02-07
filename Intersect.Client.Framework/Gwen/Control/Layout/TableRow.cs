@@ -212,17 +212,17 @@ public partial class TableRow : Base, IColorableText
 
             _cellSpacing = value;
             var columns = _columns.ToArray();
-            var lastColumn = columns.LastOrDefault();
-            var otherColumns = columns.TakeWhile(c => c != lastColumn).ToArray();
+            var firstColumn = columns.FirstOrDefault();
+            var otherColumns = columns.Skip(1).ToArray();
 
-            if (lastColumn is not null)
+            if (firstColumn is not null)
             {
-                lastColumn.Margin = default;
+                firstColumn.Margin = default;
             }
 
             foreach (var column in otherColumns)
             {
-                column.Margin = new Margin(0, 0, _cellSpacing.X, 0);
+                column.Margin = new Margin(_cellSpacing.X, 0, 0, 0);
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Framework.Gwen.ControlInternal;
+﻿using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen.ControlInternal;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
@@ -14,6 +15,7 @@ public partial class TabControl : Base
     private TabButton? _activeButton;
 
     private int _scrollOffset;
+    private GameFont? _font;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="TabControl" /> class.
@@ -80,6 +82,26 @@ public partial class TabControl : Base
     /// </summary>
     public int TabCount => _tabStrip.Children.Count;
 
+    public GameFont? Font
+    {
+        get => _font;
+        set
+        {
+            if (value == _font)
+            {
+                return;
+            }
+
+            _font = value;
+
+            var tabs = _tabStrip.Children.OfType<TabButton>().ToArray();
+            foreach (var tab in tabs)
+            {
+                tab.Font = _font;
+            }
+        }
+    }
+
     /// <summary>
     ///     Invoked when a tab has been added.
     /// </summary>
@@ -109,6 +131,7 @@ public partial class TabControl : Base
 
         TabButton button = new(_tabStrip)
         {
+            Font = _font,
             IsTabable = false,
             Page = page,
             Text = label,

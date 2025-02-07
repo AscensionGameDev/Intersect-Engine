@@ -52,6 +52,12 @@ public partial class ScrollControl : Base
         MouseInputEnabled = false;
     }
 
+    public Padding InnerPanelPadding
+    {
+        get => _innerPanel!.Padding;
+        set => _innerPanel!.Padding = value;
+    }
+
     public int VerticalScroll => _innerPanel?.Y ?? 0;
 
     public int HorizontalScroll => _innerPanel?.X ?? 0;

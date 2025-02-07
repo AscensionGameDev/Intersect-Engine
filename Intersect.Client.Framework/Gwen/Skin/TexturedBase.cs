@@ -829,96 +829,139 @@ public partial class TexturedBase : Skin.Base
             return;
         }
 
-        if (((Menu) control).GetTemplate() != null)
+        if (control is not Menu menu)
         {
-            var renderImg = ((Menu) control).GetTemplate();
+            return;
+        }
 
-            //Draw Top Left Corner
-            Renderer.DrawTexturedRect(
-                renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Y, 2, 2), control.RenderColor,
-                0, 0, 2f / renderImg.Width, 2f / renderImg.Height
-            );
+        if (menu.GetTemplate() is not { } menuTemplate)
+        {
+            if (paddingDisabled)
+            {
+                mTextures.Menu.Background.Draw(Renderer, control.RenderBounds, control.RenderColor);
+            }
+            else
+            {
+                mTextures.Menu.BackgroundWithMargin.Draw(Renderer, control.RenderBounds, control.RenderColor);
+            }
 
-            //Draw Top
-            Renderer.DrawTexturedRect(
-                renderImg,
-                new Rectangle(
-                    control.RenderBounds.X + 2, control.RenderBounds.Y, control.RenderBounds.Width - 4, 2
-                ), control.RenderColor, 2f / renderImg.Width, 0,
-                (renderImg.Width - 2f) / renderImg.Width, 2f / renderImg.Height
-            );
-
-            //Draw Top Right Corner
-            Renderer.DrawTexturedRect(
-                renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Y, 2, 2),
-                control.RenderColor, (renderImg.Width - 2f) / renderImg.Width, 0, 1f,
-                2f / renderImg.Height
-            );
-
-            //Draw Left
-            Renderer.DrawTexturedRect(
-                renderImg,
-                new Rectangle(
-                    control.RenderBounds.X, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                ), control.RenderColor, 0, 2f / renderImg.Height, 2f / renderImg.Width,
-                (renderImg.Height - 2f) / renderImg.Height
-            );
-
-            //Draw Middle
-            Renderer.DrawTexturedRect(
-                renderImg,
-                new Rectangle(
-                    control.RenderBounds.X + 2, control.RenderBounds.Y + 2, control.RenderBounds.Width - 4,
-                    control.RenderBounds.Height - 4
-                ), control.RenderColor, 2f / renderImg.Width, 2f / renderImg.Height,
-                (renderImg.Width - 2f) / renderImg.Width,
-                (renderImg.Height - 2f) / renderImg.Height
-            );
-
-            //Draw Right
-            Renderer.DrawTexturedRect(
-                renderImg,
-                new Rectangle(
-                    control.RenderBounds.Width - 2, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                ), control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
-                2f / renderImg.Height, 1, (renderImg.Height - 2f) / renderImg.Height
-            );
-
-            // Draw Bottom Left Corner
-            Renderer.DrawTexturedRect(
-                renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Bottom - 2, 2, 2),
-                control.RenderColor, 0, (renderImg.Height - 2f) / renderImg.Height,
-                2f / renderImg.Width, 1f
-            );
-
-            //Draw Bottom
-            Renderer.DrawTexturedRect(
-                renderImg,
-                new Rectangle(
-                    control.RenderBounds.X + 2, control.RenderBounds.Bottom - 2, control.RenderBounds.Width - 4, 2
-                ), control.RenderColor, 2f / renderImg.Width,
-                (renderImg.Height - 2f) / renderImg.Height,
-                (renderImg.Width - 2f) / renderImg.Width, 1f
-            );
-
-            //Draw Bottom Right Corner
-            Renderer.DrawTexturedRect(
-                renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Bottom - 2, 2, 2),
-                control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
-                (renderImg.Height - 2f) / renderImg.Height, 1f, 1f
-            );
 
             return;
         }
 
-        if (!paddingDisabled)
-        {
-            mTextures.Menu.BackgroundWithMargin.Draw(Renderer, control.RenderBounds, control.RenderColor);
+        //Draw Top Left Corner
+        Renderer.DrawTexturedRect(
+            menuTemplate,
+            new Rectangle(control.RenderBounds.X, control.RenderBounds.Y, 2, 2),
+            control.RenderColor,
+            0,
+            0,
+            2f / menuTemplate.Width,
+            2f / menuTemplate.Height
+        );
 
-            return;
-        }
+        //Draw Top
+        Renderer.DrawTexturedRect(
+            menuTemplate,
+            new Rectangle(control.RenderBounds.X + 2, control.RenderBounds.Y, control.RenderBounds.Width - 4, 2),
+            control.RenderColor,
+            2f / menuTemplate.Width,
+            0,
+            (menuTemplate.Width - 2f) / menuTemplate.Width,
+            2f / menuTemplate.Height
+        );
 
-        mTextures.Menu.Background.Draw(Renderer, control.RenderBounds, control.RenderColor);
+        //Draw Top Right Corner
+        Renderer.DrawTexturedRect(
+            menuTemplate,
+            new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Y, 2, 2),
+            control.RenderColor,
+            (menuTemplate.Width - 2f) / menuTemplate.Width,
+            0,
+            1f,
+            2f / menuTemplate.Height
+        );
+
+        //Draw Left
+        Renderer.DrawTexturedRect(
+            menuTemplate,
+            new Rectangle(control.RenderBounds.X, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4),
+            control.RenderColor,
+            0,
+            2f / menuTemplate.Height,
+            2f / menuTemplate.Width,
+            (menuTemplate.Height - 2f) / menuTemplate.Height
+        );
+
+        //Draw Middle
+        Renderer.DrawTexturedRect(
+            menuTemplate,
+            new Rectangle(
+                control.RenderBounds.X + 2,
+                control.RenderBounds.Y + 2,
+                control.RenderBounds.Width - 4,
+                control.RenderBounds.Height - 4
+            ),
+            control.RenderColor,
+            2f / menuTemplate.Width,
+            2f / menuTemplate.Height,
+            (menuTemplate.Width - 2f) / menuTemplate.Width,
+            (menuTemplate.Height - 2f) / menuTemplate.Height
+        );
+
+        //Draw Right
+        Renderer.DrawTexturedRect(
+            menuTemplate,
+            new Rectangle(
+                control.RenderBounds.Width - 2,
+                control.RenderBounds.Y + 2,
+                2,
+                control.RenderBounds.Height - 4
+            ),
+            control.RenderColor,
+            (menuTemplate.Width - 2f) / menuTemplate.Width,
+            2f / menuTemplate.Height,
+            1,
+            (menuTemplate.Height - 2f) / menuTemplate.Height
+        );
+
+        // Draw Bottom Left Corner
+        Renderer.DrawTexturedRect(
+            menuTemplate,
+            new Rectangle(control.RenderBounds.X, control.RenderBounds.Bottom - 2, 2, 2),
+            control.RenderColor,
+            0,
+            (menuTemplate.Height - 2f) / menuTemplate.Height,
+            2f / menuTemplate.Width,
+            1f
+        );
+
+        //Draw Bottom
+        Renderer.DrawTexturedRect(
+            menuTemplate,
+            new Rectangle(
+                control.RenderBounds.X + 2,
+                control.RenderBounds.Bottom - 2,
+                control.RenderBounds.Width - 4,
+                2
+            ),
+            control.RenderColor,
+            2f / menuTemplate.Width,
+            (menuTemplate.Height - 2f) / menuTemplate.Height,
+            (menuTemplate.Width - 2f) / menuTemplate.Width,
+            1f
+        );
+
+        //Draw Bottom Right Corner
+        Renderer.DrawTexturedRect(
+            menuTemplate,
+            new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Bottom - 2, 2, 2),
+            control.RenderColor,
+            (menuTemplate.Width - 2f) / menuTemplate.Width,
+            (menuTemplate.Height - 2f) / menuTemplate.Height,
+            1f,
+            1f
+        );
     }
 
     public override void DrawShadow(Control.Base control)

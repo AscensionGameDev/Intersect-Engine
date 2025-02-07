@@ -99,10 +99,14 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
             }
 
             _cellSpacing = value;
-            var rows = Children.OfType<TableRow>().ToArray();
+            var rows = Children.OfType<TableRow>().Skip(1).ToArray();
             foreach (var row in rows)
             {
-                row.Margin = new Margin(0, 0, _cellSpacing.X, _cellSpacing.Y);
+                row.Margin = new Margin(0, _cellSpacing.Y, 0, 0);
+                row.CellSpacing = value with
+                {
+                    Y = 0,
+                };
             }
         }
     }
