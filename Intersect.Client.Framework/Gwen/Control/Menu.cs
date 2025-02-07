@@ -1,3 +1,4 @@
+using System.Collections;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.ControlInternal;
@@ -33,9 +34,10 @@ public partial class Menu : ScrollControl
     ///     Initializes a new instance of the <see cref="Menu" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public Menu(Base parent, string name = default) : base(parent, name)
+    /// <param name="name"></param>
+    public Menu(Base parent, string? name = default) : base(parent, name)
     {
-        SetBounds(0, 0, 10, 10);
+        Size = new Point(10, 10);
         Padding = Padding.Two;
         IconMarginDisabled = false;
 
@@ -64,6 +66,8 @@ public partial class Menu : ScrollControl
     ///     Determines whether the menu should open on mouse hover.
     /// </summary>
     protected virtual bool ShouldHoverOpenMenu => true;
+
+    public MenuItem[] MenuItems => Children.OfType<MenuItem>().ToArray();
 
     /// <summary>C:\Users\JC Snider\Desktop\AGD\Intersect-Engine\Intersect.Client.Framework\Gwen\Control\Button.cs
     ///     Renders the control using specified skin.
@@ -122,14 +126,20 @@ public partial class Menu : ScrollControl
             InnerPanel.MaximumSize = new Point(InnerPanel.MaximumSize.X, childrenHeight);
         }
 
-        if (Y + childrenHeight > GetCanvas().Height)
+        var canvasHeight = Canvas?.Height ?? Y + childrenHeight;
+        if (Y + childrenHeight > canvasHeight)
         {
-            childrenHeight = GetCanvas().Height - Y;
+            childrenHeight = canvasHeight - Y;
         }
 
         SetSize(Width, childrenHeight);
 
         base.Layout(skin);
+    }
+
+    public override void Invalidate()
+    {
+        base.Invalidate();
     }
 
     /// <summary>

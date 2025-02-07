@@ -82,7 +82,8 @@ public partial class Base : IDisposable
 
     private bool mDisposed;
 
-    private Pos mDock;
+    private Pos _dock;
+    private Padding _dockChildSpacing;
 
     private Package mDragAndDrop_package;
 
@@ -106,9 +107,9 @@ public partial class Base : IDisposable
 
     private Margin mMargin;
 
-    private Point mMaximumSize = default;
+    private Point _maximumSize = default;
 
-    private Point mMinimumSize = default;
+    private Point _minimumSize = default;
 
     private bool mMouseInputEnabled;
 
@@ -138,7 +139,7 @@ public partial class Base : IDisposable
 
     public virtual string? TooltipFontName
     {
-        get => mToolTipFont?.Name;
+        get => _tooltipFont?.Name;
         set
         {
             if (value == TooltipFontName)
@@ -146,13 +147,13 @@ public partial class Base : IDisposable
                 return;
             }
 
-            ToolTipFont = GameContentManager.Current.GetFont(value, ToolTipFont?.Size ?? 10);
+            TooltipFont = GameContentManager.Current.GetFont(value, TooltipFont?.Size ?? 10);
         }
     }
 
     public virtual int TooltipFontSize
     {
-        get => mToolTipFont?.Size ?? 10;
+        get => _tooltipFont?.Size ?? 10;
         set
         {
             if (value == TooltipFontSize)
@@ -160,7 +161,7 @@ public partial class Base : IDisposable
                 return;
             }
 
-            ToolTipFont = GameContentManager.Current.GetFont(ToolTipFont?.Name, value);
+            TooltipFont = GameContentManager.Current.GetFont(TooltipFont?.Name, value);
         }
     }
 
@@ -211,9 +212,9 @@ public partial class Base : IDisposable
         }
     }
 
-    private GameFont mToolTipFont;
+    private GameFont? _tooltipFont;
 
-    private string mToolTipFontInfo;
+    private string? _tooltipFontInfo;
 
     private object mUserData;
 
@@ -260,13 +261,13 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Font.
     /// </summary>
-    public GameFont ToolTipFont
+    public GameFont? TooltipFont
     {
-        get => mToolTipFont;
+        get => _tooltipFont;
         set
         {
-            mToolTipFont = value;
-            mToolTipFontInfo = $"{value?.GetName()},{value?.GetSize()}";
+            _tooltipFont = value;
+            _tooltipFontInfo = value == null ? null : $"{value.GetName()},{value.GetSize()}";
         }
     }
 
@@ -344,18 +345,31 @@ public partial class Base : IDisposable
     /// </summary>
     public Pos Dock
     {
-        get => mDock;
+        get => _dock;
         set
         {
-            if (mDock == value)
+            if (_dock == value)
             {
                 return;
             }
 
-            mDock = value;
+            _dock = value;
 
             Invalidate();
             InvalidateParent();
+        }
+    }
+
+    public Padding DockChildSpacing
+    {
+        get => _dockChildSpacing;
+        set
+        {
+            _dockChildSpacing = value;
+            if (_innerPanel is { } innerPanel)
+            {
+                innerPanel.DockChildSpacing = value;
+            }
         }
     }
 
@@ -749,8 +763,15 @@ public partial class Base : IDisposable
     /// </summary>
     public Point MinimumSize
     {
-        get => mMinimumSize;
-        set => mMinimumSize = value;
+        get => _minimumSize;
+        set
+        {
+            _minimumSize = value;
+            if (_innerPanel != null)
+            {
+                _innerPanel.MinimumSize = value;
+            }
+        }
     }
 
     /// <summary>
@@ -758,10 +779,10 @@ public partial class Base : IDisposable
     /// </summary>
     public Point MaximumSize
     {
-        get => mMaximumSize;
+        get => _maximumSize;
         set
         {
-            mMaximumSize = value;
+            _maximumSize = value;
             if (_innerPanel != null)
             {
                 _innerPanel.MaximumSize = value;
@@ -1013,15 +1034,15 @@ public partial class Base : IDisposable
             new JProperty("RenderColor", Color.ToString(mColor)),
             new JProperty("Alignments", string.Join(",", mAlignments.ToArray())),
             new JProperty("DrawBackground", mDrawBackground),
-            new JProperty("MinimumSize", mMinimumSize.ToString()),
-            new JProperty("MaximumSize", mMaximumSize.ToString()),
+            new JProperty("MinimumSize", _minimumSize.ToString()),
+            new JProperty("MaximumSize", _maximumSize.ToString()),
             new JProperty("Disabled", _disabled),
             new JProperty("Hidden", mHidden),
             new JProperty("RestrictToParent", mRestrictToParent),
             new JProperty("MouseInputEnabled", mMouseInputEnabled),
             new JProperty("HideToolTip", mHideToolTip),
             new JProperty("ToolTipBackground", _tooltipBackgroundName),
-            new JProperty("ToolTipFont", mToolTipFontInfo),
+            new JProperty("ToolTipFont", _tooltipFontInfo),
             new JProperty(
                 nameof(TooltipTextColor),
                 _tooltipTextColor == null ? JValue.CreateNull() : Color.ToString(_tooltipTextColor)
@@ -1251,11 +1272,22 @@ public partial class Base : IDisposable
             _tooltipBackground = texture;
         }
 
-        if (obj["ToolTipFont"] != null && obj["ToolTipFont"].Type != JTokenType.Null)
+        if (obj.TryGetValue(nameof(TooltipFont), out var tokenTooltipFont) && tokenTooltipFont is JValue { Type: JTokenType.String } valueTooltipFont)
         {
-            var fontArr = ((string) obj["ToolTipFont"]).Split(',');
-            mToolTipFontInfo = (string) obj["ToolTipFont"];
-            mToolTipFont = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
+            if (valueTooltipFont.Value<string>() is { } fontInfo)
+            {
+                var fontParts = fontInfo.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                var fontName = fontParts.FirstOrDefault();
+                if (!int.TryParse(fontParts.Skip(1).FirstOrDefault(), out var fontSize))
+                {
+                    fontSize = 10;
+                }
+                TooltipFont = GameContentManager.Current?.GetFont(fontName, fontSize);
+            }
+            else
+            {
+                TooltipFont = null;
+            }
         }
 
         if (obj[nameof(TooltipTextColor)] is JValue { Type: JTokenType.String } tooltipTextColorValue)
@@ -1502,7 +1534,7 @@ public partial class Base : IDisposable
             labelTooltip = new Label(this, name: "Tooltip")
             {
                 AutoSizeToContents = true,
-                Font = mToolTipFont ?? GameContentManager.Current?.GetFont("sourcesansproblack", 10),
+                Font = _tooltipFont ?? GameContentManager.Current?.GetFont("sourcesansproblack", 10),
                 MaximumSize = new Point(300, 0),
                 Padding = new Padding(
                     5,
@@ -1527,9 +1559,9 @@ public partial class Base : IDisposable
         if (Tooltip != null && Tooltip is Label tooltip)
         {
             tooltip.TextColorOverride = _tooltipTextColor ?? Skin.Colors.TooltipText;
-            if (mToolTipFont != null)
+            if (_tooltipFont != null)
             {
-                tooltip.Font = mToolTipFont;
+                tooltip.Font = _tooltipFont;
             }
 
             tooltip.ToolTipBackground = _tooltipBackground;
@@ -2280,14 +2312,12 @@ public partial class Base : IDisposable
             // Render the control
             Render(skin);
 
-            // Render the children (Reverse).
-            for (int i = 0; i < mChildren.Count; i++)
+            var childrenToRender = mChildren.ToArray();
+            childrenToRender = OrderChildrenForRendering(childrenToRender.Where(child => child.IsVisible));
+
+            foreach (var child in childrenToRender)
             {
-                var child = mChildren[i];
-                if (!child.IsHidden)
-                {
-                    child.DoCacheRender(skin, master);
-                }
+                child.DoCacheRender(skin, master);
             }
 
             // Finish the cache texture if necessary
@@ -2413,11 +2443,6 @@ public partial class Base : IDisposable
 
         foreach (var child in childrenToRender)
         {
-            if (!child.IsVisible)
-            {
-                continue;
-            }
-
             child.DoRender(skin);
         }
 
@@ -2826,7 +2851,8 @@ public partial class Base : IDisposable
             return;
         }
 
-        foreach (var child in mChildren)
+        var children = mChildren.ToArray();
+        foreach (var child in children)
         {
             child.Prelayout(skin);
         }
@@ -2851,7 +2877,9 @@ public partial class Base : IDisposable
         remainingBounds.Y += mPadding.Top;
         remainingBounds.Height -= mPadding.Top + mPadding.Bottom;
 
-        foreach (var child in mChildren)
+        var dockChildSpacing = DockChildSpacing;
+
+        foreach (var child in children)
         {
             if (child.ShouldSkipLayout)
             {
@@ -2904,8 +2932,9 @@ public partial class Base : IDisposable
                     height
                 );
 
-                remainingBounds.X += childOuterWidth;
-                remainingBounds.Width -= childOuterWidth;
+                var boundsDeltaX = childOuterWidth + dockChildSpacing.Left;
+                remainingBounds.X += boundsDeltaX;
+                remainingBounds.Width -= boundsDeltaX;
             }
 
             if (childDock.HasFlag(Pos.Right))
@@ -2914,14 +2943,15 @@ public partial class Base : IDisposable
                     ? child.Height
                     : availableHeight;
 
+                var offsetFromRight = child.Width + childMargin.Right + dockChildSpacing.Right;
                 child.SetBounds(
-                    remainingBounds.X + remainingBounds.Width - child.Width - childMargin.Right,
+                    remainingBounds.X + remainingBounds.Width - offsetFromRight,
                     remainingBounds.Y + childMargin.Top,
                     child.Width,
                     height
                 );
 
-                remainingBounds.Width -= childOuterWidth;
+                remainingBounds.Width -= childOuterWidth + dockChildSpacing.Right;
             }
 
             if (childDock.HasFlag(Pos.Top) && !childDock.HasFlag(Pos.Left) && !childDock.HasFlag(Pos.Right))
@@ -2937,8 +2967,9 @@ public partial class Base : IDisposable
                     child.Height
                 );
 
-                remainingBounds.Y += childOuterHeight;
-                remainingBounds.Height -= childOuterHeight;
+                var boundsDeltaY = childOuterHeight + dockChildSpacing.Top;
+                remainingBounds.Y += boundsDeltaY;
+                remainingBounds.Height -= boundsDeltaY;
             }
 
             if (childDock.HasFlag(Pos.Bottom) && !childDock.HasFlag(Pos.Left) && !childDock.HasFlag(Pos.Right))
@@ -2947,14 +2978,15 @@ public partial class Base : IDisposable
                     ? child.Width
                     : availableWidth;
 
+                var offsetFromBottom = child.Height + childMargin.Bottom + dockChildSpacing.Bottom;
                 child.SetBounds(
                     remainingBounds.Left + childMargin.Left,
-                    remainingBounds.Bottom - (child.Height + childMargin.Bottom),
+                    remainingBounds.Bottom - offsetFromBottom,
                     width,
                     child.Height
                 );
 
-                remainingBounds.Height -= childOuterHeight;
+                remainingBounds.Height -= childOuterHeight + dockChildSpacing.Bottom;
             }
 
             child.RecurseLayout(skin);
@@ -2965,7 +2997,7 @@ public partial class Base : IDisposable
         //
         // Fill uses the left over space, so do that now.
         //
-        foreach (var child in mChildren)
+        foreach (var child in children)
         {
             if (child.ShouldSkipLayout)
             {
@@ -2992,12 +3024,14 @@ public partial class Base : IDisposable
             {
                 if (Pos.Right == (dock & (Pos.Right | Pos.Left)))
                 {
-                    newPosition.X = remainingBounds.Right - (childMargin.Right + child.Width);
+                    var offsetFromRight = child.Width + childMargin.Right + dockChildSpacing.Right;
+                    newPosition.X = remainingBounds.Right - offsetFromRight;
                 }
 
                 if (Pos.Bottom == (dock & (Pos.Bottom | Pos.Top)))
                 {
-                    newPosition.Y = remainingBounds.Bottom - (childMargin.Bottom + child.Height);
+                    var offsetFromBottom = child.Height + childMargin.Bottom + dockChildSpacing.Bottom;
+                    newPosition.Y = remainingBounds.Bottom - offsetFromBottom;
                 }
 
                 if (dock.HasFlag(Pos.CenterH))

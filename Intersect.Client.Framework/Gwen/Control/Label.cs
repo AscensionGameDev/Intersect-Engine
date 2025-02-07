@@ -49,7 +49,7 @@ public partial class Label : Base, ILabel
 
     protected Color? mNormalTextColor;
 
-    private Padding mTextPadding;
+    private Padding _textPadding;
 
     private string? _displayedText;
     private string? _text;
@@ -255,8 +255,18 @@ public partial class Label : Base, ILabel
                 return;
             }
 
-            _textElement.Font = value;
-            _fontInfo = value == null ? null : $"{value.GetName()},{value.GetSize()}";
+            var oldValue = _textElement.Font;
+            if (value is not null)
+            {
+                _textElement.Font = value;
+                _fontInfo = $"{value.GetName()},{value.GetSize()}";
+            }
+            else
+            {
+                _fontInfo = null;
+            }
+
+            OnFontChanged(this, oldValue, value);
 
             if (_autoSizeToContents)
             {
@@ -264,7 +274,19 @@ public partial class Label : Base, ILabel
             }
 
             Invalidate();
+
+            FontChanged?.Invoke(this, new ValueChangedEventArgs<GameFont?>
+            {
+                OldValue = oldValue,
+                Value = value,
+            });
         }
+    }
+
+    public event GwenEventHandler<ValueChangedEventArgs<GameFont?>>? FontChanged;
+
+    protected virtual void OnFontChanged(Base sender, GameFont? oldFont, GameFont? newFont)
+    {
     }
 
     /// <summary>
@@ -365,10 +387,10 @@ public partial class Label : Base, ILabel
     /// </summary>
     public Padding TextPadding
     {
-        get => mTextPadding;
+        get => _textPadding;
         set
         {
-            mTextPadding = value;
+            _textPadding = value;
             Invalidate();
             InvalidateParent();
         }
@@ -392,7 +414,7 @@ public partial class Label : Base, ILabel
         serializedProperties.Add("ClickedTextColor", Color.ToString(mClickedTextColor));
         serializedProperties.Add("DisabledTextColor", Color.ToString(mDisabledTextColor));
         serializedProperties.Add(nameof(TextAlign), mAlign.ToString());
-        serializedProperties.Add(nameof(TextPadding), Padding.ToString(mTextPadding));
+        serializedProperties.Add(nameof(TextPadding), Padding.ToString(_textPadding));
         serializedProperties.Add(nameof(AutoSizeToContents), _autoSizeToContents);
         serializedProperties.Add(nameof(Font), _fontInfo);
         serializedProperties.Add("TextScale", _textElement.GetScale());
@@ -658,39 +680,39 @@ public partial class Label : Base, ILabel
     {
         var align = mAlign;
 
-        var x = mTextPadding.Left + Padding.Left;
-        var y = mTextPadding.Top + Padding.Top;
+        var x = _textPadding.Left + Padding.Left;
+        var y = _textPadding.Top + Padding.Top;
 
         if (0 != (align & Pos.Right))
         {
-            x = Width - textElement.Width - mTextPadding.Right - Padding.Right;
+            x = Width - textElement.Width - _textPadding.Right - Padding.Right;
         }
 
         if (0 != (align & Pos.CenterH))
         {
-            x = (int)(mTextPadding.Left +
+            x = (int)(_textPadding.Left +
                       Padding.Left +
                       (Width -
                        textElement.Width -
-                       mTextPadding.Left -
+                       _textPadding.Left -
                        Padding.Left -
-                       mTextPadding.Right -
+                       _textPadding.Right -
                        Padding.Right) *
                       0.5f);
         }
 
         if (0 != (align & Pos.CenterV))
         {
-            y = (int)(mTextPadding.Top +
+            y = (int)(_textPadding.Top +
                       Padding.Top +
                       (Height - textElement.Height) * 0.5f -
-                      mTextPadding.Bottom -
+                      _textPadding.Bottom -
                       Padding.Bottom);
         }
 
         if (0 != (align & Pos.Bottom))
         {
-            y = Height - textElement.Height - mTextPadding.Bottom - Padding.Bottom;
+            y = Height - textElement.Height - _textPadding.Bottom - Padding.Bottom;
         }
 
         textElement.SetPosition(x, y);
@@ -747,14 +769,21 @@ public partial class Label : Base, ILabel
         InvalidateParent();
     }
 
+    protected virtual Point GetContentSize() => _textElement.Size;
+
+    protected virtual Padding GetContentPadding() => Padding + _textPadding;
+
     public virtual bool SizeToContents()
     {
-        _textElement.SetPosition(mTextPadding.Left + Padding.Left, mTextPadding.Top + Padding.Top);
+        var contentPadding = GetContentPadding();
+        _textElement.SetPosition(contentPadding.Left, contentPadding.Top);
 
-        var newWidth = _textElement.Width + Padding.Left + Padding.Right + mTextPadding.Left + mTextPadding.Right;
+        var contentSize = GetContentSize();
+
+        var newWidth = contentSize.X + contentPadding.Left + contentPadding.Right;
         newWidth = Math.Max(newWidth, MinimumSize.X);
 
-        var newHeight = _textElement.Height + Padding.Top + Padding.Bottom + mTextPadding.Top + mTextPadding.Bottom;
+        var newHeight = contentSize.Y + contentPadding.Top + contentPadding.Bottom;
         newHeight = Math.Max(newHeight, MinimumSize.Y);
 
         if (!SetSize(newWidth, newHeight))

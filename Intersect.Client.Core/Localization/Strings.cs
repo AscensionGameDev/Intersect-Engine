@@ -1974,7 +1974,10 @@ public static partial class Strings
         public static LocalizedString InterfaceSettings = @"Interface";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString KeyBindingSettingsTab = @"Controls";
+        public static LocalizedString ControlsTab = @"Controls";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Language = @"Language";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString MusicVolume = @"Music Volume: {00}%";

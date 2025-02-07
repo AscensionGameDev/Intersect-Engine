@@ -99,6 +99,13 @@ public class IntersectSkin : TexturedBase
         mTextures.CheckBox.Disabled.Box = new Single(_texture, 84, 66, 22, 22);
         mTextures.CheckBox.Disabled.Fill = new Single(_texture, 106, 66, 22, 22);
 
+        mTextures.Menu.Strip = new Bordered(_texture, 0, 128, 127, 21, Margin.One);
+        mTextures.Menu.BackgroundWithMargin = new Bordered(_texture, 96, 96, 32, 16, new Margin(24, 4, 4, 4));
+        mTextures.Menu.Background = new Bordered(_texture, 96, 112, 16, 16, Margin.Four);
+        mTextures.Menu.Hovered = new Bordered(_texture, 320, 320, 32, 32, Margin.Six);
+        mTextures.Menu.RightArrow = new Single(_texture, 464, 112, 15, 15);
+        mTextures.Menu.Check = new Single(_texture, 448, 112, 15, 15);
+
         mTextures.Panel.Control = new Bordered(_texture, 64, 112, 16, 16, Margin.Four);
         mTextures.Panel.Normal = new Bordered(_texture, 32, 0, 16, 16, Margin.Four);
         mTextures.Panel.Highlight = new Bordered(_texture, 32, 16, 16, 16, Margin.Four);
@@ -113,6 +120,16 @@ public class IntersectSkin : TexturedBase
         mTextures.RadioButton.Hovered.Fill = new Single(_texture, 150, 44, 22, 22);
         mTextures.RadioButton.Disabled.Box = new Single(_texture, 128, 66, 22, 22);
         mTextures.RadioButton.Disabled.Fill = new Single(_texture, 150, 66, 22, 22);
+
+        mTextures.Input.Slider.H.Normal = new Single(_texture, 176, 0, 8, 16);
+        mTextures.Input.Slider.H.Hover = new Single(_texture, 176, 16, 8, 16);
+        mTextures.Input.Slider.H.Down = new Single(_texture, 176, 32, 8, 16);
+        mTextures.Input.Slider.H.Disabled = new Single(_texture, 176, 48, 8, 16);
+
+        mTextures.Input.Slider.V.Normal = new Single(_texture, 192, 0, 16, 8);
+        mTextures.Input.Slider.V.Hover = new Single(_texture, 192, 16, 16, 8);
+        mTextures.Input.Slider.V.Down = new Single(_texture, 192, 32, 16, 8);
+        mTextures.Input.Slider.V.Disabled = new Single(_texture, 192, 48, 16, 8);
 
         mTextures.Tab.Control = new Bordered(_texture, 0, 48, 16, 16, Margin.Four);
         mTextures.Tab.Top.Active = new Bordered(_texture, 0, 64, 16, 10, new Margin(4, 4, 4, 2));
