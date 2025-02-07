@@ -528,7 +528,7 @@ public static partial class InputHandler
 
             nextHoveredControl?.Redraw();
 
-            ApplicationContext.CurrentContext.Logger.LogDebug(
+            ApplicationContext.CurrentContext.Logger.LogTrace(
                 "Updating hovered component from {PreviousComponentName} to {NextComponentName} (Mouse focused component is '{MouseFocusedComponentName}')",
                 previouslyHoveredControl?.CanonicalName ?? "N/A",
                 nextHoveredControl?.CanonicalName ?? "N/A",
