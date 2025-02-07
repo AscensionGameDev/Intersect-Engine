@@ -18,7 +18,8 @@ public partial class TextBoxPassword : TextBox
     ///     Initializes a new instance of the <see cref="TextBoxPassword" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public TextBoxPassword(Base parent, string name = "") : base(parent, name)
+    /// <param name="name"></param>
+    public TextBoxPassword(Base parent, string? name = default) : base(parent, name)
     {
         mMaskCharacter = '*';
     }
@@ -37,12 +38,9 @@ public partial class TextBoxPassword : TextBox
     /// </summary>
     protected override void OnTextChanged()
     {
-        mMask = new String(MaskCharacter, Text.Length);
+        mMask = new string(MaskCharacter, Text?.Length ?? 0);
         TextOverride = mMask;
         base.OnTextChanged();
-
-        //Really hacky way to make sure the size for the mask is calculated.
-        base.Children[0].SizeToChildren();
     }
 
 }

@@ -1896,7 +1896,7 @@ public static partial class Strings
         public static LocalizedString Login = @"Login";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Password = @"Password:";
+        public static LocalizedString Password = @"Password";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString SavePassword = @"Save Password";
@@ -1905,7 +1905,7 @@ public static partial class Strings
         public static LocalizedString Title = @"Login";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Username = @"Username:";
+        public static LocalizedString Username = @"Username";
     }
 
     public partial struct Main

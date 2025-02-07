@@ -15,9 +15,14 @@ namespace Intersect.Client.Framework.Gwen.Control;
 /// </summary>
 public partial class TextBox : Label
 {
+    public enum Sounds
+    {
+        AddText,
+        RemoveText,
+        Submit,
+    }
 
     //Sound Effects
-    private string mAddTextSound;
 
     protected Rectangle mCaretBounds;
 
@@ -29,13 +34,14 @@ public partial class TextBox : Label
 
     private int mMaxmimumLength = -1;
 
-    private string mRemoveTextSound;
 
     private bool mSelectAll;
 
     protected Rectangle mSelectionBounds;
 
-    private string mSubmitSound;
+    private string? _soundNameAddText;
+    private string? _soundNameRemoveText;
+    private string? _soundNameSubmit;
 
     private readonly Text _placeholder;
 
@@ -231,6 +237,24 @@ public partial class TextBox : Label
         return true;
     }
 
+    public void SetSound(Sounds sound, string? name)
+    {
+        switch (sound)
+        {
+            case Sounds.AddText:
+                _soundNameAddText = name;
+                break;
+            case Sounds.RemoveText:
+                _soundNameRemoveText = name;
+                break;
+            case Sounds.Submit:
+                _soundNameSubmit = name;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(sound), sound, null);
+        }
+    }
+
     /// <summary>
     ///     Inserts text at current cursor position, erasing selection if any.
     /// </summary>
@@ -238,7 +262,7 @@ public partial class TextBox : Label
     protected virtual void InsertText(string text)
     {
         ReplaceSelection(text);
-        base.PlaySound(mAddTextSound);
+        base.PlaySound(_soundNameAddText);
     }
 
     private void ValidateCursor()
@@ -653,7 +677,7 @@ public partial class TextBox : Label
 
             if (length > 0 && playSound)
             {
-                PlaySound(mRemoveTextSound);
+                PlaySound(_soundNameRemoveText);
             }
         }
         catch (Exception exception)
@@ -889,7 +913,7 @@ public partial class TextBox : Label
     protected virtual void OnReturn()
     {
         SubmitPressed?.Invoke(this, EventArgs.Empty);
-        base.PlaySound(mSubmitSound);
+        base.PlaySound(_soundNameSubmit);
     }
 
     public void SetMaxLength(int val)
@@ -905,9 +929,9 @@ public partial class TextBox : Label
             return null;
         }
 
-        serializedProperties.Add("AddTextSound", mAddTextSound);
-        serializedProperties.Add("RemoveTextSound", mRemoveTextSound);
-        serializedProperties.Add("SubmitSound", mSubmitSound);
+        serializedProperties.Add("AddTextSound", _soundNameAddText);
+        serializedProperties.Add("RemoveTextSound", _soundNameRemoveText);
+        serializedProperties.Add("SubmitSound", _soundNameSubmit);
 
         return base.FixJson(serializedProperties);
     }
@@ -917,17 +941,17 @@ public partial class TextBox : Label
         base.LoadJson(obj);
         if (obj["AddTextSound"] != null)
         {
-            mAddTextSound = (string)obj["AddTextSound"];
+            _soundNameAddText = (string)obj["AddTextSound"];
         }
 
         if (obj["RemoveTextSound"] != null)
         {
-            mRemoveTextSound = (string)obj["RemoveTextSound"];
+            _soundNameRemoveText = (string)obj["RemoveTextSound"];
         }
 
         if (obj["SubmitSound"] != null)
         {
-            mSubmitSound = (string)obj["SubmitSound"];
+            _soundNameSubmit = (string)obj["SubmitSound"];
         }
     }
 
