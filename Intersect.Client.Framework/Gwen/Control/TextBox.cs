@@ -203,6 +203,10 @@ public partial class TextBox : Label
             mCursorEnd = TextLength;
         }
 
+        UpdatePlaceholder();
+
+        RefreshCursorBounds();
+
         TextChanged?.Invoke(this, EventArgs.Empty);
     }
 
@@ -275,7 +279,9 @@ public partial class TextBox : Label
 
         if (time % 1.0f <= 0.5f)
         {
-            skin.Renderer.DrawColor = mNormalTextColor ?? TextColor ?? TextColorOverride;
+            skin.Renderer.DrawColor = TextColorOverride is { A: > 0 } textColorOverride
+                ? textColorOverride
+                : TextColor ?? Color.White;
             skin.Renderer.DrawFilledRect(mCaretBounds);
         }
     }
@@ -849,6 +855,32 @@ public partial class TextBox : Label
     {
         _placeholder.IsVisible = string.IsNullOrEmpty(Text) && !string.IsNullOrWhiteSpace(PlaceholderText);
         AlignTextElement(_placeholder);
+    }
+
+    // Textbox only uses Normal and Disabled
+    public override void UpdateColors()
+    {
+        var textColor = GetTextColor(ComponentState.Normal) ?? Skin.Colors.Label.Normal;
+        if (IsDisabledByTree)
+        {
+            textColor = GetTextColor(ComponentState.Disabled) ?? Skin.Colors.Label.Disabled;
+        }
+
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (textColor == null)
+        {
+            ApplicationContext.CurrentContext.Logger.LogError(
+                "Text color for the current control state of '{ComponentName}' is somehow null IsDisabled={IsDisabled} IsActive={IsActive} IsHovered={IsHovered}",
+                CanonicalName,
+                IsDisabled,
+                IsActive,
+                IsHovered
+            );
+
+            textColor = new Color(r: 255, g: 0, b: 255);
+        }
+
+        TextColor = textColor;
     }
 
     /// <summary>
