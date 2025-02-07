@@ -175,7 +175,7 @@ public partial class TabButton : Button
         var colorSource = IsTabActive ? Skin.Colors.Tab.Active : Skin.Colors.Tab.Inactive;
 
         var textColor = GetTextColor(ComponentState.Normal) ?? colorSource.Normal;
-        if (IsDisabled)
+        if (IsDisabledByTree)
         {
             textColor = GetTextColor(ComponentState.Disabled) ?? colorSource.Disabled;
         }

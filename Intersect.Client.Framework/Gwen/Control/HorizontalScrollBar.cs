@@ -85,7 +85,7 @@ public partial class HorizontalScrollBar : ScrollBar
         mBar.IsHidden = Width - ButtonSize * 2 <= barWidth;
 
         //Based on our last scroll amount, produce a position for the bar
-        if (!mBar.IsHeld)
+        if (!mBar.IsActive)
         {
             SetScrollAmount(ScrollAmount, true);
         }
@@ -192,7 +192,7 @@ public partial class HorizontalScrollBar : ScrollBar
     /// <param name="control">Event source.</param>
     protected override void OnBarMoved(Base control, EventArgs args)
     {
-        if (mBar.IsHeld)
+        if (mBar.IsActive)
         {
             SetScrollAmount(CalculateScrolledAmount(), false);
             base.OnBarMoved(control, args);

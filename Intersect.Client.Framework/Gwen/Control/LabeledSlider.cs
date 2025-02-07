@@ -236,18 +236,6 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
         }
     }
 
-    public override bool IsDisabled
-    {
-        get => base.IsDisabled;
-        set
-        {
-            base.IsDisabled = value;
-            _label.IsDisabled = value;
-            _slider.IsDisabled = value;
-            _sliderValue.IsDisabled = value;
-        }
-    }
-
     public Point LabelMinimumSize
     {
         get => _label.MinimumSize;

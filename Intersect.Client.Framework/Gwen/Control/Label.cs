@@ -798,7 +798,7 @@ public partial class Label : Base, ILabel
     public override void UpdateColors()
     {
         var textColor = GetTextColor(ComponentState.Normal) ?? Skin.Colors.Label.Normal;
-        if (IsDisabled)
+        if (IsDisabledByTree)
         {
             textColor = GetTextColor(ComponentState.Disabled) ?? Skin.Colors.Label.Disabled;
         }

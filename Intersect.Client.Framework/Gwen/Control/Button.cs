@@ -278,7 +278,7 @@ public partial class Button : Label
 
     protected override void OnMouseClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
-        if (IsDisabled)
+        if (IsDisabledByTree)
         {
             return;
         }
@@ -328,7 +328,7 @@ public partial class Button : Label
     public override void UpdateColors()
     {
         var textColor = GetTextColor(ComponentState.Normal) ?? Skin.Colors.Button.Normal;
-        if (IsDisabled)
+        if (IsDisabledByTree)
         {
             textColor = GetTextColor(ComponentState.Disabled) ?? Skin.Colors.Button.Disabled;
         }
