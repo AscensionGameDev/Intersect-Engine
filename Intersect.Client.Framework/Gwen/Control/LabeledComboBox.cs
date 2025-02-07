@@ -30,7 +30,7 @@ public partial class LabeledComboBox : Base, IAutoSizeToContents
             TextPadding = Padding.Two,
         };
 
-        _comboBox.ItemSelected += (sender, args) => ItemSelected?.Invoke(sender, args);
+        _comboBox.ItemSelected += (_, args) => ItemSelected?.Invoke(this, args);
     }
 
     public GameFont? Font
