@@ -159,12 +159,12 @@ public partial class TextBox : Label
     /// <summary>
     ///     Invoked when the text has changed.
     /// </summary>
-    public event GwenEventHandler<EventArgs> TextChanged;
+    public event GwenEventHandler<EventArgs>? TextChanged;
 
     /// <summary>
     ///     Invoked when the submit key has been pressed.
     /// </summary>
-    public event GwenEventHandler<EventArgs> SubmitPressed;
+    public event GwenEventHandler<EventArgs>? SubmitPressed;
 
     /// <summary>
     ///     Determines whether the control can insert text at a given cursor position.
@@ -203,10 +203,7 @@ public partial class TextBox : Label
             mCursorEnd = TextLength;
         }
 
-        if (TextChanged != null)
-        {
-            TextChanged.Invoke(this, EventArgs.Empty);
-        }
+        TextChanged?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -850,7 +847,7 @@ public partial class TextBox : Label
 
     private void UpdatePlaceholder()
     {
-        _placeholder.IsVisible = !string.IsNullOrWhiteSpace(PlaceholderText) && string.IsNullOrEmpty(Text);
+        _placeholder.IsVisible = string.IsNullOrEmpty(Text) && !string.IsNullOrWhiteSpace(PlaceholderText);
         AlignTextElement(_placeholder);
     }
 
@@ -859,11 +856,8 @@ public partial class TextBox : Label
     /// </summary>
     protected virtual void OnReturn()
     {
-        if (SubmitPressed != null)
-        {
-            SubmitPressed.Invoke(this, EventArgs.Empty);
-            base.PlaySound(mSubmitSound);
-        }
+        SubmitPressed?.Invoke(this, EventArgs.Empty);
+        base.PlaySound(mSubmitSound);
     }
 
     public void SetMaxLength(int val)
