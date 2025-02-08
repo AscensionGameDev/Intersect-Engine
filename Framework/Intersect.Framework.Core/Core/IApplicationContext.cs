@@ -1,4 +1,5 @@
 ﻿
+using Intersect.Framework.Reflection;
 using Intersect.Plugins.Interfaces;
 using Intersect.Threading;
 using Microsoft.Extensions.Logging;
@@ -14,6 +15,26 @@ public interface IApplicationContext : IDisposable
     /// If the application has encountered unhandled/unobserved exceptions during its lifespan.
     /// </summary>
     bool HasErrors { get; }
+
+    /// <summary>
+    /// If the application is a debug build.
+    /// </summary>
+    bool IsDebug
+    {
+        get
+        {
+#if !DEBUG
+            return true;
+#else
+            return false;
+#endif
+        }
+    }
+
+    /// <summary>
+    /// If the application is being run in developer mode.
+    /// </summary>
+    bool IsDeveloper => false;
 
     /// <summary>
     /// If the application has been disposed.
@@ -49,6 +70,11 @@ public interface IApplicationContext : IDisposable
     /// The <see cref="IApplicationService"/>s currently registered.
     /// </summary>
     List<IApplicationService> Services { get; }
+
+    /// <summary>
+    /// The human-friendly version string.
+    /// </summary>
+    string VersionName => GetType().Assembly.GetMetadataVersionName();
 
     /// <summary>
     /// Gets a service of type <typeparamref name="TApplicationService"/> if one has been registered.

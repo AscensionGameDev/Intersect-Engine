@@ -89,7 +89,7 @@ public partial class Base : IDisposable
 
     private Package mDragAndDrop_package;
 
-    private bool mDrawBackground;
+    private bool mDrawBackground = true;
 
     private bool mDrawDebugOutlines;
 

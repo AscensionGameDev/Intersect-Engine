@@ -78,7 +78,28 @@ internal static partial class Bootstrapper
         var clientConfiguration = ClientConfiguration.LoadAndSave();
         loggingLevelSwitch.MinimumLevel = LevelConvert.ToSerilogLevel(clientConfiguration.LogLevel);
 
-        var context = new ClientContext(commandLineOptions, logger, packetHelper);
+        if (commandLineOptions.Server is { } server)
+        {
+            var serverParts = server.Split(':', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            var host = serverParts.First();
+
+            var portPart = serverParts.Skip(1).FirstOrDefault();
+            if (string.IsNullOrEmpty(portPart))
+            {
+                portPart = "5400";
+            }
+            var port = ushort.Parse(portPart);
+
+            clientConfiguration.Host = host;
+            clientConfiguration.Port = port;
+        }
+
+        commandLineOptions = commandLineOptions with
+        {
+            Server = $"{clientConfiguration.Host}:{clientConfiguration.Port}",
+        };
+
+        ClientContext context = new(commandLineOptions, clientConfiguration, logger, packetHelper);
         context.Start();
     }
 

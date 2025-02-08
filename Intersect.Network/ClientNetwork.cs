@@ -12,7 +12,8 @@ namespace Intersect.Network;
 
 public partial class ClientNetwork : AbstractNetwork, IClient
 {
-    private static readonly HashSet<string> UnresolvableHostNames = [];
+    public static readonly HashSet<string> UnresolvableHostNames = [];
+
     private static readonly NetworkLayerInterfaceFactory DefaultNetworkLayerInterfaceFactory =
         (network, parameters) => new LiteNetLibInterface(network, parameters);
 

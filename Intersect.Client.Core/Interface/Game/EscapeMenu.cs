@@ -13,6 +13,7 @@ public partial class EscapeMenu : ImagePanel
 {
     private readonly SettingsWindow _settingsWindow;
     private readonly Button _buttonCharacterSelect;
+    private readonly Panel _versionPanel;
 
     public EscapeMenu(Canvas gameCanvas) : base(gameCanvas, nameof(EscapeMenu))
     {
@@ -76,6 +77,8 @@ public partial class EscapeMenu : ImagePanel
         {
             _buttonCharacterSelect.IsDisabled = true;
         }
+
+        _versionPanel = new VersionPanel(this, name: nameof(_versionPanel));
     }
 
     public override void Invalidate()

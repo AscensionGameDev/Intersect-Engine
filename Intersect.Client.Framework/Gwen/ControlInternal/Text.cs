@@ -10,6 +10,8 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal;
 /// </summary>
 public partial class Text : Base
 {
+    public static readonly Color DefaultBoundsOutlineColor = Color.FromHex("bf4060", Color.Pink);
+    public static readonly Color DefaultMarginOutlineColor = Color.FromHex("1fad1f", Color.ForestGreen);
 
     private GameFont? _font;
 
@@ -30,6 +32,9 @@ public partial class Text : Base
         Color = Skin.Colors.Label.Normal;
         MouseInputEnabled = false;
         ColorOverride = Color.FromArgb(0, 255, 255, 255); // A==0, override disabled
+
+        BoundsOutlineColor = DefaultBoundsOutlineColor;
+        MarginOutlineColor = DefaultMarginOutlineColor;
     }
 
     /// <summary>

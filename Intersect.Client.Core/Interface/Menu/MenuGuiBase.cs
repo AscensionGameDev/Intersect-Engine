@@ -1,8 +1,11 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Core;
 
 namespace Intersect.Client.Interface.Menu;
 
@@ -11,6 +14,7 @@ public partial class MenuGuiBase : IMutableInterface
     private readonly Canvas _menuCanvas;
     private readonly ImagePanel _serverStatusArea;
     private readonly Label _serverStatusLabel;
+    private readonly VersionPanel _versionPanel;
 
     public MainMenu MainMenu { get; }
 
@@ -21,6 +25,9 @@ public partial class MenuGuiBase : IMutableInterface
         _menuCanvas = myCanvas;
 
         MainMenu = new MainMenu(_menuCanvas);
+
+        _versionPanel = new VersionPanel(_menuCanvas, name: nameof(_versionPanel));
+
         _serverStatusArea = new ImagePanel(_menuCanvas, "ServerStatusArea")
         {
             IsHidden = ClientContext.IsSinglePlayer,

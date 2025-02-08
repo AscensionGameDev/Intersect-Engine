@@ -2,7 +2,7 @@ using Intersect.Client.Framework.Graphics;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
-public interface ILabel : IAutoSizeToContents, IColorableText
+public interface ILabel : IAutoSizeToContents, IColorableText, ITextContainer
 {
     Pos TextAlign { get; set; }
 

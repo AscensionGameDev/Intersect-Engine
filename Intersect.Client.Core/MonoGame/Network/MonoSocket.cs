@@ -96,8 +96,6 @@ internal partial class MonoSocket : GameSocket
     private IPEndPoint? _lastEndpoint;
     private volatile bool _resolvingHost;
 
-    private static readonly HashSet<string> UnresolvableHostNames = [];
-
     public static MonoSocket Instance { get; private set; } = default!;
 
     internal MonoSocket(IClientContext context)
@@ -113,7 +111,7 @@ internal partial class MonoSocket : GameSocket
     private bool TryResolveEndPoint([NotNullWhen(true)] out IPEndPoint? endPoint)
     {
         var currentHost = ClientConfiguration.Instance.Host;
-        if (UnresolvableHostNames.Contains(currentHost))
+        if (ClientNetwork.UnresolvableHostNames.Contains(currentHost))
         {
             endPoint = default;
             return false;
@@ -165,7 +163,7 @@ internal partial class MonoSocket : GameSocket
                 throw;
             }
 
-            UnresolvableHostNames.Add(_lastHost);
+            ClientNetwork.UnresolvableHostNames.Add(_lastHost);
             Interface.Interface.ShowError(Strings.Errors.HostNotFound);
             ApplicationContext.Context.Value?.Logger.LogError(socketException, $"Failed to resolve host: '{_lastHost}'");
             endPoint = default;
@@ -237,7 +235,7 @@ internal partial class MonoSocket : GameSocket
                                         network.SendUnconnected(serverEndpoint, new ServerStatusRequestPacket());
                                     }
                                 }
-                                else if (!UnresolvableHostNames.Contains(_lastHost))
+                                else if (!ClientNetwork.UnresolvableHostNames.Contains(_lastHost))
                                 {
                                     ApplicationContext.Context.Value?.Logger.LogInformation($"Unable to resolve '{_lastHost}:{_lastPort}'");
                                 }
