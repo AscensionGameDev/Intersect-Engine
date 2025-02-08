@@ -384,6 +384,8 @@ public partial class Label : Base, ILabel
         }
     }
 
+    public Color? TextPaddingDebugColor { get; set; }
+
     public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
         var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);

@@ -1,3 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using Intersect.Framework;
 using Intersect.Localization;
 using MessagePack;
 
@@ -232,7 +235,61 @@ public partial class Color : IEquatable<Color>
 
     public static string ToString(Color clr) => clr?.ToString() ?? string.Empty;
 
-    public static Color FromString(string val, Color defaultColor = null)
+    [return: NotNullIfNotNull(nameof(defaultColor))]
+    public static Color? FromHex(string hexString, Color? defaultColor = default)
+    {
+        const NumberStyles hexStyles = NumberStyles.HexNumber | NumberStyles.AllowHexSpecifier;
+
+        if (string.IsNullOrWhiteSpace(hexString))
+        {
+            return defaultColor;
+        }
+
+        hexString = hexString.Trim();
+
+        if (hexString.StartsWith('#'))
+        {
+            hexString = hexString[1..];
+        }
+
+        string reversedHexString = hexString.Reverse();
+
+        if (!uint.TryParse(reversedHexString, hexStyles, CultureInfo.InvariantCulture, out var abgr))
+        {
+            return defaultColor;
+        }
+
+        int a, g, b, r;
+
+        if (reversedHexString.Length <= 4)
+        {
+            a = (int)(abgr >> 12 & 0xf);
+            b = (int)(abgr >> 8 & 0xf);
+            g = (int)(abgr >> 4 & 0xf);
+            r = (int)(abgr & 0xf);
+            a |= a << 4;
+            b |= b << 4;
+            g |= g << 4;
+            r |= r << 4;
+        }
+        else
+        {
+            a = (int)(abgr >> 28 & 0xf | (abgr >> 24 & 0xf) << 4);
+            b = (int)(abgr >> 20 & 0xf | (abgr >> 16 & 0xf) << 4);
+            g = (int)(abgr >> 12 & 0xf | (abgr >> 8 & 0xf) << 4);
+            r = (int)(abgr >> 4 & 0xf | (abgr & 0xf) << 4);
+        }
+
+        a = reversedHexString.Length switch
+        {
+            < 4 or > 4 and < 8 => 0xff,
+            _ => a,
+        };
+
+        return new Color(a: a, r: r, g: g, b: b);
+    }
+
+    public static Color? FromString(string val, Color? defaultColor = default)
     {
         if (string.IsNullOrEmpty(val))
         {

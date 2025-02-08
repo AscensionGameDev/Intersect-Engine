@@ -1,8 +1,10 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Core;
 
 namespace Intersect.Client.Interface.Menu;
 
@@ -11,6 +13,8 @@ public partial class MenuGuiBase : IMutableInterface
     private readonly Canvas _menuCanvas;
     private readonly ImagePanel _serverStatusArea;
     private readonly Label _serverStatusLabel;
+    private readonly Panel _versionPanel;
+    private readonly Label _versionLabel;
 
     public MainMenu MainMenu { get; }
 
@@ -21,6 +25,30 @@ public partial class MenuGuiBase : IMutableInterface
         _menuCanvas = myCanvas;
 
         MainMenu = new MainMenu(_menuCanvas);
+
+        _versionPanel = new Panel(_menuCanvas, name: nameof(_versionPanel))
+        {
+            Alignment = [Alignments.Bottom, Alignments.Right],
+            BackgroundColor = new Color(0x7f, 0, 0, 0),
+            Padding = new Padding(8, 4),
+            RestrictToParent = true,
+            IsVisible = ApplicationContext.CurrentContext.IsDeveloper, // TODO: Remove this when showing a game version is added
+        };
+
+        _versionLabel = new Label(_versionPanel, name: nameof(_versionLabel))
+        {
+            Alignment = [Alignments.Center],
+            AutoSizeToContents = true,
+            Font = GameContentManager.Current.GetFont("sourcesansproblack", 10),
+            Text = ApplicationContext.CurrentContext.VersionName,
+            TextPadding = new Padding(2, 0),
+            IsVisible = ApplicationContext.CurrentContext.IsDeveloper,
+        };
+
+        _versionLabel.SizeToContents();
+
+        _versionPanel.SizeToChildren();
+
         _serverStatusArea = new ImagePanel(_menuCanvas, "ServerStatusArea")
         {
             IsHidden = ClientContext.IsSinglePlayer,

@@ -234,25 +234,53 @@ public partial class Base : IDisposable
             return;
         }
 
-        mRenderer.DrawColor = control.PaddingOutlineColor;
-        var paddingRect = new Rectangle(
-            control.Bounds.Left + control.Padding.Left, control.Bounds.Top + control.Padding.Top,
-            control.Bounds.Width - control.Padding.Right - control.Padding.Left,
-            control.Bounds.Height - control.Padding.Bottom - control.Padding.Top
-        );
+        var padding = control.Padding;
+        if (padding != default)
+        {
+            var paddingRect = new Rectangle(
+                control.Bounds.Left + padding.Left,
+                control.Bounds.Top + padding.Top,
+                control.Bounds.Width - padding.Right - padding.Left,
+                control.Bounds.Height - padding.Bottom - padding.Top
+            );
 
-        DrawRectStroke(paddingRect, control.PaddingOutlineColor);
+            DrawRectStroke(paddingRect, control.PaddingOutlineColor);
+        }
 
-        var marginRect = new Rectangle(
-            control.Bounds.Left - control.Margin.Left, control.Bounds.Top - control.Margin.Top,
-            control.Bounds.Width + control.Margin.Right + control.Margin.Left,
-            control.Bounds.Height + control.Margin.Bottom + control.Margin.Top
-        );
+        var margin = control.Margin;
+        if (margin != default)
+        {
+            var marginRect = new Rectangle(
+                control.Bounds.Left - margin.Left,
+                control.Bounds.Top - margin.Top,
+                control.Bounds.Width + margin.Right + margin.Left,
+                control.Bounds.Height + margin.Bottom + margin.Top
+            );
 
-        DrawRectStroke(marginRect, control.MarginOutlineColor);
+            DrawRectStroke(marginRect, control.MarginOutlineColor);
+        }
+
+        if (control is ITextContainer textContainer)
+        {
+            var textPadding = textContainer.TextPadding;
+            if (textPadding != default)
+            {
+                var color = textContainer.TextPaddingDebugColor ?? DefaultTextPaddingDebugColor;
+                var textPaddingRect = new Rectangle(
+                    control.Bounds.Left + textPadding.Left,
+                    control.Bounds.Top + textPadding.Top,
+                    control.Bounds.Width - textPadding.Right - textPadding.Left,
+                    control.Bounds.Height - textPadding.Bottom - textPadding.Top
+                );
+
+                DrawRectStroke(textPaddingRect, color);
+            }
+        }
 
         DrawRectStroke(control.Bounds, control.BoundsOutlineColor);
     }
+
+    public static Color DefaultTextPaddingDebugColor = Color.FromHex("79b5d2", Color.White);
 
     public virtual void DrawRectStroke(Rectangle rect, Color color) => DrawRect(rect, color, filled: false);
 

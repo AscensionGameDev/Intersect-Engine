@@ -56,6 +56,9 @@ public static partial class AssemblyExtensions
         return GetMetadataVersionFrom(assembly, assemblyName, excludeCommitSha);
     }
 
+    public static string GetMetadataVersionName(this Assembly assembly, bool excludeCommitSha = false) =>
+        $"v{GetMetadataVersion(assembly: assembly, excludeCommitSha: excludeCommitSha)}";
+
     private static string GetMetadataVersionFrom(Assembly assembly, AssemblyName assemblyName, bool excludeCommitSha)
     {
         var assemblyVersion = assemblyName.Version ?? new Version(0, 0, 0, 0);

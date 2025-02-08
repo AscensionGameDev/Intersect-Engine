@@ -19,7 +19,7 @@ public partial class IntersectRenderer : Base, ICacheToTexture
 
     private GameRenderer mRenderer;
 
-    private GameRenderTexture mRenderTarget;
+    private GameRenderTexture? mRenderTarget;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="UnityGwenRenderer" /> class.
@@ -99,7 +99,9 @@ public partial class IntersectRenderer : Base, ICacheToTexture
     public override void DrawFilledRect(Rectangle targetRect)
     {
         var rect = new FloatRect(
-            Translate(targetRect).X, Translate(targetRect).Y, Translate(targetRect).Width,
+            Translate(targetRect).X,
+            Translate(targetRect).Y,
+            Translate(targetRect).Width,
             Translate(targetRect).Height
         );
 
@@ -154,15 +156,41 @@ public partial class IntersectRenderer : Base, ICacheToTexture
         if (mRenderTarget == null)
         {
             mRenderer.DrawTexture(
-                mRenderer.GetWhiteTexture(), 0, 0, 1, 1, rect.X, rect.Y, rect.Width, rect.Height, mColor,
-                mRenderTarget, GameBlendModes.None, null, 0f, true
+                mRenderer.GetWhiteTexture(),
+                0,
+                0,
+                1,
+                1,
+                rect.X,
+                rect.Y,
+                rect.Width,
+                rect.Height,
+                mColor,
+                mRenderTarget,
+                GameBlendModes.None,
+                null,
+                0f,
+                true
             );
         }
         else
         {
             mRenderer.DrawTexture(
-                mRenderer.GetWhiteTexture(), 0, 0, 1, 1, rect.X, rect.Y, rect.Width, rect.Height, mColor,
-                mRenderTarget, GameBlendModes.None, null, 0f, true
+                mRenderer.GetWhiteTexture(),
+                0,
+                0,
+                1,
+                1,
+                rect.X,
+                rect.Y,
+                rect.Width,
+                rect.Height,
+                mColor,
+                mRenderTarget,
+                GameBlendModes.None,
+                null,
+                0f,
+                true
             );
         }
     }

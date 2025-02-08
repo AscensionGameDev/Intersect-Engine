@@ -1,7 +1,12 @@
+using System.Net;
+using System.Net.Sockets;
 using Intersect.Client.Networking;
 using Intersect.Client.Plugins.Contexts;
+using Intersect.Configuration;
 using Intersect.Core;
 using Intersect.Factories;
+using Intersect.Framework.Net;
+using Intersect.Network;
 using Intersect.Plugins;
 using Intersect.Plugins.Interfaces;
 using Intersect.Reflection;
@@ -18,12 +23,32 @@ internal sealed partial class ClientContext : ApplicationContext<ClientContext, 
 
     private IPlatformRunner? mPlatformRunner;
 
-    internal ClientContext(ClientCommandLineOptions startupOptions, ILogger logger, IPacketHelper packetHelper) : base(
+    internal ClientContext(ClientCommandLineOptions startupOptions, ClientConfiguration clientConfiguration, ILogger logger, IPacketHelper packetHelper) : base(
         startupOptions, logger, packetHelper
     )
     {
+        var hostNameOrAddress = clientConfiguration.Host;
+        try
+        {
+            var address = Dns.GetHostAddresses(hostNameOrAddress).FirstOrDefault();
+            IsDeveloper = !(address?.IsPublic() ?? false);
+        }
+        catch (SocketException socketException)
+        {
+            if (socketException.SocketErrorCode != SocketError.HostNotFound)
+            {
+                throw;
+            }
+
+            ClientNetwork.UnresolvableHostNames.Add(startupOptions.Server);
+            ApplicationContext.Context.Value?.Logger.LogError(socketException, $"Failed to resolve host: '{hostNameOrAddress}'");
+            IsDeveloper = true;
+        }
+
         _ = FactoryRegistry<IPluginContext>.RegisterFactory(new ClientPluginContext.Factory());
     }
+
+    public bool IsDeveloper { get; }
 
     protected override bool UsesMainThread => true;
 

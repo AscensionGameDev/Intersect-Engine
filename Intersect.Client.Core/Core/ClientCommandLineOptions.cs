@@ -6,6 +6,7 @@ namespace Intersect.Client.Core;
 
 internal readonly partial struct ClientCommandLineOptions : ICommandLineOptions
 {
+    // ReSharper disable once ConvertToPrimaryConstructor
     public ClientCommandLineOptions(
         bool borderlessWindow,
         int screenWidth,
@@ -33,7 +34,7 @@ internal readonly partial struct ClientCommandLineOptions : ICommandLineOptions
     public int ScreenHeight { get; }
 
     [Option('S', "server", Default = null, Required = false)]
-    public string Server { get; }
+    public string Server { get; init; }
 
     [Option("working-directory", Default = null, Required = false)]
     public string WorkingDirectory { get; }
