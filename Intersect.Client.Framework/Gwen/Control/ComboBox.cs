@@ -358,7 +358,7 @@ public partial class ComboBox : Button
             return;
         }
 
-        TextColor = Color.Black;
+        UpdateColors();
     }
 
     /// <summary>
@@ -374,7 +374,7 @@ public partial class ComboBox : Button
             return;
         }
 
-        TextColor = Color.White;
+        UpdateColors();
     }
 
     /// <summary>
