@@ -14,7 +14,7 @@ public partial class MainMenuWindow
         var canvas = Canvas ?? throw new InvalidOperationException($"Not attached to a {nameof(Canvas)}");
 
         IsClosable = false;
-        DisableResizing();
+        IsResizable = false;
         Padding = Padding.Zero;
         InnerPanelPadding = new Padding(8, 8, 8, 8);
         Titlebar.MouseInputEnabled = false;
