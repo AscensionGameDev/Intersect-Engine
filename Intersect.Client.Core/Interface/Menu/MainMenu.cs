@@ -37,7 +37,12 @@ public partial class MainMenu : MutableInterface
     public MainMenu(Canvas menuCanvas) : base(menuCanvas)
     {
         _menuCanvas = menuCanvas;
-        _mainMenuWindow = new MainMenuWindow(_menuCanvas, this);
+        _mainMenuWindow = new MainMenuWindow(_menuCanvas, this)
+        {
+            Alignment = [Alignments.CenterH],
+            Y = 480,
+            IsVisible = true,
+        };
 
         var logo = new ImagePanel(menuCanvas, "Logo");
         logo.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
@@ -46,49 +51,57 @@ public partial class MainMenu : MutableInterface
 
         _loginWindow = new LoginWindow(_menuCanvas, this)
         {
-            AlignmentTranslation = new Point(0, 140),
+            Alignment = [Alignments.CenterH],
+            Y = 480,
             IsVisible = false,
         };
 
         _registerWindow = new RegistrationWindow(_menuCanvas, this)
         {
-            AlignmentTranslation = new Point(0, 140),
+            Alignment = [Alignments.CenterH],
+            Y = 480,
             IsVisible = false,
         };
 
         _settingsWindow = new SettingsWindow(_menuCanvas, this, null)
         {
-            AlignmentTranslation = new Point(0, 140),
+            Alignment = [Alignments.CenterH],
+            Y = 480,
             IsVisible = false,
         };
 
         _creditsWindow = new CreditsWindow(_menuCanvas, this)
         {
-            AlignmentTranslation = new Point(0, 140),
+            Alignment = [Alignments.CenterH],
+            Y = 480,
             IsVisible = false,
         };
 
         _forgotPasswordWindow = new ForgotPasswordWindow(_menuCanvas, this)
         {
-            // AlignmentTranslation = new Point(0, 140),
+            // Alignment = [Alignments.CenterH],
+            // Y = 480,
             // IsVisible = false,
         };
 
         _resetPasswordWindow = new ResetPasswordWindow(_menuCanvas, this)
         {
-            // AlignmentTranslation = new Point(0, 140),
+            // Alignment = [Alignments.CenterH],
+            // Y = 480,
             // IsVisible = false,
         };
 
         SelectCharacterWindow = new SelectCharacterWindow(_menuCanvas, this)
         {
-            AlignmentTranslation = new Point(0, 140),
+            Alignment = [Alignments.CenterH],
+            Y = 480,
             IsVisible = false,
         };
 
         _createCharacterWindow = new CreateCharacterWindow(_menuCanvas, this, SelectCharacterWindow)
         {
-            AlignmentTranslation = new Point(0, 140),
+            Alignment = [Alignments.CenterH],
+            Y = 480,
             IsVisible = false,
         };
     }

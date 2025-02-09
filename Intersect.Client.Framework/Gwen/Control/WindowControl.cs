@@ -47,7 +47,7 @@ public partial class WindowControl : ResizableControl
 
     private bool mDeleteOnClose;
 
-    private Modal mModal;
+    private Modal? mModal;
 
     private Base mOldParent;
 
@@ -70,6 +70,8 @@ public partial class WindowControl : ResizableControl
             }
         }
     }
+
+    public event GwenEventHandler<EventArgs>? Closed;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="WindowControl" /> class.
@@ -136,7 +138,7 @@ public partial class WindowControl : ResizableControl
             IsTabable = false,
             Size = new Point(24, 24),
         };
-        _closeButton.Clicked += CloseButtonPressed;
+        _closeButton.Clicked += CloseButtonOnClicked;
 
         // Create a blank content control, dock it to the top - Should this be a ScrollControl?
         _innerPanel = new Base(this, name: nameof(_innerPanel));
@@ -155,6 +157,11 @@ public partial class WindowControl : ResizableControl
         {
             MakeModal();
         }
+    }
+
+    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
+    {
+        base.OnBoundsChanged(oldBounds, newBounds);
     }
 
     protected override Point InnerPanelSizeFrom(Point size) => size - new Point(0, _titlebar.Height);
@@ -332,12 +339,9 @@ public partial class WindowControl : ResizableControl
         // _titlebar.ProcessAlignments();
     }
 
-    public void Close()
-    {
-        CloseButtonPressed(this, EventArgs.Empty);
-    }
+    public void Close() => Close(this, EventArgs.Empty);
 
-    protected virtual void CloseButtonPressed(Base control, EventArgs args)
+    private void Close(Base sender, EventArgs args)
     {
         IsHidden = true;
 
@@ -349,8 +353,17 @@ public partial class WindowControl : ResizableControl
 
         if (mDeleteOnClose)
         {
-            Parent.RemoveChild(this, true);
+            Parent?.RemoveChild(this, true);
         }
+
+        OnClose(sender, args);
+        Closed?.Invoke(sender, args);
+    }
+
+    private void CloseButtonOnClicked(Base sender, MouseButtonState args) => Close(sender, args);
+
+    protected virtual void OnClose(Base sender, EventArgs args)
+    {
     }
 
     /// <summary>

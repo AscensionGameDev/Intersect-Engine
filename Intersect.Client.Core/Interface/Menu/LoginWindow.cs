@@ -14,15 +14,18 @@ using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Menu;
 
-public partial class LoginWindow : ImagePanel, IMainMenuWindow
+public partial class LoginWindow : Window, IMainMenuWindow
 {
     private readonly GameFont? _defaultFont;
 
     private readonly MainMenu _mainMenu;
-    private readonly ImagePanel _usernamePanel;
+    private readonly Panel _inputPanel;
+    private readonly Panel _inputOptionsPanel;
+    private readonly Panel _buttonPanel;
+    private readonly Panel _usernamePanel;
     private readonly Label _usernameLabel;
     private readonly TextBox _usernameInput;
-    private readonly ImagePanel _passwordPanel;
+    private readonly Panel _passwordPanel;
     private readonly TextBoxPassword _passwordInput;
     private readonly LabeledCheckBox _savePasswordCheckbox;
     private readonly Button _btnForgotPassword;
@@ -32,32 +35,50 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
     private readonly Label _passwordLabel;
 
     //Init
-    public LoginWindow(Canvas parent, MainMenu mainMenu) : base(parent, "LoginWindow")
+    public LoginWindow(Canvas parent, MainMenu mainMenu) : base(parent, title: Strings.LoginWindow.Title, modal: false, name: nameof(LoginWindow))
     {
         //Assign References
         _mainMenu = mainMenu;
 
-        _defaultFont = GameContentManager.Current.GetFont(name: "sourcesansproblack", 10);
+        _defaultFont = GameContentManager.Current.GetFont(name: "sourcesansproblack", 12);
 
-        //Menu Header
-        _ = new Label(this, "LoginHeader")
+        Alignment = [Alignments.Center];
+        MinimumSize = new Point(x: 504, y: 144);
+        IsClosable = false;
+        IsResizable = false;
+        InnerPanelPadding = new Padding(8);
+        Titlebar.MouseInputEnabled = false;
+
+        _inputPanel = new Panel(this, nameof(_inputPanel))
         {
-            Text = Strings.LoginWindow.Title,
+            BackgroundColor = Color.Transparent,
+            Dock = Pos.Fill,
+            DockChildSpacing = new Padding(8),
+            MinimumSize = new Point(360, 0),
+        };
+
+        _buttonPanel = new Panel(this, nameof(_buttonPanel))
+        {
+            BackgroundColor = Color.Transparent,
+            Dock = Pos.Right,
+            DockChildSpacing = new Padding(8),
+            Margin = new Margin(8, 0, 0, 0),
+            MinimumSize = new Point(120, 0),
         };
 
         //Login Username Label/Textbox
-        _usernamePanel = new ImagePanel(this, nameof(_usernamePanel))
+        _usernamePanel = new Panel(_inputPanel, nameof(_usernamePanel))
         {
-            X = 14,
-            Y = 61,
-            Width = 308,
-            Height = 22,
-            Margin = new Margin(14, 0, 0, 0),
+            BackgroundColor = Color.Transparent,
+            Dock = Pos.Top,
+            DockChildSpacing = new Padding(4),
+            MaximumSize = new Point(360, 0),
+            MinimumSize = new Point(360, 28),
         };
         _usernameLabel = new Label(_usernamePanel, nameof(_usernameLabel))
         {
             AutoSizeToContents = false,
-            Dock = Pos.Left,
+            Dock = Pos.Fill,
             Font = _defaultFont,
             Padding = new Padding(0, 0, 10, 0),
             Text = Strings.LoginWindow.Username,
@@ -65,9 +86,10 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
         };
         _usernameInput = new TextBox(_usernamePanel, nameof(_usernameInput))
         {
-            Dock = Pos.Fill,
+            Dock = Pos.Right,
             Font = _defaultFont,
-            Padding = new Padding(2, 0),
+            MinimumSize = new Point(240, 0),
+            Padding = new Padding(4, 2),
             TextAlign = Pos.Left | Pos.CenterV,
         };
         _usernameInput.SubmitPressed += (s, e) => TryLogin();
@@ -77,18 +99,18 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
         _usernameInput.SetSound(TextBox.Sounds.Submit, "octave-tap-warm.wav");
 
         //Login Password Label/Textbox
-        _passwordPanel = new ImagePanel(this, nameof(_passwordPanel))
+        _passwordPanel = new Panel(_inputPanel, nameof(_passwordPanel))
         {
-            X = 14,
-            Y = 96,
-            Width = 308,
-            Height = 22,
-            Margin = new Margin(14, 0, 0, 0),
+            BackgroundColor = Color.Transparent,
+            Dock = Pos.Top,
+            DockChildSpacing = new Padding(4),
+            MaximumSize = new Point(360, 0),
+            MinimumSize = new Point(360, 28),
         };
         _passwordLabel = new Label(_passwordPanel, nameof(_passwordLabel))
         {
             AutoSizeToContents = false,
-            Dock = Pos.Left,
+            Dock = Pos.Fill,
             Font = _defaultFont,
             Padding = new Padding(0, 0, 10, 0),
             Text = Strings.LoginWindow.Password,
@@ -96,9 +118,10 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
         };
         _passwordInput = new TextBoxPassword(_passwordPanel, nameof(_passwordInput))
         {
-            Dock = Pos.Fill,
+            Dock = Pos.Right,
             Font = _defaultFont,
-            Padding = new Padding(2, 0),
+            MinimumSize = new Point(240, 0),
+            Padding = new Padding(4, 2),
             TextAlign = Pos.Left | Pos.CenterV,
         };
         _passwordInput.SubmitPressed += (s, e) => TryLogin();
@@ -108,40 +131,66 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
         _passwordInput.SetSound(TextBox.Sounds.RemoveText, "octave-tap-professional.wav");
         _passwordInput.SetSound(TextBox.Sounds.Submit, "octave-tap-warm.wav");
 
-        //Login Save Pass Checkbox
-        _savePasswordCheckbox = new LabeledCheckBox(this, nameof(_savePasswordCheckbox))
+        _inputOptionsPanel = new Panel(_inputPanel, nameof(_inputOptionsPanel))
         {
-            X = 13,
-            Y = 124,
-            Width = 160,
-            Height = 24,
+            BackgroundColor = Color.Transparent,
+            Dock = Pos.Top,
+            DockChildSpacing = new Padding(8),
+            MinimumSize = new Point(360, 28),
+        };
+
+        //Login Save Pass Checkbox
+        _savePasswordCheckbox = new LabeledCheckBox(_inputOptionsPanel, nameof(_savePasswordCheckbox))
+        {
+            Dock = Pos.Right | Pos.CenterV,
             Font = _defaultFont,
             Text = Strings.LoginWindow.SavePassword,
         };
 
-        //Forgot Password Button
-        _btnForgotPassword = new Button(this, "ForgotPasswordButton")
-        {
-            IsHidden = true,
-            Text = Strings.LoginWindow.ForgotPassword,
-        };
-        _btnForgotPassword.Clicked += _btnForgotPassword_Clicked;
-
         //Login - Send Login Button
-        _btnLogin = new Button(this, "LoginButton")
+        _btnLogin = new Button(_buttonPanel, "LoginButton")
         {
+            AutoSizeToContents = true,
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            MinimumSize = new Point(120, 24),
+            Padding = new Padding(8, 4),
             Text = Strings.LoginWindow.Login,
         };
         _btnLogin.Clicked += (s, e) => TryLogin();
 
-        //Login - Back Button
-        var btnBack = new Button(this, "BackButton")
+        //Forgot Password Button
+        _btnForgotPassword = new Button(_buttonPanel, "ForgotPasswordButton")
         {
+            AutoSizeToContents = true,
+            Dock = Pos.Right | Pos.CenterV,
+            Font = _defaultFont,
+            IsHidden = true,
+            MinimumSize = new Point(120, 24),
+            Padding = new Padding(8, 4),
+            Text = Strings.LoginWindow.ForgotPassword,
+        };
+        _btnForgotPassword.Clicked += _btnForgotPassword_Clicked;
+
+        //Login - Back Button
+        var btnBack = new Button(_buttonPanel, "BackButton")
+        {
+            AutoSizeToContents = true,
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            MinimumSize = new Point(120, 24),
+            Padding = new Padding(8, 4),
             Text = Strings.LoginWindow.Back,
         };
         btnBack.Clicked += _btnBack_Clicked;
+    }
 
+    protected override void EnsureInitialized()
+    {
         LoadCredentials();
+
+        _inputOptionsPanel.SizeToChildren(recursive: true);
+
         LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
     }
 

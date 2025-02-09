@@ -19,13 +19,13 @@ public partial class LabeledComboBox : Base, IAutoSizeToContents
         _label = new Label(this, name: nameof(_label))
         {
             Alignment = [Alignments.CenterV],
-            Dock = Pos.Left,
+            Dock = Pos.Left | Pos.CenterV,
         };
 
         _comboBox = new ComboBox(this, name: nameof(_comboBox))
         {
             Alignment = [Alignments.CenterV],
-            Dock = Pos.Left,
+            Dock = Pos.Left | Pos.CenterV,
             Margin = new Margin(8, 0, 0, 0),
             Padding = Padding.Two,
         };

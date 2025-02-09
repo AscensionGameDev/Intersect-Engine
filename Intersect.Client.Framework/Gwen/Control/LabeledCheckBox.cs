@@ -26,7 +26,7 @@ public partial class LabeledCheckBox : Base
         _checkbox = new Checkbox(this, name: nameof(_checkbox))
         {
             InheritParentEnablementProperties = true,
-            Dock = Pos.Left,
+            Dock = Pos.Left | Pos.CenterV,
             Margin = new Margin(0, 2, 2, 2),
             IsTabable = false,
         };
@@ -159,6 +159,17 @@ public partial class LabeledCheckBox : Base
         }
 
         CheckChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public override Point GetChildrenSize(Base[]? children = null)
+    {
+        var childrenSize = base.GetChildrenSize(children);
+        return childrenSize;
+    }
+
+    public override bool SizeToChildren(bool width = true, bool height = true, bool recursive = false)
+    {
+        return base.SizeToChildren(width, height, recursive);
     }
 
     public void SetCheckSize(int w, int h)

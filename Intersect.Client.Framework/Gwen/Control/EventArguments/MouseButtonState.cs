@@ -4,6 +4,8 @@ namespace Intersect.Client.Framework.Gwen.Control.EventArguments;
 
 public sealed class MouseButtonState : EventArgs
 {
+    public static new MouseButtonState Empty => new(default, default, default, default);
+
     internal MouseButtonState(MouseButton mouseButton, int x, int y, bool isPressed)
     {
         MouseButton = mouseButton;

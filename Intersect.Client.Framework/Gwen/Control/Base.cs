@@ -2997,7 +2997,16 @@ public partial class Base : IDisposable
                     : availableHeight;
 
                 var y = remainingBounds.Y + childMargin.Top;
-                if (childDock.HasFlag(Pos.Bottom))
+                if (childDock.HasFlag(Pos.CenterV))
+                {
+                    height = child.Height;
+                    var extraY = Math.Max(0, availableHeight - height) / 2;
+                    if (extraY != 0)
+                    {
+                        y += extraY;
+                    }
+                }
+                else if (childDock.HasFlag(Pos.Bottom))
                 {
                     y = remainingBounds.Bottom - (childMargin.Bottom + child.Height);
                 }
@@ -3028,15 +3037,39 @@ public partial class Base : IDisposable
                     ? child.Height
                     : availableHeight;
 
-                var offsetFromRight = child.Width + childMargin.Right + dockChildSpacing.Right;
+                var y = remainingBounds.Y + childMargin.Top;
+                if (childDock.HasFlag(Pos.CenterV))
+                {
+                    height = child.Height;
+                    var extraY = Math.Max(0, availableHeight - height) / 2;
+                    if (extraY != 0)
+                    {
+                        y += extraY;
+                    }
+                }
+                else if (childDock.HasFlag(Pos.Bottom))
+                {
+                    y = remainingBounds.Bottom - (childMargin.Bottom + child.Height);
+                }
+                else if (!childDock.HasFlag(Pos.Top))
+                {
+                    var extraY = Math.Max(0, availableHeight - height) / 2;
+                    if (extraY != 0)
+                    {
+                        y += extraY;
+                    }
+                }
+
+                var offsetFromRight = child.Width + childMargin.Right;
                 child.SetBounds(
                     remainingBounds.X + remainingBounds.Width - offsetFromRight,
-                    remainingBounds.Y + childMargin.Top,
+                    y,
                     child.Width,
                     height
                 );
 
-                remainingBounds.Width -= childOuterWidth + dockChildSpacing.Right;
+                var boundsDeltaX = childOuterWidth + dockChildSpacing.Right;
+                remainingBounds.Width -= boundsDeltaX;
             }
 
             if (childDock.HasFlag(Pos.Top) && !childDock.HasFlag(Pos.Left) && !childDock.HasFlag(Pos.Right))
@@ -3045,9 +3078,17 @@ public partial class Base : IDisposable
                     ? child.Width
                     : availableWidth;
 
+                var x = remainingBounds.Left + childMargin.Left;
+
+                if (childDock.HasFlag(Pos.CenterH))
+                {
+                    x = remainingBounds.Left + (remainingBounds.Width - child.OuterWidth) / 2;
+                    width = child.Width;
+                }
+
                 child.SetBounds(
-                    remainingBounds.X + childMargin.Left,
-                    remainingBounds.Y + childMargin.Top,
+                    x,
+                    remainingBounds.Top + childMargin.Top,
                     width,
                     child.Height
                 );
@@ -3069,6 +3110,7 @@ public partial class Base : IDisposable
                 if (childDock.HasFlag(Pos.CenterH))
                 {
                     x = remainingBounds.Left + (remainingBounds.Width - child.OuterWidth) / 2;
+                    width = child.Width;
                 }
 
                 child.SetBounds(
