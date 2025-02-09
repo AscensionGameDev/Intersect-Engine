@@ -248,7 +248,7 @@ public partial class RegistrationWindow : Window, IMainMenuWindow
 
     protected override void EnsureInitialized()
     {
-        // LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
+        LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
     }
 
     //Methods
