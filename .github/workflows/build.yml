@@ -420,7 +420,7 @@ jobs:
 
   publish-forum:
     name: Publish to Forum
-    needs: [check-tokens]
+    needs: [build-linux, build-macos, build-windows, check-tokens]
     runs-on: ubuntu-latest
     if: inputs.workflowDebug != true && inputs.packagingDebug != true && inputs.skipForumPublish != true && needs.check-tokens.outputs.publish-forum == 'true'
     steps:
