@@ -28,19 +28,13 @@ public partial class MainMenuWindow : Window
     {
         _mainMenu = mainMenu;
 
-        _buttonCredits = new Button(this, nameof(_buttonCredits))
+        _buttonStart = new Button(this, nameof(_buttonStart))
         {
             IsTabable = true,
-            Text = Strings.MainMenu.Credits,
+            IsVisible = ClientContext.IsSinglePlayer,
+            Text = Strings.MainMenu.Start,
         };
-        _buttonCredits.Clicked += _buttonCredits_Clicked;
-
-        _buttonExit = new Button(this, nameof(_buttonExit))
-        {
-            IsTabable = true,
-            Text = Strings.MainMenu.Exit,
-        };
-        _buttonExit.Clicked += _buttonExit_Clicked;
+        _buttonStart.Clicked += _buttonStart_Clicked;
 
         _buttonLogin = new Button(this, nameof(_buttonLogin))
         {
@@ -72,13 +66,19 @@ public partial class MainMenuWindow : Window
             _buttonSettings.SetToolTipText(Strings.MainMenu.SettingsTooltip);
         }
 
-        _buttonStart = new Button(this, nameof(_buttonStart))
+        _buttonCredits = new Button(this, nameof(_buttonCredits))
         {
             IsTabable = true,
-            IsVisible = ClientContext.IsSinglePlayer,
-            Text = Strings.MainMenu.Start,
+            Text = Strings.MainMenu.Credits,
         };
-        _buttonStart.Clicked += _buttonStart_Clicked;
+        _buttonCredits.Clicked += _buttonCredits_Clicked;
+
+        _buttonExit = new Button(this, nameof(_buttonExit))
+        {
+            IsTabable = true,
+            Text = Strings.MainMenu.Exit,
+        };
+        _buttonExit.Clicked += _buttonExit_Clicked;
     }
 
     private void _buttonCredits_Clicked(Base sender, MouseButtonState arguments) => _mainMenu.SwitchToWindow<CreditsWindow>();
