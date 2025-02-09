@@ -348,11 +348,25 @@ jobs:
         if: ${{ env.INTERSECTBOT_ACCESS_TOKEN != '' }}
         run: echo "token-set=true" >> "$GITHUB_OUTPUT"
 
+  debug-check-tokens:
+    name: Debug state of check-tokens
+    needs: [check-tokens]
+    runs-on: ubuntu-latest
+    steps:
+      - id: dump
+        name: Dump check-tokens output
+        env:
+          PUBLISH_FORUM: needs.check-tokens.outputs.publish-forum
+          PUBLISH_GITHUB: needs.check-tokens.outputs.publish-github
+        run: |
+          echo "PUBLISH_FORUM='$PUBLISH_FORUM'"
+          echo "PUBLISH_GITHUB='$PUBLISH_GITHUB'"
+
   publish-github:
     name: Publish GitHub Release
     needs: [check-tokens]
     runs-on: ubuntu-latest
-    if: inputs.workflowDebug != true && needs.check-tokens.outputs.publish-forum == 'true'
+    if: inputs.workflowDebug != true && needs.check-tokens.outputs.publish-github == 'true'
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
