@@ -19,6 +19,7 @@ public partial class LoginWindow : Window, IMainMenuWindow
     private readonly GameFont? _defaultFont;
 
     private readonly MainMenu _mainMenu;
+
     private readonly Panel _inputPanel;
     private readonly Panel _inputOptionsPanel;
     private readonly Panel _buttonPanel;
@@ -28,11 +29,12 @@ public partial class LoginWindow : Window, IMainMenuWindow
     private readonly Panel _passwordPanel;
     private readonly TextBoxPassword _passwordInput;
     private readonly LabeledCheckBox _savePasswordCheckbox;
-    private readonly Button _btnForgotPassword;
-    private readonly Button _btnLogin;
+    private readonly Button _forgotPasswordButton;
+    private readonly Button _loginButton;
     private bool _useSavedPass;
     private string _savedPass = string.Empty;
     private readonly Label _passwordLabel;
+    private readonly Button _backButton;
 
     public LoginWindow(Canvas parent, MainMenu mainMenu) : base(
         parent,
@@ -41,7 +43,6 @@ public partial class LoginWindow : Window, IMainMenuWindow
         name: nameof(LoginWindow)
     )
     {
-        //Assign References
         _mainMenu = mainMenu;
 
         _defaultFont = GameContentManager.Current.GetFont(name: "sourcesansproblack", 12);
@@ -52,14 +53,8 @@ public partial class LoginWindow : Window, IMainMenuWindow
         IsResizable = false;
         InnerPanelPadding = new Padding(8);
         Titlebar.MouseInputEnabled = false;
-
-        _inputPanel = new Panel(this, nameof(_inputPanel))
-        {
-            BackgroundColor = Color.Transparent,
-            Dock = Pos.Fill,
-            DockChildSpacing = new Padding(8),
-            MinimumSize = new Point(360, 0),
-        };
+        TitleLabel.FontSize = 14;
+        TitleLabel.TextColorOverride = Color.White;
 
         _buttonPanel = new Panel(this, nameof(_buttonPanel))
         {
@@ -70,14 +65,53 @@ public partial class LoginWindow : Window, IMainMenuWindow
             MinimumSize = new Point(120, 0),
         };
 
-        //Login Username Label/Textbox
+        _loginButton = new Button(_buttonPanel, "LoginButton")
+        {
+            AutoSizeToContents = true,
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            MinimumSize = new Point(120, 24),
+            Padding = new Padding(8, 4),
+            Text = Strings.LoginWindow.Login,
+        };
+        _loginButton.Clicked += LoginButtonOnClicked;
+
+        _forgotPasswordButton = new Button(_buttonPanel, "ForgotPasswordButton")
+        {
+            AutoSizeToContents = true,
+            Dock = Pos.Right | Pos.CenterV,
+            Font = _defaultFont,
+            IsHidden = true,
+            MinimumSize = new Point(120, 24),
+            Padding = new Padding(8, 4),
+            Text = Strings.LoginWindow.ForgotPassword,
+        };
+        _forgotPasswordButton.Clicked += ForgotPasswordButtonOnClicked;
+
+        _backButton = new Button(_buttonPanel, nameof(_backButton))
+        {
+            AutoSizeToContents = true,
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            MinimumSize = new Point(120, 24),
+            Padding = new Padding(8, 4),
+            Text = Strings.LoginWindow.Back,
+        };
+        _backButton.Clicked += BackButtonOnClicked;
+
+        _inputPanel = new Panel(this, nameof(_inputPanel))
+        {
+            BackgroundColor = Color.Transparent,
+            Dock = Pos.Fill,
+            DockChildSpacing = new Padding(8),
+        };
+
         _usernamePanel = new Panel(_inputPanel, nameof(_usernamePanel))
         {
             BackgroundColor = Color.Transparent,
             Dock = Pos.Top,
             DockChildSpacing = new Padding(4),
-            MaximumSize = new Point(360, 0),
-            MinimumSize = new Point(360, 28),
+            MinimumSize = new Point(0, 28),
         };
         _usernameLabel = new Label(_usernamePanel, nameof(_usernameLabel))
         {
@@ -96,7 +130,7 @@ public partial class LoginWindow : Window, IMainMenuWindow
             Padding = new Padding(4, 2),
             TextAlign = Pos.Left | Pos.CenterV,
         };
-        _usernameInput.SubmitPressed += (s, e) => TryLogin();
+        _usernameInput.SubmitPressed += (_, _) => TryLogin();
         _usernameInput.Clicked += UsernameInputClicked;
         _usernameInput.SetSound(TextBox.Sounds.AddText, "octave-tap-resonant.wav");
         _usernameInput.SetSound(TextBox.Sounds.RemoveText, "octave-tap-professional.wav");
@@ -108,8 +142,7 @@ public partial class LoginWindow : Window, IMainMenuWindow
             BackgroundColor = Color.Transparent,
             Dock = Pos.Top,
             DockChildSpacing = new Padding(4),
-            MaximumSize = new Point(360, 0),
-            MinimumSize = new Point(360, 28),
+            MinimumSize = new Point(0, 28),
         };
         _passwordLabel = new Label(_passwordPanel, nameof(_passwordLabel))
         {
@@ -128,7 +161,7 @@ public partial class LoginWindow : Window, IMainMenuWindow
             Padding = new Padding(4, 2),
             TextAlign = Pos.Left | Pos.CenterV,
         };
-        _passwordInput.SubmitPressed += (s, e) => TryLogin();
+        _passwordInput.SubmitPressed += (_, _) => TryLogin();
         _passwordInput.TextChanged += PasswordInputTextChanged;
         _passwordInput.Clicked += PasswordInputClicked;
         _passwordInput.SetSound(TextBox.Sounds.AddText, "octave-tap-resonant.wav");
@@ -140,51 +173,18 @@ public partial class LoginWindow : Window, IMainMenuWindow
             BackgroundColor = Color.Transparent,
             Dock = Pos.Top,
             DockChildSpacing = new Padding(8),
-            MinimumSize = new Point(360, 28),
+            MinimumSize = new Point(0, 28),
         };
 
-        //Login Save Pass Checkbox
         _savePasswordCheckbox = new LabeledCheckBox(_inputOptionsPanel, nameof(_savePasswordCheckbox))
         {
             Dock = Pos.Right | Pos.CenterV, Font = _defaultFont, Text = Strings.LoginWindow.SavePassword,
         };
+    }
 
-        //Login - Send Login Button
-        _btnLogin = new Button(_buttonPanel, "LoginButton")
-        {
-            AutoSizeToContents = true,
-            Dock = Pos.Top,
-            Font = _defaultFont,
-            MinimumSize = new Point(120, 24),
-            Padding = new Padding(8, 4),
-            Text = Strings.LoginWindow.Login,
-        };
-        _btnLogin.Clicked += (s, e) => TryLogin();
-
-        //Forgot Password Button
-        _btnForgotPassword = new Button(_buttonPanel, "ForgotPasswordButton")
-        {
-            AutoSizeToContents = true,
-            Dock = Pos.Right | Pos.CenterV,
-            Font = _defaultFont,
-            IsHidden = true,
-            MinimumSize = new Point(120, 24),
-            Padding = new Padding(8, 4),
-            Text = Strings.LoginWindow.ForgotPassword,
-        };
-        _btnForgotPassword.Clicked += _btnForgotPassword_Clicked;
-
-        //Login - Back Button
-        var btnBack = new Button(_buttonPanel, "BackButton")
-        {
-            AutoSizeToContents = true,
-            Dock = Pos.Top,
-            Font = _defaultFont,
-            MinimumSize = new Point(120, 24),
-            Padding = new Padding(8, 4),
-            Text = Strings.LoginWindow.Back,
-        };
-        btnBack.Clicked += _btnBack_Clicked;
+    private void LoginButtonOnClicked(Base @base, MouseButtonState mouseButtonState)
+    {
+        TryLogin();
     }
 
     protected override void EnsureInitialized()
@@ -224,12 +224,12 @@ public partial class LoginWindow : Window, IMainMenuWindow
         );
     }
 
-    private static void _btnForgotPassword_Clicked(Base sender, MouseButtonState arguments)
+    private static void ForgotPasswordButtonOnClicked(Base sender, MouseButtonState arguments)
     {
         Interface.MenuUi.MainMenu.NotifyOpenForgotPassword();
     }
 
-    private void _btnBack_Clicked(Base sender, MouseButtonState arguments)
+    private void BackButtonOnClicked(Base sender, MouseButtonState arguments)
     {
         Hide();
         _mainMenu.Show();
@@ -248,18 +248,18 @@ public partial class LoginWindow : Window, IMainMenuWindow
         }
 
         // Re-Enable our buttons button if we're not waiting for the server anymore with it disabled.
-        if (!Globals.WaitingOnServer && _btnLogin.IsDisabled)
+        if (!Globals.WaitingOnServer && _loginButton.IsDisabled)
         {
-            _btnLogin.Enable();
+            _loginButton.Enable();
         }
     }
 
     public override void Show()
     {
         base.Show();
-        if (!_btnForgotPassword.IsHidden)
+        if (!_forgotPasswordButton.IsHidden)
         {
-            _btnForgotPassword.IsHidden = !Options.Instance.SmtpValid;
+            _forgotPasswordButton.IsHidden = !Options.Instance.SmtpValid;
         }
 
         // Set focus to the appropriate elements.
@@ -308,7 +308,7 @@ public partial class LoginWindow : Window, IMainMenuWindow
         }
 
         Globals.WaitingOnServer = true;
-        _btnLogin.Disable();
+        _loginButton.Disable();
 
         PacketSender.SendLogin(_usernameInput.Text, password);
         SaveCredentials();

@@ -31,11 +31,9 @@ public partial class MainMenuWindow
             defaultHeight + TitleBarBounds.Bottom + InnerPanelPadding.Top + InnerPanelPadding.Bottom
         );
 
-        TitleLabel.TextColor = Color.White;
-        TitleLabel.FontName = "sourcesansproblack";
+        Titlebar.MouseInputEnabled = false;
         TitleLabel.FontSize = 14;
-
-        Titlebar.SetBounds(0, 0, Width, TitleLabel.Height);
+        TitleLabel.TextColorOverride = Color.White;
 
         foreach (var button in visibleButtons)
         {

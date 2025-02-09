@@ -1091,6 +1091,8 @@ public partial class Base : IDisposable
         return json;
     }
 
+    protected virtual Rectangle ValidateJsonBounds(Rectangle bounds) => bounds;
+
     public void LoadJsonUi(GameContentManager.UI stage, string? resolution, bool saveOutput = true)
     {
         if (string.IsNullOrWhiteSpace(Name))
@@ -1200,7 +1202,7 @@ public partial class Base : IDisposable
             }
             else
             {
-                SetBounds(mBoundsOnDisk);
+                SetBounds(ValidateJsonBounds(mBoundsOnDisk));
             }
         }
 

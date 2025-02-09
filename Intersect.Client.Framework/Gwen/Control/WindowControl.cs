@@ -254,6 +254,8 @@ public partial class WindowControl : ResizableControl
         base.DoRender(skin);
     }
 
+    protected override Rectangle ValidateJsonBounds(Rectangle bounds) => base.ValidateJsonBounds(bounds) with { Position =  Bounds.Position };
+
     public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
         var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);
