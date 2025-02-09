@@ -44,18 +44,49 @@ public partial class MainMenu : MutableInterface
 
         NetworkStatusChanged += HandleNetworkStatusChanged;
 
-        _loginWindow = new LoginWindow(_menuCanvas, this);
-        _registerWindow = new RegistrationWindow(_menuCanvas, this);
-        _forgotPasswordWindow = new ForgotPasswordWindow(_menuCanvas, this);
-        _resetPasswordWindow = new ResetPasswordWindow(_menuCanvas, this);
-        SelectCharacterWindow = new SelectCharacterWindow(_menuCanvas, this);
-        _createCharacterWindow = new CreateCharacterWindow(_menuCanvas, this, SelectCharacterWindow);
+        _loginWindow = new LoginWindow(_menuCanvas, this)
+        {
+            AlignmentTranslation = new Point(0, 140),
+            IsVisible = false,
+        };
+
+        _registerWindow = new RegistrationWindow(_menuCanvas, this)
+        {
+            AlignmentTranslation = new Point(0, 140),
+            IsVisible = false,
+        };
+
         _settingsWindow = new SettingsWindow(_menuCanvas, this, null)
         {
             AlignmentTranslation = new Point(0, 140),
             IsVisible = false,
         };
+
         _creditsWindow = new CreditsWindow(_menuCanvas, this)
+        {
+            AlignmentTranslation = new Point(0, 140),
+            IsVisible = false,
+        };
+
+        _forgotPasswordWindow = new ForgotPasswordWindow(_menuCanvas, this)
+        {
+            // AlignmentTranslation = new Point(0, 140),
+            // IsVisible = false,
+        };
+
+        _resetPasswordWindow = new ResetPasswordWindow(_menuCanvas, this)
+        {
+            // AlignmentTranslation = new Point(0, 140),
+            // IsVisible = false,
+        };
+
+        SelectCharacterWindow = new SelectCharacterWindow(_menuCanvas, this)
+        {
+            AlignmentTranslation = new Point(0, 140),
+            IsVisible = false,
+        };
+
+        _createCharacterWindow = new CreateCharacterWindow(_menuCanvas, this, SelectCharacterWindow)
         {
             AlignmentTranslation = new Point(0, 140),
             IsVisible = false,
