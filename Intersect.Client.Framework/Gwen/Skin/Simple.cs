@@ -471,10 +471,10 @@ public partial class Simple : Skin.Base
         mRenderer.DrawShavedCornerRect(new Rectangle(rect.X, rect.Y, rect.Width, rect.Height));
     }
 
-    public override void DrawWindowCloseButton(Control.Base control, bool depressed, bool hovered, bool disabled)
+    public override void DrawWindowCloseButton(CloseButton closeButton, bool depressed, bool hovered, bool disabled)
     {
         // TODO
-        DrawButton(control, depressed, hovered, disabled, control.HasFocus);
+        DrawButton(closeButton, depressed, hovered, disabled, closeButton.HasFocus);
     }
 
     public override void DrawHighlight(Control.Base control)

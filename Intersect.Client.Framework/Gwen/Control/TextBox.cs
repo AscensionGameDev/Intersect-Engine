@@ -58,8 +58,8 @@ public partial class TextBox : Label
         MouseInputEnabled = true;
         KeyboardInputEnabled = true;
 
+        Padding = new Padding(4, 2, 4, 2);
         TextAlign = Pos.Left | Pos.CenterV;
-        TextPadding = new Padding(4, 2, 4, 2);
 
         mCursorPos = 0;
         mCursorEnd = 0;
@@ -848,15 +848,15 @@ public partial class TextBox : Label
         var idealx = (int)(-caretPos + Width * 0.5f);
 
         // Don't show too much whitespace to the right
-        if (idealx + TextWidth < Width - TextPadding.Right - Padding.Right)
+        if (idealx + TextWidth < Width - Padding.Right)
         {
-            idealx = -TextWidth + (Width - TextPadding.Right - Padding.Right);
+            idealx = -TextWidth + (Width - Padding.Right);
         }
 
         // Or the left
-        if (idealx > TextPadding.Left + Padding.Left)
+        if (idealx > Padding.Left)
         {
-            idealx = TextPadding.Left + Padding.Left;
+            idealx = Padding.Left;
         }
 
         SetTextPosition(idealx, TextY);

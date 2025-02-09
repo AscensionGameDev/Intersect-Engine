@@ -257,15 +257,15 @@ public partial class TableRow : Base, IColorableText
     /// </summary>
     public event GwenEventHandler<ItemSelectedEventArgs> Selected;
 
-    public override bool SizeToChildren(bool width = true, bool height = true)
+    public bool SizeToChildren(bool width = true, bool height = true, bool recursive = false)
     {
         var columns = _columns.ToArray();
         foreach (var column in columns)
         {
-            column.SizeToChildren(width: width, height: height);
+            column.SizeToChildren(width: width, height: height, recursive: recursive);
         }
 
-        return base.SizeToChildren(width: width, height: height);
+        return base.SizeToChildren(width: width, height: height, recursive: recursive);
     }
 
     protected virtual void ComputeColumns()

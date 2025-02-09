@@ -54,8 +54,10 @@ internal static class Program
         .CreateDefaultBuilder(args)
         .ConfigureServices((hostContext, services) =>
         {
-            var rawDatabaseType = hostContext.Configuration.GetValue<string>("DatabaseType") ??
-                                  DatabaseType.Sqlite.ToString();
+            var rawDatabaseType = hostContext.Configuration.GetValue(
+                "DatabaseType",
+                DatabaseType.Sqlite.ToString()
+            );
             if (!Enum.TryParse(rawDatabaseType, out DatabaseType databaseType) || databaseType == DatabaseType.Unknown)
             {
                 throw new InvalidOperationException($"Invalid database type: {rawDatabaseType}");

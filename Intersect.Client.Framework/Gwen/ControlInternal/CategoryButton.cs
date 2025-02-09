@@ -20,7 +20,7 @@ public partial class CategoryButton : Button
         TextAlign = Pos.Left | Pos.CenterV;
         mAlt = false;
         IsToggle = true;
-        TextPadding = new Padding(3, 0, 3, 0);
+        Padding = new Padding(3, 0, 3, 0);
     }
 
     /// <summary>

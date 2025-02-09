@@ -4,7 +4,8 @@ namespace Intersect.Client.Framework.Gwen.Control;
 public enum ComponentStateFilters
 {
     None,
-    
-    IncludeHidden,
-    IncludeMouseInputDisabled,
+
+    IncludeHidden = 1,
+    IncludeMouseInputDisabled = 2,
+    IncludeText = 4,
 }

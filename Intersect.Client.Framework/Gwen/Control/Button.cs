@@ -36,14 +36,17 @@ public partial class Button : Label
     /// <param name="parent">Parent control.</param>
     /// <param name="name"></param>
     /// <param name="disableText"></param>
-    public Button(Base parent, string? name = default, bool disableText = false) : base(parent, name, disableText)
+    public Button(Base parent, string? name = default, bool disableText = false) : base(
+        parent: parent,
+        name: name,
+        disableText: disableText
+    )
     {
         AutoSizeToContents = false;
-        Size = new Point(100, 20);
         MouseInputEnabled = true;
         TextAlign = Pos.Center;
-        TextPadding = new Padding(3, 3, 3, 3);
-        Name = name;
+        Size = new Point(100, 20);
+        Padding = new Padding(3, 3, 3, 3);
     }
 
     /// <summary>
@@ -365,9 +368,17 @@ public partial class Button : Label
             textColor = new Color(r: 255, g: 0, b: 255);
         }
 
-        if ((textColor.ToArgb() & 0xffffff) == 0)
+        if (textColor != TextColor)
         {
-            textColor.ToString();
+            ApplicationContext.CurrentContext.Logger.LogTrace(
+                "Changing TextColor to {TextColor} of {ComponentType} '{ComponentName}' IsDisabled={IsDisabled} IsActive={IsActive} IsHovered={IsHovered}",
+                GetType().GetName(qualified: true),
+                CanonicalName,
+                textColor,
+                IsDisabled,
+                IsActive,
+                IsHovered
+            );
         }
 
         TextColor = textColor;

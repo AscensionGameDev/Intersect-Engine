@@ -211,7 +211,7 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
 
         return Skin.Renderer.MeasureText(_sliderValue.Font, valueString) +
                _sliderValue.Padding +
-               _sliderValue.TextPadding;
+               _sliderValue.Padding;
     }
 
     public double Scale

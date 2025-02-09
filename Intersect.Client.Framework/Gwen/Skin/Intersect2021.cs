@@ -41,10 +41,10 @@ public class Intersect2021 : TexturedBase
         mTextures.Window.Inactive = new Bordered(_texture, 16, 24, 16, 16, new Margin(4, 4, 4, 4));
         mTextures.Window.InactiveTitleBar = new Bordered(_texture, 16, 0, 16, 24, new Margin(4, 4, 4, 4));
 
-        mTextures.Window.Close = new Single(_texture, 60, 0, 24, 24);
-        mTextures.Window.CloseDown = new Single(_texture, 60, 24, 24, 24);
-        mTextures.Window.CloseDisabled = new Single(_texture, 60, 48, 24, 24);
-        mTextures.Window.CloseHover = new Single(_texture, 60, 72, 24, 24);
+        mTextures.Window.CloseButton.Normal = new FivePatch(_texture, 60, 0, 24, 24, Margin.Two, Margin.One);
+        mTextures.Window.CloseButton.Active = new FivePatch(_texture, 60, 24, 24, 24, Margin.Two, Margin.One);
+        mTextures.Window.CloseButton.Disabled = new FivePatch(_texture, 60, 48, 24, 24, Margin.Two, Margin.One);
+        mTextures.Window.CloseButton.Hovered = new FivePatch(_texture, 60, 72, 24, 24, Margin.Two, Margin.One);
 
         mTextures.Panel.Control = new Bordered(_texture, 32, 0, 16, 16, Margin.Four);
         mTextures.Panel.Normal = new Bordered(_texture, 32, 0, 16, 16, Margin.Four);
@@ -56,6 +56,11 @@ public class Intersect2021 : TexturedBase
         mTextures.Input.Button.Disabled = new Bordered(_texture, 48, 24, 12, 12, Margin.Four);
         mTextures.Input.Button.Hovered = new Bordered(_texture, 48, 12, 12, 12, Margin.Four);
         mTextures.Input.Button.Active = new Bordered(_texture, 48, 36, 12, 12, Margin.Four);
+
+        mTextures.Input.ComboBox.Normal = new Bordered(_texture, 385, 336, 126, 31, new Margin(8, 8, 32, 8));
+        mTextures.Input.ComboBox.Hover = new Bordered(_texture, 385, 336 + 32, 126, 31, new Margin(8, 8, 32, 8));
+        mTextures.Input.ComboBox.Down = new Bordered(_texture, 385, 336 + 64, 126, 31, new Margin(8, 8, 32, 8));
+        mTextures.Input.ComboBox.Disabled = new Bordered(_texture, 385, 336 + 96, 126, 31, new Margin(8, 8, 32, 8));
 
         mTextures.CheckBox.Default.Box = new Single(_texture, 84, 0, 22, 22);
         mTextures.CheckBox.Default.Fill = new Single(_texture, 106, 0, 22, 22);

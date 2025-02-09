@@ -127,6 +127,16 @@ public partial class Dragger : Base
     {
     }
 
+    public override void Invalidate()
+    {
+        base.Invalidate();
+    }
+
+    protected override void Layout(Skin.Base skin)
+    {
+        base.Layout(skin);
+    }
+
     public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
         var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);

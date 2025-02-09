@@ -65,8 +65,9 @@ public partial class HotbarItem
             Y = 4 + row * 40,
             Width = 36,
             Height = 36,
+            Margin = new Margin(column > 0 ? 4 : 0, row > 0 ? 4 : 0, 0, 0),
+            RestrictToParent = true,
             TextureFilename = "hotbaritem.png",
-            Margin = Margin.Four,
         };
 
         // Content Panel is layered on top of the container (shows the Item or Spell Icon).

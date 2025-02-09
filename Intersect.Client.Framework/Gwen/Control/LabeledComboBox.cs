@@ -26,8 +26,8 @@ public partial class LabeledComboBox : Base, IAutoSizeToContents
         {
             Alignment = [Alignments.CenterV],
             Dock = Pos.Left,
-            Margin = new Margin(4, 0, 0, 0),
-            TextPadding = Padding.Two,
+            Margin = new Margin(8, 0, 0, 0),
+            Padding = Padding.Two,
         };
 
         _comboBox.ItemSelected += (_, args) => ItemSelected?.Invoke(this, args);
@@ -84,16 +84,16 @@ public partial class LabeledComboBox : Base, IAutoSizeToContents
         set => _autoSizeToContents = value;
     }
 
-    public Padding LabelTextPadding
+    public Padding LabelPadding
     {
-        get => _label.TextPadding;
-        set => _label.TextPadding = value;
+        get => _label.Padding;
+        set => _label.Padding = value;
     }
 
     public Padding TextPadding
     {
-        get => _comboBox.TextPadding;
-        set => _comboBox.TextPadding = value;
+        get => _comboBox.Padding;
+        set => _comboBox.Padding = value;
     }
 
     protected override void Layout(Skin.Base skin)

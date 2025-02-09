@@ -324,10 +324,10 @@ public partial class ImagePanel : Base
         {
             _ninepatchRenderer ??= new Bordered(
                 texture,
-                _uv[0] * texture.Width,
-                _uv[1] * texture.Height,
-                _uv[2] * texture.Width,
-                _uv[3] * texture.Height,
+                (int)(_uv[0] * texture.Width),
+                (int)(_uv[1] * texture.Height),
+                (int)(_uv[2] * texture.Width),
+                (int)(_uv[3] * texture.Height),
                 textureNinePatchMargin
             );
 

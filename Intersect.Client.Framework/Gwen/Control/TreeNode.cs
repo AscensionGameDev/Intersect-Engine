@@ -43,7 +43,7 @@ public partial class TreeNode : Base
         _label.DoubleClicked += OnDoubleClickName;
         _label.Clicked += OnClickName;
 
-        _innerPanel = new Base(this);
+        _innerPanel = new Base(this, name: nameof(_innerPanel));
         _innerPanel.Dock = Pos.Top;
         _innerPanel.Height = 100;
         _innerPanel.Margin = new Margin(TREE_INDENTATION, 1, 0, 0);

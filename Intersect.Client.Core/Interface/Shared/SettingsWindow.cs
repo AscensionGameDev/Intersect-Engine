@@ -24,7 +24,7 @@ namespace Intersect.Client.Interface.Shared;
 
 using BottomBarItems = (Panel BottomBar, Button RestoreDefaultControlsButton, Button ApplyPendingChangesButton, Button CancelPendingChangesButton);
 
-public partial class SettingsWindow : WindowControl
+public partial class SettingsWindow : Window
 {
     private readonly GameFont? _defaultFont;
 
@@ -558,8 +558,6 @@ public partial class SettingsWindow : WindowControl
 
         (_bottomBar, _restoreDefaultsButton, _applyPendingChangesButton, _cancelPendingChangesButton) =
             CreateBottomBar(this);
-
-        LoadJsonUi(stage: UI.Shared, resolution: Graphics.Renderer?.GetResolutionString());
     }
 
     public override bool IsBlockingInput => _keybindingEditBtn is not null;
@@ -582,7 +580,7 @@ public partial class SettingsWindow : WindowControl
             Font = _defaultFont,
             IsVisible = false,
             MinimumSize = new Point(x: 96, y: 24),
-            TextPadding = new Padding(horizontal: 16, vertical: 2),
+            Padding = new Padding(horizontal: 16, vertical: 2),
             Text = Strings.Settings.Restore,
         };
         restoreDefaultKeybindingsButton.Clicked += RestoreDefaultKeybindingsButton_Clicked;
@@ -595,7 +593,7 @@ public partial class SettingsWindow : WindowControl
             AutoSizeToContents = true,
             Font = _defaultFont,
             MinimumSize = new Point(x: 96, y: 24),
-            TextPadding = new Padding(horizontal: 16, vertical: 2),
+            Padding = new Padding(horizontal: 16, vertical: 2),
             Text = Strings.Settings.Apply,
         };
         applyPendingChangesButton.Clicked += SettingsApplyBtn_Clicked;
@@ -608,7 +606,7 @@ public partial class SettingsWindow : WindowControl
             AutoSizeToContents = true,
             Font = _defaultFont,
             MinimumSize = new Point(x: 96, y: 24),
-            TextPadding = new Padding(horizontal: 16, vertical: 2),
+            Padding = new Padding(horizontal: 16, vertical: 2),
             Text = Strings.Settings.Cancel,
         };
         cancelPendingChangesButton.Clicked += CancelPendingChangesButton_Clicked;
@@ -1185,5 +1183,10 @@ public partial class SettingsWindow : WindowControl
 
         // Hide our current window.
         Hide();
+    }
+
+    protected override void EnsureInitialized()
+    {
+        LoadJsonUi(stage: UI.Shared, resolution: Graphics.Renderer?.GetResolutionString());
     }
 }

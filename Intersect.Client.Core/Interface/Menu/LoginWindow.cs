@@ -59,16 +59,16 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
             AutoSizeToContents = false,
             Dock = Pos.Left,
             Font = _defaultFont,
+            Padding = new Padding(0, 0, 10, 0),
             Text = Strings.LoginWindow.Username,
             TextAlign = Pos.Right | Pos.CenterV,
-            TextPadding = new Padding(0, 0, 10, 0),
         };
         _usernameInput = new TextBox(_usernamePanel, nameof(_usernameInput))
         {
             Dock = Pos.Fill,
             Font = _defaultFont,
+            Padding = new Padding(2, 0),
             TextAlign = Pos.Left | Pos.CenterV,
-            TextPadding = new Padding(2, 0),
         };
         _usernameInput.SubmitPressed += (s, e) => TryLogin();
         _usernameInput.Clicked += UsernameInputClicked;
@@ -90,16 +90,16 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
             AutoSizeToContents = false,
             Dock = Pos.Left,
             Font = _defaultFont,
+            Padding = new Padding(0, 0, 10, 0),
             Text = Strings.LoginWindow.Password,
             TextAlign = Pos.Right | Pos.CenterV,
-            TextPadding = new Padding(0, 0, 10, 0),
         };
         _passwordInput = new TextBoxPassword(_passwordPanel, nameof(_passwordInput))
         {
             Dock = Pos.Fill,
             Font = _defaultFont,
+            Padding = new Padding(2, 0),
             TextAlign = Pos.Left | Pos.CenterV,
-            TextPadding = new Padding(2, 0),
         };
         _passwordInput.SubmitPressed += (s, e) => TryLogin();
         _passwordInput.TextChanged += PasswordInputTextChanged;
