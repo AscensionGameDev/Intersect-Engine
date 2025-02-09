@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using Intersect.Client.Core;
+using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -27,6 +28,14 @@ public partial class MainMenuWindow : Window
     public MainMenuWindow(Canvas canvas, MainMenu mainMenu) : base(canvas, Strings.MainMenu.Title, false, $"{nameof(MainMenuWindow)}_{(ClientContext.IsSinglePlayer ? "singleplayer" : "online")}")
     {
         _mainMenu = mainMenu;
+
+        Alignment = [Alignments.Center];
+
+        IsClosable = false;
+        IsResizable = false;
+        Padding = Padding.Zero;
+        InnerPanelPadding = new Padding(8);
+        Titlebar.MouseInputEnabled = false;
 
         _buttonStart = new Button(this, nameof(_buttonStart))
         {

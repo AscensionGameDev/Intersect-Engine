@@ -16,7 +16,6 @@ public partial class CreditsWindow : Window, IMainMenuWindow
 
     private readonly MainMenu _mainMenu;
     private readonly RichLabel _credits;
-    private readonly Button _backButton;
     private readonly ScrollControl _creditsScroller;
 
     public CreditsWindow(Canvas parent, MainMenu mainMenu) : base(
@@ -31,7 +30,7 @@ public partial class CreditsWindow : Window, IMainMenuWindow
         Alignment = [Alignments.Center];
         MinimumSize = new Point(x: 640, y: 400);
         IsResizable = false;
-        IsClosable = false;
+        IsClosable = true;
 
         Titlebar.MouseInputEnabled = false;
 
@@ -40,7 +39,7 @@ public partial class CreditsWindow : Window, IMainMenuWindow
 
         _defaultFont = GameContentManager.Current.GetFont(name: TitleLabel.FontName, 12);
 
-        _creditsScroller = new ScrollControl(this, nameof(_creditsScroller))
+        _creditsScroller = new ScrollControl(this, name: nameof(_creditsScroller))
         {
             Dock = Pos.Fill,
         };
@@ -53,30 +52,14 @@ public partial class CreditsWindow : Window, IMainMenuWindow
             Padding = new Padding(16),
         };
 
-        _backButton = new Button(this, nameof(_backButton))
-        {
-            Alignment = [Alignments.CenterH],
-            AutoSizeToContents = true,
-            Dock = Pos.Bottom | Pos.CenterH,
-            Font = _defaultFont,
-            Margin = new Margin(0, 8),
-            Padding = new Padding(8, 4),
-            Text = Strings.Credits.Back,
-        };
-        _backButton.Clicked += BackBtn_Clicked;
-
         LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
     }
 
-    private void BackBtn_Clicked(Base sender, MouseButtonState arguments)
+    protected override void OnClose(Base control, EventArgs args)
     {
-        Hide();
-        _mainMenu.Show();
-    }
+        base.OnClose(control, args);
 
-    protected override void RecurseLayout(Framework.Gwen.Skin.Base skin)
-    {
-        base.RecurseLayout(skin);
+        _mainMenu.Show();
     }
 
     protected override void EnsureInitialized()

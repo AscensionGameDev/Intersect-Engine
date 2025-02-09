@@ -13,12 +13,6 @@ public partial class MainMenuWindow
     {
         var canvas = Canvas ?? throw new InvalidOperationException($"Not attached to a {nameof(Canvas)}");
 
-        IsClosable = false;
-        IsResizable = false;
-        Padding = Padding.Zero;
-        InnerPanelPadding = new Padding(8, 8, 8, 8);
-        Titlebar.MouseInputEnabled = false;
-
         Button[] visibleButtons = new []
         {
             _buttonStart,
@@ -36,10 +30,6 @@ public partial class MainMenuWindow
             defaultWidth * visibleButtons.Length + InnerPanelPadding.Left + InnerPanelPadding.Right,
             defaultHeight + TitleBarBounds.Bottom + InnerPanelPadding.Top + InnerPanelPadding.Bottom
         );
-
-        AddAlignment(Framework.Gwen.Alignments.Center);
-        AlignmentTranslation = new Point(0, 40);
-        ProcessAlignments();
 
         TitleLabel.TextColor = Color.White;
         TitleLabel.FontName = "sourcesansproblack";

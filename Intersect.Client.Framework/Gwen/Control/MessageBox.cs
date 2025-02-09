@@ -34,7 +34,7 @@ public partial class MessageBox : WindowControl
 
         mButton = new Button(_innerPanel);
         mButton.Text = "OK"; // todo: parametrize buttons
-        mButton.Clicked += CloseButtonPressed;
+        mButton.Clicked += OnClose;
         mButton.Clicked += DismissedHandler;
         mButton.Margin = Margin.Five;
         mButton.SetSize(50, 20);
