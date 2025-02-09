@@ -1,6 +1,10 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
@@ -10,95 +14,241 @@ using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Menu;
 
-public partial class RegistrationWindow : ImagePanel, IMainMenuWindow
+public partial class RegistrationWindow : Window, IMainMenuWindow
 {
+    private readonly GameFont? _defaultFont;
+
     private readonly MainMenu _mainMenu;
 
-    private readonly Label _registrationHeader;
-    private readonly TextBox _textBoxUsername;
-    private readonly TextBox _textBoxEmail;
-    private readonly TextBoxPassword _textBoxPassword;
-    private readonly TextBoxPassword _textBoxConfirmPassword;
-    private readonly Button _buttonRegister;
+    private readonly Panel _inputPanel;
+    private readonly Panel _buttonPanel;
 
-    //Init
-    public RegistrationWindow(Canvas parent, MainMenu mainMenu) : base(parent, nameof(RegistrationWindow))
+    private readonly Panel _usernamePanel;
+    private readonly Label _usernameLabel;
+    private readonly TextBox _usernameInput;
+
+    private readonly Panel _emailPanel;
+    private readonly Label _emailLabel;
+    private readonly TextBox _emailInput;
+
+    private readonly Panel _passwordPanel;
+    private readonly Label _passwordLabel;
+    private readonly TextBoxPassword _passwordInput;
+
+    private readonly Panel _passwordConfirmationPanel;
+    private readonly Label _passwordConfirmationLabel;
+    private readonly TextBoxPassword _passwordConfirmationInput;
+
+    private readonly Button _registerButton;
+    private readonly Button _backButton;
+
+    public RegistrationWindow(Canvas parent, MainMenu mainMenu) : base(
+        parent,
+        title: Strings.Registration.Title,
+        modal: false,
+        name: nameof(RegistrationWindow)
+    )
     {
-        //Assign References
         _mainMenu = mainMenu;
 
-        //Menu Header
-        _registrationHeader = new Label(this, "RegistrationLabel");
-        _registrationHeader.SetText(Strings.Registration.Title);
+        _defaultFont = GameContentManager.Current.GetFont(name: "sourcesansproblack", 12);
 
-        //Register Username Label/Textbox
-        var usernameContainer = new ImagePanel(this, "UsernamePanel");
-        _ = new Label(usernameContainer, "UsernameLabel")
-        {
-            Text = Strings.Registration.Username,
-        };
-        _textBoxUsername = new TextBox(usernameContainer, "UsernameField")
-        {
-            IsTabable = true,
-        };
-        _textBoxUsername.SubmitPressed += (s, e) => TryRegister();
+        Alignment = [Alignments.Center];
+        MinimumSize = new Point(x: 560, y: 180);
+        IsClosable = false;
+        IsResizable = false;
+        InnerPanelPadding = new Padding(8);
+        Titlebar.MouseInputEnabled = false;
+        TitleLabel.FontSize = 14;
+        TitleLabel.TextColorOverride = Color.White;
 
-        //Register Email Label/Textbox
-        var emailContainer = new ImagePanel(this, "EmailPanel");
-        _ = new Label(emailContainer, "EmailLabel")
+        _buttonPanel = new Panel(this, nameof(_buttonPanel))
         {
-            Text = Strings.Registration.Email,
+            BackgroundColor = Color.Transparent,
+            Dock = Pos.Right,
+            DockChildSpacing = new Padding(8),
+            Margin = new Margin(8, 0, 0, 0),
+            MinimumSize = new Point(120, 0),
         };
-        _textBoxEmail = new TextBox(emailContainer, "EmailField")
-        {
-            IsTabable = true,
-        };
-        _textBoxEmail.SubmitPressed += (s, e) => TryRegister();
 
-        //Register Password Label/Textbox
-        var passwordContainer = new ImagePanel(this, "Password1Panel");
-        _ = new Label(passwordContainer, "Password1Label")
+        _registerButton = new Button(_buttonPanel, "RegisterButton")
         {
-            Text = Strings.Registration.Password,
-        };
-        _textBoxPassword = new TextBoxPassword(passwordContainer, "Password1Field")
-        {
-            IsTabable = true,
-        };
-        _textBoxPassword.SubmitPressed += (s, e) => TryRegister();
-
-        //Register Confirm Password Label/Textbox
-        var confirmPasswordContainer = new ImagePanel(this, "Password2Panel");
-        _ = new Label(confirmPasswordContainer, "Password2Label")
-        {
-            Text = Strings.Registration.ConfirmPassword,
-        };
-        _textBoxConfirmPassword = new TextBoxPassword(confirmPasswordContainer, "Password2Field")
-        {
-            IsTabable = true,
-        };
-        _textBoxConfirmPassword.SubmitPressed += (s, e) => TryRegister();
-
-        //Register - Send Registration Button
-        _buttonRegister = new Button(this, "RegisterButton")
-        {
+            AutoSizeToContents = true,
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            MinimumSize = new Point(120, 24),
+            Padding = new Padding(8, 4),
             Text = Strings.Registration.Register,
         };
-        _buttonRegister.Clicked += (s, e) => TryRegister();
+        _registerButton.Clicked += RegisterButtonOnClicked;
 
-        //Register - Back Button
-        var buttonBack = new Button(this, "BackButton")
+        _backButton = new Button(_buttonPanel, nameof(_backButton))
         {
-            Text = Strings.Registration.Back,
+            AutoSizeToContents = true,
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            MinimumSize = new Point(120, 24),
+            Padding = new Padding(8, 4),
+            Text = Strings.LoginWindow.Back,
         };
-        buttonBack.Clicked += (s, e) =>
+        _backButton.Clicked += BackButtonClicked;
+
+        _inputPanel = new Panel(this, nameof(_inputPanel))
         {
-            Hide();
-            _mainMenu.Show();
-            Networking.Network.DebounceClose("returning_to_main_menu");
+            BackgroundColor = Color.Transparent,
+            Dock = Pos.Fill,
+            DockChildSpacing = new Padding(8),
         };
 
-        LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
+        _usernamePanel = new Panel(_inputPanel, nameof(_usernamePanel))
+        {
+            BackgroundColor = Color.Transparent,
+            Dock = Pos.Top,
+            DockChildSpacing = new Padding(4),
+            MinimumSize = new Point(0, 28),
+        };
+
+        _usernameLabel = new Label(_usernamePanel, nameof(_usernameLabel))
+        {
+            AutoSizeToContents = false,
+            Dock = Pos.Fill,
+            Font = _defaultFont,
+            Padding = new Padding(0, 0, 10, 0),
+            Text = Strings.Registration.Username,
+            TextAlign = Pos.Right | Pos.CenterV,
+        };
+
+        _usernameInput = new TextBox(_usernamePanel, nameof(_usernameInput))
+        {
+            Dock = Pos.Right,
+            Font = _defaultFont,
+            MinimumSize = new Point(240, 0),
+            Padding = new Padding(4, 2),
+            TextAlign = Pos.Left | Pos.CenterV,
+        };
+        _usernameInput.SubmitPressed += OnInputSubmitPressed;
+        _usernameInput.Clicked += UsernameInputClicked;
+        _usernameInput.SetSound(TextBox.Sounds.AddText, "octave-tap-resonant.wav");
+        _usernameInput.SetSound(TextBox.Sounds.RemoveText, "octave-tap-professional.wav");
+        _usernameInput.SetSound(TextBox.Sounds.Submit, "octave-tap-warm.wav");
+
+        _emailPanel = new Panel(_inputPanel, nameof(_emailPanel))
+        {
+            BackgroundColor = Color.Transparent,
+            Dock = Pos.Top,
+            DockChildSpacing = new Padding(4),
+            MinimumSize = new Point(0, 28),
+        };
+
+        _emailLabel = new Label(_emailPanel, nameof(_emailLabel))
+        {
+            AutoSizeToContents = false,
+            Dock = Pos.Fill,
+            Font = _defaultFont,
+            Padding = new Padding(0, 0, 10, 0),
+            Text = Strings.Registration.Email,
+            TextAlign = Pos.Right | Pos.CenterV,
+        };
+
+        _emailInput = new TextBox(_emailPanel, nameof(_emailInput))
+        {
+            Dock = Pos.Right,
+            Font = _defaultFont,
+            MinimumSize = new Point(240, 0),
+            Padding = new Padding(4, 2),
+            TextAlign = Pos.Left | Pos.CenterV,
+        };
+        _emailInput.SubmitPressed += OnInputSubmitPressed;
+        _emailInput.Clicked += EmailInputClicked;
+        _emailInput.SetSound(TextBox.Sounds.AddText, "octave-tap-resonant.wav");
+        _emailInput.SetSound(TextBox.Sounds.RemoveText, "octave-tap-professional.wav");
+        _emailInput.SetSound(TextBox.Sounds.Submit, "octave-tap-warm.wav");
+
+        _passwordPanel = new Panel(_inputPanel, nameof(_passwordPanel))
+        {
+            BackgroundColor = Color.Transparent,
+            Dock = Pos.Top,
+            DockChildSpacing = new Padding(4),
+            MinimumSize = new Point(0, 28),
+        };
+
+        _passwordLabel = new Label(_passwordPanel, nameof(_passwordLabel))
+        {
+            AutoSizeToContents = false,
+            Dock = Pos.Fill,
+            Font = _defaultFont,
+            Padding = new Padding(0, 0, 10, 0),
+            Text = Strings.Registration.Password,
+            TextAlign = Pos.Right | Pos.CenterV,
+        };
+
+        _passwordInput = new TextBoxPassword(_passwordPanel, nameof(_passwordInput))
+        {
+            Dock = Pos.Right,
+            Font = _defaultFont,
+            MinimumSize = new Point(240, 0),
+            Padding = new Padding(4, 2),
+            TextAlign = Pos.Left | Pos.CenterV,
+        };
+        _passwordInput.SubmitPressed += OnInputSubmitPressed;
+        _passwordInput.Clicked += PasswordInputClicked;
+        _passwordInput.SetSound(TextBox.Sounds.AddText, "octave-tap-resonant.wav");
+        _passwordInput.SetSound(TextBox.Sounds.RemoveText, "octave-tap-professional.wav");
+        _passwordInput.SetSound(TextBox.Sounds.Submit, "octave-tap-warm.wav");
+
+        _passwordConfirmationPanel = new Panel(_inputPanel, nameof(_passwordConfirmationPanel))
+        {
+            BackgroundColor = Color.Transparent,
+            Dock = Pos.Top,
+            DockChildSpacing = new Padding(4),
+            MinimumSize = new Point(0, 28),
+        };
+
+        _passwordConfirmationLabel = new Label(_passwordConfirmationPanel, nameof(_passwordConfirmationLabel))
+        {
+            AutoSizeToContents = false,
+            Dock = Pos.Fill,
+            Font = _defaultFont,
+            Padding = new Padding(0, 0, 10, 0),
+            Text = Strings.Registration.ConfirmPassword,
+            TextAlign = Pos.Right | Pos.CenterV,
+        };
+
+        _passwordConfirmationInput = new TextBoxPassword(_passwordConfirmationPanel, nameof(_passwordConfirmationInput))
+        {
+            Dock = Pos.Right,
+            Font = _defaultFont,
+            MinimumSize = new Point(240, 0),
+            Padding = new Padding(4, 2),
+            TextAlign = Pos.Left | Pos.CenterV,
+        };
+        _passwordConfirmationInput.SubmitPressed += OnInputSubmitPressed;
+        _passwordConfirmationInput.Clicked += PasswordConfirmationInputClicked;
+        _passwordConfirmationInput.SetSound(TextBox.Sounds.AddText, "octave-tap-resonant.wav");
+        _passwordConfirmationInput.SetSound(TextBox.Sounds.RemoveText, "octave-tap-professional.wav");
+        _passwordConfirmationInput.SetSound(TextBox.Sounds.Submit, "octave-tap-warm.wav");
+    }
+
+    private void BackButtonClicked(Base sender, MouseButtonState arguments)
+    {
+        Hide();
+        _mainMenu.Show();
+        Networking.Network.DebounceClose("returning_to_main_menu");
+    }
+
+    private void RegisterButtonOnClicked(Base @base, MouseButtonState mouseButtonState)
+    {
+        TryRegister();
+    }
+
+    private void OnInputSubmitPressed(Base @base, EventArgs eventArgs)
+    {
+        TryRegister();
+    }
+
+    protected override void EnsureInitialized()
+    {
+        // LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
     }
 
     //Methods
@@ -111,17 +261,52 @@ public partial class RegistrationWindow : ImagePanel, IMainMenuWindow
         }
 
         // Re-Enable our buttons if we're not waiting for the server anymore with it disabled.
-        if (!Globals.WaitingOnServer && _buttonRegister.IsDisabled)
+        if (!Globals.WaitingOnServer && _registerButton.IsDisabled)
         {
-            _buttonRegister.Enable();
+            _registerButton.Enable();
         }
     }
 
     public override void Show()
     {
         base.Show();
-        _textBoxUsername.Focus();
+        _usernameInput.Focus();
     }
+
+    private static void OpenKeyboardForInput(TextBox textbox, KeyboardType keyboardType, string description)
+    {
+        Globals.InputManager.OpenKeyboard(
+            keyboardType: keyboardType,
+            inputHandler: text => textbox.Text = text ?? string.Empty,
+            description: description,
+            text: textbox.Text ?? string.Empty,
+            inputBounds: textbox.BoundsGlobal
+        );
+    }
+
+    private void UsernameInputClicked(Base sender, MouseButtonState arguments) => OpenKeyboardForInput(
+        _usernameInput,
+        KeyboardType.Normal,
+        Strings.Registration.Username
+    );
+
+    private void EmailInputClicked(Base sender, MouseButtonState arguments) => OpenKeyboardForInput(
+        _emailInput,
+        KeyboardType.Email,
+        Strings.Registration.Email
+    );
+
+    private void PasswordInputClicked(Base sender, MouseButtonState arguments) => OpenKeyboardForInput(
+        _passwordInput,
+        KeyboardType.Password,
+        Strings.Registration.Password
+    );
+
+    private void PasswordConfirmationInputClicked(Base sender, MouseButtonState arguments) => OpenKeyboardForInput(
+        _passwordConfirmationInput,
+        KeyboardType.Password,
+        Strings.Registration.ConfirmPassword
+    );
 
     private void TryRegister()
     {
@@ -136,38 +321,38 @@ public partial class RegistrationWindow : ImagePanel, IMainMenuWindow
             return;
         }
 
-        if (!FieldChecking.IsValidUsername(_textBoxUsername.Text, Strings.Regex.Username))
+        if (!FieldChecking.IsValidUsername(_usernameInput.Text, Strings.Regex.Username))
         {
             Interface.ShowError(Strings.Errors.UsernameInvalid);
             return;
         }
 
-        if (!FieldChecking.IsWellformedEmailAddress(_textBoxEmail.Text, Strings.Regex.Email))
+        if (!FieldChecking.IsWellformedEmailAddress(_emailInput.Text, Strings.Regex.Email))
         {
             Interface.ShowError(Strings.Registration.EmailInvalid);
             return;
         }
 
-        if (!FieldChecking.IsValidPassword(_textBoxPassword.Text, Strings.Regex.Password))
+        if (!FieldChecking.IsValidPassword(_passwordInput.Text, Strings.Regex.Password))
         {
             Interface.ShowError(Strings.Errors.PasswordInvalid);
             return;
         }
 
-        if (_textBoxPassword.Text != _textBoxConfirmPassword.Text)
+        if (_passwordInput.Text != _passwordConfirmationInput.Text)
         {
             Interface.ShowError(Strings.Registration.PasswordMismatch);
             return;
         }
 
         PacketSender.SendCreateAccount(
-            _textBoxUsername.Text,
-            PasswordUtils.ComputePasswordHash(_textBoxPassword.Text.Trim()),
-            _textBoxEmail.Text
+            _usernameInput.Text,
+            PasswordUtils.ComputePasswordHash(_passwordInput.Text.Trim()),
+            _emailInput.Text
         );
 
         Globals.WaitingOnServer = true;
-        _buttonRegister.Disable();
+        _registerButton.Disable();
         ChatboxMsg.ClearMessages();
         Hide();
     }

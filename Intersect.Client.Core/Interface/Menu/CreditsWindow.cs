@@ -32,7 +32,6 @@ public partial class CreditsWindow : Window, IMainMenuWindow
         IsClosable = true;
 
         Titlebar.MouseInputEnabled = false;
-
         TitleLabel.FontSize = 14;
         TitleLabel.TextColorOverride = Color.White;
 
