@@ -63,11 +63,9 @@ public partial class Base : IDisposable
     /// </summary>
     private Base? mActualParent;
 
-    private Padding mAlignmentDistance;
-
-    private List<Alignments> mAlignments = new List<Alignments>();
-
-    private Point mAlignmentTransform;
+    private List<Alignments> _alignments = [];
+    private Padding _alignmentPadding;
+    private Point _alignmentTranslation;
 
     private Rectangle mBounds;
     private Rectangle mBoundsOnDisk;
@@ -117,7 +115,8 @@ public partial class Base : IDisposable
 
     private string? _name;
 
-    private bool mNeedsLayout;
+    private bool _needsAlignment;
+    private bool _needsLayout;
 
     private Padding mPadding;
 
@@ -238,7 +237,7 @@ public partial class Base : IDisposable
         mPadding = Padding.Zero;
         mMargin = Margin.Zero;
         mColor = Color.White;
-        mAlignmentDistance = Padding.Zero;
+        _alignmentPadding = Padding.Zero;
 
         RestrictToParent = false;
 
@@ -273,7 +272,7 @@ public partial class Base : IDisposable
         }
     }
 
-    public List<Alignments> CurAlignments => mAlignments;
+    public List<Alignments> CurAlignments => _alignments;
 
     /// <summary>
     ///     Returns true if any on click events are set.
@@ -333,12 +332,28 @@ public partial class Base : IDisposable
 
     public Alignments[] Alignment
     {
-        get => mAlignments.ToArray();
+        get => _alignments.ToArray();
         set
         {
-            mAlignments = value.ToList();
+            _alignments = value.ToList();
             ProcessAlignments();
         }
+    }
+
+    public Point AlignmentTranslation
+    {
+        get => _alignmentTranslation;
+        set => SetAndDoIfChanged(ref _alignmentTranslation, value, InvalidateAlignment);
+    }
+
+    public void InvalidateAlignment()
+    {
+        if (!_needsAlignment)
+        {
+            _needsAlignment = true;
+        }
+
+        Invalidate();
     }
 
     public virtual bool IsBlockingInput => true;
@@ -499,21 +514,10 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Alignment Distance - Minimum distance from parent edges when processing alignments.
     /// </summary>
-    public Padding AlignmentDistance
+    public Padding AlignmentPadding
     {
-        get => mAlignmentDistance;
-        set
-        {
-            if (mAlignmentDistance == value)
-            {
-                return;
-            }
-
-            mAlignmentDistance = value;
-            ProcessAlignments();
-            Invalidate();
-            InvalidateParent();
-        }
+        get => _alignmentPadding;
+        set => SetAndDoIfChanged(ref _alignmentPadding, value, InvalidateAlignment);
     }
 
     /// <summary>
@@ -878,7 +882,11 @@ public partial class Base : IDisposable
         set
         {
             mDrawDebugOutlines = value;
-            foreach (var child in Children)
+            if (_innerPanel is { } innerPanel)
+            {
+                innerPanel.DrawDebugOutlines = value;
+            }
+            foreach (var child in mChildren)
             {
                 child.DrawDebugOutlines = value;
             }
@@ -975,17 +983,17 @@ public partial class Base : IDisposable
 
     public void AddAlignment(Alignments alignment)
     {
-        if (mAlignments?.Contains(alignment) ?? true)
+        if (_alignments?.Contains(alignment) ?? true)
         {
             return;
         }
 
-        mAlignments.Add(alignment);
+        _alignments.Add(alignment);
     }
 
     public void RemoveAlignments()
     {
-        mAlignments.Clear();
+        _alignments.Clear();
     }
 
     public virtual string GetJsonUI(bool isRoot = false)
@@ -1031,11 +1039,11 @@ public partial class Base : IDisposable
             new JProperty(nameof(Bounds), Rectangle.ToString(boundsToWrite)),
             new JProperty(nameof(Dock), Dock.ToString()),
             new JProperty(nameof(Padding), Padding.ToString(mPadding)),
-            new JProperty("AlignmentEdgeDistances", Padding.ToString(mAlignmentDistance)),
-            new JProperty("AlignmentTransform", mAlignmentTransform.ToString()),
+            new JProperty("AlignmentEdgeDistances", Padding.ToString(_alignmentPadding)),
+            new JProperty("AlignmentTransform", _alignmentTranslation.ToString()),
             new JProperty(nameof(Margin), mMargin.ToString()),
             new JProperty(nameof(RenderColor), Color.ToString(mColor)),
-            new JProperty(nameof(Alignments), string.Join(",", mAlignments.ToArray())),
+            new JProperty(nameof(Alignments), string.Join(",", _alignments.ToArray())),
             new JProperty("DrawBackground", mDrawBackground),
             new JProperty(nameof(MinimumSize), _minimumSize.ToString()),
             new JProperty(nameof(MaximumSize), _maximumSize.ToString()),
@@ -1208,12 +1216,12 @@ public partial class Base : IDisposable
 
         if (obj["AlignmentEdgeDistances"] != null)
         {
-            mAlignmentDistance = Padding.FromString((string) obj["AlignmentEdgeDistances"]);
+            _alignmentPadding = Padding.FromString((string) obj["AlignmentEdgeDistances"]);
         }
 
         if (obj["AlignmentTransform"] != null)
         {
-            mAlignmentTransform = Point.FromString((string) obj["AlignmentTransform"]);
+            _alignmentTranslation = Point.FromString((string) obj["AlignmentTransform"]);
         }
 
         if (obj[nameof(Margin)] != null)
@@ -1335,12 +1343,7 @@ public partial class Base : IDisposable
 
     public virtual void ProcessAlignments()
     {
-        if (this is Label { Text: "Debug" })
-        {
-            this.ToString();
-        }
-
-        foreach (var alignment in mAlignments)
+        foreach (var alignment in _alignments)
         {
             switch (alignment)
             {
@@ -1377,7 +1380,7 @@ public partial class Base : IDisposable
             }
         }
 
-        MoveTo(X + mAlignmentTransform.X, Y + mAlignmentTransform.Y, true);
+        MoveTo(X + _alignmentTranslation.X, Y + _alignmentTranslation.Y, true);
         foreach (var child in Children)
         {
             child?.ProcessAlignments();
@@ -1547,7 +1550,7 @@ public partial class Base : IDisposable
                 AutoSizeToContents = true,
                 Font = _tooltipFont ?? GameContentManager.Current?.GetFont("sourcesansproblack", 10),
                 MaximumSize = new Point(300, 0),
-                TextPadding = new Padding(
+                Padding = new Padding(
                     5,
                     3
                 ),
@@ -1613,9 +1616,9 @@ public partial class Base : IDisposable
     /// </remarks>
     public virtual void Invalidate()
     {
-        if (!mNeedsLayout)
+        if (!_needsLayout)
         {
-            mNeedsLayout = true;
+            _needsLayout = true;
         }
 
         if (!mCacheTextureDirty)
@@ -2019,10 +2022,10 @@ public partial class Base : IDisposable
         {
             var ownPadding = Parent.Padding;
 
-            var alignmentDistanceLeft = aligning ? mAlignmentDistance.Left : 0;
-            var alignmentDistanceTop = aligning ? mAlignmentDistance.Top : 0;
-            var alignmentDistanceRight = aligning ? mAlignmentDistance.Right : 0;
-            var alignmentDistanceBottom = aligning ? mAlignmentDistance.Bottom : 0;
+            var alignmentDistanceLeft = aligning ? _alignmentPadding.Left : 0;
+            var alignmentDistanceTop = aligning ? _alignmentPadding.Top : 0;
+            var alignmentDistanceRight = aligning ? _alignmentPadding.Right : 0;
+            var alignmentDistanceBottom = aligning ? _alignmentPadding.Bottom : 0;
             var parentWidth = parent.Width;
             var parentHeight = parent.Height;
 
@@ -2156,8 +2159,9 @@ public partial class Base : IDisposable
         };
 
         var maximumSize = MaximumSize;
-        newBounds.Width = maximumSize.X > 0 ? Math.Min(MaximumSize.X, width) : width;
-        newBounds.Height = maximumSize.Y > 0 ? Math.Min(MaximumSize.Y, height) : height;
+        var minimumSize = MinimumSize;
+        newBounds.Width = Math.Max(maximumSize.X > 0 ? Math.Min(maximumSize.X, width) : width, minimumSize.X);
+        newBounds.Height = Math.Max(maximumSize.Y > 0 ? Math.Min(maximumSize.Y, height) : height, minimumSize.Y);
 
         if (newBounds.Width > 100000 || newBounds.Height > 100000)
         {
@@ -2877,6 +2881,11 @@ public partial class Base : IDisposable
             }
         }
 
+        if (this is Text)
+        {
+            return filters.HasFlag(ComponentStateFilters.IncludeText) ? this : null;
+        }
+
         // By default, we only return components that are mouse-input enabled, but if the filters include
         // those components explicitly, we can return them too. This is particularly useful for debugging.
         if (MouseInputEnabled || filters.HasFlag(ComponentStateFilters.IncludeMouseInputDisabled))
@@ -2938,10 +2947,16 @@ public partial class Base : IDisposable
             Size = expectedSize;
         }
 
-        if (mNeedsLayout)
+        if (_needsLayout)
         {
-            mNeedsLayout = false;
+            _needsLayout = false;
             Layout(skin);
+        }
+
+        if (_needsAlignment)
+        {
+            _needsAlignment = false;
+            ProcessAlignments();
         }
 
         var remainingBounds = RenderBounds;
@@ -2954,19 +2969,14 @@ public partial class Base : IDisposable
 
         var dockChildSpacing = DockChildSpacing;
 
-        foreach (var child in children)
+        var directionalDockChildren =
+            children.Where(child => !child.ShouldSkipLayout && !child.Dock.HasFlag(Pos.Fill)).ToArray();
+        var dockFillChildren =
+            children.Where(child => !child.ShouldSkipLayout && child.Dock.HasFlag(Pos.Fill)).ToArray();
+
+        foreach (var child in directionalDockChildren)
         {
-            if (child.ShouldSkipLayout)
-            {
-                continue;
-            }
-
             var childDock = child.Dock;
-
-            if (childDock.HasFlag(Pos.Fill))
-            {
-                continue;
-            }
 
             var childMargin = child.Margin;
             var childMarginH = childMargin.Left + childMargin.Right;
@@ -3053,9 +3063,16 @@ public partial class Base : IDisposable
                     ? child.Width
                     : availableWidth;
 
-                var offsetFromBottom = child.Height + childMargin.Bottom + dockChildSpacing.Bottom;
+                var offsetFromBottom = child.Height + childMargin.Bottom;
+                var x = remainingBounds.Left + childMargin.Left;
+
+                if (childDock.HasFlag(Pos.CenterH))
+                {
+                    x = remainingBounds.Left + (remainingBounds.Width - child.OuterWidth) / 2;
+                }
+
                 child.SetBounds(
-                    remainingBounds.Left + childMargin.Left,
+                    x,
                     remainingBounds.Bottom - offsetFromBottom,
                     width,
                     child.Height
@@ -3072,19 +3089,9 @@ public partial class Base : IDisposable
         //
         // Fill uses the left over space, so do that now.
         //
-        foreach (var child in children)
+        foreach (var child in dockFillChildren)
         {
-            if (child.ShouldSkipLayout)
-            {
-                continue;
-            }
-
             var dock = child.Dock;
-
-            if (!dock.HasFlag(Pos.Fill))
-            {
-                continue;
-            }
 
             var childMargin = child.Margin;
             var childMarginH = childMargin.Left + childMargin.Right;
@@ -3353,13 +3360,32 @@ public partial class Base : IDisposable
     /// </summary>
     /// <param name="width">Determines whether to change control's width.</param>
     /// <param name="height">Determines whether to change control's height.</param>
+    /// <param name="recursive"></param>
     /// <returns>True if bounds changed.</returns>
-    public virtual bool SizeToChildren(bool width = true, bool height = true)
+    public virtual bool SizeToChildren(bool width = true, bool height = true, bool recursive = false)
     {
-        var size = GetChildrenSize();
+        Base[]? children = null;
+        if (recursive)
+        {
+            children = mChildren.ToArray();
+            foreach (var child in children)
+            {
+                if (!child.IsVisible)
+                {
+                    continue;
+                }
+
+                child.SizeToChildren(width: width, height: height, recursive: recursive);
+            }
+        }
+
+        var size = GetChildrenSize(children: children);
         var padding = Padding;
         size.X += padding.Right + padding.Left;
         size.Y += padding.Bottom + padding.Top;
+
+        size.X = Math.Max(Math.Min(size.X, _maximumSize.X < 1 ? size.X : _maximumSize.X), _minimumSize.X);
+        size.Y = Math.Max(Math.Min(size.Y, _maximumSize.Y < 1 ? size.Y : _maximumSize.Y), _minimumSize.Y);
 
         if (!SetSize(width ? size.X : Width, height ? size.Y : Height))
         {
@@ -3375,16 +3401,16 @@ public partial class Base : IDisposable
     ///     Returns the total width and height of all children.
     /// </summary>
     /// <remarks>
-    ///     Default implementation returns maximum size of children since the layout is unknown.
+    ///     Default implementation InvalidateAlignmentreturns maximum size of children since the layout is unknown.
     ///     Implement this in derived compound controls to properly return their size.
     /// </remarks>
     /// <returns></returns>
-    public virtual Point GetChildrenSize()
+    public virtual Point GetChildrenSize(Base[]? children = null)
     {
         Point min = new(int.MaxValue, int.MaxValue);
         Point max = default;
 
-        var children = mChildren.ToArray();
+        children ??= mChildren.ToArray();
         foreach (var child in children)
         {
             if (!child.IsVisible)

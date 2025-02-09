@@ -16,7 +16,8 @@ public partial class CloseButton : Button
     /// </summary>
     /// <param name="parent">Parent control.</param>
     /// <param name="owner">Window that owns this button.</param>
-    public CloseButton(Base parent, WindowControl owner, string? name = null) : base(parent, name)
+    /// <param name="name"></param>
+    public CloseButton(Base parent, WindowControl owner, string? name = null) : base(parent, name, disableText: true)
     {
         mWindow = owner;
     }

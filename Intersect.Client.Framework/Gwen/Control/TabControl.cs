@@ -40,7 +40,7 @@ public partial class TabControl : Base
         _scrollbarButtons[1].Clicked += ScrollPressedRight;
         _scrollbarButtons[1].SetSize(14, 16);
 
-        _innerPanel = new TabControlInner(this)
+        _innerPanel = new TabControlInner(this, name: nameof(_innerPanel))
         {
             Dock = Pos.Fill,
         };

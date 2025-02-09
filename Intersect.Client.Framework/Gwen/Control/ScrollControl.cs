@@ -38,7 +38,7 @@ public partial class ScrollControl : Base
         };
         HorizontalScrollBar.BarMoved += HBarMoved;
 
-        _innerPanel = new Base(this)
+        _innerPanel = new Base(this, name: nameof(_innerPanel))
         {
             X = 0,
             Y = 0,

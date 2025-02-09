@@ -313,6 +313,8 @@ public partial class Label : Base, ILabel
         set => _textElement.ColorOverride = value;
     }
 
+    public Padding TextPadding { get; set; }
+
     private string? _textOverride;
     private WrappingBehavior _wrappingBehavior;
     private GameTexture? _tooltipBackground;
@@ -370,20 +372,6 @@ public partial class Label : Base, ILabel
         }
     }
 
-    /// <summary>
-    ///     Text padding.
-    /// </summary>
-    public Padding TextPadding
-    {
-        get => _textPadding;
-        set
-        {
-            _textPadding = value;
-            Invalidate();
-            InvalidateParent();
-        }
-    }
-
     public Color? TextPaddingDebugColor { get; set; }
 
     public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
@@ -404,7 +392,6 @@ public partial class Label : Base, ILabel
         serializedProperties.Add("ClickedTextColor", mClickedTextColor?.ToString());
         serializedProperties.Add("DisabledTextColor", mDisabledTextColor?.ToString());
         serializedProperties.Add(nameof(TextAlign), TextAlign.ToString());
-        serializedProperties.Add(nameof(TextPadding), _textPadding.ToString());
         serializedProperties.Add(nameof(AutoSizeToContents), _autoSizeToContents);
         serializedProperties.Add(nameof(Font), _fontInfo);
         serializedProperties.Add("TextScale", _textElement.GetScale());
@@ -448,11 +435,6 @@ public partial class Label : Base, ILabel
         if (obj["TextAlign"] != null)
         {
             TextAlign = (Pos)Enum.Parse(typeof(Pos), (string)obj["TextAlign"]);
-        }
-
-        if (obj["TextPadding"] != null)
-        {
-            TextPadding = Padding.FromString((string)obj["TextPadding"]);
         }
 
         if (obj["AutoSizeToContents"] != null)
@@ -647,30 +629,31 @@ public partial class Label : Base, ILabel
         var align = TextAlign;
         var textOuterWidth = textElement.OuterWidth;
         var textOuterHeight = textElement.OuterHeight;
-        var textPadding = TextPadding;
+        var textPadding = Padding;
 
         var availableWidth = Width - (textPadding.Left + textPadding.Right);
         var availableHeight = Height - (textPadding.Top + textPadding.Bottom);
+        Rectangle contentBounds = new Rectangle(textPadding.Left, textPadding.Top, availableWidth, availableHeight);
 
         var x = textPadding.Left;
         var y = textPadding.Top;
 
         if (align.HasFlag(Pos.CenterH))
         {
-            x = textPadding.Left + (int)((availableWidth - textOuterWidth) / 2f);
+            x = textPadding.Left + (int)((contentBounds.Width - textOuterWidth) / 2f);
         }
         else if (align.HasFlag(Pos.Right))
         {
-            x = availableWidth - textOuterWidth;
+            x = contentBounds.Right - textOuterWidth;
         }
 
         if (align.HasFlag(Pos.CenterV))
         {
-            y = textPadding.Top + (int)((availableHeight - textOuterHeight) / 2f);
+            y = textPadding.Top + (int)((contentBounds.Height - textOuterHeight) / 2f);
         }
         else if (align.HasFlag(Pos.Bottom))
         {
-            y = availableHeight - textOuterHeight;
+            y = contentBounds.Bottom - textOuterHeight;
         }
 
         textElement.SetPosition(x, y);
@@ -872,5 +855,10 @@ public partial class Label : Base, ILabel
             default:
                 return null;
         }
+    }
+
+    public override string ToString()
+    {
+        return $"Label (Text='{Text}')";
     }
 }

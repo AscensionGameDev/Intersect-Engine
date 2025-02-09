@@ -939,6 +939,9 @@ public static partial class Strings
         public static LocalizedString EnableLayoutHotReloading = @"Enable Experimental Layout Hot Reloading";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString IncludeTextNodesInHover = @"Include Text Nodes in Hover";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString EntitiesDrawn = @"Entities Drawn";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1355,7 +1358,7 @@ public static partial class Strings
         public static LocalizedString TextAlign = @"Text Align";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString TextPadding = @"Text Padding";
+        public static LocalizedString OuterBounds = @"Outer Bounds";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Font = @"Font";

@@ -125,7 +125,7 @@ public partial class Base : IDisposable
     {
     }
 
-    public virtual void DrawWindowCloseButton(Control.Base control, bool depressed, bool hovered, bool disabled)
+    public virtual void DrawWindowCloseButton(CloseButton closeButton, bool depressed, bool hovered, bool disabled)
     {
     }
 
@@ -234,19 +234,6 @@ public partial class Base : IDisposable
             return;
         }
 
-        var padding = control.Padding;
-        if (padding != default)
-        {
-            var paddingRect = new Rectangle(
-                control.Bounds.Left + padding.Left,
-                control.Bounds.Top + padding.Top,
-                control.Bounds.Width - padding.Right - padding.Left,
-                control.Bounds.Height - padding.Bottom - padding.Top
-            );
-
-            DrawRectStroke(paddingRect, control.PaddingOutlineColor);
-        }
-
         var margin = control.Margin;
         if (margin != default)
         {
@@ -260,21 +247,23 @@ public partial class Base : IDisposable
             DrawRectStroke(marginRect, control.MarginOutlineColor);
         }
 
-        if (control is ITextContainer textContainer)
+        var padding = control.Padding;
+        if (padding != default)
         {
-            var textPadding = textContainer.TextPadding;
-            if (textPadding != default)
+            var color = control.PaddingOutlineColor;
+            if (control is ITextContainer textContainer)
             {
-                var color = textContainer.TextPaddingDebugColor ?? DefaultTextPaddingDebugColor;
-                var textPaddingRect = new Rectangle(
-                    control.Bounds.Left + textPadding.Left,
-                    control.Bounds.Top + textPadding.Top,
-                    control.Bounds.Width - textPadding.Right - textPadding.Left,
-                    control.Bounds.Height - textPadding.Bottom - textPadding.Top
-                );
-
-                DrawRectStroke(textPaddingRect, color);
+                color = textContainer.TextPaddingDebugColor ?? DefaultTextPaddingDebugColor;
             }
+
+            var paddingRect = new Rectangle(
+                control.Bounds.Left + padding.Left,
+                control.Bounds.Top + padding.Top,
+                control.Bounds.Width - padding.Right - padding.Left,
+                control.Bounds.Height - padding.Bottom - padding.Top
+            );
+
+            DrawRectStroke(paddingRect, color);
         }
 
         DrawRectStroke(control.Bounds, control.BoundsOutlineColor);

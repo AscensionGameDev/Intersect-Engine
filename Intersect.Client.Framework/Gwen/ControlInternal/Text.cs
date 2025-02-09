@@ -129,11 +129,6 @@ public partial class Text : Base
     protected override void OnVisibilityChanged(object? sender, VisibilityChangedEventArgs eventArgs)
     {
         base.OnVisibilityChanged(sender, eventArgs);
-
-        if (_displayedText == "This feature is experimental and may cause issues when enabled.")
-        {
-            this.ToString();
-        }
     }
 
     /// <summary>
@@ -209,6 +204,8 @@ public partial class Text : Base
         base.Layout(skin);
     }
 
+    public override bool SizeToChildren(bool width = true, bool height = true, bool recursive = false) => SizeToContents();
+
     /// <summary>
     ///     Handler invoked when control's scale changes.
     /// </summary>
@@ -231,17 +228,17 @@ public partial class Text : Base
     /// <summary>
     ///     Sizes the control to its contents.
     /// </summary>
-    private void SizeToContents()
+    private bool SizeToContents()
     {
         if (!HasSkin)
         {
-            return;
+            return false;
         }
 
         var font = Font;
         if (font == default)
         {
-            return;
+            return false;
         }
 
         Point newSize;
@@ -270,16 +267,13 @@ public partial class Text : Base
 
         if (Size == newSize)
         {
-            return;
-        }
-
-        if (Parent is TextBox)
-        {
-            Parent?.ToString();
+            return false;
         }
 
         Size = newSize;
         Invalidate();
+
+        return true;
     }
 
     /// <summary>

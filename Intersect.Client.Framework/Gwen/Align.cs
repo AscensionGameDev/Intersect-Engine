@@ -39,7 +39,7 @@ public static partial class Align
             return;
         }
 
-        control.SetPosition(parent.Padding.Left + control.Margin.Left + control.AlignmentDistance.Left, control.Y);
+        control.SetPosition(parent.Padding.Left + control.Margin.Left + control.AlignmentPadding.Left, control.Y);
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ public static partial class Align
             return;
         }
 
-        var offsetRight = control.Width + control.Margin.Right + control.AlignmentDistance.Right + parent.Padding.Right;
+        var offsetRight = control.Width + control.Margin.Right + control.AlignmentPadding.Right + parent.Padding.Right;
         control.SetPosition(parent.Width - offsetRight, control.Y);
     }
 
@@ -70,7 +70,7 @@ public static partial class Align
             return;
         }
 
-        control.SetPosition(control.X, control.Margin.Top + parent.Padding.Top + control.AlignmentDistance.Top);
+        control.SetPosition(control.X, control.Margin.Top + parent.Padding.Top + control.AlignmentPadding.Top);
     }
 
     /// <summary>
@@ -87,7 +87,7 @@ public static partial class Align
 
         var offsetBottom = control.Height +
                            control.Margin.Bottom +
-                           control.AlignmentDistance.Bottom +
+                           control.AlignmentPadding.Bottom +
                            parent.Padding.Bottom;
         control.SetPosition(control.X, parent.Height - offsetBottom);
     }
@@ -108,7 +108,7 @@ public static partial class Align
         var parentPaddingH = parentPadding.Left + parentPadding.Right;
         var parentPaddingV = parentPadding.Top + parentPadding.Bottom;
 
-        Point offset = new(control.AlignmentDistance.Left, control.AlignmentDistance.Top);
+        Point offset = new(control.AlignmentPadding.Left, control.AlignmentPadding.Top);
         offset.X += parentPadding.Left;
         offset.Y += parentPadding.Top;
 
@@ -135,7 +135,7 @@ public static partial class Align
         var parentPadding = parent.Padding;
         var parentPaddingH = parentPadding.Left + parentPadding.Right;
 
-        Point offset = new(control.AlignmentDistance.Left, control.Y);
+        Point offset = new(control.AlignmentPadding.Left, control.Y);
         offset.X += parentPadding.Left;
 
         var availableWidth = parent.Width - parentPaddingH;
@@ -160,7 +160,7 @@ public static partial class Align
         var parentPadding = parent.Padding;
         var parentPaddingV = parentPadding.Top + parentPadding.Bottom;
 
-        Point offset = new(control.X, control.AlignmentDistance.Top);
+        Point offset = new(control.X, control.AlignmentPadding.Top);
         offset.Y += parentPadding.Top;
 
         var availableHeight = parent.Height - parentPaddingV;

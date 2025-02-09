@@ -43,14 +43,13 @@ public partial class MainMenuWindow
         );
 
         AddAlignment(Framework.Gwen.Alignments.Center);
-        AlignmentDistance = new Padding(0, 40, 0, 0);
+        AlignmentPadding = new Padding(0, 40, 0, 0);
         ProcessAlignments();
 
         TitleLabel.TextColor = Color.White;
         TitleLabel.FontName = "sourcesansproblack";
         TitleLabel.FontSize = 12;
         TitleLabel.Padding = new Padding(8, 4, 8, 4);
-        TitleLabel.TextPadding = new Padding(8, 4, 8, 4);
         TitleLabel.SizeToContents();
 
         Titlebar.SetBounds(0, 0, Width, TitleLabel.Height);
@@ -63,9 +62,9 @@ public partial class MainMenuWindow
 
             button.FontName = "sourcesansproblack";
             button.FontSize = 12;
+            button.Padding = new Padding(0, 8, 0, 0);
             button.TextColor = Color.White;
             button.TextColorOverride = Color.White;
-            button.TextPadding = new Padding(0, 8, 0, 0);
             button.SetHoverSound("octave-tap-resonant.wav");
 
             var buttonName = button.Name;

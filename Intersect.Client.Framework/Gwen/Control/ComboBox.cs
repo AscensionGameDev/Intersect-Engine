@@ -255,15 +255,6 @@ public partial class ComboBox : Button
         }
     }
 
-    /// <summary>
-    ///     Renders the control using specified skin.
-    /// </summary>
-    /// <param name="skin">Skin to use.</param>
-    protected override void Render(Skin.Base skin)
-    {
-        skin.DrawComboBox(this, IsActive, IsOpen);
-    }
-
     public override void Disable()
     {
         base.Disable();
@@ -344,6 +335,18 @@ public partial class ComboBox : Button
         _arrowIcon.Position(Pos.Right | Pos.CenterV, 4, 0);
 
         base.Layout(skin);
+    }
+
+    /// <summary>
+    ///     Renders the control using specified skin.
+    /// </summary>
+    /// <param name="skin">Skin to use.</param>
+    protected override void Render(Skin.Base skin)
+    {
+        // skin.DrawRectFill(OuterBounds, Color.FromArgb(0x7f, 0xff, 0, 0));
+        // skin.DrawRectFill(Bounds with { X = 0, Y = 0 }, Color.FromArgb(0xff, 0, 0xff, 0));
+        // skin.DrawRectFill(InnerBounds, Color.FromArgb(0x7f, 0, 0, 0xff));
+        skin.DrawComboBox(this, IsActive, IsOpen);
     }
 
     /// <summary>

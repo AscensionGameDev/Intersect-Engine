@@ -32,7 +32,7 @@ public partial class TreeControl : TreeNode
 
         mMultiSelect = false;
 
-        _scrollControl = new ScrollControl(this)
+        _scrollControl = new ScrollControl(this, name: nameof(_innerPanel))
         {
             Dock = Pos.Fill,
             Margin = Margin.One,

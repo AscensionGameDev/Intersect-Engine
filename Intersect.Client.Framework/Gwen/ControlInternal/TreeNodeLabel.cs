@@ -18,7 +18,7 @@ public partial class TreeNodeLabel : Button
         TextAlign = Pos.Left | Pos.CenterV;
         ShouldDrawBackground = false;
         Height = 16;
-        TextPadding = new Padding(3, 0, 3, 0);
+        Padding = new Padding(3, 0, 3, 0);
     }
 
     /// <summary>

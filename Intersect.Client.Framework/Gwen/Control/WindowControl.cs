@@ -51,6 +51,8 @@ public partial class WindowControl : ResizableControl
 
     private Base mOldParent;
 
+    protected Base InnerPanel => _innerPanel ?? throw new InvalidOperationException("Windows must have inner panels");
+
     public ImagePanel IconContainer => _iconContainer;
 
     public Dragger Titlebar => _titlebar;
@@ -88,7 +90,7 @@ public partial class WindowControl : ResizableControl
             Dock = Pos.Top,
             Height = 24,
             Margin = default,
-            Padding = default,
+            Padding = new Padding(4, 0, 0, 0),
             Target = this,
         };
 
@@ -96,7 +98,7 @@ public partial class WindowControl : ResizableControl
         {
             Dock = Pos.Left,
             IsVisible = false,
-            Margin = new Margin(4, 4, 0, 4),
+            Margin = new Margin(0, 4, 0, 4),
             MaximumSize = new Point(24, 24),
             RestrictToParent = false,
             Size = new Point(24, 24),
@@ -122,22 +124,22 @@ public partial class WindowControl : ResizableControl
             Dock = Pos.Fill | Pos.CenterV,
             Font = titleLabelFont,
             MouseInputEnabled = false,
+            Padding = new Padding(4, 4),
             Text = title,
             TextAlign = Pos.Left | Pos.Bottom,
             TextColor = Skin.Colors.Window.TitleInactive,
-            TextPadding = new Padding(8, 0, 8, 0),
         };
 
         _closeButton = new CloseButton(_titlebar, this, name: nameof(CloseButton))
         {
-            Alignment = [Alignments.Bottom, Alignments.Right],
+            Dock = Pos.Right,
             IsTabable = false,
             Size = new Point(24, 24),
         };
         _closeButton.Clicked += CloseButtonPressed;
 
         // Create a blank content control, dock it to the top - Should this be a ScrollControl?
-        _innerPanel = new Base(this);
+        _innerPanel = new Base(this, name: nameof(_innerPanel));
         _innerPanel.Dock = Pos.Fill;
 
         ClampMovement = true;
@@ -226,6 +228,24 @@ public partial class WindowControl : ResizableControl
     /// If the shadow under the window should be drawn.
     /// </summary>
     public bool DrawShadow { get; set; } = true;
+
+    protected override void Layout(Skin.Base skin)
+    {
+        base.Layout(skin);
+
+        _titlebar.SizeToChildren(width: false, height: true, recursive: true);
+        var size = _titlebar.Height;
+        if (_innerPanel is { } innerPanel)
+        {
+            innerPanel.MinimumSize = innerPanel.MinimumSize with { Y = InnerHeight - size };
+        }
+        _closeButton.Size = new Point(size, size);
+    }
+
+    internal override void DoRender(Skin.Base skin)
+    {
+        base.DoRender(skin);
+    }
 
     public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {

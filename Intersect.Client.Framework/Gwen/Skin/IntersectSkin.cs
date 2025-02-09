@@ -118,6 +118,26 @@ public class IntersectSkin : TexturedBase
         mTextures.CheckBox.Disabled.Box = new Single(_texture, 84, 66, 22, 22);
         mTextures.CheckBox.Disabled.Fill = new Single(_texture, 106, 66, 22, 22);
 
+        mTextures.Input.Button.Normal = new Bordered(_texture, 48, 0, 12, 12, Margin.Four);
+        mTextures.Input.Button.Disabled = new Bordered(_texture, 48, 12, 12, 12, Margin.Four);
+        mTextures.Input.Button.Hovered = new Bordered(_texture, 48, 24, 12, 12, Margin.Four);
+        mTextures.Input.Button.Active = new Bordered(_texture, 48, 36, 12, 12, Margin.Four);
+
+        mTextures.Input.ComboBox.Normal = new Bordered(_texture, 385, 336, 126, 31, new Margin(8, 8, 32, 8));
+        mTextures.Input.ComboBox.Hover = new Bordered(_texture, 385, 336 + 32, 126, 31, new Margin(8, 8, 32, 8));
+        mTextures.Input.ComboBox.Down = new Bordered(_texture, 385, 336 + 64, 126, 31, new Margin(8, 8, 32, 8));
+        mTextures.Input.ComboBox.Disabled = new Bordered(_texture, 385, 336 + 96, 126, 31, new Margin(8, 8, 32, 8));
+
+        mTextures.Input.Slider.H.Normal = new Bordered(_texture, 176, 0, 7, 7, new Margin(3, 2, 3, 4));
+        mTextures.Input.Slider.H.Disabled = new Bordered(_texture, 176, 8, 7, 7, new Margin(3, 2, 3, 4));
+        mTextures.Input.Slider.H.Hover = new Bordered(_texture, 176, 16, 7, 7, new Margin(3, 2, 3, 4));
+        mTextures.Input.Slider.H.Active = new Bordered(_texture, 176, 24, 7, 7, new Margin(3, 2, 3, 4));
+
+        mTextures.Input.Slider.V.Normal = new Bordered(_texture, 192, 0, 7, 7, new Margin(3, 2, 3, 4));
+        mTextures.Input.Slider.V.Disabled = new Bordered(_texture, 192, 8, 7, 7, new Margin(3, 2, 3, 4));
+        mTextures.Input.Slider.V.Hover = new Bordered(_texture, 192, 16, 7, 7, new Margin(3, 2, 3, 4));
+        mTextures.Input.Slider.V.Active = new Bordered(_texture, 192, 24, 7, 7, new Margin(3, 2, 3, 4));
+
         mTextures.Menu.Strip = new Bordered(_texture, 0, 128, 127, 21, Margin.One);
         mTextures.Menu.BackgroundWithMargin = new Bordered(_texture, 96, 96, 32, 16, new Margin(24, 4, 4, 4));
         mTextures.Menu.Background = new Bordered(_texture, 96, 112, 16, 16, Margin.Four);
@@ -139,21 +159,6 @@ public class IntersectSkin : TexturedBase
         mTextures.RadioButton.Hovered.Fill = new Single(_texture, 150, 44, 22, 22);
         mTextures.RadioButton.Disabled.Box = new Single(_texture, 128, 66, 22, 22);
         mTextures.RadioButton.Disabled.Fill = new Single(_texture, 150, 66, 22, 22);
-
-        mTextures.Input.Button.Normal = new Bordered(_texture, 48, 0, 12, 12, Margin.Four);
-        mTextures.Input.Button.Disabled = new Bordered(_texture, 48, 12, 12, 12, Margin.Four);
-        mTextures.Input.Button.Hovered = new Bordered(_texture, 48, 24, 12, 12, Margin.Four);
-        mTextures.Input.Button.Active = new Bordered(_texture, 48, 36, 12, 12, Margin.Four);
-
-        mTextures.Input.Slider.H.Normal = new Bordered(_texture, 176, 0, 7, 7, new Margin(3, 2, 3, 4));
-        mTextures.Input.Slider.H.Disabled = new Bordered(_texture, 176, 8, 7, 7, new Margin(3, 2, 3, 4));
-        mTextures.Input.Slider.H.Hover = new Bordered(_texture, 176, 16, 7, 7, new Margin(3, 2, 3, 4));
-        mTextures.Input.Slider.H.Active = new Bordered(_texture, 176, 24, 7, 7, new Margin(3, 2, 3, 4));
-
-        mTextures.Input.Slider.V.Normal = new Bordered(_texture, 192, 0, 7, 7, new Margin(3, 2, 3, 4));
-        mTextures.Input.Slider.V.Disabled = new Bordered(_texture, 192, 8, 7, 7, new Margin(3, 2, 3, 4));
-        mTextures.Input.Slider.V.Hover = new Bordered(_texture, 192, 16, 7, 7, new Margin(3, 2, 3, 4));
-        mTextures.Input.Slider.V.Active = new Bordered(_texture, 192, 24, 7, 7, new Margin(3, 2, 3, 4));
 
         mTextures.Scroller.TrackV = new Bordered(_texture, 176, 32, 15, 15, Margin.Four);
         mTextures.Scroller.BarV.Normal = new Bordered(_texture, 192, 32, 15, 15, Margin.Four);
@@ -197,10 +202,10 @@ public class IntersectSkin : TexturedBase
         mTextures.Window.Inactive = new Bordered(_texture, 16, 24, 16, 16, Margin.Four);
         mTextures.Window.InactiveTitleBar = new Bordered(_texture, 16, 0, 16, 24, Margin.Four);
 
-        mTextures.Window.Close = new Single(_texture, 60, 0, 24, 24);
-        mTextures.Window.CloseDown = new Single(_texture, 60, 24, 24, 24);
-        mTextures.Window.CloseDisabled = new Single(_texture, 60, 48, 24, 24);
-        mTextures.Window.CloseHover = new Single(_texture, 60, 72, 24, 24);
+        mTextures.Window.CloseButton.Normal = new FivePatch(_texture, 60, 0, 24, 24, Margin.Two, Margin.Two);
+        mTextures.Window.CloseButton.Disabled = new FivePatch(_texture, 60, 48, 24, 24, Margin.Two, Margin.Two);
+        mTextures.Window.CloseButton.Hovered = new FivePatch(_texture, 60, 72, 24, 24, Margin.Two, Margin.Two);
+        mTextures.Window.CloseButton.Active = new FivePatch(_texture, 60, 24, 24, 24, Margin.Two, Margin.Two);
     }
 
     #endregion

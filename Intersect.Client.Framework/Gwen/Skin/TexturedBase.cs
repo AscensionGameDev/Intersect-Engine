@@ -41,6 +41,14 @@ public partial struct SkinTextures
 
     }
 
+    public partial struct _FivePatchButton
+    {
+        public FivePatch Normal;
+        public FivePatch Disabled;
+        public FivePatch Hovered;
+        public FivePatch Active;
+    }
+
     public partial struct _Window
     {
 
@@ -52,13 +60,7 @@ public partial struct SkinTextures
 
         public Bordered InactiveTitleBar;
 
-        public Single Close;
-
-        public Single CloseHover;
-
-        public Single CloseDown;
-
-        public Single CloseDisabled;
+        public _FivePatchButton CloseButton;
 
     }
 
@@ -598,10 +600,10 @@ public partial class TexturedBase : Skin.Base
         mTextures.Tab.Right.Inactive = new Bordered(_texture, 96 + 128, 384, 31, 63, Margin.Eight);
         mTextures.Tab.HeaderBar = new Bordered(_texture, 128, 352, 127, 31, Margin.Four);
 
-        mTextures.Window.Close = new Single(_texture, 0, 224, 24, 24);
-        mTextures.Window.CloseHover = new Single(_texture, 32, 224, 24, 24);
-        mTextures.Window.CloseHover = new Single(_texture, 64, 224, 24, 24);
-        mTextures.Window.CloseHover = new Single(_texture, 96, 224, 24, 24);
+        mTextures.Window.CloseButton.Normal = new Bordered(_texture, 0, 224, 24, 24, default);
+        mTextures.Window.CloseButton.Hovered = new Bordered(_texture, 64, 224, 24, 24, default);
+        mTextures.Window.CloseButton.Disabled = new Bordered(_texture, 32, 224, 24, 24, default);
+        mTextures.Window.CloseButton.Active = new Bordered(_texture, 96, 224, 24, 24, default);
 
         mTextures.Scroller.TrackV = new Bordered(_texture, 384, 208, 15, 127, Margin.Four);
         mTextures.Scroller.BarV.Normal = new Bordered(_texture, 384 + 16, 208, 15, 127, Margin.Four);
@@ -645,10 +647,10 @@ public partial class TexturedBase : Skin.Base
         mTextures.Input.ListBox.OddLine = new Bordered(_texture, 352, 288, 32, 32, Margin.Six);
         mTextures.Input.ListBox.OddLineSelected = new Bordered(_texture, 320, 288, 32, 32, Margin.Six);
 
-        mTextures.Input.ComboBox.Normal = new Bordered(_texture, 384, 336, 127, 31, new Margin(8, 8, 32, 8));
-        mTextures.Input.ComboBox.Hover = new Bordered(_texture, 384, 336 + 32, 127, 31, new Margin(8, 8, 32, 8));
-        mTextures.Input.ComboBox.Down = new Bordered(_texture, 384, 336 + 64, 127, 31, new Margin(8, 8, 32, 8));
-        mTextures.Input.ComboBox.Disabled = new Bordered(_texture, 384, 336 + 96, 127, 31, new Margin(8, 8, 32, 8));
+        mTextures.Input.ComboBox.Normal = new Bordered(_texture, 385, 336, 127, 31, new Margin(8, 8, 32, 8));
+        mTextures.Input.ComboBox.Hover = new Bordered(_texture, 385, 336 + 32, 127, 31, new Margin(8, 8, 32, 8));
+        mTextures.Input.ComboBox.Down = new Bordered(_texture, 385, 336 + 64, 127, 31, new Margin(8, 8, 32, 8));
+        mTextures.Input.ComboBox.Disabled = new Bordered(_texture, 385, 336 + 96, 127, 31, new Margin(8, 8, 32, 8));
 
         mTextures.Input.ComboBox.Button.Normal = new Single(_texture, 496, 272, 15, 15);
         mTextures.Input.ComboBox.Button.Hover = new Single(_texture, 496, 272 + 16, 15, 15);
@@ -1369,8 +1371,8 @@ public partial class TexturedBase : Skin.Base
 
         Renderer.DrawColor = scrollBarBar.RenderColor;
 
-        
-        
+
+
         if (scrollBarBar.IsVertical)
         {
             //Draw Top Left Corner
@@ -2325,61 +2327,56 @@ public partial class TexturedBase : Skin.Base
         Renderer.DrawFilledRect(rect);
     }
 
-    public override void DrawWindowCloseButton(Control.Base control, bool depressed, bool hovered, bool disabled)
+    public override void DrawWindowCloseButton(CloseButton closeButton, bool depressed, bool hovered, bool disabled)
     {
-        if (!(control is Button button))
-        {
-            return;
-        }
-
         GameTexture renderImg = null;
-        if (disabled && button.GetStateTexture(ComponentState.Disabled) != null)
+        if (disabled && closeButton.GetStateTexture(ComponentState.Disabled) != null)
         {
-            renderImg = button.GetStateTexture(ComponentState.Disabled);
+            renderImg = closeButton.GetStateTexture(ComponentState.Disabled);
         }
-        else if (depressed && button.GetStateTexture(ComponentState.Active) != null)
+        else if (depressed && closeButton.GetStateTexture(ComponentState.Active) != null)
         {
-            renderImg = button.GetStateTexture(ComponentState.Active);
+            renderImg = closeButton.GetStateTexture(ComponentState.Active);
         }
-        else if (hovered && button.GetStateTexture(ComponentState.Hovered) != null)
+        else if (hovered && closeButton.GetStateTexture(ComponentState.Hovered) != null)
         {
-            renderImg = button.GetStateTexture(ComponentState.Hovered);
+            renderImg = closeButton.GetStateTexture(ComponentState.Hovered);
         }
-        else if (button.GetStateTexture(ComponentState.Normal) != null)
+        else if (closeButton.GetStateTexture(ComponentState.Normal) != null)
         {
-            renderImg = button.GetStateTexture(ComponentState.Normal);
+            renderImg = closeButton.GetStateTexture(ComponentState.Normal);
         }
 
         if (renderImg != null)
         {
-            Renderer.DrawColor = button.RenderColor;
-            Renderer.DrawTexturedRect(renderImg, button.RenderBounds, button.RenderColor);
+            Renderer.DrawColor = closeButton.RenderColor;
+            Renderer.DrawTexturedRect(renderImg, closeButton.RenderBounds, closeButton.RenderColor);
 
             return;
         }
 
         if (disabled)
         {
-            mTextures.Window.CloseDisabled.Draw(Renderer, button.RenderBounds);
+            mTextures.Window.CloseButton.Disabled.Draw(Renderer, closeButton.RenderBounds, closeButton.RenderColor);
 
             return;
         }
 
         if (depressed)
         {
-            mTextures.Window.CloseDown.Draw(Renderer, button.RenderBounds);
+            mTextures.Window.CloseButton.Active.Draw(Renderer, closeButton.RenderBounds, closeButton.RenderColor);
 
             return;
         }
 
         if (hovered)
         {
-            mTextures.Window.CloseHover.Draw(Renderer, button.RenderBounds);
+            mTextures.Window.CloseButton.Hovered.Draw(Renderer, closeButton.RenderBounds, closeButton.RenderColor);
 
             return;
         }
 
-        mTextures.Window.Close.Draw(Renderer, button.RenderBounds);
+        mTextures.Window.CloseButton.Normal.Draw(Renderer, closeButton.RenderBounds, closeButton.RenderColor);
     }
 
     public override void DrawSliderButton(SliderBar sliderBar)

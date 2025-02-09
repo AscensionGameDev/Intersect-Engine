@@ -183,16 +183,16 @@ public partial class Base : IDisposable, ITextHelper
     /// <summary>
     ///     Draws textured rectangle.
     /// </summary>
-    /// <param name="t">Texture to use.</param>
-    /// <param name="targetRect">Rectangle bounds.</param>
+    /// <param name="texture">Texture to use.</param>
+    /// <param name="targetBounds">Rectangle bounds.</param>
     /// <param name="u1">Texture coordinate u1.</param>
     /// <param name="v1">Texture coordinate v1.</param>
     /// <param name="u2">Texture coordinate u2.</param>
     /// <param name="v2">Texture coordinate v2.</param>
     public virtual void DrawTexturedRect(
-        GameTexture? t,
-        Rectangle targetRect,
-        Color clr,
+        GameTexture? texture,
+        Rectangle targetBounds,
+        Color color,
         float u1 = 0,
         float v1 = 0,
         float u2 = 1,

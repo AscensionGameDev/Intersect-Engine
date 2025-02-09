@@ -1,5 +1,7 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Localization;
@@ -8,30 +10,60 @@ using Newtonsoft.Json;
 
 namespace Intersect.Client.Interface.Menu;
 
-public partial class CreditsWindow : ImagePanel, IMainMenuWindow
+public partial class CreditsWindow : Window, IMainMenuWindow
 {
-    private readonly MainMenu _mainMenu;
-    private readonly RichLabel _richLabel;
+    private readonly GameFont? _defaultFont;
 
-    public CreditsWindow(Canvas parent, MainMenu mainMenu) : base(parent, "CreditsWindow")
+    private readonly MainMenu _mainMenu;
+    private readonly RichLabel _credits;
+    private readonly Button _backButton;
+    private readonly ScrollControl _creditsScroller;
+
+    public CreditsWindow(Canvas parent, MainMenu mainMenu) : base(
+        parent,
+        title: Strings.Credits.Title,
+        modal: false,
+        name: nameof(CreditsWindow)
+    )
     {
         _mainMenu = mainMenu;
 
-        _ = new Label(this, "CreditsHeader")
+        Alignment = [Alignments.Center];
+        MinimumSize = new Point(x: 640, y: 400);
+        IsResizable = false;
+        IsClosable = false;
+
+        Titlebar.MouseInputEnabled = false;
+
+        TitleLabel.FontSize = 14;
+        TitleLabel.TextColorOverride = Color.White;
+
+        _defaultFont = GameContentManager.Current.GetFont(name: TitleLabel.FontName, 12);
+
+        _creditsScroller = new ScrollControl(this, nameof(_creditsScroller))
         {
-            Text = Strings.Credits.Title,
+            Dock = Pos.Fill,
+        };
+        _creditsScroller.EnableScroll(false, true);
+
+        _credits = new RichLabel(_creditsScroller, nameof(_credits))
+        {
+            Dock = Pos.Fill,
+            Font = _defaultFont,
+            Padding = new Padding(16),
         };
 
-        var creditsContent = new ScrollControl(this, "CreditsScrollview");
-        creditsContent.EnableScroll(false, true);
-
-        _richLabel = new RichLabel(creditsContent, "CreditsLabel");
-
-        var btnBack = new Button(this, "BackButton")
+        _backButton = new Button(this, nameof(_backButton))
         {
+            Alignment = [Alignments.CenterH],
+            AutoSizeToContents = true,
+            Dock = Pos.Bottom | Pos.CenterH,
+            Font = _defaultFont,
+            Margin = new Margin(0, 8),
+            Padding = new Padding(8, 4),
             Text = Strings.Credits.Back,
         };
-        btnBack.Clicked += BackBtn_Clicked;
+        _backButton.Clicked += BackBtn_Clicked;
 
         LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
     }
@@ -42,10 +74,19 @@ public partial class CreditsWindow : ImagePanel, IMainMenuWindow
         _mainMenu.Show();
     }
 
-    public override void Show()
+    protected override void RecurseLayout(Framework.Gwen.Skin.Base skin)
     {
-        base.Show();
-        _richLabel.ClearText();
+        base.RecurseLayout(skin);
+    }
+
+    protected override void EnsureInitialized()
+    {
+        if (_credits.FormattedLabels.Count > 0)
+        {
+            return;
+        }
+
+        _credits.ClearText();
         var credits = new Credits();
         var creditsFile = Path.Combine(ClientConfiguration.ResourcesDirectory, "credits.json");
 
@@ -71,14 +112,12 @@ public partial class CreditsWindow : ImagePanel, IMainMenuWindow
 
         foreach (var line in credits?.Lines ?? [])
         {
-            if (line.Text.Trim().Length == 0)
+            var lineText = line.Text.Trim();
+            if (lineText.Length > 0)
             {
-                _richLabel.AddLineBreak();
-            }
-            else
-            {
-                _richLabel.AddText(
-                    line.Text,
+                var lineFont = GameContentManager.Current.GetFont(line.Font, line.Size);
+                _credits.AddText(
+                    lineText,
                     new Color(
                         line.TextColor?.A ?? 255,
                         line.TextColor?.R ?? 255,
@@ -86,13 +125,13 @@ public partial class CreditsWindow : ImagePanel, IMainMenuWindow
                         line.TextColor?.B ?? 255
                     ),
                     line.GetAlignment(),
-                    GameContentManager.Current.GetFont(line.Font, line.Size)
+                    lineFont
                 );
-
-                _richLabel.AddLineBreak();
             }
+
+            _credits.AddLineBreak();
         }
 
-        _ = _richLabel.SizeToChildren(false, true);
+        _ = _credits.SizeToChildren(false, true);
     }
 }

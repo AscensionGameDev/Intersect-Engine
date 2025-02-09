@@ -654,11 +654,6 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
 
     protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
     {
-        if (Bounds.Height == 800)
-        {
-            Bounds.ToString();
-        }
-
         base.OnBoundsChanged(oldBounds, newBounds);
     }
 

@@ -39,8 +39,8 @@ public partial class LabeledCheckBox : Base
             Dock = Pos.Fill | Pos.CenterV,
             InheritParentEnablementProperties = true,
             IsTabable = false,
+            Padding = new Padding(2/*, 0, 0, 0*/),
             TextAlign = Pos.CenterV | Pos.Left,
-            TextPadding = new Padding(2/*, 0, 0, 0*/),
         };
         _label.Clicked += delegate(Base control, MouseButtonState _)
         {

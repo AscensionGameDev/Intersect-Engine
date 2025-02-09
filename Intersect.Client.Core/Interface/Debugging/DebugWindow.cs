@@ -21,10 +21,12 @@ internal sealed partial class DebugWindow : Window
     private readonly GameFont? _defaultFont;
     private bool _wasParentDrawDebugOutlinesEnabled;
     private bool _drawDebugOutlinesEnabled;
+    private ComponentStateFilters _componentStateFilters = ComponentStateFilters.IncludeMouseInputDisabled;
 
     public DebugWindow(Base parent) : base(parent, Strings.Debug.Title, false, nameof(DebugWindow))
     {
         _generators = [];
+
         DisableResizing();
         MinimumSize = new Point(320, 320);
         Size = new Point(400, 600);
@@ -39,6 +41,7 @@ internal sealed partial class DebugWindow : Window
         TabInfo = Tabs.AddPage(Strings.Debug.TabLabelInfo, nameof(TabInfo));
         CheckboxDrawDebugOutlines = CreateInfoCheckboxDrawDebugOutlines(TabInfo.Page);
         CheckboxEnableLayoutHotReloading = CreateInfoCheckboxEnableLayoutHotReloading(TabInfo.Page);
+        CheckboxIncludeTextNodesInHover = CreateInfoCheckboxIncludeTextNodesInHover(TabInfo.Page);
         ButtonShutdownServer = CreateInfoButtonShutdownServer(TabInfo.Page);
         ButtonShutdownServerAndExit = CreateInfoButtonShutdownServerAndExit(TabInfo.Page);
         TableDebugStats = CreateInfoTableDebugStats(TabInfo.Page);
@@ -144,6 +147,8 @@ internal sealed partial class DebugWindow : Window
 
     private LabeledCheckBox CheckboxEnableLayoutHotReloading { get; }
 
+    private LabeledCheckBox CheckboxIncludeTextNodesInHover { get; }
+
     private Button ButtonShutdownServer { get; }
 
     private Button ButtonShutdownServerAndExit { get; }
@@ -152,7 +157,7 @@ internal sealed partial class DebugWindow : Window
 
     protected override void EnsureInitialized()
     {
-        // LoadJsonUi(UI.Debug, Graphics.Renderer?.GetResolutionString());
+        LoadJsonUi(UI.Debug, Graphics.Renderer?.GetResolutionString());
 
         foreach (var generator in _generators)
         {
@@ -237,10 +242,35 @@ internal sealed partial class DebugWindow : Window
             TextColorOverride = Color.Yellow,
         };
 
-        checkbox.CheckChanged += (sender, args) => Globals.ContentManager.ContentWatcher.Enabled = checkbox.IsChecked;
+        checkbox.CheckChanged += (_, _) => Globals.ContentManager.ContentWatcher.Enabled = checkbox.IsChecked;
 
         checkbox.SetToolTipText(Strings.Internals.ExperimentalFeatureTooltip);
         checkbox.TooltipFont = Skin.DefaultFont;
+
+        return checkbox;
+    }
+
+    private LabeledCheckBox CreateInfoCheckboxIncludeTextNodesInHover(Base parent)
+    {
+        var checkbox = new LabeledCheckBox(parent, nameof(CheckboxIncludeTextNodesInHover))
+        {
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            IsChecked = _componentStateFilters.HasFlag(ComponentStateFilters.IncludeText),
+            Text = Strings.Debug.IncludeTextNodesInHover,
+        };
+
+        checkbox.CheckChanged += (_, _) =>
+        {
+            if (_componentStateFilters.HasFlag(ComponentStateFilters.IncludeText))
+            {
+                _componentStateFilters &= ~ComponentStateFilters.IncludeText;
+            }
+            else
+            {
+                _componentStateFilters |= ComponentStateFilters.IncludeText;
+            }
+        };
 
         return checkbox;
     }
@@ -255,7 +285,7 @@ internal sealed partial class DebugWindow : Window
             Text = Strings.Debug.ShutdownServer,
         };
 
-        button.Clicked += (sender, args) =>
+        button.Clicked += (_, _) =>
         {
             // TODO: Implement
         };
@@ -273,7 +303,7 @@ internal sealed partial class DebugWindow : Window
             Text = Strings.Debug.ShutdownServerAndExit,
         };
 
-        button.Clicked += (sender, args) =>
+        button.Clicked += (_, _) =>
         {
             // TODO: Implement
         };
@@ -399,12 +429,13 @@ internal sealed partial class DebugWindow : Window
         table.AddRow(Strings.Internals.Color, name: "ColorRow").Listen(controlUnderCursorProvider, 4);
         table.AddRow(Strings.Internals.ColorOverride, name: "ColorOverrideRow").Listen(controlUnderCursorProvider, 5);
         table.AddRow(Strings.Internals.InnerBounds, name: "InnerBoundsRow").Listen(controlUnderCursorProvider, 6);
-        table.AddRow(Strings.Internals.Margin, name: "MarginRow").Listen(controlUnderCursorProvider, 7);
-        table.AddRow(Strings.Internals.Padding, name: "PaddingRow").Listen(controlUnderCursorProvider, 8);
-        table.AddRow(Strings.Internals.Dock, name: "Dock").Listen(controlUnderCursorProvider, 9);
-        table.AddRow(Strings.Internals.Alignment, name: "Alignment").Listen(controlUnderCursorProvider, 10);
-        table.AddRow(Strings.Internals.TextAlign, name: "TextAlign").Listen(controlUnderCursorProvider, 11);
-        table.AddRow(Strings.Internals.TextPadding, name: "TextPadding").Listen(controlUnderCursorProvider, 12);
+        table.AddRow(Strings.Internals.OuterBounds, name: "OuterBounds").Listen(controlUnderCursorProvider, 7);
+        table.AddRow(Strings.Internals.Margin, name: "MarginRow").Listen(controlUnderCursorProvider, 8);
+        table.AddRow(Strings.Internals.Padding, name: "PaddingRow").Listen(controlUnderCursorProvider, 9);
+        table.AddRow(Strings.Internals.Dock, name: "Dock").Listen(controlUnderCursorProvider, 10);
+        table.AddRow(Strings.Internals.Alignment, name: "Alignment").Listen(controlUnderCursorProvider, 11);
+        table.AddRow(Strings.Internals.Alignment, name: "Alignment").Listen(controlUnderCursorProvider, 11);
+        table.AddRow(Strings.Internals.TextAlign, name: "TextAlign").Listen(controlUnderCursorProvider, 12);
         table.AddRow(Strings.Internals.Font, name: "Font").Listen(controlUnderCursorProvider, 13);
         table.AddRow(Strings.Internals.AutoSizeToContents, name: "AutoSizeToContents").Listen(controlUnderCursorProvider, 14);
         _generators.Add(controlUnderCursorProvider.Generator);
@@ -425,9 +456,9 @@ internal sealed partial class DebugWindow : Window
 
     private partial class ControlUnderCursorProvider : ITableDataProvider
     {
-        private readonly Base _owner;
+        private readonly DebugWindow _owner;
 
-        public ControlUnderCursorProvider(Base owner)
+        public ControlUnderCursorProvider(DebugWindow owner)
         {
             _owner = owner;
             Generator = new CancellableGenerator<Base?>(CreateControlUnderCursorGenerator);
@@ -465,8 +496,7 @@ internal sealed partial class DebugWindow : Window
             cancellationToken.ThrowIfCancellationRequested();
         }
 
-        private static Base? CreateValue(Task _) =>
-            Interface.FindComponentUnderCursor(ComponentStateFilters.IncludeMouseInputDisabled);
+        private Base? CreateValue(Task _) => Interface.FindComponentUnderCursor(_owner._componentStateFilters);
 
         private void HandleValue(Base? component)
         {
@@ -515,29 +545,29 @@ internal sealed partial class DebugWindow : Window
             );
             DataChanged?.Invoke(
                 this,
-                new TableDataChangedEventArgs(7, 1, default, component?.Margin.ToString() ?? string.Empty)
+                new TableDataChangedEventArgs(7, 1, default, component?.OuterBounds.ToString() ?? string.Empty)
             );
             DataChanged?.Invoke(
                 this,
-                new TableDataChangedEventArgs(8, 1, default, component?.Padding.ToString() ?? string.Empty)
+                new TableDataChangedEventArgs(8, 1, default, component?.Margin.ToString() ?? string.Empty)
             );
             DataChanged?.Invoke(
                 this,
-                new TableDataChangedEventArgs(9, 1, default, component?.Dock.ToString() ?? string.Empty)
+                new TableDataChangedEventArgs(9, 1, default, component?.Padding.ToString() ?? string.Empty)
             );
             DataChanged?.Invoke(
                 this,
-                new TableDataChangedEventArgs(10, 1, default, string.Join(", ", component?.Alignment ?? []))
+                new TableDataChangedEventArgs(10, 1, default, component?.Dock.ToString() ?? string.Empty)
+            );
+            DataChanged?.Invoke(
+                this,
+                new TableDataChangedEventArgs(11, 1, default, string.Join(", ", component?.Alignment ?? []))
             );
 
             var label = component as Label;
             DataChanged?.Invoke(
                 this,
-                new TableDataChangedEventArgs(11, 1, default, label?.TextAlign.ToString() ?? string.Empty)
-            );
-            DataChanged?.Invoke(
-                this,
-                new TableDataChangedEventArgs(12, 1, default, label?.TextPadding.ToString() ?? string.Empty)
+                new TableDataChangedEventArgs(12, 1, default, label?.TextAlign.ToString() ?? string.Empty)
             );
             DataChanged?.Invoke(
                 this,
