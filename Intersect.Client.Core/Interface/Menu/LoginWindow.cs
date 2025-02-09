@@ -34,8 +34,12 @@ public partial class LoginWindow : Window, IMainMenuWindow
     private string _savedPass = string.Empty;
     private readonly Label _passwordLabel;
 
-    //Init
-    public LoginWindow(Canvas parent, MainMenu mainMenu) : base(parent, title: Strings.LoginWindow.Title, modal: false, name: nameof(LoginWindow))
+    public LoginWindow(Canvas parent, MainMenu mainMenu) : base(
+        parent,
+        title: Strings.LoginWindow.Title,
+        modal: false,
+        name: nameof(LoginWindow)
+    )
     {
         //Assign References
         _mainMenu = mainMenu;
@@ -142,9 +146,7 @@ public partial class LoginWindow : Window, IMainMenuWindow
         //Login Save Pass Checkbox
         _savePasswordCheckbox = new LabeledCheckBox(_inputOptionsPanel, nameof(_savePasswordCheckbox))
         {
-            Dock = Pos.Right | Pos.CenterV,
-            Font = _defaultFont,
-            Text = Strings.LoginWindow.SavePassword,
+            Dock = Pos.Right | Pos.CenterV, Font = _defaultFont, Text = Strings.LoginWindow.SavePassword,
         };
 
         //Login - Send Login Button
