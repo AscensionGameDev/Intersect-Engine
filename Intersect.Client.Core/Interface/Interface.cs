@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Graphics;
@@ -17,16 +18,11 @@ namespace Intersect.Client.Interface;
 public static partial class Interface
 {
 
-    private static readonly Queue<KeyValuePair<string, string>> _errorMessages = new();
+    private static readonly ConcurrentQueue<Alert> _pendingErrorMessages = new();
 
-    public static bool TryDequeueErrorMessage(out KeyValuePair<string, string> message) => _errorMessages.TryDequeue(out message);
-
-    public static void ShowError(string message, string? header = default)
-    {
-        _errorMessages.Enqueue(new KeyValuePair<string, string>(header ?? string.Empty, message));
-    }
-
-    public static ErrorHandler ErrorMsgHandler;
+    public static void ShowError(string message, string? header = default) => _pendingErrorMessages.Enqueue(
+        new Alert(Message: message, Title: header ?? string.Empty, Type: AlertType.Error)
+    );
 
     //GWEN GUI
     public static bool GwenInitialized;
@@ -117,7 +113,6 @@ public static partial class Interface
 
         FocusComponents.Clear();
         InputBlockingComponents.Clear();
-        ErrorMsgHandler = new ErrorHandler();
 
         if (Globals.GameState == GameStates.Intro || Globals.GameState == GameStates.Menu)
         {
@@ -194,7 +189,8 @@ public static partial class Interface
         //Do not allow hiding of UI under several conditions
         var forceShowUi = Globals.InCraft || Globals.InBank || Globals.InShop || Globals.InTrade || Globals.InBag || Globals.EventDialogs?.Count > 0 || HasInputFocus() || (!Interface.GameUi?.EscapeMenu?.IsHidden ?? true);
 
-        ErrorMsgHandler.Update();
+        AlertWindow.OpenPendingAlertWindowsFrom(_pendingErrorMessages);
+
         sGameCanvas.RestrictToParent = false;
         if (Globals.GameState == GameStates.Menu)
         {
