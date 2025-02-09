@@ -18,18 +18,22 @@ public abstract class Window : WindowControl
         SetTextColor(new Color(a: 255, r: 191, g: 191, b: 191), ControlState.Inactive);
     }
 
-    protected override void Render(Framework.Gwen.Skin.Base skin)
+    protected override void OnPreDraw(Intersect.Client.Framework.Gwen.Skin.Base skin)
     {
+        base.OnPreDraw(skin);
+
         lock (_initializationLock)
         {
-            if (!_initialized)
+            if (_initialized)
             {
-                _initialized = true;
-                EnsureInitialized();
+                return;
             }
-        }
 
-        base.Render(skin);
+            _initialized = true;
+
+            EnsureInitialized();
+            DoLayoutIfNeeded(skin);
+        }
     }
 
     protected abstract void EnsureInitialized();

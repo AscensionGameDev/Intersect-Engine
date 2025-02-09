@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -9,7 +10,7 @@ using Intersect.Client.Localization;
 
 namespace Intersect.Client.Interface.Shared;
 
-public partial class InputBox : WindowControl
+public partial class InputBox : Window
 {
     public enum InputType
     {
@@ -34,8 +35,10 @@ public partial class InputBox : WindowControl
 
     public bool BooleanValue { get; set; }
 
+    private readonly GameFont? _defaultFont;
+
     // Events
-    private event EventHandler? Cancelled;
+    private event EventHandler? Canceled;
     private event EventHandler? Submitted;
 
     // Types
@@ -55,8 +58,7 @@ public partial class InputBox : WindowControl
     private readonly Button _btnOk;
     private readonly Label _promptLabel;
 
-    private readonly string _prompt = string.Empty;
-    private bool _initialized = false;
+    private readonly string _prompt;
 
     public InputBox(
         string title,
@@ -69,14 +71,21 @@ public partial class InputBox : WindowControl
         int maxQuantity = int.MaxValue
     ) : base(Interface.CurrentInterface.Root, title, true, "InputBox")
     {
-        Submitted = onSuccess;
-        Cancelled = onCancel;
+        IsResizable = false;
+
+        Alignment = [Alignments.Center];
+        MinimumSize = new Point(x: 400, y: 150);
+        IsResizable = false;
+        InnerPanelPadding = new Padding(8);
+        TitleLabel.FontSize = 14;
+        TitleLabel.TextColorOverride = Color.White;
+
         UserData = userData;
         _inputType = inputType;
         _prompt = prompt;
 
-        BeforeDraw += _beforeDraw;
-        DisableResizing();
+        Submitted += onSuccess;
+        Canceled += onCancel;
 
         _txtNumericBg = new ImagePanel(this, "Textbox");
         _txtNumeric = new TextBoxNumeric(_txtNumericBg, "TextboxText")
@@ -161,7 +170,11 @@ public partial class InputBox : WindowControl
         };
         _btnOk.Clicked += (sender, e) => SubmitInput();
 
-        _promptLabel = new Label(this, "PromptLabel");
+        _promptLabel = new Label(this, nameof(_promptLabel))
+        {
+            WrappingBehavior = WrappingBehavior.Wrapped,
+        };
+
         Interface.InputBlockingComponents.Add(this);
 
         Value = quantity;
@@ -186,114 +199,6 @@ public partial class InputBox : WindowControl
 
         var value = (int)Math.Round(_numericSlider.Value);
         _txtNumericSlider.Value = value;
-    }
-
-    private void _beforeDraw(Base sender, EventArgs arguments)
-    {
-        if (!_initialized)
-        {
-            LoadJsonUi(GameContentManager.UI.Shared, Graphics.Renderer?.GetResolutionString());
-
-            var text = Text.WrapText(
-                _prompt,
-                _promptLabel.Width,
-                _promptLabel.Font,
-                Graphics.Renderer ?? throw new InvalidOperationException("No renderer")
-            );
-            var y = _promptLabel.Y;
-
-            foreach (var s in text)
-            {
-                var label = new Label(this)
-                {
-                    Text = s,
-                    TextColorOverride = _promptLabel.TextColor,
-                    Font = _promptLabel.Font
-                };
-
-                label.SetPosition(_promptLabel.X, y);
-                y += label.Height;
-                Align.CenterHorizontally(label);
-            }
-
-            switch (_inputType)
-            {
-                case InputType.YesNo:
-                    _btnYes.Text = Strings.InputBox.Yes;
-                    _btnCancel.Text = Strings.InputBox.No;
-                    _btnOk.Hide();
-                    _btnNo.Hide();
-                    _btnYes.Show();
-                    _btnCancel.Show();
-                    _txtNumericBg.Hide();
-                    _numericSliderBg.Hide();
-                    _textboxBg.Hide();
-                    break;
-
-                case InputType.YesNoCancel:
-                    _btnYes.Text = Strings.InputBox.Yes;
-                    _btnYes.Show();
-
-                    _btnCancel.Text = Strings.InputBox.Cancel;
-                    _btnCancel.Show();
-
-                    _btnNo.Text = Strings.InputBox.No;
-                    _btnNo.Show();
-
-                    _btnOk.Hide();
-                    _txtNumericBg.Hide();
-                    _numericSliderBg.Hide();
-                    _textboxBg.Hide();
-                    break;
-
-                case InputType.OkayOnly:
-                    _btnOk.Show();
-                    _btnYes.Hide();
-                    _btnNo.Hide();
-                    _btnCancel.Hide();
-                    _txtNumericBg.Hide();
-                    _numericSliderBg.Hide();
-                    _textboxBg.Hide();
-                    break;
-
-                case InputType.NumericInput:
-                    _btnOk.Hide();
-                    _btnYes.Show();
-                    _btnNo.Hide();
-                    _btnCancel.Show();
-                    _txtNumericBg.Show();
-                    _numericSliderBg.Hide();
-                    _textboxBg.Hide();
-                    break;
-
-                case InputType.NumericSliderInput:
-                    _btnOk.Hide();
-                    _btnYes.Show();
-                    _btnNo.Hide();
-                    _btnCancel.Show();
-                    _txtNumericBg.Hide();
-                    _numericSliderBg.Show();
-                    _textboxBg.Hide();
-                    break;
-
-                case InputType.TextInput:
-                    _btnOk.Hide();
-                    _btnYes.Show();
-                    _btnNo.Hide();
-                    _btnCancel.Show();
-                    _txtNumericBg.Hide();
-                    _numericSliderBg.Hide();
-                    _textboxBg.Show();
-                    break;
-
-                default:
-                    throw new NotImplementedException($"{_inputType} not yet implemented");
-            }
-
-            Show();
-            Focus();
-            _initialized = true;
-        }
     }
 
     void btnNo_Clicked(Base sender, MouseButtonState arguments)
@@ -333,7 +238,8 @@ public partial class InputBox : WindowControl
             Value = _numericSlider.Value;
         }
 
-        Cancelled?.Invoke(this, EventArgs.Empty);
+        Canceled?.Invoke(this, EventArgs.Empty);
+        OnCanceled(this, EventArgs.Empty);
         Dispose();
     }
 
@@ -355,7 +261,16 @@ public partial class InputBox : WindowControl
         }
 
         Submitted?.Invoke(this, EventArgs.Empty);
+        OnSubmitted(this, EventArgs.Empty);
         Dispose();
+    }
+
+    protected virtual void OnCanceled(Base sender, EventArgs args)
+    {
+    }
+
+    protected virtual void OnSubmitted(Base sender, EventArgs args)
+    {
     }
 
     public override void Focus(bool moveMouse = false)
@@ -389,5 +304,107 @@ public partial class InputBox : WindowControl
         Parent?.RemoveChild(this, false);
         base.Dispose();
         GC.SuppressFinalize(this);
+    }
+
+    protected override void EnsureInitialized()
+    {
+        // LoadJsonUi(GameContentManager.UI.Shared, Graphics.Renderer?.GetResolutionString());
+
+        var text = Text.WrapText(
+            _prompt,
+            _promptLabel.Width,
+            _promptLabel.Font,
+            Graphics.Renderer ?? throw new InvalidOperationException("No renderer")
+        );
+        var y = _promptLabel.Y;
+
+        foreach (var s in text)
+        {
+            var label = new Label(this)
+            {
+                Text = s, TextColorOverride = _promptLabel.TextColor, Font = _promptLabel.Font
+            };
+
+            label.SetPosition(_promptLabel.X, y);
+            y += label.Height;
+            Align.CenterHorizontally(label);
+        }
+
+        switch (_inputType)
+        {
+            case InputType.YesNo:
+                _btnYes.Text = Strings.InputBox.Yes;
+                _btnCancel.Text = Strings.InputBox.No;
+                _btnOk.Hide();
+                _btnNo.Hide();
+                _btnYes.Show();
+                _btnCancel.Show();
+                _txtNumericBg.Hide();
+                _numericSliderBg.Hide();
+                _textboxBg.Hide();
+                break;
+
+            case InputType.YesNoCancel:
+                _btnYes.Text = Strings.InputBox.Yes;
+                _btnYes.Show();
+
+                _btnCancel.Text = Strings.InputBox.Cancel;
+                _btnCancel.Show();
+
+                _btnNo.Text = Strings.InputBox.No;
+                _btnNo.Show();
+
+                _btnOk.Hide();
+                _txtNumericBg.Hide();
+                _numericSliderBg.Hide();
+                _textboxBg.Hide();
+                break;
+
+            case InputType.OkayOnly:
+                _btnOk.Show();
+                _btnYes.Hide();
+                _btnNo.Hide();
+                _btnCancel.Hide();
+                _txtNumericBg.Hide();
+                _numericSliderBg.Hide();
+                _textboxBg.Hide();
+                break;
+
+            case InputType.NumericInput:
+                _btnOk.Hide();
+                _btnYes.Show();
+                _btnNo.Hide();
+                _btnCancel.Show();
+                _txtNumericBg.Show();
+                _numericSliderBg.Hide();
+                _textboxBg.Hide();
+                break;
+
+            case InputType.NumericSliderInput:
+                _btnOk.Hide();
+                _btnYes.Show();
+                _btnNo.Hide();
+                _btnCancel.Show();
+                _txtNumericBg.Hide();
+                _numericSliderBg.Show();
+                _textboxBg.Hide();
+                break;
+
+            case InputType.TextInput:
+                _btnOk.Hide();
+                _btnYes.Show();
+                _btnNo.Hide();
+                _btnCancel.Show();
+                _txtNumericBg.Hide();
+                _numericSliderBg.Hide();
+                _textboxBg.Show();
+                break;
+
+            default:
+                throw new NotImplementedException($"{_inputType} not yet implemented");
+        }
+
+        Show();
+        Focus();
     }
 }

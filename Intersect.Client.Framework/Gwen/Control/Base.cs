@@ -974,12 +974,12 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Invoked before this control is drawn
     /// </summary>
-    public event GwenEventHandler<EventArgs> BeforeDraw;
+    public event GwenEventHandler<EventArgs>? BeforeDraw;
 
     /// <summary>
     ///     Invoked after this control is drawn
     /// </summary>
-    public event GwenEventHandler<EventArgs> AfterDraw;
+    public event GwenEventHandler<EventArgs>? AfterDraw;
 
     public void AddAlignment(Alignments alignment)
     {
@@ -2421,6 +2421,14 @@ public partial class Base : IDisposable
         return children as Base[] ?? children.ToArray();
     }
 
+    protected virtual void OnPostDraw(Skin.Base skin)
+    {
+    }
+
+    protected virtual void OnPreDraw(Skin.Base skin)
+    {
+    }
+
     /// <summary>
     ///     Recursive rendering logic.
     /// </summary>
@@ -2428,10 +2436,8 @@ public partial class Base : IDisposable
     /// <param name="clipRect">Clipping rectangle.</param>
     protected virtual void RenderRecursive(Skin.Base skin, Rectangle clipRect)
     {
-        if (BeforeDraw != null)
-        {
-            BeforeDraw.Invoke(this, EventArgs.Empty);
-        }
+        OnPreDraw(skin);
+        BeforeDraw?.Invoke(this, EventArgs.Empty);
 
         var render = skin.Renderer;
         var oldRenderOffset = render.RenderOffset;
@@ -2476,10 +2482,8 @@ public partial class Base : IDisposable
 
         render.RenderOffset = oldRenderOffset;
 
-        if (AfterDraw != null)
-        {
-            AfterDraw.Invoke(this, EventArgs.Empty);
-        }
+        OnPostDraw(skin);
+        AfterDraw?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -2921,6 +2925,17 @@ public partial class Base : IDisposable
 
     }
 
+    protected void DoLayoutIfNeeded(Skin.Base skin)
+    {
+        if (!_needsLayout)
+        {
+            return;
+        }
+
+        _needsLayout = false;
+        Layout(skin);
+    }
+
     /// <summary>
     ///     Recursively lays out the control's interior according to alignment, margin, padding, dock etc.
     /// </summary>
@@ -2949,11 +2964,7 @@ public partial class Base : IDisposable
             Size = expectedSize;
         }
 
-        if (_needsLayout)
-        {
-            _needsLayout = false;
-            Layout(skin);
-        }
+        DoLayoutIfNeeded(skin);
 
         if (_needsAlignment)
         {

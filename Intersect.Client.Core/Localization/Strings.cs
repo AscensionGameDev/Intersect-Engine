@@ -2,6 +2,7 @@ using System.Reflection;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Input;
+using Intersect.Client.Interface.Shared;
 using Intersect.Configuration;
 using Intersect.Core;
 using Intersect.Enums;
@@ -1027,6 +1028,19 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Vital1Value = @"{00} / {01}";
+    }
+
+    public partial struct Alerts
+    {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString FallbackTitle = @"Alert";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static Dictionary<AlertType, LocalizedString> Titles = new()
+        {
+            { AlertType.Error, @"Error" },
+            { AlertType.Warning, @"Warning" },
+        };
     }
 
     public partial struct Errors
