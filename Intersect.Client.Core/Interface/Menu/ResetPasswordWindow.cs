@@ -7,6 +7,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Utilities;
@@ -191,25 +192,25 @@ public partial class ResetPasswordWindow
 
         if (!Networking.Network.IsConnected)
         {
-            Interface.ShowError(Strings.Errors.NotConnected);
+            Interface.ShowAlert(Strings.Errors.NotConnected, alertType: AlertType.Error);
             return;
         }
 
         if (string.IsNullOrEmpty(mCodeInputTextbox?.Text))
         {
-            Interface.ShowError(Strings.ResetPass.InputCode);
+            Interface.ShowAlert(Strings.ResetPass.InputCode, alertType: AlertType.Error);
             return;
         }
 
         if (mPasswordTextbox.Text != mPasswordTextbox2.Text)
         {
-            Interface.ShowError(Strings.Registration.PasswordMismatch);
+            Interface.ShowAlert(Strings.Registration.PasswordMismatch, alertType: AlertType.Error);
             return;
         }
 
         if (!FieldChecking.IsValidPassword(mPasswordTextbox.Text, Strings.Regex.Password))
         {
-            Interface.ShowError(Strings.Errors.PasswordInvalid);
+            Interface.ShowAlert(Strings.Errors.PasswordInvalid, alertType: AlertType.Error);
             return;
         }
 

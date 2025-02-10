@@ -7,6 +7,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Security;
@@ -282,13 +283,13 @@ public partial class LoginWindow : Window, IMainMenuWindow
 
         if (!Networking.Network.IsConnected)
         {
-            Interface.ShowError(Strings.Errors.NotConnected);
+            Interface.ShowAlert(Strings.Errors.NotConnected, alertType: AlertType.Error);
             return;
         }
 
         if (!FieldChecking.IsValidUsername(_usernameInput.Text, Strings.Regex.Username))
         {
-            Interface.ShowError(Strings.Errors.UsernameInvalid);
+            Interface.ShowAlert(Strings.Errors.UsernameInvalid, alertType: AlertType.Error);
             return;
         }
 
@@ -296,7 +297,7 @@ public partial class LoginWindow : Window, IMainMenuWindow
         {
             if (!_useSavedPass)
             {
-                Interface.ShowError(Strings.Errors.PasswordInvalid);
+                Interface.ShowAlert(Strings.Errors.PasswordInvalid, alertType: AlertType.Error);
                 return;
             }
         }

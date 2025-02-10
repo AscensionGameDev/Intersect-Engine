@@ -20,9 +20,8 @@ public static partial class Interface
 
     private static readonly ConcurrentQueue<Alert> _pendingErrorMessages = new();
 
-    public static void ShowError(string message, string? header = default) => _pendingErrorMessages.Enqueue(
-        new Alert(Message: message, Title: header ?? string.Empty, Type: AlertType.Error)
-    );
+    public static void ShowAlert(string message, string? title = default, AlertType alertType = AlertType.Error) =>
+        _pendingErrorMessages.Enqueue(new Alert(Message: message, Title: title ?? string.Empty, Type: alertType));
 
     //GWEN GUI
     public static bool GwenInitialized;

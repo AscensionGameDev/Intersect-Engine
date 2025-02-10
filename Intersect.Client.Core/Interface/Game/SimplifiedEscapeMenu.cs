@@ -81,12 +81,7 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
     {
         if (Globals.Me?.CombatTimer > Timing.Global.Milliseconds)
         {
-            _ = new InputBox(
-                title: Strings.Combat.WarningTitle,
-                prompt: Strings.Combat.WarningCharacterSelect,
-                inputType: InputBox.InputType.YesNo,
-                onSuccess: LogoutToCharacterSelect
-            );
+            ShowCombatWarning();
         }
         else
         {
@@ -98,12 +93,7 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
     {
         if (Globals.Me?.CombatTimer > Timing.Global.Milliseconds)
         {
-            _ = new InputBox(
-                title: Strings.Combat.WarningTitle,
-                prompt: Strings.Combat.WarningLogout,
-                inputType: InputBox.InputType.YesNo,
-                onSuccess: LogoutToMainMenu
-            );
+            ShowCombatWarning();
         }
         else
         {
@@ -115,17 +105,23 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
     {
         if (Globals.Me?.CombatTimer > Timing.Global.Milliseconds)
         {
-            _ = new InputBox(
-                title: Strings.Combat.WarningTitle,
-                prompt: Strings.Combat.WarningExitDesktop,
-                inputType: InputBox.InputType.YesNo,
-                onSuccess: ExitToDesktop
-            );
+            ShowCombatWarning();
         }
         else
         {
             ExitToDesktop(null, null);
         }
+    }
+
+    private static void ShowCombatWarning()
+    {
+        AlertWindow.Open(
+            Strings.Combat.WarningCharacterSelect,
+            Strings.Combat.WarningTitle,
+            AlertType.Warning,
+            handleSubmit: LogoutToCharacterSelect,
+            inputType: InputBox.InputType.YesNo
+        );
     }
 
     private void OpenSettingsWindow(object? sender, EventArgs? e)

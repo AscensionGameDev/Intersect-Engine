@@ -4,6 +4,7 @@ using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Utilities;
@@ -144,7 +145,7 @@ public partial class ForgotPasswordWindow
     {
         if (!Networking.Network.IsConnected)
         {
-            Interface.ShowError(Strings.Errors.NotConnected);
+            Interface.ShowAlert(Strings.Errors.NotConnected, alertType: AlertType.Error);
 
             return;
         }
@@ -152,7 +153,7 @@ public partial class ForgotPasswordWindow
         if (!FieldChecking.IsValidUsername(mInputTextbox?.Text, Strings.Regex.Username) &&
             !FieldChecking.IsWellformedEmailAddress(mInputTextbox?.Text, Strings.Regex.Email))
         {
-            Interface.ShowError(Strings.Errors.UsernameInvalid);
+            Interface.ShowAlert(Strings.Errors.UsernameInvalid, alertType: AlertType.Error);
             return;
         }
 

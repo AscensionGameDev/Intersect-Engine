@@ -6,6 +6,7 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.MonoGame.NativeInterop;
 using Intersect.Client.ThirdParty;
@@ -147,11 +148,12 @@ public class MonoRenderer : GameRenderer
             {
                 Globals.Database.FullScreen = false;
                 Globals.Database.SavePreferences();
-                Interface.Interface.ShowError(
+                Interface.Interface.ShowAlert(
                     Strings.Errors.DisplayNotSupportedError.ToString(
                         Strings.Internals.ResolutionXByY.ToString(width, height)
                     ),
-                    Strings.Errors.DisplayNotSupported
+                    Strings.Errors.DisplayNotSupported,
+                    alertType: AlertType.Error
                 );
             }
         }

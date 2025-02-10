@@ -12,6 +12,7 @@ using Intersect.Utilities;
 using Intersect.Client.Core;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Menu;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Core;
 using Intersect.Network.Packets.Unconnected.Client;
@@ -164,7 +165,7 @@ internal partial class MonoSocket : GameSocket
             }
 
             ClientNetwork.UnresolvableHostNames.Add(_lastHost);
-            Interface.Interface.ShowError(Strings.Errors.HostNotFound);
+            Interface.Interface.ShowAlert(Strings.Errors.HostNotFound, alertType: AlertType.Error);
             ApplicationContext.Context.Value?.Logger.LogError(socketException, $"Failed to resolve host: '{_lastHost}'");
             endPoint = default;
             return false;

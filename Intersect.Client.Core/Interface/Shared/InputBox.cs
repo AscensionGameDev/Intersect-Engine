@@ -71,7 +71,7 @@ public partial class InputBox : Window
         int maxQuantity = int.MaxValue
     ) : base(Interface.CurrentInterface.Root, title, true, "InputBox")
     {
-        IsResizable = false;
+        _defaultFont = GameContentManager.Current.GetFont(name: TitleLabel.FontName, 12);
 
         Alignment = [Alignments.Center];
         MinimumSize = new Point(x: 400, y: 150);
@@ -90,7 +90,8 @@ public partial class InputBox : Window
         _txtNumericBg = new ImagePanel(this, "Textbox");
         _txtNumeric = new TextBoxNumeric(_txtNumericBg, "TextboxText")
         {
-            Value = quantity
+            Font = _defaultFont,
+            Value = quantity,
         };
         _txtNumeric.SubmitPressed += (sender, e) => SubmitInput();
 
@@ -111,7 +112,8 @@ public partial class InputBox : Window
         _numericSlider.ValueChanged += _numericSlider_ValueChanged;
         _txtNumericSlider = new TextBoxNumeric(_numericSliderBg, "SliderboxText")
         {
-            Value = quantity
+            Font = _defaultFont,
+            Value = quantity,
         };
         _txtNumericSlider.TextChanged += _numericSliderTextbox_TextChanged;
         _txtNumericSlider.SubmitPressed += (sender, e) => SubmitInput();
