@@ -293,10 +293,10 @@ public partial class Menu : ScrollControl
         divider.Margin = new Margin(IconMarginDisabled ? 0 : 24, 0, 4, 0);
     }
 
-    public override bool SizeToChildren(bool width = true, bool height = true, bool recursive = false)
+    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
     {
-        base.SizeToChildren(width: width, height: height, recursive: recursive);
-        if (width)
+        base.SizeToChildren(resizeX: resizeX, resizeY: resizeY, recursive: recursive);
+        if (resizeX)
         {
             var maxWidth = 0;
             foreach (var child in Children)

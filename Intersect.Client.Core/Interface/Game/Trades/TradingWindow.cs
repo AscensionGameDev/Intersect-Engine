@@ -85,7 +85,7 @@ public partial class TradingWindow
     private void MWithdrawContextItem_Clicked(Base sender, MouseButtonState arguments)
     {
         var slot = (int) sender.Parent.UserData;
-        Globals.Me.TryRevokeItem(slot);
+        Globals.Me.TryCancelOfferToTradeItem(slot);
     }
 
     public void OpenContextMenu(int side, int slot)

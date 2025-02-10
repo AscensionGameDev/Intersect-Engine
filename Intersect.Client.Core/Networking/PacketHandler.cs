@@ -1193,10 +1193,7 @@ internal sealed partial class PacketHandler
         ed.Face = packet.Face;
         if (packet.Type != 0)
         {
-            ed.Opt1 = packet.Responses[0];
-            ed.Opt2 = packet.Responses[1];
-            ed.Opt3 = packet.Responses[2];
-            ed.Opt4 = packet.Responses[3];
+            ed.Options = packet.Responses;
         }
 
         ed.EventId = packet.EventId;
@@ -1218,7 +1215,7 @@ internal sealed partial class PacketHandler
             prompt: packet.Prompt,
             inputType: type,
             userData: packet.EventId,
-            onSuccess: PacketSender.SendEventInputVariable,
+            onSubmit: PacketSender.SendEventInputVariable,
             onCancel: PacketSender.SendEventInputVariableCancel
         );
     }
@@ -1936,7 +1933,7 @@ internal sealed partial class PacketHandler
             prompt: Strings.Parties.InvitePrompt.ToString(packet.LeaderName),
             inputType: InputType.YesNo,
             userData: packet.LeaderId,
-            onSuccess: PacketSender.SendPartyAccept,
+            onSubmit: PacketSender.SendPartyAccept,
             onCancel: PacketSender.SendPartyDecline
         );
     }
@@ -2080,7 +2077,7 @@ internal sealed partial class PacketHandler
             prompt: Strings.Trading.RequestPrompt.ToString(packet.PartnerName),
             inputType: InputType.YesNo,
             userData: packet.PartnerId,
-            onSuccess: PacketSender.SendTradeRequestAccept,
+            onSubmit: PacketSender.SendTradeRequestAccept,
             onCancel: PacketSender.SendTradeRequestDecline
         );
     }
@@ -2188,7 +2185,7 @@ internal sealed partial class PacketHandler
             prompt: Strings.Friends.RequestPrompt.ToString(packet.FriendName),
             inputType: InputType.YesNo,
             userData: packet.FriendId,
-            onSuccess: PacketSender.SendFriendRequestAccept,
+            onSubmit: PacketSender.SendFriendRequestAccept,
             onCancel: PacketSender.SendFriendRequestDecline
         );
     }
@@ -2347,7 +2344,7 @@ internal sealed partial class PacketHandler
                         ? Strings.Guilds.InviteRequestPromptMissingGuild
                         : Strings.Guilds.InviteRequestPrompt).ToString(packet.Inviter, packet.GuildName),
                     inputType: InputType.YesNo,
-                    onSuccess: PacketSender.SendGuildInviteAccept,
+                    onSubmit: PacketSender.SendGuildInviteAccept,
                     onCancel: PacketSender.SendGuildInviteDecline
                 );
             }

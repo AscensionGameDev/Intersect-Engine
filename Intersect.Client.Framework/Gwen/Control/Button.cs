@@ -368,13 +368,15 @@ public partial class Button : Label
             textColor = new Color(r: 255, g: 0, b: 255);
         }
 
-        if (textColor != TextColor)
+        var oldTextColor = TextColor;
+        if (textColor != oldTextColor)
         {
             ApplicationContext.CurrentContext.Logger.LogTrace(
-                "Changing TextColor to {TextColor} of {ComponentType} '{ComponentName}' IsDisabled={IsDisabled} IsActive={IsActive} IsHovered={IsHovered}",
+                "Changing TextColor to '{ToTextColor}' from '{FromTextColor}' of {ComponentType} '{ComponentName}' IsDisabled={IsDisabled} IsActive={IsActive} IsHovered={IsHovered}",
+                textColor,
+                oldTextColor,
                 GetType().GetName(qualified: true),
                 CanonicalName,
-                textColor,
                 IsDisabled,
                 IsActive,
                 IsHovered

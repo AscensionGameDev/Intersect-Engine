@@ -161,15 +161,15 @@ public partial class LabeledCheckBox : Base
         CheckChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    public override Point GetChildrenSize(Base[]? children = null)
+    public override Point GetChildrenSize()
     {
-        var childrenSize = base.GetChildrenSize(children);
+        var childrenSize = base.GetChildrenSize();
         return childrenSize;
     }
 
-    public override bool SizeToChildren(bool width = true, bool height = true, bool recursive = false)
+    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
     {
-        return base.SizeToChildren(width, height, recursive);
+        return base.SizeToChildren(resizeX, resizeY, recursive);
     }
 
     public void SetCheckSize(int w, int h)

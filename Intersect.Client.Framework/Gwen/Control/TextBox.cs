@@ -1,5 +1,6 @@
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
@@ -101,7 +102,7 @@ public partial class TextBox : Label
             mSelectAll = value;
             if (value)
             {
-                OnSelectAll(this, EventArgs.Empty);
+                SelectAll();
             }
         }
     }
@@ -165,12 +166,12 @@ public partial class TextBox : Label
     /// <summary>
     ///     Invoked when the text has changed.
     /// </summary>
-    public event GwenEventHandler<EventArgs>? TextChanged;
+    public event GwenEventHandler<TextBox, ValueChangedEventArgs<string>>? TextChanged;
 
     /// <summary>
     ///     Invoked when the submit key has been pressed.
     /// </summary>
-    public event GwenEventHandler<EventArgs>? SubmitPressed;
+    public event GwenEventHandler<TextBox, EventArgs>? SubmitPressed;
 
     /// <summary>
     ///     Determines whether the control can insert text at a given cursor position.
@@ -213,7 +214,7 @@ public partial class TextBox : Label
 
         RefreshCursorBounds();
 
-        TextChanged?.Invoke(this, EventArgs.Empty);
+        TextChanged?.Invoke(this, new ValueChangedEventArgs<string> { Value = Text ?? string.Empty });
     }
 
     /// <summary>
@@ -259,9 +260,9 @@ public partial class TextBox : Label
     ///     Inserts text at current cursor position, erasing selection if any.
     /// </summary>
     /// <param name="text">Text to insert.</param>
-    protected virtual void InsertText(string text)
+    protected void InsertText(string text, bool skipEvents = false)
     {
-        ReplaceSelection(text);
+        ReplaceSelection(text, skipEvents: skipEvents);
         base.PlaySound(_soundNameAddText);
     }
 
@@ -387,13 +388,10 @@ public partial class TextBox : Label
         EraseSelection();
     }
 
-    /// <summary>
-    ///     Handler for Select All event.
-    /// </summary>
-    /// <param name="from">Source control.</param>
-    protected override void OnSelectAll(Base from, EventArgs args)
+    public void SelectAll() => OnSelectAll(this, EventArgs.Empty);
+
+    protected virtual void OnSelectAll(Base from, EventArgs args)
     {
-        //base.OnSelectAll(from);
         mCursorEnd = 0;
         mCursorPos = TextLength;
 
@@ -406,7 +404,7 @@ public partial class TextBox : Label
 
         if (mouseButton == MouseButton.Left)
         {
-            OnSelectAll(this, EventArgs.Empty);
+            SelectAll();
         }
     }
 
@@ -636,9 +634,16 @@ public partial class TextBox : Label
     /// </summary>
     /// <param name="startPos">Starting cursor position.</param>
     /// <param name="length">Length in characters.</param>
-    public virtual void DeleteText(int startPos, int length, bool playSound = true) => ReplaceText(startPos, length, string.Empty, playSound);
+    public virtual void DeleteText(int startPos, int length, bool playSound = true, bool skipEvents = false) =>
+        ReplaceText(startPos, length, string.Empty, playSound, skipEvents: skipEvents);
 
-    public virtual void ReplaceText(int startPos, int length, string? replacement, bool playSound = true)
+    public virtual void ReplaceText(
+        int startPos,
+        int length,
+        string? replacement,
+        bool playSound = true,
+        bool skipEvents = false
+    )
     {
         try
         {
@@ -666,7 +671,7 @@ public partial class TextBox : Label
 
             text = text.Insert(startPos, replacement ?? string.Empty);
 
-            SetText(text);
+            SetText(text, doEvents: !skipEvents);
 
             if (mCursorPos > startPos)
             {
@@ -693,7 +698,7 @@ public partial class TextBox : Label
         }
     }
 
-    public virtual void ReplaceSelection(string? replacement, bool playSound = true)
+    public virtual void ReplaceSelection(string? replacement, bool playSound = true, bool skipEvents = false)
     {
         ValidateCursor();
 
@@ -738,7 +743,7 @@ public partial class TextBox : Label
         // Get the replacement substring
         var actualReplacement = replacement?[..replacementLength];
 
-        ReplaceText(start, deletionLength, actualReplacement, playSound);
+        ReplaceText(start, deletionLength, actualReplacement, playSound, skipEvents: skipEvents);
 
         // Move the cursor, reset to 0 length cursor
         mCursorPos += replacementLength;

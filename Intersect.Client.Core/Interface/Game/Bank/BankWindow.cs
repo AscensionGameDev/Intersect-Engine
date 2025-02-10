@@ -96,7 +96,7 @@ public partial class BankWindow
     private void MWithdrawContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.MouseButtonState arguments)
     {
         var slot = (int)sender.Parent.UserData;
-        Globals.Me.TryWithdrawItem(slot);
+        Globals.Me.TryRetrieveItemFromBank(slot);
     }
 
     public void Close()

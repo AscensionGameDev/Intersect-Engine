@@ -1,8 +1,4 @@
 using Intersect.Client.Framework.GenericClasses;
-using Intersect.Core;
-using Intersect.Framework;
-using Intersect.Framework.Reflection;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;
@@ -12,6 +8,8 @@ namespace Intersect.Client.Framework.Gwen.Control;
 /// </summary>
 public partial class ScrollControl : Base
 {
+    private readonly ScrollPanel _scrollPanel;
+
     private bool _updatingScrollbars;
 
     private OverflowBehavior _overflowX;
@@ -38,14 +36,10 @@ public partial class ScrollControl : Base
         };
         HorizontalScrollBar.BarMoved += HBarMoved;
 
-        _innerPanel = new Base(this, name: nameof(_innerPanel))
-        {
-            X = 0,
-            Y = 0,
-            Margin = Margin.Four,
-            MouseInputEnabled = false,
-        };
-        _innerPanel.SendToBack();
+        _scrollPanel = new ScrollPanel(this, name: nameof(_scrollPanel));
+        _scrollPanel.SendToBack();
+
+        _innerPanel = _scrollPanel;
 
         _overflowX = OverflowBehavior.Hidden;
         _overflowY = OverflowBehavior.Auto;
@@ -54,16 +48,15 @@ public partial class ScrollControl : Base
 
     public Padding InnerPanelPadding
     {
-        get => _innerPanel!.Padding;
-        set => _innerPanel!.Padding = value;
+        get => _scrollPanel.Padding;
+        set => _scrollPanel.Padding = value;
     }
 
-    public int VerticalScroll => _innerPanel?.Y ?? 0;
+    public int VerticalScroll => _scrollPanel.Y;
 
-    public int HorizontalScroll => _innerPanel?.X ?? 0;
+    public int HorizontalScroll => _scrollPanel.X;
 
-    public Base InnerPanel => _innerPanel ??
-                              throw new InvalidOperationException($"{nameof(ScrollControl)} had the inner panel unset");
+    public Base InnerPanel => _scrollPanel;
 
     /// <summary>
     ///     Indicates whether the control can be scrolled horizontally.
@@ -194,7 +187,7 @@ public partial class ScrollControl : Base
         UpdateScrollBars();
     }
 
-    public virtual void SetInnerSize(int width, int height) => _innerPanel?.SetSize(width, height);
+    public virtual void SetInnerSize(int width, int height) => _scrollPanel.SetSize(width, height);
 
     protected virtual void VBarMoved(Base control, EventArgs args) => Invalidate();
 
@@ -208,6 +201,11 @@ public partial class ScrollControl : Base
     /// <param name="newChildBounds"></param>
     protected override void OnChildBoundsChanged(Base child, Rectangle oldChildBounds, Rectangle newChildBounds)
     {
+        if (_innerPanel == null)
+        {
+            return;
+        }
+
         UpdateScrollBars();
     }
 
@@ -305,11 +303,6 @@ render->RenderText( skin->GetDefaultFont(), Gwen::Point( 0, 0 ), Utility::Format
 
     public virtual void UpdateScrollBars()
     {
-        if (_innerPanel == null)
-        {
-            return;
-        }
-
         if (_updatingScrollbars)
         {
             return;
@@ -330,18 +323,22 @@ render->RenderText( skin->GetDefaultFont(), Gwen::Point( 0, 0 ), Utility::Format
         var horizontalScrollbarHeight = HorizontalScrollBar.IsHidden ? 0 : HorizontalScrollBar.Height;
         var availableHeight = Height - horizontalScrollbarHeight;
 
-        var updatedWidth = canScrollH ? Math.Max(Width, childrenWidth) : availableWidth;
-        var updatedHeight = canScrollV ? Math.Max(Height, childrenHeight) : availableHeight;
+        var updatedWidth = canScrollH ? Math.Max(InnerWidth, childrenWidth) : availableWidth;
+        var updatedHeight = canScrollV ? Math.Max(InnerHeight, childrenHeight) : availableHeight;
 
-        _innerPanel.SetSize(updatedWidth, updatedHeight);
+        var innerPanelMargin = _scrollPanel.Margin;
+        var innerPanelWidth = updatedWidth - (innerPanelMargin.Left + innerPanelMargin.Right);
+        var innerPanelHeight = updatedHeight - (innerPanelMargin.Top + innerPanelMargin.Bottom);
+
+        _scrollPanel.SetSize(innerPanelWidth, innerPanelHeight);
 
         var widthRatio = Width / (float)(childrenWidth + verticalScrollbarWidth);
         var heightRatio = Height / (float)(childrenHeight + horizontalScrollbarHeight);
 
-        VerticalScrollBar.ContentSize = _innerPanel.Height;
+        VerticalScrollBar.ContentSize = _scrollPanel.Height;
         VerticalScrollBar.ViewableContentSize = availableHeight;
 
-        HorizontalScrollBar.ContentSize = _innerPanel.Width;
+        HorizontalScrollBar.ContentSize = _scrollPanel.Width;
         HorizontalScrollBar.ViewableContentSize = availableWidth;
 
         var showScrollH = _overflowX == OverflowBehavior.Scroll || _overflowX == OverflowBehavior.Auto && widthRatio < 1;
@@ -355,15 +352,15 @@ render->RenderText( skin->GetDefaultFont(), Gwen::Point( 0, 0 ), Utility::Format
 
         if (showScrollV)
         {
-            newInnerPanelPosY = (int)(-(_innerPanel.Height - Height + horizontalScrollbarHeight) * VerticalScrollBar.ScrollAmount);
+            newInnerPanelPosY = (int)(-(_scrollPanel.Height - Height + horizontalScrollbarHeight) * VerticalScrollBar.ScrollAmount);
         }
 
         if (showScrollH)
         {
-            newInnerPanelPosX = (int)(-(_innerPanel.Width - Width + verticalScrollbarWidth) * HorizontalScrollBar.ScrollAmount);
+            newInnerPanelPosX = (int)(-(_scrollPanel.Width - Width + verticalScrollbarWidth) * HorizontalScrollBar.ScrollAmount);
         }
 
-        _innerPanel.SetPosition(newInnerPanelPosX, newInnerPanelPosY);
+        _scrollPanel.SetPosition(newInnerPanelPosX, newInnerPanelPosY);
         _updatingScrollbars = false;
 
         // ApplicationContext.CurrentContext.Logger.LogTrace(
@@ -375,6 +372,17 @@ render->RenderText( skin->GetDefaultFont(), Gwen::Point( 0, 0 ), Utility::Format
         //     showScrollH,
         //     showScrollV
         // );
+    }
+
+    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
+    {
+        base.OnBoundsChanged(oldBounds, newBounds);
+    }
+
+    public override Point GetChildrenSize()
+    {
+        var childrenSize = base.GetChildrenSize();
+        return childrenSize;
     }
 
     public override void Invalidate()
@@ -426,8 +434,5 @@ render->RenderText( skin->GetDefaultFont(), Gwen::Point( 0, 0 ), Utility::Format
         VerticalScrollBar.ScrollToRight();
     }
 
-    public virtual void DeleteAll()
-    {
-        _innerPanel?.DeleteAllChildren();
-    }
+    public virtual void DeleteAll() => _scrollPanel.DeleteAllChildren();
 }

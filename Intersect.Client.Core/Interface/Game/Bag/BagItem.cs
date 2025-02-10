@@ -69,7 +69,7 @@ public partial class BagItem
     {
         if (Globals.InBag)
         {
-            Globals.Me.TryRetreiveBagItem(mMySlot, -1);
+            Globals.Me.TryRetrieveItemFromBag(mMySlot, -1);
         }
     }
 
@@ -295,7 +295,7 @@ public partial class BagItem
 
                         if (bestIntersectIndex > -1)
                         {
-                            Globals.Me.TryRetreiveBagItem(mMySlot, bestIntersectIndex);
+                            Globals.Me.TryRetrieveItemFromBag(mMySlot, bestIntersectIndex);
                         }
                     }
                 }

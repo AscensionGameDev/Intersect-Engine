@@ -1,4 +1,5 @@
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 
@@ -52,7 +53,7 @@ public partial class MultilineTextBox : Label
         mScrollControl.Margin = Margin.One;
         _innerPanel = mScrollControl;
         _textElement.Parent = _innerPanel;
-        mScrollControl.InnerPanel.BoundsChanged += new GwenEventHandler<EventArgs>(ScrollChanged);
+        mScrollControl.InnerPanel.BoundsChanged += ScrollChanged;
 
         _textLines.Add(String.Empty);
 
@@ -211,7 +212,7 @@ public partial class MultilineTextBox : Label
     ///     Refreshes the cursor location and selected area when the inner panel scrolls
     /// </summary>
     /// <param name="control">The inner panel the text is embedded in</param>
-    private void ScrollChanged(Base control, EventArgs args)
+    private void ScrollChanged(Base control, ValueChangedEventArgs<Rectangle> args)
     {
         RefreshCursorBounds();
     }

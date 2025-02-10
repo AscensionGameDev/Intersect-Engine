@@ -49,9 +49,9 @@ public static partial class Interface
     public static TexturedBase Skin { get; set; }
 
     //Input Handling
-    public static readonly List<Framework.Gwen.Control.Base> FocusComponents = [];
+    public static readonly HashSet<Framework.Gwen.Control.Base> FocusComponents = [];
 
-    public static readonly List<Framework.Gwen.Control.Base> InputBlockingComponents = [];
+    public static readonly HashSet<Framework.Gwen.Control.Base> InputBlockingComponents = [];
 
     #region "Gwen Setup and Input"
 

@@ -285,7 +285,7 @@ public partial class SelectCharacterWindow : ImagePanel
             prompt: Strings.CharacterSelection.DeletePrompt.ToString(Characters[mSelectedChar].Name),
             inputType: InputType.YesNo,
             userData: Characters[mSelectedChar].Id,
-            onSuccess: DeleteCharacter
+            onSubmit: DeleteCharacter
         );
     }
 

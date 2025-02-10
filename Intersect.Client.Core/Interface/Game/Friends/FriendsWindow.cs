@@ -2,6 +2,7 @@ using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Gwen.Control.EventArguments.InputSubmissionEvent;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
@@ -103,19 +104,25 @@ partial class FriendsWindow
             title: Strings.Friends.AddFriend,
             prompt: Strings.Friends.AddFriendPrompt,
             inputType: InputType.TextInput,
-            onSuccess: (s, e) =>
+            onSubmit: (sender, args) =>
             {
-                if (s is InputBox inputBox && inputBox.TextValue.Trim().Length >= 3)
+                if (sender is not InputBox)
                 {
-                    if (Globals.Me?.CombatTimer < Timing.Global.Milliseconds)
-                    {
-                        PacketSender.SendAddFriend(inputBox.TextValue);
-                    }
-                    else
-                    {
-                        PacketSender.SendChatMsg(Strings.Friends.InFight.ToString(), 4);
-                    }
+                    return;
                 }
+
+                if (args.Value is not StringSubmissionValue submissionValue)
+                {
+                    return;
+                }
+
+                var value = submissionValue.Value?.Trim();
+                if (value is not { Length: >= 3 })
+                {
+                    return;
+                }
+
+                PacketSender.SendAddFriend(value);
             }
         );
     }

@@ -169,15 +169,15 @@ public partial class InventoryWindow
         }
         else if (Globals.InBank)
         {
-            Globals.Me.TryDepositItem(slot);
+            Globals.Me.TryStoreItemInBank(slot);
         }
         else if (Globals.InBag)
         {
-            Globals.Me.TryStoreBagItem(slot, -1);
+            Globals.Me.TryStoreItemInBag(slot, -1);
         }
         else if (Globals.InTrade)
         {
-            Globals.Me.TryTradeItem(slot);
+            Globals.Me.TryOfferItemToTrade(slot);
         }
     }
 

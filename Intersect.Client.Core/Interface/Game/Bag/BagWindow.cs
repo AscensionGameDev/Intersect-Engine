@@ -79,7 +79,7 @@ public partial class BagWindow
         if (Globals.InBag)
         {
             var slot = (int) sender.Parent.UserData;
-            Globals.Me.TryRetreiveBagItem(slot, -1);
+            Globals.Me.TryRetrieveItemFromBag(slot, -1);
         }
     }
 

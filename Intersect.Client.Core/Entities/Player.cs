@@ -4,6 +4,9 @@ using Intersect.Client.Entities.Events;
 using Intersect.Client.Entities.Projectiles;
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Gwen.Control.EventArguments.InputSubmissionEvent;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.Framework.Items;
 using Intersect.Client.General;
@@ -403,16 +406,21 @@ public partial class Player : Entity, IPlayer
             prompt: prompt.ToString(itemDescriptor.Name),
             inputType: inputType,
             quantity: quantity,
-            maxQuantity: GetQuantityOfItemInInventory(itemDescriptor.Id),
+            maximumQuantity: GetQuantityOfItemInInventory(itemDescriptor.Id),
             userData: inventorySlotIndex,
-            onSuccess: (s, e) =>
+            onSubmit: (sender, args) =>
             {
-                if (s is not InputBox inputBox || inputBox.UserData is not int invSlot)
+                if (sender is not InputBox { UserData: int slotIndex })
                 {
                     return;
                 }
 
-                var value = (int)Math.Round(inputBox.Value);
+                if (args.Value is not NumericalSubmissionValue submissionValue)
+                {
+                    return;
+                }
+
+                var value = (int)Math.Round(submissionValue.Value);
 
                 if (value <= 0)
                 {
@@ -422,7 +430,7 @@ public partial class Player : Entity, IPlayer
                 // Check if the item can be dropped in multiple quantities or if value is less than or equal to the quantity in the initial slot
                 if (!canDropMultiple || value <= quantity)
                 {
-                    PacketSender.SendDropItem(invSlot, !canDropMultiple ? 1 : value);
+                    PacketSender.SendDropItem(slotIndex, !canDropMultiple ? 1 : value);
                     return;
                 }
 
@@ -430,7 +438,7 @@ public partial class Player : Entity, IPlayer
                 var itemSlots = Inventory.Where(s => s.ItemId == itemDescriptor.Id).ToList();
 
                 // Send the drop item packet for the initial slot.
-                PacketSender.SendDropItem(invSlot, quantity);
+                PacketSender.SendDropItem(slotIndex, quantity);
                 value -= quantity;
                 _ = itemSlots.Remove(inventorySlot); // Remove the initial slot from the list of item slots
 
@@ -683,12 +691,14 @@ public partial class Player : Entity, IPlayer
 
         var prompt = Strings.Shop.SellPrompt;
         var inputType = InputType.YesNo;
-        EventHandler? onSuccess = (s, e) =>
+        Base.GwenEventHandler<InputSubmissionEventArgs>? onSuccess = (sender, args) =>
         {
-            if (s is InputBox inputBox && inputBox.UserData is int invSlot)
+            if (sender is not InputBox { UserData: int slotIndex })
             {
-                PacketSender.SendSellItem(invSlot, 1);
+                return;
             }
+
+            PacketSender.SendSellItem(slotIndex, 1);
         };
         var userData = inventorySlotIndex;
         var slotQuantity = inventorySlot.Quantity;
@@ -697,7 +707,7 @@ public partial class Player : Entity, IPlayer
         if (!shopCanBuyItem)
         {
             prompt = Strings.Shop.CannotSell;
-            inputType = InputType.OkayOnly;
+            inputType = InputType.Okay;
             onSuccess = null;
             userData = -1;
         }
@@ -709,17 +719,7 @@ public partial class Player : Entity, IPlayer
                 maxQuantity = inventoryQuantity;
                 prompt = Strings.Shop.SellItemPrompt;
                 inputType = InputType.NumericSliderInput;
-                onSuccess = (s, e) =>
-                {
-                    if (s is InputBox inputBox && inputBox.UserData is int invSlot)
-                    {
-                        var value = (int)Math.Round(inputBox.Value);
-                        if (value > 0)
-                        {
-                            PacketSender.SendSellItem(invSlot, value);
-                        }
-                    }
-                };
+                onSuccess = TrySellItemOnSubmit;
                 userData = inventorySlotIndex;
             }
         }
@@ -729,10 +729,29 @@ public partial class Player : Entity, IPlayer
             prompt: prompt.ToString(itemDescriptor.Name),
             inputType: inputType,
             quantity: slotQuantity,
-            maxQuantity: maxQuantity,
+            maximumQuantity: maxQuantity,
             userData: userData,
-            onSuccess: onSuccess
+            onSubmit: onSuccess
         );
+    }
+
+    private static void TrySellItemOnSubmit(Base sender, InputSubmissionEventArgs args)
+    {
+        if (sender is not InputBox { UserData: int slotIndex })
+        {
+            return;
+        }
+
+        if (args.Value is not NumericalSubmissionValue submissionValue)
+        {
+            return;
+        }
+
+        var value = (int)Math.Round(submissionValue.Value);
+        if (value > 0)
+        {
+            PacketSender.SendSellItem(slotIndex, value);
+        }
     }
 
     public void TryBuyItem(int shopSlotIndex)
@@ -773,20 +792,29 @@ public partial class Player : Entity, IPlayer
             prompt: Strings.Shop.BuyItemPrompt.ToString(itemDescriptor.Name),
             inputType: InputType.NumericSliderInput,
             quantity: maxBuyAmount,
-            maxQuantity: maxBuyAmount,
+            maximumQuantity: maxBuyAmount,
             userData: shopSlotIndex,
-            onSuccess: (s, e) =>
-            {
-                if (s is InputBox inputBox && inputBox.UserData is int shopSlot)
-                {
-                    var value = (int)Math.Round(inputBox.Value);
-                    if (value > 0)
-                    {
-                        PacketSender.SendBuyItem(shopSlot, value);
-                    }
-                }
-            }
+            onSubmit: TryBuyItemOnSubmit
         );
+    }
+
+    private static void TryBuyItemOnSubmit(Base sender, InputSubmissionEventArgs args)
+    {
+        if (sender is not InputBox { UserData: int slotIndex })
+        {
+            return;
+        }
+
+        if (args.Value is not NumericalSubmissionValue submissionValue)
+        {
+            return;
+        }
+
+        var value = (int)Math.Round(submissionValue.Value);
+        if (value > 0)
+        {
+            PacketSender.SendBuyItem(slotIndex, value);
+        }
     }
 
     /// <summary>
@@ -798,7 +826,7 @@ public partial class Player : Entity, IPlayer
     /// <param name="quantityHint"></param>
     /// <param name="skipPrompt"></param>
     /// <returns></returns>
-    public bool TryDepositItem(
+    public bool TryStoreItemInBank(
         int inventorySlotIndex,
         IItem? slot = null,
         int bankSlotIndex = -1,
@@ -883,23 +911,31 @@ public partial class Player : Entity, IPlayer
             prompt: Strings.Bank.DepositItemPrompt.ToString(itemDescriptor.Name),
             inputType: InputType.NumericSliderInput,
             quantity: movableQuantity,
-            maxQuantity: maximumQuantity,
+            maximumQuantity: maximumQuantity,
             userData: new Tuple<int, int>(inventorySlotIndex, bankSlotIndex),
-            onSuccess: (s, e) =>
-            {
-                if (s is InputBox inputBox && inputBox.UserData is Tuple<int, int> bankData)
-                {
-                    var value = (int)Math.Round(inputBox.Value);
-                    if (value > 0)
-                    {
-                        var (invSlot, bankSlot) = bankData;
-                        PacketSender.SendDepositItem(invSlot, value, bankSlot);
-                    }
-                }
-            }
+            onSubmit: TryDepositItemOnSubmitted
         );
 
         return true;
+    }
+
+    private static void TryDepositItemOnSubmitted(Base sender, InputSubmissionEventArgs args)
+    {
+        if (sender is not InputBox { UserData: (int inventorySlotIndex, int bankSlotIndex) })
+        {
+            return;
+        }
+
+        if (args.Value is not NumericalSubmissionValue submissionValue)
+        {
+            return;
+        }
+
+        var value = (int)Math.Round(submissionValue.Value);
+        if (value > 0)
+        {
+            PacketSender.SendDepositItem(inventorySlotIndex, value, bankSlotIndex);
+        }
     }
 
     private static bool IsGuildBankDepositAllowed()
@@ -917,7 +953,7 @@ public partial class Player : Entity, IPlayer
     /// <param name="quantityHint"></param>
     /// <param name="skipPrompt"></param>
     /// <returns></returns>
-    public bool TryWithdrawItem(
+    public bool TryRetrieveItemFromBank(
         int bankSlotIndex,
         IItem? slot = null,
         int inventorySlotIndex = -1,
@@ -1001,23 +1037,31 @@ public partial class Player : Entity, IPlayer
             prompt: Strings.Bank.WithdrawItemPrompt.ToString(itemDescriptor.Name),
             inputType: InputType.NumericSliderInput,
             quantity: movableQuantity,
-            maxQuantity: maximumQuantity,
+            maximumQuantity: maximumQuantity,
             userData: new Tuple<int, int>(bankSlotIndex, inventorySlotIndex),
-            onSuccess: (s, e) =>
-            {
-                if (s is InputBox inputBox && inputBox.UserData is Tuple<int, int> bankData)
-                {
-                    var value = (int)Math.Round(inputBox.Value);
-                    if (value > 0)
-                    {
-                        var (bankSlot, invSlot) = bankData;
-                        PacketSender.SendWithdrawItem(bankSlot, value, invSlot);
-                    }
-                }
-            }
+            onSubmit: TryWithdrawItemOnSubmitted
         );
 
         return true;
+    }
+
+    private static void TryWithdrawItemOnSubmitted(Base sender, InputSubmissionEventArgs args)
+    {
+        if (sender is not InputBox { UserData: (int bankSlotIndex, int inventorySlotIndex) })
+        {
+            return;
+        }
+
+        if (args.Value is not NumericalSubmissionValue submissionValue)
+        {
+            return;
+        }
+
+        var value = (int)Math.Round(submissionValue.Value);
+        if (value > 0)
+        {
+            PacketSender.SendWithdrawItem(bankSlotIndex, value, inventorySlotIndex);
+        }
     }
 
     private static bool IsGuildBankWithdrawAllowed()
@@ -1027,7 +1071,7 @@ public partial class Player : Entity, IPlayer
     }
 
     //Bag
-    public void TryStoreBagItem(int inventorySlotIndex, int bagSlotIndex)
+    public void TryStoreItemInBag(int inventorySlotIndex, int bagSlotIndex)
     {
         var inventorySlot = Inventory[inventorySlotIndex];
         if (!ItemBase.TryGet(inventorySlot.ItemId, out var itemDescriptor))
@@ -1049,24 +1093,32 @@ public partial class Player : Entity, IPlayer
             prompt: Strings.Bags.StoreItemPrompt.ToString(itemDescriptor.Name),
             inputType: InputType.NumericSliderInput,
             quantity: quantity,
-            maxQuantity: maxQuantity,
+            maximumQuantity: maxQuantity,
             userData: new Tuple<int, int>(inventorySlotIndex, bagSlotIndex),
-            onSuccess: (s, e) =>
-            {
-                if (s is InputBox inputBox && inputBox.UserData is Tuple<int, int> bagData)
-                {
-                    var value = (int)Math.Round(inputBox.Value);
-                    if (value > 0)
-                    {
-                        var (invSlot, bagSlot) = bagData;
-                        PacketSender.SendStoreBagItem(invSlot, value, bagSlot);
-                    }
-                }
-            }
+            onSubmit: TryStoreItemInBagOnSubmit
         );
     }
 
-    public void TryRetreiveBagItem(int bagSlotIndex, int inventorySlotIndex)
+    private static void TryStoreItemInBagOnSubmit(Base sender, InputSubmissionEventArgs args)
+    {
+        if (sender is not InputBox { UserData: (int inventorySlotIndex, int bagSlotIndex) })
+        {
+            return;
+        }
+
+        if (args.Value is not NumericalSubmissionValue submissionValue)
+        {
+            return;
+        }
+
+        var value = (int)Math.Round(submissionValue.Value);
+        if (value > 0)
+        {
+            PacketSender.SendStoreBagItem(inventorySlotIndex, value, bagSlotIndex);
+        }
+    }
+
+    public void TryRetrieveItemFromBag(int bagSlotIndex, int inventorySlotIndex)
     {
         var bagSlot = Globals.Bag[bagSlotIndex];
         if (bagSlot == default)
@@ -1093,25 +1145,33 @@ public partial class Player : Entity, IPlayer
             prompt: Strings.Bags.RetrieveItemPrompt.ToString(itemDescriptor.Name),
             inputType: InputType.NumericSliderInput,
             quantity: quantity,
-            maxQuantity: maxQuantity,
+            maximumQuantity: maxQuantity,
             userData: new Tuple<int, int>(bagSlotIndex, inventorySlotIndex),
-            onSuccess: (s, e) =>
-            {
-                if (s is InputBox inputBox && inputBox.UserData is Tuple<int, int> bagData)
-                {
-                    var value = (int)Math.Round(inputBox.Value);
-                    if (value > 0)
-                    {
-                        var (bagSlot, invSlot) = bagData;
-                        PacketSender.SendRetrieveBagItem(bagSlot, value, invSlot);
-                    }
-                }
-            }
+            onSubmit: TryRetrieveItemFromBagOnSubmit
         );
     }
 
+    private static void TryRetrieveItemFromBagOnSubmit(Base sender, InputSubmissionEventArgs args)
+    {
+        if (sender is not InputBox { UserData: (int bagSlotIndex, int inventorySlotIndex) })
+        {
+            return;
+        }
+
+        if (args.Value is not NumericalSubmissionValue submissionValue)
+        {
+            return;
+        }
+
+        var value = (int)Math.Round(submissionValue.Value);
+        if (value > 0)
+        {
+            PacketSender.SendRetrieveBagItem(bagSlotIndex, value, inventorySlotIndex);
+        }
+    }
+
     //Trade
-    public void TryTradeItem(int index)
+    public void TryOfferItemToTrade(int index)
     {
         var slot = Inventory[index];
         var quantity = slot.Quantity;
@@ -1132,23 +1192,32 @@ public partial class Player : Entity, IPlayer
             prompt: Strings.Trading.OfferItemPrompt.ToString(tradingItem.Name),
             inputType: InputType.NumericSliderInput,
             quantity: quantity,
-            maxQuantity: quantity,
+            maximumQuantity: quantity,
             userData: index,
-            onSuccess: (s, e) =>
-            {
-                if (s is InputBox inputBox && inputBox.UserData is int slotIndex)
-                {
-                    var value = (int)Math.Round(inputBox.Value);
-                    if (value > 0)
-                    {
-                        PacketSender.SendOfferTradeItem(slotIndex, value);
-                    }
-                }
-            }
+            onSubmit: TryOfferItemToTradeOnSubmit
         );
     }
 
-    public void TryRevokeItem(int index)
+    private static void TryOfferItemToTradeOnSubmit(Base sender, InputSubmissionEventArgs args)
+    {
+        if (sender is not InputBox { UserData: int slotIndex })
+        {
+            return;
+        }
+
+        if (args.Value is not NumericalSubmissionValue submissionValue)
+        {
+            return;
+        }
+
+        var value = (int)Math.Round(submissionValue.Value);
+        if (value > 0)
+        {
+            PacketSender.SendOfferTradeItem(slotIndex, value);
+        }
+    }
+
+    public void TryCancelOfferToTradeItem(int index)
     {
         var slot = Globals.Trade[0, index];
         var quantity = slot.Quantity;
@@ -1169,20 +1238,29 @@ public partial class Player : Entity, IPlayer
             prompt: Strings.Trading.RevokeItemPrompt.ToString(revokedItem.Name),
             inputType: InputType.NumericSliderInput,
             quantity: quantity,
-            maxQuantity: quantity,
+            maximumQuantity: quantity,
             userData: index,
-            onSuccess: (s, e) =>
-            {
-                if (s is InputBox inputBox && inputBox.UserData is int slotIndex)
-                {
-                    var value = (int)Math.Round(inputBox.Value);
-                    if (value > 0)
-                    {
-                        PacketSender.SendRevokeTradeItem(slotIndex, value);
-                    }
-                }
-            }
+            onSubmit: TryCancelOfferToTradeItemOnSubmit
         );
+    }
+
+    private static void TryCancelOfferToTradeItemOnSubmit(Base sender, InputSubmissionEventArgs args)
+    {
+        if (sender is not InputBox { UserData: int slotIndex })
+        {
+            return;
+        }
+
+        if (args.Value is not NumericalSubmissionValue submissionValue)
+        {
+            return;
+        }
+
+        var value = (int)Math.Round(submissionValue.Value);
+        if (value > 0)
+        {
+            PacketSender.SendRevokeTradeItem(slotIndex, value);
+        }
     }
 
     //Spell Processing
@@ -1202,15 +1280,19 @@ public partial class Player : Entity, IPlayer
                 prompt: Strings.Spells.ForgetSpellPrompt.ToString(spellDescriptor.Name),
                 inputType: InputType.YesNo,
                 userData: spellIndex,
-                onSuccess: (s, e) =>
-                {
-                    if (s is InputBox inputBox && inputBox.UserData != default)
-                    {
-                        PacketSender.SendForgetSpell((int)inputBox.UserData);
-                    }
-                }
+                onSubmit: TryForgetSpellOnSubmit
             );
         }
+    }
+
+    private static void TryForgetSpellOnSubmit(Base sender, InputSubmissionEventArgs args)
+    {
+        if (sender is not InputBox { UserData: int slotIndex })
+        {
+            return;
+        }
+
+        PacketSender.SendForgetSpell(slotIndex);
     }
 
     public void TryUseSpell(int index)

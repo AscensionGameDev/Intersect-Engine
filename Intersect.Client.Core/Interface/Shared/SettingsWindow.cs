@@ -459,8 +459,8 @@ public partial class SettingsWindow : Window
             Label = Strings.Settings.VolumeMusic,
             LabelMinimumSize = new Point(100, 0),
             Rounding = 0,
-            Min = 0,
-            Max = 100,
+            Minimum = 0,
+            Maximum = 100,
             NotchCount = 5,
             SnapToNotches = false,
         };
@@ -482,8 +482,8 @@ public partial class SettingsWindow : Window
             Label = Strings.Settings.VolumeSoundEffects,
             LabelMinimumSize = new Point(100, 0),
             Rounding = 0,
-            Min = 0,
-            Max = 100,
+            Minimum = 0,
+            Maximum = 100,
             NotchCount = 5,
             SnapToNotches = false,
         };

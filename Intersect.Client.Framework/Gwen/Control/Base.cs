@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -40,12 +41,10 @@ public partial class Base : IDisposable
         }
     }
 
-    /// <summary>
-    ///     Delegate used for all control event handlers.
-    /// </summary>
-    /// <param name="control">Event source.</param>
-    /// <param name="args">Additional arguments. May be empty (EventArgs.Empty).</param>
-    public delegate void GwenEventHandler<in T>(Base sender, T arguments) where T : EventArgs;
+    public delegate void GwenEventHandler<in TArgs>(Base sender, TArgs arguments) where TArgs : EventArgs;
+
+    public delegate void GwenEventHandler<in TSender, in TArgs>(TSender sender, TArgs arguments)
+        where TSender : Base where TArgs : EventArgs;
 
     /// <summary>
     ///     Accelerator map.
@@ -92,9 +91,11 @@ public partial class Base : IDisposable
     private bool mDrawDebugOutlines;
 
     private bool mHidden;
+    private bool _skipRender;
 
     private bool mHideToolTip;
 
+    private Rectangle _outerBounds;
     private Rectangle mInnerBounds;
 
     /// <summary>
@@ -120,6 +121,8 @@ public partial class Base : IDisposable
 
     private Padding mPadding;
 
+    protected Modal? mModal;
+    private Base? mOldParent;
     private Base? mParent;
 
     private Rectangle mRenderBounds;
@@ -227,8 +230,8 @@ public partial class Base : IDisposable
     public Base(Base? parent = default, string? name = default)
     {
         _name = name ?? string.Empty;
-        mChildren = new List<Base>();
-        mAccelerators = new Dictionary<string, GwenEventHandler<EventArgs>>();
+        mChildren = [];
+        mAccelerators = [];
 
         Parent = parent;
 
@@ -738,19 +741,7 @@ public partial class Base : IDisposable
     /// </summary>
     public Rectangle Bounds => mBounds;
 
-    public Rectangle OuterBounds
-    {
-        get
-        {
-            var margin = mMargin;
-            Rectangle outerBounds = new(mBounds);
-            outerBounds.X -= margin.Left;
-            outerBounds.Y -= margin.Top;
-            outerBounds.Width += margin.Left + margin.Right;
-            outerBounds.Height += margin.Top + margin.Bottom;
-            return outerBounds;
-        }
-    }
+    public Rectangle OuterBounds => _outerBounds;
 
     public bool ClipContents { get; set; } = true;
 
@@ -866,7 +857,11 @@ public partial class Base : IDisposable
 
     public int InnerWidth => mBounds.Width - (mPadding.Left + mPadding.Right);
 
+    public int MaximumInnerWidth => _maximumSize.X - (mPadding.Left + mPadding.Right);
+
     public int InnerHeight => mBounds.Height - (mPadding.Top + mPadding.Bottom);
+
+    public int MaximumInnerHeight => _maximumSize.Y - (mPadding.Top + mPadding.Bottom);
 
     public int Bottom => mBounds.Bottom + mMargin.Bottom;
 
@@ -1409,7 +1404,7 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Invoked when control's bounds have been changed.
     /// </summary>
-    public event GwenEventHandler<EventArgs>? BoundsChanged;
+    public event GwenEventHandler<ValueChangedEventArgs<Rectangle>>? BoundsChanged;
 
     public virtual event GwenEventHandler<MouseButtonState>? MouseDown;
 
@@ -1438,6 +1433,14 @@ public partial class Base : IDisposable
     public void DelayedDelete()
     {
         Canvas?.AddDelayedDelete(this);
+    }
+
+    private readonly ConcurrentQueue<Action> _deferredActions = [];
+
+    public void Defer(Action action)
+    {
+        _deferredActions.Enqueue(action);
+        Invalidate();
     }
 
     public override string ToString()
@@ -1879,8 +1882,68 @@ public partial class Base : IDisposable
     /// <param name="name">Child name.</param>
     /// <param name="recursive">Determines whether the search should be recursive.</param>
     /// <returns>Found control or null.</returns>
-    public virtual Base FindChildByName(string name, bool recursive = false) =>
-        Find(child => string.Equals(child?.Name, name));
+    public virtual Base? FindChildByName(string name, bool recursive = false) => FindChildByName<Base>(name, recursive);
+
+    /// <summary>
+    ///     Finds a child of a given type by name.
+    /// </summary>
+    /// <param name="name">Child name.</param>
+    /// <param name="recursive">Determines whether the search should be recursive.</param>
+    /// <typeparam name="TComponent">The type of the component.</typeparam>
+    /// <returns>Found control or null.</returns>
+    public virtual TComponent? FindChildByName<TComponent>(string name, bool recursive = false) where TComponent : Base
+    {
+        var children = Children.ToArray();
+        foreach (var child in children)
+        {
+            if (child is TComponent typedChild)
+            {
+                if (string.Equals(typedChild.Name, name, StringComparison.Ordinal))
+                {
+                    return typedChild;
+                }
+            }
+
+            if (recursive)
+            {
+                return child.FindChildByName<TComponent>(name, true);
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    ///     Makes the window modal: covers the whole canvas and gets all input.
+    /// </summary>
+    /// <param name="dim">Determines whether all the background should be dimmed.</param>
+    public void MakeModal(bool dim = false)
+    {
+        if (mModal != null)
+        {
+            return;
+        }
+
+        mModal = new Modal(Canvas)
+        {
+            ShouldDrawBackground = dim,
+        };
+
+        mOldParent = Parent;
+        Parent = mModal;
+    }
+
+    public void RemoveModal()
+    {
+        if (mModal == null)
+        {
+            return;
+        }
+
+        Parent = mOldParent;
+        Canvas?.RemoveChild(mModal, false);
+        mModal = null;
+    }
 
     /// <summary>
     ///     Attaches specified control as a child of this one.
@@ -2177,6 +2240,14 @@ public partial class Base : IDisposable
 
         mBounds = newBounds;
 
+        var margin = mMargin;
+        Rectangle outerBounds = new(newBounds);
+        outerBounds.X -= margin.Left;
+        outerBounds.Y -= margin.Top;
+        outerBounds.Width += margin.Left + margin.Right;
+        outerBounds.Height += margin.Top + margin.Bottom;
+        _outerBounds = outerBounds;
+
         if (oldBounds.Size != newBounds.Size)
         {
             ProcessAlignments();
@@ -2184,7 +2255,13 @@ public partial class Base : IDisposable
 
         OnBoundsChanged(oldBounds, newBounds);
 
-        BoundsChanged?.Invoke(this, EventArgs.Empty);
+        BoundsChanged?.Invoke(
+            this,
+            new ValueChangedEventArgs<Rectangle>
+            {
+                Value = newBounds, OldValue = oldBounds,
+            }
+        );
 
         return true;
     }
@@ -2429,6 +2506,8 @@ public partial class Base : IDisposable
     {
     }
 
+    public void SkipRender() => _skipRender = true;
+
     /// <summary>
     ///     Recursive rendering logic.
     /// </summary>
@@ -2436,6 +2515,12 @@ public partial class Base : IDisposable
     /// <param name="clipRect">Clipping rectangle.</param>
     protected virtual void RenderRecursive(Skin.Base skin, Rectangle clipRect)
     {
+        if (_skipRender)
+        {
+            _skipRender = false;
+            return;
+        }
+
         OnPreDraw(skin);
         BeforeDraw?.Invoke(this, EventArgs.Empty);
 
@@ -2877,10 +2962,11 @@ public partial class Base : IDisposable
             }
         }
 
+        var children = mChildren.ToArray();
         // Check children in reverse order (last added first).
-        for (int childIndex = mChildren.Count - 1; childIndex >= 0; childIndex--)
+        for (int childIndex = children.Length - 1; childIndex >= 0; childIndex--)
         {
-            var child = mChildren[childIndex];
+            var child = children[childIndex];
             if (child.GetComponentAt(x - child.X, y - child.Y, filters) is { } descendant)
             {
                 return descendant;
@@ -3190,13 +3276,18 @@ public partial class Base : IDisposable
                     remainingBounds.Height - childMarginV
                 );
 
-                child.SetBounds(newPosition, newSize);
+                ApplyDockFill(child, newPosition, newSize);
             }
 
             child.RecurseLayout(skin);
         }
 
         PostLayout(skin);
+
+        while (_deferredActions.TryDequeue(out var deferredAction))
+        {
+            deferredAction();
+        }
 
         var canvas = GetCanvas();
         // ReSharper disable once InvertIf
@@ -3212,6 +3303,11 @@ public partial class Base : IDisposable
                 canvas._tabQueue.AddLast(this);
             }
         }
+    }
+
+    protected virtual void ApplyDockFill(Base child, Point position, Point size)
+    {
+        child.SetBounds(position, size);
     }
 
     /// <summary>
@@ -3413,36 +3509,45 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Resizes the control to fit its children.
     /// </summary>
-    /// <param name="width">Determines whether to change control's width.</param>
-    /// <param name="height">Determines whether to change control's height.</param>
+    /// <param name="resizeX">Determines whether to change control's width.</param>
+    /// <param name="resizeY">Determines whether to change control's height.</param>
     /// <param name="recursive"></param>
     /// <returns>True if bounds changed.</returns>
-    public virtual bool SizeToChildren(bool width = true, bool height = true, bool recursive = false)
+    public virtual bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
     {
-        Base[]? children = null;
         if (recursive)
         {
-            children = mChildren.ToArray();
+            var children = mChildren.ToArray();
             foreach (var child in children)
             {
-                if (!child.IsVisible)
+                if (child.mHidden)
                 {
                     continue;
                 }
 
-                child.SizeToChildren(width: width, height: height, recursive: recursive);
+                child.SizeToChildren(resizeX: resizeX, resizeY: resizeY, recursive: recursive);
             }
         }
 
-        var size = GetChildrenSize(children: children);
+        var childrenSize = GetChildrenSize();
         var padding = Padding;
+        var size = childrenSize;
         size.X += padding.Right + padding.Left;
         size.Y += padding.Bottom + padding.Top;
 
         size.X = Math.Max(Math.Min(size.X, _maximumSize.X < 1 ? size.X : _maximumSize.X), _minimumSize.X);
         size.Y = Math.Max(Math.Min(size.Y, _maximumSize.Y < 1 ? size.Y : _maximumSize.Y), _minimumSize.Y);
 
-        if (!SetSize(width ? size.X : Width, height ? size.Y : Height))
+        var width = resizeX ? size.X : Width;
+        var height = resizeY ? size.Y : Height;
+
+        if (Dock.HasFlag(Pos.Fill))
+        {
+            width = Math.Max(Width, width);
+            height = Math.Max(Height, height);
+        }
+
+        if (!SetSize(width, height))
         {
             return false;
         }
@@ -3460,12 +3565,12 @@ public partial class Base : IDisposable
     ///     Implement this in derived compound controls to properly return their size.
     /// </remarks>
     /// <returns></returns>
-    public virtual Point GetChildrenSize(Base[]? children = null)
+    public virtual Point GetChildrenSize()
     {
         Point min = new(int.MaxValue, int.MaxValue);
         Point max = default;
 
-        children ??= mChildren.ToArray();
+        var children = mChildren.ToArray();
         foreach (var child in children)
         {
             if (!child.IsVisible)

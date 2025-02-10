@@ -7,7 +7,7 @@ using Intersect.Framework;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
-public partial class LabeledSlider : Base, IAutoSizeToContents
+public partial class LabeledSlider : Base, IAutoSizeToContents, INumericInput
 {
     private readonly Label _label;
     private readonly Slider _slider;
@@ -51,24 +51,21 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
                 newValue = Math.Round(newValue, _rounding);
             }
 
-            _sliderValue.Value = newValue;
+            _sliderValue.SetValue(newValue, skipEvents: true);
             ValueChanged?.Invoke(sender, arguments);
         };
 
         _sliderValue.TextChanged += (sender, _) =>
         {
-            if (sender == _slider)
-            {
-                return;
-            }
-
             var newValue = _sliderValue.Value / _scale;
-            var clampedValue = Math.Clamp(newValue, Min, Max);
+            var clampedValue = Math.Clamp(newValue, Minimum, Maximum);
             if (!clampedValue.Equals(newValue))
             {
                 _sliderValue.Value = clampedValue;
             }
+
             _slider.Value = clampedValue;
+            _slider.SetValue(clampedValue, skipEvents: true);
             ValueChanged?.Invoke(
                 sender,
                 new ValueChangedEventArgs<double>
@@ -176,12 +173,12 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
     /// <summary>
     ///     Minimum value.
     /// </summary>
-    public double Min
+    public double Minimum
     {
-        get => _slider.Min;
+        get => _slider.Minimum;
         set
         {
-            _slider.Min = value;
+            _slider.Minimum = value;
             _sliderValue.Minimum = value;
         }
     }
@@ -189,12 +186,12 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
     /// <summary>
     ///     Maximum value.
     /// </summary>
-    public double Max
+    public double Maximum
     {
-        get => _slider.Max;
+        get => _slider.Maximum;
         set
         {
-            _slider.Max = value;
+            _slider.Maximum = value;
             _sliderValue.Maximum = value;
             _sliderValue.MinimumSize = ComputeMinimumSizeForSliderValue(value);
         }
@@ -202,7 +199,7 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
 
     private Point ComputeMinimumSizeForSliderValue(double? value = null)
     {
-        var valueString = (value ?? Max).ToString(CultureInfo.CurrentUICulture);
+        var valueString = (value ?? Maximum).ToString(CultureInfo.CurrentUICulture);
         var valueFormatString = ValueFormatString;
         if (!string.IsNullOrWhiteSpace(valueFormatString))
         {
@@ -273,7 +270,7 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
     {
         if (_recomputeValueMinimumSize)
         {
-            _sliderValue.MinimumSize = ComputeMinimumSizeForSliderValue(Max);
+            _sliderValue.MinimumSize = ComputeMinimumSizeForSliderValue(Maximum);
         }
 
         if (_autoSizeToContents)
@@ -334,11 +331,16 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
         base.OnBoundsChanged(oldBounds, newBounds);
     }
 
-    public void SetRange(double min, double max) => (Min, Max) = (min, max);
+    public void SetRange(double min, double max) => (Minimum, Maximum) = (min, max);
 
     public bool AutoSizeToContents
     {
         get => _autoSizeToContents;
         set => SetAndDoIfChanged(ref _autoSizeToContents, value, Invalidate);
+    }
+
+    public override void Focus(bool moveMouse = false)
+    {
+        base.Focus(moveMouse);
     }
 }

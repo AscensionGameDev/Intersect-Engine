@@ -93,7 +93,7 @@ public partial class FriendsRow
             title: Strings.Friends.RemoveFriend,
             prompt: Strings.Friends.RemoveFriendPrompt.ToString(mMyName),
             inputType: InputType.YesNo,
-            onSuccess: (s, e) => PacketSender.SendRemoveFriend(mMyName)
+            onSubmit: (s, e) => PacketSender.SendRemoveFriend(mMyName)
         );
     }
 
