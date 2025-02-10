@@ -236,7 +236,7 @@ internal sealed partial class PacketHandler
         try
         {
             var sanitizedFields = packet.Sanitize();
-            if (sanitizedFields != null)
+            if (sanitizedFields is { Count: > 0 })
             {
                 var sanitizationBuilder = new StringBuilder(256, 8192);
                 sanitizationBuilder.Append("Received out-of-bounds values in '");
