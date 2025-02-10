@@ -262,10 +262,10 @@ public partial class TableRow : Base, IColorableText
         var columns = _columns.ToArray();
         foreach (var column in columns)
         {
-            column.SizeToChildren(width: width, height: height, recursive: recursive);
+            column.SizeToChildren(resizeX: width, resizeY: height, recursive: recursive);
         }
 
-        return base.SizeToChildren(width: width, height: height, recursive: recursive);
+        return base.SizeToChildren(resizeX: width, resizeY: height, recursive: recursive);
     }
 
     protected virtual void ComputeColumns()

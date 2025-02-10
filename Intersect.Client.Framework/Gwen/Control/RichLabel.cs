@@ -85,15 +85,19 @@ public partial class RichLabel : Base
     /// </summary>
     /// <param name="text">Text to add</param>
     /// <param name="template">Label to use as a template</param>
-    public void AddText(string text, Label template)
+    public void AddText(string text, Label? template)
     {
         if (template == null)
         {
             throw new ArgumentNullException(nameof(template));
         }
-        AddText(text, template.TextColor,
+
+        AddText(
+            text,
+            template.TextColor,
             template.CurAlignments.Count > 0 ? template.CurAlignments[0] : Alignments.Left,
-            template.Font);
+            template.Font
+        );
     }
 
     /// <summary>
@@ -102,7 +106,7 @@ public partial class RichLabel : Base
     /// <param name="text">Text to add.</param>
     /// <param name="color">Text color.</param>
     /// <param name="font">Font to use.</param>
-    public void AddText(string text, Color color, Alignments alignment = Alignments.Left, GameFont? font = default)
+    public void AddText(string text, Color? color, Alignments alignment = Alignments.Left, GameFont? font = default)
     {
         if (string.IsNullOrEmpty(text))
         {
@@ -137,16 +141,23 @@ public partial class RichLabel : Base
     /// <summary>
     ///     Resizes the control to fit its children.
     /// </summary>
-    /// <param name="width">Determines whether to change control's width.</param>
-    /// <param name="height">Determines whether to change control's height.</param>
+    /// <param name="resizeX">Determines whether to change control's width.</param>
+    /// <param name="resizeY">Determines whether to change control's height.</param>
+    /// <param name="recursive"></param>
     /// <returns>
     ///     True if bounds changed.
     /// </returns>
-    public override bool SizeToChildren(bool width = true, bool height = true, bool recursive = false)
+    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
     {
         Rebuild();
 
-        return base.SizeToChildren(width: width, height: height, recursive: recursive);
+        return base.SizeToChildren(resizeX: resizeX, resizeY: resizeY, recursive: recursive);
+    }
+
+    public override Point GetChildrenSize()
+    {
+        var childrenSize = base.GetChildrenSize();
+        return childrenSize;
     }
 
     protected void SplitLabel(
@@ -391,7 +402,7 @@ public partial class RichLabel : Base
     {
         base.OnBoundsChanged(oldBounds, newBounds);
 
-        SizeToChildren(width: false, height: true);
+        SizeToChildren(resizeX: true, resizeY: true);
     }
 
     /// <summary>

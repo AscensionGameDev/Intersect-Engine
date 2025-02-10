@@ -96,7 +96,7 @@ public partial class InventoryItem
         {
             if (Globals.InputManager.IsKeyDown(Keys.Shift))
             {
-                Globals.Me.TryDepositItem(
+                Globals.Me.TryStoreItemInBank(
                     mMySlot,
                     skipPrompt: true
                 );
@@ -104,7 +104,7 @@ public partial class InventoryItem
             else
             {
                 var slot = Globals.Me.Inventory[mMySlot];
-                Globals.Me.TryDepositItem(
+                Globals.Me.TryStoreItemInBank(
                     mMySlot,
                     slot,
                     quantityHint: slot.Quantity,
@@ -114,11 +114,11 @@ public partial class InventoryItem
         }
         else if (Globals.InBag)
         {
-            Globals.Me.TryStoreBagItem(mMySlot, -1);
+            Globals.Me.TryStoreItemInBag(mMySlot, -1);
         }
         else if (Globals.InTrade)
         {
-            Globals.Me.TryTradeItem(mMySlot);
+            Globals.Me.TryOfferItemToTrade(mMySlot);
         }
         else
         {
@@ -147,15 +147,15 @@ public partial class InventoryItem
                     }
                     else if (Globals.InBank)
                     {
-                        Globals.Me?.TryDepositItem(mMySlot);
+                        Globals.Me?.TryStoreItemInBank(mMySlot);
                     }
                     else if (Globals.InBag)
                     {
-                        Globals.Me?.TryStoreBagItem(mMySlot, -1);
+                        Globals.Me?.TryStoreItemInBag(mMySlot, -1);
                     }
                     else if (Globals.InTrade)
                     {
-                        Globals.Me?.TryTradeItem(mMySlot);
+                        Globals.Me?.TryOfferItemToTrade(mMySlot);
                     }
                     else
                     {
@@ -506,7 +506,7 @@ public partial class InventoryItem
 
                     if (bestIntersectIndex > -1)
                     {
-                        Globals.Me.TryStoreBagItem(mMySlot, bestIntersectIndex);
+                        Globals.Me.TryStoreItemInBag(mMySlot, bestIntersectIndex);
                     }
                 }
             }
@@ -543,7 +543,7 @@ public partial class InventoryItem
                     if (bestIntersectIndex > -1)
                     {
                         var slot = Globals.Me.Inventory[mMySlot];
-                        Globals.Me.TryDepositItem(
+                        Globals.Me.TryStoreItemInBank(
                             mMySlot,
                             bankSlotIndex: bestIntersectIndex,
                             quantityHint: slot.Quantity,

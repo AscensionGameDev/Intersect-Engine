@@ -78,7 +78,7 @@ public partial class QuestsWindow
                 prompt: Strings.QuestLog.AbandonPrompt.ToString(mSelectedQuest.Name),
                 inputType: InputType.YesNo,
                 userData: mSelectedQuest.Id,
-                onSuccess: (s, e) =>
+                onSubmit: (s, e) =>
                 {
                     if (s is InputBox inputBox && inputBox.UserData is Guid questId)
                     {

@@ -9,7 +9,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
-
 /// <summary>
 ///     Movable window with title bar.
 /// </summary>
@@ -25,13 +24,7 @@ public partial class WindowControl : ResizableControl
 
     }
 
-    private readonly ImagePanel _iconContainer;
-
-    private readonly CloseButton _closeButton;
-
-    private readonly Label _titleLabel;
-
-    private readonly Dragger _titlebar;
+    private readonly Titlebar _titlebar;
 
     private Color? mActiveColor;
 
@@ -47,17 +40,13 @@ public partial class WindowControl : ResizableControl
 
     private bool mDeleteOnClose;
 
-    private Modal? mModal;
-
-    private Base mOldParent;
-
     protected Base InnerPanel => _innerPanel ?? throw new InvalidOperationException("Windows must have inner panels");
 
-    public ImagePanel IconContainer => _iconContainer;
+    public ImagePanel IconContainer => _titlebar.Icon;
 
     public Dragger Titlebar => _titlebar;
 
-    public Label TitleLabel => _titleLabel;
+    public Label TitleLabel => _titlebar.Label;
 
     public Padding InnerPanelPadding
     {
@@ -86,59 +75,12 @@ public partial class WindowControl : ResizableControl
 
         var titleLabelFont = GameContentManager.Current?.GetFont("sourcesansproblack", 12);
 
-        _titlebar = new Dragger(this)
+        _titlebar = new Titlebar(this, CloseButtonOnClicked)
         {
-            ClipContents = false,
-            Dock = Pos.Top,
-            Height = 24,
-            Margin = default,
-            Padding = new Padding(4, 0, 0, 0),
-            Target = this,
+            Title = title,
         };
 
-        _iconContainer = new ImagePanel(_titlebar, name: "WindowIcon")
-        {
-            Dock = Pos.Left,
-            IsVisible = false,
-            Margin = new Margin(0, 4, 0, 4),
-            MaximumSize = new Point(24, 24),
-            RestrictToParent = false,
-            Size = new Point(24, 24),
-        };
-        _iconContainer.TextureLoaded += (_, _) =>
-        {
-            var iconContainerTexture = _iconContainer.Texture;
-            _iconContainer.IsVisible = iconContainerTexture != null;
-            if (iconContainerTexture is null)
-            {
-                return;
-            }
 
-            _iconContainer.MinimumSize = iconContainerTexture.Dimensions;
-            _iconContainer.MaximumSize = iconContainerTexture.Dimensions;
-            _iconContainer.Size = iconContainerTexture.Dimensions;
-            _titlebar.Height = _iconContainer.Size.Y + _iconContainer.Margin.Bottom + _iconContainer.Margin.Top;
-        };
-
-        _titleLabel = new Label(_titlebar, name: nameof(Title))
-        {
-            AutoSizeToContents = false,
-            Dock = Pos.Fill | Pos.CenterV,
-            Font = titleLabelFont,
-            MouseInputEnabled = false,
-            Padding = new Padding(4, 4),
-            Text = title,
-            TextAlign = Pos.Left | Pos.Bottom,
-            TextColor = Skin.Colors.Window.TitleInactive,
-        };
-
-        _closeButton = new CloseButton(_titlebar, this, name: nameof(CloseButton))
-        {
-            Dock = Pos.Right,
-            IsTabable = false,
-            Size = new Point(24, 24),
-        };
-        _closeButton.Clicked += CloseButtonOnClicked;
 
         // Create a blank content control, dock it to the top - Should this be a ScrollControl?
         _innerPanel = new Base(this, name: nameof(_innerPanel));
@@ -171,8 +113,8 @@ public partial class WindowControl : ResizableControl
     /// </summary>
     public string? Title
     {
-        get => _titleLabel.Text;
-        set => _titleLabel.Text = value;
+        get => _titlebar.Title;
+        set => _titlebar.Title = value;
     }
 
     /// <summary>
@@ -180,28 +122,20 @@ public partial class WindowControl : ResizableControl
     /// </summary>
     public bool IsClosable
     {
-        get => !_closeButton.IsHidden;
-        set
-        {
-            if (value == _closeButton.IsVisible)
-            {
-                return;
-            }
-
-            _closeButton.IsVisible = value;
-        }
+        get => !_titlebar.CloseButton.IsHidden;
+        set => _titlebar.CloseButton.IsVisible = value;
     }
 
     public GameTexture? Icon
     {
-        get => _iconContainer.Texture;
-        set => _iconContainer.Texture = value;
+        get => _titlebar.Icon.Texture;
+        set => _titlebar.Icon.Texture = value;
     }
 
     public string? IconName
     {
-        get => _iconContainer.TextureFilename;
-        set => _iconContainer.TextureFilename = value;
+        get => _titlebar.Icon.TextureFilename;
+        set => _titlebar.Icon.TextureFilename = value;
     }
 
     /// <summary>
@@ -240,13 +174,13 @@ public partial class WindowControl : ResizableControl
     {
         base.Layout(skin);
 
-        _titlebar.SizeToChildren(width: false, height: true, recursive: true);
+        _titlebar.SizeToChildren(resizeX: false, resizeY: true, recursive: true);
         var size = _titlebar.Height;
         if (_innerPanel is { } innerPanel)
         {
             innerPanel.MinimumSize = innerPanel.MinimumSize with { Y = InnerHeight - size };
         }
-        _closeButton.Size = new Point(size, size);
+        _titlebar.CloseButton.Size = new Point(size, size);
     }
 
     internal override void DoRender(Skin.Base skin)
@@ -270,7 +204,6 @@ public partial class WindowControl : ResizableControl
         serializedProperties.Add("ActiveColor", Color.ToString(mActiveColor));
         serializedProperties.Add("InactiveColor", Color.ToString(mInactiveColor));
         serializedProperties.Add(nameof(IsClosable), IsClosable);
-        serializedProperties.Add(nameof(Titlebar), _titlebar.GetJson());
 
         return base.FixJson(serializedProperties);
     }
@@ -369,41 +302,6 @@ public partial class WindowControl : ResizableControl
     }
 
     /// <summary>
-    ///     Makes the window modal: covers the whole canvas and gets all input.
-    /// </summary>
-    /// <param name="dim">Determines whether all the background should be dimmed.</param>
-    public void MakeModal(bool dim = false)
-    {
-        if (mModal != null)
-        {
-            return;
-        }
-
-        mModal = new Modal(GetCanvas());
-        mOldParent = Parent;
-        Parent = mModal;
-
-        if (dim)
-        {
-            mModal.ShouldDrawBackground = true;
-        }
-        else
-        {
-            mModal.ShouldDrawBackground = false;
-        }
-    }
-
-    public void RemoveModal()
-    {
-        if (mModal != null)
-        {
-            Parent = mOldParent;
-            GetCanvas().RemoveChild(mModal, false);
-            mModal = null;
-        }
-    }
-
-    /// <summary>
     ///     Renders the control using specified skin.
     /// </summary>
     /// <param name="skin">Skin to use.</param>
@@ -418,7 +316,7 @@ public partial class WindowControl : ResizableControl
 
         textColor ??= Skin.Colors.Window.TitleInactive;
 
-        _titleLabel.TextColor = textColor;
+        _titlebar.Label.TextColor = textColor;
 
         skin.DrawWindow(this, _titlebar.Bottom, hasFocus);
     }

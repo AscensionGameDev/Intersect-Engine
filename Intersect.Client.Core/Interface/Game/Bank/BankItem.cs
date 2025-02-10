@@ -74,7 +74,7 @@ public partial class BankItem
         {
             if (Globals.InputManager.IsKeyDown(Keys.Shift))
             {
-                Globals.Me.TryWithdrawItem(
+                Globals.Me.TryRetrieveItemFromBank(
                     mMySlot,
                     skipPrompt: true
                 );
@@ -82,7 +82,7 @@ public partial class BankItem
             else
             {
                 var slot = Globals.Bank[mMySlot];
-                Globals.Me.TryWithdrawItem(
+                Globals.Me.TryRetrieveItemFromBank(
                     mMySlot,
                     slot,
                     quantityHint: slot.Quantity,
@@ -348,7 +348,7 @@ public partial class BankItem
                     if (bestIntersectIndex > -1)
                     {
                         var slot = Globals.Bank[mMySlot];
-                        Globals.Me.TryWithdrawItem(
+                        Globals.Me.TryRetrieveItemFromBank(
                             mMySlot,
                             inventorySlotIndex: bestIntersectIndex,
                             quantityHint: slot.Quantity,

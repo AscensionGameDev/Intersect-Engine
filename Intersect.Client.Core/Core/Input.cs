@@ -82,9 +82,10 @@ public static partial class Input
                 return;
 
             case Keys.Enter:
-                for (int i = Interface.Interface.InputBlockingComponents.Count - 1; i >= 0; i--)
+                var components = Interface.Interface.InputBlockingComponents.ToArray();
+                for (int i = components.Length - 1; i >= 0; i--)
                 {
-                    var inputBlockingComponent = Interface.Interface.InputBlockingComponents[i];
+                    var inputBlockingComponent = components[i];
                     try
                     {
                         if (inputBlockingComponent is InputBox { IsHidden: false } inputBox)

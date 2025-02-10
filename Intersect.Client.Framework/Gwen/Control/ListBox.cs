@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Control.Layout;
@@ -546,7 +547,7 @@ public partial class ListBox : ScrollControl
         mTable.FitContents(0); // autosize without constraints
     }
 
-    private void TableResized(Base control, EventArgs args)
+    private void TableResized(Base control, ValueChangedEventArgs<Rectangle> args)
     {
         if (mSizeToContents)
         {

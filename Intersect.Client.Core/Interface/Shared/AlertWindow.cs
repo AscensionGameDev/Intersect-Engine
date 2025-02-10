@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Localization;
 
 namespace Intersect.Client.Interface.Shared;
@@ -25,16 +26,17 @@ public class AlertWindow : InputBox
         string message,
         AlertType alertType,
         object? userData = default,
-        EventHandler? handleSubmit = default,
-        EventHandler? handleCancel = default,
-        InputType inputType = InputType.OkayOnly
+        GwenEventHandler<InputSubmissionEventArgs>? handleSubmit = default,
+        GwenEventHandler<EventArgs>? handleCancel = default,
+        InputType inputType = InputType.Okay
     ) : base(
-        title,
-        message,
-        inputType,
-        handleSubmit,
-        handleCancel,
-        userData
+        name: nameof(AlertWindow),
+        title: title,
+        prompt: message,
+        inputType: inputType,
+        onSubmit: handleSubmit,
+        onCancel: handleCancel,
+        userData: userData
     )
     {
         Icon = GameContentManager.Current.GetTexture(
@@ -54,7 +56,7 @@ public class AlertWindow : InputBox
         Remove();
     }
 
-    protected override void OnSubmitted(Base sender, EventArgs args)
+    protected override void OnSubmitted(Base sender, InputSubmissionEventArgs args)
     {
         Remove();
     }
@@ -85,9 +87,9 @@ public class AlertWindow : InputBox
         string? title = default,
         AlertType alertType = AlertType.Unknown,
         object? userData = default,
-        EventHandler? handleSubmit = default,
-        EventHandler? handleCancel = default,
-        InputType inputType = InputType.OkayOnly
+        GwenEventHandler<InputSubmissionEventArgs>? handleSubmit = default,
+        GwenEventHandler<EventArgs>? handleCancel = default,
+        InputType inputType = InputType.Okay
     )
     {
         if (string.IsNullOrWhiteSpace(title))

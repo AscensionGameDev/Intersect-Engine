@@ -2,7 +2,7 @@ namespace Intersect.Client.Interface.Shared;
 
 public enum InputType
 {
-    OkayOnly,
+    Okay,
 
     YesNo,
 
@@ -10,7 +10,7 @@ public enum InputType
 
     NumericInput,
 
-    TextInput,
-
     NumericSliderInput,
+
+    TextInput,
 }

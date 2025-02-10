@@ -360,7 +360,7 @@ internal partial class IntersectGame : Game
                     title: Strings.Combat.WarningTitle,
                     prompt: Strings.Combat.WarningCharacterSelect,
                     inputType: InputType.YesNo,
-                    onSuccess: (s, e) =>
+                    onSubmit: (s, e) =>
                     {
                         if (Globals.Me != null)
                         {

@@ -301,7 +301,15 @@ public partial class Label : Base, ILabel
     public Color? TextColor
     {
         get => _textElement.Color ?? Color.White;
-        set => _textElement.Color = value;
+        set
+        {
+            if (value == _textElement.Color)
+            {
+                return;
+            }
+
+            _textElement.Color = value;
+        }
     }
 
     /// <summary>
@@ -692,9 +700,16 @@ public partial class Label : Base, ILabel
     {
         base.OnChildBoundsChanged(child, oldChildBounds, newChildBounds);
 
-        if (_autoSizeToContents && oldChildBounds.Size != newChildBounds.Size)
+        if (oldChildBounds.Size != newChildBounds.Size)
         {
-            Invalidate();
+            if (_autoSizeToContents)
+            {
+                Invalidate();
+            }
+            else
+            {
+                AlignTextElement(_textElement);
+            }
         }
     }
 

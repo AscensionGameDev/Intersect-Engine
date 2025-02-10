@@ -330,7 +330,7 @@ internal sealed partial class DebugWindow : Window
             Dock = Pos.Fill,
             Font = _defaultFont,
         };
-        table.BoundsChanged += (_, _) => table.SizeToChildren(width: false, height: true);
+        table.BoundsChanged += (_, _) => table.SizeToChildren(resizeX: false, resizeY: true);
 
         var fpsProvider = new ValueTableCellDataProvider<int>(() => Graphics.Renderer?.GetFps() ?? 0, waitPredicate: () => Task.FromResult(IsVisible));
         table.AddRow(Strings.Debug.Fps, name: "FPSRow").Listen(fpsProvider, 1);

@@ -92,7 +92,7 @@ public partial class TradeItem
 
         if (Globals.InTrade)
         {
-            Globals.Me.TryRevokeItem(mMySlot);
+            Globals.Me.TryCancelOfferToTradeItem(mMySlot);
         }
     }
 

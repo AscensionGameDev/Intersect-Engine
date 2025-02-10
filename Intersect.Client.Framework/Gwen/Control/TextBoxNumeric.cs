@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.Control;
 /// <summary>
 ///     Numeric text box - accepts only float numbers.
 /// </summary>
-public partial class TextBoxNumeric : TextBox
+public partial class TextBoxNumeric : TextBox, INumericInput
 {
 
     protected double _value;
@@ -22,7 +22,7 @@ public partial class TextBoxNumeric : TextBox
     public TextBoxNumeric(Base parent, string? name = default) : base(parent, name)
     {
         AutoSizeToContents = false;
-        SetText("0", false);
+        InsertText("0", skipEvents: true);
     }
 
     public double Maximum
@@ -46,7 +46,7 @@ public partial class TextBoxNumeric : TextBox
         set => SetValue(value, skipEvents: false);
     }
 
-    public event GwenEventHandler<ValueChangedEventArgs<double>>? ValueChanged;
+    public event GwenEventHandler<TextBoxNumeric, ValueChangedEventArgs<double>>? ValueChanged;
 
     protected virtual bool IsTextAllowed(string? str)
     {

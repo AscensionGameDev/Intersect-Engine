@@ -1,4 +1,5 @@
 ﻿using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Input;
@@ -135,6 +136,11 @@ public partial class Dragger : Base
     protected override void Layout(Skin.Base skin)
     {
         base.Layout(skin);
+    }
+
+    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
+    {
+        base.OnBoundsChanged(oldBounds, newBounds);
     }
 
     public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)

@@ -127,7 +127,10 @@ public partial class GameInterface : MutableInterface
             mPictureWindow = new PictureWindow(GameCanvas);
         }
 
-        mEventWindow = new EventWindow(GameCanvas);
+        mEventWindow = new EventWindow(GameCanvas)
+        {
+            IsVisible = false,
+        };
         mQuestOfferWindow = new QuestOfferWindow(GameCanvas);
         mMapItemWindow = new MapItemWindow(GameCanvas);
         mBankWindow = new BankWindow(GameCanvas);
