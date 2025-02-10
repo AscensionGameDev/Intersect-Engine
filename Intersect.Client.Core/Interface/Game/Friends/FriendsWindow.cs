@@ -102,7 +102,7 @@ partial class FriendsWindow
         _ = new InputBox(
             title: Strings.Friends.AddFriend,
             prompt: Strings.Friends.AddFriendPrompt,
-            inputType: InputBox.InputType.TextInput,
+            inputType: InputType.TextInput,
             onSuccess: (s, e) =>
             {
                 if (s is InputBox inputBox && inputBox.TextValue.Trim().Length >= 3)

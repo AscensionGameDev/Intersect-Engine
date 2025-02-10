@@ -67,7 +67,7 @@ partial class GuildWindow : WindowControl
             _ = new InputBox(
                 title: Strings.Guilds.LeaveTitle,
                 prompt: Strings.Guilds.LeavePrompt.ToString(Globals.Me?.Guild),
-                inputType: InputBox.InputType.YesNo,
+                inputType: InputType.YesNo,
                 onSuccess: (s, e) => PacketSender.SendLeaveGuild()
             );
         };
@@ -83,7 +83,7 @@ partial class GuildWindow : WindowControl
             new InputBox(
                 title: Strings.Guilds.InviteMemberTitle,
                 prompt: Strings.Guilds.InviteMemberPrompt.ToString(Globals.Me?.Guild),
-                inputType: InputBox.InputType.TextInput,
+                inputType: InputType.TextInput,
                 onSuccess: (s, e) =>
                 {
                     if (s is InputBox inputBox && inputBox.TextValue.Trim().Length >= 3)
@@ -335,7 +335,7 @@ partial class GuildWindow : WindowControl
         _ = new InputBox(
             Strings.Guilds.PromoteTitle,
             Strings.Guilds.PromotePrompt.ToString(_selectedMember.Name, Options.Instance.Guild.Ranks[newRank].Title),
-            InputBox.InputType.YesNo,
+            InputType.YesNo,
             userData: new Tuple<GuildMember, int>(_selectedMember, newRank),
             onSuccess: (s, e) =>
             {
@@ -368,7 +368,7 @@ partial class GuildWindow : WindowControl
         _ = new InputBox(
             Strings.Guilds.DemoteTitle,
             Strings.Guilds.DemotePrompt.ToString(_selectedMember.Name, Options.Instance.Guild.Ranks[newRank].Title),
-            InputBox.InputType.YesNo,
+            InputType.YesNo,
             userData: new Tuple<GuildMember, int>(_selectedMember, newRank),
             onSuccess: (s, e) =>
             {
@@ -400,7 +400,7 @@ partial class GuildWindow : WindowControl
         _ = new InputBox(
             Strings.Guilds.KickTitle,
             Strings.Guilds.KickPrompt.ToString(_selectedMember?.Name),
-            InputBox.InputType.YesNo,
+            InputType.YesNo,
             userData: _selectedMember,
             onSuccess: (s, e) =>
             {
@@ -431,7 +431,7 @@ partial class GuildWindow : WindowControl
         _ = new InputBox(
             Strings.Guilds.TransferTitle,
             Strings.Guilds.TransferPrompt.ToString(_selectedMember?.Name, rank.Title, Globals.Me?.Guild),
-            InputBox.InputType.TextInput,
+            InputType.TextInput,
             userData: _selectedMember,
             onSuccess: (s, e) =>
             {

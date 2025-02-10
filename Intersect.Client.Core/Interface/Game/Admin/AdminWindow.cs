@@ -150,7 +150,7 @@ public partial class AdminWindow : WindowControl
                 _ = new InputBox(
                     Strings.Admin.UnbanCaption.ToString(_textboxName.Text),
                     Strings.Admin.UnbanPrompt.ToString(_textboxName.Text),
-                    InputBox.InputType.YesNo,
+                    InputType.YesNo,
                     (_, _) => PacketSender.SendAdminAction(new UnbanAction(_textboxName.Text))
                 );
             }
@@ -174,7 +174,7 @@ public partial class AdminWindow : WindowControl
                 _ = new InputBox(
                     Strings.Admin.UnmuteCaption.ToString(_textboxName.Text),
                     Strings.Admin.UnmutePrompt.ToString(_textboxName.Text),
-                    InputBox.InputType.YesNo,
+                    InputType.YesNo,
                     (_, _) => PacketSender.SendAdminAction(new UnmuteAction(_textboxName.Text))
                 );
             }

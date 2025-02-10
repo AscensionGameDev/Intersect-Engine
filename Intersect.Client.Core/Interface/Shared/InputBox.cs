@@ -12,21 +12,6 @@ namespace Intersect.Client.Interface.Shared;
 
 public partial class InputBox : Window
 {
-    public enum InputType
-    {
-        OkayOnly,
-
-        YesNo,
-
-        YesNoCancel,
-
-        NumericInput,
-
-        TextInput,
-
-        NumericSliderInput,
-    }
-
     public string TextValue { get; set; } = string.Empty;
 
     public new object? UserData { get; set; }
