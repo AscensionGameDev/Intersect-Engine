@@ -294,9 +294,9 @@ public static partial class Strings
 
     public static string GetEventConditionalDesc(NoNpcsOnMapCondition condition)
     {
-        return condition.SpecificNpc ?
-            EventConditionDesc.NoNpcsOfTypeOnMap.ToString(NpcBase.GetName(condition.NpcId)) :
-            EventConditionDesc.NoNpcsOnMap.ToString();
+        return condition.SpecificNpc
+            ? EventConditionDesc.NoNpcsOfTypeOnMap.ToString(NpcBase.GetName(condition.NpcId))
+            : EventConditionDesc.NoNpcsOnMap.ToString();
     }
 
     public static string GetEventConditionalDesc(GenderIsCondition condition)
