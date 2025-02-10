@@ -1228,7 +1228,7 @@ internal sealed partial class PacketHandler
     {
         Fade.FadeIn(ClientConfiguration.Instance.FadeDurationMs);
         Globals.WaitingOnServer = false;
-        Interface.Interface.ShowError(packet.Error, packet.Header);
+        Interface.Interface.ShowAlert(packet.Error, packet.Header, alertType: AlertType.Error);
         Interface.Interface.MenuUi?.Reset();
     }
 
@@ -2220,12 +2220,20 @@ internal sealed partial class PacketHandler
         if (packet.Succeeded)
         {
             // Show Success Message and Open Login Screen
-            Interface.Interface.ShowError(Strings.ResetPass.Success, Strings.ResetPass.SuccessMessage);
+            Interface.Interface.ShowAlert(
+                Strings.ResetPass.Success,
+                Strings.ResetPass.SuccessMessage,
+                AlertType.Information
+            );
             Interface.Interface.MenuUi.MainMenu.NotifyOpenLogin();
         }
         else
         {
-            Interface.Interface.ShowError(Strings.ResetPass.Error, Strings.ResetPass.ErrorMessage);
+            Interface.Interface.ShowAlert(
+                Strings.ResetPass.Error,
+                Strings.ResetPass.ErrorMessage,
+                alertType: AlertType.Error
+            );
         }
 
         Globals.WaitingOnServer = false;

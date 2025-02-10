@@ -5,6 +5,7 @@ using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Core;
@@ -396,7 +397,7 @@ public partial class CreateCharacterWindow : ImagePanel
 
         if (!FieldChecking.IsValidUsername(_charNameTextbox.Text, Strings.Regex.Username))
         {
-            Interface.ShowError(Strings.CharacterCreation.InvalidName);
+            Interface.ShowAlert(Strings.CharacterCreation.InvalidName, alertType: AlertType.Error);
             return;
         }
 

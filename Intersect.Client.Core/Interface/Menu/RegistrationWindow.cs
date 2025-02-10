@@ -7,6 +7,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Security;
@@ -317,31 +318,31 @@ public partial class RegistrationWindow : Window, IMainMenuWindow
 
         if (!Networking.Network.IsConnected)
         {
-            Interface.ShowError(Strings.Errors.NotConnected);
+            Interface.ShowAlert(Strings.Errors.NotConnected, alertType: AlertType.Error);
             return;
         }
 
         if (!FieldChecking.IsValidUsername(_usernameInput.Text, Strings.Regex.Username))
         {
-            Interface.ShowError(Strings.Errors.UsernameInvalid);
+            Interface.ShowAlert(Strings.Errors.UsernameInvalid, alertType: AlertType.Error);
             return;
         }
 
         if (!FieldChecking.IsWellformedEmailAddress(_emailInput.Text, Strings.Regex.Email))
         {
-            Interface.ShowError(Strings.Registration.EmailInvalid);
+            Interface.ShowAlert(Strings.Registration.EmailInvalid, alertType: AlertType.Error);
             return;
         }
 
         if (!FieldChecking.IsValidPassword(_passwordInput.Text, Strings.Regex.Password))
         {
-            Interface.ShowError(Strings.Errors.PasswordInvalid);
+            Interface.ShowAlert(Strings.Errors.PasswordInvalid, alertType: AlertType.Error);
             return;
         }
 
         if (_passwordInput.Text != _passwordConfirmationInput.Text)
         {
-            Interface.ShowError(Strings.Registration.PasswordMismatch);
+            Interface.ShowAlert(Strings.Registration.PasswordMismatch, alertType: AlertType.Error);
             return;
         }
 

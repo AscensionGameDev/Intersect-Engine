@@ -9,7 +9,7 @@ namespace Intersect.Client.Interface.Shared;
 public enum AlertType
 {
     Unknown,
-    // Informational? Requires an icon
+    Information,
     Error,
     Warning,
 }
@@ -24,13 +24,16 @@ public class AlertWindow : InputBox
         string title,
         string message,
         AlertType alertType,
-        object? userData = default
+        object? userData = default,
+        EventHandler? handleSubmit = default,
+        EventHandler? handleCancel = default,
+        InputType inputType = InputType.OkayOnly
     ) : base(
         title,
         message,
-        InputType.OkayOnly,
-        default,
-        default,
+        inputType,
+        handleSubmit,
+        handleCancel,
         userData
     )
     {
@@ -77,7 +80,15 @@ public class AlertWindow : InputBox
         }
     }
 
-    public static void Open(string message, string? title = default, AlertType alertType = AlertType.Unknown, object? userData = default)
+    public static void Open(
+        string message,
+        string? title = default,
+        AlertType alertType = AlertType.Unknown,
+        object? userData = default,
+        EventHandler? handleSubmit = default,
+        EventHandler? handleCancel = default,
+        InputType inputType = InputType.OkayOnly
+    )
     {
         if (string.IsNullOrWhiteSpace(title))
         {
@@ -97,7 +108,10 @@ public class AlertWindow : InputBox
                 title: string.IsNullOrWhiteSpace(title) ? Strings.Errors.Title.ToString() : title,
                 message: message,
                 alertType: alertType,
-                userData: userData
+                userData: userData,
+                handleSubmit: handleSubmit,
+                handleCancel: handleCancel,
+                inputType: inputType
             )
         );
     }

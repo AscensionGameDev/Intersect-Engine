@@ -131,13 +131,7 @@ public partial class EscapeMenu : ImagePanel
         ToggleHidden();
         if (Globals.Me?.CombatTimer > Timing.Global.Milliseconds)
         {
-            //Show Logout in Combat Warning
-            _ = new InputBox(
-                title: Strings.Combat.WarningTitle,
-                prompt: Strings.Combat.WarningCharacterSelect,
-                inputType: InputBox.InputType.YesNo,
-                onSuccess: LogoutToCharacterSelect
-            );
+            ShowCombatWarning();
         }
         else
         {
@@ -160,13 +154,7 @@ public partial class EscapeMenu : ImagePanel
         ToggleHidden();
         if (Globals.Me?.CombatTimer > Timing.Global.Milliseconds)
         {
-            //Show Logout in Combat Warning
-            _ = new InputBox(
-                title: Strings.Combat.WarningTitle,
-                prompt: Strings.Combat.WarningLogout,
-                inputType: InputBox.InputType.YesNo,
-                onSuccess: LogoutToMainMenu
-            );
+            ShowCombatWarning();
         }
         else
         {
@@ -189,18 +177,23 @@ public partial class EscapeMenu : ImagePanel
         ToggleHidden();
         if (Globals.Me?.CombatTimer > Timing.Global.Milliseconds)
         {
-            //Show Logout in Combat Warning
-            _ = new InputBox(
-                title: Strings.Combat.WarningTitle,
-                prompt: Strings.Combat.WarningExitDesktop,
-                inputType: InputBox.InputType.YesNo,
-                onSuccess: ExitToDesktop
-            );
+            ShowCombatWarning();
         }
         else
         {
             ExitToDesktop(null, null);
         }
+    }
+
+    private void ShowCombatWarning()
+    {
+        AlertWindow.Open(
+            Strings.Combat.WarningCharacterSelect,
+            Strings.Combat.WarningTitle,
+            AlertType.Warning,
+            handleSubmit: LogoutToCharacterSelect,
+            inputType: InputBox.InputType.YesNo
+        );
     }
 
     private void ExitToDesktop(object? sender, EventArgs? e)
