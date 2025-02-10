@@ -8,7 +8,7 @@ namespace Intersect.Client.Framework.Gwen.Control;
 /// </summary>
 public partial class ScrollControl : Base
 {
-    private readonly ScrollPanel _scrollPanel;
+    protected readonly ScrollPanel _scrollPanel;
 
     private bool _updatingScrollbars;
 

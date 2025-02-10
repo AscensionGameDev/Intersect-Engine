@@ -37,6 +37,8 @@ public partial class Menu : ScrollControl
     /// <param name="name"></param>
     public Menu(Base parent, string? name = default) : base(parent, name)
     {
+        _scrollPanel.Padding = default;
+
         Size = new Point(10, 10);
         Padding = Padding.Two;
         IconMarginDisabled = false;

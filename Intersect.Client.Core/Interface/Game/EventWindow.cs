@@ -34,16 +34,17 @@ public partial class EventWindow : Panel
     private bool _isTypewriting;
     private readonly long _typewriterResponseDelay = ClientConfiguration.Instance.TypewriterResponseDelay;
 
-    private Dialog? _currentDialog;
+    private readonly Dialog _dialog;
 
-    public EventWindow(Canvas gameCanvas) : base(gameCanvas, nameof(EventWindow))
+    private EventWindow(Canvas gameCanvas, Dialog dialog) : base(gameCanvas, nameof(EventWindow))
     {
+        _dialog = dialog;
         _defaultFont = GameContentManager.Current.GetFont(name: "sourcesansproblack", 12);
         _writer = Globals.Database.TypewriterBehavior == TypewriterBehavior.Off ? default : new Typewriter();
 
         Alignment = [Alignments.Center];
-        MinimumSize = new Point(520, 240);
-        MaximumSize = new Point(800, 600);
+        MinimumSize = new Point(520, 180);
+        MaximumSize = new Point(720, 520);
         Padding = new Padding(16);
 
         _promptPanel = new Panel(this, nameof(_promptPanel))
@@ -86,6 +87,7 @@ public partial class EventWindow : Panel
         {
             Dock = Pos.Left,
             MaintainAspectRatio = true,
+            Margin = new Margin(8, 8, 0, 8),
             MaximumSize = new Point(128, 128),
         };
 
@@ -108,6 +110,62 @@ public partial class EventWindow : Panel
         };
 
         _promptPanel.SizeToChildren(recursive: true);
+
+
+        #region Configure and Display
+
+        if (_dialog.Face is { } faceTextureName)
+        {
+            var faceTexture = Globals.ContentManager.GetTexture(TextureType.Face, faceTextureName);
+            _faceImage.Texture = faceTexture;
+            if (faceTexture is not null)
+            {
+                _faceImage.IsVisible = true;
+                _faceImage.SizeToContents();
+            }
+            else
+            {
+                _faceImage.IsVisible = false;
+            }
+        }
+        else
+        {
+            _faceImage.Texture = null;
+            _faceImage.IsVisible = false;
+        }
+
+        var visibleOptions = _dialog.Options.Where(option => !string.IsNullOrEmpty(option)).ToArray();
+        if (visibleOptions.Length < 1)
+        {
+            visibleOptions = [Strings.EventWindow.Continue];
+        }
+
+        for (var optionIndex = 0; optionIndex < _optionButtons.Length; ++optionIndex)
+        {
+            var optionButton = _optionButtons[optionIndex];
+            if (optionIndex < visibleOptions.Length)
+            {
+                optionButton.Text = visibleOptions[optionIndex];
+                optionButton.IsVisible = true;
+            }
+            else
+            {
+                optionButton.IsVisible = false;
+            }
+        }
+
+        // var optionLimit = Math.Max(1, visibleOptions.Length);
+        // Name = $"EventDialogWindow_{optionLimit}Response{(optionLimit == 1 ? string.Empty : 's')}";
+        // LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer?.GetResolutionString());
+
+        SkipRender();
+        ShowDialog();
+
+        MakeModal(dim: true);
+        BringToFront();
+        Interface.InputBlockingComponents.Add(this);
+
+        #endregion Configure and Display
     }
 
     protected override void OnMouseClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
@@ -117,21 +175,18 @@ public partial class EventWindow : Panel
         SkipTypewriting();
     }
 
-    public void Update()
+    public override void Dispose()
     {
-        if (IsHidden)
-        {
-            _ = Interface.InputBlockingComponents.Remove(this);
-        }
+        EnsureControlRestored();
+        base.Dispose();
+    }
 
-        var availableDialog = Globals.EventDialogs.FirstOrDefault();
-        if (availableDialog == null)
-        {
-            return;
-        }
+    private static EventWindow? _instance;
 
+    private void Update()
+    {
         // Handle typewriting
-        if (_isTypewriting && !IsHidden)
+        if (_isTypewriting && IsVisible)
         {
             var voiceIdx = Randomization.Next(0, ClientConfiguration.Instance.TypewriterSounds.Count);
 
@@ -140,7 +195,7 @@ public partial class EventWindow : Panel
             for (var optionIndex = 0; optionIndex < _optionButtons.Length; ++optionIndex)
             {
                 var optionButton = _optionButtons[optionIndex];
-                var optionText = _currentDialog?.Options[optionIndex];
+                var optionText = _dialog?.Options[optionIndex];
                 optionButton.IsVisible = writerCompleted && !string.IsNullOrEmpty(optionText);
             }
 
@@ -163,82 +218,31 @@ public partial class EventWindow : Panel
             return;
         }
 
-        if (_currentDialog != availableDialog)
-        {
-            _currentDialog = availableDialog;
-
-            if (availableDialog.Face is { } faceTextureName)
-            {
-                var faceTexture = Globals.ContentManager.GetTexture(TextureType.Face, faceTextureName);
-                _faceImage.Texture = faceTexture;
-                if (faceTexture is not null)
-                {
-                    _faceImage.IsVisible = true;
-                    _faceImage.SizeToContents();
-                }
-                else
-                {
-                    _faceImage.IsVisible = false;
-                }
-            }
-            else
-            {
-                _faceImage.Texture = null;
-                _faceImage.IsVisible = false;
-            }
-
-            var visibleOptions = availableDialog.Options.Where(option => !string.IsNullOrEmpty(option)).ToArray();
-            if (visibleOptions.Length < 1)
-            {
-                visibleOptions = [Strings.EventWindow.Continue];
-            }
-
-            for (var optionIndex = 0; optionIndex < _optionButtons.Length; ++optionIndex)
-            {
-                var optionButton = _optionButtons[optionIndex];
-                if (optionIndex < visibleOptions.Length)
-                {
-                    optionButton.Text = visibleOptions[optionIndex];
-                    optionButton.IsVisible = true;
-                }
-                else
-                {
-                    optionButton.IsVisible = false;
-                }
-            }
-
-            // Name = $"EventDialogWindow_{_optionCountLimit}Response{(_optionCountLimit == 1 ? string.Empty : 's')}";
-            // LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer?.GetResolutionString());
-
-            ShowDialog();
-
-            Defer(
-                () =>
-                {
-                    SizeToChildren(recursive: true);
-
-                    _promptScroller.ScrollToTop();
-                }
-            );
-
-            SkipRender();
-            Show();
-            MakeModal(dim: true);
-            Interface.InputBlockingComponents.Add(this);
-
-            BringToFront();
-        }
-
         _isTypewriting = ClientConfiguration.Instance.TypewriterEnabled &&
                          Globals.Database.TypewriterBehavior == TypewriterBehavior.Word;
+    }
+
+    public static void ShowOrUpdateDialog(Canvas canvas)
+    {
+        if (_instance is { } instance)
+        {
+            instance.Update();
+            return;
+        }
+
+        var availableDialog = Globals.EventDialogs.FirstOrDefault();
+        if (availableDialog == null)
+        {
+            return;
+        }
+
+        _instance = new EventWindow(canvas, availableDialog);
     }
 
     private void ShowDialog()
     {
         _promptLabel.ClearText();
-        _promptLabel.Width = _promptScroller.Width - _promptScroller.VerticalScrollBar.Width;
-
-        _promptLabel.AddText(_currentDialog?.Prompt ?? string.Empty, _promptTemplateLabel);
+        _promptLabel.AddText(_dialog?.Prompt ?? string.Empty, _promptTemplateLabel);
 
         _ = _promptLabel.SizeToChildren();
 
@@ -252,7 +256,14 @@ public partial class EventWindow : Panel
             }
         }
 
-        _promptScroller.ScrollToTop();
+        Defer(
+            () =>
+            {
+                SizeToChildren(recursive: true);
+
+                _promptScroller.ScrollToTop();
+            }
+        );
     }
 
     public void CloseEventResponse(EventResponseType response)
@@ -263,7 +274,7 @@ public partial class EventWindow : Panel
             return;
         }
 
-        if (_currentDialog is not { ResponseSent: false } dialog)
+        if (_dialog is not { ResponseSent: false } dialog)
         {
             return;
         }
@@ -271,8 +282,31 @@ public partial class EventWindow : Panel
         PacketSender.SendEventResponse((byte)response, dialog);
         dialog.ResponseSent = true;
 
+        EnsureDestroyed();
+    }
+
+    private void EnsureControlRestored()
+    {
+        if (_instance == this)
+        {
+            _instance = null;
+        }
+        _ = Interface.InputBlockingComponents.Remove(this);
         RemoveModal();
-        Hide();
+    }
+
+    private void EnsureDestroyed()
+    {
+        EnsureControlRestored();
+
+        if (Parent is { } parent)
+        {
+            parent.RemoveChild(this, dispose: true);
+        }
+        else
+        {
+            DelayedDelete();
+        }
     }
 
     private void SkipTypewriting()
