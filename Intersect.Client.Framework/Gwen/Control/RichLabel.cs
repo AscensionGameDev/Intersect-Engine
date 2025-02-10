@@ -154,6 +154,16 @@ public partial class RichLabel : Base
         return base.SizeToChildren(resizeX: resizeX, resizeY: resizeY, recursive: recursive);
     }
 
+    protected override Point ApplyDockFillOnSizeToChildren(Point size, Point internalSize)
+    {
+        if (size.X >= internalSize.X && size.Y >= internalSize.Y)
+        {
+            return size;
+        }
+
+        return base.ApplyDockFillOnSizeToChildren(size, internalSize);
+    }
+
     public override Point GetChildrenSize()
     {
         var childrenSize = base.GetChildrenSize();

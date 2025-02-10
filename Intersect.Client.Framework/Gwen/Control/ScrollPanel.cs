@@ -1,6 +1,6 @@
 namespace Intersect.Client.Framework.Gwen.Control;
 
-internal class ScrollPanel : Base
+public class ScrollPanel : Base
 {
     private readonly ScrollControl _scroller;
 
@@ -26,5 +26,16 @@ internal class ScrollPanel : Base
         }
 
         base.ApplyDockFill(child, position, size);
+    }
+
+    public override Point GetChildrenSize()
+    {
+        var childrenSize = base.GetChildrenSize();
+        return childrenSize;
+    }
+
+    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
+    {
+        return base.SizeToChildren(resizeX, resizeY, recursive);
     }
 }

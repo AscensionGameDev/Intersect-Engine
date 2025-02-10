@@ -3538,16 +3538,15 @@ public partial class Base : IDisposable
         size.X = Math.Max(Math.Min(size.X, _maximumSize.X < 1 ? size.X : _maximumSize.X), _minimumSize.X);
         size.Y = Math.Max(Math.Min(size.Y, _maximumSize.Y < 1 ? size.Y : _maximumSize.Y), _minimumSize.Y);
 
-        var width = resizeX ? size.X : Width;
-        var height = resizeY ? size.Y : Height;
+        var newSize = new Point(resizeX ? size.X : Width, resizeY ? size.Y : Height);
 
         if (Dock.HasFlag(Pos.Fill))
         {
-            width = Math.Max(Width, width);
-            height = Math.Max(Height, height);
+            var dockFillSize = ApplyDockFillOnSizeToChildren(newSize, size);
+            newSize = dockFillSize;
         }
 
-        if (!SetSize(width, height))
+        if (!SetSize(newSize))
         {
             return false;
         }
@@ -3555,6 +3554,14 @@ public partial class Base : IDisposable
         ProcessAlignments();
 
         return true;
+    }
+
+    protected virtual Point ApplyDockFillOnSizeToChildren(Point size, Point internalSize)
+    {
+        return new Point(
+            Math.Max(Width, size.X),
+            Math.Max(Height, size.Y)
+        );
     }
 
     /// <summary>
