@@ -1208,9 +1208,9 @@ internal sealed partial class PacketHandler
     {
         var type = packet.Type switch
         {
-            VariableDataType.String => InputBox.InputType.TextInput,
-            VariableDataType.Boolean => InputBox.InputType.YesNoCancel,
-            _ => InputBox.InputType.NumericInput,
+            VariableDataType.String => InputType.TextInput,
+            VariableDataType.Boolean => InputType.YesNoCancel,
+            _ => InputType.NumericInput,
         };
 
         _ = new InputBox(
@@ -1934,7 +1934,7 @@ internal sealed partial class PacketHandler
         _ = new InputBox(
             title: Strings.Parties.PartyInvite,
             prompt: Strings.Parties.InvitePrompt.ToString(packet.LeaderName),
-            inputType: InputBox.InputType.YesNo,
+            inputType: InputType.YesNo,
             userData: packet.LeaderId,
             onSuccess: PacketSender.SendPartyAccept,
             onCancel: PacketSender.SendPartyDecline
@@ -2078,7 +2078,7 @@ internal sealed partial class PacketHandler
         _ = new InputBox(
             title: Strings.Trading.TradeRequest,
             prompt: Strings.Trading.RequestPrompt.ToString(packet.PartnerName),
-            inputType: InputBox.InputType.YesNo,
+            inputType: InputType.YesNo,
             userData: packet.PartnerId,
             onSuccess: PacketSender.SendTradeRequestAccept,
             onCancel: PacketSender.SendTradeRequestDecline
@@ -2186,7 +2186,7 @@ internal sealed partial class PacketHandler
         _ = new InputBox(
             title: Strings.Friends.Request,
             prompt: Strings.Friends.RequestPrompt.ToString(packet.FriendName),
-            inputType: InputBox.InputType.YesNo,
+            inputType: InputType.YesNo,
             userData: packet.FriendId,
             onSuccess: PacketSender.SendFriendRequestAccept,
             onCancel: PacketSender.SendFriendRequestDecline
@@ -2346,7 +2346,7 @@ internal sealed partial class PacketHandler
                     prompt: (string.IsNullOrWhiteSpace(packet.GuildName)
                         ? Strings.Guilds.InviteRequestPromptMissingGuild
                         : Strings.Guilds.InviteRequestPrompt).ToString(packet.Inviter, packet.GuildName),
-                    inputType: InputBox.InputType.YesNo,
+                    inputType: InputType.YesNo,
                     onSuccess: PacketSender.SendGuildInviteAccept,
                     onCancel: PacketSender.SendGuildInviteDecline
                 );

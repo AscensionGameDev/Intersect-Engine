@@ -283,7 +283,7 @@ public partial class SelectCharacterWindow : ImagePanel
         _ = new InputBox(
             title: Strings.CharacterSelection.DeleteTitle.ToString(Characters[mSelectedChar].Name),
             prompt: Strings.CharacterSelection.DeletePrompt.ToString(Characters[mSelectedChar].Name),
-            inputType: InputBox.InputType.YesNo,
+            inputType: InputType.YesNo,
             userData: Characters[mSelectedChar].Id,
             onSuccess: DeleteCharacter
         );

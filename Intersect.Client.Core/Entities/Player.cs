@@ -396,7 +396,7 @@ public partial class Player : Entity, IPlayer
 
         var quantity = inventorySlot.Quantity;
         var canDropMultiple = quantity > 1;
-        var inputType = canDropMultiple ? InputBox.InputType.NumericSliderInput : InputBox.InputType.YesNo;
+        var inputType = canDropMultiple ? InputType.NumericSliderInput : InputType.YesNo;
         var prompt = canDropMultiple ? Strings.Inventory.DropItemPrompt : Strings.Inventory.DropPrompt;
         _ = new InputBox(
             title: Strings.Inventory.DropItemTitle,
@@ -682,7 +682,7 @@ public partial class Player : Entity, IPlayer
             || shop?.BuyingWhitelist == false && !shop.BuyingItems.Any(buyingItem => buyingItem.ItemId == itemDescriptor.Id);
 
         var prompt = Strings.Shop.SellPrompt;
-        var inputType = InputBox.InputType.YesNo;
+        var inputType = InputType.YesNo;
         EventHandler? onSuccess = (s, e) =>
         {
             if (s is InputBox inputBox && inputBox.UserData is int invSlot)
@@ -697,7 +697,7 @@ public partial class Player : Entity, IPlayer
         if (!shopCanBuyItem)
         {
             prompt = Strings.Shop.CannotSell;
-            inputType = InputBox.InputType.OkayOnly;
+            inputType = InputType.OkayOnly;
             onSuccess = null;
             userData = -1;
         }
@@ -708,7 +708,7 @@ public partial class Player : Entity, IPlayer
             {
                 maxQuantity = inventoryQuantity;
                 prompt = Strings.Shop.SellItemPrompt;
-                inputType = InputBox.InputType.NumericSliderInput;
+                inputType = InputType.NumericSliderInput;
                 onSuccess = (s, e) =>
                 {
                     if (s is InputBox inputBox && inputBox.UserData is int invSlot)
@@ -771,7 +771,7 @@ public partial class Player : Entity, IPlayer
         _ = new InputBox(
             title: Strings.Shop.BuyItem,
             prompt: Strings.Shop.BuyItemPrompt.ToString(itemDescriptor.Name),
-            inputType: InputBox.InputType.NumericSliderInput,
+            inputType: InputType.NumericSliderInput,
             quantity: maxBuyAmount,
             maxQuantity: maxBuyAmount,
             userData: shopSlotIndex,
@@ -881,7 +881,7 @@ public partial class Player : Entity, IPlayer
         _ = new InputBox(
             title: Strings.Bank.DepositItem,
             prompt: Strings.Bank.DepositItemPrompt.ToString(itemDescriptor.Name),
-            inputType: InputBox.InputType.NumericSliderInput,
+            inputType: InputType.NumericSliderInput,
             quantity: movableQuantity,
             maxQuantity: maximumQuantity,
             userData: new Tuple<int, int>(inventorySlotIndex, bankSlotIndex),
@@ -999,7 +999,7 @@ public partial class Player : Entity, IPlayer
         _ = new InputBox(
             title: Strings.Bank.WithdrawItem,
             prompt: Strings.Bank.WithdrawItemPrompt.ToString(itemDescriptor.Name),
-            inputType: InputBox.InputType.NumericSliderInput,
+            inputType: InputType.NumericSliderInput,
             quantity: movableQuantity,
             maxQuantity: maximumQuantity,
             userData: new Tuple<int, int>(bankSlotIndex, inventorySlotIndex),
@@ -1047,7 +1047,7 @@ public partial class Player : Entity, IPlayer
         _ = new InputBox(
             title: Strings.Bags.StoreItem,
             prompt: Strings.Bags.StoreItemPrompt.ToString(itemDescriptor.Name),
-            inputType: InputBox.InputType.NumericSliderInput,
+            inputType: InputType.NumericSliderInput,
             quantity: quantity,
             maxQuantity: maxQuantity,
             userData: new Tuple<int, int>(inventorySlotIndex, bagSlotIndex),
@@ -1091,7 +1091,7 @@ public partial class Player : Entity, IPlayer
         _ = new InputBox(
             title: Strings.Bags.RetrieveItem,
             prompt: Strings.Bags.RetrieveItemPrompt.ToString(itemDescriptor.Name),
-            inputType: InputBox.InputType.NumericSliderInput,
+            inputType: InputType.NumericSliderInput,
             quantity: quantity,
             maxQuantity: maxQuantity,
             userData: new Tuple<int, int>(bagSlotIndex, inventorySlotIndex),
@@ -1130,7 +1130,7 @@ public partial class Player : Entity, IPlayer
         _ = new InputBox(
             title: Strings.Trading.OfferItem,
             prompt: Strings.Trading.OfferItemPrompt.ToString(tradingItem.Name),
-            inputType: InputBox.InputType.NumericSliderInput,
+            inputType: InputType.NumericSliderInput,
             quantity: quantity,
             maxQuantity: quantity,
             userData: index,
@@ -1167,7 +1167,7 @@ public partial class Player : Entity, IPlayer
         _ = new InputBox(
             title: Strings.Trading.RevokeItem,
             prompt: Strings.Trading.RevokeItemPrompt.ToString(revokedItem.Name),
-            inputType: InputBox.InputType.NumericSliderInput,
+            inputType: InputType.NumericSliderInput,
             quantity: quantity,
             maxQuantity: quantity,
             userData: index,
@@ -1200,7 +1200,7 @@ public partial class Player : Entity, IPlayer
             _ = new InputBox(
                 title: Strings.Spells.ForgetSpell,
                 prompt: Strings.Spells.ForgetSpellPrompt.ToString(spellDescriptor.Name),
-                inputType: InputBox.InputType.YesNo,
+                inputType: InputType.YesNo,
                 userData: spellIndex,
                 onSuccess: (s, e) =>
                 {

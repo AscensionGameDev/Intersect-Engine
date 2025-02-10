@@ -192,7 +192,7 @@ public partial class EscapeMenu : ImagePanel
             Strings.Combat.WarningTitle,
             AlertType.Warning,
             handleSubmit: LogoutToCharacterSelect,
-            inputType: InputBox.InputType.YesNo
+            inputType: InputType.YesNo
         );
     }
 

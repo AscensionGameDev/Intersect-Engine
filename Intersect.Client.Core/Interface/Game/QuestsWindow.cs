@@ -76,7 +76,7 @@ public partial class QuestsWindow
             _ = new InputBox(
                 title: Strings.QuestLog.AbandonTitle.ToString(mSelectedQuest.Name),
                 prompt: Strings.QuestLog.AbandonPrompt.ToString(mSelectedQuest.Name),
-                inputType: InputBox.InputType.YesNo,
+                inputType: InputType.YesNo,
                 userData: mSelectedQuest.Id,
                 onSuccess: (s, e) =>
                 {

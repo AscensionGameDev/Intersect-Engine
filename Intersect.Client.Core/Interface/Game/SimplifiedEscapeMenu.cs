@@ -120,7 +120,7 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
             Strings.Combat.WarningTitle,
             AlertType.Warning,
             handleSubmit: LogoutToCharacterSelect,
-            inputType: InputBox.InputType.YesNo
+            inputType: InputType.YesNo
         );
     }
 

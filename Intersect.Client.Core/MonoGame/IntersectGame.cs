@@ -359,7 +359,7 @@ internal partial class IntersectGame : Game
                 _ = new InputBox(
                     title: Strings.Combat.WarningTitle,
                     prompt: Strings.Combat.WarningCharacterSelect,
-                    inputType: InputBox.InputType.YesNo,
+                    inputType: InputType.YesNo,
                     onSuccess: (s, e) =>
                     {
                         if (Globals.Me != null)
