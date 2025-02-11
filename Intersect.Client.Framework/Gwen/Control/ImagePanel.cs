@@ -433,6 +433,11 @@ public partial class ImagePanel : Base
     public override Point GetChildrenSize()
     {
         var textureSize = _textureSourceBounds.Size;
+        if (TextureNinePatchMargin != null)
+        {
+            textureSize = default;
+        }
+
         var elementChildrenSize = base.GetChildrenSize();
         var childrenSize = new Point(
             Math.Max(elementChildrenSize.X, textureSize.X),
