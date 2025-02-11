@@ -27,14 +27,14 @@ internal sealed partial class DebugWindow : Window
     {
         _generators = [];
 
-        DisableResizing();
+        _defaultFont = Current?.GetFont("sourcesansproblack", 10);
+
+        IsHidden = true;
+        IsResizable = false;
+        InnerPanelPadding = new Padding(4);
         MinimumSize = new Point(320, 320);
         Size = new Point(400, 600);
         MaximumSize = new Point(800, 600);
-
-        InnerPanelPadding = new Padding(4);
-
-        _defaultFont = Current?.GetFont("sourcesansproblack", 10);
 
         Tabs = CreateTabs();
 
@@ -52,8 +52,6 @@ internal sealed partial class DebugWindow : Window
         AssetsButtonReloadAsset = CreateAssetsButtonReloadAsset(AssetsToolsTable, AssetsList);
 
         AssetsToolsTable.SizeToChildren();
-
-        IsHidden = true;
     }
 
     private SearchableTree CreateAssetsList(Base parent)

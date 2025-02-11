@@ -100,8 +100,20 @@ public partial class QuestsWindow
         UpdateSelectedQuest();
     }
 
-    //Methods
+    private bool _shouldUpdateList;
+
     public void Update(bool shouldUpdateList)
+    {
+        if (!mQuestsWindow.IsVisible)
+        {
+            _shouldUpdateList |= shouldUpdateList;
+            return;
+        }
+
+        UpdateInternal(shouldUpdateList);
+    }
+
+    private void UpdateInternal(bool shouldUpdateList)
     {
         if (shouldUpdateList)
         {
@@ -320,9 +332,9 @@ public partial class QuestsWindow
                     mQuestStatus.SetText(Strings.QuestLog.InProgress);
                     mQuestStatus.SetTextColor(CustomColors.QuestWindow.InProgress, ComponentState.Normal);
                     mQuestDescTemplateLabel.SetTextColor(CustomColors.QuestWindow.QuestDesc, ComponentState.Normal);
-                    
+
                     if (mSelectedQuest.InProgressDescription.Length > 0)
-                    {    
+                    {
                         mQuestDescLabel.AddText(mSelectedQuest.InProgressDescription, mQuestDescTemplateLabel);
 
                         mQuestDescLabel.AddLineBreak();
@@ -420,6 +432,12 @@ public partial class QuestsWindow
 
     public void Show()
     {
+        if (_shouldUpdateList)
+        {
+            UpdateInternal(_shouldUpdateList);
+            _shouldUpdateList = false;
+        }
+
         mQuestsWindow.IsHidden = false;
     }
 

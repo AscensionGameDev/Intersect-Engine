@@ -348,6 +348,8 @@ public partial class RichLabel : Base
             TextColorOverride = block.Color,
         };
 
+        label.SizeToContents();
+
         _formattedLabels.Add(label);
 
         x += label.Width;

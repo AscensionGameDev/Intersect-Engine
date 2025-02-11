@@ -11,12 +11,14 @@ namespace Intersect.Client.Interface.Game;
 
 public partial class EscapeMenu : ImagePanel
 {
-    private readonly SettingsWindow _settingsWindow;
+    private readonly Func<SettingsWindow> _settingsWindowProvider;
     private readonly Button _buttonCharacterSelect;
     private readonly Panel _versionPanel;
 
-    public EscapeMenu(Canvas gameCanvas) : base(gameCanvas, nameof(EscapeMenu))
+    public EscapeMenu(Canvas gameCanvas, Func<SettingsWindow> settingsWindowProvider) : base(gameCanvas, nameof(EscapeMenu))
     {
+        _settingsWindowProvider = settingsWindowProvider;
+
         Interface.InputBlockingComponents?.Add(this);
 
         Width = gameCanvas.Width;
@@ -29,12 +31,6 @@ public partial class EscapeMenu : ImagePanel
         _ = new Label(container, "TitleLabel")
         {
             Text = Strings.EscapeMenu.Title,
-        };
-
-        // Settings Window and Button
-        _settingsWindow = new SettingsWindow(gameCanvas, null, this)
-        {
-            IsVisible = false,
         };
 
         var buttonSettings = new Button(container, "SettingsButton")
@@ -102,7 +98,8 @@ public partial class EscapeMenu : ImagePanel
     /// <inheritdoc />
     public override void ToggleHidden()
     {
-        if (!_settingsWindow.IsHidden)
+        var settingsWindow = _settingsWindowProvider();
+        if (settingsWindow.IsVisible)
         {
             return;
         }
@@ -122,8 +119,9 @@ public partial class EscapeMenu : ImagePanel
 
     public void OpenSettingsWindow(bool returnToMenu = false)
     {
-        _settingsWindow.Show(returnToMenu);
-        Interface.GameUi?.EscapeMenu?.Hide();
+        var settingsWindow = _settingsWindowProvider();
+        settingsWindow.Show(returnToMenu ? this : null);
+        Hide();
     }
 
     private void _buttonCharacterSelect_Clicked(Base sender, MouseButtonState arguments)

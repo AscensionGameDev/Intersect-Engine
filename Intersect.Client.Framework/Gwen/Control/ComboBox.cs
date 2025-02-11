@@ -390,7 +390,7 @@ public partial class ComboBox : Button
             return;
         }
 
-        _menu.Parent = GetCanvas();
+        _menu.Parent = Canvas;
         _menu.IsHidden = false;
         _menu.BringToFront();
 

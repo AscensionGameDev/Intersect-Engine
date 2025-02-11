@@ -270,11 +270,11 @@ public partial class MenuItem : Button
         return contentSize;
     }
 
-    public override bool SizeToContents()
+    public override bool SizeToContents(out Point contentSize)
     {
         _accelerator?.SizeToContents();
 
-        var sizeChanged = base.SizeToContents();
+        var sizeChanged = base.SizeToContents(out contentSize);
 
         if (_accelerator != null)
         {

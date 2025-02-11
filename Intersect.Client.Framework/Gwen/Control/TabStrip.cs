@@ -130,7 +130,7 @@ public partial class TabStrip : Base
                 continue;
             }
 
-            var tabSize = tab.MeasureShrinkToContents();
+            tab.SizeToContents(out var tabSize);
 
             Margin margin = new();
             var notFirst = childIndex > 0 ? -1 : 0;

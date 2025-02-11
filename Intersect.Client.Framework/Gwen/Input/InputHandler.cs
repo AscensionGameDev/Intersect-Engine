@@ -153,7 +153,7 @@ public static partial class InputHandler
             return false;
         }
 
-        if (KeyboardFocus.GetCanvas() != canvas)
+        if (KeyboardFocus.Canvas != canvas)
         {
             return false;
         }
@@ -282,7 +282,7 @@ public static partial class InputHandler
             return;
         }
 
-        if (KeyboardFocus.GetCanvas() != control)
+        if (KeyboardFocus.Canvas != control)
         {
             return;
         }
@@ -420,15 +420,14 @@ public static partial class InputHandler
     ///     Mouse click handler.
     /// </summary>
     /// <param name="canvas">Canvas.</param>
-    /// <param name="mouseButton">Mouse button number.</param>
-    /// <param name="down">Specifies if the button is down.</param>
+    /// <param name="deltaX"></param>
+    /// <param name="deltaY"></param>
     /// <returns>True if handled.</returns>
-    public static bool OnMouseScroll(Base canvas, int deltaX, int deltaY)
+    public static bool OnMouseScroll(Base? canvas, int deltaX, int deltaY)
     {
-
         if (canvas == null ||
             HoveredControl == null ||
-            HoveredControl.GetCanvas() != canvas ||
+            HoveredControl.Canvas != canvas ||
             !canvas.IsVisible
         )
         {
@@ -462,7 +461,7 @@ public static partial class InputHandler
             return false;
         }
 
-        if (KeyboardFocus.GetCanvas() != canvas)
+        if (KeyboardFocus.Canvas != canvas)
         {
             return false;
         }

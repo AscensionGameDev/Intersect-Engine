@@ -63,7 +63,7 @@ public partial class MainMenu : MutableInterface
             IsVisible = false,
         };
 
-        _settingsWindow = new SettingsWindow(_menuCanvas, this, null)
+        _settingsWindow = new SettingsWindow(_menuCanvas)
         {
             Alignment = [Alignments.CenterH],
             Y = 480,
@@ -249,7 +249,7 @@ public partial class MainMenu : MutableInterface
     internal void SettingsButton_Clicked()
     {
         Hide();
-        _settingsWindow.Show(true);
+        _settingsWindow.Show(_mainMenuWindow);
     }
 
     private void HandleNetworkStatusChanged() => _mainMenuWindow.UpdateDisabled();

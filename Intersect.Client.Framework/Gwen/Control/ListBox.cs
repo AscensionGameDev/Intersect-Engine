@@ -19,7 +19,7 @@ public partial class ListBox : ScrollControl
 
     private readonly Table mTable;
 
-    private GameFont mFont;
+    private GameFont? mFont;
 
     private string mFontInfo;
 
@@ -46,7 +46,8 @@ public partial class ListBox : ScrollControl
     ///     Initializes a new instance of the <see cref="ListBox" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public ListBox(Base parent, string name = "") : base(parent, name)
+    /// <param name="name"></param>
+    public ListBox(Base parent, string? name = default) : base(parent: parent, name: name)
     {
         Margin = Margin.One;
         MouseInputEnabled = true;
@@ -56,8 +57,13 @@ public partial class ListBox : ScrollControl
 
         mTable = new Table(this)
         {
+            AutoSizeToContentHeightOnChildResize = true,
+            AutoSizeToContentWidthOnChildResize = true,
+            ColumnCount = 1,
+            ColumnWidths = [null],
             Dock = Pos.Fill,
-            ColumnCount = 1
+            FitRowHeightToContents = true,
+            Font = mFont,
         };
         mTable.BoundsChanged += TableResized;
 
@@ -392,26 +398,7 @@ public partial class ListBox : ScrollControl
         mTable.DoSizeToContents();
     }
 
-    /// <summary>
-    ///     Adds a new row.
-    /// </summary>
-    /// <param name="label">Row text.</param>
-    /// <returns>Newly created control.</returns>
-    public ListBoxRow AddRow(string label)
-    {
-        return AddRow(label, String.Empty);
-    }
-
-    /// <summary>
-    ///     Adds a new row.
-    /// </summary>
-    /// <param name="label">Row text.</param>
-    /// <param name="name">Internal control name.</param>
-    /// <returns>Newly created control.</returns>
-    public ListBoxRow AddRow(string label, string name)
-    {
-        return AddRow(label, name, null);
-    }
+    public ListBoxRow AddRow(string label, object? userData) => AddRow(label: label, name: null, userData: userData);
 
     /// <summary>
     ///     Adds a new row.
@@ -420,9 +407,10 @@ public partial class ListBox : ScrollControl
     /// <param name="name">Internal control name.</param>
     /// <param name="userData">User data for newly created row</param>
     /// <returns>Newly created control.</returns>
-    public ListBoxRow AddRow(string label, string name, Object userData)
+    public ListBoxRow AddRow(string label, string? name = null, object? userData = null)
     {
-        var row = new ListBoxRow(this, ColumnCount)
+        var computedColumnWidths = mTable.ComputedColumnWidths;
+        ListBoxRow row = new(parent: this, columns: ColumnCount, columnWidths: computedColumnWidths)
         {
             ClickSound = mItemClickSound,
             HoverSound = mItemHoverSound,
@@ -430,7 +418,8 @@ public partial class ListBox : ScrollControl
             RightClickSound = mItemRightClickSound,
             TextColor = TextColor,
             TextColorOverride = TextColorOverride,
-            UserData = userData
+            UserData = userData,
+            Width = InnerWidth,
         };
         mTable.AddRow(row);
 
@@ -444,9 +433,20 @@ public partial class ListBox : ScrollControl
         }
 
         mTable.FitContents(Width);
-        mTable.DoSizeToContents();
 
         return row;
+    }
+
+    protected override void OnSizeChanged(Point oldSize, Point newSize)
+    {
+        base.OnSizeChanged(oldSize, newSize);
+
+        if (oldSize.X == newSize.X)
+        {
+            return;
+        }
+
+        mTable.Width = InnerWidth;
     }
 
     /// <summary>
@@ -541,22 +541,11 @@ public partial class ListBox : ScrollControl
     {
         mSizeToContents = true;
 
-        // docking interferes with autosizing so we disable it until sizing is done
-        mOldDock = mTable.Dock;
-        mTable.Dock = Pos.None;
-        mTable.FitContents(0); // autosize without constraints
+        mTable.FitContents();
     }
 
-    private void TableResized(Base control, ValueChangedEventArgs<Rectangle> args)
-    {
-        if (mSizeToContents)
-        {
-            SetSize(mTable.Width, mTable.Height);
-            mSizeToContents = false;
-            mTable.Dock = mOldDock;
-            Invalidate();
-        }
-    }
+    private void TableResized(Base control, ValueChangedEventArgs<Rectangle> args) =>
+        mTable.SizeToChildren(resizeX: false, resizeY: true);
 
     /// <summary>
     ///     Selects the first menu item with the given text it finds.

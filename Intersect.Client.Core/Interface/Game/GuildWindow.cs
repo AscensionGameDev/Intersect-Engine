@@ -13,7 +13,7 @@ using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game;
 
-partial class GuildWindow : WindowControl
+partial class GuildWindow : Window
 {
     private readonly ImagePanel _textboxContainer;
     private readonly TextBox _textboxSearch;
@@ -34,7 +34,7 @@ partial class GuildWindow : WindowControl
 
     public GuildWindow(Canvas gameCanvas) : base(gameCanvas, Globals.Me?.Guild, false, nameof(GuildWindow))
     {
-        DisableResizing();
+        IsResizable = false;
 
         // Textbox Search
         _textboxContainer = new ImagePanel(this, "SearchContainer");
@@ -162,13 +162,16 @@ partial class GuildWindow : WindowControl
 
         #endregion
 
+        _addButtonUsed = !_buttonAdd.IsHidden;
+        _addPopupButtonUsed = !_buttonAddPopup.IsHidden;
+    }
+
+    protected override void EnsureInitialized()
+    {
         UpdateList();
 
         _contextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer?.GetResolutionString());
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer?.GetResolutionString());
-
-        _addButtonUsed = !_buttonAdd.IsHidden;
-        _addPopupButtonUsed = !_buttonAddPopup.IsHidden;
     }
 
     //Methods

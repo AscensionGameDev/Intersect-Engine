@@ -369,19 +369,19 @@ public partial class Button : Label
         }
 
         var oldTextColor = TextColor;
-        if (textColor != oldTextColor)
-        {
-            ApplicationContext.CurrentContext.Logger.LogTrace(
-                "Changing TextColor to '{ToTextColor}' from '{FromTextColor}' of {ComponentType} '{ComponentName}' IsDisabled={IsDisabled} IsActive={IsActive} IsHovered={IsHovered}",
-                textColor,
-                oldTextColor,
-                GetType().GetName(qualified: true),
-                CanonicalName,
-                IsDisabled,
-                IsActive,
-                IsHovered
-            );
-        }
+        // if (textColor != oldTextColor)
+        // {
+        //     ApplicationContext.CurrentContext.Logger.LogTrace(
+        //         "Changing TextColor to '{ToTextColor}' from '{FromTextColor}' of {ComponentType} '{ComponentName}' IsDisabled={IsDisabled} IsActive={IsActive} IsHovered={IsHovered}",
+        //         textColor,
+        //         oldTextColor,
+        //         GetType().GetName(qualified: true),
+        //         CanonicalName,
+        //         IsDisabled,
+        //         IsActive,
+        //         IsHovered
+        //     );
+        // }
 
         TextColor = textColor;
     }
