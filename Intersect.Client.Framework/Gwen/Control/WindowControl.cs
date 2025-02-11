@@ -276,8 +276,15 @@ public partial class WindowControl : ResizableControl
 
     public void Close() => Close(this, EventArgs.Empty);
 
+    protected virtual bool CanClose => true;
+
     private void Close(Base sender, EventArgs args)
     {
+        if (!CanClose)
+        {
+            return;
+        }
+
         IsHidden = true;
 
         if (mModal != null)

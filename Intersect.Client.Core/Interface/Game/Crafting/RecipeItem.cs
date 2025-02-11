@@ -12,9 +12,9 @@ namespace Intersect.Client.Interface.Game.Crafting;
 public partial class RecipeItem
 {
 
-    public ImagePanel Container;
+    public ImagePanel? Container;
 
-    public ItemDescriptionWindow DescWindow;
+    public ItemDescriptionWindow? DescWindow;
 
     public bool IsDragging;
 
@@ -24,7 +24,7 @@ public partial class RecipeItem
     //References
     private CraftingWindow mCraftingWindow;
 
-    private Draggable mDragIcon;
+    private Draggable? mDragIcon;
 
     //Slot info
     CraftIngredient mIngredient;
@@ -36,7 +36,7 @@ public partial class RecipeItem
 
     private int mMouseY = -1;
 
-    public ImagePanel Pnl;
+    public ImagePanel? Pnl;
 
     public RecipeItem(CraftingWindow craftingWindow, CraftIngredient ingredient)
     {

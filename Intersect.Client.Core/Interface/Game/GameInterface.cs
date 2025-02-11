@@ -40,9 +40,7 @@ public partial class GameInterface : MutableInterface
 
     private Chatbox mChatBox;
 
-    private CraftingWindow mCraftingWindow;
-
-    private EventWindow mEventWindow;
+    private CraftingWindow? mCraftingWindow;
 
     private PictureWindow mPictureWindow;
 
@@ -433,13 +431,9 @@ public partial class GameInterface : MutableInterface
 
         if (mCraftingWindow != null)
         {
-            if (!mCraftingWindow.IsVisible() || mShouldCloseCraftingTable)
+            if (!mCraftingWindow.IsVisible || mShouldCloseCraftingTable)
             {
                 CloseCraftingTable();
-            }
-            else
-            {
-                mCraftingWindow.Update();
             }
         }
 
@@ -571,7 +565,7 @@ public partial class GameInterface : MutableInterface
             closedWindows = true;
         }
 
-        if (mCraftingWindow != null && mCraftingWindow.IsVisible() && !mCraftingWindow.IsCrafting)
+        if (mCraftingWindow is { IsVisible: true, IsCrafting: false })
         {
             CloseCraftingTable();
             closedWindows = true;
