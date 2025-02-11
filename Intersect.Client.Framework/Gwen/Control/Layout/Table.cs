@@ -287,9 +287,13 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         }
 
         _computedColumnWidths.Capacity = Math.Max(_computedColumnWidths.Capacity, columnCount);
+        var currentComputedColumnWidthSum = _computedColumnWidths.Sum();
+        var remainingColumnWidth = Math.Max(0, InnerWidth - currentComputedColumnWidthSum);
+        var columnsToAdd = columnCount - _computedColumnWidths.Count;
+        var dynamicColumnWidth = remainingColumnWidth / Math.Max(1, columnsToAdd);
         while (_computedColumnWidths.Count < columnCount)
         {
-            _computedColumnWidths.Add(0);
+            _computedColumnWidths.Add(dynamicColumnWidth);
         }
 
         var rows = Children.OfType<TableRow>().ToArray();
@@ -636,7 +640,12 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         var actualWidth = 0;
         var actualHeight = 0;
         var columnLimit = Math.Min(columnCount, requestedWidths.Length);
-        var computedColumnWidths = new int[Math.Max(_computedColumnWidths.Capacity, columnLimit)];
+        var computedColumnWidths = new int[Math.Max(_computedColumnWidths.Count, columnLimit)];
+        var defaultColumnWidth = rows.Length > 0
+            ? 0
+            : (availableWidth - _cellSpacing.X * computedColumnWidths.Length) /
+              Math.Max(1, computedColumnWidths.Length);
+        Array.Fill(computedColumnWidths, defaultColumnWidth);
         foreach (var row in rows)
         {
             var rowWidth = 0;
@@ -678,20 +687,22 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         return new Point(actualWidth, actualHeight);
     }
 
-    public void DoSizeToContents(bool width = false, bool height = true)
+    public void DoSizeToContents(bool resizeX = false, bool resizeY = true)
     {
         var rows = Children.OfType<TableRow>().ToArray();
         if (_fitRowHeightToContents)
         {
             foreach (var row in rows)
             {
-                row.SizeToChildren(resizeX: width, resizeY: height, recursive: true);
+                row.SizeToChildren(resizeX: resizeX, resizeY: resizeY, recursive: true);
             }
         }
 
         var size = ComputeColumnWidths(rows);
 
-        SetSize(size.X, size.Y);
+        var width = resizeX ? size.X : Width;
+        var height = resizeY ? size.Y : Height;
+        SetSize(width, height);
 
         InvalidateParent();
     }

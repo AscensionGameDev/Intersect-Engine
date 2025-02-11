@@ -1441,6 +1441,8 @@ public partial class Base : IDisposable
     ///     Invoked when control's bounds have been changed.
     /// </summary>
     public event GwenEventHandler<ValueChangedEventArgs<Rectangle>>? BoundsChanged;
+    public event GwenEventHandler<ValueChangedEventArgs<Point>>? PositionChanged;
+    public event GwenEventHandler<ValueChangedEventArgs<Point>>? SizeChanged;
 
     public virtual event GwenEventHandler<MouseButtonState>? MouseDown;
 
@@ -2308,11 +2310,27 @@ public partial class Base : IDisposable
         if (oldBounds.Position != newBounds.Position)
         {
             OnPositionChanged(oldBounds.Position, newBounds.Position);
+            PositionChanged?.Invoke(
+                this,
+                new ValueChangedEventArgs<Point>
+                {
+                    Value = newBounds.Position,
+                    OldValue = oldBounds.Position,
+                }
+            );
         }
 
         if (oldBounds.Size != newBounds.Size)
         {
             OnSizeChanged(oldBounds.Size, newBounds.Size);
+            SizeChanged?.Invoke(
+                this,
+                new ValueChangedEventArgs<Point>
+                {
+                    Value = newBounds.Size,
+                    OldValue = oldBounds.Size,
+                }
+            );
             ProcessAlignments();
         }
 
@@ -2320,7 +2338,8 @@ public partial class Base : IDisposable
             this,
             new ValueChangedEventArgs<Rectangle>
             {
-                Value = newBounds, OldValue = oldBounds,
+                Value = newBounds,
+                OldValue = oldBounds,
             }
         );
 
