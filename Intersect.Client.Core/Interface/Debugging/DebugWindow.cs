@@ -1,12 +1,15 @@
+using System.Diagnostics;
 using Intersect.Async;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Content;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.Data;
 using Intersect.Client.Framework.Gwen.Control.Layout;
 using Intersect.Client.Framework.Gwen.Control.Utility;
+using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Maps;
@@ -21,6 +24,7 @@ internal sealed partial class DebugWindow : Window
     private readonly GameFont? _defaultFont;
     private bool _wasParentDrawDebugOutlinesEnabled;
     private bool _drawDebugOutlinesEnabled;
+    private bool _viewClickedNodeInDebugger;
     private ComponentStateFilters _componentStateFilters = ComponentStateFilters.IncludeMouseInputDisabled;
 
     public DebugWindow(Base parent) : base(parent, Strings.Debug.Title, false, nameof(DebugWindow))
@@ -42,6 +46,7 @@ internal sealed partial class DebugWindow : Window
         CheckboxDrawDebugOutlines = CreateInfoCheckboxDrawDebugOutlines(TabInfo.Page);
         CheckboxEnableLayoutHotReloading = CreateInfoCheckboxEnableLayoutHotReloading(TabInfo.Page);
         CheckboxIncludeTextNodesInHover = CreateInfoCheckboxIncludeTextNodesInHover(TabInfo.Page);
+        CheckboxViewClickedComponentInDebugger = CreateInfoCheckboxViewClickedNodeInDebugger(TabInfo.Page);
         ButtonShutdownServer = CreateInfoButtonShutdownServer(TabInfo.Page);
         ButtonShutdownServerAndExit = CreateInfoButtonShutdownServerAndExit(TabInfo.Page);
         TableDebugStats = CreateInfoTableDebugStats(TabInfo.Page);
@@ -146,6 +151,8 @@ internal sealed partial class DebugWindow : Window
     private LabeledCheckBox CheckboxEnableLayoutHotReloading { get; }
 
     private LabeledCheckBox CheckboxIncludeTextNodesInHover { get; }
+
+    private LabeledCheckBox CheckboxViewClickedComponentInDebugger { get; }
 
     private Button ButtonShutdownServer { get; }
 
@@ -271,6 +278,68 @@ internal sealed partial class DebugWindow : Window
         };
 
         return checkbox;
+    }
+
+    private LabeledCheckBox CreateInfoCheckboxViewClickedNodeInDebugger(Base parent)
+    {
+        var checkbox = new LabeledCheckBox(parent, nameof(CheckboxViewClickedComponentInDebugger))
+        {
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            IsChecked = _viewClickedNodeInDebugger,
+            Text = Strings.Debug.ViewClickedNodeInDebugger,
+        };
+
+        checkbox.CheckChanged += (_, _) =>
+        {
+            _viewClickedNodeInDebugger = !_viewClickedNodeInDebugger;
+            if (_viewClickedNodeInDebugger)
+            {
+                AddIntercepts();
+            }
+            else
+            {
+                RemoveIntercepts();
+            }
+        };
+
+        return checkbox;
+    }
+
+    private void AddIntercepts()
+    {
+        Input.MouseDownIntercept += MouseDownIntercept;
+        Input.MouseUpIntercept += MouseUpIntercept;
+    }
+
+    private void RemoveIntercepts()
+    {
+        Input.MouseDownIntercept -= MouseDownIntercept;
+        Input.MouseUpIntercept -= MouseUpIntercept;
+    }
+
+    private bool MouseDownIntercept(Keys modifier, MouseButton mouseButton)
+    {
+        if (IsVisible && _viewClickedNodeInDebugger)
+        {
+            return true;
+        }
+
+        RemoveIntercepts();
+        return false;
+    }
+
+    private bool MouseUpIntercept(Keys modifier, MouseButton mouseButton)
+    {
+        if (!IsVisible || !_viewClickedNodeInDebugger)
+        {
+            RemoveIntercepts();
+            return false;
+        }
+
+        var node = GetNodeUnderCursor();
+        Debugger.Break();
+        return true;
     }
 
     private Button CreateInfoButtonShutdownServer(Base parent)
@@ -452,6 +521,8 @@ internal sealed partial class DebugWindow : Window
         return table;
     }
 
+    private Base? GetNodeUnderCursor() => Interface.FindComponentUnderCursor(_componentStateFilters);
+
     private partial class ControlUnderCursorProvider : ITableDataProvider
     {
         private readonly DebugWindow _owner;
@@ -494,7 +565,7 @@ internal sealed partial class DebugWindow : Window
             cancellationToken.ThrowIfCancellationRequested();
         }
 
-        private Base? CreateValue(Task _) => Interface.FindComponentUnderCursor(_owner._componentStateFilters);
+        private Base? CreateValue(Task _) => _owner.GetNodeUnderCursor();
 
         private void HandleValue(Base? component)
         {

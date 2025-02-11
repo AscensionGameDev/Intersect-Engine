@@ -17,6 +17,8 @@ using Intersect.Utilities;
 
 namespace Intersect.Client.Core;
 
+public delegate bool MouseButtonEventInterceptor(Keys modifier, MouseButton mouseButton);
+
 public static partial class Input
 {
     public delegate void HandleKeyEvent(Keys modifier, Keys key);
@@ -357,10 +359,30 @@ public static partial class Input
         }
     }
 
-    public static void OnMouseDown(Keys modifier, MouseButton btn)
+    public static event MouseButtonEventInterceptor? MouseDownIntercept;
+
+    public static event MouseButtonEventInterceptor? MouseUpIntercept;
+
+    private static bool InvokeMouseButtonInterceptors(
+        MulticastDelegate? multicastDelegate,
+        Keys modifier,
+        MouseButton mouseButton
+    )
     {
+        var rawInvocationList = multicastDelegate?.GetInvocationList() ?? [];
+        var invocationList = rawInvocationList.OfType<MouseButtonEventInterceptor>().ToArray();
+        return invocationList.Any(interceptor => interceptor(modifier, mouseButton));
+    }
+
+    public static void OnMouseDown(Keys modifier, MouseButton mouseButton)
+    {
+        if (InvokeMouseButtonInterceptors(MouseDownIntercept, modifier, mouseButton))
+        {
+            return;
+        }
+
         var key = Keys.None;
-        switch (btn)
+        switch (mouseButton)
         {
             case MouseButton.Left:
                 key = Keys.LButton;
@@ -407,7 +429,7 @@ public static partial class Input
             return;
         }
 
-        if (modifier == Keys.None && btn == MouseButton.Left && Globals.Me.TryTarget())
+        if (modifier == Keys.None && mouseButton == MouseButton.Left && Globals.Me.TryTarget())
         {
             return;
         }
@@ -441,10 +463,15 @@ public static partial class Input
         }
     }
 
-    public static void OnMouseUp(Keys modifier, MouseButton btn)
+    public static void OnMouseUp(Keys modifier, MouseButton mouseButton)
     {
+        if (InvokeMouseButtonInterceptors(MouseUpIntercept, modifier, mouseButton))
+        {
+            return;
+        }
+
         var key = Keys.LButton;
-        switch (btn)
+        switch (mouseButton)
         {
             case MouseButton.Right:
                 key = Keys.RButton;
@@ -486,7 +513,7 @@ public static partial class Input
             return;
         }
 
-        if (btn != MouseButton.Right)
+        if (mouseButton != MouseButton.Right)
         {
             return;
         }
