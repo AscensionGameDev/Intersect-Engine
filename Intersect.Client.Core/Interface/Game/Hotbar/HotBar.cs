@@ -68,7 +68,7 @@ public partial class HotBarWindow
             X = HotbarWindow.LocalPosToCanvas(default).X,
             Y = HotbarWindow.LocalPosToCanvas(default).Y,
             Width = HotbarWindow.Width,
-            Height = HotbarWindow.Height
+            Height = HotbarWindow.Height,
         };
 
         return rect;
