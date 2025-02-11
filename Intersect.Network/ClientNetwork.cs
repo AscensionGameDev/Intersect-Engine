@@ -20,6 +20,7 @@ public partial class ClientNetwork : AbstractNetwork, IClient
     internal static NetworkLayerInterfaceFactory? NetworkLayerInterfaceFactory { get; set; }
 
     private readonly INetworkLayerInterface _interface;
+    private readonly Ping _ping = new();
     private bool _isConnected;
 
     public ClientNetwork(
@@ -53,7 +54,7 @@ public partial class ClientNetwork : AbstractNetwork, IClient
     public override event HandlePacketAvailable? OnPacketAvailable;
     public override event HandleUnconnectedMessage? OnUnconnectedMessage;
 
-    public IConnection Connection => Connections.FirstOrDefault();
+    public IConnection? Connection => Connections.FirstOrDefault();
 
     public override bool IsConnected => _isConnected;
 
@@ -63,23 +64,26 @@ public partial class ClientNetwork : AbstractNetwork, IClient
     {
         get
         {
-            if (Configuration.Host is not { } hostNameOrAddress)
+            if (Connection is { } connection)
+            {
+                return (int)connection.Statistics.Ping;
+            }
+
+            if (Configuration.Host is not { } hostNameOrAddress || UnresolvableHostNames.Contains(hostNameOrAddress))
             {
                 return -1;
             }
 
             try
             {
-                if (!UnresolvableHostNames.Contains(hostNameOrAddress))
+                ApplicationContext.Logger.LogTrace("Sending ping to server");
+
+                // Send a ping to the server. Timeout: 5000ms (5 seconds). Packet size: 32 bytes. TTL: 64. Don't fragment.
+                var reply = _ping.Send(hostNameOrAddress, 5000, [], new PingOptions(64, true));
+                if (reply is { Status: IPStatus.Success })
                 {
-                    // Send a ping to the server. Timeout: 5000ms (5 seconds). Packet size: 32 bytes. TTL: 64. Don't fragment.
-                    Ping ping = new();
-                    var reply = ping.Send(hostNameOrAddress, 5000, [], new PingOptions(64, true));
-                    if (reply is { Status: IPStatus.Success })
-                    {
-                        // Return the roundtrip time in milliseconds (ms) as an integer value (no decimals).
-                        return (int)reply.RoundtripTime;
-                    }
+                    // Return the roundtrip time in milliseconds (ms) as an integer value (no decimals).
+                    return (int)reply.RoundtripTime;
                 }
             }
             catch (PingException pingException)
