@@ -364,6 +364,32 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         return row;
     }
 
+    public TableRow[] AddCells(params Base[] cellContents)
+    {
+        if (cellContents.Length < 1)
+        {
+            return [];
+        }
+
+        TableRow currentRow = AddRow();
+        List<TableRow> rows = [currentRow];
+
+        var column = 0;
+        foreach (var cellContent in cellContents)
+        {
+            if (column >= currentRow.ColumnCount)
+            {
+                currentRow = AddRow();
+                rows.Add(currentRow);
+                column = 0;
+            }
+
+            currentRow.SetCellContents(column++, cellContent);
+        }
+
+        return rows.ToArray();
+    }
+
     public int[] ComputedColumnWidths => _computedColumnWidths.ToArray();
 
     /// <summary>

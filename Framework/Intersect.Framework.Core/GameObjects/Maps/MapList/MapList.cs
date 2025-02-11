@@ -353,7 +353,7 @@ public partial class MapList
 
         if (OrderedMaps.Count > 0)
         {
-            lowestMap = OrderedMaps.OrderBy(m => m.TimeCreated).FirstOrDefault().MapId;
+            lowestMap = OrderedMaps.OrderBy(m => m.TimeCreated).FirstOrDefault()?.MapId ?? default;
         }
 
         return lowestMap;

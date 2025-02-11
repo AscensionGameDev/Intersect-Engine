@@ -144,6 +144,7 @@ resharper_csharp_wrap_before_invocation_rpar = true
 resharper_csharp_wrap_parameters_style = chop_if_long
 resharper_keep_existing_invocation_parens_arrangement = false
 resharper_keep_existing_property_patterns_arrangement = false
+resharper_max_initializer_elements_on_line = 2
 resharper_max_invocation_arguments_on_line = 5
 resharper_place_expr_property_on_single_line = true
 resharper_place_simple_initializer_on_single_line = false

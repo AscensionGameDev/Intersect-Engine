@@ -404,13 +404,10 @@ public static partial class Strings
         SaveSerialized(serialized);
     }
 
-    public partial struct Admin
+    public partial struct AdminWindow
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Access = @"Access:";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Access0 = @"None";
+        public static LocalizedString Access = @"Access";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Access1 = @"Moderator";
@@ -428,22 +425,22 @@ public static partial class Strings
         public static LocalizedString BanPrompt = @"Banning {00} will not allow them to access this game for the duration you set!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Chronological = @"123...";
+        public static LocalizedString SortMapList = @"Sort map list";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString ChronologicalTip = @"Order maps chronologically.";
+        public static LocalizedString SortMapListTooltip = @"Order maps in a flat hierarchy in alphanumeric order according to the computer locale.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Face = @"Face:";
+        public static LocalizedString Face = @"Face";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Kick = @"Kick";
+        public static LocalizedString KickPlayer = @"Kick";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Kill = @"Kill";
+        public static LocalizedString KillPlayer = @"Kill";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString MapList = @"Map List:";
+        public static LocalizedString MapList = @"Map List";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Mute = @"Mute";
@@ -455,13 +452,16 @@ public static partial class Strings
         public static LocalizedString MutePrompt = @"Muting {00} will not allow them to chat in game for the duration you set!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Name = @"Name:";
+        public static LocalizedString Name = @"Name";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString NamePlaceholder = @"Player Name";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString None = @"None";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString OverworldReturn = @"Leave Instance";
+        public static LocalizedString LeaveInstance = @"Leave Instance";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString SetFace = @"Set Face";
@@ -497,10 +497,10 @@ public static partial class Strings
         public static LocalizedString UnmutePrompt = @"Are you sure that you want to unmute {00}?";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Warp2Me = @"Warp To Me";
+        public static LocalizedString WarpPlayerToMe = @"Warp To Me";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString WarpMe2 = @"Warp Me To";
+        public static LocalizedString WarpMeToPlayer = @"Warp Me To";
     }
 
     public partial struct Bags

@@ -120,7 +120,6 @@ public partial class SettingsWindow : Window
         IsClosable = false;
 
         Titlebar.MouseInputEnabled = false;
-
         TitleLabel.FontSize = 14;
         TitleLabel.TextColorOverride = Color.White;
 

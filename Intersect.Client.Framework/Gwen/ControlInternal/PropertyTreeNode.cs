@@ -15,7 +15,7 @@ public partial class PropertyTreeNode : TreeNode
     /// <param name="parent">Parent control.</param>
     public PropertyTreeNode(Base parent) : base(parent)
     {
-        _label.TextColorOverride = Skin.Colors.Properties.Title;
+        _trigger.TextColorOverride = Skin.Colors.Properties.Title;
     }
 
     /// <summary>

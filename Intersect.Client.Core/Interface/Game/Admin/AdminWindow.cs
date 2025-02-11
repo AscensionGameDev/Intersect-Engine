@@ -1,9 +1,11 @@
 using Intersect.Admin.Actions;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Content;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Gwen.Control.Layout;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
@@ -16,311 +18,509 @@ using static Intersect.Client.Framework.File_Management.GameContentManager;
 
 namespace Intersect.Client.Interface.Game.Admin;
 
-public partial class AdminWindow : WindowControl
+public partial class AdminWindow : Window
 {
-    private readonly Checkbox _checkboxChronological;
-    private readonly ComboBox _dropdownAccess;
-    private readonly ComboBox _dropdownSprite;
-    private readonly ComboBox _dropdownFace;
-    private readonly ImagePanel _facePanel;
-    private readonly ImagePanel _spritePanel;
-    private readonly TextBox _textboxName;
+    private readonly LabeledComboBox _accessDropdown;
+
+    private readonly Panel _accessPanel;
+    private readonly Button _accessSetButton;
+
+    private readonly Panel _actionPanel;
+    private readonly Table _actionTable;
+    private readonly Button _banButton;
+    private readonly GameFont? _defaultFont;
+    private readonly TexturePicker _faceTexturePicker;
+    private readonly Button _kickPlayerButton;
+    private readonly Button _killPlayerButton;
+    private readonly Button _leaveInstanceButton;
+    private readonly Label _mapListLabel;
+
+    private readonly Panel _mapListPanel;
+    private readonly Panel _mapListPanelHeader;
+    private readonly LabeledCheckBox _mapSortCheckbox;
+    private readonly Button _muteButton;
+    private readonly TextBox _nameInput;
+    private readonly Label _nameLabel;
+
+    private readonly Panel _namePanel;
+
+    private readonly TexturePicker _spriteTexturePicker;
+    private readonly Button _unbanButton;
+    private readonly Button _unmuteButton;
+    private readonly Button _warpMeToPlayerButton;
+    private readonly Button _warpPlayerToMeButton;
 
     private BanMuteBox? _banOrMuteWindow;
-    private TreeControl? _mapList;
+    private TreeControl? _mapTree;
 
     public AdminWindow(Base gameCanvas) : base(
         gameCanvas,
-        Strings.Admin.Title,
+        Strings.AdminWindow.Title,
         false,
         nameof(AdminWindow)
     )
     {
+        _defaultFont = Current.GetFont(TitleLabel.FontName, 12);
+
         IsResizable = false;
-        MinimumSize = new Point(320, 320);
-        Margin = Margin.Zero;
-        Padding = Padding.Zero;
+        TitleLabel.FontSize = 14;
 
-        // Name label and textbox
-        _ = new Label(this, "LabelName")
-        {
-            Text = Strings.Admin.Name,
-        };
-        _textboxName = new TextBox(this, "TextboxName");
-        Interface.FocusComponents.Add(_textboxName);
+        MinimumSize = new Point(396, 600);
+        InnerPanelPadding = new Padding(8);
+        InnerPanel.DockChildSpacing = new Padding(8);
 
-        // Access label, dropdown and set power button
-        _ = new Label(this, "LabelAccess")
-        {
-            Text = Strings.Admin.Access,
-        };
-        _dropdownAccess = new ComboBox(this, name: nameof(_dropdownAccess));
-        _ = _dropdownAccess.AddItem(Strings.Admin.Access0, userData: "None");
-        _ = _dropdownAccess.AddItem(Strings.Admin.Access1, userData: "Moderator");
-        _ = _dropdownAccess.AddItem(Strings.Admin.Access2, userData: "Admin");
+        #region Name Input
 
-        var buttonSetPower = new Button(this, "ButtonSetPower")
+        _namePanel = new Panel(this, nameof(_namePanel))
         {
-            Text = Strings.Admin.SetPower,
+            Dock = Pos.Top, ShouldDrawBackground = false,
         };
-        buttonSetPower.Clicked += OnButtonSetPowerOnClicked;
+
+        _nameLabel = new Label(_namePanel, nameof(_nameLabel))
+        {
+            Dock = Pos.Left,
+            Font = _defaultFont,
+            Margin = new Margin(0, 0, 4, 0),
+            Text = Strings.AdminWindow.Name,
+            TextAlign = Pos.Right,
+        };
+        _nameInput = new TextBox(_namePanel, nameof(_nameInput))
+        {
+            Font = _defaultFont,
+            Dock = Pos.Fill,
+            PlaceholderText = Strings.AdminWindow.NamePlaceholder,
+        };
+        Interface.FocusComponents.Add(_nameInput);
+
+        #endregion Name Input
+
+        #region Access
+
+        _accessPanel = new Panel(this, nameof(_accessPanel))
+        {
+            Dock = Pos.Top, ShouldDrawBackground = false,
+        };
+
+        _accessSetButton = new Button(_accessPanel, nameof(_accessSetButton))
+        {
+            Dock = Pos.Right,
+            Font = _defaultFont,
+            Margin = new Margin(4, 0, 0, 0),
+            Padding = new Padding(8, 4),
+            Text = Strings.AdminWindow.SetPower,
+        };
+        _accessSetButton.Clicked += AccessSetButtonOnClicked;
+
+        _accessDropdown = new LabeledComboBox(_accessPanel, nameof(_accessDropdown))
+        {
+            AutoSizeToContents = false,
+            Dock = Pos.Fill,
+            Font = _defaultFont,
+            TextPadding = new Padding(8, 4, 0, 4),
+            Label = Strings.AdminWindow.Access,
+        };
+        _ = _accessDropdown.AddItem(Strings.General.None, userData: "None");
+        _ = _accessDropdown.AddItem(Strings.AdminWindow.Access1, userData: "Moderator");
+        _ = _accessDropdown.AddItem(Strings.AdminWindow.Access2, userData: "Admin");
+
+        #endregion Access
 
         #region Quick Admin Actions
 
-        // Warp to me admin action
-        var buttonWarpToMe = new Button(this, "ButtonWarpToMe")
+        _actionPanel = new Panel(this, nameof(_actionPanel))
         {
-            Text = Strings.Admin.Warp2Me,
-        };
-        buttonWarpToMe.Clicked += (_, _) =>
-        {
-            if (_textboxName.Text?.Trim().Length > 0)
-            {
-                PacketSender.SendAdminAction(new WarpToMeAction(_textboxName.Text));
-            }
+            Dock = Pos.Top, ShouldDrawBackground = false,
         };
 
-        // Warp to player admin action
-        var buttonWarpMeTo = new Button(this, "ButtonWarpMeTo")
+        _actionTable = new Table(_actionPanel, nameof(_actionTable))
         {
-            Text = Strings.Admin.WarpMe2,
-        };
-        buttonWarpMeTo.Clicked += (_, _) =>
-        {
-            if (_textboxName.Text?.Trim().Length > 0)
-            {
-                PacketSender.SendAdminAction(new WarpMeToAction(_textboxName.Text));
-            }
+            CellSpacing = new Point(8, 8),
+            ColumnCount = 3,
+            Dock = Pos.Fill,
+            FitRowHeightToContents = true,
+            Font = _defaultFont,
+            SizeToContents = true,
         };
 
-        // Warp to overworld admin action
-        var buttonOverworldReturn = new Button(this, "ButtonOverworldReturn")
+        _warpMeToPlayerButton = new Button(_actionPanel, nameof(_warpMeToPlayerButton))
         {
-            Text = Strings.Admin.OverworldReturn,
+            Font = _defaultFont,
+            MinimumSize = new Point(120, 0),
+            Padding = new Padding(8, 4),
+            Text = Strings.AdminWindow.WarpMeToPlayer,
         };
-        buttonOverworldReturn.Clicked += (_, _) =>
-        {
-            if (!string.IsNullOrEmpty(_textboxName.Text))
-            {
-                PacketSender.SendAdminAction(new ReturnToOverworldAction(_textboxName.Text));
-            }
-        };
+        _warpMeToPlayerButton.Clicked += WarpMeToPlayerButtonOnClicked;
 
-        // Kick player admin action
-        var buttonKick = new Button(this, "ButtonKick")
+        _kickPlayerButton = new Button(_actionPanel, nameof(_kickPlayerButton))
         {
-            Text = Strings.Admin.Kick,
+            Font = _defaultFont,
+            MinimumSize = new Point(120, 0),
+            Padding = new Padding(8, 4),
+            Text = Strings.AdminWindow.KickPlayer,
         };
-        buttonKick.Clicked += (_, _) =>
-        {
-            if (_textboxName.Text?.Trim().Length > 0)
-            {
-                PacketSender.SendAdminAction(new KickAction(_textboxName.Text));
-            }
-        };
+        _kickPlayerButton.Clicked += KickPlayerButtonOnClicked;
 
-        // Kill player admin action
-        var buttonKill = new Button(this, "ButtonKill")
+        _killPlayerButton = new Button(_actionPanel, nameof(_killPlayerButton))
         {
-            Text = Strings.Admin.Kill,
+            Font = _defaultFont,
+            MinimumSize = new Point(120, 0),
+            Padding = new Padding(8, 4),
+            Text = Strings.AdminWindow.KillPlayer,
         };
-        buttonKill.Clicked += (_, _) =>
-        {
-            if (_textboxName.Text?.Trim().Length > 0)
-            {
-                PacketSender.SendAdminAction(new KillAction(_textboxName.Text));
-            }
-        };
+        _killPlayerButton.Clicked += KillPlayerButtonOnClicked;
 
-        // Ban and Unban player admin actions
-        var buttonBan = new Button(this, "ButtonBan")
+        _warpPlayerToMeButton = new Button(_actionPanel, nameof(_warpPlayerToMeButton))
         {
-            Text = Strings.Admin.Ban,
+            Font = _defaultFont,
+            MinimumSize = new Point(120, 0),
+            Padding = new Padding(8, 4),
+            Text = Strings.AdminWindow.WarpPlayerToMe,
         };
-        buttonBan.Clicked += banButton_Clicked;
+        _warpPlayerToMeButton.Clicked += WarpPlayerToMeButtonOnClicked;
 
-        var buttonUnban = new Button(this, "ButtonUnban")
+        _muteButton = new Button(_actionPanel, nameof(_muteButton))
         {
-            Text = Strings.Admin.Unban,
+            Font = _defaultFont,
+            MinimumSize = new Point(120, 0),
+            Padding = new Padding(8, 4),
+            Text = Strings.AdminWindow.Mute,
         };
-        buttonUnban.Clicked += (s, e) =>
-        {
-            if (_textboxName.Text?.Trim().Length > 0)
-            {
-                _ = new InputBox(
-                    Strings.Admin.UnbanCaption.ToString(_textboxName.Text),
-                    Strings.Admin.UnbanPrompt.ToString(_textboxName.Text),
-                    InputType.YesNo,
-                    (_, _) => PacketSender.SendAdminAction(new UnbanAction(_textboxName.Text))
-                );
-            }
-        };
+        _muteButton.Clicked += MuteButtonOnClicked;
 
-        // Mute and Unmute player admin actions
-        var buttonMute = new Button(this, "ButtonMute")
+        _unmuteButton = new Button(_actionPanel, nameof(_unmuteButton))
         {
-            Text = Strings.Admin.Mute,
+            Font = _defaultFont,
+            MinimumSize = new Point(120, 0),
+            Padding = new Padding(8, 4),
+            Text = Strings.AdminWindow.Unmute,
         };
-        buttonMute.Clicked += muteButton_Clicked;
+        _unmuteButton.Clicked += UnmuteButtonOnClicked;
 
-        var buttonUnmute = new Button(this, "ButtonUnmute")
+        _leaveInstanceButton = new Button(_actionPanel, nameof(_leaveInstanceButton))
         {
-            Text = Strings.Admin.Unmute,
+            Font = _defaultFont,
+            MinimumSize = new Point(120, 0),
+            Padding = new Padding(8, 4),
+            Text = Strings.AdminWindow.LeaveInstance,
         };
-        buttonUnmute.Clicked += (s, e) =>
+        _leaveInstanceButton.Clicked += LeaveInstanceButtonOnClicked;
+
+        _banButton = new Button(_actionPanel, nameof(_banButton))
         {
-            if (_textboxName.Text?.Trim().Length > 0)
-            {
-                _ = new InputBox(
-                    Strings.Admin.UnmuteCaption.ToString(_textboxName.Text),
-                    Strings.Admin.UnmutePrompt.ToString(_textboxName.Text),
-                    InputType.YesNo,
-                    (_, _) => PacketSender.SendAdminAction(new UnmuteAction(_textboxName.Text))
-                );
-            }
+            Font = _defaultFont,
+            MinimumSize = new Point(120, 0),
+            Padding = new Padding(8, 4),
+            Text = Strings.AdminWindow.Ban,
         };
+        _banButton.Clicked += BanButtonOnClicked;
+
+        _unbanButton = new Button(_actionPanel, nameof(_unbanButton))
+        {
+            Font = _defaultFont,
+            MinimumSize = new Point(120, 0),
+            Padding = new Padding(8, 4),
+            Text = Strings.AdminWindow.Unban,
+        };
+        _unbanButton.Clicked += UnbanButtonOnClicked;
+
+        var rowsAdded = _actionTable.AddCells(
+            _warpMeToPlayerButton,
+            _kickPlayerButton,
+            _killPlayerButton,
+            _warpPlayerToMeButton,
+            _muteButton,
+            _unmuteButton,
+            _leaveInstanceButton,
+            _banButton,
+            _unbanButton
+        );
 
         #endregion Quick Admin Actions
 
-        #region Change Player Sprite and Face
+        #region Sprite/Face Pickers
 
-        // Change player sprite admin action
-        _ = new Label(this, "LabelSprite")
+        _spriteTexturePicker = new TexturePicker(this, nameof(_spriteTexturePicker))
         {
-            Text = Strings.Admin.Sprite,
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            ButtonText = Strings.AdminWindow.SetSprite,
+            LabelText = Strings.AdminWindow.Sprite,
+            TextureType = TextureType.Entity,
         };
-        _dropdownSprite = new ComboBox(this, "DropdownSprite");
-        _ = _dropdownSprite.AddItem(Strings.Admin.None);
-        _dropdownSprite.ItemSelected += _dropdownSprite_ItemSelected;
+        _spriteTexturePicker.Submitted += SpriteTexturePickerOnSubmitted;
 
-        var sprites = Globals.ContentManager.GetTextureNames(TextureType.Entity);
-        Array.Sort(sprites, new AlphanumComparatorFast());
-        foreach (var sprite in sprites)
+        _faceTexturePicker = new TexturePicker(this, nameof(_faceTexturePicker))
         {
-            _ = _dropdownSprite.AddItem(sprite);
-        }
-
-        var buttonSetSprite = new Button(this, "ButtonSetSprite")
-        {
-            Text = Strings.Admin.SetSprite,
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            ButtonText = Strings.AdminWindow.SetFace,
+            LabelText = Strings.AdminWindow.Face,
+            TextureType = TextureType.Face,
         };
-        buttonSetSprite.Clicked += (_, _) =>
-        {
-            if (_textboxName.Text?.Trim().Length > 0)
-            {
-                PacketSender.SendAdminAction(new SetSpriteAction(_textboxName.Text, _dropdownSprite.Text));
-            }
-        };
+        _faceTexturePicker.Submitted += FaceTexturePickerOnSubmitted;
 
-        var panelSprite = new ImagePanel(this, "PanelSprite");
-        _spritePanel = new ImagePanel(panelSprite);
+        #endregion Sprite/Face Pickers
 
-        // Change player face admin action
-        _ = new Label(this, "LabelFace")
-        {
-            Text = Strings.Admin.Face,
-        };
-        _dropdownFace = new ComboBox(this, "DropdownFace");
-        _ = _dropdownFace.AddItem(Strings.Admin.None);
-        _dropdownFace.ItemSelected += _dropdownFace_ItemSelected;
+        #region Map List
 
-        var faces = Globals.ContentManager.GetTextureNames(TextureType.Face);
-        Array.Sort(faces, new AlphanumComparatorFast());
-        foreach (var face in faces)
+        _mapListPanel = new Panel(this, nameof(_mapListPanel))
         {
-            _ = _dropdownFace.AddItem(face);
-        }
-
-        var buttonSetFace = new Button(this, "ButtonSetFace")
-        {
-            Text = Strings.Admin.SetFace,
-        };
-        buttonSetFace.Clicked += (_, _) =>
-        {
-            if (_textboxName.Text?.Trim().Length > 0)
-            {
-                PacketSender.SendAdminAction(new SetFaceAction(_textboxName.Text, _dropdownFace.Text));
-            }
+            Dock = Pos.Fill, ShouldDrawBackground = false,
         };
 
-        var panelFace = new ImagePanel(this, "PanelFace");
-        _facePanel = new ImagePanel(panelFace);
-
-        #endregion Change Player Sprite and Face
-
-        // Map list
-        _ = new Label(this, "LabelMapList")
+        _mapListPanelHeader = new Panel(_mapListPanel, nameof(_mapListPanelHeader))
         {
-            Text = Strings.Admin.MapList,
+            Dock = Pos.Top, ShouldDrawBackground = false,
         };
-        _checkboxChronological = new Checkbox(this, "CheckboxChronological");
-        _checkboxChronological.SetToolTipText(Strings.Admin.ChronologicalTip);
-        _checkboxChronological.CheckChanged += (_, _) => UpdateMapList();
-        _ = new Label(this, "LabelChronological")
+
+        _mapListLabel = new Label(_mapListPanelHeader, nameof(_mapListLabel))
         {
-            Text = Strings.Admin.Chronological,
+            Dock = Pos.Left,
+            Font = _defaultFont,
+            Text = Strings.AdminWindow.MapList,
         };
+
+        _mapSortCheckbox = new LabeledCheckBox(_mapListPanelHeader, nameof(_mapSortCheckbox))
+        {
+            Dock = Pos.Right,
+            Font = _defaultFont,
+            Text = Strings.AdminWindow.SortMapList,
+            TooltipText = Strings.AdminWindow.SortMapListTooltip,
+            TooltipFont = _defaultFont,
+        };
+
+        _mapSortCheckbox.CheckChanged += MapSortCheckboxOnCheckChanged;
+
+        _mapListPanel.SizeToChildren(recursive: true);
+
+        #endregion Map List
+
+        SkipRender();
+    }
+
+    protected override void EnsureInitialized()
+    {
+        InnerPanel.SizeToChildren(recursive: true);
 
         LoadJsonUi(UI.InGame, Graphics.Renderer?.GetResolutionString(), saveOutput: true);
+
         UpdateMapList();
     }
 
-    private void OnButtonSetPowerOnClicked(Base @base, MouseButtonState mouseButtonState)
+    #region Action Handlers
+
+    private void UnbanButtonOnClicked(Base s, MouseButtonState e)
     {
-        var name = _textboxName.Text?.Trim();
-        if (name is null or { Length: < 1 })
+        if (PlayerName is not { Length: > 0 } playerName)
         {
             return;
         }
 
-        var power = _dropdownAccess.SelectedItem?.UserData.ToString()?.Trim();
+        _ = new InputBox(
+            Strings.AdminWindow.UnbanCaption.ToString(args: playerName),
+            Strings.AdminWindow.UnbanPrompt.ToString(args: playerName),
+            InputType.YesNo,
+            (_, _) => PacketSender.SendAdminAction(new UnbanAction(playerName))
+        );
+    }
+
+    private void UnmuteButtonOnClicked(Base s, MouseButtonState e)
+    {
+        if (PlayerName is not { Length: > 0 } playerName)
+        {
+            return;
+        }
+
+        _ = new InputBox(
+            Strings.AdminWindow.UnmuteCaption.ToString(args: playerName),
+            Strings.AdminWindow.UnmutePrompt.ToString(args: playerName),
+            InputType.YesNo,
+            (_, _) => PacketSender.SendAdminAction(new UnmuteAction(playerName))
+        );
+    }
+
+    private void WarpPlayerToMeButtonOnClicked(Base @base, MouseButtonState mouseButtonState)
+    {
+        if (PlayerName is not { Length: > 0 } playerName)
+        {
+            return;
+        }
+
+        PacketSender.SendAdminAction(new WarpToMeAction(playerName));
+    }
+
+    private void KillPlayerButtonOnClicked(Base @base, MouseButtonState mouseButtonState)
+    {
+        if (PlayerName is not { Length: > 0 } playerName)
+        {
+            return;
+        }
+
+        PacketSender.SendAdminAction(new KillAction(playerName));
+    }
+
+    private void KickPlayerButtonOnClicked(Base @base, MouseButtonState mouseButtonState)
+    {
+        if (PlayerName is not { Length: > 0 } playerName)
+        {
+            return;
+        }
+
+        PacketSender.SendAdminAction(new KickAction(playerName));
+    }
+
+    private void WarpMeToPlayerButtonOnClicked(Base @base, MouseButtonState mouseButtonState)
+    {
+        if (PlayerName is not { Length: > 0 } playerName)
+        {
+            return;
+        }
+
+        PacketSender.SendAdminAction(new WarpMeToAction(playerName));
+    }
+
+    public string? PlayerName
+    {
+        get => _nameInput.Text?.Trim();
+        set => _nameInput.Text = value;
+    }
+
+    private void FaceTexturePickerOnSubmitted(TexturePicker sender, ValueChangedEventArgs<string?> arguments)
+    {
+        if (PlayerName is not { Length: > 0 } playerName)
+        {
+            return;
+        }
+
+        var textureName = arguments.Value?.Trim();
+        PacketSender.SendAdminAction(new SetFaceAction(playerName, textureName));
+    }
+
+    private void SpriteTexturePickerOnSubmitted(TexturePicker sender, ValueChangedEventArgs<string?> arguments)
+    {
+        if (PlayerName is not { Length: > 0 } playerName)
+        {
+            return;
+        }
+
+        var textureName = arguments.Value?.Trim();
+        PacketSender.SendAdminAction(new SetSpriteAction(playerName, textureName));
+    }
+
+    private void LeaveInstanceButtonOnClicked(Base @base, MouseButtonState mouseButtonState)
+    {
+        if (PlayerName is not { Length: > 0 } playerName)
+        {
+            return;
+        }
+
+        PacketSender.SendAdminAction(new ReturnToOverworldAction(playerName));
+    }
+
+    private void AccessSetButtonOnClicked(Base @base, MouseButtonState mouseButtonState)
+    {
+        if (PlayerName is not { Length: > 0 } playerName)
+        {
+            return;
+        }
+
+        var power = _accessDropdown.SelectedItem?.UserData?.ToString()?.Trim();
         if (power is null or { Length: < 1 })
         {
             return;
         }
 
-        PacketSender.SendAdminAction(new SetAccessAction(name, power));
+        PacketSender.SendAdminAction(new SetAccessAction(playerName, power));
     }
 
-    public void SetName(string name)
+    private void BanButtonOnClicked(Base sender, MouseButtonState arguments)
     {
-        _textboxName.Text = name;
-    }
-
-    private void UpdateMapList()
-    {
-        _mapList?.Dispose();
-        var mapListY = 330;
-        var mapListHeight = (_innerPanel?.Height ?? Height) - (mapListY + 4);
-        _mapList = new TreeControl(this, nameof(_mapList))
-        {
-            X = 4,
-            Y = mapListY,
-            Width = Width - 8,
-            Height = mapListHeight,
-            MaximumSize = new Point(4096, 999999),
-            Font = Current.GetFont("sourcesansproblack", 10),
-            TextColorOverride = Color.White,
-        };
-        _mapList.SelectionChanged += MapList_SelectionChanged;
-
-        AddMapListToTree(MapList.List, null);
-    }
-
-    private void AddMapListToTree(MapList mapList, TreeNode? parent)
-    {
-        if (_mapList == default)
+        if (PlayerName is not { Length: > 0 } playerName)
         {
             return;
         }
 
-        TreeNode tmpNode;
-        if (_checkboxChronological.IsChecked)
+        if (string.Equals(playerName, Globals.Me?.Name, StringComparison.CurrentCultureIgnoreCase))
         {
-            for (var i = MapList.OrderedMaps.Count - 1; i >= 0; i--)
+            return;
+        }
+
+        _banOrMuteWindow = new BanMuteBox(
+            Strings.AdminWindow.BanCaption.ToString(playerName),
+            Strings.AdminWindow.BanPrompt.ToString(playerName),
+            (_, _) =>
             {
-                tmpNode = _mapList.AddNode(MapList.OrderedMaps[i].Name);
-                tmpNode.UserData = MapList.OrderedMaps[i].MapId;
+                PacketSender.SendAdminAction(
+                    new BanAction(
+                        playerName,
+                        _banOrMuteWindow?.GetDuration() ?? 0,
+                        _banOrMuteWindow?.GetReason() ?? string.Empty,
+                        _banOrMuteWindow?.BanIp() ?? false
+                    )
+                );
+
+                _banOrMuteWindow?.Dispose();
+            }
+        );
+    }
+
+    private void MuteButtonOnClicked(Base sender, MouseButtonState arguments)
+    {
+        if (PlayerName is not { Length: > 0 } playerName)
+        {
+            return;
+        }
+
+        if (string.Equals(playerName, Globals.Me?.Name, StringComparison.CurrentCultureIgnoreCase))
+        {
+            return;
+        }
+
+        _banOrMuteWindow = new BanMuteBox(
+            Strings.AdminWindow.MuteCaption.ToString(playerName),
+            Strings.AdminWindow.MutePrompt.ToString(playerName),
+            (_, _) =>
+            {
+                PacketSender.SendAdminAction(
+                    new MuteAction(
+                        playerName,
+                        _banOrMuteWindow?.GetDuration() ?? 0,
+                        _banOrMuteWindow?.GetReason() ?? string.Empty,
+                        _banOrMuteWindow?.BanIp() ?? false
+                    )
+                );
+
+                _banOrMuteWindow?.Dispose();
+            }
+        );
+    }
+
+    private void MapSortCheckboxOnCheckChanged(Base @base, EventArgs eventArgs)
+    {
+        UpdateMapList();
+    }
+
+    private void UpdateMapList()
+    {
+        _mapTree?.Dispose();
+
+        _mapTree = new TreeControl(_mapListPanel, nameof(_mapTree))
+        {
+            Dock = Pos.Fill, Font = _defaultFont,
+        };
+
+        _mapTree.SelectionChanged += MapTreeSelectionChanged;
+
+        AddMapListToTree(MapList.List, _mapTree);
+    }
+
+    private void AddMapListToTree(MapList mapList, TreeNode parent)
+    {
+        if (_mapSortCheckbox.IsChecked)
+        {
+            foreach (var mapListMap in MapList.OrderedMaps)
+            {
+                _ = parent.AddNode(mapListMap.Name, mapListMap.MapId);
             }
 
             return;
@@ -331,145 +531,23 @@ public partial class AdminWindow : WindowControl
             switch (item)
             {
                 case MapListFolder folder:
-                    tmpNode = parent?.AddNode(item.Name) ?? _mapList.AddNode(item.Name);
-                    tmpNode.UserData = folder;
-                    AddMapListToTree(folder.Children, tmpNode);
+                    AddMapListToTree(folder.Children, parent.AddNode(item.Name, folder));
                     break;
                 case MapListMap map:
-                    tmpNode = parent?.AddNode(item.Name) ?? _mapList.AddNode(item.Name);
-                    tmpNode.UserData = map.MapId;
+                    parent.AddNode(item.Name, map.MapId);
                     break;
             }
         }
     }
 
-    #region Action Handlers
-
-    private void banButton_Clicked(Base sender, MouseButtonState arguments)
-    {
-        if (string.IsNullOrWhiteSpace(_textboxName.Text))
-        {
-            return;
-        }
-
-        var name = _textboxName.Text?.Trim();
-        if (string.Equals(name, Globals.Me?.Name, StringComparison.CurrentCultureIgnoreCase))
-        {
-            return;
-        }
-
-        _banOrMuteWindow = new BanMuteBox(
-            Strings.Admin.BanCaption.ToString(name),
-            Strings.Admin.BanPrompt.ToString(_textboxName.Text),
-            (_, _) =>
-            {
-                PacketSender.SendAdminAction(
-                    new BanAction(
-                        _textboxName.Text,
-                        _banOrMuteWindow?.GetDuration() ?? 0,
-                        _banOrMuteWindow?.GetReason() ?? string.Empty,
-                        _banOrMuteWindow?.BanIp() ?? false
-                    )
-                );
-
-                _banOrMuteWindow?.Dispose();
-            }
-        );
-    }
-
-    private void muteButton_Clicked(Base sender, MouseButtonState arguments)
-    {
-        if (string.IsNullOrWhiteSpace(_textboxName.Text))
-        {
-            return;
-        }
-
-        var name = _textboxName.Text?.Trim();
-        if (string.Equals(name, Globals.Me?.Name, StringComparison.CurrentCultureIgnoreCase))
-        {
-            return;
-        }
-
-        _banOrMuteWindow = new BanMuteBox(
-            Strings.Admin.MuteCaption.ToString(name),
-            Strings.Admin.MutePrompt.ToString(_textboxName.Text),
-            (_, _) =>
-            {
-                PacketSender.SendAdminAction(
-                    new MuteAction(
-                        _textboxName.Text,
-                        _banOrMuteWindow?.GetDuration() ?? 0,
-                        _banOrMuteWindow?.GetReason() ?? string.Empty,
-                        _banOrMuteWindow?.BanIp() ?? false
-                    )
-                );
-
-                _banOrMuteWindow?.Dispose();
-            }
-        );
-    }
-
-    private void _dropdownSprite_ItemSelected(Base sender, ItemSelectedEventArgs arguments)
-    {
-        if (_dropdownSprite.Text is not { } spriteName)
-        {
-            return;
-        }
-
-        var spriteTexture = Globals.ContentManager.GetTexture(TextureType.Entity, spriteName);
-
-        if (spriteTexture == null)
-        {
-            return;
-        }
-
-        var textFrameWidth = spriteTexture.Width / Options.Instance.Sprites.NormalFrames;
-        var textFrameHeight = spriteTexture.Height / Options.Instance.Sprites.Directions;
-        _spritePanel.SetTextureRect(
-            0,
-            0,
-            textFrameWidth,
-            textFrameHeight
-        );
-        _ = _spritePanel.SetSize(Math.Min(textFrameWidth, 46), Math.Min(textFrameHeight, 46));
-        Align.Center(_spritePanel);
-    }
-
-    private void _dropdownFace_ItemSelected(Base sender, ItemSelectedEventArgs arguments)
-    {
-        if (_dropdownFace.Text is not { } faceName)
-        {
-            return;
-        }
-
-        var faceTexture = Globals.ContentManager.GetTexture(TextureType.Face, faceName);
-        _facePanel.Texture = faceTexture;
-
-        if (faceTexture == null)
-        {
-            return;
-        }
-
-        var textFrameWidth = faceTexture.Width;
-        var textFrameHeight = faceTexture.Height;
-        _facePanel.SetTextureRect(
-            0,
-            0,
-            textFrameWidth,
-            textFrameHeight
-        );
-        _ = _facePanel.SetSize(Math.Min(textFrameWidth, 46), Math.Min(textFrameHeight, 46));
-        Align.Center(_facePanel);
-    }
-
-    private void MapList_SelectionChanged(Base sender, EventArgs arguments)
+    private static void MapTreeSelectionChanged(Base sender, EventArgs arguments)
     {
         if (sender is not TreeNode treeNode)
         {
             ApplicationContext.Context.Value?.Logger.LogDebug(
                 "MapList selection triggered by a sender of type {SenderType} instead of a {TreeNodeType}",
-                sender.GetType().GetName(qualified: true),
-                typeof(TreeNode).GetName(qualified: true)
+                sender.GetType().GetName(true),
+                typeof(TreeNode).GetName(true)
             );
             return;
         }
@@ -498,6 +576,7 @@ public partial class AdminWindow : WindowControl
                     treeNode.Text
                 );
             }
+
             return;
         }
 

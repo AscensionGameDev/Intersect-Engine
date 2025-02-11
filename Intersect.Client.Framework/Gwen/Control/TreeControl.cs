@@ -1,41 +1,35 @@
 ﻿using Intersect.Client.Framework.GenericClasses;
-using Intersect.Client.Framework.Graphics;
 
 namespace Intersect.Client.Framework.Gwen.Control;
-
 
 /// <summary>
 ///     Tree control.
 /// </summary>
 public partial class TreeControl : TreeNode
 {
-
     private readonly ScrollControl _scrollControl;
-
-    private bool mMultiSelect;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="TreeControl" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
     /// <param name="name"></param>
-    public TreeControl(Base parent, string? name = default) : base(parent: parent, name: name)
+    public TreeControl(Base parent, string? name = default) : base(parent, name)
     {
-        mTreeControl = this;
+        _treeControl = this;
 
-        RemoveChild(mToggleButton, true);
-        mToggleButton = null;
-        RemoveChild(_label, true);
-        _label = null;
+        RemoveChild(_toggleButton, true);
+        RemoveChild(_trigger, true);
         RemoveChild(_innerPanel, true);
+        _toggleButton = null;
+        _trigger = null;
         _innerPanel = null;
 
-        mMultiSelect = false;
+        AllowMultiSelect = false;
 
-        _scrollControl = new ScrollControl(this, name: nameof(_innerPanel))
+        _scrollControl = new ScrollControl(this, nameof(_innerPanel))
         {
-            Dock = Pos.Fill,
-            Margin = Margin.One,
+            Dock = Pos.Fill, Margin = Margin.One,
         };
 
         _innerPanel = _scrollControl;
@@ -48,11 +42,7 @@ public partial class TreeControl : TreeNode
     /// <summary>
     ///     Determines if multiple nodes can be selected at the same time.
     /// </summary>
-    public bool AllowMultiSelect
-    {
-        get => mMultiSelect;
-        set => mMultiSelect = value;
-    }
+    public bool AllowMultiSelect { get; set; }
 
     /// <summary>
     ///     Renders the control using specified skin.
@@ -103,10 +93,9 @@ public partial class TreeControl : TreeNode
     /// <param name="control">Node selected.</param>
     protected virtual void OnNodeSelected(Base control, EventArgs args)
     {
-        if (!mMultiSelect /*|| InputHandler.InputHandler.IsKeyDown(Key.Control)*/)
+        if (!AllowMultiSelect /*|| InputHandler.InputHandler.IsKeyDown(Key.Control)*/)
         {
             UnselectAll();
         }
     }
-
 }

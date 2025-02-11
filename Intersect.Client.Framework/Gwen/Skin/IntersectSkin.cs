@@ -103,6 +103,11 @@ public class IntersectSkin : TexturedBase
         Colors.Tab.Inactive.Disabled = Renderer.PixelColor(_texture, 8, 480, Color.Yellow);
         Colors.Tab.Inactive.Hover = Renderer.PixelColor(_texture, 16, 480, Color.Yellow);
         Colors.Tab.Inactive.Active = Renderer.PixelColor(_texture, 24, 480, Color.Yellow);
+
+        Colors.Tree.Lines = Renderer.PixelColor(_texture, 64, 480, Color.Yellow);
+        Colors.Tree.Normal = Renderer.PixelColor(_texture, 72, 480, Color.Yellow);
+        Colors.Tree.Hover = Renderer.PixelColor(_texture, 80, 480, Color.Yellow);
+        Colors.Tree.Selected = Renderer.PixelColor(_texture, 88, 480, Color.Yellow);
     }
 
     protected override void InitializeTextures()

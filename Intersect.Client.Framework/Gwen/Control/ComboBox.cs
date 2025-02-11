@@ -231,9 +231,11 @@ public partial class ComboBox : Button
 
         UpdateItemMaximumSize(label);
 
+        // ReSharper disable once InvertIf
         if (mSelectedItem == null)
         {
-            OnItemSelected(item, new ItemSelectedEventArgs(null, true, selectedUserData: null));
+            var itemSelectedEventArgs = new ItemSelectedEventArgs(item, true, selectedUserData: item.UserData);
+            OnItemSelected(item, itemSelectedEventArgs);
         }
 
         return item;
@@ -301,29 +303,30 @@ public partial class ComboBox : Button
     /// <param name="control">Event source.</param>
     protected virtual void OnItemSelected(Base control, ItemSelectedEventArgs args)
     {
-        if (!IsDisabled)
+        if (IsDisabledByTree)
         {
-            //Convert selected to a menu item
-            var item = control as MenuItem;
-            if (null == item)
-            {
-                return;
-            }
-
-            mSelectedItem = item;
-            Text = mSelectedItem.Text;
-            _menu.IsHidden = true;
-
-            ItemSelected?.Invoke(this, args);
-
-            if (!args.Automated)
-            {
-                base.PlaySound(mSelectItemSound);
-            }
-
-            Focus();
-            Invalidate();
+            return;
         }
+
+        //Convert selected to a menu item
+        if (control is not MenuItem item)
+        {
+            return;
+        }
+
+        mSelectedItem = item;
+        Text = mSelectedItem.Text;
+        _menu.IsHidden = true;
+
+        ItemSelected?.Invoke(this, args);
+
+        if (!args.Automated)
+        {
+            base.PlaySound(mSelectItemSound);
+        }
+
+        Focus();
+        Invalidate();
     }
 
     /// <summary>
@@ -593,4 +596,13 @@ public partial class ComboBox : Button
         }
     }
 
+    public void ClearItems()
+    {
+        mSelectedItem = null;
+        var items = Children.OfType<MenuItem>().ToArray();
+        foreach (var item in items)
+        {
+            RemoveChild(item, dispose: true);
+        }
+    }
 }

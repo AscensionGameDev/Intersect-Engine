@@ -177,6 +177,8 @@ public partial class GameInterface : MutableInterface
         if (mAdminWindow == null)
         {
             mAdminWindow ??= new AdminWindow(GameCanvas);
+            mAdminWindow.X = GameCanvas.Width - mAdminWindow.OuterWidth;
+            mAdminWindow.Y = (GameCanvas.Height - mAdminWindow.OuterHeight) / 2;
         }
         else if (IsAdminWindowOpen)
         {
@@ -310,7 +312,15 @@ public partial class GameInterface : MutableInterface
 
     public bool IsAdminWindowOpen => !mAdminWindow?.IsHidden ?? false;
 
-    public void AdminWindowSelectName(string name) => mAdminWindow?.SetName(name);
+    public void AdminWindowSelectName(string playerName)
+    {
+        if (mAdminWindow is not { } adminWindow)
+        {
+            return;
+        }
+
+        adminWindow.PlayerName = playerName;
+    }
 
     public void Update()
     {
