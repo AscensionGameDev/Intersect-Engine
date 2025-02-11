@@ -943,6 +943,9 @@ public static partial class Strings
         public static LocalizedString IncludeTextNodesInHover = @"Include Text Nodes in Hover";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString ViewClickedNodeInDebugger = @"View Clicked Node in Debugger";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString EntitiesDrawn = @"Entities Drawn";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
