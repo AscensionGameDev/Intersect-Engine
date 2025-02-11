@@ -81,7 +81,23 @@ public partial class LabeledComboBox : Base, IAutoSizeToContents, ITextContainer
     public bool AutoSizeToContents
     {
         get => _autoSizeToContents;
-        set => _autoSizeToContents = value;
+        set => SetAndDoIfChanged(ref _autoSizeToContents, value, Invalidate);
+    }
+
+    protected override void OnDockChanged(Pos oldDock, Pos newDock)
+    {
+        base.OnDockChanged(oldDock, newDock);
+
+        if (newDock.HasFlag(Pos.Fill))
+        {
+            _comboBox.Dock = Pos.Fill | Pos.CenterV;
+            _comboBox.AutoSizeToContents = false;
+        }
+        else if (_comboBox.Dock.HasFlag(Pos.Fill))
+        {
+            _comboBox.Dock = Pos.Left | Pos.CenterV;
+            _comboBox.AutoSizeToContents = true;
+        }
     }
 
     public Padding LabelPadding
@@ -120,4 +136,6 @@ public partial class LabeledComboBox : Base, IAutoSizeToContents, ITextContainer
     }
 
     public Color? TextPaddingDebugColor { get; set; }
+
+    public void ClearItems() => _comboBox.ClearItems();
 }

@@ -19,7 +19,7 @@ public partial class DownArrow : Base
     public DownArrow(ComboBox parent, string? name = default) : base(parent: parent, name: name) // or Base?
     {
         MouseInputEnabled = false;
-        SetSize(15, 15);
+        MinimumSize = new Point(15, 15);
 
         mComboBox = parent;
     }

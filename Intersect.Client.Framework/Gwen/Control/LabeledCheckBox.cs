@@ -144,7 +144,7 @@ public partial class LabeledCheckBox : Base, ITextContainer
     /// <summary>
     ///     Invoked when the control's check has been changed.
     /// </summary>
-    public event GwenEventHandler<EventArgs> CheckChanged;
+    public event GwenEventHandler<EventArgs>? CheckChanged;
 
     /// <summary>
     ///     Handler for CheckChanged event.

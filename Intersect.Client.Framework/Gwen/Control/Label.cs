@@ -53,6 +53,7 @@ public partial class Label : Base, ILabel
     /// <param name="disableText"></param>
     public Label(Base parent, string? name = default, bool disableText = false) : base(parent, name)
     {
+        _autoSizeToContents = true;
         _textDisabled = disableText;
         _textElement = new Text(this)
         {
@@ -62,8 +63,6 @@ public partial class Label : Base, ILabel
         MouseInputEnabled = false;
         Size = new Point(100, 10);
         TextAlign = Pos.Left | Pos.Top;
-
-        _autoSizeToContents = true;
     }
 
     public string? FormatString
