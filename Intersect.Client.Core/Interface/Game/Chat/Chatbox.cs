@@ -353,7 +353,7 @@ public partial class Chatbox
     }
 
     //Update
-    public void Update()
+    private void Update()
     {
         var vScrollBar = mChatboxMessages.GetVerticalScrollBar();
         var scrollAmount = vScrollBar.ScrollAmount;

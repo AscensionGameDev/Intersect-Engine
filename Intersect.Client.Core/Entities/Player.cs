@@ -33,7 +33,7 @@ namespace Intersect.Client.Entities;
 
 public partial class Player : Entity, IPlayer
 {
-    public delegate void InventoryUpdated();
+    public delegate void InventoryUpdatedEventHandler(Player player, int slotIndex);
 
     private Guid _class;
 
@@ -66,7 +66,19 @@ public partial class Player : Entity, IPlayer
 
     public HotbarInstance[] Hotbar { get; set; } = new HotbarInstance[Options.Instance.Player.HotbarSlotCount];
 
-    public InventoryUpdated? InventoryUpdatedDelegate { get; set; }
+    public event InventoryUpdatedEventHandler? InventoryUpdated;
+
+    public void UpdateInventory(
+        int slotIndex,
+        Guid descriptorId,
+        int quantity,
+        Guid? bagId,
+        ItemProperties itemProperties
+    )
+    {
+        Inventory[slotIndex].Load(id: descriptorId, quantity: quantity, bagId: bagId, itemProperties: itemProperties);
+        InventoryUpdated?.Invoke(this, slotIndex);
+    }
 
     IReadOnlyDictionary<Guid, long> IPlayer.ItemCooldowns => ItemCooldowns;
 

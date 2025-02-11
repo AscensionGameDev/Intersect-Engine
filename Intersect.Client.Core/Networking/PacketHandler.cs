@@ -1313,11 +1313,7 @@ internal sealed partial class PacketHandler
     //InventoryUpdatePacket
     public void HandlePacket(IPacketSender packetSender, InventoryUpdatePacket packet)
     {
-        if (Globals.Me != null)
-        {
-            Globals.Me.Inventory[packet.Slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.Properties);
-            Globals.Me.InventoryUpdatedDelegate?.Invoke();
-        }
+        Globals.Me?.UpdateInventory(packet.Slot, packet.ItemId, packet.Quantity, packet.BagId, packet.Properties);
     }
 
     //SpellsPacket

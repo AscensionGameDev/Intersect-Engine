@@ -1,4 +1,5 @@
 using Intersect.Client.Core;
+using Intersect.Client.Entities;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -6,116 +7,110 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Core;
+using Intersect.Enums;
+using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Interface.Game.Crafting;
 
-
-public partial class CraftingWindow
+public partial class CraftingWindow : Window
 {
-    private ImagePanel mBar;
+    private readonly ImagePanel mBar;
 
-    private ImagePanel mBarContainer;
+    private readonly ImagePanel mBarContainer;
+
+    private readonly Button mCraft;
+
+    private readonly Button mCraftAll;
+
+    private readonly ScrollControl mItemContainer;
+
+    private readonly List<RecipeItem> mItems = [];
+
+    private readonly Label mLblCraftingChance;
+
+    private readonly Label mLblCraftingTime;
+
+    private readonly Label mLblDestroyMaterialsChance;
+
+    private readonly Label mLblIngredients;
+
+    private readonly Label mLblProduct;
+
+    private readonly Label mLblRecipes;
+
+    //Objects
+    private readonly ListBox mRecipes;
+
+    private readonly List<Label> mValues = [];
+    private Guid _automaticCraftingDescriptorId;
+
+    private RecipeItem? _craftedItem;
+
+    private Guid _craftRecipeDescriptorId;
 
     private long mBarTimer;
 
-    private RecipeItem mCombinedItem;
-
     private Label mCombinedValue;
 
-    private Button mCraft;
+    private int mRemainingCrafts;
 
-    private Button mCraftAll;
-
-    private Guid mAutoCraftId = Guid.Empty;
-
-    private int mRemainingCrafts = 0;
-
-    private Guid mCraftId;
-
-    //Controls
-    private WindowControl mCraftWindow;
-
-    private bool mInitialized = false;
-
-    private ScrollControl mItemContainer;
-
-    private List<RecipeItem> mItems = new List<RecipeItem>();
-
-    private Label mLblIngredients;
-
-    private Label mLblProduct;
-
-    private Label mLblRecipes;
-
-    private Label mLblCraftingChance;
-
-    private Label mLblDestroyMaterialsChance;
-
-    private Label mLblCraftingTime;
-
-    //Objects
-    private ListBox mRecipes;
-
-    private List<Label> mValues = new List<Label>();
-
-    //Location
-    public int X => mCraftWindow.X;
-
-    public int Y => mCraftWindow.Y;
-
-    public bool IsCrafting => mRemainingCrafts > 0;
-
-    private bool mJournalMode { get; set; }
-
-    public CraftingWindow(Canvas gameCanvas, bool journalMode)
+    public CraftingWindow(Canvas gameCanvas, bool journalMode) : base(
+        gameCanvas,
+        Globals.ActiveCraftingTable.Name,
+        false,
+        nameof(CraftingWindow)
+    )
     {
-        mCraftWindow = new WindowControl(gameCanvas, Globals.ActiveCraftingTable.Name, false, "CraftingWindow");
-        mCraftWindow.DisableResizing();
+        IsResizable = false;
 
-        mItemContainer = new ScrollControl(mCraftWindow, "IngredientsContainer");
+        SkipRender();
+
+        mItemContainer = new ScrollControl(this, "IngredientsContainer");
 
         mJournalMode = journalMode;
 
         //Labels
-        mLblRecipes = new Label(mCraftWindow, "RecipesTitle");
+        mLblRecipes = new Label(this, "RecipesTitle");
         mLblRecipes.Text = Strings.Crafting.Recipes;
 
-        mLblIngredients = new Label(mCraftWindow, "IngredientsTitle");
+        mLblIngredients = new Label(this, "IngredientsTitle");
         mLblIngredients.Text = Strings.Crafting.Ingredients;
 
-        mLblProduct = new Label(mCraftWindow, "ProductLabel");
+        mLblProduct = new Label(this, "ProductLabel");
         mLblProduct.Text = Strings.Crafting.Product;
 
-        mLblCraftingChance = new Label(mCraftWindow, "ProductChanceLabel");
+        mLblCraftingChance = new Label(this, "ProductChanceLabel");
         mLblCraftingChance.Text = Strings.Crafting.CraftChance.ToString(0);
 
-        mLblDestroyMaterialsChance = new Label(mCraftWindow, "DestroyMaterialsChanceLabel");
+        mLblDestroyMaterialsChance = new Label(this, "DestroyMaterialsChanceLabel");
         mLblDestroyMaterialsChance.Text = Strings.Crafting.DestroyMaterialsChance.ToString(0);
 
-        mLblCraftingTime = new Label(mCraftWindow, "CraftingTimeLabel");
+        mLblCraftingTime = new Label(this, "CraftingTimeLabel");
         mLblCraftingTime.Text = Strings.Crafting.CraftingTime.ToString(0);
 
-        //Recepie list
-        mRecipes = new ListBox(mCraftWindow, "RecipesList");
+        mRecipes = new ListBox(this, "RecipesList")
+        {
+            CellSpacing = default, InnerPanelPadding = default,
+        };
 
         //Progress Bar
-        mBarContainer = new ImagePanel(mCraftWindow, "ProgressBarContainer");
+        mBarContainer = new ImagePanel(this, "ProgressBarContainer");
         mBar = new ImagePanel(mBarContainer, "ProgressBar");
 
         //Load the craft button
-        mCraft = new Button(mCraftWindow, "CraftButton");
+        mCraft = new Button(this, "CraftButton");
         mCraft.SetText(Strings.Crafting.Craft);
         mCraft.Clicked += craft_Clicked;
 
         //Craft all button
-        mCraftAll = new Button(mCraftWindow, "CraftAllButton");
+        mCraftAll = new Button(this, "CraftAllButton");
         mCraftAll.SetText(Strings.Crafting.CraftAll.ToString(1));
         mCraftAll.Clicked += craftAll_Clicked;
-
-        mCraftWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
         if (mJournalMode)
         {
@@ -123,113 +118,119 @@ public partial class CraftingWindow
             mCraftAll.Hide();
         }
 
-        Interface.InputBlockingComponents.Add(mCraftWindow);
+        Interface.InputBlockingComponents.Add(this);
 
-        Globals.Me.InventoryUpdatedDelegate = () =>
+        if (Globals.Me is { } player)
         {
-            //Refresh crafting window items
-            LoadCraftItems(mCraftId);
-        };
+            player.InventoryUpdated += PlayerOnInventoryUpdated;
+        }
     }
 
-    private void LoadCraftItems(Guid id)
+    public bool IsCrafting => mRemainingCrafts > 0;
+
+    private bool mJournalMode { get; }
+
+    protected override bool CanClose => !IsCrafting;
+
+    private void PlayerOnInventoryUpdated(Player player, int slotIndex)
     {
-        //Combined item
-        mCraftId = id;
-        if (mCombinedItem != null)
-        {
-            mCraftWindow.Children.Remove(mCombinedItem.Container);
-        }
+        LoadCraftRecipeById(_craftRecipeDescriptorId);
+    }
 
-        //Clear the old item description box
-        if (mCombinedItem != null && mCombinedItem.DescWindow != null)
-        {
-            mCombinedItem.DescWindow.Dispose();
-        }
-
-        if (!Globals.ActiveCraftingTable.Crafts.Contains(id))
+    private void LoadCraftRecipeById(Guid craftDescriptorId)
+    {
+        if (!CraftBase.TryGet(craftDescriptorId, out var craftDescriptor))
         {
             return;
         }
 
-        var craft = Globals.ActiveCraftingTable.Crafts.Get(id);
+        LoadCraftRecipe(craftDescriptor);
+    }
 
-        if (craft == null)
+    private void LoadCraftRecipe(CraftBase craftDescriptor)
+    {
+        _craftRecipeDescriptorId = craftDescriptor.Id;
+
+        if (_craftedItem is { } craftedItem)
         {
-            return;
+            if (craftedItem.Container is { } container)
+            {
+                RemoveChild(container, true);
+            }
+
+            if (craftedItem.DescWindow is { } descriptionWindow)
+            {
+                descriptionWindow.Dispose();
+            }
         }
 
-        mCombinedItem = new RecipeItem(this, new CraftIngredient(craft.ItemId, 0))
+        var craftedItemDescriptorId = craftDescriptor.ItemId;
+        _craftedItem = new RecipeItem(this, new CraftIngredient(craftedItemDescriptorId, 0))
         {
-            Container = new ImagePanel(mCraftWindow, "CraftedItem")
+            Container = new ImagePanel(this, "CraftedItem"),
         };
 
-        mCombinedItem.Setup("CraftedItemIcon");
-        mCombinedValue = new Label(mCombinedItem.Container, "CraftedItemQuantity");
+        _craftedItem.Setup("CraftedItemIcon");
+        mCombinedValue = new Label(_craftedItem.Container, "CraftedItemQuantity");
 
-        mCombinedItem.Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        _craftedItem.Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
-        mCombinedItem.LoadItem();
+        _craftedItem.LoadItem();
         mCombinedValue.Show();
-        var quantity = Math.Max(craft.Quantity, 1);
-        var itm = ItemBase.Get(craft.ItemId);
-        if (itm == null || !itm.IsStackable)
+        var quantity = Math.Max(craftDescriptor.Quantity, 1);
+        if (!ItemBase.TryGet(craftedItemDescriptorId, out var craftedItemDescriptor) ||
+            !craftedItemDescriptor.IsStackable)
         {
             quantity = 1;
         }
 
         mCombinedValue.Text = quantity.ToString();
 
-        for (var i = 0; i < mItems.Count; i++)
+        foreach (var recipeItem in mItems)
         {
             //Clear the old item description box
-            if (mItems[i].DescWindow != null)
+            recipeItem.DescWindow?.Dispose();
+            if (recipeItem.Container is { } container)
             {
-                mItems[i].DescWindow.Dispose();
+                mItemContainer.RemoveChild(container, true);
             }
-
-            mItemContainer.RemoveChild(mItems[i].Container, true);
         }
 
         mItems.Clear();
         mValues.Clear();
 
-        //Quickly Look through the inventory and create a catalog of what items we have, and how many
-        var itemdict = new Dictionary<Guid, int>();
-        foreach (var item in Globals.Me.Inventory)
+        if (Globals.Me is not { } player)
         {
-            if (item != null)
-            {
-                if (itemdict.ContainsKey(item.ItemId))
-                {
-                    itemdict[item.ItemId] += item.Quantity;
-                }
-                else
-                {
-                    itemdict.Add(item.ItemId, item.Quantity);
-                }
-            }
+            return;
+        }
+
+        // Quickly Look through the inventory and create a catalog of what items we have, and how many
+        Dictionary<Guid, int> inventoryItemsByDescriptorId = [];
+        foreach (var item in player.Inventory)
+        {
+            var inventoryItemDescriptorId = item.ItemId;
+            var currentQuantity = inventoryItemsByDescriptorId.GetValueOrDefault(inventoryItemDescriptorId, 0);
+            inventoryItemsByDescriptorId[inventoryItemDescriptorId] = currentQuantity + item.Quantity;
         }
 
         var craftableQuantity = -1;
 
-        for (var i = 0; i < craft.Ingredients.Count; i++)
+        for (var ingredientIndex = 0; ingredientIndex < craftDescriptor.Ingredients.Count; ingredientIndex++)
         {
-            mItems.Add(new RecipeItem(this, craft.Ingredients[i]));
-            mItems[i].Container = new ImagePanel(mItemContainer, "CraftingIngredient");
-            mItems[i].Setup("IngredientItemIcon");
+            var craftingIngredient = craftDescriptor.Ingredients[ingredientIndex];
+            var recipeItem = new RecipeItem(this, craftingIngredient);
+            mItems.Add(recipeItem);
+            var recipeItemContainer = new ImagePanel(mItemContainer, "CraftingIngredient");
+            recipeItem.Container = recipeItemContainer;
+            recipeItem.Setup("IngredientItemIcon");
 
-            var lblTemp = new Label(mItems[i].Container, "IngredientItemValue");
+            var lblTemp = new Label(recipeItemContainer, "IngredientItemValue");
 
-            var onHand = 0;
-            if (itemdict.ContainsKey(craft.Ingredients[i].ItemId))
-            {
-                onHand = itemdict[craft.Ingredients[i].ItemId];
-            }
+            var onHand = inventoryItemsByDescriptorId.GetValueOrDefault(craftingIngredient.ItemId, 0);
 
-            lblTemp.Text = onHand + "/" + craft.Ingredients[i].Quantity;
+            lblTemp.Text = onHand + "/" + craftingIngredient.Quantity;
 
-            var possibleToCraft = (int)Math.Floor(onHand / (double)craft.Ingredients[i].Quantity);
+            var possibleToCraft = (int)Math.Floor(onHand / (double)craftingIngredient.Quantity);
 
             if (craftableQuantity == -1 || possibleToCraft < craftableQuantity)
             {
@@ -238,38 +239,43 @@ public partial class CraftingWindow
 
             mValues.Add(lblTemp);
 
-            mItems[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            recipeItemContainer.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            recipeItem.LoadItem();
 
-            mItems[i].LoadItem();
+            var xPadding = recipeItemContainer.Margin.Left + recipeItemContainer.Margin.Right;
+            var yPadding = recipeItemContainer.Margin.Top + recipeItemContainer.Margin.Bottom;
 
-            var xPadding = mItems[i].Container.Margin.Left + mItems[i].Container.Margin.Right;
-            var yPadding = mItems[i].Container.Margin.Top + mItems[i].Container.Margin.Bottom;
+            var availableWidth = mItemContainer.Width - mItemContainer.VerticalScrollBar.Width;
+            var widthPerRecipeItemIcon = recipeItemContainer.Width + xPadding;
+            var itemsPerRow = Math.Max(1, availableWidth / Math.Max(1, widthPerRecipeItemIcon));
 
-            var sizeFactor = (mItemContainer.Width - mItemContainer.VerticalScrollBar.Width) /
-                             (mItems[i].Container.Width + xPadding);
+            var column = ingredientIndex % itemsPerRow;
+            var row = ingredientIndex / itemsPerRow;
 
-            mItems[i].Container.SetPosition(
-                i % sizeFactor * (mItems[i].Container.Width + xPadding) + xPadding,
-                i / sizeFactor * (mItems[i].Container.Height + yPadding) + yPadding
+            Point iconPosition = new(
+                (column * widthPerRecipeItemIcon) + xPadding,
+                (row * (recipeItemContainer.Height + yPadding)) + yPadding
             );
+            recipeItemContainer.SetPosition(iconPosition);
         }
 
         //Show crafting time and chances
-        mLblCraftingTime.Text = Strings.Crafting.CraftingTime.ToString(craft.Time / 1000.0);
-        mLblCraftingChance.Text = Strings.Crafting.CraftChance.ToString(craft.FailureChance);
-        mLblDestroyMaterialsChance.Text = Strings.Crafting.DestroyMaterialsChance.ToString(craft.ItemLossChance);
+        mLblCraftingTime.Text = Strings.Crafting.CraftingTime.ToString(craftDescriptor.Time / 1000.0);
+        mLblCraftingChance.Text = Strings.Crafting.CraftChance.ToString(craftDescriptor.FailureChance);
+        mLblDestroyMaterialsChance.Text =
+            Strings.Crafting.DestroyMaterialsChance.ToString(craftDescriptor.ItemLossChance);
 
         //If crafting & we no longer have the items for the craft then stop!
         if (IsCrafting)
         {
             var cancraft = true;
-            foreach (var c in CraftBase.Get(mCraftId).Ingredients)
+            foreach (var c in CraftBase.Get(_craftRecipeDescriptorId).Ingredients)
             {
-                if (itemdict.ContainsKey(c.ItemId))
+                if (inventoryItemsByDescriptorId.ContainsKey(c.ItemId))
                 {
-                    if (itemdict[c.ItemId] >= c.Quantity)
+                    if (inventoryItemsByDescriptorId[c.ItemId] >= c.Quantity)
                     {
-                        itemdict[c.ItemId] -= c.Quantity;
+                        inventoryItemsByDescriptorId[c.ItemId] -= c.Quantity;
                     }
                     else
                     {
@@ -289,9 +295,15 @@ public partial class CraftingWindow
             if (!cancraft)
             {
                 mRemainingCrafts = 0;
-                mCraftWindow.IsClosable = true;
+                IsClosable = true;
                 mBar.Width = 0;
-                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Crafting.IncorrectResources, CustomColors.Alerts.Error, Enums.ChatMessageType.Crafting));
+                ChatboxMsg.AddMessage(
+                    new ChatboxMsg(
+                        Strings.Crafting.IncorrectResources,
+                        CustomColors.Alerts.Error,
+                        ChatMessageType.Crafting
+                    )
+                );
 
                 return;
             }
@@ -306,37 +318,39 @@ public partial class CraftingWindow
         }
     }
 
-    public void Close()
+    public override void Hide()
     {
-        if (IsCrafting == false)
+        if (IsCrafting)
         {
-            mCraftWindow.Close();
+            return;
         }
-    }
 
-    public bool IsVisible()
-    {
-        return !mCraftWindow.IsHidden;
-    }
-
-    public void Hide()
-    {
-        if (IsCrafting == false)
-        {
-            mCraftWindow.IsHidden = true;
-        }
+        base.Hide();
     }
 
     //Load new recepie
-    void tmpNode_DoubleClicked(Base sender, MouseButtonState arguments)
+    private void CraftingRecipeRowOnClicked(Base sender, MouseButtonState arguments)
     {
-        if (IsCrafting == false)
+        if (IsCrafting)
         {
-            LoadCraftItems((Guid) ((ListBoxRow) sender).UserData);
+            return;
         }
+
+        if (sender is not ListBoxRow { UserData: CraftBase craftDescriptor })
+        {
+            ApplicationContext.CurrentContext.Logger.LogError(
+                "Sender is not a {ListBoxRowTypeName} or the {UserDataPropertyName} is not a {CraftDescriptorTypeName}",
+                typeof(ListBoxRow).GetName(true),
+                nameof(UserData),
+                typeof(CraftBase).GetName(true)
+            );
+            return;
+        }
+
+        LoadCraftRecipe(craftDescriptor);
     }
 
-    bool CanCraft()
+    private bool CanCraft()
     {
         //This shouldn't be client side :(
         //Quickly Look through the inventory and create a catalog of what items we have, and how many
@@ -356,7 +370,7 @@ public partial class CraftingWindow
             }
         }
 
-        var craftDescriptor = CraftBase.Get(mCraftId);
+        var craftDescriptor = CraftBase.Get(_craftRecipeDescriptorId);
         var canCraft = craftDescriptor?.Ingredients != null;
 
         if (canCraft)
@@ -384,17 +398,17 @@ public partial class CraftingWindow
         return canCraft;
     }
 
-    void DoCraft(int count)
+    private void DoCraft(int count)
     {
         if (IsCrafting)
         {
             PacketSender.SendCraftItem(default, default);
             mRemainingCrafts = 0;
-            mCraftWindow.IsClosable = true;
+            IsClosable = true;
             mBar.Width = 0;
-            mAutoCraftId = default;
+            _automaticCraftingDescriptorId = default;
 
-            LoadCraftItems(mCraftId);
+            LoadCraftRecipeById(_craftRecipeDescriptorId);
 
             return;
         }
@@ -403,66 +417,44 @@ public partial class CraftingWindow
         {
             mRemainingCrafts = count;
             mBarTimer = Timing.Global.Milliseconds;
-            PacketSender.SendCraftItem(mCraftId, count);
-            mCraftWindow.IsClosable = false;
+            PacketSender.SendCraftItem(_craftRecipeDescriptorId, count);
+            IsClosable = false;
             mCraftAll.IsDisabled = true;
 
             return;
         }
 
-        ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Crafting.IncorrectResources, CustomColors.Alerts.Error, Enums.ChatMessageType.Crafting));
+        ChatboxMsg.AddMessage(
+            new ChatboxMsg(Strings.Crafting.IncorrectResources, CustomColors.Alerts.Error, ChatMessageType.Crafting)
+        );
     }
 
     //Craft the item
-    void craft_Clicked(Base sender, MouseButtonState arguments) => DoCraft(1);
+    private void craft_Clicked(Base sender, MouseButtonState arguments)
+    {
+        DoCraft(1);
+    }
 
     //Craft all the items
-    void craftAll_Clicked(Base sender, MouseButtonState arguments)
+    private void craftAll_Clicked(Base sender, MouseButtonState arguments)
     {
         if (CanCraft())
         {
             DoCraft((int)mCraftAll.UserData);
-            mAutoCraftId = mCraftId;
+            _automaticCraftingDescriptorId = _craftRecipeDescriptorId;
             mCraftAll.Disable();
         }
         else
         {
-            ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Crafting.IncorrectResources, CustomColors.Alerts.Error, Enums.ChatMessageType.Crafting));
+            ChatboxMsg.AddMessage(
+                new ChatboxMsg(Strings.Crafting.IncorrectResources, CustomColors.Alerts.Error, ChatMessageType.Crafting)
+            );
         }
     }
 
-    //Update the crafting bar
-    public void Update()
+    protected override void Prelayout(Framework.Gwen.Skin.Base skin)
     {
-        if (!mInitialized)
-        {
-            for (var i = 0; i < Globals.ActiveCraftingTable?.Crafts?.Count; ++i)
-            {
-                var activeCraft = CraftBase.Get(Globals.ActiveCraftingTable.Crafts[i]);
-                if (activeCraft == null)
-                {
-                    continue;
-                }
-
-                var tmpRow = mRecipes?.AddRow(i + 1 + ") " + activeCraft.Name);
-                if (tmpRow == null)
-                {
-                    continue;
-                }
-
-                tmpRow.UserData = Globals.ActiveCraftingTable.Crafts[i];
-                tmpRow.DoubleClicked += tmpNode_DoubleClicked;
-                tmpRow.Clicked += tmpNode_DoubleClicked;
-            }
-
-            //Load the craft data
-            if (Globals.ActiveCraftingTable?.Crafts?.Count > 0)
-            {
-                LoadCraftItems(Globals.ActiveCraftingTable.Crafts[0]);
-            }
-
-            mInitialized = true;
-        }
+        base.Prelayout(skin);
 
         if (IsCrafting)
         {
@@ -475,7 +467,7 @@ public partial class CraftingWindow
             return;
         }
 
-        var craft = CraftBase.Get(mCraftId);
+        var craft = CraftBase.Get(_craftRecipeDescriptorId);
         if (craft == null)
         {
             return;
@@ -488,9 +480,9 @@ public partial class CraftingWindow
             mRemainingCrafts--;
             if (mRemainingCrafts < 1)
             {
-                if (mCraftWindow != null)
+                if (this != null)
                 {
-                    mCraftWindow.IsClosable = true;
+                    IsClosable = true;
                 }
 
                 mBar.Width = 0;
@@ -509,11 +501,51 @@ public partial class CraftingWindow
             return;
         }
 
-        mBar.SetTextureRect(
-            0, 0, Convert.ToInt32(ratio * mBar.Texture?.Width ?? 0), mBar.Texture?.Height ?? 0
-        );
+        mBar.SetTextureRect(0, 0, Convert.ToInt32(ratio * mBar.Texture?.Width ?? 0), mBar.Texture?.Height ?? 0);
 
         mBar.Width = Convert.ToInt32(width);
     }
 
+    protected override void EnsureInitialized()
+    {
+        LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+        if (Globals.ActiveCraftingTable.Crafts is not { Count: > 0 } craftRecipeDescriptorIds)
+        {
+            return;
+        }
+
+        CraftBase? craftRecipeDescriptorToLoad = null;
+        foreach (var craftRecipeDescriptorId in craftRecipeDescriptorIds)
+        {
+            if (!CraftBase.TryGet(craftRecipeDescriptorId, out var craftRecipeDescriptor))
+            {
+                ApplicationContext.CurrentContext.Logger.LogWarning(
+                    "Failed to load craft recipe descriptor {CraftDescriptorId}",
+                    craftRecipeDescriptorId
+                );
+                continue;
+            }
+
+            var craftNumber = Math.Max(1, mRecipes.RowCount + 1);
+            var craftingRecipeRow = mRecipes.AddRow(
+                Strings.Crafting.RecipeListEntry.ToString(craftNumber, craftRecipeDescriptor.Name)
+            );
+            craftingRecipeRow.UserData = craftRecipeDescriptor;
+            craftingRecipeRow.DoubleClicked += CraftingRecipeRowOnClicked;
+            craftingRecipeRow.Clicked += CraftingRecipeRowOnClicked;
+
+            craftRecipeDescriptorToLoad ??= craftRecipeDescriptor;
+        }
+
+        if (craftRecipeDescriptorToLoad is not null)
+        {
+            LoadCraftRecipe(craftRecipeDescriptorToLoad);
+        }
+    }
+
+    protected override void Render(Framework.Gwen.Skin.Base skin)
+    {
+        base.Render(skin);
+    }
 }

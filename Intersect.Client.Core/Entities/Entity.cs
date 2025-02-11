@@ -106,7 +106,7 @@ public partial class Entity : IEntity
     public Guid Id { get; set; }
 
     //Inventory/Spells/Equipment
-    public IItem[] Inventory { get; set; } = new IItem[Options.Instance.Player.MaxInventory];
+    public IItem[] Inventory { get; } = new IItem[Options.Instance.Player.MaxInventory];
 
     IReadOnlyList<IItem> IEntity.Items => [.. Inventory];
 
