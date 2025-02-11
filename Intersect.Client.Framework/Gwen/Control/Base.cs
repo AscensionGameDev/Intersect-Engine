@@ -717,9 +717,9 @@ public partial class Base : IDisposable
 
     public int GlobalY => Y + (Parent?.GlobalY ?? 0);
 
-    public Point PositionGlobal => new Point(X, Y) + (Parent?.PositionGlobal ?? Point.Empty);
+    public Point PositionGlobal => new Point(X, Y) + (mActualParent?.PositionGlobal ?? Point.Empty);
 
-    public Rectangle BoundsGlobal => new Rectangle(PositionGlobal, Size);
+    public Rectangle BoundsGlobal => new(PositionGlobal, Size);
 
     /// <summary>
     ///     Indicates whether the control is tabable (can be focused by pressing Tab).
@@ -1884,6 +1884,26 @@ public partial class Base : IDisposable
         return recurse
             ? mChildren.Select(selectChild => selectChild?.Find(predicate, true)).FirstOrDefault()
             : default;
+    }
+
+    public (Base Highest, Base Closest)? FindMatchingNodes<TComponent>() where TComponent : class
+    {
+        Base? highest = null;
+        Base? closest = null;
+        Base? currentComponent = this;
+
+        while (currentComponent is not null)
+        {
+            if (currentComponent is TComponent)
+            {
+                closest ??= currentComponent;
+                highest = currentComponent;
+            }
+
+            currentComponent = currentComponent.Parent;
+        }
+
+        return (highest is null || closest is null) ? null : (highest, closest);
     }
 
     /// <summary>

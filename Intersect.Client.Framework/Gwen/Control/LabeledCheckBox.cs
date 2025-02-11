@@ -8,7 +8,7 @@ namespace Intersect.Client.Framework.Gwen.Control;
 /// <summary>
 ///     CheckBox with label.
 /// </summary>
-public partial class LabeledCheckBox : Base
+public partial class LabeledCheckBox : Base, ITextContainer
 {
     private readonly Checkbox _checkbox;
 
@@ -128,6 +128,8 @@ public partial class LabeledCheckBox : Base
         get => _label.Text;
         set => _label.Text = value;
     }
+
+    public Color? TextPaddingDebugColor { get; set; }
 
     /// <summary>
     ///     Invoked when the control has been checked.

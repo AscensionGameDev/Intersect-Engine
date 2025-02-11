@@ -4,7 +4,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
-public partial class LabeledComboBox : Base, IAutoSizeToContents
+public partial class LabeledComboBox : Base, IAutoSizeToContents, ITextContainer
 {
     private readonly ComboBox _comboBox;
     private readonly Label _label;
@@ -112,4 +112,12 @@ public partial class LabeledComboBox : Base, IAutoSizeToContents
 
         Invalidate();
     }
+
+    string? ITextContainer.Text
+    {
+        get => _label.Text;
+        set => _label.Text = value;
+    }
+
+    public Color? TextPaddingDebugColor { get; set; }
 }

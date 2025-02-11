@@ -374,13 +374,14 @@ public static partial class Input
         return invocationList.Any(interceptor => interceptor(modifier, mouseButton));
     }
 
+    public static bool TestInterceptMouse(Keys modifier, MouseButton mouseButton, bool down)
+    {
+        return modifier != Keys.Alt &&
+               InvokeMouseButtonInterceptors(down ? MouseDownIntercept : MouseUpIntercept, modifier, mouseButton);
+    }
+
     public static void OnMouseDown(Keys modifier, MouseButton mouseButton)
     {
-        if (InvokeMouseButtonInterceptors(MouseDownIntercept, modifier, mouseButton))
-        {
-            return;
-        }
-
         var key = Keys.None;
         switch (mouseButton)
         {
@@ -465,11 +466,6 @@ public static partial class Input
 
     public static void OnMouseUp(Keys modifier, MouseButton mouseButton)
     {
-        if (InvokeMouseButtonInterceptors(MouseUpIntercept, modifier, mouseButton))
-        {
-            return;
-        }
-
         var key = Keys.LButton;
         switch (mouseButton)
         {
