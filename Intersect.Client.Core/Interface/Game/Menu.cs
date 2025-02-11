@@ -370,7 +370,7 @@ public partial class Menu
         }
         else
         {
-            Interface.GameUi?.EscapeMenu?.ToggleHidden();
+            Interface.GameUi?.EscapeMenu?.Show();
         }
     }
 

@@ -26,7 +26,7 @@ public partial class TableRow : Base, IColorableText
 
     private bool mEvenRow;
 
-    private int mMaximumColumns;
+    private int _maximumColumns;
 
     private GameFont? _font;
 
@@ -147,8 +147,8 @@ public partial class TableRow : Base, IColorableText
 
     public int MaximumColumns
     {
-        get => mMaximumColumns;
-        set => SetAndDoIfChanged(ref mMaximumColumns, value, ComputeColumns);
+        get => _maximumColumns;
+        set => SetAndDoIfChanged(ref _maximumColumns, value, ComputeColumns);
     }
 
     /// <summary>
@@ -290,6 +290,13 @@ public partial class TableRow : Base, IColorableText
     {
         base.OnSizeChanged(oldSize, newSize);
 
+        ApplicationContext.CurrentContext.Logger.LogTrace(
+            "Table row {CanonicalName} resized from {OldSize} to {NewSize}",
+            CanonicalName,
+            oldSize,
+            newSize
+        );
+
         if (oldSize.X == newSize.X)
         {
             return;
@@ -332,12 +339,12 @@ public partial class TableRow : Base, IColorableText
             return;
         }
 
-        // ApplicationContext.CurrentContext.Logger.LogTrace(
-        //     "Table row child {CanonicalName} resized from {OldChildSize} to {NewChildSize}",
-        //     childCanonicalName,
-        //     oldChildSize,
-        //     newChildSize
-        // );
+        ApplicationContext.CurrentContext.Logger.LogTrace(
+            "Table row child {CanonicalName} resized from {OldChildSize} to {NewChildSize}",
+            childCanonicalName,
+            oldChildSize,
+            newChildSize
+        );
     }
 
     protected virtual void ComputeColumns(int oldValue, int columnCount)
@@ -345,10 +352,29 @@ public partial class TableRow : Base, IColorableText
         _columns.Capacity = Math.Max(_columns.Capacity, columnCount);
         _columnTextAlignments.Capacity = Math.Max(_columnTextAlignments.Capacity, columnCount);
 
+        var computedColumnWidths = _computedColumnWidths.ToArray();
+        if (computedColumnWidths.Length < columnCount)
+        {
+            var originalLength = computedColumnWidths.Length;
+            Array.Resize(ref computedColumnWidths, columnCount);
+            Array.Fill(computedColumnWidths, 0, originalLength, columnCount - originalLength);
+        }
+
+        var fixedColumnWidthSum = computedColumnWidths.Sum();
+        var fixedWithColumnCount = computedColumnWidths.Count(width => width > 0);
+        var remainingWidth = InnerWidth - fixedColumnWidthSum;
+        var dynamicWidthColumnCount = columnCount - fixedWithColumnCount;
+        var dynamicColumnWidth = remainingWidth / Math.Max(1, dynamicWidthColumnCount);
+
         while (_columns.Count < columnCount)
         {
             var columnIndex = _columns.Count;
-            var computedColumnWidth = _computedColumnWidths.Skip(columnIndex).FirstOrDefault();
+            var computedColumnWidth = computedColumnWidths.Skip(columnIndex).FirstOrDefault();
+            if (computedColumnWidth < 1)
+            {
+                computedColumnWidth = dynamicColumnWidth;
+            }
+
             var column = new TableCell(this, name: $"Column{_columns.Count}")
             {
                 AutoSizeToContents = false,
@@ -497,6 +523,11 @@ public partial class TableRow : Base, IColorableText
     /// <param name="text">Text to set.</param>
     public void SetCellText(int column, string text)
     {
+        if (_columns.Count < _columnCount)
+        {
+            ComputeColumns(0, _columnCount);
+        }
+
         var label = _columns[column];
         label.Text = text;
     }

@@ -42,7 +42,7 @@ public partial class Text : Base
         MarginOutlineColor = DefaultMarginOutlineColor;
 
         _lastParentInnerWidth = SelectWidthFrom(parent);
-        parent.BoundsChanged += ParentOnBoundsChanged;
+        parent.SizeChanged += ParentOnSizeChanged;
     }
 
     protected override void OnSizeChanged(Point oldSize, Point newSize)
@@ -55,7 +55,7 @@ public partial class Text : Base
         base.OnBoundsChanged(oldBounds, newBounds);
     }
 
-    private void ParentOnBoundsChanged(Base @base, ValueChangedEventArgs<Rectangle> eventArgs)
+    private void ParentOnSizeChanged(Base @base, ValueChangedEventArgs<Point> eventArgs)
     {
         var newSelectedWidth = SelectWidthFrom(@base);
         if (_lastParentInnerWidth == newSelectedWidth)
