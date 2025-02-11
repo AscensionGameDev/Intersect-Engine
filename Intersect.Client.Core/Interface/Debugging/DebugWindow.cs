@@ -288,6 +288,7 @@ internal sealed partial class DebugWindow : Window
             Font = _defaultFont,
             IsChecked = _viewClickedNodeInDebugger,
             Text = Strings.Debug.ViewClickedNodeInDebugger,
+            TooltipText = Strings.Debug.ViewClickedNodeInDebuggerTooltip,
         };
 
         checkbox.CheckChanged += (_, _) =>

@@ -7,7 +7,7 @@ using Intersect.Framework;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
-public partial class LabeledSlider : Base, IAutoSizeToContents, INumericInput
+public partial class LabeledSlider : Base, IAutoSizeToContents, INumericInput, ITextContainer
 {
     private readonly Label _label;
     private readonly Slider _slider;
@@ -343,4 +343,12 @@ public partial class LabeledSlider : Base, IAutoSizeToContents, INumericInput
     {
         base.Focus(moveMouse);
     }
+
+    public string? Text
+    {
+        get => _label.Text;
+        set => _label.Text = value;
+    }
+
+    public Color? TextPaddingDebugColor { get; set; }
 }
