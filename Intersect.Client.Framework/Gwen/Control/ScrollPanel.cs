@@ -1,3 +1,5 @@
+using Intersect.Client.Framework.GenericClasses;
+
 namespace Intersect.Client.Framework.Gwen.Control;
 
 public class ScrollPanel : Base
@@ -37,5 +39,15 @@ public class ScrollPanel : Base
     public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
     {
         return base.SizeToChildren(resizeX, resizeY, recursive);
+    }
+
+    protected override void OnPositionChanged(Point oldPosition, Point newPosition)
+    {
+        base.OnPositionChanged(oldPosition, newPosition);
+    }
+
+    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
+    {
+        base.OnBoundsChanged(oldBounds, newBounds);
     }
 }

@@ -52,9 +52,17 @@ public partial class ScrollControl : Base
         set => _scrollPanel.Padding = value;
     }
 
-    public int VerticalScroll => _scrollPanel.Y;
+    public int VerticalScroll
+    {
+        get => _scrollPanel.Y;
+        set => VerticalScrollBar.ScrollAmount = value / (float)_scrollPanel.Height;
+    }
 
-    public int HorizontalScroll => _scrollPanel.X;
+    public int HorizontalScroll
+    {
+        get => _scrollPanel.X;
+        set => _scrollPanel.X = value;
+    }
 
     public Base InnerPanel => _scrollPanel;
 
@@ -350,14 +358,16 @@ render->RenderText( skin->GetDefaultFont(), Gwen::Point( 0, 0 ), Utility::Format
         var newInnerPanelPosX = 0;
         var newInnerPanelPosY = 0;
 
+        _pixelsPerScrollAmountY = -(_scrollPanel.Height - Height + horizontalScrollbarHeight);
         if (showScrollV)
         {
-            newInnerPanelPosY = (int)(-(_scrollPanel.Height - Height + horizontalScrollbarHeight) * VerticalScrollBar.ScrollAmount);
+            newInnerPanelPosY = (int)(_pixelsPerScrollAmountY * VerticalScrollBar.ScrollAmount);
         }
 
+        _pixelsPerScrollAmountX = -(_scrollPanel.Width - Width + verticalScrollbarWidth);
         if (showScrollH)
         {
-            newInnerPanelPosX = (int)(-(_scrollPanel.Width - Width + verticalScrollbarWidth) * HorizontalScrollBar.ScrollAmount);
+            newInnerPanelPosX = (int)(_pixelsPerScrollAmountX * HorizontalScrollBar.ScrollAmount);
         }
 
         _scrollPanel.SetPosition(newInnerPanelPosX, newInnerPanelPosY);
@@ -372,6 +382,21 @@ render->RenderText( skin->GetDefaultFont(), Gwen::Point( 0, 0 ), Utility::Format
         //     showScrollH,
         //     showScrollV
         // );
+    }
+
+    private float _pixelsPerScrollAmountX;
+    private float _pixelsPerScrollAmountY;
+
+    public void ScrollToX(int x)
+    {
+        var scrollAmount =  x / _pixelsPerScrollAmountX;
+        HorizontalScrollBar.ScrollAmount = scrollAmount;
+    }
+
+    public void ScrollToY(int y)
+    {
+        var scrollAmount = y / _pixelsPerScrollAmountY;
+        VerticalScrollBar.ScrollAmount = scrollAmount;
     }
 
     protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)

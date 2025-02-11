@@ -16,7 +16,13 @@ public partial class ListBoxRow : TableRow
     ///     Initializes a new instance of the <see cref="ListBoxRow" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public ListBoxRow(Base parent, int columns) : base(parent, columns)
+    /// <param name="columns"></param>
+    /// <param name="columnWidths"></param>
+    public ListBoxRow(Base parent, int columns, int[]? columnWidths = null) : base(
+        parent: parent,
+        columnCount: columns,
+        columnWidths: columnWidths
+    )
     {
         MouseInputEnabled = true;
         IsSelected = false;

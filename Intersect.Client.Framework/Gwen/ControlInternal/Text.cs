@@ -24,6 +24,8 @@ public partial class Text : Base
 
     private int _lastParentInnerWidth;
 
+    private bool _recalculateLines;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="Text" /> class.
     /// </summary>
@@ -41,6 +43,16 @@ public partial class Text : Base
 
         _lastParentInnerWidth = SelectWidthFrom(parent);
         parent.BoundsChanged += ParentOnBoundsChanged;
+    }
+
+    protected override void OnSizeChanged(Point oldSize, Point newSize)
+    {
+        base.OnSizeChanged(oldSize, newSize);
+    }
+
+    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
+    {
+        base.OnBoundsChanged(oldBounds, newBounds);
     }
 
     private void ParentOnBoundsChanged(Base @base, ValueChangedEventArgs<Rectangle> eventArgs)
@@ -63,16 +75,7 @@ public partial class Text : Base
     public GameFont? Font
     {
         get => _font;
-        set
-        {
-            if (value == _font)
-            {
-                return;
-            }
-
-            _font = value;
-            RecalculateLines();
-        }
+        set => SetAndDoIfChanged(ref _font, value, Invalidate);
     }
 
     /// <summary>
@@ -81,32 +84,20 @@ public partial class Text : Base
     public string? DisplayedText
     {
         get => _displayedText;
-        set
-        {
-            if (string.Equals(value, _displayedText, StringComparison.Ordinal))
-            {
-                return;
-            }
-
-            _displayedText = value;
-            _lines = [];
-            RecalculateLines();
-        }
+        set => SetAndDoIfChanged(ref _displayedText, value, Invalidate);
     }
 
     public WrappingBehavior WrappingBehavior
     {
         get => _wrappingBehavior;
-        set
-        {
-            if (value == _wrappingBehavior)
-            {
-                return;
-            }
+        set => SetAndDoIfChanged(ref _wrappingBehavior, value, Invalidate);
+    }
 
-            _wrappingBehavior = value;
-            RecalculateLines();
-        }
+    public override void Invalidate()
+    {
+        base.Invalidate();
+
+        _recalculateLines = true;
     }
 
     private static int SelectWidthFrom(Base? parent) =>
@@ -149,7 +140,8 @@ public partial class Text : Base
             WrappingBehavior.NoWrap => _displayedText == null ? [] : [_displayedText],
             _ => throw new NotImplementedException($"{nameof(WrappingBehavior)} '{wrappingBehavior}' not implemented"),
         };
-        SizeToContents();
+
+        SizeToContents(skipRecalculateLines: true);
     }
 
     /// <summary>
@@ -244,6 +236,13 @@ public partial class Text : Base
     /// <param name="skin">Skin to use.</param>
     protected override void Layout(Skin.Base skin)
     {
+        if (_recalculateLines || _lines.Length < 1)
+        {
+            _lines = [];
+            RecalculateLines();
+            _recalculateLines = false;
+        }
+
         SizeToContents();
         base.Layout(skin);
     }
@@ -272,9 +271,14 @@ public partial class Text : Base
     /// <summary>
     ///     Sizes the control to its contents.
     /// </summary>
-    private bool SizeToContents()
+    private bool SizeToContents(bool skipRecalculateLines = false)
     {
         if (!HasSkin)
+        {
+            return false;
+        }
+
+        if (IsHidden)
         {
             return false;
         }
@@ -283,6 +287,11 @@ public partial class Text : Base
         if (font == default)
         {
             return false;
+        }
+
+        if (!skipRecalculateLines)
+        {
+            RecalculateLines();
         }
 
         Point newSize;

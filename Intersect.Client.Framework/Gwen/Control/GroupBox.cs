@@ -58,7 +58,12 @@ public partial class GroupBox : Label
     /// <summary>
     ///     Sizes to contents.
     /// </summary>
-    public override bool SizeToContents() => DoSizeToContents();
+    public override bool SizeToContents(out Point contentSize)
+    {
+        var sizeChanged = DoSizeToContents();
+        contentSize = MeasureContent();
+        return sizeChanged;
+    }
 
     protected virtual bool DoSizeToContents()
     {

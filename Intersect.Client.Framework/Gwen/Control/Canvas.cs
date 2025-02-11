@@ -35,11 +35,12 @@ public partial class Canvas : Base
     ///     Initializes a new instance of the <see cref="Canvas" /> class.
     /// </summary>
     /// <param name="skin">Skin to use.</param>
-    public Canvas(Skin.Base skin, string name) : base(null, name)
+    /// <param name="name"></param>
+    public Canvas(Skin.Base skin, string? name = default) : base(parent: null, name: name)
     {
         mUISounds = new List<GameAudioInstance>();
-        SetBounds(0, 0, 10000, 10000);
-        SetSkin(skin);
+        SetBounds(x: 0, y: 0, width: 10000, height: 10000);
+        SetSkin(skin: skin);
         Scale = 1.0f;
         BackgroundColor = Color.White;
         ShouldDrawBackground = false;
@@ -107,13 +108,6 @@ public partial class Canvas : Base
     {
         NeedsRedraw = true;
         base.Redraw();
-    }
-
-    // Children call parent.GetCanvas() until they get to
-    // this top level function.
-    public override Canvas? GetCanvas()
-    {
-        return this;
     }
 
     /// <summary>
@@ -299,7 +293,7 @@ public partial class Canvas : Base
             return false;
         }
 
-        if (InputHandler.HoveredControl.GetCanvas() != this)
+        if (InputHandler.HoveredControl.Canvas != this)
         {
             return false;
         }
@@ -390,7 +384,7 @@ public partial class Canvas : Base
             return false;
         }
 
-        if (InputHandler.KeyboardFocus.GetCanvas() != this)
+        if (InputHandler.KeyboardFocus.Canvas != this)
         {
             return false;
         }
@@ -426,7 +420,7 @@ public partial class Canvas : Base
             return false;
         }
 
-        if (InputHandler.HoveredControl.GetCanvas() != this)
+        if (InputHandler.HoveredControl.Canvas != this)
         {
             return false;
         }

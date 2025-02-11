@@ -84,7 +84,11 @@ public partial class ScrollBar : Base
         set => _nudgeAmount = value;
     }
 
-    public float ScrollAmount => _scrollAmount;
+    public float ScrollAmount
+    {
+        get => _scrollAmount;
+        set => SetScrollAmount(value);
+    }
 
     public float ContentSize
     {

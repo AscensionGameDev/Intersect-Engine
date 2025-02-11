@@ -39,6 +39,7 @@ public partial class Label : Base, ILabel
 
     private Padding _textPadding;
 
+    private bool _textDisabled;
     private string? _displayedText;
     private string? _text;
     private string? _formatString;
@@ -52,13 +53,14 @@ public partial class Label : Base, ILabel
     /// <param name="disableText"></param>
     public Label(Base parent, string? name = default, bool disableText = false) : base(parent, name)
     {
+        _textDisabled = disableText;
         _textElement = new Text(this)
         {
-            IsHidden = disableText,
+            IsHidden = _textDisabled,
         };
 
         MouseInputEnabled = false;
-        SetSize(100, 10);
+        Size = new Point(100, 10);
         TextAlign = Pos.Left | Pos.Top;
 
         _autoSizeToContents = true;
@@ -320,8 +322,6 @@ public partial class Label : Base, ILabel
         get => _textElement.ColorOverride;
         set => _textElement.ColorOverride = value;
     }
-
-    public Padding TextPadding { get; set; }
 
     private string? _textOverride;
     private WrappingBehavior _wrappingBehavior;
@@ -634,6 +634,11 @@ public partial class Label : Base, ILabel
 
     protected void AlignTextElement(Text textElement)
     {
+        if (_textDisabled && textElement == _textElement && textElement.IsHidden)
+        {
+            return;
+        }
+
         var align = TextAlign;
         var textOuterWidth = textElement.OuterWidth;
         var textOuterHeight = textElement.OuterHeight;
@@ -708,9 +713,23 @@ public partial class Label : Base, ILabel
             }
             else
             {
+                if (child is Text)
+                {
+                    var textSize = newChildBounds.Size;
+                    var ownSize = Size;
+                    if (textSize.X > ownSize.X || textSize.Y > ownSize.Y)
+                    {
+                        OnTextExceedsSize(ownSize, textSize);
+                    }
+                }
+
                 AlignTextElement(_textElement);
             }
         }
+    }
+
+    protected virtual void OnTextExceedsSize(Point ownSize, Point textSize)
+    {
     }
 
     public virtual void SetTextScale(float scale)
@@ -725,16 +744,33 @@ public partial class Label : Base, ILabel
         InvalidateParent();
     }
 
-    protected virtual Point GetContentSize() => _textElement.Size;
+    protected virtual Point GetContentSize()
+    {
+        return _textElement.Size;
+    }
 
     protected virtual Padding GetContentPadding() => Padding + _textPadding;
 
-    public virtual bool SizeToContents()
+    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
     {
-        var newSize = MeasureShrinkToContents();
+        base.OnBoundsChanged(oldBounds, newBounds);
+
+        if (RestrictToParent)
+        {
+            _textElement.MaximumSize = _textElement.MaximumSize with { X = InnerWidth };
+        }
+    }
+
+    public bool SizeToContents() => SizeToContents(out _);
+
+    public virtual bool SizeToContents(out Point contentSize)
+    {
+        _textElement.SizeToChildren();
+
+        contentSize = MeasureShrinkToContents();
 
         var oldSize = Size;
-        if (!SetSize(newSize))
+        if (!SetSize(contentSize))
         {
             return false;
         }
@@ -746,7 +782,8 @@ public partial class Label : Base, ILabel
             this,
             new ValueChangedEventArgs<Point>
             {
-                Value = newSize, OldValue = oldSize,
+                Value = contentSize,
+                OldValue = oldSize,
             }
         );
 
@@ -758,7 +795,6 @@ public partial class Label : Base, ILabel
     public virtual Point MeasureShrinkToContents()
     {
         var contentPadding = GetContentPadding();
-        _textElement.SetPosition(contentPadding.Left, contentPadding.Top);
 
         var contentSize = GetContentSize();
 

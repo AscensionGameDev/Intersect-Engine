@@ -13,7 +13,7 @@ public partial class ScrollBarButton : Button
     ///     Initializes a new instance of the <see cref="ScrollBarButton" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public ScrollBarButton(Base parent) : base(parent)
+    public ScrollBarButton(Base parent) : base(parent, disableText: true)
     {
         MinimumSize = new Point(15, 15);
         Size = new Point(15, 15);

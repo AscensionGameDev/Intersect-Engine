@@ -28,10 +28,6 @@ public partial class SettingsWindow : Window
 {
     private readonly GameFont? _defaultFont;
 
-    // Parent Window.
-    private readonly MainMenu? _mainMenu;
-    private readonly EscapeMenu? _escapeMenu;
-
     // Bottom Bar
     private readonly Button _restoreDefaultsButton;
     private readonly Button _applyPendingChangesButton;
@@ -109,15 +105,11 @@ public partial class SettingsWindow : Window
     private long _keybindingListeningTimer;
     private int _keyEdit = -1;
 
-    // Open Settings
-    private bool _returnToMenu;
+    private Base? _returnTo;
 
     // Initialize.
-    public SettingsWindow(Base parent, MainMenu? mainMenu, EscapeMenu? escapeMenu) : base(parent: parent, title: Strings.Settings.Title, modal: false, name: nameof(SettingsWindow))
+    public SettingsWindow(Base parent) : base(parent: parent, title: Strings.Settings.Title, modal: false, name: nameof(SettingsWindow))
     {
-        _mainMenu = mainMenu;
-        _escapeMenu = escapeMenu;
-
         Interface.InputBlockingComponents.Add(item: this);
 
         IconName = "SettingsWindow.icon.png";
@@ -884,7 +876,9 @@ public partial class SettingsWindow : Window
         }
     }
 
-    public void Show(bool returnToMenu = false)
+    public override void Show() => Show(returnTo: null);
+
+    public void Show(Base? returnTo)
     {
         // Take over all input when we're in-game.
         if (Globals.GameState == GameStates.InGame)
@@ -987,7 +981,7 @@ public partial class SettingsWindow : Window
         Reset();
 
         // Set up whether we're supposed to return to the previous menu.
-        _returnToMenu = returnToMenu;
+        _returnTo = returnTo;
     }
 
     public override void Hide()
@@ -997,24 +991,8 @@ public partial class SettingsWindow : Window
         RemoveModal();
 
         // Return to our previous menus (or not) depending on gamestate and the method we'd been opened.
-        if (_returnToMenu)
-        {
-            switch (Globals.GameState)
-            {
-                case GameStates.Menu:
-                    _mainMenu?.Show();
-                    break;
-
-                case GameStates.InGame:
-                    _escapeMenu?.Show();
-                    break;
-
-                default:
-                    throw new NotImplementedException();
-            }
-
-            _returnToMenu = false;
-        }
+        _returnTo?.Show();
+        _returnTo = null;
     }
 
     // Input Handlers
@@ -1187,6 +1165,6 @@ public partial class SettingsWindow : Window
 
     protected override void EnsureInitialized()
     {
-        LoadJsonUi(stage: UI.Shared, resolution: Graphics.Renderer?.GetResolutionString());
+        // LoadJsonUi(stage: UI.Shared, resolution: Graphics.Renderer?.GetResolutionString());
     }
 }

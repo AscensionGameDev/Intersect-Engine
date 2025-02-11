@@ -10,6 +10,7 @@ using Intersect.Client.Interface.Game.Hotbar;
 using Intersect.Client.Interface.Game.Inventory;
 using Intersect.Client.Interface.Game.Shop;
 using Intersect.Client.Interface.Game.Trades;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Networking;
 using Intersect.Core;
 using Intersect.Enums;
@@ -51,6 +52,8 @@ public partial class GameInterface : MutableInterface
 
     private MapItemWindow mMapItemWindow;
 
+    private SettingsWindow? _settingsWindow;
+
     private bool mShouldCloseBag;
 
     private bool mShouldCloseBank;
@@ -91,11 +94,21 @@ public partial class GameInterface : MutableInterface
 
     public PlayerStatusWindow PlayerStatusWindow;
 
+    private SettingsWindow GetOrCreateSettingsWindow()
+    {
+        _settingsWindow ??= new SettingsWindow(GameCanvas)
+        {
+            IsVisible = false,
+        };
+
+        return _settingsWindow;
+    }
+
     public GameInterface(Canvas canvas) : base(canvas)
     {
         GameCanvas = canvas;
-        EscapeMenu = new EscapeMenu(GameCanvas) {IsHidden = true};
-        SimplifiedEscapeMenu = new SimplifiedEscapeMenu(GameCanvas) {IsHidden = true};
+        EscapeMenu = new EscapeMenu(GameCanvas, GetOrCreateSettingsWindow) {IsHidden = true};
+        SimplifiedEscapeMenu = new SimplifiedEscapeMenu(GameCanvas, GetOrCreateSettingsWindow) {IsHidden = true};
         TargetContextMenu = new TargetContextMenu(GameCanvas) {IsHidden = true};
         AnnouncementWindow = new AnnouncementWindow(GameCanvas) { IsHidden = true };
 
@@ -308,7 +321,6 @@ public partial class GameInterface : MutableInterface
             PlayerBox?.SetEntity(Globals.Me);
         }
 
-        mChatBox?.Update();
         GameMenu?.Update(mShouldUpdateQuestLog);
         mShouldUpdateQuestLog = false;
         Hotbar?.Update();

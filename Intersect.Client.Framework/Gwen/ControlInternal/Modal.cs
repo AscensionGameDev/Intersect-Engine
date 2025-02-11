@@ -19,8 +19,11 @@ public partial class Modal : Base
         KeyboardInputEnabled = true;
         MouseInputEnabled = true;
         ShouldDrawBackground = true;
-        SetBounds(0, 0, GetCanvas().Width, GetCanvas().Height);
-        GetCanvas().Input_MouseMoved(InputHandler.MousePosition.X, InputHandler.MousePosition.Y, 0, 0);
+        if (Canvas is { } canvas)
+        {
+            Size = canvas.Size;
+            canvas.Input_MouseMoved(InputHandler.MousePosition.X, InputHandler.MousePosition.Y, 0, 0);
+        }
     }
 
     /// <summary>
@@ -29,7 +32,10 @@ public partial class Modal : Base
     /// <param name="skin">Skin to use.</param>
     protected override void Layout(Skin.Base skin)
     {
-        SetBounds(0, 0, GetCanvas().Width, GetCanvas().Height);
+        if (Canvas is { } canvas)
+        {
+            Size = canvas.Size;
+        }
     }
 
     /// <summary>

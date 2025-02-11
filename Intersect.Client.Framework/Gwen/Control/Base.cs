@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -55,6 +56,8 @@ public partial class Base : IDisposable
     ///     Real list of children.
     /// </summary>
     private readonly List<Base> mChildren;
+
+    private Canvas? _canvas;
 
     /// <summary>
     ///     This is the panel's actual parent - most likely the logical
@@ -123,7 +126,7 @@ public partial class Base : IDisposable
 
     protected Modal? mModal;
     private Base? mOldParent;
-    private Base? mParent;
+    private Base? mParent { get; set; }
 
     private Rectangle mRenderBounds;
 
@@ -229,6 +232,11 @@ public partial class Base : IDisposable
     /// <param name="name">name of this control</param>
     public Base(Base? parent = default, string? name = default)
     {
+        if (this is Canvas canvas)
+        {
+            _canvas = canvas;
+        }
+
         _name = name ?? string.Empty;
         mChildren = [];
         mAccelerators = [];
@@ -307,6 +315,8 @@ public partial class Base : IDisposable
 
             mParent?.RemoveChild(this, false);
 
+            PropagateCanvas(value?._canvas);
+
             mParent = value;
             mActualParent = default;
 
@@ -315,6 +325,16 @@ public partial class Base : IDisposable
             {
                 OnAttaching(mParent);
             }
+        }
+    }
+
+    private void PropagateCanvas(Canvas? canvas)
+    {
+        _canvas = canvas;
+        var children = mChildren.ToArray();
+        foreach (var child in children)
+        {
+            child.PropagateCanvas(canvas);
         }
     }
 
@@ -369,16 +389,22 @@ public partial class Base : IDisposable
         get => _dock;
         set
         {
-            if (_dock == value)
+            var oldDock = _dock;
+            if (oldDock == value)
             {
                 return;
             }
 
             _dock = value;
+            OnDockChanged(oldDock, value);
 
             Invalidate();
             InvalidateParent();
         }
+    }
+
+    protected virtual void OnDockChanged(Pos oldDock, Pos newDock)
+    {
     }
 
     public Padding DockChildSpacing
@@ -572,7 +598,7 @@ public partial class Base : IDisposable
     /// <summary>
     ///     User data associated with the control.
     /// </summary>
-    public object UserData
+    public object? UserData
     {
         get => mUserData;
         set => mUserData = value;
@@ -808,9 +834,15 @@ public partial class Base : IDisposable
                 return false;
             }
 
-            return Parent == null || Parent.IsVisible || ToolTip.IsActiveTooltip(Parent);
+            return Parent is not { } parent || parent.IsVisible || ToolTip.IsActiveTooltip(parent);
         }
         set => IsHidden = !value;
+    }
+
+    public bool IsVisibleInParent
+    {
+        get => !IsHidden || Parent is not { } parent || ToolTip.IsActiveTooltip(parent);
+        set => IsHidden = false;
     }
 
     /// <summary>
@@ -898,7 +930,7 @@ public partial class Base : IDisposable
     ///     Gets the canvas (root parent) of the control.
     /// </summary>
     /// <returns></returns>
-    public Canvas? Canvas => GetCanvas();
+    public Canvas? Canvas => _canvas;
 
     public bool SkipSerialization { get; set; } = false;
 
@@ -975,6 +1007,10 @@ public partial class Base : IDisposable
     ///     Invoked after this control is drawn
     /// </summary>
     public event GwenEventHandler<EventArgs>? AfterDraw;
+
+    public event GwenEventHandler<EventArgs>? BeforeLayout;
+
+    public event GwenEventHandler<EventArgs>? AfterLayout;
 
     public void AddAlignment(Alignments alignment)
     {
@@ -1088,7 +1124,7 @@ public partial class Base : IDisposable
 
     protected virtual Rectangle ValidateJsonBounds(Rectangle bounds) => bounds;
 
-    public void LoadJsonUi(GameContentManager.UI stage, string? resolution, bool saveOutput = true)
+    public void LoadJsonUi(GameContentManager.UI stage, string? resolution = default, bool saveOutput = true)
     {
         if (string.IsNullOrWhiteSpace(Name))
         {
@@ -1462,12 +1498,6 @@ public partial class Base : IDisposable
 
         return GetType().ToString();
     }
-
-    /// <summary>
-    ///     Gets the canvas (root parent) of the control.
-    /// </summary>
-    /// <returns></returns>
-    public virtual Canvas? GetCanvas() => mParent?.GetCanvas();
 
     /// <summary>
     ///     Enables the control.
@@ -2195,6 +2225,11 @@ public partial class Base : IDisposable
     /// </returns>
     public virtual bool SetBounds(float x, float y, float width, float height) => SetBounds((int) x, (int) y, (int) width, (int) height);
 
+    protected virtual void OnSizeChanged(Point oldSize, Point newSize)
+    {
+        Parent?.OnChildSizeChanged(this, oldSize, newSize);
+    }
+
     /// <summary>
     ///     Sets the control bounds.
     /// </summary>
@@ -2248,12 +2283,18 @@ public partial class Base : IDisposable
         outerBounds.Height += margin.Top + margin.Bottom;
         _outerBounds = outerBounds;
 
-        if (oldBounds.Size != newBounds.Size)
+        OnBoundsChanged(oldBounds, newBounds);
+
+        if (oldBounds.Position != newBounds.Position)
         {
-            ProcessAlignments();
+            OnPositionChanged(oldBounds.Position, newBounds.Position);
         }
 
-        OnBoundsChanged(oldBounds, newBounds);
+        if (oldBounds.Size != newBounds.Size)
+        {
+            OnSizeChanged(oldBounds.Size, newBounds.Size);
+            ProcessAlignments();
+        }
 
         BoundsChanged?.Invoke(
             this,
@@ -2312,6 +2353,10 @@ public partial class Base : IDisposable
         SetPosition(x, y);
     }
 
+    protected virtual void OnPositionChanged(Point oldPosition, Point newPosition)
+    {
+    }
+
     /// <summary>
     ///     Handler invoked when control's bounds change.
     /// </summary>
@@ -2344,9 +2389,16 @@ public partial class Base : IDisposable
     }
 
     /// <summary>
-    ///     Handler invoked when control children's bounds change.
+    ///     Handler invoked when a child component's bounds change.
     /// </summary>
     protected virtual void OnChildBoundsChanged(Base child, Rectangle oldChildBounds, Rectangle newChildBounds)
+    {
+    }
+
+    /// <summary>
+    ///     Handler invoked when child component's size changes.
+    /// </summary>
+    protected virtual void OnChildSizeChanged(Base child, Point oldChildSize, Point newChildSize)
     {
     }
 
@@ -3042,6 +3094,7 @@ public partial class Base : IDisposable
         foreach (var child in children)
         {
             child.Prelayout(skin);
+            child.BeforeLayout?.Invoke(child, EventArgs.Empty);
         }
 
         var expectedSize = new Point(Math.Max(Width, MinimumSize.X), Math.Max(Height, MinimumSize.Y));
@@ -3283,15 +3336,15 @@ public partial class Base : IDisposable
         }
 
         PostLayout(skin);
+        AfterLayout?.Invoke(this, EventArgs.Empty);
 
         while (_deferredActions.TryDequeue(out var deferredAction))
         {
             deferredAction();
         }
 
-        var canvas = GetCanvas();
         // ReSharper disable once InvertIf
-        if (canvas != default)
+        if (_canvas is { } canvas)
         {
             if (IsTabable && !canvas._tabQueue.Contains(this))
             {
@@ -3820,8 +3873,7 @@ public partial class Base : IDisposable
             return true;
         }
 
-        var canvas = GetCanvas();
-        if (canvas == default)
+        if (_canvas is not { } canvas)
         {
             return true;
         }
@@ -4172,8 +4224,17 @@ public partial class Base : IDisposable
         }
     }
 
-    protected bool SetIfChanged<T>(ref T field, T value)
+    protected bool SetIfChanged<T>(ref T field, T value) => SetIfChanged(ref field, value, out _);
+
+    protected bool SetIfChanged(ref string? field, string? value) => SetIfChanged(ref field, value, out _);
+
+    protected bool SetIfChanged(ref string? field, string? value, StringComparison stringComparison) =>
+        SetIfChanged(ref field, value, stringComparison, out _);
+
+    protected bool SetIfChanged<T>(ref T field, T value, out T oldValue)
     {
+        oldValue = field;
+
         if (EqualityComparer<T>.Default.Equals(field, value))
         {
             return false;
@@ -4183,43 +4244,88 @@ public partial class Base : IDisposable
         return true;
     }
 
-    protected bool SetIfChanged<T>(ref T field, T value, out T oldValue)
+    protected bool SetIfChanged(ref string? field, string? value, out string? oldValue) =>
+        SetIfChanged(ref field, value, StringComparison.Ordinal, out oldValue);
+
+    protected bool SetIfChanged(ref string? field, string? value, StringComparison stringComparison, out string? oldValue)
     {
         oldValue = field;
-        return SetIfChanged(ref field, value);
+
+        if (string.Equals(field, value, stringComparison))
+        {
+            return false;
+        }
+
+        field = value;
+        return true;
     }
 
     protected bool SetAndDoIfChanged<T>(ref T field, T value, Action action)
     {
-        if (default == action)
+        ArgumentNullException.ThrowIfNull(action, nameof(action));
+
+        if (!SetIfChanged(ref field, value))
         {
-            throw new ArgumentNullException(nameof(action));
+            return false;
         }
 
-        if (SetIfChanged(ref field, value))
-        {
-            action();
-            return true;
-        }
-
-        return false;
+        action();
+        return true;
     }
 
-    protected bool SetAndDoIfChanged<T>(ref T field, T value, ValueChangedHandler<T> valueChangedHandle)
+    protected bool SetAndDoIfChanged(ref string? field, string? value, Action action) =>
+        SetAndDoIfChanged(ref field, value, StringComparison.Ordinal, action);
+
+    protected bool SetAndDoIfChanged(ref string? field, string? value, StringComparison stringComparison, Action action)
     {
-        if (default == valueChangedHandle)
+        ArgumentNullException.ThrowIfNull(action, nameof(action));
+
+        if (!SetIfChanged(ref field, value, stringComparison))
         {
-            throw new ArgumentNullException(nameof(valueChangedHandle));
+            return false;
         }
 
-        if (SetIfChanged(ref field, value, out var oldValue))
+        action();
+        return true;
+
+    }
+
+    protected bool SetAndDoIfChanged<T>(ref T field, T value, ValueChangeHandler<T> valueChangeHandler)
+    {
+        ArgumentNullException.ThrowIfNull(valueChangeHandler);
+
+        if (!SetIfChanged(ref field, value, out var oldValue))
         {
-            valueChangedHandle(oldValue, field);
-            return true;
+            return false;
         }
 
-        return false;
+        valueChangeHandler(oldValue, value);
+        return true;
+    }
+
+    protected bool SetAndDoIfChanged(
+        ref string? field,
+        string value,
+        ValueChangeHandler<string?> valueChangeHandler
+    ) => SetAndDoIfChanged(ref field, value, StringComparison.Ordinal, valueChangeHandler);
+
+    protected bool SetAndDoIfChanged(
+        ref string? field,
+        string value,
+        StringComparison stringComparison,
+        ValueChangeHandler<string?> valueChangeHandler
+    )
+    {
+        ArgumentNullException.ThrowIfNull(valueChangeHandler);
+
+        if (!SetIfChanged(ref field, value, stringComparison, out var oldValue))
+        {
+            return false;
+        }
+
+        valueChangeHandler(oldValue, value);
+        return true;
     }
 }
 
-public delegate void ValueChangedHandler<T>(T oldValue, T newValue);
+public delegate void ValueChangeHandler<TValue>(TValue oldValue, TValue newValue);
