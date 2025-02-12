@@ -297,7 +297,7 @@ public partial class InputBox : Window
             WrappingBehavior = WrappingBehavior.Wrapped,
         };
 
-        var numericSliderInput = new LabeledSlider(inputPanel, name: nameof(_numericInputTextbox))
+        var numericSliderInput = new LabeledSlider(inputPanel, name: nameof(_numericInputSlider))
         {
             AutoSizeToContents = false,
             Dock = Pos.Bottom,
