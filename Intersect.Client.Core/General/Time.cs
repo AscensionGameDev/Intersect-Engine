@@ -29,6 +29,12 @@ public static partial class Time
 
     public static void Update()
     {
+        if (!Networking.Network.IsConnected)
+        {
+            sServerTime = DateTime.Now;
+            return;
+        }
+
         if (sUpdateTime < Timing.Global.Milliseconds)
         {
             var ts = new TimeSpan(0, 0, 0, 0, (int) (1000 * sRate));

@@ -76,7 +76,8 @@ public partial class ClientNetwork : AbstractNetwork, IClient
 
             try
             {
-                ApplicationContext.Logger.LogTrace("Sending ping to server");
+                // TODO: Add feature-specific log filtering, this one gets annoying
+                // ApplicationContext.Logger.LogTrace("Sending ping to server");
 
                 // Send a ping to the server. Timeout: 5000ms (5 seconds). Packet size: 32 bytes. TTL: 64. Don't fragment.
                 var reply = _ping.Send(hostNameOrAddress, 5000, [], new PingOptions(64, true));

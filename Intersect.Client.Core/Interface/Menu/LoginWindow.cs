@@ -206,7 +206,7 @@ public partial class LoginWindow : Window, IMainMenuWindow
             text => _usernameInput.Text = text ?? string.Empty,
             Strings.LoginWindow.Username,
             _usernameInput.Text,
-            inputBounds: _usernameInput.BoundsGlobal
+            inputBounds: _usernameInput.GlobalBounds
         );
     }
 

@@ -118,7 +118,7 @@ public partial class MainMenu : MutableInterface
     }
 
     //Methods
-    public void Update()
+    public void Update(TimeSpan elapsed, TimeSpan total)
     {
         if (_mainMenuWindow.IsVisible)
         {

@@ -142,8 +142,8 @@ public partial class MonoInput : GameInput
         }
 
         Vector2 center = new(
-            (control.BoundsGlobal.Left + control.BoundsGlobal.Right) / 2f,
-            (control.BoundsGlobal.Bottom + control.BoundsGlobal.Top) / 2f
+            (control.GlobalBounds.Left + control.GlobalBounds.Right) / 2f,
+            (control.GlobalBounds.Bottom + control.GlobalBounds.Top) / 2f
         );
 
         Mouse.SetPosition((int)center.X, (int)center.Y);

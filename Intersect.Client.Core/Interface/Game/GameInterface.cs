@@ -322,7 +322,7 @@ public partial class GameInterface : MutableInterface
         adminWindow.PlayerName = playerName;
     }
 
-    public void Update()
+    public void Update(TimeSpan elapsed, TimeSpan total)
     {
         if (Globals.Me != null && PlayerBox?.MyEntity != Globals.Me)
         {
@@ -509,9 +509,9 @@ public partial class GameInterface : MutableInterface
         }
     }
 
-    public void Draw()
+    public void Draw(TimeSpan elapsed, TimeSpan total)
     {
-        GameCanvas.RenderCanvas();
+        GameCanvas.RenderCanvas(elapsed, total);
     }
 
     private void CloseShop()

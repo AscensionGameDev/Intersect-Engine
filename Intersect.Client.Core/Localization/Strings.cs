@@ -1387,7 +1387,34 @@ public static partial class Strings
         public static LocalizedString Font = @"Font";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString AutoSizeToContents = @"Auto Size-to-Conents";
+        public static LocalizedString AutoSizeToContents = @"AutoSizeToContents";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString FontSize = @"Font Size";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString AutoSizeToContentWidth = @"AutoSizeToContentWidth";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString AutoSizeToContentHeight = @"AutoSizeToContentHeight";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString AutoSizeToContentWidthOnChildResize = @"ASTW on Child Resize";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString AutoSizeToContentHeightOnChildResize = @"ASTH on Child Resize";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString IsVisible = @"IsVisible";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString IsVisibleInParent = @"IsVisibleInParent";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString IsDisabled = @"IsDisabled";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString IsDisabledByTree = @"IsDisabledByTree";
     }
 
     public partial struct Inventory

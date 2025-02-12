@@ -169,7 +169,7 @@ public static partial class Interface
     #region "GUI Functions"
 
     //Actual Drawing Function
-    public static void DrawGui()
+    public static void DrawGui(TimeSpan elapsed, TimeSpan total)
     {
         if (!GwenInitialized)
         {
@@ -178,11 +178,11 @@ public static partial class Interface
 
         if (Globals.GameState == GameStates.Menu)
         {
-            MenuUi.Update();
+            MenuUi.Update(elapsed, total);
         }
         else if (Globals.GameState == GameStates.InGame)
         {
-            GameUi.Update();
+            GameUi.Update(elapsed, total);
         }
 
         //Do not allow hiding of UI under several conditions
@@ -193,7 +193,7 @@ public static partial class Interface
         sGameCanvas.RestrictToParent = false;
         if (Globals.GameState == GameStates.Menu)
         {
-            MenuUi.Draw();
+            MenuUi.Draw(elapsed, total);
         }
         else if (Globals.GameState == GameStates.InGame)
         {
@@ -210,7 +210,7 @@ public static partial class Interface
                 {
                     sGameCanvas.Show();
                 }
-                GameUi.Draw();
+                GameUi.Draw(elapsed, total);
             }
         }
     }
@@ -266,7 +266,7 @@ public static partial class Interface
         _onCreatedGameUi.Enqueue(action);
     }
 
-    public static Framework.Gwen.Control.Base? FindComponentUnderCursor(ComponentStateFilters filters = default)
+    public static Framework.Gwen.Control.Base? FindComponentUnderCursor(NodeFilter filters = default)
     {
         var cursor = new Point(InputHandler.MousePosition.X, InputHandler.MousePosition.Y);
         var componentUnderCursor = CurrentInterface?.Root.GetComponentAt(cursor, filters);

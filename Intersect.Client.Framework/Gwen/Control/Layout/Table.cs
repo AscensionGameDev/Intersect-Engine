@@ -429,10 +429,10 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         return row;
     }
 
-    public TableRow AddRow(string text, int columnCount, string? name = null)
+    public TableRow AddRow(string text, int columnCount, string? name = null, int columnIndex = 0)
     {
         var row = AddRow(columnCount, name: name);
-        row.SetCellText(0, text);
+        row.SetCellText(columnIndex, text);
 
         return row;
     }
@@ -606,6 +606,7 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
                 (requestedWidth, columnIndex) => requestedWidth.HasValue ? 0 : measuredContentWidths[columnIndex]
             )
             .Sum();
+
         var columnWidthRatios = requestedWidths.Select(
                 (requestedWidth, columnIndex) =>
                 {
@@ -621,7 +622,8 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
             )
             .ToArray();
 
-        var columnWidthRatioSum = columnWidthRatios.Sum();
+        var flexColumnCount = columnWidthRatios.Count(float.IsFinite);
+        var columnWidthRatioSum = columnWidthRatios.Sum(ratio => float.IsNaN(ratio) ? 0 : ratio);
         if (columnWidthRatioSum < 1f)
         {
             if (columnWidthRatioSum > 0f)
@@ -631,8 +633,23 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
             }
             else
             {
-                var ratio = 1f / columnWidthRatios.Length;
-                Array.Fill(columnWidthRatios, ratio);
+                var ratio = 1f / Math.Max(1, flexColumnCount);
+                if (flexColumnCount == columnWidthRatios.Length)
+                {
+                    Array.Fill(columnWidthRatios, ratio);
+                }
+                else
+                {
+                    for (int columnIndex = 0; columnIndex < columnWidthRatios.Length; ++columnIndex)
+                    {
+                        if (float.IsNaN(columnWidthRatios[columnIndex]))
+                        {
+                            continue;
+                        }
+
+                        columnWidthRatios[columnIndex] = ratio;
+                    }
+                }
             }
         }
 
@@ -672,6 +689,7 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
             : (availableWidth - _cellSpacing.X * computedColumnWidths.Length) /
               Math.Max(1, computedColumnWidths.Length);
         Array.Fill(computedColumnWidths, defaultColumnWidth);
+
         foreach (var row in rows)
         {
             var rowWidth = 0;
@@ -772,17 +790,6 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         }
     }
 
-    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
-    {
-        ApplicationContext.CurrentContext.Logger.LogTrace(
-            "Table {TableName} bounds changed from {OldBounds} to {NewBounds}",
-            CanonicalName,
-            oldBounds,
-            newBounds
-        );
-        base.OnBoundsChanged(oldBounds, newBounds);
-    }
-
     protected override void OnChildBoundsChanged(Base child, Rectangle oldChildBounds, Rectangle newChildBounds)
     {
         base.OnChildBoundsChanged(child, oldChildBounds, newChildBounds);
@@ -826,6 +833,13 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
     {
         base.OnSizeChanged(oldSize, newSize);
 
+        ApplicationContext.CurrentContext.Logger.LogTrace(
+            "Table {TableName} size changed from {OldSize} to {NewSize}",
+            CanonicalName,
+            oldSize,
+            newSize
+        );
+
         if (oldSize.X == newSize.X)
         {
             return;
@@ -842,6 +856,17 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         Array.Fill(widths, widthPerColumn);
         _computedColumnWidths.Clear();
         _computedColumnWidths.AddRange(widths);
+    }
+
+    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
+    {
+        // ApplicationContext.CurrentContext.Logger.LogTrace(
+        //     "Table {TableName} bounds changed from {OldBounds} to {NewBounds}",
+        //     CanonicalName,
+        //     oldBounds,
+        //     newBounds
+        // );
+        base.OnBoundsChanged(oldBounds, newBounds);
     }
 
     private int _rowCount;

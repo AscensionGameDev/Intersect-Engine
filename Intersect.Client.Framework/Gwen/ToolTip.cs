@@ -92,8 +92,8 @@ public static partial class ToolTip
 
         if (textContainerMatch is { Highest: { } highest, Closest: { } closest })
         {
-            var closestBounds = closest.BoundsGlobal;
-            var highestBounds = highest.BoundsGlobal;
+            var closestBounds = closest.GlobalBounds;
+            var highestBounds = highest.GlobalBounds;
             if (highestBounds.Top > tooltipBounds.Height)
             {
                 offset.Y = highestBounds.Top - tooltipBounds.Height;

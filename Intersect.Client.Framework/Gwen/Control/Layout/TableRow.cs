@@ -4,6 +4,7 @@ using Intersect.Client.Framework.Gwen.Control.Data;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Input;
+using Intersect.Client.Interface.Data;
 using Intersect.Core;
 using Microsoft.Extensions.Logging;
 
@@ -426,42 +427,84 @@ public partial class TableRow : Base, IColorableText
         }
     }
 
-    public void Listen(ITableDataProvider tableDataProvider, int row)
+    public TableRow Listen<TBaseValue>(
+        int column,
+        IDataProvider<TBaseValue> dataProvider,
+        string? defaultText = default
+    )
+    {
+        SetCellText(column, defaultText);
+
+        AddDataProvider(dataProvider);
+        dataProvider.ValueChanged += OnDataProviderEventHandler;
+        return this;
+
+        void OnDataProviderEventHandler(IDataProvider _, ValueChangedEventArgs<TBaseValue> args)
+        {
+            var adaptedValueString = args.Value?.ToString();
+            SetCellText(column, adaptedValueString ?? defaultText);
+        }
+    }
+
+    public TableRow Listen<TBaseValue, TDependentValue>(
+        int column,
+        IDataProvider<TBaseValue> dataProvider,
+        ValueAdapterDelegate<TBaseValue, TDependentValue> adapter,
+        string? defaultText = default
+    )
+    {
+        SetCellText(column, defaultText);
+
+        AddDataProvider(dataProvider);
+        dataProvider.ValueChanged += OnDataProviderEventHandler;
+        return this;
+
+        void OnDataProviderEventHandler(IDataProvider _, ValueChangedEventArgs<TBaseValue> args)
+        {
+            var adaptedValue = adapter(args.Value, args.OldValue);
+            var adaptedValueString = adaptedValue?.ToString();
+            SetCellText(column, adaptedValueString ?? defaultText);
+        }
+    }
+
+    public TableRow Listen(ITableDataProvider tableDataProvider, int row)
     {
         if (tableDataProvider == default)
         {
             throw new ArgumentNullException(nameof(tableDataProvider));
         }
 
-        void dataChanged(object sender, TableDataChangedEventArgs args)
+        tableDataProvider.DataChanged += DataChanged;
+        mDisposalActions.Add(() => tableDataProvider.DataChanged -= DataChanged);
+        return this;
+
+        void DataChanged(object sender, TableDataChangedEventArgs args)
         {
             if (row == args.Row)
             {
                 SetCellText(args.Column, args.NewValue?.ToString());
             }
         }
-
-        tableDataProvider.DataChanged += dataChanged;
-        mDisposalActions.Add(() => tableDataProvider.DataChanged -= dataChanged);
     }
 
-    public void Listen(ITableRowDataProvider tableRowDataProvider, int column)
+    public TableRow Listen(ITableRowDataProvider tableRowDataProvider, int column)
     {
         if (tableRowDataProvider == default)
         {
             throw new ArgumentNullException(nameof(tableRowDataProvider));
         }
 
-        void dataChanged(object sender, RowDataChangedEventArgs args)
+        tableRowDataProvider.DataChanged += DataChanged;
+        mDisposalActions.Add(() => tableRowDataProvider.DataChanged -= DataChanged);
+        return this;
+
+        void DataChanged(object sender, RowDataChangedEventArgs args)
         {
             if (args.Column == column)
             {
                 SetCellText(column, args.NewValue?.ToString());
             }
         }
-
-        tableRowDataProvider.DataChanged += dataChanged;
-        mDisposalActions.Add(() => tableRowDataProvider.DataChanged -= dataChanged);
     }
 
     public void Listen(ITableCellDataProvider tableCellDataProvider, int column)
@@ -519,17 +562,22 @@ public partial class TableRow : Base, IColorableText
     /// <summary>
     ///     Sets the text of a specified cell.
     /// </summary>
-    /// <param name="column">Column number.</param>
+    /// <param name="columnIndex">Column number.</param>
     /// <param name="text">Text to set.</param>
-    public void SetCellText(int column, string text)
+    public void SetCellText(int columnIndex, string? text)
     {
         if (_columns.Count < _columnCount)
         {
             ComputeColumns(0, _columnCount);
         }
 
-        var label = _columns[column];
-        label.Text = text;
+        var column = _columns.Skip(columnIndex).FirstOrDefault();
+        if (column is null)
+        {
+            return;
+        }
+
+        column.Text = text;
     }
 
     /// <summary>

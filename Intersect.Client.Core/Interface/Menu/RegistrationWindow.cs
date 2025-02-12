@@ -281,7 +281,7 @@ public partial class RegistrationWindow : Window, IMainMenuWindow
             inputHandler: text => textbox.Text = text ?? string.Empty,
             description: description,
             text: textbox.Text ?? string.Empty,
-            inputBounds: textbox.BoundsGlobal
+            inputBounds: textbox.GlobalBounds
         );
     }
 
