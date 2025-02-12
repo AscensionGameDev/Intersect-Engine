@@ -7,4 +7,10 @@ public class ValueChangedEventArgs<TValue> : EventArgs
     public required TValue Value { get; init; }
 
     public TValue OldValue { get; init; }
+
+    public void Deconstruct(out TValue value, out TValue oldValue)
+    {
+        value = Value;
+        oldValue = OldValue;
+    }
 }

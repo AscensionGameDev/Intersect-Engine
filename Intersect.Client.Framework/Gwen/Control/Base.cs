@@ -308,33 +308,172 @@ public partial class Base : IDisposable
                 return;
             }
 
-            if (mParent != default)
+            if (mParent is { } oldParent)
             {
-                OnDetaching(mParent);
+                NotifyDetachingFromRoot(oldParent.Root);
+                NotifyDetaching(oldParent);
+                oldParent.RemoveChild(this, false);
             }
-
-            mParent?.RemoveChild(this, false);
 
             PropagateCanvas(value?._canvas);
 
             mParent = value;
             mActualParent = default;
 
-            mParent?.AddChild(this);
-            if (mParent != default)
+            if (mParent is not { } newParent)
             {
-                OnAttaching(mParent);
+                return;
             }
+
+            newParent.AddChild(this);
+
+            NotifyAttachingToRoot(newParent.Root);
+            NotifyAttaching(newParent);
+        }
+    }
+
+    protected virtual void OnAttached(Base parent)
+    {
+    }
+
+    protected virtual void OnAttaching(Base newParent)
+    {
+    }
+
+    private void NotifyAttaching(Base parent)
+    {
+        try
+        {
+            OnAttaching(parent);
+        }
+        catch (Exception exception)
+        {
+            ApplicationContext.Context.Value?.Logger.LogWarning(
+                exception,
+                "Error occurred while invoking OnAttaching() for {NodeName}",
+                CanonicalName
+            );
+        }
+    }
+
+    protected virtual void OnDetached()
+    {
+    }
+
+    protected virtual void OnDetaching(Base oldParent)
+    {
+    }
+
+    private void NotifyDetaching(Base parent)
+    {
+        try
+        {
+            OnDetaching(parent);
+        }
+        catch (Exception exception)
+        {
+            ApplicationContext.Context.Value?.Logger.LogWarning(
+                exception,
+                "Error occurred while invoking OnDetaching() for {NodeName}",
+                CanonicalName
+            );
+        }
+    }
+
+    protected virtual void OnDetachingFromRoot(Base root) {}
+
+    private void NotifyDetachingFromRoot(Base root)
+    {
+        try
+        {
+            Root.RemoveUpdatableDataProviders(_updatableDataProviders.Keys);
+
+            try
+            {
+                OnDetachingFromRoot(root);
+            }
+            catch (Exception exception)
+            {
+                ApplicationContext.Context.Value?.Logger.LogWarning(
+                    exception,
+                    "Error occurred while invoking OnDetachingFromRoot() for {NodeName}",
+                    CanonicalName
+                );
+            }
+
+            foreach (var child in mChildren)
+            {
+                child.NotifyDetachingFromRoot(root);
+            }
+        }
+        catch (Exception exception)
+        {
+            ApplicationContext.Context.Value?.Logger.LogWarning(
+                exception,
+                "Error occurred while invoking NotifyDetachingFromRoot() for {NodeName} from {RootName}",
+                CanonicalName,
+                root.CanonicalName
+            );
+        }
+    }
+
+    protected virtual void OnAttachingToRoot(Base root) { }
+
+    private void NotifyAttachingToRoot(Base root)
+    {
+        try
+        {
+            Root.AddUpdatableDataProviders(_updatableDataProviders.Keys);
+
+            try
+            {
+                OnAttachingToRoot(root);
+            }
+            catch (Exception exception)
+            {
+                ApplicationContext.Context.Value?.Logger.LogWarning(
+                    exception,
+                    "Error occurred while invoking OnAttachingToRoot() for {NodeName}",
+                    CanonicalName
+                );
+            }
+
+            foreach (var child in mChildren)
+            {
+                child.NotifyAttachingToRoot(root);
+            }
+        }
+        catch (Exception exception)
+        {
+            ApplicationContext.Context.Value?.Logger.LogWarning(
+                exception,
+                "Error occurred while invoking NotifyAttachingToRoot() for {NodeName} to {RootName}",
+                CanonicalName,
+                root.CanonicalName
+            );
         }
     }
 
     private void PropagateCanvas(Canvas? canvas)
     {
-        _canvas = canvas;
-        var children = mChildren.ToArray();
-        foreach (var child in children)
+        try
         {
-            child.PropagateCanvas(canvas);
+            _canvas = canvas;
+
+            var children = mChildren.ToArray();
+            foreach (var child in children)
+            {
+                child.PropagateCanvas(canvas);
+            }
+        }
+        catch (Exception exception)
+        {
+            ApplicationContext.Context.Value?.Logger.LogWarning(
+                exception,
+                "Exception thrown while invoking PropagateCanvas() for {NodeName} with {CanvasName}",
+                CanonicalName,
+                canvas?.CanonicalName ?? "null"
+            );
         }
     }
 
@@ -719,7 +858,7 @@ public partial class Base : IDisposable
 
     public Point PositionGlobal => new Point(X, Y) + (mActualParent?.PositionGlobal ?? Point.Empty);
 
-    public Rectangle BoundsGlobal => new(PositionGlobal, Size);
+    public Rectangle GlobalBounds => new(PositionGlobal, Size);
 
     /// <summary>
     ///     Indicates whether the control is tabable (can be focused by pressing Tab).
@@ -2073,22 +2212,6 @@ public partial class Base : IDisposable
         }
     }
 
-    protected virtual void OnAttached(Base parent)
-    {
-    }
-
-    protected virtual void OnAttaching(Base newParent)
-    {
-    }
-
-    protected virtual void OnDetached()
-    {
-    }
-
-    protected virtual void OnDetaching(Base oldParent)
-    {
-    }
-
     /// <summary>
     ///     Handler invoked when a child is added.
     /// </summary>
@@ -3036,7 +3159,7 @@ public partial class Base : IDisposable
     /// <param name="y">The local Y coordinate to check.</param>
     /// <param name="filters"></param>
     /// <returns>Control or null if not found.</returns>
-    public Base? GetComponentAt(int x, int y, ComponentStateFilters filters = default)
+    public Base? GetComponentAt(int x, int y, NodeFilter filters = default)
     {
         // If it's out of our bounds, return null
         if (x < 0 || Width <= x || y < 0 || Height <= y)
@@ -3047,7 +3170,7 @@ public partial class Base : IDisposable
         // If we and/or an ancestor are hidden, return null if we aren't explicitly allowing hidden components
         if (IsHidden)
         {
-            if (!filters.HasFlag(ComponentStateFilters.IncludeHidden))
+            if (!filters.HasFlag(NodeFilter.IncludeHidden))
             {
                 return null;
             }
@@ -3066,12 +3189,12 @@ public partial class Base : IDisposable
 
         if (this is Text)
         {
-            return filters.HasFlag(ComponentStateFilters.IncludeText) ? this : null;
+            return filters.HasFlag(NodeFilter.IncludeText) ? this : null;
         }
 
         // By default, we only return components that are mouse-input enabled, but if the filters include
         // those components explicitly, we can return them too. This is particularly useful for debugging.
-        if (MouseInputEnabled || filters.HasFlag(ComponentStateFilters.IncludeMouseInputDisabled))
+        if (MouseInputEnabled || filters.HasFlag(NodeFilter.IncludeMouseInputDisabled))
         {
             return this;
         }
@@ -3079,7 +3202,7 @@ public partial class Base : IDisposable
         return null;
     }
 
-    public Base? GetComponentAt(Point point, ComponentStateFilters filters = default) => GetComponentAt(point.X, point.Y, filters);
+    public Base? GetComponentAt(Point point, NodeFilter filters = default) => GetComponentAt(point.X, point.Y, filters);
 
     /// <summary>
     ///     Lays out the control's interior according to alignment, padding, dock etc.
@@ -3096,6 +3219,8 @@ public partial class Base : IDisposable
     }
 
     protected virtual bool ShouldSkipLayout => IsHidden && !ToolTip.IsActiveTooltip(this);
+
+    public int NodeCount => 1 + mChildren.Sum(child => child.NodeCount);
 
     protected virtual void Prelayout(Skin.Base skin)
     {
@@ -3624,8 +3749,11 @@ public partial class Base : IDisposable
         var childrenSize = GetChildrenSize();
         var padding = Padding;
         var size = childrenSize;
-        size.X += padding.Right + padding.Left;
-        size.Y += padding.Bottom + padding.Top;
+        var paddingH = padding.Right + padding.Left;
+        var paddingV = padding.Bottom + padding.Top;
+
+        size.X = size.X < 0 ? Width : (size.X + paddingH);
+        size.Y = size.Y < 0 ? Height : (size.Y + paddingV);
 
         size.X = Math.Max(Math.Min(size.X, _maximumSize.X < 1 ? size.X : _maximumSize.X), _minimumSize.X);
         size.Y = Math.Max(Math.Min(size.Y, _maximumSize.Y < 1 ? size.Y : _maximumSize.Y), _minimumSize.Y);

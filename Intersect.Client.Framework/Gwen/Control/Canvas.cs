@@ -120,8 +120,10 @@ public partial class Canvas : Base
     /// <summary>
     ///     Renders the canvas. Call in your rendering loop.
     /// </summary>
-    public void RenderCanvas()
+    public void RenderCanvas(TimeSpan elapsed, TimeSpan total)
     {
+        UpdateDataProviders(elapsed, total);
+
         DoThink();
 
         var render = Skin.Renderer;

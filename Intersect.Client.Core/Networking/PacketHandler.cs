@@ -1890,7 +1890,9 @@ internal sealed partial class PacketHandler
     public void HandlePacket(IPacketSender packetSender, TimePacket packet)
     {
         Time.LoadTime(
-            packet.Time, Color.FromArgb(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B), packet.Rate
+            packet.Time,
+            Color.FromArgb(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B),
+            packet.Rate
         );
     }
 
