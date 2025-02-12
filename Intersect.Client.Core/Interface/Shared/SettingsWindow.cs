@@ -1164,6 +1164,6 @@ public partial class SettingsWindow : Window
 
     protected override void EnsureInitialized()
     {
-        // LoadJsonUi(stage: UI.Shared, resolution: Graphics.Renderer?.GetResolutionString());
+        LoadJsonUi(stage: UI.Shared, resolution: Graphics.Renderer?.GetResolutionString());
     }
 }

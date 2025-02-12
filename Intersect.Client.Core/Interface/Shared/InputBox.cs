@@ -1,3 +1,4 @@
+using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
@@ -6,6 +7,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Control.EventArguments.InputSubmissionEvent;
 using Intersect.Client.Localization;
 using Intersect.Framework;
+using Intersect.Framework.Reflection;
 
 namespace Intersect.Client.Interface.Shared;
 
@@ -604,7 +606,8 @@ public partial class InputBox : Window
 
     protected override void EnsureInitialized()
     {
-        // LoadJsonUi(GameContentManager.UI.Shared, Graphics.Renderer?.GetResolutionString());
+        Name = $"{GetType().GetName(qualified: false)}_{InputType}";
+        LoadJsonUi(GameContentManager.UI.Shared, Graphics.Renderer?.GetResolutionString());
 
         Show();
         Focus();
