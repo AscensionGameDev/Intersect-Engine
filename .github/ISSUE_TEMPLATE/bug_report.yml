@@ -72,8 +72,10 @@ body:
   - type: checkboxes
     id: platform-specific
     attributes:
-      label: Is this bug platform specific?
-      dewscription: If you verified that this issue only affects specific platforms, and does not affect platforms you did not select above, please check this box to inform us that this is platform-specific.
+      label: Is this bug platform-specific?
+      description: This means that you verified that platforms you did not mark above are not affected by this issue, and that this can be reproduced on any platform.
+      options:
+        - label: Yes this is platform-specific issue
   - type: textarea
     id: workaround
     attributes:
