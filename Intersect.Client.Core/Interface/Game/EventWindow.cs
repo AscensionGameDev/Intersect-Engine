@@ -154,8 +154,7 @@ public partial class EventWindow : Panel
             }
         }
 
-        // var optionLimit = Math.Max(1, visibleOptions.Length);
-        // Name = $"EventDialogWindow_{optionLimit}Response{(optionLimit == 1 ? string.Empty : 's')}";
+        // Name = $"{nameof(EventWindow)}_{Math.Max(1, visibleOptions.Length)}";
         // LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer?.GetResolutionString());
 
         SkipRender();
