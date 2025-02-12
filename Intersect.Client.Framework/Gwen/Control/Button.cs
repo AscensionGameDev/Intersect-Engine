@@ -1,6 +1,7 @@
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Core;
@@ -17,12 +18,7 @@ public partial class Button : Label
 {
     private bool mCenterImage;
 
-    //Sound Effects
-    private string? mClickSound;
-    private string? mHoverSound;
-    private string? mMouseDownSound;
-    private string? mMouseUpSound;
-
+    private readonly Dictionary<ButtonSoundState, string> _stateSoundNames = [];
     private readonly Dictionary<ComponentState, GameTexture> _stateTextures = [];
     private readonly Dictionary<ComponentState, string> _stateTextureNames = [];
 
@@ -47,6 +43,10 @@ public partial class Button : Label
         TextAlign = Pos.Center;
         Size = new Point(100, 20);
         Padding = new Padding(3, 3, 3, 3);
+
+        SetSound(ButtonSoundState.Hover, "octave-tap-resonant.wav");
+        SetSound(ButtonSoundState.MouseDown, "octave-tap-warm.wav");
+        SetSound(ButtonSoundState.MouseUp, "octave-tap-warm.wav");
     }
 
     /// <summary>
@@ -133,22 +133,22 @@ public partial class Button : Label
             serializedProperties.Add("DisabledImage", GetStateTextureName(ComponentState.Disabled));
         }
 
-        if (this is not ComboBox)
-        {
-            serializedProperties.Add("HoverSound", mHoverSound);
-            serializedProperties.Add("MouseUpSound", mMouseUpSound);
-            serializedProperties.Add("MouseDownSound", mMouseDownSound);
-            serializedProperties.Add("ClickSound", mClickSound);
-        }
+        serializedProperties.Add(nameof(_stateSoundNames), JObject.FromObject(_stateSoundNames));
 
         serializedProperties.Add("CenterImage", mCenterImage);
 
         return base.FixJson(serializedProperties);
     }
 
-    public override void LoadJson(JToken obj, bool isRoot = default)
+    public override void LoadJson(JToken token, bool isRoot = default)
     {
-        base.LoadJson(obj);
+        base.LoadJson(token, isRoot);
+
+        if (token is not JObject obj)
+        {
+            return;
+        }
+
         if (obj["NormalImage"] != null)
         {
             SetStateTexture(
@@ -190,46 +190,60 @@ public partial class Button : Label
             mCenterImage = (bool)obj["CenterImage"];
         }
 
-        if (this.GetType() != typeof(ComboBox) && this.GetType() != typeof(Checkbox))
+        if (obj.TryGetValue(nameof(_stateSoundNames), out var tokenStateSoundNames) && tokenStateSoundNames is JObject valueStateSoundNames)
         {
-            if (obj["HoverSound"] != null)
+            foreach (var (propertyName, propertyValueToken) in valueStateSoundNames)
             {
-                mHoverSound = (string)obj["HoverSound"];
-            }
+                if (!Enum.TryParse(propertyName, out ButtonSoundState buttonSoundState) ||
+                    buttonSoundState == ButtonSoundState.None)
+                {
+                    continue;
+                }
 
-            if (obj["MouseUpSound"] != null)
-            {
-                mMouseUpSound = (string)obj["MouseUpSound"];
-            }
+                if (propertyValueToken is not JValue { Type: JTokenType.String } valuePropertyValue)
+                {
+                    continue;
+                }
 
-            if (obj["MouseDownSound"] != null)
-            {
-                mMouseDownSound = (string)obj["MouseDownSound"];
-            }
-
-            if (obj["ClickSound"] != null)
-            {
-                mClickSound = (string)obj["ClickSound"];
+                var stringPropertyValue = valuePropertyValue.Value<string>()?.Trim();
+                if (stringPropertyValue is { Length: > 0 })
+                {
+                    _stateSoundNames[buttonSoundState] = stringPropertyValue;
+                }
+                else
+                {
+                    _stateSoundNames.Remove(buttonSoundState);
+                }
             }
         }
     }
 
-    public void PlayHoverSound()
-    {
-        base.PlaySound(mHoverSound);
-    }
+    private DateTime _ignoreMouseUpSoundsUntil;
 
-    public void PlayClickSound()
+    public void PlaySound(ButtonSoundState soundState)
     {
-        base.PlaySound(mClickSound);
-    }
+        if (soundState == ButtonSoundState.MouseUp)
+        {
+            if (_ignoreMouseUpSoundsUntil > DateTime.UtcNow)
+            {
+                return;
+            }
+        }
 
-    public void ClearSounds()
-    {
-        mMouseUpSound = string.Empty;
-        mMouseDownSound = string.Empty;
-        mHoverSound = string.Empty;
-        mClickSound = string.Empty;
+        if (!_stateSoundNames.TryGetValue(soundState, out var soundName))
+        {
+            return;
+        }
+
+        if (!base.PlaySound(soundName))
+        {
+            return;
+        }
+
+        if (soundState == ButtonSoundState.MouseDown)
+        {
+            _ignoreMouseUpSoundsUntil = DateTime.UtcNow.AddMilliseconds(200);
+        }
     }
 
     /// <summary>
@@ -270,13 +284,13 @@ public partial class Button : Label
     protected override void OnMouseDown(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
         base.OnMouseDown(mouseButton, mousePosition, userAction);
-        base.PlaySound(mMouseDownSound);
+        PlaySound(ButtonSoundState.MouseDown);
     }
 
     protected override void OnMouseUp(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
         base.OnMouseUp(mouseButton, mousePosition, userAction);
-        base.PlaySound(mMouseUpSound);
+        PlaySound(ButtonSoundState.MouseUp);
     }
 
     protected override void OnMouseClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
@@ -292,7 +306,7 @@ public partial class Button : Label
         }
 
         base.OnMouseClicked(mouseButton, mousePosition, userAction);
-        base.PlaySound(mClickSound);
+        PlaySound(ButtonSoundState.MouseClicked);
     }
 
     /// <summary>
@@ -392,7 +406,7 @@ public partial class Button : Label
         OnMouseClicked(mouseButton, mousePosition, userAction);
     }
 
-    public void SetStateTexture(string textureName, ComponentState componentState)
+    public void SetStateTexture(ComponentState componentState, string textureName)
     {
         var texture = GameContentManager.Current.GetTexture(TextureType.Gui, textureName);
         SetStateTexture(texture, textureName, componentState);
@@ -438,31 +452,23 @@ public partial class Button : Label
     {
         base.OnMouseEntered();
 
-        //Play Mouse Entered Sound
         if (ShouldDrawHover)
         {
-            base.PlaySound(mHoverSound);
+            PlaySound(ButtonSoundState.Hover);
         }
     }
 
-    public void SetHoverSound(string sound)
+    public void SetSound(ButtonSoundState state, string? soundName)
     {
-        mHoverSound = sound;
-    }
-
-    public void SetClickSound(string sound)
-    {
-        mClickSound = sound;
-    }
-
-    public void SetMouseDownSound(string sound)
-    {
-        mMouseDownSound = sound;
-    }
-
-    public void SetMouseUpSound(string sound)
-    {
-        mMouseUpSound = sound;
+        soundName = soundName?.Trim();
+        if (string.IsNullOrEmpty(soundName))
+        {
+            _stateSoundNames.Remove(state);
+        }
+        else
+        {
+            _stateSoundNames[state] = soundName;
+        }
     }
 
 }

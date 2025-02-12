@@ -204,7 +204,7 @@ public partial class ComboBox : Button
                 {
                     if (menuChild is MenuItem menuItem)
                     {
-                        menuItem.SetHoverSound(mHoverItemSound);
+                        menuItem.SetSound(ButtonSoundState.Hover, mHoverItemSound);
                     }
                 }
             }
@@ -227,7 +227,7 @@ public partial class ComboBox : Button
         item.SetTextColor(GetTextColor(ComponentState.Hovered), ComponentState.Hovered);
         item.SetTextColor(GetTextColor(ComponentState.Active), ComponentState.Active);
         item.SetTextColor(GetTextColor(ComponentState.Disabled), ComponentState.Disabled);
-        item.SetHoverSound(mHoverItemSound);
+        item.SetSound(ButtonSoundState.Hover, mHoverItemSound);
 
         UpdateItemMaximumSize(label);
 

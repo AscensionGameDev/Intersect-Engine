@@ -14,14 +14,6 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal;
 /// </summary>
 public partial class Dragger : Base
 {
-    public enum ControlSoundState
-    {
-        None,
-        Hover,
-        MouseDown,
-        MouseUp,
-    }
-
     protected Point mHoldPos;
 
     //Sound Effects
@@ -307,19 +299,19 @@ public partial class Dragger : Base
         mMouseUpSound = string.Empty;
     }
 
-    public void SetSound(string sound, ControlSoundState state)
+    public void SetSound(string sound, ButtonSoundState state)
     {
         switch (state)
         {
-            case ControlSoundState.None:
+            case ButtonSoundState.None:
                 break;
-            case ControlSoundState.Hover:
+            case ButtonSoundState.Hover:
                 mHoverSound = sound;
                 break;
-            case ControlSoundState.MouseDown:
+            case ButtonSoundState.MouseDown:
                 mMouseDownSound = sound;
                 break;
-            case ControlSoundState.MouseUp:
+            case ButtonSoundState.MouseUp:
                 mMouseUpSound = sound;
                 break;
             default:

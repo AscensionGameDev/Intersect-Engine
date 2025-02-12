@@ -176,10 +176,10 @@ public partial class MainMenu : MutableInterface
 
     public void Hide() => _mainMenuWindow.Hide();
 
-    public void NotifyOpenCharacterSelection(List<Character> characters)
+    public void NotifyOpenCharacterSelection(List<CharacterSelectionPreviewMetadata> characterSelectionPreviews)
     {
         mShouldOpenCharacterSelection = true;
-        SelectCharacterWindow.Characters = [.. characters];
+        SelectCharacterWindow.CharacterSelectionPreviews = [..characterSelectionPreviews];
     }
 
     public void NotifyOpenForgotPassword()

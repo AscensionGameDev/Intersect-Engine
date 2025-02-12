@@ -2191,22 +2191,28 @@ internal sealed partial class PacketHandler
     //CharactersPacket
     public void HandlePacket(IPacketSender packetSender, CharactersPacket packet)
     {
-        var characters = new List<Character>();
-
-        foreach (var chr in packet.Characters)
-        {
-            characters.Add(
-                new Character(chr.Id, chr.Name, chr.Sprite, chr.Face, chr.Level, chr.ClassName, chr.Equipment)
-            );
-        }
+        List<CharacterSelectionPreviewMetadata> characterSelectionPreviews =
+        [
+            ..packet.Characters.Select(
+                characterPacket => new CharacterSelectionPreviewMetadata(
+                    characterPacket.Id,
+                    characterPacket.Name,
+                    characterPacket.Sprite,
+                    characterPacket.Face,
+                    characterPacket.Level,
+                    characterPacket.ClassName,
+                    characterPacket.Equipment
+                )
+            )
+        ];
 
         if (packet.FreeSlot)
         {
-            characters.Add(null);
+            characterSelectionPreviews.Add(default);
         }
 
         Globals.WaitingOnServer = false;
-        Interface.Interface.MenuUi.MainMenu.NotifyOpenCharacterSelection(characters);
+        Interface.Interface.MenuUi.MainMenu.NotifyOpenCharacterSelection(characterSelectionPreviews);
     }
 
     //PasswordResetResultPacket

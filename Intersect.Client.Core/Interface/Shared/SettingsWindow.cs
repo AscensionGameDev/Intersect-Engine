@@ -457,9 +457,9 @@ public partial class SettingsWindow : Window
         };
 
         _musicSlider.ValueChanged += MusicSliderOnValueChanged;
-        _musicSlider.SetSound("octave-tap-resonant.wav", Dragger.ControlSoundState.Hover);
-        _musicSlider.SetSound("octave-tap-professional.wav", Dragger.ControlSoundState.MouseDown);
-        _musicSlider.SetSound("octave-tap-professional.wav", Dragger.ControlSoundState.MouseUp);
+        _musicSlider.SetSound("octave-tap-resonant.wav", ButtonSoundState.Hover);
+        _musicSlider.SetSound("octave-tap-professional.wav", ButtonSoundState.MouseDown);
+        _musicSlider.SetSound("octave-tap-professional.wav", ButtonSoundState.MouseUp);
 
         // Audio Settings - Sound Slider
         _soundEffectsSlider = new LabeledSlider(parent: _audioContainer, name: nameof(_soundEffectsSlider))
@@ -480,9 +480,9 @@ public partial class SettingsWindow : Window
         };
 
         _soundEffectsSlider.ValueChanged += SoundEffectsSliderOnValueChanged;
-        _soundEffectsSlider.SetSound("octave-tap-resonant.wav", Dragger.ControlSoundState.Hover);
-        _soundEffectsSlider.SetSound("octave-tap-professional.wav", Dragger.ControlSoundState.MouseDown);
-        _soundEffectsSlider.SetSound("octave-tap-professional.wav", Dragger.ControlSoundState.MouseUp);
+        _soundEffectsSlider.SetSound("octave-tap-resonant.wav", ButtonSoundState.Hover);
+        _soundEffectsSlider.SetSound("octave-tap-professional.wav", ButtonSoundState.MouseDown);
+        _soundEffectsSlider.SetSound("octave-tap-professional.wav", ButtonSoundState.MouseUp);
 
 #endregion Audio
 
@@ -575,7 +575,6 @@ public partial class SettingsWindow : Window
             Text = Strings.Settings.Restore,
         };
         restoreDefaultKeybindingsButton.Clicked += RestoreDefaultKeybindingsButton_Clicked;
-        restoreDefaultKeybindingsButton.SetHoverSound("octave-tap-resonant.wav");
 
         // Apply Button.
         var applyPendingChangesButton = new Button(parent: bottomBar, name: nameof(_applyPendingChangesButton))
@@ -588,7 +587,6 @@ public partial class SettingsWindow : Window
             Text = Strings.Settings.Apply,
         };
         applyPendingChangesButton.Clicked += SettingsApplyBtn_Clicked;
-        applyPendingChangesButton.SetHoverSound("octave-tap-resonant.wav");
 
         // Cancel Button.
         var cancelPendingChangesButton = new Button(parent: bottomBar, name: nameof(_cancelPendingChangesButton))
@@ -601,7 +599,6 @@ public partial class SettingsWindow : Window
             Text = Strings.Settings.Cancel,
         };
         cancelPendingChangesButton.Clicked += CancelPendingChangesButton_Clicked;
-        cancelPendingChangesButton.SetHoverSound("octave-tap-resonant.wav");
 
         return (
             BottomBar: bottomBar,
@@ -711,8 +708,6 @@ public partial class SettingsWindow : Window
             Text = string.Empty,
             UserData = new KeyValuePair<Control, int>(control, 0),
         };
-        key1.SetHoverSound("octave-tap-resonant.wav");
-        key1.SetMouseDownSound("octave-tap-warm.wav");
         controlRow.SetCellContents(1, key1, enableMouseInput: true);
         key1.Clicked += Key_Clicked;
 
@@ -725,8 +720,6 @@ public partial class SettingsWindow : Window
             Text = string.Empty,
             UserData = new KeyValuePair<Control, int>(control, 1),
         };
-        key2.SetHoverSound("octave-tap-resonant.wav");
-        key2.SetMouseDownSound("octave-tap-warm.wav");
         controlRow.SetCellContents(2, key2, enableMouseInput: true);
         key2.Clicked += Key_Clicked;
 
@@ -856,7 +849,7 @@ public partial class SettingsWindow : Window
                 }
             }
 
-            _keybindingEditBtn.PlayHoverSound();
+            _keybindingEditBtn.PlaySound(ButtonSoundState.Hover);
         }
 
         _keybindingEditBtn = null;
