@@ -7,15 +7,18 @@ using Intersect.Framework;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
-public partial class LabeledSlider : Base, IAutoSizeToContents, INumericInput, ITextContainer
+public partial class LabeledSlider : Base, ISmartAutoSizeToContents, INumericInput, ITextContainer
 {
     private readonly Label _label;
     private readonly Slider _slider;
     private readonly TextBoxNumeric _sliderValue;
     private double _scale = 1.0;
     private int _rounding = -1;
-    private bool _autoSizeToContents;
     private bool _recomputeValueMinimumSize = true;
+    private bool _autoSizeToContentWidth;
+    private bool _autoSizeToContentHeight;
+    private bool _autoSizeToContentWidthOnChildResize;
+    private bool _autoSizeToContentHeightOnChildResize;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="LabeledSlider" /> class.
@@ -24,6 +27,8 @@ public partial class LabeledSlider : Base, IAutoSizeToContents, INumericInput, I
     /// <param name="name"></param>
     public LabeledSlider(Base parent, string? name = default) : base(parent: parent, name: name)
     {
+        DockChildSpacing = new Padding(4);
+
         _label = new Label(this, nameof(_label))
         {
             Alignment = [Alignments.CenterV],
@@ -49,6 +54,7 @@ public partial class LabeledSlider : Base, IAutoSizeToContents, INumericInput, I
             if (_rounding > -1)
             {
                 newValue = Math.Round(newValue, _rounding);
+                _slider.SetValue(newValue, skipEvents: true);
             }
 
             _sliderValue.SetValue(newValue, skipEvents: true);
@@ -75,7 +81,7 @@ public partial class LabeledSlider : Base, IAutoSizeToContents, INumericInput, I
             );
         };
 
-        _autoSizeToContents = true;
+        AutoSizeToContentHeight = true;
         KeyboardInputEnabled = true;
         IsTabable = true;
     }
@@ -111,8 +117,8 @@ public partial class LabeledSlider : Base, IAutoSizeToContents, INumericInput, I
 
     public Point SliderSize
     {
-        get => _slider.Size;
-        set => _slider.Size = value;
+        get => _slider.MinimumSize;
+        set => _slider.MinimumSize = value;
     }
 
     public bool IsValueInputEnabled
@@ -273,9 +279,9 @@ public partial class LabeledSlider : Base, IAutoSizeToContents, INumericInput, I
             _sliderValue.MinimumSize = ComputeMinimumSizeForSliderValue(Maximum);
         }
 
-        if (_autoSizeToContents)
+        if (AutoSizeToContents)
         {
-            SizeToChildren();
+            SizeToChildren(resizeX: AutoSizeToContentWidth, resizeY: AutoSizeToContentHeight);
         }
 
         var orientation = _slider.Orientation;
@@ -284,32 +290,32 @@ public partial class LabeledSlider : Base, IAutoSizeToContents, INumericInput, I
             case Orientation.LeftToRight:
                 _label.Dock = Pos.Left;
                 _label.Alignment = [Alignments.CenterV];
-                _slider.Dock = Pos.Left;
+                _slider.Dock = Pos.Fill;
                 _slider.Alignment = [Alignments.CenterV];
                 _slider.Margin = new Margin(4, 0, 0, 0);
-                _sliderValue.Dock = Pos.Left;
+                _sliderValue.Dock = Pos.Right;
                 _sliderValue.Alignment = [Alignments.CenterV];
                 _sliderValue.Margin = new Margin(4, 0, 0, 0);
                 break;
             case Orientation.RightToLeft:
                 _label.Dock = Pos.Right | Pos.CenterV;
-                _slider.Dock = Pos.Right | Pos.CenterV;
+                _slider.Dock = Pos.Fill;
                 _slider.Margin = new Margin(0, 0, 4, 0);
-                _sliderValue.Dock = Pos.Right;
+                _sliderValue.Dock = Pos.Left;
                 _sliderValue.Margin = new Margin(0, 0, 4, 0);
                 break;
             case Orientation.TopToBottom:
                 _label.Dock = Pos.Top;
-                _slider.Dock = Pos.Top;
+                _slider.Dock = Pos.Fill;
                 _slider.Margin = new Margin(0, 4, 0, 0);
-                _sliderValue.Dock = Pos.Top;
+                _sliderValue.Dock = Pos.Bottom;
                 _sliderValue.Margin = new Margin(0, 4, 0, 0);
                 break;
             case Orientation.BottomToTop:
                 _label.Dock = Pos.Bottom;
-                _slider.Dock = Pos.Bottom;
+                _slider.Dock = Pos.Fill;
                 _slider.Margin = new Margin(0, 0, 0, 4);
-                _sliderValue.Dock = Pos.Bottom;
+                _sliderValue.Dock = Pos.Top;
                 _sliderValue.Margin = new Margin(0, 0, 0, 4);
                 break;
             default:
@@ -326,17 +332,57 @@ public partial class LabeledSlider : Base, IAutoSizeToContents, INumericInput, I
         _sliderValue.SetToolTipText(text);
     }
 
+    protected override void OnSizeChanged(Point oldSize, Point newSize)
+    {
+        base.OnSizeChanged(oldSize, newSize);
+    }
+
     protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
     {
         base.OnBoundsChanged(oldBounds, newBounds);
+    }
+
+    protected override void OnChildSizeChanged(Base child, Point oldChildSize, Point newChildSize)
+    {
+        base.OnChildSizeChanged(child, oldChildSize, newChildSize);
+
+        SizeToChildren(resizeX: AutoSizeToContentWidthOnChildResize, resizeY: AutoSizeToContentHeightOnChildResize);
     }
 
     public void SetRange(double min, double max) => (Minimum, Maximum) = (min, max);
 
     public bool AutoSizeToContents
     {
-        get => _autoSizeToContents;
-        set => SetAndDoIfChanged(ref _autoSizeToContents, value, Invalidate);
+        get => AutoSizeToContentWidth || AutoSizeToContentHeight;
+        set
+        {
+            AutoSizeToContentWidth = value;
+            AutoSizeToContentHeight = value;
+        }
+    }
+
+    public bool AutoSizeToContentWidth
+    {
+        get => _autoSizeToContentWidth;
+        set => SetAndDoIfChanged(ref _autoSizeToContentWidth, value, Invalidate);
+    }
+
+    public bool AutoSizeToContentHeight
+    {
+        get => _autoSizeToContentHeight;
+        set => SetAndDoIfChanged(ref _autoSizeToContentHeight, value, Invalidate);
+    }
+
+    public bool AutoSizeToContentWidthOnChildResize
+    {
+        get => _autoSizeToContentWidthOnChildResize;
+        set => SetAndDoIfChanged(ref _autoSizeToContentWidthOnChildResize, value, Invalidate);
+    }
+
+    public bool AutoSizeToContentHeightOnChildResize
+    {
+        get => _autoSizeToContentHeightOnChildResize;
+        set => SetAndDoIfChanged(ref _autoSizeToContentHeightOnChildResize, value, Invalidate);
     }
 
     public override void Focus(bool moveMouse = false)

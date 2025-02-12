@@ -170,6 +170,11 @@ public partial class Slider : Base
         set => _sliderBar.Size = value;
     }
 
+    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
+    {
+        return false;
+    }
+
     public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
         var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);

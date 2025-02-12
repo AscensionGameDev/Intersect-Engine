@@ -551,6 +551,11 @@ public partial class SettingsWindow : Window
             CreateBottomBar(this);
     }
 
+    protected override void EnsureInitialized()
+    {
+        LoadJsonUi(stage: UI.Shared, resolution: Graphics.Renderer?.GetResolutionString());
+    }
+
     public override bool IsBlockingInput => _keybindingEditBtn is not null;
 
     private BottomBarItems CreateBottomBar(Base parent)
@@ -1153,10 +1158,5 @@ public partial class SettingsWindow : Window
 
         // Hide our current window.
         Hide();
-    }
-
-    protected override void EnsureInitialized()
-    {
-        LoadJsonUi(stage: UI.Shared, resolution: Graphics.Renderer?.GetResolutionString());
     }
 }
