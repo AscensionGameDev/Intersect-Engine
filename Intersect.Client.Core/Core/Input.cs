@@ -232,10 +232,14 @@ public static partial class Input
                     switch (control)
                     {
                         case Control.Enter:
-                            if (!selectCharacterWindow.IsHidden && selectCharacterWindow.Characters[selectCharacterWindow.mSelectedChar] != null)
+                            if (selectCharacterWindow is { IsHidden: false, CharacterSelectionPreviews: { } previews })
                             {
-                                selectCharacterWindow.ButtonPlay_Clicked(null, null);
-                                consumeKey = true;
+                                var selectedPreviewIndex = selectCharacterWindow._selectedCharacterIndex;
+                                if (previews.Length > selectedPreviewIndex && previews[selectedPreviewIndex] != default)
+                                {
+                                    selectCharacterWindow.ButtonPlay_Clicked(null, null);
+                                    consumeKey = true;
+                                }
                             }
                             break;
                     }

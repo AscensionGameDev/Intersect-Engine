@@ -481,7 +481,7 @@ public partial class Slider : Base
         return _sliderBar.GetImage(state);
     }
 
-    public void SetSound(string? sound, Dragger.ControlSoundState state)
+    public void SetSound(string? sound, ButtonSoundState state)
     {
         _sliderBar.SetSound(sound, state);
     }

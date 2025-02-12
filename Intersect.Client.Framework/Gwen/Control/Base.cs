@@ -2919,30 +2919,31 @@ public partial class Base : IDisposable
         DoubleClicked?.Invoke(this, new MouseButtonState(mouseButton, mousePosition, true));
     }
 
-    protected void PlaySound(string? name)
+    protected bool PlaySound(string? name)
     {
         if (name == null || this.IsDisabled)
         {
-            return;
+            return false;
         }
 
         if (Canvas is not { } canvas)
         {
-            return;
+            return false;
         }
 
         name = GameContentManager.RemoveExtension(name).ToLower();
         if (GameContentManager.Current.GetSound(name) is not { } sound)
         {
-            return;
+            return false;
         }
 
         if (sound.CreateInstance() is not { } soundInstance)
         {
-            return;
+            return false;
         }
 
         canvas.PlayAndAddSound(soundInstance);
+        return true;
     }
 
     public bool IsActive

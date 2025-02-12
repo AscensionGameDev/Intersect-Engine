@@ -250,7 +250,7 @@ public partial class LabeledSlider : Base, IAutoSizeToContents, INumericInput, I
         return _slider.GetDraggerImage(state);
     }
 
-    public void SetSound(string? sound, Dragger.ControlSoundState state)
+    public void SetSound(string? sound, ButtonSoundState state)
     {
         _slider.SetSound(sound, state);
     }

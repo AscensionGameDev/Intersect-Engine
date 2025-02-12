@@ -4,6 +4,7 @@ using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Framework.Gwen.ControlInternal;
 
 namespace Intersect.Client.Interface.Menu;
 
@@ -42,13 +43,12 @@ public partial class MainMenuWindow
             button.FontSize = 12;
             button.Padding = new Padding(0, 24, 0, 0);
             button.Dock = Pos.Left;
-            button.SetHoverSound("octave-tap-resonant.wav");
 
             var buttonName = button.Name;
-            button.SetStateTexture($"mainmenu{buttonName}.png", ComponentState.Normal);
-            button.SetStateTexture($"mainmenu{buttonName}_clicked.png", ComponentState.Active);
-            button.SetStateTexture($"mainmenu{buttonName}_disabled.png", ComponentState.Disabled);
-            button.SetStateTexture($"mainmenu{buttonName}_hovered.png", ComponentState.Hovered);
+            button.SetStateTexture(ComponentState.Normal, $"mainmenu{buttonName}.png");
+            button.SetStateTexture(ComponentState.Active, $"mainmenu{buttonName}_clicked.png");
+            button.SetStateTexture(ComponentState.Disabled, $"mainmenu{buttonName}_disabled.png");
+            button.SetStateTexture(ComponentState.Hovered, $"mainmenu{buttonName}_hovered.png");
         }
 
         LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());

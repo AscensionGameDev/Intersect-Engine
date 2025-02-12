@@ -239,10 +239,12 @@ public partial class ImagePanel : Base
         }
     }
 
+    public void ResetUVs() => SetUVs(0, 0, 1, 1);
+
     /// <summary>
     ///     Sets the texture coordinates of the image.
     /// </summary>
-    public virtual void SetUv(float u1, float v1, float u2, float v2)
+    public virtual void SetUVs(float u1, float v1, float u2, float v2)
     {
         _uv[0] = u1;
         _uv[1] = v1;
@@ -289,7 +291,7 @@ public partial class ImagePanel : Base
             return;
         }
 
-        SetUv(
+        SetUVs(
             x / (float)_texture.Width,
             y / (float)_texture.Height,
             (x + w) / (float)_texture.Width,
@@ -413,6 +415,8 @@ public partial class ImagePanel : Base
                     var aspectRatioWidth = (int)(height * aspectRatio);
                     if (aspectRatioWidth > width)
                     {
+                        var deltaWidth = width - aspectRatioWidth;
+                        x += deltaWidth / 2;
                         width = aspectRatioWidth;
                     }
                 }
