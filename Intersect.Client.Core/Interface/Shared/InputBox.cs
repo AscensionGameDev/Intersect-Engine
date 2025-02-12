@@ -302,6 +302,7 @@ public partial class InputBox : Window
             AutoSizeToContents = false,
             Dock = Pos.Bottom,
             Font = _defaultFont,
+            Rounding = 0,
         };
         numericSliderInput.ValueChanged += NumericSliderInputOnValueChanged;
 
@@ -518,6 +519,8 @@ public partial class InputBox : Window
                 _numericInputSlider = _inputPanel.FindChildByName<LabeledSlider>(nameof(_numericInputSlider)) ??
                                       throw new InvalidOperationException("Numeric input (slider) wasn't created");
                 numericInput = _numericInputSlider;
+                var notchCount = Math.Min(maximumQuantity, 5);
+                _numericInputSlider.NotchCount = notchCount;
                 break;
             case InputType.TextInput:
                 _stringInput = _inputPanel.FindChildByName<TextBox>(nameof(_stringInput)) ??

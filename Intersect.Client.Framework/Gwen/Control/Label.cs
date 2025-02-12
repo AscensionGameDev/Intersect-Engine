@@ -420,10 +420,9 @@ public partial class Label : Base, ILabel
 
         if (obj["TextColor"] != null)
         {
-            TextColor = Color.FromString((string)obj["TextColor"]);
+            mNormalTextColor = Color.FromString((string)obj["TextColor"]);
         }
 
-        mNormalTextColor = TextColor;
         if (obj["HoveredTextColor"] != null)
         {
             mHoverTextColor = Color.FromString((string)obj["HoveredTextColor"]);

@@ -3239,6 +3239,8 @@ public partial class Base : IDisposable
         Layout(skin);
     }
 
+    private Point _requiredSizeForDockFillNodes;
+
     /// <summary>
     ///     Recursively lays out the control's interior according to alignment, margin, padding, dock etc.
     /// </summary>
@@ -3305,11 +3307,22 @@ public partial class Base : IDisposable
             var availableWidth = remainingBounds.Width - childMarginH;
             var availableHeight = remainingBounds.Height - childMarginV;
 
-            var childFitsContents = child is IAutoSizeToContents { AutoSizeToContents: true };
+            var childFitsContentWidth = false;
+            var childFitsContentHeight = false;
+
+            if (child is ISmartAutoSizeToContents smartAutoSizeToContents)
+            {
+                childFitsContentWidth = smartAutoSizeToContents.AutoSizeToContentWidth;
+                childFitsContentHeight = smartAutoSizeToContents.AutoSizeToContentHeight;
+            } else if (child is IAutoSizeToContents { AutoSizeToContents: true })
+            {
+                childFitsContentWidth = true;
+                childFitsContentHeight = true;
+            }
 
             if (childDock.HasFlag(Pos.Left))
             {
-                var height = childFitsContents
+                var height = childFitsContentHeight
                     ? child.Height
                     : availableHeight;
 
@@ -3350,7 +3363,7 @@ public partial class Base : IDisposable
 
             if (childDock.HasFlag(Pos.Right))
             {
-                var height = childFitsContents
+                var height = childFitsContentHeight
                     ? child.Height
                     : availableHeight;
 
@@ -3391,7 +3404,7 @@ public partial class Base : IDisposable
 
             if (childDock.HasFlag(Pos.Top) && !childDock.HasFlag(Pos.Left) && !childDock.HasFlag(Pos.Right))
             {
-                var width = childFitsContents
+                var width = childFitsContentWidth
                     ? child.Width
                     : availableWidth;
 
@@ -3417,7 +3430,7 @@ public partial class Base : IDisposable
 
             if (childDock.HasFlag(Pos.Bottom) && !childDock.HasFlag(Pos.Left) && !childDock.HasFlag(Pos.Right))
             {
-                var width = childFitsContents
+                var width = childFitsContentWidth
                     ? child.Width
                     : availableWidth;
 
@@ -3445,6 +3458,8 @@ public partial class Base : IDisposable
 
         mInnerBounds = remainingBounds;
 
+        Point sizeToFitDockFillNodes = default;
+
         //
         // Fill uses the left over space, so do that now.
         //
@@ -3460,6 +3475,25 @@ public partial class Base : IDisposable
                 remainingBounds.X + childMargin.Left,
                 remainingBounds.Y + childMargin.Top
             );
+
+            Point newSize = new(
+                remainingBounds.Width - childMarginH,
+                remainingBounds.Height - childMarginV
+            );
+
+            var childMinimumSize = child.MinimumSize;
+            var neededX = Math.Max(0, childMinimumSize.X - newSize.X);
+            var neededY = Math.Max(0, childMinimumSize.Y - newSize.Y);
+
+            bool exhaustSize = false;
+            if (neededX > 0 || neededY > 0)
+            {
+                exhaustSize = true;
+                _requiredSizeForDockFillNodes = new Point(Width + neededX, Height + neededY);
+            }
+
+            newSize.X = Math.Max(childMinimumSize.X, newSize.X);
+            newSize.Y = Math.Max(childMinimumSize.Y, newSize.Y);
 
             if (child is IAutoSizeToContents { AutoSizeToContents: true })
             {
@@ -3489,12 +3523,15 @@ public partial class Base : IDisposable
             }
             else
             {
-                Point newSize = new(
-                    remainingBounds.Width - childMarginH,
-                    remainingBounds.Height - childMarginV
-                );
-
                 ApplyDockFill(child, newPosition, newSize);
+            }
+
+            if (exhaustSize)
+            {
+                remainingBounds.X += remainingBounds.Width;
+                remainingBounds.Width = 0;
+                remainingBounds.Y += remainingBounds.Height;
+                remainingBounds.Height = 0;
             }
 
             child.RecurseLayout(skin);
@@ -3506,6 +3543,11 @@ public partial class Base : IDisposable
         while (_deferredActions.TryDequeue(out var deferredAction))
         {
             deferredAction();
+        }
+
+        if (sizeToFitDockFillNodes != default)
+        {
+
         }
 
         // ReSharper disable once InvertIf
@@ -3733,6 +3775,11 @@ public partial class Base : IDisposable
     /// <returns>True if bounds changed.</returns>
     public virtual bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
     {
+        if (!resizeX && !resizeY)
+        {
+            return false;
+        }
+
         if (recursive)
         {
             var children = mChildren.ToArray();
@@ -3755,6 +3802,13 @@ public partial class Base : IDisposable
 
         size.X = size.X < 0 ? Width : (size.X + paddingH);
         size.Y = size.Y < 0 ? Height : (size.Y + paddingV);
+
+        if (_requiredSizeForDockFillNodes != default)
+        {
+            size.X = Math.Max(_requiredSizeForDockFillNodes.X, size.X);
+            size.Y = Math.Max(_requiredSizeForDockFillNodes.Y, size.Y);
+            _requiredSizeForDockFillNodes = default;
+        }
 
         size.X = Math.Max(Math.Min(size.X, _maximumSize.X < 1 ? size.X : _maximumSize.X), _minimumSize.X);
         size.Y = Math.Max(Math.Min(size.Y, _maximumSize.Y < 1 ? size.Y : _maximumSize.Y), _minimumSize.Y);
