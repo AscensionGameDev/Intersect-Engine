@@ -1396,15 +1396,17 @@ public partial class Player : Entity
             else
             {
                 var levelsToRemove = 0;
-                while (Exp < 0 && Level - levelsToRemove > 1)
+                while (Exp < 0)
                 {
-                    ++levelsToRemove;
-                    Exp += GetExperienceToNextLevel(Level - levelsToRemove);
-                }
-
-                if (Exp < 0)
-                {
-                    Exp = 0;
+                    if (Level - levelsToRemove > 1)
+                    {
+                        ++levelsToRemove;
+                        Exp += GetExperienceToNextLevel(Level - levelsToRemove);
+                    }
+                    else
+                    {
+                        Exp = 0;
+                    }
                 }
 
                 AddLevels(-levelsToRemove); //AddLevels includes PacketSender.SendExperience(this);
