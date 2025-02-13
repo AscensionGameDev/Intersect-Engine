@@ -81,6 +81,7 @@ public partial class ImagePanel : Base
             }
 
             _texture = value;
+            _textureName = _texture?.Name;
             RecomputeTextureSourceBounds();
             if (_texture != null)
             {
