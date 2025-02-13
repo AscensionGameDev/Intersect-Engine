@@ -5,7 +5,6 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
-using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Interface.Shared;
@@ -236,7 +235,6 @@ public partial class SelectCharacterWindow : Window
         _buttonDelete.Show();
         _buttonNew.Hide();
 
-        // we are rendering the player facing down, then we need to know the render order of the equipments
         var faceTexture = GameContentManager.Current.GetTexture(TextureType.Face, selectedPreviewMetadata.Face);
         if (faceTexture != default)
         {
@@ -261,6 +259,7 @@ public partial class SelectCharacterWindow : Window
             return;
         }
 
+        // we are rendering the player facing down, then we need to know the render order of the equipments
         for (var paperdollLayerIndex = 0; paperdollLayerIndex < Options.Instance.Equipment.Paperdoll.Down.Count; paperdollLayerIndex++)
         {
             var paperdollLayerType = Options.Instance.Equipment.Paperdoll.Down[paperdollLayerIndex];

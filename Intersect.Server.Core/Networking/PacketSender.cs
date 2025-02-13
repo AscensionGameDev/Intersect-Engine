@@ -1303,9 +1303,9 @@ public static partial class PacketSender
     }
 
     //CreateCharacterPacket
-    public static void SendCreateCharacter(Client client)
+    public static void SendCreateCharacter(Client client, bool force = false)
     {
-        client.Send(new CharacterCreationPacket());
+        client.Send(new CharacterCreationPacket(force: force));
     }
 
     //CharactersPacket

@@ -8,11 +8,12 @@ namespace Intersect.Client.Framework.Gwen.Control;
 /// <summary>
 ///     CheckBox with label.
 /// </summary>
-public partial class LabeledCheckBox : Base, ITextContainer
+public partial class LabeledCheckBox : Base, IAutoSizeToContents, ITextContainer
 {
     private readonly Checkbox _checkbox;
 
     private readonly Label _label;
+    private bool _autoSizeToContents;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="LabeledCheckBox" /> class.
@@ -217,4 +218,25 @@ public partial class LabeledCheckBox : Base, ITextContainer
         return true;
     }
 
+    public bool AutoSizeToContents
+    {
+        get => _autoSizeToContents;
+        set => SetAndDoIfChanged(ref _autoSizeToContents, value, InvalidateAutoSizeToContents);
+    }
+
+    private void InvalidateAutoSizeToContents(bool oldValue, bool newValue)
+    {
+        _label.AutoSizeToContents = newValue;
+        Invalidate();
+    }
+
+    protected override void Layout(Skin.Base skin)
+    {
+        if (_autoSizeToContents)
+        {
+            SizeToChildren();
+        }
+
+        base.Layout(skin);
+    }
 }

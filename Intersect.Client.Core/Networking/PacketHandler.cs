@@ -1392,7 +1392,7 @@ internal sealed partial class PacketHandler
     public void HandlePacket(IPacketSender packetSender, CharacterCreationPacket packet)
     {
         Globals.WaitingOnServer = false;
-        Interface.Interface.MenuUi.MainMenu.NotifyOpenCharacterCreation();
+        Interface.Interface.MenuUi.MainMenu.NotifyOpenCharacterCreation(packet.Force);
     }
 
     //AdminPanelPacket
