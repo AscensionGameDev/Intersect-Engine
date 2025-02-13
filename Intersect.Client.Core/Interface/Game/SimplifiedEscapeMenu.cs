@@ -50,8 +50,8 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
         if (this.IsHidden)
         {
             // Position the context menu within the game canvas if near borders.
-            var menuPosX = target.LocalPosToCanvas(new Point(0, 0)).X;
-            var menuPosY = target.LocalPosToCanvas(new Point(0, 0)).Y;
+            var menuPosX = target.ToCanvas(new Point(0, 0)).X;
+            var menuPosY = target.ToCanvas(new Point(0, 0)).Y;
             var newX = menuPosX;
             var newY = menuPosY + target.Height + 6;
 

@@ -219,7 +219,7 @@ public partial class MenuItem : Button
         _submenu.IsHidden = false;
         _submenu.BringToFront();
 
-        var p = LocalPosToCanvas(Point.Empty);
+        var p = ToCanvas(Point.Empty);
 
         // Strip menus open downwards
         if (_onStrip)

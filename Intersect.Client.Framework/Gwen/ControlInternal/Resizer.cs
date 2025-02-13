@@ -96,7 +96,7 @@ public partial class Resizer : Dragger
 
         var pCursorPos = _target.CanvasPosToLocal(new Point(x, y));
 
-        var delta = _target.LocalPosToCanvas(mHoldPos);
+        var delta = _target.ToCanvas(mHoldPos);
         delta.X -= x;
         delta.Y -= y;
 

@@ -140,8 +140,8 @@ public partial class DescriptionWindowBase : ComponentBase
         int HoveredControlX, HoveredControlY;
 
         // Bind description window to the HoveredControl position.
-        HoveredControlX = InputHandler.HoveredControl.LocalPosToCanvas(new Point(0, 0)).X;
-        HoveredControlY = InputHandler.HoveredControl.LocalPosToCanvas(new Point(0, 0)).Y;
+        HoveredControlX = InputHandler.HoveredControl.ToCanvas(new Point(0, 0)).X;
+        HoveredControlY = InputHandler.HoveredControl.ToCanvas(new Point(0, 0)).Y;
         newX = HoveredControlX + InputHandler.HoveredControl.Width;
         newY = itemDecriptionContainer != null ? itemDecriptionContainer.Bottom : HoveredControlY + InputHandler.HoveredControl.Height;
 
@@ -161,8 +161,8 @@ public partial class DescriptionWindowBase : ComponentBase
 
     public override void SetPosition(Base _icon, SpellDescriptionWindow _descriptionWindow)
     {
-        var X = _icon.LocalPosToCanvas(new Point(0, 0)).X;
-        var Y = _icon.LocalPosToCanvas(new Point(0, 0)).Y;
+        var X = _icon.ToCanvas(new Point(0, 0)).X;
+        var Y = _icon.ToCanvas(new Point(0, 0)).Y;
 
         X = X + _descriptionWindow.Width + _icon.Height;
         Y = Y + _icon.Height;

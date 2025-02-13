@@ -2307,7 +2307,7 @@ public partial class Base : IDisposable
     /// </summary>
     public virtual void SetPosition(Base _icon)
     {
-        SetPosition((int)_icon.LocalPosToCanvas(new Point(0, 0)).X, (int)_icon.LocalPosToCanvas(new Point(0, 0)).Y);
+        SetPosition((int)_icon.ToCanvas(new Point(0, 0)).X, (int)_icon.ToCanvas(new Point(0, 0)).Y);
     }
 
     /// <summary>
@@ -3580,31 +3580,32 @@ public partial class Base : IDisposable
         return mChildren.Contains(child);
     }
 
+    public Point ToCanvas(int x, int y)
+    {
+        if (mParent is not { } parent)
+        {
+            return new Point(x, y);
+        }
+
+        x += X;
+        y += Y;
+
+        // ReSharper disable once InvertIf
+        if (parent._innerPanel is { } innerPanel && innerPanel.IsChild(this))
+        {
+            x += innerPanel.X;
+            y += innerPanel.Y;
+        }
+
+        return mParent.ToCanvas(x, y);
+    }
+
     /// <summary>
     ///     Converts local coordinates to canvas coordinates.
     /// </summary>
-    /// <param name="pnt">Local coordinates.</param>
+    /// <param name="point">Local coordinates.</param>
     /// <returns>Canvas coordinates.</returns>
-    public virtual Point LocalPosToCanvas(Point pnt)
-    {
-        if (mParent == null)
-        {
-            return pnt;
-        }
-
-        var x = pnt.X + X;
-        var y = pnt.Y + Y;
-
-        // If our parent has an innerpanel and we're a child of it
-        // add its offset onto us.
-        if (mParent._innerPanel != null && mParent._innerPanel.IsChild(this))
-        {
-            x += mParent._innerPanel.X;
-            y += mParent._innerPanel.Y;
-        }
-
-        return mParent.LocalPosToCanvas(new Point(x, y));
-    }
+    public Point ToCanvas(Point point) => ToCanvas(point.X, point.Y);
 
     /// <summary>
     ///     Converts canvas coordinates to local coordinates.
