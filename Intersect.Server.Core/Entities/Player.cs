@@ -1422,6 +1422,9 @@ public partial class Player : Entity
         AddLevels(-levelsToRemove);
     }
 
+    /// <summary>
+    /// Checks if the player has enough Exp to level. Removes EXP and calls <see cref="AddLevels"/> with the number of levels gained.
+    /// </summary>
     private void CheckLevelUp()
     {
         var levelCount = 0;
