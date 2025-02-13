@@ -304,10 +304,7 @@ public partial class Animation : IAnimation
         mDisposeNextDraw = true;
     }
 
-    public bool Disposed()
-    {
-        return disposed;
-    }
+    public bool IsDisposed => disposed;
 
     public void SetPosition(float worldX, float worldY, int mapx, int mapy, Guid mapId, Direction dir, int z = 0)
     {

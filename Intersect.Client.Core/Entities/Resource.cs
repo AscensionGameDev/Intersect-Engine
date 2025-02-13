@@ -137,7 +137,7 @@ public partial class Resource : Entity, IResource
             RenderList = null;
         }
 
-        ClearAnimations(null);
+        ClearAnimations();
         GC.SuppressFinalize(this);
         mDisposed = true;
     }

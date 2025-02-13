@@ -21,11 +21,10 @@ public partial class Critter : Entity
 
         //setup Sprite & Animation
         Sprite = att.Sprite;
-        var anim = AnimationBase.Get(att.AnimationId);
-        if (anim != null)
+
+        if (AnimationBase.TryGet(att.AnimationId, out var animationDescriptor))
         {
-            var animInstance = new Animation(anim, true);
-            Animations.Add(animInstance);
+            TryAddAnimation(new Animation(animationDescriptor, true));
         }
 
         //Define Location
