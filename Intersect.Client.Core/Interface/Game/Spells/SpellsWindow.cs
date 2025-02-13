@@ -177,9 +177,9 @@ public partial class SpellsWindow
     {
         var rect = new FloatRect()
         {
-            X = mSpellWindow.LocalPosToCanvas(new Point(0, 0)).X -
+            X = mSpellWindow.ToCanvas(new Point(0, 0)).X -
                 (Items[0].Container.Padding.Left + Items[0].Container.Padding.Right) / 2,
-            Y = mSpellWindow.LocalPosToCanvas(new Point(0, 0)).Y -
+            Y = mSpellWindow.ToCanvas(new Point(0, 0)).Y -
                 (Items[0].Container.Padding.Top + Items[0].Container.Padding.Bottom) / 2,
             Width = mSpellWindow.Width + Items[0].Container.Padding.Left + Items[0].Container.Padding.Right,
             Height = mSpellWindow.Height + Items[0].Container.Padding.Top + Items[0].Container.Padding.Bottom

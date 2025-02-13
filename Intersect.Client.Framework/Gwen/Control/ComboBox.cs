@@ -26,7 +26,7 @@ public partial class ComboBox : Button
 
     private string mHoverMenuSound;
 
-    private bool mMenuAbove;
+    private bool _positionMenuAbove;
 
     //Sound Effects
     private string mOpenMenuSound;
@@ -116,22 +116,20 @@ public partial class ComboBox : Button
     /// </summary>
     public event GwenEventHandler<ItemSelectedEventArgs>? ItemSelected;
 
-    public void SetMenuAbove()
+    public bool OpenMenuAbove
     {
-        mMenuAbove = true;
-        if (IsOpen)
-        {
-            Open();
-        }
+        get => _positionMenuAbove;
+        set => SetAndDoIfChanged(ref _positionMenuAbove, value, UpdatePositionIfOpen);
     }
 
-    public void SetMenuBelow()
+    private void UpdatePositionIfOpen()
     {
-        mMenuAbove = false;
-        if (IsOpen)
+        if (!IsOpen)
         {
-            Open();
+            return;
         }
+
+        Open();
     }
 
     public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
@@ -142,7 +140,7 @@ public partial class ComboBox : Button
             return null;
         }
 
-        obj.Add("MenuAbove", mMenuAbove);
+        obj.Add("MenuAbove", _positionMenuAbove);
         obj.Add("DropDownButton", _arrowIcon.GetJson());
         obj.Add("OpenMenuSound", mOpenMenuSound);
         obj.Add("CloseMenuSound", mCloseMenuSound);
@@ -158,7 +156,7 @@ public partial class ComboBox : Button
         base.LoadJson(obj);
         if (obj["MenuAbove"] != null)
         {
-            mMenuAbove = (bool)obj["MenuAbove"];
+            _positionMenuAbove = (bool)obj["MenuAbove"];
         }
 
         if (obj["Menu"] != null)
@@ -397,20 +395,57 @@ public partial class ComboBox : Button
         _menu.IsHidden = false;
         _menu.BringToFront();
 
-        var p = LocalPosToCanvas(Point.Empty);
-        var height = _menu.Children.OfType<MenuItem>().Sum(child => child.Height);
+        var menuPadding = _menu.Padding;
+        var menuPaddingH = menuPadding.Left + menuPadding.Right;
+        var menuPaddingV = menuPadding.Top + menuPadding.Bottom;
+
+        var menuMargin = _menu.Margin;
+        var menuMarginV = menuMargin.Top + menuMargin.Bottom;
+
         var width = Width;
-        _menu.MaximumSize = _menu.MaximumSize with { X = width };
-        if (mMenuAbove)
+        var totalChildHeight = 0;
+        var menuItems = _menu.Children.OfType<MenuItem>().ToArray();
+        foreach (var menuItem in menuItems)
         {
-            _menu.RestrictToParent = false;
-            _menu.SetBounds(new Rectangle(p.X, p.Y - _menu.Height, width, height));
-            _menu.RestrictToParent = true;
+            menuItem.SizeToContents();
+            totalChildHeight += menuItem.OuterHeight;
+            // TODO(2553): I thought this was the solution, it isn't. Results in menu growing each time it's opened.
+            // width = Math.Max(width, menuItem.OuterWidth + menuPaddingH);
+        }
+
+        var offset = ToCanvas(default);
+        _menu.MaximumSize = _menu.MaximumSize with { X = width };
+
+        var canvasBounds = Canvas?.Bounds ?? new Rectangle(0, 0, int.MaxValue, int.MinValue);
+
+        var expectedMenuHeight = totalChildHeight + menuPaddingV;
+        var maximumSize = _menu.MaximumSize;
+        if (maximumSize.Y > 0)
+        {
+            expectedMenuHeight = Math.Min(expectedMenuHeight, maximumSize.Y);
+        }
+
+        Rectangle newBounds = new(offset.X, offset.Y, width, expectedMenuHeight);
+        newBounds.X = Math.Clamp(newBounds.X, canvasBounds.Left, canvasBounds.Right - width);
+
+        var positionAbove = canvasBounds.Bottom < newBounds.Bottom;
+        if (!positionAbove)
+        {
+            positionAbove = _positionMenuAbove && canvasBounds.Top + newBounds.Height < newBounds.Top;
+        }
+
+        if (positionAbove)
+        {
+            newBounds.Y -= newBounds.Height;
         }
         else
         {
-            _menu.SetBounds(new Rectangle(p.X, p.Y + Height, width, height));
+            newBounds.Y += Height;
         }
+
+        _menu.RestrictToParent = false;
+        _menu.SetBounds(newBounds);
+        _menu.RestrictToParent = true;
 
         base.PlaySound(mOpenMenuSound);
     }

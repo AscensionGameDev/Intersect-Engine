@@ -240,8 +240,8 @@ public partial class BankWindow
     {
         var rect = new FloatRect()
         {
-            X = mBankWindow.LocalPosToCanvas(new Point(0, 0)).X - sItemXPadding / 2,
-            Y = mBankWindow.LocalPosToCanvas(new Point(0, 0)).Y - sItemYPadding / 2,
+            X = mBankWindow.ToCanvas(new Point(0, 0)).X - sItemXPadding / 2,
+            Y = mBankWindow.ToCanvas(new Point(0, 0)).Y - sItemYPadding / 2,
             Width = mBankWindow.Width + sItemXPadding,
             Height = mBankWindow.Height + sItemYPadding
         };

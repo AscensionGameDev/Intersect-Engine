@@ -58,8 +58,8 @@ public partial class SpellStatus
             _descriptionWindow = null;
         }
 
-        var X = _statusIcon.LocalPosToCanvas(new Point(0, 0)).X;
-        var Y = _statusIcon.LocalPosToCanvas(new Point(0, 0)).Y;
+        var X = _statusIcon.ToCanvas(new Point(0, 0)).X;
+        var Y = _statusIcon.ToCanvas(new Point(0, 0)).Y;
 
         _descriptionWindow = new SpellDescriptionWindow(_status.SpellId, _statusIcon);
     }

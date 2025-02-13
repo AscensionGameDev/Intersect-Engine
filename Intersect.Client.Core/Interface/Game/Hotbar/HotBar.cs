@@ -65,8 +65,8 @@ public partial class HotBarWindow
     {
         var rect = new FloatRect
         {
-            X = HotbarWindow.LocalPosToCanvas(default).X,
-            Y = HotbarWindow.LocalPosToCanvas(default).Y,
+            X = HotbarWindow.ToCanvas(default).X,
+            Y = HotbarWindow.ToCanvas(default).Y,
             Width = HotbarWindow.Width,
             Height = HotbarWindow.Height,
         };

@@ -335,9 +335,9 @@ public partial class InventoryWindow
     {
         var rect = new FloatRect()
         {
-            X = mInventoryWindow.LocalPosToCanvas(new Point(0, 0)).X -
+            X = mInventoryWindow.ToCanvas(new Point(0, 0)).X -
                 (Items[0].Container.Padding.Left + Items[0].Container.Padding.Right) / 2,
-            Y = mInventoryWindow.LocalPosToCanvas(new Point(0, 0)).Y -
+            Y = mInventoryWindow.ToCanvas(new Point(0, 0)).Y -
                 (Items[0].Container.Padding.Top + Items[0].Container.Padding.Bottom) / 2,
             Width = mInventoryWindow.Width + Items[0].Container.Padding.Left + Items[0].Container.Padding.Right,
             Height = mInventoryWindow.Height + Items[0].Container.Padding.Top + Items[0].Container.Padding.Bottom

@@ -74,8 +74,8 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
         {
             case Button button:
                 _entity = _me.TargetBox?.MyEntity;
-                posX = button.LocalPosToCanvas(Point.Empty).X;
-                posY = button.LocalPosToCanvas(Point.Empty).Y;
+                posX = button.ToCanvas(Point.Empty).X;
+                posY = button.ToCanvas(Point.Empty).Y;
                 newX = posX;
                 newY = posY + button.Height;
                 break;

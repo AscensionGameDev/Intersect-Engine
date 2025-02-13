@@ -183,8 +183,8 @@ public partial class TradingWindow
     {
         var rect = new FloatRect()
         {
-            X = mTradeWindow.LocalPosToCanvas(new Point(0, 0)).X - sItemXPadding / 2,
-            Y = mTradeWindow.LocalPosToCanvas(new Point(0, 0)).Y - sItemYPadding / 2,
+            X = mTradeWindow.ToCanvas(new Point(0, 0)).X - sItemXPadding / 2,
+            Y = mTradeWindow.ToCanvas(new Point(0, 0)).Y - sItemYPadding / 2,
             Width = mTradeWindow.Width + sItemXPadding,
             Height = mTradeWindow.Height + sItemYPadding
         };

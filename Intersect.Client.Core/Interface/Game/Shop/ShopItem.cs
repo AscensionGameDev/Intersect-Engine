@@ -145,8 +145,8 @@ public partial class ShopItem
     {
         var rect = new FloatRect()
         {
-            X = Pnl.LocalPosToCanvas(new Point(0, 0)).X,
-            Y = Pnl.LocalPosToCanvas(new Point(0, 0)).Y,
+            X = Pnl.ToCanvas(new Point(0, 0)).X,
+            Y = Pnl.ToCanvas(new Point(0, 0)).Y,
             Width = Pnl.Width,
             Height = Pnl.Height
         };
