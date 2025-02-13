@@ -1254,14 +1254,18 @@ public partial class Player : Entity
     }
 
     /// <summary>
-    /// Adds levels to the player based on what level they're currently at. Does nothing if levels param is 0.
+    /// Adds levels to the player based on what level they're currently at. And then sends all relevent data through <see cref="PacketSender"/>
+    /// <para>If <paramref name="levels"/> is zero, will still call <see cref="PacketSender.SendExperience"/> but do nothing else.</para>
     /// </summary>
     /// <param name="levels">Adds levels if positive, removes if negative and does nothing if zero.</param>
     /// <param name="resetExperience">If levels is not zero, and this is true, resets the Exp to zero after adjusting levels.</param>
     public void AddLevels(int levels = 1, bool resetExperience = true)
     {
         if (levels == 0)
+        {
+            PacketSender.SendExperience(this);
             return;
+        }
 
         ClassBase? classDescriptor = null;
         List<(string, Color)> messageList = [];
@@ -1408,14 +1412,7 @@ public partial class Player : Entity
             }
         }
 
-        if (levelsToRemove > 0)  // AddLevels can't handle zero value. 
-        {
-            AddLevels(-levelsToRemove);
-        }
-        else
-        {
-            PacketSender.SendExperience(this);
-        }
+        AddLevels(-levelsToRemove);
     }
 
     private bool CheckLevelUp()
@@ -1429,10 +1426,7 @@ public partial class Player : Entity
             experienceToNextLevel = GetExperienceToNextLevel(Level + levelCount);
         }
 
-        if (levelCount > 1) // AddLevels can't handle zero value. 
-        {
-            AddLevels(levelCount, false);
-        }
+        AddLevels(levelCount, false);
 
         return levelCount > 1;
     }
