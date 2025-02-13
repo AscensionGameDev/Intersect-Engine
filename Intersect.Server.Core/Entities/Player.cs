@@ -1374,17 +1374,14 @@ public partial class Player : Entity
             TakeExperience(-amount);
             return;
         }
-
-        Exp += (int)Math.Round(amount + (amount * (GetEquipmentBonusEffect(ItemEffect.EXP) / 100f)));
+        var equipmentBonus = (int)Math.Round(amount * GetEquipmentBonusEffect(ItemEffect.EXP) / 100f);
+        Exp += amount + equipmentBonus;
         if (Exp < 0)
         {
             Exp = 0;
         }
 
-        if (!CheckLevelUp())
-        {
-            PacketSender.SendExperience(this);
-        }
+        CheckLevelUp();
     }
 
     public void TakeExperience(long amount, bool enableLosingLevels = false, bool force = false)
@@ -1425,7 +1422,7 @@ public partial class Player : Entity
         AddLevels(-levelsToRemove);
     }
 
-    private bool CheckLevelUp()
+    private void CheckLevelUp()
     {
         var levelCount = 0;
         var experienceToNextLevel = GetExperienceToNextLevel(Level + levelCount);
@@ -1436,9 +1433,7 @@ public partial class Player : Entity
             experienceToNextLevel = GetExperienceToNextLevel(Level + levelCount);
         }
 
-        AddLevels(levelCount, false);
-
-        return levelCount > 1;
+        AddLevels(levelCount, false); //If zero, still calls PacketSender.SendExperience
     }
 
     #endregion
