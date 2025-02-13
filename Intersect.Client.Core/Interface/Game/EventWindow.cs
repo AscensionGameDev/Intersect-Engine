@@ -89,6 +89,7 @@ public partial class EventWindow : Panel
             MaintainAspectRatio = true,
             Margin = new Margin(8, 8, 0, 8),
             MaximumSize = new Point(128, 128),
+            RestrictToParent = true,
         };
 
         _promptScroller = new ScrollControl(_promptPanel, nameof(_promptScroller))
