@@ -123,12 +123,12 @@ public partial class GameInterface : MutableInterface
 
     public AnnouncementWindow AnnouncementWindow { get; }
 
-    public Menu GameMenu { get; private set; }
+    public MenuContainer GameMenu { get; private set; }
 
     public void InitGameGui()
     {
         mChatBox = new Chatbox(GameCanvas, this);
-        GameMenu = new Menu(GameCanvas);
+        GameMenu = new MenuContainer(GameCanvas);
         Hotbar = new HotBarWindow(GameCanvas);
         PlayerBox = new EntityBox(GameCanvas, EntityType.Player, Globals.Me, true);
         PlayerBox.SetEntity(Globals.Me);
