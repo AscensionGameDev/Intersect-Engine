@@ -1421,13 +1421,12 @@ public partial class Player : Entity
             experienceToNextLevel = GetExperienceToNextLevel(Level + levelCount);
         }
 
-        if (levelCount <= 0)
+        if (levelCount > 1)
         {
-            return false;
+            AddLevels(levelCount, false);
         }
 
-        AddLevels(levelCount, false);
-        return true;
+        return levelCount > 1;
     }
 
     #endregion
