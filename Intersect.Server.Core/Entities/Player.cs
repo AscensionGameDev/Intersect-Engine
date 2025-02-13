@@ -1413,11 +1413,12 @@ public partial class Player : Entity
     private bool CheckLevelUp()
     {
         var levelCount = 0;
-        while (Exp >= GetExperienceToNextLevel(Level + levelCount) &&
-               GetExperienceToNextLevel(Level + levelCount) > 0)
+        var experienceToNextLevel = GetExperienceToNextLevel(Level + levelCount);
+        while (Exp >= experienceToNextLevel && experienceToNextLevel > 0)
         {
-            Exp -= GetExperienceToNextLevel(Level + levelCount);
+            Exp -= experienceToNextLevel;
             levelCount++;
+            experienceToNextLevel = GetExperienceToNextLevel(Level + levelCount);
         }
 
         if (levelCount <= 0)
