@@ -3576,8 +3576,11 @@ public partial class Base : IDisposable
         }
     }
 
+    protected Point _dockFillSize;
+
     protected virtual void ApplyDockFill(Base child, Point position, Point size)
     {
+        child._dockFillSize = size;
         child.SetBounds(position, size);
     }
 

@@ -1,5 +1,4 @@
 using Intersect.Client.Core;
-using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Configuration;
 using Intersect.Utilities;
 
@@ -7,60 +6,44 @@ namespace Intersect.Client.Interface.Game.Typewriting;
 
 internal sealed class Typewriter
 {
-    private static List<char> _fullStopChars => ClientConfiguration.Instance.TypewriterFullStopCharacters;
-    private static long _fullStopSpeed => ClientConfiguration.Instance.TypewriterFullStopDelay;
-    private static List<char> _partialStopChars => ClientConfiguration.Instance.TypewriterPauseCharacters;
-    private static long _partialStopSpeed => ClientConfiguration.Instance.TypewriterPauseDelay;
-    private static long _typingSpeed => ClientConfiguration.Instance.TypewriterPartDelay;
+    public delegate void TextWrittenHandler(string text);
 
-    private List<Label> _labels;
-    private string[] _lines;
-    private int _lineCount;
-    private int _lineIndex;
-    private int _charIndex;
-    private char? _lastChar;
+    private static HashSet<string> FullStops => ClientConfiguration.Instance.TypewriterFullStops;
+    private static long FullStopSpeed => ClientConfiguration.Instance.TypewriterFullStopDelay;
+    private static HashSet<string> PartialStops => ClientConfiguration.Instance.TypewriterPauses;
+    private static long PartialStopSpeed => ClientConfiguration.Instance.TypewriterPauseDelay;
+    private static long TypingSpeed => ClientConfiguration.Instance.TypewriterPartDelay;
+
+    private int _offset;
+    private string? _lastText;
     private long _nextUpdateTime;
+
+    private readonly TextWrittenHandler _textWrittenHandler;
+    private readonly string _text;
 
     public bool IsDone { get; private set; }
     public long DoneAtMilliseconds { get; private set; }
 
-    public void Initialize(List<Label> labels)
+    public Typewriter(string text, TextWrittenHandler textWrittenHandler)
     {
+        _text = text.ReplaceLineEndings("\n");
+        _textWrittenHandler = textWrittenHandler;
         _nextUpdateTime = Timing.Global.MillisecondsUtc;
-        _labels = labels;
-        _lines = _labels.Select(l => l.Text).ToArray();
-        foreach (var label in _labels)
-        {
-            label.SetText(string.Empty);
-        }
-        _lineIndex = 0;
-        _charIndex = 0;
-        _lastChar = null;
-        _lineCount = _lines.Length;
+
+        _offset = 0;
+        _lastText = null;
+
         IsDone = false;
     }
 
-    private void NewLine()
-    {
-        _lineIndex++;
-        if (_lineIndex >= _lineCount)
-        {
-            End();
-            return;
-        }
-
-        _charIndex = 0;
-        _lastChar = null;
-    }
-
-    public void Write(string? voice)
+    public void Write(string? soundName)
     {
         if (IsDone)
         {
             return;
         }
 
-        if (_lineIndex != Math.Clamp(_lineIndex, 0, Math.Min(_lineCount, _labels.Count)))
+        if (_offset >= _text.Length)
         {
             End();
             return;
@@ -71,71 +54,78 @@ internal sealed class Typewriter
             return;
         }
 
-        if (!string.IsNullOrEmpty(voice) && _charIndex % ClientConfiguration.Instance.TypewriterSoundFrequency == 0)
+        var emitSound = false;
+        while (_nextUpdateTime <= Timing.Global.MillisecondsUtc)
         {
-            Audio.StopAllGameSoundsOf(ClientConfiguration.Instance.TypewriterSounds.ToArray());
-            Audio.AddGameSound(voice ?? string.Empty, false);
+            if (_offset >= _text.Length)
+            {
+                End();
+                break;
+            }
+
+            emitSound |= _offset % ClientConfiguration.Instance.TypewriterSoundFrequency == 0;
+
+            string nextText;
+            if (char.IsSurrogatePair(_text, _offset))
+            {
+                nextText = _text[_offset..(_offset + 2)];
+                _offset += 2;
+            }
+            else
+            {
+                nextText = _text[_offset..(_offset + 1)];
+                ++_offset;
+            }
+
+            _nextUpdateTime += GetTypingDelayFor(nextText, _lastText);
+            _textWrittenHandler(nextText);
+            _lastText = nextText;
         }
 
-        var currentLine = _lines[_lineIndex];
-        _charIndex++;
-
-        if (_charIndex >= currentLine.Length)
+        if (!emitSound || string.IsNullOrEmpty(soundName))
         {
-            _labels[_lineIndex].SetText(currentLine);
-            NewLine();
             return;
         }
 
-        _lastChar = currentLine[_charIndex - 1];
-        var written = currentLine[.._charIndex];
-        _labels[_lineIndex].SetText(written);
-
-        _nextUpdateTime = Timing.Global.MillisecondsUtc + GetTypingDelayFor(currentLine[_charIndex], _lastChar);
+        Audio.StopAllGameSoundsOf(ClientConfiguration.Instance.TypewriterSounds.ToArray());
+        Audio.AddGameSound(soundName, false);
     }
 
-    private static long GetTypingDelayFor(char currentChar, char? lastChar)
+    private static long GetTypingDelayFor(string next, string? last)
     {
-        if (lastChar == null)
+        if (last == null)
         {
-            return _typingSpeed;
+            return TypingSpeed;
         }
 
-        var lastCharVal = lastChar.Value;
-
-        if (currentChar == lastCharVal)
+        if (next == "\n")
         {
-            return _typingSpeed;
+            return FullStopSpeed;
         }
 
-        if (_fullStopChars.Contains(lastCharVal))
+        if (next == last)
         {
-            return _fullStopSpeed;
+            return TypingSpeed;
         }
 
-        if (_partialStopChars.Contains(lastCharVal))
+        if (FullStops.Contains(last))
         {
-            return _partialStopSpeed;
+            return FullStopSpeed;
         }
 
-        return _typingSpeed;
+        return PartialStops.Contains(last) ? PartialStopSpeed : TypingSpeed;
     }
 
     public void End()
     {
-        if (IsDone || (_lines?.Length ?? 0) == 0)
+        if (IsDone || _text.Length < 1)
         {
             return;
         }
 
-        for (var i = 0; i < _lineCount; i++)
+        if (_offset < _text.Length)
         {
-            if (i >= _labels.Count)
-            {
-                continue;
-            }
-
-            _labels[i].SetText(_lines[i]);
+            _textWrittenHandler(_text[_offset..]);
         }
 
         IsDone = true;
