@@ -1409,7 +1409,10 @@ public partial class Player : Entity
                     }
                 }
 
-                AddLevels(-levelsToRemove); //AddLevels includes PacketSender.SendExperience(this);
+                if(levelsToRemove > 0)
+                    AddLevels(-levelsToRemove); //Can't handle zero value. 
+                else
+                    PacketSender.SendExperience(this);
             }
         }
     }
