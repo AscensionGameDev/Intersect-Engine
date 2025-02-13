@@ -98,8 +98,6 @@ internal static partial class Main
             Globals.InputManager.Update(deltaTime);
             Audio.Update();
 
-            Time.Update();
-
             Globals.OnGameUpdate(deltaTime);
         }
     }
@@ -269,6 +267,7 @@ internal static partial class Main
         }
 
         Graphics.UpdatePlayerLight();
+        Time.Update();
     }
 
     public static void JoinGame()
