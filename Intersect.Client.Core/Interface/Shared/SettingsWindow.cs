@@ -418,7 +418,6 @@ public partial class SettingsWindow : Window
         _worldScale = new LabeledSlider(parent: _videoContainer, name: nameof(_worldScale))
         {
             Dock = Pos.Top,
-            IsDisabled = !Options.IsLoaded,
             Font = _defaultFont,
             Label = Strings.Settings.WorldScale,
             Orientation = Orientation.LeftToRight,
@@ -554,6 +553,13 @@ public partial class SettingsWindow : Window
     protected override void EnsureInitialized()
     {
         LoadJsonUi(stage: UI.Shared, resolution: Graphics.Renderer?.GetResolutionString());
+    }
+
+    protected override void OnJsonReloaded()
+    {
+        base.OnJsonReloaded();
+
+        UpdateWorldScaleControls();
     }
 
     public override bool IsBlockingInput => _keybindingEditBtn is not null;

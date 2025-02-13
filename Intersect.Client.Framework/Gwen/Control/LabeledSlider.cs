@@ -272,6 +272,11 @@ public partial class LabeledSlider : Base, ISmartAutoSizeToContents, INumericInp
     /// </summary>
     public event GwenEventHandler<ValueChangedEventArgs<double>>? ValueChanged;
 
+    protected override void OnDisabledChanged(bool oldValue, bool newValue)
+    {
+        base.OnDisabledChanged(oldValue, newValue);
+    }
+
     protected override void Layout(Skin.Base skin)
     {
         if (_recomputeValueMinimumSize)
