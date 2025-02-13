@@ -1239,7 +1239,8 @@ public partial class Player : Entity
     /// </summary>
     /// <param name="newLevel">Does nothing if less than 1. Clamped to <see cref="Options"/> MaxLevel</param>
     /// <param name="resetExperience">Unless <paramref name="newLevel"/> is zero, will reset Exp to 0 if true.</param>
-    public void SetLevel(int newLevel, bool resetExperience = false)
+    /// <param name="sendPackets">If set to false, will not send packets or <see cref="RecalculateStatsAndPoints"/> or <see cref="UnequipInvalidItems"/>/></param>
+    public void SetLevel(int newLevel, bool resetExperience = false, bool sendPackets = true)
     {
         if (newLevel < 1)
         {
@@ -1252,10 +1253,13 @@ public partial class Player : Entity
             Exp = 0;
         }
 
-        RecalculateStatsAndPoints();
-        UnequipInvalidItems();
-        PacketSender.SendEntityDataToProximity(this);
-        PacketSender.SendExperience(this);
+        if (sendPackets)
+        {
+            RecalculateStatsAndPoints();
+            UnequipInvalidItems();
+            PacketSender.SendEntityDataToProximity(this);
+            PacketSender.SendExperience(this);
+        }
     }
 
     /// <summary>
@@ -1280,7 +1284,7 @@ public partial class Player : Entity
         {
             while (Level < targetLevel)
             {
-                SetLevel(Level + 1, resetExperience);
+                SetLevel(Level + 1, resetExperience, sendPackets: false);
                 messageList.Add((Strings.Player.LevelUp.ToString(Level), CustomColors.Combat.LevelUp));
 
                 if ((classDescriptor?.Id == ClassId || ClassBase.TryGet(ClassId, out classDescriptor)) && classDescriptor?.Spells != default)
@@ -1308,7 +1312,7 @@ public partial class Player : Entity
         {
             while (targetLevel < Level)
             {
-                SetLevel(Level - 1);
+                SetLevel(Level - 1, sendPackets:false);
                 messageList.Add((Strings.Player.LevelLost.ToString(Level), CustomColors.Combat.LevelLost));
 
                 if ((classDescriptor?.Id == ClassId || ClassBase.TryGet(ClassId, out classDescriptor)) && classDescriptor?.Spells != default)
@@ -1332,12 +1336,13 @@ public partial class Player : Entity
             }
         }
 
-        RecalculateStatsAndPoints(); //noted redundancy. Included in SetLevel
-        UnequipInvalidItems(); //noted redundancy. Included in SetLevel
-        PacketSender.SendExperience(this); //noted redundancy. Included in SetLevel
+        RecalculateStatsAndPoints();
+        UnequipInvalidItems();
+        PacketSender.SendEntityDataToProximity(this);
+        PacketSender.SendExperience(this);
+
         PacketSender.SendPointsTo(this);
         PacketSender.SendPlayerSpells(this);
-        PacketSender.SendEntityDataToProximity(this);
 
         if (StatPoints > 0)
         {
