@@ -1234,14 +1234,19 @@ public partial class Player : Entity
 
     #region Leveling
 
-    public void SetLevel(int level, bool resetExperience = false)
+    /// <summary>
+    /// Sets the player's level to a sepecific value. Then sends all relevent data through <see cref="PacketSender"/>
+    /// </summary>
+    /// <param name="newLevel">Does nothing if less than 1. Clamped to <see cref="Options"/> MaxLevel</param>
+    /// <param name="resetExperience">Unless <paramref name="newLevel"/> is zero, will reset Exp to 0 if true.</param>
+    public void SetLevel(int newLevel, bool resetExperience = false)
     {
-        if (level < 1)
+        if (newLevel < 1)
         {
             return;
         }
 
-        Level = Math.Min(Options.Instance.Player.MaxLevel, level);
+        Level = Math.Min(Options.Instance.Player.MaxLevel, newLevel);
         if (resetExperience)
         {
             Exp = 0;
@@ -1254,7 +1259,7 @@ public partial class Player : Entity
     }
 
     /// <summary>
-    /// Adds levels to the player based on what level they're currently at. And then sends all relevent data through <see cref="PacketSender"/>
+    /// Adds levels to the player based on what level they're currently at. Then sends all relevent data through <see cref="PacketSender"/>
     /// <para>If <paramref name="amount"/> is zero, will still call <see cref="PacketSender.SendExperience"/> but do nothing else.</para>
     /// </summary>
     /// <param name="amount">Adds levels if positive, removes if negative and does nothing if zero.</param>
@@ -1327,9 +1332,9 @@ public partial class Player : Entity
             }
         }
 
-        RecalculateStatsAndPoints();
-        UnequipInvalidItems();
-        PacketSender.SendExperience(this);
+        RecalculateStatsAndPoints(); //noted redundancy. Included in SetLevel
+        UnequipInvalidItems(); //noted redundancy. Included in SetLevel
+        PacketSender.SendExperience(this); //noted redundancy. Included in SetLevel
         PacketSender.SendPointsTo(this);
         PacketSender.SendPlayerSpells(this);
         PacketSender.SendEntityDataToProximity(this);
