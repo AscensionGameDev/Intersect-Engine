@@ -759,7 +759,12 @@ public partial class Base : IDisposable
     public bool IsDisabled
     {
         get => (_inheritParentEnablementProperties && Parent != default) ? Parent.IsDisabled : _disabled;
-        set => SetAndDoIfChanged(ref _disabled, value, Invalidate);
+        set => SetAndDoIfChanged(ref _disabled, value, OnDisabledChanged);
+    }
+
+    protected virtual void OnDisabledChanged(bool oldValue, bool newValue)
+    {
+        Invalidate();
     }
 
     /// <summary>
@@ -1293,6 +1298,7 @@ public partial class Base : IDisposable
                     {
                         LoadJson(obj, true);
                         ProcessAlignments();
+                        OnJsonReloaded();
                     }
                 }
                 catch (Exception exception)
@@ -1307,6 +1313,11 @@ public partial class Base : IDisposable
                 GameContentManager.Current?.SaveUIJson(stage, Name, GetJsonUI(true), resolution);
             }
         });
+    }
+
+    protected virtual void OnJsonReloaded()
+    {
+
     }
 
     public virtual void LoadJson(JToken token, bool isRoot = default)
@@ -4550,5 +4561,3 @@ public partial class Base : IDisposable
         return true;
     }
 }
-
-public delegate void ValueChangeHandler<TValue>(TValue oldValue, TValue newValue);
