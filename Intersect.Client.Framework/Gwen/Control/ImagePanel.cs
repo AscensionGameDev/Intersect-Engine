@@ -160,6 +160,11 @@ public partial class ImagePanel : Base
         );
     }
 
+    protected override void OnPositionChanged(Point oldPosition, Point newPosition)
+    {
+        base.OnPositionChanged(oldPosition, newPosition);
+    }
+
     /// <summary>
     ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
     /// </summary>
@@ -404,34 +409,42 @@ public partial class ImagePanel : Base
 
     public override bool SetBounds(int x, int y, int width, int height)
     {
+        var updatedX = x;
+        var updatedY = y;
+        var updatedWidth = width;
+        var updatedHeight = height;
         if (MaintainAspectRatio)
         {
             var bounds = Bounds;
             var aspectRatio = _textureAspectRatio;
-            if (width == bounds.Width)
+            if (updatedWidth == bounds.Width)
             {
-                if (height != bounds.Height)
+                if (updatedHeight != bounds.Height)
                 {
-                    var aspectRatioWidth = (int)(height * aspectRatio);
-                    if (aspectRatioWidth > width)
+                    var aspectRatioWidth = (int)(updatedHeight * aspectRatio);
+                    if (aspectRatioWidth > updatedWidth)
                     {
-                        var deltaWidth = width - aspectRatioWidth;
-                        x += deltaWidth / 2;
-                        width = aspectRatioWidth;
+                        var deltaWidth = updatedWidth - aspectRatioWidth;
+                        updatedX += deltaWidth / 2;
+                        updatedWidth = aspectRatioWidth;
+                        if (RestrictToParent)
+                        {
+                            updatedX = Math.Max(0, updatedX);
+                        }
                     }
                 }
             }
-            else if (height == bounds.Height)
+            else if (updatedHeight == bounds.Height)
             {
-                var aspectRatioHeight = (int)(width / aspectRatio);
-                if (aspectRatioHeight > height)
+                var aspectRatioHeight = (int)(updatedWidth / aspectRatio);
+                if (aspectRatioHeight > updatedHeight)
                 {
-                    height = aspectRatioHeight;
+                    updatedHeight = aspectRatioHeight;
                 }
             }
         }
 
-        return base.SetBounds(x, y, width, height);
+        return base.SetBounds(updatedX, updatedY, updatedWidth, updatedHeight);
     }
 
     public override Point GetChildrenSize()
