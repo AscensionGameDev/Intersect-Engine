@@ -1395,11 +1395,11 @@ public partial class Player : Entity
             }
             else
             {
-                var levelCount = 0;
-                while (Exp < 0 && Level + levelCount > 1)
+                var levelsToRemove = 0;
+                while (Exp < 0 && Level - levelsToRemove > 1)
                 {
-                    --levelCount;
-                    Exp += GetExperienceToNextLevel(Level + levelCount);
+                    ++levelsToRemove;
+                    Exp += GetExperienceToNextLevel(Level - levelsToRemove);
                 }
 
                 if (Exp < 0)
@@ -1407,7 +1407,7 @@ public partial class Player : Entity
                     Exp = 0;
                 }
 
-                AddLevels(levelCount); //AddLevels includes PacketSender.SendExperience(this);
+                AddLevels(-levelsToRemove); //AddLevels includes PacketSender.SendExperience(this);
             }
         }
     }
