@@ -1385,6 +1385,7 @@ public partial class Player : Entity
         }
 
         Exp -= amount;
+
         if (Exp < 0)
         {
             if (!enableLosingLevels || Level == 1)
@@ -1401,13 +1402,12 @@ public partial class Player : Entity
                     Exp += GetExperienceToNextLevel(Level + levelCount);
                 }
 
-                AddLevels(levelCount);
-
                 if (Exp < 0)
                 {
                     Exp = 0;
-                    PacketSender.SendExperience(this);
                 }
+
+                AddLevels(levelCount); //AddLevels includes PacketSender.SendExperience(this);
             }
         }
     }
