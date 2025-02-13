@@ -656,7 +656,7 @@ public static partial class Strings
         public static LocalizedString Back = @"Back";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Class = @"Class:";
+        public static LocalizedString Class = @"Class";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Create = @"Create";
@@ -665,7 +665,7 @@ public static partial class Strings
         public static LocalizedString Female = @"Female";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Gender = @"Gender:";
+        public static LocalizedString Gender = @"Gender";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Hint = @"Customize";
@@ -680,7 +680,7 @@ public static partial class Strings
         public static LocalizedString Male = @"Male";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Name = @"Name:";
+        public static LocalizedString Name = @"Name";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Title = @"Create a New Character";

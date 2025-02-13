@@ -27,7 +27,7 @@ public partial class LabeledComboBox : Base, IAutoSizeToContents, ITextContainer
             Alignment = [Alignments.CenterV],
             Dock = Pos.Left | Pos.CenterV,
             Margin = new Margin(8, 0, 0, 0),
-            Padding = Padding.Two,
+            Padding = new Padding(8, 4, 0, 4),
         };
 
         _comboBox.ItemSelected += (_, args) => ItemSelected?.Invoke(this, args);
@@ -88,7 +88,7 @@ public partial class LabeledComboBox : Base, IAutoSizeToContents, ITextContainer
     {
         base.OnDockChanged(oldDock, newDock);
 
-        if (newDock.HasFlag(Pos.Fill))
+        if (newDock.HasFlag(Pos.Fill) || !_autoSizeToContents && (newDock.HasFlag(Pos.Bottom) || newDock.HasFlag(Pos.Top)))
         {
             _comboBox.Dock = Pos.Fill | Pos.CenterV;
             _comboBox.AutoSizeToContents = false;
