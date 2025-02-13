@@ -1386,34 +1386,27 @@ public partial class Player : Entity
 
         Exp -= amount;
 
-        if (Exp < 0)
+        var levelsToRemove = 0;
+        while (Exp < 0)
         {
-            if (!enableLosingLevels || Level == 1)
+            if (enableLosingLevels && Level - levelsToRemove > 1)
             {
-                Exp = 0;
-                PacketSender.SendExperience(this);
+                ++levelsToRemove;
+                Exp += GetExperienceToNextLevel(Level - levelsToRemove);
             }
             else
             {
-                var levelsToRemove = 0;
-                while (Exp < 0)
-                {
-                    if (Level - levelsToRemove > 1)
-                    {
-                        ++levelsToRemove;
-                        Exp += GetExperienceToNextLevel(Level - levelsToRemove);
-                    }
-                    else
-                    {
-                        Exp = 0;
-                    }
-                }
-
-                if(levelsToRemove > 0)
-                    AddLevels(-levelsToRemove); //Can't handle zero value. 
-                else
-                    PacketSender.SendExperience(this);
+                Exp = 0;
             }
+        }
+
+        if (levelsToRemove > 0)  // AddLevels can't handle zero value. 
+        {
+            AddLevels(-levelsToRemove);
+        }
+        else
+        {
+            PacketSender.SendExperience(this);
         }
     }
 
