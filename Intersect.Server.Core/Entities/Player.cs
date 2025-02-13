@@ -1421,7 +1421,7 @@ public partial class Player : Entity
             experienceToNextLevel = GetExperienceToNextLevel(Level + levelCount);
         }
 
-        if (levelCount > 1)
+        if (levelCount > 1) // AddLevels can't handle zero value. 
         {
             AddLevels(levelCount, false);
         }
