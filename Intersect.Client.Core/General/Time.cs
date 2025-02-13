@@ -29,12 +29,6 @@ public static partial class Time
 
     public static void Update()
     {
-        if (!Networking.Network.IsConnected)
-        {
-            sServerTime = DateTime.Now;
-            return;
-        }
-
         if (sUpdateTime < Timing.Global.Milliseconds)
         {
             var ts = new TimeSpan(0, 0, 0, 0, (int) (1000 * sRate));
@@ -85,7 +79,12 @@ public static partial class Time
 
     public static string GetTime()
     {
-        return sServerTime.ToString("h:mm:ss tt");
+        var time = sServerTime;
+        if (Globals.GameState != GameStates.InGame)
+        {
+            time = DateTime.Now;
+        }
+        return time.ToString("h:mm:ss tt");
     }
 
     public static ColorF GetTintColor()
