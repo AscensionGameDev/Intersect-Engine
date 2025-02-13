@@ -1,5 +1,4 @@
 using Intersect.Client.Core;
-using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Gwen.Renderer;
 using Intersect.Client.Framework.Input;
@@ -15,7 +14,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
 using System.Reflection;
-using HarmonyLib;
 using Intersect.Client.Framework.Database;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.ThirdParty;
@@ -556,29 +554,39 @@ internal partial class IntersectGame : Game
         {
             try
             {
-                var assemblyMonoGameFramework = AppDomain.CurrentDomain.GetAssemblies()
-                    .FirstOrDefault(assembly => assembly.FullName?.StartsWith("MonoGame.Framework") ?? false);
-                var typeInternalSdl = assemblyMonoGameFramework?.GetType("Sdl");
-                var methodSdlInit = typeInternalSdl?.GetMethod("Init");
-
-                var harmonyPatch = new Harmony(typeof(MonoGameRunner).Assembly.FullName ?? "Intersect.Client.Core");
-                harmonyPatch.Patch(methodSdlInit, postfix: SymbolExtensions.GetMethodInfo(() => SdlInitPost()));
+                DoSdlInit(12832);
             }
             catch (Exception exception)
             {
-                ApplicationContext.Context.Value?.Logger.LogWarning(exception, "Error occurred when trying to apply Harmony patch, this is not a fatal error");
+                ApplicationContext.Context.Value?.Logger.LogWarning(
+                    exception,
+                    "Error occurred while trying to initialize SDL"
+                );
             }
 
             using var game = new IntersectGame(context, postStartupAction);
             game.Run();
         }
 
-        private static void SdlInitPost()
+        private delegate void SdlInit(int flags);
+
+        private static void DoSdlInit(int flags)
         {
             if (PlatformHelper.CurrentPlatform != Platform.Linux)
             {
                 return;
             }
+
+            var assemblyMonoGameFramework = AppDomain.CurrentDomain.GetAssemblies()
+                .FirstOrDefault(assembly => assembly.FullName?.StartsWith("MonoGame.Framework") ?? false);
+            var typeInternalSdl = assemblyMonoGameFramework?.GetType("Sdl");
+            var methodSdlInit = typeInternalSdl?.GetMethod("Init");
+            var delegateSdlInit = methodSdlInit?.CreateDelegate<SdlInit>();
+            if (delegateSdlInit == null)
+            {
+                throw new InvalidOperationException("Missing Sdl.Init() from MonoGame");
+            }
+            delegateSdlInit(flags);
 
             if (!Sdl2.SDL_SetHint(Sdl2.SDL_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, false))
             {

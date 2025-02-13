@@ -5,14 +5,12 @@ namespace Intersect.Client.MonoGame.NativeInterop;
 
 public partial class Sdl2
 {
-    public const string SDL_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR = "SDL_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR";
-
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private unsafe delegate byte* SDL_GetHint_d(byte* name);
+    private unsafe delegate byte* SDL_getenv_d(byte* name);
 
-    private static SDL_GetHint_d SDL_GetHint_f = Loader.Functions.LoadFunction<SDL_GetHint_d>(nameof(SDL_GetHint));
+    private static SDL_getenv_d SDL_getenv_f = Loader.Functions.LoadFunction<SDL_getenv_d>(nameof(SDL_getenv));
 
-    public static unsafe string? SDL_GetHint(string name)
+    public static unsafe string? SDL_getenv(string name)
     {
         fixed (byte* pName = Encoding.UTF8.GetBytes(name))
         {
@@ -34,20 +32,18 @@ public partial class Sdl2
     }
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private unsafe delegate int SDL_SetHint_d(byte* name, byte* value);
+    private unsafe delegate int SDL_setenv_d(byte* name, byte* value, int overwrite);
 
-    private static SDL_SetHint_d SDL_SetHint_f = Loader.Functions.LoadFunction<SDL_SetHint_d>(nameof(SDL_SetHint));
+    private static SDL_setenv_d SDL_setenv_f = Loader.Functions.LoadFunction<SDL_setenv_d>(nameof(SDL_setenv));
 
-    public static unsafe bool SDL_SetHint(string name, string value)
+    public static unsafe bool SDL_setenv(string name, string value, bool overwrite)
     {
         fixed (byte* pValue = Encoding.UTF8.GetBytes(value))
         {
             fixed (byte* pName = Encoding.UTF8.GetBytes(name))
             {
-                return SDL_SetHint_f(pName, pValue) != 0;
+                return SDL_setenv_f(pName, pValue, overwrite ? 1 : 0) != 0;
             }
         }
     }
-
-    public static bool SDL_SetHint(string name, bool value) => SDL_SetHint(name, value ? "1" : "0");
 }

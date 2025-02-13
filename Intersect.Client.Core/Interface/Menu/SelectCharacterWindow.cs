@@ -1,4 +1,3 @@
-using HarmonyLib;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
