@@ -142,8 +142,8 @@ public partial class MonoInput : GameInput
         }
 
         Vector2 center = new(
-            (control.BoundsGlobal.Left + control.BoundsGlobal.Right) / 2f,
-            (control.BoundsGlobal.Bottom + control.BoundsGlobal.Top) / 2f
+            (control.GlobalBounds.Left + control.GlobalBounds.Right) / 2f,
+            (control.GlobalBounds.Bottom + control.GlobalBounds.Top) / 2f
         );
 
         Mouse.SetPosition((int)center.X, (int)center.Y);
@@ -199,6 +199,11 @@ public partial class MonoInput : GameInput
 
         if (bs == ButtonState.Pressed && !MouseButtonDown(mb))
         {
+            if (Core.Input.TestInterceptMouse(modifier, mb, down: true))
+            {
+                return;
+            }
+
             Interface.Interface.GwenInput.ProcessMessage(
                 new GwenInputMessage(IntersectInput.InputEvent.MouseDown, GetMousePosition(), mb, Keys.Alt)
             );
@@ -207,6 +212,11 @@ public partial class MonoInput : GameInput
         }
         else if (bs == ButtonState.Released && MouseButtonDown(mb))
         {
+            if (Core.Input.TestInterceptMouse(modifier, mb, down: false))
+            {
+                return;
+            }
+
             Interface.Interface.GwenInput.ProcessMessage(
                 new GwenInputMessage(IntersectInput.InputEvent.MouseUp, GetMousePosition(), mb, Keys.Alt)
             );

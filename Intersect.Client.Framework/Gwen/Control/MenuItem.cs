@@ -219,7 +219,7 @@ public partial class MenuItem : Button
         _submenu.IsHidden = false;
         _submenu.BringToFront();
 
-        var p = LocalPosToCanvas(Point.Empty);
+        var p = ToCanvas(Point.Empty);
 
         // Strip menus open downwards
         if (_onStrip)
@@ -270,11 +270,11 @@ public partial class MenuItem : Button
         return contentSize;
     }
 
-    public override bool SizeToContents()
+    public override bool SizeToContents(out Point contentSize)
     {
         _accelerator?.SizeToContents();
 
-        var sizeChanged = base.SizeToContents();
+        var sizeChanged = base.SizeToContents(out contentSize);
 
         if (_accelerator != null)
         {

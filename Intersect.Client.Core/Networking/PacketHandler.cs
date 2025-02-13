@@ -1193,10 +1193,7 @@ internal sealed partial class PacketHandler
         ed.Face = packet.Face;
         if (packet.Type != 0)
         {
-            ed.Opt1 = packet.Responses[0];
-            ed.Opt2 = packet.Responses[1];
-            ed.Opt3 = packet.Responses[2];
-            ed.Opt4 = packet.Responses[3];
+            ed.Options = packet.Responses;
         }
 
         ed.EventId = packet.EventId;
@@ -1208,9 +1205,9 @@ internal sealed partial class PacketHandler
     {
         var type = packet.Type switch
         {
-            VariableDataType.String => InputBox.InputType.TextInput,
-            VariableDataType.Boolean => InputBox.InputType.YesNoCancel,
-            _ => InputBox.InputType.NumericInput,
+            VariableDataType.String => InputType.TextInput,
+            VariableDataType.Boolean => InputType.YesNoCancel,
+            _ => InputType.NumericInput,
         };
 
         _ = new InputBox(
@@ -1218,7 +1215,7 @@ internal sealed partial class PacketHandler
             prompt: packet.Prompt,
             inputType: type,
             userData: packet.EventId,
-            onSuccess: PacketSender.SendEventInputVariable,
+            onSubmit: PacketSender.SendEventInputVariable,
             onCancel: PacketSender.SendEventInputVariableCancel
         );
     }
@@ -1228,7 +1225,7 @@ internal sealed partial class PacketHandler
     {
         Fade.FadeIn(ClientConfiguration.Instance.FadeDurationMs);
         Globals.WaitingOnServer = false;
-        Interface.Interface.ShowError(packet.Error, packet.Header);
+        Interface.Interface.ShowAlert(packet.Error, packet.Header, alertType: AlertType.Error);
         Interface.Interface.MenuUi?.Reset();
     }
 
@@ -1316,11 +1313,7 @@ internal sealed partial class PacketHandler
     //InventoryUpdatePacket
     public void HandlePacket(IPacketSender packetSender, InventoryUpdatePacket packet)
     {
-        if (Globals.Me != null)
-        {
-            Globals.Me.Inventory[packet.Slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.Properties);
-            Globals.Me.InventoryUpdatedDelegate?.Invoke();
-        }
+        Globals.Me?.UpdateInventory(packet.Slot, packet.ItemId, packet.Quantity, packet.BagId, packet.Properties);
     }
 
     //SpellsPacket
@@ -1399,7 +1392,7 @@ internal sealed partial class PacketHandler
     public void HandlePacket(IPacketSender packetSender, CharacterCreationPacket packet)
     {
         Globals.WaitingOnServer = false;
-        Interface.Interface.MenuUi.MainMenu.NotifyOpenCharacterCreation();
+        Interface.Interface.MenuUi.MainMenu.NotifyOpenCharacterCreation(packet.Force);
     }
 
     //AdminPanelPacket
@@ -1897,7 +1890,9 @@ internal sealed partial class PacketHandler
     public void HandlePacket(IPacketSender packetSender, TimePacket packet)
     {
         Time.LoadTime(
-            packet.Time, Color.FromArgb(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B), packet.Rate
+            packet.Time,
+            Color.FromArgb(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B),
+            packet.Rate
         );
     }
 
@@ -1934,9 +1929,9 @@ internal sealed partial class PacketHandler
         _ = new InputBox(
             title: Strings.Parties.PartyInvite,
             prompt: Strings.Parties.InvitePrompt.ToString(packet.LeaderName),
-            inputType: InputBox.InputType.YesNo,
+            inputType: InputType.YesNo,
             userData: packet.LeaderId,
-            onSuccess: PacketSender.SendPartyAccept,
+            onSubmit: PacketSender.SendPartyAccept,
             onCancel: PacketSender.SendPartyDecline
         );
     }
@@ -2078,9 +2073,9 @@ internal sealed partial class PacketHandler
         _ = new InputBox(
             title: Strings.Trading.TradeRequest,
             prompt: Strings.Trading.RequestPrompt.ToString(packet.PartnerName),
-            inputType: InputBox.InputType.YesNo,
+            inputType: InputType.YesNo,
             userData: packet.PartnerId,
-            onSuccess: PacketSender.SendTradeRequestAccept,
+            onSubmit: PacketSender.SendTradeRequestAccept,
             onCancel: PacketSender.SendTradeRequestDecline
         );
     }
@@ -2186,9 +2181,9 @@ internal sealed partial class PacketHandler
         _ = new InputBox(
             title: Strings.Friends.Request,
             prompt: Strings.Friends.RequestPrompt.ToString(packet.FriendName),
-            inputType: InputBox.InputType.YesNo,
+            inputType: InputType.YesNo,
             userData: packet.FriendId,
-            onSuccess: PacketSender.SendFriendRequestAccept,
+            onSubmit: PacketSender.SendFriendRequestAccept,
             onCancel: PacketSender.SendFriendRequestDecline
         );
     }
@@ -2196,22 +2191,28 @@ internal sealed partial class PacketHandler
     //CharactersPacket
     public void HandlePacket(IPacketSender packetSender, CharactersPacket packet)
     {
-        var characters = new List<Character>();
-
-        foreach (var chr in packet.Characters)
-        {
-            characters.Add(
-                new Character(chr.Id, chr.Name, chr.Sprite, chr.Face, chr.Level, chr.ClassName, chr.Equipment)
-            );
-        }
+        List<CharacterSelectionPreviewMetadata> characterSelectionPreviews =
+        [
+            ..packet.Characters.Select(
+                characterPacket => new CharacterSelectionPreviewMetadata(
+                    characterPacket.Id,
+                    characterPacket.Name,
+                    characterPacket.Sprite,
+                    characterPacket.Face,
+                    characterPacket.Level,
+                    characterPacket.ClassName,
+                    characterPacket.Equipment
+                )
+            )
+        ];
 
         if (packet.FreeSlot)
         {
-            characters.Add(null);
+            characterSelectionPreviews.Add(default);
         }
 
         Globals.WaitingOnServer = false;
-        Interface.Interface.MenuUi.MainMenu.NotifyOpenCharacterSelection(characters);
+        Interface.Interface.MenuUi.MainMenu.NotifyOpenCharacterSelection(characterSelectionPreviews);
     }
 
     //PasswordResetResultPacket
@@ -2220,12 +2221,20 @@ internal sealed partial class PacketHandler
         if (packet.Succeeded)
         {
             // Show Success Message and Open Login Screen
-            Interface.Interface.ShowError(Strings.ResetPass.Success, Strings.ResetPass.SuccessMessage);
+            Interface.Interface.ShowAlert(
+                Strings.ResetPass.Success,
+                Strings.ResetPass.SuccessMessage,
+                AlertType.Information
+            );
             Interface.Interface.MenuUi.MainMenu.NotifyOpenLogin();
         }
         else
         {
-            Interface.Interface.ShowError(Strings.ResetPass.Error, Strings.ResetPass.ErrorMessage);
+            Interface.Interface.ShowAlert(
+                Strings.ResetPass.Error,
+                Strings.ResetPass.ErrorMessage,
+                alertType: AlertType.Error
+            );
         }
 
         Globals.WaitingOnServer = false;
@@ -2338,8 +2347,8 @@ internal sealed partial class PacketHandler
                     prompt: (string.IsNullOrWhiteSpace(packet.GuildName)
                         ? Strings.Guilds.InviteRequestPromptMissingGuild
                         : Strings.Guilds.InviteRequestPrompt).ToString(packet.Inviter, packet.GuildName),
-                    inputType: InputBox.InputType.YesNo,
-                    onSuccess: PacketSender.SendGuildInviteAccept,
+                    inputType: InputType.YesNo,
+                    onSubmit: PacketSender.SendGuildInviteAccept,
                     onCancel: PacketSender.SendGuildInviteDecline
                 );
             }

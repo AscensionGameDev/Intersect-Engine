@@ -12,12 +12,6 @@ public interface ILabel : IAutoSizeToContents, IColorableText, ITextContainer
 
     int FontSize { get; set; }
 
-    Color? TextColor { get; set; }
-
-    Color? TextColorOverride { get; set; }
-
-    Padding TextPadding { get; set; }
-
     /// <summary>
     /// Resizes the component to fit the contents.
     /// </summary>

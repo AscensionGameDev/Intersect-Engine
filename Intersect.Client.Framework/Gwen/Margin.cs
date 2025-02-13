@@ -60,6 +60,20 @@ public partial struct Margin : IEquatable<Margin>
         point.Y + margin.Top + margin.Bottom
     );
 
+    public static Margin operator *(Margin margin, int scale) => new Margin(
+        margin.Left * scale,
+        margin.Top * scale,
+        margin.Right * scale,
+        margin.Bottom * scale
+    );
+
+    public static Margin operator *(Margin margin, float scale) => new Margin(
+        (int)(margin.Left * scale),
+        (int)(margin.Top * scale),
+        (int)(margin.Right * scale),
+        (int)(margin.Bottom * scale)
+    );
+
     public static bool operator ==(Margin lhs, Margin rhs) => lhs.Equals(rhs);
 
     public static bool operator !=(Margin lhs, Margin rhs) => !lhs.Equals(rhs);

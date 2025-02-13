@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Graphics;
@@ -17,16 +18,10 @@ namespace Intersect.Client.Interface;
 public static partial class Interface
 {
 
-    private static readonly Queue<KeyValuePair<string, string>> _errorMessages = new();
+    private static readonly ConcurrentQueue<Alert> _pendingErrorMessages = new();
 
-    public static bool TryDequeueErrorMessage(out KeyValuePair<string, string> message) => _errorMessages.TryDequeue(out message);
-
-    public static void ShowError(string message, string? header = default)
-    {
-        _errorMessages.Enqueue(new KeyValuePair<string, string>(header ?? string.Empty, message));
-    }
-
-    public static ErrorHandler ErrorMsgHandler;
+    public static void ShowAlert(string message, string? title = default, AlertType alertType = AlertType.Error) =>
+        _pendingErrorMessages.Enqueue(new Alert(Message: message, Title: title ?? string.Empty, Type: alertType));
 
     //GWEN GUI
     public static bool GwenInitialized;
@@ -54,9 +49,9 @@ public static partial class Interface
     public static TexturedBase Skin { get; set; }
 
     //Input Handling
-    public static readonly List<Framework.Gwen.Control.Base> FocusComponents = [];
+    public static readonly HashSet<Framework.Gwen.Control.Base> FocusComponents = [];
 
-    public static readonly List<Framework.Gwen.Control.Base> InputBlockingComponents = [];
+    public static readonly HashSet<Framework.Gwen.Control.Base> InputBlockingComponents = [];
 
     #region "Gwen Setup and Input"
 
@@ -117,7 +112,6 @@ public static partial class Interface
 
         FocusComponents.Clear();
         InputBlockingComponents.Clear();
-        ErrorMsgHandler = new ErrorHandler();
 
         if (Globals.GameState == GameStates.Intro || Globals.GameState == GameStates.Menu)
         {
@@ -175,7 +169,7 @@ public static partial class Interface
     #region "GUI Functions"
 
     //Actual Drawing Function
-    public static void DrawGui()
+    public static void DrawGui(TimeSpan elapsed, TimeSpan total)
     {
         if (!GwenInitialized)
         {
@@ -184,21 +178,22 @@ public static partial class Interface
 
         if (Globals.GameState == GameStates.Menu)
         {
-            MenuUi.Update();
+            MenuUi.Update(elapsed, total);
         }
         else if (Globals.GameState == GameStates.InGame)
         {
-            GameUi.Update();
+            GameUi.Update(elapsed, total);
         }
 
         //Do not allow hiding of UI under several conditions
         var forceShowUi = Globals.InCraft || Globals.InBank || Globals.InShop || Globals.InTrade || Globals.InBag || Globals.EventDialogs?.Count > 0 || HasInputFocus() || (!Interface.GameUi?.EscapeMenu?.IsHidden ?? true);
 
-        ErrorMsgHandler.Update();
+        AlertWindow.OpenPendingAlertWindowsFrom(_pendingErrorMessages);
+
         sGameCanvas.RestrictToParent = false;
         if (Globals.GameState == GameStates.Menu)
         {
-            MenuUi.Draw();
+            MenuUi.Draw(elapsed, total);
         }
         else if (Globals.GameState == GameStates.InGame)
         {
@@ -215,7 +210,7 @@ public static partial class Interface
                 {
                     sGameCanvas.Show();
                 }
-                GameUi.Draw();
+                GameUi.Draw(elapsed, total);
             }
         }
     }
@@ -271,7 +266,7 @@ public static partial class Interface
         _onCreatedGameUi.Enqueue(action);
     }
 
-    public static Framework.Gwen.Control.Base? FindComponentUnderCursor(ComponentStateFilters filters = default)
+    public static Framework.Gwen.Control.Base? FindComponentUnderCursor(NodeFilter filters = default)
     {
         var cursor = new Point(InputHandler.MousePosition.X, InputHandler.MousePosition.Y);
         var componentUnderCursor = CurrentInterface?.Root.GetComponentAt(cursor, filters);

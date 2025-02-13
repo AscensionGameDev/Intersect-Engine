@@ -9,7 +9,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
-
 /// <summary>
 ///     Movable window with title bar.
 /// </summary>
@@ -25,13 +24,7 @@ public partial class WindowControl : ResizableControl
 
     }
 
-    private readonly ImagePanel _iconContainer;
-
-    private readonly CloseButton _closeButton;
-
-    private readonly Label _titleLabel;
-
-    private readonly Dragger _titlebar;
+    private readonly Titlebar _titlebar;
 
     private Color? mActiveColor;
 
@@ -47,15 +40,13 @@ public partial class WindowControl : ResizableControl
 
     private bool mDeleteOnClose;
 
-    private Modal mModal;
+    protected Base InnerPanel => _innerPanel ?? throw new InvalidOperationException("Windows must have inner panels");
 
-    private Base mOldParent;
-
-    public ImagePanel IconContainer => _iconContainer;
+    public ImagePanel IconContainer => _titlebar.Icon;
 
     public Dragger Titlebar => _titlebar;
 
-    public Label TitleLabel => _titleLabel;
+    public Label TitleLabel => _titlebar.Label;
 
     public Padding InnerPanelPadding
     {
@@ -68,6 +59,8 @@ public partial class WindowControl : ResizableControl
             }
         }
     }
+
+    public event GwenEventHandler<EventArgs>? Closed;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="WindowControl" /> class.
@@ -82,62 +75,15 @@ public partial class WindowControl : ResizableControl
 
         var titleLabelFont = GameContentManager.Current?.GetFont("sourcesansproblack", 12);
 
-        _titlebar = new Dragger(this)
+        _titlebar = new Titlebar(this, CloseButtonOnClicked)
         {
-            ClipContents = false,
-            Dock = Pos.Top,
-            Height = 24,
-            Margin = default,
-            Padding = default,
-            Target = this,
+            Title = title,
         };
 
-        _iconContainer = new ImagePanel(_titlebar, name: "WindowIcon")
-        {
-            Dock = Pos.Left,
-            IsVisible = false,
-            Margin = new Margin(4, 4, 0, 4),
-            MaximumSize = new Point(24, 24),
-            RestrictToParent = false,
-            Size = new Point(24, 24),
-        };
-        _iconContainer.TextureLoaded += (_, _) =>
-        {
-            var iconContainerTexture = _iconContainer.Texture;
-            _iconContainer.IsVisible = iconContainerTexture != null;
-            if (iconContainerTexture is null)
-            {
-                return;
-            }
 
-            _iconContainer.MinimumSize = iconContainerTexture.Dimensions;
-            _iconContainer.MaximumSize = iconContainerTexture.Dimensions;
-            _iconContainer.Size = iconContainerTexture.Dimensions;
-            _titlebar.Height = _iconContainer.Size.Y + _iconContainer.Margin.Bottom + _iconContainer.Margin.Top;
-        };
-
-        _titleLabel = new Label(_titlebar, name: nameof(Title))
-        {
-            AutoSizeToContents = false,
-            Dock = Pos.Fill | Pos.CenterV,
-            Font = titleLabelFont,
-            MouseInputEnabled = false,
-            Text = title,
-            TextAlign = Pos.Left | Pos.Bottom,
-            TextColor = Skin.Colors.Window.TitleInactive,
-            TextPadding = new Padding(8, 0, 8, 0),
-        };
-
-        _closeButton = new CloseButton(_titlebar, this, name: nameof(CloseButton))
-        {
-            Alignment = [Alignments.Bottom, Alignments.Right],
-            IsTabable = false,
-            Size = new Point(24, 24),
-        };
-        _closeButton.Clicked += CloseButtonPressed;
 
         // Create a blank content control, dock it to the top - Should this be a ScrollControl?
-        _innerPanel = new Base(this);
+        _innerPanel = new Base(this, name: nameof(_innerPanel));
         _innerPanel.Dock = Pos.Fill;
 
         ClampMovement = true;
@@ -155,6 +101,11 @@ public partial class WindowControl : ResizableControl
         }
     }
 
+    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
+    {
+        base.OnBoundsChanged(oldBounds, newBounds);
+    }
+
     protected override Point InnerPanelSizeFrom(Point size) => size - new Point(0, _titlebar.Height);
 
     /// <summary>
@@ -162,8 +113,8 @@ public partial class WindowControl : ResizableControl
     /// </summary>
     public string? Title
     {
-        get => _titleLabel.Text;
-        set => _titleLabel.Text = value;
+        get => _titlebar.Title;
+        set => _titlebar.Title = value;
     }
 
     /// <summary>
@@ -171,28 +122,20 @@ public partial class WindowControl : ResizableControl
     /// </summary>
     public bool IsClosable
     {
-        get => !_closeButton.IsHidden;
-        set
-        {
-            if (value == _closeButton.IsVisible)
-            {
-                return;
-            }
-
-            _closeButton.IsVisible = value;
-        }
+        get => !_titlebar.CloseButton.IsHidden;
+        set => _titlebar.CloseButton.IsVisible = value;
     }
 
     public GameTexture? Icon
     {
-        get => _iconContainer.Texture;
-        set => _iconContainer.Texture = value;
+        get => _titlebar.Icon.Texture;
+        set => _titlebar.Icon.Texture = value;
     }
 
     public string? IconName
     {
-        get => _iconContainer.TextureFilename;
-        set => _iconContainer.TextureFilename = value;
+        get => _titlebar.Icon.TextureFilename;
+        set => _titlebar.Icon.TextureFilename = value;
     }
 
     /// <summary>
@@ -227,6 +170,26 @@ public partial class WindowControl : ResizableControl
     /// </summary>
     public bool DrawShadow { get; set; } = true;
 
+    protected override void Layout(Skin.Base skin)
+    {
+        base.Layout(skin);
+
+        _titlebar.SizeToChildren(resizeX: false, resizeY: true, recursive: true);
+        var size = _titlebar.Height;
+        if (_innerPanel is { } innerPanel)
+        {
+            innerPanel.MinimumSize = innerPanel.MinimumSize with { Y = InnerHeight - size };
+        }
+        _titlebar.CloseButton.Size = new Point(size, size);
+    }
+
+    internal override void DoRender(Skin.Base skin)
+    {
+        base.DoRender(skin);
+    }
+
+    protected override Rectangle ValidateJsonBounds(Rectangle bounds) => base.ValidateJsonBounds(bounds) with { Position =  Bounds.Position };
+
     public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
     {
         var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);
@@ -241,7 +204,6 @@ public partial class WindowControl : ResizableControl
         serializedProperties.Add("ActiveColor", Color.ToString(mActiveColor));
         serializedProperties.Add("InactiveColor", Color.ToString(mInactiveColor));
         serializedProperties.Add(nameof(IsClosable), IsClosable);
-        serializedProperties.Add(nameof(Titlebar), _titlebar.GetJson());
 
         return base.FixJson(serializedProperties);
     }
@@ -312,13 +274,17 @@ public partial class WindowControl : ResizableControl
         // _titlebar.ProcessAlignments();
     }
 
-    public void Close()
-    {
-        CloseButtonPressed(this, EventArgs.Empty);
-    }
+    public void Close() => Close(this, EventArgs.Empty);
 
-    protected virtual void CloseButtonPressed(Base control, EventArgs args)
+    protected virtual bool CanClose => true;
+
+    private void Close(Base sender, EventArgs args)
     {
+        if (!CanClose)
+        {
+            return;
+        }
+
         IsHidden = true;
 
         if (mModal != null)
@@ -329,43 +295,17 @@ public partial class WindowControl : ResizableControl
 
         if (mDeleteOnClose)
         {
-            Parent.RemoveChild(this, true);
+            Parent?.RemoveChild(this, true);
         }
+
+        OnClose(sender, args);
+        Closed?.Invoke(sender, args);
     }
 
-    /// <summary>
-    ///     Makes the window modal: covers the whole canvas and gets all input.
-    /// </summary>
-    /// <param name="dim">Determines whether all the background should be dimmed.</param>
-    public void MakeModal(bool dim = false)
+    private void CloseButtonOnClicked(Base sender, MouseButtonState args) => Close(sender, args);
+
+    protected virtual void OnClose(Base sender, EventArgs args)
     {
-        if (mModal != null)
-        {
-            return;
-        }
-
-        mModal = new Modal(GetCanvas());
-        mOldParent = Parent;
-        Parent = mModal;
-
-        if (dim)
-        {
-            mModal.ShouldDrawBackground = true;
-        }
-        else
-        {
-            mModal.ShouldDrawBackground = false;
-        }
-    }
-
-    public void RemoveModal()
-    {
-        if (mModal != null)
-        {
-            Parent = mOldParent;
-            GetCanvas().RemoveChild(mModal, false);
-            mModal = null;
-        }
     }
 
     /// <summary>
@@ -383,7 +323,7 @@ public partial class WindowControl : ResizableControl
 
         textColor ??= Skin.Colors.Window.TitleInactive;
 
-        _titleLabel.TextColor = textColor;
+        _titlebar.Label.TextColor = textColor;
 
         skin.DrawWindow(this, _titlebar.Bottom, hasFocus);
     }

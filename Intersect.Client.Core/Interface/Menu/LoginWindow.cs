@@ -4,9 +4,11 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Security;
@@ -14,134 +16,185 @@ using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Menu;
 
-public partial class LoginWindow : ImagePanel, IMainMenuWindow
+public partial class LoginWindow : Window, IMainMenuWindow
 {
     private readonly GameFont? _defaultFont;
 
     private readonly MainMenu _mainMenu;
-    private readonly ImagePanel _usernamePanel;
+
+    private readonly Panel _inputPanel;
+    private readonly Panel _inputOptionsPanel;
+    private readonly Panel _buttonPanel;
+    private readonly Panel _usernamePanel;
     private readonly Label _usernameLabel;
     private readonly TextBox _usernameInput;
-    private readonly ImagePanel _passwordPanel;
+    private readonly Panel _passwordPanel;
     private readonly TextBoxPassword _passwordInput;
     private readonly LabeledCheckBox _savePasswordCheckbox;
-    private readonly Button _btnForgotPassword;
-    private readonly Button _btnLogin;
+    private readonly Button _forgotPasswordButton;
+    private readonly Button _loginButton;
     private bool _useSavedPass;
     private string _savedPass = string.Empty;
     private readonly Label _passwordLabel;
+    private readonly Button _backButton;
 
-    //Init
-    public LoginWindow(Canvas parent, MainMenu mainMenu) : base(parent, "LoginWindow")
+    public LoginWindow(Canvas parent, MainMenu mainMenu) : base(
+        parent,
+        title: Strings.LoginWindow.Title,
+        modal: false,
+        name: nameof(LoginWindow)
+    )
     {
-        //Assign References
         _mainMenu = mainMenu;
 
-        _defaultFont = GameContentManager.Current.GetFont(name: "sourcesansproblack", 10);
+        _defaultFont = GameContentManager.Current.GetFont(name: "sourcesansproblack", 12);
 
-        //Menu Header
-        _ = new Label(this, "LoginHeader")
+        Alignment = [Alignments.Center];
+        MinimumSize = new Point(x: 504, y: 144);
+        IsClosable = false;
+        IsResizable = false;
+        InnerPanelPadding = new Padding(8);
+        Titlebar.MouseInputEnabled = false;
+        TitleLabel.FontSize = 14;
+        TitleLabel.TextColorOverride = Color.White;
+
+        _buttonPanel = new Panel(this, nameof(_buttonPanel))
         {
-            Text = Strings.LoginWindow.Title,
+            BackgroundColor = Color.Transparent,
+            Dock = Pos.Right,
+            DockChildSpacing = new Padding(8),
+            Margin = new Margin(8, 0, 0, 0),
+            MinimumSize = new Point(120, 0),
         };
 
-        //Login Username Label/Textbox
-        _usernamePanel = new ImagePanel(this, nameof(_usernamePanel))
+        _loginButton = new Button(_buttonPanel, "LoginButton")
         {
-            X = 14,
-            Y = 61,
-            Width = 308,
-            Height = 22,
-            Margin = new Margin(14, 0, 0, 0),
+            AutoSizeToContents = true,
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            MinimumSize = new Point(120, 24),
+            Padding = new Padding(8, 4),
+            Text = Strings.LoginWindow.Login,
+        };
+        _loginButton.Clicked += LoginButtonOnClicked;
+
+        _forgotPasswordButton = new Button(_buttonPanel, "ForgotPasswordButton")
+        {
+            AutoSizeToContents = true,
+            Dock = Pos.Right | Pos.CenterV,
+            Font = _defaultFont,
+            IsHidden = true,
+            MinimumSize = new Point(120, 24),
+            Padding = new Padding(8, 4),
+            Text = Strings.LoginWindow.ForgotPassword,
+        };
+        _forgotPasswordButton.Clicked += ForgotPasswordButtonOnClicked;
+
+        _backButton = new Button(_buttonPanel, nameof(_backButton))
+        {
+            AutoSizeToContents = true,
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            MinimumSize = new Point(120, 24),
+            Padding = new Padding(8, 4),
+            Text = Strings.LoginWindow.Back,
+        };
+        _backButton.Clicked += BackButtonOnClicked;
+
+        _inputPanel = new Panel(this, nameof(_inputPanel))
+        {
+            BackgroundColor = Color.Transparent,
+            Dock = Pos.Fill,
+            DockChildSpacing = new Padding(8),
+        };
+
+        _usernamePanel = new Panel(_inputPanel, nameof(_usernamePanel))
+        {
+            BackgroundColor = Color.Transparent,
+            Dock = Pos.Top,
+            DockChildSpacing = new Padding(4),
+            MinimumSize = new Point(0, 28),
         };
         _usernameLabel = new Label(_usernamePanel, nameof(_usernameLabel))
         {
             AutoSizeToContents = false,
-            Dock = Pos.Left,
+            Dock = Pos.Fill,
             Font = _defaultFont,
+            Padding = new Padding(0, 0, 10, 0),
             Text = Strings.LoginWindow.Username,
             TextAlign = Pos.Right | Pos.CenterV,
-            TextPadding = new Padding(0, 0, 10, 0),
         };
         _usernameInput = new TextBox(_usernamePanel, nameof(_usernameInput))
         {
-            Dock = Pos.Fill,
+            Dock = Pos.Right,
             Font = _defaultFont,
+            MinimumSize = new Point(240, 0),
+            Padding = new Padding(4, 2),
             TextAlign = Pos.Left | Pos.CenterV,
-            TextPadding = new Padding(2, 0),
         };
-        _usernameInput.SubmitPressed += (s, e) => TryLogin();
+        _usernameInput.SubmitPressed += (_, _) => TryLogin();
         _usernameInput.Clicked += UsernameInputClicked;
         _usernameInput.SetSound(TextBox.Sounds.AddText, "octave-tap-resonant.wav");
         _usernameInput.SetSound(TextBox.Sounds.RemoveText, "octave-tap-professional.wav");
         _usernameInput.SetSound(TextBox.Sounds.Submit, "octave-tap-warm.wav");
 
         //Login Password Label/Textbox
-        _passwordPanel = new ImagePanel(this, nameof(_passwordPanel))
+        _passwordPanel = new Panel(_inputPanel, nameof(_passwordPanel))
         {
-            X = 14,
-            Y = 96,
-            Width = 308,
-            Height = 22,
-            Margin = new Margin(14, 0, 0, 0),
+            BackgroundColor = Color.Transparent,
+            Dock = Pos.Top,
+            DockChildSpacing = new Padding(4),
+            MinimumSize = new Point(0, 28),
         };
         _passwordLabel = new Label(_passwordPanel, nameof(_passwordLabel))
         {
             AutoSizeToContents = false,
-            Dock = Pos.Left,
+            Dock = Pos.Fill,
             Font = _defaultFont,
+            Padding = new Padding(0, 0, 10, 0),
             Text = Strings.LoginWindow.Password,
             TextAlign = Pos.Right | Pos.CenterV,
-            TextPadding = new Padding(0, 0, 10, 0),
         };
         _passwordInput = new TextBoxPassword(_passwordPanel, nameof(_passwordInput))
         {
-            Dock = Pos.Fill,
+            Dock = Pos.Right,
             Font = _defaultFont,
+            MinimumSize = new Point(240, 0),
+            Padding = new Padding(4, 2),
             TextAlign = Pos.Left | Pos.CenterV,
-            TextPadding = new Padding(2, 0),
         };
-        _passwordInput.SubmitPressed += (s, e) => TryLogin();
+        _passwordInput.SubmitPressed += (_, _) => TryLogin();
         _passwordInput.TextChanged += PasswordInputTextChanged;
         _passwordInput.Clicked += PasswordInputClicked;
         _passwordInput.SetSound(TextBox.Sounds.AddText, "octave-tap-resonant.wav");
         _passwordInput.SetSound(TextBox.Sounds.RemoveText, "octave-tap-professional.wav");
         _passwordInput.SetSound(TextBox.Sounds.Submit, "octave-tap-warm.wav");
 
-        //Login Save Pass Checkbox
-        _savePasswordCheckbox = new LabeledCheckBox(this, nameof(_savePasswordCheckbox))
+        _inputOptionsPanel = new Panel(_inputPanel, nameof(_inputOptionsPanel))
         {
-            X = 13,
-            Y = 124,
-            Width = 160,
-            Height = 24,
-            Font = _defaultFont,
-            Text = Strings.LoginWindow.SavePassword,
+            BackgroundColor = Color.Transparent,
+            Dock = Pos.Top,
+            DockChildSpacing = new Padding(8),
+            MinimumSize = new Point(0, 28),
         };
 
-        //Forgot Password Button
-        _btnForgotPassword = new Button(this, "ForgotPasswordButton")
+        _savePasswordCheckbox = new LabeledCheckBox(_inputOptionsPanel, nameof(_savePasswordCheckbox))
         {
-            IsHidden = true,
-            Text = Strings.LoginWindow.ForgotPassword,
+            Dock = Pos.Right | Pos.CenterV, Font = _defaultFont, Text = Strings.LoginWindow.SavePassword,
         };
-        _btnForgotPassword.Clicked += _btnForgotPassword_Clicked;
+    }
 
-        //Login - Send Login Button
-        _btnLogin = new Button(this, "LoginButton")
-        {
-            Text = Strings.LoginWindow.Login,
-        };
-        _btnLogin.Clicked += (s, e) => TryLogin();
+    private void LoginButtonOnClicked(Base @base, MouseButtonState mouseButtonState)
+    {
+        TryLogin();
+    }
 
-        //Login - Back Button
-        var btnBack = new Button(this, "BackButton")
-        {
-            Text = Strings.LoginWindow.Back,
-        };
-        btnBack.Clicked += _btnBack_Clicked;
-
+    protected override void EnsureInitialized()
+    {
         LoadCredentials();
+
+        _inputOptionsPanel.SizeToChildren(recursive: true);
+
         LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
     }
 
@@ -154,7 +207,7 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
             text => _usernameInput.Text = text ?? string.Empty,
             Strings.LoginWindow.Username,
             _usernameInput.Text,
-            inputBounds: _usernameInput.BoundsGlobal
+            inputBounds: _usernameInput.GlobalBounds
         );
     }
 
@@ -173,12 +226,12 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
         );
     }
 
-    private static void _btnForgotPassword_Clicked(Base sender, MouseButtonState arguments)
+    private static void ForgotPasswordButtonOnClicked(Base sender, MouseButtonState arguments)
     {
         Interface.MenuUi.MainMenu.NotifyOpenForgotPassword();
     }
 
-    private void _btnBack_Clicked(Base sender, MouseButtonState arguments)
+    private void BackButtonOnClicked(Base sender, MouseButtonState arguments)
     {
         Hide();
         _mainMenu.Show();
@@ -197,18 +250,18 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
         }
 
         // Re-Enable our buttons button if we're not waiting for the server anymore with it disabled.
-        if (!Globals.WaitingOnServer && _btnLogin.IsDisabled)
+        if (!Globals.WaitingOnServer && _loginButton.IsDisabled)
         {
-            _btnLogin.Enable();
+            _loginButton.Enable();
         }
     }
 
     public override void Show()
     {
         base.Show();
-        if (!_btnForgotPassword.IsHidden)
+        if (!_forgotPasswordButton.IsHidden)
         {
-            _btnForgotPassword.IsHidden = !Options.Instance.SmtpValid;
+            _forgotPasswordButton.IsHidden = !Options.Instance.SmtpValid;
         }
 
         // Set focus to the appropriate elements.
@@ -231,13 +284,13 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
 
         if (!Networking.Network.IsConnected)
         {
-            Interface.ShowError(Strings.Errors.NotConnected);
+            Interface.ShowAlert(Strings.Errors.NotConnected, alertType: AlertType.Error);
             return;
         }
 
         if (!FieldChecking.IsValidUsername(_usernameInput.Text, Strings.Regex.Username))
         {
-            Interface.ShowError(Strings.Errors.UsernameInvalid);
+            Interface.ShowAlert(Strings.Errors.UsernameInvalid, alertType: AlertType.Error);
             return;
         }
 
@@ -245,7 +298,7 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
         {
             if (!_useSavedPass)
             {
-                Interface.ShowError(Strings.Errors.PasswordInvalid);
+                Interface.ShowAlert(Strings.Errors.PasswordInvalid, alertType: AlertType.Error);
                 return;
             }
         }
@@ -257,7 +310,7 @@ public partial class LoginWindow : ImagePanel, IMainMenuWindow
         }
 
         Globals.WaitingOnServer = true;
-        _btnLogin.Disable();
+        _loginButton.Disable();
 
         PacketSender.SendLogin(_usernameInput.Text, password);
         SaveCredentials();

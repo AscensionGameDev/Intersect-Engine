@@ -39,6 +39,8 @@ public abstract partial class MutableInterface : IMutableInterface
 
     internal Base Root { get; }
 
+    public int NodeCount => Root.NodeCount;
+
     /// <inheritdoc />
     public List<Base> Children => Root.Children ?? [];
 

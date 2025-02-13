@@ -15,7 +15,6 @@ namespace Intersect.Server.Web.Controllers.Api
                 .Select(ns => ns.Substring(Math.Min(ns.Length, rootNamespace.Length + 1)).ToLowerInvariant())
                 .Where(ns => !string.IsNullOrWhiteSpace(ns))
                 .ToArray();
-            DiscoveredVersions.ToString();
         }
 
         private static string[] DiscoveredVersions { get; }

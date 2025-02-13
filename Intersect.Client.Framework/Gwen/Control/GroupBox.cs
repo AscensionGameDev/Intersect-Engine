@@ -22,11 +22,11 @@ public partial class GroupBox : Label
         MouseInputEnabled = true;
         KeyboardInputEnabled = true;
 
-        TextPadding = new Padding(10, 0, 10, 0);
+        Padding = new Padding(10, 0, 10, 0);
         TextAlign = Pos.Top | Pos.Left;
         Invalidate();
 
-        _innerPanel = new Base(this);
+        _innerPanel = new Base(this, name: nameof(_innerPanel));
         _innerPanel.Dock = Pos.Fill;
         _innerPanel.Margin = new Margin(5, TextHeight + 5, 5, 5);
 
@@ -58,14 +58,19 @@ public partial class GroupBox : Label
     /// <summary>
     ///     Sizes to contents.
     /// </summary>
-    public override bool SizeToContents() => DoSizeToContents();
+    public override bool SizeToContents(out Point contentSize)
+    {
+        var sizeChanged = DoSizeToContents();
+        contentSize = MeasureContent();
+        return sizeChanged;
+    }
 
     protected virtual bool DoSizeToContents()
     {
         var sizeChanged = _innerPanel?.SizeToChildren() ?? false;
         sizeChanged &= SizeToChildren();
 
-        var textWidth = TextWidth + TextPadding.Right + TextPadding.Left;
+        var textWidth = TextWidth + Padding.Right + Padding.Left;
 
         // ReSharper disable once InvertIf
         if (Width < textWidth)

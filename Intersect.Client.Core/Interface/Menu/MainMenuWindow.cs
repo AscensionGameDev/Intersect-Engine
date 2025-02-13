@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using Intersect.Client.Core;
+using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -28,19 +29,21 @@ public partial class MainMenuWindow : Window
     {
         _mainMenu = mainMenu;
 
-        _buttonCredits = new Button(this, nameof(_buttonCredits))
-        {
-            IsTabable = true,
-            Text = Strings.MainMenu.Credits,
-        };
-        _buttonCredits.Clicked += _buttonCredits_Clicked;
+        Alignment = [Alignments.Center];
 
-        _buttonExit = new Button(this, nameof(_buttonExit))
+        IsClosable = false;
+        IsResizable = false;
+        Padding = Padding.Zero;
+        InnerPanelPadding = new Padding(8);
+        Titlebar.MouseInputEnabled = false;
+
+        _buttonStart = new Button(this, nameof(_buttonStart))
         {
             IsTabable = true,
-            Text = Strings.MainMenu.Exit,
+            IsVisible = ClientContext.IsSinglePlayer,
+            Text = Strings.MainMenu.Start,
         };
-        _buttonExit.Clicked += _buttonExit_Clicked;
+        _buttonStart.Clicked += _buttonStart_Clicked;
 
         _buttonLogin = new Button(this, nameof(_buttonLogin))
         {
@@ -72,13 +75,19 @@ public partial class MainMenuWindow : Window
             _buttonSettings.SetToolTipText(Strings.MainMenu.SettingsTooltip);
         }
 
-        _buttonStart = new Button(this, nameof(_buttonStart))
+        _buttonCredits = new Button(this, nameof(_buttonCredits))
         {
             IsTabable = true,
-            IsVisible = ClientContext.IsSinglePlayer,
-            Text = Strings.MainMenu.Start,
+            Text = Strings.MainMenu.Credits,
         };
-        _buttonStart.Clicked += _buttonStart_Clicked;
+        _buttonCredits.Clicked += _buttonCredits_Clicked;
+
+        _buttonExit = new Button(this, nameof(_buttonExit))
+        {
+            IsTabable = true,
+            Text = Strings.MainMenu.Exit,
+        };
+        _buttonExit.Clicked += _buttonExit_Clicked;
     }
 
     private void _buttonCredits_Clicked(Base sender, MouseButtonState arguments) => _mainMenu.SwitchToWindow<CreditsWindow>();

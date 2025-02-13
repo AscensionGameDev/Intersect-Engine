@@ -22,8 +22,9 @@ public partial class HotBarWindow
     {
         HotbarWindow = new ImagePanel(gameCanvas, "HotbarWindow")
         {
-            AlignmentDistance = new Padding { Top = 4, Right = 4 },
+            AlignmentPadding = new Padding { Top = 4, Right = 4 },
             Alignment = [Alignments.Top, Alignments.Right],
+            Padding = Padding.Four,
             RestrictToParent = true,
             TextureFilename = "hotbar.png",
             TextureNinePatchMargin = Margin.Three,
@@ -35,20 +36,16 @@ public partial class HotBarWindow
             return;
         }
 
-        InitHotbarItems();
-        HotbarWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-
-        HotbarWindow.SizeToChildren();
-    }
-
-    private void InitHotbarItems()
-    {
         var hotbarSlotCount = Options.Instance.Player.HotbarSlotCount;
         for (var hotbarSlotIndex = 0; hotbarSlotIndex < hotbarSlotCount; hotbarSlotIndex++)
         {
             var hotbarItem = new HotbarItem(hotbarSlotIndex, HotbarWindow);
             Items.Add(hotbarItem);
         }
+
+        // HotbarWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+        HotbarWindow.SizeToChildren();
     }
 
     public void Update()
@@ -68,10 +65,10 @@ public partial class HotBarWindow
     {
         var rect = new FloatRect
         {
-            X = HotbarWindow.LocalPosToCanvas(default).X,
-            Y = HotbarWindow.LocalPosToCanvas(default).Y,
+            X = HotbarWindow.ToCanvas(default).X,
+            Y = HotbarWindow.ToCanvas(default).Y,
             Width = HotbarWindow.Width,
-            Height = HotbarWindow.Height
+            Height = HotbarWindow.Height,
         };
 
         return rect;

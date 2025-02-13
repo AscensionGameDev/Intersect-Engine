@@ -1,4 +1,5 @@
 ﻿using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Core;
 using Intersect.Framework.Reflection;
@@ -27,9 +28,9 @@ public partial class TabButton : Button
         DragAndDrop_SetPackage(true, "TabButtonMove");
         Font = GameContentManager.Current?.GetFont("sourcesansproblack", 10);
         KeyboardInputEnabled = true;
-        Padding = Padding.Two;
+
+        Padding = new Padding(4, 2);
         TextAlign = Pos.Top | Pos.Left;
-        TextPadding = new Padding(4, 2);
     }
 
     /// <summary>
@@ -215,4 +216,15 @@ public partial class TabButton : Button
         TextColor = textColor;
     }
 
+    protected override void OnChildBoundsChanged(Base child, Rectangle oldChildBounds, Rectangle newChildBounds)
+    {
+        base.OnChildBoundsChanged(child, oldChildBounds, newChildBounds);
+    }
+
+    protected override void OnTextExceedsSize(Point ownSize, Point textSize)
+    {
+        base.OnTextExceedsSize(ownSize, textSize);
+
+        Invalidate(alsoInvalidateParent: true);
+    }
 }

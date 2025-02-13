@@ -8,7 +8,33 @@ public partial class Sdl2
     public const string SDL_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR = "SDL_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR";
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public unsafe delegate int SDL_SetHint_d(byte* name, byte* value);
+    private unsafe delegate byte* SDL_GetHint_d(byte* name);
+
+    private static SDL_GetHint_d SDL_GetHint_f = Loader.Functions.LoadFunction<SDL_GetHint_d>(nameof(SDL_GetHint));
+
+    public static unsafe string? SDL_GetHint(string name)
+    {
+        fixed (byte* pName = Encoding.UTF8.GetBytes(name))
+        {
+            var textBytes = SDL_GetHint_f(pName);
+            if (textBytes == default)
+            {
+                return null;
+            }
+
+            var endTextBytes = textBytes;
+            while (*endTextBytes != default)
+            {
+                ++endTextBytes;
+            }
+
+            var hintText = Encoding.UTF8.GetString(textBytes, (int)(endTextBytes - textBytes));
+            return hintText;
+        }
+    }
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private unsafe delegate int SDL_SetHint_d(byte* name, byte* value);
 
     private static SDL_SetHint_d SDL_SetHint_f = Loader.Functions.LoadFunction<SDL_SetHint_d>(nameof(SDL_SetHint));
 

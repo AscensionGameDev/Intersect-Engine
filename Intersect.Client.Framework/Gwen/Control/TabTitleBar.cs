@@ -13,8 +13,7 @@ public partial class TabTitleBar : Label
     {
         AutoSizeToContents = false;
         MouseInputEnabled = true;
-        TextPadding = new Padding(5, 2, 5, 2);
-        Padding = new Padding(1, 2, 1, 2);
+        Padding = new Padding(5, 2, 5, 2);
 
         DragAndDrop_SetPackage(true, "TabWindowMove");
     }

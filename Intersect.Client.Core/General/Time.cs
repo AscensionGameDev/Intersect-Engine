@@ -79,7 +79,12 @@ public static partial class Time
 
     public static string GetTime()
     {
-        return sServerTime.ToString("h:mm:ss tt");
+        var time = sServerTime;
+        if (Globals.GameState != GameStates.InGame)
+        {
+            time = DateTime.Now;
+        }
+        return time.ToString("h:mm:ss tt");
     }
 
     public static ColorF GetTintColor()

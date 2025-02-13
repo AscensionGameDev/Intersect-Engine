@@ -69,7 +69,7 @@ public partial class BagItem
     {
         if (Globals.InBag)
         {
-            Globals.Me.TryRetreiveBagItem(mMySlot, -1);
+            Globals.Me.TryRetrieveItemFromBag(mMySlot, -1);
         }
     }
 
@@ -142,8 +142,8 @@ public partial class BagItem
     {
         var rect = new FloatRect()
         {
-            X = Pnl.LocalPosToCanvas(new Point(0, 0)).X,
-            Y = Pnl.LocalPosToCanvas(new Point(0, 0)).Y,
+            X = Pnl.ToCanvas(new Point(0, 0)).X,
+            Y = Pnl.ToCanvas(new Point(0, 0)).Y,
             Width = Pnl.Width,
             Height = Pnl.Height
         };
@@ -202,23 +202,23 @@ public partial class BagItem
                     {
                         if (mMouseX == -1 || mMouseY == -1)
                         {
-                            mMouseX = InputHandler.MousePosition.X - Pnl.LocalPosToCanvas(new Point(0, 0)).X;
-                            mMouseY = InputHandler.MousePosition.Y - Pnl.LocalPosToCanvas(new Point(0, 0)).Y;
+                            mMouseX = InputHandler.MousePosition.X - Pnl.ToCanvas(new Point(0, 0)).X;
+                            mMouseY = InputHandler.MousePosition.Y - Pnl.ToCanvas(new Point(0, 0)).Y;
                         }
                         else
                         {
                             var xdiff = mMouseX -
-                                        (InputHandler.MousePosition.X - Pnl.LocalPosToCanvas(new Point(0, 0)).X);
+                                        (InputHandler.MousePosition.X - Pnl.ToCanvas(new Point(0, 0)).X);
 
                             var ydiff = mMouseY -
-                                        (InputHandler.MousePosition.Y - Pnl.LocalPosToCanvas(new Point(0, 0)).Y);
+                                        (InputHandler.MousePosition.Y - Pnl.ToCanvas(new Point(0, 0)).Y);
 
                             if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                             {
                                 IsDragging = true;
                                 mDragIcon = new Draggable(
-                                    Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseX,
-                                    Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseY, Pnl.Texture, Pnl.RenderColor
+                                    Pnl.ToCanvas(new Point(0, 0)).X + mMouseX,
+                                    Pnl.ToCanvas(new Point(0, 0)).X + mMouseY, Pnl.Texture, Pnl.RenderColor
                                 );
                             }
                         }
@@ -295,7 +295,7 @@ public partial class BagItem
 
                         if (bestIntersectIndex > -1)
                         {
-                            Globals.Me.TryRetreiveBagItem(mMySlot, bestIntersectIndex);
+                            Globals.Me.TryRetrieveItemFromBag(mMySlot, bestIntersectIndex);
                         }
                     }
                 }

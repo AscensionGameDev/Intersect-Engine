@@ -1,3 +1,4 @@
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -21,6 +22,10 @@ public partial class Text : Base
     private string[] _lines = [];
     private WrappingBehavior _wrappingBehavior;
 
+    private int _lastParentInnerWidth;
+
+    private bool _recalculateLines;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="Text" /> class.
     /// </summary>
@@ -35,6 +40,30 @@ public partial class Text : Base
 
         BoundsOutlineColor = DefaultBoundsOutlineColor;
         MarginOutlineColor = DefaultMarginOutlineColor;
+
+        _lastParentInnerWidth = SelectWidthFrom(parent);
+        parent.SizeChanged += ParentOnSizeChanged;
+    }
+
+    protected override void OnSizeChanged(Point oldSize, Point newSize)
+    {
+        base.OnSizeChanged(oldSize, newSize);
+    }
+
+    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
+    {
+        base.OnBoundsChanged(oldBounds, newBounds);
+    }
+
+    private void ParentOnSizeChanged(Base @base, ValueChangedEventArgs<Point> eventArgs)
+    {
+        var newSelectedWidth = SelectWidthFrom(@base);
+        if (_lastParentInnerWidth == newSelectedWidth)
+        {
+            return;
+        }
+
+        RecalculateLines(newSelectedWidth);
     }
 
     /// <summary>
@@ -46,16 +75,7 @@ public partial class Text : Base
     public GameFont? Font
     {
         get => _font;
-        set
-        {
-            if (value == _font)
-            {
-                return;
-            }
-
-            _font = value;
-            RecalculateLines();
-        }
+        set => SetAndDoIfChanged(ref _font, value, Invalidate);
     }
 
     /// <summary>
@@ -64,48 +84,64 @@ public partial class Text : Base
     public string? DisplayedText
     {
         get => _displayedText;
-        set
-        {
-            if (string.Equals(value, _displayedText, StringComparison.Ordinal))
-            {
-                return;
-            }
-
-            _displayedText = value;
-            RecalculateLines();
-        }
+        set => SetAndDoIfChanged(ref _displayedText, value, Invalidate);
     }
 
     public WrappingBehavior WrappingBehavior
     {
         get => _wrappingBehavior;
-        set
+        set => SetAndDoIfChanged(ref _wrappingBehavior, value, Invalidate);
+    }
+
+    public override void Invalidate()
+    {
+        base.Invalidate();
+
+        _recalculateLines = true;
+    }
+
+    private static int SelectWidthFrom(Base? parent) =>
+        parent == null ? 0 : Math.Max(0, Math.Max(parent.MaximumInnerWidth, parent.InnerWidth));
+
+    private void RecalculateLines(int parentInnerWidth = 0)
+    {
+        if (_lines.Length == 0 && string.IsNullOrEmpty(_displayedText))
         {
-            if (value == _wrappingBehavior)
+            return;
+        }
+
+        var parent = Parent;
+        if (parentInnerWidth < 1)
+        {
+            parentInnerWidth = SelectWidthFrom(parent);
+        }
+
+        // If the last calculation yielded one line and the new width is not smaller (or if it's less than one), skip
+        if (_lines.Length == 1 && (parentInnerWidth >= _lastParentInnerWidth || parentInnerWidth < 1))
+        {
+            // But only skip if we're not oversize
+            if (parentInnerWidth > Width)
             {
                 return;
             }
-
-            _wrappingBehavior = value;
-            RecalculateLines();
         }
-    }
 
-    private void RecalculateLines()
-    {
-        var wrappingBehavior = ((Parent as Label)?.WrappingBehavior ?? WrappingBehavior.NoWrap);
+        _lastParentInnerWidth = parentInnerWidth;
+
+        var wrappingBehavior = (parent as Label)?.WrappingBehavior ?? WrappingBehavior.NoWrap;
         _lines = wrappingBehavior switch
         {
             WrappingBehavior.Wrapped => WrapText(
                 _displayedText,
-                Parent?.MaximumSize.X ?? 0,
+                parentInnerWidth,
                 Font,
                 Skin.Renderer
             ),
             WrappingBehavior.NoWrap => _displayedText == null ? [] : [_displayedText],
             _ => throw new NotImplementedException($"{nameof(WrappingBehavior)} '{wrappingBehavior}' not implemented"),
         };
-        SizeToContents();
+
+        SizeToContents(skipRecalculateLines: true);
     }
 
     /// <summary>
@@ -129,11 +165,6 @@ public partial class Text : Base
     protected override void OnVisibilityChanged(object? sender, VisibilityChangedEventArgs eventArgs)
     {
         base.OnVisibilityChanged(sender, eventArgs);
-
-        if (_displayedText == "This feature is experimental and may cause issues when enabled.")
-        {
-            this.ToString();
-        }
     }
 
     /// <summary>
@@ -205,9 +236,18 @@ public partial class Text : Base
     /// <param name="skin">Skin to use.</param>
     protected override void Layout(Skin.Base skin)
     {
+        if (_recalculateLines || _lines.Length < 1)
+        {
+            _lines = [];
+            RecalculateLines();
+            _recalculateLines = false;
+        }
+
         SizeToContents();
         base.Layout(skin);
     }
+
+    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false) => SizeToContents();
 
     /// <summary>
     ///     Handler invoked when control's scale changes.
@@ -231,17 +271,27 @@ public partial class Text : Base
     /// <summary>
     ///     Sizes the control to its contents.
     /// </summary>
-    private void SizeToContents()
+    private bool SizeToContents(bool skipRecalculateLines = false)
     {
         if (!HasSkin)
         {
-            return;
+            return false;
+        }
+
+        if (IsHidden)
+        {
+            return false;
         }
 
         var font = Font;
         if (font == default)
         {
-            return;
+            return false;
+        }
+
+        if (!skipRecalculateLines)
+        {
+            RecalculateLines();
         }
 
         Point newSize;
@@ -257,7 +307,7 @@ public partial class Text : Base
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (var line in _lines)
             {
-                var lineSize = Skin.Renderer.MeasureText(font, _displayedText, _scale);
+                var lineSize = Skin.Renderer.MeasureText(font, line, _scale);
                 newSize = new Point(
                     Math.Max(newSize.X, lineSize.X),
                     newSize.Y + lineSize.Y
@@ -270,16 +320,13 @@ public partial class Text : Base
 
         if (Size == newSize)
         {
-            return;
-        }
-
-        if (Parent is TextBox)
-        {
-            Parent?.ToString();
+            return false;
         }
 
         Size = newSize;
         Invalidate();
+
+        return true;
     }
 
     /// <summary>
@@ -355,12 +402,17 @@ public partial class Text : Base
         return closestIndex;
     }
 
-    public static string[] WrapText(string? input, int width, GameFont font, ITextHelper textHelper)
+    public static string[] WrapText(string? input, int width, GameFont? font, ITextHelper textHelper)
     {
         var sanitizedInput = input?.ReplaceLineEndings("\n");
         var inputLines = (sanitizedInput ?? string.Empty).Split('\n', StringSplitOptions.TrimEntries);
 
         if (string.IsNullOrWhiteSpace(sanitizedInput) || width < 1)
+        {
+            return inputLines;
+        }
+
+        if (font == null)
         {
             return inputLines;
         }
@@ -375,12 +427,21 @@ public partial class Text : Base
                 continue;
             }
 
+            float measured = textHelper.MeasureText(inputLine, font, 1).X;
+            if (measured <= width)
+            {
+                lines.Add(inputLine);
+                continue;
+            }
+
+            inputLine.Split(". ");
+
             var lastSpace = 0;
             var curPos = 0;
             var curLen = 1;
             var lastOk = 0;
             var lastCut = 0;
-            float measured;
+
             string line;
             while (curPos + curLen < inputLine.Length)
             {

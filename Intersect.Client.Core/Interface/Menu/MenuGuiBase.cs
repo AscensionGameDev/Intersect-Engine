@@ -1,11 +1,9 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
-using Intersect.Core;
 
 namespace Intersect.Client.Interface.Menu;
 
@@ -53,7 +51,7 @@ public partial class MenuGuiBase : IMutableInterface
         _serverStatusLabel.Text = Strings.Server.StatusLabel.ToString(MainMenu.ActiveNetworkStatus.ToLocalizedString());
     }
 
-    public void Update()
+    public void Update(TimeSpan elapsed, TimeSpan total)
     {
         if (_shouldReset)
         {
@@ -61,12 +59,12 @@ public partial class MenuGuiBase : IMutableInterface
             _shouldReset = false;
         }
 
-        MainMenu.Update();
+        MainMenu.Update(elapsed, total);
     }
 
-    public void Draw()
+    public void Draw(TimeSpan elapsed, TimeSpan total)
     {
-        _menuCanvas.RenderCanvas();
+        _menuCanvas.RenderCanvas(elapsed, total);
     }
 
     public void Reset()

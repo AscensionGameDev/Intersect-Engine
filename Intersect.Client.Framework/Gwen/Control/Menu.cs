@@ -37,6 +37,8 @@ public partial class Menu : ScrollControl
     /// <param name="name"></param>
     public Menu(Base parent, string? name = default) : base(parent, name)
     {
+        _scrollPanel.Padding = default;
+
         Size = new Point(10, 10);
         Padding = Padding.Two;
         IconMarginDisabled = false;
@@ -173,7 +175,7 @@ public partial class Menu : ScrollControl
         {
             Font = font,
             Text = text,
-            TextPadding = new Padding(8),
+            Padding = new Padding(8),
         };
         newMenuItem.SetStateTexture(iconTexture, textureFilename, ComponentState.Normal);
         newMenuItem.SetAccelerator(accelerator);
@@ -189,7 +191,7 @@ public partial class Menu : ScrollControl
     /// <param name="menuItem">Item added.</param>
     protected virtual void OnAddItem(MenuItem menuItem)
     {
-        menuItem.TextPadding = new Padding(IconMarginDisabled ? 8 : 32, 4, 8, 4);
+        menuItem.Padding = new Padding(IconMarginDisabled ? 8 : 32, 4, 8, 4);
         menuItem.Dock = Pos.Top;
         menuItem.SizeToContents();
         menuItem.TextAlign = Pos.CenterV | Pos.Left;
@@ -293,10 +295,10 @@ public partial class Menu : ScrollControl
         divider.Margin = new Margin(IconMarginDisabled ? 0 : 24, 0, 4, 0);
     }
 
-    public override bool SizeToChildren(bool width = true, bool height = true)
+    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
     {
-        base.SizeToChildren(width, height);
-        if (width)
+        base.SizeToChildren(resizeX: resizeX, resizeY: resizeY, recursive: recursive);
+        if (resizeX)
         {
             var maxWidth = 0;
             foreach (var child in Children)

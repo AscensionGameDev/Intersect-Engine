@@ -102,7 +102,7 @@ public partial class Slider : Base
     /// <summary>
     ///     Minimum value.
     /// </summary>
-    public double Min
+    public double Minimum
     {
         get => _minimumValue;
         set => SetRange(value, _maximumValue);
@@ -111,7 +111,7 @@ public partial class Slider : Base
     /// <summary>
     ///     Maximum value.
     /// </summary>
-    public double Max
+    public double Maximum
     {
         get => _maximumValue;
         set => SetRange(_minimumValue, value);
@@ -123,23 +123,7 @@ public partial class Slider : Base
     public double Value
     {
         get => ScaleValueToExternal(_value);
-        set
-        {
-            if (value < _minimumValue)
-            {
-                value = _minimumValue;
-            }
-
-            if (value > _maximumValue)
-            {
-                value = _maximumValue;
-            }
-
-            // Normalize Value
-            value = (value - _minimumValue) / Math.Max(1, _maximumValue - _minimumValue);
-            SetValueInternal(value);
-            Redraw();
-        }
+        set => SetValue(value);
     }
 
     private double ScaleValueToExternal(double value)
@@ -184,6 +168,11 @@ public partial class Slider : Base
     {
         get => _sliderBar.Size;
         set => _sliderBar.Size = value;
+    }
+
+    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
+    {
+        return false;
     }
 
     public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
@@ -497,7 +486,7 @@ public partial class Slider : Base
         return _sliderBar.GetImage(state);
     }
 
-    public void SetSound(string? sound, Dragger.ControlSoundState state)
+    public void SetSound(string? sound, ButtonSoundState state)
     {
         _sliderBar.SetSound(sound, state);
     }
@@ -553,5 +542,22 @@ public partial class Slider : Base
         {
             _sliderBar.LoadJson(obj[nameof(SliderBar)]);
         }
+    }
+
+    public void SetValue(double value, bool skipEvents = false)
+    {
+        if (value > _maximumValue)
+        {
+            value = _maximumValue;
+        }
+
+        if (value < _minimumValue)
+        {
+            value = _minimumValue;
+        }
+
+        var normalizedValue = (value - _minimumValue) / Math.Max(1, _maximumValue - _minimumValue);
+        SetValueInternal(normalizedValue);
+        Redraw();
     }
 }

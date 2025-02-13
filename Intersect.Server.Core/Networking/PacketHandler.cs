@@ -680,7 +680,7 @@ internal sealed partial class PacketHandler
         if (client.Characters == default || client.Characters.Count < 1)
         {
             PacketSender.SendGameObjects(client, GameObjectType.Class);
-            PacketSender.SendCreateCharacter(client);
+            PacketSender.SendCreateCharacter(client, force: true);
             return;
         }
 
@@ -1559,7 +1559,7 @@ internal sealed partial class PacketHandler
 
                 //Start the character creation process for the newly created account.
                 PacketSender.SendGameObjects(client, GameObjectType.Class);
-                PacketSender.SendCreateCharacter(client);
+                PacketSender.SendCreateCharacter(client, force: true);
             }
         }
     }

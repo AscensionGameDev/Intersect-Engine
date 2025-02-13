@@ -12,7 +12,7 @@ public partial class VersionLabel : Label
         AutoSizeToContents = true;
         Dock = Pos.Top;
         MouseInputEnabled = true;
-        TextPadding = new Padding(2, 0);
+        Padding = new Padding(2, 0);
     }
 
     protected override void Layout(Framework.Gwen.Skin.Base skin)

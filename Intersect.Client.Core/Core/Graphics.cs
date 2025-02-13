@@ -529,7 +529,7 @@ public static partial class Graphics
     }
 
     //Game Rendering
-    public static void Render(TimeSpan deltaTime, TimeSpan _)
+    public static void Render(TimeSpan deltaTime, TimeSpan totalTime)
     {
         var takingScreenshot = false;
         if (Renderer?.ScreenshotRequests.Count > 0)
@@ -592,7 +592,7 @@ public static partial class Graphics
 
         Renderer.Scale = Globals.Database.UIScale;
 
-        Interface.Interface.DrawGui();
+        Interface.Interface.DrawGui(deltaTime, totalTime);
 
         DrawGameTexture(
             Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView,

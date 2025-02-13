@@ -38,8 +38,8 @@ body:
     id: version-with-bug
     attributes:
       label: Version with bug
-      description: Please provide the version number of Intersect that you are seeing this bug with.
-      placeholder: E.g. v7.1.22
+      description: Please provide the version number of Intersect that you are seeing this bug with. Starting with v0.8.0-beta.379 there is a version marker in the bottom right of the screen that can be clicked to copy the version to the clipboard to be pasted here.
+      placeholder: e.g. v0.8.0-beta
     validations:
       required: true
       email: true
@@ -56,15 +56,26 @@ body:
     id: platforms-affected
     attributes:
       label: Affected platforms
-      description: Select all or any platform that you see this issue on. This helps us determine if it's something platform-specific or in the core. If you were only able to test on 1 platform, please check the last option to inform us about that.
+      description: Select every platform that you have reproduced this issue on.
       multiple: true
       options:
-        - Windows
+        - Windows 10
+        - Windows 11
         - macOS
         - Linux
-        - I was *not* able test on other platforms
+        - SteamDeck
+        - SteamOS (non-SteamDeck)
+        # - Android
+        # - iOS
     validations:
       required: true
+  - type: checkboxes
+    id: platform-specific
+    attributes:
+      label: Is this bug platform-specific?
+      description: This means that you verified that platforms you did not mark above are not affected by this issue, and that this can be reproduced on any platform.
+      options:
+        - label: Yes this is platform-specific issue
   - type: textarea
     id: workaround
     attributes:

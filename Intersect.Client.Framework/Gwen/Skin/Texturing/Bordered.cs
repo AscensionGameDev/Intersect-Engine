@@ -16,6 +16,21 @@ public partial struct SubRect
 /// </summary>
 public partial struct Bordered : IEquatable<Bordered>
 {
+    private readonly float mX;
+    private readonly float mY;
+
+    public static implicit operator FivePatch(Bordered bordered)
+    {
+        return new FivePatch(
+            bordered.mTexture,
+            (int)bordered.mX,
+            (int)bordered.mY,
+            (int)bordered.mWidth,
+            (int)bordered.mHeight,
+            bordered.mMargin,
+            default
+        );
+    }
 
     private GameTexture mTexture;
 
@@ -33,17 +48,18 @@ public partial struct Bordered : IEquatable<Bordered>
         float y,
         float w,
         float h,
-        Margin inMargin,
-        float drawMarginScale = 1.0f
+        Margin inMargin
     ) : this()
     {
+        mX = x;
+        mY = y;
         mRects = new SubRect[9];
         for (var i = 0; i < mRects.Length; i++)
         {
             mRects[i].Uv = new float[4];
         }
 
-        Init(texture, x, y, w, h, inMargin, drawMarginScale);
+        Init(texture, x, y, w, h, inMargin);
     }
 
     void DrawRect(Renderer.Base render, int i, int x, int y, int w, int h, Color clr)
@@ -110,13 +126,8 @@ public partial struct Bordered : IEquatable<Bordered>
         SetRect(7, x + mMargin.Left, y + h - mMargin.Bottom, w - mMargin.Left - mMargin.Right, mMargin.Bottom);
         SetRect(8, x + w - mMargin.Right, y + h - mMargin.Bottom, mMargin.Right, mMargin.Bottom);
 
-        mMargin.Left = (int) (mMargin.Left * drawMarginScale);
-        mMargin.Right = (int) (mMargin.Right * drawMarginScale);
-        mMargin.Top = (int) (mMargin.Top * drawMarginScale);
-        mMargin.Bottom = (int) (mMargin.Bottom * drawMarginScale);
-
-        mWidth = w - x;
-        mHeight = h - y;
+        mWidth = w;
+        mHeight = h;
     }
 
     // can't have this as default param

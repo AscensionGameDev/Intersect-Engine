@@ -27,3 +27,41 @@ public enum Pos
     Center = CenterV | CenterH,
 
 }
+
+public static class PosExtensions
+{
+    private const Pos MaskTopPriority = ~(Pos.Bottom | Pos.CenterV);
+    private const Pos MaskBottomPriority = ~(Pos.Top | Pos.CenterV);
+    private const Pos MaskLeftPriority = ~(Pos.Right | Pos.CenterH);
+    private const Pos MaskRightPriority = ~(Pos.Left | Pos.CenterH);
+
+    public static Point GetDockSpacing(this Pos dock, Padding dockSpacing)
+    {
+        if (dock.HasFlag(Pos.Fill) || dock.HasFlag(Pos.Center))
+        {
+            return default;
+        }
+
+        Point spacing = default;
+
+        if (dock == (dock & MaskTopPriority))
+        {
+            spacing.Y += dockSpacing.Top;
+        }
+        else if (dock == (dock & MaskBottomPriority))
+        {
+            spacing.Y += dockSpacing.Bottom;
+        }
+
+        if (dock == (dock & MaskLeftPriority))
+        {
+            spacing.Y += dockSpacing.Left;
+        }
+        else if (dock == (dock & MaskRightPriority))
+        {
+            spacing.Y += dockSpacing.Right;
+        }
+
+        return spacing;
+    }
+}

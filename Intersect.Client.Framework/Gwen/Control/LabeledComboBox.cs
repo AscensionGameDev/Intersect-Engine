@@ -4,7 +4,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
-public partial class LabeledComboBox : Base, IAutoSizeToContents
+public partial class LabeledComboBox : Base, IAutoSizeToContents, ITextContainer
 {
     private readonly ComboBox _comboBox;
     private readonly Label _label;
@@ -19,15 +19,15 @@ public partial class LabeledComboBox : Base, IAutoSizeToContents
         _label = new Label(this, name: nameof(_label))
         {
             Alignment = [Alignments.CenterV],
-            Dock = Pos.Left,
+            Dock = Pos.Left | Pos.CenterV,
         };
 
         _comboBox = new ComboBox(this, name: nameof(_comboBox))
         {
             Alignment = [Alignments.CenterV],
-            Dock = Pos.Left,
-            Margin = new Margin(4, 0, 0, 0),
-            TextPadding = Padding.Two,
+            Dock = Pos.Left | Pos.CenterV,
+            Margin = new Margin(8, 0, 0, 0),
+            Padding = new Padding(8, 4, 0, 4),
         };
 
         _comboBox.ItemSelected += (_, args) => ItemSelected?.Invoke(this, args);
@@ -81,19 +81,35 @@ public partial class LabeledComboBox : Base, IAutoSizeToContents
     public bool AutoSizeToContents
     {
         get => _autoSizeToContents;
-        set => _autoSizeToContents = value;
+        set => SetAndDoIfChanged(ref _autoSizeToContents, value, Invalidate);
     }
 
-    public Padding LabelTextPadding
+    protected override void OnDockChanged(Pos oldDock, Pos newDock)
     {
-        get => _label.TextPadding;
-        set => _label.TextPadding = value;
+        base.OnDockChanged(oldDock, newDock);
+
+        if (newDock.HasFlag(Pos.Fill) || !_autoSizeToContents && (newDock.HasFlag(Pos.Bottom) || newDock.HasFlag(Pos.Top)))
+        {
+            _comboBox.Dock = Pos.Fill | Pos.CenterV;
+            _comboBox.AutoSizeToContents = false;
+        }
+        else if (_comboBox.Dock.HasFlag(Pos.Fill))
+        {
+            _comboBox.Dock = Pos.Left | Pos.CenterV;
+            _comboBox.AutoSizeToContents = true;
+        }
+    }
+
+    public Padding LabelPadding
+    {
+        get => _label.Padding;
+        set => _label.Padding = value;
     }
 
     public Padding TextPadding
     {
-        get => _comboBox.TextPadding;
-        set => _comboBox.TextPadding = value;
+        get => _comboBox.Padding;
+        set => _comboBox.Padding = value;
     }
 
     protected override void Layout(Skin.Base skin)
@@ -112,4 +128,14 @@ public partial class LabeledComboBox : Base, IAutoSizeToContents
 
         Invalidate();
     }
+
+    string? ITextContainer.Text
+    {
+        get => _label.Text;
+        set => _label.Text = value;
+    }
+
+    public Color? TextPaddingDebugColor { get; set; }
+
+    public void ClearItems() => _comboBox.ClearItems();
 }

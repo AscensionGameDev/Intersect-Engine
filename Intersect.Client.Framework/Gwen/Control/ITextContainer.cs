@@ -2,9 +2,9 @@ namespace Intersect.Client.Framework.Gwen.Control;
 
 public interface ITextContainer
 {
-    string? Text { get; set; }
+    Padding Padding { get; set; }
 
-    Padding TextPadding { get; set; }
+    string? Text { get; set; }
 
     Color? TextPaddingDebugColor { get; set; }
 }

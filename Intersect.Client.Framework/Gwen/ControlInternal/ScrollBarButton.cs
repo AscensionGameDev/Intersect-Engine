@@ -2,47 +2,44 @@
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal;
 
-
 /// <summary>
 ///     Scrollbar button.
 /// </summary>
 public partial class ScrollBarButton : Button
 {
-
-    private Pos mDirection;
+    private Pos _direction = Pos.Top;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ScrollBarButton" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
-    public ScrollBarButton(Base parent) : base(parent)
+    public ScrollBarButton(Base parent) : base(parent, disableText: true)
     {
-        SetDirectionUp();
+        MinimumSize = new Point(15, 15);
+        Size = new Point(15, 15);
+        MaximumSize = new Point(15, 15);
     }
 
-    public virtual void SetDirectionUp()
+    public virtual Pos Direction => _direction;
+
+    public void SetDirectionUp()
     {
-        mDirection = Pos.Top;
+        _direction = Pos.Top;
     }
 
-    public virtual void SetDirectionDown()
+    public void SetDirectionDown()
     {
-        mDirection = Pos.Bottom;
+        _direction = Pos.Bottom;
     }
 
-    public virtual void SetDirectionLeft()
+    public void SetDirectionLeft()
     {
-        mDirection = Pos.Left;
+        _direction = Pos.Left;
     }
 
-    public virtual void SetDirectionRight()
+    public void SetDirectionRight()
     {
-        mDirection = Pos.Right;
-    }
-
-    public virtual Pos GetDirection()
-    {
-        return mDirection;
+        _direction = Pos.Right;
     }
 
     /// <summary>
@@ -51,7 +48,6 @@ public partial class ScrollBarButton : Button
     /// <param name="skin">Skin to use.</param>
     protected override void Render(Skin.Base skin)
     {
-        skin.DrawScrollButton(this, mDirection, IsActive, IsHovered, IsDisabled);
+        skin.DrawScrollButton(this, _direction, IsActive, IsHovered, IsDisabled);
     }
-
 }

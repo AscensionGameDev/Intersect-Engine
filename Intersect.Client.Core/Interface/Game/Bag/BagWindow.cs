@@ -79,7 +79,7 @@ public partial class BagWindow
         if (Globals.InBag)
         {
             var slot = (int) sender.Parent.UserData;
-            Globals.Me.TryRetreiveBagItem(slot, -1);
+            Globals.Me.TryRetrieveItemFromBag(slot, -1);
         }
     }
 
@@ -180,8 +180,8 @@ public partial class BagWindow
     {
         var rect = new FloatRect()
         {
-            X = mBagWindow.LocalPosToCanvas(new Point(0, 0)).X - sItemXPadding / 2,
-            Y = mBagWindow.LocalPosToCanvas(new Point(0, 0)).Y - sItemYPadding / 2,
+            X = mBagWindow.ToCanvas(new Point(0, 0)).X - sItemXPadding / 2,
+            Y = mBagWindow.ToCanvas(new Point(0, 0)).Y - sItemYPadding / 2,
             Width = mBagWindow.Width + sItemXPadding,
             Height = mBagWindow.Height + sItemYPadding
         };

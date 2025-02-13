@@ -1,7 +1,8 @@
-using HarmonyLib;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -9,19 +10,18 @@ using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
-using Intersect.Network.Packets.Server;
 
 namespace Intersect.Client.Interface.Menu;
 
-public partial class SelectCharacterWindow : ImagePanel
+public partial class SelectCharacterWindow : Window
 {
     private readonly MainMenu _mainMenu;
 
-    private readonly Label _labelCharname;
-    private readonly Label _labelInfo;
-    private readonly ImagePanel _charContainer;
-    private readonly Button _buttonNextChar;
-    private readonly Button _buttonPrevChar;
+    private readonly Label _nameLabel;
+    private readonly Label _infoLabel;
+    private readonly ImagePanel _preview;
+    private readonly Button _selectCharacterRightButton;
+    private readonly Button _selectCharacterLeftButton;
     private readonly Button _buttonPlay;
     private readonly Button _buttonDelete;
     private readonly Button _buttonNew;
@@ -29,63 +29,148 @@ public partial class SelectCharacterWindow : ImagePanel
 
     private ImagePanel[]? _renderLayers;
 
-    public Character[]? Characters;
-
-    public int mSelectedChar = 0;
-
-    //Init
-    public SelectCharacterWindow(Canvas parent, MainMenu mainMenu) : base(parent, "CharacterSelectionWindow")
+    public CharacterSelectionPreviewMetadata[]? CharacterSelectionPreviews
     {
-        //Assign References
+        get => _characterSelectionPreviews;
+        set => SetAndDoIfChanged(ref _characterSelectionPreviews, value, Invalidate);
+    }
+
+    public int _selectedCharacterIndex;
+    private CharacterSelectionPreviewMetadata[]? _characterSelectionPreviews;
+
+    private readonly GameFont? _defaultFont;
+
+    private readonly Panel _characterPreviewPanel;
+    private readonly Panel _previewContainer;
+    private readonly Panel _buttonsPanel;
+
+    public SelectCharacterWindow(Canvas parent, MainMenu mainMenu) : base(
+        parent: parent,
+        title: Strings.CharacterSelection.Title,
+        modal: false,
+        name: nameof(SelectCharacterWindow)
+    )
+    {
         _mainMenu = mainMenu;
 
-        //Menu Header
-        _ = new Label(this, "CharacterSelectionHeader") { Text = Strings.CharacterSelection.Title };
+        _defaultFont = GameContentManager.Current.GetFont(name: "sourcesansproblack", 12);
 
-        //Character Name
-        _labelCharname = new Label(this, "CharacterNameLabel") { Text = Strings.CharacterSelection.Empty };
+        Alignment = [Alignments.Center];
+        MinimumSize = new Point(x: 560, y: 240);
+        IsClosable = false;
+        IsResizable = false;
+        InnerPanelPadding = new Padding(8);
+        Titlebar.MouseInputEnabled = false;
+        TitleLabel.FontSize = 14;
+        TitleLabel.TextColorOverride = Color.White;
 
-        //Character Info
-        _labelInfo = new Label(this, "CharacterInfoLabel") { Text = Strings.CharacterSelection.New };
-
-        //Character Container
-        _charContainer = new ImagePanel(this, "CharacterContainer");
-
-        //Next char Button
-        _buttonNextChar = new Button(_charContainer, "NextCharacterButton");
-        _buttonNextChar.Clicked += _buttonNextChar_Clicked;
-
-        //Prev Char Button
-        _buttonPrevChar = new Button(_charContainer, "PreviousCharacterButton");
-        _buttonPrevChar.Clicked += _buttonPrevChar_Clicked;
-
-        //Play Button
-        _buttonPlay = new Button(this, "PlayButton")
+        _buttonsPanel = new Panel(this, name: nameof(_buttonsPanel))
         {
+            Dock = Pos.Bottom,
+            Margin = new Margin(0, 8, 0, 0),
+            ShouldDrawBackground = false,
+        };
+
+        _buttonNew = new Button(_buttonsPanel, name: nameof(_buttonNew))
+        {
+            Alignment = [Alignments.Left],
+            Font = _defaultFont,
+            MinimumSize = new Point(120, 24),
+            Text = Strings.CharacterSelection.New,
+        };
+        _buttonNew.Clicked += _buttonNew_Clicked;
+
+        _buttonPlay = new Button(_buttonsPanel, name: nameof(_buttonPlay))
+        {
+            Alignment = [Alignments.Left],
+            Font = _defaultFont,
+            MinimumSize = new Point(120, 24),
             Text = Strings.CharacterSelection.Play,
-            IsHidden = true
         };
         _buttonPlay.Clicked += ButtonPlay_Clicked;
 
-        //Delete Button
-        _buttonDelete = new Button(this, "DeleteButton")
+        _buttonDelete = new Button(_buttonsPanel, name: nameof(_buttonDelete))
         {
+            Alignment = [Alignments.CenterH],
+            Font = _defaultFont,
+            MinimumSize = new Point(120, 24),
             Text = Strings.CharacterSelection.Delete,
-            IsHidden = true
         };
         _buttonDelete.Clicked += _buttonDelete_Clicked;
 
-        //Create new char Button
-        _buttonNew = new Button(this, "NewButton") { Text = Strings.CharacterSelection.New };
-        _buttonNew.Clicked += _buttonNew_Clicked;
-
-        //Logout Button
-        _buttonLogout = new Button(this, "LogoutButton")
+        _buttonLogout = new Button(_buttonsPanel, name: nameof(_buttonLogout))
         {
+            Alignment = [Alignments.Right],
+            Font = _defaultFont,
+            MinimumSize = new Point(120, 24),
             Text = Strings.CharacterSelection.Logout,
-            IsHidden = true
         };
         _buttonLogout.Clicked += _buttonLogout_Clicked;
+
+        _characterPreviewPanel = new Panel(this, name: nameof(_characterPreviewPanel))
+        {
+            Dock = Pos.Fill,
+            ShouldDrawBackground = false,
+        };
+
+        _selectCharacterLeftButton = new Button(_characterPreviewPanel, name: nameof(_selectCharacterLeftButton), disableText: true)
+        {
+            Dock = Pos.Left | Pos.CenterV,
+            MinimumSize = new Point(30, 35),
+            MaximumSize = new Point(30, 35),
+        };
+        _selectCharacterLeftButton.Clicked += SelectCharacterLeftButtonOnClicked;
+        _selectCharacterLeftButton.SetStateTexture(ComponentState.Normal, "button.arrow_left.normal.png");
+        _selectCharacterLeftButton.SetStateTexture(ComponentState.Disabled, "button.arrow_left.disabled.png");
+        _selectCharacterLeftButton.SetStateTexture(ComponentState.Hovered, "button.arrow_left.hovered.png");
+        _selectCharacterLeftButton.SetStateTexture(ComponentState.Active, "button.arrow_left.active.png");
+
+        _selectCharacterRightButton = new Button(_characterPreviewPanel, name: nameof(_selectCharacterRightButton), disableText: true)
+        {
+            Dock = Pos.Right | Pos.CenterV,
+            MinimumSize = new Point(30, 35),
+            MaximumSize = new Point(30, 35),
+        };
+        _selectCharacterRightButton.Clicked += SelectCharacterRightButtonOnClicked;
+        _selectCharacterRightButton.SetStateTexture(ComponentState.Normal, "button.arrow_right.normal.png");
+        _selectCharacterRightButton.SetStateTexture(ComponentState.Disabled, "button.arrow_right.disabled.png");
+        _selectCharacterRightButton.SetStateTexture(ComponentState.Hovered, "button.arrow_right.hovered.png");
+        _selectCharacterRightButton.SetStateTexture(ComponentState.Active, "button.arrow_right.active.png");
+
+        _infoLabel = new Label(_characterPreviewPanel, name: nameof(_infoLabel))
+        {
+            AutoSizeToContents = true,
+            Dock = Pos.Bottom | Pos.CenterH,
+            Font = _defaultFont,
+            Text = Strings.CharacterSelection.Empty,
+        };
+
+        _nameLabel = new Label(_characterPreviewPanel, name: nameof(_nameLabel))
+        {
+            AutoSizeToContents = true,
+            Dock = Pos.Bottom | Pos.CenterH,
+            Font = _defaultFont,
+        };
+
+        _previewContainer = new Panel(_characterPreviewPanel, name: nameof(_previewContainer))
+        {
+            Dock = Pos.Fill,
+            ShouldDrawBackground = false,
+        };
+
+        _preview = new ImagePanel(_previewContainer, name: nameof(_preview))
+        {
+            Alignment = [Alignments.Center],
+            MaintainAspectRatio = true,
+            TextureFilename = "character_preview_background.png",
+        };
+
+        _buttonsPanel.SizeToChildren(recursive: true);
+    }
+
+    protected override void EnsureInitialized()
+    {
+        SizeToChildren(recursive: true);
 
         LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
     }
@@ -108,18 +193,18 @@ public partial class SelectCharacterWindow : ImagePanel
 
     private void UpdateDisplay()
     {
-        if (_renderLayers == default || Characters == default)
+        if (_renderLayers == default || CharacterSelectionPreviews == default)
         {
             return;
         }
 
-        _buttonNextChar.IsHidden = Characters.Length <= 1;
-        _buttonPrevChar.IsHidden = Characters.Length <= 1;
+        _selectCharacterRightButton.IsHidden = CharacterSelectionPreviews.Length <= 1;
+        _selectCharacterLeftButton.IsHidden = CharacterSelectionPreviews.Length <= 1;
 
-        if (Characters.Length > 1)
+        if (CharacterSelectionPreviews.Length > 1)
         {
-            _buttonNextChar.BringToFront();
-            _buttonPrevChar.BringToFront();
+            _selectCharacterRightButton.BringToFront();
+            _selectCharacterLeftButton.BringToFront();
         }
 
         foreach (var paperdollPortrait in _renderLayers)
@@ -128,64 +213,73 @@ public partial class SelectCharacterWindow : ImagePanel
             paperdollPortrait.Hide();
         }
 
-        if (Characters[mSelectedChar] == default)
+        var selectedPreviewMetadata = CharacterSelectionPreviews[_selectedCharacterIndex];
+        if (selectedPreviewMetadata == default)
         {
             _buttonPlay.Hide();
             _buttonDelete.Hide();
             _buttonNew.Show();
 
-            _labelCharname.SetText(Strings.CharacterSelection.Empty);
-            _labelInfo.SetText(string.Empty);
+            _infoLabel.Text = Strings.CharacterSelection.Empty;
+            _nameLabel.Text = string.Empty;
             return;
         }
 
-        _labelCharname.SetText(Strings.CharacterSelection.Name.ToString(Characters[mSelectedChar].Name));
-        _labelInfo.SetText(
-            Strings.CharacterSelection.Info.ToString(
-                Characters[mSelectedChar].Level, Characters[mSelectedChar].Class
-            )
+        _nameLabel.Text = Strings.CharacterSelection.Name.ToString(selectedPreviewMetadata.Name);
+        _infoLabel.Text = Strings.CharacterSelection.Info.ToString(
+            selectedPreviewMetadata.Level,
+            selectedPreviewMetadata.Class
         );
 
         _buttonPlay.Show();
         _buttonDelete.Show();
         _buttonNew.Hide();
 
-        // we are rendering the player facing down, then we need to know the render order of the equipments
-        var faceTex = Globals.ContentManager.GetTexture(TextureType.Face, Characters[mSelectedChar].Face);
-        if (faceTex != default)
+        var faceTexture = GameContentManager.Current.GetTexture(TextureType.Face, selectedPreviewMetadata.Face);
+        if (faceTexture != default)
         {
-            _renderLayers[0].Texture = faceTex;
-            var scale = Math.Min(_charContainer.InnerWidth / (double)faceTex.Width, _charContainer.InnerHeight / (double)faceTex.Height);
-            var sizeX = (int)(faceTex.Width * scale);
-            var sizeY = (int)(faceTex.Height * scale);
-            _ = _renderLayers[0].SetSize(sizeX, sizeY);
-            _renderLayers[0].SetPosition((_charContainer.Width / 2) - (sizeX / 2), (_charContainer.Height / 2) - (sizeY / 2));
-            _renderLayers[0].Show();
+            var faceLayer = _renderLayers[0];
+            var scale = Math.Min(
+                _preview.InnerWidth / (double)faceTexture.Width,
+                _preview.InnerHeight / (double)faceTexture.Height
+            );
+            var faceTextureWidth = (int)(faceTexture.Width * scale);
+            var faceTextureHeight = (int)(faceTexture.Height * scale);
+            var x = (_preview.Width - faceTextureWidth) / 2;
+            var y = (_preview.Height - faceTextureHeight) / 2;
+            faceLayer.ResetUVs();
+            faceLayer.SetBounds(x, y, faceTextureWidth, faceTextureHeight);
+            faceLayer.Texture = faceTexture;
+            faceLayer.IsVisible = true;
 
-            _renderLayers.Skip(1).Do(p => p.Hide());
+            foreach (var renderLayer in _renderLayers.Skip(1))
+            {
+                renderLayer.IsVisible = false;
+            }
             return;
         }
 
-        for (var i = 0; i < Options.Instance.Equipment.Paperdoll.Down.Count; i++)
+        // we are rendering the player facing down, then we need to know the render order of the equipments
+        for (var paperdollLayerIndex = 0; paperdollLayerIndex < Options.Instance.Equipment.Paperdoll.Down.Count; paperdollLayerIndex++)
         {
-            var equipment = Options.Instance.Equipment.Paperdoll.Down[i];
-            var paperdollContainer = _renderLayers[i];
+            var paperdollLayerType = Options.Instance.Equipment.Paperdoll.Down[paperdollLayerIndex];
+            var paperdollContainer = _renderLayers[paperdollLayerIndex];
 
             // handle player/equip rendering, we just need to find the correct texture
-            if (string.Equals("Player", equipment, StringComparison.Ordinal))
+            if (string.Equals("Player", paperdollLayerType, StringComparison.Ordinal))
             {
-                var spriteSource = Characters[mSelectedChar].Sprite;
+                var spriteSource = selectedPreviewMetadata.Sprite;
                 var spriteTex = Globals.ContentManager.GetTexture(TextureType.Entity, spriteSource);
                 paperdollContainer.Texture = spriteTex;
             }
             else
             {
-                if (i >= Characters[mSelectedChar].Equipment.Length)
+                if (paperdollLayerIndex >= selectedPreviewMetadata.Equipment.Length)
                 {
                     continue;
                 }
 
-                var equipFragment = Characters[mSelectedChar].Equipment[i];
+                var equipFragment = selectedPreviewMetadata.Equipment[paperdollLayerIndex];
 
                 if (equipFragment == default)
                 {
@@ -216,8 +310,8 @@ public partial class SelectCharacterWindow : ImagePanel
             paperdollContainer.SetTextureRect(0, 0, textureWidth, textureHeight);
             _ = paperdollContainer.SetSize(textureWidth, textureHeight);
 
-            var centerX = (_charContainer.Width / 2) - (paperdollContainer.Width / 2);
-            var centerY = (_charContainer.Height / 2) - (paperdollContainer.Height / 2);
+            var centerX = (_preview.Width / 2) - (paperdollContainer.Width / 2);
+            var centerY = (_preview.Height / 2) - (paperdollContainer.Height / 2);
             paperdollContainer.SetPosition(centerX, centerY);
 
             paperdollContainer.Show();
@@ -231,16 +325,19 @@ public partial class SelectCharacterWindow : ImagePanel
             _renderLayers = new ImagePanel[Options.Instance.Equipment.Paperdoll.Down.Count];
             for (var i = 0; i < _renderLayers.Length; i++)
             {
-                _renderLayers[i] = new ImagePanel(_charContainer);
+                _renderLayers[i] = new ImagePanel(_preview)
+                {
+                    Alignment = [Alignments.Center],
+                };
             }
         }
 
-        if (Characters == default)
+        if (CharacterSelectionPreviews == default)
         {
-            Characters = new Character[Options.Instance.Player.MaxCharacters];
+            CharacterSelectionPreviews = new CharacterSelectionPreviewMetadata[Options.Instance.Player.MaxCharacters];
         }
 
-        mSelectedChar = 0;
+        _selectedCharacterIndex = 0;
         UpdateDisplay();
         base.Show();
     }
@@ -248,26 +345,26 @@ public partial class SelectCharacterWindow : ImagePanel
     private void _buttonLogout_Clicked(Base sender, MouseButtonState arguments)
     {
         Main.Logout(false, skipFade: true);
-        _mainMenu.Reset();
+        // _mainMenu.Reset();
     }
 
-    private void _buttonPrevChar_Clicked(Base sender, MouseButtonState arguments)
+    private void SelectCharacterLeftButtonOnClicked(Base sender, MouseButtonState arguments)
     {
-        mSelectedChar--;
-        if (mSelectedChar < 0)
+        _selectedCharacterIndex--;
+        if (_selectedCharacterIndex < 0)
         {
-            mSelectedChar = Characters!.Length - 1;
+            _selectedCharacterIndex = CharacterSelectionPreviews!.Length - 1;
         }
 
         UpdateDisplay();
     }
 
-    private void _buttonNextChar_Clicked(Base sender, MouseButtonState arguments)
+    private void SelectCharacterRightButtonOnClicked(Base sender, MouseButtonState arguments)
     {
-        mSelectedChar++;
-        if (mSelectedChar >= Characters!.Length)
+        _selectedCharacterIndex++;
+        if (_selectedCharacterIndex >= CharacterSelectionPreviews!.Length)
         {
-            mSelectedChar = 0;
+            _selectedCharacterIndex = 0;
         }
 
         UpdateDisplay();
@@ -275,17 +372,17 @@ public partial class SelectCharacterWindow : ImagePanel
 
     private void _buttonDelete_Clicked(Base sender, MouseButtonState arguments)
     {
-        if (Globals.WaitingOnServer || Characters == default)
+        if (Globals.WaitingOnServer || CharacterSelectionPreviews == default)
         {
             return;
         }
 
         _ = new InputBox(
-            title: Strings.CharacterSelection.DeleteTitle.ToString(Characters[mSelectedChar].Name),
-            prompt: Strings.CharacterSelection.DeletePrompt.ToString(Characters[mSelectedChar].Name),
-            inputType: InputBox.InputType.YesNo,
-            userData: Characters[mSelectedChar].Id,
-            onSuccess: DeleteCharacter
+            title: Strings.CharacterSelection.DeleteTitle.ToString(CharacterSelectionPreviews[_selectedCharacterIndex].Name),
+            prompt: Strings.CharacterSelection.DeletePrompt.ToString(CharacterSelectionPreviews[_selectedCharacterIndex].Name),
+            inputType: InputType.YesNo,
+            userData: CharacterSelectionPreviews[_selectedCharacterIndex].Id,
+            onSubmit: DeleteCharacter
         );
     }
 
@@ -301,7 +398,7 @@ public partial class SelectCharacterWindow : ImagePanel
             _buttonDelete.Disable();
             _buttonLogout.Disable();
 
-            mSelectedChar = 0;
+            _selectedCharacterIndex = 0;
             UpdateDisplay();
         }
     }
@@ -324,13 +421,13 @@ public partial class SelectCharacterWindow : ImagePanel
 
     public void ButtonPlay_Clicked(Base? sender, MouseButtonState? arguments)
     {
-        if (Globals.WaitingOnServer || Characters == default)
+        if (Globals.WaitingOnServer || CharacterSelectionPreviews == default)
         {
             return;
         }
 
         ChatboxMsg.ClearMessages();
-        PacketSender.SendSelectCharacter(Characters[mSelectedChar].Id);
+        PacketSender.SendSelectCharacter(CharacterSelectionPreviews[_selectedCharacterIndex].Id);
 
         Globals.WaitingOnServer = true;
         _buttonPlay.Disable();
@@ -338,31 +435,4 @@ public partial class SelectCharacterWindow : ImagePanel
         _buttonDelete.Disable();
         _buttonLogout.Disable();
     }
-}
-
-public partial class Character(
-    Guid id,
-    string name,
-    string sprite,
-    string face,
-    int level,
-    string charClass,
-    EquipmentFragment[] equipment
-    )
-{
-    public Guid Id = id;
-
-    public string Class = charClass;
-
-    public EquipmentFragment?[] Equipment = equipment;
-
-    public bool Exists = true;
-
-    public string Face = face;
-
-    public int Level = level;
-
-    public string Name = name;
-
-    public string Sprite = sprite;
 }

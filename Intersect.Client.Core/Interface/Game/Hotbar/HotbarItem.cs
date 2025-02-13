@@ -65,8 +65,9 @@ public partial class HotbarItem
             Y = 4 + row * 40,
             Width = 36,
             Height = 36,
+            Margin = new Margin(column > 0 ? 4 : 0, row > 0 ? 4 : 0, 0, 0),
+            RestrictToParent = true,
             TextureFilename = "hotbaritem.png",
-            Margin = Margin.Four,
         };
 
         // Content Panel is layered on top of the container (shows the Item or Spell Icon).
@@ -247,8 +248,8 @@ public partial class HotbarItem
     {
         var rect = new FloatRect()
         {
-            X = HotbarIcon.LocalPosToCanvas(new Point(0, 0)).X,
-            Y = HotbarIcon.LocalPosToCanvas(new Point(0, 0)).Y,
+            X = HotbarIcon.ToCanvas(new Point(0, 0)).X,
+            Y = HotbarIcon.ToCanvas(new Point(0, 0)).Y,
             Width = HotbarIcon.Width,
             Height = HotbarIcon.Height
         };
@@ -544,25 +545,25 @@ public partial class HotbarItem
                         {
                             if (_mouseX == -1 || _mouseY == -1)
                             {
-                                _mouseX = InputHandler.MousePosition.X - HotbarIcon.LocalPosToCanvas(new Point(0, 0)).X;
-                                _mouseY = InputHandler.MousePosition.Y - HotbarIcon.LocalPosToCanvas(new Point(0, 0)).Y;
+                                _mouseX = InputHandler.MousePosition.X - HotbarIcon.ToCanvas(new Point(0, 0)).X;
+                                _mouseY = InputHandler.MousePosition.Y - HotbarIcon.ToCanvas(new Point(0, 0)).Y;
                             }
                             else
                             {
                                 var xdiff = _mouseX -
                                             (InputHandler.MousePosition.X -
-                                             HotbarIcon.LocalPosToCanvas(new Point(0, 0)).X);
+                                             HotbarIcon.ToCanvas(new Point(0, 0)).X);
 
                                 var ydiff = _mouseY -
                                             (InputHandler.MousePosition.Y -
-                                             HotbarIcon.LocalPosToCanvas(new Point(0, 0)).Y);
+                                             HotbarIcon.ToCanvas(new Point(0, 0)).Y);
 
                                 if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                 {
                                     _isDragging = true;
                                     _dragIcon = new Draggable(
-                                        HotbarIcon.LocalPosToCanvas(new Point(0, 0)).X + _mouseX,
-                                        HotbarIcon.LocalPosToCanvas(new Point(0, 0)).X + _mouseY, _contentPanel.Texture, _contentPanel.RenderColor
+                                        HotbarIcon.ToCanvas(new Point(0, 0)).X + _mouseX,
+                                        HotbarIcon.ToCanvas(new Point(0, 0)).X + _mouseY, _contentPanel.Texture, _contentPanel.RenderColor
                                     );
 
                                     //SOMETHING SHOULD BE RENDERED HERE, RIGHT?

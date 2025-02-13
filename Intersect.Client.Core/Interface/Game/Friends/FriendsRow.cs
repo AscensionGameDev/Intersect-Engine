@@ -92,8 +92,8 @@ public partial class FriendsRow
         var iBox = new InputBox(
             title: Strings.Friends.RemoveFriend,
             prompt: Strings.Friends.RemoveFriendPrompt.ToString(mMyName),
-            inputType: InputBox.InputType.YesNo,
-            onSuccess: (s, e) => PacketSender.SendRemoveFriend(mMyName)
+            inputType: InputType.YesNo,
+            onSubmit: (s, e) => PacketSender.SendRemoveFriend(mMyName)
         );
     }
 

@@ -11,5 +11,5 @@ public interface IItem
     int Quantity { get; set; }
     ItemProperties ItemProperties { get; set; }
 
-    void Load(Guid id, int quantity, Guid? bagId, ItemProperties ItemProperties);
+    void Load(Guid id, int quantity, Guid? bagId, ItemProperties itemProperties);
 }

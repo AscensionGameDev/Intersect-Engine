@@ -7,15 +7,18 @@ using Intersect.Framework;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
-public partial class LabeledSlider : Base, IAutoSizeToContents
+public partial class LabeledSlider : Base, ISmartAutoSizeToContents, INumericInput, ITextContainer
 {
     private readonly Label _label;
     private readonly Slider _slider;
     private readonly TextBoxNumeric _sliderValue;
     private double _scale = 1.0;
     private int _rounding = -1;
-    private bool _autoSizeToContents;
     private bool _recomputeValueMinimumSize = true;
+    private bool _autoSizeToContentWidth;
+    private bool _autoSizeToContentHeight;
+    private bool _autoSizeToContentWidthOnChildResize;
+    private bool _autoSizeToContentHeightOnChildResize;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="LabeledSlider" /> class.
@@ -24,6 +27,8 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
     /// <param name="name"></param>
     public LabeledSlider(Base parent, string? name = default) : base(parent: parent, name: name)
     {
+        DockChildSpacing = new Padding(4);
+
         _label = new Label(this, nameof(_label))
         {
             Alignment = [Alignments.CenterV],
@@ -49,26 +54,24 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
             if (_rounding > -1)
             {
                 newValue = Math.Round(newValue, _rounding);
+                _slider.SetValue(newValue, skipEvents: true);
             }
 
-            _sliderValue.Value = newValue;
+            _sliderValue.SetValue(newValue, skipEvents: true);
             ValueChanged?.Invoke(sender, arguments);
         };
 
         _sliderValue.TextChanged += (sender, _) =>
         {
-            if (sender == _slider)
-            {
-                return;
-            }
-
             var newValue = _sliderValue.Value / _scale;
-            var clampedValue = Math.Clamp(newValue, Min, Max);
+            var clampedValue = Math.Clamp(newValue, Minimum, Maximum);
             if (!clampedValue.Equals(newValue))
             {
                 _sliderValue.Value = clampedValue;
             }
+
             _slider.Value = clampedValue;
+            _slider.SetValue(clampedValue, skipEvents: true);
             ValueChanged?.Invoke(
                 sender,
                 new ValueChangedEventArgs<double>
@@ -78,7 +81,7 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
             );
         };
 
-        _autoSizeToContents = true;
+        AutoSizeToContentHeight = true;
         KeyboardInputEnabled = true;
         IsTabable = true;
     }
@@ -114,8 +117,8 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
 
     public Point SliderSize
     {
-        get => _slider.Size;
-        set => _slider.Size = value;
+        get => _slider.MinimumSize;
+        set => _slider.MinimumSize = value;
     }
 
     public bool IsValueInputEnabled
@@ -176,12 +179,12 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
     /// <summary>
     ///     Minimum value.
     /// </summary>
-    public double Min
+    public double Minimum
     {
-        get => _slider.Min;
+        get => _slider.Minimum;
         set
         {
-            _slider.Min = value;
+            _slider.Minimum = value;
             _sliderValue.Minimum = value;
         }
     }
@@ -189,12 +192,12 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
     /// <summary>
     ///     Maximum value.
     /// </summary>
-    public double Max
+    public double Maximum
     {
-        get => _slider.Max;
+        get => _slider.Maximum;
         set
         {
-            _slider.Max = value;
+            _slider.Maximum = value;
             _sliderValue.Maximum = value;
             _sliderValue.MinimumSize = ComputeMinimumSizeForSliderValue(value);
         }
@@ -202,7 +205,7 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
 
     private Point ComputeMinimumSizeForSliderValue(double? value = null)
     {
-        var valueString = (value ?? Max).ToString(CultureInfo.CurrentUICulture);
+        var valueString = (value ?? Maximum).ToString(CultureInfo.CurrentUICulture);
         var valueFormatString = ValueFormatString;
         if (!string.IsNullOrWhiteSpace(valueFormatString))
         {
@@ -211,7 +214,7 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
 
         return Skin.Renderer.MeasureText(_sliderValue.Font, valueString) +
                _sliderValue.Padding +
-               _sliderValue.TextPadding;
+               _sliderValue.Padding;
     }
 
     public double Scale
@@ -253,7 +256,7 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
         return _slider.GetDraggerImage(state);
     }
 
-    public void SetSound(string? sound, Dragger.ControlSoundState state)
+    public void SetSound(string? sound, ButtonSoundState state)
     {
         _slider.SetSound(sound, state);
     }
@@ -269,16 +272,21 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
     /// </summary>
     public event GwenEventHandler<ValueChangedEventArgs<double>>? ValueChanged;
 
+    protected override void OnDisabledChanged(bool oldValue, bool newValue)
+    {
+        base.OnDisabledChanged(oldValue, newValue);
+    }
+
     protected override void Layout(Skin.Base skin)
     {
         if (_recomputeValueMinimumSize)
         {
-            _sliderValue.MinimumSize = ComputeMinimumSizeForSliderValue(Max);
+            _sliderValue.MinimumSize = ComputeMinimumSizeForSliderValue(Maximum);
         }
 
-        if (_autoSizeToContents)
+        if (AutoSizeToContents)
         {
-            SizeToChildren();
+            SizeToChildren(resizeX: AutoSizeToContentWidth, resizeY: AutoSizeToContentHeight);
         }
 
         var orientation = _slider.Orientation;
@@ -287,32 +295,32 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
             case Orientation.LeftToRight:
                 _label.Dock = Pos.Left;
                 _label.Alignment = [Alignments.CenterV];
-                _slider.Dock = Pos.Left;
+                _slider.Dock = Pos.Fill;
                 _slider.Alignment = [Alignments.CenterV];
                 _slider.Margin = new Margin(4, 0, 0, 0);
-                _sliderValue.Dock = Pos.Left;
+                _sliderValue.Dock = Pos.Right;
                 _sliderValue.Alignment = [Alignments.CenterV];
                 _sliderValue.Margin = new Margin(4, 0, 0, 0);
                 break;
             case Orientation.RightToLeft:
                 _label.Dock = Pos.Right | Pos.CenterV;
-                _slider.Dock = Pos.Right | Pos.CenterV;
+                _slider.Dock = Pos.Fill;
                 _slider.Margin = new Margin(0, 0, 4, 0);
-                _sliderValue.Dock = Pos.Right;
+                _sliderValue.Dock = Pos.Left;
                 _sliderValue.Margin = new Margin(0, 0, 4, 0);
                 break;
             case Orientation.TopToBottom:
                 _label.Dock = Pos.Top;
-                _slider.Dock = Pos.Top;
+                _slider.Dock = Pos.Fill;
                 _slider.Margin = new Margin(0, 4, 0, 0);
-                _sliderValue.Dock = Pos.Top;
+                _sliderValue.Dock = Pos.Bottom;
                 _sliderValue.Margin = new Margin(0, 4, 0, 0);
                 break;
             case Orientation.BottomToTop:
                 _label.Dock = Pos.Bottom;
-                _slider.Dock = Pos.Bottom;
+                _slider.Dock = Pos.Fill;
                 _slider.Margin = new Margin(0, 0, 0, 4);
-                _sliderValue.Dock = Pos.Bottom;
+                _sliderValue.Dock = Pos.Top;
                 _sliderValue.Margin = new Margin(0, 0, 0, 4);
                 break;
             default:
@@ -329,16 +337,69 @@ public partial class LabeledSlider : Base, IAutoSizeToContents
         _sliderValue.SetToolTipText(text);
     }
 
+    protected override void OnSizeChanged(Point oldSize, Point newSize)
+    {
+        base.OnSizeChanged(oldSize, newSize);
+    }
+
     protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
     {
         base.OnBoundsChanged(oldBounds, newBounds);
     }
 
-    public void SetRange(double min, double max) => (Min, Max) = (min, max);
+    protected override void OnChildSizeChanged(Base child, Point oldChildSize, Point newChildSize)
+    {
+        base.OnChildSizeChanged(child, oldChildSize, newChildSize);
+
+        SizeToChildren(resizeX: AutoSizeToContentWidthOnChildResize, resizeY: AutoSizeToContentHeightOnChildResize);
+    }
+
+    public void SetRange(double min, double max) => (Minimum, Maximum) = (min, max);
 
     public bool AutoSizeToContents
     {
-        get => _autoSizeToContents;
-        set => SetAndDoIfChanged(ref _autoSizeToContents, value, Invalidate);
+        get => AutoSizeToContentWidth || AutoSizeToContentHeight;
+        set
+        {
+            AutoSizeToContentWidth = value;
+            AutoSizeToContentHeight = value;
+        }
     }
+
+    public bool AutoSizeToContentWidth
+    {
+        get => _autoSizeToContentWidth;
+        set => SetAndDoIfChanged(ref _autoSizeToContentWidth, value, Invalidate);
+    }
+
+    public bool AutoSizeToContentHeight
+    {
+        get => _autoSizeToContentHeight;
+        set => SetAndDoIfChanged(ref _autoSizeToContentHeight, value, Invalidate);
+    }
+
+    public bool AutoSizeToContentWidthOnChildResize
+    {
+        get => _autoSizeToContentWidthOnChildResize;
+        set => SetAndDoIfChanged(ref _autoSizeToContentWidthOnChildResize, value, Invalidate);
+    }
+
+    public bool AutoSizeToContentHeightOnChildResize
+    {
+        get => _autoSizeToContentHeightOnChildResize;
+        set => SetAndDoIfChanged(ref _autoSizeToContentHeightOnChildResize, value, Invalidate);
+    }
+
+    public override void Focus(bool moveMouse = false)
+    {
+        base.Focus(moveMouse);
+    }
+
+    public string? Text
+    {
+        get => _label.Text;
+        set => _label.Text = value;
+    }
+
+    public Color? TextPaddingDebugColor { get; set; }
 }

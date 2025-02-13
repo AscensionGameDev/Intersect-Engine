@@ -3,6 +3,7 @@ using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
@@ -11,9 +12,11 @@ using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
+using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Localization;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Interface.Game.Chat;
 
@@ -97,7 +100,10 @@ public partial class Chatbox
 
         //Chatbox Window
         mChatboxWindow = new ImagePanel(gameCanvas, "ChatboxWindow");
-        mChatboxMessages = new ListBox(mChatboxWindow, "MessageList");
+        mChatboxMessages = new ListBox(mChatboxWindow, "MessageList")
+        {
+            Dock = Pos.Fill,
+        };
         mChatboxMessages.EnableScroll(false, true);
         mChatboxWindow.ShouldCacheToTexture = true;
 
@@ -193,6 +199,8 @@ public partial class Chatbox
         mGuildInviteContextItem = mContextMenu.AddItem(Strings.ChatContextMenu.GuildInvite);
         mGuildInviteContextItem.Clicked += MGuildInviteContextItem_Clicked;
         mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+        mChatboxWindow.BeforeLayout += ChatboxWindowOnBeforeLayout;
     }
 
     public void OpenContextMenu(string name)
@@ -345,7 +353,7 @@ public partial class Chatbox
     }
 
     //Update
-    public void Update()
+    private void Update()
     {
         var vScrollBar = mChatboxMessages.GetVerticalScrollBar();
         var scrollAmount = vScrollBar.ScrollAmount;
@@ -353,34 +361,42 @@ public partial class Chatbox
         var scrollToBottom = vScrollBar.ScrollAmount == 1 || !scrollBarVisible;
 
         // Did the tab change recently? If so, we need to reset a few things to make it work...
-        if (mLastTab != mCurrentTab)
+        var currentTab = mCurrentTab;
+        if (mLastTab != currentTab)
         {
             mChatboxMessages.Clear();
-            mChatboxMessages.HorizontalScrollBar.SetScrollAmount(0);
+            mChatboxMessages.HorizontalScrollBar.ScrollAmount = 0;
+            mChatboxMessages.VerticalScrollBar.ScrollAmount = 1;
             mMessageIndex = 0;
             mReceivedMessage = true;
-            mLastTab = mCurrentTab;
+            mLastTab = currentTab;
         }
 
-        var messages = ChatboxMsg.GetMessages(mCurrentTab);
+        var scrollPosition = mChatboxMessages.VerticalScroll;
+        var messages = ChatboxMsg.GetMessages(currentTab);
         for (var i = mMessageIndex; i < messages.Count; i++)
         {
             var msg = messages[i];
-            var lines = Text.WrapText(
+            string[] lines = [msg.Message];/*Text.WrapText(
                 msg.Message,
                 mChatboxMessages.Width - vScrollBar.Width - 8,
                 mChatboxText.Font,
                 Graphics.Renderer ?? throw new InvalidOperationException("No renderer")
-            );
+            );*/
 
             foreach (var line in lines)
             {
-                var row = mChatboxMessages.AddRow(line.Trim());
+                var row = mChatboxMessages.AddRow(line.Trim(), name: $"Message:{currentTab}#{mMessageIndex}", userData: msg.Target);
+                row.ShouldDrawBackground = false;
+                row.Padding = new Padding(2, 0);
                 row.Font = mChatboxText.Font;
                 row.SetTextColor(msg.Color);
-                row.ShouldDrawBackground = false;
-                row.UserData = msg.Target;
+                if (row.GetCellContents(0) is Label label)
+                {
+                    label.WrappingBehavior = WrappingBehavior.Wrapped;
+                }
                 row.Clicked += ChatboxRow_Clicked;
+
                 mReceivedMessage = true;
 
                 while (mChatboxMessages.RowCount > ClientConfiguration.Instance.ChatLines)
@@ -395,13 +411,32 @@ public partial class Chatbox
         // ReSharper disable once InvertIf
         if (mReceivedMessage)
         {
+            // mChatboxMessages.SizeToContents();
+
             if (scrollToBottom)
             {
-                mChatboxMessages.ScrollToBottom();
+                mChatboxMessages.Defer(mChatboxMessages.ScrollToBottom);
             }
-            // vScrollBar.SetScrollAmount(scrollToBottom ? 1 : scrollAmount);
+            else
+            {
+                mChatboxMessages.Defer(() =>
+                    {
+                        ApplicationContext.CurrentContext.Logger.LogTrace(
+                            "Scrolling chat to {ScrollY}",
+                            scrollPosition
+                        );
+                        mChatboxMessages.ScrollToY(scrollPosition);
+                    }
+                );
+            }
+
             mReceivedMessage = false;
         }
+    }
+
+    private void ChatboxWindowOnBeforeLayout(Base sender, EventArgs arguments)
+    {
+        Update();
     }
 
     public void SetChatboxText(string msg)

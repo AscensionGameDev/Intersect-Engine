@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 namespace Intersect.Client.Framework.GenericClasses;
 
 [StructLayout(LayoutKind.Explicit)]
-public partial struct Rectangle
+public partial struct Rectangle : IEquatable<Rectangle>
 {
     [FieldOffset(0)] public int X;
     [FieldOffset(4)] public int Y;
@@ -119,4 +119,19 @@ public partial struct Rectangle
 
         return new Rectangle(parts[0], parts[1], parts[2], parts[3]);
     }
+
+    public bool Equals(Rectangle other) => X == other.X &&
+                                           Y == other.Y &&
+                                           Width == other.Width &&
+                                           Height == other.Height &&
+                                           Position.Equals(other.Position) &&
+                                           Size.Equals(other.Size);
+
+    public override bool Equals(object? obj) => obj is Rectangle other && Equals(other);
+
+    public override int GetHashCode() => HashCode.Combine(X, Y, Width, Height, Position, Size);
+
+    public static bool operator ==(Rectangle lhs, Rectangle rhs) => lhs.Equals(rhs);
+
+    public static bool operator !=(Rectangle lhs, Rectangle rhs) => !lhs.Equals(rhs);
 }

@@ -45,7 +45,9 @@ public partial class ScrollBar : Base
 
         mBar = new ScrollBarBar(this);
 
-        SetBounds(0, 0, 15, 15);
+        MinimumSize = new Point(15, 15);
+        Size = new Point(15, 15);
+
         mDepressed = false;
 
         _scrollAmount = 0;
@@ -82,7 +84,11 @@ public partial class ScrollBar : Base
         set => _nudgeAmount = value;
     }
 
-    public float ScrollAmount => _scrollAmount;
+    public float ScrollAmount
+    {
+        get => _scrollAmount;
+        set => SetScrollAmount(value);
+    }
 
     public float ContentSize
     {
@@ -271,7 +277,7 @@ public partial class ScrollBar : Base
     {
         for (var i = 0; i < mScrollButton.Length; i++)
         {
-            if (mScrollButton[i].GetDirection() == direction)
+            if (mScrollButton[i].Direction == direction)
             {
                 return mScrollButton[i];
             }

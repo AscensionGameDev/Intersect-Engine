@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Network;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Configuration;
 using Intersect.Core;
@@ -134,7 +135,7 @@ internal static partial class Network
         }
         else
         {
-            Interface.Interface.ShowError(message);
+            Interface.Interface.ShowAlert(message, alertType: AlertType.Information);
             Fade.Cancel();
         }
 

@@ -16,7 +16,7 @@ public partial class MainMenu : MutableInterface
     private readonly RegistrationWindow _registerWindow;
     private readonly ForgotPasswordWindow _forgotPasswordWindow;
     private readonly ResetPasswordWindow _resetPasswordWindow;
-    private readonly CreateCharacterWindow _createCharacterWindow;
+    private readonly CharacterCreationWindow _characterCreationWindow;
     private readonly SettingsWindow _settingsWindow;
     private readonly CreditsWindow _creditsWindow;
 
@@ -25,6 +25,7 @@ public partial class MainMenu : MutableInterface
     //Character creation feild check
     private bool mShouldOpenCharacterCreation;
     private bool mShouldOpenCharacterSelection;
+    private bool _forceCharacterCreation;
 
     // Network status
     public static NetworkStatus ActiveNetworkStatus;
@@ -37,25 +38,73 @@ public partial class MainMenu : MutableInterface
     public MainMenu(Canvas menuCanvas) : base(menuCanvas)
     {
         _menuCanvas = menuCanvas;
-        _mainMenuWindow = new MainMenuWindow(_menuCanvas, this);
+        _mainMenuWindow = new MainMenuWindow(_menuCanvas, this)
+        {
+            Alignment = [Alignments.CenterH],
+            Y = 480,
+            IsVisible = true,
+        };
 
         var logo = new ImagePanel(menuCanvas, "Logo");
         logo.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
 
         NetworkStatusChanged += HandleNetworkStatusChanged;
 
-        _loginWindow = new LoginWindow(_menuCanvas, this);
-        _registerWindow = new RegistrationWindow(_menuCanvas, this);
-        _forgotPasswordWindow = new ForgotPasswordWindow(_menuCanvas, this);
-        _resetPasswordWindow = new ResetPasswordWindow(_menuCanvas, this);
-        SelectCharacterWindow = new SelectCharacterWindow(_menuCanvas, this);
-        _createCharacterWindow = new CreateCharacterWindow(_menuCanvas, this, SelectCharacterWindow);
-        _settingsWindow = new SettingsWindow(_menuCanvas, this, null)
+        _loginWindow = new LoginWindow(_menuCanvas, this)
         {
-            AlignmentDistance = new Padding(0, 100, 0, 0),
+            Alignment = [Alignments.CenterH],
+            Y = 480,
             IsVisible = false,
         };
-        _creditsWindow = new CreditsWindow(_menuCanvas, this);
+
+        _registerWindow = new RegistrationWindow(_menuCanvas, this)
+        {
+            Alignment = [Alignments.CenterH],
+            Y = 480,
+            IsVisible = false,
+        };
+
+        _settingsWindow = new SettingsWindow(_menuCanvas)
+        {
+            Alignment = [Alignments.CenterH],
+            Y = 480,
+            IsVisible = false,
+        };
+
+        _creditsWindow = new CreditsWindow(_menuCanvas, this)
+        {
+            Alignment = [Alignments.CenterH],
+            Y = 480,
+            IsVisible = false,
+        };
+
+        _forgotPasswordWindow = new ForgotPasswordWindow(_menuCanvas, this)
+        {
+            // Alignment = [Alignments.CenterH],
+            // Y = 480,
+            // IsVisible = false,
+        };
+
+        _resetPasswordWindow = new ResetPasswordWindow(_menuCanvas, this)
+        {
+            // Alignment = [Alignments.CenterH],
+            // Y = 480,
+            // IsVisible = false,
+        };
+
+        SelectCharacterWindow = new SelectCharacterWindow(_menuCanvas, this)
+        {
+            Alignment = [Alignments.CenterH],
+            Y = 480,
+            IsVisible = false,
+        };
+
+        _characterCreationWindow = new CharacterCreationWindow(_menuCanvas, this, SelectCharacterWindow)
+        {
+            Alignment = [Alignments.CenterH],
+            Y = 480,
+            IsVisible = false,
+        };
     }
 
     ~MainMenu()
@@ -70,7 +119,7 @@ public partial class MainMenu : MutableInterface
     }
 
     //Methods
-    public void Update()
+    public void Update(TimeSpan elapsed, TimeSpan total)
     {
         if (_mainMenuWindow.IsVisible)
         {
@@ -92,9 +141,9 @@ public partial class MainMenu : MutableInterface
             _loginWindow.Update();
         }
 
-        if (!_createCharacterWindow.IsHidden)
+        if (!_characterCreationWindow.IsHidden)
         {
-            _createCharacterWindow.Update();
+            _characterCreationWindow.Update();
         }
 
         if (!_registerWindow.IsHidden)
@@ -118,7 +167,7 @@ public partial class MainMenu : MutableInterface
         _creditsWindow.Hide();
         _forgotPasswordWindow.Hide();
         _resetPasswordWindow.Hide();
-        _createCharacterWindow.Hide();
+        _characterCreationWindow.Hide();
         SelectCharacterWindow.Hide();
         _mainMenuWindow.Show();
         _mainMenuWindow.Reset();
@@ -128,10 +177,10 @@ public partial class MainMenu : MutableInterface
 
     public void Hide() => _mainMenuWindow.Hide();
 
-    public void NotifyOpenCharacterSelection(List<Character> characters)
+    public void NotifyOpenCharacterSelection(List<CharacterSelectionPreviewMetadata> characterSelectionPreviews)
     {
         mShouldOpenCharacterSelection = true;
-        SelectCharacterWindow.Characters = [.. characters];
+        SelectCharacterWindow.CharacterSelectionPreviews = [..characterSelectionPreviews];
     }
 
     public void NotifyOpenForgotPassword()
@@ -162,12 +211,16 @@ public partial class MainMenu : MutableInterface
         _loginWindow.Hide();
         _registerWindow.Hide();
         _settingsWindow.Hide();
-        _createCharacterWindow.Hide();
+        _characterCreationWindow.Hide();
         SelectCharacterWindow.Show();
         mShouldOpenCharacterSelection = false;
     }
 
-    public void NotifyOpenCharacterCreation() => mShouldOpenCharacterCreation = true;
+    public void NotifyOpenCharacterCreation(bool force = false)
+    {
+        _forceCharacterCreation = force;
+        mShouldOpenCharacterCreation = true;
+    }
 
     public void CreateCharacterCreation()
     {
@@ -176,8 +229,7 @@ public partial class MainMenu : MutableInterface
         _registerWindow.Hide();
         _settingsWindow.Hide();
         SelectCharacterWindow.Hide();
-        _createCharacterWindow.Show();
-        _createCharacterWindow.Init();
+        _characterCreationWindow.Show(force: _forceCharacterCreation);
         mShouldOpenCharacterCreation = false;
     }
 
@@ -201,7 +253,7 @@ public partial class MainMenu : MutableInterface
     internal void SettingsButton_Clicked()
     {
         Hide();
-        _settingsWindow.Show(true);
+        _settingsWindow.Show(_mainMenuWindow);
     }
 
     private void HandleNetworkStatusChanged() => _mainMenuWindow.UpdateDisabled();

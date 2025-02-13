@@ -1,4 +1,5 @@
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 
@@ -34,8 +35,8 @@ public partial class MultilineTextBox : Label
         MouseInputEnabled = true;
         KeyboardInputEnabled = true;
 
+        Padding = new Padding(4, 2, 4, 2);
         TextAlign = Pos.Left | Pos.Top;
-        TextPadding = new Padding(4, 2, 4, 2);
 
         mCursorPos = new Point(0, 0);
         mCursorEnd = new Point(0, 0);
@@ -46,13 +47,13 @@ public partial class MultilineTextBox : Label
         IsTabable = false;
         AcceptTabs = true;
 
-        mScrollControl = new ScrollControl(this);
+        mScrollControl = new ScrollControl(this, name: nameof(_innerPanel));
         mScrollControl.Dock = Pos.Fill;
         mScrollControl.SetOverflow(OverflowBehavior.Auto, OverflowBehavior.Auto);
         mScrollControl.Margin = Margin.One;
         _innerPanel = mScrollControl;
         _textElement.Parent = _innerPanel;
-        mScrollControl.InnerPanel.BoundsChanged += new GwenEventHandler<EventArgs>(ScrollChanged);
+        mScrollControl.InnerPanel.BoundsChanged += ScrollChanged;
 
         _textLines.Add(String.Empty);
 
@@ -211,7 +212,7 @@ public partial class MultilineTextBox : Label
     ///     Refreshes the cursor location and selected area when the inner panel scrolls
     /// </summary>
     /// <param name="control">The inner panel the text is embedded in</param>
-    private void ScrollChanged(Base control, EventArgs args)
+    private void ScrollChanged(Base control, ValueChangedEventArgs<Rectangle> args)
     {
         RefreshCursorBounds();
     }
@@ -1060,15 +1061,15 @@ public partial class MultilineTextBox : Label
         var idealx = (int) (-caretPos + Width * 0.5f);
 
         // Don't show too much whitespace to the right
-        if (idealx + TextWidth < Width - TextPadding.Right - Padding.Right)
+        if (idealx + TextWidth < Width - Padding.Right)
         {
-            idealx = -TextWidth + (Width - TextPadding.Right - Padding.Right);
+            idealx = -TextWidth + (Width - Padding.Right);
         }
 
         // Or the left
-        if (idealx > TextPadding.Left + Padding.Left)
+        if (idealx > Padding.Left)
         {
-            idealx = TextPadding.Left + Padding.Left;
+            idealx = Padding.Left;
         }
 
         SetTextPosition(idealx, TextY);
@@ -1145,7 +1146,7 @@ public partial class MultilineTextBox : Label
 
         var p = new Point(Skin.Renderer.MeasureText(Font, currLine).X, Skin.Renderer.MeasureText(Font, sub).Y);
 
-        return new Point(p.X + _textElement.X, p.Y + _textElement.Y + TextPadding.Top);
+        return new Point(p.X + _textElement.X, p.Y + _textElement.Y + Padding.Top);
     }
 
     protected override bool OnMouseWheeled(int delta)

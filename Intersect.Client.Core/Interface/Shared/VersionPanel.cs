@@ -13,7 +13,6 @@ public partial class VersionPanel : Panel
     {
         Alignment = [Alignments.Bottom, Alignments.Right];
         BackgroundColor = new Color(0x7f, 0, 0, 0);
-        Padding = new Padding(8, 4);
         RestrictToParent = true;
         // TODO: Remove this when showing a game version is added
         IsVisible = ApplicationContext.CurrentContext.IsDeveloper;
@@ -23,6 +22,7 @@ public partial class VersionPanel : Panel
         _engineVersionLabel = new VersionLabel(this, name: nameof(_engineVersionLabel))
         {
             Font = font,
+            Padding = new Padding(8, 4),
             Text = ApplicationContext.CurrentContext.VersionName,
             IsVisible = ApplicationContext.CurrentContext.IsDeveloper,
         };

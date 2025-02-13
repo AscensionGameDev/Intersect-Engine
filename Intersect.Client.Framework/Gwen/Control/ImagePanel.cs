@@ -23,17 +23,16 @@ public partial class ImagePanel : Base
 
     protected string mLeftMouseClickSound;
 
-    private Modal mModal;
-
-    private Base mOldParent;
-
     protected string mRightMouseClickSound;
 
-    private GameTexture? mTexture { get; set; }
-    private string? mTextureFilename;
+    private GameTexture? _texture { get; set; }
+    private string? _textureName;
+    private Rectangle _textureSourceBounds;
+    private float _textureAspectRatio;
 
     private Margin? _textureNinePatchMargin;
     private Bordered? _ninepatchRenderer;
+    private bool _maintainAspectRatio;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ImagePanel" /> class.
@@ -45,6 +44,12 @@ public partial class ImagePanel : Base
         _uv = [0, 0, 1, 1];
 
         MouseInputEnabled = true;
+    }
+
+    public bool MaintainAspectRatio
+    {
+        get => _maintainAspectRatio;
+        set => SetAndDoIfChanged(ref _maintainAspectRatio, value, Invalidate);
     }
 
     public Margin? TextureNinePatchMargin
@@ -67,16 +72,18 @@ public partial class ImagePanel : Base
     /// </summary>
     public GameTexture? Texture
     {
-        get => mTexture;
+        get => _texture;
         set
         {
-            if (value == mTexture)
+            if (value == _texture)
             {
                 return;
             }
 
-            mTexture = value;
-            if (mTexture != null)
+            _texture = value;
+            _textureName = _texture?.Name;
+            RecomputeTextureSourceBounds();
+            if (_texture != null)
             {
                 TextureLoaded?.Invoke(this, EventArgs.Empty);
             }
@@ -86,23 +93,52 @@ public partial class ImagePanel : Base
         }
     }
 
+    private void RecomputeTextureSourceBounds()
+    {
+        if (_texture is not { } texture)
+        {
+            _textureAspectRatio = 0;
+            _textureSourceBounds = default;
+            return;
+        }
+
+        var uvs = _uv.ToArray();
+        var u1 = uvs[0];
+        var v1 = uvs[1];
+        var u2 = uvs[2];
+        var v2 = uvs[3];
+
+        (u1, u2) = (Math.Min(u1, u2), Math.Max(u1, u2));
+        (v1, v2) = (Math.Min(v1, v2), Math.Max(v1, v2));
+
+        var textureSourceBounds = new Rectangle(
+            (int)(u1 * texture.Width),
+            (int)(v1 * texture.Height),
+            (int)((u2 - u1) * texture.Width),
+            (int)((v2 - v1) * texture.Height)
+        );
+        _textureSourceBounds = textureSourceBounds;
+
+        _textureAspectRatio = textureSourceBounds.Width / (float)textureSourceBounds.Height;
+    }
+
     public event GwenEventHandler<EventArgs>? TextureLoaded;
 
     public string? TextureFilename
     {
-        get => mTextureFilename;
+        get => _textureName;
         set
         {
             var textureFilename = value?.Trim();
-            if (string.Equals(textureFilename, mTextureFilename, StringComparison.Ordinal))
+            if (string.Equals(textureFilename, _textureName, StringComparison.Ordinal))
             {
                 return;
             }
 
-            mTextureFilename = textureFilename;
-            Texture = mTextureFilename == null
+            _textureName = textureFilename;
+            Texture = _textureName == null
                 ? null
-                : GameContentManager.Current?.GetTexture(TextureType.Gui, mTextureFilename);
+                : GameContentManager.Current?.GetTexture(TextureType.Gui, _textureName);
         }
     }
 
@@ -123,6 +159,11 @@ public partial class ImagePanel : Base
                 _ => null,
             }
         );
+    }
+
+    protected override void OnPositionChanged(Point oldPosition, Point newPosition)
+    {
+        base.OnPositionChanged(oldPosition, newPosition);
     }
 
     /// <summary>
@@ -204,15 +245,19 @@ public partial class ImagePanel : Base
         }
     }
 
+    public void ResetUVs() => SetUVs(0, 0, 1, 1);
+
     /// <summary>
     ///     Sets the texture coordinates of the image.
     /// </summary>
-    public virtual void SetUv(float u1, float v1, float u2, float v2)
+    public virtual void SetUVs(float u1, float v1, float u2, float v2)
     {
         _uv[0] = u1;
         _uv[1] = v1;
         _uv[2] = u2;
         _uv[3] = v2;
+
+        RecomputeTextureSourceBounds();
 
         _ninepatchRenderer = null;
     }
@@ -222,7 +267,7 @@ public partial class ImagePanel : Base
     /// </summary>
     public virtual void SetTextureRect(int x, int y, int w, int h)
     {
-        if (mTexture == null)
+        if (_texture == null)
         {
             return;
         }
@@ -239,37 +284,24 @@ public partial class ImagePanel : Base
 
         if (w <= 0)
         {
-            w = mTexture.Width;
+            w = _texture.Width;
         }
 
         if (h <= 0)
         {
-            h = mTexture.Height;
+            h = _texture.Height;
         }
 
-        if (x + w > mTexture.Width || y + h > mTexture.Height)
+        if (x + w > _texture.Width || y + h > _texture.Height)
         {
             return;
         }
 
-        SetUv(
-            x / (float)mTexture.Width,
-            y / (float)mTexture.Height,
-            (x + w) / (float)mTexture.Width,
-            (y + h) / (float)mTexture.Height
-        );
-    }
-
-    public virtual Rectangle GetTextureRect()
-    {
-        if (Texture == null)
-        {
-            return new Rectangle(0, 0, 0, 0);
-        }
-
-        return new Rectangle(
-            (int) (_uv[0] * mTexture.Width), (int) (_uv[1] * mTexture.Height),
-            (int) ((_uv[2] - _uv[0]) * mTexture.Width), (int) ((_uv[3] - _uv[1]) * mTexture.Width)
+        SetUVs(
+            x / (float)_texture.Width,
+            y / (float)_texture.Height,
+            (x + w) / (float)_texture.Width,
+            (y + h) / (float)_texture.Height
         );
     }
 
@@ -289,12 +321,12 @@ public partial class ImagePanel : Base
 
     private void EnsureTextureLoaded()
     {
-        if (mTexture != null)
+        if (_texture != null)
         {
             return;
         }
 
-        var textureFilename = mTextureFilename;
+        var textureFilename = _textureName;
         if (string.IsNullOrWhiteSpace(textureFilename))
         {
             return;
@@ -311,7 +343,7 @@ public partial class ImagePanel : Base
     {
         base.Render(skin);
 
-        if (mTexture is not { } texture)
+        if (_texture is not { } texture)
         {
             return;
         }
@@ -322,12 +354,13 @@ public partial class ImagePanel : Base
 
         if (TextureNinePatchMargin is { } textureNinePatchMargin)
         {
+            var sourceBounds = _textureSourceBounds;
             _ninepatchRenderer ??= new Bordered(
                 texture,
-                _uv[0] * texture.Width,
-                _uv[1] * texture.Height,
-                _uv[2] * texture.Width,
-                _uv[3] * texture.Height,
+                sourceBounds.X,
+                sourceBounds.Y,
+                sourceBounds.Width,
+                sourceBounds.Height,
                 textureNinePatchMargin
             );
 
@@ -336,8 +369,23 @@ public partial class ImagePanel : Base
                 ninepatchRenderer.Draw(skin.Renderer, renderBounds, Color.White);
             }
         }
-        else
+        else if (_textureSourceBounds is { Width: > 0, Height: > 0 } textureSourceBounds)
         {
+            if (_maintainAspectRatio)
+            {
+                var widthRatio = renderBounds.Width / (float)textureSourceBounds.Width;
+                var heightRatio = renderBounds.Height / (float)textureSourceBounds.Height;
+
+                if (widthRatio > heightRatio)
+                {
+                    renderBounds.Width = (int)(textureSourceBounds.Width * heightRatio);
+                }
+                else if (heightRatio > widthRatio)
+                {
+                    renderBounds.Height = (int)(textureSourceBounds.Height * widthRatio);
+                }
+            }
+
             skin.Renderer.DrawTexturedRect(
                 texture,
                 renderBounds,
@@ -353,14 +401,67 @@ public partial class ImagePanel : Base
     /// <summary>
     ///     Sizes the control to its contents.
     /// </summary>
-    public virtual void SizeToContents()
+    public virtual void SizeToContents() => SizeToChildren();
+
+    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
     {
-        if (mTexture == null)
+        return base.SizeToChildren(resizeX, resizeY, recursive);
+    }
+
+    public override bool SetBounds(int x, int y, int width, int height)
+    {
+        var updatedX = x;
+        var updatedY = y;
+        var updatedWidth = width;
+        var updatedHeight = height;
+        if (MaintainAspectRatio)
         {
-            return;
+            var bounds = Bounds;
+            var aspectRatio = _textureAspectRatio;
+            if (updatedWidth == bounds.Width)
+            {
+                if (updatedHeight != bounds.Height)
+                {
+                    var aspectRatioWidth = (int)(updatedHeight * aspectRatio);
+                    if (aspectRatioWidth > updatedWidth)
+                    {
+                        var deltaWidth = updatedWidth - aspectRatioWidth;
+                        updatedX += deltaWidth / 2;
+                        updatedWidth = aspectRatioWidth;
+                        if (RestrictToParent)
+                        {
+                            updatedX = Math.Max(0, updatedX);
+                        }
+                    }
+                }
+            }
+            else if (updatedHeight == bounds.Height)
+            {
+                var aspectRatioHeight = (int)(updatedWidth / aspectRatio);
+                if (aspectRatioHeight > updatedHeight)
+                {
+                    updatedHeight = aspectRatioHeight;
+                }
+            }
         }
 
-        SetSize((int) (mTexture.Width * (_uv[2] - _uv[0])), (int) (mTexture.Height * (_uv[3] - _uv[1])));
+        return base.SetBounds(updatedX, updatedY, updatedWidth, updatedHeight);
+    }
+
+    public override Point GetChildrenSize()
+    {
+        var textureSize = _textureSourceBounds.Size;
+        if (TextureNinePatchMargin != null)
+        {
+            textureSize = default;
+        }
+
+        var elementChildrenSize = base.GetChildrenSize();
+        var childrenSize = new Point(
+            Math.Max(elementChildrenSize.X, textureSize.X),
+            Math.Max(elementChildrenSize.Y, textureSize.Y)
+        );
+        return childrenSize;
     }
 
     /// <summary>
@@ -386,38 +487,6 @@ public partial class ImagePanel : Base
         }
 
         return true;
-    }
-
-    /// <summary>
-    ///     Makes the window modal: covers the whole canvas and gets all input.
-    /// </summary>
-    /// <param name="dim">Determines whether all the background should be dimmed.</param>
-    public void MakeModal(bool dim = false)
-    {
-        if (mModal != null)
-        {
-            return;
-        }
-
-        mModal = new Modal(GetCanvas())
-        {
-            ShouldDrawBackground = dim
-        };
-
-        mOldParent = Parent;
-        Parent = mModal;
-    }
-
-    public void RemoveModal()
-    {
-        if (mModal == null)
-        {
-            return;
-        }
-
-        Parent = mOldParent;
-        GetCanvas()?.RemoveChild(mModal, false);
-        mModal = null;
     }
 
 }

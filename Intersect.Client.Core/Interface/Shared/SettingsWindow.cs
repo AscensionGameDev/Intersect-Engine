@@ -24,13 +24,9 @@ namespace Intersect.Client.Interface.Shared;
 
 using BottomBarItems = (Panel BottomBar, Button RestoreDefaultControlsButton, Button ApplyPendingChangesButton, Button CancelPendingChangesButton);
 
-public partial class SettingsWindow : WindowControl
+public partial class SettingsWindow : Window
 {
     private readonly GameFont? _defaultFont;
-
-    // Parent Window.
-    private readonly MainMenu? _mainMenu;
-    private readonly EscapeMenu? _escapeMenu;
 
     // Bottom Bar
     private readonly Button _restoreDefaultsButton;
@@ -109,15 +105,11 @@ public partial class SettingsWindow : WindowControl
     private long _keybindingListeningTimer;
     private int _keyEdit = -1;
 
-    // Open Settings
-    private bool _returnToMenu;
+    private Base? _returnTo;
 
     // Initialize.
-    public SettingsWindow(Base parent, MainMenu? mainMenu, EscapeMenu? escapeMenu) : base(parent: parent, title: Strings.Settings.Title, modal: false, name: nameof(SettingsWindow))
+    public SettingsWindow(Base parent) : base(parent: parent, title: Strings.Settings.Title, modal: false, name: nameof(SettingsWindow))
     {
-        _mainMenu = mainMenu;
-        _escapeMenu = escapeMenu;
-
         Interface.InputBlockingComponents.Add(item: this);
 
         IconName = "SettingsWindow.icon.png";
@@ -128,7 +120,6 @@ public partial class SettingsWindow : WindowControl
         IsClosable = false;
 
         Titlebar.MouseInputEnabled = false;
-
         TitleLabel.FontSize = 14;
         TitleLabel.TextColorOverride = Color.White;
 
@@ -427,7 +418,6 @@ public partial class SettingsWindow : WindowControl
         _worldScale = new LabeledSlider(parent: _videoContainer, name: nameof(_worldScale))
         {
             Dock = Pos.Top,
-            IsDisabled = !Options.IsLoaded,
             Font = _defaultFont,
             Label = Strings.Settings.WorldScale,
             Orientation = Orientation.LeftToRight,
@@ -459,16 +449,16 @@ public partial class SettingsWindow : WindowControl
             Label = Strings.Settings.VolumeMusic,
             LabelMinimumSize = new Point(100, 0),
             Rounding = 0,
-            Min = 0,
-            Max = 100,
+            Minimum = 0,
+            Maximum = 100,
             NotchCount = 5,
             SnapToNotches = false,
         };
 
         _musicSlider.ValueChanged += MusicSliderOnValueChanged;
-        _musicSlider.SetSound("octave-tap-resonant.wav", Dragger.ControlSoundState.Hover);
-        _musicSlider.SetSound("octave-tap-professional.wav", Dragger.ControlSoundState.MouseDown);
-        _musicSlider.SetSound("octave-tap-professional.wav", Dragger.ControlSoundState.MouseUp);
+        _musicSlider.SetSound("octave-tap-resonant.wav", ButtonSoundState.Hover);
+        _musicSlider.SetSound("octave-tap-professional.wav", ButtonSoundState.MouseDown);
+        _musicSlider.SetSound("octave-tap-professional.wav", ButtonSoundState.MouseUp);
 
         // Audio Settings - Sound Slider
         _soundEffectsSlider = new LabeledSlider(parent: _audioContainer, name: nameof(_soundEffectsSlider))
@@ -482,16 +472,16 @@ public partial class SettingsWindow : WindowControl
             Label = Strings.Settings.VolumeSoundEffects,
             LabelMinimumSize = new Point(100, 0),
             Rounding = 0,
-            Min = 0,
-            Max = 100,
+            Minimum = 0,
+            Maximum = 100,
             NotchCount = 5,
             SnapToNotches = false,
         };
 
         _soundEffectsSlider.ValueChanged += SoundEffectsSliderOnValueChanged;
-        _soundEffectsSlider.SetSound("octave-tap-resonant.wav", Dragger.ControlSoundState.Hover);
-        _soundEffectsSlider.SetSound("octave-tap-professional.wav", Dragger.ControlSoundState.MouseDown);
-        _soundEffectsSlider.SetSound("octave-tap-professional.wav", Dragger.ControlSoundState.MouseUp);
+        _soundEffectsSlider.SetSound("octave-tap-resonant.wav", ButtonSoundState.Hover);
+        _soundEffectsSlider.SetSound("octave-tap-professional.wav", ButtonSoundState.MouseDown);
+        _soundEffectsSlider.SetSound("octave-tap-professional.wav", ButtonSoundState.MouseUp);
 
 #endregion Audio
 
@@ -558,8 +548,18 @@ public partial class SettingsWindow : WindowControl
 
         (_bottomBar, _restoreDefaultsButton, _applyPendingChangesButton, _cancelPendingChangesButton) =
             CreateBottomBar(this);
+    }
 
+    protected override void EnsureInitialized()
+    {
         LoadJsonUi(stage: UI.Shared, resolution: Graphics.Renderer?.GetResolutionString());
+    }
+
+    protected override void OnJsonReloaded()
+    {
+        base.OnJsonReloaded();
+
+        UpdateWorldScaleControls();
     }
 
     public override bool IsBlockingInput => _keybindingEditBtn is not null;
@@ -582,11 +582,10 @@ public partial class SettingsWindow : WindowControl
             Font = _defaultFont,
             IsVisible = false,
             MinimumSize = new Point(x: 96, y: 24),
-            TextPadding = new Padding(horizontal: 16, vertical: 2),
+            Padding = new Padding(horizontal: 16, vertical: 2),
             Text = Strings.Settings.Restore,
         };
         restoreDefaultKeybindingsButton.Clicked += RestoreDefaultKeybindingsButton_Clicked;
-        restoreDefaultKeybindingsButton.SetHoverSound("octave-tap-resonant.wav");
 
         // Apply Button.
         var applyPendingChangesButton = new Button(parent: bottomBar, name: nameof(_applyPendingChangesButton))
@@ -595,11 +594,10 @@ public partial class SettingsWindow : WindowControl
             AutoSizeToContents = true,
             Font = _defaultFont,
             MinimumSize = new Point(x: 96, y: 24),
-            TextPadding = new Padding(horizontal: 16, vertical: 2),
+            Padding = new Padding(horizontal: 16, vertical: 2),
             Text = Strings.Settings.Apply,
         };
         applyPendingChangesButton.Clicked += SettingsApplyBtn_Clicked;
-        applyPendingChangesButton.SetHoverSound("octave-tap-resonant.wav");
 
         // Cancel Button.
         var cancelPendingChangesButton = new Button(parent: bottomBar, name: nameof(_cancelPendingChangesButton))
@@ -608,11 +606,10 @@ public partial class SettingsWindow : WindowControl
             AutoSizeToContents = true,
             Font = _defaultFont,
             MinimumSize = new Point(x: 96, y: 24),
-            TextPadding = new Padding(horizontal: 16, vertical: 2),
+            Padding = new Padding(horizontal: 16, vertical: 2),
             Text = Strings.Settings.Cancel,
         };
         cancelPendingChangesButton.Clicked += CancelPendingChangesButton_Clicked;
-        cancelPendingChangesButton.SetHoverSound("octave-tap-resonant.wav");
 
         return (
             BottomBar: bottomBar,
@@ -722,8 +719,6 @@ public partial class SettingsWindow : WindowControl
             Text = string.Empty,
             UserData = new KeyValuePair<Control, int>(control, 0),
         };
-        key1.SetHoverSound("octave-tap-resonant.wav");
-        key1.SetMouseDownSound("octave-tap-warm.wav");
         controlRow.SetCellContents(1, key1, enableMouseInput: true);
         key1.Clicked += Key_Clicked;
 
@@ -736,8 +731,6 @@ public partial class SettingsWindow : WindowControl
             Text = string.Empty,
             UserData = new KeyValuePair<Control, int>(control, 1),
         };
-        key2.SetHoverSound("octave-tap-resonant.wav");
-        key2.SetMouseDownSound("octave-tap-warm.wav");
         controlRow.SetCellContents(2, key2, enableMouseInput: true);
         key2.Clicked += Key_Clicked;
 
@@ -867,7 +860,7 @@ public partial class SettingsWindow : WindowControl
                 }
             }
 
-            _keybindingEditBtn.PlayHoverSound();
+            _keybindingEditBtn.PlaySound(ButtonSoundState.Hover);
         }
 
         _keybindingEditBtn = null;
@@ -886,7 +879,9 @@ public partial class SettingsWindow : WindowControl
         }
     }
 
-    public void Show(bool returnToMenu = false)
+    public override void Show() => Show(returnTo: null);
+
+    public void Show(Base? returnTo)
     {
         // Take over all input when we're in-game.
         if (Globals.GameState == GameStates.InGame)
@@ -989,7 +984,7 @@ public partial class SettingsWindow : WindowControl
         Reset();
 
         // Set up whether we're supposed to return to the previous menu.
-        _returnToMenu = returnToMenu;
+        _returnTo = returnTo;
     }
 
     public override void Hide()
@@ -999,24 +994,8 @@ public partial class SettingsWindow : WindowControl
         RemoveModal();
 
         // Return to our previous menus (or not) depending on gamestate and the method we'd been opened.
-        if (_returnToMenu)
-        {
-            switch (Globals.GameState)
-            {
-                case GameStates.Menu:
-                    _mainMenu?.Show();
-                    break;
-
-                case GameStates.InGame:
-                    _escapeMenu?.Show();
-                    break;
-
-                default:
-                    throw new NotImplementedException();
-            }
-
-            _returnToMenu = false;
-        }
+        _returnTo?.Show();
+        _returnTo = null;
     }
 
     // Input Handlers

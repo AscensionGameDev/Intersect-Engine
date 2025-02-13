@@ -8,11 +8,12 @@ namespace Intersect.Client.Framework.Gwen.Control;
 /// <summary>
 ///     CheckBox with label.
 /// </summary>
-public partial class LabeledCheckBox : Base
+public partial class LabeledCheckBox : Base, IAutoSizeToContents, ITextContainer
 {
     private readonly Checkbox _checkbox;
 
     private readonly Label _label;
+    private bool _autoSizeToContents;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="LabeledCheckBox" /> class.
@@ -26,7 +27,7 @@ public partial class LabeledCheckBox : Base
         _checkbox = new Checkbox(this, name: nameof(_checkbox))
         {
             InheritParentEnablementProperties = true,
-            Dock = Pos.Left,
+            Dock = Pos.Left | Pos.CenterV,
             Margin = new Margin(0, 2, 2, 2),
             IsTabable = false,
         };
@@ -39,8 +40,8 @@ public partial class LabeledCheckBox : Base
             Dock = Pos.Fill | Pos.CenterV,
             InheritParentEnablementProperties = true,
             IsTabable = false,
+            Padding = new Padding(2/*, 0, 0, 0*/),
             TextAlign = Pos.CenterV | Pos.Left,
-            TextPadding = new Padding(2/*, 0, 0, 0*/),
         };
         _label.Clicked += delegate(Base control, MouseButtonState _)
         {
@@ -129,6 +130,8 @@ public partial class LabeledCheckBox : Base
         set => _label.Text = value;
     }
 
+    public Color? TextPaddingDebugColor { get; set; }
+
     /// <summary>
     ///     Invoked when the control has been checked.
     /// </summary>
@@ -142,7 +145,7 @@ public partial class LabeledCheckBox : Base
     /// <summary>
     ///     Invoked when the control's check has been changed.
     /// </summary>
-    public event GwenEventHandler<EventArgs> CheckChanged;
+    public event GwenEventHandler<EventArgs>? CheckChanged;
 
     /// <summary>
     ///     Handler for CheckChanged event.
@@ -159,6 +162,17 @@ public partial class LabeledCheckBox : Base
         }
 
         CheckChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public override Point GetChildrenSize()
+    {
+        var childrenSize = base.GetChildrenSize();
+        return childrenSize;
+    }
+
+    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
+    {
+        return base.SizeToChildren(resizeX, resizeY, recursive);
     }
 
     public void SetCheckSize(int w, int h)
@@ -204,4 +218,25 @@ public partial class LabeledCheckBox : Base
         return true;
     }
 
+    public bool AutoSizeToContents
+    {
+        get => _autoSizeToContents;
+        set => SetAndDoIfChanged(ref _autoSizeToContents, value, InvalidateAutoSizeToContents);
+    }
+
+    private void InvalidateAutoSizeToContents(bool oldValue, bool newValue)
+    {
+        _label.AutoSizeToContents = newValue;
+        Invalidate();
+    }
+
+    protected override void Layout(Skin.Base skin)
+    {
+        if (_autoSizeToContents)
+        {
+            SizeToChildren();
+        }
+
+        base.Layout(skin);
+    }
 }

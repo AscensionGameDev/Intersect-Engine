@@ -169,15 +169,15 @@ public partial class InventoryWindow
         }
         else if (Globals.InBank)
         {
-            Globals.Me.TryDepositItem(slot);
+            Globals.Me.TryStoreItemInBank(slot);
         }
         else if (Globals.InBag)
         {
-            Globals.Me.TryStoreBagItem(slot, -1);
+            Globals.Me.TryStoreItemInBag(slot, -1);
         }
         else if (Globals.InTrade)
         {
-            Globals.Me.TryTradeItem(slot);
+            Globals.Me.TryOfferItemToTrade(slot);
         }
     }
 
@@ -335,9 +335,9 @@ public partial class InventoryWindow
     {
         var rect = new FloatRect()
         {
-            X = mInventoryWindow.LocalPosToCanvas(new Point(0, 0)).X -
+            X = mInventoryWindow.ToCanvas(new Point(0, 0)).X -
                 (Items[0].Container.Padding.Left + Items[0].Container.Padding.Right) / 2,
-            Y = mInventoryWindow.LocalPosToCanvas(new Point(0, 0)).Y -
+            Y = mInventoryWindow.ToCanvas(new Point(0, 0)).Y -
                 (Items[0].Container.Padding.Top + Items[0].Container.Padding.Bottom) / 2,
             Width = mInventoryWindow.Width + Items[0].Container.Padding.Left + Items[0].Container.Padding.Right,
             Height = mInventoryWindow.Height + Items[0].Container.Padding.Top + Items[0].Container.Padding.Bottom

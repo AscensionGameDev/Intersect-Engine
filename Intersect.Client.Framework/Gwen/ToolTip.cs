@@ -63,12 +63,13 @@ public static partial class ToolTip
     /// <param name="skin"></param>
     public static void RenderToolTip(Skin.Base skin)
     {
-        if (_activeTooltipParent?.Tooltip == default)
+        var activeTooltipParent = _activeTooltipParent;
+        if (activeTooltipParent?.Tooltip == default)
         {
             return;
         }
 
-        var canvas = _activeTooltipParent.Canvas;
+        var canvas = activeTooltipParent.Canvas;
         if (canvas == default)
         {
             return;
@@ -78,23 +79,47 @@ public static partial class ToolTip
 
         var oldRenderOffset = render.RenderOffset;
         var mousePos = Input.InputHandler.MousePosition;
-        var bounds = _activeTooltipParent.Tooltip.Bounds;
+        var tooltipBounds = activeTooltipParent.Tooltip.Bounds;
 
         var offset = Util.FloatRect(
-            mousePos.X - bounds.Width * 0.5f,
-            mousePos.Y - bounds.Height,
-            bounds.Width,
-            bounds.Height
+            mousePos.X - tooltipBounds.Width * 0.5f,
+            mousePos.Y - tooltipBounds.Height,
+            tooltipBounds.Width,
+            tooltipBounds.Height
         );
 
-        offset = Util.ClampRectToRect(offset, canvas.Bounds);
+        var textContainerMatch = activeTooltipParent.FindMatchingNodes<ITextContainer>();
+
+        if (textContainerMatch is { Highest: { } highest, Closest: { } closest })
+        {
+            var closestBounds = closest.GlobalBounds;
+            var highestBounds = highest.GlobalBounds;
+            if (highestBounds.Top > tooltipBounds.Height)
+            {
+                offset.Y = highestBounds.Top - tooltipBounds.Height;
+            }
+            else
+            {
+                // TODO: check if we have enough space below
+                offset.Y = highestBounds.Bottom;
+            }
+
+            offset.X = highestBounds.X + (highestBounds.Width - tooltipBounds.Width) / 2;
+            var closestBoundsX = closestBounds.X + closestBounds.Width * 0.25f;
+            if (offset.X > closestBoundsX)
+            {
+                offset.X = closestBounds.X + (closestBounds.Width - tooltipBounds.Width) / 2;
+            }
+        }
+
+        var clampedOffset = Util.ClampRectToRect(offset, canvas.Bounds);
 
         //Calculate offset on screen bounds
-        render.AddRenderOffset(offset);
+        render.AddRenderOffset(clampedOffset);
         render.EndClip();
 
-        skin.DrawToolTip(_activeTooltipParent.Tooltip);
-        _activeTooltipParent.Tooltip.DoRender(skin);
+        skin.DrawToolTip(activeTooltipParent.Tooltip);
+        activeTooltipParent.Tooltip.DoRender(skin);
 
         render.RenderOffset = oldRenderOffset;
     }

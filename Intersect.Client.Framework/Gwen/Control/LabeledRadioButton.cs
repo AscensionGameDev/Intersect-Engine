@@ -7,7 +7,7 @@ namespace Intersect.Client.Framework.Gwen.Control;
 /// <summary>
 ///     RadioButton with label.
 /// </summary>
-public partial class LabeledRadioButton : Base
+public partial class LabeledRadioButton : Base, ITextContainer
 {
 
     private readonly Label mLabel;
@@ -45,11 +45,13 @@ public partial class LabeledRadioButton : Base
     /// <summary>
     ///     Label text.
     /// </summary>
-    public string Text
+    public string? Text
     {
         get => mLabel.Text;
         set => mLabel.Text = value;
     }
+
+    public Color? TextPaddingDebugColor { get; set; }
 
     // todo: would be nice to remove that
     internal RadioButton RadioButton => mRadioButton;

@@ -26,7 +26,7 @@ public partial class EventInputVariablePacket : IntersectPacket
     public bool BooleanValue { get; set; }
 
     [Key(2)]
-    public string StringValue { get; set; }
+    public string? StringValue { get; set; }
 
     [Key(3)]
     public int Value { get; set; }

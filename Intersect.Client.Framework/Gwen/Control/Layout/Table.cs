@@ -4,6 +4,8 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.Data;
 using Intersect.Configuration;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control.Layout;
@@ -14,9 +16,9 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout;
 /// </summary>
 public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
 {
-
-    private readonly List<int?> _columnWidths;
-    private readonly List<Pos> _columnTextAlignments;
+    private readonly List<int?> _columnWidths = [];
+    private readonly List<int> _computedColumnWidths = [];
+    private readonly List<Pos> _columnTextAlignments = [];
 
     private int _columnCount;
     private int _defaultRowHeight;
@@ -85,7 +87,7 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
     public int ColumnCount
     {
         get => _columnCount;
-        set => SetAndDoIfChanged(ref _columnCount, value, SetColumnCount);
+        set => SetAndDoIfChanged(ref _columnCount, value, OnColumnCountChanged);
     }
 
     public Point CellSpacing
@@ -99,14 +101,21 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
             }
 
             _cellSpacing = value;
-            var rows = Children.OfType<TableRow>().Skip(1).ToArray();
+            var rows = Children.OfType<TableRow>().ToArray();
+            if (rows.FirstOrDefault() is not { } firstRow)
+            {
+                return;
+            }
+
+            var rowCellSpacing = value with { Y = 0 };
+            firstRow.CellSpacing = rowCellSpacing;
             foreach (var row in rows)
             {
-                row.Margin = new Margin(0, _cellSpacing.Y, 0, 0);
-                row.CellSpacing = value with
+                if (row != firstRow)
                 {
-                    Y = 0,
-                };
+                    row.Margin = new Margin(0, value.Y, 0, 0);
+                }
+                row.CellSpacing = rowCellSpacing;
             }
         }
     }
@@ -143,7 +152,7 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
     /// <summary>
     ///     Row count.
     /// </summary>
-    public int RowCount => Children.Count;
+    public int RowCount => Children.Count(TableRow.IsInstance);
 
     public Color? TextColor
     {
@@ -261,22 +270,30 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         }
     }
 
-    /// <summary>
-    ///     Sets the number of columns.
-    /// </summary>
-    /// <param name="count">Number of columns.</param>
-    protected virtual void SetColumnCount()
+    /// <param name="oldValue"></param>
+    /// <param name="columnCount"></param>
+    protected virtual void OnColumnCountChanged(int oldValue, int columnCount)
     {
-        var columnCount = ColumnCount;
-
+        _columnWidths.Capacity = Math.Max(_columnWidths.Capacity, columnCount);
         while (_columnWidths.Count < columnCount)
         {
             _columnWidths.Add(null);
         }
 
+        _columnTextAlignments.Capacity = Math.Max(_columnTextAlignments.Capacity, columnCount);
         while (_columnTextAlignments.Count < columnCount)
         {
             _columnTextAlignments.Add(Pos.Left | Pos.CenterV);
+        }
+
+        _computedColumnWidths.Capacity = Math.Max(_computedColumnWidths.Capacity, columnCount);
+        var currentComputedColumnWidthSum = _computedColumnWidths.Sum();
+        var remainingColumnWidth = Math.Max(0, InnerWidth - currentComputedColumnWidthSum);
+        var columnsToAdd = columnCount - _computedColumnWidths.Count;
+        var dynamicColumnWidth = remainingColumnWidth / Math.Max(1, columnsToAdd);
+        while (_computedColumnWidths.Count < columnCount)
+        {
+            _computedColumnWidths.Add(dynamicColumnWidth);
         }
 
         var rows = Children.OfType<TableRow>().ToArray();
@@ -329,21 +346,51 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
 
     public TableRow AddRow(int columnCount, string? name = null)
     {
-        var row = new TableRow(this, name: name)
+        var row = new TableRow(parent: this, columnWidths: _computedColumnWidths.ToArray(), name: name)
         {
-            CellSpacing = _cellSpacing,
+            CellSpacing = CellSpacing,
             ColumnCount = columnCount,
             ColumnTextAlignments = _columnTextAlignments,
             Dock = Pos.Top,
+            FitHeightToContents = _fitRowHeightToContents,
             Font = Font,
             Height = _defaultRowHeight,
-            Margin = new Margin(0, 0, 0, _cellSpacing.Y),
+            Margin = new Margin(left: 0, top: _rowCount < 1 ? 0 : CellSpacing.Y, right: 0, bottom: 0),
             TextColor = TextColor,
             TextColorOverride = TextColorOverride,
+            Width = InnerWidth,
         };
 
         return row;
     }
+
+    public TableRow[] AddCells(params Base[] cellContents)
+    {
+        if (cellContents.Length < 1)
+        {
+            return [];
+        }
+
+        TableRow currentRow = AddRow();
+        List<TableRow> rows = [currentRow];
+
+        var column = 0;
+        foreach (var cellContent in cellContents)
+        {
+            if (column >= currentRow.ColumnCount)
+            {
+                currentRow = AddRow();
+                rows.Add(currentRow);
+                column = 0;
+            }
+
+            currentRow.SetCellContents(column++, cellContent);
+        }
+
+        return rows.ToArray();
+    }
+
+    public int[] ComputedColumnWidths => _computedColumnWidths.ToArray();
 
     /// <summary>
     ///     Adds a new row.
@@ -357,12 +404,14 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         }
 
         row.Parent = this;
-
+        row.FitHeightToContents = _fitRowHeightToContents;
         row.ColumnCount = Math.Min(_columnCount, row.ColumnCount);
         row.Dock = Pos.Top;
-        row.Font = row.Font ?? Font;
+        row.Font ??= Font;
         row.Height = _defaultRowHeight;
+        row.Margin = new Margin(left: 0, top: _rowCount < 1 ? 0 : CellSpacing.Y, right: 0, bottom: 0);
 
+        row.SetComputedColumnWidths(_computedColumnWidths.ToArray());
         row.SetColumnWidths(_columnWidths);
     }
 
@@ -380,10 +429,10 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         return row;
     }
 
-    public TableRow AddRow(string text, int columnCount, string? name = null)
+    public TableRow AddRow(string text, int columnCount, string? name = null, int columnIndex = 0)
     {
         var row = AddRow(columnCount, name: name);
-        row.SetCellText(0, text);
+        row.SetCellText(columnIndex, text);
 
         return row;
     }
@@ -531,7 +580,7 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
                     .ToArray()
             );
 
-        var availableWidth = InnerWidth - _cellSpacing.X * Math.Max(0, _columnCount - 1);
+        var availableWidth = InnerWidth - CellSpacing.X * Math.Max(0, _columnCount - 1);
 
         var requestedWidths = _columnWidths.ToArray();
         requestedWidths = measuredContentWidths.Select(
@@ -557,11 +606,52 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
                 (requestedWidth, columnIndex) => requestedWidth.HasValue ? 0 : measuredContentWidths[columnIndex]
             )
             .Sum();
+
         var columnWidthRatios = requestedWidths.Select(
                 (requestedWidth, columnIndex) =>
-                    requestedWidth.HasValue ? float.NaN : measuredContentWidths[columnIndex] / (float)flexColumnWidthSum
+                {
+                    if (requestedWidths.Length == 1)
+                    {
+                        return 1;
+                    }
+
+                    return requestedWidth.HasValue
+                        ? float.NaN
+                        : measuredContentWidths[columnIndex] / Math.Max((float)flexColumnWidthSum, 1);
+                }
             )
             .ToArray();
+
+        var flexColumnCount = columnWidthRatios.Count(float.IsFinite);
+        var columnWidthRatioSum = columnWidthRatios.Sum(ratio => float.IsNaN(ratio) ? 0 : ratio);
+        if (columnWidthRatioSum < 1f)
+        {
+            if (columnWidthRatioSum > 0f)
+            {
+                var normalization = 1f / columnWidthRatioSum;
+                columnWidthRatios = columnWidthRatios.Select(ratio => ratio * normalization).ToArray();
+            }
+            else
+            {
+                var ratio = 1f / Math.Max(1, flexColumnCount);
+                if (flexColumnCount == columnWidthRatios.Length)
+                {
+                    Array.Fill(columnWidthRatios, ratio);
+                }
+                else
+                {
+                    for (int columnIndex = 0; columnIndex < columnWidthRatios.Length; ++columnIndex)
+                    {
+                        if (float.IsNaN(columnWidthRatios[columnIndex]))
+                        {
+                            continue;
+                        }
+
+                        columnWidthRatios[columnIndex] = ratio;
+                    }
+                }
+            }
+        }
 
         var fixedColumnCount = requestedWidths.Count(requestedWidth => requestedWidth.HasValue);
         var fixedColumnWidthSum = requestedWidths.Sum(requestedWidth => requestedWidth ?? 0);
@@ -593,6 +683,13 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         var actualWidth = 0;
         var actualHeight = 0;
         var columnLimit = Math.Min(columnCount, requestedWidths.Length);
+        var computedColumnWidths = new int[Math.Max(_computedColumnWidths.Count, columnLimit)];
+        var defaultColumnWidth = rows.Length > 0
+            ? 0
+            : (availableWidth - _cellSpacing.X * computedColumnWidths.Length) /
+              Math.Max(1, computedColumnWidths.Length);
+        Array.Fill(computedColumnWidths, defaultColumnWidth);
+
         foreach (var row in rows)
         {
             var rowWidth = 0;
@@ -606,32 +703,50 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
                 {
                     cell.Width = cellWidth;
                 }
+
+                computedColumnWidths[columnIndex] = Math.Max(cellWidth, computedColumnWidths[columnIndex]);
                 rowWidth += cellWidth;
             }
 
-            actualWidth = Math.Max(actualWidth, rowWidth);
-            actualHeight += row.OuterHeight;
+            var rowDockSpacing = row.Dock.GetDockSpacing(DockChildSpacing);
+            actualWidth = Math.Max(actualWidth, rowWidth) + rowDockSpacing.X;
+            actualHeight += row.OuterHeight + rowDockSpacing.Y;
         }
 
-        actualHeight += Math.Max(0, rows.Length - 1) * CellSpacing.Y;
+        _computedColumnWidths.Clear();
+        _computedColumnWidths.AddRange(computedColumnWidths);
+
+        foreach (var row in rows)
+        {
+            row.SetComputedColumnWidths(computedColumnWidths);
+        }
+
+        ApplicationContext.CurrentContext.Logger.LogTrace(
+            "Computed table '{TableName}' content size: ({Width}, {Height})",
+            CanonicalName,
+            actualWidth,
+            actualHeight
+        );
 
         return new Point(actualWidth, actualHeight);
     }
 
-    public void DoSizeToContents(bool width = false, bool height = true)
+    public void DoSizeToContents(bool resizeX = false, bool resizeY = true)
     {
         var rows = Children.OfType<TableRow>().ToArray();
         if (_fitRowHeightToContents)
         {
             foreach (var row in rows)
             {
-                row.SizeToChildren(width: width, height: height);
+                row.SizeToChildren(resizeX: resizeX, resizeY: resizeY, recursive: true);
             }
         }
 
         var size = ComputeColumnWidths(rows);
 
-        SetSize(size.X, size.Y);
+        var width = resizeX ? size.X : Width;
+        var height = resizeY ? size.Y : Height;
+        SetSize(width, height);
 
         InvalidateParent();
     }
@@ -643,6 +758,29 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         // InvalidateChildren(true);
     }
 
+    public override Point GetChildrenSize()
+    {
+        var childrenSize = base.GetChildrenSize();
+        ApplicationContext.CurrentContext.Logger.LogTrace(
+            "Table {TableName} children size is {ChildrenSize}",
+            CanonicalName,
+            childrenSize
+        );
+        return childrenSize;
+    }
+
+    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
+    {
+        ApplicationContext.CurrentContext.Logger.LogTrace(
+            "Resizing Table {TableName} to children (X={ResizeX}, Y={ResizeY}, Recursive={Recursive})...",
+            CanonicalName,
+            resizeX,
+            resizeY,
+            recursive
+        );
+        return base.SizeToChildren(resizeX, resizeY, recursive);
+    }
+
     public void Invalidate(bool invalidateChildren, bool invalidateRecursive = true)
     {
         Invalidate();
@@ -650,16 +788,6 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         {
             InvalidateChildren(invalidateRecursive);
         }
-    }
-
-    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
-    {
-        if (Bounds.Height == 800)
-        {
-            Bounds.ToString();
-        }
-
-        base.OnBoundsChanged(oldBounds, newBounds);
     }
 
     protected override void OnChildBoundsChanged(Base child, Rectangle oldChildBounds, Rectangle newChildBounds)
@@ -699,5 +827,71 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
     {
         get => _autoSizeToContentHeightOnChildResize;
         set => _autoSizeToContentHeightOnChildResize = value;
+    }
+
+    protected override void OnSizeChanged(Point oldSize, Point newSize)
+    {
+        base.OnSizeChanged(oldSize, newSize);
+
+        ApplicationContext.CurrentContext.Logger.LogTrace(
+            "Table {TableName} size changed from {OldSize} to {NewSize}",
+            CanonicalName,
+            oldSize,
+            newSize
+        );
+
+        if (oldSize.X == newSize.X)
+        {
+            return;
+        }
+
+        if (_rowCount > 0)
+        {
+            return;
+        }
+
+        var columnCount = _columnCount;
+        var widthPerColumn = InnerWidth / columnCount;
+        var widths = new int[columnCount];
+        Array.Fill(widths, widthPerColumn);
+        _computedColumnWidths.Clear();
+        _computedColumnWidths.AddRange(widths);
+    }
+
+    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
+    {
+        // ApplicationContext.CurrentContext.Logger.LogTrace(
+        //     "Table {TableName} bounds changed from {OldBounds} to {NewBounds}",
+        //     CanonicalName,
+        //     oldBounds,
+        //     newBounds
+        // );
+        base.OnBoundsChanged(oldBounds, newBounds);
+    }
+
+    private int _rowCount;
+
+    protected override void OnChildAdded(Base child)
+    {
+        base.OnChildAdded(child);
+
+        if (!TableRow.IsInstance(child))
+        {
+            return;
+        }
+
+        _rowCount = Math.Min(Children.Count, _rowCount + 1);
+    }
+
+    protected override void OnChildRemoved(Base child)
+    {
+        base.OnChildRemoved(child);
+
+        if (!TableRow.IsInstance(child))
+        {
+            return;
+        }
+
+        _rowCount = Math.Max(0, _rowCount - 1);
     }
 }

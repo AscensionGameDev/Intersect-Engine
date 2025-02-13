@@ -96,7 +96,7 @@ public partial class InventoryItem
         {
             if (Globals.InputManager.IsKeyDown(Keys.Shift))
             {
-                Globals.Me.TryDepositItem(
+                Globals.Me.TryStoreItemInBank(
                     mMySlot,
                     skipPrompt: true
                 );
@@ -104,7 +104,7 @@ public partial class InventoryItem
             else
             {
                 var slot = Globals.Me.Inventory[mMySlot];
-                Globals.Me.TryDepositItem(
+                Globals.Me.TryStoreItemInBank(
                     mMySlot,
                     slot,
                     quantityHint: slot.Quantity,
@@ -114,11 +114,11 @@ public partial class InventoryItem
         }
         else if (Globals.InBag)
         {
-            Globals.Me.TryStoreBagItem(mMySlot, -1);
+            Globals.Me.TryStoreItemInBag(mMySlot, -1);
         }
         else if (Globals.InTrade)
         {
-            Globals.Me.TryTradeItem(mMySlot);
+            Globals.Me.TryOfferItemToTrade(mMySlot);
         }
         else
         {
@@ -147,15 +147,15 @@ public partial class InventoryItem
                     }
                     else if (Globals.InBank)
                     {
-                        Globals.Me?.TryDepositItem(mMySlot);
+                        Globals.Me?.TryStoreItemInBank(mMySlot);
                     }
                     else if (Globals.InBag)
                     {
-                        Globals.Me?.TryStoreBagItem(mMySlot, -1);
+                        Globals.Me?.TryStoreItemInBag(mMySlot, -1);
                     }
                     else if (Globals.InTrade)
                     {
-                        Globals.Me?.TryTradeItem(mMySlot);
+                        Globals.Me?.TryOfferItemToTrade(mMySlot);
                     }
                     else
                     {
@@ -267,8 +267,8 @@ public partial class InventoryItem
     {
         var rect = new FloatRect()
         {
-            X = Pnl.LocalPosToCanvas(new Point(0, 0)).X,
-            Y = Pnl.LocalPosToCanvas(new Point(0, 0)).Y,
+            X = Pnl.ToCanvas(new Point(0, 0)).X,
+            Y = Pnl.ToCanvas(new Point(0, 0)).Y,
             Width = Pnl.Width,
             Height = Pnl.Height
         };
@@ -374,23 +374,23 @@ public partial class InventoryItem
                     {
                         if (mMouseX == -1 || mMouseY == -1)
                         {
-                            mMouseX = InputHandler.MousePosition.X - Pnl.LocalPosToCanvas(new Point(0, 0)).X;
-                            mMouseY = InputHandler.MousePosition.Y - Pnl.LocalPosToCanvas(new Point(0, 0)).Y;
+                            mMouseX = InputHandler.MousePosition.X - Pnl.ToCanvas(new Point(0, 0)).X;
+                            mMouseY = InputHandler.MousePosition.Y - Pnl.ToCanvas(new Point(0, 0)).Y;
                         }
                         else
                         {
                             var xdiff = mMouseX -
-                                        (InputHandler.MousePosition.X - Pnl.LocalPosToCanvas(new Point(0, 0)).X);
+                                        (InputHandler.MousePosition.X - Pnl.ToCanvas(new Point(0, 0)).X);
 
                             var ydiff = mMouseY -
-                                        (InputHandler.MousePosition.Y - Pnl.LocalPosToCanvas(new Point(0, 0)).Y);
+                                        (InputHandler.MousePosition.Y - Pnl.ToCanvas(new Point(0, 0)).Y);
 
                             if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                             {
                                 IsDragging = true;
                                 mDragIcon = new Draggable(
-                                    Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseX,
-                                    Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseY, Pnl.Texture, Pnl.RenderColor
+                                    Pnl.ToCanvas(new Point(0, 0)).X + mMouseX,
+                                    Pnl.ToCanvas(new Point(0, 0)).X + mMouseY, Pnl.Texture, Pnl.RenderColor
                                 );
                             }
                         }
@@ -506,7 +506,7 @@ public partial class InventoryItem
 
                     if (bestIntersectIndex > -1)
                     {
-                        Globals.Me.TryStoreBagItem(mMySlot, bestIntersectIndex);
+                        Globals.Me.TryStoreItemInBag(mMySlot, bestIntersectIndex);
                     }
                 }
             }
@@ -543,7 +543,7 @@ public partial class InventoryItem
                     if (bestIntersectIndex > -1)
                     {
                         var slot = Globals.Me.Inventory[mMySlot];
-                        Globals.Me.TryDepositItem(
+                        Globals.Me.TryStoreItemInBank(
                             mMySlot,
                             bankSlotIndex: bestIntersectIndex,
                             quantityHint: slot.Quantity,

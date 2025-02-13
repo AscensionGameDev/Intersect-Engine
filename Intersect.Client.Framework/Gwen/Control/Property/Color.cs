@@ -45,7 +45,7 @@ public partial class Color : Text
     /// <param name="control">Event source.</param>
     protected virtual void OnButtonPressed(Control.Base control, EventArgs args)
     {
-        var menu = new Menu(GetCanvas());
+        var menu = new Menu(Canvas);
         menu.SetSize(256, 180);
         menu.DeleteOnClose = true;
         menu.IconMarginDisabled = true;

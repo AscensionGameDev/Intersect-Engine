@@ -1,4 +1,5 @@
 ﻿using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Input;
@@ -13,14 +14,6 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal;
 /// </summary>
 public partial class Dragger : Base
 {
-    public enum ControlSoundState
-    {
-        None,
-        Hover,
-        MouseDown,
-        MouseUp,
-    }
-
     protected Point mHoldPos;
 
     //Sound Effects
@@ -125,6 +118,21 @@ public partial class Dragger : Base
     /// <param name="skin">Skin to use.</param>
     protected override void Render(Skin.Base skin)
     {
+    }
+
+    public override void Invalidate()
+    {
+        base.Invalidate();
+    }
+
+    protected override void Layout(Skin.Base skin)
+    {
+        base.Layout(skin);
+    }
+
+    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
+    {
+        base.OnBoundsChanged(oldBounds, newBounds);
     }
 
     public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
@@ -291,19 +299,19 @@ public partial class Dragger : Base
         mMouseUpSound = string.Empty;
     }
 
-    public void SetSound(string sound, ControlSoundState state)
+    public void SetSound(string sound, ButtonSoundState state)
     {
         switch (state)
         {
-            case ControlSoundState.None:
+            case ButtonSoundState.None:
                 break;
-            case ControlSoundState.Hover:
+            case ButtonSoundState.Hover:
                 mHoverSound = sound;
                 break;
-            case ControlSoundState.MouseDown:
+            case ButtonSoundState.MouseDown:
                 mMouseDownSound = sound;
                 break;
-            case ControlSoundState.MouseUp:
+            case ButtonSoundState.MouseUp:
                 mMouseUpSound = sound;
                 break;
             default:
