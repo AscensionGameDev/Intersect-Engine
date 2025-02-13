@@ -354,6 +354,10 @@ public partial class Player : Entity
         return changes;
     }
 
+    /// <summary>
+    /// Returns the required experience for the next level based on <see cref="ClassBase"/>. Returns -1 if MaxLevel.
+    /// </summary>
+    /// <param name="level">The current player level. Before leveling up.</param>
     private long GetExperienceToNextLevel(int level)
     {
         if (level >= Options.Instance.Player.MaxLevel)
