@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Intersect.Client.Core;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Entities.Projectiles;
@@ -28,10 +29,8 @@ public partial class Entity : IEntity
 {
     public int AnimationFrame { get; set; }
 
-    //Entity Animations
-    public readonly List<Animation> Animations = [];
-
-    public readonly Dictionary<AnimationSource, Animation> AnimationsBySource = [];
+    private readonly List<Animation> _animations = [];
+    private readonly Dictionary<AnimationSource, Animation> _animationsBySource = [];
 
     //Animation Timer (for animated sprites)
     public long AnimationTimer { get; set; }
@@ -66,6 +65,8 @@ public partial class Entity : IEntity
     public float elapsedtime { get; set; } //to be removed
 
     private Guid[] _equipment = new Guid[Options.Instance.Equipment.Slots.Count];
+
+    public bool HasAnimations => _animations.Count > 0;
 
     public Guid[] Equipment
     {
@@ -375,7 +376,7 @@ public partial class Entity : IEntity
             }
         }
 
-        foreach (var anim in Animations)
+        foreach (var anim in _animations)
         {
             animsToClear.Add(anim);
             if (!anim.InfiniteLoop)
@@ -405,7 +406,7 @@ public partial class Entity : IEntity
             }
         }
 
-        ClearAnimations(animsToClear);
+        RemoveAnimations(animsToClear);
         AddAnimations(animsToAdd);
 
         Vital = packet.Vital;
@@ -479,11 +480,11 @@ public partial class Entity : IEntity
         }
     }
 
-    public void AddAnimations(List<AnimationBase> anims)
+    public void AddAnimations(List<AnimationBase> animationDescriptors)
     {
-        foreach (var anim in anims)
+        foreach (var animationDescriptor in animationDescriptors)
         {
-            Animations.Add(new Animation(anim, true, false, -1, this));
+            TryAddAnimation(new Animation(animationDescriptor, true, false, -1, this));
         }
     }
 
@@ -515,16 +516,19 @@ public partial class Entity : IEntity
         return false;
     }
 
-    public void ClearAnimations(List<Animation>? anims)
+    public void ClearAnimations() => RemoveAnimations(_animations);
+
+    public void RemoveAnimations(IEnumerable<Animation> animations, bool dispose = true)
     {
-        anims ??= Animations;
-        if (anims.Count > 0)
+        var animationsToRemove = animations.ToArray();
+        foreach (var animation in animationsToRemove)
         {
-            for (var i = 0; i < anims.Count; i++)
+            if (dispose)
             {
-                anims[i].Dispose();
-                _ = Animations.Remove(anims[i]);
+                animation.Dispose();
             }
+
+            _ = TryRemoveAnimation(animation);
         }
     }
 
@@ -537,7 +541,7 @@ public partial class Entity : IEntity
             _ = RenderList.Remove(this);
         }
 
-        ClearAnimations(null);
+        ClearAnimations();
         GC.SuppressFinalize(this);
         mDisposed = true;
     }
@@ -758,6 +762,7 @@ public partial class Entity : IEntity
         {
             for (var z = 0; z < Options.Instance.Equipment.Slots.Count; z++)
             {
+                var equipmentAnimation = EquipmentAnimations[z];
                 if (Equipment[z] != Guid.Empty && (this != Globals.Me || MyEquipment[z] < Options.Instance.Player.MaxInventory))
                 {
                     var itemId = Guid.Empty;
@@ -774,47 +779,30 @@ public partial class Entity : IEntity
                         itemId = Equipment[z];
                     }
 
-                    var itm = ItemBase.Get(itemId);
-                    AnimationBase? anim = null;
-                    if (itm != null)
+                    if (ItemBase.TryGet(itemId, out var itemDescriptor) &&
+                        itemDescriptor.EquipmentAnimation is { } animationDescriptor)
                     {
-                        anim = itm.EquipmentAnimation;
-                    }
-
-                    if (anim != null)
-                    {
-                        if (EquipmentAnimations[z] != null &&
-                            (EquipmentAnimations[z]!.MyBase != anim || EquipmentAnimations[z]!.Disposed()))
+                        if (equipmentAnimation != null &&
+                            (equipmentAnimation.MyBase != animationDescriptor || equipmentAnimation.IsDisposed))
                         {
-                            EquipmentAnimations[z]!.Dispose();
-                            _ = Animations.Remove(EquipmentAnimations[z]!);
+                            TryRemoveAnimation(equipmentAnimation, dispose: true);
                             EquipmentAnimations[z] = null;
                         }
 
-                        if (EquipmentAnimations[z] == null)
-                        {
-                            EquipmentAnimations[z] = new Animation(anim, true, true, -1, this);
-                            Animations.Add(EquipmentAnimations[z]!);
-                        }
+                        equipmentAnimation = new Animation(animationDescriptor, true, true, -1, this);
+                        EquipmentAnimations[z] = equipmentAnimation;
+                        _animations.Add(equipmentAnimation);
                     }
-                    else
+                    else if (equipmentAnimation != null)
                     {
-                        if (EquipmentAnimations[z] != null)
-                        {
-                            EquipmentAnimations[z]!.Dispose();
-                            _ = Animations.Remove(EquipmentAnimations[z]!);
-                            EquipmentAnimations[z] = null;
-                        }
-                    }
-                }
-                else
-                {
-                    if (EquipmentAnimations[z] != null)
-                    {
-                        EquipmentAnimations[z]!.Dispose();
-                        _ = Animations.Remove(EquipmentAnimations[z]!);
+                        TryRemoveAnimation(equipmentAnimation, dispose: true);
                         EquipmentAnimations[z] = null;
                     }
+                }
+                else if (equipmentAnimation != null)
+                {
+                    TryRemoveAnimation(equipmentAnimation, dispose: true);
+                    EquipmentAnimations[z] = null;
                 }
             }
         }
@@ -840,30 +828,30 @@ public partial class Entity : IEntity
 
         CalculateOrigin();
 
-        List<Animation>? animsToRemove = null;
-        foreach (var animInstance in Animations)
+        List<Animation>? disposedAnimations = null;
+        foreach (var animation in _animations)
         {
-            animInstance.Update();
+            animation.Update();
 
             //If disposed mark to be removed and continue onward
-            if (animInstance.Disposed())
+            if (animation.IsDisposed)
             {
-                animsToRemove ??= [];
-                animsToRemove.Add(animInstance);
+                disposedAnimations ??= [];
+                disposedAnimations.Add(animation);
                 continue;
             }
 
             if (IsStealthed || IsHidden)
             {
-                animInstance.Hide();
+                animation.Hide();
             }
             else
             {
-                animInstance.Show();
+                animation.Show();
             }
 
-            var animationDirection = animInstance.AutoRotate ? Dir : default;
-            animInstance.SetPosition(
+            var animationDirection = animation.AutoRotate ? Dir : default;
+            animation.SetPosition(
                 (int)Math.Ceiling(Center.X),
                 (int)Math.Ceiling(Center.Y),
                 X,
@@ -873,12 +861,9 @@ public partial class Entity : IEntity
             );
         }
 
-        if (animsToRemove != null)
+        if (disposedAnimations != null)
         {
-            foreach (var anim in animsToRemove)
-            {
-                _ = Animations.Remove(anim);
-            }
+            RemoveAnimations(disposedAnimations);
         }
 
         mLastUpdate = Timing.Global.Milliseconds;
@@ -886,6 +871,79 @@ public partial class Entity : IEntity
         UpdateSpriteAnimation();
 
         return true;
+    }
+
+    public bool TryAddAnimation(Animation animation, AnimationSource animationSource = default)
+    {
+        if (animationSource != default)
+        {
+            if (_animationsBySource.TryGetValue(animationSource, out var existingAnimation))
+            {
+                if (!TryRemoveAnimation(existingAnimation, animationSource))
+                {
+                    return false;
+                }
+            }
+        }
+
+        _animationsBySource[animationSource] = animation;
+        _animations.Add(animation);
+        return true;
+    }
+
+    public bool TryRemoveAnimation(AnimationSource animationSource, bool dispose = false) => TryRemoveAnimation(
+        animationSource: animationSource,
+        dispose: dispose,
+        animation: out _
+    );
+
+    public bool TryRemoveAnimation(AnimationSource animationSource, [NotNullWhen(true)] out Animation? animation) =>
+        TryRemoveAnimation(animationSource: animationSource, dispose: false, animation: out animation);
+
+    public bool TryRemoveAnimation(
+        AnimationSource animationSource,
+        bool dispose,
+        [NotNullWhen(true)] out Animation? animation
+    )
+    {
+        if (!_animationsBySource.Remove(animationSource, out animation))
+        {
+            return false;
+        }
+
+        _animations.Remove(animation);
+
+        if (dispose)
+        {
+            animation.Dispose();
+        }
+
+        return true;
+    }
+
+    public bool RemoveAnimationIfExists(AnimationSource animationSource, bool dispose = false)
+    {
+        return !_animationsBySource.ContainsKey(animationSource) ||
+               TryRemoveAnimation(animationSource: animationSource, dispose: dispose);
+    }
+
+    public bool TryRemoveAnimation(Animation animation, bool dispose = false) => TryRemoveAnimation(
+        animation: animation,
+        animationSource: animation.Source,
+        dispose: dispose
+    );
+
+    public bool TryRemoveAnimation(Animation animation, AnimationSource animationSource, bool dispose = false)
+    {
+        var removedFromSourceLookup = animationSource != default && _animationsBySource.Remove(animationSource);
+        var removedFromList = _animations.Remove(animation);
+
+        if (dispose)
+        {
+            animation.Dispose();
+        }
+
+        return removedFromList || removedFromSourceLookup;
     }
 
     public virtual int CalculateAttackTime()

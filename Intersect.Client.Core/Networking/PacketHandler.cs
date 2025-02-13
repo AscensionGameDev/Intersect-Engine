@@ -1151,7 +1151,7 @@ internal sealed partial class PacketHandler
         var type = packet.Type;
         var mapId = packet.MapId;
 
-        Entity en = null;
+        Entity? en = null;
         if (type < EntityType.Event)
         {
             if (!Globals.Entities.ContainsKey(id))
@@ -1182,7 +1182,7 @@ internal sealed partial class PacketHandler
             return;
         }
 
-        en.ClearAnimations(null);
+        en.ClearAnimations();
     }
 
     //EventDialogPacket
@@ -1544,9 +1544,7 @@ internal sealed partial class PacketHandler
                     return;
                 }
 
-                if (animationSource == default ||
-                    !entity.AnimationsBySource.TryGetValue(animationSource, out var existingAnimation) ||
-                    entity.Animations.Remove(existingAnimation))
+                if (animationSource == default || entity.RemoveAnimationIfExists(animationSource, dispose: true))
                 {
                     var animationInstance = new Animation(
                         animationDescriptor,
@@ -1562,12 +1560,7 @@ internal sealed partial class PacketHandler
                         animationInstance.SetDir(packet.Direction);
                     }
 
-                    if (animationSource != default)
-                    {
-                        entity.AnimationsBySource[animationSource] = animationInstance;
-                    }
-
-                    entity.Animations.Add(animationInstance);
+                    entity.TryAddAnimation(animation: animationInstance, animationSource: animationSource);
                 }
                 else
                 {
@@ -1600,9 +1593,7 @@ internal sealed partial class PacketHandler
                     return;
                 }
 
-                if (animationSource == default ||
-                    !entity.AnimationsBySource.TryGetValue(animationSource, out var existingAnimation) ||
-                    entity.Animations.Remove(existingAnimation))
+                if (animationSource == default || entity.RemoveAnimationIfExists(animationSource, dispose: true))
                 {
                     var animationInstance = new Animation(
                         animationDescriptor,
@@ -1618,12 +1609,7 @@ internal sealed partial class PacketHandler
                         animationInstance.SetDir(packet.Direction);
                     }
 
-                    if (animationSource != default)
-                    {
-                        entity.AnimationsBySource[animationSource] = animationInstance;
-                    }
-
-                    entity.Animations.Add(animationInstance);
+                    entity.TryAddAnimation(animation: animationInstance, animationSource: animationSource);
                 }
                 else
                 {
@@ -2266,11 +2252,12 @@ internal sealed partial class PacketHandler
 
         AnimationSource animationSource = new(AnimationSourceType.SpellCast, entity.SpellCast);
 
-        if (entity.AnimationsBySource.Remove(animationSource, out var removedAnimation))
+        if (entity.TryRemoveAnimation(
+                animationSource: animationSource,
+                dispose: true,
+                animation: out var removedAnimation
+            ))
         {
-            _ = entity.Animations.Remove(removedAnimation);
-            removedAnimation.Dispose();
-
             ApplicationContext.CurrentContext.Logger.LogDebug(
                 "Removing cancelled spell cast animation {AnimationId} ({AnimationName})",
                 removedAnimation.MyBase?.Id,
