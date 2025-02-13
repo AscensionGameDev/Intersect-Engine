@@ -1253,8 +1253,16 @@ public partial class Player : Entity
         PacketSender.SendExperience(this);
     }
 
+    /// <summary>
+    /// Adds levels to the player based on what level they're currently at. Does nothing if levels param is 0.
+    /// </summary>
+    /// <param name="levels">Adds levels if positive, removes if negative and does nothing if zero.</param>
+    /// <param name="resetExperience">If levels is not zero, and this is true, resets the Exp to zero after adjusting levels.</param>
     public void AddLevels(int levels = 1, bool resetExperience = true)
     {
+        if (levels == 0)
+            return;
+
         ClassBase? classDescriptor = null;
         List<(string, Color)> messageList = [];
 
