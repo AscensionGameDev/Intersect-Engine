@@ -1376,10 +1376,6 @@ public partial class Player : Entity
         }
         var equipmentBonus = (int)Math.Round(amount * GetEquipmentBonusEffect(ItemEffect.EXP) / 100f);
         Exp += amount + equipmentBonus;
-        if (Exp < 0)
-        {
-            Exp = 0;
-        }
 
         CheckLevelUp();
     }
@@ -1431,6 +1427,11 @@ public partial class Player : Entity
             Exp -= experienceToNextLevel;
             levelCount++;
             experienceToNextLevel = GetExperienceToNextLevel(Level + levelCount);
+        }
+
+        if (Exp < 0)
+        {
+            Exp = 0;
         }
 
         AddLevels(levelCount, false); //If zero, still calls PacketSender.SendExperience
