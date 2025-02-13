@@ -1255,13 +1255,13 @@ public partial class Player : Entity
 
     /// <summary>
     /// Adds levels to the player based on what level they're currently at. And then sends all relevent data through <see cref="PacketSender"/>
-    /// <para>If <paramref name="levels"/> is zero, will still call <see cref="PacketSender.SendExperience"/> but do nothing else.</para>
+    /// <para>If <paramref name="amount"/> is zero, will still call <see cref="PacketSender.SendExperience"/> but do nothing else.</para>
     /// </summary>
-    /// <param name="levels">Adds levels if positive, removes if negative and does nothing if zero.</param>
+    /// <param name="amount">Adds levels if positive, removes if negative and does nothing if zero.</param>
     /// <param name="resetExperience">If levels is not zero, and this is true, resets the Exp to zero after adjusting levels.</param>
-    public void AddLevels(int levels = 1, bool resetExperience = true)
+    public void AddLevels(int amount = 1, bool resetExperience = true)
     {
-        if (levels == 0)
+        if (amount == 0)
         {
             PacketSender.SendExperience(this);
             return;
@@ -1270,8 +1270,8 @@ public partial class Player : Entity
         ClassBase? classDescriptor = null;
         List<(string, Color)> messageList = [];
 
-        var targetLevel = Math.Clamp(Level + levels, 1, Options.Instance.Player.MaxLevel);
-        if (levels > 0)
+        var targetLevel = Math.Clamp(Level + amount, 1, Options.Instance.Player.MaxLevel);
+        if (amount > 0)
         {
             while (Level < targetLevel)
             {
@@ -1299,7 +1299,7 @@ public partial class Player : Entity
                 PacketSender.SendActionMsg(this, Strings.Combat.LevelUp, CustomColors.Combat.LevelUp);
             }
         }
-        else if (levels < 0)
+        else if (amount < 0)
         {
             while (targetLevel < Level)
             {
