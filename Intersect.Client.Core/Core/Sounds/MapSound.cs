@@ -39,7 +39,7 @@ public partial class MapSound : Sound, IMapSound
         mY = y;
         mMapId = mapId;
         mEntity = parent;
-        mSound.SetVolume(0);
+        mSound.Volume = 0;
     }
 
     public void UpdatePosition(int x, int y, Guid mapId)
@@ -65,7 +65,10 @@ public partial class MapSound : Sound, IMapSound
     {
         if (mMapId == Guid.Empty)
         {
-            mSound?.SetVolume(0);
+            if (mSound is { } sound)
+            {
+                sound.Volume = 0;
+            }
             return;
         }
 
@@ -78,23 +81,26 @@ public partial class MapSound : Sound, IMapSound
 
         if (mX == -1 || mY == -1 || mDistance <= 0)
         {
-            mSound?.SetVolume(100);
+            if (mSound is { } sound)
+            {
+                sound.Volume = 100;
+            }
         }
         else
         {
+            var volume = 0f;
             if (mDistance > 0 && Globals.GridMaps.ContainsKey(mMapId))
             {
-                var volume = 100 - 100 / (mDistance + 1) * CalculateSoundDistance();
+                volume = 100 - 100 / ((mDistance + 1) * CalculateSoundDistance());
                 if (volume < 0)
                 {
                     volume = 0f;
                 }
-
-                mSound?.SetVolume((int)volume);
             }
-            else
+
+            if (mSound is { } sound)
             {
-                mSound?.SetVolume(0);
+                sound.Volume = (int)volume;
             }
         }
     }

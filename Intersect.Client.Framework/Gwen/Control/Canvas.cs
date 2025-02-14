@@ -183,7 +183,7 @@ public partial class Canvas : Base
         // Track the sound - we will check to see when it's done and dispose of it in DoThink()
         mUISounds.Add(sound);
         // And play the sound
-        sound.SetVolume(100, false);
+        sound.Volume = 100;
         sound.Play();
     }
 

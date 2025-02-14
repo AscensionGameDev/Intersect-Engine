@@ -22,6 +22,8 @@ public abstract partial class GameAudioSource : IAsset
 
     public string? Name { get; set; }
 
+    public abstract int TypeVolume { get; }
+
     public abstract GameAudioInstance CreateInstance();
 
     protected void EmitDisposed()
@@ -71,5 +73,7 @@ public abstract partial class GameAudioSource : IAsset
             );
         }
     }
+
+    public abstract void ReleaseInstance(GameAudioInstance? audioInstance);
 
 }

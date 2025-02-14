@@ -1,4 +1,6 @@
-﻿namespace Intersect.Client.Framework.Audio;
+﻿using Intersect.Client.Framework.Gwen.Control.EventArguments;
+
+namespace Intersect.Client.Framework.Audio;
 
 
 public abstract partial class GameAudioInstance
@@ -17,7 +19,7 @@ public abstract partial class GameAudioInstance
 
     }
 
-    private bool mIsLooping;
+    private bool _looping;
 
     protected GameAudioInstance(GameAudioSource source)
     {
@@ -28,17 +30,56 @@ public abstract partial class GameAudioInstance
 
     public bool IsLooping
     {
-        get => mIsLooping;
+        get => _looping;
         set
         {
-            mIsLooping = value;
-            InternalLoopSet();
+            if (value == _looping)
+            {
+                return;
+            }
+
+            _looping = value;
+            OnLoopingChanged(value);
         }
     }
 
+    private int _volume = 10;
+
+    public int Volume
+    {
+        get => _volume;
+        set
+        {
+            var newVolume = Math.Clamp(value, 0, 100);
+            if (_volume == newVolume)
+            {
+                return;
+            }
+
+            var oldVolume = _volume;
+            _volume = newVolume;
+
+            OnVolumeChanged(oldVolume: oldVolume, newVolume: newVolume);
+            VolumeChanged?.Invoke(
+                this,
+                new ValueChangedEventArgs<int>
+                {
+                    Value = newVolume,
+                    OldValue = oldVolume,
+                }
+            );
+        }
+    }
+
+    private int _lastSourceTypeVolume;
+
+    protected abstract void OnVolumeChanged(int oldVolume, int newVolume);
+
+    public EventHandler<ValueChangedEventArgs<int>>? VolumeChanged;
+
     public abstract AudioInstanceState State { get; }
 
-    protected abstract void InternalLoopSet();
+    protected abstract void OnLoopingChanged(bool isLooping);
 
     public abstract void Play();
 
@@ -46,10 +87,16 @@ public abstract partial class GameAudioInstance
 
     public abstract void Stop();
 
-    public abstract void SetVolume(int volume, bool isMusic = false);
-
-    public abstract int GetVolume();
-
     public abstract void Dispose();
+
+    public void Update()
+    {
+        var currentSourceTypeVolume = Source.TypeVolume;
+        if (currentSourceTypeVolume != _lastSourceTypeVolume)
+        {
+            OnVolumeChanged(Volume, Volume);
+            _lastSourceTypeVolume = currentSourceTypeVolume;
+        }
+    }
 
 }

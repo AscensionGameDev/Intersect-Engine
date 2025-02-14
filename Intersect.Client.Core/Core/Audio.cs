@@ -32,7 +32,7 @@ public static partial class Audio
     //Music
     private static string? sQueuedMusic = string.Empty;
 
-    private static GameAudioInstance? sMyMusic { get; set; }
+    private static GameAudioInstance? _activeMusicSource;
 
     //Init
     public static void Init()
@@ -48,7 +48,7 @@ public static partial class Audio
 
     public static void UpdateGlobalVolume()
     {
-        sMyMusic?.SetVolume(sMyMusic.GetVolume(), true);
+        _activeMusicSource?.Update();
         for (var i = 0; i < sGameSounds.Count; i++)
         {
             _ = sGameSounds[i].Update();
@@ -62,18 +62,25 @@ public static partial class Audio
     //Update
     public static void Update()
     {
-        if (sMyMusic != null)
+        if (_activeMusicSource != null)
         {
+            _activeMusicSource.Update();
             var currentTime = Timing.Global.MillisecondsUtc;
             if (sFadeTimer != 0 && sFadeTimer < currentTime)
             {
                 if (sFadingOut)
                 {
-                    sMyMusic.SetVolume(sMyMusic.GetVolume() - 1, true);
-                    if (sMyMusic.GetVolume() <= 1 && !string.IsNullOrEmpty(sQueuedMusic))
+                    if (--_activeMusicSource.Volume < 1)
                     {
                         StopMusic();
-                        PlayMusic(sQueuedMusic, 0, sQueuedFade, sQueuedLoop);
+                        if (!string.IsNullOrEmpty(sQueuedMusic))
+                        {
+                            PlayMusic(sQueuedMusic, 0, sQueuedFade, sQueuedLoop);
+                        }
+                        else
+                        {
+                            sFadeTimer = currentTime + sFadeRate;
+                        }
                     }
                     else
                     {
@@ -82,8 +89,7 @@ public static partial class Audio
                 }
                 else
                 {
-                    sMyMusic.SetVolume(sMyMusic.GetVolume() + 1, true);
-                    if (sMyMusic.GetVolume() < 100)
+                    if (++_activeMusicSource.Volume < 100)
                     {
                         sFadeTimer = currentTime + sFadeRate;
                     }
@@ -132,12 +138,12 @@ public static partial class Audio
         ClearQueue();
 
         filename = GameContentManager.RemoveExtension(filename);
-        if (sMyMusic != null)
+        if (_activeMusicSource != null)
         {
             if (fadeout == 0 ||
-                sMyMusic.State == GameAudioInstance.AudioInstanceState.Stopped ||
-                sMyMusic.State == GameAudioInstance.AudioInstanceState.Paused ||
-                sMyMusic.GetVolume() == 0)
+                _activeMusicSource.State == GameAudioInstance.AudioInstanceState.Stopped ||
+                _activeMusicSource.State == GameAudioInstance.AudioInstanceState.Paused ||
+                _activeMusicSource.Volume < 1)
             {
                 StopMusic();
                 StartMusic(filename, fadein, loop);
@@ -181,16 +187,16 @@ public static partial class Audio
             return;
         }
 
-        if (sMyMusic != null)
+        if (_activeMusicSource != null)
         {
             ApplicationContext.Context.Value?.Logger.LogTrace($"Trying to start '{filename}' without properly closing '{sCurrentSong}'.");
         }
 
-        sMyMusic = music.CreateInstance();
+        _activeMusicSource = music.CreateInstance();
         sCurrentSong = filename;
-        sMyMusic.Play();
-        sMyMusic.SetVolume(0, true);
-        sMyMusic.IsLooping = loop;
+        _activeMusicSource.Play();
+        _activeMusicSource.Volume = 0;
+        _activeMusicSource.IsLooping = loop;
         sFadeRate = fadein / 100;
         sFadeTimer = Timing.Global.MillisecondsUtc + sFadeRate;
         sFadingOut = false;
@@ -202,26 +208,26 @@ public static partial class Audio
     /// <param name="fadeout">The time (in ms) it should take to fade out the current music track.</param>
     public static void StopMusic(int fadeout = 0)
     {
-        if (sMyMusic == null)
+        if (_activeMusicSource == null)
         {
             return;
         }
 
         if (fadeout == 0 ||
-            sMyMusic.State == GameAudioInstance.AudioInstanceState.Stopped ||
-            sMyMusic.State == GameAudioInstance.AudioInstanceState.Paused ||
-            sMyMusic.GetVolume() == 0)
+            _activeMusicSource.State == GameAudioInstance.AudioInstanceState.Stopped ||
+            _activeMusicSource.State == GameAudioInstance.AudioInstanceState.Paused ||
+            _activeMusicSource.Volume < 1)
         {
             sCurrentSong = string.Empty;
-            sMyMusic.Stop();
-            sMyMusic.Dispose();
-            sMyMusic = null;
+            _activeMusicSource.Stop();
+            _activeMusicSource.Dispose();
+            _activeMusicSource = null;
             sFadeTimer = 0;
         }
         else
         {
             //Start fadeout
-            sFadeRate = fadeout / sMyMusic.GetVolume();
+            sFadeRate = fadeout / Math.Max(1, _activeMusicSource.Volume);
             sFadeTimer = Timing.Global.MillisecondsUtc + sFadeRate;
             sFadingOut = true;
         }

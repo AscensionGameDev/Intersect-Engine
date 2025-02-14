@@ -3,25 +3,24 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
 using Intersect.Core;
+using Intersect.Enums;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework.Audio;
 
 namespace Intersect.Client.MonoGame.Audio;
 
-
 public partial class MonoSoundSource : GameAudioSource
 {
     private readonly string mPath;
     private readonly string mRealPath;
-    private Func<Stream>? _createStream;
-
-    private int mInstanceCount;
+    private readonly Func<Stream>? _createStream;
 
     private SoundEffect? _sound;
 
+    private int mInstanceCount;
+
     public MonoSoundSource(string path, string realPath, string? name = default)
     {
-
         mPath = path;
         mRealPath = realPath;
         Name = string.IsNullOrWhiteSpace(name) ? string.Empty : name;
@@ -33,7 +32,7 @@ public partial class MonoSoundSource : GameAudioSource
         Name = string.IsNullOrWhiteSpace(name) ? string.Empty : name;
     }
 
-    public SoundEffect Effect
+    public SoundEffect? Effect
     {
         get
         {
@@ -48,6 +47,8 @@ public partial class MonoSoundSource : GameAudioSource
 
     public override bool IsLoaded => _sound != null;
 
+    public override int TypeVolume => Globals.Database.SoundVolume;
+
     public override GameAudioInstance CreateInstance()
     {
         mInstanceCount++;
@@ -55,7 +56,7 @@ public partial class MonoSoundSource : GameAudioSource
         return new MonoSoundInstance(this);
     }
 
-    public void ReleaseEffect()
+    public override void ReleaseInstance(GameAudioInstance? audioInstance)
     {
         if (--mInstanceCount > 0)
         {
@@ -90,7 +91,6 @@ public partial class MonoSoundSource : GameAudioSource
                 {
                     _sound = SoundEffect.FromStream(fileStream);
                 }
-
             }
         }
         catch (Exception exception)
@@ -99,11 +99,10 @@ public partial class MonoSoundSource : GameAudioSource
             ChatboxMsg.AddMessage(
                 new ChatboxMsg(
                     $"{Strings.Errors.LoadFile.ToString(Strings.Words.LcaseSound)} [{mPath}]",
-                    new Color(0xBF, 0x0, 0x0),  Enums.ChatMessageType.Error
+                    new Color(0xBF, 0x0, 0x0),
+                    ChatMessageType.Error
                 )
             );
         }
-
     }
-
 }

@@ -13,12 +13,16 @@ namespace Intersect.Client.MonoGame.Audio;
 
 public partial class MonoMusicSource : GameAudioSource
 {
+    private static Thread mUnderlyingThread;
+    private static readonly object mInstanceLock = new();
+    private static MonoMusicSource? mActiveSource;
+
     private readonly string mPath;
     private readonly string mRealPath;
     private readonly Func<Stream> mCreateStream;
     private DynamicSoundEffectInstance? _instance;
 
-    public VorbisReader Reader { get; set; }
+    public VorbisReader? Reader { get; set; }
 
     public DynamicSoundEffectInstance? Instance
     {
@@ -42,12 +46,7 @@ public partial class MonoMusicSource : GameAudioSource
         }
     }
 
-
-    private static Thread mUnderlyingThread;
-    private static object mInstanceLock = new object();
-    private static MonoMusicSource mActiveSource;
-
-    public MonoMusicSource(string path, string realPath, string name = default)
+    public MonoMusicSource(string path, string realPath, string? name = default)
     {
         Name = string.IsNullOrWhiteSpace(name) ? string.Empty : name;
         mPath = path;
@@ -56,7 +55,7 @@ public partial class MonoMusicSource : GameAudioSource
         InitializeThread();
     }
 
-    public MonoMusicSource(Func<Stream> createStream, string name = default)
+    public MonoMusicSource(Func<Stream> createStream, string? name = default)
     {
         Name = string.IsNullOrWhiteSpace(name) ? string.Empty : name;
         mCreateStream = createStream;
@@ -80,12 +79,28 @@ public partial class MonoMusicSource : GameAudioSource
 
     public override bool IsLoaded => Instance != null;
 
+    public override int TypeVolume => Globals.Database.MusicVolume;
+
     public override GameAudioInstance CreateInstance()
     {
         return new MonoMusicInstance(this);
     }
 
-    public DynamicSoundEffectInstance LoadSong()
+    public override void ReleaseInstance(GameAudioInstance? audioInstance)
+    {
+        lock (mInstanceLock)
+        {
+            Reader?.Dispose();
+            Reader = null;
+
+            Instance?.Dispose();
+            Instance = null;
+
+            mActiveSource = null;
+        }
+    }
+
+    public DynamicSoundEffectInstance? LoadSong()
     {
         lock (mInstanceLock)
         {
@@ -140,20 +155,6 @@ public partial class MonoMusicSource : GameAudioSource
         }
         mActiveSource = this;
         return null;
-    }
-
-    public void Close()
-    {
-        lock (mInstanceLock)
-        {
-            Reader?.Dispose();
-            Reader = null;
-
-            Instance?.Dispose();
-            Instance = null;
-
-            mActiveSource = null;
-        }
     }
 
     private static void EnsureBuffersFilled()
@@ -243,6 +244,6 @@ public partial class MonoMusicSource : GameAudioSource
 
     ~MonoMusicSource()
     {
-        Close();
+        ReleaseInstance(null);
     }
 }
