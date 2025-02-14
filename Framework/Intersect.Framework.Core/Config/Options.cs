@@ -226,8 +226,7 @@ public partial record Options
 
     public static bool LoadFromDisk()
     {
-        Options instance = new();
-        Instance = instance;
+        var instance = EnsureCreated();
 
         var pathToServerConfig = Path.Combine(ResourcesDirectory, "config.json");
         if (!Directory.Exists(ResourcesDirectory))
@@ -246,6 +245,13 @@ public partial record Options
         SaveToDisk();
 
         return true;
+    }
+
+    internal static Options EnsureCreated()
+    {
+        Options instance = new();
+        Instance = instance;
+        return instance;
     }
 
     public static void SaveToDisk()
