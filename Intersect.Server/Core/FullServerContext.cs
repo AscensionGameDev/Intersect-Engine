@@ -1,6 +1,8 @@
 using System.Diagnostics;
+using System.Net;
 using System.Resources;
 using Intersect.Core;
+using Intersect.Framework.Net;
 using Intersect.Plugins.Interfaces;
 using Intersect.Rsa;
 using Intersect.Server.Core.Services;
@@ -104,8 +106,6 @@ internal class FullServerContext : ServerContext, IFullServerContext
 #endif
 
         CheckNetwork();
-
-        Console.WriteLine();
     }
 
         #region Networking
@@ -189,7 +189,7 @@ internal class FullServerContext : ServerContext, IFullServerContext
                 return false;
             }
 
-            var portCheckResult = PortChecker.CanYouSeeMe(Options.Instance.ServerPort, out var externalIp);
+            var portCheckResult = PortChecker.CanYouSeeMe(Options.Instance.ServerPort, out var externalIP);
 
             if (!Strings.Portchecking.PortCheckerResults.TryGetValue(portCheckResult, out var portCheckResultMessage))
             {
@@ -198,11 +198,25 @@ internal class FullServerContext : ServerContext, IFullServerContext
 
             ApplicationContext.Context.Value?.Logger.LogInformation(portCheckResultMessage.ToString(Strings.Portchecking.DocumentationUrl));
 
-            if (!string.IsNullOrEmpty(externalIp))
+            if (!string.IsNullOrEmpty(externalIP))
             {
+                var hideIP = !(Options.Instance?.Logging.ShowSensitiveData ?? false);
+                string shownExternalIP = hideIP ? "********" : externalIP;
+                if (IPAddress.TryParse(externalIP, out var parsedExternalIP))
+                {
+                    var networkType = parsedExternalIP.GetNetworkType();
+                    if (networkType != NetworkTypes.Public)
+                    {
+                        shownExternalIP = externalIP;
+                    }
+
+                    shownExternalIP = $"{shownExternalIP} ({parsedExternalIP.AddressFamily}, {networkType})";
+                }
+
+                Console.WriteLine();
                 Console.WriteLine(Strings.Portchecking.ConnectionInfo);
-                Console.WriteLine(Strings.Portchecking.PublicIp, externalIp);
-                Console.WriteLine(Strings.Portchecking.PublicPort, Options.Instance.ServerPort);
+                Console.WriteLine(Strings.Portchecking.PublicIp, shownExternalIP);
+                Console.WriteLine(Strings.Portchecking.PublicPort, Options.Instance!.ServerPort);
             }
 
             if (portCheckResult == PortCheckResult.Inaccessible)

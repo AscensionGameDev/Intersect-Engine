@@ -40,6 +40,27 @@ public static class IPAddressExtensions
         },
     };
 
+    public static NetworkTypes GetNetworkType(this IPAddress address)
+    {
+        if (address.IsLoopback())
+        {
+            return NetworkTypes.Loopback;
+        }
+
+        if (address.IsPrivate())
+        {
+            return NetworkTypes.PrivateNetwork;
+        }
+
+        // ReSharper disable once ConvertIfStatementToReturnStatement
+        if (address.IsSubnet())
+        {
+            return NetworkTypes.Subnet;
+        }
+
+        return NetworkTypes.Public;
+    }
+
     public static bool IsLoopback(this IPAddress address) => MatchesNetworkTypes(address, NetworkTypes.Loopback);
 
     public static bool IsPrivate(this IPAddress address) => MatchesNetworkTypes(address, NetworkTypes.PrivateNetwork);

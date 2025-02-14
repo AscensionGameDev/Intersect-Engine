@@ -13,6 +13,13 @@ public partial class LoggingOptions
     public static readonly LoggingLevelSwitch LoggingLevelSwitch = new(LevelConvert.ToSerilogLevel(DefaultLogLevel));
 
     private LogLevel _level = DefaultLogLevel;
+    private bool _showSensitiveData;
+
+    public bool ShowSensitiveData
+    {
+        get => _showSensitiveData;
+        set => _showSensitiveData = value;
+    }
 
     [JsonConverter(typeof(SafeStringEnumConverter))]
     public LogLevel Level
