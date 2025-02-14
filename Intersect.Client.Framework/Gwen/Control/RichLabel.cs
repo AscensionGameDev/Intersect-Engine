@@ -518,6 +518,14 @@ public partial class RichLabel : Base
     {
         base.OnSizeChanged(oldSize, newSize);
 
+        if (oldSize.X == newSize.X)
+        {
+            if (newSize.X == _dockFillSize.X && newSize.Y <= _dockFillSize.Y)
+            {
+                return;
+            }
+        }
+
         InvalidateRebuild();
     }
 
