@@ -1,6 +1,5 @@
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
-using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
@@ -10,8 +9,6 @@ using Intersect.Client.Framework.Gwen.Control.Layout;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
-using Intersect.Client.Interface.Game;
-using Intersect.Client.Interface.Menu;
 using Intersect.Client.Localization;
 using Intersect.Config;
 using Intersect.Core;
@@ -1002,14 +999,22 @@ public partial class SettingsWindow : Window
     private void MusicSliderOnValueChanged(Base sender, ValueChangedEventArgs<double> arguments)
     {
         Globals.Database.MusicVolume = (int)arguments.Value;
-        ApplicationContext.CurrentContext.Logger.LogInformation("Music volume set to {MusicVolume}", arguments.Value);
+        ApplicationContext.CurrentContext.Logger.LogInformation(
+            "Music volume set to {SoundVolume} from {SenderName}",
+            arguments.Value,
+            sender.CanonicalName
+        );
         Audio.UpdateGlobalVolume();
     }
 
     private void SoundEffectsSliderOnValueChanged(Base sender, ValueChangedEventArgs<double> arguments)
     {
         Globals.Database.SoundVolume = (int)arguments.Value;
-        ApplicationContext.CurrentContext.Logger.LogInformation("Sound volume set to {SoundVolume}", arguments.Value);
+        ApplicationContext.CurrentContext.Logger.LogInformation(
+            "Sound volume set to {SoundVolume} from {SenderName}",
+            arguments.Value,
+            sender.CanonicalName
+        );
         Audio.UpdateGlobalVolume();
     }
 
