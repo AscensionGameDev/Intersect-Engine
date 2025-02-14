@@ -354,6 +354,10 @@ public partial class Player : Entity
         return changes;
     }
 
+    /// <summary>
+    /// Returns the required experience for the next level based on <see cref="ClassBase"/>. Returns -1 if MaxLevel.
+    /// </summary>
+    /// <param name="level">The current player level. Before leveling up.</param>
     private long GetExperienceToNextLevel(int level)
     {
         if (level >= Options.Instance.Player.MaxLevel)
@@ -1234,36 +1238,57 @@ public partial class Player : Entity
 
     #region Leveling
 
-    public void SetLevel(int level, bool resetExperience = false)
+    /// <summary>
+    /// Sets the player's level to a sepecific value. Then sends all relevent data through <see cref="PacketSender"/>
+    /// </summary>
+    /// <param name="newLevel">Does nothing if less than 1. Clamped to <see cref="Options"/> MaxLevel</param>
+    /// <param name="resetExperience">Unless <paramref name="newLevel"/> is zero, will reset Exp to 0 if true.</param>
+    /// <param name="sendPackets">If set to false, will not send packets or <see cref="RecalculateStatsAndPoints"/> or <see cref="UnequipInvalidItems"/>/></param>
+    public void SetLevel(int newLevel, bool resetExperience = false, bool sendPackets = true)
     {
-        if (level < 1)
+        if (newLevel < 1)
         {
             return;
         }
 
-        Level = Math.Min(Options.Instance.Player.MaxLevel, level);
+        Level = Math.Min(Options.Instance.Player.MaxLevel, newLevel);
         if (resetExperience)
         {
             Exp = 0;
         }
 
-        RecalculateStatsAndPoints();
-        UnequipInvalidItems();
-        PacketSender.SendEntityDataToProximity(this);
-        PacketSender.SendExperience(this);
+        if (sendPackets)
+        {
+            RecalculateStatsAndPoints();
+            UnequipInvalidItems();
+            PacketSender.SendEntityDataToProximity(this);
+            PacketSender.SendExperience(this);
+        }
     }
 
-    public void AddLevels(int levels = 1, bool resetExperience = true)
+    /// <summary>
+    /// Adds levels to the player based on what level they're currently at. Then sends all relevent data through <see cref="PacketSender"/>
+    /// <para>If <paramref name="amount"/> is zero, will still call <see cref="PacketSender.SendExperience"/> but do nothing else.</para>
+    /// </summary>
+    /// <param name="amount">Adds levels if positive, removes if negative and does nothing if zero.</param>
+    /// <param name="resetExperience">If levels is not zero, and this is true, resets the Exp to zero after adjusting levels.</param>
+    public void AddLevels(int amount = 1, bool resetExperience = true)
     {
+        if (amount == 0)
+        {
+            PacketSender.SendExperience(this);
+            return;
+        }
+
         ClassBase? classDescriptor = null;
         List<(string, Color)> messageList = [];
 
-        var targetLevel = Math.Clamp(Level + levels, 1, Options.Instance.Player.MaxLevel);
-        if (levels > 0)
+        var targetLevel = Math.Clamp(Level + amount, 1, Options.Instance.Player.MaxLevel);
+        if (amount > 0)
         {
             while (Level < targetLevel)
             {
-                SetLevel(Level + 1, resetExperience);
+                SetLevel(Level + 1, resetExperience, sendPackets: false);
                 messageList.Add((Strings.Player.LevelUp.ToString(Level), CustomColors.Combat.LevelUp));
 
                 if ((classDescriptor?.Id == ClassId || ClassBase.TryGet(ClassId, out classDescriptor)) && classDescriptor?.Spells != default)
@@ -1287,11 +1312,11 @@ public partial class Player : Entity
                 PacketSender.SendActionMsg(this, Strings.Combat.LevelUp, CustomColors.Combat.LevelUp);
             }
         }
-        else if (levels < 0)
+        else if (amount < 0)
         {
             while (targetLevel < Level)
             {
-                SetLevel(Level - 1);
+                SetLevel(Level - 1, sendPackets:false);
                 messageList.Add((Strings.Player.LevelLost.ToString(Level), CustomColors.Combat.LevelLost));
 
                 if ((classDescriptor?.Id == ClassId || ClassBase.TryGet(ClassId, out classDescriptor)) && classDescriptor?.Spells != default)
@@ -1317,10 +1342,11 @@ public partial class Player : Entity
 
         RecalculateStatsAndPoints();
         UnequipInvalidItems();
+        PacketSender.SendEntityDataToProximity(this);
         PacketSender.SendExperience(this);
+
         PacketSender.SendPointsTo(this);
         PacketSender.SendPlayerSpells(this);
-        PacketSender.SendEntityDataToProximity(this);
 
         if (StatPoints > 0)
         {
@@ -1352,17 +1378,10 @@ public partial class Player : Entity
             TakeExperience(-amount);
             return;
         }
+        var equipmentBonus = (int)Math.Round(amount * GetEquipmentBonusEffect(ItemEffect.EXP) / 100f);
+        Exp += amount + equipmentBonus;
 
-        Exp += (int)Math.Round(amount + (amount * (GetEquipmentBonusEffect(ItemEffect.EXP) / 100f)));
-        if (Exp < 0)
-        {
-            Exp = 0;
-        }
-
-        if (!CheckLevelUp())
-        {
-            PacketSender.SendExperience(this);
-        }
+        CheckLevelUp();
     }
 
     public void TakeExperience(long amount, bool enableLosingLevels = false, bool force = false)
@@ -1385,50 +1404,44 @@ public partial class Player : Entity
         }
 
         Exp -= amount;
-        if (Exp < 0)
+
+        var levelsToRemove = 0;
+        while (Exp < 0)
         {
-            if (!enableLosingLevels || Level == 1)
+            if (enableLosingLevels && Level - levelsToRemove > 1)
             {
-                Exp = 0;
-                PacketSender.SendExperience(this);
+                ++levelsToRemove;
+                Exp += GetExperienceToNextLevel(Level - levelsToRemove);
             }
             else
             {
-                var levelCount = 0;
-                while (Exp < 0 && Level + levelCount > 1)
-                {
-                    --levelCount;
-                    Exp += GetExperienceToNextLevel(Level + levelCount);
-                }
-
-                AddLevels(levelCount);
-
-                if (Exp < 0)
-                {
-                    Exp = 0;
-                    PacketSender.SendExperience(this);
-                }
+                Exp = 0;
             }
         }
+
+        AddLevels(-levelsToRemove);
     }
 
-    private bool CheckLevelUp()
+    /// <summary>
+    /// Checks if the player has enough Exp to level. Removes EXP and calls <see cref="AddLevels"/> with the number of levels gained.
+    /// </summary>
+    private void CheckLevelUp()
     {
         var levelCount = 0;
-        while (Exp >= GetExperienceToNextLevel(Level + levelCount) &&
-               GetExperienceToNextLevel(Level + levelCount) > 0)
+        var experienceToNextLevel = GetExperienceToNextLevel(Level + levelCount);
+        while (Exp >= experienceToNextLevel && experienceToNextLevel > 0)
         {
-            Exp -= GetExperienceToNextLevel(Level + levelCount);
+            Exp -= experienceToNextLevel;
             levelCount++;
+            experienceToNextLevel = GetExperienceToNextLevel(Level + levelCount);
         }
 
-        if (levelCount <= 0)
+        if (Exp < 0)
         {
-            return false;
+            Exp = 0;
         }
 
-        AddLevels(levelCount, false);
-        return true;
+        AddLevels(levelCount, false); //If zero, still calls PacketSender.SendExperience
     }
 
     #endregion

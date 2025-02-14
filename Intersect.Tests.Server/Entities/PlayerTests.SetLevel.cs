@@ -40,7 +40,7 @@ public partial class PlayerTests
             }
         );
 
-        player.SetLevel(level: newLevel, resetExperience: resetExperience);
+        player.SetLevel(newLevel: newLevel, resetExperience: resetExperience);
 
         Assert.Multiple(
             () =>
