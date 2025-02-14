@@ -222,7 +222,7 @@ public partial class RichLabel : Base
             ApplicationContext.CurrentContext.Logger.LogTrace(
                 "Requesting rebuild of {NodeType} ({NodeName})",
                 nameof(RichLabel),
-                CanonicalName
+                ParentQualifiedName
             );
 
             _needsRebuild = true;

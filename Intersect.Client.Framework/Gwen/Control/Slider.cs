@@ -301,10 +301,9 @@ public partial class Slider : Base
         SetValueInternal(CalculateValue(), forceUpdate: true);
     }
 
-
-    protected override void OnMouseClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
+    protected override void OnMouseDown(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
-        base.OnMouseClicked(mouseButton, mousePosition, userAction);
+        base.OnMouseDown(mouseButton, mousePosition, userAction);
 
         if (IsDisabledByTree)
         {
@@ -334,6 +333,8 @@ public partial class Slider : Base
         _sliderBar.MoveTo(newX, newY);
         _sliderBar.InputNonUserMouseClicked(mouseButton, mousePosition, true);
         SliderBarOnDragged(_sliderBar, EventArgs.Empty);
+
+        InputHandler.PassMouseFocusTo(Canvas!, _sliderBar);
     }
 
     protected virtual float CalculateValue()

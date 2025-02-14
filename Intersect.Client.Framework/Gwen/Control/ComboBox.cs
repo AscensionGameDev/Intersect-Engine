@@ -100,7 +100,7 @@ public partial class ComboBox : Button
             ApplicationContext.CurrentContext.Logger.LogWarning(
                 "Tried to set selected item of {ComponentTypeName} '{ComponentName}' to '{SelectionName}' ({SelectionType})",
                 GetType().GetName(qualified: true),
-                CanonicalName,
+                ParentQualifiedName,
                 value.Name,
                 value.GetType().GetName(qualified: true)
             );
@@ -218,7 +218,7 @@ public partial class ComboBox : Button
     public virtual MenuItem AddItem(string label, string? name = default, object? userData = default)
     {
         var item = _menu.AddItem(label, null, "", "", Font);
-        item.Name = name;
+        item.Name = name!;
         item.Selected += OnItemSelected;
         item.UserData = userData;
         item.SetTextColor(GetTextColor(ComponentState.Normal), ComponentState.Normal);

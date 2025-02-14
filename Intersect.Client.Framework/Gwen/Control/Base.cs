@@ -351,7 +351,7 @@ public partial class Base : IDisposable
             ApplicationContext.Context.Value?.Logger.LogWarning(
                 exception,
                 "Error occurred while invoking OnAttaching() for {NodeName}",
-                CanonicalName
+                ParentQualifiedName
             );
         }
     }
@@ -375,7 +375,7 @@ public partial class Base : IDisposable
             ApplicationContext.Context.Value?.Logger.LogWarning(
                 exception,
                 "Error occurred while invoking OnDetaching() for {NodeName}",
-                CanonicalName
+                ParentQualifiedName
             );
         }
     }
@@ -397,7 +397,7 @@ public partial class Base : IDisposable
                 ApplicationContext.Context.Value?.Logger.LogWarning(
                     exception,
                     "Error occurred while invoking OnDetachingFromRoot() for {NodeName}",
-                    CanonicalName
+                    ParentQualifiedName
                 );
             }
 
@@ -411,8 +411,8 @@ public partial class Base : IDisposable
             ApplicationContext.Context.Value?.Logger.LogWarning(
                 exception,
                 "Error occurred while invoking NotifyDetachingFromRoot() for {NodeName} from {RootName}",
-                CanonicalName,
-                root.CanonicalName
+                ParentQualifiedName,
+                root.ParentQualifiedName
             );
         }
     }
@@ -434,7 +434,7 @@ public partial class Base : IDisposable
                 ApplicationContext.Context.Value?.Logger.LogWarning(
                     exception,
                     "Error occurred while invoking OnAttachingToRoot() for {NodeName}",
-                    CanonicalName
+                    ParentQualifiedName
                 );
             }
 
@@ -448,8 +448,8 @@ public partial class Base : IDisposable
             ApplicationContext.Context.Value?.Logger.LogWarning(
                 exception,
                 "Error occurred while invoking NotifyAttachingToRoot() for {NodeName} to {RootName}",
-                CanonicalName,
-                root.CanonicalName
+                ParentQualifiedName,
+                root.ParentQualifiedName
             );
         }
     }
@@ -471,8 +471,8 @@ public partial class Base : IDisposable
             ApplicationContext.Context.Value?.Logger.LogWarning(
                 exception,
                 "Exception thrown while invoking PropagateCanvas() for {NodeName} with {CanvasName}",
-                CanonicalName,
-                canvas?.CanonicalName ?? "null"
+                ParentQualifiedName,
+                canvas?.ParentQualifiedName ?? "null"
             );
         }
     }
@@ -623,7 +623,7 @@ public partial class Base : IDisposable
                 {
                     ApplicationContext.CurrentContext.Logger.LogWarning(
                         "Unable to set tooltip text of {ControlName} to '{TooltipText}' because it is set to an incompatible control type {ControlType}",
-                        CanonicalName,
+                        ParentQualifiedName,
                         value,
                         _tooltip.GetType().GetName(qualified: true)
                     );
@@ -895,14 +895,22 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Gets the control's internal canonical name.
     /// </summary>
-    public string CanonicalName => mParent == null ? Name : mParent.Name + "." + Name;
+    public string ParentQualifiedName =>
+        mParent is { } parent ? $"{parent.Name}.{Name}" : Name;
+
+    public string CanonicalName =>
+        (mActualParent ?? mParent) is { } parent
+            ? $"{parent.CanonicalName}.{Name}"
+            : _name ?? $"(unnamed {GetType().GetName(qualified: true)})";
+
+    public string QualifiedName => $"{GetType().GetName(qualified: true)} ({Name})";
 
     /// <summary>
     ///     Gets or sets the control's internal name.
     /// </summary>
-    public string? Name
+    public string Name
     {
-        get => _name;
+        get => _name ?? $"(unnamed {GetType().Name})";
         set => _name = value;
     }
 
@@ -1304,7 +1312,7 @@ public partial class Base : IDisposable
                 catch (Exception exception)
                 {
                     //Log JSON UI Loading Error
-                    throw new Exception("Error loading json ui for " + CanonicalName, exception);
+                    throw new Exception("Error loading json ui for " + ParentQualifiedName, exception);
                 }
             }
 
@@ -2423,7 +2431,7 @@ public partial class Base : IDisposable
         {
             ApplicationContext.CurrentContext.Logger.LogWarning(
                 "Extremely large component resize '{ComponentName}' {OldBounds} => {NewBounds}",
-                CanonicalName,
+                ParentQualifiedName,
                 oldBounds.Size,
                 newBounds.Size
             );
@@ -2959,16 +2967,25 @@ public partial class Base : IDisposable
 
     public bool IsActive
     {
-        get => _mouseButtonPressed.GetValueOrDefault(MouseButton.Left, false);
-        set => _mouseButtonPressed[MouseButton.Left] = value;
+        get => IsMouseButtonActive(MouseButton.Left);
+        set
+        {
+            if (value)
+            {
+                _mouseButtonPressed.Add(MouseButton.Left);
+            }
+            else
+            {
+                _mouseButtonPressed.Remove(MouseButton.Left);
+            }
+        }
     }
 
-    public bool IsMouseButtonActive(MouseButton mouseButton) =>
-        _mouseButtonPressed.GetValueOrDefault(mouseButton, false);
+    public bool IsMouseButtonActive(MouseButton mouseButton) => _mouseButtonPressed.Contains(mouseButton);
 
-    private readonly Dictionary<MouseButton, bool> _mouseButtonPressed = [];
+    private readonly HashSet<MouseButton> _mouseButtonPressed = [];
 
-    public IReadOnlyDictionary<MouseButton, bool> MouseButtonPressed => _mouseButtonPressed;
+    public IReadOnlySet<MouseButton> MouseButtonPressed => _mouseButtonPressed;
 
     protected virtual void OnMouseClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
@@ -2995,7 +3012,7 @@ public partial class Base : IDisposable
         var wasActive = IsMouseButtonActive(mouseButton);
         if (pressed)
         {
-            _mouseButtonPressed[mouseButton] = true;
+            _mouseButtonPressed.Add(mouseButton);
             InputHandler.MouseFocus = this;
 
             if (!wasActive)
@@ -3018,8 +3035,17 @@ public partial class Base : IDisposable
                 }
             }
 
-            _mouseButtonPressed[mouseButton] = false;
-            InputHandler.MouseFocus = null;
+            _mouseButtonPressed.Remove(mouseButton);
+
+            if (_mouseButtonPressed.Count < 1)
+            {
+                // Only replace focus if no mouse buttons are pressed
+                // ApplicationContext.CurrentContext.Logger.LogTrace(
+                //     "Setting MouseFocus to null from {NodeName}",
+                //     CanonicalName
+                // );
+                InputHandler.MouseFocus = null;
+            }
 
             if (wasActive)
             {
@@ -4167,7 +4193,7 @@ public partial class Base : IDisposable
 
         if (next is { IsTabable: true, IsDisabledByTree: false, IsHiddenByTree: false })
         {
-            Console.WriteLine($"Focusing {next.CanonicalName} ({next.GetFullishName()})");
+            Console.WriteLine($"Focusing {next.ParentQualifiedName} ({next.GetFullishName()})");
             next.Focus(moveMouse: next is not TextBox);
         }
 

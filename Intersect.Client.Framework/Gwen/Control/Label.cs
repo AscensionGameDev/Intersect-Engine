@@ -850,7 +850,7 @@ public partial class Label : Base, ILabel
         {
             ApplicationContext.CurrentContext.Logger.LogError(
                 "Text color for the current control state of '{ComponentName}' is somehow null IsDisabled={IsDisabled} IsActive={IsActive} IsHovered={IsHovered}",
-                CanonicalName,
+                ParentQualifiedName,
                 IsDisabled,
                 IsActive,
                 IsHovered

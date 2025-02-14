@@ -4,6 +4,8 @@ using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.Input;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
@@ -285,25 +287,42 @@ public partial class Canvas : Base
 
         InputHandler.OnMouseMoved(this, x, y, dx, dy);
 
-        if (InputHandler.HoveredControl == null)
+        var hoveredControl = InputHandler.HoveredControl;
+        if (hoveredControl == null)
         {
+            // ApplicationContext.Context.Value?.Logger.LogTrace(
+            //     "Skipping emitting mouse moved because there is no hovered control"
+            // );
             return false;
         }
 
-        if (InputHandler.HoveredControl == this)
+        if (hoveredControl == this)
         {
+            // ApplicationContext.Context.Value?.Logger.LogTrace(
+            //     "Skipping emitting mouse moved because {ControlName} is this canvas",
+            //     hoveredControl.CanonicalName
+            // );
             return false;
         }
 
-        if (InputHandler.HoveredControl.Canvas != this)
+        if (hoveredControl.Canvas != this)
         {
+            // ApplicationContext.Context.Value?.Logger.LogTrace(
+            //     "Skipping emitting mouse moved because {ControlName} is not part of this canvas",
+            //     hoveredControl.CanonicalName
+            // );
             return false;
         }
 
-        InputHandler.HoveredControl.InputMouseMoved(x, y, dx, dy);
-        InputHandler.HoveredControl.UpdateCursor();
+        // ApplicationContext.Context.Value?.Logger.LogTrace(
+        //     "Emitting mouse moved to {ControlName}",
+        //     hoveredControl.CanonicalName
+        // );
 
-        DragAndDrop.OnMouseMoved(InputHandler.HoveredControl, x, y);
+        hoveredControl.InputMouseMoved(x, y, dx, dy);
+        hoveredControl.UpdateCursor();
+
+        DragAndDrop.OnMouseMoved(hoveredControl, x, y);
 
         return true;
     }

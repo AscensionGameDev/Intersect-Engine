@@ -293,7 +293,7 @@ public partial class TableRow : Base, IColorableText
 
         ApplicationContext.CurrentContext.Logger.LogTrace(
             "Table row {CanonicalName} resized from {OldSize} to {NewSize}",
-            CanonicalName,
+            ParentQualifiedName,
             oldSize,
             newSize
         );
@@ -329,7 +329,7 @@ public partial class TableRow : Base, IColorableText
     {
         base.OnChildSizeChanged(child, oldChildSize, newChildSize);
 
-        var childCanonicalName = child.CanonicalName;
+        var childCanonicalName = child.ParentQualifiedName;
         if (childCanonicalName.StartsWith('.') || childCanonicalName.EndsWith('.'))
         {
             return;

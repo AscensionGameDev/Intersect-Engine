@@ -1,9 +1,11 @@
 ﻿using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Text;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Input;
 using Intersect.Core;
+using Intersect.Framework.Reflection;
 using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Framework.Gwen.Input;
@@ -26,7 +28,26 @@ public static partial class InputHandler
     /// <summary>
     ///     Control currently hovered by mouse.
     /// </summary>
-    public static Base? HoveredControl { get; set; }
+    public static Base? HoveredControl
+    {
+        get => _hoveredControl;
+        set
+        {
+            if (value == _hoveredControl)
+            {
+                return;
+            }
+
+            var previousNode = _hoveredControl;
+            _hoveredControl = value;
+            // ApplicationContext.Context.Value?.Logger.LogTrace(
+            //     "Setting hovered node to {NextNode} from {PreviousNode} ({MouseFocusedName} is mouse focused)",
+            //     value?.Name ?? "(none)",
+            //     previousNode?.Name ?? "(none)",
+            //     MouseFocus?.Name ?? "(none)"
+            // );
+        }
+    }
 
     /// <summary>
     ///     Control that corrently has keyboard focus.
@@ -34,7 +55,22 @@ public static partial class InputHandler
     public static Base? KeyboardFocus
     {
         get => _focusedKeyboard;
-        set => _focusedKeyboard = value;
+        set
+        {
+            if (value == _focusedKeyboard)
+            {
+                return;
+            }
+
+            var previousNode = _focusedKeyboard;
+            _focusedKeyboard = value;
+            // ApplicationContext.Context.Value?.Logger.LogTrace(
+            //     "Setting keyboard focused node to {NextNode} from {PreviousNode} ({HoveredName} is hovered)",
+            //     value?.Name ?? "(none)",
+            //     previousNode?.Name ?? "(none)",
+            //     HoveredControl?.Name ?? "(none)"
+            // );
+        }
     }
 
     /// <summary>
@@ -43,10 +79,33 @@ public static partial class InputHandler
     public static Base? MouseFocus
     {
         get => _focusedMouse;
-        set => _focusedMouse = value;
+        set
+        {
+            if (value == _focusedMouse)
+            {
+                return;
+            }
+
+            var previousNode = _focusedMouse;
+            _focusedMouse = value;
+            // ApplicationContext.Context.Value?.Logger.LogTrace(
+            //     "Setting mouse focused node to {NextNode} from {PreviousNode} ({HoveredName} is hovered)",
+            //     value?.Name ?? "(none)",
+            //     previousNode?.Name ?? "(none)",
+            //     HoveredControl?.Name ?? "(none)"
+            // );
+
+            // if (value == null)
+            // {
+            //     ApplicationContext.Context.Value?.Logger.LogTrace(
+            //         "Stack:\n{Frames}",
+            //         string.Join('\n', new StackTrace(fNeedFileInfo: true).GetFrames().Select(frame => $"\t{frame}"))
+            //     );
+            // }
+        }
     }
 
-    public static void Focus(FocusSource focusSource, Base? control)
+    public static void Focus(FocusSource focusSource, Base? control, bool markHovered = false)
     {
         if (focusSource == FocusSource.Keyboard)
         {
@@ -87,6 +146,8 @@ public static partial class InputHandler
             }
         )
         .ToImmutableArray();
+
+    private static Base? _hoveredControl;
 
     /// <summary>
     ///     Maximum number of mouse buttons supported.
@@ -252,7 +313,7 @@ public static partial class InputHandler
     /// <param name="y"></param>
     /// <param name="dx"></param>
     /// <param name="dy"></param>
-    public static void OnMouseMoved(Base canvas, int x, int y, int dx, int dy)
+    public static void OnMouseMoved(Canvas canvas, int x, int y, int dx, int dy)
     {
         // Send input to canvas for study
         MousePosition.X = x;
@@ -264,10 +325,10 @@ public static partial class InputHandler
     /// <summary>
     ///     Handles focus updating and key autorepeats.
     /// </summary>
-    /// <param name="control">Unused.</param>
-    public static void OnCanvasThink(Base control)
+    /// <param name="canvas">Unused.</param>
+    public static void OnCanvasThink(Canvas canvas)
     {
-        if (MouseFocus != null && !MouseFocus.IsVisible)
+        if (MouseFocus is { IsVisible: false })
         {
             MouseFocus = null;
         }
@@ -282,7 +343,7 @@ public static partial class InputHandler
             return;
         }
 
-        if (KeyboardFocus.Canvas != control)
+        if (KeyboardFocus.Canvas != canvas)
         {
             return;
         }
@@ -312,7 +373,7 @@ public static partial class InputHandler
             }
         }
 
-        UpdateHoveredControl(control);
+        UpdateHoveredControl(canvas);
     }
 
     /// <summary>
@@ -500,47 +561,51 @@ public static partial class InputHandler
         return false;
     }
 
-    private static void UpdateHoveredControl(Base inCanvas)
+    private static void UpdateHoveredControl(Canvas canvas)
     {
-        Base? componentAtPosition = inCanvas.GetComponentAt(MousePosition.X, MousePosition.Y);
+        Base? componentAtPosition = canvas.GetComponentAt(MousePosition.X, MousePosition.Y);
 
+        UpdateMouseFocus(canvas, componentAtPosition, passing: false);
+    }
+
+    public static void PassMouseFocusTo(Canvas canvas, Base? nextHoveredControl)
+    {
+        MouseFocus = nextHoveredControl;
+        UpdateMouseFocus(canvas, nextHoveredControl, passing: true);
+    }
+
+    private static void UpdateMouseFocus(Canvas canvas, Base? nextNode, bool passing)
+    {
         var mouseFocusedControl = MouseFocus;
-        if (mouseFocusedControl?.Canvas != inCanvas)
+        if (mouseFocusedControl?.Canvas != canvas)
         {
             mouseFocusedControl = null;
         }
 
-        var nextHoveredControl = mouseFocusedControl ?? componentAtPosition;
-        var previouslyHoveredControl = HoveredControl;
-        if (nextHoveredControl != previouslyHoveredControl)
+        nextNode = mouseFocusedControl ?? nextNode;
+
+        var previousNode = HoveredControl;
+        if (nextNode != previousNode)
         {
-            HoveredControl = null;
-            previouslyHoveredControl?.Redraw();
-            previouslyHoveredControl?.InputMouseLeft();
+            HoveredControl = nextNode;
 
-            HoveredControl = nextHoveredControl;
+            previousNode?.Redraw();
+            previousNode?.InputMouseLeft();
 
-            if (nextHoveredControl != mouseFocusedControl)
+            if (nextNode != mouseFocusedControl)
             {
-                nextHoveredControl?.InputMouseEntered();
+                nextNode?.InputMouseEntered();
             }
 
-            nextHoveredControl?.Redraw();
-
-            ApplicationContext.CurrentContext.Logger.LogTrace(
-                "Updating hovered component from {PreviousComponentName} to {NextComponentName} (Mouse focused component is '{MouseFocusedComponentName}')",
-                previouslyHoveredControl?.CanonicalName ?? "N/A",
-                nextHoveredControl?.CanonicalName ?? "N/A",
-                mouseFocusedControl?.CanonicalName ?? "N/A"
-            );
+            nextNode?.Redraw();
         }
 
-        if (nextHoveredControl is null)
+        if (nextNode is null)
         {
             return;
         }
 
-        if (nextHoveredControl.KeepFocusOnMouseExit)
+        if (!passing && nextNode.KeepFocusOnMouseExit)
         {
             return;
         }
@@ -548,7 +613,7 @@ public static partial class InputHandler
         foreach (var mouseButton in MouseButtons)
         {
             var isMouseButtonDown = KeyData.IsMouseButtonDown(mouseButton);
-            nextHoveredControl.InputMouseButtonState(mouseButton, MousePosition, isMouseButtonDown);
+            nextNode.InputMouseButtonState(mouseButton, MousePosition, isMouseButtonDown);
         }
     }
 
