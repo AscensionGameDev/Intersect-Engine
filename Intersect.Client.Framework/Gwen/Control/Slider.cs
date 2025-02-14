@@ -405,7 +405,7 @@ public partial class Slider : Base
         );
     }
 
-    protected virtual void SetValueInternal(double newInternalValue, bool forceUpdate = false)
+    protected virtual void SetValueInternal(double newInternalValue, bool forceUpdate = false, bool skipEvents = false)
     {
         if (_snapToNotches)
         {
@@ -430,13 +430,16 @@ public partial class Slider : Base
         if (!_value.Equals(newInternalValue))
         {
             _value = newInternalValue;
-            ValueChanged?.Invoke(
-                this,
-                new ValueChangedEventArgs<double>
-                {
-                    Value = ScaleValueToExternal(newInternalValue),
-                }
-            );
+            if (!skipEvents)
+            {
+                ValueChanged?.Invoke(
+                    this,
+                    new ValueChangedEventArgs<double>
+                    {
+                        Value = ScaleValueToExternal(newInternalValue),
+                    }
+                );
+            }
         }
         else if (!forceUpdate)
         {
@@ -557,7 +560,7 @@ public partial class Slider : Base
         }
 
         var normalizedValue = (value - _minimumValue) / Math.Max(1, _maximumValue - _minimumValue);
-        SetValueInternal(normalizedValue);
+        SetValueInternal(normalizedValue, skipEvents: skipEvents);
         Redraw();
     }
 }

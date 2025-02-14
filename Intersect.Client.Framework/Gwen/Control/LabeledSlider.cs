@@ -54,11 +54,23 @@ public partial class LabeledSlider : Base, ISmartAutoSizeToContents, INumericInp
             if (_rounding > -1)
             {
                 newValue = Math.Round(newValue, _rounding);
-                _slider.SetValue(newValue, skipEvents: true);
             }
 
+            if (newValue.Equals(_sliderValue.Value))
+            {
+                return;
+            }
+
+            _slider.SetValue(newValue, skipEvents: true);
             _sliderValue.SetValue(newValue, skipEvents: true);
-            ValueChanged?.Invoke(sender, arguments);
+
+            ValueChanged?.Invoke(
+                sender,
+                new ValueChangedEventArgs<double>
+                {
+                    Value = newValue,
+                }
+            );
         };
 
         _sliderValue.TextChanged += (sender, _) =>
@@ -72,11 +84,12 @@ public partial class LabeledSlider : Base, ISmartAutoSizeToContents, INumericInp
 
             _slider.Value = clampedValue;
             _slider.SetValue(clampedValue, skipEvents: true);
+
             ValueChanged?.Invoke(
                 sender,
                 new ValueChangedEventArgs<double>
                 {
-                    Value = newValue,
+                    Value = clampedValue,
                 }
             );
         };
