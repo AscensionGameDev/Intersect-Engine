@@ -8,8 +8,7 @@ namespace Intersect.Client.Framework.Gwen.Control;
 /// </summary>
 public partial class TextBoxNumeric : TextBox, INumericInput
 {
-
-    protected double _value;
+    private double _value;
 
     private double _maximum = double.NaN;
     private double _minimum = double.NaN;
@@ -158,7 +157,7 @@ public partial class TextBoxNumeric : TextBox, INumericInput
         }
     }
 
-    public virtual void SetValue(double value, bool skipEvents = false)
+    public void SetValue(double value, bool skipEvents = false)
     {
         var clampedValue = value;
 
@@ -180,7 +179,7 @@ public partial class TextBoxNumeric : TextBox, INumericInput
         }
 
         _value = clampedValue;
-        Text = clampedValue.ToString(CultureInfo.CurrentCulture);
+        SetText(text: clampedValue.ToString(CultureInfo.CurrentCulture), doEvents: !skipEvents);
 
         if (skipEvents)
         {

@@ -372,8 +372,8 @@ public partial class IntersectRenderer : Base, ICacheToTexture
         m_Stack.Push(mRenderTarget); // save current RT
         if (!m_RT.ContainsKey(control))
         {
-            var keys = m_RT.Keys.Select(key => key.CanonicalName);
-            ApplicationContext.Context.Value?.Logger.LogError($"{control.CanonicalName} not found in the list of render targets: {string.Join(", ", keys)}");
+            var keys = m_RT.Keys.Select(key => key.ParentQualifiedName);
+            ApplicationContext.Context.Value?.Logger.LogError($"{control.ParentQualifiedName} not found in the list of render targets: {string.Join(", ", keys)}");
         }
         mRenderTarget = m_RT[control]; // make cache current RT
         mRenderTarget.Begin();

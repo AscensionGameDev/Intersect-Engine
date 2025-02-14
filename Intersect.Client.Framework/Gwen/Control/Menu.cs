@@ -44,7 +44,6 @@ public partial class Menu : ScrollControl
         IconMarginDisabled = false;
 
         DeleteOnClose = false;
-        Name = name;
     }
 
     internal override bool IsMenuComponent => true;

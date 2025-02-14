@@ -77,7 +77,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
     IReadOnlyList<IMapAnimation> IMapInstance.Animations => LocalAnimations.Values.ToList();
 
-    public Dictionary<Guid, Entity> LocalEntities { get; set; } = new Dictionary<Guid, Entity>();
+    public Dictionary<Guid, Entity> LocalEntities { get; } = [];
 
     IReadOnlyList<IEntity> IMapInstance.Entities => LocalEntities.Values.ToList();
 
@@ -284,7 +284,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
         foreach (var (animationId, animation) in LocalAnimations)
         {
-            if (animation.Disposed())
+            if (animation.IsDisposed)
             {
                 LocalAnimations.TryRemove(animationId, out _);
             }
@@ -757,7 +757,10 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
 
     private void HideActiveAnimations()
     {
-        LocalEntities?.Values.ToList().ForEach(entity => entity?.ClearAnimations(null));
+        foreach (var entity in LocalEntities.Values.ToList())
+        {
+            entity.ClearAnimations();
+        }
         foreach (var anim in LocalAnimations)
         {
             anim.Value?.Dispose();
@@ -1577,9 +1580,9 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         }
     }
 
-    public new static MapInstance Get(Guid id)
+    public static new MapInstance? Get(Guid id)
     {
-        return MapInstance.Lookup.Get<MapInstance>(id);
+        return Lookup.Get<MapInstance>(id);
     }
 
     public static bool TryGet(Guid id, out MapInstance instance)

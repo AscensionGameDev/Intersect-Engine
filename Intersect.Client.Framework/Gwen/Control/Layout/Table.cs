@@ -723,7 +723,7 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
 
         ApplicationContext.CurrentContext.Logger.LogTrace(
             "Computed table '{TableName}' content size: ({Width}, {Height})",
-            CanonicalName,
+            ParentQualifiedName,
             actualWidth,
             actualHeight
         );
@@ -763,7 +763,7 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         var childrenSize = base.GetChildrenSize();
         ApplicationContext.CurrentContext.Logger.LogTrace(
             "Table {TableName} children size is {ChildrenSize}",
-            CanonicalName,
+            ParentQualifiedName,
             childrenSize
         );
         return childrenSize;
@@ -773,7 +773,7 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
     {
         ApplicationContext.CurrentContext.Logger.LogTrace(
             "Resizing Table {TableName} to children (X={ResizeX}, Y={ResizeY}, Recursive={Recursive})...",
-            CanonicalName,
+            ParentQualifiedName,
             resizeX,
             resizeY,
             recursive
@@ -835,7 +835,7 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
 
         ApplicationContext.CurrentContext.Logger.LogTrace(
             "Table {TableName} size changed from {OldSize} to {NewSize}",
-            CanonicalName,
+            ParentQualifiedName,
             oldSize,
             newSize
         );

@@ -30,9 +30,9 @@ public partial class EventWindow : Panel
     private readonly Panel _optionsPanel;
     private readonly Button[] _optionButtons = new Button[4];
 
-    private readonly Typewriter? _writer;
-    private bool _isTypewriting;
+    private readonly bool _typewriting;
     private readonly long _typewriterResponseDelay = ClientConfiguration.Instance.TypewriterResponseDelay;
+    private readonly Typewriter? _writer;
 
     private readonly Dialog _dialog;
 
@@ -40,7 +40,6 @@ public partial class EventWindow : Panel
     {
         _dialog = dialog;
         _defaultFont = GameContentManager.Current.GetFont(name: "sourcesansproblack", 12);
-        _writer = Globals.Database.TypewriterBehavior == TypewriterBehavior.Off ? default : new Typewriter();
 
         Alignment = [Alignments.Center];
         MinimumSize = new Point(520, 180);
@@ -159,7 +158,28 @@ public partial class EventWindow : Panel
         // LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer?.GetResolutionString());
 
         SkipRender();
-        ShowDialog();
+
+        _promptLabel.ClearText();
+        _promptLabel.AddText(_dialog.Prompt ?? string.Empty, _promptTemplateLabel);
+        _promptLabel.ForceImmediateRebuild();
+        _ = _promptLabel.SizeToChildren();
+
+        _typewriting = ClientConfiguration.Instance.TypewriterEnabled &&
+                       Globals.Database.TypewriterBehavior != TypewriterBehavior.Off;
+        if (_typewriting)
+        {
+            _promptLabel.ClearText();
+            _writer = new Typewriter(_dialog.Prompt ?? string.Empty, text => _promptLabel.AppendText(text, _promptTemplateLabel));
+        }
+
+        Defer(
+            () =>
+            {
+                SizeToChildren(recursive: true);
+
+                _promptScroller.ScrollToTop();
+            }
+        );
 
         MakeModal(dim: true);
         BringToFront();
@@ -185,41 +205,43 @@ public partial class EventWindow : Panel
 
     private void Update()
     {
-        // Handle typewriting
-        if (_isTypewriting && IsVisible)
+        if (!IsVisible || !_typewriting)
         {
-            var voiceIdx = Randomization.Next(0, ClientConfiguration.Instance.TypewriterSounds.Count);
-
-            // Always show option 1 ("continue" if options empty)
-            var writerCompleted = _writer?.IsDone ?? true;
-            for (var optionIndex = 0; optionIndex < _optionButtons.Length; ++optionIndex)
-            {
-                var optionButton = _optionButtons[optionIndex];
-                var optionText = _dialog?.Options[optionIndex];
-                optionButton.IsVisible = writerCompleted && !string.IsNullOrEmpty(optionText);
-            }
-
-            _writer?.Write(ClientConfiguration.Instance.TypewriterSounds.ElementAtOrDefault(voiceIdx));
-            if (writerCompleted)
-            {
-                var disableResponse = _writer != default &&
-                                      Timing.Global.MillisecondsUtc - _writer.DoneAtMilliseconds <
-                                      _typewriterResponseDelay;
-                foreach (var optionButton in _optionButtons)
-                {
-                    optionButton.IsDisabled = disableResponse;
-                }
-            }
-            else if (Controls.IsControlPressed(Control.AttackInteract))
-            {
-                SkipTypewriting();
-            }
-
             return;
         }
 
-        _isTypewriting = ClientConfiguration.Instance.TypewriterEnabled &&
-                         Globals.Database.TypewriterBehavior == TypewriterBehavior.Word;
+        if (_writer is null)
+        {
+            return;
+        }
+
+        var writerCompleted = _writer.IsDone;
+
+        foreach (var optionButton in _optionButtons)
+        {
+            optionButton.IsVisible = writerCompleted && !string.IsNullOrEmpty(optionButton.Text);
+        }
+
+        if (writerCompleted)
+        {
+            var disableResponse = Timing.Global.MillisecondsUtc - _writer.DoneAtMilliseconds <
+                                  _typewriterResponseDelay;
+            foreach (var optionButton in _optionButtons)
+            {
+                optionButton.IsDisabled = disableResponse;
+            }
+        }
+        else if (Controls.IsControlPressed(Control.AttackInteract))
+        {
+            SkipTypewriting();
+            _promptScroller.ScrollToBottom();
+        }
+        else
+        {
+            var soundIndex = Randomization.Next(0, ClientConfiguration.Instance.TypewriterSounds.Count);
+            _writer.Write(ClientConfiguration.Instance.TypewriterSounds.ElementAtOrDefault(soundIndex));
+            _promptScroller.ScrollToBottom();
+        }
     }
 
     public static void ShowOrUpdateDialog(Canvas canvas)
@@ -237,33 +259,6 @@ public partial class EventWindow : Panel
         }
 
         _instance = new EventWindow(canvas, availableDialog);
-    }
-
-    private void ShowDialog()
-    {
-        _promptLabel.ClearText();
-        _promptLabel.AddText(_dialog?.Prompt ?? string.Empty, _promptTemplateLabel);
-
-        _ = _promptLabel.SizeToChildren();
-
-        // Do this _after_ sizing so we have lines broken up
-        if (_isTypewriting)
-        {
-            _writer?.Initialize(_promptLabel.FormattedLabels);
-            foreach (var button in _optionButtons)
-            {
-                button.Hide();
-            }
-        }
-
-        Defer(
-            () =>
-            {
-                SizeToChildren(recursive: true);
-
-                _promptScroller.ScrollToTop();
-            }
-        );
     }
 
     public void CloseEventResponse(EventResponseType response)

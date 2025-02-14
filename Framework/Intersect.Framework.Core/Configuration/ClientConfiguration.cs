@@ -61,23 +61,23 @@ public sealed partial class ClientConfiguration : IConfiguration<ClientConfigura
 
     public const bool DefaultTypewriterEnabled = true;
 
-    public static List<char> DefaultTypewriterFullStopCharacters =>
+    public static HashSet<string> DefaultTypewriterFullStops =>
     [
-        '.',
-        '!',
-        '?',
-        ':',
+        ".",
+        "!",
+        "?",
+        ":",
     ];
 
     public const long DefaultTypewriterFullStopDelay = 400;
 
     public const long DefaultTypewriterPartDelay = 6;
 
-    public static List<char> DefaultTypewriterPauseCharacters =>
+    public static HashSet<string> DefaultTypewriterPauses =>
     [
-        ',',
-        ';',
-        '-',
+        ",",
+        ";",
+        "-",
     ];
 
     public const long DefaultTypewriterPauseDelay = 80;
@@ -115,8 +115,8 @@ public sealed partial class ClientConfiguration : IConfiguration<ClientConfigura
               },
         ];
         Port = Math.Min(Math.Max(Port, (ushort)1), ushort.MaxValue);
-        TypewriterFullStopCharacters = TypewriterFullStopCharacters?.Distinct()?.ToList() ?? [];
-        TypewriterPauseCharacters = TypewriterPauseCharacters?.Distinct()?.ToList() ?? [];
+        TypewriterFullStops ??= [];
+        TypewriterPauses ??= [];
         TypewriterSounds = [..TypewriterSounds?.Distinct() ?? new List<string>()];
         UIFont = string.IsNullOrWhiteSpace(UIFont) ? DefaultUIFont : UIFont.Trim();
     }
@@ -240,13 +240,13 @@ public sealed partial class ClientConfiguration : IConfiguration<ClientConfigura
 
     public bool TypewriterEnabled { get; set; } = DefaultTypewriterEnabled;
 
-    public List<char> TypewriterFullStopCharacters { get; set; } = DefaultTypewriterFullStopCharacters;
+    public HashSet<string> TypewriterFullStops { get; set; } = DefaultTypewriterFullStops;
 
     public long TypewriterFullStopDelay { get; set; } = DefaultTypewriterFullStopDelay;
 
     public long TypewriterPartDelay { get; set; } = DefaultTypewriterPartDelay;
 
-    public List<char> TypewriterPauseCharacters { get; set; } = DefaultTypewriterPauseCharacters;
+    public HashSet<string> TypewriterPauses { get; set; } = DefaultTypewriterPauses;
 
     public long TypewriterPauseDelay { get; set; } = DefaultTypewriterPauseDelay;
 

@@ -52,11 +52,13 @@ public partial class Dragger : Base
     /// <summary>
     ///     Event invoked when the control position has been changed.
     /// </summary>
-    public event GwenEventHandler<EventArgs> Dragged;
+    public event GwenEventHandler<EventArgs>? Dragged;
 
     protected override void OnMouseDown(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
         base.OnMouseDown(mouseButton, mousePosition, userAction);
+
+        // ApplicationContext.Context.Value?.Logger.LogTrace("OnMouseDown {NodeName}", CanonicalName);
 
         if (_target is null)
         {
@@ -100,6 +102,10 @@ public partial class Dragger : Base
 
         if (!IsActive)
         {
+            // ApplicationContext.Context.Value?.Logger.LogTrace(
+            //     "Ignoring MouseMoved because this node isn't active ({NodeName})",
+            //     CanonicalName
+            // );
             return;
         }
 
@@ -108,6 +114,22 @@ public partial class Dragger : Base
         {
             position = parent.ToLocal(position.X, position.Y);
         }
+
+        // StackTrace stackTrace = new(fNeedFileInfo: true);
+        // ApplicationContext.Context.Value?.Logger.LogTrace(
+        //     "Moving {ComponentIdentifier} due to\n{StackPath}",
+        //     QualifiedName,
+        //     string.Join(
+        //         "\n",
+        //         stackTrace.GetFrames()
+        //             .Select(frame => (frame, method: frame.GetMethod()))
+        //             .Where(pair => pair.method != null)
+        //             .Select(pair => (frame: pair.frame, method: pair.method!))
+        //             .TakeWhile(pair => pair.method.DeclaringType != typeof(InputHandler))
+        //             .Select(pair => $"\t{pair.method.GetFullName()} {pair.frame.GetFileName()}:{pair.frame.GetFileLineNumber()}")
+        //     )
+        // );
+
         _target.MoveTo(position.X, position.Y);
         Dragged?.Invoke(this, EventArgs.Empty);
     }

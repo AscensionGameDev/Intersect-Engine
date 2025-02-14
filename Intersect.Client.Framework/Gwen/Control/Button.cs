@@ -373,7 +373,7 @@ public partial class Button : Label
             ApplicationContext.CurrentContext.Logger.LogError(
                 "Text color for the current control state of {ComponentType} '{ComponentName}' is somehow null IsDisabled={IsDisabled} IsActive={IsActive} IsHovered={IsHovered}",
                 GetType().GetName(qualified: true),
-                CanonicalName,
+                ParentQualifiedName,
                 IsDisabled,
                 IsActive,
                 IsHovered

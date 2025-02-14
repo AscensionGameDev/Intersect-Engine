@@ -301,10 +301,9 @@ public partial class Slider : Base
         SetValueInternal(CalculateValue(), forceUpdate: true);
     }
 
-
-    protected override void OnMouseClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
+    protected override void OnMouseDown(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
-        base.OnMouseClicked(mouseButton, mousePosition, userAction);
+        base.OnMouseDown(mouseButton, mousePosition, userAction);
 
         if (IsDisabledByTree)
         {
@@ -334,6 +333,8 @@ public partial class Slider : Base
         _sliderBar.MoveTo(newX, newY);
         _sliderBar.InputNonUserMouseClicked(mouseButton, mousePosition, true);
         SliderBarOnDragged(_sliderBar, EventArgs.Empty);
+
+        InputHandler.PassMouseFocusTo(Canvas!, _sliderBar);
     }
 
     protected virtual float CalculateValue()
@@ -405,7 +406,7 @@ public partial class Slider : Base
         );
     }
 
-    protected virtual void SetValueInternal(double newInternalValue, bool forceUpdate = false)
+    protected virtual void SetValueInternal(double newInternalValue, bool forceUpdate = false, bool skipEvents = false)
     {
         if (_snapToNotches)
         {
@@ -430,13 +431,16 @@ public partial class Slider : Base
         if (!_value.Equals(newInternalValue))
         {
             _value = newInternalValue;
-            ValueChanged?.Invoke(
-                this,
-                new ValueChangedEventArgs<double>
-                {
-                    Value = ScaleValueToExternal(newInternalValue),
-                }
-            );
+            if (!skipEvents)
+            {
+                ValueChanged?.Invoke(
+                    this,
+                    new ValueChangedEventArgs<double>
+                    {
+                        Value = ScaleValueToExternal(newInternalValue),
+                    }
+                );
+            }
         }
         else if (!forceUpdate)
         {
@@ -557,7 +561,7 @@ public partial class Slider : Base
         }
 
         var normalizedValue = (value - _minimumValue) / Math.Max(1, _maximumValue - _minimumValue);
-        SetValueInternal(normalizedValue);
+        SetValueInternal(normalizedValue, skipEvents: skipEvents);
         Redraw();
     }
 }

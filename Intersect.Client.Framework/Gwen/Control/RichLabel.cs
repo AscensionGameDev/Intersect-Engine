@@ -1,6 +1,8 @@
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;
@@ -19,7 +21,7 @@ public partial class RichLabel : Base
 
     private string? _fontInfo;
 
-    private bool mNeedsRebuild;
+    private bool _needsRebuild;
 
     public List<Label> FormattedLabels => _formattedLabels;
 
@@ -80,6 +82,8 @@ public partial class RichLabel : Base
         return base.FixJson(serializedProperties);
     }
 
+    public GwenEventHandler<EventArgs>? Rebuilt;
+
     /// <summary>
     ///     Adds text to the control via the properties of a <see cref="Label"/>
     /// </summary>
@@ -87,26 +91,24 @@ public partial class RichLabel : Base
     /// <param name="template">Label to use as a template</param>
     public void AddText(string text, Label? template)
     {
-        if (template == null)
-        {
-            throw new ArgumentNullException(nameof(template));
-        }
-
         AddText(
             text,
-            template.TextColor,
-            template.CurAlignments.Count > 0 ? template.CurAlignments[0] : Alignments.Left,
-            template.Font
+            template?.TextColor,
+            template?.CurAlignments.FirstOrDefault(Alignments.Left) ?? Alignments.Left,
+            template?.Font
         );
     }
+
+    public void AddText(string text, Color? color) => AddText(text, color, Alignments.Left);
 
     /// <summary>
     ///     Adds text to the control.
     /// </summary>
     /// <param name="text">Text to add.</param>
     /// <param name="color">Text color.</param>
+    /// <param name="alignment"></param>
     /// <param name="font">Font to use.</param>
-    public void AddText(string text, Color? color, Alignments alignment = Alignments.Left, GameFont? font = default)
+    public void AddText(string text, Color? color, Alignments alignment, GameFont? font = default)
     {
         if (string.IsNullOrEmpty(text))
         {
@@ -129,13 +131,104 @@ public partial class RichLabel : Base
                 Text = lines[i],
                 Color = color,
                 Font = font,
-                Alignment = alignment
+                Alignment = alignment,
             };
 
             _textBlocks.Add(block);
-            mNeedsRebuild = true;
-            Invalidate();
+            InvalidateRebuild();
         }
+    }
+
+    public void AppendText(string text, Label? template)
+    {
+        AppendText(
+            text,
+            template?.TextColor,
+            template?.CurAlignments.FirstOrDefault(Alignments.Left) ?? Alignments.Left,
+            template?.Font
+        );
+    }
+
+    public void AppendText(string text) => AppendText(text: text, color: null, alignment: Alignments.Left, font: null);
+
+    public void AppendText(string text, Color? color, Alignments alignment, GameFont? font = null)
+    {
+        if (_textBlocks.Count < 1)
+        {
+            AddText(text, color, alignment, font);
+            return;
+        }
+
+        if (text.StartsWith('\n'))
+        {
+            AddText(text, color, alignment, font);
+            return;
+        }
+
+        if (text.StartsWith("\r\n"))
+        {
+            AddText(text, color, alignment, font);
+            return;
+        }
+
+        var lastTextBlock = _textBlocks.Last();
+        var lines = text.Split(_newlines, StringSplitOptions.TrimEntries);
+        var firstLine = lines.FirstOrDefault();
+
+        var remainingLines = lines.AsEnumerable();
+
+        if (firstLine is not null)
+        {
+            var appendColor = color ?? lastTextBlock.Color;
+            var appendAlignment = alignment;
+            var appendFont = font ?? lastTextBlock.Font;
+
+            if (appendAlignment != lastTextBlock.Alignment &&
+                appendColor != lastTextBlock.Color &&
+                appendFont != lastTextBlock.Font)
+            {
+                AddText(text, color, alignment, font);
+                return;
+            }
+
+            remainingLines = remainingLines.Skip(1);
+            lastTextBlock.Text += text;
+            var label = lastTextBlock.Labels.LastOrDefault();
+            if (label == null)
+            {
+                InvalidateRebuild();
+            }
+            else
+            {
+                label.Text += text;
+                label.SizeToContents();
+                if (label.OuterBounds.Right > InnerBounds.Right)
+                {
+                    InvalidateRebuild();
+                }
+            }
+        }
+
+        foreach (var line in remainingLines)
+        {
+            AddText(line, color, alignment, font);
+        }
+    }
+
+    public void InvalidateRebuild()
+    {
+        if (!_needsRebuild)
+        {
+            ApplicationContext.CurrentContext.Logger.LogTrace(
+                "Requesting rebuild of {NodeType} ({NodeName})",
+                nameof(RichLabel),
+                ParentQualifiedName
+            );
+
+            _needsRebuild = true;
+        }
+
+        Invalidate();
     }
 
     /// <summary>
@@ -149,10 +242,12 @@ public partial class RichLabel : Base
     /// </returns>
     public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
     {
-        Rebuild();
+        InvalidateRebuild();
 
         return base.SizeToChildren(resizeX: resizeX, resizeY: resizeY, recursive: recursive);
     }
+
+    public void ForceImmediateRebuild() => Rebuild();
 
     protected override Point ApplyDockFillOnSizeToChildren(Point size, Point internalSize)
     {
@@ -303,16 +398,16 @@ public partial class RichLabel : Base
         }
 
         // This string is too long for us, split it up.
-        var p = Skin.Renderer.MeasureText(font, text);
+        var textSize = Skin.Renderer.MeasureText(font, text);
 
         if (lineHeight == -1)
         {
-            lineHeight = p.Y;
+            lineHeight = textSize.Y;
         }
 
         if (!noSplit)
         {
-            if (x + p.X > Width)
+            if (x + textSize.X > Width)
             {
                 SplitLabel(
                     text,
@@ -330,7 +425,7 @@ public partial class RichLabel : Base
         }
 
         // Wrap
-        if (x + p.X > Width)
+        if (x + textSize.X > Width)
         {
             CreateNewline(ref x, ref y, lineHeight, initialX);
         }
@@ -350,6 +445,7 @@ public partial class RichLabel : Base
 
         label.SizeToContents();
 
+        block.Labels.Add(label);
         _formattedLabels.Add(label);
 
         x += label.Width;
@@ -369,11 +465,13 @@ public partial class RichLabel : Base
     public void ClearText()
     {
         _textBlocks.Clear();
-        mNeedsRebuild = true;
+        InvalidateRebuild();
     }
 
-    protected void Rebuild()
+    private void Rebuild()
     {
+        _needsRebuild = false;
+
         DeleteAllChildren();
         _formattedLabels.Clear();
 
@@ -387,6 +485,8 @@ public partial class RichLabel : Base
 
         foreach (var block in _textBlocks)
         {
+            block.Labels.Clear();
+
             if (block.Type == BlockType.NewLine)
             {
                 CreateNewline(ref x, ref y, lineHeight, initialX);
@@ -402,19 +502,23 @@ public partial class RichLabel : Base
             }
         }
 
-        mNeedsRebuild = false;
+        Rebuilt?.Invoke(this, EventArgs.Empty);
+        var resizeX = !Dock.HasFlag(Pos.Fill) || _dockFillSize == default || _dockFillSize.X != Width;
+        base.SizeToChildren(resizeX: resizeX, resizeY: true);
     }
 
-    /// <summary>
-    ///     Handler invoked when control's bounds change.
-    /// </summary>
-    /// <param name="oldBounds">Old bounds.</param>
-    /// <param name="newBounds"></param>
-    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
-    {
-        base.OnBoundsChanged(oldBounds, newBounds);
+    // protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
+    // {
+    //     base.OnBoundsChanged(oldBounds, newBounds);
+    //
+    //     InvalidateRebuild();
+    // }
 
-        SizeToChildren(resizeX: true, resizeY: true);
+    protected override void OnSizeChanged(Point oldSize, Point newSize)
+    {
+        base.OnSizeChanged(oldSize, newSize);
+
+        InvalidateRebuild();
     }
 
     /// <summary>
@@ -424,7 +528,8 @@ public partial class RichLabel : Base
     protected override void Layout(Skin.Base skin)
     {
         base.Layout(skin);
-        if (mNeedsRebuild)
+
+        if (_needsRebuild)
         {
             Rebuild();
         }
@@ -442,19 +547,19 @@ public partial class RichLabel : Base
         }
     }
 
-    protected partial struct TextBlock
+    protected class TextBlock
     {
-
         public BlockType Type;
 
         public string Text;
 
-        public Color Color;
+        public Color? Color;
 
-        public GameFont Font;
+        public GameFont? Font;
 
         public Alignments Alignment;
 
+        public readonly List<Label> Labels = [];
     }
 
     protected enum BlockType
