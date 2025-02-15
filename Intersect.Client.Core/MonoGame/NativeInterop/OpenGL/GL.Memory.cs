@@ -17,7 +17,7 @@ public static partial class GL
 
             if (IsNVX_gpu_memory_infoSupported)
             {
-                return glGetNVXGPUMemoryInfo(GLenum.GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX);
+                return glGetNVXGPUMemoryInfo(GLenum.GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX) * 1000L;
             }
 
             return -1;
@@ -39,7 +39,7 @@ public static partial class GL
 
             if (IsNVX_gpu_memory_infoSupported)
             {
-                return glGetNVXGPUMemoryInfo(GLenum.GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX);
+                return glGetNVXGPUMemoryInfo(GLenum.GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX) * 1000L;
             }
 
             return -1;
@@ -61,7 +61,7 @@ public static partial class GL
 
             if (IsNVX_gpu_memory_infoSupported)
             {
-                return glGetNVXGPUMemoryInfo(GLenum.GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX);
+                return glGetNVXGPUMemoryInfo(GLenum.GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX) * 1000L;
             }
 
             return -1;
