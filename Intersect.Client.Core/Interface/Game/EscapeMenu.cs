@@ -12,15 +12,15 @@ namespace Intersect.Client.Interface.Game;
 
 public partial class EscapeMenu : ImagePanel
 {
-    private readonly SettingsWindow _settingsWindow;
+    private readonly Func<SettingsWindow> _settingsWindowProvider;
     private readonly Button _buttonCharacterSelect;
     private readonly Panel _versionPanel;
 
     private readonly Framework.Graphics.GameFont _font;
 
-    public EscapeMenu(Canvas gameCanvas, SettingsWindow settingsWindow) : base(gameCanvas, nameof(EscapeMenu))
+    public EscapeMenu(Canvas gameCanvas, Func<SettingsWindow> settingsWindowProvider) : base(gameCanvas, nameof(EscapeMenu))
     {
-        _settingsWindow = settingsWindow;
+        _settingsWindowProvider = settingsWindowProvider;
 
         Interface.InputBlockingComponents.Add(this);
 
@@ -113,7 +113,8 @@ public partial class EscapeMenu : ImagePanel
     /// <inheritdoc />
     public override void ToggleHidden()
     {
-        if (_settingsWindow.IsVisible)
+        var settingsWindow = _settingsWindowProvider();
+        if (settingsWindow.IsVisible)
         {
             return;
         }
@@ -133,7 +134,8 @@ public partial class EscapeMenu : ImagePanel
 
     public void OpenSettingsWindow(bool returnToMenu = false)
     {
-        _settingsWindow.Show(returnToMenu ? this : null);
+        var settingsWindow = _settingsWindowProvider();
+        settingsWindow.Show(returnToMenu ? this : null);
         Hide();
     }
 

@@ -92,22 +92,21 @@ public partial class GameInterface : MutableInterface
 
     public PlayerStatusWindow PlayerStatusWindow;
 
-    private SettingsWindow SettingsWindow
+    private SettingsWindow GetOrCreateSettingsWindow()
     {
-        get
+        _settingsWindow ??= new SettingsWindow(GameCanvas)
         {
-            return _settingsWindow ??= new SettingsWindow(GameCanvas)
-            {
-                IsVisible = false,
-            };
-        }
+            IsVisible = false,
+        };
+
+        return _settingsWindow;
     }
 
     public GameInterface(Canvas canvas) : base(canvas)
     {
         GameCanvas = canvas;
-        EscapeMenu = new EscapeMenu(GameCanvas, SettingsWindow) {IsHidden = true};
-        SimplifiedEscapeMenu = new SimplifiedEscapeMenu(GameCanvas, SettingsWindow) {IsHidden = true};
+        EscapeMenu = new EscapeMenu(GameCanvas, GetOrCreateSettingsWindow) {IsHidden = true};
+        SimplifiedEscapeMenu = new SimplifiedEscapeMenu(GameCanvas, GetOrCreateSettingsWindow) {IsHidden = true};
         TargetContextMenu = new TargetContextMenu(GameCanvas) {IsHidden = true};
         AnnouncementWindow = new AnnouncementWindow(GameCanvas) { IsHidden = true };
 
