@@ -22,7 +22,6 @@ public partial class Modal : Base
         if (Canvas is { } canvas)
         {
             Size = canvas.Size;
-            canvas.Input_MouseMoved(InputHandler.MousePosition.X, InputHandler.MousePosition.Y, 0, 0);
         }
     }
 
