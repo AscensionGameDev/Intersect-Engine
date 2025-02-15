@@ -12,17 +12,17 @@ namespace Intersect.Client.Interface.Game;
 
 public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
 {
-    private readonly Func<SettingsWindow> _settingsWindowProvider;
+    private readonly SettingsWindow _settingsWindow;
     private readonly MenuItem _settings;
     private readonly MenuItem _character;
     private readonly MenuItem _logout;
     private readonly MenuItem _exit;
 
-    public SimplifiedEscapeMenu(Canvas gameCanvas, Func<SettingsWindow> settingsWindowProvider) : base(gameCanvas, nameof(SimplifiedEscapeMenu))
+    public SimplifiedEscapeMenu(Canvas gameCanvas, SettingsWindow settingsWindow) : base(gameCanvas, nameof(SimplifiedEscapeMenu))
     {
         IsHidden = true;
         IconMarginDisabled = true;
-        _settingsWindowProvider = settingsWindowProvider;
+        _settingsWindow = settingsWindow;
 
         Children.Clear();
 
@@ -41,8 +41,7 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
 
     public void ToggleHidden(Button? target)
     {
-        var settingsWindow = _settingsWindowProvider();
-        if (!settingsWindow.IsHidden || target == null)
+        if (!_settingsWindow.IsHidden || target == null)
         {
             return;
         }
@@ -124,13 +123,10 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
 
     private void OpenSettingsWindow(object? sender, EventArgs? e)
     {
-        var settingsWindow = _settingsWindowProvider();
-        if (settingsWindow.IsVisible)
+        if (!_settingsWindow.IsVisible)
         {
-            return;
+            _settingsWindow.Show();
         }
-
-        settingsWindow.Show();
     }
 
     private static void LogoutToCharacterSelect(object? sender, EventArgs? e)
