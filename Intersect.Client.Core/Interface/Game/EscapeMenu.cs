@@ -27,7 +27,7 @@ public partial class EscapeMenu : ImagePanel
         Width = gameCanvas.Width;
         Height = gameCanvas.Height;
 
-        _font = GameContentManager.Current!.GetFont("sourcesansproblack", 12)!;
+        _font = GameContentManager.Current.GetFont("sourcesansproblack", 12)!;
 
         // Create the container
         var container = new ImagePanel(this, nameof(EscapeMenu));
