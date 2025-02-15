@@ -1286,7 +1286,7 @@ public partial class Base : IDisposable
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(resolution) || string.IsNullOrEmpty(resolution))
+        if (string.IsNullOrWhiteSpace(resolution))
         {
             ApplicationContext.Context.Value?.Logger.LogWarning(
                 $"Attempted to load layout for {Name} with no resolution"
