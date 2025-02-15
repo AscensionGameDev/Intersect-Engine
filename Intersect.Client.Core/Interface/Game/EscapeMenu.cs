@@ -22,7 +22,7 @@ public partial class EscapeMenu : ImagePanel
     {
         _settingsWindow = settingsWindow;
 
-        Interface.InputBlockingComponents?.Add(this);
+        Interface.InputBlockingComponents.Add(this);
 
         Width = gameCanvas.Width;
         Height = gameCanvas.Height;
