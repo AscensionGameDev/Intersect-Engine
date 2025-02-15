@@ -35,6 +35,7 @@ public partial class EscapeMenu : ImagePanel
 
         var buttonSettings = new Button(container, "SettingsButton")
         {
+            IsTabable = true,
             Text = Strings.EscapeMenu.Settings,
         };
         buttonSettings.Clicked += (s, e) => OpenSettingsWindow(true);
@@ -42,6 +43,7 @@ public partial class EscapeMenu : ImagePanel
         // Character Select Button
         _buttonCharacterSelect = new Button(container, "CharacterSelectButton")
         {
+            IsTabable = true,
             Text = Strings.EscapeMenu.CharacterSelect,
         };
         _buttonCharacterSelect.Clicked += _buttonCharacterSelect_Clicked;
@@ -49,6 +51,7 @@ public partial class EscapeMenu : ImagePanel
         // Logout Button
         var buttonLogout = new Button(container, "LogoutButton")
         {
+            IsTabable = true,
             Text = Strings.EscapeMenu.Logout,
         };
         buttonLogout.Clicked += buttonLogout_Clicked;
@@ -56,6 +59,7 @@ public partial class EscapeMenu : ImagePanel
         // Exit to Desktop Button
         var buttonQuit = new Button(container, "ExitToDesktopButton")
         {
+            IsTabable = true,
             Text = Strings.EscapeMenu.ExitToDesktop,
         };
         buttonQuit.Clicked += buttonQuit_Clicked;
@@ -63,6 +67,7 @@ public partial class EscapeMenu : ImagePanel
         // Close Button
         var buttonContinue = new Button(container, "CloseButton")
         {
+            IsTabable = true,
             Text = Strings.EscapeMenu.Close,
         };
         buttonContinue.Clicked += (s, e) => Hide();
