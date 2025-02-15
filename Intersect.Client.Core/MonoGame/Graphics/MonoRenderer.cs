@@ -9,6 +9,7 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.MonoGame.NativeInterop;
+using Intersect.Client.MonoGame.NativeInterop.OpenGL;
 using Intersect.Client.ThirdParty;
 using Intersect.Configuration;
 using Intersect.Extensions;

@@ -17,6 +17,7 @@ using Intersect.Client.Interface.Data;
 using Intersect.Client.Interface.Debugging.Providers;
 using Intersect.Client.Localization;
 using Intersect.Client.Maps;
+using Intersect.Client.MonoGame.NativeInterop.OpenGL;
 using Intersect.Framework.Reflection;
 using static Intersect.Client.Framework.File_Management.GameContentManager;
 
@@ -405,7 +406,13 @@ internal sealed partial class DebugWindow : Window
         table.AddRow(Strings.Debug.LightsDrawn, name: "LightsDrawnRow").Listen(1, new DelegateDataProvider<int>(() => Graphics.LightsDrawn), NoValue);
         table.AddRow(Strings.Debug.InterfaceObjects, name: "InterfaceObjectsRow").Listen(1, new DelegateDataProvider<int?>(() => Interface.CurrentInterface?.NodeCount, delayMilliseconds: 1000), NoValue);
 
-        var titleRow = table.AddRow(Strings.Debug.ControlUnderCursor, columnCount: 2, name: "ControlUnderCursorRow", columnIndex: 1);
+        _ = table.AddRow(Strings.Debug.SectionGPUStatistics, columnCount: 2, name: "SectionGPU", columnIndex: 1);
+
+        table.AddRow(Strings.Debug.RenderBufferVRAMFree, name: "GPUVRAMRenderBuffers").Listen(1, new DelegateDataProvider<string>(() => Strings.FormatBytes(GL.AvailableRenderBufferMemory)), NoValue);
+        table.AddRow(Strings.Debug.TextureVRAMFree, name: "GPUVRAMTextures").Listen(1, new DelegateDataProvider<string>(() => Strings.FormatBytes(GL.AvailableTextureMemory)), NoValue);
+        table.AddRow(Strings.Debug.VBOVRAMFree, name: "GPUVRAMVBOs").Listen(1, new DelegateDataProvider<string>(() => Strings.FormatBytes(GL.AvailableVBOMemory)), NoValue);
+
+        _ = table.AddRow(Strings.Debug.ControlUnderCursor, columnCount: 2, name: "SectionUI", columnIndex: 1);
 
         table.AddRow(Strings.Internals.Type, name: "TypeRow").Listen(1, _nodeUnderCursorProvider, (node, _) => node?.GetType().GetName(), Strings.Internals.NotApplicable);
         table.AddRow(Strings.Internals.Name, name: "NameRow").Listen(1, _nodeUnderCursorProvider, (node, _) => node?.ParentQualifiedName, NoValue);
@@ -435,7 +442,7 @@ internal sealed partial class DebugWindow : Window
         var rows = table.Children.OfType<TableRow>().ToArray();
         foreach (var row in rows)
         {
-            if (row == titleRow && row.GetCellContents(1) is Label titleLabel)
+            if (row.Name.StartsWith("Section") && row.GetCellContents(1) is Label titleLabel)
             {
                 titleLabel.Padding = titleLabel.Padding with { Top = 8 };
             }
