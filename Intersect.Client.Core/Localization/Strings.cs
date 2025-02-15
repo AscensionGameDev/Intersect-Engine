@@ -20,6 +20,31 @@ public static partial class Strings
     private const string StringsFileName = "client_strings.json";
     private static char[] mQuantityTrimChars = new char[] { '.', '0' };
 
+    private static string[] _unitsBits = [string.Empty, "Ki", "Mi", "Gi", "Ti"];
+    private static string[] _unitsBytes = [string.Empty, "K", "M", "G", "T"];
+
+    public static string FormatBits(long quantity)
+    {
+        var log = quantity < 2 ? 0 : Math.Log2(quantity);
+        var offsetLog = Math.Max(0, Math.Floor(log - 3.3));
+        var unitIndex = (int)Math.Clamp(Math.Floor(offsetLog / 10), 0, _unitsBits.Length - 1);
+        var divisor = Math.Pow(2, unitIndex * 10);
+        var quotient = quantity / divisor;
+        var unitPrefix = _unitsBits[unitIndex];
+        return $"{quotient:0.##}{unitPrefix}B";
+    }
+
+    public static string FormatBytes(long quantity)
+    {
+        var log = quantity < 10 ? 0 : Math.Floor(Math.Log10(quantity));
+        var offsetLog = Math.Max(0, log - 1);
+        var unitIndex = (int)Math.Clamp(Math.Floor(offsetLog / 3), 0, _unitsBytes.Length - 1);
+        var divisor = Math.Pow(10, unitIndex * 3);
+        var quotient = quantity / divisor;
+        var unitPrefix = _unitsBytes[unitIndex];
+        return $"{quotient:0.##}{unitPrefix}B";
+    }
+
     public static string FormatQuantityAbbreviated(long value)
     {
         if (value == 0)
@@ -930,6 +955,18 @@ public static partial class Strings
 
     public partial struct Debug
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString SectionGPUStatistics = @"GPU Statistics";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString RenderBufferVRAMFree = @"Render Buffer VRAM Free";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString TextureVRAMFree = @"Texture VRAM Free";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString VBOVRAMFree = @"VBO VRAM Free";
+
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString ControlUnderCursor = @"Control Under Cursor";
 
