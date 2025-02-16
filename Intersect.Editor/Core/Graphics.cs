@@ -7,6 +7,7 @@ using Intersect.Editor.Forms.Helpers;
 using Intersect.Editor.General;
 using Intersect.Editor.Maps;
 using Intersect.Enums;
+using Intersect.Framework.Core;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Utilities;

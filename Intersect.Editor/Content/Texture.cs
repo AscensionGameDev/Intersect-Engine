@@ -1,4 +1,5 @@
-﻿using Intersect.IO.Files;
+﻿using Intersect.Framework.Core;
+using Intersect.IO.Files;
 using Intersect.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework.Graphics;

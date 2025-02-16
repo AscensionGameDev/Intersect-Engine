@@ -7,6 +7,7 @@ using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
+using Intersect.Framework.Core;
 using Intersect.Network;
 using Intersect.Utilities;
 using Microsoft.Extensions.Logging;
