@@ -2,8 +2,7 @@
 
 namespace Intersect.Editor.Core;
 
-public sealed class
-    FakeStartupOptionsThatDoNotEverGetUsedForThisGarbageWinFormsEditorStartupOptions : ICommandLineOptions
+public sealed class DummyStartupOptions : ICommandLineOptions
 {
     public string WorkingDirectory => Environment.CurrentDirectory;
     public IEnumerable<string> PluginDirectories => [];
