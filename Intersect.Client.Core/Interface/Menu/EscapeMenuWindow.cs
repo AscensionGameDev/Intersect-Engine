@@ -1,5 +1,4 @@
 using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -22,7 +21,6 @@ public partial class EscapeMenuWindow : Window
 
     private readonly Func<SettingsWindow> _settingsWindowProvider;
 
-    // ReSharper disable once SuggestBaseTypeForParameterInConstructor
     public EscapeMenuWindow(Canvas canvas, Func<SettingsWindow> settingsWindowProvider)
         : base(canvas, Strings.EscapeMenu.Title, false,
             $"{nameof(EscapeMenuWindow)}_{(ClientContext.IsSinglePlayer ? "singleplayer" : "online")}")
