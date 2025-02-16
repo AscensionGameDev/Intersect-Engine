@@ -7,14 +7,13 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Client.MonoGame.Graphics;
 
-
 public partial class MonoFont : GameFont
 {
-
-    private SpriteFont mFont;
+    private readonly SpriteFont mFont;
 
     public MonoFont(string fontName, string fileName, int fontSize, ContentManager contentManager) : base(
-        fontName, fontSize
+        fontName,
+        fontSize
     )
     {
         try
@@ -39,5 +38,4 @@ public partial class MonoFont : GameFont
     {
         return mFont;
     }
-
 }

@@ -1,5 +1,6 @@
 using Intersect.Client.Framework.Entities;
 using Intersect.Enums;
+using Intersect.Framework.Core;
 using Intersect.Utilities;
 
 namespace Intersect.Client.Entities;

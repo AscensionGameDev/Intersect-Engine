@@ -4,6 +4,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
 using Intersect.Enums;
+using Intersect.Framework.Core;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 

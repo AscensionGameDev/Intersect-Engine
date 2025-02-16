@@ -16,7 +16,7 @@ public partial class ColorSlider : Base
 
     private int mSelectedDist;
 
-    private GameTexture mTexture;
+    private IGameTexture mTexture;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ColorSlider" /> class.

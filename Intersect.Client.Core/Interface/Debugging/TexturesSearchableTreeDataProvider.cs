@@ -152,7 +152,7 @@ public sealed class TexturesSearchableTreeDataProvider : ISearchableTreeDataProv
         var assetName = asset.Name ?? asset.Id;
 
         var displayText = assetName;
-        if (asset is GameTexture { TexturePackFrame: not null })
+        if (asset is IGameTexture { AtlasReference: not null })
         {
             displayText = Strings.Debug.FormatTextureFromAtlas.ToString(displayText);
         }

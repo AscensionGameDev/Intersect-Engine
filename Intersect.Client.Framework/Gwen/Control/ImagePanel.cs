@@ -25,7 +25,7 @@ public partial class ImagePanel : Base
 
     protected string mRightMouseClickSound;
 
-    private GameTexture? _texture { get; set; }
+    private IGameTexture? _texture { get; set; }
     private string? _textureName;
     private Rectangle _textureSourceBounds;
     private float _textureAspectRatio;
@@ -70,7 +70,7 @@ public partial class ImagePanel : Base
     /// <summary>
     ///     Assign Existing Texture
     /// </summary>
-    public GameTexture? Texture
+    public IGameTexture? Texture
     {
         get => _texture;
         set

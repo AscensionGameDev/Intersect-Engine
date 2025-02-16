@@ -9,6 +9,7 @@ using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
+using Intersect.Framework.Core;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 
@@ -76,7 +77,7 @@ public partial class InventoryItem
         Pnl.Clicked += pnl_Clicked;
         Pnl.DoubleClicked += Pnl_DoubleClicked;
         EquipPanel = new ImagePanel(Pnl, "InventoryItemEquippedIcon");
-        EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
+        EquipPanel.Texture = Graphics.Renderer.WhitePixel;
         EquipLabel = new Label(Pnl, "InventoryItemEquippedLabel");
         EquipLabel.IsHidden = true;
         EquipLabel.Text = Strings.Inventory.EquippedSymbol;

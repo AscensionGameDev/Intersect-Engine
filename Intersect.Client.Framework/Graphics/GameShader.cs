@@ -2,10 +2,8 @@
 
 namespace Intersect.Client.Framework.Graphics;
 
-
 public abstract partial class GameShader
 {
-
     public GameShader(string shaderName)
     {
     }
@@ -23,5 +21,4 @@ public abstract partial class GameShader
     public abstract void ResetChanged();
 
     public abstract object GetShader();
-
 }

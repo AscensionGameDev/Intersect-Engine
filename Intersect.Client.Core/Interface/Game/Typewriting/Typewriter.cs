@@ -1,6 +1,7 @@
 using Intersect.Client.Core;
 using Intersect.Client.Utilities;
 using Intersect.Configuration;
+using Intersect.Framework.Core;
 using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game.Typewriting;

@@ -1,4 +1,5 @@
-﻿using Intersect.Network.Packets.Client;
+﻿using Intersect.Framework.Core;
+using Intersect.Network.Packets.Client;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
 using MessagePack;

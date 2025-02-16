@@ -19,6 +19,7 @@ using Intersect.Client.Localization;
 using Intersect.Client.Maps;
 using Intersect.Client.MonoGame.NativeInterop.OpenGL;
 using Intersect.Framework.Reflection;
+using Intersect.IO.Files;
 using static Intersect.Client.Framework.File_Management.GameContentManager;
 
 namespace Intersect.Client.Interface.Debugging;
@@ -60,7 +61,162 @@ internal sealed partial class DebugWindow : Window
         AssetsList = CreateAssetsList(TabAssets.Page);
         AssetsButtonReloadAsset = CreateAssetsButtonReloadAsset(AssetsToolsTable, AssetsList);
 
+        TabGPU = Tabs.AddPage(Strings.Debug.TabLabelGPU, nameof(TabGPU));
+        GPUStatisticsTable = CreateGPUStatisticsTable(TabGPU.Page);
+        GPUAllocationsTable = CreateGPUAllocationsTable(TabGPU.Page);
+
         AssetsToolsTable.SizeToChildren();
+    }
+
+    private Table GPUStatisticsTable { get; }
+
+    private Table GPUAllocationsTable { get; }
+
+    private Table CreateGPUAllocationsTable(Base parent)
+    {
+        ScrollControl gpuAllocationsScroller = new(parent, nameof(gpuAllocationsScroller))
+        {
+            Dock = Pos.Fill,
+        };
+
+        gpuAllocationsScroller.VerticalScrollBar.BaseNudgeAmount *= 2;
+
+        var table = new Table(gpuAllocationsScroller, nameof(GPUAllocationsTable))
+        {
+            AutoSizeToContentHeightOnChildResize = true,
+            AutoSizeToContentWidthOnChildResize = true,
+            CellSpacing = new Point(8, 2),
+            ColumnCount = 2,
+            ColumnWidths = [null, 100],
+            Dock = Pos.Fill,
+            Font = _defaultFont,
+            MinimumSize = new Point(408, 0),
+            SizeToContents = true,
+        };
+        table.SizeChanged += (_, args) =>
+        {
+            table.SizeToChildren(resizeX: args.Value.X > args.OldValue.X, resizeY: true, recursive: true);
+        };
+
+        Dictionary<IGameTexture, TableRow> textureRowLookup = [];
+
+        Graphics.Renderer.TextureCreated += (_, args) =>
+        {
+            var gameTexture = args.GameTexture;
+            EnsureRowFor(gameTexture, creating: true);
+        };
+
+        Graphics.Renderer.TextureAllocated += (_, args) =>
+        {
+            var gameTexture = args.GameTexture;
+            var row = EnsureRowFor(gameTexture, creating: false);
+            row.SetCellText(1, "Allocated");
+        };
+
+        Graphics.Renderer.TextureDisposed += (_, args) =>
+        {
+            var gameTexture = args.GameTexture;
+            if (textureRowLookup.TryGetValue(gameTexture, out var existingRow))
+            {
+                table.RemoveRow(existingRow);
+            }
+        };
+
+        Graphics.Renderer.TextureFreed += (_, args) =>
+        {
+            var gameTexture = args.GameTexture;
+            var row = EnsureRowFor(gameTexture, creating: false);
+            row.SetCellText(1, "Freed");
+        };
+
+        return table;
+
+        TableRow EnsureRowFor(IGameTexture gameTexture, bool creating)
+        {
+            if (textureRowLookup.TryGetValue(gameTexture, out var existingRow))
+            {
+                if (creating)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                return existingRow;
+            }
+
+            existingRow = table.AddRow(gameTexture.Name);
+            existingRow.SetCellText(1, "Created");
+            textureRowLookup[gameTexture] = existingRow;
+
+            table.SizeToChildren(recursive: true);
+
+            return existingRow;
+        }
+    }
+
+
+    private Table CreateGPUStatisticsTable(Base parent)
+    {
+        ScrollControl gpuStatisticsScroller = new(parent, nameof(gpuStatisticsScroller))
+        {
+            Dock = Pos.Fill,
+            IsVisible = false,
+        };
+
+        gpuStatisticsScroller.VerticalScrollBar.BaseNudgeAmount *= 2;
+
+        var table = new Table(gpuStatisticsScroller, nameof(GPUStatisticsTable))
+        {
+            AutoSizeToContentHeightOnChildResize = true,
+            AutoSizeToContentWidthOnChildResize = true,
+            CellSpacing = new Point(8, 2),
+            ColumnCount = 2,
+            ColumnWidths = [180, null],
+            Dock = Pos.Fill,
+            Font = _defaultFont,
+        };
+        table.SizeChanged += (_, args) =>
+        {
+            table.SizeToChildren(resizeX: args.Value.X > args.OldValue.X, resizeY: true, recursive: true);
+        };
+
+        _ = table.AddRow(Strings.Debug.SectionGPUStatistics, columnCount: 2, name: "SectionGPU", columnIndex: 1);
+        table.AddRow(Strings.Debug.Fps, name: "FPSRow").Listen(1, new DelegateDataProvider<int>(() => Graphics.Renderer.Fps), NoValue);
+        // table.AddRow(Strings.Debug.Draws, name: "DrawsRow").Listen(1, new DelegateDataProvider<int>(() => Graphics.DrawCalls), NoValue);
+
+        table.AddRow(Strings.Debug.MapsDrawn, name: "MapsDrawnRow").Listen(1, new DelegateDataProvider<int>(() => Graphics.MapsDrawn), NoValue);
+        table.AddRow(Strings.Debug.EntitiesDrawn, name: "EntitiesDrawnRow").Listen(1, new DelegateDataProvider<int>(() => Graphics.EntitiesDrawn), NoValue);
+        table.AddRow(Strings.Debug.LightsDrawn, name: "LightsDrawnRow").Listen(1, new DelegateDataProvider<int>(() => Graphics.LightsDrawn), NoValue);
+        table.AddRow(Strings.Debug.InterfaceObjects, name: "InterfaceObjectsRow").Listen(1, new DelegateDataProvider<int?>(() => Interface.CurrentInterface?.NodeCount, delayMilliseconds: 1000), NoValue);
+
+
+        table.AddRow(Strings.Debug.RenderTargetAllocations, name: "GPURenderTargetAllocations").Listen(1, new DelegateDataProvider<ulong>(() => Graphics.Renderer.RenderTargetAllocations), NoValue);
+        table.AddRow(Strings.Debug.TextureAllocations, name: "GPUTextureAllocations").Listen(1, new DelegateDataProvider<ulong>(() => Graphics.Renderer.TextureAllocations), NoValue);
+        table.AddRow(Strings.Debug.TextureCount, name: "GPUTextureCount").Listen(1, new DelegateDataProvider<ulong>(() => Graphics.Renderer.TextureCount), NoValue);
+
+        table.AddRow(Strings.Debug.FreeVRAM, name: "GPUFreeVRAM").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(Graphics.Renderer.AvailableMemory)), NoValue);
+        table.AddRow(Strings.Debug.TotalVRAM, name: "GPUTotalVRAM").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(Graphics.Renderer.TotalMemory)), NoValue);
+
+        table.AddRow(Strings.Debug.RenderBufferVRAMFree, name: "GPUVRAMRenderBuffers").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(GL.AvailableRenderBufferMemory)), NoValue);
+        table.AddRow(Strings.Debug.TextureVRAMFree, name: "GPUVRAMTextures").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(GL.AvailableTextureMemory)), NoValue);
+        table.AddRow(Strings.Debug.VBOVRAMFree, name: "GPUVRAMVBOs").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(GL.AvailableVBOMemory)), NoValue);
+
+        var rows = table.Children.OfType<TableRow>().ToArray();
+        foreach (var row in rows)
+        {
+            if (row.Name.StartsWith("Section") && row.GetCellContents(1) is Label titleLabel)
+            {
+                titleLabel.Padding = titleLabel.Padding with { Top = 8 };
+            }
+
+            if (row.GetCellContents(0) is not Label label)
+            {
+                continue;
+            }
+
+            label.TextAlign = Pos.Right | Pos.CenterV;
+        }
+
+        return table;
     }
 
     private SearchableTree CreateAssetsList(Base parent)
@@ -107,7 +263,7 @@ internal sealed partial class DebugWindow : Window
 
         assetList.SelectionChanged += (_, _) =>
             buttonReloadAsset.IsDisabled = assetList.SelectedNodes.All(
-                node => node.UserData is not SearchableTreeDataEntry { UserData: GameTexture }
+                node => node.UserData is not SearchableTreeDataEntry { UserData: IGameTexture }
             );
 
         buttonReloadAsset.Clicked += (_, _) =>
@@ -125,7 +281,7 @@ internal sealed partial class DebugWindow : Window
                 }
 
                 // TODO: Audio reloading?
-                if (asset is not GameTexture texture)
+                if (asset is not IGameTexture texture)
                 {
                     continue;
                 }
@@ -143,6 +299,8 @@ internal sealed partial class DebugWindow : Window
     private TabButton TabInfo { get; }
 
     private TabButton TabAssets { get; }
+
+    private TabButton TabGPU { get; }
 
     private SearchableTree AssetsList { get; }
 
@@ -408,9 +566,16 @@ internal sealed partial class DebugWindow : Window
 
         _ = table.AddRow(Strings.Debug.SectionGPUStatistics, columnCount: 2, name: "SectionGPU", columnIndex: 1);
 
-        table.AddRow(Strings.Debug.RenderBufferVRAMFree, name: "GPUVRAMRenderBuffers").Listen(1, new DelegateDataProvider<string>(() => Strings.FormatBytes(GL.AvailableRenderBufferMemory)), NoValue);
-        table.AddRow(Strings.Debug.TextureVRAMFree, name: "GPUVRAMTextures").Listen(1, new DelegateDataProvider<string>(() => Strings.FormatBytes(GL.AvailableTextureMemory)), NoValue);
-        table.AddRow(Strings.Debug.VBOVRAMFree, name: "GPUVRAMVBOs").Listen(1, new DelegateDataProvider<string>(() => Strings.FormatBytes(GL.AvailableVBOMemory)), NoValue);
+        table.AddRow(Strings.Debug.RenderTargetAllocations, name: "GPURenderTargetAllocations").Listen(1, new DelegateDataProvider<ulong>(() => Graphics.Renderer.RenderTargetAllocations), NoValue);
+        table.AddRow(Strings.Debug.TextureAllocations, name: "GPUTextureAllocations").Listen(1, new DelegateDataProvider<ulong>(() => Graphics.Renderer.TextureAllocations), NoValue);
+        table.AddRow(Strings.Debug.TextureCount, name: "GPUTextureCount").Listen(1, new DelegateDataProvider<ulong>(() => Graphics.Renderer.TextureCount), NoValue);
+
+        table.AddRow(Strings.Debug.FreeVRAM, name: "GPUFreeVRAM").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(Graphics.Renderer.AvailableMemory)), NoValue);
+        table.AddRow(Strings.Debug.TotalVRAM, name: "GPUTotalVRAM").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(Graphics.Renderer.TotalMemory)), NoValue);
+
+        table.AddRow(Strings.Debug.RenderBufferVRAMFree, name: "GPUVRAMRenderBuffers").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(GL.AvailableRenderBufferMemory)), NoValue);
+        table.AddRow(Strings.Debug.TextureVRAMFree, name: "GPUVRAMTextures").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(GL.AvailableTextureMemory)), NoValue);
+        table.AddRow(Strings.Debug.VBOVRAMFree, name: "GPUVRAMVBOs").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(GL.AvailableVBOMemory)), NoValue);
 
         _ = table.AddRow(Strings.Debug.ControlUnderCursor, columnCount: 2, name: "SectionUI", columnIndex: 1);
 

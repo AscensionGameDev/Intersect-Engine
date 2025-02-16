@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace Intersect.Utilities;
+namespace Intersect.Framework.Core;
 
 /// <summary>
 /// Utility class for timing.

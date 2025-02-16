@@ -451,7 +451,7 @@ public partial class TexturedBase : Skin.Base
         return new TexturedBase(renderer, contentManager, skinName);
     }
 
-    protected readonly GameTexture _texture;
+    protected readonly IGameTexture _texture;
 
     protected SkinTextures mTextures;
 
@@ -462,7 +462,7 @@ public partial class TexturedBase : Skin.Base
     /// </summary>
     /// <param name="renderer">Renderer to use.</param>
     /// <param name="texture"></param>
-    public TexturedBase(Renderer.Base renderer, GameTexture texture) : base(renderer)
+    public TexturedBase(Renderer.Base renderer, IGameTexture texture) : base(renderer)
     {
         _texture = texture ?? throw new ArgumentNullException(nameof(texture));
         texture.Loaded += _ => InitializeColors();
@@ -960,7 +960,7 @@ public partial class TexturedBase : Skin.Base
         }
     }
 
-    protected bool TryGetOverrideTexture(Checkbox control, bool selected, bool pressed, out GameTexture overrideTexture)
+    protected bool TryGetOverrideTexture(Checkbox control, bool selected, bool pressed, out IGameTexture overrideTexture)
     {
         Checkbox.ControlState controlState = Checkbox.ControlState.Normal;
         if (selected)
@@ -1153,7 +1153,7 @@ public partial class TexturedBase : Skin.Base
 
     public override void DrawWindow(Control.Base control, int topHeight, bool inFocus)
     {
-        GameTexture renderImg = null;
+        IGameTexture renderImg = null;
         if (((WindowControl) control).GetImage(Control.WindowControl.ControlState.Active) != null)
         {
             renderImg = ((WindowControl) control).GetImage(Control.WindowControl.ControlState.Active);
@@ -1334,7 +1334,7 @@ public partial class TexturedBase : Skin.Base
 
     public override void DrawScrollBarBar(ScrollBarBar scrollBarBar)
     {
-        GameTexture? renderImg = scrollBarBar.GetImage(ComponentState.Normal);
+        IGameTexture? renderImg = scrollBarBar.GetImage(ComponentState.Normal);
         if (scrollBarBar.IsDisabledByTree)
         {
             renderImg = scrollBarBar.GetImage(ComponentState.Disabled);
@@ -2109,7 +2109,7 @@ public partial class TexturedBase : Skin.Base
             i = 3;
         }
 
-        GameTexture renderImg = null;
+        IGameTexture renderImg = null;
 
         if (disabled && button.GetStateTexture(ComponentState.Disabled) != null)
         {
@@ -2329,7 +2329,7 @@ public partial class TexturedBase : Skin.Base
 
     public override void DrawWindowCloseButton(CloseButton closeButton, bool depressed, bool hovered, bool disabled)
     {
-        GameTexture renderImg = null;
+        IGameTexture renderImg = null;
         if (disabled && closeButton.GetStateTexture(ComponentState.Disabled) != null)
         {
             renderImg = closeButton.GetStateTexture(ComponentState.Disabled);

@@ -5,7 +5,7 @@ using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.General;
 using Intersect.Core;
-using Intersect.Utilities;
+using Intersect.Framework.Core;
 using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Core;

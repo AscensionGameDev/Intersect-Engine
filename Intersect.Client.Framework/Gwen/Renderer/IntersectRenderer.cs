@@ -19,13 +19,13 @@ public partial class IntersectRenderer : Base, ICacheToTexture
 
     private GameRenderer mRenderer;
 
-    private GameRenderTexture? mRenderTarget;
+    private IGameRenderTexture? mRenderTarget;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="UnityGwenRenderer" /> class.
     /// </summary>
     /// <param name="target">Intersect render target.</param>
-    public IntersectRenderer(GameRenderTexture renderTarget, GameRenderer renderer)
+    public IntersectRenderer(IGameRenderTexture renderTarget, GameRenderer renderer)
     {
         mRenderer = renderer;
         mRenderTarget = renderTarget;
@@ -40,7 +40,7 @@ public partial class IntersectRenderer : Base, ICacheToTexture
         set => mColor = new Color(value.A, value.R, value.G, value.B);
     }
 
-    public override Color PixelColor(GameTexture texture, uint x, uint y, Color defaultColor)
+    public override Color PixelColor(IGameTexture texture, uint x, uint y, Color defaultColor)
     {
         var x1 = (int) x;
         var y1 = (int) y;
@@ -156,7 +156,7 @@ public partial class IntersectRenderer : Base, ICacheToTexture
         if (mRenderTarget == null)
         {
             mRenderer.DrawTexture(
-                mRenderer.GetWhiteTexture(),
+                mRenderer.WhitePixel,
                 0,
                 0,
                 1,
@@ -176,7 +176,7 @@ public partial class IntersectRenderer : Base, ICacheToTexture
         else
         {
             mRenderer.DrawTexture(
-                mRenderer.GetWhiteTexture(),
+                mRenderer.WhitePixel,
                 0,
                 0,
                 1,
@@ -196,7 +196,7 @@ public partial class IntersectRenderer : Base, ICacheToTexture
     }
 
     public override void DrawTexturedRect(
-        GameTexture? tex,
+        IGameTexture? tex,
         Rectangle targetRect,
         Color clr,
         float u1 = 0,
@@ -341,16 +341,16 @@ public partial class IntersectRenderer : Base, ICacheToTexture
     /// </summary>
     public override ICacheToTexture Ctt => this;
 
-    private Dictionary<Control.Base, GameRenderTexture> m_RT;
+    private Dictionary<Control.Base, IGameRenderTexture> m_RT;
 
-    private Stack<GameRenderTexture> m_Stack;
+    private Stack<IGameRenderTexture> m_Stack;
 
-    private GameRenderTexture m_RealRT;
+    private IGameRenderTexture m_RealRT;
 
     public void Initialize()
     {
-        m_RT = new Dictionary<Control.Base, GameRenderTexture>();
-        m_Stack = new Stack<GameRenderTexture>();
+        m_RT = new Dictionary<Control.Base, IGameRenderTexture>();
+        m_Stack = new Stack<IGameRenderTexture>();
     }
 
     public void ShutDown()

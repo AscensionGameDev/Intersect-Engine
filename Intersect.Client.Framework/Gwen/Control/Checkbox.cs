@@ -27,22 +27,22 @@ public partial class Checkbox : Button
 
     private bool mChecked;
 
-    private GameTexture mCheckedDisabledImage;
+    private IGameTexture mCheckedDisabledImage;
 
     private string mCheckedDisabledImageFilename;
 
-    private GameTexture mCheckedNormalImage;
+    private IGameTexture mCheckedNormalImage;
 
     private string mCheckedNormalImageFilename;
 
     //Sound Effects
     private string mCheckSound;
 
-    private GameTexture mDisabledImage;
+    private IGameTexture mDisabledImage;
 
     private string mDisabledImageFilename;
 
-    private GameTexture mNormalImage;
+    private IGameTexture mNormalImage;
 
     private string mNormalImageFilename;
 
@@ -242,7 +242,7 @@ public partial class Checkbox : Button
         base.OnMouseClicked(mouseButton, mousePosition, userAction);
     }
 
-    public void SetImage(GameTexture texture, string fileName, ControlState state)
+    public void SetImage(IGameTexture texture, string fileName, ControlState state)
     {
         switch (state)
         {
@@ -271,7 +271,7 @@ public partial class Checkbox : Button
         }
     }
 
-    public GameTexture GetImage(ControlState state)
+    public IGameTexture GetImage(ControlState state)
     {
         switch (state)
         {

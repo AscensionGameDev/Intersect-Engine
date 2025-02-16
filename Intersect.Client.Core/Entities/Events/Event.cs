@@ -93,7 +93,7 @@ public partial class Event : Entity
         return success;
     }
 
-    protected bool TryEnsureTexture(out GameTexture? texture)
+    protected bool TryEnsureTexture(out IGameTexture? texture)
     {
         if (_drawCompletedWithoutTexture)
         {

@@ -23,7 +23,7 @@ public static partial class GzipCompression
 
         // Take a few bytes out of this delicious morsel and grow stronk.
         var keyBytes = ASCIIEncoding.ASCII.GetBytes(cryptoKey);
-        cryptoProvider.Key = keyBytes.Take(16).ToArray();    
+        cryptoProvider.Key = keyBytes.Take(16).ToArray();
         cryptoProvider.IV = keyBytes.Reverse().Take(16).ToArray();
     }
 
@@ -56,11 +56,11 @@ public static partial class GzipCompression
     }
 
     /// <summary>
-    /// Read decompressed unencrypted data from an existing filestream.
+    /// Read decompressed unencrypted data from an existing <see cref="Stream"/>.
     /// </summary>
-    /// <param name="stream">The Filestream to write data from.</param>
+    /// <param name="stream">The <see cref="Stream"/> to write data from.</param>
     /// <returns>Returns a decompressed <see cref="CryptoStream"/> of the stream's content.</returns>
-    public static CryptoStream CreateDecompressedFileStream(FileStream stream)
+    public static CryptoStream CreateDecompressedFileStream(Stream stream)
     {
         if (cryptoProvider == null)
         {

@@ -30,9 +30,9 @@ public partial class WindowControl : ResizableControl
 
     private Color? mInactiveColor;
 
-    private GameTexture? mActiveImage;
+    private IGameTexture? mActiveImage;
 
-    private GameTexture? mInactiveImage;
+    private IGameTexture? mInactiveImage;
 
     private string? mActiveImageFilename;
 
@@ -126,7 +126,7 @@ public partial class WindowControl : ResizableControl
         set => _titlebar.CloseButton.IsVisible = value;
     }
 
-    public GameTexture? Icon
+    public IGameTexture? Icon
     {
         get => _titlebar.Icon.Texture;
         set => _titlebar.Icon.Texture = value;
@@ -389,7 +389,7 @@ public partial class WindowControl : ResizableControl
     ///     Sets the button's image.
     /// </summary>
     /// <param name="textureName">Texture name. Null to remove.</param>
-    public void SetImage(GameTexture texture, string fileName, ControlState state)
+    public void SetImage(IGameTexture texture, string fileName, ControlState state)
     {
         switch (state)
         {
@@ -408,7 +408,7 @@ public partial class WindowControl : ResizableControl
         }
     }
 
-    public GameTexture? GetImage(ControlState state)
+    public IGameTexture? GetImage(ControlState state)
     {
         switch (state)
         {
@@ -421,7 +421,7 @@ public partial class WindowControl : ResizableControl
         }
     }
 
-    public bool TryGetTexture(ControlState controlState, [NotNullWhen(true)] out GameTexture? texture)
+    public bool TryGetTexture(ControlState controlState, [NotNullWhen(true)] out IGameTexture? texture)
     {
         texture = GetImage(controlState);
         return texture != default;

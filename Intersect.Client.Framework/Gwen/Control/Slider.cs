@@ -17,7 +17,7 @@ public partial class Slider : Base
 {
     private readonly SliderBar _sliderBar;
 
-    private GameTexture? _backgroundImage;
+    private IGameTexture? _backgroundImage;
     private string? _backgroundImageName;
     private double _maximumValue;
     private double _minimumValue;
@@ -132,7 +132,7 @@ public partial class Slider : Base
         return minimumValue + value * (_maximumValue - minimumValue);
     }
 
-    public GameTexture? BackgroundImage
+    public IGameTexture? BackgroundImage
     {
         get => _backgroundImage;
         set
@@ -480,12 +480,12 @@ public partial class Slider : Base
         //skin.DrawKeyboardHighlight(this, RenderBounds, 0);
     }
 
-    public void SetDraggerImage(GameTexture? texture, ComponentState state)
+    public void SetDraggerImage(IGameTexture? texture, ComponentState state)
     {
         _sliderBar.SetImage(texture, texture?.Name, state);
     }
 
-    public GameTexture? GetDraggerImage(ComponentState state)
+    public IGameTexture? GetDraggerImage(ComponentState state)
     {
         return _sliderBar.GetImage(state);
     }

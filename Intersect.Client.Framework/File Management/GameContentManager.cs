@@ -220,14 +220,14 @@ public abstract partial class GameContentManager : IContentManager
         return null;
     }
 
-    public bool TryGetTexture(TextureType textureType, string textureName, [NotNullWhen(true)] out GameTexture? texture)
+    public bool TryGetTexture(TextureType textureType, string textureName, [NotNullWhen(true)] out IGameTexture? texture)
     {
         texture = GetTexture(textureType, textureName);
         return texture != default;
     }
 
     //Content Getters
-    public virtual GameTexture? GetTexture(TextureType type, string name)
+    public virtual IGameTexture? GetTexture(TextureType type, string name)
     {
         if (string.IsNullOrEmpty(name))
         {
@@ -306,7 +306,7 @@ public abstract partial class GameContentManager : IContentManager
             return null;
         }
 
-        return textureDict.TryGetValue(name.ToLower(), out var asset) ? asset as GameTexture : default;
+        return textureDict.TryGetValue(name.ToLower(), out var asset) ? asset as IGameTexture : default;
     }
 
     public bool TryGetShader(string shaderName, [NotNullWhen(true)] out GameShader? shader)
@@ -624,7 +624,7 @@ public abstract partial class GameContentManager : IContentManager
 
         if (assetLookup.TryGetValue(assetName, out var asset))
         {
-            return asset as TAsset;
+            return asset as TAsset ?? throw new InvalidOperationException();
         }
 
         return Load<TAsset>(assetLookup, contentType, assetName, createStream);

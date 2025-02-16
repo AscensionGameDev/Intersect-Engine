@@ -222,7 +222,7 @@ public partial class CharacterWindow
         );
 
         //Load Portrait
-        //UNCOMMENT THIS LINE IF YOU'D RATHER HAVE A FACE HERE GameTexture faceTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Face, Globals.Me.Face);
+        //UNCOMMENT THIS LINE IF YOU'D RATHER HAVE A FACE HERE IGameTexture faceTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Face, Globals.Me.Face);
         var entityTex = Globals.ContentManager.GetTexture(
             Framework.Content.TextureType.Entity, Globals.Me.Sprite
         );

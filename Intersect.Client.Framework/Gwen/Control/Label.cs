@@ -27,7 +27,7 @@ public partial class Label : Base, ILabel
 
     private string? mBackgroundTemplateFilename;
 
-    private GameTexture? mBackgroundTemplateTex;
+    private IGameTexture? mBackgroundTemplateTex;
 
     protected Color? mClickedTextColor;
 
@@ -186,7 +186,7 @@ public partial class Label : Base, ILabel
         }
     }
 
-    public GameTexture? ToolTipBackground
+    public IGameTexture? ToolTipBackground
     {
         get => _tooltipBackground;
         set
@@ -324,7 +324,7 @@ public partial class Label : Base, ILabel
 
     private string? _textOverride;
     private WrappingBehavior _wrappingBehavior;
-    private GameTexture? _tooltipBackground;
+    private IGameTexture? _tooltipBackground;
 
     /// <summary>
     ///     Text override - used to display different string.
@@ -479,7 +479,7 @@ public partial class Label : Base, ILabel
         }
     }
 
-    public GameTexture GetTemplate()
+    public IGameTexture GetTemplate()
     {
         return mBackgroundTemplateTex;
     }
@@ -502,7 +502,7 @@ public partial class Label : Base, ILabel
         }
     }
 
-    public void SetBackgroundTemplate(GameTexture texture, string fileName)
+    public void SetBackgroundTemplate(IGameTexture texture, string fileName)
     {
         if (texture == null && !string.IsNullOrWhiteSpace(fileName))
         {

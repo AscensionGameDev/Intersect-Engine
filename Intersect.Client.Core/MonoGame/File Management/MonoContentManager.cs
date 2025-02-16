@@ -52,14 +52,18 @@ public partial class MonoContentManager : GameContentManager
 
         foreach (var t in tilesetnames)
         {
-            var realFilename = tilesetFiles.FirstOrDefault(file => t.Equals(file, StringComparison.InvariantCultureIgnoreCase)) ?? string.Empty;
+            var realFilename = tilesetFiles.FirstOrDefault(file => t.Equals(file, StringComparison.InvariantCultureIgnoreCase)) ?? t;
             if (!string.IsNullOrWhiteSpace(t) &&
                 (!string.IsNullOrWhiteSpace(realFilename) ||
-                 GameTexturePacks.GetFrame(Path.Combine(ClientConfiguration.ResourcesDirectory, "tilesets", t.ToLower())) != null) &&
+                 AtlasReference.TryGet(Path.Combine(ClientConfiguration.ResourcesDirectory, "tilesets", t.ToLower()), out _) != null) &&
                 !mTilesetDict.ContainsKey(t.ToLower()))
             {
                 mTilesetDict.Add(
-                    t.ToLower(), Core.Graphics.Renderer.LoadTexture(Path.Combine(ClientConfiguration.ResourcesDirectory, "tilesets", t), Path.Combine(ClientConfiguration.ResourcesDirectory, "tilesets", realFilename))
+                    t.ToLower(),
+                    Core.Graphics.Renderer.LoadTexture(
+                        Path.Combine(ClientConfiguration.ResourcesDirectory, "tilesets", t),
+                        Path.Combine(ClientConfiguration.ResourcesDirectory, "tilesets", realFilename)
+                    )
                 );
             }
         }
@@ -90,7 +94,7 @@ public partial class MonoContentManager : GameContentManager
                 {
                     foreach (var frame in frames)
                     {
-                        var filename = frame["filename"].ToString();
+                        var assetName = frame["filename"].ToString();
                         var sourceRect = new Rectangle(
                             int.Parse(frame["frame"]["x"].ToString()), int.Parse(frame["frame"]["y"].ToString()),
                             int.Parse(frame["frame"]["w"].ToString()), int.Parse(frame["frame"]["h"].ToString())
@@ -104,9 +108,7 @@ public partial class MonoContentManager : GameContentManager
                             int.Parse(frame["spriteSourceSize"]["h"].ToString())
                         );
 
-                        GameTexturePacks.AddFrame(
-                            new GameTexturePackFrame(filename, sourceRect, rotated, sourceSize, platformText)
-                        );
+                        AtlasReference.Add(new AtlasReference(assetName, sourceRect, rotated, sourceSize, platformText));
                     }
                 }
             }
@@ -134,16 +136,13 @@ public partial class MonoContentManager : GameContentManager
             }
         }
 
-        var packItems = GameTexturePacks.GetFolderFrames(directory);
-        if (packItems != null)
+        var packItems = AtlasReference.GetAllFor(directory);
+        foreach (var itm in packItems)
         {
-            foreach (var itm in packItems)
+            var filename = Path.GetFileName(itm.Name.ToLower().Replace("\\", "/"));
+            if (!dict.ContainsKey(filename))
             {
-                var filename = Path.GetFileName(itm.Filename.ToLower().Replace("\\", "/"));
-                if (!dict.ContainsKey(filename))
-                {
-                    dict.Add(filename, Core.Graphics.Renderer.LoadTexture(Path.Combine(dir, filename), Path.Combine(dir, Path.Combine(dir, filename))));
-                }
+                dict.Add(filename, Core.Graphics.Renderer.LoadTexture(Path.Combine(dir, filename), Path.Combine(dir, Path.Combine(dir, filename))));
             }
         }
     }
@@ -350,7 +349,7 @@ public partial class MonoContentManager : GameContentManager
             case ContentType.Spell:
             case ContentType.TextureAtlas:
             case ContentType.Tileset:
-                var asset = Core.Graphics.Renderer.LoadTexture(name, createStream) as TAsset;
+                var asset = Core.Graphics.Renderer.CreateTextureFromStreamFactory(name, createStream) as TAsset;
                 lookup?.Add(name, asset);
                 return asset;
 

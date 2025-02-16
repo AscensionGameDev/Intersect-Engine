@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using Intersect.Config;
 using Intersect.ErrorHandling;
 using Intersect.Core;
+using Intersect.Framework.Core;
 using Intersect.Network;
 using Intersect.Network.Packets;
 using Intersect.Server.Database.Logging.Entities;

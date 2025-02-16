@@ -22,6 +22,7 @@ using MainMenu = Intersect.Client.Interface.Menu.MainMenu;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.MonoGame.NativeInterop;
 using Intersect.Core;
+using Intersect.Framework.Core;
 using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.MonoGame;

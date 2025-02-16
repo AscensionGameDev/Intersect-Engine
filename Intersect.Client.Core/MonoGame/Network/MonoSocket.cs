@@ -15,6 +15,7 @@ using Intersect.Client.Interface.Menu;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Core;
+using Intersect.Framework.Core;
 using Intersect.Network.Packets.Unconnected.Client;
 using Intersect.Rsa;
 using Microsoft.Extensions.Logging;

@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using Intersect.Core;
+using Intersect.Framework.Core;
 using Intersect.Framework.Reflection;
 using Intersect.Memory;
 using Intersect.Network.Events;

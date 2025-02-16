@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using Intersect.Core;
 using Intersect.Enums;
+using Intersect.Framework.Core;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Animations;
 using Intersect.Network.Packets.Server;

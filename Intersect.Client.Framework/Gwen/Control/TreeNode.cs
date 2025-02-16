@@ -512,7 +512,7 @@ public partial class TreeNode : Base
         IsSelected = !IsSelected;
     }
 
-    public void SetImage(GameTexture texture, string fileName = "")
+    public void SetImage(IGameTexture texture, string fileName = "")
     {
         _trigger.SetStateTexture(texture, fileName, ComponentState.Normal);
     }
