@@ -15,7 +15,7 @@ internal sealed class Typewriter
     private static long TypingSpeed => ClientConfiguration.Instance.TypewriterPartDelay;
 
     private int _offset;
-    private int _segmentIndex = 0;
+    private int _segmentIndex;
     private string? _lastText;
     private long _nextUpdateTime;
 
@@ -63,6 +63,8 @@ internal sealed class Typewriter
                 return;
             }
 
+            emitSound |= _offset % ClientConfiguration.Instance.TypewriterSoundFrequency == 0;
+
             var segment = _segments[_segmentIndex];
 
             if (_offset >= segment.Text.Length)
@@ -73,13 +75,11 @@ internal sealed class Typewriter
                 if (_segmentIndex >= _segments.Length)
                 {
                     End();
-                    return;
+                    continue;
                 }
 
                 segment = _segments[_segmentIndex];
             }
-
-            emitSound |= _offset % ClientConfiguration.Instance.TypewriterSoundFrequency == 0;
 
             string nextText;
             if (char.IsSurrogatePair(segment.Text, _offset))
@@ -144,7 +144,7 @@ internal sealed class Typewriter
             var segment = _segments[_segmentIndex];
             if (_offset < segment.Text.Length)
             {
-                _textWrittenHandler(segment.Text.Substring(_offset), segment.Color);
+                _textWrittenHandler(segment.Text[_offset..], segment.Color);
             }
             _segmentIndex++;
             _offset = 0;
