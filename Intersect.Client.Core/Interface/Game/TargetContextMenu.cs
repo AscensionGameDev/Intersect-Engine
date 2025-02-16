@@ -127,7 +127,7 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
             Open(Pos.None);
             SetPosition(newX, newY);
         }
-        else if (!Globals.InputManager.MouseButtonDown(MouseButton.Right))
+        else if (!Globals.InputManager.IsMouseButtonDown(MouseButton.Right))
         {
             Close();
         }

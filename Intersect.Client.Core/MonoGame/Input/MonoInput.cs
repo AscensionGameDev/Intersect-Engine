@@ -22,9 +22,14 @@ public partial class MonoInput : GameInput
 {
     private readonly Dictionary<Keys, MonoGameKeys> _intersectToMonoGameKeyMap;
 
-    private KeyboardState mLastKeyboardState;
+    private GamePadState _currentGamePadState;
+    private GamePadState _previousGamePadState;
 
-    private MouseState mLastMouseState;
+    private KeyboardState _currentKeyboardState;
+    private KeyboardState _previousKeyboardState;
+
+    private MouseState _currentMouseState;
+    private MouseState _previousMouseState;
 
     private int mMouseX;
 
@@ -38,8 +43,6 @@ public partial class MonoInput : GameInput
 
     private readonly GamePadCapabilities[] _gamePadCapabilities =
         new GamePadCapabilities[GamePad.MaximumGamePadCount];
-
-    private GamePadState _lastGamePadState;
 
     private int _activeGamePad;
 
@@ -163,27 +166,34 @@ public partial class MonoInput : GameInput
         );
     }
 
-    public override bool MouseButtonDown(MouseButton mb)
+    private bool MouseButtonDown(MouseState mouseState, MouseButton mb)
     {
         switch (mb)
         {
             case MouseButton.Left:
-                return mLastMouseState.LeftButton == ButtonState.Pressed;
+                return mouseState.LeftButton == ButtonState.Pressed;
             case MouseButton.Right:
-                return mLastMouseState.RightButton == ButtonState.Pressed;
+                return mouseState.RightButton == ButtonState.Pressed;
             case MouseButton.Middle:
-                return mLastMouseState.MiddleButton == ButtonState.Pressed;
+                return mouseState.MiddleButton == ButtonState.Pressed;
             case MouseButton.X1:
-                return mLastMouseState.XButton1 == ButtonState.Pressed;
+                return mouseState.XButton1 == ButtonState.Pressed;
             case MouseButton.X2:
-                return mLastMouseState.XButton2 == ButtonState.Pressed;
+                return mouseState.XButton2 == ButtonState.Pressed;
             default:
                 throw new ArgumentOutOfRangeException(nameof(mb), mb, null);
         }
     }
 
+    public override bool IsMouseButtonDown(MouseButton mb) => MouseButtonDown(_currentMouseState, mb);
+
+    public override bool WasMouseButtonDown(MouseButton mb) => MouseButtonDown(_previousMouseState, mb);
+
     public override bool IsKeyDown(Keys key) =>
-        _intersectToMonoGameKeyMap.TryGetValue(key, out var mappedKey) && mLastKeyboardState.IsKeyDown(mappedKey);
+        _intersectToMonoGameKeyMap.TryGetValue(key, out var mappedKey) && _currentKeyboardState.IsKeyDown(mappedKey);
+
+    public override bool WasKeyDown(Keys key) =>
+        _intersectToMonoGameKeyMap.TryGetValue(key, out var mappedKey) && _previousKeyboardState.IsKeyDown(mappedKey);
 
     public override Pointf GetMousePosition()
     {
@@ -197,7 +207,7 @@ public partial class MonoInput : GameInput
             return; //No mouse input allowed while showing intro slides
         }
 
-        if (bs == ButtonState.Pressed && !MouseButtonDown(mb))
+        if (bs == ButtonState.Pressed && !IsMouseButtonDown(mb))
         {
             if (Core.Input.TestInterceptMouse(modifier, mb, down: true))
             {
@@ -210,7 +220,7 @@ public partial class MonoInput : GameInput
 
             Core.Input.OnMouseDown(modifier, mb);
         }
-        else if (bs == ButtonState.Released && MouseButtonDown(mb))
+        else if (bs == ButtonState.Released && IsMouseButtonDown(mb))
         {
             if (Core.Input.TestInterceptMouse(modifier, mb, down: false))
             {
@@ -368,7 +378,7 @@ public partial class MonoInput : GameInput
 
             foreach (var key in _intersectToMonoGameKeyMap)
             {
-                if (keyboardState.IsKeyDown(key.Value) && !mLastKeyboardState.IsKeyDown(key.Value))
+                if (keyboardState.IsKeyDown(key.Value) && !_currentKeyboardState.IsKeyDown(key.Value))
                 {
                     ApplicationContext.Context.Value?.Logger.LogTrace("{0} -> {1}", key.Key, key.Value);
                     Interface.Interface.GwenInput.ProcessMessage(
@@ -379,7 +389,7 @@ public partial class MonoInput : GameInput
 
                     Core.Input.OnKeyPressed(modifier, key.Key);
                 }
-                else if (!keyboardState.IsKeyDown(key.Value) && mLastKeyboardState.IsKeyDown(key.Value))
+                else if (!keyboardState.IsKeyDown(key.Value) && _currentKeyboardState.IsKeyDown(key.Value))
                 {
                     Interface.Interface.GwenInput.ProcessMessage(
                         new GwenInputMessage(
@@ -391,17 +401,17 @@ public partial class MonoInput : GameInput
                 }
             }
 
-            mLastKeyboardState = keyboardState;
-            mLastMouseState = mouseState;
-            _lastGamePadState = gamePadState;
+            (_previousGamePadState, _currentGamePadState) = (_currentGamePadState, gamePadState);
+            (_previousKeyboardState, _currentKeyboardState) = (_currentKeyboardState, keyboardState);
+            (_previousMouseState, _currentMouseState) = (_currentMouseState, mouseState);
         }
         else
         {
-            var modifier = GetPressedModifier(mLastKeyboardState);
+            var modifier = GetPressedModifier(_currentKeyboardState);
 
             foreach (var key in _intersectToMonoGameKeyMap)
             {
-                if (mLastKeyboardState.IsKeyDown(key.Value))
+                if (_currentKeyboardState.IsKeyDown(key.Value))
                 {
                     Interface.Interface.GwenInput.ProcessMessage(
                         new GwenInputMessage(
@@ -418,8 +428,13 @@ public partial class MonoInput : GameInput
             CheckMouseButton(modifier, ButtonState.Released, MouseButton.Middle);
             CheckMouseButton(modifier, ButtonState.Released, MouseButton.X1);
             CheckMouseButton(modifier, ButtonState.Released, MouseButton.X2);
-            mLastKeyboardState = new KeyboardState();
-            mLastMouseState = new MouseState();
+
+            _currentGamePadState = new GamePadState();
+            _previousGamePadState = new GamePadState();
+            _currentKeyboardState = new KeyboardState();
+            _previousKeyboardState = new KeyboardState();
+            _currentMouseState = new MouseState();
+            _previousMouseState = new MouseState();
         }
     }
 

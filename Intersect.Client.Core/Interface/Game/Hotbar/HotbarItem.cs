@@ -203,7 +203,7 @@ public partial class HotbarItem
 
         _mouseOver = true;
         _canDrag = true;
-        if (Globals.InputManager.MouseButtonDown(MouseButton.Left))
+        if (Globals.InputManager.IsMouseButtonDown(MouseButton.Left))
         {
             _canDrag = false;
 
@@ -528,7 +528,7 @@ public partial class HotbarItem
 
                 if (_mouseOver)
                 {
-                    if (!Globals.InputManager.MouseButtonDown(MouseButton.Left))
+                    if (!Globals.InputManager.IsMouseButtonDown(MouseButton.Left))
                     {
                         _canDrag = true;
                         _mouseX = -1;

@@ -323,6 +323,25 @@ public partial class Controls : IControlSet
         }
     }
 
+    public static bool IsControlJustPressed(Control control) => IsControlJustPressed(control, out _, out _);
+
+    public static bool IsControlJustPressed(
+        Control control,
+        [NotNullWhen(true)] out ControlMapping? activeMapping,
+        [NotNullWhen(true)] out ControlBinding? activeBinding
+    )
+    {
+        if (ActiveControls.Mappings.TryGetValue(control, out var mapping) && mapping.IsActive(out activeBinding) && !activeBinding.WasDown())
+        {
+            activeMapping = mapping;
+            return true;
+        }
+
+        activeMapping = null;
+        activeBinding = null;
+        return false;
+    }
+
     public static bool IsControlPressed(Control control) => IsControlPressed(control, out _, out _);
 
     public static bool IsControlPressed(

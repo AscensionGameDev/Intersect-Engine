@@ -106,9 +106,13 @@ public abstract partial class GameInput : IGameInput
         return success;
     }
 
-    public abstract bool MouseButtonDown(MouseButton mb);
+    public abstract bool IsMouseButtonDown(MouseButton mb);
+
+    public abstract bool WasMouseButtonDown(MouseButton mb);
 
     public abstract bool IsKeyDown(Keys key);
+
+    public abstract bool WasKeyDown(Keys key);
 
     public Pointf MousePosition => GetMousePosition();
 

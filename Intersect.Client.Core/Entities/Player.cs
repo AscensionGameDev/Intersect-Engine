@@ -1863,7 +1863,7 @@ public partial class Player : Entity, IPlayer
 
     private static void ToggleTargetContextMenu(Entity en)
     {
-        if (Globals.InputManager.MouseButtonDown(MouseButton.Right))
+        if (Globals.InputManager.IsMouseButtonDown(MouseButton.Right))
         {
             Interface.Interface.GameUi.TargetContextMenu.ToggleHidden(en);
         }

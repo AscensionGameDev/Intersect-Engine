@@ -115,7 +115,7 @@ public partial class ShopItem
             return;
         }
 
-        if (Globals.InputManager.MouseButtonDown(MouseButton.Left))
+        if (Globals.InputManager.IsMouseButtonDown(MouseButton.Left))
         {
             return;
         }

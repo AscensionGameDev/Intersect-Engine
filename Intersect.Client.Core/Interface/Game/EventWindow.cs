@@ -12,8 +12,11 @@ using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Client.Utilities;
 using Intersect.Configuration;
+using Intersect.Core;
 using Intersect.Enums;
+using Intersect.Framework.Core;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Interface.Game;
 
@@ -192,6 +195,7 @@ public partial class EventWindow : Panel
         MakeModal(dim: true);
         BringToFront();
         Interface.InputBlockingComponents.Add(this);
+        ApplicationContext.CurrentContext.Logger.LogTrace("Event window opened");
 
         #endregion Configure and Display
     }
@@ -239,10 +243,10 @@ public partial class EventWindow : Panel
                 optionButton.IsDisabled = disableResponse;
             }
         }
-        else if (Controls.IsControlPressed(Control.AttackInteract))
+        else if (Controls.IsControlJustPressed(Control.AttackInteract))
         {
             SkipTypewriting();
-            _promptScroller.ScrollToBottom();
+            Defer(_promptScroller.ScrollToBottom);
         }
         else
         {
@@ -256,6 +260,7 @@ public partial class EventWindow : Panel
     {
         if (_instance is { } instance)
         {
+            // ApplicationContext.CurrentContext.Logger.LogTrace("Updating previous opened event window");
             instance.Update();
             return;
         }

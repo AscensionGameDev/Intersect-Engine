@@ -7,8 +7,12 @@ public interface IGameInput
     IControlSet ControlSet { get; set; }
 
     Pointf MousePosition { get; }
+
     bool IsKeyDown(Keys key);
-    bool MouseButtonDown(MouseButton mb);
+    bool WasKeyDown(Keys key);
+
+    bool IsMouseButtonDown(MouseButton mb);
+    bool WasMouseButtonDown(MouseButton mb);
 
     /// <summary>
     /// The available controls providers for this input instance.
