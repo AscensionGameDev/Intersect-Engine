@@ -331,15 +331,14 @@ public partial class Color : IEquatable<Color>
             return colorFunc();
         }
 
-        Color? parsedColor = Color.FromHex(val, defaultColor);
-
-        parsedColor ??= Color.FromCsv(val, defaultColor);
+        Color? parsedColor = Color.FromHex(val);
+        parsedColor ??= Color.FromCsv(val);
 
         return parsedColor ?? defaultColor;
     }
 
 
-    public static implicit operator Color(string colorString) => FromCsv(colorString);
+    public static implicit operator Color(string colorString) => FromString(colorString);
 
     public static Color operator *(Color left, Color right) => new Color(
         a: (int)(left.A * right.A / 255f),

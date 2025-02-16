@@ -21,7 +21,7 @@ namespace Intersect.Client.Utilities
                 if (segment.StartsWith("\\c{") && segment.EndsWith("}"))
                 {
                     string colorCode = segment[3..^1].ToLowerInvariant();
-                    currentColor = Color.FromString(colorCode, defaultColor) ?? defaultColor;
+                    currentColor = Color.FromString(colorCode, defaultColor);
                 }
                 else
                 {
