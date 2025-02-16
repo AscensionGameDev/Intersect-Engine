@@ -171,6 +171,8 @@ public partial class EventWindow : Panel
             _promptLabel.AddText(segment.Text, segment.Color, Alignments.Left, _promptTemplateLabel.Font);
         }
 
+        _promptLabel.ForceImmediateRebuild();
+
         _ = _promptLabel.SizeToChildren();
 
         _typewriting = ClientConfiguration.Instance.TypewriterEnabled &&
