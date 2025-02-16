@@ -10,6 +10,7 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Typewriting;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Client.Utilities;
 using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.Utilities;
@@ -160,8 +161,13 @@ public partial class EventWindow : Panel
         SkipRender();
 
         _promptLabel.ClearText();
-        _promptLabel.AddText(_dialog.Prompt ?? string.Empty, _promptTemplateLabel);
-        _promptLabel.ForceImmediateRebuild();
+        var parsedText = TextColorParser.Parse(_dialog.Prompt ?? string.Empty, Color.White);
+
+        foreach (var segment in parsedText)
+        {
+            _promptLabel.AddText(segment.Text, segment.Color, Alignments.Left, _promptTemplateLabel.Font);
+        }
+
         _ = _promptLabel.SizeToChildren();
 
         _typewriting = ClientConfiguration.Instance.TypewriterEnabled &&
@@ -169,9 +175,11 @@ public partial class EventWindow : Panel
         if (_typewriting)
         {
             _promptLabel.ClearText();
-            _writer = new Typewriter(_dialog.Prompt ?? string.Empty, text => _promptLabel.AppendText(text, _promptTemplateLabel));
+            _writer = new Typewriter(parsedText.ToArray(), (text, color) =>
+            {
+                _promptLabel.AppendText(text, color, Alignments.Left, _promptTemplateLabel.Font);
+            });
         }
-
         Defer(
             () =>
             {

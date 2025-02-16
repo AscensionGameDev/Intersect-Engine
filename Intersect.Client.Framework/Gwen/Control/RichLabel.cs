@@ -183,8 +183,8 @@ public partial class RichLabel : Base
             var appendAlignment = alignment;
             var appendFont = font ?? lastTextBlock.Font;
 
-            if (appendAlignment != lastTextBlock.Alignment &&
-                appendColor != lastTextBlock.Color &&
+            if (appendAlignment != lastTextBlock.Alignment ||
+                appendColor != lastTextBlock.Color ||
                 appendFont != lastTextBlock.Font)
             {
                 AddText(text, color, alignment, font);

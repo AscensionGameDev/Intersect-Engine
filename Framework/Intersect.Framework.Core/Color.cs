@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Reflection;
 using Intersect.Framework;
 using Intersect.Localization;
 using MessagePack;
@@ -9,7 +10,17 @@ namespace Intersect;
 [MessagePackObject]
 public partial class Color : IEquatable<Color>
 {
-
+    private static readonly Dictionary<string, Func<Color>> KnownColors;
+    static Color()
+    {
+        KnownColors = typeof(Color)
+            .GetProperties(BindingFlags.Public | BindingFlags.Static)
+            .Where(p => p.PropertyType == typeof(Color) && p.GetMethod != null)
+            .ToDictionary(
+                p => p.Name.ToLowerInvariant(),
+                p => (Func<Color>)(() => p.GetMethod?.Invoke(null, null) as Color ?? Color.White)
+            );
+    }
     public enum ChatColor
     {
 
@@ -289,7 +300,7 @@ public partial class Color : IEquatable<Color>
         return new Color(a: a, r: r, g: g, b: b);
     }
 
-    public static Color? FromString(string val, Color? defaultColor = default)
+    public static Color? FromCsv(string val, Color? defaultColor = default)
     {
         if (string.IsNullOrEmpty(val))
         {
@@ -305,6 +316,27 @@ public partial class Color : IEquatable<Color>
 
         return new Color(parts[0], parts[1], parts[2], parts[3]);
     }
+
+    public static Color? FromString(string val, Color? defaultColor = default)
+    {
+        if (string.IsNullOrWhiteSpace(val))
+        {
+            return defaultColor;
+        }
+
+        val = val.Trim().ToLowerInvariant();
+
+        if (KnownColors.TryGetValue(val, out Func<Color>? colorFunc))
+        {
+            return colorFunc();
+        }
+
+        Color? parsedColor = Color.FromHex(val);
+        parsedColor ??= Color.FromCsv(val);
+
+        return parsedColor ?? defaultColor;
+    }
+
 
     public static implicit operator Color(string colorString) => FromString(colorString);
 
