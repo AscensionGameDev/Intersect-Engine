@@ -73,7 +73,7 @@ public partial class MapItemIcon
             return;
         }
 
-        if (Globals.InputManager.MouseButtonDown(MouseButton.Left))
+        if (Globals.InputManager.IsMouseButtonDown(MouseButton.Left))
         {
             return;
         }

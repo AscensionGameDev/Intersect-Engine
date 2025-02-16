@@ -26,6 +26,35 @@ public partial class ControlMapping
         Bindings = controlMapping.Bindings.Select(binding => new ControlBinding(binding)).ToList();
     }
 
+    public bool WasActive([NotNullWhen(true)] out ControlBinding? activeBinding)
+    {
+        // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+        foreach (var binding in Bindings)
+        {
+            if (!binding.WasDown())
+            {
+                continue;
+            }
+
+            if (!binding.IsMouseKey)
+            {
+                activeBinding = binding;
+                return true;
+            }
+
+            if (GameInput.Current.MouseHitInterface)
+            {
+                continue;
+            }
+
+            activeBinding = binding;
+            return true;
+        }
+
+        activeBinding = null;
+        return false;
+    }
+
     public bool IsActive([NotNullWhen(true)] out ControlBinding? activeBinding)
     {
         // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator

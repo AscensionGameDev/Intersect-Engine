@@ -34,9 +34,27 @@ public partial class ControlBinding(Keys modifier, Keys key)
 
         if (IsMouseKey && Key.TryGetMouseButton(out var mouseButton))
         {
-            return gameInput.MouseButtonDown(mouseButton);
+            return gameInput.IsMouseButtonDown(mouseButton);
         }
 
         return gameInput.IsKeyDown(Key);
+    }
+
+    public bool WasDown()
+    {
+        var gameInput = GameInput.Current;
+
+        // Check to see if our modifier and real key are pressed!
+        if (Modifier != Keys.None && !gameInput.WasKeyDown(Modifier))
+        {
+            return false;
+        }
+
+        if (IsMouseKey && Key.TryGetMouseButton(out var mouseButton))
+        {
+            return gameInput.WasMouseButtonDown(mouseButton);
+        }
+
+        return gameInput.WasKeyDown(Key);
     }
 }
