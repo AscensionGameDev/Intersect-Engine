@@ -6,7 +6,6 @@ namespace Intersect.Client.Utilities
     public static class TextColorParser
     {
         private static readonly Regex ColorTagRegex = new(@"(\\c{[^}]*})", RegexOptions.Compiled);
-        private static readonly string SplitPattern = @"(\\c{[^}]*})";
 
         public static List<ColorizedText> Parse(string text, Color defaultColor)
         {
