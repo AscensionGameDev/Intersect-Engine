@@ -13,7 +13,8 @@ using Intersect.SinglePlayer.Networking;
 using Bootstrapper = Intersect.Server.Core.Bootstrapper;
 using Console = System.Console;
 
-Console.WriteLine($"Starting {Assembly.GetExecutingAssembly().GetMetadataName()}...");
+var executingAssembly = Assembly.GetExecutingAssembly();
+Console.WriteLine($"Starting {executingAssembly.GetMetadataName()}...");
 
 const string singleplayer = "singleplayer";
 var singleplayerPassword = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(singleplayer)));
@@ -59,10 +60,10 @@ try
         }
     };
 
-    Thread serverThread = new(args => Bootstrapper.Start(args as string[]));
+    Thread serverThread = new(args => Bootstrapper.Start(executingAssembly, args as string[]));
     serverThread.Start(args.Append("--migrate-automatically").Distinct().ToArray());
 
-    Intersect.Client.Core.Program.Main(args);
+    Intersect.Client.Core.Program.Main(executingAssembly, args);
 }
 finally
 {

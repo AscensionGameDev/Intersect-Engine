@@ -22,30 +22,35 @@ public abstract partial class ApplicationContext<TContext, TStartupOptions> : IA
 {
     #region Lifecycle Fields
 
-    private bool mIsRunning;
+    private bool _running;
 
-    private bool mNeedsLockPulse;
+    private bool _needsLockPulse;
 
-    private readonly object mDisposeLock;
+    private readonly object _disposeLock = new();
 
-    private readonly object mShutdownLock;
+    private readonly object _shutdownLock = new();
 
     #endregion Lifecycle Fields
 
     /// <summary>
     /// Initializes general pieces of the <see cref="ApplicationContext{TContext, TStartupOptions}"/>.
     /// </summary>
+    /// <param name="fallbackName"></param>
     /// <param name="startupOptions">the <typeparamref name="TStartupOptions"/> the application was started with</param>
     /// <param name="logger">the application-level <see cref="Logger"/></param>
     /// <param name="packetHelper"></param>
-    protected ApplicationContext(TStartupOptions startupOptions, ILogger logger, IPacketHelper packetHelper)
+    /// <param name="entryAssembly"></param>
+    protected ApplicationContext(
+        Assembly entryAssembly,
+        string fallbackName,
+        TStartupOptions startupOptions,
+        ILogger logger,
+        IPacketHelper packetHelper
+    )
     {
-        mDisposeLock = new object();
-        mShutdownLock = new object();
+        Name = entryAssembly.GetName().Name ?? fallbackName;
 
         ApplicationContext.Context.Value = this;
-
-        mServices = new ConcurrentDictionary<Type, IApplicationService>();
 
         StartupOptions = startupOptions;
         Logger = logger;
@@ -53,6 +58,8 @@ public abstract partial class ApplicationContext<TContext, TStartupOptions> : IA
 
         ConcurrentInstance.Set(This);
     }
+
+    public string Name { get; }
 
     ICommandLineOptions IApplicationContext.StartupOptions => StartupOptions;
 
@@ -91,15 +98,15 @@ public abstract partial class ApplicationContext<TContext, TStartupOptions> : IA
     /// <inheritdoc />
     public bool IsRunning
     {
-        get => mIsRunning && !IsShutdownRequested;
-        private set => mIsRunning = value;
+        get => _running && !IsShutdownRequested;
+        private set => _running = value;
     }
 
     #endregion Lifecycle Properties
 
     #region Services
 
-    private readonly IDictionary<Type, IApplicationService> mServices;
+    private readonly IDictionary<Type, IApplicationService> mServices = new ConcurrentDictionary<Type, IApplicationService>();
 
     /// <inheritdoc />
     public List<IApplicationService> Services => mServices.Values.ToList();
@@ -257,16 +264,16 @@ public abstract partial class ApplicationContext<TContext, TStartupOptions> : IA
 
         #region Wait for application thread
 
-        mNeedsLockPulse = lockUntilShutdown;
+        _needsLockPulse = lockUntilShutdown;
 
-        if (!mNeedsLockPulse)
+        if (!_needsLockPulse)
         {
             return;
         }
 
-        lock (mShutdownLock)
+        lock (_shutdownLock)
         {
-            Monitor.Wait(mShutdownLock);
+            Monitor.Wait(_shutdownLock);
             ApplicationContext.Context.Value?.Logger.LogTrace(DeveloperStrings.ApplicationContextExited);
         }
 
@@ -284,9 +291,9 @@ public abstract partial class ApplicationContext<TContext, TStartupOptions> : IA
     {
         Start(false);
 
-        mNeedsLockPulse = true;
+        _needsLockPulse = true;
 
-        return new LockingActionQueue(mShutdownLock);
+        return new LockingActionQueue(_shutdownLock);
     }
 
     /// <summary>
@@ -302,7 +309,7 @@ public abstract partial class ApplicationContext<TContext, TStartupOptions> : IA
     {
         Task disposeTask;
 
-        lock (mDisposeLock)
+        lock (_disposeLock)
         {
             if (IsDisposed || IsDisposing || IsShutdownRequested)
             {
@@ -315,9 +322,9 @@ public abstract partial class ApplicationContext<TContext, TStartupOptions> : IA
                 {
                     Dispose();
 
-                    lock (mShutdownLock)
+                    lock (_shutdownLock)
                     {
-                        Monitor.PulseAll(mShutdownLock);
+                        Monitor.PulseAll(_shutdownLock);
                     }
                 }
             );
@@ -513,7 +520,7 @@ public abstract partial class ApplicationContext<TContext, TStartupOptions> : IA
             throw new ObjectDisposedException(typeof(TContext).Name);
         }
 
-        lock (mDisposeLock)
+        lock (_disposeLock)
         {
             if (IsDisposing)
             {

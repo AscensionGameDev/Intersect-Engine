@@ -52,6 +52,11 @@ public interface IApplicationContext : IDisposable
     bool IsRunning { get; }
 
     /// <summary>
+    /// The name of the application.
+    /// </summary>
+    string Name { get; }
+
+    /// <summary>
     /// The options the application was started with.
     /// </summary>
     ICommandLineOptions StartupOptions { get; }

@@ -5,6 +5,7 @@ using Intersect.Server.Database;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 using System.Diagnostics;
+using System.Reflection;
 using Intersect.Factories;
 using Intersect.Plugins;
 using Intersect.Server.Plugins;
@@ -31,14 +32,19 @@ internal partial class ServerContext : ApplicationContext<ServerContext, ServerC
     );
 
     public static ServerContextFactory ServerContextFactory { get; set; } = (options, logger, packetHelper) =>
-        new ServerContext(options, logger, packetHelper);
+        new ServerContext(Assembly.GetExecutingAssembly(), options, logger, packetHelper);
 
     protected ServerContext(
+        Assembly entryAssembly,
         ServerCommandLineOptions startupOptions,
         ILogger logger,
         IPacketHelper packetHelper
     ) : base(
-        startupOptions, logger, packetHelper
+        entryAssembly,
+        "Intersect Server",
+        startupOptions,
+        logger,
+        packetHelper
     )
     {
         // Register the factory for creating service plugin contexts

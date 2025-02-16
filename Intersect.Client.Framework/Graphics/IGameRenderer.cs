@@ -40,11 +40,6 @@ public interface IGameRenderer
     FloatRect CurrentView { get; set; }
 
     /// <summary>
-    /// All currently standing request for screenshots of the client.
-    /// </summary>
-    List<Stream> ScreenshotRequests { get; }
-
-    /// <summary>
     /// The current framerate at which the client is drawing frames.
     /// </summary>
     int Fps { get; }
@@ -53,7 +48,7 @@ public interface IGameRenderer
     /// All valid video modes that the client can render at.
     /// </summary>
     List<string> ValidVideoModes { get; }
-    
+
     /// <summary>
     /// Clear the screen.
     /// </summary>
@@ -121,7 +116,7 @@ public interface IGameRenderer
     /// <param name="borderColor">The <see cref="Color"/> to use to render the border of this text with.</param>
     /// <param name="clipRect">The <see cref="FloatRect"/> containing locations that this text can not be rendered outside of, cutting off anything outside of it.</param>
     void DrawString(string text, GameFont gameFont, float x, float y, float fontScale, Color fontColor, bool worldPos, GameRenderTexture renderTexture, FloatRect clipRect, Color borderColor = null);
-    
+
     /// <summary>
     /// Measures a string of text.
     /// </summary>
@@ -134,6 +129,6 @@ public interface IGameRenderer
     /// <summary>
     /// Send a request for the client to take a screenshot the next draw cycle.
     /// </summary>
-    /// <param name="screenshotDir">The directory (relative to the client directory) to store the screenshot in.</param>
-    void RequestScreenshot(string screenshotDir = "screenshots");
+    /// <param name="pathToScreenshots">The directory (relative to the client directory) to store the screenshot in.</param>
+    void RequestScreenshot(string? pathToScreenshots = default);
 }

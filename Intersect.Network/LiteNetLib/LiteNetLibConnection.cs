@@ -93,7 +93,19 @@ public sealed class LiteNetLibConnection : AbstractConnection
     {
         buffer = default;
 
-        var cipherdata = reader.GetRemainingBytes();
+        var cipherdata = reader.GetBytesWithLength();
+
+#if DEBUG
+        byte[]? debugPlaindata = null;
+        if (Debugger.IsAttached)
+        {
+            if (!reader.EndOfData)
+            {
+                debugPlaindata = reader.GetBytesWithLength();
+            }
+        }
+#endif
+
         if (cipherdata == default)
         {
             return false;
@@ -115,7 +127,8 @@ public sealed class LiteNetLibConnection : AbstractConnection
             case EncryptionResult.EmptyInput:
             case EncryptionResult.SizeMismatch:
             case EncryptionResult.Error:
-                ApplicationContext.Context.Value?.Logger.LogWarning($"RIEP: {Guid} {decryptionResult}");
+                // Symmetric Decryption Error Result
+                ApplicationContext.Context.Value?.Logger.LogWarning($"SDER: {Guid} {decryptionResult}");
                 return false;
             default:
                 throw new UnreachableException();
@@ -141,7 +154,8 @@ public sealed class LiteNetLibConnection : AbstractConnection
             case EncryptionResult.EmptyInput:
             case EncryptionResult.SizeMismatch:
             case EncryptionResult.Error:
-                ApplicationContext.Context.Value?.Logger.LogWarning($"RIEP: {Guid} {encryptionResult}");
+                // Symmetric Encryption Error Result
+                ApplicationContext.Context.Value?.Logger.LogWarning($"SEER: {Guid} {encryptionResult}");
                 return false;
 
             default:
@@ -151,9 +165,16 @@ public sealed class LiteNetLibConnection : AbstractConnection
 #if DIAGNOSTIC
         ApplicationContext.Context.Value?.Logger.LogDebug($"Send({transmissionMode}) cipherdata({cipherdata.Length})={Convert.ToHexString(cipherdata)}");
 #endif
-        NetDataWriter data = new(false, cipherdata.Length + sizeof(byte));
+
+        NetDataWriter data = new(true, cipherdata.Length + sizeof(byte));
         data.Put((byte)1);
-        data.Put(cipherdata.ToArray());
+        data.PutBytesWithLength(cipherdata.ToArray());
+#if DEBUG
+        if (Debugger.IsAttached)
+        {
+            data.PutBytesWithLength(packetData);
+        }
+#endif
         return Send(data, transmissionMode);
     }
 

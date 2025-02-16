@@ -291,12 +291,15 @@ public partial class TableRow : Base, IColorableText
     {
         base.OnSizeChanged(oldSize, newSize);
 
-        ApplicationContext.CurrentContext.Logger.LogTrace(
-            "Table row {CanonicalName} resized from {OldSize} to {NewSize}",
-            ParentQualifiedName,
-            oldSize,
-            newSize
-        );
+        if (!string.IsNullOrWhiteSpace(Name))
+        {
+            ApplicationContext.CurrentContext.Logger.LogTrace(
+                "Table row {CanonicalName} resized from {OldSize} to {NewSize}",
+                ParentQualifiedName,
+                oldSize,
+                newSize
+            );
+        }
 
         if (oldSize.X == newSize.X)
         {

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Net;
+using System.Reflection;
 using System.Resources;
 using Intersect.Core;
 using Intersect.Framework.Net;
@@ -24,12 +25,17 @@ internal class FullServerContext : ServerContext, IFullServerContext
     private const string AsymmetricKeyManifestResourceName = "Intersect.Server.network.handshake.bkey";
 
     internal FullServerContext(
+        Assembly entryAssembly,
         ServerCommandLineOptions startupOptions,
         ILogger logger,
         IPacketHelper packetHelper
-    ) : base(startupOptions, logger, packetHelper)
+    ) : base(entryAssembly, startupOptions, logger, packetHelper)
     {
-        packetHelper.HandlerRegistry.TryRegisterAvailableMethodHandlers(typeof(NetworkedPacketHandler), new NetworkedPacketHandler(), false);
+        packetHelper.HandlerRegistry.TryRegisterAvailableMethodHandlers(
+            typeof(NetworkedPacketHandler),
+            new NetworkedPacketHandler(),
+            false
+        );
         packetHelper.HandlerRegistry.TryRegisterAvailableTypeHandlers(typeof(FullServerContext).Assembly);
     }
 

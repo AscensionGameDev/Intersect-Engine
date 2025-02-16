@@ -8,6 +8,7 @@ using Intersect.Client.General;
 using Intersect.Client.Maps;
 using Intersect.Configuration;
 using Intersect.Enums;
+using Intersect.Framework;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.GameObjects;
@@ -77,7 +78,7 @@ public static partial class Graphics
     public static ColorF PlayerLightColor = ColorF.White;
 
     //Game Renderer
-    public static GameRenderer? Renderer;
+    public static GameRenderer? Renderer { get; set; }
 
     //Cache the Y based rendering
     public static HashSet<Entity>[,]? RenderingEntities;
@@ -531,36 +532,38 @@ public static partial class Graphics
     //Game Rendering
     public static void Render(TimeSpan deltaTime, TimeSpan totalTime)
     {
+        if (Renderer is not { } renderer)
+        {
+            return;
+        }
+
         var takingScreenshot = false;
-        if (Renderer?.ScreenshotRequests.Count > 0)
+        if (renderer is { HasScreenshotRequests: true })
         {
-            takingScreenshot = Renderer.BeginScreenshot();
+            takingScreenshot = renderer.BeginScreenshot();
         }
 
-        if (Renderer == default)
-        {
-            return;
-        }
+        var gameState = Globals.GameState;
 
-        Renderer.Scale = Globals.GameState == GameStates.InGame ? Globals.Database.WorldZoom : 1.0f;
+        renderer.Scale = gameState == GameStates.InGame ? Globals.Database.WorldZoom : 1.0f;
 
-        if (!Renderer.Begin())
+        if (!renderer.Begin())
         {
             return;
         }
 
-        if (Renderer.GetScreenWidth() != sOldWidth ||
-            Renderer.GetScreenHeight() != sOldHeight ||
-            Renderer.DisplayModeChanged())
+        if (renderer.GetScreenWidth() != sOldWidth ||
+            renderer.GetScreenHeight() != sOldHeight ||
+            renderer.DisplayModeChanged())
         {
             sDarknessTexture = null;
             Interface.Interface.DestroyGwen();
             Interface.Interface.InitGwen();
-            sOldWidth = Renderer.GetScreenWidth();
-            sOldHeight = Renderer.GetScreenHeight();
+            sOldWidth = renderer.GetScreenWidth();
+            sOldHeight = renderer.GetScreenHeight();
         }
 
-        Renderer.Clear(Color.Black);
+        renderer.Clear(Color.Black);
         DrawCalls = 0;
         MapsDrawn = 0;
         EntitiesDrawn = 0;
@@ -568,51 +571,67 @@ public static partial class Graphics
 
         UpdateView();
 
-        switch (Globals.GameState)
+        switch (gameState)
         {
             case GameStates.Intro:
                 DrawIntro();
-
                 break;
+
             case GameStates.Menu:
                 DrawMenu();
-
                 break;
+
             case GameStates.Loading:
                 break;
+
             case GameStates.InGame:
                 DrawInGame(deltaTime);
-
                 break;
+
             case GameStates.Error:
                 break;
+
             default:
-                throw new ArgumentOutOfRangeException();
+                throw Exceptions.UnreachableInvalidEnum(gameState);
         }
 
-        Renderer.Scale = Globals.Database.UIScale;
+        renderer.Scale = Globals.Database.UIScale;
 
         Interface.Interface.DrawGui(deltaTime, totalTime);
 
         DrawGameTexture(
-            Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView,
-            new Color((int)Fade.Alpha, 0, 0, 0), null, GameBlendModes.None
+            tex: renderer.GetWhiteTexture(),
+            srcRectangle: new FloatRect(0, 0, 1, 1),
+            targetRect: CurrentView,
+            renderColor: new Color((int)Fade.Alpha, 0, 0, 0),
+            renderTarget: null,
+            blendMode: GameBlendModes.None
         );
 
         // Draw our mousecursor at the very end, but not when taking screenshots.
         if (!takingScreenshot && !string.IsNullOrWhiteSpace(ClientConfiguration.Instance.MouseCursor))
         {
-            var renderLoc = ConvertToWorldPointNoZoom(Globals.InputManager.GetMousePosition());
-            DrawGameTexture(
-                Globals.ContentManager.GetTexture(Framework.Content.TextureType.Misc, ClientConfiguration.Instance.MouseCursor), renderLoc.X, renderLoc.Y
-           );
+            var cursorTexture = Globals.ContentManager.GetTexture(
+                TextureType.Misc,
+                ClientConfiguration.Instance.MouseCursor
+            );
+
+            if (cursorTexture is not null)
+            {
+                var cursorPosition = ConvertToWorldPointNoZoom(Globals.InputManager.GetMousePosition());
+                DrawGameTexture(
+                    cursorTexture,
+                    cursorPosition.X,
+                    cursorPosition.Y
+                );
+            }
         }
 
-        Renderer.End();
+        renderer.End();
 
         if (takingScreenshot)
         {
-            Renderer.EndScreenshot();
+            renderer.EndScreenshot();
         }
     }
 

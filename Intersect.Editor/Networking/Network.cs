@@ -1,67 +1,12 @@
-using System.Diagnostics;
-using System.Reflection;
-using Intersect.Configuration;
 using Intersect.Editor.General;
 using Intersect.Network;
-using Intersect.Network.Events;
 using Intersect.Core;
 using Intersect.Threading;
 using Intersect.Plugins.Helpers;
-using Intersect.Plugins.Interfaces;
-using Intersect.Rsa;
-using System.Diagnostics.CodeAnalysis;
-using System.Net;
 using Intersect.Utilities;
 using Intersect.Network.Packets.Unconnected.Client;
-using Microsoft.Extensions.Logging;
 
 namespace Intersect.Editor.Networking;
-
-
-internal sealed class VirtualApplicationContext : IApplicationContext
-{
-    public VirtualApplicationContext(IPacketHelper packetHelper)
-    {
-        PacketHelper = packetHelper;
-    }
-
-    public bool HasErrors => throw new NotImplementedException();
-
-    public bool IsDisposed => throw new NotImplementedException();
-
-    public bool IsStarted => throw new NotImplementedException();
-
-    public bool IsRunning => throw new NotImplementedException();
-
-    public ICommandLineOptions StartupOptions => throw new NotImplementedException();
-
-    public ILogger Logger => Intersect.Core.ApplicationContext.Context.Value?.Logger ??
-                             throw new InvalidOperationException("Application context not yet initialized");
-
-    public IPacketHelper PacketHelper { get; }
-
-    public List<IApplicationService> Services => throw new NotImplementedException();
-
-    public void Dispose()
-    {
-        throw new NotImplementedException();
-    }
-
-    public TApplicationService GetService<TApplicationService>() where TApplicationService : IApplicationService
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Start(bool lockUntilShutdown = true)
-    {
-        throw new NotImplementedException();
-    }
-
-    public ILockingActionQueue StartWithActionQueue()
-    {
-        throw new NotImplementedException();
-    }
-}
 
 internal static partial class Network
 {
@@ -111,8 +56,8 @@ internal static partial class Network
             );
 
             var virtualApplicationContext = new VirtualApplicationContext(packetHelper);
-            var assembly = Assembly.GetExecutingAssembly();
-            using (var stream = assembly.GetManifestResourceStream("Intersect.Editor.network.handshake.bkey.pub"))
+            var executingAssembly = Assembly.GetExecutingAssembly();
+            using (var stream = executingAssembly.GetManifestResourceStream("Intersect.Editor.network.handshake.bkey.pub"))
             {
                 var rsaKey = new RsaKey(stream);
                 Debug.Assert(rsaKey != null, "rsaKey != null");
@@ -276,37 +221,4 @@ internal static partial class Network
         }
     }
 
-}
-
-internal sealed partial class VirtualEditorContext : IApplicationContext
-{
-    internal VirtualEditorContext(PacketHelper packetHelper, ILogger logger)
-    {
-        PacketHelper = packetHelper;
-        Logger = logger;
-    }
-
-    public bool HasErrors => Network.ConnectionDenied;
-
-    public bool IsDisposed { get; private set; }
-
-    public bool IsStarted => IsRunning || Network.Connecting;
-
-    public bool IsRunning => Network.Connected;
-
-    public ICommandLineOptions StartupOptions => default;
-
-    public ILogger Logger { get; }
-
-    public List<IApplicationService> Services { get; } = new List<IApplicationService>();
-
-    public IPacketHelper PacketHelper { get; }
-
-    public void Dispose() => IsDisposed = true;
-
-    public TApplicationService GetService<TApplicationService>() where TApplicationService : IApplicationService => default;
-
-    public void Start(bool lockUntilShutdown = true) { }
-
-    public ILockingActionQueue StartWithActionQueue() => default;
 }

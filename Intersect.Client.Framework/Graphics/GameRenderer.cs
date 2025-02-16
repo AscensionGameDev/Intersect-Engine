@@ -1,21 +1,23 @@
+using System.Collections.Concurrent;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Core;
+using Intersect.Framework.Collections;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Framework.Graphics;
 
-
 public abstract partial class GameRenderer : IGameRenderer, ITextHelper
 {
+    private readonly List<GameTexture> _allocatedTextures = [];
+    private readonly SortedList<long, GameTexture> _textureExpiration = [];
+    private readonly ConcurrentConditionalDequeue<ScreenshotRequest> _screenshotRequests = [];
+    private readonly ConcurrentDictionary<string, ScreenshotRequest> _screenshotRequestLookup = [];
 
-    public GameRenderer()
-    {
-        ScreenshotRequests = new List<Stream>();
-    }
-
-    public List<Stream> ScreenshotRequests { get; }
-
-    public Resolution ActiveResolution => new Resolution(PreferredResolution, OverrideResolution);
+    public Resolution ActiveResolution => new(PreferredResolution, OverrideResolution);
 
     public bool HasOverrideResolution => OverrideResolution != Resolution.Empty;
+
+    public bool HasScreenshotRequests => _screenshotRequests.Count > 0;
 
     public Resolution OverrideResolution { get; set; }
 
@@ -180,25 +182,59 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
 
     public abstract GameShader LoadShader(string shaderName);
 
-    public void RequestScreenshot(string screenshotDir = "screenshots")
+    public void RequestScreenshot(string? pathToScreenshots = default)
     {
-        if (!Directory.Exists(screenshotDir))
+        if (string.IsNullOrWhiteSpace(pathToScreenshots))
         {
-            Directory.CreateDirectory(screenshotDir ?? "");
+            var pathToPictures = Environment.GetFolderPath(
+                Environment.SpecialFolder.MyPictures,
+                Environment.SpecialFolderOption.Create
+            );
+            var pathToApplicationPictures = Path.Combine(pathToPictures, ApplicationContext.CurrentContext.Name);
+            pathToScreenshots = Path.Combine(pathToApplicationPictures, "screenshots");
         }
 
-        var screenshotNumber = 0;
-        string screenshotFile;
-        do
+        if (!Directory.Exists(pathToScreenshots))
         {
-            screenshotFile = Path.Combine(
-                screenshotDir ?? "", $"{DateTime.Now:yyyyMMdd-HHmmssfff}{screenshotNumber}.png"
-            );
+            Directory.CreateDirectory(pathToScreenshots);
+        }
 
-            ++screenshotNumber;
-        } while (File.Exists(screenshotFile) && screenshotNumber < 4);
+        var screenshotNumber = 1;
+        var screenshotFileName = $"{DateTime.Now:yyyyMMdd-HHmmssfff}.png";
+        var pathToScreenshotFile = Path.Combine(pathToScreenshots, screenshotFileName);
+        while (ScreenshotOrRequestExistsFor(pathToScreenshotFile) && screenshotNumber < 100)
+        {
+            screenshotFileName = $"{DateTime.Now:yyyyMMdd-HHmmssfff}.{screenshotNumber++:000}.png";
+            pathToScreenshotFile = Path.Combine(pathToScreenshots ?? string.Empty, screenshotFileName);
+        }
 
-        ScreenshotRequests.Add(File.OpenWrite(screenshotFile));
+        if (ScreenshotOrRequestExistsFor(pathToScreenshotFile))
+        {
+            ApplicationContext.CurrentContext.Logger.LogWarning("Failed to request screenshot");
+            return;
+        }
+
+        ScreenshotRequest screenshotRequest = new(
+            StreamFactory: () => File.OpenWrite(pathToScreenshotFile),
+            Hint: screenshotFileName
+        );
+
+        if (_screenshotRequestLookup.TryAdd(screenshotFileName, screenshotRequest))
+        {
+            _screenshotRequests.Enqueue(screenshotRequest);
+        }
+    }
+
+    private bool ScreenshotOrRequestExistsFor(string pathToScreenshotFile) =>
+        File.Exists(pathToScreenshotFile) || _screenshotRequestLookup.ContainsKey(pathToScreenshotFile);
+
+    protected void ProcessScreenshots(WriteTextureToStreamDelegate writeTexture)
+    {
+        Func<ScreenshotRequest, bool> consumer = screenshotRequest => writeTexture(
+            screenshotRequest.StreamFactory(),
+            screenshotRequest.Hint
+        );
+        while (_screenshotRequests.TryDequeueIf(consumer)) { }
     }
 
 }
