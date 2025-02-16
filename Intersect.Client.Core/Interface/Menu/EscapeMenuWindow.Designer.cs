@@ -1,10 +1,5 @@
-using System.Diagnostics;
-using Intersect.Client.Core;
-using Intersect.Client.Framework.Content;
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
-using Intersect.Client.Framework.Gwen.ControlInternal;
 
 namespace Intersect.Client.Interface.Menu;
 
@@ -14,17 +9,16 @@ public partial class EscapeMenuWindow
     {
         var canvas = Canvas ?? throw new InvalidOperationException($"Not attached to a {nameof(Canvas)}");
 
-        Button[] visibleButtons = new []
+        Button[] visibleButtons = new[]
         {
-            _buttonStart,
-            _buttonLogin,
-            _buttonRegister,
-            _buttonSettings,
-            _buttonCredits,
-            _buttonExit,
+            _settings,
+            _charselect,
+            _logout,
+            _exitdesktop,
+            _closemenu,
         }.Where(button => button.IsVisible).ToArray();
 
-        const int defaultWidth = 87;
+        const int defaultWidth = 97;
         const int defaultHeight = 154;
 
         Size = new Point(
@@ -45,12 +39,10 @@ public partial class EscapeMenuWindow
             button.Dock = Pos.Left;
 
             var buttonName = button.Name;
-            button.SetStateTexture(ComponentState.Normal, $"mainmenu{buttonName}.png");
-            button.SetStateTexture(ComponentState.Active, $"mainmenu{buttonName}_clicked.png");
-            button.SetStateTexture(ComponentState.Disabled, $"mainmenu{buttonName}_disabled.png");
-            button.SetStateTexture(ComponentState.Hovered, $"mainmenu{buttonName}_hovered.png");
+            button.SetStateTexture(ComponentState.Normal, $"ingame{buttonName}.png");
+            button.SetStateTexture(ComponentState.Active, $"ingame{buttonName}_clicked.png");
+            button.SetStateTexture(ComponentState.Disabled, $"ingame{buttonName}_disabled.png");
+            button.SetStateTexture(ComponentState.Hovered, $"ingame{buttonName}_hovered.png");
         }
-
-        LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
     }
 }

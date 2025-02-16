@@ -1,220 +1,213 @@
-using System.Security.Cryptography;
-using System.Text;
 using Intersect.Client.Core;
+using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
-using Intersect.Client.Networking;
-using Intersect.Core;
-using Intersect.Network;
-using Intersect.Network.Events;
-using Microsoft.Extensions.Logging;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Menu;
 
 public partial class EscapeMenuWindow : Window
 {
-    private readonly Button _buttonCredits;
-    private readonly Button _buttonExit;
-    private readonly Button _buttonLogin;
-    private readonly Button _buttonRegister;
-    private readonly Button _buttonSettings;
-    private readonly Button _buttonStart;
-    private readonly EscapeMenu _mainMenu;
+    private readonly Button _settings;
+    private readonly Button _charselect;
+    private readonly Button _logout;
+    private readonly Button _exitdesktop;
+    private readonly Button _closemenu;
+
+    private readonly Panel _versionPanel;
+
+    private readonly Func<SettingsWindow> _settingsWindowProvider;
 
     // ReSharper disable once SuggestBaseTypeForParameterInConstructor
-    public EscapeMenuWindow(Canvas canvas, EscapeMenu mainMenu)
+    public EscapeMenuWindow(Canvas canvas, Func<SettingsWindow> settingsWindowProvider)
         : base(canvas, Strings.EscapeMenu.Title, false,
             $"{nameof(EscapeMenuWindow)}_{(ClientContext.IsSinglePlayer ? "singleplayer" : "online")}")
     {
-        _mainMenu = mainMenu;
+        _settingsWindowProvider = settingsWindowProvider;
 
         Alignment = [Alignments.Center];
 
-        IsClosable = false;
         IsResizable = false;
         Padding = Padding.Zero;
         InnerPanelPadding = new Padding(8);
         Titlebar.MouseInputEnabled = false;
 
-        _buttonStart = new Button(this, nameof(_buttonStart))
+        _settings = new Button(this, nameof(_settings))
         {
             IsTabable = true,
-            IsVisible = ClientContext.IsSinglePlayer,
-            Text = Strings.MainMenu.Start,
+            Text = Strings.EscapeMenu.Settings,
         };
-        _buttonStart.Clicked += _buttonStart_Clicked;
+        _settings.Clicked += (s, e) => OpenSettingsWindow(true);
 
-        _buttonLogin = new Button(this, nameof(_buttonLogin))
+        _charselect = new Button(this, nameof(_charselect))
         {
-            IsDisabled = MainMenu.ActiveNetworkStatus != NetworkStatus.Online,
-            IsHidden = ClientContext.IsSinglePlayer,
             IsTabable = true,
-            Text = Strings.MainMenu.Login,
+            Text = Strings.EscapeMenu.CharacterSelect,
         };
-        _buttonLogin.Clicked += _buttonLogin_Clicked;
+        _charselect.Clicked += _buttonCharacterSelect_Clicked;
 
-        _buttonRegister = new Button(this, nameof(_buttonRegister))
+        _logout = new Button(this, nameof(_logout))
         {
-            IsDisabled = MainMenu.ActiveNetworkStatus != NetworkStatus.Online || (Options.IsLoaded && Options.Instance.BlockClientRegistrations),
-            IsHidden = ClientContext.IsSinglePlayer,
             IsTabable = true,
-            Text = Strings.MainMenu.Register,
+            Text = Strings.EscapeMenu.Logout,
         };
-        _buttonRegister.Clicked += _buttonRegister_Clicked;
+        _logout.Clicked += buttonLogout_Clicked;
 
-        _buttonSettings = new Button(this, nameof(_buttonSettings))
+        _exitdesktop = new Button(this, nameof(_exitdesktop))
         {
             IsTabable = true,
-            Text = Strings.MainMenu.Settings,
+            Text = Strings.EscapeMenu.ExitToDesktop,
         };
-        _buttonSettings.Clicked += _buttonSettings_Clicked;
+        _exitdesktop.Clicked += buttonQuit_Clicked;
+
+        _closemenu = new Button(this, nameof(_closemenu))
+        {
+            IsTabable = true,
+            Text = Strings.EscapeMenu.Close,
+        };
+        _closemenu.Clicked += (s, e) => Hide();
 
         if (!string.IsNullOrEmpty(Strings.MainMenu.SettingsTooltip))
         {
-            _buttonSettings.SetToolTipText(Strings.MainMenu.SettingsTooltip);
+            _settings.SetToolTipText(Strings.MainMenu.SettingsTooltip);
         }
 
-        _buttonCredits = new Button(this, nameof(_buttonCredits))
+        if (Options.Instance.Player.MaxCharacters <= 1)
         {
-            IsTabable = true,
-            Text = Strings.MainMenu.Credits,
-        };
-        _buttonCredits.Clicked += _buttonCredits_Clicked;
+            _charselect.IsDisabled = true;
+        }
 
-        _buttonExit = new Button(this, nameof(_buttonExit))
-        {
-            IsTabable = true,
-            Text = Strings.MainMenu.Exit,
-        };
-        _buttonExit.Clicked += _buttonExit_Clicked;
+        _versionPanel = new VersionPanel(canvas, name: nameof(_versionPanel));
     }
 
-    private void _buttonCredits_Clicked(Base sender, MouseButtonState arguments) => _mainMenu.SwitchToWindow<CreditsWindow>();
-
-    private static void _buttonExit_Clicked(Base sender, MouseButtonState arguments)
+    public override void Invalidate()
     {
-        ApplicationContext.Context.Value?.Logger.LogInformation("User clicked exit button.");
-        Globals.IsRunning = false;
-    }
-
-    #region Login
-
-    private void _buttonLogin_Clicked(Base sender, MouseButtonState arguments)
-    {
-        if (Networking.Network.InterruptDisconnectsIfConnected())
+        if (IsHidden)
         {
-            _mainMenu.SwitchToWindow<LoginWindow>();
+            RemoveModal();
         }
         else
         {
-            _buttonLogin.IsDisabled = Globals.WaitingOnServer;
-            _addLoginEvents();
-            Networking.Network.TryConnect();
+            MakeModal(true);
         }
-    }
 
-    private void _addLoginEvents()
-    {
-        MainMenu.ReceivedConfiguration += _loginConnected;
-        Networking.Network.Socket.ConnectionFailed += _loginConnectionFailed;
-        Networking.Network.Socket.Disconnected += _loginDisconnected;
-    }
-
-    private void _removeLoginEvents()
-    {
-        MainMenu.ReceivedConfiguration -= _loginConnected;
-        Networking.Network.Socket.ConnectionFailed -= _loginConnectionFailed;
-        Networking.Network.Socket.Disconnected -= _loginDisconnected;
-    }
-
-    private void _loginConnectionFailed(INetworkLayerInterface nli, ConnectionEventArgs args, bool denied) => _removeLoginEvents();
-
-    private void _loginDisconnected(INetworkLayerInterface nli, ConnectionEventArgs args) => _removeLoginEvents();
-
-    private void _loginConnected(object? sender, EventArgs eventArgs)
-    {
-        _removeLoginEvents();
-        _mainMenu.SwitchToWindow<LoginWindow>();
-    }
-
-    #endregion Login
-
-    #region Register
-
-    private void _buttonRegister_Clicked(Base sender, MouseButtonState arguments)
-    {
-        if (Networking.Network.InterruptDisconnectsIfConnected())
+        base.Invalidate();
+        if (Interface.GameUi?.GameCanvas != null)
         {
-            _mainMenu.SwitchToWindow<RegistrationWindow>();
+            Interface.GameUi.GameCanvas.MouseInputEnabled = IsVisible;
         }
-        else
+    }
+
+    /// <inheritdoc />
+    public override void ToggleHidden()
+    {
+        var settingsWindow = _settingsWindowProvider();
+        if (settingsWindow.IsVisible)
         {
-            _buttonRegister.IsDisabled = Globals.WaitingOnServer;
-            _addRegisterEvents();
-            Networking.Network.TryConnect();
+            return;
         }
+
+        base.ToggleHidden();
     }
 
-    private void _addRegisterEvents()
+    public void Update()
     {
-        MainMenu.ReceivedConfiguration += _registerConnected;
-        Networking.Network.Socket.ConnectionFailed += _registerConnectionFailed;
-        Networking.Network.Socket.Disconnected += _registerDisconnected;
+        if (!IsHidden)
+        {
+            BringToFront();
+        }
+
+        _charselect.IsDisabled = Globals.Me?.CombatTimer > Timing.Global.Milliseconds;
     }
 
-    private void _removeRegisterEvents()
+    public void OpenSettingsWindow(bool returnToMenu = false)
     {
-        MainMenu.ReceivedConfiguration -= _registerConnected;
-        Networking.Network.Socket.ConnectionFailed -= _registerConnectionFailed;
-        Networking.Network.Socket.Disconnected -= _registerDisconnected;
-    }
-
-    private void _registerConnectionFailed(INetworkLayerInterface nli, ConnectionEventArgs args, bool denied) => _removeRegisterEvents();
-
-    private void _registerDisconnected(INetworkLayerInterface nli, ConnectionEventArgs args) => _removeRegisterEvents();
-
-    private void _registerConnected(object? sender, EventArgs eventArgs)
-    {
-        _removeRegisterEvents();
-        _mainMenu.SwitchToWindow<RegistrationWindow>();
-    }
-
-    #endregion Register
-
-    private void _buttonSettings_Clicked(Base sender, MouseButtonState arguments) => _mainMenu.SettingsButton_Clicked();
-
-    private void _buttonStart_Clicked(Base sender, MouseButtonState arguments)
-    {
+        var settingsWindow = _settingsWindowProvider();
+        settingsWindow.Show(returnToMenu ? this : null);
         Hide();
-        Networking.Network.TryConnect();
-        const string singleplayer = "singleplayer";
-        PacketSender.SendLogin(singleplayer, Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(singleplayer))));
     }
 
-    internal void Reset() => _buttonSettings.Show();
-
-    internal void Update()
+    private void _buttonCharacterSelect_Clicked(Base sender, MouseButtonState arguments)
     {
-        if (Networking.Network.IsConnected)
+        ToggleHidden();
+        if (Globals.Me?.CombatTimer > Timing.Global.Milliseconds)
         {
-            _buttonLogin.IsDisabled = Globals.WaitingOnServer;
-            _buttonRegister.IsDisabled = Globals.WaitingOnServer;
+            ShowCombatWarning();
         }
         else
         {
-            UpdateDisabled();
+            LogoutToCharacterSelect(null, null);
         }
     }
 
-
-    internal void UpdateDisabled()
+    private void LogoutToCharacterSelect(object? sender, EventArgs? e)
     {
-        var networkStatus = MainMenu.ActiveNetworkStatus;
-        var isOffline = networkStatus != NetworkStatus.Online;
-        _buttonLogin.IsDisabled = isOffline;
-        _buttonRegister.IsDisabled = isOffline || (Options.IsLoaded && Options.Instance.BlockClientRegistrations);
+        if (Globals.Me != null)
+        {
+            Globals.Me.CombatTimer = 0;
+        }
+
+        Main.Logout(true);
+    }
+
+    private void buttonLogout_Clicked(Base sender, MouseButtonState arguments)
+    {
+        ToggleHidden();
+        if (Globals.Me?.CombatTimer > Timing.Global.Milliseconds)
+        {
+            ShowCombatWarning();
+        }
+        else
+        {
+            LogoutToMainMenu(null, null);
+        }
+    }
+
+    private void LogoutToMainMenu(object? sender, EventArgs? e)
+    {
+        if (Globals.Me != null)
+        {
+            Globals.Me.CombatTimer = 0;
+        }
+
+        Main.Logout(false);
+    }
+
+    private void buttonQuit_Clicked(Base sender, MouseButtonState arguments)
+    {
+        ToggleHidden();
+        if (Globals.Me?.CombatTimer > Timing.Global.Milliseconds)
+        {
+            ShowCombatWarning();
+        }
+        else
+        {
+            ExitToDesktop(null, null);
+        }
+    }
+
+    private void ShowCombatWarning()
+    {
+        AlertWindow.Open(
+            Strings.Combat.WarningCharacterSelect,
+            Strings.Combat.WarningTitle,
+            AlertType.Warning,
+            handleSubmit: LogoutToCharacterSelect,
+            inputType: InputType.YesNo
+        );
+    }
+
+    private void ExitToDesktop(object? sender, EventArgs? e)
+    {
+        if (Globals.Me != null)
+        {
+            Globals.Me.CombatTimer = 0;
+        }
+
+        Globals.IsRunning = false;
     }
 }
