@@ -175,9 +175,11 @@ public partial class EventWindow : Panel
         if (_typewriting)
         {
             _promptLabel.ClearText();
-            _writer = new Typewriter(_dialog.Prompt ?? string.Empty, text => _promptLabel.AppendText(text, _promptTemplateLabel));
+            _writer = new Typewriter(parsedText.ToArray(), (text, color) =>
+            {
+                _promptLabel.AddText(text, color, Alignments.Left, _promptTemplateLabel.Font);
+            });
         }
-
         Defer(
             () =>
             {
