@@ -959,6 +959,21 @@ public static partial class Strings
         public static LocalizedString SectionGPUStatistics = @"GPU Statistics";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString RenderTargetAllocations = @"Render Target Allocations";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString TextureAllocations = @"Texture Allocations";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString TextureCount = @"Texture Assets";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString FreeVRAM = @"Free VRAM";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString TotalVRAM = @"Total VRAM";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString RenderBufferVRAMFree = @"Render Buffer VRAM Free";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1029,6 +1044,9 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Title = @"Debug";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString TabLabelGPU = @"GPU";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString TabLabelInfo = @"Info";

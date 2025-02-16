@@ -140,7 +140,7 @@ public partial class Base : IDisposable
 
     private string? _tooltipBackgroundName;
 
-    private GameTexture? _tooltipBackground { get; set; }
+    private IGameTexture? _tooltipBackground { get; set; }
 
     private Color? _tooltipTextColor;
 
@@ -183,7 +183,7 @@ public partial class Base : IDisposable
             }
 
             _tooltipBackgroundName = value;
-            GameTexture? texture = null;
+            IGameTexture? texture = null;
             if (!string.IsNullOrWhiteSpace(_tooltipBackgroundName))
             {
                 texture = GameContentManager.Current.GetTexture(
@@ -1473,7 +1473,7 @@ public partial class Base : IDisposable
         if (obj["ToolTipBackground"] is JValue { Type: JTokenType.String } tooltipBackgroundName)
         {
             var fileName = tooltipBackgroundName.Value<string>();
-            GameTexture texture = null;
+            IGameTexture texture = null;
             if (!string.IsNullOrWhiteSpace(fileName))
             {
                 texture = GameContentManager.Current?.GetTexture(Content.TextureType.Gui, fileName);
@@ -3341,6 +3341,11 @@ public partial class Base : IDisposable
         var dockFillChildren =
             children.Where(child => !child.ShouldSkipLayout && child.Dock.HasFlag(Pos.Fill)).ToArray();
 
+        if (Name == "TabGPU")
+        {
+            Name?.ToString();
+        }
+
         foreach (var child in directionalDockChildren)
         {
             var childDock = child.Dock;
@@ -3504,9 +3509,46 @@ public partial class Base : IDisposable
             child.RecurseLayout(skin);
         }
 
+        var boundsForFillNodes = remainingBounds;
         mInnerBounds = remainingBounds;
 
         Point sizeToFitDockFillNodes = default;
+
+        var largestDockFillSize = dockFillChildren.Aggregate(
+            default(Point),
+            (size, node) =>
+                new Point(Math.Max(size.X, node.Width), Math.Max(size.Y, node.Height))
+        );
+
+        int suggestedWidth, suggestedHeight;
+        if (dockFillChildren.Length < 1)
+        {
+            suggestedWidth = remainingBounds.Width;
+            suggestedHeight = remainingBounds.Height;
+        }
+        else if (largestDockFillSize.X > largestDockFillSize.Y)
+        {
+            if (largestDockFillSize.X > remainingBounds.Width)
+            {
+                suggestedWidth = remainingBounds.Width / dockFillChildren.Length;
+                suggestedHeight = Math.Max(largestDockFillSize.Y, remainingBounds.Height);
+            }
+            else
+            {
+                suggestedWidth = Math.Max(largestDockFillSize.X, remainingBounds.Width);
+                suggestedHeight = remainingBounds.Height / dockFillChildren.Length;
+            }
+        }
+        else if (largestDockFillSize.Y > remainingBounds.Height)
+        {
+            suggestedWidth = Math.Max(largestDockFillSize.X, remainingBounds.Width);
+            suggestedHeight = remainingBounds.Height / dockFillChildren.Length;
+        }
+        else
+        {
+            suggestedWidth = remainingBounds.Width / dockFillChildren.Length;
+            suggestedHeight = Math.Max(largestDockFillSize.Y, remainingBounds.Height);
+        }
 
         //
         // Fill uses the left over space, so do that now.
@@ -3525,8 +3567,8 @@ public partial class Base : IDisposable
             );
 
             Point newSize = new(
-                remainingBounds.Width - childMarginH,
-                remainingBounds.Height - childMarginV
+                suggestedWidth - childMarginH,
+                suggestedHeight - childMarginV
             );
 
             var childMinimumSize = child.MinimumSize;
@@ -3537,7 +3579,24 @@ public partial class Base : IDisposable
             if (neededX > 0 || neededY > 0)
             {
                 exhaustSize = true;
-                _requiredSizeForDockFillNodes = new Point(Width + neededX, Height + neededY);
+
+                if (sizeToFitDockFillNodes == default)
+                {
+                    sizeToFitDockFillNodes = Size;
+                }
+
+                sizeToFitDockFillNodes.X += neededX;
+                sizeToFitDockFillNodes.Y += neededY;
+            }
+            else if (remainingBounds.Width < 1 || remainingBounds.Height < 1)
+            {
+                if (sizeToFitDockFillNodes == default)
+                {
+                    sizeToFitDockFillNodes = Size;
+                }
+
+                sizeToFitDockFillNodes.X += Math.Max(10, boundsForFillNodes.Width / dockFillChildren.Length);
+                sizeToFitDockFillNodes.Y += Math.Max(10, boundsForFillNodes.Height / dockFillChildren.Length);
             }
 
             newSize.X = Math.Max(childMinimumSize.X, newSize.X);
@@ -3591,11 +3650,6 @@ public partial class Base : IDisposable
         while (_deferredActions.TryDequeue(out var deferredAction))
         {
             deferredAction();
-        }
-
-        if (sizeToFitDockFillNodes != default)
-        {
-
         }
 
         // ReSharper disable once InvertIf

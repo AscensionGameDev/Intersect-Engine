@@ -67,4 +67,17 @@ public static partial class GL
             return -1;
         }
     }
+
+    public static long TotalMemory
+    {
+        get
+        {
+            if (IsNVX_gpu_memory_infoSupported)
+            {
+                return glGetNVXGPUMemoryInfo(GLenum.GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX) * 1000L;
+            }
+
+            return -1;
+        }
+    }
 }

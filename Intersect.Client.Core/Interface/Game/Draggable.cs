@@ -16,7 +16,7 @@ partial class Draggable
 
     ImagePanel mPnl;
 
-    public Draggable(int x, int y, GameTexture tex, Color color)
+    public Draggable(int x, int y, IGameTexture tex, Color color)
     {
         mPnl = new ImagePanel(Interface.GameUi.GameCanvas, "Draggable");
         mPnl.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());

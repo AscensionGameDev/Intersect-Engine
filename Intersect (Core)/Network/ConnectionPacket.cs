@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using Intersect.Framework.Core;
 using Intersect.Network.Packets;
 using Intersect.Utilities;
 using MessagePack;

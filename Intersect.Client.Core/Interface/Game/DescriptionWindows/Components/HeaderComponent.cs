@@ -35,9 +35,9 @@ public partial class HeaderComponent : ComponentBase
     /// <summary>
     /// Set the icon on this header.
     /// </summary>
-    /// <param name="texture">The <see cref="GameTexture"/> to use for display purposes.</param>
+    /// <param name="texture">The <see cref="IGameTexture"/> to use for display purposes.</param>
     /// <param name="color">The <see cref="Color"/> to use to display the texture.</param>
-    public void SetIcon(GameTexture texture, Color color)
+    public void SetIcon(IGameTexture texture, Color color)
     {
         mIcon.Texture = texture;
         mIcon.RenderColor = color;

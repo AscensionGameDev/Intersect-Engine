@@ -1,5 +1,6 @@
 ﻿using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
+using Intersect.Framework.Core;
 using Intersect.Utilities;
 
 namespace Intersect.Client.Maps;

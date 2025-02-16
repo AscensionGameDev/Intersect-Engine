@@ -7,6 +7,7 @@ namespace Intersect.Client.Interface;
 public abstract partial class MutableInterface : IMutableInterface
 {
     private static DebugWindow? _debugWindow;
+    private static DebugWindow? _debugWindow2;
 
     public static void DetachDebugWindow()
     {
@@ -14,21 +15,26 @@ public abstract partial class MutableInterface : IMutableInterface
         {
             _debugWindow.Parent = default;
         }
+
+        if (_debugWindow2 != null)
+        {
+            _debugWindow2.Parent = default;
+        }
     }
 
     internal static void DisposeDebugWindow()
     {
         _debugWindow?.Dispose();
+        _debugWindow2?.Dispose();
     }
 
     private static void EnsureDebugWindowInitialized(Base parent)
     {
-        if (_debugWindow == default)
-        {
-            _debugWindow = new DebugWindow(parent);
-        }
-
+        _debugWindow ??= new DebugWindow(parent);
         _debugWindow.Parent = parent;
+
+        _debugWindow2 ??= new DebugWindow(parent);
+        _debugWindow2.Parent = parent;
     }
 
     protected internal MutableInterface(Base root)
@@ -98,6 +104,10 @@ public abstract partial class MutableInterface : IMutableInterface
     public static bool ToggleDebug()
     {
         _debugWindow?.ToggleHidden();
+        if (_debugWindow is { } dw && _debugWindow2 is { } dw2)
+        {
+            dw2.IsVisible = dw.IsVisible;
+        }
         return _debugWindow?.IsVisible ?? false;
     }
 }

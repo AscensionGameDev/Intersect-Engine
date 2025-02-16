@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Net;
 using Intersect.Core;
+using Intersect.Framework.Core;
 using Intersect.Framework.Reflection;
 using Intersect.Memory;
 using Intersect.Plugins.Interfaces;

@@ -2,17 +2,17 @@
 
 public interface IAsset
 {
-    event Action<IAsset>? Disposed;
+    public event Action<IAsset>? Disposed;
 
-    event Action<IAsset>? Loaded;
+    public event Action<IAsset>? Loaded;
 
-    event Action<IAsset>? Unloaded;
+    public event Action<IAsset>? Unloaded;
 
-    bool IsDisposed { get; }
+    public bool IsDisposed { get; }
 
-    bool IsLoaded { get; }
+    public bool IsLoaded { get; }
 
     string Id { get; }
 
-    string? Name { get; }
+    public string Name { get; }
 }

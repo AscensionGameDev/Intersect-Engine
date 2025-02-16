@@ -10,7 +10,7 @@ namespace Intersect.Client.Framework.Gwen.Skin.Texturing;
 public partial struct Single
 {
 
-    private readonly GameTexture mTexture;
+    private readonly IGameTexture mTexture;
 
     private readonly float[] mUv;
 
@@ -18,7 +18,7 @@ public partial struct Single
 
     private readonly int mHeight;
 
-    public Single(GameTexture texture, float x, float y, float w, float h)
+    public Single(IGameTexture texture, float x, float y, float w, float h)
     {
         mTexture = texture;
         float texw = 1;

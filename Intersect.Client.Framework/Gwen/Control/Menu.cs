@@ -15,7 +15,7 @@ public partial class Menu : ScrollControl
 
     private string mBackgroundTemplateFilename;
 
-    private GameTexture mBackgroundTemplateTex;
+    private IGameTexture mBackgroundTemplateTex;
 
     private bool mDeleteOnClose;
 
@@ -164,7 +164,7 @@ public partial class Menu : ScrollControl
     /// <returns>Newly created control.</returns>
     public virtual MenuItem AddItem(
         string text,
-        GameTexture? iconTexture,
+        IGameTexture? iconTexture,
         string? textureFilename = default,
         string? accelerator = default,
         GameFont? font = default
@@ -378,12 +378,12 @@ public partial class Menu : ScrollControl
         }
     }
 
-    public GameTexture GetTemplate()
+    public IGameTexture GetTemplate()
     {
         return mBackgroundTemplateTex;
     }
 
-    public void SetBackgroundTemplate(GameTexture texture, string fileName)
+    public void SetBackgroundTemplate(IGameTexture texture, string fileName)
     {
         if (texture == null && !string.IsNullOrWhiteSpace(fileName))
         {

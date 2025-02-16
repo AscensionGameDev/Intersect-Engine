@@ -20,7 +20,7 @@ public abstract partial class GameAudioSource : IAsset
 
     public string Id => Name ?? _id.ToString();
 
-    public string? Name { get; set; }
+    public string Name { get; set; }
 
     public abstract int TypeVolume { get; }
 

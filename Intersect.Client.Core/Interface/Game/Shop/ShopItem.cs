@@ -36,7 +36,7 @@ public partial class ShopItem
     private int mMySlot;
 
     //Textures
-    private GameRenderTexture mSfTex;
+    private IGameRenderTexture mSfTex;
 
     //Drag/Drop References
     private ShopWindow mShopWindow;

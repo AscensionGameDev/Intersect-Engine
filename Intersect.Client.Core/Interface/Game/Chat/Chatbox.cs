@@ -14,6 +14,7 @@ using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.Core;
 using Intersect.Enums;
+using Intersect.Framework.Core;
 using Intersect.Localization;
 using Intersect.Utilities;
 using Microsoft.Extensions.Logging;
@@ -42,7 +43,7 @@ public partial class Chatbox
 
     private Button _chatboxClearLogButton;
 
-    private readonly GameTexture _chatboxTexture;
+    private readonly IGameTexture _chatboxTexture;
 
     private Label mChatboxText;
 

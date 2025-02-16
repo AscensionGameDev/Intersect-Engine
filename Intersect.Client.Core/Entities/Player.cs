@@ -22,6 +22,7 @@ using Intersect.Configuration;
 using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Extensions;
+using Intersect.Framework.Core;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
@@ -2704,7 +2705,7 @@ public partial class Player : Entity, IPlayer
         if (backgroundColor != Color.Transparent)
         {
             Graphics.DrawGameTexture(
-                Graphics.Renderer.GetWhiteTexture(),
+                Graphics.Renderer.WhitePixel,
                 new FloatRect(0, 0, 1, 1),
                 new FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y),
                 backgroundColor

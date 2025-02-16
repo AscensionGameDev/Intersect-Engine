@@ -1,12 +1,13 @@
 ﻿namespace Intersect.Client.Framework.Graphics;
 
-
 public partial struct Resolution : IComparable<Resolution>
 {
-
     public static readonly Resolution Empty = default;
 
-    private static readonly char[] Separators = { 'x', ',', ' ', '/', '-', '_', '.', '~' };
+    private static readonly char[] Separators =
+    {
+        'x', ',', ' ', '/', '-', '_', '.', '~',
+    };
 
     public readonly ushort X;
 
@@ -25,10 +26,9 @@ public partial struct Resolution : IComparable<Resolution>
     }
 
     public Resolution(Resolution resolution, long overrideX = 0, long overrideY = 0)
-        : this(
-            overrideX > 0 ? overrideX : resolution.X, overrideY > 0 ? overrideY : resolution.Y
-        )
-    { }
+        : this(overrideX > 0 ? overrideX : resolution.X, overrideY > 0 ? overrideY : resolution.Y)
+    {
+    }
 
     public Resolution(Resolution resolution, Resolution? overrideResolution = null)
     {
@@ -45,13 +45,25 @@ public partial struct Resolution : IComparable<Resolution>
         return diffX != 0 ? diffX : Y - other.Y;
     }
 
-    public override bool Equals(object obj) => obj is Resolution resolution && Equals(resolution);
+    public override bool Equals(object obj)
+    {
+        return obj is Resolution resolution && Equals(resolution);
+    }
 
-    public bool Equals(Resolution other) => X == other.X && Y == other.Y;
+    public bool Equals(Resolution other)
+    {
+        return X == other.X && Y == other.Y;
+    }
 
-    public override int GetHashCode() => (X << 16) & Y;
+    public override int GetHashCode()
+    {
+        return (X << 16) & Y;
+    }
 
-    public override string ToString() => $"{X},{Y}";
+    public override string ToString()
+    {
+        return $"{X},{Y}";
+    }
 
     public static Resolution Parse(string resolution)
     {
@@ -88,9 +100,13 @@ public partial struct Resolution : IComparable<Resolution>
         }
     }
 
-    public static bool operator ==(Resolution left, Resolution right) =>
-        left.X == right.X && left.Y == right.Y;
+    public static bool operator ==(Resolution left, Resolution right)
+    {
+        return left.X == right.X && left.Y == right.Y;
+    }
 
-    public static bool operator !=(Resolution left, Resolution right) =>
-        left.X != right.X && left.Y != right.Y;
+    public static bool operator !=(Resolution left, Resolution right)
+    {
+        return left.X != right.X && left.Y != right.Y;
+    }
 }

@@ -21,13 +21,13 @@ public partial class Dragger : Base
     private string? mMouseDownSound;
     private string? mMouseUpSound;
 
-    private GameTexture? mClickedImage;
+    private IGameTexture? mClickedImage;
     private string? mClickedImageFilename;
-    private GameTexture? mDisabledImage;
+    private IGameTexture? mDisabledImage;
     private string? mDisabledImageFilename;
-    private GameTexture? mHoverImage;
+    private IGameTexture? mHoverImage;
     private string? mHoverImageFilename;
-    private GameTexture? mNormalImage;
+    private IGameTexture? mNormalImage;
     private string? mNormalImageFilename;
 
     protected Base? _target;
@@ -240,7 +240,7 @@ public partial class Dragger : Base
     ///     Sets the button's image.
     /// </summary>
     /// <param name="textureName">Texture name. Null to remove.</param>
-    public virtual void SetImage(GameTexture? texture, string? name, ComponentState state)
+    public virtual void SetImage(IGameTexture? texture, string? name, ComponentState state)
     {
         switch (state)
         {
@@ -269,7 +269,7 @@ public partial class Dragger : Base
         }
     }
 
-    public virtual GameTexture? GetImage(ComponentState state)
+    public virtual IGameTexture? GetImage(ComponentState state)
     {
         switch (state)
         {

@@ -21,7 +21,7 @@ public partial class ScrollBar : Base
 
     private string mBackgroundTemplateFilename;
 
-    private GameTexture mBackgroundTemplateTex;
+    private IGameTexture mBackgroundTemplateTex;
 
     protected float mContentSize;
 
@@ -172,12 +172,12 @@ public partial class ScrollBar : Base
         }
     }
 
-    public GameTexture GetTemplate()
+    public IGameTexture GetTemplate()
     {
         return mBackgroundTemplateTex;
     }
 
-    public void SetBackgroundTemplate(GameTexture texture, string fileName)
+    public void SetBackgroundTemplate(IGameTexture texture, string fileName)
     {
         if (texture == null && !string.IsNullOrWhiteSpace(fileName))
         {
@@ -286,12 +286,12 @@ public partial class ScrollBar : Base
         return null;
     }
 
-    public void SetScrollBarImage(GameTexture texture, string fileName, ComponentState state)
+    public void SetScrollBarImage(IGameTexture texture, string fileName, ComponentState state)
     {
         mBar.SetImage(texture, fileName, state);
     }
 
-    public GameTexture GetScrollBarImage(ComponentState state)
+    public IGameTexture GetScrollBarImage(ComponentState state)
     {
         return mBar.GetImage(state);
     }

@@ -1,6 +1,7 @@
 ﻿using Intersect.Utilities;
 using NUnit.Framework;
 using System.Diagnostics;
+using Intersect.Framework.Core;
 
 namespace Intersect.Tests.Server
 {

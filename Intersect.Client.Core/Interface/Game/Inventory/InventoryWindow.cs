@@ -291,7 +291,7 @@ public partial class InventoryWindow
 
             if (Items[i].EquipPanel.Texture == null)
             {
-                Items[i].EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
+                Items[i].EquipPanel.Texture = Graphics.Renderer.WhitePixel;
             }
 
             var xPadding = Items[i].Container.Margin.Left + Items[i].Container.Margin.Right;

@@ -1,6 +1,7 @@
 using System.Net;
 using Intersect.Core;
 using Intersect.Enums;
+using Intersect.Framework.Core;
 using Intersect.Server.Core;
 using Intersect.Server.Entities;
 using Intersect.Server.General;

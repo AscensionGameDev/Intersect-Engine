@@ -9,6 +9,7 @@ using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Core;
 using Intersect.Enums;
+using Intersect.Framework.Core;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;

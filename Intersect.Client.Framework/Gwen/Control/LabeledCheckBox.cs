@@ -180,7 +180,7 @@ public partial class LabeledCheckBox : Base, IAutoSizeToContents, ITextContainer
         _checkbox.SetSize(w, h);
     }
 
-    public void SetImage(GameTexture texture, string fileName, Checkbox.ControlState state)
+    public void SetImage(IGameTexture texture, string fileName, Checkbox.ControlState state)
     {
         _checkbox.SetImage(texture, fileName, state);
     }

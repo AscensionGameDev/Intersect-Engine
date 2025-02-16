@@ -1,3 +1,4 @@
+using Intersect.Framework.Core;
 using Intersect.GameObjects;
 using Intersect.Server.Entities;
 using Intersect.Server.Entities.Events;

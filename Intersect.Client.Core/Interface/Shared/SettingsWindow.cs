@@ -12,6 +12,7 @@ using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Config;
 using Intersect.Core;
+using Intersect.Framework.Core;
 using Intersect.Utilities;
 using Microsoft.Extensions.Logging;
 using static Intersect.Client.Framework.File_Management.GameContentManager;

@@ -2,6 +2,7 @@ using Intersect.Client.Framework.Entities;
 using Intersect.Client.Maps;
 using Intersect.Core;
 using Intersect.Enums;
+using Intersect.Framework.Core;
 using Intersect.Utilities;
 using Microsoft.Extensions.Logging;
 

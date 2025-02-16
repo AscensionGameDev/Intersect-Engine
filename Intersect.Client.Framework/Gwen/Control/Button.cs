@@ -19,7 +19,7 @@ public partial class Button : Label
     private bool mCenterImage;
 
     private readonly Dictionary<ButtonSoundState, string> _stateSoundNames = [];
-    private readonly Dictionary<ComponentState, GameTexture> _stateTextures = [];
+    private readonly Dictionary<ComponentState, IGameTexture> _stateTextures = [];
     private readonly Dictionary<ComponentState, string> _stateTextureNames = [];
 
     private bool mToggle;
@@ -418,7 +418,7 @@ public partial class Button : Label
     /// <param name="texture"></param>
     /// <param name="name"></param>
     /// <param name="state"></param>
-    public void SetStateTexture(GameTexture? texture, string? name, ComponentState state)
+    public void SetStateTexture(IGameTexture? texture, string? name, ComponentState state)
     {
         if (texture == null && !string.IsNullOrWhiteSpace(name))
         {
@@ -444,7 +444,7 @@ public partial class Button : Label
         }
     }
 
-    public GameTexture? GetStateTexture(ComponentState state) => _stateTextures.GetValueOrDefault(state);
+    public IGameTexture? GetStateTexture(ComponentState state) => _stateTextures.GetValueOrDefault(state);
 
     public string? GetStateTextureName(ComponentState state) => _stateTextureNames.GetValueOrDefault(state);
 

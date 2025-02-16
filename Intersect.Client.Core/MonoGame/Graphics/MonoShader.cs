@@ -7,17 +7,15 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Client.MonoGame.Graphics;
 
-
 public partial class MonoShader : GameShader
 {
+    private readonly Dictionary<string, Color> Colors = new();
 
-    private Effect mShader;
+    private readonly Dictionary<string, float> Floats = new();
 
-    private bool mValuesChanged = false;
+    private readonly Effect mShader;
 
-    private Dictionary<string, Color> Colors = new Dictionary<string, Color>();
-
-    private Dictionary<string, float> Floats = new Dictionary<string, float>();
+    private bool mValuesChanged;
 
     public MonoShader(string shaderName, ContentManager contentManager) : base(shaderName)
     {
@@ -98,5 +96,4 @@ public partial class MonoShader : GameShader
     {
         return mShader;
     }
-
 }

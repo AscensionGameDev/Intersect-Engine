@@ -19,7 +19,7 @@ public interface IEntity : IDisposable
     string Sprite { get; }
     string TransformedSprite { get; }
     string Face { get; }
-    GameTexture? Texture { get; }
+    IGameTexture? Texture { get; }
     Color Color { get; }
     FloatRect WorldPos { get; }
     float OffsetX { get; }

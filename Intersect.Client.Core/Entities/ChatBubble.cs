@@ -4,13 +4,14 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.General;
+using Intersect.Framework.Core;
 using Intersect.Utilities;
 
 namespace Intersect.Client.Entities;
 
 public partial class ChatBubble
 {
-    private readonly GameTexture? mBubbleTex;
+    private readonly IGameTexture? mBubbleTex;
 
     private readonly Entity? mOwner;
 

@@ -32,7 +32,7 @@ public partial struct Bordered : IEquatable<Bordered>
         );
     }
 
-    private GameTexture mTexture;
+    private IGameTexture mTexture;
 
     private readonly SubRect[] mRects;
 
@@ -43,7 +43,7 @@ public partial struct Bordered : IEquatable<Bordered>
     private float mHeight;
 
     public Bordered(
-        GameTexture texture,
+        IGameTexture texture,
         float x,
         float y,
         float w,
@@ -94,7 +94,7 @@ public partial struct Bordered : IEquatable<Bordered>
     }
 
     private void Init(
-        GameTexture texture,
+        IGameTexture texture,
         float x,
         float y,
         float w,

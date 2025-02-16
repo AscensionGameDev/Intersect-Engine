@@ -164,7 +164,7 @@ public class Intersect2021 : TexturedBase
             return;
         }
 
-        GameTexture? renderTexture = null;
+        IGameTexture? renderTexture = null;
         if (windowControl.TryGetTexture(WindowControl.ControlState.Active, out var activeTexture))
         {
             renderTexture = activeTexture;

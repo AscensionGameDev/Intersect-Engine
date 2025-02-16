@@ -17,7 +17,7 @@ namespace Intersect.Client.Framework.Gwen.Skin;
 /// </summary>
 public class IntersectSkin : TexturedBase
 {
-    private static GameTexture LoadEmbeddedSkinTexture(GameContentManager contentManager)
+    private static IGameTexture LoadEmbeddedSkinTexture(GameContentManager contentManager)
     {
         const string skinTextureName = "skin-intersect.png";
         var skinResourceName = $"{typeof(IntersectSkin).Namespace}.{skinTextureName}";
@@ -41,7 +41,7 @@ public class IntersectSkin : TexturedBase
             skinTextureName
         );
 
-        return contentManager.Load<GameTexture>(
+        return contentManager.Load<IGameTexture>(
             ContentType.Interface,
             skinTextureName,
             () => typeof(IntersectSkin).Assembly.GetManifestResourceStream(skinResourceName) ??
@@ -295,7 +295,7 @@ public class IntersectSkin : TexturedBase
             return;
         }
 
-        GameTexture? renderTexture = null;
+        IGameTexture? renderTexture = null;
         if (windowControl.TryGetTexture(WindowControl.ControlState.Active, out var activeTexture))
         {
             renderTexture = activeTexture;

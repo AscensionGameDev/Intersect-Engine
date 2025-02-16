@@ -126,7 +126,7 @@ public partial class Base : IDisposable, ITextHelper
     {
     }
 
-    public virtual GameTexture GetWhiteTexture()
+    public virtual IGameTexture GetWhiteTexture()
     {
         return null;
     }
@@ -168,7 +168,7 @@ public partial class Base : IDisposable, ITextHelper
     ///     Loads the specified texture.
     /// </summary>
     /// <param name="t"></param>
-    public virtual void LoadTexture(GameTexture t)
+    public virtual void LoadTexture(IGameTexture t)
     {
     }
 
@@ -176,7 +176,7 @@ public partial class Base : IDisposable, ITextHelper
     ///     Frees the specified texture.
     /// </summary>
     /// <param name="t">Texture to free.</param>
-    public virtual void FreeTexture(GameTexture t)
+    public virtual void FreeTexture(IGameTexture t)
     {
     }
 
@@ -190,7 +190,7 @@ public partial class Base : IDisposable, ITextHelper
     /// <param name="u2">Texture coordinate u2.</param>
     /// <param name="v2">Texture coordinate v2.</param>
     public virtual void DrawTexturedRect(
-        GameTexture? texture,
+        IGameTexture? texture,
         Rectangle targetBounds,
         Color color,
         float u1 = 0,
@@ -293,7 +293,7 @@ public partial class Base : IDisposable, ITextHelper
     /// <param name="x">X.</param>
     /// <param name="y">Y.</param>
     /// <returns>Pixel color.</returns>
-    public virtual Color PixelColor(GameTexture texture, uint x, uint y)
+    public virtual Color PixelColor(IGameTexture texture, uint x, uint y)
     {
         return PixelColor(texture, x, y, Color.White);
     }
@@ -306,7 +306,7 @@ public partial class Base : IDisposable, ITextHelper
     /// <param name="y">Y.</param>
     /// <param name="defaultColor">Color to return on failure.</param>
     /// <returns>Pixel color.</returns>
-    public virtual Color PixelColor(GameTexture texture, uint x, uint y, Color defaultColor)
+    public virtual Color PixelColor(IGameTexture texture, uint x, uint y, Color defaultColor)
     {
         return defaultColor;
     }
