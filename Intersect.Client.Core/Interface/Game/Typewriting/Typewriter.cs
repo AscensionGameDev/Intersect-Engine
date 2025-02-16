@@ -1,4 +1,5 @@
 using Intersect.Client.Core;
+using Intersect.Client.Utilities;
 using Intersect.Configuration;
 using Intersect.Utilities;
 
@@ -6,8 +7,7 @@ namespace Intersect.Client.Interface.Game.Typewriting;
 
 internal sealed class Typewriter
 {
-    public delegate void TextWrittenHandler(string text);
-
+    public delegate void TextWrittenHandler(string text, Color color);
     private static HashSet<string> FullStops => ClientConfiguration.Instance.TypewriterFullStops;
     private static long FullStopSpeed => ClientConfiguration.Instance.TypewriterFullStopDelay;
     private static HashSet<string> PartialStops => ClientConfiguration.Instance.TypewriterPauses;
@@ -15,24 +15,24 @@ internal sealed class Typewriter
     private static long TypingSpeed => ClientConfiguration.Instance.TypewriterPartDelay;
 
     private int _offset;
+    private int _segmentIndex;
     private string? _lastText;
     private long _nextUpdateTime;
 
     private readonly TextWrittenHandler _textWrittenHandler;
-    private readonly string _text;
+    private readonly ColorizedText[] _segments;
 
     public bool IsDone { get; private set; }
     public long DoneAtMilliseconds { get; private set; }
 
-    public Typewriter(string text, TextWrittenHandler textWrittenHandler)
+    public Typewriter(ColorizedText[] segments, TextWrittenHandler textWrittenHandler)
     {
-        _text = text.ReplaceLineEndings("\n");
+        _segments = segments;
         _textWrittenHandler = textWrittenHandler;
         _nextUpdateTime = Timing.Global.MillisecondsUtc;
-
+        _segmentIndex = 0;
         _offset = 0;
         _lastText = null;
-
         IsDone = false;
     }
 
@@ -43,7 +43,7 @@ internal sealed class Typewriter
             return;
         }
 
-        if (_offset >= _text.Length)
+        if (_segmentIndex >= _segments.Length)
         {
             End();
             return;
@@ -57,28 +57,44 @@ internal sealed class Typewriter
         var emitSound = false;
         while (_nextUpdateTime <= Timing.Global.MillisecondsUtc)
         {
-            if (_offset >= _text.Length)
+            if (_segmentIndex >= _segments.Length)
             {
                 End();
-                break;
+                return;
             }
 
             emitSound |= _offset % ClientConfiguration.Instance.TypewriterSoundFrequency == 0;
 
-            string nextText;
-            if (char.IsSurrogatePair(_text, _offset))
+            var segment = _segments[_segmentIndex];
+
+            if (_offset >= segment.Text.Length)
             {
-                nextText = _text[_offset..(_offset + 2)];
+                _offset = 0;
+                _segmentIndex++;
+
+                if (_segmentIndex >= _segments.Length)
+                {
+                    End();
+                    continue;
+                }
+
+                segment = _segments[_segmentIndex];
+            }
+
+            string nextText;
+            if (char.IsSurrogatePair(segment.Text, _offset))
+            {
+                nextText = segment.Text[_offset..(_offset + 2)];
                 _offset += 2;
             }
             else
             {
-                nextText = _text[_offset..(_offset + 1)];
+                nextText = segment.Text[_offset..(_offset + 1)];
                 ++_offset;
             }
 
             _nextUpdateTime += GetTypingDelayFor(nextText, _lastText);
-            _textWrittenHandler(nextText);
+            _textWrittenHandler(nextText, segment.Color);
             _lastText = nextText;
         }
 
@@ -118,14 +134,20 @@ internal sealed class Typewriter
 
     public void End()
     {
-        if (IsDone || _text.Length < 1)
+        if (IsDone)
         {
             return;
         }
 
-        if (_offset < _text.Length)
+        while (_segmentIndex < _segments.Length)
         {
-            _textWrittenHandler(_text[_offset..]);
+            var segment = _segments[_segmentIndex];
+            if (_offset < segment.Text.Length)
+            {
+                _textWrittenHandler(segment.Text[_offset..], segment.Color);
+            }
+            _segmentIndex++;
+            _offset = 0;
         }
 
         IsDone = true;
