@@ -68,7 +68,6 @@
 
   <ItemGroup>
     <PackageReference Include="AscensionGameDev.Intersect.Rsa" Version="0.8.0.9-beta" />
-    <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="7.0.0" />
     <PackageReference Include="Microsoft.Diagnostics.Runtime" Version="3.0.442202" />

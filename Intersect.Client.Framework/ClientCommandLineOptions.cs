@@ -4,7 +4,7 @@ using Intersect.Core;
 
 namespace Intersect.Client.Core;
 
-internal readonly partial struct ClientCommandLineOptions : ICommandLineOptions
+public readonly partial struct ClientCommandLineOptions : ICommandLineOptions
 {
     // ReSharper disable once ConvertToPrimaryConstructor
     public ClientCommandLineOptions(

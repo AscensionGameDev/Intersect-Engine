@@ -22,10 +22,11 @@ internal static class Program
 
         try
         {
-            Console.WriteLine($"Starting {Assembly.GetExecutingAssembly().GetMetadataName()}...");
+            var executingAssembly = Assembly.GetExecutingAssembly();
+            Console.WriteLine($"Starting {executingAssembly.GetMetadataName()}...");
 
             ServerContext.ServerContextFactory = (options, logger, packetHelper) =>
-                new FullServerContext(options, logger, packetHelper);
+                new FullServerContext(executingAssembly, options, logger, packetHelper);
 
             ServerContext.NetworkFactory = (context, parameters, handlePacket, shouldProcessPacket) =>
             {
@@ -39,7 +40,7 @@ internal static class Program
 
             Client.EnqueueNetworkTask = action => ServerNetwork.Pool.QueueWorkItem(action);
 
-            Bootstrapper.Start(args);
+            Bootstrapper.Start(executingAssembly, args);
         }
         catch (Exception exception)
         {

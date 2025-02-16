@@ -27,7 +27,7 @@ static class Program
     ///     The main entry point for the application.
     /// </summary>
     [STAThread]
-    internal static void Main(string[] args)
+    internal static void Main(Assembly entryAssembly, string[] args)
     {
         var waitForDebugger = args.Contains("--debugger");
 
@@ -44,7 +44,7 @@ static class Program
 
         try
         {
-            Bootstrapper.Start(args);
+            Bootstrapper.Start(entryAssembly, args);
         }
         catch (NoSuitableGraphicsDeviceException noSuitableGraphicsDeviceException)
         {

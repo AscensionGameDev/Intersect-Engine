@@ -45,7 +45,7 @@ internal static class Bootstrapper
 
     public static ILockingActionQueue MainThread { get; private set; }
 
-    public static void Start(params string[] args)
+    public static void Start(Assembly entryAssembly, params string[] args)
     {
         (string[] Args, Parser Parser, ServerCommandLineOptions CommandLineOptions) parsedArguments =
             ParseCommandLineArgs(args);
@@ -68,7 +68,7 @@ internal static class Bootstrapper
 
         var executingAssembly = Assembly.GetExecutingAssembly();
         var (_, logger) = new LoggerConfiguration().CreateLoggerForIntersect(
-            executingAssembly,
+            entryAssembly,
             "Server",
             LoggingOptions.LoggingLevelSwitch
         );

@@ -12,8 +12,10 @@ using Intersect.Client.MonoGame.NativeInterop;
 using Intersect.Client.MonoGame.NativeInterop.OpenGL;
 using Intersect.Client.ThirdParty;
 using Intersect.Configuration;
+using Intersect.Core;
 using Intersect.Extensions;
 using Intersect.Utilities;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -25,7 +27,6 @@ namespace Intersect.Client.MonoGame.Graphics;
 
 public class MonoRenderer : GameRenderer
 {
-
     private readonly List<MonoTexture> mAllTextures = new List<MonoTexture>();
 
     private BasicEffect mBasicEffect;
@@ -992,6 +993,29 @@ public class MonoRenderer : GameRenderer
         return true;
     }
 
+    private bool WriteScreenshotRenderTargetAsPngTo(Stream stream, string? hint)
+    {
+        if (mScreenshotRenderTarget.IsContentLost)
+        {
+            return false;
+        }
+
+        try
+        {
+            mScreenshotRenderTarget.SaveAsPng(stream, mScreenshotRenderTarget.Width, mScreenshotRenderTarget.Height);
+            return true;
+        }
+        catch (Exception exception)
+        {
+            ApplicationContext.CurrentContext.Logger.LogWarning(
+                exception,
+                "Exception when writing screenshot to {Target}",
+                string.IsNullOrWhiteSpace(hint) ? "stream" : hint
+            );
+            return false;
+        }
+    }
+
     public override void EndScreenshot()
     {
         if (mScreenshotRenderTarget == null)
@@ -999,23 +1023,7 @@ public class MonoRenderer : GameRenderer
             return;
         }
 
-        ScreenshotRequests.ForEach(
-            screenshotRequestStream =>
-            {
-                if (screenshotRequestStream == null)
-                {
-                    return;
-                }
-
-                mScreenshotRenderTarget.SaveAsPng(
-                    screenshotRequestStream, mScreenshotRenderTarget.Width, mScreenshotRenderTarget.Height
-                );
-
-                screenshotRequestStream.Close();
-            }
-        );
-
-        ScreenshotRequests.Clear();
+        ProcessScreenshots(WriteScreenshotRenderTargetAsPngTo);
 
         if (mGraphicsDevice == null)
         {

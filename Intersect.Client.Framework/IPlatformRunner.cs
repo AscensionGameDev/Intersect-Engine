@@ -3,7 +3,7 @@
 /// <summary>
 /// Declares the API surface to launch instances of platform-specific (e.g. MonoGame, Unity) runners.
 /// </summary>
-internal interface IPlatformRunner
+public interface IPlatformRunner
 {
     /// <summary>
     /// Starts the platform-specific runner for the provided context and post-startup action.

@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using Intersect.Client.Networking;
 using Intersect.Client.Plugins.Contexts;
 using Intersect.Configuration;
@@ -23,9 +24,13 @@ internal sealed partial class ClientContext : ApplicationContext<ClientContext, 
 
     private IPlatformRunner? mPlatformRunner;
 
-    internal ClientContext(ClientCommandLineOptions startupOptions, ClientConfiguration clientConfiguration, ILogger logger, IPacketHelper packetHelper) : base(
-        startupOptions, logger, packetHelper
-    )
+    internal ClientContext(
+        Assembly entryAssembly,
+        ClientCommandLineOptions startupOptions,
+        ClientConfiguration clientConfiguration,
+        ILogger logger,
+        IPacketHelper packetHelper
+    ) : base(entryAssembly, "Intersect", startupOptions, logger, packetHelper)
     {
         var hostNameOrAddress = clientConfiguration.Host;
         try
@@ -41,7 +46,10 @@ internal sealed partial class ClientContext : ApplicationContext<ClientContext, 
             }
 
             ClientNetwork.UnresolvableHostNames.Add(startupOptions.Server);
-            ApplicationContext.Context.Value?.Logger.LogError(socketException, $"Failed to resolve host: '{hostNameOrAddress}'");
+            ApplicationContext.Context.Value?.Logger.LogError(
+                socketException,
+                $"Failed to resolve host: '{hostNameOrAddress}'"
+            );
             IsDeveloper = true;
         }
 
