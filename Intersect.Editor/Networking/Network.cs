@@ -1,10 +1,20 @@
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Net;
+using System.Reflection;
+using Intersect.Configuration;
 using Intersect.Editor.General;
 using Intersect.Network;
 using Intersect.Core;
+using Intersect.Editor.Core;
+using Intersect.Network.Events;
 using Intersect.Threading;
 using Intersect.Plugins.Helpers;
 using Intersect.Utilities;
 using Intersect.Network.Packets.Unconnected.Client;
+using Intersect.Rsa;
+using Microsoft.Extensions.Logging;
+using ApplicationContext = Intersect.Core.ApplicationContext;
 
 namespace Intersect.Editor.Networking;
 
@@ -35,33 +45,21 @@ internal static partial class Network
     {
         if (EditorLidgrenNetwork == null)
         {
-            var packetTypeRegistry = new PacketTypeRegistry(
-                Intersect.Core.ApplicationContext.Context.Value?.Logger,
-                typeof(SharedConstants).Assembly
-            );
-            if (!packetTypeRegistry.TryRegisterBuiltIn())
-            {
-                throw new Exception("Failed to register built-in packets.");
-            }
-
-            var packetHandlerRegistry = new PacketHandlerRegistry(packetTypeRegistry, Intersect.Core.ApplicationContext.Context.Value?.Logger);
-            packetHandlerRegistry.TryRegisterAvailableTypeHandlers(typeof(Network).Assembly, requireAttribute: true);
-            var packetHelper = new PacketHelper(packetTypeRegistry, packetHandlerRegistry);
-            PackedIntersectPacket.AddKnownTypes(packetHelper.AvailablePacketTypes);
-            var virtualEditorContext = new VirtualEditorContext(packetHelper, Intersect.Core.ApplicationContext.Context.Value?.Logger);
-            PacketHandler = new PacketHandler(virtualEditorContext, packetHandlerRegistry);
+            var editorContext = ApplicationContext.GetCurrentContext<EditorContext>();
+            var packetHandlerRegistry = editorContext.PacketHelper.HandlerRegistry;
+            packetHandlerRegistry.TryRegisterAvailableTypeHandlers(typeof(Intersect.Editor.Networking.Network).Assembly, requireAttribute: true);
+            PacketHandler = new PacketHandler(editorContext, packetHandlerRegistry);
 
             var config = new NetworkConfiguration(
                 ClientConfiguration.Instance.Host, ClientConfiguration.Instance.Port
             );
 
-            var virtualApplicationContext = new VirtualApplicationContext(packetHelper);
             var executingAssembly = Assembly.GetExecutingAssembly();
             using (var stream = executingAssembly.GetManifestResourceStream("Intersect.Editor.network.handshake.bkey.pub"))
             {
                 var rsaKey = new RsaKey(stream);
                 Debug.Assert(rsaKey != null, "rsaKey != null");
-                EditorLidgrenNetwork = new ClientNetwork(virtualApplicationContext, config, rsaKey.Parameters);
+                EditorLidgrenNetwork = new ClientNetwork(editorContext, config, rsaKey.Parameters);
             }
 
             EditorLidgrenNetwork.Handler = PacketHandler.HandlePacket;

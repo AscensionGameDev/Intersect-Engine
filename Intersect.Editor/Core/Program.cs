@@ -3,6 +3,8 @@ using System.Reflection;
 using Intersect.Editor.Forms;
 using Intersect.Editor.General;
 using Intersect.Framework.Logging;
+using Intersect.Network;
+using Intersect.Plugins.Helpers;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Core;
@@ -21,19 +23,6 @@ public static partial class Program
 
     static Program()
     {
-        LoggingLevelSwitch loggingLevelSwitch =
-            new(Debugger.IsAttached ? LogEventLevel.Debug : LogEventLevel.Information);
-
-        var executingAssembly = Assembly.GetExecutingAssembly();
-        var (_, logger) = new LoggerConfiguration().CreateLoggerForIntersect(
-            executingAssembly,
-            "Editor",
-            loggingLevelSwitch
-        );
-
-        ApplicationContext.Context.Value =
-            new FakeApplicationContextForThisGarbageWinFormsEditorThatIHateAndWishItWouldBurnInAFireContext(logger);
-
         var iconStream = typeof(Program).Assembly.GetManifestResourceStream(IconManifestResourceName);
         if (iconStream == default)
         {
@@ -52,7 +41,34 @@ public static partial class Program
     [STAThread]
     public static void Main()
     {
-        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogTrace("Starting editor...");
+        LoggingLevelSwitch loggingLevelSwitch =
+            new(Debugger.IsAttached ? LogEventLevel.Debug : LogEventLevel.Information);
+
+        var executingAssembly = Assembly.GetExecutingAssembly();
+        var (loggerFactory, logger) = new LoggerConfiguration().CreateLoggerForIntersect(
+            executingAssembly,
+            "Editor",
+            loggingLevelSwitch
+        );
+
+        var packetTypeRegistry = new PacketTypeRegistry(
+            loggerFactory.CreateLogger<PacketTypeRegistry>(),
+            typeof(SharedConstants).Assembly
+        );
+        if (!packetTypeRegistry.TryRegisterBuiltIn())
+        {
+            throw new Exception("Failed to register built-in packets.");
+        }
+
+        var packetHandlerRegistry = new PacketHandlerRegistry(
+            packetTypeRegistry,
+            loggerFactory.CreateLogger<PacketHandlerRegistry>()
+        );
+        var packetHelper = new PacketHelper(packetTypeRegistry, packetHandlerRegistry);
+        PackedIntersectPacket.AddKnownTypes(packetHelper.AvailablePacketTypes);
+        EditorContext editorContext = new(executingAssembly, packetHelper, logger);
+        
+        ApplicationContext.CurrentContext.Logger.LogTrace("Starting editor...");
 
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         Application.ThreadException += Application_ThreadException;
@@ -60,7 +76,7 @@ public static partial class Program
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
 
-        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogTrace("Unpacking libraries...");
+        ApplicationContext.CurrentContext.Logger.LogTrace("Unpacking libraries...");
 
         //Place sqlite3.dll where it's needed.
         var dllname = Environment.Is64BitProcess ? "sqlite3x64.dll" : "sqlite3x86.dll";
@@ -76,15 +92,15 @@ public static partial class Program
             }
         }
 
-        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogTrace("Libraries unpacked.");
+        ApplicationContext.CurrentContext.Logger.LogTrace("Libraries unpacked.");
 
-        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogTrace("Creating forms...");
+        ApplicationContext.CurrentContext.Logger.LogTrace("Creating forms...");
         Globals.UpdateForm = new FrmUpdate();
         Globals.LoginForm = new FrmLogin();
         Globals.MainForm = new FrmMain();
-        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogTrace("Forms created.");
+        ApplicationContext.CurrentContext.Logger.LogTrace("Forms created.");
 
-        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogTrace("Starting application.");
+        ApplicationContext.CurrentContext.Logger.LogTrace("Starting application.");
         Application.Run(Globals.UpdateForm);
     }
 
@@ -96,7 +112,7 @@ public static partial class Program
     //Really basic error handler for debugging purposes
     public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs exception)
     {
-        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(
+        ApplicationContext.CurrentContext.Logger.LogError(
             (Exception)exception?.ExceptionObject,
             "Unhandled exception"
         );
