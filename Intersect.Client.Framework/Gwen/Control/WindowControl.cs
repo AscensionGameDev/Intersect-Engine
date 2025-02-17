@@ -279,10 +279,10 @@ public partial class WindowControl : ResizableControl
 
         IsHidden = true;
 
-        if (mModal != null)
+        if (_modal != null)
         {
-            mModal.DelayedDelete();
-            mModal = null;
+            _modal.DelayedDelete();
+            _modal = null;
         }
 
         if (mDeleteOnClose)
