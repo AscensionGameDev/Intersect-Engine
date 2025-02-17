@@ -141,8 +141,14 @@ public static partial class Interface
 
         //The canvases dispose of all of their children.
         sMenuCanvas?.Dispose();
+        sMenuCanvas = null;
+        MenuUi?.Dispose();
+        MenuUi = null;
+
         sGameCanvas?.Dispose();
+        sGameCanvas = null;
         GameUi?.Dispose();
+        GameUi = null;
 
         // Destroy our target UI as well! Above code does NOT appear to clear this properly.
         if (Globals.Me != null)

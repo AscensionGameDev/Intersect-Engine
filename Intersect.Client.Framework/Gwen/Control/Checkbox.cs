@@ -1,6 +1,7 @@
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Input;
+using Intersect.Framework.Eventing;
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;
@@ -9,7 +10,7 @@ namespace Intersect.Client.Framework.Gwen.Control;
 /// <summary>
 ///     CheckBox control.
 /// </summary>
-public partial class Checkbox : Button
+public partial class Checkbox : Button, ICheckbox
 {
 
     public enum ControlState
@@ -172,17 +173,17 @@ public partial class Checkbox : Button
     /// <summary>
     ///     Invoked when the checkbox has been checked.
     /// </summary>
-    public event GwenEventHandler<EventArgs> Checked;
+    public event EventHandler<ICheckbox, EventArgs>? Checked;
 
     /// <summary>
     ///     Invoked when the checkbox has been unchecked.
     /// </summary>
-    public event GwenEventHandler<EventArgs> UnChecked;
+    public event EventHandler<ICheckbox, EventArgs>? Unchecked;
 
     /// <summary>
     ///     Invoked when the checkbox state has been changed.
     /// </summary>
-    public event GwenEventHandler<EventArgs> CheckChanged;
+    public event EventHandler<ICheckbox, EventArgs>? CheckChanged;
 
     /// <summary>
     ///     Handler for CheckChanged event.
@@ -198,9 +199,9 @@ public partial class Checkbox : Button
         }
         else
         {
-            if (UnChecked != null)
+            if (Unchecked != null)
             {
-                UnChecked.Invoke(this, EventArgs.Empty);
+                Unchecked.Invoke(this, EventArgs.Empty);
             }
         }
 
