@@ -798,7 +798,7 @@ internal partial class MonoRenderer : GameRenderer
     {
         EndSpriteBatch();
 
-        _frames++;
+        ++_frames;
         var now = Timing.Global.MillisecondsUtc;
         if (_nextFpsTime > now)
         {
@@ -810,8 +810,8 @@ internal partial class MonoRenderer : GameRenderer
 
         var frames = _frames;
         var scaledFrames = (int)(frames * scale);
-        _fps = scaledFrames;
-        _frames = Math.Max(0, frames - scaledFrames);
+        _fps = frames;//scaledFrames;
+        _frames = 0;//Math.Max(0, frames - scaledFrames);
         _nextFpsTime = now + 1000;
         mGameWindow.Title = Strings.Main.GameName;
     }

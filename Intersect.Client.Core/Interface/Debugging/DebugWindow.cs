@@ -1,14 +1,10 @@
 using System.Diagnostics;
-using Intersect.Async;
 using Intersect.Client.Core;
-using Intersect.Client.Entities;
 using Intersect.Client.Framework.Content;
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
-using Intersect.Client.Framework.Gwen.Control.Data;
 using Intersect.Client.Framework.Gwen.Control.Layout;
 using Intersect.Client.Framework.Gwen.Control.Utility;
 using Intersect.Client.Framework.Input;
@@ -74,9 +70,16 @@ internal sealed partial class DebugWindow : Window
 
     private Table CreateGPUAllocationsTable(Base parent)
     {
-        ScrollControl gpuAllocationsScroller = new(parent, nameof(gpuAllocationsScroller))
+        Panel gpuAllocationsPanel = new(parent, name: nameof(gpuAllocationsPanel))
         {
             Dock = Pos.Fill,
+        };
+
+        ScrollControl gpuAllocationsScroller = new(gpuAllocationsPanel, nameof(gpuAllocationsScroller))
+        {
+            Dock = Pos.Fill,
+            InnerPanelPadding = new Padding(8, 0),
+            ShouldCacheToTexture = true,
         };
 
         gpuAllocationsScroller.VerticalScrollBar.BaseNudgeAmount *= 2;
@@ -110,7 +113,13 @@ internal sealed partial class DebugWindow : Window
         {
             var gameTexture = args.GameTexture;
             var row = EnsureRowFor(gameTexture, creating: false);
-            row.SetCellText(1, "Allocated");
+            if (row.GetCellContents(1) is not Label statusLabel)
+            {
+                return;
+            }
+
+            statusLabel.Text = "Allocated";
+            statusLabel.TextColorOverride = new Color(63, 255, 63);
         };
 
         Graphics.Renderer.TextureDisposed += (_, args) =>
@@ -126,7 +135,13 @@ internal sealed partial class DebugWindow : Window
         {
             var gameTexture = args.GameTexture;
             var row = EnsureRowFor(gameTexture, creating: false);
-            row.SetCellText(1, "Freed");
+            if (row.GetCellContents(1) is not Label statusLabel)
+            {
+                return;
+            }
+
+            statusLabel.Text = "Freed";
+            statusLabel.TextColorOverride = new Color(255, 63, 63);
         };
 
         return table;
@@ -143,8 +158,20 @@ internal sealed partial class DebugWindow : Window
                 return existingRow;
             }
 
-            existingRow = table.AddRow(gameTexture.Name);
+            existingRow = table.InsertRowSorted(
+                gameTexture.Name,
+                userData: gameTexture,
+                keySelector: SelectRowUserDataGameTextureName
+            );
+
+            var nameCell = existingRow.GetCellContents(0);
+            nameCell.MouseInputEnabled = true;
+            nameCell.Clicked += (_, _) => GameClipboard.Instance.SetText(gameTexture.Name);
             existingRow.SetCellText(1, "Created");
+            if (existingRow.GetCellContents(1) is Label statusLabel)
+            {
+                statusLabel.TextColorOverride = new Color(191, 191, 191);
+            }
             textureRowLookup[gameTexture] = existingRow;
 
             table.SizeToChildren(recursive: true);
@@ -153,13 +180,17 @@ internal sealed partial class DebugWindow : Window
         }
     }
 
+    private static string? SelectRowUserDataGameTextureName(Base? node)
+    {
+        return node?.UserData is IGameTexture gameTexture ? gameTexture.Name : null;
+    }
+
 
     private Table CreateGPUStatisticsTable(Base parent)
     {
         ScrollControl gpuStatisticsScroller = new(parent, nameof(gpuStatisticsScroller))
         {
             Dock = Pos.Fill,
-            IsVisible = false,
         };
 
         gpuStatisticsScroller.VerticalScrollBar.BaseNudgeAmount *= 2;
@@ -221,7 +252,7 @@ internal sealed partial class DebugWindow : Window
 
     private SearchableTree CreateAssetsList(Base parent)
     {
-        var dataProvider = new TexturesSearchableTreeDataProvider(Current, this);
+        var dataProvider = new AssetsSearchableTreeDataProvider(Current, this);
         SearchableTree assetList = new(parent, dataProvider, name: nameof(AssetsList))
         {
             Dock = Pos.Fill,
@@ -326,7 +357,7 @@ internal sealed partial class DebugWindow : Window
     {
         TableDebugStats.SizeToChildren();
 
-        LoadJsonUi(UI.Debug, Graphics.Renderer?.GetResolutionString());
+        // LoadJsonUi(UI.Debug, Graphics.Renderer?.GetResolutionString());
     }
 
     protected override void OnAttached(Base parent)
