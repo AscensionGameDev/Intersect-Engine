@@ -28,8 +28,8 @@ partial class GuildWindow : Window
     private readonly MenuItem _kickOption;
     private readonly MenuItem _transferOption;
 
-    private readonly bool _addButtonUsed;
-    private readonly bool _addPopupButtonUsed;
+    private bool _addButtonUsed;
+    private bool _addPopupButtonUsed;
     private GuildMember? _selectedMember;
 
     public GuildWindow(Canvas gameCanvas) : base(gameCanvas, Globals.Me?.Guild, false, nameof(GuildWindow))
@@ -162,9 +162,6 @@ partial class GuildWindow : Window
         _transferOption.Clicked += transferOption_Clicked;
 
         #endregion
-
-        _addButtonUsed = !_buttonAdd.IsHidden;
-        _addPopupButtonUsed = !_buttonAddPopup.IsHidden;
     }
 
     protected override void EnsureInitialized()
@@ -173,6 +170,9 @@ partial class GuildWindow : Window
 
         _contextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer?.GetResolutionString());
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer?.GetResolutionString());
+
+        _addButtonUsed = !_buttonAdd.IsHidden;
+        _addPopupButtonUsed = !_buttonAddPopup.IsHidden;
     }
 
     //Methods
@@ -449,7 +449,7 @@ partial class GuildWindow : Window
 
         _ = new InputBox(
             Strings.Guilds.TransferTitle,
-            Strings.Guilds.TransferPrompt.ToString(_selectedMember?.Name, rank.Title, Globals.Me?.Guild),
+            Strings.Guilds.TransferToMemberPrompt.ToString(_selectedMember?.Name, rank.Title, Globals.Me?.Guild),
             InputType.TextInput,
             userData: _selectedMember,
             onSubmit: (sender, args) =>

@@ -1328,7 +1328,9 @@ public static partial class Strings
         public static LocalizedString Transfer = @"Transfer";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString TransferPrompt = @"This action will completely transfer all ownership of your guild to {00} and you will lose your rank of {01}. If you are sure you want to hand over your guild enter '{02}' below.";
+        public static LocalizedString TransferToMemberPrompt = @"This action will completely transfer all ownership of your guild to \c{{#80ff80}}{00}\c{{}} and you will lose your rank of \c{{#ff9f40}}{01}\c{{}}.
+
+If you are sure you want to hand over your guild enter '\c{{#ff8080}}{02}\c{{}}' below.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString TransferTitle = @"Transfer Guild";
