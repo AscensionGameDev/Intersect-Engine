@@ -32,9 +32,9 @@ public static partial class Interface
 
     public static bool HideUi;
 
-    private static Canvas sGameCanvas;
+    private static Canvas? sGameCanvas;
 
-    private static Canvas sMenuCanvas;
+    private static Canvas? sMenuCanvas;
 
     public static bool SetupHandlers { get; set; }
 
@@ -140,14 +140,27 @@ public static partial class Interface
         MutableInterface.DetachDebugWindow();
 
         //The canvases dispose of all of their children.
-        sMenuCanvas?.Dispose();
+        if (MenuUi is { } menuUi)
+        {
+            menuUi.Dispose();
+        }
+        else
+        {
+            sMenuCanvas?.Dispose();
+        }
         sMenuCanvas = null;
-        MenuUi?.Dispose();
         MenuUi = null;
 
-        sGameCanvas?.Dispose();
+        if (GameUi is { } gameUi)
+        {
+            gameUi.Dispose();
+        }
+        else
+        {
+            sGameCanvas?.Dispose();
+        }
+
         sGameCanvas = null;
-        GameUi?.Dispose();
         GameUi = null;
 
         // Destroy our target UI as well! Above code does NOT appear to clear this properly.

@@ -599,7 +599,15 @@ internal partial class IntersectGame : Game
             }
 
             using var game = new IntersectGame(context, postStartupAction);
-            game.Run();
+            try
+            {
+                game.Run();
+            }
+            catch (Exception exception)
+            {
+                context.Logger.LogCritical(exception, "Game is crashing due to an exception");
+                throw;
+            }
         }
 
         private delegate void SdlInit(int flags);
