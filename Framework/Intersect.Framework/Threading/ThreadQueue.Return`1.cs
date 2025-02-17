@@ -4,6 +4,11 @@ public sealed partial class ThreadQueue
 {
     public TReturn Defer<TState, TReturn>(Func<TState, TReturn> func, TState state)
     {
+        if (IsOnMainThread)
+        {
+            return func(state);
+        }
+
         Return<TState, TReturn> @return = new(func);
         Defer(
             Return<TState, TReturn>.Wrapper,

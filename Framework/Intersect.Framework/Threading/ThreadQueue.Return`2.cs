@@ -8,6 +8,11 @@ public sealed partial class ThreadQueue
         TState1 state1
     )
     {
+        if (IsOnMainThread)
+        {
+            return func(state0, state1);
+        }
+
         Return<TState0, TState1, TReturn> @return = new(func);
         Defer(
             Return<TState0, TState1, TReturn>.Wrapper,

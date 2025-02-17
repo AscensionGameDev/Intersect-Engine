@@ -4109,7 +4109,7 @@ public partial class Base : IDisposable
         return false;
     }
 
-    private record struct SizeToChildrenArgs(bool X, bool Y, bool Recurse);
+    protected record struct SizeToChildrenArgs(bool X, bool Y, bool Recurse);
 
     private static void SizeChildrenToChildren(Base @this, SizeToChildrenArgs args)
     {
