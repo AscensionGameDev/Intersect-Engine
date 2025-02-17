@@ -4209,7 +4209,7 @@ Tick timer saved in server config.json.";
     public partial struct MapInstance
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static Dictionary<MapInstanceType, LocalizedString> InstanceTypes = new Dictionary<MapInstanceType, LocalizedString>
+        public static LocaleDictionary<MapInstanceType, LocalizedString> InstanceTypes = new LocaleDictionary<MapInstanceType, LocalizedString>
         {
             {MapInstanceType.Overworld, @"Overworld" },
             {MapInstanceType.Personal, @"Personal" },
