@@ -25,7 +25,7 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
         IconMarginDisabled = true;
         _settingsWindowProvider = settingsWindowProvider;
 
-        Children.Clear();
+        ClearChildren();
 
         _settings = AddItem(Strings.EscapeMenu.Settings);
         _character = AddItem(Strings.EscapeMenu.CharacterSelect);

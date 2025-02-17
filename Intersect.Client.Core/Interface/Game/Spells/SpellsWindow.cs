@@ -51,7 +51,7 @@ public partial class SpellsWindow
         mContextMenu.IsHidden = true;
         mContextMenu.IconMarginDisabled = true;
         //TODO: Is this a memory leak?
-        mContextMenu.Children.Clear();
+        mContextMenu.ClearChildren();
         mUseSpellContextItem = mContextMenu.AddItem(Strings.SpellContextMenu.Cast);
         mUseSpellContextItem.Clicked += MUseSpellContextItem_Clicked;
         mForgetSpellContextItem = mContextMenu.AddItem(Strings.SpellContextMenu.Forget);
@@ -64,7 +64,7 @@ public partial class SpellsWindow
         // Clear out the old options.
         mContextMenu.RemoveChild(mUseSpellContextItem, false);
         mContextMenu.RemoveChild(mForgetSpellContextItem, false);
-        mContextMenu.Children.Clear();
+        mContextMenu.ClearChildren();
 
         var spell = SpellBase.Get(Globals.Me.Spells[slot].Id);
 

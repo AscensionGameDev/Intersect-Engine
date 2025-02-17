@@ -79,7 +79,7 @@ public partial class MenuGuiBase : IMutableInterface
     }
 
     /// <inheritdoc />
-    public List<Base> Children => MainMenu.Children;
+    public IReadOnlyList<Base> Children => MainMenu.Children;
 
     /// <inheritdoc />
     public TElement Create<TElement>(params object[] parameters) where TElement : Base =>

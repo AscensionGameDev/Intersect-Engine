@@ -46,7 +46,7 @@ public partial class ShopWindow
         mContextMenu.IsHidden = true;
         mContextMenu.IconMarginDisabled = true;
         //TODO: Is this a memory leak?
-        mContextMenu.Children.Clear();
+        mContextMenu.ClearChildren();
         mBuyContextItem = mContextMenu.AddItem(Strings.ShopContextMenu.Buy);
         mBuyContextItem.Clicked += MBuyContextItem_Clicked;
         mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());

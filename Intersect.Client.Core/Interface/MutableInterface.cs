@@ -48,7 +48,7 @@ public abstract partial class MutableInterface : IMutableInterface
     public int NodeCount => Root.NodeCount;
 
     /// <inheritdoc />
-    public List<Base> Children => Root.Children ?? [];
+    public IReadOnlyList<Base> Children => Root.Children ?? [];
 
     /// <inheritdoc />
     public TElement Create<TElement>(params object[] parameters) where TElement : Base

@@ -42,7 +42,7 @@ public partial class RadioButtonGroup : GroupBox
     /// <summary>
     ///     Index of the selected radio button.
     /// </summary>
-    public int SelectedIndex => Children.IndexOf(mSelected);
+    public int SelectedIndex => IndexOf(mSelected);
 
     /// <summary>
     ///     Invoked when the selected option has changed.

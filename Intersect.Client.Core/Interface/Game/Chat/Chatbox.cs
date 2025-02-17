@@ -190,7 +190,7 @@ public partial class Chatbox
         mContextMenu.IsHidden = true;
         mContextMenu.IconMarginDisabled = true;
         //TODO: Is this a memory leak?
-        mContextMenu.Children.Clear();
+        mContextMenu.ClearChildren();
         mPMContextItem = mContextMenu.AddItem(Strings.ChatContextMenu.PM);
         mPMContextItem.Clicked += MPMContextItem_Clicked;
         mFriendInviteContextItem = mContextMenu.AddItem(Strings.ChatContextMenu.FriendInvite);
@@ -211,7 +211,7 @@ public partial class Chatbox
         mContextMenu.RemoveChild(mFriendInviteContextItem, false);
         mContextMenu.RemoveChild(mPartyInviteContextItem, false);
         mContextMenu.RemoveChild(mGuildInviteContextItem, false);
-        mContextMenu.Children.Clear();
+        mContextMenu.ClearChildren();
 
         // No point showing a menu for blank space.
         if (string.IsNullOrWhiteSpace(name))

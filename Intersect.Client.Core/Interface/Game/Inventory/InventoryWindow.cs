@@ -51,7 +51,7 @@ public partial class InventoryWindow
         mContextMenu.IsHidden = true;
         mContextMenu.IconMarginDisabled = true;
         //TODO: Is this a memory leak?
-        mContextMenu.Children.Clear();
+        mContextMenu.ClearChildren();
         mUseItemContextItem = mContextMenu.AddItem(Strings.ItemContextMenu.Use);
         mUseItemContextItem.Clicked += MUseItemContextItem_Clicked;
         mDropItemContextItem = mContextMenu.AddItem(Strings.ItemContextMenu.Drop);
@@ -68,7 +68,7 @@ public partial class InventoryWindow
         mContextMenu.RemoveChild(mUseItemContextItem, false);
         mContextMenu.RemoveChild(mActionItemContextItem, false);
         mContextMenu.RemoveChild(mDropItemContextItem, false);
-        mContextMenu.Children.Clear();
+        mContextMenu.ClearChildren();
 
         var item = ItemBase.Get(Globals.Me.Inventory[slot].ItemId);
 

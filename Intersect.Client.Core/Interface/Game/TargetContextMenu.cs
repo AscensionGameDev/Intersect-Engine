@@ -34,7 +34,7 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
     {
         IsHidden = true;
         IconMarginDisabled = true;
-        Children.Clear();
+        ClearChildren();
 
         _me = Globals.Me;
 
@@ -140,21 +140,21 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
 
         if (shouldShow)
         {
-            var indexOf = Children.IndexOf(_targetNameMenuItem);
+            var indexOf = IndexOf(_targetNameMenuItem);
 
             if (indexOf > 0)
             {
-                Children.RemoveAt(indexOf);
+                RemoveAt(indexOf);
             }
 
             if (indexOf != 0)
             {
-                Children.Insert(0, _targetNameMenuItem);
+                Insert(0, _targetNameMenuItem);
             }
         }
         else
         {
-            Children.Remove(_targetNameMenuItem);
+            Remove(_targetNameMenuItem);
         }
     }
 
@@ -263,14 +263,14 @@ public sealed partial class TargetContextMenu : Framework.Gwen.Control.Menu
         {
             if (!Children.Contains(_guildMenuItem))
             {
-                Children.Add(_guildMenuItem);
+                AddChild(_guildMenuItem);
             }
         }
         else
         {
             if (Children.Contains(_guildMenuItem))
             {
-                Children.Remove(_guildMenuItem);
+                Remove(_guildMenuItem);
             }
         }
     }
