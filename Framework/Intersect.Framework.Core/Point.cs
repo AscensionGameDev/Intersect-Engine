@@ -76,4 +76,9 @@ public partial struct Point
 
     public static Point operator /(Point point, float scalar) => new((int)(point.X / scalar), (int)(point.Y / scalar));
 
+    public void Deconstruct(out int x, out int y)
+    {
+        x = X;
+        y = Y;
+    }
 }

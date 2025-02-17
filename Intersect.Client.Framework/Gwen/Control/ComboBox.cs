@@ -119,17 +119,17 @@ public partial class ComboBox : Button
     public bool OpenMenuAbove
     {
         get => _positionMenuAbove;
-        set => SetAndDoIfChanged(ref _positionMenuAbove, value, UpdatePositionIfOpen);
+        set => SetAndDoIfChanged(ref _positionMenuAbove, value, UpdatePositionIfOpen, Parent, this);
     }
 
-    private void UpdatePositionIfOpen()
+    private static void UpdatePositionIfOpen(Base? parent, ComboBox @this)
     {
-        if (!IsOpen)
+        if (!@this.IsOpen)
         {
             return;
         }
 
-        Open();
+        Open(@this, parent);
     }
 
     public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
@@ -384,27 +384,41 @@ public partial class ComboBox : Button
     /// <summary>
     ///     Opens the combo.
     /// </summary>
-    public virtual void Open()
+    public void Open() => Open(this, Parent);
+
+    private static void Open(ComboBox @this, Base? parent)
     {
-        if (IsDisabledByTree)
+        if (parent == null)
+        {
+            Open(@this);
+        }
+        else
+        {
+            parent.Defer(Open, @this);
+        }
+    }
+
+    private static void Open(ComboBox @this)
+    {
+        if (@this.IsDisabledByTree)
         {
             return;
         }
 
-        _menu.Parent = Canvas;
-        _menu.IsHidden = false;
-        _menu.BringToFront();
+        @this._menu.Parent = @this.Canvas;
+        @this._menu.IsHidden = false;
+        @this._menu.BringToFront();
 
-        var menuPadding = _menu.Padding;
+        var menuPadding = @this._menu.Padding;
         var menuPaddingH = menuPadding.Left + menuPadding.Right;
         var menuPaddingV = menuPadding.Top + menuPadding.Bottom;
 
-        var menuMargin = _menu.Margin;
+        var menuMargin = @this._menu.Margin;
         var menuMarginV = menuMargin.Top + menuMargin.Bottom;
 
-        var width = Width;
+        var width = @this.Width;
         var totalChildHeight = 0;
-        var menuItems = _menu.Children.OfType<MenuItem>().ToArray();
+        var menuItems = @this._menu.Children.OfType<MenuItem>().ToArray();
         foreach (var menuItem in menuItems)
         {
             menuItem.SizeToContents();
@@ -413,13 +427,13 @@ public partial class ComboBox : Button
             // width = Math.Max(width, menuItem.OuterWidth + menuPaddingH);
         }
 
-        var offset = ToCanvas(default);
-        _menu.MaximumSize = _menu.MaximumSize with { X = width };
+        var offset = @this.ToCanvas(default);
+        @this._menu.MaximumSize = @this._menu.MaximumSize with { X = width };
 
-        var canvasBounds = Canvas?.Bounds ?? new Rectangle(0, 0, int.MaxValue, int.MinValue);
+        var canvasBounds = @this.Canvas?.Bounds ?? new Rectangle(0, 0, int.MaxValue, int.MinValue);
 
         var expectedMenuHeight = totalChildHeight + menuPaddingV;
-        var maximumSize = _menu.MaximumSize;
+        var maximumSize = @this._menu.MaximumSize;
         if (maximumSize.Y > 0)
         {
             expectedMenuHeight = Math.Min(expectedMenuHeight, maximumSize.Y);
@@ -431,7 +445,7 @@ public partial class ComboBox : Button
         var positionAbove = canvasBounds.Bottom < newBounds.Bottom;
         if (!positionAbove)
         {
-            positionAbove = _positionMenuAbove && canvasBounds.Top + newBounds.Height < newBounds.Top;
+            positionAbove = @this._positionMenuAbove && canvasBounds.Top + newBounds.Height < newBounds.Top;
         }
 
         if (positionAbove)
@@ -440,15 +454,17 @@ public partial class ComboBox : Button
         }
         else
         {
-            newBounds.Y += Height;
+            newBounds.Y += @this.Height;
         }
 
-        _menu.RestrictToParent = false;
-        _menu.SetBounds(newBounds);
-        _menu.RestrictToParent = true;
+        @this._menu.RestrictToParent = false;
+        @this._menu.SetBounds(newBounds);
+        @this._menu.RestrictToParent = true;
 
-        base.PlaySound(mOpenMenuSound);
+        @this.BasePlaySound(@this.mOpenMenuSound);
     }
+
+    private bool BasePlaySound(string? sound) => base.PlaySound(sound);
 
     /// <summary>
     ///     Closes the combo.

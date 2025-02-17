@@ -65,12 +65,12 @@ internal sealed partial class DebugWindow : Window
         AssetsToolsTable.SizeToChildren();
     }
 
-    public override void Dispose()
+    protected override void Dispose(bool disposing)
     {
         UnsubscribeGPU();
         RemoveIntercepts();
 
-        base.Dispose();
+        base.Dispose(disposing);
     }
 
     private Table GPUStatisticsTable { get; }

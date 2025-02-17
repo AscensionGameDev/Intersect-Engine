@@ -124,7 +124,7 @@ public class TexturePicker : Panel, ITextContainer
     public bool AllowNone
     {
         get => _allowNone;
-        set => SetAndDoIfChanged(ref _allowNone, value, UpdateNone);
+        set => SetAndDoIfChanged(ref _allowNone, value, UpdateNone, this);
     }
 
     public GameFont? ButtonFont
@@ -170,7 +170,7 @@ public class TexturePicker : Panel, ITextContainer
     public TextureType TextureType
     {
         get => _textureType;
-        set => SetAndDoIfChanged(ref _textureType, value, InvalidateSelector);
+        set => SetAndDoIfChanged(ref _textureType, value, InvalidateSelector, this);
     }
 
     string? ITextContainer.Text
@@ -181,27 +181,29 @@ public class TexturePicker : Panel, ITextContainer
 
     public Color? TextPaddingDebugColor { get; set; }
 
-    private void UpdateNone()
+    private static void UpdateNone(TexturePicker @this)
     {
-        if (_allowNone)
+        if (@this._allowNone)
         {
-            _noneItem ??= AddNone();
+            @this._noneItem ??= @this.AddNone();
         }
-        else if (_noneItem is not null)
+        else if (@this._noneItem is not null)
         {
-            RemoveChild(_noneItem, dispose: true);
-            _noneItem = null;
+            @this.RemoveChild(@this._noneItem, dispose: true);
+            @this._noneItem = null;
         }
     }
 
-    public void InvalidateSelector()
+    public void InvalidateSelector() => Defer(InvalidateSelector, this);
+
+    private static void InvalidateSelector(TexturePicker @this)
     {
-        if (!_selectorDirty)
+        if (!@this._selectorDirty)
         {
-            _selectorDirty = true;
+            @this._selectorDirty = true;
         }
 
-        Invalidate();
+        @this.Invalidate();
     }
 
     private MenuItem AddNone()
@@ -223,7 +225,7 @@ public class TexturePicker : Panel, ITextContainer
             _noneItem = null;
             _textureSelector.ClearItems();
 
-            UpdateNone();
+            UpdateNone(this);
 
             foreach (var textureName in textureNames)
             {

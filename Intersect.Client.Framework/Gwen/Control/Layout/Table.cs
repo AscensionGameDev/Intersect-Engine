@@ -141,13 +141,15 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
     public GameFont? Font
     {
         get => _font;
-        set => SetAndDoIfChanged(ref _font, value, () =>
+        set => SetAndDoIfChanged(ref _font, value, SetFont);
+    }
+
+    private static void SetFont(Base @this, GameFont? value)
+    {
+        foreach (var row in @this.Children.OfType<TableRow>())
         {
-            foreach (var row in Children.OfType<TableRow>())
-            {
-                row.Font = value;
-            }
-        });
+            row.Font = value;
+        }
     }
 
     /// <summary>
@@ -158,25 +160,29 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
     public Color? TextColor
     {
         get => _textColor;
-        set => SetAndDoIfChanged(ref _textColor, value, () =>
+        set => SetAndDoIfChanged(ref _textColor, value, SetTextColor);
+    }
+
+    private static void SetTextColor(Base @this, Color? value)
+    {
+        foreach (var colorableText in @this.Children.OfType<IColorableText>())
         {
-            foreach (IColorableText colorableText in Children)
-            {
-                colorableText.TextColor = value;
-            }
-        });
+            colorableText.TextColor = value;
+        }
     }
 
     public Color? TextColorOverride
     {
         get => _textColorOverride;
-        set => SetAndDoIfChanged(ref _textColorOverride, value, () =>
+        set => SetAndDoIfChanged(ref _textColorOverride, value, SetTextColorOverride);
+    }
+
+    private static void SetTextColorOverride(Base @this, Color? value)
+    {
+        foreach (var colorableText in @this.Children.OfType<IColorableText>())
         {
-            foreach (IColorableText colorableText in Children)
-            {
-                colorableText.TextColorOverride = value;
-            }
-        });
+            colorableText.TextColorOverride = value;
+        }
     }
 
     /// <summary>

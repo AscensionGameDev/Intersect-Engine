@@ -164,25 +164,29 @@ public partial class TableRow : Base, IColorableText
     public Color? TextColor
     {
         get => _textColor;
-        set => SetAndDoIfChanged(ref _textColor, value, () =>
+        set => SetAndDoIfChanged(ref _textColor, value, SetTextColor, this);
+    }
+
+    private static void SetTextColor(TableRow @this, Color? value)
+    {
+        foreach (var column in @this._columns)
         {
-            foreach (var column in _columns)
-            {
-                column.TextColor = _textColor;
-            }
-        });
+            column.TextColor = value;
+        }
     }
 
     public Color? TextColorOverride
     {
         get => _textColorOverride;
-        set => SetAndDoIfChanged(ref _textColorOverride, value, () =>
+        set => SetAndDoIfChanged(ref _textColorOverride, value, SetTextColorOverride, this);
+    }
+
+    private static void SetTextColorOverride(TableRow @this, Color? value)
+    {
+        foreach (var column in @this._columns)
         {
-            foreach (var column in _columns)
-            {
-                column.TextColorOverride = TextColorOverride;
-            }
-        });
+            column.TextColorOverride = value;
+        }
     }
 
     public IEnumerable<string> TextColumns
@@ -526,16 +530,16 @@ public partial class TableRow : Base, IColorableText
         mDisposalActions.Add(() => tableCellDataProvider.DataChanged -= dataChanged);
     }
 
-    public override void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        base.Dispose();
-
         while (mDisposalActions.Count > 0)
         {
             var lastIndex = mDisposalActions.Count - 1;
             mDisposalActions[lastIndex]?.Invoke();
             mDisposalActions.RemoveAt(lastIndex);
         }
+
+        base.Dispose(disposing);
     }
 
     /// <summary>
