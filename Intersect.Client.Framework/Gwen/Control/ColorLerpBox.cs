@@ -42,14 +42,6 @@ public partial class ColorLerpBox : Base
     public event GwenEventHandler<EventArgs> ColorChanged;
 
     /// <summary>
-    ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-    /// </summary>
-    public override void Dispose()
-    {
-        base.Dispose();
-    }
-
-    /// <summary>
     ///     Linear color interpolation.
     /// </summary>
     public static Color Lerp(Color toColor, Color fromColor, float amount)

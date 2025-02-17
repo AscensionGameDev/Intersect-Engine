@@ -97,10 +97,10 @@ public partial class Canvas : Base
         set => mNeedsRedraw = value;
     }
 
-    public override void Dispose()
+    protected override void Dispose(bool disposing)
     {
         ProcessDelayedDeletes();
-        base.Dispose();
+        base.Dispose(disposing);
     }
 
     /// <summary>

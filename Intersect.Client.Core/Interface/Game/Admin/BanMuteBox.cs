@@ -120,12 +120,12 @@ public partial class BanMuteBox : WindowControl
         _ = richLabelPrompt.SizeToChildren(false, true);
     }
 
-    public override void Dispose()
+    protected override void Dispose(bool disposing)
     {
         Close();
         Interface.GameUi.GameCanvas.RemoveChild(this, false);
-        base.Dispose();
-        GC.SuppressFinalize(this);
+
+        base.Dispose(disposing);
     }
 
     public int GetDuration()

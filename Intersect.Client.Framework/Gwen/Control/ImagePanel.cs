@@ -166,12 +166,9 @@ public partial class ImagePanel : Base
         base.OnPositionChanged(oldPosition, newPosition);
     }
 
-    /// <summary>
-    ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-    /// </summary>
-    public override void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        base.Dispose();
+        base.Dispose(disposing);
     }
 
     public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)

@@ -84,7 +84,7 @@ public partial class Text : Base
     public string? DisplayedText
     {
         get => _displayedText;
-        set => SetAndDoIfChanged(ref _displayedText, value, Invalidate);
+        set => SetAndDoIfChanged(ref _displayedText, value, Invalidate, this);
     }
 
     public WrappingBehavior WrappingBehavior

@@ -620,13 +620,12 @@ public partial class InputBox : Window
         base.Focus(moveMouse);
     }
 
-    public override void Dispose()
+    protected override void Dispose(bool disposing)
     {
         base.Hide();
         Close();
         Parent?.RemoveChild(this, false);
-        base.Dispose();
-        GC.SuppressFinalize(this);
+        base.Dispose(disposing);
     }
 
     protected override void EnsureInitialized()

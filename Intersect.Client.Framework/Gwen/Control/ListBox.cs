@@ -38,9 +38,8 @@ public partial class ListBox : ScrollControl
 
     private bool mSizeToContents;
 
-    private Color mTextColor;
-
-    private Color mTextColorOverride;
+    private Color? _textColor;
+    private Color? _textColorOverride;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ListBox" /> class.
@@ -52,8 +51,8 @@ public partial class ListBox : ScrollControl
         Margin = Margin.One;
         MouseInputEnabled = true;
 
-        mTextColor = Color.White;
-        mTextColorOverride = Color.Transparent;
+        _textColor = Color.White;
+        _textColorOverride = Color.Transparent;
 
         _table = new Table(this)
         {
@@ -196,28 +195,32 @@ public partial class ListBox : ScrollControl
     /// </summary>
     public event GwenEventHandler<ItemSelectedEventArgs> RowUnselected;
 
-    public Color TextColor
+    public Color? TextColor
     {
-        get => mTextColor;
-        set => SetAndDoIfChanged(ref mTextColor, value, () =>
-        {
-            foreach (IColorableText colorableText in Children)
-            {
-                colorableText.TextColor = value;
-            }
-        });
+        get => _textColor;
+        set => SetAndDoIfChanged(ref _textColor, value, SetTextColor);
     }
 
-    public Color TextColorOverride
+    private static void SetTextColor(Base @this, Color? value)
     {
-        get => mTextColorOverride;
-        set => SetAndDoIfChanged(ref mTextColorOverride, value, () =>
+        foreach (var colorableText in @this.Children.OfType<IColorableText>())
         {
-            foreach (IColorableText colorableText in Children)
-            {
-                colorableText.TextColorOverride = value;
-            }
-        });
+            colorableText.TextColor = value;
+        }
+    }
+
+    public Color? TextColorOverride
+    {
+        get => _textColorOverride;
+        set => SetAndDoIfChanged(ref _textColorOverride, value, SetTextColorOverride);
+    }
+
+    private static void SetTextColorOverride(Base @this, Color? value)
+    {
+        foreach (var colorableText in @this.Children.OfType<IColorableText>())
+        {
+            colorableText.TextColorOverride = value;
+        }
     }
 
     public Point CellSpacing

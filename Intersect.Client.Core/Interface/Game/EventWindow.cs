@@ -209,10 +209,10 @@ public partial class EventWindow : Panel
         SkipTypewriting();
     }
 
-    public override void Dispose()
+    protected override void Dispose(bool disposing)
     {
         EnsureControlRestored();
-        base.Dispose();
+        base.Dispose(disposing);
     }
 
     private static EventWindow? _instance;
