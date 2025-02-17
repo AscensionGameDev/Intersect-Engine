@@ -132,7 +132,7 @@ public partial class TabButton : Button
         if (down)
         {
             var count = Parent.Children.Count;
-            var me = Parent.Children.IndexOf(this);
+            var me = Parent.IndexOf(this);
             if (me + 1 < count)
             {
                 var nextTab = Parent.Children[me + 1];
@@ -156,7 +156,7 @@ public partial class TabButton : Button
         if (down)
         {
             var count = Parent.Children.Count;
-            var me = Parent.Children.IndexOf(this);
+            var me = Parent.IndexOf(this);
             if (me - 1 >= 0)
             {
                 var prevTab = Parent.Children[me - 1];

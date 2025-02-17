@@ -76,7 +76,7 @@ public partial class TradingWindow
         mContextMenu.IsHidden = true;
         mContextMenu.IconMarginDisabled = true;
         //TODO: Is this a memory leak?
-        mContextMenu.Children.Clear();
+        mContextMenu.ClearChildren();
         mWithdrawContextItem = mContextMenu.AddItem(Strings.TradeContextMenu.Withdraw);
         mWithdrawContextItem.Clicked += MWithdrawContextItem_Clicked;
         mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());

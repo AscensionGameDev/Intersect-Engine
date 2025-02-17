@@ -79,33 +79,39 @@ internal sealed partial class DebugWindow : Window
 
     private Table CreateGPUAllocationsTable(Base parent)
     {
-        Panel gpuAllocationsPanel = new(parent, name: nameof(gpuAllocationsPanel))
+        Panel gpuAllocationsPanel = new(parent: parent, name: nameof(gpuAllocationsPanel))
         {
             Dock = Pos.Fill,
         };
 
-        ScrollControl gpuAllocationsScroller = new(gpuAllocationsPanel, nameof(gpuAllocationsScroller))
+        ScrollControl gpuAllocationsScroller = new(parent: gpuAllocationsPanel, name: nameof(gpuAllocationsScroller))
         {
             Dock = Pos.Fill,
-            InnerPanelPadding = new Padding(8, 0),
+            InnerPanelPadding = new Padding(horizontal: 8, vertical: 0),
             ShouldCacheToTexture = true,
         };
 
         gpuAllocationsScroller.VerticalScrollBar.BaseNudgeAmount *= 2;
 
-        var table = new Table(gpuAllocationsScroller, nameof(GPUAllocationsTable))
+        var table = new Table(parent: gpuAllocationsScroller, name: nameof(GPUAllocationsTable))
         {
             AutoSizeToContentHeightOnChildResize = true,
             AutoSizeToContentWidthOnChildResize = true,
-            CellSpacing = new Point(8, 2),
+            CellSpacing = new Point(x: 8, y: 2),
             ColumnCount = 2,
             ColumnWidths = [null, 100],
             Dock = Pos.Fill,
             Font = _defaultFont,
-            MinimumSize = new Point(408, 0),
+            MinimumSize = new Point(x: 408, y: 0),
             SizeToContents = true,
         };
         table.SizeChanged += ResizeTableToChildrenOnSizeChanged;
+
+        var existingTextures = Graphics.Renderer.Textures;
+        foreach (var texture in existingTextures)
+        {
+            // _ = EnsureGPUAllocationsRowFor(gameTexture: texture, creating: true, table: table);
+        }
 
         SubscribeGPU();
 
@@ -177,7 +183,7 @@ internal sealed partial class DebugWindow : Window
 
     private readonly Dictionary<IGameTexture, TableRow> _gpuAllocationsRowByTextureLookup = [];
 
-    private TableRow EnsureGPUAllocationsRowFor(IGameTexture gameTexture, bool creating)
+    private TableRow EnsureGPUAllocationsRowFor(IGameTexture gameTexture, bool creating, Table? table = null)
     {
         if (_gpuAllocationsRowByTextureLookup.TryGetValue(gameTexture, out var existingRow))
         {
@@ -189,7 +195,9 @@ internal sealed partial class DebugWindow : Window
             return existingRow;
         }
 
-        existingRow = GPUAllocationsTable.InsertRowSorted(
+        table ??= GPUAllocationsTable;
+
+        existingRow = table.InsertRowSorted(
             gameTexture.Name,
             userData: gameTexture,
             keySelector: SelectRowUserDataGameTextureName
@@ -206,7 +214,7 @@ internal sealed partial class DebugWindow : Window
         }
         _gpuAllocationsRowByTextureLookup[gameTexture] = existingRow;
 
-        GPUAllocationsTable.SizeToChildren(recursive: true);
+        table.SizeToChildren(recursive: true);
 
         return existingRow;
     }

@@ -474,7 +474,7 @@ public partial class ComboBox : Button
             return true;
         }
 
-        var it = _menu.Children.FindIndex(x => x == mSelectedItem);
+        var it = _menu.IndexOf(x => x == mSelectedItem);
         if (it + 1 >= _menu.Children.Count)
         {
             return true;
@@ -500,7 +500,7 @@ public partial class ComboBox : Button
             return true;
         }
 
-        var it = _menu.Children.FindLastIndex(x => x == mSelectedItem);
+        var it = _menu.LastIndexOf(x => x == mSelectedItem);
         if (it - 1 < 0)
         {
             return true;

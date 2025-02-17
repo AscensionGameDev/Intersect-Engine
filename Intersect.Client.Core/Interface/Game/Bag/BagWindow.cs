@@ -49,7 +49,7 @@ public partial class BagWindow
         mContextMenu.IsHidden = true;
         mContextMenu.IconMarginDisabled = true;
         //TODO: Is this a memory leak?
-        mContextMenu.Children.Clear();
+        mContextMenu.ClearChildren();
         mWithdrawContextItem = mContextMenu.AddItem(Strings.BagContextMenu.Withdraw);
         mWithdrawContextItem.Clicked += MWithdrawContextItem_Clicked;
         mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());

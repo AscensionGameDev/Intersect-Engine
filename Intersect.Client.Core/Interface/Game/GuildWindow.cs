@@ -123,7 +123,7 @@ partial class GuildWindow : Window
 
         //Add Context Menu Options
         //TODO: Is this a memory leak?
-        _contextMenu.Children.Clear();
+        _contextMenu.ClearChildren();
 
         // Private Message
         _privateMessageOption = _contextMenu.AddItem(Strings.Guilds.PM);

@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Collections.Immutable;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Core;
 using Intersect.Framework.Collections;
@@ -22,6 +23,23 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
     protected float _scale = 1.0f;
 
     private IGameTexture? _whitePixel;
+
+    public IGameTexture[] Textures
+    {
+        get
+        {
+            try
+            {
+                var buffer = new IGameTexture[_textures.Count];
+                _textures.CopyTo(buffer);
+                return buffer;
+            }
+            catch
+            {
+                return _textures.ToArray();
+            }
+        }
+    }
 
     public ulong TextureCount => (ulong)Math.Max(0, _textures.Count);
 

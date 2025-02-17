@@ -4,7 +4,7 @@ namespace Intersect.Client.Interface;
 
 public interface IMutableInterface
 {
-    List<Base> Children { get; }
+    IReadOnlyList<Base> Children { get; }
 
     TElement Create<TElement>(params object[] parameters) where TElement : Base;
 

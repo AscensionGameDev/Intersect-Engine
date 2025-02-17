@@ -65,7 +65,7 @@ public partial class BankWindow
         mContextMenu.IconMarginDisabled = true;
 
         // Clear the children of the context menu and add a "Withdraw" option.
-        mContextMenu.Children.Clear();
+        mContextMenu.ClearChildren();
         mWithdrawContextItem = mContextMenu.AddItem(Strings.BankContextMenu.Withdraw);
         mWithdrawContextItem.Clicked += MWithdrawContextItem_Clicked;
         mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
@@ -200,7 +200,7 @@ public partial class BankWindow
             bankLabel.Text = string.Empty;
 
             bankItem.Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-            
+
             Items.Add(bankItem);
             mValues.Add(bankLabel);
         }

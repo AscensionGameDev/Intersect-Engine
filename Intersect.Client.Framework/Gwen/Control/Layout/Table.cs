@@ -439,7 +439,7 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
     {
         var row = AddRow(text, name: name);
         row.UserData = userData;
-        Children.Resort(row, keySelector);
+        ResortChild(row, keySelector);
         return row;
     }
 
@@ -487,10 +487,7 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
     /// </summary>
     /// <param name="row">Row to search for.</param>
     /// <returns>Row index if found, -1 otherwise.</returns>
-    public int GetRowIndex(TableRow row)
-    {
-        return Children.IndexOf(row);
-    }
+    public int GetRowIndex(TableRow row) => IndexOf(row);
 
     /// <summary>
     ///     Lays out the control's interior according to alignment, padding, dock etc.

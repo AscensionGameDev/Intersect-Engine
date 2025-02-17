@@ -158,14 +158,6 @@ public partial class WindowControl : ResizableControl
     }
 
     /// <summary>
-    ///     Indicates whether the control is on top of its parent's children.
-    /// </summary>
-    public override bool IsOnTop
-    {
-        get { return Parent.Children.Where(x => x is WindowControl).Last() == this; }
-    }
-
-    /// <summary>
     /// If the shadow under the window should be drawn.
     /// </summary>
     public bool DrawShadow { get; set; } = true;
