@@ -5,6 +5,7 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.Data;
 using Intersect.Configuration;
 using Intersect.Core;
+using Intersect.Framework.Collections;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
@@ -426,6 +427,19 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         var row = AddNamedRow(name: name);
         row.SetCellText(0, text);
 
+        return row;
+    }
+
+    public TableRow InsertRowSorted<TKey>(
+        string text,
+        Func<Base?, TKey?> keySelector,
+        string? name = null,
+        object? userData = null
+    ) where TKey : IComparable<TKey>
+    {
+        var row = AddRow(text, name: name);
+        row.UserData = userData;
+        Children.Resort(row, keySelector);
         return row;
     }
 

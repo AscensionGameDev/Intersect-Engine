@@ -1892,6 +1892,26 @@ public partial class Base : IDisposable
         parentChildren.Insert(insertionIndex, this);
     }
 
+    public void SortChildrenBy<TSortKey>(Func<Base?, TSortKey> keySelector) where TSortKey : IComparable<TSortKey>
+    {
+        mChildren.Sort(
+            (a, b) =>
+            {
+                TSortKey keyB = keySelector(b);
+
+                if (keySelector(a) is { } keyA)
+                {
+                    return keyA.CompareTo(keyB);
+                }
+
+                // Not sure why no matter what I do that the static analysis refuses to acknowledge that it can be null,
+                // so I'm just disabling it instead so it doesn't get hit by auto-formatting
+                // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+                return -keyB?.CompareTo(default) ?? 0;
+            }
+        );
+    }
+
     public virtual void MoveAfter(Base other)
     {
         if (other == this)
@@ -2800,6 +2820,11 @@ public partial class Base : IDisposable
 
         foreach (var child in childrenToRender)
         {
+            if (child is Label label && (label.Text?.Contains("resources/gui/mainmenu_buttonregister.png") ?? false))
+            {
+                label.ToString();
+            }
+
             child.DoRender(skin);
         }
 
@@ -3521,34 +3546,36 @@ public partial class Base : IDisposable
         );
 
         int suggestedWidth, suggestedHeight;
-        if (dockFillChildren.Length < 1)
+        if (dockFillChildren.Length < 2)
         {
             suggestedWidth = remainingBounds.Width;
             suggestedHeight = remainingBounds.Height;
         }
-        else if (largestDockFillSize.X > largestDockFillSize.Y)
+        else if (largestDockFillSize.Y > largestDockFillSize.X)
         {
-            if (largestDockFillSize.X > remainingBounds.Width)
-            {
-                suggestedWidth = remainingBounds.Width / dockFillChildren.Length;
-                suggestedHeight = Math.Max(largestDockFillSize.Y, remainingBounds.Height);
-            }
-            else
+            if (largestDockFillSize.Y > remainingBounds.Height)
             {
                 suggestedWidth = Math.Max(largestDockFillSize.X, remainingBounds.Width);
                 suggestedHeight = remainingBounds.Height / dockFillChildren.Length;
             }
+            else
+            {
+                suggestedWidth = remainingBounds.Width / dockFillChildren.Length;
+                suggestedHeight = Math.Max(largestDockFillSize.Y, remainingBounds.Height);
+            }
         }
-        else if (largestDockFillSize.Y > remainingBounds.Height)
-        {
-            suggestedWidth = Math.Max(largestDockFillSize.X, remainingBounds.Width);
-            suggestedHeight = remainingBounds.Height / dockFillChildren.Length;
-        }
-        else
+        else if (largestDockFillSize.X > remainingBounds.Width)
         {
             suggestedWidth = remainingBounds.Width / dockFillChildren.Length;
             suggestedHeight = Math.Max(largestDockFillSize.Y, remainingBounds.Height);
         }
+        else
+        {
+            suggestedWidth = Math.Max(largestDockFillSize.X, remainingBounds.Width);
+            suggestedHeight = remainingBounds.Height / dockFillChildren.Length;
+        }
+
+        var fillHorizontal = suggestedHeight == remainingBounds.Height;
 
         //
         // Fill uses the left over space, so do that now.
@@ -3627,10 +3654,26 @@ public partial class Base : IDisposable
                 }
 
                 child.SetPosition(newPosition);
+
+                // TODO: Figure out how to adjust remaining bounds in the autosize case
             }
             else
             {
                 ApplyDockFill(child, newPosition, newSize);
+
+                var childOuterBounds = child.OuterBounds;
+                if (fillHorizontal)
+                {
+                    var delta = childOuterBounds.Right - remainingBounds.X;
+                    remainingBounds.X = childOuterBounds.Right;
+                    remainingBounds.Width -= delta;
+                }
+                else
+                {
+                    var delta = childOuterBounds.Bottom - remainingBounds.Y;
+                    remainingBounds.Y = childOuterBounds.Bottom;
+                    remainingBounds.Height -= delta;
+                }
             }
 
             if (exhaustSize)
