@@ -137,7 +137,7 @@ public partial class MapWarpAttribute : MapAttribute
     public bool ChangeInstance { get; set; } = false;
 
     [EditorLabel("Warping", "InstanceType")]
-    [EditorDictionary("Mapping", "InstanceTypes")]
+    [EditorDictionary("MapInstance", "InstanceTypes")]
     public MapInstanceType InstanceType { get; set; } = MapInstanceType.Overworld;
 
     [EditorLabel("Attributes", "WarpSound")]
