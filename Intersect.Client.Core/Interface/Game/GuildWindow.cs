@@ -53,9 +53,10 @@ partial class GuildWindow : Window
         };
         _buttonAdd.Clicked += (s, e) =>
         {
-            if (_textboxSearch.Text.Trim().Length >= 3)
+            var searchText = _textboxSearch.Text?.Trim();
+            if (searchText is { Length: >=3 })
             {
-                PacketSender.SendInviteGuild(_textboxSearch.Text);
+                PacketSender.SendInviteGuild(searchText);
             }
         };
 
