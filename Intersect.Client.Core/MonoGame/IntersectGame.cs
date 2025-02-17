@@ -24,6 +24,7 @@ using Intersect.Client.MonoGame.NativeInterop;
 using Intersect.Core;
 using Intersect.Framework.Core;
 using Microsoft.Extensions.Logging;
+using Exception = System.Exception;
 
 namespace Intersect.Client.MonoGame;
 
@@ -380,14 +381,39 @@ internal partial class IntersectGame : Game
         {
             mUpdater?.Stop();
         }
-        catch
+        catch (Exception exception)
         {
+            ApplicationContext.Context.Value?.Logger.LogWarning(
+                exception,
+                "Exception thrown while stopping the updater on game close"
+            );
         }
 
-        //Just close if we don't need to show a combat warning
+        try
+        {
+            Interface.Interface.DestroyGwen();
+        }
+        catch (Exception exception)
+        {
+            ApplicationContext.Context.Value?.Logger.LogWarning(
+                exception,
+                "Exception thrown while destroying GWEN on game close"
+            );
+        }
+
+        try
+        {
+            Networking.Network.Close("quitting");
+        }
+        catch (Exception exception)
+        {
+            ApplicationContext.Context.Value?.Logger.LogWarning(
+                exception,
+                "Exception thrown while closing the network on game close"
+            );
+        }
+
         base.OnExiting(sender, args);
-        Networking.Network.Close("quitting");
-        Dispose();
     }
 
     private void DrawUpdater()
@@ -532,7 +558,14 @@ internal partial class IntersectGame : Game
 
     protected override void Dispose(bool disposing)
     {
-        base.Dispose(disposing);
+        try
+        {
+            base.Dispose(disposing);
+        }
+        catch (NullReferenceException)
+        {
+            throw;
+        }
 
         if (!disposing)
         {

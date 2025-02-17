@@ -538,7 +538,7 @@ public partial class CharacterCreationWindow : Window
         UpdateDisplay();
     }
 
-    void MaleCheckboxGenderChecked(Base sender, EventArgs arguments)
+    void MaleCheckboxGenderChecked(ICheckbox sender, EventArgs arguments)
     {
         _genderMaleCheckbox.IsChecked = true;
         _genderFemaleCheckbox.IsChecked = false;
@@ -546,7 +546,7 @@ public partial class CharacterCreationWindow : Window
         UpdateDisplay();
     }
 
-    void FemaleCheckboxGenderChecked(Base sender, EventArgs arguments)
+    void FemaleCheckboxGenderChecked(ICheckbox sender, EventArgs arguments)
     {
         _genderFemaleCheckbox.IsChecked = true;
         _genderMaleCheckbox.IsChecked = false;

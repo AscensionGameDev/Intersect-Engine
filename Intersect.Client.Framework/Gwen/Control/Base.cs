@@ -582,6 +582,8 @@ public partial class Base : IDisposable
         }
     }
 
+    private Skin.Base? DisposeSkin => mSkin ?? mParent?.DisposeSkin;
+
     /// <summary>
     ///     Current tooltip.
     /// </summary>
@@ -1101,12 +1103,14 @@ public partial class Base : IDisposable
             return;
         }
 
-        ICacheToTexture cache = default;
+        mDisposed = true;
+
+        ICacheToTexture? cache = default;
 
 #pragma warning disable CA1031 // Do not catch general exception types
         try
         {
-            cache = Skin.Renderer.Ctt;
+            cache = DisposeSkin?.Renderer.Ctt;
         }
         catch
         {
@@ -1150,7 +1154,6 @@ public partial class Base : IDisposable
 
         _innerPanel?.Dispose();
 
-        mDisposed = true;
         GC.SuppressFinalize(this);
     }
 

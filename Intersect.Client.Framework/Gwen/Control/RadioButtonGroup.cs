@@ -70,7 +70,7 @@ public partial class RadioButtonGroup : GroupBox
         var lrb = new LabeledRadioButton(this);
         lrb.Name = optionName;
         lrb.Text = text;
-        lrb.RadioButton.Checked += OnRadioClicked;
+        lrb.RadioButton.Checked += OnCheckChanged;
         lrb.Dock = Pos.Top;
         lrb.Margin = new Margin(0, 0, 0, 1); // 1 bottom
         lrb.KeyboardInputEnabled = false; // todo: true?
@@ -79,6 +79,11 @@ public partial class RadioButtonGroup : GroupBox
         Invalidate();
 
         return lrb;
+    }
+
+    private void OnCheckChanged(ICheckbox checkbox, EventArgs args)
+    {
+        OnRadioClicked((checkbox as Base)!, args);
     }
 
     /// <summary>
