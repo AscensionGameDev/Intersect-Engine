@@ -88,7 +88,15 @@ public partial class TabStrip : Base
         if (droppedOn != null)
         {
             var dropPos = droppedOn.CanvasPosToLocal(new Point(x, y));
-            DragAndDrop.SourceControl.BringNextToControl(droppedOn, dropPos.X > droppedOn.Width / 2);
+            var behind = dropPos.X > droppedOn.Width / 2;
+            if (behind)
+            {
+                DragAndDrop.SourceControl.MoveBefore(droppedOn);
+            }
+            else
+            {
+                DragAndDrop.SourceControl.MoveAfter(droppedOn);
+            }
         }
         else
         {
