@@ -1124,12 +1124,23 @@ public partial class Base : IDisposable
 
     public bool SkipSerialization { get; set; } = false;
 
+    private StackTrace? _disposeStack;
+
     /// <summary>
     ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
     /// </summary>
     public void Dispose()
     {
-        ObjectDisposedException.ThrowIf(_disposed, this);
+        try
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+        }
+        catch
+        {
+            throw;
+        }
+
+        _disposeStack = new StackTrace(fNeedFileInfo: true);
 
         _disposed = true;
 
@@ -1171,8 +1182,6 @@ public partial class Base : IDisposable
         DragAndDrop.ControlDeleted(this);
         ToolTip.ControlDeleted(this);
         Animation.Cancel(this);
-
-        _innerPanel?.Dispose();
 
         DisposeChildrenOf(this);
 
@@ -2411,15 +2420,15 @@ public partial class Base : IDisposable
         if (_innerPanel == child)
         {
             _children.Remove(_innerPanel);
-            _innerPanel.DelayedDelete();
+            _innerPanel?.DelayedDelete();
             _innerPanel = null;
 
             return;
         }
 
-        if (_innerPanel != null && _innerPanel.Children.Contains(child))
+        if (_innerPanel is { } innerPanel && innerPanel.Children.Contains(child))
         {
-            _innerPanel.RemoveChild(child, dispose);
+            innerPanel.RemoveChild(child, dispose);
 
             return;
         }
