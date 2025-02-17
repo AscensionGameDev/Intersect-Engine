@@ -7,7 +7,7 @@ namespace Intersect.Client.Utilities
     {
         private static readonly Regex ColorTagRegex = new(@"(\\c{[^}]*})", RegexOptions.Compiled);
 
-        public static List<ColorizedText> Parse(string text, Color defaultColor)
+        public static List<ColorizedText> Parse(string text, Color? defaultColor)
         {
             var segments = ColorTagRegex.Split(text)
                 .Where(s => !string.IsNullOrWhiteSpace(s))
@@ -30,18 +30,6 @@ namespace Intersect.Client.Utilities
             }
 
             return output;
-        }
-    }
-
-    public class ColorizedText
-    {
-        public string Text { get; }
-        public Color Color { get; }
-
-        public ColorizedText(string text, Color color)
-        {
-            Text = text;
-            Color = color;
         }
     }
 }

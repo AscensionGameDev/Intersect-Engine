@@ -61,13 +61,15 @@ public partial class InputBox : Window
             Dock = Pos.Fill,
         };
 
-        var promptLabel = new Label(inputPanel, name: nameof(_promptLabel))
+        var promptScroller = new ScrollControl(inputPanel, name: nameof(_promptScroller))
         {
-            AutoSizeToContents = false,
+            Dock = Pos.Fill,
+        };
+
+        var promptLabel = new RichLabel(promptScroller, name: nameof(_promptLabel))
+        {
             Dock = Pos.Fill,
             Font = _defaultFont,
-            TextAlign = Pos.CenterH,
-            WrappingBehavior = WrappingBehavior.Wrapped,
         };
 
         var buttonsPanel = new Panel(this, name: nameof(_buttonPanel))
@@ -103,13 +105,15 @@ public partial class InputBox : Window
             Dock = Pos.Fill,
         };
 
-        var promptLabel = new Label(inputPanel, name: nameof(_promptLabel))
+        var promptScroller = new ScrollControl(inputPanel, name: nameof(_promptScroller))
         {
-            AutoSizeToContents = false,
+            Dock = Pos.Fill,
+        };
+
+        var promptLabel = new RichLabel(promptScroller, name: nameof(_promptLabel))
+        {
             Dock = Pos.Fill,
             Font = _defaultFont,
-            TextAlign = Pos.CenterH,
-            WrappingBehavior = WrappingBehavior.Wrapped,
         };
 
         var buttonsPanel = new Panel(this, name: nameof(_buttonPanel))
@@ -151,13 +155,15 @@ public partial class InputBox : Window
             Dock = Pos.Fill,
         };
 
-        var promptLabel = new Label(inputPanel, name: nameof(_promptLabel))
+        var promptScroller = new ScrollControl(inputPanel, name: nameof(_promptScroller))
         {
-            AutoSizeToContents = false,
+            Dock = Pos.Fill,
+        };
+
+        var promptLabel = new RichLabel(promptScroller, name: nameof(_promptLabel))
+        {
             Dock = Pos.Fill,
             Font = _defaultFont,
-            TextAlign = Pos.CenterH,
-            WrappingBehavior = WrappingBehavior.Wrapped,
         };
 
         var buttonsPanel = new Panel(this, name: nameof(_buttonPanel))
@@ -223,13 +229,15 @@ public partial class InputBox : Window
             Dock = Pos.Fill,
         };
 
-        var promptLabel = new Label(inputPanel, name: nameof(_promptLabel))
+        var promptScroller = new ScrollControl(inputPanel, name: nameof(_promptScroller))
         {
-            AutoSizeToContents = false,
+            Dock = Pos.Fill,
+        };
+
+        var promptLabel = new RichLabel(promptScroller, name: nameof(_promptLabel))
+        {
             Dock = Pos.Fill,
             Font = _defaultFont,
-            TextAlign = Pos.CenterH,
-            WrappingBehavior = WrappingBehavior.Wrapped,
         };
 
         var numericInput = new TextBoxNumeric(inputPanel, name: nameof(_numericInputTextbox))
@@ -237,6 +245,7 @@ public partial class InputBox : Window
             AutoSizeToContents = false,
             Dock = Pos.Bottom,
             Font = _defaultFont,
+            Margin = new Margin(0, 8, 0, 0),
             TextAlign = Pos.Left,
             WrappingBehavior = WrappingBehavior.NoWrap,
         };
@@ -288,13 +297,15 @@ public partial class InputBox : Window
             Dock = Pos.Fill,
         };
 
-        var promptLabel = new Label(inputPanel, name: nameof(_promptLabel))
+        var promptScroller = new ScrollControl(inputPanel, name: nameof(_promptScroller))
         {
-            AutoSizeToContents = false,
+            Dock = Pos.Fill,
+        };
+
+        var promptLabel = new RichLabel(promptScroller, name: nameof(_promptLabel))
+        {
             Dock = Pos.Fill,
             Font = _defaultFont,
-            TextAlign = Pos.CenterH,
-            WrappingBehavior = WrappingBehavior.Wrapped,
         };
 
         var numericSliderInput = new LabeledSlider(inputPanel, name: nameof(_numericInputSlider))
@@ -302,6 +313,7 @@ public partial class InputBox : Window
             AutoSizeToContents = false,
             Dock = Pos.Bottom,
             Font = _defaultFont,
+            Margin = new Margin(0, 8, 0, 0),
             Rounding = 0,
         };
         numericSliderInput.ValueChanged += NumericSliderInputOnValueChanged;
@@ -348,13 +360,15 @@ public partial class InputBox : Window
             Dock = Pos.Fill,
         };
 
-        var promptLabel = new Label(inputPanel, name: nameof(_promptLabel))
+        var promptScroller = new ScrollControl(inputPanel, name: nameof(_promptScroller))
         {
-            AutoSizeToContents = false,
+            Dock = Pos.Fill,
+        };
+
+        var promptLabel = new RichLabel(promptScroller, name: nameof(_promptLabel))
+        {
             Dock = Pos.Fill,
             Font = _defaultFont,
-            TextAlign = Pos.CenterH,
-            WrappingBehavior = WrappingBehavior.Wrapped,
         };
 
         var stringInput = new TextBox(inputPanel, name: nameof(_stringInput))
@@ -362,6 +376,7 @@ public partial class InputBox : Window
             AutoSizeToContents = false,
             Dock = Pos.Bottom,
             Font = _defaultFont,
+            Margin = new Margin(0, 8, 0, 0),
             TextAlign = Pos.Left,
             WrappingBehavior = WrappingBehavior.NoWrap,
         };
@@ -417,7 +432,8 @@ public partial class InputBox : Window
     //
     // NumericSliderInput,
 
-    private readonly Label _promptLabel;
+    private readonly ScrollControl _promptScroller;
+    private readonly RichLabel _promptLabel;
 
     private readonly LabeledSlider? _numericInputSlider;
     private readonly TextBoxNumeric? _numericInputTextbox;
@@ -452,6 +468,9 @@ public partial class InputBox : Window
     )
     {
     }
+
+    private int _initialScrollerInnerHeight;
+    private int _initialMinimumHeight;
 
     protected InputBox(
         string name,
@@ -500,7 +519,10 @@ public partial class InputBox : Window
         _okayButton = _inputPanel.FindChildByName<Button>(nameof(_okayButton));
         _yesButton = _inputPanel.FindChildByName<Button>(nameof(_yesButton));
 
-        _promptLabel = _inputPanel.FindChildByName<Label>(nameof(_promptLabel)) ??
+        _promptScroller = _inputPanel.FindChildByName<ScrollControl>(nameof(_promptScroller)) ??
+                          throw new InvalidOperationException("Prompt scroller wasn't created");
+
+        _promptLabel = _promptScroller.FindChildByName<RichLabel>(nameof(_promptLabel)) ??
                        throw new InvalidOperationException("Prompt label wasn't created");
 
         _promptLabel.Text = prompt;
@@ -611,6 +633,26 @@ public partial class InputBox : Window
     {
         Name = $"{GetType().GetName(qualified: false)}_{InputType}";
         LoadJsonUi(GameContentManager.UI.Shared, Graphics.Renderer?.GetResolutionString());
+
+        var promptScrollerInnerPanelPadding = _promptScroller.InnerPanel.Padding;
+        var promptScrollerInnerPanelPaddingV =
+            promptScrollerInnerPanelPadding.Bottom + promptScrollerInnerPanelPadding.Top;
+        _initialScrollerInnerHeight = _promptScroller.InnerHeight - promptScrollerInnerPanelPaddingV;
+        _initialMinimumHeight = MinimumSize.Y;
+
+        _promptLabel.Rebuilt += (_, _) =>
+        {
+            var newHeight = _promptLabel.Height;
+            newHeight = Math.Min(400, newHeight);
+            var delta = newHeight - _initialScrollerInnerHeight;
+            MinimumSize = MinimumSize with
+            {
+                Y = _initialMinimumHeight + delta,
+            };
+            SizeToChildren();
+        };
+
+        _promptLabel.ForceImmediateRebuild();
 
         Show();
         Focus();

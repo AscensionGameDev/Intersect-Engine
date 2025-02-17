@@ -941,11 +941,13 @@ public partial class Base : IDisposable
         get => _minimumSize;
         set
         {
+            var oldValue = _minimumSize;
             _minimumSize = value;
             if (_innerPanel != null)
             {
                 _innerPanel.MinimumSize = InnerPanelSizeFrom(value);
             }
+            OnMinimumSizeChanged(oldValue, value);
         }
     }
 
@@ -957,11 +959,13 @@ public partial class Base : IDisposable
         get => _maximumSize;
         set
         {
+            var oldValue = _maximumSize;
             _maximumSize = value;
             if (_innerPanel != null)
             {
                 _innerPanel.MaximumSize = InnerPanelSizeFrom(value);
             }
+            OnMaximumSizeChanged(oldValue, value);
         }
     }
 
@@ -2388,6 +2392,13 @@ public partial class Base : IDisposable
     ///     True if bounds changed.
     /// </returns>
     public virtual bool SetBounds(float x, float y, float width, float height) => SetBounds((int) x, (int) y, (int) width, (int) height);
+
+    protected virtual void OnMaximumSizeChanged(Point oldSize, Point newSize)
+    {
+    }
+    protected virtual void OnMinimumSizeChanged(Point oldSize, Point newSize)
+    {
+    }
 
     protected virtual void OnSizeChanged(Point oldSize, Point newSize)
     {
