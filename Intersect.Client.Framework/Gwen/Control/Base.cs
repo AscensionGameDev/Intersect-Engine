@@ -130,8 +130,8 @@ public partial class Base : IDisposable
 
     private Padding mPadding;
 
-    protected Modal? mModal;
-    private Base? mOldParent;
+    protected Modal? _modal;
+    private Base? _previousParent;
     private Base? _parent { get; set; }
 
     private Rectangle mRenderBounds;
@@ -1217,17 +1217,20 @@ public partial class Base : IDisposable
             {
                 child.Dispose();
             }
-
-            if (@this is Modal)
-            {
-                @this.ToString();
-            }
         }
         catch
         {
             throw;
         }
 
+        if (@this is Modal)
+        {
+            ApplicationContext.CurrentContext.Logger.LogTrace(
+                "Clearing {ChildCount} children of Modal {Name}",
+                @this._children.Count,
+                @this.CanonicalName
+            );
+        }
         @this._children.Clear();
     }
 
@@ -2097,6 +2100,14 @@ public partial class Base : IDisposable
 
     private static void ClearChildren(Base @this)
     {
+        if (@this is Modal)
+        {
+            ApplicationContext.CurrentContext.Logger.LogTrace(
+                "Clearing {ChildCount} children of Modal {Name}",
+                @this._children.Count,
+                @this.CanonicalName
+            );
+        }
         @this._children.Clear();
         @this.Invalidate();
     }
@@ -2125,6 +2136,14 @@ public partial class Base : IDisposable
 
     private static void RemoveAt(Base @this, int index)
     {
+        if (@this is Modal)
+        {
+            ApplicationContext.CurrentContext.Logger.LogTrace(
+                "Removing child at {Index} of Modal {Name}",
+                index,
+                @this.CanonicalName
+            );
+        }
         @this._children.RemoveAt(index);
     }
 
@@ -2346,30 +2365,30 @@ public partial class Base : IDisposable
     /// <param name="dim">Determines whether all the background should be dimmed.</param>
     public void MakeModal(bool dim = false)
     {
-        if (mModal != null)
+        if (_modal != null)
         {
             return;
         }
 
-        mModal = new Modal(Canvas)
+        _modal = new Modal(Canvas)
         {
             ShouldDrawBackground = dim,
         };
 
-        mOldParent = Parent;
-        Parent = mModal;
+        _previousParent = Parent;
+        Parent = _modal;
     }
 
     public void RemoveModal()
     {
-        if (mModal == null)
+        if (_modal is not { } modal)
         {
             return;
         }
 
-        Parent = mOldParent;
-        Canvas?.RemoveChild(mModal, false);
-        mModal = null;
+        Parent = _previousParent;
+        Canvas?.RemoveChild(modal, false);
+        _modal = null;
     }
 
     /// <summary>
@@ -2412,9 +2431,25 @@ public partial class Base : IDisposable
         // remove our pointer to it
         if (@this._innerPanel == child)
         {
-            @this._children.Remove(child);
-            child.DelayedDelete();
-            @this._innerPanel = null;
+            try
+            {
+                if (@this is Modal)
+                {
+                    ApplicationContext.CurrentContext.Logger.LogTrace(
+                        "Removing {ChildName} (inner panel) from Modal {Name} (Thread {ThreadId})",
+                        child.CanonicalName,
+                        @this.CanonicalName,
+                        Environment.CurrentManagedThreadId
+                    );
+                }
+                @this._children.Remove(child);
+                child.DelayedDelete();
+                @this._innerPanel = null;
+            }
+            catch (NullReferenceException)
+            {
+                throw;
+            }
 
             return;
         }
@@ -2426,6 +2461,15 @@ public partial class Base : IDisposable
             return;
         }
 
+        if (@this is Modal)
+        {
+            ApplicationContext.CurrentContext.Logger.LogTrace(
+                "Removing {ChildName} (normal child) from Modal {Name} (Thread {ThreadId})",
+                child.CanonicalName,
+                @this.CanonicalName,
+                Environment.CurrentManagedThreadId
+            );
+        }
         @this._children.Remove(child);
         @this.OnChildRemoved(child);
 

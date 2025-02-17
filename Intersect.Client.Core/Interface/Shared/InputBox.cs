@@ -622,9 +622,7 @@ public partial class InputBox : Window
 
     protected override void Dispose(bool disposing)
     {
-        base.Hide();
-        Close();
-        Parent?.RemoveChild(this, false);
+        _ = Interface.InputBlockingComponents.Remove(this);
         base.Dispose(disposing);
     }
 
