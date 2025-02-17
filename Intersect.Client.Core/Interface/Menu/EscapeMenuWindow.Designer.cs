@@ -1,3 +1,5 @@
+using Intersect.Client.Core;
+using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 
@@ -44,5 +46,7 @@ public partial class EscapeMenuWindow
             button.SetStateTexture(ComponentState.Disabled, $"ingame{buttonName}_disabled.png");
             button.SetStateTexture(ComponentState.Hovered, $"ingame{buttonName}_hovered.png");
         }
+
+        LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
     }
 }
