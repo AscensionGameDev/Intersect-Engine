@@ -16,24 +16,24 @@ namespace Intersect.Client.Interface.Game;
 public partial class QuestsWindow
 {
 
-    private Button mBackButton;
+    private readonly Button mBackButton;
 
-    private ScrollControl mQuestDescArea;
+    private readonly ScrollControl mQuestDescArea;
 
-    private RichLabel mQuestDescLabel;
+    private readonly RichLabel mQuestDescLabel;
 
-    private Label mQuestDescTemplateLabel;
+    private readonly Label mQuestDescTemplateLabel;
 
-    private ListBox mQuestList;
+    private readonly ListBox _questList;
 
-    private Label mQuestStatus;
+    private readonly Label mQuestStatus;
 
     //Controls
-    private WindowControl mQuestsWindow;
+    private readonly WindowControl mQuestsWindow;
 
-    private Label mQuestTitle;
+    private readonly Label mQuestTitle;
 
-    private Button mQuitButton;
+    private readonly Button mQuitButton;
 
     private QuestBase mSelectedQuest;
 
@@ -43,8 +43,8 @@ public partial class QuestsWindow
         mQuestsWindow = new WindowControl(gameCanvas, Strings.QuestLog.Title, false, "QuestsWindow");
         mQuestsWindow.DisableResizing();
 
-        mQuestList = new ListBox(mQuestsWindow, "QuestList");
-        mQuestList.EnableScroll(false, true);
+        _questList = new ListBox(mQuestsWindow, "QuestList");
+        _questList.EnableScroll(false, true);
 
         mQuestTitle = new Label(mQuestsWindow, "QuestTitle");
         mQuestTitle.SetText("");
@@ -67,6 +67,10 @@ public partial class QuestsWindow
         mQuitButton.Clicked += _quitButton_Clicked;
 
         mQuestsWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+        // Override stupid decisions in the JSON
+        _questList.IsDisabled = false;
+        _questList.IsVisible = true;
     }
 
     private void _quitButton_Clicked(Base sender, MouseButtonState arguments)
@@ -168,7 +172,7 @@ public partial class QuestsWindow
 
     private void UpdateQuestList()
     {
-        mQuestList.RemoveAllRows();
+        _questList.RemoveAllRows();
         if (Globals.Me != null)
         {
             var quests = QuestBase.Lookup.Values;
@@ -272,7 +276,7 @@ public partial class QuestsWindow
 
     private void AddQuestToList(string name, Color clr, Guid questId, bool indented = true)
     {
-        var item = mQuestList.AddRow((indented ? "\t\t\t" : "") + name);
+        var item = _questList.AddRow((indented ? "\t\t\t" : "") + name);
         item.UserData = questId;
         item.Clicked += QuestListItem_Clicked;
         item.Selected += Item_Selected;
@@ -282,7 +286,7 @@ public partial class QuestsWindow
 
     private void AddCategoryToList(string name, Color clr)
     {
-        var item = mQuestList.AddRow(name);
+        var item = _questList.AddRow(name);
         item.MouseInputEnabled = false;
         item.SetTextColor(clr);
         item.RenderColor = new Color(0, 255, 255, 255);
@@ -290,27 +294,31 @@ public partial class QuestsWindow
 
     private void Item_Selected(Base sender, ItemSelectedEventArgs arguments)
     {
-        mQuestList.UnselectAll();
+        _questList.UnselectAll();
     }
 
     private void QuestListItem_Clicked(Base sender, MouseButtonState arguments)
     {
-        var questNum = (Guid) ((ListBoxRow) sender).UserData;
-        var quest = QuestBase.Get(questNum);
-        if (quest != null)
+        if (sender.UserData is not Guid questId)
         {
-            mSelectedQuest = quest;
-            UpdateSelectedQuest();
+            return;
         }
 
-        mQuestList.UnselectAll();
+        if (!QuestBase.TryGet(questId, out var questDescriptor))
+        {
+            _questList.UnselectAll();
+            return;
+        }
+
+        mSelectedQuest = questDescriptor;
+        UpdateSelectedQuest();
     }
 
     private void UpdateSelectedQuest()
     {
         if (mSelectedQuest == null)
         {
-            mQuestList.Show();
+            _questList.Show();
             mQuestTitle.Hide();
             mQuestDescArea.Hide();
             mQuestStatus.Hide();
@@ -418,7 +426,7 @@ public partial class QuestsWindow
                 }
             }
 
-            mQuestList.Hide();
+            _questList.Hide();
             mQuestTitle.IsHidden = false;
             mQuestTitle.Text = mSelectedQuest.Name;
             mQuestDescArea.IsHidden = false;
