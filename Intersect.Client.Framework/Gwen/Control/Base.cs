@@ -1716,9 +1716,12 @@ public partial class Base : IDisposable
         _threadQueue.Defer(action, this, state);
     }
 
-    public TReturn Defer<TState, TReturn>(Func<Base, TState, TReturn> func, TState state)
+    public TReturn Defer<TState, TReturn>(Func<Base, TState, TReturn> func, TState state, bool invalidate = true)
     {
-        Invalidate();
+        if (invalidate)
+        {
+            Invalidate();
+        }
         return _threadQueue.Defer(func, this, state);
     }
 
@@ -1952,7 +1955,8 @@ public partial class Base : IDisposable
             return;
         }
 
-        var otherIndex = @this._children.IndexOf(other);
+        var children = @this.HostedChildren;
+        var otherIndex = children.IndexOf(other);
         if (otherIndex < 0)
         {
             ApplicationContext.Context.Value?.Logger.LogError(
@@ -1963,12 +1967,12 @@ public partial class Base : IDisposable
             return;
         }
 
-        var ownIndex = @this._children.IndexOf(childToMove);
+        var ownIndex = children.IndexOf(childToMove);
 
 
         if (ownIndex < 0)
         {
-            @this._children.Insert(otherIndex, childToMove);
+            children.Insert(otherIndex, childToMove);
             return;
         }
 
@@ -1983,8 +1987,8 @@ public partial class Base : IDisposable
             return;
         }
 
-        @this._children.Remove(childToMove);
-        @this._children.Insert(insertionIndex, childToMove);
+        children.Remove(childToMove);
+        children.Insert(insertionIndex, childToMove);
     }
 
     public void MoveAfter(Base other)
@@ -2002,6 +2006,8 @@ public partial class Base : IDisposable
         parent.Defer(MoveChildAfterOther, this, other);
     }
 
+    private List<Base> HostedChildren => _innerPanel?.HostedChildren ?? _children;
+
     private static void MoveChildAfterOther(Base @this, Base childToMove, Base other)
     {
         if (other.Parent != @this)
@@ -2009,7 +2015,8 @@ public partial class Base : IDisposable
             return;
         }
 
-        var otherIndex = @this._children.IndexOf(other);
+        var children = @this.HostedChildren;
+        var otherIndex = children.IndexOf(other);
         if (otherIndex < 0)
         {
             ApplicationContext.Context.Value?.Logger.LogError(
@@ -2020,12 +2027,12 @@ public partial class Base : IDisposable
             return;
         }
 
-        var ownIndex = @this._children.IndexOf(childToMove);
+        var ownIndex = children.IndexOf(childToMove);
 
         if (ownIndex < 0)
         {
             // If we have no parent yet, insert it
-            @this._children.Insert(otherIndex + 1, childToMove);
+            children.Insert(otherIndex + 1, childToMove);
             return;
         }
 
@@ -2040,8 +2047,8 @@ public partial class Base : IDisposable
             return;
         }
 
-        @this._children.Remove(childToMove);
-        @this._children.Insert(insertionIndex, childToMove);
+        children.Remove(childToMove);
+        children.Insert(insertionIndex, childToMove);
     }
 
     public void SortChildrenBy<TSortKey>(Func<Base?, TSortKey> keySelector) where TSortKey : IComparable<TSortKey>
@@ -2858,7 +2865,7 @@ public partial class Base : IDisposable
             // Render the control
             Render(skin);
 
-            var childrenToRender = Defer(OrderChildrenForRendering);
+            var childrenToRender = OrderChildrenForRendering(_children.Where(IsNodeVisible));
 
             foreach (var child in childrenToRender)
             {
@@ -2883,11 +2890,6 @@ public partial class Base : IDisposable
         {
             cache.DrawCachedControlTexture(this);
         }
-    }
-
-    private static Base[] OrderChildrenForRendering(Base @this)
-    {
-        return @this.OrderChildrenForRendering(@this._children.Where(IsNodeVisible));
     }
 
     private static bool IsNodeVisible(Base node) => node.IsVisible;
@@ -3004,7 +3006,7 @@ public partial class Base : IDisposable
         //Render myself first
         Render(skin);
 
-        var childrenToRender = Defer(OrderChildrenForRendering);
+        var childrenToRender = OrderChildrenForRendering(_children.Where(IsNodeVisible));
 
         foreach (var child in childrenToRender)
         {
@@ -3438,7 +3440,7 @@ public partial class Base : IDisposable
             }
         }
 
-        var possibleNode = Defer(FindComponentAt, new ComponentAtParams(new Point(x, y), filters));
+        var possibleNode = Defer(FindComponentAt, new ComponentAtParams(new Point(x, y), filters), invalidate: false);
         if (possibleNode is not null)
         {
             return possibleNode;
