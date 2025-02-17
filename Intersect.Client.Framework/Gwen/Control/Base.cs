@@ -1210,9 +1210,22 @@ public partial class Base : IDisposable
 
     private static void DisposeChildren(Base @this)
     {
-        foreach (var child in @this._children)
+        var children = @this._children.ToArray();
+        try
         {
-            child.Dispose();
+            foreach (var child in @this._children)
+            {
+                child.Dispose();
+            }
+
+            if (@this is Modal)
+            {
+                @this.ToString();
+            }
+        }
+        catch
+        {
+            throw;
         }
 
         @this._children.Clear();
@@ -2174,83 +2187,61 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Sends the control to the bottom of paren't visibility stack.
     /// </summary>
-    public virtual void SendToBack()
+    public void SendToBack() => Defer(SendToBack, this);
+
+    private static void SendToBack(Base @this)
     {
-        if (mActualParent == null)
+        if (@this.mActualParent == null)
         {
             return;
         }
 
-        if (mActualParent._children.Count == 0)
+        if (@this.mActualParent._children.Count == 0)
         {
             return;
         }
 
-        if (mActualParent._children.First() == this)
+        if (@this.mActualParent._children.First() == @this)
         {
             return;
         }
 
-        mActualParent._children.Remove(this);
-        mActualParent._children.Insert(0, this);
+        @this.mActualParent._children.Remove(@this);
+        @this.mActualParent._children.Insert(0, @this);
 
-        InvalidateParent();
+        @this.InvalidateParent();
     }
 
     /// <summary>
     ///     Brings the control to the top of paren't visibility stack.
     /// </summary>
-    public virtual void BringToFront()
+    public void BringToFront() => Defer(BringToFront, this);
+
+    private static void BringToFront(Base @this)
     {
-        if (_parent != null && _parent is Modal modal)
+        if (@this._parent is Modal modal)
         {
             modal.BringToFront();
         }
 
-        var last = mActualParent?._children.LastOrDefault();
-        if (last == default || last == this)
+        var actualParent = @this.mActualParent;
+        // Using null propagation somehow breaks the static analysis after the return
+        // ReSharper disable once UseNullPropagation
+        if (actualParent is null)
         {
             return;
         }
 
-        mActualParent._children.Remove(this);
-        mActualParent._children.Add(this);
-        InvalidateParent();
-        Redraw();
-    }
-
-    public virtual void BringNextToControl(Base child, bool behind)
-    {
-        if (null == mActualParent)
+        var last = actualParent._children.LastOrDefault();
+        if (last == default || last == @this)
         {
             return;
         }
 
-        mActualParent._children.Remove(this);
-
-        // todo: validate
-        var idx = mActualParent._children.IndexOf(child);
-        if (idx == mActualParent._children.Count - 1)
-        {
-            BringToFront();
-
-            return;
-        }
-
-        if (behind)
-        {
-            ++idx;
-
-            if (idx == mActualParent._children.Count - 1)
-            {
-                BringToFront();
-
-                return;
-            }
-        }
-
-        mActualParent._children.Insert(idx, this);
-        InvalidateParent();
+        actualParent._children.Remove(@this);
+        actualParent._children.Add(@this);
+        @this.InvalidateParent();
+        @this.Redraw();
     }
 
     /// <summary>
@@ -2413,28 +2404,30 @@ public partial class Base : IDisposable
     /// </summary>
     /// <param name="child">Child to be removed.</param>
     /// <param name="dispose">Determines whether the child should be disposed (added to delayed delete queue).</param>
-    public virtual void RemoveChild(Base child, bool dispose)
+    public virtual void RemoveChild(Base child, bool dispose) => Defer(RemoveChild, this, child, dispose);
+
+    private static void RemoveChild(Base @this, Base child, bool dispose)
     {
-        // If we removed our innerpanel
+        // If we removed our inner panel
         // remove our pointer to it
-        if (_innerPanel == child)
+        if (@this._innerPanel == child)
         {
-            _children.Remove(_innerPanel);
-            _innerPanel?.DelayedDelete();
-            _innerPanel = null;
+            @this._children.Remove(child);
+            child.DelayedDelete();
+            @this._innerPanel = null;
 
             return;
         }
 
-        if (_innerPanel is { } innerPanel && innerPanel.Children.Contains(child))
+        if (@this._innerPanel is { } innerPanel && innerPanel.Children.Contains(child))
         {
             innerPanel.RemoveChild(child, dispose);
 
             return;
         }
 
-        _children.Remove(child);
-        OnChildRemoved(child);
+        @this._children.Remove(child);
+        @this.OnChildRemoved(child);
 
         if (dispose)
         {
