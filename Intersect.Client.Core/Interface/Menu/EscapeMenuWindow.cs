@@ -5,6 +5,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
+using Intersect.Framework.Core;
 using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Menu;
@@ -96,7 +97,7 @@ public partial class EscapeMenuWindow : Window
         base.Invalidate();
         if (Interface.GameUi?.GameCanvas != null)
         {
-            Interface.GameUi.GameCanvas.MouseInputEnabled = IsVisible;
+            Interface.GameUi.GameCanvas.MouseInputEnabled = IsVisibleInTree;
         }
     }
 
@@ -104,7 +105,7 @@ public partial class EscapeMenuWindow : Window
     public override void ToggleHidden()
     {
         var settingsWindow = _settingsWindowProvider();
-        if (settingsWindow.IsVisible)
+        if (settingsWindow.IsVisibleInTree)
         {
             return;
         }

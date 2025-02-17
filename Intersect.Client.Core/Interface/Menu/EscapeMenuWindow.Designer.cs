@@ -16,7 +16,7 @@ public partial class EscapeMenuWindow
             _logout,
             _exitdesktop,
             _closemenu,
-        }.Where(button => button.IsVisible).ToArray();
+        }.Where(button => button.IsVisibleInParent).ToArray();
 
         const int defaultWidth = 97;
         const int defaultHeight = 154;
