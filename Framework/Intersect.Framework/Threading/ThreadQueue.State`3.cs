@@ -9,6 +9,12 @@ public sealed partial class ThreadQueue
         TState2 state2
     )
     {
+        if (IsOnMainThread)
+        {
+            action(state0, state1, state2);
+            return;
+        }
+
         Defer(
             State<TState0, TState1, TState2>.Wrapper,
             new State<TState0, TState1, TState2>(action, state0, state1, state2)

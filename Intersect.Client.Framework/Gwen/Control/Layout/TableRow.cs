@@ -280,15 +280,19 @@ public partial class TableRow : Base, IColorableText
     /// </summary>
     public event GwenEventHandler<ItemSelectedEventArgs> Selected;
 
-    public bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
+    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
     {
-        var columns = _columns.ToArray();
-        foreach (var column in columns)
-        {
-            column.SizeToChildren(resizeX: resizeX, resizeY: resizeY, recursive: recursive);
-        }
+        Defer(SizeColumnsToChildren, this, new SizeToChildrenArgs(resizeX, resizeY, recursive));
 
         return base.SizeToChildren(resizeX: resizeX, resizeY: resizeY, recursive: recursive);
+    }
+
+    private void SizeColumnsToChildren(TableRow @this, SizeToChildrenArgs args)
+    {
+        foreach (var column in this._columns)
+        {
+            column.SizeToChildren(resizeX: args.X, resizeY: args.Y, recursive: args.Recurse);
+        }
     }
 
     protected override void OnSizeChanged(Point oldSize, Point newSize)
@@ -345,6 +349,13 @@ public partial class TableRow : Base, IColorableText
         if (!IsVisible)
         {
             return;
+        }
+
+        switch (childCanonicalName)
+        {
+            case "SectionGPU.Column0":
+            case "SectionUI.Column0":
+                break;
         }
 
         ApplicationContext.CurrentContext.Logger.LogTrace(
