@@ -1352,7 +1352,7 @@ public partial class MapInstance : IMapInstance
     {
         foreach (var spawn in ResourceSpawns)
         {
-            if (!ResourceSpawnInstances.TryGetValue(spawn.Value, out var spawnInstance) || spawnInstance?.Entity?.Base == default || !spawnInstance.Entity.IsDead)
+            if (!ResourceSpawnInstances.TryGetValue(spawn.Value, out var spawnInstance) || spawnInstance?.Entity?.Descriptor == default || !spawnInstance.Entity.IsDead)
             {
                 continue;
             }
@@ -1360,14 +1360,14 @@ public partial class MapInstance : IMapInstance
             var now = Timing.Global.Milliseconds;
             if (spawnInstance.RespawnTime < 0)
             {
-                spawnInstance.RespawnTime = now + (spawnInstance.Entity.Base?.SpawnDuration ?? 0);
+                spawnInstance.RespawnTime = now + (spawnInstance.Entity.Descriptor?.SpawnDuration ?? 0);
             }
             else if (spawnInstance.RespawnTime < now)
             {
                 // Check to see if this resource can be respawned, if there's an Npc or Player on it we shouldn't let it respawn yet..
                 // Unless of course the resource is walkable regardless.
                 var canSpawn = false;
-                if (spawnInstance.Entity.Base.WalkableBefore)
+                if (spawnInstance.Entity.Descriptor.WalkableBefore)
                 {
                     canSpawn = true;
                 }
