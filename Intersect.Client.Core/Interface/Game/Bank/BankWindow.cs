@@ -42,7 +42,7 @@ public partial class BankWindow
     {
         // Create a new window to display the contents of the bank.
         mBankWindow = new WindowControl(gameCanvas,
-            Globals.GuildBank
+            Globals.IsGuildBank
                 ? Strings.Guilds.Bank.ToString(Globals.Me?.Guild)
                 : Strings.Bank.Title.ToString(),
             false, "BankWindow");
@@ -76,7 +76,7 @@ public partial class BankWindow
 
     public void OpenContextMenu(int slot)
     {
-        var item = ItemBase.Get(Globals.Bank[slot].ItemId);
+        var item = ItemBase.Get(Globals.BankSlots[slot].ItemId);
 
         // No point showing a menu for blank space.
         if (item == null)
@@ -109,7 +109,7 @@ public partial class BankWindow
     public void Open()
     {
         // Hide unavailable bank slots
-        var currentBankSlots = Math.Max(0, Globals.BankSlots);
+        var currentBankSlots = Math.Max(0, Globals.BankSlotCount);
         // For any slot beyond the current bank's maximum slots
         for (var i = currentBankSlots; i < Options.Instance.Bank.MaxSlots; i++)
         {
@@ -146,11 +146,11 @@ public partial class BankWindow
 
         X = mBankWindow.X;
         Y = mBankWindow.Y;
-        for (var i = 0; i < Math.Min(Globals.BankSlots, Options.Instance.Bank.MaxSlots); i++)
+        for (var i = 0; i < Math.Min(Globals.BankSlotCount, Options.Instance.Bank.MaxSlots); i++)
         {
             var bankItem = Items[i];
             var bankLabel = mValues[i];
-            var globalBankItem = Globals.Bank[i];
+            var globalBankItem = Globals.BankSlots[i];
 
             bankItem.Container.Show();
             SetItemPosition(i);

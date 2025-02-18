@@ -9,6 +9,19 @@ public abstract partial class MutableInterface : IMutableInterface
     private static DebugWindow? _debugWindow;
     private static DebugWindow? _debugWindow2;
 
+    public static void ReparentDebugWindow(Base parent)
+    {
+        if (_debugWindow is { } debugWindow)
+        {
+            debugWindow.Parent = parent;
+        }
+
+        if (_debugWindow2 is { } debugWindow2)
+        {
+            debugWindow2.Parent = parent;
+        }
+    }
+
     public static void DetachDebugWindow()
     {
         if (_debugWindow != null)

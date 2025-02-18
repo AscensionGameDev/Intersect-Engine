@@ -485,7 +485,7 @@ public partial class InventoryItem
                 if (bagWindow.RenderBounds().IntersectsWith(dragRect))
                 {
                     var bagSlotComponents = bagWindow.Items.ToArray();
-                    var bagSlotLimit = Math.Min(Globals.Bag.Length, bagSlotComponents.Length);
+                    var bagSlotLimit = Math.Min(Globals.BagSlots.Length, bagSlotComponents.Length);
                     for (var bagSlotIndex = 0; bagSlotIndex < bagSlotLimit; bagSlotIndex++)
                     {
                         var bagSlotComponent = bagSlotComponents[bagSlotIndex];
@@ -518,7 +518,7 @@ public partial class InventoryItem
                 {
                     var bankSlotComponents = bankWindow.Items.ToArray();
                     var bankSlotLimit = Math.Min(
-                        Math.Min(Globals.Bank.Length, Globals.BankSlots),
+                        Math.Min(Globals.BankSlots.Length, Globals.BankSlotCount),
                         bankSlotComponents.Length
                     );
 

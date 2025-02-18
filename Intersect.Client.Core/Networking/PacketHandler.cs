@@ -1734,13 +1734,13 @@ internal sealed partial class PacketHandler
     {
         if (!packet.Close)
         {
-            Globals.GuildBank = packet.Guild;
-            Globals.Bank = new Item[packet.Slots];
+            Globals.IsGuildBank = packet.Guild;
+            Globals.BankSlots = new Item[packet.Slots];
             foreach (var itm in packet.Items)
             {
                 HandlePacket(itm);
             }
-            Globals.BankSlots = packet.Slots;
+            Globals.BankSlotCount = packet.Slots;
             Interface.Interface.GameUi.NotifyOpenBank();
         }
         else
@@ -1755,12 +1755,12 @@ internal sealed partial class PacketHandler
         var slot = packet.Slot;
         if (packet.ItemId != Guid.Empty)
         {
-            Globals.Bank[slot] = new Item();
-            Globals.Bank[slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.Properties);
+            Globals.BankSlots[slot] = new Item();
+            Globals.BankSlots[slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.Properties);
         }
         else
         {
-            Globals.Bank[slot] = null;
+            Globals.BankSlots[slot] = null;
         }
     }
 
@@ -2001,10 +2001,7 @@ internal sealed partial class PacketHandler
 
             Globals.Me.HiddenQuests = packet.HiddenQuests;
 
-            if (Interface.Interface.GameUi != null)
-            {
-                Interface.Interface.GameUi.NotifyQuestsUpdated();
-            }
+            Interface.Interface.EnqueueInGame(uiInGame => uiInGame.NotifyQuestsUpdated());
         }
     }
 
@@ -2102,7 +2099,7 @@ internal sealed partial class PacketHandler
     {
         if (!packet.Close)
         {
-            Globals.Bag = new Item[packet.Slots];
+            Globals.BagSlots = new Item[packet.Slots];
             Interface.Interface.GameUi.NotifyOpenBag();
         }
         else
@@ -2116,12 +2113,12 @@ internal sealed partial class PacketHandler
     {
         if (packet.ItemId == Guid.Empty)
         {
-            Globals.Bag[packet.Slot] = null;
+            Globals.BagSlots[packet.Slot] = null;
         }
         else
         {
-            Globals.Bag[packet.Slot] = new Item();
-            Globals.Bag[packet.Slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.Properties);
+            Globals.BagSlots[packet.Slot] = new Item();
+            Globals.BagSlots[packet.Slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.Properties);
         }
     }
 

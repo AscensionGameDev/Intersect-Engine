@@ -616,6 +616,8 @@ public partial class Base : IDisposable
 
     protected bool HasSkin => _skin != null || (_host?.HasSkin ?? false);
 
+    protected Skin.Base? SafeSkin => _skin ?? _parent?.SafeSkin;
+
     /// <summary>
     ///     Current skin.
     /// </summary>
@@ -623,14 +625,9 @@ public partial class Base : IDisposable
     {
         get
         {
-            if (_skin != null)
+            if (SafeSkin is { } skin)
             {
-                return _skin;
-            }
-
-            if (_host != null)
-            {
-                return _host.Skin;
+                return skin;
             }
 
             throw new InvalidOperationException("GetSkin: null");
@@ -3044,6 +3041,8 @@ public partial class Base : IDisposable
         // Do think
         Think();
 
+        UpdateColors();
+
         var render = skin.Renderer;
 
         if (render.Ctt != null && ShouldCacheToTexture)
@@ -4467,7 +4466,6 @@ public partial class Base : IDisposable
     /// </summary>
     public virtual void Redraw()
     {
-        UpdateColors();
         _cacheTextureDirty = true;
         _host?.Redraw();
     }

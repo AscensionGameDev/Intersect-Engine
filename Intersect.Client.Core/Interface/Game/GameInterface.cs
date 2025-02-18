@@ -105,23 +105,27 @@ public partial class GameInterface : MutableInterface
     public GameInterface(Canvas canvas) : base(canvas)
     {
         GameCanvas = canvas;
-        EscapeMenu = new EscapeMenu(GameCanvas, GetOrCreateSettingsWindow) {IsHidden = true};
-        SimplifiedEscapeMenu = new SimplifiedEscapeMenu(GameCanvas, GetOrCreateSettingsWindow) {IsHidden = true};
-        TargetContextMenu = new TargetContextMenu(GameCanvas) {IsHidden = true};
-        AnnouncementWindow = new AnnouncementWindow(GameCanvas) { IsHidden = true };
 
         InitGameGui();
     }
 
     public Canvas GameCanvas { get; }
 
-    public EscapeMenu EscapeMenu { get; }
+    private AnnouncementWindow? _announcementWindow;
+    private EscapeMenu? _escapeMenu;
+    private SimplifiedEscapeMenu? _simplifiedEscapeMenu;
+    private TargetContextMenu? _targetContextMenu;
 
-    public SimplifiedEscapeMenu SimplifiedEscapeMenu { get; }
+    public EscapeMenu EscapeMenu => _escapeMenu ??= new EscapeMenu(GameCanvas, GetOrCreateSettingsWindow)
+    {
+        IsHidden = true,
+    };
 
-    public TargetContextMenu TargetContextMenu { get; }
+    public SimplifiedEscapeMenu SimplifiedEscapeMenu => _simplifiedEscapeMenu ??= new SimplifiedEscapeMenu(GameCanvas, GetOrCreateSettingsWindow) {IsHidden = true};
 
-    public AnnouncementWindow AnnouncementWindow { get; }
+    public TargetContextMenu TargetContextMenu => _targetContextMenu ??= new TargetContextMenu(GameCanvas) {IsHidden = true};
+
+    public AnnouncementWindow AnnouncementWindow => _announcementWindow ??= new AnnouncementWindow(GameCanvas) { IsHidden = true };
 
     public MenuContainer GameMenu { get; private set; }
 
