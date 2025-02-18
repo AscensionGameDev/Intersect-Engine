@@ -370,13 +370,16 @@ public partial class MonoInput : GameInput
             var modifier = GetPressedModifier(keyboardState);
 
             //Check for state changes in the left mouse button
-            CheckMouseButton(modifier, mouseState.LeftButton, MouseButton.Left);
-            CheckMouseButton(modifier, mouseState.RightButton, MouseButton.Right);
-            CheckMouseButton(modifier, mouseState.MiddleButton, MouseButton.Middle);
-            CheckMouseButton(modifier, mouseState.XButton1, MouseButton.X1);
-            CheckMouseButton(modifier, mouseState.XButton2, MouseButton.X2);
+            if (Interface.Interface.IsInBounds(mouseState.X, mouseState.Y))
+            {
+                CheckMouseButton(modifier, mouseState.LeftButton, MouseButton.Left);
+                CheckMouseButton(modifier, mouseState.RightButton, MouseButton.Right);
+                CheckMouseButton(modifier, mouseState.MiddleButton, MouseButton.Middle);
+                CheckMouseButton(modifier, mouseState.XButton1, MouseButton.X1);
+                CheckMouseButton(modifier, mouseState.XButton2, MouseButton.X2);
 
-            CheckMouseScrollWheel(mouseState.ScrollWheelValue, mouseState.HorizontalScrollWheelValue);
+                CheckMouseScrollWheel(mouseState.ScrollWheelValue, mouseState.HorizontalScrollWheelValue);
+            }
 
             foreach (var key in _intersectToMonoGameKeyMap)
             {
