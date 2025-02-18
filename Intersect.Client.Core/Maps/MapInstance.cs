@@ -883,12 +883,12 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 continue;
             }
 
-            if (layerBuffers[Globals.AnimFrame] == null)
+            if (layerBuffers[Globals.AnimationFrame] == null)
             {
                 continue;
             }
 
-            var buffersForFrame = layerBuffers[Globals.AnimFrame];
+            var buffersForFrame = layerBuffers[Globals.AnimationFrame];
             foreach (var buffer in buffersForFrame)
             {
                 Graphics.Renderer?.DrawTileBuffer(buffer);

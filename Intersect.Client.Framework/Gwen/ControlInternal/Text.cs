@@ -33,8 +33,17 @@ public partial class Text : Base
     /// <param name="name">The name of the element.</param>
     public Text(Base parent, string? name = default) : base(parent, name)
     {
-        _font = Skin.DefaultFont;
-        Color = Skin.Colors.Label.Normal;
+        if (SafeSkin is { } skin)
+        {
+            InitializeFromSkin(this);
+            _font = skin.DefaultFont;
+            Color = skin.Colors.Label.Normal;
+        }
+        else
+        {
+            PreLayout.Enqueue(InitializeFromSkin, this);
+        }
+
         MouseInputEnabled = false;
         ColorOverride = Color.FromArgb(0, 255, 255, 255); // A==0, override disabled
 
@@ -43,6 +52,12 @@ public partial class Text : Base
 
         _lastParentInnerWidth = SelectWidthFrom(parent);
         parent.SizeChanged += ParentOnSizeChanged;
+    }
+
+    private static void InitializeFromSkin(Text @this)
+    {
+        @this._font = @this.Skin.DefaultFont;
+        @this.Color = @this.Skin.Colors.Label.Normal;
     }
 
     protected override void OnSizeChanged(Point oldSize, Point newSize)

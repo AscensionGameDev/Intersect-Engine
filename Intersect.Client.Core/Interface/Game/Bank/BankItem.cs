@@ -82,7 +82,7 @@ public partial class BankItem
             }
             else
             {
-                var slot = Globals.Bank[mMySlot];
+                var slot = Globals.BankSlots[mMySlot];
                 Globals.Me.TryRetrieveItemFromBank(
                     mMySlot,
                     slot,
@@ -148,11 +148,11 @@ public partial class BankItem
             mDescWindow = null;
         }
 
-        if (Globals.Bank[mMySlot]?.Base != null)
+        if (Globals.BankSlots[mMySlot]?.Base != null)
         {
             mDescWindow = new ItemDescriptionWindow(
-                Globals.Bank[mMySlot].Base, Globals.Bank[mMySlot].Quantity, mBankWindow.X, mBankWindow.Y,
-                Globals.Bank[mMySlot].ItemProperties
+                Globals.BankSlots[mMySlot].Base, Globals.BankSlots[mMySlot].Quantity, mBankWindow.X, mBankWindow.Y,
+                Globals.BankSlots[mMySlot].ItemProperties
             );
         }
     }
@@ -172,10 +172,10 @@ public partial class BankItem
 
     public void Update()
     {
-        if (Globals.Bank[mMySlot].ItemId != mCurrentItemId)
+        if (Globals.BankSlots[mMySlot].ItemId != mCurrentItemId)
         {
-            mCurrentItemId = Globals.Bank[mMySlot].ItemId;
-            var item = ItemBase.Get(Globals.Bank[mMySlot].ItemId);
+            mCurrentItemId = Globals.BankSlots[mMySlot].ItemId;
+            var item = ItemBase.Get(Globals.BankSlots[mMySlot].ItemId);
             if (item != null)
             {
                 var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);
@@ -264,7 +264,7 @@ public partial class BankItem
             if (mBankWindow.RenderBounds().IntersectsWith(dragRect))
             {
                 var bankSlotComponents = mBankWindow.Items.ToArray();
-                var bankSlotLimit = Math.Min(Globals.BankSlots, bankSlotComponents.Length);
+                var bankSlotLimit = Math.Min(Globals.BankSlotCount, bankSlotComponents.Length);
                 for (var bankSlotIndex = 0; bankSlotIndex < bankSlotLimit; bankSlotIndex++)
                 {
                     var bankSlotComponent = bankSlotComponents[bankSlotIndex];
@@ -291,7 +291,7 @@ public partial class BankItem
                         var allowed = true;
 
                         //Permission Check
-                        if (Globals.GuildBank)
+                        if (Globals.IsGuildBank)
                         {
                             var rank = Globals.Me.GuildRank;
                             if (string.IsNullOrWhiteSpace(Globals.Me.Guild) ||
@@ -348,7 +348,7 @@ public partial class BankItem
 
                     if (bestIntersectIndex > -1)
                     {
-                        var slot = Globals.Bank[mMySlot];
+                        var slot = Globals.BankSlots[mMySlot];
                         Globals.Me.TryRetrieveItemFromBank(
                             mMySlot,
                             inventorySlotIndex: bestIntersectIndex,

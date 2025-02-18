@@ -505,7 +505,7 @@ public partial class Player : Entity, IPlayer
         return (int)Math.Min(count, int.MaxValue);
     }
 
-    public static int GetQuantityOfItemInBank(Guid itemId) => GetQuantityOfItemIn(Globals.Bank, itemId);
+    public static int GetQuantityOfItemInBank(Guid itemId) => GetQuantityOfItemIn(Globals.BankSlots, itemId);
 
     public int GetQuantityOfItemInInventory(Guid itemId) => GetQuantityOfItemIn(Inventory, itemId);
 
@@ -853,7 +853,7 @@ public partial class Player : Entity, IPlayer
     )
     {
         // Permission Check for Guild Bank
-        if (Globals.GuildBank && !IsGuildBankDepositAllowed())
+        if (Globals.IsGuildBank && !IsGuildBankDepositAllowed())
         {
             ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedDeposit.ToString(Globals.Me?.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
             return false;
@@ -877,7 +877,7 @@ public partial class Player : Entity, IPlayer
         var sourceQuantity = GetQuantityOfItemInInventory(itemDescriptor.Id);
         var quantity = quantityHint < 0 ? sourceQuantity : quantityHint;
 
-        var targetSlots = Globals.Bank.ToArray();
+        var targetSlots = Globals.BankSlots.ToArray();
 
         var movableQuantity = Item.FindSpaceForItem(
             itemDescriptor.Id,
@@ -980,13 +980,13 @@ public partial class Player : Entity, IPlayer
     )
     {
         // Permission Check for Guild Bank
-        if (Globals.GuildBank && !IsGuildBankWithdrawAllowed())
+        if (Globals.IsGuildBank && !IsGuildBankWithdrawAllowed())
         {
             ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedWithdraw.ToString(Globals.Me?.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
             return false;
         }
 
-        slot ??= Globals.Bank[bankSlotIndex];
+        slot ??= Globals.BankSlots[bankSlotIndex];
         if (!ItemBase.TryGet(slot.ItemId, out var itemDescriptor))
         {
             ApplicationContext.Context.Value?.Logger.LogWarning($"Tried to move item that does not exist from slot {bankSlotIndex}: {itemDescriptor.Id}");
@@ -1138,7 +1138,7 @@ public partial class Player : Entity, IPlayer
 
     public void TryRetrieveItemFromBag(int bagSlotIndex, int inventorySlotIndex)
     {
-        var bagSlot = Globals.Bag[bagSlotIndex];
+        var bagSlot = Globals.BagSlots[bagSlotIndex];
         if (bagSlot == default)
         {
             return;

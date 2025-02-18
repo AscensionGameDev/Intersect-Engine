@@ -57,7 +57,7 @@ public partial class BagWindow
 
     public void OpenContextMenu(int slot)
     {
-        var item = ItemBase.Get(Globals.Bag[slot].ItemId);
+        var item = ItemBase.Get(Globals.BagSlots[slot].ItemId);
 
         // No point showing a menu for blank space.
         if (item == null)
@@ -107,24 +107,24 @@ public partial class BagWindow
 
     public void Update()
     {
-        if (mBagWindow.IsHidden == true || Globals.Bag == null)
+        if (mBagWindow.IsHidden == true || Globals.BagSlots == null)
         {
             return;
         }
 
-        for (var i = 0; i < Globals.Bag.Length; i++)
+        for (var i = 0; i < Globals.BagSlots.Length; i++)
         {
-            if (Globals.Bag[i] != null && Globals.Bag[i].ItemId != Guid.Empty)
+            if (Globals.BagSlots[i] != null && Globals.BagSlots[i].ItemId != Guid.Empty)
             {
-                var item = ItemBase.Get(Globals.Bag[i].ItemId);
+                var item = ItemBase.Get(Globals.BagSlots[i].ItemId);
                 if (item != null)
                 {
                     Items[i].Pnl.IsHidden = false;
 
                     if (item.IsStackable)
                     {
-                        mValues[i].IsHidden = Globals.Bag[i].Quantity <= 1;
-                        mValues[i].Text = Strings.FormatQuantityAbbreviated(Globals.Bag[i].Quantity);
+                        mValues[i].IsHidden = Globals.BagSlots[i].Quantity <= 1;
+                        mValues[i].Text = Strings.FormatQuantityAbbreviated(Globals.BagSlots[i].Quantity);
                     }
                     else
                     {
@@ -150,7 +150,7 @@ public partial class BagWindow
 
     private void InitItemContainer()
     {
-        for (var i = 0; i < Globals.Bag.Length; i++)
+        for (var i = 0; i < Globals.BagSlots.Length; i++)
         {
             Items.Add(new BagItem(this, i));
             Items[i].Container = new ImagePanel(mItemContainer, "BagItem");

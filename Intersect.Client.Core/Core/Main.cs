@@ -243,7 +243,7 @@ internal static partial class Main
         //Update Game Animations
         if (_animationTimer < millisecondsNow)
         {
-            Globals.AnimFrame = (Globals.AnimFrame + 1) % 3;
+            Globals.AnimationFrame = (Globals.AnimationFrame + 1) % 3;
 
             _animationTimer = millisecondsNow + 500;
         }
