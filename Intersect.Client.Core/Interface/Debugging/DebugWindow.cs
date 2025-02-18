@@ -635,7 +635,7 @@ internal sealed partial class DebugWindow : Window
         table.SizeChanged += ResizeTableToChildrenOnSizeChanged;
 
         table.AddRow(Strings.Debug.Fps, name: "FPSRow").Listen(1, new DelegateDataProvider<int>(() => Graphics.Renderer.Fps), NoValue);
-        // table.AddRow(Strings.Debug.Draws, name: "DrawsRow").Listen(1, new DelegateDataProvider<int>(() => Graphics.DrawCalls), NoValue);
+        table.AddRow(Strings.Debug.Draws, name: "DrawsRow").Listen(1, new DelegateDataProvider<int>(() => Graphics.DrawCalls), NoValue);
         table.AddRow(Strings.Debug.Ping, name: "PingRow").Listen(1, new DelegateDataProvider<int>(() => Networking.Network.Ping, delayMilliseconds: 5000), NoValue);
 
         table.AddRow(Strings.Debug.Map, name: "MapRow").Listen(1, new DelegateDataProvider<string?>(() => MapInstance.TryGet(Globals.Me?.MapId ?? default, out var mapInstance) ? mapInstance.Name : default), NoValue);
@@ -651,7 +651,7 @@ internal sealed partial class DebugWindow : Window
         table.AddRow(Strings.Debug.LightsDrawn, name: "LightsDrawnRow").Listen(1, new DelegateDataProvider<int>(() => Graphics.LightsDrawn), NoValue);
         table.AddRow(Strings.Debug.InterfaceObjects, name: "InterfaceObjectsRow").Listen(1, new DelegateDataProvider<int?>(() => Interface.CurrentInterface?.NodeCount, delayMilliseconds: 1000), NoValue);
 
-        // _ = table.AddRow(Strings.Debug.SectionGPUStatistics, columnCount: 2, name: "SectionGPU", columnIndex: 1);
+        _ = table.AddRow(Strings.Debug.SectionGPUStatistics, columnCount: 2, name: "SectionGPU", columnIndex: 1);
 
         table.AddRow(Strings.Debug.RenderTargetAllocations, name: "GPURenderTargetAllocations").Listen(1, new DelegateDataProvider<ulong>(() => Graphics.Renderer.RenderTargetAllocations), NoValue);
         table.AddRow(Strings.Debug.TextureAllocations, name: "GPUTextureAllocations").Listen(1, new DelegateDataProvider<ulong>(() => Graphics.Renderer.TextureAllocations), NoValue);
