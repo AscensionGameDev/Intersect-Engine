@@ -87,7 +87,10 @@ public partial class EventWindow : Panel
             _optionButtons[optionIndex] = optionButton;
         }
 
-        _optionsPanel.SizeToChildren(new SizeToChildrenArgs(Recurse: true));
+        _optionsPanel.PostLayout.Enqueue(
+            ResizeOptionsPanelToChildren,
+            _optionsPanel
+        );
 
         _faceImage = new ImagePanel(_promptPanel, nameof(_faceImage))
         {
@@ -182,10 +185,13 @@ public partial class EventWindow : Panel
         if (_typewriting)
         {
             _promptLabel.ClearText();
-            _writer = new Typewriter(parsedText.ToArray(), (text, color) =>
-            {
-                _promptLabel.AppendText(text, color, Alignments.Left, _promptTemplateLabel.Font);
-            });
+            _writer = new Typewriter(
+                parsedText.ToArray(),
+                (text, color) =>
+                {
+                    _promptLabel.AppendText(text, color, Alignments.Left, _promptTemplateLabel.Font);
+                }
+            );
         }
 
         RunOnMainThread(
@@ -203,6 +209,11 @@ public partial class EventWindow : Panel
         ApplicationContext.CurrentContext.Logger.LogTrace("Event window opened");
 
         #endregion Configure and Display
+    }
+
+    private static void ResizeOptionsPanelToChildren(Panel optionsPanel)
+    {
+        optionsPanel.SizeToChildren(new SizeToChildrenArgs(Recurse: true));
     }
 
     protected override void OnMouseClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
