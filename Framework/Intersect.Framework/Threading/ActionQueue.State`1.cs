@@ -1,6 +1,6 @@
 namespace Intersect.Framework.Threading;
 
-public sealed partial class ThreadQueue
+public abstract partial class ActionQueue<TActionQueue, TEnqueueState>
 {
     private record struct State<TState>
     {
@@ -16,10 +16,15 @@ public sealed partial class ThreadQueue
                 throw new InvalidOperationException("Action queue is not being properly synchronized");
             }
 
-            deferredAction.Action(deferredAction.State);
-            deferredAction.ResetEvent.Set();
+            deferredAction.Action(deferredAction.ActionState);
+            deferredAction.PostInvocationAction(deferredAction.EnqueueState);
         }
 
-        public record struct DeferredAction(Action<TState> Action, ManualResetEventSlim ResetEvent, TState State);
+        public record struct DeferredAction(
+            Action<TState> Action,
+            TState ActionState,
+            Action<TEnqueueState> PostInvocationAction,
+            TEnqueueState EnqueueState
+        );
     }
 }

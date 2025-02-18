@@ -251,7 +251,7 @@ public partial class EventWindow : Panel
         else if (Controls.IsControlJustPressed(Control.AttackInteract))
         {
             SkipTypewriting();
-            RunOnMainThread(_promptScroller.ScrollToBottom);
+            PostLayout.Enqueue(_promptScroller.ScrollToBottom);
         }
         else
         {

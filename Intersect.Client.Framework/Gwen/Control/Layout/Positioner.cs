@@ -31,7 +31,7 @@ public partial class Positioner : Base
     ///     Function invoked after layout.
     /// </summary>
     /// <param name="skin">Skin to use.</param>
-    protected override void PostLayout(Skin.Base skin)
+    protected override void DoPostlayout(Skin.Base skin)
     {
         foreach (var child in Children) // ok?
         {

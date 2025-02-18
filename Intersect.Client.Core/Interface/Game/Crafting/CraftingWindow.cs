@@ -453,9 +453,9 @@ public partial class CraftingWindow : Window
         }
     }
 
-    protected override void Prelayout(Framework.Gwen.Skin.Base skin)
+    protected override void DoPrelayout(Framework.Gwen.Skin.Base skin)
     {
-        base.Prelayout(skin);
+        base.DoPrelayout(skin);
 
         if (IsCrafting)
         {

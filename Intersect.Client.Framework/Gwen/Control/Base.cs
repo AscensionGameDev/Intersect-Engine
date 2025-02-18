@@ -33,6 +33,12 @@ public partial class Base : IDisposable
 {
     private readonly ThreadQueue _threadQueue = new();
 
+    private readonly ManualActionQueueParent _preLayoutActionsParent = new();
+    public readonly ManualActionQueue PreLayout;
+
+    private readonly ManualActionQueueParent _postLayoutActionsParent = new();
+    public readonly ManualActionQueue PostLayout;
+
     private const string PropertyNameInnerPanel = "InnerPanel";
 
     private bool _inheritParentEnablementProperties;
@@ -239,6 +245,8 @@ public partial class Base : IDisposable
     public Base(Base? parent = default, string? name = default)
     {
         _visible = true;
+        PreLayout = new ManualActionQueue(_preLayoutActionsParent);
+        PostLayout = new ManualActionQueue(_postLayoutActionsParent);
 
         if (this is Canvas canvas)
         {
@@ -1765,11 +1773,6 @@ public partial class Base : IDisposable
     public void DelayedDelete()
     {
         Canvas?.AddDelayedDelete(this);
-    }
-
-    public void Defer(Action action)
-    {
-
     }
 
     public void RunOnMainThread(Action action)
@@ -3602,7 +3605,7 @@ public partial class Base : IDisposable
 
     public int NodeCount => 1 + _children.Sum(child => child.NodeCount);
 
-    protected virtual void Prelayout(Skin.Base skin)
+    protected virtual void DoPrelayout(Skin.Base skin)
     {
 
     }
@@ -3640,7 +3643,12 @@ public partial class Base : IDisposable
 
         foreach (var child in _children)
         {
-            child.Prelayout(skin);
+            child.DoPrelayout(skin);
+
+            _preLayoutActionsParent.IsExecuting = true;
+            PreLayout.InvokePending();
+            _preLayoutActionsParent.IsExecuting = false;
+
             child.BeforeLayout?.Invoke(child, EventArgs.Empty);
         }
 
@@ -3991,7 +3999,12 @@ public partial class Base : IDisposable
             child.RecurseLayout(skin);
         }
 
-        PostLayout(skin);
+        DoPostlayout(skin);
+
+        _postLayoutActionsParent.IsExecuting = true;
+        PostLayout.InvokePending();
+        _postLayoutActionsParent.IsExecuting = false;
+        
         AfterLayout?.Invoke(this, EventArgs.Empty);
 
         // ReSharper disable once InvertIf
@@ -4392,7 +4405,7 @@ public partial class Base : IDisposable
     ///     Function invoked after layout.
     /// </summary>
     /// <param name="skin">Skin to use.</param>
-    protected virtual void PostLayout(Skin.Base skin)
+    protected virtual void DoPostlayout(Skin.Base skin)
     {
     }
 
