@@ -435,8 +435,8 @@ public partial class Base : IDisposable
             var visibleProviders = _updatableDataProviderRefCounts.Where(e => e.Value.Visible > 0)
                 .Select(e => e.Key)
                 .ToArray();
-            Root.VisibleUpdatableDataProviders(visibleProviders, false);
-            Root.ListenUpdatableDataProviders(_updatableDataProviderRefCounts.Keys, false);
+            root.VisibleUpdatableDataProviders(visibleProviders, false);
+            root.ListenUpdatableDataProviders(_updatableDataProviderRefCounts.Keys, false);
 
             try
             {
@@ -476,8 +476,8 @@ public partial class Base : IDisposable
             var visibleProviders = _updatableDataProviderRefCounts.Where(e => e.Value.Visible > 0)
                 .Select(e => e.Key)
                 .ToArray();
-            Root.VisibleUpdatableDataProviders(visibleProviders, true);
             Root.ListenUpdatableDataProviders(_updatableDataProviderRefCounts.Keys, true);
+            Root.VisibleUpdatableDataProviders(visibleProviders, true);
 
             try
             {
