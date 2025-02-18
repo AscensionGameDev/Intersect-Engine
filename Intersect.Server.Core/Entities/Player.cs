@@ -1497,7 +1497,7 @@ public partial class Player : Entity
 
             case Resource resource:
                 {
-                    var descriptor = resource.Base;
+                    var descriptor = resource.Descriptor;
                     if (descriptor?.Event != null)
                     {
                         EnqueueStartCommonEvent(descriptor.Event);
@@ -1579,7 +1579,7 @@ public partial class Player : Entity
             }
 
             // Check that a resource is actually required.
-            var descriptor = resource.Base;
+            var descriptor = resource.Descriptor;
 
             //Check Dynamic Requirements
             if (!Conditions.MeetsConditionLists(descriptor.HarvestingRequirements, this, null))
@@ -1726,7 +1726,7 @@ public partial class Player : Entity
             }
 
             // Check that a resource is actually required.
-            var descriptor = resource.Base;
+            var descriptor = resource.Descriptor;
 
             //Check Dynamic Requirements
             if (!Conditions.MeetsConditionLists(descriptor.HarvestingRequirements, this, null))
