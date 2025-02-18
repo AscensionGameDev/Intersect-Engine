@@ -52,6 +52,8 @@ public abstract partial class GameInput : IGameInput
 
     public abstract bool MouseHitInterface { get; }
 
+    public abstract bool IsMouseInBounds { get; }
+
     public bool AddControlsProviders(params IControlsProvider[] controlsProviders)
     {
         var success = true;

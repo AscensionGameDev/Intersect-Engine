@@ -132,6 +132,8 @@ public partial class MonoInput : GameInput
 
     public override bool MouseHitInterface => Interface.Interface.DoesMouseHitInterface();
 
+    public override bool IsMouseInBounds => Interface.Interface.IsInBounds(_currentMouseState.X, _currentMouseState.Y);
+
     private void InputHandlerOnFocusChanged(Base? control, FocusSource focusSource)
     {
         if (control == default)

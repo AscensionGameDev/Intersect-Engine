@@ -237,6 +237,12 @@ public static partial class Interface
     public static void SetHandleInput(bool val) => GwenInput.HandleInput = val;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsInBounds(int x, int y) => CurrentInterface.Root.Bounds.Contains(x, y);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsInBounds(Point point) => CurrentInterface.Root.Bounds.Contains(point);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool DoesMouseHitInterface() => DoesMouseHitComponentOrChildren(sGameCanvas);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
