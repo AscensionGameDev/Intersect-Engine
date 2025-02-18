@@ -15,7 +15,7 @@ public partial class VersionPanel : Panel
         BackgroundColor = new Color(0x7f, 0, 0, 0);
         RestrictToParent = true;
         // TODO: Remove this when showing a game version is added
-        IsVisible = ApplicationContext.CurrentContext.IsDeveloper;
+        IsVisibleInTree = ApplicationContext.CurrentContext.IsDeveloper;
 
         var font = GameContentManager.Current.GetFont("sourcesansproblack", 10);
 
@@ -24,7 +24,7 @@ public partial class VersionPanel : Panel
             Font = font,
             Padding = new Padding(8, 4),
             Text = ApplicationContext.CurrentContext.VersionName,
-            IsVisible = ApplicationContext.CurrentContext.IsDeveloper,
+            IsVisibleInTree = ApplicationContext.CurrentContext.IsDeveloper,
         };
     }
 

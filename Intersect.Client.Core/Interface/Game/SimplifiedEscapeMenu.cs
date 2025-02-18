@@ -126,7 +126,7 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
     private void OpenSettingsWindow(object? sender, EventArgs? e)
     {
         var settingsWindow = _settingsWindowProvider();
-        if (settingsWindow.IsVisible)
+        if (settingsWindow.IsVisibleInTree)
         {
             return;
         }

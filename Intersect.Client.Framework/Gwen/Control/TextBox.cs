@@ -83,7 +83,7 @@ public partial class TextBox : Label
         _placeholder = new Text(this)
         {
             ColorOverride = new Color(255, 143, 143, 143),
-            IsVisible = false,
+            IsVisibleInTree = false,
         };
     }
 
@@ -882,7 +882,7 @@ public partial class TextBox : Label
 
     private void UpdatePlaceholder()
     {
-        _placeholder.IsVisible = string.IsNullOrEmpty(Text) && !string.IsNullOrWhiteSpace(PlaceholderText);
+        _placeholder.IsVisibleInTree = string.IsNullOrEmpty(Text) && !string.IsNullOrWhiteSpace(PlaceholderText);
         AlignTextElement(_placeholder);
     }
 

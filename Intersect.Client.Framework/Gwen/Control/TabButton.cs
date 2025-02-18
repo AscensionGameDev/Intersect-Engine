@@ -36,7 +36,7 @@ public partial class TabButton : Button
     /// <summary>
     ///     Indicates whether the tab is active.
     /// </summary>
-    public bool IsTabActive => _page is { IsVisible: true };
+    public bool IsTabActive => _page is { IsVisibleInTree: true };
 
     // todo: remove public access
     public TabControl? TabControl

@@ -22,7 +22,7 @@ public partial class MainMenuWindow
             _buttonSettings,
             _buttonCredits,
             _buttonExit,
-        }.Where(button => button.IsVisible).ToArray();
+        }.Where(button => button.IsVisibleInTree).ToArray();
 
         const int defaultWidth = 87;
         const int defaultHeight = 154;

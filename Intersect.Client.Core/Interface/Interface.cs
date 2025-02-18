@@ -181,7 +181,7 @@ public static partial class Interface
 
     public static bool HasInputFocus() =>
         FocusComponents.Any(component => component is { MouseInputEnabled: true, HasFocus: true }) ||
-        InputBlockingComponents.Any(component => component is { IsVisible: true, IsBlockingInput: true });
+        InputBlockingComponents.Any(component => component is { IsVisibleInTree: true, IsBlockingInput: true });
 
     #endregion
 
@@ -218,14 +218,14 @@ public static partial class Interface
         {
             if (HideUi && !forceShowUi)
             {
-                if (sGameCanvas.IsVisible)
+                if (sGameCanvas.IsVisibleInTree)
                 {
                     sGameCanvas.Hide();
                 }
             }
             else
             {
-                if (!sGameCanvas.IsVisible)
+                if (!sGameCanvas.IsVisibleInTree)
                 {
                     sGameCanvas.Show();
                 }

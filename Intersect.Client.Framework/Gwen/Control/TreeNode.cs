@@ -51,7 +51,7 @@ public partial class TreeNode : Base
         {
             Dock = Pos.Top,
             Height = 100,
-            IsVisible = false,
+            IsVisibleInTree = false,
             Margin = new Margin(TREE_INDENTATION, 1, 0, 0),
         };
 
@@ -269,7 +269,7 @@ public partial class TreeNode : Base
     protected override void Render(Skin.Base skin)
     {
         // Calculate the height of the tree node
-        var isOpen = _innerPanel?.IsVisible ?? false;
+        var isOpen = _innerPanel?.IsVisibleInTree ?? false;
         var treeNodeHeight = CalculateTreeNodeHeight(isOpen);
 
         // Draw the tree node using the specified skin.
@@ -309,7 +309,7 @@ public partial class TreeNode : Base
         // ReSharper disable once InvertIf
         if (isOpen)
         {
-            if (innerPanel.Children.OfType<TreeNode>().LastOrDefault(child => child.IsVisible) is { } lastVisibleChild)
+            if (innerPanel.Children.OfType<TreeNode>().LastOrDefault(child => child.IsVisibleInTree) is { } lastVisibleChild)
             {
                 return height + lastVisibleChild.Y;
             }
@@ -490,7 +490,7 @@ public partial class TreeNode : Base
     /// <param name="control">Event source.</param>
     protected virtual void OnDoubleClickName(Base control, EventArgs args)
     {
-        if (!_toggleButton.IsVisible)
+        if (!_toggleButton.IsVisibleInTree)
         {
             return;
         }

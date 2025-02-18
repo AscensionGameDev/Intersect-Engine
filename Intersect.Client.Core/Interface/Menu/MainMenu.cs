@@ -43,7 +43,7 @@ public partial class MainMenu : MutableInterface
         {
             Alignment = [Alignments.CenterH],
             Y = 480,
-            IsVisible = true,
+            IsVisibleInTree = true,
         };
 
         var logo = new ImagePanel(menuCanvas, "Logo");
@@ -55,28 +55,28 @@ public partial class MainMenu : MutableInterface
         {
             Alignment = [Alignments.CenterH],
             Y = 480,
-            IsVisible = false,
+            IsVisibleInTree = false,
         };
 
         _registerWindow = new RegistrationWindow(_menuCanvas, this)
         {
             Alignment = [Alignments.CenterH],
             Y = 480,
-            IsVisible = false,
+            IsVisibleInTree = false,
         };
 
         _settingsWindow = new SettingsWindow(_menuCanvas)
         {
             Alignment = [Alignments.CenterH],
             Y = 480,
-            IsVisible = false,
+            IsVisibleInTree = false,
         };
 
         _creditsWindow = new CreditsWindow(_menuCanvas, this)
         {
             Alignment = [Alignments.CenterH],
             Y = 480,
-            IsVisible = false,
+            IsVisibleInTree = false,
         };
 
         _forgotPasswordWindow = new ForgotPasswordWindow(_menuCanvas, this)
@@ -97,14 +97,14 @@ public partial class MainMenu : MutableInterface
         {
             Alignment = [Alignments.CenterH],
             Y = 480,
-            IsVisible = false,
+            IsVisibleInTree = false,
         };
 
         _characterCreationWindow = new CharacterCreationWindow(_menuCanvas, this, SelectCharacterWindow)
         {
             Alignment = [Alignments.CenterH],
             Y = 480,
-            IsVisible = false,
+            IsVisibleInTree = false,
         };
     }
 
@@ -122,7 +122,7 @@ public partial class MainMenu : MutableInterface
     //Methods
     public void Update(TimeSpan elapsed, TimeSpan total)
     {
-        if (_mainMenuWindow.IsVisible)
+        if (_mainMenuWindow.IsVisibleInTree)
         {
             _mainMenuWindow.Update();
         }

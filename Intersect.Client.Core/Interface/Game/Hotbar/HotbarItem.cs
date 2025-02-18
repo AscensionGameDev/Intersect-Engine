@@ -277,7 +277,7 @@ public partial class HotbarItem
         {
             if (binding?.Key is null or Keys.None)
             {
-                _keyLabel.IsVisible = false;
+                _keyLabel.IsVisibleInTree = false;
             }
             else
             {
@@ -300,7 +300,7 @@ public partial class HotbarItem
                 }
 
                 _keyLabel.Text = assembledKeyText;
-                _keyLabel.IsVisible = true;
+                _keyLabel.IsVisibleInTree = true;
             }
 
             _hotKey = binding == null ? null : new ControlBinding(binding);

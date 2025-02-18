@@ -178,7 +178,7 @@ public partial class TabControl : Base
         if (_activeButton is null)
         {
             _activeButton = button;
-            button.Page.IsVisible = true;
+            button.Page.IsVisibleInTree = true;
         }
 
         TabAdded?.Invoke(this, EventArgs.Empty);
@@ -214,7 +214,7 @@ public partial class TabControl : Base
         {
             if (_activeButton.Page is {} previousTabPage)
             {
-                previousTabPage.IsVisible = false;
+                previousTabPage.IsVisibleInTree = false;
             }
 
             _activeButton.Redraw();
@@ -227,7 +227,7 @@ public partial class TabControl : Base
         _activeButton = nextTab;
         nextTab.Redraw();
 
-        page.IsVisible = true;
+        page.IsVisibleInTree = true;
 
         TabChanged?.Invoke(control, new TabChangeEventArgs
         {

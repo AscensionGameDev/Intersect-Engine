@@ -899,8 +899,8 @@ public partial class EntityBox
 
     public bool IsVisible
     {
-        get => EntityWindow.IsVisible;
-        set => EntityWindow.IsVisible = value;
+        get => EntityWindow.IsVisibleInTree;
+        set => EntityWindow.IsVisibleInTree = value;
     }
 
     public void Hide()

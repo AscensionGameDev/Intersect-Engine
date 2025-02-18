@@ -1,6 +1,6 @@
 namespace Intersect.Client.Framework.Gwen.Control.EventArguments;
 
-public class VisibilityChangedEventArgs : EventArgs
+public class VisibilityChangedEventArgs(bool isVisible) : EventArgs
 {
-    public bool IsVisible { get; init; }
+    public bool IsVisible { get; init; } = isVisible;
 }

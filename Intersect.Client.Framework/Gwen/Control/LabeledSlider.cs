@@ -136,8 +136,8 @@ public partial class LabeledSlider : Base, ISmartAutoSizeToContents, INumericInp
 
     public bool IsValueInputEnabled
     {
-        get => _sliderValue.IsVisible;
-        set => _sliderValue.IsVisible = value;
+        get => _sliderValue.IsVisibleInTree;
+        set => _sliderValue.IsVisibleInTree = value;
     }
 
     public string? Label

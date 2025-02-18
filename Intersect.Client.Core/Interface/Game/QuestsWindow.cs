@@ -70,7 +70,7 @@ public partial class QuestsWindow
 
         // Override stupid decisions in the JSON
         _questList.IsDisabled = false;
-        _questList.IsVisible = true;
+        _questList.IsVisibleInTree = true;
     }
 
     private void _quitButton_Clicked(Base sender, MouseButtonState arguments)
@@ -108,7 +108,7 @@ public partial class QuestsWindow
 
     public void Update(bool shouldUpdateList)
     {
-        if (!mQuestsWindow.IsVisible)
+        if (!mQuestsWindow.IsVisibleInTree)
         {
             _shouldUpdateList |= shouldUpdateList;
             return;

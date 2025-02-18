@@ -67,7 +67,7 @@ public partial class ComboBox : Button
     /// <summary>
     ///     Indicates whether the combo menu is open.
     /// </summary>
-    public bool IsOpen => _menu.IsVisible;
+    public bool IsOpen => _menu.IsVisibleInTree;
 
     /// <summary>
     ///     Selected item.

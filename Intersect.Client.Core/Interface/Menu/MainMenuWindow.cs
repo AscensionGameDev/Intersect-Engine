@@ -40,7 +40,7 @@ public partial class MainMenuWindow : Window
         _buttonStart = new Button(this, nameof(_buttonStart))
         {
             IsTabable = true,
-            IsVisible = ClientContext.IsSinglePlayer,
+            IsVisibleInTree = ClientContext.IsSinglePlayer,
             Text = Strings.MainMenu.Start,
         };
         _buttonStart.Clicked += _buttonStart_Clicked;

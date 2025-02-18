@@ -15,6 +15,7 @@ using Intersect.Configuration;
 using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core;
+using Intersect.Framework.Threading;
 using Intersect.Utilities;
 using Microsoft.Extensions.Logging;
 
@@ -42,6 +43,8 @@ public partial class EventWindow : Panel
 
     private EventWindow(Canvas gameCanvas, Dialog dialog) : base(gameCanvas, nameof(EventWindow))
     {
+        ThreadQueue.Default.ThrowIfNotOnMainThread();
+
         _dialog = dialog;
         _defaultFont = GameContentManager.Current.GetFont(name: "sourcesansproblack", 12);
 
@@ -103,7 +106,7 @@ public partial class EventWindow : Panel
         _promptTemplateLabel = new Label(_promptScroller, nameof(_promptTemplateLabel))
         {
             Font = _defaultFont,
-            IsVisible = false,
+            IsVisibleInTree = false,
         };
 
         _promptLabel = new RichLabel(_promptScroller, nameof(_promptLabel))
@@ -115,7 +118,6 @@ public partial class EventWindow : Panel
 
         _promptPanel.SizeToChildren(recursive: true);
 
-
         #region Configure and Display
 
         if (_dialog.Face is { } faceTextureName)
@@ -124,18 +126,18 @@ public partial class EventWindow : Panel
             _faceImage.Texture = faceTexture;
             if (faceTexture is not null)
             {
-                _faceImage.IsVisible = true;
+                _faceImage.IsVisibleInTree = true;
                 _faceImage.SizeToContents();
             }
             else
             {
-                _faceImage.IsVisible = false;
+                _faceImage.IsVisibleInTree = false;
             }
         }
         else
         {
             _faceImage.Texture = null;
-            _faceImage.IsVisible = false;
+            _faceImage.IsVisibleInTree = false;
         }
 
         var visibleOptions = _dialog.Options.Where(option => !string.IsNullOrEmpty(option)).ToArray();
@@ -150,11 +152,11 @@ public partial class EventWindow : Panel
             if (optionIndex < visibleOptions.Length)
             {
                 optionButton.Text = visibleOptions[optionIndex];
-                optionButton.IsVisible = true;
+                optionButton.IsVisibleInTree = true;
             }
             else
             {
-                optionButton.IsVisible = false;
+                optionButton.IsVisibleInTree = false;
             }
         }
 
@@ -219,7 +221,7 @@ public partial class EventWindow : Panel
 
     private void Update()
     {
-        if (!IsVisible || !_typewriting)
+        if (!IsVisibleInTree || !_typewriting)
         {
             return;
         }
@@ -233,7 +235,7 @@ public partial class EventWindow : Panel
 
         foreach (var optionButton in _optionButtons)
         {
-            optionButton.IsVisible = writerCompleted && !string.IsNullOrEmpty(optionButton.Text);
+            optionButton.IsVisibleInTree = writerCompleted && !string.IsNullOrEmpty(optionButton.Text);
         }
 
         if (writerCompleted)

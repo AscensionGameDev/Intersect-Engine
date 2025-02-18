@@ -54,14 +54,14 @@ public partial class PlayerStatusWindow : ImagePanel
             }
 
             ShouldUpdateStatuses = _activeStatuses.Count > 0;
-            if (!IsVisible)
+            if (!IsVisibleInTree)
             {
-                IsVisible = ShouldUpdateStatuses;
+                IsVisibleInTree = ShouldUpdateStatuses;
             }
         }
-        else if (IsVisible)
+        else if (IsVisibleInTree)
         {
-            IsVisible = false;
+            IsVisibleInTree = false;
         }
     }
 }

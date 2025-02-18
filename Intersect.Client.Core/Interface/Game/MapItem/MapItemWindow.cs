@@ -157,9 +157,9 @@ public partial class MapItemWindow
         }
 
         // Do we display our window?
-        if (mFoundItems != mMapItemWindow.IsVisible)
+        if (mFoundItems != mMapItemWindow.IsVisibleInTree)
         {
-            mMapItemWindow.IsVisible = mFoundItems;
+            mMapItemWindow.IsVisibleInTree = mFoundItems;
         }
     }
 

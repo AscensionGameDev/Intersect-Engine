@@ -96,7 +96,7 @@ public partial class GameInterface : MutableInterface
     {
         _settingsWindow ??= new SettingsWindow(GameCanvas)
         {
-            IsVisible = false,
+            IsVisibleInTree = false,
         };
 
         return _settingsWindow;
@@ -441,7 +441,7 @@ public partial class GameInterface : MutableInterface
 
         if (mCraftingWindow != null)
         {
-            if (!mCraftingWindow.IsVisible || mShouldCloseCraftingTable)
+            if (!mCraftingWindow.IsVisibleInTree || mShouldCloseCraftingTable)
             {
                 CloseCraftingTable();
             }
@@ -575,7 +575,7 @@ public partial class GameInterface : MutableInterface
             closedWindows = true;
         }
 
-        if (mCraftingWindow is { IsVisible: true, IsCrafting: false })
+        if (mCraftingWindow is { IsVisibleInTree: true, IsCrafting: false })
         {
             CloseCraftingTable();
             closedWindows = true;
@@ -593,7 +593,7 @@ public partial class GameInterface : MutableInterface
             closedWindows = true;
         }
 
-        if (TargetContextMenu.IsVisible)
+        if (TargetContextMenu.IsVisibleInTree)
         {
             TargetContextMenu.ToggleHidden();
             closedWindows = true;
