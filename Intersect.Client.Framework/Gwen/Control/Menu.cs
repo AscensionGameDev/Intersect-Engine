@@ -6,7 +6,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
-
 /// <summary>
 ///     Popup menu.
 /// </summary>
@@ -93,25 +92,42 @@ public partial class Menu : ScrollControl
     ///     Opens the menu.
     /// </summary>
     /// <param name="pos">Unused.</param>
-    public void Open(Pos pos)
+    public void Open(Pos pos) => RunOnMainThread(Open, this, pos);
+
+    private static void Open(Menu @this, Pos position)
     {
-        IsHidden = false;
-        BringToFront();
+        @this.IsVisibleInParent = true;
+        @this.BringToFront();
+
         var mouse = Input.InputHandler.MousePosition;
 
-        var x = mouse.X;
-        var y = mouse.Y;
-        if (x + Width > Canvas.Width)
+        // Subtract a few pixels to it's absolutely clear the mouse is on a menu item
+        var x = mouse.X - 4;
+        var y = mouse.Y - 4;
+
+        @this.OnPositioningBeforeOpen();
+
+        if (@this.Canvas is { } canvas)
         {
-            x -= Width;
+            var canvasSize = canvas.Size;
+            var size = @this.Size;
+            x = Math.Min(x, Math.Max(0, canvasSize.X - size.X));
+            y = Math.Min(y, Math.Max(0, canvasSize.Y - size.Y));
         }
 
-        if (y + Height > Canvas.Height)
-        {
-            y -= Height;
-        }
+        @this.SetPosition(x, y);
 
-        SetPosition(x, y);
+        @this.OnOpen();
+    }
+
+    protected virtual void OnPositioningBeforeOpen()
+    {
+
+    }
+
+    protected virtual void OnOpen()
+    {
+
     }
 
     /// <summary>
