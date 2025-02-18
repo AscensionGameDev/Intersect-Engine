@@ -53,7 +53,7 @@ public static partial class Globals
     public static List<Guid> EntitiesToDispose = new List<Guid>();
 
     //Control Objects
-    public static List<Dialog> EventDialogs = new List<Dialog>();
+    public static List<Dialog> EventDialogs = [];
 
     public static Dictionary<Guid, Guid> EventHolds = new Dictionary<Guid, Guid>();
 

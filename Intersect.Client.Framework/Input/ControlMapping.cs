@@ -71,6 +71,11 @@ public partial class ControlMapping
                 return true;
             }
 
+            if (!GameInput.Current.IsMouseInBounds)
+            {
+                continue;
+            }
+
             if (GameInput.Current.MouseHitInterface)
             {
                 continue;
