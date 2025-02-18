@@ -451,13 +451,21 @@ public abstract partial class GameTexture<TPlatformTexture, TPlatformRenderer> :
         ObjectDisposedException.ThrowIf(_disposed, this);
 
         _disposed = true;
+
+        try
+        {
+            _platformTexture?.Dispose();
+            _platformTexture = null;
+
+            Renderer.MarkDisposed(this);
+        }
+        catch
+        {
+            throw;
+        }
+
         EmitDisposed();
-
-        Renderer.MarkDisposed(this);
         OnDispose(true);
-
-        _platformTexture?.Dispose();
-        _platformTexture = null;
     }
 
     protected virtual void OnDispose(bool disposing)

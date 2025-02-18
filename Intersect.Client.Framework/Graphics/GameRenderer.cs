@@ -233,8 +233,6 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
     {
         _textures.Remove(texture);
         TextureDisposed?.Invoke(this, new TextureEventArgs(texture));
-
-        MarkFreed(texture);
     }
 
     protected internal void MarkAllocated(IGameTexture texture)
