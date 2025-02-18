@@ -2,7 +2,7 @@ namespace Intersect.Framework.Threading;
 
 public sealed partial class ThreadQueue
 {
-    public void Defer<TState0, TState1>(Action<TState0, TState1> action, TState0 state0, TState1 state1)
+    public void RunOnMainThread<TState0, TState1>(Action<TState0, TState1> action, TState0 state0, TState1 state1)
     {
         if (IsOnMainThread)
         {
@@ -10,7 +10,7 @@ public sealed partial class ThreadQueue
             return;
         }
 
-        Defer(
+        RunOnMainThread(
             State<TState0, TState1>.Wrapper,
             new State<TState0, TState1>(action, state0, state1)
         );

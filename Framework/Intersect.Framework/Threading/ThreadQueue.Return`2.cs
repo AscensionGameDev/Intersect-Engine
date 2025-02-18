@@ -2,7 +2,7 @@ namespace Intersect.Framework.Threading;
 
 public sealed partial class ThreadQueue
 {
-    public TReturn Defer<TState0, TState1, TReturn>(
+    public TReturn RunOnMainThread<TState0, TState1, TReturn>(
         Func<TState0, TState1, TReturn> func,
         TState0 state0,
         TState1 state1
@@ -14,7 +14,7 @@ public sealed partial class ThreadQueue
         }
 
         Return<TState0, TState1, TReturn> @return = new(func);
-        Defer(
+        RunOnMainThread(
             Return<TState0, TState1, TReturn>.Wrapper,
             new State<TState0, TState1, Return<TState0, TState1, TReturn>>(
                 Return<TState0, TState1, TReturn>.FuncWrapper,

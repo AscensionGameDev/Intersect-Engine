@@ -226,7 +226,7 @@ public partial class MenuContainer : Panel
         SizeToChildren(recursive: true);
 
         SkipRender();
-        Defer(
+        RunOnMainThread(
             action: () =>
             {
                 LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer!.GetResolutionString());

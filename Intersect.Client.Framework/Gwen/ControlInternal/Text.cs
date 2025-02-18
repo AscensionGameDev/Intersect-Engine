@@ -247,7 +247,7 @@ public partial class Text : Base
         base.Layout(skin);
     }
 
-    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false) => SizeToContents();
+    public override bool SizeToChildren(SizeToChildrenArgs args) => SizeToContents();
 
     /// <summary>
     ///     Handler invoked when control's scale changes.

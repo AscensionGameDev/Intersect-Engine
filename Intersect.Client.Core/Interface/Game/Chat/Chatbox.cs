@@ -416,11 +416,11 @@ public partial class Chatbox
 
             if (scrollToBottom)
             {
-                mChatboxMessages.Defer(mChatboxMessages.ScrollToBottom);
+                mChatboxMessages.RunOnMainThread(mChatboxMessages.ScrollToBottom);
             }
             else
             {
-                mChatboxMessages.Defer(() =>
+                mChatboxMessages.RunOnMainThread(() =>
                     {
                         ApplicationContext.CurrentContext.Logger.LogTrace(
                             "Scrolling chat to {ScrollY}",

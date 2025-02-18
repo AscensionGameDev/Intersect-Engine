@@ -254,20 +254,10 @@ public partial class RichLabel : Base
         Invalidate();
     }
 
-    /// <summary>
-    ///     Resizes the control to fit its children.
-    /// </summary>
-    /// <param name="resizeX">Determines whether to change control's width.</param>
-    /// <param name="resizeY">Determines whether to change control's height.</param>
-    /// <param name="recursive"></param>
-    /// <returns>
-    ///     True if bounds changed.
-    /// </returns>
-    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
+    public override bool SizeToChildren(SizeToChildrenArgs args)
     {
         InvalidateRebuild();
-
-        return base.SizeToChildren(resizeX: resizeX, resizeY: resizeY, recursive: recursive);
+        return base.SizeToChildren(args);
     }
 
     public void ForceImmediateRebuild() => Rebuild();

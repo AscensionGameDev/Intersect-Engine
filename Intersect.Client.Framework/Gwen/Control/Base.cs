@@ -316,7 +316,7 @@ public partial class Base : IDisposable
             if (_parent is { } oldParent)
             {
                 // Detach from the previous parent on their thread
-                oldParent.Defer(ProcessDetachingFromParent, new NodePair(this, oldParent));
+                oldParent.RunOnMainThread(ProcessDetachingFromParent, new NodePair(this, oldParent));
             }
 
             if (value is null)
@@ -327,7 +327,7 @@ public partial class Base : IDisposable
             else
             {
                 // Otherwise, we should wait until it's run on the new parent's thread
-                value.Defer(ProcessAttachingToParent, new NodePair(this, value));
+                value.RunOnMainThread(ProcessAttachingToParent, new NodePair(this, value));
             }
         }
     }
@@ -810,7 +810,7 @@ public partial class Base : IDisposable
     public bool IsHidden
     {
         get => ((_inheritParentEnablementProperties && Parent is {} parent) ? parent.IsHidden : !_visible);
-        set => Defer(SetVisible, !value);
+        set => RunOnMainThread(SetVisible, !value);
     }
 
     private static void SetVisible(Base @this, bool value)
@@ -1072,13 +1072,13 @@ public partial class Base : IDisposable
 
             return Parent is not { } parent || parent.IsVisibleInTree || ToolTip.IsActiveTooltip(parent);
         }
-        set => Defer(SetVisible, value);
+        set => RunOnMainThread(SetVisible, value);
     }
 
     public bool IsVisibleInParent
     {
         get => !IsHidden || Parent is not { } parent || ToolTip.IsActiveTooltip(parent);
-        set => Defer(SetVisible, value);
+        set => RunOnMainThread(SetVisible, value);
     }
 
     /// <summary>
@@ -1150,7 +1150,7 @@ public partial class Base : IDisposable
                 innerPanel.DrawDebugOutlines = value;
             }
 
-            Defer(PropagateDrawDebugOutlinesToChildren, this, value);
+            RunOnMainThread(PropagateDrawDebugOutlinesToChildren, this, value);
         }
     }
 
@@ -1346,7 +1346,7 @@ public partial class Base : IDisposable
     {
         JObject json = new();
 
-        Defer(AddChildrenToJson, this, json);
+        RunOnMainThread(AddChildrenToJson, this, json);
 
         if (onlySerializeIfNotEmpty && !json.HasValues)
         {
@@ -1656,7 +1656,7 @@ public partial class Base : IDisposable
 
         if (obj.TryGetValue(nameof(Children), out var tokenChildren) && tokenChildren is JObject objectChildren)
         {
-            Defer(LoadChildrenJson, this, objectChildren);
+            RunOnMainThread(LoadChildrenJson, this, objectChildren);
         }
 
         Invalidate(alsoInvalidateParent: true);
@@ -1769,55 +1769,60 @@ public partial class Base : IDisposable
 
     public void Defer(Action action)
     {
-        Invalidate();
-        _threadQueue.Defer(action);
+
     }
 
-    public void Defer(Action<Base> action) => Defer(action, this);
-
-    public void Defer<TState>(Action<TState> action, TState state)
+    public void RunOnMainThread(Action action)
     {
         Invalidate();
-        _threadQueue.Defer(action, state);
+        _threadQueue.RunOnMainThread(action);
     }
 
-    public TReturn Defer<TReturn>(Func<Base, TReturn> func)
+    public void RunOnMainThread(Action<Base> action) => RunOnMainThread(action, this);
+
+    public void RunOnMainThread<TState>(Action<TState> action, TState state)
     {
         Invalidate();
-        return _threadQueue.Defer(func, this);
+        _threadQueue.RunOnMainThread(action, state);
     }
 
-    public void Defer<TState>(Action<Base, TState> action, TState state)
+    public TReturn RunOnMainThread<TReturn>(Func<Base, TReturn> func)
     {
         Invalidate();
-        _threadQueue.Defer(action, this, state);
+        return _threadQueue.RunOnMainThread(func, this);
     }
 
-    public TReturn Defer<TState, TReturn>(Func<Base, TState, TReturn> func, TState state, bool invalidate = true)
+    public void RunOnMainThread<TState>(Action<Base, TState> action, TState state)
+    {
+        Invalidate();
+        _threadQueue.RunOnMainThread(action, this, state);
+    }
+
+    public TReturn RunOnMainThread<TState, TReturn>(Func<Base, TState, TReturn> func, TState state, bool invalidate = true)
     {
         if (invalidate)
         {
             Invalidate();
         }
-        return _threadQueue.Defer(func, this, state);
+        return _threadQueue.RunOnMainThread(func, this, state);
     }
 
-    public void Defer<TState0, TState1>(Action<TState0, TState1> action, TState0 state0, TState1 state1)
+    public void RunOnMainThread<TState0, TState1>(Action<TState0, TState1> action, TState0 state0, TState1 state1)
     {
         Invalidate();
-        _threadQueue.Defer(action, state0, state1);
+        _threadQueue.RunOnMainThread(action, state0, state1);
     }
 
-    public void Defer<TState0, TState1>(Action<Base, TState0, TState1> action, TState0 state0, TState1 state1)
+    public void RunOnMainThread<TState0, TState1>(Action<Base, TState0, TState1> action, TState0 state0, TState1 state1)
     {
         Invalidate();
-        _threadQueue.Defer(action, this, state0, state1);
+        _threadQueue.RunOnMainThread(action, this, state0, state1);
     }
 
-    public void Defer<TState0, TState1, TState2>(Action<TState0, TState1, TState2> action, TState0 state0, TState1 state1, TState2 state2)
+    public void RunOnMainThread<TState0, TState1, TState2>(Action<TState0, TState1, TState2> action, TState0 state0, TState1 state1, TState2 state2)
     {
         Invalidate();
-        _threadQueue.Defer(action, state0, state1, state2);
+        _threadQueue.RunOnMainThread(action, state0, state1, state2);
     }
 
     public override string ToString()
@@ -1962,7 +1967,7 @@ public partial class Base : IDisposable
     /// <param name="recursive">Determines whether the operation should be carried recursively.</param>
     protected virtual void InvalidateChildren(bool recursive = false)
     {
-        Defer(InvalidateChildren, this, recursive);
+        RunOnMainThread(InvalidateChildren, this, recursive);
 
         _innerPanel?.Invalidate();
         _innerPanel?.InvalidateChildren(recursive: true);
@@ -2022,7 +2027,7 @@ public partial class Base : IDisposable
             return;
         }
 
-        parent.Defer(MoveChildBeforeOther, this, other);
+        parent.RunOnMainThread(MoveChildBeforeOther, this, other);
     }
 
     private static void MoveChildBeforeOther(Base @this, Base childToMove, Base other)
@@ -2080,7 +2085,7 @@ public partial class Base : IDisposable
             return;
         }
 
-        parent.Defer(MoveChildAfterOther, this, other);
+        parent.RunOnMainThread(MoveChildAfterOther, this, other);
     }
 
     private List<Base> HostedChildren => _innerPanel?.HostedChildren ?? _children;
@@ -2148,7 +2153,7 @@ public partial class Base : IDisposable
         );
     }
 
-    public void ClearChildren() => Defer(ClearChildren, this);
+    public void ClearChildren() => RunOnMainThread(ClearChildren, this);
 
     private static void ClearChildren(Base @this)
     {
@@ -2164,14 +2169,14 @@ public partial class Base : IDisposable
         @this.Invalidate();
     }
 
-    public void Insert(int index, Base node) => Defer(Insert, this, index, node);
+    public void Insert(int index, Base node) => RunOnMainThread(Insert, this, index, node);
 
     private static void Insert(Base @this, int index, Base node)
     {
         @this._children.Insert(index, node);
     }
 
-    public void Remove(Base node) => Defer(Remove, this, node);
+    public void Remove(Base node) => RunOnMainThread(Remove, this, node);
 
     private static void Remove(Base @this, Base node)
     {
@@ -2184,7 +2189,7 @@ public partial class Base : IDisposable
         RemoveAt(@this, index);
     }
 
-    public void RemoveAt(int index) => Defer(RemoveAt, this, index);
+    public void RemoveAt(int index) => RunOnMainThread(RemoveAt, this, index);
 
     private static void RemoveAt(Base @this, int index)
     {
@@ -2206,12 +2211,12 @@ public partial class Base : IDisposable
             return -1;
         }
 
-        return Defer(IndexOf, node);
+        return RunOnMainThread(IndexOf, node);
     }
 
     private static int IndexOf(Base @this, Base node) => @this._children.IndexOf(node);
 
-    public int IndexOf(Func<Base?, bool> predicate) => Defer(IndexOf, predicate);
+    public int IndexOf(Func<Base?, bool> predicate) => RunOnMainThread(IndexOf, predicate);
 
     private static int IndexOf(Base @this, Func<Base?, bool> predicate)
     {
@@ -2226,7 +2231,7 @@ public partial class Base : IDisposable
         return -1;
     }
 
-    public int LastIndexOf(Func<Base?, bool> predicate) => Defer(LastIndexOf, predicate);
+    public int LastIndexOf(Func<Base?, bool> predicate) => RunOnMainThread(LastIndexOf, predicate);
 
     private static int LastIndexOf(Base @this, Func<Base?, bool> predicate)
     {
@@ -2248,7 +2253,7 @@ public partial class Base : IDisposable
             return;
         }
 
-        Defer(ResortChild, this, child, keySelector);
+        RunOnMainThread(ResortChild, this, child, keySelector);
     }
 
     private static void ResortChild<TKey>(Base @this, Base child, Func<Base?, TKey?> keySelector)
@@ -2258,7 +2263,7 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Sends the control to the bottom of paren't visibility stack.
     /// </summary>
-    public void SendToBack() => Defer(SendToBack, this);
+    public void SendToBack() => RunOnMainThread(SendToBack, this);
 
     private static void SendToBack(Base @this)
     {
@@ -2286,7 +2291,7 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Brings the control to the top of paren't visibility stack.
     /// </summary>
-    public void BringToFront() => Defer(BringToFront, this);
+    public void BringToFront() => RunOnMainThread(BringToFront, this);
 
     private static void BringToFront(Base @this)
     {
@@ -2451,7 +2456,7 @@ public partial class Base : IDisposable
     /// </remarks>
     /// <param name="node">Control to be added as a child.</param>
     /// <param name="setParent"></param>
-    public void AddChild(Base node) => Defer(AddChild, this, node);
+    public void AddChild(Base node) => RunOnMainThread(AddChild, this, node);
 
     private static void AddChild(Base @this, Base node)
     {
@@ -2475,7 +2480,7 @@ public partial class Base : IDisposable
     /// </summary>
     /// <param name="child">Child to be removed.</param>
     /// <param name="dispose">Determines whether the child should be disposed (added to delayed delete queue).</param>
-    public virtual void RemoveChild(Base child, bool dispose) => Defer(RemoveChild, this, child, dispose);
+    public virtual void RemoveChild(Base child, bool dispose) => RunOnMainThread(RemoveChild, this, child, dispose);
 
     private static void RemoveChild(Base @this, Base child, bool dispose)
     {
@@ -3538,7 +3543,7 @@ public partial class Base : IDisposable
             }
         }
 
-        var possibleNode = Defer(FindComponentAt, new ComponentAtParams(new Point(x, y), filters), invalidate: false);
+        var possibleNode = RunOnMainThread(FindComponentAt, new ComponentAtParams(new Point(x, y), filters), invalidate: false);
         if (possibleNode is not null)
         {
             return possibleNode;
@@ -4209,7 +4214,7 @@ public partial class Base : IDisposable
         return false;
     }
 
-    protected record struct SizeToChildrenArgs(bool X, bool Y, bool Recurse);
+    public record struct SizeToChildrenArgs(bool X = true, bool Y = true, bool Recurse = false);
 
     private static void SizeChildrenToChildren(Base @this, SizeToChildrenArgs args)
     {
@@ -4220,27 +4225,28 @@ public partial class Base : IDisposable
                 continue;
             }
 
-            child.SizeToChildren(resizeX: args.X, resizeY: args.Y, recursive: args.Recurse);
+            child.SizeToChildren(args);
         }
     }
+
+    public bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false) =>
+        SizeToChildren(new SizeToChildrenArgs(resizeX, resizeY, recursive));
 
     /// <summary>
     ///     Resizes the control to fit its children.
     /// </summary>
-    /// <param name="resizeX">Determines whether to change control's width.</param>
-    /// <param name="resizeY">Determines whether to change control's height.</param>
-    /// <param name="recursive"></param>
+    /// <param name="args"></param>
     /// <returns>True if bounds changed.</returns>
-    public virtual bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
+    public virtual bool SizeToChildren(SizeToChildrenArgs args)
     {
-        if (!resizeX && !resizeY)
+        if (args is { X: false, Y: false })
         {
             return false;
         }
 
-        if (recursive)
+        if (args.Recurse)
         {
-            Defer(SizeChildrenToChildren, this, new SizeToChildrenArgs(resizeX, resizeY, recursive));
+            RunOnMainThread(SizeChildrenToChildren, this, args);
         }
 
         var childrenSize = GetChildrenSize();
@@ -4262,7 +4268,7 @@ public partial class Base : IDisposable
         size.X = Math.Max(Math.Min(size.X, _maximumSize.X < 1 ? size.X : _maximumSize.X), _minimumSize.X);
         size.Y = Math.Max(Math.Min(size.Y, _maximumSize.Y < 1 ? size.Y : _maximumSize.Y), _minimumSize.Y);
 
-        var newSize = new Point(resizeX ? size.X : Width, resizeY ? size.Y : Height);
+        var newSize = new Point(args.X ? size.X : Width, args.Y ? size.Y : Height);
 
         if (Dock.HasFlag(Pos.Fill))
         {
@@ -4296,7 +4302,7 @@ public partial class Base : IDisposable
     ///     Implement this in derived compound controls to properly return their size.
     /// </remarks>
     /// <returns></returns>
-    public virtual Point GetChildrenSize() => Defer(GetChildrenSize);
+    public virtual Point GetChildrenSize() => RunOnMainThread(GetChildrenSize);
 
     private static Point GetChildrenSize(Base @this)
     {
