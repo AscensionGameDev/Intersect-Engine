@@ -28,7 +28,7 @@ public partial class InventoryWindow
     private List<Label> mValues = new List<Label>();
 
     // Context menu
-    private Framework.Gwen.Control.Menu mContextMenu;
+    private ContextMenu mContextMenu;
 
     private MenuItem mUseItemContextItem;
 
@@ -47,7 +47,7 @@ public partial class InventoryWindow
         mInventoryWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
         // Generate our context menu with basic options.
-        mContextMenu = new Framework.Gwen.Control.Menu(gameCanvas, "InventoryContextMenu");
+        mContextMenu = new ContextMenu(gameCanvas, "InventoryContextMenu");
         mContextMenu.IsHidden = true;
         mContextMenu.IconMarginDisabled = true;
         //TODO: Is this a memory leak?
@@ -64,10 +64,7 @@ public partial class InventoryWindow
 
     public void OpenContextMenu(int slot)
     {
-        // Clear out the old options.
-        mContextMenu.RemoveChild(mUseItemContextItem, false);
-        mContextMenu.RemoveChild(mActionItemContextItem, false);
-        mContextMenu.RemoveChild(mDropItemContextItem, false);
+        // Clear out the old options since we might not show all of them
         mContextMenu.ClearChildren();
 
         var item = ItemBase.Get(Globals.Me.Inventory[slot].ItemId);
@@ -83,20 +80,19 @@ public partial class InventoryWindow
         {
             case Enums.ItemType.Spell:
                 mContextMenu.AddChild(mUseItemContextItem);
-                mUseItemContextItem.SetText(item.QuickCast
-                    ? Strings.ItemContextMenu.Cast.ToString(item.Name)
-                    : Strings.ItemContextMenu.Learn.ToString(item.Name));
+                var useItemLabel = item.QuickCast ? Strings.ItemContextMenu.Cast : Strings.ItemContextMenu.Learn;
+                mUseItemContextItem.Text = useItemLabel.ToString(item.Name);
                 break;
 
             case Enums.ItemType.Event:
             case Enums.ItemType.Consumable:
                 mContextMenu.AddChild(mUseItemContextItem);
-                mUseItemContextItem.SetText(Strings.ItemContextMenu.Use.ToString(item.Name));
+                mUseItemContextItem.Text = Strings.ItemContextMenu.Use.ToString(item.Name);
                 break;
 
             case Enums.ItemType.Bag:
                 mContextMenu.AddChild(mUseItemContextItem);
-                mUseItemContextItem.SetText(Strings.ItemContextMenu.Open.ToString(item.Name));
+                mUseItemContextItem.Text = Strings.ItemContextMenu.Open.ToString(item.Name);
                 break;
 
             case Enums.ItemType.Equipment:
@@ -104,11 +100,11 @@ public partial class InventoryWindow
                 // Show the correct equip/unequip prompts.
                 if (Globals.Me.MyEquipment.Contains(slot))
                 {
-                    mUseItemContextItem.SetText(Strings.ItemContextMenu.Unequip.ToString(item.Name));
+                    mUseItemContextItem.Text = Strings.ItemContextMenu.Unequip.ToString(item.Name);
                 }
                 else
                 {
-                    mUseItemContextItem.SetText(Strings.ItemContextMenu.Equip.ToString(item.Name));
+                    mUseItemContextItem.Text = Strings.ItemContextMenu.Equip.ToString(item.Name);
                 }
 
                 break;
@@ -149,7 +145,6 @@ public partial class InventoryWindow
         // Display our menu.. If we have anything to display.
         if (mContextMenu.Children.Count > 0)
         {
-            mContextMenu.SizeToChildren();
             mContextMenu.Open(Framework.Gwen.Pos.None);
         }
     }
