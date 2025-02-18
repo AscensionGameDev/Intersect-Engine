@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Anim;
 using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
@@ -131,8 +131,6 @@ public partial class Canvas : Base
         var render = Skin.Renderer;
 
         render.Begin();
-
-        RecurseLayout(Skin);
 
         render.ClipRegion = Bounds;
 
