@@ -18,7 +18,6 @@ public partial class MainMenu : MutableInterface
     private readonly ForgotPasswordWindow _forgotPasswordWindow;
     private readonly ResetPasswordWindow _resetPasswordWindow;
     private readonly CharacterCreationWindow _characterCreationWindow;
-    private readonly SettingsWindow _settingsWindow;
     private readonly CreditsWindow _creditsWindow;
 
     public readonly SelectCharacterWindow SelectCharacterWindow;
@@ -35,6 +34,14 @@ public partial class MainMenu : MutableInterface
     internal static event EventHandler? ReceivedConfiguration;
 
     public static long LastNetworkStatusChangeTime { get; private set; }
+
+    private SettingsWindow? _settingsWindow;
+    private SettingsWindow SettingsWindow => _settingsWindow ??= new SettingsWindow(_menuCanvas)
+    {
+        Alignment = [Alignments.CenterH],
+        Y = 480,
+        IsVisibleInTree = false,
+    };
 
     public MainMenu(Canvas menuCanvas) : base(menuCanvas)
     {
@@ -59,13 +66,6 @@ public partial class MainMenu : MutableInterface
         };
 
         _registerWindow = new RegistrationWindow(_menuCanvas, this)
-        {
-            Alignment = [Alignments.CenterH],
-            Y = 480,
-            IsVisibleInTree = false,
-        };
-
-        _settingsWindow = new SettingsWindow(_menuCanvas)
         {
             Alignment = [Alignments.CenterH],
             Y = 480,
@@ -157,14 +157,15 @@ public partial class MainMenu : MutableInterface
             SelectCharacterWindow.Update();
         }
 
-        _settingsWindow.Update();
+        SettingsWindow.Update();
     }
 
     public void Reset()
     {
+        _settingsWindow = null;
+
         _loginWindow.Hide();
         _registerWindow.Hide();
-        _settingsWindow.Hide();
         _creditsWindow.Hide();
         _forgotPasswordWindow.Hide();
         _resetPasswordWindow.Hide();
@@ -211,7 +212,7 @@ public partial class MainMenu : MutableInterface
         Hide();
         _loginWindow.Hide();
         _registerWindow.Hide();
-        _settingsWindow.Hide();
+        SettingsWindow.Hide();
         _characterCreationWindow.Hide();
         SelectCharacterWindow.Show();
         mShouldOpenCharacterSelection = false;
@@ -228,7 +229,7 @@ public partial class MainMenu : MutableInterface
         Hide();
         _loginWindow.Hide();
         _registerWindow.Hide();
-        _settingsWindow.Hide();
+        SettingsWindow.Hide();
         SelectCharacterWindow.Hide();
         _characterCreationWindow.Show(force: _forceCharacterCreation);
         mShouldOpenCharacterCreation = false;
@@ -254,7 +255,7 @@ public partial class MainMenu : MutableInterface
     internal void SettingsButton_Clicked()
     {
         Hide();
-        _settingsWindow.Show(_mainMenuWindow);
+        SettingsWindow.Show(_mainMenuWindow);
     }
 
     private void HandleNetworkStatusChanged() => _mainMenuWindow.UpdateDisabled();
