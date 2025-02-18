@@ -427,22 +427,27 @@ public partial class Player : Entity, IPlayer
                     return;
                 }
 
-                if (args.Value is not NumericalSubmissionValue submissionValue)
+                var promptQuantity = 0;
+                switch (args.Value)
                 {
-                    return;
+                    case BooleanSubmissionValue booleanSubmission:
+                        promptQuantity = booleanSubmission.Value ? 1 : 0;
+                        break;
+
+                    case NumericalSubmissionValue numericalSubmission:
+                        promptQuantity = (int)Math.Round(numericalSubmission.Value);
+                        break;
                 }
 
-                var value = (int)Math.Round(submissionValue.Value);
-
-                if (value <= 0)
+                if (promptQuantity < 1)
                 {
                     return;
                 }
 
                 // Check if the item can be dropped in multiple quantities or if value is less than or equal to the quantity in the initial slot
-                if (!canDropMultiple || value <= quantity)
+                if (!canDropMultiple || promptQuantity <= quantity)
                 {
-                    PacketSender.SendDropItem(slotIndex, !canDropMultiple ? 1 : value);
+                    PacketSender.SendDropItem(slotIndex, !canDropMultiple ? 1 : promptQuantity);
                     return;
                 }
 
@@ -451,13 +456,13 @@ public partial class Player : Entity, IPlayer
 
                 // Send the drop item packet for the initial slot.
                 PacketSender.SendDropItem(slotIndex, quantity);
-                value -= quantity;
+                promptQuantity -= quantity;
                 _ = itemSlots.Remove(inventorySlot); // Remove the initial slot from the list of item slots
 
                 // Iterate through the remaining slots containing the item
                 foreach (var slot in itemSlots)
                 {
-                    var dropAmount = Math.Min(value, slot.Quantity);
+                    var dropAmount = Math.Min(promptQuantity, slot.Quantity);
 
                     if (dropAmount <= 0)
                     {
@@ -465,7 +470,7 @@ public partial class Player : Entity, IPlayer
                     }
 
                     PacketSender.SendDropItem(Inventory.IndexOf(slot), dropAmount);
-                    value -= dropAmount;
+                    promptQuantity -= dropAmount;
                 }
             }
         );
