@@ -634,7 +634,7 @@ internal sealed partial class DebugWindow : Window
         };
         table.SizeChanged += ResizeTableToChildrenOnSizeChanged;
 
-        table.AddRow(Strings.Debug.Fps, name: "FPSRow").Listen(1, new DelegateDataProvider<int?>(() => Graphics.Renderer?.Fps), NoValue);
+        table.AddRow(Strings.Debug.Fps, name: "FPSRow").Listen(1, new DelegateDataProvider<int>(() => Graphics.Renderer.Fps), NoValue);
         // table.AddRow(Strings.Debug.Draws, name: "DrawsRow").Listen(1, new DelegateDataProvider<int>(() => Graphics.DrawCalls), NoValue);
         table.AddRow(Strings.Debug.Ping, name: "PingRow").Listen(1, new DelegateDataProvider<int>(() => Networking.Network.Ping, delayMilliseconds: 5000), NoValue);
 
