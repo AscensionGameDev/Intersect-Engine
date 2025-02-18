@@ -585,7 +585,7 @@ public partial class InputBox : Window
         var args = new InputSubmissionEventArgs(Value);
         OnSubmitted(this, args);
         Submitted?.Invoke(this, args);
-        Dispose();
+        Close();
     }
 
     protected virtual void OnCanceled(Base sender, EventArgs args)
