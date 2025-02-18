@@ -28,19 +28,20 @@ public abstract partial class MutableInterface : IMutableInterface
         _debugWindow2?.Dispose();
     }
 
-    private static void EnsureDebugWindowInitialized(Base parent)
+    private static DebugWindow EnsureDebugWindowInitialized(Base parent)
     {
         _debugWindow ??= new DebugWindow(parent);
         _debugWindow.Parent = parent;
 
         _debugWindow2 ??= new DebugWindow(parent);
         _debugWindow2.Parent = parent;
+
+        return _debugWindow;
     }
 
     protected internal MutableInterface(Base root)
     {
         Root = root;
-        EnsureDebugWindowInitialized(root);
     }
 
     internal Base Root { get; }
@@ -101,13 +102,16 @@ public abstract partial class MutableInterface : IMutableInterface
         Root.RemoveChild(element, dispose);
     }
 
-    public static bool ToggleDebug()
+    public bool ToggleDebug()
     {
-        _debugWindow?.ToggleHidden();
-        if (_debugWindow is { } dw && _debugWindow2 is { } dw2)
+        var debugWindow = EnsureDebugWindowInitialized(Root);
+        debugWindow.ToggleHidden();
+
+        if (_debugWindow2 is { } dw2)
         {
-            dw2.IsVisibleInTree = dw.IsVisibleInTree;
+            dw2.IsVisibleInTree = debugWindow.IsVisibleInTree;
         }
-        return _debugWindow?.IsVisibleInTree ?? false;
+
+        return debugWindow.IsVisibleInTree;
     }
 }

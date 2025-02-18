@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Framework.Gwen.Input;
+﻿using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 
 namespace Intersect.Client.Framework.Gwen.Control;
@@ -50,6 +51,11 @@ public partial class VerticalScrollBar : ScrollBar
     {
         get => mDepressed ? mViewableContentSize / mContentSize : base.NudgeAmount;
         set => base.NudgeAmount = value;
+    }
+
+    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
+    {
+        base.OnBoundsChanged(oldBounds, newBounds);
     }
 
     /// <summary>

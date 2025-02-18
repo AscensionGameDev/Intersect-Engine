@@ -21,6 +21,7 @@ public partial class TabControl : Base
     ///     Initializes a new instance of the <see cref="TabControl" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
+    /// <param name="name"></param>
     public TabControl(Base parent, string? name = default) : base(parent, name: name)
     {
         _scrollbarButtons = new ScrollBarButton[2];
@@ -225,15 +226,18 @@ public partial class TabControl : Base
         }
 
         _activeButton = nextTab;
+        nextTab.InvalidateDock();
         nextTab.Redraw();
 
         page.IsVisibleInTree = true;
 
-        TabChanged?.Invoke(control, new TabChangeEventArgs
-        {
-            PreviousTab = previousTab,
-            ActiveTab = nextTab,
-        });
+        TabChanged?.Invoke(
+            control,
+            new TabChangeEventArgs
+            {
+                PreviousTab = previousTab, ActiveTab = nextTab,
+            }
+        );
 
         _tabStrip.Invalidate();
         Invalidate();

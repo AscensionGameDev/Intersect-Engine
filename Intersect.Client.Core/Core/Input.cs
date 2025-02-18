@@ -215,7 +215,7 @@ public static partial class Input
                 }
 
                 case Control.OpenDebugger:
-                    _ = MutableInterface.ToggleDebug();
+                    Interface.Interface.CurrentInterface.ToggleDebug();
                     break;
             }
 
