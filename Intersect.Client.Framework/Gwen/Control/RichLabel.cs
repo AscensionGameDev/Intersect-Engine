@@ -256,8 +256,14 @@ public partial class RichLabel : Base
 
     public override bool SizeToChildren(SizeToChildrenArgs args)
     {
+        if (!base.SizeToChildren(args))
+        {
+            return false;
+        }
+
         InvalidateRebuild();
-        return base.SizeToChildren(args);
+        return true;
+
     }
 
     public void ForceImmediateRebuild() => Rebuild();
