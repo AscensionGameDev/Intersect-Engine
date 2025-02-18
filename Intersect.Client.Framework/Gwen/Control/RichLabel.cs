@@ -254,18 +254,6 @@ public partial class RichLabel : Base
         Invalidate();
     }
 
-    public override bool SizeToChildren(SizeToChildrenArgs args)
-    {
-        if (!base.SizeToChildren(args))
-        {
-            return false;
-        }
-
-        InvalidateRebuild();
-        return true;
-
-    }
-
     public void ForceImmediateRebuild() => Rebuild();
 
     protected override Point ApplyDockFillOnSizeToChildren(Point size, Point internalSize)
