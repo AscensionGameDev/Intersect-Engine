@@ -491,13 +491,13 @@ public partial class DockBase : Base
 
         if ((dir == Pos.Top || dir == Pos.Bottom) && !mDropFar)
         {
-            if (mLeft != null && mLeft.IsVisible)
+            if (mLeft != null && mLeft.IsVisibleInTree)
             {
                 mHoverRect.X += mLeft.Width;
                 mHoverRect.Width -= mLeft.Width;
             }
 
-            if (mRight != null && mRight.IsVisible)
+            if (mRight != null && mRight.IsVisibleInTree)
             {
                 mHoverRect.Width -= mRight.Width;
             }
@@ -505,13 +505,13 @@ public partial class DockBase : Base
 
         if ((dir == Pos.Left || dir == Pos.Right) && !mDropFar)
         {
-            if (mTop != null && mTop.IsVisible)
+            if (mTop != null && mTop.IsVisibleInTree)
             {
                 mHoverRect.Y += mTop.Height;
                 mHoverRect.Height -= mTop.Height;
             }
 
-            if (mBottom != null && mBottom.IsVisible)
+            if (mBottom != null && mBottom.IsVisibleInTree)
             {
                 mHoverRect.Height -= mBottom.Height;
             }

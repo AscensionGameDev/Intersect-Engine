@@ -234,7 +234,7 @@ public partial class ScrollControl : Base
     /// <returns></returns>
     protected override bool OnMouseWheeled(int delta)
     {
-        if (CanScrollV && VerticalScrollBar.IsVisible)
+        if (CanScrollV && VerticalScrollBar.IsVisibleInTree)
         {
             var scrollAmount = VerticalScrollBar.ScrollAmount - VerticalScrollBar.NudgeAmount * (delta / 60.0f);
             if (VerticalScrollBar.SetScrollAmount(scrollAmount))
@@ -243,7 +243,7 @@ public partial class ScrollControl : Base
             }
         }
 
-        if (!CanScrollH || !HorizontalScrollBar.IsVisible)
+        if (!CanScrollH || !HorizontalScrollBar.IsVisibleInTree)
         {
             return false;
         }
@@ -260,7 +260,7 @@ public partial class ScrollControl : Base
     /// <returns></returns>
     protected override bool OnMouseHWheeled(int delta)
     {
-        if (!CanScrollH || !HorizontalScrollBar.IsVisible)
+        if (!CanScrollH || !HorizontalScrollBar.IsVisibleInTree)
         {
             return false;
         }
@@ -294,17 +294,17 @@ render->RenderText( skin->GetDefaultFont(), Gwen::Point( 0, 0 ), Utility::Format
         if (show)
         {
             scrollBar.IsDisabled = ratio > 1;
-            if (scrollBar.IsVisible)
+            if (scrollBar.IsVisibleInTree)
             {
                 return;
             }
 
-            scrollBar.IsVisible = true;
+            scrollBar.IsVisibleInTree = true;
             scrollBar.SetScrollAmount(0, forceUpdate: true);
         }
         else
         {
-            scrollBar.IsVisible = false;
+            scrollBar.IsVisibleInTree = false;
             scrollBar.IsDisabled = true;
         }
     }

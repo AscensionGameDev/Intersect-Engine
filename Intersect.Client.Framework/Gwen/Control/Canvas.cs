@@ -410,7 +410,7 @@ public partial class Canvas : Base
             return false;
         }
 
-        if (!InputHandler.KeyboardFocus.IsVisible)
+        if (!InputHandler.KeyboardFocus.IsVisibleInTree)
         {
             return false;
         }

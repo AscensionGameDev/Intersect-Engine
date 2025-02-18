@@ -144,7 +144,7 @@ public static partial class Input
 
                 if (simplifiedEscapeMenuSetting)
                 {
-                    if (gameUi.EscapeMenu.IsVisible)
+                    if (gameUi.EscapeMenu.IsVisibleInTree)
                     {
                         gameUi.EscapeMenu.ToggleHidden();
                     }

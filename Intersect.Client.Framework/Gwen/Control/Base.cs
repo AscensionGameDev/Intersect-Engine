@@ -99,7 +99,7 @@ public partial class Base : IDisposable
 
     private bool mDrawDebugOutlines;
 
-    private bool mHidden;
+    private bool _visible;
     private bool _skipRender;
 
     private bool mHideToolTip;
@@ -238,6 +238,8 @@ public partial class Base : IDisposable
     /// <param name="name">name of this control</param>
     public Base(Base? parent = default, string? name = default)
     {
+        _visible = true;
+
         if (this is Canvas canvas)
         {
             _canvas = canvas;
@@ -247,7 +249,6 @@ public partial class Base : IDisposable
 
         Parent = parent;
 
-        mHidden = false;
         mBounds = new Rectangle(0, 0, 10, 10);
         mPadding = Padding.Zero;
         mMargin = Margin.Zero;
@@ -414,7 +415,11 @@ public partial class Base : IDisposable
     {
         try
         {
-            Root.RemoveUpdatableDataProviders(_updatableDataProviders.Keys);
+            var visibleProviders = _updatableDataProviderRefCounts.Where(e => e.Value.Visible > 0)
+                .Select(e => e.Key)
+                .ToArray();
+            Root.VisibleUpdatableDataProviders(visibleProviders, false);
+            Root.ListenUpdatableDataProviders(_updatableDataProviderRefCounts.Keys, false);
 
             try
             {
@@ -451,7 +456,11 @@ public partial class Base : IDisposable
     {
         try
         {
-            Root.AddUpdatableDataProviders(_updatableDataProviders.Keys);
+            var visibleProviders = _updatableDataProviderRefCounts.Where(e => e.Value.Visible > 0)
+                .Select(e => e.Key)
+                .ToArray();
+            Root.VisibleUpdatableDataProviders(visibleProviders, true);
+            Root.ListenUpdatableDataProviders(_updatableDataProviderRefCounts.Keys, true);
 
             try
             {
@@ -798,35 +807,78 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Indicates whether the control is hidden.
     /// </summary>
-    public virtual bool IsHidden
+    public bool IsHidden
     {
-        get => ((_inheritParentEnablementProperties && Parent is {} parent) ? parent.IsHidden : mHidden);
-        set
+        get => ((_inheritParentEnablementProperties && Parent is {} parent) ? parent.IsHidden : !_visible);
+        set => Defer(SetVisible, !value);
+    }
+
+    private static void SetVisible(Base @this, bool value)
+    {
+        var wasVisibleInParent = @this._visible;
+
+        if (@this is { _inheritParentEnablementProperties: true, Parent: { } parent })
         {
-            if (value == mHidden)
+            if (value != parent._visible)
             {
-                // ApplicationContext.CurrentContext.Logger.LogTrace(
-                //     "{ComponentTypeName} (\"{ComponentName}\") set to same visibility ({Visibility})",
-                //     GetType().GetName(qualified: true),
-                //     CanonicalName,
-                //     !value
-                // );
-                return;
+                ApplicationContext.CurrentContext.Logger.LogTrace(
+                    "Tried to change visibility of restricted node '{NodeName}' to {Visibile} when the parent ({ParentNodeName}) is set to {ParentVisible}",
+                    @this.CanonicalName,
+                    value,
+                    parent.CanonicalName,
+                    !value
+                );
             }
 
-            var hidden = _inheritParentEnablementProperties ? (Parent?.IsHidden ?? value) : value;
-            mHidden = hidden;
+            value = parent._visible;
+        }
 
-            VisibilityChangedEventArgs eventArgs = new()
+        if (value == wasVisibleInParent)
+        {
+            // ApplicationContext.CurrentContext.Logger.LogTrace(
+            //     "{ComponentTypeName} (\"{ComponentName}\") set to same visibility ({Visibility})",
+            //     GetType().GetName(qualified: true),
+            //     CanonicalName,
+            //     !value
+            // );
+
+            // Skip the rest of this method since nothing actually changed for this node
+            return;
+        }
+
+        var visibilityInTreeChanging = value != @this.IsVisibleInTree;
+
+        @this._visible = value;
+
+        if (visibilityInTreeChanging)
+        {
+            @this.NotifyVisibilityInTreeChanged(value);
+        }
+
+        VisibilityChangedEventArgs eventArgs = new(value);
+        @this.OnVisibilityChanged(@this, eventArgs);
+        @this.VisibilityChanged?.Invoke(@this, eventArgs);
+
+        @this.Invalidate();
+        @this.InvalidateParent();
+    }
+
+    private void NotifyVisibilityInTreeChanged(bool visible)
+    {
+        VisibleUpdatableDataProviders(_updatableDataProviderRefCounts.Keys, visible);
+
+        foreach (var child in _children)
+        {
+            if (child._inheritParentEnablementProperties)
             {
-                IsVisible = !hidden,
-            };
+                SetVisible(child, visible);
+                continue;
+            }
 
-            OnVisibilityChanged(this, eventArgs);
-            VisibilityChanged?.Invoke(this, eventArgs);
-
-            Invalidate();
-            InvalidateParent();
+            if (child._visible)
+            {
+                child.NotifyVisibilityInTreeChanged(visible);
+            }
         }
     }
 
@@ -837,7 +889,7 @@ public partial class Base : IDisposable
 
     protected virtual Point InnerPanelSizeFrom(Point size) => size;
 
-    public virtual bool IsHiddenByTree => mHidden || (Parent?.IsHiddenByTree ?? false);
+    public virtual bool IsHiddenByTree => !_visible || (Parent?.IsHiddenByTree ?? false);
 
     public virtual bool IsDisabledByTree => _disabled || (Parent?.IsDisabledByTree ?? false);
 
@@ -1009,24 +1061,24 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Indicates whether the control and its parents are visible.
     /// </summary>
-    public bool IsVisible
+    public bool IsVisibleInTree
     {
         get
         {
-            if (IsHidden)
+            if (!_visible)
             {
                 return false;
             }
 
-            return Parent is not { } parent || parent.IsVisible || ToolTip.IsActiveTooltip(parent);
+            return Parent is not { } parent || parent.IsVisibleInTree || ToolTip.IsActiveTooltip(parent);
         }
-        set => IsHidden = !value;
+        set => Defer(SetVisible, value);
     }
 
     public bool IsVisibleInParent
     {
         get => !IsHidden || Parent is not { } parent || ToolTip.IsActiveTooltip(parent);
-        set => IsHidden = false;
+        set => Defer(SetVisible, value);
     }
 
     /// <summary>
@@ -1320,7 +1372,7 @@ public partial class Base : IDisposable
             new JProperty(nameof(MinimumSize), _minimumSize.ToString()),
             new JProperty(nameof(MaximumSize), _maximumSize.ToString()),
             new JProperty("Disabled", _disabled),
-            new JProperty("Hidden", mHidden),
+            new JProperty("Hidden", !_visible),
             new JProperty(nameof(RestrictToParent), mRestrictToParent),
             new JProperty(nameof(MouseInputEnabled), mMouseInputEnabled),
             new JProperty("HideToolTip", mHideToolTip),
@@ -2938,7 +2990,7 @@ public partial class Base : IDisposable
         }
     }
 
-    private static bool IsNodeVisible(Base node) => node.IsVisible;
+    private static bool IsNodeVisible(Base node) => node.IsVisibleInTree;
 
     /// <summary>
     ///     Rendering logic implementation.
@@ -4163,7 +4215,7 @@ public partial class Base : IDisposable
     {
         foreach (var child in @this._children)
         {
-            if (child.mHidden)
+            if (!child._visible)
             {
                 continue;
             }
@@ -4253,7 +4305,7 @@ public partial class Base : IDisposable
 
         foreach (var child in @this._children)
         {
-            if (child.mHidden)
+            if (!child._visible)
             {
                 continue;
             }

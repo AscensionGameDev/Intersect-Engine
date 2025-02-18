@@ -167,11 +167,11 @@ public sealed class SearchableTree : Base
         {
             if (node.UserData is not SearchableTreeDataEntry nodeEntry)
             {
-                node.IsVisible = false;
+                node.IsVisibleInTree = false;
                 continue;
             }
 
-            node.IsVisible = visibleEntryIds.Contains(nodeEntry.Id);
+            node.IsVisibleInTree = visibleEntryIds.Contains(nodeEntry.Id);
         }
 
         foreach (var entry in entries)

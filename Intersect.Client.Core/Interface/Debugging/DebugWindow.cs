@@ -555,7 +555,7 @@ internal sealed partial class DebugWindow : Window
 
     private bool MouseDownIntercept(Keys modifier, MouseButton mouseButton)
     {
-        if (IsVisible && _viewClickedNodeInDebugger)
+        if (IsVisibleInTree && _viewClickedNodeInDebugger)
         {
             return true;
         }
@@ -566,7 +566,7 @@ internal sealed partial class DebugWindow : Window
 
     private bool MouseUpIntercept(Keys modifier, MouseButton mouseButton)
     {
-        if (!IsVisible || !_viewClickedNodeInDebugger)
+        if (!IsVisibleInTree || !_viewClickedNodeInDebugger)
         {
             RemoveIntercepts();
             return false;
@@ -668,7 +668,7 @@ internal sealed partial class DebugWindow : Window
 
         table.AddRow(Strings.Internals.Type, name: "TypeRow").Listen(1, _nodeUnderCursorProvider, (node, _) => node?.GetType().GetName(), Strings.Internals.NotApplicable);
         table.AddRow(Strings.Internals.Name, name: "NameRow").Listen(1, _nodeUnderCursorProvider, (node, _) => node?.ParentQualifiedName, NoValue);
-        table.AddRow(Strings.Internals.IsVisible, name: "IsVisible").Listen(1, _nodeUnderCursorProvider, (node, _) => node?.IsVisible,  NoValue);
+        table.AddRow(Strings.Internals.IsVisibleInTree, name: "IsVisible").Listen(1, _nodeUnderCursorProvider, (node, _) => node?.IsVisibleInTree,  NoValue);
         table.AddRow(Strings.Internals.IsVisibleInParent, name: "IsVisibleInParent").Listen(1, _nodeUnderCursorProvider, (node, _) => node?.IsVisibleInParent,  NoValue);
         table.AddRow(Strings.Internals.IsDisabled, name: "IsDisabled").Listen(1, _nodeUnderCursorProvider, (node, _) => node?.IsDisabled,  NoValue);
         table.AddRow(Strings.Internals.IsDisabledByTree, name: "IsDisabledByTree").Listen(1, _nodeUnderCursorProvider, (node, _) => node?.IsDisabledByTree,  NoValue);

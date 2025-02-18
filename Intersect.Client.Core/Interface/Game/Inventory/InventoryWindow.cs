@@ -232,12 +232,12 @@ public partial class InventoryWindow
                     );
                 }
 
-                if (slotComponent.Pnl.IsVisible)
+                if (slotComponent.Pnl.IsVisibleInTree)
                 {
                     slotComponent.Pnl.IsHidden = true;
                 }
 
-                if (slotLabel.IsVisible)
+                if (slotLabel.IsVisibleInTree)
                 {
                     slotLabel.IsHidden = true;
                 }
@@ -246,22 +246,22 @@ public partial class InventoryWindow
 
             if (slotComponent.Pnl.IsHidden)
             {
-                slotComponent.Pnl.IsVisible = true;
+                slotComponent.Pnl.IsVisibleInTree = true;
             }
 
             var shouldHideLabel = !itemDescriptor.IsStackable || inventorySlot.Quantity <= 1;
             if (shouldHideLabel)
             {
-                if (slotLabel.IsVisible)
+                if (slotLabel.IsVisibleInTree)
                 {
-                    slotLabel.IsVisible = false;
+                    slotLabel.IsVisibleInTree = false;
                 }
             }
             else
             {
                 if (slotLabel.IsHidden)
                 {
-                    slotLabel.IsVisible = true;
+                    slotLabel.IsVisibleInTree = true;
                 }
                 slotLabel.Text = Strings.FormatQuantityAbbreviated(inventorySlot.Quantity);
             }

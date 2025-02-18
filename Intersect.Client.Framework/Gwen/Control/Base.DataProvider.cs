@@ -8,7 +8,13 @@ namespace Intersect.Client.Framework.Gwen.Control;
 public partial class Base
 {
     private readonly HashSet<IDataProvider> _dataProviders = [];
-    private readonly Dictionary<IUpdatableDataProvider, int> _updatableDataProviders = [];
+    private readonly Dictionary<IUpdatableDataProvider, DataProviderRefCount> _updatableDataProviderRefCounts = [];
+
+    private struct DataProviderRefCount
+    {
+        public int Listening;
+        public int Visible;
+    }
 
     /// <summary>
     /// Adds a <see cref="IDataProvider"/> to this node.
@@ -24,7 +30,11 @@ public partial class Base
 
         if (dataProvider is IUpdatableDataProvider updatableDataProvider)
         {
-            AddUpdatableDataProvider(updatableDataProvider);
+            ListenUpdatableDataProvider(updatableDataProvider, true);
+            if (IsVisibleInTree)
+            {
+                VisibleUpdatableDataProvider(updatableDataProvider, true);
+            }
         }
 
         return true;
@@ -44,66 +54,101 @@ public partial class Base
 
         if (dataProvider is IUpdatableDataProvider updatableDataProvider)
         {
-            RemoveUpdatableDataProvider(updatableDataProvider);
+            ListenUpdatableDataProvider(updatableDataProvider, false);
+            if (IsVisibleInTree)
+            {
+                VisibleUpdatableDataProvider(updatableDataProvider, false);
+            }
         }
 
         return true;
     }
 
-    private void AddUpdatableDataProvider(IUpdatableDataProvider updatableDataProvider)
+    private void ListenUpdatableDataProviders(IEnumerable<IUpdatableDataProvider> providers, bool listen)
     {
-        var refCount = _updatableDataProviders.GetValueOrDefault(updatableDataProvider, 0);
-        ++refCount;
-        _updatableDataProviders[updatableDataProvider] = refCount;
-
-        var root = Root;
-        if (root != this)
+        foreach (var provider in providers)
         {
-            root.AddUpdatableDataProvider(updatableDataProvider);
+            ListenUpdatableDataProvider(provider, listen);
         }
     }
 
-    private void AddUpdatableDataProviders(IEnumerable<IUpdatableDataProvider> updatableDataProviders)
+    private void ListenUpdatableDataProvider(IUpdatableDataProvider provider, bool listen)
     {
-        foreach (var updatableDataProvider in updatableDataProviders)
+        var refCount = _updatableDataProviderRefCounts.GetValueOrDefault(key: provider, defaultValue: default);
+        if (listen)
         {
-            AddUpdatableDataProvider(updatableDataProvider);
-        }
-    }
-
-    private void RemoveUpdatableDataProvider(IUpdatableDataProvider updatableDataProvider)
-    {
-        var refCount = _updatableDataProviders.GetValueOrDefault(updatableDataProvider, 0);
-        --refCount;
-
-        if (refCount > 0)
-        {
-            _updatableDataProviders[updatableDataProvider] = refCount;
+            ++refCount.Listening;
         }
         else
         {
-            _updatableDataProviders.Remove(updatableDataProvider);
+            --refCount.Listening;
+        }
+
+        if (refCount.Listening > 0)
+        {
+            _updatableDataProviderRefCounts[key: provider] = refCount;
+        }
+        else
+        {
+            _updatableDataProviderRefCounts.Remove(key: provider);
         }
 
         var root = Root;
         if (root != this)
         {
-            root.RemoveUpdatableDataProvider(updatableDataProvider);
+            root.ListenUpdatableDataProvider(provider: provider, listen: listen);
         }
     }
 
-    private void RemoveUpdatableDataProviders(IEnumerable<IUpdatableDataProvider> updatableDataProviders)
+    private void VisibleUpdatableDataProviders(IEnumerable<IUpdatableDataProvider> providers, bool visible)
     {
-        foreach (var updatableDataProvider in updatableDataProviders)
+        foreach (var provider in providers)
         {
-            RemoveUpdatableDataProvider(updatableDataProvider);
+            VisibleUpdatableDataProvider(provider, visible);
         }
     }
+
+    private void VisibleUpdatableDataProvider(IUpdatableDataProvider updatableDataProvider, bool visible)
+    {
+        if (!_updatableDataProviderRefCounts.TryGetValue(updatableDataProvider, out var refCount))
+        {
+            throw new InvalidOperationException("Cannot mark a data provider as visible before listening to it");
+        }
+
+        if (visible)
+        {
+            ++refCount.Visible;
+        }
+        else if (refCount.Visible > 0)
+        {
+            --refCount.Visible;
+        }
+        else
+        {
+            ApplicationContext.CurrentContext.Logger.LogError(
+                "Tried to decrease visible count below 0 of a data provider"
+            );
+        }
+
+        _updatableDataProviderRefCounts[key: updatableDataProvider] = refCount;
+
+        var root = Root;
+        if (root != this)
+        {
+            root.VisibleUpdatableDataProvider(updatableDataProvider: updatableDataProvider, visible: visible);
+        }
+    }
+
 
     protected void UpdateDataProviders(TimeSpan elapsed, TimeSpan total)
     {
-        foreach (var (dataProvider, _) in _updatableDataProviders)
+        foreach (var (dataProvider, refCount) in _updatableDataProviderRefCounts)
         {
+            if (refCount.Visible < 1)
+            {
+                continue;
+            }
+
             try
             {
                 if (dataProvider.TryUpdate(elapsed, total))

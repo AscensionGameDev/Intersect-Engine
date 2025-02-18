@@ -35,7 +35,7 @@ public partial class ComponentBase : IDisposable
     /// <summary>
     /// Is this component current visible?
     /// </summary>
-    public bool IsVisible => mContainer.IsVisible;
+    public bool IsVisible => mContainer.IsVisibleInTree;
 
     /// <summary>
     /// The current X location of the control.

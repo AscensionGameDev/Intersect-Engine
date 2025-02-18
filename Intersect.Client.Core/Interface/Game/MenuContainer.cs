@@ -427,7 +427,7 @@ public partial class MenuContainer : Panel
                           _questsWindow.IsVisible() ||
                           _spellsWindow.IsVisible() ||
                           _partyWindow.IsVisible() ||
-                          _guildWindow.IsVisible;
+                          _guildWindow.IsVisibleInTree;
         return windowsOpen;
     }
 

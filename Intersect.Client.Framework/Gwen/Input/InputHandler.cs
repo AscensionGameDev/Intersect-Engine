@@ -219,7 +219,7 @@ public static partial class InputHandler
             return false;
         }
 
-        if (!KeyboardFocus.IsVisible)
+        if (!KeyboardFocus.IsVisibleInTree)
         {
             return false;
         }
@@ -328,12 +328,12 @@ public static partial class InputHandler
     /// <param name="canvas">Unused.</param>
     public static void OnCanvasThink(Canvas canvas)
     {
-        if (MouseFocus is { IsVisible: false })
+        if (MouseFocus is { IsVisibleInTree: false })
         {
             MouseFocus = null;
         }
 
-        if (KeyboardFocus != null && (!KeyboardFocus.IsVisible || !KeyboardFocus.KeyboardInputEnabled))
+        if (KeyboardFocus != null && (!KeyboardFocus.IsVisibleInTree || !KeyboardFocus.KeyboardInputEnabled))
         {
             // KeyboardFocus = null;
         }
@@ -404,7 +404,7 @@ public static partial class InputHandler
             return false;
         }
 
-        if (!hoveredControl.IsVisible)
+        if (!hoveredControl.IsVisibleInTree)
         {
             return false;
         }
@@ -489,7 +489,7 @@ public static partial class InputHandler
         if (canvas == null ||
             HoveredControl == null ||
             HoveredControl.Canvas != canvas ||
-            !canvas.IsVisible
+            !canvas.IsVisibleInTree
         )
         {
             return false;
@@ -527,7 +527,7 @@ public static partial class InputHandler
             return false;
         }
 
-        if (!KeyboardFocus.IsVisible)
+        if (!KeyboardFocus.IsVisibleInTree)
         {
             return false;
         }

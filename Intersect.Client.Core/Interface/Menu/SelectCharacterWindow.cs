@@ -250,11 +250,11 @@ public partial class SelectCharacterWindow : Window
             faceLayer.ResetUVs();
             faceLayer.SetBounds(x, y, faceTextureWidth, faceTextureHeight);
             faceLayer.Texture = faceTexture;
-            faceLayer.IsVisible = true;
+            faceLayer.IsVisibleInTree = true;
 
             foreach (var renderLayer in _renderLayers.Skip(1))
             {
-                renderLayer.IsVisible = false;
+                renderLayer.IsVisibleInTree = false;
             }
             return;
         }

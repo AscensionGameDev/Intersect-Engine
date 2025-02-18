@@ -346,7 +346,7 @@ public partial class TableRow : Base, IColorableText
             return;
         }
 
-        if (!IsVisible)
+        if (!IsVisibleInTree)
         {
             return;
         }
@@ -614,7 +614,7 @@ public partial class TableRow : Base, IColorableText
         var textElement = column.Children.OfType<Text>().FirstOrDefault();
         if (textElement is not null)
         {
-            textElement.IsVisible = control is null;
+            textElement.IsVisibleInTree = control is null;
         }
 
         var controlsToRemove = column.Children.Where(child => child is not ControlInternal.Text && child != control)

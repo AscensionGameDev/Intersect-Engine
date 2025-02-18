@@ -32,7 +32,7 @@ public class Titlebar : Dragger
         _icon = new ImagePanel(this, name: nameof(_icon))
         {
             Dock = Pos.Left,
-            IsVisible = false,
+            IsVisibleInTree = false,
             Margin = new Margin(0, 4, 0, 4),
             MaximumSize = new Point(24, 24),
             RestrictToParent = false,
@@ -61,7 +61,7 @@ public class Titlebar : Dragger
     private void IconOnTextureLoaded(Base @base, EventArgs eventArgs)
     {
         var iconContainerTexture = _icon.Texture;
-        _icon.IsVisible = iconContainerTexture != null;
+        _icon.IsVisibleInTree = iconContainerTexture != null;
         if (iconContainerTexture is null)
         {
             return;

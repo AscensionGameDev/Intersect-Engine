@@ -244,7 +244,7 @@ public partial class CharacterCreationWindow : Window
 
     public void Show(bool force)
     {
-        _backButton.IsVisible = !force;
+        _backButton.IsVisibleInTree = !force;
         _createButton.Alignment = force ? [Alignments.Center] : [Alignments.Left];
 
         _renderLayers = new ImagePanel[Options.Instance.Equipment.Paperdoll.Down.Count];
@@ -268,7 +268,7 @@ public partial class CharacterCreationWindow : Window
         {
             foreach (var renderLayer in _renderLayers)
             {
-                renderLayer.IsVisible = false;
+                renderLayer.IsVisibleInTree = false;
             }
             return;
         }
@@ -290,11 +290,11 @@ public partial class CharacterCreationWindow : Window
             faceLayer.ResetUVs();
             faceLayer.SetBounds(x, y, faceTextureWidth, faceTextureHeight);
             faceLayer.Texture = faceTexture;
-            faceLayer.IsVisible = true;
+            faceLayer.IsVisibleInTree = true;
 
             foreach (var renderLayer in _renderLayers.Skip(1))
             {
-                renderLayer.IsVisible = false;
+                renderLayer.IsVisibleInTree = false;
             }
 
             return;

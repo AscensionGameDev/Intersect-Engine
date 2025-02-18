@@ -123,7 +123,7 @@ public partial class WindowControl : ResizableControl
     public bool IsClosable
     {
         get => !_titlebar.CloseButton.IsHidden;
-        set => _titlebar.CloseButton.IsVisible = value;
+        set => _titlebar.CloseButton.IsVisibleInTree = value;
     }
 
     public IGameTexture? Icon

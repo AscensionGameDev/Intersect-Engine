@@ -578,7 +578,7 @@ public partial class SettingsWindow : Window
             Alignment = [Alignments.Left, Alignments.CenterV],
             AutoSizeToContents = true,
             Font = _defaultFont,
-            IsVisible = false,
+            IsVisibleInTree = false,
             MinimumSize = new Point(x: 96, y: 24),
             Padding = new Padding(horizontal: 16, vertical: 2),
             Text = Strings.Settings.Restore,
@@ -632,7 +632,7 @@ public partial class SettingsWindow : Window
     {
         if (_controlsTab.IsTabActive)
         {
-            _restoreDefaultsButton.IsVisible = true;
+            _restoreDefaultsButton.IsVisibleInTree = true;
 
             bool controlsAdded = false;
 
@@ -661,7 +661,7 @@ public partial class SettingsWindow : Window
         }
         else
         {
-            _restoreDefaultsButton.IsVisible = false;
+            _restoreDefaultsButton.IsVisibleInTree = false;
         }
     }
 

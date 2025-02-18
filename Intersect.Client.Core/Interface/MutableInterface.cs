@@ -106,8 +106,8 @@ public abstract partial class MutableInterface : IMutableInterface
         _debugWindow?.ToggleHidden();
         if (_debugWindow is { } dw && _debugWindow2 is { } dw2)
         {
-            dw2.IsVisible = dw.IsVisible;
+            dw2.IsVisibleInTree = dw.IsVisibleInTree;
         }
-        return _debugWindow?.IsVisible ?? false;
+        return _debugWindow?.IsVisibleInTree ?? false;
     }
 }
