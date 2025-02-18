@@ -830,7 +830,7 @@ public partial class Base : IDisposable
             if (value != parent._visible)
             {
                 ApplicationContext.CurrentContext.Logger.LogTrace(
-                    "Tried to change visibility of restricted node '{NodeName}' to {Visibile} when the parent ({ParentNodeName}) is set to {ParentVisible}",
+                    "Tried to change visibility of restricted node '{NodeName}' to {Visible} when the parent ({ParentNodeName}) is set to {ParentVisible}",
                     @this.CanonicalName,
                     value,
                     parent.CanonicalName,
@@ -879,7 +879,7 @@ public partial class Base : IDisposable
         {
             if (child._inheritParentEnablementProperties)
             {
-                SetVisible(child, visible);
+                SetVisible(child, _visible);
                 continue;
             }
 
