@@ -2156,9 +2156,9 @@ public partial class Base : IDisposable
         );
     }
 
-    public void ClearChildren() => RunOnMainThread(ClearChildren, this);
+    public void ClearChildren(bool dispose = false) => RunOnMainThread(ClearChildren, this, dispose);
 
-    private static void ClearChildren(Base @this)
+    private static void ClearChildren(Base @this, bool dispose)
     {
         if (@this is Modal)
         {
@@ -2168,7 +2168,16 @@ public partial class Base : IDisposable
                 @this.CanonicalName
             );
         }
-        @this._children.Clear();
+
+        if (dispose)
+        {
+            foreach (var child in @this.HostedChildren)
+            {
+                child.Dispose();
+            }
+        }
+
+        @this.HostedChildren.Clear();
         @this.Invalidate();
     }
 
@@ -4004,7 +4013,7 @@ public partial class Base : IDisposable
         _postLayoutActionsParent.IsExecuting = true;
         PostLayout.InvokePending();
         _postLayoutActionsParent.IsExecuting = false;
-        
+
         AfterLayout?.Invoke(this, EventArgs.Empty);
 
         // ReSharper disable once InvertIf
