@@ -194,7 +194,7 @@ public class TexturePicker : Panel, ITextContainer
         }
     }
 
-    public void InvalidateSelector() => Defer(InvalidateSelector, this);
+    public void InvalidateSelector() => RunOnMainThread(InvalidateSelector, this);
 
     private static void InvalidateSelector(TexturePicker @this)
     {

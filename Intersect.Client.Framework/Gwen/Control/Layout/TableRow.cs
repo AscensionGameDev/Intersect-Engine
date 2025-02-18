@@ -280,11 +280,10 @@ public partial class TableRow : Base, IColorableText
     /// </summary>
     public event GwenEventHandler<ItemSelectedEventArgs> Selected;
 
-    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
+    public override bool SizeToChildren(SizeToChildrenArgs args)
     {
-        Defer(SizeColumnsToChildren, this, new SizeToChildrenArgs(resizeX, resizeY, recursive));
-
-        return base.SizeToChildren(resizeX: resizeX, resizeY: resizeY, recursive: recursive);
+        RunOnMainThread(SizeColumnsToChildren, this, args);
+        return base.SizeToChildren(args);
     }
 
     private void SizeColumnsToChildren(TableRow @this, SizeToChildrenArgs args)

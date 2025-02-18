@@ -294,24 +294,25 @@ public partial class Menu : ScrollControl
         divider.Margin = new Margin(IconMarginDisabled ? 0 : 24, 0, 4, 0);
     }
 
-    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
+    public override bool SizeToChildren(SizeToChildrenArgs args)
     {
-        base.SizeToChildren(resizeX: resizeX, resizeY: resizeY, recursive: recursive);
-        if (resizeX)
-        {
-            var maxWidth = 0;
-            foreach (var child in Children)
-            {
-                if (child.Width > maxWidth)
-                {
-                    maxWidth = child.Width;
-                }
-            }
+        var resized = base.SizeToChildren(args);
 
-            this.SetSize(maxWidth, Height);
+        if (!args.X)
+        {
+            return resized;
         }
 
-        return true;
+        var maxWidth = 0;
+        foreach (var child in Children)
+        {
+            if (child.Width > maxWidth)
+            {
+                maxWidth = child.Width;
+            }
+        }
+
+        return this.SetSize(maxWidth, Height);
     }
 
     public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)

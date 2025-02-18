@@ -786,16 +786,14 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         return childrenSize;
     }
 
-    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
+    public override bool SizeToChildren(SizeToChildrenArgs args)
     {
         ApplicationContext.CurrentContext.Logger.LogTrace(
-            "Resizing Table {TableName} to children (X={ResizeX}, Y={ResizeY}, Recursive={Recursive})...",
+            "Resizing Table {TableName} to children ({Args})...",
             ParentQualifiedName,
-            resizeX,
-            resizeY,
-            recursive
+            args
         );
-        return base.SizeToChildren(resizeX, resizeY, recursive);
+        return base.SizeToChildren(args);
     }
 
     public void Invalidate(bool invalidateChildren, bool invalidateRecursive = true)

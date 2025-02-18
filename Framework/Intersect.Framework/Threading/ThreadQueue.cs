@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Intersect.Framework.Threading;
 
 public sealed partial class ThreadQueue
@@ -33,7 +31,7 @@ public sealed partial class ThreadQueue
 
     public ThreadQueue? Parent { get; set; }
 
-    public void Defer(Action action)
+    public void RunOnMainThread(Action action)
     {
         ArgumentNullException.ThrowIfNull(action, nameof(action));
 
@@ -43,10 +41,10 @@ public sealed partial class ThreadQueue
             return;
         }
 
-        Defer(_statelessAction, action);
+        RunOnMainThread(_statelessAction, action);
     }
 
-    public void Defer<TState>(Action<TState> action, TState state)
+    public void RunOnMainThread<TState>(Action<TState> action, TState state)
     {
         ArgumentNullException.ThrowIfNull(action, nameof(action));
 

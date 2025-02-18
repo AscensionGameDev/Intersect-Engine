@@ -170,11 +170,6 @@ public partial class LabeledCheckBox : Base, IAutoSizeToContents, ICheckbox, ITe
         return childrenSize;
     }
 
-    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
-    {
-        return base.SizeToChildren(resizeX, resizeY, recursive);
-    }
-
     public void SetCheckSize(int w, int h)
     {
         _checkbox.SetSize(w, h);

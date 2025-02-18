@@ -400,11 +400,6 @@ public partial class ImagePanel : Base
     /// </summary>
     public virtual void SizeToContents() => SizeToChildren();
 
-    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
-    {
-        return base.SizeToChildren(resizeX, resizeY, recursive);
-    }
-
     public override bool SetBounds(int x, int y, int width, int height)
     {
         var updatedX = x;

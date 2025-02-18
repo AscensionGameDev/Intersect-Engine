@@ -87,7 +87,7 @@ public partial class EventWindow : Panel
             _optionButtons[optionIndex] = optionButton;
         }
 
-        _optionsPanel.SizeToChildren(recursive: true);
+        _optionsPanel.SizeToChildren(new SizeToChildrenArgs(Recurse: true));
 
         _faceImage = new ImagePanel(_promptPanel, nameof(_faceImage))
         {
@@ -187,13 +187,14 @@ public partial class EventWindow : Panel
                 _promptLabel.AppendText(text, color, Alignments.Left, _promptTemplateLabel.Font);
             });
         }
-        Defer(
-            () =>
-            {
-                SizeToChildren(recursive: true);
 
-                _promptScroller.ScrollToTop();
-            }
+        RunOnMainThread(
+            static @this =>
+            {
+                @this.SizeToChildren(recursive: true);
+                @this._promptScroller.ScrollToTop();
+            },
+            this
         );
 
         MakeModal(dim: true);
@@ -250,7 +251,7 @@ public partial class EventWindow : Panel
         else if (Controls.IsControlJustPressed(Control.AttackInteract))
         {
             SkipTypewriting();
-            Defer(_promptScroller.ScrollToBottom);
+            RunOnMainThread(_promptScroller.ScrollToBottom);
         }
         else
         {

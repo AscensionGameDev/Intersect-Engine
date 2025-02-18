@@ -18,11 +18,6 @@ public class TableCell : Label
         base.Layout(skin);
     }
 
-    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
-    {
-        return base.SizeToChildren(resizeX, resizeY, recursive);
-    }
-
     public override bool SizeToContents(out Point contentSize)
     {
         return base.SizeToContents(out contentSize);

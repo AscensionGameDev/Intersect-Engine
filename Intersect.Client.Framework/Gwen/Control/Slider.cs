@@ -170,7 +170,7 @@ public partial class Slider : Base
         set => _sliderBar.Size = value;
     }
 
-    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
+    public override bool SizeToChildren(SizeToChildrenArgs args)
     {
         return false;
     }

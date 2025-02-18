@@ -394,7 +394,7 @@ public partial class ComboBox : Button
         }
         else
         {
-            parent.Defer(Open, @this);
+            parent.RunOnMainThread(Open, @this);
         }
     }
 

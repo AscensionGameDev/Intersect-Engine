@@ -36,11 +36,6 @@ public class ScrollPanel : Base
         return childrenSize;
     }
 
-    public override bool SizeToChildren(bool resizeX = true, bool resizeY = true, bool recursive = false)
-    {
-        return base.SizeToChildren(resizeX, resizeY, recursive);
-    }
-
     protected override void OnPositionChanged(Point oldPosition, Point newPosition)
     {
         base.OnPositionChanged(oldPosition, newPosition);
