@@ -3632,6 +3632,16 @@ public partial class Base : IDisposable
 
     private Point _requiredSizeForDockFillNodes;
 
+    protected void InvokeThreadQueue()
+    {
+        _threadQueue.InvokePending();
+
+        foreach (var child in _children)
+        {
+            child.InvokeThreadQueue();
+        }
+    }
+
     /// <summary>
     ///     Recursively lays out the control's interior according to alignment, margin, padding, dock etc.
     /// </summary>
@@ -3647,8 +3657,6 @@ public partial class Base : IDisposable
         {
             return;
         }
-
-        _threadQueue.InvokePending();
 
         foreach (var child in _children)
         {
