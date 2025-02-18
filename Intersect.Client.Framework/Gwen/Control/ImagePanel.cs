@@ -309,9 +309,9 @@ public partial class ImagePanel : Base
         EnsureTextureLoaded();
     }
 
-    protected override void Prelayout(Skin.Base skin)
+    protected override void DoPrelayout(Skin.Base skin)
     {
-        base.Prelayout(skin);
+        base.DoPrelayout(skin);
 
         EnsureTextureLoaded();
     }

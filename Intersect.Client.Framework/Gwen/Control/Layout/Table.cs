@@ -535,9 +535,9 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         }
     }
 
-    protected override void PostLayout(Skin.Base skin)
+    protected override void DoPostlayout(Skin.Base skin)
     {
-        base.PostLayout(skin);
+        base.DoPostlayout(skin);
     }
 
     public bool FitRowHeightToContents

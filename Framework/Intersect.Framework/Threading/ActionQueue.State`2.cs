@@ -1,16 +1,16 @@
 namespace Intersect.Framework.Threading;
 
-public sealed partial class ThreadQueue
+partial class ActionQueue<TActionQueue, TEnqueueState>
 {
-    public void RunOnMainThread<TState0, TState1>(Action<TState0, TState1> action, TState0 state0, TState1 state1)
+    public void Enqueue<TState0, TState1>(Action<TState0, TState1> action, TState0 state0, TState1 state1)
     {
-        if (IsOnMainThread)
+        if (IsActive)
         {
             action(state0, state1);
             return;
         }
 
-        RunOnMainThread(
+        Enqueue(
             State<TState0, TState1>.Wrapper,
             new State<TState0, TState1>(action, state0, state1)
         );

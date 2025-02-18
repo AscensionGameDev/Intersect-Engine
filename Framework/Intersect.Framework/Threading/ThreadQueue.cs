@@ -1,15 +1,14 @@
+using System.Runtime.CompilerServices;
+
 namespace Intersect.Framework.Threading;
 
-public sealed partial class ThreadQueue
+public sealed partial class ThreadQueue : ActionQueue<ThreadQueue, ManualResetEventSlim>
 {
     public static readonly ThreadQueue Default = new();
-
-    private readonly Queue<Action> _actionQueue = [];
 
     private readonly object _lock = new();
     private readonly Stack<ManualResetEventSlim> _resetEventPool = [];
     private readonly int? _spinCount;
-    private readonly Action<Action> _statelessAction = action => action();
 
     private int _mainThreadId;
 
@@ -27,69 +26,50 @@ public sealed partial class ThreadQueue
         _mainThreadId = parent._mainThreadId;
     }
 
+    protected override bool IsActive => IsOnMainThread;
+
     public bool IsOnMainThread => Parent?.IsOnMainThread ?? _mainThreadId == Environment.CurrentManagedThreadId;
 
     public ThreadQueue? Parent { get; set; }
 
-    public void RunOnMainThread(Action action)
+    protected override void BeginInvokePending() => ThrowIfNotOnMainThread();
+
+    protected override void EndInvokePending()
     {
-        ArgumentNullException.ThrowIfNull(action, nameof(action));
-
-        if (IsOnMainThread)
-        {
-            action();
-            return;
-        }
-
-        RunOnMainThread(_statelessAction, action);
     }
 
-    public void RunOnMainThread<TState>(Action<TState> action, TState state)
-    {
-        ArgumentNullException.ThrowIfNull(action, nameof(action));
+    protected override ManualResetEventSlim EnqueueCreateState() => ResetEventPoolPop();
 
-        if (IsOnMainThread)
-        {
-            action(state);
-            return;
-        }
+    protected override void EnqueueSuccessful(ManualResetEventSlim resetEvent) => resetEvent.Wait();
 
-        var resetEvent = ResetEventPoolPop();
+    protected override void EnqueueFinally(ManualResetEventSlim resetEvent) => ResetEventPoolPush(resetEvent);
 
-        try
-        {
-            State<TState>.DeferredAction deferredAction = new(
-                action,
-                resetEvent,
-                state
-            );
+    protected override Action<ManualResetEventSlim> PostInvocationAction { get; } = static resetEvent => resetEvent.Set();
 
-            lock (_actionQueue)
-            {
-                State<TState>.ActionQueue.Enqueue(deferredAction);
-                _actionQueue.Enqueue(State<TState>.Next);
-            }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void RunOnMainThread(Action action) => Enqueue(action);
 
-            resetEvent.Wait();
-        }
-        finally
-        {
-            ResetEventPoolPush(resetEvent);
-        }
-    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void RunOnMainThread<TState>(Action<TState> action, TState state) => Enqueue(action, state);
 
-    public void InvokePending()
-    {
-        ThrowIfNotOnMainThread();
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public TReturn RunOnMainThread<TState, TReturn>(Func<TState, TReturn> func, TState state) => EnqueueReturn(func, state);
 
-        lock (_actionQueue)
-        {
-            while (_actionQueue.TryDequeue(out var deferredAction))
-            {
-                deferredAction();
-            }
-        }
-    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void RunOnMainThread<TState0, TState1>(Action<TState0, TState1> action, TState0 state0, TState1 state1) =>
+        Enqueue(action, state0, state1);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public TReturn RunOnMainThread<TState0, TState1, TReturn>(Func<TState0, TState1, TReturn> func, TState0 state0, TState1 state1) =>
+        EnqueueReturn(func, state0, state1);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void RunOnMainThread<TState0, TState1, TState2>(
+        Action<TState0, TState1, TState2> action,
+        TState0 state0,
+        TState1 state1,
+        TState2 state2
+    ) => Enqueue(action, state0, state1, state2);
 
     private ManualResetEventSlim ResetEventPoolPop()
     {
