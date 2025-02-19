@@ -12,14 +12,14 @@ public sealed partial class ThreadQueue : ActionQueue<ThreadQueue, ManualResetEv
 
     private int _mainThreadId;
 
-    public ThreadQueue(int? spinCount = null)
+    public ThreadQueue(int? spinCount = null) : base(beginInvokePending: BeginInvokePending, endInvokePending: null)
     {
         _spinCount = spinCount;
 
         SetMainThreadId();
     }
 
-    public ThreadQueue(ThreadQueue parent)
+    public ThreadQueue(ThreadQueue parent) : base(beginInvokePending: BeginInvokePending, endInvokePending: null)
     {
         _spinCount = parent._spinCount;
         _mainThreadId = parent._mainThreadId;
@@ -27,13 +27,15 @@ public sealed partial class ThreadQueue : ActionQueue<ThreadQueue, ManualResetEv
 
     protected override bool IsActive => IsOnMainThread;
 
-    public bool IsOnMainThread => _mainThreadId == Environment.CurrentManagedThreadId;
-
-    protected override void BeginInvokePending() => ThrowIfNotOnMainThread();
-
-    protected override void EndInvokePending()
+    public bool IsOnMainThread
     {
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => _mainThreadId == Environment.CurrentManagedThreadId;
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static void BeginInvokePending(ThreadQueue @this) => @this.ThrowIfNotOnMainThread();
 
     protected override ManualResetEventSlim EnqueueCreateState() => ResetEventPoolPop();
 
@@ -108,6 +110,7 @@ public sealed partial class ThreadQueue : ActionQueue<ThreadQueue, ManualResetEv
         }
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void ThrowIfNotOnMainThread()
     {
         if (IsOnMainThread)

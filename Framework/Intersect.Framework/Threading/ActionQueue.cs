@@ -2,8 +2,18 @@ namespace Intersect.Framework.Threading;
 
 public abstract partial class ActionQueue<TActionQueue, TEnqueueState> where TActionQueue : ActionQueue<TActionQueue, TEnqueueState>
 {
+    private readonly TActionQueue @this;
     private readonly Queue<Action> _actionQueue = [];
     private readonly Action<Action> _statelessAction = action => action();
+    private readonly Action<TActionQueue>? _beginInvokePending;
+    private readonly Action<TActionQueue>? _endInvokePending;
+
+    protected ActionQueue(Action<TActionQueue>? beginInvokePending, Action<TActionQueue>? endInvokePending)
+    {
+        @this = this as TActionQueue ?? throw new InvalidCastException();
+        _beginInvokePending = beginInvokePending;
+        _endInvokePending = endInvokePending;
+    }
 
     protected abstract bool IsActive { get; }
 
@@ -11,7 +21,7 @@ public abstract partial class ActionQueue<TActionQueue, TEnqueueState> where TAc
 
     public void InvokePending()
     {
-        BeginInvokePending();
+        _beginInvokePending?.Invoke(@this);
 
         lock (_actionQueue)
         {
@@ -21,12 +31,8 @@ public abstract partial class ActionQueue<TActionQueue, TEnqueueState> where TAc
             }
         }
 
-        EndInvokePending();
+        _endInvokePending?.Invoke(@this);
     }
-
-    protected abstract void BeginInvokePending();
-
-    protected abstract void EndInvokePending();
 
     public void Enqueue(Action action)
     {
