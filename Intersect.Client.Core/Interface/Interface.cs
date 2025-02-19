@@ -44,13 +44,29 @@ public static partial class Interface
 
     public static GameInterface GameUi
     {
-        get => _uiInGame ?? throw new InvalidOperationException("In-game UI not initialized");
+        get
+        {
+            if (_uiInGame == null)
+            {
+                throw new InvalidOperationException("In-game UI not initialized");
+            }
+
+            return _uiInGame;
+        }
         private set => _uiInGame = value;
     }
 
     public static MenuGuiBase MenuUi
     {
-        get => _uiMainMenu ?? throw new InvalidOperationException("Menu UI not initialized");
+        get
+        {
+            if (_uiMainMenu == null)
+            {
+                throw new InvalidOperationException("Menu UI not initialized");
+            }
+
+            return _uiMainMenu;
+        }
         private set => _uiMainMenu = value;
     }
 
