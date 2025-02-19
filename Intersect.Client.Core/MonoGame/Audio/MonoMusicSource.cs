@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Intersect.Client.Framework.Audio;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
@@ -206,39 +207,43 @@ public partial class MonoMusicSource : GameAudioSource
 
     private void Instance_BufferNeeded(object sender, EventArgs e)
     {
-        var buffers = 3;
-        var samples = 44100;
-        var updateRate = 10;
+        const float sampleMinimum = short.MinValue;
+        const float sampleMaximum = short.MaxValue;
+        const float sampleScale = 32767f;
+
+        const int buffers = 3;
+        const int samples = 44100;
 
         var reader = Reader;
         var soundInstance = Instance;
 
-        if (reader != null && soundInstance != null && !soundInstance.IsDisposed)
+        if (reader == null || soundInstance is not { IsDisposed: false })
         {
-            float[] sampleBuffer = null;
-            while (soundInstance.PendingBufferCount < buffers)
+            return;
+        }
+
+        float[]? sampleBuffer = null;
+        while (soundInstance.PendingBufferCount < buffers)
+        {
+            sampleBuffer ??= new float[samples];
+
+            var read = reader.ReadSamples(sampleBuffer, 0, sampleBuffer.Length);
+            if (read == 0)
             {
-                if (sampleBuffer == null)
-                    sampleBuffer = new float[samples];
-
-                var read = reader.ReadSamples(sampleBuffer, 0, sampleBuffer.Length);
-                if (read == 0)
-                {
-                    reader.DecodedPosition = 0;
-                    continue;
-                }
-
-                var dataBuffer = new byte[read << 1];
-                for (var sampleIndex = 0; sampleIndex < read; ++sampleIndex)
-                {
-                    var sample = (short)MathHelper.Clamp(sampleBuffer[sampleIndex] * 32767f, short.MinValue, short.MaxValue);
-                    var sampleData = BitConverter.GetBytes(sample);
-                    for (var sampleByteIndex = 0; sampleByteIndex < sampleData.Length; ++sampleByteIndex)
-                        dataBuffer[(sampleIndex << 1) + sampleByteIndex] = sampleData[sampleByteIndex];
-                }
-
-                soundInstance.SubmitBuffer(dataBuffer, 0, read << 1);
+                reader.DecodedPosition = 0;
+                continue;
             }
+
+            var byteCount = read << 1;
+            var dataBuffer = new byte[byteCount];
+
+            for (var sampleIndex = 0; sampleIndex < read; ++sampleIndex)
+            {
+                var sample = (short)Math.Clamp(sampleBuffer[sampleIndex] * sampleScale, sampleMinimum, sampleMaximum);
+                Unsafe.As<byte, short>(ref dataBuffer[(sampleIndex << 1) + 0]) = sample;
+            }
+
+            soundInstance.SubmitBuffer(dataBuffer, 0, byteCount);
         }
     }
 
