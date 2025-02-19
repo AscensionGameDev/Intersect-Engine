@@ -21,16 +21,13 @@ public sealed partial class ThreadQueue : ActionQueue<ThreadQueue, ManualResetEv
 
     public ThreadQueue(ThreadQueue parent)
     {
-        Parent = parent;
         _spinCount = parent._spinCount;
         _mainThreadId = parent._mainThreadId;
     }
 
     protected override bool IsActive => IsOnMainThread;
 
-    public bool IsOnMainThread => Parent?.IsOnMainThread ?? _mainThreadId == Environment.CurrentManagedThreadId;
-
-    public ThreadQueue? Parent { get; set; }
+    public bool IsOnMainThread => _mainThreadId == Environment.CurrentManagedThreadId;
 
     protected override void BeginInvokePending() => ThrowIfNotOnMainThread();
 
@@ -100,6 +97,14 @@ public sealed partial class ThreadQueue : ActionQueue<ThreadQueue, ManualResetEv
         lock (_lock)
         {
             _mainThreadId = mainThreadId ?? Environment.CurrentManagedThreadId;
+        }
+    }
+
+    public void SetMainThreadId(ThreadQueue other)
+    {
+        lock (_lock)
+        {
+            _mainThreadId = other._mainThreadId;
         }
     }
 

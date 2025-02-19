@@ -361,7 +361,10 @@ public partial class Base : IDisposable
 
     private static void ProcessAttachingToParent(Base @this, Base? parent)
     {
-        @this._threadQueue.Parent = parent?._threadQueue;
+        if (parent?._threadQueue is { } parentThreadQueue)
+        {
+            @this._threadQueue.SetMainThreadId(parentThreadQueue);
+        }
 
         @this.PropagateCanvas(parent?._canvas);
 
