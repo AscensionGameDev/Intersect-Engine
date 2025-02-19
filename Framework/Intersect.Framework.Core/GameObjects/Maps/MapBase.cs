@@ -149,7 +149,10 @@ public partial class MapBase : DatabaseObject<MapBase>
 
                 foreach (var record in mapBase.LocalEvents)
                 {
-                    var evt = new EventBase(record.Key, record.Value?.JsonData);
+                    var evt = new EventBase(record.Key, record.Value?.JsonData)
+                    {
+                        MapId = Id,
+                    };
                     LocalEvents?.Add(record.Key, evt);
                 }
 

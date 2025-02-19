@@ -1907,22 +1907,29 @@ public partial class FrmMapEditor : DockContent
                     if (Globals.SelectionType != (int)SelectionTypes.CurrentLayer ||
                         Globals.CurrentLayer == LayerOptions.Events)
                     {
-                        if (Globals.SelectionSource.FindEventAt(x0 - dragxoffset, y0 - dragyoffset) != null)
+                        var eventAtPosition = Globals.SelectionSource.FindEventAt(x0 - dragxoffset, y0 - dragyoffset);
+                        if (eventAtPosition == null)
                         {
-                            if (tmpMap.FindEventAt(x0, y0) != null)
-                            {
-                                tmpMap.LocalEvents.Remove(tmpMap.FindEventAt(x0, y0).Id);
-                            }
-
-                            eventCopy = new EventBase(Guid.NewGuid(), Globals.SelectionSource.FindEventAt(x0 - dragxoffset, y0 - dragyoffset)
-                            )
-                            {
-                                SpawnX = x0,
-                                SpawnY = y0
-                            };
-
-                            tmpMap.LocalEvents.Add(eventCopy.Id, eventCopy);
+                            continue;
                         }
+
+                        var eventOnTemporaryMap = tmpMap.FindEventAt(x0, y0);
+                        if (eventOnTemporaryMap != null)
+                        {
+                            tmpMap.LocalEvents.Remove(eventOnTemporaryMap.Id);
+                        }
+
+                        eventCopy = new EventBase(
+                            Guid.NewGuid(),
+                            eventAtPosition
+                        )
+                        {
+                            MapId = tmpMap.Id,
+                            SpawnX = x0,
+                            SpawnY = y0,
+                        };
+
+                        tmpMap.LocalEvents.Add(eventCopy.Id, eventCopy);
                     }
                 }
             }

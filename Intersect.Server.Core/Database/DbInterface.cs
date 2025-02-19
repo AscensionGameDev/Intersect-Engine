@@ -406,6 +406,9 @@ public static partial class DbInterface
         Console.WriteLine("Loading game data...");
 
         LoadAllGameObjects();
+
+        ValidateMapEvents();
+        
         LoadTime();
         OnClassesLoaded();
         OnMapsLoaded();
@@ -871,6 +874,107 @@ public static partial class DbInterface
             );
             throw;
         }
+    }
+    
+    private static void ValidateMapEvents()
+    {
+        var missingEvents = 0;
+        var correctedEvents = 0;
+        
+        foreach (var (mapId, databaseObject) in MapController.Lookup)
+        {
+            if (databaseObject is not MapBase mapDescriptor)
+            {
+                ApplicationContext.CurrentContext.Logger.LogError(
+                    "Found an invalid database object in the MapDescriptor lookup ({InvalidObjectType}, {InvalidObjectId}, '{InvalidObjectName}'",
+                    databaseObject.GetType().GetName(qualified: true),
+                    databaseObject.Id,
+                    databaseObject.Name
+                );
+                continue;
+            }
+
+            var actualMapId = mapDescriptor.Id;
+            if (mapId != actualMapId)
+            {
+                ApplicationContext.CurrentContext.Logger.LogError(
+                    "Map with ID {ActualMapId} was recorded in the lookup under the ID {ExpectedMapId}, this needs to be investigated",
+                    actualMapId,
+                    mapId
+                );
+            }
+            
+            foreach (var eventId in mapDescriptor.EventIds)
+            {
+                if (!EventBase.TryGet(eventId, out var eventDescriptor))
+                {
+                    ApplicationContext.CurrentContext.Logger.LogWarning(
+                        "Map {MapId} references missing event {EventId}, unexpected behavior may occur",
+                        mapId,
+                        eventId
+                    );
+                    ++missingEvents;
+                    continue;
+                }
+
+                // Ignore common events
+                if (eventDescriptor is not { CommonEvent: false })
+                {
+                    continue;
+                }
+
+                // The map ID is correct, no validation necessary
+                var referencedMapId = eventDescriptor.MapId;
+                if (referencedMapId == mapId)
+                {
+                    continue;
+                }
+
+                // If the event is 1) not common and 2) is not using this map's ID, fix it. It was copied wrong in the editor
+                string referencedMapName = $"deleted map {referencedMapId}";
+                if (MapController.TryGet(referencedMapId, out var referencedMapDescriptor))
+                {
+                    referencedMapName = referencedMapDescriptor.Name;
+                }
+
+                if (string.IsNullOrWhiteSpace(referencedMapName))
+                {
+                    referencedMapName = "(unnamed map)";
+                }
+
+                eventDescriptor.MapId = mapId;
+                ++correctedEvents;
+
+                var eventName = eventDescriptor.Name?.Trim();
+                if (string.IsNullOrWhiteSpace(eventName))
+                {
+                    eventName = "(unnamed event)";
+                }
+
+                var mapName = mapDescriptor.Name;
+                if (string.IsNullOrWhiteSpace(mapName))
+                {
+                    mapName = "(unnamed map)";
+                }
+
+
+                ApplicationContext.CurrentContext.Logger.LogWarning(
+                    "Event '{EventName}' ({EventId}) on the map '{MapName}'({MapId}) was pointing to '{ReferencedMapName}' ({ReferencedMapId}) and while this has been corrected, the correction will not be saved until the event is resaved",
+                    eventName,
+                    eventId,
+                    mapName,
+                    mapId,
+                    referencedMapName,
+                    referencedMapId
+                );
+            }
+        }
+
+        ApplicationContext.CurrentContext.Logger.LogWarning(
+            "Finished validating map events on all maps, there were {MissingEvents} missing events and {CorrectedEvents} corrected events",
+            missingEvents,
+            correctedEvents
+        );
     }
 
     public static IDatabaseObject AddGameObject(GameObjectType gameObjectType)

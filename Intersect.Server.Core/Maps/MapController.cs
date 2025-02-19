@@ -626,7 +626,7 @@ public partial class MapController : MapBase
         mInstances.Clear();
     }
     #endregion
-
+    
     /// <summary>
     /// Gets rid of any orphaned tile layers
     /// </summary>
