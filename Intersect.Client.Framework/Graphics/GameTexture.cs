@@ -3,42 +3,11 @@ using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Compression;
 using Intersect.Core;
-using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Reflection;
-using Intersect.IO.Files;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualBasic;
 
 namespace Intersect.Client.Framework.Graphics;
-
-public interface IGameTexture : IAsset, IComparable<IGameTexture>, IDisposable
-{
-    Color this[int x, int y] { get; }
-    Color this[Point point] { get; }
-    long AccessTime { get; }
-    bool IsMissingOrCorrupt { get; }
-    bool IsPinned { get; }
-    int Area { get; }
-    Pointf Dimensions { get; }
-    FloatRect Bounds { get; }
-    Pointf Center { get; }
-
-    AtlasReference? AtlasReference
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get;
-    }
-
-    int Width { get; }
-    int Height { get; }
-    void Unload();
-    object? GetTexture();
-    TPlatformTexture? GetTexture<TPlatformTexture>() where TPlatformTexture : class;
-    void Reload();
-    Color GetPixel(int x, int y);
-    string ToString();
-}
 
 public static class GameTexture
 {
@@ -330,16 +299,16 @@ public abstract partial class GameTexture<TPlatformTexture, TPlatformRenderer> :
         }
     }
 
-    public void Unload()
+    public bool Unload()
     {
-        if (AccessTime != long.MaxValue)
+        if (AccessTime == long.MaxValue)
         {
             ApplicationContext.CurrentContext.Logger.LogWarning(
                 "Tried to unload pinned texture {TextureId} ({TextureName})",
                 Id,
                 Name
             );
-            return;
+            return false;
         }
 
         _platformTexture?.Dispose();
@@ -348,6 +317,7 @@ public abstract partial class GameTexture<TPlatformTexture, TPlatformRenderer> :
         AccessTime = 0;
         EmitUnloaded();
         OnUnload();
+        return true;
     }
 
     public object? GetTexture() => PlatformTexture;
@@ -382,13 +352,13 @@ public abstract partial class GameTexture<TPlatformTexture, TPlatformRenderer> :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void UpdateAccessTime()
     {
-        if (AccessTime != long.MaxValue)
+        if (AccessTime == long.MaxValue)
         {
             return;
         }
 
         AccessTime = Timing.Global.MillisecondsUtc;
-        Renderer.UpdateExpiration(this);
+        Renderer.UpdateAccessTime(this);
     }
 
     protected virtual void OnUnload() { }

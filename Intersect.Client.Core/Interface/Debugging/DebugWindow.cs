@@ -326,6 +326,7 @@ internal sealed partial class DebugWindow : Window
         table.AddRow(Strings.Debug.TextureAllocations, name: "GPUTextureAllocations").Listen(1, new DelegateDataProvider<ulong>(() => Graphics.Renderer.TextureAllocations), NoValue);
         table.AddRow(Strings.Debug.TextureCount, name: "GPUTextureCount").Listen(1, new DelegateDataProvider<ulong>(() => Graphics.Renderer.TextureCount), NoValue);
 
+        table.AddRow(Strings.Debug.UsedVRAM, name: "GPUUsedVRAM").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(Graphics.Renderer.UsedMemory)), NoValue);
         table.AddRow(Strings.Debug.FreeVRAM, name: "GPUFreeVRAM").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(PlatformStatistics.AvailableGPUMemory)), NoValue);
         table.AddRow(Strings.Debug.TotalVRAM, name: "GPUTotalVRAM").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(PlatformStatistics.TotalGPUMemory)), NoValue);
 

@@ -13,7 +13,6 @@ using Intersect.Configuration;
 using Intersect.Core;
 using Intersect.Extensions;
 using Intersect.Framework.Core;
-using Intersect.Framework.SystemInformation;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -126,10 +125,6 @@ internal partial class MonoRenderer : GameRenderer
 
         mGameWindow = monoGame.Window;
     }
-
-    public override long AvailableMemory => PlatformStatistics.AvailableGPUMemory;
-
-    public override long TotalMemory => PlatformStatistics.TotalGPUMemory;
 
     public IList<string> ValidVideoModes => GetValidVideoModes();
 

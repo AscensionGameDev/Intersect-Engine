@@ -974,6 +974,9 @@ public static partial class Strings
         public static LocalizedString TextureCount = @"Texture Assets";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString UsedVRAM = @"Used VRAM";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString FreeVRAM = @"Free VRAM";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
