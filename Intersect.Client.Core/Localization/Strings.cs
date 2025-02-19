@@ -1046,6 +1046,9 @@ public static partial class Strings
         public static LocalizedString Title = @"Debug";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString TitleX = @"Debug #{0}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString TabLabelGPU = @"GPU";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
