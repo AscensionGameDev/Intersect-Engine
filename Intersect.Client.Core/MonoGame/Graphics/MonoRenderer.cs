@@ -162,13 +162,22 @@ internal partial class MonoRenderer : GameRenderer
         }
 
         var isFullscreen = Globals.Database.FullScreen;
-        var fsChanged = initial || mGraphics.IsFullScreen != isFullscreen && !isFullscreen;
+        var updateFullscreen = initial || mGraphics.IsFullScreen != isFullscreen && !isFullscreen;
 
-        if (fsChanged)
+        if (updateFullscreen)
         {
             mGraphics.IsFullScreen = isFullscreen;
             mGraphics.HardwareModeSwitch = !isFullscreen;
-            mGraphics.ApplyChanges();
+        }
+
+        var displayBounds = Sdl2.GetDisplayBounds();
+        var currentDisplayBounds = displayBounds[0];
+        var currentDisplayWidth = currentDisplayBounds.w;
+        var currentDisplayHeight = currentDisplayBounds.h;
+        if (isFullscreen)
+        {
+            width = currentDisplayWidth;
+            height = currentDisplayHeight;
         }
 
         mScreenWidth = width;
@@ -200,23 +209,21 @@ internal partial class MonoRenderer : GameRenderer
 
         mDisplayWidth = mGraphics.GraphicsDevice.Adapter.CurrentDisplayMode.Width;
         mDisplayHeight = mGraphics.GraphicsDevice.Adapter.CurrentDisplayMode.Height;
-        if (fsChanged || initial)
+        if (updateFullscreen)
         {
-            var displayBounds = Sdl2.GetDisplayBounds();
-            var currentDisplayBounds = displayBounds[0];
             mGameWindow.Position = new Microsoft.Xna.Framework.Point(
-                currentDisplayBounds.x + ((currentDisplayBounds.w - mScreenWidth) / 2),
-                currentDisplayBounds.y + ((currentDisplayBounds.h - mScreenHeight) / 2)
+                currentDisplayBounds.x + ((currentDisplayWidth - mScreenWidth) / 2),
+                currentDisplayBounds.y + ((currentDisplayHeight - mScreenHeight) / 2)
             );
         }
 
         mOldDisplayMode = currentDisplayMode;
-        if (fsChanged)
+        if (updateFullscreen)
         {
             mFsChangedTimer = Timing.Global.MillisecondsUtc + 1000;
         }
 
-        if (fsChanged)
+        if (updateFullscreen)
         {
             mDisplayModeChanged = true;
         }
