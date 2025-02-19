@@ -8,6 +8,8 @@ public abstract partial class ActionQueue<TActionQueue, TEnqueueState> where TAc
     private readonly Action<TActionQueue>? _beginInvokePending;
     private readonly Action<TActionQueue>? _endInvokePending;
 
+    private bool _empty;
+
     protected ActionQueue(Action<TActionQueue>? beginInvokePending, Action<TActionQueue>? endInvokePending)
     {
         @this = this as TActionQueue ?? throw new InvalidCastException();
@@ -21,7 +23,14 @@ public abstract partial class ActionQueue<TActionQueue, TEnqueueState> where TAc
 
     public void InvokePending()
     {
+        if (_empty)
+        {
+            return;
+        }
+
         _beginInvokePending?.Invoke(@this);
+
+        _empty = true;
 
         lock (_actionQueue)
         {
@@ -70,6 +79,7 @@ public abstract partial class ActionQueue<TActionQueue, TEnqueueState> where TAc
             {
                 State<TState>.ActionQueue.Enqueue(deferredAction);
                 _actionQueue.Enqueue(State<TState>.Next);
+                _empty = false;
             }
 
             EnqueueSuccessful(enqueueState);
