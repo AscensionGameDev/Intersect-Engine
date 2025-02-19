@@ -161,11 +161,13 @@ internal partial class MonoRenderer : GameRenderer
             }
         }
 
-        var fsChanged = mGraphics.IsFullScreen != Globals.Database.FullScreen && !Globals.Database.FullScreen;
+        var isFullscreen = Globals.Database.FullScreen;
+        var fsChanged = initial || mGraphics.IsFullScreen != isFullscreen && !isFullscreen;
 
-        mGraphics.IsFullScreen = Globals.Database.FullScreen;
         if (fsChanged)
         {
+            mGraphics.IsFullScreen = isFullscreen;
+            mGraphics.HardwareModeSwitch = !isFullscreen;
             mGraphics.ApplyChanges();
         }
 
