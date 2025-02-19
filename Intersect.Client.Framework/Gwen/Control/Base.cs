@@ -3658,8 +3658,10 @@ public partial class Base : IDisposable
     {
         _threadQueue.InvokePending();
 
-        foreach (var child in _children)
+        var count = _children.Count;
+        for (var index = 0; index < count; index++)
         {
+            var child = _children[index];
             child.InvokeThreadQueue();
         }
     }
