@@ -1,5 +1,7 @@
+using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Interface.Debugging;
+using Intersect.Client.Localization;
 using Intersect.Reflection;
 
 namespace Intersect.Client.Interface;
@@ -46,8 +48,18 @@ public abstract partial class MutableInterface : IMutableInterface
         _debugWindow ??= new DebugWindow(parent);
         _debugWindow.Parent = parent;
 
-        _debugWindow2 ??= new DebugWindow(parent);
+#if DEBUG
+        if (_debugWindow2 is null)
+        {
+            _debugWindow2 = new DebugWindow(parent)
+            {
+                Alignment = [Alignments.Top, Alignments.Right],
+                Title = Strings.Debug.TitleX.ToString(2),
+            };
+            _debugWindow2.PostLayout.Enqueue(window => window.Alignment = [], _debugWindow2);
+        }
         _debugWindow2.Parent = parent;
+#endif
 
         return _debugWindow;
     }
