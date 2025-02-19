@@ -299,7 +299,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>
         }
     }
 
-    public EventBase FindEventAt(int x, int y)
+    public EventBase? FindEventAt(int x, int y)
     {
         if (LocalEvents.Count <= 0)
         {
