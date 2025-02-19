@@ -16,6 +16,7 @@ namespace Intersect.Client.Interface;
 
 public static partial class Interface
 {
+    private static FPSPanel? _fpsPanel;
     private static readonly ConcurrentQueue<Alert> PendingErrorMessages = new();
 
     private static bool _initialized;
@@ -74,6 +75,26 @@ public static partial class Interface
 
     public static MutableInterface CurrentInterface => NullableCurrentInterface ??
                                                        throw new InvalidOperationException("No current UI initialized");
+
+    private static bool _showFPSPanel;
+
+    public static bool ShowFPSPanel
+    {
+        get => _showFPSPanel;
+        set
+        {
+            if (_showFPSPanel == value)
+            {
+                return;
+            }
+
+            _showFPSPanel = value;
+            if (_fpsPanel is { } fpsPanel)
+            {
+                fpsPanel.IsVisibleInParent = _showFPSPanel;
+            }
+        }
+    }
 
     private static bool HasCurrentInterface => NullableCurrentInterface is not null;
 
@@ -192,6 +213,12 @@ public static partial class Interface
             GameUi = new GameInterface(_canvasInGame);
             _uiMainMenu = null;
         }
+
+        _showFPSPanel = Globals.Database?.ShowFPSCounter ?? false;
+        _fpsPanel = new FPSPanel(CurrentInterface.Root)
+        {
+            IsVisibleInParent = _showFPSPanel,
+        };
 
         Globals.OnLifecycleChangeState();
 

@@ -8,6 +8,8 @@ public abstract partial class DataProvider<TValue> : IDataProvider<TValue>, IUpd
 {
     public event DataProviderEventHandler<ValueChangedEventArgs<TValue>>? ValueChanged;
 
+    public object? UserData { get; set; }
+
     public TValue Value { get; private set; } = default!;
 
     protected bool TrySetValue(TValue value)

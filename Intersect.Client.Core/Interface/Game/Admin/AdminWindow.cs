@@ -495,7 +495,7 @@ public partial class AdminWindow : Window
         );
     }
 
-    private void MapSortCheckboxOnCheckChanged(ICheckbox sender, EventArgs eventArgs)
+    private void MapSortCheckboxOnCheckChanged(ICheckbox sender, ValueChangedEventArgs<bool> eventArgs)
     {
         UpdateMapList();
     }

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Content;
+using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
@@ -452,9 +453,9 @@ internal sealed partial class DebugWindow : Window
         return checkbox;
     }
 
-    private void CheckboxDrawDebugOutlinesOnCheckChanged(ICheckbox sender, EventArgs eventArgs)
+    private void CheckboxDrawDebugOutlinesOnCheckChanged(ICheckbox sender, ValueChangedEventArgs<bool> eventArgs)
     {
-        _drawDebugOutlinesEnabled = sender.IsChecked;
+        _drawDebugOutlinesEnabled = eventArgs.Value;
         if (Root is { } root)
         {
             root.DrawDebugOutlines = _drawDebugOutlinesEnabled;
@@ -480,9 +481,9 @@ internal sealed partial class DebugWindow : Window
         return checkbox;
     }
 
-    private static void CheckboxEnableLayoutHotReloadOnCheckChanged(ICheckbox sender, EventArgs _)
+    private static void CheckboxEnableLayoutHotReloadOnCheckChanged(ICheckbox sender, ValueChangedEventArgs<bool> args)
     {
-        Globals.ContentManager.ContentWatcher.Enabled = sender.IsChecked;
+        Current.ContentWatcher.Enabled = args.Value;
     }
 
     private LabeledCheckBox CreateInfoCheckboxIncludeTextNodesInHover(Base parent)
@@ -500,15 +501,15 @@ internal sealed partial class DebugWindow : Window
         return checkbox;
     }
 
-    private void CheckboxIncludesTextNodesInHoverOnCheckChanged(ICheckbox checkbox, EventArgs eventArgs)
+    private void CheckboxIncludesTextNodesInHoverOnCheckChanged(ICheckbox checkbox, ValueChangedEventArgs<bool> eventArgs)
     {
-        if (_nodeUnderCursorProvider.Filter.HasFlag(NodeFilter.IncludeText))
+        if (eventArgs.Value)
         {
-            _nodeUnderCursorProvider.Filter &= ~NodeFilter.IncludeText;
+            _nodeUnderCursorProvider.Filter |= NodeFilter.IncludeText;
         }
         else
         {
-            _nodeUnderCursorProvider.Filter |= NodeFilter.IncludeText;
+            _nodeUnderCursorProvider.Filter &= ~NodeFilter.IncludeText;
         }
     }
 
@@ -528,14 +529,19 @@ internal sealed partial class DebugWindow : Window
         return checkbox;
     }
 
-    private void CheckboxViewClickedNodeInDebuggerOnCheckChanged(ICheckbox checkbox, EventArgs eventArgs)
+    private void CheckboxViewClickedNodeInDebuggerOnCheckChanged(ICheckbox checkbox, ValueChangedEventArgs<bool> eventArgs)
     {
-        _viewClickedNodeInDebugger = !_viewClickedNodeInDebugger;
+        var wasClicked = _viewClickedNodeInDebugger;
+
+        _viewClickedNodeInDebugger = eventArgs.Value;
         if (_viewClickedNodeInDebugger)
         {
-            AddIntercepts();
+            if (!wasClicked)
+            {
+                AddIntercepts();
+            }
         }
-        else
+        else if (wasClicked)
         {
             RemoveIntercepts();
         }

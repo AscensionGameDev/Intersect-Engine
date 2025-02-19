@@ -1,4 +1,6 @@
-﻿namespace Intersect.Client.Framework.Gwen.Control.Property;
+﻿using Intersect.Client.Framework.Gwen.Control.EventArguments;
+
+namespace Intersect.Client.Framework.Gwen.Control.Property;
 
 
 /// <summary>
@@ -25,7 +27,7 @@ public partial class Check : Base
         Height = 18;
     }
 
-    private void OnCheckChanged(ICheckbox checkbox, EventArgs args)
+    private void OnCheckChanged(ICheckbox checkbox, ValueChangedEventArgs<bool> args)
     {
         OnValueChanged((checkbox as Control.Base)!, args);
     }
