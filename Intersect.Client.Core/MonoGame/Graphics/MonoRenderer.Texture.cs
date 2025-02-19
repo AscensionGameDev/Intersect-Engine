@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Core;
 using Intersect.Framework.Reflection;
@@ -11,6 +12,51 @@ namespace Intersect.Client.MonoGame.Graphics;
 internal partial class MonoRenderer
 {
     private readonly ConcurrentDictionary<Texture2D, IGameTexture> _allocatedTextures = [];
+    private long _allocatedTexturesSize;
+
+    public override long UsedMemory => _allocatedTexturesSize;
+
+    private bool AddAllocatedTexture(Texture2D platformTexture, IGameTexture gameTexture)
+    {
+        if (!_allocatedTextures.TryAdd(platformTexture, gameTexture))
+        {
+            return false;
+        }
+
+        _allocatedTexturesSize += MeasureDataSize(platformTexture);
+        return true;
+    }
+
+    private bool RemoveAllocatedTexture(Texture2D platformTexture, [NotNullWhen(true)] out IGameTexture? gameTexture)
+    {
+        if (!_allocatedTextures.TryRemove(platformTexture, out gameTexture))
+        {
+            return false;
+        }
+
+        _allocatedTexturesSize -= MeasureDataSize(platformTexture);
+        return true;
+    }
+
+    private static long MeasureDataSize(Texture2D platformTexture)
+    {
+        var width = platformTexture.Width;
+        var height = platformTexture.Height;
+        return width * height * 4;
+
+        // We don't currently use mipmaps but this may become relevant in the future:
+        // internal static int CalculateMipLevels(int width, int height = 0, int depth = 0)
+        // {
+        //     int mipLevels = 1;
+        //     int num = Math.Max(Math.Max(width, height), depth);
+        //     while (num > 1)
+        //     {
+        //         num /= 2;
+        //         ++mipLevels;
+        //     }
+        //     return mipLevels;
+        // }
+    }
 
     private Texture2D? CreatePlatformTextureFromStream(MonoTexture gameTexture, Stream stream)
     {
@@ -21,7 +67,7 @@ internal partial class MonoRenderer
         }
 
         platformTexture.Disposing += Texture2DOnDisposing;
-        if (!_allocatedTextures.TryAdd(platformTexture, gameTexture))
+        if (!AddAllocatedTexture(platformTexture, gameTexture))
         {
             throw new InvalidOperationException("Failed to record allocated texture");
         }
@@ -64,9 +110,16 @@ internal partial class MonoRenderer
 
     private void OnPlatformTextureDisposal(Texture2D platformTexture)
     {
-        if (_allocatedTextures.TryRemove(platformTexture, out var gameTexture))
+        if (RemoveAllocatedTexture(platformTexture, out var gameTexture))
         {
             MarkFreed(gameTexture);
+        }
+        else
+        {
+            ApplicationContext.CurrentContext.Logger.LogError(
+                "Failed to remove platform texture from allocations, is it not tracked? '{TextureName}'",
+                platformTexture.ToString()
+            );
         }
     }
 
