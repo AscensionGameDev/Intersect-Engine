@@ -6,6 +6,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Anim;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Gwen.Control.Layout;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
@@ -3737,15 +3738,19 @@ public partial class Base : IDisposable
                 var childFitsContentWidth = false;
                 var childFitsContentHeight = false;
 
-                if (child is ISmartAutoSizeToContents smartAutoSizeToContents)
+                switch (child)
                 {
-                    childFitsContentWidth = smartAutoSizeToContents.AutoSizeToContentWidth;
-                    childFitsContentHeight = smartAutoSizeToContents.AutoSizeToContentHeight;
-                }
-                else if (child is IAutoSizeToContents { AutoSizeToContents: true })
-                {
-                    childFitsContentWidth = true;
-                    childFitsContentHeight = true;
+                    case ISmartAutoSizeToContents smartAutoSizeToContents:
+                        childFitsContentWidth = smartAutoSizeToContents.AutoSizeToContentWidth;
+                        childFitsContentHeight = smartAutoSizeToContents.AutoSizeToContentHeight;
+                        break;
+                    case IAutoSizeToContents { AutoSizeToContents: true }:
+                        childFitsContentWidth = true;
+                        childFitsContentHeight = true;
+                        break;
+                    case IFitHeightToContents { FitHeightToContents: true }:
+                        childFitsContentHeight = true;
+                        break;
                 }
 
                 if (childDock.HasFlag(Pos.Left))
