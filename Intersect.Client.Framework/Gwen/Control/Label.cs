@@ -171,7 +171,18 @@ public partial class Label : Base, ILabel
     private static bool IsArgument(string format, Range range, int argumentIndex) =>
         int.TryParse(format[range], out var index) && index == argumentIndex;
 
-    public bool IsEmpty => Children.SingleOrDefault() == _textElement && !_textElement.IsVisibleInParent;
+    public bool IsEmpty
+    {
+        get
+        {
+            if (Children.Count > 1)
+            {
+                return false;
+            }
+
+            return Children.FirstOrDefault() is null or Text { IsVisibleInParent: false };
+        }
+    }
 
     public WrappingBehavior WrappingBehavior
     {

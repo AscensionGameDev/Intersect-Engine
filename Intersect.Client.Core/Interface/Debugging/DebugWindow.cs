@@ -106,12 +106,23 @@ internal sealed partial class DebugWindow : Window
             MinimumSize = new Point(x: 408, y: 0),
             SizeToContents = true,
         };
+        table.VisibilityChanged += (sender, args) =>
+        {
+            if (!args.IsVisibleInTree || !_resizeGPUAllocationsTable)
+            {
+                return;
+            }
+
+            _resizeGPUAllocationsTable = false;
+            sender.SizeToChildren(recursive: true);
+            sender.InvalidateParent();
+        };
         table.SizeChanged += ResizeTableToChildrenOnSizeChanged;
 
         var existingTextures = Graphics.Renderer.Textures;
         foreach (var texture in existingTextures)
         {
-            // _ = EnsureGPUAllocationsRowFor(gameTexture: texture, creating: true, table: table);
+            _ = EnsureGPUAllocationsRowFor(gameTexture: texture, creating: true, table: table);
         }
 
         SubscribeGPU();
@@ -215,10 +226,19 @@ internal sealed partial class DebugWindow : Window
         }
         _gpuAllocationsRowByTextureLookup[gameTexture] = existingRow;
 
-        table.SizeToChildren(recursive: true);
+        if (table.IsVisibleInTree)
+        {
+            table.SizeToChildren(recursive: true);
+        }
+        else
+        {
+            _resizeGPUAllocationsTable = true;
+        }
 
         return existingRow;
     }
+
+    private bool _resizeGPUAllocationsTable;
 
     private static void CopyAssetNameToClipboardOnNameCellClicked(Base sender, MouseButtonState _)
     {

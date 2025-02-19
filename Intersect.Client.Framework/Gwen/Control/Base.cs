@@ -874,7 +874,7 @@ public partial class Base : IDisposable
             @this.InvalidateParentDock();
         }
 
-        VisibilityChangedEventArgs eventArgs = new(value);
+        VisibilityChangedEventArgs eventArgs = new(value, visibilityInTreeChanging ? value : !value);
         @this.OnVisibilityChanged(@this, eventArgs);
         @this.VisibilityChanged?.Invoke(@this, eventArgs);
 
@@ -894,10 +894,13 @@ public partial class Base : IDisposable
                 continue;
             }
 
-            if (child._visible)
+            if (!child._visible)
             {
-                child.NotifyVisibilityInTreeChanged(visible);
+                continue;
             }
+
+            child.NotifyVisibilityInTreeChanged(visible);
+            child.VisibilityChanged?.Invoke(this, new VisibilityChangedEventArgs(child._visible, visible));
         }
     }
 
