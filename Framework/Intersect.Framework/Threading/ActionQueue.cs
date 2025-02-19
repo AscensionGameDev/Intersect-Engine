@@ -17,15 +17,21 @@ public abstract partial class ActionQueue<TActionQueue, TEnqueueState> where TAc
         _endInvokePending = endInvokePending;
     }
 
+    public event Action? QueueNotEmpty;
+
     protected abstract bool IsActive { get; }
 
     protected abstract Action<TEnqueueState> PostInvocationAction { get; }
 
-    public void InvokePending()
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns>Returns true if the queue was non-empty and is now empty.</returns>
+    public bool InvokePending()
     {
         if (_empty)
         {
-            return;
+            return false;
         }
 
         _beginInvokePending?.Invoke(@this);
@@ -41,6 +47,7 @@ public abstract partial class ActionQueue<TActionQueue, TEnqueueState> where TAc
         }
 
         _endInvokePending?.Invoke(@this);
+        return _actionQueue.Count < 1;
     }
 
     public void Enqueue(Action action)
@@ -79,6 +86,17 @@ public abstract partial class ActionQueue<TActionQueue, TEnqueueState> where TAc
             {
                 State<TState>.ActionQueue.Enqueue(deferredAction);
                 _actionQueue.Enqueue(State<TState>.Next);
+                try
+                {
+                    if (_empty)
+                    {
+                        QueueNotEmpty?.Invoke();
+                    }
+                }
+                catch
+                {
+                    // Ignore, application context not available here
+                }
                 _empty = false;
             }
 

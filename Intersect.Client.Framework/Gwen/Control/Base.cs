@@ -57,14 +57,6 @@ public partial class Base : IDisposable
     private bool _disposeCompleted;
     private StackTrace? _disposeStack;
 
-    private readonly ThreadQueue _threadQueue = new();
-
-    private readonly ManualActionQueueParent _preLayoutActionsParent = new();
-    public readonly ManualActionQueue PreLayout;
-
-    private readonly ManualActionQueueParent _postLayoutActionsParent = new();
-    public readonly ManualActionQueue PostLayout;
-
     private Canvas? _canvas;
 
     protected Modal? _modal;
@@ -153,6 +145,8 @@ public partial class Base : IDisposable
     /// <param name="name">name of this control</param>
     public Base(Base? parent = default, string? name = default)
     {
+        _threadQueue = new ThreadQueue();
+        _threadQueue.QueueNotEmpty += () => UpdatePendingThreadQueues(1);
         _name = name ?? string.Empty;
         _visible = true;
         _dockDirty = true;
@@ -394,6 +388,7 @@ public partial class Base : IDisposable
     {
         try
         {
+            parent.UpdatePendingThreadQueues(_pendingThreadQueues);
             OnAttaching(parent);
         }
         catch (Exception exception)
@@ -418,6 +413,7 @@ public partial class Base : IDisposable
     {
         try
         {
+            parent.UpdatePendingThreadQueues(-_pendingThreadQueues);
             OnDetaching(parent);
         }
         catch (Exception exception)
@@ -1786,59 +1782,6 @@ public partial class Base : IDisposable
     public void DelayedDelete()
     {
         Canvas?.AddDelayedDelete(this);
-    }
-
-    public void RunOnMainThread(Action action)
-    {
-        Invalidate();
-        _threadQueue.RunOnMainThread(action);
-    }
-
-    public void RunOnMainThread(Action<Base> action) => RunOnMainThread(action, this);
-
-    public void RunOnMainThread<TState>(Action<TState> action, TState state)
-    {
-        Invalidate();
-        _threadQueue.RunOnMainThread(action, state);
-    }
-
-    public TReturn RunOnMainThread<TReturn>(Func<Base, TReturn> func)
-    {
-        Invalidate();
-        return _threadQueue.RunOnMainThread(func, this);
-    }
-
-    public void RunOnMainThread<TState>(Action<Base, TState> action, TState state)
-    {
-        Invalidate();
-        _threadQueue.RunOnMainThread(action, this, state);
-    }
-
-    public TReturn RunOnMainThread<TState, TReturn>(Func<Base, TState, TReturn> func, TState state, bool invalidate = true)
-    {
-        if (invalidate)
-        {
-            Invalidate();
-        }
-        return _threadQueue.RunOnMainThread(func, this, state);
-    }
-
-    public void RunOnMainThread<TState0, TState1>(Action<TState0, TState1> action, TState0 state0, TState1 state1)
-    {
-        Invalidate();
-        _threadQueue.RunOnMainThread(action, state0, state1);
-    }
-
-    public void RunOnMainThread<TState0, TState1>(Action<Base, TState0, TState1> action, TState0 state0, TState1 state1)
-    {
-        Invalidate();
-        _threadQueue.RunOnMainThread(action, this, state0, state1);
-    }
-
-    public void RunOnMainThread<TState0, TState1, TState2>(Action<TState0, TState1, TState2> action, TState0 state0, TState1 state1, TState2 state2)
-    {
-        Invalidate();
-        _threadQueue.RunOnMainThread(action, state0, state1, state2);
     }
 
     public override string ToString() => _cachedToString ??= InternalToString();
@@ -3656,7 +3599,15 @@ public partial class Base : IDisposable
 
     protected void InvokeThreadQueue()
     {
-        _threadQueue.InvokePending();
+        if (_pendingThreadQueues < 1)
+        {
+            return;
+        }
+
+        if (_threadQueue.InvokePending())
+        {
+            UpdatePendingThreadQueues(-1);
+        }
 
         var count = _children.Count;
         for (var index = 0; index < count; index++)
