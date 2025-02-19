@@ -145,12 +145,12 @@ public partial class LabeledCheckBox : Base, IAutoSizeToContents, ICheckbox, ITe
     /// <summary>
     ///     Invoked when the control's check has been changed.
     /// </summary>
-    public event EventHandler<ICheckbox, EventArgs>? CheckChanged;
+    public event EventHandler<ICheckbox, ValueChangedEventArgs<bool>>? CheckChanged;
 
     /// <summary>
     ///     Handler for CheckChanged event.
     /// </summary>
-    protected virtual void OnCheckChanged(ICheckbox sender, EventArgs args)
+    protected virtual void OnCheckChanged(ICheckbox sender, ValueChangedEventArgs<bool> args)
     {
         if (_checkbox.IsChecked)
         {
@@ -161,7 +161,7 @@ public partial class LabeledCheckBox : Base, IAutoSizeToContents, ICheckbox, ITe
             Unchecked?.Invoke(this, EventArgs.Empty);
         }
 
-        CheckChanged?.Invoke(this, EventArgs.Empty);
+        CheckChanged?.Invoke(this, args);
     }
 
     public override Point GetChildrenSize()

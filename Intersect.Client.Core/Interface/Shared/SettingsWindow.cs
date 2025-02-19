@@ -74,6 +74,7 @@ public partial class SettingsWindow : Window
     private readonly ScrollControl _videoContainer;
     private readonly LabeledComboBox _resolutionList;
     private readonly LabeledComboBox _fpsList;
+    private readonly LabeledCheckBox _showFPSCounterCheckbox;
     private readonly LabeledSlider _worldScale;
     private readonly LabeledCheckBox _fullscreenCheckbox;
     private readonly LabeledCheckBox _lightingEnabledCheckbox;
@@ -397,6 +398,14 @@ public partial class SettingsWindow : Window
         _ = _fpsList.AddItem(label: Strings.Settings.Fps120);
         _ = _fpsList.AddItem(label: Strings.Settings.UnlimitedFps);
 
+        _showFPSCounterCheckbox = new LabeledCheckBox(parent: _videoContainer, name: nameof(_showFPSCounterCheckbox))
+        {
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            Text = Strings.Settings.ShowFPSCounter,
+        };
+        _showFPSCounterCheckbox.CheckChanged += ShowFPSCounterCheckboxOnCheckChanged;
+
         // Video Settings - Fullscreen Checkbox.
         _fullscreenCheckbox = new LabeledCheckBox(parent: _videoContainer, name: nameof(_fullscreenCheckbox))
         {
@@ -546,6 +555,11 @@ public partial class SettingsWindow : Window
 
         (_bottomBar, _restoreDefaultsButton, _applyPendingChangesButton, _cancelPendingChangesButton) =
             CreateBottomBar(this);
+    }
+
+    private static void ShowFPSCounterCheckboxOnCheckChanged(ICheckbox fpsCounterCheckbox, ValueChangedEventArgs<bool> args)
+    {
+        Interface.ShowFPSPanel = args.Value;
     }
 
     protected override void EnsureInitialized()
@@ -934,6 +948,8 @@ public partial class SettingsWindow : Window
             }
         }
 
+        _showFPSCounterCheckbox.IsChecked = Globals.Database.ShowFPSCounter;
+
         switch (Globals.Database.TargetFps)
         {
             case -1: // Unlimited.
@@ -1135,6 +1151,8 @@ public partial class SettingsWindow : Window
             shouldReset = true;
             Globals.Database.TargetFps = newFps;
         }
+
+        Globals.Database.ShowFPSCounter = _showFPSCounterCheckbox.IsChecked;
 
         // Audio Settings.
         Globals.Database.MusicVolume = (int)_musicSlider.Value;

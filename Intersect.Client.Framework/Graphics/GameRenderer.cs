@@ -145,6 +145,8 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
 
     public abstract IGameRenderTexture CreateRenderTexture(int width, int height);
 
+    public Pointf MeasureText(string text, GameFont? font) => MeasureText(text, font, 1);
+
     public abstract Pointf MeasureText(string text, GameFont? gameFont, float fontScale);
 
     public abstract void DrawString(

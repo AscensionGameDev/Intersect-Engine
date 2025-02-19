@@ -1,5 +1,6 @@
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Input;
 using Intersect.Framework.Eventing;
 using Newtonsoft.Json.Linq;
@@ -76,7 +77,7 @@ public partial class Checkbox : Button, ICheckbox
             }
 
             mChecked = value;
-            OnCheckChanged();
+            OnCheckChanged(value);
         }
     }
 
@@ -183,32 +184,29 @@ public partial class Checkbox : Button, ICheckbox
     /// <summary>
     ///     Invoked when the checkbox state has been changed.
     /// </summary>
-    public event EventHandler<ICheckbox, EventArgs>? CheckChanged;
+    public event EventHandler<ICheckbox, ValueChangedEventArgs<bool>>? CheckChanged;
 
     /// <summary>
     ///     Handler for CheckChanged event.
     /// </summary>
-    protected virtual void OnCheckChanged()
+    protected virtual void OnCheckChanged(bool isChecked)
     {
-        if (IsChecked)
+        if (isChecked)
         {
-            if (Checked != null)
-            {
-                Checked.Invoke(this, EventArgs.Empty);
-            }
+            Checked?.Invoke(this, EventArgs.Empty);
         }
         else
         {
-            if (Unchecked != null)
-            {
-                Unchecked.Invoke(this, EventArgs.Empty);
-            }
+            Unchecked?.Invoke(this, EventArgs.Empty);
         }
 
-        if (CheckChanged != null)
-        {
-            CheckChanged.Invoke(this, EventArgs.Empty);
-        }
+        CheckChanged?.Invoke(
+            this,
+            new ValueChangedEventArgs<bool>
+            {
+                Value = isChecked, OldValue = !isChecked
+            }
+        );
     }
 
     /// <summary>
