@@ -893,8 +893,7 @@ public partial class EntityBox
     public void Dispose()
     {
         EntityWindow.Hide();
-        Interface.GameUi.GameCanvas.RemoveChild(EntityWindow, false);
-        EntityWindow.Dispose();
+        EntityWindow.Canvas?.RemoveChild(EntityWindow, true);
     }
 
     public bool IsVisible
