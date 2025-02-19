@@ -1059,6 +1059,7 @@ public partial class Base : IDisposable
                 _innerPanel.MinimumSize = InnerPanelSizeFrom(value);
             }
             OnMinimumSizeChanged(oldValue, value);
+            Invalidate(alsoInvalidateParent: true);
         }
     }
 
@@ -1077,6 +1078,7 @@ public partial class Base : IDisposable
                 _innerPanel.MaximumSize = InnerPanelSizeFrom(value);
             }
             OnMaximumSizeChanged(oldValue, value);
+            Invalidate(alsoInvalidateParent: true);
         }
     }
 
@@ -2746,6 +2748,12 @@ public partial class Base : IDisposable
 
         if (oldBounds.Size != newBounds.Size)
         {
+            if (_cacheToTexture)
+            {
+                Skin.Renderer.Ctt.DisposeCachedTexture(this);
+                Redraw();
+            }
+
             OnSizeChanged(oldBounds.Size, newBounds.Size);
             SizeChanged?.Invoke(
                 this,

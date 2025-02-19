@@ -5,6 +5,7 @@ using Intersect.Configuration;
 using Intersect.Core;
 using Intersect.Factories;
 using Intersect.Framework.Logging;
+using Intersect.Framework.SystemInformation;
 using Intersect.Network;
 using Intersect.Plugins;
 using Intersect.Plugins.Contexts;
@@ -43,12 +44,13 @@ internal static partial class Bootstrapper
         LoggingLevelSwitch loggingLevelSwitch =
             new(Debugger.IsAttached ? LogEventLevel.Debug : LogEventLevel.Information);
 
-        var executingAssembly = Assembly.GetExecutingAssembly();
-        var (_, logger) = new LoggerConfiguration().CreateLoggerForIntersect(
+        var (loggerFactory, logger) = new LoggerConfiguration().CreateLoggerForIntersect(
             entryAssembly,
             "Client",
             loggingLevelSwitch
         );
+
+        PlatformStatistics.Logger = loggerFactory.CreateLogger<PlatformStatistics>();
 
         var packetTypeRegistry = new PacketTypeRegistry(logger, typeof(SharedConstants).Assembly);
         if (!packetTypeRegistry.TryRegisterBuiltIn())
