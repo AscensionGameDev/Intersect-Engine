@@ -13,7 +13,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout;
 /// <summary>
 ///     Single table row.
 /// </summary>
-public partial class TableRow : Base, IColorableText
+public partial class TableRow : Base, IColorableText, IFitHeightToContents
 {
     private readonly List<Action> mDisposalActions = [];
     private readonly List<TableCell> _columns = [];
@@ -290,6 +290,11 @@ public partial class TableRow : Base, IColorableText
     {
         foreach (var column in this._columns)
         {
+            if (column.IsEmpty)
+            {
+                continue;
+            }
+
             column.SizeToChildren(resizeX: args.X, resizeY: args.Y, recursive: args.Recurse);
         }
     }
@@ -306,6 +311,13 @@ public partial class TableRow : Base, IColorableText
                 oldSize,
                 newSize
             );
+
+            switch (Name)
+            {
+                case "SectionGPU":
+                case "SectionUI":
+                    break;
+            }
         }
 
         if (oldSize.X == newSize.X)
