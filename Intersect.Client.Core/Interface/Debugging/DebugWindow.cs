@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Content;
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
@@ -15,8 +14,8 @@ using Intersect.Client.Interface.Data;
 using Intersect.Client.Interface.Debugging.Providers;
 using Intersect.Client.Localization;
 using Intersect.Client.Maps;
-using Intersect.Client.MonoGame.NativeInterop.OpenGL;
 using Intersect.Framework.Reflection;
+using Intersect.Framework.SystemInformation;
 using Intersect.IO.Files;
 using static Intersect.Client.Framework.File_Management.GameContentManager;
 
@@ -59,9 +58,34 @@ internal sealed partial class DebugWindow : Window
         AssetsList = CreateAssetsList(TabAssets.Page);
         AssetsButtonReloadAsset = CreateAssetsButtonReloadAsset(AssetsToolsTable, AssetsList);
 
-        TabGPU = Tabs.AddPage(Strings.Debug.TabLabelGPU, nameof(TabGPU));
-        GPUStatisticsTable = CreateGPUStatisticsTable(TabGPU.Page);
-        GPUAllocationsTable = CreateGPUAllocationsTable(TabGPU.Page);
+        TabSystem = Tabs.AddPage(Strings.Debug.TabLabelSystem, nameof(TabSystem));
+        _ = new Label(TabSystem.Page, name: "HeaderSectionSystemStatistics")
+        {
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            Text = Strings.Debug.SectionSystemStatistics,
+            TextAlign = Pos.CenterH,
+            TextColorOverride = new Color(r: 191, g: 255, b: 191),
+        };
+        SystemStatisticsTable = CreateSystemStatisticsTable(TabSystem.Page);
+        _ = new Label(TabSystem.Page, name: "HeaderSectionGPUStatistics")
+        {
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            Text = Strings.Debug.SectionGPUStatistics,
+            TextAlign = Pos.CenterH,
+            TextColorOverride = new Color(r: 191, g: 255, b: 191),
+        };
+        GPUStatisticsTable = CreateGPUStatisticsTable(TabSystem.Page);
+        _ = new Label(TabSystem.Page, name: "HeaderSectionGPUAllocations")
+        {
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            Text = Strings.Debug.SectionGPUAllocations,
+            TextAlign = Pos.CenterH,
+            TextColorOverride = new Color(r: 191, g: 255, b: 191),
+        };
+        GPUAllocationsTable = CreateGPUAllocationsTable(TabSystem.Page);
 
         AssetsToolsTable.SizeToChildren();
     }
@@ -75,6 +99,8 @@ internal sealed partial class DebugWindow : Window
     }
 
     private Table GPUStatisticsTable { get; }
+
+    private Table SystemStatisticsTable { get; }
 
     private Table GPUAllocationsTable { get; }
 
@@ -128,6 +154,11 @@ internal sealed partial class DebugWindow : Window
         SubscribeGPU();
 
         return table;
+    }
+
+    private static void ResizeTableHeightToChildrenOnSizeChanged(Base sender, ValueChangedEventArgs<Point> args)
+    {
+        sender.SizeToChildren(resizeX: false, resizeY: true, recursive: true);
     }
 
     private static void ResizeTableToChildrenOnSizeChanged(Base sender, ValueChangedEventArgs<Point> args)
@@ -253,17 +284,17 @@ internal sealed partial class DebugWindow : Window
         return node?.UserData is IGameTexture gameTexture ? gameTexture.Name : null;
     }
 
-
     private Table CreateGPUStatisticsTable(Base parent)
     {
-        ScrollControl gpuStatisticsScroller = new(parent, nameof(gpuStatisticsScroller))
+        ScrollControl scroller = new(parent, nameof(scroller))
         {
-            Dock = Pos.Fill,
+            Dock = Pos.Top,
+            MinimumSize = new Point(0, 100),
         };
 
-        gpuStatisticsScroller.VerticalScrollBar.BaseNudgeAmount *= 2;
+        scroller.VerticalScrollBar.BaseNudgeAmount *= 2;
 
-        var table = new Table(gpuStatisticsScroller, nameof(GPUStatisticsTable))
+        var table = new Table(scroller, nameof(SystemStatisticsTable))
         {
             AutoSizeToContentHeightOnChildResize = true,
             AutoSizeToContentWidthOnChildResize = true,
@@ -273,9 +304,16 @@ internal sealed partial class DebugWindow : Window
             Dock = Pos.Fill,
             Font = _defaultFont,
         };
-        table.SizeChanged += ResizeTableToChildrenOnSizeChanged;
+        table.SizeChanged += (sender, args) =>
+        {
+            ResizeTableHeightToChildrenOnSizeChanged(sender, args);
+            var minimumSize = new Point(
+                0,
+                table.OuterHeight + scroller.InnerPanelPadding.Top + scroller.InnerPanelPadding.Bottom
+            );
+            scroller.MinimumSize = minimumSize;
+        };
 
-        _ = table.AddRow(Strings.Debug.SectionGPUStatistics, columnCount: 2, name: "SectionGPU", columnIndex: 1);
         table.AddRow(Strings.Debug.Fps, name: "FPSRow").Listen(1, new DelegateDataProvider<int>(() => Graphics.Renderer.Fps), NoValue);
         // table.AddRow(Strings.Debug.Draws, name: "DrawsRow").Listen(1, new DelegateDataProvider<int>(() => Graphics.DrawCalls), NoValue);
 
@@ -284,33 +322,54 @@ internal sealed partial class DebugWindow : Window
         table.AddRow(Strings.Debug.LightsDrawn, name: "LightsDrawnRow").Listen(1, new DelegateDataProvider<int>(() => Graphics.LightsDrawn), NoValue);
         table.AddRow(Strings.Debug.InterfaceObjects, name: "InterfaceObjectsRow").Listen(1, new DelegateDataProvider<int?>(() => Interface.CurrentInterface?.NodeCount, delayMilliseconds: 1000), NoValue);
 
-
         table.AddRow(Strings.Debug.RenderTargetAllocations, name: "GPURenderTargetAllocations").Listen(1, new DelegateDataProvider<ulong>(() => Graphics.Renderer.RenderTargetAllocations), NoValue);
         table.AddRow(Strings.Debug.TextureAllocations, name: "GPUTextureAllocations").Listen(1, new DelegateDataProvider<ulong>(() => Graphics.Renderer.TextureAllocations), NoValue);
         table.AddRow(Strings.Debug.TextureCount, name: "GPUTextureCount").Listen(1, new DelegateDataProvider<ulong>(() => Graphics.Renderer.TextureCount), NoValue);
 
-        table.AddRow(Strings.Debug.FreeVRAM, name: "GPUFreeVRAM").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(Graphics.Renderer.AvailableMemory)), NoValue);
-        table.AddRow(Strings.Debug.TotalVRAM, name: "GPUTotalVRAM").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(Graphics.Renderer.TotalMemory)), NoValue);
+        table.AddRow(Strings.Debug.FreeVRAM, name: "GPUFreeVRAM").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(PlatformStatistics.AvailableGPUMemory)), NoValue);
+        table.AddRow(Strings.Debug.TotalVRAM, name: "GPUTotalVRAM").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(PlatformStatistics.TotalGPUMemory)), NoValue);
 
-        table.AddRow(Strings.Debug.RenderBufferVRAMFree, name: "GPUVRAMRenderBuffers").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(GL.AvailableRenderBufferMemory)), NoValue);
-        table.AddRow(Strings.Debug.TextureVRAMFree, name: "GPUVRAMTextures").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(GL.AvailableTextureMemory)), NoValue);
-        table.AddRow(Strings.Debug.VBOVRAMFree, name: "GPUVRAMVBOs").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(GL.AvailableVBOMemory)), NoValue);
+        table.PreLayout.Enqueue(t => t.SizeToChildren(recursive: true), table);
 
-        var rows = table.Children.OfType<TableRow>().ToArray();
-        foreach (var row in rows)
+        return table;
+    }
+
+    private Table CreateSystemStatisticsTable(Base parent)
+    {
+        ScrollControl scroller = new(parent, nameof(scroller))
         {
-            if (row.Name.StartsWith("Section") && row.GetCellContents(1) is Label titleLabel)
-            {
-                titleLabel.Padding = titleLabel.Padding with { Top = 8 };
-            }
+            Dock = Pos.Top,
+        };
 
-            if (row.GetCellContents(0) is not Label label)
-            {
-                continue;
-            }
+        scroller.VerticalScrollBar.BaseNudgeAmount *= 2;
 
-            label.TextAlign = Pos.Right | Pos.CenterV;
-        }
+        var table = new Table(scroller, nameof(SystemStatisticsTable))
+        {
+            AutoSizeToContentHeightOnChildResize = true,
+            AutoSizeToContentWidthOnChildResize = true,
+            CellSpacing = new Point(8, 2),
+            ColumnCount = 2,
+            ColumnWidths = [180, null],
+            Dock = Pos.Top,
+            Font = _defaultFont,
+        };
+        table.SizeChanged += (sender, args) =>
+        {
+            ResizeTableHeightToChildrenOnSizeChanged(sender, args);
+            var minimumSize = new Point(
+                0,
+                table.OuterHeight + scroller.InnerPanelPadding.Top + scroller.InnerPanelPadding.Bottom
+            );
+            scroller.MinimumSize = minimumSize;
+        };
+
+        table.AddRow(Strings.Debug.FreeVirtualRAM, name: "RAMFreeVirtual").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(PlatformStatistics.AvailableSystemMemory)), NoValue);
+        table.AddRow(Strings.Debug.TotalVirtualRAM, name: "RAMTotalVirtual").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(PlatformStatistics.TotalSystemMemory)), NoValue);
+
+        table.AddRow(Strings.Debug.FreePhysicalRAM, name: "RAMFreePhysical").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(PlatformStatistics.AvailablePhysicalMemory)), NoValue);
+        table.AddRow(Strings.Debug.TotalPhysicalRAM, name: "RAMTotalPhysical").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(PlatformStatistics.TotalPhysicalMemory)), NoValue);
+
+        table.PreLayout.Enqueue(t => t.SizeToChildren(recursive: true), table);
 
         return table;
     }
@@ -400,7 +459,7 @@ internal sealed partial class DebugWindow : Window
 
     private TabButton TabAssets { get; }
 
-    private TabButton TabGPU { get; }
+    private TabButton TabSystem { get; }
 
     private SearchableTree AssetsList { get; }
 
@@ -424,9 +483,6 @@ internal sealed partial class DebugWindow : Window
 
     protected override void EnsureInitialized()
     {
-        TableDebugStats.SizeToChildren();
-
-        // LoadJsonUi(UI.Debug, Graphics.Renderer?.GetResolutionString());
     }
 
     protected override void OnAttached(Base parent)
@@ -677,20 +733,30 @@ internal sealed partial class DebugWindow : Window
         table.AddRow(Strings.Debug.LightsDrawn, name: "LightsDrawnRow").Listen(1, new DelegateDataProvider<int>(() => Graphics.LightsDrawn), NoValue);
         table.AddRow(Strings.Debug.InterfaceObjects, name: "InterfaceObjectsRow").Listen(1, new DelegateDataProvider<int?>(() => Interface.CurrentInterface?.NodeCount, delayMilliseconds: 1000), NoValue);
 
-        _ = table.AddRow(Strings.Debug.SectionGPUStatistics, columnCount: 2, name: "SectionGPU", columnIndex: 1);
+        var rowSectionGPU = table.AddRow(Strings.Debug.SectionGPUStatistics, columnCount: 2, name: "SectionGPU", columnIndex: 0);
+        if (rowSectionGPU.GetCellContents(0) is Label labelSectionGPU)
+        {
+            labelSectionGPU.TextColorOverride = new Color(r: 191, g: 255, b: 191);
+        }
 
         table.AddRow(Strings.Debug.RenderTargetAllocations, name: "GPURenderTargetAllocations").Listen(1, new DelegateDataProvider<ulong>(() => Graphics.Renderer.RenderTargetAllocations), NoValue);
         table.AddRow(Strings.Debug.TextureAllocations, name: "GPUTextureAllocations").Listen(1, new DelegateDataProvider<ulong>(() => Graphics.Renderer.TextureAllocations), NoValue);
         table.AddRow(Strings.Debug.TextureCount, name: "GPUTextureCount").Listen(1, new DelegateDataProvider<ulong>(() => Graphics.Renderer.TextureCount), NoValue);
 
-        table.AddRow(Strings.Debug.FreeVRAM, name: "GPUFreeVRAM").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(Graphics.Renderer.AvailableMemory)), NoValue);
-        table.AddRow(Strings.Debug.TotalVRAM, name: "GPUTotalVRAM").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(Graphics.Renderer.TotalMemory)), NoValue);
+        table.AddRow(Strings.Debug.FreeVRAM, name: "GPUFreeVRAM").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(PlatformStatistics.AvailableGPUMemory)), NoValue);
+        table.AddRow(Strings.Debug.TotalVRAM, name: "GPUTotalVRAM").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(PlatformStatistics.TotalGPUMemory)), NoValue);
 
-        table.AddRow(Strings.Debug.RenderBufferVRAMFree, name: "GPUVRAMRenderBuffers").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(GL.AvailableRenderBufferMemory)), NoValue);
-        table.AddRow(Strings.Debug.TextureVRAMFree, name: "GPUVRAMTextures").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(GL.AvailableTextureMemory)), NoValue);
-        table.AddRow(Strings.Debug.VBOVRAMFree, name: "GPUVRAMVBOs").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(GL.AvailableVBOMemory)), NoValue);
+        table.AddRow(Strings.Debug.FreeVirtualRAM, name: "RAMFreeVirtual").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(PlatformStatistics.AvailableSystemMemory)), NoValue);
+        table.AddRow(Strings.Debug.TotalVirtualRAM, name: "RAMTotalVirtual").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(PlatformStatistics.TotalSystemMemory)), NoValue);
 
-        // _ = table.AddRow(Strings.Debug.ControlUnderCursor, columnCount: 2, name: "SectionUI", columnIndex: 1);
+        table.AddRow(Strings.Debug.FreePhysicalRAM, name: "RAMFreePhysical").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(PlatformStatistics.AvailablePhysicalMemory)), NoValue);
+        table.AddRow(Strings.Debug.TotalPhysicalRAM, name: "RAMTotalPhysical").Listen(1, new DelegateDataProvider<string>(() => FileSystemHelper.FormatSize(PlatformStatistics.TotalPhysicalMemory)), NoValue);
+
+        var rowSectionUI = table.AddRow(Strings.Debug.ControlUnderCursor, columnCount: 2, name: "SectionUI", columnIndex: 0);
+        if (rowSectionUI.GetCellContents(0) is Label labelSectionUI)
+        {
+            labelSectionUI.TextColorOverride = new Color(r: 191, g: 255, b: 191);
+        }
 
         table.AddRow(Strings.Internals.Type, name: "TypeRow").Listen(1, _nodeUnderCursorProvider, (node, _) => node?.GetType().GetName(), Strings.Internals.NotApplicable);
         table.AddRow(Strings.Internals.Name, name: "NameRow").Listen(1, _nodeUnderCursorProvider, (node, _) => node?.ParentQualifiedName, NoValue);

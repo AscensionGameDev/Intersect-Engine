@@ -959,6 +959,12 @@ public static partial class Strings
         public static LocalizedString SectionGPUStatistics = @"GPU Statistics";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString SectionGPUAllocations = @"GPU Allocations";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString SectionSystemStatistics = @"System Statistics";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString RenderTargetAllocations = @"Render Target Allocations";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -974,13 +980,16 @@ public static partial class Strings
         public static LocalizedString TotalVRAM = @"Total VRAM";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString RenderBufferVRAMFree = @"Render Buffer VRAM Free";
+        public static LocalizedString FreeVirtualRAM = @"Free RAM (Virtual)";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString TextureVRAMFree = @"Texture VRAM Free";
+        public static LocalizedString TotalVirtualRAM = @"Total RAM (Virtual)";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString VBOVRAMFree = @"VBO VRAM Free";
+        public static LocalizedString FreePhysicalRAM = @"Free RAM (Physical)";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString TotalPhysicalRAM = @"Total RAM (Physical)";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString ControlUnderCursor = @"Control Under Cursor";
@@ -1049,7 +1058,7 @@ public static partial class Strings
         public static LocalizedString TitleX = @"Debug #{0}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString TabLabelGPU = @"GPU";
+        public static LocalizedString TabLabelSystem = @"System";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString TabLabelInfo = @"Info";

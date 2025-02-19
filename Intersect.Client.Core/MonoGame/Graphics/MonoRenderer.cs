@@ -8,12 +8,12 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.MonoGame.NativeInterop;
-using Intersect.Client.MonoGame.NativeInterop.OpenGL;
 using Intersect.Client.ThirdParty;
 using Intersect.Configuration;
 using Intersect.Core;
 using Intersect.Extensions;
 using Intersect.Framework.Core;
+using Intersect.Framework.SystemInformation;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -127,9 +127,9 @@ internal partial class MonoRenderer : GameRenderer
         mGameWindow = monoGame.Window;
     }
 
-    public override long AvailableMemory => GL.AvailableTextureMemory;
+    public override long AvailableMemory => PlatformStatistics.AvailableGPUMemory;
 
-    public override long TotalMemory => GL.AvailableTextureMemory;
+    public override long TotalMemory => PlatformStatistics.TotalGPUMemory;
 
     public IList<string> ValidVideoModes => GetValidVideoModes();
 

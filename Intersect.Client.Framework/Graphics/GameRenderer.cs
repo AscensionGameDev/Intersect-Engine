@@ -316,6 +316,7 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
 
         while (AvailableMemory < MinimumAvailableVRAM && _texturesSortedByExpiration.FirstOrDefault() is { } texture)
         {
+            _texturesSortedByExpiration.Remove(texture);
             texture.Unload();
         }
     }
