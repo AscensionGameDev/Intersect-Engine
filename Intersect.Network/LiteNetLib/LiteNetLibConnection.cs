@@ -93,15 +93,20 @@ public sealed class LiteNetLibConnection : AbstractConnection
     {
         buffer = default;
 
-        var cipherdata = reader.GetBytesWithLength();
+        reader.Get(out int cipherdataLength);
+        var cipherdata = new byte[cipherdataLength];
+        reader.GetBytes(cipherdata, cipherdataLength);
 
 #if DEBUG
         byte[]? debugPlaindata = null;
+        int debugPlaindataLength;
         if (Debugger.IsAttached)
         {
             if (!reader.EndOfData)
             {
-                debugPlaindata = reader.GetBytesWithLength();
+                reader.Get(out debugPlaindataLength);
+                debugPlaindata = new byte[debugPlaindataLength];
+                reader.GetBytes(debugPlaindata, debugPlaindataLength);
             }
         }
 #endif
@@ -167,12 +172,18 @@ public sealed class LiteNetLibConnection : AbstractConnection
 #endif
 
         NetDataWriter data = new(true, cipherdata.Length + sizeof(byte));
-        data.Put((byte)1);
-        data.PutBytesWithLength(cipherdata.ToArray());
+        data.Put((byte)0x20);
+        data.Put((byte)0x21);
+        data.Put((byte)0x22);
+        data.Put((byte)0x23);
+
+        data.Put(cipherdata.Length);
+        data.Put(cipherdata);
 #if DEBUG
         if (Debugger.IsAttached)
         {
-            data.PutBytesWithLength(packetData);
+            data.Put(packetData.Length);
+            data.Put(packetData);
         }
 #endif
         return Send(data, transmissionMode);

@@ -304,8 +304,29 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
         // ReSharper disable once ConvertIfStatementToSwitchStatement
         if (packetCode > 1)
         {
-            ApplicationContext.Context.Value?.Logger.LogWarning($"Invalid packet code from {peer} / {connection.Guid}");
-            return;
+            if (packetCode != 0x20)
+            {
+                ApplicationContext.Context.Value?.Logger.LogWarning($"Invalid packet code from {peer} / {connection.Guid}");
+                return;
+            }
+
+            if (reader.GetByte() != 0x21)
+            {
+                ApplicationContext.Context.Value?.Logger.LogWarning($"Invalid packet code from {peer} / {connection.Guid}");
+                return;
+            }
+
+            if (reader.GetByte() != 0x22)
+            {
+                ApplicationContext.Context.Value?.Logger.LogWarning($"Invalid packet code from {peer} / {connection.Guid}");
+                return;
+            }
+
+            if (reader.GetByte() != 0x23)
+            {
+                ApplicationContext.Context.Value?.Logger.LogWarning($"Invalid packet code from {peer} / {connection.Guid}");
+                return;
+            }
         }
 
         if (packetCode == 0)
