@@ -451,21 +451,28 @@ public partial class Entity : IEntity
         {
             if (Id == Globals.Me.Id)
             {
-                if (Interface.Interface.GameUi == null)
-                {
-                    ApplicationContext.Context.Value?.Logger.LogWarning($"'{nameof(Interface.Interface.GameUi)}' is null.");
-                }
-                else
-                {
-                    if (Interface.Interface.GameUi.PlayerStatusWindow == null)
+                Interface.Interface.EnqueueInGame(
+                    gameInterface =>
                     {
-                        ApplicationContext.Context.Value?.Logger.LogWarning($"'{nameof(Interface.Interface.GameUi.PlayerStatusWindow)}' is null.");
-                    }
-                    else
-                    {
-                        Interface.Interface.GameUi.PlayerStatusWindow.ShouldUpdateStatuses = true;
-                    }
-                }
+                        if (gameInterface.PlayerStatusWindow == null)
+                        {
+                            ApplicationContext.Context.Value?.Logger.LogWarning(
+                                $"'{nameof(gameInterface.PlayerStatusWindow)}' is null."
+                            );
+                        }
+                        else
+                        {
+                            gameInterface.PlayerStatusWindow.ShouldUpdateStatuses = true;
+                        }
+                    },
+                    (entityId, entityName) => ApplicationContext.CurrentContext.Logger.LogWarning(
+                        "Tried to load entity {EntityId} ({EntityName}) from packet before in-game UI was ready",
+                        entityId,
+                        entityName
+                    ),
+                    packet.EntityId,
+                    packet.Name
+                );
             }
             else if (Id != Guid.Empty && Id == Globals.Me.TargetId)
             {

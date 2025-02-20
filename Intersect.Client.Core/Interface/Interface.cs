@@ -131,6 +131,18 @@ public static partial class Interface
         PendingActionsForInGameInterface.Enqueue(() => action(GameUi));
     }
 
+    public static void EnqueueInGame<TArg0, TArg1>(Action<GameInterface> action, Action<TArg0, TArg1> onDeferred, TArg0 arg0, TArg1 arg1)
+    {
+        if (_uiInGame is {} uiInGame)
+        {
+            action(uiInGame);
+            return;
+        }
+
+        PendingActionsForInGameInterface.Enqueue(() => action(GameUi));
+        onDeferred(arg0, arg1);
+    }
+
     public static Framework.Gwen.Control.Base? FindComponentUnderCursor(NodeFilter filters = default)
     {
         var cursor = new Point(InputHandler.MousePosition.X, InputHandler.MousePosition.Y);
