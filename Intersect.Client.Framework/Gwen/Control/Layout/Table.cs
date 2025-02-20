@@ -597,7 +597,8 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
                     .ToArray()
             );
 
-        var availableWidth = InnerWidth - CellSpacing.X * Math.Max(0, _columnCount - 1);
+        var cellSpacingX = CellSpacing.X;
+        var availableWidth = InnerWidth;
 
         var requestedWidths = _columnWidths.ToArray();
         requestedWidths = measuredContentWidths.Select(
@@ -697,6 +698,51 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
             )
             .ToArray();
 
+        var computedFlexColumnWidthSum = flexColumnWidths.Sum();
+        if (computedFlexColumnWidthSum > availableWidth)
+        {
+            var pixelsToRedistribute = computedFlexColumnWidthSum - availableWidth;
+            if (pixelsToRedistribute > columnCount)
+            {
+                var leftoverPixels = pixelsToRedistribute % columnCount;
+                var pixelsPerColumn = (pixelsToRedistribute - leftoverPixels) / columnCount;
+                flexColumnWidths = flexColumnWidths.Select(fcw => fcw - pixelsPerColumn).ToArray();
+                pixelsToRedistribute = leftoverPixels;
+            }
+
+            var distinctColumnWidths = flexColumnWidths.Distinct().ToArray();
+            if (distinctColumnWidths.Length == columnCount)
+            {
+                for (var index = 0; index < columnCount && pixelsToRedistribute > 0; ++index, --pixelsToRedistribute)
+                {
+                    --flexColumnWidths[index];
+                }
+            }
+            else
+            {
+                var distinctColumnWidthsSortedByCountAscending = distinctColumnWidths.ToDictionary(
+                        dw => dw,
+                        dw => flexColumnWidths.Count(fcw => fcw == dw)
+                    )
+                    .OrderBy(p => p.Value)
+                    .Select(p => p.Key)
+                    .ToArray();
+
+                foreach (var distinctColumnWidth in distinctColumnWidthsSortedByCountAscending)
+                {
+                    for (var index = 0;
+                         index < columnCount && pixelsToRedistribute > 0;
+                         ++index, --pixelsToRedistribute)
+                    {
+                        if (flexColumnWidths[index] == distinctColumnWidth)
+                        {
+                            --flexColumnWidths[index];
+                        }
+                    }
+                }
+            }
+        }
+
         var actualWidth = 0;
         var actualHeight = 0;
         var columnLimit = Math.Min(columnCount, requestedWidths.Length);
@@ -715,6 +761,10 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
                 var requestedWidth = requestedWidths[columnIndex];
                 var flexColumnWidth = flexColumnWidths[columnIndex];
                 var cellWidth = requestedWidth ?? flexColumnWidth;
+                if (columnIndex > 0)
+                {
+                    cellWidth -= cellSpacingX;
+                }
                 var cell = row.GetColumn(columnIndex);
                 if (cell is not null)
                 {
