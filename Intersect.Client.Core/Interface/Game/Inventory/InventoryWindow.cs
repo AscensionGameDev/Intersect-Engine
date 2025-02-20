@@ -142,7 +142,7 @@ public partial class InventoryWindow
         // Set our Inventory slot as userdata for future reference.
         mContextMenu.UserData = slot;
 
-        // Display our menu.. If we have anything to display.
+        // Display our menu... If we have anything to display.
         if (mContextMenu.Children.Count > 0)
         {
             mContextMenu.Open(Framework.Gwen.Pos.None);
