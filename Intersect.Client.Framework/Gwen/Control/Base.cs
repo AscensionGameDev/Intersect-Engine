@@ -1054,6 +1054,11 @@ public partial class Base : IDisposable
         set
         {
             var oldValue = _minimumSize;
+            if (oldValue == value)
+            {
+                return;
+            }
+
             _minimumSize = value;
             if (_innerPanel != null)
             {
@@ -1073,6 +1078,11 @@ public partial class Base : IDisposable
         set
         {
             var oldValue = _maximumSize;
+            if (oldValue == value)
+            {
+                return;
+            }
+
             _maximumSize = value;
             if (_innerPanel != null)
             {
@@ -4270,7 +4280,12 @@ public partial class Base : IDisposable
         return false;
     }
 
-    public record struct SizeToChildrenArgs(bool X = true, bool Y = true, bool Recurse = false);
+    public record struct SizeToChildrenArgs(
+        bool X = true,
+        bool Y = true,
+        bool Recurse = false,
+        Point MinimumSize = default
+    );
 
     private static void SizeChildrenToChildren(Base @this, SizeToChildrenArgs args)
     {
@@ -4306,6 +4321,9 @@ public partial class Base : IDisposable
         }
 
         var childrenSize = GetChildrenSize();
+        childrenSize.X = Math.Max(childrenSize.X, args.MinimumSize.X);
+        childrenSize.Y = Math.Max(childrenSize.Y, args.MinimumSize.Y);
+
         var padding = Padding;
         var size = childrenSize;
         var paddingH = padding.Right + padding.Left;

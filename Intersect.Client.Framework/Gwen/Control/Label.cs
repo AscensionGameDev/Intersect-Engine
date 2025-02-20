@@ -809,11 +809,25 @@ public partial class Label : Base, ILabel
 
         var contentSize = GetContentSize();
 
+        var minimumSize = MinimumSize;
+
         var newWidth = contentSize.X + contentPadding.Left + contentPadding.Right;
-        newWidth = Math.Max(newWidth, MinimumSize.X);
+        newWidth = Math.Max(newWidth, minimumSize.X);
 
         var newHeight = contentSize.Y + contentPadding.Top + contentPadding.Bottom;
-        newHeight = Math.Max(newHeight, MinimumSize.Y);
+        newHeight = Math.Max(newHeight, minimumSize.Y);
+
+        var maximumSize = MaximumSize;
+
+        if (maximumSize.X > 0)
+        {
+            newWidth = Math.Min(maximumSize.X, newWidth);
+        }
+
+        if (maximumSize.Y > 0)
+        {
+            newHeight = Math.Min(maximumSize.Y, newHeight);
+        }
 
         return new Point(newWidth, newHeight);
     }

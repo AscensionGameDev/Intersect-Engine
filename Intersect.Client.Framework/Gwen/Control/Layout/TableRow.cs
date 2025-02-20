@@ -288,14 +288,24 @@ public partial class TableRow : Base, IColorableText, IFitHeightToContents
 
     private void SizeColumnsToChildren(TableRow @this, SizeToChildrenArgs args)
     {
-        foreach (var column in this._columns)
+        var padding = Padding;
+        var paddingV = padding.Bottom + padding.Top;
+        var minimumHeight = Math.Max(0, MinimumSize.Y - paddingV);
+        foreach (var cell in this._columns)
         {
-            if (column.IsEmpty)
+            var shrunkCellSize = cell.MeasureShrinkToContents();
+            minimumHeight = Math.Max(minimumHeight, shrunkCellSize.Y);
+        }
+
+        foreach (var cell in this._columns)
+        {
+            if (cell.IsEmpty)
             {
                 continue;
             }
 
-            column.SizeToChildren(resizeX: args.X, resizeY: args.Y, recursive: args.Recurse);
+            var childArgs = args with { MinimumSize = cell.MinimumSize with { Y = minimumHeight }};
+            cell.SizeToChildren(childArgs);
         }
     }
 
