@@ -30,8 +30,7 @@ internal sealed partial class ClientLifecycleHelper : ContextHelper<IClientPlugi
     }
 
     /// <inheritdoc />
-    public IMutableInterface Interface =>
-        Client.Interface.Interface.MenuUi ?? Client.Interface.Interface.GameUi as IMutableInterface;
+    public IMutableInterface Interface => Client.Interface.Interface.CurrentInterface;
 
     /// <inheritdoc />
     public void OnLifecycleChangeState(GameStates state)

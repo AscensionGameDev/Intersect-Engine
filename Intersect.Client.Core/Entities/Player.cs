@@ -295,7 +295,7 @@ public partial class Player : Entity, IPlayer
             }
         }
 
-        if (TargetBox == default && this == Globals.Me && Interface.Interface.GameUi != default)
+        if (TargetBox == default && this == Globals.Me && Interface.Interface.HasInGameUI)
         {
             // If for WHATEVER reason the box hasn't been created, create it.
             TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityType.Player, null);
@@ -318,7 +318,7 @@ public partial class Player : Entity, IPlayer
         StatusWindow?.Update();
 
         // Hide our Guild window if we're not in a guild!
-        if (this == Globals.Me && string.IsNullOrEmpty(Guild) && Interface.Interface.GameUi != null)
+        if (this == Globals.Me && string.IsNullOrEmpty(Guild) && Interface.Interface.HasInGameUI)
         {
             Interface.Interface.GameUi.HideGuildWindow();
         }
@@ -363,7 +363,7 @@ public partial class Player : Entity, IPlayer
             }
         }
 
-        if (this == Globals.Me && TargetBox == null && Interface.Interface.GameUi != null)
+        if (this == Globals.Me && TargetBox == null && Interface.Interface.HasInGameUI)
         {
             TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityType.Player, null);
             TargetBox.Hide();
@@ -1584,10 +1584,15 @@ public partial class Player : Entity, IPlayer
             castInput = slotIndex;
         }
 
-        // ReSharper disable once InvertIf
-        if (0 <= castInput && castInput < Interface.Interface.GameUi?.Hotbar?.Items?.Count && mLastHotbarUseTime[castInput] < Timing.Global.Milliseconds)
+        if (!Interface.Interface.HasInGameUI)
         {
-            Interface.Interface.GameUi?.Hotbar?.Items?[castInput]?.Activate();
+            return;
+
+        }
+        // ReSharper disable once InvertIf
+        if (0 <= castInput && castInput < Interface.Interface.GameUi.Hotbar?.Items?.Count && mLastHotbarUseTime[castInput] < Timing.Global.Milliseconds)
+        {
+            Interface.Interface.GameUi.Hotbar?.Items?[castInput]?.Activate();
             mLastHotbarUseTime[castInput] = Timing.Global.Milliseconds + mHotbarUseDelay;
         }
     }

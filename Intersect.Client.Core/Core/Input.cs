@@ -119,7 +119,7 @@ public static partial class Input
                 return;
             }
 
-            if (Interface.Interface.GameUi is not { } gameUi)
+            if (!Interface.Interface.HasInGameUI)
             {
                 return;
             }
@@ -244,6 +244,11 @@ public static partial class Input
                     break;
 
                 case GameStates.InGame:
+                    if (!Interface.Interface.HasInGameUI)
+                    {
+                        break;
+                    }
+
                     switch (control)
                     {
                         case Control.Block:
@@ -273,7 +278,7 @@ public static partial class Input
                             break;
 
                         case Control.Enter:
-                            if (canFocusChat && Interface.Interface.GameUi != default)
+                            if (canFocusChat)
                             {
                                 Interface.Interface.GameUi.FocusChat = true;
                                 consumeKey = true;
@@ -281,31 +286,31 @@ public static partial class Input
                             continue;
 
                         case Control.OpenInventory:
-                            Interface.Interface.GameUi?.GameMenu?.ToggleInventoryWindow();
+                            Interface.Interface.GameUi.GameMenu?.ToggleInventoryWindow();
                             break;
 
                         case Control.OpenQuests:
-                            Interface.Interface.GameUi?.GameMenu?.ToggleQuestsWindow();
+                            Interface.Interface.GameUi.GameMenu?.ToggleQuestsWindow();
                             break;
 
                         case Control.OpenCharacterInfo:
-                            Interface.Interface.GameUi?.GameMenu?.ToggleCharacterWindow();
+                            Interface.Interface.GameUi.GameMenu?.ToggleCharacterWindow();
                             break;
 
                         case Control.OpenParties:
-                            Interface.Interface.GameUi?.GameMenu?.TogglePartyWindow();
+                            Interface.Interface.GameUi.GameMenu?.TogglePartyWindow();
                             break;
 
                         case Control.OpenSpells:
-                            Interface.Interface.GameUi?.GameMenu?.ToggleSpellsWindow();
+                            Interface.Interface.GameUi.GameMenu?.ToggleSpellsWindow();
                             break;
 
                         case Control.OpenFriends:
-                            _ = (Interface.Interface.GameUi?.GameMenu?.ToggleFriendsWindow());
+                            _ = (Interface.Interface.GameUi.GameMenu?.ToggleFriendsWindow());
                             break;
 
                         case Control.OpenSettings:
-                            Interface.Interface.GameUi?.EscapeMenu?.OpenSettingsWindow();
+                            Interface.Interface.GameUi.EscapeMenu?.OpenSettingsWindow();
                             break;
 
                         case Control.OpenAdminPanel:
@@ -313,7 +318,7 @@ public static partial class Input
                             break;
 
                         case Control.OpenGuild:
-                            _ = Interface.Interface.GameUi?.GameMenu?.ToggleGuildWindow();
+                            _ = Interface.Interface.GameUi.GameMenu?.ToggleGuildWindow();
                             break;
                     }
                     break;

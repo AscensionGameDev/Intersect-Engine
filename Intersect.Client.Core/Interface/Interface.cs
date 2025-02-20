@@ -43,6 +43,10 @@ public static partial class Interface
 
     public static bool SetupHandlers { get; set; }
 
+    public static bool HasInGameUI => _uiInGame != null;
+
+    public static bool HasMainMenuUI => _uiMainMenu != null;
+
     public static GameInterface GameUi
     {
         get

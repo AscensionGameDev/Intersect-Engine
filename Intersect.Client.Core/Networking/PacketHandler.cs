@@ -609,7 +609,9 @@ internal sealed partial class PacketHandler
     //AnnouncementPacket
     public void HandlePacket(IPacketSender packetSender, AnnouncementPacket packet)
     {
-        Interface.Interface.GameUi.AnnouncementWindow.ShowAnnouncement(packet.Message, packet.Duration);
+        Interface.Interface.EnqueueInGame(
+            gameInterface => gameInterface.AnnouncementWindow.ShowAnnouncement(packet.Message, packet.Duration)
+        );
     }
 
     //ActionMsgPackets
@@ -914,17 +916,19 @@ internal sealed partial class PacketHandler
 
             entity.SortStatuses();
 
-            if (Interface.Interface.GameUi != null)
+            if (!Interface.Interface.HasInGameUI)
             {
-                //If its you or your target, update the entity box.
-                if (en.Id == Globals.Me.Id && Interface.Interface.GameUi.PlayerStatusWindow != null)
-                {
-                    Interface.Interface.GameUi.PlayerStatusWindow.ShouldUpdateStatuses = true;
-                }
-                else if (en.Id == Globals.Me.TargetId && Globals.Me.TargetBox != null)
-                {
-                    Globals.Me.TargetBox.ShouldUpdateStatuses = true;
-                }
+                continue;
+            }
+
+            //If its you or your target, update the entity box.
+            if (en.Id == Globals.Me.Id && Interface.Interface.GameUi.PlayerStatusWindow != null)
+            {
+                Interface.Interface.GameUi.PlayerStatusWindow.ShouldUpdateStatuses = true;
+            }
+            else if (en.Id == Globals.Me.TargetId && Globals.Me.TargetBox != null)
+            {
+                Globals.Me.TargetBox.ShouldUpdateStatuses = true;
             }
         }
     }
@@ -999,17 +1003,19 @@ internal sealed partial class PacketHandler
 
         en.SortStatuses();
 
-        if (Interface.Interface.GameUi != null)
+        if (!Interface.Interface.HasInGameUI)
         {
-            //If its you or your target, update the entity box.
-            if (id == Globals.Me.Id && Interface.Interface.GameUi.PlayerStatusWindow != null)
-            {
-                Interface.Interface.GameUi.PlayerStatusWindow.ShouldUpdateStatuses = true;
-            }
-            else if (id == Globals.Me.TargetId && Globals.Me.TargetBox != null)
-            {
-                Globals.Me.TargetBox.ShouldUpdateStatuses = true;
-            }
+            return;
+        }
+
+        //If its you or your target, update the entity box.
+        if (id == Globals.Me.Id && Interface.Interface.GameUi.PlayerStatusWindow != null)
+        {
+            Interface.Interface.GameUi.PlayerStatusWindow.ShouldUpdateStatuses = true;
+        }
+        else if (id == Globals.Me.TargetId && Globals.Me.TargetBox != null)
+        {
+            Globals.Me.TargetBox.ShouldUpdateStatuses = true;
         }
     }
 
@@ -1399,7 +1405,7 @@ internal sealed partial class PacketHandler
     //AdminPanelPacket
     public void HandlePacket(IPacketSender packetSender, AdminPanelPacket packet)
     {
-        Interface.Interface.GameUi.NotifyOpenAdminWindow();
+        Interface.Interface.EnqueueInGame(gameInterface => gameInterface.NotifyOpenAdminWindow());
     }
 
     //SpellCastPacket
@@ -1691,7 +1697,7 @@ internal sealed partial class PacketHandler
     //ShopPacket
     public void HandlePacket(IPacketSender packetSender, ShopPacket packet)
     {
-        if (Interface.Interface.GameUi == null)
+        if (!Interface.Interface.HasInGameUI)
         {
             throw new ArgumentNullException(nameof(Interface.Interface.GameUi));
         }
@@ -1705,12 +1711,12 @@ internal sealed partial class PacketHandler
         {
             Globals.GameShop = new ShopBase();
             Globals.GameShop.Load(packet.ShopData);
-            Interface.Interface.GameUi.NotifyOpenShop();
+            Interface.Interface.EnqueueInGame(gameInterface => gameInterface.NotifyOpenShop());
         }
         else
         {
             Globals.GameShop = null;
-            Interface.Interface.GameUi.NotifyCloseShop();
+            Interface.Interface.EnqueueInGame(gameInterface => gameInterface.NotifyCloseShop());
         }
     }
 
@@ -1721,11 +1727,11 @@ internal sealed partial class PacketHandler
         {
             Globals.ActiveCraftingTable = new CraftingTableBase();
             Globals.ActiveCraftingTable.Load(packet.TableData);
-            Interface.Interface.GameUi.NotifyOpenCraftingTable(packet.JournalMode);
+            Interface.Interface.EnqueueInGame(gameInterface => gameInterface.NotifyOpenCraftingTable(packet.JournalMode));
         }
         else
         {
-            Interface.Interface.GameUi.NotifyCloseCraftingTable();
+            Interface.Interface.EnqueueInGame(gameInterface => gameInterface.NotifyCloseCraftingTable());
         }
     }
 
@@ -1741,11 +1747,11 @@ internal sealed partial class PacketHandler
                 HandlePacket(itm);
             }
             Globals.BankSlotCount = packet.Slots;
-            Interface.Interface.GameUi.NotifyOpenBank();
+            Interface.Interface.EnqueueInGame(gameInterface => gameInterface.NotifyOpenBank());
         }
         else
         {
-            Interface.Interface.GameUi.NotifyCloseBank();
+            Interface.Interface.EnqueueInGame(gameInterface => gameInterface.NotifyCloseBank());
         }
     }
 
@@ -2021,11 +2027,11 @@ internal sealed partial class PacketHandler
                 }
             }
 
-            Interface.Interface.GameUi.NotifyOpenTrading(packet.TradePartner);
+            Interface.Interface.EnqueueInGame(gameInterface => gameInterface.NotifyOpenTrading(packet.TradePartner));
         }
         else
         {
-            Interface.Interface.GameUi.NotifyCloseTrading();
+            Interface.Interface.EnqueueInGame(gameInterface => gameInterface.NotifyCloseTrading());
         }
     }
 
@@ -2100,11 +2106,11 @@ internal sealed partial class PacketHandler
         if (!packet.Close)
         {
             Globals.BagSlots = new Item[packet.Slots];
-            Interface.Interface.GameUi.NotifyOpenBag();
+            Interface.Interface.EnqueueInGame(gameInterface => gameInterface.NotifyOpenBag());
         }
         else
         {
-            Interface.Interface.GameUi.NotifyCloseBag();
+            Interface.Interface.EnqueueInGame(gameInterface => gameInterface.NotifyCloseBag());
         }
     }
 
@@ -2156,7 +2162,12 @@ internal sealed partial class PacketHandler
             Globals.Me?.Friends.Add(f);
         }
 
-        Interface.Interface.GameUi?.NotifyUpdateFriendsList();
+        if (!Interface.Interface.HasInGameUI)
+        {
+            return;
+        }
+
+        Interface.Interface.EnqueueInGame(gameInterface => gameInterface.NotifyUpdateFriendsList());
     }
 
     //FriendRequestPacket
@@ -2316,7 +2327,7 @@ internal sealed partial class PacketHandler
         if (hasUpdates)
         {
             Globals.Me.GuildMembers = updatedGuildMembers;
-            Interface.Interface.GameUi.NotifyUpdateGuildList();
+            Interface.Interface.EnqueueInGame(gameInterface => gameInterface.NotifyUpdateGuildList());
         }
     }
 
