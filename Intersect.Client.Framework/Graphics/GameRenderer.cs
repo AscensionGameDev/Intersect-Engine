@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Core;
 using Intersect.Framework.Collections;
@@ -14,7 +15,7 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
     // MinimumAvailableVRAM to above your GPU RAM (if using Nvidia) or system RAM (if not using Nvidia)
 
     /// <summary>
-    /// 30 seconds in milliseconds
+    ///     30 seconds in milliseconds
     /// </summary>
     private const long InactiveTimeCutoff = 30_000;
 
@@ -24,22 +25,22 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
     private const long MinimumAvailableVRAM = 134217728;
 
     /// <summary>
-    /// 30 minutes in milliseconds
+    ///     30 minutes in milliseconds
     /// </summary>
     private const long StaleTimeCutoff = 30 * 60 * 1000;
 
     /// <summary>
-    /// 1GiB, which is 16x 4096px² atlases, 4x 8192px² atlases, and 1x 16384px² atlas
+    ///     1GiB, which is 16x 4096px² atlases, 4x 8192px² atlases, and 1x 16384px² atlas
     /// </summary>
     private const long StaleVRAMCutoff = MinimumAvailableVRAM * 8;
 
     /// <summary>
-    /// 6 hours in milliseconds
+    ///     6 hours in milliseconds
     /// </summary>
     private const long UnusedTimeCutoff = 6 * 60 * 60 * 1000;
 
     /// <summary>
-    /// 8GiB, which is 128x 4096px² atlases, 32x 8192px² atlases, and 8x 16384px² atlases
+    ///     8GiB, which is 128x 4096px² atlases, 32x 8192px² atlases, and 8x 16384px² atlases
     /// </summary>
     private const long UnusedVRAMCutoff = StaleVRAMCutoff * 8;
 
@@ -49,7 +50,7 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
     private readonly HashSet<IGameTexture> _textures = [];
     private readonly List<IGameTexture> _texturesSortedByAccessTime = [];
 
-    protected float _scale = 1.0f;
+    private float _scale = 1.0f;
 
     private IGameTexture? _whitePixel;
 
@@ -95,6 +96,12 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
         }
     }
 
+    public abstract long UsedMemory { get; }
+
+    public abstract int FPS { get; }
+
+    public IGameTexture WhitePixel => _whitePixel ??= CreateWhitePixel();
+
     public Resolution ActiveResolution => new(PreferredResolution, OverrideResolution);
 
     public Resolution OverrideResolution { get; set; }
@@ -112,21 +119,7 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
         set => SetView(value);
     }
 
-    public int Fps => GetFps();
-
-    public int ScreenWidth => GetScreenWidth();
-
-    public int ScreenHeight => GetScreenHeight();
-
     public string ResolutionAsString => GetResolutionString();
-
-    public event EventHandler<TextureEventArgs>? TextureAllocated;
-
-    public event EventHandler<TextureEventArgs>? TextureCreated;
-
-    public event EventHandler<TextureEventArgs>? TextureDisposed;
-
-    public event EventHandler<TextureEventArgs>? TextureFreed;
 
     void IGameRenderer.DrawTexture(
         IGameTexture tex,
@@ -139,10 +132,10 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
         float tw,
         float th,
         Color renderColor,
-        IGameRenderTexture? renderTarget = null,
-        GameBlendModes blendMode = GameBlendModes.None,
-        GameShader? shader = null,
-        float rotationDegrees = 0.0f
+        IGameRenderTexture? renderTarget,
+        GameBlendModes blendMode,
+        GameShader? shader,
+        float rotationDegrees
     )
     {
         DrawTexture(
@@ -163,14 +156,7 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
         );
     }
 
-    public IGameRenderTexture CreateWhiteTexture()
-    {
-        return WhitePixel as IGameRenderTexture;
-    }
-
     public abstract IGameRenderTexture CreateRenderTexture(int width, int height);
-
-    public Pointf MeasureText(string text, GameFont? font) => MeasureText(text, font, 1);
 
     public abstract Pointf MeasureText(string text, GameFont? gameFont, float fontScale);
 
@@ -188,7 +174,7 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
 
     public abstract void DrawString(
         string text,
-        GameFont gameFont,
+        GameFont? gameFont,
         float x,
         float y,
         float fontScale,
@@ -196,10 +182,8 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
         bool worldPos,
         IGameRenderTexture renderTexture,
         FloatRect clipRect,
-        Color borderColor = null
+        Color? borderColor = null
     );
-
-    public List<string> ValidVideoModes => GetValidVideoModes();
 
     public void RequestScreenshot(string? pathToScreenshots = default)
     {
@@ -244,6 +228,21 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
         }
     }
 
+    public abstract List<string> ValidVideoModes { get; }
+
+    public event EventHandler<TextureEventArgs>? TextureAllocated;
+
+    public event EventHandler<TextureEventArgs>? TextureCreated;
+
+    public event EventHandler<TextureEventArgs>? TextureDisposed;
+
+    public event EventHandler<TextureEventArgs>? TextureFreed;
+
+    public Pointf MeasureText(string text, GameFont? font)
+    {
+        return MeasureText(text, font, 1);
+    }
+
     protected internal void MarkConstructed(IGameTexture texture, bool markAllocated = false)
     {
         _textures.Add(texture);
@@ -284,6 +283,7 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
         TextureAllocated?.Invoke(this, new TextureEventArgs(texture));
     }
 
+    // ReSharper disable once MemberCanBeProtected.Global
     protected internal void MarkFreed(IGameTexture texture)
     {
         if (!texture.IsPinned)
@@ -323,7 +323,7 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
     public abstract void Init();
 
     /// <summary>
-    ///     Called before a frame is drawn, if the renderer must re-created or anything it does it here.
+    ///     Called before a frame is drawn, if the renderer must recreated or anything it does it here.
     /// </summary>
     /// <returns></returns>
     public abstract bool Begin();
@@ -331,8 +331,6 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
     public abstract bool BeginScreenshot();
 
     protected abstract bool RecreateSpriteBatch();
-
-    public abstract long UsedMemory { get; }
 
     /// <summary>
     ///     Called when the frame is done being drawn, generally used to finally display the content to the screen.
@@ -470,11 +468,9 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
         bool drawImmediate = false
     );
 
-    public abstract int GetFps();
+    public abstract int ScreenWidth { get; }
 
-    public abstract int GetScreenWidth();
-
-    public abstract int GetScreenHeight();
+    public abstract int ScreenHeight { get; }
 
     public abstract string GetResolutionString();
 
@@ -494,18 +490,21 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
                     }
                     catch
                     {
-                        assetName.ToLowerInvariant();
+#if DEBUG
+                        Debugger.Break();
+#endif
                         throw;
                     }
                 }
             );
     }
 
-    protected abstract IGameTexture CreateGameTextureFromAtlasReference(string assetName, AtlasReference atlasReference);
+    protected abstract IGameTexture CreateGameTextureFromAtlasReference(
+        string assetName,
+        AtlasReference atlasReference
+    );
 
     public abstract IGameTexture CreateTextureFromStreamFactory(string assetName, Func<Stream> streamFactory);
-
-    public IGameTexture WhitePixel => _whitePixel ??= CreateWhitePixel();
 
     protected abstract IGameTexture CreateWhitePixel();
 
@@ -515,7 +514,6 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
     public abstract void DrawTileBuffer(GameTileBuffer buffer);
 
     public abstract void Close();
-    public abstract List<string> GetValidVideoModes();
 
     public abstract GameShader LoadShader(string shaderName);
 

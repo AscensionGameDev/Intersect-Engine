@@ -39,7 +39,7 @@ public partial class FPSPanel : Panel
 
         MinimumSize = Graphics.Renderer.MeasureText(Strings.General.FpsLabelFormat.ToString(10_000), font) + new Pointf(16, 8);
 
-        DelegateDataProvider<int> fpsProvider = new(() => Graphics.Renderer.Fps)
+        DelegateDataProvider<int> fpsProvider = new(() => Graphics.Renderer.FPS)
         {
             UserData = _label,
         };

@@ -1374,7 +1374,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 var spawnTime = 25 + (int)(475 * (1f - WeatherIntensity / 100f));
                 spawnTime = (int)(spawnTime *
                                    (480000f /
-                                    (Graphics.Renderer.GetScreenWidth() * Graphics.Renderer.GetScreenHeight())));
+                                    (Graphics.Renderer.ScreenWidth * Graphics.Renderer.ScreenHeight)));
 
                 _weatherParticleSpawnTime = Timing.Global.MillisecondsUtc + spawnTime;
             }

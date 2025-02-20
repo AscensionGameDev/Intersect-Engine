@@ -42,7 +42,7 @@ public interface IGameRenderer
     /// <summary>
     ///     The current framerate at which the client is drawing frames.
     /// </summary>
-    int Fps { get; }
+    int FPS { get; }
 
     /// <summary>
     ///     All valid video modes that the client can render at.
@@ -62,12 +62,6 @@ public interface IGameRenderer
     /// <param name="height">The height of the render texture.</param>
     /// <returns>Returns a new <see cref="IGameRenderTexture" /> with the configured height and width.</returns>
     IGameRenderTexture CreateRenderTexture(int width, int height);
-
-    /// <summary>
-    ///     Create a new render texture in memory that's white.
-    /// </summary>
-    /// <returns>Returns a new white <see cref="IGameRenderTexture" />.</returns>
-    IGameRenderTexture CreateWhiteTexture();
 
     /// <summary>
     ///     Draw a texture to the client display.

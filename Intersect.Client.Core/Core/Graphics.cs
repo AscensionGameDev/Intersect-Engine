@@ -552,15 +552,15 @@ public static partial class Graphics
             return;
         }
 
-        if (renderer.GetScreenWidth() != sOldWidth ||
-            renderer.GetScreenHeight() != sOldHeight ||
+        if (renderer.ScreenWidth != sOldWidth ||
+            renderer.ScreenHeight != sOldHeight ||
             renderer.DisplayModeChanged())
         {
             sDarknessTexture = null;
             Interface.Interface.DestroyGwen();
             Interface.Interface.InitGwen();
-            sOldWidth = renderer.GetScreenWidth();
-            sOldHeight = renderer.GetScreenHeight();
+            sOldWidth = renderer.ScreenWidth;
+            sOldHeight = renderer.ScreenHeight;
         }
 
         renderer.Clear(Color.Black);
@@ -811,22 +811,22 @@ public static partial class Graphics
             return;
         }
 
-        var bgx = Renderer.GetScreenWidth() / 2 - tex.Width / 2;
-        var bgy = Renderer.GetScreenHeight() / 2 - tex.Height / 2;
+        var bgx = Renderer.ScreenWidth / 2 - tex.Width / 2;
+        var bgy = Renderer.ScreenHeight / 2 - tex.Height / 2;
         var bgw = tex.Width;
         var bgh = tex.Height;
         int diff;
 
-        if (bgw < Renderer.GetScreenWidth())
+        if (bgw < Renderer.ScreenWidth)
         {
-            diff = Renderer.GetScreenWidth() - bgw;
+            diff = Renderer.ScreenWidth - bgw;
             bgx -= diff / 2;
             bgw += diff;
         }
 
-        if (bgh < Renderer.GetScreenHeight())
+        if (bgh < Renderer.ScreenHeight)
         {
-            diff = Renderer.GetScreenHeight() - bgh;
+            diff = Renderer.ScreenHeight - bgh;
             bgy -= diff / 2;
             bgh += diff;
         }
@@ -845,8 +845,8 @@ public static partial class Graphics
             return;
         }
 
-        var bgx = Renderer.GetScreenWidth() / 2 - tex.Width / 2;
-        var bgy = Renderer.GetScreenHeight() / 2 - tex.Height / 2;
+        var bgx = Renderer.ScreenWidth / 2 - tex.Width / 2;
+        var bgy = Renderer.ScreenHeight / 2 - tex.Height / 2;
         var bgw = tex.Width;
         var bgh = tex.Height;
 
@@ -867,7 +867,7 @@ public static partial class Graphics
         DrawGameTexture(
             tex, GetSourceRect(tex),
             new FloatRect(
-                Renderer.GetView().X, Renderer.GetView().Y, Renderer.GetScreenWidth(), Renderer.GetScreenHeight()
+                Renderer.GetView().X, Renderer.GetView().Y, Renderer.ScreenWidth, Renderer.ScreenHeight
             ), Color.White
         );
     }
@@ -879,13 +879,13 @@ public static partial class Graphics
             return;
         }
 
-        var scale = Renderer.GetScreenWidth() / (float)tex.Width;
+        var scale = Renderer.ScreenWidth / (float)tex.Width;
         var scaledHeight = tex.Height * scale;
-        var offsetY = (Renderer.GetScreenHeight() - tex.Height) / 2f;
+        var offsetY = (Renderer.ScreenHeight - tex.Height) / 2f;
         DrawGameTexture(
             tex, GetSourceRect(tex),
             new FloatRect(
-                Renderer.GetView().X, Renderer.GetView().Y + offsetY, Renderer.GetScreenWidth(), scaledHeight
+                Renderer.GetView().X, Renderer.GetView().Y + offsetY, Renderer.ScreenWidth, scaledHeight
             ), Color.White
         );
     }
@@ -897,13 +897,13 @@ public static partial class Graphics
             return;
         }
 
-        var scale = Renderer.GetScreenHeight() / (float)tex.Height;
+        var scale = Renderer.ScreenHeight / (float)tex.Height;
         var scaledWidth = tex.Width * scale;
-        var offsetX = (Renderer.GetScreenWidth() - scaledWidth) / 2f;
+        var offsetX = (Renderer.ScreenWidth - scaledWidth) / 2f;
         DrawGameTexture(
             tex, GetSourceRect(tex),
             new FloatRect(
-                Renderer.GetView().X + offsetX, Renderer.GetView().Y, scaledWidth, Renderer.GetScreenHeight()
+                Renderer.GetView().X + offsetX, Renderer.GetView().Y, scaledWidth, Renderer.ScreenHeight
             ), Color.White
         );
     }
@@ -915,7 +915,7 @@ public static partial class Graphics
             return;
         }
 
-        if (Renderer.GetScreenWidth() > Renderer.GetScreenHeight())
+        if (Renderer.ScreenWidth > Renderer.ScreenHeight)
         {
             DrawFullScreenTextureFitHeight(tex);
         }
@@ -932,7 +932,7 @@ public static partial class Graphics
             return;
         }
 
-        if (Renderer.GetScreenWidth() < Renderer.GetScreenHeight())
+        if (Renderer.ScreenWidth < Renderer.ScreenHeight)
         {
             DrawFullScreenTextureFitHeight(tex);
         }
@@ -953,8 +953,8 @@ public static partial class Graphics
 
         if (Globals.GameState != GameStates.InGame || !MapInstance.TryGet(Globals.Me?.MapId ?? Guid.Empty, out var map))
         {
-            var sw = Renderer.GetScreenWidth();
-            var sh = Renderer.GetScreenHeight();
+            var sw = Renderer.ScreenWidth;
+            var sh = Renderer.ScreenHeight;
             var sx = 0;
             var sy = 0;
             CurrentView = new FloatRect(sx, sy, sw / scale, sh / scale);
@@ -1062,7 +1062,7 @@ public static partial class Graphics
             return;
         }
 
-        sDarknessTexture ??= Renderer.CreateRenderTexture(Renderer.GetScreenWidth(), Renderer.GetScreenHeight());
+        sDarknessTexture ??= Renderer.CreateRenderTexture(Renderer.ScreenWidth, Renderer.ScreenHeight);
         sDarknessTexture.Clear(Color.Black);
     }
 
