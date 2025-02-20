@@ -701,19 +701,19 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         var computedFlexColumnWidthSum = flexColumnWidths.Sum();
         if (computedFlexColumnWidthSum > availableWidth)
         {
-            var pixelsToRedistribute = computedFlexColumnWidthSum - availableWidth;
-            if (pixelsToRedistribute > columnCount)
+            var negativePixelsToRedistribute = computedFlexColumnWidthSum - availableWidth;
+            if (negativePixelsToRedistribute > columnCount)
             {
-                var leftoverPixels = pixelsToRedistribute % columnCount;
-                var pixelsPerColumn = (pixelsToRedistribute - leftoverPixels) / columnCount;
+                var leftoverPixels = negativePixelsToRedistribute % columnCount;
+                var pixelsPerColumn = (negativePixelsToRedistribute - leftoverPixels) / columnCount;
                 flexColumnWidths = flexColumnWidths.Select(fcw => fcw - pixelsPerColumn).ToArray();
-                pixelsToRedistribute = leftoverPixels;
+                negativePixelsToRedistribute = leftoverPixels;
             }
 
             var distinctColumnWidths = flexColumnWidths.Distinct().ToArray();
             if (distinctColumnWidths.Length == columnCount)
             {
-                for (var index = 0; index < columnCount && pixelsToRedistribute > 0; ++index, --pixelsToRedistribute)
+                for (var index = 0; index < columnCount && negativePixelsToRedistribute > 0; ++index, --negativePixelsToRedistribute)
                 {
                     --flexColumnWidths[index];
                 }
@@ -731,8 +731,8 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
                 foreach (var distinctColumnWidth in distinctColumnWidthsSortedByCountAscending)
                 {
                     for (var index = 0;
-                         index < columnCount && pixelsToRedistribute > 0;
-                         ++index, --pixelsToRedistribute)
+                         index < columnCount && negativePixelsToRedistribute > 0;
+                         ++index, --negativePixelsToRedistribute)
                     {
                         if (flexColumnWidths[index] == distinctColumnWidth)
                         {
@@ -755,7 +755,7 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
 
         foreach (var row in rows)
         {
-            var rowWidth = 0;
+            var rowCellWidths = new int[columnLimit];
             for (var columnIndex = 0; columnIndex < columnLimit; ++columnIndex)
             {
                 var requestedWidth = requestedWidths[columnIndex];
@@ -765,6 +765,33 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
                 {
                     cellWidth -= cellSpacingX;
                 }
+
+                rowCellWidths[columnIndex] = cellWidth;
+            }
+
+            var rowPadding = row.Padding;
+            var rowPaddingH = rowPadding.Left + rowPadding.Right;
+            if (rowPaddingH > 0)
+            {
+                var negativePixelsToRedistribute = rowPaddingH;
+                if (negativePixelsToRedistribute % columnLimit == 0)
+                {
+                    var pixelsToRemovePerCell = negativePixelsToRedistribute / columnLimit;
+                    rowCellWidths = rowCellWidths.Select(rcw => rcw - pixelsToRemovePerCell).ToArray();
+                }
+                else
+                {
+                    for (var columnIndex = 0; columnIndex < columnLimit && negativePixelsToRedistribute > 0; ++columnIndex, --negativePixelsToRedistribute)
+                    {
+                        --rowCellWidths[columnIndex];
+                    }
+                }
+            }
+
+            var rowWidth = 0;
+            for (var columnIndex = 0; columnIndex < columnLimit; ++columnIndex)
+            {
+                var cellWidth = rowCellWidths[columnIndex];
                 var cell = row.GetColumn(columnIndex);
                 if (cell is not null)
                 {
