@@ -124,6 +124,8 @@ public static partial class Input
                 return;
             }
 
+            var gameUi = Interface.Interface.GameUi;
+
             // First try and unfocus chat then close all UI elements, then untarget our target.. and THEN open the escape menu.
             // Most games do this, why not this?
             if (gameUi.ChatFocussed)
