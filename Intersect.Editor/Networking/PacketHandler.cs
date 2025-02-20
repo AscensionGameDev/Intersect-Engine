@@ -14,6 +14,7 @@ using Intersect.GameObjects.Maps.MapList;
 using Intersect.Network;
 using Intersect.Network.Packets.Server;
 using Microsoft.Extensions.Logging;
+using ApplicationContext = Intersect.Core.ApplicationContext;
 
 namespace Intersect.Editor.Networking;
 
@@ -272,21 +273,68 @@ internal sealed partial class PacketHandler
                 }
             }
 
-            if (Globals.CurrentMap.Id == packet.MapId && Globals.MapGrid != null && Globals.MapGrid.Loaded)
+            if (Globals.CurrentMap is not { } currentMap)
             {
-                for (var y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
+                throw new InvalidOperationException(
+                    $"Received packet for map {packet.MapId} but the current map was null"
+                );
+            }
+
+            if (Globals.MapGrid is not { } mapGrid)
+            {
+                ApplicationContext.CurrentContext.Logger.LogError(
+                    "Received packet for map {MapId} before the map grid was initialized",
+                    packet.MapId
+                );
+                return;
+            }
+
+            if (!mapGrid.Loaded)
+            {
+                ApplicationContext.CurrentContext.Logger.LogError(
+                    "Received packet for map {MapId} before the map grid was loaded",
+                    packet.MapId
+                );
+                return;
+            }
+
+            if (currentMap.Id != packet.MapId)
+            {
+                ApplicationContext.CurrentContext.Logger.LogError(
+                    "Received packet for map {MapId} but the current map is {CurrentMapId} ({CurrentMapName})",
+                    packet.MapId,
+                    currentMap.Id,
+                    currentMap.Name
+                );
+                return;
+            }
+
+            for (var y = currentMap.MapGridY + 1; y >= currentMap.MapGridY - 1; y--)
+            {
+                if (y < 0 || y >= mapGrid.GridHeight)
                 {
-                    for (var x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                    continue;
+                }
+                
+                for (var x = currentMap.MapGridX - 1; x <= currentMap.MapGridX + 1; x++)
+                {
+                    if (x < 0 || x >= mapGrid.GridWidth)
                     {
-                        if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
-                        {
-                            var needMap = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
-                            if (needMap == null && Globals.MapGrid.Grid[x, y].MapId != Guid.Empty)
-                            {
-                                PacketSender.SendNeedMap(Globals.MapGrid.Grid[x, y].MapId);
-                            }
-                        }
+                        continue;
                     }
+
+                    var gridMapId = mapGrid.Grid[x, y].MapId;
+                    if (gridMapId == Guid.Empty)
+                    {
+                        continue;
+                    }
+
+                    if (!MapInstance.TryGet(gridMapId, out _))
+                    {
+                        continue;
+                    }
+                    
+                    PacketSender.SendNeedMap(gridMapId);
                 }
             }
         }
