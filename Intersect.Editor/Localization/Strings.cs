@@ -1,6 +1,7 @@
 using System.Reflection;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Variables;
+using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
@@ -569,7 +570,7 @@ public static partial class Strings
                         default:
                             {
                                 var fieldType = fieldInfo.FieldType;
-                                if (!fieldType.IsGenericType || typeof(Dictionary<,>) != fieldType.GetGenericTypeDefinition())
+                                if (!fieldType.IsGenericType || typeof(Dictionary<,>).ExtendedBy(fieldType) && typeof(LocaleDictionary<,>).ExtendedBy(fieldType))
                                 {
                                     Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(
                                         new NotSupportedException(
@@ -593,16 +594,19 @@ public static partial class Strings
                                     break;
                                 }
 
-                                _ = _methodInfoDeserializeDictionary.MakeGenericMethod(parameters.First()).Invoke(default, new object[]
-                                {
-                                            missingStrings,
+                                var keyType = parameters.First();
+                                var constructedMethod = _methodInfoDeserializeDictionary.MakeGenericMethod(keyType);
+                                _ = constructedMethod.Invoke(null,
+                                [
+                                    missingStrings,
                                             groupType,
                                             fieldInfo,
                                             fieldValue,
                                             serializedGroup,
                                             serializedValue,
-                                            fieldValue
-                                });
+                                            fieldValue,
+                                ]
+                                );
                                 break;
                             }
                     }
@@ -636,7 +640,7 @@ public static partial class Strings
         object fieldValue,
         Dictionary<string, object> serializedGroup,
         object serializedValue,
-        Dictionary<TKey, LocalizedString> dictionary
+        IDictionary<TKey, LocalizedString> dictionary
     )
     {
         var serializedDictionary = serializedValue as JObject;
@@ -664,7 +668,7 @@ public static partial class Strings
         }
     }
 
-    private static Dictionary<string, string> SerializeDictionary<TKey>(Dictionary<TKey, LocalizedString> localizedDictionary)
+    private static Dictionary<string, string> SerializeDictionary<TKey>(IDictionary<TKey, LocalizedString> localizedDictionary)
     {
         return localizedDictionary.ToDictionary(
             pair => pair.Key.ToString(),
@@ -693,6 +697,35 @@ public static partial class Strings
 
                 case Dictionary<ChatboxTab, LocalizedString> localizedChatboxTabKeyDictionary:
                     serializedGroup.Add(fieldInfo.Name, SerializeDictionary(localizedChatboxTabKeyDictionary));
+                    break;
+                
+                default:
+                    if (!typeof(LocaleDictionary<,>).ExtendedBy(fieldInfo.FieldType))
+                    {
+                        break;
+                    }
+
+                    var serializeMethod = typeof(Strings).GetMethod(
+                        nameof(SerializeDictionary),
+                        BindingFlags.Static | BindingFlags.NonPublic
+                    );
+
+                    if (serializeMethod == null)
+                    {
+                        throw new MissingMethodException(
+                            typeof(Strings).GetName(qualified: true),
+                            nameof(SerializeDictionary)
+                        );
+                    }
+
+                    var keyType = fieldInfo.FieldType.GenericTypeArguments.First();
+                    var constructedSerializeMethod = serializeMethod.MakeGenericMethod(keyType);
+                    var result = constructedSerializeMethod.Invoke(null, [fieldInfo.GetValue(null)]);
+                    if (result is not Dictionary<string, string> dictionary)
+                    {
+                        throw new InvalidOperationException("Invalid serialization result");
+                    }
+                    serializedGroup.Add(fieldInfo.Name, result);
                     break;
             }
         }
