@@ -418,6 +418,11 @@ public abstract partial class GameTexture<TPlatformTexture, TPlatformRenderer> :
 
     private void Dispose(bool disposing)
     {
+        if (!disposing && _disposed)
+        {
+            return;
+        }
+
         ObjectDisposedException.ThrowIf(_disposed, this);
 
         _disposed = true;
