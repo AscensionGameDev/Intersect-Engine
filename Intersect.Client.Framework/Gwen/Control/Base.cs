@@ -153,6 +153,7 @@ public partial class Base : IDisposable
         _layoutDirty = true;
         _disabled = false;
         _tooltip = null;
+        _tooltipEnabled = true;
         _cacheTextureDirty = true;
         _cacheToTexture = false;
         _drawBackground = true;
@@ -1364,10 +1365,23 @@ public partial class Base : IDisposable
                 continue;
             }
 
-            if (!string.IsNullOrEmpty(node.Name) && json[node.Name] == null)
+            if (node._name is not { } name || string.IsNullOrWhiteSpace(name))
             {
-                json.Add(node.Name, node.GetJson());
+                continue;
             }
+
+            if (json.ContainsKey(name))
+            {
+                ApplicationContext.CurrentContext.Logger.LogWarning(
+                    "Unable to add '{ChildName}' to the JSON of {ParentName} because a sibling shares the same name",
+                    name,
+                    @this.CanonicalName
+                );
+                continue;
+            }
+
+            var nodeJson = node.GetJson();
+            json.Add(node.Name, nodeJson);
         }
     }
 
@@ -1688,7 +1702,12 @@ public partial class Base : IDisposable
     {
         foreach (var child in @this._children)
         {
-            if (objectChildren.TryGetValue(child.Name, out var tokenChild))
+            if (child._name is not { } name || string.IsNullOrWhiteSpace(name))
+            {
+                continue;
+            }
+
+            if (objectChildren.TryGetValue(name, out var tokenChild))
             {
                 child.LoadJson(tokenChild);
             }
