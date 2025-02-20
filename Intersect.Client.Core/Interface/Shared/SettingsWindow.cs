@@ -512,7 +512,8 @@ public partial class SettingsWindow : Window
 
         // Keybinding Settings - Controls
         var row = 0;
-        foreach (var control in (_keybindingEditControls ?? Controls.ActiveControls).Mappings.Keys)
+        var controls = (_keybindingEditControls ?? Controls.ActiveControls).Mappings.Keys.ToArray();
+        foreach (var control in controls)
         {
             AddControlKeybindRow(control: control, row: ref row, keyButtons: out _);
         }
