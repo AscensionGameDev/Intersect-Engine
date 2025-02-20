@@ -373,7 +373,7 @@ public partial class SettingsWindow : Window
             TextPadding = new Padding(8, 4, 0, 4),
         };
 
-        var availableVideoModes = Graphics.Renderer?.GetValidVideoModes().ToArray() ?? [];
+        var availableVideoModes = (Graphics.Renderer?.ValidVideoModes).ToArray() ?? [];
         for (var videoModeIndex = 0; videoModeIndex < availableVideoModes.Length; videoModeIndex++)
         {
             var availableVideoMode = availableVideoModes[videoModeIndex];
@@ -931,7 +931,7 @@ public partial class SettingsWindow : Window
 
         // _uiScale.Value = Globals.Database.UIScale;
 
-        if (Graphics.Renderer?.GetValidVideoModes().Count > 0)
+        if ((Graphics.Renderer?.ValidVideoModes).Count > 0)
         {
             if (Graphics.Renderer.HasOverrideResolution)
             {

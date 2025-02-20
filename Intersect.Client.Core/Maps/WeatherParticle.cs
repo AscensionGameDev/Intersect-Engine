@@ -43,7 +43,7 @@ public partial class WeatherParticle : IWeatherParticle
     public WeatherParticle(List<IWeatherParticle> RemoveParticle, int xvelocity, int yvelocity, AnimationBase anim)
     {
         TransmittionTimer = Timing.Global.MillisecondsUtc;
-        bounds = new Rectangle(0, 0, Graphics.Renderer.GetScreenWidth(), Graphics.Renderer.GetScreenHeight());
+        bounds = new Rectangle(0, 0, Graphics.Renderer.ScreenWidth, Graphics.Renderer.ScreenHeight);
 
         xVelocity = xvelocity;
         yVelocity = yvelocity;
@@ -55,19 +55,19 @@ public partial class WeatherParticle : IWeatherParticle
         if (xVelocity > 0)
         {
             originalX = Globals.Random.Next(
-                -Graphics.Renderer.GetScreenWidth() / 4 - animSize.X,
-                Graphics.Renderer.GetScreenWidth() + animSize.X
+                -Graphics.Renderer.ScreenWidth / 4 - animSize.X,
+                Graphics.Renderer.ScreenWidth + animSize.X
             );
         }
         else if (xVelocity < 0)
         {
             originalX = Globals.Random.Next(
-                animSize.X, (int)(Graphics.Renderer.GetScreenWidth() * 1.25f) + animSize.X
+                animSize.X, (int)(Graphics.Renderer.ScreenWidth * 1.25f) + animSize.X
             );
         }
         else
         {
-            originalX = Globals.Random.Next(-animSize.X, Graphics.Renderer.GetScreenWidth() + animSize.X);
+            originalX = Globals.Random.Next(-animSize.X, Graphics.Renderer.ScreenWidth + animSize.X);
         }
 
         if (yVelocity > 0)
@@ -76,18 +76,18 @@ public partial class WeatherParticle : IWeatherParticle
         }
         else if (yVelocity < 0)
         {
-            originalY = Graphics.Renderer.GetScreenHeight() + animSize.Y;
+            originalY = Graphics.Renderer.ScreenHeight + animSize.Y;
         }
         else
         {
-            originalY = Globals.Random.Next(-animSize.Y, Graphics.Renderer.GetScreenHeight() + animSize.Y);
+            originalY = Globals.Random.Next(-animSize.Y, Graphics.Renderer.ScreenHeight + animSize.Y);
             if (xVelocity > 0)
             {
                 originalX = -animSize.X;
             }
             else if (xVelocity < 0)
             {
-                originalX = Graphics.Renderer.GetScreenWidth();
+                originalX = Graphics.Renderer.ScreenWidth;
             }
         }
 
@@ -103,12 +103,12 @@ public partial class WeatherParticle : IWeatherParticle
             bounds.Height += Math.Abs(originalY);
         }
 
-        if (originalY > Graphics.Renderer.GetScreenHeight())
+        if (originalY > Graphics.Renderer.ScreenHeight)
         {
             bounds.Height = originalY;
         }
 
-        if (originalX > Graphics.Renderer.GetScreenWidth())
+        if (originalX > Graphics.Renderer.ScreenWidth)
         {
             bounds.Width = originalX;
         }

@@ -167,8 +167,8 @@ public static partial class Interface
         };
 
         _canvasMainMenu.SetSize(
-            (int)(Graphics.Renderer.GetScreenWidth() / _canvasMainMenu.Scale),
-            (int)(Graphics.Renderer.GetScreenHeight() / _canvasMainMenu.Scale)
+            (int)(Graphics.Renderer.ScreenWidth / _canvasMainMenu.Scale),
+            (int)(Graphics.Renderer.ScreenHeight / _canvasMainMenu.Scale)
         );
 
         _canvasMainMenu.ShouldDrawBackground = false;
@@ -180,8 +180,8 @@ public static partial class Interface
 
         //_gameCanvas.Scale = (GameGraphics.Renderer.GetScreenWidth() / 1920f);
         _canvasInGame.SetSize(
-            (int)(Graphics.Renderer.GetScreenWidth() / _canvasInGame.Scale),
-            (int)(Graphics.Renderer.GetScreenHeight() / _canvasInGame.Scale)
+            (int)(Graphics.Renderer.ScreenWidth / _canvasInGame.Scale),
+            (int)(Graphics.Renderer.ScreenHeight / _canvasInGame.Scale)
         );
 
         _canvasInGame.ShouldDrawBackground = false;
