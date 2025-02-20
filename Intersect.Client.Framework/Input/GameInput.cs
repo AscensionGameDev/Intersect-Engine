@@ -44,7 +44,7 @@ public abstract partial class GameInput : IGameInput
 
     public abstract IControlSet ControlSet { get; set; }
 
-    public IReadOnlySet<IControlsProvider> ControlsProviders => _controlsProviders.ToImmutableHashSet();
+    public IReadOnlySet<IControlsProvider> ControlsProviders => _controlsProviders;
 
     public Control[] AllControls => ControlsProviders.SelectMany(provider => provider.Controls)
         .Distinct()
