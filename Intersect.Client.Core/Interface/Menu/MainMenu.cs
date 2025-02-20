@@ -145,27 +145,30 @@ public partial class MainMenu : MutableInterface
             CreateCharacterCreation();
         }
 
-        if (!LoginWindow.IsHidden)
+        if (_loginWindow is { IsVisibleInTree: true } loginWindow)
         {
-            LoginWindow.Update();
+            loginWindow.Update();
         }
 
-        if (!CharacterCreationWindow.IsHidden)
+        if (_characterCreationWindow is { IsVisibleInTree: true } characterCreationWindow)
         {
-            CharacterCreationWindow.Update();
+            characterCreationWindow.Update();
         }
 
-        if (!RegistrationWindow.IsHidden)
+        if (_registrationWindow is { IsVisibleInTree: true } registrationWindow)
         {
-            RegistrationWindow.Update();
+            registrationWindow.Update();
         }
 
-        if (!SelectCharacterWindow.IsHidden)
+        if (_selectCharacterWindow is { IsVisibleInTree: true } selectCharacterWindow)
         {
-            SelectCharacterWindow.Update();
+            selectCharacterWindow.Update();
         }
 
-        SettingsWindow.Update();
+        if (_settingsWindow is { IsVisibleInTree: true } settingsWindow)
+        {
+            settingsWindow.Update();
+        }
     }
 
     public void Reset()
