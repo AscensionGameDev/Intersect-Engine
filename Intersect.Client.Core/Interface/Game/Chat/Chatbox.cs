@@ -416,18 +416,23 @@ public partial class Chatbox
 
             if (scrollToBottom)
             {
+                mChatboxMessages.PostLayout.Enqueue(scroller => scroller.ScrollToBottom(), mChatboxMessages);
                 mChatboxMessages.RunOnMainThread(mChatboxMessages.ScrollToBottom);
             }
             else
             {
-                mChatboxMessages.RunOnMainThread(() =>
+                mChatboxMessages.PostLayout.Enqueue(
+                    (scroller, position) =>
                     {
                         ApplicationContext.CurrentContext.Logger.LogTrace(
-                            "Scrolling chat to {ScrollY}",
-                            scrollPosition
+                            "Scrolling chat ({ChatNode}) to {ScrollY}",
+                            scroller.CanonicalName,
+                            position
                         );
-                        mChatboxMessages.ScrollToY(scrollPosition);
-                    }
+                        scroller.ScrollToY(position);
+                    },
+                    mChatboxMessages,
+                    scrollPosition
                 );
             }
 
