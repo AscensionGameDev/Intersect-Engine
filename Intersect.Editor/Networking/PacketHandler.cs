@@ -332,7 +332,7 @@ internal sealed partial class PacketHandler
                     continue;
                 }
 
-                if (!MapInstance.TryGet(gridMapId, out _))
+                if (MapInstance.TryGet(gridMapId, out _))
                 {
                     continue;
                 }
