@@ -131,7 +131,15 @@ public sealed class LiteNetLibConnection : AbstractConnection
             case EncryptionResult.InvalidTag:
             case EncryptionResult.EmptyInput:
             case EncryptionResult.SizeMismatch:
+                // Symmetric Decryption Error Result
+                ApplicationContext.Context.Value?.Logger.LogWarning($"SDER: {Guid} {decryptionResult}");
+                return false;
             case EncryptionResult.Error:
+#if DEBUG
+                var cipherNonce = cipherdata[7..][..12];
+                var debugEncryptionResult = _symmetric.TryEncrypt(debugPlaindata, cipherNonce, out var debugCipherdata);
+                var expectedMessage = MessagePacker.Instance.Deserialize(debugPlaindata);
+#endif
                 // Symmetric Decryption Error Result
                 ApplicationContext.Context.Value?.Logger.LogWarning($"SDER: {Guid} {decryptionResult}");
                 return false;
