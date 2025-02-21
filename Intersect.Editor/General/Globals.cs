@@ -45,9 +45,9 @@ public static partial class Globals
     public static string CurrentLayer = string.Empty;
 
     //Editor Variables
-    public static MapInstance CurrentMap = null;
+    public static MapInstance? CurrentMap { get; set; }
 
-    public static TilesetBase CurrentTileset = null;
+    public static TilesetBase? CurrentTileset { get; set; }
 
     public static EditingTool _currentTool = EditingTool.Brush;
 
@@ -94,7 +94,7 @@ public static partial class Globals
 
     public static bool HasCopy;
 
-    public static bool HasGameData = false;
+    public static bool HasGameData { get; set; } = false;
 
     public static bool InEditor;
 

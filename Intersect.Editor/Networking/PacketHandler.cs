@@ -162,180 +162,182 @@ internal sealed partial class PacketHandler
     {
         if (packet.Deleted)
         {
-            if (MapInstance.Get(packet.MapId) != null)
+            if (!MapInstance.TryGet(packet.MapId, out var existingMapToDelete))
             {
-                if (Globals.CurrentMap == MapInstance.Get(packet.MapId))
+                return;
+            }
+
+            if (Globals.CurrentMap == existingMapToDelete)
+            {
+                Globals.MainForm.EnterMap(MapList.List.FindFirstMap());
+            }
+
+            existingMapToDelete.Delete();
+            return;
+        }
+
+        var receivedMap = new MapInstance(packet.MapId);
+        receivedMap.Load(packet.Data);
+        receivedMap.LoadTileData(packet.TileData);
+        receivedMap.AttributeData = packet.AttributeData;
+        receivedMap.MapGridX = packet.GridX;
+        receivedMap.MapGridY = packet.GridY;
+        receivedMap.SaveStateAsUnchanged();
+        receivedMap.InitAutotiles();
+        receivedMap.UpdateAdjacentAutotiles();
+        
+        if (MapInstance.TryGet(packet.MapId, out var existingMap))
+        {
+            lock (existingMap.MapLock)
+            {
+                if (Globals.CurrentMap == existingMap)
                 {
-                    Globals.MainForm.EnterMap(MapList.List.FindFirstMap());
+                    Globals.CurrentMap = receivedMap;
                 }
 
-                MapInstance.Get(packet.MapId).Delete();
+                existingMap.Delete();
             }
         }
-        else
+
+        MapInstance.Lookup.Set(packet.MapId, receivedMap);
+        if (!Globals.InEditor && Globals.HasGameData)
         {
-            var map = new MapInstance(packet.MapId);
-            map.Load(packet.Data);
-            map.LoadTileData(packet.TileData);
-            map.AttributeData = packet.AttributeData;
-            map.MapGridX = packet.GridX;
-            map.MapGridY = packet.GridY;
-            map.SaveStateAsUnchanged();
-            map.InitAutotiles();
-            map.UpdateAdjacentAutotiles();
-            if (MapInstance.Get(packet.MapId) != null)
+            Globals.CurrentMap = receivedMap;
+            Globals.LoginForm.BeginInvoke(Globals.LoginForm.EditorLoopDelegate);
+        }
+        else if (Globals.InEditor)
+        {
+            if (Globals.FetchingMapPreviews || Globals.CurrentMap == receivedMap)
             {
-                lock (MapInstance.Get(packet.MapId).MapLock)
+                var currentMapId = Globals.CurrentMap.Id;
+                var img = Database.LoadMapCacheLegacy(packet.MapId, receivedMap.Revision);
+                if (img == null && !Globals.MapsToScreenshot.Contains(packet.MapId))
                 {
-                    if (Globals.CurrentMap == MapInstance.Get(packet.MapId))
-                    {
-                        Globals.CurrentMap = map;
-                    }
-
-                    MapInstance.Get(packet.MapId).Delete();
+                    Globals.MapsToScreenshot.Add(packet.MapId);
                 }
-            }
 
-            MapInstance.Lookup.Set(packet.MapId, map);
-            if (!Globals.InEditor && Globals.HasGameData)
-            {
-                Globals.CurrentMap = map;
-                Globals.LoginForm.BeginInvoke(Globals.LoginForm.EditorLoopDelegate);
-            }
-            else if (Globals.InEditor)
-            {
-                if (Globals.FetchingMapPreviews || Globals.CurrentMap == map)
+                img?.Dispose();
+                if (Globals.FetchingMapPreviews)
                 {
-                    var currentMapId = Globals.CurrentMap.Id;
-                    var img = Database.LoadMapCacheLegacy(packet.MapId, map.Revision);
-                    if (img == null && !Globals.MapsToScreenshot.Contains(packet.MapId))
+                    if (Globals.MapsToFetch.Contains(packet.MapId))
                     {
-                        Globals.MapsToScreenshot.Add(packet.MapId);
-                    }
-
-                    img?.Dispose();
-                    if (Globals.FetchingMapPreviews)
-                    {
-                        if (Globals.MapsToFetch.Contains(packet.MapId))
+                        Globals.MapsToFetch.Remove(packet.MapId);
+                        if (Globals.MapsToFetch.Count == 0)
                         {
-                            Globals.MapsToFetch.Remove(packet.MapId);
-                            if (Globals.MapsToFetch.Count == 0)
-                            {
-                                Globals.FetchingMapPreviews = false;
-                                Globals.PreviewProgressForm.BeginInvoke(
-                                    (MethodInvoker) delegate { Globals.PreviewProgressForm.Dispose(); }
-                                );
-                            }
-                            else
-                            {
-                                //TODO Localize
-                                Globals.PreviewProgressForm.SetProgress(
-                                    "Fetching Maps: " +
-                                    (Globals.FetchCount - Globals.MapsToFetch.Count) +
-                                    "/" +
-                                    Globals.FetchCount,
-                                    (int) ((float) (Globals.FetchCount - Globals.MapsToFetch.Count) /
-                                           (float) Globals.FetchCount *
-                                           100f), false
-                                );
-                            }
+                            Globals.FetchingMapPreviews = false;
+                            Globals.PreviewProgressForm.BeginInvoke(
+                                (MethodInvoker) delegate { Globals.PreviewProgressForm.Dispose(); }
+                            );
+                        }
+                        else
+                        {
+                            //TODO Localize
+                            Globals.PreviewProgressForm.SetProgress(
+                                "Fetching Maps: " +
+                                (Globals.FetchCount - Globals.MapsToFetch.Count) +
+                                "/" +
+                                Globals.FetchCount,
+                                (int) ((float) (Globals.FetchCount - Globals.MapsToFetch.Count) /
+                                       (float) Globals.FetchCount *
+                                       100f), false
+                            );
                         }
                     }
-
-                    Globals.CurrentMap = MapInstance.Get(currentMapId);
                 }
 
-                if (packet.MapId != Globals.LoadingMap)
-                {
-                    return;
-                }
-
-                Globals.CurrentMap = MapInstance.Get(Globals.LoadingMap);
-                MapUpdatedDelegate();
-                if (map.Up != Guid.Empty)
-                {
-                    PacketSender.SendNeedMap(map.Up);
-                }
-
-                if (map.Down != Guid.Empty)
-                {
-                    PacketSender.SendNeedMap(map.Down);
-                }
-
-                if (map.Left != Guid.Empty)
-                {
-                    PacketSender.SendNeedMap(map.Left);
-                }
-
-                if (map.Right != Guid.Empty)
-                {
-                    PacketSender.SendNeedMap(map.Right);
-                }
+                Globals.CurrentMap = MapInstance.Get(currentMapId);
             }
 
-            if (Globals.CurrentMap is not { } currentMap)
+            if (packet.MapId != Globals.LoadingMap)
             {
-                throw new InvalidOperationException(
-                    $"Received packet for map {packet.MapId} but the current map was null"
-                );
-            }
-
-            if (Globals.MapGrid is not { } mapGrid)
-            {
-                ApplicationContext.CurrentContext.Logger.LogError(
-                    "Received packet for map {MapId} before the map grid was initialized",
-                    packet.MapId
-                );
                 return;
             }
 
-            if (!mapGrid.Loaded)
+            Globals.CurrentMap = MapInstance.Get(Globals.LoadingMap);
+            MapUpdatedDelegate();
+            if (receivedMap.Up != Guid.Empty)
             {
-                ApplicationContext.CurrentContext.Logger.LogError(
-                    "Received packet for map {MapId} before the map grid was loaded",
-                    packet.MapId
-                );
-                return;
+                PacketSender.SendNeedMap(receivedMap.Up);
             }
 
-            if (currentMap.Id != packet.MapId)
+            if (receivedMap.Down != Guid.Empty)
             {
-                ApplicationContext.CurrentContext.Logger.LogError(
-                    "Received packet for map {MapId} but the current map is {CurrentMapId} ({CurrentMapName})",
-                    packet.MapId,
-                    currentMap.Id,
-                    currentMap.Name
-                );
-                return;
+                PacketSender.SendNeedMap(receivedMap.Down);
             }
 
-            for (var y = currentMap.MapGridY + 1; y >= currentMap.MapGridY - 1; y--)
+            if (receivedMap.Left != Guid.Empty)
             {
-                if (y < 0 || y >= mapGrid.GridHeight)
+                PacketSender.SendNeedMap(receivedMap.Left);
+            }
+
+            if (receivedMap.Right != Guid.Empty)
+            {
+                PacketSender.SendNeedMap(receivedMap.Right);
+            }
+        }
+
+        if (Globals.CurrentMap is not { } currentMap)
+        {
+            throw new InvalidOperationException(
+                $"Received packet for map {packet.MapId} but the current map was null"
+            );
+        }
+
+        if (Globals.MapGrid is not { } mapGrid)
+        {
+            ApplicationContext.CurrentContext.Logger.LogError(
+                "Received packet for map {MapId} before the map grid was initialized",
+                packet.MapId
+            );
+            return;
+        }
+
+        if (!mapGrid.Loaded)
+        {
+            ApplicationContext.CurrentContext.Logger.LogError(
+                "Received packet for map {MapId} before the map grid was loaded",
+                packet.MapId
+            );
+            return;
+        }
+
+        if (currentMap.Id != packet.MapId)
+        {
+            ApplicationContext.CurrentContext.Logger.LogError(
+                "Received packet for map {MapId} but the current map is {CurrentMapId} ({CurrentMapName})",
+                packet.MapId,
+                currentMap.Id,
+                currentMap.Name
+            );
+            return;
+        }
+
+        for (var y = currentMap.MapGridY + 1; y >= currentMap.MapGridY - 1; y--)
+        {
+            if (y < 0 || y >= mapGrid.GridHeight)
+            {
+                continue;
+            }
+                
+            for (var x = currentMap.MapGridX - 1; x <= currentMap.MapGridX + 1; x++)
+            {
+                if (x < 0 || x >= mapGrid.GridWidth)
                 {
                     continue;
                 }
-                
-                for (var x = currentMap.MapGridX - 1; x <= currentMap.MapGridX + 1; x++)
+
+                var gridMapId = mapGrid.Grid[x, y].MapId;
+                if (gridMapId == Guid.Empty)
                 {
-                    if (x < 0 || x >= mapGrid.GridWidth)
-                    {
-                        continue;
-                    }
-
-                    var gridMapId = mapGrid.Grid[x, y].MapId;
-                    if (gridMapId == Guid.Empty)
-                    {
-                        continue;
-                    }
-
-                    if (!MapInstance.TryGet(gridMapId, out _))
-                    {
-                        continue;
-                    }
-                    
-                    PacketSender.SendNeedMap(gridMapId);
+                    continue;
                 }
+
+                if (!MapInstance.TryGet(gridMapId, out _))
+                {
+                    continue;
+                }
+                    
+                PacketSender.SendNeedMap(gridMapId);
             }
         }
     }
