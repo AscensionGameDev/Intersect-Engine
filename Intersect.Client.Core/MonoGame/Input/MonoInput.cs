@@ -258,7 +258,7 @@ public partial class MonoInput : GameInput
 
             {
 
-                if ((InputHandler.HoveredControl == null || !InputHandler.HoveredControl.IsVisible)
+                if ((InputHandler.HoveredControl == null || !InputHandler.HoveredControl.IsVisibleInTree)
                   && Globals.GameState == GameStates.InGame
                   && Globals.Database.EnableMouseScrollZoom)
             {
