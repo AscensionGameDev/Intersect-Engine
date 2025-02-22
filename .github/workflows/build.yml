@@ -107,7 +107,7 @@ jobs:
           Intersect*/obj/
 
     - name: Apply environment patches
-      run: git apply disable-windows-editor.patch
+      run: git apply disable-windows-only.patch
 
     - name: Restore NuGet Packages
       if: steps.cache-binaries.outputs.cache-hit != 'true' && steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceRestore == true
@@ -163,7 +163,7 @@ jobs:
           Intersect*/obj/
 
     - name: Apply environment patches
-      run: git apply disable-windows-editor.patch
+      run: git apply disable-windows-only.patch
 
     - name: Restore NuGet Packages
       if: steps.cache-binaries.outputs.cache-hit != 'true' && steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceRestore == true
@@ -231,7 +231,7 @@ jobs:
           Intersect*/obj/
 
     - name: Apply environment patches
-      run: git apply disable-windows-editor.patch
+      run: git apply disable-windows-only.patch
 
     - name: Restore NuGet Packages
       if: steps.cache-binaries.outputs.cache-hit != 'true' && steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceRestore == true

@@ -49,9 +49,9 @@ We're open to expanding to new platforms (mobile, web, etc) but don't have the c
 
 After cloning or updating,
 - on all platforms run `git submodule update --init --recursive`
-- on non-Windows platforms, additionally run `git apply disable-windows-editor.patch`
+- on non-Windows platforms, additionally run `git apply disable-windows-only.patch`
 
-Before updating on non-Windows platforms, run `git apply -R disable-windows-editor.patch`
+Before updating on non-Windows platforms, run `git apply -R disable-windows-only.patch`
 
 ### Compiling
 

@@ -72,7 +72,7 @@ jobs:
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       run: |
         dotnet publish Intersect.sln -r win-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }} -p:CommitSha=${{ github.sha }} -p:BuildNumber=${{ github.run_number }} -p:VersionNameSuffix=${{ env.VERSION_SUFFIX_NAME }}
-        git apply disable-windows-editor.patch
+        git apply disable-windows-only.patch
         dotnet publish Intersect.sln -r linux-x64 -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }} -p:CommitSha=${{ github.sha }} -p:BuildNumber=${{ github.run_number }} -p:VersionNameSuffix=${{ env.VERSION_SUFFIX_NAME }}
         dotnet publish Intersect.sln -r osx-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }} -p:CommitSha=${{ github.sha }} -p:BuildNumber=${{ github.run_number }} -p:VersionNameSuffix=${{ env.VERSION_SUFFIX_NAME }}
 
