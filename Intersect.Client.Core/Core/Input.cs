@@ -37,22 +37,33 @@ public static partial class Input
 
     public static HandleKeyEvent? MouseUp { get => _mouseUp; set => _mouseUp = value; }
 
-    private static void HandleZoomOut()
+    public static void HandleZoomOut(bool wrap = true)
     {
-        Globals.Database.WorldZoom /= 2;
-        if (Globals.Database.WorldZoom < Graphics.MinimumWorldScale)
+        var nextZoom = Globals.Database.WorldZoom / 2;
+        if (nextZoom < Graphics.MinimumWorldScale)
         {
-            Globals.Database.WorldZoom = Graphics.MaximumWorldScale;
+            if (wrap)
+            {
+                Globals.Database.WorldZoom = Graphics.MaximumWorldScale;
+            }
+            return;
         }
+
+        Globals.Database.WorldZoom = nextZoom;
     }
 
-    private static void HandleZoomIn()
+    public static void HandleZoomIn(bool wrap = true)
     {
-        Globals.Database.WorldZoom *= 2;
-        if (Globals.Database.WorldZoom > Graphics.MaximumWorldScale)
+        var nextZoom = Globals.Database.WorldZoom * 2;
+        if (nextZoom > Graphics.MaximumWorldScale)
         {
-            Globals.Database.WorldZoom = Graphics.MinimumWorldScale;
+            if (wrap)
+            {
+                Globals.Database.WorldZoom = Graphics.MinimumWorldScale;
+            }
+            return;
         }
+        Globals.Database.WorldZoom = nextZoom;
     }
 
     public static void OnKeyPressed(Keys modifier, Keys key)

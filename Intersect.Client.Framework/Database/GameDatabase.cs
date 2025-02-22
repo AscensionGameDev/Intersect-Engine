@@ -27,6 +27,8 @@ public abstract partial class GameDatabase
 
     public bool EnableLighting { get; set; }
 
+    public bool EnableMouseScrollZoom { get; set; }
+
     public bool StickyTarget { get; set; }
 
     public bool AutoTurnToTarget { get; set; }
@@ -119,6 +121,7 @@ public abstract partial class GameDatabase
         TargetFps = LoadPreference(nameof(TargetFps), 0);
         FullScreen = LoadPreference(nameof(FullScreen), false);
         EnableLighting = LoadPreference(nameof(EnableLighting), true);
+        EnableMouseScrollZoom = LoadPreference(nameof(EnableMouseScrollZoom), false);
         HideOthersOnWindowOpen = LoadPreference(nameof(HideOthersOnWindowOpen), true);
         AutoToggleChatLog = LoadPreference(nameof(AutoToggleChatLog), false);
         TargetAccountDirection = LoadPreference(nameof(TargetAccountDirection), false);
@@ -158,6 +161,7 @@ public abstract partial class GameDatabase
         SavePreference(nameof(FullScreen), FullScreen);
         SavePreference(nameof(ShowFPSCounter), ShowFPSCounter);
         SavePreference(nameof(EnableLighting), EnableLighting);
+        SavePreference(nameof(EnableMouseScrollZoom), EnableMouseScrollZoom);
         SavePreference(nameof(HideOthersOnWindowOpen), HideOthersOnWindowOpen);
         SavePreference(nameof(AutoToggleChatLog), AutoToggleChatLog);
         SavePreference(nameof(TargetAccountDirection), TargetAccountDirection);
