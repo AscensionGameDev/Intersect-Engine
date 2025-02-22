@@ -254,14 +254,17 @@ public partial class MonoInput : GameInput
 
             var deltaV = Math.Sign(mMouseVScroll - scrlVValue);
 
-            if ((DateTime.Now - _lastZoomTime).TotalMilliseconds >= ZoomDelayInMilliseconds)
+            var now = DateTime.Now;
+            if ((now - _lastZoomTime).TotalMilliseconds >= ZoomDelayInMilliseconds)
 
             {
 
-                if ((InputHandler.HoveredControl == null || !InputHandler.HoveredControl.IsVisibleInTree)
-                  && Globals.GameState == GameStates.InGame
-                  && Globals.Database.EnableMouseScrollZoom)
-            {
+                if ((InputHandler.HoveredControl == null
+                     || !InputHandler.HoveredControl.IsVisibleInTree
+                     || (InputHandler.HoveredControl is Canvas canvas && canvas == canvas.Canvas))
+                    && Globals.GameState == GameStates.InGame
+                    && Globals.Database.EnableScrollingWorldZoom)
+                {
                 if (deltaV < 0)
                 {
                     Core.Input.HandleZoomIn(false);
@@ -270,7 +273,7 @@ public partial class MonoInput : GameInput
                 {
                     Core.Input.HandleZoomOut(false);
                 }
-                    _lastZoomTime = DateTime.Now;
+                    _lastZoomTime = now;
                 }
             }
             mMouseVScroll = scrlVValue;

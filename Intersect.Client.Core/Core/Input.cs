@@ -40,13 +40,10 @@ public static partial class Input
     public static void HandleZoomOut(bool wrap = true)
     {
         var nextZoom = Globals.Database.WorldZoom / 2;
+
         if (nextZoom < Graphics.MinimumWorldScale)
         {
-            if (wrap)
-            {
-                Globals.Database.WorldZoom = Graphics.MaximumWorldScale;
-            }
-            return;
+            nextZoom = wrap ? Graphics.MaximumWorldScale : Graphics.MinimumWorldScale;
         }
 
         Globals.Database.WorldZoom = nextZoom;
@@ -55,14 +52,12 @@ public static partial class Input
     public static void HandleZoomIn(bool wrap = true)
     {
         var nextZoom = Globals.Database.WorldZoom * 2;
+
         if (nextZoom > Graphics.MaximumWorldScale)
         {
-            if (wrap)
-            {
-                Globals.Database.WorldZoom = Graphics.MinimumWorldScale;
-            }
-            return;
+            nextZoom = wrap ? Graphics.MinimumWorldScale : Graphics.MaximumWorldScale;
         }
+
         Globals.Database.WorldZoom = nextZoom;
     }
 

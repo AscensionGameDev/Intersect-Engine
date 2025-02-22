@@ -27,8 +27,6 @@ public abstract partial class GameDatabase
 
     public bool EnableLighting { get; set; }
 
-    public bool EnableMouseScrollZoom { get; set; }
-
     public bool StickyTarget { get; set; }
 
     public bool AutoTurnToTarget { get; set; }
@@ -72,6 +70,8 @@ public abstract partial class GameDatabase
     public bool TypewriterEnabled => TypewriterBehavior != TypewriterBehavior.Off;
 
     public float UIScale { get; set; } = 1.0f;
+
+    public bool EnableScrollingWorldZoom { get; set; }
 
     public float WorldZoom { get; set; } = 1.0f;
 
@@ -121,7 +121,6 @@ public abstract partial class GameDatabase
         TargetFps = LoadPreference(nameof(TargetFps), 0);
         FullScreen = LoadPreference(nameof(FullScreen), false);
         EnableLighting = LoadPreference(nameof(EnableLighting), true);
-        EnableMouseScrollZoom = LoadPreference(nameof(EnableMouseScrollZoom), false);
         HideOthersOnWindowOpen = LoadPreference(nameof(HideOthersOnWindowOpen), true);
         AutoToggleChatLog = LoadPreference(nameof(AutoToggleChatLog), false);
         TargetAccountDirection = LoadPreference(nameof(TargetAccountDirection), false);
@@ -146,6 +145,7 @@ public abstract partial class GameDatabase
         SimplifiedEscapeMenu = LoadPreference(nameof(SimplifiedEscapeMenu), false);
         TypewriterBehavior = LoadPreference(nameof(TypewriterBehavior), TypewriterBehavior.Word);
         UIScale = LoadPreference(nameof(UIScale), 1.0f);
+        EnableScrollingWorldZoom = LoadPreference(nameof(EnableScrollingWorldZoom), false);
         WorldZoom = LoadPreference(nameof(WorldZoom), 1.0f);
     }
 
@@ -161,7 +161,6 @@ public abstract partial class GameDatabase
         SavePreference(nameof(FullScreen), FullScreen);
         SavePreference(nameof(ShowFPSCounter), ShowFPSCounter);
         SavePreference(nameof(EnableLighting), EnableLighting);
-        SavePreference(nameof(EnableMouseScrollZoom), EnableMouseScrollZoom);
         SavePreference(nameof(HideOthersOnWindowOpen), HideOthersOnWindowOpen);
         SavePreference(nameof(AutoToggleChatLog), AutoToggleChatLog);
         SavePreference(nameof(TargetAccountDirection), TargetAccountDirection);
@@ -186,6 +185,7 @@ public abstract partial class GameDatabase
         SavePreference(nameof(SimplifiedEscapeMenu), SimplifiedEscapeMenu);
         SavePreference(nameof(TypewriterBehavior), TypewriterBehavior);
         SavePreference(nameof(UIScale), UIScale);
+        SavePreference(nameof(EnableScrollingWorldZoom), EnableScrollingWorldZoom);
         SavePreference(nameof(WorldZoom), WorldZoom);
     }
 
