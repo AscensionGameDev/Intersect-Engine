@@ -43,7 +43,7 @@ public partial class HotBarWindow
             Items.Add(hotbarItem);
         }
 
-        // HotbarWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        HotbarWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
         HotbarWindow.SizeToChildren();
     }
