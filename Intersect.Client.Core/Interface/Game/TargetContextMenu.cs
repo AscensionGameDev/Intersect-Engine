@@ -43,8 +43,6 @@ public sealed partial class TargetContextMenu : ContextMenu
         _nameDivider = new MenuDivider(this)
         {
             Dock = Pos.Top,
-            Margin = new Margin(IconMarginDisabled ? 0 : 24, 0, 4, 0),
-            Height = 1,
             MinimumSize = new Point(0, 1),
         };
 
@@ -64,7 +62,7 @@ public sealed partial class TargetContextMenu : ContextMenu
         _privateMessageMenuItem.Clicked += privateMessageRequest_Clicked;
 
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer?.GetResolutionString());
-        _buildContextMenu();
+        BuildContextMenu();
     }
 
     public void ToggleHidden(object? target)
@@ -128,7 +126,7 @@ public sealed partial class TargetContextMenu : ContextMenu
 
         if (IsHidden)
         {
-            _buildContextMenu(shouldShowTargetNameMenuItem);
+            BuildContextMenu(shouldShowTargetNameMenuItem);
             SizeToChildren();
             Open(Pos.None);
             SetPosition(newX, newY);
@@ -139,7 +137,7 @@ public sealed partial class TargetContextMenu : ContextMenu
         }
     }
 
-    private void _buildContextMenu(bool shouldShowTargetName = false)
+    private void BuildContextMenu(bool shouldShowTargetName = false)
     {
         ClearChildren();
 
@@ -155,17 +153,17 @@ public sealed partial class TargetContextMenu : ContextMenu
         AddChild(_partyMenuItem);
         AddChild(_friendMenuItem);
 
-        if (_entity is Player player && player != _me && string.IsNullOrWhiteSpace(player.Guild))
+        if (_entity is Player player)
         {
-            if (_me?.GuildRank?.Permissions?.Invite ?? false)
+            if (player != _me && string.IsNullOrWhiteSpace(player.Guild) && (_me?.GuildRank?.Permissions?.Invite ?? false))
             {
                 AddChild(_guildMenuItem);
             }
-        }
 
-        if (_entity is Player plyr && plyr != _me)
-        {
-            AddChild(_privateMessageMenuItem);
+            if (player != _me)
+            {
+                AddChild(_privateMessageMenuItem);
+            }
         }
     }
 
