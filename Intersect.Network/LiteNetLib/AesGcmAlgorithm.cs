@@ -290,10 +290,12 @@ public sealed class AesGcmAlgorithm : SymmetricAlgorithm
         return TryEncryptInternal(plaindata, nonce, out cipherdata);
     }
 
+#if DEBUG
     public override EncryptionResult TryEncrypt(ReadOnlySpan<byte> plaindata, ReadOnlySpan<byte> nonce, out ReadOnlySpan<byte> cipherdata)
     {
         return TryEncryptInternal(plaindata, nonce, out cipherdata);
     }
+#endif
 
     public override EncryptionResult TryEncrypt(ReadOnlySpan<byte> plaindata, int offset, int length, out ReadOnlySpan<byte> cipherdata) =>
         TryEncrypt(plaindata[offset..(offset + length)], out cipherdata);
