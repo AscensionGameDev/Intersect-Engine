@@ -237,6 +237,9 @@ public partial class MonoInput : GameInput
         }
     }
 
+    private const double ZoomDelayInMilliseconds = 300;
+    private DateTime _lastZoomTime = DateTime.MinValue;
+
     private void CheckMouseScrollWheel(int scrlVValue, int scrlHValue)
     {
         Pointf p = new Pointf(0, 0);
@@ -249,6 +252,27 @@ public partial class MonoInput : GameInput
                 new GwenInputMessage(IntersectInput.InputEvent.MouseScroll, p, MouseButton.Middle, Keys.Alt)
             );
 
+            var deltaV = Math.Sign(mMouseVScroll - scrlVValue);
+
+            if ((DateTime.Now - _lastZoomTime).TotalMilliseconds >= ZoomDelayInMilliseconds)
+
+            {
+
+                if ((InputHandler.HoveredControl == null || !InputHandler.HoveredControl.IsVisible)
+                  && Globals.GameState == GameStates.InGame
+                  && Globals.Database.EnableMouseScrollZoom)
+            {
+                if (deltaV < 0)
+                {
+                    Core.Input.HandleZoomIn(false);
+                }
+                else
+                {
+                    Core.Input.HandleZoomOut(false);
+                }
+                    _lastZoomTime = DateTime.Now;
+                }
+            }
             mMouseVScroll = scrlVValue;
             mMouseHScroll = scrlHValue;
         }

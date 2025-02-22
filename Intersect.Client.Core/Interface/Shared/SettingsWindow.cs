@@ -78,6 +78,7 @@ public partial class SettingsWindow : Window
     private readonly LabeledSlider _worldScale;
     private readonly LabeledCheckBox _fullscreenCheckbox;
     private readonly LabeledCheckBox _lightingEnabledCheckbox;
+    public readonly LabeledCheckBox _enableMouseScrollZoomCheckbox;
     private MenuItem? _customResolutionMenuItem;
 
     // Audio Settings
@@ -420,6 +421,14 @@ public partial class SettingsWindow : Window
             Dock = Pos.Top,
             Font = _defaultFont,
             Text = Strings.Settings.EnableLighting,
+        };
+
+        // Video Settings - Enable Mouse Scroll Zoom Checkbox
+        _enableMouseScrollZoomCheckbox = new LabeledCheckBox(parent: _videoContainer, name: nameof(_enableMouseScrollZoomCheckbox))
+        {
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            Text = Strings.Settings.EnableMouseScrollZoom,
         };
 
         _worldScale = new LabeledSlider(parent: _videoContainer, name: nameof(_worldScale))
@@ -929,6 +938,7 @@ public partial class SettingsWindow : Window
         // Video Settings.
         _fullscreenCheckbox.IsChecked = Globals.Database.FullScreen;
         _lightingEnabledCheckbox.IsChecked = Globals.Database.EnableLighting;
+        _enableMouseScrollZoomCheckbox.IsChecked = Globals.Database.EnableMouseScrollZoom;
 
         // _uiScale.Value = Globals.Database.UIScale;
 
@@ -1113,6 +1123,8 @@ public partial class SettingsWindow : Window
         var newFps = 0;
 
         Globals.Database.EnableLighting = _lightingEnabledCheckbox.IsChecked;
+
+        Globals.Database.EnableMouseScrollZoom = _enableMouseScrollZoomCheckbox.IsChecked;
 
         if (targetResolution > -1)
         {
