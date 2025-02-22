@@ -237,7 +237,7 @@ public partial class MonoInput : GameInput
         }
     }
 
-    private const double ZoomDelayInMilliseconds = 300;
+    private static readonly TimeSpan ZoomDelay = TimeSpan.FromMilliseconds(300);
     private DateTime _lastZoomTime = DateTime.MinValue;
 
     private void CheckMouseScrollWheel(int scrlVValue, int scrlHValue)
@@ -255,7 +255,7 @@ public partial class MonoInput : GameInput
             var deltaV = Math.Sign(mMouseVScroll - scrlVValue);
 
             var now = DateTime.Now;
-            if ((now - _lastZoomTime).TotalMilliseconds >= ZoomDelayInMilliseconds)
+            if (now - _lastZoomTime >= ZoomDelay)
 
             {
 
@@ -265,14 +265,14 @@ public partial class MonoInput : GameInput
                     && Globals.GameState == GameStates.InGame
                     && Globals.Database.EnableScrollingWorldZoom)
                 {
-                if (deltaV < 0)
-                {
-                    Core.Input.HandleZoomIn(false);
-                }
-                else
-                {
-                    Core.Input.HandleZoomOut(false);
-                }
+                    if (deltaV < 0)
+                    {
+                        Core.Input.HandleZoomIn(false);
+                    }
+                    else
+                    {
+                        Core.Input.HandleZoomOut(false);
+                    }
                     _lastZoomTime = now;
                 }
             }
