@@ -75,10 +75,10 @@ public partial class SettingsWindow : Window
     private readonly LabeledComboBox _resolutionList;
     private readonly LabeledComboBox _fpsList;
     private readonly LabeledCheckBox _showFPSCounterCheckbox;
+    public readonly LabeledCheckBox _enableScrollingWorldZoomCheckbox;
     private readonly LabeledSlider _worldScale;
     private readonly LabeledCheckBox _fullscreenCheckbox;
     private readonly LabeledCheckBox _lightingEnabledCheckbox;
-    public readonly LabeledCheckBox _enableMouseScrollZoomCheckbox;
     private MenuItem? _customResolutionMenuItem;
 
     // Audio Settings
@@ -423,12 +423,12 @@ public partial class SettingsWindow : Window
             Text = Strings.Settings.EnableLighting,
         };
 
-        // Video Settings - Enable Mouse Scroll Zoom Checkbox
-        _enableMouseScrollZoomCheckbox = new LabeledCheckBox(parent: _videoContainer, name: nameof(_enableMouseScrollZoomCheckbox))
+        // Video Settings - Enable Scrolling World Zoom Checkbox
+        _enableScrollingWorldZoomCheckbox = new LabeledCheckBox(parent: _videoContainer, name: nameof(_enableScrollingWorldZoomCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
-            Text = Strings.Settings.EnableMouseScrollZoom,
+            Text = Strings.Settings.EnableScrollingWorldZoom,
         };
 
         _worldScale = new LabeledSlider(parent: _videoContainer, name: nameof(_worldScale))
@@ -938,7 +938,7 @@ public partial class SettingsWindow : Window
         // Video Settings.
         _fullscreenCheckbox.IsChecked = Globals.Database.FullScreen;
         _lightingEnabledCheckbox.IsChecked = Globals.Database.EnableLighting;
-        _enableMouseScrollZoomCheckbox.IsChecked = Globals.Database.EnableMouseScrollZoom;
+        _enableScrollingWorldZoomCheckbox.IsChecked = Globals.Database.EnableScrollingWorldZoom;
 
         // _uiScale.Value = Globals.Database.UIScale;
 
@@ -1116,6 +1116,7 @@ public partial class SettingsWindow : Window
         Globals.Database.TypewriterBehavior = _typewriterCheckbox.IsChecked ? Enums.TypewriterBehavior.Word : Enums.TypewriterBehavior.Off;
 
         // Video Settings.
+        Globals.Database.EnableScrollingWorldZoom = _enableScrollingWorldZoomCheckbox.IsChecked;
         Globals.Database.WorldZoom = (float)_worldScale.Value;
 
         var resolutionItem = _resolutionList.SelectedItem;
@@ -1123,8 +1124,6 @@ public partial class SettingsWindow : Window
         var newFps = 0;
 
         Globals.Database.EnableLighting = _lightingEnabledCheckbox.IsChecked;
-
-        Globals.Database.EnableMouseScrollZoom = _enableMouseScrollZoomCheckbox.IsChecked;
 
         if (targetResolution > -1)
         {
