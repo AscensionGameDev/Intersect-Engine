@@ -173,6 +173,7 @@ public partial class SelectCharacterWindow : Window
         SizeToChildren(recursive: true);
 
         LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
+        EnsureArrowsVisibility();
     }
 
     //Methods
@@ -340,6 +341,18 @@ public partial class SelectCharacterWindow : Window
         _selectedCharacterIndex = 0;
         UpdateDisplay();
         base.Show();
+        EnsureArrowsVisibility();
+    }
+
+    private void EnsureArrowsVisibility()
+    {
+        // in case the json load is changing the visibility of the arrows when it shouldn't
+        // lets ensure the right value
+        if (CharacterSelectionPreviews != default)
+        {
+            _selectCharacterRightButton.IsHidden = CharacterSelectionPreviews.Length <= 1;
+            _selectCharacterLeftButton.IsHidden = CharacterSelectionPreviews.Length <= 1;
+        }
     }
 
     private void _buttonLogout_Clicked(Base sender, MouseButtonState arguments)
