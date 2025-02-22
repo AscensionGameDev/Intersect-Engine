@@ -173,7 +173,7 @@ public partial class SelectCharacterWindow : Window
         SizeToChildren(recursive: true);
 
         LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
-        _ensureArrowsVisibility();
+        EnsureArrowsVisibility();
     }
 
     //Methods
@@ -341,10 +341,10 @@ public partial class SelectCharacterWindow : Window
         _selectedCharacterIndex = 0;
         UpdateDisplay();
         base.Show();
-        _ensureArrowsVisibility();
+        EnsureArrowsVisibility();
     }
 
-    private void _ensureArrowsVisibility()
+    private void EnsureArrowsVisibility()
     {
         // in case the json load is changing the visibility of the arrows when it shouldn't
         // lets ensure the right value
