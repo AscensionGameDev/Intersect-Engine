@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Content;
+using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
@@ -25,7 +26,7 @@ internal sealed partial class DebugWindow : Window
 {
     private const string NoValue = "-";
 
-    private readonly GameFont? _defaultFont;
+    private readonly IFont? _defaultFont;
     private bool _wasParentDrawDebugOutlinesEnabled;
     private bool _drawDebugOutlinesEnabled;
     private bool _viewClickedNodeInDebugger;
@@ -33,7 +34,7 @@ internal sealed partial class DebugWindow : Window
 
     public DebugWindow(Base parent) : base(parent, Strings.Debug.Title, false, nameof(DebugWindow))
     {
-        _defaultFont = Current?.GetFont("sourcesansproblack", 10);
+        _defaultFont = Current?.GetFont("sourcesansproblack");
 
         IsHidden = true;
         IsResizable = false;
@@ -63,6 +64,7 @@ internal sealed partial class DebugWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 10,
             Text = Strings.Debug.SectionSystemStatistics,
             TextAlign = Pos.CenterH,
             TextColorOverride = new Color(r: 191, g: 255, b: 191),
@@ -72,6 +74,7 @@ internal sealed partial class DebugWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 10,
             Text = Strings.Debug.SectionGPUStatistics,
             TextAlign = Pos.CenterH,
             TextColorOverride = new Color(r: 191, g: 255, b: 191),
@@ -81,6 +84,7 @@ internal sealed partial class DebugWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 10,
             Text = Strings.Debug.SectionGPUAllocations,
             TextAlign = Pos.CenterH,
             TextColorOverride = new Color(r: 191, g: 255, b: 191),
@@ -129,6 +133,7 @@ internal sealed partial class DebugWindow : Window
             ColumnWidths = [null, 100],
             Dock = Pos.Fill,
             Font = _defaultFont,
+            FontSize = 10,
             MinimumSize = new Point(x: 408, y: 0),
             SizeToContents = true,
         };
@@ -303,6 +308,7 @@ internal sealed partial class DebugWindow : Window
             ColumnWidths = [180, null],
             Dock = Pos.Fill,
             Font = _defaultFont,
+            FontSize = 10,
         };
         table.SizeChanged += (sender, args) =>
         {
@@ -353,6 +359,7 @@ internal sealed partial class DebugWindow : Window
             ColumnWidths = [180, null],
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 10,
         };
         table.SizeChanged += (sender, args) =>
         {
@@ -382,7 +389,9 @@ internal sealed partial class DebugWindow : Window
         {
             Dock = Pos.Fill,
             FontSearch = _defaultFont,
+            FontSearchSize = 10,
             FontTree = _defaultFont,
+            FontTreeSize = 10,
             SearchPlaceholderText = Strings.Debug.AssetsSearchPlaceholder,
         };
 
@@ -413,6 +422,7 @@ internal sealed partial class DebugWindow : Window
         {
             IsDisabled = assetList.SelectedNodes.Length < 1,
             Font = _defaultFont,
+            FontSize = 10,
             Text = Strings.Debug.ReloadAsset,
         };
         row.SetCellContents(0, buttonReloadAsset);
@@ -521,6 +531,7 @@ internal sealed partial class DebugWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 10,
             IsChecked = _drawDebugOutlinesEnabled,
             Text = Strings.Debug.DrawDebugOutlines,
         };
@@ -545,7 +556,8 @@ internal sealed partial class DebugWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
-            IsChecked = Globals.ContentManager.ContentWatcher.Enabled,
+            FontSize = 10,
+            IsChecked = Current.ContentWatcher.Enabled,
             Text = Strings.Debug.EnableLayoutHotReloading,
             TextColorOverride = Color.Yellow,
         };
@@ -569,6 +581,7 @@ internal sealed partial class DebugWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 10,
             IsChecked = _nodeUnderCursorProvider.Filter.HasFlag(NodeFilter.IncludeText),
             Text = Strings.Debug.IncludeTextNodesInHover,
         };
@@ -596,6 +609,7 @@ internal sealed partial class DebugWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 10,
             IsChecked = _viewClickedNodeInDebugger,
             Text = Strings.Debug.ViewClickedNodeInDebugger,
             TooltipText = Strings.Debug.ViewClickedNodeInDebuggerTooltip,
@@ -666,6 +680,7 @@ internal sealed partial class DebugWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 10,
             IsHidden = true,
             Text = Strings.Debug.ShutdownServer,
         };
@@ -684,6 +699,7 @@ internal sealed partial class DebugWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 10,
             IsHidden = true,
             Text = Strings.Debug.ShutdownServerAndExit,
         };
@@ -714,6 +730,7 @@ internal sealed partial class DebugWindow : Window
             ColumnWidths = [180, null],
             Dock = Pos.Fill,
             Font = _defaultFont,
+            FontSize = 10,
         };
         table.SizeChanged += ResizeTableToChildrenOnSizeChanged;
 

@@ -19,14 +19,16 @@ namespace Intersect.Client.Core;
 public static partial class Graphics
 {
 
-    public static GameFont? ActionMsgFont;
+    public static IFont? ActionMsgFont { get; set; }
+    public static int ActionMsgFontSize { get; set; }
 
     public static object AnimationLock = new();
 
     //Darkness Stuff
-    public static float BrightnessLevel;
+    public static float BrightnessLevel { get; set; }
 
-    public static GameFont? ChatBubbleFont;
+    public static IFont? ChatBubbleFont { get; set; }
+    public static int ChatBubbleFontSize { get; set; }
 
     private static FloatRect _currentView;
 
@@ -51,10 +53,12 @@ public static partial class Graphics
 
     public static int EntitiesDrawn;
 
-    public static GameFont? EntityNameFont;
+    public static IFont? EntityNameFont { get; set; }
+    public static int EntityNameFontSize { get; set; }
 
     //Screen Values
-    public static GameFont? GameFont;
+    public static IFont? GameFont { get; set; }
+    public static int GameFontSize { get; set; }
 
     public static object GfxLock = new();
 
@@ -105,7 +109,8 @@ public static partial class Graphics
 
     private static float sPlayerLightSize;
 
-    public static GameFont? UIFont;
+    public static IFont? UIFont { get; set; }
+    public static int UIFontSize { get; set; }
 
     public static float MinimumWorldScale => Options.Instance?.Map?.MinimumWorldScale ?? 1;
 
@@ -117,27 +122,26 @@ public static partial class Graphics
         Renderer?.Init();
         sContentManager = Globals.ContentManager;
         sContentManager.LoadAll();
-        GameFont = FindFont(ClientConfiguration.Instance.GameFont);
-        UIFont = FindFont(ClientConfiguration.Instance.UIFont);
-        EntityNameFont = FindFont(ClientConfiguration.Instance.EntityNameFont);
-        ChatBubbleFont = FindFont(ClientConfiguration.Instance.ChatBubbleFont);
-        ActionMsgFont = FindFont(ClientConfiguration.Instance.ActionMsgFont);
+        (GameFont, GameFontSize) = FindFont(ClientConfiguration.Instance.GameFont);
+        (UIFont, UIFontSize) = FindFont(ClientConfiguration.Instance.UIFont);
+        (EntityNameFont, EntityNameFontSize) = FindFont(ClientConfiguration.Instance.EntityNameFont);
+        (ChatBubbleFont, ChatBubbleFontSize) = FindFont(ClientConfiguration.Instance.ChatBubbleFont);
+        (ActionMsgFont, ActionMsgFontSize) = FindFont(ClientConfiguration.Instance.ActionMsgFont);
     }
 
-    public static GameFont FindFont(string font)
+    private static (IFont?, int) FindFont(string font)
     {
         var size = 8;
 
-        if (font.IndexOf(',') < 0)
+        // ReSharper disable once InvertIf
+        if (font.IndexOf(',') > 0)
         {
-            return sContentManager.GetFont(font, size);
+            var parts = font.Split(',');
+            font = parts[0];
+            _ = int.TryParse(parts[1], out size);
         }
 
-        var parts = font.Split(',');
-        font = parts[0];
-        _ = int.TryParse(parts[1], out size);
-
-        return sContentManager.GetFont(font, size);
+        return (sContentManager.GetFont(font), size);
     }
 
     public static void InitInGame()

@@ -29,7 +29,7 @@ public partial class TableRow : Base, IColorableText, IFitHeightToContents
 
     private int _maximumColumns;
 
-    private GameFont? _font;
+    private IFont? _font;
 
     private Color? _textColor;
 
@@ -127,7 +127,7 @@ public partial class TableRow : Base, IColorableText, IFitHeightToContents
         set => mEvenRow = value;
     }
 
-    public GameFont? Font
+    public IFont? Font
     {
         get => _font;
         set
@@ -143,6 +143,27 @@ public partial class TableRow : Base, IColorableText, IFitHeightToContents
             {
                 column.Font = _font;
             }
+        }
+    }
+
+    private int _fontSize = 10;
+
+    public int FontSize
+    {
+        get => _fontSize;
+        set => SetAndDoIfChanged(ref _fontSize, value, SetFontSize);
+    }
+
+    private static void SetFontSize(Base @this, int value)
+    {
+        if (@this is not TableRow row)
+        {
+            return;
+        }
+
+        foreach (var cell in row._columns)
+        {
+            cell.FontSize = value;
         }
     }
 
@@ -419,6 +440,7 @@ public partial class TableRow : Base, IColorableText, IFitHeightToContents
             {
                 AutoSizeToContents = false,
                 Font = Font,
+                FontSize = FontSize,
                 MouseInputEnabled = false,
                 Padding = default,
                 RestrictToParent = true,

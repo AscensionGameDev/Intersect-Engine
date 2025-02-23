@@ -24,20 +24,27 @@ public partial class FPSPanel : Panel
         // TODO: Remove this when showing a game version is added
         IsVisibleInTree = ApplicationContext.CurrentContext.IsDeveloper;
 
-        var font = GameContentManager.Current.GetFont("sourcesansproblack", 10);
+        var font = GameContentManager.Current.GetFont("sourcesansproblack");
 
         _label = new Label(this, name: nameof(_label))
         {
             AutoSizeToContents = false,
             Dock = Pos.Fill,
             Font = font,
+            FontSize = 10,
             Padding = new Padding(8, 4),
             Text = ApplicationContext.CurrentContext.VersionName,
             TextAlign = Pos.Center,
             IsVisibleInParent = Globals.Database?.ShowFPSCounter ?? false,
         };
 
-        MinimumSize = Graphics.Renderer.MeasureText(Strings.General.FpsLabelFormat.ToString(10_000), font) + new Pointf(16, 8);
+        MinimumSize = Graphics.Renderer.MeasureText(
+                          Strings.General.FpsLabelFormat.ToString(10_000),
+                          font,
+                          size: 10,
+                          fontScale: 1
+                      ) +
+                      new Pointf(16, 8);
 
         DelegateDataProvider<int> fpsProvider = new(() => Graphics.Renderer.FPS)
         {

@@ -26,7 +26,8 @@ public partial class TabButton : Button
     public TabButton(Base parent, string? name = null) : base(parent: parent, name: name)
     {
         DragAndDrop_SetPackage(true, "TabButtonMove");
-        Font = GameContentManager.Current?.GetFont("sourcesansproblack", 10);
+        Font = GameContentManager.Current?.GetFont("sourcesansproblack");
+        FontSize = 10;
         KeyboardInputEnabled = true;
 
         Padding = new Padding(4, 2);

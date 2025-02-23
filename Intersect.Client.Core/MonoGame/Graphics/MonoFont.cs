@@ -1,41 +1,66 @@
-﻿using Intersect.Client.Framework.File_Management;
+﻿using System.Diagnostics;
+using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
-using Intersect.Core;
-using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Client.MonoGame.Graphics;
 
-public partial class MonoFont : GameFont
+public partial class MonoFont : Font<SpriteFont>, IFont
 {
-    private readonly SpriteFont mFont;
+    private readonly SortedDictionary<int, FontReference> _fontsBySize = [];
 
-    public MonoFont(string fontName, string fileName, int fontSize, ContentManager contentManager) : base(
-        fontName,
-        fontSize
+    public MonoFont(string fontName, IDictionary<int, FileInfo> fontSourcesBySize, ContentManager contentManager) : base(
+        fontName: fontName,
+        supportedSizes: fontSourcesBySize.Keys
     )
     {
-        try
+        foreach (var (size, fileInfo) in fontSourcesBySize)
         {
-            var extensionlessFileName = GameContentManager.RemoveExtension(fileName);
-            var resolvedFileName = Path.Combine(Environment.CurrentDirectory, extensionlessFileName);
-            mFont = contentManager.Load<SpriteFont>(resolvedFileName);
-        }
-        catch (Exception ex)
-        {
-            ApplicationContext.Context.Value?.Logger.LogTrace(
-                ex,
-                "Error occurred loading {FontName}, {FontSize} from {FileName}",
+            _fontsBySize[size] = new FontReference(
                 fontName,
-                fontSize,
-                fileName
+                size,
+                () =>
+                {
+                    var pathWithoutExtension = GameContentManager.RemoveExtension(fileInfo.FullName);
+                    return contentManager.Load<SpriteFont>(pathWithoutExtension);
+                }
             );
         }
     }
 
-    public override object GetFont()
+    private sealed class FontReference(string fontName, int size, Func<SpriteFont> platformObjectFactory)
     {
-        return mFont;
+        private SpriteFont? _instance;
+
+        public string FontName { get; } = fontName;
+        public readonly Func<SpriteFont> PlatformObjectFactory = platformObjectFactory;
+        public int Size { get; } = size;
+
+        public SpriteFont Instance
+        {
+            get
+            {
+                try
+                {
+                    return _instance ??= PlatformObjectFactory();
+                }
+                catch (Exception exception)
+                {
+                    throw new ContentLoadException($"Failed to load {Size}pt source for '{FontName}'", exception);
+                }
+            }
+        }
+    }
+
+    protected override FontSizeRenderer<SpriteFont> CreateRendererFor(int size)
+    {
+        if (!_fontsBySize.TryGetValue(size, out var reference))
+        {
+            throw new UnreachableException($"Missing reference for size {size} of '{Name}'");
+        }
+
+        var instance = reference.Instance;
+        return new SpriteFontRenderer(instance);
     }
 }

@@ -73,8 +73,6 @@ public partial class WindowControl : ResizableControl
     {
         ClipContents = false;
 
-        var titleLabelFont = GameContentManager.Current?.GetFont("sourcesansproblack", 12);
-
         _titlebar = new Titlebar(this, CloseButtonOnClicked)
         {
             Title = title,

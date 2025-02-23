@@ -39,7 +39,7 @@ public abstract partial class GameContentManager : IContentManager
 
     protected readonly Dictionary<string, IAsset> mFogDict = [];
 
-    protected readonly List<GameFont> mFontDict = [];
+    protected readonly Dictionary<string, IFont> mFontDict = [];
 
     protected readonly Dictionary<string, IAsset> mGuiDict = [];
 
@@ -67,6 +67,7 @@ public abstract partial class GameContentManager : IContentManager
 
     protected readonly Dictionary<string, IAsset> mTilesetDict = [];
     private static GameContentManager? _current;
+    private static readonly char[] DirectorySeparators = [Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar];
 
     public Dictionary<ContentType, ICollection<IAsset>> Content => Textures;
 
@@ -165,15 +166,17 @@ public abstract partial class GameContentManager : IContentManager
 
     public abstract void LoadMusic();
 
-    public static string RemoveExtension(string fileName)
+    public static string RemoveExtension(string fileNameOrPath)
     {
-        var fileExtPos = fileName.LastIndexOf(".");
-        if (fileExtPos >= 0)
+        var directorySeparator = fileNameOrPath.LastIndexOfAny(DirectorySeparators);
+        var extensionOffset = fileNameOrPath.LastIndexOf('.');
+
+        if (directorySeparator > extensionOffset || extensionOffset < 0)
         {
-            fileName = fileName.Substring(0, fileExtPos);
+            return fileNameOrPath;
         }
 
-        return fileName;
+        return fileNameOrPath[..extensionOffset];
     }
 
     public string[] GetTextureNames(TextureType type)
@@ -325,16 +328,21 @@ public abstract partial class GameContentManager : IContentManager
         return mShaderDict?.GetValueOrDefault(name.ToLower());
     }
 
-    public virtual GameFont? GetFont(string? name, int size)
+    public virtual IFont? GetFont(string? name)
     {
         if (name == null)
         {
             return null;
         }
 
-        return mFontDict.Where(t => t != null)
-            .Where(t => t.GetName().ToLower().Trim() == name.ToLower().Trim())
-            .FirstOrDefault(t => t.GetSize() == size);
+        var lookupName = name.Trim().ToLowerInvariant();
+        if (mFontDict.TryGetValue(lookupName, out var font))
+        {
+            return font;
+        }
+
+        ApplicationContext.CurrentContext.Logger.LogWarning("Missing font '{FontName}'", name);
+        return null;
     }
 
     public virtual GameAudioSource? GetMusic(string name)

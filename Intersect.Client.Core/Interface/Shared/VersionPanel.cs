@@ -19,11 +19,12 @@ public partial class VersionPanel : Panel
         // TODO: Remove this when showing a game version is added
         IsVisibleInTree = ApplicationContext.CurrentContext.IsDeveloper;
 
-        var font = GameContentManager.Current.GetFont("sourcesansproblack", 10);
+        var font = GameContentManager.Current.GetFont("sourcesansproblack");
 
         _engineVersionLabel = new VersionLabel(this, name: nameof(_engineVersionLabel))
         {
             Font = font,
+            FontSize = 10,
             Padding = new Padding(8, 4),
             Text = ApplicationContext.CurrentContext.VersionName,
             IsVisibleInTree = ApplicationContext.CurrentContext.IsDeveloper,

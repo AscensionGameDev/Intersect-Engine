@@ -18,7 +18,7 @@ public enum ContentType
     [AssetType(typeof(IGameTexture))]
     Fog,
 
-    [AssetType(typeof(GameFont))]
+    [AssetType(typeof(IFont))]
     Font,
 
     [AssetType(typeof(IGameTexture))]

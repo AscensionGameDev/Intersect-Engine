@@ -6,7 +6,7 @@ public interface ILabel : IAutoSizeToContents, IColorableText, ITextContainer
 {
     Pos TextAlign { get; set; }
 
-    GameFont? Font { get; set; }
+    IFont? Font { get; set; }
 
     string? FontName { get; set; }
 

@@ -16,7 +16,7 @@ public partial class InputBox : Window
     private InvalidOperationException CreateInvalidInputTypeException() =>
         new($"This {nameof(InputBox)} is being used for {InputType} input.");
 
-    private readonly GameFont? _defaultFont;
+    private readonly IFont? _defaultFont;
 
     private readonly Panel _inputPanel;
     private readonly Panel _buttonPanel;
@@ -70,6 +70,7 @@ public partial class InputBox : Window
         {
             Dock = Pos.Fill,
             Font = _defaultFont,
+            FontSize = 12,
         };
 
         var buttonsPanel = new Panel(this, name: nameof(_buttonPanel))
@@ -83,6 +84,7 @@ public partial class InputBox : Window
             Alignment = [Alignments.Center],
             AutoSizeToContents = true,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 24),
             Padding = new Padding(8, 4),
             Text = Strings.InputBox.Okay,
@@ -114,6 +116,7 @@ public partial class InputBox : Window
         {
             Dock = Pos.Fill,
             Font = _defaultFont,
+            FontSize = 12,
         };
 
         var buttonsPanel = new Panel(this, name: nameof(_buttonPanel))
@@ -127,6 +130,7 @@ public partial class InputBox : Window
             Alignment = [Alignments.Left],
             AutoSizeToContents = true,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 24),
             Padding = new Padding(8, 4),
             Text = Strings.InputBox.Yes,
@@ -138,6 +142,7 @@ public partial class InputBox : Window
             Alignment = [Alignments.Right],
             AutoSizeToContents = true,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 24),
             Padding = new Padding(8, 4),
             Text = Strings.InputBox.No,
@@ -164,6 +169,7 @@ public partial class InputBox : Window
         {
             Dock = Pos.Fill,
             Font = _defaultFont,
+            FontSize = 12,
         };
 
         var buttonsPanel = new Panel(this, name: nameof(_buttonPanel))
@@ -177,6 +183,7 @@ public partial class InputBox : Window
             Alignment = [Alignments.Left],
             AutoSizeToContents = true,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 24),
             Padding = new Padding(8, 4),
             Text = Strings.InputBox.Yes,
@@ -188,6 +195,7 @@ public partial class InputBox : Window
             Alignment = [Alignments.Center],
             AutoSizeToContents = true,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 24),
             Padding = new Padding(8, 4),
             Text = Strings.InputBox.No,
@@ -199,6 +207,7 @@ public partial class InputBox : Window
             Alignment = [Alignments.Right],
             AutoSizeToContents = true,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 24),
             Padding = new Padding(8, 4),
             Text = Strings.InputBox.Cancel,
@@ -238,6 +247,7 @@ public partial class InputBox : Window
         {
             Dock = Pos.Fill,
             Font = _defaultFont,
+            FontSize = 12,
         };
 
         var numericInput = new TextBoxNumeric(inputPanel, name: nameof(_numericInputTextbox))
@@ -245,6 +255,7 @@ public partial class InputBox : Window
             AutoSizeToContents = false,
             Dock = Pos.Bottom,
             Font = _defaultFont,
+            FontSize = 12,
             Margin = new Margin(0, 8, 0, 0),
             TextAlign = Pos.Left,
             WrappingBehavior = WrappingBehavior.NoWrap,
@@ -264,6 +275,7 @@ public partial class InputBox : Window
             Alignment = [Alignments.Left],
             AutoSizeToContents = true,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 24),
             Padding = new Padding(8, 4),
             Text = Strings.InputBox.Okay,
@@ -275,6 +287,7 @@ public partial class InputBox : Window
             Alignment = [Alignments.Right],
             AutoSizeToContents = true,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 24),
             Padding = new Padding(8, 4),
             Text = Strings.InputBox.Cancel,
@@ -306,6 +319,7 @@ public partial class InputBox : Window
         {
             Dock = Pos.Fill,
             Font = _defaultFont,
+            FontSize = 12,
         };
 
         var numericSliderInput = new LabeledSlider(inputPanel, name: nameof(_numericInputSlider))
@@ -313,6 +327,7 @@ public partial class InputBox : Window
             AutoSizeToContents = false,
             Dock = Pos.Bottom,
             Font = _defaultFont,
+            FontSize = 12,
             Margin = new Margin(0, 8, 0, 0),
             Rounding = 0,
         };
@@ -329,6 +344,7 @@ public partial class InputBox : Window
             Alignment = [Alignments.Left],
             AutoSizeToContents = true,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 24),
             Padding = new Padding(8, 4),
             Text = Strings.InputBox.Okay,
@@ -340,6 +356,7 @@ public partial class InputBox : Window
             Alignment = [Alignments.Right],
             AutoSizeToContents = true,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 24),
             Padding = new Padding(8, 4),
             Text = Strings.InputBox.Cancel,
@@ -369,6 +386,7 @@ public partial class InputBox : Window
         {
             Dock = Pos.Fill,
             Font = _defaultFont,
+            FontSize = 12,
         };
 
         var stringInput = new TextBox(inputPanel, name: nameof(_stringInput))
@@ -376,6 +394,7 @@ public partial class InputBox : Window
             AutoSizeToContents = false,
             Dock = Pos.Bottom,
             Font = _defaultFont,
+            FontSize = 12,
             Margin = new Margin(0, 8, 0, 0),
             TextAlign = Pos.Left,
             WrappingBehavior = WrappingBehavior.NoWrap,
@@ -395,6 +414,7 @@ public partial class InputBox : Window
             Alignment = [Alignments.Left],
             AutoSizeToContents = true,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 24),
             Padding = new Padding(8, 4),
             Text = Strings.InputBox.Okay,
@@ -406,6 +426,7 @@ public partial class InputBox : Window
             Alignment = [Alignments.Right],
             AutoSizeToContents = true,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 24),
             Padding = new Padding(8, 4),
             Text = Strings.InputBox.Cancel,
@@ -485,7 +506,7 @@ public partial class InputBox : Window
         int minimumQuantity = 0
     ) : base(parent: Interface.CurrentInterface.Root, title: title, modal: true, name: name)
     {
-        _defaultFont = GameContentManager.Current.GetFont(name: TitleLabel.FontName, 12);
+        _defaultFont = GameContentManager.Current.GetFont(name: TitleLabel.FontName);
         UserData = userData;
         InputType = inputType;
 

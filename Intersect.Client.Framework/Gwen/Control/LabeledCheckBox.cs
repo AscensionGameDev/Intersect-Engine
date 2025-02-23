@@ -61,7 +61,7 @@ public partial class LabeledCheckBox : Base, IAutoSizeToContents, ICheckbox, ITe
         set => _checkbox.IsChecked = value;
     }
 
-    public GameFont? Font
+    public IFont? Font
     {
         get => _label.Font;
         set => _label.Font = value;
@@ -190,7 +190,7 @@ public partial class LabeledCheckBox : Base, IAutoSizeToContents, ICheckbox, ITe
         _checkbox.Margin = new Margin(0, 2, dist, 2);
     }
 
-    public void SetFont(GameFont font)
+    public void SetFont(IFont font)
     {
         _label.Font = font;
     }

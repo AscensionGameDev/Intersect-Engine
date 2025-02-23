@@ -241,12 +241,12 @@ public partial class ComboBox : Button
 
     private void UpdateItemMaximumSize(string item)
     {
-        var itemSize = Skin.Renderer.MeasureText(Font, item);
+        var itemSize = Skin.Renderer.MeasureText(Font, FontSize, item);
         _itemMaximumSize.X = Math.Max(_itemMaximumSize.X, itemSize.X);
         _itemMaximumSize.Y = Math.Max(_itemMaximumSize.Y, itemSize.Y);
     }
 
-    protected override void OnFontChanged(Base sender, GameFont? oldFont, GameFont? newFont)
+    protected override void OnFontChanged(Base sender, IFont? oldFont, IFont? newFont)
     {
         _itemMaximumSize = default;
         foreach (var item in _menu.MenuItems)

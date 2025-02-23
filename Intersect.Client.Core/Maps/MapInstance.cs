@@ -957,10 +957,9 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         {
             return;
         }
+
         // Get where our mouse is located and convert it to a tile based location.
-        var mousePos = Graphics.ConvertToWorldPoint(
-                Globals.InputManager.GetMousePosition()
-        );
+        var mousePos = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
         var x = (int)(mousePos.X - (int)X) / _tileWidth;
         var y = (int)(mousePos.Y - (int)Y) / _tileHeight;
         var mapId = Id;
@@ -983,12 +982,21 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                     var rarity = itemBase.Rarity;
                     if (tileItems[index].Quantity > 1)
                     {
-                        name = Strings.General.MapItemStackable.ToString(name, Strings.FormatQuantityAbbreviated(quantity));
+                        name = Strings.General.MapItemStackable.ToString(
+                            name,
+                            Strings.FormatQuantityAbbreviated(quantity)
+                        );
                     }
+
                     var color = CustomColors.Items.MapRarities.ContainsKey(rarity)
                         ? CustomColors.Items.MapRarities[rarity]
                         : new LabelColor(Color.White, Color.Black, new Color(100, 0, 0, 0));
-                    var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
+                    var textSize = Graphics.Renderer.MeasureText(
+                        name,
+                        Graphics.EntityNameFont,
+                        Graphics.EntityNameFontSize,
+                        1
+                    );
                     var offsetY = (baseOffset * textSize.Y);
                     var destX = X + (int)Math.Ceiling(((x * _tileWidth) + (_tileHalfWidth)) - (textSize.X / 2));
                     var destY = Y + (int)Math.Ceiling(((y * _tileHeight) - ((_tileHeight / 3) + textSize.Y))) - offsetY;
@@ -997,13 +1005,26 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                     if (color.Background != Color.Transparent)
                     {
                         Graphics.DrawGameTexture(
-                            Graphics.Renderer.WhitePixel, new FloatRect(0, 0, 1, 1),
-                            new FloatRect(destX - 4, destY, textSize.X + 8, textSize.Y), color.Background
+                            Graphics.Renderer.WhitePixel,
+                            new FloatRect(0, 0, 1, 1),
+                            new FloatRect(destX - 4, destY, textSize.X + 8, textSize.Y),
+                            color.Background
                         );
                     }
 
                     // Finaly, draw the actual name!
-                    Graphics.Renderer.DrawString(name, Graphics.EntityNameFont, destX, destY, 1, color.Name, true, null, color.Outline);
+                    Graphics.Renderer.DrawString(
+                        name,
+                        Graphics.EntityNameFont,
+                        Graphics.EntityNameFontSize,
+                        destX,
+                        destY,
+                        1,
+                        color.Name,
+                        true,
+                        null,
+                        color.Outline
+                    );
 
                     baseOffset++;
                 }
@@ -1544,11 +1565,18 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             var x = (X + actionMessage.X * _tileWidth + actionMessage.XOffset);
             var y = Y + actionMessage.Y * _tileHeight - _tileHeight * 2 *
                 (1000 - (int)(actionMessage.TransmissionTimer - Timing.Global.MillisecondsUtc)) / 1000;
-            var textWidth = Graphics.Renderer.MeasureText(actionMessage.Text, Graphics.ActionMsgFont, 1).X;
+            var textWidth = Graphics.Renderer.MeasureText(
+                    actionMessage.Text,
+                    Graphics.ActionMsgFont,
+                    Graphics.ActionMsgFontSize,
+                    1
+                )
+                .X;
 
             Graphics.Renderer.DrawString(
                 actionMessage.Text,
                 Graphics.ActionMsgFont,
+                Graphics.ActionMsgFontSize,
                 x - textWidth / 2f,
                 y,
                 1,

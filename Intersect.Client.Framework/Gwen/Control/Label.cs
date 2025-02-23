@@ -57,6 +57,7 @@ public partial class Label : Base, ILabel
         _textDisabled = disableText;
         _textElement = new Text(this)
         {
+            FontSize = 12,
             IsHidden = _textDisabled,
         };
 
@@ -247,7 +248,7 @@ public partial class Label : Base, ILabel
     /// <summary>
     ///     Font.
     /// </summary>
-    public virtual GameFont? Font
+    public virtual IFont? Font
     {
         get => _textElement.Font;
         set
@@ -261,7 +262,7 @@ public partial class Label : Base, ILabel
             if (value is not null)
             {
                 _textElement.Font = value;
-                _fontInfo = $"{value.GetName()},{value.GetSize()}";
+                _fontInfo = $"{value.Name},{FontSize}";
             }
             else
             {
@@ -277,7 +278,7 @@ public partial class Label : Base, ILabel
 
             Invalidate();
 
-            FontChanged?.Invoke(this, new ValueChangedEventArgs<GameFont?>
+            FontChanged?.Invoke(this, new ValueChangedEventArgs<IFont?>
             {
                 OldValue = oldValue,
                 Value = value,
@@ -285,9 +286,9 @@ public partial class Label : Base, ILabel
         }
     }
 
-    public event GwenEventHandler<ValueChangedEventArgs<GameFont?>>? FontChanged;
+    public event GwenEventHandler<ValueChangedEventArgs<IFont?>>? FontChanged;
 
-    protected virtual void OnFontChanged(Base sender, GameFont? oldFont, GameFont? newFont)
+    protected virtual void OnFontChanged(Base sender, IFont? oldFont, IFont? newFont)
     {
     }
 
@@ -296,8 +297,8 @@ public partial class Label : Base, ILabel
     /// </summary>
     public string? FontName
     {
-        get => _textElement.Font?.GetName();
-        set => Font = GameContentManager.Current?.GetFont(value, FontSize);
+        get => _textElement.Font?.Name;
+        set => Font = GameContentManager.Current?.GetFont(value);
     }
 
     /// <summary>
@@ -305,8 +306,8 @@ public partial class Label : Base, ILabel
     /// </summary>
     public int FontSize
     {
-        get => _textElement?.Font?.GetSize() ?? 12;
-        set => Font = GameContentManager.Current?.GetFont(FontName, value);
+        get => _textElement.FontSize;
+        set => _textElement.FontSize = value;
     }
 
     /// <summary>
@@ -476,7 +477,8 @@ public partial class Label : Base, ILabel
                     _fontInfo = stringFont;
                     try
                     {
-                        Font = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
+                        FontSize = int.Parse(fontArr[1]);
+                        Font = GameContentManager.Current.GetFont(fontArr[0]);
                     }
                     catch
                     {

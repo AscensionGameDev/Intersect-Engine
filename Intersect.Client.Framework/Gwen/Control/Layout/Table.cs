@@ -28,7 +28,7 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
 
     private ITableDataProvider? _dataProvider;
 
-    private GameFont? _font;
+    private IFont? _font;
     private Color? _textColor;
     private Color? _textColorOverride;
     private bool _fitRowHeightToContents = true;
@@ -138,17 +138,33 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         });
     }
 
-    public GameFont? Font
+    public IFont? Font
     {
         get => _font;
         set => SetAndDoIfChanged(ref _font, value, SetFont);
     }
 
-    private static void SetFont(Base @this, GameFont? value)
+    private static void SetFont(Base @this, IFont? value)
     {
         foreach (var row in @this.Children.OfType<TableRow>())
         {
             row.Font = value;
+        }
+    }
+
+    private int _fontSize = 10;
+
+    public int FontSize
+    {
+        get => _fontSize;
+        set => SetAndDoIfChanged(ref _fontSize, value, SetFontSize);
+    }
+
+    private static void SetFontSize(Base @this, int value)
+    {
+        foreach (var row in @this.Children.OfType<TableRow>())
+        {
+            row.FontSize = value;
         }
     }
 
@@ -262,7 +278,8 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
                 var parts = fontInfo.Split(',');
                 var name = parts[0];
                 var size = int.Parse(parts[1], CultureInfo.InvariantCulture);
-                Font = GameContentManager.Current?.GetFont(name, size);
+                FontSize = size;
+                Font = GameContentManager.Current?.GetFont(name);
             }
         }
 

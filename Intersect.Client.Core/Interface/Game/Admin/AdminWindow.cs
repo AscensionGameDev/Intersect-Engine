@@ -28,7 +28,7 @@ public partial class AdminWindow : Window
     private readonly Panel _actionPanel;
     private readonly Table _actionTable;
     private readonly Button _banButton;
-    private readonly GameFont? _defaultFont;
+    private readonly IFont? _defaultFont;
     private readonly TexturePicker _faceTexturePicker;
     private readonly Button _kickPlayerButton;
     private readonly Button _killPlayerButton;
@@ -60,7 +60,7 @@ public partial class AdminWindow : Window
         nameof(AdminWindow)
     )
     {
-        _defaultFont = Current.GetFont(TitleLabel.FontName, 12);
+        _defaultFont = Current.GetFont(TitleLabel.FontName);
 
         IsResizable = false;
         TitleLabel.FontSize = 14;
@@ -80,6 +80,7 @@ public partial class AdminWindow : Window
         {
             Dock = Pos.Left,
             Font = _defaultFont,
+            FontSize = 12,
             Margin = new Margin(0, 0, 4, 0),
             Text = Strings.AdminWindow.Name,
             TextAlign = Pos.Right,
@@ -87,6 +88,7 @@ public partial class AdminWindow : Window
         _nameInput = new TextBox(_namePanel, nameof(_nameInput))
         {
             Font = _defaultFont,
+            FontSize = 12,
             Dock = Pos.Fill,
             PlaceholderText = Strings.AdminWindow.NamePlaceholder,
         };
@@ -105,6 +107,7 @@ public partial class AdminWindow : Window
         {
             Dock = Pos.Right,
             Font = _defaultFont,
+            FontSize = 12,
             Margin = new Margin(4, 0, 0, 0),
             Padding = new Padding(8, 4),
             Text = Strings.AdminWindow.SetPower,
@@ -116,6 +119,7 @@ public partial class AdminWindow : Window
             AutoSizeToContents = false,
             Dock = Pos.Fill,
             Font = _defaultFont,
+            FontSize = 12,
             TextPadding = new Padding(8, 4, 0, 4),
             Label = Strings.AdminWindow.Access,
         };
@@ -139,12 +143,14 @@ public partial class AdminWindow : Window
             Dock = Pos.Fill,
             FitRowHeightToContents = true,
             Font = _defaultFont,
+            FontSize = 12,
             SizeToContents = true,
         };
 
         _warpMeToPlayerButton = new Button(_actionPanel, nameof(_warpMeToPlayerButton))
         {
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 0),
             Padding = new Padding(8, 4),
             Text = Strings.AdminWindow.WarpMeToPlayer,
@@ -154,6 +160,7 @@ public partial class AdminWindow : Window
         _kickPlayerButton = new Button(_actionPanel, nameof(_kickPlayerButton))
         {
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 0),
             Padding = new Padding(8, 4),
             Text = Strings.AdminWindow.KickPlayer,
@@ -163,6 +170,7 @@ public partial class AdminWindow : Window
         _killPlayerButton = new Button(_actionPanel, nameof(_killPlayerButton))
         {
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 0),
             Padding = new Padding(8, 4),
             Text = Strings.AdminWindow.KillPlayer,
@@ -172,6 +180,7 @@ public partial class AdminWindow : Window
         _warpPlayerToMeButton = new Button(_actionPanel, nameof(_warpPlayerToMeButton))
         {
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 0),
             Padding = new Padding(8, 4),
             Text = Strings.AdminWindow.WarpPlayerToMe,
@@ -181,6 +190,7 @@ public partial class AdminWindow : Window
         _muteButton = new Button(_actionPanel, nameof(_muteButton))
         {
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 0),
             Padding = new Padding(8, 4),
             Text = Strings.AdminWindow.Mute,
@@ -190,6 +200,7 @@ public partial class AdminWindow : Window
         _unmuteButton = new Button(_actionPanel, nameof(_unmuteButton))
         {
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 0),
             Padding = new Padding(8, 4),
             Text = Strings.AdminWindow.Unmute,
@@ -199,6 +210,7 @@ public partial class AdminWindow : Window
         _leaveInstanceButton = new Button(_actionPanel, nameof(_leaveInstanceButton))
         {
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 0),
             Padding = new Padding(8, 4),
             Text = Strings.AdminWindow.LeaveInstance,
@@ -208,6 +220,7 @@ public partial class AdminWindow : Window
         _banButton = new Button(_actionPanel, nameof(_banButton))
         {
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 0),
             Padding = new Padding(8, 4),
             Text = Strings.AdminWindow.Ban,
@@ -217,6 +230,7 @@ public partial class AdminWindow : Window
         _unbanButton = new Button(_actionPanel, nameof(_unbanButton))
         {
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 0),
             Padding = new Padding(8, 4),
             Text = Strings.AdminWindow.Unban,
@@ -243,6 +257,7 @@ public partial class AdminWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             ButtonText = Strings.AdminWindow.SetSprite,
             LabelText = Strings.AdminWindow.Sprite,
             TextureType = TextureType.Entity,
@@ -253,6 +268,7 @@ public partial class AdminWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             ButtonText = Strings.AdminWindow.SetFace,
             LabelText = Strings.AdminWindow.Face,
             TextureType = TextureType.Face,
@@ -277,6 +293,7 @@ public partial class AdminWindow : Window
         {
             Dock = Pos.Left,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.AdminWindow.MapList,
         };
 
@@ -284,9 +301,11 @@ public partial class AdminWindow : Window
         {
             Dock = Pos.Right,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.AdminWindow.SortMapList,
             TooltipText = Strings.AdminWindow.SortMapListTooltip,
             TooltipFont = _defaultFont,
+            TooltipFontSize = 12,
         };
 
         _mapSortCheckbox.CheckChanged += MapSortCheckboxOnCheckChanged;
@@ -506,7 +525,9 @@ public partial class AdminWindow : Window
 
         _mapTree = new TreeControl(_mapListPanel, nameof(_mapTree))
         {
-            Dock = Pos.Fill, Font = _defaultFont,
+            Dock = Pos.Fill,
+            Font = _defaultFont,
+            FontSize = 12,
         };
 
         _mapTree.SelectionChanged += MapTreeSelectionChanged;

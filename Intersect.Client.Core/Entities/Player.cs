@@ -2685,7 +2685,9 @@ public partial class Player : Entity, IPlayer
         }
 
         var guildLabel = Guild?.Trim();
-        if (!ShouldDrawName || string.IsNullOrWhiteSpace(guildLabel) || !Options.Instance.Guild.ShowGuildNameTagsOverMembers)
+        if (!ShouldDrawName ||
+            string.IsNullOrWhiteSpace(guildLabel) ||
+            !Options.Instance.Guild.ShowGuildNameTagsOverMembers)
         {
             return;
         }
@@ -2701,7 +2703,12 @@ public partial class Player : Entity, IPlayer
             return;
         }
 
-        var textSize = Graphics.Renderer.MeasureText(guildLabel, Graphics.EntityNameFont, 1);
+        var textSize = Graphics.Renderer.MeasureText(
+            guildLabel,
+            Graphics.EntityNameFont,
+            Graphics.EntityNameFontSize,
+            1
+        );
 
         var x = (int)Math.Ceiling(Origin.X);
         var y = GetLabelLocation(LabelType.Guild);
@@ -2721,6 +2728,7 @@ public partial class Player : Entity, IPlayer
         Graphics.Renderer.DrawString(
             guildLabel,
             Graphics.EntityNameFont,
+            Graphics.EntityNameFontSize,
             x - (int)Math.Ceiling(textSize.X / 2f),
             (int)y,
             1,

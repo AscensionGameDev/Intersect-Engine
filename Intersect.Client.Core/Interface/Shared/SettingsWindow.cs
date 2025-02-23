@@ -24,7 +24,7 @@ using BottomBarItems = (Panel BottomBar, Button RestoreDefaultControlsButton, Bu
 
 public partial class SettingsWindow : Window
 {
-    private readonly GameFont? _defaultFont;
+    private readonly IFont? _defaultFont;
 
     // Bottom Bar
     private readonly Button _restoreDefaultsButton;
@@ -123,7 +123,7 @@ public partial class SettingsWindow : Window
         TitleLabel.FontSize = 14;
         TitleLabel.TextColorOverride = Color.White;
 
-        _defaultFont = Current.GetFont(name: TitleLabel.FontName, 12);
+        _defaultFont = Current.GetFont(name: TitleLabel.FontName);
 
 #region Game
 
@@ -133,6 +133,7 @@ public partial class SettingsWindow : Window
             Dock = Pos.Fill,
             DockChildSpacing = new Padding(0, 4, 0, 0),
             Font = _defaultFont,
+            FontSize = 12,
             TabStripPosition = Pos.Left,
         };
         _gameContainer.TabChanged += GameContainerOnTabChanged;
@@ -180,6 +181,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.AutoCloseWindows,
         };
 
@@ -188,6 +190,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.AutoToggleChatLog,
         };
 
@@ -196,6 +199,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.ShowExperienceAsPercentage,
         };
 
@@ -203,6 +207,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.ShowHealthAsPercentage,
         };
 
@@ -210,6 +215,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.ShowManaAsPercentage,
         };
 
@@ -218,6 +224,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.SimplifiedEscapeMenu,
         };
 
@@ -226,6 +233,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.TypewriterText,
         };
 
@@ -234,6 +242,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.ShowFriendOverheadInformation,
         };
 
@@ -242,6 +251,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.ShowGuildOverheadInformation,
         };
 
@@ -250,6 +260,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.ShowMyOverheadInformation,
         };
 
@@ -258,6 +269,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.ShowNpcOverheadInformation,
         };
 
@@ -266,6 +278,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.ShowPartyOverheadInformation,
         };
 
@@ -274,6 +287,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.ShowPlayerOverheadInformation,
         };
 
@@ -282,6 +296,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.ShowFriendOverheadHpBar,
         };
 
@@ -290,6 +305,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.ShowGuildOverheadHpBar,
         };
 
@@ -298,6 +314,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.ShowMyOverheadHpBar,
         };
 
@@ -306,6 +323,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.ShowNpcOverheadHpBar,
         };
 
@@ -314,6 +332,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.ShowPartyOverheadHpBar,
         };
 
@@ -322,6 +341,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.ShowPlayerOverheadHpBar,
         };
 
@@ -330,6 +350,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.StickyTarget,
         };
 
@@ -338,6 +359,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.AutoTurnToTarget,
         };
 
@@ -346,6 +368,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.AutoSoftRetargetOnSelfCast,
             TooltipText = Strings.Settings.AutoSoftRetargetOnSelfCastTooltip,
             TooltipBackgroundName = "tooltip.png",
@@ -370,6 +393,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Label = Strings.Settings.Resolution,
             TextPadding = new Padding(8, 4, 0, 4),
         };
@@ -389,6 +413,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Label = Strings.Settings.FPS,
             TextPadding = new Padding(8, 4, 0, 4),
         };
@@ -403,6 +428,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.ShowFPSCounter,
         };
         _showFPSCounterCheckbox.CheckChanged += ShowFPSCounterCheckboxOnCheckChanged;
@@ -412,6 +438,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.Fullscreen,
         };
 
@@ -420,6 +447,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.EnableLighting,
         };
 
@@ -428,6 +456,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Text = Strings.Settings.EnableScrollingWorldZoom,
         };
 
@@ -435,6 +464,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Label = Strings.Settings.WorldScale,
             Orientation = Orientation.LeftToRight,
             SnapToNotches = true,
@@ -458,6 +488,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Orientation = Orientation.LeftToRight,
             Height = 35,
             DraggerSize = new Point(9, 9),
@@ -481,6 +512,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             Orientation = Orientation.LeftToRight,
             Height = 35,
             DraggerSize = new Point(9, 9),
@@ -516,6 +548,7 @@ public partial class SettingsWindow : Window
             DockChildSpacing = new Padding(0, 4, 0, 0),
             ColumnCount = 3,
             Font = _defaultFont,
+            FontSize = 12,
             SizeToContents = true,
         };
 
@@ -538,6 +571,7 @@ public partial class SettingsWindow : Window
         {
             Dock = Pos.Fill,
             Font = _defaultFont,
+            FontSize = 12,
             Margin = new Margin(left: 4, top: 4, right: 4, bottom: 0),
         };
 
@@ -602,6 +636,7 @@ public partial class SettingsWindow : Window
             Alignment = [Alignments.Left, Alignments.CenterV],
             AutoSizeToContents = true,
             Font = _defaultFont,
+            FontSize = 12,
             IsVisibleInTree = false,
             MinimumSize = new Point(x: 96, y: 24),
             Padding = new Padding(horizontal: 16, vertical: 2),
@@ -615,6 +650,7 @@ public partial class SettingsWindow : Window
             Alignment = [Alignments.Center],
             AutoSizeToContents = true,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(x: 96, y: 24),
             Padding = new Padding(horizontal: 16, vertical: 2),
             Text = Strings.Settings.Apply,
@@ -627,6 +663,7 @@ public partial class SettingsWindow : Window
             Alignment = [Alignments.Right, Alignments.CenterV],
             AutoSizeToContents = true,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(x: 96, y: 24),
             Padding = new Padding(horizontal: 16, vertical: 2),
             Text = Strings.Settings.Cancel,
@@ -697,11 +734,10 @@ public partial class SettingsWindow : Window
             return false;
         }
 
-        GameFont? defaultFont = Current.GetFont("sourcesansproblack", 10);
+        IFont? defaultFont = Current.GetFont("sourcesansproblack");
 
-            var offset = row++ * 32;
         var controlName = control.GetControlId();
-            var name = controlName?.ToLower() ?? string.Empty;
+        var name = controlName?.ToLower() ?? string.Empty;
 
         if (!Strings.Controls.KeyDictionary.TryGetValue(name, out var localizedControlName))
         {
@@ -728,6 +764,7 @@ public partial class SettingsWindow : Window
             AutoSizeToContents = true,
             MouseInputEnabled = false,
             Font = defaultFont,
+            FontSize = 10,
         };
 
         controlRow.SetCellContents(0, controlLabel, enableMouseInput: false);
@@ -737,6 +774,7 @@ public partial class SettingsWindow : Window
             Alignment = [Alignments.Center],
             AutoSizeToContents = false,
             Font = defaultFont,
+            FontSize = 10,
             MinimumSize = new Point(150, 20),
             Text = string.Empty,
             UserData = new KeyValuePair<Control, int>(control, 0),
@@ -749,6 +787,7 @@ public partial class SettingsWindow : Window
             Alignment = [Alignments.Center],
             AutoSizeToContents = false,
             Font = defaultFont,
+            FontSize = 10,
             MinimumSize = new Point(150, 20),
             Text = string.Empty,
             UserData = new KeyValuePair<Control, int>(control, 1),

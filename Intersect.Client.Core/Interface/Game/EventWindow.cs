@@ -23,7 +23,7 @@ namespace Intersect.Client.Interface.Game;
 
 public partial class EventWindow : Panel
 {
-    private readonly GameFont? _defaultFont;
+    private readonly IFont? _defaultFont;
 
     private readonly Panel _promptPanel;
 
@@ -46,7 +46,7 @@ public partial class EventWindow : Panel
         ThreadQueue.Default.ThrowIfNotOnMainThread();
 
         _dialog = dialog;
-        _defaultFont = GameContentManager.Current.GetFont(name: "sourcesansproblack", 12);
+        _defaultFont = GameContentManager.Current.GetFont(name: "sourcesansproblack");
 
         Alignment = [Alignments.Center];
         MinimumSize = new Point(520, 180);
@@ -73,6 +73,7 @@ public partial class EventWindow : Panel
             {
                 Dock = Pos.Top,
                 Font = _defaultFont,
+                FontSize = 12,
                 UserData = (EventResponseType)(optionIndex + 1),
             };
             optionButton.Clicked += (sender, _) =>
@@ -109,6 +110,7 @@ public partial class EventWindow : Panel
         _promptTemplateLabel = new Label(_promptScroller, nameof(_promptTemplateLabel))
         {
             Font = _defaultFont,
+            FontSize = 12,
             IsVisibleInTree = false,
         };
 
@@ -116,6 +118,7 @@ public partial class EventWindow : Panel
         {
             Dock = Pos.Fill,
             Font = _defaultFont,
+            FontSize = 12,
             Padding = new Padding(8),
         };
 

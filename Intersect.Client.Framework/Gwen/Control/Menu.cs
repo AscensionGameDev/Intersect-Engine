@@ -20,7 +20,8 @@ public partial class Menu : ScrollControl
 
     private bool mDisableIconMargin;
 
-    private GameFont mItemFont;
+    private IFont? mItemFont;
+    private int _itemFontSize;
 
     //Menu Item Stuff
     private string mItemFontInfo;
@@ -183,7 +184,7 @@ public partial class Menu : ScrollControl
         IGameTexture? iconTexture,
         string? textureFilename = default,
         string? accelerator = default,
-        GameFont? font = default
+        IFont? font = default
     )
     {
         var newMenuItem = new MenuItem(this)
@@ -373,7 +374,8 @@ public partial class Menu : ScrollControl
         {
             var fontArr = ((string)obj["ItemFont"]).Split(',');
             mItemFontInfo = (string)obj["ItemFont"];
-            mItemFont = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
+            _itemFontSize = int.Parse(fontArr[1]);
+            mItemFont = GameContentManager.Current.GetFont(fontArr[0]);
         }
 
         UpdateItemStyles();
@@ -381,17 +383,17 @@ public partial class Menu : ScrollControl
 
     private void UpdateItemStyles()
     {
-        var menuItems = Children.Where(x => x is MenuItem).ToArray();
+        var menuItems = Children.OfType<MenuItem>().ToArray();
         foreach (var item in menuItems)
         {
-            var itm = (MenuItem)item;
             if (mItemFont != null)
             {
-                itm.Font = mItemFont;
+                item.Font = mItemFont;
             }
 
-            itm.SetTextColor(mItemNormalTextColor, ComponentState.Normal);
-            itm.SetTextColor(mItemHoverTextColor, ComponentState.Hovered);
+            item.FontSize = _itemFontSize;
+            item.SetTextColor(mItemNormalTextColor, ComponentState.Normal);
+            item.SetTextColor(mItemHoverTextColor, ComponentState.Hovered);
         }
     }
 

@@ -97,9 +97,9 @@ public interface IGameRenderer
         float targetWidth,
         float targetHeight,
         Color renderColor,
-        IGameRenderTexture renderTarget = null,
+        IGameRenderTexture? renderTarget = null,
         GameBlendModes blendMode = GameBlendModes.None,
-        GameShader shader = null,
+        GameShader? shader = null,
         float rotationDegrees = 0
     );
 
@@ -107,7 +107,8 @@ public interface IGameRenderer
     ///     Draw text to the client display.
     /// </summary>
     /// <param name="text">The text to render to the screen.</param>
-    /// <param name="gameFont">The <see cref="GameFont" /> to use to render the text.</param>
+    /// <param name="font">The <see cref="IFont" /> to use to render the text.</param>
+    /// <param name="size"></param>
     /// <param name="x">The X location on the screen to render the text to.</param>
     /// <param name="y">The Y location on the screen to render the text to.</param>
     /// <param name="fontScale">The scale of the font to render the text with.</param>
@@ -123,21 +124,23 @@ public interface IGameRenderer
     /// <param name="borderColor">The <see cref="Color" /> to use to render the border of this text with.</param>
     void DrawString(
         string text,
-        GameFont gameFont,
+        IFont font,
+        int size,
         float x,
         float y,
         float fontScale,
         Color fontColor,
         bool worldPos = true,
-        IGameRenderTexture renderTexture = null,
-        Color borderColor = null
+        IGameRenderTexture? renderTexture = null,
+        Color? borderColor = null
     );
 
     /// <summary>
     ///     Draw text to the client display.
     /// </summary>
     /// <param name="text">The text to render to the screen.</param>
-    /// <param name="gameFont">The <see cref="GameFont" /> to use to render the text.</param>
+    /// <param name="font">The <see cref="IFont" /> to use to render the text.</param>
+    /// <param name="size"></param>
     /// <param name="x">The X location on the screen to render the text to.</param>
     /// <param name="y">The Y location on the screen to render the text to.</param>
     /// <param name="fontScale">The scale of the font to render the text with.</param>
@@ -157,7 +160,8 @@ public interface IGameRenderer
     /// </param>
     void DrawString(
         string text,
-        GameFont gameFont,
+        IFont font,
+        int size,
         float x,
         float y,
         float fontScale,
@@ -165,17 +169,18 @@ public interface IGameRenderer
         bool worldPos,
         IGameRenderTexture renderTexture,
         FloatRect clipRect,
-        Color borderColor = null
+        Color? borderColor = null
     );
 
     /// <summary>
     ///     Measures a string of text.
     /// </summary>
     /// <param name="text">The text to measure the size of.</param>
-    /// <param name="gameFont">The <see cref="GameFont" /> to use to measure the text with.</param>
+    /// <param name="font">The <see cref="IFont" /> to use to measure the text with.</param>
+    /// <param name="size"></param>
     /// <param name="fontScale">The scale of the font to measure the text with.</param>
     /// <returns>Returns a <see cref="Pointf" /> containing the width and height of the measured text.</returns>
-    Pointf MeasureText(string text, GameFont gameFont, float fontScale);
+    Pointf MeasureText(string? text, IFont? font, int size, float fontScale);
 
     /// <summary>
     ///     Send a request for the client to take a screenshot the next draw cycle.

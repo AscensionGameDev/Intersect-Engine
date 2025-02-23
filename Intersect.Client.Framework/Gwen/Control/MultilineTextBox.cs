@@ -983,7 +983,7 @@ public partial class MultilineTextBox : Label
         for (var y = 0; y < _textLines.Count(); y++)
         {
             sub += _textLines[y] + Environment.NewLine;
-            var cp = Skin.Renderer.MeasureText(Font, sub);
+            var cp = Skin.Renderer.MeasureText(Font, fontSize: FontSize, sub);
 
             double yDist = Math.Abs(cp.Y - p.Y);
             if (yDist < distance)
@@ -1007,7 +1007,7 @@ public partial class MultilineTextBox : Label
                 sub += " ";
             }
 
-            var cp = Skin.Renderer.MeasureText(Font, sub);
+            var cp = Skin.Renderer.MeasureText(Font, fontSize: FontSize, sub);
 
             double xDiff = Math.Abs(cp.X - p.X);
 
@@ -1144,7 +1144,10 @@ public partial class MultilineTextBox : Label
             sub += _textLines[i] + "\n";
         }
 
-        var p = new Point(Skin.Renderer.MeasureText(Font, currLine).X, Skin.Renderer.MeasureText(Font, sub).Y);
+        var p = new Point(
+            Skin.Renderer.MeasureText(Font, fontSize: FontSize, currLine).X,
+            Skin.Renderer.MeasureText(Font, fontSize: FontSize, sub).Y
+        );
 
         return new Point(p.X + _textElement.X, p.Y + _textElement.Y + Padding.Top);
     }

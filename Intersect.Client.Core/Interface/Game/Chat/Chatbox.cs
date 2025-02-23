@@ -158,6 +158,7 @@ public partial class Chatbox
         mChatboxText = new Label(mChatboxWindow);
         mChatboxText.Name = "ChatboxText";
         mChatboxText.Font = mChatboxWindow.Parent.Skin.DefaultFont;
+        mChatboxText.FontSize = mChatboxWindow.Parent.Skin.DefaultFontSize;
 
         mChatboxSendButton = new Button(mChatboxWindow, "ChatboxSendButton");
         mChatboxSendButton.Text = Strings.Chatbox.Send;
@@ -391,6 +392,7 @@ public partial class Chatbox
                 row.ShouldDrawBackground = false;
                 row.Padding = new Padding(2, 0);
                 row.Font = mChatboxText.Font;
+                row.FontSize = mChatboxWindow.Parent.Skin.DefaultFontSize;
                 row.SetTextColor(msg.Color);
                 if (row.GetCellContents(0) is Label label)
                 {

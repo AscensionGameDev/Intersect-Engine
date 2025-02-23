@@ -171,6 +171,10 @@ public static partial class Interface
                 ClientConfiguration.Instance.UiSkin
             );
             _skin.DefaultFont = Graphics.UIFont ?? _skin.DefaultFont;
+            if (Graphics.UIFontSize != default)
+            {
+                _skin.DefaultFontSize = Graphics.UIFontSize;
+            }
         }
 
         _uiMainMenu?.Dispose();

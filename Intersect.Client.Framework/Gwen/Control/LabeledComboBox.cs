@@ -33,7 +33,7 @@ public partial class LabeledComboBox : Base, IAutoSizeToContents, ITextContainer
         _comboBox.ItemSelected += (_, args) => ItemSelected?.Invoke(this, args);
     }
 
-    public GameFont? Font
+    public IFont? Font
     {
         get => _label.Font;
         set
@@ -43,13 +43,23 @@ public partial class LabeledComboBox : Base, IAutoSizeToContents, ITextContainer
         }
     }
 
-    public GameFont? LabelFont
+    public int FontSize
+    {
+        get => _label.FontSize;
+        set
+        {
+            _label.FontSize = value;
+            _comboBox.FontSize = value;
+        }
+    }
+
+    public IFont? LabelFont
     {
         get => _label.Font;
         set => _label.Font = value;
     }
 
-    public GameFont? ItemFont
+    public IFont? ItemFont
     {
         get => _comboBox.Font;
         set => _comboBox.Font = value;

@@ -145,7 +145,7 @@ public partial class TextBox : Label
         }
     }
 
-    public override GameFont? Font
+    public override IFont? Font
     {
         get => base.Font;
         set

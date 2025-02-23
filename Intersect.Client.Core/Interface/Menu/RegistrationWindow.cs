@@ -17,7 +17,7 @@ namespace Intersect.Client.Interface.Menu;
 
 public partial class RegistrationWindow : Window, IMainMenuWindow
 {
-    private readonly GameFont? _defaultFont;
+    private readonly IFont? _defaultFont;
 
     private readonly MainMenu _mainMenu;
 
@@ -52,7 +52,7 @@ public partial class RegistrationWindow : Window, IMainMenuWindow
     {
         _mainMenu = mainMenu;
 
-        _defaultFont = GameContentManager.Current.GetFont(name: "sourcesansproblack", 12);
+        _defaultFont = GameContentManager.Current.GetFont(name: "sourcesansproblack");
 
         Alignment = [Alignments.Center];
         MinimumSize = new Point(x: 560, y: 180);
@@ -77,6 +77,7 @@ public partial class RegistrationWindow : Window, IMainMenuWindow
             AutoSizeToContents = true,
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 24),
             Padding = new Padding(8, 4),
             Text = Strings.Registration.Register,
@@ -88,6 +89,7 @@ public partial class RegistrationWindow : Window, IMainMenuWindow
             AutoSizeToContents = true,
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 24),
             Padding = new Padding(8, 4),
             Text = Strings.LoginWindow.Back,
@@ -114,6 +116,7 @@ public partial class RegistrationWindow : Window, IMainMenuWindow
             AutoSizeToContents = false,
             Dock = Pos.Fill,
             Font = _defaultFont,
+            FontSize = 12,
             Padding = new Padding(0, 0, 10, 0),
             Text = Strings.Registration.Username,
             TextAlign = Pos.Right | Pos.CenterV,
@@ -123,6 +126,7 @@ public partial class RegistrationWindow : Window, IMainMenuWindow
         {
             Dock = Pos.Right,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(240, 0),
             Padding = new Padding(4, 2),
             TextAlign = Pos.Left | Pos.CenterV,
@@ -146,6 +150,7 @@ public partial class RegistrationWindow : Window, IMainMenuWindow
             AutoSizeToContents = false,
             Dock = Pos.Fill,
             Font = _defaultFont,
+            FontSize = 12,
             Padding = new Padding(0, 0, 10, 0),
             Text = Strings.Registration.Email,
             TextAlign = Pos.Right | Pos.CenterV,
@@ -155,6 +160,7 @@ public partial class RegistrationWindow : Window, IMainMenuWindow
         {
             Dock = Pos.Right,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(240, 0),
             Padding = new Padding(4, 2),
             TextAlign = Pos.Left | Pos.CenterV,
@@ -178,6 +184,7 @@ public partial class RegistrationWindow : Window, IMainMenuWindow
             AutoSizeToContents = false,
             Dock = Pos.Fill,
             Font = _defaultFont,
+            FontSize = 12,
             Padding = new Padding(0, 0, 10, 0),
             Text = Strings.Registration.Password,
             TextAlign = Pos.Right | Pos.CenterV,
@@ -187,6 +194,7 @@ public partial class RegistrationWindow : Window, IMainMenuWindow
         {
             Dock = Pos.Right,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(240, 0),
             Padding = new Padding(4, 2),
             TextAlign = Pos.Left | Pos.CenterV,
@@ -210,6 +218,7 @@ public partial class RegistrationWindow : Window, IMainMenuWindow
             AutoSizeToContents = false,
             Dock = Pos.Fill,
             Font = _defaultFont,
+            FontSize = 12,
             Padding = new Padding(0, 0, 10, 0),
             Text = Strings.Registration.ConfirmPassword,
             TextAlign = Pos.Right | Pos.CenterV,
@@ -219,6 +228,7 @@ public partial class RegistrationWindow : Window, IMainMenuWindow
         {
             Dock = Pos.Right,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(240, 0),
             Padding = new Padding(4, 2),
             TextAlign = Pos.Left | Pos.CenterV,

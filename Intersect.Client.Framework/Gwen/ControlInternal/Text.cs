@@ -1,4 +1,3 @@
-using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -14,7 +13,7 @@ public partial class Text : Base
     public static readonly Color DefaultBoundsOutlineColor = Color.FromHex("bf4060", Color.Pink);
     public static readonly Color DefaultMarginOutlineColor = Color.FromHex("1fad1f", Color.ForestGreen);
 
-    private GameFont? _font;
+    private IFont? _font;
 
     private float _scale = 1f;
 
@@ -60,16 +59,6 @@ public partial class Text : Base
         @this.Color = @this.Skin.Colors.Label.Normal;
     }
 
-    protected override void OnSizeChanged(Point oldSize, Point newSize)
-    {
-        base.OnSizeChanged(oldSize, newSize);
-    }
-
-    protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
-    {
-        base.OnBoundsChanged(oldBounds, newBounds);
-    }
-
     private void ParentOnSizeChanged(Base @base, ValueChangedEventArgs<Point> eventArgs)
     {
         var newSelectedWidth = SelectWidthFrom(@base);
@@ -87,10 +76,18 @@ public partial class Text : Base
     /// <remarks>
     ///     The font is not being disposed by this class.
     /// </remarks>
-    public GameFont? Font
+    public IFont? Font
     {
         get => _font;
         set => SetAndDoIfChanged(ref _font, value, Invalidate);
+    }
+
+    private int _fontSize = 10;
+
+    public int FontSize
+    {
+        get => _fontSize;
+        set => SetAndDoIfChanged(ref _fontSize, value, Invalidate);
     }
 
     /// <summary>
@@ -150,6 +147,7 @@ public partial class Text : Base
                 _displayedText,
                 parentInnerWidth,
                 Font,
+                FontSize,
                 Skin.Renderer
             ),
             WrappingBehavior.NoWrap => _displayedText == null ? [] : [_displayedText],
@@ -176,11 +174,6 @@ public partial class Text : Base
     ///     Text color override - used by tooltips.
     /// </summary>
     public Color? ColorOverride { get; set; }
-
-    protected override void OnVisibilityChanged(object? sender, VisibilityChangedEventArgs eventArgs)
-    {
-        base.OnVisibilityChanged(sender, eventArgs);
-    }
 
     /// <summary>
     ///     Renders the control using specified skin.
@@ -214,14 +207,14 @@ public partial class Text : Base
         Point cursor = default;
         foreach (var line in _lines)
         {
-            skin.Renderer.RenderText(font, cursor, line, _scale);
+            skin.Renderer.RenderText(font, _fontSize, cursor, line, _scale);
 
             if (_lines.Length <= 1)
             {
                 break;
             }
 
-            cursor.Y += skin.Renderer.MeasureText(text: line, font: font, scale: _scale).Y;
+            cursor.Y += skin.Renderer.MeasureText(font: font, fontSize: _fontSize, text: line, scale: _scale).Y;
         }
 
 #if DEBUG_TEXT_MEASURE
@@ -314,7 +307,7 @@ public partial class Text : Base
         if (string.IsNullOrEmpty(_displayedText))
         {
             const string verticalBar = "|";
-            newSize = Skin.Renderer.MeasureText(font, verticalBar, _scale) with { X = 0 };
+            newSize = Skin.Renderer.MeasureText(font, fontSize: _fontSize, verticalBar, _scale) with { X = 0 };
         }
         else
         {
@@ -322,7 +315,7 @@ public partial class Text : Base
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (var line in _lines)
             {
-                var lineSize = Skin.Renderer.MeasureText(font, line, _scale);
+                var lineSize = Skin.Renderer.MeasureText(font, fontSize: _fontSize,line, _scale);
                 newSize = new Point(
                     Math.Max(newSize.X, lineSize.X),
                     newSize.Y + lineSize.Y
@@ -374,7 +367,7 @@ public partial class Text : Base
         }
 
         var substring = displayedText[..index];
-        var substringSize = Skin.Renderer.MeasureText(font, substring) with
+        var substringSize = Skin.Renderer.MeasureText(font, fontSize: _fontSize, substring) with
         {
             Y = 0,
         };
@@ -417,7 +410,7 @@ public partial class Text : Base
         return closestIndex;
     }
 
-    public static string[] WrapText(string? input, int width, GameFont? font, ITextHelper textHelper)
+    public static string[] WrapText(string? input, int width, IFont? font, int size, ITextHelper textHelper)
     {
         var sanitizedInput = input?.ReplaceLineEndings("\n");
         var inputLines = (sanitizedInput ?? string.Empty).Split('\n', StringSplitOptions.TrimEntries);
@@ -442,7 +435,7 @@ public partial class Text : Base
                 continue;
             }
 
-            float measured = textHelper.MeasureText(inputLine, font, 1).X;
+            float measured = textHelper.MeasureText(inputLine, font, size, 1).X;
             if (measured <= width)
             {
                 lines.Add(inputLine);
@@ -455,20 +448,19 @@ public partial class Text : Base
             var curPos = 0;
             var curLen = 1;
             var lastOk = 0;
-            var lastCut = 0;
 
             string line;
             while (curPos + curLen < inputLine.Length)
             {
                 line = inputLine.Substring(curPos, curLen);
-                measured = textHelper.MeasureText(line, font, 1).X;
+                measured = textHelper.MeasureText(line, font, size, 1).X;
                 if (measured < width)
                 {
                     lastOk = lastSpace;
                     lastSpace = inputLine[curPos + curLen] switch
                     {
                         ' ' or '-' => curLen,
-                        _ => lastSpace
+                        _ => lastSpace,
                     };
                 }
                 else

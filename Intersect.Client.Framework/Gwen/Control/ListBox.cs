@@ -19,7 +19,8 @@ public partial class ListBox : ScrollControl
 
     private readonly Table _table;
 
-    private GameFont? mFont;
+    private IFont? mFont;
+    private int _fontSize = 10;
 
     private string mFontInfo;
 
@@ -63,6 +64,7 @@ public partial class ListBox : ScrollControl
             Dock = Pos.Fill,
             FitRowHeightToContents = true,
             Font = mFont,
+            FontSize = _fontSize,
         };
         _table.BoundsChanged += TableResized;
 
@@ -287,7 +289,8 @@ public partial class ListBox : ScrollControl
         {
             var fontArr = ((string)obj["Font"]).Split(',');
             mFontInfo = (string)obj["Font"];
-            mFont = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
+            _fontSize = int.Parse(fontArr[1]);
+            mFont = GameContentManager.Current.GetFont(fontArr[0]);
         }
 
         if (obj[nameof(TextColor)] != null)
@@ -310,6 +313,7 @@ public partial class ListBox : ScrollControl
             {
                 row.Font = mFont;
             }
+            row.FontSize = _fontSize;
         }
     }
 
@@ -422,6 +426,7 @@ public partial class ListBox : ScrollControl
         ListBoxRow row = new(parent: this, columns: ColumnCount, columnWidths: computedColumnWidths)
         {
             ClickSound = mItemClickSound,
+            FontSize = _fontSize,
             HoverSound = mItemHoverSound,
             Name = name,
             RightClickSound = mItemRightClickSound,

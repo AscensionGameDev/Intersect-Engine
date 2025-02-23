@@ -1537,7 +1537,7 @@ public partial class Entity : IEntity
             textColor = labelColor;
         }
 
-        var textSize = Graphics.Renderer.MeasureText(label, Graphics.EntityNameFont, 1);
+        var textSize = Graphics.Renderer.MeasureText(label, Graphics.EntityNameFont, Graphics.EntityNameFontSize, 1);
 
         var x = (int)Math.Ceiling(Origin.X);
         var y = position == 0 ? GetLabelLocation(LabelType.Header) : GetLabelLocation(LabelType.Footer);
@@ -1545,14 +1545,24 @@ public partial class Entity : IEntity
         if (backgroundColor != Color.Transparent)
         {
             Graphics.DrawGameTexture(
-                Graphics.Renderer.WhitePixel, new FloatRect(0, 0, 1, 1),
-                new FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y), backgroundColor
+                Graphics.Renderer.WhitePixel,
+                new FloatRect(0, 0, 1, 1),
+                new FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y),
+                backgroundColor
             );
         }
 
         Graphics.Renderer.DrawString(
-            label, Graphics.EntityNameFont, x - (int)Math.Ceiling(textSize.X / 2f), (int)y, 1,
-            Color.FromArgb(textColor.ToArgb()), true, null, Color.FromArgb(borderColor.ToArgb())
+            label,
+            Graphics.EntityNameFont,
+            Graphics.EntityNameFontSize,
+            x - (int)Math.Ceiling(textSize.X / 2f),
+            (int)y,
+            1,
+            Color.FromArgb(textColor.ToArgb()),
+            true,
+            null,
+            Color.FromArgb(borderColor.ToArgb())
         );
     }
 
@@ -1595,12 +1605,13 @@ public partial class Entity : IEntity
         }
 
         var name = Name;
-        if ((this is Player && Options.Instance.Player.ShowLevelByName) || (Type == EntityType.GlobalEntity && Options.Instance.Npc.ShowLevelByName))
+        if ((this is Player && Options.Instance.Player.ShowLevelByName) ||
+            (Type == EntityType.GlobalEntity && Options.Instance.Npc.ShowLevelByName))
         {
             name = Strings.GameWindow.EntityNameAndLevel.ToString(Name, Level);
         }
 
-        var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
+        var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, Graphics.EntityNameFontSize, 1);
 
         var x = (int)Math.Ceiling(Origin.X);
         var y = GetLabelLocation(LabelType.Name);
@@ -1608,14 +1619,24 @@ public partial class Entity : IEntity
         if (backgroundColor != Color.Transparent)
         {
             Graphics.DrawGameTexture(
-                Graphics.Renderer.WhitePixel, new FloatRect(0, 0, 1, 1),
-                new FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y), backgroundColor
+                Graphics.Renderer.WhitePixel,
+                new FloatRect(0, 0, 1, 1),
+                new FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y),
+                backgroundColor
             );
         }
 
         Graphics.Renderer.DrawString(
-            name, Graphics.EntityNameFont, x - (int)Math.Ceiling(textSize.X / 2f), (int)y, 1,
-            textColor, true, null, Color.FromArgb(borderColor.ToArgb())
+            name,
+            Graphics.EntityNameFont,
+            Graphics.EntityNameFontSize,
+            x - (int)Math.Ceiling(textSize.X / 2f),
+            (int)y,
+            1,
+            textColor,
+            true,
+            null,
+            Color.FromArgb(borderColor.ToArgb())
         );
     }
 
@@ -1644,7 +1665,12 @@ public partial class Entity : IEntity
                     break;
                 }
 
-                var headerSize = Graphics.Renderer.MeasureText(HeaderLabel.Text, Graphics.EntityNameFont, 1);
+                var headerSize = Graphics.Renderer.MeasureText(
+                    HeaderLabel.Text,
+                    Graphics.EntityNameFont,
+                    Graphics.EntityNameFontSize,
+                    1
+                );
                 y -= headerSize.Y + 2;
                 break;
 
@@ -1654,13 +1680,23 @@ public partial class Entity : IEntity
                     break;
                 }
 
-                var footerSize = Graphics.Renderer.MeasureText(FooterLabel.Text, Graphics.EntityNameFont, 1);
+                var footerSize = Graphics.Renderer.MeasureText(
+                    FooterLabel.Text,
+                    Graphics.EntityNameFont,
+                    Graphics.EntityNameFontSize,
+                    1
+                );
                 y -= footerSize.Y - 6;
                 break;
 
             case LabelType.Name:
                 y = GetLabelLocation(LabelType.Footer);
-                var nameSize = Graphics.Renderer.MeasureText(Name, Graphics.EntityNameFont, 1);
+                var nameSize = Graphics.Renderer.MeasureText(
+                    Name,
+                    Graphics.EntityNameFont,
+                    Graphics.EntityNameFontSize,
+                    1
+                );
                 y -= nameSize.Y + (string.IsNullOrEmpty(FooterLabel.Text) ? -6 : 2);
                 break;
 
@@ -1686,7 +1722,12 @@ public partial class Entity : IEntity
                         break;
                     }
 
-                    var guildSize = Graphics.Renderer.MeasureText(player.Guild, Graphics.EntityNameFont, 1);
+                    var guildSize = Graphics.Renderer.MeasureText(
+                        player.Guild,
+                        Graphics.EntityNameFont,
+                        Graphics.EntityNameFontSize,
+                        1
+                    );
                     y -= 2 + guildSize.Y;
                 }
 

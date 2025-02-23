@@ -158,11 +158,12 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
 
     public abstract IGameRenderTexture CreateRenderTexture(int width, int height);
 
-    public abstract Pointf MeasureText(string text, GameFont? gameFont, float fontScale);
+    public abstract Pointf MeasureText(string? text, IFont? font, int size, float fontScale);
 
     public abstract void DrawString(
         string text,
-        GameFont? gameFont,
+        IFont? gameFont,
+        int size,
         float x,
         float y,
         float fontScale,
@@ -174,7 +175,8 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
 
     public abstract void DrawString(
         string text,
-        GameFont? gameFont,
+        IFont? gameFont,
+        int size,
         float x,
         float y,
         float fontScale,
@@ -237,11 +239,6 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
     public event EventHandler<TextureEventArgs>? TextureDisposed;
 
     public event EventHandler<TextureEventArgs>? TextureFreed;
-
-    public Pointf MeasureText(string text, GameFont? font)
-    {
-        return MeasureText(text, font, 1);
-    }
 
     protected internal void MarkConstructed(IGameTexture texture, bool markAllocated = false)
     {
@@ -447,7 +444,7 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
 
     public abstract FloatRect GetView();
 
-    public abstract GameFont LoadFont(string filename);
+    public abstract IFont LoadFont(string fontName, IDictionary<int, FileInfo> fontSourcesBySize);
 
     public abstract void DrawTexture(
         IGameTexture tex,
