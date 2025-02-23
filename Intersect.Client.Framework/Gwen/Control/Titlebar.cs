@@ -54,7 +54,10 @@ public class Titlebar : Dragger
 
         _closeButton = new CloseButton(parent: this, owner: window, name: nameof(CloseButton))
         {
-            Dock = Pos.Right, IsTabable = false, Size = new Point(x: 24, y: 24),
+            Dock = Pos.Right,
+            Font = null,
+            IsTabable = false,
+            Size = new Point(x: 24, y: 24),
         };
         _closeButton.Clicked += closeButtonHandler;
     }

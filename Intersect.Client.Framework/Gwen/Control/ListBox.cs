@@ -18,11 +18,17 @@ public partial class ListBox : ScrollControl
     private readonly List<ListBoxRow> mSelectedRows = [];
 
     private readonly Table _table;
+    public string? FontName
+    {
+        get => _table.Font?.Name;
+        set => _table.Font = GameContentManager.Current.GetFont(value);
+    }
 
-    private IFont? mFont;
-    private int _fontSize = 10;
-
-    private string mFontInfo;
+    public int FontSize
+    {
+        get => _table.FontSize;
+        set => _table.FontSize = value;
+    }
 
     private bool mIsToggle;
 
@@ -63,8 +69,7 @@ public partial class ListBox : ScrollControl
             ColumnWidths = [null],
             Dock = Pos.Fill,
             FitRowHeightToContents = true,
-            Font = mFont,
-            FontSize = _fontSize,
+            FontSize = 10,
         };
         _table.BoundsChanged += TableResized;
 
@@ -242,7 +247,8 @@ public partial class ListBox : ScrollControl
         serializedProperties.Add("SizeToContents", mSizeToContents);
         serializedProperties.Add("MultiSelect", AllowMultiSelect);
         serializedProperties.Add("IsToggle", IsToggle);
-        serializedProperties.Add("Font", mFontInfo);
+        serializedProperties.Add(nameof(FontName), FontName);
+        serializedProperties.Add(nameof(FontSize), FontSize);
         serializedProperties.Add("ItemHoverSound", mItemHoverSound);
         serializedProperties.Add("ItemClickSound", mItemClickSound);
         serializedProperties.Add("ItemRightClickSound", mItemRightClickSound);
@@ -252,9 +258,15 @@ public partial class ListBox : ScrollControl
         return base.FixJson(serializedProperties);
     }
 
-    public override void LoadJson(JToken obj, bool isRoot = default)
+    public override void LoadJson(JToken token, bool isRoot = default)
     {
-        base.LoadJson(obj);
+        base.LoadJson(token, isRoot);
+
+        if (token is not JObject obj)
+        {
+            return;
+        }
+
         if (obj["SizeToContents"] != null)
         {
             mSizeToContents = (bool)obj["SizeToContents"];
@@ -288,9 +300,20 @@ public partial class ListBox : ScrollControl
         if (obj["Font"] != null && obj["Font"].Type != JTokenType.Null)
         {
             var fontArr = ((string)obj["Font"]).Split(',');
-            mFontInfo = (string)obj["Font"];
-            _fontSize = int.Parse(fontArr[1]);
-            mFont = GameContentManager.Current.GetFont(fontArr[0]);
+            FontSize = int.Parse(fontArr[1]);
+            FontName = fontArr[0];
+        }
+
+        if (obj.TryGetValue(nameof(FontName), out var tokenFontName) &&
+            tokenFontName is JValue { Type: JTokenType.String } valueFontName)
+        {
+            FontName = valueFontName.Value<string>();
+        }
+
+        if (obj.TryGetValue(nameof(FontSize), out var tokenFontSize) &&
+            tokenFontSize is JValue { Type: JTokenType.Integer } valueFontSize)
+        {
+            FontSize = valueFontSize.Value<int>();
         }
 
         if (obj[nameof(TextColor)] != null)
@@ -309,11 +332,8 @@ public partial class ListBox : ScrollControl
             row.HoverSound = mItemHoverSound;
             row.ClickSound = mItemClickSound;
             row.RightClickSound = mItemRightClickSound;
-            if (mFont != null)
-            {
-                row.Font = mFont;
-            }
-            row.FontSize = _fontSize;
+            row.Font = _table.Font ?? row.Font;
+            row.FontSize = FontSize;
         }
     }
 
@@ -426,7 +446,7 @@ public partial class ListBox : ScrollControl
         ListBoxRow row = new(parent: this, columns: ColumnCount, columnWidths: computedColumnWidths)
         {
             ClickSound = mItemClickSound,
-            FontSize = _fontSize,
+            FontSize = FontSize,
             HoverSound = mItemHoverSound,
             Name = name,
             RightClickSound = mItemRightClickSound,
@@ -441,10 +461,7 @@ public partial class ListBox : ScrollControl
 
         row.Selected += OnRowSelected;
 
-        if (mFont != null)
-        {
-            row.Font = mFont;
-        }
+        row.Font = _table.Font ?? row.Font;
 
         _table.FitContents(Width);
 

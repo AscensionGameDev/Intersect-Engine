@@ -152,6 +152,12 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         }
     }
 
+    public string? FontName
+    {
+        get => _font?.Name;
+        set => Font = GameContentManager.Current.GetFont(value);
+    }
+
     private int _fontSize = 10;
 
     public int FontSize
@@ -250,16 +256,23 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
 
         serializedProperties.Add(nameof(SizeToContents), _sizeToContents);
         serializedProperties.Add(nameof(DefaultRowHeight), _defaultRowHeight);
-        serializedProperties.Add(nameof(Font), Font?.ToString());
+        serializedProperties.Add(nameof(FontName), FontName);
+        serializedProperties.Add(nameof(FontSize), FontSize);
         serializedProperties.Add(nameof(TextColor), TextColor?.ToString());
         serializedProperties.Add(nameof(TextColorOverride), TextColorOverride?.ToString());
 
         return base.FixJson(serializedProperties);
     }
 
-    public override void LoadJson(JToken obj, bool isRoot = default)
+    public override void LoadJson(JToken token, bool isRoot = default)
     {
-        base.LoadJson(obj);
+        base.LoadJson(token, isRoot);
+
+        if (token is not JObject obj)
+        {
+            return;
+        }
+
         if (obj[nameof(FitContents)] != null)
         {
             _sizeToContents = (bool)obj[nameof(FitContents)];
@@ -281,6 +294,18 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
                 FontSize = size;
                 Font = GameContentManager.Current?.GetFont(name);
             }
+        }
+
+        if (obj.TryGetValue(nameof(FontName), out var tokenFontName) &&
+            tokenFontName is JValue { Type: JTokenType.String } valueFontName)
+        {
+            FontName = valueFontName.Value<string>();
+        }
+
+        if (obj.TryGetValue(nameof(FontSize), out var tokenFontSize) &&
+            tokenFontSize is JValue { Type: JTokenType.Integer } valueFontSize)
+        {
+            FontSize = valueFontSize.Value<int>();
         }
 
         if (obj[nameof(TextColor)] != null)

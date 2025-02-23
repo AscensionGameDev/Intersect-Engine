@@ -414,15 +414,30 @@ public partial class Label : Base, ILabel
         serializedProperties.Add("DisabledTextColor", mDisabledTextColor?.ToString());
         serializedProperties.Add(nameof(TextAlign), TextAlign.ToString());
         serializedProperties.Add(nameof(AutoSizeToContents), _autoSizeToContents);
-        serializedProperties.Add(nameof(Font), _fontInfo);
+        if (FontName is { } fontName && !string.IsNullOrWhiteSpace(fontName))
+        {
+            serializedProperties.Add(nameof(FontName), FontName);
+            serializedProperties.Add(nameof(FontSize), FontSize);
+        }
+        else
+        {
+            serializedProperties.Add(nameof(FontName), null);
+            serializedProperties.Add(nameof(FontSize), null);
+        }
         serializedProperties.Add("TextScale", _textElement.GetScale());
 
         return base.FixJson(serializedProperties);
     }
 
-    public override void LoadJson(JToken obj, bool isRoot = default)
+    public override void LoadJson(JToken token, bool isRoot = default)
     {
-        base.LoadJson(obj);
+        base.LoadJson(token, isRoot);
+
+        if (token is not JObject obj)
+        {
+            return;
+        }
+
         if (typeof(Label) == GetType() && obj["BackgroundTemplate"] != null)
         {
             SetBackgroundTemplate(
@@ -478,7 +493,7 @@ public partial class Label : Base, ILabel
                     try
                     {
                         FontSize = int.Parse(fontArr[1]);
-                        Font = GameContentManager.Current.GetFont(fontArr[0]);
+                        FontName = fontArr[0];
                     }
                     catch
                     {
@@ -486,6 +501,18 @@ public partial class Label : Base, ILabel
                     }
                 }
             }
+        }
+
+        if (obj.TryGetValue(nameof(FontName), out var tokenFontName) &&
+            tokenFontName is JValue { Type: JTokenType.String } valueFontName)
+        {
+            FontName = valueFontName.Value<string>();
+        }
+
+        if (obj.TryGetValue(nameof(FontSize), out var tokenFontSize) &&
+            tokenFontSize is JValue { Type: JTokenType.Integer } valueFontSize)
+        {
+            FontSize = valueFontSize.Value<int>();
         }
 
         if (obj["TextScale"] != null)

@@ -38,6 +38,12 @@ public partial class RichLabel : Base
         }
     }
 
+    public string? FontName
+    {
+        get => _font?.Name;
+        set => Font = GameContentManager.Current.GetFont(value);
+    }
+
     public int FontSize
     {
         get => _fontSize;
@@ -77,9 +83,14 @@ public partial class RichLabel : Base
     }
 
     /// <inheritdoc />
-    public override void LoadJson(JToken obj, bool isRoot = default)
+    public override void LoadJson(JToken token, bool isRoot = default)
     {
-        base.LoadJson(obj);
+        base.LoadJson(token, isRoot);
+
+        if (token is not JObject obj)
+        {
+            return;
+        }
 
         if (obj["Font"] != null && obj["Font"].Type != JTokenType.Null)
         {
@@ -87,6 +98,18 @@ public partial class RichLabel : Base
             _fontInfo = (string)obj["Font"];
             _fontSize = int.Parse(fontArr[1]);
             _font = GameContentManager.Current.GetFont(fontArr[0]);
+        }
+
+        if (obj.TryGetValue(nameof(FontName), out var tokenFontName) &&
+            tokenFontName is JValue { Type: JTokenType.String } valueFontName)
+        {
+            FontName = valueFontName.Value<string>();
+        }
+
+        if (obj.TryGetValue(nameof(FontSize), out var tokenFontSize) &&
+            tokenFontSize is JValue { Type: JTokenType.Integer } valueFontSize)
+        {
+            FontSize = valueFontSize.Value<int>();
         }
     }
 

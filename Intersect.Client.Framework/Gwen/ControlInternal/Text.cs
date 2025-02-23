@@ -35,7 +35,6 @@ public partial class Text : Base
         if (SafeSkin is { } skin)
         {
             InitializeFromSkin(this);
-            _font = skin.DefaultFont;
             Color = skin.Colors.Label.Normal;
         }
         else
@@ -55,7 +54,6 @@ public partial class Text : Base
 
     private static void InitializeFromSkin(Text @this)
     {
-        @this._font = @this.Skin.DefaultFont;
         @this.Color = @this.Skin.Colors.Label.Normal;
     }
 
@@ -186,7 +184,7 @@ public partial class Text : Base
             return;
         }
 
-        var font = _font;
+        var font = _font ?? SafeSkin?.DefaultFont;
         if (font == default)
         {
             return;
@@ -349,7 +347,7 @@ public partial class Text : Base
             return default;
         }
 
-        var font = _font;
+        var font = _font ?? SafeSkin?.DefaultFont;
         if (font == default)
         {
             return default;
