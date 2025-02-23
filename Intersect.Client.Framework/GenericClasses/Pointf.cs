@@ -1,19 +1,35 @@
-﻿namespace Intersect.Client.Framework.GenericClasses;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
+namespace Intersect.Client.Framework.GenericClasses;
 
-public partial struct Pointf
+[DataContract]
+[DebuggerDisplay("{DebugDisplayString,nq}")]
+[StructLayout(LayoutKind.Explicit)]
+public partial struct Pointf : IEquatable<Pointf>
 {
-    public static Pointf Empty => new Pointf();
+    [FieldOffset(0)]
+    public float X;
 
-    public static Pointf UnitX => new Pointf(1, 0);
+    [FieldOffset(sizeof(float))]
+    public float Y;
 
-    public static Pointf UnitY => new Pointf(0, 1);
+    public static Pointf Empty => new();
 
-    private const float TOLERANCE = 0.001f;
+    public static Pointf UnitX => new(1, 0);
 
-    public float X { get; set; }
+    public static Pointf UnitY => new(0, 1);
 
-    public float Y { get; set; }
+    public static Pointf One => new(1, 1);
+
+    private const float Tolerance = 0.001f;
+
+    public Pointf()
+    {
+    }
+
+    public Pointf(float value) : this(value, value) { }
 
     public Pointf(float x, float y)
     {
@@ -21,46 +37,37 @@ public partial struct Pointf
         Y = y;
     }
 
-    public override bool Equals(object obj)
+    public Pointf(double x, double y) : this((float)x, (float)y)
     {
-        if (obj is Pointf point)
-        {
-            return point == this;
-        }
-
-        return false;
     }
 
-    public bool Equals(Pointf other)
-    {
-        return Math.Abs(X - other.X) < TOLERANCE && Math.Abs(Y - other.Y) < TOLERANCE;
-    }
+    public override bool Equals(object? obj) => obj is Pointf point && Equals(point);
 
-    public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode();
+    public bool Equals(Pointf other) => this == other;
 
-    public Pointf StripX() => new Pointf(0, Y);
-
-    public Pointf StripY() => new Pointf(X, 0);
+    public override int GetHashCode() => HashCode.Combine(X, Y);
 
     public static implicit operator Pointf(Point point) => new(point.X, point.Y);
 
     public static implicit operator Point(Pointf point) => new((int)point.X, (int)point.Y);
 
-    public static bool operator !=(Pointf left, Pointf right)
-    {
-        return Math.Abs(left.X - right.X) > TOLERANCE || Math.Abs(left.Y - right.Y) > TOLERANCE;
-    }
+    public static bool operator ==(Pointf left, Pointf right) => left.X.Equals(right.X) && left.Y.Equals(right.Y);
 
-    public static bool operator ==(Pointf left, Pointf right)
-    {
-        return Math.Abs(left.X - right.X) < TOLERANCE && Math.Abs(left.Y - right.Y) < TOLERANCE;
-    }
+    public static bool operator !=(Pointf left, Pointf right) => !left.X.Equals(right.X) || !left.Y.Equals(right.Y);
 
-    public static Pointf operator +(Pointf left, Pointf right) => new Pointf(left.X + right.X, left.Y + right.Y);
+    public static Pointf operator +(Pointf left, Pointf right) => new(left.X + right.X, left.Y + right.Y);
 
-    public static Pointf operator -(Pointf left, Pointf right) => new Pointf(left.X - right.X, left.Y - right.Y);
+    public static Pointf operator -(Pointf left, Pointf right) => new(left.X - right.X, left.Y - right.Y);
 
-    public static Pointf operator *(Pointf point, float scalar) => new Pointf(point.X * scalar, point.Y * scalar);
+    public static Pointf operator *(Pointf lhs, Pointf rhs) => new(lhs.X * rhs.X, lhs.Y * rhs.Y);
 
-    public static Pointf operator /(Pointf point, float scalar) => new Pointf(point.X / scalar, point.Y / scalar);
+    public static Pointf operator *(Pointf point, float scalar) => new(point.X * scalar, point.Y * scalar);
+
+    public static Pointf operator *(float scalar, Pointf point) => new(point.X * scalar, point.Y * scalar);
+
+    public static Pointf operator /(Pointf point, float scalar) => new(point.X / scalar, point.Y / scalar);
+
+    internal string DebugDisplayString => $"{X}, {Y}";
+
+    public override string ToString() => $"({X}, {Y})";
 }

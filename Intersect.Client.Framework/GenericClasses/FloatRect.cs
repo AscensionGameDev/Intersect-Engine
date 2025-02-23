@@ -58,6 +58,8 @@ public partial struct FloatRect
         }
     }
 
+    public Pointf Center => Position + Size / 2f;
+
     public float Left => X;
 
     public float Top => Y;
