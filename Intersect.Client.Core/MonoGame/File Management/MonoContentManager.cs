@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
@@ -205,21 +206,88 @@ public partial class MonoContentManager : GameContentManager
     public override void LoadFonts()
     {
         mFontDict.Clear();
-        var dir = Path.Combine(ClientConfiguration.ResourcesDirectory, "fonts");
-        if (!Directory.Exists(dir))
+
+        var assetDirectory = Path.Combine(ClientConfiguration.ResourcesDirectory, "fonts");
+        if (!Directory.Exists(assetDirectory))
         {
-            Directory.CreateDirectory(dir);
+            Directory.CreateDirectory(assetDirectory);
         }
 
-        var items = Directory.GetFiles(dir, "*.xnb");
-        for (var i = 0; i < items.Length; i++)
+        var fileInfos = Directory.GetFiles(assetDirectory, "*.xnb")
+            .Select(filePath => new FileInfo(filePath))
+            .ToArray();
+        Dictionary<string, Dictionary<int, FileInfo>> discoveredFontFiles = [];
+        foreach (var fileInfo in fileInfos)
         {
-            var filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
-            var font = Core.Graphics.Renderer.LoadFont(Path.Combine(dir, filename));
-            if (mFontDict.IndexOf(font) == -1)
+            var rawName = Path.GetFileNameWithoutExtension(fileInfo.Name);
+            var sizeSeparatorIndex = rawName.LastIndexOf(',');
+            if (sizeSeparatorIndex < 1)
             {
-                mFontDict.Add(font);
+                sizeSeparatorIndex = rawName.LastIndexOf('_');
             }
+
+            if (sizeSeparatorIndex < 1)
+            {
+                ApplicationContext.CurrentContext.Logger.LogWarning(
+                    "Ignoring invalid font file name: '{FileName}' located at {FilePath}",
+                    fileInfo.Name,
+                    fileInfo.FullName
+                );
+                continue;
+            }
+
+            var rawSize = rawName[(sizeSeparatorIndex + 1)..];
+            if (!int.TryParse(rawSize, out var size))
+            {
+                ApplicationContext.CurrentContext.Logger.LogWarning(
+                    "Font size '{Size}' in font file name '{FileName}' is not a valid integer",
+                    rawSize,
+                    rawName
+                );
+                continue;
+            }
+
+            if (size < 1)
+            {
+                ApplicationContext.CurrentContext.Logger.LogWarning(
+                    "Font size '{Size}' in font file name '{FileName}' must be greater than or equal to 1",
+                    size,
+                    rawName
+                );
+                continue;
+            }
+
+            var fontName = rawName[..sizeSeparatorIndex].Trim().ToLowerInvariant();
+            if (!discoveredFontFiles.TryGetValue(fontName, out var fontFamilyCollection))
+            {
+                fontFamilyCollection = [];
+                discoveredFontFiles[fontName] = fontFamilyCollection;
+            }
+
+            if (fontFamilyCollection.TryGetValue(size, out var originalFileInfo))
+            {
+                ApplicationContext.CurrentContext.Logger.LogWarning(
+                    "A font file for size {Size} already exists for the font family {Family}, the first one is located at {OriginalPath} and this one is located at {CurrentPath}",
+                    size,
+                    fontName,
+                    originalFileInfo.FullName,
+                    fileInfo.FullName
+                );
+                continue;
+            }
+
+            fontFamilyCollection[size] = fileInfo;
+        }
+
+        foreach (var (fontName, fontSourcesBySize) in discoveredFontFiles)
+        {
+            var font = Core.Graphics.Renderer.LoadFont(fontName, fontSourcesBySize);
+            if (mFontDict.TryAdd(fontName, font))
+            {
+                continue;
+            }
+
+            throw new UnreachableException();
         }
     }
 

@@ -22,7 +22,7 @@ public partial class Base : IDisposable
     /// </summary>
     public SkinColors Colors;
 
-    protected GameFont mDefaultFont;
+    protected IFont mDefaultFont;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Base" /> class.
@@ -37,11 +37,13 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Default font to use when rendering text if none specified.
     /// </summary>
-    public GameFont DefaultFont
+    public IFont DefaultFont
     {
         get => mDefaultFont;
         set => mDefaultFont = value;
     }
+
+    public int DefaultFontSize { get; set; }
 
     /// <summary>
     ///     Renderer used.

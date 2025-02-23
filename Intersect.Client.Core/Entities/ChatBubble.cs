@@ -58,6 +58,7 @@ public partial class ChatBubble
                 mSourceText,
                 200,
                 Graphics.ChatBubbleFont,
+                Graphics.ChatBubbleFontSize,
                 Graphics.Renderer ?? throw new InvalidOperationException("No renderer")
             );
         }
@@ -68,26 +69,31 @@ public partial class ChatBubble
         }
 
         var x = (int)Math.Ceiling(mOwner.Origin.X);
-        var y = (int) Math.Ceiling(mOwner.GetLabelLocation(LabelType.ChatBubble));
+        var y = (int)Math.Ceiling(mOwner.GetLabelLocation(LabelType.ChatBubble));
 
         if (mTextureBounds.Width == 0)
         {
             //Gotta Calculate Bounds
             for (var i = (mText?.Length ?? 0) - 1; i > -1; i--)
             {
-                var textSize = Graphics.Renderer.MeasureText(mText![i], Graphics.ChatBubbleFont, 1);
+                var textSize = Graphics.Renderer.MeasureText(
+                    mText![i],
+                    Graphics.ChatBubbleFont,
+                    Graphics.ChatBubbleFontSize,
+                    1
+                );
                 if (textSize.X > mTextureBounds.Width)
                 {
-                    mTextureBounds.Width = (int) textSize.X + 16;
+                    mTextureBounds.Width = (int)textSize.X + 16;
                 }
 
-                mTextureBounds.Height += (int) textSize.Y + 2;
+                mTextureBounds.Height += (int)textSize.Y + 2;
                 if (textSize.X > mTextBounds.Width)
                 {
-                    mTextBounds.Width = (int) textSize.X;
+                    mTextBounds.Width = (int)textSize.X;
                 }
 
-                mTextBounds.Height += (int) textSize.Y + 2;
+                mTextBounds.Height += (int)textSize.Y + 2;
             }
 
             mTextureBounds.Height += 16;
@@ -101,8 +107,8 @@ public partial class ChatBubble
                 mTextureBounds.Height = 32;
             }
 
-            mTextureBounds.Width = (int) (Math.Round(mTextureBounds.Width / 8.0) * 8.0);
-            mTextureBounds.Height = (int) (Math.Round(mTextureBounds.Height / 8.0) * 8.0);
+            mTextureBounds.Width = (int)(Math.Round(mTextureBounds.Width / 8.0) * 8.0);
+            mTextureBounds.Height = (int)(Math.Round(mTextureBounds.Height / 8.0) * 8.0);
             if (mTextureBounds.Width / 8 % 2 != 0)
             {
                 mTextureBounds.Width += 8;
@@ -175,8 +181,15 @@ public partial class ChatBubble
                 for (var y1 = 0; y1 < mTextureBounds.Height / 8; y1++)
                 {
                     Graphics.Renderer.DrawTexture(
-                        mBubbleTex, mTexSections[x1, y1].X * 8, mTexSections[x1, y1].Y * 8, 8, 8,
-                        x - mTextureBounds.Width / 2 + x1 * 8, y - mTextureBounds.Height - yoffset + y1 * 8, 8, 8,
+                        mBubbleTex,
+                        mTexSections[x1, y1].X * 8,
+                        mTexSections[x1, y1].Y * 8,
+                        8,
+                        8,
+                        x - mTextureBounds.Width / 2 + x1 * 8,
+                        y - mTextureBounds.Height - yoffset + y1 * 8,
+                        8,
+                        8,
                         Color.White
                     );
                 }
@@ -184,12 +197,22 @@ public partial class ChatBubble
 
             for (var i = mText.Length - 1; i > -1; i--)
             {
-                var textSize = Graphics.Renderer.MeasureText(mText[i], Graphics.ChatBubbleFont, 1);
+                var textSize = Graphics.Renderer.MeasureText(
+                    mText[i],
+                    Graphics.ChatBubbleFont,
+                    Graphics.ChatBubbleFontSize,
+                    1
+                );
                 Graphics.Renderer.DrawString(
-                    mText[i], Graphics.ChatBubbleFont,
-                    (int) (x - mTextureBounds.Width / 2 + (mTextureBounds.Width - textSize.X) / 2f),
-                    (int) (y - mTextureBounds.Height - yoffset + 8 + i * 16), 1,
-                    Color.FromArgb(CustomColors.Chat.ChatBubbleText.ToArgb()), true, null,
+                    mText[i],
+                    Graphics.ChatBubbleFont,
+                    Graphics.ChatBubbleFontSize,
+                    (int)(x - mTextureBounds.Width / 2 + (mTextureBounds.Width - textSize.X) / 2f),
+                    (int)(y - mTextureBounds.Height - yoffset + 8 + i * 16),
+                    1,
+                    Color.FromArgb(CustomColors.Chat.ChatBubbleText.ToArgb()),
+                    true,
+                    null,
                     Color.FromArgb(CustomColors.Chat.ChatBubbleTextOutline.ToArgb())
                 );
             }

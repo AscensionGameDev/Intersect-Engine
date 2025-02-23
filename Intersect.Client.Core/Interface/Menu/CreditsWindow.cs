@@ -11,7 +11,7 @@ namespace Intersect.Client.Interface.Menu;
 
 public partial class CreditsWindow : Window, IMainMenuWindow
 {
-    private readonly GameFont? _defaultFont;
+    private readonly IFont? _defaultFont;
 
     private readonly MainMenu _mainMenu;
     private readonly RichLabel _credits;
@@ -35,7 +35,7 @@ public partial class CreditsWindow : Window, IMainMenuWindow
         TitleLabel.FontSize = 14;
         TitleLabel.TextColorOverride = Color.White;
 
-        _defaultFont = GameContentManager.Current.GetFont(name: TitleLabel.FontName, 12);
+        _defaultFont = GameContentManager.Current.GetFont(name: TitleLabel.FontName);
 
         _creditsScroller = new ScrollControl(this, name: nameof(_creditsScroller))
         {
@@ -47,6 +47,7 @@ public partial class CreditsWindow : Window, IMainMenuWindow
         {
             Dock = Pos.Fill,
             Font = _defaultFont,
+            FontSize = 12,
             Padding = new Padding(16),
         };
 
@@ -96,17 +97,18 @@ public partial class CreditsWindow : Window, IMainMenuWindow
             var lineText = line.Text.Trim();
             if (lineText.Length > 0)
             {
-                var lineFont = GameContentManager.Current.GetFont(line.Font, line.Size);
+                var lineFont = GameContentManager.Current.GetFont(line.Font);
                 _credits.AddText(
-                    lineText,
-                    new Color(
+                    text: lineText,
+                    color: new Color(
                         line.TextColor?.A ?? 255,
                         line.TextColor?.R ?? 255,
                         line.TextColor?.G ?? 255,
                         line.TextColor?.B ?? 255
                     ),
-                    line.GetAlignment(),
-                    lineFont
+                    alignment: line.GetAlignment(),
+                    font: lineFont,
+                    fontSize: line.Size
                 );
             }
 

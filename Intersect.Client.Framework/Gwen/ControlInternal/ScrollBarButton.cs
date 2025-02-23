@@ -15,6 +15,7 @@ public partial class ScrollBarButton : Button
     /// <param name="parent">Parent control.</param>
     public ScrollBarButton(Base parent) : base(parent, disableText: true)
     {
+        Font = null;
         MinimumSize = new Point(15, 15);
         Size = new Point(15, 15);
         MaximumSize = new Point(15, 15);

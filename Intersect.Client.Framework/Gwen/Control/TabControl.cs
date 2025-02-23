@@ -15,7 +15,7 @@ public partial class TabControl : Base
     private TabButton? _activeButton;
 
     private int _scrollOffset;
-    private GameFont? _font;
+    private IFont? _font;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="TabControl" /> class.
@@ -83,7 +83,29 @@ public partial class TabControl : Base
     /// </summary>
     public int TabCount => _tabStrip.Children.Count;
 
-    public GameFont? Font
+    private int _fontSize = 10;
+
+    public int FontSize
+    {
+        get => _fontSize;
+        set
+        {
+            if (value == _fontSize)
+            {
+                return;
+            }
+
+            _fontSize = value;
+
+            var tabs = _tabStrip.Children.OfType<TabButton>().ToArray();
+            foreach (var tab in tabs)
+            {
+                tab.FontSize = _fontSize;
+            }
+        }
+    }
+
+    public IFont? Font
     {
         get => _font;
         set

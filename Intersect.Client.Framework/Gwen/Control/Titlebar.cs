@@ -27,7 +27,7 @@ public class Titlebar : Dragger
         Padding = new Padding(4, 0, 0, 0);
         Target = window;
 
-        var titleLabelFont = GameContentManager.Current?.GetFont("sourcesansproblack", 12);
+        var titleLabelFont = GameContentManager.Current?.GetFont("sourcesansproblack");
 
         _icon = new ImagePanel(this, name: nameof(_icon))
         {
@@ -45,6 +45,7 @@ public class Titlebar : Dragger
             AutoSizeToContents = false,
             Dock = Pos.Fill | Pos.CenterV,
             Font = titleLabelFont,
+            FontSize = 12,
             MouseInputEnabled = false,
             Padding = new Padding(4, 4),
             TextAlign = Pos.Left | Pos.Bottom,
@@ -53,7 +54,10 @@ public class Titlebar : Dragger
 
         _closeButton = new CloseButton(parent: this, owner: window, name: nameof(CloseButton))
         {
-            Dock = Pos.Right, IsTabable = false, Size = new Point(x: 24, y: 24),
+            Dock = Pos.Right,
+            Font = null,
+            IsTabable = false,
+            Size = new Point(x: 24, y: 24),
         };
         _closeButton.Clicked += closeButtonHandler;
     }

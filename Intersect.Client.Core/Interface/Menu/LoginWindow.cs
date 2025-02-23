@@ -18,7 +18,7 @@ namespace Intersect.Client.Interface.Menu;
 
 public partial class LoginWindow : Window, IMainMenuWindow
 {
-    private readonly GameFont? _defaultFont;
+    private readonly IFont? _defaultFont;
 
     private readonly MainMenu _mainMenu;
 
@@ -47,7 +47,7 @@ public partial class LoginWindow : Window, IMainMenuWindow
     {
         _mainMenu = mainMenu;
 
-        _defaultFont = GameContentManager.Current.GetFont(name: "sourcesansproblack", 12);
+        _defaultFont = GameContentManager.Current.GetFont(name: "sourcesansproblack");
 
         Alignment = [Alignments.Center];
         MinimumSize = new Point(x: 504, y: 144);
@@ -72,6 +72,7 @@ public partial class LoginWindow : Window, IMainMenuWindow
             AutoSizeToContents = true,
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 24),
             Padding = new Padding(8, 4),
             Text = Strings.LoginWindow.Login,
@@ -83,6 +84,7 @@ public partial class LoginWindow : Window, IMainMenuWindow
             AutoSizeToContents = true,
             Dock = Pos.Right | Pos.CenterV,
             Font = _defaultFont,
+            FontSize = 12,
             IsHidden = true,
             MinimumSize = new Point(120, 24),
             Padding = new Padding(8, 4),
@@ -95,6 +97,7 @@ public partial class LoginWindow : Window, IMainMenuWindow
             AutoSizeToContents = true,
             Dock = Pos.Top,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(120, 24),
             Padding = new Padding(8, 4),
             Text = Strings.LoginWindow.Back,
@@ -120,6 +123,7 @@ public partial class LoginWindow : Window, IMainMenuWindow
             AutoSizeToContents = false,
             Dock = Pos.Fill,
             Font = _defaultFont,
+            FontSize = 12,
             Padding = new Padding(0, 0, 10, 0),
             Text = Strings.LoginWindow.Username,
             TextAlign = Pos.Right | Pos.CenterV,
@@ -128,6 +132,7 @@ public partial class LoginWindow : Window, IMainMenuWindow
         {
             Dock = Pos.Right,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(240, 0),
             Padding = new Padding(4, 2),
             TextAlign = Pos.Left | Pos.CenterV,
@@ -151,6 +156,7 @@ public partial class LoginWindow : Window, IMainMenuWindow
             AutoSizeToContents = false,
             Dock = Pos.Fill,
             Font = _defaultFont,
+            FontSize = 12,
             Padding = new Padding(0, 0, 10, 0),
             Text = Strings.LoginWindow.Password,
             TextAlign = Pos.Right | Pos.CenterV,
@@ -159,6 +165,7 @@ public partial class LoginWindow : Window, IMainMenuWindow
         {
             Dock = Pos.Right,
             Font = _defaultFont,
+            FontSize = 12,
             MinimumSize = new Point(240, 0),
             Padding = new Padding(4, 2),
             TextAlign = Pos.Left | Pos.CenterV,
@@ -180,7 +187,10 @@ public partial class LoginWindow : Window, IMainMenuWindow
 
         _savePasswordCheckbox = new LabeledCheckBox(_inputOptionsPanel, nameof(_savePasswordCheckbox))
         {
-            Dock = Pos.Right | Pos.CenterV, Font = _defaultFont, Text = Strings.LoginWindow.SavePassword,
+            Dock = Pos.Right | Pos.CenterV,
+            Font = _defaultFont,
+            FontSize = 12,
+            Text = Strings.LoginWindow.SavePassword,
         };
     }
 

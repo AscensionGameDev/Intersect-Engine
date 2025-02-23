@@ -28,7 +28,7 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
 
     private ITableDataProvider? _dataProvider;
 
-    private GameFont? _font;
+    private IFont? _font;
     private Color? _textColor;
     private Color? _textColorOverride;
     private bool _fitRowHeightToContents = true;
@@ -138,17 +138,39 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         });
     }
 
-    public GameFont? Font
+    public IFont? Font
     {
         get => _font;
         set => SetAndDoIfChanged(ref _font, value, SetFont);
     }
 
-    private static void SetFont(Base @this, GameFont? value)
+    private static void SetFont(Base @this, IFont? value)
     {
         foreach (var row in @this.Children.OfType<TableRow>())
         {
             row.Font = value;
+        }
+    }
+
+    public string? FontName
+    {
+        get => _font?.Name;
+        set => Font = GameContentManager.Current.GetFont(value);
+    }
+
+    private int _fontSize = 10;
+
+    public int FontSize
+    {
+        get => _fontSize;
+        set => SetAndDoIfChanged(ref _fontSize, value, SetFontSize);
+    }
+
+    private static void SetFontSize(Base @this, int value)
+    {
+        foreach (var row in @this.Children.OfType<TableRow>())
+        {
+            row.FontSize = value;
         }
     }
 
@@ -234,16 +256,23 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
 
         serializedProperties.Add(nameof(SizeToContents), _sizeToContents);
         serializedProperties.Add(nameof(DefaultRowHeight), _defaultRowHeight);
-        serializedProperties.Add(nameof(Font), Font?.ToString());
+        serializedProperties.Add(nameof(FontName), FontName);
+        serializedProperties.Add(nameof(FontSize), FontSize);
         serializedProperties.Add(nameof(TextColor), TextColor?.ToString());
         serializedProperties.Add(nameof(TextColorOverride), TextColorOverride?.ToString());
 
         return base.FixJson(serializedProperties);
     }
 
-    public override void LoadJson(JToken obj, bool isRoot = default)
+    public override void LoadJson(JToken token, bool isRoot = default)
     {
-        base.LoadJson(obj);
+        base.LoadJson(token, isRoot);
+
+        if (token is not JObject obj)
+        {
+            return;
+        }
+
         if (obj[nameof(FitContents)] != null)
         {
             _sizeToContents = (bool)obj[nameof(FitContents)];
@@ -262,8 +291,21 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
                 var parts = fontInfo.Split(',');
                 var name = parts[0];
                 var size = int.Parse(parts[1], CultureInfo.InvariantCulture);
-                Font = GameContentManager.Current?.GetFont(name, size);
+                FontSize = size;
+                Font = GameContentManager.Current?.GetFont(name);
             }
+        }
+
+        if (obj.TryGetValue(nameof(FontName), out var tokenFontName) &&
+            tokenFontName is JValue { Type: JTokenType.String } valueFontName)
+        {
+            FontName = valueFontName.Value<string>();
+        }
+
+        if (obj.TryGetValue(nameof(FontSize), out var tokenFontSize) &&
+            tokenFontSize is JValue { Type: JTokenType.Integer } valueFontSize)
+        {
+            FontSize = valueFontSize.Value<int>();
         }
 
         if (obj[nameof(TextColor)] != null)

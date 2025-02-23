@@ -119,7 +119,7 @@ public partial class Base : IDisposable
     private bool _tooltipEnabled;
     private IGameTexture? _tooltipBackground { get; set; }
     private string? _tooltipBackgroundName;
-    private GameFont? _tooltipFont;
+    private IFont? _tooltipFont;
     private string? _tooltipFontInfo;
     private Color? _tooltipTextColor;
 
@@ -197,21 +197,27 @@ public partial class Base : IDisposable
                 return;
             }
 
-            TooltipFont = GameContentManager.Current.GetFont(value, TooltipFont?.Size ?? 10);
+            TooltipFont = GameContentManager.Current.GetFont(value);
         }
     }
 
+    private int _tooltipFontSize = 10;
+
     public virtual int TooltipFontSize
     {
-        get => _tooltipFont?.Size ?? 10;
+        get => _tooltipFontSize;
         set
         {
-            if (value == TooltipFontSize)
+            if (value == _tooltipFontSize)
             {
                 return;
             }
 
-            TooltipFont = GameContentManager.Current.GetFont(TooltipFont?.Name, value);
+            _tooltipFontSize = value;
+            if (_tooltip is Label label)
+            {
+                label.FontSize = value;
+            }
         }
     }
 
@@ -291,13 +297,18 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Font.
     /// </summary>
-    public GameFont? TooltipFont
+    public IFont? TooltipFont
     {
         get => _tooltipFont;
         set
         {
             _tooltipFont = value;
-            _tooltipFontInfo = value == null ? null : $"{value.GetName()},{value.GetSize()}";
+            _tooltipFontInfo = value == null ? null : $"{value.Name},{_tooltipFontSize}";
+
+            if (_tooltip is Label label)
+            {
+                label.Font = value;
+            }
         }
     }
 
@@ -1676,7 +1687,9 @@ public partial class Base : IDisposable
                 {
                     fontSize = 10;
                 }
-                TooltipFont = GameContentManager.Current?.GetFont(fontName, fontSize);
+
+                TooltipFontName = fontName;
+                TooltipFontSize = fontSize;
             }
             else
             {
@@ -1904,7 +1917,8 @@ public partial class Base : IDisposable
             labelTooltip = new Label(this, name: nameof(Tooltip))
             {
                 AutoSizeToContents = true,
-                Font = _tooltipFont ?? GameContentManager.Current?.GetFont("sourcesansproblack", 10),
+                Font = _tooltipFont ?? GameContentManager.Current.GetFont("sourcesansproblack"),
+                FontSize = TooltipFontSize,
                 MaximumSize = new Point(300, 0),
                 Padding = new Padding(
                     5,

@@ -83,7 +83,7 @@ public partial class HotbarItem
         _contentPanel.HoverLeave += hotbarIcon_HoverLeave;
         _contentPanel.Clicked += hotbarIcon_Clicked;
 
-        var font = GameContentManager.Current.GetFont("sourcesansproblack", 8);
+        var font = GameContentManager.Current.GetFont("sourcesansproblack");
 
         _equipLabel = new Label(_icon, $"EquipLabel{hotbarSlotIndex}")
         {
@@ -94,6 +94,7 @@ public partial class HotbarItem
             Height = 11,
             BackgroundTemplateName = "equipped.png",
             Font = font,
+            FontSize = 8,
             IsHidden = true,
             Padding = Padding.FourH,
             Text = Strings.Inventory.EquippedSymbol,
@@ -109,6 +110,7 @@ public partial class HotbarItem
             Height = 11,
             BackgroundTemplateName = "quantity.png",
             Font = font,
+            FontSize = 8,
             IsHidden = true,
             Padding = Padding.FourH,
             TextColorOverride = Color.White,
@@ -124,6 +126,7 @@ public partial class HotbarItem
             Height = 11,
             BackgroundTemplateName = "quantity.png",
             Font = font,
+            FontSize = 8,
             IsHidden = true,
             Padding = Padding.FourH,
             TextColorOverride = Color.White,
@@ -138,6 +141,7 @@ public partial class HotbarItem
             Height = 11,
             BackgroundTemplateName = "hotbar_label.png",
             Font = font,
+            FontSize = 8,
             Padding = Padding.FourH,
             TextColorOverride = Color.White,
         };

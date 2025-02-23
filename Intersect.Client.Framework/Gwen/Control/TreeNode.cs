@@ -14,7 +14,7 @@ public partial class TreeNode : Base
     private readonly Dictionary<GwenEventHandler<MouseButtonState>, GwenEventHandler<MouseButtonState>>
         _wrappedMouseButtonStateDelegates = [];
 
-    private GameFont? _font;
+    private IFont? _font;
 
     private Color? _textColor;
 
@@ -42,6 +42,7 @@ public partial class TreeNode : Base
         _trigger = new TreeNodeLabel(this)
         {
             Dock = Pos.Top,
+            FontSize = _fontSize,
             Margin = new Margin(16, 0, 0, 0),
         };
         _trigger.DoubleClicked += OnDoubleClickName;
@@ -64,7 +65,33 @@ public partial class TreeNode : Base
 
     protected Button? _trigger { get; set; }
 
-    public virtual GameFont? Font
+    private int _fontSize = 10;
+
+    public virtual int FontSize
+    {
+        get => _trigger?.FontSize ?? _fontSize;
+        set
+        {
+            if (_fontSize == value)
+            {
+                return;
+            }
+
+            _fontSize = value;
+            if (_trigger is { } trigger)
+            {
+                trigger.FontSize = value;
+            }
+
+            var treeNodes = Children.OfType<TreeNode>().ToArray();
+            foreach (var node in treeNodes)
+            {
+                node.FontSize = value;
+            }
+        }
+    }
+
+    public virtual IFont? Font
     {
         get => _trigger?.Font ?? _font;
         set
@@ -348,6 +375,7 @@ public partial class TreeNode : Base
         TreeNode node = new(this)
         {
             Font = Font,
+            FontSize = FontSize,
             Text = label,
             TextColor = _textColor,
             TextColorOverride = _textColorOverride,

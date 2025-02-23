@@ -2,14 +2,12 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using Intersect.Client.Classes.MonoGame.Graphics;
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.MonoGame.NativeInterop;
 using Intersect.Client.ThirdParty;
-using Intersect.Configuration;
 using Intersect.Core;
 using Intersect.Extensions;
 using Intersect.Framework.Core;
@@ -436,7 +434,8 @@ internal partial class MonoRenderer : GameRenderer
 
     public override void DrawString(
         string text,
-        GameFont? gameFont,
+        IFont? font,
+        int size,
         float x,
         float y,
         float fontScale,
@@ -446,11 +445,16 @@ internal partial class MonoRenderer : GameRenderer
         Color? borderColor = null
     )
     {
-        var font = (SpriteFont)gameFont?.GetFont();
-        if (font == null)
+        if (font is not Font<SpriteFont> platformFont)
         {
             return;
         }
+
+        var renderer = platformFont.GetRendererFor(size);
+
+        var spriteFont = renderer.PlatformObject;
+
+        text = SanitizeText(text, spriteFont);
 
         StartSpritebatch(
             _currentView,
@@ -458,19 +462,12 @@ internal partial class MonoRenderer : GameRenderer
             null,
             renderTexture
         );
-        foreach (var chr in text)
-        {
-            if (!font.Characters.Contains(chr))
-            {
-                text = text.Replace(chr, ' ');
-            }
-        }
 
         if (borderColor != null && borderColor != Color.Transparent)
         {
             var platformBorderColor = ConvertColor(borderColor);
             _spriteBatch.DrawString(
-                font,
+                spriteFont,
                 text,
                 new Vector2(x, y - 1),
                 platformBorderColor,
@@ -482,7 +479,7 @@ internal partial class MonoRenderer : GameRenderer
             );
 
             _spriteBatch.DrawString(
-                font,
+                spriteFont,
                 text,
                 new Vector2(x - 1, y),
                 platformBorderColor,
@@ -494,7 +491,7 @@ internal partial class MonoRenderer : GameRenderer
             );
 
             _spriteBatch.DrawString(
-                font,
+                spriteFont,
                 text,
                 new Vector2(x + 1, y),
                 platformBorderColor,
@@ -506,7 +503,7 @@ internal partial class MonoRenderer : GameRenderer
             );
 
             _spriteBatch.DrawString(
-                font,
+                spriteFont,
                 text,
                 new Vector2(x, y + 1),
                 platformBorderColor,
@@ -518,12 +515,13 @@ internal partial class MonoRenderer : GameRenderer
             );
         }
 
-        _spriteBatch.DrawString(font, text, new Vector2(x, y), ConvertColor(fontColor));
+        _spriteBatch.DrawString(spriteFont, text, new Vector2(x, y), ConvertColor(fontColor));
     }
 
     public override void DrawString(
         string text,
-        GameFont? gameFont,
+        IFont? font,
+        int size,
         float x,
         float y,
         float fontScale,
@@ -534,18 +532,19 @@ internal partial class MonoRenderer : GameRenderer
         Color? borderColor = null
     )
     {
-        if (gameFont == null)
+        if (font is not Font<SpriteFont> platformFont)
         {
             return;
         }
+
+        var renderer = platformFont.GetRendererFor(size);
+
+        var spriteFont = renderer.PlatformObject;
+
+        text = SanitizeText(text, spriteFont);
 
         x += _currentView.X;
         y += _currentView.Y;
-
-        if (gameFont.GetFont() is not SpriteFont font)
-        {
-            return;
-        }
 
         var clr = ConvertColor(fontColor);
 
@@ -569,19 +568,11 @@ internal partial class MonoRenderer : GameRenderer
             (int)clipRect.Height
         );
 
-        foreach (var chr in text)
-        {
-            if (!font.Characters.Contains(chr))
-            {
-                text = text.Replace(chr, ' ');
-            }
-        }
-
         if (borderColor != null && borderColor != Color.Transparent)
         {
             var platformBorderColor = ConvertColor(borderColor);
             _spriteBatch.DrawString(
-                font,
+                spriteFont,
                 text,
                 new Vector2(x, y - 1),
                 platformBorderColor,
@@ -593,7 +584,7 @@ internal partial class MonoRenderer : GameRenderer
             );
 
             _spriteBatch.DrawString(
-                font,
+                spriteFont,
                 text,
                 new Vector2(x - 1, y),
                 platformBorderColor,
@@ -605,7 +596,7 @@ internal partial class MonoRenderer : GameRenderer
             );
 
             _spriteBatch.DrawString(
-                font,
+                spriteFont,
                 text,
                 new Vector2(x + 1, y),
                 platformBorderColor,
@@ -617,7 +608,7 @@ internal partial class MonoRenderer : GameRenderer
             );
 
             _spriteBatch.DrawString(
-                font,
+                spriteFont,
                 text,
                 new Vector2(x, y + 1),
                 platformBorderColor,
@@ -630,7 +621,7 @@ internal partial class MonoRenderer : GameRenderer
         }
 
         _spriteBatch.DrawString(
-            font,
+            spriteFont,
             text,
             new Vector2(x, y),
             clr,
@@ -974,27 +965,10 @@ internal partial class MonoRenderer : GameRenderer
         _spriteBatch = new SpriteBatch(_graphicsDevice);
     }
 
-    public override GameFont LoadFont(string filename)
+    public override IFont LoadFont(string fontName, IDictionary<int, FileInfo> fontSourcesBySize)
     {
-        // Get font size from filename, format should be name_size.xnb or whatever
-        var name = GameContentManager.RemoveExtension(filename)
-            .Replace(Path.Combine(ClientConfiguration.ResourcesDirectory, "fonts"), "")
-            .TrimStart(Path.DirectorySeparatorChar);
-
-        // Split the name into parts
-        var parts = name.Split('_');
-
-        // Check if the font size can be extracted
-        if (parts.Length < 1 || !int.TryParse(parts[parts.Length - 1], out var size))
-        {
-            return null;
-        }
-
-        // Concatenate the parts of the name except the last one to get the full name
-        name = string.Join("_", parts.Take(parts.Length - 1));
-
         // Return a new MonoFont with the extracted name and size
-        return new MonoFont(name, filename, size, _contentManager);
+        return new MonoFont(fontName, fontSourcesBySize, _contentManager);
     }
 
     public override GameShader LoadShader(string shaderName)
@@ -1002,25 +976,39 @@ internal partial class MonoRenderer : GameRenderer
         return new MonoShader(shaderName, _contentManager);
     }
 
-    public override Pointf MeasureText(string text, GameFont? gameFont, float fontScale)
+    public override Pointf MeasureText(string text, IFont? font, int size, float fontScale)
     {
-        var font = (SpriteFont)gameFont?.GetFont();
-        if (font == null)
+        if (font is not Font<SpriteFont> platformFont)
         {
-            return Pointf.Empty;
+            return default;
         }
 
-        foreach (var chr in text)
+        var renderer = platformFont.GetRendererFor(size);
+        var spriteFont = renderer.PlatformObject;
+        text = SanitizeText(text, spriteFont);
+
+        var textMeasurement = spriteFont.MeasureString(text);
+
+        return new Pointf(textMeasurement.X * fontScale, textMeasurement.Y * fontScale);
+    }
+
+    private readonly Dictionary<SpriteFont, char> _defaultCharacterForSpriteFont = [];
+
+    private string SanitizeText(string text, SpriteFont spriteFont)
+    {
+        if (!_defaultCharacterForSpriteFont.TryGetValue(spriteFont, out var defaultCharacter))
         {
-            if (!font.Characters.Contains(chr))
-            {
-                text = text.Replace(chr, ' ');
-            }
+            defaultCharacter = spriteFont.DefaultCharacter ??
+                               (spriteFont.Characters.Contains(' ') ? ' ' : spriteFont.Characters.FirstOrDefault());
+            _defaultCharacterForSpriteFont[spriteFont] = defaultCharacter;
         }
 
-        var size = font.MeasureString(text);
-
-        return new Pointf(size.X * fontScale, size.Y * fontScale);
+        var invalidCharacters = text.Where(@char => !spriteFont.Characters.Contains(@char)).Distinct().ToArray();
+        text = invalidCharacters.Aggregate(
+            text,
+            (current, invalidCharacter) => current.Replace(invalidCharacter, defaultCharacter)
+        );
+        return text;
     }
 
     private Matrix CreateViewMatrix(FloatRect view)

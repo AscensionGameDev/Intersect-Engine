@@ -68,24 +68,25 @@ public partial class IntersectRenderer : Base, ICacheToTexture
     ///     Returns dimensions of the text using specified font.
     /// </summary>
     /// <param name="font">Font to use.</param>
+    /// <param name="fontSize"></param>
     /// <param name="text">Text to measure.</param>
     /// <param name="scale"></param>
     /// <returns>
     ///     Width and height of the rendered text.
     /// </returns>
-    public override Point MeasureText(GameFont? font, string? text, float scale = 1f)
+    public override Point MeasureText(IFont? font, int fontSize, string? text, float scale = 1f)
     {
         if (font == null || string.IsNullOrEmpty(text))
         {
             return default;
         }
 
-        var size = mRenderer.MeasureText(text, font, scale * Scale);
+        var size = mRenderer.MeasureText(text: text, font: font, size: fontSize, fontScale: scale * Scale);
 
         return new Point((int) size.X, (int) size.Y);
     }
 
-    public override void RenderText(GameFont font, Point pos, string text, float scale = 1f)
+    public override void RenderText(IFont font, int fontSize, Point pos, string text, float scale = 1f)
     {
         pos = Translate(pos);
         var clip = new FloatRect(ClipRegion.X, ClipRegion.Y, ClipRegion.Width, ClipRegion.Height);
@@ -93,7 +94,18 @@ public partial class IntersectRenderer : Base, ICacheToTexture
         clip.Y = (int) Math.Round(clip.Y * Scale);
         clip.Width = (int) Math.Round(clip.Width * Scale);
         clip.Height = (int) Math.Round(clip.Height * Scale);
-        mRenderer.DrawString(text, font, pos.X, pos.Y, Scale * scale, mColor, false, mRenderTarget, clip);
+        mRenderer.DrawString(
+            text,
+            font,
+            size: fontSize,
+            pos.X,
+            pos.Y,
+            Scale * scale,
+            mColor,
+            false,
+            mRenderTarget,
+            clip
+        );
     }
 
     public override void DrawFilledRect(Rectangle targetRect)

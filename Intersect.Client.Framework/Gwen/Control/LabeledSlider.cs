@@ -117,13 +117,24 @@ public partial class LabeledSlider : Base, ISmartAutoSizeToContents, INumericInp
         set => _slider.DraggerSize = value;
     }
 
-    public GameFont? Font
+    public IFont? Font
     {
         get => _label.Font;
         set
         {
             _label.Font = value;
             _sliderValue.Font = value;
+            _sliderValue.MinimumSize = ComputeMinimumSizeForSliderValue();
+        }
+    }
+
+    public int FontSize
+    {
+        get => _label.FontSize;
+        set
+        {
+            _label.FontSize = value;
+            _sliderValue.FontSize = value;
             _sliderValue.MinimumSize = ComputeMinimumSizeForSliderValue();
         }
     }
@@ -225,7 +236,7 @@ public partial class LabeledSlider : Base, ISmartAutoSizeToContents, INumericInp
             valueString = string.Format(valueFormatString, valueString);
         }
 
-        return Skin.Renderer.MeasureText(_sliderValue.Font, valueString) +
+        return Skin.Renderer.MeasureText(font: _sliderValue.Font, fontSize: _sliderValue.FontSize, text: valueString) +
                _sliderValue.Padding +
                _sliderValue.Padding;
     }
