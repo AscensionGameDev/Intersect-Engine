@@ -2457,6 +2457,9 @@ If you are sure you want to hand over your guild enter '\c{{#ff8080}}{02}\c{{}}'
     public partial struct Shop
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Title = @"Shop";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString BuyItem = @"Buy Item";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
