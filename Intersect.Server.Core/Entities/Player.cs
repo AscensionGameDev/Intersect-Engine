@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using Intersect.Collections.Slotting;
 using Intersect.Core;
 using Intersect.Enums;
+using Intersect.Framework;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
@@ -5686,8 +5687,36 @@ public partial class Player : Entity
             return;
         }
 
-        if (!CanCastSpell(spellDescriptor, target, true, softRetargetOnSelfCast, out _))
+        if (!CanCastSpell(spellDescriptor, target, true, softRetargetOnSelfCast, out var spellCastFailureReason))
         {
+            switch (spellCastFailureReason)
+            {
+                case SpellCastFailureReason.InvalidSpell:
+                case SpellCastFailureReason.InsufficientHP:
+                case SpellCastFailureReason.InsufficientMP:
+                case SpellCastFailureReason.InvalidTarget:
+                case SpellCastFailureReason.InvalidProjectile:
+                case SpellCastFailureReason.InsufficientItems:
+                case SpellCastFailureReason.OutOfRange:
+                case SpellCastFailureReason.ConditionsNotMet:
+                case SpellCastFailureReason.OnCooldown:
+                    // There's no logical reason for the answer to change in any of these cases, just abort
+                    return;
+
+                case SpellCastFailureReason.Silenced:
+                case SpellCastFailureReason.Stunned:
+                case SpellCastFailureReason.Asleep:
+                    // Leaving these three in a group for now because they _might not_ be reasons to abort all spells
+                    break;
+
+                case SpellCastFailureReason.Snared:
+                case SpellCastFailureReason.None:
+                    // Probably aren't hard blocking things
+                    break;
+
+                default: throw Exceptions.UnreachableInvalidEnum(spellCastFailureReason);
+            }
+
             if (!spellDescriptor.Combat.Friendly)
             {
                 return;
