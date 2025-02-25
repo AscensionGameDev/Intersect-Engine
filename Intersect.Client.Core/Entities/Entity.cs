@@ -246,6 +246,10 @@ public partial class Entity : IEntity
 
     protected virtual void OnPositionChanged(Vector3 newPosition, Vector3 oldPosition) {}
 
+    public int TileX => (int)float.Floor(Position.X);
+    public int TileY => (int)float.Floor(Position.Y);
+    public int TileZ => (int)float.Floor(Position.Z);
+    
     //Location Info
     public byte X
     {
@@ -264,9 +268,6 @@ public partial class Entity : IEntity
         get => (byte)float.Floor(Position.Z);
         set => Position = Position with { Z = value };
     }
-
-    protected readonly int TileWidth = Options.Instance.Map.TileWidth;
-    protected readonly int TileHeight = Options.Instance.Map.TileHeight;
 
     public float OffsetX { get; set; }
     // {
@@ -701,7 +702,7 @@ public partial class Entity : IEntity
         }
         else if (IsMoving)
         {
-            var displacementTime = ecTime * Options.Instance.Map.TileHeight / GetMovementTime();
+            var displacementTime = ecTime * TileHeight / GetMovementTime();
 
             PickLastDirection(Dir);
 
@@ -1132,18 +1133,18 @@ public partial class Entity : IEntity
 
                 if (y == gridY - 1)
                 {
-                    entityY = Options.Instance.Map.MapHeight + Y;
+                    entityY = MapHeight + Y;
                 }
                 else if (y == gridY)
                 {
-                    entityY = Options.Instance.Map.MapHeight * 2 + Y;
+                    entityY = MapHeight * 2 + Y;
                 }
                 else
                 {
-                    entityY = Options.Instance.Map.MapHeight * 3 + Y;
+                    entityY = MapHeight * 3 + Y;
                 }
 
-                entityY = (int)Math.Floor(entityY + OffsetY / Options.Instance.Map.TileHeight);
+                entityY = (int)Math.Floor(entityY + OffsetY / TileHeight);
 
                 var renderingEntities = Graphics.RenderingEntities;
                 if (priority >= renderingEntities.GetLength(0) || entityY >= renderingEntities.GetLength(1))
@@ -1227,10 +1228,10 @@ public partial class Entity : IEntity
         {
             // We don't have a texture to render, but we still want this to be targetable.
             WorldPos = new FloatRect(
-                map.X + X * Options.Instance.Map.TileWidth + OffsetX,
-                map.Y + Y * Options.Instance.Map.TileHeight + OffsetY,
-                Options.Instance.Map.TileWidth,
-                Options.Instance.Map.TileHeight);
+                map.X + X * TileWidth + OffsetX,
+                map.Y + Y * TileHeight + OffsetY,
+                TileWidth,
+                TileHeight);
             return;
         }
 
@@ -1519,8 +1520,8 @@ public partial class Entity : IEntity
         }
 
         mOrigin = new Vector2(
-            LatestMap.X + X * Options.Instance.Map.TileWidth + OffsetX + Options.Instance.Map.TileWidth / 2,
-            LatestMap.Y + Y * Options.Instance.Map.TileHeight + OffsetY + Options.Instance.Map.TileHeight
+            LatestMap.X + X * TileWidth + OffsetX + TileWidth / 2,
+            LatestMap.Y + Y * TileHeight + OffsetY + TileHeight
         );
     }
 
@@ -2327,10 +2328,10 @@ public partial class Entity : IEntity
             return Dir;
         }
 
-        var originY = Y + originMapController.GridY * Options.Instance.Map.MapHeight;
-        var originX = X + originMapController.GridX * Options.Instance.Map.MapWidth;
-        var targetY = en.Y + targetMapController.GridY * Options.Instance.Map.MapHeight;
-        var targetX = en.X + targetMapController.GridX * Options.Instance.Map.MapWidth;
+        var originY = Y + originMapController.GridY * MapHeight;
+        var originX = X + originMapController.GridX * MapWidth;
+        var targetY = en.Y + targetMapController.GridY * MapHeight;
+        var targetX = en.X + targetMapController.GridX * MapWidth;
 
         // Calculate the offset between origin and target along both of their axis.
         var yDiff = originY - targetY;
@@ -2398,25 +2399,25 @@ public partial class Entity : IEntity
             if (delta.X < 0)
             {
                 gridX--;
-                tmpX = Options.Instance.Map.MapWidth - delta.X * -1;
+                tmpX = MapWidth - delta.X * -1;
             }
 
             if (delta.Y < 0)
             {
                 gridY--;
-                tmpY = Options.Instance.Map.MapHeight - delta.Y * -1;
+                tmpY = MapHeight - delta.Y * -1;
             }
 
-            if (delta.X > Options.Instance.Map.MapWidth - 1)
+            if (delta.X > MapWidth - 1)
             {
                 gridX++;
-                tmpX = delta.X - Options.Instance.Map.MapWidth;
+                tmpX = delta.X - MapWidth;
             }
 
-            if (delta.Y > Options.Instance.Map.MapHeight - 1)
+            if (delta.Y > MapHeight - 1)
             {
                 gridY++;
-                tmpY = delta.Y - Options.Instance.Map.MapHeight;
+                tmpY = delta.Y - MapHeight;
             }
 
             if (Globals.MapGrid == default || gridX < 0 || gridY < 0 || gridX >= Globals.MapGridWidth || gridY >= Globals.MapGridHeight)
