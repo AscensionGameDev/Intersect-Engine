@@ -1554,16 +1554,13 @@ public partial class Player : Entity, IPlayer
         }
 
         var inputDirection = GetInputDirection();
-        if (inputDirection != Direction.None)
+        if (TryTurnAround(inputDirection))
         {
-            if (TryTurnAround(inputDirection))
-            {
-                MoveDir = Direction.None;
-            }
-            else
-            {
-                MoveDir = inputDirection;
-            }
+            MoveDir = Direction.None;
+        }
+        else
+        {
+            MoveDir = inputDirection;
         }
 
         var castInput = -1;
@@ -2957,6 +2954,11 @@ public partial class Player : Entity, IPlayer
 
     private bool TryTurnAround(Direction inputDirection)
     {
+        if (inputDirection == Direction.None)
+        {
+            return false;
+        }
+        
         if (!CanTurnAround)
         {
             return false;
