@@ -50,7 +50,9 @@ public partial class Entity : IEntity
 
     public bool IsCasting => CastTime > Timing.Global.Milliseconds;
 
-    public bool IsTurnAroundWhileCastingDisabled => !Options.Instance.Combat.EnableTurnAroundWhileCasting && IsCasting;
+    protected readonly bool EnableTurnAroundWhileCasting = Options.Instance.Combat.EnableTurnAroundWhileCasting;
+
+    public bool CanTurnAround => !IsMoving && (!IsCasting || EnableTurnAroundWhileCasting);
 
     public bool IsDashing => Dashing != null;
 

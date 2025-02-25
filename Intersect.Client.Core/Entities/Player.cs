@@ -1462,16 +1462,15 @@ public partial class Player : Entity, IPlayer
         }
     }
 
-    //Input Handling
-    private void HandleInput()
+    private Direction GetInputDirection()
     {
-        var inputX = 0;
-        var inputY = 0;
-
         if (Interface.Interface.HasInputFocus())
         {
-            return;
+            return Direction.None;
         }
+        
+        var inputX = 0;
+        var inputY = 0;
 
         if (Controls.IsControlPressed(Control.MoveUp))
         {
@@ -1543,12 +1542,29 @@ public partial class Player : Entity, IPlayer
             }
         }
 
-        if (Globals.Me != default)
+        return inputDirection;
+    }
+
+    //Input Handling
+    private void HandleInput()
+    {
+        if (Globals.Me != this)
         {
-            Globals.Me.MoveDir = inputDirection;
+            return;
         }
 
-        TurnAround();
+        var inputDirection = GetInputDirection();
+        if (inputDirection != Direction.None)
+        {
+            if (TryTurnAround(inputDirection))
+            {
+                MoveDir = Direction.None;
+            }
+            else
+            {
+                MoveDir = inputDirection;
+            }
+        }
 
         var castInput = -1;
 
@@ -1837,12 +1853,12 @@ public partial class Player : Entity, IPlayer
             return;
         }
 
-        if (Controls.IsControlPressed(Control.TurnAround))
+        if (CanTurnAround)
         {
             return;
         }
 
-        if (IsTurnAroundWhileCastingDisabled)
+        if (Controls.IsControlPressed(Control.TurnAround))
         {
             return;
         }
@@ -2933,38 +2949,35 @@ public partial class Player : Entity, IPlayer
         public int DistanceTo;
     }
 
-    private void TurnAround()
+    private Direction DirectionFacing
     {
-        if (Globals.Me == default)
-        {
-            return;
-        }
-
-        // If players hold the 'TurnAround' Control Key and tap to any direction, they will turn on their own axis.
-        for (var direction = 0; direction < Options.Instance.Map.MovementDirections; direction++)
-        {
-            if (!Controls.IsControlPressed(Control.TurnAround) || direction != (int)Globals.Me.MoveDir || IsTurnAroundWhileCastingDisabled)
-            {
-                continue;
-            }
-
-            // Turn around and hold the player in place if the requested direction is different from the current one.
-            if (!Globals.Me.IsMoving && Dir != Globals.Me.MoveDir)
-            {
-                Dir = Globals.Me.MoveDir;
-                PacketSender.SendDirection(Dir);
-                Globals.Me.MoveDir = Direction.None;
-                PickLastDirection(Dir);
-            }
-
-            // Hold the player in place if the requested direction is the same as the current one.
-            if (!Globals.Me.IsMoving && Dir == Globals.Me.MoveDir)
-            {
-                Globals.Me.MoveDir = Direction.None;
-            }
-        }
+        get => Dir;
+        set => Dir = value;
     }
 
+    private bool TryTurnAround(Direction inputDirection)
+    {
+        if (!CanTurnAround)
+        {
+            return false;
+        }
+
+        if (!Controls.IsControlPressed(Control.TurnAround))
+        {
+            return false;
+        }
+
+        var directionFacing = DirectionFacing;
+        if (inputDirection == directionFacing)
+        {
+            return true;
+        }
+
+        PacketSender.SendDirection(inputDirection);
+        PickLastDirection(inputDirection);
+
+        return true;
+    }
     // Checks if the target is at the opposite direction of the current player's direction.
     // The comparison also takes into account whether diagonal movement is enabled or not.
     private static bool IsTargetAtOppositeDirection(Direction currentDir, Direction targetDir)
