@@ -264,9 +264,9 @@ internal partial class MonoRenderer : GameRenderer
         return true;
     }
 
-    public Pointf GetMouseOffset()
+    public Vector2 GetMouseOffset()
     {
-        return new Pointf(
+        return new Vector2(
             _graphicsDeviceManager.PreferredBackBufferWidth / (float)_gameWindow.ClientBounds.Width,
             _graphicsDeviceManager.PreferredBackBufferHeight / (float)_gameWindow.ClientBounds.Height
         );
@@ -703,10 +703,10 @@ internal partial class MonoRenderer : GameRenderer
             origin = new Vector2(sw / 2f, sh / 2f);
 
             //TODO: Optimize in terms of memory AND performance.
-            var pnt = new Pointf(0, 0);
-            var pnt1 = new Pointf(tw, 0);
-            var pnt2 = new Pointf(0, th);
-            var cntr = new Pointf(tw / 2, th / 2);
+            var pnt = new Vector2(0, 0);
+            var pnt1 = new Vector2(tw, 0);
+            var pnt2 = new Vector2(0, th);
+            var cntr = new Vector2(tw / 2, th / 2);
 
             var pntMod = Rotate(pnt, cntr, rotationDegrees);
             var pntMod2 = Rotate(pnt1, cntr, rotationDegrees);
@@ -778,9 +778,9 @@ internal partial class MonoRenderer : GameRenderer
         return root;
     }
 
-    private Pointf Rotate(Pointf pnt, Pointf ctr, float angle)
+    private Vector2 Rotate(Vector2 pnt, Vector2 ctr, float angle)
     {
-        return new Pointf(
+        return new Vector2(
             (float)(pnt.X + (ctr.X * Math.Cos(angle)) - (ctr.Y * Math.Sin(angle))),
             (float)(pnt.Y + (ctr.X * Math.Sin(angle)) + (ctr.Y * Math.Cos(angle)))
         );
@@ -976,7 +976,7 @@ internal partial class MonoRenderer : GameRenderer
         return new MonoShader(shaderName, _contentManager);
     }
 
-    public override Pointf MeasureText(string text, IFont? font, int size, float fontScale)
+    public override System.Numerics.Vector2 MeasureText(string text, IFont? font, int size, float fontScale)
     {
         if (font is not Font<SpriteFont> platformFont)
         {
@@ -989,7 +989,7 @@ internal partial class MonoRenderer : GameRenderer
 
         var textMeasurement = spriteFont.MeasureString(text);
 
-        return new Pointf(textMeasurement.X * fontScale, textMeasurement.Y * fontScale);
+        return new System.Numerics.Vector2(textMeasurement.X * fontScale, textMeasurement.Y * fontScale);
     }
 
     private readonly Dictionary<SpriteFont, char> _defaultCharacterForSpriteFont = [];

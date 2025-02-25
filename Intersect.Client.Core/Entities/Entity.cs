@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using Intersect.Client.Core;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Entities.Projectiles;
@@ -129,7 +130,7 @@ public partial class Entity : IEntity
     IReadOnlyDictionary<Vital, long> IEntity.MaxVitals =>
         Enum.GetValues<Vital>().ToDictionary(vital => vital, vital => MaxVital[(int)vital]);
 
-    protected Pointf mOrigin = Pointf.Empty;
+    protected Vector2 mOrigin = Vector2.Zero;
 
     //Chat
     private readonly List<ChatBubble> mChatBubbles = [];
@@ -276,11 +277,11 @@ public partial class Entity : IEntity
 
     IReadOnlyList<IStatus> IEntity.Status => Status;
 
-    public Pointf Origin => LatestMap == default ? Pointf.Empty : mOrigin;
+    public Vector2 Origin => LatestMap == default ? Vector2.Zero : mOrigin;
 
-    protected virtual Pointf CenterOffset => (Texture == default) ? Pointf.Empty : (Pointf.UnitY * Texture.Center.Y / Options.Instance.Sprites.Directions);
+    protected virtual Vector2 CenterOffset => (Texture == default) ? Vector2.Zero : (Vector2.UnitY * Texture.Center.Y / Options.Instance.Sprites.Directions);
 
-    public Pointf Center => Origin - CenterOffset;
+    public Vector2 Center => Origin - CenterOffset;
 
     public Direction Dir
     {
@@ -1475,7 +1476,7 @@ public partial class Entity : IEntity
             return;
         }
 
-        mOrigin = new Pointf(
+        mOrigin = new Vector2(
             LatestMap.X + X * Options.Instance.Map.TileWidth + OffsetX + Options.Instance.Map.TileWidth / 2,
             LatestMap.Y + Y * Options.Instance.Map.TileHeight + OffsetY + Options.Instance.Map.TileHeight
         );

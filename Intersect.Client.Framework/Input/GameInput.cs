@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Numerics;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Core;
 using Intersect.Framework.Reflection;
@@ -116,9 +117,9 @@ public abstract partial class GameInput : IGameInput
 
     public abstract bool WasKeyDown(Keys key);
 
-    public Pointf MousePosition => GetMousePosition();
+    public Vector2 MousePosition => GetMousePosition();
 
-    public abstract Pointf GetMousePosition();
+    public abstract Vector2 GetMousePosition();
 
     public abstract void Update(TimeSpan elapsed);
 

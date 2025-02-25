@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Framework.GenericClasses;
+﻿using System.Numerics;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 #if DEBUG || DIAGNOSTIC
 #endif
@@ -445,6 +446,6 @@ public partial class Base : IDisposable, ITextHelper
         mClipRegion = r;
     }
 
-    public Pointf MeasureText(string? text, IFont? font, int size, float fontScale) =>
+    public Vector2 MeasureText(string? text, IFont? font, int size, float fontScale) =>
         MeasureText(font: font, fontSize: size, text: text, scale: fontScale);
 }

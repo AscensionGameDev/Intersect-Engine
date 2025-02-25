@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Framework.GenericClasses;
+﻿using System.Numerics;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Input;
 
@@ -153,7 +154,7 @@ public partial class GwenInputMessage
 
     public MouseButton MouseBtn;
 
-    public Pointf MousePosition;
+    public Vector2 MousePosition;
 
     public bool Shift;
 
@@ -163,7 +164,7 @@ public partial class GwenInputMessage
 
     public GwenInputMessage(
         IntersectInput.InputEvent type,
-        Pointf mousePos,
+        Vector2 mousePos,
         MouseButton mousebtn,
         Keys keyAction,
         bool alt = false,

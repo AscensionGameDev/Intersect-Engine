@@ -1,3 +1,4 @@
+using System.Numerics;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -45,7 +46,7 @@ public partial class Slider : Base
 
         _sliderBar = new SliderBar(this, name: nameof(_sliderBar))
         {
-            AnchorAxis = new Pointf(0, 0.5f),
+            AnchorAxis = new Vector2(0, 0.5f),
         };
         _sliderBar.Dragged += SliderBarOnDragged;
 

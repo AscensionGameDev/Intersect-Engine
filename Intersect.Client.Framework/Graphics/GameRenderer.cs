@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Numerics;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Core;
 using Intersect.Framework.Collections;
@@ -158,7 +159,7 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
 
     public abstract IGameRenderTexture CreateRenderTexture(int width, int height);
 
-    public abstract Pointf MeasureText(string? text, IFont? font, int size, float fontScale);
+    public abstract Vector2 MeasureText(string? text, IFont? font, int size, float fontScale);
 
     public abstract void DrawString(
         string text,
@@ -488,7 +489,7 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
                     catch
                     {
 #if DEBUG
-                        Debugger.Break();
+                        // Debugger.Break();
 #endif
                         throw;
                     }

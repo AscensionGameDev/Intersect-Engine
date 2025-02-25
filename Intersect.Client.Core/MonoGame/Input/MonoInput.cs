@@ -154,7 +154,7 @@ public partial class MonoInput : GameInput
         Mouse.SetPosition((int)center.X, (int)center.Y);
         var mouseState = Mouse.GetState();
         Interface.Interface.GwenInput.ProcessMessage(
-            new GwenInputMessage(IntersectInput.InputEvent.MouseMove, new Pointf(mouseState.X, mouseState.Y), MouseButton.None, Keys.Alt)
+            new GwenInputMessage(IntersectInput.InputEvent.MouseMove, new System.Numerics.Vector2(mouseState.X, mouseState.Y), MouseButton.None, Keys.Alt)
         );
     }
 
@@ -197,9 +197,9 @@ public partial class MonoInput : GameInput
     public override bool WasKeyDown(Keys key) =>
         _intersectToMonoGameKeyMap.TryGetValue(key, out var mappedKey) && _previousKeyboardState.IsKeyDown(mappedKey);
 
-    public override Pointf GetMousePosition()
+    public override System.Numerics.Vector2 GetMousePosition()
     {
-        return new Pointf(mMouseX, mMouseY);
+        return new System.Numerics.Vector2(mMouseX, mMouseY);
     }
 
     private void CheckMouseButton(Keys modifier, ButtonState bs, MouseButton mb)
@@ -242,11 +242,11 @@ public partial class MonoInput : GameInput
 
     private void CheckMouseScrollWheel(int scrlVValue, int scrlHValue)
     {
-        Pointf p = new Pointf(0, 0);
+        System.Numerics.Vector2 p = default;
 
         if (scrlVValue != mMouseVScroll || scrlHValue != mMouseHScroll)
         {
-            p = new Pointf(scrlHValue - mMouseHScroll, scrlVValue - mMouseVScroll);
+            p = new System.Numerics.Vector2(scrlHValue - mMouseHScroll, scrlVValue - mMouseVScroll);
 
             Interface.Interface.GwenInput.ProcessMessage(
                 new GwenInputMessage(IntersectInput.InputEvent.MouseScroll, p, MouseButton.Middle, Keys.Alt)

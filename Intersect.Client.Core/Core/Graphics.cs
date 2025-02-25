@@ -1,3 +1,4 @@
+using System.Numerics;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Framework.Content;
@@ -1098,7 +1099,7 @@ public static partial class Graphics
             return;
         }
 
-        var destRect = new FloatRect(new Pointf(), sDarknessTexture.Dimensions / Globals.Database.WorldZoom);
+        var destRect = new FloatRect(new Vector2(), sDarknessTexture.Dimensions / Globals.Database.WorldZoom);
         if (map.IsIndoors)
         {
             DrawGameTexture(
@@ -1411,9 +1412,9 @@ public static partial class Graphics
     /// </summary>
     /// <param name="windowPoint">The point to convert.</param>
     /// <returns>The converted point.</returns>
-    public static Pointf ConvertToWorldPoint(Pointf windowPoint)
+    public static Vector2 ConvertToWorldPoint(Vector2 windowPoint)
     {
-        return new Pointf(
+        return new Vector2(
             (int)Math.Floor(windowPoint.X / Globals.Database.WorldZoom + CurrentView.Left),
             (int)Math.Floor(windowPoint.Y / Globals.Database.WorldZoom + CurrentView.Top)
         );
@@ -1424,9 +1425,9 @@ public static partial class Graphics
     /// </summary>
     /// <param name="windowPoint">The point to convert.</param>
     /// <returns>The converted point.</returns>
-    public static Pointf ConvertToWorldPointNoZoom(Pointf windowPoint)
+    public static Vector2 ConvertToWorldPointNoZoom(Vector2 windowPoint)
     {
-        return new Pointf((int)Math.Floor(windowPoint.X + CurrentView.Left), (int)Math.Floor(windowPoint.Y + CurrentView.Top));
+        return new Vector2((int)Math.Floor(windowPoint.X + CurrentView.Left), (int)Math.Floor(windowPoint.Y + CurrentView.Top));
     }
 
     //Rendering Functions

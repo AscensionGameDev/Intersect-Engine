@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Framework.GenericClasses;
+﻿using System.Numerics;
+using Intersect.Client.Framework.GenericClasses;
 
 namespace Intersect.Client.Framework.Graphics;
 
@@ -179,8 +180,8 @@ public interface IGameRenderer
     /// <param name="font">The <see cref="IFont" /> to use to measure the text with.</param>
     /// <param name="size"></param>
     /// <param name="fontScale">The scale of the font to measure the text with.</param>
-    /// <returns>Returns a <see cref="Pointf" /> containing the width and height of the measured text.</returns>
-    Pointf MeasureText(string? text, IFont? font, int size, float fontScale);
+    /// <returns>Returns a <see cref="Vector2" /> containing the width and height of the measured text.</returns>
+    Vector2 MeasureText(string? text, IFont? font, int size, float fontScale);
 
     /// <summary>
     ///     Send a request for the client to take a screenshot the next draw cycle.

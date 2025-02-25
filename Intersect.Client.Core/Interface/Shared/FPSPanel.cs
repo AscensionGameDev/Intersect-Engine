@@ -1,3 +1,4 @@
+using System.Numerics;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
@@ -44,7 +45,7 @@ public partial class FPSPanel : Panel
                           size: 10,
                           fontScale: 1
                       ) +
-                      new Pointf(16, 8);
+                      new Vector2(16, 8);
 
         DelegateDataProvider<int> fpsProvider = new(() => Graphics.Renderer.FPS)
         {

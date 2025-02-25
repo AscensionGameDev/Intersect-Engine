@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Framework.GenericClasses;
+﻿using System.Numerics;
+using Intersect.Client.Framework.GenericClasses;
 
 namespace Intersect.Client.Framework.Input;
 
@@ -6,7 +7,7 @@ public interface IGameInput
 {
     IControlSet ControlSet { get; set; }
 
-    Pointf MousePosition { get; }
+    Vector2 MousePosition { get; }
 
     bool IsKeyDown(Keys key);
     bool WasKeyDown(Keys key);

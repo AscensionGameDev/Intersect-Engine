@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
@@ -12,9 +13,9 @@ public interface IGameTexture : IAsset, IComparable<IGameTexture>, IDisposable
     bool IsMissingOrCorrupt { get; }
     bool IsPinned { get; }
     int Area { get; }
-    Pointf Dimensions { get; }
+    Vector2 Dimensions { get; }
     FloatRect Bounds { get; }
-    Pointf Center { get; }
+    Vector2 Center { get; }
 
     AtlasReference? AtlasReference
     {

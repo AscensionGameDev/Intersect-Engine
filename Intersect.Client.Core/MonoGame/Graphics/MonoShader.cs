@@ -4,6 +4,7 @@ using Intersect.IO.Files;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Vector2 = System.Numerics.Vector2;
 
 namespace Intersect.Client.MonoGame.Graphics;
 
@@ -65,7 +66,7 @@ public partial class MonoShader : GameShader
         }
     }
 
-    public override void SetVector2(string key, Pointf val)
+    public override void SetVector2(string key, Vector2 val)
     {
         //throw new NotImplementedException();
     }

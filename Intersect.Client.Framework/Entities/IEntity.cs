@@ -1,3 +1,4 @@
+using System.Numerics;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Items;
@@ -24,8 +25,8 @@ public interface IEntity : IDisposable
     FloatRect WorldPos { get; }
     float OffsetX { get; }
     float OffsetY { get; }
-    Pointf Center { get; }
-    Pointf Origin { get; }
+    Vector2 Center { get; }
+    Vector2 Origin { get; }
     bool IsMoving { get; }
     bool IsStealthed { get; }
     bool IsBlocking { get; }

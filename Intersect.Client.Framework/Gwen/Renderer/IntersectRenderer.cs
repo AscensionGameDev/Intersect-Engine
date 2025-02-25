@@ -58,7 +58,7 @@ public partial class IntersectRenderer : Base, ICacheToTexture
         Translate(ref x1, ref y1);
         Translate(ref x2, ref y2);
 
-        Vertex[] line = {new Vertex(new Pointf(x1, y1), m_Color), new Vertex(new Pointf(x2, y2), m_Color)};
+        Vertex[] line = {new Vertex(new Vector2(x1, y1), m_Color), new Vertex(new Vector2(x2, y2), m_Color)};
 
         m_Target.Draw(line, PrimitiveType.Lines);
     }

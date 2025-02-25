@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace Intersect.Client.Framework.GenericClasses;
 
@@ -38,9 +39,9 @@ public partial struct FloatRect
         set => mHeight = value;
     }
 
-    public Pointf Position
+    public Vector2 Position
     {
-        get => new Pointf(X, Y);
+        get => new Vector2(X, Y);
         set
         {
             X = value.X;
@@ -48,9 +49,9 @@ public partial struct FloatRect
         }
     }
 
-    public Pointf Size
+    public Vector2 Size
     {
-        get => new Pointf(Width, Height);
+        get => new Vector2(Width, Height);
         set
         {
             Width = value.X;
@@ -58,7 +59,7 @@ public partial struct FloatRect
         }
     }
 
-    public Pointf Center => Position + Size / 2f;
+    public Vector2 Center => Position + Size / 2f;
 
     public float Left => X;
 
@@ -78,7 +79,7 @@ public partial struct FloatRect
         mHeight = h;
     }
 
-    public FloatRect(Pointf position, Pointf size) : this(
+    public FloatRect(Vector2 position, Vector2 size) : this(
         position.X,
         position.Y,
         size.X,

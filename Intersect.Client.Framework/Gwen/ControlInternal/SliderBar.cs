@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Framework.GenericClasses;
+﻿using System.Numerics;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal;
@@ -8,7 +9,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal;
 /// </summary>
 public partial class SliderBar : Dragger
 {
-    private Pointf? _anchorAxis;
+    private Vector2? _anchorAxis;
     private Orientation _orientation;
 
     /// <summary>
@@ -23,7 +24,7 @@ public partial class SliderBar : Dragger
         Orientation = parent.Orientation;
     }
 
-    public Pointf? AnchorAxis
+    public Vector2? AnchorAxis
     {
         get => _anchorAxis;
         set => SetAndDoIfChanged(ref _anchorAxis, value, Invalidate);

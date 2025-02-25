@@ -1,3 +1,4 @@
+using System.Numerics;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -29,24 +30,24 @@ public partial class Event : Entity
 
     public EventTrigger Trigger { get; set; }
 
-    protected override Pointf CenterOffset
+    protected override Vector2 CenterOffset
     {
         get
         {
             switch (Graphic.Type)
             {
                 case EventGraphicType.None:
-                    return HasAnimations ? Pointf.UnitY * Options.Instance.Map.TileHeight / 2f : Pointf.Empty;
+                    return HasAnimations ? Vector2.UnitY * Options.Instance.Map.TileHeight / 2f : Vector2.Zero;
 
                 case EventGraphicType.Sprite:
                     return base.CenterOffset;
 
                 case EventGraphicType.Tileset:
-                    return Pointf.UnitY * Options.Instance.Map.TileHeight * (Graphic.Height + 1) / 2f;
+                    return Vector2.UnitY * Options.Instance.Map.TileHeight * (Graphic.Height + 1) / 2f;
 
                 default:
                     ApplicationContext.Context.Value?.Logger.LogError($"Unimplemented graphic type: {Graphic.Type}");
-                    return Pointf.Empty;
+                    return Vector2.Zero;
             }
         }
     }

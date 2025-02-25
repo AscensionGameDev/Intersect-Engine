@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
@@ -184,9 +185,9 @@ public abstract partial class GameTexture<TPlatformTexture, TPlatformRenderer> :
 
     public FloatRect Bounds => new(0, 0, Width, Height);
 
-    public Pointf Dimensions => new(Width, Height);
+    public Vector2 Dimensions => new(Width, Height);
 
-    public Pointf Center => Dimensions / 2;
+    public Vector2 Center => Dimensions / 2;
 
     public AtlasReference? AtlasReference
     {
