@@ -7,7 +7,6 @@ using MessagePack;
 
 namespace Intersect.Network;
 
-[MessagePackObject]
 public abstract partial class IntersectPacket : IPacket
 {
     [IgnoreMember]

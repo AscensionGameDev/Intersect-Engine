@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using Intersect.Collections.Slotting;
 using Intersect.Core;
 using Intersect.Enums;
@@ -3223,9 +3224,7 @@ public abstract partial class Entity : IEntity
         packet.Color = Color;
         packet.Face = Face;
         packet.Level = Level;
-        packet.X = (byte)X;
-        packet.Y = (byte)Y;
-        packet.Z = (byte)Z;
+        packet.Position = new Vector3(X, Y, Z);
         packet.Dir = (byte)Dir;
         packet.Passable = Passable;
         packet.HideName = HideName;

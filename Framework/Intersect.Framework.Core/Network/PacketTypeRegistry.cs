@@ -24,10 +24,10 @@ public sealed partial class PacketTypeRegistry
         Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _builtinAssembly = builtinAssembly;
 
-        BuiltInTypesInternal = new List<Type>();
+        BuiltInTypesInternal = [];
         BuiltInTypes = BuiltInTypesInternal.WrapReadOnly();
 
-        TypesInternal = new List<Type>();
+        TypesInternal = [];
         Types = TypesInternal.WrapReadOnly();
     }
 

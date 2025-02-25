@@ -14,9 +14,9 @@ public partial class PackedIntersectPacket
         "Intersect.Admin.Actions"
     };
 
-    public static readonly Dictionary<Type, short> KnownTypes = new();
+    public static readonly Dictionary<Type, ushort> KnownTypes = new();
 
-    public static readonly Dictionary<short, Type> KnownKeys = new();
+    public static readonly Dictionary<ushort, Type> KnownKeys = new();
 
     private static IEnumerable<Type> FindTypes(IEnumerable<string> nameSpaces) => nameSpaces.SelectMany(FindTypes);
 
@@ -25,7 +25,7 @@ public partial class PackedIntersectPacket
 
     public static void AddKnownTypes(IReadOnlyList<Type> types)
     {
-        var key = (short)KnownKeys.Count;
+        var key = (ushort)KnownKeys.Count;
         foreach (var type in types) {
             if (KnownTypes.ContainsKey(type))
             {
@@ -41,7 +41,7 @@ public partial class PackedIntersectPacket
 
     [Key(0)]
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
-    public short Key { get; set; } = -1;
+    public ushort Key { get; set; } = ushort.MaxValue;
 
     [Key(1)]
     public byte[] Data { get; set; }

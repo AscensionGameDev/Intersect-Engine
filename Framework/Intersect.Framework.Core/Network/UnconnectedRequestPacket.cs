@@ -2,7 +2,6 @@ using MessagePack;
 
 namespace Intersect.Network;
 
-[MessagePackObject]
 public abstract class UnconnectedRequestPacket : UnconnectedPacket
 {
     protected UnconnectedRequestPacket() { }

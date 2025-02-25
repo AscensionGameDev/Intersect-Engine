@@ -1,4 +1,5 @@
-﻿using MessagePack;
+﻿using System.Numerics;
+using MessagePack;
 
 namespace Intersect.Network.Packets.Server;
 
@@ -30,13 +31,13 @@ public abstract partial class EntityPacket : IntersectPacket
     public int Level { get; set; }
 
     [Key(7)]
-    public byte X { get; set; }
-
+    public Vector3 Position { get; set; }
+    
     [Key(8)]
-    public byte Y { get; set; }
-
+    public byte Dummy8 { get; set; }
+    
     [Key(9)]
-    public byte Z { get; set; }
+    public byte Dummy9 { get; set; }
 
     [Key(10)]
     public byte Dir { get; set; }

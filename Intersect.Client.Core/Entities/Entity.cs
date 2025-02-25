@@ -402,9 +402,7 @@ public partial class Entity : IEntity
         Color = packet.Color;
         Face = packet.Face;
         Level = packet.Level;
-        X = packet.X;
-        Y = packet.Y;
-        Z = packet.Z;
+        Position = packet.Position;
         Dir = (Direction)packet.Dir;
         Passable = packet.Passable;
         HideName = packet.HideName;
