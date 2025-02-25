@@ -161,10 +161,6 @@ public partial class Entity : IEntity
 
     public Color? NameColor { get; set; } = null;
 
-    public float OffsetX { get; set; }
-
-    public float OffsetY { get; set; }
-
     public bool Passable { get; set; }
 
     //Rendering Variables
@@ -228,13 +224,61 @@ public partial class Entity : IEntity
     public FloatRect WorldPos { get; set; } = new FloatRect();
 
     public bool IsHovered { get; set; }
+    
+    private Vector3 _position;
+
+    public Vector3 Position
+    {
+        get => _position;
+        set
+        {
+            if (_position == value)
+            {
+                return;
+            }
+
+            var oldValue = _position;
+            var delta = value - oldValue;
+            _position = value;
+            OnPositionChanged(value, oldValue);
+        }
+    }
+
+    protected virtual void OnPositionChanged(Vector3 newPosition, Vector3 oldPosition) {}
 
     //Location Info
-    public byte X { get; set; }
+    public byte X
+    {
+        get => (byte)float.Floor(Position.X);
+        set => Position = Position with { X = value };
+    }
 
-    public byte Y { get; set; }
+    public byte Y
+    {
+        get => (byte)float.Floor(Position.Y);
+        set => Position = Position with { Y = value };
+    }
 
-    public byte Z { get; set; }
+    public byte Z
+    {
+        get => (byte)float.Floor(Position.Z);
+        set => Position = Position with { Z = value };
+    }
+
+    protected readonly int TileWidth = Options.Instance.Map.TileWidth;
+    protected readonly int TileHeight = Options.Instance.Map.TileHeight;
+
+    public float OffsetX { get; set; }
+    // {
+    //     get => (Position.X % 1) * TileWidth;
+    //     set => Position = Position with { X = X + (value / TileWidth) };
+    // }
+
+    public float OffsetY { get; set; }
+    // {
+    //     get => (Position.Y % 1) * TileHeight;
+    //     set => Position = Position with { Y = Y + (value / TileHeight) };
+    // }
 
     public Entity(Guid id, EntityPacket? packet, EntityType entityType)
     {
