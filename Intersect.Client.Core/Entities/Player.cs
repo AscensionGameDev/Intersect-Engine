@@ -1442,23 +1442,39 @@ public partial class Player : Entity, IPlayer
     // Change the dimension if the player is on a gateway
     private void TryToChangeDimension()
     {
-        if (X < Options.Instance.Map.MapWidth && X >= 0)
+        var tileX = TileX;
+        if (tileX >= MapWidth || tileX < 0)
         {
-            if (Y < Options.Instance.Map.MapHeight && Y >= 0)
-            {
-                if (Maps.MapInstance.Get(MapId) != null && Maps.MapInstance.Get(MapId).Attributes[X, Y] != null)
-                {
-                    if (Maps.MapInstance.Get(MapId).Attributes[X, Y].Type == MapAttributeType.ZDimension)
-                    {
-                        if (((MapZDimensionAttribute)Maps.MapInstance.Get(MapId).Attributes[X, Y]).GatewayTo > 0)
-                        {
-                            Z = (byte)(((MapZDimensionAttribute)Maps.MapInstance.Get(MapId).Attributes[X, Y])
-                                        .GatewayTo -
-                                        1);
-                        }
-                    }
-                }
-            }
+            return;
+        }
+
+        var tileY = TileY;
+        if (tileY >= MapHeight || tileY < 0)
+        {
+            return;
+        }
+
+        if (!Maps.MapInstance.TryGet(MapId, out var mapInstance))
+        {
+            return;
+        }
+
+        var mapAttribute = mapInstance.Attributes[tileX, tileY];
+        if (mapAttribute is not MapZDimensionAttribute { Type: MapAttributeType.ZDimension } zAttribute)
+        {
+            return;
+        }
+
+        var gatewayZ = zAttribute.GatewayTo - 1;
+        if (gatewayZ < 0)
+        {
+            return;
+        }
+
+        var tileZ = TileZ;
+        if (tileZ != gatewayZ)
+        {
+            Position = Position with { Z = zAttribute.GatewayTo - 1 };
         }
     }
 
@@ -1619,12 +1635,12 @@ public partial class Player : Entity, IPlayer
             if (myMap != null && targetMap != null)
             {
                 //Calculate World Tile of Me
-                var x1 = X + myMap.GridX * Options.Instance.Map.MapWidth;
-                var y1 = Y + myMap.GridY * Options.Instance.Map.MapHeight;
+                var x1 = X + myMap.GridX * MapWidth;
+                var y1 = Y + myMap.GridY * MapHeight;
 
                 //Calculate world tile of target
-                var x2 = target.X + targetMap.GridX * Options.Instance.Map.MapWidth;
-                var y2 = target.Y + targetMap.GridY * Options.Instance.Map.MapHeight;
+                var x2 = target.X + targetMap.GridX * MapWidth;
+                var y2 = target.Y + targetMap.GridY * MapHeight;
 
                 return (int)Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
             }
@@ -2047,25 +2063,25 @@ public partial class Player : Entity, IPlayer
 
             if (x < 0)
             {
-                tmpX = Options.Instance.Map.MapWidth - x * -1;
+                tmpX = MapWidth - x * -1;
                 gridX--;
             }
 
             if (y < 0)
             {
-                tmpY = Options.Instance.Map.MapHeight - y * -1;
+                tmpY = MapHeight - y * -1;
                 gridY--;
             }
 
-            if (y > Options.Instance.Map.MapHeight - 1)
+            if (y > MapHeight - 1)
             {
-                tmpY = y - Options.Instance.Map.MapHeight;
+                tmpY = y - MapHeight;
                 gridY++;
             }
 
-            if (x > Options.Instance.Map.MapWidth - 1)
+            if (x > MapWidth - 1)
             {
-                tmpX = x - Options.Instance.Map.MapWidth;
+                tmpX = x - MapWidth;
                 gridX++;
             }
 
@@ -2106,17 +2122,17 @@ public partial class Player : Entity, IPlayer
 
         foreach (MapInstance map in Maps.MapInstance.Lookup.Values.Cast<MapInstance>())
         {
-            if (x >= map.X && x <= map.X + Options.Instance.Map.MapWidth * Options.Instance.Map.TileWidth)
+            if (x >= map.X && x <= map.X + MapWidth * TileWidth)
             {
-                if (y >= map.Y && y <= map.Y + Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight)
+                if (y >= map.Y && y <= map.Y + MapHeight * TileHeight)
                 {
                     //Remove the offsets to just be dealing with pixels within the map selected
                     x -= (int)map.X;
                     y -= (int)map.Y;
 
                     //transform pixel format to tile format
-                    x /= Options.Instance.Map.TileWidth;
-                    y /= Options.Instance.Map.TileHeight;
+                    x /= TileWidth;
+                    y /= TileHeight;
                     var mapId = map.Id;
 
                     if (TryGetRealLocation(ref x, ref y, ref mapId))
@@ -2490,7 +2506,7 @@ public partial class Player : Entity, IPlayer
                 }
                 else
                 {
-                    OffsetX = delta.X > 0 ? -Options.Instance.Map.TileWidth : Options.Instance.Map.TileWidth;
+                    OffsetX = delta.X > 0 ? -TileWidth : TileWidth;
                 }
 
                 if (delta.Y == 0)
@@ -2499,7 +2515,7 @@ public partial class Player : Entity, IPlayer
                 }
                 else
                 {
-                    OffsetY = delta.Y > 0 ? -Options.Instance.Map.TileHeight : Options.Instance.Map.TileHeight;
+                    OffsetY = delta.Y > 0 ? -TileHeight : TileHeight;
                 }
 
                 break;
@@ -2513,16 +2529,16 @@ public partial class Player : Entity, IPlayer
 
         if (IsMoving)
         {
-            if (position.X < 0 || position.Y < 0 || position.X > Options.Instance.Map.MapWidth - 1 || position.Y > Options.Instance.Map.MapHeight - 1)
+            if (position.X < 0 || position.Y < 0 || position.X > MapWidth - 1 || position.Y > MapHeight - 1)
             {
                 var gridX = Maps.MapInstance.Get(Globals.Me.MapId).GridX;
                 var gridY = Maps.MapInstance.Get(Globals.Me.MapId).GridY;
                 if (position.X < 0)
                 {
                     gridX--;
-                    X = (byte)(Options.Instance.Map.MapWidth - 1);
+                    X = (byte)(MapWidth - 1);
                 }
-                else if (position.X >= Options.Instance.Map.MapWidth)
+                else if (position.X >= MapWidth)
                 {
                     X = 0;
                     gridX++;
@@ -2535,9 +2551,9 @@ public partial class Player : Entity, IPlayer
                 if (position.Y < 0)
                 {
                     gridY--;
-                    Y = (byte)(Options.Instance.Map.MapHeight - 1);
+                    Y = (byte)(MapHeight - 1);
                 }
-                else if (position.Y >= Options.Instance.Map.MapHeight)
+                else if (position.Y >= MapHeight)
                 {
                     Y = 0;
                     gridY++;
@@ -2876,10 +2892,10 @@ public partial class Player : Entity, IPlayer
             var mouseInWorld = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
             foreach (MapInstance map in Maps.MapInstance.Lookup.Values.Cast<MapInstance>())
             {
-                if (mouseInWorld.X >= map.X && mouseInWorld.X <= map.X + Options.Instance.Map.MapWidth * Options.Instance.Map.TileWidth)
+                if (mouseInWorld.X >= map.X && mouseInWorld.X <= map.X + MapWidth * TileWidth)
                 {
                     if (mouseInWorld.Y >= map.Y &&
-                        mouseInWorld.Y <= map.Y + Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight)
+                        mouseInWorld.Y <= map.Y + MapHeight * TileHeight)
                     {
                         var mapId = map.Id;
 
