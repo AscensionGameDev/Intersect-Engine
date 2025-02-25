@@ -89,12 +89,12 @@ public partial class Player : Entity, IPlayer
 
     private List<IPartyMember>? mParty;
 
-    public override Direction MoveDir
+    public override Direction DirectionMoving
     {
-        get => base.MoveDir;
+        get => base.DirectionMoving;
         set
         {
-            base.MoveDir = value;
+            base.DirectionMoving = value;
         }
     }
 
@@ -1484,7 +1484,7 @@ public partial class Player : Entity, IPlayer
         {
             return Direction.None;
         }
-        
+
         var inputX = 0;
         var inputY = 0;
 
@@ -1572,11 +1572,11 @@ public partial class Player : Entity, IPlayer
         var inputDirection = GetInputDirection();
         if (TryTurnAround(inputDirection))
         {
-            MoveDir = Direction.None;
+            DirectionMoving = Direction.None;
         }
         else
         {
-            MoveDir = inputDirection;
+            DirectionMoving = inputDirection;
         }
 
         var castInput = -1;
@@ -1878,7 +1878,7 @@ public partial class Player : Entity, IPlayer
 
         var directionToTarget = DirectionToTarget(en);
 
-        if (IsMoving || Dir == MoveDir || Dir == directionToTarget)
+        if (IsMoving || DirectionFacing == DirectionMoving || DirectionFacing == directionToTarget)
         {
             AutoTurnToTargetTimer = Timing.Global.Milliseconds + Options.Instance.Player.AutoTurnToTargetDelay;
             return;
@@ -1890,15 +1890,15 @@ public partial class Player : Entity, IPlayer
         }
 
         if (Options.Instance.Player.AutoTurnToTargetIgnoresEntitiesBehind &&
-            IsTargetAtOppositeDirection(Dir, directionToTarget))
+            IsTargetAtOppositeDirection(DirectionFacing, directionToTarget))
         {
             return;
         }
 
-        MoveDir = Direction.None;
-        Dir = directionToTarget;
-        PacketSender.SendDirection(Dir);
-        PickLastDirection(Dir);
+        DirectionMoving = Direction.None;
+        DirectionFacing = directionToTarget;
+        PacketSender.SendDirection(DirectionFacing);
+        PickLastDirection(DirectionFacing);
     }
 
     private static void ToggleTargetContextMenu(Entity en)
@@ -1942,7 +1942,7 @@ public partial class Player : Entity, IPlayer
         int y = Globals.Me.Y;
         var map = Globals.Me.MapId;
 
-        switch (Globals.Me.Dir)
+        switch (Globals.Me.DirectionFacing)
         {
             case Direction.Up:
                 y--;
@@ -2440,7 +2440,7 @@ public partial class Player : Entity, IPlayer
         Point position = new(X, Y);
         IEntity? blockedBy = null;
 
-        if (MoveDir <= Direction.None || Globals.EventDialogs.Count != 0)
+        if (DirectionMoving <= Direction.None || Globals.EventDialogs.Count != 0)
         {
             return;
         }
@@ -2457,8 +2457,8 @@ public partial class Player : Entity, IPlayer
             CastTime = 0;
         }
 
-        var dir = Dir;
-        var moveDir = MoveDir;
+        var dir = DirectionFacing;
+        var moveDir = DirectionMoving;
 
         var enableCrossingDiagonalBlocks = Options.Instance.Map.EnableCrossingDiagonalBlocks;
 
@@ -2498,7 +2498,7 @@ public partial class Player : Entity, IPlayer
                 position.X += delta.X;
                 position.Y += delta.Y;
                 IsMoving = true;
-                Dir = possibleDirection;
+                DirectionFacing = possibleDirection;
 
                 if (delta.X == 0)
                 {
@@ -2581,11 +2581,11 @@ public partial class Player : Entity, IPlayer
         }
         else
         {
-            if (MoveDir != Dir)
+            if (DirectionMoving != DirectionFacing)
             {
-                Dir = MoveDir;
-                PacketSender.SendDirection(Dir);
-                PickLastDirection(Dir);
+                DirectionFacing = DirectionMoving;
+                PacketSender.SendDirection(DirectionFacing);
+                PickLastDirection(DirectionFacing);
             }
 
             if (blockedBy != null && mLastBumpedEvent != blockedBy && blockedBy is Event)
@@ -2962,19 +2962,13 @@ public partial class Player : Entity, IPlayer
         public int DistanceTo;
     }
 
-    private Direction DirectionFacing
-    {
-        get => Dir;
-        set => Dir = value;
-    }
-
     private bool TryTurnAround(Direction inputDirection)
     {
         if (inputDirection == Direction.None)
         {
             return false;
         }
-        
+
         if (!CanTurnAround)
         {
             return false;

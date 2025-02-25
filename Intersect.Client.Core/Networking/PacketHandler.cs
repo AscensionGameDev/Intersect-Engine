@@ -560,7 +560,7 @@ internal sealed partial class PacketHandler
 
         en.X = packet.X;
         en.Y = packet.Y;
-        en.Dir = (Direction)packet.Direction;
+        en.DirectionFacing = (Direction)packet.Direction;
         en.Passable = packet.Passable;
         en.HideName = packet.HideName;
     }
@@ -744,14 +744,14 @@ internal sealed partial class PacketHandler
             en.MapId = map;
             en.X = x;
             en.Y = y;
-            en.Dir = dir;
+            en.DirectionFacing = dir;
             if (en is Player p)
             {
-                p.MoveDir = dir;
+                p.DirectionMoving = dir;
             }
             en.IsMoving = true;
 
-            switch (en.Dir)
+            switch (en.DirectionFacing)
             {
                 case Direction.Up:
                     en.OffsetY = Options.Instance.Map.TileWidth;
@@ -1096,7 +1096,7 @@ internal sealed partial class PacketHandler
             return;
         }
 
-        en.Dir = (Direction)packet.Direction;
+        en.DirectionFacing = (Direction)packet.Direction;
     }
 
     //EntityAttackPacket

@@ -36,7 +36,7 @@ public interface IEntity : IDisposable
     bool InView { get; }
     IMapInstance? MapInstance { get; }
     Guid MapId { get; }
-    Direction Dir { get; }
+    Direction DirectionFacing { get; }
     byte X { get; }
     byte Y { get; }
     byte Z { get; }

@@ -106,7 +106,7 @@ public static partial class PacketSender
 
     public static void SendMove()
     {
-        Network.SendPacket(new MovePacket(Globals.Me.MapId, Globals.Me.X, Globals.Me.Y, Globals.Me.Dir));
+        Network.SendPacket(new MovePacket(Globals.Me.MapId, Globals.Me.X, Globals.Me.Y, Globals.Me.DirectionFacing));
     }
 
     public static void SendChatMsg(string msg, byte channel)

@@ -135,7 +135,7 @@ public partial class Entity : IEntity
     //Chat
     private readonly List<ChatBubble> mChatBubbles = [];
 
-    private Direction mDir;
+    private Direction _directionFacing;
 
     protected bool mDisposed;
 
@@ -145,7 +145,7 @@ public partial class Entity : IEntity
 
     public Color Color { get; set; } = new Color(255, 255, 255, 255);
 
-    public virtual Direction MoveDir { get; set; } = Direction.None;
+    public virtual Direction DirectionMoving { get; set; } = Direction.None;
 
     public long MoveTimer { get; set; }
 
@@ -328,13 +328,13 @@ public partial class Entity : IEntity
 
     public Vector2 Center => Origin - CenterOffset;
 
-    public Direction Dir
+    public Direction DirectionFacing
     {
-        get => mDir;
-        set => mDir = (Direction)((int)(value + Options.Instance.Map.MovementDirections) % Options.Instance.Map.MovementDirections);
+        get => _directionFacing;
+        set => _directionFacing = (Direction)((int)(value + Options.Instance.Map.MovementDirections) % Options.Instance.Map.MovementDirections);
     }
 
-    private Direction mLastDirection = Direction.Down;
+    private Direction _lastDirection = Direction.Down;
 
     public virtual string TransformedSprite
     {
@@ -404,7 +404,7 @@ public partial class Entity : IEntity
         Face = packet.Face;
         Level = packet.Level;
         Position = packet.Position;
-        Dir = (Direction)packet.Dir;
+        DirectionFacing = (Direction)packet.Dir;
         Passable = packet.Passable;
         HideName = packet.HideName;
         IsHidden = packet.HideEntity;
@@ -604,7 +604,7 @@ public partial class Entity : IEntity
     public virtual float GetMovementTime()
     {
         var time = 1000f / (float)(1 + Math.Log(Stat[(int)Enums.Stat.Speed]));
-        if (Dir > Direction.Right)
+        if (DirectionFacing > Direction.Right)
         {
             time *= MathHelper.UnitDiagonalLength;
         }
@@ -704,9 +704,9 @@ public partial class Entity : IEntity
         {
             var displacementTime = ecTime * TileHeight / GetMovementTime();
 
-            PickLastDirection(Dir);
+            PickLastDirection(DirectionFacing);
 
-            switch (Dir)
+            switch (DirectionFacing)
             {
                 case Direction.Up:
                     OffsetY -= displacementTime;
@@ -904,7 +904,7 @@ public partial class Entity : IEntity
                 animation.Show();
             }
 
-            var animationDirection = animation.AutoRotate ? Dir : default;
+            var animationDirection = animation.AutoRotate ? DirectionFacing : default;
             animation.SetPosition(
                 (int)Math.Ceiling(Center.X),
                 (int)Math.Ceiling(Center.Y),
@@ -1235,7 +1235,7 @@ public partial class Entity : IEntity
             return;
         }
 
-        var spriteRow = PickSpriteRow(Dir);
+        var spriteRow = PickSpriteRow(DirectionFacing);
 
         var frameWidth = texture.Width / SpriteFrames;
         var frameHeight = texture.Height / Options.Instance.Sprites.Directions;
@@ -1261,9 +1261,9 @@ public partial class Entity : IEntity
         WorldPos = destRectangle;
 
         //Order the layers of paperdolls and sprites
-        for (var z = 0; z < Options.Instance.Equipment.Paperdoll.Directions[(int)mLastDirection].Count; z++)
+        for (var z = 0; z < Options.Instance.Equipment.Paperdoll.Directions[(int)_lastDirection].Count; z++)
         {
-            var paperdoll = Options.Instance.Equipment.Paperdoll.Directions[(int)mLastDirection][z];
+            var paperdoll = Options.Instance.Equipment.Paperdoll.Directions[(int)_lastDirection][z];
             var equipSlot = Options.Instance.Equipment.Slots.IndexOf(paperdoll);
 
             //Check for player
@@ -1343,23 +1343,23 @@ public partial class Entity : IEntity
         switch (direction)
         {
             case Direction.Left:
-            case Direction.DownLeft when mLastDirection == Direction.Left:
-            case Direction.UpLeft when mLastDirection == Direction.Left:
+            case Direction.DownLeft when _lastDirection == Direction.Left:
+            case Direction.UpLeft when _lastDirection == Direction.Left:
                 return 1;
 
             case Direction.Right:
-            case Direction.DownRight when mLastDirection == Direction.Right:
-            case Direction.UpRight when mLastDirection == Direction.Right:
+            case Direction.DownRight when _lastDirection == Direction.Right:
+            case Direction.UpRight when _lastDirection == Direction.Right:
                 return 2;
 
             case Direction.Up:
-            case Direction.UpLeft when mLastDirection != Direction.Left:
-            case Direction.UpRight when mLastDirection != Direction.Right:
+            case Direction.UpLeft when _lastDirection != Direction.Left:
+            case Direction.UpRight when _lastDirection != Direction.Right:
                 return 3;
 
             case Direction.Down:
-            case Direction.DownLeft when mLastDirection != Direction.Left:
-            case Direction.DownRight when mLastDirection != Direction.Right:
+            case Direction.DownLeft when _lastDirection != Direction.Left:
+            case Direction.DownRight when _lastDirection != Direction.Right:
             default:
                 return 0;
         }
@@ -1370,28 +1370,28 @@ public partial class Entity : IEntity
         switch (direction)
         {
             case Direction.Left:
-            case Direction.DownLeft when mLastDirection == Direction.Left:
-            case Direction.UpLeft when mLastDirection == Direction.Left:
-                mLastDirection = Direction.Left;
+            case Direction.DownLeft when _lastDirection == Direction.Left:
+            case Direction.UpLeft when _lastDirection == Direction.Left:
+                _lastDirection = Direction.Left;
                 break;
 
             case Direction.Right:
-            case Direction.DownRight when mLastDirection == Direction.Right:
-            case Direction.UpRight when mLastDirection == Direction.Right:
-                mLastDirection = Direction.Right;
+            case Direction.DownRight when _lastDirection == Direction.Right:
+            case Direction.UpRight when _lastDirection == Direction.Right:
+                _lastDirection = Direction.Right;
                 break;
 
             case Direction.Up:
-            case Direction.UpLeft when mLastDirection != Direction.Left:
-            case Direction.UpRight when mLastDirection != Direction.Right:
-                mLastDirection = Direction.Up;
+            case Direction.UpLeft when _lastDirection != Direction.Left:
+            case Direction.UpRight when _lastDirection != Direction.Right:
+                _lastDirection = Direction.Up;
                 break;
 
             case Direction.Down:
-            case Direction.DownLeft when mLastDirection != Direction.Left:
-            case Direction.DownRight when mLastDirection != Direction.Right:
+            case Direction.DownLeft when _lastDirection != Direction.Left:
+            case Direction.DownRight when _lastDirection != Direction.Right:
             default:
-                mLastDirection = Direction.Down;
+                _lastDirection = Direction.Down;
                 break;
         }
     }
@@ -1483,7 +1483,7 @@ public partial class Entity : IEntity
         }
 
         // Calculate: direction, frame width and frame height.
-        var spriteRow = PickSpriteRow(Dir);
+        var spriteRow = PickSpriteRow(DirectionFacing);
         var frameWidth = paperdollTex.Width / spriteFrames;
         var frameHeight = paperdollTex.Height / Options.Instance.Sprites.Directions;
 
@@ -2317,7 +2317,7 @@ public partial class Entity : IEntity
     {
         if (en == null)
         {
-            return Dir;
+            return DirectionFacing;
         }
 
         var originMapController = MapInstance;
@@ -2325,7 +2325,7 @@ public partial class Entity : IEntity
 
         if (originMapController == null || targetMapController == null)
         {
-            return Dir;
+            return DirectionFacing;
         }
 
         var originY = Y + originMapController.GridY * MapHeight;

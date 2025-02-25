@@ -72,7 +72,7 @@ public partial class Projectile : Entity
 
         var pkt = (ProjectileEntityPacket)packet;
         _projectileId = pkt.ProjectileId;
-        Dir = (Direction)pkt.ProjectileDirection;
+        DirectionFacing = (Direction)pkt.ProjectileDirection;
         _targetId = pkt.TargetId;
         _owner = pkt.OwnerId;
         _myBase = ProjectileBase.Get(_projectileId);
@@ -192,9 +192,9 @@ public partial class Projectile : Entity
                     {
                         // Calculate the spawn position and direction for the new projectile
                         var s = new ProjectileSpawns(
-                            FindProjectileRotationDir(Dir, (Direction)d),
-                            (byte)(X + FindProjectileRotation(Dir, x - 2, y - 2, true)),
-                            (byte)(Y + FindProjectileRotation(Dir, x - 2, y - 2, false)), Z, MapId, animBase,
+                            FindProjectileRotationDir(DirectionFacing, (Direction)d),
+                            (byte)(X + FindProjectileRotation(DirectionFacing, x - 2, y - 2, true)),
+                            (byte)(Y + FindProjectileRotation(DirectionFacing, x - 2, y - 2, false)), Z, MapId, animBase,
                             _myBase.Animations[spawn].AutoRotate, _myBase, this
                         );
 

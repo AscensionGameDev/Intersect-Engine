@@ -36,11 +36,11 @@ public partial class Critter : Entity
         //Determine Direction
         if (mAttribute.Direction == 0)
         {
-            Dir = Randomization.NextDirection();
+            DirectionFacing = Randomization.NextDirection();
         }
         else
         {
-            Dir = (Direction)(mAttribute.Direction - 1);
+            DirectionFacing = (Direction)(mAttribute.Direction - 1);
         }
 
         //Block Players?
@@ -59,7 +59,7 @@ public partial class Critter : Entity
                         MoveRandomly();
                         break;
                     case 1: //Turn?
-                        Dir = Randomization.NextDirection();
+                        DirectionFacing = Randomization.NextDirection();
                         break;
 
                 }
@@ -75,7 +75,7 @@ public partial class Critter : Entity
 
     private void MoveRandomly()
     {
-        MoveDir = Randomization.NextDirection();
+        DirectionMoving = Randomization.NextDirection();
         var tmpX = (sbyte)X;
         var tmpY = (sbyte)Y;
         IEntity? blockedBy = null;
@@ -88,7 +88,7 @@ public partial class Critter : Entity
         var deltaX = 0;
         var deltaY = 0;
 
-        switch (MoveDir)
+        switch (DirectionMoving)
         {
             case Direction.Up:
                 deltaX = 0;
@@ -153,7 +153,7 @@ public partial class Critter : Entity
                 tmpX += (sbyte)deltaX;
                 tmpY += (sbyte)deltaY;
                 IsMoving = true;
-                Dir = MoveDir;
+                DirectionFacing = DirectionMoving;
 
                 if (deltaX == 0)
                 {
@@ -181,9 +181,9 @@ public partial class Critter : Entity
             Y = (byte)tmpY;
             MoveTimer = Timing.Global.MillisecondsUtc + (long)GetMovementTime();
         }
-        else if (MoveDir != Dir)
+        else if (DirectionMoving != DirectionFacing)
         {
-            Dir = MoveDir;
+            DirectionFacing = DirectionMoving;
         }
     }
 
