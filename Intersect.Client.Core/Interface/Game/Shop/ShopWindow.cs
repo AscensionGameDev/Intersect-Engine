@@ -1,5 +1,6 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
@@ -16,8 +17,20 @@ public partial class ShopWindow : Window
         DisableResizing();
         Interface.InputBlockingComponents.Add(this);
 
-        _slotContainer = new ScrollControl(this, "ItemContainer");
-        _slotContainer.EnableScroll(false, true);
+        Alignment = [Alignments.Center];
+        MinimumSize = new Point(x: 442, y: 469);
+        IsResizable = false;
+        IsClosable = true;
+
+        TitleLabel.FontSize = 14;
+        TitleLabel.TextColorOverride = Color.White;
+
+        _slotContainer = new ScrollControl(this, "ItemContainer")
+        {
+            Dock = Pos.Fill,
+            OverflowX = OverflowBehavior.Auto,
+            OverflowY = OverflowBehavior.Scroll,
+        };
     }
 
     protected override void EnsureInitialized()
