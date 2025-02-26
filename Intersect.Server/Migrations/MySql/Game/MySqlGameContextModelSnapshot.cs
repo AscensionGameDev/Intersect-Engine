@@ -1319,7 +1319,7 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.GameObjects.AnimationBase", b =>
                 {
-                    b.OwnsOne("Intersect.GameObjects.AnimationLayer", "Lower", b1 =>
+                    b.OwnsOne("Intersect.Framework.Core.GameObjects.Animations.AnimationLayer", "Lower", b1 =>
                         {
                             b1.Property<Guid>("AnimationBaseId")
                                 .HasColumnType("char(36)")
@@ -1360,7 +1360,7 @@ namespace Intersect.Server.Migrations.MySql.Game
                                 .HasForeignKey("AnimationBaseId");
                         });
 
-                    b.OwnsOne("Intersect.GameObjects.AnimationLayer", "Upper", b1 =>
+                    b.OwnsOne("Intersect.Framework.Core.GameObjects.Animations.AnimationLayer", "Upper", b1 =>
                         {
                             b1.Property<Guid>("AnimationBaseId")
                                 .HasColumnType("char(36)")

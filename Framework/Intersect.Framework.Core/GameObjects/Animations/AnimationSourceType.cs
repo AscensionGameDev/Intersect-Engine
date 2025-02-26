@@ -1,4 +1,4 @@
-namespace Intersect.GameObjects.Animations;
+namespace Intersect.Framework.Core.GameObjects.Animations;
 
 public enum AnimationSourceType
 {

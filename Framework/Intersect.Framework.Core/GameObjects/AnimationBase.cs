@@ -1,4 +1,5 @@
-﻿using Intersect.Models;
+﻿using Intersect.Framework.Core.GameObjects.Animations;
+using Intersect.Models;
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects;

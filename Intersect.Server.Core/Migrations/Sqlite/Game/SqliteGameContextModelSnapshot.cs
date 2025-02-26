@@ -1263,7 +1263,7 @@ namespace Intersect.Server.Migrations.Sqlite.Game
 
             modelBuilder.Entity("Intersect.GameObjects.AnimationBase", b =>
                 {
-                    b.OwnsOne("Intersect.GameObjects.AnimationLayer", "Lower", b1 =>
+                    b.OwnsOne("Intersect.Framework.Core.GameObjects.Animations.AnimationLayer", "Lower", b1 =>
                         {
                             b1.Property<Guid>("AnimationBaseId")
                                 .HasColumnType("TEXT");
@@ -1303,7 +1303,7 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                                 .HasForeignKey("AnimationBaseId");
                         });
 
-                    b.OwnsOne("Intersect.GameObjects.AnimationLayer", "Upper", b1 =>
+                    b.OwnsOne("Intersect.Framework.Core.GameObjects.Animations.AnimationLayer", "Upper", b1 =>
                         {
                             b1.Property<Guid>("AnimationBaseId")
                                 .HasColumnType("TEXT");

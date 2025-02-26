@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Intersect.GameObjects;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
-namespace Intersect.GameObjects;
+namespace Intersect.Framework.Core.GameObjects.Animations;
 
 [Owned]
 public partial class AnimationLayer

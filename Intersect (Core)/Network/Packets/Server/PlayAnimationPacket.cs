@@ -1,6 +1,6 @@
 ﻿using MessagePack;
 using Intersect.Enums;
-using Intersect.GameObjects.Animations;
+using Intersect.Framework.Core.GameObjects.Animations;
 
 namespace Intersect.Network.Packets.Server;
 
