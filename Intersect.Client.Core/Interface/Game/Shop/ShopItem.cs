@@ -51,7 +51,7 @@ public partial class ShopItem : ImagePanel
         // TODO: Refactor so shop only has 1 context menu shared between all items
         _contextMenu = new ContextMenu(Interface.CurrentInterface.Root, "ShopContextMenu")
         {
-            IsHidden = true,
+            IsVisibleInParent = false,
             IconMarginDisabled = true,
             ItemFont = GameContentManager.Current.GetFont(name: "sourcesansproblack"),
             ItemFontSize = 10,

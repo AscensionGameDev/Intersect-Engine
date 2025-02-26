@@ -390,7 +390,7 @@ public partial class GameInterface : MutableInterface
             GameMenu.OpenInventory();
         }
 
-        if (mShopWindow != null && (mShopWindow.IsHidden || mShouldCloseShop))
+        if (mShopWindow != null && (!mShopWindow.IsVisibleInTree || mShouldCloseShop))
         {
             CloseShop();
         }
@@ -583,7 +583,7 @@ public partial class GameInterface : MutableInterface
             closedWindows = true;
         }
 
-        if (mShopWindow != null && !mShopWindow.IsHidden)
+        if (mShopWindow is { IsVisibleInTree: false })
         {
             CloseShop();
             closedWindows = true;
