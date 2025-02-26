@@ -1,5 +1,6 @@
-using Intersect.Client.Framework.GenericClasses;
-using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Core;
+using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
@@ -13,102 +14,59 @@ using Intersect.Network.Packets.Server;
 
 namespace Intersect.Client.Interface.Game.Shop;
 
-
-public partial class ShopItem
+public partial class ShopItem : ImagePanel
 {
+    private readonly int _mySlot;
+    private readonly ShopWindow _shopWindow;
+    public ImagePanel _iconImage;
+    private readonly ContextMenu _contextMenu;
+    private readonly MenuItem _buyMenuItem;
+    private ItemDescriptionWindow? _itemDescWindow;
 
-    public ImagePanel Container;
-
-    private int mCurrentItem = -2;
-
-    private ItemDescriptionWindow mDescWindow;
-
-    private bool mIsEquipped;
-
-    //Mouse Event Variables
-    private bool mMouseOver;
-
-    private int mMouseX = -1;
-
-    private int mMouseY = -1;
-
-    //Slot info
-    private int mMySlot;
-
-    //Textures
-    private IGameRenderTexture mSfTex;
-
-    //Drag/Drop References
-    private ShopWindow mShopWindow;
-
-    public ImagePanel Pnl;
-
-    public ShopItem(ShopWindow shopWindow, int index)
+    public ShopItem(ShopWindow shopWindow, Base parent, int index) : base(parent, nameof(ShopItem))
     {
-        mShopWindow = shopWindow;
-        mMySlot = index;
-    }
+        _shopWindow = shopWindow;
+        _mySlot = index;
 
-    public void Setup()
-    {
-        Pnl = new ImagePanel(Container, "ShopItemIcon");
-        Pnl.HoverEnter += pnl_HoverEnter;
-        Pnl.HoverLeave += pnl_HoverLeave;
-        Pnl.Clicked += Pnl_RightClicked;
-        Pnl.DoubleClicked += Pnl_DoubleClicked;
-    }
+        MinimumSize = new Point(34, 34);
+        Margin = new Margin(4, 4, 4, 4);
+        MouseInputEnabled = true;
+        TextureFilename = "shopitem.png";
 
-    private void Pnl_DoubleClicked(Base sender, MouseButtonState arguments)
-    {
-        Globals.Me?.TryBuyItem(mMySlot);
-    }
-
-    private void Pnl_RightClicked(Base sender, MouseButtonState arguments)
-    {
-        if (arguments.MouseButton != MouseButton.Right)
+        _iconImage = new ImagePanel(this, "ShopItemIcon")
         {
-            return;
-        }
+            MinimumSize = new Point(32, 32),
+            MouseInputEnabled = true,
+            Alignment = [Alignments.Center],
+            HoverSound = "octave-tap-resonant.wav",
+        };
+        _iconImage.HoverEnter += _iconImage_HoverEnter;
+        _iconImage.HoverLeave += _iconImage_HoverLeave;
+        _iconImage.Clicked += _iconImage_RightClicked;
+        _iconImage.DoubleClicked += _iconImage_DoubleClicked;
 
-        if (ClientConfiguration.Instance.EnableContextMenus)
+        LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+        // Generate our context menu with basic options.
+        // TODO: Refactor so shop only has 1 context menu shared between all items
+        _contextMenu = new ContextMenu(Interface.CurrentInterface.Root, "ShopContextMenu")
         {
-            mShopWindow.OpenContextMenu(mMySlot);
-        }
-        else
-        {
-            Pnl_DoubleClicked(sender, arguments);
-        }
+            IsVisibleInParent = false,
+            IconMarginDisabled = true,
+            ItemFont = GameContentManager.Current.GetFont(name: "sourcesansproblack"),
+            ItemFontSize = 10,
+        };
+
+        //TODO: Is this a memory leak?
+        _contextMenu.ClearChildren();
+        _buyMenuItem = _contextMenu.AddItem(Strings.ShopContextMenu.Buy);
+        _buyMenuItem.Clicked += _buyMenuItem_Clicked;
+        _contextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+        LoadItem();
     }
 
-    public void LoadItem()
-    {
-        var item = ItemBase.Get(Globals.GameShop.SellingItems[mMySlot].ItemId);
-        if (item != null)
-        {
-            var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);
-            if (itemTex != null)
-            {
-                Pnl.Texture = itemTex;
-                Pnl.RenderColor = item.Color;
-            }
-        }
-    }
-
-
-
-    void pnl_HoverLeave(Base sender, EventArgs arguments)
-    {
-        mMouseOver = false;
-        mMouseX = -1;
-        mMouseY = -1;
-        if (mDescWindow != null)
-        {
-            mDescWindow.Dispose();
-            mDescWindow = null;
-        }
-    }
-
-    void pnl_HoverEnter(Base sender, EventArgs arguments)
+    private void _iconImage_HoverEnter(Base sender, EventArgs arguments)
     {
         if (InputHandler.MouseFocus != null)
         {
@@ -120,42 +78,115 @@ public partial class ShopItem
             return;
         }
 
-        if (mDescWindow != null)
+        if (_itemDescWindow != default)
         {
-            mDescWindow.Dispose();
-            mDescWindow = null;
+            _itemDescWindow.Dispose();
+            _itemDescWindow = default;
         }
 
-        var item = ItemBase.Get(Globals.GameShop.SellingItems[mMySlot].CostItemId);
-        if (item != null && Globals.GameShop.SellingItems[mMySlot].Item != null)
+        if (Globals.GameShop is not { SellingItems.Count: > 0 } gameShop)
+        {
+            return;
+        }
+
+        if (!ItemBase.TryGet(gameShop.SellingItems[_mySlot].CostItemId, out var item))
+        {
+            return;
+        }
+
+        if (gameShop.SellingItems[_mySlot].Item != default)
         {
             ItemProperties itemProperty = new ItemProperties()
             {
                 StatModifiers = item.StatsGiven,
             };
 
-            mDescWindow = new ItemDescriptionWindow(
-                Globals.GameShop.SellingItems[mMySlot].Item, 1, mShopWindow.X, mShopWindow.Y, itemProperty, "",
-                Strings.Shop.Costs.ToString(Globals.GameShop.SellingItems[mMySlot].CostItemQuantity, item.Name)
+            _itemDescWindow = new ItemDescriptionWindow(
+                item: gameShop.SellingItems[_mySlot].Item,
+                amount: 1,
+                x: _shopWindow.X,
+                y: _shopWindow.Y,
+                itemProperties: itemProperty,
+                valueLabel: Strings.Shop.Costs.ToString(gameShop.SellingItems[_mySlot].CostItemQuantity, item.Name)
             );
         }
     }
 
-    public FloatRect RenderBounds()
+    private void _iconImage_HoverLeave(Base sender, EventArgs arguments)
     {
-        var rect = new FloatRect()
+        if (_itemDescWindow != null)
         {
-            X = Pnl.ToCanvas(new Point(0, 0)).X,
-            Y = Pnl.ToCanvas(new Point(0, 0)).Y,
-            Width = Pnl.Width,
-            Height = Pnl.Height
-        };
-
-        return rect;
+            _itemDescWindow.Dispose();
+            _itemDescWindow = null;
+        }
     }
 
-    public void Update()
+    private void _iconImage_RightClicked(Base sender, MouseButtonState arguments)
     {
+        if (arguments.MouseButton != MouseButton.Right)
+        {
+            return;
+        }
+
+        if (ClientConfiguration.Instance.EnableContextMenus)
+        {
+            OpenContextMenu(_mySlot);
+        }
+        else
+        {
+            _iconImage_DoubleClicked(sender, arguments);
+        }
     }
 
+    private void _iconImage_DoubleClicked(Base sender, MouseButtonState arguments)
+    {
+        Globals.Me?.TryBuyItem(_mySlot);
+    }
+
+    private void _buyMenuItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.MouseButtonState arguments)
+    {
+        Globals.Me?.TryBuyItem(_mySlot);
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        _contextMenu?.Close();
+        base.Dispose(disposing);
+    }
+
+    public void OpenContextMenu(int slot)
+    {
+        if (Globals.GameShop is not { SellingItems.Count: > 0 } gameShop)
+        {
+            return;
+        }
+
+        if (!ItemBase.TryGet(gameShop.SellingItems[slot].ItemId, out var item))
+        {
+            return;
+        }
+
+        _buyMenuItem.SetText(Strings.ShopContextMenu.Buy.ToString(item.Name));
+        _contextMenu.Open(Pos.None);
+    }
+
+    public void LoadItem()
+    {
+        if (Globals.GameShop is not { SellingItems.Count: > 0 } gameShop)
+        {
+            return;
+        }
+
+        if (!ItemBase.TryGet(gameShop.SellingItems[_mySlot].ItemId, out var itemDescriptor))
+        {
+            return;
+        }
+
+        var itemTex = Globals.ContentManager?.GetTexture(Framework.Content.TextureType.Item, itemDescriptor.Icon);
+        if (itemTex != null)
+        {
+            _iconImage.Texture = itemTex;
+            _iconImage.RenderColor = itemDescriptor.Color;
+        }
+    }
 }

@@ -1,16 +1,14 @@
-﻿using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Input;
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal;
-
 
 /// <summary>
 ///     Scrollbar bar.
 /// </summary>
 public partial class ScrollBarBar : Dragger
 {
-
     private bool mHorizontal;
 
     /// <summary>
@@ -21,6 +19,10 @@ public partial class ScrollBarBar : Dragger
     {
         RestrictToParent = true;
         Target = this;
+
+        SetSound(ButtonSoundState.Hover, "octave-tap-resonant.wav");
+        SetSound(ButtonSoundState.MouseDown, "octave-tap-warm.wav");
+        SetSound(ButtonSoundState.MouseUp, "octave-tap-warm.wav");
     }
 
     /// <summary>
@@ -67,16 +69,6 @@ public partial class ScrollBarBar : Dragger
         }
 
         InvalidateParent();
-    }
-
-    protected override void OnMouseClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
-    {
-        base.OnMouseClicked(mouseButton, mousePosition, userAction);
-
-        if (mouseButton == MouseButton.Left)
-        {
-            InvalidateParent();
-        }
     }
 
     /// <summary>
