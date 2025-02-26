@@ -583,7 +583,7 @@ public partial class GameInterface : MutableInterface
             closedWindows = true;
         }
 
-        if (mShopWindow is { IsVisibleInTree: false })
+        if (mShopWindow is { IsVisibleInTree: true })
         {
             CloseShop();
             closedWindows = true;
