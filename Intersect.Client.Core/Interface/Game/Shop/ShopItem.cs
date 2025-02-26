@@ -28,7 +28,7 @@ public partial class ShopItem : ImagePanel
         _shopWindow = shopWindow;
         _mySlot = index;
 
-        MinimumSize = new Point(34, 35);
+        MinimumSize = new Point(34, 34);
         Margin = new Margin(4, 4, 4, 4);
         MouseInputEnabled = true;
         TextureFilename = "shopitem.png";
@@ -48,17 +48,14 @@ public partial class ShopItem : ImagePanel
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
         // Generate our context menu with basic options.
+        // TODO: Refactor so shop only has 1 context menu shared between all items
         _contextMenu = new ContextMenu(Interface.CurrentInterface.Root, "ShopContextMenu")
         {
             IsHidden = true,
             IconMarginDisabled = true,
+            ItemFont = GameContentManager.Current.GetFont(name: "sourcesansproblack"),
+            ItemFontSize = 10,
         };
-
-        var font = GameContentManager.Current.GetFont(name: "sourcesansproblack");
-        if (font != default)
-        {
-            _contextMenu.SetItemFont(font, 10);
-        }
 
         //TODO: Is this a memory leak?
         _contextMenu.ClearChildren();
@@ -87,17 +84,17 @@ public partial class ShopItem : ImagePanel
             _itemDescWindow = default;
         }
 
-        if (Globals.GameShop == default || Globals.GameShop.SellingItems.Count == 0)
+        if (Globals.GameShop is not { SellingItems.Count: > 0 } gameShop)
         {
             return;
         }
 
-        if (!ItemBase.TryGet(Globals.GameShop.SellingItems[_mySlot].CostItemId, out var item))
+        if (!ItemBase.TryGet(gameShop.SellingItems[_mySlot].CostItemId, out var item))
         {
             return;
         }
 
-        if (Globals.GameShop.SellingItems[_mySlot].Item != default)
+        if (gameShop.SellingItems[_mySlot].Item != default)
         {
             ItemProperties itemProperty = new ItemProperties()
             {
@@ -105,12 +102,12 @@ public partial class ShopItem : ImagePanel
             };
 
             _itemDescWindow = new ItemDescriptionWindow(
-                item: Globals.GameShop.SellingItems[_mySlot].Item,
+                item: gameShop.SellingItems[_mySlot].Item,
                 amount: 1,
                 x: _shopWindow.X,
                 y: _shopWindow.Y,
                 itemProperties: itemProperty,
-                valueLabel: Strings.Shop.Costs.ToString(Globals.GameShop.SellingItems[_mySlot].CostItemQuantity, item.Name)
+                valueLabel: Strings.Shop.Costs.ToString(gameShop.SellingItems[_mySlot].CostItemQuantity, item.Name)
             );
         }
     }
@@ -183,16 +180,21 @@ public partial class ShopItem : ImagePanel
 
     public void LoadItem()
     {
-        if (Globals.GameShop == default || !ItemBase.TryGet(Globals.GameShop.SellingItems[_mySlot].ItemId, out var item))
+        if (Globals.GameShop is not { SellingItems.Count: > 0 } gameShop)
         {
             return;
         }
 
-        var itemTex = Globals.ContentManager?.GetTexture(Framework.Content.TextureType.Item, item.Icon);
+        if (!ItemBase.TryGet(gameShop.SellingItems[_mySlot].ItemId, out var itemDescriptor))
+        {
+            return;
+        }
+
+        var itemTex = Globals.ContentManager?.GetTexture(Framework.Content.TextureType.Item, itemDescriptor.Icon);
         if (itemTex != null)
         {
             _iconImage.Texture = itemTex;
-            _iconImage.RenderColor = item.Color;
+            _iconImage.RenderColor = itemDescriptor.Color;
         }
     }
 }
