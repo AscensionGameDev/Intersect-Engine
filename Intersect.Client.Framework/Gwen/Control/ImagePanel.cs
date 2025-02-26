@@ -20,9 +20,9 @@ public partial class ImagePanel : Base
     //Sound Effects
     public string? HoverSound { get; set; }
 
-    protected string? LeftMouseClickSound { get; set; }
+    public string? LeftMouseClickSound { get; set; }
 
-    protected string? RightMouseClickSound { get; set; }
+    public string? RightMouseClickSound { get; set; }
 
     private IGameTexture? _texture { get; set; }
     private string? _textureName;
