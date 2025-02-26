@@ -28,20 +28,37 @@ public partial class ShopItem : ImagePanel
         _shopWindow = shopWindow;
         _mySlot = index;
 
-        _iconImage = new ImagePanel(this, "ShopItemIcon");
+        MinimumSize = new Point(34, 35);
+        Margin = new Margin(4, 4, 4, 4);
+        MouseInputEnabled = true;
+        TextureFilename = "shopitem.png";
+
+        _iconImage = new ImagePanel(this, "ShopItemIcon")
+        {
+            MinimumSize = new Point(32, 32),
+            MouseInputEnabled = true,
+            Alignment = [Alignments.Center],
+            HoverSound = "octave-tap-resonant.wav",
+        };
         _iconImage.HoverEnter += _iconImage_HoverEnter;
         _iconImage.HoverLeave += _iconImage_HoverLeave;
         _iconImage.Clicked += _iconImage_RightClicked;
         _iconImage.DoubleClicked += _iconImage_DoubleClicked;
 
+        LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
         // Generate our context menu with basic options.
         _contextMenu = new ContextMenu(Interface.CurrentInterface.Root, "ShopContextMenu")
         {
             IsHidden = true,
-            IconMarginDisabled = true
+            IconMarginDisabled = true,
         };
 
-        LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        var font = GameContentManager.Current.GetFont(name: "sourcesansproblack");
+        if (font != default)
+        {
+            _contextMenu.SetItemFont(font, 10);
+        }
 
         //TODO: Is this a memory leak?
         _contextMenu.ClearChildren();
