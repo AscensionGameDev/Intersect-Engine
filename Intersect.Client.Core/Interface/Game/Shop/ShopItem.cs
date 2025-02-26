@@ -145,12 +145,7 @@ public partial class ShopItem : ImagePanel
 
     private void _buyMenuItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.MouseButtonState arguments)
     {
-        if (sender.Parent?.UserData is not int slot)
-        {
-            return;
-        }
-
-        Globals.Me?.TryBuyItem(slot);
+        Globals.Me?.TryBuyItem(_mySlot);
     }
 
     protected override void Dispose(bool disposing)
@@ -161,20 +156,17 @@ public partial class ShopItem : ImagePanel
 
     public void OpenContextMenu(int slot)
     {
-        if (Globals.GameShop?.SellingItems[slot] == default)
+        if (Globals.GameShop is not { SellingItems.Count: > 0 } gameShop)
         {
             return;
         }
 
-        if (!ItemBase.TryGet(Globals.GameShop.SellingItems[slot].ItemId, out var item))
+        if (!ItemBase.TryGet(gameShop.SellingItems[slot].ItemId, out var item))
         {
             return;
         }
 
         _buyMenuItem.SetText(Strings.ShopContextMenu.Buy.ToString(item.Name));
-
-        _contextMenu.UserData = slot;
-        _contextMenu.SizeToChildren();
         _contextMenu.Open(Pos.None);
     }
 
