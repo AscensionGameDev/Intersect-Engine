@@ -15,7 +15,7 @@ namespace Intersect.Server.Migrations.Sqlite.Logging
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.11");
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
 
             modelBuilder.Entity("Intersect.Server.Database.Logging.Entities.ChatHistory", b =>
                 {
@@ -155,7 +155,7 @@ namespace Intersect.Server.Migrations.Sqlite.Logging
                         .HasColumnType("TEXT")
                         .HasColumnOrder(0);
 
-                    b.Property<byte>("Level")
+                    b.Property<int>("Level")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Method")
