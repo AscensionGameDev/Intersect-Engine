@@ -1,4 +1,3 @@
-using System.Collections;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.ControlInternal;
@@ -20,12 +19,7 @@ public partial class Menu : ScrollControl
 
     private bool mDisableIconMargin;
 
-    private IFont? mItemFont;
-    private int _itemFontSize;
-
     //Menu Item Stuff
-    private string mItemFontInfo;
-
     protected Color mItemHoverTextColor;
 
     protected Color mItemNormalTextColor;
@@ -45,6 +39,66 @@ public partial class Menu : ScrollControl
 
         DeleteOnClose = false;
     }
+
+    #region Font Handling
+
+    private IFont? _itemFont;
+
+    public IFont? ItemFont
+    {
+        get => _itemFont;
+        set => SetItemFont(value, value?.Name);
+    }
+
+    private string? _itemFontName;
+
+    public string? ItemFontName
+    {
+        get => _itemFontName;
+        set => SetItemFont(GameContentManager.Current.GetFont(_itemFontName), _itemFontName);
+    }
+
+    private int _itemFontSize;
+
+    public int ItemFontSize
+    {
+        get => _itemFontSize;
+        set
+        {
+            if (value == _itemFontSize)
+            {
+                return;
+            }
+
+            var oldValue = _itemFontSize;
+            _itemFontSize = value;
+            OnFontSizeChanged(this, value, oldValue);
+        }
+    }
+
+    private void SetItemFont(IFont? itemFont, string? itemFontName)
+    {
+        var oldValue = _itemFont;
+        _itemFont = itemFont;
+        _itemFontName = itemFontName;
+
+        if (itemFont != oldValue)
+        {
+            OnFontChanged(this, itemFont, oldValue);
+        }
+    }
+
+    protected virtual void OnFontChanged(Base sender, IFont? newFont, IFont? oldFont)
+    {
+        UpdateItemStyles();
+    }
+
+    protected virtual void OnFontSizeChanged(Base sender, int newSize, int oldSize)
+    {
+        UpdateItemStyles();
+    }
+
+    #endregion
 
     internal override bool IsMenuComponent => true;
 
@@ -343,14 +397,21 @@ public partial class Menu : ScrollControl
         serializedProperties.Add("BackgroundTemplate", mBackgroundTemplateFilename);
         serializedProperties.Add("ItemTextColor", Color.ToString(mItemNormalTextColor));
         serializedProperties.Add("ItemHoveredTextColor", Color.ToString(mItemHoverTextColor));
-        serializedProperties.Add("ItemFont", mItemFontInfo);
+        serializedProperties.Add(nameof(ItemFontName), ItemFontName);
+        serializedProperties.Add(nameof(ItemFontSize), ItemFontSize);
 
         return base.FixJson(serializedProperties);
     }
 
-    public override void LoadJson(JToken obj, bool isRoot = default)
+    public override void LoadJson(JToken token, bool isRoot = default)
     {
-        base.LoadJson(obj);
+        base.LoadJson(token, isRoot);
+
+        if (token is not JObject obj)
+        {
+            return;
+        }
+
         if (obj["BackgroundTemplate"] != null)
         {
             SetBackgroundTemplate(
@@ -370,12 +431,46 @@ public partial class Menu : ScrollControl
             mItemHoverTextColor = Color.FromString((string)obj["ItemHoveredTextColor"]);
         }
 
-        if (obj["ItemFont"] != null && obj["ItemFont"].Type != JTokenType.Null)
+        string? itemFontName = null;
+        int? itemFontSize = null;
+
+        if (obj.TryGetValue(nameof(ItemFont), out var tokenItemFont) &&
+            tokenItemFont is JValue { Type: JTokenType.String } valueItemFont)
         {
-            var fontArr = ((string)obj["ItemFont"]).Split(',');
-            mItemFontInfo = (string)obj["ItemFont"];
-            _itemFontSize = int.Parse(fontArr[1]);
-            mItemFont = GameContentManager.Current.GetFont(fontArr[0]);
+            var stringItemFont = valueItemFont.Value<string>()?.Trim();
+            if (!string.IsNullOrWhiteSpace(stringItemFont))
+            {
+                var parts = stringItemFont.Split(',');
+                itemFontName = parts.FirstOrDefault();
+
+                if (parts.Length > 1 && int.TryParse(parts[1], out var size))
+                {
+                    itemFontSize = size;
+                }
+            }
+        }
+
+        if (obj.TryGetValue(nameof(ItemFontName), out var tokenItemFontName) &&
+            tokenItemFontName is JValue { Type: JTokenType.String } valueItemFontName)
+        {
+            itemFontName = valueItemFontName.Value<string>();
+        }
+
+        if (obj.TryGetValue(nameof(ItemFontSize), out var tokenItemFontSize) &&
+            tokenItemFontSize is JValue { Type: JTokenType.Integer } valueItemFontSize)
+        {
+            itemFontSize = valueItemFontSize.Value<int>();
+        }
+
+        if (itemFontSize.HasValue)
+        {
+            ItemFontSize = itemFontSize.Value;
+        }
+
+        itemFontName = itemFontName?.Trim();
+        if (!string.IsNullOrWhiteSpace(itemFontName))
+        {
+            ItemFontName = itemFontName;
         }
 
         UpdateItemStyles();
@@ -386,9 +481,9 @@ public partial class Menu : ScrollControl
         var menuItems = Children.OfType<MenuItem>().ToArray();
         foreach (var item in menuItems)
         {
-            if (mItemFont != null)
+            if (_itemFont != null)
             {
-                item.Font = mItemFont;
+                item.Font = _itemFont;
             }
 
             item.FontSize = _itemFontSize;
@@ -415,9 +510,8 @@ public partial class Menu : ScrollControl
 
     public void SetItemFont(IFont font, int fontSize)
     {
-        mItemFont = font;
+        _itemFont = font;
         _itemFontSize = fontSize;
-        mItemFontInfo = $"{font.Name},{fontSize}";
         UpdateItemStyles();
     }
 

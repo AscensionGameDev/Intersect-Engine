@@ -18,7 +18,7 @@ public partial class ShopWindow : Window
         Interface.InputBlockingComponents.Add(this);
 
         Alignment = [Alignments.Center];
-        MinimumSize = new Point(x: 442, y: 469);
+        MinimumSize = new Point(x: 435, y: 469);
         IsResizable = false;
         IsClosable = true;
 
@@ -41,30 +41,27 @@ public partial class ShopWindow : Window
 
     private void InitItemContainer()
     {
-        if (Globals.GameShop == default || Globals.GameShop.SellingItems.Count == 0)
+        if (Globals.GameShop is not { SellingItems.Count: > 0 } gameShop)
         {
             return;
         }
 
-        for (var i = 0; i < Globals.GameShop.SellingItems.Count; i++)
+        float containerInnerWidth = _slotContainer.InnerPanel.InnerWidth;
+        for (var slotIndex = 0; slotIndex < gameShop.SellingItems.Count; slotIndex++)
         {
-            _items.Add(new ShopItem(this, _slotContainer, i));
+            var slotContainer = new ShopItem(this, _slotContainer, slotIndex);
+            _items.Add(slotContainer);
 
-            var xPadding = _items[i].Margin.Left + _items[i].Margin.Right;
-            var yPadding = _items[i].Margin.Top + _items[i].Margin.Bottom;
+            var outerSize = slotContainer.OuterBounds.Size;
+            var itemsPerRow = (int)(containerInnerWidth / outerSize.X);
 
-            var itemWidthWithPadding = _items[i].Width + xPadding;
-            var itemHeightWithPadding = _items[i].Height + yPadding;
+            var column = slotIndex % itemsPerRow;
+            var row = slotIndex / itemsPerRow;
 
-            var itemsPerRow = _slotContainer.Width / itemWidthWithPadding;
+            var xPosition = column * outerSize.X + slotContainer.Margin.Left;
+            var yPosition = row * outerSize.Y + slotContainer.Margin.Top;
 
-            var column = i % itemsPerRow;
-            var row = i / itemsPerRow;
-
-            var xPosition = column * itemWidthWithPadding + xPadding;
-            var yPosition = row * itemHeightWithPadding + yPadding;
-
-            _items[i].SetPosition(xPosition, yPosition);
+            slotContainer.SetPosition(xPosition, yPosition);
         }
     }
 }
