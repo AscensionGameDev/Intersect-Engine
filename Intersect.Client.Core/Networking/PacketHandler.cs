@@ -1545,7 +1545,7 @@ internal sealed partial class PacketHandler
                     return;
                 }
 
-                if (!AnimationBase.TryGet(animationDescriptorId, out var animationDescriptor))
+                if (!AnimationDescriptor.TryGet(animationDescriptorId, out var animationDescriptor))
                 {
                     return;
                 }
@@ -1594,7 +1594,7 @@ internal sealed partial class PacketHandler
                     return;
                 }
 
-                if (!AnimationBase.TryGet(animationDescriptorId, out var animationDescriptor))
+                if (!AnimationDescriptor.TryGet(animationDescriptorId, out var animationDescriptor))
                 {
                     return;
                 }
@@ -2268,8 +2268,8 @@ internal sealed partial class PacketHandler
         {
             ApplicationContext.CurrentContext.Logger.LogDebug(
                 "Removing cancelled spell cast animation {AnimationId} ({AnimationName})",
-                removedAnimation.MyBase?.Id,
-                removedAnimation.MyBase?.Name
+                removedAnimation.Descriptor?.Id,
+                removedAnimation.Descriptor?.Name
             );
         }
 

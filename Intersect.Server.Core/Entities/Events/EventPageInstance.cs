@@ -671,7 +671,7 @@ public partial class EventPageInstance : Entity
                         break;
                     case MoveRouteEnum.SetAnimation:
                         Animations.Clear();
-                        var anim = AnimationBase.Get(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationId);
+                        var anim = AnimationDescriptor.Get(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationId);
                         if (anim != null)
                         {
                             Animations.Add(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationId);

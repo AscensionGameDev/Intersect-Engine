@@ -61,9 +61,9 @@ public partial class ResourceBase : DatabaseObject<ResourceBase>, IFolderable
 
     [NotMapped]
     [JsonIgnore]
-    public AnimationBase Animation
+    public AnimationDescriptor Animation
     {
-        get => AnimationBase.Get(AnimationId);
+        get => AnimationDescriptor.Get(AnimationId);
         set => AnimationId = value?.Id ?? Guid.Empty;
     }
 

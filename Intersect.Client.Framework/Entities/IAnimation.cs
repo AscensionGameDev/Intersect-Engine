@@ -8,7 +8,7 @@ public interface IAnimation : IDisposable
     bool AutoRotate { get; set; }
     bool Hidden { get; set; }
     bool InfiniteLoop { get; set; }
-    AnimationBase? MyBase { get; set; }
+    AnimationDescriptor? Descriptor { get; set; }
     Point Size { get; }
 
     void Hide();

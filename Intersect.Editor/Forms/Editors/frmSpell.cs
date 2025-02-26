@@ -94,16 +94,16 @@ public partial class FrmSpell : EditorForm
         cmbProjectile.Items.AddRange(ProjectileBase.Names);
         cmbCastAnimation.Items.Clear();
         cmbCastAnimation.Items.Add(Strings.General.None);
-        cmbCastAnimation.Items.AddRange(AnimationBase.Names);
+        cmbCastAnimation.Items.AddRange(AnimationDescriptor.Names);
         cmbHitAnimation.Items.Clear();
         cmbHitAnimation.Items.Add(Strings.General.None);
-        cmbHitAnimation.Items.AddRange(AnimationBase.Names);
+        cmbHitAnimation.Items.AddRange(AnimationDescriptor.Names);
         cmbEvent.Items.Clear();
         cmbEvent.Items.Add(Strings.General.None);
         cmbEvent.Items.AddRange(EventBase.Names);
         cmbTickAnimation.Items.Clear();
         cmbTickAnimation.Items.Add(Strings.General.None);
-        cmbTickAnimation.Items.AddRange(AnimationBase.Names);
+        cmbTickAnimation.Items.AddRange(AnimationDescriptor.Names);
 
         cmbSprite.Items.Clear();
         cmbSprite.Items.Add(Strings.General.None);
@@ -289,9 +289,9 @@ public partial class FrmSpell : EditorForm
             chkIgnoreGlobalCooldown.Checked = mEditorItem.IgnoreGlobalCooldown;
             chkIgnoreCdr.Checked = mEditorItem.IgnoreCooldownReduction;
 
-            cmbCastAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.CastAnimationId) + 1;
-            cmbHitAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.HitAnimationId) + 1;
-            cmbTickAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.TickAnimationId) + 1;
+            cmbCastAnimation.SelectedIndex = AnimationDescriptor.ListIndex(mEditorItem.CastAnimationId) + 1;
+            cmbHitAnimation.SelectedIndex = AnimationDescriptor.ListIndex(mEditorItem.HitAnimationId) + 1;
+            cmbTickAnimation.SelectedIndex = AnimationDescriptor.ListIndex(mEditorItem.TickAnimationId) + 1;
             cmbCastSprite.SelectedIndex = cmbCastSprite.FindString(
                     TextUtils.NullToNone(mEditorItem.CastSpriteOverride)
             );
@@ -721,12 +721,12 @@ public partial class FrmSpell : EditorForm
 
     private void cmbCastAnimation_SelectedIndexChanged(object sender, EventArgs e)
     {
-        mEditorItem.CastAnimation = AnimationBase.Get(AnimationBase.IdFromList(cmbCastAnimation.SelectedIndex - 1));
+        mEditorItem.CastAnimation = AnimationDescriptor.Get(AnimationDescriptor.IdFromList(cmbCastAnimation.SelectedIndex - 1));
     }
 
     private void cmbHitAnimation_SelectedIndexChanged(object sender, EventArgs e)
     {
-        mEditorItem.HitAnimation = AnimationBase.Get(AnimationBase.IdFromList(cmbHitAnimation.SelectedIndex - 1));
+        mEditorItem.HitAnimation = AnimationDescriptor.Get(AnimationDescriptor.IdFromList(cmbHitAnimation.SelectedIndex - 1));
     }
 
     private void cmbProjectile_SelectedIndexChanged(object sender, EventArgs e)
@@ -1091,7 +1091,7 @@ public partial class FrmSpell : EditorForm
 
     private void cmbTickAnimation_SelectedIndexChanged(object sender, EventArgs e)
     {
-        Guid animationId = AnimationBase.IdFromList(cmbTickAnimation.SelectedIndex - 1);
-        mEditorItem.TickAnimation = AnimationBase.Get(animationId);
+        Guid animationId = AnimationDescriptor.IdFromList(cmbTickAnimation.SelectedIndex - 1);
+        mEditorItem.TickAnimation = AnimationDescriptor.Get(animationId);
     }
 }

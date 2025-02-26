@@ -9,7 +9,7 @@ namespace Intersect.Enums;
 
 public enum GameObjectType
 {
-    [GameObjectInfo(typeof(AnimationBase), "animations")]
+    [GameObjectInfo(typeof(AnimationDescriptor), "animations")]
     Animation = 0,
 
     [GameObjectInfo(typeof(ClassBase), "classes")]

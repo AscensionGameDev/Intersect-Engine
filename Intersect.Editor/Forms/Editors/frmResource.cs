@@ -110,7 +110,7 @@ public partial class FrmResource : EditorForm
 
         cmbAnimation.Items.Clear();
         cmbAnimation.Items.Add(Strings.General.None);
-        cmbAnimation.Items.AddRange(AnimationBase.Names);
+        cmbAnimation.Items.AddRange(AnimationDescriptor.Names);
         cmbDropItem.Items.Clear();
         cmbDropItem.Items.Add(Strings.General.None);
         cmbDropItem.Items.AddRange(ItemBase.Names);
@@ -246,7 +246,7 @@ public partial class FrmResource : EditorForm
             cmbFolder.Text = mEditorItem.Folder;
             cmbToolType.SelectedIndex = mEditorItem.Tool + 1;
             nudSpawnDuration.Value = mEditorItem.SpawnDuration;
-            cmbAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AnimationId) + 1;
+            cmbAnimation.SelectedIndex = AnimationDescriptor.ListIndex(mEditorItem.AnimationId) + 1;
             nudMinHp.Value = mEditorItem.MinHp;
             nudMaxHp.Value = mEditorItem.MaxHp;
             chkWalkableBefore.Checked = mEditorItem.WalkableBefore;
@@ -562,7 +562,7 @@ public partial class FrmResource : EditorForm
 
     private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
     {
-        mEditorItem.Animation = AnimationBase.Get(AnimationBase.IdFromList(cmbAnimation.SelectedIndex - 1));
+        mEditorItem.Animation = AnimationDescriptor.Get(AnimationDescriptor.IdFromList(cmbAnimation.SelectedIndex - 1));
     }
 
     private void nudMinHp_ValueChanged(object sender, EventArgs e)

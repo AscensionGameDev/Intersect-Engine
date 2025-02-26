@@ -440,7 +440,7 @@ public partial class FrmEvent : Form
 
     private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
     {
-        CurrentPage.AnimationId = AnimationBase.IdFromList(cmbAnimation.SelectedIndex - 1);
+        CurrentPage.AnimationId = AnimationDescriptor.IdFromList(cmbAnimation.SelectedIndex - 1);
     }
 
     private void chkIsGlobal_CheckedChanged(object sender, EventArgs e)
@@ -1000,7 +1000,7 @@ public partial class FrmEvent : Form
 
         cmbAnimation.Items.Clear();
         cmbAnimation.Items.Add(Strings.General.None);
-        cmbAnimation.Items.AddRange(AnimationBase.Names);
+        cmbAnimation.Items.AddRange(AnimationDescriptor.Names);
         chkParallelRun.Checked = MyEvent.CanRunInParallel;
         if (MyEvent.CommonEvent || questEvent)
         {
@@ -1092,7 +1092,7 @@ public partial class FrmEvent : Form
             UpdateFacePreview();
         }
 
-        cmbAnimation.SelectedIndex = AnimationBase.ListIndex(CurrentPage.AnimationId) + 1;
+        cmbAnimation.SelectedIndex = AnimationDescriptor.ListIndex(CurrentPage.AnimationId) + 1;
         chkHideName.Checked = Convert.ToBoolean(CurrentPage.HideName);
         chkDisableInspector.Checked = Convert.ToBoolean(CurrentPage.DisablePreview);
         chkDirectionFix.Checked = Convert.ToBoolean(CurrentPage.DirectionFix);

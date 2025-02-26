@@ -116,7 +116,7 @@ public partial class FrmItem : EditorForm
         );
         cmbAttackAnimation.Items.Clear();
         cmbAttackAnimation.Items.Add(Strings.General.None);
-        cmbAttackAnimation.Items.AddRange(AnimationBase.Names);
+        cmbAttackAnimation.Items.AddRange(AnimationDescriptor.Names);
         cmbScalingStat.Items.Clear();
         for (var x = 0; x < Enum.GetValues<Stat>().Length; x++)
         {
@@ -125,10 +125,10 @@ public partial class FrmItem : EditorForm
 
         cmbAnimation.Items.Clear();
         cmbAnimation.Items.Add(Strings.General.None);
-        cmbAnimation.Items.AddRange(AnimationBase.Names);
+        cmbAnimation.Items.AddRange(AnimationDescriptor.Names);
         cmbEquipmentAnimation.Items.Clear();
         cmbEquipmentAnimation.Items.Add(Strings.General.None);
-        cmbEquipmentAnimation.Items.AddRange(AnimationBase.Names);
+        cmbEquipmentAnimation.Items.AddRange(AnimationDescriptor.Names);
         cmbTeachSpell.Items.Clear();
         cmbTeachSpell.Items.Add(Strings.General.None);
         cmbTeachSpell.Items.AddRange(SpellBase.Names);
@@ -342,7 +342,7 @@ public partial class FrmItem : EditorForm
             nudRgbaG.Value = mEditorItem.Color.G;
             nudRgbaB.Value = mEditorItem.Color.B;
             nudRgbaA.Value = mEditorItem.Color.A;
-            cmbEquipmentAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.EquipmentAnimationId) + 1;
+            cmbEquipmentAnimation.SelectedIndex = AnimationDescriptor.ListIndex(mEditorItem.EquipmentAnimationId) + 1;
             nudPrice.Value = mEditorItem.Price;
             if (mEditorItem.Rarity < cmbRarity.Items.Count)
             {
@@ -392,7 +392,7 @@ public partial class FrmItem : EditorForm
             nudDeathDropChance.Value = mEditorItem.DropChanceOnDeath;
             nudItemDespawnTime.Value = mEditorItem.DespawnTime;
             cmbToolType.SelectedIndex = mEditorItem.Tool + 1;
-            cmbAttackAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AttackAnimationId) + 1;
+            cmbAttackAnimation.SelectedIndex = AnimationDescriptor.ListIndex(mEditorItem.AttackAnimationId) + 1;
             cmbWeaponSprite.SelectedIndex = cmbWeaponSprite.FindString(
                     TextUtils.NullToNone(mEditorItem.WeaponSpriteOverride)
             );
@@ -441,7 +441,7 @@ public partial class FrmItem : EditorForm
 
             //External References
             cmbProjectile.SelectedIndex = ProjectileBase.ListIndex(mEditorItem.ProjectileId) + 1;
-            cmbAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AnimationId) + 1;
+            cmbAnimation.SelectedIndex = AnimationDescriptor.ListIndex(mEditorItem.AnimationId) + 1;
 
             nudCooldown.Value = mEditorItem.Cooldown;
             cmbCooldownGroup.Text = mEditorItem.CooldownGroup;
@@ -774,7 +774,7 @@ public partial class FrmItem : EditorForm
     private void cmbAttackAnimation_SelectedIndexChanged(object sender, EventArgs e)
     {
         mEditorItem.AttackAnimation =
-            AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimation.SelectedIndex - 1));
+            AnimationDescriptor.Get(AnimationDescriptor.IdFromList(cmbAttackAnimation.SelectedIndex - 1));
     }
 
     private void cmbDamageType_SelectedIndexChanged(object sender, EventArgs e)
@@ -800,7 +800,7 @@ public partial class FrmItem : EditorForm
 
     private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
     {
-        mEditorItem.Animation = AnimationBase.Get(AnimationBase.IdFromList(cmbAnimation.SelectedIndex - 1));
+        mEditorItem.Animation = AnimationDescriptor.Get(AnimationDescriptor.IdFromList(cmbAnimation.SelectedIndex - 1));
     }
 
     private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
@@ -1015,7 +1015,7 @@ public partial class FrmItem : EditorForm
     private void cmbEquipmentAnimation_SelectedIndexChanged(object sender, EventArgs e)
     {
         mEditorItem.EquipmentAnimation =
-            AnimationBase.Get(AnimationBase.IdFromList(cmbEquipmentAnimation.SelectedIndex - 1));
+            AnimationDescriptor.Get(AnimationDescriptor.IdFromList(cmbEquipmentAnimation.SelectedIndex - 1));
     }
 
     private void cmbAttackSpeedModifier_SelectedIndexChanged(object sender, EventArgs e)

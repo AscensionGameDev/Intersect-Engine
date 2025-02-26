@@ -23,10 +23,10 @@ public partial class EventMoveRouteAnimationSelector : UserControl
         InitializeComponent();
         cmbAnimation.Items.Clear();
         cmbAnimation.Items.Add(Strings.General.None);
-        cmbAnimation.Items.AddRange(AnimationBase.Names);
+        cmbAnimation.Items.AddRange(AnimationDescriptor.Names);
         if (!newAction)
         {
-            cmbAnimation.SelectedIndex = AnimationBase.ListIndex(action.AnimationId) + 1;
+            cmbAnimation.SelectedIndex = AnimationDescriptor.ListIndex(action.AnimationId) + 1;
         }
 
         mNewAction = newAction;
@@ -45,7 +45,7 @@ public partial class EventMoveRouteAnimationSelector : UserControl
 
     private void btnOkay_Click(object sender, EventArgs e)
     {
-        mMyAction.AnimationId = AnimationBase.IdFromList(cmbAnimation.SelectedIndex - 1);
+        mMyAction.AnimationId = AnimationDescriptor.IdFromList(cmbAnimation.SelectedIndex - 1);
         mRouteDesigner.Controls.Remove(this);
     }
 

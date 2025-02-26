@@ -19,7 +19,7 @@ public abstract partial class GameContext : IntersectDbContext<GameContext>, IGa
     protected GameContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
 
     //Animations
-    public DbSet<AnimationBase> Animations { get; set; }
+    public DbSet<AnimationDescriptor> Animations { get; set; }
 
     //Crafting
     public DbSet<CraftBase> Crafts { get; set; }

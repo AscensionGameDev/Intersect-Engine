@@ -134,7 +134,7 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.ToTable("UserVariables");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.AnimationBase", b =>
+            modelBuilder.Entity("Intersect.GameObjects.AnimationDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("char(36)")
@@ -1317,11 +1317,11 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.ToTable("Maps");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.AnimationBase", b =>
+            modelBuilder.Entity("Intersect.GameObjects.AnimationDescriptor", b =>
                 {
                     b.OwnsOne("Intersect.Framework.Core.GameObjects.Animations.AnimationLayer", "Lower", b1 =>
                         {
-                            b1.Property<Guid>("AnimationBaseId")
+                            b1.Property<Guid>("AnimationDescriptorId")
                                 .HasColumnType("char(36)")
                                 .UseCollation("ascii_general_ci");
 
@@ -1352,17 +1352,17 @@ namespace Intersect.Server.Migrations.MySql.Game
                             b1.Property<int>("YFrames")
                                 .HasColumnType("int");
 
-                            b1.HasKey("AnimationBaseId");
+                            b1.HasKey("AnimationDescriptorId");
 
                             b1.ToTable("Animations");
 
                             b1.WithOwner()
-                                .HasForeignKey("AnimationBaseId");
+                                .HasForeignKey("AnimationDescriptorId");
                         });
 
                     b.OwnsOne("Intersect.Framework.Core.GameObjects.Animations.AnimationLayer", "Upper", b1 =>
                         {
-                            b1.Property<Guid>("AnimationBaseId")
+                            b1.Property<Guid>("AnimationDescriptorId")
                                 .HasColumnType("char(36)")
                                 .UseCollation("ascii_general_ci");
 
@@ -1393,12 +1393,12 @@ namespace Intersect.Server.Migrations.MySql.Game
                             b1.Property<int>("YFrames")
                                 .HasColumnType("int");
 
-                            b1.HasKey("AnimationBaseId");
+                            b1.HasKey("AnimationDescriptorId");
 
                             b1.ToTable("Animations");
 
                             b1.WithOwner()
-                                .HasForeignKey("AnimationBaseId");
+                                .HasForeignKey("AnimationDescriptorId");
                         });
 
                     b.Navigation("Lower");

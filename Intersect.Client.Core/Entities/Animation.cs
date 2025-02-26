@@ -52,7 +52,7 @@ public partial class Animation : IAnimation
 
     private float mExternalRotation;
 
-    public AnimationBase? MyBase { get; set; }
+    public AnimationDescriptor? Descriptor { get; set; }
 
     public AnimationSource Source { get; }
 
@@ -61,7 +61,7 @@ public partial class Animation : IAnimation
     private int mZDimension = -1;
 
     public Animation(
-        AnimationBase animBase,
+        AnimationDescriptor animationDescriptor,
         bool loopForever,
         bool autoRotate = false,
         int zDimension = -1,
@@ -69,17 +69,17 @@ public partial class Animation : IAnimation
         AnimationSource source = default
     )
     {
-        MyBase = animBase;
+        Descriptor = animationDescriptor;
         Source = source;
         mParent = parent;
-        if (MyBase != null)
+        if (Descriptor != null)
         {
-            mLowerLoop = animBase.Lower.LoopCount;
-            mUpperLoop = animBase.Upper.LoopCount;
+            mLowerLoop = animationDescriptor.Lower.LoopCount;
+            mUpperLoop = animationDescriptor.Upper.LoopCount;
             InfiniteLoop = loopForever;
             AutoRotate = autoRotate;
             mZDimension = zDimension;
-            mSound = Audio.AddMapSound(MyBase.Sound, 0, 0, Guid.Empty, loopForever, 0, 12, parent);
+            mSound = Audio.AddMapSound(Descriptor.Sound, 0, 0, Guid.Empty, loopForever, 0, 12, parent);
             lock (Graphics.AnimationLock)
             {
                 Graphics.LiveAnimations.Add(this);
@@ -93,23 +93,23 @@ public partial class Animation : IAnimation
 
     public void Draw(bool upper = false, bool alternate = false)
     {
-        if (Hidden || MyBase == default)
+        if (Hidden || Descriptor == default)
         {
             return;
         }
 
-        if (!upper && alternate != MyBase.Lower.AlternateRenderLayer)
+        if (!upper && alternate != Descriptor.Lower.AlternateRenderLayer)
         {
             return;
         }
 
-        if (upper && alternate != MyBase.Upper.AlternateRenderLayer)
+        if (upper && alternate != Descriptor.Upper.AlternateRenderLayer)
         {
             return;
         }
 
         var rotationDegrees = 0f;
-        var dontRotate = upper && MyBase.Upper.DisableRotations || !upper && MyBase.Lower.DisableRotations;
+        var dontRotate = upper && Descriptor.Upper.DisableRotations || !upper && Descriptor.Lower.DisableRotations;
 
         if (mUseExternalRotation)
         {
@@ -159,20 +159,20 @@ public partial class Animation : IAnimation
         {
             //Draw Lower
             var tex = Globals.ContentManager.GetTexture(
-                Framework.Content.TextureType.Animation, MyBase.Lower.Sprite
+                Framework.Content.TextureType.Animation, Descriptor.Lower.Sprite
             );
 
             if (tex != null)
             {
-                if (MyBase.Lower.XFrames > 0 && MyBase.Lower.YFrames > 0)
+                if (Descriptor.Lower.XFrames > 0 && Descriptor.Lower.YFrames > 0)
                 {
-                    var frameWidth = tex.Width / MyBase.Lower.XFrames;
-                    var frameHeight = tex.Height / MyBase.Lower.YFrames;
+                    var frameWidth = tex.Width / Descriptor.Lower.XFrames;
+                    var frameHeight = tex.Height / Descriptor.Lower.YFrames;
                     Graphics.DrawGameTexture(
                         tex,
                         new FloatRect(
-                            mLowerFrame % MyBase.Lower.XFrames * frameWidth,
-                            (float)Math.Floor((double)mLowerFrame / MyBase.Lower.XFrames) * frameHeight,
+                            mLowerFrame % Descriptor.Lower.XFrames * frameWidth,
+                            (float)Math.Floor((double)mLowerFrame / Descriptor.Lower.XFrames) * frameHeight,
                             frameWidth, frameHeight
                         ),
                         new FloatRect(
@@ -182,16 +182,16 @@ public partial class Animation : IAnimation
                 }
             }
 
-            var offsetX = MyBase.Lower.Lights[mLowerFrame].OffsetX;
-            var offsetY = MyBase.Lower.Lights[mLowerFrame].OffsetY;
+            var offsetX = Descriptor.Lower.Lights[mLowerFrame].OffsetX;
+            var offsetY = Descriptor.Lower.Lights[mLowerFrame].OffsetY;
             var offset = RotatePoint(
                 new Point(offsetX, offsetY), new Point(0, 0), rotationDegrees + 180
             );
 
             Graphics.AddLight(
-                (int)mRenderX - offset.X, (int)mRenderY - offset.Y, MyBase.Lower.Lights[mLowerFrame].Size,
-                MyBase.Lower.Lights[mLowerFrame].Intensity, MyBase.Lower.Lights[mLowerFrame].Expand,
-                MyBase.Lower.Lights[mLowerFrame].Color
+                (int)mRenderX - offset.X, (int)mRenderY - offset.Y, Descriptor.Lower.Lights[mLowerFrame].Size,
+                Descriptor.Lower.Lights[mLowerFrame].Intensity, Descriptor.Lower.Lights[mLowerFrame].Expand,
+                Descriptor.Lower.Lights[mLowerFrame].Color
             );
         }
 
@@ -199,21 +199,21 @@ public partial class Animation : IAnimation
         {
             //Draw Upper
             var tex = Globals.ContentManager.GetTexture(
-                Framework.Content.TextureType.Animation, MyBase.Upper.Sprite
+                Framework.Content.TextureType.Animation, Descriptor.Upper.Sprite
             );
 
             if (tex != null)
             {
-                if (MyBase.Upper.XFrames > 0 && MyBase.Upper.YFrames > 0)
+                if (Descriptor.Upper.XFrames > 0 && Descriptor.Upper.YFrames > 0)
                 {
-                    var frameWidth = tex.Width / MyBase.Upper.XFrames;
-                    var frameHeight = tex.Height / MyBase.Upper.YFrames;
+                    var frameWidth = tex.Width / Descriptor.Upper.XFrames;
+                    var frameHeight = tex.Height / Descriptor.Upper.YFrames;
 
                     Graphics.DrawGameTexture(
                         tex,
                         new FloatRect(
-                            mUpperFrame % MyBase.Upper.XFrames * frameWidth,
-                            (float)Math.Floor((double)mUpperFrame / MyBase.Upper.XFrames) * frameHeight,
+                            mUpperFrame % Descriptor.Upper.XFrames * frameWidth,
+                            (float)Math.Floor((double)mUpperFrame / Descriptor.Upper.XFrames) * frameHeight,
                             frameWidth, frameHeight
                         ),
                         new FloatRect(
@@ -223,16 +223,16 @@ public partial class Animation : IAnimation
                 }
             }
 
-            var offsetX = MyBase.Upper.Lights[mUpperFrame].OffsetX;
-            var offsetY = MyBase.Upper.Lights[mUpperFrame].OffsetY;
+            var offsetX = Descriptor.Upper.Lights[mUpperFrame].OffsetX;
+            var offsetY = Descriptor.Upper.Lights[mUpperFrame].OffsetY;
             var offset = RotatePoint(
                 new Point(offsetX, offsetY), new Point(0, 0), rotationDegrees + 180
             );
 
             Graphics.AddLight(
-                (int)mRenderX - offset.X, (int)mRenderY - offset.Y, MyBase.Upper.Lights[mUpperFrame].Size,
-                MyBase.Upper.Lights[mUpperFrame].Intensity, MyBase.Upper.Lights[mUpperFrame].Expand,
-                MyBase.Upper.Lights[mUpperFrame].Color
+                (int)mRenderX - offset.X, (int)mRenderY - offset.Y, Descriptor.Upper.Lights[mUpperFrame].Size,
+                Descriptor.Upper.Lights[mUpperFrame].Intensity, Descriptor.Upper.Lights[mUpperFrame].Expand,
+                Descriptor.Upper.Lights[mUpperFrame].Color
             );
         }
     }
@@ -285,7 +285,7 @@ public partial class Animation : IAnimation
             if (mSound != null)
             {
                 mSound.Loop = false;
-                if (MyBase?.CompleteSound == false)
+                if (Descriptor?.CompleteSound == false)
                 {
                     mSound.Stop();
                 }
@@ -327,7 +327,7 @@ public partial class Animation : IAnimation
             return;
         }
 
-        if (MyBase != null)
+        if (Descriptor != null)
         {
             if (mSound != null)
             {
@@ -338,10 +338,10 @@ public partial class Animation : IAnimation
             var elapsedTime = Timing.Global.MillisecondsUtc - mStartTime;
 
             //Lower
-            if (MyBase.Lower.FrameCount > 0 && MyBase.Lower.FrameSpeed > 0)
+            if (Descriptor.Lower.FrameCount > 0 && Descriptor.Lower.FrameSpeed > 0)
             {
-                var realFrameCount = Math.Min(MyBase.Lower.FrameCount, MyBase.Lower.XFrames * MyBase.Lower.YFrames);
-                var lowerFrame = (int)Math.Floor(elapsedTime / (float)MyBase.Lower.FrameSpeed);
+                var realFrameCount = Math.Min(Descriptor.Lower.FrameCount, Descriptor.Lower.XFrames * Descriptor.Lower.YFrames);
+                var lowerFrame = (int)Math.Floor(elapsedTime / (float)Descriptor.Lower.FrameSpeed);
                 var lowerLoops = (int)Math.Floor(lowerFrame / (float)realFrameCount);
                 if (lowerLoops > mLowerLoop && !InfiniteLoop)
                 {
@@ -354,10 +354,10 @@ public partial class Animation : IAnimation
             }
 
             //Upper
-            if (MyBase.Upper.FrameCount > 0 && MyBase.Upper.FrameSpeed > 0)
+            if (Descriptor.Upper.FrameCount > 0 && Descriptor.Upper.FrameSpeed > 0)
             {
-                var realFrameCount = Math.Min(MyBase.Upper.FrameCount, MyBase.Upper.XFrames * MyBase.Upper.YFrames);
-                var upperFrame = (int)Math.Floor(elapsedTime / (float)MyBase.Upper.FrameSpeed);
+                var realFrameCount = Math.Min(Descriptor.Upper.FrameCount, Descriptor.Upper.XFrames * Descriptor.Upper.YFrames);
+                var upperFrame = (int)Math.Floor(elapsedTime / (float)Descriptor.Upper.FrameSpeed);
                 var upperLoops = (int)Math.Floor(upperFrame / (float)realFrameCount);
                 if (upperLoops > mUpperLoop && !InfiniteLoop)
                 {
@@ -380,18 +380,18 @@ public partial class Animation : IAnimation
     {
         var size = new Point(0, 0);
 
-        if (MyBase == default)
+        if (Descriptor == default)
         {
             return size;
         }
 
-        var tex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Animation, MyBase.Lower.Sprite);
+        var tex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Animation, Descriptor.Lower.Sprite);
         if (tex != null)
         {
-            if (MyBase.Lower.XFrames > 0 && MyBase.Lower.YFrames > 0)
+            if (Descriptor.Lower.XFrames > 0 && Descriptor.Lower.YFrames > 0)
             {
-                var frameWidth = tex.Width / MyBase.Lower.XFrames;
-                var frameHeight = tex.Height / MyBase.Lower.YFrames;
+                var frameWidth = tex.Width / Descriptor.Lower.XFrames;
+                var frameHeight = tex.Height / Descriptor.Lower.YFrames;
                 if (frameWidth > size.X)
                 {
                     size.X = frameWidth;
@@ -404,13 +404,13 @@ public partial class Animation : IAnimation
             }
         }
 
-        tex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Animation, MyBase.Upper.Sprite);
+        tex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Animation, Descriptor.Upper.Sprite);
         if (tex != null)
         {
-            if (MyBase.Upper.XFrames > 0 && MyBase.Upper.YFrames > 0)
+            if (Descriptor.Upper.XFrames > 0 && Descriptor.Upper.YFrames > 0)
             {
-                var frameWidth = tex.Width / MyBase.Upper.XFrames;
-                var frameHeight = tex.Height / MyBase.Upper.YFrames;
+                var frameWidth = tex.Width / Descriptor.Upper.XFrames;
+                var frameHeight = tex.Height / Descriptor.Upper.YFrames;
                 if (frameWidth > size.X)
                 {
                     size.X = frameWidth;
@@ -423,7 +423,7 @@ public partial class Animation : IAnimation
             }
         }
 
-        foreach (var light in MyBase.Lower.Lights)
+        foreach (var light in Descriptor.Lower.Lights)
         {
             if (light != null)
             {
@@ -439,7 +439,7 @@ public partial class Animation : IAnimation
             }
         }
 
-        foreach (var light in MyBase.Upper.Lights)
+        foreach (var light in Descriptor.Upper.Lights)
         {
             if (light != null)
             {

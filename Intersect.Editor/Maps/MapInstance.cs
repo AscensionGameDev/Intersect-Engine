@@ -148,7 +148,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>
 
         if (!mAttributeAnimInstances.ContainsKey(attr))
         {
-            mAttributeAnimInstances.Add(attr, new Animation(AnimationBase.Get(animId), true));
+            mAttributeAnimInstances.Add(attr, new Animation(AnimationDescriptor.Get(animId), true));
         }
 
         return mAttributeAnimInstances[attr];

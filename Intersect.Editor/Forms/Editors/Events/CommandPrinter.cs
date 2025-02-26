@@ -1096,7 +1096,7 @@ public static partial class CommandPrinter
                 if (MapList.OrderedMaps[i].MapId == command.MapId)
                 {
                     commandTextBuilder.Append(Strings.EventCommandList.playanimation.ToString(
-                        AnimationBase.GetName(command.AnimationId),
+                        AnimationDescriptor.GetName(command.AnimationId),
                         Strings.EventCommandList.animationonmap.ToString(
                             MapList.OrderedMaps[i].Name, command.X, command.Y,
                             Strings.Direction.dir[(Direction) command.Dir]
@@ -1106,7 +1106,7 @@ public static partial class CommandPrinter
             }
 
             commandTextBuilder.Append(Strings.EventCommandList.playanimation.ToString(
-                AnimationBase.GetName(command.AnimationId),
+                AnimationDescriptor.GetName(command.AnimationId),
                 Strings.EventCommandList.animationonmap.ToString(
                     Strings.EventCommandList.mapnotfound, command.X, command.Y, Strings.Direction.dir[(Direction)command.Dir]
                 )
@@ -1135,7 +1135,7 @@ public static partial class CommandPrinter
             if (command.EntityId == Guid.Empty)
             {
                 commandTextBuilder.Append(Strings.EventCommandList.playanimation.ToString(
-                    AnimationBase.GetName(command.AnimationId),
+                    AnimationDescriptor.GetName(command.AnimationId),
                     Strings.EventCommandList.animationonplayer.ToString(command.X, command.Y, spawnOpt)
                 ));
             }
@@ -1144,7 +1144,7 @@ public static partial class CommandPrinter
                 if (map.LocalEvents.ContainsKey(command.EntityId))
                 {
                     commandTextBuilder.Append(Strings.EventCommandList.playanimation.ToString(
-                        AnimationBase.GetName(command.AnimationId),
+                        AnimationDescriptor.GetName(command.AnimationId),
                         Strings.EventCommandList.animationonevent.ToString(
                             map.LocalEvents[command.EntityId].Name, command.X, command.Y, spawnOpt
                         )
@@ -1153,7 +1153,7 @@ public static partial class CommandPrinter
                 else
                 {
                     commandTextBuilder.Append(Strings.EventCommandList.playanimation.ToString(
-                        AnimationBase.GetName(command.AnimationId),
+                        AnimationDescriptor.GetName(command.AnimationId),
                         Strings.EventCommandList.animationonevent.ToString(
                             Strings.EventCommandList.deletedevent, command.X, command.Y, spawnOpt
                         )

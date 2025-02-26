@@ -865,7 +865,7 @@ internal sealed partial class NetworkedPacketHandler
             switch (type)
             {
                 case GameObjectType.Animation:
-                    obj = AnimationBase.Get(id);
+                    obj = AnimationDescriptor.Get(id);
 
                     break;
 
@@ -1004,7 +1004,7 @@ internal sealed partial class NetworkedPacketHandler
             switch (type)
             {
                 case GameObjectType.Animation:
-                    obj = AnimationBase.Get(id);
+                    obj = AnimationDescriptor.Get(id);
 
                     break;
 

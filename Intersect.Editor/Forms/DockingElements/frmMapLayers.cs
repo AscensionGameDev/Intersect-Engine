@@ -734,7 +734,7 @@ public partial class FrmMapLayers : DockContent
 
             case MapAttributeType.Animation:
                 var animationAttribute = attribute as MapAnimationAttribute;
-                animationAttribute.AnimationId = AnimationBase.IdFromList(cmbAnimationAttribute.SelectedIndex);
+                animationAttribute.AnimationId = AnimationDescriptor.IdFromList(cmbAnimationAttribute.SelectedIndex);
                 animationAttribute.IsBlock = chkAnimationBlock.Checked;
                 break;
 
@@ -746,7 +746,7 @@ public partial class FrmMapLayers : DockContent
             case MapAttributeType.Critter:
                 var critterAttribute = attribute as MapCritterAttribute;
                 critterAttribute.Sprite = cmbCritterSprite.Text;
-                critterAttribute.AnimationId = AnimationBase.IdFromList(cmbCritterAnimation.SelectedIndex - 1);
+                critterAttribute.AnimationId = AnimationDescriptor.IdFromList(cmbCritterAnimation.SelectedIndex - 1);
                 critterAttribute.Movement = (byte)cmbCritterMovement.SelectedIndex;
                 critterAttribute.Layer = (byte)cmbCritterLayer.SelectedIndex;
                 critterAttribute.Speed = (int)nudCritterMoveSpeed.Value;
@@ -993,7 +993,7 @@ public partial class FrmMapLayers : DockContent
     private void rbAnimation_CheckedChanged(object sender, EventArgs e)
     {
         cmbAnimationAttribute.Items.Clear();
-        cmbAnimationAttribute.Items.AddRange(AnimationBase.Names);
+        cmbAnimationAttribute.Items.AddRange(AnimationDescriptor.Names);
         if (cmbAnimationAttribute.Items.Count > 0)
         {
             cmbAnimationAttribute.SelectedIndex = 0;
@@ -1012,7 +1012,7 @@ public partial class FrmMapLayers : DockContent
     {
         cmbCritterAnimation.Items.Clear();
         cmbCritterAnimation.Items.Add(Strings.General.None);
-        cmbCritterAnimation.Items.AddRange(AnimationBase.Names);
+        cmbCritterAnimation.Items.AddRange(AnimationDescriptor.Names);
         cmbCritterAnimation.SelectedIndex = 0;
 
         cmbCritterSprite.Items.Clear();

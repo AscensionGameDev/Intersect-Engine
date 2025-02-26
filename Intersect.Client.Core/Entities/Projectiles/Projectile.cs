@@ -179,7 +179,7 @@ public partial class Projectile : Entity
         }
 
         var spawn = FindSpawnAnimationData();
-        var animBase = AnimationBase.Get(_myBase.Animations[spawn].AnimationId);
+        var animBase = AnimationDescriptor.Get(_myBase.Animations[spawn].AnimationId);
 
         for (var x = 0; x < ProjectileBase.SPAWN_LOCATIONS_WIDTH; x++)
         {

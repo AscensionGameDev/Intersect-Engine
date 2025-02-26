@@ -34,26 +34,26 @@ public partial class Animation
 
     private long mUpperTimer;
 
-    public AnimationBase MyBase;
+    public AnimationDescriptor Descriptor;
 
-    public Animation(AnimationBase animBase, bool loopForever)
+    public Animation(AnimationDescriptor animationDescriptor, bool loopForever)
     {
-        MyBase = animBase;
-        mLowerLoop = animBase.Lower.LoopCount;
-        mUpperLoop = animBase.Upper.LoopCount;
-        mLowerTimer = Timing.Global.MillisecondsUtc + animBase.Lower.FrameSpeed;
-        mUpperTimer = Timing.Global.MillisecondsUtc + animBase.Upper.FrameSpeed;
+        Descriptor = animationDescriptor;
+        mLowerLoop = animationDescriptor.Lower.LoopCount;
+        mUpperLoop = animationDescriptor.Upper.LoopCount;
+        mLowerTimer = Timing.Global.MillisecondsUtc + animationDescriptor.Lower.FrameSpeed;
+        mUpperTimer = Timing.Global.MillisecondsUtc + animationDescriptor.Upper.FrameSpeed;
         mInfiniteLoop = loopForever;
     }
 
     public void Draw(RenderTarget2D target, bool upper = false, bool alternate = false)
     {
-        if (!upper && alternate != MyBase.Lower.AlternateRenderLayer)
+        if (!upper && alternate != Descriptor.Lower.AlternateRenderLayer)
         {
             return;
         }
 
-        if (upper && alternate != MyBase.Upper.AlternateRenderLayer)
+        if (upper && alternate != Descriptor.Upper.AlternateRenderLayer)
         {
             return;
         }
@@ -61,25 +61,25 @@ public partial class Animation
         if (!upper)
         {
             //Draw Lower
-            var tex = GameContentManager.GetTexture(GameContentManager.TextureType.Animation, MyBase.Lower.Sprite);
+            var tex = GameContentManager.GetTexture(GameContentManager.TextureType.Animation, Descriptor.Lower.Sprite);
             if (mShowLower)
             {
-                if (mLowerFrame >= MyBase.Lower.FrameCount)
+                if (mLowerFrame >= Descriptor.Lower.FrameCount)
                 {
                     return;
                 }
 
                 if (tex != null)
                 {
-                    if (MyBase.Lower.XFrames > 0 && MyBase.Lower.YFrames > 0)
+                    if (Descriptor.Lower.XFrames > 0 && Descriptor.Lower.YFrames > 0)
                     {
-                        var frameWidth = (int) tex.Width / MyBase.Lower.XFrames;
-                        var frameHeight = (int) tex.Height / MyBase.Lower.YFrames;
+                        var frameWidth = (int) tex.Width / Descriptor.Lower.XFrames;
+                        var frameHeight = (int) tex.Height / Descriptor.Lower.YFrames;
                         Core.Graphics.DrawTexture(
                             tex,
                             new RectangleF(
-                                mLowerFrame % MyBase.Lower.XFrames * frameWidth,
-                                (float) Math.Floor((double) mLowerFrame / MyBase.Lower.XFrames) * frameHeight,
+                                mLowerFrame % Descriptor.Lower.XFrames * frameWidth,
+                                (float) Math.Floor((double) mLowerFrame / Descriptor.Lower.XFrames) * frameHeight,
                                 frameWidth, frameHeight
                             ),
                             new RectangleF(
@@ -93,36 +93,36 @@ public partial class Animation
                     Options.Instance.Map.MapWidth * Options.Instance.Map.TileWidth -
                     Core.Graphics.CurrentView.Left +
                     (int) mRenderX +
-                    MyBase.Lower.Lights[mLowerFrame].OffsetX,
+                    Descriptor.Lower.Lights[mLowerFrame].OffsetX,
                     Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight -
                     Core.Graphics.CurrentView.Top +
                     (int) mRenderY +
-                    MyBase.Lower.Lights[mLowerFrame].OffsetY, MyBase.Lower.Lights[mLowerFrame]
+                    Descriptor.Lower.Lights[mLowerFrame].OffsetY, Descriptor.Lower.Lights[mLowerFrame]
                 );
             }
         }
         else
         {
             //Draw Upper
-            var tex = GameContentManager.GetTexture(GameContentManager.TextureType.Animation, MyBase.Upper.Sprite);
+            var tex = GameContentManager.GetTexture(GameContentManager.TextureType.Animation, Descriptor.Upper.Sprite);
             if (mShowUpper)
             {
-                if (mUpperFrame >= MyBase.Upper.FrameCount)
+                if (mUpperFrame >= Descriptor.Upper.FrameCount)
                 {
                     return;
                 }
 
                 if (tex != null)
                 {
-                    if (MyBase.Upper.XFrames > 0 && MyBase.Upper.YFrames > 0)
+                    if (Descriptor.Upper.XFrames > 0 && Descriptor.Upper.YFrames > 0)
                     {
-                        var frameWidth = (int) tex.Width / MyBase.Upper.XFrames;
-                        var frameHeight = (int) tex.Height / MyBase.Upper.YFrames;
+                        var frameWidth = (int) tex.Width / Descriptor.Upper.XFrames;
+                        var frameHeight = (int) tex.Height / Descriptor.Upper.YFrames;
                         Core.Graphics.DrawTexture(
                             tex,
                             new RectangleF(
-                                mUpperFrame % MyBase.Upper.XFrames * frameWidth,
-                                (float) Math.Floor((double) mUpperFrame / MyBase.Upper.XFrames) * frameHeight,
+                                mUpperFrame % Descriptor.Upper.XFrames * frameWidth,
+                                (float) Math.Floor((double) mUpperFrame / Descriptor.Upper.XFrames) * frameHeight,
                                 frameWidth, frameHeight
                             ),
                             new RectangleF(
@@ -136,11 +136,11 @@ public partial class Animation
                     Options.Instance.Map.MapWidth * Options.Instance.Map.TileWidth -
                     Core.Graphics.CurrentView.Left +
                     (int) mRenderX +
-                    MyBase.Upper.Lights[mUpperFrame].OffsetX,
+                    Descriptor.Upper.Lights[mUpperFrame].OffsetX,
                     Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight -
                     Core.Graphics.CurrentView.Top +
                     (int) mRenderY +
-                    MyBase.Upper.Lights[mUpperFrame].OffsetY, MyBase.Upper.Lights[mUpperFrame]
+                    Descriptor.Upper.Lights[mUpperFrame].OffsetY, Descriptor.Upper.Lights[mUpperFrame]
                 );
             }
         }
@@ -158,7 +158,7 @@ public partial class Animation
         if (mLowerTimer < Timing.Global.MillisecondsUtc && mShowLower)
         {
             mLowerFrame++;
-            if (mLowerFrame >= MyBase.Lower.FrameCount)
+            if (mLowerFrame >= Descriptor.Lower.FrameCount)
             {
                 mLowerLoop--;
                 mLowerFrame = 0;
@@ -166,7 +166,7 @@ public partial class Animation
                 {
                     if (mInfiniteLoop)
                     {
-                        mLowerLoop = MyBase.Lower.LoopCount;
+                        mLowerLoop = Descriptor.Lower.LoopCount;
                     }
                     else
                     {
@@ -175,13 +175,13 @@ public partial class Animation
                 }
             }
 
-            mLowerTimer = Timing.Global.MillisecondsUtc + MyBase.Lower.FrameSpeed;
+            mLowerTimer = Timing.Global.MillisecondsUtc + Descriptor.Lower.FrameSpeed;
         }
 
         if (mUpperTimer < Timing.Global.MillisecondsUtc && mShowUpper)
         {
             mUpperFrame++;
-            if (mUpperFrame >= MyBase.Upper.FrameCount)
+            if (mUpperFrame >= Descriptor.Upper.FrameCount)
             {
                 mUpperLoop--;
                 mUpperFrame = 0;
@@ -189,7 +189,7 @@ public partial class Animation
                 {
                     if (mInfiniteLoop)
                     {
-                        mUpperLoop = MyBase.Upper.LoopCount;
+                        mUpperLoop = Descriptor.Upper.LoopCount;
                     }
                     else
                     {
@@ -198,7 +198,7 @@ public partial class Animation
                 }
             }
 
-            mUpperTimer = Timing.Global.MillisecondsUtc + MyBase.Upper.FrameSpeed;
+            mUpperTimer = Timing.Global.MillisecondsUtc + Descriptor.Upper.FrameSpeed;
         }
     }
 

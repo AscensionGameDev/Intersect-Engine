@@ -451,20 +451,20 @@ internal sealed partial class PacketHandler
             case GameObjectType.Animation:
                 if (deleted)
                 {
-                    var anim = AnimationBase.Get(id);
+                    var anim = AnimationDescriptor.Get(id);
                     anim.Delete();
                 }
                 else
                 {
-                    var anim = new AnimationBase(id);
+                    var anim = new AnimationDescriptor(id);
                     anim.Load(json);
                     try
                     {
-                        AnimationBase.Lookup.Set(id, anim);
+                        AnimationDescriptor.Lookup.Set(id, anim);
                     }
                     catch (Exception exception)
                     {
-                        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError($"Another mystery NPE. [Lookup={AnimationBase.Lookup}]");
+                        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError($"Another mystery NPE. [Lookup={AnimationDescriptor.Lookup}]");
                         if (exception.InnerException != null)
                         {
                             Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(exception.InnerException, "Mystery NPE");

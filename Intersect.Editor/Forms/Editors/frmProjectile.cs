@@ -85,7 +85,7 @@ public partial class FrmProjectile : EditorForm
         mDirectionGrid = new Bitmap("resources/misc/directions.png");
         cmbAnimation.Items.Clear();
         cmbAnimation.Items.Add(Strings.General.None);
-        cmbAnimation.Items.AddRange(AnimationBase.Names);
+        cmbAnimation.Items.AddRange(AnimationDescriptor.Names);
 
         cmbItem.Items.Clear();
         cmbItem.Items.Add(Strings.General.None);
@@ -221,7 +221,7 @@ public partial class FrmProjectile : EditorForm
     private void UpdateAnimationData(int index)
     {
         UpdateAnimations(true);
-        cmbAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.Animations[index].AnimationId) + 1;
+        cmbAnimation.SelectedIndex = AnimationDescriptor.ListIndex(mEditorItem.Animations[index].AnimationId) + 1;
         scrlSpawnRange.Value = Math.Min(mEditorItem.Animations[index].SpawnRange, scrlSpawnRange.Maximum);
         chkRotation.Checked = mEditorItem.Animations[index].AutoRotate;
         UpdateAnimations(true);
@@ -261,7 +261,7 @@ public partial class FrmProjectile : EditorForm
                 lstAnimations.Items.Add(
                     Strings.ProjectileEditor.animationline.ToString(
                         n, mEditorItem.Animations[i].SpawnRange,
-                        AnimationBase.GetName(mEditorItem.Animations[i].AnimationId)
+                        AnimationDescriptor.GetName(mEditorItem.Animations[i].AnimationId)
                     )
                 );
             }
@@ -647,7 +647,7 @@ public partial class FrmProjectile : EditorForm
     private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
     {
         mEditorItem.Animations[lstAnimations.SelectedIndex].AnimationId =
-            AnimationBase.IdFromList(cmbAnimation.SelectedIndex - 1);
+            AnimationDescriptor.IdFromList(cmbAnimation.SelectedIndex - 1);
 
         UpdateAnimations();
     }

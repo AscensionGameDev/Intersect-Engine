@@ -101,7 +101,7 @@ public partial class FrmNpc : EditorForm
         cmbDropItem.Items.AddRange(ItemBase.Names);
         cmbAttackAnimation.Items.Clear();
         cmbAttackAnimation.Items.Add(Strings.General.None);
-        cmbAttackAnimation.Items.AddRange(AnimationBase.Names);
+        cmbAttackAnimation.Items.AddRange(AnimationDescriptor.Names);
         cmbOnDeathEventKiller.Items.Clear();
         cmbOnDeathEventKiller.Items.Add(Strings.General.None);
         cmbOnDeathEventKiller.Items.AddRange(EventBase.Names);
@@ -315,7 +315,7 @@ public partial class FrmNpc : EditorForm
             nudScaling.Value = mEditorItem.Scaling;
             cmbDamageType.SelectedIndex = mEditorItem.DamageType;
             cmbScalingStat.SelectedIndex = mEditorItem.ScalingStat;
-            cmbAttackAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AttackAnimationId) + 1;
+            cmbAttackAnimation.SelectedIndex = AnimationDescriptor.ListIndex(mEditorItem.AttackAnimationId) + 1;
             cmbAttackSpeedModifier.SelectedIndex = mEditorItem.AttackSpeedModifier;
             nudAttackSpeedValue.Value = mEditorItem.AttackSpeedValue;
 
@@ -605,7 +605,7 @@ public partial class FrmNpc : EditorForm
     private void cmbAttackAnimation_SelectedIndexChanged(object sender, EventArgs e)
     {
         mEditorItem.AttackAnimation =
-            AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimation.SelectedIndex - 1));
+            AnimationDescriptor.Get(AnimationDescriptor.IdFromList(cmbAttackAnimation.SelectedIndex - 1));
     }
 
     private void cmbDamageType_SelectedIndexChanged(object sender, EventArgs e)

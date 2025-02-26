@@ -340,9 +340,9 @@ public partial class MapBase : DatabaseObject<MapBase>
 
     [NotMapped]
     [JsonIgnore]
-    public AnimationBase WeatherAnimation
+    public AnimationDescriptor WeatherAnimation
     {
-        get => AnimationBase.Get(WeatherAnimationId);
+        get => AnimationDescriptor.Get(WeatherAnimationId);
         set => WeatherAnimationId = value?.Id ?? Guid.Empty;
     }
 

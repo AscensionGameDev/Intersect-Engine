@@ -218,7 +218,7 @@ public partial class MapAnimationAttribute : MapAttribute
     public override MapAttributeType Type => MapAttributeType.Animation;
 
     [EditorLabel("Attributes", "MapAnimation")]
-    [EditorReference(typeof(AnimationBase), nameof(AnimationBase.Name))]
+    [EditorReference(typeof(AnimationDescriptor), nameof(AnimationDescriptor.Name))]
     public Guid AnimationId { get; set; }
 
     [EditorLabel("Attributes", "MapAnimationBlock")]
@@ -269,7 +269,7 @@ public partial class MapCritterAttribute : MapAttribute
     public string Sprite { get; set; }
 
     [EditorLabel("Attributes", "CritterAnimation")]
-    [EditorReference(typeof(AnimationBase), nameof(AnimationBase.Name))]
+    [EditorReference(typeof(AnimationDescriptor), nameof(AnimationDescriptor.Name))]
     public Guid AnimationId { get; set; }
 
     //Movement types will mimic npc options?

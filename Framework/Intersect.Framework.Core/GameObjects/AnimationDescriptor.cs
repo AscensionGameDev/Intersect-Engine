@@ -4,10 +4,10 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects;
 
-public partial class AnimationBase : DatabaseObject<AnimationBase>, IFolderable
+public partial class AnimationDescriptor : DatabaseObject<AnimationDescriptor>, IFolderable
 {
     [JsonConstructor]
-    public AnimationBase(Guid id) : base(id)
+    public AnimationDescriptor(Guid id) : base(id)
     {
         // TODO: localize this
         Name = "New Animation";
@@ -16,7 +16,7 @@ public partial class AnimationBase : DatabaseObject<AnimationBase>, IFolderable
     }
 
     //EF Parameterless Constructor
-    public AnimationBase()
+    public AnimationDescriptor()
     {
         // TODO: localize this
         Name = "New Animation";

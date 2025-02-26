@@ -223,7 +223,7 @@ public partial class Entity : IEntity
     public FloatRect WorldPos { get; set; } = new FloatRect();
 
     public bool IsHovered { get; set; }
-    
+
     private Vector3 _position;
 
     public Vector3 Position
@@ -248,7 +248,7 @@ public partial class Entity : IEntity
     public int TileX => (int)float.Floor(Position.X);
     public int TileY => (int)float.Floor(Position.Y);
     public int TileZ => (int)float.Floor(Position.Z);
-    
+
     //Location Info
     public byte X
     {
@@ -412,10 +412,10 @@ public partial class Entity : IEntity
         FooterLabel = new Label(packet.FooterLabel.Label, packet.FooterLabel.Color);
 
         var animsToClear = new List<Animation>();
-        var animsToAdd = new List<AnimationBase>();
+        var animsToAdd = new List<AnimationDescriptor>();
         for (var i = 0; i < packet.Animations.Length; i++)
         {
-            var anim = AnimationBase.Get(packet.Animations[i]);
+            var anim = AnimationDescriptor.Get(packet.Animations[i]);
             if (anim != null)
             {
                 animsToAdd.Add(anim);
@@ -433,7 +433,7 @@ public partial class Entity : IEntity
             {
                 foreach (var addedAnim in animsToAdd)
                 {
-                    if (addedAnim.Id == anim?.MyBase?.Id)
+                    if (addedAnim.Id == anim?.Descriptor?.Id)
                     {
                         _ = animsToClear.Remove(anim);
                         _ = animsToAdd.Remove(addedAnim);
@@ -533,7 +533,7 @@ public partial class Entity : IEntity
         }
     }
 
-    public void AddAnimations(List<AnimationBase> animationDescriptors)
+    public void AddAnimations(List<AnimationDescriptor> animationDescriptors)
     {
         foreach (var animationDescriptor in animationDescriptors)
         {
@@ -836,7 +836,7 @@ public partial class Entity : IEntity
                         itemDescriptor.EquipmentAnimation is { } animationDescriptor)
                     {
                         if (equipmentAnimation != null &&
-                            (equipmentAnimation.MyBase != animationDescriptor || equipmentAnimation.IsDisposed))
+                            (equipmentAnimation.Descriptor != animationDescriptor || equipmentAnimation.IsDisposed))
                         {
                             TryRemoveAnimation(equipmentAnimation, dispose: true);
                             EquipmentAnimations[z] = null;

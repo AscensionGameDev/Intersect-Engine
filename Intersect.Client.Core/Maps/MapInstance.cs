@@ -625,7 +625,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 {
                     case MapAttributeType.Animation:
                     {
-                        var anim = AnimationBase.Get(((MapAnimationAttribute)mapAttribute).AnimationId);
+                        var anim = AnimationDescriptor.Get(((MapAnimationAttribute)mapAttribute).AnimationId);
                         if (anim == null)
                         {
                             continue;
@@ -649,7 +649,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                     {
                         var critterAttribute = ((MapCritterAttribute)mapAttribute);
                         var sprite = critterAttribute.Sprite;
-                        var anim = AnimationBase.Get(critterAttribute.AnimationId);
+                        var anim = AnimationDescriptor.Get(critterAttribute.AnimationId);
                         if (anim == null && TextUtils.IsNone(sprite))
                         {
                             continue;
@@ -731,7 +731,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         AnimationSource source = default
     )
     {
-        var animBase = AnimationBase.Get(animId);
+        var animBase = AnimationDescriptor.Get(animId);
         if (animBase == null)
         {
             return;
@@ -1378,7 +1378,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             return;
         }
 
-        var anim = AnimationBase.Get(WeatherAnimationId);
+        var anim = AnimationDescriptor.Get(WeatherAnimationId);
 
         if (anim == null || WeatherIntensity == 0)
         {

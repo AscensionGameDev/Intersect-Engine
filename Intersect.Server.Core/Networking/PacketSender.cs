@@ -1729,7 +1729,7 @@ public static partial class PacketSender
         switch (type)
         {
             case GameObjectType.Animation:
-                foreach (var obj in AnimationBase.Lookup)
+                foreach (var obj in AnimationDescriptor.Lookup)
                 {
                     SendGameObject(client, obj.Value, false, false, packetList);
                 }

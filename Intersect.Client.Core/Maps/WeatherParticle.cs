@@ -40,7 +40,7 @@ public partial class WeatherParticle : IWeatherParticle
 
     private int yVelocity;
 
-    public WeatherParticle(List<IWeatherParticle> RemoveParticle, int xvelocity, int yvelocity, AnimationBase anim)
+    public WeatherParticle(List<IWeatherParticle> RemoveParticle, int xvelocity, int yvelocity, AnimationDescriptor anim)
     {
         TransmittionTimer = Timing.Global.MillisecondsUtc;
         bounds = new Rectangle(0, 0, Graphics.Renderer.ScreenWidth, Graphics.Renderer.ScreenHeight);

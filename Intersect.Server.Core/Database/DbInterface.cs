@@ -637,7 +637,7 @@ public static partial class DbInterface
         switch (type)
         {
             case GameObjectType.Animation:
-                AnimationBase.Lookup.Clear();
+                AnimationDescriptor.Lookup.Clear();
 
                 break;
             case GameObjectType.Class:
@@ -727,7 +727,7 @@ public static partial class DbInterface
                     case GameObjectType.Animation:
                         foreach (var anim in context.Animations) // TODO: fix "The data is NULL at ordinal 2"
                         {
-                            AnimationBase.Lookup.Set(anim.Id, anim);
+                            AnimationDescriptor.Lookup.Set(anim.Id, anim);
                         }
 
                         break;
@@ -993,7 +993,7 @@ public static partial class DbInterface
         switch (gameObjectType)
         {
             case GameObjectType.Animation:
-                dbObj = new AnimationBase(predefinedid);
+                dbObj = new AnimationDescriptor(predefinedid);
 
                 break;
             case GameObjectType.Class:
@@ -1090,8 +1090,8 @@ public static partial class DbInterface
                 switch (gameObjectType)
                 {
                     case GameObjectType.Animation:
-                        context.Animations.Add((AnimationBase)dbObj);
-                        AnimationBase.Lookup.Set(dbObj.Id, dbObj);
+                        context.Animations.Add((AnimationDescriptor)dbObj);
+                        AnimationDescriptor.Lookup.Set(dbObj.Id, dbObj);
 
                         break;
 
@@ -1230,7 +1230,7 @@ public static partial class DbInterface
                 switch (gameObject.Type)
                 {
                     case GameObjectType.Animation:
-                        context.Animations.Remove((AnimationBase)gameObject);
+                        context.Animations.Remove((AnimationDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Class:
@@ -1376,7 +1376,7 @@ public static partial class DbInterface
                 switch (gameObject.Type)
                 {
                     case GameObjectType.Animation:
-                        context.Animations.Update((AnimationBase)gameObject);
+                        context.Animations.Update((AnimationDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Class:

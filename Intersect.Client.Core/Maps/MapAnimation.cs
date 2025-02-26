@@ -19,14 +19,14 @@ public partial class MapAnimation : Animation, IMapAnimation
     private int mTileY;
 
     public MapAnimation(
-        AnimationBase animBase,
+        AnimationDescriptor animationDescriptor,
         int tileX,
         int tileY,
         Direction dir,
         IEntity? owner = null,
         AnimationSource source = default
     ) : base(
-        animBase,
+        animationDescriptor,
         false,
         false,
         -1,

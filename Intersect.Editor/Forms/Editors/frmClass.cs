@@ -171,7 +171,7 @@ public partial class FrmClass : EditorForm
             cmbAttackSprite.SelectedIndex = cmbAttackSprite.FindString(
                     TextUtils.NullToNone(mEditorItem.AttackSpriteOverride)
             );
-            cmbAttackAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AttackAnimationId) + 1;
+            cmbAttackAnimation.SelectedIndex = AnimationDescriptor.ListIndex(mEditorItem.AttackAnimationId) + 1;
             cmbAttackSpeedModifier.SelectedIndex = mEditorItem.AttackSpeedModifier;
             nudAttackSpeedValue.Value = mEditorItem.AttackSpeedValue;
 
@@ -295,7 +295,7 @@ public partial class FrmClass : EditorForm
         nudLevel.Maximum = Options.Instance.Player.MaxLevel;
         cmbAttackAnimation.Items.Clear();
         cmbAttackAnimation.Items.Add(Strings.General.None);
-        cmbAttackAnimation.Items.AddRange(AnimationBase.Names);
+        cmbAttackAnimation.Items.AddRange(AnimationDescriptor.Names);
         cmbAttackSprite.Items.Clear();
         cmbAttackSprite.Items.Add(Strings.General.None);
         cmbAttackSprite.Items.AddRange(
@@ -911,7 +911,7 @@ public partial class FrmClass : EditorForm
     private void cmbAttackAnimation_SelectedIndexChanged(object sender, EventArgs e)
     {
         mEditorItem.AttackAnimation =
-            AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimation.SelectedIndex - 1));
+            AnimationDescriptor.Get(AnimationDescriptor.IdFromList(cmbAttackAnimation.SelectedIndex - 1));
     }
 
     private void cmbAttackSprite_SelectedIndexChanged(object sender, EventArgs e)

@@ -1446,7 +1446,7 @@ public static partial class Graphics
                 else if (tmpMap.Attributes[x, y].Type == MapAttributeType.Animation)
                 {
                     var animation =
-                        AnimationBase.Get(((MapAnimationAttribute) tmpMap.Attributes[x, y]).AnimationId);
+                        AnimationDescriptor.Get(((MapAnimationAttribute) tmpMap.Attributes[x, y]).AnimationId);
 
                     if (animation != null)
                     {
@@ -1457,7 +1457,7 @@ public static partial class Graphics
                             var animInstance = tmpMap.GetAttributeAnimation(tmpMap.Attributes[x, y], animation.Id);
 
                             //Update if the animation isn't right!
-                            if (animInstance == null || animInstance.MyBase != animation)
+                            if (animInstance == null || animInstance.Descriptor != animation)
                             {
                                 tmpMap.SetAttributeAnimation(
                                     tmpMap.Attributes[x, y], new Animation(animation, true)

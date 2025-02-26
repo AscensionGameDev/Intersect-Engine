@@ -139,9 +139,9 @@ public partial class NpcBase : DatabaseObject<NpcBase>, IFolderable
 
     [NotMapped]
     [JsonIgnore]
-    public AnimationBase AttackAnimation
+    public AnimationDescriptor AttackAnimation
     {
-        get => AnimationBase.Get(AttackAnimationId);
+        get => AnimationDescriptor.Get(AttackAnimationId);
         set => AttackAnimationId = value?.Id ?? Guid.Empty;
     }
 

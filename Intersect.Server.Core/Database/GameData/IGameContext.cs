@@ -10,7 +10,7 @@ namespace Intersect.Server.Database.GameData;
 
 public interface IGameContext : IDbContext
 {
-    DbSet<AnimationBase> Animations { get; set; }
+    DbSet<AnimationDescriptor> Animations { get; set; }
 
     DbSet<CraftBase> Crafts { get; set; }
 

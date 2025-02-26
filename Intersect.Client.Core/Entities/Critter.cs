@@ -23,7 +23,7 @@ public partial class Critter : Entity
         //setup Sprite & Animation
         Sprite = att.Sprite;
 
-        if (AnimationBase.TryGet(att.AnimationId, out var animationDescriptor))
+        if (AnimationDescriptor.TryGet(att.AnimationId, out var animationDescriptor))
         {
             TryAddAnimation(new Animation(animationDescriptor, true));
         }
