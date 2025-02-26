@@ -2,7 +2,6 @@ using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
-using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.Skin.Texturing;
 using Intersect.Client.Framework.Input;
 using Newtonsoft.Json.Linq;
@@ -19,11 +18,11 @@ public partial class ImagePanel : Base
     private readonly float[] _uv;
 
     //Sound Effects
-    public string HoverSound;
+    public string? HoverSound { get; set; }
 
-    protected string mLeftMouseClickSound;
+    protected string? LeftMouseClickSound { get; set; }
 
-    protected string mRightMouseClickSound;
+    protected string? RightMouseClickSound { get; set; }
 
     private IGameTexture? _texture { get; set; }
     private string? _textureName;
@@ -154,8 +153,8 @@ public partial class ImagePanel : Base
         PlaySound(
             mouseButton switch
             {
-                MouseButton.Left => mLeftMouseClickSound,
-                MouseButton.Right => mRightMouseClickSound,
+                MouseButton.Left => LeftMouseClickSound,
+                MouseButton.Right => RightMouseClickSound,
                 _ => null,
             }
         );
@@ -181,9 +180,9 @@ public partial class ImagePanel : Base
 
         serializedProperties.Add(nameof(Texture), TextureFilename);
         serializedProperties.Add(nameof(TextureNinePatchMargin), TextureNinePatchMargin?.ToString());
-        serializedProperties.Add("HoverSound", HoverSound);
-        serializedProperties.Add("LeftMouseClickSound", mLeftMouseClickSound);
-        serializedProperties.Add("RightMouseClickSound", mRightMouseClickSound);
+        serializedProperties.Add(nameof(HoverSound), HoverSound);
+        serializedProperties.Add(nameof(LeftMouseClickSound), LeftMouseClickSound);
+        serializedProperties.Add(nameof(RightMouseClickSound), RightMouseClickSound);
 
         return base.FixJson(serializedProperties);
     }
@@ -226,19 +225,22 @@ public partial class ImagePanel : Base
             }
         }
 
-        if (obj["HoverSound"] != null)
+        if (obj[nameof(HoverSound)] is JValue { Type: JTokenType.String } hoverSound &&
+            hoverSound.Value<string>()?.Trim() is { Length: > 0 })
         {
-            HoverSound = (string) obj["HoverSound"];
+            HoverSound = hoverSound?.Value<string>();
         }
 
-        if (obj["LeftMouseClickSound"] != null)
+        if (obj[nameof(LeftMouseClickSound)] is JValue { Type: JTokenType.String } leftMouseClickSound &&
+            leftMouseClickSound.Value<string>()?.Trim() is { Length: > 0 })
         {
-            mLeftMouseClickSound = (string) obj["LeftMouseClickSound"];
+            LeftMouseClickSound = leftMouseClickSound?.Value<string>();
         }
 
-        if (obj["RightMouseClickSound"] != null)
+        if (obj[nameof(RightMouseClickSound)] is JValue { Type: JTokenType.String } rightMouseClickSound &&
+            rightMouseClickSound.Value<string>()?.Trim() is { Length: > 0 })
         {
-            mRightMouseClickSound = (string) obj["RightMouseClickSound"];
+            RightMouseClickSound = rightMouseClickSound?.Value<string>();
         }
     }
 
