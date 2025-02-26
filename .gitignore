@@ -217,3 +217,5 @@ packages/
 
 /assets/**
 !/assets/*.*
+
+.local/
