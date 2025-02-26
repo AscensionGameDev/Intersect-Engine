@@ -2,7 +2,7 @@
 
 ## Dependencies
 
-If you are unable to run the engine, please make sure to download the [.NET 7 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/7.0).
+If you are unable to run the engine, please make sure to download the [.NET 8 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).
 
 ## Support Matrix
 
@@ -20,11 +20,12 @@ If you are unable to run the engine, please make sure to download the [.NET 7 Ru
 
 ### Tested Distros
 
-----------------------------------------------------------------------------------------
-| Distro              | Kernel             | Status | Notes                            |
-----------------------|--------------------|--------|----------------------------------|
-| Manjaro             | 5.15.133-1-MANJARO |   ✅   | Only tested on dev machine       |
-----------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------
+| Distro              | Kernel             | Status | Notes                            | Version tested                                           |
+----------------------|--------------------|--------|----------------------------------|----------------------------------------------------------|
+| Manjaro             | 5.15.133-1-MANJARO |   ✅   | Only tested on dev machine       |                                                          |
+| Arch                | 6.13.2-arch1-1     |   ✅   | Only tested on dev machine       | v0.8.0.433-beta+7542bc79922660075708287220a648a150a54d8f |
+---------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## MacOS
 
