@@ -19,7 +19,7 @@ public partial class ImagePanel : Base
     private readonly float[] _uv;
 
     //Sound Effects
-    protected string mHoverSound;
+    public string HoverSound;
 
     protected string mLeftMouseClickSound;
 
@@ -145,7 +145,7 @@ public partial class ImagePanel : Base
     protected override void OnMouseEntered()
     {
         base.OnMouseEntered();
-        PlaySound(mHoverSound);
+        PlaySound(HoverSound);
     }
 
     protected override void OnMouseClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
@@ -181,7 +181,7 @@ public partial class ImagePanel : Base
 
         serializedProperties.Add(nameof(Texture), TextureFilename);
         serializedProperties.Add(nameof(TextureNinePatchMargin), TextureNinePatchMargin?.ToString());
-        serializedProperties.Add("HoverSound", mHoverSound);
+        serializedProperties.Add("HoverSound", HoverSound);
         serializedProperties.Add("LeftMouseClickSound", mLeftMouseClickSound);
         serializedProperties.Add("RightMouseClickSound", mRightMouseClickSound);
 
@@ -228,7 +228,7 @@ public partial class ImagePanel : Base
 
         if (obj["HoverSound"] != null)
         {
-            mHoverSound = (string) obj["HoverSound"];
+            HoverSound = (string) obj["HoverSound"];
         }
 
         if (obj["LeftMouseClickSound"] != null)
