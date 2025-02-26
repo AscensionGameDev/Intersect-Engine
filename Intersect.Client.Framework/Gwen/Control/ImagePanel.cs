@@ -225,22 +225,22 @@ public partial class ImagePanel : Base
             }
         }
 
-        if (obj[nameof(HoverSound)] is JValue { Type: JTokenType.String } hoverSound &&
-            hoverSound.Value<string>()?.Trim() is { Length: > 0 })
+        if (obj[nameof(HoverSound)] is JValue { Type: JTokenType.String } tokenHoverSound &&
+            tokenHoverSound.Value<string>()?.Trim() is { Length: > 0 } hoverSound)
         {
-            HoverSound = hoverSound?.Value<string>();
+            HoverSound = hoverSound;
         }
 
-        if (obj[nameof(LeftMouseClickSound)] is JValue { Type: JTokenType.String } leftMouseClickSound &&
-            leftMouseClickSound.Value<string>()?.Trim() is { Length: > 0 })
+        if (obj[nameof(LeftMouseClickSound)] is JValue { Type: JTokenType.String } tokenLeftMouseClickSound &&
+            tokenLeftMouseClickSound.Value<string>()?.Trim() is { Length: > 0 } leftMouseClickSound)
         {
-            LeftMouseClickSound = leftMouseClickSound?.Value<string>();
+            LeftMouseClickSound = leftMouseClickSound;
         }
 
-        if (obj[nameof(RightMouseClickSound)] is JValue { Type: JTokenType.String } rightMouseClickSound &&
-            rightMouseClickSound.Value<string>()?.Trim() is { Length: > 0 })
+        if (obj[nameof(RightMouseClickSound)] is JValue { Type: JTokenType.String } tokenRightMouseClickSound &&
+            tokenRightMouseClickSound.Value<string>()?.Trim() is { Length: > 0 } rightMouseClickSound)
         {
-            RightMouseClickSound = rightMouseClickSound?.Value<string>();
+            RightMouseClickSound = rightMouseClickSound;
         }
     }
 
