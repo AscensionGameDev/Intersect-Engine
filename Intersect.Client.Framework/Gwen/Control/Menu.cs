@@ -55,7 +55,7 @@ public partial class Menu : ScrollControl
     public string? ItemFontName
     {
         get => _itemFontName;
-        set => SetItemFont(GameContentManager.Current.GetFont(_itemFontName), _itemFontName);
+        set => SetItemFont(GameContentManager.Current.GetFont(value), value);
     }
 
     private int _itemFontSize;
