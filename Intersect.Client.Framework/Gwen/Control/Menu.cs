@@ -413,4 +413,12 @@ public partial class Menu : ScrollControl
         mBackgroundTemplateTex = texture;
     }
 
+    public void SetItemFont(IFont font, int fontSize)
+    {
+        mItemFont = font;
+        _itemFontSize = fontSize;
+        mItemFontInfo = $"{font.Name},{fontSize}";
+        UpdateItemStyles();
+    }
+
 }
