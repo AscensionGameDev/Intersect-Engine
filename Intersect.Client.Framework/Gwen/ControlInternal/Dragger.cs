@@ -57,9 +57,9 @@ public partial class Dragger : Base
     {
         base.OnMouseEntered();
 
-        if (ShouldDrawHover)
+        if (ShouldDrawHover && _stateSoundNames.TryGetValue(ButtonSoundState.Hover, out var value))
         {
-            PlaySound(_stateSoundNames[ButtonSoundState.Hover]);
+            PlaySound(value);
         }
     }
 
@@ -74,9 +74,9 @@ public partial class Dragger : Base
             return;
         }
 
-        if (userAction)
+        if (userAction && _stateSoundNames.TryGetValue(ButtonSoundState.MouseDown, out var value))
         {
-            PlaySound(_stateSoundNames[ButtonSoundState.MouseDown]);
+            PlaySound(value);
         }
 
         mHoldPos = _target.CanvasPosToLocal(mousePosition);
@@ -87,9 +87,9 @@ public partial class Dragger : Base
     {
         base.OnMouseUp(mouseButton, mousePosition, userAction);
 
-        if (userAction)
+        if (userAction && _stateSoundNames.TryGetValue(ButtonSoundState.MouseUp, out var value))
         {
-            PlaySound(_stateSoundNames[ButtonSoundState.MouseUp]);
+            PlaySound(value);
         }
 
         InputHandler.MouseFocus = null;
@@ -269,9 +269,10 @@ public partial class Dragger : Base
         }
     }
 
-    public string GetMouseUpSound()
+    public string? GetMouseUpSound()
     {
-        return _stateSoundNames[ButtonSoundState.MouseUp];
+        _ = _stateSoundNames.TryGetValue(ButtonSoundState.MouseUp, out var value);
+        return value;
     }
 
     /// <summary>
