@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
@@ -17,9 +17,8 @@ public partial class Dragger : Base
     protected Point mHoldPos;
 
     //Sound Effects
-    private string? mHoverSound;
-    private string? mMouseDownSound;
-    private string? mMouseUpSound;
+    protected readonly Dictionary<ButtonSoundState, string> _stateSoundNames = [];
+    protected DateTime _ignoreMouseUpSoundsUntil;
 
     private IGameTexture? mClickedImage;
     private string? mClickedImageFilename;
@@ -54,6 +53,16 @@ public partial class Dragger : Base
     /// </summary>
     public event GwenEventHandler<EventArgs>? Dragged;
 
+    protected override void OnMouseEntered()
+    {
+        base.OnMouseEntered();
+
+        if (ShouldDrawHover)
+        {
+            PlaySound(_stateSoundNames[ButtonSoundState.Hover]);
+        }
+    }
+
     protected override void OnMouseDown(MouseButton mouseButton, Point mousePosition, bool userAction = true)
     {
         base.OnMouseDown(mouseButton, mousePosition, userAction);
@@ -67,7 +76,7 @@ public partial class Dragger : Base
 
         if (userAction)
         {
-            base.PlaySound(mMouseDownSound);
+            PlaySound(_stateSoundNames[ButtonSoundState.MouseDown]);
         }
 
         mHoldPos = _target.CanvasPosToLocal(mousePosition);
@@ -80,7 +89,7 @@ public partial class Dragger : Base
 
         if (userAction)
         {
-            base.PlaySound(mMouseUpSound);
+            PlaySound(_stateSoundNames[ButtonSoundState.MouseUp]);
         }
 
         InputHandler.MouseFocus = null;
@@ -169,16 +178,20 @@ public partial class Dragger : Base
         serializedProperties.Add("HoveredImage", GetImageFilename(ComponentState.Hovered));
         serializedProperties.Add("ClickedImage", GetImageFilename(ComponentState.Active));
         serializedProperties.Add("DisabledImage", GetImageFilename(ComponentState.Disabled));
-        serializedProperties.Add("HoverSound", mHoverSound);
-        serializedProperties.Add("MouseUpSound", mMouseUpSound);
-        serializedProperties.Add("MouseDownSound", mMouseDownSound);
+        serializedProperties.Add(nameof(_stateSoundNames), JObject.FromObject(_stateSoundNames));
 
         return base.FixJson(serializedProperties);
     }
 
-    public override void LoadJson(JToken obj, bool isRoot = default)
+    public override void LoadJson(JToken token, bool isRoot = default)
     {
-        base.LoadJson(obj);
+        base.LoadJson(token, isRoot);
+
+        if (token is not JObject obj)
+        {
+            return;
+        }
+
         if (obj["NormalImage"] != null)
         {
             SetImage(
@@ -215,25 +228,50 @@ public partial class Dragger : Base
             );
         }
 
-        if (obj["HoverSound"] != null)
+        if (obj.TryGetValue(nameof(_stateSoundNames), out var tokenStateSoundNames) && tokenStateSoundNames is JObject valueStateSoundNames)
         {
-            mHoverSound = (string) obj["HoverSound"];
-        }
+            foreach (var (propertyName, propertyValueToken) in valueStateSoundNames)
+            {
+                if (!Enum.TryParse(propertyName, out ButtonSoundState buttonSoundState) ||
+                    buttonSoundState == ButtonSoundState.None)
+                {
+                    continue;
+                }
 
-        if (obj["MouseUpSound"] != null)
-        {
-            mMouseUpSound = (string) obj["MouseUpSound"];
-        }
+                if (propertyValueToken is not JValue { Type: JTokenType.String } valuePropertyValue)
+                {
+                    continue;
+                }
 
-        if (obj["MouseDownSound"] != null)
+                var stringPropertyValue = valuePropertyValue.Value<string>()?.Trim();
+                if (stringPropertyValue is { Length: > 0 })
+                {
+                    _stateSoundNames[buttonSoundState] = stringPropertyValue;
+                }
+                else
+                {
+                    _stateSoundNames.Remove(buttonSoundState);
+                }
+            }
+        }
+    }
+
+    public void SetSound(ButtonSoundState state, string? soundName)
+    {
+        soundName = soundName?.Trim();
+        if (string.IsNullOrEmpty(soundName))
         {
-            mMouseDownSound = (string) obj["MouseDownSound"];
+            _stateSoundNames.Remove(state);
+        }
+        else
+        {
+            _stateSoundNames[state] = soundName;
         }
     }
 
     public string GetMouseUpSound()
     {
-        return mMouseUpSound;
+        return _stateSoundNames[ButtonSoundState.MouseUp];
     }
 
     /// <summary>
@@ -303,22 +341,35 @@ public partial class Dragger : Base
         }
     }
 
-    protected override void OnMouseEntered()
+    public void PlaySound(ButtonSoundState soundState)
     {
-        base.OnMouseEntered();
-
-        //Play Mouse Entered Sound
-        if (ShouldDrawHover)
+        if (soundState == ButtonSoundState.MouseUp)
         {
-            base.PlaySound(mHoverSound);
+            if (_ignoreMouseUpSoundsUntil > DateTime.UtcNow)
+            {
+                return;
+            }
+        }
+
+        if (!_stateSoundNames.TryGetValue(soundState, out var soundName))
+        {
+            return;
+        }
+
+        if (!base.PlaySound(soundName))
+        {
+            return;
+        }
+
+        if (soundState == ButtonSoundState.MouseDown)
+        {
+            _ignoreMouseUpSoundsUntil = DateTime.UtcNow.AddMilliseconds(200);
         }
     }
 
     public void ClearSounds()
     {
-        mHoverSound = string.Empty;
-        mMouseDownSound = string.Empty;
-        mMouseUpSound = string.Empty;
+        _stateSoundNames.Clear();
     }
 
     public void SetSound(string sound, ButtonSoundState state)
@@ -328,13 +379,13 @@ public partial class Dragger : Base
             case ButtonSoundState.None:
                 break;
             case ButtonSoundState.Hover:
-                mHoverSound = sound;
+                _stateSoundNames[ButtonSoundState.Hover] = sound;
                 break;
             case ButtonSoundState.MouseDown:
-                mMouseDownSound = sound;
+                _stateSoundNames[ButtonSoundState.MouseDown] = sound;
                 break;
             case ButtonSoundState.MouseUp:
-                mMouseUpSound = sound;
+                _stateSoundNames[ButtonSoundState.MouseUp] = sound;
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(state), state, null);
