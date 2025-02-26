@@ -507,12 +507,4 @@ public partial class Menu : ScrollControl
         mBackgroundTemplateFilename = fileName;
         mBackgroundTemplateTex = texture;
     }
-
-    public void SetItemFont(IFont font, int fontSize)
-    {
-        _itemFont = font;
-        _itemFontSize = fontSize;
-        UpdateItemStyles();
-    }
-
 }
