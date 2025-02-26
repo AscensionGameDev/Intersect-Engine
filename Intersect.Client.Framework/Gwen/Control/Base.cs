@@ -1586,6 +1586,16 @@ public partial class Base : IDisposable
             }
         }
 
+        if (obj[nameof(MinimumSize)] != null)
+        {
+            MinimumSize = Point.FromString((string)obj[nameof(MinimumSize)]);
+        }
+
+        if (obj[nameof(MaximumSize)] != null)
+        {
+            MaximumSize = Point.FromString((string)obj[nameof(MaximumSize)]);
+        }
+
         if (obj[nameof(Bounds)] != null)
         {
             _boundsOnDisk = Rectangle.FromString((string)obj[nameof(Bounds)]);
@@ -1633,16 +1643,6 @@ public partial class Base : IDisposable
         if (obj["DrawBackground"] != null)
         {
             ShouldDrawBackground = (bool) obj["DrawBackground"];
-        }
-
-        if (obj[nameof(MinimumSize)] != null)
-        {
-            MinimumSize = Point.FromString((string) obj[nameof(MinimumSize)]);
-        }
-
-        if (obj[nameof(MaximumSize)] != null)
-        {
-            MaximumSize = Point.FromString((string) obj[nameof(MaximumSize)]);
         }
 
         if (obj["Disabled"] != null)
