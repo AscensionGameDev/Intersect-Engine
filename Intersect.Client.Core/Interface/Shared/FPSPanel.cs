@@ -21,9 +21,8 @@ public partial class FPSPanel : Panel
     {
         Alignment = [Alignments.Top, Alignments.Right];
         BackgroundColor = new Color(0x7f, 0, 0, 0);
+        IsVisibleInParent = Globals.Database?.ShowFPSCounter ?? false;
         RestrictToParent = true;
-        // TODO: Remove this when showing a game version is added
-        IsVisibleInTree = ApplicationContext.CurrentContext.IsDeveloper;
 
         var font = GameContentManager.Current.GetFont("sourcesansproblack");
 
@@ -36,7 +35,6 @@ public partial class FPSPanel : Panel
             Padding = new Padding(8, 4),
             Text = ApplicationContext.CurrentContext.VersionName,
             TextAlign = Pos.Center,
-            IsVisibleInParent = Globals.Database?.ShowFPSCounter ?? false,
         };
 
         MinimumSize = Graphics.Renderer.MeasureText(
