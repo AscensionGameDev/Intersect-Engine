@@ -17,8 +17,8 @@ public partial class Dragger : Base
     protected Point mHoldPos;
 
     //Sound Effects
-    protected readonly Dictionary<ButtonSoundState, string> _stateSoundNames = [];
-    protected DateTime _ignoreMouseUpSoundsUntil;
+    private readonly Dictionary<ButtonSoundState, string> _stateSoundNames = [];
+    private DateTime _ignoreMouseUpSoundsUntil;
 
     private IGameTexture? mClickedImage;
     private string? mClickedImageFilename;
