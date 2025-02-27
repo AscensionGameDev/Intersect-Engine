@@ -41,7 +41,7 @@
   </ItemGroup>
 
   <ItemGroup Label="Package Embedded Resources">
-    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\lib\net6.0\MonoGame.Framework.dll">
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\lib\net8.0\MonoGame.Framework.dll">
       <Link>Resources\MonoGame.Framework.dll</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\linux-x64\native\libopenal.so.1" WithCulture="false">
@@ -56,7 +56,7 @@
     <EmbeddedResource Include="$(PkgMonoGame_Library_SDL)\runtimes\linux-x64\native\libSDL2-2.0.so.0" WithCulture="false">
       <Link>Resources\libSDL2-2.0.so.0</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="$(PkgMonoGame_Library_SDL)\runtimes\osx\native\libSDL2.dylib">
+    <EmbeddedResource Include="$(PkgMonoGame_Library_SDL)\runtimes\osx\native\libSDL2-2.0.0.dylib">
       <Link>Resources\libSDL2.dylib</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="$(PkgMonoGame_Library_SDL)\runtimes\win-x64\native\SDL2.dll">
@@ -87,8 +87,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" GeneratePathProperty="True" />
-    <PackageReference Include="MonoGame.Library.SDL" Version="2.26.5.5" GeneratePathProperty="True" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.2.1105" GeneratePathProperty="True" />
+    <PackageReference Include="MonoGame.Library.SDL" Version="2.30.7.1" GeneratePathProperty="True" />
     <PackageReference Include="Steamworks.NET" Version="2024.8.0" />
   </ItemGroup>
 

@@ -341,7 +341,7 @@ internal partial class IntersectGame : Game
         base.Draw(gameTime);
     }
 
-    protected override void OnExiting(object sender, EventArgs args)
+    protected override void OnExiting(object sender, ExitingEventArgs args)
     {
         ApplicationContext.Context.Value?.Logger.LogInformation("System window closing (due to user interaction most likely).");
 
