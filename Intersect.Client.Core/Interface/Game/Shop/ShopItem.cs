@@ -131,7 +131,7 @@ public partial class ShopItem : ImagePanel
 
         if (ClientConfiguration.Instance.EnableContextMenus)
         {
-            OpenContextMenu(_mySlot);
+            _openContextMenu(_mySlot);
         }
         else
         {
@@ -155,7 +155,7 @@ public partial class ShopItem : ImagePanel
         base.Dispose(disposing);
     }
 
-    public void OpenContextMenu(int slot)
+    private void _openContextMenu(int slot)
     {
         if (Globals.GameShop is not { SellingItems.Count: > 0 } gameShop)
         {

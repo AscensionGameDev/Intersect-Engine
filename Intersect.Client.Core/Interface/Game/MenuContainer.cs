@@ -337,7 +337,7 @@ public partial class MenuContainer : Panel
 
     public void ToggleInventoryWindow()
     {
-        if (_inventoryWindow.IsVisible())
+        if (_inventoryWindow.IsVisibleInTree)
         {
             _inventoryWindow.Hide();
         }
@@ -423,7 +423,7 @@ public partial class MenuContainer : Panel
     {
         var windowsOpen = _characterWindow.IsVisible() ||
                           _friendsWindow.IsVisible ||
-                          _inventoryWindow.IsVisible() ||
+                          _inventoryWindow.IsVisibleInTree ||
                           _questsWindow.IsVisible() ||
                           _spellsWindow.IsVisible() ||
                           _partyWindow.IsVisible() ||
