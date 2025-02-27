@@ -1,10 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Enums;
-using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects.Ranges;
 
-namespace Intersect.GameObjects;
+namespace Intersect.Framework.Core.GameObjects.Items;
 
 public partial class EquipmentProperties
 {

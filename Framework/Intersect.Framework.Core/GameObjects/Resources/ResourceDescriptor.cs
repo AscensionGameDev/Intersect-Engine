@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Intersect.Models;
 using Newtonsoft.Json;

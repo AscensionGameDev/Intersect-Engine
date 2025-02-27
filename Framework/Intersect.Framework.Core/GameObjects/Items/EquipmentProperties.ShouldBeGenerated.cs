@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 // ReSharper disable InconsistentNaming
 
-namespace Intersect.GameObjects;
+namespace Intersect.Framework.Core.GameObjects.Items;
 
 public partial class EquipmentProperties
 {

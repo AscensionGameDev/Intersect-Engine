@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Intersect.GameObjects;
+namespace Intersect.Framework.Core.GameObjects.Items;
 
 public partial class Drop
 {
