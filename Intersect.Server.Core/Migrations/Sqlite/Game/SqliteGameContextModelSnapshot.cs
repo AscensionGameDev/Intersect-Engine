@@ -1020,7 +1020,7 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.ToTable("Shops");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.SpellBase", b =>
+            modelBuilder.Entity("Intersect.GameObjects.SpellDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("TEXT");
@@ -1566,11 +1566,11 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.Navigation("StatRange_Speed");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.SpellBase", b =>
+            modelBuilder.Entity("Intersect.GameObjects.SpellDescriptor", b =>
                 {
-                    b.OwnsOne("Intersect.GameObjects.SpellCombatData", "Combat", b1 =>
+                    b.OwnsOne("Intersect.GameObjects.SpellCombatDescriptor", "Combat", b1 =>
                         {
-                            b1.Property<Guid>("SpellBaseId")
+                            b1.Property<Guid>("SpellDescriptorId")
                                 .HasColumnType("TEXT");
 
                             b1.Property<int>("CastRange")
@@ -1639,17 +1639,17 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                                 .HasColumnType("TEXT")
                                 .HasColumnName("VitalDiff");
 
-                            b1.HasKey("SpellBaseId");
+                            b1.HasKey("SpellDescriptorId");
 
                             b1.ToTable("Spells");
 
                             b1.WithOwner()
-                                .HasForeignKey("SpellBaseId");
+                                .HasForeignKey("SpellDescriptorId");
                         });
 
-                    b.OwnsOne("Intersect.GameObjects.SpellDashOpts", "Dash", b1 =>
+                    b.OwnsOne("Intersect.GameObjects.SpellDashDescriptor", "Dash", b1 =>
                         {
-                            b1.Property<Guid>("SpellBaseId")
+                            b1.Property<Guid>("SpellDescriptorId")
                                 .HasColumnType("TEXT");
 
                             b1.Property<bool>("IgnoreActiveResources")
@@ -1664,17 +1664,17 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                             b1.Property<bool>("IgnoreZDimensionAttributes")
                                 .HasColumnType("INTEGER");
 
-                            b1.HasKey("SpellBaseId");
+                            b1.HasKey("SpellDescriptorId");
 
                             b1.ToTable("Spells");
 
                             b1.WithOwner()
-                                .HasForeignKey("SpellBaseId");
+                                .HasForeignKey("SpellDescriptorId");
                         });
 
-                    b.OwnsOne("Intersect.GameObjects.SpellWarpData", "Warp", b1 =>
+                    b.OwnsOne("Intersect.GameObjects.SpellWarpDescriptor", "Warp", b1 =>
                         {
-                            b1.Property<Guid>("SpellBaseId")
+                            b1.Property<Guid>("SpellDescriptorId")
                                 .HasColumnType("TEXT");
 
                             b1.Property<int>("Dir")
@@ -1689,12 +1689,12 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                             b1.Property<int>("Y")
                                 .HasColumnType("INTEGER");
 
-                            b1.HasKey("SpellBaseId");
+                            b1.HasKey("SpellDescriptorId");
 
                             b1.ToTable("Spells");
 
                             b1.WithOwner()
-                                .HasForeignKey("SpellBaseId");
+                                .HasForeignKey("SpellDescriptorId");
                         });
 
                     b.Navigation("Combat");
