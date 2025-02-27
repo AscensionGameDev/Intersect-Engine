@@ -863,6 +863,30 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.ToTable("Classes");
                 });
 
+            modelBuilder.Entity("Intersect.GameObjects.DaylightCycleDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)")
+                        .UseCollation("ascii_general_ci");
+
+                    b.Property<string>("DaylightHuesJson")
+                        .HasColumnType("longtext")
+                        .HasColumnName("DaylightHues");
+
+                    b.Property<int>("RangeInterval")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Rate")
+                        .HasColumnType("float");
+
+                    b.Property<bool>("SyncTime")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Time");
+                });
+
             modelBuilder.Entity("Intersect.GameObjects.EquipmentProperties", b =>
                 {
                     b.Property<Guid>("DescriptorId")
@@ -1160,30 +1184,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.HasKey("Id");
 
                     b.ToTable("Spells");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.DaylightCycleDescriptor", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
-
-                    b.Property<string>("DaylightHuesJson")
-                        .HasColumnType("longtext")
-                        .HasColumnName("DaylightHues");
-
-                    b.Property<int>("RangeInterval")
-                        .HasColumnType("int");
-
-                    b.Property<float>("Rate")
-                        .HasColumnType("float");
-
-                    b.Property<bool>("SyncTime")
-                        .HasColumnType("tinyint(1)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Time");
                 });
 
             modelBuilder.Entity("Intersect.Server.Maps.MapController", b =>

@@ -828,6 +828,29 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.ToTable("Classes");
                 });
 
+            modelBuilder.Entity("Intersect.GameObjects.DaylightCycleDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DaylightHuesJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("DaylightHues");
+
+                    b.Property<int>("RangeInterval")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<float>("Rate")
+                        .HasColumnType("REAL");
+
+                    b.Property<bool>("SyncTime")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Time");
+                });
+
             modelBuilder.Entity("Intersect.GameObjects.EquipmentProperties", b =>
                 {
                     b.Property<Guid>("DescriptorId")
@@ -1111,29 +1134,6 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.HasKey("Id");
 
                     b.ToTable("Spells");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.DaylightCycleDescriptor", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("DaylightHuesJson")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("DaylightHues");
-
-                    b.Property<int>("RangeInterval")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<float>("Rate")
-                        .HasColumnType("REAL");
-
-                    b.Property<bool>("SyncTime")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Time");
                 });
 
             modelBuilder.Entity("Intersect.Server.Maps.MapController", b =>
