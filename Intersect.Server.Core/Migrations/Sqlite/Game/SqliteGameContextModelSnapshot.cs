@@ -500,6 +500,66 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.ToTable("Npcs");
                 });
 
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Resources.ResourceDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("AnimationId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Animation");
+
+                    b.Property<string>("CannotHarvestMessage")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Event");
+
+                    b.Property<string>("Folder")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("JsonDrops")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Drops");
+
+                    b.Property<string>("JsonHarvestingRequirements")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("HarvestingRequirements");
+
+                    b.Property<int>("MaxHp")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MinHp")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("SpawnDuration")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("TimeCreated")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Tool")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("VitalRegen")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("WalkableAfter")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("WalkableBefore")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Resources");
+                });
+
             modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.GuildVariableDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
@@ -919,66 +979,6 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.ToTable("Quests");
                 });
 
-            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Resources.ResourceDescriptor", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("AnimationId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("Animation");
-
-                    b.Property<string>("CannotHarvestMessage")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("Event");
-
-                    b.Property<string>("Folder")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("JsonDrops")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("Drops");
-
-                    b.Property<string>("JsonHarvestingRequirements")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("HarvestingRequirements");
-
-                    b.Property<int>("MaxHp")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MinHp")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT")
-                        .HasColumnOrder(0);
-
-                    b.Property<int>("SpawnDuration")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Tool")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("VitalRegen")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("WalkableAfter")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("WalkableBefore")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Resources");
-                });
-
             modelBuilder.Entity("Intersect.GameObjects.ShopBase", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1288,6 +1288,81 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.Navigation("Consumable");
                 });
 
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Resources.ResourceDescriptor", b =>
+                {
+                    b.OwnsOne("Intersect.Framework.Core.GameObjects.Resources.ResourceStateDescriptor", "Exhausted", b1 =>
+                        {
+                            b1.Property<Guid>("ResourceDescriptorId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("Graphic")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<bool>("GraphicFromTileset")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("Height")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<bool>("RenderBelowEntities")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("Width")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("X")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("Y")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("ResourceDescriptorId");
+
+                            b1.ToTable("Resources");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ResourceDescriptorId");
+                        });
+
+                    b.OwnsOne("Intersect.Framework.Core.GameObjects.Resources.ResourceStateDescriptor", "Initial", b1 =>
+                        {
+                            b1.Property<Guid>("ResourceDescriptorId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("Graphic")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<bool>("GraphicFromTileset")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("Height")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<bool>("RenderBelowEntities")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("Width")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("X")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("Y")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("ResourceDescriptorId");
+
+                            b1.ToTable("Resources");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ResourceDescriptorId");
+                        });
+
+                    b.Navigation("Exhausted");
+
+                    b.Navigation("Initial");
+                });
+
             modelBuilder.Entity("Intersect.GameObjects.AnimationDescriptor", b =>
                 {
                     b.OwnsOne("Intersect.Framework.Core.GameObjects.Animations.AnimationLayer", "Lower", b1 =>
@@ -1489,81 +1564,6 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.Navigation("StatRange_MagicResist");
 
                     b.Navigation("StatRange_Speed");
-                });
-
-            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Resources.ResourceDescriptor", b =>
-                {
-                    b.OwnsOne("Intersect.Framework.Core.GameObjects.Resources.ResourceStateDescriptor", "Exhausted", b1 =>
-                        {
-                            b1.Property<Guid>("ResourceDescriptorId")
-                                .HasColumnType("TEXT");
-
-                            b1.Property<string>("Graphic")
-                                .HasColumnType("TEXT");
-
-                            b1.Property<bool>("GraphicFromTileset")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("Height")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<bool>("RenderBelowEntities")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("Width")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("X")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("Y")
-                                .HasColumnType("INTEGER");
-
-                            b1.HasKey("ResourceDescriptorId");
-
-                            b1.ToTable("Resources");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ResourceDescriptorId");
-                        });
-
-                    b.OwnsOne("Intersect.Framework.Core.GameObjects.Resources.ResourceStateDescriptor", "Initial", b1 =>
-                        {
-                            b1.Property<Guid>("ResourceDescriptorId")
-                                .HasColumnType("TEXT");
-
-                            b1.Property<string>("Graphic")
-                                .HasColumnType("TEXT");
-
-                            b1.Property<bool>("GraphicFromTileset")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("Height")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<bool>("RenderBelowEntities")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("Width")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("X")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("Y")
-                                .HasColumnType("INTEGER");
-
-                            b1.HasKey("ResourceDescriptorId");
-
-                            b1.ToTable("Resources");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ResourceDescriptorId");
-                        });
-
-                    b.Navigation("Exhausted");
-
-                    b.Navigation("Initial");
                 });
 
             modelBuilder.Entity("Intersect.GameObjects.SpellBase", b =>
