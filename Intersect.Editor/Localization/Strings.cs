@@ -4,6 +4,7 @@ using Intersect.Framework.Core.GameObjects.Conditions.ConditionMetadata;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
+using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
@@ -299,7 +300,7 @@ public static partial class Strings
     public static string GetEventConditionalDesc(NoNpcsOnMapCondition condition)
     {
         return condition.SpecificNpc
-            ? EventConditionDesc.NoNpcsOfTypeOnMap.ToString(NpcBase.GetName(condition.NpcId))
+            ? EventConditionDesc.NoNpcsOfTypeOnMap.ToString(NPCDescriptor.GetName(condition.NpcId))
             : EventConditionDesc.NoNpcsOnMap.ToString();
     }
 

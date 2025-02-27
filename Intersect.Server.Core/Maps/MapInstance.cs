@@ -6,6 +6,7 @@ using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.Attributes;
+using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
@@ -450,7 +451,7 @@ public partial class MapInstance : IMapInstance
             return;
         }
 
-        var npcBase = NpcBase.Get(spawn.NpcId);
+        var npcBase = NPCDescriptor.Get(spawn.NpcId);
         if (npcBase != null)
         {
             if (!NpcSpawnInstances.TryGetValue(spawn, out var npcSpawnInstance))
@@ -520,7 +521,7 @@ public partial class MapInstance : IMapInstance
     /// <returns></returns>
     public Npc SpawnNpc(byte tileX, byte tileY, Direction dir, Guid npcId, bool despawnable = false)
     {
-        var npcBase = NpcBase.Get(npcId);
+        var npcBase = NPCDescriptor.Get(npcId);
         if (npcBase != null)
         {
             var processLayer = this.MapInstanceId;
@@ -1334,14 +1335,14 @@ public partial class MapInstance : IMapInstance
         for (var i = 0; i < spawns.Count; i++)
         {
             var spawn = spawns[i];
-            if (!NpcSpawnInstances.TryGetValue(spawn, out var spawnInstance) || spawnInstance?.Entity?.Base == default || !spawnInstance.Entity.IsDead)
+            if (!NpcSpawnInstances.TryGetValue(spawn, out var spawnInstance) || spawnInstance?.Entity?.Descriptor == default || !spawnInstance.Entity.IsDead)
             {
                 continue;
             }
 
             if (spawnInstance.RespawnTime < 0)
             {
-                spawnInstance.RespawnTime = mLastUpdateTime + (spawnInstance.Entity.Base?.SpawnDuration ?? 0);
+                spawnInstance.RespawnTime = mLastUpdateTime + (spawnInstance.Entity.Descriptor?.SpawnDuration ?? 0);
             }
             else if (spawnInstance.RespawnTime < Timing.Global.Milliseconds)
             {

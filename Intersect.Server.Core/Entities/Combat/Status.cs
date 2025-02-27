@@ -76,7 +76,7 @@ public partial class Status
             // Get our NPC's Tenacity stat
             if (!Status.TenacityExcluded.Contains(type))
             {
-                tenacity = (float)thisNpc.Base.Tenacity;
+                tenacity = (float)thisNpc.Descriptor.Tenacity;
             }
         }
 

@@ -5,6 +5,7 @@ using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Events.Commands;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
+using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.GameObjects;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands;
@@ -41,8 +42,8 @@ public partial class EventCommandSpawnNpc : UserControl
         mCurrentMap = currentMap;
         InitLocalization();
         cmbNpc.Items.Clear();
-        cmbNpc.Items.AddRange(NpcBase.Names);
-        cmbNpc.SelectedIndex = NpcBase.ListIndex(mMyCommand.NpcId);
+        cmbNpc.Items.AddRange(NPCDescriptor.Names);
+        cmbNpc.SelectedIndex = NPCDescriptor.ListIndex(mMyCommand.NpcId);
         if (mMyCommand.MapId != Guid.Empty)
         {
             cmbConditionType.SelectedIndex = 0;
@@ -181,7 +182,7 @@ public partial class EventCommandSpawnNpc : UserControl
 
     private void btnSave_Click(object sender, EventArgs e)
     {
-        mMyCommand.NpcId = NpcBase.IdFromList(cmbNpc.SelectedIndex);
+        mMyCommand.NpcId = NPCDescriptor.IdFromList(cmbNpc.SelectedIndex);
         switch (cmbConditionType.SelectedIndex)
         {
             case 0: //Tile Spawn

@@ -5,6 +5,7 @@ using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
+using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
@@ -106,34 +107,34 @@ public partial class Npc : Entity
     /// </summary>
     public int AggroCenterZ;
 
-    public Npc(NpcBase myBase, bool despawnable = false) : base()
+    public Npc(NPCDescriptor npcDescriptor, bool despawnable = false) : base()
     {
-        Name = myBase.Name;
-        Sprite = myBase.Sprite;
-        Color = myBase.Color;
-        Level = myBase.Level;
-        Immunities = myBase.Immunities;
-        Base = myBase;
+        Name = npcDescriptor.Name;
+        Sprite = npcDescriptor.Sprite;
+        Color = npcDescriptor.Color;
+        Level = npcDescriptor.Level;
+        Immunities = npcDescriptor.Immunities;
+        Descriptor = npcDescriptor;
         Despawnable = despawnable;
 
         for (var i = 0; i < Enum.GetValues<Stat>().Length; i++)
         {
-            BaseStats[i] = myBase.Stats[i];
+            BaseStats[i] = npcDescriptor.Stats[i];
             Stat[i] = new Combat.Stat((Stat)i, this);
         }
 
         var spellSlot = 0;
-        for (var I = 0; I < Base.Spells.Count; I++)
+        for (var I = 0; I < Descriptor.Spells.Count; I++)
         {
             var slot = new SpellSlot(spellSlot);
-            slot.Set(new Spell(Base.Spells[I]));
+            slot.Set(new Spell(Descriptor.Spells[I]));
             Spells.Add(slot);
             spellSlot++;
         }
 
         //Give NPC Drops
         var itemSlot = 0;
-        foreach (var drop in myBase.Drops)
+        foreach (var drop in npcDescriptor.Drops)
         {
             var slot = new InventorySlot(itemSlot);
             slot.Set(new Item(drop.ItemId, Randomization.Next(drop.MinQuantity, drop.MaxQuantity + 1)));
@@ -144,15 +145,15 @@ public partial class Npc : Entity
 
         for (var i = 0; i < Enum.GetValues<Vital>().Length; i++)
         {
-            SetMaxVital(i, myBase.MaxVitals[i]);
-            SetVital(i, myBase.MaxVitals[i]);
+            SetMaxVital(i, npcDescriptor.MaxVitals[i]);
+            SetVital(i, npcDescriptor.MaxVitals[i]);
         }
 
-        Range = (byte)myBase.SightRange;
+        Range = (byte)npcDescriptor.SightRange;
         mPathFinder = new Pathfinder(this);
     }
 
-    public NpcBase Base { get; private set; }
+    public NPCDescriptor Descriptor { get; private set; }
 
     private bool IsStunnedOrSleeping => CachedStatuses.Any(PredicateStunnedOrSleeping);
 
@@ -232,7 +233,7 @@ public partial class Npc : Entity
             }
             else if (entity is Npc npc)
             {
-                if (!Base.NpcVsNpcEnabled || (Base == npc.Base && !Base.AttackAllies))
+                if (!Descriptor.NpcVsNpcEnabled || (Descriptor == npc.Descriptor && !Descriptor.AttackAllies))
                 {
                     return;
                 }
@@ -286,13 +287,13 @@ public partial class Npc : Entity
         // ReSharper disable once InvertIf
         if (entity is Npc npc)
         {
-            if (!Base.NpcVsNpcEnabled)
+            if (!Descriptor.NpcVsNpcEnabled)
             {
                 return false;
             }
 
             // ReSharper disable once InvertIf
-            if (Base == npc.Base && !Base.AttackAllies)
+            if (Descriptor == npc.Descriptor && !Descriptor.AttackAllies)
             {
                 return false;
             }
@@ -313,9 +314,9 @@ public partial class Npc : Entity
 
     public override int CalculateAttackTime()
     {
-        if (Base.AttackSpeedModifier == 1) //Static
+        if (Descriptor.AttackSpeedModifier == 1) //Static
         {
-            return Base.AttackSpeedValue;
+            return Descriptor.AttackSpeedValue;
         }
 
         return base.CalculateAttackTime();
@@ -421,17 +422,17 @@ public partial class Npc : Entity
             return;
         }
 
-        if (Base.AttackAnimation != null)
+        if (Descriptor.AttackAnimation != null)
         {
             PacketSender.SendAnimationToProximity(
-                Base.AttackAnimationId, -1, Guid.Empty, target.MapId, (byte)target.X, (byte)target.Y,
+                Descriptor.AttackAnimationId, -1, Guid.Empty, target.MapId, (byte)target.X, (byte)target.Y,
                 Dir, target.MapInstanceId
             );
         }
 
         base.TryAttack(
-            target, Base.Damage, (DamageType)Base.DamageType, (Stat)Base.ScalingStat, Base.Scaling,
-            Base.CritChance, Base.CritMultiplier, deadAnimations, aliveAnimations
+            target, Descriptor.Damage, (DamageType)Descriptor.DamageType, (Stat)Descriptor.ScalingStat, Descriptor.Scaling,
+            Descriptor.CritChance, Descriptor.CritMultiplier, deadAnimations, aliveAnimations
         );
 
         PacketSender.SendEntityAttack(this, CalculateAttackTime());
@@ -442,21 +443,21 @@ public partial class Npc : Entity
         //Check for NpcVsNpc Combat, both must be enabled and the attacker must have it as an enemy or attack all types of npc.
         if (!friendly)
         {
-            if (enemy != null && enemy is Npc enemyNpc && Base != null)
+            if (enemy != null && enemy is Npc enemyNpc && Descriptor != null)
             {
-                if (enemyNpc.Base.NpcVsNpcEnabled == false)
+                if (enemyNpc.Descriptor.NpcVsNpcEnabled == false)
                 {
                     return false;
                 }
 
-                if (Base.AttackAllies && enemyNpc.Base == Base)
+                if (Descriptor.AttackAllies && enemyNpc.Descriptor == Descriptor)
                 {
                     return true;
                 }
 
-                for (var i = 0; i < Base.AggroList.Count; i++)
+                for (var i = 0; i < Descriptor.AggroList.Count; i++)
                 {
-                    if (NpcBase.Get(Base.AggroList[i]) == enemyNpc.Base)
+                    if (NPCDescriptor.Get(Descriptor.AggroList[i]) == enemyNpc.Descriptor)
                     {
                         return true;
                     }
@@ -470,7 +471,7 @@ public partial class Npc : Entity
                 return true;
             }
         }
-        else if (enemy is Npc enemyNpc && Base != null && enemyNpc.Base == Base && Base.AttackAllies == false)
+        else if (enemy is Npc enemyNpc && Descriptor != null && enemyNpc.Descriptor == Descriptor && Descriptor.AttackAllies == false)
         {
             return true;
         }
@@ -547,7 +548,7 @@ public partial class Npc : Entity
     {
         entityType = default;
 
-        if (Base.Movement == (byte)NpcMovement.Static)
+        if (Descriptor.Movement == (byte)NpcMovement.Static)
         {
             blockerType = MovementBlockerType.MapAttribute;
             return false;
@@ -632,7 +633,7 @@ public partial class Npc : Entity
             );
 
             // ReSharper disable once InvertIf
-            if (dist > Math.Max(Options.Instance.Npc.ResetRadius, Base.ResetRadius))
+            if (dist > Math.Max(Options.Instance.Npc.ResetRadius, Descriptor.ResetRadius))
             {
                 blockerType = MovementBlockerType.MapAttribute;
                 return false;
@@ -674,14 +675,14 @@ public partial class Npc : Entity
             return;
         }
 
-        if (Base.Spells is not { Count: > 0 })
+        if (Descriptor.Spells is not { Count: > 0 })
         {
             return;
         }
 
         // Pick a random spell
         var spellIndex = Randomization.Next(0, Spells.Count);
-        var spellId = Base.Spells[spellIndex];
+        var spellId = Descriptor.Spells[spellIndex];
         if (!SpellBase.TryGet(spellId, out var spellBase))
         {
             return;
@@ -739,7 +740,7 @@ public partial class Npc : Entity
             CastTarget = target;
         }
 
-        switch (Base.SpellFrequency)
+        switch (Descriptor.SpellFrequency)
         {
             case 0:
                 CastFreq = Timing.Global.Milliseconds + 30000;
@@ -792,9 +793,9 @@ public partial class Npc : Entity
 
     public bool IsFleeing()
     {
-        if (Base.FleeHealthPercentage > 0)
+        if (Descriptor.FleeHealthPercentage > 0)
         {
-            var fleeHpCutoff = GetMaxVital(Vital.Health) * (Base.FleeHealthPercentage / 100f);
+            var fleeHpCutoff = GetMaxVital(Vital.Health) * (Descriptor.FleeHealthPercentage / 100f);
             if (GetVital(Vital.Health) < fleeHpCutoff)
             {
                 return true;
@@ -949,7 +950,7 @@ public partial class Npc : Entity
 
                     }
 
-                    if (mPathFinder.GetTarget() != null && Base.Movement != (int)NpcMovement.Static)
+                    if (mPathFinder.GetTarget() != null && Descriptor.Movement != (int)NpcMovement.Static)
                     {
                         TryCastSpells();
                         // TODO: Make resetting mobs actually return to their starting location.
@@ -1166,13 +1167,13 @@ public partial class Npc : Entity
                         return;
                     }
 
-                    if (Base.Movement == (int)NpcMovement.StandStill)
+                    if (Descriptor.Movement == (int)NpcMovement.StandStill)
                     {
                         LastRandomMove = Timing.Global.Milliseconds + Randomization.Next(1000, 3000);
 
                         return;
                     }
-                    else if (Base.Movement == (int)NpcMovement.TurnRandomly)
+                    else if (Descriptor.Movement == (int)NpcMovement.TurnRandomly)
                     {
                         ChangeDir(Randomization.NextDirection());
                         LastRandomMove = Timing.Global.Milliseconds + Randomization.Next(1000, 3000);
@@ -1260,7 +1261,7 @@ public partial class Npc : Entity
     {
         // Check if we've moved out of our range we're allowed to move from after being "aggro'd" by something.
         // If so, remove target and move back to the origin point.
-        if (Options.Instance.Npc.AllowResetRadius && AggroCenterMap != null && (GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) > Math.Max(Options.Instance.Npc.ResetRadius, Math.Min(Base.ResetRadius, Math.Max(Options.Instance.Map.MapWidth, Options.Instance.Map.MapHeight))) || forceDistance))
+        if (Options.Instance.Npc.AllowResetRadius && AggroCenterMap != null && (GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) > Math.Max(Options.Instance.Npc.ResetRadius, Math.Min(Descriptor.ResetRadius, Math.Max(Options.Instance.Map.MapWidth, Options.Instance.Map.MapHeight))) || forceDistance))
         {
             Reset(Options.Instance.Npc.ResetVitalsAndStatuses);
 
@@ -1326,9 +1327,9 @@ public partial class Npc : Entity
             {
                 if (en is Npc npc)
                 {
-                    if (npc.Target == null && npc.Base == Base && npc.Base.Swarm)
+                    if (npc.Target == null && npc.Descriptor == Descriptor && npc.Descriptor.Swarm)
                     {
-                        if (npc.InRangeOf(attacker, npc.Base.SightRange))
+                        if (npc.InRangeOf(attacker, npc.Descriptor.SightRange))
                         {
                             npc.AssignTarget(attacker);
                         }
@@ -1347,8 +1348,8 @@ public partial class Npc : Entity
         }
 
         //If not then check and see if player meets the conditions to attack the npc...
-        if (Base.PlayerCanAttackConditions.Lists.Count == 0 ||
-            Conditions.MeetsConditionLists(Base.PlayerCanAttackConditions, en, null))
+        if (Descriptor.PlayerCanAttackConditions.Lists.Count == 0 ||
+            Conditions.MeetsConditionLists(Descriptor.PlayerCanAttackConditions, en, null))
         {
             return true;
         }
@@ -1361,14 +1362,14 @@ public partial class Npc : Entity
         switch (otherEntity)
         {
             case Npc otherNpc:
-                if (!Base.NpcVsNpcEnabled && !otherNpc.Base.NpcVsNpcEnabled)
+                if (!Descriptor.NpcVsNpcEnabled && !otherNpc.Descriptor.NpcVsNpcEnabled)
                 {
                     return true;
                 }
 
                 return !otherNpc.CanNpcCombat(this);
             case Player otherPlayer:
-                var conditionLists = Base.PlayerFriendConditions;
+                var conditionLists = Descriptor.PlayerFriendConditions;
                 if ((conditionLists?.Count ?? 0) == 0)
                 {
                     return false;
@@ -1387,10 +1388,10 @@ public partial class Npc : Entity
             return false;
         }
 
-        if (Base.Aggressive)
+        if (Descriptor.Aggressive)
         {
-            if (Base.AttackOnSightConditions.Lists.Count > 0 &&
-                Conditions.MeetsConditionLists(Base.AttackOnSightConditions, en, null))
+            if (Descriptor.AttackOnSightConditions.Lists.Count > 0 &&
+                Conditions.MeetsConditionLists(Descriptor.AttackOnSightConditions, en, null))
             {
                 return false;
             }
@@ -1399,8 +1400,8 @@ public partial class Npc : Entity
         }
         else
         {
-            if (Base.AttackOnSightConditions.Lists.Count > 0 &&
-                Conditions.MeetsConditionLists(Base.AttackOnSightConditions, en, null))
+            if (Descriptor.AttackOnSightConditions.Lists.Count > 0 &&
+                Conditions.MeetsConditionLists(Descriptor.AttackOnSightConditions, en, null))
             {
                 return true;
             }
@@ -1421,7 +1422,7 @@ public partial class Npc : Entity
         if (AggroCenterMap != null && pathTarget != null &&
             pathTarget.TargetMapId == AggroCenterMap.Id && pathTarget.TargetX == AggroCenterX && pathTarget.TargetY == AggroCenterY)
         {
-            if (!Options.Instance.Npc.AllowEngagingWhileResetting || attackedBy == null || attackedBy.GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) > Math.Max(Options.Instance.Npc.ResetRadius, Base.ResetRadius))
+            if (!Options.Instance.Npc.AllowEngagingWhileResetting || attackedBy == null || attackedBy.GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) > Math.Max(Options.Instance.Npc.ResetRadius, Descriptor.ResetRadius))
             {
                 return false;
             }
@@ -1502,7 +1503,7 @@ public partial class Npc : Entity
                     }
                     else if (entity is Npc npc)
                     {
-                        if (Base.Aggressive && Base.AggroList.Contains(npc.Base.Id))
+                        if (Descriptor.Aggressive && Descriptor.AggroList.Contains(npc.Descriptor.Id))
                         {
                             var dist = GetDistanceTo(entity);
                             if (dist <= Range && dist < closestRange)
@@ -1518,7 +1519,7 @@ public partial class Npc : Entity
         }
 
         // Assign our target if we've found one!
-        if (Base.FocusHighestDamageDealer && highestDmgIndex != -1)
+        if (Descriptor.FocusHighestDamageDealer && highestDmgIndex != -1)
         {
             // We're focussed on whoever has the most threat! o7
             AssignTarget(possibleTargets[highestDmgIndex]);
@@ -1540,7 +1541,7 @@ public partial class Npc : Entity
                 }
             }
         }
-        else if (Target == null && Base.Aggressive && closestIndex != -1)
+        else if (Target == null && Descriptor.Aggressive && closestIndex != -1)
         {
             // Aggressively attack closest person!
             AssignTarget(possibleTargets[closestIndex]);
@@ -1577,7 +1578,7 @@ public partial class Npc : Entity
 
     public override void ProcessRegen()
     {
-        if (Base == null)
+        if (Descriptor == null)
         {
             return;
         }
@@ -1597,7 +1598,7 @@ public partial class Npc : Entity
                 continue;
             }
 
-            var vitalRegenRate = Base.VitalRegen[vitalId] / 100f;
+            var vitalRegenRate = Descriptor.VitalRegen[vitalId] / 100f;
             var regenValue = (long)Math.Max(1, maxVitalValue * vitalRegenRate) *
                              Math.Abs(Math.Sign(vitalRegenRate));
 
@@ -1705,7 +1706,7 @@ public partial class Npc : Entity
         {
             EntityType = GetEntityType(),
             EntityReference = new WeakReference<IEntity>(this),
-            Id = this.Base.Id
+            Id = this.Descriptor.Id
         };
     }
 

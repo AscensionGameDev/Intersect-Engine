@@ -392,7 +392,7 @@ public static partial class Conditions
             {
                 if (en is Npc npc)
                 {
-                    if (!condition.SpecificNpc || npc.Base?.Id == condition.NpcId)
+                    if (!condition.SpecificNpc || npc.Descriptor?.Id == condition.NpcId)
                     {
                         return false;
                     }

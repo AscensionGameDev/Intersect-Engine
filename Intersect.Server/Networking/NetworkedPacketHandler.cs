@@ -6,6 +6,7 @@ using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
+using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.Models;
@@ -887,7 +888,7 @@ internal sealed partial class NetworkedPacketHandler
 
                     break;
                 case GameObjectType.Npc:
-                    obj = NpcBase.Get(id);
+                    obj = NPCDescriptor.Get(id);
 
                     break;
 
@@ -972,7 +973,7 @@ internal sealed partial class NetworkedPacketHandler
                     case ItemDescriptor itemDescriptor:
                         MapController.DespawnInstancesOf(itemDescriptor);
                         break;
-                    case NpcBase npcDescriptor:
+                    case NPCDescriptor npcDescriptor:
                         MapController.DespawnInstancesOf(npcDescriptor);
                         break;
                     case ProjectileBase projectileDescriptor:
@@ -1019,7 +1020,7 @@ internal sealed partial class NetworkedPacketHandler
 
                     break;
                 case GameObjectType.Npc:
-                    obj = NpcBase.Get(id);
+                    obj = NPCDescriptor.Get(id);
 
                     break;
 
@@ -1108,7 +1109,7 @@ internal sealed partial class NetworkedPacketHandler
                         case ItemDescriptor itemDescriptor:
                             MapController.DespawnInstancesOf(itemDescriptor);
                             break;
-                        case NpcBase npcDescriptor:
+                        case NPCDescriptor npcDescriptor:
                             MapController.DespawnInstancesOf(npcDescriptor);
                             break;
                         case ProjectileBase projectileDescriptor:

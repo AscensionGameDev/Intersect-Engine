@@ -3,6 +3,7 @@ using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
+using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 
@@ -19,7 +20,7 @@ public enum GameObjectType
     [GameObjectInfo(typeof(ItemDescriptor), "items")]
     Item,
 
-    [GameObjectInfo(typeof(NpcBase), "npcs")]
+    [GameObjectInfo(typeof(NPCDescriptor), "npcs")]
     Npc,
 
     [GameObjectInfo(typeof(ProjectileBase), "projectiles")]

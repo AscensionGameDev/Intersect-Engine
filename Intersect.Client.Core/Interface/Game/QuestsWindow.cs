@@ -8,6 +8,7 @@ using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 
@@ -381,7 +382,7 @@ public partial class QuestsWindow
                                     Strings.QuestLog.TaskNpc.ToString(
                                         Globals.Me.QuestProgress[mSelectedQuest.Id].TaskProgress,
                                         mSelectedQuest.Tasks[i].Quantity,
-                                        NpcBase.GetName(mSelectedQuest.Tasks[i].TargetId)
+                                        NPCDescriptor.GetName(mSelectedQuest.Tasks[i].TargetId)
                                     ), mQuestDescTemplateLabel
                                 );
                             }

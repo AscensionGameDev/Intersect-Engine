@@ -2,6 +2,7 @@ using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
+using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.Server.Maps;
@@ -29,7 +30,7 @@ public interface IGameContext : IDbContext
 
     DbSet<MapList> MapFolders { get; set; }
 
-    DbSet<NpcBase> Npcs { get; set; }
+    DbSet<NPCDescriptor> Npcs { get; set; }
 
     DbSet<ProjectileBase> Projectiles { get; set; }
 

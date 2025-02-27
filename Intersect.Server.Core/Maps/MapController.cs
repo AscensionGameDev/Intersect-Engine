@@ -6,6 +6,7 @@ using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
+using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
@@ -44,7 +45,7 @@ public partial class MapController : MapDescriptor
         }
     }
 
-    public static void DespawnInstancesOf(NpcBase npc)
+    public static void DespawnInstancesOf(NPCDescriptor npc)
     {
         var allMapControllers = Lookup.Values.OfType<MapController>().ToArray();
         foreach (var map in allMapControllers)
@@ -353,14 +354,14 @@ public partial class MapController : MapDescriptor
     }
 
     /// <summary>
-    /// Despawns NPCs of a given <see cref="NpcBase"/> from all instances of this controller.
+    /// Despawns NPCs of a given <see cref="NPCDescriptor"/> from all instances of this controller.
     /// </summary>
-    /// <param name="npcBase">The <see cref="NpcBase"/> to despawn</param>
-    public void DespawnNpcAcrossInstances(NpcBase npcBase)
+    /// <param name="npcDescriptor">The <see cref="NPCDescriptor"/> to despawn</param>
+    public void DespawnNpcAcrossInstances(NPCDescriptor npcDescriptor)
     {
         foreach (var entity in GetEntitiesOnAllInstances())
         {
-            if (entity is Npc npc && npc.Base == npcBase)
+            if (entity is Npc npc && npc.Descriptor == npcDescriptor)
             {
                 lock (npc.EntityLock)
                 {

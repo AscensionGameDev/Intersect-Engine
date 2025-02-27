@@ -3,6 +3,7 @@ using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.GameObjects;
 using Microsoft.Extensions.Logging;
 
@@ -57,7 +58,7 @@ public partial class QuestTaskEditor : UserControl
 
                 break;
             case 2: //Kill NPCS
-                cmbNpc.SelectedIndex = NpcBase.ListIndex(mMyTask?.TargetId ?? Guid.Empty);
+                cmbNpc.SelectedIndex = NPCDescriptor.ListIndex(mMyTask?.TargetId ?? Guid.Empty);
                 nudNpcQuantity.Value = mMyTask?.Quantity ?? 0;
 
                 break;
@@ -115,7 +116,7 @@ public partial class QuestTaskEditor : UserControl
             case 2: //Kill Npcs
                 grpKillNpcs.Show();
                 cmbNpc.Items.Clear();
-                cmbNpc.Items.AddRange(NpcBase.Names);
+                cmbNpc.Items.AddRange(NPCDescriptor.Names);
                 if (cmbNpc.Items.Count > 0)
                 {
                     cmbNpc.SelectedIndex = 0;
@@ -144,7 +145,7 @@ public partial class QuestTaskEditor : UserControl
 
                 break;
             case QuestObjective.KillNpcs: //Kill Npcs
-                mMyTask.TargetId = NpcBase.IdFromList(cmbNpc.SelectedIndex);
+                mMyTask.TargetId = NPCDescriptor.IdFromList(cmbNpc.SelectedIndex);
                 mMyTask.Quantity = (int) nudNpcQuantity.Value;
 
                 break;

@@ -6,6 +6,7 @@ using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Events.Commands;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
+using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.Utilities;
@@ -529,7 +530,7 @@ public partial class EventCommandConditionalBranch : UserControl
             case ConditionType.NoNpcsOnMap:
                 grpNpc.Show();
                 cmbNpcs.Items.Clear();
-                cmbNpcs.Items.AddRange(NpcBase.Names);
+                cmbNpcs.Items.AddRange(NPCDescriptor.Names);
 
                 chkNpc.Checked = false;
                 cmbNpcs.Hide();
@@ -1344,7 +1345,7 @@ public partial class EventCommandConditionalBranch : UserControl
         {
             lblNpc.Show();
             cmbNpcs.Show();
-            cmbNpcs.SelectedIndex = NpcBase.ListIndex(condition.NpcId);
+            cmbNpcs.SelectedIndex = NPCDescriptor.ListIndex(condition.NpcId);
         }
         else
         {
@@ -1541,7 +1542,7 @@ public partial class EventCommandConditionalBranch : UserControl
     private void SaveFormValues(NoNpcsOnMapCondition condition)
     {
         condition.SpecificNpc = chkNpc.Checked;
-        condition.NpcId = condition.SpecificNpc ? NpcBase.IdFromList(cmbNpcs.SelectedIndex) : default;
+        condition.NpcId = condition.SpecificNpc ? NPCDescriptor.IdFromList(cmbNpcs.SelectedIndex) : default;
     }
 
     private void SaveFormValues(GenderIsCondition condition)

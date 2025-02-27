@@ -10,6 +10,7 @@ using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
+using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.Network;
@@ -512,14 +513,14 @@ internal sealed partial class PacketHandler
             case GameObjectType.Npc:
                 if (deleted)
                 {
-                    var npc = NpcBase.Get(id);
+                    var npc = NPCDescriptor.Get(id);
                     npc.Delete();
                 }
                 else
                 {
-                    var npc = new NpcBase(id);
+                    var npc = new NPCDescriptor(id);
                     npc.Load(json);
-                    NpcBase.Lookup.Set(id, npc);
+                    NPCDescriptor.Lookup.Set(id, npc);
                 }
 
                 break;

@@ -15,6 +15,7 @@ using Intersect.Framework.Core.GameObjects.Events.Commands;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.Attributes;
+using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.Network;
@@ -1457,7 +1458,7 @@ public partial class Player : Entity
         {
             case Npc npc:
                 {
-                    var descriptor = npc.Base;
+                    var descriptor = npc.Descriptor;
                     var playerEvent = descriptor.OnDeathEvent;
                     var partyEvent = descriptor.OnDeathPartyEvent;
 
@@ -1528,7 +1529,7 @@ public partial class Player : Entity
                     var questTask = quest.FindTask(questProgress.TaskId);
                     if (questTask != null)
                     {
-                        if (questTask.Objective == QuestObjective.KillNpcs && questTask.TargetId == npc.Base.Id)
+                        if (questTask.Objective == QuestObjective.KillNpcs && questTask.TargetId == npc.Descriptor.Id)
                         {
                             questProgress.TaskProgress++;
                             if (questProgress.TaskProgress >= questTask.Quantity)
@@ -1542,7 +1543,7 @@ public partial class Player : Entity
                                     this,
                                     Strings.Quests.NpcTask.ToString(
                                         quest.Name, questProgress.TaskProgress, questTask.Quantity,
-                                        NpcBase.GetName(questTask.TargetId)
+                                        NPCDescriptor.GetName(questTask.TargetId)
                                     ),
                                     ChatMessageType.Quest
                                 );
@@ -1868,7 +1869,7 @@ public partial class Player : Entity
                     if (entity is Npc npc &&
                         npc.Target == null &&
                         npc.IsAllyOf(this) &&
-                        InRangeOf(npc, npc.Base.SightRange))
+                        InRangeOf(npc, npc.Descriptor.SightRange))
                     {
                         npc.AssignTarget(attacker);
                     }

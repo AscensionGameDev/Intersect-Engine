@@ -3,6 +3,7 @@ using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
+using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.Server.Database.GameData.Migrations;
@@ -45,7 +46,7 @@ public abstract partial class GameContext : IntersectDbContext<GameContext>, IGa
     public DbSet<MapList> MapFolders { get; set; }
 
     //NPCs
-    public DbSet<NpcBase> Npcs { get; set; }
+    public DbSet<NPCDescriptor> Npcs { get; set; }
 
     //Projectiles
     public DbSet<ProjectileBase> Projectiles { get; set; }

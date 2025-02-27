@@ -3,6 +3,7 @@ using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.Serialization;
 using Intersect.Localization;
 using Intersect.Models;
@@ -254,7 +255,7 @@ public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
                     break;
                 case QuestObjective.KillNpcs: //Kill Npcs
                     taskString = descriptions[(int)Objective].ToString(
-                        NpcBase.GetName(TargetId),
+                        NPCDescriptor.GetName(TargetId),
                         Quantity,
                         Description
                     );

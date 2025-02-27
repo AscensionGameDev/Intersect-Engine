@@ -2,13 +2,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.GameObjects;
 using Intersect.Models;
 using Intersect.Utilities;
 using Newtonsoft.Json;
 
-namespace Intersect.GameObjects;
+namespace Intersect.Framework.Core.GameObjects.NPCs;
 
-public partial class NpcBase : DatabaseObject<NpcBase>, IFolderable
+public partial class NPCDescriptor : DatabaseObject<NPCDescriptor>, IFolderable
 {
     private long[] _maxVitals = new long[Enum.GetValues<Vital>().Length];
     private int[] _stats = new int[Enum.GetValues<Stat>().Length];
@@ -110,13 +111,13 @@ public partial class NpcBase : DatabaseObject<NpcBase>, IFolderable
     }
 
     [JsonConstructor]
-    public NpcBase(Guid id) : base(id)
+    public NPCDescriptor(Guid id) : base(id)
     {
         Name = "New Npc";
     }
 
     //Parameterless constructor for EF
-    public NpcBase()
+    public NPCDescriptor()
     {
         Name = "New Npc";
     }

@@ -15,6 +15,7 @@ using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
+using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Reflection;
@@ -651,7 +652,7 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.Npc:
-                NpcBase.Lookup.Clear();
+                NPCDescriptor.Lookup.Clear();
 
                 break;
             case GameObjectType.Projectile:
@@ -754,7 +755,7 @@ public static partial class DbInterface
                     case GameObjectType.Npc:
                         foreach (var npc in context.Npcs)
                         {
-                            NpcBase.Lookup.Set(npc.Id, npc);
+                            NPCDescriptor.Lookup.Set(npc.Id, npc);
                         }
 
                         break;
@@ -1007,7 +1008,7 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.Npc:
-                dbObj = new NpcBase(predefinedid);
+                dbObj = new NPCDescriptor(predefinedid);
 
                 break;
             case GameObjectType.Projectile:
@@ -1109,8 +1110,8 @@ public static partial class DbInterface
 
                         break;
                     case GameObjectType.Npc:
-                        context.Npcs.Add((NpcBase)dbObj);
-                        NpcBase.Lookup.Set(dbObj.Id, dbObj);
+                        context.Npcs.Add((NPCDescriptor)dbObj);
+                        NPCDescriptor.Lookup.Set(dbObj.Id, dbObj);
 
                         break;
 
@@ -1244,7 +1245,7 @@ public static partial class DbInterface
 
                         break;
                     case GameObjectType.Npc:
-                        context.Npcs.Remove((NpcBase)gameObject);
+                        context.Npcs.Remove((NPCDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Projectile:
@@ -1415,7 +1416,7 @@ public static partial class DbInterface
                         break;
                     }
                     case GameObjectType.Npc:
-                        context.Npcs.Update((NpcBase)gameObject);
+                        context.Npcs.Update((NPCDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Projectile:

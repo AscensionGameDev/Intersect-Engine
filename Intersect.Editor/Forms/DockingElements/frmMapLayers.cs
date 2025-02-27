@@ -8,6 +8,7 @@ using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.Attributes;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
+using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.GameObjects;
 using Intersect.Localization;
 using Intersect.Utilities;
@@ -793,13 +794,13 @@ public partial class FrmMapLayers : DockContent
     {
         // Update the list incase npcs have been modified since form load.
         cmbNpc.Items.Clear();
-        cmbNpc.Items.AddRange(NpcBase.Names);
+        cmbNpc.Items.AddRange(NPCDescriptor.Names);
 
         // Add the map NPCs
         lstMapNpcs.Items.Clear();
         for (var i = 0; i < Globals.CurrentMap.Spawns.Count; i++)
         {
-            lstMapNpcs.Items.Add(NpcBase.GetName(Globals.CurrentMap.Spawns[i].NpcId));
+            lstMapNpcs.Items.Add(NPCDescriptor.GetName(Globals.CurrentMap.Spawns[i].NpcId));
         }
 
         // Don't select if there are no NPCs, to avoid crashes.
@@ -816,7 +817,7 @@ public partial class FrmMapLayers : DockContent
             if (lstMapNpcs.SelectedIndex < Globals.CurrentMap.Spawns.Count)
             {
                 cmbDir.SelectedIndex = (int) Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Direction;
-                cmbNpc.SelectedIndex = NpcBase.ListIndex(Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcId);
+                cmbNpc.SelectedIndex = NPCDescriptor.ListIndex(Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcId);
                 if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
                 {
                     rbDeclared.Checked = true;
@@ -840,13 +841,13 @@ public partial class FrmMapLayers : DockContent
         //Don't add nothing
         if (cmbNpc.SelectedIndex > -1)
         {
-            n.NpcId = NpcBase.IdFromList(cmbNpc.SelectedIndex);
+            n.NpcId = NPCDescriptor.IdFromList(cmbNpc.SelectedIndex);
             n.X = -1;
             n.Y = -1;
             n.Direction = NpcSpawnDirection.Random;
 
             Globals.CurrentMap.Spawns.Add(n);
-            lstMapNpcs.Items.Add(NpcBase.GetName(n.NpcId));
+            lstMapNpcs.Items.Add(NPCDescriptor.GetName(n.NpcId));
             lstMapNpcs.SelectedIndex = lstMapNpcs.Items.Count - 1;
         }
 
@@ -864,7 +865,7 @@ public partial class FrmMapLayers : DockContent
             lstMapNpcs.Items.Clear();
             for (var i = 0; i < Globals.CurrentMap.Spawns.Count; i++)
             {
-                lstMapNpcs.Items.Add(NpcBase.GetName(Globals.CurrentMap.Spawns[i].NpcId));
+                lstMapNpcs.Items.Add(NPCDescriptor.GetName(Globals.CurrentMap.Spawns[i].NpcId));
             }
 
             if (lstMapNpcs.Items.Count > 0)
@@ -902,7 +903,7 @@ public partial class FrmMapLayers : DockContent
 
         var selectedSpawn = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex];
 
-        cmbNpc.SelectedIndex = NpcBase.ListIndex(selectedSpawn.NpcId);
+        cmbNpc.SelectedIndex = NPCDescriptor.ListIndex(selectedSpawn.NpcId);
         cmbDir.SelectedIndex = (int)selectedSpawn.Direction;
         rbDeclared.Checked = selectedSpawn.X >= 0;
         rbRandom.Checked = !rbDeclared.Checked;
@@ -943,14 +944,14 @@ public partial class FrmMapLayers : DockContent
 
         if (lstMapNpcs.SelectedIndex >= 0)
         {
-            Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcId = NpcBase.IdFromList(cmbNpc.SelectedIndex);
+            Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcId = NPCDescriptor.IdFromList(cmbNpc.SelectedIndex);
 
             // Refresh List
             n = lstMapNpcs.SelectedIndex;
             lstMapNpcs.Items.Clear();
             for (var i = 0; i < Globals.CurrentMap.Spawns.Count; i++)
             {
-                lstMapNpcs.Items.Add(NpcBase.GetName(Globals.CurrentMap.Spawns[i].NpcId));
+                lstMapNpcs.Items.Add(NPCDescriptor.GetName(Globals.CurrentMap.Spawns[i].NpcId));
             }
 
             lstMapNpcs.SelectedIndex = n;

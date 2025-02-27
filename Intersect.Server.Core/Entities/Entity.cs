@@ -3047,7 +3047,7 @@ public abstract partial class Entity : IEntity
         {
             var lootGenerated = new List<Player>();
             // If this is an NPC, drop loot for every single player that participated in the fight.
-            if (this is Npc npc && npc.Base.IndividualizedLoot)
+            if (this is Npc npc && npc.Descriptor.IndividualizedLoot)
             {
                 // Generate loot for every player that has helped damage this monster, as well as their party members.
                 // Keep track of who already got loot generated for them though, or this gets messy!

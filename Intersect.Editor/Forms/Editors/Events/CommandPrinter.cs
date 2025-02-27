@@ -7,6 +7,7 @@ using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Events.Commands;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
+using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Microsoft.Extensions.Logging;
@@ -1035,7 +1036,7 @@ public static partial class CommandPrinter
                 if (orderedMap.MapId == command.MapId)
                 {
                     return Strings.EventCommandList.spawnnpc.ToString(
-                        NpcBase.GetName(command.NpcId),
+                        NPCDescriptor.GetName(command.NpcId),
                         Strings.EventCommandList.spawnonmap.ToString(
                             orderedMap.Name, command.X, command.Y, Strings.Direction.dir?[command.Dir]
                         )
@@ -1044,7 +1045,7 @@ public static partial class CommandPrinter
             }
 
             return Strings.EventCommandList.spawnnpc.ToString(
-                NpcBase.GetName(command.NpcId),
+                NPCDescriptor.GetName(command.NpcId),
                 Strings.EventCommandList.spawnonmap.ToString(
                     Strings.EventCommandList.mapnotfound, command.X, command.Y, Strings.Direction.dir[command.Dir]
                 )
@@ -1062,7 +1063,7 @@ public static partial class CommandPrinter
         if (command.EntityId == Guid.Empty)
         {
             return Strings.EventCommandList.spawnnpc.ToString(
-                NpcBase.GetName(command.NpcId),
+                NPCDescriptor.GetName(command.NpcId),
                 Strings.EventCommandList.spawnonplayer.ToString(command.X, command.Y, retain)
             );
         }
@@ -1070,13 +1071,13 @@ public static partial class CommandPrinter
         if (map.LocalEvents.TryGetValue(command.EntityId, out var localEvent))
         {
             return Strings.EventCommandList.spawnnpc.ToString(
-                NpcBase.GetName(command.NpcId),
+                NPCDescriptor.GetName(command.NpcId),
                 Strings.EventCommandList.spawnonevent.ToString(localEvent.Name, command.X, command.Y, retain)
             );
         }
 
         return Strings.EventCommandList.spawnnpc.ToString(
-            NpcBase.GetName(command.NpcId),
+            NPCDescriptor.GetName(command.NpcId),
             Strings.EventCommandList.spawnonevent.ToString(
                 Strings.EventCommandList.deletedevent, command.X, command.Y, retain
             )

@@ -352,6 +352,154 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.ToTable("MapFolders");
                 });
 
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.NPCs.NPCDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Aggressive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("AttackAllies")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("AttackAnimationId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("AttackAnimation");
+
+                    b.Property<string>("AttackOnSightConditionsJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("AttackOnSightConditions");
+
+                    b.Property<int>("AttackSpeedModifier")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AttackSpeedValue")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CraftsJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Spells");
+
+                    b.Property<int>("CritChance")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("CritMultiplier")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("Damage")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DamageType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("Experience")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte>("FleeHealthPercentage")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("FocusHighestDamageDealer")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Folder")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ImmunitiesJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Immunities");
+
+                    b.Property<bool>("IndividualizedLoot")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("JsonAggroList")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("AggroList");
+
+                    b.Property<string>("JsonColor")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Color");
+
+                    b.Property<string>("JsonDrops")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Drops");
+
+                    b.Property<string>("JsonMaxVital")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("MaxVital");
+
+                    b.Property<string>("JsonStat")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Stats");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte>("Movement")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(0);
+
+                    b.Property<bool>("NpcVsNpcEnabled")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("OnDeathEventId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("OnDeathEvent");
+
+                    b.Property<Guid>("OnDeathPartyEventId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("OnDeathPartyEvent");
+
+                    b.Property<string>("PlayerCanAttackConditionsJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("PlayerCanAttackConditions");
+
+                    b.Property<string>("PlayerFriendConditionsJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("PlayerFriendConditions");
+
+                    b.Property<string>("RegenJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("VitalRegen");
+
+                    b.Property<int>("ResetRadius")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Scaling")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ScalingStat")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SightRange")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SpawnDuration")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SpellFrequency")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Sprite")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Swarm")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Tenacity")
+                        .HasColumnType("REAL");
+
+                    b.Property<long>("TimeCreated")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Npcs");
+                });
+
             modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.GuildVariableDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
@@ -612,154 +760,6 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.HasKey("DescriptorId");
 
                     b.ToTable("Items_EquipmentProperties");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.NpcBase", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Aggressive")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("AttackAllies")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid>("AttackAnimationId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("AttackAnimation");
-
-                    b.Property<string>("AttackOnSightConditionsJson")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("AttackOnSightConditions");
-
-                    b.Property<int>("AttackSpeedModifier")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AttackSpeedValue")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("CraftsJson")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("Spells");
-
-                    b.Property<int>("CritChance")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<double>("CritMultiplier")
-                        .HasColumnType("REAL");
-
-                    b.Property<int>("Damage")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("DamageType")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("Experience")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<byte>("FleeHealthPercentage")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("FocusHighestDamageDealer")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Folder")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ImmunitiesJson")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("Immunities");
-
-                    b.Property<bool>("IndividualizedLoot")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("JsonAggroList")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("AggroList");
-
-                    b.Property<string>("JsonColor")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("Color");
-
-                    b.Property<string>("JsonDrops")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("Drops");
-
-                    b.Property<string>("JsonMaxVital")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("MaxVital");
-
-                    b.Property<string>("JsonStat")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("Stats");
-
-                    b.Property<int>("Level")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<byte>("Movement")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT")
-                        .HasColumnOrder(0);
-
-                    b.Property<bool>("NpcVsNpcEnabled")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid>("OnDeathEventId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("OnDeathEvent");
-
-                    b.Property<Guid>("OnDeathPartyEventId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("OnDeathPartyEvent");
-
-                    b.Property<string>("PlayerCanAttackConditionsJson")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("PlayerCanAttackConditions");
-
-                    b.Property<string>("PlayerFriendConditionsJson")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("PlayerFriendConditions");
-
-                    b.Property<string>("RegenJson")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("VitalRegen");
-
-                    b.Property<int>("ResetRadius")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Scaling")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ScalingStat")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SightRange")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SpawnDuration")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SpellFrequency")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Sprite")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Swarm")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<double>("Tenacity")
-                        .HasColumnType("REAL");
-
-                    b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Npcs");
                 });
 
             modelBuilder.Entity("Intersect.GameObjects.ProjectileBase", b =>
