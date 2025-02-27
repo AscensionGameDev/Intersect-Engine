@@ -45,6 +45,7 @@ public partial class EscapeMenuWindow : Window
 
         _returnToCharacterSelectionButton = new Button(this, nameof(_returnToCharacterSelectionButton))
         {
+            IsVisibleInParent = Options.Instance.Player.MaxCharacters > 1,
             IsTabable = true,
             Text = Strings.EscapeMenu.CharacterSelect,
         };
@@ -52,6 +53,7 @@ public partial class EscapeMenuWindow : Window
 
         _logoutButton = new Button(this, nameof(_logoutButton))
         {
+            IsVisibleInParent = !ClientContext.IsSinglePlayer,
             IsTabable = true,
             Text = Strings.EscapeMenu.Logout,
         };
@@ -74,11 +76,6 @@ public partial class EscapeMenuWindow : Window
         if (!string.IsNullOrEmpty(Strings.MainMenu.SettingsTooltip))
         {
             _openSettingsButton.SetToolTipText(Strings.MainMenu.SettingsTooltip);
-        }
-
-        if (Options.Instance.Player.MaxCharacters <= 1)
-        {
-            _returnToCharacterSelectionButton.IsDisabled = true;
         }
 
         _versionPanel = new VersionPanel(this, name: nameof(_versionPanel));
