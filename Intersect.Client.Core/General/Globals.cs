@@ -126,7 +126,7 @@ public static partial class Globals
 
     //Game Shop
     //Only need 1 shop, and that is the one we see at a given moment in time.
-    public static ShopBase? GameShop { get; set; }
+    public static ShopDescriptor? GameShop { get; set; }
 
     /// <see cref="GameStates" />
     public static GameStates GameState

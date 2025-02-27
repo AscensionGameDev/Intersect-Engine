@@ -909,7 +909,7 @@ internal sealed partial class NetworkedPacketHandler
                     break;
 
                 case GameObjectType.Shop:
-                    obj = ShopBase.Get(id);
+                    obj = ShopDescriptor.Get(id);
 
                     break;
 
@@ -1041,7 +1041,7 @@ internal sealed partial class NetworkedPacketHandler
                     break;
 
                 case GameObjectType.Shop:
-                    obj = ShopBase.Get(id);
+                    obj = ShopDescriptor.Get(id);
 
                     break;
 

@@ -3932,7 +3932,7 @@ public partial class Player : Entity
     }
 
     //Shop
-    public bool OpenShop(ShopBase shop)
+    public bool OpenShop(ShopDescriptor shop)
     {
         if (IsBusy())
         {
@@ -7848,7 +7848,7 @@ public partial class Player : Entity
 
     [JsonIgnore, NotMapped] public bool IsInBag => InBag != null;
 
-    [JsonIgnore, NotMapped] public ShopBase InShop;
+    [JsonIgnore, NotMapped] public ShopDescriptor InShop;
 
     [NotMapped] public bool InBank => BankInterface != null;
 

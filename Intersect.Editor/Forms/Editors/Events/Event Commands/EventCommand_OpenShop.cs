@@ -19,8 +19,8 @@ public partial class EventCommandOpenShop : UserControl
         mEventEditor = editor;
         InitLocalization();
         cmbShop.Items.Clear();
-        cmbShop.Items.AddRange(ShopBase.Names);
-        cmbShop.SelectedIndex = ShopBase.ListIndex(mMyCommand.ShopId);
+        cmbShop.Items.AddRange(ShopDescriptor.Names);
+        cmbShop.SelectedIndex = ShopDescriptor.ListIndex(mMyCommand.ShopId);
     }
 
     private void InitLocalization()
@@ -35,7 +35,7 @@ public partial class EventCommandOpenShop : UserControl
     {
         if (cmbShop.SelectedIndex > -1)
         {
-            mMyCommand.ShopId = ShopBase.IdFromList(cmbShop.SelectedIndex);
+            mMyCommand.ShopId = ShopDescriptor.IdFromList(cmbShop.SelectedIndex);
         }
 
         mEventEditor.FinishCommandEdit();

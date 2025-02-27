@@ -1711,7 +1711,7 @@ internal sealed partial class PacketHandler
 
         if (packet.ShopData != null)
         {
-            Globals.GameShop = new ShopBase();
+            Globals.GameShop = new ShopDescriptor();
             Globals.GameShop.Load(packet.ShopData);
             Interface.Interface.EnqueueInGame(gameInterface => gameInterface.NotifyOpenShop());
         }

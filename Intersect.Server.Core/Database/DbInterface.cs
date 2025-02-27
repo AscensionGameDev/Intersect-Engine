@@ -669,7 +669,7 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.Shop:
-                ShopBase.Lookup.Clear();
+                ShopDescriptor.Lookup.Clear();
 
                 break;
             case GameObjectType.Spell:
@@ -784,7 +784,7 @@ public static partial class DbInterface
                     case GameObjectType.Shop:
                         foreach (var shp in context.Shops)
                         {
-                            ShopBase.Lookup.Set(shp.Id, shp);
+                            ShopDescriptor.Lookup.Set(shp.Id, shp);
                         }
 
                         break;
@@ -1021,7 +1021,7 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.Shop:
-                dbObj = new ShopBase(predefinedid);
+                dbObj = new ShopDescriptor(predefinedid);
 
                 break;
             case GameObjectType.Spell:
@@ -1135,8 +1135,8 @@ public static partial class DbInterface
                         break;
 
                     case GameObjectType.Shop:
-                        context.Shops.Add((ShopBase)dbObj);
-                        ShopBase.Lookup.Set(dbObj.Id, dbObj);
+                        context.Shops.Add((ShopDescriptor)dbObj);
+                        ShopDescriptor.Lookup.Set(dbObj.Id, dbObj);
 
                         break;
 
@@ -1287,7 +1287,7 @@ public static partial class DbInterface
 
                         break;
                     case GameObjectType.Shop:
-                        context.Shops.Remove((ShopBase)gameObject);
+                        context.Shops.Remove((ShopDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Spell:
@@ -1452,7 +1452,7 @@ public static partial class DbInterface
 
                         break;
                     case GameObjectType.Shop:
-                        context.Shops.Update((ShopBase)gameObject);
+                        context.Shops.Update((ShopDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Spell:

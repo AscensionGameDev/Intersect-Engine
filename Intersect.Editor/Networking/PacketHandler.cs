@@ -579,14 +579,14 @@ internal sealed partial class PacketHandler
             case GameObjectType.Shop:
                 if (deleted)
                 {
-                    var shp = ShopBase.Get(id);
+                    var shp = ShopDescriptor.Get(id);
                     shp.Delete();
                 }
                 else
                 {
-                    var shp = new ShopBase(id);
+                    var shp = new ShopDescriptor(id);
                     shp.Load(json);
-                    ShopBase.Lookup.Set(id, shp);
+                    ShopDescriptor.Lookup.Set(id, shp);
                 }
 
                 break;

@@ -1681,7 +1681,7 @@ public static partial class PacketSender
     }
 
     //ShopPacket
-    public static void SendOpenShop(Player player, ShopBase shop)
+    public static void SendOpenShop(Player player, ShopDescriptor shop)
     {
         if (shop == null)
         {
@@ -1781,7 +1781,7 @@ public static partial class PacketSender
 
                 break;
             case GameObjectType.Shop:
-                foreach (var obj in ShopBase.Lookup)
+                foreach (var obj in ShopDescriptor.Lookup)
                 {
                     SendGameObject(client, obj.Value, false, false, packetList);
                 }

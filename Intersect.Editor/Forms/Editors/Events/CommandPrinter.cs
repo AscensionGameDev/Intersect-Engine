@@ -1216,7 +1216,7 @@ public static partial class CommandPrinter
 
     private static string GetCommandText(OpenShopCommand command, MapInstance map)
     {
-        return Strings.EventCommandList.openshop.ToString(ShopBase.GetName(command.ShopId));
+        return Strings.EventCommandList.openshop.ToString(ShopDescriptor.GetName(command.ShopId));
     }
 
     private static string GetCommandText(OpenCraftingTableCommand command, MapInstance map)

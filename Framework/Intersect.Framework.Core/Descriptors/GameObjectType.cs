@@ -33,7 +33,7 @@ public enum GameObjectType
     [GameObjectInfo(typeof(ResourceDescriptor), "resources")]
     Resource,
 
-    [GameObjectInfo(typeof(ShopBase), "shops")]
+    [GameObjectInfo(typeof(ShopDescriptor), "shops")]
     Shop,
 
     [GameObjectInfo(typeof(SpellBase), "spells")]

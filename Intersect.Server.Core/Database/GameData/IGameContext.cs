@@ -39,7 +39,7 @@ public interface IGameContext : IDbContext
 
     DbSet<ResourceDescriptor> Resources { get; set; }
 
-    DbSet<ShopBase> Shops { get; set; }
+    DbSet<ShopDescriptor> Shops { get; set; }
 
     DbSet<SpellBase> Spells { get; set; }
 

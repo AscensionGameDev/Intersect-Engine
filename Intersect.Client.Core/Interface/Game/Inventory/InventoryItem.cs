@@ -375,66 +375,79 @@ public partial class InventoryItem : ImagePanel
             return;
         }
 
+        var inventorySlotDescriptor = inventorySlot.Descriptor;
+        if (inventorySlotDescriptor is null)
+        {
+            return;
+        }
+
         if (Globals.GameShop == null)
         {
-            if (inventorySlot.Descriptor != null)
-            {
-                _descWindow = new ItemDescriptionWindow(
-                    inventorySlot.Descriptor, inventorySlot.Quantity, _inventoryWindow.X,
-                    _inventoryWindow.Y, inventorySlot.ItemProperties
-                );
-            }
+            _descWindow = new ItemDescriptionWindow(
+                inventorySlotDescriptor,
+                inventorySlot.Quantity,
+                _inventoryWindow.X,
+                _inventoryWindow.Y,
+                inventorySlot.ItemProperties
+            );
         }
         else
         {
-            ShopItem? shopItem = default;
+            ShopItemDescriptor? shopItemDescriptor = default;
             for (var i = 0; i < Globals.GameShop.BuyingItems.Count; i++)
             {
                 var tmpShop = Globals.GameShop.BuyingItems[i];
                 if (inventorySlot.ItemId == tmpShop.ItemId)
                 {
-                    shopItem = tmpShop;
+                    shopItemDescriptor = tmpShop;
                     break;
                 }
             }
 
-            if (Globals.GameShop.BuyingWhitelist && shopItem != default)
+            if (Globals.GameShop.BuyingWhitelist && shopItemDescriptor != default)
             {
-                if (!ItemDescriptor.TryGet(shopItem.CostItemId, out var hoveredItem))
+                if (!ItemDescriptor.TryGet(shopItemDescriptor.CostItemId, out var hoveredItem))
                 {
                     return;
                 }
 
-                if (inventorySlot.Descriptor != null)
-                {
-                    _descWindow = new ItemDescriptionWindow(
-                        inventorySlot.Descriptor, inventorySlot.Quantity,
-                        _inventoryWindow.X, _inventoryWindow.Y, inventorySlot.ItemProperties, "",
-                        Strings.Shop.SellsFor.ToString(shopItem.CostItemQuantity, hoveredItem.Name)
-                    );
-                }
+                _descWindow = new ItemDescriptionWindow(
+                    inventorySlotDescriptor,
+                    inventorySlot.Quantity,
+                    _inventoryWindow.X,
+                    _inventoryWindow.Y,
+                    inventorySlot.ItemProperties,
+                    "",
+                    Strings.Shop.SellsFor.ToString(shopItemDescriptor.CostItemQuantity, hoveredItem.Name)
+                );
             }
-            else if (shopItem == null)
+            else if (shopItemDescriptor == null)
             {
                 var costItem = Globals.GameShop.DefaultCurrency;
-                if (inventorySlot.Descriptor != null && costItem != null)
+                if (inventorySlotDescriptor != null && costItem != null)
                 {
                     _descWindow = new ItemDescriptionWindow(
-                        inventorySlot.Descriptor, inventorySlot.Quantity,
-                        _inventoryWindow.X, _inventoryWindow.Y, inventorySlot.ItemProperties, "",
-                        Strings.Shop.SellsFor.ToString(inventorySlot.Descriptor.Price.ToString(), costItem.Name)
+                        inventorySlotDescriptor,
+                        inventorySlot.Quantity,
+                        _inventoryWindow.X,
+                        _inventoryWindow.Y,
+                        inventorySlot.ItemProperties,
+                        "",
+                        Strings.Shop.SellsFor.ToString(inventorySlotDescriptor.Price.ToString(), costItem.Name)
                     );
                 }
             }
             else
             {
-                if (inventorySlot.Descriptor != null)
-                {
-                    _descWindow = new ItemDescriptionWindow(
-                        inventorySlot.Descriptor, inventorySlot.Quantity, _inventoryWindow.X, _inventoryWindow.Y, inventorySlot.ItemProperties,
-                        "", Strings.Shop.WontBuy
-                    );
-                }
+                _descWindow = new ItemDescriptionWindow(
+                    inventorySlotDescriptor,
+                    inventorySlot.Quantity,
+                    _inventoryWindow.X,
+                    _inventoryWindow.Y,
+                    inventorySlot.ItemProperties,
+                    "",
+                    Strings.Shop.WontBuy
+                );
             }
         }
     }

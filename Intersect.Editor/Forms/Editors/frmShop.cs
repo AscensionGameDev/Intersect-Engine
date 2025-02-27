@@ -15,11 +15,11 @@ namespace Intersect.Editor.Forms.Editors;
 public partial class FrmShop : EditorForm
 {
 
-    private List<ShopBase> mChanged = new List<ShopBase>();
+    private List<ShopDescriptor> mChanged = new List<ShopDescriptor>();
 
     private string mCopiedItem;
 
-    private ShopBase mEditorItem;
+    private ShopDescriptor mEditorItem;
 
     private List<string> mKnownFolders = new List<string>();
 
@@ -33,7 +33,7 @@ public partial class FrmShop : EditorForm
     }
     private void AssignEditorItem(Guid id)
     {
-        mEditorItem = ShopBase.Get(id);
+        mEditorItem = ShopDescriptor.Get(id);
         UpdateEditor();
     }
 
@@ -42,7 +42,7 @@ public partial class FrmShop : EditorForm
         if (type == GameObjectType.Shop)
         {
             InitEditor();
-            if (mEditorItem != null && !ShopBase.Lookup.Values.Contains(mEditorItem))
+            if (mEditorItem != null && !ShopDescriptor.Lookup.Values.Contains(mEditorItem))
             {
                 mEditorItem = null;
                 UpdateEditor();
@@ -278,7 +278,7 @@ public partial class FrmShop : EditorForm
     {
         var addedItem = false;
         var cost = (int) nudSellCost.Value;
-        var newItem = new ShopItem(
+        var newItem = new ShopItemDescriptor(
             ItemDescriptor.IdFromList(cmbAddSoldItem.SelectedIndex), ItemDescriptor.IdFromList(cmbSellFor.SelectedIndex), cost
         );
 
@@ -315,7 +315,7 @@ public partial class FrmShop : EditorForm
     {
         var addedItem = false;
         var cost = (int) nudBuyAmount.Value;
-        var newItem = new ShopItem(
+        var newItem = new ShopItemDescriptor(
             ItemDescriptor.IdFromList(cmbAddBoughtItem.SelectedIndex), ItemDescriptor.IdFromList(cmbBuyFor.SelectedIndex), cost
         );
 
@@ -468,15 +468,15 @@ public partial class FrmShop : EditorForm
     {
         //Collect folders
         var mFolders = new List<string>();
-        foreach (var itm in ShopBase.Lookup)
+        foreach (var itm in ShopDescriptor.Lookup)
         {
-            if (!string.IsNullOrEmpty(((ShopBase) itm.Value).Folder) &&
-                !mFolders.Contains(((ShopBase) itm.Value).Folder))
+            if (!string.IsNullOrEmpty(((ShopDescriptor) itm.Value).Folder) &&
+                !mFolders.Contains(((ShopDescriptor) itm.Value).Folder))
             {
-                mFolders.Add(((ShopBase) itm.Value).Folder);
-                if (!mKnownFolders.Contains(((ShopBase) itm.Value).Folder))
+                mFolders.Add(((ShopDescriptor) itm.Value).Folder);
+                if (!mKnownFolders.Contains(((ShopDescriptor) itm.Value).Folder))
                 {
-                    mKnownFolders.Add(((ShopBase) itm.Value).Folder);
+                    mKnownFolders.Add(((ShopDescriptor) itm.Value).Folder);
                 }
             }
         }
@@ -487,8 +487,8 @@ public partial class FrmShop : EditorForm
         cmbFolder.Items.Add("");
         cmbFolder.Items.AddRange(mKnownFolders.ToArray());
 
-        var items = ShopBase.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
-            new KeyValuePair<string, string>(((ShopBase)pair.Value)?.Name ?? Models.DatabaseObject<ShopBase>.Deleted, ((ShopBase)pair.Value)?.Folder ?? ""))).ToArray();
+        var items = ShopDescriptor.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
+            new KeyValuePair<string, string>(((ShopDescriptor)pair.Value)?.Name ?? Models.DatabaseObject<ShopDescriptor>.Deleted, ((ShopDescriptor)pair.Value)?.Folder ?? ""))).ToArray();
         lstGameObjects.Repopulate(items, mFolders, btnAlphabetical.Checked, CustomSearch(), txtSearch.Text);
     }
 

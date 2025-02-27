@@ -59,7 +59,7 @@ public abstract partial class GameContext : IntersectDbContext<GameContext>, IGa
     public DbSet<ResourceDescriptor> Resources { get; set; }
 
     //Shops
-    public DbSet<ShopBase> Shops { get; set; }
+    public DbSet<ShopDescriptor> Shops { get; set; }
 
     //Spells
     public DbSet<SpellBase> Spells { get; set; }

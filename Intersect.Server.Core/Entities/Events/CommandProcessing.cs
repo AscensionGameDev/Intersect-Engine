@@ -1253,7 +1253,7 @@ public static partial class CommandProcessing
         Stack<CommandInstance> callStack
     )
     {
-        player.OpenShop(ShopBase.Get(command.ShopId));
+        player.OpenShop(ShopDescriptor.Get(command.ShopId));
         callStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Shop;
     }
 

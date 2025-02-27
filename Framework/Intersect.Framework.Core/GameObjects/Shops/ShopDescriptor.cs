@@ -5,22 +5,22 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects;
 
-public partial class ShopBase : DatabaseObject<ShopBase>, IFolderable
+public partial class ShopDescriptor : DatabaseObject<ShopDescriptor>, IFolderable
 {
     [NotMapped]
-    public List<ShopItem> BuyingItems { get; set; } = [];
+    public List<ShopItemDescriptor> BuyingItems { get; set; } = [];
 
     [NotMapped]
-    public List<ShopItem> SellingItems { get; set; } = [];
+    public List<ShopItemDescriptor> SellingItems { get; set; } = [];
 
     [JsonConstructor]
-    public ShopBase(Guid id) : base(id)
+    public ShopDescriptor(Guid id) : base(id)
     {
         Name = "New Shop";
     }
 
     //EF is so damn picky about its parameters
-    public ShopBase()
+    public ShopDescriptor()
     {
         Name = "New Shop";
     }
@@ -45,7 +45,7 @@ public partial class ShopBase : DatabaseObject<ShopBase>, IFolderable
     public string JsonBuyingItems
     {
         get => JsonConvert.SerializeObject(BuyingItems);
-        set => BuyingItems = JsonConvert.DeserializeObject<List<ShopItem>>(value);
+        set => BuyingItems = JsonConvert.DeserializeObject<List<ShopItemDescriptor>>(value);
     }
 
     [Column("SellingItems")]
@@ -53,7 +53,7 @@ public partial class ShopBase : DatabaseObject<ShopBase>, IFolderable
     public string JsonSellingItems
     {
         get => JsonConvert.SerializeObject(SellingItems);
-        set => SellingItems = JsonConvert.DeserializeObject<List<ShopItem>>(value);
+        set => SellingItems = JsonConvert.DeserializeObject<List<ShopItemDescriptor>>(value);
     }
 
     public string BuySound { get; set; } = null;
@@ -62,25 +62,4 @@ public partial class ShopBase : DatabaseObject<ShopBase>, IFolderable
 
     /// <inheritdoc />
     public string Folder { get; set; } = string.Empty;
-}
-
-public partial class ShopItem
-{
-    public Guid CostItemId;
-
-    public int CostItemQuantity;
-
-    public Guid ItemId;
-
-    [JsonConstructor]
-    public ShopItem(Guid itemId, Guid costItemId, int costVal)
-    {
-        ItemId = itemId;
-        CostItemId = costItemId;
-        CostItemQuantity = costVal;
-    }
-
-    [NotMapped]
-    [JsonIgnore]
-    public ItemDescriptor Item => ItemDescriptor.Get(ItemId);
 }
