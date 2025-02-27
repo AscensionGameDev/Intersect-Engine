@@ -11,6 +11,7 @@ using Intersect.Editor.Maps;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.GameObjects;
 using Microsoft.Extensions.Logging;
@@ -246,7 +247,7 @@ public partial class FrmMapEditor : DockContent
                     {
                         if (tmpMap.Layers[layer][Globals.CurTileX, Globals.CurTileY].TilesetId != Guid.Empty)
                         {
-                            Globals.MapLayersWindow.SetTileset(TilesetBase.GetName(tmpMap.Layers[layer][Globals.CurTileX, Globals.CurTileY].TilesetId));
+                            Globals.MapLayersWindow.SetTileset(TilesetDescriptor.GetName(tmpMap.Layers[layer][Globals.CurTileX, Globals.CurTileY].TilesetId));
 
                             Globals.CurSelW = 0;
                             Globals.CurSelH = 0;

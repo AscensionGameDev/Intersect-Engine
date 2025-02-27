@@ -1,18 +1,18 @@
 ﻿using Intersect.Models;
 using Newtonsoft.Json;
 
-namespace Intersect.GameObjects;
+namespace Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 
-public partial class TilesetBase : DatabaseObject<TilesetBase>
+public partial class TilesetDescriptor : DatabaseObject<TilesetDescriptor>
 {
     [JsonConstructor]
-    public TilesetBase(Guid id) : base(id)
+    public TilesetDescriptor(Guid id) : base(id)
     {
         Name = string.Empty;
     }
 
     //Ef Parameterless Constructor
-    public TilesetBase()
+    public TilesetDescriptor()
     {
         Name = string.Empty;
     }

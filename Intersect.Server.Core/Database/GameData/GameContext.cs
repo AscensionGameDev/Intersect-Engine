@@ -2,6 +2,7 @@ using Intersect.Extensions;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.Resources;
@@ -74,7 +75,7 @@ public abstract partial class GameContext : IntersectDbContext<GameContext>, IGa
     public DbSet<UserVariableDescriptor> UserVariables { get; set; }
 
     //Tilesets
-    public DbSet<TilesetBase> Tilesets { get; set; }
+    public DbSet<TilesetDescriptor> Tilesets { get; set; }
 
     //Time
     public DbSet<TimeBase> Time { get; set; }

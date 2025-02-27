@@ -4,6 +4,7 @@ using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
@@ -1215,7 +1216,7 @@ internal sealed partial class NetworkedPacketHandler
             {
                 var value = tileset.Trim().ToLower();
                 var found = false;
-                foreach (var tset in TilesetBase.Lookup)
+                foreach (var tset in TilesetDescriptor.Lookup)
                 {
                     if (tset.Value.Name.Trim().ToLower() == value)
                     {
@@ -1226,7 +1227,7 @@ internal sealed partial class NetworkedPacketHandler
                 if (!found)
                 {
                     var obj = DbInterface.AddGameObject(GameObjectType.Tileset);
-                    ((TilesetBase)obj).Name = value;
+                    ((TilesetDescriptor)obj).Name = value;
                     DbInterface.SaveGameObject(obj);
                     PacketSender.CacheGameDataPacket();
                     PacketSender.SendGameObjectToAll(obj);

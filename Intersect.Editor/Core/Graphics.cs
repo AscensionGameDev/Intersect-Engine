@@ -9,6 +9,7 @@ using Intersect.Editor.Maps;
 using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.Attributes;
 using Intersect.Framework.Core.GameObjects.Resources;
@@ -751,7 +752,7 @@ public static partial class Graphics
                             Options.Instance.Map.TileHeight
                         ).IntersectsWith(new System.Drawing.Rectangle(0, 0, CurrentView.Width, CurrentView.Height)))
                         {
-                            var tilesetObj = TilesetBase.Get(tmpMap.Layers[drawLayer][x, y].TilesetId);
+                            var tilesetObj = TilesetDescriptor.Get(tmpMap.Layers[drawLayer][x, y].TilesetId);
                             try
                             {
                                 if (tilesetObj == null)

@@ -25,6 +25,7 @@ using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.Attributes;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
@@ -1791,12 +1792,12 @@ internal sealed partial class PacketHandler
                 //Handled in a different packet
                 break;
             case GameObjectType.Tileset:
-                var obj = new TilesetBase(objectId);
+                var obj = new TilesetDescriptor(objectId);
                 obj.Load(json);
-                TilesetBase.Lookup.Set(objectId, obj);
+                TilesetDescriptor.Lookup.Set(objectId, obj);
                 if (Globals.HasGameData && !another)
                 {
-                    Globals.ContentManager.LoadTilesets(TilesetBase.GetNameList());
+                    Globals.ContentManager.LoadTilesets(TilesetDescriptor.GetNameList());
                 }
 
                 break;

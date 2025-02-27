@@ -5,6 +5,7 @@ using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.Framework.Core;
+using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.GameObjects;
 
@@ -173,7 +174,7 @@ internal static partial class Main
 
         if (!_loadedTilesets && Globals.HasGameData)
         {
-            Globals.ContentManager.LoadTilesets(TilesetBase.GetNameList());
+            Globals.ContentManager.LoadTilesets(TilesetDescriptor.GetNameList());
             _loadedTilesets = true;
         }
 

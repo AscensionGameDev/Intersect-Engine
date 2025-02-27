@@ -8,6 +8,7 @@ using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
@@ -694,9 +695,9 @@ internal sealed partial class PacketHandler
                 break;
 
             case GameObjectType.Tileset:
-                var obj = new TilesetBase(id);
+                var obj = new TilesetDescriptor(id);
                 obj.Load(json);
-                TilesetBase.Lookup.Set(id, obj);
+                TilesetDescriptor.Lookup.Set(id, obj);
                 if (Globals.HasGameData && !packet.AnotherFollowing)
                 {
                     GameContentManager.LoadTilesets();

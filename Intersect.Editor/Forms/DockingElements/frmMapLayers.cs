@@ -5,6 +5,7 @@ using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.Attributes;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
@@ -286,7 +287,7 @@ public partial class FrmMapLayers : DockContent
     {
         Globals.MapLayersWindow.cmbTilesets.Items.Clear();
         var tilesetList = new List<string>();
-        tilesetList.AddRange(TilesetBase.Names);
+        tilesetList.AddRange(TilesetDescriptor.Names);
         tilesetList.Sort(new AlphanumComparatorFast());
         foreach (var filename in tilesetList)
         {
@@ -299,21 +300,21 @@ public partial class FrmMapLayers : DockContent
             }
         }
 
-        if (TilesetBase.Lookup.Count > 0)
+        if (TilesetDescriptor.Lookup.Count > 0)
         {
             if (Globals.MapLayersWindow.cmbTilesets.Items.Count > 0)
             {
                 Globals.MapLayersWindow.cmbTilesets.SelectedIndex = 0;
             }
 
-            Globals.CurrentTileset = (TilesetBase) TilesetBase.Lookup.Values.ToArray()[0];
+            Globals.CurrentTileset = (TilesetDescriptor) TilesetDescriptor.Lookup.Values.ToArray()[0];
         }
     }
 
     public void SetTileset(string name)
     {
-        TilesetBase tSet = null;
-        var tilesets = TilesetBase.Lookup;
+        TilesetDescriptor tSet = null;
+        var tilesets = TilesetDescriptor.Lookup;
         var id = Guid.Empty;
         foreach (var tileset in tilesets.Pairs)
         {
@@ -327,7 +328,7 @@ public partial class FrmMapLayers : DockContent
 
         if (id != Guid.Empty)
         {
-            tSet = TilesetBase.Get(id);
+            tSet = TilesetDescriptor.Get(id);
         }
 
         if (tSet != null)

@@ -1,6 +1,7 @@
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.Resources;
@@ -45,7 +46,7 @@ public interface IGameContext : IDbContext
 
     DbSet<ServerVariableDescriptor> ServerVariables { get; set; }
 
-    DbSet<TilesetBase> Tilesets { get; set; }
+    DbSet<TilesetDescriptor> Tilesets { get; set; }
 
     DbSet<TimeBase> Time { get; set; }
 }

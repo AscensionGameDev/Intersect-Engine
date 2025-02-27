@@ -13,6 +13,7 @@ using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
@@ -701,7 +702,7 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.Tileset:
-                TilesetBase.Lookup.Clear();
+                TilesetDescriptor.Lookup.Clear();
 
                 break;
             case GameObjectType.Time:
@@ -844,7 +845,7 @@ public static partial class DbInterface
                     case GameObjectType.Tileset:
                         foreach (var psw in context.Tilesets)
                         {
-                            TilesetBase.Lookup.Set(psw.Id, psw);
+                            TilesetDescriptor.Lookup.Set(psw.Id, psw);
                         }
 
                         break;
@@ -1053,7 +1054,7 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.Tileset:
-                dbObj = new TilesetBase(predefinedid);
+                dbObj = new TilesetDescriptor(predefinedid);
 
                 break;
             case GameObjectType.Time:
@@ -1183,8 +1184,8 @@ public static partial class DbInterface
                         break;
 
                     case GameObjectType.Tileset:
-                        context.Tilesets.Add((TilesetBase)dbObj);
-                        TilesetBase.Lookup.Set(dbObj.Id, dbObj);
+                        context.Tilesets.Add((TilesetDescriptor)dbObj);
+                        TilesetDescriptor.Lookup.Set(dbObj.Id, dbObj);
 
                         break;
 
@@ -1329,7 +1330,7 @@ public static partial class DbInterface
 
                         break;
                     case GameObjectType.Tileset:
-                        context.Tilesets.Remove((TilesetBase)gameObject);
+                        context.Tilesets.Remove((TilesetDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Time:
@@ -1484,7 +1485,7 @@ public static partial class DbInterface
 
                         break;
                     case GameObjectType.Tileset:
-                        context.Tilesets.Update((TilesetBase)gameObject);
+                        context.Tilesets.Update((TilesetDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Time:

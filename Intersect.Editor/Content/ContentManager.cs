@@ -1,6 +1,7 @@
 using Intersect.Editor.Core;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
+using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.GameObjects;
 using Intersect.IO.Files;
 using Intersect.Utilities;
@@ -178,7 +179,7 @@ public static partial class GameContentManager
         Array.Sort(tilesets, new AlphanumComparatorFast());
         if (tilesets.Length > 0)
         {
-            var tilesetBaseList = TilesetBase.Names;
+            var tilesetBaseList = TilesetDescriptor.Names;
             for (var i = 0; i < tilesets.Length; i++)
             {
                 tilesets[i] = tilesets[i].Replace("resources/tilesets\\", "");
@@ -209,9 +210,9 @@ public static partial class GameContentManager
         sTilesetDict.Clear();
         TilesetTextures.Clear();
         var badTilesets = new List<string>();
-        for (var i = 0; i < TilesetBase.Lookup.Count; i++)
+        for (var i = 0; i < TilesetDescriptor.Lookup.Count; i++)
         {
-            var tileset = TilesetBase.Get(TilesetBase.IdFromList(i));
+            var tileset = TilesetDescriptor.Get(TilesetDescriptor.IdFromList(i));
             if (File.Exists("resources/tilesets/" + tileset.Name))
             {
                 try

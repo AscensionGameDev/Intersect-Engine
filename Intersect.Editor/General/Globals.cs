@@ -4,6 +4,7 @@ using Intersect.Editor.Forms.Editors;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Maps;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.GameObjects;
 
 namespace Intersect.Editor.General;
@@ -47,7 +48,7 @@ public static partial class Globals
     //Editor Variables
     public static MapInstance? CurrentMap { get; set; }
 
-    public static TilesetBase? CurrentTileset { get; set; }
+    public static TilesetDescriptor? CurrentTileset { get; set; }
 
     public static EditingTool _currentTool = EditingTool.Brush;
 

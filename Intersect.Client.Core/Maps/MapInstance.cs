@@ -18,6 +18,7 @@ using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.Attributes;
 using Intersect.Framework.Core.Serialization;
@@ -236,7 +237,7 @@ public partial class MapInstance : MapDescriptor, IGameObject<Guid, MapInstance>
                         continue;
                     }
 
-                    if (!TilesetBase.TryGet(layerTile.TilesetId, out var tileset))
+                    if (!TilesetDescriptor.TryGet(layerTile.TilesetId, out var tileset))
                     {
                         continue;
                     }

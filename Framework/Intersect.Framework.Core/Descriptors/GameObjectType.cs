@@ -2,6 +2,7 @@ using Intersect.Extensions;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.Resources;
@@ -57,7 +58,7 @@ public enum GameObjectType
     [GameObjectInfo(typeof(ServerVariableDescriptor), "server_variables")]
     ServerVariable,
 
-    [GameObjectInfo(typeof(TilesetBase), "tilesets")]
+    [GameObjectInfo(typeof(TilesetDescriptor), "tilesets")]
     Tileset,
 
     [GameObjectInfo(typeof(TimeBase), "")]
