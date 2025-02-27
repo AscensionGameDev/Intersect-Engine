@@ -338,6 +338,22 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.ToTable("Items");
                 });
 
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Mapping.Tilesets.TilesetDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("TimeCreated")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tilesets");
+                });
+
             modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Maps.MapList.MapList", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1095,22 +1111,6 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.HasKey("Id");
 
                     b.ToTable("Spells");
-                });
-
-            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Mapping.Tilesets.TilesetDescriptor", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tilesets");
                 });
 
             modelBuilder.Entity("Intersect.GameObjects.TimeBase", b =>
