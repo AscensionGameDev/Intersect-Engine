@@ -1,4 +1,4 @@
-﻿namespace Intersect.Enums;
+﻿namespace Intersect.Framework.Core.GameObjects.Events;
 
 public enum EventRenderLayer
 {

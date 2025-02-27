@@ -1,5 +1,5 @@
 ﻿using Intersect.Core;
-using Intersect.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Events;
 using Microsoft.Extensions.Logging;
 
 namespace Intersect.Server.Database.GameData.Migrations;
@@ -28,11 +28,11 @@ public partial class FixQuestTaskCompletionEventsMigration
                 // If the event Id is incorrect and we can't find the event.. recreate it!
                 if (incorrectEventId && foundEvent == null)
                 {
-                    var ev = new EventBase(task.Id, Guid.Empty, 0, 0, false);
+                    var ev = new EventDescriptor(task.Id, Guid.Empty, 0, 0, false);
                     ev.CommonEvent = false;
                     ev.Name = $"Quest: {quest.Name} - Task Completion Event";
                     context.Events.Add(ev);
-                    EventBase.Lookup.Set(ev.Id, ev);
+                    EventDescriptor.Lookup.Set(ev.Id, ev);
                     task.CompletionEventId = task.Id;
 
                     ApplicationContext.Context.Value?.Logger.LogInformation($"Fixed quest {quest.Name} ({quest.Id}) task {task.Id}, created new event {task.Id}.");

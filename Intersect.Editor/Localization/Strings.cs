@@ -1,10 +1,10 @@
 using System.Reflection;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Conditions.ConditionMetadata;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Intersect.Localization;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;

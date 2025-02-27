@@ -368,7 +368,7 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.ToTable("Items_EquipmentProperties");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.Events.EventBase", b =>
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Events.EventDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("char(36)")

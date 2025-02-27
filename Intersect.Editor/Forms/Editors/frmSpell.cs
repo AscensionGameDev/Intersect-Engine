@@ -6,8 +6,8 @@ using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Utilities;
 using Graphics = System.Drawing.Graphics;
@@ -100,7 +100,7 @@ public partial class FrmSpell : EditorForm
         cmbHitAnimation.Items.AddRange(AnimationDescriptor.Names);
         cmbEvent.Items.Clear();
         cmbEvent.Items.Add(Strings.General.None);
-        cmbEvent.Items.AddRange(EventBase.Names);
+        cmbEvent.Items.AddRange(EventDescriptor.Names);
         cmbTickAnimation.Items.Clear();
         cmbTickAnimation.Items.Add(Strings.General.None);
         cmbTickAnimation.Items.AddRange(AnimationDescriptor.Names);
@@ -406,7 +406,7 @@ public partial class FrmSpell : EditorForm
         if (cmbType.SelectedIndex == (int)SpellType.Event)
         {
             grpEvent.Show();
-            cmbEvent.SelectedIndex = EventBase.ListIndex(mEditorItem.EventId) + 1;
+            cmbEvent.SelectedIndex = EventDescriptor.ListIndex(mEditorItem.EventId) + 1;
             // Move our combat data down a little bit, it's not a very clean solution but it'll let us display it properly.
             grpCombat.Location = new System.Drawing.Point(grpEvent.Location.X, grpEvent.Location.Y + grpEvent.Size.Height + 5);
         }
@@ -736,7 +736,7 @@ public partial class FrmSpell : EditorForm
 
     private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
     {
-        mEditorItem.EventId = EventBase.IdFromList(cmbEvent.SelectedIndex - 1);
+        mEditorItem.EventId = EventDescriptor.IdFromList(cmbEvent.SelectedIndex - 1);
     }
 
     private void btnVisualMapSelector_Click(object sender, EventArgs e)

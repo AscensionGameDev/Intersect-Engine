@@ -2,9 +2,9 @@ using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Models;
@@ -190,7 +190,7 @@ internal sealed partial class NetworkedPacketHandler
             {
                 if (!map.LocalEvents.ContainsKey(id))
                 {
-                    var evt = EventBase.Get(id);
+                    var evt = EventDescriptor.Get(id);
                     if (evt != null)
                     {
                         DbInterface.DeleteGameObject(evt);
@@ -207,10 +207,10 @@ internal sealed partial class NetworkedPacketHandler
 
             foreach (var evt in map.LocalEvents)
             {
-                var dbObj = EventBase.Get(evt.Key);
+                var dbObj = EventDescriptor.Get(evt.Key);
                 if (dbObj == null)
                 {
-                    dbObj = (EventBase)DbInterface.AddGameObject(GameObjectType.Event, evt.Key);
+                    dbObj = (EventDescriptor)DbInterface.AddGameObject(GameObjectType.Event, evt.Key);
                 }
 
                 dbObj.Load(evt.Value.JsonData);
@@ -815,7 +815,7 @@ internal sealed partial class NetworkedPacketHandler
             switch(type)
             {
                 case GameObjectType.Event:
-                    ((EventBase)obj).CommonEvent = true;
+                    ((EventDescriptor)obj).CommonEvent = true;
                     changed = true;
 
                     break;
@@ -929,7 +929,7 @@ internal sealed partial class NetworkedPacketHandler
                     break;
 
                 case GameObjectType.Event:
-                    obj = EventBase.Get(id);
+                    obj = EventDescriptor.Get(id);
 
                     break;
 
@@ -1061,7 +1061,7 @@ internal sealed partial class NetworkedPacketHandler
                     break;
 
                 case GameObjectType.Event:
-                    obj = EventBase.Get(id);
+                    obj = EventDescriptor.Get(id);
 
                     break;
 
@@ -1125,7 +1125,7 @@ internal sealed partial class NetworkedPacketHandler
                         var qst = (QuestBase)obj;
                         foreach (var evt in qst.RemoveEvents)
                         {
-                            var evtb = EventBase.Get(evt);
+                            var evtb = EventDescriptor.Get(evt);
                             if (evtb != null)
                             {
                                 DbInterface.DeleteGameObject(evtb);
@@ -1134,7 +1134,7 @@ internal sealed partial class NetworkedPacketHandler
 
                         foreach (var evt in qst.AddEvents)
                         {
-                            var evtb = (EventBase)DbInterface.AddGameObject(GameObjectType.Event, evt.Key);
+                            var evtb = (EventDescriptor)DbInterface.AddGameObject(GameObjectType.Event, evt.Key);
                             evtb.Load(evt.Value.JsonData);
 
                             foreach (var tsk in qst.Tasks)

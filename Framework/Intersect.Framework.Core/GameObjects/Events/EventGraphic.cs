@@ -1,7 +1,6 @@
-﻿using Intersect.Enums;
-using MessagePack;
+﻿using MessagePack;
 
-namespace Intersect.GameObjects.Events;
+namespace Intersect.Framework.Core.GameObjects.Events;
 
 [MessagePackObject]
 public partial class EventGraphic

@@ -6,7 +6,7 @@ using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
 using Intersect.Core;
 using Intersect.Enums;
-using Intersect.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Network.Packets.Server;
 using Microsoft.Extensions.Logging;
 

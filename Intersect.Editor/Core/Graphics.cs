@@ -8,6 +8,7 @@ using Intersect.Editor.General;
 using Intersect.Editor.Maps;
 using Intersect.Enums;
 using Intersect.Framework.Core;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Utilities;

@@ -1,6 +1,7 @@
 using Intersect.Attributes;
+using Intersect.Enums;
 
-namespace Intersect.Enums;
+namespace Intersect.Framework.Core.GameObjects.Events;
 
 // Should properly separate static value, player & global vars into a separate enum.
 // But technical debt :/

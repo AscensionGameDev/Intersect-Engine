@@ -1,4 +1,4 @@
-﻿namespace Intersect.GameObjects.Events.Commands;
+﻿namespace Intersect.Framework.Core.GameObjects.Events.Commands;
 
 /// <summary>
 /// Defines the Event command partial class for the Change Player Color command.

@@ -7,9 +7,10 @@ using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Intersect.Utilities;
+using EventDescriptor = Intersect.Framework.Core.GameObjects.Events.EventDescriptor;
 using Graphics = System.Drawing.Graphics;
 
 namespace Intersect.Editor.Forms.Editors;
@@ -104,10 +105,10 @@ public partial class FrmNpc : EditorForm
         cmbAttackAnimation.Items.AddRange(AnimationDescriptor.Names);
         cmbOnDeathEventKiller.Items.Clear();
         cmbOnDeathEventKiller.Items.Add(Strings.General.None);
-        cmbOnDeathEventKiller.Items.AddRange(EventBase.Names);
+        cmbOnDeathEventKiller.Items.AddRange(EventDescriptor.Names);
         cmbOnDeathEventParty.Items.Clear();
         cmbOnDeathEventParty.Items.Add(Strings.General.None);
-        cmbOnDeathEventParty.Items.AddRange(EventBase.Names);
+        cmbOnDeathEventParty.Items.AddRange(EventDescriptor.Names);
         cmbScalingStat.Items.Clear();
         for (var x = 0; x < Enum.GetValues<Stat>().Length; x++)
         {
@@ -294,8 +295,8 @@ public partial class FrmNpc : EditorForm
             nudResetRadius.Value = mEditorItem.ResetRadius;
 
             //Common Events
-            cmbOnDeathEventKiller.SelectedIndex = EventBase.ListIndex(mEditorItem.OnDeathEventId) + 1;
-            cmbOnDeathEventParty.SelectedIndex = EventBase.ListIndex(mEditorItem.OnDeathPartyEventId) + 1;
+            cmbOnDeathEventKiller.SelectedIndex = EventDescriptor.ListIndex(mEditorItem.OnDeathEventId) + 1;
+            cmbOnDeathEventParty.SelectedIndex = EventDescriptor.ListIndex(mEditorItem.OnDeathPartyEventId) + 1;
 
             nudStr.Value = mEditorItem.Stats[(int)Stat.Attack];
             nudMag.Value = mEditorItem.Stats[(int)Stat.AbilityPower];
@@ -891,12 +892,12 @@ public partial class FrmNpc : EditorForm
 
     private void cmbOnDeathEventKiller_SelectedIndexChanged(object sender, EventArgs e)
     {
-        mEditorItem.OnDeathEvent = EventBase.Get(EventBase.IdFromList(cmbOnDeathEventKiller.SelectedIndex - 1));
+        mEditorItem.OnDeathEvent = EventDescriptor.Get(EventDescriptor.IdFromList(cmbOnDeathEventKiller.SelectedIndex - 1));
     }
 
     private void cmbOnDeathEventParty_SelectedIndexChanged(object sender, EventArgs e)
     {
-        mEditorItem.OnDeathPartyEvent = EventBase.Get(EventBase.IdFromList(cmbOnDeathEventParty.SelectedIndex - 1));
+        mEditorItem.OnDeathPartyEvent = EventDescriptor.Get(EventDescriptor.IdFromList(cmbOnDeathEventParty.SelectedIndex - 1));
     }
 
     private void chkFocusDamageDealer_CheckedChanged(object sender, EventArgs e)

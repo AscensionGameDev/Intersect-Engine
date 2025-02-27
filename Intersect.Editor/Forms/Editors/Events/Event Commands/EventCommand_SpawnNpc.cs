@@ -1,9 +1,9 @@
 using Intersect.Editor.Forms.Helpers;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Events.Commands;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
-using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 
@@ -17,7 +17,7 @@ public partial class EventCommandSpawnNpc : UserControl
 
     private MapBase mCurrentMap;
 
-    private EventBase mEditingEvent;
+    private EventDescriptor mEditingEvent;
 
     private SpawnNpcCommand mMyCommand;
 
@@ -30,7 +30,7 @@ public partial class EventCommandSpawnNpc : UserControl
     public EventCommandSpawnNpc(
         FrmEvent eventEditor,
         MapBase currentMap,
-        EventBase currentEvent,
+        EventDescriptor currentEvent,
         SpawnNpcCommand editingCommand
     )
     {

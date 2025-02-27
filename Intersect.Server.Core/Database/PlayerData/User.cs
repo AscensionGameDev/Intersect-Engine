@@ -8,6 +8,7 @@ using System.Text;
 using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Reflection;
 using Intersect.Security;

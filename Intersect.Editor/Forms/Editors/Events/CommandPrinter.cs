@@ -3,13 +3,13 @@ using Intersect.Editor.Localization;
 using Intersect.Editor.Maps;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Events.Commands;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
-using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Maps.MapList;
 using Microsoft.Extensions.Logging;
-using VariableMod = Intersect.GameObjects.Events.VariableMod;
+using VariableMod = Intersect.Framework.Core.GameObjects.Events.VariableMod;
 
 namespace Intersect.Editor.Forms.Editors.Events;
 
@@ -766,10 +766,10 @@ public static partial class CommandPrinter
     {
         if (command.AllInInstance)
         {
-            return Strings.EventCommandList.CommonEventInstanced.ToString(EventBase.GetName(command.EventId), command.AllowInOverworld);
+            return Strings.EventCommandList.CommonEventInstanced.ToString(EventDescriptor.GetName(command.EventId), command.AllowInOverworld);
         }
 
-        return Strings.EventCommandList.commonevent.ToString(EventBase.GetName(command.EventId));
+        return Strings.EventCommandList.commonevent.ToString(EventDescriptor.GetName(command.EventId));
     }
 
     private static string GetCommandText(RestoreHpCommand command, MapInstance map)

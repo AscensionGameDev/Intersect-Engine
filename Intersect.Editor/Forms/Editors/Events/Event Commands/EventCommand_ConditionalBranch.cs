@@ -2,10 +2,10 @@ using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.GameObjects.Conditions.ConditionMetadata;
+using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Events.Commands;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
-using Intersect.GameObjects.Events.Commands;
 using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands;

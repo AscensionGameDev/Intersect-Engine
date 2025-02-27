@@ -1,6 +1,6 @@
 using Intersect.Editor.Content;
 using Intersect.Editor.Localization;
-using Intersect.GameObjects.Events.Commands;
+using Intersect.Framework.Core.GameObjects.Events.Commands;
 using Intersect.Utilities;
 using Graphics = System.Drawing.Graphics;
 

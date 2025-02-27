@@ -1,4 +1,4 @@
-using Intersect.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Events;
 using MessagePack;
 
 namespace Intersect.Network.Packets.Server;

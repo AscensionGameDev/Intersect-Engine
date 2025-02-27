@@ -1,7 +1,7 @@
 using Intersect.Framework.Core.Serialization;
 using Newtonsoft.Json;
 
-namespace Intersect.GameObjects.Events.Commands;
+namespace Intersect.Framework.Core.GameObjects.Events.Commands;
 
 public abstract partial class EventCommand
 {

@@ -1,6 +1,7 @@
 using System.Reflection;
 using Intersect.Attributes;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Events;
 
 namespace Intersect.Extensions;
 public static class VariableModExtensions

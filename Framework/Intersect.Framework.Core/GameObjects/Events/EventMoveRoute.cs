@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Intersect.GameObjects.Events;
+namespace Intersect.Framework.Core.GameObjects.Events;
 
 public partial class EventMoveRoute
 {

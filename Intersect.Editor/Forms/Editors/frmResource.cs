@@ -6,9 +6,10 @@ using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Intersect.Utilities;
+using EventDescriptor = Intersect.Framework.Core.GameObjects.Events.EventDescriptor;
 using Graphics = System.Drawing.Graphics;
 
 namespace Intersect.Editor.Forms.Editors;
@@ -50,7 +51,7 @@ public partial class FrmResource : EditorForm
         cmbToolType.Items.AddRange(Options.Instance.Equipment.ToolTypes.ToArray());
         cmbEvent.Items.Clear();
         cmbEvent.Items.Add(Strings.General.None);
-        cmbEvent.Items.AddRange(EventBase.Names);
+        cmbEvent.Items.AddRange(EventDescriptor.Names);
 
         lstDrops.DataSource = _dropList;
         lstDrops.DisplayMember = nameof(NotifiableDrop.DisplayName);
@@ -253,7 +254,7 @@ public partial class FrmResource : EditorForm
             chkWalkableAfter.Checked = mEditorItem.WalkableAfter;
             chkInitialFromTileset.Checked = mEditorItem.Initial.GraphicFromTileset;
             chkExhaustedFromTileset.Checked = mEditorItem.Exhausted.GraphicFromTileset;
-            cmbEvent.SelectedIndex = EventBase.ListIndex(mEditorItem.EventId) + 1;
+            cmbEvent.SelectedIndex = EventDescriptor.ListIndex(mEditorItem.EventId) + 1;
             chkInitialBelowEntities.Checked = mEditorItem.Initial.RenderBelowEntities;
             chkExhaustedBelowEntities.Checked = mEditorItem.Exhausted.RenderBelowEntities;
             txtCannotHarvest.Text = mEditorItem.CannotHarvestMessage;
@@ -866,7 +867,7 @@ public partial class FrmResource : EditorForm
 
     private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
     {
-        mEditorItem.Event = EventBase.Get(EventBase.IdFromList(cmbEvent.SelectedIndex - 1));
+        mEditorItem.Event = EventDescriptor.Get(EventDescriptor.IdFromList(cmbEvent.SelectedIndex - 1));
     }
 
     private void chkInitialBelowEntities_CheckedChanged(object sender, EventArgs e)

@@ -10,10 +10,10 @@ using Intersect.Framework;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Events.Commands;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
-using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Maps;
 using Intersect.Network;
 using Intersect.Network.Packets.Server;
@@ -775,9 +775,9 @@ public partial class Player : Entity
                 {
                     var autorunEvents = 0;
                     //Check for autorun common events and run them
-                    foreach (var obj in EventBase.Lookup)
+                    foreach (var obj in EventDescriptor.Lookup)
                     {
-                        var evt = obj.Value as EventBase;
+                        var evt = obj.Value as EventDescriptor;
                         if (evt != null && evt.CommonEvent)
                         {
                             foreach (var page in evt.Pages)
@@ -1015,7 +1015,7 @@ public partial class Player : Entity
         EventLookup.TryRemove(id, out outInstance);
         if (outInstance != null)
         {
-            EventBaseIdLookup.TryRemove(outInstance.BaseEvent.Id, out Event evt);
+            EventBaseIdLookup.TryRemove(outInstance.Descriptor.Id, out Event evt);
         }
         if (outInstance != null && outInstance.MapId != Guid.Empty)
         {
@@ -3539,7 +3539,7 @@ public partial class Player : Entity
 
                     break;
                 case ItemType.Event:
-                    var evt = EventBase.Get(itemBase.EventId);
+                    var evt = EventDescriptor.Get(itemBase.EventId);
                     if (evt == null || !UnsafeStartCommonEvent(evt))
                     {
                         return;
@@ -6030,10 +6030,10 @@ public partial class Player : Entity
     }
 
     [NotMapped, JsonIgnore]
-    private List<EventBase> CachedEquipmentOnHitTriggers { get; set; } = new List<EventBase>();
+    private List<EventDescriptor> CachedEquipmentOnHitTriggers { get; set; } = new List<EventDescriptor>();
 
     [NotMapped, JsonIgnore]
-    private List<EventBase> CachedEquipmentOnDamageTriggers { get; set; } = new List<EventBase>();
+    private List<EventDescriptor> CachedEquipmentOnDamageTriggers { get; set; } = new List<EventDescriptor>();
 
     public void CacheEquipmentTriggers()
     {
@@ -6116,9 +6116,9 @@ public partial class Player : Entity
 
     public void StartCommonEventsWithTrigger(CommonEventTrigger trigger, string command = "", string param = "")
     {
-        foreach (var value in EventBase.Lookup.Values)
+        foreach (var value in EventDescriptor.Lookup.Values)
         {
-            if (value is EventBase eventDescriptor && eventDescriptor.Pages.Any(p => p.CommonTrigger == trigger))
+            if (value is EventDescriptor eventDescriptor && eventDescriptor.Pages.Any(p => p.CommonTrigger == trigger))
             {
                 EnqueueStartCommonEvent(eventDescriptor, trigger, command, param);
             }
@@ -6128,9 +6128,9 @@ public partial class Player : Entity
     public static void StartCommonEventsWithTriggerForAll(CommonEventTrigger trigger, string command = "", string param = "")
     {
         var players = OnlinePlayers.ToArray();
-        foreach (var value in EventBase.Lookup.Values)
+        foreach (var value in EventDescriptor.Lookup.Values)
         {
-            if (value is EventBase eventDescriptor && eventDescriptor.Pages.Any(p => p.CommonTrigger == trigger))
+            if (value is EventDescriptor eventDescriptor && eventDescriptor.Pages.Any(p => p.CommonTrigger == trigger))
             {
                 foreach (var player in players)
                 {
@@ -6333,7 +6333,7 @@ public partial class Player : Entity
                 UpdateGatherItemQuests(quest.Tasks[0].TargetId);
             }
 
-            EnqueueStartCommonEvent(EventBase.Get(quest.StartEventId));
+            EnqueueStartCommonEvent(EventDescriptor.Get(quest.StartEventId));
             PacketSender.SendChatMsg(
                 this, Strings.Quests.Started.ToString(quest.Name), ChatMessageType.Quest, CustomColors.QuestAlert.Started
             );
@@ -6466,7 +6466,7 @@ public partial class Player : Entity
                                     EnqueueStartCommonEvent(quest.Tasks[i].CompletionEvent);
                                 }
 
-                                EnqueueStartCommonEvent(EventBase.Get(quest.EndEventId));
+                                EnqueueStartCommonEvent(EventDescriptor.Get(quest.EndEventId));
                                 PacketSender.SendChatMsg(
                                     this, Strings.Quests.Completed.ToString(quest.Name), ChatMessageType.Quest,
                                     CustomColors.QuestAlert.Completed
@@ -6517,7 +6517,7 @@ public partial class Player : Entity
                 questProgress.TaskProgress = -1;
                 if (!skipCompletionEvent)
                 {
-                    EnqueueStartCommonEvent(EventBase.Get(quest.EndEventId));
+                    EnqueueStartCommonEvent(EventDescriptor.Get(quest.EndEventId));
                     PacketSender.SendChatMsg(
                         this, Strings.Quests.Completed.ToString(quest.Name), ChatMessageType.Quest,
                         CustomColors.QuestAlert.Completed
@@ -7022,7 +7022,7 @@ public partial class Player : Entity
                                 if (variable.Value?.Value != value.Value)
                                 {
                                     variable.Value = value;
-                                    Guild.StartCommonEventsWithTriggerForAll(Enums.CommonEventTrigger.GuildVariableChange, "", cmd.VariableId.ToString());
+                                    Guild.StartCommonEventsWithTriggerForAll(CommonEventTrigger.GuildVariableChange, "", cmd.VariableId.ToString());
                                     Guild.UpdatedVariables.AddOrUpdate(cmd.VariableId, GuildVariableDescriptor.Get(cmd.VariableId), (key, oldValue) => GuildVariableDescriptor.Get(cmd.VariableId));
                                 }
                             }
@@ -7085,7 +7085,7 @@ public partial class Player : Entity
     {
         public string Command { get; }
 
-        public EventBase EventDescriptor { get; }
+        public EventDescriptor EventDescriptor { get; }
 
         public string Parameter { get; }
 
@@ -7093,7 +7093,7 @@ public partial class Player : Entity
 
         public StartCommonEventMetadata(
             string command,
-            EventBase eventDescriptor,
+            EventDescriptor eventDescriptor,
             string parameter,
             CommonEventTrigger trigger
         )
@@ -7106,7 +7106,7 @@ public partial class Player : Entity
     }
 
     public void EnqueueStartCommonEvent(
-        EventBase eventDescriptor,
+        EventDescriptor eventDescriptor,
         CommonEventTrigger trigger = CommonEventTrigger.None,
         string command = default,
         string parameter = default
@@ -7121,23 +7121,23 @@ public partial class Player : Entity
     }
 
     public bool UnsafeStartCommonEvent(
-        EventBase baseEvent,
+        EventDescriptor eventDescriptor,
         CommonEventTrigger trigger = CommonEventTrigger.None,
         string command = "",
         string param = ""
     )
     {
-        if (baseEvent == null)
+        if (eventDescriptor == null)
         {
             return false;
         }
 
-        if (!baseEvent.CommonEvent && baseEvent.MapId != Guid.Empty)
+        if (!eventDescriptor.CommonEvent && eventDescriptor.MapId != Guid.Empty)
         {
             return false;
         }
 
-        if (EventBaseIdLookup.ContainsKey(baseEvent.Id) && !baseEvent.CanRunInParallel)
+        if (EventBaseIdLookup.ContainsKey(eventDescriptor.Id) && !eventDescriptor.CanRunInParallel)
         {
             return false;
         }
@@ -7154,33 +7154,33 @@ public partial class Player : Entity
             Event newEvent = null;
 
             //Try to Spawn a PageInstance.. if we can
-            for (var i = baseEvent.Pages.Count - 1; i >= 0; i--)
+            for (var i = eventDescriptor.Pages.Count - 1; i >= 0; i--)
             {
-                if ((trigger == CommonEventTrigger.None || baseEvent.Pages[i].CommonTrigger == trigger) && Conditions.CanSpawnPage(baseEvent.Pages[i], this, null))
+                if ((trigger == CommonEventTrigger.None || eventDescriptor.Pages[i].CommonTrigger == trigger) && Conditions.CanSpawnPage(eventDescriptor.Pages[i], this, null))
                 {
-                    if (trigger == CommonEventTrigger.SlashCommand && command.ToLower() != baseEvent.Pages[i].TriggerCommand.ToLower())
+                    if (trigger == CommonEventTrigger.SlashCommand && command.ToLower() != eventDescriptor.Pages[i].TriggerCommand.ToLower())
                     {
                         continue;
                     }
 
-                    if (trigger == CommonEventTrigger.PlayerVariableChange && param != baseEvent.Pages[i].TriggerId.ToString())
+                    if (trigger == CommonEventTrigger.PlayerVariableChange && param != eventDescriptor.Pages[i].TriggerId.ToString())
                     {
                         continue;
                     }
 
-                    if (trigger == CommonEventTrigger.ServerVariableChange && param != baseEvent.Pages[i].TriggerId.ToString())
+                    if (trigger == CommonEventTrigger.ServerVariableChange && param != eventDescriptor.Pages[i].TriggerId.ToString())
                     {
                         continue;
                     }
 
-                    newEvent = new Event(evtId, null, this, baseEvent)
+                    newEvent = new Event(evtId, null, this, eventDescriptor)
                     {
                         MapId = mapId,
                         SpawnX = -1,
                         SpawnY = -1
                     };
                     newEvent.PageInstance = new EventPageInstance(
-                        baseEvent, baseEvent.Pages[i], mapId, MapInstanceId, newEvent, this
+                        eventDescriptor, eventDescriptor.Pages[i], mapId, MapInstanceId, newEvent, this
                     );
 
                     newEvent.PageIndex = i;
@@ -7243,7 +7243,7 @@ public partial class Player : Entity
             if (newEvent != null)
             {
                 EventLookup.AddOrUpdate(evtId, newEvent, (key, oldValue) => newEvent);
-                EventBaseIdLookup.AddOrUpdate(baseEvent.Id, newEvent, (key, oldvalue) => newEvent);
+                EventBaseIdLookup.AddOrUpdate(eventDescriptor.Id, newEvent, (key, oldvalue) => newEvent);
                 return true;
             }
             return false;
@@ -7393,7 +7393,7 @@ public partial class Player : Entity
         {
             if (evt.Value.MapId == mapId)
             {
-                if (evt.Value.PageInstance != null && evt.Value.PageInstance.MapId == mapId && evt.Value.BaseEvent.Id == eventId)
+                if (evt.Value.PageInstance != null && evt.Value.PageInstance.MapId == mapId && evt.Value.Descriptor.Id == eventId)
                 {
                     var x = evt.Value.PageInstance.GlobalClone?.X ?? evt.Value.PageInstance.X;
                     var y = evt.Value.PageInstance.GlobalClone?.Y ?? evt.Value.PageInstance.Y;
@@ -7426,9 +7426,9 @@ public partial class Player : Entity
             eventInstance = null;
             foreach (var e in EventLookup)
             {
-                if (e.Value.BaseEvent.Id == evt.BaseEvent.Id)
+                if (e.Value.Descriptor.Id == evt.Descriptor.Id)
                 {
-                    if (e.Value.PageInstance.MyPage == e.Value.BaseEvent.Pages[pageNum])
+                    if (e.Value.PageInstance.MyPage == e.Value.Descriptor.Pages[pageNum])
                     {
                         eventInstance = e.Value;
 

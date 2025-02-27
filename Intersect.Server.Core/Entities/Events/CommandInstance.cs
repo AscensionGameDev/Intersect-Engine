@@ -1,4 +1,5 @@
-using Intersect.GameObjects.Events.Commands;
+using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Events.Commands;
 
 namespace Intersect.Server.Entities.Events;
 
@@ -40,7 +41,7 @@ public partial class CommandInstance
 
     public Guid CommandListId;
 
-    public GameObjects.Events.EventPage Page;
+    public EventPage Page;
 
     public EventResponse WaitingForResponse = EventResponse.None;
 
@@ -50,21 +51,21 @@ public partial class CommandInstance
 
     public EventCommand WaitingOnCommand = null;
 
-    public CommandInstance(GameObjects.Events.EventPage page, int listIndex = 0)
+    public CommandInstance(EventPage page, int listIndex = 0)
     {
         Page = page;
         CommandList = page.CommandLists.Values.First();
         CommandIndex = listIndex;
     }
 
-    public CommandInstance(GameObjects.Events.EventPage page, List<EventCommand> commandList, int listIndex = 0)
+    public CommandInstance(EventPage page, List<EventCommand> commandList, int listIndex = 0)
     {
         Page = page;
         CommandList = commandList;
         CommandIndex = listIndex;
     }
 
-    public CommandInstance(GameObjects.Events.EventPage page, Guid commandListId, int listIndex = 0)
+    public CommandInstance(EventPage page, Guid commandListId, int listIndex = 0)
     {
         Page = page;
         CommandList = page.CommandLists[commandListId];

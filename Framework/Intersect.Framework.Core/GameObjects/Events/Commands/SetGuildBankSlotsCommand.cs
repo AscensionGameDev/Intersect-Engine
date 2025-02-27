@@ -1,6 +1,4 @@
-﻿using Intersect.Enums;
-
-namespace Intersect.GameObjects.Events.Commands;
+﻿namespace Intersect.Framework.Core.GameObjects.Events.Commands;
 
 public partial class SetGuildBankSlotsCommand : EventCommand
 {

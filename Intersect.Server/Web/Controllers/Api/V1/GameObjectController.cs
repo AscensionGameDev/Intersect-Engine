@@ -1,7 +1,7 @@
 using System.Net;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Intersect.Models;
 using Intersect.Server.Web.Http;
 using Intersect.Server.Web.Types;
@@ -28,7 +28,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
             }
 
             var baseEnumerable = gameObjectType == GameObjectType.Event
-                ? lookup.Where(obj => ((EventBase)obj.Value).CommonEvent).Select(pair => pair.Value)
+                ? lookup.Where(obj => ((EventDescriptor)obj.Value).CommonEvent).Select(pair => pair.Value)
                 : lookup.Values;
 
             var entries = baseEnumerable.OrderBy(obj => obj.Name)
@@ -37,7 +37,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
                 .ToArray();
 
             var total = gameObjectType == GameObjectType.Event
-                ? lookup.Count(obj => ((EventBase)obj.Value).CommonEvent)
+                ? lookup.Count(obj => ((EventDescriptor)obj.Value).CommonEvent)
                 : lookup.Count;
 
             return Ok(
@@ -64,7 +64,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
             var descriptors = lookup.Values.AsEnumerable();
             if (gameObjectType == GameObjectType.Event)
             {
-                descriptors = descriptors.OfType<EventBase>().Where(descriptor => descriptor.CommonEvent);
+                descriptors = descriptors.OfType<EventDescriptor>().Where(descriptor => descriptor.CommonEvent);
             }
 
             var descriptorNames = descriptors.Select(descriptor => descriptor.Name).ToArray();

@@ -2,8 +2,8 @@ using Intersect.Editor.Localization;
 using Intersect.Editor.Utilities;
 using Intersect.Enums;
 using Intersect.Extensions;
-using Intersect.GameObjects.Events;
-using Intersect.GameObjects.Events.Commands;
+using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Events.Commands;
 using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands;
@@ -204,7 +204,7 @@ public partial class EventCommandVariable : UserControl
 
     #region "Boolean Variable"
 
-    private void TryLoadBooleanMod(GameObjects.Events.VariableMod variableMod)
+    private void TryLoadBooleanMod(VariableMod variableMod)
     {
         if (variableMod == null)
         {
@@ -248,7 +248,7 @@ public partial class EventCommandVariable : UserControl
 
     #region "Numeric Variable"
 
-    private void TryLoadNumericMod(GameObjects.Events.VariableMod variableMod)
+    private void TryLoadNumericMod(VariableMod variableMod)
     {
         if (variableMod == null)
         {
@@ -538,7 +538,7 @@ public partial class EventCommandVariable : UserControl
 
     #region "String Variable"
 
-    private void TryLoadStringMod(GameObjects.Events.VariableMod variableMod)
+    private void TryLoadStringMod(VariableMod variableMod)
     {
         if (variableMod == null)
         {

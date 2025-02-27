@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Conditions;
-using Intersect.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Models;
 using Intersect.Utilities;
 using Newtonsoft.Json;
@@ -204,9 +204,9 @@ public partial class NpcBase : DatabaseObject<NpcBase>, IFolderable
 
     [NotMapped]
     [JsonIgnore]
-    public EventBase OnDeathEvent
+    public EventDescriptor OnDeathEvent
     {
-        get => EventBase.Get(OnDeathEventId);
+        get => EventDescriptor.Get(OnDeathEventId);
         set => OnDeathEventId = value?.Id ?? Guid.Empty;
     }
 
@@ -215,9 +215,9 @@ public partial class NpcBase : DatabaseObject<NpcBase>, IFolderable
 
     [NotMapped]
     [JsonIgnore]
-    public EventBase OnDeathPartyEvent
+    public EventDescriptor OnDeathPartyEvent
     {
-        get => EventBase.Get(OnDeathPartyEventId);
+        get => EventDescriptor.Get(OnDeathPartyEventId);
         set => OnDeathPartyEventId = value?.Id ?? Guid.Empty;
     }
 

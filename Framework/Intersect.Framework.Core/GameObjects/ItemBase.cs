@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Conditions;
-using Intersect.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.GameObjects.Ranges;
 using Intersect.Models;
 using Intersect.Utilities;
@@ -162,9 +162,9 @@ public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
 
     [NotMapped]
     [JsonIgnore]
-    public EventBase Event
+    public EventDescriptor Event
     {
-        get => EventBase.Get(EventId);
+        get => EventDescriptor.Get(EventId);
         set => EventId = value?.Id ?? Guid.Empty;
     }
 
@@ -340,14 +340,14 @@ public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
         set => EventTriggers = JsonConvert.DeserializeObject<Dictionary<ItemEventTrigger, Guid>>(value ?? string.Empty) ?? new Dictionary<ItemEventTrigger, Guid>();
     }
 
-    public EventBase? GetEventTrigger(ItemEventTrigger eventTrigger)
+    public EventDescriptor? GetEventTrigger(ItemEventTrigger eventTrigger)
     {
         if (!EventTriggers.TryGetValue(eventTrigger, out var trigger))
         {
             return null;
         }
 
-        return EventBase.Get(trigger);
+        return EventDescriptor.Get(trigger);
     }
 
     [NotMapped, JsonIgnore]

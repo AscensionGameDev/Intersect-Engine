@@ -4,8 +4,8 @@ using Intersect.Editor.Classes.Maps;
 using Intersect.Editor.Core;
 using Intersect.Editor.Entities;
 using Intersect.Editor.General;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Newtonsoft.Json;
 using Graphics = Intersect.Editor.Core.Graphics;
@@ -78,7 +78,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>
                 LocalEvents.Clear();
                 foreach (var id in EventIds)
                 {
-                    var evt = EventBase.Get(id);
+                    var evt = EventDescriptor.Get(id);
                     LocalEvents.Add(id, evt);
                 }
             }
@@ -299,7 +299,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>
         }
     }
 
-    public EventBase? FindEventAt(int x, int y)
+    public EventDescriptor? FindEventAt(int x, int y)
     {
         if (LocalEvents.Count <= 0)
         {

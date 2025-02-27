@@ -1,4 +1,5 @@
 ﻿using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Core.CommandParsing.Arguments;
 using Intersect.Server.Database;

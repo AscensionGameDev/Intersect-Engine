@@ -1,7 +1,7 @@
 using Intersect.Editor.Content;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
-using Intersect.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Events;
 using Graphics = System.Drawing.Graphics;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands;

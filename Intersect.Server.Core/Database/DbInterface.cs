@@ -11,11 +11,11 @@ using Intersect.Config;
 using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Models;
@@ -686,7 +686,7 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.Event:
-                EventBase.Lookup.Clear();
+                EventDescriptor.Lookup.Clear();
 
                 break;
             case GameObjectType.PlayerVariable:
@@ -820,7 +820,7 @@ public static partial class DbInterface
                     case GameObjectType.Event:
                         foreach (var evt in context.Events)
                         {
-                            EventBase.Lookup.Set(evt.Id, evt);
+                            EventDescriptor.Lookup.Set(evt.Id, evt);
                         }
 
                         break;
@@ -907,7 +907,7 @@ public static partial class DbInterface
             
             foreach (var eventId in mapDescriptor.EventIds)
             {
-                if (!EventBase.TryGet(eventId, out var eventDescriptor))
+                if (!EventDescriptor.TryGet(eventId, out var eventDescriptor))
                 {
                     ApplicationContext.CurrentContext.Logger.LogWarning(
                         "Map {MapId} references missing event {EventId}, unexpected behavior may occur",
@@ -1038,7 +1038,7 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.Event:
-                dbObj = new EventBase(predefinedid);
+                dbObj = new EventDescriptor(predefinedid);
 
                 break;
             case GameObjectType.PlayerVariable:
@@ -1058,8 +1058,8 @@ public static partial class DbInterface
 
             case GameObjectType.Quest:
                 dbObj = new QuestBase(predefinedid);
-                ((QuestBase)dbObj).StartEvent = (EventBase)AddGameObject(GameObjectType.Event);
-                ((QuestBase)dbObj).EndEvent = (EventBase)AddGameObject(GameObjectType.Event);
+                ((QuestBase)dbObj).StartEvent = (EventDescriptor)AddGameObject(GameObjectType.Event);
+                ((QuestBase)dbObj).EndEvent = (EventDescriptor)AddGameObject(GameObjectType.Event);
                 ((QuestBase)dbObj).StartEvent.CommonEvent = false;
                 ((QuestBase)dbObj).EndEvent.CommonEvent = false;
 
@@ -1162,8 +1162,8 @@ public static partial class DbInterface
                         break;
 
                     case GameObjectType.Event:
-                        context.Events.Add((EventBase)dbObj);
-                        EventBase.Lookup.Set(dbObj.Id, dbObj);
+                        context.Events.Add((EventDescriptor)dbObj);
+                        EventDescriptor.Lookup.Set(dbObj.Id, dbObj);
 
                         break;
 
@@ -1256,14 +1256,14 @@ public static partial class DbInterface
                         {
                             context.Events.Remove(((QuestBase)gameObject).StartEvent);
                             context.Entry(((QuestBase)gameObject).StartEvent).State = EntityState.Deleted;
-                            EventBase.Lookup.Delete(((QuestBase)gameObject).StartEvent);
+                            EventDescriptor.Lookup.Delete(((QuestBase)gameObject).StartEvent);
                         }
 
                         if (((QuestBase)gameObject).EndEvent != null)
                         {
                             context.Events.Remove(((QuestBase)gameObject).EndEvent);
                             context.Entry(((QuestBase)gameObject).EndEvent).State = EntityState.Deleted;
-                            EventBase.Lookup.Delete(((QuestBase)gameObject).EndEvent);
+                            EventDescriptor.Lookup.Delete(((QuestBase)gameObject).EndEvent);
                         }
 
                         foreach (var tsk in ((QuestBase)gameObject).Tasks)
@@ -1272,7 +1272,7 @@ public static partial class DbInterface
                             {
                                 context.Events.Remove(tsk.CompletionEvent);
                                 context.Entry(tsk.CompletionEvent).State = EntityState.Deleted;
-                                EventBase.Lookup.Delete(tsk.CompletionEvent);
+                                EventDescriptor.Lookup.Delete(tsk.CompletionEvent);
                             }
                         }
 
@@ -1303,7 +1303,7 @@ public static partial class DbInterface
                         //Delete all map events first
                         foreach (var evtId in ((MapController)gameObject).EventIds)
                         {
-                            var evt = EventBase.Get(evtId);
+                            var evt = EventDescriptor.Get(evtId);
                             if (evt != null)
                             {
                                 DeleteGameObject(evt);
@@ -1314,7 +1314,7 @@ public static partial class DbInterface
 
                         break;
                     case GameObjectType.Event:
-                        context.Events.Remove((EventBase)gameObject);
+                        context.Events.Remove((EventDescriptor)gameObject);
 
                         break;
                     case GameObjectType.PlayerVariable:
@@ -1469,7 +1469,7 @@ public static partial class DbInterface
 
                         break;
                     case GameObjectType.Event:
-                        context.Events.Update((EventBase)gameObject);
+                        context.Events.Update((EventDescriptor)gameObject);
 
                         break;
                     case GameObjectType.PlayerVariable:

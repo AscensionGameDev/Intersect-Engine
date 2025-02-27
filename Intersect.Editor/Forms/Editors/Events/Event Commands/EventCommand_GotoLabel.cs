@@ -1,5 +1,5 @@
 ﻿using Intersect.Editor.Localization;
-using Intersect.GameObjects.Events.Commands;
+using Intersect.Framework.Core.GameObjects.Events.Commands;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands;
 

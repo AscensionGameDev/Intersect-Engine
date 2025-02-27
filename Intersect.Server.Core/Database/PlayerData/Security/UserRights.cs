@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Reflection;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Events;
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Database.PlayerData.Security;

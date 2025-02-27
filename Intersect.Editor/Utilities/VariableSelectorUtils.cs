@@ -2,6 +2,7 @@ using Intersect.Editor.Forms;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.Extensions;
+using Intersect.Framework.Core.GameObjects.Events;
 
 namespace Intersect.Editor.Utilities;
 public static class VariableSelectorUtils

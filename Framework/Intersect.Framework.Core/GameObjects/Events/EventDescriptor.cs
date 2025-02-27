@@ -3,9 +3,9 @@ using Intersect.Framework.Core.Serialization;
 using Intersect.Models;
 using Newtonsoft.Json;
 
-namespace Intersect.GameObjects.Events;
+namespace Intersect.Framework.Core.GameObjects.Events;
 
-public partial class EventBase : DatabaseObject<EventBase>, IFolderable
+public partial class EventDescriptor : DatabaseObject<EventDescriptor>, IFolderable
 {
     //Cached Pages Data
     private string mCachedPagesData = null;
@@ -14,12 +14,12 @@ public partial class EventBase : DatabaseObject<EventBase>, IFolderable
     private List<EventPage> mPages = [];
 
     //EF Parameterless Constructor
-    public EventBase()
+    public EventDescriptor()
     {
     }
 
     [JsonConstructor]
-    public EventBase(Guid id, Guid mapId, int x, int y, bool isCommon = false, bool isGlobal = false) : base(id)
+    public EventDescriptor(Guid id, Guid mapId, int x, int y, bool isCommon = false, bool isGlobal = false) : base(id)
     {
         Name = "New Event";
         MapId = mapId;
@@ -35,14 +35,14 @@ public partial class EventBase : DatabaseObject<EventBase>, IFolderable
         Pages = [new()];
     }
 
-    public EventBase(Guid id, bool isCommon = false) : base(id)
+    public EventDescriptor(Guid id, bool isCommon = false) : base(id)
     {
         Name = "New Event";
         Pages = [];
         CommonEvent = isCommon;
     }
 
-    public EventBase(Guid id, EventBase copy) : base(id)
+    public EventDescriptor(Guid id, EventDescriptor copy) : base(id)
     {
         Name = "New Event";
         Pages = [];
@@ -50,7 +50,7 @@ public partial class EventBase : DatabaseObject<EventBase>, IFolderable
         CommonEvent = copy.CommonEvent;
     }
 
-    public EventBase(Guid id, string json, bool isCommon = false) : base(id)
+    public EventDescriptor(Guid id, string json, bool isCommon = false) : base(id)
     {
         Name = "New Event";
         CommonEvent = isCommon;
@@ -110,13 +110,13 @@ public partial class EventBase : DatabaseObject<EventBase>, IFolderable
         }
     }
 
-    public new static string[] Names => Lookup.Where(pair => ((EventBase) pair.Value)?.CommonEvent ?? false)
+    public new static string[] Names => Lookup.Where(pair => ((EventDescriptor) pair.Value)?.CommonEvent ?? false)
         .OrderBy(p => p.Value?.Name)
         .Select(pair => pair.Value?.Name ?? Deleted)
         .ToArray();
 
     public new static KeyValuePair<Guid, string>[] ItemPairs => Lookup
-        .Where(pair => ((EventBase) pair.Value)?.CommonEvent ?? false)
+        .Where(pair => ((EventDescriptor) pair.Value)?.CommonEvent ?? false)
         .OrderBy(p => p.Value?.Name)
         .Select(pair => new KeyValuePair<Guid, string>(pair.Key, pair.Value?.Name ?? Deleted))
         .ToArray();
@@ -143,7 +143,7 @@ public partial class EventBase : DatabaseObject<EventBase>, IFolderable
             return Guid.Empty;
         }
 
-        var commonEvents = Lookup.Where(pair => ((EventBase) pair.Value)?.CommonEvent ?? false)
+        var commonEvents = Lookup.Where(pair => ((EventDescriptor) pair.Value)?.CommonEvent ?? false)
             .OrderBy(p => p.Value?.Name)
             .ToArray();
 
@@ -155,14 +155,14 @@ public partial class EventBase : DatabaseObject<EventBase>, IFolderable
         return commonEvents[listIndex].Value?.Id ?? Guid.Empty;
     }
 
-    public static new EventBase FromList(int listIndex)
+    public static new EventDescriptor FromList(int listIndex)
     {
         return Get(IdFromList(listIndex));
     }
 
     public static new int ListIndex(Guid id)
     {
-        var commonEvents = Lookup.Where(pair => ((EventBase) pair.Value)?.CommonEvent ?? false)
+        var commonEvents = Lookup.Where(pair => ((EventDescriptor) pair.Value)?.CommonEvent ?? false)
             .OrderBy(p => p.Value?.Name)
             .ToArray();
 

@@ -6,6 +6,7 @@ using Intersect.Enums;
 using Intersect.Server.Database.GameData;
 using Intersect.Server.Entities;
 using System.Globalization;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Variables;
 
 namespace Intersect.Server.Core.Commands

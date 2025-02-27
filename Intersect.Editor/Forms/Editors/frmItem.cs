@@ -6,8 +6,8 @@ using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Intersect.Localization;
 using Intersect.Utilities;
 using Graphics = System.Drawing.Graphics;
@@ -133,7 +133,7 @@ public partial class FrmItem : EditorForm
         cmbTeachSpell.Items.Add(Strings.General.None);
         cmbTeachSpell.Items.AddRange(SpellBase.Names);
 
-        var events = EventBase.Names;
+        var events = EventDescriptor.Names;
         var eventElements = new List<ComboBox>() { cmbEvent, cmbEventTriggers };
         foreach (var element in eventElements)
         {
@@ -506,7 +506,7 @@ public partial class FrmItem : EditorForm
         }
         else if (cmbType.SelectedIndex == (int)ItemType.Event)
         {
-            cmbEvent.SelectedIndex = EventBase.ListIndex(mEditorItem.EventId) + 1;
+            cmbEvent.SelectedIndex = EventDescriptor.ListIndex(mEditorItem.EventId) + 1;
             chkSingleUseEvent.Checked = mEditorItem.SingleUse;
             grpEvent.Visible = true;
         }
@@ -569,7 +569,7 @@ public partial class FrmItem : EditorForm
             Strings.ItemEditor.EventTriggerNames.TryGetValue(trigger, out var triggerName);
             if (string.IsNullOrEmpty(triggerName))
             {
-                triggerName = EventBase.Deleted;
+                triggerName = EventDescriptor.Deleted;
             }
 
             var evt = mEditorItem.GetEventTrigger(trigger);
@@ -805,7 +805,7 @@ public partial class FrmItem : EditorForm
 
     private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
     {
-        mEditorItem.Event = EventBase.Get(EventBase.IdFromList(cmbEvent.SelectedIndex - 1));
+        mEditorItem.Event = EventDescriptor.Get(EventDescriptor.IdFromList(cmbEvent.SelectedIndex - 1));
     }
 
     private void cmbTeachSpell_SelectedIndexChanged(object sender, EventArgs e)
@@ -1526,7 +1526,7 @@ public partial class FrmItem : EditorForm
             return;
         }
 
-        cmbEventTriggers.SelectedIndex = EventBase.ListIndex(trigger.Id) + 1;
+        cmbEventTriggers.SelectedIndex = EventDescriptor.ListIndex(trigger.Id) + 1;
     }
 
     private void cmbEventTriggers_SelectedIndexChanged(object sender, EventArgs e)
@@ -1536,7 +1536,7 @@ public partial class FrmItem : EditorForm
             return;
         }
 
-        mEditorItem.EventTriggers[SelectedEventTrigger.Value] = EventBase.IdFromList(cmbEventTriggers.SelectedIndex - 1);
+        mEditorItem.EventTriggers[SelectedEventTrigger.Value] = EventDescriptor.IdFromList(cmbEventTriggers.SelectedIndex - 1);
 
         PopulateEventTriggerList(lstEventTriggers.SelectedIndex);
     }

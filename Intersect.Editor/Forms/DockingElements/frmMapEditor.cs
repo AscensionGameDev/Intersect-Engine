@@ -10,8 +10,8 @@ using Intersect.Editor.Localization;
 using Intersect.Editor.Maps;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework.Graphics;
@@ -468,7 +468,7 @@ public partial class FrmMapEditor : DockContent
                 }
                 else if (Globals.CurrentLayer == LayerOptions.Events)
                 {
-                    EventBase tmpEvent;
+                    EventDescriptor tmpEvent;
                     if ((tmpEvent = Globals.CurrentMap.FindEventAt(Globals.CurTileX, Globals.CurTileY)) != null)
                     {
                         Globals.CurrentMap.LocalEvents.Remove(tmpEvent.Id);
@@ -1215,7 +1215,7 @@ public partial class FrmMapEditor : DockContent
                     FrmEvent tmpEventEditor;
                     if (tmpEvent == null)
                     {
-                        tmpEvent = new EventBase(
+                        tmpEvent = new EventDescriptor(
                             Guid.NewGuid(), Globals.CurrentMap.Id, Globals.CurTileX, Globals.CurTileY
                         );
 
@@ -1903,7 +1903,7 @@ public partial class FrmMapEditor : DockContent
                     }
 
                     //Events
-                    EventBase eventCopy;
+                    EventDescriptor eventCopy;
                     if (Globals.SelectionType != (int)SelectionTypes.CurrentLayer ||
                         Globals.CurrentLayer == LayerOptions.Events)
                     {
@@ -1919,7 +1919,7 @@ public partial class FrmMapEditor : DockContent
                             tmpMap.LocalEvents.Remove(eventOnTemporaryMap.Id);
                         }
 
-                        eventCopy = new EventBase(
+                        eventCopy = new EventDescriptor(
                             Guid.NewGuid(),
                             eventAtPosition
                         )

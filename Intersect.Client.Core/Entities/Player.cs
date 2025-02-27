@@ -23,6 +23,7 @@ using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Extensions;
 using Intersect.Framework.Core;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;

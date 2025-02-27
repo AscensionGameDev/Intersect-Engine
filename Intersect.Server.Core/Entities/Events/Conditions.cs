@@ -1,9 +1,9 @@
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.GameObjects.Conditions.ConditionMetadata;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
 
@@ -274,7 +274,7 @@ public static partial class Conditions
         {
             if (eventInstance.Global && MapController.TryGetInstanceFromMap(eventInstance.MapId, player.MapInstanceId, out var instance))
             {
-                if (instance.GlobalEventInstances.TryGetValue(eventInstance.BaseEvent, out Event evt))
+                if (instance.GlobalEventInstances.TryGetValue(eventInstance.Descriptor, out Event evt))
                 {
                     if (evt != null)
                     {

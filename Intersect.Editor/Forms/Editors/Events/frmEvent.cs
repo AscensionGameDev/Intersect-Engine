@@ -7,10 +7,10 @@ using Intersect.Editor.Localization;
 using Intersect.Editor.Maps;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Events.Commands;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
-using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Maps;
 using Intersect.Utilities;
 using Newtonsoft.Json;
@@ -48,7 +48,7 @@ public partial class FrmEvent : Form
 
     private List<DarkButton> mPageTabs = new List<DarkButton>();
 
-    public EventBase MyEvent;
+    public EventDescriptor MyEvent;
 
     public MapInstance MyMap;
 

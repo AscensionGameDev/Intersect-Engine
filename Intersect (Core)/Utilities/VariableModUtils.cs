@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Events;
 
 namespace Intersect.Utilities;
 public static class VariableModUtils

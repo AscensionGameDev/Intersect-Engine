@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Conditions;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.Serialization;
-using Intersect.GameObjects.Events;
 using Intersect.Localization;
 using Intersect.Models;
 using Newtonsoft.Json;
@@ -39,7 +39,7 @@ public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
     [NotMapped]
     [JsonIgnore]
     //Events that need to be added for the quest, int is task id
-    public Dictionary<Guid, EventBase> AddEvents { get; set; } = [];
+    public Dictionary<Guid, EventDescriptor> AddEvents { get; set; } = [];
 
     [NotMapped]
     //Events that need to be removed for the quest
@@ -94,9 +94,9 @@ public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
 
     [NotMapped]
     [JsonIgnore]
-    public EventBase StartEvent
+    public EventDescriptor StartEvent
     {
-        get => EventBase.Get(StartEventId);
+        get => EventDescriptor.Get(StartEventId);
         set => StartEventId = value.Id;
     }
 
@@ -105,9 +105,9 @@ public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
 
     [NotMapped]
     [JsonIgnore]
-    public EventBase EndEvent
+    public EventDescriptor EndEvent
     {
-        get => EventBase.Get(EndEventId);
+        get => EventDescriptor.Get(EndEventId);
         set => EndEventId = value.Id;
     }
 
@@ -207,7 +207,7 @@ public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
     {
         [NotMapped]
         [JsonIgnore]
-        public EventBase EditingEvent;
+        public EventDescriptor EditingEvent;
 
         public QuestTask(Guid id)
         {
@@ -219,9 +219,9 @@ public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
         public Guid CompletionEventId { get; set; }
 
         [JsonIgnore]
-        public EventBase CompletionEvent
+        public EventDescriptor CompletionEvent
         {
-            get => EventBase.Get(CompletionEventId);
+            get => EventDescriptor.Get(CompletionEventId);
             set => CompletionEventId = value.Id;
         }
 

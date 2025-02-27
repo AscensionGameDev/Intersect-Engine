@@ -4,9 +4,9 @@ using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Models;
 using Intersect.Network;
@@ -197,7 +197,7 @@ public static partial class PacketSender
         {
             foreach (var id in map.EventIds)
             {
-                if (EventBase.TryGet(id, out var evt))
+                if (EventDescriptor.TryGet(id, out var evt))
                 {
                     SendGameObject(client, evt);
                 }
@@ -1808,9 +1808,9 @@ public static partial class PacketSender
             case GameObjectType.Map:
                 throw new Exception("Maps are not sent as batches, use the proper send map functions");
             case GameObjectType.Event:
-                foreach (var obj in EventBase.Lookup)
+                foreach (var obj in EventDescriptor.Lookup)
                 {
-                    if (((EventBase)obj.Value).CommonEvent)
+                    if (((EventDescriptor)obj.Value).CommonEvent)
                     {
                         SendGameObject(client, obj.Value, false, false, packetList);
                     }
@@ -1906,7 +1906,7 @@ public static partial class PacketSender
     }
 
     //GameObjectPacket
-    public static void SendEventIfExists(Client client, EventBase evt)
+    public static void SendEventIfExists(Client client, EventDescriptor evt)
     {
         if (evt != null && evt.Id != Guid.Empty)
         {

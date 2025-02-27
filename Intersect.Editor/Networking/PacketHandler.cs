@@ -6,9 +6,9 @@ using Intersect.Editor.Localization;
 using Intersect.Editor.Maps;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Network;
@@ -641,16 +641,16 @@ internal sealed partial class PacketHandler
                 var wasCommon = false;
                 if (deleted)
                 {
-                    var evt = EventBase.Get(id);
+                    var evt = EventDescriptor.Get(id);
                     wasCommon = evt.CommonEvent;
                     evt.Delete();
                 }
                 else
                 {
-                    var evt = new EventBase(id);
+                    var evt = new EventDescriptor(id);
                     evt.Load(json);
                     wasCommon = evt.CommonEvent;
-                    EventBase.Lookup.Set(id, evt);
+                    EventDescriptor.Lookup.Set(id, evt);
                 }
 
                 if (!wasCommon)

@@ -3,7 +3,6 @@ using Intersect.Editor.Forms.Editors.Events.Event_Commands;
 using Intersect.Editor.Localization;
 using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.GameObjects.Conditions.ConditionMetadata;
-using Intersect.GameObjects.Events;
 
 namespace Intersect.Editor.Forms.Editors;
 

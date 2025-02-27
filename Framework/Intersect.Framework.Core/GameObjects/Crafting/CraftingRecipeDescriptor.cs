@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Framework.Core.GameObjects.Conditions;
-using Intersect.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Models;
 using Newtonsoft.Json;
 
@@ -55,9 +55,9 @@ public partial class CraftingRecipeDescriptor : DatabaseObject<CraftingRecipeDes
 
     [NotMapped]
     [JsonIgnore]
-    public EventBase Event
+    public EventDescriptor Event
     {
-        get => EventBase.Get(EventId);
+        get => EventDescriptor.Get(EventId);
         set => EventId = value?.Id ?? Guid.Empty;
     }
 

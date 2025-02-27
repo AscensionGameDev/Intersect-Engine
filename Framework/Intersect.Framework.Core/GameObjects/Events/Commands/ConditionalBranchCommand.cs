@@ -1,6 +1,6 @@
 ﻿using Intersect.Framework.Core.GameObjects.Conditions;
 
-namespace Intersect.GameObjects.Events.Commands;
+namespace Intersect.Framework.Core.GameObjects.Events.Commands;
 
 public partial class ConditionalBranchCommand : EventCommand
 {

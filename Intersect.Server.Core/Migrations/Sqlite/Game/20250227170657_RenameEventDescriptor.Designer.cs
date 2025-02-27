@@ -3,6 +3,7 @@ using System;
 using Intersect.Server.Database.GameData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intersect.Server.Migrations.Sqlite.Game
 {
     [DbContext(typeof(SqliteGameContext))]
-    partial class SqliteGameContextModelSnapshot : ModelSnapshot
+    [Migration("20250227170657_RenameEventDescriptor")]
+    partial class RenameEventDescriptor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
@@ -86,6 +89,48 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.HasKey("Id");
 
                     b.ToTable("CraftingTables");
+                });
+
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Events.EventDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("CanRunInParallel")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("CommonEvent")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Folder")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Global")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("MapId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("PagesJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Pages");
+
+                    b.Property<int>("SpawnX")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SpawnY")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("TimeCreated")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Events");
                 });
 
             modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.GuildVariableDescriptor", b =>
@@ -348,48 +393,6 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.HasKey("DescriptorId");
 
                     b.ToTable("Items_EquipmentProperties");
-                });
-
-            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Events.EventDescriptor", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("CanRunInParallel")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("CommonEvent")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Folder")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Global")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid>("MapId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT")
-                        .HasColumnOrder(0);
-
-                    b.Property<string>("PagesJson")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("Pages");
-
-                    b.Property<int>("SpawnX")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SpawnY")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Events");
                 });
 
             modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>

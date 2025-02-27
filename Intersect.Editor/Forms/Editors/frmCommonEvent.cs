@@ -4,7 +4,7 @@ using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
-using Intersect.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Events;
 
 namespace Intersect.Editor.Forms.Editors;
 
@@ -59,7 +59,7 @@ public partial class FrmCommonEvent : EditorForm
     private void toolStripItemDelete_Click(object sender, EventArgs e)
     {
         if (lstGameObjects.SelectedNode?.Tag != null &&
-            EventBase.Get((Guid) lstGameObjects.SelectedNode.Tag) != null)
+            EventDescriptor.Get((Guid) lstGameObjects.SelectedNode.Tag) != null)
         {
             if (MessageBox.Show(
                     Strings.CommonEventEditor.deleteprompt, Strings.CommonEventEditor.delete,
@@ -67,7 +67,7 @@ public partial class FrmCommonEvent : EditorForm
                 ) ==
                 DialogResult.Yes)
             {
-                PacketSender.SendDeleteObject(EventBase.Get((Guid) lstGameObjects.SelectedNode.Tag));
+                PacketSender.SendDeleteObject(EventDescriptor.Get((Guid) lstGameObjects.SelectedNode.Tag));
             }
         }
     }
@@ -76,17 +76,17 @@ public partial class FrmCommonEvent : EditorForm
     {
         //Collect folders
         var mFolders = new List<string>();
-        foreach (var itm in EventBase.Lookup)
+        foreach (var itm in EventDescriptor.Lookup)
         {
-            if (((EventBase)itm.Value).CommonEvent)
+            if (((EventDescriptor)itm.Value).CommonEvent)
             {
-                if (!string.IsNullOrEmpty(((EventBase)itm.Value).Folder) &&
-                    !mFolders.Contains(((EventBase)itm.Value).Folder))
+                if (!string.IsNullOrEmpty(((EventDescriptor)itm.Value).Folder) &&
+                    !mFolders.Contains(((EventDescriptor)itm.Value).Folder))
                 {
-                    mFolders.Add(((EventBase)itm.Value).Folder);
-                    if (!mKnownFolders.Contains(((EventBase)itm.Value).Folder))
+                    mFolders.Add(((EventDescriptor)itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((EventDescriptor)itm.Value).Folder))
                     {
-                        mKnownFolders.Add(((EventBase)itm.Value).Folder);
+                        mKnownFolders.Add(((EventDescriptor)itm.Value).Folder);
                     }
                 }
             }
@@ -98,8 +98,8 @@ public partial class FrmCommonEvent : EditorForm
         cmbFolder.Items.Add("");
         cmbFolder.Items.AddRange(mKnownFolders.ToArray());
 
-        var items = EventBase.Lookup.Where(pair => ((EventBase)pair.Value)?.CommonEvent ?? false).OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
-            new KeyValuePair<string, string>(((EventBase)pair.Value)?.Name ?? Models.DatabaseObject<EventBase>.Deleted, ((EventBase)pair.Value)?.Folder ?? ""))).ToArray();
+        var items = EventDescriptor.Lookup.Where(pair => ((EventDescriptor)pair.Value)?.CommonEvent ?? false).OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
+            new KeyValuePair<string, string>(((EventDescriptor)pair.Value)?.Name ?? Models.DatabaseObject<EventDescriptor>.Deleted, ((EventDescriptor)pair.Value)?.Folder ?? ""))).ToArray();
         lstGameObjects.Repopulate(items, mFolders, btnAlphabetical.Checked, CustomSearch(), txtSearch.Text);
     }
 
@@ -138,14 +138,14 @@ public partial class FrmCommonEvent : EditorForm
 
     #region "Item List - Folders, Searching, Sorting, Etc"
 
-    private EventBase GetSelectedEvent()
+    private EventDescriptor GetSelectedEvent()
     {
         if (lstGameObjects.SelectedNode == null || lstGameObjects.SelectedNode.Tag == null)
         {
             return null;
         }
 
-        return EventBase.Get((Guid) lstGameObjects.SelectedNode.Tag);
+        return EventDescriptor.Get((Guid) lstGameObjects.SelectedNode.Tag);
     }
 
     private void btnAddFolder_Click(object sender, EventArgs e)
@@ -183,7 +183,7 @@ public partial class FrmCommonEvent : EditorForm
 
         var editor = new FrmEvent(null)
         {
-            MyEvent = EventBase.Get((Guid) lstGameObjects.SelectedNode.Tag)
+            MyEvent = EventDescriptor.Get((Guid) lstGameObjects.SelectedNode.Tag)
         };
 
         editor.InitEditor(false, false, false);

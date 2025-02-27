@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 using DarkUI.Controls;
-using Intersect.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Events;
 
 namespace Intersect.Editor.Forms.Editors.Events
 {

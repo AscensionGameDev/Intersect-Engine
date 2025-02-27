@@ -1,6 +1,5 @@
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.Network;
 using Intersect.Network.Packets;
@@ -21,6 +20,7 @@ using System.Text;
 using Intersect.Core;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Core;
 using Microsoft.Extensions.Logging;
@@ -1122,9 +1122,9 @@ internal sealed partial class PacketHandler
         else
         {
             //Search for command activated events and run them
-            foreach (var evt in EventBase.Lookup)
+            foreach (var evt in EventDescriptor.Lookup)
             {
-                var eventDescriptor = evt.Value as EventBase;
+                var eventDescriptor = evt.Value as EventDescriptor;
                 if (eventDescriptor == default)
                 {
                     continue;

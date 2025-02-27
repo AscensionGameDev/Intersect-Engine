@@ -5,8 +5,8 @@ using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Microsoft.Extensions.Logging;
 
 
@@ -335,7 +335,7 @@ public partial class FrmQuest : EditorForm
         OpenQuestEvent(mEditorItem.EndEvent);
     }
 
-    private void OpenQuestEvent(EventBase evt)
+    private void OpenQuestEvent(EventDescriptor evt)
     {
         var editor = new FrmEvent(null) {MyEvent = evt};
         editor.InitEditor(true, true, true);
@@ -347,7 +347,7 @@ public partial class FrmQuest : EditorForm
     private void btnAddTask_Click(object sender, EventArgs e)
     {
         var questTask = new QuestBase.QuestTask(Guid.NewGuid());
-        questTask.EditingEvent = new EventBase(questTask.Id, Guid.Empty, 0, 0, false);
+        questTask.EditingEvent = new EventDescriptor(questTask.Id, Guid.Empty, 0, 0, false);
         questTask.EditingEvent.CommonEvent = false;
         questTask.EditingEvent.Name = Strings.TaskEditor.completionevent.ToString(mEditorItem.Name);
         mEditorItem.AddEvents.Add(questTask.Id, questTask.EditingEvent);
@@ -506,8 +506,8 @@ public partial class FrmQuest : EditorForm
             var endEventId = mEditorItem.EndEventId;
             mEditorItem.Load(mCopiedItem, true);
 
-            EventBase.Get(startEventId).Load(mEditorItem.StartEvent.JsonData);
-            EventBase.Get(endEventId).Load(mEditorItem.EndEvent.JsonData);
+            EventDescriptor.Get(startEventId).Load(mEditorItem.StartEvent.JsonData);
+            EventDescriptor.Get(endEventId).Load(mEditorItem.EndEvent.JsonData);
 
             mEditorItem.StartEventId = startEventId;
             mEditorItem.EndEventId = endEventId;
@@ -526,9 +526,9 @@ public partial class FrmQuest : EditorForm
                 }
                 else
                 {
-                    var tskEventData = EventBase.Get(tsk.CompletionEventId).JsonData;
+                    var tskEventData = EventDescriptor.Get(tsk.CompletionEventId).JsonData;
                     tsk.CompletionEventId = Guid.Empty;
-                    tsk.EditingEvent = new EventBase(Guid.Empty, Guid.Empty, 0, 0, false);
+                    tsk.EditingEvent = new EventDescriptor(Guid.Empty, Guid.Empty, 0, 0, false);
                     tsk.EditingEvent.Name = Strings.TaskEditor.completionevent.ToString(mEditorItem.Name);
                     tsk.EditingEvent.Load(tskEventData);
                     mEditorItem.AddEvents.Add(tsk.Id, tsk.EditingEvent);

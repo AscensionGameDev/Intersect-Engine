@@ -1,6 +1,6 @@
 ﻿using Intersect.Editor.Localization;
-using Intersect.GameObjects.Events;
-using Intersect.GameObjects.Events.Commands;
+using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Events.Commands;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands;
 
@@ -18,9 +18,9 @@ public partial class EventCommandStartCommonEvent : UserControl
         InitLocalization();
 
         cmbEvent.Items.Clear();
-        cmbEvent.Items.AddRange(EventBase.Names);
+        cmbEvent.Items.AddRange(EventDescriptor.Names);
 
-        cmbEvent.SelectedIndex = EventBase.ListIndex(refCommand.EventId);
+        cmbEvent.SelectedIndex = EventDescriptor.ListIndex(refCommand.EventId);
         chkAllInInstance.Checked = refCommand.AllInInstance;
         chkOverworldOverride.Checked = refCommand.AllowInOverworld;
         chkOverworldOverride.Enabled = chkAllInInstance.Checked;
@@ -47,7 +47,7 @@ public partial class EventCommandStartCommonEvent : UserControl
 
     private void btnSave_Click(object sender, EventArgs e)
     {
-        mMyCommand.EventId = EventBase.IdFromList(cmbEvent.SelectedIndex);
+        mMyCommand.EventId = EventDescriptor.IdFromList(cmbEvent.SelectedIndex);
         mMyCommand.AllInInstance = chkAllInInstance.Checked;
         mMyCommand.AllowInOverworld = chkAllInInstance.Checked && chkOverworldOverride.Checked;
         mEventEditor.FinishCommandEdit();

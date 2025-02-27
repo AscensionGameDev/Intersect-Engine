@@ -2,8 +2,8 @@ using System.Collections.Concurrent;
 using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
@@ -139,8 +139,8 @@ public partial class MapInstance : IMapInstance
     /* Processing Layers have Global Events - these are global to the PROCESSING instance, NOT to the MapController.
      * As of the initial "Add Instancing" refactor, this is what the stock "Is Global?" event tick box in the editor
      * will enable - an "Instance-Global" event */
-    public ConcurrentDictionary<EventBase, Event> GlobalEventInstances = new ConcurrentDictionary<EventBase, Event>();
-    public List<EventBase> EventsCache = new List<EventBase>();
+    public ConcurrentDictionary<EventDescriptor, Event> GlobalEventInstances = new ConcurrentDictionary<EventDescriptor, Event>();
+    public List<EventDescriptor> EventsCache = new List<EventDescriptor>();
 
     // Animations & Text
     private MapActionMessages mActionMessages = new MapActionMessages();
@@ -1078,7 +1078,7 @@ public partial class MapInstance : IMapInstance
         GlobalEventInstances.Clear();
         foreach (var id in mMapController.EventIds)
         {
-            var evt = EventBase.Get(id);
+            var evt = EventDescriptor.Get(id);
             if (evt != null && evt.Global)
             {
                 GlobalEventInstances.TryAdd(evt, new Event(evt.Id, evt, mMapController, MapInstanceId));
@@ -1094,30 +1094,30 @@ public partial class MapInstance : IMapInstance
         {
             foreach (var player in GetPlayers(true))
             {
-                player.RemoveEvent(evt.Value.BaseEvent.Id);
+                player.RemoveEvent(evt.Value.Descriptor.Id);
             }
         }
 
         GlobalEventInstances.Clear();
     }
 
-    public Event GetGlobalEventInstance(EventBase baseEvent)
+    public Event GetGlobalEventInstance(EventDescriptor eventDescriptor)
     {
-        if (GlobalEventInstances.ContainsKey(baseEvent))
+        if (GlobalEventInstances.ContainsKey(eventDescriptor))
         {
-            return GlobalEventInstances[baseEvent];
+            return GlobalEventInstances[eventDescriptor];
         }
 
         return null;
     }
 
-    public bool FindEvent(EventBase baseEvent, EventPageInstance globalClone)
+    public bool FindEvent(EventDescriptor eventDescriptor, EventPageInstance globalClone)
     {
-        if (GlobalEventInstances.ContainsKey(baseEvent))
+        if (GlobalEventInstances.ContainsKey(eventDescriptor))
         {
-            for (var i = 0; i < GlobalEventInstances[baseEvent].GlobalPageInstance.Length; i++)
+            for (var i = 0; i < GlobalEventInstances[eventDescriptor].GlobalPageInstance.Length; i++)
             {
-                if (GlobalEventInstances[baseEvent].GlobalPageInstance[i] == globalClone)
+                if (GlobalEventInstances[eventDescriptor].GlobalPageInstance[i] == globalClone)
                 {
                     return true;
                 }
@@ -1129,10 +1129,10 @@ public partial class MapInstance : IMapInstance
 
     public void RefreshEventsCache()
     {
-        var events = new List<EventBase>();
+        var events = new List<EventDescriptor>();
         foreach (var evt in mMapController.EventIds)
         {
-            var itm = EventBase.Get(evt);
+            var itm = EventDescriptor.Get(evt);
             if (itm != null)
             {
                 events.Add(itm);

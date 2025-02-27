@@ -1,4 +1,5 @@
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Events;
 
 namespace Intersect.Attributes;
 

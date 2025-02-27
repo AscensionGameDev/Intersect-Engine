@@ -5,8 +5,8 @@ using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Intersect.Models;
 
 namespace Intersect.Editor.Forms.Editors;
@@ -41,7 +41,7 @@ public partial class FrmCrafts : EditorForm
         cmbIngredient.Items.AddRange(ItemBase.Names);
         cmbEvent.Items.Clear();
         cmbEvent.Items.Add(Strings.General.None);
-        cmbEvent.Items.AddRange(EventBase.Names);
+        cmbEvent.Items.AddRange(EventDescriptor.Names);
 
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
     }
@@ -122,7 +122,7 @@ public partial class FrmCrafts : EditorForm
                 mEditorItem.MakeBackup();
             }
 
-            cmbEvent.SelectedIndex = EventBase.ListIndex(mEditorItem.EventId) + 1;
+            cmbEvent.SelectedIndex = EventDescriptor.ListIndex(mEditorItem.EventId) + 1;
         }
         else
         {
@@ -468,7 +468,7 @@ public partial class FrmCrafts : EditorForm
 
     private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
     {
-        mEditorItem.Event = EventBase.Get(EventBase.IdFromList(cmbEvent.SelectedIndex - 1));
+        mEditorItem.Event = EventDescriptor.Get(EventDescriptor.IdFromList(cmbEvent.SelectedIndex - 1));
     }
 
     private void btnCraftRequirements_Click(object sender, EventArgs e)

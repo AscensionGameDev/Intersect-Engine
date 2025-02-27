@@ -1,8 +1,8 @@
 using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core;
-using Intersect.GameObjects.Events;
-using Intersect.GameObjects.Events.Commands;
+using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Events.Commands;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
@@ -15,7 +15,7 @@ namespace Intersect.Server.Entities.Events;
 public partial class Event
 {
 
-    public EventBase BaseEvent;
+    public EventDescriptor Descriptor;
 
     public Stack<CommandInstance> CallStack = new Stack<CommandInstance>();
 
@@ -54,7 +54,7 @@ public partial class Event
 
     public int Y;
 
-    public Event(Guid instanceId, MapController map, Player player, EventBase baseEvent)
+    public Event(Guid instanceId, MapController map, Player player, EventDescriptor eventDescriptor)
     {
         Id = instanceId;
         MapInstanceId = player.MapInstanceId;
@@ -62,26 +62,26 @@ public partial class Event
         MapController = map;
         Player = player;
         SelfSwitch = new bool[4];
-        BaseEvent = baseEvent;
-        X = baseEvent.SpawnX;
-        Y = baseEvent.SpawnY;
+        Descriptor = eventDescriptor;
+        X = eventDescriptor.SpawnX;
+        Y = eventDescriptor.SpawnY;
     }
 
-    public Event(Guid instanceId, EventBase baseEvent, MapController map, Guid mapInstanceId) //Global constructor
+    public Event(Guid instanceId, EventDescriptor eventDescriptor, MapController map, Guid mapInstanceId) //Global constructor
     {
         Id = instanceId;
         MapInstanceId = mapInstanceId;
         Global = true;
         MapId = map?.Id ?? Guid.Empty;
         MapController = map;
-        BaseEvent = baseEvent;
+        Descriptor = eventDescriptor;
         SelfSwitch = new bool[4];
-        GlobalPageInstance = new EventPageInstance[BaseEvent.Pages.Count];
-        X = (byte) baseEvent.SpawnX;
-        Y = baseEvent.SpawnY;
-        for (var i = 0; i < BaseEvent.Pages.Count; i++)
+        GlobalPageInstance = new EventPageInstance[Descriptor.Pages.Count];
+        X = (byte) eventDescriptor.SpawnX;
+        Y = eventDescriptor.SpawnY;
+        for (var i = 0; i < Descriptor.Pages.Count; i++)
         {
-            GlobalPageInstance[i] = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], MapId, mapInstanceId, this, null);
+            GlobalPageInstance[i] = new EventPageInstance(Descriptor, Descriptor.Pages[i], MapId, mapInstanceId, this, null);
         }
     }
 
@@ -190,7 +190,7 @@ public partial class Event
                                 foreach (var evt in Player.EventLookup)
                                 {
                                     if (evt.Value.MapId == curStack.WaitingForRouteMap &&
-                                        evt.Value.BaseEvent.Id == curStack.WaitingForRoute)
+                                        evt.Value.Descriptor.Id == curStack.WaitingForRoute)
                                     {
                                         if (evt.Value.PageInstance == null)
                                         {
@@ -248,23 +248,23 @@ public partial class Event
                     if (commandsExecuted >= Options.Instance.EventWatchdogKillThreshold)
                     {
                         CallStack.Clear(); //Killing this event, we're over it.
-                        if (this.BaseEvent.MapId == Guid.Empty)
+                        if (this.Descriptor.MapId == Guid.Empty)
                         {
-                            ApplicationContext.Context.Value?.Logger.LogError(Strings.Events.WatchdogKillCommon.ToString(BaseEvent.Name));
+                            ApplicationContext.Context.Value?.Logger.LogError(Strings.Events.WatchdogKillCommon.ToString(Descriptor.Name));
                             if (Player.Power.IsModerator)
                             {
                                 PacketSender.SendChatMsg(
-                                    Player, Strings.Events.WatchdogKillCommon.ToString(BaseEvent.Name), ChatMessageType.Error, Color.Red
+                                    Player, Strings.Events.WatchdogKillCommon.ToString(Descriptor.Name), ChatMessageType.Error, Color.Red
                                 );
                             }
                         }
                         else
                         {
-                            ApplicationContext.Context.Value?.Logger.LogError(Strings.Events.WatchdogKill.ToString(map.Name, BaseEvent.Name));
+                            ApplicationContext.Context.Value?.Logger.LogError(Strings.Events.WatchdogKill.ToString(map.Name, Descriptor.Name));
                             if (Player.Power.IsModerator)
                             {
                                 PacketSender.SendChatMsg(
-                                    Player, Strings.Events.WatchdogKill.ToString(map.Name, BaseEvent.Name),
+                                    Player, Strings.Events.WatchdogKill.ToString(map.Name, Descriptor.Name),
                                     ChatMessageType.Error, Color.Red
                                 );
                             }
@@ -285,19 +285,19 @@ public partial class Event
         if (PageInstance == null)
         {
             //Try to Spawn a PageInstance.. if we can
-            for (var i = BaseEvent.Pages.Count - 1; i >= 0; i--)
+            for (var i = Descriptor.Pages.Count - 1; i >= 0; i--)
             {
-                if (Conditions.CanSpawnPage(BaseEvent.Pages[i], Player, this))
+                if (Conditions.CanSpawnPage(Descriptor.Pages[i], Player, this))
                 {
                     if (Global)
                     {
                         if (MapController.TryGetInstanceFromMap(map.Id, Player.MapInstanceId, out var mapInstance))
                         {
-                            var globalEvent = mapInstance.GetGlobalEventInstance(BaseEvent);
+                            var globalEvent = mapInstance.GetGlobalEventInstance(Descriptor);
                             if (globalEvent != null)
                             {
                                 PageInstance = new EventPageInstance(
-                                    BaseEvent, BaseEvent.Pages[i], BaseEvent.Id, MapId, Player.MapInstanceId, this, Player,
+                                    Descriptor, Descriptor.Pages[i], Descriptor.Id, MapId, Player.MapInstanceId, this, Player,
                                     globalEvent.GlobalPageInstance[i]
                                 );
 
@@ -313,7 +313,7 @@ public partial class Event
                     }
                     else
                     {
-                        PageInstance = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], MapId, Player.MapInstanceId, this, Player);
+                        PageInstance = new EventPageInstance(Descriptor, Descriptor.Pages[i], MapId, Player.MapInstanceId, this, Player);
                         sendLeave = false;
                         PageIndex = i;
                     }
@@ -338,9 +338,9 @@ public partial class Event
             prams.Add(prm.Key, prm.Value);
         }
 
-        prams.Add("evtName", BaseEvent.Name);
+        prams.Add("evtName", Descriptor.Name);
 
-        var map = MapController.Get(BaseEvent.MapId);
+        var map = MapController.Get(Descriptor.MapId);
         if (map != null)
         {
             prams.Add("evtMap", map.Name);
@@ -350,7 +350,7 @@ public partial class Event
         {
             if (Global && MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var mapInstance))
             {
-                var globalEvent = mapInstance.GetGlobalEventInstance(BaseEvent);
+                var globalEvent = mapInstance.GetGlobalEventInstance(Descriptor);
                 if (globalEvent.GlobalPageInstance != null)
                 {
                     prams.Add("evtX", globalEvent.GlobalPageInstance[globalEvent.PageIndex].X.ToString());

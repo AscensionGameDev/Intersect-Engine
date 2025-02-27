@@ -1,8 +1,8 @@
 using Intersect.Extensions;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 
 namespace Intersect.Enums;
@@ -45,7 +45,7 @@ public enum GameObjectType
     [GameObjectInfo(typeof(MapBase), "maps")]
     Map,
 
-    [GameObjectInfo(typeof(EventBase), "events")]
+    [GameObjectInfo(typeof(EventDescriptor), "events")]
     Event,
 
     [GameObjectInfo(typeof(PlayerVariableDescriptor), "player_variables")]

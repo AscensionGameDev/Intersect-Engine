@@ -26,6 +26,7 @@ using Intersect.Client.Interface.Shared;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Events;
 using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Networking;
@@ -2355,13 +2356,13 @@ internal sealed partial class PacketHandler
     {
         switch (packet.FadeType)
         {
-            case GameObjects.Events.FadeType.None:
+            case FadeType.None:
                 Fade.Cancel();
                 break;
-            case GameObjects.Events.FadeType.FadeIn:
+            case FadeType.FadeIn:
                 Fade.FadeIn(packet.DurationMs, packet.WaitForCompletion);
                 break;
-            case GameObjects.Events.FadeType.FadeOut:
+            case FadeType.FadeOut:
                 Fade.FadeOut(packet.DurationMs, packet.WaitForCompletion);
                 break;
         }

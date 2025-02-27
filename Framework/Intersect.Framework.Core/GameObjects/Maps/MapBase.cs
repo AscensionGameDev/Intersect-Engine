@@ -3,8 +3,8 @@ using Intersect.Collections;
 using Intersect.Compression;
 using Intersect.Config;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.Serialization;
-using Intersect.GameObjects.Events;
 using Intersect.Models;
 using Newtonsoft.Json;
 
@@ -24,7 +24,7 @@ public partial class MapBase : DatabaseObject<MapBase>
 
     [NotMapped]
     [JsonIgnore]
-    public readonly Dictionary<Guid, EventBase> LocalEvents = new();
+    public readonly Dictionary<Guid, EventDescriptor> LocalEvents = new();
 
     //Client/Editor Only
     [JsonIgnore]
@@ -149,7 +149,7 @@ public partial class MapBase : DatabaseObject<MapBase>
 
                 foreach (var record in mapBase.LocalEvents)
                 {
-                    var evt = new EventBase(record.Key, record.Value?.JsonData)
+                    var evt = new EventDescriptor(record.Key, record.Value?.JsonData)
                     {
                         MapId = Id,
                     };
