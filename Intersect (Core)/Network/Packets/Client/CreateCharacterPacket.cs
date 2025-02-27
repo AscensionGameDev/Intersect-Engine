@@ -1,4 +1,5 @@
 ﻿using Intersect.Collections;
+using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.GameObjects;
 using MessagePack;
 
