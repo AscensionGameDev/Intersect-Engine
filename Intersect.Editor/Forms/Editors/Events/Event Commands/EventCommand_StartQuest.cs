@@ -23,8 +23,8 @@ public partial class EventCommandStartQuest : UserControl
         mEventEditor = editor;
         InitLocalization();
         cmbQuests.Items.Clear();
-        cmbQuests.Items.AddRange(QuestBase.Names);
-        cmbQuests.SelectedIndex = QuestBase.ListIndex(refCommand.QuestId);
+        cmbQuests.Items.AddRange(QuestDescriptor.Names);
+        cmbQuests.SelectedIndex = QuestDescriptor.ListIndex(refCommand.QuestId);
         chkShowOfferWindow.Checked = refCommand.Offer;
     }
 
@@ -39,7 +39,7 @@ public partial class EventCommandStartQuest : UserControl
 
     private void btnSave_Click(object sender, EventArgs e)
     {
-        mMyCommand.QuestId = QuestBase.IdFromList(cmbQuests.SelectedIndex);
+        mMyCommand.QuestId = QuestDescriptor.IdFromList(cmbQuests.SelectedIndex);
         mMyCommand.Offer = chkShowOfferWindow.Checked;
         mEventEditor.FinishCommandEdit();
     }

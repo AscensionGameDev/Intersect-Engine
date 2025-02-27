@@ -1766,7 +1766,7 @@ public static partial class PacketSender
 
                 break;
             case GameObjectType.Quest:
-                foreach (var obj in QuestBase.Lookup)
+                foreach (var obj in QuestDescriptor.Lookup)
                 {
                     SendGameObject(client, obj.Value, false, false, packetList);
                 }
@@ -1880,7 +1880,7 @@ public static partial class PacketSender
             //If editor send quest events and map events
             if (obj.Type == GameObjectType.Quest)
             {
-                SendQuestEventsTo(client, (QuestBase)obj);
+                SendQuestEventsTo(client, (QuestDescriptor)obj);
             }
         }
 
@@ -1897,7 +1897,7 @@ public static partial class PacketSender
     }
 
     //GameObjectPacket
-    public static void SendQuestEventsTo(Client client, QuestBase qst)
+    public static void SendQuestEventsTo(Client client, QuestDescriptor qst)
     {
         SendEventIfExists(client, qst.StartEvent);
         SendEventIfExists(client, qst.EndEvent);
@@ -2106,9 +2106,9 @@ public static partial class PacketSender
         }
 
         var hiddenQuests = new List<Guid>();
-        foreach (var pair in QuestBase.Lookup)
+        foreach (var pair in QuestDescriptor.Lookup)
         {
-            var quest = (QuestBase)pair.Value;
+            var quest = (QuestDescriptor)pair.Value;
             if (!player.Quests.Any(q => q.QuestId == quest.Id) && quest.DoNotShowUnlessRequirementsMet && !player.CanStartQuest(quest))
             {
                 hiddenQuests.Add(quest.Id);

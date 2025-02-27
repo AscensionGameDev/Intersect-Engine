@@ -1236,20 +1236,20 @@ public static partial class CommandPrinter
         if (!command.Offer)
         {
             return Strings.EventCommandList.startquest.ToString(
-                QuestBase.GetName(command.QuestId), Strings.EventCommandList.forcedstart
+                QuestDescriptor.GetName(command.QuestId), Strings.EventCommandList.forcedstart
             );
         }
         else
         {
             return Strings.EventCommandList.startquest.ToString(
-                QuestBase.GetName(command.QuestId), Strings.EventCommandList.showoffer
+                QuestDescriptor.GetName(command.QuestId), Strings.EventCommandList.showoffer
             );
         }
     }
 
     private static string GetCommandText(CompleteQuestTaskCommand command, MapInstance map)
     {
-        var quest = QuestBase.Get(command.QuestId);
+        var quest = QuestDescriptor.Get(command.QuestId);
         if (quest != null)
         {
             //Try to find task
@@ -1258,14 +1258,14 @@ public static partial class CommandPrinter
                 if (task.Id == command.TaskId)
                 {
                     return Strings.EventCommandList.completetask.ToString(
-                        QuestBase.GetName(command.QuestId), task.GetTaskString(Strings.TaskEditor.descriptions)
+                        QuestDescriptor.GetName(command.QuestId), task.GetTaskString(Strings.TaskEditor.descriptions)
                     );
                 }
             }
         }
 
         return Strings.EventCommandList.completetask.ToString(
-            QuestBase.GetName(command.QuestId), Strings.EventCommandList.taskundefined
+            QuestDescriptor.GetName(command.QuestId), Strings.EventCommandList.taskundefined
         );
     }
 
@@ -1274,12 +1274,12 @@ public static partial class CommandPrinter
         if (!command.SkipCompletionEvent)
         {
             return Strings.EventCommandList.endquest.ToString(
-                QuestBase.GetName(command.QuestId), Strings.EventCommandList.runcompletionevent
+                QuestDescriptor.GetName(command.QuestId), Strings.EventCommandList.runcompletionevent
             );
         }
 
         return Strings.EventCommandList.endquest.ToString(
-            QuestBase.GetName(command.QuestId), Strings.EventCommandList.skipcompletionevent
+            QuestDescriptor.GetName(command.QuestId), Strings.EventCommandList.skipcompletionevent
         );
     }
 

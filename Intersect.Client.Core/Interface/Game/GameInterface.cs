@@ -350,7 +350,7 @@ public partial class GameInterface : MutableInterface
                 mQuestOfferWindow.Hide();
             }
         }
-        else if (QuestBase.TryGet(questDescriptorId, out var questDescriptor))
+        else if (QuestDescriptor.TryGet(questDescriptorId, out var questDescriptor))
         {
             mQuestOfferWindow.Update(questDescriptor);
         }

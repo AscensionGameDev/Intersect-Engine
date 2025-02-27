@@ -16,11 +16,11 @@ namespace Intersect.Editor.Forms.Editors.Quest;
 public partial class FrmQuest : EditorForm
 {
 
-    private List<QuestBase> mChanged = new List<QuestBase>();
+    private List<QuestDescriptor> mChanged = new List<QuestDescriptor>();
 
     private string mCopiedItem;
 
-    private QuestBase mEditorItem;
+    private QuestDescriptor mEditorItem;
 
     private List<string> mKnownFolders = new List<string>();
 
@@ -36,7 +36,7 @@ public partial class FrmQuest : EditorForm
     }
     private void AssignEditorItem(Guid id)
     {
-        mEditorItem = QuestBase.Get(id);
+        mEditorItem = QuestDescriptor.Get(id);
         UpdateEditor();
     }
 
@@ -113,7 +113,7 @@ public partial class FrmQuest : EditorForm
         if (type == GameObjectType.Quest)
         {
             InitEditor();
-            if (mEditorItem != null && !QuestBase.Lookup.Values.Contains(mEditorItem))
+            if (mEditorItem != null && !QuestDescriptor.Lookup.Values.Contains(mEditorItem))
             {
                 mEditorItem = null;
                 UpdateEditor();
@@ -346,7 +346,7 @@ public partial class FrmQuest : EditorForm
 
     private void btnAddTask_Click(object sender, EventArgs e)
     {
-        var questTask = new QuestBase.QuestTask(Guid.NewGuid());
+        var questTask = new QuestTaskDescriptor(Guid.NewGuid());
         questTask.EditingEvent = new EventDescriptor(questTask.Id, Guid.Empty, 0, 0, false);
         questTask.EditingEvent.CommonEvent = false;
         questTask.EditingEvent.Name = Strings.TaskEditor.completionevent.ToString(mEditorItem.Name);
@@ -367,7 +367,7 @@ public partial class FrmQuest : EditorForm
         }
     }
 
-    private bool OpenTaskEditor(QuestBase.QuestTask task)
+    private bool OpenTaskEditor(QuestTaskDescriptor task)
     {
         var cmdWindow = new QuestTaskEditor(mEditorItem, task);
         var frm = new Form
@@ -586,15 +586,15 @@ public partial class FrmQuest : EditorForm
     {
         //Collect folders
         var mFolders = new List<string>();
-        foreach (var itm in QuestBase.Lookup)
+        foreach (var itm in QuestDescriptor.Lookup)
         {
-            if (!string.IsNullOrEmpty(((QuestBase) itm.Value).Folder) &&
-                !mFolders.Contains(((QuestBase) itm.Value).Folder))
+            if (!string.IsNullOrEmpty(((QuestDescriptor) itm.Value).Folder) &&
+                !mFolders.Contains(((QuestDescriptor) itm.Value).Folder))
             {
-                mFolders.Add(((QuestBase) itm.Value).Folder);
-                if (!mKnownFolders.Contains(((QuestBase) itm.Value).Folder))
+                mFolders.Add(((QuestDescriptor) itm.Value).Folder);
+                if (!mKnownFolders.Contains(((QuestDescriptor) itm.Value).Folder))
                 {
-                    mKnownFolders.Add(((QuestBase) itm.Value).Folder);
+                    mKnownFolders.Add(((QuestDescriptor) itm.Value).Folder);
                 }
             }
         }
@@ -605,8 +605,8 @@ public partial class FrmQuest : EditorForm
         cmbFolder.Items.Add("");
         cmbFolder.Items.AddRange(mKnownFolders.ToArray());
 
-        var items = QuestBase.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
-            new KeyValuePair<string, string>(((QuestBase)pair.Value)?.Name ?? Models.DatabaseObject<QuestBase>.Deleted, ((QuestBase)pair.Value)?.Folder ?? ""))).ToArray();
+        var items = QuestDescriptor.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
+            new KeyValuePair<string, string>(((QuestDescriptor)pair.Value)?.Name ?? Models.DatabaseObject<QuestDescriptor>.Deleted, ((QuestDescriptor)pair.Value)?.Folder ?? ""))).ToArray();
         lstGameObjects.Repopulate(items, mFolders, btnAlphabetical.Checked, CustomSearch(), txtSearch.Text);
     }
 

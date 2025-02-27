@@ -26,7 +26,7 @@ public enum GameObjectType
     [GameObjectInfo(typeof(ProjectileDescriptor), "projectiles")]
     Projectile,
 
-    [GameObjectInfo(typeof(QuestBase), "quests")]
+    [GameObjectInfo(typeof(QuestDescriptor), "quests")]
     Quest,
 
     [GameObjectInfo(typeof(ResourceBase), "resources")]

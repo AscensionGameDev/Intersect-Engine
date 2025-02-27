@@ -21,7 +21,7 @@ public static partial class Conditions
         Player player,
         Event eventInstance,
         bool singleList = true,
-        QuestBase questBase = null
+        QuestDescriptor questDescriptor = null
     )
     {
         if (player == null)
@@ -37,7 +37,7 @@ public static partial class Conditions
 
         for (var i = 0; i < lists.Lists.Count; i++)
         {
-            if (MeetsConditionList(lists.Lists[i], player, eventInstance, questBase))
+            if (MeetsConditionList(lists.Lists[i], player, eventInstance, questDescriptor))
 
             //Checks to see if all conditions in this list are met
             {
@@ -66,12 +66,12 @@ public static partial class Conditions
         ConditionList list,
         Player player,
         Event eventInstance,
-        QuestBase questBase
+        QuestDescriptor questDescriptor
     )
     {
         for (var i = 0; i < list.Conditions.Count; i++)
         {
-            var meetsCondition = MeetsCondition(list.Conditions[i], player, eventInstance, questBase);
+            var meetsCondition = MeetsCondition(list.Conditions[i], player, eventInstance, questDescriptor);
 
             if (!meetsCondition)
             {
@@ -88,10 +88,10 @@ public static partial class Conditions
         Condition condition,
         Player player,
         Event eventInstance,
-        QuestBase questBase
+        QuestDescriptor questDescriptor
     )
     {
-        var result = ConditionHandlerRegistry.CheckCondition(condition, player, eventInstance, questBase);
+        var result = ConditionHandlerRegistry.CheckCondition(condition, player, eventInstance, questDescriptor);
         if (condition.Negated)
         {
             result = !result;
@@ -103,7 +103,7 @@ public static partial class Conditions
         VariableIsCondition condition,
         Player player,
         Event eventInstance,
-        QuestBase questBase
+        QuestDescriptor questDescriptor
     )
     {
         VariableValue value = null;
@@ -136,7 +136,7 @@ public static partial class Conditions
         HasItemCondition condition,
         Player player,
         Event eventInstance,
-        QuestBase questBase
+        QuestDescriptor questDescriptor
     )
     {
         var quantity = condition.Quantity;
@@ -166,7 +166,7 @@ public static partial class Conditions
         ClassIsCondition condition,
         Player player,
         Event eventInstance,
-        QuestBase questBase
+        QuestDescriptor questDescriptor
     )
     {
         if (player.ClassId == condition.ClassId)
@@ -181,7 +181,7 @@ public static partial class Conditions
         KnowsSpellCondition condition,
         Player player,
         Event eventInstance,
-        QuestBase questBase
+        QuestDescriptor questDescriptor
     )
     {
         if (player.KnowsSpell(condition.SpellId))
@@ -196,7 +196,7 @@ public static partial class Conditions
         LevelOrStatCondition condition,
         Player player,
         Event eventInstance,
-        QuestBase questBase
+        QuestDescriptor questDescriptor
     )
     {
         var lvlStat = 0;
@@ -267,7 +267,7 @@ public static partial class Conditions
         SelfSwitchCondition condition,
         Player player,
         Event eventInstance,
-        QuestBase questBase
+        QuestDescriptor questDescriptor
     )
     {
         if (eventInstance != null)
@@ -295,7 +295,7 @@ public static partial class Conditions
         AccessIsCondition condition,
         Player player,
         Event eventInstance,
-        QuestBase questBase
+        QuestDescriptor questDescriptor
     )
     {
         var power = player.Power;
@@ -315,7 +315,7 @@ public static partial class Conditions
         TimeBetweenCondition condition,
         Player player,
         Event eventInstance,
-        QuestBase questBase
+        QuestDescriptor questDescriptor
     )
     {
         if (condition.Ranges[0] > -1 &&
@@ -333,11 +333,11 @@ public static partial class Conditions
         CanStartQuestCondition condition,
         Player player,
         Event eventInstance,
-        QuestBase questBase
+        QuestDescriptor questDescriptor
     )
     {
-        var startQuest = QuestBase.Get(condition.QuestId);
-        if (startQuest == questBase)
+        var startQuest = QuestDescriptor.Get(condition.QuestId);
+        if (startQuest == questDescriptor)
         {
             //We cannot check and see if we meet quest requirements if we are already checking to see if we meet quest requirements :P
             return true;
@@ -355,7 +355,7 @@ public static partial class Conditions
         QuestInProgressCondition condition,
         Player player,
         Event eventInstance,
-        QuestBase questBase
+        QuestDescriptor questDescriptor
     )
     {
         return player.QuestInProgress(condition.QuestId, condition.Progress, condition.TaskId);
@@ -365,7 +365,7 @@ public static partial class Conditions
         QuestCompletedCondition condition,
         Player player,
         Event eventInstance,
-        QuestBase questBase
+        QuestDescriptor questDescriptor
     )
     {
         return player.QuestCompleted(condition.QuestId);
@@ -375,7 +375,7 @@ public static partial class Conditions
         NoNpcsOnMapCondition condition,
         Player player,
         Event eventInstance,
-        QuestBase questBase
+        QuestDescriptor questDescriptor
     )
     {
         var map = MapController.Get(eventInstance?.MapId ?? Guid.Empty);
@@ -409,7 +409,7 @@ public static partial class Conditions
         GenderIsCondition condition,
         Player player,
         Event eventInstance,
-        QuestBase questBase
+        QuestDescriptor questDescriptor
     )
     {
         return player.Gender == condition.Gender;
@@ -419,7 +419,7 @@ public static partial class Conditions
         MapIsCondition condition,
         Player player,
         Event eventInstance,
-        QuestBase questBase
+        QuestDescriptor questDescriptor
     )
     {
         return player.MapId == condition.MapId;
@@ -429,7 +429,7 @@ public static partial class Conditions
         IsItemEquippedCondition condition,
         Player player,
         Event eventInstance,
-        QuestBase questBase
+        QuestDescriptor questDescriptor
     )
     {
         if (player == null || condition == null)
@@ -446,7 +446,7 @@ public static partial class Conditions
         CheckEquippedSlot condition,
         Player player,
         Event eventInstance,
-        QuestBase questBase
+        QuestDescriptor questDescriptor
     )
     {
         if (player == null || condition == null)
@@ -462,7 +462,7 @@ public static partial class Conditions
         HasFreeInventorySlots condition,
         Player player,
         Event eventInstance,
-        QuestBase questBase
+        QuestDescriptor questDescriptor
     )
     {
 
@@ -496,7 +496,7 @@ public static partial class Conditions
         InGuildWithRank condition,
         Player player,
         Event eventInstance,
-        QuestBase questBase
+        QuestDescriptor questDescriptor
     )
     {
         return player.Guild != null && player.GuildRank <= condition.Rank;
@@ -506,7 +506,7 @@ public static partial class Conditions
         MapZoneTypeIs condition,
         Player player,
         Event eventInstance,
-        QuestBase questBase)
+        QuestDescriptor questDescriptor)
     {
         return player.Map?.ZoneType == condition.ZoneType;
     }

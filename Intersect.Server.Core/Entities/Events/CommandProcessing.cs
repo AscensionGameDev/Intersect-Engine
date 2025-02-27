@@ -1299,7 +1299,7 @@ public static partial class CommandProcessing
     )
     {
         var success = false;
-        var quest = QuestBase.Get(command.QuestId);
+        var quest = QuestDescriptor.Get(command.QuestId);
         if (quest != null)
         {
             if (player.CanStartQuest(quest))

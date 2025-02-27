@@ -4,6 +4,7 @@ using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Quests;
 using Intersect.Framework.Core.Serialization;
 using Intersect.Localization;
 using Intersect.Models;
@@ -11,32 +12,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects;
 
-public enum QuestProgressState
-{
-    OnAnyTask = 0,
-
-    BeforeTask = 1,
-
-    AfterTask = 2,
-
-    OnTask = 3,
-}
-
-public partial class QuestProgress
-{
-    public bool Completed;
-
-    public Guid TaskId;
-
-    public int TaskProgress;
-
-    public QuestProgress(string data)
-    {
-        JsonConvert.PopulateObject(data, this);
-    }
-}
-
-public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
+public partial class QuestDescriptor : DatabaseObject<QuestDescriptor>, IFolderable
 {
     [NotMapped]
     [JsonIgnore]
@@ -48,16 +24,16 @@ public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
     public List<Guid> RemoveEvents { get; set; } = [];
 
     [NotMapped]
-    public List<QuestTask> Tasks { get; set; } = [];
+    public List<QuestTaskDescriptor> Tasks { get; set; } = [];
 
     [JsonConstructor]
-    public QuestBase(Guid Id) : base(Id)
+    public QuestDescriptor(Guid Id) : base(Id)
     {
         Name = "New Quest";
     }
 
     //Parameterless EF Constructor
-    public QuestBase()
+    public QuestDescriptor()
     {
         Name = "New Quest";
     }
@@ -118,7 +94,7 @@ public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
     public string TasksJson
     {
         get => JsonConvert.SerializeObject(Tasks);
-        set => Tasks = JsonConvert.DeserializeObject<List<QuestTask>>(value);
+        set => Tasks = JsonConvert.DeserializeObject<List<QuestTaskDescriptor>>(value);
     }
 
     [NotMapped]
@@ -192,7 +168,7 @@ public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
         return -1;
     }
 
-    public QuestTask FindTask(Guid taskId)
+    public QuestTaskDescriptor FindTask(Guid taskId)
     {
         for (var i = 0; i < Tasks.Count; i++)
         {
@@ -204,66 +180,67 @@ public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
 
         return null;
     }
+}
 
-    public partial class QuestTask
+public partial class QuestTaskDescriptor
+{
+    [NotMapped]
+    [JsonIgnore]
+    [Obsolete("Windows Editor only")]
+    public EventDescriptor EditingEvent { get; set; }
+
+    public QuestTaskDescriptor(Guid id)
     {
-        [NotMapped]
-        [JsonIgnore]
-        public EventDescriptor EditingEvent;
+        Id = id;
+    }
 
-        public QuestTask(Guid id)
+    public Guid Id { get; set; }
+
+    public Guid CompletionEventId { get; set; }
+
+    [JsonIgnore]
+    public EventDescriptor CompletionEvent
+    {
+        get => EventDescriptor.Get(CompletionEventId);
+        set => CompletionEventId = value.Id;
+    }
+
+    //# of npcs to kill, # of X item to collect, or for event driven this value should be 1
+    public QuestObjective Objective { get; set; } = QuestObjective.EventDriven;
+
+    public Guid TargetId { get; set; }
+
+    public int Quantity { get; set; }
+
+    public string Description { get; set; } = string.Empty;
+
+    public string GetTaskString(Dictionary<int, LocalizedString> descriptions)
+    {
+        var taskString = string.Empty;
+        switch (Objective)
         {
-            Id = id;
+            case QuestObjective.EventDriven: //Event Driven
+                taskString = descriptions[(int)Objective].ToString(Description);
+
+                break;
+            case QuestObjective.GatherItems: //Gather Items
+                taskString = descriptions[(int)Objective].ToString(
+                    ItemDescriptor.GetName(TargetId),
+                    Quantity,
+                    Description
+                );
+
+                break;
+            case QuestObjective.KillNpcs: //Kill Npcs
+                taskString = descriptions[(int)Objective].ToString(
+                    NPCDescriptor.GetName(TargetId),
+                    Quantity,
+                    Description
+                );
+
+                break;
         }
 
-        public Guid Id { get; set; }
-
-        public Guid CompletionEventId { get; set; }
-
-        [JsonIgnore]
-        public EventDescriptor CompletionEvent
-        {
-            get => EventDescriptor.Get(CompletionEventId);
-            set => CompletionEventId = value.Id;
-        }
-
-        //# of npcs to kill, # of X item to collect, or for event driven this value should be 1
-        public QuestObjective Objective { get; set; } = QuestObjective.EventDriven;
-
-        public Guid TargetId { get; set; }
-
-        public int Quantity { get; set; }
-
-        public string Description { get; set; } = string.Empty;
-
-        public string GetTaskString(Dictionary<int, LocalizedString> descriptions)
-        {
-            var taskString = string.Empty;
-            switch (Objective)
-            {
-                case QuestObjective.EventDriven: //Event Driven
-                    taskString = descriptions[(int)Objective].ToString(Description);
-
-                    break;
-                case QuestObjective.GatherItems: //Gather Items
-                    taskString = descriptions[(int)Objective].ToString(
-                        ItemDescriptor.GetName(TargetId),
-                        Quantity,
-                        Description
-                    );
-
-                    break;
-                case QuestObjective.KillNpcs: //Kill Npcs
-                    taskString = descriptions[(int)Objective].ToString(
-                        NPCDescriptor.GetName(TargetId),
-                        Quantity,
-                        Description
-                    );
-
-                    break;
-            }
-
-            return taskString;
-        }
+        return taskString;
     }
 }

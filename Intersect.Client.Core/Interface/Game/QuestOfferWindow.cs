@@ -77,7 +77,7 @@ public partial class QuestOfferWindow
         }
     }
 
-    public void Update(QuestBase quest)
+    public void Update(QuestDescriptor quest)
     {
         if (quest == null)
         {

@@ -19,8 +19,8 @@ public partial class EventCommandCompleteQuestTask : UserControl
         mEventEditor = editor;
         InitLocalization();
         cmbQuests.Items.Clear();
-        cmbQuests.Items.AddRange(QuestBase.Names);
-        cmbQuests.SelectedIndex = QuestBase.ListIndex(refCommand.QuestId);
+        cmbQuests.Items.AddRange(QuestDescriptor.Names);
+        cmbQuests.SelectedIndex = QuestDescriptor.ListIndex(refCommand.QuestId);
     }
 
     private void InitLocalization()
@@ -34,10 +34,10 @@ public partial class EventCommandCompleteQuestTask : UserControl
 
     private void btnSave_Click(object sender, EventArgs e)
     {
-        mMyCommand.QuestId = QuestBase.IdFromList(cmbQuests.SelectedIndex);
+        mMyCommand.QuestId = QuestDescriptor.IdFromList(cmbQuests.SelectedIndex);
         if (cmbQuests.SelectedIndex > -1)
         {
-            var quest = QuestBase.Get(QuestBase.IdFromList(cmbQuests.SelectedIndex));
+            var quest = QuestDescriptor.Get(QuestDescriptor.IdFromList(cmbQuests.SelectedIndex));
             if (quest != null)
             {
                 var i = -1;
@@ -66,7 +66,7 @@ public partial class EventCommandCompleteQuestTask : UserControl
         lblTask.Hide();
         if (cmbQuests.SelectedIndex > -1)
         {
-            var quest = QuestBase.Get(QuestBase.IdFromList(cmbQuests.SelectedIndex));
+            var quest = QuestDescriptor.Get(QuestDescriptor.IdFromList(cmbQuests.SelectedIndex));
             if (quest != null)
             {
                 lblTask.Show();

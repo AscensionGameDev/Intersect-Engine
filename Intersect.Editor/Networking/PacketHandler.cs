@@ -543,19 +543,19 @@ internal sealed partial class PacketHandler
             case GameObjectType.Quest:
                 if (deleted)
                 {
-                    var qst = QuestBase.Get(id);
+                    var qst = QuestDescriptor.Get(id);
                     qst.Delete();
                 }
                 else
                 {
-                    var qst = new QuestBase(id);
+                    var qst = new QuestDescriptor(id);
                     qst.Load(json);
                     foreach (var tsk in qst.Tasks)
                     {
                         qst.OriginalTaskEventIds.Add(tsk.Id, tsk.CompletionEventId);
                     }
 
-                    QuestBase.Lookup.Set(id, qst);
+                    QuestDescriptor.Lookup.Set(id, qst);
                 }
 
                 break;

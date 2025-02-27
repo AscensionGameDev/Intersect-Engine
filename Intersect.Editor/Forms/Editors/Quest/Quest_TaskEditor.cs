@@ -4,6 +4,7 @@ using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Quests;
 using Intersect.GameObjects;
 using Microsoft.Extensions.Logging;
 
@@ -18,11 +19,11 @@ public partial class QuestTaskEditor : UserControl
 
     private string mEventBackup = null;
 
-    private QuestBase mMyQuest;
+    private QuestDescriptor mMyQuest;
 
-    private QuestBase.QuestTask mMyTask;
+    private QuestTaskDescriptor mMyTask;
 
-    public QuestTaskEditor(QuestBase refQuest, QuestBase.QuestTask refTask)
+    public QuestTaskEditor(QuestDescriptor refQuest, QuestTaskDescriptor refTask)
     {
         if (refQuest == null)
         {

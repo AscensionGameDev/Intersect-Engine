@@ -660,7 +660,7 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.Quest:
-                QuestBase.Lookup.Clear();
+                QuestDescriptor.Lookup.Clear();
 
                 break;
             case GameObjectType.Resource:
@@ -769,7 +769,7 @@ public static partial class DbInterface
                     case GameObjectType.Quest:
                         foreach (var qst in context.Quests)
                         {
-                            QuestBase.Lookup.Set(qst.Id, qst);
+                            QuestDescriptor.Lookup.Set(qst.Id, qst);
                         }
 
                         break;
@@ -1059,11 +1059,11 @@ public static partial class DbInterface
                 break;
 
             case GameObjectType.Quest:
-                dbObj = new QuestBase(predefinedid);
-                ((QuestBase)dbObj).StartEvent = (EventDescriptor)AddGameObject(GameObjectType.Event);
-                ((QuestBase)dbObj).EndEvent = (EventDescriptor)AddGameObject(GameObjectType.Event);
-                ((QuestBase)dbObj).StartEvent.CommonEvent = false;
-                ((QuestBase)dbObj).EndEvent.CommonEvent = false;
+                dbObj = new QuestDescriptor(predefinedid);
+                ((QuestDescriptor)dbObj).StartEvent = (EventDescriptor)AddGameObject(GameObjectType.Event);
+                ((QuestDescriptor)dbObj).EndEvent = (EventDescriptor)AddGameObject(GameObjectType.Event);
+                ((QuestDescriptor)dbObj).StartEvent.CommonEvent = false;
+                ((QuestDescriptor)dbObj).EndEvent.CommonEvent = false;
 
                 break;
 
@@ -1122,8 +1122,8 @@ public static partial class DbInterface
                         break;
 
                     case GameObjectType.Quest:
-                        context.Quests.Add((QuestBase)dbObj);
-                        QuestBase.Lookup.Set(dbObj.Id, dbObj);
+                        context.Quests.Add((QuestDescriptor)dbObj);
+                        QuestDescriptor.Lookup.Set(dbObj.Id, dbObj);
 
                         break;
 
@@ -1254,21 +1254,21 @@ public static partial class DbInterface
                         break;
                     case GameObjectType.Quest:
 
-                        if (((QuestBase)gameObject).StartEvent != null)
+                        if (((QuestDescriptor)gameObject).StartEvent != null)
                         {
-                            context.Events.Remove(((QuestBase)gameObject).StartEvent);
-                            context.Entry(((QuestBase)gameObject).StartEvent).State = EntityState.Deleted;
-                            EventDescriptor.Lookup.Delete(((QuestBase)gameObject).StartEvent);
+                            context.Events.Remove(((QuestDescriptor)gameObject).StartEvent);
+                            context.Entry(((QuestDescriptor)gameObject).StartEvent).State = EntityState.Deleted;
+                            EventDescriptor.Lookup.Delete(((QuestDescriptor)gameObject).StartEvent);
                         }
 
-                        if (((QuestBase)gameObject).EndEvent != null)
+                        if (((QuestDescriptor)gameObject).EndEvent != null)
                         {
-                            context.Events.Remove(((QuestBase)gameObject).EndEvent);
-                            context.Entry(((QuestBase)gameObject).EndEvent).State = EntityState.Deleted;
-                            EventDescriptor.Lookup.Delete(((QuestBase)gameObject).EndEvent);
+                            context.Events.Remove(((QuestDescriptor)gameObject).EndEvent);
+                            context.Entry(((QuestDescriptor)gameObject).EndEvent).State = EntityState.Deleted;
+                            EventDescriptor.Lookup.Delete(((QuestDescriptor)gameObject).EndEvent);
                         }
 
-                        foreach (var tsk in ((QuestBase)gameObject).Tasks)
+                        foreach (var tsk in ((QuestDescriptor)gameObject).Tasks)
                         {
                             if (tsk.CompletionEvent != null)
                             {
@@ -1278,7 +1278,7 @@ public static partial class DbInterface
                             }
                         }
 
-                        context.Quests.Remove((QuestBase)gameObject);
+                        context.Quests.Remove((QuestDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Resource:
@@ -1425,17 +1425,17 @@ public static partial class DbInterface
                         break;
                     case GameObjectType.Quest:
 
-                        if (((QuestBase)gameObject).StartEvent != null)
+                        if (((QuestDescriptor)gameObject).StartEvent != null)
                         {
-                            context.Events.Update(((QuestBase)gameObject).StartEvent);
+                            context.Events.Update(((QuestDescriptor)gameObject).StartEvent);
                         }
 
-                        if (((QuestBase)gameObject).EndEvent != null)
+                        if (((QuestDescriptor)gameObject).EndEvent != null)
                         {
-                            context.Events.Update(((QuestBase)gameObject).EndEvent);
+                            context.Events.Update(((QuestDescriptor)gameObject).EndEvent);
                         }
 
-                        foreach (var tsk in ((QuestBase)gameObject).Tasks)
+                        foreach (var tsk in ((QuestDescriptor)gameObject).Tasks)
                         {
                             if (tsk.CompletionEvent != null)
                             {
@@ -1443,7 +1443,7 @@ public static partial class DbInterface
                             }
                         }
 
-                        context.Quests.Update((QuestBase)gameObject);
+                        context.Quests.Update((QuestDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Resource:

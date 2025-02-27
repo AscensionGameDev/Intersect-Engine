@@ -898,7 +898,7 @@ internal sealed partial class NetworkedPacketHandler
                     break;
 
                 case GameObjectType.Quest:
-                    obj = QuestBase.Get(id);
+                    obj = QuestDescriptor.Get(id);
 
                     break;
 
@@ -1030,7 +1030,7 @@ internal sealed partial class NetworkedPacketHandler
                     break;
 
                 case GameObjectType.Quest:
-                    obj = QuestBase.Get(id);
+                    obj = QuestDescriptor.Get(id);
 
                     break;
 
@@ -1124,7 +1124,7 @@ internal sealed partial class NetworkedPacketHandler
 
                     if (type == GameObjectType.Quest)
                     {
-                        var qst = (QuestBase)obj;
+                        var qst = (QuestDescriptor)obj;
                         foreach (var evt in qst.RemoveEvents)
                         {
                             var evtb = EventDescriptor.Get(evt);

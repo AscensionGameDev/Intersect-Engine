@@ -16,6 +16,7 @@ using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.Attributes;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Quests;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.Network;
@@ -1520,7 +1521,7 @@ public partial class Player : Entity
         foreach (var questProgress in Quests)
         {
             var questId = questProgress.QuestId;
-            var quest = QuestBase.Get(questId);
+            var quest = QuestDescriptor.Get(questId);
             if (quest != null)
             {
                 if (questProgress.TaskId != Guid.Empty)
@@ -6198,7 +6199,7 @@ public partial class Player : Entity
     }
 
     //Quests
-    public bool CanStartQuest(QuestBase quest)
+    public bool CanStartQuest(QuestDescriptor quest)
     {
         //Check and see if the quest is already in progress, or if it has already been completed and cannot be repeated.
         var questProgress = FindQuest(quest.Id);
@@ -6248,7 +6249,7 @@ public partial class Player : Entity
         var questProgress = FindQuest(questId);
         if (questProgress != null)
         {
-            var quest = QuestBase.Get(questId);
+            var quest = QuestDescriptor.Get(questId);
             if (quest != null)
             {
                 if (questProgress.TaskId != Guid.Empty && quest.GetTaskIndex(questProgress.TaskId) != -1)
@@ -6288,7 +6289,7 @@ public partial class Player : Entity
         return false;
     }
 
-    public void OfferQuest(QuestBase quest)
+    public void OfferQuest(QuestDescriptor quest)
     {
         if (CanStartQuest(quest))
         {
@@ -6310,7 +6311,7 @@ public partial class Player : Entity
         return null;
     }
 
-    public void StartQuest(QuestBase quest)
+    public void StartQuest(QuestDescriptor quest)
     {
         if (CanStartQuest(quest))
         {
@@ -6352,7 +6353,7 @@ public partial class Player : Entity
             lock (mEventLock)
             {
                 QuestOffers.Remove(questId);
-                var quest = QuestBase.Get(questId);
+                var quest = QuestDescriptor.Get(questId);
                 if (quest != null)
                 {
                     StartQuest(quest);
@@ -6389,7 +6390,7 @@ public partial class Player : Entity
             {
                 QuestOffers.Remove(questId);
                 PacketSender.SendChatMsg(
-                    this, Strings.Quests.Declined.ToString(QuestBase.GetName(questId)), ChatMessageType.Quest, CustomColors.QuestAlert.Declined
+                    this, Strings.Quests.Declined.ToString(QuestDescriptor.GetName(questId)), ChatMessageType.Quest, CustomColors.QuestAlert.Declined
                 );
 
                 foreach (var evt in EventLookup)
@@ -6419,7 +6420,7 @@ public partial class Player : Entity
 
     public void CancelQuest(Guid questId)
     {
-        var quest = QuestBase.Get(questId);
+        var quest = QuestDescriptor.Get(questId);
         if (quest != null)
         {
             if (QuestInProgress(quest.Id, QuestProgressState.OnAnyTask, Guid.Empty))
@@ -6431,7 +6432,7 @@ public partial class Player : Entity
                     questProgress.TaskId = Guid.Empty;
                     questProgress.TaskProgress = -1;
                     PacketSender.SendChatMsg(
-                        this, Strings.Quests.Abandoned.ToString(QuestBase.GetName(questId)), ChatMessageType.Quest,
+                        this, Strings.Quests.Abandoned.ToString(QuestDescriptor.GetName(questId)), ChatMessageType.Quest,
                         CustomColors.QuestAlert.Abandoned
                     );
 
@@ -6444,7 +6445,7 @@ public partial class Player : Entity
 
     public void CompleteQuestTask(Guid questId, Guid taskId)
     {
-        var quest = QuestBase.Get(questId);
+        var quest = QuestDescriptor.Get(questId);
         if (quest != null)
         {
             var questProgress = FindQuest(questId);
@@ -6508,7 +6509,7 @@ public partial class Player : Entity
 
     public void CompleteQuest(Guid questId, bool skipCompletionEvent)
     {
-        var quest = QuestBase.Get(questId);
+        var quest = QuestDescriptor.Get(questId);
         if (quest != null)
         {
             var questProgress = FindQuest(questId);
@@ -6541,7 +6542,7 @@ public partial class Player : Entity
             foreach (var questProgress in Quests)
             {
                 var questId = questProgress.QuestId;
-                var quest = QuestBase.Get(questId);
+                var quest = QuestDescriptor.Get(questId);
                 if (quest != null)
                 {
                     if (questProgress.TaskId != Guid.Empty)

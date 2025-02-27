@@ -34,7 +34,7 @@ public interface IGameContext : IDbContext
 
     DbSet<ProjectileDescriptor> Projectiles { get; set; }
 
-    DbSet<QuestBase> Quests { get; set; }
+    DbSet<QuestDescriptor> Quests { get; set; }
 
     DbSet<ResourceBase> Resources { get; set; }
 

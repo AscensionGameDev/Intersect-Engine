@@ -512,19 +512,19 @@ public partial class EventCommandConditionalBranch : UserControl
             case ConditionType.CanStartQuest:
                 grpStartQuest.Show();
                 cmbStartQuest.Items.Clear();
-                cmbStartQuest.Items.AddRange(QuestBase.Names);
+                cmbStartQuest.Items.AddRange(QuestDescriptor.Names);
 
                 break;
             case ConditionType.QuestInProgress:
                 grpQuestInProgress.Show();
                 cmbQuestInProgress.Items.Clear();
-                cmbQuestInProgress.Items.AddRange(QuestBase.Names);
+                cmbQuestInProgress.Items.AddRange(QuestDescriptor.Names);
 
                 break;
             case ConditionType.QuestCompleted:
                 grpQuestCompleted.Show();
                 cmbCompletedQuest.Items.Clear();
-                cmbCompletedQuest.Items.AddRange(QuestBase.Names);
+                cmbCompletedQuest.Items.AddRange(QuestDescriptor.Names);
 
                 break;
             case ConditionType.NoNpcsOnMap:
@@ -650,7 +650,7 @@ public partial class EventCommandConditionalBranch : UserControl
     private void cmbQuestInProgress_SelectedIndexChanged(object sender, EventArgs e)
     {
         cmbQuestTask.Items.Clear();
-        var quest = QuestBase.Get(QuestBase.IdFromList(cmbQuestInProgress.SelectedIndex));
+        var quest = QuestDescriptor.Get(QuestDescriptor.IdFromList(cmbQuestInProgress.SelectedIndex));
         if (quest != null)
         {
             foreach (var task in quest.Tasks)
@@ -1309,12 +1309,12 @@ public partial class EventCommandConditionalBranch : UserControl
 
     private void SetupFormValues(CanStartQuestCondition condition)
     {
-        cmbStartQuest.SelectedIndex = QuestBase.ListIndex(condition.QuestId);
+        cmbStartQuest.SelectedIndex = QuestDescriptor.ListIndex(condition.QuestId);
     }
 
     private void SetupFormValues(QuestInProgressCondition condition)
     {
-        cmbQuestInProgress.SelectedIndex = QuestBase.ListIndex(condition.QuestId);
+        cmbQuestInProgress.SelectedIndex = QuestDescriptor.ListIndex(condition.QuestId);
         cmbTaskModifier.SelectedIndex = (int)condition.Progress;
         if (cmbTaskModifier.SelectedIndex == -1)
         {
@@ -1324,7 +1324,7 @@ public partial class EventCommandConditionalBranch : UserControl
         if (cmbTaskModifier.SelectedIndex != 0)
         {
             //Get Quest Task Here
-            var quest = QuestBase.Get(QuestBase.IdFromList(cmbQuestInProgress.SelectedIndex));
+            var quest = QuestDescriptor.Get(QuestDescriptor.IdFromList(cmbQuestInProgress.SelectedIndex));
             if (quest != null)
             {
                 for (var i = 0; i < quest.Tasks.Count; i++)
@@ -1356,7 +1356,7 @@ public partial class EventCommandConditionalBranch : UserControl
 
     private void SetupFormValues(QuestCompletedCondition condition)
     {
-        cmbCompletedQuest.SelectedIndex = QuestBase.ListIndex(condition.QuestId);
+        cmbCompletedQuest.SelectedIndex = QuestDescriptor.ListIndex(condition.QuestId);
     }
 
     private void SetupFormValues(GenderIsCondition condition)
@@ -1512,18 +1512,18 @@ public partial class EventCommandConditionalBranch : UserControl
 
     private void SaveFormValues(CanStartQuestCondition condition)
     {
-        condition.QuestId = QuestBase.IdFromList(cmbStartQuest.SelectedIndex);
+        condition.QuestId = QuestDescriptor.IdFromList(cmbStartQuest.SelectedIndex);
     }
 
     private void SaveFormValues(QuestInProgressCondition condition)
     {
-        condition.QuestId = QuestBase.IdFromList(cmbQuestInProgress.SelectedIndex);
+        condition.QuestId = QuestDescriptor.IdFromList(cmbQuestInProgress.SelectedIndex);
         condition.Progress = (QuestProgressState)cmbTaskModifier.SelectedIndex;
         condition.TaskId = Guid.Empty;
         if (cmbTaskModifier.SelectedIndex != 0)
         {
             //Get Quest Task Here
-            var quest = QuestBase.Get(QuestBase.IdFromList(cmbQuestInProgress.SelectedIndex));
+            var quest = QuestDescriptor.Get(QuestDescriptor.IdFromList(cmbQuestInProgress.SelectedIndex));
             if (quest != null)
             {
                 if (cmbQuestTask.SelectedIndex > -1)
@@ -1536,7 +1536,7 @@ public partial class EventCommandConditionalBranch : UserControl
 
     private void SaveFormValues(QuestCompletedCondition condition)
     {
-        condition.QuestId = QuestBase.IdFromList(cmbCompletedQuest.SelectedIndex);
+        condition.QuestId = QuestDescriptor.IdFromList(cmbCompletedQuest.SelectedIndex);
     }
 
     private void SaveFormValues(NoNpcsOnMapCondition condition)

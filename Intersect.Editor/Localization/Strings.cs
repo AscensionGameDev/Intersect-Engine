@@ -245,15 +245,15 @@ public static partial class Strings
 
     public static string GetEventConditionalDesc(CanStartQuestCondition condition)
     {
-        return EventConditionDesc.startquest.ToString(QuestBase.GetName(condition.QuestId));
+        return EventConditionDesc.startquest.ToString(QuestDescriptor.GetName(condition.QuestId));
     }
 
     public static string GetEventConditionalDesc(QuestInProgressCondition condition)
     {
-        var quest = QuestBase.Get(condition.QuestId);
+        var quest = QuestDescriptor.Get(condition.QuestId);
         if (quest != null)
         {
-            QuestBase.QuestTask task = null;
+            QuestTaskDescriptor task = null;
             foreach (var tsk in quest.Tasks)
             {
                 if (tsk.Id == condition.TaskId)
@@ -270,31 +270,31 @@ public static partial class Strings
             {
                 case QuestProgressState.BeforeTask:
                     return EventConditionDesc.questinprogress.ToString(
-                        QuestBase.GetName(condition.QuestId),
+                        QuestDescriptor.GetName(condition.QuestId),
                         EventConditionDesc.beforetask.ToString(taskName)
                     );
                 case QuestProgressState.AfterTask:
                     return EventConditionDesc.questinprogress.ToString(
-                        QuestBase.GetName(condition.QuestId),
+                        QuestDescriptor.GetName(condition.QuestId),
                         EventConditionDesc.aftertask.ToString(taskName)
                     );
                 case QuestProgressState.OnTask:
                     return EventConditionDesc.questinprogress.ToString(
-                        QuestBase.GetName(condition.QuestId), EventConditionDesc.ontask.ToString(taskName)
+                        QuestDescriptor.GetName(condition.QuestId), EventConditionDesc.ontask.ToString(taskName)
                     );
                 default: //On Any task
                     return EventConditionDesc.questinprogress.ToString(
-                        QuestBase.GetName(condition.QuestId), EventConditionDesc.onanytask
+                        QuestDescriptor.GetName(condition.QuestId), EventConditionDesc.onanytask
                     );
             }
         }
 
-        return EventConditionDesc.questinprogress.ToString(QuestBase.GetName(condition.QuestId));
+        return EventConditionDesc.questinprogress.ToString(QuestDescriptor.GetName(condition.QuestId));
     }
 
     public static string GetEventConditionalDesc(QuestCompletedCondition condition)
     {
-        return EventConditionDesc.questcompleted.ToString(QuestBase.GetName(condition.QuestId));
+        return EventConditionDesc.questcompleted.ToString(QuestDescriptor.GetName(condition.QuestId));
     }
 
     public static string GetEventConditionalDesc(NoNpcsOnMapCondition condition)
