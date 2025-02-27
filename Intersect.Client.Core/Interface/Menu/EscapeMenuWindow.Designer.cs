@@ -41,10 +41,10 @@ public partial class EscapeMenuWindow
             button.Dock = Pos.Left;
 
             var buttonName = button.Name;
-            button.SetStateTexture(ComponentState.Normal, $"ingame{buttonName}.png");
-            button.SetStateTexture(ComponentState.Active, $"ingame{buttonName}_clicked.png");
-            button.SetStateTexture(ComponentState.Disabled, $"ingame{buttonName}_disabled.png");
-            button.SetStateTexture(ComponentState.Hovered, $"ingame{buttonName}_hovered.png");
+            foreach (var componentState in Enum.GetValues<ComponentState>())
+            {
+                button.SetStateTexture(componentState, $"{nameof(EscapeMenuWindow)}{buttonName}_{componentState}.png");
+            }
         }
 
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
