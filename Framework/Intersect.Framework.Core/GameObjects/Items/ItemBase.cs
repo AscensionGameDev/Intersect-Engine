@@ -6,7 +6,6 @@ using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.GameObjects.Ranges;
 using Intersect.Models;
 using Intersect.Utilities;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects;
@@ -483,34 +482,4 @@ public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
         Effects = [];
         Color = new Color(255, 255, 255, 255);
     }
-}
-
-[Owned]
-public partial class ConsumableData
-{
-    public ConsumableType Type { get; set; }
-
-    public long Value { get; set; }
-
-    public int Percentage { get; set; }
-}
-
-[Owned]
-public partial class EffectData
-{
-    public EffectData()
-    {
-        Type = default;
-        Percentage = default;
-    }
-
-    public EffectData(ItemEffect type, int percentage)
-    {
-        Type = type;
-        Percentage = percentage;
-    }
-
-    public ItemEffect Type { get; set; }
-
-    public int Percentage { get; set; }
 }
