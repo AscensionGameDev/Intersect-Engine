@@ -11,6 +11,7 @@ using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.Attributes;
+using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 using Microsoft.Extensions.Logging;
@@ -1378,7 +1379,7 @@ public static partial class Graphics
 
                 if (tmpMap.Attributes[x, y].Type == MapAttributeType.Resource && !upper && !alternate)
                 {
-                    var resource = ResourceBase.Get(((MapResourceAttribute) tmpMap.Attributes[x, y]).ResourceId);
+                    var resource = ResourceDescriptor.Get(((MapResourceAttribute) tmpMap.Attributes[x, y]).ResourceId);
                     if (resource == null)
                     {
                         continue;

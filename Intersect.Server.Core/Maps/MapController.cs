@@ -7,6 +7,7 @@ using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
@@ -36,7 +37,7 @@ namespace Intersect.Server.Maps;
 /// </summary>
 public partial class MapController : MapDescriptor
 {
-    public static void DespawnInstancesOf(ResourceBase resource)
+    public static void DespawnInstancesOf(ResourceDescriptor resource)
     {
         var allMapControllers = Lookup.Values.OfType<MapController>().ToArray();
         foreach (var map in allMapControllers)
@@ -372,14 +373,14 @@ public partial class MapController : MapDescriptor
     }
 
     /// <summary>
-    /// Despawns resources of a given <see cref="ResourceBase"/> from all instances of this controller.
+    /// Despawns resources of a given <see cref="ResourceDescriptor"/> from all instances of this controller.
     /// </summary>
-    /// <param name="resourceBase">The <see cref="ResourceBase"/> to despawn</param>
-    public void DespawnResourceAcrossInstances(ResourceBase resourceBase)
+    /// <param name="resourceDescriptor">The <see cref="ResourceDescriptor"/> to despawn</param>
+    public void DespawnResourceAcrossInstances(ResourceDescriptor resourceDescriptor)
     {
         foreach (var entity in GetEntitiesOnAllInstances())
         {
-            if (entity is Resource res && res.Descriptor == resourceBase)
+            if (entity is Resource res && res.Descriptor == resourceDescriptor)
             {
                 lock (res.EntityLock)
                 {

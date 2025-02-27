@@ -8,6 +8,7 @@ using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 using EventDescriptor = Intersect.Framework.Core.GameObjects.Events.EventDescriptor;
@@ -18,11 +19,11 @@ namespace Intersect.Editor.Forms.Editors;
 public partial class FrmResource : EditorForm
 {
 
-    private List<ResourceBase> mChanged = [];
+    private List<ResourceDescriptor> mChanged = [];
 
     private string mCopiedItem;
 
-    private ResourceBase mEditorItem;
+    private ResourceDescriptor mEditorItem;
 
     private Bitmap mEndBitmap;
 
@@ -61,7 +62,7 @@ public partial class FrmResource : EditorForm
     }
     private void AssignEditorItem(Guid id)
     {
-        mEditorItem = ResourceBase.Get(id);
+        mEditorItem = ResourceDescriptor.Get(id);
         UpdateEditor();
     }
 
@@ -70,7 +71,7 @@ public partial class FrmResource : EditorForm
         if (type == GameObjectType.Resource)
         {
             InitEditor();
-            if (mEditorItem != null && !ResourceBase.Lookup.Values.Contains(mEditorItem))
+            if (mEditorItem != null && !ResourceDescriptor.Lookup.Values.Contains(mEditorItem))
             {
                 mEditorItem = null;
                 UpdateEditor();
@@ -892,15 +893,15 @@ public partial class FrmResource : EditorForm
     {
         //Collect folders
         var mFolders = new List<string>();
-        foreach (var itm in ResourceBase.Lookup)
+        foreach (var itm in ResourceDescriptor.Lookup)
         {
-            if (!string.IsNullOrEmpty(((ResourceBase) itm.Value).Folder) &&
-                !mFolders.Contains(((ResourceBase) itm.Value).Folder))
+            if (!string.IsNullOrEmpty(((ResourceDescriptor) itm.Value).Folder) &&
+                !mFolders.Contains(((ResourceDescriptor) itm.Value).Folder))
             {
-                mFolders.Add(((ResourceBase) itm.Value).Folder);
-                if (!mKnownFolders.Contains(((ResourceBase) itm.Value).Folder))
+                mFolders.Add(((ResourceDescriptor) itm.Value).Folder);
+                if (!mKnownFolders.Contains(((ResourceDescriptor) itm.Value).Folder))
                 {
-                    mKnownFolders.Add(((ResourceBase) itm.Value).Folder);
+                    mKnownFolders.Add(((ResourceDescriptor) itm.Value).Folder);
                 }
             }
         }
@@ -911,8 +912,8 @@ public partial class FrmResource : EditorForm
         cmbFolder.Items.Add("");
         cmbFolder.Items.AddRange(mKnownFolders.ToArray());
 
-        var items = ResourceBase.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
-            new KeyValuePair<string, string>(((ResourceBase)pair.Value)?.Name ?? Models.DatabaseObject<ResourceBase>.Deleted, ((ResourceBase)pair.Value)?.Folder ?? ""))).ToArray();
+        var items = ResourceDescriptor.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
+            new KeyValuePair<string, string>(((ResourceDescriptor)pair.Value)?.Name ?? Models.DatabaseObject<ResourceDescriptor>.Deleted, ((ResourceDescriptor)pair.Value)?.Folder ?? ""))).ToArray();
         lstGameObjects.Repopulate(items, mFolders, btnAlphabetical.Checked, CustomSearch(), txtSearch.Text);
     }
 

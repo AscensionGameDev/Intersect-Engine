@@ -9,6 +9,7 @@ using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.Attributes;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.GameObjects;
 using Intersect.Localization;
 using Intersect.Utilities;
@@ -528,7 +529,7 @@ public partial class FrmMapLayers : DockContent
     private void rbResource_CheckedChanged(object sender, EventArgs e)
     {
         cmbResourceAttribute.Items.Clear();
-        cmbResourceAttribute.Items.AddRange(ResourceBase.Names);
+        cmbResourceAttribute.Items.AddRange(ResourceDescriptor.Names);
         if (cmbResourceAttribute.Items.Count > 0)
         {
             cmbResourceAttribute.SelectedIndex = 0;
@@ -731,7 +732,7 @@ public partial class FrmMapLayers : DockContent
 
             case MapAttributeType.Resource:
                 var resourceAttribute = attribute as MapResourceAttribute;
-                resourceAttribute.ResourceId = ResourceBase.IdFromList(cmbResourceAttribute.SelectedIndex);
+                resourceAttribute.ResourceId = ResourceDescriptor.IdFromList(cmbResourceAttribute.SelectedIndex);
                 resourceAttribute.SpawnLevel = (byte)(rbLevel1.Checked ? 0 : 1);
                 break;
 

@@ -7,6 +7,7 @@ using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.Attributes;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
@@ -677,7 +678,7 @@ public partial class MapInstance : IMapInstance
 
         if (resourceSpawnInstance.Entity == default)
         {
-            if (ResourceBase.TryGet(spawn.ResourceId, out var resourceDescriptor))
+            if (ResourceDescriptor.TryGet(spawn.ResourceId, out var resourceDescriptor))
             {
                 var res = new Resource(resourceDescriptor)
                 {

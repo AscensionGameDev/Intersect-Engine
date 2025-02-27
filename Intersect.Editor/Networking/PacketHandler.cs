@@ -11,6 +11,7 @@ using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.Network;
@@ -563,14 +564,14 @@ internal sealed partial class PacketHandler
             case GameObjectType.Resource:
                 if (deleted)
                 {
-                    var res = ResourceBase.Get(id);
+                    var res = ResourceDescriptor.Get(id);
                     res.Delete();
                 }
                 else
                 {
-                    var res = new ResourceBase(id);
+                    var res = new ResourceDescriptor(id);
                     res.Load(json);
-                    ResourceBase.Lookup.Set(id, res);
+                    ResourceDescriptor.Lookup.Set(id, res);
                 }
 
                 break;

@@ -17,6 +17,7 @@ using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
+using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
@@ -664,7 +665,7 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.Resource:
-                ResourceBase.Lookup.Clear();
+                ResourceDescriptor.Lookup.Clear();
 
                 break;
             case GameObjectType.Shop:
@@ -776,7 +777,7 @@ public static partial class DbInterface
                     case GameObjectType.Resource:
                         foreach (var res in context.Resources)
                         {
-                            ResourceBase.Lookup.Set(res.Id, res);
+                            ResourceDescriptor.Lookup.Set(res.Id, res);
                         }
 
                         break;
@@ -1016,7 +1017,7 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.Resource:
-                dbObj = new ResourceBase(predefinedid);
+                dbObj = new ResourceDescriptor(predefinedid);
 
                 break;
             case GameObjectType.Shop:
@@ -1128,8 +1129,8 @@ public static partial class DbInterface
                         break;
 
                     case GameObjectType.Resource:
-                        context.Resources.Add((ResourceBase)dbObj);
-                        ResourceBase.Lookup.Set(dbObj.Id, dbObj);
+                        context.Resources.Add((ResourceDescriptor)dbObj);
+                        ResourceDescriptor.Lookup.Set(dbObj.Id, dbObj);
 
                         break;
 
@@ -1282,7 +1283,7 @@ public static partial class DbInterface
 
                         break;
                     case GameObjectType.Resource:
-                        context.Resources.Remove((ResourceBase)gameObject);
+                        context.Resources.Remove((ResourceDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Shop:
@@ -1447,7 +1448,7 @@ public static partial class DbInterface
 
                         break;
                     case GameObjectType.Resource:
-                        context.Resources.Update((ResourceBase)gameObject);
+                        context.Resources.Update((ResourceDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Shop:

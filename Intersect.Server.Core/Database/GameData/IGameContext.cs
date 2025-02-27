@@ -3,6 +3,7 @@ using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.Server.Maps;
@@ -36,7 +37,7 @@ public interface IGameContext : IDbContext
 
     DbSet<QuestDescriptor> Quests { get; set; }
 
-    DbSet<ResourceBase> Resources { get; set; }
+    DbSet<ResourceDescriptor> Resources { get; set; }
 
     DbSet<ShopBase> Shops { get; set; }
 

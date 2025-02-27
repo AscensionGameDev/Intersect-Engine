@@ -5,6 +5,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
 
@@ -19,14 +20,14 @@ public partial class Resource : Entity, IResource
     private bool _waitingForTilesets;
 
     private bool _isDead;
-    private ResourceBase? _descriptor;
+    private ResourceDescriptor? _descriptor;
 
     public Resource(Guid id, ResourceEntityPacket packet) : base(id, packet, EntityType.Resource)
     {
         mRenderPriority = 0;
     }
 
-    public ResourceBase? Descriptor
+    public ResourceDescriptor? Descriptor
     {
         get => _descriptor;
         set => _descriptor = value;
@@ -109,7 +110,7 @@ public partial class Resource : Entity, IResource
 
         IsDead = resourceEntityPacket.IsDead;
 
-        if (!ResourceBase.TryGet(resourceEntityPacket.ResourceId, out _descriptor))
+        if (!ResourceDescriptor.TryGet(resourceEntityPacket.ResourceId, out _descriptor))
         {
             return;
         }
@@ -117,7 +118,7 @@ public partial class Resource : Entity, IResource
         UpdateFromDescriptor(_descriptor);
     }
 
-    private void UpdateFromDescriptor(ResourceBase? descriptor)
+    private void UpdateFromDescriptor(ResourceDescriptor? descriptor)
     {
         if (descriptor == null)
         {
@@ -153,7 +154,7 @@ public partial class Resource : Entity, IResource
 
         if (Descriptor is { IsDeleted: true } deletedDescriptor)
         {
-            _ = ResourceBase.TryGet(deletedDescriptor.Id, out _descriptor);
+            _ = ResourceDescriptor.TryGet(deletedDescriptor.Id, out _descriptor);
             UpdateFromDescriptor(_descriptor);
         }
 

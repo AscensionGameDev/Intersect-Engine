@@ -1,5 +1,6 @@
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
@@ -15,9 +16,9 @@ namespace Intersect.Server.Entities;
 
 public partial class Resource : Entity
 {
-    public readonly ResourceBase Descriptor;
+    public readonly ResourceDescriptor Descriptor;
 
-    public Resource(ResourceBase descriptor)
+    public Resource(ResourceDescriptor descriptor)
     {
         ArgumentNullException.ThrowIfNull(descriptor);
 

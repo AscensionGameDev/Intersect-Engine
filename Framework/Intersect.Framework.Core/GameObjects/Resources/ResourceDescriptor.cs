@@ -1,31 +1,13 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.GameObjects;
 using Intersect.Models;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
-namespace Intersect.GameObjects;
+namespace Intersect.Framework.Core.GameObjects.Resources;
 
-[Owned]
-public partial class ResourceState
-{
-    public string Graphic { get; set; } = null;
-
-    public bool RenderBelowEntities { get; set; }
-
-    public bool GraphicFromTileset { get; set; }
-
-    public int X { get; set; }
-
-    public int Y { get; set; }
-
-    public int Width { get; set; }
-
-    public int Height { get; set; }
-}
-
-public partial class ResourceBase : DatabaseObject<ResourceBase>, IFolderable
+public partial class ResourceDescriptor : DatabaseObject<ResourceDescriptor>, IFolderable
 {
     [NotMapped]
     public List<Drop> Drops { get; set; } = [];
@@ -36,25 +18,25 @@ public partial class ResourceBase : DatabaseObject<ResourceBase>, IFolderable
     public string CannotHarvestMessage { get; set; } = string.Empty;
 
     [JsonConstructor]
-    public ResourceBase(Guid id) : base(id)
+    public ResourceDescriptor(Guid id) : base(id)
     {
         Name = "New Resource";
-        Initial = new ResourceState();
-        Exhausted = new ResourceState();
+        Initial = new ResourceStateDescriptor();
+        Exhausted = new ResourceStateDescriptor();
     }
 
     //EF wants NO PARAMETERS!!!!!
-    public ResourceBase()
+    public ResourceDescriptor()
     {
         Name = "New Resource";
-        Initial = new ResourceState();
-        Exhausted = new ResourceState();
+        Initial = new ResourceStateDescriptor();
+        Exhausted = new ResourceStateDescriptor();
     }
 
     // Graphics
-    public ResourceState Initial { get; set; }
+    public ResourceStateDescriptor Initial { get; set; }
 
-    public ResourceState Exhausted { get; set; }
+    public ResourceStateDescriptor Exhausted { get; set; }
 
     [Column("Animation")]
     public Guid AnimationId { get; set; }
