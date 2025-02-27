@@ -12,12 +12,10 @@ using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
-using Intersect.Core;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Intersect.Utilities;
-using Microsoft.Extensions.Logging;
 using static Intersect.Client.Localization.Strings;
 
 namespace Intersect.Client.Interface.Game.Inventory;
@@ -463,12 +461,6 @@ public partial class InventoryItem : ImagePanel
         // empty texture to reload on update
         _textureLoaded = string.Empty;
     }
-
-    public void HideIcon() => _iconImage.IsVisibleInParent = false;
-
-    public void ShowQuantity() => _quantityLabel.IsVisibleInParent = true;
-
-    public void HideQuantity() => _quantityLabel.IsVisibleInParent = false;
 
     public FloatRect RenderBounds()
     {
