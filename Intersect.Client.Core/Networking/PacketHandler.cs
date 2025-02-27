@@ -1725,7 +1725,7 @@ internal sealed partial class PacketHandler
     {
         if (!packet.Close)
         {
-            Globals.ActiveCraftingTable = new CraftingTableBase();
+            Globals.ActiveCraftingTable = new CraftingTableDescriptor();
             Globals.ActiveCraftingTable.Load(packet.TableData);
             Interface.Interface.EnqueueInGame(gameInterface => gameInterface.NotifyOpenCraftingTable(packet.JournalMode));
         }

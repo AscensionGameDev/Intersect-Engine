@@ -100,7 +100,7 @@ public static partial class Globals
     //Scene management
 
     //Only need 1 table, and that is the one we see at a given moment in time.
-    public static CraftingTableBase? ActiveCraftingTable { get; set; }
+    public static CraftingTableDescriptor? ActiveCraftingTable { get; set; }
 
     public static int AnimationFrame { get; set; }
 

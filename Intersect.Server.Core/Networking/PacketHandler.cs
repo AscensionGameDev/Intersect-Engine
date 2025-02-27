@@ -1991,7 +1991,7 @@ internal sealed partial class PacketHandler
                 return;
             }
 
-            if (!CraftBase.TryGet(packet.CraftId, out var craftDescriptor))
+            if (!CraftingRecipeDescriptor.TryGet(packet.CraftId, out var craftDescriptor))
             {
                 ApplicationContext.Context.Value?.Logger.LogWarning($"Player {player.Id} tried to craft {packet.CraftId} which does not exist.");
                 return;

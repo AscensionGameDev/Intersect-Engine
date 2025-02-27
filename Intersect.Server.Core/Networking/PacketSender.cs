@@ -1695,17 +1695,17 @@ public static partial class PacketSender
     }
 
     //CraftingTablePacket
-    public static void SendOpenCraftingTable(Player player, CraftingTableBase table, bool journalMode)
+    public static void SendOpenCraftingTable(Player player, CraftingTableDescriptor table, bool journalMode)
     {
         if (table != null)
         {
             //Use Json To Cheaply Clone The Table
-            var playerTable = JsonConvert.DeserializeObject<CraftingTableBase>(table.JsonData);
+            var playerTable = JsonConvert.DeserializeObject<CraftingTableDescriptor>(table.JsonData);
 
             //Strip our the items the player can't craft
             foreach (var craft in table.Crafts)
             {
-                var craftBase = CraftBase.Get(craft);
+                var craftBase = CraftingRecipeDescriptor.Get(craft);
                 if (!(craftBase != null && Conditions.MeetsConditionLists(craftBase.CraftingRequirements, player, null)))
                 {
                     playerTable.Crafts.Remove(craft);
@@ -1792,14 +1792,14 @@ public static partial class PacketSender
 
                 break;
             case GameObjectType.CraftTables:
-                foreach (var obj in CraftingTableBase.Lookup)
+                foreach (var obj in CraftingTableDescriptor.Lookup)
                 {
                     SendGameObject(client, obj.Value, false, false, packetList);
                 }
 
                 break;
             case GameObjectType.Crafts:
-                foreach (var obj in CraftBase.Lookup)
+                foreach (var obj in CraftingRecipeDescriptor.Lookup)
                 {
                     SendGameObject(client, obj.Value, false, false, packetList);
                 }

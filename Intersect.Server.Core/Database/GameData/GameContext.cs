@@ -22,9 +22,9 @@ public abstract partial class GameContext : IntersectDbContext<GameContext>, IGa
     public DbSet<AnimationDescriptor> Animations { get; set; }
 
     //Crafting
-    public DbSet<CraftBase> Crafts { get; set; }
+    public DbSet<CraftingRecipeDescriptor> Crafts { get; set; }
 
-    public DbSet<CraftingTableBase> CraftingTables { get; set; }
+    public DbSet<CraftingTableDescriptor> CraftingTables { get; set; }
 
     //Classes
     public DbSet<ClassDescriptor> Classes { get; set; }

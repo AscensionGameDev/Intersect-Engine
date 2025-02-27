@@ -606,14 +606,14 @@ internal sealed partial class PacketHandler
             case GameObjectType.CraftTables:
                 if (deleted)
                 {
-                    var cft = CraftingTableBase.Get(id);
+                    var cft = CraftingTableDescriptor.Get(id);
                     cft.Delete();
                 }
                 else
                 {
-                    var cft = new CraftingTableBase(id);
+                    var cft = new CraftingTableDescriptor(id);
                     cft.Load(json);
-                    CraftingTableBase.Lookup.Set(id, cft);
+                    CraftingTableDescriptor.Lookup.Set(id, cft);
                 }
 
                 break;
@@ -621,14 +621,14 @@ internal sealed partial class PacketHandler
             case GameObjectType.Crafts:
                 if (deleted)
                 {
-                    var cft = CraftBase.Get(id);
+                    var cft = CraftingRecipeDescriptor.Get(id);
                     cft.Delete();
                 }
                 else
                 {
-                    var cft = new CraftBase(id);
+                    var cft = new CraftingRecipeDescriptor(id);
                     cft.Load(json);
-                    CraftBase.Lookup.Set(id, cft);
+                    CraftingRecipeDescriptor.Lookup.Set(id, cft);
                 }
 
                 break;

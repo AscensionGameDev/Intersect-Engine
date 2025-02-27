@@ -674,11 +674,11 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.CraftTables:
-                CraftingTableBase.Lookup.Clear();
+                CraftingTableDescriptor.Lookup.Clear();
 
                 break;
             case GameObjectType.Crafts:
-                CraftBase.Lookup.Clear();
+                CraftingRecipeDescriptor.Lookup.Clear();
 
                 break;
             case GameObjectType.Map:
@@ -795,14 +795,14 @@ public static partial class DbInterface
                     case GameObjectType.CraftTables:
                         foreach (var craft in context.CraftingTables)
                         {
-                            CraftingTableBase.Lookup.Set(craft.Id, craft);
+                            CraftingTableDescriptor.Lookup.Set(craft.Id, craft);
                         }
 
                         break;
                     case GameObjectType.Crafts:
                         foreach (var craft in context.Crafts)
                         {
-                            CraftBase.Lookup.Set(craft.Id, craft);
+                            CraftingRecipeDescriptor.Lookup.Set(craft.Id, craft);
                         }
 
                         break;
@@ -1026,11 +1026,11 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.CraftTables:
-                dbObj = new CraftingTableBase(predefinedid);
+                dbObj = new CraftingTableDescriptor(predefinedid);
 
                 break;
             case GameObjectType.Crafts:
-                dbObj = new CraftBase(predefinedid);
+                dbObj = new CraftingRecipeDescriptor(predefinedid);
 
                 break;
             case GameObjectType.Map:
@@ -1144,14 +1144,14 @@ public static partial class DbInterface
                         break;
 
                     case GameObjectType.CraftTables:
-                        context.CraftingTables.Add((CraftingTableBase)dbObj);
-                        CraftingTableBase.Lookup.Set(dbObj.Id, dbObj);
+                        context.CraftingTables.Add((CraftingTableDescriptor)dbObj);
+                        CraftingTableDescriptor.Lookup.Set(dbObj.Id, dbObj);
 
                         break;
 
                     case GameObjectType.Crafts:
-                        context.Crafts.Add((CraftBase)dbObj);
-                        CraftBase.Lookup.Set(dbObj.Id, dbObj);
+                        context.Crafts.Add((CraftingRecipeDescriptor)dbObj);
+                        CraftingRecipeDescriptor.Lookup.Set(dbObj.Id, dbObj);
 
                         break;
 
@@ -1292,11 +1292,11 @@ public static partial class DbInterface
 
                         break;
                     case GameObjectType.CraftTables:
-                        context.CraftingTables.Remove((CraftingTableBase)gameObject);
+                        context.CraftingTables.Remove((CraftingTableDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Crafts:
-                        context.Crafts.Remove((CraftBase)gameObject);
+                        context.Crafts.Remove((CraftingRecipeDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Map:
@@ -1457,11 +1457,11 @@ public static partial class DbInterface
 
                         break;
                     case GameObjectType.CraftTables:
-                        context.CraftingTables.Update((CraftingTableBase)gameObject);
+                        context.CraftingTables.Update((CraftingTableDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Crafts:
-                        context.Crafts.Update((CraftBase)gameObject);
+                        context.Crafts.Update((CraftingRecipeDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Map:

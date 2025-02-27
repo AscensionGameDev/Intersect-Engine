@@ -916,12 +916,12 @@ internal sealed partial class NetworkedPacketHandler
                     break;
 
                 case GameObjectType.CraftTables:
-                    obj = DatabaseObject<CraftingTableBase>.Lookup.Get(id);
+                    obj = DatabaseObject<CraftingTableDescriptor>.Lookup.Get(id);
 
                     break;
 
                 case GameObjectType.Crafts:
-                    obj = DatabaseObject<CraftBase>.Lookup.Get(id);
+                    obj = DatabaseObject<CraftingRecipeDescriptor>.Lookup.Get(id);
 
                     break;
 
@@ -1048,12 +1048,12 @@ internal sealed partial class NetworkedPacketHandler
                     break;
 
                 case GameObjectType.CraftTables:
-                    obj = DatabaseObject<CraftingTableBase>.Lookup.Get(id);
+                    obj = DatabaseObject<CraftingTableDescriptor>.Lookup.Get(id);
 
                     break;
 
                 case GameObjectType.Crafts:
-                    obj = DatabaseObject<CraftBase>.Lookup.Get(id);
+                    obj = DatabaseObject<CraftingRecipeDescriptor>.Lookup.Get(id);
 
                     break;
 

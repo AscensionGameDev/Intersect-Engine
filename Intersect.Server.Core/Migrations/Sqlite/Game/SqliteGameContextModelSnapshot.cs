@@ -17,6 +17,77 @@ namespace Intersect.Server.Migrations.Sqlite.Game
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
 
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Crafting.CraftingRecipeDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Event");
+
+                    b.Property<int>("FailureChance")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Folder")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IngredientsJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Ingredients");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ItemLossChance")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("JsonCraftingRequirements")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("CraftingRequirements");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Time")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("TimeCreated")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Crafts");
+                });
+
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Crafting.CraftingTableDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CraftsJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Crafts");
+
+                    b.Property<string>("Folder")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(0);
+
+                    b.Property<long>("TimeCreated")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CraftingTables");
+                });
+
             modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.GuildVariableDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
@@ -267,77 +338,6 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.HasKey("Id");
 
                     b.ToTable("Classes");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.Crafting.CraftBase", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("Event");
-
-                    b.Property<int>("FailureChance")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Folder")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("IngredientsJson")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("Ingredients");
-
-                    b.Property<Guid>("ItemId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ItemLossChance")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("JsonCraftingRequirements")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("CraftingRequirements");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT")
-                        .HasColumnOrder(0);
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Time")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Crafts");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.CraftingTableBase", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CraftsJson")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("Crafts");
-
-                    b.Property<string>("Folder")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT")
-                        .HasColumnOrder(0);
-
-                    b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CraftingTables");
                 });
 
             modelBuilder.Entity("Intersect.GameObjects.EquipmentProperties", b =>

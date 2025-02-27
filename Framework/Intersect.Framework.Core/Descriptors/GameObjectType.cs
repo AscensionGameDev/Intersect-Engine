@@ -36,10 +36,10 @@ public enum GameObjectType
     [GameObjectInfo(typeof(SpellBase), "spells")]
     Spell,
 
-    [GameObjectInfo(typeof(CraftingTableBase), "crafting_tables")]
+    [GameObjectInfo(typeof(CraftingTableDescriptor), "crafting_tables")]
     CraftTables,
 
-    [GameObjectInfo(typeof(CraftBase), "crafts")]
+    [GameObjectInfo(typeof(CraftingRecipeDescriptor), "crafts")]
     Crafts,
 
     [GameObjectInfo(typeof(MapBase), "maps")]

@@ -1264,7 +1264,7 @@ public static partial class CommandProcessing
         Stack<CommandInstance> callStack
     )
     {
-        player.OpenCraftingTable(CraftingTableBase.Get(command.CraftingTableId), command.JournalMode);
+        player.OpenCraftingTable(CraftingTableDescriptor.Get(command.CraftingTableId), command.JournalMode);
         callStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Crafting;
     }
 

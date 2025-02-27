@@ -15,11 +15,11 @@ namespace Intersect.Editor.Forms.Editors;
 public partial class FrmCrafts : EditorForm
 {
 
-    private List<CraftBase> mChanged = new List<CraftBase>();
+    private List<CraftingRecipeDescriptor> mChanged = new List<CraftingRecipeDescriptor>();
 
     private string mCopiedItem;
 
-    private CraftBase mEditorItem;
+    private CraftingRecipeDescriptor mEditorItem;
 
     private List<string> mKnownFolders = new List<string>();
 
@@ -47,7 +47,7 @@ public partial class FrmCrafts : EditorForm
     }
     private void AssignEditorItem(Guid id)
     {
-        mEditorItem = CraftBase.Get(id);
+        mEditorItem = CraftingRecipeDescriptor.Get(id);
         UpdateEditor();
     }
 
@@ -56,7 +56,7 @@ public partial class FrmCrafts : EditorForm
         if (type == GameObjectType.Crafts)
         {
             InitEditor();
-            if (mEditorItem != null && !DatabaseObject<CraftBase>.Lookup.Values.Contains(mEditorItem))
+            if (mEditorItem != null && !DatabaseObject<CraftingRecipeDescriptor>.Lookup.Values.Contains(mEditorItem))
             {
                 mEditorItem = null;
                 UpdateEditor();
@@ -483,15 +483,15 @@ public partial class FrmCrafts : EditorForm
     {
         //Collect folders
         var mFolders = new List<string>();
-        foreach (var itm in CraftBase.Lookup)
+        foreach (var itm in CraftingRecipeDescriptor.Lookup)
         {
-            if (!string.IsNullOrEmpty(((CraftBase) itm.Value).Folder) &&
-                !mFolders.Contains(((CraftBase) itm.Value).Folder))
+            if (!string.IsNullOrEmpty(((CraftingRecipeDescriptor) itm.Value).Folder) &&
+                !mFolders.Contains(((CraftingRecipeDescriptor) itm.Value).Folder))
             {
-                mFolders.Add(((CraftBase) itm.Value).Folder);
-                if (!mKnownFolders.Contains(((CraftBase) itm.Value).Folder))
+                mFolders.Add(((CraftingRecipeDescriptor) itm.Value).Folder);
+                if (!mKnownFolders.Contains(((CraftingRecipeDescriptor) itm.Value).Folder))
                 {
-                    mKnownFolders.Add(((CraftBase) itm.Value).Folder);
+                    mKnownFolders.Add(((CraftingRecipeDescriptor) itm.Value).Folder);
                 }
             }
         }
@@ -502,8 +502,8 @@ public partial class FrmCrafts : EditorForm
         cmbFolder.Items.Add("");
         cmbFolder.Items.AddRange(mKnownFolders.ToArray());
 
-        var items = CraftBase.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
-            new KeyValuePair<string, string>(((CraftBase)pair.Value)?.Name ?? Models.DatabaseObject<CraftBase>.Deleted, ((CraftBase)pair.Value)?.Folder ?? ""))).ToArray();
+        var items = CraftingRecipeDescriptor.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
+            new KeyValuePair<string, string>(((CraftingRecipeDescriptor)pair.Value)?.Name ?? Models.DatabaseObject<CraftingRecipeDescriptor>.Deleted, ((CraftingRecipeDescriptor)pair.Value)?.Folder ?? ""))).ToArray();
         lstGameObjects.Repopulate(items, mFolders, btnAlphabetical.Checked, CustomSearch(), txtSearch.Text);
     }
 

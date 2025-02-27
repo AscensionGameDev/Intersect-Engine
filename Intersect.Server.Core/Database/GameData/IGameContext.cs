@@ -12,9 +12,9 @@ public interface IGameContext : IDbContext
 {
     DbSet<AnimationDescriptor> Animations { get; set; }
 
-    DbSet<CraftBase> Crafts { get; set; }
+    DbSet<CraftingRecipeDescriptor> Crafts { get; set; }
 
-    DbSet<CraftingTableBase> CraftingTables { get; set; }
+    DbSet<CraftingTableDescriptor> CraftingTables { get; set; }
 
     DbSet<ClassDescriptor> Classes { get; set; }
 

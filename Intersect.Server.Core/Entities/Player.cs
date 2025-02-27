@@ -727,7 +727,7 @@ public partial class Player : Entity
                     }
                 }
 
-                if (CraftingTableBase.TryGet(OpenCraftingTableId, out var b) && CraftingState?.Id != default)
+                if (CraftingTableDescriptor.TryGet(OpenCraftingTableId, out var b) && CraftingState?.Id != default)
                 {
                     if (CraftingState != default && b.Crafts.Contains(CraftingState.Id))
                     {
@@ -4169,7 +4169,7 @@ public partial class Player : Entity
     }
 
     //Crafting
-    public bool OpenCraftingTable(CraftingTableBase table, bool journalMode)
+    public bool OpenCraftingTable(CraftingTableDescriptor table, bool journalMode)
     {
         if (IsBusy())
         {
@@ -4201,7 +4201,7 @@ public partial class Player : Entity
             return;
         }
 
-        if (!CraftBase.TryGet(CraftingState?.Id ?? default, out var craftDescriptor))
+        if (!CraftingRecipeDescriptor.TryGet(CraftingState?.Id ?? default, out var craftDescriptor))
         {
             return;
         }
@@ -4340,7 +4340,7 @@ public partial class Player : Entity
             return true;
         }
 
-        if (!CraftingTableBase.TryGet(OpenCraftingTableId, out var table))
+        if (!CraftingTableDescriptor.TryGet(OpenCraftingTableId, out var table))
         {
             return true;
         }
@@ -4352,7 +4352,7 @@ public partial class Player : Entity
             return true;
         }
 
-        if (!CraftBase.TryGet(craftingStateId.Value, out var craftDescriptor))
+        if (!CraftingRecipeDescriptor.TryGet(craftingStateId.Value, out var craftDescriptor))
         {
             return true;
         }

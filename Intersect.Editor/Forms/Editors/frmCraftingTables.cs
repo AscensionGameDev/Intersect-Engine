@@ -14,11 +14,11 @@ namespace Intersect.Editor.Forms.Editors;
 public partial class FrmCraftingTables : EditorForm
 {
 
-    private List<CraftingTableBase> mChanged = new List<CraftingTableBase>();
+    private List<CraftingTableDescriptor> mChanged = new List<CraftingTableDescriptor>();
 
     private string mCopiedItem;
 
-    private CraftingTableBase mEditorItem;
+    private CraftingTableDescriptor mEditorItem;
 
     private List<string> mKnownFolders = new List<string>();
 
@@ -32,7 +32,7 @@ public partial class FrmCraftingTables : EditorForm
     }
     private void AssignEditorItem(Guid id)
     {
-        mEditorItem = CraftingTableBase.Get(id);
+        mEditorItem = CraftingTableDescriptor.Get(id);
         UpdateEditor();
     }
 
@@ -41,7 +41,7 @@ public partial class FrmCraftingTables : EditorForm
         if (type == GameObjectType.CraftTables)
         {
             InitEditor();
-            if (mEditorItem != null && !DatabaseObject<CraftingTableBase>.Lookup.Values.Contains(mEditorItem))
+            if (mEditorItem != null && !DatabaseObject<CraftingTableDescriptor>.Lookup.Values.Contains(mEditorItem))
             {
                 mEditorItem = null;
                 UpdateEditor();
@@ -189,7 +189,7 @@ public partial class FrmCraftingTables : EditorForm
     private void frmCrafting_Load(object sender, EventArgs e)
     {
         cmbCrafts.Items.Clear();
-        cmbCrafts.Items.AddRange(CraftBase.Names);
+        cmbCrafts.Items.AddRange(CraftingRecipeDescriptor.Names);
 
         InitLocalization();
     }
@@ -227,14 +227,14 @@ public partial class FrmCraftingTables : EditorForm
         lstCrafts.Items.Clear();
         foreach (var id in mEditorItem.Crafts)
         {
-            lstCrafts.Items.Add(CraftBase.GetName(id));
+            lstCrafts.Items.Add(CraftingRecipeDescriptor.GetName(id));
         }
     }
 
     private void btnAddCraftedItem_Click(object sender, EventArgs e)
     {
-        var id = CraftBase.IdFromList(cmbCrafts.SelectedIndex);
-        var craft = CraftBase.Get(id);
+        var id = CraftingRecipeDescriptor.IdFromList(cmbCrafts.SelectedIndex);
+        var craft = CraftingRecipeDescriptor.Get(id);
         if (craft != null && !mEditorItem.Crafts.Contains(id))
         {
             mEditorItem.Crafts.Add(id);
@@ -283,15 +283,15 @@ public partial class FrmCraftingTables : EditorForm
     {
         //Collect folders
         var mFolders = new List<string>();
-        foreach (var itm in CraftingTableBase.Lookup)
+        foreach (var itm in CraftingTableDescriptor.Lookup)
         {
-            if (!string.IsNullOrEmpty(((CraftingTableBase) itm.Value).Folder) &&
-                !mFolders.Contains(((CraftingTableBase) itm.Value).Folder))
+            if (!string.IsNullOrEmpty(((CraftingTableDescriptor) itm.Value).Folder) &&
+                !mFolders.Contains(((CraftingTableDescriptor) itm.Value).Folder))
             {
-                mFolders.Add(((CraftingTableBase) itm.Value).Folder);
-                if (!mKnownFolders.Contains(((CraftingTableBase) itm.Value).Folder))
+                mFolders.Add(((CraftingTableDescriptor) itm.Value).Folder);
+                if (!mKnownFolders.Contains(((CraftingTableDescriptor) itm.Value).Folder))
                 {
-                    mKnownFolders.Add(((CraftingTableBase) itm.Value).Folder);
+                    mKnownFolders.Add(((CraftingTableDescriptor) itm.Value).Folder);
                 }
             }
         }
@@ -302,8 +302,8 @@ public partial class FrmCraftingTables : EditorForm
         cmbFolder.Items.Add("");
         cmbFolder.Items.AddRange(mKnownFolders.ToArray());
 
-        var items = CraftingTableBase.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
-            new KeyValuePair<string, string>(((CraftingTableBase)pair.Value)?.Name ?? Models.DatabaseObject<CraftingTableBase>.Deleted, ((CraftingTableBase)pair.Value)?.Folder ?? ""))).ToArray();
+        var items = CraftingTableDescriptor.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
+            new KeyValuePair<string, string>(((CraftingTableDescriptor)pair.Value)?.Name ?? Models.DatabaseObject<CraftingTableDescriptor>.Deleted, ((CraftingTableDescriptor)pair.Value)?.Folder ?? ""))).ToArray();
         lstGameObjects.Repopulate(items, mFolders, btnAlphabetical.Checked, CustomSearch(), txtSearch.Text);
     }
 

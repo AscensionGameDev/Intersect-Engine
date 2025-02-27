@@ -6,19 +6,19 @@ using Newtonsoft.Json;
 
 namespace Intersect.Framework.Core.GameObjects.Crafting;
 
-public partial class CraftBase : DatabaseObject<CraftBase>, IFolderable
+public partial class CraftingRecipeDescriptor : DatabaseObject<CraftingRecipeDescriptor>, IFolderable
 {
     [NotMapped]
     public List<CraftingRecipeIngredient> Ingredients { get; set; } = [];
 
     [JsonConstructor]
-    public CraftBase(Guid id) : base(id)
+    public CraftingRecipeDescriptor(Guid id) : base(id)
     {
         Name = "New Craft";
     }
 
     //Parameterless constructor for EF
-    public CraftBase()
+    public CraftingRecipeDescriptor()
     {
         Name = "New Craft";
     }
