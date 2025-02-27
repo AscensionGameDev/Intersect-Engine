@@ -1,20 +1,20 @@
 ﻿namespace Intersect.GameObjects.Maps;
 
-public partial class QuarterTileCls
+public partial class Autotile
 {
-    public PointStruct[] QuarterTile = new PointStruct[5];
+    public Point16i[] QuarterTile = new Point16i[5];
 
     public byte RenderState;
 
-    public QuarterTileCls Copy()
+    public Autotile Copy()
     {
-        var autotile = new QuarterTileCls();
+        var autotile = new Autotile();
 
         autotile.RenderState = RenderState;
 
         for (var z = 0; z < 5; z++)
         {
-            autotile.QuarterTile[z] = new PointStruct()
+            autotile.QuarterTile[z] = new Point16i()
             {
                 X = QuarterTile[z].X,
                 Y = QuarterTile[z].Y
@@ -24,7 +24,7 @@ public partial class QuarterTileCls
         return autotile;
     }
 
-    public bool Equals(QuarterTileCls quarterTile)
+    public bool Equals(Autotile quarterTile)
     {
         if (quarterTile.RenderState != RenderState)
         {

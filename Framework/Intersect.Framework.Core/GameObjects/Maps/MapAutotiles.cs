@@ -61,43 +61,43 @@ public partial class MapAutotiles
 
     public const byte XPW = 10;
 
-    public static PointStruct[] AutoCxp = new PointStruct[6];
+    public static Point16i[] AutoCxp = new Point16i[6];
 
-    public static PointStruct[] AutoExp = new PointStruct[6];
+    public static Point16i[] AutoExp = new Point16i[6];
 
-    public static PointStruct[] AutoInner = new PointStruct[6];
+    public static Point16i[] AutoInner = new Point16i[6];
 
     // XP autotiling
-    public static PointStruct[] AutoInnerXp = new PointStruct[6];
+    public static Point16i[] AutoInnerXp = new Point16i[6];
 
-    public static PointStruct[] AutoNe = new PointStruct[6];
+    public static Point16i[] AutoNe = new Point16i[6];
 
-    public static PointStruct[] AutoNeXp = new PointStruct[6];
+    public static Point16i[] AutoNeXp = new Point16i[6];
 
-    public static PointStruct[] AutoNw = new PointStruct[6];
+    public static Point16i[] AutoNw = new Point16i[6];
 
-    public static PointStruct[] AutoNwXp = new PointStruct[6];
+    public static Point16i[] AutoNwXp = new Point16i[6];
 
-    public static PointStruct[] AutoNxp = new PointStruct[6];
+    public static Point16i[] AutoNxp = new Point16i[6];
 
-    public static PointStruct[] AutoSe = new PointStruct[6];
+    public static Point16i[] AutoSe = new Point16i[6];
 
-    public static PointStruct[] AutoSeXp = new PointStruct[6];
+    public static Point16i[] AutoSeXp = new Point16i[6];
 
-    public static PointStruct[] AutoSw = new PointStruct[6];
+    public static Point16i[] AutoSw = new Point16i[6];
 
-    public static PointStruct[] AutoSwXp = new PointStruct[6];
+    public static Point16i[] AutoSwXp = new Point16i[6];
 
-    public static PointStruct[] AutoSxp = new PointStruct[6];
+    public static Point16i[] AutoSxp = new Point16i[6];
 
-    public static PointStruct[] AutoWxp = new PointStruct[6];
+    public static Point16i[] AutoWxp = new Point16i[6];
 
     // autotiling
     private static bool sLoadedTemplates = false;
 
     private readonly MapBase mMyMap;
 
-    public Dictionary<string, QuarterTileCls[,]> Layers;
+    public Dictionary<string, Autotile[,]> Layers;
 
     public MapAutotiles(MapBase map)
     {
@@ -372,15 +372,15 @@ public partial class MapAutotiles
 
     private void CreateFields()
     {
-        Layers = new Dictionary<string, QuarterTileCls[,]>();
+        Layers = new Dictionary<string, Autotile[,]>();
         foreach (var layerName in Options.Instance.Map.Layers.All)
         {
-            var layer = new QuarterTileCls[Options.Instance.Map.MapWidth, Options.Instance.Map.MapHeight];
+            var layer = new Autotile[Options.Instance.Map.MapWidth, Options.Instance.Map.MapHeight];
             for (var x = 0; x < Options.Instance.Map.MapWidth; x++)
             {
                 for (var y = 0; y < Options.Instance.Map.MapHeight; y++)
                 {
-                    layer[x, y] = new QuarterTileCls() { QuarterTile = new PointStruct[5] };
+                    layer[x, y] = new Autotile() { QuarterTile = new Point16i[5] };
                 }
             }
             Layers.Add(layerName, layer);
@@ -2314,7 +2314,7 @@ public partial class MapAutotiles
 
     public void PlaceAutotile(string layerName, int x, int y, byte tileQuarter, string autoTileLetter)
     {
-        var quarterTile = new PointStruct();
+        var quarterTile = new Point16i();
         switch (autoTileLetter)
         {
             case "a":
@@ -2423,7 +2423,7 @@ public partial class MapAutotiles
 
     public void PlaceAutotileXp(string layerName, int x, int y, byte tileQuarter, string autoTileLetter)
     {
-        var quarterTile = new PointStruct();
+        var quarterTile = new Point16i();
         switch (autoTileLetter)
         {
             case "a":

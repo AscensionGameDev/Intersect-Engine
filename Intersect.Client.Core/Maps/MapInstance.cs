@@ -1054,7 +1054,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         GameTileBuffer buffer,
         bool update = false,
         Tile? layerTile = default,
-        QuarterTileCls? layerAutoTile = default
+        Autotile? layerAutoTile = default
     )
     {
         if (layerTile == null)
