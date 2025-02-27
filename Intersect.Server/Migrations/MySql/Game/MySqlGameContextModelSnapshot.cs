@@ -97,6 +97,50 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.ToTable("CraftingTables");
                 });
 
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Events.EventDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)")
+                        .UseCollation("ascii_general_ci");
+
+                    b.Property<bool>("CanRunInParallel")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("CommonEvent")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Folder")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("Global")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<Guid>("MapId")
+                        .HasColumnType("char(36)")
+                        .UseCollation("ascii_general_ci");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("PagesJson")
+                        .HasColumnType("longtext")
+                        .HasColumnName("Pages");
+
+                    b.Property<int>("SpawnX")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SpawnY")
+                        .HasColumnType("int");
+
+                    b.Property<long>("TimeCreated")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Events");
+                });
+
             modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.GuildVariableDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
@@ -366,50 +410,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.HasKey("DescriptorId");
 
                     b.ToTable("Items_EquipmentProperties");
-                });
-
-            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Events.EventDescriptor", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
-
-                    b.Property<bool>("CanRunInParallel")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("CommonEvent")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("Folder")
-                        .HasColumnType("longtext");
-
-                    b.Property<bool>("Global")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<Guid>("MapId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext")
-                        .HasColumnOrder(0);
-
-                    b.Property<string>("PagesJson")
-                        .HasColumnType("longtext")
-                        .HasColumnName("Pages");
-
-                    b.Property<int>("SpawnX")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SpawnY")
-                        .HasColumnType("int");
-
-                    b.Property<long>("TimeCreated")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Events");
                 });
 
             modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>
