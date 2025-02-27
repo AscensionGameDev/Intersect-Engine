@@ -1020,7 +1020,7 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.ToTable("Quests");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.ShopBase", b =>
+            modelBuilder.Entity("Intersect.GameObjects.ShopDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("char(36)")
