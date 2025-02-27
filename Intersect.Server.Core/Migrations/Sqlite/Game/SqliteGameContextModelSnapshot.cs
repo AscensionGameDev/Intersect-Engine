@@ -919,7 +919,7 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.ToTable("Quests");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.ResourceBase", b =>
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Resources.ResourceDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("TEXT");
@@ -1491,11 +1491,11 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.Navigation("StatRange_Speed");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.ResourceBase", b =>
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Resources.ResourceDescriptor", b =>
                 {
-                    b.OwnsOne("Intersect.GameObjects.ResourceState", "Exhausted", b1 =>
+                    b.OwnsOne("Intersect.Framework.Core.GameObjects.Resources.ResourceStateDescriptor", "Exhausted", b1 =>
                         {
-                            b1.Property<Guid>("ResourceBaseId")
+                            b1.Property<Guid>("ResourceDescriptorId")
                                 .HasColumnType("TEXT");
 
                             b1.Property<string>("Graphic")
@@ -1519,17 +1519,17 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                             b1.Property<int>("Y")
                                 .HasColumnType("INTEGER");
 
-                            b1.HasKey("ResourceBaseId");
+                            b1.HasKey("ResourceDescriptorId");
 
                             b1.ToTable("Resources");
 
                             b1.WithOwner()
-                                .HasForeignKey("ResourceBaseId");
+                                .HasForeignKey("ResourceDescriptorId");
                         });
 
-                    b.OwnsOne("Intersect.GameObjects.ResourceState", "Initial", b1 =>
+                    b.OwnsOne("Intersect.Framework.Core.GameObjects.Resources.ResourceStateDescriptor", "Initial", b1 =>
                         {
-                            b1.Property<Guid>("ResourceBaseId")
+                            b1.Property<Guid>("ResourceDescriptorId")
                                 .HasColumnType("TEXT");
 
                             b1.Property<string>("Graphic")
@@ -1553,12 +1553,12 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                             b1.Property<int>("Y")
                                 .HasColumnType("INTEGER");
 
-                            b1.HasKey("ResourceBaseId");
+                            b1.HasKey("ResourceDescriptorId");
 
                             b1.ToTable("Resources");
 
                             b1.WithOwner()
-                                .HasForeignKey("ResourceBaseId");
+                                .HasForeignKey("ResourceDescriptorId");
                         });
 
                     b.Navigation("Exhausted");
