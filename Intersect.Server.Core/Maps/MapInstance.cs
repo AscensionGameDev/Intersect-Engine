@@ -1011,7 +1011,7 @@ public partial class MapInstance : IMapInstance
     /// <param name="target">The target of the projectil</param>
     public void SpawnMapProjectile(
         Entity owner,
-        ProjectileBase projectile,
+        ProjectileDescriptor projectile,
         SpellBase parentSpell,
         ItemDescriptor parentItem,
         Guid mapId,

@@ -92,7 +92,7 @@ public partial class SpellDescriptionWindow : DescriptionWindowBase
         {
             if (mSpell.Combat.TargetType == SpellTargetType.Projectile)
             {
-                var proj = ProjectileBase.Get(mSpell.Combat.ProjectileId);
+                var proj = ProjectileDescriptor.Get(mSpell.Combat.ProjectileId);
                 header.SetDescription(Strings.SpellDescription.TargetTypes[(int)mSpell.Combat.TargetType].ToString(proj?.Range ?? 0, mSpell.Combat.HitRadius), Color.White);
             }
             else

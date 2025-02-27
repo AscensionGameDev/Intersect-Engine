@@ -762,7 +762,7 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.ToTable("Items_EquipmentProperties");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.ProjectileBase", b =>
+            modelBuilder.Entity("Intersect.GameObjects.ProjectileDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("TEXT");

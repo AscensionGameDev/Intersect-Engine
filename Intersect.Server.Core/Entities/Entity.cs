@@ -1603,7 +1603,7 @@ public abstract partial class Entity : IEntity
 
     //Attacking with projectile
     public virtual void TryAttack(Entity target,
-        ProjectileBase projectile,
+        ProjectileDescriptor projectile,
         SpellBase parentSpell,
         ItemDescriptor parentItem,
         Direction projectileDir)

@@ -528,14 +528,14 @@ internal sealed partial class PacketHandler
             case GameObjectType.Projectile:
                 if (deleted)
                 {
-                    var proj = ProjectileBase.Get(id);
+                    var proj = ProjectileDescriptor.Get(id);
                     proj.Delete();
                 }
                 else
                 {
-                    var proj = new ProjectileBase(id);
+                    var proj = new ProjectileDescriptor(id);
                     proj.Load(json);
-                    ProjectileBase.Lookup.Set(id, proj);
+                    ProjectileDescriptor.Lookup.Set(id, proj);
                 }
 
                 break;

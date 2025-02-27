@@ -656,7 +656,7 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.Projectile:
-                ProjectileBase.Lookup.Clear();
+                ProjectileDescriptor.Lookup.Clear();
 
                 break;
             case GameObjectType.Quest:
@@ -762,7 +762,7 @@ public static partial class DbInterface
                     case GameObjectType.Projectile:
                         foreach (var proj in context.Projectiles)
                         {
-                            ProjectileBase.Lookup.Set(proj.Id, proj);
+                            ProjectileDescriptor.Lookup.Set(proj.Id, proj);
                         }
 
                         break;
@@ -1012,7 +1012,7 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.Projectile:
-                dbObj = new ProjectileBase(predefinedid);
+                dbObj = new ProjectileDescriptor(predefinedid);
 
                 break;
             case GameObjectType.Resource:
@@ -1116,8 +1116,8 @@ public static partial class DbInterface
                         break;
 
                     case GameObjectType.Projectile:
-                        context.Projectiles.Add((ProjectileBase)dbObj);
-                        ProjectileBase.Lookup.Set(dbObj.Id, dbObj);
+                        context.Projectiles.Add((ProjectileDescriptor)dbObj);
+                        ProjectileDescriptor.Lookup.Set(dbObj.Id, dbObj);
 
                         break;
 
@@ -1249,7 +1249,7 @@ public static partial class DbInterface
 
                         break;
                     case GameObjectType.Projectile:
-                        context.Projectiles.Remove((ProjectileBase)gameObject);
+                        context.Projectiles.Remove((ProjectileDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Quest:
@@ -1420,7 +1420,7 @@ public static partial class DbInterface
 
                         break;
                     case GameObjectType.Projectile:
-                        context.Projectiles.Update((ProjectileBase)gameObject);
+                        context.Projectiles.Update((ProjectileDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Quest:

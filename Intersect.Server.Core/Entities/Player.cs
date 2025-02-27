@@ -1557,7 +1557,7 @@ public partial class Player : Entity
     }
 
     public override void TryAttack(Entity target,
-        ProjectileBase projectile,
+        ProjectileDescriptor projectile,
         SpellBase parentSpell,
         ItemDescriptor parentItem,
         Direction projectileDir)

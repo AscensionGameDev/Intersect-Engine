@@ -1021,7 +1021,7 @@ public partial class FrmEvent : Form
 
             cmbTriggerVal.Items.Clear();
             cmbTriggerVal.Items.Add(Strings.General.None);
-            cmbTriggerVal.Items.AddRange(ProjectileBase.Names);
+            cmbTriggerVal.Items.AddRange(ProjectileDescriptor.Names);
         }
 
         chkIsGlobal.Checked = Convert.ToBoolean(MyEvent.Global);

@@ -92,7 +92,7 @@ public partial class FrmSpell : EditorForm
     private void frmSpell_Load(object sender, EventArgs e)
     {
         cmbProjectile.Items.Clear();
-        cmbProjectile.Items.AddRange(ProjectileBase.Names);
+        cmbProjectile.Items.AddRange(ProjectileDescriptor.Names);
         cmbCastAnimation.Items.Clear();
         cmbCastAnimation.Items.Add(Strings.General.None);
         cmbCastAnimation.Items.AddRange(AnimationDescriptor.Names);
@@ -464,7 +464,7 @@ public partial class FrmSpell : EditorForm
         {
             lblProjectile.Show();
             cmbProjectile.Show();
-            cmbProjectile.SelectedIndex = ProjectileBase.ListIndex(mEditorItem.Combat.ProjectileId);
+            cmbProjectile.SelectedIndex = ProjectileDescriptor.ListIndex(mEditorItem.Combat.ProjectileId);
         }
 
         if (cmbTargetType.SelectedIndex == (int)SpellTargetType.OnHit)
@@ -732,7 +732,7 @@ public partial class FrmSpell : EditorForm
 
     private void cmbProjectile_SelectedIndexChanged(object sender, EventArgs e)
     {
-        mEditorItem.Combat.ProjectileId = ProjectileBase.IdFromList(cmbProjectile.SelectedIndex);
+        mEditorItem.Combat.ProjectileId = ProjectileDescriptor.IdFromList(cmbProjectile.SelectedIndex);
     }
 
     private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)

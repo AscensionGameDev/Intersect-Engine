@@ -23,7 +23,7 @@ public partial class ProjectileSpawns
 
     public float OffsetY;
 
-    public ProjectileBase ProjectileBase;
+    public ProjectileDescriptor ProjectileDescriptor;
 
     public Guid SpawnMapId;
 
@@ -49,7 +49,7 @@ public partial class ProjectileSpawns
         Guid mapId,
         AnimationDescriptor animationDescriptor,
         bool autoRotate,
-        ProjectileBase projectileBase,
+        ProjectileDescriptor projectileDescriptor,
         Entity parent
     )
     {
@@ -63,8 +63,8 @@ public partial class ProjectileSpawns
         Dir = dir;
         Anim = new Animation(animationDescriptor, true, autoRotate, Z, parent);
         AutoRotate = autoRotate;
-        ProjectileBase = projectileBase;
-        TransmissionTimer = Timing.Global.Milliseconds + (ProjectileBase.Speed / ProjectileBase.Range);
+        ProjectileDescriptor = projectileDescriptor;
+        TransmissionTimer = Timing.Global.Milliseconds + (ProjectileDescriptor.Speed / ProjectileDescriptor.Range);
     }
 
     public void Dispose()

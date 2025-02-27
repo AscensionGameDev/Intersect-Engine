@@ -45,7 +45,7 @@ public partial class FrmItem : EditorForm
 
         cmbProjectile.Items.Clear();
         cmbProjectile.Items.Add(Strings.General.None);
-        cmbProjectile.Items.AddRange(ProjectileBase.Names);
+        cmbProjectile.Items.AddRange(ProjectileDescriptor.Names);
 
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
     }
@@ -441,7 +441,7 @@ public partial class FrmItem : EditorForm
             cmbScalingStat.SelectedIndex = mEditorItem.ScalingStat;
 
             //External References
-            cmbProjectile.SelectedIndex = ProjectileBase.ListIndex(mEditorItem.ProjectileId) + 1;
+            cmbProjectile.SelectedIndex = ProjectileDescriptor.ListIndex(mEditorItem.ProjectileId) + 1;
             cmbAnimation.SelectedIndex = AnimationDescriptor.ListIndex(mEditorItem.AnimationId) + 1;
 
             nudCooldown.Value = mEditorItem.Cooldown;
@@ -790,7 +790,7 @@ public partial class FrmItem : EditorForm
 
     private void cmbProjectile_SelectedIndexChanged(object sender, EventArgs e)
     {
-        mEditorItem.Projectile = ProjectileBase.Get(ProjectileBase.IdFromList(cmbProjectile.SelectedIndex - 1));
+        mEditorItem.Projectile = ProjectileDescriptor.Get(ProjectileDescriptor.IdFromList(cmbProjectile.SelectedIndex - 1));
     }
 
     private void btnEditRequirements_Click(object sender, EventArgs e)

@@ -1316,7 +1316,7 @@ internal sealed partial class PacketHandler
                 );
             }
 
-            var projectileBase = ProjectileBase.Get(weaponItem?.ProjectileId ?? Guid.Empty);
+            var projectileBase = ProjectileDescriptor.Get(weaponItem?.ProjectileId ?? Guid.Empty);
 
             if (projectileBase != null)
             {

@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects;
 
-public partial class ProjectileBase : DatabaseObject<ProjectileBase>, IFolderable
+public partial class ProjectileDescriptor : DatabaseObject<ProjectileDescriptor>, IFolderable
 {
     public const int MAX_PROJECTILE_DIRECTIONS = 8;
 
@@ -37,7 +37,7 @@ public partial class ProjectileBase : DatabaseObject<ProjectileBase>, IFolderabl
 
     //Init
     [JsonConstructor]
-    public ProjectileBase(Guid id) : base(id)
+    public ProjectileDescriptor(Guid id) : base(id)
     {
         Name = "New Projectile";
         for (var x = 0; x < SPAWN_LOCATIONS_WIDTH; x++)
@@ -50,7 +50,7 @@ public partial class ProjectileBase : DatabaseObject<ProjectileBase>, IFolderabl
     }
 
     //Parameterless for EF
-    public ProjectileBase()
+    public ProjectileDescriptor()
     {
         Name = "New Projectile";
         for (var x = 0; x < SPAWN_LOCATIONS_WIDTH; x++)
@@ -145,25 +145,4 @@ public partial class ProjectileBase : DatabaseObject<ProjectileBase>, IFolderabl
 
     /// <inheritdoc />
     public string Folder { get; set; } = string.Empty;
-}
-
-public partial class Location
-{
-    public bool[] Directions = new bool[ProjectileBase.MAX_PROJECTILE_DIRECTIONS];
-}
-
-public partial class ProjectileAnimation
-{
-    public Guid AnimationId;
-
-    public bool AutoRotate;
-
-    public int SpawnRange = 1;
-
-    public ProjectileAnimation(Guid animationId, int spawnRange, bool autoRotate)
-    {
-        AnimationId = animationId;
-        SpawnRange = spawnRange;
-        AutoRotate = autoRotate;
-    }
 }

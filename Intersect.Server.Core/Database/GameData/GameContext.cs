@@ -49,7 +49,7 @@ public abstract partial class GameContext : IntersectDbContext<GameContext>, IGa
     public DbSet<NPCDescriptor> Npcs { get; set; }
 
     //Projectiles
-    public DbSet<ProjectileBase> Projectiles { get; set; }
+    public DbSet<ProjectileDescriptor> Projectiles { get; set; }
 
     //Quests
     public DbSet<QuestBase> Quests { get; set; }

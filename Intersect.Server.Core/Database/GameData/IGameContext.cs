@@ -32,7 +32,7 @@ public interface IGameContext : IDbContext
 
     DbSet<NPCDescriptor> Npcs { get; set; }
 
-    DbSet<ProjectileBase> Projectiles { get; set; }
+    DbSet<ProjectileDescriptor> Projectiles { get; set; }
 
     DbSet<QuestBase> Quests { get; set; }
 

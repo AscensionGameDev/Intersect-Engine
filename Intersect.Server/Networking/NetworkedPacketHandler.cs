@@ -893,7 +893,7 @@ internal sealed partial class NetworkedPacketHandler
                     break;
 
                 case GameObjectType.Projectile:
-                    obj = ProjectileBase.Get(id);
+                    obj = ProjectileDescriptor.Get(id);
 
                     break;
 
@@ -976,7 +976,7 @@ internal sealed partial class NetworkedPacketHandler
                     case NPCDescriptor npcDescriptor:
                         MapController.DespawnInstancesOf(npcDescriptor);
                         break;
-                    case ProjectileBase projectileDescriptor:
+                    case ProjectileDescriptor projectileDescriptor:
                         MapController.DespawnInstancesOf(projectileDescriptor);
                         break;
                     case ResourceBase resourceDescriptor:
@@ -1025,7 +1025,7 @@ internal sealed partial class NetworkedPacketHandler
                     break;
 
                 case GameObjectType.Projectile:
-                    obj = ProjectileBase.Get(id);
+                    obj = ProjectileDescriptor.Get(id);
 
                     break;
 
@@ -1112,7 +1112,7 @@ internal sealed partial class NetworkedPacketHandler
                         case NPCDescriptor npcDescriptor:
                             MapController.DespawnInstancesOf(npcDescriptor);
                             break;
-                        case ProjectileBase projectileDescriptor:
+                        case ProjectileDescriptor projectileDescriptor:
                             MapController.DespawnInstancesOf(projectileDescriptor);
                             break;
                         case ResourceBase resourceDescriptor:

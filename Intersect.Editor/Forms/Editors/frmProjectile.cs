@@ -15,13 +15,13 @@ namespace Intersect.Editor.Forms.Editors;
 public partial class FrmProjectile : EditorForm
 {
 
-    private List<ProjectileBase> mChanged = new List<ProjectileBase>();
+    private List<ProjectileDescriptor> mChanged = new List<ProjectileDescriptor>();
 
     private string mCopiedItem;
 
     private Bitmap mDirectionGrid;
 
-    private ProjectileBase mEditorItem;
+    private ProjectileDescriptor mEditorItem;
 
     private List<string> mKnownFolders = new List<string>();
 
@@ -35,7 +35,7 @@ public partial class FrmProjectile : EditorForm
     }
     private void AssignEditorItem(Guid id)
     {
-        mEditorItem = ProjectileBase.Get(id);
+        mEditorItem = ProjectileDescriptor.Get(id);
         UpdateEditor();
     }
 
@@ -44,7 +44,7 @@ public partial class FrmProjectile : EditorForm
         if (type == GameObjectType.Projectile)
         {
             InitEditor();
-            if (mEditorItem != null && !ProjectileBase.Lookup.Values.Contains(mEditorItem))
+            if (mEditorItem != null && !ProjectileDescriptor.Lookup.Values.Contains(mEditorItem))
             {
                 mEditorItem = null;
                 UpdateEditor();
@@ -335,16 +335,16 @@ public partial class FrmProjectile : EditorForm
         var gfx = Graphics.FromImage(img);
         gfx.FillRectangle(Brushes.White, new Rectangle(0, 0, picSpawns.Width, picSpawns.Height));
 
-        for (var x = 0; x < ProjectileBase.SPAWN_LOCATIONS_WIDTH; x++)
+        for (var x = 0; x < ProjectileDescriptor.SPAWN_LOCATIONS_WIDTH; x++)
         {
-            for (var y = 0; y < ProjectileBase.SPAWN_LOCATIONS_HEIGHT; y++)
+            for (var y = 0; y < ProjectileDescriptor.SPAWN_LOCATIONS_HEIGHT; y++)
             {
                 gfx.DrawImage(
                     mDirectionGrid, new Rectangle(x * 32, y * 32, 32, 32), new Rectangle(0, 0, 32, 32),
                     GraphicsUnit.Pixel
                 );
 
-                for (var i = 0; i < ProjectileBase.MAX_PROJECTILE_DIRECTIONS; i++)
+                for (var i = 0; i < ProjectileDescriptor.MAX_PROJECTILE_DIRECTIONS; i++)
                 {
                     if (mEditorItem.SpawnLocations[x, y].Directions[i] == true)
                     {
@@ -721,15 +721,15 @@ public partial class FrmProjectile : EditorForm
     {
         //Collect folders
         var mFolders = new List<string>();
-        foreach (var itm in ProjectileBase.Lookup)
+        foreach (var itm in ProjectileDescriptor.Lookup)
         {
-            if (!string.IsNullOrEmpty(((ProjectileBase)itm.Value).Folder) &&
-                !mFolders.Contains(((ProjectileBase)itm.Value).Folder))
+            if (!string.IsNullOrEmpty(((ProjectileDescriptor)itm.Value).Folder) &&
+                !mFolders.Contains(((ProjectileDescriptor)itm.Value).Folder))
             {
-                mFolders.Add(((ProjectileBase)itm.Value).Folder);
-                if (!mKnownFolders.Contains(((ProjectileBase)itm.Value).Folder))
+                mFolders.Add(((ProjectileDescriptor)itm.Value).Folder);
+                if (!mKnownFolders.Contains(((ProjectileDescriptor)itm.Value).Folder))
                 {
-                    mKnownFolders.Add(((ProjectileBase)itm.Value).Folder);
+                    mKnownFolders.Add(((ProjectileDescriptor)itm.Value).Folder);
                 }
             }
         }
@@ -740,8 +740,8 @@ public partial class FrmProjectile : EditorForm
         cmbFolder.Items.Add("");
         cmbFolder.Items.AddRange(mKnownFolders.ToArray());
 
-        var items = ProjectileBase.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
-            new KeyValuePair<string, string>(((ProjectileBase)pair.Value)?.Name ?? Models.DatabaseObject<ProjectileBase>.Deleted, ((ProjectileBase)pair.Value)?.Folder ?? ""))).ToArray();
+        var items = ProjectileDescriptor.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
+            new KeyValuePair<string, string>(((ProjectileDescriptor)pair.Value)?.Name ?? Models.DatabaseObject<ProjectileDescriptor>.Deleted, ((ProjectileDescriptor)pair.Value)?.Folder ?? ""))).ToArray();
         lstGameObjects.Repopulate(items, mFolders, btnAlphabetical.Checked, CustomSearch(), txtSearch.Text);
     }
 

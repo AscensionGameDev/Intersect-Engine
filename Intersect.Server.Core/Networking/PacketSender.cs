@@ -1759,7 +1759,7 @@ public static partial class PacketSender
 
                 break;
             case GameObjectType.Projectile:
-                foreach (var obj in ProjectileBase.Lookup)
+                foreach (var obj in ProjectileDescriptor.Lookup)
                 {
                     SendGameObject(client, obj.Value, false, false, packetList);
                 }

@@ -17,7 +17,7 @@ namespace Intersect.Server.Entities;
 public partial class Projectile : Entity
 {
 
-    public ProjectileBase Base;
+    public ProjectileDescriptor Descriptor;
 
     public bool HasGrappled;
 
@@ -52,7 +52,7 @@ public partial class Projectile : Entity
         Entity owner,
         SpellBase parentSpell,
         ItemDescriptor parentItem,
-        ProjectileBase projectile,
+        ProjectileDescriptor projectile,
         Guid mapId,
         byte X,
         byte Y,
@@ -61,8 +61,8 @@ public partial class Projectile : Entity
         Entity target
     ) : base()
     {
-        Base = projectile;
-        Name = Base.Name;
+        Descriptor = projectile;
+        Name = Descriptor.Name;
         Owner = owner;
         Target = owner.Target;
         Stat = owner.Stat;
@@ -78,13 +78,13 @@ public partial class Projectile : Entity
 
         Passable = true;
         HideName = true;
-        for (var x = 0; x < ProjectileBase.SPAWN_LOCATIONS_WIDTH; x++)
+        for (var x = 0; x < ProjectileDescriptor.SPAWN_LOCATIONS_WIDTH; x++)
         {
-            for (var y = 0; y < ProjectileBase.SPAWN_LOCATIONS_HEIGHT; y++)
+            for (var y = 0; y < ProjectileDescriptor.SPAWN_LOCATIONS_HEIGHT; y++)
             {
-                for (var d = 0; d < ProjectileBase.MAX_PROJECTILE_DIRECTIONS; d++)
+                for (var d = 0; d < ProjectileDescriptor.MAX_PROJECTILE_DIRECTIONS; d++)
                 {
-                    if (Base.SpawnLocations[x, y].Directions[d] == true)
+                    if (Descriptor.SpawnLocations[x, y].Directions[d] == true)
                     {
                         _totalSpawns++;
                     }
@@ -92,7 +92,7 @@ public partial class Projectile : Entity
             }
         }
 
-        _totalSpawns *= Base.Quantity;
+        _totalSpawns *= Descriptor.Quantity;
         Spawns = new ProjectileSpawn[_totalSpawns];
     }
 
@@ -102,23 +102,23 @@ public partial class Projectile : Entity
     private void AddProjectileSpawns()
     {
         // Iterate over all possible spawn locations within the defined width and height
-        for (byte x = 0; x < ProjectileBase.SPAWN_LOCATIONS_WIDTH; x++)
+        for (byte x = 0; x < ProjectileDescriptor.SPAWN_LOCATIONS_WIDTH; x++)
         {
-            for (byte y = 0; y < ProjectileBase.SPAWN_LOCATIONS_HEIGHT; y++)
+            for (byte y = 0; y < ProjectileDescriptor.SPAWN_LOCATIONS_HEIGHT; y++)
             {
                 // Iterate over all possible directions a projectile can be spawned in
-                for (byte d = 0; d < ProjectileBase.MAX_PROJECTILE_DIRECTIONS; d++)
+                for (byte d = 0; d < ProjectileDescriptor.MAX_PROJECTILE_DIRECTIONS; d++)
                 {
                     // Check if the current direction is enabled for spawning at this location
                     // and if the maximum number of spawned projectiles has not been reached
-                    if (Base.SpawnLocations[x, y].Directions[d] && _spawnedAmount < Spawns.Length)
+                    if (Descriptor.SpawnLocations[x, y].Directions[d] && _spawnedAmount < Spawns.Length)
                     {
                         // Calculate the spawn position and direction for the new projectile
                         var s = new ProjectileSpawn(
                             FindProjectileRotationDir(Dir, (Direction)d),
                             (byte)(X + FindProjectileRotation(Dir, x - 2, y - 2, true)),
                             (byte)(Y + FindProjectileRotation(Dir, x - 2, y - 2, false)),
-                            (byte)Z, MapId, MapInstanceId, Base, this
+                            (byte)Z, MapId, MapInstanceId, Descriptor, this
                         );
 
                         // Add the new spawn to the array and increment counters
@@ -137,7 +137,7 @@ public partial class Projectile : Entity
 
         // Increment the quantity of projectiles spawned and update the spawn time based on the delay
         _quantity++;
-        _spawnTime = Timing.Global.Milliseconds + Base.Delay;
+        _spawnTime = Timing.Global.Milliseconds + Descriptor.Delay;
     }
 
     /// <summary>
@@ -175,11 +175,11 @@ public partial class Projectile : Entity
     }
 
     private static Direction FindProjectileRotationDir(Direction entityDir, Direction projectionDir) =>
-        (Direction)ProjectileBase.ProjectileRotationDir[(int)entityDir * ProjectileBase.MAX_PROJECTILE_DIRECTIONS + (int)projectionDir];
+        (Direction)ProjectileDescriptor.ProjectileRotationDir[(int)entityDir * ProjectileDescriptor.MAX_PROJECTILE_DIRECTIONS + (int)projectionDir];
 
     public void Update(List<Guid> projDeaths, List<KeyValuePair<Guid, int>> spawnDeaths)
     {
-        if (_quantity < Base.Quantity && Timing.Global.Milliseconds > _spawnTime)
+        if (_quantity < Descriptor.Quantity && Timing.Global.Milliseconds > _spawnTime)
         {
             AddProjectileSpawns();
         }
@@ -218,12 +218,12 @@ public partial class Projectile : Entity
 
     public void ProcessFragments(List<Guid> projDeaths, List<KeyValuePair<Guid, int>> spawnDeaths)
     {
-        if (Base == null)
+        if (Descriptor == null)
         {
             return;
         }
 
-        if (_spawnCount != 0 || _quantity < Base.Quantity)
+        if (_spawnCount != 0 || _quantity < Descriptor.Quantity)
         {
             for (var i = 0; i < _spawnedAmount; i++)
             {
@@ -312,7 +312,7 @@ public partial class Projectile : Entity
         if (!killSpawn && attribute != null)
         {
             // Check for Z-Dimension
-            if (!spawn.ProjectileBase.IgnoreZDimension && attribute is MapZDimensionAttribute zDimAttr && zDimAttr != null)
+            if (!spawn.ProjectileDescriptor.IgnoreZDimension && attribute is MapZDimensionAttribute zDimAttr && zDimAttr != null)
             {
                 // If the Z dimension attribute specifies a blocked level that matches the projectile's current Z level,
                 // mark the projectile for destruction.
@@ -331,12 +331,12 @@ public partial class Projectile : Entity
 
             //Check for grapplehooks.
             if (attribute.Type == MapAttributeType.GrappleStone &&
-                Base.GrappleHookOptions.Contains(GrappleOption.MapAttribute) &&
+                Descriptor.GrappleHookOptions.Contains(GrappleOption.MapAttribute) &&
                 !spawn.Parent.HasGrappled &&
                 (spawn.X != Owner.X || spawn.Y != Owner.Y))
             {
                 // Grapple hooks are only allowed in the default projectile behavior
-                if (!spawn.ProjectileBase.HomingBehavior && !spawn.ProjectileBase.DirectShotBehavior &&
+                if (!spawn.ProjectileDescriptor.HomingBehavior && !spawn.ProjectileDescriptor.DirectShotBehavior &&
                     (spawn.Dir <= Direction.Right || (spawn.Dir != Direction.None && Options.Instance.Map.EnableDiagonalMovement)))
                 {
                     spawn.Parent.HasGrappled = true;
@@ -346,8 +346,8 @@ public partial class Projectile : Entity
                     {
                         Owner.Dir = spawn.Dir;
                         new Dash(
-                            Owner, spawn.Distance, Owner.Dir, Base.IgnoreMapBlocks,
-                            Base.IgnoreActiveResources, Base.IgnoreExhaustedResources, Base.IgnoreZDimension
+                            Owner, spawn.Distance, Owner.Dir, Descriptor.IgnoreMapBlocks,
+                            Descriptor.IgnoreActiveResources, Descriptor.IgnoreExhaustedResources, Descriptor.IgnoreZDimension
                         );
                     }
 
@@ -355,7 +355,7 @@ public partial class Projectile : Entity
                 }
             }
 
-            if (!spawn.ProjectileBase.IgnoreMapBlocks &&
+            if (!spawn.ProjectileDescriptor.IgnoreMapBlocks &&
                 ((attribute.Type == MapAttributeType.Blocked) || (attribute.Type == MapAttributeType.Animation && ((MapAnimationAttribute)attribute).IsBlock)))
             {
                 killSpawn = true;
@@ -373,19 +373,19 @@ public partial class Projectile : Entity
                     (spawn.X != Owner.X || spawn.Y != Owner.Y))
                 {
                     killSpawn = spawn.HitEntity(entity);
-                    if (killSpawn && !spawn.ProjectileBase.PierceTarget)
+                    if (killSpawn && !spawn.ProjectileDescriptor.PierceTarget)
                     {
                         return killSpawn;
                     }
                 }
-                else if (z == entities.Count - 1 && spawn.Distance >= Base.Range)
+                else if (z == entities.Count - 1 && spawn.Distance >= Descriptor.Range)
                 {
                     killSpawn = true;
                 }
             }
         }
 
-        return killSpawn || spawn?.Distance >= Base.Range;
+        return killSpawn || spawn?.Distance >= Descriptor.Range;
     }
 
     /// <summary>
@@ -466,9 +466,9 @@ public partial class Projectile : Entity
         {
             // Increase the distance traveled by the projectile and update its transmission timer.
             spawn.Distance++;
-            spawn.TransmissionTimer += (long)(Base.Speed / (float)Base.Range);
+            spawn.TransmissionTimer += (long)(Descriptor.Speed / (float)Descriptor.Range);
 
-            if (Target != default && Target.Id != Owner.Id && (Base.HomingBehavior || Base.DirectShotBehavior))
+            if (Target != default && Target.Id != Owner.Id && (Descriptor.HomingBehavior || Descriptor.DirectShotBehavior))
             {
                 // Homing or direct shot logic: Adjusts the projectile's trajectory towards the target.
                 _lastTargetX = Target.X;
@@ -482,7 +482,7 @@ public partial class Projectile : Entity
                 spawn.Y += directionY / distance;
 
                 // For direct shots, reset the target after moving towards it once.
-                if (Base.DirectShotBehavior)
+                if (Descriptor.DirectShotBehavior)
                 {
                     Target = default;
                 }
@@ -645,7 +645,7 @@ public partial class Projectile : Entity
         packet = base.EntityPacket(packet, forPlayer);
 
         var pkt = (ProjectileEntityPacket)packet;
-        pkt.ProjectileId = Base.Id;
+        pkt.ProjectileId = Descriptor.Id;
         pkt.ProjectileDirection = (byte)Dir;
         pkt.TargetId = Owner.Target != default && Owner.Target.Id != Guid.Empty ? Owner.Target.Id : Guid.Empty;
         pkt.OwnerId = Owner?.Id ?? Guid.Empty;

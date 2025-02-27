@@ -23,7 +23,7 @@ public enum GameObjectType
     [GameObjectInfo(typeof(NPCDescriptor), "npcs")]
     Npc,
 
-    [GameObjectInfo(typeof(ProjectileBase), "projectiles")]
+    [GameObjectInfo(typeof(ProjectileDescriptor), "projectiles")]
     Projectile,
 
     [GameObjectInfo(typeof(QuestBase), "quests")]

@@ -54,7 +54,7 @@ public partial class MapController : MapDescriptor
         }
     }
 
-    public static void DespawnInstancesOf(ProjectileBase projectile)
+    public static void DespawnInstancesOf(ProjectileDescriptor projectile)
     {
         var allMapControllers = Lookup.Values.OfType<MapController>().ToArray();
         foreach (var map in allMapControllers)
@@ -390,15 +390,15 @@ public partial class MapController : MapDescriptor
     }
 
     /// <summary>
-    /// Despawns projectiles of a given <see cref="ProjectileBase"/> from all instances of this controller.
+    /// Despawns projectiles of a given <see cref="ProjectileDescriptor"/> from all instances of this controller.
     /// </summary>
-    /// <param name="projectileBase">The <see cref="ProjectileBase"/> to despawn</param>
-    public void DespawnProjectileAcrossInstances(ProjectileBase projectileBase)
+    /// <param name="projectileDescriptor">The <see cref="ProjectileDescriptor"/> to despawn</param>
+    public void DespawnProjectileAcrossInstances(ProjectileDescriptor projectileDescriptor)
     {
         var guids = new List<Guid>();
         foreach (var entity in GetEntitiesOnAllInstances())
         {
-            if (entity is Projectile proj && proj.Base == projectileBase)
+            if (entity is Projectile proj && proj.Descriptor == projectileDescriptor)
             {
                 lock (proj.EntityLock)
                 {

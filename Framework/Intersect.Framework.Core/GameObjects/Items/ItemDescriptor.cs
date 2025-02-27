@@ -205,9 +205,9 @@ public partial class ItemDescriptor : DatabaseObject<ItemDescriptor>, IFolderabl
 
     [NotMapped]
     [JsonIgnore]
-    public ProjectileBase Projectile
+    public ProjectileDescriptor Projectile
     {
-        get => ProjectileBase.Get(ProjectileId);
+        get => ProjectileDescriptor.Get(ProjectileId);
         set => ProjectileId = value?.Id ?? Guid.Empty;
     }
 
