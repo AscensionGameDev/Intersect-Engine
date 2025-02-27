@@ -544,39 +544,41 @@ public partial class Player : Entity, IPlayer
                 if (itm != null && itm.ItemId == hotbarInstance.ItemOrSpellId)
                 {
                     bestMatch = i;
-                    var itemBase = ItemDescriptor.Get(itm.ItemId);
-                    if (itemBase != null)
+                    var itemDescriptor = ItemDescriptor.Get(itm.ItemId);
+                    if (itemDescriptor == null)
                     {
-                        if (itemBase.ItemType == ItemType.Bag)
+                        continue;
+                    }
+
+                    if (itemDescriptor.ItemType == ItemType.Bag)
+                    {
+                        if (hotbarInstance.BagId == itm.BagId)
                         {
-                            if (hotbarInstance.BagId == itm.BagId)
+                            break;
+                        }
+                    }
+                    else if (itemDescriptor.ItemType == ItemType.Equipment)
+                    {
+                        if (hotbarInstance.PreferredStatBuffs != null)
+                        {
+                            var statMatch = true;
+                            for (var s = 0; s < hotbarInstance.PreferredStatBuffs.Length; s++)
+                            {
+                                if (itm.ItemProperties.StatModifiers[s] != hotbarInstance.PreferredStatBuffs[s])
+                                {
+                                    statMatch = false;
+                                }
+                            }
+
+                            if (statMatch)
                             {
                                 break;
                             }
                         }
-                        else if (itemBase.ItemType == ItemType.Equipment)
-                        {
-                            if (hotbarInstance.PreferredStatBuffs != null)
-                            {
-                                var statMatch = true;
-                                for (var s = 0; s < hotbarInstance.PreferredStatBuffs.Length; s++)
-                                {
-                                    if (itm.ItemProperties.StatModifiers[s] != hotbarInstance.PreferredStatBuffs[s])
-                                    {
-                                        statMatch = false;
-                                    }
-                                }
-
-                                if (statMatch)
-                                {
-                                    break;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            break;
-                        }
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
             }
@@ -600,46 +602,62 @@ public partial class Player : Entity, IPlayer
 
     public bool IsItemOnCooldown(int slot)
     {
-        if (Inventory[slot] != null)
+        if (Inventory[slot] is not {} inventorySlot)
         {
-            var itm = Inventory[slot];
-            if (itm.ItemId != Guid.Empty)
-            {
-                if (ItemCooldowns.TryGetValue(itm.ItemId, out var value) && value > Timing.Global.Milliseconds)
-                {
-                    return true;
-                }
-
-                if ((ItemDescriptor.TryGet(itm.ItemId, out var itemBase) && !itemBase.IgnoreGlobalCooldown) && Globals.Me?.GlobalCooldown > Timing.Global.Milliseconds)
-                {
-                    return true;
-                }
-            }
+            return false;
         }
 
-        return false;
+        if (inventorySlot.ItemId == Guid.Empty)
+        {
+            return false;
+        }
+
+        if (ItemCooldowns.TryGetValue(inventorySlot.ItemId, out var cooldownEndTime) &&
+            cooldownEndTime > Timing.Global.Milliseconds)
+        {
+            return true;
+        }
+
+        return ItemDescriptor.TryGet(inventorySlot.ItemId, out var itemDescriptor) &&
+               !itemDescriptor.IgnoreGlobalCooldown &&
+               Globals.Me?.GlobalCooldown > Timing.Global.Milliseconds;
     }
 
     public long GetItemRemainingCooldown(int slot)
     {
-        if (Inventory[slot] != null)
+        if (Inventory[slot] is not { } inventorySlot)
         {
-            var itm = Inventory[slot];
-            if (itm.ItemId != Guid.Empty)
-            {
-                if (ItemCooldowns.TryGetValue(itm.ItemId, out var value) && value > Timing.Global.Milliseconds)
-                {
-                    return value - Timing.Global.Milliseconds;
-                }
-
-                if ((ItemDescriptor.TryGet(itm.ItemId, out var itemBase) && !itemBase.IgnoreGlobalCooldown) && Globals.Me?.GlobalCooldown > Timing.Global.Milliseconds)
-                {
-                    return Globals.Me.GlobalCooldown - Timing.Global.Milliseconds;
-                }
-            }
+            return 0;
         }
 
-        return 0;
+        if (inventorySlot.ItemId == Guid.Empty)
+        {
+            return 0;
+        }
+
+        if (ItemCooldowns.TryGetValue(inventorySlot.ItemId, out var cooldownEndTime) &&
+            cooldownEndTime > Timing.Global.Milliseconds)
+        {
+            return cooldownEndTime - Timing.Global.Milliseconds;
+        }
+
+        if (!ItemDescriptor.TryGet(inventorySlot.ItemId, out var itemDescriptor))
+        {
+            return 0;
+        }
+
+        if (itemDescriptor.IgnoreGlobalCooldown)
+        {
+            return 0;
+        }
+
+        if (Globals.Me is not { } player)
+        {
+            return 0;
+        }
+
+        var itemRemainingCooldown = player.GlobalCooldown - Timing.Global.Milliseconds;
+        return Math.Max(0, itemRemainingCooldown);
     }
 
     public bool IsSpellOnCooldown(int slot)
