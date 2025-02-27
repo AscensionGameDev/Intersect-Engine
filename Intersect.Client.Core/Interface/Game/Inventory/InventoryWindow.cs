@@ -5,10 +5,6 @@ using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
-using Intersect.Core;
-using Intersect.Framework.Core.GameObjects.Items;
-using Intersect.GameObjects;
-using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Interface.Game.Inventory;
 

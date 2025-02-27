@@ -148,7 +148,7 @@ public partial class InventoryItem : ImagePanel
         }
 
         // No point showing a menu for blank space.
-        if (!ItemBase.TryGet(inventorySlot.ItemId, out var descriptor))
+        if (!ItemDescriptor.TryGet(inventorySlot.ItemId, out var descriptor))
         {
             return;
         }
@@ -156,24 +156,24 @@ public partial class InventoryItem : ImagePanel
         // Add our use Item prompt, assuming we have a valid usecase.
         switch (descriptor.ItemType)
         {
-            case Enums.ItemType.Spell:
+            case ItemType.Spell:
                 _contextMenu.AddChild(_useItemMenuItem);
                 var useItemLabel = descriptor.QuickCast ? Strings.ItemContextMenu.Cast : Strings.ItemContextMenu.Learn;
                 _useItemMenuItem.Text = useItemLabel.ToString(descriptor.Name);
                 break;
 
-            case Enums.ItemType.Event:
-            case Enums.ItemType.Consumable:
+            case ItemType.Event:
+            case ItemType.Consumable:
                 _contextMenu.AddChild(_useItemMenuItem);
                 _useItemMenuItem.Text = Strings.ItemContextMenu.Use.ToString(descriptor.Name);
                 break;
 
-            case Enums.ItemType.Bag:
+            case ItemType.Bag:
                 _contextMenu.AddChild(_useItemMenuItem);
                 _useItemMenuItem.Text = Strings.ItemContextMenu.Open.ToString(descriptor.Name);
                 break;
 
-            case Enums.ItemType.Equipment:
+            case ItemType.Equipment:
                 _contextMenu.AddChild(_useItemMenuItem);
                 var equipItemLabel = Globals.Me.MyEquipment.Contains(_mySlot) ? Strings.ItemContextMenu.Unequip : Strings.ItemContextMenu.Equip;
                 _useItemMenuItem.Text = equipItemLabel.ToString(descriptor.Name);
@@ -377,10 +377,10 @@ public partial class InventoryItem : ImagePanel
 
         if (Globals.GameShop == null)
         {
-            if (inventorySlot.Base != null)
+            if (inventorySlot.Descriptor != null)
             {
                 _descWindow = new ItemDescriptionWindow(
-                    inventorySlot.Base, inventorySlot.Quantity, _inventoryWindow.X,
+                    inventorySlot.Descriptor, inventorySlot.Quantity, _inventoryWindow.X,
                     _inventoryWindow.Y, inventorySlot.ItemProperties
                 );
             }
@@ -400,15 +400,15 @@ public partial class InventoryItem : ImagePanel
 
             if (Globals.GameShop.BuyingWhitelist && shopItem != default)
             {
-                if (!ItemBase.TryGet(shopItem.CostItemId, out var hoveredItem))
+                if (!ItemDescriptor.TryGet(shopItem.CostItemId, out var hoveredItem))
                 {
                     return;
                 }
 
-                if (inventorySlot.Base != null)
+                if (inventorySlot.Descriptor != null)
                 {
                     _descWindow = new ItemDescriptionWindow(
-                        inventorySlot.Base, inventorySlot.Quantity,
+                        inventorySlot.Descriptor, inventorySlot.Quantity,
                         _inventoryWindow.X, _inventoryWindow.Y, inventorySlot.ItemProperties, "",
                         Strings.Shop.SellsFor.ToString(shopItem.CostItemQuantity, hoveredItem.Name)
                     );
@@ -417,21 +417,21 @@ public partial class InventoryItem : ImagePanel
             else if (shopItem == null)
             {
                 var costItem = Globals.GameShop.DefaultCurrency;
-                if (inventorySlot.Base != null && costItem != null)
+                if (inventorySlot.Descriptor != null && costItem != null)
                 {
                     _descWindow = new ItemDescriptionWindow(
-                        inventorySlot.Base, inventorySlot.Quantity,
+                        inventorySlot.Descriptor, inventorySlot.Quantity,
                         _inventoryWindow.X, _inventoryWindow.Y, inventorySlot.ItemProperties, "",
-                        Strings.Shop.SellsFor.ToString(inventorySlot.Base.Price.ToString(), costItem.Name)
+                        Strings.Shop.SellsFor.ToString(inventorySlot.Descriptor.Price.ToString(), costItem.Name)
                     );
                 }
             }
             else
             {
-                if (inventorySlot.Base != null)
+                if (inventorySlot.Descriptor != null)
                 {
                     _descWindow = new ItemDescriptionWindow(
-                        inventorySlot.Base, inventorySlot.Quantity, _inventoryWindow.X, _inventoryWindow.Y, inventorySlot.ItemProperties,
+                        inventorySlot.Descriptor, inventorySlot.Quantity, _inventoryWindow.X, _inventoryWindow.Y, inventorySlot.ItemProperties,
                         "", Strings.Shop.WontBuy
                     );
                 }
@@ -487,7 +487,7 @@ public partial class InventoryItem : ImagePanel
             return;
         }
 
-        if (!ItemBase.TryGet(inventorySlot.ItemId, out var descriptor))
+        if (!ItemDescriptor.TryGet(inventorySlot.ItemId, out var descriptor))
         {
             _reset();
             return;
