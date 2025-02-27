@@ -1,11 +1,11 @@
-namespace Intersect.GameObjects;
+namespace Intersect.Framework.Core.GameObjects.Lighting;
 
-public partial class LightBase
+public partial class LightDescriptor
 {
 
-    public LightBase() : this(-1, -1) { }
+    public LightDescriptor() : this(-1, -1) { }
 
-    public LightBase(int x, int y)
+    public LightDescriptor(int x, int y)
     {
         TileX = x;
         TileY = y;
@@ -13,7 +13,7 @@ public partial class LightBase
         Intensity = 255;
     }
 
-    public LightBase(LightBase copy)
+    public LightDescriptor(LightDescriptor copy)
     {
         TileX = copy.TileX;
         TileY = copy.TileY;
@@ -25,7 +25,7 @@ public partial class LightBase
         Color = Color.FromArgb(copy.Color.R, copy.Color.G, copy.Color.B);
     }
 
-    public LightBase(
+    public LightDescriptor(
         int tileX,
         int tileY,
         int offsetX,
@@ -78,7 +78,7 @@ public partial class LightBase
     /// <returns></returns>
     public override bool Equals(object obj)
     {
-        if (obj is LightBase light)
+        if (obj is LightDescriptor light)
         {
             return Intensity == light.Intensity && Color == light.Color && Expand == light.Expand && TileX == light.TileX && TileY == light.TileY;
         }

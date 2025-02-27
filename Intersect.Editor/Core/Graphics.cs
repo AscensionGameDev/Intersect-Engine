@@ -10,6 +10,7 @@ using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Lighting;
 using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.Attributes;
@@ -76,8 +77,8 @@ public static partial class Graphics
     //MonoGame Setup/Device
     private static GraphicsDevice sGraphicsDevice;
 
-    private static List<KeyValuePair<Microsoft.Xna.Framework.Point, LightBase>> sLightQueue =
-        new List<KeyValuePair<Microsoft.Xna.Framework.Point, LightBase>>();
+    private static List<KeyValuePair<Microsoft.Xna.Framework.Point, LightDescriptor>> sLightQueue =
+        new List<KeyValuePair<Microsoft.Xna.Framework.Point, LightDescriptor>>();
 
     private static SwapChainRenderTarget sMapEditorChain;
 
@@ -2086,7 +2087,7 @@ public static partial class Graphics
         sLightQueue.Clear();
     }
 
-    public static void DrawLight(int x, int y, LightBase light, RenderTarget2D target)
+    public static void DrawLight(int x, int y, LightDescriptor light, RenderTarget2D target)
     {
         var shader = GameContentManager.GetShader("radialgradient_editor.xnb");
         var vec = new Vector4(
@@ -2103,7 +2104,7 @@ public static partial class Graphics
         );
     }
 
-    public static void AddLight(int x, int y, LightBase light, RenderTarget2D target = null)
+    public static void AddLight(int x, int y, LightDescriptor light, RenderTarget2D target = null)
     {
         if (target == null)
         {
@@ -2111,7 +2112,7 @@ public static partial class Graphics
         }
 
         sLightQueue.Add(
-            new KeyValuePair<Microsoft.Xna.Framework.Point, LightBase>(
+            new KeyValuePair<Microsoft.Xna.Framework.Point, LightDescriptor>(
                 new Microsoft.Xna.Framework.Point(x, y), light
             )
         );

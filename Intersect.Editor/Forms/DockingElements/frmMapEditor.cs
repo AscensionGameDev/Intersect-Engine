@@ -11,6 +11,7 @@ using Intersect.Editor.Maps;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Lighting;
 using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.GameObjects;
@@ -459,7 +460,7 @@ public partial class FrmMapEditor : DockContent
                 }
                 else if (Globals.CurrentLayer == LayerOptions.Lights)
                 {
-                    LightBase tmpLight;
+                    LightDescriptor tmpLight;
                     if ((tmpLight = Globals.CurrentMap.FindLightAt(Globals.CurTileX, Globals.CurTileY)) != null)
                     {
                         Globals.CurrentMap.Lights.Remove(tmpLight);
@@ -1188,10 +1189,10 @@ public partial class FrmMapEditor : DockContent
             //Lights
             case LayerOptions.Lights:
                 {
-                    LightBase tmpLight;
+                    LightDescriptor tmpLight;
                     if ((tmpLight = Globals.CurrentMap.FindLightAt(Globals.CurTileX, Globals.CurTileY)) == null)
                     {
-                        tmpLight = new LightBase(Globals.CurTileX, Globals.CurTileY)
+                        tmpLight = new LightDescriptor(Globals.CurTileX, Globals.CurTileY)
                         {
                             Size = 50
                         };
@@ -1201,7 +1202,7 @@ public partial class FrmMapEditor : DockContent
 
                     Globals.MapLayersWindow.btnLightsHeader_Click(null, null);
                     Globals.MapLayersWindow.lightEditor.Show();
-                    Globals.BackupLight = new LightBase(tmpLight);
+                    Globals.BackupLight = new LightDescriptor(tmpLight);
                     Globals.MapLayersWindow.lightEditor.LoadEditor(tmpLight);
                     Globals.EditingLight = tmpLight;
                     mMapChanged = true;
@@ -1882,7 +1883,7 @@ public partial class FrmMapEditor : DockContent
                     }
 
                     //Lights
-                    LightBase lightCopy;
+                    LightDescriptor lightCopy;
                     if (Globals.SelectionType != (int)SelectionTypes.CurrentLayer ||
                         Globals.CurrentLayer == LayerOptions.Lights)
                     {
@@ -1893,7 +1894,7 @@ public partial class FrmMapEditor : DockContent
                                 tmpMap.Lights.Remove(tmpMap.FindLightAt(x0, y0));
                             }
 
-                            lightCopy = new LightBase(Globals.SelectionSource.FindLightAt(x0 - dragxoffset, y0 - dragyoffset))
+                            lightCopy = new LightDescriptor(Globals.SelectionSource.FindLightAt(x0 - dragxoffset, y0 - dragyoffset))
                             {
                                 TileX = x0,
                                 TileY = y0

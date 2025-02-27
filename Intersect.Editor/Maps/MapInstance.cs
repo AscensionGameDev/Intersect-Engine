@@ -6,6 +6,7 @@ using Intersect.Editor.Entities;
 using Intersect.Editor.General;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Lighting;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.GameObjects;
 using Newtonsoft.Json;
@@ -318,7 +319,7 @@ public partial class MapInstance : MapDescriptor, IGameObject<Guid, MapInstance>
         return null;
     }
 
-    public LightBase FindLightAt(int x, int y)
+    public LightDescriptor FindLightAt(int x, int y)
     {
         if (Lights.Count <= 0)
         {

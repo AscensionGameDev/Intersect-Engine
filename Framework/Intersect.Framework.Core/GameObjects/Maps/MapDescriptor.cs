@@ -4,6 +4,7 @@ using Intersect.Compression;
 using Intersect.Config;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Lighting;
 using Intersect.Framework.Core.Serialization;
 using Intersect.GameObjects;
 using Intersect.Models;
@@ -145,7 +146,7 @@ public partial class MapDescriptor : DatabaseObject<MapDescriptor>
 
                 for (var i = 0; i < mapDescriptor.Lights?.Count; i++)
                 {
-                    Lights.Add(new LightBase(mapDescriptor.Lights[i]));
+                    Lights.Add(new LightDescriptor(mapDescriptor.Lights[i]));
                 }
 
                 foreach (var record in mapDescriptor.LocalEvents)
@@ -220,7 +221,7 @@ public partial class MapDescriptor : DatabaseObject<MapDescriptor>
         set
         {
             Lights.Clear();
-            var lights = JsonConvert.DeserializeObject<List<LightBase>>(value);
+            var lights = JsonConvert.DeserializeObject<List<LightDescriptor>>(value);
             if (lights != null)
             {
                 Lights.AddRange(lights);
@@ -230,7 +231,7 @@ public partial class MapDescriptor : DatabaseObject<MapDescriptor>
 
     [NotMapped]
     [JsonProperty]
-    public List<LightBase> Lights { get; private set; } = [];
+    public List<LightDescriptor> Lights { get; private set; } = [];
 
     [Column("Events")]
     [JsonIgnore]

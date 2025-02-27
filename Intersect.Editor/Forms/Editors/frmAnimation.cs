@@ -8,6 +8,7 @@ using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Animations;
+using Intersect.Framework.Core.GameObjects.Lighting;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 using Microsoft.Xna.Framework.Graphics;
@@ -335,11 +336,11 @@ public partial class FrmAnimation : EditorForm
 
     void UpdateLowerFrames()
     {
-        LightBase[] newArray;
+        LightDescriptor[] newArray;
         scrlLowerFrame.Maximum = (int)nudLowerFrameCount.Value;
         if (mEditorItem.Lower.Lights == null || mEditorItem.Lower.FrameCount != mEditorItem.Lower.Lights.Length)
         {
-            newArray = new LightBase[mEditorItem.Lower.FrameCount];
+            newArray = new LightDescriptor[mEditorItem.Lower.FrameCount];
             for (var i = 0; i < newArray.Length; i++)
             {
                 if (mEditorItem.Lower.Lights != null && i < mEditorItem.Lower.Lights.Length)
@@ -348,7 +349,7 @@ public partial class FrmAnimation : EditorForm
                 }
                 else
                 {
-                    newArray[i] = new LightBase(-1, -1);
+                    newArray[i] = new LightDescriptor(-1, -1);
                 }
             }
 
@@ -358,11 +359,11 @@ public partial class FrmAnimation : EditorForm
 
     void UpdateUpperFrames()
     {
-        LightBase[] newArray;
+        LightDescriptor[] newArray;
         scrlUpperFrame.Maximum = (int)nudUpperFrameCount.Value;
         if (mEditorItem.Upper.Lights == null || mEditorItem.Upper.FrameCount != mEditorItem.Upper.Lights.Length)
         {
-            newArray = new LightBase[mEditorItem.Upper.FrameCount];
+            newArray = new LightDescriptor[mEditorItem.Upper.FrameCount];
             for (var i = 0; i < newArray.Length; i++)
             {
                 if (mEditorItem.Upper.Lights != null && i < mEditorItem.Upper.Lights.Length)
@@ -371,7 +372,7 @@ public partial class FrmAnimation : EditorForm
                 }
                 else
                 {
-                    newArray[i] = new LightBase(-1, -1);
+                    newArray[i] = new LightDescriptor(-1, -1);
                 }
             }
 
@@ -576,7 +577,7 @@ public partial class FrmAnimation : EditorForm
         if (scrlLowerFrame.Value > 1)
         {
             mEditorItem.Lower.Lights[scrlLowerFrame.Value - 1] =
-                new LightBase(mEditorItem.Lower.Lights[scrlLowerFrame.Value - 2]);
+                new LightDescriptor(mEditorItem.Lower.Lights[scrlLowerFrame.Value - 2]);
 
             LoadLowerLight();
             DrawLowerFrame();
@@ -604,7 +605,7 @@ public partial class FrmAnimation : EditorForm
         if (scrlUpperFrame.Value > 1)
         {
             mEditorItem.Upper.Lights[scrlUpperFrame.Value - 1] =
-                new LightBase(mEditorItem.Upper.Lights[scrlUpperFrame.Value - 2]);
+                new LightDescriptor(mEditorItem.Upper.Lights[scrlUpperFrame.Value - 2]);
 
             LoadUpperLight();
             DrawUpperFrame();

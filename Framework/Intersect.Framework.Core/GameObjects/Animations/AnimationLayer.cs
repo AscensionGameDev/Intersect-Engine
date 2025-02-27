@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Intersect.Framework.Core.GameObjects.Lighting;
 using Intersect.GameObjects;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -10,11 +11,11 @@ public partial class AnimationLayer
 {
     public AnimationLayer()
     {
-        Lights = new LightBase[FrameCount];
+        Lights = new LightDescriptor[FrameCount];
 
         for (var frame = 0; frame < FrameCount; ++frame)
         {
-            Lights[frame] = new LightBase();
+            Lights[frame] = new LightDescriptor();
         }
     }
 
@@ -38,9 +39,9 @@ public partial class AnimationLayer
     public string Light
     {
         get => JsonConvert.SerializeObject(Lights);
-        set => Lights = JsonConvert.DeserializeObject<LightBase[]>(value);
+        set => Lights = JsonConvert.DeserializeObject<LightDescriptor[]>(value);
     }
 
     [NotMapped]
-    public LightBase[] Lights { get; set; }
+    public LightDescriptor[] Lights { get; set; }
 }

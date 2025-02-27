@@ -11,6 +11,7 @@ using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.Framework;
 using Intersect.Framework.Core;
+using Intersect.Framework.Core.GameObjects.Lighting;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.GameObjects;
 using Intersect.Utilities;
@@ -92,7 +93,7 @@ public static partial class Graphics
 
     private static IGameRenderTexture? sDarknessTexture;
 
-    private static readonly List<LightBase> sLightQueue = [];
+    private static readonly List<LightDescriptor> sLightQueue = [];
 
     //Player Spotlight Values
     private static long sLightUpdate;
@@ -1173,7 +1174,7 @@ public static partial class Graphics
             return;
         }
 
-        sLightQueue.Add(new LightBase(0, 0, x, y, intensity, size, expand, color));
+        sLightQueue.Add(new LightDescriptor(0, 0, x, y, intensity, size, expand, color));
         LightsDrawn++;
     }
 
