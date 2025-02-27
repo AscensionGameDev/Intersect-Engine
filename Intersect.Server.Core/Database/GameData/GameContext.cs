@@ -78,7 +78,7 @@ public abstract partial class GameContext : IntersectDbContext<GameContext>, IGa
     public DbSet<TilesetDescriptor> Tilesets { get; set; }
 
     //Time
-    public DbSet<TimeBase> Time { get; set; }
+    public DbSet<DaylightCycleDescriptor> Time { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

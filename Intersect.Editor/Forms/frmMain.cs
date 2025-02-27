@@ -1522,10 +1522,10 @@ public partial class FrmMain : Form
 
         btn.Click += TimeDropdownButton_Click;
         toolStripTimeButton.DropDownItems.Add(btn);
-        for (var i = 0; i < 1440; i += TimeBase.GetTimeBase().RangeInterval)
+        for (var i = 0; i < 1440; i += DaylightCycleDescriptor.Instance.RangeInterval)
         {
             var addRange = time.ToString("h:mm:ss tt") + " to ";
-            time = time.AddMinutes(TimeBase.GetTimeBase().RangeInterval);
+            time = time.AddMinutes(DaylightCycleDescriptor.Instance.RangeInterval);
             addRange += time.ToString("h:mm:ss tt");
 
             //Create image of overlay color
@@ -1539,7 +1539,7 @@ public partial class FrmMain : Form
                 g.DrawImage(transtile, new System.Drawing.Point(0, 0));
             }
 
-            var clr = TimeBase.GetTimeBase().DaylightHues[x];
+            var clr = DaylightCycleDescriptor.Instance.DaylightHues[x];
             Brush brush = new SolidBrush(System.Drawing.Color.FromArgb(clr.A, clr.R, clr.G, clr.B));
             g.FillRectangle(brush, new System.Drawing.Rectangle(0, 0, 32, 32));
 
@@ -1711,7 +1711,7 @@ public partial class FrmMain : Form
                     if (mTimeEditor == null || mTimeEditor.Visible == false)
                     {
                         mTimeEditor = new FrmTime();
-                        mTimeEditor.InitEditor(TimeBase.GetTimeBase());
+                        mTimeEditor.InitEditor(DaylightCycleDescriptor.Instance);
                         mTimeEditor.Show();
                     }
 

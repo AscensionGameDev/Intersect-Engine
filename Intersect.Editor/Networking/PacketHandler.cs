@@ -750,6 +750,6 @@ internal sealed partial class PacketHandler
     //TimeDataPacket
     public void HandlePacket(IPacketSender packetSender, TimeDataPacket packet)
     {
-        TimeBase.GetTimeBase().LoadFromJson(packet.TimeJson);
+        DaylightCycleDescriptor.Instance.LoadFromJson(packet.TimeJson);
     }
 }

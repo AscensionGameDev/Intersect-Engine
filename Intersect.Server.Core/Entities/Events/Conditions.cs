@@ -320,8 +320,8 @@ public static partial class Conditions
     {
         if (condition.Ranges[0] > -1 &&
             condition.Ranges[1] > -1 &&
-            condition.Ranges[0] < 1440 / TimeBase.GetTimeBase().RangeInterval &&
-            condition.Ranges[1] < 1440 / TimeBase.GetTimeBase().RangeInterval)
+            condition.Ranges[0] < 1440 / DaylightCycleDescriptor.Instance.RangeInterval &&
+            condition.Ranges[1] < 1440 / DaylightCycleDescriptor.Instance.RangeInterval)
         {
             return Time.GetTimeRange() >= condition.Ranges[0] && Time.GetTimeRange() <= condition.Ranges[1];
         }

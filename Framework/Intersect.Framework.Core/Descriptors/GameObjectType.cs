@@ -61,7 +61,7 @@ public enum GameObjectType
     [GameObjectInfo(typeof(TilesetDescriptor), "tilesets")]
     Tileset,
 
-    [GameObjectInfo(typeof(TimeBase), "")]
+    [GameObjectInfo(typeof(DaylightCycleDescriptor), "")]
     Time,
 
     [GameObjectInfo(typeof(GuildVariableDescriptor), "guild_variables")]

@@ -1837,13 +1837,13 @@ public static partial class DbInterface
                 var time = context.Time.OrderBy(t => t.Id).FirstOrDefault();
                 if (time == null)
                 {
-                    context.Time.Add(TimeBase.GetTimeBase());
+                    context.Time.Add(DaylightCycleDescriptor.Instance);
                     context.ChangeTracker.DetectChanges();
                     context.SaveChanges();
                 }
                 else
                 {
-                    TimeBase.SetStaticTime(time);
+                    DaylightCycleDescriptor.Instance = time;
                 }
             }
             Time.Init();
@@ -1861,7 +1861,7 @@ public static partial class DbInterface
         {
             using (var context = CreateGameContext(readOnly: false))
             {
-                context.Time.Update(TimeBase.GetTimeBase());
+                context.Time.Update(DaylightCycleDescriptor.Instance);
                 context.ChangeTracker.DetectChanges();
                 context.SaveChanges();
             }

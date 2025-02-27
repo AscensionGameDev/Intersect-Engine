@@ -11,11 +11,11 @@ namespace Intersect.Editor.Forms.Editors;
 public partial class FrmTime : Form
 {
 
-    private TimeBase mBackupTime;
+    private DaylightCycleDescriptor mBackupTime;
 
     private Bitmap mTileBackbuffer;
 
-    private TimeBase mYTime;
+    private DaylightCycleDescriptor mYTime;
 
     public FrmTime()
     {
@@ -45,15 +45,15 @@ public partial class FrmTime : Form
         btnCancel.Text = Strings.TimeEditor.cancel;
     }
 
-    public void InitEditor(TimeBase time)
+    public void InitEditor(DaylightCycleDescriptor time)
     {
         //Create a backup in case we want to revert
         mYTime = time;
-        mBackupTime = new TimeBase();
+        mBackupTime = new DaylightCycleDescriptor();
         mBackupTime.LoadFromJson(time.GetInstanceJson());
 
         mTileBackbuffer = new Bitmap(pnlColor.Width, pnlColor.Height);
-        UpdateList(TimeBase.GetTimeInterval(cmbIntervals.SelectedIndex));
+        UpdateList(DaylightCycleDescriptor.GetTimeInterval(cmbIntervals.SelectedIndex));
         typeof(Panel).InvokeMember(
             "DoubleBuffered", BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null,
             pnlColor, new object[] {true}
@@ -61,16 +61,16 @@ public partial class FrmTime : Form
 
         chkSync.Checked = mYTime.SyncTime;
         txtTimeRate.Text = mYTime.Rate.ToString();
-        cmbIntervals.SelectedIndex = TimeBase.GetIntervalIndex(mYTime.RangeInterval);
+        cmbIntervals.SelectedIndex = DaylightCycleDescriptor.GetIntervalIndex(mYTime.RangeInterval);
         UpdateList(mYTime.RangeInterval);
         txtTimeRate.Enabled = !mYTime.SyncTime;
     }
 
     private void cmbIntervals_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if (mYTime.RangeInterval != TimeBase.GetTimeInterval(cmbIntervals.SelectedIndex))
+        if (mYTime.RangeInterval != DaylightCycleDescriptor.GetTimeInterval(cmbIntervals.SelectedIndex))
         {
-            mYTime.RangeInterval = TimeBase.GetTimeInterval(cmbIntervals.SelectedIndex);
+            mYTime.RangeInterval = DaylightCycleDescriptor.GetTimeInterval(cmbIntervals.SelectedIndex);
             UpdateList(mYTime.RangeInterval);
             mYTime.ResetColors();
             grpRangeOptions.Hide();

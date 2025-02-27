@@ -1198,7 +1198,7 @@ internal sealed partial class NetworkedPacketHandler
                 return;
             }
 
-            TimeBase.GetTimeBase().LoadFromJson(packet.TimeJson);
+            DaylightCycleDescriptor.Instance.LoadFromJson(packet.TimeJson);
             DbInterface.SaveTime();
             Time.Init();
             PacketSender.SendTimeBaseToAllEditors();

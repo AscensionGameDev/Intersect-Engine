@@ -102,7 +102,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
         }
 
         [HttpGet("time")]
-        [ProducesResponseType(typeof(TimeBase), (int)HttpStatusCode.OK, ContentTypes.Json)]
-        public IActionResult Time() => Ok(TimeBase.GetTimeBase());
+        [ProducesResponseType(typeof(DaylightCycleDescriptor), (int)HttpStatusCode.OK, ContentTypes.Json)]
+        public IActionResult Time() => Ok(DaylightCycleDescriptor.Instance);
     }
 }

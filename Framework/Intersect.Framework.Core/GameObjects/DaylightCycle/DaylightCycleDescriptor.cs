@@ -3,14 +3,14 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects;
 
-public partial class TimeBase
+public partial class DaylightCycleDescriptor
 {
-    private static TimeBase sTimeBase = new();
-
+    public static DaylightCycleDescriptor Instance { get; set; } = new();
+    
     [NotMapped]
     public Color[]? DaylightHues { get; set; }
 
-    public TimeBase()
+    public DaylightCycleDescriptor()
     {
         ResetColors();
     }
@@ -44,7 +44,7 @@ public partial class TimeBase
 
     public static string GetTimeJson()
     {
-        return JsonConvert.SerializeObject(sTimeBase);
+        return JsonConvert.SerializeObject(Instance);
     }
 
     public void ResetColors()
@@ -120,15 +120,5 @@ public partial class TimeBase
         }
 
         return 5;
-    }
-
-    public static void SetStaticTime(TimeBase time)
-    {
-        sTimeBase = time;
-    }
-
-    public static TimeBase GetTimeBase()
-    {
-        return sTimeBase;
     }
 }

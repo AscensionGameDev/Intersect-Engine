@@ -48,5 +48,5 @@ public interface IGameContext : IDbContext
 
     DbSet<TilesetDescriptor> Tilesets { get; set; }
 
-    DbSet<TimeBase> Time { get; set; }
+    DbSet<DaylightCycleDescriptor> Time { get; set; }
 }

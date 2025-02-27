@@ -499,10 +499,10 @@ public partial class EventCommandConditionalBranch : UserControl
                 cmbTime1.Items.Clear();
                 cmbTime2.Items.Clear();
                 var time = new DateTime(2000, 1, 1, 0, 0, 0);
-                for (var i = 0; i < 1440; i += TimeBase.GetTimeBase().RangeInterval)
+                for (var i = 0; i < 1440; i += DaylightCycleDescriptor.Instance.RangeInterval)
                 {
                     var addRange = time.ToString("h:mm:ss tt") + " " + Strings.EventConditional.to + " ";
-                    time = time.AddMinutes(TimeBase.GetTimeBase().RangeInterval);
+                    time = time.AddMinutes(DaylightCycleDescriptor.Instance.RangeInterval);
                     addRange += time.ToString("h:mm:ss tt");
                     cmbTime1.Items.Add(addRange);
                     cmbTime2.Items.Add(addRange);

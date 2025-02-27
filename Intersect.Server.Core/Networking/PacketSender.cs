@@ -1999,13 +1999,13 @@ public static partial class PacketSender
     //TimeDataPacket
     public static void SendTimeBaseTo(Client client)
     {
-        client.Send(new TimeDataPacket(TimeBase.GetTimeBase().GetInstanceJson()));
+        client.Send(new TimeDataPacket(DaylightCycleDescriptor.Instance.GetInstanceJson()));
     }
 
     //TimeDataPacket
     public static void SendTimeBaseToAllEditors()
     {
-        SendDataToEditors(new TimeDataPacket(TimeBase.GetTimeBase().GetInstanceJson()));
+        SendDataToEditors(new TimeDataPacket(DaylightCycleDescriptor.Instance.GetInstanceJson()));
     }
 
     //TimePacket
@@ -2013,7 +2013,7 @@ public static partial class PacketSender
     {
         SendDataToAllPlayers(
             new TimePacket(
-                Time.GetTime(), TimeBase.GetTimeBase().SyncTime ? 1 : TimeBase.GetTimeBase().Rate,
+                Time.GetTime(), DaylightCycleDescriptor.Instance.SyncTime ? 1 : DaylightCycleDescriptor.Instance.Rate,
                 Time.GetTimeColor()
             )
         );
@@ -2024,7 +2024,7 @@ public static partial class PacketSender
     {
         client?.Send(
             new TimePacket(
-                Time.GetTime(), TimeBase.GetTimeBase().SyncTime ? 1 : TimeBase.GetTimeBase().Rate,
+                Time.GetTime(), DaylightCycleDescriptor.Instance.SyncTime ? 1 : DaylightCycleDescriptor.Instance.Rate,
                 Time.GetTimeColor()
             )
         );
