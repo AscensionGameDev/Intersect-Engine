@@ -16,7 +16,7 @@ public interface IGameContext : IDbContext
 
     DbSet<CraftingTableBase> CraftingTables { get; set; }
 
-    DbSet<ClassBase> Classes { get; set; }
+    DbSet<ClassDescriptor> Classes { get; set; }
 
     DbSet<EventBase> Events { get; set; }
 

@@ -1392,7 +1392,7 @@ internal sealed partial class PacketHandler
 
         if (unequippedAttack)
         {
-            var classBase = ClassBase.Get(player.ClassId);
+            var classBase = ClassDescriptor.Get(player.ClassId);
             if (classBase != null)
             {
                 //Check for animation
@@ -1581,7 +1581,7 @@ internal sealed partial class PacketHandler
         }
 
         var index = client.Id;
-        var classBase = ClassBase.Get(packet.ClassId);
+        var classBase = ClassDescriptor.Get(packet.ClassId);
         if (classBase == null || classBase.Locked)
         {
             PacketSender.SendError(client, Strings.Account.InvalidClass, Strings.General.NoticeError);

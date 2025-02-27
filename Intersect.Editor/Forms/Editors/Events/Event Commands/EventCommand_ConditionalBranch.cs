@@ -468,7 +468,7 @@ public partial class EventCommandConditionalBranch : UserControl
             case ConditionTypes.ClassIs:
                 grpClass.Show();
                 cmbClass.Items.Clear();
-                cmbClass.Items.AddRange(ClassBase.Names);
+                cmbClass.Items.AddRange(ClassDescriptor.Names);
 
                 break;
             case ConditionTypes.KnowsSpell:
@@ -1269,7 +1269,7 @@ public partial class EventCommandConditionalBranch : UserControl
 
     private void SetupFormValues(ClassIsCondition condition)
     {
-        cmbClass.SelectedIndex = ClassBase.ListIndex(condition.ClassId);
+        cmbClass.SelectedIndex = ClassDescriptor.ListIndex(condition.ClassId);
     }
 
     private void SetupFormValues(KnowsSpellCondition condition)
@@ -1467,7 +1467,7 @@ public partial class EventCommandConditionalBranch : UserControl
 
     private void SaveFormValues(ClassIsCondition condition)
     {
-        condition.ClassId = ClassBase.IdFromList(cmbClass.SelectedIndex);
+        condition.ClassId = ClassDescriptor.IdFromList(cmbClass.SelectedIndex);
     }
 
     private void SaveFormValues(KnowsSpellCondition condition)

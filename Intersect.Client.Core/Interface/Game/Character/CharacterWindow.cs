@@ -69,7 +69,7 @@ public partial class CharacterWindow
     public int Y;
 
     //Extra Buffs
-    ClassBase mPlayer;
+    ClassDescriptor mPlayer;
 
     Label mHpRegen;
 
@@ -218,7 +218,7 @@ public partial class CharacterWindow
 
         mCharacterName.Text = Globals.Me.Name;
         mCharacterLevelAndClass.Text = Strings.Character.LevelAndClass.ToString(
-            Globals.Me.Level, ClassBase.GetName(Globals.Me.Class)
+            Globals.Me.Level, ClassDescriptor.GetName(Globals.Me.Class)
         );
 
         //Load Portrait
@@ -406,7 +406,7 @@ public partial class CharacterWindow
     /// </summary>
     public void UpdateExtraBuffs()
     {
-        mPlayer = ClassBase.Get(Globals.Me?.Class ?? Guid.Empty);
+        mPlayer = ClassDescriptor.Get(Globals.Me?.Class ?? Guid.Empty);
 
         //Getting HP and Mana Regen
         if (mPlayer != null)

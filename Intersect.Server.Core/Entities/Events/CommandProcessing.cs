@@ -1276,7 +1276,7 @@ public static partial class CommandProcessing
         Stack<CommandInstance> callStack
     )
     {
-        if (ClassBase.Get(command.ClassId) != null)
+        if (ClassDescriptor.Get(command.ClassId) != null)
         {
             player.ClassId = command.ClassId;
             player.RecalculateStatsAndPoints();

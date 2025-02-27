@@ -1420,7 +1420,7 @@ public static partial class PacketSender
                     character.Sprite,
                     character.Face,
                     character.Level,
-                    ClassBase.GetName(character.ClassId),
+                    ClassDescriptor.GetName(character.ClassId),
                     equipment
                 )
             );
@@ -1736,7 +1736,7 @@ public static partial class PacketSender
 
                 break;
             case GameObjectType.Class:
-                foreach (var obj in ClassBase.Lookup)
+                foreach (var obj in ClassDescriptor.Lookup)
                 {
                     SendGameObject(client, obj.Value, false, false, packetList);
                 }

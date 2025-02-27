@@ -482,14 +482,14 @@ internal sealed partial class PacketHandler
             case GameObjectType.Class:
                 if (deleted)
                 {
-                    var cls = ClassBase.Get(id);
+                    var cls = ClassDescriptor.Get(id);
                     cls.Delete();
                 }
                 else
                 {
-                    var cls = new ClassBase(id);
+                    var cls = new ClassDescriptor(id);
                     cls.Load(json);
-                    ClassBase.Lookup.Set(id, cls);
+                    ClassDescriptor.Lookup.Set(id, cls);
                 }
 
                 break;

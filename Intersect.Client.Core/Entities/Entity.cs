@@ -2224,7 +2224,7 @@ public partial class Entity : IEntity
                 break;
 
             case SpriteAnimations.Attack:
-                if (this is Player player && ClassBase.TryGet(player.Class, out var classDescriptor))
+                if (this is Player player && ClassDescriptor.TryGet(player.Class, out var classDescriptor))
                 {
                     textureOverride = classDescriptor.AttackSpriteOverride;
                 }

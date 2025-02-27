@@ -216,7 +216,7 @@ public partial class Guild
         foreach (var (memberId, membership) in members)
         {
             var (memberName, memberRank, memberLevel, memberClassId, memberMapId) = membership;
-            var className = ClassBase.GetName(memberClassId);
+            var className = ClassDescriptor.GetName(memberClassId);
             var mapName = MapBase.GetName(memberMapId);
             var guildMember = new GuildMember(
                 memberId,

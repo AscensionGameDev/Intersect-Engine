@@ -151,7 +151,7 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.ToTable("Animations");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.ClassBase", b =>
+            modelBuilder.Entity("Intersect.GameObjects.ClassDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("TEXT");

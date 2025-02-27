@@ -870,14 +870,14 @@ internal sealed partial class NetworkedPacketHandler
                     break;
 
                 case GameObjectType.Class:
-                    if (ClassBase.Lookup.Count == 1)
+                    if (ClassDescriptor.Lookup.Count == 1)
                     {
                         PacketSender.SendError(client, Strings.Classes.LastClassError, Strings.Classes.LastClass);
 
                         return;
                     }
 
-                    obj = DatabaseObject<ClassBase>.Lookup.Get(id);
+                    obj = DatabaseObject<ClassDescriptor>.Lookup.Get(id);
 
                     break;
 
@@ -1009,7 +1009,7 @@ internal sealed partial class NetworkedPacketHandler
                     break;
 
                 case GameObjectType.Class:
-                    obj = DatabaseObject<ClassBase>.Lookup.Get(id);
+                    obj = DatabaseObject<ClassDescriptor>.Lookup.Get(id);
 
                     break;
 

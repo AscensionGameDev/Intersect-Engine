@@ -69,7 +69,7 @@ public partial class Player : Entity
     public Guid ClassId { get; set; }
 
     [NotMapped]
-    public string ClassName => ClassBase.GetName(ClassId);
+    public string ClassName => ClassDescriptor.GetName(ClassId);
 
     public Gender Gender { get; set; }
 
@@ -357,7 +357,7 @@ public partial class Player : Entity
     }
 
     /// <summary>
-    /// Returns the required experience for the next level based on <see cref="ClassBase"/>. Returns -1 if MaxLevel.
+    /// Returns the required experience for the next level based on <see cref="ClassDescriptor"/>. Returns -1 if MaxLevel.
     /// </summary>
     /// <param name="level">The current player level. Before leveling up.</param>
     private long GetExperienceToNextLevel(int level)
@@ -367,9 +367,9 @@ public partial class Player : Entity
             return -1;
         }
 
-        var classBase = ClassBase.Get(ClassId);
+        var classBase = ClassDescriptor.Get(ClassId);
 
-        return classBase?.ExperienceToNextLevel(level) ?? ClassBase.DEFAULT_BASE_EXPERIENCE;
+        return classBase?.ExperienceToNextLevel(level) ?? ClassDescriptor.DEFAULT_BASE_EXPERIENCE;
     }
 
     public void SetOnline()
@@ -1087,7 +1087,7 @@ public partial class Player : Entity
     //Spawning/Dying
     private void Respawn()
     {
-        if (ClassBase.TryGet(ClassId, out _))
+        if (ClassDescriptor.TryGet(ClassId, out _))
         {
             WarpToSpawn();
         }
@@ -1154,9 +1154,9 @@ public partial class Player : Entity
 
     public override void ProcessRegen()
     {
-        Debug.Assert(ClassBase.Lookup != null, "ClassBase.Lookup != null");
+        Debug.Assert(ClassDescriptor.Lookup != null, "ClassBase.Lookup != null");
 
-        var playerClass = ClassBase.Get(ClassId);
+        var playerClass = ClassDescriptor.Get(ClassId);
         if (playerClass?.VitalRegen == null)
         {
             return;
@@ -1187,7 +1187,7 @@ public partial class Player : Entity
 
     public override long GetMaxVital(int vital)
     {
-        var classDescriptor = ClassBase.Get(this.ClassId);
+        var classDescriptor = ClassDescriptor.Get(this.ClassId);
         long classVital = 20;
         if (classDescriptor != null)
         {
@@ -1282,7 +1282,7 @@ public partial class Player : Entity
             return;
         }
 
-        ClassBase? classDescriptor = null;
+        ClassDescriptor? classDescriptor = null;
         List<(string, Color)> messageList = [];
 
         var targetLevel = Math.Clamp(Level + amount, 1, Options.Instance.Player.MaxLevel);
@@ -1293,7 +1293,7 @@ public partial class Player : Entity
                 SetLevel(Level + 1, resetExperience, sendPackets: false);
                 messageList.Add((Strings.Player.LevelUp.ToString(Level), CustomColors.Combat.LevelUp));
 
-                if ((classDescriptor?.Id == ClassId || ClassBase.TryGet(ClassId, out classDescriptor)) && classDescriptor?.Spells != default)
+                if ((classDescriptor?.Id == ClassId || ClassDescriptor.TryGet(ClassId, out classDescriptor)) && classDescriptor?.Spells != default)
                 {
                     foreach (var spell in classDescriptor.Spells)
                     {
@@ -1321,7 +1321,7 @@ public partial class Player : Entity
                 SetLevel(Level - 1, sendPackets:false);
                 messageList.Add((Strings.Player.LevelLost.ToString(Level), CustomColors.Combat.LevelLost));
 
-                if ((classDescriptor?.Id == ClassId || ClassBase.TryGet(ClassId, out classDescriptor)) && classDescriptor?.Spells != default)
+                if ((classDescriptor?.Id == ClassId || ClassDescriptor.TryGet(ClassId, out classDescriptor)) && classDescriptor?.Spells != default)
                 {
                     foreach (var spell in classDescriptor.Spells)
                     {
@@ -1769,7 +1769,7 @@ public partial class Player : Entity
         }
         else
         {
-            var classBase = ClassBase.Get(ClassId);
+            var classBase = ClassDescriptor.Get(ClassId);
             if (classBase != null)
             {
                 base.TryAttack(
@@ -1879,7 +1879,7 @@ public partial class Player : Entity
     {
         var attackTime = base.CalculateAttackTime();
 
-        var cls = ClassBase.Get(ClassId);
+        var cls = ClassDescriptor.Get(ClassId);
         if (cls != null && cls.AttackSpeedModifier == 1) //Static
         {
             attackTime = cls.AttackSpeedValue;
@@ -1936,7 +1936,7 @@ public partial class Player : Entity
 
     public void RecalculateStatsAndPoints()
     {
-        var playerClass = ClassBase.Get(ClassId);
+        var playerClass = ClassDescriptor.Get(ClassId);
 
         if (playerClass != null)
         {
@@ -2294,7 +2294,7 @@ public partial class Player : Entity
         }
         else
         {
-            var cls = ClassBase.Get(ClassId);
+            var cls = ClassDescriptor.Get(ClassId);
             if (cls != null)
             {
                 if (MapController.Lookup.Keys.Contains(cls.SpawnMapId))

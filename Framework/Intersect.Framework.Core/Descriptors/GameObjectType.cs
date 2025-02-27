@@ -12,7 +12,7 @@ public enum GameObjectType
     [GameObjectInfo(typeof(AnimationDescriptor), "animations")]
     Animation = 0,
 
-    [GameObjectInfo(typeof(ClassBase), "classes")]
+    [GameObjectInfo(typeof(ClassDescriptor), "classes")]
     Class,
 
     [GameObjectInfo(typeof(ItemBase), "items")]

@@ -642,7 +642,7 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.Class:
-                ClassBase.Lookup.Clear();
+                ClassDescriptor.Lookup.Clear();
 
                 break;
             case GameObjectType.Item:
@@ -735,7 +735,7 @@ public static partial class DbInterface
                     case GameObjectType.Class:
                         foreach (var cls in context.Classes)
                         {
-                            ClassBase.Lookup.Set(cls.Id, cls);
+                            ClassDescriptor.Lookup.Set(cls.Id, cls);
                         }
 
                         break;
@@ -998,7 +998,7 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.Class:
-                dbObj = new ClassBase(predefinedid);
+                dbObj = new ClassDescriptor(predefinedid);
 
                 break;
             case GameObjectType.Item:
@@ -1097,8 +1097,8 @@ public static partial class DbInterface
                         break;
 
                     case GameObjectType.Class:
-                        context.Classes.Add((ClassBase)dbObj);
-                        ClassBase.Lookup.Set(dbObj.Id, dbObj);
+                        context.Classes.Add((ClassDescriptor)dbObj);
+                        ClassDescriptor.Lookup.Set(dbObj.Id, dbObj);
 
                         break;
 
@@ -1235,7 +1235,7 @@ public static partial class DbInterface
 
                         break;
                     case GameObjectType.Class:
-                        context.Classes.Remove((ClassBase)gameObject);
+                        context.Classes.Remove((ClassDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Item:
@@ -1381,7 +1381,7 @@ public static partial class DbInterface
 
                         break;
                     case GameObjectType.Class:
-                        context.Classes.Update((ClassBase)gameObject);
+                        context.Classes.Update((ClassDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Item:
@@ -1534,10 +1534,10 @@ public static partial class DbInterface
 
     private static void OnClassesLoaded()
     {
-        if (ClassBase.Lookup.Count == 0)
+        if (ClassDescriptor.Lookup.Count == 0)
         {
             Console.WriteLine(Strings.Database.NoClasses);
-            var cls = (ClassBase)AddGameObject(GameObjectType.Class);
+            var cls = (ClassDescriptor)AddGameObject(GameObjectType.Class);
             cls.Name = Strings.Database.Default;
             var defaultMale = new ClassSprite()
             {

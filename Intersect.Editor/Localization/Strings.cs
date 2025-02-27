@@ -127,7 +127,7 @@ public static partial class Strings
 
     public static string GetEventConditionalDesc(ClassIsCondition condition)
     {
-        return EventConditionDesc.Class.ToString(ClassBase.GetName(condition.ClassId));
+        return EventConditionDesc.Class.ToString(ClassDescriptor.GetName(condition.ClassId));
     }
 
     public static string GetEventConditionalDesc(KnowsSpellCondition condition)

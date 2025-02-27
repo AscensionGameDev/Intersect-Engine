@@ -1225,7 +1225,7 @@ public static partial class CommandPrinter
 
     private static string GetCommandText(SetClassCommand command, MapInstance map)
     {
-        return Strings.EventCommandList.setclass.ToString(ClassBase.GetName(command.ClassId));
+        return Strings.EventCommandList.setclass.ToString(ClassDescriptor.GetName(command.ClassId));
     }
 
     private static string GetCommandText(StartQuestCommand command, MapInstance map)

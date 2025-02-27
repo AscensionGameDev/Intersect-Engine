@@ -17,11 +17,11 @@ namespace Intersect.Editor.Forms.Editors;
 public partial class FrmClass : EditorForm
 {
 
-    private List<ClassBase> mChanged = new List<ClassBase>();
+    private List<ClassDescriptor> mChanged = new List<ClassDescriptor>();
 
     private string mCopiedItem;
 
-    private ClassBase mEditorItem;
+    private ClassDescriptor mEditorItem;
 
     private List<string> mKnownFolders = new List<string>();
 
@@ -41,7 +41,7 @@ public partial class FrmClass : EditorForm
     }
     private void AssignEditorItem(Guid id)
     {
-        mEditorItem = ClassBase.Get(id);
+        mEditorItem = ClassDescriptor.Get(id);
         UpdateEditor();
     }
 
@@ -50,7 +50,7 @@ public partial class FrmClass : EditorForm
         if (type == GameObjectType.Class)
         {
             InitEditor();
-            if (mEditorItem != null && !ClassBase.Lookup.Values.Contains(mEditorItem))
+            if (mEditorItem != null && !ClassDescriptor.Lookup.Values.Contains(mEditorItem))
             {
                 mEditorItem = null;
                 UpdateEditor();
@@ -484,15 +484,15 @@ public partial class FrmClass : EditorForm
     {
         //Collect folders
         var mFolders = new List<string>();
-        foreach (var itm in ClassBase.Lookup)
+        foreach (var itm in ClassDescriptor.Lookup)
         {
-            if (!string.IsNullOrEmpty(((ClassBase) itm.Value).Folder) &&
-                !mFolders.Contains(((ClassBase) itm.Value).Folder))
+            if (!string.IsNullOrEmpty(((ClassDescriptor) itm.Value).Folder) &&
+                !mFolders.Contains(((ClassDescriptor) itm.Value).Folder))
             {
-                mFolders.Add(((ClassBase) itm.Value).Folder);
-                if (!mKnownFolders.Contains(((ClassBase) itm.Value).Folder))
+                mFolders.Add(((ClassDescriptor) itm.Value).Folder);
+                if (!mKnownFolders.Contains(((ClassDescriptor) itm.Value).Folder))
                 {
-                    mKnownFolders.Add(((ClassBase) itm.Value).Folder);
+                    mKnownFolders.Add(((ClassDescriptor) itm.Value).Folder);
                 }
             }
         }
@@ -503,8 +503,8 @@ public partial class FrmClass : EditorForm
         cmbFolder.Items.Add("");
         cmbFolder.Items.AddRange(mKnownFolders.ToArray());
 
-        var items = ClassBase.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
-            new KeyValuePair<string, string>(((ClassBase)pair.Value)?.Name ?? Models.DatabaseObject<ClassBase>.Deleted, ((ClassBase)pair.Value)?.Folder ?? ""))).ToArray();
+        var items = ClassDescriptor.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
+            new KeyValuePair<string, string>(((ClassDescriptor)pair.Value)?.Name ?? Models.DatabaseObject<ClassDescriptor>.Deleted, ((ClassDescriptor)pair.Value)?.Folder ?? ""))).ToArray();
         lstGameObjects.Repopulate(items, mFolders, btnAlphabetical.Checked, CustomSearch(), txtSearch.Text);
     }
 

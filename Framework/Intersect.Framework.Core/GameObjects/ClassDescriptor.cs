@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects;
 
-public partial class ClassBase : DatabaseObject<ClassBase>, IFolderable
+public partial class ClassDescriptor : DatabaseObject<ClassDescriptor>, IFolderable
 {
     public const long DEFAULT_BASE_EXPERIENCE = 100;
 
@@ -128,7 +128,7 @@ public partial class ClassBase : DatabaseObject<ClassBase>, IFolderable
     public long[] VitalRegen { get; set; } = new long[Enum.GetValues<Vital>().Length];
 
     [JsonConstructor]
-    public ClassBase(Guid id) : base(id)
+    public ClassDescriptor(Guid id) : base(id)
     {
         Name = "New Class";
 
@@ -139,7 +139,7 @@ public partial class ClassBase : DatabaseObject<ClassBase>, IFolderable
     }
 
     //Parameterless constructor for EF
-    public ClassBase()
+    public ClassDescriptor()
     {
         Name = "New Class";
 

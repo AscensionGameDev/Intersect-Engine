@@ -2350,7 +2350,7 @@ public partial class Player : Entity, IPlayer
         ItemBase? weapon = null;
         var attackTime = base.CalculateAttackTime();
 
-        var cls = ClassBase.Get(Class);
+        var cls = ClassDescriptor.Get(Class);
         if (cls != null && cls.AttackSpeedModifier == 1) //Static
         {
             attackTime = cls.AttackSpeedValue;

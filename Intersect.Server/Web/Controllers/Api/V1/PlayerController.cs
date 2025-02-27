@@ -274,7 +274,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-            if (!ClassBase.TryGet(change.Id, out var _))
+            if (!ClassDescriptor.TryGet(change.Id, out var _))
             {
                 return BadRequest($@"Invalid class id {change.Id}.");
             }

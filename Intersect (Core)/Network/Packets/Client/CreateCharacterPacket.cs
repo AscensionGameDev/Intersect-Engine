@@ -34,7 +34,7 @@ public partial class CreateCharacterPacket : IntersectPacket
 
         var sanitizer = new Sanitizer();
 
-        var classDescriptor = ClassBase.Get(ClassId);
+        var classDescriptor = ClassDescriptor.Get(ClassId);
         if (classDescriptor != null)
         {
             Sprite = sanitizer.Clamp(nameof(Sprite), Sprite, 0, classDescriptor.Sprites?.Count ?? 0);
