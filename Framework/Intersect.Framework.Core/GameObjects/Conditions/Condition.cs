@@ -4,7 +4,7 @@ namespace Intersect.GameObjects.Events;
 
 public partial class Condition
 {
-    public virtual ConditionTypes Type { get; }
+    public virtual ConditionType Type { get; }
 
     public bool Negated { get; set; }
 
@@ -16,7 +16,7 @@ public partial class Condition
 
 public partial class VariableIsCondition : Condition
 {
-    public override ConditionTypes Type { get; } = ConditionTypes.VariableIs;
+    public override ConditionType Type { get; } = ConditionType.VariableIs;
 
     public VariableType VariableType { get; set; } = VariableType.PlayerVariable;
 
@@ -27,7 +27,7 @@ public partial class VariableIsCondition : Condition
 
 public partial class HasItemCondition : Condition
 {
-    public override ConditionTypes Type { get; } = ConditionTypes.HasItem;
+    public override ConditionType Type { get; } = ConditionType.HasItem;
 
     public Guid ItemId { get; set; }
 
@@ -53,21 +53,21 @@ public partial class HasItemCondition : Condition
 
 public partial class ClassIsCondition : Condition
 {
-    public override ConditionTypes Type { get; } = ConditionTypes.ClassIs;
+    public override ConditionType Type { get; } = ConditionType.ClassIs;
 
     public Guid ClassId { get; set; }
 }
 
 public partial class KnowsSpellCondition : Condition
 {
-    public override ConditionTypes Type { get; } = ConditionTypes.KnowsSpell;
+    public override ConditionType Type { get; } = ConditionType.KnowsSpell;
 
     public Guid SpellId { get; set; }
 }
 
 public partial class LevelOrStatCondition : Condition
 {
-    public override ConditionTypes Type { get; } = ConditionTypes.LevelOrStat;
+    public override ConditionType Type { get; } = ConditionType.LevelOrStat;
 
     public bool ComparingLevel { get; set; }
 
@@ -82,7 +82,7 @@ public partial class LevelOrStatCondition : Condition
 
 public partial class SelfSwitchCondition : Condition
 {
-    public override ConditionTypes Type { get; } = ConditionTypes.SelfSwitch;
+    public override ConditionType Type { get; } = ConditionType.SelfSwitch;
 
     public int SwitchIndex { get; set; } //0 through 3
 
@@ -91,28 +91,28 @@ public partial class SelfSwitchCondition : Condition
 
 public partial class AccessIsCondition : Condition
 {
-    public override ConditionTypes Type { get; } = ConditionTypes.AccessIs;
+    public override ConditionType Type { get; } = ConditionType.AccessIs;
 
     public Access Access { get; set; }
 }
 
 public partial class TimeBetweenCondition : Condition
 {
-    public override ConditionTypes Type { get; } = ConditionTypes.TimeBetween;
+    public override ConditionType Type { get; } = ConditionType.TimeBetween;
 
     public int[] Ranges { get; set; } = new int[2];
 }
 
 public partial class CanStartQuestCondition : Condition
 {
-    public override ConditionTypes Type { get; } = ConditionTypes.CanStartQuest;
+    public override ConditionType Type { get; } = ConditionType.CanStartQuest;
 
     public Guid QuestId { get; set; }
 }
 
 public partial class QuestInProgressCondition : Condition
 {
-    public override ConditionTypes Type { get; } = ConditionTypes.QuestInProgress;
+    public override ConditionType Type { get; } = ConditionType.QuestInProgress;
 
     public Guid QuestId { get; set; }
 
@@ -123,14 +123,14 @@ public partial class QuestInProgressCondition : Condition
 
 public partial class QuestCompletedCondition : Condition
 {
-    public override ConditionTypes Type { get; } = ConditionTypes.QuestCompleted;
+    public override ConditionType Type { get; } = ConditionType.QuestCompleted;
 
     public Guid QuestId { get; set; }
 }
 
 public partial class NoNpcsOnMapCondition : Condition
 {
-    public override ConditionTypes Type { get; } = ConditionTypes.NoNpcsOnMap;
+    public override ConditionType Type { get; } = ConditionType.NoNpcsOnMap;
 
     public bool SpecificNpc { get; set; }
 
@@ -139,21 +139,21 @@ public partial class NoNpcsOnMapCondition : Condition
 
 public partial class GenderIsCondition : Condition
 {
-    public override ConditionTypes Type { get; } = ConditionTypes.GenderIs;
+    public override ConditionType Type { get; } = ConditionType.GenderIs;
 
     public Gender Gender { get; set; } = Gender.Male;
 }
 
 public partial class MapIsCondition : Condition
 {
-    public override ConditionTypes Type { get; } = ConditionTypes.MapIs;
+    public override ConditionType Type { get; } = ConditionType.MapIs;
 
     public Guid MapId { get; set; }
 }
 
 public partial class IsItemEquippedCondition : Condition
 {
-    public override ConditionTypes Type { get; } = ConditionTypes.IsItemEquipped;
+    public override ConditionType Type { get; } = ConditionType.IsItemEquipped;
 
     public Guid ItemId { get; set; }
 }
@@ -166,7 +166,7 @@ public partial class HasFreeInventorySlots : Condition
     /// <summary>
     /// Defines the type of condition.
     /// </summary>
-    public override ConditionTypes Type { get; } = ConditionTypes.HasFreeInventorySlots;
+    public override ConditionType Type { get; } = ConditionType.HasFreeInventorySlots;
 
     /// <summary>
     /// Defines the amount of inventory slots that need to be free to clear this condition.
@@ -197,7 +197,7 @@ public partial class InGuildWithRank : Condition
     /// <summary>
     /// Defines the type of condition
     /// </summary>
-    public override ConditionTypes Type { get; } = ConditionTypes.InGuildWithRank;
+    public override ConditionType Type { get; } = ConditionType.InGuildWithRank;
 
     /// <summary>
     /// The guild rank the condition checks for as a minimum
@@ -213,7 +213,7 @@ public partial class MapZoneTypeIs : Condition
     /// <summary>
     /// Defines the type of condition.
     /// </summary>
-    public override ConditionTypes Type { get; } = ConditionTypes.MapZoneTypeIs;
+    public override ConditionType Type { get; } = ConditionType.MapZoneTypeIs;
 
     /// <summary>
     /// Defines the map Zone Type to compare to.
@@ -259,7 +259,7 @@ public partial class StringVariableComparison : VariableComparison
 
 public partial class CheckEquippedSlot : Condition
 {
-    public override ConditionTypes Type { get; } = ConditionTypes.CheckEquipment;
+    public override ConditionType Type { get; } = ConditionType.CheckEquipment;
 
     public string Name { get; set; }
 }

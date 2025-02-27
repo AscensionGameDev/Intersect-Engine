@@ -1,6 +1,6 @@
 namespace Intersect.GameObjects.Events;
 
-public enum ConditionTypes
+public enum ConditionType
 {
     VariableIs = 0,
 

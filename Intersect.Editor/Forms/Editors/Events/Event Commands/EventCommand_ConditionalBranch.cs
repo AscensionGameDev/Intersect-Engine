@@ -266,17 +266,17 @@ public partial class EventCommandConditionalBranch : UserControl
         btnCancel.Text = Strings.EventConditional.cancel;
     }
 
-    private void ConditionTypeChanged(ConditionTypes type)
+    private void ConditionTypeChanged(ConditionType type)
     {
         chkBank.Visible = false;
         switch (type)
         {
-            case ConditionTypes.VariableIs:
+            case ConditionType.VariableIs:
                 Condition = new VariableIsCondition();
                 SetupFormValues((dynamic)Condition);
 
                 break;
-            case ConditionTypes.HasItem:
+            case ConditionType.HasItem:
                 Condition = new HasItemCondition();
                 if (cmbItem.Items.Count > 0)
                 {
@@ -287,7 +287,7 @@ public partial class EventCommandConditionalBranch : UserControl
                 chkBank.Visible = true;
 
                 break;
-            case ConditionTypes.ClassIs:
+            case ConditionType.ClassIs:
                 Condition = new ClassIsCondition();
                 if (cmbClass.Items.Count > 0)
                 {
@@ -295,7 +295,7 @@ public partial class EventCommandConditionalBranch : UserControl
                 }
 
                 break;
-            case ConditionTypes.KnowsSpell:
+            case ConditionType.KnowsSpell:
                 Condition = new KnowsSpellCondition();
                 if (cmbSpell.Items.Count > 0)
                 {
@@ -303,7 +303,7 @@ public partial class EventCommandConditionalBranch : UserControl
                 }
 
                 break;
-            case ConditionTypes.LevelOrStat:
+            case ConditionType.LevelOrStat:
                 Condition = new LevelOrStatCondition();
                 cmbLevelComparator.SelectedIndex = 0;
                 cmbLevelStat.SelectedIndex = 0;
@@ -311,24 +311,24 @@ public partial class EventCommandConditionalBranch : UserControl
                 chkStatIgnoreBuffs.Checked = false;
 
                 break;
-            case ConditionTypes.SelfSwitch:
+            case ConditionType.SelfSwitch:
                 Condition = new SelfSwitchCondition();
                 cmbSelfSwitch.SelectedIndex = 0;
                 cmbSelfSwitchVal.SelectedIndex = 0;
 
                 break;
-            case ConditionTypes.AccessIs:
+            case ConditionType.AccessIs:
                 Condition = new AccessIsCondition();
                 cmbPower.SelectedIndex = 0;
 
                 break;
-            case ConditionTypes.TimeBetween:
+            case ConditionType.TimeBetween:
                 Condition = new TimeBetweenCondition();
                 cmbTime1.SelectedIndex = 0;
                 cmbTime2.SelectedIndex = 0;
 
                 break;
-            case ConditionTypes.CanStartQuest:
+            case ConditionType.CanStartQuest:
                 Condition = new CanStartQuestCondition();
                 if (cmbStartQuest.Items.Count > 0)
                 {
@@ -336,7 +336,7 @@ public partial class EventCommandConditionalBranch : UserControl
                 }
 
                 break;
-            case ConditionTypes.QuestInProgress:
+            case ConditionType.QuestInProgress:
                 Condition = new QuestInProgressCondition();
                 if (cmbQuestInProgress.Items.Count > 0)
                 {
@@ -346,7 +346,7 @@ public partial class EventCommandConditionalBranch : UserControl
                 cmbTaskModifier.SelectedIndex = 0;
 
                 break;
-            case ConditionTypes.QuestCompleted:
+            case ConditionType.QuestCompleted:
                 Condition = new QuestCompletedCondition();
                 if (cmbCompletedQuest.Items.Count > 0)
                 {
@@ -354,7 +354,7 @@ public partial class EventCommandConditionalBranch : UserControl
                 }
 
                 break;
-            case ConditionTypes.NoNpcsOnMap:
+            case ConditionType.NoNpcsOnMap:
                 Condition = new NoNpcsOnMapCondition();
                 if (cmbNpcs.Items.Count > 0)
                 {
@@ -362,17 +362,17 @@ public partial class EventCommandConditionalBranch : UserControl
                 }
 
                 break;
-            case ConditionTypes.GenderIs:
+            case ConditionType.GenderIs:
                 Condition = new GenderIsCondition();
                 cmbGender.SelectedIndex = 0;
 
                 break;
-            case ConditionTypes.MapIs:
+            case ConditionType.MapIs:
                 Condition = new MapIsCondition();
                 btnSelectMap.Tag = Guid.Empty;
 
                 break;
-            case ConditionTypes.IsItemEquipped:
+            case ConditionType.IsItemEquipped:
                 Condition = new IsItemEquippedCondition();
                 if (cmbEquippedItem.Items.Count > 0)
                 {
@@ -380,17 +380,17 @@ public partial class EventCommandConditionalBranch : UserControl
                 }
 
                 break;
-            case ConditionTypes.HasFreeInventorySlots:
+            case ConditionType.HasFreeInventorySlots:
                 Condition = new HasFreeInventorySlots();
 
 
                 break;
-            case ConditionTypes.InGuildWithRank:
+            case ConditionType.InGuildWithRank:
                 Condition = new InGuildWithRank();
                 cmbRank.SelectedIndex = 0;
 
                 break;
-            case ConditionTypes.MapZoneTypeIs:
+            case ConditionType.MapZoneTypeIs:
                 Condition = new MapZoneTypeIs();
                 if (cmbMapZoneType.Items.Count > 0)
                 {
@@ -398,7 +398,7 @@ public partial class EventCommandConditionalBranch : UserControl
                 }
 
                 break;
-            case ConditionTypes.CheckEquipment:
+            case ConditionType.CheckEquipment:
                 Condition = new CheckEquippedSlot();
                 if (cmbCheckEquippedSlot.Items.Count > 0)
                 {
@@ -411,7 +411,7 @@ public partial class EventCommandConditionalBranch : UserControl
         }
     }
 
-    private void UpdateFormElements(ConditionTypes type)
+    private void UpdateFormElements(ConditionType type)
     {
         grpVariable.Hide();
         grpInventoryConditions.Hide();
@@ -433,7 +433,7 @@ public partial class EventCommandConditionalBranch : UserControl
         grpCheckEquippedSlot.Hide();
         switch (type)
         {
-            case ConditionTypes.VariableIs:
+            case ConditionType.VariableIs:
                 grpVariable.Show();
 
                 cmbCompareGlobalVar.Items.Clear();
@@ -455,7 +455,7 @@ public partial class EventCommandConditionalBranch : UserControl
                 cmbBooleanUserVariable.Items.AddRange(UserVariableDescriptor.Names);
 
                 break;
-            case ConditionTypes.HasItem:
+            case ConditionType.HasItem:
                 grpInventoryConditions.Show();
                 grpInventoryConditions.Text = Strings.EventConditional.hasitem;
                 lblItem.Visible = true;
@@ -465,31 +465,31 @@ public partial class EventCommandConditionalBranch : UserControl
                 SetupAmountInput();
 
                 break;
-            case ConditionTypes.ClassIs:
+            case ConditionType.ClassIs:
                 grpClass.Show();
                 cmbClass.Items.Clear();
                 cmbClass.Items.AddRange(ClassDescriptor.Names);
 
                 break;
-            case ConditionTypes.KnowsSpell:
+            case ConditionType.KnowsSpell:
                 grpSpell.Show();
                 cmbSpell.Items.Clear();
                 cmbSpell.Items.AddRange(SpellBase.Names);
 
                 break;
-            case ConditionTypes.LevelOrStat:
+            case ConditionType.LevelOrStat:
                 grpLevelStat.Show();
 
                 break;
-            case ConditionTypes.SelfSwitch:
+            case ConditionType.SelfSwitch:
                 grpSelfSwitch.Show();
 
                 break;
-            case ConditionTypes.AccessIs:
+            case ConditionType.AccessIs:
                 grpPowerIs.Show();
 
                 break;
-            case ConditionTypes.TimeBetween:
+            case ConditionType.TimeBetween:
                 grpTime.Show();
                 cmbTime1.Items.Clear();
                 cmbTime2.Items.Clear();
@@ -504,25 +504,25 @@ public partial class EventCommandConditionalBranch : UserControl
                 }
 
                 break;
-            case ConditionTypes.CanStartQuest:
+            case ConditionType.CanStartQuest:
                 grpStartQuest.Show();
                 cmbStartQuest.Items.Clear();
                 cmbStartQuest.Items.AddRange(QuestBase.Names);
 
                 break;
-            case ConditionTypes.QuestInProgress:
+            case ConditionType.QuestInProgress:
                 grpQuestInProgress.Show();
                 cmbQuestInProgress.Items.Clear();
                 cmbQuestInProgress.Items.AddRange(QuestBase.Names);
 
                 break;
-            case ConditionTypes.QuestCompleted:
+            case ConditionType.QuestCompleted:
                 grpQuestCompleted.Show();
                 cmbCompletedQuest.Items.Clear();
                 cmbCompletedQuest.Items.AddRange(QuestBase.Names);
 
                 break;
-            case ConditionTypes.NoNpcsOnMap:
+            case ConditionType.NoNpcsOnMap:
                 grpNpc.Show();
                 cmbNpcs.Items.Clear();
                 cmbNpcs.Items.AddRange(NpcBase.Names);
@@ -531,22 +531,22 @@ public partial class EventCommandConditionalBranch : UserControl
                 cmbNpcs.Hide();
                 lblNpc.Hide();
                 break;
-            case ConditionTypes.GenderIs:
+            case ConditionType.GenderIs:
                 grpGender.Show();
 
                 break;
-            case ConditionTypes.MapIs:
+            case ConditionType.MapIs:
                 grpMapIs.Show();
 
                 break;
-            case ConditionTypes.IsItemEquipped:
+            case ConditionType.IsItemEquipped:
                 grpEquippedItem.Show();
                 cmbEquippedItem.Items.Clear();
                 cmbEquippedItem.Items.AddRange(ItemBase.Names);
 
                 break;
 
-            case ConditionTypes.HasFreeInventorySlots:
+            case ConditionType.HasFreeInventorySlots:
                 grpInventoryConditions.Show();
                 grpInventoryConditions.Text = Strings.EventConditional.FreeInventorySlots;
                 lblItem.Visible = false;
@@ -555,15 +555,15 @@ public partial class EventCommandConditionalBranch : UserControl
                 SetupAmountInput();
 
                 break;
-            case ConditionTypes.InGuildWithRank:
+            case ConditionType.InGuildWithRank:
                 grpInGuild.Show();
 
                 break;
-            case ConditionTypes.MapZoneTypeIs:
+            case ConditionType.MapZoneTypeIs:
                 grpMapZoneType.Show();
 
                 break;
-            case ConditionTypes.CheckEquipment:
+            case ConditionType.CheckEquipment:
                 grpCheckEquippedSlot.Show();
                 cmbCheckEquippedSlot.Items.Clear();
                 foreach (var slot in Options.Instance.Equipment.Slots)
@@ -623,10 +623,10 @@ public partial class EventCommandConditionalBranch : UserControl
             type = 0;
         }
 
-        UpdateFormElements((ConditionTypes)type);
-        if ((ConditionTypes)type != Condition.Type)
+        UpdateFormElements((ConditionType)type);
+        if ((ConditionType)type != Condition.Type)
         {
-            ConditionTypeChanged((ConditionTypes)type);
+            ConditionTypeChanged((ConditionType)type);
         }
     }
 
@@ -1132,12 +1132,12 @@ public partial class EventCommandConditionalBranch : UserControl
 
         switch (Condition.Type)
         {
-            case ConditionTypes.HasFreeInventorySlots:
+            case ConditionType.HasFreeInventorySlots:
                 conditionVariableType = ((HasFreeInventorySlots)Condition).VariableType;
                 conditionVariableId = ((HasFreeInventorySlots)Condition).VariableId;
                 ConditionQuantity = ((HasFreeInventorySlots)Condition).Quantity;
                 break;
-            case ConditionTypes.HasItem:
+            case ConditionType.HasItem:
                 conditionVariableType = ((HasItemCondition)Condition).VariableType;
                 conditionVariableId = ((HasItemCondition)Condition).VariableId;
                 ConditionQuantity = ((HasItemCondition)Condition).Quantity;
