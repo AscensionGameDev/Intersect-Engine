@@ -13,11 +13,11 @@ public partial class EscapeMenuWindow
 
         Button[] visibleButtons = new[]
         {
-            _settings,
-            _charselect,
-            _logout,
-            _exitdesktop,
-            _closemenu,
+            _openSettingsButton,
+            _returnToCharacterSelectionButton,
+            _logoutButton,
+            _exitToDesktopButton,
+            _returnToGameButton,
         }.Where(button => button.IsVisibleInParent).ToArray();
 
         const int defaultWidth = 97;

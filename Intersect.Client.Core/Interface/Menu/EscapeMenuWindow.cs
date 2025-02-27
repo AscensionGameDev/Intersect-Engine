@@ -12,11 +12,11 @@ namespace Intersect.Client.Interface.Menu;
 
 public partial class EscapeMenuWindow : Window
 {
-    private readonly Button _settings;
-    private readonly Button _charselect;
-    private readonly Button _logout;
-    private readonly Button _exitdesktop;
-    private readonly Button _closemenu;
+    private readonly Button _openSettingsButton;
+    private readonly Button _returnToCharacterSelectionButton;
+    private readonly Button _logoutButton;
+    private readonly Button _exitToDesktopButton;
+    private readonly Button _returnToGameButton;
 
     private readonly Panel _versionPanel;
 
@@ -30,74 +30,92 @@ public partial class EscapeMenuWindow : Window
 
         Alignment = [Alignments.Center];
 
+        IsClosable = false;
         IsResizable = false;
         Padding = Padding.Zero;
         InnerPanelPadding = new Padding(8);
         Titlebar.MouseInputEnabled = false;
 
-        _settings = new Button(this, nameof(_settings))
+        _openSettingsButton = new Button(this, nameof(_openSettingsButton))
         {
             IsTabable = true,
             Text = Strings.EscapeMenu.Settings,
         };
-        _settings.Clicked += (s, e) => OpenSettingsWindow(true);
+        _openSettingsButton.Clicked += OpenSettingsButtonOnClicked;
 
-        _charselect = new Button(this, nameof(_charselect))
+        _returnToCharacterSelectionButton = new Button(this, nameof(_returnToCharacterSelectionButton))
         {
             IsTabable = true,
             Text = Strings.EscapeMenu.CharacterSelect,
         };
-        _charselect.Clicked += _buttonCharacterSelect_Clicked;
+        _returnToCharacterSelectionButton.Clicked += ReturnToCharacterSelectionButtonOnClicked;
 
-        _logout = new Button(this, nameof(_logout))
+        _logoutButton = new Button(this, nameof(_logoutButton))
         {
             IsTabable = true,
             Text = Strings.EscapeMenu.Logout,
         };
-        _logout.Clicked += buttonLogout_Clicked;
+        _logoutButton.Clicked += LogoutButtonOnClicked;
 
-        _exitdesktop = new Button(this, nameof(_exitdesktop))
+        _exitToDesktopButton = new Button(this, nameof(_exitToDesktopButton))
         {
             IsTabable = true,
             Text = Strings.EscapeMenu.ExitToDesktop,
         };
-        _exitdesktop.Clicked += buttonQuit_Clicked;
+        _exitToDesktopButton.Clicked += ExitToDesktopButtonOnClicked;
 
-        _closemenu = new Button(this, nameof(_closemenu))
+        _returnToGameButton = new Button(this, nameof(_returnToGameButton))
         {
             IsTabable = true,
             Text = Strings.EscapeMenu.Close,
         };
-        _closemenu.Clicked += (s, e) => Hide();
+        _returnToGameButton.Clicked += ReturnToGameButtonOnClicked;
 
         if (!string.IsNullOrEmpty(Strings.MainMenu.SettingsTooltip))
         {
-            _settings.SetToolTipText(Strings.MainMenu.SettingsTooltip);
+            _openSettingsButton.SetToolTipText(Strings.MainMenu.SettingsTooltip);
         }
 
         if (Options.Instance.Player.MaxCharacters <= 1)
         {
-            _charselect.IsDisabled = true;
+            _returnToCharacterSelectionButton.IsDisabled = true;
         }
 
-        _versionPanel = new VersionPanel(canvas, name: nameof(_versionPanel));
+        _versionPanel = new VersionPanel(this, name: nameof(_versionPanel));
+
+        Interface.InputBlockingComponents.Add(this);
     }
 
-    public override void Invalidate()
+    private void ReturnToGameButtonOnClicked(Base s, MouseButtonState e)
     {
-        if (IsHidden)
+        Hide();
+    }
+
+    private void OpenSettingsButtonOnClicked(Base s, MouseButtonState e)
+    {
+        OpenSettingsWindow(true);
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+
+        Interface.InputBlockingComponents.Remove(this);
+    }
+
+    protected override void OnVisibilityChanged(object? sender, VisibilityChangedEventArgs eventArgs)
+    {
+        base.OnVisibilityChanged(sender, eventArgs);
+
+        if (eventArgs.IsVisibleInTree)
         {
-            RemoveModal();
+            var modal = MakeModal(dim: true);
+            _versionPanel.Parent = modal;
         }
         else
         {
-            MakeModal(true);
-        }
-
-        base.Invalidate();
-        if (Interface.GameUi?.GameCanvas != null)
-        {
-            Interface.GameUi.GameCanvas.MouseInputEnabled = IsVisibleInTree;
+            _versionPanel.Parent = this;
+            RemoveModal();
         }
     }
 
@@ -120,7 +138,7 @@ public partial class EscapeMenuWindow : Window
             BringToFront();
         }
 
-        _charselect.IsDisabled = Globals.Me?.CombatTimer > Timing.Global.Milliseconds;
+        _returnToCharacterSelectionButton.IsDisabled = Globals.Me?.CombatTimer > Timing.Global.Milliseconds;
     }
 
     public void OpenSettingsWindow(bool returnToMenu = false)
@@ -130,7 +148,7 @@ public partial class EscapeMenuWindow : Window
         Hide();
     }
 
-    private void _buttonCharacterSelect_Clicked(Base sender, MouseButtonState arguments)
+    private void ReturnToCharacterSelectionButtonOnClicked(Base sender, MouseButtonState arguments)
     {
         ToggleHidden();
         if (Globals.Me?.CombatTimer > Timing.Global.Milliseconds)
@@ -153,7 +171,7 @@ public partial class EscapeMenuWindow : Window
         Main.Logout(true);
     }
 
-    private void buttonLogout_Clicked(Base sender, MouseButtonState arguments)
+    private void LogoutButtonOnClicked(Base sender, MouseButtonState arguments)
     {
         ToggleHidden();
         if (Globals.Me?.CombatTimer > Timing.Global.Milliseconds)
@@ -176,7 +194,7 @@ public partial class EscapeMenuWindow : Window
         Main.Logout(false);
     }
 
-    private void buttonQuit_Clicked(Base sender, MouseButtonState arguments)
+    private void ExitToDesktopButtonOnClicked(Base sender, MouseButtonState arguments)
     {
         ToggleHidden();
         if (Globals.Me?.CombatTimer > Timing.Global.Milliseconds)

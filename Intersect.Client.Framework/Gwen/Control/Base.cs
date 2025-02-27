@@ -1120,6 +1120,11 @@ public partial class Base : IDisposable
     {
         get
         {
+            if (_disposed)
+            {
+                return false;
+            }
+
             if (!_visible)
             {
                 return false;
@@ -2418,20 +2423,27 @@ public partial class Base : IDisposable
     ///     Makes the window modal: covers the whole canvas and gets all input.
     /// </summary>
     /// <param name="dim">Determines whether all the background should be dimmed.</param>
-    public void MakeModal(bool dim = false)
+    public Modal MakeModal(bool dim = false)
     {
-        if (_modal != null)
+        if (_modal is {} modal)
         {
-            return;
+            return modal;
         }
 
-        _modal = new Modal(Canvas)
+        if (Canvas is not { } canvas)
+        {
+            throw new InvalidOperationException("Tried to make a modal without being attached to a canvas");
+        }
+
+        modal = new Modal(canvas)
         {
             ShouldDrawBackground = dim,
         };
 
+        _modal = modal;
         _previousParent = Parent;
-        Parent = _modal;
+        Parent = modal;
+        return modal;
     }
 
     public void RemoveModal()
