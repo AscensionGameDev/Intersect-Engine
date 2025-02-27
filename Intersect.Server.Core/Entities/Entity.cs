@@ -8,8 +8,9 @@ using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.Maps;
+using Intersect.Framework.Core.GameObjects.Maps.Attributes;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
@@ -637,7 +638,7 @@ public abstract partial class Entity : IEntity
 
     private bool IsBlockedByMapAttribute(
         Direction direction,
-        Intersect.GameObjects.Maps.MapAttribute mapAttribute,
+        MapAttribute mapAttribute,
         out MovementBlockerType blockerType
     )
     {

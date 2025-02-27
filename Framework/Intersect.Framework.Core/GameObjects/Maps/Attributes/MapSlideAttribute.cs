@@ -1,7 +1,7 @@
 ﻿using Intersect.Enums;
 using Intersect.GameObjects.Annotations;
 
-namespace Intersect.GameObjects.Maps;
+namespace Intersect.Framework.Core.GameObjects.Maps.Attributes;
 
 public partial class MapSlideAttribute : MapAttribute
 {

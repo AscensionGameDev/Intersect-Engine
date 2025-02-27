@@ -1,8 +1,7 @@
-﻿using Intersect.Enums;
-using Intersect.Framework.Core.GameObjects.Items;
+﻿using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects.Annotations;
 
-namespace Intersect.GameObjects.Maps;
+namespace Intersect.Framework.Core.GameObjects.Maps.Attributes;
 
 public partial class MapItemAttribute : MapAttribute
 {

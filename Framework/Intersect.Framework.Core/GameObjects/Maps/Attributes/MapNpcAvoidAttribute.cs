@@ -1,6 +1,4 @@
-﻿using Intersect.Enums;
-
-namespace Intersect.GameObjects.Maps;
+﻿namespace Intersect.Framework.Core.GameObjects.Maps.Attributes;
 
 public partial class MapNpcAvoidAttribute : MapAttribute
 {

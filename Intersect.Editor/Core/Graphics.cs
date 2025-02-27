@@ -9,8 +9,9 @@ using Intersect.Editor.Maps;
 using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Maps;
+using Intersect.Framework.Core.GameObjects.Maps.Attributes;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Maps;
 using Intersect.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
@@ -447,7 +448,7 @@ public static partial class Graphics
         int quarterNum,
         int x,
         int y,
-        MapBase map,
+        MapDescriptor map,
         RenderTarget2D target
     )
     {

@@ -3,7 +3,7 @@ using Intersect.Collections;
 using Intersect.Framework.Core.Serialization;
 using Newtonsoft.Json;
 
-namespace Intersect.GameObjects.Maps.MapList;
+namespace Intersect.Framework.Core.GameObjects.Maps.MapList;
 
 public partial class MapList
 {
@@ -64,7 +64,7 @@ public partial class MapList
                 var removed = false;
                 if (isServer)
                 {
-                    if (gameMaps.Get<MapBase>(mapItm.MapId) == null)
+                    if (gameMaps.Get<MapDescriptor>(mapItm.MapId) == null)
                     {
                         Items.Remove(itm);
                         removed = true;
@@ -339,7 +339,7 @@ public partial class MapList
     public void UpdateMap(Guid mapId)
     {
         var map = FindMap(mapId);
-        var mapInstance = MapBase.Get(mapId);
+        var mapInstance = MapDescriptor.Get(mapId);
         if (map != null && mapInstance != null)
         {
             map.Name = mapInstance.Name;

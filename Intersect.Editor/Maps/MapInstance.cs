@@ -5,15 +5,15 @@ using Intersect.Editor.Core;
 using Intersect.Editor.Entities;
 using Intersect.Editor.General;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Maps;
 using Newtonsoft.Json;
 using Graphics = Intersect.Editor.Core.Graphics;
 
 namespace Intersect.Editor.Maps;
 
 
-public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>
+public partial class MapInstance : MapDescriptor, IGameObject<Guid, MapInstance>
 {
 
     private static MapControllers sLookup;
@@ -31,7 +31,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>
         }
     }
 
-    public MapInstance(MapBase mapStruct) : base(mapStruct)
+    public MapInstance(MapDescriptor mapStruct) : base(mapStruct)
     {
         lock (MapLock)
         {
@@ -46,7 +46,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>
         }
     }
 
-    public new static MapControllers Lookup => sLookup = sLookup ?? new MapControllers(MapBase.Lookup);
+    public new static MapControllers Lookup => sLookup = sLookup ?? new MapControllers(MapDescriptor.Lookup);
 
     //World Position
     public int MapGridX { get; set; }
@@ -237,9 +237,9 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>
     }
 
     //Helper Functions
-    public override MapBase[,] GenerateAutotileGrid()
+    public override MapDescriptor[,] GenerateAutotileGrid()
     {
-        var mapBase = new MapBase[3, 3];
+        var mapBase = new MapDescriptor[3, 3];
         if (Globals.MapGrid != null && Globals.MapGrid.Contains(Id))
         {
             for (var x = -1; x <= 1; x++)

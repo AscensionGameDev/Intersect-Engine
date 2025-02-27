@@ -9,11 +9,11 @@ using Intersect.Collections.Slotting;
 using Intersect.Core;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Microsoft.EntityFrameworkCore;
 using Intersect.Network.Packets.Server;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Maps;
 using Intersect.Utilities;
 using Intersect.Server.Localization;
 using static Intersect.Server.Database.Logging.Entities.GuildHistory;
@@ -218,7 +218,7 @@ public partial class Guild
         {
             var (memberName, memberRank, memberLevel, memberClassId, memberMapId) = membership;
             var className = ClassDescriptor.GetName(memberClassId);
-            var mapName = MapBase.GetName(memberMapId);
+            var mapName = MapDescriptor.GetName(memberMapId);
             var guildMember = new GuildMember(
                 memberId,
                 memberName,

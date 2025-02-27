@@ -3,7 +3,7 @@ using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
-using Intersect.GameObjects.Maps.MapList;
+using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect.Editor.Forms.DockingElements;

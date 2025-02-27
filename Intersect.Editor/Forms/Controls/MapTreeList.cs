@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 using Intersect.Editor.Networking;
-using Intersect.GameObjects.Maps.MapList;
+using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Microsoft.Extensions.Logging;
 
 

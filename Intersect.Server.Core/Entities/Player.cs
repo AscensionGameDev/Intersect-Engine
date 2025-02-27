@@ -13,9 +13,10 @@ using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Events.Commands;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.Maps;
+using Intersect.Framework.Core.GameObjects.Maps.Attributes;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Maps;
 using Intersect.Network;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Core.MapInstancing;
@@ -302,9 +303,9 @@ public partial class Player : Entity
     public Guid LastOverworldMapId { get; set; }
     [NotMapped]
     [JsonIgnore]
-    public MapBase LastOverworldMap
+    public MapDescriptor LastOverworldMap
     {
-        get => MapBase.Get(LastOverworldMapId);
+        get => MapDescriptor.Get(LastOverworldMapId);
         set => LastOverworldMapId = value?.Id ?? Guid.Empty;
     }
     public int LastOverworldX { get; set; }
@@ -316,9 +317,9 @@ public partial class Player : Entity
     public Guid SharedInstanceRespawnId { get; set; }
     [NotMapped]
     [JsonIgnore]
-    public MapBase SharedInstanceRespawn
+    public MapDescriptor SharedInstanceRespawn
     {
-        get => MapBase.Get(SharedInstanceRespawnId);
+        get => MapDescriptor.Get(SharedInstanceRespawnId);
         set => SharedInstanceRespawnId = value?.Id ?? Guid.Empty;
     }
     public int SharedInstanceRespawnX { get; set; }

@@ -1,7 +1,7 @@
 using Intersect.Editor.General;
 using Intersect.Editor.Maps;
 using Intersect.Enums;
-using Intersect.GameObjects.Maps.MapList;
+using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Models;
 using Intersect.Network.Packets.Editor;
 

@@ -2,15 +2,15 @@
 using Intersect.Collections;
 using Intersect.Compression;
 using Intersect.Config;
-using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.Serialization;
+using Intersect.GameObjects;
 using Intersect.Models;
 using Newtonsoft.Json;
 
-namespace Intersect.GameObjects.Maps;
+namespace Intersect.Framework.Core.GameObjects.Maps;
 
-public partial class MapBase : DatabaseObject<MapBase>
+public partial class MapDescriptor : DatabaseObject<MapDescriptor>
 {
     [NotMapped]
     [JsonIgnore]
@@ -54,7 +54,7 @@ public partial class MapBase : DatabaseObject<MapBase>
     protected object mMapLock = new();
 
     [JsonConstructor]
-    public MapBase(Guid id) : base(id)
+    public MapDescriptor(Guid id) : base(id)
     {
         Name = "New Map";
 
@@ -74,30 +74,30 @@ public partial class MapBase : DatabaseObject<MapBase>
     }
 
     //EF Constructor
-    public MapBase()
+    public MapDescriptor()
     {
         Name = "New Map";
     }
 
-    public MapBase(MapBase mapBase) : base(mapBase?.Id ?? Guid.Empty)
+    public MapDescriptor(MapDescriptor mapDescriptor) : base(mapDescriptor?.Id ?? Guid.Empty)
     {
-        if (mapBase == null)
+        if (mapDescriptor == null)
         {
             return;
         }
 
         lock (MapLock ?? throw new ArgumentNullException(nameof(MapLock), @"this"))
         {
-            lock (mapBase.MapLock ?? throw new ArgumentNullException(nameof(mapBase.MapLock), nameof(mapBase)))
+            lock (mapDescriptor.MapLock ?? throw new ArgumentNullException(nameof(mapDescriptor.MapLock), nameof(mapDescriptor)))
             {
-                Name = mapBase.Name;
-                Brightness = mapBase.Brightness;
-                IsIndoors = mapBase.IsIndoors;
-                if (Layers != null && mapBase.Layers != null)
+                Name = mapDescriptor.Name;
+                Brightness = mapDescriptor.Brightness;
+                IsIndoors = mapDescriptor.IsIndoors;
+                if (Layers != null && mapDescriptor.Layers != null)
                 {
                     Layers.Clear();
 
-                    foreach (var layer in mapBase.Layers)
+                    foreach (var layer in mapDescriptor.Layers)
                     {
                         var tiles = new Tile[Options.Instance.Map.MapWidth, Options.Instance.Map.MapHeight];
                         for (var x = 0; x < Options.Instance.Map.MapWidth; x++)
@@ -126,28 +126,28 @@ public partial class MapBase : DatabaseObject<MapBase>
                             continue;
                         }
 
-                        if (mapBase.Attributes?[x, y] == null)
+                        if (mapDescriptor.Attributes?[x, y] == null)
                         {
                             Attributes[x, y] = null;
                         }
                         else
                         {
-                            Attributes[x, y] = mapBase.Attributes[x, y].Clone();
+                            Attributes[x, y] = mapDescriptor.Attributes[x, y].Clone();
                         }
                     }
                 }
 
-                for (var i = 0; i < mapBase.Spawns?.Count; i++)
+                for (var i = 0; i < mapDescriptor.Spawns?.Count; i++)
                 {
-                    Spawns.Add(new NpcSpawn(mapBase.Spawns[i]));
+                    Spawns.Add(new NpcSpawn(mapDescriptor.Spawns[i]));
                 }
 
-                for (var i = 0; i < mapBase.Lights?.Count; i++)
+                for (var i = 0; i < mapDescriptor.Lights?.Count; i++)
                 {
-                    Lights.Add(new LightBase(mapBase.Lights[i]));
+                    Lights.Add(new LightBase(mapDescriptor.Lights[i]));
                 }
 
-                foreach (var record in mapBase.LocalEvents)
+                foreach (var record in mapDescriptor.LocalEvents)
                 {
                     var evt = new EventDescriptor(record.Key, record.Value?.JsonData)
                     {
@@ -157,7 +157,7 @@ public partial class MapBase : DatabaseObject<MapBase>
                 }
 
                 EventIds?.Clear();
-                EventIds?.AddRange(mapBase.EventIds?.ToArray() ?? []);
+                EventIds?.AddRange(mapDescriptor.EventIds?.ToArray() ?? []);
             }
         }
     }
@@ -358,7 +358,7 @@ public partial class MapBase : DatabaseObject<MapBase>
     [JsonIgnore]
     public object MapLock => mMapLock;
 
-    public virtual MapBase[,] GenerateAutotileGrid()
+    public virtual MapDescriptor[,] GenerateAutotileGrid()
     {
         return null;
     }

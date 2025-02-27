@@ -6,9 +6,9 @@ using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Maps.MapList;
 using Intersect.Utilities;
 using Graphics = System.Drawing.Graphics;
 

@@ -5,7 +5,7 @@ using Intersect.Editor.Forms;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
-using Intersect.GameObjects.Maps.MapList;
+using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json.Linq;
 

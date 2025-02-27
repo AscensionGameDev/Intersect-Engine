@@ -1,8 +1,9 @@
 using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.Maps;
+using Intersect.Framework.Core.GameObjects.Maps.Attributes;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Entities.Combat;
@@ -295,7 +296,7 @@ public partial class Projectile : Entity
             return false;
         }
 
-        GameObjects.Maps.MapAttribute attribute;
+        MapAttribute attribute;
 
         // Before accessing map attributes, check if the coordinates are within the bounds of the map's attribute array.
         if (roundedX >= 0 && roundedX < map.Attributes.GetLength(0) &&

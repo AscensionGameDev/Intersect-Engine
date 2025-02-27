@@ -5,8 +5,8 @@ using Intersect.Client.General;
 using Intersect.Client.Maps;
 using Intersect.Enums;
 using Intersect.Framework.Core;
+using Intersect.Framework.Core.GameObjects.Maps.Attributes;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Maps;
 using Intersect.Utilities;
 
 namespace Intersect.Client.Entities;

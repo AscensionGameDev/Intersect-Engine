@@ -11,8 +11,8 @@ using Intersect.Editor.Maps;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Maps;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
@@ -1577,7 +1577,7 @@ public partial class FrmMapEditor : DockContent
         }
     }
 
-    private void SmartFillAttribute(int x, int y, string data = null, GameObjects.Maps.MapAttribute newAttribute = null)
+    private void SmartFillAttribute(int x, int y, string data = null, MapAttribute newAttribute = null)
     {
         if (x < 0 || x >= Options.Instance.Map.MapWidth || y < 0 || y >= Options.Instance.Map.MapHeight)
         {
@@ -1936,7 +1936,7 @@ public partial class FrmMapEditor : DockContent
         }
     }
 
-    private void WipeCurrentSelection(MapBase tmpMap)
+    private void WipeCurrentSelection(MapDescriptor tmpMap)
     {
         int selX = Globals.CurMapSelX,
             selY = Globals.CurMapSelY,

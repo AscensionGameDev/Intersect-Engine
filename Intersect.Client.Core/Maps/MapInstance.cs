@@ -18,9 +18,10 @@ using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.Maps;
+using Intersect.Framework.Core.GameObjects.Maps.Attributes;
 using Intersect.Framework.Core.Serialization;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
 using Microsoft.Extensions.Logging;
@@ -29,7 +30,7 @@ using Newtonsoft.Json;
 namespace Intersect.Client.Maps;
 
 
-public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMapInstance
+public partial class MapInstance : MapDescriptor, IGameObject<Guid, MapInstance>, IMapInstance
 {
     public const int MapAnimationFrames = 3;
     private const int XpAnimationFrameTileWidth = 3;
@@ -97,8 +98,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     IReadOnlyList<IMapItemInstance> IMapInstance.Items => MapItems.Values.SelectMany(x => x).ToList();
 
     //Map Attributes
-    private Dictionary<GameObjects.Maps.MapAttribute, Animation> mAttributeAnimInstances = new Dictionary<GameObjects.Maps.MapAttribute, Animation>();
-    private Dictionary<GameObjects.Maps.MapAttribute, Entity> mAttributeCritterInstances = new Dictionary<GameObjects.Maps.MapAttribute, Entity>();
+    private Dictionary<MapAttribute, Animation> mAttributeAnimInstances = new Dictionary<MapAttribute, Animation>();
+    private Dictionary<MapAttribute, Entity> mAttributeCritterInstances = new Dictionary<MapAttribute, Entity>();
 
     protected float mCurFogIntensity;
 
@@ -176,7 +177,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     //Map Sounds
     public IMapSound? BackgroundSound { get; set; }
 
-    public new static MapControllers Lookup => sLookup ?? (sLookup = new MapControllers(MapBase.Lookup));
+    public new static MapControllers Lookup => sLookup ?? (sLookup = new MapControllers(MapDescriptor.Lookup));
 
     //Load
     public void Load(string json)
@@ -436,7 +437,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
         }
     }
 
-    private GameTileBuffer[] CheckAutotile(int x, int y, MapBase[,] surroundingMaps)
+    private GameTileBuffer[] CheckAutotile(int x, int y, MapDescriptor[,] surroundingMaps)
     {
         var mapXOffset = X;
         var mapYOffset = Y;
@@ -560,9 +561,9 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
     }
 
     //Helper Functions
-    public MapBase[,] GenerateAutotileGrid()
+    public MapDescriptor[,] GenerateAutotileGrid()
     {
-        var mapBase = new MapBase[3, 3];
+        var mapBase = new MapDescriptor[3, 3];
         if (Globals.MapGrid != null && Globals.GridMaps.ContainsKey(Id))
         {
             for (var x = -1; x <= 1; x++)

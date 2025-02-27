@@ -9,9 +9,9 @@ using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Events.Commands;
+using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Maps;
 using Intersect.Utilities;
 using Newtonsoft.Json;
 using Graphics = System.Drawing.Graphics;
@@ -28,7 +28,7 @@ public partial class FrmEvent : Form
 
     private readonly List<CommandListProperties> mCommandProperties = new List<CommandListProperties>();
 
-    private readonly MapBase mCurrentMap;
+    private readonly MapDescriptor mCurrentMap;
 
     public EventPage CurrentPage;
 
@@ -788,7 +788,7 @@ public partial class FrmEvent : Form
 
     #region "Form Events"
 
-    public FrmEvent(MapBase currentMap)
+    public FrmEvent(MapDescriptor currentMap)
     {
         InitializeComponent();
         Icon = Program.Icon;

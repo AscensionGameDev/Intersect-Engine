@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
-using Intersect.GameObjects.Maps;
 using Intersect.Models;
 using Intersect.Server.Utilities;
 using Intersect.Utilities;
@@ -221,9 +221,9 @@ public partial class ClassDescriptor : DatabaseObject<ClassDescriptor>, IFoldera
 
     [NotMapped]
     [JsonIgnore]
-    public MapBase SpawnMap
+    public MapDescriptor SpawnMap
     {
-        get => MapBase.Get(SpawnMapId);
+        get => MapDescriptor.Get(SpawnMapId);
         set => SpawnMapId = value?.Id ?? Guid.Empty;
     }
 

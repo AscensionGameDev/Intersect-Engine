@@ -3,6 +3,7 @@ using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.Items;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Animations;
+using Intersect.Framework.Core.GameObjects.Maps;
 
 namespace Intersect.Client.Framework.Maps;
 

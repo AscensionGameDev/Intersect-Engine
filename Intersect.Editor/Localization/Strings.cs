@@ -3,6 +3,7 @@ using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Conditions.ConditionMetadata;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
@@ -311,7 +312,7 @@ public static partial class Strings
 
     public static string GetEventConditionalDesc(MapIsCondition condition)
     {
-        var map = GameObjects.Maps.MapList.MapList.List.FindMap(condition.MapId);
+        var map = Framework.Core.GameObjects.Maps.MapList.MapList.List.FindMap(condition.MapId);
         if (map != null)
         {
             return EventConditionDesc.map.ToString(map.Name);

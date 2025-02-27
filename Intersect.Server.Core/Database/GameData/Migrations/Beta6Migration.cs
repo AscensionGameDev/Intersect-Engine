@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using MapAttribute = Intersect.GameObjects.Maps.MapAttribute;
+using MapAttribute = Intersect.Framework.Core.GameObjects.Maps.MapAttribute;
 
 namespace Intersect.Server.Database.GameData.Migrations;
 

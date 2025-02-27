@@ -14,8 +14,6 @@ using Intersect.Configuration;
 using Intersect.Core;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Maps;
-using Intersect.GameObjects.Maps.MapList;
 using Intersect.Network;
 using Intersect.Network.Packets;
 using Intersect.Network.Packets.Server;
@@ -27,6 +25,9 @@ using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Maps;
+using Intersect.Framework.Core.GameObjects.Maps.Attributes;
+using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Networking;
@@ -200,17 +201,17 @@ internal sealed partial class PacketHandler
     public void HandlePacket(IPacketSender packetSender, MapAreaIdsPacket packet)
     {
         // TODO: Background all of this?
-        List<ObjectCacheKey<MapBase>> cacheKeys = new(packet.MapIds.Length);
+        List<ObjectCacheKey<MapDescriptor>> cacheKeys = new(packet.MapIds.Length);
         List<MapPacket> loadedCachedMaps = new(packet.MapIds.Length);
         foreach (var mapId in packet.MapIds)
         {
-            if (ObjectDataDiskCache<MapBase>.TryLoad(mapId, out var cacheData))
+            if (ObjectDataDiskCache<MapDescriptor>.TryLoad(mapId, out var cacheData))
             {
-                ObjectCacheKey<MapBase> cacheKey = new(cacheData.Id);
+                ObjectCacheKey<MapDescriptor> cacheKey = new(cacheData.Id);
                 var deserializedCachedPacket = MessagePacker.Instance.Deserialize<MapPacket>(cacheData.Data, silent: true);
                 if (deserializedCachedPacket != default)
                 {
-                    cacheKey = new ObjectCacheKey<MapBase>(
+                    cacheKey = new ObjectCacheKey<MapDescriptor>(
                         cacheData.Id,
                         cacheData.Checksum,
                         cacheData.Version
@@ -223,7 +224,7 @@ internal sealed partial class PacketHandler
                 ApplicationContext.Context.Value?.Logger.LogWarning($"Failed to deserialized cached data for {cacheKey}, will fetch again");
             }
 
-            cacheKeys.Add(new ObjectCacheKey<MapBase>(new Id<MapBase>(mapId)));
+            cacheKeys.Add(new ObjectCacheKey<MapDescriptor>(new Id<MapDescriptor>(mapId)));
         }
 
         PacketSender.SendNeedMap(cacheKeys.ToArray());
@@ -250,15 +251,15 @@ internal sealed partial class PacketHandler
                 $"[{string.Join(", ", packet.CameraHolds ?? [])}]"
             );
 
-            ObjectCacheData<MapBase> cacheData = new()
+            ObjectCacheData<MapDescriptor> cacheData = new()
             {
-                Id = new Id<MapBase>(mapId),
+                Id = new Id<MapDescriptor>(mapId),
                 Data = (packet as IntersectPacket).Data,
                 Version = packet.CacheVersion,
             };
-            ObjectCacheKey<MapBase> cacheKey = new(new Id<MapBase>(mapId), cacheData.Checksum, cacheData.Version);
+            ObjectCacheKey<MapDescriptor> cacheKey = new(new Id<MapDescriptor>(mapId), cacheData.Checksum, cacheData.Version);
 
-            if (!ObjectDataDiskCache<MapBase>.TrySave(cacheData))
+            if (!ObjectDataDiskCache<MapDescriptor>.TrySave(cacheData))
             {
                 ApplicationContext.CurrentContext.Logger.LogWarning("Failed to save cache for {CacheKey}", cacheKey);
             }
@@ -655,7 +656,7 @@ internal sealed partial class PacketHandler
     public void HandlePacket(IPacketSender packetSender, MapListPacket packet)
     {
         MapList.List.JsonData = packet.MapListData;
-        MapList.List.PostLoad(MapBase.Lookup, false, true);
+        MapList.List.PostLoad(MapDescriptor.Lookup, false, true);
 
         //TODO ? If admin window is open update it
     }

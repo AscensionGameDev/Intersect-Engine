@@ -7,7 +7,7 @@ using Intersect.Client.Interface.Shared;
 using Intersect.Client.Maps;
 using Intersect.Enums;
 using Intersect.Framework;
-using Intersect.GameObjects.Maps;
+using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Models;
 using Intersect.Network.Packets.Client;
 using AdminAction = Intersect.Admin.Actions.AdminAction;
@@ -33,7 +33,7 @@ public static partial class PacketSender
         Network.SendPacket(new LogoutPacket(characterSelect));
     }
 
-    public static void SendNeedMap(params ObjectCacheKey<MapBase>[] cacheKeys)
+    public static void SendNeedMap(params ObjectCacheKey<MapDescriptor>[] cacheKeys)
     {
         var validMapCacheKeys = cacheKeys
             .Where(cacheKey => cacheKey != default && MapInstance.MapNotRequested(cacheKey.Id.Guid))
@@ -48,7 +48,7 @@ public static partial class PacketSender
             return;
         }
 
-        Network.SendPacket(new GetObjectData<MapBase>(validMapCacheKeys));
+        Network.SendPacket(new GetObjectData<MapDescriptor>(validMapCacheKeys));
         MapInstance.UpdateMapRequestTime(validMapCacheKeys.Select(cacheKey => cacheKey.Id.Guid).ToArray());
     }
 
@@ -64,8 +64,8 @@ public static partial class PacketSender
         }
 
         Network.SendPacket(
-            new GetObjectData<MapBase>(
-                validMapIds.Select(id => new ObjectCacheKey<MapBase>(new Id<MapBase>(id))).ToArray()
+            new GetObjectData<MapDescriptor>(
+                validMapIds.Select(id => new ObjectCacheKey<MapDescriptor>(new Id<MapDescriptor>(id))).ToArray()
             )
         );
         MapInstance.UpdateMapRequestTime(validMapIds);

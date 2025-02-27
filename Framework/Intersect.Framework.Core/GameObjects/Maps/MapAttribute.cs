@@ -1,8 +1,8 @@
-using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Maps.Attributes;
 using Intersect.GameObjects.Annotations;
 using Newtonsoft.Json;
 
-namespace Intersect.GameObjects.Maps;
+namespace Intersect.Framework.Core.GameObjects.Maps;
 
 public abstract partial class MapAttribute
 {

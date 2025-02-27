@@ -1,5 +1,5 @@
 using Intersect.Editor.Localization;
-using Intersect.GameObjects.Maps;
+using Intersect.Framework.Core.GameObjects.Maps;
 
 namespace Intersect.Editor.Forms.Controls;
 

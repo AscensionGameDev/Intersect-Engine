@@ -5,9 +5,10 @@ using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.Maps;
+using Intersect.Framework.Core.GameObjects.Maps.Attributes;
+using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Maps;
-using Intersect.GameObjects.Maps.MapList;
 using Intersect.Localization;
 using Intersect.Utilities;
 using Microsoft.Xna.Framework.Graphics;
@@ -684,10 +685,10 @@ public partial class FrmMapLayers : DockContent
     }
 
     [Obsolete("The entire switch statement should be implemented as a parameterized CreateAttribute().")]
-    public GameObjects.Maps.MapAttribute CreateAttribute()
+    public MapAttribute CreateAttribute()
     {
         var attributeType = SelectedMapAttributeType;
-        var attribute = GameObjects.Maps.MapAttribute.CreateAttribute(attributeType);
+        var attribute = MapAttribute.CreateAttribute(attributeType);
         switch (SelectedMapAttributeType)
         {
             case MapAttributeType.Walkable:
@@ -764,7 +765,7 @@ public partial class FrmMapLayers : DockContent
         return attribute;
     }
 
-    public GameObjects.Maps.MapAttribute PlaceAttribute(MapBase mapDescriptor, int x, int y, GameObjects.Maps.MapAttribute attribute = null)
+    public MapAttribute PlaceAttribute(MapDescriptor mapDescriptor, int x, int y, MapAttribute attribute = null)
     {
         if (attribute == null)
         {
@@ -776,7 +777,7 @@ public partial class FrmMapLayers : DockContent
         return attribute;
     }
 
-    public bool RemoveAttribute(MapBase tmpMap, int x, int y)
+    public bool RemoveAttribute(MapDescriptor tmpMap, int x, int y)
     {
         if (tmpMap.Attributes[x, y] != null && tmpMap.Attributes[x, y].Type != MapAttributeType.Walkable)
         {

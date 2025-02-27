@@ -1,8 +1,8 @@
-﻿using Intersect.Enums;
+﻿using Intersect.GameObjects;
 using Intersect.GameObjects.Annotations;
 using Intersect.Localization;
 
-namespace Intersect.GameObjects.Maps;
+namespace Intersect.Framework.Core.GameObjects.Maps.Attributes;
 
 public partial class MapAnimationAttribute : MapAttribute
 {

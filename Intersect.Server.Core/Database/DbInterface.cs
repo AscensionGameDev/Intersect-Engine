@@ -13,12 +13,12 @@ using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.Maps;
+using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Maps;
-using Intersect.GameObjects.Maps.MapList;
 using Intersect.Models;
 using Intersect.Server.Core;
 using Intersect.Server.Database.GameData;
@@ -683,7 +683,7 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.Map:
-                MapBase.Lookup.Clear();
+                MapDescriptor.Lookup.Clear();
 
                 break;
             case GameObjectType.Event:
@@ -885,7 +885,7 @@ public static partial class DbInterface
         
         foreach (var (mapId, databaseObject) in MapController.Lookup)
         {
-            if (databaseObject is not MapBase mapDescriptor)
+            if (databaseObject is not MapDescriptor mapDescriptor)
             {
                 ApplicationContext.CurrentContext.Logger.LogError(
                     "Found an invalid database object in the MapDescriptor lookup ({InvalidObjectType}, {InvalidObjectId}, '{InvalidObjectName}'",
@@ -1517,7 +1517,7 @@ public static partial class DbInterface
     //Post Loading Functions
     private static void OnMapsLoaded()
     {
-        if (MapBase.Lookup.Count == 0)
+        if (MapDescriptor.Lookup.Count == 0)
         {
             Console.WriteLine(Strings.Database.NoMaps);
             AddGameObject(GameObjectType.Map);
@@ -1794,15 +1794,15 @@ public static partial class DbInterface
             throw;
         }
 
-        foreach (var map in MapBase.Lookup)
+        foreach (var map in MapDescriptor.Lookup)
         {
             if (MapList.List.FindMap(map.Value.Id) == null)
             {
-                MapList.List.AddMap(map.Value.Id, map.Value.TimeCreated, MapBase.Lookup);
+                MapList.List.AddMap(map.Value.Id, map.Value.TimeCreated, MapDescriptor.Lookup);
             }
         }
 
-        MapList.List.PostLoad(MapBase.Lookup, true, true);
+        MapList.List.PostLoad(MapDescriptor.Lookup, true, true);
         PacketSender.SendMapListToAll();
     }
 

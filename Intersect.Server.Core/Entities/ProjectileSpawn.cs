@@ -1,5 +1,6 @@
 using Intersect.Enums;
 using Intersect.Framework.Core;
+using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.GameObjects;
 using Intersect.Server.Entities.Combat;
 using Intersect.Server.Entities.Events;
@@ -81,7 +82,7 @@ public partial class ProjectileSpawn
                 {
                     if (targetPlayer != null)
                     {
-                        if (targetPlayer.Map.ZoneType == Enums.MapZone.Safe ||
+                        if (targetPlayer.Map.ZoneType == MapZone.Safe ||
                             Parent.Owner is Player plyr && plyr.InParty(targetPlayer))
                         {
                             return false;
@@ -110,7 +111,7 @@ public partial class ProjectileSpawn
 
                     if (!Parent.Base.PierceTarget)
                     {
-                        if (targetPlayer.Map.ZoneType == Enums.MapZone.Safe ||
+                        if (targetPlayer.Map.ZoneType == MapZone.Safe ||
                             Parent.Owner is Player plyr && plyr.InParty(targetPlayer))
                         {
                             return false;

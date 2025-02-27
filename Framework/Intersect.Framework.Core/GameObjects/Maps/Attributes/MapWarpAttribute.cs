@@ -1,15 +1,14 @@
-﻿using Intersect.Enums;
-using Intersect.GameObjects.Annotations;
+﻿using Intersect.GameObjects.Annotations;
 using Intersect.Localization;
 
-namespace Intersect.GameObjects.Maps;
+namespace Intersect.Framework.Core.GameObjects.Maps.Attributes;
 
 public partial class MapWarpAttribute : MapAttribute
 {
     public override MapAttributeType Type => MapAttributeType.Warp;
 
     [EditorLabel("Attributes", "Map")]
-    [EditorReference(typeof(MapBase), nameof(MapBase.Name))]
+    [EditorReference(typeof(MapDescriptor), nameof(MapDescriptor.Name))]
     public Guid MapId { get; set; }
 
     [EditorLabel("Attributes", "WarpX")]

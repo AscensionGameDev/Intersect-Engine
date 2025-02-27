@@ -4,10 +4,10 @@ using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.Maps;
+using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Maps;
-using Intersect.GameObjects.Maps.MapList;
 using Intersect.Models;
 using Intersect.Network.Packets.Client;
 using Intersect.Server.Admin.Actions;
@@ -278,7 +278,7 @@ internal sealed partial class NetworkedPacketHandler
                     destType = -1;
                     if (destType == -1)
                     {
-                        MapList.List.AddMap(newMapId, tmpMap.TimeCreated, MapBase.Lookup);
+                        MapList.List.AddMap(newMapId, tmpMap.TimeCreated, MapDescriptor.Lookup);
                     }
 
                     DbInterface.SaveMapList();
@@ -438,11 +438,11 @@ internal sealed partial class NetworkedPacketHandler
                         var folderDir = MapList.List.FindMapParent(relativeMap, null);
                         if (folderDir != null)
                         {
-                            folderDir.Children.AddMap(newMapId, MapController.Get(newMapId).TimeCreated, MapBase.Lookup);
+                            folderDir.Children.AddMap(newMapId, MapController.Get(newMapId).TimeCreated, MapDescriptor.Lookup);
                         }
                         else
                         {
-                            MapList.List.AddMap(newMapId, MapController.Get(newMapId).TimeCreated, MapBase.Lookup);
+                            MapList.List.AddMap(newMapId, MapController.Get(newMapId).TimeCreated, MapDescriptor.Lookup);
                         }
 
                         DbInterface.SaveMapList();
@@ -711,9 +711,9 @@ internal sealed partial class NetworkedPacketHandler
                                         PacketSender.SendError(
                                             client,
                                             Strings.Mapping.LinkFailureError.ToString(
-                                                MapBase.GetName(linkMapId), MapBase.GetName(adjacentMapId),
-                                                MapBase.GetName(adjacentGrid.MapIdGrid[x, y]),
-                                                MapBase.GetName(linkGrid.MapIdGrid[x + xOffset, y + yOffset])
+                                                MapDescriptor.GetName(linkMapId), MapDescriptor.GetName(adjacentMapId),
+                                                MapDescriptor.GetName(adjacentGrid.MapIdGrid[x, y]),
+                                                MapDescriptor.GetName(linkGrid.MapIdGrid[x + xOffset, y + yOffset])
                                             ), Strings.Mapping.LinkFailure
                                         );
 

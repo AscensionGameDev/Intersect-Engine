@@ -2,7 +2,7 @@
 using System.Numerics;
 using MessagePack;
 using System.Security.Cryptography;
-using Intersect.GameObjects.Maps;
+using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Models;
 using Newtonsoft.Json.Converters;
 
@@ -82,7 +82,7 @@ public partial class MapPacket : IntersectPacket
                 return _checksum;
             }
 
-            _checksum = ObjectCacheKey<MapBase>.ComputeChecksum(base.Data);
+            _checksum = ObjectCacheKey<MapDescriptor>.ComputeChecksum(base.Data);
             return _checksum;
         }
     }

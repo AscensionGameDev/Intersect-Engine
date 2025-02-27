@@ -1,7 +1,7 @@
 ﻿using Intersect.Compression;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.Serialization;
-using Intersect.GameObjects.Maps;
 using Intersect.Network;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;

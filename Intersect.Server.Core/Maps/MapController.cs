@@ -7,7 +7,6 @@ using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Entities;
@@ -34,7 +33,7 @@ namespace Intersect.Server.Maps;
 /// </para>
 /// </remarks>
 /// </summary>
-public partial class MapController : MapBase
+public partial class MapController : MapDescriptor
 {
     public static void DespawnInstancesOf(ResourceBase resource)
     {
@@ -238,12 +237,12 @@ public partial class MapController : MapBase
     }
 
     /// <summary>
-    /// Quick reference for DB lookup of the relevant <see cref="MapBase"/>
+    /// Quick reference for DB lookup of the relevant <see cref="MapDescriptor"/>
     /// </summary>
-    public new static MapControllers Lookup => sLookup = sLookup ?? new MapControllers(MapBase.Lookup);
+    public new static MapControllers Lookup => sLookup = sLookup ?? new MapControllers(MapDescriptor.Lookup);
 
     /// <summary>
-    /// Quick reference to get a Map Controller from its <see cref="MapBase"/> ID
+    /// Quick reference to get a Map Controller from its <see cref="MapDescriptor"/> ID
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -253,7 +252,7 @@ public partial class MapController : MapBase
     }
 
     /// <summary>
-    /// Tries to get a Map Controller from its <see cref="MapBase"/> ID
+    /// Tries to get a Map Controller from its <see cref="MapDescriptor"/> ID
     /// </summary>
     /// <param name="id"></param>
     /// <param name="mapController">The retrieved Map Controller, if successful</param>

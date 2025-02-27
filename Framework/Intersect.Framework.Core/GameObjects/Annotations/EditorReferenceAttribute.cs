@@ -1,7 +1,7 @@
 using System.Reflection;
 using Intersect.Collections;
-using Intersect.GameObjects.Maps;
-using Intersect.GameObjects.Maps.MapList;
+using Intersect.Framework.Core.GameObjects.Maps;
+using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Models;
 
 namespace Intersect.GameObjects.Annotations;
@@ -40,7 +40,7 @@ public class EditorReferenceAttribute : EditorDisplayAttribute
             throw new ArgumentException($"Invalid value type {value?.GetType().FullName}", nameof(value));
         }
 
-        if (DescriptorType == typeof(MapBase))
+        if (DescriptorType == typeof(MapDescriptor))
         {
             var mapName = MapList.OrderedMaps.FirstOrDefault(map => map.MapId == guid)?.Name;
             if (mapName != default)

@@ -1,10 +1,10 @@
-﻿using Intersect.GameObjects.Maps;
+﻿using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Models;
 using MessagePack;
 
 namespace Intersect.Network.Packets.Client;
 
-[GenericPacketTypeArguments(typeof(MapBase))]
+[GenericPacketTypeArguments(typeof(MapDescriptor))]
 [MessagePackObject]
 public partial class GetObjectData<TGameObject> : IntersectPacket
 {

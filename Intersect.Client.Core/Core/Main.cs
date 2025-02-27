@@ -5,8 +5,8 @@ using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.Framework.Core;
+using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Maps;
 
 // ReSharper disable All
 
@@ -324,7 +324,7 @@ internal static partial class Main
             en.Value.Dispose();
         }
 
-        MapBase.Lookup.Clear();
+        MapDescriptor.Lookup.Clear();
         MapInstance.Lookup.Clear();
 
         Globals.Entities.Clear();

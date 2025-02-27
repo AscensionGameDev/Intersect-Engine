@@ -11,8 +11,8 @@ using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Core;
+using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Reflection;
-using Intersect.GameObjects.Maps.MapList;
 using Microsoft.Extensions.Logging;
 using static Intersect.Client.Framework.File_Management.GameContentManager;
 

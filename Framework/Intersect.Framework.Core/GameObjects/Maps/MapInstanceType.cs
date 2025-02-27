@@ -1,4 +1,4 @@
-namespace Intersect.Enums;
+namespace Intersect.Framework.Core.GameObjects.Maps;
 
 /// <summary>
 /// Used to determine warping logic across the different types of map instance a developer may request the creation of
