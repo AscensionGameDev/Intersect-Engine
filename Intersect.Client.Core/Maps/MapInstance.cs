@@ -916,7 +916,7 @@ public partial class MapInstance : MapDescriptor, IGameObject<Guid, MapInstance>
             for (var index = itemInstancesOnTile.Count - 1; index >= 0; index--)
             {
                 var mapItemInstance = itemInstancesOnTile[index];
-                if (ItemDescriptor.TryGet(mapItemInstance.ItemId, out var itemDescriptor))
+                if (!ItemDescriptor.TryGet(mapItemInstance.ItemId, out var itemDescriptor))
                 {
                     continue;
                 }
