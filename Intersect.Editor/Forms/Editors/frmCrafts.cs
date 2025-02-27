@@ -184,7 +184,7 @@ public partial class FrmCrafts : EditorForm
 
     private void btnAdd_Click(object sender, EventArgs e)
     {
-        mEditorItem.Ingredients.Add(new CraftIngredient(Guid.Empty, 1));
+        mEditorItem.Ingredients.Add(new CraftingRecipeIngredient(Guid.Empty, 1));
         lstIngredients.Items.Add(Strings.General.None);
         lstIngredients.SelectedIndex = lstIngredients.Items.Count - 1;
         cmbIngredient_SelectedIndexChanged(null, null);
@@ -363,7 +363,7 @@ public partial class FrmCrafts : EditorForm
         {
             mEditorItem.Ingredients.Insert(
                 lstIngredients.SelectedIndex,
-                new CraftIngredient(
+                new CraftingRecipeIngredient(
                     mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId,
                     mEditorItem.Ingredients[lstIngredients.SelectedIndex].Quantity
                 )

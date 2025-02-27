@@ -9,7 +9,7 @@ namespace Intersect.Framework.Core.GameObjects.Crafting;
 public partial class CraftBase : DatabaseObject<CraftBase>, IFolderable
 {
     [NotMapped]
-    public List<CraftIngredient> Ingredients { get; set; } = [];
+    public List<CraftingRecipeIngredient> Ingredients { get; set; } = [];
 
     [JsonConstructor]
     public CraftBase(Guid id) : base(id)
@@ -28,7 +28,7 @@ public partial class CraftBase : DatabaseObject<CraftBase>, IFolderable
     public string IngredientsJson
     {
         get => JsonConvert.SerializeObject(Ingredients, Formatting.None);
-        protected set => Ingredients = JsonConvert.DeserializeObject<List<CraftIngredient>>(value);
+        protected set => Ingredients = JsonConvert.DeserializeObject<List<CraftingRecipeIngredient>>(value);
     }
 
     [JsonProperty(Order = -6)]

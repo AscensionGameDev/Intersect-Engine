@@ -2,13 +2,13 @@
 
 namespace Intersect.Framework.Core.GameObjects.Crafting;
 
-public partial class CraftIngredient
+public partial class CraftingRecipeIngredient
 {
     public Guid ItemId { get; set; }
 
     public int Quantity { get; set; }
 
-    public CraftIngredient(Guid itemId, int quantity)
+    public CraftingRecipeIngredient(Guid itemId, int quantity)
     {
         ItemId = itemId;
         Quantity = quantity;

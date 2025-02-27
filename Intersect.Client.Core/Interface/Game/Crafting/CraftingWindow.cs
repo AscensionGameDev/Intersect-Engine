@@ -166,7 +166,7 @@ public partial class CraftingWindow : Window
         }
 
         var craftedItemDescriptorId = craftDescriptor.ItemId;
-        _craftedItem = new RecipeItem(this, new CraftIngredient(craftedItemDescriptorId, 0))
+        _craftedItem = new RecipeItem(this, new CraftingRecipeIngredient(craftedItemDescriptorId, 0))
         {
             Container = new ImagePanel(this, "CraftedItem"),
         };

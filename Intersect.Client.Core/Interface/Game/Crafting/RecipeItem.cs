@@ -27,7 +27,7 @@ public partial class RecipeItem
     private Draggable? mDragIcon;
 
     //Slot info
-    CraftIngredient mIngredient;
+    CraftingRecipeIngredient mIngredient;
 
     //Mouse Event Variables
     private bool mMouseOver;
@@ -38,7 +38,7 @@ public partial class RecipeItem
 
     public ImagePanel? Pnl;
 
-    public RecipeItem(CraftingWindow craftingWindow, CraftIngredient ingredient)
+    public RecipeItem(CraftingWindow craftingWindow, CraftingRecipeIngredient ingredient)
     {
         mCraftingWindow = craftingWindow;
         mIngredient = ingredient;
