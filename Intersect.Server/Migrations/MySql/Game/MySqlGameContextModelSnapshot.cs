@@ -1145,7 +1145,7 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.ToTable("Spells");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.TilesetBase", b =>
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Mapping.Tilesets.TilesetDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("char(36)")
