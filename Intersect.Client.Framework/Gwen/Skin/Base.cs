@@ -67,7 +67,11 @@ public partial class Base : IDisposable
 
     #region UI elements
 
-    public virtual void DrawButton(Control.Base control, bool depressed, bool hovered, bool disabled, bool focused)
+    public virtual void DrawSplitter(SplitterBar splitterBar)
+    {
+    }
+
+    public virtual void DrawButton(Button button)
     {
     }
 
@@ -127,7 +131,7 @@ public partial class Base : IDisposable
     {
     }
 
-    public virtual void DrawWindowCloseButton(CloseButton closeButton, bool depressed, bool hovered, bool disabled)
+    public virtual void DrawWindowCloseButton(CloseButton closeButton)
     {
     }
 

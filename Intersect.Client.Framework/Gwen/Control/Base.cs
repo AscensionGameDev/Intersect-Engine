@@ -3341,6 +3341,28 @@ public partial class Base : IDisposable
         }
     }
 
+    public virtual ComponentState ComponentState
+    {
+        get
+        {
+            var componentState = ComponentState.Normal;
+            if (IsDisabledByTree)
+            {
+                componentState = ComponentState.Disabled;
+            }
+            else if (IsActive)
+            {
+                componentState = ComponentState.Active;
+            }
+            else if (IsHovered)
+            {
+                componentState = ComponentState.Hovered;
+            }
+
+            return componentState;
+        }
+    }
+
     public bool IsMouseButtonActive(MouseButton mouseButton) => _mouseButtonPressed.Contains(mouseButton);
 
     private readonly HashSet<MouseButton> _mouseButtonPressed = [];

@@ -4,7 +4,7 @@ using Intersect.Client.Framework.Graphics;
 
 namespace Intersect.Client.Framework.Gwen.Skin.Texturing;
 
-public readonly record struct FivePatch
+public readonly record struct FivePatch : IAtlasDrawable
 {
     private readonly IGameTexture _texture;
     private readonly float _textureWidth;

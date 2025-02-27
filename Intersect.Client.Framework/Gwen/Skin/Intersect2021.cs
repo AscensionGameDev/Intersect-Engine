@@ -41,10 +41,13 @@ public class Intersect2021 : TexturedBase
         mTextures.Window.Inactive = new Bordered(_texture, 16, 24, 16, 16, new Margin(4, 4, 4, 4));
         mTextures.Window.InactiveTitleBar = new Bordered(_texture, 16, 0, 16, 24, new Margin(4, 4, 4, 4));
 
-        mTextures.Window.CloseButton.Normal = new FivePatch(_texture, 60, 0, 24, 24, Margin.Two, Margin.One);
-        mTextures.Window.CloseButton.Active = new FivePatch(_texture, 60, 24, 24, 24, Margin.Two, Margin.One);
-        mTextures.Window.CloseButton.Disabled = new FivePatch(_texture, 60, 48, 24, 24, Margin.Two, Margin.One);
-        mTextures.Window.CloseButton.Hovered = new FivePatch(_texture, 60, 72, 24, 24, Margin.Two, Margin.One);
+        mTextures.Window.CloseButton = new SkinTextures._Input._Button
+        {
+            Normal = new FivePatch(_texture, 60, 0, 24, 24, Margin.Two, Margin.One),
+            Disabled = new FivePatch(_texture, 60, 48, 24, 24, Margin.Two, Margin.One),
+            Hovered = new FivePatch(_texture, 60, 72, 24, 24, Margin.Two, Margin.One),
+            Active = new FivePatch(_texture, 60, 24, 24, 24, Margin.Two, Margin.One),
+        };
 
         mTextures.Panel.Control = new Bordered(_texture, 32, 0, 16, 16, Margin.Four);
         mTextures.Panel.Normal = new Bordered(_texture, 32, 0, 16, 16, Margin.Four);

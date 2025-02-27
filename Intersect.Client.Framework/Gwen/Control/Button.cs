@@ -265,19 +265,28 @@ public partial class Button : Label
     /// <param name="skin">Skin to use.</param>
     protected override void Render(Skin.Base skin)
     {
-        base.Render(skin);
+        skin.DrawButton(this);
 
-        if (ShouldDrawBackground)
+        base.Render(skin);
+    }
+
+    public override ComponentState ComponentState
+    {
+        get
         {
-            var drawDepressed = IsActive && IsHovered;
-            if (IsToggle)
+            var componentState = base.ComponentState;
+
+            if (componentState == ComponentState.Disabled)
             {
-                drawDepressed = drawDepressed || ToggleState;
+                return componentState;
             }
 
-            var bDrawHovered = IsHovered && ShouldDrawHover;
+            if (IsToggle && ToggleState)
+            {
+                componentState = ComponentState.Active;
+            }
 
-            skin.DrawButton(this, drawDepressed, bDrawHovered, IsDisabled, HasFocus);
+            return componentState;
         }
     }
 

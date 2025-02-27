@@ -14,7 +14,7 @@ public partial struct SubRect
 /// <summary>
 ///     3x3 texture grid.
 /// </summary>
-public partial struct Bordered : IEquatable<Bordered>
+public partial struct Bordered : IEquatable<Bordered>, IAtlasDrawable
 {
     private readonly float mX;
     private readonly float mY;

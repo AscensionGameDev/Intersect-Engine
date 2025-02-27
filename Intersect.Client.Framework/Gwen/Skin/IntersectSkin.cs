@@ -207,10 +207,13 @@ public class IntersectSkin : TexturedBase
         mTextures.Window.Inactive = new Bordered(_texture, 16, 24, 16, 16, Margin.Four);
         mTextures.Window.InactiveTitleBar = new Bordered(_texture, 16, 0, 16, 24, Margin.Four);
 
-        mTextures.Window.CloseButton.Normal = new FivePatch(_texture, 60, 0, 24, 24, Margin.Two, Margin.Two);
-        mTextures.Window.CloseButton.Disabled = new FivePatch(_texture, 60, 48, 24, 24, Margin.Two, Margin.Two);
-        mTextures.Window.CloseButton.Hovered = new FivePatch(_texture, 60, 72, 24, 24, Margin.Two, Margin.Two);
-        mTextures.Window.CloseButton.Active = new FivePatch(_texture, 60, 24, 24, 24, Margin.Two, Margin.Two);
+        mTextures.Window.CloseButton = new SkinTextures._Input._Button
+        {
+            Normal = new FivePatch(_texture, 60, 0, 24, 24, Margin.Two, Margin.Two),
+            Disabled = new FivePatch(_texture, 60, 48, 24, 24, Margin.Two, Margin.Two),
+            Hovered = new FivePatch(_texture, 60, 72, 24, 24, Margin.Two, Margin.Two),
+            Active = new FivePatch(_texture, 60, 24, 24, 24, Margin.Two, Margin.Two),
+        };
     }
 
     #endregion
