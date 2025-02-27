@@ -11,6 +11,7 @@ using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Core;
+using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
 using Intersect.Utilities;

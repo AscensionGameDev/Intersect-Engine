@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.GameObjects.Maps;
 using Intersect.Models;
 using Intersect.Server.Utilities;
@@ -331,39 +332,4 @@ public partial class ClassBase : DatabaseObject<ClassBase>, IFolderable
 
         return ExperienceCurve.Calculate(level);
     }
-}
-
-public partial class ClassItem
-{
-    [JsonProperty]
-    public Guid Id { get; set; }
-
-    public int Quantity { get; set; }
-
-    public ItemBase Get()
-    {
-        return ItemBase.Get(Id);
-    }
-}
-
-public partial class ClassSpell
-{
-    [JsonProperty]
-    public Guid Id { get; set; }
-
-    public int Level { get; set; }
-
-    public SpellBase Get()
-    {
-        return SpellBase.Get(Id);
-    }
-}
-
-public partial class ClassSprite
-{
-    public string Face = string.Empty;
-
-    public Gender Gender;
-
-    public string Sprite = string.Empty;
 }

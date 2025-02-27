@@ -10,6 +10,7 @@ using Intersect.Collections;
 using Intersect.Config;
 using Intersect.Core;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
