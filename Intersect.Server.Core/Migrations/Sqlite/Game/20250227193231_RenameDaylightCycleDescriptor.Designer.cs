@@ -3,6 +3,7 @@ using System;
 using Intersect.Server.Database.GameData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intersect.Server.Migrations.Sqlite.Game
 {
     [DbContext(typeof(SqliteGameContext))]
-    partial class SqliteGameContextModelSnapshot : ModelSnapshot
+    [Migration("20250227193231_RenameDaylightCycleDescriptor")]
+    partial class RenameDaylightCycleDescriptor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
@@ -828,6 +831,29 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.ToTable("Classes");
                 });
 
+            modelBuilder.Entity("Intersect.GameObjects.DaylightCycleDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DaylightHuesJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("DaylightHues");
+
+                    b.Property<int>("RangeInterval")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<float>("Rate")
+                        .HasColumnType("REAL");
+
+                    b.Property<bool>("SyncTime")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Time");
+                });
+
             modelBuilder.Entity("Intersect.GameObjects.EquipmentProperties", b =>
                 {
                     b.Property<Guid>("DescriptorId")
@@ -1111,29 +1137,6 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.HasKey("Id");
 
                     b.ToTable("Spells");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.DaylightCycleDescriptor", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("DaylightHuesJson")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("DaylightHues");
-
-                    b.Property<int>("RangeInterval")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<float>("Rate")
-                        .HasColumnType("REAL");
-
-                    b.Property<bool>("SyncTime")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Time");
                 });
 
             modelBuilder.Entity("Intersect.Server.Maps.MapController", b =>

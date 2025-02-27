@@ -1162,7 +1162,7 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.ToTable("Spells");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.TimeBase", b =>
+            modelBuilder.Entity("Intersect.GameObjects.DaylightCycleDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("char(36)")
