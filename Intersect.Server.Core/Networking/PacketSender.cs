@@ -1788,7 +1788,7 @@ public static partial class PacketSender
 
                 break;
             case GameObjectType.Spell:
-                foreach (var obj in SpellBase.Lookup)
+                foreach (var obj in SpellDescriptor.Lookup)
                 {
                     SendGameObject(client, obj.Value, false, false, packetList);
                 }

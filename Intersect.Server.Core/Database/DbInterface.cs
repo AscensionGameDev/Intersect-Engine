@@ -673,7 +673,7 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.Spell:
-                SpellBase.Lookup.Clear();
+                SpellDescriptor.Lookup.Clear();
 
                 break;
             case GameObjectType.CraftTables:
@@ -791,7 +791,7 @@ public static partial class DbInterface
                     case GameObjectType.Spell:
                         foreach (var spl in context.Spells)
                         {
-                            SpellBase.Lookup.Set(spl.Id, spl);
+                            SpellDescriptor.Lookup.Set(spl.Id, spl);
                         }
 
                         break;
@@ -1025,7 +1025,7 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.Spell:
-                dbObj = new SpellBase(predefinedid);
+                dbObj = new SpellDescriptor(predefinedid);
 
                 break;
             case GameObjectType.CraftTables:
@@ -1141,8 +1141,8 @@ public static partial class DbInterface
                         break;
 
                     case GameObjectType.Spell:
-                        context.Spells.Add((SpellBase)dbObj);
-                        SpellBase.Lookup.Set(dbObj.Id, dbObj);
+                        context.Spells.Add((SpellDescriptor)dbObj);
+                        SpellDescriptor.Lookup.Set(dbObj.Id, dbObj);
 
                         break;
 
@@ -1291,7 +1291,7 @@ public static partial class DbInterface
 
                         break;
                     case GameObjectType.Spell:
-                        context.Spells.Remove((SpellBase)gameObject);
+                        context.Spells.Remove((SpellDescriptor)gameObject);
 
                         break;
                     case GameObjectType.CraftTables:
@@ -1456,7 +1456,7 @@ public static partial class DbInterface
 
                         break;
                     case GameObjectType.Spell:
-                        context.Spells.Update((SpellBase)gameObject);
+                        context.Spells.Update((SpellDescriptor)gameObject);
 
                         break;
                     case GameObjectType.CraftTables:

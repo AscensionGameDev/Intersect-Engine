@@ -839,12 +839,12 @@ public static partial class CommandPrinter
         if (command.Add)
         {
             return Strings.EventCommandList.changespells.ToString(
-                Strings.EventCommandList.teach.ToString(SpellBase.GetName(command.SpellId))
+                Strings.EventCommandList.teach.ToString(SpellDescriptor.GetName(command.SpellId))
             );
         }
 
         return Strings.EventCommandList.changespells.ToString(
-            Strings.EventCommandList.forget.ToString(SpellBase.GetName(command.SpellId))
+            Strings.EventCommandList.forget.ToString(SpellDescriptor.GetName(command.SpellId))
         );
     }
 
@@ -1315,7 +1315,7 @@ public static partial class CommandPrinter
 
     private static string GetCommandText(CastSpellOn command, MapInstance map)
     {
-        return Strings.EventCommandList.CastSpellOn.ToString(SpellBase.GetName(command.SpellId), command.Self, command.PartyMembers, command.GuildMembers);
+        return Strings.EventCommandList.CastSpellOn.ToString(SpellDescriptor.GetName(command.SpellId), command.Self, command.PartyMembers, command.GuildMembers);
     }
 
     private static string GetCommandText(ScreenFadeCommand command, MapInstance map)

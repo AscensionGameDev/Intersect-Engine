@@ -16,22 +16,22 @@ public partial class DoT
 
     private long mInterval;
 
-    public SpellBase SpellBase;
+    public SpellDescriptor SpellDescriptor;
 
     public DoT(Entity attacker, Guid spellId, Entity target)
     {
-        SpellBase = SpellBase.Get(spellId);
+        SpellDescriptor = SpellDescriptor.Get(spellId);
 
         Attacker = attacker;
         Target = target;
 
-        if (SpellBase == null || SpellBase.Combat.HotDotInterval < 1)
+        if (SpellDescriptor == null || SpellDescriptor.Combat.HotDotInterval < 1)
         {
             return;
         }
 
         // Does target have a cleanse buff? If so, do not allow this DoT when spell is unfriendly.
-        if (!SpellBase.Combat.Friendly)
+        if (!SpellDescriptor.Combat.Friendly)
         {
             foreach (var status in Target.CachedStatuses)
             {
@@ -43,8 +43,8 @@ public partial class DoT
         }
         
 
-        mInterval = Timing.Global.Milliseconds + SpellBase.Combat.HotDotInterval;
-        Count = (SpellBase.Combat.Duration + SpellBase.Combat.HotDotInterval - 1) / SpellBase.Combat.HotDotInterval;
+        mInterval = Timing.Global.Milliseconds + SpellDescriptor.Combat.HotDotInterval;
+        Count = (SpellDescriptor.Combat.Duration + SpellDescriptor.Combat.HotDotInterval - 1) / SpellDescriptor.Combat.HotDotInterval;
         target.DoT.TryAdd(Id, this);
         target.CachedDots = target.DoT.Values.ToArray();
 
@@ -69,7 +69,7 @@ public partial class DoT
             return false;
         }
 
-        if (SpellBase == null || Count > 0)
+        if (SpellDescriptor == null || Count > 0)
         {
             return false;
         }
@@ -93,30 +93,30 @@ public partial class DoT
 
         var deadAnimations = new List<KeyValuePair<Guid, Direction>>();
         var aliveAnimations = new List<KeyValuePair<Guid, Direction>>();
-        if (SpellBase.TickAnimationId != Guid.Empty)
+        if (SpellDescriptor.TickAnimationId != Guid.Empty)
         {
-            var animation = new KeyValuePair<Guid, Direction>(SpellBase.TickAnimationId, Direction.Up);
+            var animation = new KeyValuePair<Guid, Direction>(SpellDescriptor.TickAnimationId, Direction.Up);
             deadAnimations.Add(animation);
             aliveAnimations.Add(animation);
         }
-        else if (SpellBase.HitAnimationId != Guid.Empty)
+        else if (SpellDescriptor.HitAnimationId != Guid.Empty)
         {
-            var animation = new KeyValuePair<Guid, Direction>(SpellBase.HitAnimationId, Direction.Up);
+            var animation = new KeyValuePair<Guid, Direction>(SpellDescriptor.HitAnimationId, Direction.Up);
             deadAnimations.Add(animation);
             aliveAnimations.Add(animation);
         }
 
-        var damageHealth = SpellBase.Combat.VitalDiff[(int)Vital.Health];
-        var damageMana = SpellBase.Combat.VitalDiff[(int)Vital.Mana];
+        var damageHealth = SpellDescriptor.Combat.VitalDiff[(int)Vital.Health];
+        var damageMana = SpellDescriptor.Combat.VitalDiff[(int)Vital.Mana];
 
         Attacker?.Attack(
             Target, damageHealth, damageMana,
-            (DamageType)SpellBase.Combat.DamageType, (Enums.Stat)SpellBase.Combat.ScalingStat,
-            SpellBase.Combat.Scaling, SpellBase.Combat.CritChance, SpellBase.Combat.CritMultiplier, deadAnimations,
+            (DamageType)SpellDescriptor.Combat.DamageType, (Enums.Stat)SpellDescriptor.Combat.ScalingStat,
+            SpellDescriptor.Combat.Scaling, SpellDescriptor.Combat.CritChance, SpellDescriptor.Combat.CritMultiplier, deadAnimations,
             aliveAnimations, false
         );
 
-        mInterval = Timing.Global.Milliseconds + SpellBase.Combat.HotDotInterval;
+        mInterval = Timing.Global.Milliseconds + SpellDescriptor.Combat.HotDotInterval;
         Count--;
     }
 

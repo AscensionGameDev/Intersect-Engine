@@ -10,8 +10,8 @@ public partial class ClassSpell
 
     public int Level { get; set; }
 
-    public SpellBase Get()
+    public SpellDescriptor Get()
     {
-        return SpellBase.Get(Id);
+        return SpellDescriptor.Get(Id);
     }
 }

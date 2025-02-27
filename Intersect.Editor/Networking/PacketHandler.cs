@@ -594,14 +594,14 @@ internal sealed partial class PacketHandler
             case GameObjectType.Spell:
                 if (deleted)
                 {
-                    var spl = SpellBase.Get(id);
+                    var spl = SpellDescriptor.Get(id);
                     spl.Delete();
                 }
                 else
                 {
-                    var spl = new SpellBase(id);
+                    var spl = new SpellDescriptor(id);
                     spl.Load(json);
-                    SpellBase.Lookup.Set(id, spl);
+                    SpellDescriptor.Lookup.Set(id, spl);
                 }
 
                 break;

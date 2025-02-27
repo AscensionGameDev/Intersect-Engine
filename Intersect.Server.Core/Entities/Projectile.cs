@@ -38,7 +38,7 @@ public partial class Projectile : Entity
     // Individual Spawns
     public ProjectileSpawn[] Spawns;
 
-    public SpellBase Spell;
+    public SpellDescriptor Spell;
 
     public new Entity Target;
 
@@ -50,7 +50,7 @@ public partial class Projectile : Entity
 
     public Projectile(
         Entity owner,
-        SpellBase parentSpell,
+        SpellDescriptor parentSpell,
         ItemDescriptor parentItem,
         ProjectileDescriptor projectile,
         Guid mapId,

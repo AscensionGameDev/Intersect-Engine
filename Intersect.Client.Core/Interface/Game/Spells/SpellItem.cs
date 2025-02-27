@@ -146,7 +146,7 @@ public partial class SpellItem
 
     public void Update()
     {
-        var spell = SpellBase.Get(Globals.Me.Spells[mYindex].Id);
+        var spell = SpellDescriptor.Get(Globals.Me.Spells[mYindex].Id);
         if (!IsDragging &&
             (mTexLoaded != "" && spell == null ||
              spell != null && mTexLoaded != spell.Icon ||

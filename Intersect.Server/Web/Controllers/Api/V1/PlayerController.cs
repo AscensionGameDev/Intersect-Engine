@@ -533,7 +533,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-            if (SpellBase.Get(spell.Id) == null)
+            if (SpellDescriptor.Get(spell.Id) == null)
             {
                 return BadRequest(@"Invalid spell id.");
             }
@@ -569,7 +569,7 @@ namespace Intersect.Server.Web.Controllers.Api.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-            if (SpellBase.Get(spell.Id) == null)
+            if (SpellDescriptor.Get(spell.Id) == null)
             {
                 return BadRequest(@"Invalid spell id.");
             }

@@ -19,7 +19,7 @@ public partial class EventCommand_CastSpellOn : UserControl
         InitLocalization();
 
         cmbSpell.Items.Clear();
-        cmbSpell.Items.AddRange(SpellBase.Names);
+        cmbSpell.Items.AddRange(SpellDescriptor.Names);
 
         PopulateForm(mMyCommand);
     }
@@ -41,7 +41,7 @@ public partial class EventCommand_CastSpellOn : UserControl
 
     public void PopulateForm(CastSpellOn command)
     {
-        cmbSpell.SelectedIndex = SpellBase.ListIndex(command.SpellId);
+        cmbSpell.SelectedIndex = SpellDescriptor.ListIndex(command.SpellId);
         chkApplyToSelf.Checked = command.Self;
         chkApplyToGuildies.Checked = command.GuildMembers;
         chkApplyToParty.Checked = command.PartyMembers;
@@ -49,7 +49,7 @@ public partial class EventCommand_CastSpellOn : UserControl
 
     private void btnSave_Click(object sender, EventArgs e)
     {
-        mMyCommand.SpellId = SpellBase.IdFromList(cmbSpell.SelectedIndex);
+        mMyCommand.SpellId = SpellDescriptor.IdFromList(cmbSpell.SelectedIndex);
         mMyCommand.Self = chkApplyToSelf.Checked;
         mMyCommand.PartyMembers = chkApplyToParty.Checked;
         mMyCommand.GuildMembers = chkApplyToGuildies.Checked;

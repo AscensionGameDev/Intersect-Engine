@@ -153,7 +153,7 @@ public partial class SpellStatus
         }
 
         var remaining = _status.RemainingMs;
-        var spell = SpellBase.Get(_status.SpellId);
+        var spell = SpellDescriptor.Get(_status.SpellId);
 
         _durationLabel.Text = TimeSpan.FromMilliseconds(remaining).WithSuffix();
 

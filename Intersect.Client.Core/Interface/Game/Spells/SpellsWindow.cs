@@ -66,7 +66,7 @@ public partial class SpellsWindow
         mContextMenu.RemoveChild(mForgetSpellContextItem, false);
         mContextMenu.ClearChildren();
 
-        var spell = SpellBase.Get(Globals.Me.Spells[slot].Id);
+        var spell = SpellDescriptor.Get(Globals.Me.Spells[slot].Id);
 
         // No point showing a menu for blank space.
         if (spell == null)
@@ -122,7 +122,7 @@ public partial class SpellsWindow
         Y = mSpellWindow.Y;
         for (var i = 0; i < Options.Instance.Player.MaxSpells; i++)
         {
-            var spell = SpellBase.Get(Globals.Me.Spells[i].Id);
+            var spell = SpellDescriptor.Get(Globals.Me.Spells[i].Id);
             Items[i].Pnl.IsHidden = spell == null || Items[i].IsDragging;
             if (spell != null)
             {

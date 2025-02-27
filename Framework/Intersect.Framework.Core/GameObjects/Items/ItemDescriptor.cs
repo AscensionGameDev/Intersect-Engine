@@ -145,9 +145,9 @@ public partial class ItemDescriptor : DatabaseObject<ItemDescriptor>, IFolderabl
 
     [NotMapped]
     [JsonIgnore]
-    public SpellBase Spell
+    public SpellDescriptor Spell
     {
-        get => SpellBase.Get(SpellId);
+        get => SpellDescriptor.Get(SpellId);
         set => SpellId = value?.Id ?? Guid.Empty;
     }
 

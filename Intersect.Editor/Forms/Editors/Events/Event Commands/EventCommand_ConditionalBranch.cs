@@ -479,7 +479,7 @@ public partial class EventCommandConditionalBranch : UserControl
             case ConditionType.KnowsSpell:
                 grpSpell.Show();
                 cmbSpell.Items.Clear();
-                cmbSpell.Items.AddRange(SpellBase.Names);
+                cmbSpell.Items.AddRange(SpellDescriptor.Names);
 
                 break;
             case ConditionType.LevelOrStat:
@@ -1279,7 +1279,7 @@ public partial class EventCommandConditionalBranch : UserControl
 
     private void SetupFormValues(KnowsSpellCondition condition)
     {
-        cmbSpell.SelectedIndex = SpellBase.ListIndex(condition.SpellId);
+        cmbSpell.SelectedIndex = SpellDescriptor.ListIndex(condition.SpellId);
     }
 
     private void SetupFormValues(LevelOrStatCondition condition)
@@ -1477,7 +1477,7 @@ public partial class EventCommandConditionalBranch : UserControl
 
     private void SaveFormValues(KnowsSpellCondition condition)
     {
-        condition.SpellId = SpellBase.IdFromList(cmbSpell.SelectedIndex);
+        condition.SpellId = SpellDescriptor.IdFromList(cmbSpell.SelectedIndex);
     }
 
     private void SaveFormValues(LevelOrStatCondition condition)

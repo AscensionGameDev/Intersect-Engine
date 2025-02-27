@@ -1932,7 +1932,7 @@ public partial class Entity : IEntity
             return;
         }
 
-        var castingSpell = SpellBase.Get(SpellCast);
+        var castingSpell = SpellDescriptor.Get(SpellCast);
         if (castingSpell == null)
         {
             return;
@@ -2142,7 +2142,7 @@ public partial class Entity : IEntity
 
         if (IsCasting)
         {
-            var spell = SpellBase.Get(SpellCast);
+            var spell = SpellDescriptor.Get(SpellCast);
             if (spell != null)
             {
                 var duration = spell.CastDuration;
@@ -2252,7 +2252,7 @@ public partial class Entity : IEntity
                 break;
 
             case SpriteAnimations.Cast:
-                if (SpellBase.TryGet(SpellCast, out var spellDescriptor))
+                if (SpellDescriptor.TryGet(SpellCast, out var spellDescriptor))
                 {
                     textureOverride = spellDescriptor.CastSpriteOverride;
                 }

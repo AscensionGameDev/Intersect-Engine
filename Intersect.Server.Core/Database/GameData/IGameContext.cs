@@ -41,7 +41,7 @@ public interface IGameContext : IDbContext
 
     DbSet<ShopDescriptor> Shops { get; set; }
 
-    DbSet<SpellBase> Spells { get; set; }
+    DbSet<SpellDescriptor> Spells { get; set; }
 
     DbSet<ServerVariableDescriptor> ServerVariables { get; set; }
 

@@ -12,9 +12,9 @@ public partial class Buff
 
     public long ExpireTime;
 
-    public SpellBase Spell;
+    public SpellDescriptor Spell;
 
-    public Buff(SpellBase spell, int flatStats, int percentageStats, long expireTime)
+    public Buff(SpellDescriptor spell, int flatStats, int percentageStats, long expireTime)
     {
         Spell = spell;
         FlatStatcount = flatStats;

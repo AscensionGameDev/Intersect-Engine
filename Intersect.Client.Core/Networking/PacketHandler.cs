@@ -1415,9 +1415,9 @@ internal sealed partial class PacketHandler
     {
         var entityId = packet.EntityId;
         var spellId = packet.SpellId;
-        if (SpellBase.Get(spellId) != null && Globals.Entities.ContainsKey(entityId))
+        if (SpellDescriptor.Get(spellId) != null && Globals.Entities.ContainsKey(entityId))
         {
-            Globals.Entities[entityId].CastTime = Timing.Global.Milliseconds + SpellBase.Get(spellId).CastDuration;
+            Globals.Entities[entityId].CastTime = Timing.Global.Milliseconds + SpellDescriptor.Get(spellId).CastDuration;
             Globals.Entities[entityId].SpellCast = spellId;
         }
     }

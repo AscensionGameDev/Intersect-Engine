@@ -36,7 +36,7 @@ public enum GameObjectType
     [GameObjectInfo(typeof(ShopDescriptor), "shops")]
     Shop,
 
-    [GameObjectInfo(typeof(SpellBase), "spells")]
+    [GameObjectInfo(typeof(SpellDescriptor), "spells")]
     Spell,
 
     [GameObjectInfo(typeof(CraftingTableDescriptor), "crafting_tables")]

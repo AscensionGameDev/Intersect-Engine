@@ -653,7 +653,7 @@ public partial class Player : Entity, IPlayer
                     return true;
                 }
 
-                if ((SpellBase.TryGet(spl.Id, out var spellBase) && !spellBase.IgnoreGlobalCooldown) && Globals.Me?.GlobalCooldown > Timing.Global.Milliseconds)
+                if ((SpellDescriptor.TryGet(spl.Id, out var spellBase) && !spellBase.IgnoreGlobalCooldown) && Globals.Me?.GlobalCooldown > Timing.Global.Milliseconds)
                 {
                     return true;
                 }
@@ -689,7 +689,7 @@ public partial class Player : Entity, IPlayer
             return cd - now;
         }
 
-        if (SpellBase.TryGet(spell.Id, out var spellBase) && !spellBase.IgnoreGlobalCooldown && Globals.Me?.GlobalCooldown > now)
+        if (SpellDescriptor.TryGet(spell.Id, out var spellBase) && !spellBase.IgnoreGlobalCooldown && Globals.Me?.GlobalCooldown > now)
         {
             return Globals.Me.GlobalCooldown - now;
         }
@@ -1294,7 +1294,7 @@ public partial class Player : Entity, IPlayer
     public void TryForgetSpell(int spellIndex)
     {
         var spellSlot = Spells[spellIndex];
-        if (SpellBase.TryGet(spellSlot.Id, out var spellDescriptor))
+        if (SpellDescriptor.TryGet(spellSlot.Id, out var spellDescriptor))
         {
             _ = new InputBox(
                 title: Strings.Spells.ForgetSpell,
@@ -1334,7 +1334,7 @@ public partial class Player : Entity, IPlayer
             return;
         }
 
-        if (!SpellBase.TryGet(spell.Id, out var spellDescriptor))
+        if (!SpellDescriptor.TryGet(spell.Id, out var spellDescriptor))
         {
             return;
         }
@@ -1357,7 +1357,7 @@ public partial class Player : Entity, IPlayer
             return cd;
         }
 
-        if ((SpellBase.TryGet(id, out var spellBase) && !spellBase.IgnoreGlobalCooldown) && Globals.Me?.GlobalCooldown > Timing.Global.Milliseconds)
+        if ((SpellDescriptor.TryGet(id, out var spellBase) && !spellBase.IgnoreGlobalCooldown) && Globals.Me?.GlobalCooldown > Timing.Global.Milliseconds)
         {
             return Globals.Me.GlobalCooldown;
         }
@@ -1385,7 +1385,7 @@ public partial class Player : Entity, IPlayer
 
     public int FindHotbarSpell(IHotbarInstance hotbarInstance)
     {
-        if (hotbarInstance.ItemOrSpellId != Guid.Empty && SpellBase.Get(hotbarInstance.ItemOrSpellId) != null)
+        if (hotbarInstance.ItemOrSpellId != Guid.Empty && SpellDescriptor.Get(hotbarInstance.ItemOrSpellId) != null)
         {
             for (var i = 0; i < Spells.Length; i++)
             {

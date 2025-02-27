@@ -7,7 +7,7 @@ namespace Intersect.Server.Entities.Combat;
 public partial class Stat
 {
 
-    private ConcurrentDictionary<SpellBase, Buff> mBuff = new ConcurrentDictionary<SpellBase, Buff>();
+    private ConcurrentDictionary<SpellDescriptor, Buff> mBuff = new ConcurrentDictionary<SpellDescriptor, Buff>();
 
     private Buff[] mCachedBuffs = new Buff[0];
 

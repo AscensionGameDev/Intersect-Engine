@@ -322,7 +322,7 @@ public partial class Npc : Entity
         return base.CalculateAttackTime();
     }
 
-    public override bool CanAttack(Entity entity, SpellBase spell)
+    public override bool CanAttack(Entity entity, SpellDescriptor spell)
     {
         if (!base.CanAttack(entity, spell))
         {
@@ -683,7 +683,7 @@ public partial class Npc : Entity
         // Pick a random spell
         var spellIndex = Randomization.Next(0, Spells.Count);
         var spellId = Descriptor.Spells[spellIndex];
-        if (!SpellBase.TryGet(spellId, out var spellBase))
+        if (!SpellDescriptor.TryGet(spellId, out var spellBase))
         {
             return;
         }

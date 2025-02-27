@@ -101,7 +101,7 @@ public partial class FrmClass : EditorForm
         {
             lstSpells.Items.Add(
                 Strings.ClassEditor.spellitem.ToString(
-                    i + 1, SpellBase.GetName(mEditorItem.Spells[i].Id), mEditorItem.Spells[i].Level
+                    i + 1, SpellDescriptor.GetName(mEditorItem.Spells[i].Id), mEditorItem.Spells[i].Level
                 )
             );
         }
@@ -116,7 +116,7 @@ public partial class FrmClass : EditorForm
     {
         var n = new ClassSpell
         {
-            Id = SpellBase.IdFromList(cmbSpell.SelectedIndex),
+            Id = SpellDescriptor.IdFromList(cmbSpell.SelectedIndex),
             Level = (int) nudLevel.Value
         };
 
@@ -205,7 +205,7 @@ public partial class FrmClass : EditorForm
             if (lstSpells.Items.Count > 0)
             {
                 lstSpells.SelectedIndex = 0;
-                cmbSpell.SelectedIndex = SpellBase.ListIndex(mEditorItem.Spells[lstSpells.SelectedIndex].Id);
+                cmbSpell.SelectedIndex = SpellDescriptor.ListIndex(mEditorItem.Spells[lstSpells.SelectedIndex].Id);
                 nudLevel.Value = mEditorItem.Spells[lstSpells.SelectedIndex].Level;
             }
             else
@@ -293,7 +293,7 @@ public partial class FrmClass : EditorForm
         cmbSpawnItem.Items.Add(Strings.General.None);
         cmbSpawnItem.Items.AddRange(ItemDescriptor.Names);
         cmbSpell.Items.Clear();
-        cmbSpell.Items.AddRange(SpellBase.Names);
+        cmbSpell.Items.AddRange(SpellDescriptor.Names);
         nudLevel.Maximum = Options.Instance.Player.MaxLevel;
         cmbAttackAnimation.Items.Clear();
         cmbAttackAnimation.Items.Add(Strings.General.None);
@@ -935,7 +935,7 @@ public partial class FrmClass : EditorForm
     {
         if (lstSpells.SelectedIndex > -1 && cmbSpell.SelectedIndex > -1)
         {
-            mEditorItem.Spells[lstSpells.SelectedIndex].Id = SpellBase.IdFromList(cmbSpell.SelectedIndex);
+            mEditorItem.Spells[lstSpells.SelectedIndex].Id = SpellDescriptor.IdFromList(cmbSpell.SelectedIndex);
             UpdateSpellList();
         }
     }
@@ -944,7 +944,7 @@ public partial class FrmClass : EditorForm
     {
         if (lstSpells.SelectedIndex > -1)
         {
-            cmbSpell.SelectedIndex = SpellBase.ListIndex(mEditorItem.Spells[lstSpells.SelectedIndex].Id);
+            cmbSpell.SelectedIndex = SpellDescriptor.ListIndex(mEditorItem.Spells[lstSpells.SelectedIndex].Id);
             nudLevel.Value = mEditorItem.Spells[lstSpells.SelectedIndex].Level;
         }
     }

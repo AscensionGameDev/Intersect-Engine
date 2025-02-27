@@ -136,7 +136,7 @@ public static partial class Strings
 
     public static string GetEventConditionalDesc(KnowsSpellCondition condition)
     {
-        return EventConditionDesc.knowsspell.ToString(SpellBase.GetName(condition.SpellId));
+        return EventConditionDesc.knowsspell.ToString(SpellDescriptor.GetName(condition.SpellId));
     }
 
     public static string GetEventConditionalDesc(LevelOrStatCondition condition)

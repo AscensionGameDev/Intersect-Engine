@@ -1013,7 +1013,7 @@ public partial class MapInstance : IMapInstance
     public void SpawnMapProjectile(
         Entity owner,
         ProjectileDescriptor projectile,
-        SpellBase parentSpell,
+        SpellDescriptor parentSpell,
         ItemDescriptor parentItem,
         Guid mapId,
         byte x,
@@ -1055,7 +1055,7 @@ public partial class MapInstance : IMapInstance
         MapProjectilesCached = MapProjectiles.Values.ToArray();
     }
 
-    public void SpawnTrap(Entity owner, SpellBase parentSpell, byte x, byte y, byte z)
+    public void SpawnTrap(Entity owner, SpellDescriptor parentSpell, byte x, byte y, byte z)
     {
         var trap = new MapTrapInstance(owner, parentSpell, mMapController.Id, MapInstanceId, x, y, z);
         MapTraps.TryAdd(trap.Id, trap);

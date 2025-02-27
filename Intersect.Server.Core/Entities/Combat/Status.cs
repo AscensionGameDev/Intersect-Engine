@@ -20,7 +20,7 @@ public partial class Status
 
     public Entity Attacker;
 
-    public SpellBase Spell;
+    public SpellDescriptor Spell;
 
     public long StartTime;
 
@@ -44,7 +44,7 @@ public partial class Status
         SpellEffect.Stun,
     };
 
-    public Status(Entity en, Entity attacker, SpellBase spell, SpellEffect type, int duration, string data)
+    public Status(Entity en, Entity attacker, SpellDescriptor spell, SpellEffect type, int duration, string data)
     {
         mEntity = en;
         Attacker = attacker;
@@ -134,7 +134,7 @@ public partial class Status
 
             foreach (var dot in en.CachedDots)
             {
-                if (spell.Combat.Friendly != dot.SpellBase.Combat.Friendly)
+                if (spell.Combat.Friendly != dot.SpellDescriptor.Combat.Friendly)
                 {
                     dot.Expire();
                 }

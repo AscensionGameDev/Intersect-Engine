@@ -914,7 +914,7 @@ internal sealed partial class NetworkedPacketHandler
                     break;
 
                 case GameObjectType.Spell:
-                    obj = SpellBase.Get(id);
+                    obj = SpellDescriptor.Get(id);
 
                     break;
 
@@ -1046,7 +1046,7 @@ internal sealed partial class NetworkedPacketHandler
                     break;
 
                 case GameObjectType.Spell:
-                    obj = SpellBase.Get(id);
+                    obj = SpellDescriptor.Get(id);
 
                     break;
 

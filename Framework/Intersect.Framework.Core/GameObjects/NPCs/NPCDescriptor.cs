@@ -269,11 +269,11 @@ public partial class NPCDescriptor : DatabaseObject<NPCDescriptor>, IFolderable
     public string CraftsJson
     {
         get => JsonConvert.SerializeObject(Spells, Formatting.None);
-        protected set => Spells = JsonConvert.DeserializeObject<DbList<SpellBase>>(value);
+        protected set => Spells = JsonConvert.DeserializeObject<DbList<SpellDescriptor>>(value);
     }
 
     [NotMapped]
-    public DbList<SpellBase> Spells { get; set; } = [];
+    public DbList<SpellDescriptor> Spells { get; set; } = [];
 
     public string Sprite { get; set; } = string.Empty;
 
@@ -314,7 +314,7 @@ public partial class NPCDescriptor : DatabaseObject<NPCDescriptor>, IFolderable
     /// <inheritdoc />
     public string Folder { get; set; } = string.Empty;
 
-    public SpellBase GetRandomSpell(Random random)
+    public SpellDescriptor GetRandomSpell(Random random)
     {
         if (Spells == null || Spells.Count == 0)
         {
@@ -324,6 +324,6 @@ public partial class NPCDescriptor : DatabaseObject<NPCDescriptor>, IFolderable
         var spellIndex = random.Next(0, Spells.Count);
         var spellId = Spells[spellIndex];
 
-        return SpellBase.Get(spellId);
+        return SpellDescriptor.Get(spellId);
     }
 }

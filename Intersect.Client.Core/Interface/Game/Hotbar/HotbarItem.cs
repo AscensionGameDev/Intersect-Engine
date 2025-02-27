@@ -34,7 +34,7 @@ public partial class HotbarItem
     private long _clickTime;
     private Guid _currentId = Guid.Empty;
     private ItemDescriptor? _currentItem = null;
-    private SpellBase? _currentSpell = null;
+    private SpellDescriptor? _currentSpell = null;
     private Draggable _dragIcon;
     private bool _isDragging;
     private bool _isEquipped;
@@ -319,7 +319,7 @@ public partial class HotbarItem
             _currentItem = null;
             _currentSpell = null;
             var itm = ItemDescriptor.Get(slot.ItemOrSpellId);
-            var spl = SpellBase.Get(slot.ItemOrSpellId);
+            var spl = SpellDescriptor.Get(slot.ItemOrSpellId);
             if (itm != null)
             {
                 _currentItem = itm;

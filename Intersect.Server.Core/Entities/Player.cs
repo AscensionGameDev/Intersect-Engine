@@ -420,7 +420,7 @@ public partial class Player : Entity
 
         foreach (var spl in Spells)
         {
-            if (spl.SpellId != Guid.Empty && SpellBase.Get(spl.SpellId) == null)
+            if (spl.SpellId != Guid.Empty && SpellDescriptor.Get(spl.SpellId) == null)
             {
                 spl.Set(Spell.None);
             }
@@ -994,20 +994,20 @@ public partial class Player : Entity
     }
 
     /// <summary>
-    ///     Updates the player's spell cooldown for the specified <paramref name="spellBase"/>.
+    ///     Updates the player's spell cooldown for the specified <paramref name="spellDescriptor"/>.
     ///     <para> This method is called when a spell is casted by a player. </para>
     /// </summary>
-    public override void UpdateSpellCooldown(SpellBase spellBase, int spellSlot)
+    public override void UpdateSpellCooldown(SpellDescriptor spellDescriptor, int spellSlot)
     {
         if (spellSlot < 0 || spellSlot >= Options.Instance.Player.MaxSpells)
         {
             return;
         }
 
-        this.UpdateCooldown(spellBase);
+        this.UpdateCooldown(spellDescriptor);
 
         // Trigger the global cooldown, if we're allowed to.
-        if (!spellBase.IgnoreGlobalCooldown)
+        if (!spellDescriptor.IgnoreGlobalCooldown)
         {
             this.UpdateGlobalCooldown();
         }
@@ -1336,7 +1336,7 @@ public partial class Player : Entity
 
                         ForgetSpell(FindSpell(spell.Id), true);
                         messageList.Add(
-                            (Strings.Player.ForgotSpell.ToString(SpellBase.GetName(spell.Id)), CustomColors.Alerts.Info)
+                            (Strings.Player.ForgotSpell.ToString(SpellDescriptor.GetName(spell.Id)), CustomColors.Alerts.Info)
                         );
                     }
                 }
@@ -1559,7 +1559,7 @@ public partial class Player : Entity
 
     public override void TryAttack(Entity target,
         ProjectileDescriptor projectile,
-        SpellBase parentSpell,
+        SpellDescriptor parentSpell,
         ItemDescriptor parentItem,
         Direction projectileDir)
     {
@@ -1660,7 +1660,7 @@ public partial class Player : Entity
     //Attacking with spell
     public override void TryAttack(
         Entity target,
-        SpellBase spellBase,
+        SpellDescriptor spellDescriptor,
         bool onHitTrigger = false,
         bool trapTrigger = false
     )
@@ -1670,7 +1670,7 @@ public partial class Player : Entity
             return;
         }
 
-        base.TryAttack(target, spellBase, onHitTrigger, trapTrigger);
+        base.TryAttack(target, spellDescriptor, onHitTrigger, trapTrigger);
     }
 
     /// <summary>
@@ -1788,7 +1788,7 @@ public partial class Player : Entity
         }
     }
 
-    public override bool CanAttack(Entity entity, SpellBase spell)
+    public override bool CanAttack(Entity entity, SpellDescriptor spell)
     {
         var npc = entity as Npc;
         if (npc != default && !npc.CanPlayerAttack(this))
@@ -5416,7 +5416,7 @@ public partial class Player : Entity
             return false;
         }
 
-        if (SpellBase.Get(spell.SpellId) == null)
+        if (SpellDescriptor.Get(spell.SpellId) == null)
         {
             return false;
         }
@@ -5430,7 +5430,7 @@ public partial class Player : Entity
                 {
                     PacketSender.SendPlayerSpellUpdate(this, i);
                     PacketSender.SendChatMsg(this,
-                        Strings.Player.LearnedSpell.ToString(SpellBase.GetName(spell.SpellId)),
+                        Strings.Player.LearnedSpell.ToString(SpellDescriptor.GetName(spell.SpellId)),
                         ChatMessageType.Experience, CustomColors.Alerts.Info, Name);
                 }
 
@@ -5483,7 +5483,7 @@ public partial class Player : Entity
             return false;
         }
 
-        if (!SpellBase.Get(Spells[spellSlot].SpellId).Bound || removeBoundSpell)
+        if (!SpellDescriptor.Get(Spells[spellSlot].SpellId).Bound || removeBoundSpell)
         {
             Spells[spellSlot].Set(Spell.None);
             PacketSender.SendPlayerSpellUpdate(this, spellSlot);
@@ -5522,7 +5522,7 @@ public partial class Player : Entity
             return false;
         }
 
-        var spellBase = SpellBase.Get(spell.SpellId);
+        var spellBase = SpellDescriptor.Get(spell.SpellId);
         if (spellBase == null)
         {
             return false;
@@ -5576,7 +5576,7 @@ public partial class Player : Entity
     }
 
     public override bool CanCastSpell(
-        SpellBase spell,
+        SpellDescriptor spell,
         Entity target,
         bool checkVitalReqs,
         bool softRetargetOnSelfCast,
@@ -5686,7 +5686,7 @@ public partial class Player : Entity
     {
         var spellDescriptorId = Spells[spellSlot].SpellId;
         Target = target;
-        if (!SpellBase.TryGet(spellDescriptorId, out var spellDescriptor))
+        if (!SpellDescriptor.TryGet(spellDescriptorId, out var spellDescriptor))
         {
             return;
         }
@@ -5803,7 +5803,7 @@ public partial class Player : Entity
 
     public override void CastSpell(Guid spellId, int spellSlot = -1)
     {
-        var spellBase = SpellBase.Get(spellId);
+        var spellBase = SpellDescriptor.Get(spellId);
         if (spellBase == null)
         {
             return;
@@ -5838,15 +5838,15 @@ public partial class Player : Entity
     /// If the spell has a valid ProjectileId, it retrieves the projectile and checks if it has a valid AmmoItemId.
     /// If it does, it attempts to take the required amount of ammo from the player's inventory.
     /// </summary>
-    /// <param name="spellBase">The spell that is being cast.</param>
-    private void ConsumeSpellProjectile(SpellBase spellBase)
+    /// <param name="spellDescriptor">The spell that is being cast.</param>
+    private void ConsumeSpellProjectile(SpellDescriptor spellDescriptor)
     {
         // Check if the caster has the required projectile(s) for the spell and try to take it/them.
-        if (spellBase.SpellType == SpellType.CombatSpell &&
-            spellBase.Combat.TargetType == SpellTargetType.Projectile &&
-            spellBase.Combat.ProjectileId != Guid.Empty)
+        if (spellDescriptor.SpellType == SpellType.CombatSpell &&
+            spellDescriptor.Combat.TargetType == SpellTargetType.Projectile &&
+            spellDescriptor.Combat.ProjectileId != Guid.Empty)
         {
-            var projectileBase = spellBase.Combat.Projectile;
+            var projectileBase = spellDescriptor.Combat.Projectile;
             if (projectileBase != null && projectileBase.AmmoItemId != Guid.Empty)
             {
                 TryTakeItem(projectileBase.AmmoItemId, projectileBase.AmmoRequired);
@@ -7489,8 +7489,8 @@ public partial class Player : Entity
     /// <summary>
     /// Update the cooldown for a specific spell.
     /// </summary>
-    /// <param name="item">The <see cref="SpellBase"/> to update the cooldown for.</param>
-    public void UpdateCooldown(SpellBase spell)
+    /// <param name="item">The <see cref="SpellDescriptor"/> to update the cooldown for.</param>
+    public void UpdateCooldown(SpellDescriptor spell)
     {
         if (spell == null)
         {
@@ -7552,7 +7552,7 @@ public partial class Player : Entity
 
         // Retrieve a list of all items and/or spells depending on our settings to set the cooldown for.
         var matchingItems = Array.Empty<ItemDescriptor>();
-        var matchingSpells = Array.Empty<SpellBase>();
+        var matchingSpells = Array.Empty<SpellDescriptor>();
         var itemsUpdated = false;
         var spellsUpdated = false;
 
@@ -7562,7 +7562,7 @@ public partial class Player : Entity
         }
         if (type == GameObjectType.Spell || Options.Instance.Combat.LinkSpellAndItemCooldowns)
         {
-            matchingSpells = SpellBase.GetCooldownGroup(group);
+            matchingSpells = SpellDescriptor.GetCooldownGroup(group);
         }
 
         // Set our matched cooldown, should we need to use it.
@@ -7644,7 +7644,7 @@ public partial class Player : Entity
     /// Assign a cooldown time to a specified spell.
     /// WARNING: Makes no checks at all to see whether this SHOULD happen!
     /// </summary>
-    /// <param name="itemId">The <see cref="SpellBase"/> id to assign the cooldown for.</param>
+    /// <param name="itemId">The <see cref="SpellDescriptor"/> id to assign the cooldown for.</param>
     /// <param name="cooldownTime">The cooldown time to assign.</param>
     private void AssignSpellCooldown(Guid spellId, long cooldownTime)
     {
@@ -7671,7 +7671,7 @@ public partial class Player : Entity
     /// <summary>
     /// Remove the cooldown time entry for a specified Spell.
     /// </summary>
-    /// <param name="itemId">The <see cref="SpellBase"/> id to remove the cooldown entry for.</param>
+    /// <param name="itemId">The <see cref="SpellDescriptor"/> id to remove the cooldown entry for.</param>
     private void RemoveSpellCooldown(Guid itemId)
     {
         SpellCooldowns.TryRemove(itemId, out _);

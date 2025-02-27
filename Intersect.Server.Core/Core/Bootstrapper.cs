@@ -292,7 +292,7 @@ internal static class Bootstrapper
         Console.WriteLine(Strings.Commandoutput.AccountCount.ToString(Database.PlayerData.User.Count()));
         Console.WriteLine(Strings.Commandoutput.CharacterCount.ToString(Player.Count()));
         Console.WriteLine(Strings.Commandoutput.NpcCount.ToString(NPCDescriptor.Lookup.Count));
-        Console.WriteLine(Strings.Commandoutput.SpellCount.ToString(SpellBase.Lookup.Count));
+        Console.WriteLine(Strings.Commandoutput.SpellCount.ToString(SpellDescriptor.Lookup.Count));
         Console.WriteLine(Strings.Commandoutput.MapCount.ToString(MapDescriptor.Lookup.Count));
         Console.WriteLine(Strings.Commandoutput.EventCount.ToString(EventDescriptor.Lookup.Count));
         Console.WriteLine(Strings.Commandoutput.ItemCount.ToString(ItemDescriptor.Lookup.Count));

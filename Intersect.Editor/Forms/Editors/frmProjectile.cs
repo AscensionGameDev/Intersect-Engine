@@ -94,7 +94,7 @@ public partial class FrmProjectile : EditorForm
 
         cmbSpell.Items.Clear();
         cmbSpell.Items.Add(Strings.General.None);
-        cmbSpell.Items.AddRange(SpellBase.Names);
+        cmbSpell.Items.AddRange(SpellDescriptor.Names);
 
         InitLocalization();
         UpdateEditor();
@@ -171,7 +171,7 @@ public partial class FrmProjectile : EditorForm
             nudSpawn.Value = mEditorItem.Delay;
             nudAmount.Value = mEditorItem.Quantity;
             nudRange.Value = mEditorItem.Range;
-            cmbSpell.SelectedIndex = SpellBase.ListIndex(mEditorItem.SpellId) + 1;
+            cmbSpell.SelectedIndex = SpellDescriptor.ListIndex(mEditorItem.SpellId) + 1;
             nudKnockback.Value = mEditorItem.Knockback;
             chkIgnoreMapBlocks.Checked = mEditorItem.IgnoreMapBlocks;
             chkIgnoreActiveResources.Checked = mEditorItem.IgnoreActiveResources;
@@ -688,7 +688,7 @@ public partial class FrmProjectile : EditorForm
     {
         if (cmbSpell.SelectedIndex > 0)
         {
-            mEditorItem.Spell = SpellBase.Get(SpellBase.IdFromList(cmbSpell.SelectedIndex - 1));
+            mEditorItem.Spell = SpellDescriptor.Get(SpellDescriptor.IdFromList(cmbSpell.SelectedIndex - 1));
         }
         else
         {

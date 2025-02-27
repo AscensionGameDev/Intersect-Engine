@@ -96,7 +96,7 @@ public partial class FrmNpc : EditorForm
         );
 
         cmbSpell.Items.Clear();
-        cmbSpell.Items.AddRange(SpellBase.Names);
+        cmbSpell.Items.AddRange(SpellDescriptor.Names);
         cmbHostileNPC.Items.Clear();
         cmbHostileNPC.Items.AddRange(NPCDescriptor.Names);
         cmbDropItem.Items.Clear();
@@ -332,7 +332,7 @@ public partial class FrmNpc : EditorForm
             {
                 if (mEditorItem.Spells[i] != Guid.Empty)
                 {
-                    lstSpells.Items.Add(SpellBase.GetName(mEditorItem.Spells[i]));
+                    lstSpells.Items.Add(SpellDescriptor.GetName(mEditorItem.Spells[i]));
                 }
                 else
                 {
@@ -343,7 +343,7 @@ public partial class FrmNpc : EditorForm
             if (lstSpells.Items.Count > 0)
             {
                 lstSpells.SelectedIndex = 0;
-                cmbSpell.SelectedIndex = SpellBase.ListIndex(mEditorItem.Spells[lstSpells.SelectedIndex]);
+                cmbSpell.SelectedIndex = SpellDescriptor.ListIndex(mEditorItem.Spells[lstSpells.SelectedIndex]);
             }
 
             cmbFreq.SelectedIndex = mEditorItem.SpellFrequency;
@@ -457,12 +457,12 @@ public partial class FrmNpc : EditorForm
 
     private void btnAdd_Click(object sender, EventArgs e)
     {
-        mEditorItem.Spells.Add(SpellBase.IdFromList(cmbSpell.SelectedIndex));
+        mEditorItem.Spells.Add(SpellDescriptor.IdFromList(cmbSpell.SelectedIndex));
         var n = lstSpells.SelectedIndex;
         lstSpells.Items.Clear();
         for (var i = 0; i < mEditorItem.Spells.Count; i++)
         {
-            lstSpells.Items.Add(SpellBase.GetName(mEditorItem.Spells[i]));
+            lstSpells.Items.Add(SpellDescriptor.GetName(mEditorItem.Spells[i]));
         }
 
         lstSpells.SelectedIndex = n;
@@ -625,7 +625,7 @@ public partial class FrmNpc : EditorForm
     {
         if (lstSpells.SelectedIndex > -1)
         {
-            cmbSpell.SelectedIndex = SpellBase.ListIndex(mEditorItem.Spells[lstSpells.SelectedIndex]);
+            cmbSpell.SelectedIndex = SpellDescriptor.ListIndex(mEditorItem.Spells[lstSpells.SelectedIndex]);
         }
     }
 
@@ -633,14 +633,14 @@ public partial class FrmNpc : EditorForm
     {
         if (lstSpells.SelectedIndex > -1 && lstSpells.SelectedIndex < mEditorItem.Spells.Count)
         {
-            mEditorItem.Spells[lstSpells.SelectedIndex] = SpellBase.IdFromList(cmbSpell.SelectedIndex);
+            mEditorItem.Spells[lstSpells.SelectedIndex] = SpellDescriptor.IdFromList(cmbSpell.SelectedIndex);
         }
 
         var n = lstSpells.SelectedIndex;
         lstSpells.Items.Clear();
         for (var i = 0; i < mEditorItem.Spells.Count; i++)
         {
-            lstSpells.Items.Add(SpellBase.GetName(mEditorItem.Spells[i]));
+            lstSpells.Items.Add(SpellDescriptor.GetName(mEditorItem.Spells[i]));
         }
 
         lstSpells.SelectedIndex = n;

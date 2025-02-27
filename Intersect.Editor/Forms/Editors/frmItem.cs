@@ -132,7 +132,7 @@ public partial class FrmItem : EditorForm
         cmbEquipmentAnimation.Items.AddRange(AnimationDescriptor.Names);
         cmbTeachSpell.Items.Clear();
         cmbTeachSpell.Items.Add(Strings.General.None);
-        cmbTeachSpell.Items.AddRange(SpellBase.Names);
+        cmbTeachSpell.Items.AddRange(SpellDescriptor.Names);
 
         var events = EventDescriptor.Names;
         var eventElements = new List<ComboBox>() { cmbEvent, cmbEventTriggers };
@@ -500,7 +500,7 @@ public partial class FrmItem : EditorForm
         }
         else if (cmbType.SelectedIndex == (int)ItemType.Spell)
         {
-            cmbTeachSpell.SelectedIndex = SpellBase.ListIndex(mEditorItem.SpellId) + 1;
+            cmbTeachSpell.SelectedIndex = SpellDescriptor.ListIndex(mEditorItem.SpellId) + 1;
             chkQuickCast.Checked = mEditorItem.QuickCast;
             chkSingleUseSpell.Checked = mEditorItem.SingleUse;
             grpSpell.Visible = true;
@@ -811,7 +811,7 @@ public partial class FrmItem : EditorForm
 
     private void cmbTeachSpell_SelectedIndexChanged(object sender, EventArgs e)
     {
-        mEditorItem.Spell = SpellBase.Get(SpellBase.IdFromList(cmbTeachSpell.SelectedIndex - 1));
+        mEditorItem.Spell = SpellDescriptor.Get(SpellDescriptor.IdFromList(cmbTeachSpell.SelectedIndex - 1));
     }
 
     private void nudPrice_ValueChanged(object sender, EventArgs e)
@@ -1274,12 +1274,12 @@ public partial class FrmItem : EditorForm
         // Do we add spell cooldown groups as well?
         if (Options.Instance.Combat.LinkSpellAndItemCooldowns)
         {
-            foreach (var itm in SpellBase.Lookup)
+            foreach (var itm in SpellDescriptor.Lookup)
             {
-                if (!string.IsNullOrWhiteSpace(((SpellBase)itm.Value).CooldownGroup) &&
-                !mKnownCooldownGroups.Contains(((SpellBase)itm.Value).CooldownGroup))
+                if (!string.IsNullOrWhiteSpace(((SpellDescriptor)itm.Value).CooldownGroup) &&
+                !mKnownCooldownGroups.Contains(((SpellDescriptor)itm.Value).CooldownGroup))
                 {
-                    mKnownCooldownGroups.Add(((SpellBase)itm.Value).CooldownGroup);
+                    mKnownCooldownGroups.Add(((SpellDescriptor)itm.Value).CooldownGroup);
                 }
             }
         }

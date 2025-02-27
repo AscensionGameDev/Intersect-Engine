@@ -19,11 +19,11 @@ namespace Intersect.Editor.Forms.Editors;
 public partial class FrmSpell : EditorForm
 {
 
-    private List<SpellBase> mChanged = new List<SpellBase>();
+    private List<SpellDescriptor> mChanged = new List<SpellDescriptor>();
 
     private string mCopiedItem;
 
-    private SpellBase mEditorItem;
+    private SpellDescriptor mEditorItem;
 
     private List<string> mKnownFolders = new List<string>();
 
@@ -45,7 +45,7 @@ public partial class FrmSpell : EditorForm
     }
     private void AssignEditorItem(Guid id)
     {
-        mEditorItem = SpellBase.Get(id);
+        mEditorItem = SpellDescriptor.Get(id);
         UpdateEditor();
     }
 
@@ -54,7 +54,7 @@ public partial class FrmSpell : EditorForm
         if (type == GameObjectType.Spell)
         {
             InitEditor();
-            if (mEditorItem != null && !SpellBase.Lookup.Values.Contains(mEditorItem))
+            if (mEditorItem != null && !SpellDescriptor.Lookup.Values.Contains(mEditorItem))
             {
                 mEditorItem = null;
                 UpdateEditor();
@@ -970,22 +970,22 @@ public partial class FrmSpell : EditorForm
     {
         //Collect folders
         var mFolders = new List<string>();
-        foreach (var itm in SpellBase.Lookup)
+        foreach (var itm in SpellDescriptor.Lookup)
         {
-            if (!string.IsNullOrEmpty(((SpellBase)itm.Value).Folder) &&
-                !mFolders.Contains(((SpellBase)itm.Value).Folder))
+            if (!string.IsNullOrEmpty(((SpellDescriptor)itm.Value).Folder) &&
+                !mFolders.Contains(((SpellDescriptor)itm.Value).Folder))
             {
-                mFolders.Add(((SpellBase)itm.Value).Folder);
-                if (!mKnownFolders.Contains(((SpellBase)itm.Value).Folder))
+                mFolders.Add(((SpellDescriptor)itm.Value).Folder);
+                if (!mKnownFolders.Contains(((SpellDescriptor)itm.Value).Folder))
                 {
-                    mKnownFolders.Add(((SpellBase)itm.Value).Folder);
+                    mKnownFolders.Add(((SpellDescriptor)itm.Value).Folder);
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(((SpellBase)itm.Value).CooldownGroup) &&
-                !mKnownCooldownGroups.Contains(((SpellBase)itm.Value).CooldownGroup))
+            if (!string.IsNullOrWhiteSpace(((SpellDescriptor)itm.Value).CooldownGroup) &&
+                !mKnownCooldownGroups.Contains(((SpellDescriptor)itm.Value).CooldownGroup))
             {
-                mKnownCooldownGroups.Add(((SpellBase)itm.Value).CooldownGroup);
+                mKnownCooldownGroups.Add(((SpellDescriptor)itm.Value).CooldownGroup);
             }
         }
 
@@ -1013,8 +1013,8 @@ public partial class FrmSpell : EditorForm
         cmbCooldownGroup.Items.Add(string.Empty);
         cmbCooldownGroup.Items.AddRange(mKnownCooldownGroups.ToArray());
 
-        var items = SpellBase.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
-            new KeyValuePair<string, string>(((SpellBase)pair.Value)?.Name ?? Models.DatabaseObject<SpellBase>.Deleted, ((SpellBase)pair.Value)?.Folder ?? ""))).ToArray();
+        var items = SpellDescriptor.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
+            new KeyValuePair<string, string>(((SpellDescriptor)pair.Value)?.Name ?? Models.DatabaseObject<SpellDescriptor>.Deleted, ((SpellDescriptor)pair.Value)?.Folder ?? ""))).ToArray();
         lstGameObjects.Repopulate(items, mFolders, btnAlphabetical.Checked, CustomSearch(), txtSearch.Text);
     }
 

@@ -5,12 +5,11 @@ using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Models;
 using Intersect.Utilities;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects;
 
-public partial class SpellBase : DatabaseObject<SpellBase>, IFolderable
+public partial class SpellDescriptor : DatabaseObject<SpellDescriptor>, IFolderable
 {
     private long[] _vitalCost = new long[Enum.GetValues<Vital>().Length];
 
@@ -22,12 +21,12 @@ public partial class SpellBase : DatabaseObject<SpellBase>, IFolderable
     }
 
     [JsonConstructor]
-    public SpellBase(Guid id) : base(id)
+    public SpellDescriptor(Guid id) : base(id)
     {
         Name = "New Spell";
     }
 
-    public SpellBase()
+    public SpellDescriptor()
     {
         Name = "New Spell";
     }
@@ -112,13 +111,13 @@ public partial class SpellBase : DatabaseObject<SpellBase>, IFolderable
     public string CastSpriteOverride { get; set; }
 
     //Combat Info
-    public SpellCombatData Combat { get; set; } = new();
+    public SpellCombatDescriptor Combat { get; set; } = new();
 
     //Warp Info
-    public SpellWarpData Warp { get; set; } = new();
+    public SpellWarpDescriptor Warp { get; set; } = new();
 
     //Dash Info
-    public SpellDashOpts Dash { get; set; } = new();
+    public SpellDashDescriptor Dash { get; set; } = new();
 
     //Event Info
     [Column("Event")]
@@ -149,7 +148,7 @@ public partial class SpellBase : DatabaseObject<SpellBase>, IFolderable
     /// </summary>
     /// <param name="cooldownGroup">The cooldown group to search for.</param>
     /// <returns>Returns an array of <see cref="ItemDescriptor"/> containing all items with the supplied cooldown group.</returns>
-    public static SpellBase[] GetCooldownGroup(string cooldownGroup)
+    public static SpellDescriptor[] GetCooldownGroup(string cooldownGroup)
     {
         cooldownGroup = cooldownGroup.Trim();
 
@@ -160,118 +159,8 @@ public partial class SpellBase : DatabaseObject<SpellBase>, IFolderable
         }
 
         return Lookup
-            .Where(i => ((SpellBase)i.Value).CooldownGroup.Trim() == cooldownGroup)
-            .Select(i => (SpellBase)i.Value)
+            .Where(i => ((SpellDescriptor)i.Value).CooldownGroup.Trim() == cooldownGroup)
+            .Select(i => (SpellDescriptor)i.Value)
             .ToArray();
     }
-}
-
-[Owned]
-public partial class SpellCombatData
-{
-    [NotMapped]
-    public long[] VitalDiff = new long[Enum.GetValues<Vital>().Length];
-
-    public int CritChance { get; set; }
-
-    public double CritMultiplier { get; set; } = 1.5;
-
-    public int DamageType { get; set; } = 1;
-
-    public int HitRadius { get; set; }
-
-    public bool Friendly { get; set; }
-
-    public int CastRange { get; set; }
-
-    //Extra Data, Teleport Coords, Custom Spells, Etc
-    [Column("Projectile")]
-    public Guid ProjectileId { get; set; }
-
-    [NotMapped]
-    [JsonIgnore]
-    public ProjectileDescriptor Projectile
-    {
-        get => ProjectileDescriptor.Get(ProjectileId);
-        set => ProjectileId = value?.Id ?? Guid.Empty;
-    }
-
-    //Heal/Damage
-    [Column("VitalDiff")]
-    [JsonIgnore]
-    public string VitalDiffJson
-    {
-        get => DatabaseUtils.SaveLongArray(VitalDiff, Enum.GetValues<Vital>().Length);
-        set => VitalDiff = DatabaseUtils.LoadLongArray(value, Enum.GetValues<Vital>().Length);
-    }
-
-    //Buff/Debuff Data
-    [Column("StatDiff")]
-    [JsonIgnore]
-    public string StatDiffJson
-    {
-        get => DatabaseUtils.SaveIntArray(StatDiff, Enum.GetValues<Stat>().Length);
-        set => StatDiff = DatabaseUtils.LoadIntArray(value, Enum.GetValues<Stat>().Length);
-    }
-
-    [NotMapped]
-    public int[] StatDiff { get; set; } = new int[Enum.GetValues<Stat>().Length];
-
-    //Buff/Debuff Data
-    [Column("PercentageStatDiff")]
-    [JsonIgnore]
-    public string PercentageStatDiffJson
-    {
-        get => DatabaseUtils.SaveIntArray(PercentageStatDiff, Enum.GetValues<Stat>().Length);
-        set => PercentageStatDiff = DatabaseUtils.LoadIntArray(value, Enum.GetValues<Stat>().Length);
-    }
-
-    [NotMapped]
-    public int[] PercentageStatDiff { get; set; } = new int[Enum.GetValues<Stat>().Length];
-
-    public int Scaling { get; set; } = 0;
-
-    public int ScalingStat { get; set; }
-
-    public SpellTargetType TargetType { get; set; }
-
-    public bool HoTDoT { get; set; }
-
-    public int HotDotInterval { get; set; }
-
-    public int Duration { get; set; }
-
-    public SpellEffect Effect { get; set; }
-
-    public string TransformSprite { get; set; }
-
-    [Column("OnHit")]
-    public int OnHitDuration { get; set; }
-
-    [Column("Trap")]
-    public int TrapDuration { get; set; }
-}
-
-[Owned]
-public partial class SpellWarpData
-{
-    public Guid MapId { get; set; }
-
-    public int X { get; set; }
-
-    public int Y { get; set; }
-
-    public int Dir { get; set; }
-}
-
-[Owned]
-public partial class SpellDashOpts
-{
-    public bool IgnoreMapBlocks { get; set; }
-
-    public bool IgnoreActiveResources { get; set; }
-
-    public bool IgnoreInactiveResources { get; set; }
-
-    public bool IgnoreZDimensionAttributes { get; set; }
 }

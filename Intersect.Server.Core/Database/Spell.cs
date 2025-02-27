@@ -19,7 +19,7 @@ public partial class Spell
     public Guid SpellId { get; set; }
 
     [NotMapped]
-    public string SpellName => SpellBase.GetName(SpellId);
+    public string SpellName => SpellDescriptor.GetName(SpellId);
 
     public static Spell None => new Spell(Guid.Empty);
 
