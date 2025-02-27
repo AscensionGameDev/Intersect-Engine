@@ -47,7 +47,7 @@ public partial class GameInterface : MutableInterface
 
     private QuestOfferWindow mQuestOfferWindow;
 
-    private ShopWindow mShopWindow;
+    private ShopWindow _shopWindow;
 
     private MapItemWindow mMapItemWindow;
 
@@ -210,7 +210,7 @@ public partial class GameInterface : MutableInterface
 
     public void OpenShop()
     {
-        mShopWindow = new ShopWindow(GameCanvas) { DeleteOnClose = true };
+        _shopWindow = new ShopWindow(GameCanvas) { DeleteOnClose = true };
         mShouldOpenShop = false;
     }
 
@@ -391,7 +391,7 @@ public partial class GameInterface : MutableInterface
             GameMenu.OpenInventory();
         }
 
-        if (mShopWindow != null && (!mShopWindow.IsVisibleInTree || mShouldCloseShop))
+        if (_shopWindow != null && (!_shopWindow.IsVisibleInTree || mShouldCloseShop))
         {
             CloseShop();
         }
@@ -520,8 +520,8 @@ public partial class GameInterface : MutableInterface
     private void CloseShop()
     {
         Globals.GameShop = null;
-        mShopWindow?.Hide();
-        mShopWindow = null;
+        _shopWindow?.Hide();
+        _shopWindow = null;
         PacketSender.SendCloseShop();
     }
 
@@ -584,7 +584,7 @@ public partial class GameInterface : MutableInterface
             closedWindows = true;
         }
 
-        if (mShopWindow is { IsVisibleInTree: true })
+        if (_shopWindow is { IsVisibleInTree: true })
         {
             CloseShop();
             closedWindows = true;
