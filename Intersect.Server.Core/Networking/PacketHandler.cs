@@ -1,6 +1,5 @@
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.Network;
@@ -21,6 +20,7 @@ using System.Diagnostics;
 using System.Text;
 using Intersect.Core;
 using Intersect.Framework.Core;
+using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Core;
 using Microsoft.Extensions.Logging;

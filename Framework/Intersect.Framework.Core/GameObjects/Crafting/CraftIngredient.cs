@@ -1,4 +1,6 @@
-﻿namespace Intersect.GameObjects.Crafting;
+﻿using Intersect.GameObjects;
+
+namespace Intersect.Framework.Core.GameObjects.Crafting;
 
 public partial class CraftIngredient
 {

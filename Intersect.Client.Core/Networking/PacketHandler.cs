@@ -25,6 +25,7 @@ using Intersect.Models;
 using Intersect.Client.Interface.Shared;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Animations;
+using Intersect.Framework.Core.GameObjects.Crafting;
 using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Networking;

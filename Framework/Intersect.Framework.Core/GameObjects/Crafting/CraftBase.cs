@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using Intersect.Models;
-using Intersect.GameObjects.Events;
-using Newtonsoft.Json;
 using Intersect.GameObjects.Conditions;
+using Intersect.GameObjects.Events;
+using Intersect.Models;
+using Newtonsoft.Json;
 
-namespace Intersect.GameObjects.Crafting;
+namespace Intersect.Framework.Core.GameObjects.Crafting;
 
 public partial class CraftBase : DatabaseObject<CraftBase>, IFolderable
 {

@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using Intersect.GameObjects.Crafting;
 using Intersect.Models;
 using Newtonsoft.Json;
 
-namespace Intersect.GameObjects;
+namespace Intersect.Framework.Core.GameObjects.Crafting;
 
 public partial class CraftingTableBase : DatabaseObject<CraftingTableBase>, IFolderable
 {

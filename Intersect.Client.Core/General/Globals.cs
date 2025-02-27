@@ -10,6 +10,7 @@ using Intersect.Client.Items;
 using Intersect.Client.Maps;
 using Intersect.Client.Plugins.Interfaces;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
 

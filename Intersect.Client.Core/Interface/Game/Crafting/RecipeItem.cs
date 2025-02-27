@@ -3,8 +3,8 @@ using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
+using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Crafting;
 
 namespace Intersect.Client.Interface.Game.Crafting;
 
