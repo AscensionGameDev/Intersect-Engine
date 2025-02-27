@@ -2,6 +2,7 @@ using Intersect.Enums;
 using Intersect.Editor.Localization;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Events.Commands;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 
@@ -25,9 +26,9 @@ public partial class EventCommandChangeItems : UserControl
         mCurrentPage = refPage;
         InitLocalization();
         cmbItem.Items.Clear();
-        cmbItem.Items.AddRange(ItemBase.Names);
+        cmbItem.Items.AddRange(ItemDescriptor.Names);
         cmbAction.SelectedIndex = mMyCommand.Add ? 0 : 1;
-        cmbItem.SelectedIndex = ItemBase.ListIndex(mMyCommand.ItemId);
+        cmbItem.SelectedIndex = ItemDescriptor.ListIndex(mMyCommand.ItemId);
         cmbMethod.SelectedIndex = (int)mMyCommand.ItemHandling;
 
         rdoVariable.Checked = mMyCommand.UseVariable;
@@ -75,7 +76,7 @@ public partial class EventCommandChangeItems : UserControl
     private void btnSave_Click(object sender, EventArgs e)
     {
         mMyCommand.Add = !Convert.ToBoolean(cmbAction.SelectedIndex);
-        mMyCommand.ItemId = ItemBase.IdFromList(cmbItem.SelectedIndex);
+        mMyCommand.ItemId = ItemDescriptor.IdFromList(cmbItem.SelectedIndex);
         if (rdoPlayerVariable.Checked)
         {
             mMyCommand.VariableType = VariableType.PlayerVariable;

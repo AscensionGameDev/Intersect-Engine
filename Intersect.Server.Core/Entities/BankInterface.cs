@@ -8,6 +8,7 @@ using Intersect.Server.Networking;
 using System.Diagnostics;
 using Intersect.Collections.Slotting;
 using Intersect.Core;
+using Intersect.Framework.Core.GameObjects.Items;
 using Microsoft.Extensions.Logging;
 
 namespace Intersect.Server.Entities;
@@ -101,7 +102,7 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
         }
 
         slot ??= _player.Items[inventorySlotIndex];
-        if (!ItemBase.TryGet(slot.ItemId, out var itemDescriptor))
+        if (!ItemDescriptor.TryGet(slot.ItemId, out var itemDescriptor))
         {
             PacketSender.SendChatMsg(
                 _player,
@@ -238,7 +239,7 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
 
                 if (itemDescriptor.ItemType == ItemType.Equipment || maximumStack <= 1)
                 {
-                    ApplicationContext.Context.Value?.Logger.LogWarning($"{nameof(Item.FindCompatibleSlotsForItem)}() returned incompatible slots for {nameof(ItemBase)} {itemDescriptor.Id}");
+                    ApplicationContext.Context.Value?.Logger.LogWarning($"{nameof(Item.FindCompatibleSlotsForItem)}() returned incompatible slots for {nameof(ItemDescriptor)} {itemDescriptor.Id}");
                     break;
                 }
 
@@ -364,7 +365,7 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
         }
 
         slot ??= _bank[bankSlotIndex];
-        if (!ItemBase.TryGet(slot.ItemId, out var itemDescriptor))
+        if (!ItemDescriptor.TryGet(slot.ItemId, out var itemDescriptor))
         {
             PacketSender.SendChatMsg(
                 _player,
@@ -471,7 +472,7 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
 
                 if (itemDescriptor.ItemType == ItemType.Equipment || maximumStack <= 1)
                 {
-                    ApplicationContext.Context.Value?.Logger.LogWarning($"{nameof(Item.FindCompatibleSlotsForItem)}() returned incompatible slots for {nameof(ItemBase)} {itemDescriptor.Id}");
+                    ApplicationContext.Context.Value?.Logger.LogWarning($"{nameof(Item.FindCompatibleSlotsForItem)}() returned incompatible slots for {nameof(ItemDescriptor)} {itemDescriptor.Id}");
                     break;
                 }
 
@@ -601,7 +602,7 @@ public partial class BankInterface<TSlot> : IBankInterface where TSlot : Item, I
                     }
 
                     /* Items are the same, move the maximum quantity */
-                    if (!ItemBase.TryGet(sourceSlot.ItemId, out var itemDescriptor))
+                    if (!ItemDescriptor.TryGet(sourceSlot.ItemId, out var itemDescriptor))
                     {
                         ApplicationContext.Context.Value?.Logger.LogError($"SwapBankItems({slotFrom}, {slotTo}) for {_player.Id} failed due to missing item {sourceSlot.ItemId}");
                         return;

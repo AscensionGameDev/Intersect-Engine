@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Intersect.Client.Framework.Items;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
 
@@ -16,7 +17,7 @@ public class Item : IItem
 
     public ItemProperties ItemProperties { get; set; }
 
-    public ItemBase Base => ItemBase.Get(ItemId);
+    public ItemDescriptor Descriptor => ItemDescriptor.Get(ItemId);
 
     public void Load(Guid id, int quantity, Guid? bagId, ItemProperties itemProperties)
     {

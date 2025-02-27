@@ -5,6 +5,7 @@ using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Graphics = System.Drawing.Graphics;
 
@@ -89,7 +90,7 @@ public partial class FrmProjectile : EditorForm
 
         cmbItem.Items.Clear();
         cmbItem.Items.Add(Strings.General.None);
-        cmbItem.Items.AddRange(ItemBase.Names);
+        cmbItem.Items.AddRange(ItemDescriptor.Names);
 
         cmbSpell.Items.Clear();
         cmbSpell.Items.Add(Strings.General.None);
@@ -177,7 +178,7 @@ public partial class FrmProjectile : EditorForm
             chkIgnoreInactiveResources.Checked = mEditorItem.IgnoreExhaustedResources;
             chkIgnoreZDimensionBlocks.Checked = mEditorItem.IgnoreZDimension;
             chkPierce.Checked = mEditorItem.PierceTarget;
-            cmbItem.SelectedIndex = ItemBase.ListIndex(mEditorItem.AmmoItemId) + 1;
+            cmbItem.SelectedIndex = ItemDescriptor.ListIndex(mEditorItem.AmmoItemId) + 1;
             nudConsume.Value = mEditorItem.AmmoRequired;
 
             if (lstAnimations.SelectedIndex < 0)
@@ -641,7 +642,7 @@ public partial class FrmProjectile : EditorForm
 
     private void cmbItem_SelectedIndexChanged(object sender, EventArgs e)
     {
-        mEditorItem.Ammo = ItemBase.Get(ItemBase.IdFromList(cmbItem.SelectedIndex - 1));
+        mEditorItem.Ammo = ItemDescriptor.Get(ItemDescriptor.IdFromList(cmbItem.SelectedIndex - 1));
     }
 
     private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)

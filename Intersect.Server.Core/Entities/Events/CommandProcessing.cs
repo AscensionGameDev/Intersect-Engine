@@ -4,6 +4,7 @@ using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Events.Commands;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.Server.Core.MapInstancing;
@@ -608,7 +609,7 @@ public static partial class CommandProcessing
         Stack<CommandInstance> callStack
     )
     {
-        var itm = ItemBase.Get(command.ItemId);
+        var itm = ItemDescriptor.Get(command.ItemId);
 
         if (command.Unequip)
         {
@@ -624,7 +625,7 @@ public static partial class CommandProcessing
         else
         {
             if (itm == null) return;
-            player.EquipItem(ItemBase.Get(command.ItemId), updateCooldown: command.TriggerCooldown);
+            player.EquipItem(ItemDescriptor.Get(command.ItemId), updateCooldown: command.TriggerCooldown);
         }
     }
 

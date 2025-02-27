@@ -1,4 +1,5 @@
-﻿using Intersect.GameObjects;
+﻿using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.GameObjects;
 
 namespace Intersect.Framework.Core.GameObjects.Crafting;
 
@@ -14,8 +15,8 @@ public partial class CraftingRecipeIngredient
         Quantity = quantity;
     }
 
-    public ItemBase GetItem()
+    public ItemDescriptor GetItem()
     {
-        return ItemBase.Get(ItemId);
+        return ItemDescriptor.Get(ItemId);
     }
 }

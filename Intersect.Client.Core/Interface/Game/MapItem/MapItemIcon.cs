@@ -7,6 +7,7 @@ using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Items;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Inventory;
@@ -84,7 +85,7 @@ public partial class MapItemIcon
             mDescWindow = null;
         }
         mDescWindow = new ItemDescriptionWindow(
-            ItemBase.Get(MyItem.ItemId), MyItem.Quantity, mMapItemWindow.X,
+            ItemDescriptor.Get(MyItem.ItemId), MyItem.Quantity, mMapItemWindow.X,
             mMapItemWindow.Y, MyItem.ItemProperties
        );
     }
@@ -109,7 +110,7 @@ public partial class MapItemIcon
             return;
         }
 
-        var item = ItemBase.Get(MyItem.ItemId);
+        var item = ItemDescriptor.Get(MyItem.ItemId);
         if (item != null)
         {
             var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);

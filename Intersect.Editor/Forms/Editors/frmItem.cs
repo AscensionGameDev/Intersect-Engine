@@ -7,6 +7,7 @@ using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Intersect.Localization;
 using Intersect.Utilities;
@@ -18,11 +19,11 @@ namespace Intersect.Editor.Forms.Editors;
 public partial class FrmItem : EditorForm
 {
 
-    private List<ItemBase> mChanged = new List<ItemBase>();
+    private List<ItemDescriptor> mChanged = new List<ItemDescriptor>();
 
     private string mCopiedItem;
 
-    private ItemBase mEditorItem;
+    private ItemDescriptor mEditorItem;
 
     private List<string> mKnownFolders = new List<string>();
 
@@ -50,7 +51,7 @@ public partial class FrmItem : EditorForm
     }
     private void AssignEditorItem(Guid id)
     {
-        mEditorItem = ItemBase.Get(id);
+        mEditorItem = ItemDescriptor.Get(id);
         UpdateEditor();
     }
 
@@ -59,7 +60,7 @@ public partial class FrmItem : EditorForm
         if (type == GameObjectType.Item)
         {
             InitEditor();
-            if (mEditorItem != null && !ItemBase.Lookup.Values.Contains(mEditorItem))
+            if (mEditorItem != null && !ItemDescriptor.Lookup.Values.Contains(mEditorItem))
             {
                 mEditorItem = null;
                 UpdateEditor();
@@ -1251,22 +1252,22 @@ public partial class FrmItem : EditorForm
     {
         //Collect folders and cooldown groups
         var mFolders = new List<string>();
-        foreach (var itm in ItemBase.Lookup)
+        foreach (var itm in ItemDescriptor.Lookup)
         {
-            if (!string.IsNullOrEmpty(((ItemBase)itm.Value).Folder) &&
-                !mFolders.Contains(((ItemBase)itm.Value).Folder))
+            if (!string.IsNullOrEmpty(((ItemDescriptor)itm.Value).Folder) &&
+                !mFolders.Contains(((ItemDescriptor)itm.Value).Folder))
             {
-                mFolders.Add(((ItemBase)itm.Value).Folder);
-                if (!mKnownFolders.Contains(((ItemBase)itm.Value).Folder))
+                mFolders.Add(((ItemDescriptor)itm.Value).Folder);
+                if (!mKnownFolders.Contains(((ItemDescriptor)itm.Value).Folder))
                 {
-                    mKnownFolders.Add(((ItemBase)itm.Value).Folder);
+                    mKnownFolders.Add(((ItemDescriptor)itm.Value).Folder);
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(((ItemBase)itm.Value).CooldownGroup) &&
-                !mKnownCooldownGroups.Contains(((ItemBase)itm.Value).CooldownGroup))
+            if (!string.IsNullOrWhiteSpace(((ItemDescriptor)itm.Value).CooldownGroup) &&
+                !mKnownCooldownGroups.Contains(((ItemDescriptor)itm.Value).CooldownGroup))
             {
-                mKnownCooldownGroups.Add(((ItemBase)itm.Value).CooldownGroup);
+                mKnownCooldownGroups.Add(((ItemDescriptor)itm.Value).CooldownGroup);
             }
         }
 
@@ -1294,8 +1295,8 @@ public partial class FrmItem : EditorForm
         cmbFolder.Items.Add("");
         cmbFolder.Items.AddRange(mKnownFolders.ToArray());
 
-        var items = ItemBase.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
-            new KeyValuePair<string, string>(((ItemBase)pair.Value)?.Name ?? Models.DatabaseObject<ItemBase>.Deleted, ((ItemBase)pair.Value)?.Folder ?? ""))).ToArray();
+        var items = ItemDescriptor.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
+            new KeyValuePair<string, string>(((ItemDescriptor)pair.Value)?.Name ?? Models.DatabaseObject<ItemDescriptor>.Deleted, ((ItemDescriptor)pair.Value)?.Folder ?? ""))).ToArray();
         lstGameObjects.Repopulate(items, mFolders, btnAlphabetical.Checked, CustomSearch(), txtSearch.Text);
     }
 

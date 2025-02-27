@@ -7,6 +7,7 @@ using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 using EventDescriptor = Intersect.Framework.Core.GameObjects.Events.EventDescriptor;
@@ -114,7 +115,7 @@ public partial class FrmResource : EditorForm
         cmbAnimation.Items.AddRange(AnimationDescriptor.Names);
         cmbDropItem.Items.Clear();
         cmbDropItem.Items.Add(Strings.General.None);
-        cmbDropItem.Items.AddRange(ItemBase.Names);
+        cmbDropItem.Items.AddRange(ItemDescriptor.Names);
         InitLocalization();
         UpdateEditor();
     }
@@ -580,7 +581,7 @@ public partial class FrmResource : EditorForm
     {
         if (lstDrops.SelectedIndex > -1)
         {
-            cmbDropItem.SelectedIndex = ItemBase.ListIndex(mEditorItem.Drops[lstDrops.SelectedIndex].ItemId) + 1;
+            cmbDropItem.SelectedIndex = ItemDescriptor.ListIndex(mEditorItem.Drops[lstDrops.SelectedIndex].ItemId) + 1;
             nudDropMaxAmount.Value = mEditorItem.Drops[lstDrops.SelectedIndex].MaxQuantity;
             nudDropMinAmount.Value = mEditorItem.Drops[lstDrops.SelectedIndex].MinQuantity;
             nudDropChance.Value = (decimal)mEditorItem.Drops[lstDrops.SelectedIndex].Chance;
@@ -595,7 +596,7 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        mEditorItem.Drops[index].ItemId = ItemBase.IdFromList(cmbDropItem.SelectedIndex - 1);
+        mEditorItem.Drops[index].ItemId = ItemDescriptor.IdFromList(cmbDropItem.SelectedIndex - 1);
         _dropList[index].ItemId = mEditorItem.Drops[index].ItemId;
     }
 
@@ -639,7 +640,7 @@ public partial class FrmResource : EditorForm
     {
         var drop = new Drop()
         {
-            ItemId = ItemBase.IdFromList(cmbDropItem.SelectedIndex - 1),
+            ItemId = ItemDescriptor.IdFromList(cmbDropItem.SelectedIndex - 1),
             MaxQuantity = (int)nudDropMaxAmount.Value,
             MinQuantity = (int)nudDropMinAmount.Value,
             Chance = (double)nudDropChance.Value

@@ -6,6 +6,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Trades;
@@ -90,7 +91,7 @@ public partial class TradingWindow
 
     public void OpenContextMenu(int side, int slot)
     {
-        var item = ItemBase.Get(Globals.Trade[side, slot].ItemId);
+        var item = ItemDescriptor.Get(Globals.Trade[side, slot].ItemId);
 
         // No point showing a menu for blank space.
         if (item == null)
@@ -146,7 +147,7 @@ public partial class TradingWindow
             {
                 if (Globals.Trade[n, i] != null && Globals.Trade[n, i].ItemId != Guid.Empty)
                 {
-                    var item = ItemBase.Get(Globals.Trade[n, i].ItemId);
+                    var item = ItemDescriptor.Get(Globals.Trade[n, i].ItemId);
                     if (item == null)
                     {
                         continue;

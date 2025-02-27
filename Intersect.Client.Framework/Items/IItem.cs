@@ -1,12 +1,12 @@
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
-using Intersect.Network.Packets.Server;
 
 namespace Intersect.Client.Framework.Items;
 
 public interface IItem
 {
     Guid? BagId { get; set; }
-    ItemBase Base { get; }
+    ItemDescriptor Descriptor { get; }
     Guid ItemId { get; set; }
     int Quantity { get; set; }
     ItemProperties ItemProperties { get; set; }

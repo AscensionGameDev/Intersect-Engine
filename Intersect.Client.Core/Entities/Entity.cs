@@ -18,6 +18,7 @@ using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Animations;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
@@ -832,7 +833,7 @@ public partial class Entity : IEntity
                         itemId = Equipment[z];
                     }
 
-                    if (ItemBase.TryGet(itemId, out var itemDescriptor) &&
+                    if (ItemDescriptor.TryGet(itemId, out var itemDescriptor) &&
                         itemDescriptor.EquipmentAnimation is { } animationDescriptor)
                     {
                         if (equipmentAnimation != null &&
@@ -1292,8 +1293,8 @@ public partial class Entity : IEntity
                             itemId = Equipment[equipSlot];
                         }
 
-                        var item = ItemBase.Get(itemId);
-                        if (ItemBase.TryGet(itemId, out var itemDescriptor))
+                        var item = ItemDescriptor.Get(itemId);
+                        if (ItemDescriptor.TryGet(itemId, out var itemDescriptor))
                         {
                             var itemPaperdoll = Gender == 0
                                 ? itemDescriptor.MalePaperdoll
@@ -2105,7 +2106,7 @@ public partial class Entity : IEntity
                         itemId = Equipment[Options.Instance.Equipment.WeaponSlot];
                     }
 
-                    var item = ItemBase.Get(itemId);
+                    var item = ItemDescriptor.Get(itemId);
                     if (item != null)
                     {
                         if (AnimatedTextures.TryGetValue(SpriteAnimations.Weapon, out _))
@@ -2237,7 +2238,7 @@ public partial class Entity : IEntity
                     break;
                 }
 
-                if (ItemBase.TryGet(weaponId, out var shootItemDescriptor))
+                if (ItemDescriptor.TryGet(weaponId, out var shootItemDescriptor))
                 {
                     textureOverride = shootItemDescriptor.WeaponSpriteOverride;
                 }
@@ -2268,7 +2269,7 @@ public partial class Entity : IEntity
                     break;
                 }
 
-                if (ItemBase.TryGet(weaponId, out var weaponItemDescriptor))
+                if (ItemDescriptor.TryGet(weaponId, out var weaponItemDescriptor))
                 {
                     textureOverride = weaponItemDescriptor.WeaponSpriteOverride;
                 }

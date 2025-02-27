@@ -412,7 +412,7 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.ToTable("Items_EquipmentProperties");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Items.ItemDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("char(36)")
@@ -1408,7 +1408,7 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.GameObjects.EquipmentProperties", b =>
                 {
-                    b.HasOne("Intersect.GameObjects.ItemBase", "Descriptor")
+                    b.HasOne("Intersect.Framework.Core.GameObjects.Items.ItemDescriptor", "Descriptor")
                         .WithOne("EquipmentProperties")
                         .HasForeignKey("Intersect.GameObjects.EquipmentProperties", "DescriptorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1527,11 +1527,11 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.Navigation("StatRange_Speed");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Items.ItemDescriptor", b =>
                 {
-                    b.OwnsOne("Intersect.GameObjects.ConsumableData", "Consumable", b1 =>
+                    b.OwnsOne("Intersect.Framework.Core.GameObjects.Items.ConsumableData", "Consumable", b1 =>
                         {
-                            b1.Property<Guid>("ItemBaseId")
+                            b1.Property<Guid>("ItemDescriptorId")
                                 .HasColumnType("char(36)")
                                 .UseCollation("ascii_general_ci");
 
@@ -1544,12 +1544,12 @@ namespace Intersect.Server.Migrations.MySql.Game
                             b1.Property<long>("Value")
                                 .HasColumnType("bigint");
 
-                            b1.HasKey("ItemBaseId");
+                            b1.HasKey("ItemDescriptorId");
 
                             b1.ToTable("Items");
 
                             b1.WithOwner()
-                                .HasForeignKey("ItemBaseId");
+                                .HasForeignKey("ItemDescriptorId");
                         });
 
                     b.Navigation("Consumable");
@@ -1775,7 +1775,7 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.Navigation("Warp");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Items.ItemDescriptor", b =>
                 {
                     b.Navigation("EquipmentProperties");
                 });

@@ -7,6 +7,7 @@ using Intersect.Config;
 using Intersect.Core;
 using Intersect.Factories;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Logging;
 using Intersect.Framework.SystemInformation;
 using Intersect.GameObjects;
@@ -293,7 +294,7 @@ internal static class Bootstrapper
         Console.WriteLine(Strings.Commandoutput.SpellCount.ToString(SpellBase.Lookup.Count));
         Console.WriteLine(Strings.Commandoutput.MapCount.ToString(MapBase.Lookup.Count));
         Console.WriteLine(Strings.Commandoutput.EventCount.ToString(EventDescriptor.Lookup.Count));
-        Console.WriteLine(Strings.Commandoutput.ItemCount.ToString(ItemBase.Lookup.Count));
+        Console.WriteLine(Strings.Commandoutput.ItemCount.ToString(ItemDescriptor.Lookup.Count));
         Console.WriteLine();
         Console.WriteLine(Strings.Commandoutput.GameTime.ToString(Time.GetTime().ToString("F")));
         Console.WriteLine();

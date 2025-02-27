@@ -5,6 +5,7 @@ using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps.MapList;
@@ -1401,7 +1402,7 @@ public static partial class PacketSender
 
                 var itemId = character.Items[itemIndex].ItemId;
 
-                if (!ItemBase.TryGet(itemId, out var itemDescriptor))
+                if (!ItemDescriptor.TryGet(itemId, out var itemDescriptor))
                 {
                     continue;
                 }
@@ -1743,7 +1744,7 @@ public static partial class PacketSender
 
                 break;
             case GameObjectType.Item:
-                foreach (var obj in ItemBase.Lookup)
+                foreach (var obj in ItemDescriptor.Lookup)
                 {
                     SendGameObject(client, obj.Value, false, false, packetList);
                 }

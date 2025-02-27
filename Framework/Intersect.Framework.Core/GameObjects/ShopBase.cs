@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Models;
 using Newtonsoft.Json;
 
@@ -33,9 +34,9 @@ public partial class ShopBase : DatabaseObject<ShopBase>, IFolderable
 
     [NotMapped]
     [JsonIgnore]
-    public ItemBase DefaultCurrency
+    public ItemDescriptor DefaultCurrency
     {
-        get => ItemBase.Get(DefaultCurrencyId);
+        get => ItemDescriptor.Get(DefaultCurrencyId);
         set => DefaultCurrencyId = value?.Id ?? Guid.Empty;
     }
 
@@ -81,5 +82,5 @@ public partial class ShopItem
 
     [NotMapped]
     [JsonIgnore]
-    public ItemBase Item => ItemBase.Get(ItemId);
+    public ItemDescriptor Item => ItemDescriptor.Get(ItemId);
 }

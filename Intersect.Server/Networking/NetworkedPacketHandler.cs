@@ -3,6 +3,7 @@ using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
@@ -820,7 +821,7 @@ internal sealed partial class NetworkedPacketHandler
 
                     break;
                 case GameObjectType.Item:
-                    ((ItemBase)obj).DropChanceOnDeath = Options.Instance.Player.ItemDropChance;
+                    ((ItemDescriptor)obj).DropChanceOnDeath = Options.Instance.Player.ItemDropChance;
                     changed = true;
 
                     break;
@@ -882,7 +883,7 @@ internal sealed partial class NetworkedPacketHandler
                     break;
 
                 case GameObjectType.Item:
-                    obj = ItemBase.Get(id);
+                    obj = ItemDescriptor.Get(id);
 
                     break;
                 case GameObjectType.Npc:
@@ -968,7 +969,7 @@ internal sealed partial class NetworkedPacketHandler
                 switch (obj)
                 {
                     //if Item or Resource, kill all global entities of that kind
-                    case ItemBase itemDescriptor:
+                    case ItemDescriptor itemDescriptor:
                         MapController.DespawnInstancesOf(itemDescriptor);
                         break;
                     case NpcBase npcDescriptor:
@@ -1014,7 +1015,7 @@ internal sealed partial class NetworkedPacketHandler
                     break;
 
                 case GameObjectType.Item:
-                    obj = ItemBase.Get(id);
+                    obj = ItemDescriptor.Get(id);
 
                     break;
                 case GameObjectType.Npc:
@@ -1104,7 +1105,7 @@ internal sealed partial class NetworkedPacketHandler
                     //if Item or Resource, kill all global entities of that kind
                     switch (obj)
                     {
-                        case ItemBase itemDescriptor:
+                        case ItemDescriptor itemDescriptor:
                             MapController.DespawnInstancesOf(itemDescriptor);
                             break;
                         case NpcBase npcDescriptor:

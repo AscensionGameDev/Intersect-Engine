@@ -2,6 +2,7 @@
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Microsoft.Extensions.Logging;
 
@@ -51,7 +52,7 @@ public partial class QuestTaskEditor : UserControl
             case 0: //Event Driven
                 break;
             case 1: //Gather Items
-                cmbItem.SelectedIndex = ItemBase.ListIndex(mMyTask?.TargetId ?? Guid.Empty);
+                cmbItem.SelectedIndex = ItemDescriptor.ListIndex(mMyTask?.TargetId ?? Guid.Empty);
                 nudItemAmount.Value = mMyTask?.Quantity ?? 0;
 
                 break;
@@ -102,7 +103,7 @@ public partial class QuestTaskEditor : UserControl
             case 1: //Gather Items
                 grpGatherItems.Show();
                 cmbItem.Items.Clear();
-                cmbItem.Items.AddRange(ItemBase.Names);
+                cmbItem.Items.AddRange(ItemDescriptor.Names);
                 if (cmbItem.Items.Count > 0)
                 {
                     cmbItem.SelectedIndex = 0;
@@ -138,7 +139,7 @@ public partial class QuestTaskEditor : UserControl
 
                 break;
             case QuestObjective.GatherItems: //Gather Items
-                mMyTask.TargetId = ItemBase.IdFromList(cmbItem.SelectedIndex);
+                mMyTask.TargetId = ItemDescriptor.IdFromList(cmbItem.SelectedIndex);
                 mMyTask.Quantity = (int) nudItemAmount.Value;
 
                 break;

@@ -6,6 +6,7 @@ using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Intersect.Models;
 
@@ -35,10 +36,10 @@ public partial class FrmCrafts : EditorForm
         lstGameObjects.GotFocus += itemList_FocusChanged;
         cmbResult.Items.Clear();
         cmbResult.Items.Add(Strings.General.None);
-        cmbResult.Items.AddRange(ItemBase.Names);
+        cmbResult.Items.AddRange(ItemDescriptor.Names);
         cmbIngredient.Items.Clear();
         cmbIngredient.Items.Add(Strings.General.None);
-        cmbIngredient.Items.AddRange(ItemBase.Names);
+        cmbIngredient.Items.AddRange(ItemDescriptor.Names);
         cmbEvent.Items.Clear();
         cmbEvent.Items.Add(Strings.General.None);
         cmbEvent.Items.AddRange(EventDescriptor.Names);
@@ -78,7 +79,7 @@ public partial class FrmCrafts : EditorForm
             nudSpeed.Value = mEditorItem.Time;
             nudFailureChance.Value = mEditorItem.FailureChance;
             nudItemLossChance.Value = mEditorItem.ItemLossChance;
-            cmbResult.SelectedIndex = ItemBase.ListIndex(mEditorItem.ItemId) + 1;
+            cmbResult.SelectedIndex = ItemDescriptor.ListIndex(mEditorItem.ItemId) + 1;
 
             nudCraftQuantity.Value = mEditorItem.Quantity;
 
@@ -93,7 +94,7 @@ public partial class FrmCrafts : EditorForm
                 {
                     lstIngredients.Items.Add(
                         Strings.CraftsEditor.ingredientlistitem.ToString(
-                            ItemBase.GetName(mEditorItem.Ingredients[i].ItemId), mEditorItem.Ingredients[i].Quantity
+                            ItemDescriptor.GetName(mEditorItem.Ingredients[i].ItemId), mEditorItem.Ingredients[i].Quantity
                         )
                     );
                 }
@@ -111,7 +112,7 @@ public partial class FrmCrafts : EditorForm
             {
                 lstIngredients.SelectedIndex = 0;
                 cmbIngredient.SelectedIndex =
-                    ItemBase.ListIndex(mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId) + 1;
+                    ItemDescriptor.ListIndex(mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId) + 1;
 
                 nudQuantity.Value = mEditorItem.Ingredients[lstIngredients.SelectedIndex].Quantity;
             }
@@ -151,7 +152,7 @@ public partial class FrmCrafts : EditorForm
             {
                 lstIngredients.Items[lstIngredients.SelectedIndex] =
                     Strings.CraftsEditor.ingredientlistitem.ToString(
-                        ItemBase.GetName(mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId),
+                        ItemDescriptor.GetName(mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId),
                         nudQuantity.Value
                     );
             }
@@ -344,7 +345,7 @@ public partial class FrmCrafts : EditorForm
             lblQuantity.Show();
             lblIngredient.Show();
             cmbIngredient.SelectedIndex =
-                ItemBase.ListIndex(mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId) + 1;
+                ItemDescriptor.ListIndex(mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId) + 1;
 
             nudQuantity.Value = mEditorItem.Ingredients[lstIngredients.SelectedIndex].Quantity;
         }
@@ -375,8 +376,8 @@ public partial class FrmCrafts : EditorForm
 
     private void cmbResult_SelectedIndexChanged(object sender, EventArgs e)
     {
-        mEditorItem.ItemId = ItemBase.IdFromList(cmbResult.SelectedIndex - 1);
-        var itm = ItemBase.Get(mEditorItem.ItemId);
+        mEditorItem.ItemId = ItemDescriptor.IdFromList(cmbResult.SelectedIndex - 1);
+        var itm = ItemDescriptor.Get(mEditorItem.ItemId);
         if (itm == null || !itm.IsStackable)
         {
             nudCraftQuantity.Value = 1;
@@ -394,14 +395,14 @@ public partial class FrmCrafts : EditorForm
         if (lstIngredients.SelectedIndex > -1)
         {
             mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId =
-                ItemBase.IdFromList(cmbIngredient.SelectedIndex - 1);
+                ItemDescriptor.IdFromList(cmbIngredient.SelectedIndex - 1);
 
             updatingIngedients = true;
             if (cmbIngredient.SelectedIndex > 0)
             {
                 lstIngredients.Items[lstIngredients.SelectedIndex] =
                     Strings.CraftsEditor.ingredientlistitem.ToString(
-                        ItemBase.GetName(mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId),
+                        ItemDescriptor.GetName(mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId),
                         nudQuantity.Value
                     );
             }

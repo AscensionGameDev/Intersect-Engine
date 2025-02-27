@@ -7,6 +7,7 @@ using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
@@ -1603,7 +1604,7 @@ public abstract partial class Entity : IEntity
     public virtual void TryAttack(Entity target,
         ProjectileBase projectile,
         SpellBase parentSpell,
-        ItemBase parentItem,
+        ItemDescriptor parentItem,
         Direction projectileDir)
     {
         if (target is Resource && parentSpell != null)
@@ -1980,7 +1981,7 @@ public abstract partial class Entity : IEntity
         double critMultiplier,
         List<KeyValuePair<Guid, Direction>> deadAnimations = null,
         List<KeyValuePair<Guid, Direction>> aliveAnimations = null,
-        ItemBase weapon = null)
+        ItemDescriptor weapon = null)
     {
         if (IsAttacking)
         {
@@ -3109,7 +3110,7 @@ public abstract partial class Entity : IEntity
         IsDead = true;
     }
 
-    protected virtual bool ShouldDropItem(Entity killer, ItemBase itemDescriptor, Item item, float dropRateModifier, out Guid lootOwner)
+    protected virtual bool ShouldDropItem(Entity killer, ItemDescriptor itemDescriptor, Item item, float dropRateModifier, out Guid lootOwner)
     {
         lootOwner = default;
 
@@ -3145,7 +3146,7 @@ public abstract partial class Entity : IEntity
             // Don't mess with the actual object.
             var drop = slot.Clone();
 
-            var itemDescriptor = ItemBase.Get(drop.ItemId);
+            var itemDescriptor = ItemDescriptor.Get(drop.ItemId);
             if (itemDescriptor == default)
             {
                 continue;

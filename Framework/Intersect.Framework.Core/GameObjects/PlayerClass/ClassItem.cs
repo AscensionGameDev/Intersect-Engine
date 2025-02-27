@@ -1,3 +1,4 @@
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Newtonsoft.Json;
 
@@ -10,8 +11,8 @@ public partial class ClassItem
 
     public int Quantity { get; set; }
 
-    public ItemBase Get()
+    public ItemDescriptor Get()
     {
-        return ItemBase.Get(Id);
+        return ItemDescriptor.Get(Id);
     }
 }

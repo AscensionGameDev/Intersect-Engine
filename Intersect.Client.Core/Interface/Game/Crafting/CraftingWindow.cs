@@ -11,6 +11,7 @@ using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
 using Intersect.Utilities;
@@ -179,7 +180,7 @@ public partial class CraftingWindow : Window
         _craftedItem.LoadItem();
         mCombinedValue.Show();
         var quantity = Math.Max(craftDescriptor.Quantity, 1);
-        if (!ItemBase.TryGet(craftedItemDescriptorId, out var craftedItemDescriptor) ||
+        if (!ItemDescriptor.TryGet(craftedItemDescriptorId, out var craftedItemDescriptor) ||
             !craftedItemDescriptor.IsStackable)
         {
             quantity = 1;

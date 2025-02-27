@@ -1,4 +1,5 @@
 using Intersect.Client.Framework.Items;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Network.Packets.Server;
 using Newtonsoft.Json;
 

@@ -4,6 +4,7 @@ using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
@@ -466,7 +467,7 @@ public partial class FrmMapLayers : DockContent
         HideAttributeMenus();
         grpItem.Visible = true;
         cmbItemAttribute.Items.Clear();
-        cmbItemAttribute.Items.AddRange(ItemBase.Names);
+        cmbItemAttribute.Items.AddRange(ItemDescriptor.Names);
         if (cmbItemAttribute.Items.Count > 0)
         {
             cmbItemAttribute.SelectedIndex = 0;
@@ -697,7 +698,7 @@ public partial class FrmMapLayers : DockContent
 
             case MapAttributeType.Item:
                 var itemAttribute = attribute as MapItemAttribute;
-                itemAttribute.ItemId = ItemBase.IdFromList(cmbItemAttribute.SelectedIndex);
+                itemAttribute.ItemId = ItemDescriptor.IdFromList(cmbItemAttribute.SelectedIndex);
                 itemAttribute.Quantity = (int)nudItemQuantity.Value;
                 itemAttribute.RespawnTime = (long)nudItemRespawnTime.Value;
                 break;

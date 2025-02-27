@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Models;
 using Intersect.Utilities;
 using Microsoft.EntityFrameworkCore;
@@ -147,7 +148,7 @@ public partial class SpellBase : DatabaseObject<SpellBase>, IFolderable
     /// Gets an array of all items sharing the provided cooldown group.
     /// </summary>
     /// <param name="cooldownGroup">The cooldown group to search for.</param>
-    /// <returns>Returns an array of <see cref="ItemBase"/> containing all items with the supplied cooldown group.</returns>
+    /// <returns>Returns an array of <see cref="ItemDescriptor"/> containing all items with the supplied cooldown group.</returns>
     public static SpellBase[] GetCooldownGroup(string cooldownGroup)
     {
         cooldownGroup = cooldownGroup.Trim();

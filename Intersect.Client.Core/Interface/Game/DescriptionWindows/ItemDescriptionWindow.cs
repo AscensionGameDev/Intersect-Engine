@@ -3,6 +3,7 @@ using Intersect.GameObjects;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Core;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects.Ranges;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
@@ -12,7 +13,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows;
 
 public partial class ItemDescriptionWindow : DescriptionWindowBase
 {
-    protected ItemBase mItem;
+    protected ItemDescriptor mItem;
 
     protected int mAmount;
 
@@ -25,7 +26,7 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
     protected SpellDescriptionWindow? mSpellDescWindow;
 
     public ItemDescriptionWindow(
-        ItemBase item,
+        ItemDescriptor item,
         int amount,
         int x,
         int y,
@@ -251,7 +252,7 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
                 if (weaponSlot != -1)
                 {
                     var randomStats = Globals.Me.Inventory[weaponSlot].ItemProperties.StatModifiers;
-                    var weapon = ItemBase.Get(Globals.Me.Inventory[weaponSlot].ItemId);
+                    var weapon = ItemDescriptor.Get(Globals.Me.Inventory[weaponSlot].ItemId);
                     if (weapon != null && randomStats != null)
                     {
                         speed = (int)Math.Round(speed / ((100 + weapon.PercentageStatsGiven[(int)Stat.Speed]) / 100f));

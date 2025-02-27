@@ -12,6 +12,7 @@ using Intersect.Client.Items;
 using Intersect.Client.Localization;
 using Intersect.Client.Spells;
 using Intersect.Framework.Core;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 
@@ -32,7 +33,7 @@ public partial class HotbarItem
     private bool _canDrag;
     private long _clickTime;
     private Guid _currentId = Guid.Empty;
-    private ItemBase? _currentItem = null;
+    private ItemDescriptor? _currentItem = null;
     private SpellBase? _currentSpell = null;
     private Draggable _dragIcon;
     private bool _isDragging;
@@ -317,7 +318,7 @@ public partial class HotbarItem
         {
             _currentItem = null;
             _currentSpell = null;
-            var itm = ItemBase.Get(slot.ItemOrSpellId);
+            var itm = ItemDescriptor.Get(slot.ItemOrSpellId);
             var spl = SpellBase.Get(slot.ItemOrSpellId);
             if (itm != null)
             {

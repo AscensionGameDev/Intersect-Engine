@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using Intersect.Core;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -27,7 +28,7 @@ public partial class Bag
     }
 
     [JsonIgnore, NotMapped]
-    public bool IsEmpty => Slots?.All(slot => slot?.ItemId == default || ItemBase.Get(slot.ItemId) == default) ?? true;
+    public bool IsEmpty => Slots?.All(slot => slot?.ItemId == default || ItemDescriptor.Get(slot.ItemId) == default) ?? true;
 
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public Guid Id { get; private set; } = Guid.NewGuid();
@@ -184,7 +185,7 @@ public partial class Bag
             // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
             foreach (var bagSlot in bag.Slots)
             {
-                if (ItemBase.TryGet(bagSlot.ItemId, out _))
+                if (ItemDescriptor.TryGet(bagSlot.ItemId, out _))
                 {
                     continue;
                 }

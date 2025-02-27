@@ -1,6 +1,7 @@
 using Intersect.Extensions;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps.MapList;
@@ -33,7 +34,7 @@ public abstract partial class GameContext : IntersectDbContext<GameContext>, IGa
     public DbSet<EventDescriptor> Events { get; set; }
 
     //Items
-    public DbSet<ItemBase> Items { get; set; }
+    public DbSet<ItemDescriptor> Items { get; set; }
 
     //Equipment Properties of Items
     public DbSet<EquipmentProperties> Items_EquipmentProperties { get; set; }

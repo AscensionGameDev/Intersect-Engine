@@ -3,27 +3,28 @@ using System.Diagnostics.CodeAnalysis;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.GameObjects;
 using Intersect.GameObjects.Ranges;
 using Intersect.Models;
 using Intersect.Utilities;
 using Newtonsoft.Json;
 
-namespace Intersect.GameObjects;
+namespace Intersect.Framework.Core.GameObjects.Items;
 
-public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
+public partial class ItemDescriptor : DatabaseObject<ItemDescriptor>, IFolderable
 {
     [NotMapped]
     public ConditionLists UsageRequirements { get; set; } = new();
 
     public string CannotUseMessage { get; set; } = string.Empty;
 
-    public ItemBase()
+    public ItemDescriptor()
     {
         Initialize();
     }
 
     [JsonConstructor]
-    public ItemBase(Guid id) : base(id)
+    public ItemDescriptor(Guid id) : base(id)
     {
         Initialize();
     }
@@ -431,8 +432,8 @@ public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
     /// Gets an array of all items sharing the provided cooldown group.
     /// </summary>
     /// <param name="cooldownGroup">The cooldown group to search for.</param>
-    /// <returns>Returns an array of <see cref="ItemBase"/> containing all items with the supplied cooldown group.</returns>
-    public static ItemBase[] GetCooldownGroup(string cooldownGroup)
+    /// <returns>Returns an array of <see cref="ItemDescriptor"/> containing all items with the supplied cooldown group.</returns>
+    public static ItemDescriptor[] GetCooldownGroup(string cooldownGroup)
     {
         cooldownGroup = cooldownGroup.Trim();
 
@@ -442,7 +443,7 @@ public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
             return [];
         }
 
-        return Lookup.Values.OfType<ItemBase>()
+        return Lookup.Values.OfType<ItemDescriptor>()
             .Where(descriptor => descriptor.CooldownGroup?.Trim() == cooldownGroup)
             .ToArray();
     }

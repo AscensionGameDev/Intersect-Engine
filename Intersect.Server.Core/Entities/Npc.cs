@@ -3,6 +3,7 @@ using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Animations;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
@@ -181,7 +182,7 @@ public partial class Npc : Entity
         }
     }
 
-    protected override bool ShouldDropItem(Entity killer, ItemBase itemDescriptor, Item item, float dropRateModifier, out Guid lootOwner)
+    protected override bool ShouldDropItem(Entity killer, ItemDescriptor itemDescriptor, Item item, float dropRateModifier, out Guid lootOwner)
     {
         lootOwner = (killer as Player)?.Id ?? Id;
         return base.ShouldDropItem(killer, itemDescriptor, item, dropRateModifier, out _);

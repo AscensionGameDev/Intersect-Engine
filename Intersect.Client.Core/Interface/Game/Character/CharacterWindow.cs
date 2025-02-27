@@ -7,6 +7,7 @@ using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
 
@@ -256,7 +257,7 @@ public partial class CharacterWindow
                             .Inventory[equipment[Options.Instance.Equipment.Slots.IndexOf(Options.Instance.Equipment.Paperdoll.Directions[1][z])]]
                             .ItemId;
 
-                        if (ItemBase.TryGet(itemNum, out var itemDescriptor))
+                        if (ItemDescriptor.TryGet(itemNum, out var itemDescriptor))
                         {
                             paperdoll = Globals.Me.Gender == 0
                                 ? itemDescriptor.MalePaperdoll : itemDescriptor.FemalePaperdoll;
@@ -440,7 +441,7 @@ public partial class CharacterWindow
     /// <param name="itemId">Id of item to update extra buffs</param>
     public void UpdateExtraBuffs(Guid itemId)
     {
-        var item = ItemBase.Get(itemId);
+        var item = ItemDescriptor.Get(itemId);
 
         if (item == null)
         {

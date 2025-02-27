@@ -4,6 +4,7 @@ using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.GameObjects.Conditions.ConditionMetadata;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Events.Commands;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.Utilities;
@@ -463,7 +464,7 @@ public partial class EventCommandConditionalBranch : UserControl
                 lblItem.Visible = true;
                 cmbItem.Visible = true;
                 cmbItem.Items.Clear();
-                cmbItem.Items.AddRange(ItemBase.Names);
+                cmbItem.Items.AddRange(ItemDescriptor.Names);
                 SetupAmountInput();
 
                 break;
@@ -544,7 +545,7 @@ public partial class EventCommandConditionalBranch : UserControl
             case ConditionType.IsItemEquipped:
                 grpEquippedItem.Show();
                 cmbEquippedItem.Items.Clear();
-                cmbEquippedItem.Items.AddRange(ItemBase.Names);
+                cmbEquippedItem.Items.AddRange(ItemDescriptor.Names);
 
                 break;
 
@@ -1260,7 +1261,7 @@ public partial class EventCommandConditionalBranch : UserControl
 
     private void SetupFormValues(HasItemCondition condition)
     {
-        cmbItem.SelectedIndex = ItemBase.ListIndex(condition.ItemId);
+        cmbItem.SelectedIndex = ItemDescriptor.ListIndex(condition.ItemId);
         nudItemAmount.Value = condition.Quantity;
         rdoVariable.Checked = condition.UseVariable;
         rdoInvGlobalVariable.Checked = condition.VariableType == VariableType.ServerVariable;
@@ -1368,7 +1369,7 @@ public partial class EventCommandConditionalBranch : UserControl
 
     private void SetupFormValues(IsItemEquippedCondition condition)
     {
-        cmbEquippedItem.SelectedIndex = ItemBase.ListIndex(condition.ItemId);
+        cmbEquippedItem.SelectedIndex = ItemDescriptor.ListIndex(condition.ItemId);
     }
 
     private void SetupFormValues(HasFreeInventorySlots condition)
@@ -1446,7 +1447,7 @@ public partial class EventCommandConditionalBranch : UserControl
 
     private void SaveFormValues(HasItemCondition condition)
     {
-        condition.ItemId = ItemBase.IdFromList(cmbItem.SelectedIndex);
+        condition.ItemId = ItemDescriptor.IdFromList(cmbItem.SelectedIndex);
         condition.Quantity = (int)nudItemAmount.Value;
         if (rdoInvPlayerVariable.Checked)
         {
@@ -1554,7 +1555,7 @@ public partial class EventCommandConditionalBranch : UserControl
 
     private void SaveFormValues(IsItemEquippedCondition condition)
     {
-        condition.ItemId = ItemBase.IdFromList(cmbEquippedItem.SelectedIndex);
+        condition.ItemId = ItemDescriptor.IdFromList(cmbEquippedItem.SelectedIndex);
     }
 
     private void SaveFormValues(HasFreeInventorySlots condition)

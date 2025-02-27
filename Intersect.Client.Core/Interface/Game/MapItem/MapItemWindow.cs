@@ -99,7 +99,7 @@ public partial class MapItemWindow
                             continue;
                         }
 
-                        var finalItem = mapItem.Base;
+                        var finalItem = mapItem.Descriptor;
                         if (finalItem != null)
                         {
                             Items[itemSlot].TileIndex = tileIndex;

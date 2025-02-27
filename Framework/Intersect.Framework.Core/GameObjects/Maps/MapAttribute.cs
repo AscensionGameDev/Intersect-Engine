@@ -1,4 +1,5 @@
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects.Annotations;
 using Intersect.Localization;
 using Newtonsoft.Json;
@@ -65,7 +66,7 @@ public partial class MapItemAttribute : MapAttribute
     public override MapAttributeType Type => MapAttributeType.Item;
 
     [EditorLabel("Attributes", "Item")]
-    [EditorReference(typeof(ItemBase), nameof(ItemBase.Name))]
+    [EditorReference(typeof(ItemDescriptor), nameof(ItemDescriptor.Name))]
     public Guid ItemId { get; set; }
 
     [EditorLabel("Attributes", "Quantity")]

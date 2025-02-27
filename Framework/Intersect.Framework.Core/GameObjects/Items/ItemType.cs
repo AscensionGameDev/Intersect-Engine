@@ -1,4 +1,4 @@
-namespace Intersect.Enums;
+namespace Intersect.Framework.Core.GameObjects.Items;
 
 public enum ItemType
 {

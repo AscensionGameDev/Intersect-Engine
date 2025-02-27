@@ -1,4 +1,5 @@
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
@@ -104,7 +105,7 @@ public partial class Resource : Entity
             var roll = Randomization.Next(1, 10001);
             var maximumRoll = drop.Chance * 100;
 
-            if (roll > maximumRoll || !ItemBase.TryGet(drop.ItemId, out _))
+            if (roll > maximumRoll || !ItemDescriptor.TryGet(drop.ItemId, out _))
             {
                 continue;
             }
@@ -183,7 +184,7 @@ public partial class Resource : Entity
             // Drop items
             foreach (var item in Items)
             {
-                if (ItemBase.Get(item.ItemId) != null)
+                if (ItemDescriptor.Get(item.ItemId) != null)
                 {
                     var mapId = selectedTile.GetMapId();
                     if (MapController.TryGetInstanceFromMap(mapId, MapInstanceId, out var mapInstance))

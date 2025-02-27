@@ -6,6 +6,7 @@ using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Configuration;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Trades;
@@ -123,10 +124,10 @@ public partial class TradeItem
             mDescWindow = null;
         }
 
-        if (ItemBase.Get(Globals.Trade[mMySide, mMySlot].ItemId) != null)
+        if (ItemDescriptor.Get(Globals.Trade[mMySide, mMySlot].ItemId) != null)
         {
             mDescWindow = new ItemDescriptionWindow(
-                Globals.Trade[mMySide, mMySlot].Base, Globals.Trade[mMySide, mMySlot].Quantity, mTradeWindow.X,
+                Globals.Trade[mMySide, mMySlot].Descriptor, Globals.Trade[mMySide, mMySlot].Quantity, mTradeWindow.X,
                 mTradeWindow.Y, Globals.Trade[mMySide, mMySlot].ItemProperties
             );
         }
@@ -151,7 +152,7 @@ public partial class TradeItem
         if (Globals.Trade[n, mMySlot].ItemId != mCurrentItemId)
         {
             mCurrentItemId = Globals.Trade[n, mMySlot].ItemId;
-            var item = ItemBase.Get(Globals.Trade[n, mMySlot].ItemId);
+            var item = ItemDescriptor.Get(Globals.Trade[n, mMySlot].ItemId);
             if (item != null)
             {
                 var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);

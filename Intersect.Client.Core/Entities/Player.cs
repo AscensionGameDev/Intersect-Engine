@@ -24,6 +24,7 @@ using Intersect.Enums;
 using Intersect.Extensions;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
@@ -380,7 +381,7 @@ public partial class Player : Entity, IPlayer
 
         if (
             fromSlot.ItemId == toSlot.ItemId
-            && ItemBase.TryGet(toSlot.ItemId, out var itemInSlot)
+            && ItemDescriptor.TryGet(toSlot.ItemId, out var itemInSlot)
             && itemInSlot.IsStackable
             && fromSlot.Quantity < itemInSlot.MaxInventoryStack
             && toSlot.Quantity < itemInSlot.MaxInventoryStack
@@ -406,7 +407,7 @@ public partial class Player : Entity, IPlayer
     public void TryDropItem(int inventorySlotIndex)
     {
         var inventorySlot = Inventory[inventorySlotIndex];
-        if (!ItemBase.TryGet(inventorySlot.ItemId, out var itemDescriptor))
+        if (!ItemDescriptor.TryGet(inventorySlot.ItemId, out var itemDescriptor))
         {
             return;
         }
@@ -541,7 +542,7 @@ public partial class Player : Entity, IPlayer
                 if (itm != null && itm.ItemId == hotbarInstance.ItemOrSpellId)
                 {
                     bestMatch = i;
-                    var itemBase = ItemBase.Get(itm.ItemId);
+                    var itemBase = ItemDescriptor.Get(itm.ItemId);
                     if (itemBase != null)
                     {
                         if (itemBase.ItemType == ItemType.Bag)
@@ -607,7 +608,7 @@ public partial class Player : Entity, IPlayer
                     return true;
                 }
 
-                if ((ItemBase.TryGet(itm.ItemId, out var itemBase) && !itemBase.IgnoreGlobalCooldown) && Globals.Me?.GlobalCooldown > Timing.Global.Milliseconds)
+                if ((ItemDescriptor.TryGet(itm.ItemId, out var itemBase) && !itemBase.IgnoreGlobalCooldown) && Globals.Me?.GlobalCooldown > Timing.Global.Milliseconds)
                 {
                     return true;
                 }
@@ -629,7 +630,7 @@ public partial class Player : Entity, IPlayer
                     return value - Timing.Global.Milliseconds;
                 }
 
-                if ((ItemBase.TryGet(itm.ItemId, out var itemBase) && !itemBase.IgnoreGlobalCooldown) && Globals.Me?.GlobalCooldown > Timing.Global.Milliseconds)
+                if ((ItemDescriptor.TryGet(itm.ItemId, out var itemBase) && !itemBase.IgnoreGlobalCooldown) && Globals.Me?.GlobalCooldown > Timing.Global.Milliseconds)
                 {
                     return Globals.Me.GlobalCooldown - Timing.Global.Milliseconds;
                 }
@@ -698,7 +699,7 @@ public partial class Player : Entity, IPlayer
     public void TrySellItem(int inventorySlotIndex)
     {
         var inventorySlot = Inventory[inventorySlotIndex];
-        if (!ItemBase.TryGet(inventorySlot.ItemId, out var itemDescriptor))
+        if (!ItemDescriptor.TryGet(inventorySlot.ItemId, out var itemDescriptor))
         {
             return;
         }
@@ -777,7 +778,7 @@ public partial class Player : Entity, IPlayer
     {
         //Confirm the purchase
         var shopSlot = Globals.GameShop?.SellingItems[shopSlotIndex];
-        if (shopSlot == default || !ItemBase.TryGet(shopSlot.ItemId, out var itemDescriptor))
+        if (shopSlot == default || !ItemDescriptor.TryGet(shopSlot.ItemId, out var itemDescriptor))
         {
             return;
         }
@@ -861,7 +862,7 @@ public partial class Player : Entity, IPlayer
         }
 
         slot ??= Inventory[inventorySlotIndex];
-        if (!ItemBase.TryGet(slot.ItemId, out var itemDescriptor))
+        if (!ItemDescriptor.TryGet(slot.ItemId, out var itemDescriptor))
         {
             ApplicationContext.Context.Value?.Logger.LogWarning($"Tried to move item that does not exist from slot {inventorySlotIndex}: {itemDescriptor.Id}");
             return false;
@@ -988,7 +989,7 @@ public partial class Player : Entity, IPlayer
         }
 
         slot ??= Globals.BankSlots[bankSlotIndex];
-        if (!ItemBase.TryGet(slot.ItemId, out var itemDescriptor))
+        if (!ItemDescriptor.TryGet(slot.ItemId, out var itemDescriptor))
         {
             ApplicationContext.Context.Value?.Logger.LogWarning($"Tried to move item that does not exist from slot {bankSlotIndex}: {itemDescriptor.Id}");
             return false;
@@ -1093,7 +1094,7 @@ public partial class Player : Entity, IPlayer
     public void TryStoreItemInBag(int inventorySlotIndex, int bagSlotIndex)
     {
         var inventorySlot = Inventory[inventorySlotIndex];
-        if (!ItemBase.TryGet(inventorySlot.ItemId, out var itemDescriptor))
+        if (!ItemDescriptor.TryGet(inventorySlot.ItemId, out var itemDescriptor))
         {
             return;
         }
@@ -1145,7 +1146,7 @@ public partial class Player : Entity, IPlayer
             return;
         }
 
-        if (!ItemBase.TryGet(bagSlot.ItemId, out var itemDescriptor))
+        if (!ItemDescriptor.TryGet(bagSlot.ItemId, out var itemDescriptor))
         {
             return;
         }
@@ -1194,7 +1195,7 @@ public partial class Player : Entity, IPlayer
     {
         var slot = Inventory[index];
         var quantity = slot.Quantity;
-        var tradingItem = ItemBase.Get(slot.ItemId);
+        var tradingItem = ItemDescriptor.Get(slot.ItemId);
         if (tradingItem == null)
         {
             return;
@@ -1240,7 +1241,7 @@ public partial class Player : Entity, IPlayer
     {
         var slot = Globals.Trade[0, index];
         var quantity = slot.Quantity;
-        var revokedItem = ItemBase.Get(slot.ItemId);
+        var revokedItem = ItemDescriptor.Get(slot.ItemId);
         if (revokedItem == null)
         {
             return;
@@ -1922,7 +1923,7 @@ public partial class Player : Entity, IPlayer
         }
 
         // Return false if the shield item descriptor could not be retrieved.
-        if (!ItemBase.TryGet(Inventory[myShieldIndex].ItemId, out _))
+        if (!ItemDescriptor.TryGet(Inventory[myShieldIndex].ItemId, out _))
         {
             return false;
         }
@@ -2348,7 +2349,7 @@ public partial class Player : Entity, IPlayer
 
     public override int CalculateAttackTime()
     {
-        ItemBase? weapon = null;
+        ItemDescriptor? weapon = null;
         var attackTime = base.CalculateAttackTime();
 
         var cls = ClassDescriptor.Get(Class);
@@ -2363,7 +2364,7 @@ public partial class Player : Entity, IPlayer
                 Options.Instance.Equipment.WeaponSlot < Equipment.Length &&
                 MyEquipment[Options.Instance.Equipment.WeaponSlot] >= 0)
             {
-                weapon = ItemBase.Get(Inventory[MyEquipment[Options.Instance.Equipment.WeaponSlot]].ItemId);
+                weapon = ItemDescriptor.Get(Inventory[MyEquipment[Options.Instance.Equipment.WeaponSlot]].ItemId);
             }
         }
         else
@@ -2372,7 +2373,7 @@ public partial class Player : Entity, IPlayer
                 Options.Instance.Equipment.WeaponSlot < Equipment.Length &&
                 Equipment[Options.Instance.Equipment.WeaponSlot] != Guid.Empty)
             {
-                weapon = ItemBase.Get(Equipment[Options.Instance.Equipment.WeaponSlot]);
+                weapon = ItemDescriptor.Get(Equipment[Options.Instance.Equipment.WeaponSlot]);
             }
         }
 

@@ -5,6 +5,7 @@ using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Core;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Microsoft.Extensions.Logging;
 
@@ -67,7 +68,7 @@ public partial class InventoryWindow
         // Clear out the old options since we might not show all of them
         mContextMenu.ClearChildren();
 
-        var item = ItemBase.Get(Globals.Me.Inventory[slot].ItemId);
+        var item = ItemDescriptor.Get(Globals.Me.Inventory[slot].ItemId);
 
         // No point showing a menu for blank space.
         if (item == null)
@@ -78,24 +79,24 @@ public partial class InventoryWindow
         // Add our use Item prompt, assuming we have a valid usecase.
         switch (item.ItemType)
         {
-            case Enums.ItemType.Spell:
+            case ItemType.Spell:
                 mContextMenu.AddChild(mUseItemContextItem);
                 var useItemLabel = item.QuickCast ? Strings.ItemContextMenu.Cast : Strings.ItemContextMenu.Learn;
                 mUseItemContextItem.Text = useItemLabel.ToString(item.Name);
                 break;
 
-            case Enums.ItemType.Event:
-            case Enums.ItemType.Consumable:
+            case ItemType.Event:
+            case ItemType.Consumable:
                 mContextMenu.AddChild(mUseItemContextItem);
                 mUseItemContextItem.Text = Strings.ItemContextMenu.Use.ToString(item.Name);
                 break;
 
-            case Enums.ItemType.Bag:
+            case ItemType.Bag:
                 mContextMenu.AddChild(mUseItemContextItem);
                 mUseItemContextItem.Text = Strings.ItemContextMenu.Open.ToString(item.Name);
                 break;
 
-            case Enums.ItemType.Equipment:
+            case ItemType.Equipment:
                 mContextMenu.AddChild(mUseItemContextItem);
                 // Show the correct equip/unequip prompts.
                 if (Globals.Me.MyEquipment.Contains(slot))
@@ -216,7 +217,7 @@ public partial class InventoryWindow
             var slotLabel = mValues[slotIndex];
 
             var inventorySlot = inventory[slotIndex];
-            if (!ItemBase.TryGet(inventorySlot.ItemId, out var itemDescriptor))
+            if (!ItemDescriptor.TryGet(inventorySlot.ItemId, out var itemDescriptor))
             {
                 if (inventorySlot.ItemId != default)
                 {

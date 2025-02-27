@@ -5,6 +5,7 @@ using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Events.Commands;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps.MapList;
@@ -851,12 +852,12 @@ public static partial class CommandPrinter
         if (command.Add)
         {
             return Strings.EventCommandList.changeitems.ToString(
-                Strings.EventCommandList.give.ToString(ItemBase.GetName(command.ItemId))
+                Strings.EventCommandList.give.ToString(ItemDescriptor.GetName(command.ItemId))
             );
         }
 
         return Strings.EventCommandList.changeitems.ToString(
-            Strings.EventCommandList.take.ToString(ItemBase.GetName(command.ItemId))
+            Strings.EventCommandList.take.ToString(ItemDescriptor.GetName(command.ItemId))
         );
     }
 
@@ -866,13 +867,13 @@ public static partial class CommandPrinter
 
         if(!command.Unequip)
         {
-            commandText = Strings.EventCommandList.equipitem.ToString(ItemBase.GetName(command.ItemId));
+            commandText = Strings.EventCommandList.equipitem.ToString(ItemDescriptor.GetName(command.ItemId));
         }
         else
         {
             if (command.IsItem)
             {
-                 commandText = Strings.EventCommandList.unequipitem.ToString(ItemBase.GetName(command.ItemId));
+                 commandText = Strings.EventCommandList.unequipitem.ToString(ItemDescriptor.GetName(command.ItemId));
             }
             else
             {

@@ -4,6 +4,7 @@ using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Crafting;
@@ -53,7 +54,7 @@ public partial class RecipeItem
 
     public void LoadItem()
     {
-        var item = ItemBase.Get(mIngredient.ItemId);
+        var item = ItemDescriptor.Get(mIngredient.ItemId);
 
         if (item != null)
         {
@@ -114,7 +115,7 @@ public partial class RecipeItem
             DescWindow = null;
         }
 
-        if (mIngredient != null && ItemBase.TryGet(mIngredient.ItemId, out var itemDescriptor))
+        if (mIngredient != null && ItemDescriptor.TryGet(mIngredient.ItemId, out var itemDescriptor))
         {
             DescWindow = new ItemDescriptionWindow(
                 itemDescriptor, mIngredient.Quantity, mCraftingWindow.X, mCraftingWindow.Y, null

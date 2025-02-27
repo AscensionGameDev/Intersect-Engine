@@ -7,6 +7,7 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
 
@@ -102,7 +103,7 @@ public partial class EquipmentItem
             mDescWindow = null;
         }
 
-        var item = ItemBase.Get(mCurrentItemId);
+        var item = ItemDescriptor.Get(mCurrentItemId);
         if (item == null)
         {
             return;
@@ -130,7 +131,7 @@ public partial class EquipmentItem
         {
             mCurrentItemId = currentItemId;
             mItemProperties = itemProperties;
-            var item = ItemBase.Get(mCurrentItemId);
+            var item = ItemDescriptor.Get(mCurrentItemId);
             if (item != null)
             {
                 var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);

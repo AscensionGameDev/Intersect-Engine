@@ -12,6 +12,7 @@ using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Events.Commands;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
@@ -280,7 +281,7 @@ public partial class Player : Entity
     /// Reference stored of the last weapon used for an auto-attack
     /// </summary>
     [NotMapped, JsonIgnore]
-    public ItemBase LastAttackingWeapon { get; set; }
+    public ItemDescriptor LastAttackingWeapon { get; set; }
 
     // Instancing
     public MapInstanceType InstanceType { get; set; } = MapInstanceType.Overworld;
@@ -400,7 +401,7 @@ public partial class Player : Entity
         //Upon Sign In Remove Any Items/Spells that have been deleted
         foreach (var itm in Items)
         {
-            if (itm.ItemId != Guid.Empty && ItemBase.Get(itm.ItemId) == null)
+            if (itm.ItemId != Guid.Empty && ItemDescriptor.Get(itm.ItemId) == null)
             {
                 itm.Set(Item.None);
             }
@@ -408,7 +409,7 @@ public partial class Player : Entity
 
         foreach (var itm in Bank)
         {
-            if (itm.ItemId != Guid.Empty && ItemBase.Get(itm.ItemId) == null)
+            if (itm.ItemId != Guid.Empty && ItemDescriptor.Get(itm.ItemId) == null)
             {
                 itm.Set(Item.None);
             }
@@ -1207,7 +1208,7 @@ public partial class Player : Entity
         // Loop through equipment and see if any items grant vital buffs
         foreach (var item in EquippedItems.ToArray())
         {
-            if (ItemBase.TryGet(item.ItemId, out var descriptor))
+            if (ItemDescriptor.TryGet(item.ItemId, out var descriptor))
             {
                 classVital += descriptor.VitalsGiven[vital] + descriptor.PercentageVitalsGiven[vital] * baseVital / 100;
             }
@@ -1556,7 +1557,7 @@ public partial class Player : Entity
     public override void TryAttack(Entity target,
         ProjectileBase projectile,
         SpellBase parentSpell,
-        ItemBase parentItem,
+        ItemDescriptor parentItem,
         Direction projectileDir)
     {
         if (!CanAttack(target, parentSpell))
@@ -2659,7 +2660,7 @@ public partial class Player : Entity
     /// <returns></returns>
     public bool CanGiveItem(Guid itemId, int quantity) => CanGiveItem(new Item(itemId, quantity), out _);
 
-    private BagSlot[] FindCompatibleBagSlots(ItemBase itemDescriptor, int quantityHint, out int remainingQuantity)
+    private BagSlot[] FindCompatibleBagSlots(ItemDescriptor itemDescriptor, int quantityHint, out int remainingQuantity)
     {
         var items = Items;
         if (items == default || items.Count < 1)
@@ -3215,7 +3216,7 @@ public partial class Player : Entity
 
         if (
             fromSlot.ItemId == toSlot.ItemId
-            && ItemBase.TryGet(toSlot.ItemId, out var itemInSlot)
+            && ItemDescriptor.TryGet(toSlot.ItemId, out var itemInSlot)
             && itemInSlot.IsStackable
             && fromSlot.Quantity < itemInSlot.MaxInventoryStack
             && toSlot.Quantity < itemInSlot.MaxInventoryStack
@@ -3327,7 +3328,7 @@ public partial class Player : Entity
     [Obsolete("Use TryDropItemFrom(int, int).")]
     public void DropItemFrom(int slotIndex, int amount) => TryDropItemFrom(slotIndex, amount);
 
-    protected override bool ShouldDropItem(Entity killer, ItemBase itemDescriptor, Item item, float dropRateModifier, out Guid lootOwner)
+    protected override bool ShouldDropItem(Entity killer, ItemDescriptor itemDescriptor, Item item, float dropRateModifier, out Guid lootOwner)
     {
         lootOwner = (killer as Player)?.Id ?? Id;
 
@@ -3350,7 +3351,7 @@ public partial class Player : Entity
     {
         var equipped = false;
         var Item = Items[slot];
-        var itemBase = ItemBase.Get(Item.ItemId);
+        var itemBase = ItemDescriptor.Get(Item.ItemId);
         if (itemBase != null && Item.Quantity > 0)
         {
 
@@ -3713,7 +3714,7 @@ public partial class Player : Entity
         }
 
         // Figure out what we're dealing with here.
-        var itemDescriptor = ItemBase.Get(itemId);
+        var itemDescriptor = ItemDescriptor.Get(itemId);
 
         // Go through our inventory and take what we need!
         foreach (var slot in FindInventoryItemSlots(itemId))
@@ -4085,14 +4086,14 @@ public partial class Player : Entity
         }
 
         var boughtItem = InShop.SellingItems[slot];
-        var boughtItemBase = ItemBase.Get(boughtItem.ItemId);
+        var boughtItemBase = ItemDescriptor.Get(boughtItem.ItemId);
         if (boughtItemBase == default)
         {
             PacketSender.SendChatMsg(this, Strings.Shops.TransactionFailed, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
             return;
         }
 
-        var currencyBase = ItemBase.Get(boughtItem.CostItemId);
+        var currencyBase = ItemDescriptor.Get(boughtItem.CostItemId);
         if (currencyBase == default)
         {
             PacketSender.SendChatMsg(this, Strings.Shops.TransactionFailed, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
@@ -4212,7 +4213,7 @@ public partial class Player : Entity
             backupItems.Add(backupItem.Clone());
         }
 
-        if (!ItemBase.TryGet(craftDescriptor.ItemId, out var craftItem) && CraftingState != default)
+        if (!ItemDescriptor.TryGet(craftDescriptor.ItemId, out var craftItem) && CraftingState != default)
         {
             CraftingState.RemainingCount--;
             return;
@@ -4363,7 +4364,7 @@ public partial class Player : Entity
             return true;
         }
 
-        if (!ItemBase.TryGet(craftDescriptor.ItemId, out var craftItem))
+        if (!ItemDescriptor.TryGet(craftDescriptor.ItemId, out var craftItem))
         {
             PacketSender.SendChatMsg(this, Strings.Errors.UnknownErrorTryAgain, ChatMessageType.Error, CustomColors.Alerts.Error);
             ApplicationContext.Context.Value?.Logger.LogError($"Unable to find item descriptor {craftItem?.Id} for craft {craftDescriptor?.Id}.");
@@ -4461,7 +4462,7 @@ public partial class Player : Entity
     }
 
     // TODO: Document this. The TODO on bagItem == null needs to be resolved before this is.
-    public bool OpenBag(Item bagItem, ItemBase itemDescriptor)
+    public bool OpenBag(Item bagItem, ItemDescriptor itemDescriptor)
     {
         if (IsBusy())
         {
@@ -4526,7 +4527,7 @@ public partial class Player : Entity
         }
     }
 
-    private bool TryFillInventoryStacksOfItemForTradeOffer(Item tradeItem, int offerIdx, List<InventorySlot> inventorySlots, ItemBase itemDescriptor, int amountToGive = 1)
+    private bool TryFillInventoryStacksOfItemForTradeOffer(Item tradeItem, int offerIdx, List<InventorySlot> inventorySlots, ItemDescriptor itemDescriptor, int amountToGive = 1)
     {
         int amountRemainder = amountToGive;
         foreach (var invItem in inventorySlots)
@@ -4582,10 +4583,10 @@ public partial class Player : Entity
     /// <param name="bag">The <see cref="Bag"/> we're pulling from</param>
     /// <param name="bagSlotIdx">The index of the bag that we're choosing to withrdaw</param>
     /// <param name="inventorySlots">A list of inventory slots that are valid locations for the withdrawal</param>
-    /// <param name="itemDescriptor">The <see cref="ItemBase"/> of the item that is getting moved around.</param>
+    /// <param name="itemDescriptor">The <see cref="ItemDescriptor"/> of the item that is getting moved around.</param>
     /// <param name="amountToGive">How many of the item that we're moving, if stackable.</param>
     /// <returns>A <see cref="bool"/> saying whether or not we successfully deposited ALL the items</returns>
-    private bool TryFillInventoryStacksOfItemFromBagSlot(Bag bag, int bagSlotIdx, List<InventorySlot> inventorySlots, ItemBase itemDescriptor, int amountToGive = 1)
+    private bool TryFillInventoryStacksOfItemFromBagSlot(Bag bag, int bagSlotIdx, List<InventorySlot> inventorySlots, ItemDescriptor itemDescriptor, int amountToGive = 1)
     {
         int amountRemainder = amountToGive;
         var bagSlots = bag.Slots;
@@ -4641,10 +4642,10 @@ public partial class Player : Entity
     /// <param name="bag">The <see cref="Bag"/> we're putting items into from</param>
     /// <param name="inventorySlotIdx">The index of the players inventory that we're withrdawing from</param>
     /// <param name="bagSlots">A list of valid bag slots that could ccontain the item</param>
-    /// <param name="itemDescriptor">The <see cref="ItemBase"/> of the item that is getting moved around.</param>
+    /// <param name="itemDescriptor">The <see cref="ItemDescriptor"/> of the item that is getting moved around.</param>
     /// <param name="amountToGive">How many of the item that we're moving, if stackable.</param>
     /// <returns>A <see cref="bool"/> saying whether or not we successfully deposited ALL the items</returns>
-    private bool TryFillBagStacksOfItemFromInventorySlot(Bag bag, int inventorySlotIdx, List<BagSlot> bagSlots, ItemBase itemDescriptor, int amountToGive = 1)
+    private bool TryFillBagStacksOfItemFromInventorySlot(Bag bag, int inventorySlotIdx, List<BagSlot> bagSlots, ItemDescriptor itemDescriptor, int amountToGive = 1)
     {
         int amountRemainder = amountToGive;
         foreach (var bagSlotWithItem in bagSlots)
@@ -5662,7 +5663,7 @@ public partial class Player : Entity
                     if (Options.Instance.Combat.EnableCombatChatMessages)
                     {
                         PacketSender.SendChatMsg(
-                            this, Strings.Items.NotEnough.ToString(ItemBase.GetName(projectileBase.AmmoItemId)),
+                            this, Strings.Items.NotEnough.ToString(ItemDescriptor.GetName(projectileBase.AmmoItemId)),
                             ChatMessageType.Inventory,
                             CustomColors.Alerts.Error
                         );
@@ -5923,9 +5924,9 @@ public partial class Player : Entity
     }
 
     //Equipment
-    public void EquipItem(ItemBase itemBase, int slot = -1, bool updateCooldown = false)
+    public void EquipItem(ItemDescriptor itemDescriptor, int slot = -1, bool updateCooldown = false)
     {
-        if (itemBase == null || itemBase.ItemType != ItemType.Equipment)
+        if (itemDescriptor == null || itemDescriptor.ItemType != ItemType.Equipment)
         {
             return;
         }
@@ -5935,7 +5936,7 @@ public partial class Player : Entity
         {
             for (var i = 0; i < Options.Instance.Player.MaxInventory; i++)
             {
-                if (itemBase == Items[i].Descriptor)
+                if (itemDescriptor == Items[i].Descriptor)
                 {
                     slot = i;
                     break;
@@ -5945,15 +5946,15 @@ public partial class Player : Entity
 
         if (slot != -1)
         {
-            if (itemBase.EquipmentSlot == Options.Instance.Equipment.WeaponSlot)
+            if (itemDescriptor.EquipmentSlot == Options.Instance.Equipment.WeaponSlot)
             {
                 //If we are equipping a 2hand weapon, remove the shield
-                if (itemBase.TwoHanded)
+                if (itemDescriptor.TwoHanded)
                 {
                     UnequipItem(Options.Instance.Equipment.ShieldSlot, false);
                 }
             }
-            else if (itemBase.EquipmentSlot == Options.Instance.Equipment.ShieldSlot)
+            else if (itemDescriptor.EquipmentSlot == Options.Instance.Equipment.ShieldSlot)
             {
                 // If we are equipping a shield, remove any 2-handed weapon
                 if (TryGetEquippedItem(Options.Instance.Equipment.WeaponSlot, out Item weapon) && weapon.Descriptor.TwoHanded)
@@ -5962,15 +5963,15 @@ public partial class Player : Entity
                 }
             }
 
-            SetEquipmentSlot(itemBase.EquipmentSlot, slot);
+            SetEquipmentSlot(itemDescriptor.EquipmentSlot, slot);
 
             if (updateCooldown)
             {
-                UpdateCooldown(itemBase);
+                UpdateCooldown(itemDescriptor);
             }
         }
 
-        EnqueueStartCommonEvent(itemBase.GetEventTrigger(ItemEventTrigger.OnEquip));
+        EnqueueStartCommonEvent(itemDescriptor.GetEventTrigger(ItemEventTrigger.OnEquip));
 
         ProcessEquipmentUpdated(true);
     }
@@ -6532,7 +6533,7 @@ public partial class Player : Entity
     private void UpdateGatherItemQuests(Guid itemId)
     {
         //If any quests demand that this item be gathered then let's handle it
-        var item = ItemBase.Get(itemId);
+        var item = ItemDescriptor.Get(itemId);
         if (item != null)
         {
             foreach (var questProgress in Quests)
@@ -6561,7 +6562,7 @@ public partial class Player : Entity
                                         this,
                                         Strings.Quests.ItemTask.ToString(
                                             quest.Name, questProgress.TaskProgress, questTask.Quantity,
-                                            ItemBase.GetName(questTask.TargetId)
+                                            ItemDescriptor.GetName(questTask.TargetId)
                                         ),
                                         ChatMessageType.Quest
                                     );
@@ -7458,8 +7459,8 @@ public partial class Player : Entity
     /// <summary>
     /// Update the cooldown for a specific item.
     /// </summary>
-    /// <param name="item">The <see cref="ItemBase"/> to update the cooldown for.</param>
-    public void UpdateCooldown(ItemBase item)
+    /// <param name="item">The <see cref="ItemDescriptor"/> to update the cooldown for.</param>
+    public void UpdateCooldown(ItemDescriptor item)
     {
         if (item == null)
         {
@@ -7547,14 +7548,14 @@ public partial class Player : Entity
         var cooldownReduction = 1 - (ignoreCdr ? 0 : GetEquipmentBonusEffect(ItemEffect.CooldownReduction) / 100f);
 
         // Retrieve a list of all items and/or spells depending on our settings to set the cooldown for.
-        var matchingItems = Array.Empty<ItemBase>();
+        var matchingItems = Array.Empty<ItemDescriptor>();
         var matchingSpells = Array.Empty<SpellBase>();
         var itemsUpdated = false;
         var spellsUpdated = false;
 
         if (type == GameObjectType.Item || Options.Instance.Combat.LinkSpellAndItemCooldowns)
         {
-            matchingItems = ItemBase.GetCooldownGroup(group);
+            matchingItems = ItemDescriptor.GetCooldownGroup(group);
         }
         if (type == GameObjectType.Spell || Options.Instance.Combat.LinkSpellAndItemCooldowns)
         {
@@ -7621,7 +7622,7 @@ public partial class Player : Entity
     /// Assign a cooldown time to a specified item.
     /// WARNING: Makes no checks at all to see whether this SHOULD happen!
     /// </summary>
-    /// <param name="itemId">The <see cref="ItemBase"/> id to assign the cooldown for.</param>
+    /// <param name="itemId">The <see cref="ItemDescriptor"/> id to assign the cooldown for.</param>
     /// <param name="cooldownTime">The cooldown time to assign.</param>
     private void AssignItemCooldown(Guid itemId, long cooldownTime)
     {
@@ -7658,7 +7659,7 @@ public partial class Player : Entity
     /// <summary>
     /// Remove the cooldown time entry for a specified Item.
     /// </summary>
-    /// <param name="itemId">The <see cref="ItemBase"/> id to remove the cooldown entry for.</param>
+    /// <param name="itemId">The <see cref="ItemDescriptor"/> id to remove the cooldown entry for.</param>
     private void RemoveItemCooldown(Guid itemId)
     {
         ItemCooldowns.TryRemove(itemId, out _);

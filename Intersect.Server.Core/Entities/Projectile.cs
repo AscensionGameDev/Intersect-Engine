@@ -1,5 +1,6 @@
 using Intersect.Enums;
 using Intersect.Framework.Core;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
@@ -19,7 +20,7 @@ public partial class Projectile : Entity
 
     public bool HasGrappled;
 
-    public ItemBase Item;
+    public ItemDescriptor Item;
 
     private int _quantity;
 
@@ -49,7 +50,7 @@ public partial class Projectile : Entity
     public Projectile(
         Entity owner,
         SpellBase parentSpell,
-        ItemBase parentItem,
+        ItemDescriptor parentItem,
         ProjectileBase projectile,
         Guid mapId,
         byte X,

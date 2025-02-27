@@ -1,7 +1,7 @@
 using Intersect.Enums;
 using MessagePack;
 
-namespace Intersect.Network.Packets.Server;
+namespace Intersect.Framework.Core.GameObjects.Items;
 
 [MessagePackObject]
 public partial class ItemProperties

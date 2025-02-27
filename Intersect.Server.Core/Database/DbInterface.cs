@@ -12,6 +12,7 @@ using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Reflection;
@@ -606,7 +607,7 @@ public static partial class DbInterface
         {
             if (bag.Slots[i] != null)
             {
-                var item = ItemBase.Get(bag.Slots[i].ItemId);
+                var item = ItemDescriptor.Get(bag.Slots[i].ItemId);
                 if (item != null)
                 {
                     return false;
@@ -646,7 +647,7 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.Item:
-                ItemBase.Lookup.Clear();
+                ItemDescriptor.Lookup.Clear();
 
                 break;
             case GameObjectType.Npc:
@@ -746,7 +747,7 @@ public static partial class DbInterface
 
                         foreach (var itm in loadedItems)
                         {
-                            ItemBase.Lookup.Set(itm.Id, itm);
+                            ItemDescriptor.Lookup.Set(itm.Id, itm);
                         }
 
                         break;
@@ -1002,7 +1003,7 @@ public static partial class DbInterface
 
                 break;
             case GameObjectType.Item:
-                dbObj = new ItemBase(predefinedid);
+                dbObj = new ItemDescriptor(predefinedid);
 
                 break;
             case GameObjectType.Npc:
@@ -1103,8 +1104,8 @@ public static partial class DbInterface
                         break;
 
                     case GameObjectType.Item:
-                        context.Items.Add((ItemBase)dbObj);
-                        ItemBase.Lookup.Set(dbObj.Id, dbObj);
+                        context.Items.Add((ItemDescriptor)dbObj);
+                        ItemDescriptor.Lookup.Set(dbObj.Id, dbObj);
 
                         break;
                     case GameObjectType.Npc:
@@ -1239,7 +1240,7 @@ public static partial class DbInterface
 
                         break;
                     case GameObjectType.Item:
-                        context.Items.Remove((ItemBase)gameObject);
+                        context.Items.Remove((ItemDescriptor)gameObject);
 
                         break;
                     case GameObjectType.Npc:
@@ -1386,7 +1387,7 @@ public static partial class DbInterface
                         break;
                     case GameObjectType.Item:
                     {
-                        if (gameObject is not ItemBase itemDescriptor)
+                        if (gameObject is not ItemDescriptor itemDescriptor)
                         {
                             throw new InvalidOperationException();
                         }

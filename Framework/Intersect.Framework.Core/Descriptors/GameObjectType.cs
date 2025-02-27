@@ -1,6 +1,7 @@
 using Intersect.Extensions;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
@@ -15,7 +16,7 @@ public enum GameObjectType
     [GameObjectInfo(typeof(ClassDescriptor), "classes")]
     Class,
 
-    [GameObjectInfo(typeof(ItemBase), "items")]
+    [GameObjectInfo(typeof(ItemDescriptor), "items")]
     Item,
 
     [GameObjectInfo(typeof(NpcBase), "npcs")]

@@ -2,6 +2,7 @@
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.Serialization;
 using Intersect.Localization;
 using Intersect.Models;
@@ -245,7 +246,7 @@ public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
                     break;
                 case QuestObjective.GatherItems: //Gather Items
                     taskString = descriptions[(int)Objective].ToString(
-                        ItemBase.GetName(TargetId),
+                        ItemDescriptor.GetName(TargetId),
                         Quantity,
                         Description
                     );

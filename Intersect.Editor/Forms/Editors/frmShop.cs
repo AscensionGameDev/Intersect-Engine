@@ -5,6 +5,7 @@ using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 
@@ -83,11 +84,11 @@ public partial class FrmShop : EditorForm
         cmbBuyFor.Items.Clear();
         cmbSellFor.Items.Clear();
         cmbDefaultCurrency.Items.Clear();
-        cmbAddBoughtItem.Items.AddRange(ItemBase.Names);
-        cmbAddSoldItem.Items.AddRange(ItemBase.Names);
-        cmbBuyFor.Items.AddRange(ItemBase.Names);
-        cmbSellFor.Items.AddRange(ItemBase.Names);
-        cmbDefaultCurrency.Items.AddRange(ItemBase.Names);
+        cmbAddBoughtItem.Items.AddRange(ItemDescriptor.Names);
+        cmbAddSoldItem.Items.AddRange(ItemDescriptor.Names);
+        cmbBuyFor.Items.AddRange(ItemDescriptor.Names);
+        cmbSellFor.Items.AddRange(ItemDescriptor.Names);
+        cmbDefaultCurrency.Items.AddRange(ItemDescriptor.Names);
         if (cmbAddBoughtItem.Items.Count > 0)
         {
             cmbAddBoughtItem.SelectedIndex = 0;
@@ -169,7 +170,7 @@ public partial class FrmShop : EditorForm
 
             txtName.Text = mEditorItem.Name;
             cmbFolder.Text = mEditorItem.Folder;
-            cmbDefaultCurrency.SelectedIndex = ItemBase.ListIndex(mEditorItem.DefaultCurrencyId);
+            cmbDefaultCurrency.SelectedIndex = ItemDescriptor.ListIndex(mEditorItem.DefaultCurrencyId);
             if (mEditorItem.BuyingWhitelist)
             {
                 rdoBuyWhitelist.Checked = true;
@@ -241,9 +242,9 @@ public partial class FrmShop : EditorForm
         {
             lstSoldItems.Items.Add(
                 Strings.ShopEditor.selldesc.ToString(
-                    ItemBase.GetName(mEditorItem.SellingItems[i].ItemId),
+                    ItemDescriptor.GetName(mEditorItem.SellingItems[i].ItemId),
                     mEditorItem.SellingItems[i].CostItemQuantity,
-                    ItemBase.GetName(mEditorItem.SellingItems[i].CostItemId)
+                    ItemDescriptor.GetName(mEditorItem.SellingItems[i].CostItemId)
                 )
             );
         }
@@ -255,9 +256,9 @@ public partial class FrmShop : EditorForm
             {
                 lstBoughtItems.Items.Add(
                     Strings.ShopEditor.buydesc.ToString(
-                        ItemBase.GetName(mEditorItem.BuyingItems[i].ItemId),
+                        ItemDescriptor.GetName(mEditorItem.BuyingItems[i].ItemId),
                         mEditorItem.BuyingItems[i].CostItemQuantity,
-                        ItemBase.GetName(mEditorItem.BuyingItems[i].CostItemId)
+                        ItemDescriptor.GetName(mEditorItem.BuyingItems[i].CostItemId)
                     )
                 );
             }
@@ -267,7 +268,7 @@ public partial class FrmShop : EditorForm
             for (var i = 0; i < mEditorItem.BuyingItems.Count; i++)
             {
                 lstBoughtItems.Items.Add(
-                    Strings.ShopEditor.dontbuy.ToString(ItemBase.GetName(mEditorItem.BuyingItems[i].ItemId))
+                    Strings.ShopEditor.dontbuy.ToString(ItemDescriptor.GetName(mEditorItem.BuyingItems[i].ItemId))
                 );
             }
         }
@@ -278,7 +279,7 @@ public partial class FrmShop : EditorForm
         var addedItem = false;
         var cost = (int) nudSellCost.Value;
         var newItem = new ShopItem(
-            ItemBase.IdFromList(cmbAddSoldItem.SelectedIndex), ItemBase.IdFromList(cmbSellFor.SelectedIndex), cost
+            ItemDescriptor.IdFromList(cmbAddSoldItem.SelectedIndex), ItemDescriptor.IdFromList(cmbSellFor.SelectedIndex), cost
         );
 
         for (var i = 0; i < mEditorItem.SellingItems.Count; i++)
@@ -315,7 +316,7 @@ public partial class FrmShop : EditorForm
         var addedItem = false;
         var cost = (int) nudBuyAmount.Value;
         var newItem = new ShopItem(
-            ItemBase.IdFromList(cmbAddBoughtItem.SelectedIndex), ItemBase.IdFromList(cmbBuyFor.SelectedIndex), cost
+            ItemDescriptor.IdFromList(cmbAddBoughtItem.SelectedIndex), ItemDescriptor.IdFromList(cmbBuyFor.SelectedIndex), cost
         );
 
         for (var i = 0; i < mEditorItem.BuyingItems.Count; i++)
@@ -349,7 +350,7 @@ public partial class FrmShop : EditorForm
 
     private void cmbDefaultCurrency_SelectedIndexChanged(object sender, EventArgs e)
     {
-        mEditorItem.DefaultCurrency = ItemBase.FromList(cmbDefaultCurrency.SelectedIndex);
+        mEditorItem.DefaultCurrency = ItemDescriptor.FromList(cmbDefaultCurrency.SelectedIndex);
     }
 
     private void btnItemUp_Click(object sender, EventArgs e)

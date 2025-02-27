@@ -3,6 +3,7 @@ using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
@@ -770,7 +771,7 @@ public partial class MapInstance : IMapInstance
             return;
         }
 
-        var itemDescriptor = ItemBase.Get(item.ItemId);
+        var itemDescriptor = ItemDescriptor.Get(item.ItemId);
         if (itemDescriptor == null)
         {
             ApplicationContext.Context.Value?.Logger.LogWarning($"No item found for {item.ItemId}.");
@@ -942,7 +943,7 @@ public partial class MapInstance : IMapInstance
     /// <param name="y">Y co-ordinate to spawn</param>
     private void SpawnAttributeItem(int x, int y)
     {
-        var item = ItemBase.Get(((MapItemAttribute)mMapController.Attributes[x, y]).ItemId);
+        var item = ItemDescriptor.Get(((MapItemAttribute)mMapController.Attributes[x, y]).ItemId);
         if (item != null)
         {
             var mapItem = new MapItem(item.Id, ((MapItemAttribute)mMapController.Attributes[x, y]).Quantity, x, y, ((MapItemAttribute)mMapController.Attributes[x, y]).RespawnTime);
@@ -1010,7 +1011,7 @@ public partial class MapInstance : IMapInstance
         Entity owner,
         ProjectileBase projectile,
         SpellBase parentSpell,
-        ItemBase parentItem,
+        ItemDescriptor parentItem,
         Guid mapId,
         byte x,
         byte y,

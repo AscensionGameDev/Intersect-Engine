@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Models;
 using Newtonsoft.Json;
 
@@ -66,9 +67,9 @@ public partial class ProjectileBase : DatabaseObject<ProjectileBase>, IFolderabl
 
     [NotMapped]
     [JsonIgnore]
-    public ItemBase Ammo
+    public ItemDescriptor Ammo
     {
-        get => ItemBase.Get(AmmoItemId);
+        get => ItemDescriptor.Get(AmmoItemId);
         set => AmmoItemId = value?.Id ?? Guid.Empty;
     }
 

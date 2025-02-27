@@ -7,6 +7,7 @@ using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Utilities;
@@ -991,12 +992,12 @@ public partial class FrmSpell : EditorForm
         // Do we add item cooldown groups as well?
         if (Options.Instance.Combat.LinkSpellAndItemCooldowns)
         {
-            foreach (var itm in ItemBase.Lookup)
+            foreach (var itm in ItemDescriptor.Lookup)
             {
-                if (!string.IsNullOrWhiteSpace(((ItemBase)itm.Value).CooldownGroup) &&
-                !mKnownCooldownGroups.Contains(((ItemBase)itm.Value).CooldownGroup))
+                if (!string.IsNullOrWhiteSpace(((ItemDescriptor)itm.Value).CooldownGroup) &&
+                !mKnownCooldownGroups.Contains(((ItemDescriptor)itm.Value).CooldownGroup))
                 {
-                    mKnownCooldownGroups.Add(((ItemBase)itm.Value).CooldownGroup);
+                    mKnownCooldownGroups.Add(((ItemDescriptor)itm.Value).CooldownGroup);
                 }
             }
         }

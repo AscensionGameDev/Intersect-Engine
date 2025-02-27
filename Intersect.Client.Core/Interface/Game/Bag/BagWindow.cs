@@ -4,6 +4,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Bag;
@@ -57,7 +58,7 @@ public partial class BagWindow
 
     public void OpenContextMenu(int slot)
     {
-        var item = ItemBase.Get(Globals.BagSlots[slot].ItemId);
+        var item = ItemDescriptor.Get(Globals.BagSlots[slot].ItemId);
 
         // No point showing a menu for blank space.
         if (item == null)
@@ -116,7 +117,7 @@ public partial class BagWindow
         {
             if (Globals.BagSlots[i] != null && Globals.BagSlots[i].ItemId != Guid.Empty)
             {
-                var item = ItemBase.Get(Globals.BagSlots[i].ItemId);
+                var item = ItemDescriptor.Get(Globals.BagSlots[i].ItemId);
                 if (item != null)
                 {
                     Items[i].Pnl.IsHidden = false;

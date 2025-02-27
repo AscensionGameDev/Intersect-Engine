@@ -17,6 +17,7 @@ using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Animations;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.Serialization;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
@@ -913,7 +914,7 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
             for (var index = tileItems.Count - 1; index >= 0; index--)
             {
                 // Set up all information we need to draw this name.
-                var itemBase = ItemBase.Get(tileItems[index].ItemId);
+                var itemBase = ItemDescriptor.Get(tileItems[index].ItemId);
                 var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, itemBase.Icon);
 
                 if (itemTex == null)
@@ -976,8 +977,8 @@ public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IMap
                 for (var index = tileItems.Count - 1; index >= 0; index--)
                 {
                     // Set up all information we need to draw this name.
-                    var itemBase = ItemBase.Get(tileItems[index].ItemId);
-                    var name = tileItems[index].Base.Name;
+                    var itemBase = ItemDescriptor.Get(tileItems[index].ItemId);
+                    var name = tileItems[index].Descriptor.Name;
                     var quantity = tileItems[index].Quantity;
                     var rarity = itemBase.Rarity;
                     if (tileItems[index].Quantity > 1)

@@ -1,4 +1,4 @@
-﻿namespace Intersect.Enums;
+﻿namespace Intersect.Framework.Core.GameObjects.Items;
 
 /// <summary>
 /// Contains the definitions to be used on how to handle giving or taking away items to and from players.

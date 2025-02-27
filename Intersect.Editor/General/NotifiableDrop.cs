@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using Intersect.Editor.Localization;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 
@@ -22,7 +23,7 @@ public partial class NotifiableDrop: INotifyPropertyChanged
             return _itemId == default
             ? TextUtils.None
             : Strings.NpcEditor.dropdisplay.ToString(
-                    ItemBase.GetName(_itemId),
+                    ItemDescriptor.GetName(_itemId),
                     MinQuantity,
                     MaxQuantity,
                     _chance

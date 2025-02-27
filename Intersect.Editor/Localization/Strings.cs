@@ -2,6 +2,7 @@ using System.Reflection;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Conditions.ConditionMetadata;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
@@ -113,17 +114,17 @@ public static partial class Strings
                     break;
             }
 
-            return EventConditionDesc.hasitem.ToString(amount, ItemBase.GetName(condition.ItemId));
+            return EventConditionDesc.hasitem.ToString(amount, ItemDescriptor.GetName(condition.ItemId));
         }
         else
         {
-            return EventConditionDesc.hasitem.ToString(condition.Quantity, ItemBase.GetName(condition.ItemId));
+            return EventConditionDesc.hasitem.ToString(condition.Quantity, ItemDescriptor.GetName(condition.ItemId));
         }
     }
 
     public static string GetEventConditionalDesc(IsItemEquippedCondition condition)
     {
-        return EventConditionDesc.hasitemequipped.ToString(ItemBase.GetName(condition.ItemId));
+        return EventConditionDesc.hasitemequipped.ToString(ItemDescriptor.GetName(condition.ItemId));
     }
 
     public static string GetEventConditionalDesc(ClassIsCondition condition)

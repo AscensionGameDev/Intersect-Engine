@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using Intersect.Compression;
 using Intersect.Core;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
@@ -62,7 +63,7 @@ public partial class MapController : MapBase
         }
     }
 
-    public static void DespawnInstancesOf(ItemBase item)
+    public static void DespawnInstancesOf(ItemDescriptor item)
     {
         var allMapControllers = Lookup.Values.OfType<MapController>().ToArray();
         foreach (var map in allMapControllers)
@@ -410,16 +411,16 @@ public partial class MapController : MapBase
     }
 
     /// <summary>
-    /// Despawns items of a given <see cref="ItemBase"/> from all instances of this controller.
+    /// Despawns items of a given <see cref="ItemDescriptor"/> from all instances of this controller.
     /// </summary>
-    /// <param name="itemBase">The <see cref="ItemBase"/> to despawn</param>
-    public void DespawnItemAcrossInstances(ItemBase itemBase)
+    /// <param name="itemDescriptor">The <see cref="ItemDescriptor"/> to despawn</param>
+    public void DespawnItemAcrossInstances(ItemDescriptor itemDescriptor)
     {
         foreach(var mapInstance in mInstances.Values)
         {
             foreach (var item in mapInstance.AllMapItems.Values)
             {
-                if (ItemBase.Get(item.ItemId) == itemBase)
+                if (ItemDescriptor.Get(item.ItemId) == itemDescriptor)
                 {
                     mapInstance.RemoveItem(item);
                 }

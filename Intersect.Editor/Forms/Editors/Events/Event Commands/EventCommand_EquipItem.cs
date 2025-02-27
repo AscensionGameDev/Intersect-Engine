@@ -1,5 +1,6 @@
 using Intersect.Editor.Localization;
 using Intersect.Framework.Core.GameObjects.Events.Commands;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands;
@@ -20,8 +21,8 @@ public partial class EventCommandEquipItems : UserControl
 
         InitLocalization();
         cmbItem.Items.Clear();
-        cmbItem.Items.AddRange(ItemBase.Names);
-        cmbItem.SelectedIndex = ItemBase.ListIndex(mMyCommand.ItemId);
+        cmbItem.Items.AddRange(ItemDescriptor.Names);
+        cmbItem.SelectedIndex = ItemDescriptor.ListIndex(mMyCommand.ItemId);
         chkUnequip.Checked = mMyCommand.Unequip;
         optUnequipItem.Enabled = mMyCommand.Unequip;
         optUnequipItem.Checked = mMyCommand.Unequip && mMyCommand.IsItem;
@@ -43,7 +44,7 @@ public partial class EventCommandEquipItems : UserControl
 
     private void btnSave_Click(object sender, EventArgs e)
     {
-        mMyCommand.ItemId = optUnequipItem.Checked || !chkUnequip.Checked ? ItemBase.IdFromList(cmbItem.SelectedIndex) : Guid.Empty;
+        mMyCommand.ItemId = optUnequipItem.Checked || !chkUnequip.Checked ? ItemDescriptor.IdFromList(cmbItem.SelectedIndex) : Guid.Empty;
         mMyCommand.Slot = optUnequipSlot.Checked ? cmbItem.SelectedIndex : -1;
         mMyCommand.Unequip = chkUnequip.Checked;
         mMyCommand.IsItem = optUnequipItem.Checked;
@@ -86,7 +87,7 @@ public partial class EventCommandEquipItems : UserControl
     private void UpdateUnequipOptions()
     {
         cmbItem.Items.Clear();
-        cmbItem.Items.AddRange(optUnequipItem.Checked || !chkUnequip.Checked ? ItemBase.Names : Options.Instance.Equipment.Slots.ToArray());
+        cmbItem.Items.AddRange(optUnequipItem.Checked || !chkUnequip.Checked ? ItemDescriptor.Names : Options.Instance.Equipment.Slots.ToArray());
         cmbItem.SelectedIndex = cmbItem.Items.Count > 0 ? 0 : -1;
         lblItem.Text = optUnequipItem.Checked || !chkUnequip.Checked ? Strings.EventEquipItems.item : Strings.EventEquipItems.slot;
     }

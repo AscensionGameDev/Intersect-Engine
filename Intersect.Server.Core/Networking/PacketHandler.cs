@@ -21,6 +21,7 @@ using Intersect.Core;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Core;
 using Microsoft.Extensions.Logging;
@@ -1329,7 +1330,7 @@ internal sealed partial class PacketHandler
                     {
                         PacketSender.SendChatMsg(
                             player,
-                            Strings.Items.NotEnough.ToString(ItemBase.GetName(projectileBase.AmmoItemId)),
+                            Strings.Items.NotEnough.ToString(ItemDescriptor.GetName(projectileBase.AmmoItemId)),
                             ChatMessageType.Inventory,
                             CustomColors.Combat.NoAmmo
                         );
@@ -1641,7 +1642,7 @@ internal sealed partial class PacketHandler
 
         foreach (var item in classBase.Items)
         {
-            if (ItemBase.Get(item.Id) != null)
+            if (ItemDescriptor.Get(item.Id) != null)
             {
                 var tempItem = new Item(item.Id, item.Quantity);
                 newChar.TryGiveItem(tempItem, ItemHandling.Normal, false, -1, false);
@@ -1752,7 +1753,7 @@ internal sealed partial class PacketHandler
                     continue;
                 }
 
-                if (ItemBase.TryGet(mapItem.ItemId, out var item))
+                if (ItemDescriptor.TryGet(mapItem.ItemId, out var item))
                 {
                     PacketSender.SendActionMsg(player, item.Name, CustomColors.Items.Rarities[item.Rarity]);
                 }

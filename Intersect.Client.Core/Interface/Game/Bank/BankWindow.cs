@@ -4,6 +4,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Bank;
@@ -76,7 +77,7 @@ public partial class BankWindow
 
     public void OpenContextMenu(int slot)
     {
-        var item = ItemBase.Get(Globals.BankSlots[slot].ItemId);
+        var item = ItemDescriptor.Get(Globals.BankSlots[slot].ItemId);
 
         // No point showing a menu for blank space.
         if (item == null)
@@ -156,7 +157,7 @@ public partial class BankWindow
             SetItemPosition(i);
             if (globalBankItem != null && globalBankItem.ItemId != Guid.Empty)
             {
-                var item = ItemBase.Get(globalBankItem.ItemId);
+                var item = ItemDescriptor.Get(globalBankItem.ItemId);
                 if (item != null)
                 {
                     bankItem.Pnl.IsHidden = false;

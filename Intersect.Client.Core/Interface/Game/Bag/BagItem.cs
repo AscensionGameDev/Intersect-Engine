@@ -8,6 +8,7 @@ using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.Framework.Core;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 
@@ -130,10 +131,10 @@ public partial class BagItem
             mDescWindow = null;
         }
 
-        if (Globals.BagSlots[mMySlot]?.Base != null)
+        if (Globals.BagSlots[mMySlot]?.Descriptor != null)
         {
             mDescWindow = new ItemDescriptionWindow(
-                Globals.BagSlots[mMySlot].Base, Globals.BagSlots[mMySlot].Quantity, mBagWindow.X, mBagWindow.Y,
+                Globals.BagSlots[mMySlot].Descriptor, Globals.BagSlots[mMySlot].Quantity, mBagWindow.X, mBagWindow.Y,
                 Globals.BagSlots[mMySlot].ItemProperties
             );
         }
@@ -157,7 +158,7 @@ public partial class BagItem
         if (Globals.BagSlots[mMySlot].ItemId != mCurrentItemId)
         {
             mCurrentItemId = Globals.BagSlots[mMySlot].ItemId;
-            var item = ItemBase.Get(Globals.BagSlots[mMySlot].ItemId);
+            var item = ItemDescriptor.Get(Globals.BagSlots[mMySlot].ItemId);
             if (item != null)
             {
                 var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);

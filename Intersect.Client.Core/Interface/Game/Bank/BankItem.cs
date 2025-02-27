@@ -11,6 +11,7 @@ using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.Framework.Core;
+using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 
@@ -148,10 +149,10 @@ public partial class BankItem
             mDescWindow = null;
         }
 
-        if (Globals.BankSlots[mMySlot]?.Base != null)
+        if (Globals.BankSlots[mMySlot]?.Descriptor != null)
         {
             mDescWindow = new ItemDescriptionWindow(
-                Globals.BankSlots[mMySlot].Base, Globals.BankSlots[mMySlot].Quantity, mBankWindow.X, mBankWindow.Y,
+                Globals.BankSlots[mMySlot].Descriptor, Globals.BankSlots[mMySlot].Quantity, mBankWindow.X, mBankWindow.Y,
                 Globals.BankSlots[mMySlot].ItemProperties
             );
         }
@@ -175,7 +176,7 @@ public partial class BankItem
         if (Globals.BankSlots[mMySlot].ItemId != mCurrentItemId)
         {
             mCurrentItemId = Globals.BankSlots[mMySlot].ItemId;
-            var item = ItemBase.Get(Globals.BankSlots[mMySlot].ItemId);
+            var item = ItemDescriptor.Get(Globals.BankSlots[mMySlot].ItemId);
             if (item != null)
             {
                 var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);
