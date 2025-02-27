@@ -2452,27 +2452,30 @@ public partial class Entity : IEntity
                             switch (en.Value)
                             {
                                 case Resource resource:
-                                    var resourceBase = resource.Descriptor;
-                                    if (resourceBase != null)
+                                    var resourceDescriptor = resource.Descriptor;
+                                    if (resourceDescriptor == null)
                                     {
-                                        if (projectileTrigger)
+                                        break;
+                                    }
+
+                                    if (projectileTrigger)
+                                    {
+                                        bool isDead = resource.IsDead;
+                                        if ((ignoreAliveResources || isDead) && (ignoreDeadResources || !isDead))
                                         {
-                                            bool isDead = resource.IsDead;
-                                            if (!ignoreAliveResources && !isDead || !ignoreDeadResources && isDead)
-                                            {
-                                                blockedBy = en.Value;
-
-                                                return -6;
-                                            }
-
                                             return -1;
                                         }
 
-                                        if (resourceBase.WalkableAfter && resource.IsDead ||
-                                            resourceBase.WalkableBefore && !resource.IsDead)
-                                        {
-                                            continue;
-                                        }
+                                        blockedBy = en.Value;
+
+                                        return -6;
+
+                                    }
+
+                                    if (resourceDescriptor.WalkableAfter && resource.IsDead ||
+                                        resourceDescriptor.WalkableBefore && !resource.IsDead)
+                                    {
+                                        continue;
                                     }
 
                                     break;
