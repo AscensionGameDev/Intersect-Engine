@@ -10,6 +10,7 @@ using Intersect.Client.Interface.Game.Hotbar;
 using Intersect.Client.Interface.Game.Inventory;
 using Intersect.Client.Interface.Game.Shop;
 using Intersect.Client.Interface.Game.Trades;
+using Intersect.Client.Interface.Menu;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Networking;
 using Intersect.Core;
@@ -112,11 +113,11 @@ public partial class GameInterface : MutableInterface
     public Canvas GameCanvas { get; }
 
     private AnnouncementWindow? _announcementWindow;
-    private EscapeMenu? _escapeMenu;
+    private EscapeMenuWindow? _escapeMenu;
     private SimplifiedEscapeMenu? _simplifiedEscapeMenu;
     private TargetContextMenu? _targetContextMenu;
 
-    public EscapeMenu EscapeMenu => _escapeMenu ??= new EscapeMenu(GameCanvas, GetOrCreateSettingsWindow)
+    public EscapeMenuWindow EscapeMenu => _escapeMenu ??= new EscapeMenuWindow(GameCanvas, GetOrCreateSettingsWindow)
     {
         IsHidden = true,
     };

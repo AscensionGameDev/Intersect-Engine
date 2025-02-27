@@ -1,4 +1,5 @@
 ﻿using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 
 namespace Intersect.Client.Framework.Gwen.Skin;
@@ -66,12 +67,15 @@ public partial class Simple : Skin.Base
 
     #region UI elements
 
-    public override void DrawButton(Control.Base control, bool depressed, bool hovered, bool disabled, bool focused)
+    public override void DrawButton(Button button)
     {
-        var w = control.Width;
-        var h = control.Height;
-
-        DrawButton(w, h, depressed, hovered);
+        var componentState = button.ComponentState;
+        DrawButton(
+            button.Width,
+            button.Height,
+            componentState == ComponentState.Active,
+            componentState == ComponentState.Hovered
+        );
     }
 
     public override void DrawMenuItem(Control.Base control, bool submenuOpen, bool isChecked)
@@ -471,10 +475,15 @@ public partial class Simple : Skin.Base
         mRenderer.DrawShavedCornerRect(new Rectangle(rect.X, rect.Y, rect.Width, rect.Height));
     }
 
-    public override void DrawWindowCloseButton(CloseButton closeButton, bool depressed, bool hovered, bool disabled)
+    public override void DrawWindowCloseButton(CloseButton closeButton)
     {
-        // TODO
-        DrawButton(closeButton, depressed, hovered, disabled, closeButton.HasFocus);
+        var componentState = closeButton.ComponentState;
+        DrawButton(
+            closeButton.Width,
+            closeButton.Height,
+            componentState == ComponentState.Active,
+            componentState == ComponentState.Hovered
+        );
     }
 
     public override void DrawHighlight(Control.Base control)
@@ -501,8 +510,13 @@ public partial class Simple : Skin.Base
 
     public override void DrawScrollBarBar(ScrollBarBar scrollBarBar)
     {
-        //TODO: something specialized
-        DrawButton(scrollBarBar, scrollBarBar.IsActive, scrollBarBar.IsHovered, scrollBarBar.IsDisabledByTree, scrollBarBar.HasFocus);
+        var componentState = scrollBarBar.ComponentState;
+        DrawButton(
+            scrollBarBar.Width,
+            scrollBarBar.Height,
+            componentState == ComponentState.Active,
+            componentState == ComponentState.Hovered
+        );
     }
 
     public override void DrawTabTitleBar(Control.Base control)
@@ -672,7 +686,13 @@ public partial class Simple : Skin.Base
         bool disabled
     )
     {
-        DrawButton(control, depressed, false, false, control.HasFocus);
+        var componentState = control.ComponentState;
+        DrawButton(
+            control.Width,
+            control.Height,
+            componentState == ComponentState.Active,
+            componentState == ComponentState.Hovered
+        );
 
         mRenderer.DrawColor = Color.FromArgb(240, 0, 0, 0);
 
@@ -853,7 +873,13 @@ public partial class Simple : Skin.Base
 
     public override void DrawSliderButton(SliderBar sliderBar)
     {
-        DrawButton(sliderBar, sliderBar.IsActive, sliderBar.IsHovered, sliderBar.IsDisabled, sliderBar.HasFocus);
+        var componentState = sliderBar.ComponentState;
+        DrawButton(
+            sliderBar.Width,
+            sliderBar.Height,
+            componentState == ComponentState.Active,
+            componentState == ComponentState.Hovered
+        );
     }
 
     public override void DrawCategoryHolder(Control.Base control)

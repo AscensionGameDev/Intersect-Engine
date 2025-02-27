@@ -28,7 +28,7 @@ public partial class CloseButton : Button
     /// <param name="skin">Skin to use.</param>
     protected override void Render(Skin.Base skin)
     {
-        skin.DrawWindowCloseButton(this, IsActive && IsHovered, IsHovered && ShouldDrawHover, !mWindow.IsOnTop);
+        skin.DrawWindowCloseButton(this);
     }
 
 }

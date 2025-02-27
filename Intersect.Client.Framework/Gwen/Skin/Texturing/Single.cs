@@ -7,7 +7,7 @@ namespace Intersect.Client.Framework.Gwen.Skin.Texturing;
 /// <summary>
 ///     Single textured element.
 /// </summary>
-public partial struct Single
+public partial struct Single : IAtlasDrawable
 {
 
     private readonly IGameTexture mTexture;

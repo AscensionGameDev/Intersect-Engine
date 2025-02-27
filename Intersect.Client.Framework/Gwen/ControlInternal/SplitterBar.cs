@@ -27,7 +27,7 @@ public partial class SplitterBar : Dragger
     {
         if (ShouldDrawBackground)
         {
-            skin.DrawButton(this, true, false, IsDisabled, HasFocus);
+            skin.DrawSplitter(this);
         }
     }
 
