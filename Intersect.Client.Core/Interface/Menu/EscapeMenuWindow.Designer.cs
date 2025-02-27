@@ -20,7 +20,7 @@ public partial class EscapeMenuWindow
             _returnToGameButton,
         }.Where(button => button.IsVisibleInParent).ToArray();
 
-        const int defaultWidth = 97;
+        const int defaultWidth = 87;
         const int defaultHeight = 154;
 
         Size = new Point(
