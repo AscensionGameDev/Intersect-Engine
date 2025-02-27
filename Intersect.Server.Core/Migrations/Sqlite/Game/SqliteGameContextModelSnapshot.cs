@@ -600,7 +600,7 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.ToTable("Items_EquipmentProperties");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.Maps.MapList.MapList", b =>
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Maps.MapList.MapList", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("TEXT");
