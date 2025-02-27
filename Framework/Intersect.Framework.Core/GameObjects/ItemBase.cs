@@ -337,10 +337,10 @@ public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
     public string EventTriggersJson
     {
         get => JsonConvert.SerializeObject(EventTriggers);
-        set => EventTriggers = JsonConvert.DeserializeObject<Dictionary<ItemEventTriggers, Guid>>(value ?? string.Empty) ?? new Dictionary<ItemEventTriggers, Guid>();
+        set => EventTriggers = JsonConvert.DeserializeObject<Dictionary<ItemEventTrigger, Guid>>(value ?? string.Empty) ?? new Dictionary<ItemEventTrigger, Guid>();
     }
 
-    public EventBase? GetEventTrigger(ItemEventTriggers eventTrigger)
+    public EventBase? GetEventTrigger(ItemEventTrigger eventTrigger)
     {
         if (!EventTriggers.TryGetValue(eventTrigger, out var trigger))
         {
@@ -351,7 +351,7 @@ public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
     }
 
     [NotMapped, JsonIgnore]
-    public Dictionary<ItemEventTriggers, Guid> EventTriggers { get; set; } = new();
+    public Dictionary<ItemEventTrigger, Guid> EventTriggers { get; set; } = new();
 
     public bool TryGetRangeFor(Stat stat, [NotNullWhen(true)] out ItemRange? range)
     {

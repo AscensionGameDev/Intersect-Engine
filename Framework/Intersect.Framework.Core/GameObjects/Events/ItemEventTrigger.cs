@@ -1,6 +1,6 @@
 ﻿namespace Intersect.GameObjects.Events;
 
-public enum ItemEventTriggers
+public enum ItemEventTrigger
 {
     OnPickup = 0,
     OnDrop,

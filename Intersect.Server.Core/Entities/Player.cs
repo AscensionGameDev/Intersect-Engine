@@ -1643,7 +1643,7 @@ public partial class Player : Entity
     {
         if (isAutoAttack)
         {
-            EnqueueStartCommonEvent(LastAttackingWeapon?.GetEventTrigger(ItemEventTriggers.OnHit));
+            EnqueueStartCommonEvent(LastAttackingWeapon?.GetEventTrigger(ItemEventTrigger.OnHit));
             foreach (var trigger in CachedEquipmentOnHitTriggers)
             {
                 EnqueueStartCommonEvent(trigger);
@@ -2962,7 +2962,7 @@ public partial class Player : Entity
         if (success)
         {
             // Start common events related to inventory changes.
-            EnqueueStartCommonEvent(item.Descriptor?.GetEventTrigger(ItemEventTriggers.OnPickup));
+            EnqueueStartCommonEvent(item.Descriptor?.GetEventTrigger(ItemEventTrigger.OnPickup));
             StartCommonEventsWithTrigger(CommonEventTrigger.InventoryChanged);
             UnequipInvalidItems();
 
@@ -3310,7 +3310,7 @@ public partial class Player : Entity
             EquipmentProcessItemLoss(slotIndex);
         }
 
-        EnqueueStartCommonEvent(itemDescriptor.GetEventTrigger(ItemEventTriggers.OnDrop));
+        EnqueueStartCommonEvent(itemDescriptor.GetEventTrigger(ItemEventTrigger.OnDrop));
         UnequipInvalidItems();
         StartCommonEventsWithTrigger(CommonEventTrigger.InventoryChanged);
         UpdateGatherItemQuests(itemDescriptor.Id);
@@ -3411,7 +3411,7 @@ public partial class Player : Entity
                 return;
             }
 
-            var useEvent = itemBase.GetEventTrigger(ItemEventTriggers.OnUse);
+            var useEvent = itemBase.GetEventTrigger(ItemEventTrigger.OnUse);
 
             switch (itemBase.ItemType)
             {
@@ -5970,7 +5970,7 @@ public partial class Player : Entity
             }
         }
 
-        EnqueueStartCommonEvent(itemBase.GetEventTrigger(ItemEventTriggers.OnEquip));
+        EnqueueStartCommonEvent(itemBase.GetEventTrigger(ItemEventTrigger.OnEquip));
 
         ProcessEquipmentUpdated(true);
     }
@@ -6004,7 +6004,7 @@ public partial class Player : Entity
 
         if (TryGetEquippedItem(equipmentSlot, out var prevEquipped))
         {
-            EnqueueStartCommonEvent(prevEquipped.Descriptor?.GetEventTrigger(ItemEventTriggers.OnUnequip));
+            EnqueueStartCommonEvent(prevEquipped.Descriptor?.GetEventTrigger(ItemEventTrigger.OnUnequip));
         }
 
         Equipment[equipmentSlot] = -1;
@@ -6047,8 +6047,8 @@ public partial class Player : Entity
                 continue;
             }
 
-            var onHit = equippedItem.Descriptor.GetEventTrigger(ItemEventTriggers.OnHit);
-            var onDamaged = equippedItem.Descriptor.GetEventTrigger(ItemEventTriggers.OnDamageReceived);
+            var onHit = equippedItem.Descriptor.GetEventTrigger(ItemEventTrigger.OnHit);
+            var onDamaged = equippedItem.Descriptor.GetEventTrigger(ItemEventTrigger.OnDamageReceived);
 
             // We have special logic for handling weapons, so the player can't hot-swap their weapon and get a different on-hit event to proc
             // As a result, don't cache them, instead use property "LastAttackingWeapon"

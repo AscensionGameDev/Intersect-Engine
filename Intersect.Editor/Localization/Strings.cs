@@ -3792,26 +3792,26 @@ Tick timer saved in server config.json.";
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString EventGroupLabel = @"Event";
 
-        public static Dictionary<ItemEventTriggers, LocalizedString> EventTriggerNames = new Dictionary<ItemEventTriggers, LocalizedString>
+        public static Dictionary<ItemEventTrigger, LocalizedString> EventTriggerNames = new Dictionary<ItemEventTrigger, LocalizedString>
         {
-            {ItemEventTriggers.OnPickup, @"On Pickup"},
-            {ItemEventTriggers.OnDrop, @"On Drop"},
-            {ItemEventTriggers.OnUse, @"On Use"},
-            {ItemEventTriggers.OnEquip, @"On Equip"},
-            {ItemEventTriggers.OnUnequip, @"On Unequip"},
-            {ItemEventTriggers.OnHit, @"On Hit"},
-            {ItemEventTriggers.OnDamageReceived, @"On Damage Received"},
+            {ItemEventTrigger.OnPickup, @"On Pickup"},
+            {ItemEventTrigger.OnDrop, @"On Drop"},
+            {ItemEventTrigger.OnUse, @"On Use"},
+            {ItemEventTrigger.OnEquip, @"On Equip"},
+            {ItemEventTrigger.OnUnequip, @"On Unequip"},
+            {ItemEventTrigger.OnHit, @"On Hit"},
+            {ItemEventTrigger.OnDamageReceived, @"On Damage Received"},
         };
 
-        public static Dictionary<ItemEventTriggers, LocalizedString> EventTriggerSelections = new Dictionary<ItemEventTriggers, LocalizedString>
+        public static Dictionary<ItemEventTrigger, LocalizedString> EventTriggerSelections = new Dictionary<ItemEventTrigger, LocalizedString>
         {
-            {ItemEventTriggers.OnPickup, @"On Pickup: {00}"},
-            {ItemEventTriggers.OnDrop, @"On Drop: {00}"},
-            {ItemEventTriggers.OnUse, @"On Use: {00}"},
-            {ItemEventTriggers.OnEquip, @"On Equip: {00}"},
-            {ItemEventTriggers.OnUnequip, @"On Unequip: {00}"},
-            {ItemEventTriggers.OnHit, @"On Hit: {00}"},
-            {ItemEventTriggers.OnDamageReceived, @"On Damage Received: {00}"},
+            {ItemEventTrigger.OnPickup, @"On Pickup: {00}"},
+            {ItemEventTrigger.OnDrop, @"On Drop: {00}"},
+            {ItemEventTrigger.OnUse, @"On Use: {00}"},
+            {ItemEventTrigger.OnEquip, @"On Equip: {00}"},
+            {ItemEventTrigger.OnUnequip, @"On Unequip: {00}"},
+            {ItemEventTrigger.OnHit, @"On Hit: {00}"},
+            {ItemEventTrigger.OnDamageReceived, @"On Damage Received: {00}"},
         };
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

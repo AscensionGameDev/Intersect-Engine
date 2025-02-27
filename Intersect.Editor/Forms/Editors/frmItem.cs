@@ -556,9 +556,9 @@ public partial class FrmItem : EditorForm
         lstEventTriggers.SelectedIndex = -1;
 
         // Some event triggers aren't valid for some item types - setup filters here
-        var invalidNonEquipOperations = new List<ItemEventTriggers>() { ItemEventTriggers.OnEquip, ItemEventTriggers.OnUnequip, ItemEventTriggers.OnHit, ItemEventTriggers.OnDamageReceived };
+        var invalidNonEquipOperations = new List<ItemEventTrigger>() { ItemEventTrigger.OnEquip, ItemEventTrigger.OnUnequip, ItemEventTrigger.OnHit, ItemEventTrigger.OnDamageReceived };
 
-        var invalidEventOperations = new List<ItemEventTriggers>() { ItemEventTriggers.OnUse };
+        var invalidEventOperations = new List<ItemEventTrigger>() { ItemEventTrigger.OnUse };
         invalidEventOperations.AddRange(invalidNonEquipOperations);
 
         foreach (var triggerMapping in Strings.ItemEditor.EventTriggerSelections)
@@ -1425,9 +1425,9 @@ public partial class FrmItem : EditorForm
         get => Enum.IsDefined((Stat)lstStatRanges.SelectedIndex) ? (Stat)(lstStatRanges.SelectedIndex) : null;
     }
 
-    private ItemEventTriggers? SelectedEventTrigger
+    private ItemEventTrigger? SelectedEventTrigger
     {
-        get => Enum.IsDefined((ItemEventTriggers)lstEventTriggers.SelectedIndex) ? (ItemEventTriggers)(lstEventTriggers.SelectedIndex) : null;
+        get => Enum.IsDefined((ItemEventTrigger)lstEventTriggers.SelectedIndex) ? (ItemEventTrigger)(lstEventTriggers.SelectedIndex) : null;
     }
 
     private void lstBonusEffects_SelectedIndexChanged(object sender, EventArgs e)
