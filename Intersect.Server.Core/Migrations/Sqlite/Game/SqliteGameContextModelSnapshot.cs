@@ -844,7 +844,7 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.ToTable("Projectiles");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.QuestBase", b =>
+            modelBuilder.Entity("Intersect.GameObjects.QuestDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("TEXT");
