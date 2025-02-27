@@ -1,6 +1,6 @@
 ﻿using Intersect.Enums;
 
-namespace Intersect.GameObjects.Events;
+namespace Intersect.Framework.Core.GameObjects.Conditions.ConditionMetadata;
 
 public partial class AccessIsCondition : Condition
 {

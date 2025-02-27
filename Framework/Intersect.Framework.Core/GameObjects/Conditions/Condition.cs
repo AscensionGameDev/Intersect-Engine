@@ -1,4 +1,4 @@
-namespace Intersect.GameObjects.Events;
+namespace Intersect.Framework.Core.GameObjects.Conditions;
 
 public partial class Condition
 {

@@ -1,5 +1,7 @@
 ﻿using System.IO.Compression;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Conditions;
+using Intersect.Framework.Core.GameObjects.Conditions.ConditionMetadata;
 using Intersect.Framework.Core.Serialization;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;

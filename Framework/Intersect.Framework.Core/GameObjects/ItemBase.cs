@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using Intersect.Enums;
-using Intersect.GameObjects.Conditions;
+using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Ranges;
 using Intersect.Models;

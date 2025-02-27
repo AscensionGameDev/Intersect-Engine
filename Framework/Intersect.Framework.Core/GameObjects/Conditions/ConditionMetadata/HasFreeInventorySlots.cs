@@ -1,6 +1,6 @@
 ﻿using Intersect.Enums;
 
-namespace Intersect.GameObjects.Events;
+namespace Intersect.Framework.Core.GameObjects.Conditions.ConditionMetadata;
 
 /// <summary>
 /// Defines the condition class used when checking for a player's free inventory slots.

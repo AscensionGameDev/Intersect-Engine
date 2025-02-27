@@ -1,4 +1,6 @@
-﻿namespace Intersect.GameObjects.Events.Commands;
+﻿using Intersect.Framework.Core.GameObjects.Conditions;
+
+namespace Intersect.GameObjects.Events.Commands;
 
 public partial class ConditionalBranchCommand : EventCommand
 {

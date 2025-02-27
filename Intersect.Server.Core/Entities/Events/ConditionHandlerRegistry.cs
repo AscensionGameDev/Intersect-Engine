@@ -1,6 +1,7 @@
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using System.Reflection;
+using Intersect.Framework.Core.GameObjects.Conditions;
 
 namespace Intersect.Server.Entities.Events;
 

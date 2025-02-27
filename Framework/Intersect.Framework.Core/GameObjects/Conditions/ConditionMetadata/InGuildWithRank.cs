@@ -1,4 +1,4 @@
-﻿namespace Intersect.GameObjects.Events;
+﻿namespace Intersect.Framework.Core.GameObjects.Conditions.ConditionMetadata;
 
 /// <summary>
 /// Defines the condition class used when checking whether a player is in a guild with at least a specified rank

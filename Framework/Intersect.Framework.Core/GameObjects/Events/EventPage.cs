@@ -1,5 +1,5 @@
 ﻿using Intersect.Enums;
-using Intersect.GameObjects.Conditions;
+using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.GameObjects.Events.Commands;
 using Newtonsoft.Json;
 

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.Serialization;
-using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
 using Intersect.Models;

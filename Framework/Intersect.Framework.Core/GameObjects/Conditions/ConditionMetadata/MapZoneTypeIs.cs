@@ -1,6 +1,6 @@
 ﻿using Intersect.Enums;
 
-namespace Intersect.GameObjects.Events;
+namespace Intersect.Framework.Core.GameObjects.Conditions.ConditionMetadata;
 
 /// <summary>
 /// Defines the condition class used when checking whether a player is on a specific map zone type.

@@ -1,7 +1,7 @@
 ﻿using Intersect.Framework.Core.Serialization;
 using Newtonsoft.Json;
 
-namespace Intersect.GameObjects.Conditions;
+namespace Intersect.Framework.Core.GameObjects.Conditions;
 
 [JsonConverter(typeof(ConditionListsSerializer))]
 public partial class ConditionLists

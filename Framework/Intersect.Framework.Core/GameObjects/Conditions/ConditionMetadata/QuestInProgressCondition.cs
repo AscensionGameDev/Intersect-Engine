@@ -1,4 +1,6 @@
-﻿namespace Intersect.GameObjects.Events;
+﻿using Intersect.GameObjects;
+
+namespace Intersect.Framework.Core.GameObjects.Conditions.ConditionMetadata;
 
 public partial class QuestInProgressCondition : Condition
 {

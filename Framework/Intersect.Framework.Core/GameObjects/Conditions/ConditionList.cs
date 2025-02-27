@@ -1,8 +1,7 @@
 ﻿using Intersect.Framework.Core.Serialization;
-using Intersect.GameObjects.Events;
 using Newtonsoft.Json;
 
-namespace Intersect.GameObjects.Conditions;
+namespace Intersect.Framework.Core.GameObjects.Conditions;
 
 public partial class ConditionList
 {
