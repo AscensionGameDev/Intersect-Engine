@@ -338,6 +338,20 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.ToTable("Items");
                 });
 
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Maps.MapList.MapList", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("JsonData")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("JsonData");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MapFolders");
+                });
+
             modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.GuildVariableDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
@@ -598,20 +612,6 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.HasKey("DescriptorId");
 
                     b.ToTable("Items_EquipmentProperties");
-                });
-
-            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Maps.MapList.MapList", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("JsonData")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("JsonData");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MapFolders");
                 });
 
             modelBuilder.Entity("Intersect.GameObjects.NpcBase", b =>
