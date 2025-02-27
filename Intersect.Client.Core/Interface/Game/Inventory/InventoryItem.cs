@@ -494,16 +494,16 @@ public partial class InventoryItem : ImagePanel
         }
 
         var equipped = Globals.Me.MyEquipment.Any(s => s == _mySlot);
-        _equipImageBackground.IsVisibleInParent = equipped;
-        _equipLabel.IsVisibleInParent = equipped;
+        _equipImageBackground.IsVisibleInParent = !IsDragging && equipped;
+        _equipLabel.IsVisibleInParent = !IsDragging && equipped;
 
-        _quantityLabel.IsVisibleInParent = descriptor.IsStackable && inventorySlot.Quantity > 1;
+        _quantityLabel.IsVisibleInParent = !IsDragging && descriptor.IsStackable && inventorySlot.Quantity > 1;
         if (_quantityLabel.IsVisibleInParent)
         {
             _quantityLabel.Text = FormatQuantityAbbreviated(inventorySlot.Quantity);
         }
 
-        _cooldownLabel.IsVisibleInParent = Globals.Me.IsItemOnCooldown(_mySlot);
+        _cooldownLabel.IsVisibleInParent = !IsDragging && Globals.Me.IsItemOnCooldown(_mySlot);
         if (_cooldownLabel.IsVisibleInParent)
         {
             var itemCooldownRemaining = Globals.Me.GetItemRemainingCooldown(_mySlot);
@@ -581,10 +581,6 @@ public partial class InventoryItem : ImagePanel
                             {
                                 IsDragging = true;
                                 _iconImage.IsVisibleInParent = false;
-                                _equipLabel.IsVisibleInParent = false;
-                                _equipImageBackground.IsVisibleInParent = false;
-                                _quantityLabel.IsVisibleInParent = false;
-                                _cooldownLabel.IsVisibleInParent = false;
 
                                 _dragIcon = new Draggable(
                                     _iconImage.ToCanvas(new Point(0, 0)).X + _mouseX,
@@ -600,6 +596,7 @@ public partial class InventoryItem : ImagePanel
         {
             //Drug the item and now we stopped
             IsDragging = false;
+            _iconImage.IsVisibleInParent = true;
 
             var dragRect = new FloatRect(
                 _dragIcon.X - (Padding.Left + Padding.Right) / 2f,
