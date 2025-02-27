@@ -247,10 +247,10 @@ public abstract partial class Entity : IEntity
     public List<Guid> Animations { get; set; } = [];
 
     //DoT/HoT Spells
-    [NotMapped, JsonIgnore] public ConcurrentDictionary<Guid, DoT> DoT { get; } = [];
+    // TODO: Are DoTs from the same source entity not stackable? This should be configurable
+    [NotMapped, JsonIgnore] public ConcurrentDictionary<Guid, DamageOverTimeEffect> DamageOverTimeEffects { get; } = [];
 
-    [NotMapped, JsonIgnore]
-    public DoT[] CachedDots { get; set; } = new DoT[0];
+    [NotMapped, JsonIgnore] public DamageOverTimeEffect[] CachedDamageOverTimeEffects { get; set; } = [];
 
     [NotMapped, JsonIgnore]
     public EventMoveRoute MoveRoute { get; set; } = null;
@@ -350,7 +350,7 @@ public abstract partial class Entity : IEntity
                 }
 
                 //DoT/HoT timers
-                foreach (var dot in CachedDots)
+                foreach (var dot in CachedDamageOverTimeEffects)
                 {
                     dot.Tick();
                 }
@@ -1946,7 +1946,7 @@ public abstract partial class Entity : IEntity
         //Handle DoT/HoT spells]
         if (spellDescriptor.Combat.HoTDoT)
         {
-            foreach (var dot in target.CachedDots)
+            foreach (var dot in target.CachedDamageOverTimeEffects)
             {
                 if (dot.SpellDescriptor.Id == spellDescriptor.Id && dot.Attacker == this)
                 {
@@ -1954,7 +1954,11 @@ public abstract partial class Entity : IEntity
                 }
             }
 
-            new DoT(this, spellDescriptor.Id, target);
+            if (DamageOverTimeEffect.TryCreate(this, spellDescriptor, target, out var damageOverTimeEffect))
+            {
+                target.DamageOverTimeEffects.TryAdd(Id, damageOverTimeEffect);
+                target.CachedDamageOverTimeEffects = target.DamageOverTimeEffects.Values.ToArray();
+            }
         }
     }
 
@@ -3102,8 +3106,8 @@ public abstract partial class Entity : IEntity
             instance.ClearEntityTargetsOf(this);
         }
 
-        DoT?.Clear();
-        CachedDots = new DoT[0];
+        DamageOverTimeEffects?.Clear();
+        CachedDamageOverTimeEffects = new DamageOverTimeEffect[0];
         Statuses?.Clear();
         CachedStatuses = new Status[0];
         Stat?.ToList().ForEach(stat => stat?.Reset());
@@ -3182,8 +3186,8 @@ public abstract partial class Entity : IEntity
         }
 
         // Remove any damage over time effects
-        DoT.Clear();
-        CachedDots = [];
+        DamageOverTimeEffects.Clear();
+        CachedDamageOverTimeEffects = [];
         Statuses.Clear();
         CachedStatuses = [];
 

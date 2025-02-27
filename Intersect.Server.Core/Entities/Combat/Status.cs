@@ -132,7 +132,7 @@ public partial class Status
                 }
             }
 
-            foreach (var dot in en.CachedDots)
+            foreach (var dot in en.CachedDamageOverTimeEffects)
             {
                 if (spell.Combat.Friendly != dot.SpellDescriptor.Combat.Friendly)
                 {

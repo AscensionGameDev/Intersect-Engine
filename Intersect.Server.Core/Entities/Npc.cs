@@ -1299,8 +1299,8 @@ public partial class Npc : Entity
         {
             Statuses.Clear();
             CachedStatuses = Statuses.Values.ToArray();
-            DoT.Clear();
-            CachedDots = DoT.Values.ToArray();
+            DamageOverTimeEffects.Clear();
+            CachedDamageOverTimeEffects = DamageOverTimeEffects.Values.ToArray();
             for (var v = 0; v < Enum.GetValues<Vital>().Length; v++)
             {
                 RestoreVital((Vital)v);
