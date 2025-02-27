@@ -1,5 +1,6 @@
 using Intersect.GameObjects;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Animations;
 
 namespace Intersect.Client.Framework.Entities;
 

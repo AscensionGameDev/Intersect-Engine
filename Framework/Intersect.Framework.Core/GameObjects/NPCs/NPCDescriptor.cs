@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;

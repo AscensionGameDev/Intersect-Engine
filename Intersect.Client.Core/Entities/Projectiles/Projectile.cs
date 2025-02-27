@@ -2,6 +2,7 @@ using Intersect.Client.Framework.Entities;
 using Intersect.Client.General;
 using Intersect.Enums;
 using Intersect.Framework.Core;
+using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.Attributes;
 using Intersect.GameObjects;

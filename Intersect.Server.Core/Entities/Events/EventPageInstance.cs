@@ -1,5 +1,6 @@
 using Intersect.Enums;
 using Intersect.Framework.Core;
+using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;

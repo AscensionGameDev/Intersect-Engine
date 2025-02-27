@@ -2,6 +2,7 @@
 using Intersect.Collections;
 using Intersect.Compression;
 using Intersect.Config;
+using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.Serialization;
 using Intersect.GameObjects;

@@ -1,8 +1,7 @@
-﻿using Intersect.Framework.Core.GameObjects.Animations;
-using Intersect.Models;
+﻿using Intersect.Models;
 using Newtonsoft.Json;
 
-namespace Intersect.GameObjects;
+namespace Intersect.Framework.Core.GameObjects.Animations;
 
 public partial class AnimationDescriptor : DatabaseObject<AnimationDescriptor>, IFolderable
 {

@@ -1,5 +1,6 @@
 ﻿using Intersect.Editor.Content;
 using Intersect.Framework.Core;
+using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 using Microsoft.Xna.Framework.Graphics;

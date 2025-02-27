@@ -1,4 +1,5 @@
-﻿using Intersect.GameObjects;
+﻿using Intersect.Framework.Core.GameObjects.Animations;
+using Intersect.GameObjects;
 using Intersect.GameObjects.Annotations;
 using Intersect.Localization;
 
