@@ -141,6 +141,221 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.ToTable("Events");
                 });
 
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Items.ItemDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)")
+                        .UseCollation("ascii_general_ci");
+
+                    b.Property<Guid>("AnimationId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("Animation")
+                        .UseCollation("ascii_general_ci");
+
+                    b.Property<Guid>("AttackAnimationId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("AttackAnimation")
+                        .UseCollation("ascii_general_ci");
+
+                    b.Property<int>("AttackSpeedModifier")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AttackSpeedValue")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BlockAbsorption")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BlockAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BlockChance")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("CanBag")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("CanBank")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("CanDrop")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("Bound");
+
+                    b.Property<bool>("CanGuildBank")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("CanSell")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("CanTrade")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("CannotUseMessage")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Cooldown")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CooldownGroup")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("CritChance")
+                        .HasColumnType("int");
+
+                    b.Property<double>("CritMultiplier")
+                        .HasColumnType("double");
+
+                    b.Property<int>("Damage")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DamageType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.Property<long>("DespawnTime")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("DropChanceOnDeath")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EffectsJson")
+                        .HasColumnType("longtext")
+                        .HasColumnName("Effects");
+
+                    b.Property<Guid>("EquipmentAnimationId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("EquipmentAnimation")
+                        .UseCollation("ascii_general_ci");
+
+                    b.Property<int>("EquipmentSlot")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("Event")
+                        .UseCollation("ascii_general_ci");
+
+                    b.Property<string>("EventTriggersJson")
+                        .HasColumnType("longtext")
+                        .HasColumnName("EventTriggers");
+
+                    b.Property<string>("FemalePaperdoll")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Folder")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Icon")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("IgnoreCooldownReduction")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IgnoreGlobalCooldown")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("ItemType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("JsonColor")
+                        .HasColumnType("longtext")
+                        .HasColumnName("Color");
+
+                    b.Property<string>("JsonUsageRequirements")
+                        .HasColumnType("longtext")
+                        .HasColumnName("UsageRequirements");
+
+                    b.Property<string>("MalePaperdoll")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("MaxBankStack")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaxInventoryStack")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("PercentageStatsJson")
+                        .HasColumnType("longtext")
+                        .HasColumnName("PercentageStatsGiven");
+
+                    b.Property<string>("PercentageVitalsJson")
+                        .HasColumnType("longtext")
+                        .HasColumnName("PercentageVitalsGiven");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ProjectileId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("Projectile")
+                        .UseCollation("ascii_general_ci");
+
+                    b.Property<bool>("QuickCast")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("Rarity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Scaling")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ScalingStat")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("SingleUse")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("DestroySpell");
+
+                    b.Property<int>("SlotCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Speed")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("SpellId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("Spell")
+                        .UseCollation("ascii_general_ci");
+
+                    b.Property<bool>("Stackable")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("StatsJson")
+                        .HasColumnType("longtext")
+                        .HasColumnName("StatsGiven");
+
+                    b.Property<long>("TimeCreated")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Tool")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("TwoHanded")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("VitalsJson")
+                        .HasColumnType("longtext")
+                        .HasColumnName("VitalsGiven");
+
+                    b.Property<string>("VitalsRegenJson")
+                        .HasColumnType("longtext")
+                        .HasColumnName("VitalsRegen");
+
+                    b.Property<string>("WeaponSpriteOverride")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Items");
+                });
+
             modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Variables.GuildVariableDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
@@ -410,221 +625,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.HasKey("DescriptorId");
 
                     b.ToTable("Items_EquipmentProperties");
-                });
-
-            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Items.ItemDescriptor", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
-
-                    b.Property<Guid>("AnimationId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("Animation")
-                        .UseCollation("ascii_general_ci");
-
-                    b.Property<Guid>("AttackAnimationId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("AttackAnimation")
-                        .UseCollation("ascii_general_ci");
-
-                    b.Property<int>("AttackSpeedModifier")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AttackSpeedValue")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BlockAbsorption")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BlockAmount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BlockChance")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("CanBag")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("CanBank")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("CanDrop")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("Bound");
-
-                    b.Property<bool>("CanGuildBank")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("CanSell")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("CanTrade")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("CannotUseMessage")
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("Cooldown")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CooldownGroup")
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("CritChance")
-                        .HasColumnType("int");
-
-                    b.Property<double>("CritMultiplier")
-                        .HasColumnType("double");
-
-                    b.Property<int>("Damage")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DamageType")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("longtext");
-
-                    b.Property<long>("DespawnTime")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("DropChanceOnDeath")
-                        .HasColumnType("int");
-
-                    b.Property<string>("EffectsJson")
-                        .HasColumnType("longtext")
-                        .HasColumnName("Effects");
-
-                    b.Property<Guid>("EquipmentAnimationId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("EquipmentAnimation")
-                        .UseCollation("ascii_general_ci");
-
-                    b.Property<int>("EquipmentSlot")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("Event")
-                        .UseCollation("ascii_general_ci");
-
-                    b.Property<string>("EventTriggersJson")
-                        .HasColumnType("longtext")
-                        .HasColumnName("EventTriggers");
-
-                    b.Property<string>("FemalePaperdoll")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Folder")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Icon")
-                        .HasColumnType("longtext");
-
-                    b.Property<bool>("IgnoreCooldownReduction")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("IgnoreGlobalCooldown")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<int>("ItemType")
-                        .HasColumnType("int");
-
-                    b.Property<string>("JsonColor")
-                        .HasColumnType("longtext")
-                        .HasColumnName("Color");
-
-                    b.Property<string>("JsonUsageRequirements")
-                        .HasColumnType("longtext")
-                        .HasColumnName("UsageRequirements");
-
-                    b.Property<string>("MalePaperdoll")
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("MaxBankStack")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MaxInventoryStack")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext")
-                        .HasColumnOrder(0);
-
-                    b.Property<string>("PercentageStatsJson")
-                        .HasColumnType("longtext")
-                        .HasColumnName("PercentageStatsGiven");
-
-                    b.Property<string>("PercentageVitalsJson")
-                        .HasColumnType("longtext")
-                        .HasColumnName("PercentageVitalsGiven");
-
-                    b.Property<int>("Price")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("ProjectileId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("Projectile")
-                        .UseCollation("ascii_general_ci");
-
-                    b.Property<bool>("QuickCast")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<int>("Rarity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Scaling")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ScalingStat")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("SingleUse")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("DestroySpell");
-
-                    b.Property<int>("SlotCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Speed")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("SpellId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("Spell")
-                        .UseCollation("ascii_general_ci");
-
-                    b.Property<bool>("Stackable")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("StatsJson")
-                        .HasColumnType("longtext")
-                        .HasColumnName("StatsGiven");
-
-                    b.Property<long>("TimeCreated")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("Tool")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("TwoHanded")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("VitalsJson")
-                        .HasColumnType("longtext")
-                        .HasColumnName("VitalsGiven");
-
-                    b.Property<string>("VitalsRegenJson")
-                        .HasColumnType("longtext")
-                        .HasColumnName("VitalsRegen");
-
-                    b.Property<string>("WeaponSpriteOverride")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Items");
                 });
 
             modelBuilder.Entity("Intersect.GameObjects.Maps.MapList.MapList", b =>
@@ -1317,6 +1317,34 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.ToTable("Maps");
                 });
 
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Items.ItemDescriptor", b =>
+                {
+                    b.OwnsOne("Intersect.Framework.Core.GameObjects.Items.ConsumableData", "Consumable", b1 =>
+                        {
+                            b1.Property<Guid>("ItemDescriptorId")
+                                .HasColumnType("char(36)")
+                                .UseCollation("ascii_general_ci");
+
+                            b1.Property<int>("Percentage")
+                                .HasColumnType("int");
+
+                            b1.Property<byte>("Type")
+                                .HasColumnType("tinyint unsigned");
+
+                            b1.Property<long>("Value")
+                                .HasColumnType("bigint");
+
+                            b1.HasKey("ItemDescriptorId");
+
+                            b1.ToTable("Items");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ItemDescriptorId");
+                        });
+
+                    b.Navigation("Consumable");
+                });
+
             modelBuilder.Entity("Intersect.GameObjects.AnimationDescriptor", b =>
                 {
                     b.OwnsOne("Intersect.Framework.Core.GameObjects.Animations.AnimationLayer", "Lower", b1 =>
@@ -1525,34 +1553,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.Navigation("StatRange_MagicResist");
 
                     b.Navigation("StatRange_Speed");
-                });
-
-            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Items.ItemDescriptor", b =>
-                {
-                    b.OwnsOne("Intersect.Framework.Core.GameObjects.Items.ConsumableData", "Consumable", b1 =>
-                        {
-                            b1.Property<Guid>("ItemDescriptorId")
-                                .HasColumnType("char(36)")
-                                .UseCollation("ascii_general_ci");
-
-                            b1.Property<int>("Percentage")
-                                .HasColumnType("int");
-
-                            b1.Property<byte>("Type")
-                                .HasColumnType("tinyint unsigned");
-
-                            b1.Property<long>("Value")
-                                .HasColumnType("bigint");
-
-                            b1.HasKey("ItemDescriptorId");
-
-                            b1.ToTable("Items");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ItemDescriptorId");
-                        });
-
-                    b.Navigation("Consumable");
                 });
 
             modelBuilder.Entity("Intersect.GameObjects.ResourceBase", b =>
