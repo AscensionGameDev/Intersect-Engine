@@ -2,6 +2,7 @@ using Intersect.Admin.Actions;
 using Intersect.Client.Entities;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface;
@@ -97,6 +98,7 @@ public static partial class Input
                         if (inputBlockingComponent is InputBox { IsHidden: false } inputBox)
                         {
                             inputBox.SubmitInput();
+                            consumeKey = true;
                             canFocusChat = false;
                             break;
                         }
@@ -108,12 +110,18 @@ public static partial class Input
                         if (inputBlockingComponent is EventWindow { IsHidden: false } eventWindow && Globals.EventDialogs.Count > 0)
                         {
                             eventWindow.CloseEventResponse(EventResponseType.OneOption);
+                            consumeKey = true;
                             canFocusChat = false;
 
                             break;
                         }
                     }
                     catch { }
+                }
+
+                if (!consumeKey)
+                {
+
                 }
                 break;
         }
@@ -233,22 +241,6 @@ public static partial class Input
                     break;
 
                 case GameStates.Menu:
-                    var selectCharacterWindow = Interface.Interface.MenuUi.MainMenu.SelectCharacterWindow;
-
-                    switch (control)
-                    {
-                        case Control.Enter:
-                            if (selectCharacterWindow is { IsHidden: false, CharacterSelectionPreviews: { } previews })
-                            {
-                                var selectedPreviewIndex = selectCharacterWindow._selectedCharacterIndex;
-                                if (previews.Length > selectedPreviewIndex && previews[selectedPreviewIndex] != default)
-                                {
-                                    selectCharacterWindow.ButtonPlay_Clicked(null, null);
-                                    consumeKey = true;
-                                }
-                            }
-                            break;
-                    }
                     break;
 
                 case GameStates.InGame:

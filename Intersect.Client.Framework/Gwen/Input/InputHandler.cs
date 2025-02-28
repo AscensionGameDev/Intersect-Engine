@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Text;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Input;
@@ -206,8 +207,9 @@ public static partial class InputHandler
     /// </summary>
     /// <param name="canvas">Canvas.</param>
     /// <param name="chr">Input character.</param>
+    /// <param name="msgKey"></param>
     /// <returns>True if the key was handled.</returns>
-    public static bool DoSpecialKeys(Base canvas, char chr)
+    public static bool DoSpecialKeys(Base canvas, char chr, Keys msgKey)
     {
         if (null == KeyboardFocus)
         {
@@ -224,37 +226,37 @@ public static partial class InputHandler
             return false;
         }
 
-        if (!IsControlDown)
+        if (IsControlDown)
         {
+            if (chr == 'C' || chr == 'c')
+            {
+                KeyboardFocus.InputCopy(null);
+
+                return true;
+            }
+
+            if (chr == 'V' || chr == 'v')
+            {
+                KeyboardFocus.InputPaste(null);
+
+                return true;
+            }
+
+            if (chr == 'X' || chr == 'x')
+            {
+                KeyboardFocus.InputCut(null);
+
+                return true;
+            }
+
+            if (chr == 'A' || chr == 'a')
+            {
+                KeyboardFocus.InputSelectAll(null);
+
+                return true;
+            }
+
             return false;
-        }
-
-        if (chr == 'C' || chr == 'c')
-        {
-            KeyboardFocus.InputCopy(null);
-
-            return true;
-        }
-
-        if (chr == 'V' || chr == 'v')
-        {
-            KeyboardFocus.InputPaste(null);
-
-            return true;
-        }
-
-        if (chr == 'X' || chr == 'x')
-        {
-            KeyboardFocus.InputCut(null);
-
-            return true;
-        }
-
-        if (chr == 'A' || chr == 'a')
-        {
-            KeyboardFocus.InputSelectAll(null);
-
-            return true;
         }
 
         return false;

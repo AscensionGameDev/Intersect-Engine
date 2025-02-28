@@ -1,6 +1,7 @@
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
@@ -327,11 +328,26 @@ public partial class Button : Label
     /// </returns>
     protected override bool OnKeySpace(bool down)
     {
-        return base.OnKeySpace(down);
+        if (!down)
+        {
+            EmitVirtualClick(new MouseButtonState(MouseButton.Left, mousePosition: default, isPressed: false));
+            // OnMouseClicked(MouseButton.Left, default);
+            return true;
+        }
 
-        //if (down)
-        //    OnClicked(0, 0);
-        //return true;
+        return base.OnKeySpace(down);
+    }
+
+    protected override bool OnKeyReturn(bool down)
+    {
+        if (!down)
+        {
+            EmitVirtualClick(new MouseButtonState(MouseButton.Left, mousePosition: default, isPressed: false));
+            // OnMouseClicked(MouseButton.Left, default);
+            return true;
+        }
+
+        return base.OnKeyReturn(down);
     }
 
     /// <summary>

@@ -118,7 +118,7 @@ public partial class IntersectInput : InputBase
                 return mCanvas.Input_Character((char) msg.Unicode[0]);
             case InputEvent.KeyDown:
                 var ch = TranslateChar(msg.Key);
-                if ((int) msg.MouseBtn > -1 && InputHandler.DoSpecialKeys(mCanvas, ch))
+                if ((int) msg.MouseBtn < 0 && InputHandler.DoSpecialKeys(mCanvas, ch, msg.Key))
                 {
                     return false;
                 }

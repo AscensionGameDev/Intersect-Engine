@@ -3399,6 +3399,11 @@ public partial class Base : IDisposable
 
     public bool KeepFocusOnMouseExit { get; set; }
 
+    protected void EmitVirtualClick(MouseButtonState args)
+    {
+        Clicked?.Invoke(this, args);
+    }
+
     internal void InputMouseButtonState(MouseButton mouseButton, Point mousePosition, bool pressed, bool userAction = true)
     {
         var emitsEvents = !IsDisabledByTree;
