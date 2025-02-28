@@ -9,6 +9,8 @@ public abstract partial class GameShader
     {
     }
 
+    public abstract IGameTexture? Texture { get; set; }
+
     public abstract void SetFloat(string key, float val);
 
     public abstract void SetInt(string key, int val);

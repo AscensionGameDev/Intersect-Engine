@@ -1,13 +1,16 @@
 ﻿using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.MonoGame.Graphics;
 using Intersect.Core;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using BufferUsage = Intersect.Client.Framework.Graphics.BufferUsage;
+using PrimitiveType = Microsoft.Xna.Framework.Graphics.PrimitiveType;
 
 namespace Intersect.Client.Classes.MonoGame.Graphics;
 
-public partial class MonoTileBuffer(GraphicsDevice device) : GameTileBuffer
+internal partial class MonoTileBuffer(MonoRenderer renderer, GraphicsDevice device) : GameTileBuffer
 {
     public readonly Dictionary<AddedTile, int> _addedTileCount = [];
     private readonly List<short> _indices = [];
@@ -17,17 +20,25 @@ public partial class MonoTileBuffer(GraphicsDevice device) : GameTileBuffer
     private bool _dirty;
     private bool _disposed;
 
-    private IndexBuffer? _indexBuffer;
     private Texture2D? _platformTexture;
 
-    internal IGameTexture? _texture;
-    private VertexBuffer? _vertexBuffer;
     private int _vertexCount;
+
+    private IIndexBuffer? _indexBuffer;
+    private IVertexBuffer? _vertexBuffer;
+    private IGameTexture? _texture;
+
+    public override IIndexBuffer IndexBuffer => _indexBuffer ?? throw new InvalidOperationException();
+
+    public override IVertexBuffer VertexBuffer => _vertexBuffer ?? throw new InvalidOperationException();
+
+    public override IGameTexture? Texture => _texture;
 
     public override bool Supported => true;
 
     public override bool TryAddTile(IGameTexture texture, int x, int y, int srcX, int srcY, int srcW, int srcH)
     {
+
         if (_vertexBuffer != null)
         {
             ApplicationContext.Context.Value?.Logger.LogError("Unable to add tile to null vertex buffer");
@@ -116,6 +127,8 @@ public partial class MonoTileBuffer(GraphicsDevice device) : GameTileBuffer
         _indices.Add((short)(_vertexCount + 3));
 
         _vertexCount += 4;
+
+        _dirty = true;
 
         return true;
     }
@@ -219,31 +232,6 @@ public partial class MonoTileBuffer(GraphicsDevice device) : GameTileBuffer
         return true;
     }
 
-    public void Draw(BasicEffect basicEffect, FloatRect view)
-    {
-        if (_disposed || _vertexBuffer == default)
-        {
-            return;
-        }
-
-        device.SetVertexBuffer(_vertexBuffer);
-        device.Indices = _indexBuffer;
-
-        // If we use _platformTexture directly here it will get marked as "unused" and disposed
-        basicEffect.Texture = _texture?.GetTexture<Texture2D>();
-
-        foreach (var pass in basicEffect.CurrentTechnique.Passes)
-        {
-            pass.Apply();
-            device.DrawIndexedPrimitives(
-                PrimitiveType.TriangleList,
-                0,
-                0,
-                _vertexCount / 2
-            );
-        }
-    }
-
     public override bool SetData()
     {
         if (_vertexBuffer != null && !_dirty)
@@ -258,23 +246,12 @@ public partial class MonoTileBuffer(GraphicsDevice device) : GameTileBuffer
 
         TileBufferCount++;
 
-        _vertexBuffer ??= new VertexBuffer(
-            device,
-            typeof(VertexPositionTexture),
-            _vertices.Count,
-            BufferUsage.WriteOnly
-        );
-
+        _vertexBuffer ??= renderer.CreateVertexBuffer<VertexPositionTexture>(_vertices.Count, BufferUsage.WriteOnly);
         _vertexBuffer.SetData(_vertices.ToArray());
 
-        _indexBuffer ??= new IndexBuffer(
-            device,
-            typeof(short),
-            _indices.Count,
-            BufferUsage.WriteOnly
-        );
+        _indexBuffer ??= renderer.CreateIndexBuffer<short>(_indices.Count, BufferUsage.WriteOnly);
 
-        if (!_dirty)
+        if (_dirty)
         {
             _indexBuffer.SetData(_indices.ToArray());
         }

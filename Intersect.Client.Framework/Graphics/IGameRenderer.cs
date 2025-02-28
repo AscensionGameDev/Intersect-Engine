@@ -5,6 +5,22 @@ namespace Intersect.Client.Framework.Graphics;
 
 public interface IGameRenderer
 {
+    public event EventHandler<TextureEventArgs>? TextureAllocated;
+
+    public event EventHandler<TextureEventArgs>? TextureCreated;
+
+    public event EventHandler<TextureEventArgs>? TextureDisposed;
+
+    public event EventHandler<TextureEventArgs>? TextureFreed;
+
+    public event EventHandler<BufferEventArgs>? IndexBufferAllocated;
+
+    public event EventHandler<BufferEventArgs>? IndexBufferFreed;
+
+    public event EventHandler<BufferEventArgs>? VertexBufferAllocated;
+
+    public event EventHandler<BufferEventArgs>? VertexBufferFreed;
+
     /// <summary>
     ///     The current active resolution of the client.
     /// </summary>
@@ -56,6 +72,22 @@ public interface IGameRenderer
     /// <param name="color">The <see cref="Color" /> to clear the screen with.</param>
     void Clear(Color color);
 
+    ulong TextureCount { get; }
+
+    ulong RenderTargetAllocations { get; }
+
+    ulong TextureAllocations { get; }
+
+    ulong IndexBufferAllocations { get; }
+
+    ulong VertexBufferAllocations { get; }
+
+    GameShader? ActiveShader { get; set; }
+
+    IIndexBuffer? ActiveIndexBuffer { get; set; }
+
+    void SetActiveVertexBuffer(IVertexBuffer vertexBuffer, int bufferIndex = 0);
+
     /// <summary>
     ///     Create a new empty render texture in memory.
     /// </summary>
@@ -63,6 +95,10 @@ public interface IGameRenderer
     /// <param name="height">The height of the render texture.</param>
     /// <returns>Returns a new <see cref="IGameRenderTexture" /> with the configured height and width.</returns>
     IGameRenderTexture CreateRenderTexture(int width, int height);
+
+    IIndexBuffer CreateIndexBuffer<TIndex>(int count, BufferUsage usage = BufferUsage.None, bool dynamic = false) where TIndex : struct;
+
+    IVertexBuffer CreateVertexBuffer<TVertex>(int count, BufferUsage usage = BufferUsage.None, bool dynamic = false) where TVertex : struct;
 
     /// <summary>
     ///     Draw a texture to the client display.
@@ -188,4 +224,6 @@ public interface IGameRenderer
     /// </summary>
     /// <param name="pathToScreenshots">The directory (relative to the client directory) to store the screenshot in.</param>
     void RequestScreenshot(string? pathToScreenshots = default);
+
+    void DrawTileBuffer(GameTileBuffer buffer);
 }

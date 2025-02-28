@@ -2,6 +2,12 @@
 
 public abstract partial class GameTileBuffer
 {
+    public abstract IIndexBuffer IndexBuffer { get; }
+
+    public abstract IVertexBuffer VertexBuffer { get; }
+
+    public abstract IGameTexture? Texture { get; }
+
     public static int TileBufferCount { get; set; }
 
     public abstract bool Supported { get; }

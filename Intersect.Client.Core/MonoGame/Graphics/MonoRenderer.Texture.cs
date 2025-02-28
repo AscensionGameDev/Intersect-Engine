@@ -14,8 +14,6 @@ internal partial class MonoRenderer
     private readonly ConcurrentDictionary<Texture2D, IGameTexture> _allocatedTextures = [];
     private long _allocatedTexturesSize;
 
-    public override long UsedMemory => _allocatedTexturesSize;
-
     private bool AddAllocatedTexture(Texture2D platformTexture, IGameTexture gameTexture)
     {
         if (!_allocatedTextures.TryAdd(platformTexture, gameTexture))

@@ -11,6 +11,7 @@ using Intersect.Client.ThirdParty;
 using Intersect.Core;
 using Intersect.Extensions;
 using Intersect.Framework.Core;
+using Intersect.Framework.Reflection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -41,6 +42,35 @@ internal partial class MonoRenderer : GameRenderer
     {
         ScissorTestEnable = true,
     };
+
+    public override GameShader BasicShader => _basicShader;
+
+    protected override void OnSetActiveShader(GameShader? shader)
+    {
+    }
+
+    protected override void OnSetActiveIndexBuffer(IIndexBuffer? indexBuffer)
+    {
+        var graphicsDevice = GraphicsDevice;
+
+        if (indexBuffer is null)
+        {
+            graphicsDevice.Indices = null;
+            return;
+        }
+
+        if (indexBuffer is not IndexBuffer { PlatformBuffer: { } platformBuffer })
+        {
+            throw new ArgumentException(
+                $"Expected a {typeof(IndexBuffer).GetName(qualified: true)} but received a {indexBuffer.GetType().GetName(qualified: true)}",
+                nameof(indexBuffer)
+            );
+        }
+
+        graphicsDevice.Indices = platformBuffer;
+    }
+
+    public override long UsedMemory => _allocatedTexturesSize + _allocatedIndexBuffersSize + _allocatedVertexBuffersSize;
 
     private GraphicsDevice? _graphicsDevice;
 
@@ -399,20 +429,18 @@ internal partial class MonoRenderer : GameRenderer
         _graphicsDevice.Clear(ConvertColor(color));
     }
 
-    public override void DrawTileBuffer(GameTileBuffer buffer)
+    protected override void PreDrawTileBuffer(GameTileBuffer buffer)
     {
-        EndSpriteBatch();
-        if (_graphicsDevice == null || buffer == null)
-        {
-            return;
-        }
+        base.PreDrawTileBuffer(buffer);
 
-        _graphicsDevice.SetRenderTarget(_screenshotRenderTarget);
-        _graphicsDevice.BlendState = _normalState;
-        _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-        _graphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-        _graphicsDevice.DepthStencilState = DepthStencilState.None;
-        ((MonoTileBuffer)buffer).Draw(_basicEffect, _currentView);
+        EndSpriteBatch();
+
+        var graphicsDevice = GraphicsDevice;
+        graphicsDevice.SetRenderTarget(_screenshotRenderTarget);
+        graphicsDevice.BlendState = _normalState;
+        graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+        graphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+        graphicsDevice.DepthStencilState = DepthStencilState.None;
     }
 
     public override void Close()
@@ -640,7 +668,7 @@ internal partial class MonoRenderer : GameRenderer
 
     public override GameTileBuffer CreateTileBuffer()
     {
-        return new MonoTileBuffer(_graphicsDevice);
+        return new MonoTileBuffer(this, _graphicsDevice);
     }
 
     public override void DrawTexture(
@@ -958,11 +986,15 @@ internal partial class MonoRenderer : GameRenderer
 
     public void Init(GraphicsDevice graphicsDevice)
     {
+        ArgumentNullException.ThrowIfNull(graphicsDevice);
+
         _graphicsDevice = graphicsDevice;
-        _basicEffect = new BasicEffect(_graphicsDevice);
+        _basicEffect = new BasicEffect(graphicsDevice);
         _basicEffect.LightingEnabled = false;
         _basicEffect.TextureEnabled = true;
-        _spriteBatch = new SpriteBatch(_graphicsDevice);
+        _spriteBatch = new SpriteBatch(graphicsDevice);
+
+        _basicShader = new Shader(this, _basicEffect);
     }
 
     public override IFont LoadFont(string fontName, IDictionary<int, FileInfo> fontSourcesBySize)
@@ -973,7 +1005,7 @@ internal partial class MonoRenderer : GameRenderer
 
     public override GameShader LoadShader(string shaderName)
     {
-        return new MonoShader(shaderName, _contentManager);
+        return new Shader(this, shaderName, _contentManager);
     }
 
     public override System.Numerics.Vector2 MeasureText(string text, IFont? font, int size, float fontScale)
@@ -993,6 +1025,7 @@ internal partial class MonoRenderer : GameRenderer
     }
 
     private readonly Dictionary<SpriteFont, char> _defaultCharacterForSpriteFont = [];
+    private GameShader _basicShader;
 
     private string SanitizeText(string text, SpriteFont spriteFont)
     {
@@ -1039,18 +1072,20 @@ internal partial class MonoRenderer : GameRenderer
 
     public override bool BeginScreenshot()
     {
-        if (_graphicsDevice == null)
+        var graphicsDevice = GraphicsDevice;
+
+        if (_screenWidth < 1 || _screenHeight < 1)
         {
             return false;
         }
 
         _screenshotRenderTarget = new RenderTarget2D(
-            _graphicsDevice,
+            graphicsDevice,
             _screenWidth,
             _screenHeight,
             false,
-            _graphicsDevice.PresentationParameters.BackBufferFormat,
-            _graphicsDevice.PresentationParameters.DepthStencilFormat,
+            graphicsDevice.PresentationParameters.BackBufferFormat,
+            graphicsDevice.PresentationParameters.DepthStencilFormat,
             /* For whatever reason if this isn't zero everything breaks in .NET 7 on MacOS and most Windows devices */
             0, // mGraphicsDevice.PresentationParameters.MultiSampleCount,
             RenderTargetUsage.PreserveContents
@@ -1091,14 +1126,11 @@ internal partial class MonoRenderer : GameRenderer
 
         ProcessScreenshots(WriteScreenshotRenderTargetAsPngTo);
 
-        if (_graphicsDevice == null)
-        {
-            return;
-        }
+        var graphicsDevice = GraphicsDevice;
 
         var skippedFrame = _screenshotRenderTarget;
         _screenshotRenderTarget = null;
-        _graphicsDevice.SetRenderTarget(null);
+        graphicsDevice.SetRenderTarget(null);
 
         if (!Begin())
         {

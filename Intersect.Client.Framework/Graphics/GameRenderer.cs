@@ -50,10 +50,14 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
 
     private readonly HashSet<IGameTexture> _textures = [];
     private readonly List<IGameTexture> _texturesSortedByAccessTime = [];
+    private readonly HashSet<IIndexBuffer> _indexBuffers = [];
+    private readonly HashSet<IVertexBuffer> _vertexBuffers = [];
 
     private float _scale = 1.0f;
 
     private IGameTexture? _whitePixel;
+    private GameShader? _activeShader;
+    private IIndexBuffer? _activeIndexBuffer;
 
     public IGameTexture[] Textures
     {
@@ -77,6 +81,46 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
     public ulong RenderTargetAllocations { get; private set; }
 
     public ulong TextureAllocations { get; private set; }
+
+    public ulong IndexBufferAllocations { get; private set; }
+
+    public ulong VertexBufferAllocations { get; private set; }
+
+    public abstract GameShader BasicShader { get; }
+
+    public GameShader? ActiveShader
+    {
+        get => _activeShader;
+        set
+        {
+            if (value == _activeShader)
+            {
+                return;
+            }
+
+            _activeShader = value;
+            OnSetActiveShader(value);
+        }
+    }
+
+    protected abstract void OnSetActiveShader(GameShader? shader);
+
+    public IIndexBuffer? ActiveIndexBuffer
+    {
+        get => _activeIndexBuffer;
+        set
+        {
+            if (value == _activeIndexBuffer)
+            {
+                return;
+            }
+
+            _activeIndexBuffer = value;
+            OnSetActiveIndexBuffer(value);
+        }
+    }
+
+    protected abstract void OnSetActiveIndexBuffer(IIndexBuffer? indexBuffer);
 
     public bool HasOverrideResolution => OverrideResolution != Resolution.Empty;
 
@@ -157,7 +201,13 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
         );
     }
 
+    public abstract void SetActiveVertexBuffer(IVertexBuffer vertexBuffer, int bufferIndex = 0);
+
     public abstract IGameRenderTexture CreateRenderTexture(int width, int height);
+
+    public abstract IIndexBuffer CreateIndexBuffer<TIndex>(int count, BufferUsage usage = BufferUsage.None, bool dynamic = false) where TIndex : struct;
+
+    public abstract IVertexBuffer CreateVertexBuffer<TVertex>(int count, BufferUsage usage = BufferUsage.None, bool dynamic = false) where TVertex : struct;
 
     public abstract Vector2 MeasureText(string? text, IFont? font, int size, float fontScale);
 
@@ -241,6 +291,14 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
 
     public event EventHandler<TextureEventArgs>? TextureFreed;
 
+    public event EventHandler<BufferEventArgs>? IndexBufferAllocated;
+
+    public event EventHandler<BufferEventArgs>? IndexBufferFreed;
+
+    public event EventHandler<BufferEventArgs>? VertexBufferAllocated;
+
+    public event EventHandler<BufferEventArgs>? VertexBufferFreed;
+
     protected internal void MarkConstructed(IGameTexture texture, bool markAllocated = false)
     {
         _textures.Add(texture);
@@ -253,7 +311,7 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
         }
     }
 
-    protected internal virtual void MarkDisposed(IGameTexture texture)
+    protected internal void MarkDisposed(IGameTexture texture)
     {
         _textures.Remove(texture);
         TextureDisposed?.Invoke(this, new TextureEventArgs(texture));
@@ -316,6 +374,68 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
     internal void UpdateAccessTime(IGameTexture gameTexture)
     {
         _texturesSortedByAccessTime.Resort(gameTexture);
+    }
+
+    protected internal void MarkAllocated(IIndexBuffer buffer)
+    {
+        if (!_indexBuffers.Add(buffer))
+        {
+            throw new InvalidOperationException($"Index buffer {buffer.Id} was already allocated");
+        }
+
+        ++IndexBufferAllocations;
+
+        IndexBufferAllocated?.Invoke(this, new BufferEventArgs(buffer));
+    }
+
+    protected internal void MarkFreed(IIndexBuffer buffer)
+    {
+        if (!_indexBuffers.Remove(buffer))
+        {
+            throw new InvalidOperationException($"Index buffer {buffer.Id} was already freed");
+        }
+
+        if (IndexBufferAllocations > 0)
+        {
+            --IndexBufferAllocations;
+        }
+        else
+        {
+            ApplicationContext.CurrentContext.Logger.LogCritical("IndexBufferAllocations out of sync");
+        }
+
+        IndexBufferFreed?.Invoke(this, new BufferEventArgs(buffer));
+    }
+
+    protected internal void MarkAllocated(IVertexBuffer buffer)
+    {
+        if (!_vertexBuffers.Add(buffer))
+        {
+            throw new InvalidOperationException($"Vertex buffer {buffer.Id} was already allocated");
+        }
+
+        ++VertexBufferAllocations;
+
+        VertexBufferAllocated?.Invoke(this, new BufferEventArgs(buffer));
+    }
+
+    protected internal void MarkFreed(IVertexBuffer buffer)
+    {
+        if (!_vertexBuffers.Remove(buffer))
+        {
+            throw new InvalidOperationException($"Vertex buffer {buffer.Id} was already freed");
+        }
+
+        if (VertexBufferAllocations > 0)
+        {
+            --VertexBufferAllocations;
+        }
+        else
+        {
+            ApplicationContext.CurrentContext.Logger.LogCritical("VertexBufferAllocations out of sync");
+        }
+
+        VertexBufferFreed?.Invoke(this, new BufferEventArgs(buffer));
     }
 
     public abstract void Init();
@@ -509,7 +629,23 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
     //Buffers
     public abstract GameTileBuffer CreateTileBuffer();
 
-    public abstract void DrawTileBuffer(GameTileBuffer buffer);
+    public abstract void DrawBuffer(IVertexBuffer vertexBuffer, IIndexBuffer? indexBuffer = null);
+
+    protected virtual void PreDrawTileBuffer(GameTileBuffer buffer)
+    {
+    }
+
+    public void DrawTileBuffer(GameTileBuffer buffer)
+    {
+        ArgumentNullException.ThrowIfNull(buffer);
+
+        PreDrawTileBuffer(buffer);
+
+        ActiveShader = BasicShader;
+        ActiveShader.Texture = buffer.Texture;
+
+        DrawBuffer(buffer.VertexBuffer, buffer.IndexBuffer);
+    }
 
     public abstract void Close();
 
