@@ -346,6 +346,12 @@ public partial class SelectCharacterWindow : Window
 
         _selectedCharacterIndex = 0;
         UpdateDisplay();
+
+        if (_buttonPlay.IsVisibleInParent)
+        {
+            PostLayout.Enqueue(button => button.Focus(), _buttonPlay);
+        }
+
         base.Show();
         EnsureArrowsVisibility();
     }
