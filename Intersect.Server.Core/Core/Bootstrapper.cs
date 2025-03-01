@@ -44,7 +44,7 @@ internal static class Bootstrapper
 
     public static ILockingActionQueue MainThread { get; private set; }
 
-    public static void Start(Assembly entryAssembly, params string[] args)
+    public static void Start(Assembly entryAssembly, string[] args, params Action<ServerCommandLineOptions>[] configuredActions)
     {
         (string[] Args, Parser Parser, ServerCommandLineOptions CommandLineOptions) parsedArguments =
             ParseCommandLineArgs(args);
@@ -55,6 +55,11 @@ internal static class Bootstrapper
             {
                 Directory.SetCurrentDirectory(workingDirectory);
             }
+        }
+
+        foreach (var configureAction in configuredActions)
+        {
+            configureAction(parsedArguments.CommandLineOptions);
         }
 
         if (!PreContextSetup(args))

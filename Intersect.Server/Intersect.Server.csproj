@@ -44,6 +44,10 @@
     <Content Update="wwwroot\favicon.ico" CopyToOutputDirectory="PreserveNewest" />
     <Content Update="wwwroot\css\theme.css" CopyToOutputDirectory="PreserveNewest" />
     <Content Update="wwwroot\css\site.css" CopyToOutputDirectory="PreserveNewest" />
+
+    <EmbeddedResource Include="wwwroot\**" CopyToOutputDirectory="PreserveNewest">
+      <LogicalName>$([System.String]::new('%(RelativeDir)').Replace('\','/'))%(FileName)%(Extension)</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup Label="Resources (ResX)">

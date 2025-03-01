@@ -2,6 +2,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Resources;
+using System.Text.RegularExpressions;
+
 // ReSharper disable MemberCanBePrivate.Global
 
 namespace Intersect.Framework.Reflection;
@@ -150,6 +152,20 @@ public static partial class AssemblyExtensions
 
     public static IEnumerable<Type> FindValueSubtypesOf<TParentType>(this Assembly assembly) =>
         assembly.FindValueSubtypesOf(typeof(TParentType));
+
+    public static string[] FindMatchingResources(this Assembly assembly, string search)
+    {
+        return assembly.IsDynamic
+            ? []
+            : assembly.GetManifestResourceNames().Where(name => name.Contains(search)).ToArray();
+    }
+
+    public static string[] FindMatchingResources(this Assembly assembly, Regex regex)
+    {
+        return assembly.IsDynamic
+            ? []
+            : assembly.GetManifestResourceNames().Where(name => regex.IsMatch(name)).ToArray();
+    }
 
     public static bool TryFindResource(
         this Assembly assembly,

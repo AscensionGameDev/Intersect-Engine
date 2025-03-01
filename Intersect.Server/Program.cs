@@ -40,11 +40,49 @@ internal static class Program
 
             Client.EnqueueNetworkTask = action => ServerNetwork.Pool.QueueWorkItem(action);
 
-            Bootstrapper.Start(executingAssembly, args);
+            Bootstrapper.Start(executingAssembly, args, ExtractWwwroot);
         }
         catch (Exception exception)
         {
             ServerContext.DispatchUnhandledException(exception.InnerException ?? exception);
+        }
+    }
+
+    private static void ExtractWwwroot(ServerCommandLineOptions options)
+    {
+        var assembly = typeof(Program).Assembly;
+        var wwwrootResourceNames = assembly.FindMatchingResources("wwwroot");
+        var workingDirectory = options.WorkingDirectory;
+        if (string.IsNullOrWhiteSpace(workingDirectory))
+        {
+            workingDirectory = Environment.CurrentDirectory;
+        }
+
+        foreach (var wwwrootResourceName in wwwrootResourceNames)
+        {
+            var resolvedOutputPath = Path.Combine(workingDirectory, wwwrootResourceName);
+            FileInfo outputFileInfo = new(resolvedOutputPath);
+            if (outputFileInfo.Exists)
+            {
+                // Don't overwrite existing files
+                continue;
+            }
+
+            using var manifestResourceStream = assembly.GetManifestResourceStream(wwwrootResourceName);
+            if (manifestResourceStream == null)
+            {
+                // TODO: Pre-context logging
+                continue;
+            }
+
+            DirectoryInfo outputFileDirectoryInfo = outputFileInfo.Directory;
+            if (outputFileDirectoryInfo is { Exists: false })
+            {
+                outputFileDirectoryInfo.Create();
+            }
+
+            using var outputFileStream = outputFileInfo.OpenWrite();
+            manifestResourceStream.CopyTo(outputFileStream);
         }
     }
 
