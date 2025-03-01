@@ -1,17 +1,15 @@
 ﻿using Intersect.Network;
 using MessagePack;
 
-namespace Intersect.Examples.Plugin.Packets.Client
-{
-    [MessagePackObject]
-    public class ExamplePluginClientPacket : IntersectPacket
-    {
-        [Key(0)]
-        public string ExamplePluginMessage { get; set; }
+namespace Intersect.Examples.Plugin.Packets.Client;
 
-        public ExamplePluginClientPacket(string examplePluginMessage)
-        {
-            ExamplePluginMessage = examplePluginMessage;
-        }
+[MessagePackObject]
+public class ExamplePluginClientPacket : IntersectPacket
+{
+    public ExamplePluginClientPacket(string examplePluginMessage)
+    {
+        ExamplePluginMessage = examplePluginMessage;
     }
+
+    [Key(0)] public string ExamplePluginMessage { get; set; }
 }

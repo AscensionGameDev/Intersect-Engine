@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Intersect.Client.Framework\Intersect.Client.Framework.csproj" />
-    <ProjectReference Include="..\..\Intersect.Server.Framework\Intersect.Server.Framework.csproj" />
+    <ProjectReference Include="..\..\Intersect.Client.Framework\Intersect.Client.Framework.csproj"/>
+    <ProjectReference Include="..\..\Intersect.Server.Framework\Intersect.Server.Framework.csproj"/>
   </ItemGroup>
 
 </Project>

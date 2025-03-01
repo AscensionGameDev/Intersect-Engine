@@ -13,8 +13,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
-    <NetworkKeyOutputDir>$(IntersectRepoPath)\Intersect.Network\bin\$(Configuration)\keys</NetworkKeyOutputDir>
+    <NetworkKeyOutputDir>$(IntersectRepoPath)\Intersect.Network\bin\$(IntersectConfiguration)\keys</NetworkKeyOutputDir>
     <NetworkHandshakePublicKey>$(NetworkKeyOutputDir)\network.handshake.bkey.pub</NetworkHandshakePublicKey>
     <NetworkHandshakePrivateKey>$(NetworkKeyOutputDir)\network.handshake.bkey</NetworkHandshakePrivateKey>
   </PropertyGroup>

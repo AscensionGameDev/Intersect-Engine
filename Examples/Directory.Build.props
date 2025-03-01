@@ -1,6 +1,6 @@
 <Project>
 
-  <Import Project=".\Plugin.Common.props" />
+  <Import Project=".\Plugin.Common.props"/>
 
   <PropertyGroup Condition="'$(IntersectDeveloperTargetsImported)' == ''">
     <IntersectRepoPath>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..'))</IntersectRepoPath>

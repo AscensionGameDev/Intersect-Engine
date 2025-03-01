@@ -19,7 +19,8 @@ public partial class HailPacket : ConnectionPacket
 
     [IgnoreMember]
     private RSAParameters mRsaParameters;
-
+    
+    [IgnoreMember]
     private byte _symmetricVersion = (byte)(AesGcm.IsSupported ? 1 : 0);
 
     public HailPacket()

@@ -3,7 +3,7 @@ using MessagePack;
 namespace Intersect.Network.Packets.Unconnected.Client;
 
 [MessagePackObject]
-public class ServerStatusRequestPacket : UnconnectedRequestPacket
+public partial class ServerStatusRequestPacket : UnconnectedRequestPacket
 {
     [SerializationConstructor]
     public ServerStatusRequestPacket() { }
@@ -12,5 +12,5 @@ public class ServerStatusRequestPacket : UnconnectedRequestPacket
     {
     }
 
-    [Key(2)] public byte[] VersionData { get; set; } = SharedConstants.VersionData;
+    [Key(2)] public byte[] VersionData { get; set; }
 }

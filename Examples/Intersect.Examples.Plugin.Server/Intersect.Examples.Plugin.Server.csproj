@@ -15,11 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Intersect.Server.Framework\Intersect.Server.Framework.csproj" />
-    <ProjectReference Include="..\Intersect.Examples.Plugin\Intersect.Examples.Plugin.csproj" />
+    <ProjectReference Include="..\..\Intersect.Server.Framework\Intersect.Server.Framework.csproj"/>
+    <ProjectReference Include="..\Intersect.Examples.Plugin\Intersect.Examples.Plugin.csproj"/>
   </ItemGroup>
 
   <!-- This has to go here to pick up IntersectPluginType -->
-  <Import Project="..\Plugin.build.props" />
+  <Import Project="..\Plugin.build.props"/>
 
 </Project>

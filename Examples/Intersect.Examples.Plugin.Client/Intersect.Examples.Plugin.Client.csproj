@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Assets\join-our-discord.png" />
+    <None Remove="Assets\join-our-discord.png"/>
   </ItemGroup>
 
   <ItemGroup>
@@ -19,15 +19,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Assets\join-our-discord.png" />
+    <EmbeddedResource Include="Assets\join-our-discord.png"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Intersect.Client.Framework\Intersect.Client.Framework.csproj" />
-    <ProjectReference Include="..\Intersect.Examples.Plugin\Intersect.Examples.Plugin.csproj" />
+    <ProjectReference Include="..\..\Intersect.Client.Framework\Intersect.Client.Framework.csproj"/>
+    <ProjectReference Include="..\Intersect.Examples.Plugin\Intersect.Examples.Plugin.csproj"/>
   </ItemGroup>
 
   <!-- This has to go here to pick up IntersectPluginType -->
-  <Import Project="..\Plugin.build.props" />
+  <Import Project="..\Plugin.build.props"/>
 
 </Project>

@@ -234,7 +234,13 @@ internal partial class MonoSocket : GameSocket
                                     }
                                     else
                                     {
-                                        network.SendUnconnected(serverEndpoint, new ServerStatusRequestPacket());
+                                        network.SendUnconnected(
+                                            serverEndpoint,
+                                            new ServerStatusRequestPacket
+                                            {
+                                                VersionData = SharedConstants.VersionData,
+                                            }
+                                        );
                                     }
                                 }
                                 else if (!ClientNetwork.UnresolvableHostNames.Contains(_lastHost))

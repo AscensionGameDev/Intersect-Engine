@@ -8,12 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Intersect.Examples.Plugin.Client\Intersect.Examples.Plugin.Client.csproj" />
+    <ProjectReference Include="..\..\Intersect (Core)\Intersect.Core.csproj"/>
+    <ProjectReference Include="..\Intersect.Examples.Plugin.Client\Intersect.Examples.Plugin.Client.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NUnit" Version="3.12.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
+    <PackageReference Include="NUnit" Version="3.12.0"/>
+    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0"/>
   </ItemGroup>
 
 </Project>

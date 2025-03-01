@@ -3,13 +3,13 @@
   <PropertyGroup>
     <Description>Example Client Plugin in Visual Basic - Part of the Intersect 2D Game Creation Suite</Description>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-    <RootNamespace>Intersect.Examples.Plugin.ClientVB</RootNamespace>
+    <RootNamespace>Intersect.Examples.Plugin.Client</RootNamespace>
     <AssemblyName>Intersect.Examples.Plugin.ClientVB</AssemblyName>
     <IntersectPluginType>Client</IntersectPluginType>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Assets\join-our-discord.png" />
+    <None Remove="Assets\join-our-discord.png"/>
   </ItemGroup>
 
   <ItemGroup>
@@ -19,12 +19,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Assets\join-our-discord.png" />
+    <EmbeddedResource Include="Assets\join-our-discord.png"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Intersect.Client.Framework\Intersect.Client.Framework.csproj" />
-    <ProjectReference Include="..\Intersect.Examples.Plugin\Intersect.Examples.Plugin.csproj" />
+    <ProjectReference Include="..\..\Intersect.Client.Framework\Intersect.Client.Framework.csproj"/>
+    <ProjectReference Include="..\Intersect.Examples.Plugin\Intersect.Examples.Plugin.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +43,6 @@
   </ItemGroup>
 
   <!-- This has to go here to pick up IntersectPluginType -->
-  <Import Project="..\Plugin.build.props" />
+  <Import Project="..\Plugin.build.props"/>
 
 </Project>

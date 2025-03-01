@@ -16,10 +16,10 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(IntersectPluginType.ToLower())' != ''">
-    <IntersectExecutableDirectoryPath>$(IntersectRepoPath)\Intersect.$(IntersectPluginType)\bin\$(Configuration)\$(TargetFramework)</IntersectExecutableDirectoryPath>
+    <IntersectExecutableDirectoryPath>$(IntersectRepoPath)\Intersect.$(IntersectPluginType)\bin\$(IntersectConfiguration)\$(TargetFramework)</IntersectExecutableDirectoryPath>
     <IntersectExecutableSuffix Condition="'$(OS)' != 'Unix'">.exe</IntersectExecutableSuffix>
     <IntersectExecutablePath>$(IntersectExecutableDirectoryPath)\$(IntersectExecutableName)$(IntersectExecutableSuffix)</IntersectExecutablePath>
-    <IntersectPluginTargetPath>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)'))</IntersectPluginTargetPath>
+    <IntersectPluginTargetPath>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\bin\$(IntersectConfiguration)\$(TargetFramework)'))</IntersectPluginTargetPath>
     <IntersectPluginWorkingDirectory>$(INTERSECT_PLUGIN_WORKING_DIRECTORY)</IntersectPluginWorkingDirectory>
     <IntersectPluginWorkingDirectory Condition="'$(IntersectPluginWorkingDirectory)' == ''">$([System.IO.Path]::GetFullPath('$(IntersectPath)\assets\development\client'))</IntersectPluginWorkingDirectory>
   </PropertyGroup>

@@ -3,9 +3,11 @@
     <PropertyGroup>
         <Configurations>Debug;Release;DebugTests;DebugFull;DebugPlugins</Configurations>
         <Platforms>AnyCPU</Platforms>
+        <IntersectConfiguration>$(Configuration)</IntersectConfiguration>
+        <IntersectConfiguration Condition="$(IntersectConfiguration.StartsWith('Debug'))">Debug</IntersectConfiguration>
     </PropertyGroup>
 
-    <PropertyGroup Condition="$(Configuration.StartsWith('Debug'))">
+    <PropertyGroup Condition="'$(IntersectConfiguration)' == 'Debug'">
         <ImplicitConfigurationDefine>DEBUG</ImplicitConfigurationDefine>
         <ConfigurationName>Debug</ConfigurationName>
         <Configuration>Debug</Configuration>

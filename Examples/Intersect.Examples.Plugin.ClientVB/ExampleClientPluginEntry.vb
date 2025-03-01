@@ -5,127 +5,133 @@ Imports Intersect.Client.Framework.Graphics
 Imports Intersect.Client.Framework.Gwen
 Imports Intersect.Client.Framework.Gwen.Control
 Imports Intersect.Client.General
-Imports Intersect.Client.[Interface]
+Imports Intersect.Client.Interface
 Imports Intersect.Client.Plugins
 Imports Intersect.Client.Plugins.Interfaces
 Imports Intersect.Plugins
 Imports Intersect.Utilities
-Imports Microsoft
+Imports Microsoft.Extensions.Logging
 
-Namespace Intersect.Examples.ClientPlugin
-    ''' <summary>
-    ''' Demonstrates basic plugin functionality for the client.
-    ''' </summary>
-    <SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")>
-    Public Class ExampleClientPluginEntry
-        Inherits ClientPluginEntry
 
-        Private mDisposed As Boolean
-        Private mMutex As Mutex
+''' <summary>
+'''     Demonstrates basic plugin functionality for the client.
+''' </summary>
+<SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")>
+Public Class ExampleClientPluginEntry
+    Inherits ClientPluginEntry
 
-        Private mButtonTexture As GameTexture
+    Private _disposed As Boolean
+    Private _mutex As Mutex
 
-        ''' <inheritdoc />
-        Public Overrides Sub OnBootstrap(
-                                         <ValidatedNotNull> ByVal context As IPluginBootstrapContext)
-            MyBase.OnBootstrap(context)
+    Private _buttonTexture As IGameTexture
 
-            context.Logging.Application.Info(
-                $"{NameOf(ExampleClientPluginEntry)}.{NameOf(OnBootstrap)} writing to the application log!")
-            context.Logging.Plugin.Info(
-                $"{NameOf(ExampleClientPluginEntry)}.{NameOf(OnBootstrap)} writing to the plugin log!")
-            Dim createdNew As Boolean = Nothing
-            mMutex = New Mutex(True, "testplugin", createdNew)
+    ''' <inheritdoc />
+    Public Overrides Sub OnBootstrap(context As IPluginBootstrapContext)
+        MyBase.OnBootstrap(context)
 
-            If Not createdNew Then
-                Environment.[Exit](-1)
-            End If
+        context.Logging.Application.LogInformation(
+            $"{NameOf(ExampleClientPluginEntry)}.{NameOf(OnBootstrap)} writing to the application log!"
+        )
+        context.Logging.Plugin.LogInformation(
+            $"{NameOf(ExampleClientPluginEntry)}.{NameOf(OnBootstrap)} writing to the plugin log!"
+        )
 
-            Dim exampleCommandLineOptions = context.CommandLine.ParseArguments(Of ExampleCommandLineOptions)()
+        Dim createdNew As Boolean = Nothing
+        _mutex = New Mutex(True, "testplugin", createdNew)
 
-            If Not exampleCommandLineOptions.ExampleFlag Then
-                context.Logging.Plugin.Warn("Client wasn't started with the start-up flag!")
-            End If
+        If Not createdNew Then
+            Environment.[Exit](- 1)
+        End If
 
-            context.Logging.Plugin.Info(
-                $"{NameOf(exampleCommandLineOptions.ExampleVariable)} = {exampleCommandLineOptions.ExampleVariable}")
-        End Sub
+        Dim exampleCommandLineOptions = context.CommandLine.ParseArguments (Of ExampleCommandLineOptions)()
 
-        ''' <inheritdoc />
-        Public Overrides Sub OnStart(
-                                     <ValidatedNotNull> ByVal context As IClientPluginContext)
-            context.Logging.Application.Info(
-                $"{NameOf(ExampleClientPluginEntry)}.{NameOf(OnStart)} writing to the application log!")
-            context.Logging.Plugin.Info(
-                $"{NameOf(ExampleClientPluginEntry)}.{NameOf(OnStart)} writing to the plugin log!")
-            mButtonTexture = context.ContentManager.LoadEmbedded(Of GameTexture)(context, ContentTypes.[Interface],
-                                                                                  "join-our-discord.png")
-            AddHandler context.Lifecycle.LifecycleChangeState, AddressOf HandleLifecycleChangeState
-        End Sub
+        If Not exampleCommandLineOptions.ExampleFlag Then
+            context.Logging.Plugin.LogWarning("Client wasn't started with the start-up flag!")
+        End If
 
-        ''' <inheritdoc />
-        Public Overrides Sub OnStop(
-                                    <ValidatedNotNull> ByVal context As IClientPluginContext)
-            context.Logging.Application.Info(
-                $"{NameOf(ExampleClientPluginEntry)}.{NameOf(OnStop)} writing to the application log!")
-            context.Logging.Plugin.Info(
-                $"{NameOf(ExampleClientPluginEntry)}.{NameOf(OnStop)} writing to the plugin log!")
-        End Sub
+        context.Logging.Plugin.LogInformation(
+            $"{NameOf(exampleCommandLineOptions.ExampleVariable)} = {exampleCommandLineOptions.ExampleVariable}")
+    End Sub
 
-        Private Sub HandleLifecycleChangeState(
-                                               <ValidatedNotNull> ByVal context As IClientPluginContext,
-                                               <ValidatedNotNull> ByVal lifecycleChangeStateArgs As _
-                                                  LifecycleChangeStateArgs)
-            Debug.Assert(mButtonTexture IsNot Nothing, NameOf(mButtonTexture) & " != null")
-            Dim activeInterface = context.Lifecycle.[Interface]
+    ''' <inheritdoc />
+    Public Overrides Sub OnStart(context As IClientPluginContext)
+        context.Logging.Application.LogInformation(
+            $"{NameOf(ExampleClientPluginEntry)}.{NameOf(OnStart)} writing to the application log!")
+        context.Logging.Plugin.LogInformation(
+            $"{NameOf(ExampleClientPluginEntry)}.{NameOf(OnStart)} writing to the plugin log!")
+        _buttonTexture = context.ContentManager.LoadEmbedded (Of IGameTexture)(context, ContentType.[Interface],
+                                                                              "join-our-discord.png")
+        AddHandler context.Lifecycle.LifecycleChangeState, AddressOf HandleLifecycleChangeState
+    End Sub
 
-            If activeInterface Is Nothing Then
-                Return
-            End If
+    ''' <inheritdoc />
+    Public Overrides Sub OnStop(context As IClientPluginContext)
+        context.Logging.Application.LogInformation(
+            $"{NameOf(ExampleClientPluginEntry)}.{NameOf(OnStop)} writing to the application log!"
+        )
+        context.Logging.Plugin.LogInformation(
+            $"{NameOf(ExampleClientPluginEntry)}.{NameOf(OnStop)} writing to the plugin log!"
+        )
+    End Sub
 
-            Select Case lifecycleChangeStateArgs.State
-                Case GameStates.Menu
-                    AddButtonToMainMenu(context, activeInterface)
-            End Select
-        End Sub
+    Private Sub HandleLifecycleChangeState(
+                                           context As IClientPluginContext,
+                                           lifecycleChangeStateArgs As LifecycleChangeStateArgs
+    )
+        Debug.Assert(_buttonTexture IsNot Nothing, NameOf(_buttonTexture) & " != null")
+        Dim activeInterface = context.Lifecycle.[Interface]
 
-        Private Sub AddButtonToMainMenu(
-                                        <ValidatedNotNull> ByVal context As IClientPluginContext,
-                                        <ValidatedNotNull> ByVal activeInterface As IMutableInterface)
-            Dim button = activeInterface.Create(Of Button)("DiscordButton")
-            Debug.Assert(button IsNot Nothing, NameOf(button) & " != null")
-            Dim discordInviteUrl = context.GetTypedConfiguration(Of ExamplePluginConfiguration)()?.DiscordInviteUrl
-            AddHandler button.Clicked,
-                Sub(sender, args)
-                    If String.IsNullOrWhiteSpace(discordInviteUrl) Then
-                        context.Logging.Plugin.[Error](
-                            $"DiscordInviteUrl configuration property is null/empty/whitespace.")
-                        Return
-                    End If
+        If activeInterface Is Nothing Then
+            Return
+        End If
 
-                    BrowserUtils.Open(discordInviteUrl)
-                End Sub
+        Select Case lifecycleChangeStateArgs.State
+            Case GameStates.Menu
+                AddButtonToMainMenu(context, activeInterface)
+        End Select
+    End Sub
 
-            button.SetImage(mButtonTexture, mButtonTexture.Name, Button.ControlState.Normal)
-            button.SetSize(mButtonTexture.GetWidth(), mButtonTexture.GetHeight())
-            button.CurAlignments?.Add(Alignments.Bottom)
-            button.CurAlignments?.Add(Alignments.Right)
-            button.ProcessAlignments()
-        End Sub
+    Private Sub AddButtonToMainMenu(
+                                    context As IClientPluginContext,
+                                    activeInterface As IMutableInterface
+    )
+        Dim button = activeInterface.Create (Of Button)("DiscordButton")
+        Debug.Assert(button IsNot Nothing, NameOf(button) & " != null")
+        Dim discordInviteUrl = context.GetTypedConfiguration (Of ExamplePluginConfiguration)()?.DiscordInviteUrl
+        AddHandler button.Clicked,
+            Sub(sender, args)
+                If String.IsNullOrWhiteSpace(discordInviteUrl) Then
+                    context.Logging.Plugin.[LogError](
+                        $"DiscordInviteUrl configuration property is null/empty/whitespace.")
+                    Return
+                End If
 
-        Protected Overrides Sub Dispose(ByVal disposing As Boolean)
-            MyBase.Dispose(True)
+                BrowserUtils.Open(discordInviteUrl)
+            End Sub
 
-            If mDisposed Then
-                Return
-            End If
+        Dim buttonTexture = _buttonTexture
+        If buttonTexture Is Nothing Then
+            Return
+        End If
 
-            If disposing Then
-                mMutex.Dispose()
-            End If
+        button.SetStateTexture(buttonTexture, buttonTexture.Name, ComponentState.Normal)
+        button.SetSize(buttonTexture.Width, buttonTexture.Height)
+        button.CurAlignments?.Add(Alignments.Bottom)
+        button.CurAlignments?.Add(Alignments.Right)
+        button.ProcessAlignments()
+    End Sub
 
-            mDisposed = True
-        End Sub
-    End Class
-End Namespace
+    Protected Overrides Sub Dispose(disposing As Boolean)
+        MyBase.Dispose(True)
 
+        If _disposed Then
+            Return
+        End If
+
+        If disposing Then
+            _mutex?.Dispose()
+        End If
+
+        _disposed = True
+    End Sub
+End Class
