@@ -67,7 +67,7 @@ public static partial class ManifestLoader
         }
         catch (Exception exception)
         {
-            ApplicationContext.Context.Value?.Logger.LogError(exception, "Exception thrown by manifest loader delegate.");
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Exception thrown by manifest loader delegate");
         }
 
         return default;

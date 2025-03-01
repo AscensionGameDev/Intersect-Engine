@@ -10,6 +10,9 @@
 
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>Intersect.Tests</_Parameter1>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
       <_Parameter1>Intersect Client</_Parameter1>
     </AssemblyAttribute>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
@@ -38,7 +41,7 @@
       <PackageReference Include="NCalcSync" Version="3.8.0" />
       <PackageReference Include="Semver" Version="2.3.0" />
       <PackageReference Include="System.Collections.Immutable" Version="9.0.0" />
-      <PackageReference Include="System.IO.Abstractions" Version="21.1.7" />
+      <PackageReference Include="System.IO.Abstractions" Version="22.0.10" />
       <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
     </ItemGroup>
 

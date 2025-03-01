@@ -63,7 +63,7 @@ namespace Intersect.Plugins.Manifests.Types
         public void AreEqual_StringArray()
         {
             var authors = new Authors(new Author(AuthorName), new Author(AuthorStringNameEmail));
-            Assert.IsTrue(authors.Equals(new[] {AuthorName, AuthorStringNameEmail}));
+            Assert.IsTrue(authors.Equals([AuthorName, AuthorStringNameEmail]));
         }
 
         [Test]
@@ -114,9 +114,14 @@ namespace Intersect.Plugins.Manifests.Types
             object arrayAuthors = new Author[] {AuthorName, AuthorStringNameEmailHomepage};
             object arrayAuthorStrings = new[] {AuthorName, AuthorStringNameEmailHomepage};
 
-            Assert.AreEqual(0, authors.CompareTo(objectAuthors));
-            Assert.AreEqual(0, authors.CompareTo(arrayAuthors));
-            Assert.AreEqual(0, authors.CompareTo(arrayAuthorStrings));
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(authors.CompareTo(objectAuthors), Is.EqualTo(0));
+                    Assert.That(authors.CompareTo(arrayAuthors), Is.EqualTo(0));
+                    Assert.That(authors.CompareTo(arrayAuthorStrings), Is.EqualTo(0));
+                }
+            );
         }
 
         [Test]
@@ -218,11 +223,14 @@ namespace Intersect.Plugins.Manifests.Types
         {
             using (var enumerator = new Authors(AuthorName, AuthorStringNameEmail).GetEnumerator())
             {
-                Assert.IsTrue(enumerator.MoveNext());
-                Assert.AreEqual(AuthorName, enumerator.Current);
-                Assert.IsTrue(enumerator.MoveNext());
-                Assert.AreEqual(AuthorStringNameEmail, enumerator.Current);
-                Assert.IsFalse(enumerator.MoveNext());
+                Assert.Multiple(() =>
+                {
+                    Assert.That(enumerator.MoveNext());
+                    Assert.That(enumerator.Current, Is.EqualTo(AuthorName));
+                    Assert.That(enumerator.MoveNext());
+                    Assert.That(enumerator.Current, Is.EqualTo(AuthorStringNameEmail));
+                    Assert.That(enumerator.MoveNext(), Is.False);
+                });
             }
         }
 
@@ -230,8 +238,12 @@ namespace Intersect.Plugins.Manifests.Types
         public void GetHashCode_default()
         {
             var authors = new Authors(AuthorName, AuthorStringNameEmail);
-            var hashCode = ValueUtils.ComputeHashCode(new Author[] {AuthorName, AuthorStringNameEmail});
-            Assert.AreEqual(hashCode, authors.GetHashCode());
+            HashCode expectedHashCode = new();
+            foreach (var author in authors)
+            {
+                expectedHashCode.Add(author);
+            }
+            Assert.That(authors.GetHashCode(), Is.EqualTo(expectedHashCode.ToHashCode()));
         }
 
         [Test]
@@ -243,10 +255,20 @@ namespace Intersect.Plugins.Manifests.Types
 
             var comparer = mockComparer.Object;
             Debug.Assert(comparer != null, "comparer != null");
+            HashCode expectedHashCode = new();
+            Author[] authors =
+            [
+                AuthorName,
+                AuthorStringNameEmail,
+            ];
+            foreach (var author in authors)
+            {
+                expectedHashCode.Add(author);
+            }
 
-            Assert.AreEqual(
-                ValueUtils.ComputeHashCode(new Author[] {AuthorName, AuthorStringNameEmail}),
-                new Authors(AuthorName, AuthorStringNameEmail).GetHashCode(comparer)
+            Assert.That(
+                new Authors(AuthorName, AuthorStringNameEmail).GetHashCode(comparer),
+                Is.EqualTo(expectedHashCode.ToHashCode())
             );
         }
 

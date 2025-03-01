@@ -1,4 +1,5 @@
-﻿using System.IO.Abstractions.TestingHelpers;
+﻿using System.Globalization;
+using System.IO.Abstractions.TestingHelpers;
 using NUnit.Framework;
 
 namespace Intersect.IO.Files
@@ -9,6 +10,8 @@ namespace Intersect.IO.Files
         [OneTimeSetUp]
         public void BeforeAll()
         {
+            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+
             FileSystemHelper.FileSystem = new MockFileSystem(
                 new Dictionary<string, MockFileData>
                 {
@@ -52,139 +55,144 @@ namespace Intersect.IO.Files
         {
             #region Unix-style paths
 
-            yield return new[]
-            {
+            yield return
+            [
                 @"/directory/that/exists", @"/directory/that/does/not/exist",
-                Path.Combine("..", "does", "not", "exist")
-            };
+                Path.Combine("..", "does", "not", "exist"),
+            ];
 
-            yield return new[]
-            {
+            yield return
+            [
                 @"/directory/that/exists/", @"/directory/that/does/not/exist/",
-                Path.Combine("..", "does", "not", "exist") + Path.DirectorySeparatorChar
-            };
+                Path.Combine("..", "does", "not", "exist") + Path.DirectorySeparatorChar,
+            ];
 
-            yield return new[]
-            {
+            yield return
+            [
                 @"/directory/that/exists/", @"/directory/that/does/not/exist",
-                Path.Combine("..", "does", "not", "exist")
-            };
+                Path.Combine("..", "does", "not", "exist"),
+            ];
 
-            yield return new[]
-            {
+            yield return
+            [
                 @"/directory/that/exists/", @"/directory/that/does/not/exist/",
-                Path.Combine("..", "does", "not", "exist") + Path.DirectorySeparatorChar
-            };
+                Path.Combine("..", "does", "not", "exist") + Path.DirectorySeparatorChar,
+            ];
 
-            yield return new[]
-            {
+            yield return
+            [
                 @"/directory/that/exists/", @"/directory/that/exists/with/a/file/that/exists",
-                Path.Combine("with", "a", "file", "that", "exists")
-            };
+                Path.Combine("with", "a", "file", "that", "exists"),
+            ];
 
-            yield return new[]
-            {
+            yield return
+            [
                 @"/directory/that/exists/", @"/directory/that/exists/with/a/file/that/exists",
-                Path.Combine("with", "a", "file", "that", "exists")
-            };
+                Path.Combine("with", "a", "file", "that", "exists"),
+            ];
 
-            yield return new[]
-            {
+            yield return
+            [
                 @"/directory/that/exists/file.txt", @"/directory/that/exists/with/a/file/that/exists",
-                Path.Combine("with", "a", "file", "that", "exists")
-            };
+                Path.Combine("with", "a", "file", "that", "exists"),
+            ];
 
             #endregion Unix-style paths
 
             #region Unix-style Windows paths
 
-            yield return new[]
-            {
+            yield return
+            [
                 @"C:/directory/that/exists/", @"C:/directory/that/does/not/exist",
-                Path.Combine("..", "does", "not", "exist")
-            };
+                Path.Combine("..", "does", "not", "exist"),
+            ];
 
-            yield return new[]
-            {
+            yield return
+            [
                 @"C:/directory/that/exists/", @"C:/directory/that/does/not/exist/",
-                Path.Combine("..", "does", "not", "exist") + Path.DirectorySeparatorChar
-            };
+                Path.Combine("..", "does", "not", "exist") + Path.DirectorySeparatorChar,
+            ];
 
-            yield return new[]
-            {
+            yield return
+            [
                 @"C:/directory/that/exists/", @"C:/directory/that/does/not/exist",
-                Path.Combine("..", "does", "not", "exist")
-            };
+                Path.Combine("..", "does", "not", "exist"),
+            ];
 
-            yield return new[]
-            {
+            yield return
+            [
                 @"C:/directory/that/exists/", @"C:/directory/that/does/not/exist/",
-                Path.Combine("..", "does", "not", "exist") + Path.DirectorySeparatorChar
-            };
+                Path.Combine("..", "does", "not", "exist") + Path.DirectorySeparatorChar,
+            ];
 
-            yield return new[]
-            {
+            yield return
+            [
                 @"C:/directory/that/exists/", @"C:/directory/that/exists/with/a/file/that/exists",
-                Path.Combine("with", "a", "file", "that", "exists")
-            };
+                Path.Combine("with", "a", "file", "that", "exists"),
+            ];
 
-            yield return new[]
-            {
+            yield return
+            [
                 @"C:/directory/that/exists/", @"C:/directory/that/exists/with/a/file/that/exists",
-                Path.Combine("with", "a", "file", "that", "exists")
-            };
+                Path.Combine("with", "a", "file", "that", "exists"),
+            ];
 
-            yield return new[]
-            {
+            yield return
+            [
                 @"C:/directory/that/exists/file.txt", @"C:/directory/that/exists/with/a/file/that/exists",
-                Path.Combine("with", "a", "file", "that", "exists")
-            };
+                Path.Combine("with", "a", "file", "that", "exists"),
+            ];
 
             #endregion Unix-style Windows paths
 
             #region Windows paths
 
-            yield return new[]
+            var directorySeparators = new[]{Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar}.ToHashSet();
+            // ReSharper disable once InvertIf
+            if (directorySeparators.Contains('\\'))
             {
-                @"C:\directory\that\exists\", @"C:\directory\that\does\not\exist",
-                Path.Combine("..", "does", "not", "exist")
-            };
+                yield return
+                [
+                    @"C:\directory\that\exists\", @"C:\directory\that\does\not\exist",
+                    Path.Combine("..", "does", "not", "exist"),
+                ];
 
-            yield return new[]
-            {
-                @"C:\directory\that\exists\", @"C:\directory\that\does\not\exist\",
-                Path.Combine("..", "does", "not", "exist") + Path.DirectorySeparatorChar
-            };
+                yield return
+                [
+                    @"C:\directory\that\exists\", @"C:\directory\that\does\not\exist\",
+                    Path.Combine("..", "does", "not", "exist") + Path.DirectorySeparatorChar,
+                ];
 
-            yield return new[]
-            {
-                @"C:\directory\that\exists\", @"C:\directory\that\does\not\exist",
-                Path.Combine("..", "does", "not", "exist")
-            };
+                yield return
+                [
+                    @"C:\directory\that\exists\", @"C:\directory\that\does\not\exist",
+                    Path.Combine("..", "does", "not", "exist"),
+                ];
 
-            yield return new[]
-            {
-                @"C:\directory\that\exists\", @"C:\directory\that\does\not\exist\",
-                Path.Combine("..", "does", "not", "exist") + Path.DirectorySeparatorChar
-            };
+                yield return
+                [
+                    @"C:\directory\that\exists\", @"C:\directory\that\does\not\exist\",
+                    Path.Combine("..", "does", "not", "exist") + Path.DirectorySeparatorChar,
+                ];
 
-            yield return new[]
-            {
-                @"C:\directory\that\exists\", @"C:\directory\that\exists\with\a\file\that\exists",
-                Path.Combine("with", "a", "file", "that", "exists")
-            };
+                yield return
+                [
+                    @"C:\directory\that\exists\", @"C:\directory\that\exists\with\a\file\that\exists",
+                    Path.Combine("with", "a", "file", "that", "exists"),
+                ];
 
-            yield return new[]
-            {
-                @"C:\directory\that\exists\", @"C:\directory\that\exists\with\a\file\that\exists",
-                Path.Combine("with", "a", "file", "that", "exists")
-            };
+                yield return
+                [
+                    @"C:\directory\that\exists\", @"C:\directory\that\exists\with\a\file\that\exists",
+                    Path.Combine("with", "a", "file", "that", "exists"),
+                ];
 
-            yield return new[]
-            {
-                @"C:\directory\that\exists\file.txt", @"C:/directory/that/exists/with/a/file/that/exists",
-                Path.Combine("with", "a", "file", "that", "exists")
-            };
+                yield return
+                [
+                    @"C:\directory\that\exists\file.txt", @"C:/directory/that/exists/with/a/file/that/exists",
+                    Path.Combine("with", "a", "file", "that", "exists"),
+                ];
+            }
 
             #endregion Windows paths
         }
@@ -193,7 +201,7 @@ namespace Intersect.IO.Files
         public void TestRelativePath(string from, string to, string expected)
         {
             // ReSharper disable AssignNullToNotNullAttribute
-            Assert.AreEqual(expected, FileSystemHelper.RelativePath(from, to));
+            Assert.That(FileSystemHelper.RelativePath(from, to), Is.EqualTo(expected));
         }
     }
 }

@@ -10,34 +10,34 @@ namespace Intersect.Extensions
         {
             get
             {
-                yield return new object[] {new DateTime(0, DateTimeKind.Unspecified)};
-                yield return new object[] {new DateTime(0, DateTimeKind.Local)};
-                yield return new object[] {new DateTime(0, DateTimeKind.Utc)};
+                yield return [new DateTime(0, DateTimeKind.Unspecified)];
+                yield return [new DateTime(0, DateTimeKind.Local)];
+                yield return [new DateTime(0, DateTimeKind.Utc)];
 
-                yield return new object[] {new DateTime(DateTime.MinValue.Ticks, DateTimeKind.Unspecified)};
-                yield return new object[] {new DateTime(DateTime.MinValue.Ticks, DateTimeKind.Local)};
-                yield return new object[] {new DateTime(DateTime.MinValue.Ticks, DateTimeKind.Utc)};
+                yield return [new DateTime(DateTime.MinValue.Ticks, DateTimeKind.Unspecified)];
+                yield return [new DateTime(DateTime.MinValue.Ticks, DateTimeKind.Local)];
+                yield return [new DateTime(DateTime.MinValue.Ticks, DateTimeKind.Utc)];
 
-                yield return new object[] {new DateTime(DateTime.MaxValue.Ticks, DateTimeKind.Unspecified)};
-                yield return new object[] {new DateTime(DateTime.MaxValue.Ticks, DateTimeKind.Local)};
-                yield return new object[] {new DateTime(DateTime.MaxValue.Ticks, DateTimeKind.Utc)};
+                yield return [new DateTime(DateTime.MaxValue.Ticks, DateTimeKind.Unspecified)];
+                yield return [new DateTime(DateTime.MaxValue.Ticks, DateTimeKind.Local)];
+                yield return [new DateTime(DateTime.MaxValue.Ticks, DateTimeKind.Utc)];
 
                 var random = new Random();
 
-                yield return new object[]
-                {
+                yield return
+                [
                     new DateTime(
                         random.NextLong(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks), DateTimeKind.Unspecified
-                    )
-                };
+                    ),
+                ];
 
-                yield return new object[]
-                {
-                    new DateTime(random.NextLong(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks), DateTimeKind.Local)
-                };
+                yield return
+                [
+                    new DateTime(random.NextLong(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks), DateTimeKind.Local),
+                ];
 
-                yield return new object[]
-                    {new DateTime(random.NextLong(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks), DateTimeKind.Utc)};
+                yield return [new DateTime(random.NextLong(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks), DateTimeKind.Utc),
+                ];
             }
         }
 
