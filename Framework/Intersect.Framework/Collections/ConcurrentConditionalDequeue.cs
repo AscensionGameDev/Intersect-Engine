@@ -119,7 +119,7 @@ public class ConcurrentConditionalDequeue<TValue> : IReadOnlyCollection<TValue>,
     {
         lock (_dequeueLock)
         {
-            return _queue.TryPeek(out value);
+            return _queue.TryPeek(out value) && value != null;
         }
     }
 
