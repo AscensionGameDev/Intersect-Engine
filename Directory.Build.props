@@ -4,6 +4,8 @@
     <IntersectRepoPath Condition="'$(IntersectRepoPath)' == ''">$(MSBuildProjectDirectory)\..</IntersectRepoPath>
   </PropertyGroup>
 
+  <Import Project=".\Common.props" />
+
   <Import Project=".\Intersect.props" />
 
   <PropertyGroup>
@@ -15,15 +17,6 @@
     <NetworkKeyOutputDir>$(IntersectRepoPath)\Intersect.Network\bin\$(Configuration)\keys</NetworkKeyOutputDir>
     <NetworkHandshakePublicKey>$(NetworkKeyOutputDir)\network.handshake.bkey.pub</NetworkHandshakePublicKey>
     <NetworkHandshakePrivateKey>$(NetworkKeyOutputDir)\network.handshake.bkey</NetworkHandshakePrivateKey>
-  </PropertyGroup>
-
-  <PropertyGroup Label="Language Properties">
-    <Deterministic>true</Deterministic>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-    <RuntimeIdentifiers>linux-arm64;linux-x64;osx-arm64;osx-x64;win-x64</RuntimeIdentifiers>
-    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
 </Project>

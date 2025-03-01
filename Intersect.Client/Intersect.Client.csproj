@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
   </PropertyGroup>
 
-	<PropertyGroup Condition="$(Configuration) != 'Debug'">
+	<PropertyGroup Condition="$(Configuration.StartsWith('Debug')) != 'true'">
 		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
 		<PublishSingleFile>true</PublishSingleFile>
 		<SelfContained>true</SelfContained>

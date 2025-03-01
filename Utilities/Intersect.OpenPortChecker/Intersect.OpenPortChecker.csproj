@@ -6,7 +6,7 @@
     <TrimMode>partial</TrimMode>
   </PropertyGroup>
 
-  <PropertyGroup Condition="$(Configuration) != 'Debug'">
+  <PropertyGroup Condition="$(Configuration.StartsWith('Debug')) != 'true'">
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
   </PropertyGroup>

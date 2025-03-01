@@ -1,0 +1,29 @@
+<Project>
+
+    <PropertyGroup>
+        <Configurations>Debug;Release;DebugTests;DebugFull;DebugPlugins</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="$(Configuration.StartsWith('Debug'))">
+        <ImplicitConfigurationDefine>DEBUG</ImplicitConfigurationDefine>
+        <ConfigurationName>Debug</ConfigurationName>
+        <Configuration>Debug</Configuration>
+        <DefineConstants Condition="'$(DefineConstants)' != ''">$(DefineConstants);</DefineConstants>
+        <DefineConstants>$(DefineConstants)DEBUG</DefineConstants>
+        <DebugSymbols Condition=" '$(DebugSymbols)' == '' ">true</DebugSymbols>
+        <Optimize Condition=" '$(Optimize)' == '' ">false</Optimize>
+        <OutputPath>bin/Debug/</OutputPath>
+        <IntermediateOutputPath>obj/Debug/</IntermediateOutputPath>
+    </PropertyGroup>
+
+    <PropertyGroup Label="Language Properties">
+        <Deterministic>true</Deterministic>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <RuntimeIdentifiers>linux-arm64;linux-x64;osx-arm64;osx-x64;win-x64</RuntimeIdentifiers>
+        <TargetFramework>net8.0</TargetFramework>
+    </PropertyGroup>
+
+</Project>
