@@ -52,7 +52,7 @@ internal static partial class Bootstrapper
 
         PlatformStatistics.Logger = loggerFactory.CreateLogger<PlatformStatistics>();
 
-        var packetTypeRegistry = new PacketTypeRegistry(logger, typeof(SharedConstants).Assembly);
+        var packetTypeRegistry = new PacketTypeRegistry(logger, typeof(IntersectPacket).Assembly);
         if (!packetTypeRegistry.TryRegisterBuiltIn())
         {
             logger.LogError("Failed to register built-in packets.");
