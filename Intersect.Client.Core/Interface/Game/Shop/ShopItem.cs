@@ -20,7 +20,7 @@ public partial class ShopItem : SlotItem
     private readonly MenuItem _buyMenuItem;
     private ItemDescriptionWindow? _itemDescWindow;
 
-    public ShopItem(ShopWindow shopWindow, Base parent, int index) : base(parent, nameof(ShopItem), index, "ShopContextMenu")
+    public ShopItem(ShopWindow shopWindow, Base parent, int index, ContextMenu contextMenu) : base(parent, nameof(ShopItem), index, contextMenu)
     {
         _shopWindow = shopWindow;
         _mySlot = index;
@@ -106,7 +106,7 @@ public partial class ShopItem : SlotItem
 
         if (ClientConfiguration.Instance.EnableContextMenus)
         {
-            _openContextMenu(_mySlot);
+            OpenContextMenu();
         }
         else
         {
@@ -124,20 +124,20 @@ public partial class ShopItem : SlotItem
         Globals.Me?.TryBuyItem(_mySlot);
     }
 
-    private void _openContextMenu(int slot)
+    public override void OpenContextMenu()
     {
         if (Globals.GameShop is not { SellingItems.Count: > 0 } gameShop)
         {
             return;
         }
 
-        if (!ItemDescriptor.TryGet(gameShop.SellingItems[slot].ItemId, out var item))
+        if (!ItemDescriptor.TryGet(gameShop.SellingItems[SlotIndex].ItemId, out var item))
         {
             return;
         }
 
         _buyMenuItem.SetText(Strings.ShopContextMenu.Buy.ToString(item.Name));
-        _contextMenu.Open(Pos.None);
+        base.OpenContextMenu();
     }
 
     public void LoadItem()

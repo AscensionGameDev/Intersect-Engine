@@ -12,8 +12,8 @@ namespace Intersect.Client.Interface.Game.Inventory;
 public partial class InventoryWindow : Window
 {
     public List<SlotItem> Items { get; set; } = [];
-
     private readonly ScrollControl _slotContainer;
+    private ContextMenu _contextMenu = default!;
 
     public InventoryWindow(Canvas gameCanvas) : base(gameCanvas, Strings.Inventory.Title, false, nameof(InventoryWindow))
     {
@@ -37,6 +37,15 @@ public partial class InventoryWindow : Window
     protected override void EnsureInitialized()
     {
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+        _contextMenu = new ContextMenu(Interface.CurrentInterface.Root, "InventoryContextMenu")
+        {
+            IsVisibleInParent = false,
+            IconMarginDisabled = true,
+            ItemFont = GameContentManager.Current.GetFont(name: "sourcesansproblack"),
+            ItemFontSize = 10,
+        };
+
         InitItemContainer();
     }
 
@@ -75,7 +84,7 @@ public partial class InventoryWindow : Window
     {
         for (var slotIndex = 0; slotIndex < Options.Instance.Player.MaxInventory; slotIndex++)
         {
-            Items.Add(new InventoryItem(this, _slotContainer, slotIndex));
+            Items.Add(new InventoryItem(this, _slotContainer, slotIndex, _contextMenu));
         }
 
         PopulateSlotContainer.Populate(_slotContainer, Items);
@@ -88,6 +97,7 @@ public partial class InventoryWindow : Window
             return;
         }
 
+        _contextMenu?.Close();
         base.Hide();
     }
 

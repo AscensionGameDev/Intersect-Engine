@@ -46,7 +46,7 @@ public partial class InventoryItem : SlotItem
     private readonly MenuItem _actionItemMenuItem;
     private readonly MenuItem _dropItemMenuItem;
 
-    public InventoryItem(InventoryWindow inventoryWindow, Base parent, int index) : base(parent, nameof(InventoryItem), index, "InventoryContextMenu")
+    public InventoryItem(InventoryWindow inventoryWindow, Base parent, int index, ContextMenu contextMenu) : base(parent, nameof(InventoryItem), index, contextMenu)
     {
         _inventoryWindow = inventoryWindow;
         TextureFilename = "inventoryitem.png";
@@ -184,11 +184,7 @@ public partial class InventoryItem : SlotItem
             _dropItemMenuItem.SetText(Strings.ItemContextMenu.Drop.ToString(descriptor.Name));
         }
 
-        // Display our menu... If we have anything to display.
-        if (_contextMenu.Children.Count > 0)
-        {
-            _contextMenu.Open(Pos.None);
-        }
+        base.OpenContextMenu();
     }
 
     private void _useItemContextItem_Clicked(Base sender, MouseButtonState arguments)

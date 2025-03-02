@@ -1,4 +1,3 @@
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 
@@ -10,7 +9,7 @@ public partial class SlotItem : ImagePanel
     protected readonly ImagePanel _iconImage;
     protected readonly ContextMenu _contextMenu;
 
-    public SlotItem(Base parent, string name, int index, string contextMenuName) : base(parent, name)
+    public SlotItem(Base parent, string name, int index, ContextMenu contextMenu) : base(parent, name)
     {
         SlotIndex = index;
 
@@ -26,15 +25,7 @@ public partial class SlotItem : ImagePanel
             HoverSound = "octave-tap-resonant.wav",
         };
 
-        // Generate our context menu with basic options.
-        // TODO: Refactor so shop only has 1 context menu shared between all items
-        _contextMenu = new ContextMenu(Interface.CurrentInterface.Root, contextMenuName)
-        {
-            IsVisibleInParent = false,
-            IconMarginDisabled = true,
-            ItemFont = GameContentManager.Current.GetFont(name: "sourcesansproblack"),
-            ItemFontSize = 10,
-        };
+        _contextMenu = contextMenu;
     }
 
     public virtual void Update()
@@ -43,11 +34,10 @@ public partial class SlotItem : ImagePanel
 
     public virtual void OpenContextMenu()
     {
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        _contextMenu?.Close();
-        base.Dispose(disposing);
+        // Display our menu... If we have anything to display.
+        if (_contextMenu.Children.Count > 0)
+        {
+            _contextMenu.Open(Pos.None);
+        }
     }
 }

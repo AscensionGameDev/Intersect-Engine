@@ -12,6 +12,7 @@ public partial class ShopWindow : Window
 {
     private readonly List<SlotItem> _items = [];
     private readonly ScrollControl _slotContainer;
+    private readonly ContextMenu _contextMenu;
 
     public ShopWindow(Canvas gameCanvas) : base(gameCanvas, Globals.GameShop?.Name ?? Strings.Shop.Title, false, nameof(ShopWindow))
     {
@@ -32,6 +33,14 @@ public partial class ShopWindow : Window
             OverflowX = OverflowBehavior.Auto,
             OverflowY = OverflowBehavior.Scroll,
         };
+
+        _contextMenu = new ContextMenu(Interface.CurrentInterface.Root, "ShopContextMenu")
+        {
+            IsVisibleInParent = false,
+            IconMarginDisabled = true,
+            ItemFont = GameContentManager.Current.GetFont(name: "sourcesansproblack"),
+            ItemFontSize = 10,
+        };
     }
 
     protected override void EnsureInitialized()
@@ -49,9 +58,15 @@ public partial class ShopWindow : Window
 
         for (var slotIndex = 0; slotIndex < gameShop.SellingItems.Count; slotIndex++)
         {
-            _items.Add(new ShopItem(this, _slotContainer, slotIndex));
+            _items.Add(new ShopItem(this, _slotContainer, slotIndex, _contextMenu));
         }
 
         PopulateSlotContainer.Populate(_slotContainer, _items);
+    }
+
+    public override void Hide()
+    {
+        _contextMenu?.Close();
+        base.Hide();
     }
 }
