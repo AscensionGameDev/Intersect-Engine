@@ -53,7 +53,7 @@ public static partial class Program
 
         var packetTypeRegistry = new PacketTypeRegistry(
             loggerFactory.CreateLogger<PacketTypeRegistry>(),
-            typeof(SharedConstants).Assembly
+            typeof(IntersectPacket).Assembly
         );
         if (!packetTypeRegistry.TryRegisterBuiltIn())
         {

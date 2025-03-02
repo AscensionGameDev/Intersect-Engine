@@ -26,7 +26,11 @@ internal static partial class Network
 
     public static bool ConnectionDenied;
 
-    public static ClientNetwork EditorLidgrenNetwork { get; set; }
+    public static ClientNetwork? EditorLidgrenNetwork
+    {
+        get => _editorLidgrenNetwork;
+        set => _editorLidgrenNetwork = value;
+    }
 
     internal static PacketHandler PacketHandler { get; private set; }
 
@@ -90,6 +94,7 @@ internal static partial class Network
     private static string? _lastHost;
     private static int? _lastPort;
     private static IPEndPoint? _lastEndpoint;
+    private static ClientNetwork? _editorLidgrenNetwork;
 
     private static bool TryResolveEndPoint([NotNullWhen(true)] out IPEndPoint? endPoint)
     {
@@ -149,7 +154,13 @@ internal static partial class Network
                     }
                     else
                     {
-                        network.SendUnconnected(serverEndpoint, new ServerStatusRequestPacket());
+                        network.SendUnconnected(
+                            serverEndpoint,
+                            new ServerStatusRequestPacket
+                            {
+                                VersionData = SharedConstants.VersionData,
+                            }
+                        );
                         Globals.NextServerStatusPing = now + ServerStatusPingInterval;
                     }
                 }
