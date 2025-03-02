@@ -34,7 +34,7 @@ public partial class ShopWindow : Window
             OverflowY = OverflowBehavior.Scroll,
         };
 
-        _contextMenu = new ContextMenu(Interface.CurrentInterface.Root, "ShopContextMenu")
+        _contextMenu = new ContextMenu(gameCanvas, "ShopContextMenu")
         {
             IsVisibleInParent = false,
             IconMarginDisabled = true,

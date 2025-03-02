@@ -13,7 +13,7 @@ public partial class InventoryWindow : Window
 {
     public List<SlotItem> Items { get; set; } = [];
     private readonly ScrollControl _slotContainer;
-    private ContextMenu _contextMenu = default!;
+    private readonly ContextMenu _contextMenu;
 
     public InventoryWindow(Canvas gameCanvas) : base(gameCanvas, Strings.Inventory.Title, false, nameof(InventoryWindow))
     {
@@ -32,20 +32,19 @@ public partial class InventoryWindow : Window
             OverflowX = OverflowBehavior.Auto,
             OverflowY = OverflowBehavior.Scroll,
         };
-    }
 
-    protected override void EnsureInitialized()
-    {
-        LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-
-        _contextMenu = new ContextMenu(Interface.CurrentInterface.Root, "InventoryContextMenu")
+        _contextMenu = new ContextMenu(gameCanvas, "InventoryContextMenu")
         {
             IsVisibleInParent = false,
             IconMarginDisabled = true,
             ItemFont = GameContentManager.Current.GetFont(name: "sourcesansproblack"),
             ItemFontSize = 10,
         };
+    }
 
+    protected override void EnsureInitialized()
+    {
+        LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
         InitItemContainer();
     }
 
