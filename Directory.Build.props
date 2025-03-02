@@ -4,9 +4,11 @@
     <IntersectRepoPath Condition="'$(IntersectRepoPath)' == ''">$(MSBuildProjectDirectory)\..</IntersectRepoPath>
   </PropertyGroup>
 
-  <Import Project=".\Common.props" />
+  <Import Project=".\Common.props"/>
 
-  <Import Project=".\Intersect.props" />
+  <Import Condition="Exists('$(IntersectRepoPath)/CustomCommon.props')" Project=".\CustomCommon.props" />
+
+  <Import Project=".\Intersect.props"/>
 
   <PropertyGroup>
     <IntersectProjectName>$(MSBuildProjectName.Substring(10))</IntersectProjectName>

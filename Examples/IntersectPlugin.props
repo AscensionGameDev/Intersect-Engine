@@ -1,0 +1,165 @@
+<Project>
+
+  <PropertyGroup>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <_IntersectInRepo Condition="'$(_IntersectInRepo)' == ''">false</_IntersectInRepo>
+    <IntersectRepoPath Condition="'$(IntersectRepoPath)' == ''">$(INTERSECT_REPO_PATH)</IntersectRepoPath>
+    <IntersectPath Condition="'$(IntersectPath)' == ''">$(INTERSECT_PATH)</IntersectPath>
+    <IntersectPath Condition="'$(IntersectPath)' == ''">$(IntersectRepoPath)</IntersectPath>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Language Properties" Condition="!$(_IntersectInRepo)">
+    <Deterministic>true</Deterministic>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <RuntimeIdentifiers>linux-arm64;linux-x64;osx-arm64;osx-x64;win-x64</RuntimeIdentifiers>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Plugin Types">
+    <IntersectPluginLibrary Condition="'$(IntersectPluginLibrary)' == ''">false</IntersectPluginLibrary>
+    <IntersectClientPlugin Condition="'$(IntersectClientPlugin)' == ''">false</IntersectClientPlugin>
+    <IntersectEditorPlugin Condition="'$(IntersectEditorPlugin)' == ''">false</IntersectEditorPlugin>
+    <IntersectServerPlugin Condition="'$(IntersectServerPlugin)' == ''">false</IntersectServerPlugin>
+    <_IntersectMultitargetPlugin>false</_IntersectMultitargetPlugin>
+    <_IntersectMultitargetPlugin Condition="$(IntersectClientPlugin) and $(IntersectServerPlugin)">true</_IntersectMultitargetPlugin>
+  </PropertyGroup>
+
+  <Target Name="IntersectCheckPluginTypes" BeforeTargets="PrepareForBuild">
+    <Message Importance="High" Text="$(ProjectName) is being built internally and will use project references" Condition="$(_IntersectInRepo)"/>
+    <Message Importance="High" Text="$(ProjectName) is being built externally and requires packages references" Condition="!$(_IntersectInRepo)"/>
+    <Message Importance="High" Text="$(ProjectName) is a plugin library" Condition="$(IntersectPluginLibrary)"/>
+    <Message Importance="High" Text="$(ProjectName) is a client plugin" Condition="$(IntersectClientPlugin)"/>
+    <Message Importance="High" Text="$(ProjectName) is not a client plugin" Condition="!$(IntersectClientPlugin)"/>
+    <!--    <Message Importance="High" Text="$(ProjectName) is an editor plugin" Condition="$(IntersectEditorPlugin)"/>-->
+    <!--    <Message Importance="High" Text="$(ProjectName) is not an editor plugin" Condition="!$(IntersectEditorPlugin)"/>-->
+    <Message Importance="High" Text="$(ProjectName) is a server plugin" Condition="$(IntersectServerPlugin)"/>
+    <Message Importance="High" Text="$(ProjectName) is not a server plugin" Condition="!$(IntersectServerPlugin)"/>
+    <Message Importance="High" Text="$(ProjectName) is a multitarget plugin" Condition="$(_IntersectMultitargetPlugin)"/>
+    <Message Importance="High" Text="$(ProjectName) is not a multitarget plugin" Condition="!$(_IntersectMultitargetPlugin)"/>
+    <Error Condition="!$(IntersectPluginLibrary) AND !$(IntersectClientPlugin) AND !$(IntersectServerPlugin)" Text="Invalid plugin type, one of the following properties must be set to true: IntersectClientPlugin, IntersectServerPlugin, or IntersectPluginLibrary"/>
+  </Target>
+
+  <!-- startbug workaround for https://github.com/dotnet/sdk/issues/42708 -->
+
+  <ItemGroup Condition="$(_IntersectInRepo)">
+    <ProjectReference Include="..\..\Framework\Intersect.Framework\Intersect.Framework.csproj">
+      <Private>false</Private>
+      <PrivateAssets>none</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Framework\Intersect.Framework.Core\Intersect.Framework.Core.csproj">
+      <Private>false</Private>
+      <PrivateAssets>none</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
+    <ProjectReference Condition="$(_IntersectMultitargetPlugin)" Include="..\..\Framework\Intersect.Framework.Multitarget\Intersect.Framework.Multitarget.csproj">
+      <Private>false</Private>
+      <PrivateAssets>none</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
+    <ProjectReference Condition="$(IntersectClientPlugin)" Include="../../Intersect.Client.Framework/Intersect.Client.Framework.csproj">
+      <Private>false</Private>
+      <PrivateAssets>none</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
+    <ProjectReference Condition="$(IntersectClientPlugin)" Include="../../Intersect.Client.Core/Intersect.Client.Core.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Condition="$(IntersectServerPlugin)" Include="../../Intersect.Server.Framework/Intersect.Server.Framework.csproj">
+      <Private>false</Private>
+      <PrivateAssets>none</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
+    <ProjectReference Condition="$(IntersectServerPlugin)" Include="../../Intersect.Server.Core/Intersect.Server.Core.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <IntersectExecutableTest>IntersectClientPlugin=$(IntersectClientPlugin);IntersectServerPlugin=$(IntersectServerPlugin);IntersectMultitargetPlugin=$(IntersectMultitargetPlugin)</IntersectExecutableTest>
+  </PropertyGroup>
+
+  <!-- end bug workaround for https://github.com/dotnet/sdk/issues/42708 -->
+
+  <!--  <PropertyGroup Condition="$(IntersectClientPlugin)">-->
+  <!--    <IntersectExecutableName Condition="'$(IntersectExecutableName)' == '' AND '$(INTERSECT_CLIENT_EXECUTABLE_NAME)' == ''">$(INTERSECT_CLIENT_EXECUTABLE_NAME)</IntersectExecutableName>-->
+  <!--    <IntersectExecutableName Condition="'$(IntersectExecutableName)' == ''">Intersect Client</IntersectExecutableName>-->
+  <!--  </PropertyGroup>-->
+
+  <!--  <PropertyGroup Condition="$(IntersectEditorPlugin)">-->
+  <!--    <IntersectExecutableName Condition="'$(IntersectExecutableName)' == '' AND '$(INTERSECT_EDITOR_EXECUTABLE_NAME)' == ''">$(INTERSECT_EDITOR_EXECUTABLE_NAME)</IntersectExecutableName>-->
+  <!--    <IntersectExecutableName Condition="'$(IntersectExecutableName)' == ''">Intersect Editor</IntersectExecutableName>-->
+  <!--  </PropertyGroup>-->
+
+  <!--  <PropertyGroup Condition="$(IntersectServerPlugin)">-->
+  <!--    <IntersectExecutableName Condition="'$(IntersectExecutableName)' == '' AND '$(INTERSECT_SERVER_EXECUTABLE_NAME)' == ''">$(INTERSECT_SERVER_EXECUTABLE_NAME)</IntersectExecutableName>-->
+  <!--    <IntersectExecutableName Condition="'$(IntersectExecutableName)' == ''">Intersect Server</IntersectExecutableName>-->
+  <!--  </PropertyGroup>-->
+
+  <PropertyGroup Condition="'$(IntersectPluginType.ToLower())' != ''">
+    <IntersectExecutableDirectoryPath>$(IntersectRepoPath)\Intersect.$(IntersectPluginType)\bin\$(IntersectConfiguration)\$(TargetFramework)</IntersectExecutableDirectoryPath>
+    <IntersectExecutableSuffix Condition="'$(OS)' != 'Unix'">.exe</IntersectExecutableSuffix>
+    <IntersectExecutablePath>$(IntersectExecutableDirectoryPath)\$(IntersectExecutableName)$(IntersectExecutableSuffix)</IntersectExecutablePath>
+    <IntersectPluginTargetPath>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\bin\$(IntersectConfiguration)\$(TargetFramework)'))</IntersectPluginTargetPath>
+    <IntersectPluginWorkingDirectory>$(INTERSECT_PLUGIN_WORKING_DIRECTORY)</IntersectPluginWorkingDirectory>
+    <IntersectPluginWorkingDirectory Condition="'$(IntersectPluginWorkingDirectory)' == ''">$([System.IO.Path]::GetFullPath('$(IntersectPath)\assets\development\client'))</IntersectPluginWorkingDirectory>
+  </PropertyGroup>
+
+  <!--  <PropertyGroup Condition="$(IntersectClientPlugin)">-->
+  <!--    &lt;!&ndash; include PDB file by default to enable line numbers in stack traces &ndash;&gt;-->
+  <!--    <DebugType>pdbonly</DebugType>-->
+  <!--    <DebugSymbols>true</DebugSymbols>-->
+
+  <!--    &lt;!&ndash; enable runtime debugging &ndash;&gt;-->
+  <!--    <StartAction>Program</StartAction>-->
+  <!--    <StartProgram>$(IntersectExecutableDirectoryPath)\$(IntersectExecutableName)$(IntersectExecutableSuffix)</StartProgram>-->
+  <!--    <StartWorkingDirectory>$(IntersectPluginWorkingDirectory)</StartWorkingDirectory>-->
+  <!--    <StartArguments Condition="'$(IntersectPluginType.ToLower())' != 'server'">&#45;&#45;plugin-directory $(IntersectPluginTargetPath) &#45;&#45;working-directory $(IntersectPluginWorkingDirectory)</StartArguments>-->
+  <!--    <StartArguments Condition="'$(IntersectPluginType.ToLower())' == 'server'">&#45;&#45;plugin-directory $(IntersectPluginTargetPath) &#45;&#45;working-directory $(IntersectPluginWorkingDirectory)</StartArguments>-->
+  <!--  </PropertyGroup>-->
+
+  <PropertyGroup Condition="'$(IntersectPluginType.ToLower())' != ''">
+    <!-- include PDB file by default to enable line numbers in stack traces -->
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+
+    <!-- enable runtime debugging -->
+    <StartAction>Program</StartAction>
+    <StartProgram>$(IntersectExecutableDirectoryPath)\$(IntersectExecutableName)$(IntersectExecutableSuffix)</StartProgram>
+    <StartWorkingDirectory>$(IntersectPluginWorkingDirectory)</StartWorkingDirectory>
+    <StartArguments Condition="'$(IntersectPluginType.ToLower())' != 'server'">--plugin-directory $(IntersectPluginTargetPath) --working-directory $(IntersectPluginWorkingDirectory)</StartArguments>
+    <StartArguments Condition="'$(IntersectPluginType.ToLower())' == 'server'">--plugin-directory $(IntersectPluginTargetPath) --working-directory $(IntersectPluginWorkingDirectory)</StartArguments>
+  </PropertyGroup>
+
+  <Target Name="CheckIntersectOutputPath" BeforeTargets="BeforeBuild" Condition="'$(IntersectPluginType.ToLower())' != ''">
+    <Message Importance="High" Text="IntersectPluginType=$(IntersectPluginType) IntersectPluginType.ToLower()=$(IntersectPluginType.ToLower()) IntersectExecutableName='$(IntersectExecutableName)' StartProgram='$(StartProgram)'"/>
+    <Error Condition="!Exists('$(IntersectExecutableDirectoryPath)')" Text="Unable to find working directory for the $(IntersectPluginType.ToLower()), '$(IntersectExecutableDirectoryPath)' does not exist."/>
+    <Error Condition="!Exists('$(IntersectExecutablePath)')" Text="Unable to find the executable for the $(IntersectPluginType.ToLower()), '$(IntersectExecutablePath)' does not exist."/>
+  </Target>
+
+  <Target Name="CopyBuiltPlugin" AfterTargets="AfterBuild" Condition="'$(IntersectPluginType.ToLower())' != ''">
+    <ItemGroup>
+      <CopiedBinaries Include="$(TargetDir)\*.*" Exclude="$(ExcludedIntersectDependencies)"/>
+    </ItemGroup>
+
+    <Message Importance="High" Text="IntersectExecutableDirectoryPath=$(IntersectExecutableDirectoryPath)"/>
+    <Message Importance="High" Text="IntersectExecutableName=$(IntersectExecutableName)"/>
+    <Message Importance="High" Text="IntersectPluginTargetPath=$(IntersectPluginTargetPath)"/>
+    <Message Importance="High" Text="IntersectPluginType=$(IntersectPluginType)"/>
+    <Message Importance="High" Text="IntersectRepoPath=$(IntersectRepoPath)"/>
+    <Message Importance="High" Text="OutputPath=$(OutputPath)"/>
+    <Message Importance="High" Text="StartProgram=$(StartProgram)"/>
+    <Message Importance="High" Text="StartWorkingDirectory=$(StartWorkingDirectory)"/>
+    <Message Importance="High" Text="StartArguments=$(StartArguments)"/>
+    <Message Importance="High" Text="TargetDir=$(TargetDir)"/>
+    <Message Importance="High" Text="CopiedBinaries=@(CopiedBinaries)"/>
+    <Message Importance="High" Text="Compile=@(Compile)"/>
+    <Copy SourceFiles="@(CopiedBinaries)" DestinationFolder="$(IntersectPluginTargetPath)\$(AssemblyName)"/>
+  </Target>
+
+</Project>

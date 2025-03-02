@@ -27,11 +27,11 @@ public static partial class ManifestLoader
     /// <summary>
     /// Currently registered manifest loading functions.
     /// </summary>
-    public static readonly List<ManifestLoaderDelegate> ManifestLoaderDelegates = new List<ManifestLoaderDelegate>
-    {
+    public static readonly List<ManifestLoaderDelegate> ManifestLoaderDelegates =
+    [
         LoadJsonManifestFrom,
-        LoadVirtualManifestFrom
-    };
+        LoadVirtualManifestFrom,
+    ];
 
     /// <summary>
     /// Locates manifests in the assembly with priority order declared by <see cref="ManifestLoaderDelegates"/>.
@@ -173,10 +173,7 @@ public static partial class ManifestLoader
     /// <returns>an instance of <see cref="IManifestHelper"/> or null if not found or an error occurred</returns>
     public static IManifestHelper LoadVirtualManifestFrom(Assembly assembly)
     {
-        if (default == assembly)
-        {
-            throw new ArgumentNullException(nameof(assembly));
-        }
+        ArgumentNullException.ThrowIfNull(assembly);
 
         try
         {

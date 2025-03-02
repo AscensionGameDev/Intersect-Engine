@@ -13,6 +13,11 @@ public interface IPluginBootstrapContext : IPluginBaseContext
     ICommandLineHelper CommandLine { get; }
 
     /// <summary>
+    /// The <see cref="System.Type"/> of the plugin context that will be created by the plugin host.
+    /// </summary>
+    Type HostPluginContextType { get; }
+
+    /// <summary>
     /// The <see cref="IPacketHelper"/> of the current plugin.
     /// </summary>
     IPacketHelper Packet { get; }

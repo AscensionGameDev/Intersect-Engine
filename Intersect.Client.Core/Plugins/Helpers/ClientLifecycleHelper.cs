@@ -11,13 +11,16 @@ namespace Intersect.Client.Plugins.Helpers;
 internal sealed partial class ClientLifecycleHelper : ContextHelper<IClientPluginContext>, IClientLifecycleHelper
 {
     /// <inheritdoc />
-    public event LifecycleChangeStateHandler LifecycleChangeState;
+    public event GameUpdateHandler? GameUpdate;
 
     /// <inheritdoc />
-    public event GameUpdateHandler GameUpdate;
+    public event GameDrawHandler? GameDraw;
 
     /// <inheritdoc />
-    public event GameDrawHandler GameDraw;
+    public event LifecycleChangeStateHandler? LifecycleChangedState;
+
+    /// <inheritdoc />
+    public event LifecycleChangeStateHandler? LifecycleChangingState;
 
     internal ClientLifecycleHelper(IClientPluginContext context) : base(context)
     {
@@ -33,28 +36,35 @@ internal sealed partial class ClientLifecycleHelper : ContextHelper<IClientPlugi
     public IMutableInterface Interface => Client.Interface.Interface.CurrentInterface;
 
     /// <inheritdoc />
-    public void OnLifecycleChangeState(GameStates state)
+    public void EmitLifecycleChangedState(GameStates state)
     {
         var lifecycleChangeStateArgs = new LifecycleChangeStateArgs(state);
-        LifecycleChangeState?.Invoke(Context, lifecycleChangeStateArgs);
+        LifecycleChangedState?.Invoke(Context, lifecycleChangeStateArgs);
     }
 
     /// <inheritdoc />
-    public void OnGameUpdate(GameStates state, IPlayer player, Dictionary<Guid, IEntity> knownEntities, TimeSpan deltaTime)
+    public void EmitLifecycleChangingState(GameStates state)
+    {
+        var lifecycleChangeStateArgs = new LifecycleChangeStateArgs(state);
+        LifecycleChangingState?.Invoke(Context, lifecycleChangeStateArgs);
+    }
+
+    /// <inheritdoc />
+    public void EmitGameUpdate(GameStates state, IPlayer player, Dictionary<Guid, IEntity> knownEntities, TimeSpan deltaTime)
     {
         var GameUpdateArgs = new GameUpdateArgs(state, player, knownEntities, deltaTime);
         GameUpdate?.Invoke(Context, GameUpdateArgs);
     }
 
     /// <inheritdoc />
-    public void OnGameDraw(DrawStates state, TimeSpan deltaTime)
+    public void EmitGameDraw(DrawStates state, TimeSpan deltaTime)
     {
         var gameDrawArgs = new GameDrawArgs(state, deltaTime);
         GameDraw?.Invoke(Context, gameDrawArgs);
     }
 
     /// <inheritdoc />
-    public void OnGameDraw(DrawStates state, IEntity entity, TimeSpan deltaTime)
+    public void EmitGameDraw(DrawStates state, IEntity entity, TimeSpan deltaTime)
     {
         var gameDrawArgs = new GameDrawArgs(state, entity, deltaTime);
         GameDraw?.Invoke(Context, gameDrawArgs);

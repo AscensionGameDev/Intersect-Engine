@@ -76,7 +76,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{362547B0-915F-4359-867A-58558C5DE0F2}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
-		Plugin.build.props = Plugin.build.props
+		IntersectPlugin.props = IntersectPlugin.props
 		Plugin.Common.props = Plugin.Common.props
 	EndProjectSection
 EndProject

@@ -70,11 +70,19 @@ internal sealed partial class PluginService : ApplicationService<IPluginService,
                 applicationContext.StartupOptions.PluginDirectories ?? Array.Empty<string>()
             );
 
+            applicationContext.Logger.LogDebug(
+                "Scanning for plugins in {PluginDirectoryCount} directories:\n{PluginDirectories}",
+                PluginDirectories.Count,
+                string.Join('\n', PluginDirectories.Select(d => $"\t{d}"))
+            );
+
             // Discover plugins
             var discoveredPlugins = Loader.DiscoverPlugins(applicationContext, PluginDirectories);
 
             applicationContext.Logger.LogInformation(
-                $"Discovered {discoveredPlugins.Count} plugins:\n{string.Join("\n", discoveredPlugins.Select(plugin => plugin.Key))}"
+                "Discovered {PluginCount} plugins:\n{Plugins}",
+                discoveredPlugins.Count,
+                string.Join('\n', discoveredPlugins.Select(p => $"\t{p.Key}"))
             );
 
             // Load configuration for plugins

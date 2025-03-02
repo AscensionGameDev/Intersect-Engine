@@ -4,52 +4,31 @@ using Intersect.Network;
 
 namespace Intersect.Server.Core;
 
-internal struct ServerCommandLineOptions : ICommandLineOptions
+internal partial record ServerCommandLineOptions : ICommandLineOptions
 {
-    public ServerCommandLineOptions(
-        bool doNotShowConsole,
-        bool doNotHaltOnError,
-        bool migrateAutomatically,
-        bool noNatPunchthrough,
-        bool noNetworkCheck,
-        ushort port,
-        string workingDirectory,
-        IEnumerable<string> pluginDirectories
-    )
-    {
-        DoNotShowConsole = doNotShowConsole;
-        DoNotHaltOnError = doNotHaltOnError;
-        MigrateAutomatically = migrateAutomatically;
-        NoNatPunchthrough = noNatPunchthrough;
-        NoNetworkCheck = noNetworkCheck;
-        Port = port;
-        WorkingDirectory = workingDirectory;
-        PluginDirectories = pluginDirectories?.Select(Path.GetFullPath).ToArray();
-    }
-
     [Option('C', "no-console", Default = false, Required = false)]
-    public bool DoNotShowConsole { get; }
+    public bool DoNotShowConsole { get; init; }
 
     [Option('H', "no-halt", Default = false, Required = false)]
-    public bool DoNotHaltOnError { get; }
+    public bool DoNotHaltOnError { get; init; }
 
     [Option('m', "migrate-automatically", Default = false, Required = false)]
-    public bool MigrateAutomatically { get; }
+    public bool MigrateAutomatically { get; init; }
 
     [Option('U', "no-upnp", Default = false, Required = false)]
-    public bool NoNatPunchthrough { get; }
+    public bool NoNatPunchthrough { get; init; }
 
     [Option('P', "no-port-check", Default = false, Required = false)]
-    public bool NoNetworkCheck { get; }
+    public bool NoNetworkCheck { get; init; }
 
     [Option('p', "port", Default = (ushort)0, Required = false)]
-    public ushort Port { get; }
+    public ushort Port { get; init; }
 
     [Option("working-directory", Default = null, Required = false)]
-    public string WorkingDirectory { get; }
+    public string WorkingDirectory { get; init; }
 
     [Option('p', "plugin-directory", Default = null, Required = false)]
-    public IEnumerable<string> PluginDirectories { get; }
+    public IEnumerable<string> PluginDirectories { get; init; }
 
     public ushort ValidPort(ushort defaultPort)
     {

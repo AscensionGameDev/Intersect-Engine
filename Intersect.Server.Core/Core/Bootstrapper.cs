@@ -24,6 +24,7 @@ using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Metrics;
 using Intersect.Server.Networking;
+using Intersect.Server.Plugins;
 using Intersect.Threading;
 using Intersect.Utilities;
 using Microsoft.Extensions.Logging;
@@ -92,6 +93,7 @@ internal static class Bootstrapper
 
         FactoryRegistry<IPluginBootstrapContext>.RegisterFactory(
             PluginBootstrapContext.CreateFactory(
+                typeof(IServerPluginContext),
                 parsedArguments.Args ?? [],
                 parsedArguments.Parser,
                 packetHelper

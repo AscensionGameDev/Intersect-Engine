@@ -41,6 +41,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution 
 		README.md = README.md
 		SECURITY.md = SECURITY.md
 		VERSIONING.md = VERSIONING.md
+		CustomCommon.props = CustomCommon.props
+		Common.props = Common.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "targets", "targets", "{BAD9DA5F-4FA5-42A3-A58A-A7B880573121}"
@@ -67,6 +69,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Framework", "Fram
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Framework.Core", "Framework\Intersect.Framework.Core\Intersect.Framework.Core.csproj", "{CD824F78-E469-496D-9DB6-0B0F0A24E5BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Framework.Multitarget", "Framework\Intersect.Framework.Multitarget\Intersect.Framework.Multitarget.csproj", "{DDAB5DB5-1B9E-48E2-9BAC-E7570ACCC0FA}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{D89EF539-3EC6-4D07-9E98-65BC55F1DAA4}"
 	ProjectSection(SolutionItems) = preProject
 		Utilities\Directory.Build.props = Utilities\Directory.Build.props
@@ -89,6 +93,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Tests.Editor", "Intersect.Tests.Editor\Intersect.Tests.Editor.csproj", "{3E8FC79E-D0B3-4554-9ABD-BD6DCBFBEE5D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{69F06A61-5BD8-4D11-90D0-DE9AEAD2D09A}"
+	ProjectSection(SolutionItems) = preProject
+		Examples\IntersectPlugin.props = Examples\IntersectPlugin.props
+		Examples\Directory.Build.props = Examples\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Examples.Plugin", "Examples\Intersect.Examples.Plugin\Intersect.Examples.Plugin.csproj", "{3F994F9D-ADAE-4F79-8FF6-3D7523EE9315}"
 EndProject
@@ -99,6 +107,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Examples.Plugin.Client.Tests", "Examples\Intersect.Examples.Plugin.Client.Tests\Intersect.Examples.Plugin.Client.Tests.csproj", "{CC88BF08-CBF5-4AF2-823C-8291C5903168}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Intersect.Examples.Plugin.ClientVB", "Examples\Intersect.Examples.Plugin.ClientVB\Intersect.Examples.Plugin.ClientVB.vbproj", "{8C8CD5C9-6BB3-4C4C-AB93-968BAD44F9CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Examples.Plugin.Multitarget", "Examples\Intersect.Examples.Plugin.Multitarget\Intersect.Examples.Plugin.Multitarget.csproj", "{39CCE9FC-A5AA-47E6-91E9-8AAF494CBE40}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -357,6 +367,26 @@ Global
 		{8C8CD5C9-6BB3-4C4C-AB93-968BAD44F9CC}.DebugFull|Any CPU.Build.0 = DebugFull|Any CPU
 		{8C8CD5C9-6BB3-4C4C-AB93-968BAD44F9CC}.DebugPlugins|Any CPU.ActiveCfg = DebugPlugins|Any CPU
 		{8C8CD5C9-6BB3-4C4C-AB93-968BAD44F9CC}.DebugPlugins|Any CPU.Build.0 = DebugPlugins|Any CPU
+		{39CCE9FC-A5AA-47E6-91E9-8AAF494CBE40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39CCE9FC-A5AA-47E6-91E9-8AAF494CBE40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39CCE9FC-A5AA-47E6-91E9-8AAF494CBE40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39CCE9FC-A5AA-47E6-91E9-8AAF494CBE40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39CCE9FC-A5AA-47E6-91E9-8AAF494CBE40}.DebugTests|Any CPU.ActiveCfg = DebugTests|Any CPU
+		{39CCE9FC-A5AA-47E6-91E9-8AAF494CBE40}.DebugTests|Any CPU.Build.0 = DebugTests|Any CPU
+		{39CCE9FC-A5AA-47E6-91E9-8AAF494CBE40}.DebugFull|Any CPU.ActiveCfg = DebugFull|Any CPU
+		{39CCE9FC-A5AA-47E6-91E9-8AAF494CBE40}.DebugFull|Any CPU.Build.0 = DebugFull|Any CPU
+		{39CCE9FC-A5AA-47E6-91E9-8AAF494CBE40}.DebugPlugins|Any CPU.ActiveCfg = DebugPlugins|Any CPU
+		{39CCE9FC-A5AA-47E6-91E9-8AAF494CBE40}.DebugPlugins|Any CPU.Build.0 = DebugPlugins|Any CPU
+		{DDAB5DB5-1B9E-48E2-9BAC-E7570ACCC0FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDAB5DB5-1B9E-48E2-9BAC-E7570ACCC0FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDAB5DB5-1B9E-48E2-9BAC-E7570ACCC0FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDAB5DB5-1B9E-48E2-9BAC-E7570ACCC0FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDAB5DB5-1B9E-48E2-9BAC-E7570ACCC0FA}.DebugTests|Any CPU.ActiveCfg = DebugTests|Any CPU
+		{DDAB5DB5-1B9E-48E2-9BAC-E7570ACCC0FA}.DebugTests|Any CPU.Build.0 = DebugTests|Any CPU
+		{DDAB5DB5-1B9E-48E2-9BAC-E7570ACCC0FA}.DebugFull|Any CPU.ActiveCfg = DebugFull|Any CPU
+		{DDAB5DB5-1B9E-48E2-9BAC-E7570ACCC0FA}.DebugFull|Any CPU.Build.0 = DebugFull|Any CPU
+		{DDAB5DB5-1B9E-48E2-9BAC-E7570ACCC0FA}.DebugPlugins|Any CPU.ActiveCfg = DebugPlugins|Any CPU
+		{DDAB5DB5-1B9E-48E2-9BAC-E7570ACCC0FA}.DebugPlugins|Any CPU.Build.0 = DebugPlugins|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -381,6 +411,8 @@ Global
 		{FC255E92-4E35-4E2C-A7F0-638B06096E67} = {69F06A61-5BD8-4D11-90D0-DE9AEAD2D09A}
 		{CC88BF08-CBF5-4AF2-823C-8291C5903168} = {69F06A61-5BD8-4D11-90D0-DE9AEAD2D09A}
 		{8C8CD5C9-6BB3-4C4C-AB93-968BAD44F9CC} = {69F06A61-5BD8-4D11-90D0-DE9AEAD2D09A}
+		{39CCE9FC-A5AA-47E6-91E9-8AAF494CBE40} = {69F06A61-5BD8-4D11-90D0-DE9AEAD2D09A}
+		{DDAB5DB5-1B9E-48E2-9BAC-E7570ACCC0FA} = {1ABC3725-EB8C-494E-8BA8-A991CE7BD7A1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {06095334-0BBD-4FDA-A230-272D08AFB221}

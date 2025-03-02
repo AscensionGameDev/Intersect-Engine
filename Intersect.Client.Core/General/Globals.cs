@@ -135,7 +135,7 @@ public static partial class Globals
         set
         {
             mGameState = value;
-            OnLifecycleChangeState();
+            EmitLifecycleChangingState();
         }
     }
 
@@ -150,11 +150,20 @@ public static partial class Globals
 
     public static bool WaitingOnServer { get; set; }
 
-    internal static void OnLifecycleChangeState()
+    internal static void EmitLifecycleChangingState()
     {
-        ClientLifecycleHelpers.ForEach(
-            clientLifecycleHelper => clientLifecycleHelper?.OnLifecycleChangeState(GameState)
-        );
+        foreach (var clientLifecycleHelper in ClientLifecycleHelpers)
+        {
+            clientLifecycleHelper.EmitLifecycleChangingState(GameState);
+        }
+    }
+
+    internal static void EmitLifecycleChangedState()
+    {
+        foreach (var clientLifecycleHelper in ClientLifecycleHelpers)
+        {
+            clientLifecycleHelper.EmitLifecycleChangedState(GameState);
+        }
     }
 
     internal static void OnGameUpdate(TimeSpan deltaTime)
@@ -196,19 +205,19 @@ public static partial class Globals
         }
 
         ClientLifecycleHelpers.ForEach(
-            clientLifecycleHelper => clientLifecycleHelper?.OnGameUpdate(GameState, Me, knownEntities, deltaTime)
+            clientLifecycleHelper => clientLifecycleHelper?.EmitGameUpdate(GameState, Me, knownEntities, deltaTime)
         );
     }
 
     internal static void OnGameDraw(DrawStates state, TimeSpan deltaTime)
     {
-        ClientLifecycleHelpers.ForEach(clientLifecycleHelper => clientLifecycleHelper?.OnGameDraw(state, deltaTime));
+        ClientLifecycleHelpers.ForEach(clientLifecycleHelper => clientLifecycleHelper?.EmitGameDraw(state, deltaTime));
     }
 
     internal static void OnGameDraw(DrawStates state, IEntity entity, TimeSpan deltaTime)
     {
         ClientLifecycleHelpers.ForEach(
-            clientLifecycleHelper => clientLifecycleHelper?.OnGameDraw(state, entity, deltaTime)
+            clientLifecycleHelper => clientLifecycleHelper?.EmitGameDraw(state, entity, deltaTime)
         );
     }
 

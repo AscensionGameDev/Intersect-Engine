@@ -5,6 +5,7 @@
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <RootNamespace>Intersect.Examples.Plugin</RootNamespace>
     <AssemblyName>Intersect.Examples.Plugin</AssemblyName>
+    <IntersectPluginLibrary>true</IntersectPluginLibrary>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,9 +14,7 @@
     </AssemblyAttribute>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Intersect.Client.Framework\Intersect.Client.Framework.csproj"/>
-    <ProjectReference Include="..\..\Intersect.Server.Framework\Intersect.Server.Framework.csproj"/>
-  </ItemGroup>
+  <!-- This must go last -->
+  <Import Project="..\IntersectPlugin.props"/>
 
 </Project>

@@ -5,7 +5,7 @@
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <RootNamespace>Intersect.Examples.Plugin.Client</RootNamespace>
     <AssemblyName>Intersect.Examples.Plugin.ClientVB</AssemblyName>
-    <IntersectPluginType>Client</IntersectPluginType>
+    <IntersectClientPlugin>true</IntersectClientPlugin>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Intersect.Client.Framework\Intersect.Client.Framework.csproj"/>
     <ProjectReference Include="..\Intersect.Examples.Plugin\Intersect.Examples.Plugin.csproj"/>
   </ItemGroup>
 
@@ -43,6 +42,6 @@
   </ItemGroup>
 
   <!-- This has to go here to pick up IntersectPluginType -->
-  <Import Project="..\Plugin.build.props"/>
+  <Import Project="..\IntersectPlugin.props"/>
 
 </Project>

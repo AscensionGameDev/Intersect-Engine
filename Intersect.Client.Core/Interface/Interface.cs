@@ -240,7 +240,7 @@ public static partial class Interface
             IsVisibleInParent = _showFPSPanel,
         };
 
-        Globals.OnLifecycleChangeState();
+        Globals.EmitLifecycleChangedState();
 
         _initialized = true;
 

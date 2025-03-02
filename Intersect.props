@@ -29,8 +29,8 @@
   </PropertyGroup>
 
   <ItemGroup Label="Embedded Resources">
-    <None Include="$(IntersectRepoPath)\assets\intersect-logo-qu.png" Pack="true" PackagePath="\" />
-    <EmbeddedResource Include="$(IntersectRepoPath)\assets\intersect-logo-qu.ico" Pack="true" PackagePath="\" />
+    <None Include="$(IntersectRepoPath)\assets\intersect-logo-qu.png" Pack="true" PackagePath="\"/>
+    <EmbeddedResource Include="$(IntersectRepoPath)\assets\intersect-logo-qu.ico" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
   <ItemGroup Label="Embedded Assembly Metadata">
@@ -50,14 +50,14 @@
 
   <Target Name="GetGitCommit" Condition="'$(CommitSha)' == ''" BeforeTargets="GetAssemblyAttributes">
     <Exec Command="git --version" IgnoreExitCode="true">
-      <Output TaskParameter="ExitCode" PropertyName="GitVersionExitCode" />
+      <Output TaskParameter="ExitCode" PropertyName="GitVersionExitCode"/>
     </Exec>
     <Exec Condition="'$(GitVersionExitCode)' == '0'" Command="git diff-index --quiet HEAD --" IgnoreExitCode="true">
-      <Output TaskParameter="ExitCode" PropertyName="DiffIndexExitCode" />
+      <Output TaskParameter="ExitCode" PropertyName="DiffIndexExitCode"/>
     </Exec>
     <Exec Condition="'$(GitVersionExitCode)' == '0'" Command="git rev-parse --verify HEAD" ConsoleToMsBuild="true" IgnoreExitCode="true">
-      <Output TaskParameter="ConsoleOutput" PropertyName="RevParseOutput" />
-      <Output TaskParameter="ExitCode" PropertyName="RevParseExitCode" />
+      <Output TaskParameter="ConsoleOutput" PropertyName="RevParseOutput"/>
+      <Output TaskParameter="ExitCode" PropertyName="RevParseExitCode"/>
     </Exec>
     <PropertyGroup>
       <RevParseOutput Condition="'$(RevParseExitCode)' == ''">unknowncommit</RevParseOutput>
@@ -68,7 +68,7 @@
       <CommitSha Condition="'$(CommitSha)' == ''">$(_GitCommitSha)</CommitSha>
     </PropertyGroup>
     <CreateProperty Value="$(CommitSha)">
-      <Output TaskParameter="Value" PropertyName="CommitSha" />
+      <Output TaskParameter="Value" PropertyName="CommitSha"/>
     </CreateProperty>
     <ItemGroup>
       <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">

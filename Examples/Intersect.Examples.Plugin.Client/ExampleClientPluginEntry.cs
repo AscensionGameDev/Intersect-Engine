@@ -27,7 +27,7 @@ public class ExampleClientPluginEntry : ClientPluginEntry
     private bool _disposed;
     private Mutex? _mutex;
 
-    private bool wasConnected;
+    private bool _wasConnected;
 
     /// <inheritdoc />
     public override void OnBootstrap(IPluginBootstrapContext context)
@@ -97,7 +97,7 @@ public class ExampleClientPluginEntry : ClientPluginEntry
             "Assets/join-our-discord.png"
         );
 
-        context.Lifecycle.LifecycleChangeState += HandleLifecycleChangeState;
+        context.Lifecycle.LifecycleChangedState += HandleLifecycleChangedState;
 
         context.Lifecycle.GameUpdate += HandleGameUpdate;
     }
@@ -119,26 +119,23 @@ public class ExampleClientPluginEntry : ClientPluginEntry
         GameUpdateArgs gameUpdateArgs
     )
     {
-        if (!wasConnected && context.Network.IsConnected)
+        if (!_wasConnected && context.Network.IsConnected)
         {
-            wasConnected = true;
+            _wasConnected = true;
 
             context.Network.PacketSender.Send(new ExamplePluginClientPacket("This is an unprompted client packet."));
         }
     }
 
-    private void HandleLifecycleChangeState(
+    private void HandleLifecycleChangedState(
         IClientPluginContext context,
         LifecycleChangeStateArgs lifecycleChangeStateArgs
     )
     {
-        Debug.Assert(_buttonTexture != null, nameof(_buttonTexture) + " != null");
-
-        var activeInterface = context.Lifecycle.Interface;
-
         switch (lifecycleChangeStateArgs.State)
         {
             case GameStates.Menu:
+                var activeInterface = context.Lifecycle.Interface;
                 AddButtonToMainMenu(context, activeInterface);
                 break;
         }
@@ -169,10 +166,10 @@ public class ExampleClientPluginEntry : ClientPluginEntry
             return;
         }
 
-        button.SetStateTexture(buttonTexture, buttonTexture.Name, ComponentState.Normal);
+        button.SetAllStatesTexture(buttonTexture);
         button.SetSize(buttonTexture.Width, buttonTexture.Height);
-        button.CurAlignments?.Add(Alignments.Bottom);
-        button.CurAlignments?.Add(Alignments.Right);
+        button.Alignment = [Alignments.CenterV, Alignments.Right];
+        button.AlignmentPadding = new Padding(8);
         button.ProcessAlignments();
     }
 

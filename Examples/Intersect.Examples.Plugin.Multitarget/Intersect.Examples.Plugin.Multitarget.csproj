@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Example Multitarget Plugin - Part of the Intersect 2D Game Creation Suite</Description>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <IntersectClientPlugin>true</IntersectClientPlugin>
+    <IntersectServerPlugin>true</IntersectServerPlugin>
+  </PropertyGroup>
+
+  <!-- This has to go here to pick up IntersectPluginType -->
+  <Import Project="..\IntersectPlugin.props"/>
+
+</Project>

@@ -431,11 +431,27 @@ public partial class Button : Label
         OnMouseClicked(mouseButton, mousePosition, userAction);
     }
 
+    public void SetAllStatesTexture(IGameTexture? texture)
+    {
+        foreach (var componentState in Enum.GetValues<ComponentState>())
+        {
+            SetStateTexture(texture, componentState);
+        }
+    }
+
     public void SetStateTexture(ComponentState componentState, string textureName)
     {
         var texture = GameContentManager.Current.GetTexture(TextureType.Gui, textureName);
         SetStateTexture(texture, textureName, componentState);
     }
+
+    /// <summary>
+    ///     Sets the button's image.
+    /// </summary>
+    /// <param name="texture"></param>
+    /// <param name="componentState"></param>
+    public void SetStateTexture(IGameTexture? texture, ComponentState componentState) =>
+        SetStateTexture(texture, texture?.Name, componentState);
 
     /// <summary>
     ///     Sets the button's image.

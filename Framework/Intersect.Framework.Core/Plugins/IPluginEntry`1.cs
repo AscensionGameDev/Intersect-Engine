@@ -1,4 +1,6 @@
-﻿namespace Intersect.Plugins;
+﻿using Intersect.Framework.Reflection;
+
+namespace Intersect.Plugins;
 
 /// <summary>
 /// Defines the API that plugin entry points must implement
@@ -10,6 +12,30 @@
 public interface IPluginEntry<in TPluginContext> : IPluginEntry
     where TPluginContext : IPluginContext<TPluginContext>
 {
+    void IPluginEntry.OnStart(IPluginContext context)
+    {
+        if (context is not TPluginContext typedContext)
+        {
+            var expectedType = typeof(TPluginContext).GetName(qualified: true);
+            var actualType = context.GetType().GetName(qualified: true);
+            throw new ArgumentException($"Expected {expectedType} but received {actualType}", nameof(context));
+        }
+
+        OnStart(typedContext);
+    }
+
+    void IPluginEntry.OnStop(IPluginContext context)
+    {
+        if (context is not TPluginContext typedContext)
+        {
+            var expectedType = typeof(TPluginContext).GetName(qualified: true);
+            var actualType = context.GetType().GetName(qualified: true);
+            throw new ArgumentException($"Expected {expectedType} but received {actualType}", nameof(context));
+        }
+
+        OnStop(typedContext);
+    }
+
     /// <summary>
     /// Invoked during application startup after basic initialization.
     /// </summary>

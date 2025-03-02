@@ -1,25 +1,19 @@
 <Project>
 
-  <Import Project=".\Plugin.Common.props"/>
+  <PropertyGroup>
+    <IntersectRepoPath Condition="'$(IntersectRepoPath)' == ''">$(MSBuildProjectDirectory)\..\..</IntersectRepoPath>
+    <_IntersectInRepo>true</_IntersectInRepo>
+  </PropertyGroup>
+
+  <Import Project="../Directory.Build.props" />
+
+  <PropertyGroup>
+    <IntersectRepoPath>$(MSBuildProjectDirectory)\..\..</IntersectRepoPath>
+  </PropertyGroup>
 
   <PropertyGroup Condition="'$(IntersectDeveloperTargetsImported)' == ''">
     <IntersectRepoPath>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..'))</IntersectRepoPath>
     <IntersectProjectName>$(MSBuildProjectName.Substring(10))</IntersectProjectName>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <IntersectRepoPath Condition="'$(IntersectRepoPath)' == ''">$(INTERSECT_REPO_PATH)</IntersectRepoPath>
-    <IntersectPath Condition="'$(IntersectPath)' == ''">$(INTERSECT_PATH)</IntersectPath>
-    <IntersectPath Condition="'$(IntersectPath)' == ''">$(IntersectRepoPath)</IntersectPath>
-    <BaseStartWorkingDirectory>$(IntersectRepoPath)\assets\development</BaseStartWorkingDirectory>
-  </PropertyGroup>
-
-  <PropertyGroup Label="Language Properties">
-    <Deterministic>true</Deterministic>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
 </Project>

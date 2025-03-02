@@ -25,6 +25,14 @@
 	  <ProjectReference Include="..\Intersect.Client.Core\Intersect.Client.Core.csproj" />
 	</ItemGroup>
 
+	<ItemGroup Label="Plugins">
+    <ProjectReference Include="@(PluginToDebug)">
+      <OutputItemType>Content</OutputItemType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+	</ItemGroup>
+
 	<ItemGroup Label="Project Embedded Resources">
 		<EmbeddedResource Include="$(IntersectRepoPath)\assets\intersect-logo-qu.bmp">
 			<LogicalName>Icon.bmp</LogicalName>

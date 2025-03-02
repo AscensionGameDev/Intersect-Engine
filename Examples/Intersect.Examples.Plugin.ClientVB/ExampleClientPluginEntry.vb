@@ -61,7 +61,7 @@ Public Class ExampleClientPluginEntry
             $"{NameOf(ExampleClientPluginEntry)}.{NameOf(OnStart)} writing to the plugin log!")
         _buttonTexture = context.ContentManager.LoadEmbedded (Of IGameTexture)(context, ContentType.[Interface],
                                                                               "join-our-discord.png")
-        AddHandler context.Lifecycle.LifecycleChangeState, AddressOf HandleLifecycleChangeState
+        AddHandler context.Lifecycle.LifecycleChangingState, AddressOf HandleLifecycleChangingState
     End Sub
 
     ''' <inheritdoc />
@@ -74,7 +74,7 @@ Public Class ExampleClientPluginEntry
         )
     End Sub
 
-    Private Sub HandleLifecycleChangeState(
+    Private Sub HandleLifecycleChangingState(
                                            context As IClientPluginContext,
                                            lifecycleChangeStateArgs As LifecycleChangeStateArgs
     )
