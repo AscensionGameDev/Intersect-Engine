@@ -112,7 +112,7 @@ public partial class InventoryItem : SlotItem
 
     #region Context Menu
 
-    public void OpenContextMenu()
+    public override void OpenContextMenu()
     {
         // Clear out the old options since we might not show all of them
         _contextMenu.ClearChildren();
@@ -441,7 +441,7 @@ public partial class InventoryItem : SlotItem
             return;
         }
 
-        if (Globals.Me.Inventory[SlotIndex] is not { } inventorySlot)
+        if (Globals.Me.Inventory[SlotIndex] == default)
         {
             return;
         }
@@ -463,7 +463,7 @@ public partial class InventoryItem : SlotItem
         return rect;
     }
 
-    public void Update()
+    public override void Update()
     {
         if (Globals.Me == default)
         {
@@ -605,7 +605,7 @@ public partial class InventoryItem : SlotItem
                 for (var inventoryIndex = 0; inventoryIndex < inventorySlotLimit; inventoryIndex++)
                 {
                     var inventorySlotComponent = inventorySlotComponents[inventoryIndex];
-                    var inventoryRenderBounds = inventorySlotComponent.RenderBounds();
+                    var inventoryRenderBounds = ((InventoryItem)inventorySlotComponent).RenderBounds();
 
                     if (!inventoryRenderBounds.IntersectsWith(dragRect))
                     {
@@ -661,7 +661,7 @@ public partial class InventoryItem : SlotItem
                     Globals.Me.AddToHotbar((byte)bestIntersectIndex, 0, SlotIndex);
                 }
             }
-            else if (Globals.InBag)
+            else if (Globals.InBag && Globals.BagSlots != default)
             {
                 var bagWindow = Interface.GameUi.GetBagWindow();
                 if (bagWindow.RenderBounds().IntersectsWith(dragRect))
@@ -693,7 +693,7 @@ public partial class InventoryItem : SlotItem
                     }
                 }
             }
-            else if (Globals.InBank)
+            else if (Globals.InBank && Globals.BankSlots != default)
             {
                 var bankWindow = Interface.GameUi.GetBankWindow();
                 if (bankWindow.RenderBounds().IntersectsWith(dragRect))

@@ -37,6 +37,14 @@ public partial class SlotItem : ImagePanel
         };
     }
 
+    public virtual void Update()
+    {
+    }
+
+    public virtual void OpenContextMenu()
+    {
+    }
+
     protected override void Dispose(bool disposing)
     {
         _contextMenu?.Close();

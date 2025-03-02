@@ -4,12 +4,13 @@ using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
+using Intersect.Client.Utilities;
 
 namespace Intersect.Client.Interface.Game.Shop;
 
 public partial class ShopWindow : Window
 {
-    private readonly List<ShopItem> _items = [];
+    private readonly List<SlotItem> _items = [];
     private readonly ScrollControl _slotContainer;
 
     public ShopWindow(Canvas gameCanvas) : base(gameCanvas, Globals.GameShop?.Name ?? Strings.Shop.Title, false, nameof(ShopWindow))
@@ -46,22 +47,11 @@ public partial class ShopWindow : Window
             return;
         }
 
-        float containerInnerWidth = _slotContainer.InnerPanel.InnerWidth;
         for (var slotIndex = 0; slotIndex < gameShop.SellingItems.Count; slotIndex++)
         {
-            var slotContainer = new ShopItem(this, _slotContainer, slotIndex);
-            _items.Add(slotContainer);
-
-            var outerSize = slotContainer.OuterBounds.Size;
-            var itemsPerRow = (int)(containerInnerWidth / outerSize.X);
-
-            var column = slotIndex % itemsPerRow;
-            var row = slotIndex / itemsPerRow;
-
-            var xPosition = column * outerSize.X + slotContainer.Margin.Left;
-            var yPosition = row * outerSize.Y + slotContainer.Margin.Top;
-
-            slotContainer.SetPosition(xPosition, yPosition);
+            _items.Add(new ShopItem(this, _slotContainer, slotIndex));
         }
+
+        PopulateSlotContainer.Populate(_slotContainer, _items);
     }
 }

@@ -5,6 +5,7 @@ using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
+using Intersect.Client.Interface.Game.Inventory;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.Framework.Core;
@@ -280,15 +281,20 @@ public partial class BagItem
                     {
                         for (var i = 0; i < Options.Instance.Player.MaxInventory; i++)
                         {
-                            if (invWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
+                            if(invWindow.Items[i] is not InventoryItem inventoryItem)
                             {
-                                if (FloatRect.Intersect(invWindow.Items[i].RenderBounds(), dragRect).Width *
-                                    FloatRect.Intersect(invWindow.Items[i].RenderBounds(), dragRect).Height >
+                                continue;
+                            }
+
+                            if (inventoryItem.RenderBounds().IntersectsWith(dragRect))
+                            {
+                                if (FloatRect.Intersect(inventoryItem.RenderBounds(), dragRect).Width *
+                                    FloatRect.Intersect(inventoryItem.RenderBounds(), dragRect).Height >
                                     bestIntersect)
                                 {
                                     bestIntersect =
-                                        FloatRect.Intersect(invWindow.Items[i].RenderBounds(), dragRect).Width *
-                                        FloatRect.Intersect(invWindow.Items[i].RenderBounds(), dragRect).Height;
+                                        FloatRect.Intersect(inventoryItem.RenderBounds(), dragRect).Width *
+                                        FloatRect.Intersect(inventoryItem.RenderBounds(), dragRect).Height;
 
                                     bestIntersectIndex = i;
                                 }
