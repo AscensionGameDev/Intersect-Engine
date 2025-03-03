@@ -43,7 +43,14 @@ public partial class MonoFont : Font<SpriteFont>, IFont
             {
                 try
                 {
-                    return _instance ??= PlatformObjectFactory();
+                    // ReSharper disable once InvertIf
+                    if (_instance == null)
+                    {
+                        _instance = PlatformObjectFactory();
+                        _instance.Texture.Name = $"{FontName} @ {Size}pt";
+                    }
+
+                    return _instance;
                 }
                 catch (Exception exception)
                 {

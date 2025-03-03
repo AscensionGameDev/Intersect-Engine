@@ -494,6 +494,7 @@ public partial class RichLabel : Base
             Alignment = [block.Alignment],
             AutoSizeToContents = true,
             Font = font,
+            FontSize = block.FontSize,
             RestrictToParent = false,
             Text = x == 0 ? text.TrimStart(' ') : text,
             TextAlign = Pos.None,
@@ -583,6 +584,12 @@ public partial class RichLabel : Base
             }
         }
 
+        ApplicationContext.CurrentContext.Logger.LogDebug(
+            "Rebuilding due to size change from {OldSize} to {NewSize} (_dockFillSize={DockFillSize})",
+            oldSize,
+            newSize,
+            _dockFillSize
+        );
         InvalidateRebuild();
     }
 

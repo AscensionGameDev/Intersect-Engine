@@ -16,6 +16,8 @@ public partial class DescriptionComponent : ComponentBase
         base.GenerateComponents();
 
         mDescription = new RichLabel(mContainer, "Description");
+        mDescription.SizeChanged += (_, _) => mContainer.SizeToChildren();
+
     }
 
     /// <summary>
@@ -42,6 +44,7 @@ public partial class DescriptionComponent : ComponentBase
         var margins = mDescription.Margin;
 
         mDescription.SetSize(mContainer.InnerWidth - margins.Right, mContainer.InnerHeight);
+        mDescription.ForceImmediateRebuild();
         mDescription.SizeToChildren(false, true);
         mDescription.SetSize(mDescription.Width, mDescription.Height + margins.Bottom);
         mContainer.SizeToChildren(false, true);
