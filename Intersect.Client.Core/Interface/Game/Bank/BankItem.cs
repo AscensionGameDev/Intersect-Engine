@@ -6,6 +6,7 @@ using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Interface.Game.DescriptionWindows;
+using Intersect.Client.Interface.Game.Inventory;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
@@ -330,7 +331,11 @@ public partial class BankItem
                     );
                     for (var inventoryIndex = 0; inventoryIndex < inventorySlotLimit; inventoryIndex++)
                     {
-                        var inventorySlotComponent = inventorySlots[inventoryIndex];
+                        if (inventorySlots[inventoryIndex] is not InventoryItem inventorySlotComponent)
+                        {
+                            continue;
+                        }
+
                         var inventorySlotRenderBounds = inventorySlotComponent.RenderBounds();
                         if (!inventorySlotRenderBounds.IntersectsWith(dragRect))
                         {

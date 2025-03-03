@@ -5,14 +5,15 @@ using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
+using Intersect.Client.Utilities;
 
 namespace Intersect.Client.Interface.Game.Inventory;
 
 public partial class InventoryWindow : Window
 {
-    public List<InventoryItem> Items { get; set; } = [];
-
+    public List<SlotItem> Items { get; set; } = [];
     private readonly ScrollControl _slotContainer;
+    private readonly ContextMenu _contextMenu;
 
     public InventoryWindow(Canvas gameCanvas) : base(gameCanvas, Strings.Inventory.Title, false, nameof(InventoryWindow))
     {
@@ -30,6 +31,14 @@ public partial class InventoryWindow : Window
             Dock = Pos.Fill,
             OverflowX = OverflowBehavior.Auto,
             OverflowY = OverflowBehavior.Scroll,
+        };
+
+        _contextMenu = new ContextMenu(gameCanvas, "InventoryContextMenu")
+        {
+            IsVisibleInParent = false,
+            IconMarginDisabled = true,
+            ItemFont = GameContentManager.Current.GetFont(name: "sourcesansproblack"),
+            ItemFontSize = 10,
         };
     }
 
@@ -58,7 +67,7 @@ public partial class InventoryWindow : Window
 
         IsClosable = Globals.CanCloseInventory;
 
-        if (Globals.Me?.Inventory is not { } inventory)
+        if (Globals.Me?.Inventory == default)
         {
             return;
         }
@@ -72,23 +81,12 @@ public partial class InventoryWindow : Window
 
     private void InitItemContainer()
     {
-        float containerInnerWidth = _slotContainer.InnerPanel.InnerWidth;
         for (var slotIndex = 0; slotIndex < Options.Instance.Player.MaxInventory; slotIndex++)
         {
-            var slotContainer = new InventoryItem(this, _slotContainer, slotIndex);
-            Items.Add(slotContainer);
-
-            var outerSize = slotContainer.OuterBounds.Size;
-            var itemsPerRow = (int)(containerInnerWidth / outerSize.X);
-
-            var column = slotIndex % itemsPerRow;
-            var row = slotIndex / itemsPerRow;
-
-            var xPosition = column * outerSize.X + slotContainer.Margin.Left;
-            var yPosition = row * outerSize.Y + slotContainer.Margin.Top;
-
-            slotContainer.SetPosition(xPosition, yPosition);
+            Items.Add(new InventoryItem(this, _slotContainer, slotIndex, _contextMenu));
         }
+
+        PopulateSlotContainer.Populate(_slotContainer, Items);
     }
 
     public override void Hide()
@@ -98,6 +96,7 @@ public partial class InventoryWindow : Window
             return;
         }
 
+        _contextMenu?.Close();
         base.Hide();
     }
 

@@ -16,14 +16,12 @@ using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
 using Intersect.Utilities;
-using static Intersect.Client.Localization.Strings;
 
 namespace Intersect.Client.Interface.Game.Inventory;
 
-public partial class InventoryItem : ImagePanel
+public partial class InventoryItem : SlotItem
 {
     // Controls
-    private readonly ImagePanel _iconImage;
     private readonly Label _quantityLabel;
     private readonly Label _equipLabel;
     private readonly Label _cooldownLabel;
@@ -41,32 +39,18 @@ public partial class InventoryItem : ImagePanel
     private int _mouseY = -1;
 
     // Data control
-    private readonly int _mySlot = -1;
     private string _textureLoaded = string.Empty;
 
     // Context Menu Handling
-    private readonly ContextMenu _contextMenu;
     private readonly MenuItem _useItemMenuItem;
     private readonly MenuItem _actionItemMenuItem;
     private readonly MenuItem _dropItemMenuItem;
 
-    public InventoryItem(InventoryWindow inventoryWindow, Base parent, int index) : base(parent, nameof(InventoryItem))
+    public InventoryItem(InventoryWindow inventoryWindow, Base parent, int index, ContextMenu contextMenu) : base(parent, nameof(InventoryItem), index, contextMenu)
     {
         _inventoryWindow = inventoryWindow;
-        _mySlot = index;
-
-        MinimumSize = new Point(34, 34);
-        Margin = new Margin(4);
-        MouseInputEnabled = true;
         TextureFilename = "inventoryitem.png";
 
-        _iconImage = new ImagePanel(this, "Icon")
-        {
-            MinimumSize = new Point(32, 32),
-            MouseInputEnabled = true,
-            Alignment = [Alignments.Center],
-            HoverSound = "octave-tap-resonant.wav",
-        };
         _iconImage.HoverEnter += _iconImage_HoverEnter;
         _iconImage.HoverLeave += _iconImage_HoverLeave;
         _iconImage.Clicked += _iconImage_Clicked;
@@ -111,15 +95,6 @@ public partial class InventoryItem : ImagePanel
 
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
-        // Generate our context menu with basic options.
-        _contextMenu = new ContextMenu(Interface.CurrentInterface.Root, "InventoryContextMenu")
-        {
-            IsVisibleInParent = false,
-            IconMarginDisabled = true,
-            ItemFont = GameContentManager.Current.GetFont(name: "sourcesansproblack"),
-            ItemFontSize = 10,
-        };
-
         _contextMenu.ClearChildren();
         _useItemMenuItem = _contextMenu.AddItem(Strings.ItemContextMenu.Use);
         _useItemMenuItem.Clicked += _useItemContextItem_Clicked;
@@ -137,12 +112,12 @@ public partial class InventoryItem : ImagePanel
 
     #region Context Menu
 
-    public void OpenContextMenu()
+    public override void OpenContextMenu()
     {
         // Clear out the old options since we might not show all of them
         _contextMenu.ClearChildren();
 
-        if (Globals.Me?.Inventory[_mySlot] is not { } inventorySlot)
+        if (Globals.Me?.Inventory[SlotIndex] is not { } inventorySlot)
         {
             return;
         }
@@ -175,7 +150,7 @@ public partial class InventoryItem : ImagePanel
 
             case ItemType.Equipment:
                 _contextMenu.AddChild(_useItemMenuItem);
-                var equipItemLabel = Globals.Me.MyEquipment.Contains(_mySlot) ? Strings.ItemContextMenu.Unequip : Strings.ItemContextMenu.Equip;
+                var equipItemLabel = Globals.Me.MyEquipment.Contains(SlotIndex) ? Strings.ItemContextMenu.Unequip : Strings.ItemContextMenu.Equip;
                 _useItemMenuItem.Text = equipItemLabel.ToString(descriptor.Name);
                 break;
         }
@@ -209,41 +184,37 @@ public partial class InventoryItem : ImagePanel
             _dropItemMenuItem.SetText(Strings.ItemContextMenu.Drop.ToString(descriptor.Name));
         }
 
-        // Display our menu... If we have anything to display.
-        if (_contextMenu.Children.Count > 0)
-        {
-            _contextMenu.Open(Pos.None);
-        }
+        base.OpenContextMenu();
     }
 
     private void _useItemContextItem_Clicked(Base sender, MouseButtonState arguments)
     {
-        Globals.Me?.TryUseItem(_mySlot);
+        Globals.Me?.TryUseItem(SlotIndex);
     }
 
     private void _actionItemContextItem_Clicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.GameShop != null)
         {
-            Globals.Me?.TrySellItem(_mySlot);
+            Globals.Me?.TrySellItem(SlotIndex);
         }
         else if (Globals.InBank)
         {
-            Globals.Me?.TryStoreItemInBank(_mySlot);
+            Globals.Me?.TryStoreItemInBank(SlotIndex);
         }
         else if (Globals.InBag)
         {
-            Globals.Me?.TryStoreItemInBag(_mySlot, -1);
+            Globals.Me?.TryStoreItemInBag(SlotIndex, -1);
         }
         else if (Globals.InTrade)
         {
-            Globals.Me?.TryOfferItemToTrade(_mySlot);
+            Globals.Me?.TryOfferItemToTrade(SlotIndex);
         }
     }
 
     private void _dropItemContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.MouseButtonState arguments)
     {
-        Globals.Me?.TryDropItem(_mySlot);
+        Globals.Me?.TryDropItem(SlotIndex);
     }
 
     #endregion
@@ -259,22 +230,22 @@ public partial class InventoryItem : ImagePanel
 
         if (Globals.GameShop != null)
         {
-            Globals.Me.TrySellItem(_mySlot);
+            Globals.Me.TrySellItem(SlotIndex);
         }
         else if (Globals.InBank)
         {
             if (Globals.InputManager.IsKeyDown(Framework.GenericClasses.Keys.Shift))
             {
                 Globals.Me.TryStoreItemInBank(
-                    _mySlot,
+                    SlotIndex,
                     skipPrompt: true
                 );
             }
             else
             {
-                var slot = Globals.Me.Inventory[_mySlot];
+                var slot = Globals.Me.Inventory[SlotIndex];
                 Globals.Me.TryStoreItemInBank(
-                    _mySlot,
+                    SlotIndex,
                     slot,
                     quantityHint: slot.Quantity,
                     skipPrompt: false
@@ -283,15 +254,15 @@ public partial class InventoryItem : ImagePanel
         }
         else if (Globals.InBag)
         {
-            Globals.Me.TryStoreItemInBag(_mySlot, -1);
+            Globals.Me.TryStoreItemInBag(SlotIndex, -1);
         }
         else if (Globals.InTrade)
         {
-            Globals.Me.TryOfferItemToTrade(_mySlot);
+            Globals.Me.TryOfferItemToTrade(SlotIndex);
         }
         else
         {
-            Globals.Me.TryUseItem(_mySlot);
+            Globals.Me.TryUseItem(SlotIndex);
         }
     }
 
@@ -312,23 +283,23 @@ public partial class InventoryItem : ImagePanel
                 {
                     if (Globals.GameShop != null)
                     {
-                        Globals.Me?.TrySellItem(_mySlot);
+                        Globals.Me?.TrySellItem(SlotIndex);
                     }
                     else if (Globals.InBank)
                     {
-                        Globals.Me?.TryStoreItemInBank(_mySlot);
+                        Globals.Me?.TryStoreItemInBank(SlotIndex);
                     }
                     else if (Globals.InBag)
                     {
-                        Globals.Me?.TryStoreItemInBag(_mySlot, -1);
+                        Globals.Me?.TryStoreItemInBag(SlotIndex, -1);
                     }
                     else if (Globals.InTrade)
                     {
-                        Globals.Me?.TryOfferItemToTrade(_mySlot);
+                        Globals.Me?.TryOfferItemToTrade(SlotIndex);
                     }
                     else
                     {
-                        Globals.Me?.TryDropItem(_mySlot);
+                        Globals.Me?.TryDropItem(SlotIndex);
                     }
                 }
                 break;
@@ -370,7 +341,7 @@ public partial class InventoryItem : ImagePanel
             _descWindow = null;
         }
 
-        if (Globals.Me?.Inventory[_mySlot] is not { } inventorySlot)
+        if (Globals.Me?.Inventory[SlotIndex] is not { } inventorySlot)
         {
             return;
         }
@@ -461,12 +432,12 @@ public partial class InventoryItem : ImagePanel
             return;
         }
 
-        if (slotIndex != _mySlot)
+        if (slotIndex != SlotIndex)
         {
             return;
         }
 
-        if (Globals.Me.Inventory[_mySlot] is not { } inventorySlot)
+        if (Globals.Me.Inventory[SlotIndex] == default)
         {
             return;
         }
@@ -488,14 +459,14 @@ public partial class InventoryItem : ImagePanel
         return rect;
     }
 
-    public void Update()
+    public override void Update()
     {
         if (Globals.Me == default)
         {
             return;
         }
 
-        if (Globals.Me.Inventory[_mySlot] is not { } inventorySlot)
+        if (Globals.Me.Inventory[SlotIndex] is not { } inventorySlot)
         {
             return;
         }
@@ -506,20 +477,20 @@ public partial class InventoryItem : ImagePanel
             return;
         }
 
-        var equipped = Globals.Me.MyEquipment.Any(s => s == _mySlot);
+        var equipped = Globals.Me.MyEquipment.Any(s => s == SlotIndex);
         _equipImageBackground.IsVisibleInParent = !IsDragging && equipped;
         _equipLabel.IsVisibleInParent = !IsDragging && equipped;
 
         _quantityLabel.IsVisibleInParent = !IsDragging && descriptor.IsStackable && inventorySlot.Quantity > 1;
         if (_quantityLabel.IsVisibleInParent)
         {
-            _quantityLabel.Text = FormatQuantityAbbreviated(inventorySlot.Quantity);
+            _quantityLabel.Text = Strings.FormatQuantityAbbreviated(inventorySlot.Quantity);
         }
 
-        _cooldownLabel.IsVisibleInParent = !IsDragging && Globals.Me.IsItemOnCooldown(_mySlot);
+        _cooldownLabel.IsVisibleInParent = !IsDragging && Globals.Me.IsItemOnCooldown(SlotIndex);
         if (_cooldownLabel.IsVisibleInParent)
         {
-            var itemCooldownRemaining = Globals.Me.GetItemRemainingCooldown(_mySlot);
+            var itemCooldownRemaining = Globals.Me.GetItemRemainingCooldown(SlotIndex);
             _cooldownLabel.Text = TimeSpan.FromMilliseconds(itemCooldownRemaining).WithSuffix("0.0");
             _iconImage.RenderColor.A = 100;
         }
@@ -534,7 +505,7 @@ public partial class InventoryItem : ImagePanel
             if (itemTex != null)
             {
                 _iconImage.Texture = itemTex;
-                _iconImage.RenderColor = Globals.Me.IsItemOnCooldown(_mySlot)
+                _iconImage.RenderColor = Globals.Me.IsItemOnCooldown(SlotIndex)
                     ? new Color(100, descriptor.Color.R, descriptor.Color.G, descriptor.Color.B)
                     : descriptor.Color;
                 _iconImage.IsVisibleInParent = true;
@@ -630,7 +601,7 @@ public partial class InventoryItem : ImagePanel
                 for (var inventoryIndex = 0; inventoryIndex < inventorySlotLimit; inventoryIndex++)
                 {
                     var inventorySlotComponent = inventorySlotComponents[inventoryIndex];
-                    var inventoryRenderBounds = inventorySlotComponent.RenderBounds();
+                    var inventoryRenderBounds = ((InventoryItem)inventorySlotComponent).RenderBounds();
 
                     if (!inventoryRenderBounds.IntersectsWith(dragRect))
                     {
@@ -649,9 +620,9 @@ public partial class InventoryItem : ImagePanel
 
                 if (bestIntersectIndex > -1)
                 {
-                    if (_mySlot != bestIntersectIndex)
+                    if (SlotIndex != bestIntersectIndex)
                     {
-                        Globals.Me.SwapItems(_mySlot, bestIntersectIndex);
+                        Globals.Me.SwapItems(SlotIndex, bestIntersectIndex);
                     }
                 }
             }
@@ -683,10 +654,10 @@ public partial class InventoryItem : ImagePanel
 
                 if (bestIntersectIndex > -1)
                 {
-                    Globals.Me.AddToHotbar((byte)bestIntersectIndex, 0, _mySlot);
+                    Globals.Me.AddToHotbar((byte)bestIntersectIndex, 0, SlotIndex);
                 }
             }
-            else if (Globals.InBag)
+            else if (Globals.InBag && Globals.BagSlots != default)
             {
                 var bagWindow = Interface.GameUi.GetBagWindow();
                 if (bagWindow.RenderBounds().IntersectsWith(dragRect))
@@ -714,11 +685,11 @@ public partial class InventoryItem : ImagePanel
 
                     if (bestIntersectIndex > -1)
                     {
-                        Globals.Me.TryStoreItemInBag(_mySlot, bestIntersectIndex);
+                        Globals.Me.TryStoreItemInBag(SlotIndex, bestIntersectIndex);
                     }
                 }
             }
-            else if (Globals.InBank)
+            else if (Globals.InBank && Globals.BankSlots != default)
             {
                 var bankWindow = Interface.GameUi.GetBankWindow();
                 if (bankWindow.RenderBounds().IntersectsWith(dragRect))
@@ -750,9 +721,9 @@ public partial class InventoryItem : ImagePanel
 
                     if (bestIntersectIndex > -1)
                     {
-                        var slot = Globals.Me.Inventory[_mySlot];
+                        var slot = Globals.Me.Inventory[SlotIndex];
                         Globals.Me.TryStoreItemInBank(
-                            _mySlot,
+                            SlotIndex,
                             bankSlotIndex: bestIntersectIndex,
                             quantityHint: slot.Quantity,
                             skipPrompt: true
@@ -762,7 +733,7 @@ public partial class InventoryItem : ImagePanel
             }
             else if (!Globals.Me.IsBusy)
             {
-                PacketSender.SendDropItem(_mySlot, Globals.Me.Inventory[_mySlot].Quantity);
+                PacketSender.SendDropItem(SlotIndex, Globals.Me.Inventory[SlotIndex].Quantity);
             }
 
             _dragIcon.Dispose();
@@ -789,11 +760,5 @@ public partial class InventoryItem : ImagePanel
             _descWindow.Dispose();
             _descWindow = default;
         }
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        _contextMenu?.Close();
-        base.Dispose(disposing);
     }
 }

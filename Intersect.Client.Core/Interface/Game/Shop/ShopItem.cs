@@ -10,53 +10,28 @@ using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Localization;
 using Intersect.Configuration;
 using Intersect.Framework.Core.GameObjects.Items;
-using Intersect.GameObjects;
-using Intersect.Network.Packets.Server;
 
 namespace Intersect.Client.Interface.Game.Shop;
 
-public partial class ShopItem : ImagePanel
+public partial class ShopItem : SlotItem
 {
     private readonly int _mySlot;
     private readonly ShopWindow _shopWindow;
-    public ImagePanel _iconImage;
-    private readonly ContextMenu _contextMenu;
     private readonly MenuItem _buyMenuItem;
     private ItemDescriptionWindow? _itemDescWindow;
 
-    public ShopItem(ShopWindow shopWindow, Base parent, int index) : base(parent, nameof(ShopItem))
+    public ShopItem(ShopWindow shopWindow, Base parent, int index, ContextMenu contextMenu) : base(parent, nameof(ShopItem), index, contextMenu)
     {
         _shopWindow = shopWindow;
         _mySlot = index;
-
-        MinimumSize = new Point(34, 34);
-        Margin = new Margin(4, 4, 4, 4);
-        MouseInputEnabled = true;
         TextureFilename = "shopitem.png";
 
-        _iconImage = new ImagePanel(this, "ShopItemIcon")
-        {
-            MinimumSize = new Point(32, 32),
-            MouseInputEnabled = true,
-            Alignment = [Alignments.Center],
-            HoverSound = "octave-tap-resonant.wav",
-        };
         _iconImage.HoverEnter += _iconImage_HoverEnter;
         _iconImage.HoverLeave += _iconImage_HoverLeave;
         _iconImage.Clicked += _iconImage_RightClicked;
         _iconImage.DoubleClicked += _iconImage_DoubleClicked;
 
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-
-        // Generate our context menu with basic options.
-        // TODO: Refactor so shop only has 1 context menu shared between all items
-        _contextMenu = new ContextMenu(Interface.CurrentInterface.Root, "ShopContextMenu")
-        {
-            IsVisibleInParent = false,
-            IconMarginDisabled = true,
-            ItemFont = GameContentManager.Current.GetFont(name: "sourcesansproblack"),
-            ItemFontSize = 10,
-        };
 
         //TODO: Is this a memory leak?
         _contextMenu.ClearChildren();
@@ -131,7 +106,7 @@ public partial class ShopItem : ImagePanel
 
         if (ClientConfiguration.Instance.EnableContextMenus)
         {
-            _openContextMenu(_mySlot);
+            OpenContextMenu();
         }
         else
         {
@@ -149,26 +124,20 @@ public partial class ShopItem : ImagePanel
         Globals.Me?.TryBuyItem(_mySlot);
     }
 
-    protected override void Dispose(bool disposing)
-    {
-        _contextMenu?.Close();
-        base.Dispose(disposing);
-    }
-
-    private void _openContextMenu(int slot)
+    public override void OpenContextMenu()
     {
         if (Globals.GameShop is not { SellingItems.Count: > 0 } gameShop)
         {
             return;
         }
 
-        if (!ItemDescriptor.TryGet(gameShop.SellingItems[slot].ItemId, out var item))
+        if (!ItemDescriptor.TryGet(gameShop.SellingItems[SlotIndex].ItemId, out var item))
         {
             return;
         }
 
         _buyMenuItem.SetText(Strings.ShopContextMenu.Buy.ToString(item.Name));
-        _contextMenu.Open(Pos.None);
+        base.OpenContextMenu();
     }
 
     public void LoadItem()
