@@ -1008,8 +1008,13 @@ internal partial class MonoRenderer : GameRenderer
         return new Shader(this, shaderName, _contentManager);
     }
 
-    public override System.Numerics.Vector2 MeasureText(string text, IFont? font, int size, float fontScale)
+    public override System.Numerics.Vector2 MeasureText(string? text, IFont? font, int size, float fontScale)
     {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return default;
+        }
+
         if (font is not Font<SpriteFont> platformFont)
         {
             return default;

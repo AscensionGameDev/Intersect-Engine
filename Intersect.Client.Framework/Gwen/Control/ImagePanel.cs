@@ -354,14 +354,17 @@ public partial class ImagePanel : Base
         if (TextureNinePatchMargin is { } textureNinePatchMargin)
         {
             var sourceBounds = _textureSourceBounds;
-            _ninepatchRenderer ??= new Bordered(
-                texture,
-                sourceBounds.X,
-                sourceBounds.Y,
-                sourceBounds.Width,
-                sourceBounds.Height,
-                textureNinePatchMargin
-            );
+            if (_ninepatchRenderer == null || _ninepatchRenderer.Value.Margin != textureNinePatchMargin)
+            {
+                _ninepatchRenderer = new Bordered(
+                    texture,
+                    sourceBounds.X,
+                    sourceBounds.Y,
+                    sourceBounds.Width,
+                    sourceBounds.Height,
+                    textureNinePatchMargin
+                );
+            }
 
             if (_ninepatchRenderer is { } ninepatchRenderer)
             {
