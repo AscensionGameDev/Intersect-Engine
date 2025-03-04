@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -457,8 +458,12 @@ public partial class TexturedBase : Skin.Base
     public TexturedBase(Renderer.Base renderer, IGameTexture texture) : base(renderer)
     {
         _texture = texture ?? throw new ArgumentNullException(nameof(texture));
-        texture.Loaded += _ => InitializeColors();
+        texture.Loaded += OnTextureLoaded;
+        texture.Reload();
+    }
 
+    private void OnTextureLoaded(IAsset _)
+    {
         InitializeColors();
         InitializeTextures();
     }
@@ -478,6 +483,7 @@ public partial class TexturedBase : Skin.Base
     /// </summary>
     public override void Dispose()
     {
+        _texture.Loaded -= OnTextureLoaded;
         base.Dispose();
     }
 
