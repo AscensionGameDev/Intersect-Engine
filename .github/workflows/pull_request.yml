@@ -3,13 +3,16 @@ name: Pull Requests
 on:
   pull_request:
     branches: [ "main" ]
-    paths-ignore:
-      - '.github/**'
-      - 'Documentation/**'
-      - '.gitignore'
-      - '*.DotSettings'
-      - '*.json'
-      - '*.md'
+    paths:
+      - 'Framework/**'
+      - 'Intersect*/**'
+      - '!Intersect.Tests*/**'
+      - '!launchSettings.json'
+      - '!*.md'
+      - '!Examples/**'
+      - '!Documentation/**'
+      - '!.git*'
+      - '!*.DotSettings'
   workflow_dispatch:
     inputs:
       forceBuild:
