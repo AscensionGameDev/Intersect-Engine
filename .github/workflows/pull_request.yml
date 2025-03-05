@@ -45,7 +45,7 @@ jobs:
       uses: actions/cache@v4.2.0
       id: cache-binaries
       with:
-        key: ${{ runner.os }}-binaries-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/**/*.cs*') }}
+        key: ${{ runner.os }}-binaries-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('/*.props', 'Intersect*/**/*.cs*', 'Framework/**/*.cs*') }}
         path: |
           Intersect*/bin/Release/**/*
 
@@ -60,7 +60,7 @@ jobs:
       id: cache-nuget
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       with:
-        key: ${{ runner.os }}-nuget-${{ env.VERSION_PREFIX }}${{ env.PARENT_VERSION_SUFFIX }}-${{ hashFiles('Intersect*/*.csproj') }}
+        key: ${{ runner.os }}-nuget-${{ env.VERSION_PREFIX }}${{ env.PARENT_VERSION_SUFFIX }}-${{ hashFiles('/*.props', 'Intersect*/*.csproj', 'Framework/*/*.csproj') }}
         path: |
           ~/.nuget/packages
           Intersect*/obj/
