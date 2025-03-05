@@ -3,13 +3,18 @@ name: Intersect (main)
 on:
   push:
     branches: [ "main" ]
-    paths-ignore:
-      - '.github/**'
-      - 'Documentation/**'
-      - '.gitignore'
-      - '*.DotSettings'
-      - '*.json'
-      - '*.md'
+    paths:
+      - 'Framework/**'
+      - 'Intersect*/**'
+      - '.github/bundles/**'
+      - '.github/workflows/build.yml'
+      - '!Intersect.Tests*/**'
+      - '!launchSettings.json'
+      - '!*.md'
+      - '!Examples/**'
+      - '!Documentation/**'
+      - '!.git*'
+      - '!*.DotSettings'
   workflow_dispatch:
     inputs:
       forceBuild:
