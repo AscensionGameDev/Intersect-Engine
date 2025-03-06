@@ -415,11 +415,11 @@ public partial class Resource : Entity, IResource
             return;
         }
 
-        // TODO: Add an option to hide the exhausted sprite until the exhaustion animation is finished, but this is not necessary if the graphics line up like Blinkuz' sample provided to fix #2572
-        // if (_activeAnimation != null)
-        // {
-        //     return;
-        // }
+        // TODO: Add an option to show the exhausted sprite until the exhaustion animation is finished, but this is not necessary if the graphics line up like Blinkuz' sample provided to fix #2572
+        if (_activeAnimation != null)
+        {
+            return;
+        }
 
         Graphics.DrawGameTexture(Texture, _renderBoundsSrc, _renderBoundsDest, Intersect.Color.White);
     }
