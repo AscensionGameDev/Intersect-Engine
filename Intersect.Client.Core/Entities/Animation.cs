@@ -14,9 +14,12 @@ namespace Intersect.Client.Entities;
 
 public partial class Animation : IAnimation
 {
+    public event Action<IAnimation>? Disposed;
+    public event Action<IAnimation>? Finished;
+
     public bool AutoRotate { get; set; }
 
-    private bool disposed = false;
+    private bool _disposed = false;
 
     public bool Hidden { get; set; }
 
@@ -243,6 +246,8 @@ public partial class Animation : IAnimation
         {
             Dispose();
         }
+
+        Finished?.Invoke(this);
     }
 
     static Point RotatePoint(Point pointToRotate, Point centerPoint, double angleInDegrees)
@@ -275,10 +280,7 @@ public partial class Animation : IAnimation
 
     public void Dispose()
     {
-        if (disposed)
-        {
-            return;
-        }
+        ObjectDisposedException.ThrowIf(_disposed, this);
 
         lock (Graphics.AnimationLock)
         {
@@ -294,9 +296,11 @@ public partial class Animation : IAnimation
             }
 
             _ = Graphics.LiveAnimations.Remove(this);
-            disposed = true;
+            _disposed = true;
             GC.SuppressFinalize(this);
         }
+
+        Disposed?.Invoke(this);
     }
 
     public void DisposeNextDraw()
@@ -304,7 +308,7 @@ public partial class Animation : IAnimation
         mDisposeNextDraw = true;
     }
 
-    public bool IsDisposed => disposed;
+    public bool IsDisposed => _disposed;
 
     public void SetPosition(float worldX, float worldY, int mapx, int mapy, Guid mapId, Direction dir, int z = 0)
     {
@@ -322,7 +326,7 @@ public partial class Animation : IAnimation
 
     public void Update()
     {
-        if (disposed)
+        if (_disposed)
         {
             return;
         }

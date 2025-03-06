@@ -389,15 +389,22 @@ internal sealed partial class PacketHandler
     //ResourceEntityPacket
     public void HandlePacket(IPacketSender packetSender, ResourceEntityPacket packet)
     {
-        var en = Globals.GetEntity(packet.EntityId, EntityType.Resource);
-        if (en != null)
+        if (Globals.TryGetEntity(EntityType.Resource, packet.EntityId, out var entity))
         {
-            en.Load(packet);
+            entity.Load(packet);
         }
         else
         {
-            var entity = new Resource(packet.EntityId, packet);
-            Globals.Entities.Add(entity.Id, entity);
+            entity = new Resource(packet.EntityId, packet);
+            if (!Globals.Entities.TryAdd(entity.Id, entity))
+            {
+                ApplicationContext.CurrentContext.Logger.LogError(
+                    "Failed to register new {EntityType} {EntityId} ({EntityName})",
+                    EntityType.Resource,
+                    packet.EntityId,
+                    packet.Name
+                );
+            }
         }
     }
 

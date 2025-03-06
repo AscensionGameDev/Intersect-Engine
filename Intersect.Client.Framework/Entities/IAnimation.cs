@@ -1,4 +1,3 @@
-using Intersect.GameObjects;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Animations;
 
@@ -6,6 +5,10 @@ namespace Intersect.Client.Framework.Entities;
 
 public interface IAnimation : IDisposable
 {
+    event Action<IAnimation>? Disposed;
+    event Action<IAnimation>? Finished;
+
+    bool IsDisposed { get; }
     bool AutoRotate { get; set; }
     bool Hidden { get; set; }
     bool InfiniteLoop { get; set; }
