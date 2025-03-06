@@ -4,10 +4,12 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
+using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Entities;
 
@@ -20,7 +22,9 @@ public partial class Resource : Entity, IResource
     private bool _waitingForTilesets;
 
     private bool _isDead;
+    private Guid _descriptorId;
     private ResourceDescriptor? _descriptor;
+    private IAnimation? _activeAnimation;
 
     public Resource(Guid id, ResourceEntityPacket packet) : base(id, packet, EntityType.Resource)
     {
@@ -108,14 +112,67 @@ public partial class Resource : Entity, IResource
             return;
         }
 
+        var wasDead = IsDead;
         IsDead = resourceEntityPacket.IsDead;
 
-        if (!ResourceDescriptor.TryGet(resourceEntityPacket.ResourceId, out _descriptor))
+        var descriptorId = resourceEntityPacket.ResourceId;
+        _descriptorId = descriptorId;
+
+        var justDied = !wasDead && resourceEntityPacket.IsDead;
+        if (!ResourceDescriptor.TryGet(descriptorId, out var descriptor))
+        {
+            if (justDied)
+            {
+                ApplicationContext.CurrentContext.Logger.LogError(
+                    "Unable to play resource exhaustion animation because resource {EntityId} ({EntityName}) is missing the descriptor ({DescriptorId})",
+                    Id,
+                    Name,
+                    descriptorId
+                );
+            }
+
+            return;
+        }
+
+        _descriptor = descriptor;
+        UpdateFromDescriptor(_descriptor);
+
+        if (!justDied)
         {
             return;
         }
 
-        UpdateFromDescriptor(_descriptor);
+        if (MapInstance is { } mapInstance)
+        {
+            var animation = mapInstance.AddTileAnimation(descriptor.AnimationId, X, Y, Direction.Up);
+            if (animation is { IsDisposed: false })
+            {
+                animation.Finished += OnAnimationDisposedOrFinished;
+                animation.Disposed += OnAnimationDisposedOrFinished;
+            }
+            _activeAnimation = animation;
+        }
+        else
+        {
+            ApplicationContext.CurrentContext.Logger.LogError(
+                "Unable to play resource exhaustion animation because resource {EntityId} ({EntityName}) has no reference to the map instance for map {MapId}",
+                Id,
+                Name,
+                MapId
+            );
+        }
+    }
+
+    private void OnAnimationDisposedOrFinished(IAnimation animation)
+    {
+        if (_activeAnimation != animation)
+        {
+            return;
+        }
+
+        _activeAnimation = null;
+        animation.Disposed -= OnAnimationDisposedOrFinished;
+        animation.Finished -= OnAnimationDisposedOrFinished;
     }
 
     private void UpdateFromDescriptor(ResourceDescriptor? descriptor)
@@ -353,9 +410,17 @@ public partial class Resource : Entity, IResource
             return;
         }
 
-        if (Texture != null)
+        if (Texture == null)
         {
-            Graphics.DrawGameTexture(Texture, _renderBoundsSrc, _renderBoundsDest, Intersect.Color.White);
+            return;
         }
+
+        // TODO: Add an option to hide the exhausted sprite until the exhaustion animation is finished, but this is not necessary if the graphics line up like Blinkuz' sample provided to fix #2572
+        // if (_activeAnimation != null)
+        // {
+        //     return;
+        // }
+
+        Graphics.DrawGameTexture(Texture, _renderBoundsSrc, _renderBoundsDest, Intersect.Color.White);
     }
 }

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Framework.Database;
@@ -9,10 +10,12 @@ using Intersect.Client.Framework.Sys;
 using Intersect.Client.Items;
 using Intersect.Client.Maps;
 using Intersect.Client.Plugins.Interfaces;
+using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.General;
 
@@ -221,23 +224,37 @@ public static partial class Globals
         );
     }
 
-    public static Entity GetEntity(Guid id, EntityType type)
+    public static bool TryGetEntity(EntityType entityType, Guid entityId, [NotNullWhen(true)] out Entity? entity)
     {
-        if (Entities.ContainsKey(id))
+        if (!Entities.TryGetValue(entityId, out entity))
         {
-            var entity = Entities[id];
-
-            if (!entity.IsDisposed && entity.Type == type)
-            {
-                EntitiesToDispose.Remove(entity.Id);
-
-                return entity;
-            }
-
-            entity.Dispose();
-            Entities.Remove(id);
+            return false;
         }
 
-        return default;
+        if (entity.IsDisposed)
+        {
+            Entities.Remove(entityId);
+            entity = null;
+            return false;
+        }
+
+        if (entity.Type != entityType)
+        {
+            ApplicationContext.CurrentContext.Logger.LogError(
+                "Found instance of {ActualEntityType} registered to {EntityId} but it was expected to be {ExpectedEntityType}",
+                entity.Type,
+                entityId,
+                entityType
+            );
+            Entities.Remove(entityId);
+            entity.Dispose();
+            entity = null;
+            return false;
+        }
+
+        EntitiesToDispose.Remove(entityId);
+        return true;
     }
+
+    public static Entity? GetEntity(Guid id, EntityType type) => TryGetEntity(type, id, out var entity) ? entity : null;
 }

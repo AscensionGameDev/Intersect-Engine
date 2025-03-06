@@ -725,8 +725,8 @@ public partial class MapInstance : MapDescriptor, IGameObject<Guid, MapInstance>
     }
 
     //Animations
-    public void AddTileAnimation(
-        Guid animId,
+    public IAnimation? AddTileAnimation(
+        Guid animationDescriptorId,
         int tileX,
         int tileY,
         Direction dir = Direction.None,
@@ -734,22 +734,42 @@ public partial class MapInstance : MapDescriptor, IGameObject<Guid, MapInstance>
         AnimationSource source = default
     )
     {
-        var animBase = AnimationDescriptor.Get(animId);
-        if (animBase == null)
+        if (!AnimationDescriptor.TryGet(animationDescriptorId, out var animationDescriptor))
         {
-            return;
+            return null;
         }
 
-        var anim = new MapAnimation(
-            animBase,
+        return AddTileAnimation(
+            animationDescriptor,
+            tileX,
+            tileY,
+            dir,
+            owner,
+            source
+        );
+    }
+
+    public IAnimation? AddTileAnimation(
+        AnimationDescriptor animationDescriptor,
+        int tileX,
+        int tileY,
+        Direction dir = Direction.None,
+        IEntity? owner = null,
+        AnimationSource source = default
+    )
+    {
+        var animationInstance = new MapAnimation(
+            animationDescriptor,
             tileX,
             tileY,
             dir,
             owner as Entity,
             source: source
         );
-        LocalAnimations.TryAdd(anim.Id, anim);
-        anim.SetPosition(
+
+        LocalAnimations.TryAdd(animationInstance.Id, animationInstance);
+
+        animationInstance.SetPosition(
             X + tileX * _tileWidth + _tileHalfWidth,
             Y + tileY * _tileHeight + _tileHalfHeight,
             tileX,
@@ -757,6 +777,8 @@ public partial class MapInstance : MapDescriptor, IGameObject<Guid, MapInstance>
             Id,
             dir
         );
+
+        return animationInstance;
     }
 
     private void HideActiveAnimations()

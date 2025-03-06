@@ -60,19 +60,6 @@ public partial class Resource : Entity
         if (dropItems)
         {
             SpawnResourceItems(killer);
-            if (Descriptor.AnimationId != Guid.Empty)
-            {
-                PacketSender.SendAnimationToProximity(
-                    Descriptor.AnimationId,
-                    -1,
-                    Guid.Empty,
-                    MapId,
-                    X,
-                    Y,
-                    Direction.Up,
-                    MapInstanceId
-                );
-            }
         }
 
         PacketSender.SendEntityDataToProximity(this);

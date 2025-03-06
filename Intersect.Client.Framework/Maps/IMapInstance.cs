@@ -28,8 +28,17 @@ public interface IMapInstance
     bool IsDisposed { get; }
     bool IsLoaded { get; }
 
-    void AddTileAnimation(
+    IAnimation? AddTileAnimation(
         Guid animId,
+        int tileX,
+        int tileY,
+        Direction dir = Direction.None,
+        IEntity? owner = null,
+        AnimationSource source = default
+    );
+
+    IAnimation? AddTileAnimation(
+        AnimationDescriptor animationDescriptor,
         int tileX,
         int tileY,
         Direction dir = Direction.None,
