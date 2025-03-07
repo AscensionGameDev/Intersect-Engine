@@ -41,7 +41,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution 
 		README.md = README.md
 		SECURITY.md = SECURITY.md
 		VERSIONING.md = VERSIONING.md
-		CustomCommon.props = CustomCommon.props
 		Common.props = Common.props
 	EndProjectSection
 EndProject
