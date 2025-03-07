@@ -6,7 +6,11 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using Intersect.Core;
+using Intersect.Web;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace Intersect.Framework.Core.AssetManagement;
 
@@ -130,7 +134,10 @@ public sealed class Updater
                         $"{_manifestUrl}?token={Environment.TickCount}"
                     );
 
-                    Log.Info($"Attempting to fetch update manifest from {_manifestUrl}");
+                    ApplicationContext.CurrentContext.Logger.LogInformation(
+                        "Attempting to fetch update manifest from {ManifestUrl}",
+                        _manifestUrl
+                    );
 
                     responseMessage = httpClient.Send(requestMessage);
 
@@ -236,14 +243,21 @@ public sealed class Updater
                                 }
                                 catch (Exception exception)
                                 {
-                                    Log.Warn(exception, $"Failed to delete cached file: \"{cachedFile.Path}\"");
+                                    ApplicationContext.CurrentContext.Logger.LogWarning(
+                                        exception,
+                                        "Failed to delete cached file: \"{CacheFilePath}\"",
+                                        cachedFile.Path
+                                    );
                                 }
                             }
                         }
                     }
                     catch (Exception exception)
                     {
-                        Log.Warn(exception, "Error inspecting existing manifest, forcing update");
+                        ApplicationContext.CurrentContext.Logger.LogWarning(
+                            exception,
+                            "Error inspecting existing manifest, forcing update"
+                        );
                         updateRequired = true;
                     }
                 }
@@ -259,7 +273,7 @@ public sealed class Updater
         }
         catch (Exception exception)
         {
-            Log.Error(exception, "Failed to access update server");
+            ApplicationContext.CurrentContext.Logger.LogError(exception, "Failed to access update server");
             updateManifest = default;
             return UpdaterStatus.Offline;
         }
@@ -313,7 +327,7 @@ public sealed class Updater
         get
         {
 #if DIAGNOSTIC
-            Log.Diagnostic($"Reading SizeTotal {Environment.TickCount64}");
+            ApplicationContext.CurrentContext.Logger.LogTrace($"Reading SizeTotal {Environment.TickCount64}");
 #endif
             return _sizeTotal;
         }
@@ -337,7 +351,7 @@ public sealed class Updater
                     throw new Exception("Failed to download update manifest");
                 case UpdaterStatus.NoUpdateNeeded:
                     Status = UpdateStatus.None;
-                    Log.Info("Assets are already up-to-date");
+                    ApplicationContext.CurrentContext.Logger.LogInformation("Assets are already up-to-date");
                     return;
                 case UpdaterStatus.Ready:
                     break;
@@ -376,11 +390,11 @@ public sealed class Updater
                 {
                     EnqueueLocked(file);
 #if DIAGNOSTIC
-                    Log.Diagnostic($"Executing Interlocked.Add(ref _sizeTotal ({_sizeTotal}), {file.Size})");
+                    ApplicationContext.CurrentContext.Logger.LogTrace($"Executing Interlocked.Add(ref _sizeTotal ({_sizeTotal}), {file.Size})");
 #endif
                     Interlocked.Add(ref _sizeTotal, file.Size);
 #if DIAGNOSTIC
-                    Log.Diagnostic($"Done Interlocked.Add(ref _sizeTotal ({_sizeTotal}), {file.Size})");
+                    ApplicationContext.CurrentContext.Logger.LogTrace($"Done Interlocked.Add(ref _sizeTotal ({_sizeTotal}), {file.Size})");
 #endif
                 }
 
@@ -401,7 +415,10 @@ public sealed class Updater
 
                 if (!_downloadResults.TryAdd(file, downloadResult))
                 {
-                    Log.Warn($"Failed to add file to download results, it may already be registered? {file.Path}");
+                    ApplicationContext.CurrentContext.Logger.LogWarning(
+                        "Failed to add file to download results, it may already be registered? {OutputFilePath}",
+                        file.Path
+                    );
                 }
 
                 if (IsUpdaterFile(file.Path))
@@ -411,11 +428,11 @@ public sealed class Updater
 
                 EnqueueLocked(file);
 #if DIAGNOSTIC
-                Log.Diagnostic($"Executing Interlocked.Add(ref _sizeTotal ({_sizeTotal}), {file.Size})");
+                ApplicationContext.CurrentContext.Logger.LogTrace($"Executing Interlocked.Add(ref _sizeTotal ({_sizeTotal}), {file.Size})");
 #endif
                 Interlocked.Add(ref _sizeTotal, file.Size);
 #if DIAGNOSTIC
-                Log.Diagnostic($"Done Interlocked.Add(ref _sizeTotal ({_sizeTotal}), {file.Size})");
+                ApplicationContext.CurrentContext.Logger.LogTrace($"Done Interlocked.Add(ref _sizeTotal ({_sizeTotal}), {file.Size})");
 #endif
             }
 
@@ -433,7 +450,7 @@ public sealed class Updater
             // Failed to fetch update info or deserialize!
             Status = UpdateStatus.Error;
             Exception = new Exception($"[Update Check Failed!] - {exception.Message}", exception);
-            Log.Error(Exception);
+            ApplicationContext.CurrentContext.Logger.LogError(exception, "Update check failed");
             return;
         }
 
@@ -487,7 +504,7 @@ public sealed class Updater
 
         lock (assetManifest)
         {
-            Log.Info("Collating downloads...");
+            ApplicationContext.CurrentContext.Logger.LogInformation("Collating downloads...");
 
             lock (_downloadResults)
             {
@@ -495,17 +512,27 @@ public sealed class Updater
                 {
                     if (result.State == DownloadState.Completed)
                     {
-                        Log.Info($"Completed download of \"{file.Path}\"");
+                        ApplicationContext.CurrentContext.Logger.LogInformation(
+                            "Completed download : {OutputFilePath}",
+                            file.Path
+                        );
                         assetManifest.Files.Add(file);
                     }
                     else
                     {
-                        Log.Warn($"\"{file.Path}\" is marked {result.State} instead of {nameof(DownloadState.Completed)}");
+                        ApplicationContext.CurrentContext.Logger.LogWarning(
+                            "Download marked as {ActualDownloadState} instead of {ExpectedDownloadState}: {OutputFilePath}",
+                            file.Path,
+                            result.State,
+                            DownloadState.Completed
+                        );
                     }
                 }
             }
 
-            Log.Info("Finished, now writing updated version manifest...");
+            ApplicationContext.CurrentContext.Logger.LogInformation(
+                "Finished downloads, now writing updated version manifest..."
+            );
 
             File.WriteAllText(
                 _versionPath,
@@ -520,7 +547,7 @@ public sealed class Updater
                 )
             );
 
-            Log.Info("Finished writing updated version manifest.");
+            ApplicationContext.CurrentContext.Logger.LogInformation("Finished writing updated version manifest...");
         }
 
 
@@ -543,8 +570,10 @@ public sealed class Updater
         {
             if (!_downloadResults.TryGetValue(currentFile, out _))
             {
-                Log.Warn(
-                    $"Tried to download a file that was not registered, will ignore {nameof(UpdateManifest.OverrideBaseUrl)}: {currentFile.Path}"
+                ApplicationContext.CurrentContext.Logger.LogWarning(
+                    "Skipping download of unregistered file in {ManifestPropertyName}: {FilePath}",
+                    nameof(UpdateManifest.OverrideBaseUrl),
+                    currentFile.Path
                 );
                 _downloadResults[currentFile] = new DownloadResult { State = DownloadState.Queued };
             }
@@ -577,7 +606,7 @@ public sealed class Updater
         {
             if (_baseUrl == default)
             {
-                Log.Warn(exception, "No base URL");
+                ApplicationContext.CurrentContext.Logger.LogWarning(exception, "No base URL");
                 return false;
             }
 
@@ -589,7 +618,11 @@ public sealed class Updater
             catch (Exception secondException)
             {
                 AggregateException aggregateException = new(exception, secondException);
-                Log.Warn(aggregateException, $"Unable to resolve streaming url {streamingUrl}");
+                ApplicationContext.CurrentContext.Logger.LogWarning(
+                    aggregateException,
+                    "Unable to resolve streaming url: {StreamingURL}",
+                    streamingUrl
+                );
                 return false;
             }
         }
@@ -648,7 +681,7 @@ public sealed class Updater
                 var currentFile = _downloadResults.Keys.FirstOrDefault(key => string.Equals(key.Path, assetName));
                 if (currentFile == default)
                 {
-                    Log.Error(
+                    ApplicationContext.CurrentContext.Logger.LogError(
                         $"Streaming server returned unknown file, falling back to per-file downloads: {assetName}"
                     );
                     return false;
@@ -656,13 +689,13 @@ public sealed class Updater
 
                 if (!_downloadResults.TryGetValue(currentFile, out var currentResult))
                 {
-                    Log.Error($"Unregistered file, falling back to per-file downloads: {assetName}");
+                    ApplicationContext.CurrentContext.Logger.LogError($"Unregistered file, falling back to per-file downloads: {assetName}");
                     return false;
                 }
 
                 if (currentResult.State != DownloadState.Queued)
                 {
-                    Log.Error(
+                    ApplicationContext.CurrentContext.Logger.LogError(
                         $"Another thread is already downloading this, falling back to per-file downloads: {assetName}"
                     );
                     return false;
@@ -740,7 +773,10 @@ public sealed class Updater
                             _ => throw new UnreachableException(),
                         }
                     );
-                    Log.Error(Exception);
+                    ApplicationContext.CurrentContext.Logger.LogError(
+                        Exception,
+                        "Error detected while downloading streamed asset"
+                    );
                     _failed = true;
                     Status = UpdateStatus.Error;
                     return false;
@@ -755,14 +791,25 @@ public sealed class Updater
                 }
                 catch (Exception exception)
                 {
-                    Log.Warn(exception, $"Failed to delete {relativePathToTargetFile}");
+                    ApplicationContext.CurrentContext.Logger.LogWarning(
+                        exception,
+                        "Failed to delete {RelativeTargetPath}",
+                        relativePathToTargetFile
+                    );
+
                     FileInfo oldTargetFileInfo = new($"{targetFileInfo.FullName}.old");
                     try
                     {
-                        targetFileInfo.MoveTo($"{targetFileInfo.FullName}.old", true);
-                    } catch (Exception moveToException)
+                        targetFileInfo.MoveTo(oldTargetFileInfo.FullName, true);
+                    }
+                    catch (Exception moveToException)
                     {
-                        Log.Warn(moveToException, $"Failed to move {relativePathToTargetFile} to {relativePathToTargetFile}.old");
+                        ApplicationContext.CurrentContext.Logger.LogWarning(
+                            moveToException,
+                            "Failed to move {RelativeSourcePath} to {RelativeTargetPath}.old",
+                            relativePathToTargetFile,
+                            relativePathToTargetFile
+                        );
                     }
                 }
 
@@ -782,7 +829,12 @@ public sealed class Updater
                 }
                 catch (Exception exception)
                 {
-                    Log.Error(exception, $"Failed to move {relativePathToTemporaryFile} to {relativePathToTargetFile}");
+                    ApplicationContext.CurrentContext.Logger.LogError(
+                        exception,
+                        "Failed to move {RelativeSourcePath} to {RelativeTargetPath}",
+                        relativePathToTemporaryFile,
+                        relativePathToTargetFile
+                    );
 
                     try
                     {
@@ -796,7 +848,12 @@ public sealed class Updater
                     }
                     catch (Exception copyException)
                     {
-                        Log.Error(copyException, $"Failed to copy data from {relativePathToTemporaryFile} to {relativePathToTargetFile}");
+                        ApplicationContext.CurrentContext.Logger.LogError(
+                            exception,
+                            "Failed to copy data from {RelativeSourcePath} to {RelativeTargetPath}",
+                            relativePathToTemporaryFile,
+                            relativePathToTargetFile
+                        );
                     }
                 }
             }
@@ -805,7 +862,12 @@ public sealed class Updater
         }
         catch (EndOfStreamException endOfStreamException)
         {
-            Log.Error(endOfStreamException, $"Error downloading from stream: {requestUri}");
+            ApplicationContext.CurrentContext.Logger.LogError(
+                endOfStreamException,
+                "Error download from stream: {RequestURI}",
+                requestUri
+            );
+
             foreach (var (file, result) in _downloadResults)
             {
                 if (result.State != DownloadState.Failed)
@@ -821,7 +883,10 @@ public sealed class Updater
         }
         catch (Exception exception)
         {
-            Log.Error(exception, "Error downloading from stream");
+            ApplicationContext.CurrentContext.Logger.LogError(
+                exception,
+                "Error download from stream"
+            );
             return false;
         }
         finally
@@ -880,7 +945,7 @@ public sealed class Updater
             {
                 if (!_downloadResults.TryGetValue(currentFile, out currentResult))
                 {
-                    Log.Warn(
+                    ApplicationContext.CurrentContext.Logger.LogWarning(
                         $"Tried to download a file that was not registered, will ignore {nameof(UpdateManifest.OverrideBaseUrl)}: {currentFile.Path}"
                     );
                     currentResult = new DownloadResult { State = DownloadState.Active };
@@ -898,7 +963,7 @@ public sealed class Updater
                         break;
                 }
 
-                Log.Info($"[{workerThreadIndex}] Starting download for {currentResult.State} {currentFile.Path}");
+                ApplicationContext.CurrentContext.Logger.LogInformation($"[{workerThreadIndex}] Starting download for {currentResult.State} {currentFile.Path}");
                 currentResult.State = DownloadState.Active;
             }
 
@@ -918,18 +983,18 @@ public sealed class Updater
                 var currentFileUrl = $"{effectiveBaseUrl}/{currentFile.Path}?token={Environment.TickCount}";
 
 #if DIAGNOSTIC
-                Log.Diagnostic($"Starting download for {currentFile.Path}");
+                ApplicationContext.CurrentContext.Logger.LogTrace($"Starting download for {currentFile.Path}");
 #endif
                 using HttpRequestMessage requestMessage = new(HttpMethod.Get, currentFileUrl);
                 using var responseMessage = httpClient.Send(requestMessage, cancellationToken);
 #if DIAGNOSTIC
-                Log.Diagnostic($"Received response, beginning download of content for {(int)responseMessage.StatusCode} {currentFile.Path}");
+                ApplicationContext.CurrentContext.Logger.LogTrace($"Received response, beginning download of content for {(int)responseMessage.StatusCode} {currentFile.Path}");
 #endif
 
                 // ReSharper disable once ConvertIfStatementToSwitchStatement
                 if (responseMessage.StatusCode == HttpStatusCode.PartialContent)
                 {
-                    Log.Warn($"Unsupported response from update server for \"{currentFile.Path}\" ({responseMessage.StatusCode})");
+                    ApplicationContext.CurrentContext.Logger.LogWarning($"Unsupported response from update server for \"{currentFile.Path}\" ({responseMessage.StatusCode})");
                     // TODO: Support 206 Partial Content
                     currentResult.State = DownloadState.Failed;
                     currentResult.Count = long.MaxValue;
@@ -938,7 +1003,7 @@ public sealed class Updater
 
                 if (responseMessage.StatusCode >= HttpStatusCode.InternalServerError)
                 {
-                    Log.Warn($"Server error response from update server for \"{currentFile.Path}\" ({responseMessage.StatusCode})");
+                    ApplicationContext.CurrentContext.Logger.LogWarning($"Server error response from update server for \"{currentFile.Path}\" ({responseMessage.StatusCode})");
                     currentResult.State = DownloadState.Failed;
                     currentResult.Count += 1;
                     continue;
@@ -946,7 +1011,7 @@ public sealed class Updater
 
                 if (responseMessage.StatusCode >= HttpStatusCode.BadRequest)
                 {
-                    Log.Warn($"Client error response from update server for \"{currentFile.Path}\" ({responseMessage.StatusCode})");
+                    ApplicationContext.CurrentContext.Logger.LogWarning($"Client error response from update server for \"{currentFile.Path}\" ({responseMessage.StatusCode})");
                     currentResult.State = DownloadState.Failed;
                     currentResult.Count = long.MaxValue;
                     continue;
@@ -955,7 +1020,7 @@ public sealed class Updater
                 if (currentFile.Size != responseMessage.Content.Headers.ContentLength)
                 {
                     // This is fine for 206 Partial Content responses but not for any others
-                    Log.Warn($"Update stream mismatch for \"{currentFile.Path}\" (expected {currentFile.Size} but received {responseMessage.Content.Headers.ContentLength})");
+                    ApplicationContext.CurrentContext.Logger.LogWarning($"Update stream mismatch for \"{currentFile.Path}\" (expected {currentFile.Size} but received {responseMessage.Content.Headers.ContentLength})");
                     currentResult.State = DownloadState.Failed;
                     ++currentResult.Count;
 
@@ -968,23 +1033,23 @@ public sealed class Updater
                 }
 
 #if DIAGNOSTIC
-                Log.Diagnostic($"Opening response read stream for {currentFile.Path}");
+                ApplicationContext.CurrentContext.Logger.LogTrace($"Opening response read stream for {currentFile.Path}");
 #endif
                 using var responseStream = responseMessage.Content.ReadAsStream(cancellationToken);
 #if DIAGNOSTIC
-                Log.Diagnostic($"Opening file write stream for {currentFile.Path}");
+                ApplicationContext.CurrentContext.Logger.LogTrace($"Opening file write stream for {currentFile.Path}");
 #endif
 
                 if (currentResult.State == DownloadState.Completed)
                 {
-                    Log.Warn($"[{workerThreadIndex}] Two threads were downloading {currentResult.State} {currentFile.Path}");
+                    ApplicationContext.CurrentContext.Logger.LogWarning($"[{workerThreadIndex}] Two threads were downloading {currentResult.State} {currentFile.Path}");
                     continue;
                 }
 
-                Log.Debug($"[{workerThreadIndex}] Creating temporary file for {currentResult.State} {currentFile.Path}");
+                ApplicationContext.CurrentContext.Logger.LogDebug($"[{workerThreadIndex}] Creating temporary file for {currentResult.State} {currentFile.Path}");
                 using FileStream fileStream = temporaryFileInfo.OpenWrite();
 #if DIAGNOSTIC
-                Log.Diagnostic($"Copying chunks of {currentFile.Path}");
+                ApplicationContext.CurrentContext.Logger.LogTrace($"Copying chunks of {currentFile.Path}");
 #endif
 
                 while (currentResult.Count < currentFile.Size && responseStream.Position < responseStream.Length)
@@ -1003,7 +1068,7 @@ public sealed class Updater
                     );
 
 #if DIAGNOSTIC
-                    Log.Diagnostic($"Reading chunk ({chunkSize} bytes) from {bufferOffset} {currentFile.Path}");
+                    ApplicationContext.CurrentContext.Logger.LogTrace($"Reading chunk ({chunkSize} bytes) from {bufferOffset} {currentFile.Path}");
 #endif
                     read = responseStream.Read(buffer, bufferOffset, chunkSize);
 
@@ -1011,7 +1076,7 @@ public sealed class Updater
                     currentResult.Count += read;
 
 #if DIAGNOSTIC
-                    Log.Diagnostic($"Read {read} (of {chunkSize}) bytes ({currentResult.Count}/{currentFile.Size}) of {currentFile.Path}");
+                    ApplicationContext.CurrentContext.Logger.LogTrace($"Read {read} (of {chunkSize}) bytes ({currentResult.Count}/{currentFile.Size}) of {currentFile.Path}");
 #endif
 
                     if (bufferOffset < MaxBuffer)
@@ -1024,7 +1089,7 @@ public sealed class Updater
                 }
 
 #if DIAGNOSTIC
-                Log.Diagnostic($"Writing final chunk of {currentFile.Path}");
+                ApplicationContext.CurrentContext.Logger.LogTrace($"Writing final chunk of {currentFile.Path}");
 #endif
 
                 if (bufferOffset > 0)
@@ -1033,19 +1098,19 @@ public sealed class Updater
                 }
 
 #if DIAGNOSTIC
-                Log.Diagnostic($"Flushing chunks to disk of {currentFile.Path}");
+                ApplicationContext.CurrentContext.Logger.LogTrace($"Flushing chunks to disk of {currentFile.Path}");
 #endif
 
                 fileStream.Close();
 
 #if DIAGNOSTIC
-                Log.Diagnostic($"Finished download for {currentFile.Path}");
+                ApplicationContext.CurrentContext.Logger.LogTrace($"Finished download for {currentFile.Path}");
 #endif
 
                 var validity = ValidateTemporaryFile(currentFile, temporaryFileInfo, out var temporaryChecksum);
 
 #if DIAGNOSTIC
-                Log.Diagnostic($"Checked validity of file (result: {validity}) {currentFile.Path}");
+                ApplicationContext.CurrentContext.Logger.LogTrace($"Checked validity of file (result: {validity}) {currentFile.Path}");
 #endif
 
                 var relativePathToTemporaryFile = Path.GetRelativePath(
@@ -1073,7 +1138,7 @@ public sealed class Updater
                             _ => throw new UnreachableException(),
                         }
                     );
-                    Log.Error(Exception);
+                    ApplicationContext.CurrentContext.Logger.LogError(Exception, "Error downloading update");
                     _failed = true;
                     Status = UpdateStatus.Error;
                     return false;
@@ -1092,7 +1157,7 @@ public sealed class Updater
                     }
                     catch (Exception exception)
                     {
-                        Log.Warn(exception, $"Failed to make {temporaryFileInfo.Name} executable");
+                        ApplicationContext.CurrentContext.Logger.LogWarning(exception, $"Failed to make {temporaryFileInfo.Name} executable");
                     }
                 }
 
@@ -1105,7 +1170,7 @@ public sealed class Updater
                 }
                 catch (Exception exception)
                 {
-                    Log.Warn(exception, $"Failed to delete {relativePathToTargetFile}");
+                    ApplicationContext.CurrentContext.Logger.LogWarning(exception, $"Failed to delete {relativePathToTargetFile}");
                 }
 
                 try
@@ -1118,14 +1183,14 @@ public sealed class Updater
                     }
 
 #if DIAGNOSTIC
-                    Log.Diagnostic($"Completed for {currentFile.Path}");
+                    ApplicationContext.CurrentContext.Logger.LogTraceApplicationContext.CurrentContext.Logger.LogTrace($"Completed for {currentFile.Path}");
 #endif
                     currentResult.State = DownloadState.Completed;
                     _downloadedBytes += currentFile.Size;
                 }
                 catch (Exception exception)
                 {
-                    Log.Error(
+                    ApplicationContext.CurrentContext.Logger.LogError(
                         exception,
                         $"Failed to move {relativePathToTemporaryFile} to {relativePathToTargetFile}"
                     );
@@ -1142,7 +1207,10 @@ public sealed class Updater
                     }
                     catch (Exception copyException)
                     {
-                        Log.Error(copyException, $"Failed to copy data from {relativePathToTemporaryFile} to {relativePathToTargetFile}");
+                        ApplicationContext.CurrentContext.Logger.LogError(
+                            copyException,
+                            $"Failed to copy data from {relativePathToTemporaryFile} to {relativePathToTargetFile}"
+                        );
                     }
                 }
             }
@@ -1155,12 +1223,12 @@ public sealed class Updater
                 var message = $"Error while downloading file, will {behaviorModifier} reattempt: {path}";
                 if (reattempt)
                 {
-                    Log.Warn(exception, message);
+                    ApplicationContext.CurrentContext.Logger.LogWarning(exception, message);
                     EnqueueLocked(currentFile);
                 }
                 else
                 {
-                    Log.Error(exception, message);
+                    ApplicationContext.CurrentContext.Logger.LogError(exception, message);
                 }
             }
 
@@ -1207,7 +1275,7 @@ public sealed class Updater
             }
             catch (Exception exception)
             {
-                Log.Warn(exception, $"Exception deleting old file: {file}");
+                ApplicationContext.CurrentContext.Logger.LogWarning(exception, $"Exception deleting old file: {file}");
             }
         }
     }
@@ -1289,7 +1357,7 @@ public sealed class Updater
                 }
                 catch (Exception exception)
                 {
-                    Log.Warn(exception, "Exception while interrupting download thread");
+                    ApplicationContext.CurrentContext.Logger.LogWarning(exception, "Exception while interrupting download thread");
                 }
             }
         }

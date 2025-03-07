@@ -1,4 +1,4 @@
-namespace Intersect.Server.Web.Authentication;
+namespace Intersect.Web;
 
 public static class TokenTypes
 {

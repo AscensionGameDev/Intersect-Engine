@@ -8,6 +8,7 @@ using Intersect.Server.Database.PlayerData.Api;
 using Intersect.Server.Web.Authentication;
 using Intersect.Server.Web.Http;
 using Intersect.Server.Web.Types;
+using Intersect.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
