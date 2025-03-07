@@ -1,0 +1,15 @@
+tab-set {
+	width: calc(100% - 2em);
+}
+
+tab-content > * {
+	margin: 1em 0;
+}
+
+tab-content > *:first-child {
+	margin-top: 0;
+}
+
+tab-content > *:last-child {
+	margin-bottom: 0;
+}

@@ -1,0 +1,466 @@
+@page
+@model AssetManagerModel
+@{
+    ViewData["Title"] = AssetManagerResources.AssetManager;
+}
+
+@await Html.PartialAsync("~/Web/Pages/Developer/Assets/_TabSet.cshtml")
+
+<script src="~/js/assets.js"></script>
+
+<template id="custom-element-manifest-viewer">
+    <style>
+    	:host {
+    		display:  block;
+    	}
+
+        article.manifest>.entries {
+        	background-color: var(--theme-bg-accent);
+
+        	--entries-border: solid color-mix(in srgb, var(--theme-text), #000 33%);
+        	border-bottom: 0.0625rem var(--entries-border);
+        	border-top: 0.125rem var(--entries-border);
+
+        	--entries-height: calc((100vh - (3.75rem + 2.375rem + (1rem * 2) + 2.625rem + 1rem + (2.0625rem + 0.1875rem) * 2)) / 2);
+        	min-height: var(--entries-height);
+        	max-height: var(--entries-height);
+        	overflow: scroll;
+        }
+
+        article.manifest>h2 {
+        	margin: 0 0 0 1rem;
+        }
+
+        article.manifest article.entry {
+        	/*background-color: color-mix(in srgb, var(--theme-bg-accent), #000 25%);*/
+        	display: grid;
+        	grid-template-columns: 1fr 0.25fr minmax(12rem, 0.1fr);
+        	padding: 0.5rem 1rem;
+        }
+
+        article.manifest article.entry:nth-child(2n) {
+        	background-color: color-mix(in srgb, var(--theme-bg-accent), #000 25%);
+        	/*background-color: var(--theme-bg-accent);*/
+        }
+
+        article.manifest article.entry>* {
+        	position: relative;
+        }
+
+        article.manifest article.entry>* {
+        	font-size: 1rem;
+        	margin: 0.5em 0 0;
+        }
+
+        article.manifest article.entry>:not(:last-child) {
+        	margin-right: 1rem;
+        }
+
+        article.manifest article.entry [class*='entry-']::before {
+        	color: var(--theme-text-accent);
+        	font-size: 0.75em;
+        	font-weight: normal;
+        	position: absolute;
+        	top: -1.25em;
+        }
+
+        .entry-name > code {
+        	font-size: 0.875em;
+        }
+
+        article.manifest article.entry .entry-name::before {
+        	content: '@AssetManagerResources.ColumnPath';
+        }
+
+        article.manifest article.entry>.entry-checksum::before {
+        	content: '@AssetManagerResources.ColumnChecksum';
+        }
+
+        article.manifest article.entry>.entry-size::before {
+        	content: '@AssetManagerResources.ColumnSize';
+        }
+    </style>
+    <article class="manifest">
+        <h2 class="label">Manifest Label</h2>
+        <section class="entries"></section>
+    </article>
+    <template id="custom-element-manifest-entry">
+        <article class="entry">
+            <h3>
+                <code class="entry-name">Entry Name</code>
+            </h3>
+            <span class="entry-size">Entry Size</span>
+            <code class="entry-checksum">Entry Checksum</code>
+        </article>
+    </template>
+</template>
+
+<template id="custom-element-asset-browser">
+	<style>
+        [data-type=Directory] .only-file,
+        [data-type=File] .only-directory {
+        	visibility: hidden;
+        }
+
+        td.actions {
+        	display: flex;
+        	justify-content: space-evenly;
+        }
+
+        table {
+        	--_svg-size: calc(min(1.5em, 24px));
+
+        	--table-height: calc(100vh - (3.75rem + 2.375rem + (1rem * 2) + 2.625rem));
+        	display: block;
+        	min-height: var(--table-height);
+        	max-height: var(--table-height);
+        	overflow: scroll;
+
+        	border-collapse: collapse;
+        	table-layout: auto;
+        	width: 100%;
+        }
+
+        table>thead {
+        	background-color: color-mix(in srgb, var(--theme-bg-accent), #fff 12.5%);
+        	position: sticky;
+        	top: 0;
+        }
+
+        tr[data-type=Directory] input.browse-node-trigger:checked+label>.name::after {
+        	content: '/';
+        	margin: 0 0.25em;
+        }
+
+        table>tbody>tr>th {
+        	font-family: monospace;
+        }
+
+        tr[data-parent-collapsed] {
+        	display: none;
+        }
+
+        tr>th>label>.name::before {
+        	content: '├─ ';
+        }
+
+        tr[data-last-child]>th>label>.name::before {
+        	content: '└─ ';
+        }
+
+        th>label {
+        	display: block;
+        }
+
+        td.checksum:not([data-checksum]),
+        td.size:not([data-size]) {
+        	color: color-mix(in srgb, var(--theme-text), #000 50%);
+        	text-align: center;
+        }
+
+        td.size {
+        	text-align: right;
+        }
+
+        .ta-left,
+        tbody>tr>th {
+        	text-align: left;
+        }
+
+        table tr>* {
+        	padding: 0 0.5em;
+        }
+
+        tbody>tr {
+        	background-color: color-mix(in srgb, var(--theme-bg-accent), #000 25%);
+        }
+
+        tbody>tr:nth-child(2n of :not([data-parent-collapsed])) {
+        	background-color: var(--theme-bg-accent);
+        }
+
+        input.browse-node-trigger {
+        	display: none;
+        }
+
+        svg.material {
+        	fill: currentColor;
+        	max-width: var(--_svg-size);
+        	min-width: var(--_svg-size);
+        }
+
+        svg.material:not(:last-child) {
+        	margin-block-end: 0.5em;
+        }
+
+        a.button,
+        a.button:visited {
+        	color: inherit;
+        }
+
+		svg.material.button {
+			cursor: pointer;
+		}
+
+		.not-implemented {
+			display: none;
+		}
+
+        th.name {
+        	width: 100%;
+        }
+
+        th.actions {
+        	width: calc(var(--_svg-size) * 6);
+        }
+
+        dialog#asset-file-upload {
+        	align-items: center;
+        	background-color: var(--theme-bg-accent);
+        	border: 0.125em solid var(--theme-bg-accent-hover);
+        	bottom: 0;
+        	flex-direction: column;
+        	height: calc(max(600px, 80vh));
+        	justify-content: start;
+        	left: 0;
+        	max-height: calc(max(600px, 80vh));
+        	max-width: calc(max(800px, 80vw));
+        	min-height: calc(min(100vh, 600px));
+        	min-width: calc(min(100vw, 800px));
+        	position: absolute;
+        	right: 0;
+        	top: 0;
+        	width: calc(max(800px, 80vw));
+        	z-index: 1000;
+        }
+
+        dialog[open] {
+        	display: flex;
+        }
+
+        dialog#asset-file-upload h2 {
+        	margin: 0;
+        }
+
+        dialog#asset-file-upload > form,
+        dialog#asset-file-upload .file-dropper {
+        	align-items: center;
+        	display: flex;
+        	flex: 1;
+        	flex-direction: column;
+        	justify-content: center;
+        	width: 100%;
+        }
+
+        dialog#asset-file-upload .file-dropper {
+        	border: 0.125em solid var(--theme-bg-accent-hover);
+        	position: relative;
+        }
+
+        /* Form/Input Styling */
+
+        form span {
+        	/* debugging */
+        	/*border: 1px solid #bbb;*/
+        	display: block;
+        	position: relative;
+        }
+
+        form span:has(input) {
+        	padding-top: 1.5em;
+        }
+
+        form span > input {
+        	border-width: 0;
+        	border-bottom-width: 0.0625em;
+        }
+
+        form span:not(:first-child):not(:has(input)), span+:not(:first-child):not(span:has(input)) {
+        	margin-block-start: 1em;
+        }
+
+        form span > input:invalid {
+        	border-color: var(--theme-accent-error, color-mix(in srgb, red, #777 25%));
+        }
+
+        form span > input:invalid+label {
+        	border-color: var(--theme-accent-error, color-mix(in srgb, red, #777 25%));
+        }
+
+		form span.expand {
+			width: calc(min(50em, 100% - 2em));
+		}
+
+        form span.expand > * {
+        	width: 100%;
+        }
+
+        form span > input:not([type=checkbox]) {
+        	padding: 0.5em;
+        }
+
+        form  span > input:not([type=checkbox])+label {
+        	left: 0.5em;
+        	position: absolute;
+        	top: 1.75em;
+        	transform-origin: 0 0;
+        	transition: transform ease-in-out 0.2s;
+        }
+
+        form input:not(:placeholder-shown)+label,
+        form input[placeholder]:not([placeholder=""])+label,
+        form input:focus+label
+        {
+        	transform: translateY(-1.65em) scale(0.8);
+        }
+
+        form input[type=file] {
+        	background-color: var(--theme-bg);
+        	/*border: 1px solid var(--theme-bg-accent-hover);*/
+        }
+
+        .no-pointer {
+        	user-select: none;
+        }
+
+        .confirm-tray {
+        	display: flex;
+        	justify-content: space-between;
+        }
+
+        .confirm-tray>button {
+        	/*border: 1px solid var(--theme-text-40);*/
+        	/*border-radius: 0.5em;*/
+        	border: none;
+        	padding: 0.5em 2em;
+        	width: 10em !important;
+		}
+
+        form button.submit {
+        	background-color: var(--theme-accent);
+        }
+
+        form button.submit:hover {
+        	background-color: var(--theme-accent-secondary);
+        }
+
+        .toasts {
+        	display: flex;
+        	flex-direction: column;
+        	left: 0;
+        	margin: auto;
+        	position: absolute;
+        	right: 0;
+        	top: 0;
+		}
+
+		.toast {
+			margin-top: 0.5em;
+			padding: 0.5em 1em;
+		}
+
+		.toast.error {
+			background-color: var(--theme-accent-error);
+		}
+
+		.toast.warning {
+			background-color: var(--theme-accent-warning);
+		}
+
+		.toast.info {
+			background-color: var(--theme-accent-info);
+		}
+
+		.toast.success {
+			background-color: var(--theme-accent-success);
+		}
+    </style>
+	<dialog id="asset-file-upload">
+		<h2>@AssetManagerResources.UploadFiles</h2>
+		<form id="asset-file-upload-form" hx-post="/assets" hx-encoding="multipart/form-data" hx-target="find .toasts#upload" hx-swap="innerHTML">
+			@Html.AntiForgeryToken()
+
+			<span class="expand">
+				<input type="text" name="folder" id="folder" placeholder=""/>
+				<label for="folder">@AssetManagerResources.Folder</label>
+			</span>
+			<section class="file-dropper">
+				<span class="expand toasts" id="upload">
+				</span>
+				<span class="no-pointer">@AssetManagerResources.DropFilesHere</span>
+				<span>
+					<input type="file" name="files" id="files" multiple/>
+				</span>
+			</section>
+			<span class="expand confirm-tray">
+				<button class="cancel" type="reset">@AssetManagerResources.ButtonCancel</button>
+				<button class="submit" type="submit">@AssetManagerResources.ButtonSubmit</button>
+			</span>
+		</form>
+	</dialog>
+	<table>
+		<thead>
+		<th title="@AssetManagerResources.ColumnSelect" class="not-implemented">
+			<input type="checkbox" name="select-all"/>
+		</th>
+		<th class="name">@AssetManagerResources.ColumnName</th>
+		<th>@AssetManagerResources.ColumnSize</th>
+		<th>@AssetManagerResources.ColumnChecksum</th>
+		<th>@AssetManagerResources.ColumnType</th>
+		<th class="actions">@AssetManagerResources.ColumnActions</th>
+		</thead>
+		<tbody name="browse-table-body">
+		<template id="browse-row">
+			<tr class="browse-row">
+				<td class="not-implemented">
+					<input type="checkbox" class="select-row"/>
+				</td>
+				<th>
+					<input type="checkbox" class="browse-node-trigger"/>
+					<label>
+						<code class="depth"></code>
+						<code class="name">Sample Name</code>
+					</label>
+				</th>
+				<td class="size">123456</td>
+				<td class="checksum">Sample Checksum</td>
+				<td class="type">Type</td>
+				<td class="actions">
+					<svg class="refresh material button only-directory" viewBox="0 0 24 24">
+						<use href="/material/navigation/refresh/materialiconsoutlined/24px.svg#root"/>
+					</svg>
+					<svg class="upload material button only-directory" viewBox="0 0 24 24">
+						<use href="/material/file/file_upload/materialiconsoutlined/24px.svg#root"/>
+					</svg>
+					<svg class="create-folder material button only-directory" viewBox="0 0 24 24">
+						<use href="/material/file/create_new_folder/materialiconsoutlined/24px.svg#root"/>
+					</svg>
+					<svg class="rename material button" viewBox="0 0 24 24">
+						<use href="/material/file/drive_file_rename_outline/materialiconsoutlined/24px.svg#root"/>
+					</svg>
+					<a class="button download">
+						<svg class="download material button only-file" viewBox="0 0 24 24">
+							<use href="/material/file/file_download/materialiconsoutlined/24px.svg#root"/>
+						</svg>
+					</a>
+					<svg class="delete material button" viewBox="0 0 24 24">
+						<use href="/material/action/delete/materialiconsoutlined/24px.svg#root"/>
+					</svg>
+				</td>
+			</tr>
+		</template>
+		</tbody>
+	</table>
+</template>
+
+<tab-set style="--tabs-trigger-color: var(--theme-bg-accent); --tabs-trigger-color-selected: var(--theme-bg-accent-hover); --tabs-trigger-border-width: 0.125em;">
+    <tab-content tab-id="browse" tab-label="Browse"
+                 tab-icon="/material/notification/account_tree/materialiconsoutlined/24px.svg#root">
+        <defer-render tag="asset-browser" auto-refresh-interval="@Model.UpdateServerOptions.AutoRefreshInterval"></defer-render>
+    </tab-content>
+    <tab-content tab-id="manifests" tab-label="Manifests"
+                 tab-icon="/material/action/receipt/materialiconsoutlined/24px.svg#root">
+        <defer-render tag="manifest-viewer" label="Client" type="client" auto-refresh-interval="@Model.UpdateServerOptions.AutoRefreshInterval"></defer-render>
+        <defer-render tag="manifest-viewer" label="Editor" type="editor" auto-refresh-interval="@Model.UpdateServerOptions.AutoRefreshInterval"></defer-render>
+    </tab-content>
+</tab-set>
