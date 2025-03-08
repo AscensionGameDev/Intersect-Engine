@@ -112,8 +112,8 @@ namespace Intersect.Editor.Forms
             //
             // tmrUpdate
             //
-            this.tmrUpdate.Enabled = true;
-            this.tmrUpdate.Interval = 10;
+            this.tmrUpdate.Enabled = false;
+            this.tmrUpdate.Interval = 50;
             this.tmrUpdate.Tick += new System.EventHandler(this.tmrUpdate_Tick);
             //
             // FrmUpdate

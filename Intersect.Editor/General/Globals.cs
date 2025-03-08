@@ -104,11 +104,11 @@ public static partial class Globals
 
     public static Guid LoadingMap = Guid.Empty;
 
-    public static FrmUpdate UpdateForm;
+    public static FrmUpdate? UpdateForm;
 
-    public static FrmLogin LoginForm;
+    public static FrmLogin? LoginForm;
 
-    public static FrmMain MainForm;
+    public static FrmMain? MainForm;
 
     public static FrmMapEditor MapEditorWindow;
 

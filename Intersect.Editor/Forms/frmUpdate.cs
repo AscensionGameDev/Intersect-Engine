@@ -1,12 +1,15 @@
-using System.Diagnostics;
 using System.Globalization;
 using Intersect.Configuration;
 using Intersect.Editor.Content;
 using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
-using Intersect.Updater;
+using Intersect.Framework.Core.AssetManagement;
+using Intersect.Framework.Utilities;
+using Intersect.Web;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using ApplicationContext = Intersect.Core.ApplicationContext;
 
 namespace Intersect.Editor.Forms;
 
@@ -14,7 +17,13 @@ namespace Intersect.Editor.Forms;
 public partial class FrmUpdate : Form
 {
 
-    private Updater.Updater mUpdater;
+    private readonly object _manifestTaskLock = new();
+
+    private long _nextUpdateAttempt;
+    private Task? _pendingManifestTask;
+    private TokenResponse? _tokenResponse;
+    private Updater _updater;
+    private UpdaterStatus? _updaterStatus;
 
     public FrmUpdate()
     {
@@ -38,7 +47,32 @@ public partial class FrmUpdate : Form
         GameContentManager.CheckForResources();
         Database.LoadOptions();
         InitLocalization();
-        mUpdater = new Updater.Updater(ClientConfiguration.Instance.UpdateUrl, Path.Combine("version.json"), false, 5);
+
+        _updater = new Updater(
+            ClientConfiguration.Instance.UpdateUrl,
+            "editor/update.json",
+            "version.editor.json",
+            7
+        );
+
+        var rawTokenResponse = Preferences.LoadPreference(nameof(TokenResponse));
+        if (string.IsNullOrWhiteSpace(rawTokenResponse))
+        {
+            return;
+        }
+
+        try
+        {
+            _tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(rawTokenResponse);
+            _updater.SetAuthorizationData(_tokenResponse);
+        }
+        catch (Exception exception)
+        {
+            ApplicationContext.CurrentContext.Logger.LogError(
+                exception,
+                "Failed to deserialize token on disk, re-authentication will be necessary"
+            );
+        }
     }
 
     private void InitLocalization()
@@ -50,32 +84,137 @@ public partial class FrmUpdate : Form
 
     protected override void OnClosed(EventArgs e)
     {
-        mUpdater.Stop();
+        _updater.Stop();
         base.OnClosed(e);
         Application.Exit();
     }
 
-    private void tmrUpdate_Tick(object sender, EventArgs e)
+    protected override void OnShown(EventArgs e)
     {
-        if (mUpdater != null)
-        {
+        base.OnShown(e);
+        tmrUpdate.Enabled = true;
+    }
 
-            progressBar.Style = mUpdater.Status == UpdateStatus.Checking
+    private void SwitchToLogin(bool requiresAuthentication)
+    {
+        lblFiles.Hide();
+        lblSize.Hide();
+        tmrUpdate.Enabled = false;
+
+        var loginForm = Globals.LoginForm ??= new FrmLogin(requiresAuthentication);
+
+        _pendingManifestTask = default;
+
+        try
+        {
+            Hide();
+
+            loginForm.Show();
+        }
+        catch
+        {
+            throw;
+        }
+        finally
+        {
+        }
+    }
+
+    private void CheckForUpdate()
+    {
+        lock (_manifestTaskLock)
+        {
+            if (_pendingManifestTask != default)
+            {
+                return;
+            }
+
+            _pendingManifestTask = Task.Run(() =>
+            {
+                _updaterStatus = _updater.TryGetManifest(out var manifest, force: _tokenResponse != default);
+                if (_updaterStatus == UpdaterStatus.Offline)
+                {
+                    _nextUpdateAttempt = Environment.TickCount64 + 10_000;
+                }
+                _pendingManifestTask = default;
+            });
+        }
+    }
+
+    internal void ShowWithToken(TokenResponse tokenResponse)
+    {
+        _tokenResponse = tokenResponse ?? throw new ArgumentNullException(nameof(tokenResponse));
+
+        Preferences.SavePreference(nameof(TokenResponse), JsonConvert.SerializeObject(_tokenResponse));
+        _updater.SetAuthorizationData(_tokenResponse);
+
+        _updaterStatus = default;
+
+        lblFiles.Show();
+        lblSize.Show();
+        tmrUpdate.Enabled = true;
+
+        Show();
+
+        Globals.LoginForm?.Close();
+        Globals.LoginForm = default;
+    }
+
+            private void tmrUpdate_Tick(object sender, EventArgs e)
+        {
+            if (_updater == null)
+            {
+                return;
+            }
+
+            switch (_updaterStatus)
+            {
+                case UpdaterStatus.NoUpdateNeeded:
+                    SwitchToLogin(false);
+                    return;
+                case UpdaterStatus.NeedsAuthentication:
+                    SwitchToLogin(true);
+                    return;
+                case UpdaterStatus.Ready:
+                    _nextUpdateAttempt = long.MinValue;
+                    _updaterStatus = default;
+                    _updater.Start();
+                    break;
+                case UpdaterStatus.Offline:
+                    break;
+                default:
+                    break;
+            }
+
+            if (_nextUpdateAttempt != long.MinValue)
+            {
+                var now = Environment.TickCount64;
+                if (now < _nextUpdateAttempt)
+                {
+                    return;
+                }
+
+                _nextUpdateAttempt = now + 10_000;
+                CheckForUpdate();
+                return;
+            }
+
+            progressBar.Style = _updater.Status == UpdateStatus.DownloadingManifest
                 ? ProgressBarStyle.Marquee
                 : ProgressBarStyle.Continuous;
 
-            switch (mUpdater.Status)
+            switch (_updater.Status)
             {
-                case UpdateStatus.Checking:
+                case UpdateStatus.DownloadingManifest:
                     lblStatus.Text = Strings.Update.Checking;
                     break;
-                case UpdateStatus.Updating:
+                case UpdateStatus.UpdateInProgress:
                     lblFiles.Show();
                     lblSize.Show();
-                    lblFiles.Text = Strings.Update.Files.ToString(mUpdater.FilesRemaining);
-                    lblSize.Text = Strings.Update.Size.ToString(mUpdater.GetHumanReadableFileSize(mUpdater.SizeRemaining));
-                    lblStatus.Text = Strings.Update.Updating.ToString((int)mUpdater.Progress);
-                    progressBar.Value = (int) mUpdater.Progress;
+                    lblFiles.Text = Strings.Update.Files.ToString(_updater.FilesRemaining);
+                    lblSize.Text = Strings.Update.Size.ToString(Updater.GetHumanReadableFileSize(_updater.SizeRemaining));
+                    lblStatus.Text = Strings.Update.Updating.ToString((int)_updater.Progress);
+                    progressBar.Value = Math.Min(100, (int)_updater.Progress);
                     break;
                 case UpdateStatus.Restart:
                     lblFiles.Hide();
@@ -83,41 +222,31 @@ public partial class FrmUpdate : Form
                     progressBar.Value = 100;
                     lblStatus.Text = Strings.Update.Restart.ToString();
                     tmrUpdate.Enabled = false;
-                    Process.Start(
-                        Environment.GetCommandLineArgs()[0],
-                        Environment.GetCommandLineArgs().Length > 1
-                            ? string.Join(" ", Environment.GetCommandLineArgs().Skip(1))
-                            : null
-                    );
+
+                    if (!ProcessHelper.TryRelaunch())
+                    {
+                        ApplicationContext.CurrentContext.Logger.LogWarning("Failed to restart automatically");
+                    }
 
                     this.Close();
 
                     break;
-                case UpdateStatus.Done:
-                    lblFiles.Hide();
-                    lblSize.Hide();
+                case UpdateStatus.UpdateCompleted:
                     progressBar.Value = 100;
                     lblStatus.Text = Strings.Update.Done;
-                    tmrUpdate.Enabled = false;
-                    Hide();
-                    Globals.LoginForm.Show();
+                    SwitchToLogin(false);
                     break;
                 case UpdateStatus.Error:
                     lblFiles.Hide();
                     lblSize.Hide();
                     progressBar.Value = 100;
-                    lblStatus.Text = Strings.Update.Error.ToString(mUpdater.Exception?.Message ?? "");
+                    lblStatus.Text = Strings.Update.Error.ToString(_updater.Exception?.Message ?? "");
                     break;
                 case UpdateStatus.None:
-                    lblFiles.Hide();
-                    lblSize.Hide();
-                    tmrUpdate.Enabled = false;
-                    Hide();
-                    Globals.LoginForm.Show();
+                    SwitchToLogin(false);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
-    }
 }

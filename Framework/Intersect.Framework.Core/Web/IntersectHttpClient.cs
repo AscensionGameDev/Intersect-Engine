@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Headers;
+using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Text;
 using Intersect.Core;
@@ -13,8 +14,9 @@ public partial class IntersectHttpClient : HttpClient
 {
     private static HttpClientHandler GetHttpClientHandler()
     {
-        return new()
+        return new HttpClientHandler
         {
+            // SslProtocols = SslProtocols.Tls12,
             ServerCertificateCustomValidationCallback = (request, certificate, chain, policyErrors) =>
             {
                 var host = request.RequestUri?.Host;

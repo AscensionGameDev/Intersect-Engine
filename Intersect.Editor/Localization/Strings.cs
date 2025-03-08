@@ -1567,6 +1567,8 @@ Tick timer saved in server config.json.";
 
     public partial struct Errors
     {
+        public static LocalizedString UnhandledError =
+            @"The Intersect Editor has encountered an error and must close. Error information can be found in logs/errors.log";
 
         public static LocalizedString disconnected = @"Disconnected!";
 
