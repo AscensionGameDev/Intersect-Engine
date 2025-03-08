@@ -1,6 +1,8 @@
 using System.Globalization;
 using System.Net;
+using System.Net.Security;
 using System.Reflection;
+using System.Security.Authentication;
 using System.Security.Claims;
 using System.Threading.RateLimiting;
 using Htmx.TagHelpers;
@@ -69,13 +71,37 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
 
         ApplicationContext.Context.Value?.Logger.LogInformation($"Launching Intersect REST API in '{builder.Environment.EnvironmentName}' mode...");
 
+        builder.WebHost.ConfigureKestrel(
+            ko =>
+            {
+                ko.ConfigureHttpsDefaults(
+                    hcao =>
+                    {
+                        // hcao.SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13;
+                        hcao.SslProtocols = SslProtocols.Tls12;
+                        hcao.OnAuthenticate += (context, options) =>
+                        {
+                            options.AllowRenegotiation = true;
+                            options.CipherSuitesPolicy = new CipherSuitesPolicy(
+                                [
+                                    TlsCipherSuite.TLS_AES_128_GCM_SHA256,
+                                    TlsCipherSuite.TLS_AES_256_GCM_SHA384,
+                                    TlsCipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+                                ]
+                            );
+                        };
+                    }
+                );
+            }
+        );
+
         var updateServerSection = builder.Configuration.GetSection(GetOptionsName<UpdateServerOptions>());
         builder.Services.Configure<UpdateServerOptions>(updateServerSection);
 
         // I can't get System.Text.Json to deserialize an array as non-null, and it totally ignores
         // the JsonConverter attribute I tried putting on it, so I am just giving up and doing this
         // to make sure the array is not null in the event that it is empty.
-        configuration.StaticFilePaths ??= new List<StaticFilePathOptions>();
+        configuration.StaticFilePaths ??= [];
 
         var tokenGenerationOptionsSection =
             apiConfigurationSection.GetRequiredSection(nameof(TokenGenerationOptions));

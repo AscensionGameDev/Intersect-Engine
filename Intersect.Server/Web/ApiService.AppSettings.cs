@@ -182,21 +182,27 @@ internal partial class ApiService
                 var certificatePath = certificate.Value<string>("Path");
                 var keyPath = certificate.Value<string>("KeyPath");
 
-#if DEBUG
-                if (File.Exists(SelfSignedCertificateName) && File.Exists(SelfSignedKeyName))
-                {
-                    return;
-                }
-#endif
-
                 if (!string.Equals(certificatePath, SelfSignedCertificateName) ||
                     !string.Equals(keyPath, SelfSignedKeyName))
                 {
                     continue;
                 }
 
+                if (File.Exists(certificatePath) && File.Exists(keyPath))
+                {
+                    var existingSelfSignedCertificate = X509Certificate2.CreateFromPemFile(certificatePath, keyPath);
+                    if (existingSelfSignedCertificate.NotAfter.ToUniversalTime() > DateTime.UtcNow)
+                    {
+                        continue;
+                    }
+
+                    ApplicationContext.CurrentContext.Logger.LogInformation(
+                        "Self-signed certificate is expired and will be regenerated"
+                    );
+                }
+
                 using var ecdsa = ECDsa.Create();
-                CertificateRequest request = new("cn=self-signed", ecdsa, HashAlgorithmName.SHA256);
+                CertificateRequest request = new("cn=self-signed", ecdsa, HashAlgorithmName.SHA384);
                 var selfSignedCertificate = request.CreateSelfSigned(
                     DateTimeOffset.Now,
                     DateTimeOffset.Now.AddDays(30)
