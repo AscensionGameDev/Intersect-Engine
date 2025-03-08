@@ -34,6 +34,7 @@ using Newtonsoft.Json.Converters;
 using Intersect.Server.Collections.Indexing;
 using Intersect.Server.Web.Controllers;
 using Intersect.Server.Web.Controllers.Api;
+using Intersect.Server.Web.Controllers.AssetManagement;
 using Intersect.Server.Web.Types.Chat;
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
@@ -67,6 +68,9 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
         }
 
         ApplicationContext.Context.Value?.Logger.LogInformation($"Launching Intersect REST API in '{builder.Environment.EnvironmentName}' mode...");
+
+        var updateServerSection = builder.Configuration.GetSection(GetOptionsName<UpdateServerOptions>());
+        builder.Services.Configure<UpdateServerOptions>(updateServerSection);
 
         // I can't get System.Text.Json to deserialize an array as non-null, and it totally ignores
         // the JsonConverter attribute I tried putting on it, so I am just giving up and doing this

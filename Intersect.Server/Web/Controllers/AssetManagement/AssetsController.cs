@@ -80,7 +80,7 @@ public sealed partial class AssetsController : IntersectController
         {
             if (!User.HasRole("Editor"))
             {
-                return NotFound();
+                return Forbidden();
             }
         }
 
@@ -90,7 +90,7 @@ public sealed partial class AssetsController : IntersectController
         var assetFileSystemInfo = AssetFileSystemInfo.From(assetRootPath, pathToInspect);
         if (assetFileSystemInfo == default)
         {
-            return NotFound(path);
+            return Ok(Array.Empty<AssetFileSystemInfo>());
         }
 
         if (assetFileSystemInfo.Type == AssetFileSystemInfoType.File)
