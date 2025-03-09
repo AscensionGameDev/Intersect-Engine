@@ -157,6 +157,15 @@ public sealed partial class AssetsController : IntersectController
         try
         {
             assetFileSystemInfo = AssetFileSystemInfo.From(assetRootPath, resolvedSourcePath);
+            if (assetFileSystemInfo == null)
+            {
+                _logger.LogWarning(
+                    "No file system information found for '{SourcePath}' ({ResolvedSourcePath})",
+                    sourcePath,
+                    resolvedSourcePath
+                );
+                return BadRequest("Invalid source path");
+            }
         }
         catch (Exception exception)
         {
@@ -261,7 +270,7 @@ public sealed partial class AssetsController : IntersectController
             directoryInfo.Create();
         }
 
-        Dictionary<string, (HttpStatusCode StatusCode, string? Message)> results = new();
+        Dictionary<string, (HttpStatusCode StatusCode, string? Message)> results = [];
         foreach (var file in files)
         {
             if (results.ContainsKey(file.FileName))
@@ -564,8 +573,8 @@ public sealed partial class AssetsController : IntersectController
                 return false;
             }
 
-            HashSet<FileSystemInfo> visited = new();
-            Queue<FileSystemInfo> scanQueue = new();
+            HashSet<FileSystemInfo> visited = [];
+            Queue<FileSystemInfo> scanQueue = [];
             scanQueue.Enqueue(assetSubdirectoryInfo);
 
             updateManifest = new UpdateManifest
@@ -646,7 +655,7 @@ public sealed partial class AssetsController : IntersectController
             }
 
             long totalSize = 0;
-            List<(FileInfo Info, string Name)> assets = new();
+            List<(FileInfo Info, string Name)> assets = [];
             foreach (var assetName in assetNames)
             {
                 var pathToAsset = Path.GetFullPath(assetName, assetSubdirectoryPath);
