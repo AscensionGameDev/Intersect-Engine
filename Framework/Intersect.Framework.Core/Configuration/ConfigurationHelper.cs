@@ -58,10 +58,11 @@ public static partial class ConfigurationHelper
         {
             throw new DirectoryNotFoundException($"Directory does not exist: {directoryPath}");
         }
-
+        
         try
         {
             var json = JsonConvert.SerializeObject(configuration, Formatting.Indented);
+            json = json.ReplaceLineEndings("\n");
 
             File.WriteAllText(filePath, json, Encoding.UTF8);
 
