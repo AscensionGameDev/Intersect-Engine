@@ -75,35 +75,6 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
             builder.Environment.EnvironmentName
         );
 
-        // builder.WebHost.ConfigureKestrel(
-        //     ko =>
-        //     {
-        //         ko.ConfigureEndpointDefaults(lo =>
-        //             {
-        //                 lo.Protocols = HttpProtocols.Http1;
-        //             }
-        //         );
-        //         ko.ConfigureHttpsDefaults(
-        //             hcao =>
-        //             {
-        //                 // hcao.SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13;
-        //                 hcao.SslProtocols = SslProtocols.Tls12;
-        //                 hcao.OnAuthenticate += (context, options) =>
-        //                 {
-        //                     // options.AllowRenegotiation = true;
-        //                     // options.CipherSuitesPolicy = new CipherSuitesPolicy(
-        //                     //     [
-        //                     //         TlsCipherSuite.TLS_AES_128_GCM_SHA256,
-        //                     //         TlsCipherSuite.TLS_AES_256_GCM_SHA384,
-        //                     //         TlsCipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
-        //                     //     ]
-        //                     // );
-        //                 };
-        //             }
-        //         );
-        //     }
-        // );
-
         var updateServerSection = builder.Configuration.GetSection(GetOptionsName<UpdateServerOptions>());
         builder.Services.Configure<UpdateServerOptions>(updateServerSection);
 
