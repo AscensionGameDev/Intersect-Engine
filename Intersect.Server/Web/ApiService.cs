@@ -38,6 +38,7 @@ using Intersect.Server.Web.Controllers;
 using Intersect.Server.Web.Controllers.Api;
 using Intersect.Server.Web.Controllers.AssetManagement;
 using Intersect.Server.Web.Types.Chat;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
@@ -71,29 +72,34 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
 
         ApplicationContext.Context.Value?.Logger.LogInformation($"Launching Intersect REST API in '{builder.Environment.EnvironmentName}' mode...");
 
-        builder.WebHost.ConfigureKestrel(
-            ko =>
-            {
-                ko.ConfigureHttpsDefaults(
-                    hcao =>
-                    {
-                        // hcao.SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13;
-                        hcao.SslProtocols = SslProtocols.Tls12;
-                        hcao.OnAuthenticate += (context, options) =>
-                        {
-                            // options.AllowRenegotiation = true;
-                            // options.CipherSuitesPolicy = new CipherSuitesPolicy(
-                            //     [
-                            //         TlsCipherSuite.TLS_AES_128_GCM_SHA256,
-                            //         TlsCipherSuite.TLS_AES_256_GCM_SHA384,
-                            //         TlsCipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
-                            //     ]
-                            // );
-                        };
-                    }
-                );
-            }
-        );
+        // builder.WebHost.ConfigureKestrel(
+        //     ko =>
+        //     {
+        //         ko.ConfigureEndpointDefaults(lo =>
+        //             {
+        //                 lo.Protocols = HttpProtocols.Http1;
+        //             }
+        //         );
+        //         ko.ConfigureHttpsDefaults(
+        //             hcao =>
+        //             {
+        //                 // hcao.SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13;
+        //                 hcao.SslProtocols = SslProtocols.Tls12;
+        //                 hcao.OnAuthenticate += (context, options) =>
+        //                 {
+        //                     // options.AllowRenegotiation = true;
+        //                     // options.CipherSuitesPolicy = new CipherSuitesPolicy(
+        //                     //     [
+        //                     //         TlsCipherSuite.TLS_AES_128_GCM_SHA256,
+        //                     //         TlsCipherSuite.TLS_AES_256_GCM_SHA384,
+        //                     //         TlsCipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+        //                     //     ]
+        //                     // );
+        //                 };
+        //             }
+        //         );
+        //     }
+        // );
 
         var updateServerSection = builder.Configuration.GetSection(GetOptionsName<UpdateServerOptions>());
         builder.Services.Configure<UpdateServerOptions>(updateServerSection);

@@ -5,6 +5,7 @@ using Intersect.Core;
 using Intersect.Server.Web.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Server.Web;
@@ -64,7 +65,7 @@ internal partial class ApiService
             rawConfiguration = "{}";
         }
 
-        var configurationJObject = JObject.Parse(rawConfiguration);
+        var configurationJObject = JsonConvert.DeserializeObject<JObject>(rawConfiguration);
         if (!configurationJObject.TryGetValue("Api", out var apiSectionJToken))
         {
             apiSectionJToken = JObject.FromObject(new ApiConfiguration());
@@ -102,7 +103,10 @@ internal partial class ApiService
 
         if (apiConfiguration.StaticFilePaths == default)
         {
-            apiConfiguration.StaticFilePaths = new List<StaticFilePathOptions> { new("wwwroot") };
+            apiConfiguration.StaticFilePaths = new List<StaticFilePathOptions>
+            {
+                new("wwwroot")
+            };
         }
 
         var updatedApiConfigurationJObject = JObject.FromObject(apiConfiguration);
@@ -166,21 +170,21 @@ internal partial class ApiService
 
         foreach (var endpointToken in endpoints.PropertyValues())
         {
-            if (endpointToken is not JObject endpoint)
+            if (endpointToken is not JObject endpointValue)
             {
                 continue;
             }
+            var endpoint = endpointValue.ToObject<PartialKestrelEndpoint>();
 
-            if (!endpoint.TryGetValue("Certificate", out var certificateToken) ||
-                certificateToken is not JObject certificate)
+            if (endpoint.Certificate is not { } certificate)
             {
                 continue;
             }
 
             try
             {
-                var certificatePath = certificate.Value<string>("Path");
-                var keyPath = certificate.Value<string>("KeyPath");
+                var certificatePath = certificate.Path;
+                var keyPath = certificate.KeyPath;
 
                 if (!string.Equals(certificatePath, SelfSignedCertificateName) ||
                     !string.Equals(keyPath, SelfSignedKeyName))
@@ -201,17 +205,79 @@ internal partial class ApiService
                     );
                 }
 
-                using var ecdsa = ECDsa.Create();
-                CertificateRequest request = new("cn=self-signed", ecdsa, HashAlgorithmName.SHA384);
-                var selfSignedCertificate = request.CreateSelfSigned(
+                AsymmetricAlgorithm algorithm;
+                CertificateRequest certificateRequest;
+                var osVersion = Environment.OSVersion;
+
+                PartialKestrelEndpointCertificateType certificateType = certificate.SelfSignedCertificateType;
+                if (certificateType == PartialKestrelEndpointCertificateType.None)
+                {
+                    certificateType = osVersion.Platform switch
+                    {
+                        PlatformID.Win32S or PlatformID.Win32Windows or PlatformID.Win32NT or PlatformID.WinCE
+                            or PlatformID.Xbox => osVersion.Version.Major < 11
+                                ? PartialKestrelEndpointCertificateType.RSA
+                                : PartialKestrelEndpointCertificateType.ECDSA,
+                        PlatformID.Unix or PlatformID.MacOSX or PlatformID.Other =>
+                            PartialKestrelEndpointCertificateType.ECDSA,
+                        _ => throw new ArgumentOutOfRangeException()
+                    };
+                }
+
+                switch (certificateType)
+                {
+                    case PartialKestrelEndpointCertificateType.None:
+                        throw new InvalidOperationException();
+                    case PartialKestrelEndpointCertificateType.RSA:
+                    {
+                        var rsa = RSA.Create(4096);
+                        algorithm = rsa;
+                        certificateRequest = new CertificateRequest(
+                            "cn=self-signed",
+                            rsa,
+                            HashAlgorithmName.SHA256,
+                            RSASignaturePadding.Pkcs1
+                        );
+                        break;
+                    }
+                    case PartialKestrelEndpointCertificateType.ECDSA:
+                    {
+                        var ecdsa = ECDsa.Create();
+                        algorithm = ecdsa;
+                        certificateRequest = new CertificateRequest("cn=self-signed", ecdsa, HashAlgorithmName.SHA384);
+                        break;
+                    }
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                var selfSignedCertificate = certificateRequest.CreateSelfSigned(
                     DateTimeOffset.Now,
                     DateTimeOffset.Now.AddDays(30)
                 );
 
                 var certificatePem = selfSignedCertificate.ExportCertificatePem();
-                var keyPem = selfSignedCertificate.GetECDsaPrivateKey().ExportECPrivateKeyPem();
+
+                string keyPem;
+                if (selfSignedCertificate.GetRSAPrivateKey() is { } rsaPrivateKey)
+                {
+                    keyPem = rsaPrivateKey.ExportRSAPrivateKeyPem();
+                }
+                else if (selfSignedCertificate.GetECDsaPrivateKey() is { } ecDsaPrivateKey)
+                {
+                    keyPem = ecDsaPrivateKey.ExportECPrivateKeyPem();
+                }
+                else
+                {
+                    throw new InvalidOperationException(
+                        "Private key should be RSA or ECDSA, why was this code changed without verifying it?"
+                    );
+                }
+
                 File.WriteAllText(SelfSignedCertificateName, certificatePem);
                 File.WriteAllText(SelfSignedKeyName, keyPem);
+
+                algorithm.Dispose();
             }
             catch (Exception exception)
             {
