@@ -2105,150 +2105,182 @@ public partial class FrmMain : Form
 
     private void createUpdate(string sourceDirectory, string targetDirectory, UpdateManifest? existingUpdate)
     {
-        if (!Directory.Exists(targetDirectory))
+        DirectoryInfo targetDirectoryInfo = new(targetDirectory);
+        if (!targetDirectoryInfo.Exists)
         {
-            Directory.CreateDirectory((targetDirectory));
+            targetDirectoryInfo.Create();
         }
 
-        if (Directory.Exists(targetDirectory))
+        if (!targetDirectoryInfo.Exists)
         {
-            DirectoryInfo di = new DirectoryInfo(targetDirectory);
+            return;
+        }
 
-            foreach (FileInfo file in di.GetFiles())
-            {
-                file.Delete();
-            }
+        foreach (FileInfo targetFileInfo in targetDirectoryInfo.GetFiles())
+        {
+            targetFileInfo.Delete();
+        }
 
-            foreach (DirectoryInfo dir in di.GetDirectories())
-            {
-                dir.Delete(true);
-            }
+        foreach (DirectoryInfo targetSubdirectoryInfo in targetDirectoryInfo.GetDirectories())
+        {
+            targetSubdirectoryInfo.Delete(true);
+        }
 
-            // Intersect excluded files
-            var editorBaseName = Process.GetCurrentProcess()?.ProcessName.ToLowerInvariant() ?? "intersect editor";
-            var editorFileNameExe = $"{editorBaseName}.exe";
-            var editorFileNamePdb = $"{editorBaseName}.pdb";
-            var excludeFiles = new string[]
-            {
-                "resources/mapcache.db", "update.json", "version.json"
-            };
-            var clientExcludeFiles = new List<string>()
-            {
-                editorFileNameExe,
-                editorFileNamePdb,
-                "resources/editor_strings.json"
-            };
-            var editorExcludeFiles = new List<string>()
-            {
-                "resources/client_strings.json"
-            };
-            var excludeExtensions = new string[]
-            {
-                ".dll", ".xml", ".config", ".php"
-            };
-            var excludeDirectories = new string[]
-            {
-                "logs", "screenshots"
-            };
+        // Intersect excluded files
+        var editorBaseName = Process.GetCurrentProcess().ProcessName.ToLowerInvariant();
+        var editorFileNameExe = $"{editorBaseName}.exe";
+        var editorFileNamePdb = $"{editorBaseName}.pdb";
+        string[] excludeFiles =
+        [
+            "resources/mapcache.db",
+            "update.json",
+            "version.json",
+            "version.client.json",
+            "version.editor.json",
+            ".gitkeep",
+        ];
+        List<string> clientExcludeFiles =
+        [
+            editorFileNameExe,
+            editorFileNamePdb,
+            "resources/editor_strings.json",
+        ];
+        List<string> clientExcludeDirectories =
+        [
+            "resources/cursors",
+        ];
+        List<string> editorExcludeFiles =
+        [
+            "resources/client_strings.json",
+        ];
+        List<string> editorExcludeDirectories =
+        [
+            "resources/packs",
+        ];
+        string[] excludeExtensions =
+        [
+            ".dll",
+            ".xml",
+            ".config",
+            ".php",
+        ];
+        string[] excludeDirectories =
+        [
+            "logs",
+            "screenshots",
+        ];
 
-            const string resourcesDirectoryName = "resources";
-            var pathToResourcesDirectory = Path.Combine(sourceDirectory, resourcesDirectoryName);
-            var pathToPacksDirectory = Path.Combine(pathToResourcesDirectory, "packs");
-            if (Directory.Exists(pathToPacksDirectory))
-            {
-                var packs = Directory.GetFiles(pathToPacksDirectory, "*.meta");
-                editorExcludeFiles.AddRange(packs);
-                foreach (var pack in packs)
-                {
-                    var obj = JObject.Parse(GzipCompression.ReadDecompressedString(pack))["frames"];
-                    foreach (var frame in obj.Children())
-                    {
-                        var filename = frame["filename"].ToString();
-                        clientExcludeFiles.Add(filename);
-                    }
-                }
-
-                var soundIndex = Path.Combine(pathToPacksDirectory, "sound.index");
-                if (File.Exists(soundIndex))
-                {
-                    editorExcludeFiles.Add(soundIndex);
-                    using (var soundPacker = new AssetPacker(soundIndex, pathToPacksDirectory))
-                    {
-                        editorExcludeFiles.AddRange(
-                            soundPacker.CachedPackages.Select(
-                                cachedPackage => Path.Combine(soundPacker.PackageLocation, cachedPackage)
-                            )
-                        );
-                        foreach (var sound in soundPacker.FileList)
+        const string resourcesDirectoryName = "resources";
+        var pathToResourcesDirectory = Path.Combine(sourceDirectory, resourcesDirectoryName);
+        var pathToPacksDirectory = Path.Combine(pathToResourcesDirectory, "packs");
+        if (Directory.Exists(pathToPacksDirectory))
+        {
+            var packFileNames = Directory.GetFiles(pathToPacksDirectory, "*.meta");
+            editorExcludeFiles.AddRange(packFileNames);
+            clientExcludeFiles.AddRange(
+                packFileNames.Select(
+                        pack =>
                         {
-                            // Add as lowercase as our update generator checks for lowercases!
-                            var relativeSoundPath = Path.Combine(
-                                    resourcesDirectoryName,
-                                    "sounds",
-                                    sound.ToLower(CultureInfo.CurrentCulture)
-                                )
-                                .Replace('\\', '/');
-                            clientExcludeFiles.Add(relativeSoundPath);
+                            var tokenPack = JToken.Parse(GzipCompression.ReadDecompressedString(pack));
+                            if (tokenPack is not JObject objectPack)
+                            {
+                                return null;
+                            }
+
+                            return objectPack.TryGetValue("frames", out var tokenFrames) ? tokenFrames : null;
                         }
-                    }
-                }
-
-                var musicIndex = Path.Combine(pathToPacksDirectory, "music.index");
-                if (File.Exists(musicIndex))
-                {
-                    editorExcludeFiles.Add(musicIndex);
-                    using (var musicPacker = new AssetPacker(musicIndex, pathToPacksDirectory))
-                    {
-                        editorExcludeFiles.AddRange(
-                            musicPacker.CachedPackages.Select(
-                                cachedPackage => Path.Combine(musicPacker.PackageLocation, cachedPackage)
-                            )
-                        );
-                        foreach (var music in musicPacker.FileList)
-                        {
-                            // Add as lowercase as our update generator checks for lowercases!
-                            var relativeMusicPath = Path.Combine(
-                                    resourcesDirectoryName,
-                                    "music",
-                                    music.ToLower(CultureInfo.CurrentCulture)
-                                )
-                                .Replace('\\', '/');
-                            clientExcludeFiles.Add(relativeMusicPath);
-                        }
-                    }
-                }
-
-            }
-
-            var fileCount = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.*", SearchOption.AllDirectories)
-                .Length;
-
-            var update = new UpdateManifest();
-            queryFilesForUpdate(
-                update,
-                excludeFiles,
-                clientExcludeFiles,
-                editorExcludeFiles,
-                excludeExtensions,
-                excludeDirectories,
-                sourceDirectory,
-                sourceDirectory,
-                sourceDirectory,
-                targetDirectory,
-                0,
-                fileCount,
-                existingUpdate
+                    )
+                    .SelectMany(
+                        token => token?.Children() ?? [],
+                        (_, frameToken) =>
+                            frameToken is JObject frameObject &&
+                            frameObject.TryGetValue("filename", out var tokenFilename)
+                                ? tokenFilename.Value<string>()
+                                : null
+                    )
+                    .Where(filename => !string.IsNullOrWhiteSpace(filename))
+                    .OfType<string>()
             );
+
+            var soundIndex = Path.Combine(pathToPacksDirectory, "sound.index");
+            if (File.Exists(soundIndex))
+            {
+                editorExcludeFiles.Add(soundIndex);
+                using AssetPacker soundPacker = new(soundIndex, pathToPacksDirectory);
+                editorExcludeFiles.AddRange(
+                    soundPacker.CachedPackages.Select(
+                        cachedPackage => Path.Combine(soundPacker.PackageLocation, cachedPackage)
+                    )
+                );
+
+                clientExcludeFiles.AddRange(
+                    soundPacker.FileList.Select(
+                        sound => Path.Combine(
+                                resourcesDirectoryName,
+                                "sounds",
+                                sound.ToLower(CultureInfo.CurrentCulture)
+                            )
+                            .Replace('\\', '/')
+                    )
+                );
+            }
+
+            var musicIndex = Path.Combine(pathToPacksDirectory, "music.index");
+            if (File.Exists(musicIndex))
+            {
+                editorExcludeFiles.Add(musicIndex);
+                using AssetPacker musicPacker = new(musicIndex, pathToPacksDirectory);
+                editorExcludeFiles.AddRange(
+                    musicPacker.CachedPackages.Select(
+                        cachedPackage => Path.Combine(musicPacker.PackageLocation, cachedPackage)
+                    )
+                );
+
+                clientExcludeFiles.AddRange(
+                    musicPacker.FileList.Select(
+                        music => Path.Combine(
+                                resourcesDirectoryName,
+                                "music",
+                                music.ToLower(CultureInfo.CurrentCulture)
+                            )
+                            .Replace('\\', '/')
+                    )
+                );
+            }
+
         }
+
+        var fileCount = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.*", SearchOption.AllDirectories).Length;
+
+        var update = new UpdateManifest();
+        QueryFilesForUpdate(
+            update: update,
+            excludeFiles: excludeFiles,
+            clientExcludeDirectories: clientExcludeDirectories.ToHashSet(),
+            clientExcludeFiles: clientExcludeFiles.ToHashSet(),
+            editorExcludeDirectories: editorExcludeDirectories.ToHashSet(),
+            editorExcludeFiles: editorExcludeFiles.ToHashSet(),
+            excludeExtensions: excludeExtensions.ToHashSet(),
+            excludeDirectories: excludeDirectories.ToHashSet(),
+            workingDirectory: sourceDirectory,
+            sourcePath: sourceDirectory,
+            currentSourcePath: sourceDirectory,
+            targetPath: targetDirectory,
+            filesProcessed: 0,
+            fileCount: fileCount,
+            existingUpdate: existingUpdate
+        );
     }
 
-    private int queryFilesForUpdate(
+    private static int QueryFilesForUpdate(
         UpdateManifest update,
         string[] excludeFiles,
-        IEnumerable<string> clientExcludeFiles,
-        IEnumerable<string> editorExcludeFiles,
-        string[] excludeExtensions,
-        string[] excludeDirectories,
+        HashSet<string> clientExcludeDirectories,
+        HashSet<string> clientExcludeFiles,
+        HashSet<string> editorExcludeDirectories,
+        HashSet<string> editorExcludeFiles,
+        HashSet<string> excludeExtensions,
+        HashSet<string> excludeDirectories,
         string workingDirectory,
         string sourcePath,
         string currentSourcePath,
@@ -2258,8 +2290,8 @@ public partial class FrmMain : Form
         UpdateManifest? existingUpdate
     )
     {
-        var directoryInfo = new DirectoryInfo(currentSourcePath);
-        var workingDir = new Uri(workingDirectory + "/");
+        DirectoryInfo directoryInfo = new(currentSourcePath);
+        Uri workingDir = new(workingDirectory + "/");
 
         var fileInfos = directoryInfo.GetFiles();
         foreach (var fileInfo in fileInfos)
@@ -2269,7 +2301,13 @@ public partial class FrmMain : Form
                     .ToString()
                     .Replace('\\', '/')
             );
-            if (!excludeFiles.Contains(relativePath) &&
+            var relativeDirectoryPath = Uri.UnescapeDataString(
+                workingDir.MakeRelativeUri(new Uri(Path.Combine(currentSourcePath, fileInfo.DirectoryName ?? string.Empty)))
+                    .ToString()
+                    .Replace('\\', '/')
+            );
+            if (!clientExcludeDirectories.Contains(relativeDirectoryPath) &&
+                !excludeFiles.Contains(relativePath) &&
                 !excludeExtensions.Contains(fileInfo.Extension) &&
                 !clientExcludeFiles.Contains(relativePath.ToLower(CultureInfo.CurrentCulture)))
             {
@@ -2303,67 +2341,73 @@ public partial class FrmMain : Form
 
             filesProcessed++;
 
-            var percentage = (float)(filesProcessed / (float)(fileCount + 1));
-            var outofeighty = (int)(percentage * 80f);
+            var percentage = filesProcessed / (float)(fileCount + 1);
+            var fakePercentage = (int)(percentage * 80f);
 
-            Globals.UpdateCreationProgressForm.SetProgress(Strings.UpdatePacking.Calculating, outofeighty + 10, false);
+            Globals.UpdateCreationProgressForm.SetProgress(
+                Strings.UpdatePacking.Calculating,
+                fakePercentage + 10,
+                false
+            );
 
             Application.DoEvents();
         }
 
-        foreach (var dir in directoryInfo.GetDirectories())
+        foreach (var subdirectory in directoryInfo.GetDirectories())
         {
             var relativePath = Uri.UnescapeDataString(
-                workingDir.MakeRelativeUri(new Uri(Path.Combine(currentSourcePath, dir.Name)))
+                workingDir.MakeRelativeUri(new Uri(Path.Combine(currentSourcePath, subdirectory.Name)))
                     .ToString()
                     .Replace('\\', '/')
             );
-            if (!excludeDirectories.Contains(relativePath))
+            if (excludeDirectories.Contains(relativePath))
             {
-                filesProcessed = queryFilesForUpdate(
-                    update,
-                    excludeFiles,
-                    clientExcludeFiles,
-                    editorExcludeFiles,
-                    excludeExtensions,
-                    excludeFiles,
-                    workingDirectory,
-                    sourcePath,
-                    Path.Combine(currentSourcePath, dir.Name),
-                    targetPath,
-                    filesProcessed,
-                    fileCount,
-                    existingUpdate
-                );
+                continue;
             }
-            else
-            {
-                //MessageBox.Show("Directory not added to update! " + relativePath);
-            }
-        }
 
-        if (string.Equals(sourcePath, currentSourcePath, StringComparison.Ordinal))
-        {
-            Globals.UpdateCreationProgressForm.SetProgress(Strings.UpdatePacking.Done, 100, false);
-            Application.DoEvents();
-            Thread.Sleep(1000);
-
-            //TODO: Open folder with update files
-            var targetJsonPath = Path.Combine(targetPath, "update.json");
-            File.WriteAllText(
-                targetJsonPath,
-                JsonConvert.SerializeObject(
-                    update,
-                    Formatting.Indented,
-                    new JsonSerializerSettings
-                    {
-                        DefaultValueHandling = DefaultValueHandling.Ignore
-                    }
-                )
+            filesProcessed = QueryFilesForUpdate(
+                update: update,
+                excludeFiles: excludeFiles,
+                clientExcludeDirectories: clientExcludeDirectories,
+                clientExcludeFiles: clientExcludeFiles,
+                editorExcludeDirectories: editorExcludeDirectories,
+                editorExcludeFiles: editorExcludeFiles,
+                excludeExtensions: excludeExtensions,
+                excludeDirectories: excludeDirectories,
+                workingDirectory: workingDirectory,
+                sourcePath: sourcePath,
+                currentSourcePath: Path.Combine(currentSourcePath, subdirectory.Name),
+                targetPath: targetPath,
+                filesProcessed: filesProcessed,
+                fileCount: fileCount,
+                existingUpdate: existingUpdate
             );
-
-            Globals.UpdateCreationProgressForm.NotifyClose();
         }
+
+        if (!string.Equals(sourcePath, currentSourcePath, StringComparison.Ordinal))
+        {
+            return filesProcessed;
+        }
+
+        Globals.UpdateCreationProgressForm.SetProgress(Strings.UpdatePacking.Done, 100, false);
+        Application.DoEvents();
+        Thread.Sleep(1000);
+
+        //TODO: Open folder with update files
+        var targetJsonPath = Path.Combine(targetPath, "update.json");
+        File.WriteAllText(
+            targetJsonPath,
+            JsonConvert.SerializeObject(
+                update,
+                Formatting.Indented,
+                new JsonSerializerSettings
+                {
+                    DefaultValueHandling = DefaultValueHandling.Ignore
+                }
+            )
+        );
+
+        Globals.UpdateCreationProgressForm.NotifyClose();
 
         return filesProcessed;
     }
