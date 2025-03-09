@@ -33,8 +33,4 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="System\" />
-  </ItemGroup>
-
 </Project>
