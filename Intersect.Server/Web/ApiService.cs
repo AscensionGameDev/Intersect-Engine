@@ -70,7 +70,10 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
             return default;
         }
 
-        ApplicationContext.Context.Value?.Logger.LogInformation($"Launching Intersect REST API in '{builder.Environment.EnvironmentName}' mode...");
+        ApplicationContext.Context.Value?.Logger.LogInformation(
+            "Launching Intersect REST API in '{EnvironmentName}' mode...",
+            builder.Environment.EnvironmentName
+        );
 
         // builder.WebHost.ConfigureKestrel(
         //     ko =>
