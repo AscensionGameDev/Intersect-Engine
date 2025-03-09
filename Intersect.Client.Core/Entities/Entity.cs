@@ -581,7 +581,10 @@ public partial class Entity : IEntity
         {
             if (dispose)
             {
-                animation.Dispose();
+                if (!animation.IsDisposed)
+                {
+                    animation.Dispose();
+                }
             }
 
             _ = TryRemoveAnimation(animation);
