@@ -160,11 +160,13 @@ public static partial class Graphics
 
     public static void DrawIntro()
     {
-        if (!sContentManager.TryGetTexture(
-                TextureType.Image,
-                ClientConfiguration.Instance.IntroImages[Globals.IntroIndex],
-                out var texture
-            ))
+        var introImages = ClientConfiguration.Instance.IntroImages;
+        if (introImages.Count <= Globals.IntroIndex)
+        {
+            return;
+        }
+
+        if (!sContentManager.TryGetTexture(TextureType.Image, introImages[Globals.IntroIndex], out var texture))
         {
             return;
         }

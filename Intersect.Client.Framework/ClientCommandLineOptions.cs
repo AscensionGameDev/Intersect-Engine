@@ -16,10 +16,10 @@ public partial record ClientCommandLineOptions : ICommandLineOptions
     public int ScreenHeight { get; init; }
 
     [Option('S', "server", Default = null, Required = false)]
-    public string Server { get; init; }
+    public string? Server { get; init; }
 
     [Option("working-directory", Default = null, Required = false)]
-    public string WorkingDirectory { get; init; }
+    public string? WorkingDirectory { get; init; }
 
     [Option('p', "plugin-directory", Default = null, Required = false)]
     public IEnumerable<string>? PluginDirectories { get; init; }

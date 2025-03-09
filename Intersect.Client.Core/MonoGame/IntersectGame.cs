@@ -95,7 +95,9 @@ internal partial class IntersectGame : Game
             args.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount = 8;
         };
 
-        Content.RootDirectory = string.Empty;
+        var workingDirectory = context.StartupOptions.WorkingDirectory ?? string.Empty;
+        var resolvedWorkingDirectory = Path.GetFullPath(workingDirectory, Environment.CurrentDirectory);
+        Content.RootDirectory = resolvedWorkingDirectory;
         IsMouseVisible = true;
         Globals.ContentManager = new MonoContentManager();
         Globals.Database = new JsonDatabase();
