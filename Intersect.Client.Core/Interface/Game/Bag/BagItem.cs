@@ -1,4 +1,7 @@
+using Intersect.Client.Core;
+using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
@@ -6,77 +9,149 @@ using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Interface.Game.Inventory;
+using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Collections.Slotting;
 using Intersect.Configuration;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Items;
-using Intersect.GameObjects;
-using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game.Bag;
 
-
-public partial class BagItem
+public partial class BagItem : SlotItem
 {
+    // Controls
+    private readonly Label _quantityLabel;
+    private readonly BagWindow _bagWindow;
+    private Draggable? _dragIcon;
+    private ItemDescriptionWindow? _descWindow;
 
-    private static int sItemXPadding = 4;
-
-    private static int sItemYPadding = 4;
-
-    public ImagePanel Container;
-
+    // Drag Handling
     public bool IsDragging;
+    private bool _canDrag;
+    private long _clickTime;
+    private bool _mouseOver;
+    private int _mouseX = -1;
+    private int _mouseY = -1;
 
-    //Drag/Drop References
-    private BagWindow mBagWindow;
+    // Data control
+    private string? _textureLoaded;
 
-    //Dragging
-    private bool mCanDrag;
+    // Context Menu Handling
+    private readonly MenuItem _withdrawContextItem;
 
-    private long mClickTime;
-
-    private Guid mCurrentItemId;
-
-    private ItemDescriptionWindow mDescWindow;
-
-    private Draggable mDragIcon;
-
-    //Mouse Event Variables
-    private bool mMouseOver;
-
-    private int mMouseX = -1;
-
-    private int mMouseY = -1;
-
-    //Slot info
-    private int mMySlot;
-
-    public ImagePanel Pnl;
-
-    public BagItem(BagWindow bagWindow, int index)
+    public BagItem(BagWindow bagWindow, Base parent, int index, ContextMenu contextMenu) : base(parent, nameof(BagItem), index, contextMenu)
     {
-        mBagWindow = bagWindow;
-        mMySlot = index;
+        _bagWindow = bagWindow;
+        TextureFilename = "bagitem.png";
+
+        _iconImage.HoverEnter += _iconImage_HoverEnter;
+        _iconImage.HoverLeave += _iconImage_HoverLeave;
+        _iconImage.Clicked += _iconImage_Clicked;
+        _iconImage.DoubleClicked += _iconImage_DoubleClicked;
+
+        _quantityLabel = new Label(this, "Quantity")
+        {
+            Alignment = [Alignments.Bottom, Alignments.Right],
+            BackgroundTemplateName = "quantity.png",
+            FontName = "sourcesansproblack",
+            FontSize = 8,
+            Padding = new Padding(2),
+        };
+
+        LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+        _contextMenu.ClearChildren();
+        _withdrawContextItem = _contextMenu.AddItem(Strings.BagContextMenu.Withdraw);
+        _withdrawContextItem.Clicked += _withdrawMenuItem_Clicked;
+        _contextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
     }
 
-    public void Setup()
+    #region Context Menu
+
+    public override void OpenContextMenu()
     {
-        Pnl = new ImagePanel(Container, "BagItemIcon");
-        Pnl.HoverEnter += pnl_HoverEnter;
-        Pnl.HoverLeave += pnl_HoverLeave;
-        Pnl.DoubleClicked += Pnl_DoubleClicked;
-        Pnl.Clicked += pnl_Clicked;
+        if (Globals.BagSlots is not { Length: > 0 } bagSlots)
+        {
+            return;
+        }
+
+        if (!ItemDescriptor.TryGet(bagSlots[SlotIndex].ItemId, out var item))
+        {
+            return;
+        }
+
+        _withdrawContextItem.SetText(Strings.BagContextMenu.Withdraw.ToString(item.Name));
+        base.OpenContextMenu();
     }
 
-    private void Pnl_DoubleClicked(Base sender, MouseButtonState arguments)
+    private void _withdrawMenuItem_Clicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.InBag)
         {
-            Globals.Me.TryRetrieveItemFromBag(mMySlot, -1);
+            Globals.Me?.TryRetrieveItemFromBag(SlotIndex, -1);
         }
     }
 
-    void pnl_Clicked(Base sender, MouseButtonState arguments)
+    #endregion
+
+    #region Mouse Events
+
+    private void _iconImage_HoverEnter(Base? sender, EventArgs? arguments)
+    {
+        if (InputHandler.MouseFocus != default)
+        {
+            return;
+        }
+
+        _mouseOver = true;
+        _canDrag = true;
+        if (Globals.InputManager.IsMouseButtonDown(MouseButton.Left))
+        {
+            _canDrag = false;
+            return;
+        }
+
+        if (_descWindow != default)
+        {
+            _descWindow.Dispose();
+            _descWindow = default;
+        }
+
+        if (Globals.BagSlots is not { Length: > 0 } bagSlots)
+        {
+            return;
+        }
+
+        if (bagSlots[SlotIndex] is not { Descriptor: not null } or { Quantity: <= 0 })
+        {
+            return;
+        }
+
+        var item = bagSlots[SlotIndex];
+        _descWindow = new ItemDescriptionWindow(
+            item.Descriptor,
+            item.Quantity,
+            _bagWindow.X,
+            _bagWindow.Y,
+            item.ItemProperties
+        );
+    }
+
+    private void _iconImage_HoverLeave(Base sender, EventArgs arguments)
+    {
+        _mouseOver = false;
+        _mouseX = -1;
+        _mouseY = -1;
+
+        if (_descWindow != default)
+        {
+            _descWindow.Dispose();
+            _descWindow = default;
+        }
+    }
+
+    private void _iconImage_Clicked(Base sender, MouseButtonState arguments)
     {
         // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
         switch (arguments.MouseButton)
@@ -84,144 +159,124 @@ public partial class BagItem
             case MouseButton.Right:
                 if (ClientConfiguration.Instance.EnableContextMenus)
                 {
-                    mBagWindow.OpenContextMenu(mMySlot);
+                    OpenContextMenu();
                 }
                 else
                 {
-                    Pnl_DoubleClicked(sender, arguments);
+                    _iconImage_DoubleClicked(sender, arguments);
                 }
                 break;
 
             case MouseButton.Left:
-                mClickTime = Timing.Global.MillisecondsUtc + 500;
+                _clickTime = Timing.Global.MillisecondsUtc + 500;
                 break;
         }
     }
 
-    void pnl_HoverLeave(Base sender, EventArgs arguments)
+    private void _iconImage_DoubleClicked(Base sender, MouseButtonState arguments)
     {
-        mMouseOver = false;
-        mMouseX = -1;
-        mMouseY = -1;
-        if (mDescWindow != null)
+        if (Globals.InBag)
         {
-            mDescWindow.Dispose();
-            mDescWindow = null;
+            Globals.Me?.TryRetrieveItemFromBag(SlotIndex, -1);
         }
     }
 
-    void pnl_HoverEnter(Base sender, EventArgs arguments)
+    #endregion
+
+    public override void Update()
     {
-        if (InputHandler.MouseFocus != null)
+        if (Globals.Me == default)
         {
             return;
         }
 
-        mMouseOver = true;
-        mCanDrag = true;
-        if (Globals.InputManager.IsMouseButtonDown(MouseButton.Left))
+        if (Globals.BagSlots is not { Length: > 0 } bagSlots)
         {
-            mCanDrag = false;
-
             return;
         }
 
-        if (mDescWindow != null)
+        if (bagSlots[SlotIndex] is not { Descriptor: not null } or { Quantity: <= 0 })
         {
-            mDescWindow.Dispose();
-            mDescWindow = null;
+            _quantityLabel.IsVisibleInParent = false;
+            _iconImage.Texture = default;
+            _textureLoaded = default;
+            return;
         }
 
-        if (Globals.BagSlots[mMySlot]?.Descriptor != null)
+        var bagSlot = bagSlots[SlotIndex];
+        var descriptor = bagSlot.Descriptor;
+
+        _quantityLabel.IsVisibleInParent = !IsDragging && descriptor.IsStackable && bagSlot.Quantity > 1;
+        if (_quantityLabel.IsVisibleInParent)
         {
-            mDescWindow = new ItemDescriptionWindow(
-                Globals.BagSlots[mMySlot].Descriptor, Globals.BagSlots[mMySlot].Quantity, mBagWindow.X, mBagWindow.Y,
-                Globals.BagSlots[mMySlot].ItemProperties
-            );
+            _quantityLabel.Text = Strings.FormatQuantityAbbreviated(bagSlot.Quantity);
         }
-    }
 
-    public FloatRect RenderBounds()
-    {
-        var rect = new FloatRect()
+        if (_textureLoaded != descriptor.Icon)
         {
-            X = Pnl.ToCanvas(new Point(0, 0)).X,
-            Y = Pnl.ToCanvas(new Point(0, 0)).Y,
-            Width = Pnl.Width,
-            Height = Pnl.Height
-        };
-
-        return rect;
-    }
-
-    public void Update()
-    {
-        if (Globals.BagSlots[mMySlot].ItemId != mCurrentItemId)
-        {
-            mCurrentItemId = Globals.BagSlots[mMySlot].ItemId;
-            var item = ItemDescriptor.Get(Globals.BagSlots[mMySlot].ItemId);
-            if (item != null)
+            var itemTex = Globals.ContentManager?.GetTexture(Framework.Content.TextureType.Item, descriptor.Icon);
+            if (itemTex != default)
             {
-                var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);
-                if (itemTex != null)
-                {
-                    Pnl.Texture = itemTex;
-                    Pnl.RenderColor = item.Color;
-                }
-                else
-                {
-                    if (Pnl.Texture != null)
-                    {
-                        Pnl.Texture = null;
-                    }
-                }
+                _iconImage.Texture = itemTex;
+                _iconImage.RenderColor = descriptor.Color;
+                _iconImage.IsVisibleInParent = true;
             }
             else
             {
-                if (Pnl.Texture != null)
+                if (_iconImage.Texture != default)
                 {
-                    Pnl.Texture = null;
+                    _iconImage.Texture = default;
+                    _iconImage.IsVisibleInParent = false;
                 }
+            }
+
+            _textureLoaded = descriptor.Icon;
+
+            if (_descWindow != default)
+            {
+                _descWindow.Dispose();
+                _descWindow = default;
+                _iconImage_HoverEnter(default, default);
             }
         }
 
         if (!IsDragging)
         {
-            if (mMouseOver)
+            if (_mouseOver)
             {
                 if (!Globals.InputManager.IsMouseButtonDown(MouseButton.Left))
                 {
-                    mCanDrag = true;
-                    mMouseX = -1;
-                    mMouseY = -1;
-                    if (Timing.Global.MillisecondsUtc < mClickTime)
+                    _canDrag = true;
+                    _mouseX = -1;
+                    _mouseY = -1;
+                    if (Timing.Global.MillisecondsUtc < _clickTime)
                     {
-                        mClickTime = 0;
+                        _clickTime = 0;
                     }
                 }
                 else
                 {
-                    if (mCanDrag && Draggable.Active == null)
+                    if (_canDrag && Draggable.Active == default)
                     {
-                        if (mMouseX == -1 || mMouseY == -1)
+                        if (_mouseX == -1 || _mouseY == -1)
                         {
-                            mMouseX = InputHandler.MousePosition.X - Pnl.ToCanvas(new Point(0, 0)).X;
-                            mMouseY = InputHandler.MousePosition.Y - Pnl.ToCanvas(new Point(0, 0)).Y;
+                            _mouseX = InputHandler.MousePosition.X - _iconImage.ToCanvas(new Point(0, 0)).X;
+                            _mouseY = InputHandler.MousePosition.Y - _iconImage.ToCanvas(new Point(0, 0)).Y;
                         }
                         else
                         {
-                            var xdiff = mMouseX -
-                                        (InputHandler.MousePosition.X - Pnl.ToCanvas(new Point(0, 0)).X);
+                            var xdiff = _mouseX -
+                                        (InputHandler.MousePosition.X - _iconImage.ToCanvas(new Point(0, 0)).X);
 
-                            var ydiff = mMouseY -
-                                        (InputHandler.MousePosition.Y - Pnl.ToCanvas(new Point(0, 0)).Y);
+                            var ydiff = _mouseY -
+                                        (InputHandler.MousePosition.Y - _iconImage.ToCanvas(new Point(0, 0)).Y);
 
                             if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                             {
                                 IsDragging = true;
-                                mDragIcon = new Draggable(
-                                    Pnl.ToCanvas(new Point(0, 0)).X + mMouseX,
-                                    Pnl.ToCanvas(new Point(0, 0)).X + mMouseY, Pnl.Texture, Pnl.RenderColor
+                                _dragIcon = new Draggable(
+                                    _iconImage.ToCanvas(new Point(0, 0)).X + _mouseX,
+                                    _iconImage.ToCanvas(new Point(0, 0)).X + _mouseY, _iconImage.Texture, _iconImage.RenderColor
                                 );
                             }
                         }
@@ -231,13 +286,15 @@ public partial class BagItem
         }
         else
         {
-            if (mDragIcon.Update())
+            if (_dragIcon?.Update() == true)
             {
                 //Drug the item and now we stopped
                 IsDragging = false;
                 var dragRect = new FloatRect(
-                    mDragIcon.X - sItemXPadding / 2, mDragIcon.Y - sItemYPadding / 2, sItemXPadding / 2 + 32,
-                    sItemYPadding / 2 + 32
+                    _dragIcon.X - (Padding.Left + Padding.Right) / 2f,
+                    _dragIcon.Y - (Padding.Top + Padding.Bottom) / 2f,
+                    (Padding.Left + Padding.Right) / 2f + _iconImage.Width,
+                    (Padding.Top + Padding.Bottom) / 2f + _iconImage.Height
                 );
 
                 float bestIntersect = 0;
@@ -245,19 +302,25 @@ public partial class BagItem
 
                 //So we picked up an item and then dropped it. Lets see where we dropped it to.
                 //Check inventory first.
-                if (mBagWindow.RenderBounds().IntersectsWith(dragRect))
+                if (_bagWindow.RenderBounds().IntersectsWith(dragRect))
                 {
                     for (var i = 0; i < Globals.BagSlots.Length; i++)
                     {
-                        if (mBagWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
+                        var slot = _bagWindow.Items[i];
+                        if (slot is not BagItem bagItem)
                         {
-                            if (FloatRect.Intersect(mBagWindow.Items[i].RenderBounds(), dragRect).Width *
-                                FloatRect.Intersect(mBagWindow.Items[i].RenderBounds(), dragRect).Height >
+                            continue;
+                        }
+
+                        if (bagItem.RenderBounds().IntersectsWith(dragRect))
+                        {
+                            if (FloatRect.Intersect(bagItem.RenderBounds(), dragRect).Width *
+                                FloatRect.Intersect(bagItem.RenderBounds(), dragRect).Height >
                                 bestIntersect)
                             {
                                 bestIntersect =
-                                    FloatRect.Intersect(mBagWindow.Items[i].RenderBounds(), dragRect).Width *
-                                    FloatRect.Intersect(mBagWindow.Items[i].RenderBounds(), dragRect).Height;
+                                    FloatRect.Intersect(bagItem.RenderBounds(), dragRect).Width *
+                                    FloatRect.Intersect(bagItem.RenderBounds(), dragRect).Height;
 
                                 bestIntersectIndex = i;
                             }
@@ -266,10 +329,10 @@ public partial class BagItem
 
                     if (bestIntersectIndex > -1)
                     {
-                        if (mMySlot != bestIntersectIndex)
+                        if (SlotIndex != bestIntersectIndex)
                         {
                             //Try to swap....
-                            PacketSender.SendMoveBagItems(mMySlot, bestIntersectIndex);
+                            PacketSender.SendMoveBagItems(SlotIndex, bestIntersectIndex);
                         }
                     }
                 }
@@ -303,14 +366,26 @@ public partial class BagItem
 
                         if (bestIntersectIndex > -1)
                         {
-                            Globals.Me.TryRetrieveItemFromBag(mMySlot, bestIntersectIndex);
+                            Globals.Me.TryRetrieveItemFromBag(SlotIndex, bestIntersectIndex);
                         }
                     }
                 }
 
-                mDragIcon.Dispose();
+                _dragIcon.Dispose();
             }
         }
     }
 
+    public FloatRect RenderBounds()
+    {
+        var rect = new FloatRect()
+        {
+            X = _iconImage.ToCanvas(new Point(0, 0)).X,
+            Y = _iconImage.ToCanvas(new Point(0, 0)).Y,
+            Width = _iconImage.Width,
+            Height = _iconImage.Height
+        };
+
+        return rect;
+    }
 }

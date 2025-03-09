@@ -8,6 +8,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.Bag;
 using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
@@ -666,7 +667,11 @@ public partial class InventoryItem : SlotItem
                     var bagSlotLimit = Math.Min(Globals.BagSlots.Length, bagSlotComponents.Length);
                     for (var bagSlotIndex = 0; bagSlotIndex < bagSlotLimit; bagSlotIndex++)
                     {
-                        var bagSlotComponent = bagSlotComponents[bagSlotIndex];
+                        if (bagSlotComponents[bagSlotIndex] is not BagItem bagSlotComponent)
+                        {
+                            continue;
+                        }
+
                         var bagSlotRenderBounds = bagSlotComponent.RenderBounds();
                         if (!bagSlotRenderBounds.IntersectsWith(dragRect))
                         {

@@ -35,7 +35,7 @@ public partial class GameInterface : MutableInterface
 
     private AdminWindow? mAdminWindow;
 
-    private BagWindow mBagWindow;
+    private BagWindow _bagWindow;
 
     private BankWindow mBankWindow;
 
@@ -245,16 +245,14 @@ public partial class GameInterface : MutableInterface
 
     public void OpenBag()
     {
-        mBagWindow?.Close();
-
-        mBagWindow = new BagWindow(GameCanvas);
+        _bagWindow = new BagWindow(GameCanvas) { DeleteOnClose = true };
         mShouldOpenBag = false;
         Globals.InBag = true;
     }
 
     public BagWindow GetBagWindow()
     {
-        return mBagWindow;
+        return _bagWindow;
     }
 
     public BankWindow GetBankWindow()
@@ -421,15 +419,15 @@ public partial class GameInterface : MutableInterface
             OpenBag();
         }
 
-        if (mBagWindow != null)
+        if (_bagWindow != null)
         {
-            if (!mBagWindow.IsVisible() || mShouldCloseBag)
+            if (!_bagWindow.IsVisibleInTree || mShouldCloseBag)
             {
                 CloseBagWindow();
             }
             else
             {
-                mBagWindow.Update();
+                _bagWindow.Update();
             }
         }
 
@@ -535,8 +533,8 @@ public partial class GameInterface : MutableInterface
 
     private void CloseBagWindow()
     {
-        mBagWindow?.Close();
-        mBagWindow = null;
+        _bagWindow?.Hide();
+        _bagWindow = null;
         Globals.InBag = false;
         PacketSender.SendCloseBag();
     }
@@ -560,7 +558,7 @@ public partial class GameInterface : MutableInterface
     public bool CloseAllWindows()
     {
         var closedWindows = false;
-        if (mBagWindow != null && mBagWindow.IsVisible())
+        if (_bagWindow != null && _bagWindow.IsVisibleInTree)
         {
             CloseBagWindow();
             closedWindows = true;
