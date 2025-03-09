@@ -76,29 +76,17 @@ public partial class Formulas
             throw new ArgumentException($@"{nameof(victim)}.{nameof(victim.Stat)} is null", nameof(victim));
         }
 
-        string expressionString;
-        switch (damageType)
+        var expressionString = damageType switch
         {
-            case DamageType.Physical:
-                expressionString = _formulas.PhysicalDamage;
-
-                break;
-            case DamageType.Magic:
-                expressionString = _formulas.MagicDamage;
-
-                break;
-            case DamageType.True:
-                expressionString = _formulas.TrueDamage;
-
-                break;
-            default:
-                expressionString = _formulas.TrueDamage;
-
-                break;
-        }
+            DamageType.Physical => _formulas.PhysicalDamage,
+            DamageType.Magic => _formulas.MagicDamage,
+            DamageType.True => _formulas.TrueDamage,
+            _ => _formulas.TrueDamage,
+        };
 
         var expression = new Expression(expressionString);
         var negate = false;
+
         if (baseDamage < 0)
         {
             baseDamage = Math.Abs(baseDamage);
@@ -121,17 +109,17 @@ public partial class Formulas
             expression.Parameters["A_Speed"] = attacker.Stat[(int)Stat.Speed].Value();
             expression.Parameters["A_AbilityPwr"] = attacker.Stat[(int)Stat.AbilityPower].Value();
             expression.Parameters["A_MagicResist"] = attacker.Stat[(int)Stat.MagicResist].Value();
+            expression.Parameters["A_Level"] = attacker.Level;
             expression.Parameters["V_Attack"] = victim.Stat[(int)Stat.Attack].Value();
             expression.Parameters["V_Defense"] = victim.Stat[(int)Stat.Defense].Value();
             expression.Parameters["V_Speed"] = victim.Stat[(int)Stat.Speed].Value();
             expression.Parameters["V_AbilityPwr"] = victim.Stat[(int)Stat.AbilityPower].Value();
             expression.Parameters["V_MagicResist"] = victim.Stat[(int)Stat.MagicResist].Value();
+            expression.Parameters["V_Level"] = victim.Level;
+
             expression.EvaluateFunction += delegate(string name, FunctionArgs args)
             {
-                if (args == null)
-                {
-                    throw new ArgumentNullException(nameof(args));
-                }
+                ArgumentNullException.ThrowIfNull(args);
 
                 if (name == "Random")
                 {
@@ -173,7 +161,7 @@ public partial class Formulas
         );
 
         var max = (int)Math.Round(
-            (double)(parameters[1] ?? throw new NullReferenceException("First parameter is null."))
+            (double)(parameters[1] ?? throw new NullReferenceException("Second parameter is null."))
         );
 
         return min >= max ? min : Randomization.Next(min, max + 1);
