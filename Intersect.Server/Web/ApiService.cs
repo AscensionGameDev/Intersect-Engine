@@ -81,14 +81,14 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                         hcao.SslProtocols = SslProtocols.Tls12;
                         hcao.OnAuthenticate += (context, options) =>
                         {
-                            options.AllowRenegotiation = true;
-                            options.CipherSuitesPolicy = new CipherSuitesPolicy(
-                                [
-                                    TlsCipherSuite.TLS_AES_128_GCM_SHA256,
-                                    TlsCipherSuite.TLS_AES_256_GCM_SHA384,
-                                    TlsCipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
-                                ]
-                            );
+                            // options.AllowRenegotiation = true;
+                            // options.CipherSuitesPolicy = new CipherSuitesPolicy(
+                            //     [
+                            //         TlsCipherSuite.TLS_AES_128_GCM_SHA256,
+                            //         TlsCipherSuite.TLS_AES_256_GCM_SHA384,
+                            //         TlsCipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+                            //     ]
+                            // );
                         };
                     }
                 );
