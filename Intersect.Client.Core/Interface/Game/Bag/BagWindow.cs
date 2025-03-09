@@ -1,179 +1,89 @@
-﻿using Intersect.Client.Core;
+using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
-using Intersect.Framework.Core.GameObjects.Items;
-using Intersect.GameObjects;
+using Intersect.Client.Utilities;
 
 namespace Intersect.Client.Interface.Game.Bag;
 
-
-public partial class BagWindow
+public partial class BagWindow : Window
 {
+    public List<SlotItem> Items = [];
+    private readonly ScrollControl _slotContainer;
+    private readonly ContextMenu _contextMenu;
 
-    private static int sItemXPadding = 4;
-
-    private static int sItemYPadding = 4;
-
-    public List<BagItem> Items = new List<BagItem>();
-
-    //Controls
-    private WindowControl mBagWindow;
-
-    private ScrollControl mItemContainer;
-
-    private List<Label> mValues = new List<Label>();
-
-    // Context menu
-    private Framework.Gwen.Control.Menu mContextMenu;
-
-    private MenuItem mWithdrawContextItem;
-
-    //Init
-    public BagWindow(Canvas gameCanvas)
+    public BagWindow(Canvas gameCanvas) : base(gameCanvas, Strings.Bags.Title, false, nameof(BagWindow))
     {
-        mBagWindow = new WindowControl(gameCanvas, Strings.Bags.Title, false, "BagWindow");
-        mBagWindow.DisableResizing();
-        Interface.InputBlockingComponents.Add(mBagWindow);
+        DisableResizing();
+        Interface.InputBlockingComponents.Add(this);
 
-        mItemContainer = new ScrollControl(mBagWindow, "ItemContainer");
-        mItemContainer.EnableScroll(false, true);
+        Alignment = [Alignments.Center];
+        MinimumSize = new Point(x: 192, y: 254);
+        IsResizable = false;
+        IsClosable = true;
 
-        mBagWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        TitleLabel.FontSize = 14;
+        TitleLabel.TextColorOverride = Color.White;
 
+        _slotContainer = new ScrollControl(this, "ItemContainer")
+        {
+            Dock = Pos.Fill,
+            OverflowX = OverflowBehavior.Auto,
+            OverflowY = OverflowBehavior.Scroll,
+        };
+
+        _contextMenu = new ContextMenu(gameCanvas, "BagContextMenu")
+        {
+            IsVisibleInParent = false,
+            IconMarginDisabled = true,
+            ItemFont = GameContentManager.Current.GetFont(name: "sourcesansproblack"),
+            ItemFontSize = 10,
+        };
+    }
+
+    protected override void EnsureInitialized()
+    {
+        LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
         InitItemContainer();
-
-        // Generate our context menu with basic options.
-        mContextMenu = new Framework.Gwen.Control.Menu(gameCanvas, "BagContextMenu");
-        mContextMenu.IsHidden = true;
-        mContextMenu.IconMarginDisabled = true;
-        //TODO: Is this a memory leak?
-        mContextMenu.ClearChildren();
-        mWithdrawContextItem = mContextMenu.AddItem(Strings.BagContextMenu.Withdraw);
-        mWithdrawContextItem.Clicked += MWithdrawContextItem_Clicked;
-        mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-    }
-
-    public void OpenContextMenu(int slot)
-    {
-        var item = ItemDescriptor.Get(Globals.BagSlots[slot].ItemId);
-
-        // No point showing a menu for blank space.
-        if (item == null)
-        {
-            return;
-        }
-
-        mWithdrawContextItem.SetText(Strings.BagContextMenu.Withdraw.ToString(item.Name));
-
-        // Set our spell slot as userdata for future reference.
-        mContextMenu.UserData = slot;
-
-        mContextMenu.SizeToChildren();
-        mContextMenu.Open(Framework.Gwen.Pos.None);
-    }
-
-    private void MWithdrawContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.MouseButtonState arguments)
-    {
-        if (Globals.InBag)
-        {
-            var slot = (int) sender.Parent.UserData;
-            Globals.Me.TryRetrieveItemFromBag(slot, -1);
-        }
-    }
-
-    //Location
-    //Location
-    public int X => mBagWindow.X;
-
-    public int Y => mBagWindow.Y;
-
-    public void Close()
-    {
-        mContextMenu?.Close();
-        mBagWindow.Close();
-    }
-
-    public bool IsVisible()
-    {
-        return !mBagWindow.IsHidden;
-    }
-
-    public void Hide()
-    {
-        mBagWindow.IsHidden = true;
-    }
-
-    public void Update()
-    {
-        if (mBagWindow.IsHidden == true || Globals.BagSlots == null)
-        {
-            return;
-        }
-
-        for (var i = 0; i < Globals.BagSlots.Length; i++)
-        {
-            if (Globals.BagSlots[i] != null && Globals.BagSlots[i].ItemId != Guid.Empty)
-            {
-                var item = ItemDescriptor.Get(Globals.BagSlots[i].ItemId);
-                if (item != null)
-                {
-                    Items[i].Pnl.IsHidden = false;
-
-                    if (item.IsStackable)
-                    {
-                        mValues[i].IsHidden = Globals.BagSlots[i].Quantity <= 1;
-                        mValues[i].Text = Strings.FormatQuantityAbbreviated(Globals.BagSlots[i].Quantity);
-                    }
-                    else
-                    {
-                        mValues[i].IsHidden = true;
-                    }
-
-                    if (Items[i].IsDragging)
-                    {
-                        Items[i].Pnl.IsHidden = true;
-                        mValues[i].IsHidden = true;
-                    }
-
-                    Items[i].Update();
-                }
-            }
-            else
-            {
-                Items[i].Pnl.IsHidden = true;
-                mValues[i].IsHidden = true;
-            }
-        }
     }
 
     private void InitItemContainer()
     {
-        for (var i = 0; i < Globals.BagSlots.Length; i++)
+        if (Globals.BagSlots is not { Length: > 0 } bagSlots)
         {
-            Items.Add(new BagItem(this, i));
-            Items[i].Container = new ImagePanel(mItemContainer, "BagItem");
-            Items[i].Setup();
+            return;
+        }
 
-            mValues.Add(new Label(Items[i].Container, "BagItemValue"));
-            mValues[i].Text = string.Empty;
-            Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        for (var slotIndex = 0; slotIndex < bagSlots.Length; slotIndex++)
+        {
+            Items.Add(new BagItem(this, _slotContainer, slotIndex, _contextMenu));
+        }
 
-            var xPadding = Items[i].Container.Margin.Left + Items[i].Container.Margin.Right;
-            var yPadding = Items[i].Container.Margin.Top + Items[i].Container.Margin.Bottom;
-            Items[i]
-                .Container.SetPosition(
-                    i %
-                    (mItemContainer.Width / (Items[i].Container.Width + xPadding)) *
-                    (Items[i].Container.Width + xPadding) +
-                    xPadding,
-                    i /
-                    (mItemContainer.Width / (Items[i].Container.Width + xPadding)) *
-                    (Items[i].Container.Height + yPadding) +
-                    yPadding
-                );
+        PopulateSlotContainer.Populate(_slotContainer, Items);
+    }
+
+    public override void Hide()
+    {
+        _contextMenu?.Close();
+        base.Hide();
+    }
+
+    public void Update()
+    {
+        if (IsVisibleInTree == false)
+        {
+            return;
+        }
+
+        for (var i = 0; i < Items.Count; i++)
+        {
+            if (Items[i] is BagItem bagItem)
+            {
+                bagItem.Update();
+            }
         }
     }
 
@@ -181,13 +91,12 @@ public partial class BagWindow
     {
         var rect = new FloatRect()
         {
-            X = mBagWindow.ToCanvas(new Point(0, 0)).X - sItemXPadding / 2,
-            Y = mBagWindow.ToCanvas(new Point(0, 0)).Y - sItemYPadding / 2,
-            Width = mBagWindow.Width + sItemXPadding,
-            Height = mBagWindow.Height + sItemYPadding
+            X = ToCanvas(new Point(0, 0)).X - 4 / 2,
+            Y = ToCanvas(new Point(0, 0)).Y - 4 / 2,
+            Width = Width + 4,
+            Height = Height + 4
         };
 
         return rect;
     }
-
 }
