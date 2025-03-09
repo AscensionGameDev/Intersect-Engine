@@ -216,14 +216,30 @@ public sealed class Updater
                                     break;
                                 }
 
-                                updateRequired = !string.Equals(
-                                    updateFile.Checksum,
-                                    cachedFile.Checksum,
-                                    StringComparison.Ordinal
-                                );
-
-                                if (updateRequired)
+                                if (!string.Equals(updateFile.Checksum, cachedFile.Checksum, StringComparison.Ordinal))
                                 {
+                                    updateRequired = true;
+                                    break;
+                                }
+                                
+                                var resolvedPath = ResolvePath(cachedFile.Path, _updateRootInfo.FullName);
+                                FileInfo resolvedInfo = new(resolvedPath);
+                                if (!resolvedInfo.Exists)
+                                {
+                                    updateRequired = true;
+                                    break;
+                                }
+
+                                if (updateFile.Size != resolvedInfo.Length)
+                                {
+                                    updateRequired = true;
+                                    break;
+                                }
+
+                                var actualChecksum = UpdateManifestFile.ComputeChecksum(resolvedInfo);
+                                if (!string.Equals(actualChecksum, updateFile.Checksum, StringComparison.Ordinal))
+                                {
+                                    updateRequired = true;
                                     break;
                                 }
                             }
