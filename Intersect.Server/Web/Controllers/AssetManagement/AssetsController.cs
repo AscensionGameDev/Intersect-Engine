@@ -8,7 +8,9 @@ using Htmx;
 using Intersect.Framework.Core.AssetManagement;
 using Intersect.Framework.Reflection;
 using Intersect.Server.Web.Extensions;
+using Intersect.Server.Web.Http;
 using Intersect.Server.Web.Pages.Shared;
+using Intersect.Server.Web.Types;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -74,13 +76,19 @@ public sealed partial class AssetsController : IntersectController
 
     [HttpGet("{**path}")]
     [AllowAnonymous]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK, ContentTypes.Json)]
+    [ProducesResponseType(typeof(byte[]), (int)HttpStatusCode.OK, ContentTypes.OctetStream)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.Forbidden, ContentTypes.Json)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
     public IActionResult AssetGet([FromRoute] string? path = default)
     {
         if (!(path?.StartsWith("client") ?? false))
         {
             if (!User.HasRole("Editor"))
             {
-                return Forbidden();
+                return Forbidden(message: $"No access to {path}");
             }
         }
 
@@ -90,7 +98,7 @@ public sealed partial class AssetsController : IntersectController
         var assetFileSystemInfo = AssetFileSystemInfo.From(assetRootPath, pathToInspect);
         if (assetFileSystemInfo == default)
         {
-            return Ok(Array.Empty<AssetFileSystemInfo>());
+            return NotFound(message: $"Path not found: {path}");
         }
 
         if (assetFileSystemInfo.Type == AssetFileSystemInfoType.File)
@@ -118,12 +126,17 @@ public sealed partial class AssetsController : IntersectController
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Failed to generate client update manifest");
+            _logger.LogError(exception, "Failed to retrieve results for {Path}", path);
 
-            object? data = default;
+            object? data = $"An error occurred when retrieving results for {path}";
 #if DEBUG
             data = exception;
 #endif
+
+            if (data is string message)
+            {
+                return InternalServerError(message: message);
+            }
 
             return InternalServerError(data);
         }
@@ -216,13 +229,16 @@ public sealed partial class AssetsController : IntersectController
     }
 
     [HttpPost]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK, ContentTypes.Html)]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.MultiStatus, ContentTypes.Html)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
     public IActionResult AssetsUpload([FromForm] string folder, [FromForm] List<IFormFile> files)
     {
         if (string.IsNullOrWhiteSpace(folder))
         {
             if (!Request.IsHtmx())
             {
-                return BadRequest("No destination folder");
+                return BadRequest(message: "No destination folder");
             }
 
             var partial = PartialView(
@@ -250,7 +266,7 @@ public sealed partial class AssetsController : IntersectController
 
             if (!Request.IsHtmx())
             {
-                return BadRequest("Destination folder does not exist");
+                return BadRequest(message: "Destination folder does not exist");
             }
 
             var partial = PartialView(
@@ -277,7 +293,7 @@ public sealed partial class AssetsController : IntersectController
             {
                 if (!Request.IsHtmx())
                 {
-                    return BadRequest($"Multiple files uploaded with the name '{file.FileName}'");
+                    return BadRequest(message: $"Multiple files uploaded with the name '{file.FileName}'");
                 }
 
                 var partial = PartialView(
@@ -380,6 +396,8 @@ public sealed partial class AssetsController : IntersectController
     }
 
     [HttpPost("{**path}")]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK, ContentTypes.Json)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
     public IActionResult AssetPost(string? path = default, [FromHeader(Name = "Move-To")] string? destinationPath = default)
     {
         if (string.IsNullOrWhiteSpace(path))
@@ -414,6 +432,10 @@ public sealed partial class AssetsController : IntersectController
     }
 
     [HttpDelete("{**path}")]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK, ContentTypes.Json)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
     public IActionResult BrowseDelete(string? path = default)
     {
         var assetRootPath = AssetRootPath;
@@ -423,19 +445,28 @@ public sealed partial class AssetsController : IntersectController
 
         try
         {
-            var fileSystemInfo = assetFileSystemInfo.FileSystemInfo;
+            var fileSystemInfo = assetFileSystemInfo?.FileSystemInfo;
             if (fileSystemInfo is not { Exists: true })
             {
-                return NotFound();
+                return NotFound(message: $"Unable to delete missing resource: {path}");
             }
 
             fileSystemInfo.Delete();
-            return Ok();
+            return Ok(message: $"Deleted {path}");
         }
         catch (Exception exception)
         {
-            _logger.LogWarning(exception, "Failed to delete asset: {Path}", string.IsNullOrWhiteSpace(path) ? "<empty>" : path);
-            return InternalServerError();
+            _logger.LogWarning(
+                exception,
+                "Failed to delete asset: {Path}",
+                string.IsNullOrWhiteSpace(path) ? "<empty>" : path
+            );
+
+#if DEBUG
+            return InternalServerError(exception);
+#else
+            return InternalServerError("Failed to generate manifest");
+#endif
         }
     }
 
@@ -444,6 +475,10 @@ public sealed partial class AssetsController : IntersectController
 
     [AllowAnonymous]
     [HttpGet("client/update.json")]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK, ContentTypes.Json)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
     public IActionResult ClientUpdateManifest()
     {
         try
@@ -457,7 +492,7 @@ public sealed partial class AssetsController : IntersectController
 
             if (!TryGenerateUpdateManifestFrom("client", out var manifest))
             {
-                return InternalServerError();
+                return InternalServerError("Failed to generate manifest");
             }
 
             _clientUpdateManifestCacheExpiry = DateTime.UtcNow.Add(ManifestCacheExpiry);
@@ -468,12 +503,11 @@ public sealed partial class AssetsController : IntersectController
         {
             _logger.LogError(exception, "Failed to generate client update manifest");
 
-            object? data = default;
 #if DEBUG
-            data = exception;
+            return InternalServerError(exception);
+#else
+            return InternalServerError("Failed to generate manifest");
 #endif
-
-            return InternalServerError(data);
         }
     }
 
@@ -486,16 +520,21 @@ public sealed partial class AssetsController : IntersectController
 
 
     [HttpDelete("client/update.json")]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK, ContentTypes.Json)]
     public IActionResult ClearClientUpdateManifestCache()
     {
         _clientUpdateManifest = default;
-        return Ok();
+        return Ok(message: "Cache cleared");
     }
 
     [HttpDelete("editor")]
     public IActionResult ClearEditorAssets() => DeleteAssets("editor");
 
     [HttpGet("editor/update.json")]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK, ContentTypes.Json)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
+    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
     public IActionResult EditorUpdateManifest()
     {
         try
@@ -508,7 +547,7 @@ public sealed partial class AssetsController : IntersectController
 
             if (!TryGenerateUpdateManifestFrom("editor", out var manifest))
             {
-                return InternalServerError();
+                return InternalServerError("Failed to generate manifest");
             }
 
             _editorUpdateManifestCacheExpiry = DateTime.UtcNow.Add(ManifestCacheExpiry);
@@ -519,20 +558,20 @@ public sealed partial class AssetsController : IntersectController
         {
             _logger.LogError(exception, "Failed to generate editor update manifest");
 
-            object? data = default;
 #if DEBUG
-            data = exception;
+            return InternalServerError(exception);
+#else
+            return InternalServerError("Failed to generate manifest");
 #endif
-
-            return InternalServerError(data);
         }
     }
 
     [HttpDelete("editor/update.json")]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK, ContentTypes.Json)]
     public IActionResult ClearEditorUpdateManifestCache()
     {
         _editorUpdateManifest = default;
-        return Ok();
+        return Ok(message: "Cache cleared");
     }
 
     private IActionResult DeleteAssets(string subdirectory)
