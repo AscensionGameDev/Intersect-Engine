@@ -100,13 +100,28 @@ public sealed partial class AssetsController : IntersectController
         var assetFileSystemInfo = AssetFileSystemInfo.From(assetRootPath, pathToInspect);
         if (assetFileSystemInfo == default)
         {
+            // ReSharper disable once InvertIf
             if (RuntimeIdentifier is { } runtimeIdentifier && !string.IsNullOrWhiteSpace(runtimeIdentifier))
             {
-                var pathToBinary = Path.Combine(assetRootPath, "binaries", RuntimeIdentifier, partialPath);
-                FileInfo binaryFileInfo = new(pathToBinary);
-                if (binaryFileInfo.Exists)
+                var segments = partialPath.Split('/', 2, StringSplitOptions.RemoveEmptyEntries);
+                var initialSegment = segments.FirstOrDefault();
+                // ReSharper disable once InvertIf
+                if (!string.IsNullOrWhiteSpace(initialSegment))
                 {
-                    return new PhysicalFileResult(binaryFileInfo.FullName, ContentTypes.OctetStream);
+                    var remainingSegments = segments.Skip(1).ToArray();
+                    var combinedRemainingSegments = Path.Combine(remainingSegments);
+                    var pathToBinary = Path.Combine(
+                        assetRootPath,
+                        initialSegment,
+                        "binaries",
+                        RuntimeIdentifier,
+                        combinedRemainingSegments
+                    );
+                    FileInfo binaryFileInfo = new(pathToBinary);
+                    if (binaryFileInfo.Exists)
+                    {
+                        return new PhysicalFileResult(binaryFileInfo.FullName, ContentTypes.OctetStream);
+                    }
                 }
             }
 
