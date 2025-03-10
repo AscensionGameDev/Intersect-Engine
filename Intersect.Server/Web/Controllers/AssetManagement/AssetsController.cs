@@ -73,7 +73,7 @@ public sealed partial class AssetsController : IntersectController
 
     [HttpGet("{**path}")]
     [AllowAnonymous]
-    [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK, ContentTypes.Json)]
+    [ProducesResponseType(typeof(AssetFileSystemInfo[]), (int)HttpStatusCode.OK, ContentTypes.Json)]
     [ProducesResponseType(typeof(byte[]), (int)HttpStatusCode.OK, ContentTypes.OctetStream)]
     [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.Forbidden, ContentTypes.Json)]
     [ProducesResponseType(
@@ -94,11 +94,22 @@ public sealed partial class AssetsController : IntersectController
         }
 
         var assetRootPath = AssetRootPath;
-        var pathToInspect = Path.Combine(assetRootPath, path?.Trim() ?? string.Empty);
+        var partialPath = path?.Trim() ?? string.Empty;
+        var pathToInspect = Path.Combine(assetRootPath, partialPath);
 
         var assetFileSystemInfo = AssetFileSystemInfo.From(assetRootPath, pathToInspect);
         if (assetFileSystemInfo == default)
         {
+            if (RuntimeIdentifier is { } runtimeIdentifier && !string.IsNullOrWhiteSpace(runtimeIdentifier))
+            {
+                var pathToBinary = Path.Combine(assetRootPath, "binaries", RuntimeIdentifier, partialPath);
+                FileInfo binaryFileInfo = new(pathToBinary);
+                if (binaryFileInfo.Exists)
+                {
+                    return new PhysicalFileResult(binaryFileInfo.FullName, ContentTypes.OctetStream);
+                }
+            }
+
             return NotFound($"Path not found: {path}");
         }
 
@@ -116,7 +127,7 @@ public sealed partial class AssetsController : IntersectController
 
             if (!ContentTypeProvider.TryGetContentType(pathToInspect, out var contentType))
             {
-                contentType = "application/octet-stream";
+                contentType = ContentTypes.OctetStream;
             }
 
             return new PhysicalFileResult(assetFileSystemInfo.FileSystemInfo?.FullName ?? pathToInspect, contentType);

@@ -1,5 +1,6 @@
 using System.Buffers.Binary;
 using System.Text;
+using Intersect.Server.Web.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Intersect.Server.Web.Controllers.AssetManagement;
@@ -22,7 +23,7 @@ public class UpdateStreamResult : IActionResult
         logger?.LogDebug("Beginning streaming {AssetCount} assets {TotalSize}...", _assets.Count, _totalSize);
 
         context.HttpContext.Response.ContentLength = _totalSize;
-        context.HttpContext.Response.ContentType = "application/octet-stream";
+        context.HttpContext.Response.ContentType = ContentTypes.OctetStream;
 
         var stream = context.HttpContext.Response.Body;
 
