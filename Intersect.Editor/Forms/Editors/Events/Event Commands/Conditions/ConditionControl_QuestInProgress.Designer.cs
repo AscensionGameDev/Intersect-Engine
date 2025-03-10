@@ -111,6 +111,7 @@ partial class ConditionControl_QuestInProgress
         cmbTaskModifier.TabIndex = 7;
         cmbTaskModifier.Text = null;
         cmbTaskModifier.TextPadding = new Padding(2);
+        cmbTaskModifier.SelectedIndexChanged += cmbTaskModifier_SelectedIndexChanged;
         // 
         // lblQuestIs
         // 
@@ -152,6 +153,7 @@ partial class ConditionControl_QuestInProgress
         cmbQuestInProgress.TabIndex = 3;
         cmbQuestInProgress.Text = null;
         cmbQuestInProgress.TextPadding = new Padding(2);
+        cmbQuestInProgress.SelectedIndexChanged += cmbQuestInProgress_SelectedIndexChanged;
         // 
         // ConditionControl_QuestInProgress
         // 

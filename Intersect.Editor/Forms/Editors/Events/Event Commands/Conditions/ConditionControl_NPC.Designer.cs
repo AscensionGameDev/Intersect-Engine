@@ -61,6 +61,7 @@ partial class ConditionControl_NPC
         chkNpc.Size = new Size(114, 20);
         chkNpc.TabIndex = 60;
         chkNpc.Text = "Specify NPC?";
+        chkNpc.CheckedChanged += chkNpc_CheckedChanged;
         // 
         // cmbNpcs
         // 

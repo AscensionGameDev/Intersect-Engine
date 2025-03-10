@@ -57,6 +57,7 @@ partial class ConditionControl_Map
         btnSelectMap.Size = new Size(285, 27);
         btnSelectMap.TabIndex = 21;
         btnSelectMap.Text = "Select Map";
+        btnSelectMap.Click += btnSelectMap_Click;
         // 
         // ConditionControl_Map
         // 

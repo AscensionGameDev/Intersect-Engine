@@ -122,6 +122,7 @@ partial class ConditionControl_Variable
         rdoUserVariable.Size = new Size(114, 19);
         rdoUserVariable.TabIndex = 36;
         rdoUserVariable.Text = "Account Variable";
+        rdoUserVariable.CheckedChanged += rdoUserVariable_CheckedChanged;
         // 
         // rdoPlayerVariable
         // 
@@ -134,6 +135,7 @@ partial class ConditionControl_Variable
         rdoPlayerVariable.TabIndex = 34;
         rdoPlayerVariable.TabStop = true;
         rdoPlayerVariable.Text = "Player Variable";
+        rdoPlayerVariable.CheckedChanged += rdoPlayerVariable_CheckedChanged;
         // 
         // cmbVariable
         // 
@@ -155,6 +157,7 @@ partial class ConditionControl_Variable
         cmbVariable.TabIndex = 22;
         cmbVariable.Text = null;
         cmbVariable.TextPadding = new Padding(2);
+        cmbVariable.SelectedIndexChanged += cmbVariable_SelectedIndexChanged;
         // 
         // rdoGlobalVariable
         // 
@@ -165,6 +168,7 @@ partial class ConditionControl_Variable
         rdoGlobalVariable.Size = new Size(103, 19);
         rdoGlobalVariable.TabIndex = 35;
         rdoGlobalVariable.Text = "Global Variable";
+        rdoGlobalVariable.CheckedChanged += rdoGlobalVariable_CheckedChanged;
         // 
         // rdoGuildVariable
         // 
@@ -175,6 +179,7 @@ partial class ConditionControl_Variable
         rdoGuildVariable.Size = new Size(97, 19);
         rdoGuildVariable.TabIndex = 35;
         rdoGuildVariable.Text = "Guild Variable";
+        rdoGuildVariable.CheckedChanged += rdoGuildVariable_CheckedChanged;
         // 
         // grpNumericVariable
         // 
@@ -212,6 +217,7 @@ partial class ConditionControl_Variable
         rdoTimeSystem.Size = new Size(92, 19);
         rdoTimeSystem.TabIndex = 52;
         rdoTimeSystem.Text = "Time System";
+        rdoTimeSystem.CheckedChanged += rdoTimeSystem_CheckedChanged;
         // 
         // cmbCompareUserVar
         // 
@@ -243,6 +249,7 @@ partial class ConditionControl_Variable
         rdoVarCompareUserVar.Size = new Size(148, 19);
         rdoVarCompareUserVar.TabIndex = 50;
         rdoVarCompareUserVar.Text = "Account Variable Value:";
+        rdoVarCompareUserVar.CheckedChanged += rdoVarCompareUserVar_CheckedChanged;
         // 
         // cmbNumericComparitor
         // 
@@ -318,6 +325,7 @@ partial class ConditionControl_Variable
         rdoVarCompareStaticValue.Size = new Size(112, 20);
         rdoVarCompareStaticValue.TabIndex = 44;
         rdoVarCompareStaticValue.Text = "Static Value:";
+        rdoVarCompareStaticValue.CheckedChanged += rdoVarCompareStaticValue_CheckedChanged;
         // 
         // cmbComparePlayerVar
         // 
@@ -349,6 +357,7 @@ partial class ConditionControl_Variable
         rdoVarComparePlayerVar.Size = new Size(135, 19);
         rdoVarComparePlayerVar.TabIndex = 45;
         rdoVarComparePlayerVar.Text = "Player Variable Value:";
+        rdoVarComparePlayerVar.CheckedChanged += rdoVarComparePlayerVar_CheckedChanged;
         // 
         // rdoVarCompareGuildVar
         // 
@@ -359,6 +368,7 @@ partial class ConditionControl_Variable
         rdoVarCompareGuildVar.Size = new Size(131, 19);
         rdoVarCompareGuildVar.TabIndex = 46;
         rdoVarCompareGuildVar.Text = "Guild Variable Value:";
+        rdoVarCompareGuildVar.CheckedChanged += rdoVarCompareGuildVar_CheckedChanged;
         // 
         // cmbCompareGlobalVar
         // 
@@ -390,6 +400,7 @@ partial class ConditionControl_Variable
         rdoVarCompareGlobalVar.Size = new Size(137, 19);
         rdoVarCompareGlobalVar.TabIndex = 46;
         rdoVarCompareGlobalVar.Text = "Global Variable Value:";
+        rdoVarCompareGlobalVar.CheckedChanged += rdoVarCompareGlobalVar_CheckedChanged;
         // 
         // grpStringVariable
         // 
@@ -422,6 +433,7 @@ partial class ConditionControl_Variable
         lblStringTextVariables.Size = new Size(218, 13);
         lblStringTextVariables.TabIndex = 69;
         lblStringTextVariables.Text = "Text variables work here. Click here for a list!";
+        lblStringTextVariables.Click += lblStringTextVariables_Click;
         // 
         // lblStringComparatorValue
         // 
@@ -678,13 +690,13 @@ partial class ConditionControl_Variable
         optBooleanGlobalVariable.TabIndex = 46;
         optBooleanGlobalVariable.Text = "Global Variable Value:";
         // 
-        // ConditionControl_VariableIs
+        // ConditionControl_Variable
         // 
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
         BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         Controls.Add(grpVariable);
-        Name = "ConditionControl_VariableIs";
+        Name = "ConditionControl_Variable";
         Size = new Size(310, 430);
         grpVariable.ResumeLayout(false);
         grpSelectVariable.ResumeLayout(false);
