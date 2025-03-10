@@ -16,7 +16,7 @@ public partial class FrmAbout : Form
 
     private void lblWebsite_Click(object sender, EventArgs e)
     {
-        BrowserUtils.Open("http://ascensiongamedev.com");
+        BrowserUtils.Open("https://ascensiongamedev.com");
     }
 
     private void frmAbout_Load(object sender, EventArgs e)
