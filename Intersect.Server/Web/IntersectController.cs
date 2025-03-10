@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using Intersect.Security.Claims;
 using Intersect.Server.Web.Types;
+using Intersect.Web;
 using Microsoft.AspNetCore.Mvc;
 using MyCSharp.HttpUserAgentParser.AspNetCore;
 using IntersectUser = Intersect.Server.Database.PlayerData.User;
@@ -11,6 +12,21 @@ namespace Intersect.Server.Web;
 
 public abstract class IntersectController : Controller
 {
+    private string? _runtimeIdentifier;
+
+    public string? RuntimeIdentifier
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(_runtimeIdentifier))
+            {
+                _runtimeIdentifier = Request.Headers[IntersectHttpClient.HeaderIntersectRuntimeIdentifier];
+            }
+
+            return _runtimeIdentifier;
+        }
+    }
+
     private string? _userAgent;
     private string? _userAgentProductName;
     private string? _userAgentProductVersion;

@@ -1,10 +1,10 @@
 using System.Net;
 using System.Net.Http.Headers;
-using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Text;
 using Intersect.Core;
 using Intersect.Framework.Net;
+using Intersect.Framework.SystemInformation;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -12,6 +12,8 @@ namespace Intersect.Web;
 
 public partial class IntersectHttpClient : HttpClient
 {
+    public const string HeaderIntersectRuntimeIdentifier = "X-Intersect-RuntimeIdentifier";
+
     private static HttpClientHandler GetHttpClientHandler()
     {
         return new HttpClientHandler
@@ -46,6 +48,21 @@ public partial class IntersectHttpClient : HttpClient
 
         _baseUri = new Uri(new Uri(serverUri), "/");
         _tokenResponse = tokenResponse;
+
+
+        var applicationContext = ApplicationContext.CurrentContext;
+        var productName = applicationContext.Name.Replace(" ", "_");
+        var productVersion = applicationContext.Version;
+
+        var runtimeIdentifier = PlatformInformation.RuntimeIdentifier;
+        var platformComment = new ProductInfoHeaderValue(comment: $"({runtimeIdentifier})");
+        ProductInfoHeaderValue productInfoHeaderValue = new(productName, productVersion);
+        DefaultRequestHeaders.UserAgent.Clear();
+        DefaultRequestHeaders.UserAgent.Add(productInfoHeaderValue);
+        DefaultRequestHeaders.UserAgent.Add(platformComment);
+
+        DefaultRequestHeaders.Add(HeaderIntersectRuntimeIdentifier, runtimeIdentifier);
+
     }
 
     public TokenResultType TryRequestToken(string username, string password, out TokenResponse? tokenResponse, bool hashed = false)

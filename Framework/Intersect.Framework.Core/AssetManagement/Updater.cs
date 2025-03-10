@@ -3,17 +3,14 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
-using System.Net.Http.Headers;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using Hardware.Info;
 using Intersect.Core;
 using Intersect.Framework.SystemInformation;
 using Intersect.Web;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Serilog;
 
 namespace Intersect.Framework.Core.AssetManagement;
 
@@ -115,15 +112,6 @@ public sealed class Updater
         try
         {
             using IntersectHttpClient httpClient = new(_baseUrl, _tokenResponse);
-            httpClient.DefaultRequestHeaders.UserAgent.Clear();
-
-            var applicationContext = ApplicationContext.CurrentContext;
-            var productName = applicationContext.Name.Replace(" ", "_");
-            var productVersion = applicationContext.Version;
-            var platformComment = new ProductInfoHeaderValue(comment: $"({PlatformInformation.RuntimeIdentifier})");
-            ProductInfoHeaderValue productInfoHeaderValue = new(productName, productVersion);
-            httpClient.DefaultRequestHeaders.UserAgent.Add(productInfoHeaderValue);
-            httpClient.DefaultRequestHeaders.UserAgent.Add(platformComment);
 
             HttpResponseMessage? responseMessage = default;
 
@@ -240,7 +228,7 @@ public sealed class Updater
                                     updateRequired = true;
                                     break;
                                 }
-                                
+
                                 var resolvedPath = ResolvePath(cachedFile.Path, _updateRootInfo.FullName);
                                 FileInfo resolvedInfo = new(resolvedPath);
                                 if (!resolvedInfo.Exists)
