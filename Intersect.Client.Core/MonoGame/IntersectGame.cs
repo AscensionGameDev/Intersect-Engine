@@ -205,6 +205,7 @@ internal partial class IntersectGame : Game
     }
 
     private TimeSpan _elapsedSincePlatformStatisticsRefresh;
+    private bool _restartFailed;
 
     /// <summary>
     ///     Allows the game to run logic such as updating the world,
@@ -270,9 +271,15 @@ internal partial class IntersectGame : Game
                 }
                 case UpdateStatus.Restart:
                 {
+                    if (_restartFailed)
+                    {
+                        break;
+                    }
+                    
                     if (!ProcessHelper.TryRelaunch())
                     {
                         ApplicationContext.CurrentContext.Logger.LogWarning("Failed to restart automatically");
+                        _restartFailed = true;
                     }
 
                     break;

@@ -827,31 +827,54 @@ public sealed class Updater
                     return false;
                 }
 
+                var isSelf = IsSelf(currentFile.Path);
+                if (isSelf)
+                {
+                    ShouldRestart = true;
+
+                    try
+                    {
+                        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                        {
+                            temporaryFileInfo.UnixFileMode |= UnixFileMode.UserExecute;
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        ApplicationContext.CurrentContext.Logger.LogWarning(exception, $"Failed to make {temporaryFileInfo.Name} executable");
+                    }
+                }
+
                 try
                 {
                     if (targetFileInfo.Exists)
-                        {
-                            targetFileInfo.Delete();
+                    {
+                        ApplicationContext.CurrentContext.Logger.LogTrace(
+                            "Attempting to delete: {TargetFilePath}",
+                            relativePathToTargetFile
+                        );
+                        targetFileInfo.Delete();
                     }
                 }
                 catch (Exception exception)
                 {
                     ApplicationContext.CurrentContext.Logger.LogWarning(
                         exception,
-                        "Failed to delete {RelativeTargetPath}",
+                        "Failed to delete, falling back to rename {RelativeTargetPath}",
                         relativePathToTargetFile
                     );
 
                     FileInfo oldTargetFileInfo = new($"{targetFileInfo.FullName}.old");
                     try
                     {
-                        targetFileInfo.MoveTo(oldTargetFileInfo.FullName, true);
+                        FileInfo temporaryRenameInfo = new FileInfo(targetFileInfo.FullName);
+                        temporaryRenameInfo.MoveTo(oldTargetFileInfo.FullName, true);
                     }
                     catch (Exception moveToException)
                     {
                         ApplicationContext.CurrentContext.Logger.LogWarning(
                             moveToException,
-                            "Failed to move {RelativeSourcePath} to {RelativeTargetPath}.old",
+                            "Failed to rename {RelativeSourcePath} to {RelativeTargetPath}.old",
                             relativePathToTargetFile,
                             relativePathToTargetFile
                         );
@@ -874,6 +897,13 @@ public sealed class Updater
                 }
                 catch (Exception exception)
                 {
+                    ApplicationContext.CurrentContext.Logger.LogTrace(
+                        exception,
+                        "Failed to move {SourcePath} to {TargetPath}",
+                        temporaryFileInfo.FullName,
+                        targetFileInfo.FullName
+                    );
+                    
                     ApplicationContext.CurrentContext.Logger.LogError(
                         exception,
                         "Failed to move {RelativeSourcePath} to {RelativeTargetPath}",
@@ -1189,7 +1219,8 @@ public sealed class Updater
                     return false;
                 }
 
-                if (IsSelf(currentFile.Path))
+                var isSelf = IsSelf(currentFile.Path);
+                if (isSelf)
                 {
                     ShouldRestart = true;
 
@@ -1210,12 +1241,36 @@ public sealed class Updater
                 {
                     if (targetFileInfo.Exists)
                     {
+                        ApplicationContext.CurrentContext.Logger.LogTrace(
+                            "Attempting to delete: {TargetFilePath}",
+                            relativePathToTargetFile
+                        );
                         targetFileInfo.Delete();
                     }
                 }
                 catch (Exception exception)
                 {
-                    ApplicationContext.CurrentContext.Logger.LogWarning(exception, $"Failed to delete {relativePathToTargetFile}");
+                    ApplicationContext.CurrentContext.Logger.LogWarning(
+                        exception,
+                        "Failed to delete, falling back to rename {RelativeTargetPath}",
+                        relativePathToTargetFile
+                    );
+
+                    FileInfo oldTargetFileInfo = new($"{targetFileInfo.FullName}.old");
+                    try
+                    {
+                        FileInfo temporaryRenameInfo = new FileInfo(targetFileInfo.FullName);
+                        temporaryRenameInfo.MoveTo(oldTargetFileInfo.FullName, true);
+                    }
+                    catch (Exception moveToException)
+                    {
+                        ApplicationContext.CurrentContext.Logger.LogWarning(
+                            moveToException,
+                            "Failed to rename {RelativeSourcePath} to {RelativeTargetPath}.old",
+                            relativePathToTargetFile,
+                            relativePathToTargetFile
+                        );
+                    }
                 }
 
                 try
@@ -1228,13 +1283,20 @@ public sealed class Updater
                     }
 
 #if DIAGNOSTIC
-                    ApplicationContext.CurrentContext.Logger.LogTraceApplicationContext.CurrentContext.Logger.LogTrace($"Completed for {currentFile.Path}");
+                    ApplicationContext.CurrentContext.Logger.LogTrace($"Completed for {currentFile.Path}");
 #endif
                     currentResult.State = DownloadState.Completed;
                     _downloadedBytes += currentFile.Size;
                 }
                 catch (Exception exception)
                 {
+                    ApplicationContext.CurrentContext.Logger.LogTrace(
+                        exception,
+                        "Failed to move {SourcePath} to {TargetPath}",
+                        temporaryFileInfo.FullName,
+                        targetFileInfo.FullName
+                    );
+
                     ApplicationContext.CurrentContext.Logger.LogError(
                         exception,
                         $"Failed to move {relativePathToTemporaryFile} to {relativePathToTargetFile}"
