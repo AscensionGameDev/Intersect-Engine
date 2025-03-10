@@ -384,6 +384,11 @@ public sealed class Updater
                     throw new UnreachableException();
             }
 
+            if (updateManifest == null)
+            {
+                throw new InvalidOperationException($"Manifest is null despite a status of {manifestStatus}");
+            }
+
             assetManifest = new UpdateManifest
             {
                 StreamingUrl = updateManifest.StreamingUrl,
@@ -518,9 +523,26 @@ public sealed class Updater
             thread.Join();
         }
 
+        if (!_failed)
+        {
+            foreach (var (file, result) in _downloadResults)
+            {
+                if (result.State != DownloadState.Failed)
+                {
+                    continue;
+                }
+
+                ApplicationContext.CurrentContext.Logger.LogError(
+                    "Download of {File} marked as {DownloadState}, marking update as failed",
+                    file.Path,
+                    result.State
+                );
+                _failed = true;
+            }
+        }
+
         if (_failed)
         {
-            _failed = true;
             Status = UpdateStatus.Error;
             return;
         }
@@ -808,8 +830,8 @@ public sealed class Updater
                 try
                 {
                     if (targetFileInfo.Exists)
-                    {
-                        targetFileInfo.Delete();
+                        {
+                            targetFileInfo.Delete();
                     }
                 }
                 catch (Exception exception)
