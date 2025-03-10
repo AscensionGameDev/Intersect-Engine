@@ -109,15 +109,17 @@ namespace Intersect.Editor.Forms
             //
             // lblVersion
             //
+            this.lblVersion.AutoSize = true;
             this.lblVersion.BackColor = System.Drawing.Color.Transparent;
             this.lblVersion.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblVersion.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lblVersion.Location = new System.Drawing.Point(372, 319);
+            // this.lblVersion.Location = new System.Drawing.Point(372, 319);
+            this.lblVersion.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             this.lblVersion.Name = "lblVersion";
-            this.lblVersion.Size = new System.Drawing.Size(257, 20);
+            this.lblVersion.Size = new System.Drawing.Size(300, 20);
             this.lblVersion.TabIndex = 5;
             this.lblVersion.Text = "Editor v1.0.0.0";
-            this.lblVersion.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblVersion.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             //
             // lblUsername
             //

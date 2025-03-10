@@ -82,6 +82,10 @@ public partial class FrmLogin : Form
     {
         Text = Strings.Login.title;
         lblVersion.Text = Strings.Login.version.ToString(Application.ProductVersion);
+        lblVersion.Location = new System.Drawing.Point(
+            (lblVersion.Parent?.ClientRectangle.Right - (lblVersion.Parent?.Padding.Right + lblVersion.Width + 4)) ?? 0,
+            (lblVersion.Parent?.ClientRectangle.Bottom - (lblVersion.Parent?.Padding.Bottom + lblVersion.Height + 4)) ?? 0
+        );
         lblGettingStarted.Text = Strings.Login.gettingstarted;
         lblUsername.Text = Strings.Login.username;
         lblPassword.Text = Strings.Login.password;

@@ -79,6 +79,10 @@ public partial class FrmUpdate : Form
     {
         Text = Strings.Update.Title;
         lblVersion.Text = Strings.Login.version.ToString(Application.ProductVersion);
+        lblVersion.Location = new System.Drawing.Point(
+            (lblVersion.Parent?.ClientRectangle.Right - (lblVersion.Parent?.Padding.Right + lblVersion.Width + 4)) ?? 0,
+            (lblVersion.Parent?.ClientRectangle.Bottom - (lblVersion.Parent?.Padding.Bottom + lblVersion.Height + 4)) ?? 0
+        );
         lblStatus.Text = Strings.Update.Checking;
     }
 
