@@ -1,8 +1,6 @@
 using System.Globalization;
 using System.Net;
-using System.Net.Security;
 using System.Reflection;
-using System.Security.Authentication;
 using System.Security.Claims;
 using System.Threading.RateLimiting;
 using Htmx.TagHelpers;
@@ -38,7 +36,9 @@ using Intersect.Server.Web.Controllers;
 using Intersect.Server.Web.Controllers.Api;
 using Intersect.Server.Web.Controllers.AssetManagement;
 using Intersect.Server.Web.Types.Chat;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.AspNetCore.Http.Features;
+using MyCSharp.HttpUserAgentParser.AspNetCore.DependencyInjection;
+using MyCSharp.HttpUserAgentParser.MemoryCache.DependencyInjection;
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
@@ -120,6 +120,8 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
             }
         );
 
+        builder.Services.AddHttpUserAgentMemoryCachedParser().AddHttpUserAgentParserAccessor();
+
         builder.Services.AddRateLimiter(
             rateLimiterOptions =>
             {
@@ -170,7 +172,9 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 options =>
                 {
-                    options.ForwardChallenge = JwtBearerDefaults.AuthenticationScheme;
+                    // Commenting this out fixes no redirect
+                    // Uncommenting fixed something else, but I can't remember what it was
+                    // options.ForwardChallenge = JwtBearerDefaults.AuthenticationScheme;
                     options.Events.OnSignedIn += async (context) => { };
                     options.Events.OnSigningIn += async (context) => { };
                     options.Events.OnSigningOut += async (context) => { };
@@ -203,8 +207,12 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                         context.ShouldRenew = true;
                         context.ReplacePrincipal(updatedPrincipal);
                     };
-                    options.Events.OnRedirectToLogin += async (context) => { };
-                    options.Events.OnRedirectToAccessDenied += async (context) => { };
+                    options.Events.OnRedirectToLogin += async (context) =>
+                    {
+                    };
+                    options.Events.OnRedirectToAccessDenied += async (context) =>
+                    {
+                    };
                     options.Events.OnRedirectToLogout += async (context) => { };
                     options.Events.OnRedirectToReturnUrl += async (context) => { };
                     options.ExpireTimeSpan = TimeSpan.FromSeconds(10);
@@ -486,30 +494,6 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
             app.UseIntersectRequestLogging(configuration.RequestLogLevel);
         }
 
-        app.UseStaticFiles();
-
-        // Unreadable if it LINQs it...
-        // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
-        foreach (var (sourcePath, requestPath) in configuration.StaticFilePaths)
-        {
-            var pathToRoot = Path.Combine(builder.Environment.ContentRootPath, sourcePath);
-            if (!Directory.Exists(pathToRoot))
-            {
-                Directory.CreateDirectory(pathToRoot);
-            }
-
-            app.UseStaticFiles(
-                new StaticFileOptions
-                {
-                    FileProvider = new PhysicalFileProvider(
-                        pathToRoot,
-                        ExclusionFilters.Sensitive
-                    ),
-                    RequestPath = requestPath ?? string.Empty,
-                }
-            );
-        }
-
         app.UseRouting();
 
         app.UseAuthentication();
@@ -548,6 +532,39 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
 
         app.UseResponseCaching();
         app.UseOutputCache();
+
+
+        StaticFileOptions staticFileOptions = new()
+        {
+            HttpsCompression = HttpsCompressionMode.Compress,
+            ServeUnknownFileTypes = true,
+        };
+
+        app.UseStaticFiles(staticFileOptions);
+
+        // Unreadable if it LINQs it...
+        // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+        foreach (var (sourcePath, requestPath) in configuration.StaticFilePaths)
+        {
+            var pathToRoot = Path.Combine(builder.Environment.ContentRootPath, sourcePath);
+            if (!Directory.Exists(pathToRoot))
+            {
+                Directory.CreateDirectory(pathToRoot);
+            }
+
+            app.UseStaticFiles(
+                new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(
+                        pathToRoot,
+                        ExclusionFilters.Sensitive
+                    ),
+                    HttpsCompression = HttpsCompressionMode.Compress,
+                    RequestPath = requestPath ?? string.Empty,
+                    ServeUnknownFileTypes = true,
+                }
+            );
+        }
 
         app.UseAuthorization();
 

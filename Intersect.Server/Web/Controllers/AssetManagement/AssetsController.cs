@@ -1,4 +1,4 @@
-using System.Buffers.Binary;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
@@ -29,10 +29,8 @@ public sealed partial class AssetsController : IntersectController
     private static readonly MediaTypeHeaderValue MediaTypeApplicationJson =
         MediaTypeHeaderValue.Parse("application/json");
 
-    private static DateTime _clientUpdateManifestCacheExpiry;
-    private static UpdateManifest? _clientUpdateManifest;
-    private static DateTime _editorUpdateManifestCacheExpiry;
-    private static UpdateManifest? _editorUpdateManifest;
+    private static ConcurrentDictionary<string, CachedManifest> _clientUpdateManifests = [];
+    private static ConcurrentDictionary<string, CachedManifest> _editorUpdateManifests = [];
 
     private readonly IHostEnvironment _hostEnvironment;
     private readonly ILogger<AssetsController> _logger;
@@ -70,7 +68,6 @@ public sealed partial class AssetsController : IntersectController
         if (!_updateServerOptionsMonitor.CurrentValue.Enabled)
         {
             context.Result = NotFound();
-            return;
         }
     }
 
@@ -79,7 +76,11 @@ public sealed partial class AssetsController : IntersectController
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK, ContentTypes.Json)]
     [ProducesResponseType(typeof(byte[]), (int)HttpStatusCode.OK, ContentTypes.OctetStream)]
     [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.Forbidden, ContentTypes.Json)]
-    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
+    [ProducesResponseType(
+        typeof(StatusMessageResponseBody),
+        (int)HttpStatusCode.InternalServerError,
+        ContentTypes.Json
+    )]
     [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
     [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
     public IActionResult AssetGet([FromRoute] string? path = default)
@@ -88,7 +89,7 @@ public sealed partial class AssetsController : IntersectController
         {
             if (!User.HasRole("Editor"))
             {
-                return Forbidden(message: $"No access to {path}");
+                return Forbidden($"No access to {path}");
             }
         }
 
@@ -98,14 +99,19 @@ public sealed partial class AssetsController : IntersectController
         var assetFileSystemInfo = AssetFileSystemInfo.From(assetRootPath, pathToInspect);
         if (assetFileSystemInfo == default)
         {
-            return NotFound(message: $"Path not found: {path}");
+            return NotFound($"Path not found: {path}");
         }
 
         if (assetFileSystemInfo.Type == AssetFileSystemInfoType.File)
         {
             if (Request.GetTypedHeaders().Accept.Any(mt => mt.IsSubsetOf(MediaTypeApplicationJson)))
             {
-                return Ok(new[] { assetFileSystemInfo });
+                return Ok(
+                    new[]
+                    {
+                        assetFileSystemInfo,
+                    }
+                );
             }
 
             if (!ContentTypeProvider.TryGetContentType(pathToInspect, out var contentType))
@@ -135,7 +141,7 @@ public sealed partial class AssetsController : IntersectController
 
             if (data is string message)
             {
-                return InternalServerError(message: message);
+                return InternalServerError(message);
             }
 
             return InternalServerError(data);
@@ -196,7 +202,7 @@ public sealed partial class AssetsController : IntersectController
             return Ok(assetFileSystemInfo);
         }
 
-        (FileSystemInfo destinationInfo, DirectoryInfo? destinationParentInfo) =
+        var (destinationInfo, destinationParentInfo) =
             assetFileSystemInfo.FileSystemInfo switch
             {
                 DirectoryInfo => (new DirectoryInfo(resolvedDestinationPath) as FileSystemInfo,
@@ -238,19 +244,17 @@ public sealed partial class AssetsController : IntersectController
         {
             if (!Request.IsHtmx())
             {
-                return BadRequest(message: "No destination folder");
+                return BadRequest("No destination folder");
             }
 
             var partial = PartialView(
                 "~/Web/Pages/Shared/_Toast.cshtml",
                 new ToastModel
                 {
-                    Message = "No destination folder",
-                    Type = ToastModel.TypeError,
+                    Message = "No destination folder", Type = ToastModel.TypeError,
                 }
             );
             return partial;
-
         }
 
         var assetRootPath = AssetRootPath;
@@ -266,15 +270,14 @@ public sealed partial class AssetsController : IntersectController
 
             if (!Request.IsHtmx())
             {
-                return BadRequest(message: "Destination folder does not exist");
+                return BadRequest("Destination folder does not exist");
             }
 
             var partial = PartialView(
                 "~/Web/Pages/Shared/_Toast.cshtml",
                 new ToastModel
                 {
-                    Message = "Destination folder does not exist",
-                    Type = ToastModel.TypeError,
+                    Message = "Destination folder does not exist", Type = ToastModel.TypeError,
                 }
             );
             return partial;
@@ -293,7 +296,7 @@ public sealed partial class AssetsController : IntersectController
             {
                 if (!Request.IsHtmx())
                 {
-                    return BadRequest(message: $"Multiple files uploaded with the name '{file.FileName}'");
+                    return BadRequest($"Multiple files uploaded with the name '{file.FileName}'");
                 }
 
                 var partial = PartialView(
@@ -358,11 +361,11 @@ public sealed partial class AssetsController : IntersectController
 
         if (folder == "client")
         {
-            _clientUpdateManifest = default;
+            _clientUpdateManifests.Clear();
         }
         else
         {
-            _editorUpdateManifest = default;
+            _editorUpdateManifests.Clear();
         }
 
         if (!Request.IsHtmx())
@@ -384,8 +387,7 @@ public sealed partial class AssetsController : IntersectController
                         };
                         return new ToastModel
                         {
-                            Message = message,
-                            Type = type,
+                            Message = message, Type = type,
                         };
                     }
                 )
@@ -398,7 +400,10 @@ public sealed partial class AssetsController : IntersectController
     [HttpPost("{**path}")]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK, ContentTypes.Json)]
     [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
-    public IActionResult AssetPost(string? path = default, [FromHeader(Name = "Move-To")] string? destinationPath = default)
+    public IActionResult AssetPost(
+        string? path = default,
+        [FromHeader(Name = "Move-To")] string? destinationPath = default
+    )
     {
         if (string.IsNullOrWhiteSpace(path))
         {
@@ -435,7 +440,11 @@ public sealed partial class AssetsController : IntersectController
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK, ContentTypes.Json)]
     [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
     [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
-    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
+    [ProducesResponseType(
+        typeof(StatusMessageResponseBody),
+        (int)HttpStatusCode.InternalServerError,
+        ContentTypes.Json
+    )]
     public IActionResult BrowseDelete(string? path = default)
     {
         var assetRootPath = AssetRootPath;
@@ -448,7 +457,7 @@ public sealed partial class AssetsController : IntersectController
             var fileSystemInfo = assetFileSystemInfo?.FileSystemInfo;
             if (fileSystemInfo is not { Exists: true })
             {
-                return NotFound(message: $"Unable to delete missing resource: {path}");
+                return NotFound($"Unable to delete missing resource: {path}");
             }
 
             fileSystemInfo.Delete();
@@ -465,113 +474,112 @@ public sealed partial class AssetsController : IntersectController
 #if DEBUG
             return InternalServerError(exception);
 #else
-            return InternalServerError("Failed to generate manifest");
+            return InternalServerError(message: $"Failed to delete {path}");
 #endif
         }
     }
 
     [HttpDelete("client")]
-    public IActionResult ClearClientAssets() => DeleteAssets("client");
+    public IActionResult ClearClientAssets()
+    {
+        return DeleteAssets("client");
+    }
 
     [AllowAnonymous]
     [HttpGet("client/update.json")]
-    [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK, ContentTypes.Json)]
+    [ProducesResponseType(typeof(UpdateManifest), (int)HttpStatusCode.OK, ContentTypes.Json)]
     [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
     [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
-    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
-    public IActionResult ClientUpdateManifest()
+    [ProducesResponseType(
+        typeof(StatusMessageResponseBody),
+        (int)HttpStatusCode.InternalServerError,
+        ContentTypes.Json
+    )]
+    public IActionResult GetClientUpdateManifest([FromQuery(Name = "rid")] string? runtimeIdentifier) =>
+        GetUpdateManifest(_clientUpdateManifests, "client", runtimeIdentifier);
+
+    private IActionResult GetUpdateManifest(ConcurrentDictionary<string, CachedManifest> cachedManifests, string manifestType, string? runtimeIdentifier)
     {
         try
         {
             Response.Headers.ContentType = "application/json";
 
-            if (_clientUpdateManifest != default && DateTime.UtcNow < _clientUpdateManifestCacheExpiry)
+            var resolvedRuntimeIdentifier = runtimeIdentifier ?? string.Empty;
+            if (cachedManifests.TryGetValue(resolvedRuntimeIdentifier, out var cachedManifest))
             {
-                return Ok(_clientUpdateManifest);
+                if (!cachedManifest.IsExpired)
+                {
+                    return Ok(cachedManifest.Manifest);
+                }
             }
 
-            if (!TryGenerateUpdateManifestFrom("client", out var manifest))
+            if (!TryGenerateUpdateManifestFrom(manifestType, runtimeIdentifier, out var manifest))
             {
-                return InternalServerError("Failed to generate manifest");
+                return InternalServerError($"Failed to generate {manifestType} manifest");
             }
 
-            _clientUpdateManifestCacheExpiry = DateTime.UtcNow.Add(ManifestCacheExpiry);
-            _clientUpdateManifest = manifest;
+            cachedManifest = new CachedManifest(manifest, DateTime.UtcNow.Add(ManifestCacheExpiry));
+            cachedManifests[resolvedRuntimeIdentifier] = cachedManifest;
             return Ok(manifest);
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Failed to generate client update manifest");
+            _logger.LogError(exception, "Failed to generate {ManifestType} manifest due to an exception", manifestType);
 
 #if DEBUG
             return InternalServerError(exception);
 #else
-            return InternalServerError("Failed to generate manifest");
+            return InternalServerError($"Failed to generate {manifestType} manifest");
 #endif
         }
     }
 
     [AllowAnonymous]
     [HttpPost("stream/client")]
-    public IActionResult StreamClientAssets([FromBody] List<string> assetNames) => StreamAssets("client", assetNames);
+    public IActionResult StreamClientAssets([FromBody] List<string> assetNames)
+    {
+        return StreamAssets("client", assetNames);
+    }
 
     [HttpPost("stream/editor")]
-    public IActionResult StreamEditorAssets([FromBody] List<string> assetNames) => StreamAssets("editor", assetNames);
+    public IActionResult StreamEditorAssets([FromBody] List<string> assetNames)
+    {
+        return StreamAssets("editor", assetNames);
+    }
 
 
     [HttpDelete("client/update.json")]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK, ContentTypes.Json)]
     public IActionResult ClearClientUpdateManifestCache()
     {
-        _clientUpdateManifest = default;
-        return Ok(message: "Cache cleared");
+        _clientUpdateManifests.Clear();
+        return Ok("Cache cleared");
     }
 
     [HttpDelete("editor")]
-    public IActionResult ClearEditorAssets() => DeleteAssets("editor");
+    public IActionResult ClearEditorAssets()
+    {
+        return DeleteAssets("editor");
+    }
 
     [HttpGet("editor/update.json")]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK, ContentTypes.Json)]
     [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.BadRequest, ContentTypes.Json)]
     [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.NotFound, ContentTypes.Json)]
-    [ProducesResponseType(typeof(StatusMessageResponseBody), (int)HttpStatusCode.InternalServerError, ContentTypes.Json)]
-    public IActionResult EditorUpdateManifest()
-    {
-        try
-        {
-            Response.Headers.ContentType = "application/json";
-            if (_editorUpdateManifest != default && DateTime.UtcNow < _editorUpdateManifestCacheExpiry)
-            {
-                return Ok(_editorUpdateManifest);
-            }
-
-            if (!TryGenerateUpdateManifestFrom("editor", out var manifest))
-            {
-                return InternalServerError("Failed to generate manifest");
-            }
-
-            _editorUpdateManifestCacheExpiry = DateTime.UtcNow.Add(ManifestCacheExpiry);
-            _editorUpdateManifest = manifest;
-            return Ok(manifest);
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, "Failed to generate editor update manifest");
-
-#if DEBUG
-            return InternalServerError(exception);
-#else
-            return InternalServerError("Failed to generate manifest");
-#endif
-        }
-    }
+    [ProducesResponseType(
+        typeof(StatusMessageResponseBody),
+        (int)HttpStatusCode.InternalServerError,
+        ContentTypes.Json
+    )]
+    public IActionResult GetEditorUpdateManifest([FromQuery(Name = "rid")] string? runtimeIdentifier) =>
+        GetUpdateManifest(_editorUpdateManifests, "editor", runtimeIdentifier);
 
     [HttpDelete("editor/update.json")]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK, ContentTypes.Json)]
     public IActionResult ClearEditorUpdateManifestCache()
     {
-        _editorUpdateManifest = default;
-        return Ok(message: "Cache cleared");
+        _editorUpdateManifests.Clear();
+        return Ok("Cache cleared");
     }
 
     private IActionResult DeleteAssets(string subdirectory)
@@ -585,22 +593,27 @@ public sealed partial class AssetsController : IntersectController
                 assetSubdirectoryInfo.Delete(true);
             }
 
-            return Ok();
+            return Ok(message: $"Deleted {subdirectory}");
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Failed to delete {Subdirectory} assets", subdirectory);
 
-            object? data = default;
 #if DEBUG
-            data = exception;
+            return InternalServerError(exception);
+#else
+            return InternalServerError(message: $"Failed to delete {subdirectory}");
 #endif
-
-            return InternalServerError(data);
         }
     }
 
-    private bool TryGenerateUpdateManifestFrom(string subdirectory, [NotNullWhen(true)] out UpdateManifest? updateManifest)
+    private record struct RemappedFileSystemInfo(FileSystemInfo Info, FileSystemInfo? MappedTo = null);
+
+    private bool TryGenerateUpdateManifestFrom(
+        string subdirectory,
+        string? runtimeIdentifier,
+        [NotNullWhen(true)] out UpdateManifest? updateManifest
+    )
     {
         try
         {
@@ -612,9 +625,25 @@ public sealed partial class AssetsController : IntersectController
                 return false;
             }
 
-            HashSet<FileSystemInfo> visited = [];
-            Queue<FileSystemInfo> scanQueue = [];
-            scanQueue.Enqueue(assetSubdirectoryInfo);
+            Dictionary<string, RemappedFileSystemInfo> visited = [];
+            Queue<RemappedFileSystemInfo> scanQueue = [];
+            scanQueue.Enqueue(new RemappedFileSystemInfo(assetSubdirectoryInfo));
+
+            var pathToBinaries = Path.GetFullPath("binaries", assetSubdirectoryInfo.FullName);
+            DirectoryInfo binariesSubdirectoryInfo = new(pathToBinaries);
+            visited.Add(binariesSubdirectoryInfo.FullName, new RemappedFileSystemInfo(binariesSubdirectoryInfo));
+
+            if (!string.IsNullOrWhiteSpace(runtimeIdentifier))
+            {
+                var pathToRuntime = Path.GetFullPath(runtimeIdentifier, pathToBinaries);
+                DirectoryInfo runtimeBinariesSubdirectoryInfo = new(pathToRuntime);
+                if (runtimeBinariesSubdirectoryInfo.Exists)
+                {
+                    scanQueue.Enqueue(
+                        new RemappedFileSystemInfo(runtimeBinariesSubdirectoryInfo, assetSubdirectoryInfo)
+                    );
+                }
+            }
 
             updateManifest = new UpdateManifest
             {
@@ -622,17 +651,22 @@ public sealed partial class AssetsController : IntersectController
                 TrustCache = true,
             };
 
-            while (scanQueue.TryDequeue(out var currentFileSystemInfo))
+            while (scanQueue.TryDequeue(out var currentRemappedFileSystemInfo))
             {
-                if (visited.TryGetValue(currentFileSystemInfo, out var collidingFileSystemInfo))
+                if (visited.TryGetValue(currentRemappedFileSystemInfo.Info.FullName, out var collidingFileSystemInfo))
                 {
-                    if (collidingFileSystemInfo == currentFileSystemInfo)
+                    if (string.Equals(
+                            collidingFileSystemInfo.Info.FullName,
+                            currentRemappedFileSystemInfo.Info.FullName
+                        ))
                     {
                         continue;
                     }
                 }
 
-                visited.Add(currentFileSystemInfo);
+                var (currentFileSystemInfo, currentMappedTo) = currentRemappedFileSystemInfo;
+
+                visited.Add(currentFileSystemInfo.FullName, currentRemappedFileSystemInfo);
 
                 switch (currentFileSystemInfo)
                 {
@@ -640,7 +674,28 @@ public sealed partial class AssetsController : IntersectController
                     {
                         foreach (var childFileSystemInfo in currentDirectoryInfo.EnumerateFileSystemInfos())
                         {
-                            scanQueue.Enqueue(childFileSystemInfo);
+                            FileSystemInfo? childMappedTo = null;
+                            if (currentMappedTo != null)
+                            {
+                                var relativePathToInfo = Path.GetRelativePath(
+                                    currentDirectoryInfo.FullName,
+                                    childFileSystemInfo.FullName
+                                );
+                                var remappedRelativePathToInfo = Path.Combine(
+                                    currentMappedTo.FullName,
+                                    relativePathToInfo
+                                );
+                                var resolvedRelativePathToInfo = Path.GetFullPath(remappedRelativePathToInfo);
+                                childMappedTo = childFileSystemInfo switch
+                                {
+                                    DirectoryInfo _ => new DirectoryInfo(resolvedRelativePathToInfo),
+                                    FileInfo _ => new FileInfo(resolvedRelativePathToInfo),
+                                    _ => throw new NotImplementedException(
+                                        $"Handling for type {childFileSystemInfo.GetType().GetName(qualified: true)} not implemented"
+                                    ),
+                                };
+                            }
+                            scanQueue.Enqueue(new RemappedFileSystemInfo(childFileSystemInfo, childMappedTo));
                         }
 
                         break;
@@ -648,7 +703,23 @@ public sealed partial class AssetsController : IntersectController
 
                     case FileInfo currentFileInfo:
                     {
-                        var updateManifestFile = UpdateManifestFile.From(currentFileInfo, assetSubdirectoryInfo.FullName);
+                        var currentMappedToFileInfo = currentMappedTo as FileInfo;
+                        if (currentMappedTo is not null and not FileInfo)
+                        {
+                            var expectedTypeName = typeof(FileInfo).GetName(qualified: true);
+                            var actualTypeName = currentMappedTo.GetType().GetName(qualified: true);
+                            var originalPath = currentFileInfo.FullName;
+                            var mappedPath = currentMappedTo.FullName;
+                            throw new InvalidOperationException(
+                                $"{expectedTypeName} was mapped to {actualTypeName} ('{originalPath}' => '{mappedPath}')"
+                            );
+                        }
+
+                        var updateManifestFile = UpdateManifestFile.From(
+                            currentFileInfo,
+                            assetSubdirectoryInfo.FullName,
+                            currentMappedToFileInfo
+                        );
                         updateManifest.Files.Add(updateManifestFile);
                         updateManifest.TotalSize += updateManifestFile.Size;
                         break;
@@ -722,49 +793,5 @@ public sealed partial class AssetsController : IntersectController
             _logger.LogError(exception, "Failed to stream one or more assets from {Subdirectory}", subdirectory);
             return InternalServerError();
         }
-    }
-}
-
-public class UpdateStreamResult : IActionResult
-{
-    private readonly List<(FileInfo Info, string Name)> _assets;
-    private readonly long _totalSize;
-
-    public UpdateStreamResult(List<(FileInfo Info, string Name)> assets, long totalSize)
-    {
-        _assets = assets;
-        _totalSize = totalSize;
-    }
-
-    public async Task ExecuteResultAsync(ActionContext context)
-    {
-        var logger = context.HttpContext.RequestServices.GetService<ILogger<UpdateStreamResult>>();
-
-        logger?.LogDebug("Beginning streaming {AssetCount} assets {TotalSize}...", _assets.Count, _totalSize);
-
-        context.HttpContext.Response.ContentLength = _totalSize;
-        context.HttpContext.Response.ContentType = "application/octet-stream";
-
-        var stream = context.HttpContext.Response.Body;
-
-        foreach (var (fileInfo, assetName) in _assets)
-        {
-            logger?.LogDebug("Beginning streaming {AssetName}...", assetName);
-
-            var assetNameBytes = Encoding.UTF8.GetBytes(assetName);
-            var assetNameLengthBuffer = new byte[sizeof(int)];
-            BinaryPrimitives.WriteInt32LittleEndian(assetNameLengthBuffer, assetNameBytes.Length);
-            await stream.WriteAsync(assetNameLengthBuffer);
-            await stream.WriteAsync(assetNameBytes);
-
-            var fileInfoLengthBuffer = new byte[sizeof(long)];
-            BinaryPrimitives.WriteInt64LittleEndian(fileInfoLengthBuffer, fileInfo.Length);
-            await stream.WriteAsync(fileInfoLengthBuffer);
-
-            await using var fileStream = fileInfo.OpenRead();
-            await fileStream.CopyToAsync(stream);
-        }
-
-        logger?.LogDebug("Completed streaming assets");
     }
 }

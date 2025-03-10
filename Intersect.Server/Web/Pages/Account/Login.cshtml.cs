@@ -36,6 +36,19 @@ public partial class LoginModel : PageModel
     public string? RedirectUrl { get; init; }
 
     [BindProperty]
+    public string? ReturnUrl
+    {
+        get => RedirectUrl;
+        init
+        {
+            if (string.IsNullOrWhiteSpace(RedirectUrl))
+            {
+                RedirectUrl = value;
+            }
+        }
+    }
+
+    [BindProperty]
     [Display(Name = "Stay Logged In")]
     public bool StayLoggedIn { get; init; }
 

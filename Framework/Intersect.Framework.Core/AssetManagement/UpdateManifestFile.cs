@@ -15,10 +15,13 @@ public sealed record UpdateManifestFile(string Path, string Checksum, long Size)
         return segmentDifference != 0 ? segmentDifference : string.CompareOrdinal(Path, other.Path);
     }
 
-    public static UpdateManifestFile From(FileInfo fileInfo, string rootPath)
+    public static UpdateManifestFile From(FileInfo fileInfo, string rootPath, FileInfo? mappedTo = null)
     {
-        var relativeFilePath = System.IO.Path.GetRelativePath(rootPath, fileInfo.FullName);
         var checksum = ComputeChecksum(fileInfo);
+        var relativeFilePath = System.IO.Path.GetRelativePath(
+            rootPath,
+            mappedTo?.FullName ?? fileInfo.FullName
+        );
         return new UpdateManifestFile(relativeFilePath, checksum, fileInfo.Length);
     }
 

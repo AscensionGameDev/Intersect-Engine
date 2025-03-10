@@ -14,6 +14,22 @@ async function intersectEncodePassword(password) {
 }
 
 /**
+ * @param {Record<string, any>} parameters 
+ * @returns {Record<string, any>}
+ */
+function addUriSearchParametersTo(parameters) {
+	const searchParams = new URLSearchParams(window.location?.search);
+	for (const [searchParamKey, searchParamValue] of searchParams.entries()) {
+		if (searchParamKey in parameters) {
+			continue;
+		}
+
+		parameters[searchParamKey] = searchParamValue;
+	}
+	return parameters;
+}
+
+/**
  * @param {HTMLFormElement} loginFormElement
  * @param {number} minimumPasswordLength
  */
@@ -56,7 +72,7 @@ function prepareLoginForm(loginFormElement, minimumPasswordLength = 4) {
 		parameters.password = parameters['encoded-password'];
 		delete parameters['encoded-password'];
 
-		parameters['RedirectUri'] = window.location?.searchParams?.get('redirect');
+		addUriSearchParametersTo(parameters);
 	});
 }
 
@@ -114,6 +130,6 @@ function prepareRegistrationForm(registrationFormElement, minimumPasswordLength 
 		delete parameters['encoded-password'];
 		delete parameters['confirm-password'];
 
-		parameters['RedirectUri'] = window.location?.searchParams?.get('redirect');
+		addUriSearchParametersTo(parameters);
 	});
 }
