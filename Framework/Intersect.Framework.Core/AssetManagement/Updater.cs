@@ -17,14 +17,6 @@ using Serilog;
 
 namespace Intersect.Framework.Core.AssetManagement;
 
-public enum UpdaterStatus
-{
-    Offline,
-    NeedsAuthentication,
-    Ready,
-    NoUpdateNeeded,
-}
-
 public sealed class Updater
 {
     public const string KeywordAppManifest = "#appmanifest";
@@ -1407,12 +1399,4 @@ public sealed class Updater
 
         _stopping = true;
     }
-}
-
-internal enum DownloadValidity
-{
-    Valid,
-    Missing,
-    LengthMismatch,
-    ChecksumMismatch,
 }
