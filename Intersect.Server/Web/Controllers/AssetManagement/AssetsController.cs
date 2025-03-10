@@ -134,17 +134,11 @@ public sealed partial class AssetsController : IntersectController
         {
             _logger.LogError(exception, "Failed to retrieve results for {Path}", path);
 
-            object? data = $"An error occurred when retrieving results for {path}";
 #if DEBUG
-            data = exception;
+            return InternalServerError(exception);
+#else
+            return InternalServerError($"An error occurred when retrieving results for {path}");
 #endif
-
-            if (data is string message)
-            {
-                return InternalServerError(message);
-            }
-
-            return InternalServerError(data);
         }
     }
 
