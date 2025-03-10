@@ -77,6 +77,11 @@ public interface IApplicationContext : IDisposable
     List<IApplicationService> Services { get; }
 
     /// <summary>
+    /// The version string used in protocol communication.
+    /// </summary>
+    string Version => GetType().Assembly.GetMetadataVersion();
+
+    /// <summary>
     /// The human-friendly version string.
     /// </summary>
     string VersionName => GetType().Assembly.GetMetadataVersionName();

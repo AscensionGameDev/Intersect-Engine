@@ -3,10 +3,13 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using Hardware.Info;
 using Intersect.Core;
+using Intersect.Framework.SystemInformation;
 using Intersect.Web;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -120,6 +123,15 @@ public sealed class Updater
         try
         {
             using IntersectHttpClient httpClient = new(_baseUrl, _tokenResponse);
+            httpClient.DefaultRequestHeaders.UserAgent.Clear();
+
+            var applicationContext = ApplicationContext.CurrentContext;
+            var productName = applicationContext.Name.Replace(" ", "_");
+            var productVersion = applicationContext.Version;
+            var platformComment = new ProductInfoHeaderValue(comment: $"({PlatformInformation.RuntimeIdentifier})");
+            ProductInfoHeaderValue productInfoHeaderValue = new(productName, productVersion);
+            httpClient.DefaultRequestHeaders.UserAgent.Add(productInfoHeaderValue);
+            httpClient.DefaultRequestHeaders.UserAgent.Add(platformComment);
 
             HttpResponseMessage? responseMessage = default;
 
@@ -129,9 +141,24 @@ public sealed class Updater
             {
                 try
                 {
+                    KeyValuePair<string, string>[] queryParameters =
+                    [
+                        new("token", Environment.TickCount.ToString()),
+                        new("rid", PlatformInformation.RuntimeIdentifier),
+                    ];
+                    UriBuilder requestUriBuilder = new(_manifestUrl ?? throw new InvalidOperationException())
+                    {
+                        Query = string.Join(
+                            "&",
+                            queryParameters.Select(
+                                p => string.Join('=', Uri.EscapeDataString(p.Key), Uri.EscapeDataString(p.Value))
+                            )
+                        ),
+                    };
+                    var requestUri = requestUriBuilder.Uri;
                     using HttpRequestMessage requestMessage = new(
                         HttpMethod.Get,
-                        $"{_manifestUrl}?token={Environment.TickCount}"
+                        requestUri
                     );
 
                     ApplicationContext.CurrentContext.Logger.LogInformation(

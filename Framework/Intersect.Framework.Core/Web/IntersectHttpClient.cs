@@ -149,7 +149,7 @@ public partial class IntersectHttpClient : HttpClient
             var tokenRequestBody = JsonConvert.SerializeObject(objectTokenRequestBody);
             requestMessage.Content = new StringContent(tokenRequestBody, MediaTypeHeaderValue.Parse("application/json"));
 
-            var responseMessage = Send(requestMessage);
+            var responseMessage = base.Send(requestMessage);
             if (responseMessage.StatusCode != HttpStatusCode.OK)
             {
                 ApplicationContext.Context.Value?.Logger.LogError(
