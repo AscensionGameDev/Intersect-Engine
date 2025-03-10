@@ -50,6 +50,12 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
     private WebApplication? _app;
     private static readonly Assembly Assembly = typeof(ApiService).Assembly;
 
+    private static readonly string[] ChallengePaths = [
+        "/api",
+        "/assets",
+        "/avatar",
+    ];
+
     private static string GetOptionsName<TOptions>() => typeof(TOptions).Name.Replace("Options", string.Empty);
 
     // ReSharper disable once MemberCanBeMadeStatic.Local
@@ -173,8 +179,24 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                 options =>
                 {
                     // Commenting this out fixes no redirect
-                    // Uncommenting fixed something else, but I can't remember what it was
+                    // Uncommenting fixed API consumers with expired tokens
                     // options.ForwardChallenge = JwtBearerDefaults.AuthenticationScheme;
+
+                    // So the thing that was broken if the above was commented out was the editor (or presumably
+                    // anything that had an expired token) -- I believe the below fixes it
+                    options.ForwardDefaultSelector = context =>
+                    {
+                        var requestPath = context.Request.Path;
+                        foreach (var challengePath in ChallengePaths)
+                        {
+                            if (requestPath.StartsWithSegments(challengePath))
+                            {
+                                return JwtBearerDefaults.AuthenticationScheme;
+                            }
+                        }
+
+                        return null;
+                    };
                     options.Events.OnSignedIn += async (context) => { };
                     options.Events.OnSigningIn += async (context) => { };
                     options.Events.OnSigningOut += async (context) => { };
@@ -242,6 +264,12 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                         },
                         OnChallenge = async context =>
                         {
+                            if (context.AuthenticateFailure != null)
+                            {
+                                // This was needed to make sure authentication failures didn't return 200
+                                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                                context.HandleResponse();
+                            }
                         },
                         OnMessageReceived = async context => { },
                         OnTokenValidated = async context =>
@@ -306,9 +334,17 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                 "Bearer-to-Cookie Fallback",
                 pso =>
                 {
-                    pso.ForwardDefaultSelector = context => context.Request.Headers.Authorization.Count > 0
-                        ? JwtBearerDefaults.AuthenticationScheme
-                        : CookieAuthenticationDefaults.AuthenticationScheme;
+                    pso.ForwardDefaultSelector = context =>
+                    {
+                        if (context.Request.Headers.Authorization.Count > 0)
+                        {
+                            return JwtBearerDefaults.AuthenticationScheme;
+                        }
+                        else
+                        {
+                            return CookieAuthenticationDefaults.AuthenticationScheme;
+                        }
+                    };
                 }
             );
 
