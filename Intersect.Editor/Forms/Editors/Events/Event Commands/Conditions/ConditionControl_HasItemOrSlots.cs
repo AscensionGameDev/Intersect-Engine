@@ -40,6 +40,7 @@ public partial class ConditionControl_HasItemOrSlots : UserControl
     {
         cmbItem.SelectedIndex = ItemDescriptor.ListIndex(condition.ItemId);
         nudItemAmount.Value = Math.Max(1, condition.Quantity);
+        rdoManual.Checked = !condition.UseVariable;
         rdoVariable.Checked = condition.UseVariable;
         rdoInvGlobalVariable.Checked = condition.VariableType == VariableType.ServerVariable;
         chkBank.Checked = condition.CheckBank;
@@ -73,6 +74,7 @@ public partial class ConditionControl_HasItemOrSlots : UserControl
     public void SetupFormValues(HasFreeInventorySlots condition)
     {
         nudItemAmount.Value = condition.Quantity;
+        rdoManual.Checked = !condition.UseVariable;
         rdoVariable.Checked = condition.UseVariable;
         rdoInvGlobalVariable.Checked = condition.VariableType == VariableType.ServerVariable;
         rdoInvGuildVariable.Checked = condition.VariableType == VariableType.GuildVariable;
@@ -117,6 +119,7 @@ public partial class ConditionControl_HasItemOrSlots : UserControl
         grpInventoryConditions.Text = Strings.EventConditional.FreeInventorySlots;
         lblItem.Visible = false;
         cmbItem.Visible = false;
+        chkBank.Visible = false;
         cmbItem.Items.Clear();
         SetupAmountInput();
         Show();
