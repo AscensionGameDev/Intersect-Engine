@@ -23,7 +23,7 @@ public partial class FrmWarpSelection : Form
 
     private Image mMapImage;
 
-    private List<Guid> mRestrictMaps;
+    private List<Guid>? mRestrictMaps;
 
     private bool mResult;
 
@@ -47,7 +47,7 @@ public partial class FrmWarpSelection : Form
         );
     }
 
-    public void InitForm(bool tileSelection = true, List<Guid> restrictMaps = null)
+    public void InitForm(bool tileSelection = true, List<Guid>? restrictMaps = null)
     {
         mapTreeList1.UpdateMapList(mCurrentMapId, restrictMaps);
         mRestrictMaps = restrictMaps;
