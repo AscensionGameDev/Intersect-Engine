@@ -36,16 +36,6 @@ public static class Program
         }
     }
 
-    private static bool IsRename(string arg)
-    {
-        return string.Equals("--rename", arg, StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static bool IsNotRename(string arg)
-    {
-        return !IsRename(arg);
-    }
-
     /// <summary>
     ///     The main entry point for the application.
     /// </summary>
@@ -53,29 +43,11 @@ public static class Program
     public static void Main(string[] args)
     {
         var executingAssembly = Assembly.GetExecutingAssembly();
-        var executingAssemblyName = executingAssembly.GetName();
-        System.Console.WriteLine(
-            $@"{executingAssemblyName.Name} {executingAssembly.GetVersionName()}\n\t{string.Join(' ', args)}"
+        Console.WriteLine(
+            $"Starting {executingAssembly.GetMetadataName()} in {Environment.CurrentDirectory}...\n\t{string.Join(' ', args)}"
         );
 
-        var rename = args.SkipWhile(IsNotRename).Take(2).LastOrDefault();
-        // var restartArgs = args.Where((arg, index) => IsNotRename(arg) && (index < 1 || IsNotRename(args[index - 1])))
-        //     .ToArray();
-        // Console.WriteLine($"Replacement args: {string.Join(' ', restartArgs)}");
-        // Environment.Exit(1);
-        if (!string.IsNullOrWhiteSpace(rename))
-        {
-            if (!ProcessHelper.TryReplaceTargetWithEntryAssembly(rename))
-            {
-                Console.Error.WriteLine(
-                    $"Failed to replace \"{rename}\" with current executable to complete the auto-update process."
-                );
-                Environment.Exit(1);
-            }
-        }
-
-        // Console.WriteLine($"rename={rename}");
-        // Environment.Exit(0);
+        var executingAssemblyName = executingAssembly.GetName();
 
         LoggingLevelSwitch loggingLevelSwitch =
             new(Debugger.IsAttached ? LogEventLevel.Debug : LogEventLevel.Information);

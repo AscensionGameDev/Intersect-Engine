@@ -1,7 +1,6 @@
 {
   "profiles": {
     "Intersect.Editor": {
-			"commandLineArgs": "--rename \"Intersect Editor.exe\"",
       "commandName": "Project",
       "workingDirectory": "$(ProjectDir)../assets/development/client"
     }
