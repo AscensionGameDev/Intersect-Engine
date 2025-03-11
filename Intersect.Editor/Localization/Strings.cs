@@ -2488,7 +2488,7 @@ Tick timer saved in server config.json.";
             {ConditionType.InGuildWithRank, @"In Guild With At Least Rank..." },
             {ConditionType.MapZoneTypeIs, @"Map Zone Type is..." },
             {ConditionType.CheckEquipment, @"Check Equipped Slot..." },
-            {ConditionType.IsInCombat, @"Is on Combat" },
+            {ConditionType.IsInCombat, @"Is in Combat" },
         };
 
         public static LocalizedString endrange = @"End Range:";
@@ -2667,7 +2667,7 @@ Tick timer saved in server config.json.";
 
         public static LocalizedString Class = @"Player's class is {00}";
 
-        public static LocalizedString Combat = @"Is on Combat";
+        public static LocalizedString Combat = @"Is in Combat";
 
         public static LocalizedString contains = @"contains {00}";
 
