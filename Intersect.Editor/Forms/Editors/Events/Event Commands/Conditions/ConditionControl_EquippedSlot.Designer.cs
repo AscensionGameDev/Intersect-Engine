@@ -45,7 +45,7 @@ partial class ConditionControl_EquippedSlot
         grpCheckEquippedSlot.Margin = new Padding(4, 3, 4, 3);
         grpCheckEquippedSlot.Name = "grpCheckEquippedSlot";
         grpCheckEquippedSlot.Padding = new Padding(4, 3, 4, 3);
-        grpCheckEquippedSlot.Size = new Size(306, 52);
+        grpCheckEquippedSlot.Size = new Size(308, 58);
         grpCheckEquippedSlot.TabIndex = 28;
         grpCheckEquippedSlot.TabStop = false;
         grpCheckEquippedSlot.Text = "Check Equipped Slot:";
@@ -63,7 +63,7 @@ partial class ConditionControl_EquippedSlot
         cmbCheckEquippedSlot.FlatStyle = FlatStyle.Flat;
         cmbCheckEquippedSlot.ForeColor = System.Drawing.Color.Gainsboro;
         cmbCheckEquippedSlot.FormattingEnabled = true;
-        cmbCheckEquippedSlot.Location = new System.Drawing.Point(46, 22);
+        cmbCheckEquippedSlot.Location = new System.Drawing.Point(48, 22);
         cmbCheckEquippedSlot.Margin = new Padding(4, 3, 4, 3);
         cmbCheckEquippedSlot.Name = "cmbCheckEquippedSlot";
         cmbCheckEquippedSlot.Size = new Size(252, 24);
@@ -88,7 +88,7 @@ partial class ConditionControl_EquippedSlot
         BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         Controls.Add(grpCheckEquippedSlot);
         Name = "ConditionControl_EquippedSlot";
-        Size = new Size(310, 56);
+        Size = new Size(310, 60);
         grpCheckEquippedSlot.ResumeLayout(false);
         grpCheckEquippedSlot.PerformLayout();
         ResumeLayout(false);

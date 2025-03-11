@@ -45,7 +45,7 @@ partial class ConditionControl_EquippedItem
         grpEquippedItem.Margin = new Padding(4, 3, 4, 3);
         grpEquippedItem.Name = "grpEquippedItem";
         grpEquippedItem.Padding = new Padding(4, 3, 4, 3);
-        grpEquippedItem.Size = new Size(306, 53);
+        grpEquippedItem.Size = new Size(308, 58);
         grpEquippedItem.TabIndex = 27;
         grpEquippedItem.TabStop = false;
         grpEquippedItem.Text = "Has Equipped Item";
@@ -63,7 +63,7 @@ partial class ConditionControl_EquippedItem
         cmbEquippedItem.FlatStyle = FlatStyle.Flat;
         cmbEquippedItem.ForeColor = System.Drawing.Color.Gainsboro;
         cmbEquippedItem.FormattingEnabled = true;
-        cmbEquippedItem.Location = new System.Drawing.Point(50, 19);
+        cmbEquippedItem.Location = new System.Drawing.Point(52, 22);
         cmbEquippedItem.Margin = new Padding(4, 3, 4, 3);
         cmbEquippedItem.Name = "cmbEquippedItem";
         cmbEquippedItem.Size = new Size(248, 24);
@@ -74,7 +74,7 @@ partial class ConditionControl_EquippedItem
         // lblEquippedItem
         // 
         lblEquippedItem.AutoSize = true;
-        lblEquippedItem.Location = new System.Drawing.Point(8, 22);
+        lblEquippedItem.Location = new System.Drawing.Point(8, 25);
         lblEquippedItem.Margin = new Padding(4, 0, 4, 0);
         lblEquippedItem.Name = "lblEquippedItem";
         lblEquippedItem.Size = new Size(34, 15);
@@ -88,7 +88,7 @@ partial class ConditionControl_EquippedItem
         BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         Controls.Add(grpEquippedItem);
         Name = "ConditionControl_EquippedItem";
-        Size = new Size(307, 55);
+        Size = new Size(310, 60);
         grpEquippedItem.ResumeLayout(false);
         grpEquippedItem.PerformLayout();
         ResumeLayout(false);

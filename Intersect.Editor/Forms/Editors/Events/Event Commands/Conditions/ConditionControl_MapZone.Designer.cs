@@ -45,11 +45,10 @@ partial class ConditionControl_MapZone
         grpMapZoneType.Margin = new Padding(4, 3, 4, 3);
         grpMapZoneType.Name = "grpMapZoneType";
         grpMapZoneType.Padding = new Padding(4, 3, 4, 3);
-        grpMapZoneType.Size = new Size(306, 82);
+        grpMapZoneType.Size = new Size(308, 58);
         grpMapZoneType.TabIndex = 59;
         grpMapZoneType.TabStop = false;
         grpMapZoneType.Text = "Map Zone Type Is:";
-        grpMapZoneType.Visible = false;
         // 
         // lblMapZoneType
         // 
@@ -82,14 +81,14 @@ partial class ConditionControl_MapZone
         cmbMapZoneType.Text = null;
         cmbMapZoneType.TextPadding = new Padding(2);
         // 
-        // ConditionControl_MapZoneIs
+        // ConditionControl_MapZone
         // 
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
         BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         Controls.Add(grpMapZoneType);
-        Name = "ConditionControl_MapZoneIs";
-        Size = new Size(309, 85);
+        Name = "ConditionControl_MapZone";
+        Size = new Size(310, 60);
         grpMapZoneType.ResumeLayout(false);
         grpMapZoneType.PerformLayout();
         ResumeLayout(false);

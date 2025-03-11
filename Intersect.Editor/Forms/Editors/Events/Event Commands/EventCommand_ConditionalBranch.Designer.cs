@@ -31,13 +31,13 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void InitializeComponent()
         {
             grpConditional = new DarkGroupBox();
+            pnlConditionControl = new Panel();
             chkHasElse = new DarkCheckBox();
             chkNegated = new DarkCheckBox();
             btnSave = new DarkButton();
             cmbConditionType = new DarkComboBox();
             lblType = new Label();
             btnCancel = new DarkButton();
-            pnlConditionControl = new Panel();
             grpConditional.SuspendLayout();
             SuspendLayout();
             // 
@@ -61,6 +61,13 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             grpConditional.TabIndex = 17;
             grpConditional.TabStop = false;
             grpConditional.Text = "Conditional";
+            // 
+            // pnlConditionControl
+            // 
+            pnlConditionControl.Location = new System.Drawing.Point(7, 45);
+            pnlConditionControl.Name = "pnlConditionControl";
+            pnlConditionControl.Size = new Size(310, 426);
+            pnlConditionControl.TabIndex = 57;
             // 
             // chkHasElse
             // 
@@ -134,13 +141,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             btnCancel.TabIndex = 20;
             btnCancel.Text = "Cancel";
             btnCancel.Click += btnCancel_Click;
-            // 
-            // pnlConditionControl
-            // 
-            pnlConditionControl.Location = new System.Drawing.Point(7, 45);
-            pnlConditionControl.Name = "pnlConditionControl";
-            pnlConditionControl.Size = new Size(310, 426);
-            pnlConditionControl.TabIndex = 57;
             // 
             // EventCommandConditionalBranch
             // 

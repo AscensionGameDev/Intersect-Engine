@@ -45,11 +45,10 @@ partial class ConditionControl_PlayerGuild
         grpInGuild.Margin = new Padding(4, 3, 4, 3);
         grpInGuild.Name = "grpInGuild";
         grpInGuild.Padding = new Padding(4, 3, 4, 3);
-        grpInGuild.Size = new Size(306, 82);
+        grpInGuild.Size = new Size(308, 58);
         grpInGuild.TabIndex = 34;
         grpInGuild.TabStop = false;
         grpInGuild.Text = "In Guild With At Least Rank:";
-        grpInGuild.Visible = false;
         // 
         // lblRank
         // 
@@ -82,14 +81,14 @@ partial class ConditionControl_PlayerGuild
         cmbRank.Text = null;
         cmbRank.TextPadding = new Padding(2);
         // 
-        // ConditionControl_GuildRankIs
+        // ConditionControl_PlayerGuild
         // 
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
         BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         Controls.Add(grpInGuild);
-        Name = "ConditionControl_GuildRankIs";
-        Size = new Size(309, 86);
+        Name = "ConditionControl_PlayerGuild";
+        Size = new Size(310, 60);
         grpInGuild.ResumeLayout(false);
         grpInGuild.PerformLayout();
         ResumeLayout(false);

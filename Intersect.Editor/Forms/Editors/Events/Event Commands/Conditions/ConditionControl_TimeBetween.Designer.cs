@@ -51,11 +51,10 @@ partial class ConditionControl_TimeBetween
         grpTime.Margin = new Padding(4, 3, 4, 3);
         grpTime.Name = "grpTime";
         grpTime.Padding = new Padding(4, 3, 4, 3);
-        grpTime.Size = new Size(304, 121);
+        grpTime.Size = new Size(308, 121);
         grpTime.TabIndex = 31;
         grpTime.TabStop = false;
         grpTime.Text = "Time is between:";
-        grpTime.Visible = false;
         // 
         // lblEndRange
         // 

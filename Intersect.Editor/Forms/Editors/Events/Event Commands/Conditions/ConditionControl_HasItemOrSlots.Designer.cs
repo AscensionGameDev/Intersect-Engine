@@ -66,17 +66,17 @@ partial class ConditionControl_HasItemOrSlots
         grpInventoryConditions.Margin = new Padding(4, 3, 4, 3);
         grpInventoryConditions.Name = "grpInventoryConditions";
         grpInventoryConditions.Padding = new Padding(4, 3, 4, 3);
-        grpInventoryConditions.Size = new Size(306, 273);
+        grpInventoryConditions.Size = new Size(308, 251);
         grpInventoryConditions.TabIndex = 26;
         grpInventoryConditions.TabStop = false;
         grpInventoryConditions.Text = "Has Item";
         // 
         // chkBank
         // 
-        chkBank.Location = new System.Drawing.Point(177, 243);
+        chkBank.Location = new System.Drawing.Point(7, 227);
         chkBank.Margin = new Padding(4, 3, 4, 3);
         chkBank.Name = "chkBank";
-        chkBank.Size = new Size(114, 20);
+        chkBank.Size = new Size(116, 20);
         chkBank.TabIndex = 59;
         chkBank.Text = "Check Bank?";
         // 
@@ -258,7 +258,7 @@ partial class ConditionControl_HasItemOrSlots
         cmbItem.FlatStyle = FlatStyle.Flat;
         cmbItem.ForeColor = System.Drawing.Color.Gainsboro;
         cmbItem.FormattingEnabled = true;
-        cmbItem.Location = new System.Drawing.Point(49, 210);
+        cmbItem.Location = new System.Drawing.Point(51, 197);
         cmbItem.Margin = new Padding(4, 3, 4, 3);
         cmbItem.Name = "cmbItem";
         cmbItem.Size = new Size(247, 24);
@@ -269,21 +269,21 @@ partial class ConditionControl_HasItemOrSlots
         // lblItem
         // 
         lblItem.AutoSize = true;
-        lblItem.Location = new System.Drawing.Point(8, 212);
+        lblItem.Location = new System.Drawing.Point(10, 199);
         lblItem.Margin = new Padding(4, 0, 4, 0);
         lblItem.Name = "lblItem";
         lblItem.Size = new Size(34, 15);
         lblItem.TabIndex = 2;
         lblItem.Text = "Item:";
         // 
-        // ConditionControl_HasItem
+        // ConditionControl_HasItemOrSlots
         // 
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
         BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         Controls.Add(grpInventoryConditions);
-        Name = "ConditionControl_HasItem";
-        Size = new Size(310, 279);
+        Name = "ConditionControl_HasItemOrSlots";
+        Size = new Size(310, 256);
         grpInventoryConditions.ResumeLayout(false);
         grpInventoryConditions.PerformLayout();
         grpVariableAmount.ResumeLayout(false);

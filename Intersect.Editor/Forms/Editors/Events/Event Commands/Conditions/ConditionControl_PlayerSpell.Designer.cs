@@ -45,7 +45,7 @@ partial class ConditionControl_PlayerSpell
         grpSpell.Margin = new Padding(4, 3, 4, 3);
         grpSpell.Name = "grpSpell";
         grpSpell.Padding = new Padding(4, 3, 4, 3);
-        grpSpell.Size = new Size(306, 60);
+        grpSpell.Size = new Size(308, 60);
         grpSpell.TabIndex = 27;
         grpSpell.TabStop = false;
         grpSpell.Text = "Knows Spell";
@@ -81,14 +81,14 @@ partial class ConditionControl_PlayerSpell
         lblSpell.TabIndex = 2;
         lblSpell.Text = "Spell:";
         // 
-        // KnownSpell
+        // ConditionControl_PlayerSpell
         // 
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
         BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         Controls.Add(grpSpell);
-        Name = "KnownSpell";
-        Size = new Size(311, 64);
+        Name = "ConditionControl_PlayerSpell";
+        Size = new Size(310, 64);
         grpSpell.ResumeLayout(false);
         grpSpell.PerformLayout();
         ResumeLayout(false);

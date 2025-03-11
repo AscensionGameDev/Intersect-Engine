@@ -45,7 +45,7 @@ partial class ConditionControl_PlayerGender
         grpGender.Margin = new Padding(4, 3, 4, 3);
         grpGender.Name = "grpGender";
         grpGender.Padding = new Padding(4, 3, 4, 3);
-        grpGender.Size = new Size(304, 60);
+        grpGender.Size = new Size(308, 60);
         grpGender.TabIndex = 34;
         grpGender.TabStop = false;
         grpGender.Text = "Gender Is...";
@@ -88,7 +88,7 @@ partial class ConditionControl_PlayerGender
         BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         Controls.Add(grpGender);
         Name = "ConditionControl_PlayerGender";
-        Size = new Size(307, 63);
+        Size = new Size(310, 63);
         grpGender.ResumeLayout(false);
         grpGender.PerformLayout();
         ResumeLayout(false);

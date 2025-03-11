@@ -89,7 +89,7 @@ partial class ConditionControl_Variable
         grpVariable.Margin = new Padding(4, 3, 4, 3);
         grpVariable.Name = "grpVariable";
         grpVariable.Padding = new Padding(4, 3, 4, 3);
-        grpVariable.Size = new Size(306, 423);
+        grpVariable.Size = new Size(308, 395);
         grpVariable.TabIndex = 25;
         grpVariable.TabStop = false;
         grpVariable.Text = "Variable is...";
@@ -199,11 +199,11 @@ partial class ConditionControl_Variable
         grpNumericVariable.Controls.Add(cmbCompareGlobalVar);
         grpNumericVariable.Controls.Add(rdoVarCompareGlobalVar);
         grpNumericVariable.ForeColor = System.Drawing.Color.Gainsboro;
-        grpNumericVariable.Location = new System.Drawing.Point(9, 160);
+        grpNumericVariable.Location = new System.Drawing.Point(8, 160);
         grpNumericVariable.Margin = new Padding(4, 3, 4, 3);
         grpNumericVariable.Name = "grpNumericVariable";
         grpNumericVariable.Padding = new Padding(4, 3, 4, 3);
-        grpNumericVariable.Size = new Size(288, 256);
+        grpNumericVariable.Size = new Size(288, 229);
         grpNumericVariable.TabIndex = 51;
         grpNumericVariable.TabStop = false;
         grpNumericVariable.Text = "Numeric Variable:";
@@ -211,7 +211,7 @@ partial class ConditionControl_Variable
         // rdoTimeSystem
         // 
         rdoTimeSystem.AutoSize = true;
-        rdoTimeSystem.Location = new System.Drawing.Point(13, 215);
+        rdoTimeSystem.Location = new System.Drawing.Point(12, 206);
         rdoTimeSystem.Margin = new Padding(4, 3, 4, 3);
         rdoTimeSystem.Name = "rdoTimeSystem";
         rdoTimeSystem.Size = new Size(92, 19);
@@ -412,11 +412,11 @@ partial class ConditionControl_Variable
         grpStringVariable.Controls.Add(cmbStringComparitor);
         grpStringVariable.Controls.Add(lblStringComparator);
         grpStringVariable.ForeColor = System.Drawing.Color.Gainsboro;
-        grpStringVariable.Location = new System.Drawing.Point(7, 168);
+        grpStringVariable.Location = new System.Drawing.Point(8, 160);
         grpStringVariable.Margin = new Padding(4, 3, 4, 3);
         grpStringVariable.Name = "grpStringVariable";
         grpStringVariable.Padding = new Padding(4, 3, 4, 3);
-        grpStringVariable.Size = new Size(288, 202);
+        grpStringVariable.Size = new Size(288, 124);
         grpStringVariable.TabIndex = 53;
         grpStringVariable.TabStop = false;
         grpStringVariable.Text = "String Variable:";
@@ -427,7 +427,7 @@ partial class ConditionControl_Variable
         lblStringTextVariables.BackColor = System.Drawing.Color.Transparent;
         lblStringTextVariables.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Underline, GraphicsUnit.Point, 0);
         lblStringTextVariables.ForeColor = SystemColors.MenuHighlight;
-        lblStringTextVariables.Location = new System.Drawing.Point(10, 166);
+        lblStringTextVariables.Location = new System.Drawing.Point(13, 96);
         lblStringTextVariables.Margin = new Padding(4, 0, 4, 0);
         lblStringTextVariables.Name = "lblStringTextVariables";
         lblStringTextVariables.Size = new Size(218, 13);
@@ -505,7 +505,7 @@ partial class ConditionControl_Variable
         grpBooleanVariable.Controls.Add(cmbBooleanGlobalVariable);
         grpBooleanVariable.Controls.Add(optBooleanGlobalVariable);
         grpBooleanVariable.ForeColor = System.Drawing.Color.Gainsboro;
-        grpBooleanVariable.Location = new System.Drawing.Point(9, 160);
+        grpBooleanVariable.Location = new System.Drawing.Point(8, 160);
         grpBooleanVariable.Margin = new Padding(4, 3, 4, 3);
         grpBooleanVariable.Name = "grpBooleanVariable";
         grpBooleanVariable.Padding = new Padding(4, 3, 4, 3);
@@ -697,7 +697,7 @@ partial class ConditionControl_Variable
         BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         Controls.Add(grpVariable);
         Name = "ConditionControl_Variable";
-        Size = new Size(310, 430);
+        Size = new Size(310, 398);
         grpVariable.ResumeLayout(false);
         grpSelectVariable.ResumeLayout(false);
         grpSelectVariable.PerformLayout();

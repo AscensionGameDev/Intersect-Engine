@@ -53,16 +53,15 @@ partial class ConditionControl_QuestInProgress
         grpQuestInProgress.Margin = new Padding(4, 3, 4, 3);
         grpQuestInProgress.Name = "grpQuestInProgress";
         grpQuestInProgress.Padding = new Padding(4, 3, 4, 3);
-        grpQuestInProgress.Size = new Size(307, 141);
+        grpQuestInProgress.Size = new Size(308, 111);
         grpQuestInProgress.TabIndex = 33;
         grpQuestInProgress.TabStop = false;
         grpQuestInProgress.Text = "Quest In Progress:";
-        grpQuestInProgress.Visible = false;
         // 
         // lblQuestTask
         // 
         lblQuestTask.AutoSize = true;
-        lblQuestTask.Location = new System.Drawing.Point(8, 99);
+        lblQuestTask.Location = new System.Drawing.Point(8, 84);
         lblQuestTask.Margin = new Padding(4, 0, 4, 0);
         lblQuestTask.Name = "lblQuestTask";
         lblQuestTask.Size = new Size(32, 15);
@@ -83,7 +82,7 @@ partial class ConditionControl_QuestInProgress
         cmbQuestTask.FlatStyle = FlatStyle.Flat;
         cmbQuestTask.ForeColor = System.Drawing.Color.Gainsboro;
         cmbQuestTask.FormattingEnabled = true;
-        cmbQuestTask.Location = new System.Drawing.Point(107, 96);
+        cmbQuestTask.Location = new System.Drawing.Point(107, 81);
         cmbQuestTask.Margin = new Padding(4, 3, 4, 3);
         cmbQuestTask.Name = "cmbQuestTask";
         cmbQuestTask.Size = new Size(190, 24);
@@ -104,7 +103,7 @@ partial class ConditionControl_QuestInProgress
         cmbTaskModifier.FlatStyle = FlatStyle.Flat;
         cmbTaskModifier.ForeColor = System.Drawing.Color.Gainsboro;
         cmbTaskModifier.FormattingEnabled = true;
-        cmbTaskModifier.Location = new System.Drawing.Point(107, 58);
+        cmbTaskModifier.Location = new System.Drawing.Point(107, 51);
         cmbTaskModifier.Margin = new Padding(4, 3, 4, 3);
         cmbTaskModifier.Name = "cmbTaskModifier";
         cmbTaskModifier.Size = new Size(190, 24);
@@ -116,7 +115,7 @@ partial class ConditionControl_QuestInProgress
         // lblQuestIs
         // 
         lblQuestIs.AutoSize = true;
-        lblQuestIs.Location = new System.Drawing.Point(8, 60);
+        lblQuestIs.Location = new System.Drawing.Point(8, 53);
         lblQuestIs.Margin = new Padding(4, 0, 4, 0);
         lblQuestIs.Name = "lblQuestIs";
         lblQuestIs.Size = new Size(18, 15);
@@ -162,7 +161,7 @@ partial class ConditionControl_QuestInProgress
         BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         Controls.Add(grpQuestInProgress);
         Name = "ConditionControl_QuestInProgress";
-        Size = new Size(310, 144);
+        Size = new Size(310, 113);
         grpQuestInProgress.ResumeLayout(false);
         grpQuestInProgress.PerformLayout();
         ResumeLayout(false);

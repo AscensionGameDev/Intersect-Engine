@@ -56,14 +56,14 @@ partial class ConditionControl_PlayerStat
         grpLevelStat.Margin = new Padding(4, 3, 4, 3);
         grpLevelStat.Name = "grpLevelStat";
         grpLevelStat.Padding = new Padding(4, 3, 4, 3);
-        grpLevelStat.Size = new Size(306, 162);
+        grpLevelStat.Size = new Size(308, 142);
         grpLevelStat.TabIndex = 29;
         grpLevelStat.TabStop = false;
         grpLevelStat.Text = "Level or Stat is...";
         // 
         // chkStatIgnoreBuffs
         // 
-        chkStatIgnoreBuffs.Location = new System.Drawing.Point(15, 133);
+        chkStatIgnoreBuffs.Location = new System.Drawing.Point(13, 116);
         chkStatIgnoreBuffs.Margin = new Padding(4, 3, 4, 3);
         chkStatIgnoreBuffs.Name = "chkStatIgnoreBuffs";
         chkStatIgnoreBuffs.Size = new Size(246, 20);
@@ -74,7 +74,7 @@ partial class ConditionControl_PlayerStat
         // 
         nudLevelStatValue.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
         nudLevelStatValue.ForeColor = System.Drawing.Color.Gainsboro;
-        nudLevelStatValue.Location = new System.Drawing.Point(92, 100);
+        nudLevelStatValue.Location = new System.Drawing.Point(92, 87);
         nudLevelStatValue.Margin = new Padding(4, 3, 4, 3);
         nudLevelStatValue.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
         nudLevelStatValue.Name = "nudLevelStatValue";
@@ -117,7 +117,7 @@ partial class ConditionControl_PlayerStat
         // lblLvlStatValue
         // 
         lblLvlStatValue.AutoSize = true;
-        lblLvlStatValue.Location = new System.Drawing.Point(13, 103);
+        lblLvlStatValue.Location = new System.Drawing.Point(13, 90);
         lblLvlStatValue.Margin = new Padding(4, 0, 4, 0);
         lblLvlStatValue.Name = "lblLvlStatValue";
         lblLvlStatValue.Size = new Size(38, 15);
@@ -137,7 +137,7 @@ partial class ConditionControl_PlayerStat
         cmbLevelComparator.FlatStyle = FlatStyle.Flat;
         cmbLevelComparator.ForeColor = System.Drawing.Color.Gainsboro;
         cmbLevelComparator.FormattingEnabled = true;
-        cmbLevelComparator.Location = new System.Drawing.Point(92, 61);
+        cmbLevelComparator.Location = new System.Drawing.Point(92, 57);
         cmbLevelComparator.Margin = new Padding(4, 3, 4, 3);
         cmbLevelComparator.Name = "cmbLevelComparator";
         cmbLevelComparator.Size = new Size(206, 24);
@@ -148,7 +148,7 @@ partial class ConditionControl_PlayerStat
         // lblLevelComparator
         // 
         lblLevelComparator.AutoSize = true;
-        lblLevelComparator.Location = new System.Drawing.Point(9, 63);
+        lblLevelComparator.Location = new System.Drawing.Point(9, 59);
         lblLevelComparator.Margin = new Padding(4, 0, 4, 0);
         lblLevelComparator.Name = "lblLevelComparator";
         lblLevelComparator.Size = new Size(74, 15);
@@ -162,7 +162,7 @@ partial class ConditionControl_PlayerStat
         BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         Controls.Add(grpLevelStat);
         Name = "ConditionControl_PlayerStat";
-        Size = new Size(310, 167);
+        Size = new Size(310, 146);
         grpLevelStat.ResumeLayout(false);
         grpLevelStat.PerformLayout();
         ((System.ComponentModel.ISupportInitialize)nudLevelStatValue).EndInit();

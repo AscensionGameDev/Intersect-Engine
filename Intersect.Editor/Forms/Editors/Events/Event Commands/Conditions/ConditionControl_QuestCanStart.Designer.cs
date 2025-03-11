@@ -45,11 +45,10 @@ partial class ConditionControl_QuestCanStart
         grpStartQuest.Margin = new Padding(4, 3, 4, 3);
         grpStartQuest.Name = "grpStartQuest";
         grpStartQuest.Padding = new Padding(4, 3, 4, 3);
-        grpStartQuest.Size = new Size(306, 54);
+        grpStartQuest.Size = new Size(308, 58);
         grpStartQuest.TabIndex = 32;
         grpStartQuest.TabStop = false;
         grpStartQuest.Text = "Can Start Quest:";
-        grpStartQuest.Visible = false;
         // 
         // lblStartQuest
         // 

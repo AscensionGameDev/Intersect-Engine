@@ -47,15 +47,14 @@ partial class ConditionControl_NPC
         grpNpc.Margin = new Padding(4, 3, 4, 3);
         grpNpc.Name = "grpNpc";
         grpNpc.Padding = new Padding(4, 3, 4, 3);
-        grpNpc.Size = new Size(303, 85);
+        grpNpc.Size = new Size(308, 85);
         grpNpc.TabIndex = 41;
         grpNpc.TabStop = false;
         grpNpc.Text = "NPCs";
-        grpNpc.Visible = false;
         // 
         // chkNpc
         // 
-        chkNpc.Location = new System.Drawing.Point(8, 25);
+        chkNpc.Location = new System.Drawing.Point(8, 22);
         chkNpc.Margin = new Padding(4, 3, 4, 3);
         chkNpc.Name = "chkNpc";
         chkNpc.Size = new Size(114, 20);
@@ -76,10 +75,10 @@ partial class ConditionControl_NPC
         cmbNpcs.FlatStyle = FlatStyle.Flat;
         cmbNpcs.ForeColor = System.Drawing.Color.Gainsboro;
         cmbNpcs.FormattingEnabled = true;
-        cmbNpcs.Location = new System.Drawing.Point(78, 52);
+        cmbNpcs.Location = new System.Drawing.Point(50, 52);
         cmbNpcs.Margin = new Padding(4, 3, 4, 3);
         cmbNpcs.Name = "cmbNpcs";
-        cmbNpcs.Size = new Size(206, 24);
+        cmbNpcs.Size = new Size(245, 24);
         cmbNpcs.TabIndex = 39;
         cmbNpcs.Text = null;
         cmbNpcs.TextPadding = new Padding(2);
@@ -101,7 +100,7 @@ partial class ConditionControl_NPC
         BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         Controls.Add(grpNpc);
         Name = "ConditionControl_NPC";
-        Size = new Size(306, 89);
+        Size = new Size(310, 89);
         grpNpc.ResumeLayout(false);
         grpNpc.PerformLayout();
         ResumeLayout(false);

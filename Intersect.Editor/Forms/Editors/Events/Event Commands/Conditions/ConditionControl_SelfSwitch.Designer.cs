@@ -49,7 +49,7 @@ partial class ConditionControl_SelfSwitch
         grpSelfSwitch.Margin = new Padding(4, 3, 4, 3);
         grpSelfSwitch.Name = "grpSelfSwitch";
         grpSelfSwitch.Padding = new Padding(4, 3, 4, 3);
-        grpSelfSwitch.Size = new Size(306, 103);
+        grpSelfSwitch.Size = new Size(308, 53);
         grpSelfSwitch.TabIndex = 30;
         grpSelfSwitch.TabStop = false;
         grpSelfSwitch.Text = "Self Switch";
@@ -67,10 +67,10 @@ partial class ConditionControl_SelfSwitch
         cmbSelfSwitchVal.FlatStyle = FlatStyle.Flat;
         cmbSelfSwitchVal.ForeColor = System.Drawing.Color.Gainsboro;
         cmbSelfSwitchVal.FormattingEnabled = true;
-        cmbSelfSwitchVal.Location = new System.Drawing.Point(92, 60);
+        cmbSelfSwitchVal.Location = new System.Drawing.Point(224, 20);
         cmbSelfSwitchVal.Margin = new Padding(4, 3, 4, 3);
         cmbSelfSwitchVal.Name = "cmbSelfSwitchVal";
-        cmbSelfSwitchVal.Size = new Size(206, 24);
+        cmbSelfSwitchVal.Size = new Size(74, 24);
         cmbSelfSwitchVal.TabIndex = 3;
         cmbSelfSwitchVal.Text = null;
         cmbSelfSwitchVal.TextPadding = new Padding(2);
@@ -78,7 +78,7 @@ partial class ConditionControl_SelfSwitch
         // lblSelfSwitchIs
         // 
         lblSelfSwitchIs.AutoSize = true;
-        lblSelfSwitchIs.Location = new System.Drawing.Point(13, 63);
+        lblSelfSwitchIs.Location = new System.Drawing.Point(195, 23);
         lblSelfSwitchIs.Margin = new Padding(4, 0, 4, 0);
         lblSelfSwitchIs.Name = "lblSelfSwitchIs";
         lblSelfSwitchIs.Size = new Size(21, 15);
@@ -101,7 +101,7 @@ partial class ConditionControl_SelfSwitch
         cmbSelfSwitch.Location = new System.Drawing.Point(92, 20);
         cmbSelfSwitch.Margin = new Padding(4, 3, 4, 3);
         cmbSelfSwitch.Name = "cmbSelfSwitch";
-        cmbSelfSwitch.Size = new Size(206, 24);
+        cmbSelfSwitch.Size = new Size(95, 24);
         cmbSelfSwitch.TabIndex = 1;
         cmbSelfSwitch.Text = null;
         cmbSelfSwitch.TextPadding = new Padding(2);
@@ -123,7 +123,7 @@ partial class ConditionControl_SelfSwitch
         BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         Controls.Add(grpSelfSwitch);
         Name = "ConditionControl_SelfSwitch";
-        Size = new Size(310, 106);
+        Size = new Size(307, 55);
         grpSelfSwitch.ResumeLayout(false);
         grpSelfSwitch.PerformLayout();
         ResumeLayout(false);

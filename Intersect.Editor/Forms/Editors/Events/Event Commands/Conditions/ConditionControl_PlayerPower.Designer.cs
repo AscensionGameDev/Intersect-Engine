@@ -45,7 +45,7 @@ partial class ConditionControl_PlayerPower
         grpPowerIs.Margin = new Padding(4, 3, 4, 3);
         grpPowerIs.Name = "grpPowerIs";
         grpPowerIs.Padding = new Padding(4, 3, 4, 3);
-        grpPowerIs.Size = new Size(306, 59);
+        grpPowerIs.Size = new Size(308, 58);
         grpPowerIs.TabIndex = 26;
         grpPowerIs.TabStop = false;
         grpPowerIs.Text = "Power Is...";
@@ -81,14 +81,14 @@ partial class ConditionControl_PlayerPower
         lblPower.TabIndex = 0;
         lblPower.Text = "Power:";
         // 
-        // ConditionControl_PowerIs
+        // ConditionControl_PlayerPower
         // 
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
         BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         Controls.Add(grpPowerIs);
-        Name = "ConditionControl_PowerIs";
-        Size = new Size(309, 63);
+        Name = "ConditionControl_PlayerPower";
+        Size = new Size(310, 60);
         grpPowerIs.ResumeLayout(false);
         grpPowerIs.PerformLayout();
         ResumeLayout(false);

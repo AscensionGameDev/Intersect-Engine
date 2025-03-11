@@ -43,14 +43,14 @@ partial class ConditionControl_Map
         grpMapIs.Margin = new Padding(4, 3, 4, 3);
         grpMapIs.Name = "grpMapIs";
         grpMapIs.Padding = new Padding(4, 3, 4, 3);
-        grpMapIs.Size = new Size(304, 60);
+        grpMapIs.Size = new Size(308, 58);
         grpMapIs.TabIndex = 36;
         grpMapIs.TabStop = false;
         grpMapIs.Text = "Map Is...";
         // 
         // btnSelectMap
         // 
-        btnSelectMap.Location = new System.Drawing.Point(10, 24);
+        btnSelectMap.Location = new System.Drawing.Point(15, 22);
         btnSelectMap.Margin = new Padding(4, 3, 4, 3);
         btnSelectMap.Name = "btnSelectMap";
         btnSelectMap.Padding = new Padding(6);
@@ -66,7 +66,7 @@ partial class ConditionControl_Map
         BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         Controls.Add(grpMapIs);
         Name = "ConditionControl_Map";
-        Size = new Size(309, 66);
+        Size = new Size(310, 60);
         grpMapIs.ResumeLayout(false);
         ResumeLayout(false);
     }

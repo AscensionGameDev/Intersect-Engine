@@ -45,7 +45,7 @@ partial class ConditionControl_PlayerClass
         grpClass.Margin = new Padding(4, 3, 4, 3);
         grpClass.Name = "grpClass";
         grpClass.Padding = new Padding(4, 3, 4, 3);
-        grpClass.Size = new Size(306, 60);
+        grpClass.Size = new Size(308, 60);
         grpClass.TabIndex = 28;
         grpClass.TabStop = false;
         grpClass.Text = "Class is";
@@ -88,7 +88,7 @@ partial class ConditionControl_PlayerClass
         BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         Controls.Add(grpClass);
         Name = "ConditionControl_PlayerClass";
-        Size = new Size(308, 62);
+        Size = new Size(310, 62);
         grpClass.ResumeLayout(false);
         grpClass.PerformLayout();
         ResumeLayout(false);

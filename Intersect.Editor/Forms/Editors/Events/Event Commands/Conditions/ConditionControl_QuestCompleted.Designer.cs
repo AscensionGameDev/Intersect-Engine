@@ -45,11 +45,10 @@ partial class ConditionControl_QuestCompleted
         grpQuestCompleted.Margin = new Padding(4, 3, 4, 3);
         grpQuestCompleted.Name = "grpQuestCompleted";
         grpQuestCompleted.Padding = new Padding(4, 3, 4, 3);
-        grpQuestCompleted.Size = new Size(306, 58);
+        grpQuestCompleted.Size = new Size(308, 58);
         grpQuestCompleted.TabIndex = 33;
         grpQuestCompleted.TabStop = false;
         grpQuestCompleted.Text = "Quest Completed:";
-        grpQuestCompleted.Visible = false;
         // 
         // lblQuestCompleted
         // 
@@ -89,7 +88,7 @@ partial class ConditionControl_QuestCompleted
         BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         Controls.Add(grpQuestCompleted);
         Name = "ConditionControl_QuestCompleted";
-        Size = new Size(311, 62);
+        Size = new Size(310, 60);
         grpQuestCompleted.ResumeLayout(false);
         grpQuestCompleted.PerformLayout();
         ResumeLayout(false);
