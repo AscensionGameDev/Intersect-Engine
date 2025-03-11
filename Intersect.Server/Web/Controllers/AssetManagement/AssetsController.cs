@@ -379,7 +379,7 @@ public sealed partial class AssetsController : IntersectController
             }
         );
 
-        if (folder == "client")
+        if (folder.StartsWith("client"))
         {
             _clientUpdateManifests.Clear();
         }
