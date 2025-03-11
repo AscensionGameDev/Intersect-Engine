@@ -147,9 +147,10 @@ public partial class MonoInput : GameInput
             return;
         }
 
-        if (GameInput.Current.CursorMovementDevice != InputDeviceType.Controller)
+        switch (CursorMovementDevice)
         {
-            return;
+            case InputDeviceType.Mouse:
+                return;
         }
 
         Vector2 center = new(
@@ -319,7 +320,7 @@ public partial class MonoInput : GameInput
 
                 if (deltaX != 0 || deltaY != 0)
                 {
-                    GameInput.Current.CursorMovementDevice = InputDeviceType.Controller;
+                    CursorMovementDevice = InputDeviceType.Controller;
                 }
 
                 var temporaryMouseState = Mouse.GetState();
@@ -334,7 +335,7 @@ public partial class MonoInput : GameInput
                 mMouseX = (int)(mouseState.X * ((MonoRenderer)Core.Graphics.Renderer).GetMouseOffset().X);
                 mMouseY = (int)(mouseState.Y * ((MonoRenderer)Core.Graphics.Renderer).GetMouseOffset().Y);
 
-                GameInput.Current.CursorMovementDevice = InputDeviceType.Mouse;
+                CursorMovementDevice = InputDeviceType.Mouse;
 
                 Interface.Interface.GwenInput.ProcessMessage(
                     new GwenInputMessage(
