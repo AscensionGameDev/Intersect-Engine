@@ -29,7 +29,7 @@
 			"target": "Server"
 		},
 		{
-			"source": "Intersect.Server/bin/Release/**/win-x64/publish/wwwroot",
+			"source": "Intersect.Server/bin/Release/**/win-x64/publish/wwwroot/**",
 			"target": "Server/wwwroot"
 		},
 		{

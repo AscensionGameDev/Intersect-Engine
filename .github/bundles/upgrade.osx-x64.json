@@ -21,7 +21,7 @@
 			"target": "Server"
 		},
 		{
-			"source": "Intersect.Server/bin/Release/**/osx-x64/publish/wwwroot",
+			"source": "Intersect.Server/bin/Release/**/osx-x64/publish/wwwroot/**",
 			"target": "Server/wwwroot"
 		},
 		{
