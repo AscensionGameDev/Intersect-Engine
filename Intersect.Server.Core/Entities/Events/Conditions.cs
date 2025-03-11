@@ -1,4 +1,5 @@
 using Intersect.Enums;
+using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.GameObjects.Conditions.ConditionMetadata;
 using Intersect.Framework.Core.GameObjects.Events;
@@ -509,6 +510,15 @@ public static partial class Conditions
         QuestDescriptor questDescriptor)
     {
         return player.Map?.ZoneType == condition.ZoneType;
+    }
+
+    public static bool MeetsCondition(
+        CombatCondition condition,
+        Player player,
+        Event eventInstance,
+        QuestDescriptor questDescriptor)
+    {
+        return player.CombatTimer > Timing.Global.Milliseconds;
     }
 
     //Variable Comparison Processing

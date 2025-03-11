@@ -39,4 +39,6 @@ public enum ConditionType
     MapZoneTypeIs,
 
     CheckEquipment,
+
+    IsInCombat,
 }

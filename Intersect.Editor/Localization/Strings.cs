@@ -1,5 +1,6 @@
 using System.Reflection;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.GameObjects.Conditions.ConditionMetadata;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
@@ -362,6 +363,11 @@ public static partial class Strings
     public static string GetEventConditionalDesc(CheckEquippedSlot condition)
     {
         return EventConditionDesc.checkequippedslot.ToString(condition.Name);
+    }
+
+    public static string GetEventConditionalDesc(CombatCondition condition)
+    {
+        return EventConditionDesc.Combat.ToString();
     }
 
     public static string GetVariableComparisonString(VariableComparison comparison)
@@ -2461,27 +2467,28 @@ Tick timer saved in server config.json.";
             {5, @"Does Not Equal"}
         };
 
-        public static Dictionary<int, LocalizedString> conditions = new Dictionary<int, LocalizedString>
+        public static Dictionary<ConditionType, LocalizedString> conditions = new Dictionary<ConditionType, LocalizedString>
         {
-            {0, @"Variable Is..."},
-            {4, @"Has item..."},
-            {5, @"Class is..."},
-            {6, @"Knows spell..."},
-            {7, @"Level or Stat is..."},
-            {8, @"Self Switch is..."},
-            {9, @"Power level is..."},
-            {10, @"Time is between..."},
-            {11, @"Can Start Quest..."},
-            {12, @"Quest In Progress..."},
-            {13, @"Quest Completed..."},
-            {14, @"No NPCs on Map..."},
-            {15, @"Gender is..."},
-            {16, @"Map is..."},
-            {17, @"Item Equipped is..."},
-            {18, @"Has X free Inventory slots..." },
-            {19, @"In Guild With At Least Rank..." },
-            {20, @"Map Zone Type is..." },
-            {21, @"Check Equipped Slot..." },
+            {ConditionType.VariableIs, @"Variable Is..."},
+            {ConditionType.HasItem, @"Has item..."},
+            {ConditionType.ClassIs, @"Class is..."},
+            {ConditionType.KnowsSpell, @"Knows spell..."},
+            {ConditionType.LevelOrStat, @"Level or Stat is..."},
+            {ConditionType.SelfSwitch, @"Self Switch is..."},
+            {ConditionType.AccessIs, @"Power level is..."},
+            {ConditionType.TimeBetween, @"Time is between..."},
+            {ConditionType.CanStartQuest, @"Can Start Quest..."},
+            {ConditionType.QuestInProgress, @"Quest In Progress..."},
+            {ConditionType.QuestCompleted, @"Quest Completed..."},
+            {ConditionType.NoNpcsOnMap, @"No NPCs on Map..."},
+            {ConditionType.GenderIs, @"Gender is..."},
+            {ConditionType.MapIs, @"Map is..."},
+            {ConditionType.IsItemEquipped, @"Item Equipped is..."},
+            {ConditionType.HasFreeInventorySlots, @"Has X free Inventory slots..." },
+            {ConditionType.InGuildWithRank, @"In Guild With At Least Rank..." },
+            {ConditionType.MapZoneTypeIs, @"Map Zone Type is..." },
+            {ConditionType.CheckEquipment, @"Check Equipped Slot..." },
+            {ConditionType.IsInCombat, @"Is in Combat" },
         };
 
         public static LocalizedString endrange = @"End Range:";
@@ -2659,6 +2666,8 @@ Tick timer saved in server config.json.";
         public static LocalizedString checkequippedslot = @"Player has slot {00} occupied";
 
         public static LocalizedString Class = @"Player's class is {00}";
+
+        public static LocalizedString Combat = @"Is in Combat";
 
         public static LocalizedString contains = @"contains {00}";
 
