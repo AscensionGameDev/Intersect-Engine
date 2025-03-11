@@ -2488,7 +2488,7 @@ Tick timer saved in server config.json.";
             {ConditionType.InGuildWithRank, @"In Guild With At Least Rank..." },
             {ConditionType.MapZoneTypeIs, @"Map Zone Type is..." },
             {ConditionType.CheckEquipment, @"Check Equipped Slot..." },
-            {ConditionType.IsOnCombat, @"Is on Combat" },
+            {ConditionType.IsInCombat, @"Is on Combat" },
         };
 
         public static LocalizedString endrange = @"End Range:";

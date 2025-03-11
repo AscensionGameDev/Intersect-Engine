@@ -228,7 +228,7 @@ public partial class EventCommandConditionalBranch : UserControl
                 _variableControl.Show();
                 break;
 
-            case ConditionType.IsOnCombat:
+            case ConditionType.IsInCombat:
                 break;
 
             default:
@@ -536,7 +536,7 @@ public partial class EventCommandConditionalBranch : UserControl
                     Condition = new TimeBetweenCondition();
                     break;
 
-                case ConditionType.IsOnCombat:
+                case ConditionType.IsInCombat:
                     Condition = new CombatCondition();
                     break;
 

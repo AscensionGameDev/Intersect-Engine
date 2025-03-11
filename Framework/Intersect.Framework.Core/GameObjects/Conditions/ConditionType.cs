@@ -40,5 +40,5 @@ public enum ConditionType
 
     CheckEquipment,
 
-    IsOnCombat,
+    IsInCombat,
 }
