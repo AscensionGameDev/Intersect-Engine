@@ -96,7 +96,7 @@ public partial class EventCommandConditionalBranch : UserControl
         var typeIndex = 0;
         foreach (var item in Strings.EventConditional.conditions)
         {
-            if (item.Key == (int)Condition.Type)
+            if (item.Key == Condition.Type)
             {
                 cmbConditionType.SelectedIndex = typeIndex;
                 break;
@@ -228,6 +228,9 @@ public partial class EventCommandConditionalBranch : UserControl
                 _variableControl.Show();
                 break;
 
+            case ConditionType.IsOnCombat:
+                break;
+
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -311,6 +314,9 @@ public partial class EventCommandConditionalBranch : UserControl
 
             case VariableIsCondition variableIsCondition:
                 _variableControl.SetupFormValues(variableIsCondition);
+                break;
+
+            case CombatCondition _:
                 break;
 
             default:
@@ -398,6 +404,9 @@ public partial class EventCommandConditionalBranch : UserControl
                 _variableControl.SaveFormValues(variableIsCondition);
                 break;
 
+            case CombatCondition _:
+                break;
+
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -438,7 +447,7 @@ public partial class EventCommandConditionalBranch : UserControl
     private void cmbConditionType_SelectedIndexChanged(object sender, EventArgs e)
     {
         var type = Strings.EventConditional.conditions.FirstOrDefault(x => x.Value == cmbConditionType.Text).Key;
-        if (type < 4)
+        if (type < ConditionType.HasItem)
         {
             type = 0;
         }
@@ -518,7 +527,6 @@ public partial class EventCommandConditionalBranch : UserControl
                     Condition = new SelfSwitchCondition();
                     break;
 
-
                 case ConditionType.VariableIs:
                     Condition = new VariableIsCondition();
                     SetupFormValues(Condition);
@@ -526,6 +534,10 @@ public partial class EventCommandConditionalBranch : UserControl
 
                 case ConditionType.TimeBetween:
                     Condition = new TimeBetweenCondition();
+                    break;
+
+                case ConditionType.IsOnCombat:
+                    Condition = new CombatCondition();
                     break;
 
                 default:
