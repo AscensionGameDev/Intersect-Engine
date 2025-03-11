@@ -21,6 +21,10 @@
 			"target": "Server"
 		},
 		{
+			"source": "Intersect.Server/bin/Release/**/osx-x64/publish/wwwroot",
+			"target": "Server/wwwroot"
+		},
+		{
 			"source": "assets_full/**",
 			"target": "Client and Editor"
 		},

@@ -29,6 +29,10 @@
 			"target": "Server"
 		},
 		{
+			"source": "Intersect.Server/bin/Release/**/win-x64/publish/wwwroot",
+			"target": "Server/wwwroot"
+		},
+		{
 			"source": "Documentation/Intersect Documentation.url",
 			"target": "Intersect Documentation.url"
 		}
