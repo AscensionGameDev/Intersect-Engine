@@ -184,19 +184,19 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
 
                     // So the thing that was broken if the above was commented out was the editor (or presumably
                     // anything that had an expired token) -- I believe the below fixes it
-                    options.ForwardDefaultSelector = context =>
-                    {
-                        var requestPath = context.Request.Path;
-                        foreach (var challengePath in ChallengePaths)
-                        {
-                            if (requestPath.StartsWithSegments(challengePath))
-                            {
-                                return JwtBearerDefaults.AuthenticationScheme;
-                            }
-                        }
-
-                        return null;
-                    };
+                    // options.ForwardDefaultSelector = context =>
+                    // {
+                    //     var requestPath = context.Request.Path;
+                    //     foreach (var challengePath in ChallengePaths)
+                    //     {
+                    //         if (requestPath.StartsWithSegments(challengePath))
+                    //         {
+                    //             return JwtBearerDefaults.AuthenticationScheme;
+                    //         }
+                    //     }
+                    //
+                    //     return null;
+                    // };
                     options.Events.OnSignedIn += async (context) => { };
                     options.Events.OnSigningIn += async (context) => { };
                     options.Events.OnSigningOut += async (context) => { };
@@ -254,6 +254,19 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                         ValidateLifetime = false,
                         ValidateIssuerSigningKey = true,
                     };
+                    options.ForwardDefaultSelector += context =>
+                    {
+                        var requestPath = context.Request.Path;
+                        foreach (var challengePath in ChallengePaths)
+                        {
+                            if (requestPath.StartsWithSegments(challengePath))
+                            {
+                                return null;
+                            }
+                        }
+
+                        return CookieAuthenticationDefaults.AuthenticationScheme;
+                    };
                     builder.Configuration.Bind($"Api.{nameof(JwtBearerOptions)}", options);
                     options.TokenValidationParameters.ValidAudience ??= tokenGenerationOptions.Audience;
                     options.TokenValidationParameters.ValidIssuer ??= tokenGenerationOptions.Issuer;
@@ -270,6 +283,7 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                                 context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                                 context.HandleResponse();
                             }
+                            context.HandleResponse();
                         },
                         OnMessageReceived = async context => { },
                         OnTokenValidated = async context =>
