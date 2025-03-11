@@ -1,7 +1,8 @@
 {
 	"directories": [
 		"Client and Editor",
-		"Server"
+		"Server",
+		"Server/wwwroot"
 	],
 	"includes": [
 		{
