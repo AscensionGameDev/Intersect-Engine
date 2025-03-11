@@ -1007,10 +1007,7 @@ public partial class FrmEvent : Form
         {
             grpEntityOptions.Hide();
             cmbTrigger.Items.Clear();
-            for (var i = 0; i < Strings.EventEditor.commontriggers.Count; i++)
-            {
-                cmbTrigger.Items.Add(Strings.EventEditor.commontriggers[i]);
-            }
+            cmbTrigger.Items.AddRange([.. Strings.EventEditor.CommonTriggers.Values]);
         }
         else
         {

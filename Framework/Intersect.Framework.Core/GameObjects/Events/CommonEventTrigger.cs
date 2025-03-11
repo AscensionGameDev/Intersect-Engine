@@ -41,4 +41,6 @@ public enum CommonEventTrigger
     UserVariableChange,
 
     LevelDown,
+
+    Logout,
 }

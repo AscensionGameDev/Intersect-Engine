@@ -2828,28 +2828,29 @@ Tick timer saved in server config.json.";
 
         public static LocalizedString commandlist = @"Commands:";
 
-        public static Dictionary<int, LocalizedString> commontriggers = new Dictionary<int, LocalizedString>
+        public static Dictionary<CommonEventTrigger, LocalizedString> CommonTriggers = new()
         {
-            {0, @"None"},
-            {1, @"Login"},
-            {2, @"Level Up"},
-            {3, @"On Respawn"},
-            {4, @"/Command"},
-            {5, @"Autorun"},
-            {6, @"PVP Kill"},
-            {7, @"PVP Death"},
-            {8, @"Player Interact"},
-            {9, @"Equipment Changed"},
-            {10, @"Player Variable Changed"},
-            {11, @"Server Variable Changed"},
-            {12, @"Guild Member Joined"},
-            {13, @"Guild Member Left"},
-            {14, @"Guild Member Kicked"},
-            {15, @"Guild Variable Changed"},
-            {16, @"Inventory Changed"},
-            {17, @"Map Changed"},
-            {18, @"User Variable Changed"},
-            {19, @"Level Down"},
+            {CommonEventTrigger.None, @"None"},
+            {CommonEventTrigger.Login, @"Login"},
+            {CommonEventTrigger.LevelUp, @"Level Up"},
+            {CommonEventTrigger.OnRespawn, @"On Respawn"},
+            {CommonEventTrigger.SlashCommand, @"/Command"},
+            {CommonEventTrigger.Autorun, @"Autorun"},
+            {CommonEventTrigger.PVPKill, @"PVP Kill"},
+            {CommonEventTrigger.PVPDeath, @"PVP Death"},
+            {CommonEventTrigger.PlayerInteract, @"Player Interact"},
+            {CommonEventTrigger.EquipChange, @"Equipment Changed"},
+            {CommonEventTrigger.PlayerVariableChange, @"Player Variable Changed"},
+            {CommonEventTrigger.ServerVariableChange, @"Server Variable Changed"},
+            {CommonEventTrigger.GuildMemberJoined, @"Guild Member Joined"},
+            {CommonEventTrigger.GuildMemberLeft, @"Guild Member Left"},
+            {CommonEventTrigger.GuildMemberKicked, @"Guild Member Kicked"},
+            {CommonEventTrigger.GuildVariableChange, @"Guild Variable Changed"},
+            {CommonEventTrigger.InventoryChanged, @"Inventory Changed"},
+            {CommonEventTrigger.MapChanged, @"Map Changed"},
+            {CommonEventTrigger.UserVariableChange, @"User Variable Changed"},
+            {CommonEventTrigger.LevelDown, @"Level Down"},
+            {CommonEventTrigger.Logout, @"Logout"},
         };
 
         public static LocalizedString conditions = @"Conditions";

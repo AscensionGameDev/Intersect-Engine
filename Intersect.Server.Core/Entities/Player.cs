@@ -512,6 +512,11 @@ public partial class Player : Entity
             instance.RemoveEntity(this);
         }
 
+        foreach (var player in OnlinePlayersById.Values)
+        {
+            player.StartCommonEventsWithTrigger(CommonEventTrigger.Logout, param: Name);
+        }
+
         RemoveFromInstanceController(MapInstanceId);
 
         //Update parties
@@ -7203,39 +7208,49 @@ public partial class Player : Entity
                     switch (trigger)
                     {
                         case CommonEventTrigger.None:
-                            break;
                         case CommonEventTrigger.Login:
-                            break;
                         case CommonEventTrigger.LevelUp:
-                            break;
                         case CommonEventTrigger.OnRespawn:
-                            break;
                         case CommonEventTrigger.SlashCommand:
-                            break;
                         case CommonEventTrigger.Autorun:
+                        case CommonEventTrigger.EquipChange:
+                        case CommonEventTrigger.PlayerVariableChange:
+                        case CommonEventTrigger.ServerVariableChange:
+                        case CommonEventTrigger.GuildVariableChange:
+                        case CommonEventTrigger.InventoryChanged:
+                        case CommonEventTrigger.MapChanged:
+                        case CommonEventTrigger.UserVariableChange:
+                        case CommonEventTrigger.LevelDown:
                             break;
+
                         case CommonEventTrigger.PVPKill:
                             //Add victim as a parameter
                             newEvent.SetParam("victim", param);
-
                             break;
+
                         case CommonEventTrigger.PVPDeath:
                             //Add killer as a parameter
                             newEvent.SetParam("killer", param);
-
                             break;
+
                         case CommonEventTrigger.PlayerInteract:
                             //Interactee as a parameter
                             newEvent.SetParam("triggered", param);
-
                             break;
+
                         case CommonEventTrigger.GuildMemberJoined:
                         case CommonEventTrigger.GuildMemberKicked:
                         case CommonEventTrigger.GuildMemberLeft:
                             newEvent.SetParam("member", param);
                             newEvent.SetParam("guild", command);
-
                             break;
+
+                        case CommonEventTrigger.Logout:
+                            newEvent.SetParam("player", param);
+                            break;
+
+                        default:
+                            throw Exceptions.UnreachableInvalidEnum(trigger);
                     }
 
                     var newStack = new CommandInstance(newEvent.PageInstance.MyPage);
