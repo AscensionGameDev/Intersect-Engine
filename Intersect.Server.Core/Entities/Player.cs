@@ -7207,6 +7207,22 @@ public partial class Player : Entity
 
                     switch (trigger)
                     {
+                        case CommonEventTrigger.None:
+                        case CommonEventTrigger.Login:
+                        case CommonEventTrigger.LevelUp:
+                        case CommonEventTrigger.OnRespawn:
+                        case CommonEventTrigger.SlashCommand:
+                        case CommonEventTrigger.Autorun:
+                        case CommonEventTrigger.EquipChange:
+                        case CommonEventTrigger.PlayerVariableChange:
+                        case CommonEventTrigger.ServerVariableChange:
+                        case CommonEventTrigger.GuildVariableChange:
+                        case CommonEventTrigger.InventoryChanged:
+                        case CommonEventTrigger.MapChanged:
+                        case CommonEventTrigger.UserVariableChange:
+                        case CommonEventTrigger.LevelDown:
+                            break;
+
                         case CommonEventTrigger.PVPKill:
                             //Add victim as a parameter
                             newEvent.SetParam("victim", param);
@@ -7232,6 +7248,9 @@ public partial class Player : Entity
                         case CommonEventTrigger.Logout:
                             newEvent.SetParam("player", param);
                             break;
+
+                        default:
+                            throw Exceptions.UnreachableInvalidEnum(trigger);
                     }
 
                     var newStack = new CommandInstance(newEvent.PageInstance.MyPage);
