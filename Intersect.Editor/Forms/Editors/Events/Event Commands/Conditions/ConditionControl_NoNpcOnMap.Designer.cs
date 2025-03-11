@@ -1,6 +1,6 @@
 ﻿namespace Intersect.Editor.Forms.Editors.Events.Event_Commands.Conditions;
 
-partial class ConditionControl_NPC
+partial class ConditionControl_NoNpcOnMap
 {
     /// <summary> 
     /// Variável de designer necessária.

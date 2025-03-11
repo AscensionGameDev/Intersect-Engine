@@ -4,9 +4,9 @@ using Intersect.Framework.Core.GameObjects.NPCs;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands.Conditions;
 
-public partial class ConditionControl_NPC : UserControl
+public partial class ConditionControl_NoNpcOnMap : UserControl
 {
-    public ConditionControl_NPC()
+    public ConditionControl_NoNpcOnMap()
     {
         InitializeComponent();
         InitLocalization();

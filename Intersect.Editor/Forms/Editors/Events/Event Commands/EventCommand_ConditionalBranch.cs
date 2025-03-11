@@ -22,7 +22,7 @@ public partial class EventCommandConditionalBranch : UserControl
     private readonly ConditionControl_HasItemOrSlots _itemControl;
     private readonly ConditionControl_Map _mapControl;
     private readonly ConditionControl_MapZone _mapZoneControl;
-    private readonly ConditionControl_NPC _npcControl;
+    private readonly ConditionControl_NoNpcOnMap _npcControl;
     private readonly ConditionControl_PlayerClass _playerClassControl;
     private readonly ConditionControl_PlayerGender _playerGenderControl;
     private readonly ConditionControl_PlayerGuild _playerGuildControl;
