@@ -1,7 +1,9 @@
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using Intersect.Core;
+using Intersect.Framework.Reflection;
 using Intersect.Server.Web.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -15,42 +17,129 @@ internal partial class ApiService
     private const string SelfSignedCertificateName = "self-signed.crt";
     private const string SelfSignedKeyName = "self-signed.key";
 
+    private const string FileNameAppsettingsJson = "appsettings.json";
+    private static readonly string FileNameAppsettingsEnvironmentJson;
+
+    private static readonly JObject? AppsettingsToken;
+    private static readonly JObject? AppsettingsEnvironmentToken;
+
+    static ApiService()
+    {
+        var dummyHostBuilder = Host.CreateApplicationBuilder();
+        FileNameAppsettingsEnvironmentJson = $"appsettings.{dummyHostBuilder.Environment.EnvironmentName}.json";
+
+        AppsettingsToken = ParseEmbeddedAppsettings(FileNameAppsettingsJson);
+        AppsettingsEnvironmentToken = ParseEmbeddedAppsettings(FileNameAppsettingsEnvironmentJson);
+    }
+
+    private static JObject? ParseEmbeddedAppsettings(string name)
+    {
+        try
+        {
+            if (!Assembly.TryFindResource(name, out var resourceName))
+            {
+                ApplicationContext.CurrentContext.Logger.LogWarning("Failed to find '{AppsettingsName}'", name);
+                return null;
+            }
+
+            using var resourceStream = Assembly.GetManifestResourceStream(resourceName);
+            if (resourceStream == default)
+            {
+                ApplicationContext.Context.Value?.Logger.LogError(
+                    "Failed to open resource stream for '{ResourceName}'",
+                    resourceName
+                );
+                return null;
+            }
+
+            using var reader = new StreamReader(resourceStream, Encoding.UTF8);
+            var rawJson = reader.ReadToEnd();
+            if (!string.IsNullOrWhiteSpace(rawJson))
+            {
+                return JObject.Parse(rawJson);
+            }
+
+            ApplicationContext.Context.Value?.Logger.LogError(
+                "Invalid JSON, embedded resouce was empty or whitespace: '{ResourceName}'",
+                resourceName
+            );
+            return null;
+        }
+        catch (Exception exception)
+        {
+            ApplicationContext.CurrentContext.Logger.LogError(
+                exception,
+                "Exception thrown while loading and parsing '{Name}'",
+                name
+            );
+            return null;
+        }
+    }
+
+    private static void Dump(string fileName, JObject? token)
+    {
+        try
+        {
+            if (token == null)
+            {
+                ApplicationContext.Context.Value?.Logger.LogDebug(
+                    "Skipping dumping '{FileName}' because the token is null",
+                    fileName
+                );
+                return;
+            }
+
+            if (File.Exists(FileNameAppsettingsJson))
+            {
+                ApplicationContext.Context.Value?.Logger.LogDebug(
+                    "Skipping dumping '{FileName}' because the file already exists",
+                    fileName
+                );
+                return;
+            }
+
+            var rawJson = token.ToString(Formatting.Indented);
+            File.WriteAllText(fileName, rawJson, Encoding.UTF8);
+        }
+        catch (Exception exception)
+        {
+            ApplicationContext.CurrentContext.Logger.LogError(
+                exception,
+                "Exception thrown while dumping '{FileName}'",
+                fileName
+            );
+        }
+    }
+
     private static void UnpackAppSettings()
     {
         ApplicationContext.Context.Value?.Logger.LogInformation("Unpacking appsettings...");
-        var hostBuilder = Host.CreateApplicationBuilder();
+        Dump(FileNameAppsettingsJson, AppsettingsToken);
+        Dump(FileNameAppsettingsEnvironmentJson, AppsettingsEnvironmentToken);
+    }
 
-        var names = new[] { "appsettings.json", $"appsettings.{hostBuilder.Environment.EnvironmentName}.json" };
-        var manifestResourceNamePairs = Assembly.GetManifestResourceNames()
-            .Where(mrn => names.Any(mrn.EndsWith))
-            .Select(mrn => (mrn, names.First(mrn.EndsWith)))
-            .ToArray();
-
-        foreach (var (mrn, name) in manifestResourceNamePairs)
+    private static JObject? LoadOrFallbackTo(FileInfo fileInfo, JObject? fallback)
+    {
+        if (!fileInfo.Exists)
         {
-            if (string.IsNullOrWhiteSpace(mrn) || string.IsNullOrWhiteSpace(name))
-            {
-                ApplicationContext.Context.Value?.Logger.LogWarning($"Manifest resource name or file name is null/empty: ({mrn}, {name})");
-                continue;
-            }
+            return fallback;
+        }
 
-            if (File.Exists(name))
-            {
-                ApplicationContext.Context.Value?.Logger.LogDebug($"'{name}' already exists, not unpacking '{mrn}'");
-                continue;
-            }
-
-            using var mrs = Assembly.GetManifestResourceStream(mrn);
-            if (mrs == default)
-            {
-                ApplicationContext.Context.Value?.Logger.LogWarning($"Unable to open stream for embedded content: '{mrn}'");
-                continue;
-            }
-
-            ApplicationContext.Context.Value?.Logger.LogInformation($"Unpacking '{name}' in {Environment.CurrentDirectory}");
-
-            using var fs = File.OpenWrite(name);
-            mrs.CopyTo(fs);
+        try
+        {
+            using var reader = fileInfo.OpenText();
+            var rawJson = reader.ReadToEnd();
+            JObject parsedObject = JObject.Parse(rawJson);
+            return parsedObject;
+        }
+        catch (Exception exception)
+        {
+            ApplicationContext.CurrentContext.Logger.LogError(
+                exception,
+                "Exception thrown while loading and parsing '{Name}' and will return the fallback instead",
+                Path.GetRelativePath(Environment.CurrentDirectory, fileInfo.FullName)
+            );
+            return fallback;
         }
     }
 
@@ -58,15 +147,32 @@ internal partial class ApiService
     {
         var builder = Host.CreateApplicationBuilder();
 
-        var environmentAppSettingsFileName = $"appsettings.{builder.Environment.EnvironmentName}.json";
-        var rawConfiguration = File.ReadAllText(environmentAppSettingsFileName);
-        if (string.IsNullOrWhiteSpace(rawConfiguration) || rawConfiguration.Trim().Length < 2)
+        FileInfo genericConfigurationFileInfo = new(FileNameAppsettingsJson);
+        JObject? genericConfigurationToken = LoadOrFallbackTo(genericConfigurationFileInfo, AppsettingsToken);
+
+        FileInfo environmentConfigurationFileInfo = new(FileNameAppsettingsEnvironmentJson);
+        JObject? environmentConfigurationToken = LoadOrFallbackTo(environmentConfigurationFileInfo, AppsettingsToken);
+
+        JsonMergeSettings jsonMergeSettings = new()
         {
-            rawConfiguration = "{}";
+            MergeArrayHandling = MergeArrayHandling.Replace,
+            MergeNullValueHandling = MergeNullValueHandling.Merge,
+            PropertyNameComparison = StringComparison.Ordinal,
+        };
+
+        JObject mergedConfiguration = new();
+
+        if (genericConfigurationToken is not null)
+        {
+            mergedConfiguration.Merge(genericConfigurationToken, jsonMergeSettings);
         }
 
-        var configurationJObject = JsonConvert.DeserializeObject<JObject>(rawConfiguration);
-        if (!configurationJObject.TryGetValue("Api", out var apiSectionJToken))
+        if (environmentConfigurationToken is not null)
+        {
+            mergedConfiguration.Merge(environmentConfigurationToken, jsonMergeSettings);
+        }
+
+        if (!mergedConfiguration.TryGetValue("Api", out var apiSectionJToken))
         {
             apiSectionJToken = JObject.FromObject(new ApiConfiguration());
         }
@@ -103,14 +209,11 @@ internal partial class ApiService
 
         if (apiConfiguration.StaticFilePaths == default)
         {
-            apiConfiguration.StaticFilePaths = new List<StaticFilePathOptions>
-            {
-                new("wwwroot")
-            };
+            apiConfiguration.StaticFilePaths = [new StaticFilePathOptions("wwwroot")];
         }
 
         var updatedApiConfigurationJObject = JObject.FromObject(apiConfiguration);
-        configurationJObject["Api"] = updatedApiConfigurationJObject;
+        mergedConfiguration["Api"] = updatedApiConfigurationJObject;
 
         updatedApiConfigurationJObject[nameof(JwtBearerOptions)] = apiSectionJToken[nameof(JwtBearerOptions)];
         var jwtBearerOptionsToken = updatedApiConfigurationJObject[nameof(JwtBearerOptions)];
@@ -155,10 +258,12 @@ internal partial class ApiService
             tokenValidationParameters[nameof(TokenValidationParameters.ValidIssuer)] = validIssuerToken;
         }
 
-        var updatedAppSettingsJson = configurationJObject.ToString();
-        File.WriteAllText(environmentAppSettingsFileName, updatedAppSettingsJson);
+        var updatedAppSettingsJson = mergedConfiguration.ToString();
+        File.WriteAllText(FileNameAppsettingsEnvironmentJson, updatedAppSettingsJson);
 
-        if (!configurationJObject.TryGetValue("Kestrel", out var kestrelToken) || kestrelToken is not JObject kestrel)
+        // Below this point should be only self-signed certificate generation
+
+        if (!mergedConfiguration.TryGetValue("Kestrel", out var kestrelToken) || kestrelToken is not JObject kestrel)
         {
             return;
         }
