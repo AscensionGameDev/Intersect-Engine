@@ -1102,26 +1102,66 @@ public partial class Entity : IEntity
 
     public virtual HashSet<Entity>? DetermineRenderOrder(HashSet<Entity>? existingRenderSet, IMapInstance? map)
     {
-        _ = (existingRenderSet?.Remove(this));
+        _ = existingRenderSet?.Remove(this);
+
+        if (map == null)
+        {
+            return null;
+        }
+
+        var mapGrid = Globals.MapGrid;
+        if (mapGrid == null)
+        {
+            return null;
+        }
+
+        var renderingEntities = Graphics.RenderingEntities;
+        if (renderingEntities == null)
+        {
+            return null;
+        }
 
         var playerMap = Globals.Me?.MapInstance;
-        if (map == default || playerMap == default || Globals.MapGrid == default)
+        if (playerMap == default)
         {
             return default;
         }
 
         var gridX = playerMap.GridX;
         var gridY = playerMap.GridY;
-        for (var x = gridX - 1; x <= gridX + 1; x++)
-        {
-            for (var y = gridY - 1; y <= gridY + 1; y++)
-            {
-                if (x < 0 || x >= Globals.MapGridWidth || y < 0 || y >= Globals.MapGridHeight)
-                {
-                    continue;
-                }
+        var startX = Math.Max(0, gridX - 1);
+        var startY = Math.Max(0, gridY - 1);
 
-                var mapIdOnGrid = Globals.MapGrid[x, y];
+        var mapGridWidth = Globals.MapGridWidth;
+        var mapGridHeight = Globals.MapGridHeight;
+        var mapGridLimitX = mapGrid.GetLength(0);
+        var mapGridLimitY = mapGrid.GetLength(1);
+        var endX = Math.Min(Math.Min(mapGridWidth, mapGridLimitX) - 1, gridX + 1);
+        var endY = Math.Min(Math.Min(mapGridHeight, mapGridLimitY) - 1, gridY + 1);
+
+        if (mapGridWidth != mapGridLimitX)
+        {
+            ApplicationContext.CurrentContext.Logger.LogWarning(
+                "Possible map grid race condition detected, MapGrid's X dimension is {XLength} but MapGridWidth is {Width}",
+                mapGridLimitX,
+                mapGridWidth
+            );
+        }
+
+        if (mapGridHeight != mapGridLimitY)
+        {
+            ApplicationContext.CurrentContext.Logger.LogWarning(
+                "Possible map grid race condition detected, MapGrid's Y dimension is {YLength} but MapGridHeight is {Height}",
+                mapGridLimitY,
+                mapGridHeight
+            );
+        }
+
+        for (var x = startX; x <= endX; ++x)
+        {
+            for (var y = startY; y <= endY; ++y)
+            {
+                var mapIdOnGrid = mapGrid[x, y];
                 if (mapIdOnGrid != MapId)
                 {
                     continue;
@@ -1151,7 +1191,6 @@ public partial class Entity : IEntity
 
                 entityY = (int)Math.Floor(entityY + OffsetY / TileHeight);
 
-                var renderingEntities = Graphics.RenderingEntities;
                 if (priority >= renderingEntities.GetLength(0) || entityY >= renderingEntities.GetLength(1))
                 {
                     return renderSet;
