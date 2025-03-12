@@ -239,7 +239,6 @@ public partial class SpellItem : SlotItem
 
             _descriptionWindow?.Dispose();
             _descriptionWindow = null;
-            _iconImage_HoverEnter(null, null);
         }
 
         if (!IsDragging)
