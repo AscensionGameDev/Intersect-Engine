@@ -219,6 +219,10 @@ jobs:
         path: |
           Intersect*/bin/Release/**/*
 
+    - name: Force cURL to use HTTP 1.1
+      run: |
+        alias curl="$(which curl) --http1.1"
+
     - name: Setup dotnet
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       uses: actions/setup-dotnet@v4.1.0
