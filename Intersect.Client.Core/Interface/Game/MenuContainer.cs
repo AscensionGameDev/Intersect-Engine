@@ -391,7 +391,7 @@ public partial class MenuContainer : Panel
 
     public void ToggleSpellsWindow()
     {
-        if (_spellsWindow.IsVisible())
+        if (_spellsWindow.IsVisibleInTree)
         {
             _spellsWindow.Hide();
         }
@@ -425,7 +425,7 @@ public partial class MenuContainer : Panel
                           _friendsWindow.IsVisible ||
                           _inventoryWindow.IsVisibleInTree ||
                           _questsWindow.IsVisible() ||
-                          _spellsWindow.IsVisible() ||
+                          _spellsWindow.IsVisibleInTree ||
                           _partyWindow.IsVisible() ||
                           _guildWindow.IsVisibleInTree;
         return windowsOpen;

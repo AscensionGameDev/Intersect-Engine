@@ -1,10 +1,15 @@
+using Intersect.Client.Core;
+using Intersect.Client.Framework.Content;
+using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
+using Intersect.Client.Localization;
 using Intersect.Configuration;
 using Intersect.Framework.Core;
 using Intersect.GameObjects;
@@ -12,236 +17,273 @@ using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game.Spells;
 
-
-public partial class SpellItem
+public partial class SpellItem : SlotItem
 {
+    // Controls
+    private readonly Label _cooldownLabel;
+    private readonly SpellsWindow _spellWindow;
+    private Draggable? _dragIcon;
+    private SpellDescriptionWindow? _descWindow;
 
-    public ImagePanel Container;
-
+    // Drag Handling
     public bool IsDragging;
+    private bool _canDrag;
+    private long _clickTime;
+    private bool _mouseOver;
+    private int _mouseX = -1;
+    private int _mouseY = -1;
 
-    private bool mCanDrag;
+    // Context Menu Handling
+    private readonly MenuItem _useSpellMenuItem;
+    private readonly MenuItem _forgetSpellMenuItem;
 
-    private long mClickTime;
-
-    private Label mCooldownLabel;
-
-    private Guid mCurrentSpellId;
-
-    private SpellDescriptionWindow mDescWindow;
-
-    private Draggable mDragIcon;
-
-    private bool mIconCd;
-
-    private bool mMouseOver;
-
-    private int mMouseX = -1;
-
-    private int mMouseY = -1;
-
-    //Drag/Drop References
-    private SpellsWindow mSpellWindow;
-
-    private string mTexLoaded = string.Empty;
-
-    private int mYindex;
-
-    public ImagePanel Pnl;
-
-    public SpellItem(SpellsWindow spellWindow, int index)
+    public SpellItem(SpellsWindow spellWindow, Base parent, int index, ContextMenu contextMenu)
+        : base(parent, nameof(SpellItem), index, contextMenu)
     {
-        mSpellWindow = spellWindow;
-        mYindex = index;
-    }
+        _spellWindow = spellWindow;
+        TextureFilename = "spellitem.png";
 
-    public void Setup()
-    {
-        Pnl = new ImagePanel(Container, "SpellIcon");
-        Pnl.HoverEnter += pnl_HoverEnter;
-        Pnl.HoverLeave += pnl_HoverLeave;
-        Pnl.Clicked += pnl_Clicked;
-        Pnl.DoubleClicked += Pnl_DoubleClicked;
-        mCooldownLabel = new Label(Pnl, "SpellCooldownLabel");
-        mCooldownLabel.IsHidden = true;
-        mCooldownLabel.TextColor = new Color(0, 255, 255, 255);
-    }
+        _iconImage.HoverEnter += _iconImage_HoverEnter;
+        _iconImage.HoverLeave += _iconImage_HoverLeave;
+        _iconImage.Clicked += _iconImage_Clicked;
+        _iconImage.DoubleClicked += _iconImage_DoubleClicked;
 
-    private void Pnl_DoubleClicked(Base sender, MouseButtonState arguments)
-    {
-        Globals.Me.TryUseSpell(mYindex);
-    }
-
-    void pnl_Clicked(Base sender, MouseButtonState arguments)
-    {
-        switch (arguments.MouseButton)
+        _cooldownLabel = new Label(this, "CooldownLabel")
         {
-            case MouseButton.Left:
-                mClickTime = Timing.Global.MillisecondsUtc + 500;
-                break;
+            IsVisibleInParent = false,
+            FontName = "sourcesansproblack",
+            FontSize = 8,
+            TextColor = new Color(0, 255, 255, 255),
+            Alignment = [Alignments.Center],
+            BackgroundTemplateName = "quantity.png",
+            Padding = new Padding(2),
+        };
 
-            case MouseButton.Right:
-                if (ClientConfiguration.Instance.EnableContextMenus)
-                {
-                    mSpellWindow.OpenContextMenu(mYindex);
-                }
-                else
-                {
-                    Globals.Me?.TryForgetSpell(mYindex);
-                }
-                break;
+        LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+        _contextMenu.ClearChildren();
+        _useSpellMenuItem = _contextMenu.AddItem(Strings.SpellContextMenu.Cast.ToString());
+        _useSpellMenuItem.Clicked += _useSpellMenuItem_Clicked;
+        _forgetSpellMenuItem = _contextMenu.AddItem(Strings.SpellContextMenu.Forget.ToString());
+        _forgetSpellMenuItem.Clicked += _forgetSpellMenuItem_Clicked;
+        _contextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+    }
+
+    #region Context Menu
+
+    public void OpenContextMenu()
+    {
+        // Clear out the old options.
+        _contextMenu.ClearChildren();
+
+        if (Globals.Me?.Spells is not { Length: > 0 } spellSlots)
+        {
+            return;
         }
 
-    }
-
-    void pnl_HoverLeave(Base sender, EventArgs arguments)
-    {
-        mMouseOver = false;
-        mMouseX = -1;
-        mMouseY = -1;
-        if (mDescWindow != null)
+        // No point showing a menu for blank space.
+        if (!SpellDescriptor.TryGet(spellSlots[SlotIndex].Id, out var spell))
         {
-            mDescWindow.Dispose();
-            mDescWindow = null;
+            return;
         }
+
+        // Add our use spell option.
+        _contextMenu.AddChild(_useSpellMenuItem);
+        _useSpellMenuItem.SetText(Strings.SpellContextMenu.Cast.ToString(spell.Name));
+
+        // If this spell is not bound, allow users to forget it!
+        if (!spell.Bound)
+        {
+            _contextMenu.AddChild(_forgetSpellMenuItem);
+            _forgetSpellMenuItem.SetText(Strings.SpellContextMenu.Forget.ToString(spell.Name));
+        }
+
+        _contextMenu.SizeToChildren();
+        _contextMenu.Open(Pos.None);
     }
 
-    void pnl_HoverEnter(Base sender, EventArgs arguments)
+    private void _useSpellMenuItem_Clicked(Base sender, MouseButtonState arguments)
+    {
+        Globals.Me?.TryUseSpell(SlotIndex);
+    }
+
+    private void _forgetSpellMenuItem_Clicked(Base sender, MouseButtonState arguments)
+    {
+        Globals.Me?.TryForgetSpell(SlotIndex);
+    }
+
+    #endregion
+
+    #region Mouse Events
+
+    void _iconImage_HoverEnter(Base? sender, EventArgs? arguments)
     {
         if (InputHandler.MouseFocus != null)
         {
             return;
         }
 
-        mMouseOver = true;
-        mCanDrag = true;
+        _mouseOver = true;
+        _canDrag = true;
+
         if (Globals.InputManager.IsMouseButtonDown(MouseButton.Left))
         {
-            mCanDrag = false;
-
+            _canDrag = false;
             return;
         }
 
-        if (mDescWindow != null)
+        if (_descWindow != null)
         {
-            mDescWindow.Dispose();
-            mDescWindow = null;
+            _descWindow.Dispose();
+            _descWindow = null;
         }
 
-        mDescWindow = new SpellDescriptionWindow(Globals.Me.Spells[mYindex].Id, mSpellWindow.X, mSpellWindow.Y);
+        if (Globals.Me?.Spells is not { Length: > 0 } spellSlots)
+        {
+            return;
+        }
+
+        _descWindow = new SpellDescriptionWindow(spellSlots[SlotIndex].Id, _spellWindow.X, _spellWindow.Y);
     }
 
-    public FloatRect RenderBounds()
+    void _iconImage_HoverLeave(Base sender, EventArgs arguments)
     {
-        var rect = new FloatRect()
-        {
-            X = Pnl.ToCanvas(new Point(0, 0)).X,
-            Y = Pnl.ToCanvas(new Point(0, 0)).Y,
-            Width = Pnl.Width,
-            Height = Pnl.Height
-        };
+        _mouseOver = false;
+        _mouseX = -1;
+        _mouseY = -1;
 
-        return rect;
+        if (_descWindow != null)
+        {
+            _descWindow.Dispose();
+            _descWindow = null;
+        }
     }
 
-    public void Update()
+    void _iconImage_Clicked(Base sender, MouseButtonState arguments)
     {
-        var spell = SpellDescriptor.Get(Globals.Me.Spells[mYindex].Id);
-        if (!IsDragging &&
-            (mTexLoaded != "" && spell == null ||
-             spell != null && mTexLoaded != spell.Icon ||
-             mCurrentSpellId != Globals.Me.Spells[mYindex].Id ||
-             mIconCd !=
-             Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].Id) > Timing.Global.Milliseconds ||
-             Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].Id) > Timing.Global.Milliseconds))
+        switch (arguments.MouseButton)
         {
-            mCooldownLabel.IsHidden = true;
-            if (spell != null)
-            {
-                var spellTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Spell, spell.Icon);
-                if (spellTex != null)
+            case MouseButton.Left:
+                _clickTime = Timing.Global.MillisecondsUtc + 500;
+                break;
+
+            case MouseButton.Right:
+                if (ClientConfiguration.Instance.EnableContextMenus)
                 {
-                    Pnl.Texture = spellTex;
-                    if (Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].Id) >
-                        Timing.Global.Milliseconds)
-                    {
-                        Pnl.RenderColor = new Color(100, 255, 255, 255);
-                    }
-                    else
-                    {
-                        Pnl.RenderColor = new Color(255, 255, 255, 255);
-                    }
+                    OpenContextMenu();
                 }
                 else
                 {
-                    if (Pnl.Texture != null)
-                    {
-                        Pnl.Texture = null;
-                    }
+                    Globals.Me?.TryForgetSpell(SlotIndex);
                 }
+                break;
+        }
+    }
 
-                mTexLoaded = spell.Icon;
-                mCurrentSpellId = Globals.Me.Spells[mYindex].Id;
-                mIconCd = Globals.Me.IsSpellOnCooldown(mYindex);
+    private void _iconImage_DoubleClicked(Base sender, MouseButtonState arguments)
+    {
+        Globals.Me?.TryUseSpell(SlotIndex);
+    }
 
-                if (mIconCd)
-                {
-                    mCooldownLabel.IsHidden = false;
-                    var remaining = Globals.Me.GetSpellRemainingCooldown(mYindex);
-                    mCooldownLabel.Text = TimeSpan.FromMilliseconds(remaining).WithSuffix();
-                }
+    #endregion
+
+    public override void Update()
+    {
+        if (Globals.Me == default)
+        {
+            return;
+        }
+
+        if (Globals.Me?.Spells is not { Length: > 0 } spellSlots)
+        {
+            return;
+        }
+
+        if (!SpellDescriptor.TryGet(spellSlots[SlotIndex].Id, out var spell))
+        {
+            _iconImage.Hide();
+            _iconImage.Texture = null;
+            _cooldownLabel.Hide();
+            return;
+        }
+
+        _cooldownLabel.IsVisibleInParent = !IsDragging && Globals.Me.IsSpellOnCooldown(SlotIndex);
+        if (_cooldownLabel.IsVisibleInParent)
+        {
+            var itemCooldownRemaining = Globals.Me.GetSpellRemainingCooldown(SlotIndex);
+            _cooldownLabel.Text = TimeSpan.FromMilliseconds(itemCooldownRemaining).WithSuffix("0.0");
+            _iconImage.RenderColor.A = 100;
+        }
+        else
+        {
+            _iconImage.RenderColor.A = 255;
+        }
+
+        if (Path.GetFileName(_iconImage.Texture?.Name) != spell.Icon)
+        {
+            var spellTex = Globals.ContentManager?.GetTexture(TextureType.Spell, spell.Icon);
+            if (spellTex != null)
+            {
+                _iconImage.Texture = spellTex;
+                _iconImage.RenderColor.A = (byte)(_cooldownLabel.IsVisibleInParent ? 100 : 255);
+                _iconImage.IsVisibleInParent = true;
             }
             else
             {
-                if (Pnl.Texture != null)
+                if (_iconImage.Texture != null)
                 {
-                    Pnl.Texture = null;
+                    _iconImage.Texture = null;
+                    _iconImage.IsVisibleInParent = false;
                 }
+            }
 
-                mTexLoaded = string.Empty;
+            if (_descWindow != null)
+            {
+                _descWindow.Dispose();
+                _descWindow = null;
+                _iconImage_HoverEnter(null, null);
             }
         }
 
         if (!IsDragging)
         {
-            if (mMouseOver)
+            if (_mouseOver)
             {
                 if (!Globals.InputManager.IsMouseButtonDown(MouseButton.Left))
                 {
-                    mCanDrag = true;
-                    mMouseX = -1;
-                    mMouseY = -1;
-                    if (Timing.Global.MillisecondsUtc < mClickTime)
+                    _canDrag = true;
+                    _mouseX = -1;
+                    _mouseY = -1;
+                    if (Timing.Global.MillisecondsUtc < _clickTime)
                     {
-                        mClickTime = 0;
+                        _clickTime = 0;
                     }
                 }
                 else
                 {
-                    if (mCanDrag && Draggable.Active == null)
+                    if (_canDrag && Draggable.Active == null)
                     {
-                        if (mMouseX == -1 || mMouseY == -1)
+                        if (_mouseX == -1 || _mouseY == -1)
                         {
-                            mMouseX = InputHandler.MousePosition.X - Pnl.ToCanvas(new Point(0, 0)).X;
-                            mMouseY = InputHandler.MousePosition.Y - Pnl.ToCanvas(new Point(0, 0)).Y;
+                            _mouseX = InputHandler.MousePosition.X - _iconImage.ToCanvas(new Point(0, 0)).X;
+                            _mouseY = InputHandler.MousePosition.Y - _iconImage.ToCanvas(new Point(0, 0)).Y;
                         }
                         else
                         {
-                            var xdiff = mMouseX -
-                                        (InputHandler.MousePosition.X - Pnl.ToCanvas(new Point(0, 0)).X);
+                            var xdiff = _mouseX -
+                                        (InputHandler.MousePosition.X - _iconImage.ToCanvas(new Point(0, 0)).X);
 
-                            var ydiff = mMouseY -
-                                        (InputHandler.MousePosition.Y - Pnl.ToCanvas(new Point(0, 0)).Y);
+                            var ydiff = _mouseY -
+                                        (InputHandler.MousePosition.Y - _iconImage.ToCanvas(new Point(0, 0)).Y);
 
                             if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                             {
                                 IsDragging = true;
-                                mDragIcon = new Draggable(
-                                    Pnl.ToCanvas(new Point(0, 0)).X + mMouseX,
-                                    Pnl.ToCanvas(new Point(0, 0)).X + mMouseY, Pnl.Texture, Pnl.RenderColor
+                                _iconImage.IsVisibleInParent = false;
+                                _dragIcon = new Draggable(
+                                    _iconImage.ToCanvas(new Point(0, 0)).X + _mouseX,
+                                    _iconImage.ToCanvas(new Point(0, 0)).X + _mouseY, _iconImage.Texture, _iconImage.RenderColor
                                 );
-
-                                mTexLoaded = string.Empty;
                             }
                         }
                     }
@@ -250,15 +292,17 @@ public partial class SpellItem
         }
         else
         {
-            if (mDragIcon.Update())
+            if (_dragIcon?.Update() == true)
             {
                 //Drug the item and now we stopped
                 IsDragging = false;
+                _iconImage.IsVisibleInParent = true;
+
                 var dragRect = new FloatRect(
-                    mDragIcon.X - (Container.Padding.Left + Container.Padding.Right) / 2,
-                    mDragIcon.Y - (Container.Padding.Top + Container.Padding.Bottom) / 2,
-                    (Container.Padding.Left + Container.Padding.Right) / 2 + Pnl.Width,
-                    (Container.Padding.Top + Container.Padding.Bottom) / 2 + Pnl.Height
+                    _dragIcon.X - (Padding.Left + Padding.Right) / 2f,
+                    _dragIcon.Y - (Padding.Top + Padding.Bottom) / 2f,
+                    (Padding.Left + Padding.Right) / 2f + _iconImage.Width,
+                    (Padding.Top + Padding.Bottom) / 2f + _iconImage.Height
                 );
 
                 float bestIntersect = 0;
@@ -266,20 +310,25 @@ public partial class SpellItem
 
                 //So we picked up an item and then dropped it. Lets see where we dropped it to.
                 //Check spell first.
-                if (mSpellWindow.RenderBounds().IntersectsWith(dragRect))
+                if (_spellWindow.RenderBounds().IntersectsWith(dragRect))
                 {
                     for (var i = 0; i < Options.Instance.Player.MaxSpells; i++)
                     {
-                        if (i < mSpellWindow.Items.Count &&
-                            mSpellWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
+                        if (_spellWindow.Items[i] is not SpellItem spellSlot)
                         {
-                            if (FloatRect.Intersect(mSpellWindow.Items[i].RenderBounds(), dragRect).Width *
-                                FloatRect.Intersect(mSpellWindow.Items[i].RenderBounds(), dragRect).Height >
+                            continue;
+                        }
+
+                        if (i < _spellWindow.Items.Count &&
+                            spellSlot.RenderBounds().IntersectsWith(dragRect))
+                        {
+                            if (FloatRect.Intersect(spellSlot.RenderBounds(), dragRect).Width *
+                                FloatRect.Intersect(spellSlot.RenderBounds(), dragRect).Height >
                                 bestIntersect)
                             {
                                 bestIntersect =
-                                    FloatRect.Intersect(mSpellWindow.Items[i].RenderBounds(), dragRect).Width *
-                                    FloatRect.Intersect(mSpellWindow.Items[i].RenderBounds(), dragRect).Height;
+                                    FloatRect.Intersect(spellSlot.RenderBounds(), dragRect).Width *
+                                    FloatRect.Intersect(spellSlot.RenderBounds(), dragRect).Height;
 
                                 bestIntersectIndex = i;
                             }
@@ -288,9 +337,9 @@ public partial class SpellItem
 
                     if (bestIntersectIndex > -1)
                     {
-                        if (mYindex != bestIntersectIndex && !Globals.Me.IsCasting)
+                        if (SlotIndex != bestIntersectIndex && !Globals.Me.IsCasting)
                         {
-                            Globals.Me.SwapSpells(bestIntersectIndex, mYindex);
+                            Globals.Me.SwapSpells(bestIntersectIndex, SlotIndex);
                         }
                     }
                 }
@@ -321,13 +370,25 @@ public partial class SpellItem
 
                     if (bestIntersectIndex > -1)
                     {
-                        Globals.Me.AddToHotbar((byte) bestIntersectIndex, 1, mYindex);
+                        Globals.Me.AddToHotbar((byte) bestIntersectIndex, 1, SlotIndex);
                     }
                 }
 
-                mDragIcon.Dispose();
+                _dragIcon.Dispose();
             }
         }
     }
 
+    public FloatRect RenderBounds()
+    {
+        var rect = new FloatRect()
+        {
+            X = _iconImage.ToCanvas(new Point(0, 0)).X,
+            Y = _iconImage.ToCanvas(new Point(0, 0)).Y,
+            Width = _iconImage.Width,
+            Height = _iconImage.Height
+        };
+
+        return rect;
+    }
 }
