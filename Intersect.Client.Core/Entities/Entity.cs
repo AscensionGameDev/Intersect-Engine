@@ -2523,9 +2523,9 @@ public partial class Entity : IEntity
                                     break;
 
                                 case Player player:
-                                    //Return the entity key as this should block the player.  Only exception is if the MapZone this entity is on is passable.
-                                    var entityMap = Maps.MapInstance.Get(player.MapId);
-                                    if (Options.Instance.Passability.Passable[(int)entityMap.ZoneType])
+                                    // Return the entity key as this should block the player.  Only exception is if the MapZone this entity is on is passable.
+                                    if (Maps.MapInstance.TryGet(player.MapId, out var playerMapInstance) &&
+                                        Options.Instance.Passability.IsPassable(playerMapInstance.ZoneType))
                                     {
                                         continue;
                                     }

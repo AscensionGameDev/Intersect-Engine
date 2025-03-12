@@ -7298,7 +7298,7 @@ public partial class Player : Entity
 
     protected override bool CanPassPlayer(MapController targetMap)
     {
-        return Options.Instance.Passability.Passable[(int)targetMap.ZoneType];
+        return !Options.Instance.Passability.IsPassable(Map.ZoneType);
     }
 
     protected override bool IsBlockedByEvent(
