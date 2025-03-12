@@ -1,6 +1,5 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
@@ -20,7 +19,8 @@ public partial class ShopItem : SlotItem
     private readonly MenuItem _buyMenuItem;
     private ItemDescriptionWindow? _itemDescWindow;
 
-    public ShopItem(ShopWindow shopWindow, Base parent, int index, ContextMenu contextMenu) : base(parent, nameof(ShopItem), index, contextMenu)
+    public ShopItem(ShopWindow shopWindow, Base parent, int index, ContextMenu contextMenu)
+        : base(parent, nameof(ShopItem), index, contextMenu)
     {
         _shopWindow = shopWindow;
         _mySlot = index;
@@ -33,11 +33,10 @@ public partial class ShopItem : SlotItem
 
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
-        //TODO: Is this a memory leak?
-        _contextMenu.ClearChildren();
-        _buyMenuItem = _contextMenu.AddItem(Strings.ShopContextMenu.Buy);
+        contextMenu.ClearChildren();
+        _buyMenuItem = contextMenu.AddItem(Strings.ShopContextMenu.Buy);
         _buyMenuItem.Clicked += _buyMenuItem_Clicked;
-        _contextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        contextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
         LoadItem();
     }
@@ -124,7 +123,7 @@ public partial class ShopItem : SlotItem
         Globals.Me?.TryBuyItem(_mySlot);
     }
 
-    public override void OpenContextMenu()
+    protected override void OnContextMenuOpening(ContextMenu contextMenu)
     {
         if (Globals.GameShop is not { SellingItems.Count: > 0 } gameShop)
         {
@@ -136,8 +135,10 @@ public partial class ShopItem : SlotItem
             return;
         }
 
+        contextMenu.ClearChildren();
+        contextMenu.AddChild(_buyMenuItem);
         _buyMenuItem.SetText(Strings.ShopContextMenu.Buy.ToString(item.Name));
-        base.OpenContextMenu();
+        base.OnContextMenuOpening(contextMenu);
     }
 
     public void LoadItem()

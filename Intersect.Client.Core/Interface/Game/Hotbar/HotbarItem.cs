@@ -18,16 +18,13 @@ using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game.Hotbar;
 
-
-public partial class HotbarItem
+public partial class HotbarItem : SlotItem
 {
     private const int ItemXPadding = 4;
     private const int ItemYPadding = 4;
 
-    private readonly ImagePanel _contentPanel;
     private readonly Label _cooldownLabel;
     private readonly Label _equipLabel;
-    private readonly ImagePanel _icon;
     private readonly Label _keyLabel;
 
     private bool _canDrag;
@@ -40,7 +37,6 @@ public partial class HotbarItem
     private bool _isEquipped;
     private bool _isFaded;
     private readonly Base _hotbarWindow;
-    private readonly int _hotbarSlotIndex;
     private ControlBinding? _hotKey;
     private Item? _inventoryItem = null;
     private int _inventoryItemIndex = -1;
@@ -54,39 +50,31 @@ public partial class HotbarItem
     private bool _textureLoaded;
 
     public HotbarItem(int hotbarSlotIndex, Base hotbarWindow)
+        : base(hotbarWindow, $"HotbarContainer{hotbarSlotIndex}", hotbarSlotIndex, null)
     {
-        _hotbarSlotIndex = hotbarSlotIndex;
         _hotbarWindow = hotbarWindow;
 
         var column = hotbarSlotIndex % 10;
         var row = hotbarSlotIndex / 10;
 
-        _icon = new ImagePanel(hotbarWindow, $"HotbarContainer{hotbarSlotIndex}")
-        {
-            X = 4 + column * 40,
-            Y = 4 + row * 40,
-            Width = 36,
-            Height = 36,
-            Margin = new Margin(column > 0 ? 4 : 0, row > 0 ? 4 : 0, 0, 0),
-            RestrictToParent = true,
-            TextureFilename = "hotbaritem.png",
-        };
+        X = 4 + column * 40;
+        Y = 4 + row * 40;
+        Width = 36;
+        Height = 36;
+        Margin = new Margin(column > 0 ? 4 : 0, row > 0 ? 4 : 0, 0, 0);
+        RestrictToParent = true;
+        TextureFilename = "hotbaritem.png";
 
-        // Content Panel is layered on top of the container (shows the Item or Spell Icon).
-        _contentPanel = new ImagePanel(_icon, $"{nameof(HotbarIcon)}{_hotbarSlotIndex}")
-        {
-            X = 1,
-            Y = 1,
-            Width = 32,
-            Height = 32,
-        };
-        _contentPanel.HoverEnter += hotbarIcon_HoverEnter;
-        _contentPanel.HoverLeave += hotbarIcon_HoverLeave;
-        _contentPanel.Clicked += hotbarIcon_Clicked;
+        // _iconImage is layered on top of the container (shows the Item or Spell Icon).
+        _iconImage.Name = $"{nameof(HotbarItem)}{SlotIndex}";
+        _iconImage.SetPosition(1, 1);
+        _iconImage.HoverEnter += _iconImage_HoverEnter;
+        _iconImage.HoverLeave += _iconImage_HoverLeave;
+        _iconImage.Clicked += _iconImage_Clicked;
 
         var font = GameContentManager.Current.GetFont("sourcesansproblack");
 
-        _equipLabel = new Label(_icon, $"EquipLabel{hotbarSlotIndex}")
+        _equipLabel = new Label(this, $"EquipLabel{hotbarSlotIndex}")
         {
             Alignment = [Alignments.Top, Alignments.Left],
             X = 26,
@@ -102,7 +90,7 @@ public partial class HotbarItem
             TextColorOverride = Color.White,
         };
 
-        _quantityLabel = new Label(_icon, $"QuantityLabel{hotbarSlotIndex}")
+        _quantityLabel = new Label(this, $"QuantityLabel{hotbarSlotIndex}")
         {
             Alignment = [Alignments.Top, Alignments.Right],
             X = 32,
@@ -117,7 +105,7 @@ public partial class HotbarItem
             TextColorOverride = Color.White,
         };
 
-        _cooldownLabel = new Label(_icon, $"CooldownLabel{hotbarSlotIndex}")
+        _cooldownLabel = new Label(this, $"CooldownLabel{hotbarSlotIndex}")
         {
             Alignment = [Alignments.Center],
             TextAlign = Pos.Center,
@@ -133,7 +121,7 @@ public partial class HotbarItem
             TextColorOverride = Color.White,
         };
 
-        _keyLabel = new Label(_icon, $"KeyLabel{hotbarSlotIndex}")
+        _keyLabel = new Label(this, $"KeyLabel{hotbarSlotIndex}")
         {
             Alignment = [Alignments.Bottom, Alignments.Right],
             X = 31,
@@ -148,10 +136,13 @@ public partial class HotbarItem
         };
     }
 
-    public ImagePanel HotbarIcon => _icon;
-
     public void Activate()
     {
+        if (Globals.InputManager.IsMouseButtonDown(MouseButton.Right))
+        {
+            return;
+        }
+
         if (_currentId != Guid.Empty && Globals.Me != null)
         {
             if (_currentItem != null)
@@ -168,7 +159,7 @@ public partial class HotbarItem
         }
     }
 
-    private void hotbarIcon_Clicked(Base sender, MouseButtonState arguments)
+    private void _iconImage_Clicked(Base sender, MouseButtonState arguments)
     {
         switch (arguments.MouseButton)
         {
@@ -177,12 +168,12 @@ public partial class HotbarItem
                 break;
 
             case MouseButton.Right:
-                Globals.Me?.AddToHotbar(_hotbarSlotIndex, -1, -1);
+                Globals.Me?.AddToHotbar(SlotIndex, -1, -1);
                 break;
         }
     }
 
-    private void hotbarIcon_HoverLeave(Base sender, EventArgs arguments)
+    private void _iconImage_HoverLeave(Base sender, EventArgs arguments)
     {
         _mouseOver = false;
         _mouseX = -1;
@@ -200,7 +191,7 @@ public partial class HotbarItem
         }
     }
 
-    private void hotbarIcon_HoverEnter(Base sender, EventArgs arguments)
+    private void _iconImage_HoverEnter(Base sender, EventArgs arguments)
     {
         if (InputHandler.MouseFocus != null || Globals.Me == null)
         {
@@ -254,10 +245,10 @@ public partial class HotbarItem
     {
         var rect = new FloatRect()
         {
-            X = HotbarIcon.ToCanvas(new Point(0, 0)).X,
-            Y = HotbarIcon.ToCanvas(new Point(0, 0)).Y,
-            Width = HotbarIcon.Width,
-            Height = HotbarIcon.Height
+            X = ToCanvas(new Point(0, 0)).X,
+            Y = ToCanvas(new Point(0, 0)).Y,
+            Width = Width,
+            Height = Height
         };
 
         return rect;
@@ -271,7 +262,7 @@ public partial class HotbarItem
         }
 
         // Check if the label should be changed
-        var controlValue = Control.HotkeyOffset + _hotbarSlotIndex + 1;
+        var controlValue = Control.HotkeyOffset + SlotIndex + 1;
         ControlBinding? binding = null;
         if (Controls.ActiveControls.TryGetMappingFor(controlValue, out var mapping))
         {
@@ -311,7 +302,7 @@ public partial class HotbarItem
             _hotKey = binding == null ? null : new ControlBinding(binding);
         }
 
-        var slot = Globals.Me.Hotbar[_hotbarSlotIndex];
+        var slot = Globals.Me.Hotbar[SlotIndex];
         var updateDisplay = _currentId != slot.ItemOrSpellId || _textureLoaded == false; // Update display if item changes or we dont have a texture for it.
 
         if (_currentId != slot.ItemOrSpellId)
@@ -395,7 +386,7 @@ public partial class HotbarItem
             //We don't know it, remove from hotbar right away!
             if (_spellBookItem == null)
             {
-                Globals.Me.AddToHotbar(_hotbarSlotIndex, -1, -1);
+                Globals.Me.AddToHotbar(SlotIndex, -1, -1);
                 updateDisplay = true;
             }
 
@@ -418,8 +409,8 @@ public partial class HotbarItem
         {
             if (_currentItem != null)
             {
-                _contentPanel.Show();
-                _contentPanel.Texture = Globals.ContentManager.GetTexture(
+                _iconImage.Show();
+                _iconImage.Texture = Globals.ContentManager.GetTexture(
                     Framework.Content.TextureType.Item, _currentItem.Icon
                 );
 
@@ -457,8 +448,8 @@ public partial class HotbarItem
             }
             else if (_currentSpell != null)
             {
-                _contentPanel.Show();
-                _contentPanel.Texture = Globals.ContentManager.GetTexture(
+                _iconImage.Show();
+                _iconImage.Texture = Globals.ContentManager.GetTexture(
                     Framework.Content.TextureType.Spell, _currentSpell.Icon
                 );
 
@@ -486,7 +477,7 @@ public partial class HotbarItem
             }
             else
             {
-                _contentPanel.Hide();
+                _iconImage.Hide();
                 _textureLoaded = true;
                 _isEquipped = false;
                 _equipLabel.IsHidden = true;
@@ -498,24 +489,24 @@ public partial class HotbarItem
             {
                 if (_currentSpell != null)
                 {
-                    _contentPanel.RenderColor = new Color(60, 255, 255, 255);
+                    _iconImage.RenderColor = new Color(60, 255, 255, 255);
                 }
 
                 if (_currentItem != null)
                 {
-                    _contentPanel.RenderColor = new Color(60, _currentItem.Color.R, _currentItem.Color.G, _currentItem.Color.B);
+                    _iconImage.RenderColor = new Color(60, _currentItem.Color.R, _currentItem.Color.G, _currentItem.Color.B);
                 }
             }
             else
             {
                 if (_currentSpell != null)
                 {
-                    _contentPanel.RenderColor = Color.White;
+                    _iconImage.RenderColor = Color.White;
                 }
 
                 if (_currentItem != null)
                 {
-                    _contentPanel.RenderColor = _currentItem.Color;
+                    _iconImage.RenderColor = _currentItem.Color;
                 }
             }
         }
@@ -524,7 +515,7 @@ public partial class HotbarItem
         {
             if (!_isDragging)
             {
-                _contentPanel.IsHidden = false;
+                _iconImage.IsHidden = false;
 
                 var equipLabelIsHidden = _currentItem == null || !Globals.Me.IsEquipped(_inventoryItemIndex) || _inventoryItemIndex < 0;
                 _equipLabel.IsHidden = equipLabelIsHidden;
@@ -551,25 +542,25 @@ public partial class HotbarItem
                         {
                             if (_mouseX == -1 || _mouseY == -1)
                             {
-                                _mouseX = InputHandler.MousePosition.X - HotbarIcon.ToCanvas(new Point(0, 0)).X;
-                                _mouseY = InputHandler.MousePosition.Y - HotbarIcon.ToCanvas(new Point(0, 0)).Y;
+                                _mouseX = InputHandler.MousePosition.X - ToCanvas(new Point(0, 0)).X;
+                                _mouseY = InputHandler.MousePosition.Y - ToCanvas(new Point(0, 0)).Y;
                             }
                             else
                             {
                                 var xdiff = _mouseX -
                                             (InputHandler.MousePosition.X -
-                                             HotbarIcon.ToCanvas(new Point(0, 0)).X);
+                                             ToCanvas(new Point(0, 0)).X);
 
                                 var ydiff = _mouseY -
                                             (InputHandler.MousePosition.Y -
-                                             HotbarIcon.ToCanvas(new Point(0, 0)).Y);
+                                             ToCanvas(new Point(0, 0)).Y);
 
                                 if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                 {
                                     _isDragging = true;
                                     _dragIcon = new Draggable(
-                                        HotbarIcon.ToCanvas(new Point(0, 0)).X + _mouseX,
-                                        HotbarIcon.ToCanvas(new Point(0, 0)).X + _mouseY, _contentPanel.Texture, _contentPanel.RenderColor
+                                        ToCanvas(new Point(0, 0)).X + _mouseX,
+                                        ToCanvas(new Point(0, 0)).X + _mouseY, _iconImage.Texture, _iconImage.RenderColor
                                     );
 
                                     //SOMETHING SHOULD BE RENDERED HERE, RIGHT?
@@ -620,9 +611,9 @@ public partial class HotbarItem
                         bestIntersectIndex = hotbarSlotIndex;
                     }
 
-                    if (bestIntersectIndex > -1 && bestIntersectIndex != _hotbarSlotIndex)
+                    if (bestIntersectIndex > -1 && bestIntersectIndex != SlotIndex)
                     {
-                        Globals.Me.HotbarSwap(_hotbarSlotIndex, (byte)bestIntersectIndex);
+                        Globals.Me.HotbarSwap(SlotIndex, (byte)bestIntersectIndex);
                     }
                 }
 
@@ -630,7 +621,7 @@ public partial class HotbarItem
             }
             else
             {
-                _contentPanel.IsHidden = true;
+                _iconImage.IsHidden = true;
                 _equipLabel.IsHidden = true;
                 _quantityLabel.IsHidden = true;
                 _cooldownLabel.IsHidden = true;

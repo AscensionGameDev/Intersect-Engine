@@ -7,9 +7,9 @@ public partial class SlotItem : ImagePanel
 {
     public readonly int SlotIndex;
     protected readonly ImagePanel _iconImage;
-    protected readonly ContextMenu _contextMenu;
+    protected readonly ContextMenu? _contextMenu;
 
-    public SlotItem(Base parent, string name, int index, ContextMenu contextMenu) : base(parent, name)
+    public SlotItem(Base parent, string name, int index, ContextMenu? contextMenu) : base(parent, name)
     {
         SlotIndex = index;
 
@@ -32,12 +32,22 @@ public partial class SlotItem : ImagePanel
     {
     }
 
-    public virtual void OpenContextMenu()
+    public void OpenContextMenu()
+    {
+        if (_contextMenu is not { } contextMenu)
+        {
+            return;
+        }
+
+        OnContextMenuOpening(contextMenu);
+    }
+
+    protected virtual void OnContextMenuOpening(ContextMenu contextMenu)
     {
         // Display our menu... If we have anything to display.
-        if (_contextMenu.Children.Count > 0)
+        if (contextMenu.Children.Count > 0)
         {
-            _contextMenu.Open(Pos.None);
+            contextMenu.Open(Pos.None);
         }
     }
 }

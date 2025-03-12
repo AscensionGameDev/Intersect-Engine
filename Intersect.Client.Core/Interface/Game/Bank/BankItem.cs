@@ -63,13 +63,13 @@ public partial class BankItem : SlotItem
 
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
-        _contextMenu.ClearChildren();
-        _withdrawContextItem = _contextMenu.AddItem(Strings.BankContextMenu.Withdraw);
+        contextMenu.ClearChildren();
+        _withdrawContextItem = contextMenu.AddItem(Strings.BankContextMenu.Withdraw);
         _withdrawContextItem.Clicked += _withdrawMenuItem_Clicked;
-        _contextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        contextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
     }
 
-    public void OpenContextMenu()
+    protected override void OnContextMenuOpening(ContextMenu contextMenu)
     {
         if (Globals.BankSlots is not { Length: > 0 } bankSlots)
         {
@@ -82,11 +82,11 @@ public partial class BankItem : SlotItem
         }
 
         // Clear the context menu and add the withdraw item with updated item name
-        _contextMenu.ClearChildren();
+        contextMenu.ClearChildren();
+        contextMenu.AddChild(_withdrawContextItem);
         _withdrawContextItem.SetText(Strings.BankContextMenu.Withdraw.ToString(item.Name));
-        _contextMenu.AddChild(_withdrawContextItem);
 
-        base.OpenContextMenu();
+        base.OnContextMenuOpening(contextMenu);
     }
 
     private void _withdrawMenuItem_Clicked(Base sender, MouseButtonState arguments)
