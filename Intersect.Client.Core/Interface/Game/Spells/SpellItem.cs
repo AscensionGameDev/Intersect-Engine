@@ -61,20 +61,20 @@ public partial class SpellItem : SlotItem
 
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
-        _contextMenu!.ClearChildren();
-        _useSpellMenuItem = _contextMenu.AddItem(Strings.SpellContextMenu.Cast.ToString());
+        contextMenu.ClearChildren();
+        _useSpellMenuItem = contextMenu.AddItem(Strings.SpellContextMenu.Cast.ToString());
         _useSpellMenuItem.Clicked += _useSpellMenuItem_Clicked;
-        _forgetSpellMenuItem = _contextMenu.AddItem(Strings.SpellContextMenu.Forget.ToString());
+        _forgetSpellMenuItem = contextMenu.AddItem(Strings.SpellContextMenu.Forget.ToString());
         _forgetSpellMenuItem.Clicked += _forgetSpellMenuItem_Clicked;
-        _contextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        contextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
     }
 
     #region Context Menu
 
-    public void OpenContextMenu()
+    protected override void OnContextMenuOpening(ContextMenu contextMenu)
     {
         // Clear out the old options.
-        _contextMenu!.ClearChildren();
+        contextMenu.ClearChildren();
 
         if (Globals.Me?.Spells is not { Length: > 0 } spellSlots)
         {
@@ -88,18 +88,17 @@ public partial class SpellItem : SlotItem
         }
 
         // Add our use spell option.
-        _contextMenu.AddChild(_useSpellMenuItem);
+        contextMenu.AddChild(_useSpellMenuItem);
         _useSpellMenuItem.SetText(Strings.SpellContextMenu.Cast.ToString(spell.Name));
 
         // If this spell is not bound, allow users to forget it!
         if (!spell.Bound)
         {
-            _contextMenu.AddChild(_forgetSpellMenuItem);
+            contextMenu.AddChild(_forgetSpellMenuItem);
             _forgetSpellMenuItem.SetText(Strings.SpellContextMenu.Forget.ToString(spell.Name));
         }
 
-        _contextMenu.SizeToChildren();
-        _contextMenu.Open(Pos.None);
+        base.OnContextMenuOpening(contextMenu);
     }
 
     private void _useSpellMenuItem_Clicked(Base sender, MouseButtonState arguments)

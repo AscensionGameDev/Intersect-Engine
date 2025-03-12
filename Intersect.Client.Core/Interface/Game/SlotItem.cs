@@ -32,12 +32,22 @@ public partial class SlotItem : ImagePanel
     {
     }
 
-    public virtual void OpenContextMenu()
+    public void OpenContextMenu()
+    {
+        if (_contextMenu is not { } contextMenu)
+        {
+            return;
+        }
+
+        OnContextMenuOpening(contextMenu);
+    }
+
+    protected virtual void OnContextMenuOpening(ContextMenu contextMenu)
     {
         // Display our menu... If we have anything to display.
-        if (_contextMenu?.Children.Count > 0)
+        if (contextMenu.Children.Count > 0)
         {
-            _contextMenu.Open(Pos.None);
+            contextMenu.Open(Pos.None);
         }
     }
 }
