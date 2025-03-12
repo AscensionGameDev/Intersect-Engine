@@ -23,7 +23,7 @@ public partial class SpellItem : SlotItem
     private readonly Label _cooldownLabel;
     private readonly SpellsWindow _spellWindow;
     private Draggable? _dragIcon;
-    private SpellDescriptionWindow? _descWindow;
+    private SpellDescriptionWindow? _descriptionWindow;
 
     // Drag Handling
     public bool IsDragging;
@@ -132,10 +132,10 @@ public partial class SpellItem : SlotItem
             return;
         }
 
-        if (_descWindow != null)
+        if (_descriptionWindow != null)
         {
-            _descWindow.Dispose();
-            _descWindow = null;
+            _descriptionWindow.Dispose();
+            _descriptionWindow = null;
         }
 
         if (Globals.Me?.Spells is not { Length: > 0 } spellSlots)
@@ -143,7 +143,7 @@ public partial class SpellItem : SlotItem
             return;
         }
 
-        _descWindow = new SpellDescriptionWindow(spellSlots[SlotIndex].Id, _spellWindow.X, _spellWindow.Y);
+        _descriptionWindow = new SpellDescriptionWindow(spellSlots[SlotIndex].Id, _spellWindow.X, _spellWindow.Y);
     }
 
     void _iconImage_HoverLeave(Base sender, EventArgs arguments)
@@ -152,10 +152,10 @@ public partial class SpellItem : SlotItem
         _mouseX = -1;
         _mouseY = -1;
 
-        if (_descWindow != null)
+        if (_descriptionWindow != null)
         {
-            _descWindow.Dispose();
-            _descWindow = null;
+            _descriptionWindow.Dispose();
+            _descriptionWindow = null;
         }
     }
 
@@ -237,10 +237,10 @@ public partial class SpellItem : SlotItem
                 }
             }
 
-            if (_descWindow != null)
+            if (_descriptionWindow != null)
             {
-                _descWindow.Dispose();
-                _descWindow = null;
+                _descriptionWindow.Dispose();
+                _descriptionWindow = null;
                 _iconImage_HoverEnter(null, null);
             }
         }
