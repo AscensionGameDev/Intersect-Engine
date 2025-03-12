@@ -1,60 +1,17 @@
-﻿using Newtonsoft.Json;
+﻿using Intersect.Framework.Core.GameObjects.Maps;
 
 namespace Intersect.Config;
 
-public partial class PassabilityOptions
+public partial class PassabilityOptions : Dictionary<MapZone, bool>
 {
-    private bool[]? _cache;
-    private bool _arena;
-    private bool _normal;
-    private bool _safe = true;
+    public bool Default { get; set; } = false;
 
-    public bool Arena
+    public PassabilityOptions()
     {
-        get => _arena;
-        set
-        {
-            if (value == _arena)
-            {
-                return;
-            }
-
-            _arena = value;
-            _cache = null;
-        }
+        this[MapZone.Arena] = false;
+        this[MapZone.Normal] = false;
+        this[MapZone.Safe] = true;
     }
 
-    //Can players move through each other on the following map types/moralities
-    public bool Normal
-    {
-        get => _normal;
-        set
-        {
-            if (value == _arena)
-            {
-                return;
-            }
-
-            _normal = value;
-            _cache = null;
-        }
-    }
-
-    public bool Safe
-    {
-        get => _safe;
-        set
-        {
-            if (value == _arena)
-            {
-                return;
-            }
-
-            _safe = value;
-            _cache = null;
-        }
-    }
-
-    [JsonIgnore]
-    public bool[] Passable => _cache ??= [Normal, Safe, Arena];
+    public bool IsPassable(MapZone mapZoneType) => TryGetValue(mapZoneType, out var passable) ? passable : Default;
 }
