@@ -11,7 +11,6 @@ using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Interface.Game.Inventory;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
-using Intersect.Collections.Slotting;
 using Intersect.Configuration;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Items;

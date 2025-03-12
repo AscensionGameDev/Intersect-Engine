@@ -1,191 +1,94 @@
-﻿using Intersect.Client.Core;
+using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
-using Intersect.Client.General;
 using Intersect.Client.Localization;
-using Intersect.GameObjects;
+using Intersect.Client.Utilities;
 
 namespace Intersect.Client.Interface.Game.Spells;
 
-
-public partial class SpellsWindow
+public partial class SpellsWindow : Window
 {
+    public List<SlotItem> Items { get; set; } = [];
+    private readonly ScrollControl _slotContainer;
+    private readonly ContextMenu _contextMenu;
 
-    //Spell List
-    public List<SpellItem> Items = new List<SpellItem>();
-
-    //Initialized
-    private bool mInitializedSpells;
-
-    //Item/Spell Rendering
-    private ScrollControl mItemContainer;
-
-    //Controls
-    private WindowControl mSpellWindow;
-
-    //Location
-    public int X;
-
-    public int Y;
-
-    // Context menu
-    private Framework.Gwen.Control.Menu mContextMenu;
-
-    private MenuItem mUseSpellContextItem;
-
-    private MenuItem mForgetSpellContextItem;
-
-    //Init
-    public SpellsWindow(Canvas gameCanvas)
+    public SpellsWindow(Canvas gameCanvas) : base(gameCanvas, Strings.Spells.Title, false, nameof(SpellsWindow))
     {
-        mSpellWindow = new WindowControl(gameCanvas, Strings.Spells.Title, false, "SpellsWindow");
-        mSpellWindow.DisableResizing();
+        DisableResizing();
 
-        mItemContainer = new ScrollControl(mSpellWindow, "SpellsContainer");
-        mItemContainer.EnableScroll(false, true);
-        mSpellWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        Alignment = [Alignments.Bottom, Alignments.Right];
+        MinimumSize = new Point(x: 225, y: 327);
+        Margin = new Margin(0, 0, 15, 60);
+        IsVisibleInTree = false;
+        IsResizable = false;
+        IsClosable = true;
 
-        // Generate our context menu with basic options.
-        mContextMenu = new Framework.Gwen.Control.Menu(gameCanvas, "SpellContextMenu");
-        mContextMenu.IsHidden = true;
-        mContextMenu.IconMarginDisabled = true;
-        //TODO: Is this a memory leak?
-        mContextMenu.ClearChildren();
-        mUseSpellContextItem = mContextMenu.AddItem(Strings.SpellContextMenu.Cast);
-        mUseSpellContextItem.Clicked += MUseSpellContextItem_Clicked;
-        mForgetSpellContextItem = mContextMenu.AddItem(Strings.SpellContextMenu.Forget);
-        mForgetSpellContextItem.Clicked += MForgetSpellContextItem_Clicked;
-        mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-    }
-
-    public void OpenContextMenu(int slot)
-    {
-        // Clear out the old options.
-        mContextMenu.RemoveChild(mUseSpellContextItem, false);
-        mContextMenu.RemoveChild(mForgetSpellContextItem, false);
-        mContextMenu.ClearChildren();
-
-        var spell = SpellDescriptor.Get(Globals.Me.Spells[slot].Id);
-
-        // No point showing a menu for blank space.
-        if (spell == null)
+        _slotContainer = new ScrollControl(this, "SpellsContainer")
         {
-            return;
-        }
+            Dock = Pos.Fill,
+            OverflowX = OverflowBehavior.Auto,
+            OverflowY = OverflowBehavior.Scroll,
+        };
 
-        // Add our use spell option.
-        mContextMenu.AddChild(mUseSpellContextItem);
-        mUseSpellContextItem.SetText(Strings.SpellContextMenu.Cast.ToString(spell.Name));
-
-        // If this spell is not bound, allow users to forget it!
-        if (!spell.Bound)
+        _contextMenu = new ContextMenu(gameCanvas, "SpellContextMenu")
         {
-            mContextMenu.AddChild(mForgetSpellContextItem);
-            mForgetSpellContextItem.SetText(Strings.SpellContextMenu.Forget.ToString(spell.Name));
-        }
-
-        // Set our spell slot as userdata for future reference.
-        mContextMenu.UserData = slot;
-
-        mContextMenu.SizeToChildren();
-        mContextMenu.Open(Framework.Gwen.Pos.None);
+            IsVisibleInParent = false,
+            IconMarginDisabled = true,
+            ItemFont = GameContentManager.Current.GetFont(name: "sourcesansproblack"),
+            ItemFontSize = 10,
+        };
     }
 
-    private void MForgetSpellContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.MouseButtonState arguments)
+    protected override void EnsureInitialized()
     {
-        var slot = (int)sender.Parent.UserData;
-        Globals.Me.TryForgetSpell(slot);
+        LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        InitItemContainer();
     }
 
-    private void MUseSpellContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.MouseButtonState arguments)
-    {
-        var slot = (int)sender.Parent.UserData;
-        Globals.Me.TryUseSpell(slot);
-    }
-
-    //Methods
     public void Update()
     {
-        if (!mInitializedSpells)
-        {
-            InitItemContainer();
-            mInitializedSpells = true;
-        }
-
-        if (mSpellWindow.IsHidden == true)
+        if (!IsVisibleInTree)
         {
             return;
         }
 
-        X = mSpellWindow.X;
-        Y = mSpellWindow.Y;
-        for (var i = 0; i < Options.Instance.Player.MaxSpells; i++)
+        var slotCount = Math.Min(Items.Count, Options.Instance.Player.MaxSpells);
+        for (var slotIndex = 0; slotIndex < slotCount; slotIndex++)
         {
-            var spell = SpellDescriptor.Get(Globals.Me.Spells[i].Id);
-            Items[i].Pnl.IsHidden = spell == null || Items[i].IsDragging;
-            if (spell != null)
-            {
-                Items[i].Update();
-            }
+            Items[slotIndex].Update();
         }
     }
 
     private void InitItemContainer()
     {
-        for (var i = 0; i < Options.Instance.Player.MaxSpells; i++)
+        for (var slotIndex = 0; slotIndex < Options.Instance.Player.MaxSpells; slotIndex++)
         {
-            Items.Add(new SpellItem(this, i));
-            Items[i].Container = new ImagePanel(mItemContainer, "Spell");
-            Items[i].Setup();
-
-            Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-
-            var xPadding = Items[i].Container.Margin.Left + Items[i].Container.Margin.Right;
-            var yPadding = Items[i].Container.Margin.Top + Items[i].Container.Margin.Bottom;
-            Items[i]
-                .Container.SetPosition(
-                    i %
-                    (mItemContainer.Width / (Items[i].Container.Width + xPadding)) *
-                    (Items[i].Container.Width + xPadding) +
-                    xPadding,
-                    i /
-                    (mItemContainer.Width / (Items[i].Container.Width + xPadding)) *
-                    (Items[i].Container.Height + yPadding) +
-                    yPadding
-                );
+            Items.Add(new SpellItem(this, _slotContainer, slotIndex, _contextMenu));
         }
+
+        PopulateSlotContainer.Populate(_slotContainer, Items);
     }
 
-    public void Show()
+    public override void Hide()
     {
-        mSpellWindow.IsHidden = false;
-    }
-
-    public bool IsVisible()
-    {
-        return !mSpellWindow.IsHidden;
-    }
-
-    public void Hide()
-    {
-        mContextMenu?.Close();
-        mSpellWindow.IsHidden = true;
+        _contextMenu?.Close();
+        base.Hide();
     }
 
     public FloatRect RenderBounds()
     {
         var rect = new FloatRect()
         {
-            X = mSpellWindow.ToCanvas(new Point(0, 0)).X -
-                (Items[0].Container.Padding.Left + Items[0].Container.Padding.Right) / 2,
-            Y = mSpellWindow.ToCanvas(new Point(0, 0)).Y -
-                (Items[0].Container.Padding.Top + Items[0].Container.Padding.Bottom) / 2,
-            Width = mSpellWindow.Width + Items[0].Container.Padding.Left + Items[0].Container.Padding.Right,
-            Height = mSpellWindow.Height + Items[0].Container.Padding.Top + Items[0].Container.Padding.Bottom
+            X = ToCanvas(new Point(0, 0)).X -
+                (Items[0].Padding.Left + Items[0].Padding.Right) / 2,
+            Y = ToCanvas(new Point(0, 0)).Y -
+                (Items[0].Padding.Top + Items[0].Padding.Bottom) / 2,
+            Width = Width + Items[0].Padding.Left + Items[0].Padding.Right,
+            Height = Height + Items[0].Padding.Top + Items[0].Padding.Bottom
         };
 
         return rect;
     }
-
 }
