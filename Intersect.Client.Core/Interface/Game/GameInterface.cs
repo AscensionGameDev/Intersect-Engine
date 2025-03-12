@@ -37,7 +37,7 @@ public partial class GameInterface : MutableInterface
 
     private BagWindow _bagWindow;
 
-    private BankWindow mBankWindow;
+    private BankWindow? _bankWindow;
 
     private Chatbox mChatBox;
 
@@ -55,7 +55,7 @@ public partial class GameInterface : MutableInterface
 
     private bool mShouldCloseBag;
 
-    private bool mShouldCloseBank;
+    private bool _shouldCloseBank;
 
     private bool mShouldCloseCraftingTable;
 
@@ -145,7 +145,6 @@ public partial class GameInterface : MutableInterface
 
         mQuestOfferWindow = new QuestOfferWindow(GameCanvas);
         mMapItemWindow = new MapItemWindow(GameCanvas);
-        mBankWindow = new BankWindow(GameCanvas);
     }
 
     //Chatbox
@@ -222,12 +221,12 @@ public partial class GameInterface : MutableInterface
 
     public void NotifyCloseBank()
     {
-        mShouldCloseBank = true;
+        _shouldCloseBank = true;
     }
 
     public void OpenBank()
     {
-        mBankWindow.Open();
+        _bankWindow = new BankWindow(GameCanvas) { DeleteOnClose = true };
         mShouldOpenBank = false;
         Globals.InBank = true;
     }
@@ -255,9 +254,9 @@ public partial class GameInterface : MutableInterface
         return _bagWindow;
     }
 
-    public BankWindow GetBankWindow()
+    public BankWindow? GetBankWindow()
     {
-        return mBankWindow;
+        return _bankWindow;
     }
 
     //Crafting
@@ -400,18 +399,16 @@ public partial class GameInterface : MutableInterface
         if (mShouldOpenBank)
         {
             OpenBank();
-            GameMenu.OpenInventory();
+            GameMenu?.OpenInventory();
         }
-        else if (mShouldCloseBank)
+        else if (_shouldCloseBank)
         {
             CloseBank();
         }
         else
         {
-            mBankWindow.Update();
+            _bankWindow?.Update();
         }
-
-
 
         //Bag Update
         if (mShouldOpenBag)
@@ -525,10 +522,10 @@ public partial class GameInterface : MutableInterface
 
     private void CloseBank()
     {
-        mBankWindow.Close();
+        _bankWindow = null;
         Globals.InBank = false;
         PacketSender.SendCloseBank();
-        mShouldCloseBank = false;
+        _shouldCloseBank = false;
     }
 
     private void CloseBagWindow()
@@ -570,7 +567,7 @@ public partial class GameInterface : MutableInterface
             closedWindows = true;
         }
 
-        if (mBankWindow != null && mBankWindow.IsVisible())
+        if (_bankWindow is { IsVisibleInTree: true })
         {
             CloseBank();
             closedWindows = true;

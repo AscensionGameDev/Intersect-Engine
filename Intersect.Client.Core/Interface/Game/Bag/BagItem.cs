@@ -81,7 +81,10 @@ public partial class BagItem : SlotItem
             return;
         }
 
+        // Clear the context menu and add the withdraw item with updated item name
+        _contextMenu.ClearChildren();
         _withdrawContextItem.SetText(Strings.BagContextMenu.Withdraw.ToString(item.Name));
+        _contextMenu.AddChild(_withdrawContextItem);
         base.OpenContextMenu();
     }
 
