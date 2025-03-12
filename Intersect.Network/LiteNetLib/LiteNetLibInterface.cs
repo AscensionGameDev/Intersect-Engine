@@ -490,7 +490,29 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
         }
 #endif
 
-        ApplicationContext.Context.Value?.Logger.LogDebug($"LTNC {peer} {latency}ms");
+        ApplicationContext.CurrentContext.Logger.LogTrace("LATENCY {Peer} {Latency}ms", peer, latency);
+
+        if (!_connectionIdLookup.TryGetValue(peer.Id, out var connectionId))
+        {
+            ApplicationContext.CurrentContext.Logger.LogWarning("Missing connection for {PeerId}", peer.Id);
+            return;
+        }
+
+        var genericConnection = _network.FindConnection(connectionId);
+        if (genericConnection is not LiteNetLibConnection connection)
+        {
+            var expectedTypeName = typeof(LiteNetLibConnection).GetName(qualified: true);
+            var actualTypeName = genericConnection.GetType().GetName(qualified: true);
+            ApplicationContext.CurrentContext.Logger.LogWarning(
+                "Connection is not {ExpectedType} for {PeerId}, was {ActualType}",
+                expectedTypeName,
+                peer.Id,
+                actualTypeName
+            );
+            return;
+        }
+
+        connection.Statistics.Ping = latency;
     }
 
     public void OnConnectionRequest(ConnectionRequest request)
