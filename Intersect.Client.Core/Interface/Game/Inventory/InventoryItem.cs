@@ -9,6 +9,7 @@ using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Bag;
+using Intersect.Client.Interface.Game.Bank;
 using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
@@ -696,7 +697,11 @@ public partial class InventoryItem : SlotItem
             }
             else if (Globals.InBank && Globals.BankSlots != default)
             {
-                var bankWindow = Interface.GameUi.GetBankWindow();
+                if (Interface.GameUi.GetBankWindow() is not BankWindow bankWindow)
+                {
+                    return;
+                }
+
                 if (bankWindow.RenderBounds().IntersectsWith(dragRect))
                 {
                     var bankSlotComponents = bankWindow.Items.ToArray();
@@ -707,7 +712,11 @@ public partial class InventoryItem : SlotItem
 
                     for (var bankSlotIndex = 0; bankSlotIndex < bankSlotLimit; bankSlotIndex++)
                     {
-                        var bankSlotComponent = bankSlotComponents[bankSlotIndex];
+                        if (bankSlotComponents[bankSlotIndex] is not BankItem bankSlotComponent)
+                        {
+                            continue;
+                        }
+
                         var bankSlotRenderBounds = bankSlotComponent.RenderBounds();
                         if (!bankSlotRenderBounds.IntersectsWith(dragRect))
                         {
