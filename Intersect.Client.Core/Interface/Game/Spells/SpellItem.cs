@@ -116,7 +116,7 @@ public partial class SpellItem : SlotItem
 
     #region Mouse Events
 
-    void _iconImage_HoverEnter(Base? sender, EventArgs? arguments)
+    private void _iconImage_HoverEnter(Base? sender, EventArgs? arguments)
     {
         if (InputHandler.MouseFocus != null)
         {
@@ -146,7 +146,7 @@ public partial class SpellItem : SlotItem
         _descriptionWindow = new SpellDescriptionWindow(spellSlots[SlotIndex].Id, _spellWindow.X, _spellWindow.Y);
     }
 
-    void _iconImage_HoverLeave(Base sender, EventArgs arguments)
+    private void _iconImage_HoverLeave(Base sender, EventArgs arguments)
     {
         _mouseOver = false;
         _mouseX = -1;
@@ -159,7 +159,7 @@ public partial class SpellItem : SlotItem
         }
     }
 
-    void _iconImage_Clicked(Base sender, MouseButtonState arguments)
+    private void _iconImage_Clicked(Base sender, MouseButtonState arguments)
     {
         switch (arguments.MouseButton)
         {
@@ -221,10 +221,10 @@ public partial class SpellItem : SlotItem
 
         if (Path.GetFileName(_iconImage.Texture?.Name) != spell.Icon)
         {
-            var spellTex = Globals.ContentManager?.GetTexture(TextureType.Spell, spell.Icon);
-            if (spellTex != null)
+            var spellIconTexture = Globals.ContentManager?.GetTexture(TextureType.Spell, spell.Icon);
+            if (spellIconTexture != null)
             {
-                _iconImage.Texture = spellTex;
+                _iconImage.Texture = spellIconTexture;
                 _iconImage.RenderColor.A = (byte)(_cooldownLabel.IsVisibleInParent ? 100 : 255);
                 _iconImage.IsVisibleInParent = true;
             }
@@ -237,12 +237,9 @@ public partial class SpellItem : SlotItem
                 }
             }
 
-            if (_descriptionWindow != null)
-            {
-                _descriptionWindow.Dispose();
-                _descriptionWindow = null;
-                _iconImage_HoverEnter(null, null);
-            }
+            _descriptionWindow?.Dispose();
+            _descriptionWindow = null;
+            _iconImage_HoverEnter(null, null);
         }
 
         if (!IsDragging)
