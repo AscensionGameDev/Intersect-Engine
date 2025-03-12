@@ -34,7 +34,7 @@ public partial class ShopItem : SlotItem
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
         //TODO: Is this a memory leak?
-        _contextMenu.ClearChildren();
+        _contextMenu!.ClearChildren();
         _buyMenuItem = _contextMenu.AddItem(Strings.ShopContextMenu.Buy);
         _buyMenuItem.Clicked += _buyMenuItem_Clicked;
         _contextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());

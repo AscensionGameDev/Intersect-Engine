@@ -97,7 +97,7 @@ public partial class InventoryItem : SlotItem
 
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
-        _contextMenu.ClearChildren();
+        _contextMenu!.ClearChildren();
         _useItemMenuItem = _contextMenu.AddItem(Strings.ItemContextMenu.Use);
         _useItemMenuItem.Clicked += _useItemContextItem_Clicked;
         _dropItemMenuItem = _contextMenu.AddItem(Strings.ItemContextMenu.Drop);
@@ -117,7 +117,7 @@ public partial class InventoryItem : SlotItem
     public override void OpenContextMenu()
     {
         // Clear out the old options since we might not show all of them
-        _contextMenu.ClearChildren();
+        _contextMenu!.ClearChildren();
 
         if (Globals.Me?.Inventory[SlotIndex] is not { } inventorySlot)
         {

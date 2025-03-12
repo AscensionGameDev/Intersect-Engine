@@ -60,7 +60,7 @@ public partial class BagItem : SlotItem
 
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
-        _contextMenu.ClearChildren();
+        _contextMenu!.ClearChildren();
         _withdrawContextItem = _contextMenu.AddItem(Strings.BagContextMenu.Withdraw);
         _withdrawContextItem.Clicked += _withdrawMenuItem_Clicked;
         _contextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
@@ -81,7 +81,7 @@ public partial class BagItem : SlotItem
         }
 
         // Clear the context menu and add the withdraw item with updated item name
-        _contextMenu.ClearChildren();
+        _contextMenu!.ClearChildren();
         _withdrawContextItem.SetText(Strings.BagContextMenu.Withdraw.ToString(item.Name));
         _contextMenu.AddChild(_withdrawContextItem);
         base.OpenContextMenu();

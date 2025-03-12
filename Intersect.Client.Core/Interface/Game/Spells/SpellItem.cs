@@ -61,7 +61,7 @@ public partial class SpellItem : SlotItem
 
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
-        _contextMenu.ClearChildren();
+        _contextMenu!.ClearChildren();
         _useSpellMenuItem = _contextMenu.AddItem(Strings.SpellContextMenu.Cast.ToString());
         _useSpellMenuItem.Clicked += _useSpellMenuItem_Clicked;
         _forgetSpellMenuItem = _contextMenu.AddItem(Strings.SpellContextMenu.Forget.ToString());
@@ -74,7 +74,7 @@ public partial class SpellItem : SlotItem
     public void OpenContextMenu()
     {
         // Clear out the old options.
-        _contextMenu.ClearChildren();
+        _contextMenu!.ClearChildren();
 
         if (Globals.Me?.Spells is not { Length: > 0 } spellSlots)
         {
