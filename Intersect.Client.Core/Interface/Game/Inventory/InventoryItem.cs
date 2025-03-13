@@ -1,7 +1,6 @@
 using Intersect.Client.Core;
 using Intersect.Client.Entities;
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -515,20 +514,17 @@ public partial class InventoryItem : SlotItem
         }
 
         var equipped = Globals.Me.MyEquipment.Any(s => s == SlotIndex);
-        //Todo: hide when dragging
-        _equipImageBackground.IsVisibleInParent = equipped;
-        //Todo: hide when dragging
-        _equipLabel.IsVisibleInParent = equipped;
+        var isDragging = IconImage.IsDragging;
+        _equipImageBackground.IsVisibleInParent = !isDragging && equipped;
+        _equipLabel.IsVisibleInParent = !isDragging && equipped;
 
-        //Todo: hide when dragging
-        _quantityLabel.IsVisibleInParent = descriptor.IsStackable && inventorySlot.Quantity > 1;
+        _quantityLabel.IsVisibleInParent = !isDragging && descriptor.IsStackable && inventorySlot.Quantity > 1;
         if (_quantityLabel.IsVisibleInParent)
         {
             _quantityLabel.Text = Strings.FormatQuantityAbbreviated(inventorySlot.Quantity);
         }
 
-        //Todo: hide when dragging
-        _cooldownLabel.IsVisibleInParent = Globals.Me.IsItemOnCooldown(SlotIndex);
+        _cooldownLabel.IsVisibleInParent = !isDragging && Globals.Me.IsItemOnCooldown(SlotIndex);
         if (_cooldownLabel.IsVisibleInParent)
         {
             var itemCooldownRemaining = Globals.Me.GetItemRemainingCooldown(SlotIndex);

@@ -213,8 +213,7 @@ public partial class SpellItem : SlotItem
             return;
         }
 
-        //TODO: dont show when is dragging
-        _cooldownLabel.IsVisibleInParent = Globals.Me.IsSpellOnCooldown(SlotIndex);
+        _cooldownLabel.IsVisibleInParent = !IconImage.IsDragging && Globals.Me.IsSpellOnCooldown(SlotIndex);
         if (_cooldownLabel.IsVisibleInParent)
         {
             var itemCooldownRemaining = Globals.Me.GetSpellRemainingCooldown(SlotIndex);

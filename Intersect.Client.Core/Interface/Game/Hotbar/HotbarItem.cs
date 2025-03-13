@@ -9,8 +9,6 @@ using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
-using Intersect.Client.Interface.Game.Inventory;
-using Intersect.Client.Interface.Game.Spells;
 using Intersect.Client.Items;
 using Intersect.Client.Localization;
 using Intersect.Client.Spells;
@@ -395,11 +393,25 @@ public partial class HotbarItem : SlotItem
             }
         }
 
+        var isDragging = IconImage.IsDragging;
+        if (isDragging)
+        {
+            _equipLabel.IsHidden = true;
+            _quantityLabel.IsHidden = true;
+            _cooldownLabel.IsHidden = true;
+        }
+        else
+        {
+            _equipLabel.IsHidden = !_isEquipped || _inventoryItemIndex < 0;
+            _quantityLabel.IsHidden = _currentItem?.Stackable == false || _inventoryItemIndex < 0;
+            _cooldownLabel.IsHidden = !_isFaded || _inventoryItemIndex < 0;
+        }
+
         if (updateDisplay) //Item on cd and fade is incorrect
         {
             if (_currentItem != null)
             {
-                IconImage.Show();
+                IconImage.IsVisibleInTree = !isDragging;
                 IconImage.Texture = Globals.ContentManager.GetTexture(
                     Framework.Content.TextureType.Item, _currentItem.Icon
                 );
@@ -413,7 +425,7 @@ public partial class HotbarItem : SlotItem
                     _isFaded = Globals.Me.IsItemOnCooldown(_inventoryItemIndex);
                     _isEquipped = Globals.Me.IsEquipped(_inventoryItemIndex);
 
-                    if (_isFaded)
+                    if (_isFaded && !isDragging)
                     {
                         _cooldownLabel.IsHidden = false;
                         _cooldownLabel.Text = TimeSpan
@@ -430,15 +442,11 @@ public partial class HotbarItem : SlotItem
                     _isFaded = true;
                 }
 
-                _equipLabel.IsHidden = !_isEquipped || _inventoryItemIndex < 0;
-                _quantityLabel.IsHidden = !_currentItem.Stackable || _inventoryItemIndex < 0;
-                _cooldownLabel.IsHidden = !_isFaded || _inventoryItemIndex < 0;
-
                 _textureLoaded = true;
             }
             else if (_currentSpell != null)
             {
-                IconImage.Show();
+                IconImage.IsVisibleInTree = !isDragging;
                 IconImage.Texture = Globals.ContentManager.GetTexture(
                     Framework.Content.TextureType.Spell, _currentSpell.Icon
                 );
@@ -450,7 +458,7 @@ public partial class HotbarItem : SlotItem
                 {
                     var spellSlot = Globals.Me.FindHotbarSpell(slot);
                     _isFaded = Globals.Me.IsSpellOnCooldown(spellSlot);
-                    if (_isFaded)
+                    if (_isFaded && !isDragging)
                     {
                         _cooldownLabel.IsHidden = false;
                         var remaining = Globals.Me.GetSpellRemainingCooldown(spellSlot);

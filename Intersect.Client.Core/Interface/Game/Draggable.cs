@@ -8,6 +8,8 @@ public partial class Draggable(Base parent, string name) : ImagePanel(parent, na
 {
     public bool DisableDragAndDrop { get; set; } = false;
 
+    public bool IsDragging => DragAndDrop.CurrentPackage?.DrawControl == this;
+
     public override bool DragAndDrop_Draggable()
     {
         return true;

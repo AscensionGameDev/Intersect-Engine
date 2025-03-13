@@ -276,8 +276,7 @@ public partial class BankItem : SlotItem
         var bankSlot = bankSlots[SlotIndex];
         var descriptor = bankSlot.Descriptor;
 
-        //TODO: dont show when is dragging
-        _quantityLabel.IsVisibleInParent = descriptor.IsStackable && bankSlot.Quantity > 1;
+        _quantityLabel.IsVisibleInParent = !IconImage.IsDragging && descriptor.IsStackable && bankSlot.Quantity > 1;
         if (_quantityLabel.IsVisibleInParent)
         {
             _quantityLabel.Text = Strings.FormatQuantityAbbreviated(bankSlot.Quantity);

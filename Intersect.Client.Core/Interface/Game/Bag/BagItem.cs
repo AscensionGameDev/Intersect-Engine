@@ -211,8 +211,7 @@ public partial class BagItem : SlotItem
         var bagSlot = bagSlots[SlotIndex];
         var descriptor = bagSlot.Descriptor;
 
-        //TODO: dont show when is dragging
-        _quantityLabel.IsVisibleInParent = descriptor.IsStackable && bagSlot.Quantity > 1;
+        _quantityLabel.IsVisibleInParent = !IconImage.IsDragging && descriptor.IsStackable && bagSlot.Quantity > 1;
         if (_quantityLabel.IsVisibleInParent)
         {
             _quantityLabel.Text = Strings.FormatQuantityAbbreviated(bagSlot.Quantity);
