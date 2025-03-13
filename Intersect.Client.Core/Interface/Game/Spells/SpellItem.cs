@@ -34,10 +34,10 @@ public partial class SpellItem : SlotItem
         _spellWindow = spellWindow;
         TextureFilename = "spellitem.png";
 
-        _iconImage.HoverEnter += _iconImage_HoverEnter;
-        _iconImage.HoverLeave += _iconImage_HoverLeave;
-        _iconImage.Clicked += _iconImage_Clicked;
-        _iconImage.DoubleClicked += _iconImage_DoubleClicked;
+        IconImage.HoverEnter += IconImage_HoverEnter;
+        IconImage.HoverLeave += IconImage_HoverLeave;
+        IconImage.Clicked += IconImage_Clicked;
+        IconImage.DoubleClicked += IconImage_DoubleClicked;
 
         _cooldownLabel = new Label(this, "CooldownLabel")
         {
@@ -106,7 +106,7 @@ public partial class SpellItem : SlotItem
 
     #region Mouse Events
 
-    private void _iconImage_HoverEnter(Base? sender, EventArgs? arguments)
+    private void IconImage_HoverEnter(Base? sender, EventArgs? arguments)
     {
         if (InputHandler.MouseFocus != null)
         {
@@ -129,13 +129,13 @@ public partial class SpellItem : SlotItem
         _descriptionWindow = new SpellDescriptionWindow(spellSlots[SlotIndex].Id, _spellWindow.X, _spellWindow.Y);
     }
 
-    private void _iconImage_HoverLeave(Base sender, EventArgs arguments)
+    private void IconImage_HoverLeave(Base sender, EventArgs arguments)
     {
         _descriptionWindow?.Dispose();
         _descriptionWindow = null;
     }
 
-    private void _iconImage_Clicked(Base sender, MouseButtonState arguments)
+    private void IconImage_Clicked(Base sender, MouseButtonState arguments)
     {
         if (arguments.MouseButton is MouseButton.Right)
         {
@@ -150,7 +150,7 @@ public partial class SpellItem : SlotItem
         }
     }
 
-    private void _iconImage_DoubleClicked(Base sender, MouseButtonState arguments)
+    private void IconImage_DoubleClicked(Base sender, MouseButtonState arguments)
     {
         Globals.Me?.TryUseSpell(SlotIndex);
     }
@@ -207,8 +207,8 @@ public partial class SpellItem : SlotItem
 
         if (!SpellDescriptor.TryGet(spellSlots[SlotIndex].Id, out var spell))
         {
-            _iconImage.Hide();
-            _iconImage.Texture = null;
+            IconImage.Hide();
+            IconImage.Texture = null;
             _cooldownLabel.Hide();
             return;
         }
@@ -219,28 +219,28 @@ public partial class SpellItem : SlotItem
         {
             var itemCooldownRemaining = Globals.Me.GetSpellRemainingCooldown(SlotIndex);
             _cooldownLabel.Text = TimeSpan.FromMilliseconds(itemCooldownRemaining).WithSuffix("0.0");
-            _iconImage.RenderColor.A = 100;
+            IconImage.RenderColor.A = 100;
         }
         else
         {
-            _iconImage.RenderColor.A = 255;
+            IconImage.RenderColor.A = 255;
         }
 
-        if (Path.GetFileName(_iconImage.Texture?.Name) != spell.Icon)
+        if (Path.GetFileName(IconImage.Texture?.Name) != spell.Icon)
         {
             var spellIconTexture = Globals.ContentManager?.GetTexture(TextureType.Spell, spell.Icon);
             if (spellIconTexture != null)
             {
-                _iconImage.Texture = spellIconTexture;
-                _iconImage.RenderColor.A = (byte)(_cooldownLabel.IsVisibleInParent ? 100 : 255);
-                _iconImage.IsVisibleInParent = true;
+                IconImage.Texture = spellIconTexture;
+                IconImage.RenderColor.A = (byte)(_cooldownLabel.IsVisibleInParent ? 100 : 255);
+                IconImage.IsVisibleInParent = true;
             }
             else
             {
-                if (_iconImage.Texture != null)
+                if (IconImage.Texture != null)
                 {
-                    _iconImage.Texture = null;
-                    _iconImage.IsVisibleInParent = false;
+                    IconImage.Texture = null;
+                    IconImage.IsVisibleInParent = false;
                 }
             }
 

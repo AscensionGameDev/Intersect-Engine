@@ -35,10 +35,10 @@ public partial class BankItem : SlotItem
         _bankWindow = bankWindow;
         TextureFilename = "bankitem.png";
 
-        _iconImage.HoverEnter += _iconImage_HoverEnter;
-        _iconImage.HoverLeave += _iconImage_HoverLeave;
-        _iconImage.Clicked += _iconImage_Clicked;
-        _iconImage.DoubleClicked += _iconImage_DoubleClicked;
+        IconImage.HoverEnter += IconImage_HoverEnter;
+        IconImage.HoverLeave += IconImage_HoverLeave;
+        IconImage.Clicked += IconImage_Clicked;
+        IconImage.DoubleClicked += IconImage_DoubleClicked;
 
         _quantityLabel = new Label(this, "Quantity")
         {
@@ -88,7 +88,7 @@ public partial class BankItem : SlotItem
 
     #region Mouse Events
 
-    private void _iconImage_HoverEnter(Base? sender, EventArgs? arguments)
+    private void IconImage_HoverEnter(Base? sender, EventArgs? arguments)
     {
         if (InputHandler.MouseFocus != null)
         {
@@ -124,13 +124,13 @@ public partial class BankItem : SlotItem
         );
     }
 
-    private void _iconImage_HoverLeave(Base sender, EventArgs arguments)
+    private void IconImage_HoverLeave(Base sender, EventArgs arguments)
     {
         _descWindow?.Dispose();
         _descWindow = default;
     }
 
-    private void _iconImage_Clicked(Base sender, MouseButtonState arguments)
+    private void IconImage_Clicked(Base sender, MouseButtonState arguments)
     {
         if (arguments.MouseButton is MouseButton.Right)
         {
@@ -140,12 +140,12 @@ public partial class BankItem : SlotItem
             }
             else
             {
-                _iconImage_DoubleClicked(sender, arguments);
+                IconImage_DoubleClicked(sender, arguments);
             }
         }
     }
 
-    private void _iconImage_DoubleClicked(Base sender, MouseButtonState arguments)
+    private void IconImage_DoubleClicked(Base sender, MouseButtonState arguments)
     {
         if (!Globals.InBank)
         {
@@ -269,7 +269,7 @@ public partial class BankItem : SlotItem
         if (bankSlots[SlotIndex] is not { Descriptor: not null } or { Quantity: <= 0 })
         {
             _quantityLabel.IsVisibleInParent = false;
-            _iconImage.Texture = default;
+            IconImage.Texture = default;
             return;
         }
 
@@ -283,7 +283,7 @@ public partial class BankItem : SlotItem
             _quantityLabel.Text = Strings.FormatQuantityAbbreviated(bankSlot.Quantity);
         }
 
-        if (_iconImage.TextureFilename == descriptor.Icon)
+        if (IconImage.TextureFilename == descriptor.Icon)
         {
             return;
         }
@@ -291,16 +291,16 @@ public partial class BankItem : SlotItem
         var itemTexture = Globals.ContentManager?.GetTexture(Framework.Content.TextureType.Item, descriptor.Icon);
         if (itemTexture != default)
         {
-            _iconImage.Texture = itemTexture;
-            _iconImage.RenderColor = descriptor.Color;
-            _iconImage.IsVisibleInParent = true;
+            IconImage.Texture = itemTexture;
+            IconImage.RenderColor = descriptor.Color;
+            IconImage.IsVisibleInParent = true;
         }
         else
         {
-            if (_iconImage.Texture != default)
+            if (IconImage.Texture != default)
             {
-                _iconImage.Texture = default;
-                _iconImage.IsVisibleInParent = false;
+                IconImage.Texture = default;
+                IconImage.IsVisibleInParent = false;
             }
         }
 

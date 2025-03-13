@@ -44,10 +44,10 @@ public partial class InventoryItem : SlotItem
         _inventoryWindow = inventoryWindow;
         TextureFilename = "inventoryitem.png";
 
-        _iconImage.HoverEnter += _iconImage_HoverEnter;
-        _iconImage.HoverLeave += _iconImage_HoverLeave;
-        _iconImage.Clicked += _iconImage_Clicked;
-        _iconImage.DoubleClicked += _iconImage_DoubleClicked;
+        IconImage.HoverEnter += IconImage_HoverEnter;
+        IconImage.HoverLeave += IconImage_HoverLeave;
+        IconImage.Clicked += IconImage_Clicked;
+        IconImage.DoubleClicked += IconImage_DoubleClicked;
 
         _equipImageBackground = new ImagePanel(this, "EquippedIcon")
         {
@@ -214,7 +214,7 @@ public partial class InventoryItem : SlotItem
 
     #region Mouse Events
 
-    private void _iconImage_DoubleClicked(Base sender, MouseButtonState arguments)
+    private void IconImage_DoubleClicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.Me == default)
         {
@@ -259,7 +259,7 @@ public partial class InventoryItem : SlotItem
         }
     }
 
-    private void _iconImage_Clicked(Base sender, MouseButtonState arguments)
+    private void IconImage_Clicked(Base sender, MouseButtonState arguments)
     {
         if (arguments.MouseButton is MouseButton.Right)
         {
@@ -293,13 +293,13 @@ public partial class InventoryItem : SlotItem
         }
     }
 
-    private void _iconImage_HoverLeave(Base sender, EventArgs arguments)
+    private void IconImage_HoverLeave(Base sender, EventArgs arguments)
     {
         _descWindow?.Dispose();
         _descWindow = null;
     }
 
-    void _iconImage_HoverEnter(Base? sender, EventArgs? arguments)
+    void IconImage_HoverEnter(Base? sender, EventArgs? arguments)
     {
         if (InputHandler.MouseFocus != null)
         {
@@ -493,7 +493,7 @@ public partial class InventoryItem : SlotItem
         }
 
         // empty texture to reload on update
-        _iconImage.Texture = default;
+        IconImage.Texture = default;
     }
 
     public override void Update()
@@ -533,14 +533,14 @@ public partial class InventoryItem : SlotItem
         {
             var itemCooldownRemaining = Globals.Me.GetItemRemainingCooldown(SlotIndex);
             _cooldownLabel.Text = TimeSpan.FromMilliseconds(itemCooldownRemaining).WithSuffix("0.0");
-            _iconImage.RenderColor.A = 100;
+            IconImage.RenderColor.A = 100;
         }
         else
         {
-            _iconImage.RenderColor.A = descriptor.Color.A;
+            IconImage.RenderColor.A = descriptor.Color.A;
         }
 
-        if (_iconImage.TextureFilename == descriptor.Icon)
+        if (IconImage.TextureFilename == descriptor.Icon)
         {
             return;
         }
@@ -548,18 +548,18 @@ public partial class InventoryItem : SlotItem
         var itemTexture = Globals.ContentManager?.GetTexture(Framework.Content.TextureType.Item, descriptor.Icon);
         if (itemTexture != null)
         {
-            _iconImage.Texture = itemTexture;
-            _iconImage.RenderColor = Globals.Me.IsItemOnCooldown(SlotIndex)
+            IconImage.Texture = itemTexture;
+            IconImage.RenderColor = Globals.Me.IsItemOnCooldown(SlotIndex)
                 ? new Color(100, descriptor.Color.R, descriptor.Color.G, descriptor.Color.B)
                 : descriptor.Color;
-            _iconImage.IsVisibleInParent = true;
+            IconImage.IsVisibleInParent = true;
         }
         else
         {
-            if (_iconImage.Texture != null)
+            if (IconImage.Texture != null)
             {
-                _iconImage.Texture = null;
-                _iconImage.IsVisibleInParent = false;
+                IconImage.Texture = null;
+                IconImage.IsVisibleInParent = false;
             }
         }
 
@@ -567,14 +567,14 @@ public partial class InventoryItem : SlotItem
         {
             _descWindow.Dispose();
             _descWindow = null;
-            _iconImage_HoverEnter(null, null);
+            IconImage_HoverEnter(null, null);
         }
     }
 
     private void _reset()
     {
-        _iconImage.IsVisibleInParent = false;
-        _iconImage.Texture = default;
+        IconImage.IsVisibleInParent = false;
+        IconImage.Texture = default;
         _equipImageBackground.IsVisibleInParent = false;
         _quantityLabel.IsVisibleInParent = false;
         _equipLabel.IsVisibleInParent = false;

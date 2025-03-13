@@ -6,7 +6,7 @@ namespace Intersect.Client.Interface.Game;
 public partial class SlotItem : ImagePanel
 {
     public readonly int SlotIndex;
-    protected readonly Draggable _iconImage;
+    public readonly Draggable IconImage;
     protected readonly ContextMenu? _contextMenu;
 
     public SlotItem(Base parent, string name, int index, ContextMenu? contextMenu) : base(parent, name)
@@ -17,7 +17,7 @@ public partial class SlotItem : ImagePanel
         Margin = new Margin(4);
         MouseInputEnabled = true;
 
-        _iconImage = new Draggable(this, "Icon")
+        IconImage = new Draggable(this, "Icon")
         {
             MinimumSize = new Point(32, 32),
             MouseInputEnabled = true,

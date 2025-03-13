@@ -26,11 +26,11 @@ public partial class ShopItem : SlotItem
         _mySlot = index;
         TextureFilename = "shopitem.png";
 
-        _iconImage.HoverEnter += _iconImage_HoverEnter;
-        _iconImage.HoverLeave += _iconImage_HoverLeave;
-        _iconImage.Clicked += _iconImage_RightClicked;
-        _iconImage.DoubleClicked += _iconImage_DoubleClicked;
-        _iconImage.DisableDragAndDrop = true;
+        IconImage.HoverEnter += IconImage_HoverEnter;
+        IconImage.HoverLeave += IconImage_HoverLeave;
+        IconImage.Clicked += IconImage_RightClicked;
+        IconImage.DoubleClicked += IconImage_DoubleClicked;
+        IconImage.DisableDragAndDrop = true;
 
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
@@ -42,7 +42,7 @@ public partial class ShopItem : SlotItem
         LoadItem();
     }
 
-    private void _iconImage_HoverEnter(Base sender, EventArgs arguments)
+    private void IconImage_HoverEnter(Base sender, EventArgs arguments)
     {
         if (InputHandler.MouseFocus != null)
         {
@@ -88,7 +88,7 @@ public partial class ShopItem : SlotItem
         }
     }
 
-    private void _iconImage_HoverLeave(Base sender, EventArgs arguments)
+    private void IconImage_HoverLeave(Base sender, EventArgs arguments)
     {
         if (_itemDescWindow != null)
         {
@@ -97,7 +97,7 @@ public partial class ShopItem : SlotItem
         }
     }
 
-    private void _iconImage_RightClicked(Base sender, MouseButtonState arguments)
+    private void IconImage_RightClicked(Base sender, MouseButtonState arguments)
     {
         if (arguments.MouseButton != MouseButton.Right)
         {
@@ -110,11 +110,11 @@ public partial class ShopItem : SlotItem
         }
         else
         {
-            _iconImage_DoubleClicked(sender, arguments);
+            IconImage_DoubleClicked(sender, arguments);
         }
     }
 
-    private void _iconImage_DoubleClicked(Base sender, MouseButtonState arguments)
+    private void IconImage_DoubleClicked(Base sender, MouseButtonState arguments)
     {
         Globals.Me?.TryBuyItem(_mySlot);
     }
@@ -157,8 +157,8 @@ public partial class ShopItem : SlotItem
         var itemTex = Globals.ContentManager?.GetTexture(Framework.Content.TextureType.Item, itemDescriptor.Icon);
         if (itemTex != null)
         {
-            _iconImage.Texture = itemTex;
-            _iconImage.RenderColor = itemDescriptor.Color;
+            IconImage.Texture = itemTex;
+            IconImage.RenderColor = itemDescriptor.Color;
         }
     }
 }
