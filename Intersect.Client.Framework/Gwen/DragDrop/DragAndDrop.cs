@@ -27,6 +27,8 @@ public static partial class DragAndDrop
 
     public static Base SourceControl;
 
+    public static bool IsDragging => CurrentPackage != default;
+
     private static bool OnDrop(int x, int y)
     {
         var success = false;

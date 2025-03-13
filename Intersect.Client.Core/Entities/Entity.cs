@@ -7,6 +7,7 @@ using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Items;
 using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
@@ -1368,7 +1369,7 @@ public partial class Entity : IEntity
             // Checks if the entity is attacking or not.
             // Note: the calculation differs with IsAttacking because
             // frames are intended to behave differently with normal sprite-sheets.
-            else if (AttackTimer - (CalculateAttackTime() / 2) > Timing.Global.Milliseconds)
+            else if (AttackTimer - (CalculateAttackTime() / 2) > Timing.Global.Milliseconds && !DragAndDrop.IsDragging)
             {
                 frame = Options.Instance.Sprites.NormalAttackFrame;
             }
