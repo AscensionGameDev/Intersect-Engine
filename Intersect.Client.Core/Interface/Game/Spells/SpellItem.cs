@@ -1,7 +1,6 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -11,7 +10,6 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Localization;
 using Intersect.Configuration;
-using Intersect.Framework.Core;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 
@@ -22,16 +20,7 @@ public partial class SpellItem : SlotItem
     // Controls
     private readonly Label _cooldownLabel;
     private readonly SpellsWindow _spellWindow;
-    private Draggable? _dragIcon;
     private SpellDescriptionWindow? _descriptionWindow;
-
-    // Drag Handling
-    public bool IsDragging;
-    private bool _canDrag;
-    private long _clickTime;
-    private bool _mouseOver;
-    private int _mouseX = -1;
-    private int _mouseY = -1;
 
     // Context Menu Handling
     private readonly MenuItem _useSpellMenuItem;
@@ -122,20 +111,13 @@ public partial class SpellItem : SlotItem
             return;
         }
 
-        _mouseOver = true;
-        _canDrag = true;
-
         if (Globals.InputManager.IsMouseButtonDown(MouseButton.Left))
         {
-            _canDrag = false;
             return;
         }
 
-        if (_descriptionWindow != null)
-        {
-            _descriptionWindow.Dispose();
-            _descriptionWindow = null;
-        }
+        _descriptionWindow?.Dispose();
+        _descriptionWindow = null;
 
         if (Globals.Me?.Spells is not { Length: > 0 } spellSlots)
         {
@@ -147,35 +129,22 @@ public partial class SpellItem : SlotItem
 
     private void _iconImage_HoverLeave(Base sender, EventArgs arguments)
     {
-        _mouseOver = false;
-        _mouseX = -1;
-        _mouseY = -1;
-
-        if (_descriptionWindow != null)
-        {
-            _descriptionWindow.Dispose();
-            _descriptionWindow = null;
-        }
+        _descriptionWindow?.Dispose();
+        _descriptionWindow = null;
     }
 
     private void _iconImage_Clicked(Base sender, MouseButtonState arguments)
     {
-        switch (arguments.MouseButton)
+        if (arguments.MouseButton is MouseButton.Right)
         {
-            case MouseButton.Left:
-                _clickTime = Timing.Global.MillisecondsUtc + 500;
-                break;
-
-            case MouseButton.Right:
-                if (ClientConfiguration.Instance.EnableContextMenus)
-                {
-                    OpenContextMenu();
-                }
-                else
-                {
-                    Globals.Me?.TryForgetSpell(SlotIndex);
-                }
-                break;
+            if (ClientConfiguration.Instance.EnableContextMenus)
+            {
+                OpenContextMenu();
+            }
+            else
+            {
+                Globals.Me?.TryForgetSpell(SlotIndex);
+            }
         }
     }
 
@@ -206,7 +175,8 @@ public partial class SpellItem : SlotItem
             return;
         }
 
-        _cooldownLabel.IsVisibleInParent = !IsDragging && Globals.Me.IsSpellOnCooldown(SlotIndex);
+        //TODO: dont show when is dragging
+        _cooldownLabel.IsVisibleInParent = Globals.Me.IsSpellOnCooldown(SlotIndex);
         if (_cooldownLabel.IsVisibleInParent)
         {
             var itemCooldownRemaining = Globals.Me.GetSpellRemainingCooldown(SlotIndex);
@@ -239,151 +209,5 @@ public partial class SpellItem : SlotItem
             _descriptionWindow?.Dispose();
             _descriptionWindow = null;
         }
-
-        if (!IsDragging)
-        {
-            if (_mouseOver)
-            {
-                if (!Globals.InputManager.IsMouseButtonDown(MouseButton.Left))
-                {
-                    _canDrag = true;
-                    _mouseX = -1;
-                    _mouseY = -1;
-                    if (Timing.Global.MillisecondsUtc < _clickTime)
-                    {
-                        _clickTime = 0;
-                    }
-                }
-                else
-                {
-                    if (_canDrag && Draggable.Active == null)
-                    {
-                        if (_mouseX == -1 || _mouseY == -1)
-                        {
-                            _mouseX = InputHandler.MousePosition.X - _iconImage.ToCanvas(new Point(0, 0)).X;
-                            _mouseY = InputHandler.MousePosition.Y - _iconImage.ToCanvas(new Point(0, 0)).Y;
-                        }
-                        else
-                        {
-                            var xdiff = _mouseX -
-                                        (InputHandler.MousePosition.X - _iconImage.ToCanvas(new Point(0, 0)).X);
-
-                            var ydiff = _mouseY -
-                                        (InputHandler.MousePosition.Y - _iconImage.ToCanvas(new Point(0, 0)).Y);
-
-                            if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
-                            {
-                                IsDragging = true;
-                                _iconImage.IsVisibleInParent = false;
-                                _dragIcon = new Draggable(
-                                    _iconImage.ToCanvas(new Point(0, 0)).X + _mouseX,
-                                    _iconImage.ToCanvas(new Point(0, 0)).X + _mouseY, _iconImage.Texture, _iconImage.RenderColor
-                                );
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        else
-        {
-            if (_dragIcon?.Update() == true)
-            {
-                //Drug the item and now we stopped
-                IsDragging = false;
-                _iconImage.IsVisibleInParent = true;
-
-                var dragRect = new FloatRect(
-                    _dragIcon.X - (Padding.Left + Padding.Right) / 2f,
-                    _dragIcon.Y - (Padding.Top + Padding.Bottom) / 2f,
-                    (Padding.Left + Padding.Right) / 2f + _iconImage.Width,
-                    (Padding.Top + Padding.Bottom) / 2f + _iconImage.Height
-                );
-
-                float bestIntersect = 0;
-                var bestIntersectIndex = -1;
-
-                //So we picked up an item and then dropped it. Lets see where we dropped it to.
-                //Check spell first.
-                if (_spellWindow.RenderBounds().IntersectsWith(dragRect))
-                {
-                    for (var i = 0; i < Options.Instance.Player.MaxSpells; i++)
-                    {
-                        if (_spellWindow.Items[i] is not SpellItem spellSlot)
-                        {
-                            continue;
-                        }
-
-                        if (i < _spellWindow.Items.Count &&
-                            spellSlot.RenderBounds().IntersectsWith(dragRect))
-                        {
-                            if (FloatRect.Intersect(spellSlot.RenderBounds(), dragRect).Width *
-                                FloatRect.Intersect(spellSlot.RenderBounds(), dragRect).Height >
-                                bestIntersect)
-                            {
-                                bestIntersect =
-                                    FloatRect.Intersect(spellSlot.RenderBounds(), dragRect).Width *
-                                    FloatRect.Intersect(spellSlot.RenderBounds(), dragRect).Height;
-
-                                bestIntersectIndex = i;
-                            }
-                        }
-                    }
-
-                    if (bestIntersectIndex > -1)
-                    {
-                        if (SlotIndex != bestIntersectIndex && !Globals.Me.IsCasting)
-                        {
-                            Globals.Me.SwapSpells(bestIntersectIndex, SlotIndex);
-                        }
-                    }
-                }
-                else if (Interface.GameUi.Hotbar.RenderBounds().IntersectsWith(dragRect))
-                {
-                    for (var i = 0; i < Options.Instance.Player.HotbarSlotCount; i++)
-                    {
-                        if (Interface.GameUi.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
-                        {
-                            if (FloatRect.Intersect(
-                                        Interface.GameUi.Hotbar.Items[i].RenderBounds(), dragRect
-                                    )
-                                    .Width *
-                                FloatRect.Intersect(Interface.GameUi.Hotbar.Items[i].RenderBounds(), dragRect)
-                                    .Height >
-                                bestIntersect)
-                            {
-                                bestIntersect =
-                                    FloatRect.Intersect(Interface.GameUi.Hotbar.Items[i].RenderBounds(), dragRect)
-                                        .Width *
-                                    FloatRect.Intersect(Interface.GameUi.Hotbar.Items[i].RenderBounds(), dragRect)
-                                        .Height;
-
-                                bestIntersectIndex = i;
-                            }
-                        }
-                    }
-
-                    if (bestIntersectIndex > -1)
-                    {
-                        Globals.Me.AddToHotbar((byte) bestIntersectIndex, 1, SlotIndex);
-                    }
-                }
-
-                _dragIcon.Dispose();
-            }
-        }
-    }
-
-    public FloatRect RenderBounds()
-    {
-        var rect = new FloatRect()
-        {
-            X = _iconImage.ToCanvas(new Point(0, 0)).X,
-            Y = _iconImage.ToCanvas(new Point(0, 0)).Y,
-            Width = _iconImage.Width,
-            Height = _iconImage.Height
-        };
-
-        return rect;
     }
 }

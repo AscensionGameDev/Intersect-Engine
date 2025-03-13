@@ -49,17 +49,4 @@ public partial class HotBarWindow : ImagePanel
             slot.Update();
         }
     }
-
-    public FloatRect RenderBounds()
-    {
-        var rect = new FloatRect
-        {
-            X = ToCanvas(default).X,
-            Y = ToCanvas(default).Y,
-            Width = Width,
-            Height = Height,
-        };
-
-        return rect;
-    }
 }

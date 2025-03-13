@@ -1,68 +1,34 @@
-﻿using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
-using Intersect.Client.Framework.Input;
-using Intersect.Client.General;
 
 namespace Intersect.Client.Interface.Game;
 
-
-partial class Draggable
+public partial class Draggable(Base parent, string name) : ImagePanel(parent, name)
 {
-
-    public static Draggable Active = null;
-
-    ImagePanel mPnl;
-
-    public Draggable(int x, int y, IGameTexture tex, Color color)
+    public override bool DragAndDrop_Draggable()
     {
-        mPnl = new ImagePanel(Interface.GameUi.GameCanvas, "Draggable");
-        mPnl.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-        mPnl.SetPosition(
-            InputHandler.MousePosition.X - mPnl.Width / 2, InputHandler.MousePosition.Y - mPnl.Height / 2
-        );
-
-        mPnl.Texture = tex;
-        mPnl.RenderColor = color;
-        Active = this;
+        return true;
     }
 
-    public int X
+    public override Package DragAndDrop_GetPackage(int x, int y)
     {
-        get => mPnl.X;
-        set => mPnl.X = value;
-    }
-
-    public int Y
-    {
-        get => mPnl.Y;
-        set => mPnl.Y = value;
-    }
-
-    public bool Update()
-    {
-        mPnl.SetPosition(
-            InputHandler.MousePosition.X - mPnl.Width / 2, InputHandler.MousePosition.Y - mPnl.Height / 2
-        );
-
-        if (!Globals.InputManager.IsMouseButtonDown(MouseButton.Left))
+        return new Package()
         {
-            return true;
-        }
-
-        return false;
+            IsDraggable = true,
+            DrawControl = this,
+            Name = Name,
+            HoldOffset = ToLocal(InputHandler.MousePosition.X, InputHandler.MousePosition.Y),
+        };
     }
 
-    public void Dispose()
+    public override void DragAndDrop_StartDragging(Package package, int x, int y)
     {
-        if (Active == this)
-        {
-            Active = null;
-        }
-
-        Interface.GameUi.GameCanvas.RemoveChild(mPnl, false);
+        IsVisibleInParent = false;
     }
 
+    public override void DragAndDrop_EndDragging(bool success, int x, int y)
+    {
+        IsVisibleInParent = true;
+    }
 }

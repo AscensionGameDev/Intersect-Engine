@@ -86,17 +86,4 @@ public partial class BagWindow : Window
             }
         }
     }
-
-    public FloatRect RenderBounds()
-    {
-        var rect = new FloatRect()
-        {
-            X = ToCanvas(new Point(0, 0)).X - 4 / 2,
-            Y = ToCanvas(new Point(0, 0)).Y - 4 / 2,
-            Width = Width + 4,
-            Height = Height + 4
-        };
-
-        return rect;
-    }
 }

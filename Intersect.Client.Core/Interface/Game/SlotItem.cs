@@ -17,7 +17,7 @@ public partial class SlotItem : ImagePanel
         Margin = new Margin(4);
         MouseInputEnabled = true;
 
-        _iconImage = new ImagePanel(this, "Icon")
+        _iconImage = new Draggable(this, "Icon")
         {
             MinimumSize = new Point(32, 32),
             MouseInputEnabled = true,
