@@ -6,7 +6,7 @@ namespace Intersect.Client.Interface.Game;
 public partial class SlotItem : ImagePanel
 {
     public readonly int SlotIndex;
-    protected readonly ImagePanel _iconImage;
+    protected readonly Draggable _iconImage;
     protected readonly ContextMenu? _contextMenu;
 
     public SlotItem(Base parent, string name, int index, ContextMenu? contextMenu) : base(parent, name)

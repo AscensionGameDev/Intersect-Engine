@@ -4,12 +4,17 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Interface.Game.DescriptionWindows;
+using Intersect.Client.Interface.Game.Inventory;
 using Intersect.Client.Localization;
+using Intersect.Client.Networking;
 using Intersect.Configuration;
+using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Items;
 
 namespace Intersect.Client.Interface.Game.Bank;
@@ -52,6 +57,8 @@ public partial class BankItem : SlotItem
         contextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
     }
 
+    #region Context Menu
+
     protected override void OnContextMenuOpening(ContextMenu contextMenu)
     {
         if (Globals.BankSlots is not { Length: > 0 } bankSlots)
@@ -76,6 +83,8 @@ public partial class BankItem : SlotItem
     {
         Globals.Me?.TryRetrieveItemFromBank(SlotIndex);
     }
+
+    #endregion
 
     #region Mouse Events
 
@@ -166,6 +175,81 @@ public partial class BankItem : SlotItem
                 skipPrompt: false
             );
         }
+    }
+
+    #endregion
+
+    #region Drag and Drop
+
+    public override bool DragAndDrop_HandleDrop(Package package, int x, int y)
+    {
+        var targetNode = Interface.FindComponentUnderCursor(NodeFilter.None);
+
+        // Find the first parent acceptable in that tree that can accept the package
+        while (targetNode != default)
+        {
+            switch (targetNode)
+            {
+                case BankItem bankItem:
+                    if (Globals.IsGuildBank)
+                    {
+                        if (Globals.Me is not { } player)
+                        {
+                            return false;
+                        }
+
+                        var rank = player.GuildRank;
+                        var isInGuild = !string.IsNullOrWhiteSpace(player.Guild);
+                        if (!isInGuild || (player.Rank != 0 && rank?.Permissions.BankDeposit == false))
+                        {
+                            ChatboxMsg.AddMessage(
+                                new ChatboxMsg(
+                                    Strings.Guilds.NotAllowedSwap.ToString(player.Guild),
+                                    CustomColors.Alerts.Error,
+                                    ChatMessageType.Bank
+                                )
+                            );
+
+                            return false;
+                        }
+                    }
+
+                    PacketSender.SendMoveBankItems(SlotIndex, bankItem.SlotIndex);
+                    return true;
+
+                case InventoryItem inventoryItem:
+
+                    if (Globals.BankSlots is not { Length: > 0 } bankSlots)
+                    {
+                        return false;
+                    }
+
+                    if (bankSlots[SlotIndex] is not { Quantity: > 0 } slot)
+                    {
+                        return false;
+                    }
+
+                    Globals.Me?.TryRetrieveItemFromBank(
+                        SlotIndex,
+                        inventorySlotIndex: inventoryItem.SlotIndex,
+                        quantityHint: slot.Quantity,
+                        skipPrompt: true
+                    );
+                    return true;
+
+                default:
+                    targetNode = targetNode.Parent;
+                    break;
+            }
+            
+            // If we've reached the top of the tree, we can't drop here, so cancel drop
+            if (targetNode == null)
+            {
+                return false;
+            }
+        }
+
+        return false;
     }
 
     #endregion

@@ -4,10 +4,13 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
+using Intersect.Client.Interface.Game.Inventory;
+using Intersect.Client.Interface.Game.Spells;
 using Intersect.Client.Items;
 using Intersect.Client.Localization;
 using Intersect.Client.Spells;
@@ -204,6 +207,33 @@ public partial class HotbarItem : SlotItem
                 _currentSpell.Id, _hotbarWindow.X + (_hotbarWindow.Width / 2), _hotbarWindow.Y + _hotbarWindow.Height + 2
             );
         }
+    }
+
+    public override bool DragAndDrop_HandleDrop(Package package, int x, int y)
+    {
+        var targetNode = Interface.FindComponentUnderCursor(NodeFilter.None);
+
+        // Find the first parent acceptable in that tree that can accept the package
+        while (targetNode != default)
+        {
+            if (targetNode is HotbarItem hotbarItem)
+            {
+                Globals.Me?.HotbarSwap(SlotIndex, hotbarItem.SlotIndex);
+                return true;
+            }
+            else
+            {
+                targetNode = targetNode.Parent;
+            }
+
+            // If we've reached the top of the tree, we can't drop here, so cancel drop
+            if (targetNode == null)
+            {
+                return false;
+            }
+        }
+
+        return false;
     }
 
     public void Update()

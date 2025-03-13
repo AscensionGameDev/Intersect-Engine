@@ -30,6 +30,7 @@ public partial class ShopItem : SlotItem
         _iconImage.HoverLeave += _iconImage_HoverLeave;
         _iconImage.Clicked += _iconImage_RightClicked;
         _iconImage.DoubleClicked += _iconImage_DoubleClicked;
+        _iconImage.DisableDragAndDrop = true;
 
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 

@@ -4330,7 +4330,7 @@ public partial class Base : IDisposable
     // receiver
     public virtual bool DragAndDrop_CanAcceptPackage(Package p)
     {
-        return false;
+        return true;
     }
 
     public record struct SizeToChildrenArgs(

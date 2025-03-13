@@ -3,11 +3,14 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
+using Intersect.Client.Interface.Game.Inventory;
 using Intersect.Client.Localization;
+using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.Framework.Core.GameObjects.Items;
 
@@ -146,6 +149,42 @@ public partial class BagItem : SlotItem
         {
             Globals.Me?.TryRetrieveItemFromBag(SlotIndex, -1);
         }
+    }
+
+    #endregion
+
+    #region Drag and Drop
+
+    public override bool DragAndDrop_HandleDrop(Package package, int x, int y)
+    {
+        var targetNode = Interface.FindComponentUnderCursor(NodeFilter.None);
+
+        // Find the first parent acceptable in that tree that can accept the package
+        while (targetNode != default)
+        {
+            switch (targetNode)
+            {
+                case BagItem bagItem:
+                    PacketSender.SendMoveBagItems(SlotIndex, bagItem.SlotIndex);
+                    return true;
+
+                case InventoryItem inventoryItem:
+                    Globals.Me?.TryRetrieveItemFromBag(SlotIndex, inventoryItem.SlotIndex);
+                    return true;
+
+                default:
+                    targetNode = targetNode.Parent;
+                    break;
+            }
+            
+            // If we've reached the top of the tree, we can't drop here, so cancel drop
+            if (targetNode == null)
+            {
+                return false;
+            }
+        }
+
+        return false;
     }
 
     #endregion

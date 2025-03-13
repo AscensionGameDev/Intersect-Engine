@@ -4,10 +4,12 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
+using Intersect.Client.Interface.Game.Hotbar;
 using Intersect.Client.Localization;
 using Intersect.Configuration;
 using Intersect.GameObjects;
@@ -151,6 +153,42 @@ public partial class SpellItem : SlotItem
     private void _iconImage_DoubleClicked(Base sender, MouseButtonState arguments)
     {
         Globals.Me?.TryUseSpell(SlotIndex);
+    }
+
+    #endregion
+
+    #region Drag and Drop
+
+    public override bool DragAndDrop_HandleDrop(Package package, int x, int y)
+    {
+        var targetNode = Interface.FindComponentUnderCursor(NodeFilter.None);
+
+        // Find the first parent acceptable in that tree that can accept the package
+        while (targetNode != default)
+        {
+            switch (targetNode)
+            {
+                case SpellItem spellItem:
+                    Globals.Me?.SwapSpells(SlotIndex, spellItem.SlotIndex);
+                    return true;
+
+                case HotbarItem hotbarItem:
+                    Globals.Me?.AddToHotbar(hotbarItem.SlotIndex, 1, SlotIndex);
+                    return true;
+
+                default:
+                    targetNode = targetNode.Parent;
+                    break;
+            }
+
+            // If we've reached the top of the tree, we can't drop here, so cancel drop
+            if (targetNode == null)
+            {
+                return false;
+            }
+        }
+
+        return false;
     }
 
     #endregion
