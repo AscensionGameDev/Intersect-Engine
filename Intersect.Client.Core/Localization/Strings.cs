@@ -1263,6 +1263,9 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString FpsLabelFormat = @"{0}fps";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString PingLabelFormat = @"{0}ms";
     }
 
     public partial struct Guilds
@@ -2109,6 +2112,9 @@ If you are sure you want to hand over your guild enter '\c{{#ff8080}}{02}\c{{}}'
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString ShowFPSCounter = @"Show FPS Counter";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString ShowPingCounter = @"Show Ping Counter";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Fullscreen = @"Fullscreen";

@@ -21,6 +21,8 @@ public abstract partial class GameDatabase
 
     public bool ShowFPSCounter { get; set; }
 
+    public bool ShowPingCounter { get; set; }
+
     public int TargetFps { get; set; }
 
     public int TargetResolution { get; set; }
@@ -118,6 +120,7 @@ public abstract partial class GameDatabase
         SoundVolume = LoadPreference(nameof(SoundVolume), 15);
         TargetResolution = LoadPreference(nameof(TargetResolution), -1);
         ShowFPSCounter = LoadPreference(nameof(ShowFPSCounter), false);
+        ShowPingCounter = LoadPreference(nameof(ShowPingCounter), false);
         TargetFps = LoadPreference(nameof(TargetFps), 0);
         FullScreen = LoadPreference(nameof(FullScreen), false);
         EnableLighting = LoadPreference(nameof(EnableLighting), true);
@@ -160,6 +163,7 @@ public abstract partial class GameDatabase
         SavePreference(nameof(TargetFps), TargetFps);
         SavePreference(nameof(FullScreen), FullScreen);
         SavePreference(nameof(ShowFPSCounter), ShowFPSCounter);
+        SavePreference(nameof(ShowPingCounter), ShowPingCounter);
         SavePreference(nameof(EnableLighting), EnableLighting);
         SavePreference(nameof(HideOthersOnWindowOpen), HideOthersOnWindowOpen);
         SavePreference(nameof(AutoToggleChatLog), AutoToggleChatLog);

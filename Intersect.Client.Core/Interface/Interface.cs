@@ -16,7 +16,7 @@ namespace Intersect.Client.Interface;
 
 public static partial class Interface
 {
-    private static FPSPanel? _fpsPanel;
+    private static StatisticsPanel? _statisticsPanel;
     private static readonly ConcurrentQueue<Alert> PendingErrorMessages = new();
 
     private static bool _initialized;
@@ -80,22 +80,41 @@ public static partial class Interface
     public static MutableInterface CurrentInterface => NullableCurrentInterface ??
                                                        throw new InvalidOperationException("No current UI initialized");
 
-    private static bool _showFPSPanel;
+    private static bool _showStatisticsPanelFPS;
+    private static bool _showStatisticsPanelPing;
 
-    public static bool ShowFPSPanel
+    public static bool ShowStatisticsPanelFPS
     {
-        get => _showFPSPanel;
+        get => _showStatisticsPanelFPS;
         set
         {
-            if (_showFPSPanel == value)
+            if (_showStatisticsPanelFPS == value)
             {
                 return;
             }
 
-            _showFPSPanel = value;
-            if (_fpsPanel is { } fpsPanel)
+            _showStatisticsPanelFPS = value;
+            if (_statisticsPanel is { } panel)
             {
-                fpsPanel.IsVisibleInParent = _showFPSPanel;
+                panel.IsFPSEnabled = value;
+            }
+        }
+    }
+
+    public static bool ShowStatisticsPanelPing
+    {
+        get => _showStatisticsPanelPing;
+        set
+        {
+            if (_showStatisticsPanelPing == value)
+            {
+                return;
+            }
+
+            _showStatisticsPanelPing = value;
+            if (_statisticsPanel is { } panel)
+            {
+                panel.IsPingEnabled = value;
             }
         }
     }
@@ -234,10 +253,12 @@ public static partial class Interface
             _uiMainMenu = null;
         }
 
-        _showFPSPanel = Globals.Database?.ShowFPSCounter ?? false;
-        _fpsPanel = new FPSPanel(CurrentInterface.Root)
+        _showStatisticsPanelFPS = Globals.Database?.ShowFPSCounter ?? false;
+        _showStatisticsPanelPing = Globals.Database?.ShowPingCounter ?? false;
+        _statisticsPanel = new StatisticsPanel(CurrentInterface.Root)
         {
-            IsVisibleInParent = _showFPSPanel,
+            IsFPSEnabled = _showStatisticsPanelFPS,
+            IsPingEnabled = _showStatisticsPanelPing,
         };
 
         Globals.EmitLifecycleChangedState();
