@@ -75,6 +75,7 @@ public partial class SettingsWindow : Window
     private readonly LabeledComboBox _resolutionList;
     private readonly LabeledComboBox _fpsList;
     private readonly LabeledCheckBox _showFPSCounterCheckbox;
+    private readonly LabeledCheckBox _showPingCounterCheckbox;
     public readonly LabeledCheckBox _enableScrollingWorldZoomCheckbox;
     private readonly LabeledSlider _worldScale;
     private readonly LabeledCheckBox _fullscreenCheckbox;
@@ -236,6 +237,17 @@ public partial class SettingsWindow : Window
             FontSize = 12,
             Text = Strings.Settings.TypewriterText,
         };
+
+        // Game > Information
+
+        _showPingCounterCheckbox = new LabeledCheckBox(parent: _informationSettings, name: nameof(_showPingCounterCheckbox))
+        {
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            FontSize = 12,
+            Text = Strings.Settings.ShowPingCounter,
+        };
+        _showPingCounterCheckbox.CheckChanged += ShowPingCounterCheckboxOnCheckChanged;
 
         // Game Settings - Information: Friends.
         _friendOverheadInfoCheckbox = new LabeledCheckBox(parent: _informationSettings, name: nameof(_friendOverheadInfoCheckbox))
@@ -603,7 +615,12 @@ public partial class SettingsWindow : Window
 
     private static void ShowFPSCounterCheckboxOnCheckChanged(ICheckbox fpsCounterCheckbox, ValueChangedEventArgs<bool> args)
     {
-        Interface.ShowFPSPanel = args.Value;
+        Interface.ShowStatisticsPanelFPS = args.Value;
+    }
+
+    private static void ShowPingCounterCheckboxOnCheckChanged(ICheckbox pingCounterCheckbox, ValueChangedEventArgs<bool> args)
+    {
+        Interface.ShowStatisticsPanelPing = args.Value;
     }
 
     protected override void EnsureInitialized()
@@ -868,6 +885,7 @@ public partial class SettingsWindow : Window
     {
         Title = Strings.Settings.Title;
 
+        _gameSettingsTabInterface.Select();
         _gameSettingsTab.Select();
 
         UpdateWorldScaleControls();
@@ -998,6 +1016,7 @@ public partial class SettingsWindow : Window
             }
         }
 
+        _showPingCounterCheckbox.IsChecked = Globals.Database.ShowPingCounter;
         _showFPSCounterCheckbox.IsChecked = Globals.Database.ShowFPSCounter;
 
         switch (Globals.Database.TargetFps)
@@ -1204,6 +1223,7 @@ public partial class SettingsWindow : Window
         }
 
         Globals.Database.ShowFPSCounter = _showFPSCounterCheckbox.IsChecked;
+        Globals.Database.ShowPingCounter = _showPingCounterCheckbox.IsChecked;
 
         // Audio Settings.
         Globals.Database.MusicVolume = (int)_musicSlider.Value;
@@ -1234,6 +1254,8 @@ public partial class SettingsWindow : Window
         // Update previously saved values in order to discard changes.
         Globals.Database.MusicVolume = _previousMusicVolume;
         Globals.Database.SoundVolume = _previousSoundVolume;
+        Interface.ShowStatisticsPanelFPS = Globals.Database.ShowFPSCounter;
+        Interface.ShowStatisticsPanelPing = Globals.Database.ShowPingCounter;
         Audio.UpdateGlobalVolume();
         _keybindingEditControls = new Controls(Controls.ActiveControls);
 

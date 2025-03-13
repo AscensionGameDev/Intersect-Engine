@@ -888,6 +888,7 @@ public partial class Base : IDisposable
 
         VisibilityChangedEventArgs eventArgs = new(value, visibilityInTreeChanging ? value : !value);
         @this.OnVisibilityChanged(@this, eventArgs);
+        @this.Parent?.OnChildVisibilityChanged(@this, eventArgs);
         @this.VisibilityChanged?.Invoke(@this, eventArgs);
 
         @this.Invalidate();
@@ -917,6 +918,11 @@ public partial class Base : IDisposable
     }
 
     protected virtual void OnVisibilityChanged(object? sender, VisibilityChangedEventArgs eventArgs)
+    {
+
+    }
+
+    protected virtual void OnChildVisibilityChanged(object? sender, VisibilityChangedEventArgs eventArgs)
     {
 
     }
