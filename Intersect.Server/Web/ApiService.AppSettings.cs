@@ -151,7 +151,7 @@ internal partial class ApiService
         JObject? genericConfigurationToken = LoadOrFallbackTo(genericConfigurationFileInfo, AppsettingsToken);
 
         FileInfo environmentConfigurationFileInfo = new(FileNameAppsettingsEnvironmentJson);
-        JObject? environmentConfigurationToken = LoadOrFallbackTo(environmentConfigurationFileInfo, AppsettingsToken);
+        JObject? environmentConfigurationToken = LoadOrFallbackTo(environmentConfigurationFileInfo, AppsettingsEnvironmentToken);
 
         JsonMergeSettings jsonMergeSettings = new()
         {
