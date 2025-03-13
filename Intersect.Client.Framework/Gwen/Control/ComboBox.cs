@@ -45,6 +45,7 @@ public partial class ComboBox : Button
         Size = new Point(100, 20);
         _menu = new Menu(this, name: nameof(_menu))
         {
+            FontProvider = this,
             IsHidden = true,
             IconMarginDisabled = true,
             IsTabable = false,

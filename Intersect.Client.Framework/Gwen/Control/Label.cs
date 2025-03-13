@@ -15,7 +15,7 @@ namespace Intersect.Client.Framework.Gwen.Control;
 /// <summary>
 ///     Static text label.
 /// </summary>
-public partial class Label : Base, ILabel
+public partial class Label : Base, ILabel, IFontProvider
 {
     protected readonly Text _textElement;
 

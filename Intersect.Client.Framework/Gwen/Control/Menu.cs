@@ -42,6 +42,21 @@ public partial class Menu : ScrollControl
 
     #region Font Handling
 
+    public IFontProvider? FontProvider
+    {
+        get => _fontProvider;
+        set
+        {
+            if (value == _fontProvider)
+            {
+                return;
+            }
+
+            _fontProvider = value;
+            UpdateItemStyles();
+        }
+    }
+
     private IFont? _itemFont;
 
     public IFont? ItemFont
@@ -59,6 +74,7 @@ public partial class Menu : ScrollControl
     }
 
     private int _itemFontSize;
+    private IFontProvider? _fontProvider;
 
     public int ItemFontSize
     {
@@ -478,15 +494,25 @@ public partial class Menu : ScrollControl
 
     private void UpdateItemStyles()
     {
+        var font = _fontProvider?.Font;
+        var itemFontSize = (_itemFontSize < 1 ? 10 : _itemFontSize);
+        var fontSize = _fontProvider?.FontSize ?? itemFontSize;
+
+        if (_itemFont is { } itemFont)
+        {
+            font = itemFont;
+            fontSize = itemFontSize;
+        }
+
         var menuItems = Children.OfType<MenuItem>().ToArray();
         foreach (var item in menuItems)
         {
-            if (_itemFont != null)
+            if (font != null)
             {
-                item.Font = _itemFont;
+                item.Font = font;
             }
 
-            item.FontSize = _itemFontSize;
+            item.FontSize = fontSize;
             item.SetTextColor(mItemNormalTextColor, ComponentState.Normal);
             item.SetTextColor(mItemHoverTextColor, ComponentState.Hovered);
         }

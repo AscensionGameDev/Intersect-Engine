@@ -1,5 +1,7 @@
-﻿using Intersect.Client.Framework.Graphics;
+﻿using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.ControlInternal;
+using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
@@ -121,6 +123,7 @@ public partial class TabControl : Base
             foreach (var tab in tabs)
             {
                 tab.Font = _font;
+                tab.FontSize = _fontSize;
             }
         }
     }
@@ -155,6 +158,7 @@ public partial class TabControl : Base
         TabButton button = new(_tabStrip)
         {
             Font = _font,
+            FontSize = _fontSize,
             IsTabable = false,
             Page = page,
             Text = label,
@@ -209,6 +213,40 @@ public partial class TabControl : Base
         Invalidate();
 
         return button;
+    }
+
+    public override JObject? GetJson(bool isRoot = false, bool onlySerializeIfNotEmpty = false)
+    {
+        var serializedProperties = base.GetJson(isRoot, onlySerializeIfNotEmpty);
+        if (serializedProperties is null)
+        {
+            return null;
+        }
+
+        serializedProperties[nameof(Font)] = Font?.Name;
+        serializedProperties[nameof(FontSize)] = FontSize;
+
+        return serializedProperties;
+    }
+
+    public override void LoadJson(JToken token, bool isRoot = default)
+    {
+        base.LoadJson(token, isRoot);
+
+        if (token is not JObject obj)
+        {
+            return;
+        }
+
+        if (obj.TryGetValue(nameof(Font), out var tokenFont) && tokenFont is { Type: JTokenType.String })
+        {
+            Font = GameContentManager.Current.GetFont(tokenFont.Value<string>());
+        }
+
+        if (obj.TryGetValue(nameof(FontSize), out var tokenFontSize) && tokenFontSize is { Type: JTokenType.Integer })
+        {
+            FontSize = tokenFontSize.Value<int>();
+        }
     }
 
     /// <summary>
