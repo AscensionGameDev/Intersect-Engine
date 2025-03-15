@@ -163,7 +163,7 @@ public partial class ShopItem : SlotItem
         }
     }
 
-    public override bool DragAndDrop_HandleDrop(Package p, int x, int y)
+    public override bool DragAndDrop_HandleDrop(Package package, int x, int y)
     {
         var targetNode = Interface.FindComponentUnderCursor();
 

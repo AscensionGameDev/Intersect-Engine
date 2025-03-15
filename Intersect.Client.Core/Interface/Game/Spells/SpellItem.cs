@@ -161,6 +161,11 @@ public partial class SpellItem : SlotItem
 
     public override bool DragAndDrop_HandleDrop(Package package, int x, int y)
     {
+        if (Globals.Me is not { } player)
+        {
+            return false;
+        }
+
         var targetNode = Interface.FindComponentUnderCursor();
 
         // Find the first parent acceptable in that tree that can accept the package
@@ -169,11 +174,11 @@ public partial class SpellItem : SlotItem
             switch (targetNode)
             {
                 case SpellItem spellItem:
-                    Globals.Me?.SwapSpells(SlotIndex, spellItem.SlotIndex);
+                    player.SwapSpells(SlotIndex, spellItem.SlotIndex);
                     return true;
 
                 case HotbarItem hotbarItem:
-                    Globals.Me?.AddToHotbar(hotbarItem.SlotIndex, 1, SlotIndex);
+                    player.AddToHotbar(hotbarItem.SlotIndex, 1, SlotIndex);
                     return true;
 
                 default:

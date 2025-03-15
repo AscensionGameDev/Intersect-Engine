@@ -1,5 +1,6 @@
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Framework.Gwen.DragDrop;
 
 namespace Intersect.Client.Interface.Game;
 
@@ -40,6 +41,11 @@ public partial class SlotItem : ImagePanel
         }
 
         OnContextMenuOpening(contextMenu);
+    }
+
+    public override bool DragAndDrop_CanAcceptPackage(Package package)
+    {
+        return true;
     }
 
     protected virtual void OnContextMenuOpening(ContextMenu contextMenu)

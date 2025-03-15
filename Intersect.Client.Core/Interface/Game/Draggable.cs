@@ -8,12 +8,18 @@ public partial class Draggable(Base parent, string name) : ImagePanel(parent, na
 {
     public bool IsDragging => DragAndDrop.CurrentPackage?.DrawControl == this;
 
+    // TODO: Fix drag and drop names
     public override bool DragAndDrop_Draggable()
     {
         return true;
     }
 
-    public override Package DragAndDrop_GetPackage(int x, int y)
+    public override bool DragAndDrop_CanAcceptPackage(Package package)
+    {
+        return true;
+    }
+
+    public override Package? DragAndDrop_GetPackage(int x, int y)
     {
         return new Package()
         {

@@ -4258,7 +4258,7 @@ public partial class Base : IDisposable
     }
 
     // giver
-    public virtual Package DragAndDrop_GetPackage(int x, int y)
+    public virtual Package? DragAndDrop_GetPackage(int x, int y)
     {
         return _dragPayload;
     }
@@ -4330,7 +4330,7 @@ public partial class Base : IDisposable
     // receiver
     public virtual bool DragAndDrop_CanAcceptPackage(Package p)
     {
-        return true;
+        return false;
     }
 
     public record struct SizeToChildrenArgs(
