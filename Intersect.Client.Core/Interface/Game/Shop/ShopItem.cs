@@ -2,10 +2,12 @@ using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
+using Intersect.Client.Interface.Game.Inventory;
 using Intersect.Client.Localization;
 using Intersect.Configuration;
 using Intersect.Framework.Core.GameObjects.Items;
@@ -30,7 +32,6 @@ public partial class ShopItem : SlotItem
         Icon.HoverLeave += Icon_HoverLeave;
         Icon.Clicked += Icon_RightClicked;
         Icon.DoubleClicked += Icon_DoubleClicked;
-        Icon.DisableDragAndDrop = true;
 
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
@@ -160,5 +161,26 @@ public partial class ShopItem : SlotItem
             Icon.Texture = itemTex;
             Icon.RenderColor = itemDescriptor.Color;
         }
+    }
+
+    public override bool DragAndDrop_HandleDrop(Package p, int x, int y)
+    {
+        var targetNode = Interface.FindComponentUnderCursor();
+
+        // Find the first parent acceptable in that tree that can accept the package
+        while (targetNode != default)
+        {
+            if (targetNode is not InventoryWindow)
+            {
+                targetNode = targetNode.Parent;
+                continue;
+            }
+
+            Globals.Me?.TryBuyItem(_mySlot);
+            return true;
+        }
+
+        // If we've reached the top of the tree, we can't drop here, so cancel drop
+        return false;
     }
 }
