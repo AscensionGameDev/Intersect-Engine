@@ -4264,7 +4264,7 @@ public partial class Base : IDisposable
     }
 
     // giver
-    public virtual Package DragAndDrop_GetPackage(int x, int y)
+    public virtual Package? DragAndDrop_GetPackage(int x, int y)
     {
         return _dragPayload;
     }

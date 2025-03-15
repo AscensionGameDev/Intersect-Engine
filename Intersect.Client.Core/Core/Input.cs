@@ -2,6 +2,7 @@ using Intersect.Admin.Actions;
 using Intersect.Client.Entities;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
@@ -138,6 +139,11 @@ public static partial class Input
                 return;
             }
 
+            if (DragAndDrop.IsDragging)
+            {
+                return;
+            }
+
             var gameUi = Interface.Interface.GameUi;
 
             // First try and unfocus chat then close all UI elements, then untarget our target.. and THEN open the escape menu.
@@ -196,7 +202,7 @@ public static partial class Input
                     break;
 
                 case Control.ToggleGui:
-                    if (currentGameState == GameStates.InGame)
+                    if (currentGameState == GameStates.InGame && !DragAndDrop.IsDragging)
                     {
                         Interface.Interface.HideUi = !Interface.Interface.HideUi;
                     }
@@ -245,6 +251,11 @@ public static partial class Input
 
                 case GameStates.InGame:
                     if (!Interface.Interface.HasInGameUI)
+                    {
+                        break;
+                    }
+
+                    if (DragAndDrop.IsDragging)
                     {
                         break;
                     }

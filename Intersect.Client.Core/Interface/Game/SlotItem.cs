@@ -1,12 +1,13 @@
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Framework.Gwen.DragDrop;
 
 namespace Intersect.Client.Interface.Game;
 
 public partial class SlotItem : ImagePanel
 {
     public readonly int SlotIndex;
-    protected readonly ImagePanel _iconImage;
+    public readonly Draggable Icon;
     protected readonly ContextMenu? _contextMenu;
 
     public SlotItem(Base parent, string name, int index, ContextMenu? contextMenu) : base(parent, name)
@@ -17,7 +18,7 @@ public partial class SlotItem : ImagePanel
         Margin = new Margin(4);
         MouseInputEnabled = true;
 
-        _iconImage = new ImagePanel(this, "Icon")
+        Icon = new Draggable(this, nameof(Icon))
         {
             MinimumSize = new Point(32, 32),
             MouseInputEnabled = true,
@@ -40,6 +41,11 @@ public partial class SlotItem : ImagePanel
         }
 
         OnContextMenuOpening(contextMenu);
+    }
+
+    public override bool DragAndDrop_CanAcceptPackage(Package package)
+    {
+        return true;
     }
 
     protected virtual void OnContextMenuOpening(ContextMenu contextMenu)

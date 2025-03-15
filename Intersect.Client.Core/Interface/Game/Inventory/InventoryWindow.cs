@@ -1,6 +1,5 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
@@ -98,20 +97,5 @@ public partial class InventoryWindow : Window
 
         _contextMenu?.Close();
         base.Hide();
-    }
-
-    // TODO: Window has RenderBounds as property, but InventoryWindow has it as a method. This should be consistent.
-    public FloatRect RenderBounds()
-    {
-        var tempSlot = Items[0];
-        var rect = new FloatRect()
-        {
-            X = ToCanvas(new Point(0, 0)).X - (tempSlot.Padding.Left + tempSlot.Padding.Right) / 2,
-            Y = ToCanvas(new Point(0, 0)).Y - (tempSlot.Padding.Top + tempSlot.Padding.Bottom) / 2,
-            Width = Width + tempSlot.Padding.Left + tempSlot.Padding.Right,
-            Height = Height + tempSlot.Padding.Top + tempSlot.Padding.Bottom
-        };
-
-        return rect;
     }
 }
