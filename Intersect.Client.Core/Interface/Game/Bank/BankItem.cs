@@ -191,17 +191,20 @@ public partial class BankItem : SlotItem
         var rank = player.GuildRank;
         var isInGuild = !string.IsNullOrWhiteSpace(player.Guild);
 
-        if (!isInGuild || (Globals.IsGuildBank && player.Rank != 0 && rank?.Permissions.BankDeposit == false))
+        if (Globals.IsGuildBank)
         {
-            ChatboxMsg.AddMessage(
-                new ChatboxMsg(
-                    Strings.Guilds.NotAllowedSwap.ToString(player.Guild),
-                    CustomColors.Alerts.Error,
-                    ChatMessageType.Bank
-                )
-            );
+            if (!isInGuild || (player.Rank != 0 && rank?.Permissions.BankDeposit == false))
+            {
+                ChatboxMsg.AddMessage(
+                    new ChatboxMsg(
+                        Strings.Guilds.NotAllowedSwap.ToString(player.Guild),
+                        CustomColors.Alerts.Error,
+                        ChatMessageType.Bank
+                    )
+                );
 
-            return false;
+                return false;
+            }
         }
 
         var targetNode = Interface.FindComponentUnderCursor();
