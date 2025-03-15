@@ -13,4 +13,6 @@ public enum VariableComparator
     Less,
 
     NotEqual,
+
+    Between,
 }

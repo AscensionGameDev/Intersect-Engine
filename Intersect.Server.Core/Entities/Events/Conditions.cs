@@ -692,6 +692,13 @@ public static partial class Conditions
                 }
 
                 break;
+            case VariableComparator.Between:
+                if (varVal >= comparison.Value && varVal <= comparison.MaxValue)
+                {
+                    return true;
+                }
+
+                break;
         }
 
         return false;

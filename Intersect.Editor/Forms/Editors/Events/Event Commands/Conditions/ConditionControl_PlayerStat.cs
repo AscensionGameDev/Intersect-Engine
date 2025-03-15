@@ -27,10 +27,7 @@ public partial class ConditionControl_PlayerStat : UserControl
         }
 
         cmbLevelComparator.Items.Clear();
-        for (var i = 0; i < Strings.EventConditional.comparators.Count; i++)
-        {
-            cmbLevelComparator.Items.Add(Strings.EventConditional.comparators[i]);
-        }
+        cmbLevelComparator.Items.AddRange(Strings.EventConditional.comparators.Values.ToArray());
 
         chkStatIgnoreBuffs.Text = Strings.EventConditional.ignorestatbuffs;
     }
