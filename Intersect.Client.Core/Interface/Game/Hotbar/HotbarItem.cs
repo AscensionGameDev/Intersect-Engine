@@ -222,6 +222,11 @@ public partial class HotbarItem : SlotItem
 
     public override bool DragAndDrop_HandleDrop(Package package, int x, int y)
     {
+        if (Globals.Me is not { } player)
+        {
+            return false;
+        }
+
         var targetNode = Interface.FindComponentUnderCursor();
 
         // Find the first parent acceptable in that tree that can accept the package
@@ -229,7 +234,7 @@ public partial class HotbarItem : SlotItem
         {
             if (targetNode is HotbarItem hotbarItem)
             {
-                Globals.Me?.HotbarSwap(SlotIndex, hotbarItem.SlotIndex);
+                player.HotbarSwap(SlotIndex, hotbarItem.SlotIndex);
                 return true;
             }
             else
@@ -394,6 +399,7 @@ public partial class HotbarItem : SlotItem
         }
 
         var isDragging = Icon.IsDragging;
+        var invalidInventoryIndex = _inventoryItemIndex < 0;
         if (isDragging)
         {
             _equipLabel.IsHidden = true;
@@ -402,9 +408,9 @@ public partial class HotbarItem : SlotItem
         }
         else
         {
-            _equipLabel.IsHidden = !_isEquipped || _inventoryItemIndex < 0;
-            _quantityLabel.IsHidden = _currentItem?.Stackable == false || _inventoryItemIndex < 0;
-            _cooldownLabel.IsHidden = !_isFaded || _inventoryItemIndex < 0;
+            _equipLabel.IsHidden = !_isEquipped || invalidInventoryIndex;
+            _quantityLabel.IsHidden = _currentItem?.Stackable == false || invalidInventoryIndex;
+            _cooldownLabel.IsHidden = !_isFaded || invalidInventoryIndex;
         }
 
         if (updateDisplay) //Item on cd and fade is incorrect
@@ -420,7 +426,7 @@ public partial class HotbarItem : SlotItem
                 _quantityLabel.IsHidden = true;
                 _cooldownLabel.IsHidden = true;
 
-                if (_inventoryItemIndex > -1)
+                if (!invalidInventoryIndex)
                 {
                     _isFaded = Globals.Me.IsItemOnCooldown(_inventoryItemIndex);
                     _isEquipped = Globals.Me.IsEquipped(_inventoryItemIndex);

@@ -147,7 +147,7 @@ public partial class BankItem : SlotItem
 
     private void Icon_DoubleClicked(Base sender, MouseButtonState arguments)
     {
-        if (!Globals.InBank)
+        if (arguments.MouseButton is not MouseButton.Left)
         {
             return;
         }
@@ -183,6 +183,27 @@ public partial class BankItem : SlotItem
 
     public override bool DragAndDrop_HandleDrop(Package package, int x, int y)
     {
+        if (Globals.Me is not { } player)
+        {
+            return false;
+        }
+
+        var rank = player.GuildRank;
+        var isInGuild = !string.IsNullOrWhiteSpace(player.Guild);
+
+        if (!isInGuild || (player.Rank != 0 && rank?.Permissions.BankDeposit == false))
+        {
+            ChatboxMsg.AddMessage(
+                new ChatboxMsg(
+                    Strings.Guilds.NotAllowedSwap.ToString(player.Guild),
+                    CustomColors.Alerts.Error,
+                    ChatMessageType.Bank
+                )
+            );
+
+            return false;
+        }
+
         var targetNode = Interface.FindComponentUnderCursor();
 
         // Find the first parent acceptable in that tree that can accept the package
@@ -191,29 +212,6 @@ public partial class BankItem : SlotItem
             switch (targetNode)
             {
                 case BankItem bankItem:
-                    if (Globals.IsGuildBank)
-                    {
-                        if (Globals.Me is not { } player)
-                        {
-                            return false;
-                        }
-
-                        var rank = player.GuildRank;
-                        var isInGuild = !string.IsNullOrWhiteSpace(player.Guild);
-                        if (!isInGuild || (player.Rank != 0 && rank?.Permissions.BankDeposit == false))
-                        {
-                            ChatboxMsg.AddMessage(
-                                new ChatboxMsg(
-                                    Strings.Guilds.NotAllowedSwap.ToString(player.Guild),
-                                    CustomColors.Alerts.Error,
-                                    ChatMessageType.Bank
-                                )
-                            );
-
-                            return false;
-                        }
-                    }
-
                     PacketSender.SendMoveBankItems(SlotIndex, bankItem.SlotIndex);
                     return true;
 
@@ -229,7 +227,7 @@ public partial class BankItem : SlotItem
                         return false;
                     }
 
-                    Globals.Me?.TryRetrieveItemFromBank(
+                    player.TryRetrieveItemFromBank(
                         SlotIndex,
                         inventorySlotIndex: inventoryItem.SlotIndex,
                         quantityHint: slot.Quantity,

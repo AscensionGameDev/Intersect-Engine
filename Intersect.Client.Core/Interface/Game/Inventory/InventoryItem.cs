@@ -204,7 +204,7 @@ public partial class InventoryItem : SlotItem
         }
     }
 
-    private void _dropItemContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.MouseButtonState arguments)
+    private void _dropItemContextItem_Clicked(Base sender, MouseButtonState arguments)
     {
         Globals.Me?.TryDropItem(SlotIndex);
     }
@@ -260,35 +260,41 @@ public partial class InventoryItem : SlotItem
 
     private void Icon_Clicked(Base sender, MouseButtonState arguments)
     {
-        if (arguments.MouseButton is MouseButton.Right)
+        if (arguments.MouseButton is not MouseButton.Right)
         {
-            if (ClientConfiguration.Instance.EnableContextMenus)
-            {
-                OpenContextMenu();
-            }
-            else
-            {
-                if (Globals.GameShop != null)
-                {
-                    Globals.Me?.TrySellItem(SlotIndex);
-                }
-                else if (Globals.InBank)
-                {
-                    Globals.Me?.TryStoreItemInBank(SlotIndex);
-                }
-                else if (Globals.InBag)
-                {
-                    Globals.Me?.TryStoreItemInBag(SlotIndex, -1);
-                }
-                else if (Globals.InTrade)
-                {
-                    Globals.Me?.TryOfferItemToTrade(SlotIndex);
-                }
-                else
-                {
-                    Globals.Me?.TryDropItem(SlotIndex);
-                }
-            }
+            return;
+        }
+
+        if (ClientConfiguration.Instance.EnableContextMenus)
+        {
+            OpenContextMenu();
+            return;
+        }
+
+        if (Globals.Me is not { } player)
+        {
+            return;
+        }
+
+        if (Globals.GameShop != null)
+        {
+            player.TrySellItem(SlotIndex);
+        }
+        else if (Globals.InBank)
+        {
+            player.TryStoreItemInBank(SlotIndex);
+        }
+        else if (Globals.InBag)
+        {
+            player.TryStoreItemInBag(SlotIndex, -1);
+        }
+        else if (Globals.InTrade)
+        {
+            player.TryOfferItemToTrade(SlotIndex);
+        }
+        else
+        {
+            player.TryDropItem(SlotIndex);
         }
     }
 
@@ -404,7 +410,12 @@ public partial class InventoryItem : SlotItem
 
     public override bool DragAndDrop_HandleDrop(Package package, int x, int y)
     {
-        if (Globals.Me?.Inventory is not { } inventory)
+        if (Globals.Me is not { } player)
+        {
+            return false;
+        }
+
+        if (player.Inventory is not { } inventory)
         {
             return false;
         }
@@ -414,7 +425,7 @@ public partial class InventoryItem : SlotItem
             return false;
         }
 
-        if (!Interface.DoesMouseHitInterface() && !Globals.Me.IsBusy)
+        if (!Interface.DoesMouseHitInterface() && !player.IsBusy)
         {
             PacketSender.SendDropItem(SlotIndex, inventorySlot.Quantity);
             return true;
@@ -433,15 +444,15 @@ public partial class InventoryItem : SlotItem
                         return false;
                     }
 
-                    Globals.Me?.SwapItems(SlotIndex, inventoryItem.SlotIndex);
+                    player.SwapItems(SlotIndex, inventoryItem.SlotIndex);
                     return true;
 
                 case BagItem bagItem:
-                    Globals.Me?.TryStoreItemInBag(SlotIndex, bagItem.SlotIndex);
+                    player.TryStoreItemInBag(SlotIndex, bagItem.SlotIndex);
                     return true;
 
                 case BankItem bankItem:
-                    Globals.Me?.TryStoreItemInBank(
+                    player.TryStoreItemInBank(
                         SlotIndex,
                         bankSlotIndex: bankItem.SlotIndex,
                         quantityHint: inventorySlot.Quantity,
@@ -450,11 +461,11 @@ public partial class InventoryItem : SlotItem
                     return true;
 
                 case HotbarItem hotbarItem:
-                    Globals.Me?.AddToHotbar(hotbarItem.SlotIndex, 0, SlotIndex);
+                    player.AddToHotbar(hotbarItem.SlotIndex, 0, SlotIndex);
                     return true;
 
                 case ShopWindow:
-                    Globals.Me?.TrySellItem(SlotIndex);
+                    player.TrySellItem(SlotIndex);
                     return true;
 
                 default:
