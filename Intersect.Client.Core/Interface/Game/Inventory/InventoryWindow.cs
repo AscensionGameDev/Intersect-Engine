@@ -2,7 +2,6 @@ using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
-using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Utilities;
@@ -97,13 +96,6 @@ public partial class InventoryWindow : Window
         }
 
         _contextMenu?.Close();
-
-        // dont hide window if we are dragging something
-        if (Items.Any(c => c.IconImage == DragAndDrop.CurrentPackage?.DrawControl))
-        {
-            return;
-        }
-
         base.Hide();
     }
 }

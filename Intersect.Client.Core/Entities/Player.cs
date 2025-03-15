@@ -7,7 +7,6 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Control.EventArguments.InputSubmissionEvent;
-using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.Framework.Items;
 using Intersect.Client.General;
@@ -1957,11 +1956,6 @@ public partial class Player : Entity, IPlayer
     public bool TryAttack()
     {
         if (IsAttacking || IsBlocking || (IsMoving && !Options.Instance.Player.AllowCombatMovement) || Globals.Me == default)
-        {
-            return false;
-        }
-
-        if (DragAndDrop.IsDragging)
         {
             return false;
         }

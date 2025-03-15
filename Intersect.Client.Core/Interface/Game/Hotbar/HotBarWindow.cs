@@ -1,9 +1,7 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
-using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.General;
 
 namespace Intersect.Client.Interface.Game.Hotbar;
@@ -49,16 +47,5 @@ public partial class HotBarWindow : ImagePanel
         {
             slot.Update();
         }
-    }
-
-    public override void Hide()
-    {
-        // dont hide window if we are dragging something
-        if (Items.Any(c => c.IconImage == DragAndDrop.CurrentPackage?.DrawControl))
-        {
-            return;
-        }
-
-        base.Hide();
     }
 }

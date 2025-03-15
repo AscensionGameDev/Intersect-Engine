@@ -134,6 +134,11 @@ public partial class HotbarItem : SlotItem
             return;
         }
 
+        if (DragAndDrop.IsDragging)
+        {
+            return;
+        }
+
         if (_currentId != Guid.Empty && Globals.Me != null)
         {
             if (_currentItem != null)

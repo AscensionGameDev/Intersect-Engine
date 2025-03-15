@@ -255,6 +255,11 @@ public static partial class Input
                         break;
                     }
 
+                    if (DragAndDrop.IsDragging)
+                    {
+                        break;
+                    }
+
                     switch (control)
                     {
                         case Control.Block:
