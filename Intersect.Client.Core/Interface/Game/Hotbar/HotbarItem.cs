@@ -222,7 +222,7 @@ public partial class HotbarItem : SlotItem
 
     public override bool DragAndDrop_HandleDrop(Package package, int x, int y)
     {
-        var targetNode = Interface.FindComponentUnderCursor(NodeFilter.None);
+        var targetNode = Interface.FindComponentUnderCursor();
 
         // Find the first parent acceptable in that tree that can accept the package
         while (targetNode != default)
@@ -236,14 +236,9 @@ public partial class HotbarItem : SlotItem
             {
                 targetNode = targetNode.Parent;
             }
-
-            // If we've reached the top of the tree, we can't drop here, so cancel drop
-            if (targetNode == null)
-            {
-                return false;
-            }
         }
 
+        // If we've reached the top of the tree, we can't drop here, so cancel drop
         return false;
     }
 

@@ -145,7 +145,7 @@ public partial class BagItem : SlotItem
 
     private void Icon_DoubleClicked(Base sender, MouseButtonState arguments)
     {
-        if (Globals.InBag)
+        if (arguments.MouseButton is MouseButton.Left)
         {
             Globals.Me?.TryRetrieveItemFromBag(SlotIndex, -1);
         }
@@ -157,7 +157,7 @@ public partial class BagItem : SlotItem
 
     public override bool DragAndDrop_HandleDrop(Package package, int x, int y)
     {
-        var targetNode = Interface.FindComponentUnderCursor(NodeFilter.None);
+        var targetNode = Interface.FindComponentUnderCursor();
 
         // Find the first parent acceptable in that tree that can accept the package
         while (targetNode != default)
@@ -176,14 +176,9 @@ public partial class BagItem : SlotItem
                     targetNode = targetNode.Parent;
                     break;
             }
-            
-            // If we've reached the top of the tree, we can't drop here, so cancel drop
-            if (targetNode == null)
-            {
-                return false;
-            }
         }
 
+        // If we've reached the top of the tree, we can't drop here, so cancel drop
         return false;
     }
 
