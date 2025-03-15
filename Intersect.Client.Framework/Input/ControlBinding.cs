@@ -53,7 +53,7 @@ public partial class ControlBinding(Keys modifier, Keys key)
 
         if (IsMouseKey && Key.TryGetMouseButton(out var mouseButton))
         {
-            return gameInput.WasMouseButtonDown(mouseButton);
+            return gameInput.WasMouseButtonDown(mouseButton) && !DragAndDrop.IsDragging;
         }
 
         return gameInput.WasKeyDown(Key);

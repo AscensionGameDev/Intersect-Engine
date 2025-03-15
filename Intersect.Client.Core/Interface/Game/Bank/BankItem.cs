@@ -191,7 +191,7 @@ public partial class BankItem : SlotItem
         var rank = player.GuildRank;
         var isInGuild = !string.IsNullOrWhiteSpace(player.Guild);
 
-        if (!isInGuild || (player.Rank != 0 && rank?.Permissions.BankDeposit == false))
+        if (!isInGuild || (Globals.IsGuildBank && player.Rank != 0 && rank?.Permissions.BankDeposit == false))
         {
             ChatboxMsg.AddMessage(
                 new ChatboxMsg(
