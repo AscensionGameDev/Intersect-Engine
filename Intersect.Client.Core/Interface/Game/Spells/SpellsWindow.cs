@@ -1,6 +1,5 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Localization;
@@ -75,20 +74,5 @@ public partial class SpellsWindow : Window
     {
         _contextMenu?.Close();
         base.Hide();
-    }
-
-    public FloatRect RenderBounds()
-    {
-        var rect = new FloatRect()
-        {
-            X = ToCanvas(new Point(0, 0)).X -
-                (Items[0].Padding.Left + Items[0].Padding.Right) / 2,
-            Y = ToCanvas(new Point(0, 0)).Y -
-                (Items[0].Padding.Top + Items[0].Padding.Bottom) / 2,
-            Width = Width + Items[0].Padding.Left + Items[0].Padding.Right,
-            Height = Height + Items[0].Padding.Top + Items[0].Padding.Bottom
-        };
-
-        return rect;
     }
 }

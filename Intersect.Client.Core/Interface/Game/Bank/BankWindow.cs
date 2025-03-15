@@ -1,6 +1,5 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
@@ -90,16 +89,9 @@ public partial class BankWindow : Window
         }
     }
 
-    public FloatRect RenderBounds()
+    public override void Hide()
     {
-        var rect = new FloatRect()
-        {
-            X = ToCanvas(new Point(0, 0)).X - 4 / 2,
-            Y = ToCanvas(new Point(0, 0)).Y - 4 / 2,
-            Width = Width + 4,
-            Height = Height + 4
-        };
-
-        return rect;
+        _contextMenu?.Close();
+        base.Hide();
     }
 }

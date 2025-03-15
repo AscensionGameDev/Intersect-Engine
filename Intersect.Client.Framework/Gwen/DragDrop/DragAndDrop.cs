@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Input;
 
@@ -26,6 +26,8 @@ public static partial class DragAndDrop
     private static Base sNewHoveredControl;
 
     public static Base SourceControl;
+
+    public static bool IsDragging => CurrentPackage != default;
 
     private static bool OnDrop(int x, int y)
     {
@@ -78,7 +80,6 @@ public static partial class DragAndDrop
         SourceControl = sLastPressedControl;
         InputHandler.MouseFocus = null;
         sLastPressedControl = null;
-        CurrentPackage.DrawControl = null;
 
         // Some controls will want to decide whether they should be dragged at that moment.
         // This function is for them (it defaults to true)

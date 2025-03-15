@@ -4264,12 +4264,13 @@ public partial class Base : IDisposable
     }
 
     // giver
-    public virtual Package DragAndDrop_GetPackage(int x, int y)
+    public virtual Package? DragAndDrop_GetPackage(int x, int y)
     {
         return _dragPayload;
     }
 
     // giver
+    // TODO: Fix drag and drop names
     public virtual bool DragAndDrop_Draggable()
     {
         if (_dragPayload == null)
