@@ -536,7 +536,7 @@ public partial class InventoryItem : SlotItem
             return;
         }
 
-        var itemTexture = Globals.ContentManager?.GetTexture(Framework.Content.TextureType.Item, descriptor.Icon);
+        var itemTexture = GameContentManager.Current.GetTexture(Framework.Content.TextureType.Item, descriptor.Icon);
         if (itemTexture != null)
         {
             Icon.Texture = itemTexture;

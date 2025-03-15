@@ -222,7 +222,7 @@ public partial class SpellItem : SlotItem
 
         if (Path.GetFileName(Icon.Texture?.Name) != spell.Icon)
         {
-            var spellIconTexture = Globals.ContentManager?.GetTexture(TextureType.Spell, spell.Icon);
+            var spellIconTexture = GameContentManager.Current.GetTexture(TextureType.Spell, spell.Icon);
             if (spellIconTexture != null)
             {
                 Icon.Texture = spellIconTexture;

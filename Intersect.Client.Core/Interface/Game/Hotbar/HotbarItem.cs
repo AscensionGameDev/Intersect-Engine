@@ -242,7 +242,7 @@ public partial class HotbarItem : SlotItem
         return false;
     }
 
-    public void Update()
+    public override void Update()
     {
         if (Globals.Me == null || Controls.ActiveControls == null)
         {
@@ -412,7 +412,7 @@ public partial class HotbarItem : SlotItem
             if (_currentItem != null)
             {
                 Icon.IsVisibleInTree = !isDragging;
-                Icon.Texture = Globals.ContentManager.GetTexture(
+                Icon.Texture = GameContentManager.Current.GetTexture(
                     Framework.Content.TextureType.Item, _currentItem.Icon
                 );
 

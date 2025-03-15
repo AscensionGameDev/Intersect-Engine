@@ -249,7 +249,7 @@ public partial class BankItem : SlotItem
 
     #endregion
 
-    public new void Update()
+    public override void Update()
     {
         if (Globals.Me == default)
         {
@@ -282,7 +282,7 @@ public partial class BankItem : SlotItem
             return;
         }
 
-        var itemTexture = Globals.ContentManager?.GetTexture(Framework.Content.TextureType.Item, descriptor.Icon);
+        var itemTexture = GameContentManager.Current.GetTexture(Framework.Content.TextureType.Item, descriptor.Icon);
         if (itemTexture != default)
         {
             Icon.Texture = itemTexture;

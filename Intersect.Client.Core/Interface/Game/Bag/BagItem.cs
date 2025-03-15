@@ -217,7 +217,7 @@ public partial class BagItem : SlotItem
             return;
         }
 
-        var itemTexture = Globals.ContentManager?.GetTexture(Framework.Content.TextureType.Item, descriptor.Icon);
+        var itemTexture = GameContentManager.Current.GetTexture(Framework.Content.TextureType.Item, descriptor.Icon);
         if (itemTexture != default)
         {
             Icon.Texture = itemTexture;
