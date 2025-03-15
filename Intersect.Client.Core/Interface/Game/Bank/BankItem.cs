@@ -24,7 +24,7 @@ public partial class BankItem : SlotItem
     // Controls
     private readonly Label _quantityLabel;
     private BankWindow _bankWindow;
-    private ItemDescriptionWindow? _descWindow;
+    private ItemDescriptionWindow? _descriptionWindow;
 
     // Context Menu Handling
     private MenuItem _withdrawContextItem;
@@ -101,8 +101,8 @@ public partial class BankItem : SlotItem
         }
 
 
-        _descWindow?.Dispose();
-        _descWindow = null;
+        _descriptionWindow?.Dispose();
+        _descriptionWindow = null;
 
         if (Globals.BankSlots is not { Length: > 0 } bankSlots)
         {
@@ -115,7 +115,7 @@ public partial class BankItem : SlotItem
         }
 
         var item = bankSlots[SlotIndex];
-        _descWindow = new ItemDescriptionWindow(
+        _descriptionWindow = new ItemDescriptionWindow(
             item.Descriptor,
             item.Quantity,
             _bankWindow.X,
@@ -126,8 +126,8 @@ public partial class BankItem : SlotItem
 
     private void Icon_HoverLeave(Base sender, EventArgs arguments)
     {
-        _descWindow?.Dispose();
-        _descWindow = default;
+        _descriptionWindow?.Dispose();
+        _descriptionWindow = default;
     }
 
     private void Icon_Clicked(Base sender, MouseButtonState arguments)
@@ -303,7 +303,7 @@ public partial class BankItem : SlotItem
             }
         }
 
-        _descWindow?.Dispose();
-        _descWindow = default;
+        _descriptionWindow?.Dispose();
+        _descriptionWindow = default;
     }
 }

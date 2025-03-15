@@ -17,7 +17,7 @@ public partial class ShopItem : SlotItem
     private readonly int _mySlot;
     private readonly ShopWindow _shopWindow;
     private readonly MenuItem _buyMenuItem;
-    private ItemDescriptionWindow? _itemDescWindow;
+    private ItemDescriptionWindow? _descriptionWindow;
 
     public ShopItem(ShopWindow shopWindow, Base parent, int index, ContextMenu contextMenu)
         : base(parent, nameof(ShopItem), index, contextMenu)
@@ -54,10 +54,10 @@ public partial class ShopItem : SlotItem
             return;
         }
 
-        if (_itemDescWindow != default)
+        if (_descriptionWindow != default)
         {
-            _itemDescWindow.Dispose();
-            _itemDescWindow = default;
+            _descriptionWindow.Dispose();
+            _descriptionWindow = default;
         }
 
         if (Globals.GameShop is not { SellingItems.Count: > 0 } gameShop)
@@ -77,7 +77,7 @@ public partial class ShopItem : SlotItem
                 StatModifiers = item.StatsGiven,
             };
 
-            _itemDescWindow = new ItemDescriptionWindow(
+            _descriptionWindow = new ItemDescriptionWindow(
                 item: gameShop.SellingItems[_mySlot].Item,
                 amount: 1,
                 x: _shopWindow.X,
@@ -90,10 +90,10 @@ public partial class ShopItem : SlotItem
 
     private void Icon_HoverLeave(Base sender, EventArgs arguments)
     {
-        if (_itemDescWindow != null)
+        if (_descriptionWindow != null)
         {
-            _itemDescWindow.Dispose();
-            _itemDescWindow = null;
+            _descriptionWindow.Dispose();
+            _descriptionWindow = null;
         }
     }
 

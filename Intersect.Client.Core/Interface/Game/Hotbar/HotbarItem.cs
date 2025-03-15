@@ -34,10 +34,10 @@ public partial class HotbarItem : SlotItem
     private ControlBinding? _hotKey;
     private Item? _inventoryItem = null;
     private int _inventoryItemIndex = -1;
-    private ItemDescriptionWindow? _itemDescWindow;
+    private ItemDescriptionWindow? _itemDescriptionWindow;
     private Label _quantityLabel;
     private Spell? _spellBookItem = null;
-    private SpellDescriptionWindow? _spellDescWindow;
+    private SpellDescriptionWindow? _spellDescriptionWindow;
     private bool _textureLoaded;
 
     public HotbarItem(int hotbarSlotIndex, Base hotbarWindow)
@@ -173,11 +173,11 @@ public partial class HotbarItem : SlotItem
 
     private void Icon_HoverLeave(Base sender, EventArgs arguments)
     {
-        _itemDescWindow?.Dispose();
-        _itemDescWindow = null;
+        _itemDescriptionWindow?.Dispose();
+        _itemDescriptionWindow = null;
 
-        _spellDescWindow?.Dispose();
-        _spellDescWindow = null;
+        _spellDescriptionWindow?.Dispose();
+        _spellDescriptionWindow = null;
     }
 
     private void Icon_HoverEnter(Base sender, EventArgs arguments)
@@ -194,8 +194,8 @@ public partial class HotbarItem : SlotItem
 
         if (_currentItem != null && _inventoryItem != null)
         {
-            _itemDescWindow?.Dispose();
-            _itemDescWindow = null;
+            _itemDescriptionWindow?.Dispose();
+            _itemDescriptionWindow = null;
 
             var quantityOfItem = 1;
 
@@ -204,17 +204,17 @@ public partial class HotbarItem : SlotItem
                 quantityOfItem = Globals.Me.GetQuantityOfItemInInventory(_currentItem.Id);
             }
 
-            _itemDescWindow = new ItemDescriptionWindow(
+            _itemDescriptionWindow = new ItemDescriptionWindow(
                 _currentItem, quantityOfItem, _hotbarWindow.X + (_hotbarWindow.Width / 2), _hotbarWindow.Y + _hotbarWindow.Height + 2,
                 _inventoryItem.ItemProperties, _currentItem.Name, ""
             );
         }
         else if (_currentSpell != null)
         {
-            _spellDescWindow?.Dispose();
-            _spellDescWindow = null;
+            _spellDescriptionWindow?.Dispose();
+            _spellDescriptionWindow = null;
 
-            _spellDescWindow = new SpellDescriptionWindow(
+            _spellDescriptionWindow = new SpellDescriptionWindow(
                 _currentSpell.Id, _hotbarWindow.X + (_hotbarWindow.Width / 2), _hotbarWindow.Y + _hotbarWindow.Height + 2
             );
         }

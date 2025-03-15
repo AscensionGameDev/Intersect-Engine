@@ -30,7 +30,7 @@ public partial class InventoryItem : SlotItem
     private readonly Label _cooldownLabel;
     private readonly ImagePanel _equipImageBackground;
     private readonly InventoryWindow _inventoryWindow;
-    private ItemDescriptionWindow? _descWindow;
+    private ItemDescriptionWindow? _descriptionWindow;
 
     // Context Menu Handling
     private readonly MenuItem _useItemMenuItem;
@@ -294,8 +294,8 @@ public partial class InventoryItem : SlotItem
 
     private void Icon_HoverLeave(Base sender, EventArgs arguments)
     {
-        _descWindow?.Dispose();
-        _descWindow = null;
+        _descriptionWindow?.Dispose();
+        _descriptionWindow = null;
     }
 
     void Icon_HoverEnter(Base? sender, EventArgs? arguments)
@@ -310,10 +310,10 @@ public partial class InventoryItem : SlotItem
             return;
         }
 
-        if (_descWindow != null)
+        if (_descriptionWindow != null)
         {
-            _descWindow.Dispose();
-            _descWindow = null;
+            _descriptionWindow.Dispose();
+            _descriptionWindow = null;
         }
 
         if (Globals.Me?.Inventory[SlotIndex] is not { } inventorySlot)
@@ -329,7 +329,7 @@ public partial class InventoryItem : SlotItem
 
         if (Globals.GameShop == null)
         {
-            _descWindow = new ItemDescriptionWindow(
+            _descriptionWindow = new ItemDescriptionWindow(
                 inventorySlotDescriptor,
                 inventorySlot.Quantity,
                 _inventoryWindow.X,
@@ -357,7 +357,7 @@ public partial class InventoryItem : SlotItem
                     return;
                 }
 
-                _descWindow = new ItemDescriptionWindow(
+                _descriptionWindow = new ItemDescriptionWindow(
                     inventorySlotDescriptor,
                     inventorySlot.Quantity,
                     _inventoryWindow.X,
@@ -372,7 +372,7 @@ public partial class InventoryItem : SlotItem
                 var costItem = Globals.GameShop.DefaultCurrency;
                 if (inventorySlotDescriptor != null && costItem != null)
                 {
-                    _descWindow = new ItemDescriptionWindow(
+                    _descriptionWindow = new ItemDescriptionWindow(
                         inventorySlotDescriptor,
                         inventorySlot.Quantity,
                         _inventoryWindow.X,
@@ -385,7 +385,7 @@ public partial class InventoryItem : SlotItem
             }
             else
             {
-                _descWindow = new ItemDescriptionWindow(
+                _descriptionWindow = new ItemDescriptionWindow(
                     inventorySlotDescriptor,
                     inventorySlot.Quantity,
                     _inventoryWindow.X,
@@ -559,10 +559,10 @@ public partial class InventoryItem : SlotItem
             }
         }
 
-        if (_descWindow != null)
+        if (_descriptionWindow != null)
         {
-            _descWindow.Dispose();
-            _descWindow = null;
+            _descriptionWindow.Dispose();
+            _descriptionWindow = null;
             Icon_HoverEnter(null, null);
         }
     }
@@ -575,7 +575,7 @@ public partial class InventoryItem : SlotItem
         _quantityLabel.IsVisibleInParent = false;
         _equipLabel.IsVisibleInParent = false;
         _cooldownLabel.IsVisibleInParent = false;
-        _descWindow?.Dispose();
-        _descWindow = default;
+        _descriptionWindow?.Dispose();
+        _descriptionWindow = default;
     }
 }

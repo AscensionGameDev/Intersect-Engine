@@ -21,7 +21,7 @@ public partial class BagItem : SlotItem
     // Controls
     private readonly Label _quantityLabel;
     private readonly BagWindow _bagWindow;
-    private ItemDescriptionWindow? _descWindow;
+    private ItemDescriptionWindow? _descriptionWindow;
 
     // Context Menu Handling
     private readonly MenuItem _withdrawContextItem;
@@ -99,8 +99,8 @@ public partial class BagItem : SlotItem
             return;
         }
 
-        _descWindow?.Dispose();
-        _descWindow = default;
+        _descriptionWindow?.Dispose();
+        _descriptionWindow = default;
 
         if (Globals.BagSlots is not { Length: > 0 } bagSlots)
         {
@@ -113,7 +113,7 @@ public partial class BagItem : SlotItem
         }
 
         var item = bagSlots[SlotIndex];
-        _descWindow = new ItemDescriptionWindow(
+        _descriptionWindow = new ItemDescriptionWindow(
             item.Descriptor,
             item.Quantity,
             _bagWindow.X,
@@ -124,8 +124,8 @@ public partial class BagItem : SlotItem
 
     private void Icon_HoverLeave(Base sender, EventArgs arguments)
     {
-        _descWindow?.Dispose();
-        _descWindow = default;
+        _descriptionWindow?.Dispose();
+        _descriptionWindow = default;
     }
 
     private void Icon_Clicked(Base sender, MouseButtonState arguments)
@@ -238,7 +238,7 @@ public partial class BagItem : SlotItem
             }
         }
 
-        _descWindow?.Dispose();
-        _descWindow = default;
+        _descriptionWindow?.Dispose();
+        _descriptionWindow = default;
     }
 }
