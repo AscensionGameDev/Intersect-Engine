@@ -18,6 +18,9 @@ public partial class ConditionControl_Variable : UserControl
 
         nudVariableValue.Minimum = long.MinValue;
         nudVariableValue.Maximum = long.MaxValue;
+        nudVariableMaxValue.Minimum = long.MinValue;
+        nudVariableMaxValue.Maximum = long.MaxValue;
+
         InitLocalization();
     }
 
@@ -41,11 +44,7 @@ public partial class ConditionControl_Variable : UserControl
         rdoVarCompareGuildVar.Text = Strings.EventConditional.guildvariablevalue;
         rdoVarCompareUserVar.Text = Strings.EventConditional.UserVariableValue;
         cmbNumericComparitor.Items.Clear();
-        for (var i = 0; i < Strings.EventConditional.comparators.Count; i++)
-        {
-            cmbNumericComparitor.Items.Add(Strings.EventConditional.comparators[i]);
-        }
-
+        cmbNumericComparitor.Items.AddRange(Strings.EventConditional.comparators.Values.ToArray());
         cmbNumericComparitor.SelectedIndex = 0;
 
         //Boolean Variable
@@ -359,6 +358,7 @@ public partial class ConditionControl_Variable : UserControl
         {
             rdoVarCompareStaticValue.Checked = true;
             nudVariableValue.Value = integerComparison.Value;
+            nudVariableMaxValue.Value = integerComparison.MaxValue;
         }
 
         UpdateNumericVariableElements();
@@ -435,6 +435,10 @@ public partial class ConditionControl_Variable : UserControl
         if (rdoVarCompareStaticValue.Checked)
         {
             comparison.Value = (long)nudVariableValue.Value;
+            if (comparison.Comparator == VariableComparator.Between)
+            {
+                comparison.MaxValue = (long)nudVariableMaxValue.Value;
+            }
         }
         else if (rdoVarCompareGlobalVar.Checked)
         {
@@ -483,10 +487,23 @@ public partial class ConditionControl_Variable : UserControl
     private void UpdateNumericVariableElements()
     {
         nudVariableValue.Enabled = rdoVarCompareStaticValue.Checked;
+        nudVariableMaxValue.Enabled = 
+            rdoVarCompareStaticValue.Checked &&
+            cmbNumericComparitor.SelectedIndex == (int)VariableComparator.Between;
+
+        var isBetween = 
+            rdoVarCompareStaticValue.Checked &&
+            cmbNumericComparitor.SelectedIndex == (int)VariableComparator.Between;
+
+        rdoVarComparePlayerVar.Enabled = rdoVarComparePlayerVar.Checked || !isBetween;
         cmbComparePlayerVar.Enabled = rdoVarComparePlayerVar.Checked;
+        rdoVarCompareGlobalVar.Enabled = rdoVarCompareGlobalVar.Checked || !isBetween;
         cmbCompareGlobalVar.Enabled = rdoVarCompareGlobalVar.Checked;
+        rdoVarCompareGuildVar.Enabled = rdoVarCompareGuildVar.Checked || !isBetween;
         cmbCompareGuildVar.Enabled = rdoVarCompareGuildVar.Checked;
+        rdoVarCompareUserVar.Enabled = rdoVarCompareUserVar.Checked || !isBetween;
         cmbCompareUserVar.Enabled = rdoVarCompareUserVar.Checked;
+        rdoTimeSystem.Enabled = rdoTimeSystem.Checked || !isBetween;
     }
 
     #endregion
@@ -586,6 +603,16 @@ public partial class ConditionControl_Variable : UserControl
     private void lblStringTextVariables_Click(object sender, EventArgs e)
     {
         BrowserUtils.Open("http://www.ascensiongamedev.com/community/topic/749-event-text-variables/");
+    }
+
+    private void cmbNumericComparitor_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (cmbNumericComparitor.SelectedIndex == (int)VariableComparator.Between && !rdoVarCompareStaticValue.Checked)
+        {
+            rdoVarCompareStaticValue.Checked = true;
+        }
+
+        UpdateNumericVariableElements();
     }
 
     #endregion

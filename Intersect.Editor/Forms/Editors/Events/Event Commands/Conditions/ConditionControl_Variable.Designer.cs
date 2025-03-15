@@ -36,6 +36,8 @@ partial class ConditionControl_Variable
         rdoGlobalVariable = new DarkUI.Controls.DarkRadioButton();
         rdoGuildVariable = new DarkUI.Controls.DarkRadioButton();
         grpNumericVariable = new DarkUI.Controls.DarkGroupBox();
+        nudVariableMaxValue = new DarkUI.Controls.DarkNumericUpDown();
+        lblBetweenSeparator = new Label();
         rdoTimeSystem = new DarkUI.Controls.DarkRadioButton();
         cmbCompareUserVar = new DarkUI.Controls.DarkComboBox();
         rdoVarCompareUserVar = new DarkUI.Controls.DarkRadioButton();
@@ -71,6 +73,7 @@ partial class ConditionControl_Variable
         grpVariable.SuspendLayout();
         grpSelectVariable.SuspendLayout();
         grpNumericVariable.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)nudVariableMaxValue).BeginInit();
         ((System.ComponentModel.ISupportInitialize)nudVariableValue).BeginInit();
         grpStringVariable.SuspendLayout();
         grpBooleanVariable.SuspendLayout();
@@ -89,7 +92,7 @@ partial class ConditionControl_Variable
         grpVariable.Margin = new Padding(4, 3, 4, 3);
         grpVariable.Name = "grpVariable";
         grpVariable.Padding = new Padding(4, 3, 4, 3);
-        grpVariable.Size = new Size(308, 395);
+        grpVariable.Size = new Size(308, 435);
         grpVariable.TabIndex = 25;
         grpVariable.TabStop = false;
         grpVariable.Text = "Variable is...";
@@ -185,6 +188,8 @@ partial class ConditionControl_Variable
         // 
         grpNumericVariable.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         grpNumericVariable.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+        grpNumericVariable.Controls.Add(nudVariableMaxValue);
+        grpNumericVariable.Controls.Add(lblBetweenSeparator);
         grpNumericVariable.Controls.Add(rdoTimeSystem);
         grpNumericVariable.Controls.Add(cmbCompareUserVar);
         grpNumericVariable.Controls.Add(rdoVarCompareUserVar);
@@ -203,15 +208,38 @@ partial class ConditionControl_Variable
         grpNumericVariable.Margin = new Padding(4, 3, 4, 3);
         grpNumericVariable.Name = "grpNumericVariable";
         grpNumericVariable.Padding = new Padding(4, 3, 4, 3);
-        grpNumericVariable.Size = new Size(288, 229);
+        grpNumericVariable.Size = new Size(288, 264);
         grpNumericVariable.TabIndex = 51;
         grpNumericVariable.TabStop = false;
         grpNumericVariable.Text = "Numeric Variable:";
         // 
+        // nudVariableMaxValue
+        // 
+        nudVariableMaxValue.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+        nudVariableMaxValue.ForeColor = System.Drawing.Color.Gainsboro;
+        nudVariableMaxValue.Location = new System.Drawing.Point(151, 84);
+        nudVariableMaxValue.Margin = new Padding(4, 3, 4, 3);
+        nudVariableMaxValue.Maximum = new decimal(new int[] { -1, -1, -1, 0 });
+        nudVariableMaxValue.Minimum = new decimal(new int[] { -1, -1, -1, int.MinValue });
+        nudVariableMaxValue.Name = "nudVariableMaxValue";
+        nudVariableMaxValue.Size = new Size(130, 23);
+        nudVariableMaxValue.TabIndex = 54;
+        nudVariableMaxValue.Value = new decimal(new int[] { 0, 0, 0, 0 });
+        // 
+        // lblBetweenSeparator
+        // 
+        lblBetweenSeparator.AutoSize = true;
+        lblBetweenSeparator.Location = new System.Drawing.Point(138, 88);
+        lblBetweenSeparator.Margin = new Padding(4, 0, 4, 0);
+        lblBetweenSeparator.Name = "lblBetweenSeparator";
+        lblBetweenSeparator.Size = new Size(12, 15);
+        lblBetweenSeparator.TabIndex = 53;
+        lblBetweenSeparator.Text = "-";
+        // 
         // rdoTimeSystem
         // 
         rdoTimeSystem.AutoSize = true;
-        rdoTimeSystem.Location = new System.Drawing.Point(12, 206);
+        rdoTimeSystem.Location = new System.Drawing.Point(9, 236);
         rdoTimeSystem.Margin = new Padding(4, 3, 4, 3);
         rdoTimeSystem.Name = "rdoTimeSystem";
         rdoTimeSystem.Size = new Size(92, 19);
@@ -232,7 +260,7 @@ partial class ConditionControl_Variable
         cmbCompareUserVar.FlatStyle = FlatStyle.Flat;
         cmbCompareUserVar.ForeColor = System.Drawing.Color.Gainsboro;
         cmbCompareUserVar.FormattingEnabled = true;
-        cmbCompareUserVar.Location = new System.Drawing.Point(170, 180);
+        cmbCompareUserVar.Location = new System.Drawing.Point(172, 206);
         cmbCompareUserVar.Margin = new Padding(4, 3, 4, 3);
         cmbCompareUserVar.Name = "cmbCompareUserVar";
         cmbCompareUserVar.Size = new Size(109, 24);
@@ -243,7 +271,7 @@ partial class ConditionControl_Variable
         // rdoVarCompareUserVar
         // 
         rdoVarCompareUserVar.AutoSize = true;
-        rdoVarCompareUserVar.Location = new System.Drawing.Point(13, 181);
+        rdoVarCompareUserVar.Location = new System.Drawing.Point(9, 207);
         rdoVarCompareUserVar.Margin = new Padding(4, 3, 4, 3);
         rdoVarCompareUserVar.Name = "rdoVarCompareUserVar";
         rdoVarCompareUserVar.Size = new Size(148, 19);
@@ -272,17 +300,18 @@ partial class ConditionControl_Variable
         cmbNumericComparitor.TabIndex = 3;
         cmbNumericComparitor.Text = "Equal To";
         cmbNumericComparitor.TextPadding = new Padding(2);
+        cmbNumericComparitor.SelectedIndexChanged += cmbNumericComparitor_SelectedIndexChanged;
         // 
         // nudVariableValue
         // 
         nudVariableValue.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
         nudVariableValue.ForeColor = System.Drawing.Color.Gainsboro;
-        nudVariableValue.Location = new System.Drawing.Point(134, 55);
+        nudVariableValue.Location = new System.Drawing.Point(7, 84);
         nudVariableValue.Margin = new Padding(4, 3, 4, 3);
         nudVariableValue.Maximum = new decimal(new int[] { -1, -1, -1, 0 });
         nudVariableValue.Minimum = new decimal(new int[] { -1, -1, -1, int.MinValue });
         nudVariableValue.Name = "nudVariableValue";
-        nudVariableValue.Size = new Size(146, 23);
+        nudVariableValue.Size = new Size(130, 23);
         nudVariableValue.TabIndex = 49;
         nudVariableValue.Value = new decimal(new int[] { 0, 0, 0, 0 });
         // 
@@ -309,7 +338,7 @@ partial class ConditionControl_Variable
         cmbCompareGuildVar.FlatStyle = FlatStyle.Flat;
         cmbCompareGuildVar.ForeColor = System.Drawing.Color.Gainsboro;
         cmbCompareGuildVar.FormattingEnabled = true;
-        cmbCompareGuildVar.Location = new System.Drawing.Point(170, 149);
+        cmbCompareGuildVar.Location = new System.Drawing.Point(172, 175);
         cmbCompareGuildVar.Margin = new Padding(4, 3, 4, 3);
         cmbCompareGuildVar.Name = "cmbCompareGuildVar";
         cmbCompareGuildVar.Size = new Size(109, 24);
@@ -319,7 +348,7 @@ partial class ConditionControl_Variable
         // 
         // rdoVarCompareStaticValue
         // 
-        rdoVarCompareStaticValue.Location = new System.Drawing.Point(12, 55);
+        rdoVarCompareStaticValue.Location = new System.Drawing.Point(9, 55);
         rdoVarCompareStaticValue.Margin = new Padding(4, 3, 4, 3);
         rdoVarCompareStaticValue.Name = "rdoVarCompareStaticValue";
         rdoVarCompareStaticValue.Size = new Size(112, 20);
@@ -340,7 +369,7 @@ partial class ConditionControl_Variable
         cmbComparePlayerVar.FlatStyle = FlatStyle.Flat;
         cmbComparePlayerVar.ForeColor = System.Drawing.Color.Gainsboro;
         cmbComparePlayerVar.FormattingEnabled = true;
-        cmbComparePlayerVar.Location = new System.Drawing.Point(170, 87);
+        cmbComparePlayerVar.Location = new System.Drawing.Point(172, 113);
         cmbComparePlayerVar.Margin = new Padding(4, 3, 4, 3);
         cmbComparePlayerVar.Name = "cmbComparePlayerVar";
         cmbComparePlayerVar.Size = new Size(109, 24);
@@ -351,7 +380,7 @@ partial class ConditionControl_Variable
         // rdoVarComparePlayerVar
         // 
         rdoVarComparePlayerVar.AutoSize = true;
-        rdoVarComparePlayerVar.Location = new System.Drawing.Point(13, 88);
+        rdoVarComparePlayerVar.Location = new System.Drawing.Point(9, 114);
         rdoVarComparePlayerVar.Margin = new Padding(4, 3, 4, 3);
         rdoVarComparePlayerVar.Name = "rdoVarComparePlayerVar";
         rdoVarComparePlayerVar.Size = new Size(135, 19);
@@ -362,7 +391,7 @@ partial class ConditionControl_Variable
         // rdoVarCompareGuildVar
         // 
         rdoVarCompareGuildVar.AutoSize = true;
-        rdoVarCompareGuildVar.Location = new System.Drawing.Point(13, 150);
+        rdoVarCompareGuildVar.Location = new System.Drawing.Point(9, 176);
         rdoVarCompareGuildVar.Margin = new Padding(4, 3, 4, 3);
         rdoVarCompareGuildVar.Name = "rdoVarCompareGuildVar";
         rdoVarCompareGuildVar.Size = new Size(131, 19);
@@ -383,7 +412,7 @@ partial class ConditionControl_Variable
         cmbCompareGlobalVar.FlatStyle = FlatStyle.Flat;
         cmbCompareGlobalVar.ForeColor = System.Drawing.Color.Gainsboro;
         cmbCompareGlobalVar.FormattingEnabled = true;
-        cmbCompareGlobalVar.Location = new System.Drawing.Point(170, 118);
+        cmbCompareGlobalVar.Location = new System.Drawing.Point(172, 144);
         cmbCompareGlobalVar.Margin = new Padding(4, 3, 4, 3);
         cmbCompareGlobalVar.Name = "cmbCompareGlobalVar";
         cmbCompareGlobalVar.Size = new Size(109, 24);
@@ -394,7 +423,7 @@ partial class ConditionControl_Variable
         // rdoVarCompareGlobalVar
         // 
         rdoVarCompareGlobalVar.AutoSize = true;
-        rdoVarCompareGlobalVar.Location = new System.Drawing.Point(13, 119);
+        rdoVarCompareGlobalVar.Location = new System.Drawing.Point(9, 145);
         rdoVarCompareGlobalVar.Margin = new Padding(4, 3, 4, 3);
         rdoVarCompareGlobalVar.Name = "rdoVarCompareGlobalVar";
         rdoVarCompareGlobalVar.Size = new Size(137, 19);
@@ -697,12 +726,13 @@ partial class ConditionControl_Variable
         BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         Controls.Add(grpVariable);
         Name = "ConditionControl_Variable";
-        Size = new Size(310, 398);
+        Size = new Size(310, 437);
         grpVariable.ResumeLayout(false);
         grpSelectVariable.ResumeLayout(false);
         grpSelectVariable.PerformLayout();
         grpNumericVariable.ResumeLayout(false);
         grpNumericVariable.PerformLayout();
+        ((System.ComponentModel.ISupportInitialize)nudVariableMaxValue).EndInit();
         ((System.ComponentModel.ISupportInitialize)nudVariableValue).EndInit();
         grpStringVariable.ResumeLayout(false);
         grpStringVariable.PerformLayout();
@@ -753,4 +783,6 @@ partial class ConditionControl_Variable
     internal DarkUI.Controls.DarkRadioButton optBooleanGuildVariable;
     internal DarkUI.Controls.DarkComboBox cmbBooleanGlobalVariable;
     internal DarkUI.Controls.DarkRadioButton optBooleanGlobalVariable;
+    private DarkUI.Controls.DarkNumericUpDown nudVariableMaxValue;
+    private Label lblBetweenSeparator;
 }

@@ -480,6 +480,10 @@ public static partial class Strings
                 pVar = EventConditionDesc.notequal.ToString(value);
 
                 break;
+            case VariableComparator.Between:
+                pVar = EventConditionDesc.Between.ToString(value, comparison.MaxValue);
+
+                break;
         }
 
         return pVar;
@@ -2457,14 +2461,15 @@ Tick timer saved in server config.json.";
             {1, @"Contains"}
         };
 
-        public static Dictionary<int, LocalizedString> comparators = new Dictionary<int, LocalizedString>
+        public static Dictionary<VariableComparator, LocalizedString> comparators = new()
         {
-            {0, @"Equal To"},
-            {1, @"Greater Than or Equal To"},
-            {2, @"Less Than or Equal To"},
-            {3, @"Greater Than"},
-            {4, @"Less Than"},
-            {5, @"Does Not Equal"}
+            {VariableComparator.Equal, @"Equal To"},
+            {VariableComparator.GreaterOrEqual, @"Greater Than or Equal To"},
+            {VariableComparator.LesserOrEqual, @"Less Than or Equal To"},
+            {VariableComparator.Greater, @"Greater Than"},
+            {VariableComparator.Less, @"Less Than"},
+            {VariableComparator.NotEqual, @"Does Not Equal"},
+            {VariableComparator.Between, @"Between"},
         };
 
         public static Dictionary<ConditionType, LocalizedString> conditions = new Dictionary<ConditionType, LocalizedString>
@@ -2662,6 +2667,8 @@ Tick timer saved in server config.json.";
         public static LocalizedString aftertask = @", After Task: {00}";
 
         public static LocalizedString beforetask = @", Before Task: {00}";
+
+        public static LocalizedString Between = @"between {00} and {01}";
 
         public static LocalizedString checkequippedslot = @"Player has slot {00} occupied";
 
