@@ -56,12 +56,12 @@ public partial class HotbarItem : SlotItem
         RestrictToParent = true;
         TextureFilename = "hotbaritem.png";
 
-        IconImage.Name = $"{nameof(HotbarItem)}{SlotIndex}";
-        IconImage.SetPosition(1, 1);
-        IconImage.HoverEnter += IconImage_HoverEnter;
-        IconImage.HoverLeave += IconImage_HoverLeave;
-        IconImage.Clicked += IconImage_Clicked;
-        IconImage.DoubleClicked += IconImage_DoubleClicked;
+        Icon.Name = $"{nameof(HotbarItem)}{SlotIndex}";
+        Icon.SetPosition(1, 1);
+        Icon.HoverEnter += Icon_HoverEnter;
+        Icon.HoverLeave += Icon_HoverLeave;
+        Icon.Clicked += Icon_Clicked;
+        Icon.DoubleClicked += Icon_DoubleClicked;
 
         var font = GameContentManager.Current.GetFont("sourcesansproblack");
 
@@ -155,7 +155,7 @@ public partial class HotbarItem : SlotItem
         }
     }
 
-    private void IconImage_Clicked(Base sender, MouseButtonState arguments)
+    private void Icon_Clicked(Base sender, MouseButtonState arguments)
     {
         if (arguments.MouseButton is MouseButton.Right)
         {
@@ -163,7 +163,7 @@ public partial class HotbarItem : SlotItem
         }
     }
 
-    private void IconImage_DoubleClicked(Base sender, MouseButtonState arguments)
+    private void Icon_DoubleClicked(Base sender, MouseButtonState arguments)
     {
         if (arguments.MouseButton is MouseButton.Left)
         {
@@ -171,7 +171,7 @@ public partial class HotbarItem : SlotItem
         }
     }
 
-    private void IconImage_HoverLeave(Base sender, EventArgs arguments)
+    private void Icon_HoverLeave(Base sender, EventArgs arguments)
     {
         _itemDescWindow?.Dispose();
         _itemDescWindow = null;
@@ -180,7 +180,7 @@ public partial class HotbarItem : SlotItem
         _spellDescWindow = null;
     }
 
-    private void IconImage_HoverEnter(Base sender, EventArgs arguments)
+    private void Icon_HoverEnter(Base sender, EventArgs arguments)
     {
         if (InputHandler.MouseFocus != null || Globals.Me == null)
         {
@@ -398,7 +398,7 @@ public partial class HotbarItem : SlotItem
             }
         }
 
-        var isDragging = IconImage.IsDragging;
+        var isDragging = Icon.IsDragging;
         if (isDragging)
         {
             _equipLabel.IsHidden = true;
@@ -416,8 +416,8 @@ public partial class HotbarItem : SlotItem
         {
             if (_currentItem != null)
             {
-                IconImage.IsVisibleInTree = !isDragging;
-                IconImage.Texture = Globals.ContentManager.GetTexture(
+                Icon.IsVisibleInTree = !isDragging;
+                Icon.Texture = Globals.ContentManager.GetTexture(
                     Framework.Content.TextureType.Item, _currentItem.Icon
                 );
 
@@ -451,8 +451,8 @@ public partial class HotbarItem : SlotItem
             }
             else if (_currentSpell != null)
             {
-                IconImage.IsVisibleInTree = !isDragging;
-                IconImage.Texture = Globals.ContentManager.GetTexture(
+                Icon.IsVisibleInTree = !isDragging;
+                Icon.Texture = Globals.ContentManager.GetTexture(
                     Framework.Content.TextureType.Spell, _currentSpell.Icon
                 );
 
@@ -480,7 +480,7 @@ public partial class HotbarItem : SlotItem
             }
             else
             {
-                IconImage.Hide();
+                Icon.Hide();
                 _textureLoaded = true;
                 _isEquipped = false;
                 _equipLabel.IsHidden = true;
@@ -492,24 +492,24 @@ public partial class HotbarItem : SlotItem
             {
                 if (_currentSpell != null)
                 {
-                    IconImage.RenderColor = new Color(60, 255, 255, 255);
+                    Icon.RenderColor = new Color(60, 255, 255, 255);
                 }
 
                 if (_currentItem != null)
                 {
-                    IconImage.RenderColor = new Color(60, _currentItem.Color.R, _currentItem.Color.G, _currentItem.Color.B);
+                    Icon.RenderColor = new Color(60, _currentItem.Color.R, _currentItem.Color.G, _currentItem.Color.B);
                 }
             }
             else
             {
                 if (_currentSpell != null)
                 {
-                    IconImage.RenderColor = Color.White;
+                    Icon.RenderColor = Color.White;
                 }
 
                 if (_currentItem != null)
                 {
-                    IconImage.RenderColor = _currentItem.Color;
+                    Icon.RenderColor = _currentItem.Color;
                 }
             }
         }

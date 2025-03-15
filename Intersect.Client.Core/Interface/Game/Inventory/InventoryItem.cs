@@ -43,10 +43,10 @@ public partial class InventoryItem : SlotItem
         _inventoryWindow = inventoryWindow;
         TextureFilename = "inventoryitem.png";
 
-        IconImage.HoverEnter += IconImage_HoverEnter;
-        IconImage.HoverLeave += IconImage_HoverLeave;
-        IconImage.Clicked += IconImage_Clicked;
-        IconImage.DoubleClicked += IconImage_DoubleClicked;
+        Icon.HoverEnter += Icon_HoverEnter;
+        Icon.HoverLeave += Icon_HoverLeave;
+        Icon.Clicked += Icon_Clicked;
+        Icon.DoubleClicked += Icon_DoubleClicked;
 
         _equipImageBackground = new ImagePanel(this, "EquippedIcon")
         {
@@ -213,7 +213,7 @@ public partial class InventoryItem : SlotItem
 
     #region Mouse Events
 
-    private void IconImage_DoubleClicked(Base sender, MouseButtonState arguments)
+    private void Icon_DoubleClicked(Base sender, MouseButtonState arguments)
     {
         if (Globals.Me == default)
         {
@@ -258,7 +258,7 @@ public partial class InventoryItem : SlotItem
         }
     }
 
-    private void IconImage_Clicked(Base sender, MouseButtonState arguments)
+    private void Icon_Clicked(Base sender, MouseButtonState arguments)
     {
         if (arguments.MouseButton is MouseButton.Right)
         {
@@ -292,13 +292,13 @@ public partial class InventoryItem : SlotItem
         }
     }
 
-    private void IconImage_HoverLeave(Base sender, EventArgs arguments)
+    private void Icon_HoverLeave(Base sender, EventArgs arguments)
     {
         _descWindow?.Dispose();
         _descWindow = null;
     }
 
-    void IconImage_HoverEnter(Base? sender, EventArgs? arguments)
+    void Icon_HoverEnter(Base? sender, EventArgs? arguments)
     {
         if (InputHandler.MouseFocus != null)
         {
@@ -492,7 +492,7 @@ public partial class InventoryItem : SlotItem
         }
 
         // empty texture to reload on update
-        IconImage.Texture = default;
+        Icon.Texture = default;
     }
 
     public override void Update()
@@ -514,7 +514,7 @@ public partial class InventoryItem : SlotItem
         }
 
         var equipped = Globals.Me.MyEquipment.Any(s => s == SlotIndex);
-        var isDragging = IconImage.IsDragging;
+        var isDragging = Icon.IsDragging;
         _equipImageBackground.IsVisibleInParent = !isDragging && equipped;
         _equipLabel.IsVisibleInParent = !isDragging && equipped;
 
@@ -529,14 +529,14 @@ public partial class InventoryItem : SlotItem
         {
             var itemCooldownRemaining = Globals.Me.GetItemRemainingCooldown(SlotIndex);
             _cooldownLabel.Text = TimeSpan.FromMilliseconds(itemCooldownRemaining).WithSuffix("0.0");
-            IconImage.RenderColor.A = 100;
+            Icon.RenderColor.A = 100;
         }
         else
         {
-            IconImage.RenderColor.A = descriptor.Color.A;
+            Icon.RenderColor.A = descriptor.Color.A;
         }
 
-        if (IconImage.TextureFilename == descriptor.Icon)
+        if (Icon.TextureFilename == descriptor.Icon)
         {
             return;
         }
@@ -544,18 +544,18 @@ public partial class InventoryItem : SlotItem
         var itemTexture = Globals.ContentManager?.GetTexture(Framework.Content.TextureType.Item, descriptor.Icon);
         if (itemTexture != null)
         {
-            IconImage.Texture = itemTexture;
-            IconImage.RenderColor = Globals.Me.IsItemOnCooldown(SlotIndex)
+            Icon.Texture = itemTexture;
+            Icon.RenderColor = Globals.Me.IsItemOnCooldown(SlotIndex)
                 ? new Color(100, descriptor.Color.R, descriptor.Color.G, descriptor.Color.B)
                 : descriptor.Color;
-            IconImage.IsVisibleInParent = true;
+            Icon.IsVisibleInParent = true;
         }
         else
         {
-            if (IconImage.Texture != null)
+            if (Icon.Texture != null)
             {
-                IconImage.Texture = null;
-                IconImage.IsVisibleInParent = false;
+                Icon.Texture = null;
+                Icon.IsVisibleInParent = false;
             }
         }
 
@@ -563,14 +563,14 @@ public partial class InventoryItem : SlotItem
         {
             _descWindow.Dispose();
             _descWindow = null;
-            IconImage_HoverEnter(null, null);
+            Icon_HoverEnter(null, null);
         }
     }
 
     private void _reset()
     {
-        IconImage.IsVisibleInParent = false;
-        IconImage.Texture = default;
+        Icon.IsVisibleInParent = false;
+        Icon.Texture = default;
         _equipImageBackground.IsVisibleInParent = false;
         _quantityLabel.IsVisibleInParent = false;
         _equipLabel.IsVisibleInParent = false;
