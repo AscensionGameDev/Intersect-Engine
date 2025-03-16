@@ -203,7 +203,7 @@ public sealed partial class ClientConfiguration : IConfiguration<ClientConfigura
     /// <summary>
     /// Sets a custom mouse cursor.
     /// </summary>
-    public string MouseCursor { get; set; } = string.Empty;
+    public string? MouseCursor { get; set; }
 
     /// <summary>
     /// Determines the time it takes to fade-in or fade-out a song when no other instructions are given.

@@ -127,17 +127,8 @@ internal partial class IntersectGame : Game
         ) / new Microsoft.Xna.Framework.Point(2);
         Window.AllowAltF4 = false;
 
-        // Store frequently used property values in local variables.
-        string mouseCursor = ClientConfiguration.Instance.MouseCursor;
-        string? updateUrl = ClientConfiguration.Instance.UpdateUrl;
-
-        // If we're going to be rendering a custom mouse cursor, hide the default one!
-        if (!string.IsNullOrWhiteSpace(mouseCursor))
-        {
-            IsMouseVisible = false;
-        }
-
         // Reuse Updater object instead of creating a new one each time.
+        string? updateUrl = ClientConfiguration.Instance.UpdateUrl;
         if (!string.IsNullOrWhiteSpace(updateUrl))
         {
             _updater ??= new Updater(updateUrl, "client/update.json", "version.client.json", 7);

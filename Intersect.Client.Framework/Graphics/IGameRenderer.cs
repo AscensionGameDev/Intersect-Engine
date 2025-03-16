@@ -66,6 +66,10 @@ public interface IGameRenderer
     /// </summary>
     List<string> ValidVideoModes { get; }
 
+    string? CursorName { get; set; }
+
+    IGameTexture? Cursor { get; set; }
+
     /// <summary>
     ///     Clear the screen.
     /// </summary>

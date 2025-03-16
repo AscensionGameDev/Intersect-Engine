@@ -2,6 +2,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using Intersect.Client.Classes.MonoGame.Graphics;
+using Intersect.Client.Framework.Content;
+using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
@@ -1031,6 +1033,11 @@ internal partial class MonoRenderer : GameRenderer
 
     private readonly Dictionary<SpriteFont, char> _defaultCharacterForSpriteFont = [];
     private GameShader _basicShader;
+
+    protected override void OnCursorChanged(IGameTexture? newCursor)
+    {
+        _game.IsMouseVisible = newCursor is null;
+    }
 
     private string SanitizeText(string text, SpriteFont spriteFont)
     {

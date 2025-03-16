@@ -121,9 +121,14 @@ public static partial class Graphics
     //Init Functions
     public static void InitGraphics()
     {
-        Renderer?.Init();
+        Renderer.Init();
         sContentManager = Globals.ContentManager;
         sContentManager.LoadAll();
+
+        // If we're going to be rendering a custom mouse cursor, hide the default one!
+        string? mouseCursor = ClientConfiguration.Instance.MouseCursor;
+        Renderer.CursorName = mouseCursor;
+
         (GameFont, GameFontSize) = FindFont(ClientConfiguration.Instance.GameFont);
         (UIFont, UIFontSize) = FindFont(ClientConfiguration.Instance.UIFont);
         (EntityNameFont, EntityNameFontSize) = FindFont(ClientConfiguration.Instance.EntityNameFont);
@@ -617,22 +622,14 @@ public static partial class Graphics
         );
 
         // Draw our mousecursor at the very end, but not when taking screenshots.
-        if (!takingScreenshot && !string.IsNullOrWhiteSpace(ClientConfiguration.Instance.MouseCursor))
+        if (!takingScreenshot && Renderer.Cursor is { } cursorTexture)
         {
-            var cursorTexture = Globals.ContentManager.GetTexture(
-                TextureType.Misc,
-                ClientConfiguration.Instance.MouseCursor
+            var cursorPosition = ConvertToWorldPointNoZoom(Globals.InputManager.GetMousePosition());
+            DrawGameTexture(
+                cursorTexture,
+                cursorPosition.X,
+                cursorPosition.Y
             );
-
-            if (cursorTexture is not null)
-            {
-                var cursorPosition = ConvertToWorldPointNoZoom(Globals.InputManager.GetMousePosition());
-                DrawGameTexture(
-                    cursorTexture,
-                    cursorPosition.X,
-                    cursorPosition.Y
-                );
-            }
         }
 
         renderer.End();

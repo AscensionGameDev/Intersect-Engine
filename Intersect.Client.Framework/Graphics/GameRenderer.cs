@@ -1,6 +1,8 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Numerics;
+using Intersect.Client.Framework.Content;
+using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Core;
 using Intersect.Framework.Collections;
@@ -152,6 +154,45 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
     public Resolution OverrideResolution { get; set; }
 
     public Resolution PreferredResolution { get; set; }
+
+    private string? _cursorName;
+    private IGameTexture? _cursor;
+
+    public string? CursorName
+    {
+        get => _cursorName;
+        set
+        {
+            if (value == _cursorName)
+            {
+                return;
+            }
+
+            _cursorName = value;
+            _cursor = string.IsNullOrWhiteSpace(_cursorName)
+                ? null
+                : GameContentManager.Current.GetTexture(TextureType.Misc, _cursorName);
+            OnCursorChanged(_cursor);
+        }
+    }
+
+    public IGameTexture? Cursor
+    {
+        get => _cursor;
+        set
+        {
+            if (value == _cursor)
+            {
+                return;
+            }
+
+            _cursor = value;
+            _cursorName = _cursor?.Name;
+            OnCursorChanged(_cursor);
+        }
+    }
+
+    protected abstract void OnCursorChanged(IGameTexture? newCursor);
 
     /// <summary>
     ///     Clears everything off the render target with a specified color.
