@@ -302,12 +302,8 @@ public partial class Client : IPacketSender
         }
 
         Intersect.Core.ApplicationContext.Context.Value?.Logger.LogDebug(
-            string.IsNullOrWhiteSpace(client.Name)
-
-                //? $"Client disconnected ({(client.IsEditor ? "[editor]" : "[client]")})"
-                // TODO: Transmit client information on network start so we can determine editor vs client
-                ? $"Client disconnected ([menu])"
-                : $"Client disconnected ({client.Name}->{client.Entity?.Name ?? "[editor]"})"
+            "Client disconnected ({ClientState}])",
+            string.IsNullOrWhiteSpace(client.Name) ? "[menu]" : $"{client.Name}->{client.Entity?.Name ?? "[editor]"}"
         );
 
         client.Disconnect();
