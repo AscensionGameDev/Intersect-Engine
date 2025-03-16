@@ -4,6 +4,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using Intersect.Core;
+using Intersect.Framework.Core.Security;
 using Intersect.Network.Events;
 using Intersect.Network.LiteNetLib;
 using Microsoft.Extensions.Logging;
@@ -159,6 +160,7 @@ public partial class ClientNetwork : AbstractNetwork, IClient
         ApplicationContext.Logger.LogInformation($"Disconnected [{connectionEventArgs.Connection?.Guid ?? Guid.Empty}].");
         _isConnected = false;
         OnDisconnected?.Invoke(sender, connectionEventArgs);
+        PermissionSet.ActivePermissionSet = PermissionSet.Default;
     }
 
     public override void Close()

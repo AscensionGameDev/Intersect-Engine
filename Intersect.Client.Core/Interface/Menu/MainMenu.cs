@@ -18,7 +18,7 @@ public partial class MainMenu : MutableInterface
     private bool _forceCharacterCreation;
 
     // Network status
-    public static NetworkStatus ActiveNetworkStatus;
+    public static NetworkStatus ActiveNetworkStatus { get; set; }
 
     public delegate void NetworkStatusHandler();
 

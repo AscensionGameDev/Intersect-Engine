@@ -29,6 +29,7 @@ using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.Attributes;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
+using Intersect.Framework.Core.Security;
 using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Networking;
@@ -1410,12 +1411,6 @@ internal sealed partial class PacketHandler
     {
         Globals.WaitingOnServer = false;
         Interface.Interface.MenuUi.MainMenu.NotifyOpenCharacterCreation(packet.Force);
-    }
-
-    //AdminPanelPacket
-    public void HandlePacket(IPacketSender packetSender, AdminPanelPacket packet)
-    {
-        Interface.Interface.EnqueueInGame(gameInterface => gameInterface.NotifyOpenAdminWindow());
     }
 
     //SpellCastPacket

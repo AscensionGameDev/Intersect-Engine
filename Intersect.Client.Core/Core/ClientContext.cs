@@ -6,11 +6,13 @@ using Intersect.Client.Plugins.Contexts;
 using Intersect.Configuration;
 using Intersect.Core;
 using Intersect.Factories;
+using Intersect.Framework.Core.Network.Packets.Security;
+using Intersect.Framework.Core.Security;
 using Intersect.Framework.Net;
+using Intersect.Framework.Reflection;
 using Intersect.Network;
 using Intersect.Plugins;
 using Intersect.Plugins.Interfaces;
-using Intersect.Reflection;
 using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Core;
@@ -32,11 +34,14 @@ internal sealed partial class ClientContext : ApplicationContext<ClientContext, 
         IPacketHelper packetHelper
     ) : base(entryAssembly, "Intersect", startupOptions, logger, packetHelper)
     {
+        PermissionSet.ActivePermissionSetChanged += PermissionSetOnActivePermissionSetChanged;
+        PermissionSet.PermissionSetUpdated += PermissionSetOnPermissionSetUpdated;
+
         var hostNameOrAddress = clientConfiguration.Host;
         try
         {
             var address = Dns.GetHostAddresses(hostNameOrAddress).FirstOrDefault();
-            IsDeveloper = !(address?.IsPublic() ?? false);
+            IsDeveloper = !(address?.IsPublic() ?? true);
         }
         catch (SocketException socketException)
         {
@@ -45,10 +50,11 @@ internal sealed partial class ClientContext : ApplicationContext<ClientContext, 
                 throw;
             }
 
-            ClientNetwork.UnresolvableHostNames.Add(startupOptions.Server);
+            ClientNetwork.UnresolvableHostNames.Add(hostNameOrAddress);
             ApplicationContext.Context.Value?.Logger.LogError(
                 socketException,
-                $"Failed to resolve host: '{hostNameOrAddress}'"
+                "Failed to resolve host '{HostNameOrAddress}'",
+                hostNameOrAddress
             );
             IsDeveloper = true;
         }
@@ -56,7 +62,25 @@ internal sealed partial class ClientContext : ApplicationContext<ClientContext, 
         _ = FactoryRegistry<IPluginContext>.RegisterFactory(new ClientPluginContext.Factory());
     }
 
-    public bool IsDeveloper { get; }
+    private void PermissionSetOnPermissionSetUpdated(PermissionSet permissionSet)
+    {
+        if (permissionSet != PermissionSet.ActivePermissionSet)
+        {
+            return;
+        }
+
+        IsDeveloper = permissionSet.IsGranted(Permission.EngineVersion);
+        PermissionsChanged?.Invoke(permissionSet);
+    }
+
+    private void PermissionSetOnActivePermissionSetChanged(string activePermissionSetName)
+    {
+        PermissionSetOnPermissionSetUpdated(PermissionSet.ActivePermissionSet);
+    }
+
+    public event PermissionSetChangedHandler? PermissionsChanged;
+
+    public bool IsDeveloper { get; private set; }
 
     protected override bool UsesMainThread => true;
 

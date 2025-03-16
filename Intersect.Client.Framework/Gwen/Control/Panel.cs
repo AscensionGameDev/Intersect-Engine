@@ -1,5 +1,3 @@
-using Intersect.Client.Framework.GenericClasses;
-
 namespace Intersect.Client.Framework.Gwen.Control;
 
 /// <summary>

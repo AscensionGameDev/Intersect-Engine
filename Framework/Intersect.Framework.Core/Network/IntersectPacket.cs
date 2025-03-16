@@ -10,14 +10,15 @@ namespace Intersect.Network;
 public abstract partial class IntersectPacket : IPacket
 {
     [IgnoreMember]
-    private byte[] mCachedData = null;
+    private byte[]? _cachedData;
 
     [IgnoreMember]
-    private byte[] mCachedCompresedData = null;
+    private byte[]? _cachedCompressedData = null;
 
     /// <inheritdoc />
     public virtual void Dispose()
     {
+        GC.SuppressFinalize(this);
     }
 
     /// <inheritdoc />
@@ -26,19 +27,19 @@ public abstract partial class IntersectPacket : IPacket
     {
         get
         {
-            mCachedData ??= MessagePacker.Instance.Serialize(this) ??
+            _cachedData ??= MessagePacker.Instance.Serialize(this) ??
                                    throw new Exception($"Failed to serialize {this.GetFullishName()}");
 
 #if DIAGNOSTIC
             ApplicationContext.Context.Value?.Logger.LogDebug($"{GetType().FullName}({mCachedData.Length})={Convert.ToHexString(mCachedData)}");
 #endif
-            return mCachedData;
+            return _cachedData;
         }
     }
 
     public virtual void ClearCachedData()
     {
-        mCachedData = null;
+        _cachedData = null;
     }
 
     [IgnoreMember]

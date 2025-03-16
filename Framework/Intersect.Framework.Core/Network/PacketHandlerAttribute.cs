@@ -87,47 +87,56 @@ public partial class PacketHandlerAttribute : Attribute
         return expectedPacketType;
     }
 
-    public static Type GetHandlerInterface(Type implementationType)
+    public static Type[] GetHandlerInterfaces(Type implementationType)
     {
-        if (implementationType == null)
-        {
-            throw new ArgumentNullException(nameof(implementationType));
-        }
+        ArgumentNullException.ThrowIfNull(implementationType, nameof(implementationType));
 
-        return implementationType.GetInterfaces()
-            .FirstOrDefault(
+        var interfaces = implementationType.GetInterfaces()
+            .Where(
                 interfaceType => interfaceType.IsGenericType &&
                                  interfaceType.GetGenericTypeDefinition() == TypeIPacketHandlerInterface_1
-            );
-    }
+            )
+            .ToArray();
 
-    public static Type GetPacketType<THandler>() where THandler : IPacketHandler =>
-        GetPacketType(typeof(THandler));
-
-    public static Type GetPacketType(Type packetHandlerType)
-    {
-        if (packetHandlerType == default)
-        {
-            throw new ArgumentNullException(nameof(packetHandlerType));
-        }
-
-        var interfaceType = GetHandlerInterface(packetHandlerType);
-        if (interfaceType == null)
+        if (interfaces.Length < 1)
         {
             throw new ArgumentException(
-                $"{packetHandlerType.FullName} does not implement {TypeIPacketHandlerInterface_1.FullName}.",
+                $"{implementationType.GetName(qualified: true)} does not directly implement {TypeIPacketHandlerInterface_1.GetName(qualified: true)}",
+                nameof(implementationType)
+            );
+        }
+
+        return interfaces;
+    }
+
+    public static Type[] GetPacketTypes<THandler>() where THandler : IPacketHandler =>
+        GetPacketTypes(typeof(THandler));
+
+    public static Type[] GetPacketTypes(Type packetHandlerType)
+    {
+        ArgumentNullException.ThrowIfNull(packetHandlerType, nameof(packetHandlerType));
+
+        var interfaceTypes = GetHandlerInterfaces(packetHandlerType);
+        if (interfaceTypes.Length < 1)
+        {
+            throw new ArgumentException(
+                $"{packetHandlerType.GetName(qualified: true)} does not implement {TypeIPacketHandlerInterface_1.GetName(qualified: true)}.",
                 nameof(packetHandlerType)
             );
         }
 
-        var packetTypeFromType = interfaceType.GenericTypeArguments.FirstOrDefault();
-        if (packetTypeFromType.IsInterface ||
-            packetTypeFromType.IsAbstract ||
-            packetTypeFromType.IsGenericType ||
-            !TypeIPacket.IsAssignableFrom(packetTypeFromType))
+        var genericTypeArguments = interfaceTypes.SelectMany(interfaceType => interfaceType.GenericTypeArguments).Distinct().ToArray();
+        var packetTypesFromType = genericTypeArguments.Where(
+                packetTypeFromType =>
+                    packetTypeFromType is { IsInterface: false, IsAbstract: false, IsGenericType: false } &&
+                    packetTypeFromType.Extends(TypeIPacket)
+            )
+            .ToArray();
+
+        if (packetTypesFromType.Length < 1)
         {
             throw new ArgumentException(
-                $"Invalid packet generic type ({packetTypeFromType.FullName}) in handler declaration '{packetHandlerType.FullName}'.",
+                $"{packetHandlerType.GetName(qualified: true)} handles no packet types",
                 nameof(packetHandlerType)
             );
         }
@@ -136,17 +145,20 @@ public partial class PacketHandlerAttribute : Attribute
             GetCustomAttribute(packetHandlerType, typeof(PacketHandlerAttribute)) as PacketHandlerAttribute;
 
         var packetTypeFromAttribute = packetHandlerAttribute?.PacketType;
-        var expectedPacketType = packetTypeFromAttribute ?? packetTypeFromType;
+        var expectedPacketTypes = packetTypeFromAttribute == null ? packetTypesFromType : [packetTypeFromAttribute];
 
-        if (packetTypeFromType != expectedPacketType)
+        if (!packetTypesFromType.SequenceEqual(expectedPacketTypes))
         {
+            var packetHandlerTypeName = packetHandlerType.GetName(qualified: true);
+            var packetTypeNames = string.Join(", ", packetTypesFromType.Select(type => type.GetName(qualified: true)));
+            var expectedPacketTypeNames = string.Join(", ", expectedPacketTypes.Select(type => type.GetName(qualified: true)));
             throw new ArgumentException(
-                $"{packetHandlerType.FullName} is a packet handler for {packetTypeFromType.FullName} but is marked with an attribute for {packetTypeFromAttribute.FullName}.",
+                $"{packetHandlerTypeName} is a packet handler for {packetTypeNames} but is marked with an attribute for {expectedPacketTypeNames}.",
                 nameof(packetHandlerType)
             );
         }
 
-        return expectedPacketType;
+        return expectedPacketTypes;
     }
 
     public static bool IsValidHandler(MethodInfo methodInfo)
@@ -186,7 +198,7 @@ public partial class PacketHandlerAttribute : Attribute
 
         try
         {
-            return GetPacketType(type) != default;
+            return GetPacketTypes(type).Length > 0;
         }
         catch (ArgumentNullException)
         {

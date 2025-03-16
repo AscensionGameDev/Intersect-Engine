@@ -8,7 +8,7 @@ public abstract partial class ActionQueue<TActionQueue, TEnqueueState> where TAc
     private readonly Action<TActionQueue>? _beginInvokePending;
     private readonly Action<TActionQueue>? _endInvokePending;
 
-    private bool _empty;
+    private bool _empty = true;
 
     protected ActionQueue(Action<TActionQueue>? beginInvokePending, Action<TActionQueue>? endInvokePending)
     {

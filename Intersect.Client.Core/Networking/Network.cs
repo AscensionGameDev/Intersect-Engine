@@ -14,6 +14,7 @@ namespace Intersect.Client.Networking;
 
 internal static partial class Network
 {
+    private static readonly TimeSpan CloseTaskLockTimeout = TimeSpan.FromSeconds(15);
     private static readonly object CloseTaskLock = new();
 
     private static Task? _closeTask;
@@ -51,7 +52,12 @@ internal static partial class Network
             return;
         }
 
-        lock (CloseTaskLock)
+        if (!Monitor.TryEnter(CloseTaskLock, CloseTaskLockTimeout))
+        {
+            throw new Exception($"Failed to acquire lock on {nameof(CloseTaskLock)} from debounce");
+        }
+
+        try
         {
             if (_closeTask != default)
             {
@@ -63,8 +69,14 @@ internal static partial class Network
             _closeTask.ContinueWith(
                 task =>
                 {
-                    lock (CloseTaskLock)
+                    if (!Monitor.TryEnter(CloseTaskLock, CloseTaskLockTimeout))
                     {
+                        throw new Exception($"Failed to acquire lock on {nameof(CloseTaskLock)} from debounce continue");
+                    }
+
+                    try
+                    {
+                        Console.WriteLine("DEBOUNCE CONTINUE ENTERED");
                         if (_closeTask != task)
                         {
                             ApplicationContext.Context.Value?.Logger.LogDebug("Disconnect interrupted, skipping");
@@ -75,8 +87,16 @@ internal static partial class Network
                         _closeTask = default;
                         Close(reason);
                     }
+                    finally
+                    {
+                        Monitor.Exit(CloseTaskLock);
+                    }
                 }
             );
+        }
+        finally
+        {
+            Monitor.Exit(CloseTaskLock);
         }
     }
 
@@ -92,10 +112,19 @@ internal static partial class Network
 
     public static bool InterruptDisconnectsIfConnected()
     {
-        lock (CloseTaskLock)
+        if (!Monitor.TryEnter(CloseTaskLock, CloseTaskLockTimeout))
+        {
+            throw new Exception($"Failed to acquire lock on {nameof(CloseTaskLock)} from {nameof(InterruptDisconnectsIfConnected)}");
+        }
+
+        try
         {
             _closeTask = default;
             return IsConnected;
+        }
+        finally
+        {
+            Monitor.Exit(CloseTaskLock);
         }
     }
 

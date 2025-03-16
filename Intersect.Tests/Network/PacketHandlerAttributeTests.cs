@@ -72,75 +72,106 @@ namespace Intersect.Network
 
         [Test]
         public void TestGetPacketType_Type_null() =>
-            Assert.Throws<ArgumentNullException>(() => PacketHandlerAttribute.GetPacketType(default(Type)));
+            Assert.Throws<ArgumentNullException>(() => PacketHandlerAttribute.GetPacketTypes(default(Type)));
 
         [Test]
         public void TestGetPacketType_Type_NotPacketHandlerImplementation() => Assert.Throws<ArgumentException>(
-            () => PacketHandlerAttribute.GetPacketType(typeof(TestClassNotPacketHandler))
+            () => PacketHandlerAttribute.GetPacketTypes(typeof(TestClassNotPacketHandler))
         );
 
         [Test]
         public void TestGetPacketType_Type_InvalidPacketType() => Assert.Throws<ArgumentException>(
-            () => PacketHandlerAttribute.GetPacketType(typeof(TestClassPacketHandlerInvalidPacketType))
+            () => PacketHandlerAttribute.GetPacketTypes(typeof(TestClassPacketHandlerInvalidPacketType))
         );
 
         [Test]
         public void TestGetPacketType_Type_MismatchedAttribute() => Assert.Throws<ArgumentException>(
-            () => PacketHandlerAttribute.GetPacketType(typeof(TestClassPacketHandlerWithMismatchedAttribute))
+            () => PacketHandlerAttribute.GetPacketTypes(typeof(TestClassPacketHandlerWithMismatchedAttribute))
         );
 
         [Test]
         public void TestGetPacketType_Type()
         {
-            Assert.AreEqual(
-                typeof(TestPacket), PacketHandlerAttribute.GetPacketType(typeof(TestClassPacketHandlerNoAttribute))
-            );
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(
+                        PacketHandlerAttribute.GetPacketTypes(typeof(TestClassPacketHandlerNoAttribute)),
+                        Is.EquivalentTo(
+                            new[]
+                            {
+                                typeof(TestPacket),
+                            }
+                        )
+                    );
 
-            Assert.AreEqual(
-                typeof(TestPacket), PacketHandlerAttribute.GetPacketType(typeof(TestClassPacketHandlerWithAttribute))
-            );
+                    Assert.That(
+                        PacketHandlerAttribute.GetPacketTypes(typeof(TestClassPacketHandlerWithAttribute)),
+                        Is.EquivalentTo(
+                            new[]
+                            {
+                                typeof(TestPacket),
+                            }
+                        )
+                    );
 
-            Assert.AreEqual(
-                typeof(TestPacket2), PacketHandlerAttribute.GetPacketType(typeof(TestClassPacketHandlerWithAttribute2))
+                    Assert.That(
+                        PacketHandlerAttribute.GetPacketTypes(typeof(TestClassPacketHandlerWithAttribute2)),
+                        Is.EquivalentTo(
+                            new[]
+                            {
+                                typeof(TestPacket2),
+                            }
+                        )
+                    );
+                }
             );
         }
 
         [Test]
         public void TestGetHandlerInterface_Type_null() =>
-            Assert.Throws<ArgumentNullException>(() => PacketHandlerAttribute.GetHandlerInterface(null));
+            Assert.Throws<ArgumentNullException>(() => PacketHandlerAttribute.GetHandlerInterfaces(null));
 
         [Test]
         public void TestGetHandlerInterface_Type_NotHandler() =>
-            Assert.IsNull(PacketHandlerAttribute.GetHandlerInterface(typeof(TestClassNotPacketHandler)));
+            Assert.That(
+                () => PacketHandlerAttribute.GetHandlerInterfaces(typeof(TestClassNotPacketHandler)),
+                Throws.ArgumentException
+            );
 
         [Test]
         public void TestGetHandlerInterface_Type()
         {
-            Assert.AreEqual(
-                typeof(IPacketHandler<TestPacket>),
-                PacketHandlerAttribute.GetHandlerInterface(typeof(TestClassPacketHandlerNoAttribute))
-            );
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(
+                        new []{typeof(IPacketHandler<TestPacket>)},
+                        Is.EquivalentTo(PacketHandlerAttribute.GetHandlerInterfaces(typeof(TestClassPacketHandlerNoAttribute)))
+                    );
 
-            Assert.AreEqual(
-                typeof(IPacketHandler<TestPacket>),
-                PacketHandlerAttribute.GetHandlerInterface(typeof(TestClassPacketHandlerWithAttribute))
-            );
+                    Assert.That(
+                        new[]{typeof(IPacketHandler<TestPacket>)},
+                        Is.EquivalentTo(PacketHandlerAttribute.GetHandlerInterfaces(typeof(TestClassPacketHandlerWithAttribute)))
+                    );
 
-            Assert.AreEqual(
-                typeof(IPacketHandler<TestPacket2>),
-                PacketHandlerAttribute.GetHandlerInterface(typeof(TestClassPacketHandlerWithAttribute2))
-            );
+                    Assert.That(
+                        new[]{typeof(IPacketHandler<TestPacket2>)},
+                        Is.EquivalentTo(PacketHandlerAttribute.GetHandlerInterfaces(typeof(TestClassPacketHandlerWithAttribute2)))
+                    );
 
-            Assert.AreEqual(
-                typeof(IPacketHandler<TestPacket>),
-                PacketHandlerAttribute.GetHandlerInterface(typeof(TestClassPacketHandlerWithMismatchedAttribute))
-            );
+                    Assert.That(
+                        new[]{typeof(IPacketHandler<TestPacket>)},
+                        Is.EquivalentTo(PacketHandlerAttribute.GetHandlerInterfaces(typeof(TestClassPacketHandlerWithMismatchedAttribute)))
+                    );
 
-            // This specific handler is disallowed in the registry and filtered out elsewhere,
-            // but PacketHandlerAttribute.GetHandlerInterface() allowing it is acceptable.
-            Assert.AreEqual(
-                typeof(IPacketHandler<IPacket>),
-                PacketHandlerAttribute.GetHandlerInterface(typeof(TestClassPacketHandlerInvalidPacketType))
+                    // This specific handler is disallowed in the registry and filtered out elsewhere,
+                    // but PacketHandlerAttribute.GetHandlerInterface() allowing it is acceptable.
+                    Assert.That(
+                        new[]{typeof(IPacketHandler<IPacket>)},
+                        Is.EquivalentTo(PacketHandlerAttribute.GetHandlerInterfaces(typeof(TestClassPacketHandlerInvalidPacketType)))
+                    );
+                }
             );
         }
 
@@ -207,7 +238,7 @@ namespace Intersect.Network
 
         [Test]
         public void TestIsValidHandler_Type_null() =>
-            Assert.Throws<ArgumentNullException>(() => PacketHandlerAttribute.GetPacketType(default(Type)));
+            Assert.Throws<ArgumentNullException>(() => PacketHandlerAttribute.GetPacketTypes(default(Type)));
 
         [Test]
         public void TestIsValidHandler_Type_NoAttribute() => Assert.IsTrue(

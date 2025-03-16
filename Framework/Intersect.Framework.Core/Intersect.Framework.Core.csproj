@@ -69,4 +69,8 @@
       </Compile>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Network\Handlers\" />
+    </ItemGroup>
+
 </Project>

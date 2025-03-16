@@ -3,6 +3,8 @@ using Intersect.Config;
 using Intersect.ErrorHandling;
 using Intersect.Core;
 using Intersect.Framework.Core;
+using Intersect.Framework.Core.Network.Packets.Security;
+using Intersect.Framework.Core.Security;
 using Intersect.Network;
 using Intersect.Network.Packets;
 using Intersect.Server.Database.Logging.Entities;
@@ -16,7 +18,6 @@ using Microsoft.Extensions.Logging;
 using Strings = Intersect.Server.Localization.Strings;
 
 namespace Intersect.Server.Networking;
-
 
 public partial class Client : IPacketSender
 {
@@ -44,12 +45,17 @@ public partial class Client : IPacketSender
 
     private int mPacketCount = 0;
 
-    private ConcurrentQueue<Tuple<IPacket, TransmissionMode, long>> mSendPacketQueue = new ConcurrentQueue<Tuple<IPacket, TransmissionMode, long>>();
+    private ConcurrentQueue<Tuple<IPacket, TransmissionMode, long>> mSendPacketQueue =
+        new ConcurrentQueue<Tuple<IPacket, TransmissionMode, long>>();
+
     public ConcurrentQueue<IPacket> HandlePacketQueue = new ConcurrentQueue<IPacket>();
     public ConcurrentQueue<IPacket> RecentPackets = new ConcurrentQueue<IPacket>();
     public bool PacketHandlingQueued = false;
     public bool PacketSendingQueued = false;
-    public FloodThresholdOptions PacketFloodingThresholds { get; set; } = Options.Instance.Security?.Packets.DefaultThresholds;
+
+    public FloodThresholdOptions PacketFloodingThresholds { get; set; } =
+        Options.Instance.Security?.Packets.DefaultThresholds;
+
     public long LastPing { get; set; } = -1;
 
     protected long mTimeout = 20000; //20 seconds
@@ -57,7 +63,7 @@ public partial class Client : IPacketSender
     private bool mBanChecked;
 
     //Sent Maps
-    public Dictionary<Guid, Tuple<long, int>> SentMaps = new Dictionary<Guid, Tuple<long, int>>();
+    public readonly Dictionary<Guid, Tuple<long, int>> SentMaps = [];
 
     private Client(IApplicationContext applicationContext, INetwork network, IConnection connection = null)
     {
@@ -69,6 +75,8 @@ public partial class Client : IPacketSender
         mConnectionTimeout = Timing.Global.Milliseconds + mTimeout;
 
         PacketSender.SendServerConfig(this);
+
+        SynchronizePermissions();
     }
 
     //Game Incorperation Variables
@@ -147,6 +155,7 @@ public partial class Client : IPacketSender
         }
 
         User = user;
+        PermissionSet = (user?.Power.IsAdmin ?? false) ? PermissionSet.Admin : PermissionSet.Default;
     }
 
     public void LoadCharacter(Player character)
@@ -331,56 +340,62 @@ public partial class Client : IPacketSender
     {
         while (mSendPacketQueue.TryDequeue(out Tuple<IPacket, TransmissionMode, long> tuple))
         {
-            if (Connection != null)
+            if (Connection == null)
             {
-                var packet = tuple.Item1;
-                var mode = tuple.Item2;
+                continue;
+            }
 
-                try
+            var (packet, mode, _) = tuple;
+
+            try
+            {
+                if (packet is AbstractTimedPacket timedPacket)
                 {
-                    if (packet is AbstractTimedPacket timedPacket)
-                    {
-                        timedPacket.UpdateTiming();
-                    }
-                    Connection?.Send(packet, mode);
-                    if (Options.Instance.Metrics.Enable)
-                    {
-                        if (!PacketSender.SentPacketTypes.ContainsKey(packet.GetType().Name))
-                        {
-                            PacketSender.SentPacketTypes.TryAdd(packet.GetType().Name, 0);
-                        }
-                        PacketSender.SentPacketTypes[packet.GetType().Name]++;
-                        PacketSender.SentPackets++;
-                        PacketSender.SentBytes += packet.Data.Length;
-                        MetricsRoot.Instance.Network.TotalSentPacketProcessingTime.Record(Timing.Global.Milliseconds - tuple.Item3);
-                    }
+                    timedPacket.UpdateTiming();
                 }
-                catch (Exception exception)
-                {
-                    var packetType = packet.GetType().Name;
-                    var packetMessage =
-                        $"Sending Packet Error! [Packet: {packetType} | User: {this.Name ?? ""} | Player: {this.Entity?.Name ?? ""} | IP {this.Ip}]";
 
-                    // TODO: Re-combine these once we figure out how to prevent the OutOfMemoryException that happens occasionally
-                    ApplicationContext.Logger.LogError(packetMessage);
-                    ApplicationContext.Logger.LogError(new ExceptionInfo(exception));
-                    if (exception.InnerException != null)
+                Connection?.Send(packet, mode);
+                if (Options.Instance.Metrics.Enable)
+                {
+                    if (!PacketSender.SentPacketTypes.ContainsKey(packet.GetType().Name))
                     {
-                        ApplicationContext.Logger.LogError(new ExceptionInfo(exception.InnerException));
+                        PacketSender.SentPacketTypes.TryAdd(packet.GetType().Name, 0);
                     }
 
-                    // Make the call that triggered the OOME in the first place so that we know when it stops happening
-                    ApplicationContext.Logger.LogError(exception, packetMessage);
+                    PacketSender.SentPacketTypes[packet.GetType().Name]++;
+                    PacketSender.SentPackets++;
+                    PacketSender.SentBytes += packet.Data.Length;
+                    MetricsRoot.Instance.Network.TotalSentPacketProcessingTime.Record(
+                        Timing.Global.Milliseconds - tuple.Item3
+                    );
+                }
+            }
+            catch (Exception exception)
+            {
+                var packetType = packet.GetType().Name;
+                var packetMessage =
+                    $"Sending Packet Error! [Packet: {packetType} | User: {this.Name ?? ""} | Player: {this.Entity?.Name ?? ""} | IP {this.Ip}]";
+
+                // TODO: Re-combine these once we figure out how to prevent the OutOfMemoryException that happens occasionally
+                ApplicationContext.Logger.LogError(packetMessage);
+                ApplicationContext.Logger.LogError(new ExceptionInfo(exception));
+                if (exception.InnerException != null)
+                {
+                    ApplicationContext.Logger.LogError(new ExceptionInfo(exception.InnerException));
+                }
+
+                // Make the call that triggered the OOME in the first place so that we know when it stops happening
+                ApplicationContext.Logger.LogError(exception, packetMessage);
 
 #if DIAGNOSTIC
                         this.Disconnect($"Error processing packet type '{packetType}'.");
 #else
-                    this.Disconnect($"Error sending packet.");
+                this.Disconnect($"Error sending packet.");
 #endif
-                    break;
-                }
+                break;
             }
         }
+
         lock (mSendPacketQueue)
         {
             PacketSendingQueued = false;
@@ -403,10 +418,14 @@ public partial class Client : IPacketSender
                 {
                     banned = true;
                 }
-                if (!banned && !string.IsNullOrEmpty(Ban.CheckBan(Connection.Ip.Trim())) && Options.Instance.Security.CheckIp(Connection.Ip.Trim()))
+
+                if (!banned &&
+                    !string.IsNullOrEmpty(Ban.CheckBan(Connection.Ip.Trim())) &&
+                    Options.Instance.Security.CheckIp(Connection.Ip.Trim()))
                 {
                     banned = true;
                 }
+
                 if (banned)
                 {
                     Disconnect("Banned");
@@ -468,6 +487,7 @@ public partial class Client : IPacketSender
                 }
             }
         }
+
         lock (HandlePacketQueue)
         {
             PacketHandlingQueued = false;
