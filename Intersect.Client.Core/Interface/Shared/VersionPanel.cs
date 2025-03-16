@@ -36,7 +36,7 @@ public partial class VersionPanel : Panel
 
     private void ApplicationContextOnPermissionsChanged(PermissionSet permissionSet)
     {
-        _engineVersionLabel.IsVisibleInParent = permissionSet.IsGranted(Permission.EngineVersion);
+        _engineVersionLabel.IsVisibleInParent = permissionSet.IsGranted(Permission.EngineVersion) || ApplicationContext.CurrentContext.IsDeveloper;
     }
 
     protected override void Layout(Framework.Gwen.Skin.Base skin)
