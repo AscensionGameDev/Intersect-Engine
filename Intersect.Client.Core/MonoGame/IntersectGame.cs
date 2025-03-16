@@ -129,7 +129,7 @@ internal partial class IntersectGame : Game
 
         // Store frequently used property values in local variables.
         string mouseCursor = ClientConfiguration.Instance.MouseCursor;
-        string updateUrl = ClientConfiguration.Instance.UpdateUrl;
+        string? updateUrl = ClientConfiguration.Instance.UpdateUrl;
 
         // If we're going to be rendering a custom mouse cursor, hide the default one!
         if (!string.IsNullOrWhiteSpace(mouseCursor))
@@ -275,7 +275,7 @@ internal partial class IntersectGame : Game
                     {
                         break;
                     }
-                    
+
                     if (!ProcessHelper.TryRelaunch())
                     {
                         ApplicationContext.CurrentContext.Logger.LogWarning("Failed to restart automatically");
