@@ -23,6 +23,8 @@ public abstract partial class ActionQueue<TActionQueue, TEnqueueState> where TAc
 
     protected abstract Action<TEnqueueState> PostInvocationAction { get; }
 
+    public virtual void ClearPending() { }
+
     /// <summary>
     ///
     /// </summary>

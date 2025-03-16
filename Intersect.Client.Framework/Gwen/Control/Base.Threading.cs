@@ -1,4 +1,6 @@
+using Intersect.Core;
 using Intersect.Framework.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Framework.Gwen.Control;
 
@@ -60,6 +62,21 @@ public partial class Base
 
     public void RunOnMainThread<TState0, TState1>(Action<TState0, TState1> action, TState0 state0, TState1 state1)
     {
+        if (_disposed)
+        {
+            if (_disposeCompleted)
+            {
+                // TODO: Turn this into a LogError() after we see some reports
+                ObjectDisposedException.ThrowIf(true, this);
+            }
+
+            ApplicationContext.CurrentContext.Logger.LogTrace(
+                "RunOnMainThread() called after {NodeName} was disposed",
+                CanonicalName
+            );
+            return;
+        }
+
         Invalidate();
         _threadQueue.RunOnMainThread(action, state0, state1);
     }

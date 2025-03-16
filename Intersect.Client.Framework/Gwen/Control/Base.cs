@@ -1287,6 +1287,8 @@ public partial class Base : IDisposable
 
         _disposed = true;
 
+        _threadQueue.ClearPending();
+
         Dispose(disposing: true);
 
         ICacheToTexture? cache = default;

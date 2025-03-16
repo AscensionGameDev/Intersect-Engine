@@ -8,6 +8,7 @@ public sealed partial class ThreadQueue : ActionQueue<ThreadQueue, ManualResetEv
 
     private readonly object _lock = new();
     private readonly Stack<ManualResetEventSlim> _resetEventPool = [];
+    private readonly HashSet<CancellationTokenSource> _pendingCancellationTokenSources = [];
     private readonly int? _spinCount;
 
     private int _mainThreadId;
@@ -34,12 +35,55 @@ public sealed partial class ThreadQueue : ActionQueue<ThreadQueue, ManualResetEv
         get => _mainThreadId == Environment.CurrentManagedThreadId;
     }
 
+    public override void ClearPending()
+    {
+        base.ClearPending();
+
+        CancellationTokenSource[] pendingCancellationTokenSources;
+        lock (_pendingCancellationTokenSources)
+        {
+            pendingCancellationTokenSources = _pendingCancellationTokenSources.ToArray();
+            _pendingCancellationTokenSources.Clear();
+        }
+
+        foreach (var cancellationTokenSource in pendingCancellationTokenSources)
+        {
+            cancellationTokenSource.Cancel();
+        }
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void BeginInvokePending(ThreadQueue @this) => @this.ThrowIfNotOnMainThread();
 
     protected override ManualResetEventSlim EnqueueCreateState() => ResetEventPoolPop();
 
-    protected override void EnqueueSuccessful(ManualResetEventSlim resetEvent) => resetEvent.Wait();
+    protected override void EnqueueSuccessful(ManualResetEventSlim resetEvent)
+    {
+        CancellationTokenSource cancellationTokenSource = new();
+
+        lock (_pendingCancellationTokenSources)
+        {
+            _pendingCancellationTokenSources.Add(cancellationTokenSource);
+        }
+
+        try
+        {
+            resetEvent.Wait(cancellationTokenSource.Token);
+        }
+        catch (OperationCanceledException operationCanceledException)
+        {
+            if (!cancellationTokenSource.IsCancellationRequested ||
+                !operationCanceledException.CancellationToken.Equals(cancellationTokenSource.Token))
+            {
+                throw;
+            }
+        }
+
+        lock (_pendingCancellationTokenSources)
+        {
+            _pendingCancellationTokenSources.Remove(cancellationTokenSource);
+        }
+    }
 
     protected override void EnqueueFinally(ManualResetEventSlim resetEvent) => ResetEventPoolPush(resetEvent);
 
