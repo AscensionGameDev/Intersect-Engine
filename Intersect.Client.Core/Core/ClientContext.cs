@@ -24,7 +24,10 @@ internal sealed partial class ClientContext : ApplicationContext<ClientContext, 
 {
     internal static bool IsSinglePlayer { get; set; }
 
+    private bool _forceDeveloper;
+
     private IPlatformRunner? mPlatformRunner;
+    private bool _isDeveloper;
 
     internal ClientContext(
         Assembly entryAssembly,
@@ -41,7 +44,7 @@ internal sealed partial class ClientContext : ApplicationContext<ClientContext, 
         try
         {
             var address = Dns.GetHostAddresses(hostNameOrAddress).FirstOrDefault();
-            IsDeveloper = !(address?.IsPublic() ?? true);
+            _forceDeveloper = !(address?.IsPublic() ?? true);
         }
         catch (SocketException socketException)
         {
@@ -56,7 +59,7 @@ internal sealed partial class ClientContext : ApplicationContext<ClientContext, 
                 "Failed to resolve host '{HostNameOrAddress}'",
                 hostNameOrAddress
             );
-            IsDeveloper = true;
+            _forceDeveloper = true;
         }
 
         _ = FactoryRegistry<IPluginContext>.RegisterFactory(new ClientPluginContext.Factory());
@@ -80,7 +83,11 @@ internal sealed partial class ClientContext : ApplicationContext<ClientContext, 
 
     public event PermissionSetChangedHandler? PermissionsChanged;
 
-    public bool IsDeveloper { get; private set; }
+    public bool IsDeveloper
+    {
+        get => _isDeveloper || _forceDeveloper;
+        private set => _isDeveloper = value;
+    }
 
     protected override bool UsesMainThread => true;
 

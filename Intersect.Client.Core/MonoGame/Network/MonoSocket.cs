@@ -43,7 +43,7 @@ internal partial class MonoSocket : GameSocket
     /// Interval between status pings in ms (e.g. full, bad version, etc.)
     /// </summary>
 #if DEBUG
-    private const long ServerStatusPingInterval = 15_000;
+    private const long ServerStatusPingInterval = 1_000;
 #else
     private const long ServerStatusPingInterval = 15_000;
 #endif
