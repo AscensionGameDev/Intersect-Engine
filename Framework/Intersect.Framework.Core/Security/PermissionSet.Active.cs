@@ -23,7 +23,11 @@ public sealed partial class PermissionSet
             var activePermissionSetName = _activePermissionSetName;
             if (!TryGet(activePermissionSetName, out activePermissionSet))
             {
-                throw new InvalidOperationException($"Unknown active permission set '{activePermissionSetName}'");
+                ApplicationContext.CurrentContext.Logger.LogError(
+                    "Unknown active permission set '{PermissionSetName}'",
+                    activePermissionSetName
+                );
+                return Default;
             }
 
             _activePermissionSet = activePermissionSet;
