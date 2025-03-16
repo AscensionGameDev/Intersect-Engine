@@ -1,4 +1,4 @@
-﻿using DarkUI.Controls;
+using DarkUI.Controls;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
@@ -30,251 +30,275 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         /// </summary>
         private void InitializeComponent()
         {
-            this.grpWarp = new DarkUI.Controls.DarkGroupBox();
-            this.btnVisual = new DarkUI.Controls.DarkButton();
-            this.btnCancel = new DarkUI.Controls.DarkButton();
-            this.btnSave = new DarkUI.Controls.DarkButton();
-            this.scrlY = new DarkUI.Controls.DarkScrollBar();
-            this.scrlX = new DarkUI.Controls.DarkScrollBar();
-            this.cmbMap = new DarkUI.Controls.DarkComboBox();
-            this.cmbDirection = new DarkUI.Controls.DarkComboBox();
-            this.lblDir = new System.Windows.Forms.Label();
-            this.lblY = new System.Windows.Forms.Label();
-            this.lblMap = new System.Windows.Forms.Label();
-            this.lblX = new System.Windows.Forms.Label();
-            this.chkChangeInstance = new System.Windows.Forms.CheckBox();
-            this.grpInstanceSettings = new DarkUI.Controls.DarkGroupBox();
-            this.cmbInstanceType = new DarkUI.Controls.DarkComboBox();
-            this.lblInstanceType = new System.Windows.Forms.Label();
-            this.grpWarp.SuspendLayout();
-            this.grpInstanceSettings.SuspendLayout();
-            this.SuspendLayout();
+            grpWarp = new DarkGroupBox();
+            nudWarpY = new DarkNumericUpDown();
+            nudWarpX = new DarkNumericUpDown();
+            grpInstanceSettings = new DarkGroupBox();
+            cmbInstanceType = new DarkComboBox();
+            lblInstanceType = new Label();
+            chkChangeInstance = new CheckBox();
+            btnVisual = new DarkButton();
+            btnCancel = new DarkButton();
+            btnSave = new DarkButton();
+            cmbMap = new DarkComboBox();
+            cmbDirection = new DarkComboBox();
+            lblDir = new Label();
+            lblY = new Label();
+            lblMap = new Label();
+            lblX = new Label();
+            grpWarp.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudWarpY).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudWarpX).BeginInit();
+            grpInstanceSettings.SuspendLayout();
+            SuspendLayout();
             // 
             // grpWarp
             // 
-            this.grpWarp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.grpWarp.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpWarp.Controls.Add(this.grpInstanceSettings);
-            this.grpWarp.Controls.Add(this.chkChangeInstance);
-            this.grpWarp.Controls.Add(this.btnVisual);
-            this.grpWarp.Controls.Add(this.btnCancel);
-            this.grpWarp.Controls.Add(this.btnSave);
-            this.grpWarp.Controls.Add(this.scrlY);
-            this.grpWarp.Controls.Add(this.scrlX);
-            this.grpWarp.Controls.Add(this.cmbMap);
-            this.grpWarp.Controls.Add(this.cmbDirection);
-            this.grpWarp.Controls.Add(this.lblDir);
-            this.grpWarp.Controls.Add(this.lblY);
-            this.grpWarp.Controls.Add(this.lblMap);
-            this.grpWarp.Controls.Add(this.lblX);
-            this.grpWarp.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpWarp.Location = new System.Drawing.Point(3, 3);
-            this.grpWarp.Name = "grpWarp";
-            this.grpWarp.Size = new System.Drawing.Size(374, 201);
-            this.grpWarp.TabIndex = 17;
-            this.grpWarp.TabStop = false;
-            this.grpWarp.Text = "Warp";
+            grpWarp.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            grpWarp.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpWarp.Controls.Add(nudWarpY);
+            grpWarp.Controls.Add(nudWarpX);
+            grpWarp.Controls.Add(grpInstanceSettings);
+            grpWarp.Controls.Add(chkChangeInstance);
+            grpWarp.Controls.Add(btnVisual);
+            grpWarp.Controls.Add(btnCancel);
+            grpWarp.Controls.Add(btnSave);
+            grpWarp.Controls.Add(cmbMap);
+            grpWarp.Controls.Add(cmbDirection);
+            grpWarp.Controls.Add(lblDir);
+            grpWarp.Controls.Add(lblY);
+            grpWarp.Controls.Add(lblMap);
+            grpWarp.Controls.Add(lblX);
+            grpWarp.ForeColor = System.Drawing.Color.Gainsboro;
+            grpWarp.Location = new System.Drawing.Point(4, 3);
+            grpWarp.Margin = new Padding(4, 3, 4, 3);
+            grpWarp.Name = "grpWarp";
+            grpWarp.Padding = new Padding(4, 3, 4, 3);
+            grpWarp.Size = new Size(436, 232);
+            grpWarp.TabIndex = 17;
+            grpWarp.TabStop = false;
+            grpWarp.Text = "Warp";
             // 
-            // btnVisual
+            // nudWarpY
             // 
-            this.btnVisual.Location = new System.Drawing.Point(12, 130);
-            this.btnVisual.Name = "btnVisual";
-            this.btnVisual.Padding = new System.Windows.Forms.Padding(5);
-            this.btnVisual.Size = new System.Drawing.Size(155, 23);
-            this.btnVisual.TabIndex = 21;
-            this.btnVisual.Text = "Open Visual Interface";
-            this.btnVisual.Click += new System.EventHandler(this.btnVisual_Click);
+            nudWarpY.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            nudWarpY.ForeColor = System.Drawing.Color.Gainsboro;
+            nudWarpY.Location = new System.Drawing.Point(54, 82);
+            nudWarpY.Name = "nudWarpY";
+            nudWarpY.Size = new Size(140, 23);
+            nudWarpY.TabIndex = 67;
+            nudWarpY.Value = new decimal(new int[] { 0, 0, 0, 0 });
+            nudWarpY.ValueChanged += nudWarpY_ValueChanged;
             // 
-            // btnCancel
+            // nudWarpX
             // 
-            this.btnCancel.Location = new System.Drawing.Point(286, 168);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 20;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-            // 
-            // btnSave
-            // 
-            this.btnSave.Location = new System.Drawing.Point(205, 168);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 19;
-            this.btnSave.Text = "Ok";
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
-            // scrlY
-            // 
-            this.scrlY.Location = new System.Drawing.Point(46, 73);
-            this.scrlY.Name = "scrlY";
-            this.scrlY.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlY.Size = new System.Drawing.Size(121, 17);
-            this.scrlY.TabIndex = 18;
-            this.scrlY.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlY_Scroll);
-            // 
-            // scrlX
-            // 
-            this.scrlX.Location = new System.Drawing.Point(46, 46);
-            this.scrlX.Name = "scrlX";
-            this.scrlX.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlX.Size = new System.Drawing.Size(121, 17);
-            this.scrlX.TabIndex = 17;
-            this.scrlX.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlX_Scroll);
-            // 
-            // cmbMap
-            // 
-            this.cmbMap.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbMap.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbMap.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbMap.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbMap.DrawDropdownHoverOutline = false;
-            this.cmbMap.DrawFocusRectangle = false;
-            this.cmbMap.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbMap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbMap.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbMap.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbMap.FormattingEnabled = true;
-            this.cmbMap.Location = new System.Drawing.Point(46, 16);
-            this.cmbMap.Name = "cmbMap";
-            this.cmbMap.Size = new System.Drawing.Size(121, 21);
-            this.cmbMap.TabIndex = 16;
-            this.cmbMap.Text = null;
-            this.cmbMap.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbMap.SelectedIndexChanged += new System.EventHandler(this.cmbMap_SelectedIndexChanged);
-            // 
-            // cmbDirection
-            // 
-            this.cmbDirection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbDirection.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbDirection.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbDirection.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbDirection.DrawDropdownHoverOutline = false;
-            this.cmbDirection.DrawFocusRectangle = false;
-            this.cmbDirection.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbDirection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbDirection.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbDirection.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbDirection.FormattingEnabled = true;
-            this.cmbDirection.Location = new System.Drawing.Point(46, 97);
-            this.cmbDirection.Name = "cmbDirection";
-            this.cmbDirection.Size = new System.Drawing.Size(121, 21);
-            this.cmbDirection.TabIndex = 15;
-            this.cmbDirection.Text = null;
-            this.cmbDirection.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbDirection.SelectedIndexChanged += new System.EventHandler(this.cmbDirection_SelectedIndexChanged);
-            // 
-            // lblDir
-            // 
-            this.lblDir.AutoSize = true;
-            this.lblDir.Location = new System.Drawing.Point(9, 100);
-            this.lblDir.Name = "lblDir";
-            this.lblDir.Size = new System.Drawing.Size(23, 13);
-            this.lblDir.TabIndex = 14;
-            this.lblDir.Text = "Dir:";
-            this.lblDir.Click += new System.EventHandler(this.label23_Click);
-            // 
-            // lblY
-            // 
-            this.lblY.AutoSize = true;
-            this.lblY.Location = new System.Drawing.Point(9, 73);
-            this.lblY.Name = "lblY";
-            this.lblY.Size = new System.Drawing.Size(26, 13);
-            this.lblY.TabIndex = 13;
-            this.lblY.Text = "Y: 0";
-            this.lblY.Click += new System.EventHandler(this.lblY_Click);
-            // 
-            // lblMap
-            // 
-            this.lblMap.AutoSize = true;
-            this.lblMap.Location = new System.Drawing.Point(9, 19);
-            this.lblMap.Name = "lblMap";
-            this.lblMap.Size = new System.Drawing.Size(31, 13);
-            this.lblMap.TabIndex = 8;
-            this.lblMap.Text = "Map:";
-            this.lblMap.Click += new System.EventHandler(this.label21_Click);
-            // 
-            // lblX
-            // 
-            this.lblX.AutoSize = true;
-            this.lblX.Location = new System.Drawing.Point(9, 46);
-            this.lblX.Name = "lblX";
-            this.lblX.Size = new System.Drawing.Size(26, 13);
-            this.lblX.TabIndex = 12;
-            this.lblX.Text = "X: 0";
-            this.lblX.Click += new System.EventHandler(this.lblX_Click);
-            // 
-            // chkChangeInstance
-            // 
-            this.chkChangeInstance.AutoSize = true;
-            this.chkChangeInstance.Location = new System.Drawing.Point(178, 19);
-            this.chkChangeInstance.Name = "chkChangeInstance";
-            this.chkChangeInstance.Size = new System.Drawing.Size(112, 17);
-            this.chkChangeInstance.TabIndex = 64;
-            this.chkChangeInstance.Text = "Change instance?";
-            this.chkChangeInstance.UseVisualStyleBackColor = true;
-            this.chkChangeInstance.CheckedChanged += new System.EventHandler(this.chkChangeInstance_CheckedChanged);
+            nudWarpX.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            nudWarpX.ForeColor = System.Drawing.Color.Gainsboro;
+            nudWarpX.Location = new System.Drawing.Point(54, 51);
+            nudWarpX.Name = "nudWarpX";
+            nudWarpX.Size = new Size(140, 23);
+            nudWarpX.TabIndex = 66;
+            nudWarpX.Value = new decimal(new int[] { 0, 0, 0, 0 });
+            nudWarpX.ValueChanged += nudWarpX_ValueChanged;
             // 
             // grpInstanceSettings
             // 
-            this.grpInstanceSettings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.grpInstanceSettings.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpInstanceSettings.Controls.Add(this.cmbInstanceType);
-            this.grpInstanceSettings.Controls.Add(this.lblInstanceType);
-            this.grpInstanceSettings.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpInstanceSettings.Location = new System.Drawing.Point(178, 51);
-            this.grpInstanceSettings.Name = "grpInstanceSettings";
-            this.grpInstanceSettings.Size = new System.Drawing.Size(183, 102);
-            this.grpInstanceSettings.TabIndex = 65;
-            this.grpInstanceSettings.TabStop = false;
-            this.grpInstanceSettings.Text = "Instance Settings";
-            this.grpInstanceSettings.Visible = false;
+            grpInstanceSettings.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            grpInstanceSettings.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpInstanceSettings.Controls.Add(cmbInstanceType);
+            grpInstanceSettings.Controls.Add(lblInstanceType);
+            grpInstanceSettings.ForeColor = System.Drawing.Color.Gainsboro;
+            grpInstanceSettings.Location = new System.Drawing.Point(208, 59);
+            grpInstanceSettings.Margin = new Padding(4, 3, 4, 3);
+            grpInstanceSettings.Name = "grpInstanceSettings";
+            grpInstanceSettings.Padding = new Padding(4, 3, 4, 3);
+            grpInstanceSettings.Size = new Size(214, 118);
+            grpInstanceSettings.TabIndex = 65;
+            grpInstanceSettings.TabStop = false;
+            grpInstanceSettings.Text = "Instance Settings";
+            grpInstanceSettings.Visible = false;
             // 
             // cmbInstanceType
             // 
-            this.cmbInstanceType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbInstanceType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbInstanceType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbInstanceType.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbInstanceType.DrawDropdownHoverOutline = false;
-            this.cmbInstanceType.DrawFocusRectangle = false;
-            this.cmbInstanceType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbInstanceType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbInstanceType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbInstanceType.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbInstanceType.FormattingEnabled = true;
-            this.cmbInstanceType.Location = new System.Drawing.Point(9, 47);
-            this.cmbInstanceType.Name = "cmbInstanceType";
-            this.cmbInstanceType.Size = new System.Drawing.Size(169, 21);
-            this.cmbInstanceType.TabIndex = 64;
-            this.cmbInstanceType.Text = null;
-            this.cmbInstanceType.TextPadding = new System.Windows.Forms.Padding(2);
+            cmbInstanceType.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbInstanceType.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbInstanceType.BorderStyle = ButtonBorderStyle.Solid;
+            cmbInstanceType.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbInstanceType.DrawDropdownHoverOutline = false;
+            cmbInstanceType.DrawFocusRectangle = false;
+            cmbInstanceType.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbInstanceType.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbInstanceType.FlatStyle = FlatStyle.Flat;
+            cmbInstanceType.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbInstanceType.FormattingEnabled = true;
+            cmbInstanceType.Location = new System.Drawing.Point(10, 54);
+            cmbInstanceType.Margin = new Padding(4, 3, 4, 3);
+            cmbInstanceType.Name = "cmbInstanceType";
+            cmbInstanceType.Size = new Size(196, 24);
+            cmbInstanceType.TabIndex = 64;
+            cmbInstanceType.Text = null;
+            cmbInstanceType.TextPadding = new Padding(2);
             // 
             // lblInstanceType
             // 
-            this.lblInstanceType.AutoSize = true;
-            this.lblInstanceType.Location = new System.Drawing.Point(6, 31);
-            this.lblInstanceType.Name = "lblInstanceType";
-            this.lblInstanceType.Size = new System.Drawing.Size(78, 13);
-            this.lblInstanceType.TabIndex = 64;
-            this.lblInstanceType.Text = "Instance Type:";
+            lblInstanceType.AutoSize = true;
+            lblInstanceType.Location = new System.Drawing.Point(7, 36);
+            lblInstanceType.Margin = new Padding(4, 0, 4, 0);
+            lblInstanceType.Name = "lblInstanceType";
+            lblInstanceType.Size = new Size(81, 15);
+            lblInstanceType.TabIndex = 64;
+            lblInstanceType.Text = "Instance Type:";
+            // 
+            // chkChangeInstance
+            // 
+            chkChangeInstance.AutoSize = true;
+            chkChangeInstance.Location = new System.Drawing.Point(208, 22);
+            chkChangeInstance.Margin = new Padding(4, 3, 4, 3);
+            chkChangeInstance.Name = "chkChangeInstance";
+            chkChangeInstance.Size = new Size(119, 19);
+            chkChangeInstance.TabIndex = 64;
+            chkChangeInstance.Text = "Change instance?";
+            chkChangeInstance.UseVisualStyleBackColor = true;
+            chkChangeInstance.CheckedChanged += chkChangeInstance_CheckedChanged;
+            // 
+            // btnVisual
+            // 
+            btnVisual.Location = new System.Drawing.Point(14, 150);
+            btnVisual.Margin = new Padding(4, 3, 4, 3);
+            btnVisual.Name = "btnVisual";
+            btnVisual.Padding = new Padding(6);
+            btnVisual.Size = new Size(181, 27);
+            btnVisual.TabIndex = 21;
+            btnVisual.Text = "Open Visual Interface";
+            btnVisual.Click += btnVisual_Click;
+            // 
+            // btnCancel
+            // 
+            btnCancel.Location = new System.Drawing.Point(334, 194);
+            btnCancel.Margin = new Padding(4, 3, 4, 3);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Padding = new Padding(6);
+            btnCancel.Size = new Size(88, 27);
+            btnCancel.TabIndex = 20;
+            btnCancel.Text = "Cancel";
+            btnCancel.Click += btnCancel_Click;
+            // 
+            // btnSave
+            // 
+            btnSave.Location = new System.Drawing.Point(239, 194);
+            btnSave.Margin = new Padding(4, 3, 4, 3);
+            btnSave.Name = "btnSave";
+            btnSave.Padding = new Padding(6);
+            btnSave.Size = new Size(88, 27);
+            btnSave.TabIndex = 19;
+            btnSave.Text = "Ok";
+            btnSave.Click += btnSave_Click;
+            // 
+            // cmbMap
+            // 
+            cmbMap.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbMap.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbMap.BorderStyle = ButtonBorderStyle.Solid;
+            cmbMap.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbMap.DrawDropdownHoverOutline = false;
+            cmbMap.DrawFocusRectangle = false;
+            cmbMap.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbMap.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbMap.FlatStyle = FlatStyle.Flat;
+            cmbMap.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbMap.FormattingEnabled = true;
+            cmbMap.Location = new System.Drawing.Point(54, 18);
+            cmbMap.Margin = new Padding(4, 3, 4, 3);
+            cmbMap.Name = "cmbMap";
+            cmbMap.Size = new Size(140, 24);
+            cmbMap.TabIndex = 16;
+            cmbMap.Text = null;
+            cmbMap.TextPadding = new Padding(2);
+            cmbMap.SelectedIndexChanged += cmbMap_SelectedIndexChanged;
+            // 
+            // cmbDirection
+            // 
+            cmbDirection.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbDirection.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbDirection.BorderStyle = ButtonBorderStyle.Solid;
+            cmbDirection.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbDirection.DrawDropdownHoverOutline = false;
+            cmbDirection.DrawFocusRectangle = false;
+            cmbDirection.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbDirection.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbDirection.FlatStyle = FlatStyle.Flat;
+            cmbDirection.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbDirection.FormattingEnabled = true;
+            cmbDirection.Location = new System.Drawing.Point(54, 115);
+            cmbDirection.Margin = new Padding(4, 3, 4, 3);
+            cmbDirection.Name = "cmbDirection";
+            cmbDirection.Size = new Size(140, 24);
+            cmbDirection.TabIndex = 15;
+            cmbDirection.Text = null;
+            cmbDirection.TextPadding = new Padding(2);
+            cmbDirection.SelectedIndexChanged += cmbDirection_SelectedIndexChanged;
+            // 
+            // lblDir
+            // 
+            lblDir.AutoSize = true;
+            lblDir.Location = new System.Drawing.Point(10, 115);
+            lblDir.Margin = new Padding(4, 0, 4, 0);
+            lblDir.Name = "lblDir";
+            lblDir.Size = new Size(25, 15);
+            lblDir.TabIndex = 14;
+            lblDir.Text = "Dir:";
+            lblDir.Click += label23_Click;
+            // 
+            // lblY
+            // 
+            lblY.AutoSize = true;
+            lblY.Location = new System.Drawing.Point(10, 84);
+            lblY.Margin = new Padding(4, 0, 4, 0);
+            lblY.Name = "lblY";
+            lblY.Size = new Size(26, 15);
+            lblY.TabIndex = 13;
+            lblY.Text = "Y: 0";
+            lblY.Click += lblY_Click;
+            // 
+            // lblMap
+            // 
+            lblMap.AutoSize = true;
+            lblMap.Location = new System.Drawing.Point(10, 22);
+            lblMap.Margin = new Padding(4, 0, 4, 0);
+            lblMap.Name = "lblMap";
+            lblMap.Size = new Size(34, 15);
+            lblMap.TabIndex = 8;
+            lblMap.Text = "Map:";
+            lblMap.Click += label21_Click;
+            // 
+            // lblX
+            // 
+            lblX.AutoSize = true;
+            lblX.Location = new System.Drawing.Point(10, 53);
+            lblX.Margin = new Padding(4, 0, 4, 0);
+            lblX.Name = "lblX";
+            lblX.Size = new Size(26, 15);
+            lblX.TabIndex = 12;
+            lblX.Text = "X: 0";
+            lblX.Click += lblX_Click;
             // 
             // EventCommandWarp
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSize = true;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.Controls.Add(this.grpWarp);
-            this.Name = "EventCommandWarp";
-            this.Size = new System.Drawing.Size(383, 209);
-            this.grpWarp.ResumeLayout(false);
-            this.grpWarp.PerformLayout();
-            this.grpInstanceSettings.ResumeLayout(false);
-            this.grpInstanceSettings.PerformLayout();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            AutoSize = true;
+            BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            Controls.Add(grpWarp);
+            Margin = new Padding(4, 3, 4, 3);
+            Name = "EventCommandWarp";
+            Size = new Size(447, 241);
+            grpWarp.ResumeLayout(false);
+            grpWarp.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudWarpY).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudWarpX).EndInit();
+            grpInstanceSettings.ResumeLayout(false);
+            grpInstanceSettings.PerformLayout();
+            ResumeLayout(false);
         }
 
         #endregion
@@ -288,12 +312,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private System.Windows.Forms.Label lblX;
         private DarkButton btnCancel;
         private DarkButton btnSave;
-        private DarkScrollBar scrlY;
-        private DarkScrollBar scrlX;
         private DarkButton btnVisual;
         private DarkGroupBox grpInstanceSettings;
         private DarkComboBox cmbInstanceType;
         private System.Windows.Forms.Label lblInstanceType;
         private System.Windows.Forms.CheckBox chkChangeInstance;
+        private DarkNumericUpDown nudWarpY;
+        private DarkNumericUpDown nudWarpX;
     }
 }

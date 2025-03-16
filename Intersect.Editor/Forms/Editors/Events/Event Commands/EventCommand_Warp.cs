@@ -37,13 +37,13 @@ public partial class EventCommandWarp : UserControl
             cmbMap.SelectedIndex = 0;
         }
 
-        scrlX.Maximum = Options.Instance.Map.MapWidth - 1;
-        scrlY.Maximum = Options.Instance.Map.MapHeight - 1;
-        scrlX.Value = mMyCommand.X;
-        scrlY.Value = mMyCommand.Y;
-        lblX.Text = Strings.Warping.x.ToString(scrlX.Value);
-        lblY.Text = Strings.Warping.y.ToString(scrlY.Value);
-        cmbDirection.SelectedIndex = (int) mMyCommand.Direction;
+        nudWarpX.Maximum = Options.Instance.Map.MapWidth - 1;
+        nudWarpY.Maximum = Options.Instance.Map.MapHeight - 1;
+        nudWarpX.Value = mMyCommand.X;
+        nudWarpY.Value = mMyCommand.Y;
+        lblX.Text = Strings.Warping.x.ToString(nudWarpY.Value);
+        lblY.Text = Strings.Warping.y.ToString(nudWarpY.Value);
+        cmbDirection.SelectedIndex = (int)mMyCommand.Direction;
         chkChangeInstance.Checked = mMyCommand.ChangeInstance;
         grpInstanceSettings.Visible = chkChangeInstance.Checked;
 
@@ -52,15 +52,15 @@ public partial class EventCommandWarp : UserControl
         {
             cmbInstanceType.Items.Add(Strings.MapInstance.InstanceTypes[instanceType]);
         }
-        cmbInstanceType.SelectedIndex = (int) mMyCommand.InstanceType;
+        cmbInstanceType.SelectedIndex = (int)mMyCommand.InstanceType;
     }
 
     private void InitLocalization()
     {
         grpWarp.Text = Strings.EventWarp.title;
         lblMap.Text = Strings.Warping.map.ToString("");
-        lblX.Text = Strings.Warping.x.ToString(scrlX.Value);
-        lblY.Text = Strings.Warping.y.ToString(scrlY.Value);
+        lblX.Text = Strings.Warping.x.ToString(nudWarpX.Value);
+        lblY.Text = Strings.Warping.y.ToString(nudWarpY.Value);
         lblDir.Text = Strings.Warping.direction.ToString("");
         btnVisual.Text = Strings.Warping.visual;
         cmbDirection.Items.Clear();
@@ -80,9 +80,9 @@ public partial class EventCommandWarp : UserControl
     private void btnSave_Click(object sender, EventArgs e)
     {
         mMyCommand.MapId = MapList.OrderedMaps[cmbMap.SelectedIndex].MapId;
-        mMyCommand.X = (byte) scrlX.Value;
-        mMyCommand.Y = (byte) scrlY.Value;
-        mMyCommand.Direction = (WarpDirection) cmbDirection.SelectedIndex;
+        mMyCommand.X = (byte)nudWarpX.Value;
+        mMyCommand.Y = (byte)nudWarpY.Value;
+        mMyCommand.Direction = (WarpDirection)cmbDirection.SelectedIndex;
         mMyCommand.ChangeInstance = chkChangeInstance.Checked;
         mMyCommand.InstanceType = (MapInstanceType)cmbInstanceType.SelectedIndex;
         mEventEditor.FinishCommandEdit();
@@ -93,20 +93,10 @@ public partial class EventCommandWarp : UserControl
         mEventEditor.CancelCommandEdit();
     }
 
-    private void scrlX_Scroll(object sender, ScrollValueEventArgs e)
-    {
-        lblX.Text = Strings.Warping.x.ToString(scrlX.Value);
-    }
-
-    private void scrlY_Scroll(object sender, ScrollValueEventArgs e)
-    {
-        lblY.Text = Strings.Warping.y.ToString(scrlY.Value);
-    }
-
     private void btnVisual_Click(object sender, EventArgs e)
     {
         var frmWarpSelection = new FrmWarpSelection();
-        frmWarpSelection.SelectTile(MapList.OrderedMaps[cmbMap.SelectedIndex].MapId, scrlX.Value, scrlY.Value);
+        frmWarpSelection.SelectTile(MapList.OrderedMaps[cmbMap.SelectedIndex].MapId, (int)nudWarpX.Value, (int)nudWarpY.Value);
         frmWarpSelection.ShowDialog();
         if (frmWarpSelection.GetResult())
         {
@@ -120,10 +110,10 @@ public partial class EventCommandWarp : UserControl
                 }
             }
 
-            scrlX.Value = frmWarpSelection.GetX();
-            scrlY.Value = frmWarpSelection.GetY();
-            lblX.Text = Strings.Warping.x.ToString(scrlX.Value);
-            lblY.Text = Strings.Warping.y.ToString(scrlY.Value);
+            nudWarpX.Value = frmWarpSelection.GetX();
+            nudWarpY.Value = frmWarpSelection.GetY();
+            lblX.Text = Strings.Warping.x.ToString(nudWarpX.Value);
+            lblY.Text = Strings.Warping.y.ToString(nudWarpY.Value);
         }
     }
 
@@ -154,5 +144,15 @@ public partial class EventCommandWarp : UserControl
     private void chkChangeInstance_CheckedChanged(object sender, EventArgs e)
     {
         grpInstanceSettings.Visible = chkChangeInstance.Checked;
+    }
+
+    private void nudWarpY_ValueChanged(object sender, EventArgs e)
+    {
+        lblY.Text = Strings.Warping.y.ToString(nudWarpY.Value);
+    }
+
+    private void nudWarpX_ValueChanged(object sender, EventArgs e)
+    {
+        lblX.Text = Strings.Warping.x.ToString(nudWarpX.Value);
     }
 }
