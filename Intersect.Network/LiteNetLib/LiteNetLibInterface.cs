@@ -254,7 +254,7 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
 
         if (!Guid.TryParse(message, out var eventId))
         {
-
+            // TODO: What the hell is this?
         }
 
         OnDisconnected?.Invoke(
