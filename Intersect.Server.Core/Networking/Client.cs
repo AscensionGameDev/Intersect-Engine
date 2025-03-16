@@ -341,7 +341,7 @@ public partial class Client : IPacketSender
                 continue;
             }
 
-            var (packet, mode, _) = tuple;
+            var (packet, mode, packetTime) = tuple;
 
             try
             {
@@ -362,7 +362,7 @@ public partial class Client : IPacketSender
                     PacketSender.SentPackets++;
                     PacketSender.SentBytes += packet.Data.Length;
                     MetricsRoot.Instance.Network.TotalSentPacketProcessingTime.Record(
-                        Timing.Global.Milliseconds - tuple.Item3
+                        Timing.Global.Milliseconds - packetTime
                     );
                 }
             }
