@@ -76,7 +76,6 @@ internal static partial class Network
 
                     try
                     {
-                        Console.WriteLine("DEBOUNCE CONTINUE ENTERED");
                         if (_closeTask != task)
                         {
                             ApplicationContext.Context.Value?.Logger.LogDebug("Disconnect interrupted, skipping");
