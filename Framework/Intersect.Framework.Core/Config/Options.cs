@@ -10,6 +10,22 @@ namespace Intersect;
 
 public partial record Options
 {
+    private static readonly JsonSerializerSettings PrivateIndentedSerializerSettings = new()
+    {
+        ContractResolver = new OptionsContractResolver(true, false),
+        Formatting = Formatting.Indented,
+    };
+
+    private static readonly JsonSerializerSettings PrivateSerializerSettings = new()
+    {
+        ContractResolver = new OptionsContractResolver(true, false),
+    };
+
+    private static readonly JsonSerializerSettings PublicSerializerSettings = new()
+    {
+        ContractResolver = new OptionsContractResolver(false, true),
+    };
+
     #region Constants
 
     public const string DefaultGameName = "Intersect";
@@ -47,10 +63,6 @@ public partial record Options
     [Ignore]
     [JsonIgnore]
     public string OptionsData { get; private set; } = string.Empty;
-
-    [Ignore]
-    [JsonIgnore]
-    public bool SendingToClient { get; set; } = true;
 
     [Ignore]
     public bool SmtpValid { get; private set; }
@@ -235,7 +247,8 @@ public partial record Options
         }
         else if (File.Exists(pathToServerConfig))
         {
-            instance = JsonConvert.DeserializeObject<Options>(File.ReadAllText(pathToServerConfig)) ?? instance;
+            var rawJson = File.ReadAllText(pathToServerConfig);
+            instance = JsonConvert.DeserializeObject<Options>(rawJson, PrivateSerializerSettings) ?? instance;
             Instance = instance;
         }
 
@@ -269,13 +282,10 @@ public partial record Options
 
         var pathToServerConfig = Path.Combine(ResourcesDirectory, "config.json");
 
-        instance.SendingToClient = false;
         try
         {
-            File.WriteAllText(
-                pathToServerConfig,
-                JsonConvert.SerializeObject(instance, Formatting.Indented)
-            );
+            var serializedPrivateConfiguration = JsonConvert.SerializeObject(instance, PrivateIndentedSerializerSettings);
+            File.WriteAllText(pathToServerConfig, serializedPrivateConfiguration);
         }
         catch (Exception exception)
         {
@@ -285,15 +295,15 @@ public partial record Options
                 pathToServerConfig
             );
         }
-        instance.SendingToClient = true;
-        instance.OptionsData = JsonConvert.SerializeObject(instance);
+
+        instance.OptionsData = JsonConvert.SerializeObject(instance, PublicSerializerSettings);
     }
 
     public static void LoadFromServer(string data)
     {
         try
         {
-            var loadedOptions = JsonConvert.DeserializeObject<Options>(data);
+            var loadedOptions = JsonConvert.DeserializeObject<Options>(data, PublicSerializerSettings);
             Instance = loadedOptions;
             OptionsLoaded?.Invoke(loadedOptions);
         }
@@ -306,47 +316,7 @@ public partial record Options
 
     public static event OptionsLoadedEventHandler? OptionsLoaded;
 
-    // ReSharper disable once UnusedMember.Global
-    public bool ShouldSerializeGameDatabase()
-    {
-        return !SendingToClient;
-    }
-
-    // ReSharper disable once UnusedMember.Global
-    public bool ShouldSerializeLoggingDatabase()
-    {
-        return !SendingToClient;
-    }
-
-    // ReSharper disable once UnusedMember.Global
-    public bool ShouldSerializeLogging()
-    {
-        return !SendingToClient;
-    }
-
-    // ReSharper disable once UnusedMember.Global
-    public bool ShouldSerializePlayerDatabase()
-    {
-        return !SendingToClient;
-    }
-
-    // ReSharper disable once UnusedMember.Global
-    public bool ShouldSerializeSmtpSettings()
-    {
-        return !SendingToClient;
-    }
-
-    // ReSharper disable once UnusedMember.Global
-    public bool ShouldSerializeSmtpValid()
-    {
-        return SendingToClient;
-    }
-
-    // ReSharper disable once UnusedMember.Global
-    public bool ShouldSerializeSecurity()
-    {
-        return !SendingToClient;
-    }
-
-    public Options DeepClone() => JsonConvert.DeserializeObject<Options>(JsonConvert.SerializeObject(this with { SendingToClient = false }));
+    public Options DeepClone() => JsonConvert.DeserializeObject<Options>(
+        JsonConvert.SerializeObject(this, PrivateSerializerSettings)
+    );
 }
