@@ -12,6 +12,8 @@ using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.Framework.Core.GameObjects.Variables;
+using Intersect.Framework.Core.Network.Packets.Security;
+using Intersect.Framework.Core.Security;
 using Intersect.GameObjects;
 using Intersect.Models;
 using Intersect.Network;
@@ -1440,12 +1442,6 @@ public static partial class PacketSender
         {
             ApplicationContext.Context.Value?.Logger.LogError($"Failed to send {bulkCharactersPacket.Characters.Length} characters to {client.Id}");
         }
-    }
-
-    //AdminPanelPacket
-    public static void SendOpenAdminWindow(Client client)
-    {
-        client.Send(new AdminPanelPacket(), TransmissionMode.Any);
     }
 
     //MapGridPacket

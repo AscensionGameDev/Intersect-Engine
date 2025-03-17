@@ -8,7 +8,7 @@ public abstract partial class ActionQueue<TActionQueue, TEnqueueState> where TAc
     private readonly Action<TActionQueue>? _beginInvokePending;
     private readonly Action<TActionQueue>? _endInvokePending;
 
-    private bool _empty;
+    private bool _empty = true;
 
     protected ActionQueue(Action<TActionQueue>? beginInvokePending, Action<TActionQueue>? endInvokePending)
     {
@@ -22,6 +22,8 @@ public abstract partial class ActionQueue<TActionQueue, TEnqueueState> where TAc
     protected abstract bool IsActive { get; }
 
     protected abstract Action<TEnqueueState> PostInvocationAction { get; }
+
+    public virtual void ClearPending() { }
 
     /// <summary>
     ///

@@ -3,6 +3,7 @@ using Intersect.Threading;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Reflection;
+using Intersect.Framework.Reflection;
 using Intersect.Properties;
 using Intersect.Plugins.Interfaces;
 using Intersect.Network;
@@ -71,6 +72,9 @@ public abstract partial class ApplicationContext<TContext, TStartupOptions> : IA
 
     /// <inheritdoc />
     public IPacketHelper PacketHelper { get; }
+
+    /// <inheritdoc />
+    public string VersionName => GetType().Assembly.GetMetadataVersionName();
 
     #region Lifecycle Properties
 

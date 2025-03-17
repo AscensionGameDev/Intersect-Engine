@@ -1,9 +1,9 @@
+using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
-using Intersect.Client.General;
 using Intersect.Core;
+using Intersect.Framework.Core.Security;
 
 namespace Intersect.Client.Interface.Shared;
 
@@ -13,11 +13,12 @@ public partial class VersionPanel : Panel
 
     public VersionPanel(Base parent, string name = nameof(VersionPanel)) : base(parent: parent, name: name)
     {
+        var applicationContext = ApplicationContext.GetCurrentContext<ClientContext>();
+
         Alignment = [Alignments.Bottom, Alignments.Right];
         BackgroundColor = new Color(0x7f, 0, 0, 0);
+        DockChildSpacing = new Padding(0, 4);
         RestrictToParent = true;
-        // TODO: Remove this when showing a game version is added
-        IsVisibleInTree = ApplicationContext.CurrentContext.IsDeveloper;
 
         var font = GameContentManager.Current.GetFont("sourcesansproblack");
 
@@ -26,9 +27,16 @@ public partial class VersionPanel : Panel
             Font = font,
             FontSize = 10,
             Padding = new Padding(8, 4),
-            Text = ApplicationContext.CurrentContext.VersionName,
-            IsVisibleInTree = ApplicationContext.CurrentContext.IsDeveloper,
+            Text = applicationContext.VersionName,
+            IsVisibleInParent = applicationContext.IsDeveloper,
         };
+
+        applicationContext.PermissionsChanged += ApplicationContextOnPermissionsChanged;
+    }
+
+    private void ApplicationContextOnPermissionsChanged(PermissionSet permissionSet)
+    {
+        _engineVersionLabel.IsVisibleInParent = permissionSet.IsGranted(Permission.EngineVersion) || ApplicationContext.CurrentContext.IsDeveloper;
     }
 
     protected override void Layout(Framework.Gwen.Skin.Base skin)
@@ -36,5 +44,13 @@ public partial class VersionPanel : Panel
         base.Layout(skin);
 
         SizeToChildren();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        var applicationContext = ApplicationContext.GetCurrentContext<ClientContext>();
+        applicationContext.PermissionsChanged -= ApplicationContextOnPermissionsChanged;
+
+        base.Dispose(disposing);
     }
 }

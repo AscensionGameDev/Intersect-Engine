@@ -13,7 +13,7 @@ public partial class PacketHandlerRegistry : IDisposable
 
     private MethodInfo CreateWeaklyTypedDelegateForMethodInfoInfo { get; }
 
-    private MethodInfo CreateHandlerDelegateForTypeInfo { get; }
+    private readonly MethodInfo _createHandlerDelegateForTypeInfo;
 
     private Dictionary<Type, HandlePacketGeneric> Handlers { get; }
 
@@ -46,10 +46,10 @@ public partial class PacketHandlerRegistry : IDisposable
             );
         }
 
-        CreateHandlerDelegateForTypeInfo = GetType()
+        _createHandlerDelegateForTypeInfo = GetType()
             .GetMethod(nameof(CreateHandlerDelegateForType), BindingFlags.Instance | BindingFlags.NonPublic);
 
-        if (default == CreateHandlerDelegateForTypeInfo)
+        if (default == _createHandlerDelegateForTypeInfo)
         {
             throw new NullReferenceException($"Failed to reflect {nameof(CreateHandlerDelegateForType)}.");
         }
@@ -60,6 +60,8 @@ public partial class PacketHandlerRegistry : IDisposable
         Preprocessors = new Dictionary<Type, List<IPacketHandler>>();
         PreHooks = new Dictionary<Type, List<IPacketHandler>>();
         PostHooks = new Dictionary<Type, List<IPacketHandler>>();
+
+        TryRegisterAvailableHandlers(typeof(PacketHandlerRegistry).Assembly, requireAttribute: true);
     }
 
     public int Count => Handlers.Count;
@@ -119,6 +121,7 @@ public partial class PacketHandlerRegistry : IDisposable
     {
         var packetHandler = Activator.CreateInstance(handlerType) as IPacketHandler;
 
+        // ReSharper disable once SuspiciousTypeConversion.Global
         if (packetHandler is IDisposable disposable)
         {
             DisposableHandlers.Push(new DisposableHandler(typeof(TPacket), disposable));
@@ -145,15 +148,15 @@ public partial class PacketHandlerRegistry : IDisposable
 
     protected virtual HandlePacketGeneric CreateInstance(Type packetType, Type type)
     {
-        var typedDelegateFactory = CreateHandlerDelegateForTypeInfo.MakeGenericMethod(packetType);
-        var weakDelegate = typedDelegateFactory.Invoke(this, new object[] { type }) as HandlePacketGeneric;
+        var typedDelegateFactory = _createHandlerDelegateForTypeInfo.MakeGenericMethod(packetType);
+        var weakDelegate = typedDelegateFactory.Invoke(this, [type]) as HandlePacketGeneric;
 
         return weakDelegate;
     }
 
-    public bool HasHandler<TPacket>() where TPacket : IPacket => HasHandler(typeof(TPacket));
+    public bool HasHandler<TPacket>() where TPacket : IPacket =>TryGetHandler(typeof(TPacket), out _);
 
-    public bool HasHandler(Type packetType) => Handlers.ContainsKey(packetType);
+    public bool HasHandler(Type packetType) => TryGetHandler(packetType, out _);
 
     public bool TryGetHandler(Type packetType, out HandlePacketGeneric handlerInstance) =>
         Handlers.TryGetValue(packetType ?? throw new ArgumentNullException(nameof(packetType)), out handlerInstance);
@@ -293,30 +296,41 @@ public partial class PacketHandlerRegistry : IDisposable
         return true;
     }
 
-    protected virtual bool TryRegister(IEnumerable<Type> types)
+    protected virtual bool TryRegister(IEnumerable<Type> handlerTypes)
     {
-        if (default == types)
+        if (default == handlerTypes)
         {
-            throw new ArgumentNullException(nameof(types));
+            throw new ArgumentNullException(nameof(handlerTypes));
         }
 
-        foreach (var type in types)
+        foreach (var handlerType in handlerTypes)
         {
-            var packetType = PacketHandlerAttribute.GetPacketType(type);
-            if (!PacketTypeRegistry.IsRegistered(packetType))
+            var packetTypes = PacketHandlerAttribute.GetPacketTypes(handlerType);
+            foreach (var packetType in packetTypes)
             {
-                Logger.LogError($"The packet type \'{packetType.FullName}\' has not been registered, a handler cannot be added.");
-                return false;
-            }
+                if (!PacketTypeRegistry.IsRegistered(packetType))
+                {
+                    Logger.LogError(
+                        "The packet type {PacketType} has not been registered, a the handler type {HandlerType} cannot be added.",
+                        packetType.GetName(qualified: true),
+                        handlerType.GetName(qualified: true)
+                    );
+                    return false;
+                }
 
-            if (HasHandler(packetType))
-            {
-                Logger.LogError($"There is already a packet handler for '{packetType.FullName}'.");
-                return false;
-            }
+                if (TryGetHandler(packetType, out var existingHandler))
+                {
+                    Logger.LogError(
+                        "There is already a packet handler ({ExistingHandlerType}) for '{PacketType}'",
+                        existingHandler.GetType().GetName(qualified: true),
+                        packetType.GetName(qualified: true)
+                    );
+                    return false;
+                }
 
-            var instance = CreateInstance(packetType, type);
-            Handlers.Add(packetType, instance);
+                var instance = CreateInstance(packetType, handlerType);
+                Handlers.Add(packetType, instance);
+            }
         }
 
         return true;
@@ -324,33 +338,48 @@ public partial class PacketHandlerRegistry : IDisposable
 
     protected virtual bool TryRegister(Dictionary<Type, List<IPacketHandler>> collection, Type handlerType, Type packetType, out IPacketHandler handler)
     {
-        if (default == collection)
-        {
-            throw new ArgumentNullException(nameof(collection));
-        }
-
-        handler = default;
-
-        var realPacketType = PacketHandlerAttribute.GetPacketType(handlerType);
-        if (packetType != realPacketType)
-        {
-            Logger.LogError($"Handler {handlerType.FullName} is incompatible with {packetType.FullName}, expected {realPacketType.FullName}.");
-            return false;
-        }
-
-        if (!PacketTypeRegistry.IsRegistered(realPacketType))
-        {
-            Logger.LogError($"The packet type '{packetType.FullName}' has not been registered, a handler cannot be added.");
-            return false;
-        }
-
-        if (!collection.TryGetValue(realPacketType, out var handlerList))
-        {
-            handlerList = new List<IPacketHandler>();
-            collection.Add(realPacketType, handlerList);
-        }
+        ArgumentNullException.ThrowIfNull(collection, nameof(collection));
+        ArgumentNullException.ThrowIfNull(handlerType, nameof(handlerType));
+        ArgumentNullException.ThrowIfNull(packetType, nameof(packetType));
 
         handler = Activator.CreateInstance(handlerType) as IPacketHandler;
+        return TryRegister(collection, handlerType, packetType, handler);
+    }
+
+    protected virtual bool TryRegister(Dictionary<Type, List<IPacketHandler>> collection, Type handlerType, Type packetType, IPacketHandler handler)
+    {
+        ArgumentNullException.ThrowIfNull(collection, nameof(collection));
+        ArgumentNullException.ThrowIfNull(handlerType, nameof(handlerType));
+        ArgumentNullException.ThrowIfNull(packetType, nameof(packetType));
+        ArgumentNullException.ThrowIfNull(handler, nameof(handler));
+
+        var expectedPacketTypes = PacketHandlerAttribute.GetPacketTypes(handlerType);
+        if (!expectedPacketTypes.Contains(packetType))
+        {
+            Logger.LogError(
+                "Handler {HandlerTypeName} is incompatible with {ActualPacketTypeName}, expected one of {ExpectedPacketTypeNames}.",
+                handlerType.GetName(qualified: true),
+                packetType.GetName(qualified: true),
+                string.Join(", ", expectedPacketTypes.Select(type => type.GetName(qualified: true)))
+            );
+            return false;
+        }
+
+        if (!PacketTypeRegistry.IsRegistered(packetType))
+        {
+            Logger.LogError(
+                "The packet type '{PacketTypeName}' has not been registered, a handler cannot be added.",
+                packetType.GetName(qualified: true)
+            );
+            return false;
+        }
+
+        if (!collection.TryGetValue(packetType, out var handlerList))
+        {
+            handlerList = [];
+            collection.Add(packetType, handlerList);
+        }
+
         handlerList.Add(handler);
         return true;
     }
@@ -369,6 +398,13 @@ public partial class PacketHandlerRegistry : IDisposable
         return false;
     }
 
+    protected virtual bool TryRegister<THandler, TPacket>(Dictionary<Type, List<IPacketHandler>> collection, THandler handler)
+        where TPacket : class, IPacket
+        where THandler : IPacketHandler<TPacket>
+    {
+        return TryRegister(collection, typeof(THandler), typeof(TPacket), handler);
+    }
+
     public virtual bool TryRegisterPreprocessor(Type handlerType, Type packetType, out IPacketHandler handler) =>
         TryRegister(Preprocessors, handlerType, packetType, out handler);
 
@@ -385,6 +421,13 @@ public partial class PacketHandlerRegistry : IDisposable
         where THandler : IPacketHandler<TPacket>
         => TryRegister<THandler, TPacket>(PreHooks, out handler);
 
+    public bool TryRegisterPreHook<THandler, TPacket>(THandler handler)
+        where TPacket : class, IPacket
+        where THandler : IPacketHandler<TPacket>
+    {
+        return TryRegister<THandler, TPacket>(PreHooks, handler);
+    }
+
     public virtual bool TryRegisterPostHook(Type handlerType, Type packetType, out IPacketHandler handler) =>
         TryRegister(PostHooks, handlerType, packetType, out handler);
 
@@ -393,25 +436,35 @@ public partial class PacketHandlerRegistry : IDisposable
         where THandler : IPacketHandler<TPacket>
         => TryRegister<THandler, TPacket>(PostHooks, out handler);
 
+    public bool TryRegisterPostHook<THandler, TPacket>(THandler handler)
+        where TPacket : class, IPacket
+        where THandler : IPacketHandler<TPacket>
+    {
+        return TryRegister<THandler, TPacket>(PostHooks, handler);
+    }
+
     public virtual bool TryRegisterHandler(Type handlerType, out IPacketHandler handler)
     {
         handler = default;
 
-        var packetType = PacketHandlerAttribute.GetPacketType(handlerType);
-        if (!PacketTypeRegistry.IsRegistered(packetType))
+        var packetTypes = PacketHandlerAttribute.GetPacketTypes(handlerType);
+        foreach (var packetType in packetTypes)
         {
-            Logger.LogError($"The packet type '{packetType.FullName}' has not been registered, a handler cannot be added.");
-            return false;
-        }
+            if (!PacketTypeRegistry.IsRegistered(packetType))
+            {
+                Logger.LogError("The packet type '{PacketType}' has not been registered, a {Ha cannot be added.");
+                return false;
+            }
 
-        if (HasHandler(packetType))
-        {
-            Logger.LogError($"There is already a packet handler for '{packetType.FullName}'.");
-            return false;
-        }
+            if (HasHandler(packetType))
+            {
+                Logger.LogError("There is already a packet handler for '{packetType.FullName}'.");
+                return false;
+            }
 
-        var instance = CreateInstance(packetType, handlerType);
-        Handlers.Add(packetType, instance);
+            var instance = CreateInstance(packetType, handlerType);
+            Handlers.Add(packetType, instance);
+        }
         return true;
     }
 

@@ -12,6 +12,7 @@ using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.Framework.Core.GameObjects.Variables;
+using Intersect.Framework.Core.Security;
 using Intersect.GameObjects;
 using Intersect.Models;
 using Intersect.Network.Packets.Client;
@@ -47,10 +48,9 @@ internal sealed partial class NetworkedPacketHandler
     //OpenAdminWindowPacket
     public void HandlePacket(Client client, OpenAdminWindowPacket packet)
     {
-        if (client.Power.IsModerator)
+        if (client.PermissionSet.IsGranted(Permission.WindowAdmin))
         {
             PacketSender.SendMapList(client);
-            PacketSender.SendOpenAdminWindow(client);
         }
     }
 

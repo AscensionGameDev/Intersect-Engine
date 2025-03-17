@@ -146,7 +146,7 @@ public partial class Base : IDisposable
     public Base(Base? parent = default, string? name = default)
     {
         _threadQueue = new ThreadQueue();
-        _threadQueue.QueueNotEmpty += () => UpdatePendingThreadQueues(1);
+        _threadQueue.QueueNotEmpty += OnThreadQueueOnQueueNotEmpty;
         _name = name ?? string.Empty;
         _visible = true;
         _dockDirty = true;
@@ -185,6 +185,11 @@ public partial class Base : IDisposable
         BoundsOutlineColor = Color.Red;
         MarginOutlineColor = Color.Green;
         PaddingOutlineColor = Color.Blue;
+    }
+
+    private void OnThreadQueueOnQueueNotEmpty()
+    {
+        UpdatePendingThreadQueues(1);
     }
 
     public virtual string? TooltipFontName
@@ -795,7 +800,20 @@ public partial class Base : IDisposable
     /// <summary>
     ///     Indicates whether the control is on top of its parent's children.
     /// </summary>
-    public bool IsOnTop => Parent?.IndexOf(this) == (Parent?.Children.Count ?? -1);
+    public bool IsOnTop
+    {
+        get
+        {
+            try
+            {
+                return Parent?.IndexOf(this) == (Parent?.Children.Count ?? -1);
+            }
+            catch (StackOverflowException)
+            {
+                throw;
+            }
+        }
+    }
 
     /// <summary>
     ///     User data associated with the control.
@@ -836,12 +854,17 @@ public partial class Base : IDisposable
     public bool IsHidden
     {
         get => ((_inheritParentEnablementProperties && Parent is {} parent) ? parent.IsHidden : !_visible);
-        set => RunOnMainThread(SetVisible, !value);
+        set => (Canvas ?? this).RunOnMainThread(SetVisible, this, !value);
     }
 
     private static void SetVisible(Base @this, bool value)
     {
         var wasVisibleInParent = @this._visible;
+
+        if (@this.GetType().Name == "VersionPanel")
+        {
+            Debugger.Break();
+        }
 
         if (@this is { _inheritParentEnablementProperties: true, Parent: { } parent })
         {
@@ -1138,13 +1161,17 @@ public partial class Base : IDisposable
 
             return Parent is not { } parent || parent.IsVisibleInTree || ToolTip.IsActiveTooltip(parent);
         }
-        set => RunOnMainThread(SetVisible, value);
+        set => (Canvas ?? this).RunOnMainThread(SetVisible, this, value);
     }
 
     public bool IsVisibleInParent
     {
         get => !IsHidden || Parent is not { } parent || ToolTip.IsActiveTooltip(parent);
-        set => RunOnMainThread(SetVisible, value);
+        set
+        {
+            var threadTarget = (Canvas ?? this);
+            threadTarget.RunOnMainThread(SetVisible, this, value);
+        }
     }
 
     /// <summary>
@@ -1259,6 +1286,8 @@ public partial class Base : IDisposable
         _disposeStack = new StackTrace(fNeedFileInfo: true);
 
         _disposed = true;
+
+        _threadQueue.ClearPending();
 
         Dispose(disposing: true);
 
