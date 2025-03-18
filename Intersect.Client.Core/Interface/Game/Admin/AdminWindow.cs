@@ -521,7 +521,7 @@ public partial class AdminWindow : Window
 
     private void UpdateMapList()
     {
-        _mapTree?.Dispose();
+        _mapTree?.DelayedDelete();
 
         _mapTree = new TreeControl(_mapListPanel, nameof(_mapTree))
         {
