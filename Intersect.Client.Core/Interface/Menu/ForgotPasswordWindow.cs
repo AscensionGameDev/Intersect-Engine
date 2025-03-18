@@ -202,7 +202,7 @@ public partial class ForgotPasswordWindow : Window
             );
         }
 
-        Interface.MenuUi.MainMenu.OpenResetPassword(usernameOrEmail);
+        Interface.MenuUi.MainMenu.OpenPasswordChangeWindow(usernameOrEmail, PasswordChangeMode.ResetToken, null);
         PacketSender.SendRequestPasswordReset(usernameOrEmail);
     }
 

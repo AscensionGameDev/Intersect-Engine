@@ -2204,7 +2204,7 @@ internal sealed partial class PacketHandler
                     characterPacket.ClassName,
                     characterPacket.Equipment
                 )
-            )
+            ),
         ];
 
         if (packet.FreeSlot)
@@ -2213,19 +2213,19 @@ internal sealed partial class PacketHandler
         }
 
         Globals.WaitingOnServer = false;
-        Interface.Interface.MenuUi.MainMenu.NotifyOpenCharacterSelection(characterSelectionPreviews);
+        Interface.Interface.MenuUi.MainMenu.NotifyOpenCharacterSelection(characterSelectionPreviews, packet.Username);
     }
 
     //PasswordResetResultPacket
     public void HandlePacket(IPacketSender packetSender, PasswordChangeResultPacket packet)
     {
         var passwordResetResultType = packet.ResultType;
-        var responseMessage = Strings.ResetPass.ResponseMessages[passwordResetResultType];
+        var responseMessage = Strings.PasswordChange.ResponseMessages[passwordResetResultType];
         var requestSuccessful = passwordResetResultType == PasswordResetResultType.Success;
         var alertType = requestSuccessful
             ? AlertType.Information
             : AlertType.Error;
-        var alertTitle = requestSuccessful ? Strings.ResetPass.AlertTitleSuccess : Strings.ResetPass.AlertTitleError;
+        var alertTitle = requestSuccessful ? Strings.PasswordChange.AlertTitleSuccess : Strings.PasswordChange.AlertTitleError;
 
         Interface.Interface.ShowAlert(
             message: responseMessage,

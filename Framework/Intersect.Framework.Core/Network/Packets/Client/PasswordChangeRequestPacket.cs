@@ -3,14 +3,14 @@
 namespace Intersect.Network.Packets.Client;
 
 [MessagePackObject]
-public partial class PasswordChangePacket : IntersectPacket
+public partial class PasswordChangeRequestPacket : IntersectPacket
 {
     //Parameterless Constructor for MessagePack
-    public PasswordChangePacket()
+    public PasswordChangeRequestPacket()
     {
     }
 
-    public PasswordChangePacket(string identifier, string token, string password)
+    public PasswordChangeRequestPacket(string identifier, string token, string password)
     {
         Identifier = identifier;
         Token = token;

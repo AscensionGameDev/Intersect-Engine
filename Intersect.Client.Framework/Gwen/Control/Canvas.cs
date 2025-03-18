@@ -244,7 +244,7 @@ public partial class Canvas : Base
         if (!mDisposeQueue.Contains(control))
         {
             mDisposeQueue.Add(control);
-            RemoveChild(control, false);
+            control.Parent?.RemoveChild(control, false);
         }
 #if DEBUG
         else

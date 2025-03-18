@@ -25,6 +25,7 @@ public partial class SelectCharacterWindow : Window
     private readonly Button _buttonPlay;
     private readonly Button _buttonDelete;
     private readonly Button _buttonNew;
+    private readonly Button _buttonChangePassword;
     private readonly Button _buttonLogout;
 
     private ImagePanel[]? _renderLayers;
@@ -66,7 +67,9 @@ public partial class SelectCharacterWindow : Window
 
         _buttonsPanel = new Panel(this, name: nameof(_buttonsPanel))
         {
+            DisplayMode = DisplayMode.FlowStartToEnd,
             Dock = Pos.Bottom,
+            DockChildSpacing = new Padding(8),
             Margin = new Margin(0, 8, 0, 0),
             ShouldDrawBackground = false,
         };
@@ -76,7 +79,7 @@ public partial class SelectCharacterWindow : Window
             Alignment = [Alignments.Left],
             Font = _defaultFont,
             FontSize = 12,
-            MinimumSize = new Point(120, 24),
+            MinimumSize = new Point(140, 24),
             Text = Strings.CharacterSelection.New,
         };
         _buttonNew.Clicked += _buttonNew_Clicked;
@@ -86,7 +89,7 @@ public partial class SelectCharacterWindow : Window
             Alignment = [Alignments.Left],
             Font = _defaultFont,
             FontSize = 12,
-            MinimumSize = new Point(120, 24),
+            MinimumSize = new Point(160, 24),
             Text = Strings.CharacterSelection.Play,
         };
         _buttonPlay.Clicked += ButtonPlay_Clicked;
@@ -96,17 +99,27 @@ public partial class SelectCharacterWindow : Window
             Alignment = [Alignments.CenterH],
             Font = _defaultFont,
             FontSize = 12,
-            MinimumSize = new Point(120, 24),
+            MinimumSize = new Point(160, 24),
             Text = Strings.CharacterSelection.Delete,
         };
         _buttonDelete.Clicked += _buttonDelete_Clicked;
+
+        _buttonChangePassword = new Button(_buttonsPanel, name: nameof(_buttonLogout))
+        {
+            Alignment = [Alignments.Right],
+            Font = _defaultFont,
+            FontSize = 12,
+            MinimumSize = new Point(160, 24),
+            Text = Strings.CharacterSelection.ChangePassword,
+        };
+        _buttonChangePassword.Clicked += ButtonChangePasswordOnClicked;
 
         _buttonLogout = new Button(_buttonsPanel, name: nameof(_buttonLogout))
         {
             Alignment = [Alignments.Right],
             Font = _defaultFont,
             FontSize = 12,
-            MinimumSize = new Point(120, 24),
+            MinimumSize = new Point(160, 24),
             Text = Strings.CharacterSelection.Logout,
         };
         _buttonLogout.Clicked += _buttonLogout_Clicked;
@@ -174,11 +187,16 @@ public partial class SelectCharacterWindow : Window
         _buttonsPanel.SizeToChildren(recursive: true);
     }
 
+    private void ButtonChangePasswordOnClicked(Base sender, MouseButtonState arguments)
+    {
+        _mainMenu.OpenPasswordChangeWindow(null, PasswordChangeMode.ExistingPassword, this);
+    }
+
     protected override void EnsureInitialized()
     {
         SizeToChildren(recursive: true);
 
-        LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
+        // LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
         EnsureArrowsVisibility();
     }
 

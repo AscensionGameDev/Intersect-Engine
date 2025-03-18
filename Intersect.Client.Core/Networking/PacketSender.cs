@@ -457,9 +457,9 @@ public static partial class PacketSender
         Network.SendPacket(new RequestPasswordResetPacket(nameEmail));
     }
 
-    public static void SendResetPassword(string nameEmail, string code, string passwordHash)
+    public static void SendPasswordChangeRequest(string identifier, string token, string passwordHash)
     {
-        Network.SendPacket(new PasswordChangePacket(nameEmail, code, passwordHash));
+        Network.SendPacket(new PasswordChangeRequestPacket(identifier, token, passwordHash));
     }
 
     public static void SendAdminAction(AdminAction action)

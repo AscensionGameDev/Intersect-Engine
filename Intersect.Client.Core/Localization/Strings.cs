@@ -733,6 +733,9 @@ public static partial class Strings
         public static LocalizedString Logout = @"Logout";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString ChangePassword = @"Change Password";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Name = @"{00}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -2397,25 +2400,37 @@ If you are sure you want to hand over your guild enter '\c{{#ff8080}}{02}\c{{}}'
         public static LocalizedString Username = @"Username:";
     }
 
-    public partial struct ResetPass
+    public partial struct PasswordChange
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Back = @"Cancel";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Code = @"Enter the reset code that was sent to you:";
+        public static LocalizedString ConfirmNewPassword = @"Confirm New Password";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString ConfirmPassword = @"Confirm Password:";
+        public static LocalizedString ErrorNoResetCode = @"Please enter your reset code";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString ErrorNoOldPassword = @"Please enter your previous password";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString ErrorNoNewPassword = @"Please enter your new password";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString ErrorNoNewPasswordConfirmation = @"Please confirm your new password";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString AlertTitleError = @"Error!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString InputCode = @"Please enter your password reset code.";
+        public static LocalizedString InputLabelResetCode = @"Reset code";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString NewPassword = @"New Password:";
+        public static LocalizedString InputLabelPassword = @"Old Password";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString NewPassword = @"New Password";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Submit = @"Submit";

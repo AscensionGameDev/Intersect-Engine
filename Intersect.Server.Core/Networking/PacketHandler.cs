@@ -2673,7 +2673,7 @@ internal sealed partial class PacketHandler
     }
 
     //ResetPasswordPacket
-    public void HandlePacket(Client client, PasswordChangePacket passwordChangePacket)
+    public void HandlePacket(Client client, PasswordChangeRequestPacket passwordChangeRequestPacket)
     {
         //Find account with that name or email
 
@@ -2685,36 +2685,36 @@ internal sealed partial class PacketHandler
             return;
         }
 
-        var identifier = passwordChangePacket.Identifier?.Trim();
+        var identifier = passwordChangeRequestPacket.Identifier?.Trim();
         if (string.IsNullOrWhiteSpace(identifier))
         {
             Logger.LogWarning(
                 "Received {PasswordChangePacket} with empty identifier from {ClientId}",
-                nameof(PasswordChangePacket),
+                nameof(PasswordChangeRequestPacket),
                 client.Id
             );
             PacketSender.SendPasswordResetResult(client, PasswordResetResultType.InvalidRequest);
             return;
         }
 
-        var token = passwordChangePacket.Token?.Trim();
+        var token = passwordChangeRequestPacket.Token?.Trim();
         if (string.IsNullOrWhiteSpace(token))
         {
             Logger.LogWarning(
                 "Received {PasswordChangePacket} with empty token from {ClientId}",
-                nameof(PasswordChangePacket),
+                nameof(PasswordChangeRequestPacket),
                 client.Id
             );
             PacketSender.SendPasswordResetResult(client, PasswordResetResultType.InvalidRequest);
             return;
         }
 
-        var password = passwordChangePacket.Password?.Trim();
+        var password = passwordChangeRequestPacket.Password?.Trim();
         if (string.IsNullOrWhiteSpace(password))
         {
             Logger.LogWarning(
                 "Received {PasswordChangePacket} with empty password from {ClientId}",
-                nameof(PasswordChangePacket),
+                nameof(PasswordChangeRequestPacket),
                 client.Id
             );
             PacketSender.SendPasswordResetResult(client, PasswordResetResultType.InvalidRequest);
@@ -2726,7 +2726,7 @@ internal sealed partial class PacketHandler
         {
             Logger.LogWarning(
                 "Received {PasswordChangePacket} from {ClientId} for a user '{MissingIdentifier}' that cannot be found",
-                nameof(PasswordChangePacket),
+                nameof(PasswordChangeRequestPacket),
                 client.Id,
                 identifier
             );
@@ -2740,7 +2740,7 @@ internal sealed partial class PacketHandler
             {
                 user.PasswordResetCode = string.Empty;
                 user.PasswordResetTime = DateTime.MinValue;
-                DbInterface.UpdatePassword(user, passwordChangePacket.Password);
+                DbInterface.UpdatePassword(user, passwordChangeRequestPacket.Password);
                 ApplicationContext.CurrentContext.Logger.LogInformation("Password changed via reset token for {UserId}", user.Id);
                 PacketSender.SendPasswordResetResult(client, PasswordResetResultType.Success);
                 return;
@@ -2748,7 +2748,7 @@ internal sealed partial class PacketHandler
 
             Logger.LogWarning(
                 "Received {PasswordChangePacket} from {ClientId} for user {UserId} with an expired password reset token",
-                nameof(PasswordChangePacket),
+                nameof(PasswordChangeRequestPacket),
                 client.Id,
                 user.Id
             );
@@ -2760,7 +2760,7 @@ internal sealed partial class PacketHandler
         {
             user.PasswordResetCode = string.Empty;
             user.PasswordResetTime = DateTime.MinValue;
-            DbInterface.UpdatePassword(user, passwordChangePacket.Password);
+            DbInterface.UpdatePassword(user, passwordChangeRequestPacket.Password);
             ApplicationContext.CurrentContext.Logger.LogInformation("Password changed via existing password for {UserId}", user.Id);
             PacketSender.SendPasswordResetResult(client, PasswordResetResultType.Success);
             return;
@@ -2768,7 +2768,7 @@ internal sealed partial class PacketHandler
 
         Logger.LogWarning(
             "Received {PasswordChangePacket} from {ClientId} for user {UserId} with an invalid token",
-            nameof(PasswordChangePacket),
+            nameof(PasswordChangeRequestPacket),
             client.Id,
             user.Id
         );

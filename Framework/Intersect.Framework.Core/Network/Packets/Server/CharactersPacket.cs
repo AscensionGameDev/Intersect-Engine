@@ -10,16 +10,20 @@ public partial class CharactersPacket : IntersectPacket
     {
     }
 
-    public CharactersPacket(CharacterPacket[] characters, bool freeSlot)
+    public CharactersPacket(string username, CharacterPacket[] characters, bool freeSlot)
     {
+        Username = username;
         Characters = characters;
         FreeSlot = freeSlot;
     }
 
     [Key(0)]
-    public CharacterPacket[] Characters { get; set; }
+    public string Username { get; set; }
 
     [Key(1)]
+    public CharacterPacket[] Characters { get; set; }
+
+    [Key(2)]
     public bool FreeSlot { get; set; }
 
 }
