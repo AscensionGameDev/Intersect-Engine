@@ -2587,7 +2587,10 @@ public partial class Base : IDisposable
                     );
                 }
                 @this._children.Remove(child);
-                child.DelayedDelete();
+                if (dispose)
+                {
+                    child.DelayedDelete();
+                }
                 @this._innerPanel = null;
             }
             catch (NullReferenceException)
