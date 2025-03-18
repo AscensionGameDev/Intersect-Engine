@@ -1956,7 +1956,7 @@ public abstract partial class Entity : IEntity
 
             if (DamageOverTimeEffect.TryCreate(this, spellDescriptor, target, out var damageOverTimeEffect))
             {
-                target.DamageOverTimeEffects.TryAdd(Id, damageOverTimeEffect);
+                target.DamageOverTimeEffects.TryAdd(damageOverTimeEffect.Id, damageOverTimeEffect);
                 target.CachedDamageOverTimeEffects = target.DamageOverTimeEffects.Values.ToArray();
             }
         }
