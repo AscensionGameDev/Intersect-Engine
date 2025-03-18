@@ -2236,9 +2236,9 @@ public static partial class PacketSender
     }
 
     //PasswordResetResultPacket
-    public static void SendPasswordResetResult(Client client, bool result)
+    public static void SendPasswordResetResult(Client client, PasswordResetResultType resultType)
     {
-        client.Send(new PasswordResetResultPacket(result));
+        client.Send(new PasswordChangeResultPacket(resultType));
     }
 
     //TargetOverridePacket

@@ -10,6 +10,7 @@ using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Security;
 using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Menu;
@@ -124,7 +125,7 @@ public partial class ResetPasswordWindow
     public bool IsHidden => mResetWindow.IsHidden;
 
     //The username or email of the acc we are resetting the pass for
-    public string Target { set; get; } = string.Empty;
+    public string? Target { set; get; }
 
     private void Textbox_Clicked(Base sender, MouseButtonState arguments)
     {
@@ -142,6 +143,12 @@ public partial class ResetPasswordWindow
             Hide();
             mMainMenu.Show();
         }
+    }
+
+    private void ReturnToMainMenu()
+    {
+        Hide();
+        mMainMenu.Show();
     }
 
     public void Hide()
@@ -196,32 +203,37 @@ public partial class ResetPasswordWindow
             return;
         }
 
-        if (string.IsNullOrEmpty(mCodeInputTextbox?.Text))
+        var identifier = Target?.Trim();
+        if (string.IsNullOrWhiteSpace(identifier))
+        {
+            Interface.ShowAlert(Strings.Errors.InvalidStateReturnToMainMenu, alertType: AlertType.Error);
+            ReturnToMainMenu();
+            return;
+        }
+
+        var resetCode = mCodeInputTextbox.Text?.Trim();
+        if (string.IsNullOrWhiteSpace(resetCode))
         {
             Interface.ShowAlert(Strings.ResetPass.InputCode, alertType: AlertType.Error);
             return;
         }
 
-        if (mPasswordTextbox.Text != mPasswordTextbox2.Text)
+        var password = mPasswordTextbox.Text?.Trim();
+        if (password != mPasswordTextbox2.Text)
         {
             Interface.ShowAlert(Strings.Registration.PasswordMismatch, alertType: AlertType.Error);
             return;
         }
 
-        if (!FieldChecking.IsValidPassword(mPasswordTextbox.Text, Strings.Regex.Password))
+        if (!FieldChecking.IsValidPassword(password, Strings.Regex.Password))
         {
             Interface.ShowAlert(Strings.Errors.PasswordInvalid, alertType: AlertType.Error);
             return;
         }
 
-        using (var sha = new SHA256Managed())
-        {
-            PacketSender.SendResetPassword(
-                Target, mCodeInputTextbox?.Text,
-                BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(mPasswordTextbox.Text.Trim())))
-                    .Replace("-", "")
-            );
-        }
+        var passwordHash = PasswordUtils.ComputePasswordHash(password);
+
+        PacketSender.SendResetPassword(identifier, resetCode, passwordHash);
 
         Globals.WaitingOnServer = true;
         ChatboxMsg.ClearMessages();

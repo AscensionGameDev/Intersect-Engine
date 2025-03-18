@@ -498,8 +498,13 @@ namespace Intersect.Server.Web.Controllers.Api.V1
                 return NotFound("Could not send password reset email, SMTP settings on the server are not configured!");
             }
 
-            var email = new PasswordResetEmail(user);
-            if (!email.Send())
+            if (!PasswordResetEmail.TryCreate(user, out var passwordResetEmail))
+            {
+                return InternalServerError("Failed to create reset email.");
+            }
+
+            // ReSharper disable once ConvertIfStatementToReturnStatement
+            if (!passwordResetEmail.TrySend())
             {
                 return InternalServerError("Failed to send reset email.");
             }

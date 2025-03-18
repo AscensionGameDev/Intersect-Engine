@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 
 namespace Intersect.Utilities;
 
@@ -16,9 +17,9 @@ public static partial class FieldChecking
 
     public const string PATTERN_GUILDNAME = @"^[a-zA-Z0-9 ]{3,20}$";
 
-    public static bool IsWellformedEmailAddress(string email, string emailRegex)
+    public static bool IsWellformedEmailAddress([NotNullWhen(true)] string? email, string emailRegex)
     {
-        if (email == null)
+        if (string.IsNullOrWhiteSpace(email))
         {
             return false;
         }
@@ -39,9 +40,9 @@ public static partial class FieldChecking
         }
     }
 
-    public static bool IsValidUsername(string username, string usernameRegex)
+    public static bool IsValidUsername([NotNullWhen(true)] string? username, string usernameRegex)
     {
-        if (username == null)
+        if (string.IsNullOrWhiteSpace(username))
         {
             return false;
         }
@@ -62,9 +63,9 @@ public static partial class FieldChecking
         }
     }
 
-    public static bool IsValidPassword(string password, string passwordRegex)
+    public static bool IsValidPassword([NotNullWhen(true)] string? password, string passwordRegex)
     {
-        if (password == null)
+        if (string.IsNullOrWhiteSpace(password))
         {
             return false;
         }

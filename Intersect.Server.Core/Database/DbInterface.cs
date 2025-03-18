@@ -414,7 +414,7 @@ public static partial class DbInterface
         LoadAllGameObjects();
 
         ValidateMapEvents();
-        
+
         LoadTime();
         OnClassesLoaded();
         OnMapsLoaded();
@@ -589,19 +589,12 @@ public static partial class DbInterface
         client?.SetUser(user);
     }
 
-    public static void ResetPass(User user, string password)
+    public static void UpdatePassword(User user, string password)
     {
-        var sha = new SHA256Managed();
-
-        //Generate a Salt
-        var rng = new RNGCryptoServiceProvider();
-        var buff = new byte[20];
-        rng.GetBytes(buff);
-        var salt = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(Convert.ToBase64String(buff))))
-            .Replace("-", "");
-
+        var salt = User.GenerateSalt();
+        var saltedPasswordHash = User.SaltPasswordHash(password, salt);
         user.Salt = salt;
-        user.Password = User.SaltPasswordHash(password, salt);
+        user.Password = saltedPasswordHash;
         user.Save();
     }
 
@@ -881,12 +874,12 @@ public static partial class DbInterface
             throw;
         }
     }
-    
+
     private static void ValidateMapEvents()
     {
         var missingEvents = 0;
         var correctedEvents = 0;
-        
+
         foreach (var (mapId, databaseObject) in MapController.Lookup)
         {
             if (databaseObject is not MapDescriptor mapDescriptor)
@@ -909,7 +902,7 @@ public static partial class DbInterface
                     mapId
                 );
             }
-            
+
             foreach (var eventId in mapDescriptor.EventIds)
             {
                 if (!EventDescriptor.TryGet(eventId, out var eventDescriptor))

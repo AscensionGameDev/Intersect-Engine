@@ -47,7 +47,7 @@ public partial class MainMenu : MutableInterface
 
     private ForgotPasswordWindow? _forgotPasswordWindow;
 
-    private ForgotPasswordWindow ForgotPasswordWindow => _forgotPasswordWindow ??= new ForgotPasswordWindow(_menuCanvas, this)
+    private ForgotPasswordWindow ForgotPasswordWindow => _forgotPasswordWindow ??= new ForgotPasswordWindow(_menuCanvas)
     {
         // Alignment = [Alignments.CenterH],
         // Y = 480,
@@ -210,7 +210,7 @@ public partial class MainMenu : MutableInterface
         LoginWindow.Show();
     }
 
-    public void OpenResetPassword(string nameEmail)
+    public void OpenResetPassword(string? nameEmail)
     {
         Reset();
         Hide();

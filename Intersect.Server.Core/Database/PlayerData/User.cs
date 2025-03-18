@@ -109,6 +109,25 @@ public partial class User
 
     public string LastIp { get; set; }
 
+    public static bool TryFindOnline(LookupKey lookupKey, [NotNullWhen(true)] out User? user)
+    {
+        if (lookupKey.IsId)
+        {
+            return OnlineUsers.TryGetValue(lookupKey.Id, out user);
+        }
+
+        if (lookupKey.IsName)
+        {
+            user = OnlineUsers.Values.FirstOrDefault(
+                onlineUser => string.Equals(lookupKey.Name, onlineUser.Name, StringComparison.OrdinalIgnoreCase)
+            );
+            return user != null;
+        }
+
+        user = null;
+        return false;
+    }
+
     public static User FindOnline(Guid id) => OnlineUsers.ContainsKey(id) ? OnlineUsers[id] : null;
 
     public static User FindOnline(string username) =>
@@ -622,7 +641,7 @@ public partial class User
 
     public static bool TryLogin(
         string username,
-        string ptPassword,
+        string passwordClientHash,
         [NotNullWhen(true)] out User? user,
         out LoginFailureReason failureReason
     )
@@ -632,7 +651,7 @@ public partial class User
 
         if (user != null)
         {
-            var hashedPassword = SaltPasswordHash(ptPassword, user.Salt);
+            var hashedPassword = SaltPasswordHash(passwordClientHash, user.Salt);
             if (!string.Equals(user.Password, hashedPassword, StringComparison.Ordinal))
             {
                 ApplicationContext.Context.Value?.Logger.LogDebug($"Login to {username} failed due invalid credentials");
@@ -682,10 +701,18 @@ public partial class User
                 return false;
             }
 
-            var pass = SaltPasswordHash(ptPassword, salt);
-            var queriedUser = QueryUserByNameAndPasswordShallow(context, username, pass);
+            var saltedPasswordHash = SaltPasswordHash(passwordClientHash, salt);
+            var queriedUser = QueryUserByNameAndPasswordShallow(context, username, saltedPasswordHash);
             user = PostLoad(queriedUser, context);
-            return user != default;
+
+            if (user == default)
+            {
+                failureReason = new LoginFailureReason(LoginFailureType.InvalidCredentials);
+                return false;
+            }
+
+            failureReason = default;
+            return true;
         }
         catch (Exception exception)
         {
@@ -888,32 +915,36 @@ public partial class User
         }
     }
 
-    public static string GetUserSalt(string userName)
-    {
-        if (string.IsNullOrWhiteSpace(userName))
-        {
-            return null;
-        }
+    public static string? GetUserSalt(string username) => TryGetSalt(username, out var salt) ? salt : null;
 
-        var user = FindOnline(userName);
-        if (user != null)
+    public static bool TryGetSalt(string username, [NotNullWhen(true)] out string? salt)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(username, nameof(username));
+
+        if (TryFindOnline(username, out var user))
         {
-            return user.Salt;
+            salt = user.Salt;
+            if (!string.IsNullOrWhiteSpace(salt))
+            {
+                return true;
+            }
         }
 
         try
         {
             using var context = DbInterface.CreatePlayerContext();
-            return SaltByName(context, userName);
+            salt = QuerySaltByName(context, username);
+            return !string.IsNullOrWhiteSpace(salt);
         }
         catch (Exception exception)
         {
             ApplicationContext.Context.Value?.Logger.LogError(
                 exception,
                 "Error getting salt for '{Username}'",
-                userName
+                username
             );
-            return null;
+            salt = null;
+            return false;
         }
     }
 
@@ -1284,7 +1315,7 @@ public partial class User
             context.Users.Where(u => u.Name == nameOrEmail || u.Email == nameOrEmail).Any()
     );
 
-    private static readonly Func<PlayerContext, string, string> SaltByName = EF.CompileQuery(
+    private static readonly Func<PlayerContext, string, string> QuerySaltByName = EF.CompileQuery(
         // ReSharper disable once SpecifyStringComparison
         (PlayerContext context, string userName) =>
             context.Users.Where(u => u.Name == userName).Select(u => u.Salt).FirstOrDefault()

@@ -170,6 +170,16 @@ public partial class TextBox : Label
         }
     }
 
+    public override int FontSize
+    {
+        get => base.FontSize;
+        set
+        {
+            base.FontSize = value;
+            _placeholder.FontSize = value;
+        }
+    }
+
     public int MaximumLength { get => mMaxmimumLength; set => mMaxmimumLength = value; }
 
     public string? PlaceholderText
