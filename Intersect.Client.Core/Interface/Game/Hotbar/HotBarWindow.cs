@@ -33,6 +33,10 @@ public partial class HotBarWindow : ImagePanel
 
         SizeToChildren();
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        foreach (var item in Items)
+        {
+            item.RestrictToParent = true;
+        }
         SizeToChildren();
     }
 

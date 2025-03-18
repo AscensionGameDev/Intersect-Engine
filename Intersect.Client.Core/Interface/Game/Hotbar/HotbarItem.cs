@@ -53,7 +53,7 @@ public partial class HotbarItem : SlotItem
         Width = 36;
         Height = 36;
         Margin = new Margin(column > 0 ? 4 : 0, row > 0 ? 4 : 0, 0, 0);
-        RestrictToParent = true;
+        RestrictToParent = false;
         TextureFilename = "hotbaritem.png";
 
         Icon.Name = $"{nameof(HotbarItem)}{SlotIndex}";
