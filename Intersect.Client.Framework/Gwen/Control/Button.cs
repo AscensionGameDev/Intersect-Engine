@@ -266,7 +266,10 @@ public partial class Button : Label
     /// <param name="skin">Skin to use.</param>
     protected override void Render(Skin.Base skin)
     {
-        skin.DrawButton(this);
+        if (ShouldDrawBackground)
+        {
+            skin.DrawButton(this);
+        }
 
         base.Render(skin);
     }
