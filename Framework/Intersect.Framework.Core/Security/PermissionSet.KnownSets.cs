@@ -23,6 +23,11 @@ public sealed partial class PermissionSet
             }
         }
 
+        InsertPermissionSet(permissionSet);
+    }
+
+    private static void InsertPermissionSet(PermissionSet permissionSet)
+    {
         KnownPermissionSets[permissionSet.Name] = permissionSet;
         PermissionSetUpdated?.Invoke(permissionSet);
     }

@@ -15,7 +15,7 @@ public sealed partial class PermissionSet
             }
 
             permissionSet = new PermissionSet(NameDefault, inheritsFrom: null);
-            KnownPermissionSets[NameDefault] = permissionSet;
+            InsertPermissionSet(permissionSet);
             return permissionSet;
         }
     }
@@ -34,7 +34,7 @@ public sealed partial class PermissionSet
                 [Permission.EngineVersion] = true,
                 [Permission.WindowAdmin] = true,
             };
-            KnownPermissionSets[NameAdmin] = permissionSet;
+            InsertPermissionSet(permissionSet);
             return permissionSet;
         }
     }
