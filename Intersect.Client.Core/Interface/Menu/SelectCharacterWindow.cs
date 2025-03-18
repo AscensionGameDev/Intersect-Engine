@@ -214,6 +214,7 @@ public partial class SelectCharacterWindow : Window
         _buttonNew.IsDisabled = Globals.WaitingOnServer;
         _buttonDelete.IsDisabled = Globals.WaitingOnServer;
         _buttonLogout.IsDisabled = Globals.WaitingOnServer;
+        _buttonChangePassword.IsDisabled = Globals.WaitingOnServer;
     }
 
     private void UpdateDisplay()
