@@ -176,8 +176,10 @@ public partial class GameInterface : MutableInterface
         mShouldOpenAdminWindow = true;
     }
 
-    public void OpenAdminWindow()
+    public bool ToggleAdminWindow()
     {
+        mShouldOpenAdminWindow = false;
+
         if (mAdminWindow == null)
         {
             mAdminWindow ??= new AdminWindow(GameCanvas);
@@ -193,7 +195,7 @@ public partial class GameInterface : MutableInterface
             mAdminWindow.Show();
         }
 
-        mShouldOpenAdminWindow = false;
+        return mAdminWindow.IsVisibleInParent;
     }
 
     //Shop
@@ -378,7 +380,7 @@ public partial class GameInterface : MutableInterface
         //Admin window update
         if (mShouldOpenAdminWindow)
         {
-            OpenAdminWindow();
+            ToggleAdminWindow();
         }
 
         //Shop Update

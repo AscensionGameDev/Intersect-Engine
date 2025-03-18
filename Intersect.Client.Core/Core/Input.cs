@@ -325,7 +325,10 @@ public static partial class Input
                             break;
 
                         case Control.OpenAdminPanel:
-                            PacketSender.SendOpenAdminWindow();
+                            if (Interface.Interface.GameUi.ToggleAdminWindow())
+                            {
+                                PacketSender.SendOpenAdminWindow();
+                            }
                             break;
 
                         case Control.OpenGuild:
