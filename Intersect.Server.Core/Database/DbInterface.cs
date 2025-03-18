@@ -423,7 +423,73 @@ public static partial class DbInterface
         CacheGuildVariableEventTextLookups();
         CacheUserVariableEventTextLookups();
 
+        CheckPlayerDatabaseCaseInsensitiveCollisions();
+
         return true;
+    }
+
+    private static void CheckPlayerDatabaseCaseInsensitiveCollisions()
+    {
+        using var playerContext = CreatePlayerContext();
+        var conflictingUsersByName =
+            (from u1 in playerContext.Users
+                join u2 in playerContext.Users on u1.Name equals u2.Name
+                where u1.Id != u2.Id
+                select u1).Distinct()
+            .ToArray();
+        if (conflictingUsersByName.Length > 0)
+        {
+            ApplicationContext.CurrentContext.Logger.LogError(
+                "There are {Count} users with conflicting names (they only differ by case):\nThis needs to be resolved but cannot be handled automatically!\n{Users}",
+                conflictingUsersByName.Length,
+                string.Join('\n', conflictingUsersByName.Select(u => $"\t{u.Id}"))
+            );
+        }
+
+        var conflictingUsersByEmail =
+            (from u1 in playerContext.Users
+                join u2 in playerContext.Users on u1.Email equals u2.Email
+                where u1.Id != u2.Id
+                select u1).Distinct()
+            .ToArray();
+        if (conflictingUsersByEmail.Length > 0)
+        {
+            ApplicationContext.CurrentContext.Logger.LogError(
+                "There are {Count} users with conflicting emails (they only differ by case):\nThis needs to be resolved but cannot be handled automatically!\n{Users}",
+                conflictingUsersByEmail.Length,
+                string.Join('\n', conflictingUsersByName.Select(u => $"\t{u.Id}"))
+            );
+        }
+
+        var conflictingPlayersByName =
+            (from p1 in playerContext.Players
+                join p2 in playerContext.Players on p1.Name equals p2.Name
+                where p1.Id != p2.Id
+                select p1).Distinct()
+            .ToArray();
+        if (conflictingPlayersByName.Length > 0)
+        {
+            ApplicationContext.CurrentContext.Logger.LogError(
+                "There are {Count} players with conflicting names (they only differ by case):\nThis needs to be resolved but cannot be handled automatically!\n{Players}",
+                conflictingPlayersByName.Length,
+                string.Join('\n', conflictingPlayersByName.Select(p => $"\t{p.Id}"))
+            );
+        }
+
+        var conflictingGuildsByName =
+            (from g1 in playerContext.Guilds
+                join g2 in playerContext.Guilds on g1.Name equals g2.Name
+                where g1.Id != g2.Id
+                select g1).Distinct()
+            .ToArray();
+        if (conflictingGuildsByName.Length > 0)
+        {
+            ApplicationContext.CurrentContext.Logger.LogError(
+                "There are {Count} guilds with conflicting names (they only differ by case):\nThis needs to be resolved but cannot be handled automatically!\n{Guilds}",
+                conflictingGuildsByName.Length,
+                string.Join('\n', conflictingGuildsByName.Select(g => $"\t{g.Id}"))
+            );
+        }
     }
 
     public static void SetPlayerPower(string username, UserRights power)
