@@ -71,6 +71,10 @@ public partial struct Point
 
     public static Point operator +(Point left, Point right) => new(left.X + right.X, left.Y + right.Y);
 
+    public static Vector2 operator +(Point left, Vector2 right) => new(left.X + right.X, left.Y + right.Y);
+
+    public static Vector2 operator +(Vector2 left, Point right) => new(left.X + right.X, left.Y + right.Y);
+
     public static Point operator -(Point left, Point right) => new(left.X - right.X, left.Y - right.Y);
 
     public static Point operator *(Point point, float scalar) => new((int)(point.X * scalar), (int)(point.Y * scalar));

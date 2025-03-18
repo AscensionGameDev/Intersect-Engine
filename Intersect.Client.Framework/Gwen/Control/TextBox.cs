@@ -170,6 +170,16 @@ public partial class TextBox : Label
         }
     }
 
+    public override int FontSize
+    {
+        get => base.FontSize;
+        set
+        {
+            base.FontSize = value;
+            _placeholder.FontSize = value;
+        }
+    }
+
     public int MaximumLength { get => mMaxmimumLength; set => mMaxmimumLength = value; }
 
     public string? PlaceholderText
@@ -405,7 +415,7 @@ public partial class TextBox : Label
 
     public void SelectAll() => OnSelectAll(this, EventArgs.Empty);
 
-    protected virtual void OnSelectAll(Base from, EventArgs args)
+    protected override void OnSelectAll(Base from, EventArgs args)
     {
         mCursorEnd = 0;
         mCursorPos = TextLength;

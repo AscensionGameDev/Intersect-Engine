@@ -1363,7 +1363,8 @@ public static partial class PacketSender
         if (clientCharacters.Count < 1)
         {
             CharactersPacket emptyBulkCharactersPacket = new(
-                Array.Empty<CharacterPacket>(),
+                user.Name,
+                [],
                 client.Characters.Count < Options.Instance.Player.MaxCharacters
             );
 
@@ -1434,6 +1435,7 @@ public static partial class PacketSender
         }
 
         CharactersPacket bulkCharactersPacket = new(
+            user.Name,
             characterPackets.ToArray(),
             client.Characters.Count < Options.Instance.Player.MaxCharacters
         );
@@ -2236,9 +2238,9 @@ public static partial class PacketSender
     }
 
     //PasswordResetResultPacket
-    public static void SendPasswordResetResult(Client client, bool result)
+    public static void SendPasswordResetResult(Client client, PasswordResetResultType resultType)
     {
-        client.Send(new PasswordResetResultPacket(result));
+        client.Send(new PasswordChangeResultPacket(resultType));
     }
 
     //TargetOverridePacket

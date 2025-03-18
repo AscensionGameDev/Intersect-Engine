@@ -23,6 +23,7 @@ using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
+using Intersect.Framework.Core.Security;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Core;
 using Microsoft.Extensions.Logging;
@@ -1477,7 +1478,7 @@ internal sealed partial class PacketHandler
     }
 
     //CreateAccountPacket
-    public void HandlePacket(Client client, CreateAccountPacket packet)
+    public void HandlePacket(Client client, UserRegistrationRequestPacket packet)
     {
         if (client.TimeoutMs > Timing.Global.Milliseconds)
         {
@@ -2672,7 +2673,7 @@ internal sealed partial class PacketHandler
     }
 
     //ResetPasswordPacket
-    public void HandlePacket(Client client, ResetPasswordPacket packet)
+    public void HandlePacket(Client client, PasswordChangeRequestPacket passwordChangeRequestPacket)
     {
         //Find account with that name or email
 
@@ -2684,21 +2685,94 @@ internal sealed partial class PacketHandler
             return;
         }
 
-        var success = false;
-        var user = User.FindFromNameOrEmail(packet.NameOrEmail.Trim());
-        if (user != null)
+        var identifier = passwordChangeRequestPacket.Identifier?.Trim();
+        if (string.IsNullOrWhiteSpace(identifier))
         {
-            if (user.PasswordResetCode.ToLower().Trim() == packet.ResetCode.ToLower().Trim() &&
-                user.PasswordResetTime > DateTime.UtcNow)
+            Logger.LogWarning(
+                "Received {PasswordChangePacket} with empty identifier from {ClientId}",
+                nameof(PasswordChangeRequestPacket),
+                client.Id
+            );
+            PacketSender.SendPasswordResetResult(client, PasswordResetResultType.InvalidRequest);
+            return;
+        }
+
+        var token = passwordChangeRequestPacket.Token?.Trim();
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Logger.LogWarning(
+                "Received {PasswordChangePacket} with empty token from {ClientId}",
+                nameof(PasswordChangeRequestPacket),
+                client.Id
+            );
+            PacketSender.SendPasswordResetResult(client, PasswordResetResultType.InvalidRequest);
+            return;
+        }
+
+        var password = passwordChangeRequestPacket.Password?.Trim();
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            Logger.LogWarning(
+                "Received {PasswordChangePacket} with empty password from {ClientId}",
+                nameof(PasswordChangeRequestPacket),
+                client.Id
+            );
+            PacketSender.SendPasswordResetResult(client, PasswordResetResultType.InvalidRequest);
+            return;
+        }
+
+        var user = User.FindFromNameOrEmail(identifier);
+        if (user == null)
+        {
+            Logger.LogWarning(
+                "Received {PasswordChangePacket} from {ClientId} for a user '{MissingIdentifier}' that cannot be found",
+                nameof(PasswordChangeRequestPacket),
+                client.Id,
+                identifier
+            );
+            PacketSender.SendPasswordResetResult(client, PasswordResetResultType.NoUserFound);
+            return;
+        }
+
+        if (string.Equals(user.PasswordResetCode, token, StringComparison.OrdinalIgnoreCase))
+        {
+            if (DateTime.UtcNow < user.PasswordResetTime)
             {
                 user.PasswordResetCode = string.Empty;
                 user.PasswordResetTime = DateTime.MinValue;
-                DbInterface.ResetPass(user, packet.NewPassword);
-                success = true;
+                DbInterface.UpdatePassword(user, passwordChangeRequestPacket.Password);
+                ApplicationContext.CurrentContext.Logger.LogInformation("Password changed via reset token for {UserId}", user.Id);
+                PacketSender.SendPasswordResetResult(client, PasswordResetResultType.Success);
+                return;
             }
+
+            Logger.LogWarning(
+                "Received {PasswordChangePacket} from {ClientId} for user {UserId} with an expired password reset token",
+                nameof(PasswordChangeRequestPacket),
+                client.Id,
+                user.Id
+            );
+            PacketSender.SendPasswordResetResult(client, PasswordResetResultType.InvalidToken);
+            return;
         }
 
-        PacketSender.SendPasswordResetResult(client, success);
+        if (user.IsPasswordValid(token))
+        {
+            user.PasswordResetCode = string.Empty;
+            user.PasswordResetTime = DateTime.MinValue;
+            DbInterface.UpdatePassword(user, passwordChangeRequestPacket.Password);
+            ApplicationContext.CurrentContext.Logger.LogInformation("Password changed via existing password for {UserId}", user.Id);
+            PacketSender.SendPasswordResetResult(client, PasswordResetResultType.Success);
+            return;
+        }
+
+        Logger.LogWarning(
+            "Received {PasswordChangePacket} from {ClientId} for user {UserId} with an invalid token",
+            nameof(PasswordChangeRequestPacket),
+            client.Id,
+            user.Id
+        );
+        PacketSender.SendPasswordResetResult(client, PasswordResetResultType.InvalidToken);
     }
 
     //RequestGuildPacket

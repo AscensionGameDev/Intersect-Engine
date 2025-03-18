@@ -177,9 +177,9 @@ public static partial class PacketSender
         Network.SendPacket(new EventInputVariablePacket(eventId, default, default, default, true));
     }
 
-    public static void SendCreateAccount(string username, string password, string email)
+    public static void SendUserRegistration(string username, string password, string email)
     {
-        Network.SendPacket(new CreateAccountPacket(username.Trim(), password.Trim(), email.Trim()));
+        Network.SendPacket(new UserRegistrationRequestPacket(username, password, email));
     }
 
     public static void SendCreateCharacter(string name, Guid classId, int sprite)
@@ -457,9 +457,9 @@ public static partial class PacketSender
         Network.SendPacket(new RequestPasswordResetPacket(nameEmail));
     }
 
-    public static void SendResetPassword(string nameEmail, string code, string hashedPass)
+    public static void SendPasswordChangeRequest(string identifier, string token, string passwordHash)
     {
-        Network.SendPacket(new ResetPasswordPacket(nameEmail, code, hashedPass));
+        Network.SendPacket(new PasswordChangeRequestPacket(identifier, token, passwordHash));
     }
 
     public static void SendAdminAction(AdminAction action)

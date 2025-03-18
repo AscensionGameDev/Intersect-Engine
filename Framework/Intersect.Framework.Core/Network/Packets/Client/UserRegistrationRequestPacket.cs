@@ -3,14 +3,14 @@
 namespace Intersect.Network.Packets.Client;
 
 [MessagePackObject]
-public partial class CreateAccountPacket : IntersectPacket
+public partial class UserRegistrationRequestPacket : IntersectPacket
 {
     //Parameterless Constructor for MessagePack
-    public CreateAccountPacket()
+    public UserRegistrationRequestPacket()
     {
     }
 
-    public CreateAccountPacket(string username, string password, string email)
+    public UserRegistrationRequestPacket(string username, string password, string email)
     {
         Username = username;
         Password = password;

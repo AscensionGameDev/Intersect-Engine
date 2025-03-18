@@ -3,6 +3,7 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Interface.Shared;
+using Intersect.Framework;
 using Intersect.Framework.Core;
 using Intersect.Network;
 
@@ -16,6 +17,8 @@ public partial class MainMenu : MutableInterface
     private bool _shouldOpenCharacterCreation;
     private bool _shouldOpenCharacterSelection;
     private bool _forceCharacterCreation;
+
+    private string? _username;
 
     // Network status
     public static NetworkStatus ActiveNetworkStatus { get; set; }
@@ -47,21 +50,14 @@ public partial class MainMenu : MutableInterface
 
     private ForgotPasswordWindow? _forgotPasswordWindow;
 
-    private ForgotPasswordWindow ForgotPasswordWindow => _forgotPasswordWindow ??= new ForgotPasswordWindow(_menuCanvas, this)
+    private ForgotPasswordWindow ForgotPasswordWindow => _forgotPasswordWindow ??= new ForgotPasswordWindow(_menuCanvas)
     {
         // Alignment = [Alignments.CenterH],
         // Y = 480,
         // IsVisible = false,
     };
 
-    private ResetPasswordWindow? _resetPasswordWindow;
-
-    private ResetPasswordWindow ResetPasswordWindow => _resetPasswordWindow ??= new ResetPasswordWindow(_menuCanvas, this)
-    {
-        // Alignment = [Alignments.CenterH],
-        // Y = 480,
-        // IsVisible = false,
-    };
+    private PasswordChangeWindow? _passwordChangeWindow;
 
     private CharacterCreationWindow? _characterCreationWindow;
 
@@ -179,7 +175,10 @@ public partial class MainMenu : MutableInterface
         RegistrationWindow.Hide();
         CreditsWindow.Hide();
         ForgotPasswordWindow.Hide();
-        ResetPasswordWindow.Hide();
+
+        _passwordChangeWindow?.DelayedDelete();
+        _passwordChangeWindow = null;
+
         CharacterCreationWindow.Hide();
         SelectCharacterWindow.Hide();
         _mainMenuWindow.Show();
@@ -190,8 +189,12 @@ public partial class MainMenu : MutableInterface
 
     private void Hide() => _mainMenuWindow.Hide();
 
-    public void NotifyOpenCharacterSelection(List<CharacterSelectionPreviewMetadata> characterSelectionPreviews)
+    public void NotifyOpenCharacterSelection(
+        List<CharacterSelectionPreviewMetadata> characterSelectionPreviews,
+        string username
+    )
     {
+        _username = username;
         _shouldOpenCharacterSelection = true;
         SelectCharacterWindow.CharacterSelectionPreviews = [..characterSelectionPreviews];
     }
@@ -210,12 +213,43 @@ public partial class MainMenu : MutableInterface
         LoginWindow.Show();
     }
 
-    public void OpenResetPassword(string nameEmail)
+    public void OpenPasswordChangeWindow(string? identifier, PasswordChangeMode changeMode, Window? previousWindow)
     {
         Reset();
         Hide();
-        ResetPasswordWindow.Target = nameEmail;
-        ResetPasswordWindow.Show();
+
+        _passwordChangeWindow?.Dispose();
+
+        identifier ??= _username;
+
+        previousWindow ??= changeMode switch
+        {
+            PasswordChangeMode.ResetToken => LoginWindow,
+            PasswordChangeMode.ExistingPassword => SelectCharacterWindow,
+            _ => throw Exceptions.UnreachableInvalidEnum(changeMode),
+        };
+
+        _passwordChangeWindow = new PasswordChangeWindow(
+            _menuCanvas,
+            this,
+            previousWindow,
+            changeMode
+        )
+        {
+            // Alignment = [Alignments.CenterH],
+            // Y = 480,
+            // IsVisible = false,
+            Target = identifier,
+        };
+        _passwordChangeWindow.Disposed += PasswordChangeWindowOnDisposed;
+    }
+
+    private void PasswordChangeWindowOnDisposed(Base sender, EventArgs _)
+    {
+        if (sender == _passwordChangeWindow)
+        {
+            _passwordChangeWindow = null;
+        }
     }
 
     private void CreateCharacterSelection()

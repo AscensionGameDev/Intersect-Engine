@@ -1,4 +1,7 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 using Intersect.Core;
+using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Localization;
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -6,136 +9,171 @@ using MimeKit;
 
 namespace Intersect.Server.Notifications
 {
-
     public partial class Notification
     {
-
-        public Notification(string to, string subject = "", bool html = false)
+        public Notification(string to, string? subject = null, bool html = false)
         {
             ToAddress = to;
             Subject = subject;
             IsHtml = html;
         }
 
-        public string ToAddress { get; set; } = string.Empty;
+        public string? Recipient { get; init; }
 
-        public string Subject { get; set; } = string.Empty;
+        public string ToAddress { get; init; }
 
-        public string Body { get; set; } = string.Empty;
+        public string? Subject { get; init; }
 
-        public bool IsHtml { get; set; } = false;
+        public string? Body { get; set; }
 
-        public bool Send()
+        public bool IsHtml { get; set; }
+
+        public bool TrySend()
         {
-            //Check and see if smtp is even setup
-            if (Options.Instance.SmtpSettings.IsValid())
+            // If there is no subject log an error
+            if (string.IsNullOrWhiteSpace(Subject))
             {
-                //Make sure we have a body
-                if (!string.IsNullOrEmpty(Body))
+                ApplicationContext.CurrentContext.Logger.LogError(
+                    "Unable to send email to '{SenderAddress}' because the subject is empty (or whitespace).",
+                    ToAddress
+                );
+                return false;
+            }
+
+            // If there is no message body log an error
+            if (string.IsNullOrWhiteSpace(Body))
+            {
+                ApplicationContext.CurrentContext.Logger.LogError(
+                    "Unable to send email ({Subject}) to '{SenderAddress}' because the body is empty (or whitespace).",
+                    Subject,
+                    ToAddress
+                );
+                return false;
+            }
+
+            // If SMTP is not set up correctly log an error
+            var smtpSettings = Options.Instance.SmtpSettings;
+            if (!smtpSettings.IsValid())
+            {
+                ApplicationContext.CurrentContext.Logger.LogError(
+                    "Unable to send email ({Subject}) to '{SenderAddress}' because SMTP is not correctly configured.",
+                    Subject,
+                    ToAddress
+                );
+                return false;
+            }
+
+            var username = smtpSettings.Username;
+            var password = smtpSettings.Password;
+            var shouldAuthenticate = !(string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password));
+
+            try
+            {
+                using SmtpClient client = new();
+                client.Connect(
+                    smtpSettings.Host,
+                    smtpSettings.Port,
+                    smtpSettings.UseSsl
+                        ? SecureSocketOptions.StartTls
+                        : SecureSocketOptions.Auto
+                );
+
+                if (shouldAuthenticate)
                 {
-                    try
-                    {
-                        //Send the email
-                        var fromAddress = new MailboxAddress(Options.Instance.SmtpSettings.FromName, Options.Instance.SmtpSettings.FromAddress);
-                        var toAddress = new MailboxAddress(ToAddress, ToAddress);
+                    client.Authenticate(username, password);
+                }
 
-                        using (var client = new SmtpClient())
-                        {
-                            client.Connect(Options.Instance.SmtpSettings.Host, Options.Instance.SmtpSettings.Port, Options.Instance.SmtpSettings.UseSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.Auto);
-                            client.Authenticate(Options.Instance.SmtpSettings.Username, Options.Instance.SmtpSettings.Password);
+                var fromAddress = new MailboxAddress(smtpSettings.FromName, smtpSettings.FromAddress);
+                var toAddress = new MailboxAddress(ToAddress, ToAddress);
 
-                            var message = new MimeMessage();
-                            message.To.Add(toAddress);
-                            message.From.Add(fromAddress);
-                            message.Subject = Subject;
+                var message = new MimeMessage();
+                message.To.Add(toAddress);
+                message.From.Add(fromAddress);
+                message.Subject = Subject;
 
-                            var bodyBuilder = new BodyBuilder();
-                            if (IsHtml)
-                            {
-                                bodyBuilder.HtmlBody = Body;
-                            }
-                            else
-                            {
-                                bodyBuilder.TextBody = Body;
-                            }
-                            message.Body = bodyBuilder.ToMessageBody();
-
-                            client.Send(message);
-                            client.Disconnect(true);
-                        }
-
-                        return true;
-                    }
-                    catch (Exception ex)
-                    {
-                        ApplicationContext.Context.Value?.Logger.LogError(
-                            "Failed to send email (Subject: " +
-                            Subject +
-                            ") to " +
-                            ToAddress +
-                            ". Reason: Uncaught Error" +
-                            Environment.NewLine +
-                            ex.ToString()
-                        );
-                        return false;
-                    }
+                var bodyBuilder = new BodyBuilder();
+                if (IsHtml)
+                {
+                    bodyBuilder.HtmlBody = Body;
                 }
                 else
                 {
-                    ApplicationContext.Context.Value?.Logger.LogWarning(
-                        "Failed to send email (Subject: " +
-                        Subject +
-                        ") to " +
-                        ToAddress +
-                        ". Reason: SMTP not configured!"
-                    );
-                    return false;
+                    bodyBuilder.TextBody = Body;
                 }
+
+                message.Body = bodyBuilder.ToMessageBody();
+
+                client.Send(message);
+                client.Disconnect(true);
+
+                return true;
             }
-            else
+            catch (Exception ex)
             {
-                ApplicationContext.Context.Value?.Logger.LogWarning(
-                    "Failed to send email (Subject: " + Subject + ") to " + ToAddress + ". Reason: SMTP not configured!"
+                ApplicationContext.Context.Value?.Logger.LogError(
+                    "Failed to send email (Subject: " +
+                    Subject +
+                    ") to " +
+                    ToAddress +
+                    ". Reason: Uncaught Error" +
+                    Environment.NewLine +
+                    ex.ToString()
                 );
                 return false;
             }
         }
 
-        protected bool LoadFromTemplate(string templatename, string username)
+        protected static bool TryLoadTemplate(string templateName, [NotNullWhen(true)] out string? template)
         {
-            var templatesDir = Path.Combine("resources", "notifications");
-            if (!Directory.Exists(templatesDir))
+            var pathToTemplates = Path.Combine("resources", "notifications");
+            if (!Directory.Exists(pathToTemplates))
             {
-                Directory.CreateDirectory(templatesDir);
+                Directory.CreateDirectory(pathToTemplates);
             }
 
-            var filepath = Path.Combine("resources", "notifications", templatename + ".html");
-            if (File.Exists(filepath))
+            var pathToTemplate = Path.Combine("resources", "notifications", $"{templateName}.html");
+            if (!File.Exists(pathToTemplate))
             {
-                IsHtml = true;
-                Body = File.ReadAllText(filepath);
-                Body = Body.Replace("{{product}}", Strings.Notifications.Product);
-                Body = Body.Replace("{{copyright}}", Strings.Notifications.Copyright);
-                Body = Body.Replace("{{name}}", username);
-
-                return true;
+                template = null;
+                return false;
             }
-            else
+
+            try
             {
-                ApplicationContext.Context.Value?.Logger.LogWarning(
-                    "Failed to load email template (Subject: " +
-                    Subject +
-                    ") for " +
-                    ToAddress +
-                    ". Reason: Template " +
-                    templatename +
-                    ".html not found!"
+                template = File.ReadAllText(pathToTemplate);
+                if (!string.IsNullOrWhiteSpace(template))
+                {
+                    return true;
+                }
+
+                template = null;
+                return false;
+
+            }
+            catch (Exception exception)
+            {
+                ApplicationContext.CurrentContext.Logger.LogError(
+                    exception,
+                    "Failed to load email template '{TemplateName}'",
+                    templateName
                 );
+                template = null;
+                return false;
             }
-
-            return false;
         }
 
-    }
+        protected static string PopulateBasicTemplate(string template, User user)
+        {
+            return template.Replace("{{product}}", Strings.Notifications.Product)
+                .Replace("{{copyright}}", Strings.Notifications.Copyright)
+                .Replace("{{name}}", user.Name);
+        }
 
+        protected static bool IsTemplateHTML(string template) => PatternHtmlTag.IsMatch(template);
+
+        private static readonly Regex PatternHtmlTag = CompilePatternHtmlTag();
+
+        [GeneratedRegex(@"\<[\s\n\r]*html[^\>]*>", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled, "en-US")]
+        private static partial Regex CompilePatternHtmlTag();
+    }
 }

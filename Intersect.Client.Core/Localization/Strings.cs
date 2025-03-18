@@ -6,6 +6,7 @@ using Intersect.Client.Interface.Shared;
 using Intersect.Configuration;
 using Intersect.Core;
 using Intersect.Enums;
+using Intersect.Framework.Core.Security;
 using Intersect.Framework.Reflection;
 using Intersect.Localization;
 using Microsoft.Extensions.Logging;
@@ -732,6 +733,9 @@ public static partial class Strings
         public static LocalizedString Logout = @"Logout";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString ChangePassword = @"Change Password";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Name = @"{00}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1146,6 +1150,9 @@ public static partial class Strings
         public static LocalizedString NotConnected = @"Not connected to the game server. Is it online?";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString InvalidStateReturnToMainMenu = @"An invalid state was detected and we had to return to the main menu.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString OpenAllLink = @"https://goo.gl/Nbx6hx";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1187,10 +1194,10 @@ public static partial class Strings
         public static LocalizedString Back = @"Back";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Hint = @"If your account exists, we will send you a temporary password reset code.";
+        public static LocalizedString Disclaimer = @"If an account exists with the provided username or email address, an email with a password reset code will be sent to the email address associated with the account.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Label = @"Enter your username or email below:";
+        public static LocalizedString UsernameOrEmailPlaceholder = @"Username or Email Address";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Submit = @"Submit";
@@ -2393,38 +2400,66 @@ If you are sure you want to hand over your guild enter '\c{{#ff8080}}{02}\c{{}}'
         public static LocalizedString Username = @"Username:";
     }
 
-    public partial struct ResetPass
+    public partial struct PasswordChange
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Back = @"Cancel";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Code = @"Enter the reset code that was sent to you:";
+        public static LocalizedString ConfirmNewPassword = @"Confirm New Password";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString ConfirmPassword = @"Confirm Password:";
+        public static LocalizedString ErrorNoResetCode = @"Please enter your reset code";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Error = @"Error!";
+        public static LocalizedString ErrorNoOldPassword = @"Please enter your previous password";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString ErrorMessage =
-            @"The reset code was not valid, has expired, or the account does not exist!";
+        public static LocalizedString ErrorNoNewPassword = @"Please enter your new password";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString InputCode = @"Please enter your password reset code.";
+        public static LocalizedString ErrorNoNewPasswordConfirmation = @"Please confirm your new password";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString NewPassword = @"New Password:";
+        public static LocalizedString AlertTitleError = @"Error!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString InputLabelResetCode = @"Reset code";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString InputLabelPassword = @"Old Password";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString NewPassword = @"New Password";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Submit = @"Submit";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString Success = @"Success!";
+        public static LocalizedString AlertTitleSuccess = @"Success!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString SuccessMessage = @"Your password has been reset!";
+        public static Dictionary<PasswordResetResultType, LocalizedString> ResponseMessages = new()
+        {
+            {
+                PasswordResetResultType.InvalidRequest,
+                @"Unable to change the password because the request was invalid."
+            },
+            {
+                PasswordResetResultType.InvalidToken,
+                @"Unable to change the password because the reset token or password was invalid or expired."
+            },
+            {
+                PasswordResetResultType.NoUserFound,
+                @"Unable to change the password because the user could not be found."
+            },
+            {
+                PasswordResetResultType.Success, @"Successfully changed the password."
+            },
+            {
+                PasswordResetResultType.Unknown, @"An unknown error occurred while changing the password."
+            },
+        };
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Title = @"Password Reset";

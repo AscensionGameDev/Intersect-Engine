@@ -304,7 +304,7 @@ public partial class Label : Base, ILabel, IFontProvider
     /// <summary>
     /// Font Size
     /// </summary>
-    public int FontSize
+    public virtual int FontSize
     {
         get => _textElement.FontSize;
         set => _textElement.FontSize = value;

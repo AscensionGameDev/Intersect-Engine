@@ -9,6 +9,7 @@ using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Control.Layout;
 using Intersect.Client.Framework.Gwen.Control.Utility;
+using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Data;
@@ -793,8 +794,24 @@ internal sealed partial class DebugWindow : Window
         table.AddRow(Strings.Internals.Color, name: "ColorRow").Listen(1, _nodeUnderCursorProvider, (node, _) => (node as IColorableText)?.TextColor, NoValue);
         table.AddRow(Strings.Internals.ColorOverride, name: "ColorOverrideRow").Listen(1, _nodeUnderCursorProvider, (node, _) => (node as IColorableText)?.TextColorOverride, NoValue);
         table.AddRow(Strings.Internals.TextAlign, name: "TextAlign").Listen(1, _nodeUnderCursorProvider, (node, _) => (node as Label)?.TextAlign, NoValue);
-        table.AddRow(Strings.Internals.Font, name: "Font").Listen(1, _nodeUnderCursorProvider, (node, _) => (node as Label)?.FontName, NoValue);
-        table.AddRow(Strings.Internals.FontSize, name: "FontSize").Listen(1, _nodeUnderCursorProvider, (node, _) => (node as Label)?.FontSize, NoValue);
+        table.AddRow(Strings.Internals.Font, name: "Font").Listen(1, _nodeUnderCursorProvider, (node, _) =>
+        {
+            return node switch
+            {
+                Label label => label.FontName,
+                Text text => text.Font?.Name,
+                _ => null,
+            };
+        }, NoValue);
+        table.AddRow(Strings.Internals.FontSize, name: "FontSize").Listen(1, _nodeUnderCursorProvider, (node, _) =>
+        {
+            return node switch
+            {
+                Label label => label.FontSize,
+                Text text => text.FontSize,
+                _ => default(int?),
+            };
+        }, NoValue);
         table.AddRow(Strings.Internals.AutoSizeToContents, name: nameof(IAutoSizeToContents.AutoSizeToContents)).Listen(1, _nodeUnderCursorProvider, (node, _) => (node as IAutoSizeToContents)?.AutoSizeToContents, NoValue);
         table.AddRow(Strings.Internals.AutoSizeToContentWidth, name: nameof(ISmartAutoSizeToContents.AutoSizeToContentWidth)).Listen(1, _nodeUnderCursorProvider, (node, _) => (node as ISmartAutoSizeToContents)?.AutoSizeToContentWidth, NoValue);
         table.AddRow(Strings.Internals.AutoSizeToContentHeight, name: nameof(ISmartAutoSizeToContents.AutoSizeToContentHeight)).Listen(1, _nodeUnderCursorProvider, (node, _) => (node as ISmartAutoSizeToContents)?.AutoSizeToContentHeight, NoValue);

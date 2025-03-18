@@ -332,35 +332,35 @@ public partial class RegistrationWindow : Window, IMainMenuWindow
             return;
         }
 
-        if (!FieldChecking.IsValidUsername(_usernameInput.Text, Strings.Regex.Username))
+        var username = _usernameInput.Text?.Trim();
+        if (!FieldChecking.IsValidUsername(username, Strings.Regex.Username))
         {
             Interface.ShowAlert(Strings.Errors.UsernameInvalid, alertType: AlertType.Error);
             return;
         }
 
-        if (!FieldChecking.IsWellformedEmailAddress(_emailInput.Text, Strings.Regex.Email))
+        var email = _emailInput.Text?.Trim();
+        if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.Email))
         {
             Interface.ShowAlert(Strings.Registration.EmailInvalid, alertType: AlertType.Error);
             return;
         }
 
-        if (!FieldChecking.IsValidPassword(_passwordInput.Text, Strings.Regex.Password))
+        var password = _passwordInput.Text?.Trim();
+        if (!FieldChecking.IsValidPassword(password, Strings.Regex.Password))
         {
             Interface.ShowAlert(Strings.Errors.PasswordInvalid, alertType: AlertType.Error);
             return;
         }
 
-        if (_passwordInput.Text != _passwordConfirmationInput.Text)
+        if (password != _passwordConfirmationInput.Text)
         {
             Interface.ShowAlert(Strings.Registration.PasswordMismatch, alertType: AlertType.Error);
             return;
         }
 
-        PacketSender.SendCreateAccount(
-            _usernameInput.Text,
-            PasswordUtils.ComputePasswordHash(_passwordInput.Text.Trim()),
-            _emailInput.Text
-        );
+        var passwordHash = PasswordUtils.ComputePasswordHash(password);
+        PacketSender.SendUserRegistration(username, passwordHash, email);
 
         Globals.WaitingOnServer = true;
         _registerButton.Disable();

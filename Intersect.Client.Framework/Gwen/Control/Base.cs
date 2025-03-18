@@ -1,5 +1,5 @@
-using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Numerics;
 using System.Text;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
@@ -10,8 +10,6 @@ using Intersect.Client.Framework.Gwen.Control.Layout;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
-#if DEBUG || DIAGNOSTIC
-#endif
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Intersect.Client.Framework.Gwen.Renderer;
@@ -25,8 +23,6 @@ using Intersect.Framework.Threading;
 using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Framework.Gwen.Control;
-
-public record struct NodePair(Base This, Base? Parent);
 
 /// <summary>
 ///     Base control class.
@@ -185,6 +181,12 @@ public partial class Base : IDisposable
         BoundsOutlineColor = Color.Red;
         MarginOutlineColor = Color.Green;
         PaddingOutlineColor = Color.Blue;
+    }
+
+    public DisplayMode DisplayMode
+    {
+        get => _displayMode;
+        set => SetAndDoIfChanged(ref _displayMode, value, InvalidateDock);
     }
 
     private void OnThreadQueueOnQueueNotEmpty()
@@ -1017,6 +1019,23 @@ public partial class Base : IDisposable
         set => _tabEnabled = value;
     }
 
+    public int TabOrder
+    {
+        get => _tabOrder;
+        set => SetAndDoIfChanged(ref _tabOrder, value, OnTabOrderChanged);
+    }
+
+    private void OnTabOrderChanged(int oldTabOrder, int newTabOrder)
+    {
+        IsTabable = newTabOrder > 0;
+        Parent?.OnChildTabOrderChanged(this, oldTabOrder, newTabOrder);
+    }
+
+    protected virtual void OnChildTabOrderChanged(Base? childNode, int oldTabOrder, int newTabOrder)
+    {
+
+    }
+
     /// <summary>
     ///     Indicates whether control's background should be drawn during rendering.
     /// </summary>
@@ -1269,6 +1288,8 @@ public partial class Base : IDisposable
 
     public bool SkipSerialization { get; set; } = false;
 
+    public event GwenEventHandler<EventArgs>? Disposed;
+
     /// <summary>
     ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
     /// </summary>
@@ -1333,6 +1354,20 @@ public partial class Base : IDisposable
         GC.SuppressFinalize(this);
 
         _disposeCompleted = true;
+
+        try
+        {
+            Disposed?.Invoke(this, EventArgs.Empty);
+        }
+        catch (Exception exception)
+        {
+            var logger = ApplicationContext.GetContext<IApplicationContext>()?.Logger;
+            logger?.LogWarning(
+                exception,
+                "Exception thrown by a Disposed event handler for '{Node}'",
+                CanonicalName
+            );
+        }
     }
 
     protected virtual void Dispose(bool disposing)
@@ -2032,6 +2067,8 @@ public partial class Base : IDisposable
             _cacheTextureDirty = true;
         }
     }
+
+    protected static void InvalidateDock(Base @this) => @this.InvalidateDock();
 
     protected static void Invalidate(Base @this) => @this.Invalidate();
 
@@ -2844,6 +2881,7 @@ public partial class Base : IDisposable
                 Redraw();
             }
 
+            InvalidateDock();
             OnSizeChanged(oldBounds.Size, newBounds.Size);
             SizeChanged?.Invoke(
                 this,
@@ -3790,6 +3828,7 @@ public partial class Base : IDisposable
         {
             _dockDirty = false;
 
+            var dockChildSpacing = DockChildSpacing;
             var remainingBounds = RenderBounds;
 
             // Adjust bounds for padding
@@ -3798,333 +3837,447 @@ public partial class Base : IDisposable
             remainingBounds.Y += _padding.Top;
             remainingBounds.Height -= _padding.Top + _padding.Bottom;
 
-            var dockChildSpacing = DockChildSpacing;
-
-            var directionalDockChildren =
-                _children.Where(child => !child.ShouldSkipLayout && !child.Dock.HasFlag(Pos.Fill)).ToArray();
-            var dockFillChildren =
-                _children.Where(child => !child.ShouldSkipLayout && child.Dock.HasFlag(Pos.Fill)).ToArray();
-
-            foreach (var child in directionalDockChildren)
+            var displayMode = _displayMode;
+            var isFlow = displayMode switch
             {
-                var childDock = child.Dock;
+                DisplayMode.Initial => false,
+                DisplayMode.FlowStartToEnd => true,
+                DisplayMode.FlowTopToBottom => true,
+                _ => throw Exceptions.UnreachableInvalidEnum(displayMode),
+            };
 
-                var childMargin = child.Margin;
-                var childMarginH = childMargin.Left + childMargin.Right;
-                var childMarginV = childMargin.Top + childMargin.Bottom;
+            if (isFlow)
+            {
+                Point cursor = remainingBounds.Position;
+                var visibleChildren = _children.Where(child => child.IsVisibleInParent).ToArray();
+                var minimumRequiredSize = visibleChildren.Aggregate(
+                    default(Point),
+                    (sum, node) =>
+                    {
+                        switch (displayMode)
+                        {
+                            case DisplayMode.FlowStartToEnd:
+                            {
+                                sum.X += node.MinimumSize.X;
+                                sum.Y = Math.Max(sum.Y, node.MinimumSize.Y);
+                                break;
+                            }
 
-                var childOuterWidth = childMarginH + child.Width;
-                var childOuterHeight = childMarginV + child.Height;
+                            case DisplayMode.FlowTopToBottom:
+                            {
+                                sum.X = Math.Max(sum.X, node.MinimumSize.X);
+                                sum.Y += node.MinimumSize.Y;
+                                break;
+                            }
 
-                var availableWidth = remainingBounds.Width - childMarginH;
-                var availableHeight = remainingBounds.Height - childMarginV;
+                            default:
+                                throw Exceptions.UnreachableInvalidEnum(displayMode);
+                        }
 
-                var childFitsContentWidth = false;
-                var childFitsContentHeight = false;
+                        return sum;
+                    }
+                );
 
-                switch (child)
+                var gapCountX = 0;
+                var gapCountY = 0;
+                switch (displayMode)
                 {
-                    case ISmartAutoSizeToContents smartAutoSizeToContents:
-                        childFitsContentWidth = smartAutoSizeToContents.AutoSizeToContentWidth;
-                        childFitsContentHeight = smartAutoSizeToContents.AutoSizeToContentHeight;
+                    case DisplayMode.FlowStartToEnd:
+                    {
+                        gapCountX = visibleChildren.Length - 1;
                         break;
-                    case IAutoSizeToContents { AutoSizeToContents: true }:
-                        childFitsContentWidth = true;
-                        childFitsContentHeight = true;
+                    }
+
+                    case DisplayMode.FlowTopToBottom:
+                    {
+                        gapCountY = visibleChildren.Length - 1;
                         break;
-                    case IFitHeightToContents { FitHeightToContents: true }:
-                        childFitsContentHeight = true;
+                    }
+
+                    default:
+                        throw Exceptions.UnreachableInvalidEnum(displayMode);
+                }
+
+                minimumRequiredSize.X += DockChildSpacing.Left * gapCountX;
+                minimumRequiredSize.Y += DockChildSpacing.Top * gapCountY;
+
+                var containingSize = remainingBounds.Size;
+                if (containingSize.X < minimumRequiredSize.X || containingSize.Y < minimumRequiredSize.Y)
+                {
+                    _requiredSizeForDockFillNodes = minimumRequiredSize;
+                }
+
+                var totalSize = visibleChildren.Aggregate(default(Point), (sum, node) => sum + node.OuterBounds.Size);
+                var spaceBetween = visibleChildren.Length > 1
+                    ? (containingSize - totalSize) / (visibleChildren.Length - 1)
+                    : default;
+                switch (displayMode)
+                {
+                    case DisplayMode.FlowStartToEnd:
+                    {
+                        var remainingPixels = containingSize.X % visibleChildren.Length;
+                        foreach (var child in visibleChildren)
+                        {
+                            var extraPixel = remainingPixels-- > 0 ? 1 : 0;
+                            var cursorDelta = extraPixel + child.Width + spaceBetween.X;
+                            var x = cursor.X + extraPixel;
+                            var y = cursor.Y + (remainingBounds.Height - child.Height) / 2;
+                            child.SetPosition(x, y);
+
+                            cursor.X += cursorDelta;
+                        }
                         break;
-                }
+                    }
 
-                if (childDock.HasFlag(Pos.Left))
-                {
-                    var height = childFitsContentHeight
-                        ? child.Height
-                        : availableHeight;
-
-                    var y = remainingBounds.Y + childMargin.Top;
-                    if (childDock.HasFlag(Pos.CenterV))
+                    case DisplayMode.FlowTopToBottom:
                     {
-                        height = child.Height;
-                        var extraY = Math.Max(0, availableHeight - height) / 2;
-                        if (extraY != 0)
+                        var remainingPixels = containingSize.Y % visibleChildren.Length;
+                        foreach (var child in visibleChildren)
                         {
-                            y += extraY;
+                            var extraPixel = remainingPixels-- > 0 ? 1 : 0;
+                            var cursorDelta = extraPixel + child.Height + spaceBetween.Y;
+                            var x = cursor.X + (remainingBounds.Width - child.Width) / 2;
+                            var y = cursor.Y + extraPixel;
+                            child.SetPosition(x, y);
+
+                            cursor.X += cursorDelta;
                         }
-                    }
-                    else if (childDock.HasFlag(Pos.Bottom))
-                    {
-                        y = remainingBounds.Bottom - (childMargin.Bottom + child.Height);
-                    }
-                    else if (!childDock.HasFlag(Pos.Top))
-                    {
-                        var extraY = Math.Max(0, availableHeight - height) / 2;
-                        if (extraY != 0)
-                        {
-                            y += extraY;
-                        }
+                        break;
                     }
 
-                    child.SetBounds(
-                        remainingBounds.X + childMargin.Left,
-                        y,
-                        child.Width,
-                        height
-                    );
-
-                    var boundsDeltaX = childOuterWidth + dockChildSpacing.Left;
-                    remainingBounds.X += boundsDeltaX;
-                    remainingBounds.Width -= boundsDeltaX;
+                    default:
+                        throw Exceptions.UnreachableInvalidEnum(displayMode);
                 }
-
-                if (childDock.HasFlag(Pos.Right))
-                {
-                    var height = childFitsContentHeight
-                        ? child.Height
-                        : availableHeight;
-
-                    var y = remainingBounds.Y + childMargin.Top;
-                    if (childDock.HasFlag(Pos.CenterV))
-                    {
-                        height = child.Height;
-                        var extraY = Math.Max(0, availableHeight - height) / 2;
-                        if (extraY != 0)
-                        {
-                            y += extraY;
-                        }
-                    }
-                    else if (childDock.HasFlag(Pos.Bottom))
-                    {
-                        y = remainingBounds.Bottom - (childMargin.Bottom + child.Height);
-                    }
-                    else if (!childDock.HasFlag(Pos.Top))
-                    {
-                        var extraY = Math.Max(0, availableHeight - height) / 2;
-                        if (extraY != 0)
-                        {
-                            y += extraY;
-                        }
-                    }
-
-                    var offsetFromRight = child.Width + childMargin.Right;
-                    child.SetBounds(
-                        remainingBounds.X + remainingBounds.Width - offsetFromRight,
-                        y,
-                        child.Width,
-                        height
-                    );
-
-                    var boundsDeltaX = childOuterWidth + dockChildSpacing.Right;
-                    remainingBounds.Width -= boundsDeltaX;
-                }
-
-                if (childDock.HasFlag(Pos.Top) && !childDock.HasFlag(Pos.Left) && !childDock.HasFlag(Pos.Right))
-                {
-                    var width = childFitsContentWidth
-                        ? child.Width
-                        : availableWidth;
-
-                    var x = remainingBounds.Left + childMargin.Left;
-
-                    if (childDock.HasFlag(Pos.CenterH))
-                    {
-                        x = remainingBounds.Left + (remainingBounds.Width - child.OuterWidth) / 2;
-                        width = child.Width;
-                    }
-
-                    child.SetBounds(
-                        x,
-                        remainingBounds.Top + childMargin.Top,
-                        width,
-                        child.Height
-                    );
-
-                    var boundsDeltaY = childOuterHeight + dockChildSpacing.Top;
-                    remainingBounds.Y += boundsDeltaY;
-                    remainingBounds.Height -= boundsDeltaY;
-                }
-
-                if (childDock.HasFlag(Pos.Bottom) && !childDock.HasFlag(Pos.Left) && !childDock.HasFlag(Pos.Right))
-                {
-                    var width = childFitsContentWidth
-                        ? child.Width
-                        : availableWidth;
-
-                    var offsetFromBottom = child.Height + childMargin.Bottom;
-                    var x = remainingBounds.Left + childMargin.Left;
-
-                    if (childDock.HasFlag(Pos.CenterH))
-                    {
-                        x = remainingBounds.Left + (remainingBounds.Width - child.OuterWidth) / 2;
-                        width = child.Width;
-                    }
-
-                    child.SetBounds(
-                        x,
-                        remainingBounds.Bottom - offsetFromBottom,
-                        width,
-                        child.Height
-                    );
-
-                    remainingBounds.Height -= childOuterHeight + dockChildSpacing.Bottom;
-                }
-
-                child.RecurseLayout(skin);
             }
-
-            var boundsForFillNodes = remainingBounds;
-            _innerBounds = remainingBounds;
-
-            Point sizeToFitDockFillNodes = default;
-
-            var largestDockFillSize = dockFillChildren.Aggregate(
-                default(Point),
-                (size, node) =>
-                    new Point(Math.Max(size.X, node.Width), Math.Max(size.Y, node.Height))
-            );
-
-            int suggestedWidth, suggestedHeight;
-            if (dockFillChildren.Length < 2)
+            else
             {
-                suggestedWidth = remainingBounds.Width;
-                suggestedHeight = remainingBounds.Height;
-            }
-            else if (largestDockFillSize.Y > largestDockFillSize.X)
-            {
-                if (largestDockFillSize.Y > remainingBounds.Height)
+                var directionalDockChildren =
+                    _children.Where(child => !child.ShouldSkipLayout && !child.Dock.HasFlag(Pos.Fill)).ToArray();
+                var dockFillChildren =
+                    _children.Where(child => !child.ShouldSkipLayout && child.Dock.HasFlag(Pos.Fill)).ToArray();
+
+                foreach (var child in directionalDockChildren)
                 {
-                    suggestedWidth = Math.Max(largestDockFillSize.X, remainingBounds.Width);
-                    suggestedHeight = remainingBounds.Height / dockFillChildren.Length;
+                    var childDock = child.Dock;
+
+                    var childMargin = child.Margin;
+                    var childMarginH = childMargin.Left + childMargin.Right;
+                    var childMarginV = childMargin.Top + childMargin.Bottom;
+
+                    var childOuterWidth = childMarginH + child.Width;
+                    var childOuterHeight = childMarginV + child.Height;
+
+                    var availableWidth = remainingBounds.Width - childMarginH;
+                    var availableHeight = remainingBounds.Height - childMarginV;
+
+                    var childFitsContentWidth = false;
+                    var childFitsContentHeight = false;
+
+                    switch (child)
+                    {
+                        case ISmartAutoSizeToContents smartAutoSizeToContents:
+                            childFitsContentWidth = smartAutoSizeToContents.AutoSizeToContentWidth;
+                            childFitsContentHeight = smartAutoSizeToContents.AutoSizeToContentHeight;
+                            break;
+                        case IAutoSizeToContents { AutoSizeToContents: true }:
+                            childFitsContentWidth = true;
+                            childFitsContentHeight = true;
+                            break;
+                        case IFitHeightToContents { FitHeightToContents: true }:
+                            childFitsContentHeight = true;
+                            break;
+                    }
+
+                    if (childDock.HasFlag(Pos.Left))
+                    {
+                        var height = childFitsContentHeight
+                            ? child.Height
+                            : availableHeight;
+
+                        var y = remainingBounds.Y + childMargin.Top;
+                        if (childDock.HasFlag(Pos.CenterV))
+                        {
+                            height = child.Height;
+                            var extraY = Math.Max(0, availableHeight - height) / 2;
+                            if (extraY != 0)
+                            {
+                                y += extraY;
+                            }
+                        }
+                        else if (childDock.HasFlag(Pos.Bottom))
+                        {
+                            y = remainingBounds.Bottom - (childMargin.Bottom + child.Height);
+                        }
+                        else if (!childDock.HasFlag(Pos.Top))
+                        {
+                            var extraY = Math.Max(0, availableHeight - height) / 2;
+                            if (extraY != 0)
+                            {
+                                y += extraY;
+                            }
+                        }
+
+                        child.SetBounds(
+                            remainingBounds.X + childMargin.Left,
+                            y,
+                            child.Width,
+                            height
+                        );
+
+                        var boundsDeltaX = childOuterWidth + dockChildSpacing.Left;
+                        remainingBounds.X += boundsDeltaX;
+                        remainingBounds.Width -= boundsDeltaX;
+                    }
+
+                    if (childDock.HasFlag(Pos.Right))
+                    {
+                        var height = childFitsContentHeight
+                            ? child.Height
+                            : availableHeight;
+
+                        var y = remainingBounds.Y + childMargin.Top;
+                        if (childDock.HasFlag(Pos.CenterV))
+                        {
+                            height = child.Height;
+                            var extraY = Math.Max(0, availableHeight - height) / 2;
+                            if (extraY != 0)
+                            {
+                                y += extraY;
+                            }
+                        }
+                        else if (childDock.HasFlag(Pos.Bottom))
+                        {
+                            y = remainingBounds.Bottom - (childMargin.Bottom + child.Height);
+                        }
+                        else if (!childDock.HasFlag(Pos.Top))
+                        {
+                            var extraY = Math.Max(0, availableHeight - height) / 2;
+                            if (extraY != 0)
+                            {
+                                y += extraY;
+                            }
+                        }
+
+                        var offsetFromRight = child.Width + childMargin.Right;
+                        child.SetBounds(
+                            remainingBounds.X + remainingBounds.Width - offsetFromRight,
+                            y,
+                            child.Width,
+                            height
+                        );
+
+                        var boundsDeltaX = childOuterWidth + dockChildSpacing.Right;
+                        remainingBounds.Width -= boundsDeltaX;
+                    }
+
+                    if (childDock.HasFlag(Pos.Top) && !childDock.HasFlag(Pos.Left) && !childDock.HasFlag(Pos.Right))
+                    {
+                        var width = childFitsContentWidth
+                            ? child.Width
+                            : availableWidth;
+
+                        var x = remainingBounds.Left + childMargin.Left;
+
+                        if (childDock.HasFlag(Pos.CenterH))
+                        {
+                            x = remainingBounds.Left + (remainingBounds.Width - child.OuterWidth) / 2;
+                            width = child.Width;
+                        }
+
+                        child.SetBounds(
+                            x,
+                            remainingBounds.Top + childMargin.Top,
+                            width,
+                            child.Height
+                        );
+
+                        var boundsDeltaY = childOuterHeight + dockChildSpacing.Top;
+                        remainingBounds.Y += boundsDeltaY;
+                        remainingBounds.Height -= boundsDeltaY;
+                    }
+
+                    if (childDock.HasFlag(Pos.Bottom) && !childDock.HasFlag(Pos.Left) && !childDock.HasFlag(Pos.Right))
+                    {
+                        var width = childFitsContentWidth
+                            ? child.Width
+                            : availableWidth;
+
+                        var offsetFromBottom = child.Height + childMargin.Bottom;
+                        var x = remainingBounds.Left + childMargin.Left;
+
+                        if (childDock.HasFlag(Pos.CenterH))
+                        {
+                            x = remainingBounds.Left + (remainingBounds.Width - child.OuterWidth) / 2;
+                            width = child.Width;
+                        }
+
+                        child.SetBounds(
+                            x,
+                            remainingBounds.Bottom - offsetFromBottom,
+                            width,
+                            child.Height
+                        );
+
+                        remainingBounds.Height -= childOuterHeight + dockChildSpacing.Bottom;
+                    }
+
+                    child.RecurseLayout(skin);
                 }
-                else
+
+                var boundsForFillNodes = remainingBounds;
+                _innerBounds = remainingBounds;
+
+                Point sizeToFitDockFillNodes = default;
+
+                var largestDockFillSize = dockFillChildren.Aggregate(
+                    default(Point),
+                    (size, node) =>
+                        new Point(Math.Max(size.X, node.Width), Math.Max(size.Y, node.Height))
+                );
+
+                int suggestedWidth, suggestedHeight;
+                if (dockFillChildren.Length < 2)
+                {
+                    suggestedWidth = remainingBounds.Width;
+                    suggestedHeight = remainingBounds.Height;
+                }
+                else if (largestDockFillSize.Y > largestDockFillSize.X)
+                {
+                    if (largestDockFillSize.Y > remainingBounds.Height)
+                    {
+                        suggestedWidth = Math.Max(largestDockFillSize.X, remainingBounds.Width);
+                        suggestedHeight = remainingBounds.Height / dockFillChildren.Length;
+                    }
+                    else
+                    {
+                        suggestedWidth = remainingBounds.Width / dockFillChildren.Length;
+                        suggestedHeight = Math.Max(largestDockFillSize.Y, remainingBounds.Height);
+                    }
+                }
+                else if (largestDockFillSize.X > remainingBounds.Width)
                 {
                     suggestedWidth = remainingBounds.Width / dockFillChildren.Length;
                     suggestedHeight = Math.Max(largestDockFillSize.Y, remainingBounds.Height);
                 }
-            }
-            else if (largestDockFillSize.X > remainingBounds.Width)
-            {
-                suggestedWidth = remainingBounds.Width / dockFillChildren.Length;
-                suggestedHeight = Math.Max(largestDockFillSize.Y, remainingBounds.Height);
-            }
-            else
-            {
-                suggestedWidth = Math.Max(largestDockFillSize.X, remainingBounds.Width);
-                suggestedHeight = remainingBounds.Height / dockFillChildren.Length;
-            }
-
-            var fillHorizontal = suggestedHeight == remainingBounds.Height;
-
-            //
-            // Fill uses the left over space, so do that now.
-            //
-            foreach (var child in dockFillChildren)
-            {
-                var dock = child.Dock;
-
-                var childMargin = child.Margin;
-                var childMarginH = childMargin.Left + childMargin.Right;
-                var childMarginV = childMargin.Top + childMargin.Bottom;
-
-                Point newPosition = new(
-                    remainingBounds.X + childMargin.Left,
-                    remainingBounds.Y + childMargin.Top
-                );
-
-                Point newSize = new(
-                    suggestedWidth - childMarginH,
-                    suggestedHeight - childMarginV
-                );
-
-                var childMinimumSize = child.MinimumSize;
-                var neededX = Math.Max(0, childMinimumSize.X - newSize.X);
-                var neededY = Math.Max(0, childMinimumSize.Y - newSize.Y);
-
-                bool exhaustSize = false;
-                if (neededX > 0 || neededY > 0)
-                {
-                    exhaustSize = true;
-
-                    if (sizeToFitDockFillNodes == default)
-                    {
-                        sizeToFitDockFillNodes = Size;
-                    }
-
-                    sizeToFitDockFillNodes.X += neededX;
-                    sizeToFitDockFillNodes.Y += neededY;
-                }
-                else if (remainingBounds.Width < 1 || remainingBounds.Height < 1)
-                {
-                    if (sizeToFitDockFillNodes == default)
-                    {
-                        sizeToFitDockFillNodes = Size;
-                    }
-
-                    sizeToFitDockFillNodes.X += Math.Max(10, boundsForFillNodes.Width / dockFillChildren.Length);
-                    sizeToFitDockFillNodes.Y += Math.Max(10, boundsForFillNodes.Height / dockFillChildren.Length);
-                }
-
-                newSize.X = Math.Max(childMinimumSize.X, newSize.X);
-                newSize.Y = Math.Max(childMinimumSize.Y, newSize.Y);
-
-                if (child is IAutoSizeToContents { AutoSizeToContents: true })
-                {
-                    if (Pos.Right == (dock & (Pos.Right | Pos.Left)))
-                    {
-                        var offsetFromRight = child.Width + childMargin.Right + dockChildSpacing.Right;
-                        newPosition.X = remainingBounds.Right - offsetFromRight;
-                    }
-
-                    if (Pos.Bottom == (dock & (Pos.Bottom | Pos.Top)))
-                    {
-                        var offsetFromBottom = child.Height + childMargin.Bottom + dockChildSpacing.Bottom;
-                        newPosition.Y = remainingBounds.Bottom - offsetFromBottom;
-                    }
-
-                    if (dock.HasFlag(Pos.CenterH))
-                    {
-                        newPosition.X = remainingBounds.X + (remainingBounds.Width - (childMarginH + child.Width)) / 2;
-                    }
-
-                    if (dock.HasFlag(Pos.CenterV))
-                    {
-                        newPosition.Y = remainingBounds.Y +
-                                        (remainingBounds.Height - (childMarginV + child.Height)) / 2;
-                    }
-
-                    child.SetPosition(newPosition);
-
-                    // TODO: Figure out how to adjust remaining bounds in the autosize case
-                }
                 else
                 {
-                    ApplyDockFill(child, newPosition, newSize);
+                    suggestedWidth = Math.Max(largestDockFillSize.X, remainingBounds.Width);
+                    suggestedHeight = remainingBounds.Height / dockFillChildren.Length;
+                }
 
-                    var childOuterBounds = child.OuterBounds;
-                    if (fillHorizontal)
+                var fillHorizontal = suggestedHeight == remainingBounds.Height;
+
+                //
+                // Fill uses the left over space, so do that now.
+                //
+                foreach (var child in dockFillChildren)
+                {
+                    var dock = child.Dock;
+
+                    var childMargin = child.Margin;
+                    var childMarginH = childMargin.Left + childMargin.Right;
+                    var childMarginV = childMargin.Top + childMargin.Bottom;
+
+                    Point newPosition = new(
+                        remainingBounds.X + childMargin.Left,
+                        remainingBounds.Y + childMargin.Top
+                    );
+
+                    Point newSize = new(
+                        suggestedWidth - childMarginH,
+                        suggestedHeight - childMarginV
+                    );
+
+                    var childMinimumSize = child.MinimumSize;
+                    var neededX = Math.Max(0, childMinimumSize.X - newSize.X);
+                    var neededY = Math.Max(0, childMinimumSize.Y - newSize.Y);
+
+                    bool exhaustSize = false;
+                    if (neededX > 0 || neededY > 0)
                     {
-                        var delta = childOuterBounds.Right - remainingBounds.X;
-                        remainingBounds.X = childOuterBounds.Right;
-                        remainingBounds.Width -= delta;
+                        exhaustSize = true;
+
+                        if (sizeToFitDockFillNodes == default)
+                        {
+                            sizeToFitDockFillNodes = Size;
+                        }
+
+                        sizeToFitDockFillNodes.X += neededX;
+                        sizeToFitDockFillNodes.Y += neededY;
+                    }
+                    else if (remainingBounds.Width < 1 || remainingBounds.Height < 1)
+                    {
+                        if (sizeToFitDockFillNodes == default)
+                        {
+                            sizeToFitDockFillNodes = Size;
+                        }
+
+                        sizeToFitDockFillNodes.X += Math.Max(10, boundsForFillNodes.Width / dockFillChildren.Length);
+                        sizeToFitDockFillNodes.Y += Math.Max(10, boundsForFillNodes.Height / dockFillChildren.Length);
+                    }
+
+                    newSize.X = Math.Max(childMinimumSize.X, newSize.X);
+                    newSize.Y = Math.Max(childMinimumSize.Y, newSize.Y);
+
+                    if (child is IAutoSizeToContents { AutoSizeToContents: true })
+                    {
+                        if (Pos.Right == (dock & (Pos.Right | Pos.Left)))
+                        {
+                            var offsetFromRight = child.Width + childMargin.Right + dockChildSpacing.Right;
+                            newPosition.X = remainingBounds.Right - offsetFromRight;
+                        }
+
+                        if (Pos.Bottom == (dock & (Pos.Bottom | Pos.Top)))
+                        {
+                            var offsetFromBottom = child.Height + childMargin.Bottom + dockChildSpacing.Bottom;
+                            newPosition.Y = remainingBounds.Bottom - offsetFromBottom;
+                        }
+
+                        if (dock.HasFlag(Pos.CenterH))
+                        {
+                            newPosition.X = remainingBounds.X +
+                                            (remainingBounds.Width - (childMarginH + child.Width)) / 2;
+                        }
+
+                        if (dock.HasFlag(Pos.CenterV))
+                        {
+                            newPosition.Y = remainingBounds.Y +
+                                            (remainingBounds.Height - (childMarginV + child.Height)) / 2;
+                        }
+
+                        child.SetPosition(newPosition);
+
+                        // TODO: Figure out how to adjust remaining bounds in the autosize case
                     }
                     else
                     {
-                        var delta = childOuterBounds.Bottom - remainingBounds.Y;
-                        remainingBounds.Y = childOuterBounds.Bottom;
-                        remainingBounds.Height -= delta;
+                        ApplyDockFill(child, newPosition, newSize);
+
+                        var childOuterBounds = child.OuterBounds;
+                        if (fillHorizontal)
+                        {
+                            var delta = childOuterBounds.Right - remainingBounds.X;
+                            remainingBounds.X = childOuterBounds.Right;
+                            remainingBounds.Width -= delta;
+                        }
+                        else
+                        {
+                            var delta = childOuterBounds.Bottom - remainingBounds.Y;
+                            remainingBounds.Y = childOuterBounds.Bottom;
+                            remainingBounds.Height -= delta;
+                        }
                     }
-                }
 
-                if (exhaustSize)
-                {
-                    remainingBounds.X += remainingBounds.Width;
-                    remainingBounds.Width = 0;
-                    remainingBounds.Y += remainingBounds.Height;
-                    remainingBounds.Height = 0;
-                }
+                    if (exhaustSize)
+                    {
+                        remainingBounds.X += remainingBounds.Width;
+                        remainingBounds.Width = 0;
+                        remainingBounds.Y += remainingBounds.Height;
+                        remainingBounds.Height = 0;
+                    }
 
-                child.RecurseLayout(skin);
+                    child.RecurseLayout(skin);
+                }
             }
         }
         else
@@ -4164,6 +4317,8 @@ public partial class Base : IDisposable
     }
 
     protected Point _dockFillSize;
+    private int _tabOrder;
+    private DisplayMode _displayMode;
 
     protected virtual void ApplyDockFill(Base child, Point position, Point size)
     {

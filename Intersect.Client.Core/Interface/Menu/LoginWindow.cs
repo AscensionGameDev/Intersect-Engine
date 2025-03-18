@@ -50,7 +50,7 @@ public partial class LoginWindow : Window, IMainMenuWindow
         _defaultFont = GameContentManager.Current.GetFont(name: "sourcesansproblack");
 
         Alignment = [Alignments.Center];
-        MinimumSize = new Point(x: 504, y: 144);
+        MinimumSize = new Point(x: 544, y: 148);
         IsClosable = false;
         IsResizable = false;
         InnerPanelPadding = new Padding(8);
@@ -64,7 +64,7 @@ public partial class LoginWindow : Window, IMainMenuWindow
             Dock = Pos.Right,
             DockChildSpacing = new Padding(8),
             Margin = new Margin(8, 0, 0, 0),
-            MinimumSize = new Point(120, 0),
+            MinimumSize = new Point(160, 0),
         };
 
         _loginButton = new Button(_buttonPanel, "LoginButton")
@@ -73,24 +73,11 @@ public partial class LoginWindow : Window, IMainMenuWindow
             Dock = Pos.Top,
             Font = _defaultFont,
             FontSize = 12,
-            MinimumSize = new Point(120, 24),
+            MinimumSize = new Point(160, 24),
             Padding = new Padding(8, 4),
             Text = Strings.LoginWindow.Login,
         };
         _loginButton.Clicked += LoginButtonOnClicked;
-
-        _forgotPasswordButton = new Button(_buttonPanel, "ForgotPasswordButton")
-        {
-            AutoSizeToContents = true,
-            Dock = Pos.Right | Pos.CenterV,
-            Font = _defaultFont,
-            FontSize = 12,
-            IsHidden = true,
-            MinimumSize = new Point(120, 24),
-            Padding = new Padding(8, 4),
-            Text = Strings.LoginWindow.ForgotPassword,
-        };
-        _forgotPasswordButton.Clicked += ForgotPasswordButtonOnClicked;
 
         _backButton = new Button(_buttonPanel, nameof(_backButton))
         {
@@ -98,11 +85,23 @@ public partial class LoginWindow : Window, IMainMenuWindow
             Dock = Pos.Top,
             Font = _defaultFont,
             FontSize = 12,
-            MinimumSize = new Point(120, 24),
+            MinimumSize = new Point(160, 24),
             Padding = new Padding(8, 4),
             Text = Strings.LoginWindow.Back,
         };
         _backButton.Clicked += BackButtonOnClicked;
+
+        _forgotPasswordButton = new Button(_buttonPanel, "ForgotPasswordButton")
+        {
+            AutoSizeToContents = true,
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            FontSize = 12,
+            MinimumSize = new Point(160, 24),
+            Padding = new Padding(8, 4),
+            Text = Strings.LoginWindow.ForgotPassword,
+        };
+        _forgotPasswordButton.Clicked += ForgotPasswordButtonOnClicked;
 
         _inputPanel = new Panel(this, nameof(_inputPanel))
         {
@@ -197,6 +196,16 @@ public partial class LoginWindow : Window, IMainMenuWindow
     private void LoginButtonOnClicked(Base @base, MouseButtonState mouseButtonState)
     {
         TryLogin();
+    }
+
+    protected override void OnVisibilityChanged(object? sender, VisibilityChangedEventArgs eventArgs)
+    {
+        base.OnVisibilityChanged(sender, eventArgs);
+
+        if (eventArgs.IsVisibleInTree)
+        {
+            _forgotPasswordButton.IsVisibleInParent = !Options.IsLoaded || Options.Instance.SmtpValid;
+        }
     }
 
     protected override void EnsureInitialized()

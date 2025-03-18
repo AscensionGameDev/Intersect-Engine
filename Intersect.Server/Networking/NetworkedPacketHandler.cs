@@ -65,27 +65,38 @@ internal sealed partial class NetworkedPacketHandler
             return;
         }
 
-        if (Options.Instance.SmtpValid)
-        {
-            //Find account with that name or email
-            var user = User.FindFromNameOrEmail(packet.NameOrEmail.Trim());
-            if (user != null)
-            {
-                var email = new PasswordResetEmail(user);
-                if (!email.Send())
-                {
-                    PacketSender.SendError(client, Strings.Account.EmailFail, Strings.General.NoticeError);
-                }
-            }
-            else
-            {
-                client.FailedAttempt();
-            }
-        }
-        else
+        if (!Options.Instance.SmtpValid)
         {
             client.FailedAttempt();
+            return;
         }
+
+        //Find account with that name or email
+        var user = User.FindFromNameOrEmail(packet.NameOrEmail.Trim());
+        if (user == null)
+        {
+            client.FailedAttempt();
+            return;
+        }
+
+        if (!PasswordResetEmail.TryCreate(user, out var passwordResetEmail))
+        {
+            ApplicationContext.CurrentContext.Logger.LogError(
+                "Failed to create password reset email for {UserName} ({UserId})",
+                user.Name,
+                user.Id
+            );
+            PacketSender.SendError(client, Strings.Account.EmailFail, Strings.General.NoticeError);
+            return;
+        }
+
+        if (!passwordResetEmail.TrySend())
+        {
+            PacketSender.SendError(client, Strings.Account.EmailFail, Strings.General.NoticeError);
+            return;
+        }
+
+        ApplicationContext.CurrentContext.Logger.LogInformation("Send password reset email to {UserId}", user.Id);
     }
 
         #region "Editor Packets"
