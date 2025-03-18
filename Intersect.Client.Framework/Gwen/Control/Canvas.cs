@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Framework.GenericClasses;
+﻿using System.Diagnostics;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Anim;
 using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
@@ -15,8 +16,7 @@ namespace Intersect.Client.Framework.Gwen.Control;
 /// </summary>
 public partial class Canvas : Base
 {
-
-    private readonly List<IDisposable> mDisposeQueue; // dictionary for faster access?
+    private readonly List<IDisposable> _disposeQueue = [];
 
     private Color mBackgroundColor;
 
@@ -48,8 +48,6 @@ public partial class Canvas : Base
         ShouldDrawBackground = false;
         IsTabable = false;
         MouseInputEnabled = false;
-
-        mDisposeQueue = new List<IDisposable>();
     }
 
     /// <summary>
@@ -241,29 +239,45 @@ public partial class Canvas : Base
     /// <param name="control">Control to delete.</param>
     public void AddDelayedDelete(Base control)
     {
-        if (!mDisposeQueue.Contains(control))
+        lock (_disposeQueue)
         {
-            mDisposeQueue.Add(control);
-            control.Parent?.RemoveChild(control, false);
-        }
+            if (!_disposeQueue.Contains(control))
+            {
+                _disposeQueue.Add(control);
+                control.Parent?.RemoveChild(control, false);
 #if DEBUG
-        else
-        {
-            throw new InvalidOperationException("Control deleted twice");
-        }
+                _delayedDeleteStackTraces.Add(control, new StackTrace());
+            }
+            else
+            {
+                throw new InvalidOperationException("Control deleted twice");
 #endif
+            }
+        }
     }
+
+#if DEBUG
+    private readonly Dictionary<Base, StackTrace> _delayedDeleteStackTraces = [];
+#endif
 
     private void ProcessDelayedDeletes()
     {
-        //if (m_DisposeQueue.Count > 0)
-        //    System.Diagnostics.//debug.print("Canvas.ProcessDelayedDeletes: {0} items", m_DisposeQueue.Count);
-        foreach (var control in mDisposeQueue)
+        lock (_disposeQueue)
         {
-            control.Dispose();
-        }
+            foreach (var control in _disposeQueue)
+            {
+#if DEBUG
+                if (control is Base node)
+                {
+                    _delayedDeleteStackTraces.Remove(node);
+                }
+#endif
 
-        mDisposeQueue.Clear();
+                control.Dispose();
+            }
+
+            _disposeQueue.Clear();
+        }
     }
 
     /// <summary>
