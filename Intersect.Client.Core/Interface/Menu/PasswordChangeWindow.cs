@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using Intersect.Client.Core;
+﻿using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
@@ -48,7 +46,7 @@ public partial class PasswordChangeWindow : Window
         parent,
         title: Strings.PasswordChange.Title,
         modal: false,
-        name: nameof(PasswordChangeWindow)
+        name: $"{nameof(PasswordChangeWindow)}{passwordChangeMode}"
     )
     {
         _mainMenu = mainMenu;
@@ -369,6 +367,6 @@ public partial class PasswordChangeWindow : Window
 
     protected override void EnsureInitialized()
     {
-        // LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+        LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
     }
 }

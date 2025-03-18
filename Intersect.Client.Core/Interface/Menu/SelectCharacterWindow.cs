@@ -196,7 +196,7 @@ public partial class SelectCharacterWindow : Window
     {
         SizeToChildren(recursive: true);
 
-        // LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
+        LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
         EnsureArrowsVisibility();
     }
 
