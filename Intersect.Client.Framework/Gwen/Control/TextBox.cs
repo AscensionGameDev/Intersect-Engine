@@ -415,7 +415,7 @@ public partial class TextBox : Label
 
     public void SelectAll() => OnSelectAll(this, EventArgs.Empty);
 
-    protected virtual void OnSelectAll(Base from, EventArgs args)
+    protected override void OnSelectAll(Base from, EventArgs args)
     {
         mCursorEnd = 0;
         mCursorPos = TextLength;
