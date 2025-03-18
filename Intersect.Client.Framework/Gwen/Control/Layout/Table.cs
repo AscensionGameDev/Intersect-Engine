@@ -736,7 +736,7 @@ public partial class Table : Base, ISmartAutoSizeToContents, IColorableText
         }
 
         var flexColumnWidths = columnWidthRatios.Select(
-                ratio => float.IsNaN(ratio) ? 0 : (int)MathF.Ceiling(Math.Max(10f / ratio, availableWidth * ratio))
+                ratio => float.IsNaN(ratio) || ratio.Equals(0) ? 0 : (int)MathF.Ceiling(Math.Max(10f / ratio, availableWidth * ratio))
             )
             .ToArray();
 
