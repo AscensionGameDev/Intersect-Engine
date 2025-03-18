@@ -5,6 +5,7 @@
         <Platforms>AnyCPU</Platforms>
         <IntersectConfiguration>$(Configuration)</IntersectConfiguration>
         <IntersectConfiguration Condition="$(IntersectConfiguration.StartsWith('Debug'))">Debug</IntersectConfiguration>
+        <IntersectConfiguration Condition="'$(IntersectConfiguration)' == ''">Release</IntersectConfiguration>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(IntersectConfiguration)' == 'Debug'">
