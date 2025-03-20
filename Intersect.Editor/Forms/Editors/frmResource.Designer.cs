@@ -233,9 +233,9 @@ namespace Intersect.Editor.Forms.Editors
             chkUseExplicitMaxHealthForResourceStates.Location = new System.Drawing.Point(7, 319);
             chkUseExplicitMaxHealthForResourceStates.Margin = new Padding(4, 3, 4, 3);
             chkUseExplicitMaxHealthForResourceStates.Name = "chkUseExplicitMaxHealthForResourceStates";
-            chkUseExplicitMaxHealthForResourceStates.Size = new Size(246, 20);
+            chkUseExplicitMaxHealthForResourceStates.Size = new Size(246, 34);
             chkUseExplicitMaxHealthForResourceStates.TabIndex = 53;
-            chkUseExplicitMaxHealthForResourceStates.Text = "Use explicit Max Health for States?";
+            chkUseExplicitMaxHealthForResourceStates.Text = "Use explicit Max Health for Resources States?";
             chkUseExplicitMaxHealthForResourceStates.CheckedChanged += chkUseExplicitMaxHealthForResourceStates_CheckedChanged;
             // 
             // btnAddFolder
