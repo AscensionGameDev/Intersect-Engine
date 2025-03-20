@@ -387,32 +387,20 @@ public partial class FrmResource : EditorForm
         UpdateGraphicFileControl(currentState);
     }
 
-    private void UpdateCurrentState(object sender, EventArgs e)
-    {
-        if (_editorItem is null)
-        {
-            return;
-        }
-
-        if (!TryGetCurrentHealthState(out var currentState))
-        {
-            return;
-        }
-
-        currentState.GraphicType = (ResourceGraphicType)cmbGraphicType.SelectedIndex;
-        currentState.AnimationId = AnimationDescriptor.IdFromList(cmbAnimation.SelectedIndex - 1);
-    }
-
     private void UpdateGraphicFileControl(ResourceStateDescriptor currentState)
     {
         cmbGraphicFile.Items.Clear();
         cmbGraphicFile.Items.Add(Strings.General.None);
+        cmbAnimation.Items.Clear();
+        cmbAnimation.Items.Add(Strings.General.None);
 
         if (currentState.GraphicType == ResourceGraphicType.Animation)
         {
             cmbGraphicFile.Enabled = false;
             picResource.Visible = false;
             cmbAnimation.Enabled = true;
+            cmbAnimation.Items.AddRange(AnimationDescriptor.Names);
+            cmbAnimation.SelectedIndex = AnimationDescriptor.ListIndex(currentState.AnimationId) + 1;
             return;
         }
 
@@ -868,7 +856,7 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        UpdateCurrentState(sender, e);
+        currentState.GraphicType = (ResourceGraphicType)cmbGraphicType.SelectedIndex;
         UpdateGraphicFileControl(currentState);
     }
 
@@ -913,6 +901,16 @@ public partial class FrmResource : EditorForm
         }
 
         picResource.Visible = _resourceGraphic != null;
+    }
+
+    private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (!TryGetCurrentHealthState(out var currentState))
+        {
+            return;
+        }
+
+        currentState.AnimationId = AnimationDescriptor.IdFromList(cmbAnimation.SelectedIndex - 1);
     }
 
     private void nudHealthRangeMin_ValueChanged(object sender, EventArgs e)
