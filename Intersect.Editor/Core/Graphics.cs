@@ -1469,7 +1469,33 @@ public static partial class Graphics
                             break;
 
                         case ResourceGraphicType.Animation:
-                            //TODO: FIX THIS
+                            {
+                                if (!AnimationDescriptor.TryGet(resourceGraphic.AnimationId, out var animation))
+                                {
+                                    continue;
+                                }
+
+                                float xpos = x * Options.Instance.Map.TileWidth + xoffset + Options.Instance.Map.TileWidth / 2;
+                                float ypos = y * Options.Instance.Map.TileHeight + yoffset + Options.Instance.Map.TileHeight / 2;
+
+                                var animationInstance = tmpMap.GetAttributeAnimation(tmpMap.Attributes[x, y], animation.Id);
+
+                                //Update if the animation isn't right!
+                                if (animationInstance == null || animationInstance.Descriptor != animation)
+                                {
+                                    tmpMap.SetAttributeAnimation(
+                                        tmpMap.Attributes[x, y], new Animation(animation, true)
+                                    );
+                                }
+
+                                if (animationInstance != null)
+                                {
+                                    animationInstance.Update();
+                                    animationInstance.SetPosition((int)xpos, (int)ypos, 0);
+                                    animationInstance.Draw(renderTarget, false, alternate);
+                                    animationInstance.Draw(renderTarget, true, alternate);
+                                }
+                            }
                             break;
 
                         default:

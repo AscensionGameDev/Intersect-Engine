@@ -656,7 +656,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbAnimation.TabIndex = 55;
             cmbAnimation.Text = null;
             cmbAnimation.TextPadding = new Padding(2);
-            cmbAnimation.SelectedIndexChanged += UpdateCurrentState;
+            cmbAnimation.SelectedIndexChanged += cmbAnimation_SelectedIndexChanged;
             // 
             // lblAnimation
             // 
