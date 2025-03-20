@@ -2,7 +2,6 @@ using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.Framework.Reflection;
-using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
@@ -24,13 +23,14 @@ public partial class Resource : Entity
 
         Descriptor = descriptor;
         Name = descriptor.Name;
-        Sprite = descriptor.Initial.Graphic;
+
         SetMaxVital(
             Vital.Health,
             Randomization.Next(Math.Min(1, descriptor.MinHp), Math.Max(descriptor.MaxHp, Math.Min(1, descriptor.MinHp)) + 1)
         );
 
         RestoreVital(Vital.Health);
+        HandleSprite();
         Passable = descriptor.WalkableBefore;
         HideName = true;
     }
@@ -46,6 +46,29 @@ public partial class Resource : Entity
         PacketSender.SendEntityLeave(this);
     }
 
+    private void HandleSprite()
+    {
+        var graphicStates = Descriptor.HealthGraphics.Values.ToList();
+        var currentHealthPercentage = Math.Floor((float)GetVital(Vital.Health) / GetMaxVital(Vital.Health));
+        var currentGraphicState = graphicStates.FirstOrDefault(
+            state => currentHealthPercentage >= state.MinHp && currentHealthPercentage <= state.MaxHp
+        );
+
+        if (currentGraphicState is null || currentGraphicState.GraphicType == ResourceGraphicType.Animation)
+        {
+            Sprite = default;
+            return;
+        }
+
+        Sprite = currentGraphicState.Graphic;
+    }
+
+    public override void SubVital(Vital vital, long amount)
+    {
+        base.SubVital(vital, amount);
+        HandleSprite();
+    }
+
     public override void Die(bool dropItems = true, Entity killer = null)
     {
         lock (EntityLock)
@@ -53,7 +76,7 @@ public partial class Resource : Entity
             base.Die(false, killer);
         }
 
-        Sprite = Descriptor.Exhausted.Graphic;
+        HandleSprite();
         Passable = Descriptor.WalkableAfter;
         IsDead = true;
 
@@ -68,7 +91,7 @@ public partial class Resource : Entity
 
     public void Spawn()
     {
-        Sprite = Descriptor.Initial.Graphic;
+        HandleSprite();
         var minimumHealth = Descriptor.MinHp;
         var maximumHealth = Descriptor.MaxHp;
 
