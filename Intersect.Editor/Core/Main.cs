@@ -1,4 +1,4 @@
-﻿using Intersect.Editor.Content;
+using Intersect.Editor.Content;
 using Intersect.Editor.Forms;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
@@ -52,12 +52,6 @@ public static partial class Main
 
     public static void DrawFrame()
     {
-        //Check Editors
-        if (Globals.ResourceEditor != null && Globals.ResourceEditor.IsDisposed == false)
-        {
-            Globals.ResourceEditor.Render();
-        }
-
         if (Globals.MapGrid == null)
         {
             return;
