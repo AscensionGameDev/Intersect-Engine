@@ -7,6 +7,7 @@ using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
+using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
@@ -4977,16 +4978,19 @@ Tick timer saved in server config.json.";
 
     public partial struct ResourceEditor
     {
+        public static LocalizedString Animation = @"Animation";
 
-        public static LocalizedString animation = @"Animation:";
+        public static LocalizedString AddHealthState = @"Add";
 
-        public static LocalizedString belowentities = @"Below Entities";
+        public static LocalizedString BelowEntities = @"Below Entities";
 
         public static LocalizedString cancel = @"Cancel";
 
         public static LocalizedString commonevent = @"Common Event";
 
         public static LocalizedString copy = @"Copy Resource";
+
+        public static LocalizedString DeathAnimation = @"Animation:";
 
         public static LocalizedString delete = @"Delete Resource";
 
@@ -5011,25 +5015,42 @@ Tick timer saved in server config.json.";
 
         public static LocalizedString dropdisplay = @"{00} x{01}-{02} | {03}%";
 
-        public static LocalizedString exhaustedgraphic = @"Exhausted Graphic:";
-
         public static LocalizedString folderlabel = @"Folder:";
 
         public static LocalizedString foldertitle = @"Add Folder";
 
         public static LocalizedString folderprompt = @"Enter a name for the folder you'd like to add:";
 
-        public static LocalizedString fromtileset = @"From Tileset";
-
         public static LocalizedString general = @"General";
 
-        public static LocalizedString graphics = @"Graphics";
+        public static LocalizedString Graphics = @"Graphics";
+
+        public static LocalizedString GraphicData = @"Graphic Data";
+
+        public static LocalizedString GraphicFile = @"Graphic File:";
+
+        public static LocalizedString GraphicType = @"Graphic Type:";
+
+        public static Dictionary<ResourceGraphicType, LocalizedString> GraphicTypes = new()
+        {
+            { ResourceGraphicType.Graphic, @"Graphic" },
+            { ResourceGraphicType.Tileset, @"Tileset" },
+            { ResourceGraphicType.Animation, @"Animation" },
+        };
 
         public static LocalizedString harvestevent = @"Event:";
 
-        public static LocalizedString hpregen = @"HP (%);";
+        public static LocalizedString HealthStatesLabel = @"Health States";
 
-        public static LocalizedString initialgraphic = @"Initial Graphic:";
+        public static LocalizedString HealthStateName = @"Health Graphic State Name:";
+
+        public static LocalizedString HealthStateErrorTitle = @"Invalid Health Graphic State Name";
+
+        public static LocalizedString HealthStateNameError = @"Health Graphic State Name must be unique and greater than 0 characters.";
+
+        public static LocalizedString HealthStateNameExists = @"Health Graphic State Name already exists.";
+
+        public static LocalizedString hpregen = @"HP (%);";
 
         public static LocalizedString maxhp = @"Max HP:";
 
@@ -5046,6 +5067,8 @@ Tick timer saved in server config.json.";
         public static LocalizedString regenhint = @"% of HP to restore per tick.
 
 Tick timer saved in server config.json.";
+
+        public static LocalizedString RemoveHealthState = @"Remove";
 
         public static LocalizedString requirementsgroup = @"Requirements";
 
@@ -5074,6 +5097,8 @@ Tick timer saved in server config.json.";
             @"Are you sure you want to undo changes made to this resource? This action cannot be reverted!";
 
         public static LocalizedString undotitle = @"Undo Changes";
+
+        public static LocalizedString UseExplicitMaxHealthForResourceStates = @"Use Explicit Max Health for Resource States";
 
         public static LocalizedString walkableafter = @"Walkable after resource removal?";
 
