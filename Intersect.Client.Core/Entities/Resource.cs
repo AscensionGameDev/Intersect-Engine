@@ -42,7 +42,7 @@ public partial class Resource : Entity, IResource
         set => _descriptor = value;
     }
 
-    private ResourceStateDescriptor? CurrentGraphicState
+    public ResourceStateDescriptor? CurrentGraphicState
     {
         get
         {
@@ -65,6 +65,11 @@ public partial class Resource : Entity, IResource
                 _sprite = string.Empty;
                 Texture = default;
                 return default;
+            }
+
+            if (currentState.Value.GraphicType == ResourceGraphicType.Animation)
+            {
+                return currentState.Value;
             }
 
             if (currentState.Key != _currentStateKey)
