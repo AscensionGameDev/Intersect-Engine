@@ -387,8 +387,8 @@ public partial class FrmResource : EditorForm
 
         cmbGraphicType.SelectedIndex = (int)currentState.TextureType;
         chkRenderBelowEntity.Checked = currentState.RenderBelowEntities;
-        nudHealthRangeMin.Value = currentState.MinHp;
-        nudHealthRangeMax.Value = currentState.MaxHp;
+        nudHealthRangeMin.Value = currentState.MinimumHealth;
+        nudHealthRangeMax.Value = currentState.MaximumHealth;
         UpdateGraphicFileControl(currentState);
     }
 
@@ -925,7 +925,7 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        currentState.MinHp = (int)nudHealthRangeMin.Value;
+        currentState.MinimumHealth = (int)nudHealthRangeMin.Value;
     }
 
     private void nudHealthRangeMax_ValueChanged(object sender, EventArgs e)
@@ -935,7 +935,7 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        currentState.MaxHp = (int)nudHealthRangeMax.Value;
+        currentState.MaximumHealth = (int)nudHealthRangeMax.Value;
     }
 
     private void picResource_MouseDown(object sender, MouseEventArgs e)
