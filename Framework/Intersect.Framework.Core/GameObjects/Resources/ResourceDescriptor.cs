@@ -35,13 +35,13 @@ public partial class ResourceDescriptor : DatabaseObject<ResourceDescriptor>, IF
     public bool UseExplicitMaxHealthForResourceStates { get; set; }
 
     [NotMapped, JsonIgnore]
-    public Dictionary<string, ResourceStateDescriptor> StatesGraphics { get; set; }
+    public Dictionary<Guid, ResourceStateDescriptor> StatesGraphics { get; set; }
 
     [Column("StatesGraphics")]
-    public string JsonHealthGraphics
+    public string JsonStates
     {
         get => JsonConvert.SerializeObject(StatesGraphics);
-        set => StatesGraphics = JsonConvert.DeserializeObject<Dictionary<string, ResourceStateDescriptor>>(value);
+        set => StatesGraphics = JsonConvert.DeserializeObject<Dictionary<Guid, ResourceStateDescriptor>>(value);
     }
 
     [Column("Animation")]
