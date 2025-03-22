@@ -19,9 +19,9 @@ public partial class Resource : Entity, IResource
     private FloatRect _renderBoundsSrc = FloatRect.Empty;
 
     private bool _waitingForTilesets;
+    private bool _recalculateRenderBounds;
 
     private bool _isDead;
-    private Guid _currentStateKey = Guid.Empty;
     private ResourceStateDescriptor? _currentGraphicState;
     private ResourceDescriptor? _descriptor;
     private IAnimation? _activeAnimation;
@@ -29,6 +29,9 @@ public partial class Resource : Entity, IResource
     private readonly int _tileWidth = Options.Instance.Map.TileWidth;
     private readonly int _tileHeight = Options.Instance.Map.TileHeight;
     private readonly int _tapHeight = Options.Instance.Map.MapHeight;
+
+    /// <inheritdoc />
+    public override bool CanBeAttacked => !IsDead;
 
     public ResourceStateDescriptor? CurrentGraphicState => _currentGraphicState;
 
@@ -41,54 +44,6 @@ public partial class Resource : Entity, IResource
     {
         get => _descriptor;
         set => _descriptor = value;
-    }
-
-    private void UpdateGraphicState()
-    {
-        if (Descriptor == default)
-        {
-            _currentGraphicState = default;
-            _sprite = string.Empty;
-            Texture = default;
-            return;
-        }
-
-        var graphicStates = Descriptor.StatesGraphics;
-        var maxHealth = Descriptor.UseExplicitMaxHealthForResourceStates
-            ? Descriptor.MaxHp
-            : MaxVital[(int)Enums.Vital.Health];
-        var currentHealthPercentage = Math.Floor((float)Vital[(int)Enums.Vital.Health] / maxHealth * 100);
-
-        var currentState = graphicStates.FirstOrDefault(
-            s => currentHealthPercentage >= s.Value.MinimumHealth && currentHealthPercentage <= s.Value.MaximumHealth
-        );
-
-        if (currentState.Value == default)
-        {
-            _currentGraphicState = default;
-            _sprite = string.Empty;
-            Texture = default;
-            return;
-        }
-
-        if (currentState.Value.TextureType == ResourceTextureSource.Animation)
-        {
-            _currentGraphicState = currentState.Value;
-            return;
-        }
-
-        if (currentState.Key != _currentStateKey)
-        {
-            _currentStateKey = currentState.Key;
-            _sprite = currentState.Value.Texture;
-            var textureType = currentState.Value.TextureType == ResourceTextureSource.Tileset
-                ? TextureType.Tileset
-                : TextureType.Resource;
-            Texture = GameContentManager.Current.GetTexture(textureType, _sprite);
-            CalculateRenderBounds();
-        }
-
-        _currentGraphicState = currentState.Value;
     }
 
     public bool IsDead
@@ -121,12 +76,40 @@ public partial class Resource : Entity, IResource
             }
 
             _sprite = value;
+            ReloadSpriteTexture();
         }
+    }
+
+    private void ReloadSpriteTexture()
+    {
+        if (Descriptor == null)
+        {
+            return;
+        }
+
+        if (_currentGraphicState?.TextureType == ResourceTextureSource.Tileset)
+        {
+            if (GameContentManager.Current.TilesetsLoaded)
+            {
+                Texture = GameContentManager.Current.GetTexture(TextureType.Tileset, _sprite);
+            }
+            else
+            {
+                _waitingForTilesets = true;
+            }
+        }
+        else
+        {
+            Texture = GameContentManager.Current.GetTexture(TextureType.Resource, _sprite);
+        }
+
+        _recalculateRenderBounds = true;
     }
 
     public override void Load(EntityPacket? packet)
     {
         base.Load(packet);
+        _recalculateRenderBounds = true;
 
         if (packet is not ResourceEntityPacket resourceEntityPacket)
         {
@@ -155,6 +138,7 @@ public partial class Resource : Entity, IResource
         }
 
         _descriptor = descriptor;
+        UpdateFromDescriptor(_descriptor);
 
         if (!justDied)
         {
@@ -194,6 +178,42 @@ public partial class Resource : Entity, IResource
         animation.Finished -= OnAnimationDisposedOrFinished;
     }
 
+    private void UpdateFromDescriptor(ResourceDescriptor? descriptor)
+    {
+        if (descriptor == null)
+        {
+            return;
+        }
+
+        var graphicStates = descriptor.StatesGraphics;
+        var maxHealth = descriptor.UseExplicitMaxHealthForResourceStates
+            ? descriptor.MaxHp
+            : MaxVital[(int)Enums.Vital.Health];
+        var currentHealthPercentage = Math.Floor((float)Vital[(int)Enums.Vital.Health] / maxHealth * 100);
+
+        var currentState = graphicStates.FirstOrDefault(
+            s => currentHealthPercentage >= s.Value.MinimumHealth && currentHealthPercentage <= s.Value.MaximumHealth
+        );
+
+        var updatedSprite = currentState.Value.Texture;
+        _sprite = updatedSprite;
+        _currentGraphicState = currentState.Value;
+        ReloadSpriteTexture();
+    }
+
+    public override void Dispose()
+    {
+        if (RenderList != null)
+        {
+            _ = RenderList.Remove(this);
+            RenderList = null;
+        }
+
+        ClearAnimations();
+        GC.SuppressFinalize(this);
+        mDisposed = true;
+    }
+
     public override bool Update()
     {
         if (mDisposed)
@@ -202,11 +222,22 @@ public partial class Resource : Entity, IResource
             return false;
         }
 
+        if (Descriptor is { IsDeleted: true } deletedDescriptor)
+        {
+            _ = ResourceDescriptor.TryGet(deletedDescriptor.Id, out _descriptor);
+            UpdateFromDescriptor(_descriptor);
+        }
+
         if (!Maps.MapInstance.TryGet(MapId, out var map) || !map.InView())
         {
             LatestMap = map;
             Globals.EntitiesToDispose.Add(Id);
             return false;
+        }
+
+        if (_recalculateRenderBounds)
+        {
+            CalculateRenderBounds();
         }
 
         if (!Graphics.WorldViewport.IntersectsWith(_renderBoundsDest))
@@ -228,25 +259,8 @@ public partial class Resource : Entity, IResource
             }
         }
 
-        UpdateGraphicState();
         return result;
     }
-
-    public override void Dispose()
-    {
-        if (RenderList != null)
-        {
-            _ = RenderList.Remove(this);
-            RenderList = null;
-        }
-
-        ClearAnimations();
-        GC.SuppressFinalize(this);
-        mDisposed = true;
-    }
-
-    /// <inheritdoc />
-    public override bool CanBeAttacked => !IsDead;
 
     public override HashSet<Entity>? DetermineRenderOrder(HashSet<Entity>? renderList, IMapInstance? map)
     {
@@ -344,6 +358,7 @@ public partial class Resource : Entity, IResource
         {
             if (GameContentManager.Current.TilesetsLoaded)
             {
+                ReloadSpriteTexture();
                 _waitingForTilesets = false;
             }
             else
@@ -422,6 +437,8 @@ public partial class Resource : Entity, IResource
         {
             _renderBoundsDest.X -= (_renderBoundsSrc.Width - _tileWidth) / 2;
         }
+
+        _recalculateRenderBounds = false;
     }
 
     //Rendering Resources
