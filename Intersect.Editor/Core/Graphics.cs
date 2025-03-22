@@ -1408,7 +1408,7 @@ public static partial class Graphics
                         case ResourceGraphicType.Graphic:
                             {
                                 var texture = GameContentManager.GetTexture(
-                                    GameContentManager.TextureType.Resource, resourceGraphic.Graphic
+                                    GameContentManager.TextureType.Resource, resourceGraphic.Texture
                                 );
 
                                 if (texture == null)
@@ -1438,7 +1438,7 @@ public static partial class Graphics
                         case ResourceGraphicType.Tileset:
                             {
                                 var texture = GameContentManager.GetTexture(
-                                    GameContentManager.TextureType.Tileset, resourceGraphic.Graphic
+                                    GameContentManager.TextureType.Tileset, resourceGraphic.Texture
                                 );
 
                                 if (texture == null)
