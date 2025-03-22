@@ -1,15 +1,21 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.Framework.Core.GameObjects.Resources;
 
 [Owned]
 public partial class ResourceStateDescriptor
 {
-    public string Graphic { get; set; } = null;
+    public string Graphic { get; set; } = default;
+
+    public ResourceGraphicType GraphicType { get; set; } = ResourceGraphicType.Graphic;
 
     public bool RenderBelowEntities { get; set; }
 
-    public bool GraphicFromTileset { get; set; }
+    public Guid AnimationId { get; set; } = Guid.Empty;
+
+    public int MinHp { get; set; }
+
+    public int MaxHp { get; set; }
 
     public int X { get; set; }
 

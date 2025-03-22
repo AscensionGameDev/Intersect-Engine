@@ -3,7 +3,6 @@ using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
-using Intersect.GameObjects;
 using Intersect.Models;
 using Newtonsoft.Json;
 
@@ -23,22 +22,27 @@ public partial class ResourceDescriptor : DatabaseObject<ResourceDescriptor>, IF
     public ResourceDescriptor(Guid id) : base(id)
     {
         Name = "New Resource";
-        Initial = new ResourceStateDescriptor();
-        Exhausted = new ResourceStateDescriptor();
+        HealthGraphics = [];
     }
 
     //EF wants NO PARAMETERS!!!!!
     public ResourceDescriptor()
     {
         Name = "New Resource";
-        Initial = new ResourceStateDescriptor();
-        Exhausted = new ResourceStateDescriptor();
+        HealthGraphics = [];
     }
 
-    // Graphics
-    public ResourceStateDescriptor Initial { get; set; }
+    public bool UseExplicitMaxHealthForResourceStates { get; set; }
 
-    public ResourceStateDescriptor Exhausted { get; set; }
+    [NotMapped, JsonIgnore]
+    public Dictionary<string, ResourceStateDescriptor> HealthGraphics { get; set; }
+
+    [Column("HealthGraphics")]
+    public string JsonHealthGraphics
+    {
+        get => JsonConvert.SerializeObject(HealthGraphics);
+        set => HealthGraphics = JsonConvert.DeserializeObject<Dictionary<string, ResourceStateDescriptor>>(value);
+    }
 
     [Column("Animation")]
     public Guid AnimationId { get; set; }
