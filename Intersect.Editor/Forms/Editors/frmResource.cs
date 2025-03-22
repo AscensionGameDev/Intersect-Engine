@@ -302,7 +302,7 @@ public partial class FrmResource : EditorForm
             else
             {
                 txtHealthStateName.Text = string.Empty;
-                cmbGraphicType.SelectedIndex = (int)ResourceGraphicType.Graphic;
+                cmbGraphicType.SelectedIndex = (int)ResourceTextureSource.Resource;
                 chkRenderBelowEntity.Checked = false;
                 cmbGraphicFile.Items.Clear();
                 cmbAnimation.Items.Clear();
@@ -385,7 +385,7 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        cmbGraphicType.SelectedIndex = (int)currentState.GraphicType;
+        cmbGraphicType.SelectedIndex = (int)currentState.TextureType;
         chkRenderBelowEntity.Checked = currentState.RenderBelowEntities;
         nudHealthRangeMin.Value = currentState.MinHp;
         nudHealthRangeMax.Value = currentState.MaxHp;
@@ -399,7 +399,7 @@ public partial class FrmResource : EditorForm
         cmbAnimation.Items.Clear();
         cmbAnimation.Items.Add(Strings.General.None);
 
-        if (currentState.GraphicType == ResourceGraphicType.Animation)
+        if (currentState.TextureType == ResourceTextureSource.Animation)
         {
             cmbGraphicFile.Enabled = false;
             picResource.Visible = false;
@@ -414,7 +414,7 @@ public partial class FrmResource : EditorForm
         cmbAnimation.Enabled = false;
 
         var resources = GameContentManager.GetSmartSortedTextureNames(
-            currentState.GraphicType == ResourceGraphicType.Tileset
+            currentState.TextureType == ResourceTextureSource.Tileset
                 ? GameContentManager.TextureType.Tileset
                 : GameContentManager.TextureType.Resource
         );
@@ -462,7 +462,7 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        if (currentState.GraphicType == ResourceGraphicType.Animation)
+        if (currentState.TextureType == ResourceTextureSource.Animation)
         {
             return;
         }
@@ -480,7 +480,7 @@ public partial class FrmResource : EditorForm
             );
         }
 
-        if (currentState.GraphicType == ResourceGraphicType.Tileset)
+        if (currentState.TextureType == ResourceTextureSource.Tileset)
         {
             var selX = currentState.X;
             var selY = currentState.Y;
@@ -861,7 +861,7 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        currentState.GraphicType = (ResourceGraphicType)cmbGraphicType.SelectedIndex;
+        currentState.TextureType = (ResourceTextureSource)cmbGraphicType.SelectedIndex;
         UpdateGraphicFileControl(currentState);
     }
 
@@ -889,7 +889,7 @@ public partial class FrmResource : EditorForm
         {
             currentState.Texture = cmbGraphicFile.Text;
             var graphic = Path.Combine(
-                "resources", currentState.GraphicType == ResourceGraphicType.Tileset ? "tilesets" : "resources", cmbGraphicFile.Text
+                "resources", currentState.TextureType == ResourceTextureSource.Tileset ? "tilesets" : "resources", cmbGraphicFile.Text
             );
 
             if (File.Exists(graphic))
@@ -950,7 +950,7 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        if ((ResourceGraphicType)cmbGraphicType.SelectedIndex != ResourceGraphicType.Tileset)
+        if ((ResourceTextureSource)cmbGraphicType.SelectedIndex != ResourceTextureSource.Tileset)
         {
             return;
         }
@@ -979,7 +979,7 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        if ((ResourceGraphicType)cmbGraphicType.SelectedIndex != ResourceGraphicType.Tileset)
+        if ((ResourceTextureSource)cmbGraphicType.SelectedIndex != ResourceTextureSource.Tileset)
         {
             return;
         }
@@ -1025,7 +1025,7 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        if ((ResourceGraphicType)cmbGraphicType.SelectedIndex != ResourceGraphicType.Tileset)
+        if ((ResourceTextureSource)cmbGraphicType.SelectedIndex != ResourceTextureSource.Tileset)
         {
             return;
         }

@@ -67,7 +67,7 @@ public partial class Resource : Entity, IResource
                 return default;
             }
 
-            if (currentState.Value.GraphicType == ResourceGraphicType.Animation)
+            if (currentState.Value.TextureType == ResourceTextureSource.Animation)
             {
                 return currentState.Value;
             }
@@ -76,7 +76,7 @@ public partial class Resource : Entity, IResource
             {
                 _currentStateKey = currentState.Key;
                 _sprite = currentState.Value.Texture;
-                var textureType = currentState.Value.GraphicType == ResourceGraphicType.Tileset
+                var textureType = currentState.Value.TextureType == ResourceTextureSource.Tileset
                     ? TextureType.Tileset
                     : TextureType.Resource;
                 Texture = GameContentManager.Current.GetTexture(textureType, _sprite);
@@ -350,14 +350,14 @@ public partial class Resource : Entity, IResource
         _renderBoundsSrc.X = 0;
         _renderBoundsSrc.Y = 0;
 
-        switch(graphicState.GraphicType)
+        switch(graphicState.TextureType)
         {
-            case ResourceGraphicType.Graphic:
+            case ResourceTextureSource.Resource:
                 _renderBoundsSrc.Width = Texture.Width;
                 _renderBoundsSrc.Height = Texture.Height;
                 break;
 
-            case ResourceGraphicType.Tileset:
+            case ResourceTextureSource.Tileset:
                 if (IsDead && graphicState is { MaxHp: 0 } deadGraphic)
                 {
                     _renderBoundsSrc = new(
@@ -367,7 +367,7 @@ public partial class Resource : Entity, IResource
                         (deadGraphic.Height + 1) * TileHeight
                     );
                 }
-                else if (!IsDead && graphicState is { GraphicType: ResourceGraphicType.Tileset, MinHp: > 0 } aliveGraphic)
+                else if (!IsDead && graphicState is { TextureType: ResourceTextureSource.Tileset, MinHp: > 0 } aliveGraphic)
                 {
                     _renderBoundsSrc = new(
                         aliveGraphic.X * TileWidth,
@@ -383,7 +383,7 @@ public partial class Resource : Entity, IResource
                 }
                 break;
 
-            case ResourceGraphicType.Animation:
+            case ResourceTextureSource.Animation:
                 break;
 
             default:
