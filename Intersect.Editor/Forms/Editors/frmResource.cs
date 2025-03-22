@@ -240,16 +240,16 @@ public partial class FrmResource : EditorForm
         new ToolTip().SetToolTip(grpRegen, Strings.ResourceEditor.regenhint);
 
         grpGraphics.Text = Strings.ResourceEditor.Appearance;
-        lblHealthStates.Text = Strings.ResourceEditor.StatesLabel;
-        lblHealthStateName.Text = Strings.ResourceEditor.StateName;
-        btnAddHealthState.Text = Strings.ResourceEditor.AddHealthState;
-        btnRemoveHealthState.Text = Strings.ResourceEditor.RemoveHealthState;
+        lblStates.Text = Strings.ResourceEditor.StatesLabel;
+        lblStateName.Text = Strings.ResourceEditor.StateName;
+        btnAddState.Text = Strings.ResourceEditor.AddState;
+        btnRemoveState.Text = Strings.ResourceEditor.RemoveState;
         grpGraphicData.Text = Strings.ResourceEditor.StateProperties;
-        lblGraphicType.Text = Strings.ResourceEditor.TextureSource;
-        cmbGraphicType.Items.Clear();
-        cmbGraphicType.Items.AddRange([.. Strings.ResourceEditor.TextureSources.Values]);
+        lblTextureType.Text = Strings.ResourceEditor.TextureSource;
+        cmbTextureType.Items.Clear();
+        cmbTextureType.Items.AddRange([.. Strings.ResourceEditor.TextureSources.Values]);
         chkRenderBelowEntity.Text = Strings.ResourceEditor.BelowEntities;
-        lblGraphicFile.Text = Strings.ResourceEditor.TextureName;
+        lblTerxtureSource.Text = Strings.ResourceEditor.TextureName;
         lblAnimation.Text = Strings.ResourceEditor.Animation;
 
         grpCommonEvent.Text = Strings.ResourceEditor.commonevent;
@@ -289,25 +289,25 @@ public partial class FrmResource : EditorForm
             nudHpRegen.Value = _editorItem.VitalRegen;
 
             picResource.Hide();
-            lstHealthState.Items.Clear();
+            lstStates.Items.Clear();
             foreach (var state in _editorItem.StatesGraphics.Keys)
             {
-                lstHealthState.Items.Add(state);
+                lstStates.Items.Add(state);
             }
 
-            if (lstHealthState.Items.Count > 0)
+            if (lstStates.Items.Count > 0)
             {
-                lstHealthState.SelectedIndex = 0;
+                lstStates.SelectedIndex = 0;
             }
             else
             {
-                txtHealthStateName.Text = string.Empty;
-                cmbGraphicType.SelectedIndex = (int)ResourceTextureSource.Resource;
+                txtStateName.Text = string.Empty;
+                cmbTextureType.SelectedIndex = (int)ResourceTextureSource.Resource;
                 chkRenderBelowEntity.Checked = false;
-                cmbGraphicFile.Items.Clear();
+                cmbTextureSource.Items.Clear();
                 cmbAnimation.Items.Clear();
-                nudHealthRangeMin.Value = 0;
-                nudHealthRangeMax.Value = 0;
+                nudStateRangeMin.Value = 0;
+                nudStateRangeMax.Value = 0;
                 picResource.Hide();
             }
 
@@ -334,7 +334,7 @@ public partial class FrmResource : EditorForm
 
     #region Helpers
 
-    private bool TryGetCurrentHealthState([NotNullWhen(true)] out ResourceStateDescriptor? state)
+    private bool TryGetCurrentState([NotNullWhen(true)] out ResourceStateDescriptor? state)
     {
         state = null;
 
@@ -343,12 +343,12 @@ public partial class FrmResource : EditorForm
             return false;
         }
 
-        if (lstHealthState.SelectedIndex < 0)
+        if (lstStates.SelectedIndex < 0)
         {
             return false;
         }
 
-        var selectedIndex = lstHealthState.SelectedIndex;
+        var selectedIndex = lstStates.SelectedIndex;
         var stateKey = _editorItem.StatesGraphics.Keys.ToList()[selectedIndex];
         if (!_editorItem.StatesGraphics.TryGetValue(stateKey, out state))
         {
@@ -378,30 +378,30 @@ public partial class FrmResource : EditorForm
         }
     }
 
-    private void UpdateHealthStateControls()
+    private void UpdateStateControls()
     {
-        if (!TryGetCurrentHealthState(out var currentState))
+        if (!TryGetCurrentState(out var currentState))
         {
             return;
         }
 
-        cmbGraphicType.SelectedIndex = (int)currentState.TextureType;
+        cmbTextureType.SelectedIndex = (int)currentState.TextureType;
         chkRenderBelowEntity.Checked = currentState.RenderBelowEntities;
-        nudHealthRangeMin.Value = currentState.MinimumHealth;
-        nudHealthRangeMax.Value = currentState.MaximumHealth;
+        nudStateRangeMin.Value = currentState.MinimumHealth;
+        nudStateRangeMax.Value = currentState.MaximumHealth;
         UpdateGraphicFileControl(currentState);
     }
 
     private void UpdateGraphicFileControl(ResourceStateDescriptor currentState)
     {
-        cmbGraphicFile.Items.Clear();
-        cmbGraphicFile.Items.Add(Strings.General.None);
+        cmbTextureSource.Items.Clear();
+        cmbTextureSource.Items.Add(Strings.General.None);
         cmbAnimation.Items.Clear();
         cmbAnimation.Items.Add(Strings.General.None);
 
         if (currentState.TextureType == ResourceTextureSource.Animation)
         {
-            cmbGraphicFile.Enabled = false;
+            cmbTextureSource.Enabled = false;
             picResource.Visible = false;
             cmbAnimation.Enabled = true;
             cmbAnimation.Items.AddRange(AnimationDescriptor.Names);
@@ -409,7 +409,7 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        cmbGraphicFile.Enabled = true;
+        cmbTextureSource.Enabled = true;
         picResource.Visible = true;
         cmbAnimation.Enabled = false;
 
@@ -419,20 +419,20 @@ public partial class FrmResource : EditorForm
                 : GameContentManager.TextureType.Resource
         );
 
-        cmbGraphicFile.Items.AddRange(resources);
+        cmbTextureSource.Items.AddRange(resources);
 
         if (_editorItem is null)
         {
             return;
         }
 
-        if (currentState.Texture != null && cmbGraphicFile.Items.Contains(currentState.Texture))
+        if (currentState.Texture != null && cmbTextureSource.Items.Contains(currentState.Texture))
         {
-            cmbGraphicFile.SelectedIndex = cmbGraphicFile.FindString(TextUtils.NullToNone(currentState.Texture));
+            cmbTextureSource.SelectedIndex = cmbTextureSource.FindString(TextUtils.NullToNone(currentState.Texture));
             return;
         }
 
-        cmbGraphicFile.SelectedIndex = 0;
+        cmbTextureSource.SelectedIndex = 0;
     }
 
     private void Render(object sender, EventArgs e)
@@ -452,7 +452,7 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        if (!TryGetCurrentHealthState(out var currentState))
+        if (!TryGetCurrentState(out var currentState))
         {
             return;
         }
@@ -470,7 +470,7 @@ public partial class FrmResource : EditorForm
         var gfx = Graphics.FromImage(_graphicBitmap);
         gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picResource.Width, picResource.Height));
 
-        if (cmbGraphicFile.SelectedIndex > 0 && cmbGraphicFile.SelectedIndex > 0)
+        if (cmbTextureSource.SelectedIndex > 0 && cmbTextureSource.SelectedIndex > 0)
         {
             gfx.DrawImage(
                 _resourceGraphic,
@@ -779,25 +779,25 @@ public partial class FrmResource : EditorForm
         _editorItem.CannotHarvestMessage = txtCannotHarvest.Text;
     }
 
-    private void lstHealthState_SelectedIndexChanged(object sender, EventArgs e)
+    private void lstStates_SelectedIndexChanged(object sender, EventArgs e)
     {
         if (_editorItem is null)
         {
             return;
         }
 
-        if (lstHealthState.SelectedIndex < 0)
+        if (lstStates.SelectedIndex < 0)
         {
             return;
         }
 
-        UpdateHealthStateControls();
+        UpdateStateControls();
     }
 
-    private void btnAddHealthState_Click(object sender, EventArgs e)
+    private void btnAddState_Click(object sender, EventArgs e)
     {
         //alert if name is less than 3 characters
-        if (txtHealthStateName.Text.Length <= 0)
+        if (txtStateName.Text.Length <= 0)
         {
             DarkMessageBox.ShowError(
                 Strings.ResourceEditor.StateNameError,
@@ -816,19 +816,19 @@ public partial class FrmResource : EditorForm
             Id = Guid.NewGuid()
         };
         _editorItem.StatesGraphics.Add(state.Id, state);
-        lstHealthState.Items.Add(txtHealthStateName.Text);
-        lstHealthState.SelectedIndex = lstHealthState.Items.Count - 1;
-        txtHealthStateName.Text = string.Empty;
+        lstStates.Items.Add(txtStateName.Text);
+        lstStates.SelectedIndex = lstStates.Items.Count - 1;
+        txtStateName.Text = string.Empty;
     }
 
-    private void btnRemoveHealthState_Click(object sender, EventArgs e)
+    private void btnRemoveState_Click(object sender, EventArgs e)
     {
         if (_editorItem is null)
         {
             return;
         }
 
-        var selectedIndex = lstHealthState.SelectedIndex;
+        var selectedIndex = lstStates.SelectedIndex;
         if (selectedIndex < 0)
         {
             return;
@@ -841,27 +841,27 @@ public partial class FrmResource : EditorForm
         }
 
         _editorItem.StatesGraphics.Remove(stateKey);
-        lstHealthState.Items.RemoveAt(selectedIndex);
-        if (lstHealthState.Items.Count > 0)
+        lstStates.Items.RemoveAt(selectedIndex);
+        if (lstStates.Items.Count > 0)
         {
-            lstHealthState.SelectedIndex = 0;
+            lstStates.SelectedIndex = 0;
         }
     }
 
     private void cmbGraphicType_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if (!TryGetCurrentHealthState(out var currentState))
+        if (!TryGetCurrentState(out var currentState))
         {
             return;
         }
 
-        currentState.TextureType = (ResourceTextureSource)cmbGraphicType.SelectedIndex;
+        currentState.TextureType = (ResourceTextureSource)cmbTextureType.SelectedIndex;
         UpdateGraphicFileControl(currentState);
     }
 
     private void chkRenderBelowEntity_CheckedChanged(object sender, EventArgs e)
     {
-        if (!TryGetCurrentHealthState(out var currentState))
+        if (!TryGetCurrentState(out var currentState))
         {
             return;
         }
@@ -874,16 +874,16 @@ public partial class FrmResource : EditorForm
         _resourceGraphic?.Dispose();
         _resourceGraphic = null;
 
-        if (!TryGetCurrentHealthState(out var currentState))
+        if (!TryGetCurrentState(out var currentState))
         {
             return;
         }
 
-        if (cmbGraphicFile.SelectedIndex > 0)
+        if (cmbTextureSource.SelectedIndex > 0)
         {
-            currentState.Texture = cmbGraphicFile.Text;
+            currentState.Texture = cmbTextureSource.Text;
             var graphic = Path.Combine(
-                "resources", currentState.TextureType == ResourceTextureSource.Tileset ? "tilesets" : "resources", cmbGraphicFile.Text
+                "resources", currentState.TextureType == ResourceTextureSource.Tileset ? "tilesets" : "resources", cmbTextureSource.Text
             );
 
             if (File.Exists(graphic))
@@ -904,7 +904,7 @@ public partial class FrmResource : EditorForm
 
     private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if (!TryGetCurrentHealthState(out var currentState))
+        if (!TryGetCurrentState(out var currentState))
         {
             return;
         }
@@ -912,24 +912,24 @@ public partial class FrmResource : EditorForm
         currentState.AnimationId = AnimationDescriptor.IdFromList(cmbAnimation.SelectedIndex - 1);
     }
 
-    private void nudHealthRangeMin_ValueChanged(object sender, EventArgs e)
+    private void nudStateRangeMin_ValueChanged(object sender, EventArgs e)
     {
-        if (!TryGetCurrentHealthState(out var currentState))
+        if (!TryGetCurrentState(out var currentState))
         {
             return;
         }
 
-        currentState.MinimumHealth = (int)nudHealthRangeMin.Value;
+        currentState.MinimumHealth = (int)nudStateRangeMin.Value;
     }
 
-    private void nudHealthRangeMax_ValueChanged(object sender, EventArgs e)
+    private void nudStateRangeMax_ValueChanged(object sender, EventArgs e)
     {
-        if (!TryGetCurrentHealthState(out var currentState))
+        if (!TryGetCurrentState(out var currentState))
         {
             return;
         }
 
-        currentState.MaximumHealth = (int)nudHealthRangeMax.Value;
+        currentState.MaximumHealth = (int)nudStateRangeMax.Value;
     }
 
     private void picResource_MouseDown(object sender, MouseEventArgs e)
@@ -944,12 +944,12 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        if ((ResourceTextureSource)cmbGraphicType.SelectedIndex != ResourceTextureSource.Tileset)
+        if ((ResourceTextureSource)cmbTextureType.SelectedIndex != ResourceTextureSource.Tileset)
         {
             return;
         }
 
-        if (!TryGetCurrentHealthState(out var currentState))
+        if (!TryGetCurrentState(out var currentState))
         {
             return;
         }
@@ -973,12 +973,12 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        if ((ResourceTextureSource)cmbGraphicType.SelectedIndex != ResourceTextureSource.Tileset)
+        if ((ResourceTextureSource)cmbTextureType.SelectedIndex != ResourceTextureSource.Tileset)
         {
             return;
         }
 
-        if (!TryGetCurrentHealthState(out var currentState))
+        if (!TryGetCurrentState(out var currentState))
         {
             return;
         }
@@ -1019,12 +1019,12 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        if ((ResourceTextureSource)cmbGraphicType.SelectedIndex != ResourceTextureSource.Tileset)
+        if ((ResourceTextureSource)cmbTextureType.SelectedIndex != ResourceTextureSource.Tileset)
         {
             return;
         }
 
-        if (!TryGetCurrentHealthState(out var currentState))
+        if (!TryGetCurrentState(out var currentState))
         {
             return;
         }
