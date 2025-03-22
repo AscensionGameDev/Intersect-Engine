@@ -49,7 +49,7 @@ public partial class Resource : Entity, IResource
                 return default;
             }
 
-            var graphicStates = Descriptor.HealthGraphics.ToList();
+            var graphicStates = Descriptor.StatesGraphics.ToList();
             var maxHealth = Descriptor.UseExplicitMaxHealthForResourceStates
                 ? Descriptor.MaxHp
                 : MaxVital[(int)Enums.Vital.Health];

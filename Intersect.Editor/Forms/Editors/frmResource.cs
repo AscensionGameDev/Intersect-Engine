@@ -290,7 +290,7 @@ public partial class FrmResource : EditorForm
 
             picResource.Hide();
             lstHealthState.Items.Clear();
-            foreach (var state in _editorItem.HealthGraphics.Keys)
+            foreach (var state in _editorItem.StatesGraphics.Keys)
             {
                 lstHealthState.Items.Add(state);
             }
@@ -349,8 +349,8 @@ public partial class FrmResource : EditorForm
         }
 
         var selectedIndex = lstHealthState.SelectedIndex;
-        var stateKey = _editorItem.HealthGraphics.Keys.ToList()[selectedIndex];
-        if (!_editorItem.HealthGraphics.TryGetValue(stateKey, out state))
+        var stateKey = _editorItem.StatesGraphics.Keys.ToList()[selectedIndex];
+        if (!_editorItem.StatesGraphics.TryGetValue(stateKey, out state))
         {
             return false;
         }
@@ -811,7 +811,7 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        if (_editorItem.HealthGraphics.ContainsKey(txtHealthStateName.Text))
+        if (_editorItem.StatesGraphics.ContainsKey(txtHealthStateName.Text))
         {
             DarkMessageBox.ShowError(
                 Strings.ResourceEditor.HealthStateNameExists,
@@ -821,7 +821,7 @@ public partial class FrmResource : EditorForm
         }
 
         var state = new ResourceStateDescriptor();
-        _editorItem.HealthGraphics.Add(txtHealthStateName.Text, state);
+        _editorItem.StatesGraphics.Add(txtHealthStateName.Text, state);
         lstHealthState.Items.Add(txtHealthStateName.Text);
         lstHealthState.SelectedIndex = lstHealthState.Items.Count - 1;
         txtHealthStateName.Text = string.Empty;
@@ -840,13 +840,13 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        var stateKey = _editorItem.HealthGraphics.Keys.ToList()[selectedIndex];
-        if (!_editorItem.HealthGraphics.TryGetValue(stateKey, out _))
+        var stateKey = _editorItem.StatesGraphics.Keys.ToList()[selectedIndex];
+        if (!_editorItem.StatesGraphics.TryGetValue(stateKey, out _))
         {
             return;
         }
 
-        _editorItem.HealthGraphics.Remove(stateKey);
+        _editorItem.StatesGraphics.Remove(stateKey);
         lstHealthState.Items.RemoveAt(selectedIndex);
         if (lstHealthState.Items.Count > 0)
         {
