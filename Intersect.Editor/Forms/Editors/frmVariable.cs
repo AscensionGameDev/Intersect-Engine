@@ -10,7 +10,7 @@ using Intersect.Models;
 namespace Intersect.Editor.Forms.Editors;
 
 
-public partial class FrmSwitchVariable : EditorForm
+public partial class FrmSwitchVariable : BaseEditorForm
 {
 
     private List<IDatabaseObject> mChanged = new List<IDatabaseObject>();
@@ -38,6 +38,7 @@ public partial class FrmSwitchVariable : EditorForm
         ApplyHooks();
         InitializeComponent();
         Icon = Program.Icon;
+        SetEditorButtons(btnSave);
 
         InitLocalization();
         nudVariableValue.Minimum = long.MinValue;
@@ -309,6 +310,9 @@ public partial class FrmSwitchVariable : EditorForm
         }
 
         UpdateToolStripItems();
+        var hasItem = mEditorItem != null;
+        var isChanged = hasItem && mChanged.Contains(mEditorItem);
+        UpdateEditorButtons(hasItem, isChanged);
     }
 
     private void UpdateSelection()

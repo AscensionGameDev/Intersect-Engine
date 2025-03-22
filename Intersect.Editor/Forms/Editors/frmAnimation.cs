@@ -527,7 +527,7 @@ public partial class FrmAnimation : EditorForm
 
     private void frmAnimation_FormClosed(object sender, FormClosedEventArgs e)
     {
-        Globals.CurrentEditor = -1;
+        btnCancel_Click(null, null);
     }
 
     private void scrlLowerFrame_Scroll(object sender, ScrollValueEventArgs e)

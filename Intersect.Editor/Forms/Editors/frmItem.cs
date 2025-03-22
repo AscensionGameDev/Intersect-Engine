@@ -17,7 +17,7 @@ using Graphics = System.Drawing.Graphics;
 namespace Intersect.Editor.Forms.Editors;
 
 
-public partial class FrmItem : EditorForm
+public partial class FrmItem : BaseEditorForm
 {
 
     private List<ItemDescriptor> mChanged = new List<ItemDescriptor>();
@@ -47,6 +47,7 @@ public partial class FrmItem : EditorForm
         cmbProjectile.Items.Clear();
         cmbProjectile.Items.Add(Strings.General.None);
         cmbProjectile.Items.AddRange(ProjectileDescriptor.Names);
+        SetEditorButtons(btnSave);
 
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
     }
@@ -463,6 +464,9 @@ public partial class FrmItem : EditorForm
             pnlContainer.Hide();
         }
 
+        var hasItem = mEditorItem != null;
+        var isChanged = hasItem && mChanged.Contains(mEditorItem);
+        UpdateEditorButtons(hasItem, isChanged);
         UpdateToolStripItems();
     }
 

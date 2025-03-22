@@ -13,7 +13,7 @@ using Graphics = System.Drawing.Graphics;
 namespace Intersect.Editor.Forms.Editors;
 
 
-public partial class FrmProjectile : EditorForm
+public partial class FrmProjectile : BaseEditorForm
 {
 
     private List<ProjectileDescriptor> mChanged = new List<ProjectileDescriptor>();
@@ -31,7 +31,7 @@ public partial class FrmProjectile : EditorForm
         ApplyHooks();
         InitializeComponent();
         Icon = Program.Icon;
-
+        SetEditorButtons(btnSave);
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
     }
     private void AssignEditorItem(Guid id)
@@ -217,6 +217,9 @@ public partial class FrmProjectile : EditorForm
             pnlContainer.Hide();
         }
 
+        var hasItem = mEditorItem != null;
+        var isChanged = hasItem && mChanged.Contains(mEditorItem);
+        UpdateEditorButtons(hasItem, isChanged);
         UpdateToolStripItems();
     }
 
