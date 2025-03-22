@@ -290,9 +290,9 @@ public partial class FrmResource : EditorForm
 
             picResource.Hide();
             lstStates.Items.Clear();
-            foreach (var state in _editorItem.StatesGraphics.Keys)
+            foreach (var state in _editorItem.StatesGraphics.Values)
             {
-                lstStates.Items.Add(state);
+                lstStates.Items.Add(state.Name);
             }
 
             if (lstStates.Items.Count > 0)
