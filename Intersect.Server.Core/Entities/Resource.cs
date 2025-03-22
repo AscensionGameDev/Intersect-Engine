@@ -54,7 +54,7 @@ public partial class Resource : Entity
             state => currentHealthPercentage >= state.MinHp && currentHealthPercentage <= state.MaxHp
         );
 
-        if (currentGraphicState is null || currentGraphicState.GraphicType == ResourceGraphicType.Animation)
+        if (currentGraphicState is null || currentGraphicState.TextureType == ResourceTextureSource.Animation)
         {
             Sprite = default;
             return;

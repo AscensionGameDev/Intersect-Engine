@@ -1403,9 +1403,9 @@ public static partial class Graphics
                     }
 
                     // we have the graphic, now lets build based on type
-                    switch(resourceGraphic.GraphicType)
+                    switch(resourceGraphic.TextureType)
                     {
-                        case ResourceGraphicType.Graphic:
+                        case ResourceTextureSource.Resource:
                             {
                                 var texture = GameContentManager.GetTexture(
                                     GameContentManager.TextureType.Resource, resourceGraphic.Texture
@@ -1435,7 +1435,7 @@ public static partial class Graphics
                             }
                             break;
 
-                        case ResourceGraphicType.Tileset:
+                        case ResourceTextureSource.Tileset:
                             {
                                 var texture = GameContentManager.GetTexture(
                                     GameContentManager.TextureType.Tileset, resourceGraphic.Texture
@@ -1468,7 +1468,7 @@ public static partial class Graphics
                             }
                             break;
 
-                        case ResourceGraphicType.Animation:
+                        case ResourceTextureSource.Animation:
                             {
                                 if (!AnimationDescriptor.TryGet(resourceGraphic.AnimationId, out var animation))
                                 {
@@ -1500,8 +1500,8 @@ public static partial class Graphics
 
                         default:
                             throw new ArgumentOutOfRangeException(
-                                nameof(resourceGraphic.GraphicType),
-                                resourceGraphic.GraphicType,
+                                nameof(resourceGraphic.TextureType),
+                                resourceGraphic.TextureType,
                                 "Unknown ResourceGraphicType"
                             );
                     }

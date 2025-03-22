@@ -1,8 +1,8 @@
 namespace Intersect.Framework.Core.GameObjects.Resources;
 
-public enum ResourceGraphicType
+public enum ResourceTextureSource
 {
-    Graphic,
+    Resource,
     Tileset,
     Animation,
 }

@@ -683,7 +683,7 @@ public partial class MapInstance : MapDescriptor, IGameObject<Guid, MapInstance>
                                 continue;
                             }
 
-                            if (graphicState.GraphicType != ResourceGraphicType.Animation)
+                            if (graphicState.TextureType != ResourceTextureSource.Animation)
                             {
                                 continue;
                             }

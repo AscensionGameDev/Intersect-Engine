@@ -5031,11 +5031,11 @@ Tick timer saved in server config.json.";
 
         public static LocalizedString GraphicType = @"Graphic Type:";
 
-        public static Dictionary<ResourceGraphicType, LocalizedString> GraphicTypes = new()
+        public static Dictionary<ResourceTextureSource, LocalizedString> GraphicTypes = new()
         {
-            { ResourceGraphicType.Graphic, @"Graphic" },
-            { ResourceGraphicType.Tileset, @"Tileset" },
-            { ResourceGraphicType.Animation, @"Animation" },
+            { ResourceTextureSource.Resource, @"Graphic" },
+            { ResourceTextureSource.Tileset, @"Tileset" },
+            { ResourceTextureSource.Animation, @"Animation" },
         };
 
         public static LocalizedString harvestevent = @"Event:";

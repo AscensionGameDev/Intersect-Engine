@@ -7,7 +7,7 @@ public partial class ResourceStateDescriptor
 {
     public string Texture { get; set; } = default;
 
-    public ResourceGraphicType GraphicType { get; set; } = ResourceGraphicType.Graphic;
+    public ResourceTextureSource TextureType { get; set; } = ResourceTextureSource.Resource;
 
     public bool RenderBelowEntities { get; set; }
 
