@@ -49,7 +49,7 @@ public partial class FrmResource : BaseEditorForm
         InitializeComponent();
         Icon = Program.Icon;
 
-        SetEditorButtons(btnSave);
+        SetEditorButtons(btnSave, btnCancel);
         cmbToolType.Items.Clear();
         cmbToolType.Items.Add(Strings.General.None);
         cmbToolType.Items.AddRange(Options.Instance.Equipment.ToolTypes.ToArray());
@@ -281,8 +281,8 @@ public partial class FrmResource : BaseEditorForm
         }
         
         var hasItem = mEditorItem != null;
-        var isChanged = hasItem && mChanged.Contains(mEditorItem);
-        UpdateEditorButtons(hasItem, isChanged);
+        
+        UpdateEditorButtons(hasItem);
         UpdateToolStripItems();
     }
 
@@ -481,7 +481,7 @@ public partial class FrmResource : BaseEditorForm
 
     private void frmResource_FormClosed(object sender, FormClosedEventArgs e)
     {
-        Globals.CurrentEditor = -1;
+        btnCancel_Click(null, null);
     }
 
     private void tmrRender_Tick(object sender, EventArgs e)

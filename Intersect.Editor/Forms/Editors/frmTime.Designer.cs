@@ -1,4 +1,4 @@
-﻿using DarkUI.Controls;
+using DarkUI.Controls;
 
 namespace Intersect.Editor.Forms.Editors
 {
@@ -269,7 +269,7 @@ namespace Intersect.Editor.Forms.Editors
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.ClientSize = new System.Drawing.Size(529, 347);
-            this.ControlBox = false;
+            this.ControlBox = true;
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.grpSettings);
@@ -280,6 +280,7 @@ namespace Intersect.Editor.Forms.Editors
             this.Name = "FrmTime";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Time Editor (Day/Night Settings)";
+            FormClosed += FrmTime_FormClosed;
             this.grpRangeOptions.ResumeLayout(false);
             this.grpRangeOptions.PerformLayout();
             this.grpSettings.ResumeLayout(false);

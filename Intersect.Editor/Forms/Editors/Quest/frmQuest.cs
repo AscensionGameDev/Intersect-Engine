@@ -31,9 +31,11 @@ public partial class FrmQuest : BaseEditorForm
         Icon = Program.Icon;
 
         InitLocalization();
-        SetEditorButtons(btnSave);
+        SetEditorButtons(btnSave, btnCancel);
 
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
+
+        UpdateEditor();
     }
     private void AssignEditorItem(Guid id)
     {
@@ -120,6 +122,11 @@ public partial class FrmQuest : BaseEditorForm
                 UpdateEditor();
             }
         }
+    }
+
+    private void FrmQuest_FormClosed(object sender, FormClosedEventArgs e)
+    {
+        btnCancel_Click(null, null);
     }
 
     private void btnCancel_Click(object sender, EventArgs e)
@@ -280,8 +287,8 @@ public partial class FrmQuest : BaseEditorForm
         }
         
         var hasItem = mEditorItem != null;
-        var isChanged = hasItem && mChanged.Contains(mEditorItem);
-        UpdateEditorButtons(hasItem, isChanged);
+        
+        UpdateEditorButtons(hasItem);
         UpdateToolStripItems();
     }
 

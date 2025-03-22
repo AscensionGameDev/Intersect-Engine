@@ -2964,7 +2964,7 @@ namespace Intersect.Editor.Forms.Editors
             AutoSize = true;
             BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
             ClientSize = new Size(1241, 728);
-            ControlBox = false;
+            ControlBox = true;
             Controls.Add(toolStrip);
             Controls.Add(btnCancel);
             Controls.Add(btnSave);

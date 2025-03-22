@@ -2285,7 +2285,7 @@ namespace Intersect.Editor.Forms.Editors
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.ClientSize = new System.Drawing.Size(1184, 631);
-            this.ControlBox = false;
+            this.ControlBox = true;
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
@@ -2297,6 +2297,7 @@ namespace Intersect.Editor.Forms.Editors
             this.Name = "FrmClass";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Class Editor";
+            FormClosed += FrmClass_FormClosed;
             this.Load += new System.EventHandler(this.frmClass_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_KeyDown);
             this.grpClasses.ResumeLayout(false);

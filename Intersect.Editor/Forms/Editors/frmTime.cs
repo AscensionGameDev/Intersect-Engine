@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using DarkUI.Controls;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
@@ -167,6 +167,11 @@ public partial class FrmTime : Form
         Hide();
         Globals.CurrentEditor = -1;
         Dispose();
+    }
+
+    private void FrmTime_FormClosed(object sender, FormClosedEventArgs e)
+    {
+        btnCancel_Click(null, null);
     }
 
     private void btnCancel_Click(object sender, EventArgs e)

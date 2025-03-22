@@ -28,7 +28,7 @@ public partial class FrmShop : BaseEditorForm
         ApplyHooks();
         InitializeComponent();
         Icon = Program.Icon;
-        SetEditorButtons(btnSave);
+        SetEditorButtons(btnSave, btnCancel);
 
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
     }
@@ -49,6 +49,11 @@ public partial class FrmShop : BaseEditorForm
                 UpdateEditor();
             }
         }
+    }
+
+    private void FrmShop_FormClosed(object sender, FormClosedEventArgs e)
+    {
+        btnCancel_Click(null, null);
     }
 
     private void btnCancel_Click(object sender, EventArgs e)
@@ -198,8 +203,8 @@ public partial class FrmShop : BaseEditorForm
         }
 
         var hasItem = mEditorItem != null;
-        var isChanged = hasItem && mChanged.Contains(mEditorItem);
-        UpdateEditorButtons(hasItem, isChanged);
+        
+        UpdateEditorButtons(hasItem);
         UpdateToolStripItems();
     }
 

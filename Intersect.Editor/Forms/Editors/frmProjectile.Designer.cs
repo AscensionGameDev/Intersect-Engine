@@ -992,7 +992,7 @@ namespace Intersect.Editor.Forms.Editors
             AutoSize = true;
             BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
             ClientSize = new Size(818, 729);
-            ControlBox = false;
+            ControlBox = true;
             Controls.Add(toolStrip);
             Controls.Add(btnCancel);
             Controls.Add(btnSave);
@@ -1004,6 +1004,7 @@ namespace Intersect.Editor.Forms.Editors
             Name = "FrmProjectile";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Projectile Editor";
+            FormClosed += FrmProjectile_FormClosed;
             Load += frmProjectile_Load;
             KeyDown += form_KeyDown;
             grpProjectiles.ResumeLayout(false);

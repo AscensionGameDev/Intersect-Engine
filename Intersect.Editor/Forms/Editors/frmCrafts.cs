@@ -31,7 +31,7 @@ public partial class FrmCrafts : BaseEditorForm
         ApplyHooks();
         InitializeComponent();
         Icon = Program.Icon;
-        SetEditorButtons(btnSave);
+        SetEditorButtons(btnSave, btnCancel);
         lstGameObjects.LostFocus += itemList_FocusChanged;
         lstGameObjects.GotFocus += itemList_FocusChanged;
         cmbResult.Items.Clear();
@@ -131,8 +131,7 @@ public partial class FrmCrafts : BaseEditorForm
         }
 
         var hasItem = mEditorItem != null;
-        var isChanged = hasItem && mChanged.Contains(mEditorItem);
-        UpdateEditorButtons(hasItem, isChanged);
+        UpdateEditorButtons(hasItem);
         UpdateToolStripItems();
     }
 
@@ -201,6 +200,11 @@ public partial class FrmCrafts : BaseEditorForm
             mEditorItem.Ingredients.RemoveAt(lstIngredients.SelectedIndex);
             UpdateEditor();
         }
+    }
+
+    private void FrmCrafts_FormClosed(object sender, FormClosedEventArgs e)
+    {
+        btnCancel_Click(null, null);
     }
 
     private void btnCancel_Click(object sender, EventArgs e)
@@ -424,6 +428,7 @@ public partial class FrmCrafts : BaseEditorForm
     private void frmCrafting_Load(object sender, EventArgs e)
     {
         InitLocalization();
+        UpdateEditor();
     }
 
     private void InitLocalization()

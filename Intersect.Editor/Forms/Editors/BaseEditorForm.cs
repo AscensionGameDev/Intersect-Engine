@@ -5,21 +5,26 @@ namespace Intersect.Editor.Forms.Editors;
 public class BaseEditorForm : EditorForm
 {
     protected Button btnSave;
+    protected Button btnCancel;
 
-    protected void SetEditorButtons(Button saveButton)
+    protected void SetEditorButtons(Button saveButton, Button cancelButton)
     {
         btnSave = saveButton;
-
-        // Keeping method name as 'SetEditorButtons' in case we want to support multiple buttons (e.g. Cancel) later.
+        btnCancel = cancelButton;
     }
 
-    protected void UpdateEditorButtons(bool isItemSelected, bool hasChanges)
+    protected void UpdateEditorButtons(bool isItemSelected)
     {
         if (btnSave != null)
         {
-            btnSave.Visible = isItemSelected && hasChanges;
-            btnSave.Enabled = isItemSelected && hasChanges;
+            btnSave.Visible = isItemSelected;
+            btnSave.Enabled = isItemSelected;
+        }
+
+        if (btnCancel != null)
+        {
+            btnCancel.Visible = isItemSelected;
+            btnCancel.Enabled = isItemSelected;
         }
     }
 }
-

@@ -38,7 +38,7 @@ public partial class FrmSwitchVariable : BaseEditorForm
         ApplyHooks();
         InitializeComponent();
         Icon = Program.Icon;
-        SetEditorButtons(btnSave);
+        SetEditorButtons(btnSave, btnCancel);
 
         InitLocalization();
         nudVariableValue.Minimum = long.MinValue;
@@ -201,6 +201,11 @@ public partial class FrmSwitchVariable : BaseEditorForm
         }
     }
 
+    private void FrmVariable_FormClosed(object sender, FormClosedEventArgs e)
+    {
+        btnCancel_Click(null, null);
+    }
+
     private void btnCancel_Click(object sender, EventArgs e)
     {
         foreach (var item in mChanged)
@@ -311,8 +316,8 @@ public partial class FrmSwitchVariable : BaseEditorForm
 
         UpdateToolStripItems();
         var hasItem = mEditorItem != null;
-        var isChanged = hasItem && mChanged.Contains(mEditorItem);
-        UpdateEditorButtons(hasItem, isChanged);
+        
+        UpdateEditorButtons(hasItem);
     }
 
     private void UpdateSelection()

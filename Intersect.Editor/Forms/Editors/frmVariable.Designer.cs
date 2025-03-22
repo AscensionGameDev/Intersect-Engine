@@ -536,7 +536,7 @@ namespace Intersect.Editor.Forms.Editors
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.ClientSize = new System.Drawing.Size(515, 554);
-            this.ControlBox = false;
+            this.ControlBox = true;
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.grpTypes);
@@ -546,6 +546,7 @@ namespace Intersect.Editor.Forms.Editors
             this.Name = "FrmSwitchVariable";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Variable Editor";
+            FormClosed += FrmVariable_FormClosed;
             this.grpTypes.ResumeLayout(false);
             this.grpTypes.PerformLayout();
             this.grpList.ResumeLayout(false);
