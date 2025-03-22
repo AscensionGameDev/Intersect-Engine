@@ -22,7 +22,7 @@ public partial class Resource : Entity, IResource
     private bool _recalculateRenderBounds;
 
     private bool _isDead;
-    private ResourceStateDescriptor? _currentGraphicState;
+    private ResourceStateDescriptor? _currentState;
     private ResourceDescriptor? _descriptor;
     private IAnimation? _activeAnimation;
 
@@ -33,7 +33,7 @@ public partial class Resource : Entity, IResource
     /// <inheritdoc />
     public override bool CanBeAttacked => !IsDead;
 
-    public ResourceStateDescriptor? CurrentGraphicState => _currentGraphicState;
+    public ResourceStateDescriptor? CurrentGraphicState => _currentState;
 
     public Resource(Guid id, ResourceEntityPacket packet) : base(id, packet, EntityType.Resource)
     {
@@ -87,7 +87,7 @@ public partial class Resource : Entity, IResource
             return;
         }
 
-        if (_currentGraphicState?.TextureType == ResourceTextureSource.Tileset)
+        if (_currentState?.TextureType == ResourceTextureSource.Tileset)
         {
             if (GameContentManager.Current.TilesetsLoaded)
             {
@@ -138,7 +138,7 @@ public partial class Resource : Entity, IResource
         }
 
         _descriptor = descriptor;
-        UpdateFromDescriptor(_descriptor);
+        UpdateCurrentState();
 
         if (!justDied)
         {
@@ -178,16 +178,16 @@ public partial class Resource : Entity, IResource
         animation.Finished -= OnAnimationDisposedOrFinished;
     }
 
-    private void UpdateFromDescriptor(ResourceDescriptor? descriptor)
+    public void UpdateCurrentState()
     {
-        if (descriptor == null)
+        if (Descriptor == default)
         {
             return;
         }
 
-        var graphicStates = descriptor.StatesGraphics;
-        var maxHealth = descriptor.UseExplicitMaxHealthForResourceStates
-            ? descriptor.MaxHp
+        var graphicStates = Descriptor.StatesGraphics;
+        var maxHealth = Descriptor.UseExplicitMaxHealthForResourceStates
+            ? Descriptor.MaxHp
             : MaxVital[(int)Enums.Vital.Health];
         var currentHealthPercentage = Math.Floor((float)Vital[(int)Enums.Vital.Health] / maxHealth * 100);
 
@@ -195,9 +195,9 @@ public partial class Resource : Entity, IResource
             s => currentHealthPercentage >= s.Value.MinimumHealth && currentHealthPercentage <= s.Value.MaximumHealth
         );
 
-        var updatedSprite = currentState.Value.Texture;
-        _sprite = updatedSprite;
-        _currentGraphicState = currentState.Value;
+        _currentState = currentState.Value;
+        var updatedSprite = _currentState?.Texture;
+        _sprite = updatedSprite ?? string.Empty;
         ReloadSpriteTexture();
     }
 
@@ -225,7 +225,7 @@ public partial class Resource : Entity, IResource
         if (Descriptor is { IsDeleted: true } deletedDescriptor)
         {
             _ = ResourceDescriptor.TryGet(deletedDescriptor.Id, out _descriptor);
-            UpdateFromDescriptor(_descriptor);
+            UpdateCurrentState();
         }
 
         if (!Maps.MapInstance.TryGet(MapId, out var map) || !map.InView())

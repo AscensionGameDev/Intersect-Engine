@@ -866,6 +866,11 @@ internal sealed partial class PacketHandler
                     Globals.Me.CombatTimer = Timing.Global.Milliseconds + en.CombatTimeRemaining;
                 }
             }
+
+            if (entity.Type == EntityType.Resource)
+            {
+                ((Resource)entity).UpdateCurrentState();
+            }
         }
     }
 
