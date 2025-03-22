@@ -48,7 +48,7 @@ public partial class Resource : Entity
 
     private void HandleSprite()
     {
-        var graphicStates = Descriptor.HealthGraphics.Values.ToList();
+        var graphicStates = Descriptor.StatesGraphics.Values.ToList();
         var currentHealthPercentage = Math.Floor((float)GetVital(Vital.Health) / GetMaxVital(Vital.Health));
         var currentGraphicState = graphicStates.FirstOrDefault(
             state => currentHealthPercentage >= state.MinimumHealth && currentHealthPercentage <= state.MaximumHealth
