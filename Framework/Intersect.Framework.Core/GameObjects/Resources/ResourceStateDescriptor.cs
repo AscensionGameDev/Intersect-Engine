@@ -1,10 +1,11 @@
-using Microsoft.EntityFrameworkCore;
-
 namespace Intersect.Framework.Core.GameObjects.Resources;
 
-[Owned]
 public partial class ResourceStateDescriptor
 {
+    public Guid Id { get; set; }
+
+    public string Name { get; set; }
+
     public string Texture { get; set; } = default;
 
     public ResourceTextureSource TextureType { get; set; } = ResourceTextureSource.Resource;
