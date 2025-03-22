@@ -1388,16 +1388,16 @@ public static partial class Graphics
                         continue;
                     }
 
-                    if (resource.StatesGraphics.Count == 0)
+                    if (resource.StatesGraphics.Count < 1)
                     {
                         continue;
                     }
 
-                    var fullVitalResourceGraphic = resource.StatesGraphics.FirstOrDefault(
-                        g => g.Value.MaximumHealth == 100
-                    );
+                    var fullVitalResourceGraphic = resource.StatesGraphics.Values
+                        .OrderByDescending(g => g.MaximumHealth)
+                        .FirstOrDefault();
 
-                    if (fullVitalResourceGraphic.Value is not { MaximumHealth: 100 } resourceGraphic)
+                    if (fullVitalResourceGraphic is not { } resourceGraphic)
                     {
                         continue;
                     }
