@@ -13,7 +13,7 @@ using Intersect.Models;
 namespace Intersect.Editor.Forms.Editors;
 
 
-public partial class FrmCrafts : EditorForm
+public partial class FrmCrafts : BaseEditorForm
 {
 
     private List<CraftingRecipeDescriptor> mChanged = new List<CraftingRecipeDescriptor>();
@@ -31,7 +31,7 @@ public partial class FrmCrafts : EditorForm
         ApplyHooks();
         InitializeComponent();
         Icon = Program.Icon;
-
+        SetEditorButtons(btnSave);
         lstGameObjects.LostFocus += itemList_FocusChanged;
         lstGameObjects.GotFocus += itemList_FocusChanged;
         cmbResult.Items.Clear();
@@ -130,6 +130,9 @@ public partial class FrmCrafts : EditorForm
             pnlContainer.Hide();
         }
 
+        var hasItem = mEditorItem != null;
+        var isChanged = hasItem && mChanged.Contains(mEditorItem);
+        UpdateEditorButtons(hasItem, isChanged);
         UpdateToolStripItems();
     }
 

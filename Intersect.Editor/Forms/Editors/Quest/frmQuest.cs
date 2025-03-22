@@ -1,4 +1,4 @@
-﻿using DarkUI.Forms;
+using DarkUI.Forms;
 using Intersect.Editor.Core;
 using Intersect.Editor.Forms.Editors.Events;
 using Intersect.Editor.General;
@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 namespace Intersect.Editor.Forms.Editors.Quest;
 
 
-public partial class FrmQuest : EditorForm
+public partial class FrmQuest : BaseEditorForm
 {
 
     private List<QuestDescriptor> mChanged = new List<QuestDescriptor>();
@@ -31,6 +31,7 @@ public partial class FrmQuest : EditorForm
         Icon = Program.Icon;
 
         InitLocalization();
+        SetEditorButtons(btnSave);
 
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
     }
@@ -277,7 +278,10 @@ public partial class FrmQuest : EditorForm
         {
             pnlContainer.Hide();
         }
-
+        
+        var hasItem = mEditorItem != null;
+        var isChanged = hasItem && mChanged.Contains(mEditorItem);
+        UpdateEditorButtons(hasItem, isChanged);
         UpdateToolStripItems();
     }
 

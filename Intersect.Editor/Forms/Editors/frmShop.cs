@@ -1,4 +1,4 @@
-﻿using DarkUI.Forms;
+using DarkUI.Forms;
 using Intersect.Editor.Content;
 using Intersect.Editor.Core;
 using Intersect.Editor.General;
@@ -12,7 +12,7 @@ using Intersect.Utilities;
 namespace Intersect.Editor.Forms.Editors;
 
 
-public partial class FrmShop : EditorForm
+public partial class FrmShop : BaseEditorForm
 {
 
     private List<ShopDescriptor> mChanged = new List<ShopDescriptor>();
@@ -28,6 +28,7 @@ public partial class FrmShop : EditorForm
         ApplyHooks();
         InitializeComponent();
         Icon = Program.Icon;
+        SetEditorButtons(btnSave);
 
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
     }
@@ -196,6 +197,9 @@ public partial class FrmShop : EditorForm
             pnlContainer.Hide();
         }
 
+        var hasItem = mEditorItem != null;
+        var isChanged = hasItem && mChanged.Contains(mEditorItem);
+        UpdateEditorButtons(hasItem, isChanged);
         UpdateToolStripItems();
     }
 

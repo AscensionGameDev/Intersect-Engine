@@ -1205,7 +1205,7 @@ namespace Intersect.Editor.Forms.Editors
             AutoSize = true;
             BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
             ClientSize = new Size(1249, 622);
-            ControlBox = false;
+            ControlBox = true;
             Controls.Add(toolStrip);
             Controls.Add(grpAnimations);
             Controls.Add(pnlContainer);

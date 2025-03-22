@@ -17,7 +17,7 @@ using Graphics = System.Drawing.Graphics;
 
 namespace Intersect.Editor.Forms.Editors;
 
-public partial class FrmResource : EditorForm
+public partial class FrmResource : BaseEditorForm
 {
 
     private List<ResourceDescriptor> mChanged = [];
@@ -49,6 +49,7 @@ public partial class FrmResource : EditorForm
         InitializeComponent();
         Icon = Program.Icon;
 
+        SetEditorButtons(btnSave);
         cmbToolType.Items.Clear();
         cmbToolType.Items.Add(Strings.General.None);
         cmbToolType.Items.AddRange(Options.Instance.Equipment.ToolTypes.ToArray());
@@ -278,7 +279,10 @@ public partial class FrmResource : EditorForm
         {
             pnlContainer.Hide();
         }
-
+        
+        var hasItem = mEditorItem != null;
+        var isChanged = hasItem && mChanged.Contains(mEditorItem);
+        UpdateEditorButtons(hasItem, isChanged);
         UpdateToolStripItems();
     }
 

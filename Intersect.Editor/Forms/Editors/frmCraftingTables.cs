@@ -1,4 +1,4 @@
-﻿using DarkUI.Forms;
+using DarkUI.Forms;
 using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
@@ -11,7 +11,7 @@ using Intersect.Models;
 namespace Intersect.Editor.Forms.Editors;
 
 
-public partial class FrmCraftingTables : EditorForm
+public partial class FrmCraftingTables : BaseEditorForm
 {
 
     private List<CraftingTableDescriptor> mChanged = new List<CraftingTableDescriptor>();
@@ -27,6 +27,7 @@ public partial class FrmCraftingTables : EditorForm
         ApplyHooks();
         InitializeComponent();
         Icon = Program.Icon;
+        SetEditorButtons(btnSave);
 
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
     }
@@ -72,6 +73,9 @@ public partial class FrmCraftingTables : EditorForm
             pnlContainer.Hide();
         }
 
+        var hasItem = mEditorItem != null;
+        var isChanged = hasItem && mChanged.Contains(mEditorItem);
+        UpdateEditorButtons(hasItem, isChanged);
         UpdateToolStripItems();
     }
 
