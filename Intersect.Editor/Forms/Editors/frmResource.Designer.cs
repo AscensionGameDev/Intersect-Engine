@@ -86,7 +86,6 @@ namespace Intersect.Editor.Forms.Editors
             lblEvent = new Label();
             grpRegen = new DarkGroupBox();
             nudHpRegen = new DarkNumericUpDown();
-            lblHpRegen = new Label();
             lblRegenHint = new Label();
             grpDrops = new DarkGroupBox();
             nudDropMinAmount = new DarkNumericUpDown();
@@ -113,6 +112,7 @@ namespace Intersect.Editor.Forms.Editors
             toolStripItemPaste = new ToolStripButton();
             toolStripSeparator3 = new ToolStripSeparator();
             toolStripItemUndo = new ToolStripButton();
+            lblHpRegen = new Label();
             grpResources.SuspendLayout();
             grpGeneral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)nudMaxHp).BeginInit();
@@ -487,7 +487,7 @@ namespace Intersect.Editor.Forms.Editors
             grpGraphics.Size = new Size(824, 524);
             grpGraphics.TabIndex = 16;
             grpGraphics.TabStop = false;
-            grpGraphics.Text = "Graphics";
+            grpGraphics.Text = "Appearance";
             // 
             // btnRemoveHealthState
             // 
@@ -880,16 +880,6 @@ namespace Intersect.Editor.Forms.Editors
             nudHpRegen.Value = new decimal(new int[] { 0, 0, 0, 0 });
             nudHpRegen.ValueChanged += nudHpRegen_ValueChanged;
             // 
-            // lblHpRegen
-            // 
-            lblHpRegen.AutoSize = true;
-            lblHpRegen.Location = new System.Drawing.Point(6, 20);
-            lblHpRegen.Margin = new Padding(2, 0, 2, 0);
-            lblHpRegen.Name = "lblHpRegen";
-            lblHpRegen.Size = new Size(47, 15);
-            lblHpRegen.TabIndex = 26;
-            lblHpRegen.Text = "HP: (%)";
-            // 
             // lblRegenHint
             // 
             lblRegenHint.Location = new System.Drawing.Point(119, 32);
@@ -1198,6 +1188,16 @@ namespace Intersect.Editor.Forms.Editors
             toolStripItemUndo.Text = "Undo";
             toolStripItemUndo.Click += toolStripItemUndo_Click;
             // 
+            // lblHpRegen
+            // 
+            lblHpRegen.AutoSize = true;
+            lblHpRegen.Location = new System.Drawing.Point(6, 20);
+            lblHpRegen.Margin = new Padding(2, 0, 2, 0);
+            lblHpRegen.Name = "lblHpRegen";
+            lblHpRegen.Size = new Size(47, 15);
+            lblHpRegen.TabIndex = 26;
+            lblHpRegen.Text = "HP: (%)";
+            // 
             // FrmResource
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1302,7 +1302,6 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblDropItem;
         private DarkGroupBox grpRegen;
         private DarkNumericUpDown nudHpRegen;
-        private System.Windows.Forms.Label lblHpRegen;
         private System.Windows.Forms.Label lblRegenHint;
         private DarkGroupBox grpCommonEvent;
         private DarkComboBox cmbEvent;
@@ -1338,5 +1337,6 @@ namespace Intersect.Editor.Forms.Editors
         private DarkNumericUpDown nudHealthRangeMax;
         private DarkNumericUpDown nudHealthRangeMin;
         private DarkCheckBox chkUseExplicitMaxHealthForResourceStates;
+        private Label lblHpRegen;
     }
 }

@@ -237,19 +237,19 @@ public partial class FrmResource : EditorForm
 
         grpRegen.Text = Strings.ResourceEditor.regen;
         lblHpRegen.Text = Strings.ResourceEditor.hpregen;
-        lblRegenHint.Text = Strings.ResourceEditor.regenhint;
+        new ToolTip().SetToolTip(grpRegen, Strings.ResourceEditor.regenhint);
 
-        grpGraphics.Text = Strings.ResourceEditor.Graphics;
-        lblHealthStates.Text = Strings.ResourceEditor.HealthStatesLabel;
-        lblHealthStateName.Text = Strings.ResourceEditor.HealthStateName;
+        grpGraphics.Text = Strings.ResourceEditor.Appearance;
+        lblHealthStates.Text = Strings.ResourceEditor.StatesLabel;
+        lblHealthStateName.Text = Strings.ResourceEditor.StateName;
         btnAddHealthState.Text = Strings.ResourceEditor.AddHealthState;
         btnRemoveHealthState.Text = Strings.ResourceEditor.RemoveHealthState;
-        grpGraphicData.Text = Strings.ResourceEditor.GraphicData;
-        lblGraphicType.Text = Strings.ResourceEditor.GraphicType;
+        grpGraphicData.Text = Strings.ResourceEditor.StateProperties;
+        lblGraphicType.Text = Strings.ResourceEditor.TextureSource;
         cmbGraphicType.Items.Clear();
-        cmbGraphicType.Items.AddRange([.. Strings.ResourceEditor.GraphicTypes.Values]);
+        cmbGraphicType.Items.AddRange([.. Strings.ResourceEditor.TextureSources.Values]);
         chkRenderBelowEntity.Text = Strings.ResourceEditor.BelowEntities;
-        lblGraphicFile.Text = Strings.ResourceEditor.GraphicFile;
+        lblGraphicFile.Text = Strings.ResourceEditor.TextureName;
         lblAnimation.Text = Strings.ResourceEditor.Animation;
 
         grpCommonEvent.Text = Strings.ResourceEditor.commonevent;
@@ -800,8 +800,8 @@ public partial class FrmResource : EditorForm
         if (txtHealthStateName.Text.Length <= 0)
         {
             DarkMessageBox.ShowError(
-                Strings.ResourceEditor.HealthStateNameError,
-                Strings.ResourceEditor.HealthStateErrorTitle
+                Strings.ResourceEditor.StateNameError,
+                Strings.ResourceEditor.StateErrorTitle
             );
             return;
         }
@@ -811,17 +811,11 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        if (_editorItem.StatesGraphics.ContainsKey(txtHealthStateName.Text))
+        var state = new ResourceStateDescriptor
         {
-            DarkMessageBox.ShowError(
-                Strings.ResourceEditor.HealthStateNameExists,
-                Strings.ResourceEditor.HealthStateErrorTitle
-            );
-            return;
-        }
-
-        var state = new ResourceStateDescriptor();
-        _editorItem.StatesGraphics.Add(txtHealthStateName.Text, state);
+            Id = Guid.NewGuid()
+        };
+        _editorItem.StatesGraphics.Add(state.Id, state);
         lstHealthState.Items.Add(txtHealthStateName.Text);
         lstHealthState.SelectedIndex = lstHealthState.Items.Count - 1;
         txtHealthStateName.Text = string.Empty;

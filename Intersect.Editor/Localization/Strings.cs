@@ -5023,15 +5023,15 @@ Tick timer saved in server config.json.";
 
         public static LocalizedString general = @"General";
 
-        public static LocalizedString Graphics = @"Graphics";
+        public static LocalizedString Appearance = @"Appearance";
 
-        public static LocalizedString GraphicData = @"Graphic Data";
+        public static LocalizedString StateProperties = @"State Properties";
 
-        public static LocalizedString GraphicFile = @"Graphic File:";
+        public static LocalizedString TextureName = @"Texture Name:";
 
-        public static LocalizedString GraphicType = @"Graphic Type:";
+        public static LocalizedString TextureSource = @"Texture Source:";
 
-        public static Dictionary<ResourceTextureSource, LocalizedString> GraphicTypes = new()
+        public static Dictionary<ResourceTextureSource, LocalizedString> TextureSources = new()
         {
             { ResourceTextureSource.Resource, @"Graphic" },
             { ResourceTextureSource.Tileset, @"Tileset" },
@@ -5040,15 +5040,13 @@ Tick timer saved in server config.json.";
 
         public static LocalizedString harvestevent = @"Event:";
 
-        public static LocalizedString HealthStatesLabel = @"Health States";
+        public static LocalizedString StatesLabel = @"States";
 
-        public static LocalizedString HealthStateName = @"Health Graphic State Name:";
+        public static LocalizedString StateName = @"State Name:";
 
-        public static LocalizedString HealthStateErrorTitle = @"Invalid Health Graphic State Name";
+        public static LocalizedString StateErrorTitle = @"Invalid name for a resource state";
 
-        public static LocalizedString HealthStateNameError = @"Health Graphic State Name must be unique and greater than 0 characters.";
-
-        public static LocalizedString HealthStateNameExists = @"Health Graphic State Name already exists.";
+        public static LocalizedString StateNameError = @"State Name must be greater than 0 characters.";
 
         public static LocalizedString hpregen = @"HP (%);";
 
