@@ -51,7 +51,7 @@ public partial class Resource : Entity
         var graphicStates = Descriptor.HealthGraphics.Values.ToList();
         var currentHealthPercentage = Math.Floor((float)GetVital(Vital.Health) / GetMaxVital(Vital.Health));
         var currentGraphicState = graphicStates.FirstOrDefault(
-            state => currentHealthPercentage >= state.MinHp && currentHealthPercentage <= state.MaxHp
+            state => currentHealthPercentage >= state.MinimumHealth && currentHealthPercentage <= state.MaximumHealth
         );
 
         if (currentGraphicState is null || currentGraphicState.TextureType == ResourceTextureSource.Animation)

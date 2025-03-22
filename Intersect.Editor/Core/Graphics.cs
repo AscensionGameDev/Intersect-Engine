@@ -1394,10 +1394,10 @@ public static partial class Graphics
                     }
 
                     var fullVitalResourceGraphic = resource.HealthGraphics.FirstOrDefault(
-                        g => g.Value.MaxHp == 100
+                        g => g.Value.MaximumHealth == 100
                     );
 
-                    if (fullVitalResourceGraphic.Value is not { MaxHp: 100 } resourceGraphic)
+                    if (fullVitalResourceGraphic.Value is not { MaximumHealth: 100 } resourceGraphic)
                     {
                         continue;
                     }

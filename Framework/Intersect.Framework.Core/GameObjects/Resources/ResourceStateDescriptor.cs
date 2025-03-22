@@ -11,11 +11,11 @@ public partial class ResourceStateDescriptor
 
     public bool RenderBelowEntities { get; set; }
 
-    public Guid AnimationId { get; set; } = Guid.Empty;
+    public Guid AnimationId { get; set; }
 
-    public int MinHp { get; set; }
+    public int MinimumHealth { get; set; }
 
-    public int MaxHp { get; set; }
+    public int MaximumHealth { get; set; }
 
     public int X { get; set; }
 

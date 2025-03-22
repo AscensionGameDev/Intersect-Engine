@@ -57,7 +57,7 @@ public partial class Resource : Entity, IResource
                 : MaxVital[(int)Enums.Vital.Health];
             var currentHealthPercentage = Math.Floor((float)Vital[(int)Enums.Vital.Health] / maxHealth * 100);
             var currentState = graphicStates.FirstOrDefault(
-                s => currentHealthPercentage >= s.Value.MinHp && currentHealthPercentage <= s.Value.MaxHp
+                s => currentHealthPercentage >= s.Value.MinimumHealth && currentHealthPercentage <= s.Value.MaximumHealth
             );
 
             if (currentState.Value == default)
@@ -358,7 +358,7 @@ public partial class Resource : Entity, IResource
                 break;
 
             case ResourceTextureSource.Tileset:
-                if (IsDead && graphicState is { MaxHp: 0 } deadGraphic)
+                if (IsDead && graphicState is { MaximumHealth: 0 } deadGraphic)
                 {
                     _renderBoundsSrc = new(
                         deadGraphic.X * TileWidth,
@@ -367,7 +367,7 @@ public partial class Resource : Entity, IResource
                         (deadGraphic.Height + 1) * TileHeight
                     );
                 }
-                else if (!IsDead && graphicState is { TextureType: ResourceTextureSource.Tileset, MinHp: > 0 } aliveGraphic)
+                else if (!IsDead && graphicState is { TextureType: ResourceTextureSource.Tileset, MinimumHealth: > 0 } aliveGraphic)
                 {
                     _renderBoundsSrc = new(
                         aliveGraphic.X * TileWidth,
@@ -376,7 +376,7 @@ public partial class Resource : Entity, IResource
                         (aliveGraphic.Height + 1) * TileHeight
                     );
                 }
-                else if (IsDead && graphicState is not { MaxHp: 0} reloadingGraphic)
+                else if (IsDead && graphicState is not { MaximumHealth: 0} reloadingGraphic)
                 {
                     // some game dev pressed save on resource editor, tilesets are reloading, show nothing
                     _renderBoundsSrc = new();
