@@ -161,6 +161,11 @@ public partial class FrmResource : EditorForm
         //Send Changed items
         foreach (var item in _changed)
         {
+            item.StatesGraphics = item.StatesGraphics
+                .OrderBy(s => s.Value.MinimumHealth)
+                .ThenBy(s => s.Value.MaximumHealth)
+                .ToDictionary(p => p.Key, p => p.Value);
+
             PacketSender.SendSaveObject(item);
             item.DeleteBackup();
         }
@@ -289,6 +294,12 @@ public partial class FrmResource : EditorForm
             nudHpRegen.Value = _editorItem.VitalRegen;
 
             picResource.Hide();
+
+            _editorItem.StatesGraphics = _editorItem.StatesGraphics
+                .OrderBy(s => s.Value.MinimumHealth)
+                .ThenBy(s => s.Value.MaximumHealth)
+                .ToDictionary(p => p.Key, p => p.Value);
+
             lstStates.Items.Clear();
             foreach (var state in _editorItem.StatesGraphics.Values)
             {
@@ -813,11 +824,22 @@ public partial class FrmResource : EditorForm
 
         var state = new ResourceStateDescriptor
         {
-            Id = Guid.NewGuid()
+            Id = Guid.NewGuid(),
+            Name = txtStateName.Text,
         };
+
         _editorItem.StatesGraphics.Add(state.Id, state);
-        lstStates.Items.Add(txtStateName.Text);
-        lstStates.SelectedIndex = lstStates.Items.Count - 1;
+        _editorItem.StatesGraphics = _editorItem.StatesGraphics
+            .OrderBy(s => s.Value.MinimumHealth)
+            .ThenBy(s => s.Value.MaximumHealth)
+            .ToDictionary(p => p.Key, p => p.Value);
+
+        lstStates.Items.Clear();
+        foreach (var stateName in _editorItem.StatesGraphics.Values.Select(s => s.Name))
+        {
+            lstStates.Items.Add(stateName);
+        }
+        lstStates.SelectedIndex = lstStates.Items.IndexOf(state.Name);
         txtStateName.Text = string.Empty;
     }
 
