@@ -25,11 +25,9 @@ public partial class Resource : Entity, IResource
     private ResourceDescriptor? _descriptor;
     private IAnimation? _activeAnimation;
 
-    private int TileWidth => Options.Instance.Map.TileWidth;
-
-    private int TileHeight => Options.Instance.Map.TileHeight;
-
-    private int MapHeight => Options.Instance.Map.MapHeight;
+    private readonly int _tileWidth = Options.Instance.Map.TileWidth;
+    private readonly int _tileHeight = Options.Instance.Map.TileHeight;
+    private readonly int _tapHeight = Options.Instance.Map.MapHeight;
 
     public Resource(Guid id, ResourceEntityPacket packet) : base(id, packet, EntityType.Resource)
     {
@@ -293,11 +291,11 @@ public partial class Resource : Entity, IResource
                         }
                         else if (y == gridY)
                         {
-                            renderSet = Graphics.RenderingEntities[priority, MapHeight + Y];
+                            renderSet = Graphics.RenderingEntities[priority, _tapHeight + Y];
                         }
                         else
                         {
-                            renderSet = Graphics.RenderingEntities[priority, MapHeight * 2 + Y];
+                            renderSet = Graphics.RenderingEntities[priority, _tapHeight * 2 + Y];
                         }
 
                         _ = renderSet.Add(this);
@@ -361,19 +359,19 @@ public partial class Resource : Entity, IResource
                 if (IsDead && graphicState is { MaximumHealth: 0 } deadGraphic)
                 {
                     _renderBoundsSrc = new(
-                        deadGraphic.X * TileWidth,
-                        deadGraphic.Y * TileHeight,
-                        (deadGraphic.Width + 1) * TileWidth,
-                        (deadGraphic.Height + 1) * TileHeight
+                        deadGraphic.X * _tileWidth,
+                        deadGraphic.Y * _tileHeight,
+                        (deadGraphic.Width + 1) * _tileWidth,
+                        (deadGraphic.Height + 1) * _tileHeight
                     );
                 }
                 else if (!IsDead && graphicState is { TextureType: ResourceTextureSource.Tileset, MinimumHealth: > 0 } aliveGraphic)
                 {
                     _renderBoundsSrc = new(
-                        aliveGraphic.X * TileWidth,
-                        aliveGraphic.Y * TileHeight,
-                        (aliveGraphic.Width + 1) * TileWidth,
-                        (aliveGraphic.Height + 1) * TileHeight
+                        aliveGraphic.X * _tileWidth,
+                        aliveGraphic.Y * _tileHeight,
+                        (aliveGraphic.Width + 1) * _tileWidth,
+                        (aliveGraphic.Height + 1) * _tileHeight
                     );
                 }
                 else if (IsDead && graphicState is not { MaximumHealth: 0} reloadingGraphic)
@@ -392,17 +390,17 @@ public partial class Resource : Entity, IResource
 
         _renderBoundsDest.Width = _renderBoundsSrc.Width;
         _renderBoundsDest.Height = _renderBoundsSrc.Height;
-        _renderBoundsDest.Y = (int) (map.Y + Y * TileHeight + OffsetY);
-        _renderBoundsDest.X = (int) (map.X + X * TileWidth + OffsetX);
+        _renderBoundsDest.Y = (int) (map.Y + Y * _tileHeight + OffsetY);
+        _renderBoundsDest.X = (int) (map.X + X * _tileWidth + OffsetX);
 
-        if (_renderBoundsSrc.Height > TileHeight)
+        if (_renderBoundsSrc.Height > _tileHeight)
         {
-            _renderBoundsDest.Y -= _renderBoundsSrc.Height - TileHeight;
+            _renderBoundsDest.Y -= _renderBoundsSrc.Height - _tileHeight;
         }
 
-        if (_renderBoundsSrc.Width > TileWidth)
+        if (_renderBoundsSrc.Width > _tileWidth)
         {
-            _renderBoundsDest.X -= (_renderBoundsSrc.Width - TileWidth) / 2;
+            _renderBoundsDest.X -= (_renderBoundsSrc.Width - _tileWidth) / 2;
         }
     }
 
