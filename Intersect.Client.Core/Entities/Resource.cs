@@ -21,7 +21,7 @@ public partial class Resource : Entity, IResource
     private bool _waitingForTilesets;
 
     private bool _isDead;
-    private string _currentStateKey = string.Empty;
+    private Guid _currentStateKey = Guid.Empty;
     private ResourceDescriptor? _descriptor;
     private IAnimation? _activeAnimation;
 
