@@ -5,7 +5,7 @@ namespace Intersect.Framework.Core.GameObjects.Resources;
 [Owned]
 public partial class ResourceStateDescriptor
 {
-    public string Graphic { get; set; } = default;
+    public string Texture { get; set; } = default;
 
     public ResourceGraphicType GraphicType { get; set; } = ResourceGraphicType.Graphic;
 

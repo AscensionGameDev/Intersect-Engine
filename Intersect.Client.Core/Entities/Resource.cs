@@ -75,7 +75,7 @@ public partial class Resource : Entity, IResource
             if (currentState.Key != _currentStateKey)
             {
                 _currentStateKey = currentState.Key;
-                _sprite = currentState.Value.Graphic;
+                _sprite = currentState.Value.Texture;
                 var textureType = currentState.Value.GraphicType == ResourceGraphicType.Tileset
                     ? TextureType.Tileset
                     : TextureType.Resource;

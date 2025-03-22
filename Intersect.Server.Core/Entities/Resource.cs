@@ -60,7 +60,7 @@ public partial class Resource : Entity
             return;
         }
 
-        Sprite = currentGraphicState.Graphic;
+        Sprite = currentGraphicState.Texture;
     }
 
     public override void SubVital(Vital vital, long amount)

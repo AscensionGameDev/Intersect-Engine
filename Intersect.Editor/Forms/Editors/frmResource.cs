@@ -426,9 +426,9 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        if (currentState.Graphic != null && cmbGraphicFile.Items.Contains(currentState.Graphic))
+        if (currentState.Texture != null && cmbGraphicFile.Items.Contains(currentState.Texture))
         {
-            cmbGraphicFile.SelectedIndex = cmbGraphicFile.FindString(TextUtils.NullToNone(currentState.Graphic));
+            cmbGraphicFile.SelectedIndex = cmbGraphicFile.FindString(TextUtils.NullToNone(currentState.Texture));
             return;
         }
 
@@ -457,7 +457,7 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        if (currentState.Graphic is null)
+        if (currentState.Texture is null)
         {
             return;
         }
@@ -887,7 +887,7 @@ public partial class FrmResource : EditorForm
 
         if (cmbGraphicFile.SelectedIndex > 0)
         {
-            currentState.Graphic = cmbGraphicFile.Text;
+            currentState.Texture = cmbGraphicFile.Text;
             var graphic = Path.Combine(
                 "resources", currentState.GraphicType == ResourceGraphicType.Tileset ? "tilesets" : "resources", cmbGraphicFile.Text
             );
@@ -902,7 +902,7 @@ public partial class FrmResource : EditorForm
         }
         else
         {
-            currentState.Graphic = null;
+            currentState.Texture = null;
         }
 
         picResource.Visible = _resourceGraphic != null;
