@@ -4980,7 +4980,7 @@ Tick timer saved in server config.json.";
     {
         public static LocalizedString Animation = @"Animation";
 
-        public static LocalizedString AddHealthState = @"Add";
+        public static LocalizedString AddState = @"Add";
 
         public static LocalizedString BelowEntities = @"Below Entities";
 
@@ -5066,7 +5066,7 @@ Tick timer saved in server config.json.";
 
 Tick timer saved in server config.json.";
 
-        public static LocalizedString RemoveHealthState = @"Remove";
+        public static LocalizedString RemoveState = @"Remove";
 
         public static LocalizedString requirementsgroup = @"Requirements";
 
