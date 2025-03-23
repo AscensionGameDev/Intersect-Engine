@@ -238,11 +238,19 @@ public partial class Resource : Entity, IResource
         var graphicStates = Descriptor.States;
         var currentHealthPercentage = Math.Floor((float)Vital[(int)Enums.Vital.Health] / _maximumHealthForStates * 100);
 
-        var currentState = graphicStates.FirstOrDefault(
-            s => currentHealthPercentage >= s.Value.MinimumHealth && currentHealthPercentage <= s.Value.MaximumHealth
+        if (_currentState is { } currentState &&
+            currentHealthPercentage >= _currentState?.MinimumHealth &&
+            currentHealthPercentage <= _currentState?.MaximumHealth
+        )
+        {
+            return;
+        }
+
+        currentState = graphicStates.Values.FirstOrDefault(
+            s => currentHealthPercentage >= s.MinimumHealth && currentHealthPercentage <= s.MaximumHealth
         );
 
-        _currentState = currentState.Value;
+        _currentState = currentState;
         _sprite = _currentState?.Texture ?? string.Empty;
         ReloadSpriteTexture();
     }
