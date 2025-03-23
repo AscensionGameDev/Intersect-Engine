@@ -1002,6 +1002,8 @@ namespace Intersect.Editor.Forms.Editors
             KeyPreview = true;
             Margin = new Padding(4, 3, 4, 3);
             Name = "FrmProjectile";
+            MaximizeBox = false;
+            MinimizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Projectile Editor";
             FormClosed += FrmProjectile_FormClosed;
