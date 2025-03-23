@@ -26,6 +26,7 @@ public partial class Resource : Entity, IResource
     private int _maximumHealthForStates;
     private ResourceStateDescriptor? _currentState;
     private ResourceDescriptor? _descriptor;
+    private AnimationDescriptor? _animationDescriptor;
     private IAnimation? _activeAnimation;
     private IAnimation? _stateAnimation;
 
@@ -134,7 +135,7 @@ public partial class Resource : Entity, IResource
                     return;
                 }
 
-                if (!AnimationDescriptor.TryGet(_currentState.AnimationId, out var animationDescriptor))
+                if (_animationDescriptor is not { } animationDescriptor)
                 {
                     return;
                 }
@@ -252,6 +253,12 @@ public partial class Resource : Entity, IResource
 
         _currentState = currentState;
         _sprite = _currentState?.Texture ?? string.Empty;
+
+        if (currentState is { TextureType: ResourceTextureSource.Animation } && currentState.AnimationId != Guid.Empty)
+        {
+            _ = AnimationDescriptor.TryGet(currentState.AnimationId, out _animationDescriptor);
+        }
+
         ReloadSpriteTexture();
     }
 
