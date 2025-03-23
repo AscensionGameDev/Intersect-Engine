@@ -27,7 +27,6 @@ using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Intersect.Framework.Core.GameObjects.Resources;
 
 namespace Intersect.Client.Maps;
 
@@ -669,59 +668,6 @@ public partial class MapInstance : MapDescriptor, IGameObject<Guid, MapInstance>
                         mAttributeCritterInstances[mapAttribute].Update();
                         break;
                     }
-                    case MapAttributeType.Resource:
-                        {
-                            var resource = Globals.Entities.Values
-                                .Where(e =>
-                                    e.Type == EntityType.Resource &&
-                                    e.X == x && e.Y == y &&
-                                    e.MapInstance?.Id == Id
-                                ).FirstOrDefault() as Resource;
-
-                            if (resource?.CurrentGraphicState is not { } graphicState)
-                            {
-                                continue;
-                            }
-
-                            if (graphicState.TextureType != ResourceTextureSource.Animation)
-                            {
-                                continue;
-                            }
-
-                            if (!AnimationDescriptor.TryGet(graphicState.AnimationId, out var animation))
-                            {
-                                continue;
-                            }
-
-                            if (!mAttributeAnimInstances.ContainsKey(mapAttribute))
-                            {
-                                var animInstance = new Animation(animation, true);
-                                animInstance.SetPosition(
-                                X + x * _tileWidth + _tileHalfWidth,
-                                Y + y * _tileHeight + _tileHalfHeight, x, y, Id, 0
-                            );
-
-                                mAttributeAnimInstances.Add(mapAttribute, animInstance);
-                            }
-                            else
-                            {
-                                var currentResourceAnimation = mAttributeAnimInstances[mapAttribute];
-                                if (currentResourceAnimation.Descriptor?.Id != animation.Id)
-                                {
-                                    currentResourceAnimation.Dispose();
-                                    mAttributeAnimInstances.Remove(mapAttribute);
-                                    var animInstance = new Animation(animation, true);
-                                    animInstance.SetPosition(
-                                        X + x * _tileWidth + _tileHalfWidth,
-                                        Y + y * _tileHeight + _tileHalfHeight, x, y, Id, 0
-                                    );
-                                    mAttributeAnimInstances.Add(mapAttribute, animInstance);
-                                }
-                            }
-
-                            mAttributeAnimInstances[mapAttribute].Update();
-                        }
-                        break;
                 }
             }
         }
