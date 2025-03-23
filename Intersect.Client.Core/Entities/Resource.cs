@@ -7,6 +7,7 @@ using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
 using Intersect.Core;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.Network.Packets.Server;
 using Microsoft.Extensions.Logging;
@@ -25,6 +26,7 @@ public partial class Resource : Entity, IResource
     private ResourceStateDescriptor? _currentState;
     private ResourceDescriptor? _descriptor;
     private IAnimation? _activeAnimation;
+    private IAnimation? _stateAnimation;
 
     private readonly int _tileWidth = Options.Instance.Map.TileWidth;
     private readonly int _tileHeight = Options.Instance.Map.TileHeight;
@@ -87,20 +89,49 @@ public partial class Resource : Entity, IResource
             return;
         }
 
-        if (_currentState?.TextureType == ResourceTextureSource.Tileset)
+        switch (_currentState?.TextureType)
         {
-            if (GameContentManager.Current.TilesetsLoaded)
-            {
-                Texture = GameContentManager.Current.GetTexture(TextureType.Tileset, _sprite);
-            }
-            else
-            {
-                _waitingForTilesets = true;
-            }
-        }
-        else
-        {
-            Texture = GameContentManager.Current.GetTexture(TextureType.Resource, _sprite);
+            case ResourceTextureSource.Tileset:
+                if (GameContentManager.Current.TilesetsLoaded)
+                {
+                    Texture = GameContentManager.Current.GetTexture(TextureType.Tileset, _sprite);
+                }
+                else
+                {
+                    _waitingForTilesets = true;
+                }
+                break;
+
+            case ResourceTextureSource.Resource:
+                Texture = GameContentManager.Current.GetTexture(TextureType.Resource, _sprite);
+                break;
+
+            case ResourceTextureSource.Animation:
+                if (_stateAnimation?.Descriptor?.Id == _currentState.AnimationId)
+                {
+                    return;
+                }
+
+                _stateAnimation?.Dispose();
+                _stateAnimation = null;
+
+                if (MapInstance is not { } mapInstance)
+                {
+                    return;
+                }
+
+                if (!AnimationDescriptor.TryGet(_currentState.AnimationId, out var animationDescriptor))
+                {
+                    return;
+                }
+
+                var animation = mapInstance.AddTileAnimation(animationDescriptor, X, Y, Direction.Up);
+                if (animation is { IsDisposed: false })
+                {
+                    animation.InfiniteLoop = true;
+                }
+                _stateAnimation = animation;
+                break;
         }
 
         if (Texture == default)
