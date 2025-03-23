@@ -103,6 +103,11 @@ public partial class Resource : Entity, IResource
             Texture = GameContentManager.Current.GetTexture(TextureType.Resource, _sprite);
         }
 
+        if (Texture == default)
+        {
+            Texture = Graphics.Renderer.WhitePixel;
+        }
+
         _recalculateRenderBounds = true;
     }
 
@@ -196,8 +201,7 @@ public partial class Resource : Entity, IResource
         );
 
         _currentState = currentState.Value;
-        var updatedSprite = _currentState?.Texture;
-        _sprite = updatedSprite ?? string.Empty;
+        _sprite = _currentState?.Texture ?? string.Empty;
         ReloadSpriteTexture();
     }
 
