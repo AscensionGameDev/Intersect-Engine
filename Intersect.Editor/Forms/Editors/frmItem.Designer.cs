@@ -2973,6 +2973,8 @@ namespace Intersect.Editor.Forms.Editors
             FormBorderStyle = FormBorderStyle.FixedSingle;
             KeyPreview = true;
             Margin = new Padding(4, 3, 4, 3);
+            MinimizeBox = false;
+            MaximizeBox = false;
             Name = "FrmItem";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Item Editor";

@@ -2293,6 +2293,8 @@ namespace Intersect.Editor.Forms.Editors
             this.Controls.Add(this.pnlContainer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
+            MaximizeBox = false;
+            MinimizeBox = false;
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "FrmClass";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

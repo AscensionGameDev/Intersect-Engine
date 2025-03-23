@@ -542,7 +542,8 @@ namespace Intersect.Editor.Forms.Editors
             this.Controls.Add(this.grpTypes);
             this.Controls.Add(this.grpVariables);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
+            MinimizeBox = false;
+            MaximizeBox = false;
             this.Name = "FrmSwitchVariable";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Variable Editor";

@@ -1,4 +1,4 @@
-﻿using DarkUI.Controls;
+using DarkUI.Controls;
 
 namespace Intersect.Editor.Forms
 {
@@ -264,7 +264,8 @@ namespace Intersect.Editor.Forms
             this.Controls.Add(this.pnlGeneral);
             this.Controls.Add(this.btnGeneralOptions);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
+            MaximizeBox = false;
+            MinimizeBox = false;
             this.Name = "FrmOptions";
             this.Text = "Options";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmOptions_FormClosing);

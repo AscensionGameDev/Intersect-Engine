@@ -858,6 +858,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
             this.MinimizeBox = false;
+            MaximizeBox = false;
             this.Name = "FrmQuest";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Quest Editor";

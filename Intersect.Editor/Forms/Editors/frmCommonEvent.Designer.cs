@@ -1,4 +1,4 @@
-﻿using DarkUI.Controls;
+using DarkUI.Controls;
 
 namespace Intersect.Editor.Forms.Editors
 {
@@ -264,6 +264,7 @@ namespace Intersect.Editor.Forms.Editors
             this.Controls.Add(this.grpCommonEvents);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
+            MinimizeBox = false;
             this.Name = "FrmCommonEvent";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Common Event Editor";

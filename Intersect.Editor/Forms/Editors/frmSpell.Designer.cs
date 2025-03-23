@@ -2390,6 +2390,7 @@ namespace Intersect.Editor.Forms.Editors
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
             this.MaximizeBox = false;
+            MinimizeBox = false;
             this.Name = "FrmSpell";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Spell Editor                       ";

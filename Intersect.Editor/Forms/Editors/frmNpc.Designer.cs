@@ -2148,6 +2148,7 @@ namespace Intersect.Editor.Forms.Editors
             KeyPreview = true;
             Margin = new Padding(4, 3, 4, 3);
             MaximizeBox = false;
+            MinimizeBox = false;
             Name = "FrmNpc";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "NPC Editor";

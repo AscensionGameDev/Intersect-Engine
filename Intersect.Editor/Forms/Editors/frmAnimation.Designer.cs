@@ -1213,6 +1213,7 @@ namespace Intersect.Editor.Forms.Editors
             KeyPreview = true;
             Margin = new Padding(4, 3, 4, 3);
             MaximizeBox = false;
+            MinimizeBox = false;
             Name = "FrmAnimation";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Animation Editor";

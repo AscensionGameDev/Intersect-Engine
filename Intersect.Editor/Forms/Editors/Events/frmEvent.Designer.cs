@@ -1349,6 +1349,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             FormBorderStyle = FormBorderStyle.FixedSingle;
             KeyPreview = true;
             Margin = new Padding(4, 3, 4, 3);
+            MinimizeBox = false;
             MaximizeBox = false;
             MinimumSize = new Size(967, 757);
             Name = "FrmEvent";
