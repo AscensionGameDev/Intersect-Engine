@@ -22,26 +22,24 @@ public partial class ResourceDescriptor : DatabaseObject<ResourceDescriptor>, IF
     public ResourceDescriptor(Guid id) : base(id)
     {
         Name = "New Resource";
-        StatesGraphics = [];
     }
 
     //EF wants NO PARAMETERS!!!!!
     public ResourceDescriptor()
     {
         Name = "New Resource";
-        StatesGraphics = [];
     }
 
     public bool UseExplicitMaxHealthForResourceStates { get; set; }
 
     [NotMapped, JsonIgnore]
-    public Dictionary<Guid, ResourceStateDescriptor> StatesGraphics { get; set; }
+    public Dictionary<Guid, ResourceStateDescriptor> States { get; set; } = [];
 
-    [Column("StatesGraphics")]
+    [Column(nameof(States))]
     public string JsonStates
     {
-        get => JsonConvert.SerializeObject(StatesGraphics);
-        set => StatesGraphics = JsonConvert.DeserializeObject<Dictionary<Guid, ResourceStateDescriptor>>(value);
+        get => JsonConvert.SerializeObject(States);
+        set => States = JsonConvert.DeserializeObject<Dictionary<Guid, ResourceStateDescriptor>>(value);
     }
 
     [Column("Animation")]

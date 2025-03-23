@@ -221,7 +221,7 @@ public partial class Resource : Entity, IResource
             return;
         }
 
-        var graphicStates = Descriptor.StatesGraphics;
+        var graphicStates = Descriptor.States;
         var maxHealth = Descriptor.UseExplicitMaxHealthForResourceStates
             ? Descriptor.MaxHp
             : MaxVital[(int)Enums.Vital.Health];

@@ -161,7 +161,7 @@ public partial class FrmResource : EditorForm
         //Send Changed items
         foreach (var item in _changed)
         {
-            item.StatesGraphics = item.StatesGraphics
+            item.States = item.States
                 .OrderBy(s => s.Value.MinimumHealth)
                 .ThenBy(s => s.Value.MaximumHealth)
                 .ToDictionary(p => p.Key, p => p.Value);
@@ -295,13 +295,13 @@ public partial class FrmResource : EditorForm
 
             picResource.Hide();
 
-            _editorItem.StatesGraphics = _editorItem.StatesGraphics
+            _editorItem.States = _editorItem.States
                 .OrderBy(s => s.Value.MinimumHealth)
                 .ThenBy(s => s.Value.MaximumHealth)
                 .ToDictionary(p => p.Key, p => p.Value);
 
             lstStates.Items.Clear();
-            foreach (var state in _editorItem.StatesGraphics.Values)
+            foreach (var state in _editorItem.States.Values)
             {
                 lstStates.Items.Add(state.Name);
             }
@@ -360,8 +360,8 @@ public partial class FrmResource : EditorForm
         }
 
         var selectedIndex = lstStates.SelectedIndex;
-        var stateKey = _editorItem.StatesGraphics.Keys.ToList()[selectedIndex];
-        if (!_editorItem.StatesGraphics.TryGetValue(stateKey, out state))
+        var stateKey = _editorItem.States.Keys.ToList()[selectedIndex];
+        if (!_editorItem.States.TryGetValue(stateKey, out state))
         {
             return false;
         }
@@ -828,14 +828,14 @@ public partial class FrmResource : EditorForm
             Name = txtStateName.Text,
         };
 
-        _editorItem.StatesGraphics.Add(state.Id, state);
-        _editorItem.StatesGraphics = _editorItem.StatesGraphics
+        _editorItem.States.Add(state.Id, state);
+        _editorItem.States = _editorItem.States
             .OrderBy(s => s.Value.MinimumHealth)
             .ThenBy(s => s.Value.MaximumHealth)
             .ToDictionary(p => p.Key, p => p.Value);
 
         lstStates.Items.Clear();
-        foreach (var stateName in _editorItem.StatesGraphics.Values.Select(s => s.Name))
+        foreach (var stateName in _editorItem.States.Values.Select(s => s.Name))
         {
             lstStates.Items.Add(stateName);
         }
@@ -856,13 +856,13 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        var stateKey = _editorItem.StatesGraphics.Keys.ToList()[selectedIndex];
-        if (!_editorItem.StatesGraphics.TryGetValue(stateKey, out _))
+        var stateKey = _editorItem.States.Keys.ToList()[selectedIndex];
+        if (!_editorItem.States.TryGetValue(stateKey, out _))
         {
             return;
         }
 
-        _editorItem.StatesGraphics.Remove(stateKey);
+        _editorItem.States.Remove(stateKey);
         lstStates.Items.RemoveAt(selectedIndex);
         if (lstStates.Items.Count > 0)
         {
