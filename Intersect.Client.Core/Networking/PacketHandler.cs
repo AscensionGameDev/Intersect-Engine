@@ -867,9 +867,9 @@ internal sealed partial class PacketHandler
                 }
             }
 
-            if (entity.Type == EntityType.Resource)
+            if (entity is Resource resourceEntity)
             {
-                ((Resource)entity).UpdateCurrentState();
+                resourceEntity.UpdateCurrentState();
             }
         }
     }

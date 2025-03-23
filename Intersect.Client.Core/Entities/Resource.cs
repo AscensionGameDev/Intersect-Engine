@@ -31,12 +31,12 @@ public partial class Resource : Entity, IResource
 
     private readonly int _tileWidth = Options.Instance.Map.TileWidth;
     private readonly int _tileHeight = Options.Instance.Map.TileHeight;
-    private readonly int _tapHeight = Options.Instance.Map.MapHeight;
+    private readonly int _mapHeight = Options.Instance.Map.MapHeight;
 
     /// <inheritdoc />
     public override bool CanBeAttacked => !IsDead;
 
-    public ResourceStateDescriptor? CurrentGraphicState => _currentState;
+    public ResourceStateDescriptor? CurrentState => _currentState;
 
     public Resource(Guid id, ResourceEntityPacket packet) : base(id, packet, EntityType.Resource)
     {
@@ -319,7 +319,7 @@ public partial class Resource : Entity, IResource
 
     public override HashSet<Entity>? DetermineRenderOrder(HashSet<Entity>? renderList, IMapInstance? map)
     {
-        if (Descriptor == default || CurrentGraphicState is not { } graphicState || !graphicState.RenderBelowEntities)
+        if (Descriptor == default || CurrentState is not { } graphicState || !graphicState.RenderBelowEntities)
         {
             return base.DetermineRenderOrder(renderList, map);
         }
@@ -378,11 +378,11 @@ public partial class Resource : Entity, IResource
                         }
                         else if (y == gridY)
                         {
-                            renderSet = Graphics.RenderingEntities[priority, _tapHeight + Y];
+                            renderSet = Graphics.RenderingEntities[priority, _mapHeight + Y];
                         }
                         else
                         {
-                            renderSet = Graphics.RenderingEntities[priority, _tapHeight * 2 + Y];
+                            renderSet = Graphics.RenderingEntities[priority, _mapHeight * 2 + Y];
                         }
 
                         _ = renderSet.Add(this);
@@ -428,7 +428,7 @@ public partial class Resource : Entity, IResource
             return;
         }
 
-        if (CurrentGraphicState is not { } graphicState)
+        if (CurrentState is not { } graphicState)
         {
             return;
         }
