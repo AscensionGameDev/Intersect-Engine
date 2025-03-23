@@ -37,7 +37,9 @@ namespace Intersect.Editor.Forms.Editors
             txtSearch = new DarkTextBox();
             lstGameObjects = new Controls.GameObjectList();
             grpGeneral = new DarkGroupBox();
+            nudHpRegen = new DarkNumericUpDown();
             chkUseExplicitMaxHealthForResourceStates = new DarkCheckBox();
+            lblHpRegen = new Label();
             btnAddFolder = new DarkButton();
             lblFolder = new Label();
             cmbFolder = new DarkComboBox();
@@ -84,10 +86,6 @@ namespace Intersect.Editor.Forms.Editors
             grpCommonEvent = new DarkGroupBox();
             cmbEvent = new DarkComboBox();
             lblEvent = new Label();
-            grpRegen = new DarkGroupBox();
-            nudHpRegen = new DarkNumericUpDown();
-            lblHpRegen = new Label();
-            lblRegenHint = new Label();
             grpDrops = new DarkGroupBox();
             nudDropMinAmount = new DarkNumericUpDown();
             lblDropMinAmount = new Label();
@@ -115,6 +113,7 @@ namespace Intersect.Editor.Forms.Editors
             toolStripItemUndo = new ToolStripButton();
             grpResources.SuspendLayout();
             grpGeneral.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudHpRegen).BeginInit();
             ((System.ComponentModel.ISupportInitialize)nudMaxHp).BeginInit();
             ((System.ComponentModel.ISupportInitialize)nudMinHp).BeginInit();
             ((System.ComponentModel.ISupportInitialize)nudSpawnDuration).BeginInit();
@@ -127,8 +126,6 @@ namespace Intersect.Editor.Forms.Editors
             pnlContainer.SuspendLayout();
             grpRequirements.SuspendLayout();
             grpCommonEvent.SuspendLayout();
-            grpRegen.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)nudHpRegen).BeginInit();
             grpDrops.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)nudDropMinAmount).BeginInit();
             ((System.ComponentModel.ISupportInitialize)nudDropMaxAmount).BeginInit();
@@ -200,7 +197,9 @@ namespace Intersect.Editor.Forms.Editors
             // 
             grpGeneral.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
             grpGeneral.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpGeneral.Controls.Add(nudHpRegen);
             grpGeneral.Controls.Add(chkUseExplicitMaxHealthForResourceStates);
+            grpGeneral.Controls.Add(lblHpRegen);
             grpGeneral.Controls.Add(btnAddFolder);
             grpGeneral.Controls.Add(lblFolder);
             grpGeneral.Controls.Add(cmbFolder);
@@ -223,20 +222,42 @@ namespace Intersect.Editor.Forms.Editors
             grpGeneral.Margin = new Padding(4, 3, 4, 3);
             grpGeneral.Name = "grpGeneral";
             grpGeneral.Padding = new Padding(4, 3, 4, 3);
-            grpGeneral.Size = new Size(260, 353);
+            grpGeneral.Size = new Size(260, 380);
             grpGeneral.TabIndex = 15;
             grpGeneral.TabStop = false;
             grpGeneral.Text = "General";
             // 
+            // nudHpRegen
+            // 
+            nudHpRegen.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            nudHpRegen.ForeColor = System.Drawing.Color.Gainsboro;
+            nudHpRegen.Location = new System.Drawing.Point(108, 173);
+            nudHpRegen.Margin = new Padding(4, 3, 4, 3);
+            nudHpRegen.Name = "nudHpRegen";
+            nudHpRegen.Size = new Size(138, 23);
+            nudHpRegen.TabIndex = 30;
+            nudHpRegen.Value = new decimal(new int[] { 0, 0, 0, 0 });
+            nudHpRegen.ValueChanged += nudHpRegen_ValueChanged;
+            // 
             // chkUseExplicitMaxHealthForResourceStates
             // 
-            chkUseExplicitMaxHealthForResourceStates.Location = new System.Drawing.Point(7, 319);
+            chkUseExplicitMaxHealthForResourceStates.Location = new System.Drawing.Point(7, 339);
             chkUseExplicitMaxHealthForResourceStates.Margin = new Padding(4, 3, 4, 3);
             chkUseExplicitMaxHealthForResourceStates.Name = "chkUseExplicitMaxHealthForResourceStates";
             chkUseExplicitMaxHealthForResourceStates.Size = new Size(246, 34);
             chkUseExplicitMaxHealthForResourceStates.TabIndex = 53;
             chkUseExplicitMaxHealthForResourceStates.Text = "Use explicit Max Health for Resources States?";
             chkUseExplicitMaxHealthForResourceStates.CheckedChanged += chkUseExplicitMaxHealthForResourceStates_CheckedChanged;
+            // 
+            // lblHpRegen
+            // 
+            lblHpRegen.AutoSize = true;
+            lblHpRegen.Location = new System.Drawing.Point(7, 175);
+            lblHpRegen.Margin = new Padding(2, 0, 2, 0);
+            lblHpRegen.Name = "lblHpRegen";
+            lblHpRegen.Size = new Size(83, 15);
+            lblHpRegen.TabIndex = 26;
+            lblHpRegen.Text = "HP Regen (%):";
             // 
             // btnAddFolder
             // 
@@ -311,11 +332,11 @@ namespace Intersect.Editor.Forms.Editors
             // 
             nudSpawnDuration.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
             nudSpawnDuration.ForeColor = System.Drawing.Color.Gainsboro;
-            nudSpawnDuration.Location = new System.Drawing.Point(144, 174);
+            nudSpawnDuration.Location = new System.Drawing.Point(108, 202);
             nudSpawnDuration.Margin = new Padding(4, 3, 4, 3);
             nudSpawnDuration.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             nudSpawnDuration.Name = "nudSpawnDuration";
-            nudSpawnDuration.Size = new Size(102, 23);
+            nudSpawnDuration.Size = new Size(137, 23);
             nudSpawnDuration.TabIndex = 40;
             nudSpawnDuration.Value = new decimal(new int[] { 0, 0, 0, 0 });
             nudSpawnDuration.ValueChanged += nudSpawnDuration_ValueChanged;
@@ -333,7 +354,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbDeathAnimation.FlatStyle = FlatStyle.Flat;
             cmbDeathAnimation.ForeColor = System.Drawing.Color.Gainsboro;
             cmbDeathAnimation.FormattingEnabled = true;
-            cmbDeathAnimation.Location = new System.Drawing.Point(7, 237);
+            cmbDeathAnimation.Location = new System.Drawing.Point(7, 255);
             cmbDeathAnimation.Margin = new Padding(4, 3, 4, 3);
             cmbDeathAnimation.Name = "cmbDeathAnimation";
             cmbDeathAnimation.Size = new Size(239, 24);
@@ -345,7 +366,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblDeathAnimation
             // 
             lblDeathAnimation.AutoSize = true;
-            lblDeathAnimation.Location = new System.Drawing.Point(7, 210);
+            lblDeathAnimation.Location = new System.Drawing.Point(8, 232);
             lblDeathAnimation.Margin = new Padding(4, 0, 4, 0);
             lblDeathAnimation.Name = "lblDeathAnimation";
             lblDeathAnimation.Size = new Size(100, 15);
@@ -365,7 +386,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblSpawnDuration
             // 
             lblSpawnDuration.AutoSize = true;
-            lblSpawnDuration.Location = new System.Drawing.Point(7, 179);
+            lblSpawnDuration.Location = new System.Drawing.Point(6, 204);
             lblSpawnDuration.Margin = new Padding(4, 0, 4, 0);
             lblSpawnDuration.Name = "lblSpawnDuration";
             lblSpawnDuration.Size = new Size(94, 15);
@@ -374,7 +395,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // chkWalkableAfter
             // 
-            chkWalkableAfter.Location = new System.Drawing.Point(7, 293);
+            chkWalkableAfter.Location = new System.Drawing.Point(7, 314);
             chkWalkableAfter.Margin = new Padding(4, 3, 4, 3);
             chkWalkableAfter.Name = "chkWalkableAfter";
             chkWalkableAfter.Size = new Size(246, 20);
@@ -384,7 +405,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // chkWalkableBefore
             // 
-            chkWalkableBefore.Location = new System.Drawing.Point(7, 267);
+            chkWalkableBefore.Location = new System.Drawing.Point(7, 287);
             chkWalkableBefore.Margin = new Padding(4, 3, 4, 3);
             chkWalkableBefore.Name = "chkWalkableBefore";
             chkWalkableBefore.Size = new Size(246, 20);
@@ -480,7 +501,7 @@ namespace Intersect.Editor.Forms.Editors
             grpGraphics.Controls.Add(lblStates);
             grpGraphics.Controls.Add(graphicContainer);
             grpGraphics.ForeColor = System.Drawing.Color.Gainsboro;
-            grpGraphics.Location = new System.Drawing.Point(0, 359);
+            grpGraphics.Location = new System.Drawing.Point(1, 386);
             grpGraphics.Margin = new Padding(4, 3, 4, 3);
             grpGraphics.Name = "grpGraphics";
             grpGraphics.Padding = new Padding(4, 3, 4, 3);
@@ -753,7 +774,6 @@ namespace Intersect.Editor.Forms.Editors
             pnlContainer.AutoScroll = true;
             pnlContainer.Controls.Add(grpRequirements);
             pnlContainer.Controls.Add(grpCommonEvent);
-            pnlContainer.Controls.Add(grpRegen);
             pnlContainer.Controls.Add(grpDrops);
             pnlContainer.Controls.Add(grpGeneral);
             pnlContainer.Controls.Add(grpGraphics);
@@ -772,11 +792,11 @@ namespace Intersect.Editor.Forms.Editors
             grpRequirements.Controls.Add(btnRequirements);
             grpRequirements.Controls.Add(txtCannotHarvest);
             grpRequirements.ForeColor = System.Drawing.Color.Gainsboro;
-            grpRequirements.Location = new System.Drawing.Point(539, 218);
+            grpRequirements.Location = new System.Drawing.Point(539, 0);
             grpRequirements.Margin = new Padding(2);
             grpRequirements.Name = "grpRequirements";
             grpRequirements.Padding = new Padding(2);
-            grpRequirements.Size = new Size(285, 135);
+            grpRequirements.Size = new Size(285, 107);
             grpRequirements.TabIndex = 33;
             grpRequirements.TabStop = false;
             grpRequirements.Text = "Requirements";
@@ -810,7 +830,7 @@ namespace Intersect.Editor.Forms.Editors
             grpCommonEvent.Controls.Add(cmbEvent);
             grpCommonEvent.Controls.Add(lblEvent);
             grpCommonEvent.ForeColor = System.Drawing.Color.Gainsboro;
-            grpCommonEvent.Location = new System.Drawing.Point(539, 134);
+            grpCommonEvent.Location = new System.Drawing.Point(539, 114);
             grpCommonEvent.Margin = new Padding(2);
             grpCommonEvent.Name = "grpCommonEvent";
             grpCommonEvent.Padding = new Padding(2);
@@ -832,10 +852,10 @@ namespace Intersect.Editor.Forms.Editors
             cmbEvent.FlatStyle = FlatStyle.Flat;
             cmbEvent.ForeColor = System.Drawing.Color.Gainsboro;
             cmbEvent.FormattingEnabled = true;
-            cmbEvent.Location = new System.Drawing.Point(9, 40);
+            cmbEvent.Location = new System.Drawing.Point(9, 39);
             cmbEvent.Margin = new Padding(4, 3, 4, 3);
             cmbEvent.Name = "cmbEvent";
-            cmbEvent.Size = new Size(227, 24);
+            cmbEvent.Size = new Size(262, 24);
             cmbEvent.TabIndex = 19;
             cmbEvent.Text = null;
             cmbEvent.TextPadding = new Padding(2);
@@ -850,54 +870,6 @@ namespace Intersect.Editor.Forms.Editors
             lblEvent.Size = new Size(39, 15);
             lblEvent.TabIndex = 18;
             lblEvent.Text = "Event:";
-            // 
-            // grpRegen
-            // 
-            grpRegen.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
-            grpRegen.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
-            grpRegen.Controls.Add(nudHpRegen);
-            grpRegen.Controls.Add(lblHpRegen);
-            grpRegen.Controls.Add(lblRegenHint);
-            grpRegen.ForeColor = System.Drawing.Color.Gainsboro;
-            grpRegen.Location = new System.Drawing.Point(539, 2);
-            grpRegen.Margin = new Padding(2);
-            grpRegen.Name = "grpRegen";
-            grpRegen.Padding = new Padding(2);
-            grpRegen.Size = new Size(285, 127);
-            grpRegen.TabIndex = 32;
-            grpRegen.TabStop = false;
-            grpRegen.Text = "Regen";
-            // 
-            // nudHpRegen
-            // 
-            nudHpRegen.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
-            nudHpRegen.ForeColor = System.Drawing.Color.Gainsboro;
-            nudHpRegen.Location = new System.Drawing.Point(9, 36);
-            nudHpRegen.Margin = new Padding(4, 3, 4, 3);
-            nudHpRegen.Name = "nudHpRegen";
-            nudHpRegen.Size = new Size(100, 23);
-            nudHpRegen.TabIndex = 30;
-            nudHpRegen.Value = new decimal(new int[] { 0, 0, 0, 0 });
-            nudHpRegen.ValueChanged += nudHpRegen_ValueChanged;
-            // 
-            // lblHpRegen
-            // 
-            lblHpRegen.AutoSize = true;
-            lblHpRegen.Location = new System.Drawing.Point(6, 20);
-            lblHpRegen.Margin = new Padding(2, 0, 2, 0);
-            lblHpRegen.Name = "lblHpRegen";
-            lblHpRegen.Size = new Size(47, 15);
-            lblHpRegen.TabIndex = 26;
-            lblHpRegen.Text = "HP: (%)";
-            // 
-            // lblRegenHint
-            // 
-            lblRegenHint.Location = new System.Drawing.Point(119, 32);
-            lblRegenHint.Margin = new Padding(4, 0, 4, 0);
-            lblRegenHint.Name = "lblRegenHint";
-            lblRegenHint.Size = new Size(160, 83);
-            lblRegenHint.TabIndex = 0;
-            lblRegenHint.Text = "% of HP to restore per tick.\r\n\r\nTick timer saved in server config.json.";
             // 
             // grpDrops
             // 
@@ -919,7 +891,7 @@ namespace Intersect.Editor.Forms.Editors
             grpDrops.Margin = new Padding(4, 3, 4, 3);
             grpDrops.Name = "grpDrops";
             grpDrops.Padding = new Padding(4, 3, 4, 3);
-            grpDrops.Size = new Size(264, 353);
+            grpDrops.Size = new Size(264, 380);
             grpDrops.TabIndex = 31;
             grpDrops.TabStop = false;
             grpDrops.Text = "Drops";
@@ -928,7 +900,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             nudDropMinAmount.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
             nudDropMinAmount.ForeColor = System.Drawing.Color.Gainsboro;
-            nudDropMinAmount.Location = new System.Drawing.Point(10, 200);
+            nudDropMinAmount.Location = new System.Drawing.Point(10, 254);
             nudDropMinAmount.Margin = new Padding(4, 3, 4, 3);
             nudDropMinAmount.Maximum = new decimal(new int[] { 10000000, 0, 0, 0 });
             nudDropMinAmount.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
@@ -941,7 +913,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblDropMinAmount
             // 
             lblDropMinAmount.AutoSize = true;
-            lblDropMinAmount.Location = new System.Drawing.Point(10, 182);
+            lblDropMinAmount.Location = new System.Drawing.Point(10, 236);
             lblDropMinAmount.Margin = new Padding(4, 0, 4, 0);
             lblDropMinAmount.Name = "lblDropMinAmount";
             lblDropMinAmount.Size = new Size(78, 15);
@@ -950,7 +922,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // btnDropRemove
             // 
-            btnDropRemove.Location = new System.Drawing.Point(168, 312);
+            btnDropRemove.Location = new System.Drawing.Point(168, 342);
             btnDropRemove.Margin = new Padding(4, 3, 4, 3);
             btnDropRemove.Name = "btnDropRemove";
             btnDropRemove.Padding = new Padding(6);
@@ -961,7 +933,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // btnDropAdd
             // 
-            btnDropAdd.Location = new System.Drawing.Point(10, 312);
+            btnDropAdd.Location = new System.Drawing.Point(10, 342);
             btnDropAdd.Margin = new Padding(4, 3, 4, 3);
             btnDropAdd.Name = "btnDropAdd";
             btnDropAdd.Padding = new Padding(6);
@@ -980,7 +952,7 @@ namespace Intersect.Editor.Forms.Editors
             lstDrops.Location = new System.Drawing.Point(10, 22);
             lstDrops.Margin = new Padding(4, 3, 4, 3);
             lstDrops.Name = "lstDrops";
-            lstDrops.Size = new Size(246, 107);
+            lstDrops.Size = new Size(246, 152);
             lstDrops.TabIndex = 62;
             lstDrops.SelectedIndexChanged += lstDrops_SelectedIndexChanged;
             // 
@@ -988,7 +960,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             nudDropMaxAmount.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
             nudDropMaxAmount.ForeColor = System.Drawing.Color.Gainsboro;
-            nudDropMaxAmount.Location = new System.Drawing.Point(169, 200);
+            nudDropMaxAmount.Location = new System.Drawing.Point(169, 254);
             nudDropMaxAmount.Margin = new Padding(4, 3, 4, 3);
             nudDropMaxAmount.Maximum = new decimal(new int[] { 10000000, 0, 0, 0 });
             nudDropMaxAmount.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
@@ -1004,7 +976,7 @@ namespace Intersect.Editor.Forms.Editors
             nudDropChance.DecimalPlaces = 2;
             nudDropChance.ForeColor = System.Drawing.Color.Gainsboro;
             nudDropChance.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            nudDropChance.Location = new System.Drawing.Point(10, 253);
+            nudDropChance.Location = new System.Drawing.Point(10, 307);
             nudDropChance.Margin = new Padding(4, 3, 4, 3);
             nudDropChance.Name = "nudDropChance";
             nudDropChance.Size = new Size(246, 23);
@@ -1025,7 +997,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbDropItem.FlatStyle = FlatStyle.Flat;
             cmbDropItem.ForeColor = System.Drawing.Color.Gainsboro;
             cmbDropItem.FormattingEnabled = true;
-            cmbDropItem.Location = new System.Drawing.Point(10, 153);
+            cmbDropItem.Location = new System.Drawing.Point(10, 205);
             cmbDropItem.Margin = new Padding(4, 3, 4, 3);
             cmbDropItem.Name = "cmbDropItem";
             cmbDropItem.Size = new Size(246, 24);
@@ -1037,7 +1009,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblDropMaxAmount
             // 
             lblDropMaxAmount.AutoSize = true;
-            lblDropMaxAmount.Location = new System.Drawing.Point(169, 182);
+            lblDropMaxAmount.Location = new System.Drawing.Point(169, 236);
             lblDropMaxAmount.Margin = new Padding(4, 0, 4, 0);
             lblDropMaxAmount.Name = "lblDropMaxAmount";
             lblDropMaxAmount.Size = new Size(80, 15);
@@ -1047,7 +1019,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblDropChance
             // 
             lblDropChance.AutoSize = true;
-            lblDropChance.Location = new System.Drawing.Point(10, 230);
+            lblDropChance.Location = new System.Drawing.Point(10, 284);
             lblDropChance.Margin = new Padding(4, 0, 4, 0);
             lblDropChance.Name = "lblDropChance";
             lblDropChance.Size = new Size(71, 15);
@@ -1057,7 +1029,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblDropItem
             // 
             lblDropItem.AutoSize = true;
-            lblDropItem.Location = new System.Drawing.Point(10, 134);
+            lblDropItem.Location = new System.Drawing.Point(10, 186);
             lblDropItem.Margin = new Padding(4, 0, 4, 0);
             lblDropItem.Name = "lblDropItem";
             lblDropItem.Size = new Size(34, 15);
@@ -1226,6 +1198,7 @@ namespace Intersect.Editor.Forms.Editors
             grpResources.PerformLayout();
             grpGeneral.ResumeLayout(false);
             grpGeneral.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudHpRegen).EndInit();
             ((System.ComponentModel.ISupportInitialize)nudMaxHp).EndInit();
             ((System.ComponentModel.ISupportInitialize)nudMinHp).EndInit();
             ((System.ComponentModel.ISupportInitialize)nudSpawnDuration).EndInit();
@@ -1242,9 +1215,6 @@ namespace Intersect.Editor.Forms.Editors
             grpRequirements.PerformLayout();
             grpCommonEvent.ResumeLayout(false);
             grpCommonEvent.PerformLayout();
-            grpRegen.ResumeLayout(false);
-            grpRegen.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)nudHpRegen).EndInit();
             grpDrops.ResumeLayout(false);
             grpDrops.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)nudDropMinAmount).EndInit();
@@ -1300,9 +1270,7 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblDropMaxAmount;
         private System.Windows.Forms.Label lblDropChance;
         private System.Windows.Forms.Label lblDropItem;
-        private DarkGroupBox grpRegen;
         private DarkNumericUpDown nudHpRegen;
-        private System.Windows.Forms.Label lblRegenHint;
         private DarkGroupBox grpCommonEvent;
         private DarkComboBox cmbEvent;
         private System.Windows.Forms.Label lblEvent;
