@@ -23,6 +23,7 @@ public partial class Resource : Entity, IResource
     private bool _recalculateRenderBounds;
 
     private bool _isDead;
+    private int _maximumHealthForStates;
     private ResourceStateDescriptor? _currentState;
     private ResourceDescriptor? _descriptor;
     private IAnimation? _activeAnimation;
@@ -45,7 +46,20 @@ public partial class Resource : Entity, IResource
     public ResourceDescriptor? Descriptor
     {
         get => _descriptor;
-        set => _descriptor = value;
+        set
+        {
+            _descriptor = value;
+            if (value is { } descriptor)
+            {
+                _maximumHealthForStates = (int)(descriptor.UseExplicitMaxHealthForResourceStates
+                    ? descriptor.MaxHp
+                    : MaxVital[(int)Enums.Vital.Health]);
+            }
+            else
+            {
+                _maximumHealthForStates = 0;
+            }
+        }
     }
 
     public bool IsDead
@@ -173,7 +187,7 @@ public partial class Resource : Entity, IResource
             return;
         }
 
-        _descriptor = descriptor;
+        Descriptor = descriptor;
         UpdateCurrentState();
 
         if (!justDied)
@@ -222,10 +236,7 @@ public partial class Resource : Entity, IResource
         }
 
         var graphicStates = Descriptor.States;
-        var maxHealth = Descriptor.UseExplicitMaxHealthForResourceStates
-            ? Descriptor.MaxHp
-            : MaxVital[(int)Enums.Vital.Health];
-        var currentHealthPercentage = Math.Floor((float)Vital[(int)Enums.Vital.Health] / maxHealth * 100);
+        var currentHealthPercentage = Math.Floor((float)Vital[(int)Enums.Vital.Health] / _maximumHealthForStates * 100);
 
         var currentState = graphicStates.FirstOrDefault(
             s => currentHealthPercentage >= s.Value.MinimumHealth && currentHealthPercentage <= s.Value.MaximumHealth
@@ -259,7 +270,8 @@ public partial class Resource : Entity, IResource
 
         if (Descriptor is { IsDeleted: true } deletedDescriptor)
         {
-            _ = ResourceDescriptor.TryGet(deletedDescriptor.Id, out _descriptor);
+            _ = ResourceDescriptor.TryGet(deletedDescriptor.Id, out var descriptor);
+            Descriptor = descriptor;
             UpdateCurrentState();
         }
 
