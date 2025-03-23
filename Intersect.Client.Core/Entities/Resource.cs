@@ -430,7 +430,7 @@ public partial class Resource : Entity, IResource
             }
         }
 
-        if (Texture == null)
+        if (Texture is not { } texture)
         {
             return;
         }
@@ -446,8 +446,8 @@ public partial class Resource : Entity, IResource
         switch(graphicState.TextureType)
         {
             case ResourceTextureSource.Resource:
-                _renderBoundsSrc.Width = Texture.Width;
-                _renderBoundsSrc.Height = Texture.Height;
+                _renderBoundsSrc.Width = texture.Width;
+                _renderBoundsSrc.Height = texture.Height;
                 break;
 
             case ResourceTextureSource.Tileset:
