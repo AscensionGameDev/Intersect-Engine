@@ -4990,7 +4990,7 @@ Tick timer saved in server config.json.";
 
         public static LocalizedString copy = @"Copy Resource";
 
-        public static LocalizedString DeathAnimation = @"Animation:";
+        public static LocalizedString DeathAnimation = @"Death Animation:";
 
         public static LocalizedString delete = @"Delete Resource";
 
@@ -5048,7 +5048,7 @@ Tick timer saved in server config.json.";
 
         public static LocalizedString StateNameError = @"State Name must be greater than 0 characters.";
 
-        public static LocalizedString hpregen = @"HP (%);";
+        public static LocalizedString hpregen = @"HP Regen (%):";
 
         public static LocalizedString maxhp = @"Max HP:";
 
@@ -5059,8 +5059,6 @@ Tick timer saved in server config.json.";
         public static LocalizedString New = @"New Resource";
 
         public static LocalizedString paste = @"Paste Resource";
-
-        public static LocalizedString regen = @"Regen";
 
         public static LocalizedString regenhint = @"% of HP to restore per tick.
 

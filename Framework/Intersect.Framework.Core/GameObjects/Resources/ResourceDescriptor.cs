@@ -42,15 +42,15 @@ public partial class ResourceDescriptor : DatabaseObject<ResourceDescriptor>, IF
         set => States = JsonConvert.DeserializeObject<Dictionary<Guid, ResourceStateDescriptor>>(value);
     }
 
-    [Column("Animation")]
-    public Guid AnimationId { get; set; }
+    [Column(nameof(DeathAnimation))]
+    public Guid DeathAnimationId { get; set; }
 
     [NotMapped]
     [JsonIgnore]
-    public AnimationDescriptor Animation
+    public AnimationDescriptor DeathAnimation
     {
-        get => AnimationDescriptor.Get(AnimationId);
-        set => AnimationId = value?.Id ?? Guid.Empty;
+        get => AnimationDescriptor.Get(DeathAnimationId);
+        set => DeathAnimationId = value?.Id ?? Guid.Empty;
     }
 
     // Drops

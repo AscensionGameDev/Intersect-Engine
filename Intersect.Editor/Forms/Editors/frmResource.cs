@@ -240,9 +240,8 @@ public partial class FrmResource : EditorForm
         btnDropAdd.Text = Strings.ResourceEditor.dropadd;
         btnDropRemove.Text = Strings.ResourceEditor.dropremove;
 
-        grpRegen.Text = Strings.ResourceEditor.regen;
         lblHpRegen.Text = Strings.ResourceEditor.hpregen;
-        new ToolTip().SetToolTip(grpRegen, Strings.ResourceEditor.regenhint);
+        new ToolTip().SetToolTip(lblHpRegen, Strings.ResourceEditor.regenhint);
 
         grpGraphics.Text = Strings.ResourceEditor.Appearance;
         lblStates.Text = Strings.ResourceEditor.StatesLabel;
@@ -283,7 +282,7 @@ public partial class FrmResource : EditorForm
             cmbFolder.Text = _editorItem.Folder;
             cmbToolType.SelectedIndex = _editorItem.Tool + 1;
             nudSpawnDuration.Value = _editorItem.SpawnDuration;
-            cmbDeathAnimation.SelectedIndex = AnimationDescriptor.ListIndex(_editorItem.AnimationId) + 1;
+            cmbDeathAnimation.SelectedIndex = AnimationDescriptor.ListIndex(_editorItem.DeathAnimationId) + 1;
             nudMinHp.Value = _editorItem.MinHp;
             nudMaxHp.Value = _editorItem.MaxHp;
             chkWalkableBefore.Checked = _editorItem.WalkableBefore;
@@ -592,7 +591,7 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        _editorItem.Animation = AnimationDescriptor.Get(AnimationDescriptor.IdFromList(cmbDeathAnimation.SelectedIndex - 1));
+        _editorItem.DeathAnimation = AnimationDescriptor.Get(AnimationDescriptor.IdFromList(cmbDeathAnimation.SelectedIndex - 1));
     }
 
     private void chkWalkableBefore_CheckedChanged(object sender, EventArgs e)

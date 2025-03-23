@@ -183,7 +183,7 @@ public partial class Resource : Entity, IResource
 
         if (MapInstance is { } mapInstance)
         {
-            var animation = mapInstance.AddTileAnimation(descriptor.AnimationId, X, Y, Direction.Up);
+            var animation = mapInstance.AddTileAnimation(descriptor.DeathAnimationId, X, Y, Direction.Up);
             if (animation is { IsDisposed: false })
             {
                 animation.Finished += OnAnimationDisposedOrFinished;
