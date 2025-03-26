@@ -17,7 +17,7 @@ using Graphics = System.Drawing.Graphics;
 namespace Intersect.Editor.Forms.Editors;
 
 
-public partial class FrmSpell : BaseEditorForm
+public partial class FrmSpell : EditorForm
 {
 
     private List<SpellDescriptor> mChanged = new List<SpellDescriptor>();
@@ -35,8 +35,8 @@ public partial class FrmSpell : BaseEditorForm
         ApplyHooks();
         InitializeComponent();
         Icon = Program.Icon;
-        SetSaveButton(btnSave);
-        SetCancelButton(btnCancel);
+        _btnSave = btnSave;
+        _btnCancel = btnCancel;
 
         cmbScalingStat.Items.Clear();
         for (var i = 0; i < Enum.GetValues<Stat>().Length; i++)

@@ -13,7 +13,7 @@ using Intersect.Models;
 namespace Intersect.Editor.Forms.Editors;
 
 
-public partial class FrmCrafts : BaseEditorForm
+public partial class FrmCrafts : EditorForm
 {
 
     private List<CraftingRecipeDescriptor> mChanged = new List<CraftingRecipeDescriptor>();
@@ -31,8 +31,8 @@ public partial class FrmCrafts : BaseEditorForm
         ApplyHooks();
         InitializeComponent();
         Icon = Program.Icon;
-        SetSaveButton(btnSave);
-        SetCancelButton(btnCancel);
+        _btnSave = btnSave;
+        _btnCancel = btnCancel;
         lstGameObjects.LostFocus += itemList_FocusChanged;
         lstGameObjects.GotFocus += itemList_FocusChanged;
         cmbResult.Items.Clear();

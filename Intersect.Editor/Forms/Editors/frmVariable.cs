@@ -10,7 +10,7 @@ using Intersect.Models;
 namespace Intersect.Editor.Forms.Editors;
 
 
-public partial class FrmSwitchVariable : BaseEditorForm
+public partial class FrmSwitchVariable : EditorForm
 {
 
     private List<IDatabaseObject> mChanged = new List<IDatabaseObject>();
@@ -38,8 +38,8 @@ public partial class FrmSwitchVariable : BaseEditorForm
         ApplyHooks();
         InitializeComponent();
         Icon = Program.Icon;
-        SetSaveButton(btnSave);
-        SetCancelButton(btnCancel);
+        _btnSave = btnSave;
+        _btnCancel = btnCancel;
 
         InitLocalization();
         nudVariableValue.Minimum = long.MinValue;

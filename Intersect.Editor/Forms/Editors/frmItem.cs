@@ -17,7 +17,7 @@ using Graphics = System.Drawing.Graphics;
 namespace Intersect.Editor.Forms.Editors;
 
 
-public partial class FrmItem : BaseEditorForm
+public partial class FrmItem : EditorForm
 {
 
     private List<ItemDescriptor> mChanged = new List<ItemDescriptor>();
@@ -47,8 +47,8 @@ public partial class FrmItem : BaseEditorForm
         cmbProjectile.Items.Clear();
         cmbProjectile.Items.Add(Strings.General.None);
         cmbProjectile.Items.AddRange(ProjectileDescriptor.Names);
-        SetSaveButton(btnSave);
-        SetCancelButton(btnCancel);
+        _btnSave = btnSave;
+        _btnCancel = btnCancel;
 
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
     }

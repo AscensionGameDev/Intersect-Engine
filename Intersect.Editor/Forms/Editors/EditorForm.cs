@@ -1,3 +1,4 @@
+using DarkUI.Controls;
 using Intersect.Editor.Core;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
@@ -11,6 +12,9 @@ public partial class EditorForm : Form
 {
 
     private bool mClosing = false;
+
+    protected DarkButton? _btnSave;
+    protected DarkButton? _btnCancel;
 
     protected EditorForm()
     {
@@ -83,4 +87,18 @@ public partial class EditorForm : Form
 
     }
 
+    protected void UpdateEditorButtons(bool isItemSelected)
+    {
+        if (_btnSave != null)
+        {
+            _btnSave.Visible = isItemSelected;
+            _btnSave.Enabled = isItemSelected;
+        }
+
+        if (_btnCancel != null)
+        {
+            _btnCancel.Visible = isItemSelected;
+            _btnCancel.Enabled = isItemSelected;
+        }
+    }
 }

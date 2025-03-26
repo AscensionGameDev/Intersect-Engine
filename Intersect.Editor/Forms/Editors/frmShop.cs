@@ -12,7 +12,7 @@ using Intersect.Utilities;
 namespace Intersect.Editor.Forms.Editors;
 
 
-public partial class FrmShop : BaseEditorForm
+public partial class FrmShop : EditorForm
 {
 
     private List<ShopDescriptor> mChanged = new List<ShopDescriptor>();
@@ -28,8 +28,8 @@ public partial class FrmShop : BaseEditorForm
         ApplyHooks();
         InitializeComponent();
         Icon = Program.Icon;
-        SetSaveButton(btnSave);
-        SetCancelButton(btnCancel);
+        _btnSave = btnSave;
+        _btnCancel = btnCancel;
 
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
     }

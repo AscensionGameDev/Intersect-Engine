@@ -18,7 +18,7 @@ using Graphics = System.Drawing.Graphics;
 
 namespace Intersect.Editor.Forms.Editors;
 
-public partial class FrmNpc : BaseEditorForm
+public partial class FrmNpc : EditorForm
 {
 
     private List<NPCDescriptor> mChanged = [];
@@ -36,8 +36,8 @@ public partial class FrmNpc : BaseEditorForm
         ApplyHooks();
         InitializeComponent();
         Icon = Program.Icon;
-        SetSaveButton(btnSave);
-        SetCancelButton(btnCancel);
+        _btnSave = btnSave;
+        _btnCancel = btnCancel;
 
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
     }

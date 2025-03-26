@@ -12,7 +12,7 @@ using System.Diagnostics;
 namespace Intersect.Editor.Forms.Editors;
 
 
-public partial class FrmCraftingTables : BaseEditorForm
+public partial class FrmCraftingTables : EditorForm
 {
 
     private List<CraftingTableDescriptor> mChanged = new List<CraftingTableDescriptor>();
@@ -28,8 +28,8 @@ public partial class FrmCraftingTables : BaseEditorForm
         ApplyHooks();
         InitializeComponent();
         Icon = Program.Icon;
-        SetSaveButton(btnSave);
-        SetCancelButton(btnCancel);
+        _btnSave = btnSave;
+        _btnCancel = btnCancel;
 
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
     }

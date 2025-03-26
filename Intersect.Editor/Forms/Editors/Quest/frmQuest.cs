@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 namespace Intersect.Editor.Forms.Editors.Quest;
 
 
-public partial class FrmQuest : BaseEditorForm
+public partial class FrmQuest : EditorForm
 {
 
     private List<QuestDescriptor> mChanged = new List<QuestDescriptor>();
@@ -31,8 +31,8 @@ public partial class FrmQuest : BaseEditorForm
         Icon = Program.Icon;
 
         InitLocalization();
-        SetSaveButton(btnSave);
-        SetCancelButton(btnCancel);
+        _btnSave = btnSave;
+        _btnCancel = btnCancel;
 
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
 

@@ -17,7 +17,7 @@ using Graphics = System.Drawing.Graphics;
 
 namespace Intersect.Editor.Forms.Editors;
 
-public partial class FrmResource : BaseEditorForm
+public partial class FrmResource : EditorForm
 {
 
     private List<ResourceDescriptor> mChanged = [];
@@ -49,8 +49,8 @@ public partial class FrmResource : BaseEditorForm
         InitializeComponent();
         Icon = Program.Icon;
 
-        SetSaveButton(btnSave);
-        SetCancelButton(btnCancel);
+        _btnSave = btnSave;
+        _btnCancel = btnCancel;
         cmbToolType.Items.Clear();
         cmbToolType.Items.Add(Strings.General.None);
         cmbToolType.Items.AddRange(Options.Instance.Equipment.ToolTypes.ToArray());
