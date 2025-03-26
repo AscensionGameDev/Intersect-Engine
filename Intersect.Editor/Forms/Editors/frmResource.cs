@@ -18,7 +18,7 @@ namespace Intersect.Editor.Forms.Editors;
 
 public partial class FrmResource : EditorForm
 {
-    private readonly List<ResourceDescriptor> _changed = [];
+    private readonly Dictionary<Guid, ResourceDescriptor> _changed = [];
     private string? _copiedItem;
     private ResourceDescriptor? _editorItem;
     private Bitmap? _graphicBitmap;
@@ -112,7 +112,7 @@ public partial class FrmResource : EditorForm
 
     private void toolStripItemUndo_Click(object sender, EventArgs e)
     {
-        if (_editorItem != null && _changed.Contains(_editorItem) && _editorItem != null)
+        if (_editorItem != null && _changed.ContainsKey(_editorItem.Id) && _editorItem != null)
         {
             if (DarkMessageBox.ShowWarning(
                     Strings.ResourceEditor.undoprompt, Strings.ResourceEditor.undotitle, DarkDialogButton.YesNo,
@@ -150,7 +150,7 @@ public partial class FrmResource : EditorForm
 
     private void btnCancel_Click(object sender, EventArgs e)
     {
-        foreach (var item in _changed)
+        foreach (var item in _changed.Values)
         {
             item.RestoreBackup();
             item.DeleteBackup();
@@ -164,7 +164,7 @@ public partial class FrmResource : EditorForm
     private void btnSave_Click(object sender, EventArgs e)
     {
         //Send Changed items
-        foreach (var item in _changed)
+        foreach (var item in _changed.Values)
         {
             item.States = item.States
                 .OrderBy(s => s.Value.MinimumHealth)
@@ -328,9 +328,9 @@ public partial class FrmResource : EditorForm
 
             UpdateDropValues();
 
-            if (_changed.IndexOf(_editorItem) == -1)
+            if (!_changed.TryGetValue(_editorItem.Id, out var _))
             {
-                _changed.Add(_editorItem);
+                _changed.Add(_editorItem.Id, _editorItem);
                 _editorItem.MakeBackup();
             }
         }
