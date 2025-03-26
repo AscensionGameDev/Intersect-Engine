@@ -112,17 +112,19 @@ public partial class FrmResource : EditorForm
 
     private void toolStripItemUndo_Click(object sender, EventArgs e)
     {
-        if (_editorItem != null && _changed.ContainsKey(_editorItem.Id) && _editorItem != null)
+        if (_editorItem == null || !_changed.ContainsKey(_editorItem.Id))
         {
-            if (DarkMessageBox.ShowWarning(
+            return;
+        }
+
+        if (DarkMessageBox.ShowWarning(
                     Strings.ResourceEditor.undoprompt, Strings.ResourceEditor.undotitle, DarkDialogButton.YesNo,
                     Icon
                 ) ==
                 DialogResult.Yes)
-            {
-                _editorItem.RestoreBackup();
-                UpdateEditor();
-            }
+        {
+            _editorItem.RestoreBackup();
+            UpdateEditor();
         }
     }
 
