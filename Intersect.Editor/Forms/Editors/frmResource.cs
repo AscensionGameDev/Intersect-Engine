@@ -26,6 +26,7 @@ public partial class FrmResource : EditorForm
     private bool _mouseDown;
     private readonly List<string> _knownFolders = [];
     private readonly BindingList<NotifiableDrop> _dropList = [];
+    private readonly BindingList<ResourceStateDescriptor> _stateList = [];
 
     public FrmResource()
     {
@@ -44,6 +45,9 @@ public partial class FrmResource : EditorForm
 
         lstDrops.DataSource = _dropList;
         lstDrops.DisplayMember = nameof(NotifiableDrop.DisplayName);
+        lstStates.DataSource = _stateList;
+        lstStates.DisplayMember = nameof(ResourceStateDescriptor.Name);
+        lstStates.ValueMember = nameof(ResourceStateDescriptor.Id);
 
         lstGameObjects.Init(
             UpdateToolStripItems,
@@ -295,11 +299,15 @@ public partial class FrmResource : EditorForm
             nudHpRegen.Value = _editorItem.VitalRegen;
             picResource.Hide();
 
-            lstStates.DataSource = new BindingSource(_editorItem.States.Values, nameof(ResourceStateDescriptor.Name));
+            _stateList.Clear();
+            foreach (var state in _editorItem.States.Values)
+            {
+                _stateList.Add(state);
+            }
 
             if (lstStates.Items.Count > 0)
             {
-                lstStates.SelectedIndex = 0;
+                UpdateStateControls();
             }
             else
             {
@@ -350,9 +358,12 @@ public partial class FrmResource : EditorForm
             return false;
         }
 
-        var selectedIndex = lstStates.SelectedIndex;
-        var stateKey = _editorItem.States.Keys.ToList()[selectedIndex];
-        if (!_editorItem.States.TryGetValue(stateKey, out state))
+        if (lstStates.SelectedValue is not Guid selectedId)
+        {
+            return false;
+        }
+
+        if (!_editorItem.States.TryGetValue(selectedId, out state))
         {
             return false;
         }
@@ -377,6 +388,32 @@ public partial class FrmResource : EditorForm
                 MaxQuantity = drop.MaxQuantity,
                 Chance = drop.Chance
             });
+        }
+    }
+
+    private void OrderStates()
+    {
+        if (_editorItem is null)
+        {
+            return;
+        }
+
+        _editorItem.States = _editorItem.States
+            .OrderBy(s => s.Value.MinimumHealth)
+            .ThenBy(s => s.Value.MaximumHealth)
+            .ToDictionary(p => p.Key, p => p.Value);
+
+        var selectedItem = (Guid?)lstStates.SelectedValue;
+
+        _stateList.Clear();
+        foreach (var state in _editorItem.States.Values)
+        {
+            _stateList.Add(state);
+        }
+
+        if (selectedItem.HasValue && (Guid?)lstStates.SelectedValue != selectedItem)
+        {
+            lstStates.SelectedValue = selectedItem.Value;
         }
     }
 
@@ -820,6 +857,8 @@ public partial class FrmResource : EditorForm
         };
 
         _editorItem.States.Add(state.Id, state);
+        _stateList.Add(state);
+        OrderStates();
         lstStates.SelectedIndex = lstStates.Items.IndexOf(state.Name);
         txtStateName.Text = string.Empty;
     }
@@ -844,7 +883,8 @@ public partial class FrmResource : EditorForm
         }
 
         _editorItem.States.Remove(stateKey);
-        lstStates.Items.RemoveAt(selectedIndex);
+        _stateList.RemoveAt(selectedIndex);
+        OrderStates();
         if (lstStates.Items.Count > 0)
         {
             lstStates.SelectedIndex = 0;
@@ -928,10 +968,7 @@ public partial class FrmResource : EditorForm
         }
 
         currentState.MinimumHealth = (int)nudStateRangeMin.Value;
-        _editorItem.States = _editorItem.States
-                .OrderBy(s => s.Value.MinimumHealth)
-                .ThenBy(s => s.Value.MaximumHealth)
-                .ToDictionary(p => p.Key, p => p.Value);
+        OrderStates();
     }
 
     private void nudStateRangeMax_ValueChanged(object sender, EventArgs e)
@@ -947,10 +984,7 @@ public partial class FrmResource : EditorForm
         }
 
         currentState.MaximumHealth = (int)nudStateRangeMax.Value;
-        _editorItem.States = _editorItem.States
-                .OrderBy(s => s.Value.MinimumHealth)
-                .ThenBy(s => s.Value.MaximumHealth)
-                .ToDictionary(p => p.Key, p => p.Value);
+        OrderStates();
     }
 
     private void picResource_MouseDown(object sender, MouseEventArgs e)
