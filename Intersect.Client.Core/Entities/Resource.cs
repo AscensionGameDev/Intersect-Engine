@@ -252,7 +252,7 @@ public partial class Resource : Entity, IResource
         );
 
         _currentState = currentState;
-        _sprite = _currentState?.Texture ?? string.Empty;
+        _sprite = _currentState?.TextureName ?? string.Empty;
 
         if (currentState is { TextureType: ResourceTextureSource.Animation } && currentState.AnimationId != Guid.Empty)
         {

@@ -428,9 +428,9 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        if (currentState.Texture != null && cmbTextureSource.Items.Contains(currentState.Texture))
+        if (currentState.TextureName != null && cmbTextureSource.Items.Contains(currentState.TextureName))
         {
-            cmbTextureSource.SelectedIndex = cmbTextureSource.FindString(TextUtils.NullToNone(currentState.Texture));
+            cmbTextureSource.SelectedIndex = cmbTextureSource.FindString(TextUtils.NullToNone(currentState.TextureName));
             return;
         }
 
@@ -459,7 +459,7 @@ public partial class FrmResource : EditorForm
             return;
         }
 
-        if (currentState.Texture is null)
+        if (currentState.TextureName is null)
         {
             return;
         }
@@ -884,7 +884,7 @@ public partial class FrmResource : EditorForm
 
         if (cmbTextureSource.SelectedIndex > 0)
         {
-            currentState.Texture = cmbTextureSource.Text;
+            currentState.TextureName = cmbTextureSource.Text;
             var graphic = Path.Combine(
                 "resources", currentState.TextureType == ResourceTextureSource.Tileset ? "tilesets" : "resources", cmbTextureSource.Text
             );
@@ -899,7 +899,7 @@ public partial class FrmResource : EditorForm
         }
         else
         {
-            currentState.Texture = null;
+            currentState.TextureName = null;
         }
 
         picResource.Visible = _resourceGraphic != null;
