@@ -5033,7 +5033,7 @@ Tick timer saved in server config.json.";
 
         public static Dictionary<ResourceTextureSource, LocalizedString> TextureSources = new()
         {
-            { ResourceTextureSource.Resource, @"Graphic" },
+            { ResourceTextureSource.Resource, @"Resource" },
             { ResourceTextureSource.Tileset, @"Tileset" },
             { ResourceTextureSource.Animation, @"Animation" },
         };
