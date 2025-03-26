@@ -168,11 +168,6 @@ public partial class FrmResource : EditorForm
         //Send Changed items
         foreach (var item in _changed.Values)
         {
-            item.States = item.States
-                .OrderBy(s => s.Value.MinimumHealth)
-                .ThenBy(s => s.Value.MaximumHealth)
-                .ToDictionary(p => p.Key, p => p.Value);
-
             PacketSender.SendSaveObject(item);
             item.DeleteBackup();
         }
@@ -298,19 +293,9 @@ public partial class FrmResource : EditorForm
             cmbEvent.SelectedIndex = EventDescriptor.ListIndex(_editorItem.EventId) + 1;
             txtCannotHarvest.Text = _editorItem.CannotHarvestMessage;
             nudHpRegen.Value = _editorItem.VitalRegen;
-
             picResource.Hide();
 
-            _editorItem.States = _editorItem.States
-                .OrderBy(s => s.Value.MinimumHealth)
-                .ThenBy(s => s.Value.MaximumHealth)
-                .ToDictionary(p => p.Key, p => p.Value);
-
-            lstStates.Items.Clear();
-            foreach (var state in _editorItem.States.Values)
-            {
-                lstStates.Items.Add(state.Name);
-            }
+            lstStates.DataSource = new BindingSource(_editorItem.States.Values, nameof(ResourceStateDescriptor.Name));
 
             if (lstStates.Items.Count > 0)
             {
@@ -835,16 +820,6 @@ public partial class FrmResource : EditorForm
         };
 
         _editorItem.States.Add(state.Id, state);
-        _editorItem.States = _editorItem.States
-            .OrderBy(s => s.Value.MinimumHealth)
-            .ThenBy(s => s.Value.MaximumHealth)
-            .ToDictionary(p => p.Key, p => p.Value);
-
-        lstStates.Items.Clear();
-        foreach (var stateName in _editorItem.States.Values.Select(s => s.Name))
-        {
-            lstStates.Items.Add(stateName);
-        }
         lstStates.SelectedIndex = lstStates.Items.IndexOf(state.Name);
         txtStateName.Text = string.Empty;
     }
@@ -942,22 +917,40 @@ public partial class FrmResource : EditorForm
 
     private void nudStateRangeMin_ValueChanged(object sender, EventArgs e)
     {
+        if (_editorItem is null)
+        {
+            return;
+        }
+
         if (!TryGetCurrentState(out var currentState))
         {
             return;
         }
 
         currentState.MinimumHealth = (int)nudStateRangeMin.Value;
+        _editorItem.States = _editorItem.States
+                .OrderBy(s => s.Value.MinimumHealth)
+                .ThenBy(s => s.Value.MaximumHealth)
+                .ToDictionary(p => p.Key, p => p.Value);
     }
 
     private void nudStateRangeMax_ValueChanged(object sender, EventArgs e)
     {
+        if (_editorItem is null)
+        {
+            return;
+        }
+
         if (!TryGetCurrentState(out var currentState))
         {
             return;
         }
 
         currentState.MaximumHealth = (int)nudStateRangeMax.Value;
+        _editorItem.States = _editorItem.States
+                .OrderBy(s => s.Value.MinimumHealth)
+                .ThenBy(s => s.Value.MaximumHealth)
+                .ToDictionary(p => p.Key, p => p.Value);
     }
 
     private void picResource_MouseDown(object sender, MouseEventArgs e)
