@@ -1557,7 +1557,7 @@ public abstract partial class Entity : IEntity
         SetVital(vital, GetVital(vital) + safeAmount);
     }
 
-    public virtual void SubVital(Vital vital, long amount)
+    public void SubVital(Vital vital, long amount)
     {
         if (!Enum.IsDefined(vital))
         {
