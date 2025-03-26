@@ -37,6 +37,7 @@ using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
 using MySqlConnector;
 using Serilog;
@@ -80,6 +81,11 @@ public static partial class DbInterface
     public static ConcurrentDictionary<Guid, ServerVariableDescriptor> UpdatedServerVariables = new();
 
     private static List<MapGrid> mapGrids = new();
+
+    private static readonly HashSet<Guid> IdsToRegenerate = [
+      new Guid("00000000-0000-0000-0000-000000000001"),
+      new Guid("00000000-0000-0000-0000-000000000002"),
+    ];
 
     public static GameContext CreateGameContext(
         bool readOnly = true,
@@ -414,6 +420,7 @@ public static partial class DbInterface
         LoadAllGameObjects();
 
         ValidateMapEvents();
+        ValidateResourceStates();
 
         LoadTime();
         OnClassesLoaded();
@@ -1040,6 +1047,42 @@ public static partial class DbInterface
             missingEvents,
             correctedEvents
         );
+    }
+
+    private static void ValidateResourceStates()
+    {
+        using var context = CreateGameContext(readOnly: false);
+        foreach (var (resourceId, resource) in ResourceDescriptor.Lookup)
+        {
+            if (resource is not ResourceDescriptor descriptor)
+            {
+                ApplicationContext.CurrentContext.Logger.LogError(
+                    "Found an invalid database object in the ResourceDescriptor lookup ({InvalidObjectType}, {InvalidObjectId}, '{InvalidObjectName}')",
+                    resource.GetType().GetName(qualified: true),
+                    resourceId,
+                    resource.Name
+                );
+                continue;
+            }
+
+            var statesToUpdate = descriptor.States.Where(pair => IdsToRegenerate.Contains(pair.Key)).Select(pair => pair.Value).ToArray();
+            if (statesToUpdate.Length > 0)
+            {
+                foreach (var state in statesToUpdate)
+                {
+                    // invalid id, lets fix it
+                    var invalidId = state.Id;
+                    state.Id = Guid.NewGuid();
+                    descriptor.States.Remove(invalidId);
+                    descriptor.States.Add(state.Id, state);
+                }
+
+                context.Resources.Update(descriptor);
+            }
+        }
+
+        context.ChangeTracker.DetectChanges();
+        context.SaveChanges();
     }
 
     public static IDatabaseObject AddGameObject(GameObjectType gameObjectType)
