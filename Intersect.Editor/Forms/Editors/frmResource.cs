@@ -75,16 +75,20 @@ public partial class FrmResource : EditorForm
 
     private void toolStripItemDelete_Click(object sender, EventArgs e)
     {
-        if (_editorItem != null && lstGameObjects.Focused)
+        if (_editorItem == null || !lstGameObjects.Focused)
         {
-            if (DarkMessageBox.ShowWarning(
-                    Strings.ResourceEditor.deleteprompt, Strings.ResourceEditor.deletetitle, DarkDialogButton.YesNo,
+            return;
+        }
+
+        if (DarkMessageBox.ShowWarning(
+                    Strings.ResourceEditor.deleteprompt,
+                    Strings.ResourceEditor.deletetitle,
+                    DarkDialogButton.YesNo,
                     Icon
                 ) ==
                 DialogResult.Yes)
-            {
-                PacketSender.SendDeleteObject(_editorItem);
-            }
+        {
+            PacketSender.SendDeleteObject(_editorItem);
         }
     }
 
@@ -124,10 +128,11 @@ public partial class FrmResource : EditorForm
 
     private void UpdateToolStripItems()
     {
-        toolStripItemCopy.Enabled = _editorItem != null && lstGameObjects.Focused;
-        toolStripItemPaste.Enabled = _editorItem != null && _copiedItem != null && lstGameObjects.Focused;
-        toolStripItemDelete.Enabled = _editorItem != null && lstGameObjects.Focused;
-        toolStripItemUndo.Enabled = _editorItem != null && lstGameObjects.Focused;
+        var shouldEnableToolStripItems = _editorItem != null && lstGameObjects.Focused;
+        toolStripItemCopy.Enabled = shouldEnableToolStripItems;
+        toolStripItemPaste.Enabled = shouldEnableToolStripItems && _copiedItem != null;
+        toolStripItemDelete.Enabled = shouldEnableToolStripItems;
+        toolStripItemUndo.Enabled = shouldEnableToolStripItems;
     }
 
     protected override void GameObjectUpdatedDelegate(GameObjectType type)
