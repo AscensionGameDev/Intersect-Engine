@@ -36,6 +36,8 @@ public partial class FrmNpc : EditorForm
         ApplyHooks();
         InitializeComponent();
         Icon = Program.Icon;
+        _btnSave = btnSave;
+        _btnCancel = btnCancel;
 
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
     }
@@ -383,6 +385,8 @@ public partial class FrmNpc : EditorForm
             pnlContainer.Hide();
         }
 
+        var hasItem = mEditorItem != null;
+        UpdateEditorButtons(hasItem);
         UpdateToolStripItems();
     }
 
@@ -453,7 +457,7 @@ public partial class FrmNpc : EditorForm
 
     private void frmNpc_FormClosed(object sender, FormClosedEventArgs e)
     {
-        Globals.CurrentEditor = -1;
+        btnCancel_Click(null, null);
     }
 
     private void btnAdd_Click(object sender, EventArgs e)

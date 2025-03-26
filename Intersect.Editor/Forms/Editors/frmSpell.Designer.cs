@@ -2381,7 +2381,7 @@ namespace Intersect.Editor.Forms.Editors
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.ClientSize = new System.Drawing.Size(1214, 611);
-            this.ControlBox = false;
+            this.ControlBox = true;
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
@@ -2390,6 +2390,7 @@ namespace Intersect.Editor.Forms.Editors
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
             this.MaximizeBox = false;
+            MinimizeBox = false;
             this.Name = "FrmSpell";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Spell Editor                       ";

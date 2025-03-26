@@ -31,7 +31,8 @@ public partial class FrmCrafts : EditorForm
         ApplyHooks();
         InitializeComponent();
         Icon = Program.Icon;
-
+        _btnSave = btnSave;
+        _btnCancel = btnCancel;
         lstGameObjects.LostFocus += itemList_FocusChanged;
         lstGameObjects.GotFocus += itemList_FocusChanged;
         cmbResult.Items.Clear();
@@ -130,6 +131,8 @@ public partial class FrmCrafts : EditorForm
             pnlContainer.Hide();
         }
 
+        var hasItem = mEditorItem != null;
+        UpdateEditorButtons(hasItem);
         UpdateToolStripItems();
     }
 
@@ -198,6 +201,11 @@ public partial class FrmCrafts : EditorForm
             mEditorItem.Ingredients.RemoveAt(lstIngredients.SelectedIndex);
             UpdateEditor();
         }
+    }
+
+    private void FrmCrafts_FormClosed(object sender, FormClosedEventArgs e)
+    {
+        btnCancel_Click(null, null);
     }
 
     private void btnCancel_Click(object sender, EventArgs e)
@@ -421,6 +429,7 @@ public partial class FrmCrafts : EditorForm
     private void frmCrafting_Load(object sender, EventArgs e)
     {
         InitLocalization();
+        UpdateEditor();
     }
 
     private void InitLocalization()

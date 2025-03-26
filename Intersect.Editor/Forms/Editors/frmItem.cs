@@ -47,6 +47,8 @@ public partial class FrmItem : EditorForm
         cmbProjectile.Items.Clear();
         cmbProjectile.Items.Add(Strings.General.None);
         cmbProjectile.Items.AddRange(ProjectileDescriptor.Names);
+        _btnSave = btnSave;
+        _btnCancel = btnCancel;
 
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
     }
@@ -463,6 +465,9 @@ public partial class FrmItem : EditorForm
             pnlContainer.Hide();
         }
 
+        var hasItem = mEditorItem != null;
+        
+        UpdateEditorButtons(hasItem);
         UpdateToolStripItems();
     }
 
@@ -681,7 +686,7 @@ public partial class FrmItem : EditorForm
 
     private void FrmItem_FormClosed(object sender, FormClosedEventArgs e)
     {
-        Globals.CurrentEditor = -1;
+        btnCancel_Click(null, null);
     }
 
     private void cmbFemalePaperdoll_SelectedIndexChanged(object sender, EventArgs e)

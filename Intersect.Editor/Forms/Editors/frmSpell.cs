@@ -35,6 +35,8 @@ public partial class FrmSpell : EditorForm
         ApplyHooks();
         InitializeComponent();
         Icon = Program.Icon;
+        _btnSave = btnSave;
+        _btnCancel = btnCancel;
 
         cmbScalingStat.Items.Clear();
         for (var i = 0; i < Enum.GetValues<Stat>().Length; i++)
@@ -325,6 +327,8 @@ public partial class FrmSpell : EditorForm
             pnlContainer.Hide();
         }
 
+        var hasItem = mEditorItem != null;
+        UpdateEditorButtons(hasItem);
         UpdateToolStripItems();
     }
 
@@ -567,7 +571,7 @@ public partial class FrmSpell : EditorForm
 
     private void frmSpell_FormClosed(object sender, FormClosedEventArgs e)
     {
-        Globals.CurrentEditor = -1;
+        btnCancel_Click(null, null);
     }
 
     private void scrlRange_Scroll(object sender, ScrollValueEventArgs e)

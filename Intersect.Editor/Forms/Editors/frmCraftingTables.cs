@@ -1,4 +1,4 @@
-﻿using DarkUI.Forms;
+using DarkUI.Forms;
 using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
@@ -7,6 +7,7 @@ using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.GameObjects;
 using Intersect.Models;
+using System.Diagnostics;
 
 namespace Intersect.Editor.Forms.Editors;
 
@@ -27,6 +28,8 @@ public partial class FrmCraftingTables : EditorForm
         ApplyHooks();
         InitializeComponent();
         Icon = Program.Icon;
+        _btnSave = btnSave;
+        _btnCancel = btnCancel;
 
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
     }
@@ -72,6 +75,8 @@ public partial class FrmCraftingTables : EditorForm
             pnlContainer.Hide();
         }
 
+        var hasItem = mEditorItem != null;
+        UpdateEditorButtons(hasItem);
         UpdateToolStripItems();
     }
 
@@ -79,6 +84,12 @@ public partial class FrmCraftingTables : EditorForm
     {
         mEditorItem.Name = txtName.Text;
         lstGameObjects.UpdateText(txtName.Text);
+    }
+
+
+    private void FrmCraftingTables_FormClosed(object sender, FormClosedEventArgs e)
+    {
+        btnCancel_Click(null, null);
     }
 
     private void btnCancel_Click(object sender, EventArgs e)
@@ -188,6 +199,7 @@ public partial class FrmCraftingTables : EditorForm
 
     private void frmCrafting_Load(object sender, EventArgs e)
     {
+        UpdateEditor();
         cmbCrafts.Items.Clear();
         cmbCrafts.Items.AddRange(CraftingRecipeDescriptor.Names);
 

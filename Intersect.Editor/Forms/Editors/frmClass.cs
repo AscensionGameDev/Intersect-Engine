@@ -1280,6 +1280,11 @@ public partial class FrmClass : EditorForm
         }
     }
 
+    private void FrmClass_FormClosed(object sender, FormClosedEventArgs e)
+    {
+        btnCancel_Click(null, null);
+    }
+
     private void btnCloseExpGrid_Click(object sender, EventArgs e)
     {
         grpExpGrid.Hide();

@@ -1,4 +1,4 @@
-﻿using DarkUI.Controls;
+using DarkUI.Controls;
 
 namespace Intersect.Editor.Forms.Editors
 {
@@ -461,7 +461,7 @@ namespace Intersect.Editor.Forms.Editors
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.ClientSize = new System.Drawing.Size(491, 507);
-            this.ControlBox = false;
+            this.ControlBox = true;
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.pnlContainer);
             this.Controls.Add(this.btnCancel);
@@ -474,6 +474,7 @@ namespace Intersect.Editor.Forms.Editors
             this.Name = "FrmCraftingTables";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Crafting Tables Editor";
+            FormClosed += FrmCraftingTables_FormClosed;
             this.Load += new System.EventHandler(this.frmCrafting_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_KeyDown);
             this.grpTables.ResumeLayout(false);

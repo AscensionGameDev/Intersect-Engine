@@ -1,4 +1,4 @@
-﻿using DarkUI.Forms;
+using DarkUI.Forms;
 using Intersect.Editor.Core;
 using Intersect.Editor.Forms.Editors.Events;
 using Intersect.Editor.General;
@@ -31,8 +31,12 @@ public partial class FrmQuest : EditorForm
         Icon = Program.Icon;
 
         InitLocalization();
+        _btnSave = btnSave;
+        _btnCancel = btnCancel;
 
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
+
+        UpdateEditor();
     }
     private void AssignEditorItem(Guid id)
     {
@@ -119,6 +123,11 @@ public partial class FrmQuest : EditorForm
                 UpdateEditor();
             }
         }
+    }
+
+    private void FrmQuest_FormClosed(object sender, FormClosedEventArgs e)
+    {
+        btnCancel_Click(null, null);
     }
 
     private void btnCancel_Click(object sender, EventArgs e)
@@ -277,7 +286,10 @@ public partial class FrmQuest : EditorForm
         {
             pnlContainer.Hide();
         }
-
+        
+        var hasItem = mEditorItem != null;
+        
+        UpdateEditorButtons(hasItem);
         UpdateToolStripItems();
     }
 

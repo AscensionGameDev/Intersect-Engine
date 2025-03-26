@@ -1,4 +1,4 @@
-﻿using DarkUI.Controls;
+using DarkUI.Controls;
 
 namespace Intersect.Editor.Forms.Editors
 {
@@ -2138,7 +2138,7 @@ namespace Intersect.Editor.Forms.Editors
             AutoSize = true;
             BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
             ClientSize = new Size(1393, 728);
-            ControlBox = false;
+            ControlBox = true;
             Controls.Add(toolStrip);
             Controls.Add(btnCancel);
             Controls.Add(btnSave);
@@ -2148,6 +2148,7 @@ namespace Intersect.Editor.Forms.Editors
             KeyPreview = true;
             Margin = new Padding(4, 3, 4, 3);
             MaximizeBox = false;
+            MinimizeBox = false;
             Name = "FrmNpc";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "NPC Editor";

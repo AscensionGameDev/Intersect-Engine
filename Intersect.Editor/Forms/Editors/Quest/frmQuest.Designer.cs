@@ -1,4 +1,4 @@
-﻿using DarkUI.Controls;
+using DarkUI.Controls;
 
 namespace Intersect.Editor.Forms.Editors.Quest
 {
@@ -849,7 +849,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.ClientSize = new System.Drawing.Size(992, 446);
-            this.ControlBox = false;
+            this.ControlBox = true;
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
@@ -858,9 +858,11 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
             this.MinimizeBox = false;
+            MaximizeBox = false;
             this.Name = "FrmQuest";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Quest Editor";
+            FormClosed += FrmQuest_FormClosed;
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_KeyDown);
             this.grpQuests.ResumeLayout(false);
             this.grpQuests.PerformLayout();
