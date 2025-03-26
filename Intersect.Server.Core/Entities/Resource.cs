@@ -30,7 +30,6 @@ public partial class Resource : Entity
         );
 
         RestoreVital(Vital.Health);
-        HandleSprite();
         Passable = descriptor.WalkableBefore;
         HideName = true;
     }
@@ -46,29 +45,6 @@ public partial class Resource : Entity
         PacketSender.SendEntityLeave(this);
     }
 
-    private void HandleSprite()
-    {
-        var graphicStates = Descriptor.States.Values.ToList();
-        var currentHealthPercentage = Math.Floor((float)GetVital(Vital.Health) / GetMaxVital(Vital.Health));
-        var currentGraphicState = graphicStates.FirstOrDefault(
-            state => currentHealthPercentage >= state.MinimumHealth && currentHealthPercentage <= state.MaximumHealth
-        );
-
-        if (currentGraphicState is null || currentGraphicState.TextureType == ResourceTextureSource.Animation)
-        {
-            Sprite = default;
-            return;
-        }
-
-        Sprite = currentGraphicState.Texture;
-    }
-
-    public override void SubVital(Vital vital, long amount)
-    {
-        base.SubVital(vital, amount);
-        HandleSprite();
-    }
-
     public override void Die(bool dropItems = true, Entity killer = null)
     {
         lock (EntityLock)
@@ -76,7 +52,6 @@ public partial class Resource : Entity
             base.Die(false, killer);
         }
 
-        HandleSprite();
         Passable = Descriptor.WalkableAfter;
         IsDead = true;
 
@@ -91,7 +66,6 @@ public partial class Resource : Entity
 
     public void Spawn()
     {
-        HandleSprite();
         var minimumHealth = Descriptor.MinHp;
         var maximumHealth = Descriptor.MaxHp;
 
