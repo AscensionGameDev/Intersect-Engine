@@ -47,7 +47,8 @@ public partial class FrmItem : BaseEditorForm
         cmbProjectile.Items.Clear();
         cmbProjectile.Items.Add(Strings.General.None);
         cmbProjectile.Items.AddRange(ProjectileDescriptor.Names);
-        SetEditorButtons(btnSave, btnCancel);
+        SetSaveButton(btnSave);
+        SetCancelButton(btnCancel);
 
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
     }

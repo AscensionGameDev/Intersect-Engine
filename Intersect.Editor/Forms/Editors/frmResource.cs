@@ -49,7 +49,8 @@ public partial class FrmResource : BaseEditorForm
         InitializeComponent();
         Icon = Program.Icon;
 
-        SetEditorButtons(btnSave, btnCancel);
+        SetSaveButton(btnSave);
+        SetCancelButton(btnCancel);
         cmbToolType.Items.Clear();
         cmbToolType.Items.Add(Strings.General.None);
         cmbToolType.Items.AddRange(Options.Instance.Equipment.ToolTypes.ToArray());

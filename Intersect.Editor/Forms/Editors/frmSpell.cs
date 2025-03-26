@@ -35,7 +35,8 @@ public partial class FrmSpell : BaseEditorForm
         ApplyHooks();
         InitializeComponent();
         Icon = Program.Icon;
-        SetEditorButtons(btnSave, btnCancel);
+        SetSaveButton(btnSave);
+        SetCancelButton(btnCancel);
 
         cmbScalingStat.Items.Clear();
         for (var i = 0; i < Enum.GetValues<Stat>().Length; i++)

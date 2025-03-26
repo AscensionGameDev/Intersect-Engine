@@ -31,7 +31,8 @@ public partial class FrmQuest : BaseEditorForm
         Icon = Program.Icon;
 
         InitLocalization();
-        SetEditorButtons(btnSave, btnCancel);
+        SetSaveButton(btnSave);
+        SetCancelButton(btnCancel);
 
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
 

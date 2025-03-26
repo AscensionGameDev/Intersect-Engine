@@ -38,7 +38,8 @@ public partial class FrmSwitchVariable : BaseEditorForm
         ApplyHooks();
         InitializeComponent();
         Icon = Program.Icon;
-        SetEditorButtons(btnSave, btnCancel);
+        SetSaveButton(btnSave);
+        SetCancelButton(btnCancel);
 
         InitLocalization();
         nudVariableValue.Minimum = long.MinValue;

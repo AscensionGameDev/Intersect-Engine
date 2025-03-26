@@ -1,16 +1,19 @@
-using System.Windows.Forms;
 using DarkUI.Controls;
 
 namespace Intersect.Editor.Forms.Editors;
 
 public class BaseEditorForm : EditorForm
 {
-    protected DarkButton? btnSave;
-    protected DarkButton? btnCancel;
+    private DarkButton? btnSave;
+    private DarkButton? btnCancel;
 
-    protected void SetEditorButtons(DarkButton saveButton, DarkButton cancelButton)
+    protected void SetSaveButton(DarkButton saveButton)
     {
         btnSave = saveButton;
+    }
+
+    protected void SetCancelButton(DarkButton cancelButton)
+    {
         btnCancel = cancelButton;
     }
 
