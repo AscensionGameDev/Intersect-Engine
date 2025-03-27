@@ -41,6 +41,8 @@ public partial class WeatherParticle : IWeatherParticle
 
     private int yVelocity;
 
+    private bool _disposed = false;
+
     public WeatherParticle(List<IWeatherParticle> RemoveParticle, int xvelocity, int yvelocity, AnimationDescriptor anim)
     {
         TransmittionTimer = Timing.Global.MillisecondsUtc;
@@ -150,7 +152,13 @@ public partial class WeatherParticle : IWeatherParticle
 
     public void Dispose()
     {
-        animInstance.Dispose();
+        if (_disposed) return;
+
+        _disposed = true;
+
+        animInstance?.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 
     ~WeatherParticle()
