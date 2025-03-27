@@ -49,6 +49,11 @@ public partial class Resource : Entity, IResource
         get => _descriptor;
         set
         {
+            if (value == _descriptor)
+            {
+                return;
+            }
+
             _descriptor = value;
             if (value is { } descriptor)
             {
@@ -60,6 +65,8 @@ public partial class Resource : Entity, IResource
             {
                 _maximumHealthForStates = 0;
             }
+
+            UpdateCurrentState();
         }
     }
 
@@ -189,7 +196,6 @@ public partial class Resource : Entity, IResource
         }
 
         Descriptor = descriptor;
-        UpdateCurrentState();
 
         if (!justDied)
         {
@@ -240,8 +246,8 @@ public partial class Resource : Entity, IResource
         var currentHealthPercentage = Math.Floor((float)Vital[(int)Enums.Vital.Health] / _maximumHealthForStates * 100);
 
         if (_currentState is { } currentState &&
-            currentHealthPercentage >= _currentState?.MinimumHealth &&
-            currentHealthPercentage <= _currentState?.MaximumHealth
+            currentHealthPercentage >= currentState?.MinimumHealth &&
+            currentHealthPercentage <= currentState?.MaximumHealth
         )
         {
             return;
@@ -255,11 +261,10 @@ public partial class Resource : Entity, IResource
         // but the previous state was an animation
         if (
             _currentState?.TextureType == ResourceTextureSource.Animation &&
-            _stateAnimation != default &&
             currentState?.TextureType != ResourceTextureSource.Animation
-            )
+        )
         {
-            _stateAnimation.Dispose();
+            _stateAnimation?.Dispose();
             _stateAnimation = default;
         }
 
@@ -299,7 +304,6 @@ public partial class Resource : Entity, IResource
         {
             _ = ResourceDescriptor.TryGet(deletedDescriptor.Id, out var descriptor);
             Descriptor = descriptor;
-            UpdateCurrentState();
         }
 
         if (!Maps.MapInstance.TryGet(MapId, out var map) || !map.InView())
@@ -338,7 +342,7 @@ public partial class Resource : Entity, IResource
 
     public override HashSet<Entity>? DetermineRenderOrder(HashSet<Entity>? renderList, IMapInstance? map)
     {
-        if (Descriptor == default || CurrentState is not { } graphicState || !graphicState.RenderBelowEntities)
+        if (CurrentState is not { } graphicState || !graphicState.RenderBelowEntities)
         {
             return base.DetermineRenderOrder(renderList, map);
         }
@@ -463,35 +467,29 @@ public partial class Resource : Entity, IResource
                 break;
 
             case ResourceTextureSource.Tileset:
-                if (IsDead)
+                ResourceStateDescriptor? selectedGraphic = null;
+
+                if (IsDead && graphicState is { MaximumHealth: 0 } deadGraphic)
                 {
-                    if (graphicState is { MaximumHealth: 0 } deadGraphic)
-                    {
-                        _renderBoundsSrc = new(
-                            deadGraphic.X * _tileWidth,
-                            deadGraphic.Y * _tileHeight,
-                            (deadGraphic.Width + 1) * _tileWidth,
-                            (deadGraphic.Height + 1) * _tileHeight
-                        );
-                    }
-                    else
-                    {
-                        _renderBoundsSrc = new();
-                    }
+                    selectedGraphic = deadGraphic;
                 }
-                else if (graphicState is { MinimumHealth: > 0 } aliveGraphic)
+                else if (!IsDead && graphicState is { MinimumHealth: > 0 } aliveGraphic)
                 {
-                    _renderBoundsSrc = new(
-                        aliveGraphic.X * _tileWidth,
-                        aliveGraphic.Y * _tileHeight,
-                        (aliveGraphic.Width + 1) * _tileWidth,
-                        (aliveGraphic.Height + 1) * _tileHeight
+                    selectedGraphic = aliveGraphic;
+                }
+
+                _renderBoundsSrc = selectedGraphic is null
+                    ? default
+                    : new (
+                        selectedGraphic.X * _tileWidth,
+                        selectedGraphic.Y * _tileHeight,
+                        (selectedGraphic.Width + 1) * _tileWidth,
+                        (selectedGraphic.Height + 1) * _tileHeight
                     );
-                }
                 break;
 
             case ResourceTextureSource.Animation:
-                _renderBoundsSrc = new();
+                _renderBoundsSrc = default;
                 break;
 
             default:
