@@ -154,7 +154,7 @@ public partial class FrmResource : EditorForm
         }
     }
 
-    private void btnCancel_Click(object sender, EventArgs e)
+    private void btnCancel_Click(object? sender, EventArgs? e)
     {
         foreach (var item in _changed.Values)
         {
@@ -201,7 +201,7 @@ public partial class FrmResource : EditorForm
 
     private void frmResource_FormClosed(object sender, FormClosedEventArgs e)
     {
-        Globals.CurrentEditor = -1;
+        btnCancel_Click(null, null);
     }
 
     private void form_KeyDown(object sender, KeyEventArgs e)
@@ -334,9 +334,7 @@ public partial class FrmResource : EditorForm
             pnlContainer.Hide();
         }
         
-        var hasItem = mEditorItem != null;
-        
-        UpdateEditorButtons(hasItem);
+        UpdateEditorButtons(_editorItem != default);
         UpdateToolStripItems();
     }
 
