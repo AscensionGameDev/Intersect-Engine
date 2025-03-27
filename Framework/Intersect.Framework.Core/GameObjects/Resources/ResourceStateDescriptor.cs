@@ -6,7 +6,7 @@ public partial class ResourceStateDescriptor
 
     public string Name { get; set; }
 
-    public string TextureName { get; set; } = default;
+    public string? TextureName { get; set; } = default;
 
     public ResourceTextureSource TextureType { get; set; } = ResourceTextureSource.Resource;
 
