@@ -246,7 +246,7 @@ public partial class FrmResource : EditorForm
         btnDropAdd.Text = Strings.ResourceEditor.dropadd;
         btnDropRemove.Text = Strings.ResourceEditor.dropremove;
 
-        lblHpRegen.Text = Strings.ResourceEditor.hpregen;
+        lblHpRegen.Text = Strings.ResourceEditor.HealthRegenPercent;
         new ToolTip().SetToolTip(lblHpRegen, Strings.ResourceEditor.regenhint);
 
         grpGraphics.Text = Strings.ResourceEditor.Appearance;
