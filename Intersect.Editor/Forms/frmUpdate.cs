@@ -4,6 +4,7 @@ using Intersect.Editor.Content;
 using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
+using Intersect.Framework;
 using Intersect.Framework.Core.AssetManagement;
 using Intersect.Framework.Utilities;
 using Intersect.Web;
@@ -22,7 +23,7 @@ public partial class FrmUpdate : Form
     private long _nextUpdateAttempt;
     private Task? _pendingManifestTask;
     private TokenResponse? _tokenResponse;
-    private Updater _updater;
+    private Updater? _updater;
     private UpdaterStatus? _updaterStatus;
 
     public FrmUpdate()
@@ -34,22 +35,28 @@ public partial class FrmUpdate : Form
 
     private void frmUpdate_Load(object sender, EventArgs e)
     {
-        AppDomain.CurrentDomain.UnhandledException += Program.CurrentDomain_UnhandledException;
         try
         {
             Strings.Load();
         }
         catch (Exception exception)
         {
-            Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(exception, "Error loading strings");
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Error loading strings");
             throw;
         }
+
         GameContentManager.CheckForResources();
         Database.LoadOptions();
         InitLocalization();
 
+
+        if (ClientConfiguration.Instance.UpdateUrl is not { } updateUrl || string.IsNullOrWhiteSpace(updateUrl))
+        {
+            return;
+        }
+
         _updater = new Updater(
-            ClientConfiguration.Instance.UpdateUrl,
+            updateUrl,
             "editor/update.json",
             "version.editor.json",
             7
@@ -81,14 +88,15 @@ public partial class FrmUpdate : Form
         lblVersion.Text = Strings.Login.version.ToString(Application.ProductVersion);
         lblVersion.Location = new System.Drawing.Point(
             (lblVersion.Parent?.ClientRectangle.Right - (lblVersion.Parent?.Padding.Right + lblVersion.Width + 4)) ?? 0,
-            (lblVersion.Parent?.ClientRectangle.Bottom - (lblVersion.Parent?.Padding.Bottom + lblVersion.Height + 4)) ?? 0
+            (lblVersion.Parent?.ClientRectangle.Bottom - (lblVersion.Parent?.Padding.Bottom + lblVersion.Height + 4)) ??
+            0
         );
         lblStatus.Text = Strings.Update.Checking;
     }
 
     protected override void OnClosed(EventArgs e)
     {
-        _updater.Stop();
+        _updater?.Stop();
         base.OnClosed(e);
         Application.Exit();
     }
@@ -96,10 +104,18 @@ public partial class FrmUpdate : Form
     protected override void OnShown(EventArgs e)
     {
         base.OnShown(e);
-        tmrUpdate.Enabled = true;
+
+        if (_updater is null)
+        {
+            SwitchToLogin(requiresAuthentication: false, deferHide: true);
+        }
+        else
+        {
+            tmrUpdate.Enabled = true;
+        }
     }
 
-    private void SwitchToLogin(bool requiresAuthentication)
+    private void SwitchToLogin(bool requiresAuthentication, bool deferHide = false)
     {
         lblFiles.Hide();
         lblSize.Hide();
@@ -107,13 +123,13 @@ public partial class FrmUpdate : Form
 
         var loginForm = Globals.LoginForm ??= new FrmLogin(requiresAuthentication);
 
-        _pendingManifestTask = default;
+        _pendingManifestTask = null;
 
         try
         {
-            Hide();
-
             loginForm.Show();
+
+            Hide();
         }
         catch
         {
@@ -128,20 +144,23 @@ public partial class FrmUpdate : Form
     {
         lock (_manifestTaskLock)
         {
-            if (_pendingManifestTask != default)
+            if (_pendingManifestTask != null)
             {
                 return;
             }
 
-            _pendingManifestTask = Task.Run(() =>
-            {
-                _updaterStatus = _updater.TryGetManifest(out var manifest, force: _tokenResponse != default);
-                if (_updaterStatus == UpdaterStatus.Offline)
+            _pendingManifestTask = Task.Run(
+                () =>
                 {
-                    _nextUpdateAttempt = Environment.TickCount64 + 10_000;
+                    _updaterStatus = _updater?.TryGetManifest(out _, force: _tokenResponse != null);
+                    if (_updaterStatus == UpdaterStatus.Offline)
+                    {
+                        _nextUpdateAttempt = Environment.TickCount64 + 10_000;
+                    }
+
+                    _pendingManifestTask = null;
                 }
-                _pendingManifestTask = default;
-            });
+            );
         }
     }
 
@@ -150,9 +169,9 @@ public partial class FrmUpdate : Form
         _tokenResponse = tokenResponse ?? throw new ArgumentNullException(nameof(tokenResponse));
 
         Preferences.SavePreference(nameof(TokenResponse), JsonConvert.SerializeObject(_tokenResponse));
-        _updater.SetAuthorizationData(_tokenResponse);
+        _updater?.SetAuthorizationData(_tokenResponse);
 
-        _updaterStatus = default;
+        _updaterStatus = null;
 
         lblFiles.Show();
         lblSize.Show();
@@ -161,96 +180,96 @@ public partial class FrmUpdate : Form
         Show();
 
         Globals.LoginForm?.Close();
-        Globals.LoginForm = default;
+        Globals.LoginForm = null;
     }
 
-            private void tmrUpdate_Tick(object sender, EventArgs e)
+    private void tmrUpdate_Tick(object sender, EventArgs e)
+    {
+        if (_updater == null)
         {
-            if (_updater == null)
+            return;
+        }
+
+        switch (_updaterStatus)
+        {
+            case UpdaterStatus.NoUpdateNeeded:
+                SwitchToLogin(false);
+                return;
+            case UpdaterStatus.NeedsAuthentication:
+                SwitchToLogin(true);
+                return;
+            case UpdaterStatus.Ready:
+                _nextUpdateAttempt = long.MinValue;
+                _updaterStatus = null;
+                _updater.Start();
+                break;
+            case UpdaterStatus.Offline:
+                break;
+            default:
+                throw Exceptions.UnreachableInvalidEnum(_updaterStatus ?? default);
+        }
+
+        if (_nextUpdateAttempt != long.MinValue)
+        {
+            var now = Environment.TickCount64;
+            if (now < _nextUpdateAttempt)
             {
                 return;
             }
 
-            switch (_updaterStatus)
-            {
-                case UpdaterStatus.NoUpdateNeeded:
-                    SwitchToLogin(false);
-                    return;
-                case UpdaterStatus.NeedsAuthentication:
-                    SwitchToLogin(true);
-                    return;
-                case UpdaterStatus.Ready:
-                    _nextUpdateAttempt = long.MinValue;
-                    _updaterStatus = default;
-                    _updater.Start();
-                    break;
-                case UpdaterStatus.Offline:
-                    break;
-                default:
-                    break;
-            }
+            _nextUpdateAttempt = now + 10_000;
+            CheckForUpdate();
+            return;
+        }
 
-            if (_nextUpdateAttempt != long.MinValue)
-            {
-                var now = Environment.TickCount64;
-                if (now < _nextUpdateAttempt)
+        progressBar.Style = _updater.Status == UpdateStatus.DownloadingManifest
+            ? ProgressBarStyle.Marquee
+            : ProgressBarStyle.Continuous;
+
+        switch (_updater.Status)
+        {
+            case UpdateStatus.DownloadingManifest:
+                lblStatus.Text = Strings.Update.Checking;
+                break;
+            case UpdateStatus.UpdateInProgress:
+                lblFiles.Show();
+                lblSize.Show();
+                lblFiles.Text = Strings.Update.Files.ToString(_updater.FilesRemaining);
+                lblSize.Text = Strings.Update.Size.ToString(Updater.GetHumanReadableFileSize(_updater.SizeRemaining));
+                lblStatus.Text = Strings.Update.Updating.ToString((int)_updater.Progress);
+                progressBar.Value = Math.Min(100, (int)_updater.Progress);
+                break;
+            case UpdateStatus.Restart:
+                lblFiles.Hide();
+                lblSize.Hide();
+                progressBar.Value = 100;
+                lblStatus.Text = Strings.Update.Restart.ToString();
+                tmrUpdate.Enabled = false;
+
+                if (!ProcessHelper.TryRelaunch())
                 {
-                    return;
+                    ApplicationContext.CurrentContext.Logger.LogWarning("Failed to restart automatically");
                 }
 
-                _nextUpdateAttempt = now + 10_000;
-                CheckForUpdate();
-                return;
-            }
+                this.Close();
 
-            progressBar.Style = _updater.Status == UpdateStatus.DownloadingManifest
-                ? ProgressBarStyle.Marquee
-                : ProgressBarStyle.Continuous;
-
-            switch (_updater.Status)
-            {
-                case UpdateStatus.DownloadingManifest:
-                    lblStatus.Text = Strings.Update.Checking;
-                    break;
-                case UpdateStatus.UpdateInProgress:
-                    lblFiles.Show();
-                    lblSize.Show();
-                    lblFiles.Text = Strings.Update.Files.ToString(_updater.FilesRemaining);
-                    lblSize.Text = Strings.Update.Size.ToString(Updater.GetHumanReadableFileSize(_updater.SizeRemaining));
-                    lblStatus.Text = Strings.Update.Updating.ToString((int)_updater.Progress);
-                    progressBar.Value = Math.Min(100, (int)_updater.Progress);
-                    break;
-                case UpdateStatus.Restart:
-                    lblFiles.Hide();
-                    lblSize.Hide();
-                    progressBar.Value = 100;
-                    lblStatus.Text = Strings.Update.Restart.ToString();
-                    tmrUpdate.Enabled = false;
-
-                    if (!ProcessHelper.TryRelaunch())
-                    {
-                        ApplicationContext.CurrentContext.Logger.LogWarning("Failed to restart automatically");
-                    }
-
-                    this.Close();
-
-                    break;
-                case UpdateStatus.UpdateCompleted:
-                    progressBar.Value = 100;
-                    lblStatus.Text = Strings.Update.Done;
-                    SwitchToLogin(false);
-                    break;
-                case UpdateStatus.Error:
-                    lblFiles.Hide();
-                    lblSize.Hide();
-                    progressBar.Value = 100;
-                    lblStatus.Text = Strings.Update.Error.ToString(_updater.Exception?.Message ?? "");
-                    break;
-                case UpdateStatus.None:
-                    SwitchToLogin(false);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                break;
+            case UpdateStatus.UpdateCompleted:
+                progressBar.Value = 100;
+                lblStatus.Text = Strings.Update.Done;
+                SwitchToLogin(false);
+                break;
+            case UpdateStatus.Error:
+                lblFiles.Hide();
+                lblSize.Hide();
+                progressBar.Value = 100;
+                lblStatus.Text = Strings.Update.Error.ToString(_updater.Exception?.Message ?? "");
+                break;
+            case UpdateStatus.None:
+                SwitchToLogin(false);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
+    }
 }
