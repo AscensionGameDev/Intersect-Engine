@@ -491,6 +491,7 @@ public partial class Resource : Entity, IResource
                 break;
 
             case ResourceTextureSource.Animation:
+                _renderBoundsSrc = new();
                 break;
 
             default:
