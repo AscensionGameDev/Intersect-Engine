@@ -251,6 +251,18 @@ public partial class Resource : Entity, IResource
             s => currentHealthPercentage >= s.MinimumHealth && currentHealthPercentage <= s.MaximumHealth
         );
 
+        // dispose animation if animation is not used in this current state,
+        // but the previous state was an animation
+        if (
+            _currentState?.TextureType == ResourceTextureSource.Animation &&
+            _stateAnimation != default &&
+            currentState?.TextureType != ResourceTextureSource.Animation
+            )
+        {
+            _stateAnimation.Dispose();
+            _stateAnimation = default;
+        }
+
         _currentState = currentState;
         _sprite = _currentState?.TextureName ?? string.Empty;
 
