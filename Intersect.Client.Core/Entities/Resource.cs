@@ -49,12 +49,6 @@ public partial class Resource : Entity, IResource
         get => _descriptor;
         set
         {
-            if (value == _descriptor)
-            {
-                return;
-            }
-
-            _descriptor = value;
             if (value is { } descriptor)
             {
                 _maximumHealthForStates = (int)(descriptor.UseExplicitMaxHealthForResourceStates
@@ -66,6 +60,12 @@ public partial class Resource : Entity, IResource
                 _maximumHealthForStates = 0;
             }
 
+            if (value == _descriptor)
+            {
+                return;
+            }
+
+            _descriptor = value;
             UpdateCurrentState();
         }
     }
@@ -116,7 +116,7 @@ public partial class Resource : Entity, IResource
             case ResourceTextureSource.Tileset:
                 if (GameContentManager.Current.TilesetsLoaded)
                 {
-                    Texture = GameContentManager.Current.GetTexture(TextureType.Tileset, _sprite);
+                    Texture = GameContentManager.Current.GetTexture(TextureType.Tileset, _currentState?.TextureName);
                 }
                 else
                 {
@@ -125,7 +125,7 @@ public partial class Resource : Entity, IResource
                 break;
 
             case ResourceTextureSource.Resource:
-                Texture = GameContentManager.Current.GetTexture(TextureType.Resource, _sprite);
+                Texture = GameContentManager.Current.GetTexture(TextureType.Resource, _currentState?.TextureName);
                 break;
 
             case ResourceTextureSource.Animation:
@@ -269,7 +269,6 @@ public partial class Resource : Entity, IResource
         }
 
         _currentState = currentState;
-        _sprite = _currentState?.TextureName ?? string.Empty;
 
         if (currentState is { TextureType: ResourceTextureSource.Animation } && currentState.AnimationId != Guid.Empty)
         {
