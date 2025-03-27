@@ -18,15 +18,16 @@ namespace Intersect.Editor.Forms.Editors;
 
 public partial class FrmResource : EditorForm
 {
+    private readonly List<string> _knownFolders = [];
+    private readonly BindingList<NotifiableDrop> _dropList = [];
+    private readonly BindingList<ResourceStateDescriptor> _stateList = [];
     private readonly Dictionary<Guid, ResourceDescriptor> _changed = [];
+
     private string? _copiedItem;
     private ResourceDescriptor? _editorItem;
     private Bitmap? _graphicBitmap;
     private Bitmap? _resourceGraphic;
     private bool _mouseDown;
-    private readonly List<string> _knownFolders = [];
-    private readonly BindingList<NotifiableDrop> _dropList = [];
-    private readonly BindingList<ResourceStateDescriptor> _stateList = [];
 
     public FrmResource()
     {
