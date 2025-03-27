@@ -5048,7 +5048,7 @@ Tick timer saved in server config.json.";
 
         public static LocalizedString StateNameError = @"State Name must be greater than 0 characters.";
 
-        public static LocalizedString hpregen = @"HP Regen (%):";
+        public static LocalizedString HealthRegenPercent = @"HP Regen (%):";
 
         public static LocalizedString maxhp = @"Max HP:";
 
