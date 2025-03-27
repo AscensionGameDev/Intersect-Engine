@@ -1348,7 +1348,9 @@ public static partial class Graphics
         var x2 = Options.Instance.Map.MapWidth;
         var y1 = 0;
         var y2 = Options.Instance.Map.MapHeight;
-        var xoffset = CurrentView.Left + gridX * Options.Instance.Map.TileWidth * Options.Instance.Map.MapWidth;
+        var tileWidth = Options.Instance.Map.TileWidth;
+        var tileHeight = Options.Instance.Map.TileHeight;
+        var xoffset = CurrentView.Left + gridX * tileWidth * Options.Instance.Map.MapWidth;
         var yoffset = CurrentView.Top + gridY * Options.Instance.Map.TileHeight * Options.Instance.Map.MapHeight;
 
         if (screenShotting)
@@ -1402,8 +1404,11 @@ public static partial class Graphics
                         continue;
                     }
 
+                    float xpos = x * tileWidth + xoffset;
+                    float ypos = y * Options.Instance.Map.TileHeight + yoffset;
+
                     // we have the graphic, now lets build based on type
-                    switch(resourceGraphic.TextureType)
+                    switch (resourceGraphic.TextureType)
                     {
                         case ResourceTextureSource.Resource:
                             {
@@ -1416,21 +1421,25 @@ public static partial class Graphics
                                     continue;
                                 }
 
-                                float xpos = x * Options.Instance.Map.TileWidth + xoffset;
-                                float ypos = y * Options.Instance.Map.TileHeight + yoffset;
-
                                 if (texture.Height > Options.Instance.Map.TileHeight)
                                 {
                                     ypos -= texture.Height - Options.Instance.Map.TileHeight;
                                 }
 
-                                if (texture.Width > Options.Instance.Map.TileWidth)
+                                if (texture.Width > tileWidth)
                                 {
-                                    xpos -= (texture.Width - Options.Instance.Map.TileWidth) / 2;
+                                    xpos -= (texture.Width - tileWidth) / 2;
                                 }
 
                                 DrawTexture(
-                                    texture, xpos, ypos, 0, 0, texture.Width, texture.Height, renderTarget
+                                    texture,
+                                    xpos,
+                                    ypos,
+                                    0,
+                                    0,
+                                    texture.Width,
+                                    texture.Height,
+                                    renderTarget
                                 );
                             }
                             break;
@@ -1446,24 +1455,25 @@ public static partial class Graphics
                                     continue;
                                 }
 
-                                float xpos = x * Options.Instance.Map.TileWidth + xoffset;
-                                float ypos = y * Options.Instance.Map.TileHeight + yoffset;
-
                                 if ((resourceGraphic.Height + 1) * Options.Instance.Map.TileHeight > Options.Instance.Map.TileHeight)
                                 {
                                     ypos -= (resourceGraphic.Height + 1) * Options.Instance.Map.TileHeight - Options.Instance.Map.TileHeight;
                                 }
 
-                                if ((resourceGraphic.Width + 1) * Options.Instance.Map.TileWidth > Options.Instance.Map.TileWidth)
+                                if ((resourceGraphic.Width + 1) * tileWidth > tileWidth)
                                 {
-                                    xpos -= ((resourceGraphic.Width + 1) * Options.Instance.Map.TileWidth - Options.Instance.Map.TileWidth) / 2;
+                                    xpos -= ((resourceGraphic.Width + 1) * tileWidth - tileWidth) / 2;
                                 }
 
                                 DrawTexture(
-                                    texture, xpos, ypos, resourceGraphic.X * Options.Instance.Map.TileWidth,
+                                    texture,
+                                    xpos,
+                                    ypos,
+                                    resourceGraphic.X * tileWidth,
                                     resourceGraphic.Y * Options.Instance.Map.TileHeight,
-                                    (resourceGraphic.Width + 1) * Options.Instance.Map.TileWidth,
-                                    (resourceGraphic.Height + 1) * Options.Instance.Map.TileHeight, renderTarget
+                                    (resourceGraphic.Width + 1) * tileWidth,
+                                    (resourceGraphic.Height + 1) * Options.Instance.Map.TileHeight,
+                                    renderTarget
                                 );
                             }
                             break;
@@ -1475,8 +1485,8 @@ public static partial class Graphics
                                     continue;
                                 }
 
-                                float xpos = x * Options.Instance.Map.TileWidth + xoffset + Options.Instance.Map.TileWidth / 2f;
-                                float ypos = y * Options.Instance.Map.TileHeight + yoffset + Options.Instance.Map.TileHeight / 2f;
+                                xpos += tileWidth / 2f;
+                                ypos += Options.Instance.Map.TileHeight / 2f;
 
                                 var animationInstance = tmpMap.GetAttributeAnimation(tmpMap.Attributes[x, y], animation.Id);
 
@@ -1514,7 +1524,7 @@ public static partial class Graphics
 
                     if (animation != null)
                     {
-                        float xpos = x * Options.Instance.Map.TileWidth + xoffset + Options.Instance.Map.TileWidth / 2;
+                        float xpos = x * tileWidth + xoffset + tileWidth / 2;
                         float ypos = y * Options.Instance.Map.TileHeight + yoffset + Options.Instance.Map.TileHeight / 2;
                         if (tmpMap.Attributes[x, y] != null)
                         {
