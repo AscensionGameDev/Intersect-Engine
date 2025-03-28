@@ -11,35 +11,33 @@ using Intersect.Utilities;
 
 namespace Intersect.Client.Maps;
 
-
-public partial class WeatherParticle : IWeatherParticle
+public partial class WeatherParticle : IWeatherParticle, IDisposable
 {
+    private readonly List<IWeatherParticle> _RemoveParticle;
 
-    private List<IWeatherParticle> _RemoveParticle;
+    private readonly Animation animInstance;
 
-    private Animation animInstance;
+    private readonly Rectangle bounds;
 
-    private Rectangle bounds;
+    private readonly float cameraSpawnX;
 
-    private float cameraSpawnX;
+    private readonly float cameraSpawnY;
 
-    private float cameraSpawnY;
+    private readonly int originalX;
 
-    private int originalX;
+    private readonly int originalY;
 
-    private int originalY;
+    private readonly Point partSize;
 
-    private Point partSize;
+    private readonly long TransmittionTimer;
 
-    private long TransmittionTimer;
+    private readonly int xVelocity;
+
+    private readonly int yVelocity;
 
     public float X { get; set; }
 
-    private int xVelocity;
-
     public float Y { get; set; }
-
-    private int yVelocity;
 
     public WeatherParticle(List<IWeatherParticle> RemoveParticle, int xvelocity, int yvelocity, AnimationDescriptor anim)
     {
@@ -136,6 +134,10 @@ public partial class WeatherParticle : IWeatherParticle
 
         if (!newBounds.IntersectsWith(new Rectangle((int)X, (int)Y, partSize.X, partSize.Y)))
         {
+            if (_RemoveParticle.Contains(this))
+            {
+                throw new Exception();
+            }
             _RemoveParticle.Add(this);
         }
         else
@@ -150,12 +152,34 @@ public partial class WeatherParticle : IWeatherParticle
 
     public void Dispose()
     {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    private void Dispose(bool disposing)
+    {
+        ReleaseUnmanagedResources();
+
+        if (!disposing)
+        {
+            return;
+        }
+
         animInstance.Dispose();
+        ReleaseManagedResources();
+    }
+
+    protected virtual void ReleaseManagedResources()
+    {
+    }
+
+    protected virtual void ReleaseUnmanagedResources()
+    {
+        // TODO release unmanaged resources here
     }
 
     ~WeatherParticle()
     {
-        Dispose();
+        Dispose(false);
     }
-
 }
