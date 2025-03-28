@@ -2,7 +2,6 @@ using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.Framework.Reflection;
-using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
@@ -24,7 +23,7 @@ public partial class Resource : Entity
 
         Descriptor = descriptor;
         Name = descriptor.Name;
-        Sprite = descriptor.Initial.Graphic;
+
         SetMaxVital(
             Vital.Health,
             Randomization.Next(Math.Min(1, descriptor.MinHp), Math.Max(descriptor.MaxHp, Math.Min(1, descriptor.MinHp)) + 1)
@@ -53,7 +52,6 @@ public partial class Resource : Entity
             base.Die(false, killer);
         }
 
-        Sprite = Descriptor.Exhausted.Graphic;
         Passable = Descriptor.WalkableAfter;
         IsDead = true;
 
@@ -68,7 +66,6 @@ public partial class Resource : Entity
 
     public void Spawn()
     {
-        Sprite = Descriptor.Initial.Graphic;
         var minimumHealth = Descriptor.MinHp;
         var maximumHealth = Descriptor.MaxHp;
 

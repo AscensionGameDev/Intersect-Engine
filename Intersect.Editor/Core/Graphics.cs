@@ -1344,12 +1344,16 @@ public static partial class Graphics
             return;
         }
 
+        var mapWidth = Options.Instance.Map.MapWidth;
+        var mapHeight = Options.Instance.Map.MapHeight;
         var x1 = 0;
-        var x2 = Options.Instance.Map.MapWidth;
+        var x2 = mapWidth;
         var y1 = 0;
-        var y2 = Options.Instance.Map.MapHeight;
-        var xoffset = CurrentView.Left + gridX * Options.Instance.Map.TileWidth * Options.Instance.Map.MapWidth;
-        var yoffset = CurrentView.Top + gridY * Options.Instance.Map.TileHeight * Options.Instance.Map.MapHeight;
+        var y2 = mapHeight;
+        var tileWidth = Options.Instance.Map.TileWidth;
+        var tileHeight = Options.Instance.Map.TileHeight;
+        var xoffset = CurrentView.Left + gridX * tileWidth * mapWidth;
+        var yoffset = CurrentView.Top + gridY * tileHeight * mapHeight;
 
         if (screenShotting)
         {
@@ -1380,6 +1384,9 @@ public static partial class Graphics
                     continue;
                 }
 
+                float xpos = x * tileWidth + xoffset;
+                float ypos = y * tileHeight + yoffset;
+
                 if (tmpMap.Attributes[x, y].Type == MapAttributeType.Resource && !upper && !alternate)
                 {
                     var resource = ResourceDescriptor.Get(((MapResourceAttribute) tmpMap.Attributes[x, y]).ResourceId);
@@ -1388,65 +1395,128 @@ public static partial class Graphics
                         continue;
                     }
 
-                    if (TextUtils.IsNone(resource.Initial.Graphic))
+                    if (resource.States.Count < 1)
                     {
                         continue;
                     }
 
-                    if (resource.Initial.GraphicFromTileset)
+                    var fullVitalResourceGraphic = resource.States.Values
+                        .OrderByDescending(g => g.MaximumHealth)
+                        .FirstOrDefault();
+
+                    if (fullVitalResourceGraphic is not { } resourceGraphic)
                     {
-                        var res = GameContentManager.GetTexture(
-                            GameContentManager.TextureType.Tileset, resource.Initial.Graphic
-                        );
-
-                        if (res == null)
-                        {
-                            continue;
-                        }
-
-                        float xpos = x * Options.Instance.Map.TileWidth + xoffset;
-                        float ypos = y * Options.Instance.Map.TileHeight + yoffset;
-                        if ((resource.Initial.Height + 1) * Options.Instance.Map.TileHeight > Options.Instance.Map.TileHeight)
-                        {
-                            ypos -= (resource.Initial.Height + 1) * Options.Instance.Map.TileHeight - Options.Instance.Map.TileHeight;
-                        }
-
-                        if ((resource.Initial.Width + 1) * Options.Instance.Map.TileWidth > Options.Instance.Map.TileWidth)
-                        {
-                            xpos -= ((resource.Initial.Width + 1) * Options.Instance.Map.TileWidth - Options.Instance.Map.TileWidth) / 2;
-                        }
-
-                        DrawTexture(
-                            res, xpos, ypos, resource.Initial.X * Options.Instance.Map.TileWidth,
-                            resource.Initial.Y * Options.Instance.Map.TileHeight,
-                            (resource.Initial.Width + 1) * Options.Instance.Map.TileWidth,
-                            (resource.Initial.Height + 1) * Options.Instance.Map.TileHeight, renderTarget
-                        );
+                        continue;
                     }
-                    else
+
+                    // we have the graphic, now lets build based on type
+                    switch (resourceGraphic.TextureType)
                     {
-                        var res = GameContentManager.GetTexture(
-                            GameContentManager.TextureType.Resource, resource.Initial.Graphic
-                        );
+                        case ResourceTextureSource.Resource:
+                            {
+                                var texture = GameContentManager.GetTexture(
+                                    GameContentManager.TextureType.Resource, resourceGraphic.TextureName
+                                );
 
-                        if (res == null)
-                        {
-                            continue;
-                        }
+                                if (texture == null)
+                                {
+                                    continue;
+                                }
 
-                        float xpos = x * Options.Instance.Map.TileWidth + xoffset;
-                        float ypos = y * Options.Instance.Map.TileHeight + yoffset;
-                        if (res.Height > Options.Instance.Map.TileHeight)
-                        {
-                            ypos -= res.Height - Options.Instance.Map.TileHeight;
-                        }
+                                if (texture.Height > tileHeight)
+                                {
+                                    ypos -= texture.Height - tileHeight;
+                                }
 
-                        if (res.Width > Options.Instance.Map.TileWidth)
-                        {
-                            xpos -= (res.Width - Options.Instance.Map.TileWidth) / 2;
-                        }
+                                if (texture.Width > tileWidth)
+                                {
+                                    xpos -= (texture.Width - tileWidth) / 2;
+                                }
 
-                        DrawTexture(res, xpos, ypos, 0, 0, res.Width, res.Height, renderTarget);
+                                DrawTexture(
+                                    texture,
+                                    xpos,
+                                    ypos,
+                                    0,
+                                    0,
+                                    texture.Width,
+                                    texture.Height,
+                                    renderTarget
+                                );
+                            }
+                            break;
+
+                        case ResourceTextureSource.Tileset:
+                            {
+                                var texture = GameContentManager.GetTexture(
+                                    GameContentManager.TextureType.Tileset, resourceGraphic.TextureName
+                                );
+
+                                if (texture == null)
+                                {
+                                    continue;
+                                }
+
+                                if ((resourceGraphic.Height + 1) * tileHeight > tileHeight)
+                                {
+                                    ypos -= (resourceGraphic.Height + 1) * tileHeight - tileHeight;
+                                }
+
+                                if ((resourceGraphic.Width + 1) * tileWidth > tileWidth)
+                                {
+                                    xpos -= ((resourceGraphic.Width + 1) * tileWidth - tileWidth) / 2;
+                                }
+
+                                DrawTexture(
+                                    texture,
+                                    xpos,
+                                    ypos,
+                                    resourceGraphic.X * tileWidth,
+                                    resourceGraphic.Y * tileHeight,
+                                    (resourceGraphic.Width + 1) * tileWidth,
+                                    (resourceGraphic.Height + 1) * tileHeight,
+                                    renderTarget
+                                );
+                            }
+                            break;
+
+                        case ResourceTextureSource.Animation:
+                            {
+                                if (!AnimationDescriptor.TryGet(resourceGraphic.AnimationId, out var animation))
+                                {
+                                    continue;
+                                }
+
+                                xpos += tileWidth / 2f;
+                                ypos += tileHeight / 2f;
+
+                                var animationInstance = tmpMap.GetAttributeAnimation(tmpMap.Attributes[x, y], animation.Id);
+
+                                //Update if the animation isn't right!
+                                if (animationInstance?.Descriptor != animation)
+                                {
+                                    tmpMap.SetAttributeAnimation(
+                                        tmpMap.Attributes[x, y],
+                                        new Animation(animation, true)
+                                    );
+                                }
+
+                                if (animationInstance != null)
+                                {
+                                    animationInstance.Update();
+                                    animationInstance.SetPosition((int)xpos, (int)ypos, 0);
+                                    animationInstance.Draw(renderTarget, false, alternate);
+                                    animationInstance.Draw(renderTarget, true, alternate);
+                                }
+                            }
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException(
+                                nameof(resourceGraphic.TextureType),
+                                resourceGraphic.TextureType,
+                                "Unknown ResourceGraphicType"
+                            );
                     }
                 }
                 else if (tmpMap.Attributes[x, y].Type == MapAttributeType.Animation)
@@ -1456,8 +1526,9 @@ public static partial class Graphics
 
                     if (animation != null)
                     {
-                        float xpos = x * Options.Instance.Map.TileWidth + xoffset + Options.Instance.Map.TileWidth / 2;
-                        float ypos = y * Options.Instance.Map.TileHeight + yoffset + Options.Instance.Map.TileHeight / 2;
+                        xpos += tileWidth / 2f;
+                        ypos += tileHeight / 2f;
+
                         if (tmpMap.Attributes[x, y] != null)
                         {
                             var animInstance = tmpMap.GetAttributeAnimation(tmpMap.Attributes[x, y], animation.Id);

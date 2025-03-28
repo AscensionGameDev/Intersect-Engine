@@ -1,4 +1,5 @@
 using Intersect.Client.Core;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
@@ -6,8 +7,8 @@ using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
 using Intersect.Core;
 using Intersect.Enums;
+using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Resources;
-using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
 using Microsoft.Extensions.Logging;
 
@@ -18,13 +19,25 @@ public partial class Resource : Entity, IResource
     private FloatRect _renderBoundsDest = FloatRect.Empty;
     private FloatRect _renderBoundsSrc = FloatRect.Empty;
 
-    private bool _recalculateRenderBounds;
     private bool _waitingForTilesets;
+    private bool _recalculateRenderBounds;
 
     private bool _isDead;
-    private Guid _descriptorId;
+    private int _maximumHealthForStates;
+    private ResourceStateDescriptor? _currentState;
     private ResourceDescriptor? _descriptor;
+    private AnimationDescriptor? _animationDescriptor;
     private IAnimation? _activeAnimation;
+    private IAnimation? _stateAnimation;
+
+    private readonly int _tileWidth = Options.Instance.Map.TileWidth;
+    private readonly int _tileHeight = Options.Instance.Map.TileHeight;
+    private readonly int _mapHeight = Options.Instance.Map.MapHeight;
+
+    /// <inheritdoc />
+    public override bool CanBeAttacked => !IsDead;
+
+    public ResourceStateDescriptor? CurrentState => _currentState;
 
     public Resource(Guid id, ResourceEntityPacket packet) : base(id, packet, EntityType.Resource)
     {
@@ -34,10 +47,17 @@ public partial class Resource : Entity, IResource
     public ResourceDescriptor? Descriptor
     {
         get => _descriptor;
-        set => _descriptor = value;
-    }
+        set
+        {
+            if (value == _descriptor)
+            {
+                return;
+            }
 
-    public bool IsDepleted => IsDead;
+            _descriptor = value;
+            UpdateCurrentState();
+        }
+    }
 
     public bool IsDead
     {
@@ -50,7 +70,6 @@ public partial class Resource : Entity, IResource
             }
 
             _isDead = value;
-            _recalculateRenderBounds = true;
         }
     }
 
@@ -81,21 +100,54 @@ public partial class Resource : Entity, IResource
             return;
         }
 
-        if (IsDead && Descriptor.Exhausted.GraphicFromTileset ||
-            !IsDead && Descriptor.Initial.GraphicFromTileset)
+        switch (_currentState?.TextureType)
         {
-            if (GameContentManager.Current.TilesetsLoaded)
-            {
-                Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Tileset, _sprite);
-            }
-            else
-            {
-                _waitingForTilesets = true;
-            }
+            case ResourceTextureSource.Tileset:
+                if (GameContentManager.Current.TilesetsLoaded)
+                {
+                    Texture = GameContentManager.Current.GetTexture(TextureType.Tileset, _currentState?.TextureName);
+                }
+                else
+                {
+                    _waitingForTilesets = true;
+                }
+                break;
+
+            case ResourceTextureSource.Resource:
+                Texture = GameContentManager.Current.GetTexture(TextureType.Resource, _currentState?.TextureName);
+                break;
+
+            case ResourceTextureSource.Animation:
+                if (_stateAnimation?.Descriptor?.Id == _currentState.AnimationId)
+                {
+                    return;
+                }
+
+                _stateAnimation?.Dispose();
+                _stateAnimation = null;
+
+                if (MapInstance is not { } mapInstance)
+                {
+                    return;
+                }
+
+                if (_animationDescriptor is not { } animationDescriptor)
+                {
+                    return;
+                }
+
+                var animation = mapInstance.AddTileAnimation(animationDescriptor, X, Y, Direction.Up);
+                if (animation is { IsDisposed: false })
+                {
+                    animation.InfiniteLoop = true;
+                }
+                _stateAnimation = animation;
+                break;
         }
-        else
+
+        if (Texture == default)
         {
-            Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Resource, _sprite);
+            Texture = Graphics.Renderer.WhitePixel;
         }
 
         _recalculateRenderBounds = true;
@@ -104,7 +156,6 @@ public partial class Resource : Entity, IResource
     public override void Load(EntityPacket? packet)
     {
         base.Load(packet);
-
         _recalculateRenderBounds = true;
 
         if (packet is not ResourceEntityPacket resourceEntityPacket)
@@ -116,7 +167,6 @@ public partial class Resource : Entity, IResource
         IsDead = resourceEntityPacket.IsDead;
 
         var descriptorId = resourceEntityPacket.ResourceId;
-        _descriptorId = descriptorId;
 
         var justDied = !wasDead && resourceEntityPacket.IsDead;
         if (!ResourceDescriptor.TryGet(descriptorId, out var descriptor))
@@ -134,8 +184,11 @@ public partial class Resource : Entity, IResource
             return;
         }
 
-        _descriptor = descriptor;
-        UpdateFromDescriptor(_descriptor);
+        _maximumHealthForStates = (int)(descriptor.UseExplicitMaxHealthForResourceStates
+            ? descriptor.MaxHp
+            : MaxVital[(int)Enums.Vital.Health]);
+
+        Descriptor = descriptor;
 
         if (!justDied)
         {
@@ -144,7 +197,7 @@ public partial class Resource : Entity, IResource
 
         if (MapInstance is { } mapInstance)
         {
-            var animation = mapInstance.AddTileAnimation(descriptor.AnimationId, X, Y, Direction.Up);
+            var animation = mapInstance.AddTileAnimation(descriptor.DeathAnimationId, X, Y, Direction.Up);
             if (animation is { IsDisposed: false })
             {
                 animation.Finished += OnAnimationDisposedOrFinished;
@@ -175,15 +228,46 @@ public partial class Resource : Entity, IResource
         animation.Finished -= OnAnimationDisposedOrFinished;
     }
 
-    private void UpdateFromDescriptor(ResourceDescriptor? descriptor)
+    public void UpdateCurrentState()
     {
-        if (descriptor == null)
+        if (Descriptor == default)
         {
             return;
         }
 
-        var updatedSprite = IsDead ? descriptor.Exhausted.Graphic : descriptor.Initial.Graphic;
-        _sprite = updatedSprite;
+        var graphicStates = Descriptor.States;
+        var currentHealthPercentage = Math.Floor((float)Vital[(int)Enums.Vital.Health] / _maximumHealthForStates * 100);
+
+        if (_currentState is { } currentState &&
+            currentHealthPercentage >= currentState?.MinimumHealth &&
+            currentHealthPercentage <= currentState?.MaximumHealth
+        )
+        {
+            return;
+        }
+
+        currentState = graphicStates.Values.FirstOrDefault(
+            s => currentHealthPercentage >= s.MinimumHealth && currentHealthPercentage <= s.MaximumHealth
+        );
+
+        // dispose animation if animation is not used in this current state,
+        // but the previous state was an animation
+        if (
+            _currentState?.TextureType == ResourceTextureSource.Animation &&
+            currentState?.TextureType != ResourceTextureSource.Animation
+        )
+        {
+            _stateAnimation?.Dispose();
+            _stateAnimation = default;
+        }
+
+        _currentState = currentState;
+
+        if (currentState is { TextureType: ResourceTextureSource.Animation } && currentState.AnimationId != Guid.Empty)
+        {
+            _ = AnimationDescriptor.TryGet(currentState.AnimationId, out _animationDescriptor);
+        }
+
         ReloadSpriteTexture();
     }
 
@@ -205,21 +289,19 @@ public partial class Resource : Entity, IResource
         if (mDisposed)
         {
             LatestMap = null;
-
             return false;
         }
 
         if (Descriptor is { IsDeleted: true } deletedDescriptor)
         {
-            _ = ResourceDescriptor.TryGet(deletedDescriptor.Id, out _descriptor);
-            UpdateFromDescriptor(_descriptor);
+            _ = ResourceDescriptor.TryGet(deletedDescriptor.Id, out var descriptor);
+            Descriptor = descriptor;
         }
 
         if (!Maps.MapInstance.TryGet(MapId, out var map) || !map.InView())
         {
             LatestMap = map;
             Globals.EntitiesToDispose.Add(Id);
-
             return false;
         }
 
@@ -250,15 +332,9 @@ public partial class Resource : Entity, IResource
         return result;
     }
 
-    /// <inheritdoc />
-    public override bool CanBeAttacked => !IsDead;
-
     public override HashSet<Entity>? DetermineRenderOrder(HashSet<Entity>? renderList, IMapInstance? map)
     {
-        if (Descriptor == default ||
-            (IsDead && !Descriptor.Exhausted.RenderBelowEntities) ||
-            (!IsDead && !Descriptor.Initial.RenderBelowEntities)
-        )
+        if (CurrentState is not { } graphicState || !graphicState.RenderBelowEntities)
         {
             return base.DetermineRenderOrder(renderList, map);
         }
@@ -280,6 +356,11 @@ public partial class Resource : Entity, IResource
         }
 
         if (Globals.Me?.MapInstance == null)
+        {
+            return null;
+        }
+
+        if (Graphics.RenderingEntities == default)
         {
             return null;
         }
@@ -312,16 +393,15 @@ public partial class Resource : Entity, IResource
                         }
                         else if (y == gridY)
                         {
-                            renderSet = Graphics.RenderingEntities[priority, Options.Instance.Map.MapHeight + Y];
+                            renderSet = Graphics.RenderingEntities[priority, _mapHeight + Y];
                         }
                         else
                         {
-                            renderSet = Graphics.RenderingEntities[priority, Options.Instance.Map.MapHeight * 2 + Y];
+                            renderSet = Graphics.RenderingEntities[priority, _mapHeight * 2 + Y];
                         }
 
                         _ = renderSet.Add(this);
                         renderList = renderSet;
-
                         return renderList;
 
                     }
@@ -358,45 +438,69 @@ public partial class Resource : Entity, IResource
             }
         }
 
-        if (Texture == null)
+        if (Texture is not { } texture)
+        {
+            return;
+        }
+
+        if (CurrentState is not { } graphicState)
         {
             return;
         }
 
         _renderBoundsSrc.X = 0;
         _renderBoundsSrc.Y = 0;
-        if (IsDead && Descriptor.Exhausted.GraphicFromTileset)
+
+        switch(graphicState.TextureType)
         {
-            _renderBoundsSrc.X = Descriptor.Exhausted.X * Options.Instance.Map.TileWidth;
-            _renderBoundsSrc.Y = Descriptor.Exhausted.Y * Options.Instance.Map.TileHeight;
-            _renderBoundsSrc.Width = (Descriptor.Exhausted.Width + 1) * Options.Instance.Map.TileWidth;
-            _renderBoundsSrc.Height = (Descriptor.Exhausted.Height + 1) * Options.Instance.Map.TileHeight;
-        }
-        else if (!IsDead && Descriptor.Initial.GraphicFromTileset)
-        {
-            _renderBoundsSrc.X = Descriptor.Initial.X * Options.Instance.Map.TileWidth;
-            _renderBoundsSrc.Y = Descriptor.Initial.Y * Options.Instance.Map.TileHeight;
-            _renderBoundsSrc.Width = (Descriptor.Initial.Width + 1) * Options.Instance.Map.TileWidth;
-            _renderBoundsSrc.Height = (Descriptor.Initial.Height + 1) * Options.Instance.Map.TileHeight;
-        }
-        else
-        {
-            _renderBoundsSrc.Width = Texture.Width;
-            _renderBoundsSrc.Height = Texture.Height;
+            case ResourceTextureSource.Resource:
+                _renderBoundsSrc.Width = texture.Width;
+                _renderBoundsSrc.Height = texture.Height;
+                break;
+
+            case ResourceTextureSource.Tileset:
+                ResourceStateDescriptor? selectedGraphic = null;
+
+                if (IsDead && graphicState is { MaximumHealth: 0 } deadGraphic)
+                {
+                    selectedGraphic = deadGraphic;
+                }
+                else if (graphicState is { MinimumHealth: > 0 } aliveGraphic)
+                {
+                    selectedGraphic = aliveGraphic;
+                }
+
+                _renderBoundsSrc = selectedGraphic is null
+                    ? default
+                    : new (
+                        selectedGraphic.X * _tileWidth,
+                        selectedGraphic.Y * _tileHeight,
+                        (selectedGraphic.Width + 1) * _tileWidth,
+                        (selectedGraphic.Height + 1) * _tileHeight
+                    );
+                break;
+
+            case ResourceTextureSource.Animation:
+                _renderBoundsSrc = default;
+                break;
+
+            default:
+                return;
         }
 
         _renderBoundsDest.Width = _renderBoundsSrc.Width;
         _renderBoundsDest.Height = _renderBoundsSrc.Height;
-        _renderBoundsDest.Y = (int) (map.Y + Y * Options.Instance.Map.TileHeight + OffsetY);
-        _renderBoundsDest.X = (int) (map.X + X * Options.Instance.Map.TileWidth + OffsetX);
-        if (_renderBoundsSrc.Height > Options.Instance.Map.TileHeight)
+        _renderBoundsDest.Y = (int) (map.Y + Y * _tileHeight + OffsetY);
+        _renderBoundsDest.X = (int) (map.X + X * _tileWidth + OffsetX);
+
+        if (_renderBoundsSrc.Height > _tileHeight)
         {
-            _renderBoundsDest.Y -= _renderBoundsSrc.Height - Options.Instance.Map.TileHeight;
+            _renderBoundsDest.Y -= _renderBoundsSrc.Height - _tileHeight;
         }
 
-        if (_renderBoundsSrc.Width > Options.Instance.Map.TileWidth)
+        if (_renderBoundsSrc.Width > _tileWidth)
         {
-            _renderBoundsDest.X -= (_renderBoundsSrc.Width - Options.Instance.Map.TileWidth) / 2;
+            _renderBoundsDest.X -= (_renderBoundsSrc.Width - _tileWidth) / 2;
         }
 
         _recalculateRenderBounds = false;
@@ -421,6 +525,6 @@ public partial class Resource : Entity, IResource
             return;
         }
 
-        Graphics.DrawGameTexture(Texture, _renderBoundsSrc, _renderBoundsDest, Intersect.Color.White);
+        Graphics.DrawGameTexture(Texture, _renderBoundsSrc, _renderBoundsDest, Color.White);
     }
 }

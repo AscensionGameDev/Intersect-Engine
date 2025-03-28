@@ -3,7 +3,6 @@ using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
-using Intersect.GameObjects;
 using Intersect.Models;
 using Newtonsoft.Json;
 
@@ -23,32 +22,35 @@ public partial class ResourceDescriptor : DatabaseObject<ResourceDescriptor>, IF
     public ResourceDescriptor(Guid id) : base(id)
     {
         Name = "New Resource";
-        Initial = new ResourceStateDescriptor();
-        Exhausted = new ResourceStateDescriptor();
     }
 
     //EF wants NO PARAMETERS!!!!!
     public ResourceDescriptor()
     {
         Name = "New Resource";
-        Initial = new ResourceStateDescriptor();
-        Exhausted = new ResourceStateDescriptor();
     }
 
-    // Graphics
-    public ResourceStateDescriptor Initial { get; set; }
+    public bool UseExplicitMaxHealthForResourceStates { get; set; }
 
-    public ResourceStateDescriptor Exhausted { get; set; }
+    [NotMapped, JsonIgnore]
+    public Dictionary<Guid, ResourceStateDescriptor> States { get; set; } = [];
 
-    [Column("Animation")]
-    public Guid AnimationId { get; set; }
+    [Column(nameof(States))]
+    public string JsonStates
+    {
+        get => JsonConvert.SerializeObject(States);
+        set => States = JsonConvert.DeserializeObject<Dictionary<Guid, ResourceStateDescriptor>>(value);
+    }
+
+    [Column(nameof(DeathAnimation))]
+    public Guid DeathAnimationId { get; set; }
 
     [NotMapped]
     [JsonIgnore]
-    public AnimationDescriptor Animation
+    public AnimationDescriptor DeathAnimation
     {
-        get => AnimationDescriptor.Get(AnimationId);
-        set => AnimationId = value?.Id ?? Guid.Empty;
+        get => AnimationDescriptor.Get(DeathAnimationId);
+        set => DeathAnimationId = value?.Id ?? Guid.Empty;
     }
 
     // Drops

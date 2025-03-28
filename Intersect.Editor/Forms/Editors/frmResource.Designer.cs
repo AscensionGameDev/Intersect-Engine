@@ -37,14 +37,17 @@ namespace Intersect.Editor.Forms.Editors
             txtSearch = new DarkTextBox();
             lstGameObjects = new Controls.GameObjectList();
             grpGeneral = new DarkGroupBox();
+            nudHpRegen = new DarkNumericUpDown();
+            chkUseExplicitMaxHealthForResourceStates = new DarkCheckBox();
+            lblHpRegen = new Label();
             btnAddFolder = new DarkButton();
             lblFolder = new Label();
             cmbFolder = new DarkComboBox();
             nudMaxHp = new DarkNumericUpDown();
             nudMinHp = new DarkNumericUpDown();
             nudSpawnDuration = new DarkNumericUpDown();
-            cmbAnimation = new DarkComboBox();
-            lblAnimation = new Label();
+            cmbDeathAnimation = new DarkComboBox();
+            lblDeathAnimation = new Label();
             lblMaxHp = new Label();
             lblSpawnDuration = new Label();
             chkWalkableAfter = new DarkCheckBox();
@@ -56,18 +59,25 @@ namespace Intersect.Editor.Forms.Editors
             txtName = new DarkTextBox();
             btnRequirements = new DarkButton();
             grpGraphics = new DarkGroupBox();
-            chkExhaustedBelowEntities = new DarkCheckBox();
-            chkInitialBelowEntities = new DarkCheckBox();
-            chkExhaustedFromTileset = new DarkCheckBox();
-            chkInitialFromTileset = new DarkCheckBox();
-            exhaustedGraphicContainer = new Panel();
-            picEndResource = new PictureBox();
-            initalGraphicContainer = new Panel();
-            picInitialResource = new PictureBox();
-            cmbEndSprite = new DarkComboBox();
-            lblPic2 = new Label();
-            cmbInitialSprite = new DarkComboBox();
-            lblPic = new Label();
+            btnRemoveState = new DarkButton();
+            btnAddState = new DarkButton();
+            lblStateName = new Label();
+            lstStates = new ListBox();
+            txtStateName = new DarkTextBox();
+            grpGraphicData = new DarkGroupBox();
+            nudStateRangeMax = new DarkNumericUpDown();
+            nudStateRangeMin = new DarkNumericUpDown();
+            lblStateRange = new Label();
+            cmbTextureSource = new DarkComboBox();
+            lblTerxtureSource = new Label();
+            cmbAnimation = new DarkComboBox();
+            lblAnimation = new Label();
+            chkRenderBelowEntity = new DarkCheckBox();
+            cmbTextureType = new DarkComboBox();
+            lblTextureType = new Label();
+            lblStates = new Label();
+            graphicContainer = new Panel();
+            picResource = new PictureBox();
             tmrRender = new System.Windows.Forms.Timer(components);
             pnlContainer = new Panel();
             grpRequirements = new DarkGroupBox();
@@ -76,10 +86,6 @@ namespace Intersect.Editor.Forms.Editors
             grpCommonEvent = new DarkGroupBox();
             cmbEvent = new DarkComboBox();
             lblEvent = new Label();
-            grpRegen = new DarkGroupBox();
-            nudHpRegen = new DarkNumericUpDown();
-            lblHpRegen = new Label();
-            lblRegenHint = new Label();
             grpDrops = new DarkGroupBox();
             nudDropMinAmount = new DarkNumericUpDown();
             lblDropMinAmount = new Label();
@@ -107,19 +113,19 @@ namespace Intersect.Editor.Forms.Editors
             toolStripItemUndo = new ToolStripButton();
             grpResources.SuspendLayout();
             grpGeneral.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudHpRegen).BeginInit();
             ((System.ComponentModel.ISupportInitialize)nudMaxHp).BeginInit();
             ((System.ComponentModel.ISupportInitialize)nudMinHp).BeginInit();
             ((System.ComponentModel.ISupportInitialize)nudSpawnDuration).BeginInit();
             grpGraphics.SuspendLayout();
-            exhaustedGraphicContainer.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)picEndResource).BeginInit();
-            initalGraphicContainer.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)picInitialResource).BeginInit();
+            grpGraphicData.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudStateRangeMax).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudStateRangeMin).BeginInit();
+            graphicContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)picResource).BeginInit();
             pnlContainer.SuspendLayout();
             grpRequirements.SuspendLayout();
             grpCommonEvent.SuspendLayout();
-            grpRegen.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)nudHpRegen).BeginInit();
             grpDrops.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)nudDropMinAmount).BeginInit();
             ((System.ComponentModel.ISupportInitialize)nudDropMaxAmount).BeginInit();
@@ -191,14 +197,17 @@ namespace Intersect.Editor.Forms.Editors
             // 
             grpGeneral.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
             grpGeneral.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpGeneral.Controls.Add(nudHpRegen);
+            grpGeneral.Controls.Add(chkUseExplicitMaxHealthForResourceStates);
+            grpGeneral.Controls.Add(lblHpRegen);
             grpGeneral.Controls.Add(btnAddFolder);
             grpGeneral.Controls.Add(lblFolder);
             grpGeneral.Controls.Add(cmbFolder);
             grpGeneral.Controls.Add(nudMaxHp);
             grpGeneral.Controls.Add(nudMinHp);
             grpGeneral.Controls.Add(nudSpawnDuration);
-            grpGeneral.Controls.Add(cmbAnimation);
-            grpGeneral.Controls.Add(lblAnimation);
+            grpGeneral.Controls.Add(cmbDeathAnimation);
+            grpGeneral.Controls.Add(lblDeathAnimation);
             grpGeneral.Controls.Add(lblMaxHp);
             grpGeneral.Controls.Add(lblSpawnDuration);
             grpGeneral.Controls.Add(chkWalkableAfter);
@@ -213,10 +222,42 @@ namespace Intersect.Editor.Forms.Editors
             grpGeneral.Margin = new Padding(4, 3, 4, 3);
             grpGeneral.Name = "grpGeneral";
             grpGeneral.Padding = new Padding(4, 3, 4, 3);
-            grpGeneral.Size = new Size(260, 324);
+            grpGeneral.Size = new Size(260, 380);
             grpGeneral.TabIndex = 15;
             grpGeneral.TabStop = false;
             grpGeneral.Text = "General";
+            // 
+            // nudHpRegen
+            // 
+            nudHpRegen.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            nudHpRegen.ForeColor = System.Drawing.Color.Gainsboro;
+            nudHpRegen.Location = new System.Drawing.Point(108, 173);
+            nudHpRegen.Margin = new Padding(4, 3, 4, 3);
+            nudHpRegen.Name = "nudHpRegen";
+            nudHpRegen.Size = new Size(138, 23);
+            nudHpRegen.TabIndex = 30;
+            nudHpRegen.Value = new decimal(new int[] { 0, 0, 0, 0 });
+            nudHpRegen.ValueChanged += nudHpRegen_ValueChanged;
+            // 
+            // chkUseExplicitMaxHealthForResourceStates
+            // 
+            chkUseExplicitMaxHealthForResourceStates.Location = new System.Drawing.Point(7, 339);
+            chkUseExplicitMaxHealthForResourceStates.Margin = new Padding(4, 3, 4, 3);
+            chkUseExplicitMaxHealthForResourceStates.Name = "chkUseExplicitMaxHealthForResourceStates";
+            chkUseExplicitMaxHealthForResourceStates.Size = new Size(246, 34);
+            chkUseExplicitMaxHealthForResourceStates.TabIndex = 53;
+            chkUseExplicitMaxHealthForResourceStates.Text = "Use explicit Max Health for Resources States?";
+            chkUseExplicitMaxHealthForResourceStates.CheckedChanged += chkUseExplicitMaxHealthForResourceStates_CheckedChanged;
+            // 
+            // lblHpRegen
+            // 
+            lblHpRegen.AutoSize = true;
+            lblHpRegen.Location = new System.Drawing.Point(7, 175);
+            lblHpRegen.Margin = new Padding(2, 0, 2, 0);
+            lblHpRegen.Name = "lblHpRegen";
+            lblHpRegen.Size = new Size(83, 15);
+            lblHpRegen.TabIndex = 26;
+            lblHpRegen.Text = "HP Regen (%):";
             // 
             // btnAddFolder
             // 
@@ -291,46 +332,46 @@ namespace Intersect.Editor.Forms.Editors
             // 
             nudSpawnDuration.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
             nudSpawnDuration.ForeColor = System.Drawing.Color.Gainsboro;
-            nudSpawnDuration.Location = new System.Drawing.Point(144, 174);
+            nudSpawnDuration.Location = new System.Drawing.Point(108, 202);
             nudSpawnDuration.Margin = new Padding(4, 3, 4, 3);
             nudSpawnDuration.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             nudSpawnDuration.Name = "nudSpawnDuration";
-            nudSpawnDuration.Size = new Size(102, 23);
+            nudSpawnDuration.Size = new Size(137, 23);
             nudSpawnDuration.TabIndex = 40;
             nudSpawnDuration.Value = new decimal(new int[] { 0, 0, 0, 0 });
             nudSpawnDuration.ValueChanged += nudSpawnDuration_ValueChanged;
             // 
-            // cmbAnimation
+            // cmbDeathAnimation
             // 
-            cmbAnimation.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
-            cmbAnimation.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
-            cmbAnimation.BorderStyle = ButtonBorderStyle.Solid;
-            cmbAnimation.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
-            cmbAnimation.DrawDropdownHoverOutline = false;
-            cmbAnimation.DrawFocusRectangle = false;
-            cmbAnimation.DrawMode = DrawMode.OwnerDrawFixed;
-            cmbAnimation.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbAnimation.FlatStyle = FlatStyle.Flat;
-            cmbAnimation.ForeColor = System.Drawing.Color.Gainsboro;
-            cmbAnimation.FormattingEnabled = true;
-            cmbAnimation.Location = new System.Drawing.Point(88, 207);
-            cmbAnimation.Margin = new Padding(4, 3, 4, 3);
-            cmbAnimation.Name = "cmbAnimation";
-            cmbAnimation.Size = new Size(157, 24);
-            cmbAnimation.TabIndex = 39;
-            cmbAnimation.Text = null;
-            cmbAnimation.TextPadding = new Padding(2);
-            cmbAnimation.SelectedIndexChanged += cmbAnimation_SelectedIndexChanged;
+            cmbDeathAnimation.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbDeathAnimation.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbDeathAnimation.BorderStyle = ButtonBorderStyle.Solid;
+            cmbDeathAnimation.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbDeathAnimation.DrawDropdownHoverOutline = false;
+            cmbDeathAnimation.DrawFocusRectangle = false;
+            cmbDeathAnimation.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbDeathAnimation.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbDeathAnimation.FlatStyle = FlatStyle.Flat;
+            cmbDeathAnimation.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbDeathAnimation.FormattingEnabled = true;
+            cmbDeathAnimation.Location = new System.Drawing.Point(7, 255);
+            cmbDeathAnimation.Margin = new Padding(4, 3, 4, 3);
+            cmbDeathAnimation.Name = "cmbDeathAnimation";
+            cmbDeathAnimation.Size = new Size(239, 24);
+            cmbDeathAnimation.TabIndex = 39;
+            cmbDeathAnimation.Text = null;
+            cmbDeathAnimation.TextPadding = new Padding(2);
+            cmbDeathAnimation.SelectedIndexChanged += cmbDeathAnimation_SelectedIndexChanged;
             // 
-            // lblAnimation
+            // lblDeathAnimation
             // 
-            lblAnimation.AutoSize = true;
-            lblAnimation.Location = new System.Drawing.Point(7, 210);
-            lblAnimation.Margin = new Padding(4, 0, 4, 0);
-            lblAnimation.Name = "lblAnimation";
-            lblAnimation.Size = new Size(66, 15);
-            lblAnimation.TabIndex = 36;
-            lblAnimation.Text = "Animation:";
+            lblDeathAnimation.AutoSize = true;
+            lblDeathAnimation.Location = new System.Drawing.Point(8, 232);
+            lblDeathAnimation.Margin = new Padding(4, 0, 4, 0);
+            lblDeathAnimation.Name = "lblDeathAnimation";
+            lblDeathAnimation.Size = new Size(100, 15);
+            lblDeathAnimation.TabIndex = 36;
+            lblDeathAnimation.Text = "Death Animation:";
             // 
             // lblMaxHp
             // 
@@ -345,7 +386,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblSpawnDuration
             // 
             lblSpawnDuration.AutoSize = true;
-            lblSpawnDuration.Location = new System.Drawing.Point(7, 179);
+            lblSpawnDuration.Location = new System.Drawing.Point(6, 204);
             lblSpawnDuration.Margin = new Padding(4, 0, 4, 0);
             lblSpawnDuration.Name = "lblSpawnDuration";
             lblSpawnDuration.Size = new Size(94, 15);
@@ -354,7 +395,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // chkWalkableAfter
             // 
-            chkWalkableAfter.Location = new System.Drawing.Point(7, 264);
+            chkWalkableAfter.Location = new System.Drawing.Point(7, 314);
             chkWalkableAfter.Margin = new Padding(4, 3, 4, 3);
             chkWalkableAfter.Name = "chkWalkableAfter";
             chkWalkableAfter.Size = new Size(246, 20);
@@ -364,7 +405,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // chkWalkableBefore
             // 
-            chkWalkableBefore.Location = new System.Drawing.Point(7, 238);
+            chkWalkableBefore.Location = new System.Drawing.Point(7, 287);
             chkWalkableBefore.Margin = new Padding(4, 3, 4, 3);
             chkWalkableBefore.Name = "chkWalkableBefore";
             chkWalkableBefore.Size = new Size(246, 20);
@@ -451,188 +492,288 @@ namespace Intersect.Editor.Forms.Editors
             // 
             grpGraphics.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
             grpGraphics.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
-            grpGraphics.Controls.Add(chkExhaustedBelowEntities);
-            grpGraphics.Controls.Add(chkInitialBelowEntities);
-            grpGraphics.Controls.Add(chkExhaustedFromTileset);
-            grpGraphics.Controls.Add(chkInitialFromTileset);
-            grpGraphics.Controls.Add(exhaustedGraphicContainer);
-            grpGraphics.Controls.Add(initalGraphicContainer);
-            grpGraphics.Controls.Add(cmbEndSprite);
-            grpGraphics.Controls.Add(lblPic2);
-            grpGraphics.Controls.Add(cmbInitialSprite);
-            grpGraphics.Controls.Add(lblPic);
+            grpGraphics.Controls.Add(btnRemoveState);
+            grpGraphics.Controls.Add(btnAddState);
+            grpGraphics.Controls.Add(lblStateName);
+            grpGraphics.Controls.Add(lstStates);
+            grpGraphics.Controls.Add(txtStateName);
+            grpGraphics.Controls.Add(grpGraphicData);
+            grpGraphics.Controls.Add(lblStates);
+            grpGraphics.Controls.Add(graphicContainer);
             grpGraphics.ForeColor = System.Drawing.Color.Gainsboro;
-            grpGraphics.Location = new System.Drawing.Point(0, 325);
+            grpGraphics.Location = new System.Drawing.Point(1, 386);
             grpGraphics.Margin = new Padding(4, 3, 4, 3);
             grpGraphics.Name = "grpGraphics";
             grpGraphics.Padding = new Padding(4, 3, 4, 3);
             grpGraphics.Size = new Size(824, 524);
             grpGraphics.TabIndex = 16;
             grpGraphics.TabStop = false;
-            grpGraphics.Text = "Graphics";
+            grpGraphics.Text = "Appearance";
             // 
-            // chkExhaustedBelowEntities
+            // btnRemoveState
             // 
-            chkExhaustedBelowEntities.Location = new System.Drawing.Point(696, 15);
-            chkExhaustedBelowEntities.Margin = new Padding(4, 3, 4, 3);
-            chkExhaustedBelowEntities.Name = "chkExhaustedBelowEntities";
-            chkExhaustedBelowEntities.Size = new Size(114, 24);
-            chkExhaustedBelowEntities.TabIndex = 35;
-            chkExhaustedBelowEntities.Text = "Below Entities";
-            chkExhaustedBelowEntities.CheckedChanged += chkExhaustedBelowEntities_CheckedChanged;
+            btnRemoveState.Location = new System.Drawing.Point(172, 187);
+            btnRemoveState.Margin = new Padding(4, 3, 4, 3);
+            btnRemoveState.Name = "btnRemoveState";
+            btnRemoveState.Padding = new Padding(6);
+            btnRemoveState.Size = new Size(88, 27);
+            btnRemoveState.TabIndex = 67;
+            btnRemoveState.Text = "Remove";
+            btnRemoveState.Click += btnRemoveState_Click;
             // 
-            // chkInitialBelowEntities
+            // btnAddState
             // 
-            chkInitialBelowEntities.Location = new System.Drawing.Point(286, 15);
-            chkInitialBelowEntities.Margin = new Padding(4, 3, 4, 3);
-            chkInitialBelowEntities.Name = "chkInitialBelowEntities";
-            chkInitialBelowEntities.Size = new Size(114, 24);
-            chkInitialBelowEntities.TabIndex = 34;
-            chkInitialBelowEntities.Text = "Below Entities";
-            chkInitialBelowEntities.CheckedChanged += chkInitialBelowEntities_CheckedChanged;
+            btnAddState.Location = new System.Drawing.Point(7, 187);
+            btnAddState.Margin = new Padding(4, 3, 4, 3);
+            btnAddState.Name = "btnAddState";
+            btnAddState.Padding = new Padding(6);
+            btnAddState.Size = new Size(88, 27);
+            btnAddState.TabIndex = 67;
+            btnAddState.Text = "Add";
+            btnAddState.Click += btnAddState_Click;
             // 
-            // chkExhaustedFromTileset
+            // lblStateName
             // 
-            chkExhaustedFromTileset.Location = new System.Drawing.Point(696, 37);
-            chkExhaustedFromTileset.Margin = new Padding(4, 3, 4, 3);
-            chkExhaustedFromTileset.Name = "chkExhaustedFromTileset";
-            chkExhaustedFromTileset.Size = new Size(114, 24);
-            chkExhaustedFromTileset.TabIndex = 33;
-            chkExhaustedFromTileset.Text = "From Tileset";
-            chkExhaustedFromTileset.CheckedChanged += chkExhaustedFromTileset_CheckedChanged;
+            lblStateName.AutoSize = true;
+            lblStateName.Location = new System.Drawing.Point(4, 139);
+            lblStateName.Margin = new Padding(4, 0, 4, 0);
+            lblStateName.Name = "lblStateName";
+            lblStateName.Size = new Size(71, 15);
+            lblStateName.TabIndex = 56;
+            lblStateName.Text = "State Name:";
             // 
-            // chkInitialFromTileset
+            // lstStates
             // 
-            chkInitialFromTileset.Location = new System.Drawing.Point(286, 37);
-            chkInitialFromTileset.Margin = new Padding(4, 3, 4, 3);
-            chkInitialFromTileset.Name = "chkInitialFromTileset";
-            chkInitialFromTileset.Size = new Size(114, 24);
-            chkInitialFromTileset.TabIndex = 32;
-            chkInitialFromTileset.Text = "From Tileset";
-            chkInitialFromTileset.CheckedChanged += chkInitialFromTileset_CheckedChanged;
+            lstStates.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            lstStates.BorderStyle = BorderStyle.FixedSingle;
+            lstStates.ForeColor = System.Drawing.Color.Gainsboro;
+            lstStates.FormattingEnabled = true;
+            lstStates.ItemHeight = 15;
+            lstStates.Location = new System.Drawing.Point(7, 39);
+            lstStates.Margin = new Padding(4, 3, 4, 3);
+            lstStates.Name = "lstStates";
+            lstStates.Size = new Size(253, 92);
+            lstStates.TabIndex = 60;
+            lstStates.SelectedIndexChanged += lstStates_SelectedIndexChanged;
             // 
-            // exhaustedGraphicContainer
+            // txtStateName
             // 
-            exhaustedGraphicContainer.AutoScroll = true;
-            exhaustedGraphicContainer.Controls.Add(picEndResource);
-            exhaustedGraphicContainer.Location = new System.Drawing.Point(426, 72);
-            exhaustedGraphicContainer.Margin = new Padding(4, 3, 4, 3);
-            exhaustedGraphicContainer.Name = "exhaustedGraphicContainer";
-            exhaustedGraphicContainer.Size = new Size(385, 445);
-            exhaustedGraphicContainer.TabIndex = 25;
+            txtStateName.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            txtStateName.BorderStyle = BorderStyle.FixedSingle;
+            txtStateName.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            txtStateName.Location = new System.Drawing.Point(7, 158);
+            txtStateName.Margin = new Padding(4, 3, 4, 3);
+            txtStateName.Name = "txtStateName";
+            txtStateName.Size = new Size(253, 23);
+            txtStateName.TabIndex = 55;
             // 
-            // picEndResource
+            // grpGraphicData
             // 
-            picEndResource.Location = new System.Drawing.Point(0, 0);
-            picEndResource.Margin = new Padding(4, 3, 4, 3);
-            picEndResource.Name = "picEndResource";
-            picEndResource.Size = new Size(212, 335);
-            picEndResource.TabIndex = 2;
-            picEndResource.TabStop = false;
-            picEndResource.MouseDown += picExhustedResource_MouseDown;
-            picEndResource.MouseMove += picExhaustedResource_MouseMove;
-            picEndResource.MouseUp += picExhaustedResource_MouseUp;
+            grpGraphicData.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpGraphicData.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpGraphicData.Controls.Add(nudStateRangeMax);
+            grpGraphicData.Controls.Add(nudStateRangeMin);
+            grpGraphicData.Controls.Add(lblStateRange);
+            grpGraphicData.Controls.Add(cmbTextureSource);
+            grpGraphicData.Controls.Add(lblTerxtureSource);
+            grpGraphicData.Controls.Add(cmbAnimation);
+            grpGraphicData.Controls.Add(lblAnimation);
+            grpGraphicData.Controls.Add(chkRenderBelowEntity);
+            grpGraphicData.Controls.Add(cmbTextureType);
+            grpGraphicData.Controls.Add(lblTextureType);
+            grpGraphicData.ForeColor = System.Drawing.Color.Gainsboro;
+            grpGraphicData.Location = new System.Drawing.Point(7, 221);
+            grpGraphicData.Margin = new Padding(2);
+            grpGraphicData.Name = "grpGraphicData";
+            grpGraphicData.Padding = new Padding(2);
+            grpGraphicData.Size = new Size(253, 292);
+            grpGraphicData.TabIndex = 34;
+            grpGraphicData.TabStop = false;
+            grpGraphicData.Text = "Graphic Data";
             // 
-            // initalGraphicContainer
+            // nudStateRangeMax
             // 
-            initalGraphicContainer.AutoScroll = true;
-            initalGraphicContainer.Controls.Add(picInitialResource);
-            initalGraphicContainer.Location = new System.Drawing.Point(15, 72);
-            initalGraphicContainer.Margin = new Padding(4, 3, 4, 3);
-            initalGraphicContainer.Name = "initalGraphicContainer";
-            initalGraphicContainer.Size = new Size(385, 445);
-            initalGraphicContainer.TabIndex = 24;
+            nudStateRangeMax.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            nudStateRangeMax.ForeColor = System.Drawing.Color.Gainsboro;
+            nudStateRangeMax.Location = new System.Drawing.Point(137, 229);
+            nudStateRangeMax.Margin = new Padding(4, 3, 4, 3);
+            nudStateRangeMax.Name = "nudStateRangeMax";
+            nudStateRangeMax.Size = new Size(102, 23);
+            nudStateRangeMax.TabIndex = 68;
+            nudStateRangeMax.Value = new decimal(new int[] { 0, 0, 0, 0 });
+            nudStateRangeMax.ValueChanged += nudStateRangeMax_ValueChanged;
             // 
-            // picInitialResource
+            // nudStateRangeMin
             // 
-            picInitialResource.Location = new System.Drawing.Point(0, 0);
-            picInitialResource.Margin = new Padding(4, 3, 4, 3);
-            picInitialResource.Name = "picInitialResource";
-            picInitialResource.Size = new Size(210, 335);
-            picInitialResource.TabIndex = 2;
-            picInitialResource.TabStop = false;
-            picInitialResource.MouseDown += picInitialResource_MouseDown;
-            picInitialResource.MouseMove += picInitialResource_MouseMove;
-            picInitialResource.MouseUp += picInitialResource_MouseUp;
+            nudStateRangeMin.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            nudStateRangeMin.ForeColor = System.Drawing.Color.Gainsboro;
+            nudStateRangeMin.Location = new System.Drawing.Point(12, 229);
+            nudStateRangeMin.Margin = new Padding(4, 3, 4, 3);
+            nudStateRangeMin.Name = "nudStateRangeMin";
+            nudStateRangeMin.Size = new Size(102, 23);
+            nudStateRangeMin.TabIndex = 67;
+            nudStateRangeMin.Value = new decimal(new int[] { 0, 0, 0, 0 });
+            nudStateRangeMin.ValueChanged += nudStateRangeMin_ValueChanged;
             // 
-            // cmbEndSprite
+            // lblStateRange
             // 
-            cmbEndSprite.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
-            cmbEndSprite.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
-            cmbEndSprite.BorderStyle = ButtonBorderStyle.Solid;
-            cmbEndSprite.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
-            cmbEndSprite.DrawDropdownHoverOutline = false;
-            cmbEndSprite.DrawFocusRectangle = false;
-            cmbEndSprite.DrawMode = DrawMode.OwnerDrawFixed;
-            cmbEndSprite.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbEndSprite.FlatStyle = FlatStyle.Flat;
-            cmbEndSprite.ForeColor = System.Drawing.Color.Gainsboro;
-            cmbEndSprite.FormattingEnabled = true;
-            cmbEndSprite.Items.AddRange(new object[] { "None" });
-            cmbEndSprite.Location = new System.Drawing.Point(426, 37);
-            cmbEndSprite.Margin = new Padding(4, 3, 4, 3);
-            cmbEndSprite.Name = "cmbEndSprite";
-            cmbEndSprite.Size = new Size(228, 24);
-            cmbEndSprite.TabIndex = 16;
-            cmbEndSprite.Text = "None";
-            cmbEndSprite.TextPadding = new Padding(2);
-            cmbEndSprite.SelectedIndexChanged += cmbEndSprite_SelectedIndexChanged;
+            lblStateRange.AutoSize = true;
+            lblStateRange.Location = new System.Drawing.Point(12, 208);
+            lblStateRange.Margin = new Padding(4, 0, 4, 0);
+            lblStateRange.Name = "lblStateRange";
+            lblStateRange.Size = new Size(151, 15);
+            lblStateRange.TabIndex = 58;
+            lblStateRange.Text = "State Range Min - Max (%):";
             // 
-            // lblPic2
+            // cmbTextureSource
             // 
-            lblPic2.AutoSize = true;
-            lblPic2.Location = new System.Drawing.Point(422, 18);
-            lblPic2.Margin = new Padding(4, 0, 4, 0);
-            lblPic2.Name = "lblPic2";
-            lblPic2.Size = new Size(104, 15);
-            lblPic2.TabIndex = 15;
-            lblPic2.Text = "Removed Graphic:";
+            cmbTextureSource.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbTextureSource.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbTextureSource.BorderStyle = ButtonBorderStyle.Solid;
+            cmbTextureSource.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbTextureSource.DrawDropdownHoverOutline = false;
+            cmbTextureSource.DrawFocusRectangle = false;
+            cmbTextureSource.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbTextureSource.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbTextureSource.FlatStyle = FlatStyle.Flat;
+            cmbTextureSource.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbTextureSource.FormattingEnabled = true;
+            cmbTextureSource.Location = new System.Drawing.Point(12, 119);
+            cmbTextureSource.Margin = new Padding(4, 3, 4, 3);
+            cmbTextureSource.Name = "cmbTextureSource";
+            cmbTextureSource.Size = new Size(227, 24);
+            cmbTextureSource.TabIndex = 57;
+            cmbTextureSource.Text = null;
+            cmbTextureSource.TextPadding = new Padding(2);
+            cmbTextureSource.SelectedIndexChanged += cmbGraphicFile_SelectedIndexChanged;
             // 
-            // cmbInitialSprite
+            // lblTerxtureSource
             // 
-            cmbInitialSprite.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
-            cmbInitialSprite.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
-            cmbInitialSprite.BorderStyle = ButtonBorderStyle.Solid;
-            cmbInitialSprite.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
-            cmbInitialSprite.DrawDropdownHoverOutline = false;
-            cmbInitialSprite.DrawFocusRectangle = false;
-            cmbInitialSprite.DrawMode = DrawMode.OwnerDrawFixed;
-            cmbInitialSprite.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbInitialSprite.FlatStyle = FlatStyle.Flat;
-            cmbInitialSprite.ForeColor = System.Drawing.Color.Gainsboro;
-            cmbInitialSprite.FormattingEnabled = true;
-            cmbInitialSprite.Items.AddRange(new object[] { "None" });
-            cmbInitialSprite.Location = new System.Drawing.Point(15, 37);
-            cmbInitialSprite.Margin = new Padding(4, 3, 4, 3);
-            cmbInitialSprite.Name = "cmbInitialSprite";
-            cmbInitialSprite.Size = new Size(227, 24);
-            cmbInitialSprite.TabIndex = 14;
-            cmbInitialSprite.Text = "None";
-            cmbInitialSprite.TextPadding = new Padding(2);
-            cmbInitialSprite.SelectedIndexChanged += cmbInitialSprite_SelectedIndexChanged;
+            lblTerxtureSource.AutoSize = true;
+            lblTerxtureSource.Location = new System.Drawing.Point(9, 99);
+            lblTerxtureSource.Margin = new Padding(4, 0, 4, 0);
+            lblTerxtureSource.Name = "lblTerxtureSource";
+            lblTerxtureSource.Size = new Size(87, 15);
+            lblTerxtureSource.TabIndex = 56;
+            lblTerxtureSource.Text = "Texture Source:";
             // 
-            // lblPic
+            // cmbAnimation
             // 
-            lblPic.AutoSize = true;
-            lblPic.Location = new System.Drawing.Point(12, 18);
-            lblPic.Margin = new Padding(4, 0, 4, 0);
-            lblPic.Name = "lblPic";
-            lblPic.Size = new Size(83, 15);
-            lblPic.TabIndex = 13;
-            lblPic.Text = "Initial Graphic:";
+            cmbAnimation.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbAnimation.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbAnimation.BorderStyle = ButtonBorderStyle.Solid;
+            cmbAnimation.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbAnimation.DrawDropdownHoverOutline = false;
+            cmbAnimation.DrawFocusRectangle = false;
+            cmbAnimation.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbAnimation.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbAnimation.FlatStyle = FlatStyle.Flat;
+            cmbAnimation.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbAnimation.FormattingEnabled = true;
+            cmbAnimation.Location = new System.Drawing.Point(12, 175);
+            cmbAnimation.Margin = new Padding(4, 3, 4, 3);
+            cmbAnimation.Name = "cmbAnimation";
+            cmbAnimation.Size = new Size(227, 24);
+            cmbAnimation.TabIndex = 55;
+            cmbAnimation.Text = null;
+            cmbAnimation.TextPadding = new Padding(2);
+            cmbAnimation.SelectedIndexChanged += cmbAnimation_SelectedIndexChanged;
+            // 
+            // lblAnimation
+            // 
+            lblAnimation.AutoSize = true;
+            lblAnimation.Location = new System.Drawing.Point(9, 155);
+            lblAnimation.Margin = new Padding(4, 0, 4, 0);
+            lblAnimation.Name = "lblAnimation";
+            lblAnimation.Size = new Size(66, 15);
+            lblAnimation.TabIndex = 54;
+            lblAnimation.Text = "Animation:";
+            // 
+            // chkRenderBelowEntity
+            // 
+            chkRenderBelowEntity.Location = new System.Drawing.Point(12, 71);
+            chkRenderBelowEntity.Margin = new Padding(4, 3, 4, 3);
+            chkRenderBelowEntity.Name = "chkRenderBelowEntity";
+            chkRenderBelowEntity.Size = new Size(227, 20);
+            chkRenderBelowEntity.TabIndex = 53;
+            chkRenderBelowEntity.Text = "Render Below Entity";
+            chkRenderBelowEntity.CheckedChanged += chkRenderBelowEntity_CheckedChanged;
+            // 
+            // cmbTextureType
+            // 
+            cmbTextureType.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbTextureType.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbTextureType.BorderStyle = ButtonBorderStyle.Solid;
+            cmbTextureType.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbTextureType.DrawDropdownHoverOutline = false;
+            cmbTextureType.DrawFocusRectangle = false;
+            cmbTextureType.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbTextureType.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbTextureType.FlatStyle = FlatStyle.Flat;
+            cmbTextureType.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbTextureType.FormattingEnabled = true;
+            cmbTextureType.Location = new System.Drawing.Point(12, 41);
+            cmbTextureType.Margin = new Padding(4, 3, 4, 3);
+            cmbTextureType.Name = "cmbTextureType";
+            cmbTextureType.Size = new Size(227, 24);
+            cmbTextureType.TabIndex = 21;
+            cmbTextureType.Text = null;
+            cmbTextureType.TextPadding = new Padding(2);
+            cmbTextureType.SelectedIndexChanged += cmbGraphicType_SelectedIndexChanged;
+            // 
+            // lblTextureType
+            // 
+            lblTextureType.AutoSize = true;
+            lblTextureType.Location = new System.Drawing.Point(9, 21);
+            lblTextureType.Margin = new Padding(4, 0, 4, 0);
+            lblTextureType.Name = "lblTextureType";
+            lblTextureType.Size = new Size(73, 15);
+            lblTextureType.TabIndex = 20;
+            lblTextureType.Text = "Terture Type:";
+            // 
+            // lblStates
+            // 
+            lblStates.AutoSize = true;
+            lblStates.Location = new System.Drawing.Point(10, 21);
+            lblStates.Margin = new Padding(4, 0, 4, 0);
+            lblStates.Name = "lblStates";
+            lblStates.Size = new Size(41, 15);
+            lblStates.TabIndex = 55;
+            lblStates.Text = "States:";
+            // 
+            // graphicContainer
+            // 
+            graphicContainer.AutoScroll = true;
+            graphicContainer.Controls.Add(picResource);
+            graphicContainer.Location = new System.Drawing.Point(270, 22);
+            graphicContainer.Margin = new Padding(4, 3, 4, 3);
+            graphicContainer.Name = "graphicContainer";
+            graphicContainer.Size = new Size(540, 491);
+            graphicContainer.TabIndex = 24;
+            // 
+            // picResource
+            // 
+            picResource.Location = new System.Drawing.Point(0, 0);
+            picResource.Margin = new Padding(4, 3, 4, 3);
+            picResource.Name = "picResource";
+            picResource.Size = new Size(540, 491);
+            picResource.TabIndex = 2;
+            picResource.TabStop = false;
+            picResource.MouseDown += picResource_MouseDown;
+            picResource.MouseMove += picResource_MouseMove;
+            picResource.MouseUp += picResource_MouseUp;
             // 
             // tmrRender
             // 
             tmrRender.Enabled = true;
             tmrRender.Interval = 10;
-            tmrRender.Tick += tmrRender_Tick;
+            tmrRender.Tick += Render;
             // 
             // pnlContainer
             // 
             pnlContainer.AutoScroll = true;
             pnlContainer.Controls.Add(grpRequirements);
             pnlContainer.Controls.Add(grpCommonEvent);
-            pnlContainer.Controls.Add(grpRegen);
             pnlContainer.Controls.Add(grpDrops);
             pnlContainer.Controls.Add(grpGeneral);
             pnlContainer.Controls.Add(grpGraphics);
@@ -651,11 +792,11 @@ namespace Intersect.Editor.Forms.Editors
             grpRequirements.Controls.Add(btnRequirements);
             grpRequirements.Controls.Add(txtCannotHarvest);
             grpRequirements.ForeColor = System.Drawing.Color.Gainsboro;
-            grpRequirements.Location = new System.Drawing.Point(539, 218);
+            grpRequirements.Location = new System.Drawing.Point(539, 0);
             grpRequirements.Margin = new Padding(2);
             grpRequirements.Name = "grpRequirements";
             grpRequirements.Padding = new Padding(2);
-            grpRequirements.Size = new Size(285, 106);
+            grpRequirements.Size = new Size(285, 107);
             grpRequirements.TabIndex = 33;
             grpRequirements.TabStop = false;
             grpRequirements.Text = "Requirements";
@@ -689,7 +830,7 @@ namespace Intersect.Editor.Forms.Editors
             grpCommonEvent.Controls.Add(cmbEvent);
             grpCommonEvent.Controls.Add(lblEvent);
             grpCommonEvent.ForeColor = System.Drawing.Color.Gainsboro;
-            grpCommonEvent.Location = new System.Drawing.Point(539, 134);
+            grpCommonEvent.Location = new System.Drawing.Point(539, 114);
             grpCommonEvent.Margin = new Padding(2);
             grpCommonEvent.Name = "grpCommonEvent";
             grpCommonEvent.Padding = new Padding(2);
@@ -711,10 +852,10 @@ namespace Intersect.Editor.Forms.Editors
             cmbEvent.FlatStyle = FlatStyle.Flat;
             cmbEvent.ForeColor = System.Drawing.Color.Gainsboro;
             cmbEvent.FormattingEnabled = true;
-            cmbEvent.Location = new System.Drawing.Point(9, 40);
+            cmbEvent.Location = new System.Drawing.Point(9, 39);
             cmbEvent.Margin = new Padding(4, 3, 4, 3);
             cmbEvent.Name = "cmbEvent";
-            cmbEvent.Size = new Size(227, 24);
+            cmbEvent.Size = new Size(262, 24);
             cmbEvent.TabIndex = 19;
             cmbEvent.Text = null;
             cmbEvent.TextPadding = new Padding(2);
@@ -729,54 +870,6 @@ namespace Intersect.Editor.Forms.Editors
             lblEvent.Size = new Size(39, 15);
             lblEvent.TabIndex = 18;
             lblEvent.Text = "Event:";
-            // 
-            // grpRegen
-            // 
-            grpRegen.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
-            grpRegen.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
-            grpRegen.Controls.Add(nudHpRegen);
-            grpRegen.Controls.Add(lblHpRegen);
-            grpRegen.Controls.Add(lblRegenHint);
-            grpRegen.ForeColor = System.Drawing.Color.Gainsboro;
-            grpRegen.Location = new System.Drawing.Point(539, 2);
-            grpRegen.Margin = new Padding(2);
-            grpRegen.Name = "grpRegen";
-            grpRegen.Padding = new Padding(2);
-            grpRegen.Size = new Size(285, 127);
-            grpRegen.TabIndex = 32;
-            grpRegen.TabStop = false;
-            grpRegen.Text = "Regen";
-            // 
-            // nudHpRegen
-            // 
-            nudHpRegen.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
-            nudHpRegen.ForeColor = System.Drawing.Color.Gainsboro;
-            nudHpRegen.Location = new System.Drawing.Point(9, 36);
-            nudHpRegen.Margin = new Padding(4, 3, 4, 3);
-            nudHpRegen.Name = "nudHpRegen";
-            nudHpRegen.Size = new Size(100, 23);
-            nudHpRegen.TabIndex = 30;
-            nudHpRegen.Value = new decimal(new int[] { 0, 0, 0, 0 });
-            nudHpRegen.ValueChanged += nudHpRegen_ValueChanged;
-            // 
-            // lblHpRegen
-            // 
-            lblHpRegen.AutoSize = true;
-            lblHpRegen.Location = new System.Drawing.Point(6, 20);
-            lblHpRegen.Margin = new Padding(2, 0, 2, 0);
-            lblHpRegen.Name = "lblHpRegen";
-            lblHpRegen.Size = new Size(47, 15);
-            lblHpRegen.TabIndex = 26;
-            lblHpRegen.Text = "HP: (%)";
-            // 
-            // lblRegenHint
-            // 
-            lblRegenHint.Location = new System.Drawing.Point(119, 32);
-            lblRegenHint.Margin = new Padding(4, 0, 4, 0);
-            lblRegenHint.Name = "lblRegenHint";
-            lblRegenHint.Size = new Size(160, 83);
-            lblRegenHint.TabIndex = 0;
-            lblRegenHint.Text = "% of HP to restore per tick.\r\n\r\nTick timer saved in server config.json.";
             // 
             // grpDrops
             // 
@@ -798,7 +891,7 @@ namespace Intersect.Editor.Forms.Editors
             grpDrops.Margin = new Padding(4, 3, 4, 3);
             grpDrops.Name = "grpDrops";
             grpDrops.Padding = new Padding(4, 3, 4, 3);
-            grpDrops.Size = new Size(264, 324);
+            grpDrops.Size = new Size(264, 380);
             grpDrops.TabIndex = 31;
             grpDrops.TabStop = false;
             grpDrops.Text = "Drops";
@@ -807,7 +900,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             nudDropMinAmount.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
             nudDropMinAmount.ForeColor = System.Drawing.Color.Gainsboro;
-            nudDropMinAmount.Location = new System.Drawing.Point(10, 200);
+            nudDropMinAmount.Location = new System.Drawing.Point(10, 254);
             nudDropMinAmount.Margin = new Padding(4, 3, 4, 3);
             nudDropMinAmount.Maximum = new decimal(new int[] { 10000000, 0, 0, 0 });
             nudDropMinAmount.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
@@ -820,7 +913,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblDropMinAmount
             // 
             lblDropMinAmount.AutoSize = true;
-            lblDropMinAmount.Location = new System.Drawing.Point(10, 182);
+            lblDropMinAmount.Location = new System.Drawing.Point(10, 236);
             lblDropMinAmount.Margin = new Padding(4, 0, 4, 0);
             lblDropMinAmount.Name = "lblDropMinAmount";
             lblDropMinAmount.Size = new Size(78, 15);
@@ -829,7 +922,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // btnDropRemove
             // 
-            btnDropRemove.Location = new System.Drawing.Point(168, 287);
+            btnDropRemove.Location = new System.Drawing.Point(168, 342);
             btnDropRemove.Margin = new Padding(4, 3, 4, 3);
             btnDropRemove.Name = "btnDropRemove";
             btnDropRemove.Padding = new Padding(6);
@@ -840,7 +933,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // btnDropAdd
             // 
-            btnDropAdd.Location = new System.Drawing.Point(10, 287);
+            btnDropAdd.Location = new System.Drawing.Point(10, 342);
             btnDropAdd.Margin = new Padding(4, 3, 4, 3);
             btnDropAdd.Name = "btnDropAdd";
             btnDropAdd.Padding = new Padding(6);
@@ -859,7 +952,7 @@ namespace Intersect.Editor.Forms.Editors
             lstDrops.Location = new System.Drawing.Point(10, 22);
             lstDrops.Margin = new Padding(4, 3, 4, 3);
             lstDrops.Name = "lstDrops";
-            lstDrops.Size = new Size(246, 107);
+            lstDrops.Size = new Size(246, 152);
             lstDrops.TabIndex = 62;
             lstDrops.SelectedIndexChanged += lstDrops_SelectedIndexChanged;
             // 
@@ -867,7 +960,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             nudDropMaxAmount.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
             nudDropMaxAmount.ForeColor = System.Drawing.Color.Gainsboro;
-            nudDropMaxAmount.Location = new System.Drawing.Point(169, 200);
+            nudDropMaxAmount.Location = new System.Drawing.Point(169, 254);
             nudDropMaxAmount.Margin = new Padding(4, 3, 4, 3);
             nudDropMaxAmount.Maximum = new decimal(new int[] { 10000000, 0, 0, 0 });
             nudDropMaxAmount.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
@@ -883,7 +976,7 @@ namespace Intersect.Editor.Forms.Editors
             nudDropChance.DecimalPlaces = 2;
             nudDropChance.ForeColor = System.Drawing.Color.Gainsboro;
             nudDropChance.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            nudDropChance.Location = new System.Drawing.Point(10, 253);
+            nudDropChance.Location = new System.Drawing.Point(10, 307);
             nudDropChance.Margin = new Padding(4, 3, 4, 3);
             nudDropChance.Name = "nudDropChance";
             nudDropChance.Size = new Size(246, 23);
@@ -904,7 +997,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbDropItem.FlatStyle = FlatStyle.Flat;
             cmbDropItem.ForeColor = System.Drawing.Color.Gainsboro;
             cmbDropItem.FormattingEnabled = true;
-            cmbDropItem.Location = new System.Drawing.Point(10, 153);
+            cmbDropItem.Location = new System.Drawing.Point(10, 205);
             cmbDropItem.Margin = new Padding(4, 3, 4, 3);
             cmbDropItem.Name = "cmbDropItem";
             cmbDropItem.Size = new Size(246, 24);
@@ -916,7 +1009,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblDropMaxAmount
             // 
             lblDropMaxAmount.AutoSize = true;
-            lblDropMaxAmount.Location = new System.Drawing.Point(169, 182);
+            lblDropMaxAmount.Location = new System.Drawing.Point(169, 236);
             lblDropMaxAmount.Margin = new Padding(4, 0, 4, 0);
             lblDropMaxAmount.Name = "lblDropMaxAmount";
             lblDropMaxAmount.Size = new Size(80, 15);
@@ -926,7 +1019,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblDropChance
             // 
             lblDropChance.AutoSize = true;
-            lblDropChance.Location = new System.Drawing.Point(10, 230);
+            lblDropChance.Location = new System.Drawing.Point(10, 284);
             lblDropChance.Margin = new Padding(4, 0, 4, 0);
             lblDropChance.Name = "lblDropChance";
             lblDropChance.Size = new Size(71, 15);
@@ -936,7 +1029,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblDropItem
             // 
             lblDropItem.AutoSize = true;
-            lblDropItem.Location = new System.Drawing.Point(10, 134);
+            lblDropItem.Location = new System.Drawing.Point(10, 186);
             lblDropItem.Margin = new Padding(4, 0, 4, 0);
             lblDropItem.Name = "lblDropItem";
             lblDropItem.Size = new Size(34, 15);
@@ -1105,23 +1198,23 @@ namespace Intersect.Editor.Forms.Editors
             grpResources.PerformLayout();
             grpGeneral.ResumeLayout(false);
             grpGeneral.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudHpRegen).EndInit();
             ((System.ComponentModel.ISupportInitialize)nudMaxHp).EndInit();
             ((System.ComponentModel.ISupportInitialize)nudMinHp).EndInit();
             ((System.ComponentModel.ISupportInitialize)nudSpawnDuration).EndInit();
             grpGraphics.ResumeLayout(false);
             grpGraphics.PerformLayout();
-            exhaustedGraphicContainer.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)picEndResource).EndInit();
-            initalGraphicContainer.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)picInitialResource).EndInit();
+            grpGraphicData.ResumeLayout(false);
+            grpGraphicData.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudStateRangeMax).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudStateRangeMin).EndInit();
+            graphicContainer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)picResource).EndInit();
             pnlContainer.ResumeLayout(false);
             grpRequirements.ResumeLayout(false);
             grpRequirements.PerformLayout();
             grpCommonEvent.ResumeLayout(false);
             grpCommonEvent.PerformLayout();
-            grpRegen.ResumeLayout(false);
-            grpRegen.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)nudHpRegen).EndInit();
             grpDrops.ResumeLayout(false);
             grpDrops.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)nudDropMinAmount).EndInit();
@@ -1144,15 +1237,10 @@ namespace Intersect.Editor.Forms.Editors
         private DarkCheckBox chkWalkableBefore;
         private DarkComboBox cmbToolType;
         private System.Windows.Forms.Label lblToolType;
-        private DarkComboBox cmbEndSprite;
-        private System.Windows.Forms.Label lblPic2;
-        private DarkComboBox cmbInitialSprite;
-        private System.Windows.Forms.Label lblPic;
         private System.Windows.Forms.Label lblSpawnDuration;
-        public System.Windows.Forms.PictureBox picEndResource;
-        public System.Windows.Forms.PictureBox picInitialResource;
+        public System.Windows.Forms.PictureBox picResource;
         private System.Windows.Forms.Label lblMaxHp;
-        private System.Windows.Forms.Label lblAnimation;
+        private System.Windows.Forms.Label lblDeathAnimation;
         private System.Windows.Forms.Timer tmrRender;
         private System.Windows.Forms.Panel pnlContainer;
         private DarkButton btnSave;
@@ -1166,10 +1254,9 @@ namespace Intersect.Editor.Forms.Editors
         public System.Windows.Forms.ToolStripButton toolStripItemPaste;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         public System.Windows.Forms.ToolStripButton toolStripItemUndo;
-        private System.Windows.Forms.Panel exhaustedGraphicContainer;
-        private System.Windows.Forms.Panel initalGraphicContainer;
+        private System.Windows.Forms.Panel graphicContainer;
         private DarkButton btnRequirements;
-        private DarkComboBox cmbAnimation;
+        private DarkComboBox cmbDeathAnimation;
         private DarkNumericUpDown nudSpawnDuration;
         private DarkNumericUpDown nudMaxHp;
         private DarkNumericUpDown nudMinHp;
@@ -1183,17 +1270,10 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblDropMaxAmount;
         private System.Windows.Forms.Label lblDropChance;
         private System.Windows.Forms.Label lblDropItem;
-        private DarkCheckBox chkExhaustedFromTileset;
-        private DarkCheckBox chkInitialFromTileset;
-        private DarkGroupBox grpRegen;
         private DarkNumericUpDown nudHpRegen;
-        private System.Windows.Forms.Label lblHpRegen;
-        private System.Windows.Forms.Label lblRegenHint;
         private DarkGroupBox grpCommonEvent;
         private DarkComboBox cmbEvent;
         private System.Windows.Forms.Label lblEvent;
-        private DarkCheckBox chkExhaustedBelowEntities;
-        private DarkCheckBox chkInitialBelowEntities;
         private DarkButton btnClearSearch;
         private DarkTextBox txtSearch;
         private DarkButton btnAddFolder;
@@ -1207,5 +1287,24 @@ namespace Intersect.Editor.Forms.Editors
         private DarkTextBox txtCannotHarvest;
         private DarkNumericUpDown nudDropMinAmount;
         private Label lblDropMinAmount;
+        private Label lblStates;
+        private DarkGroupBox grpGraphicData;
+        private DarkComboBox cmbTextureType;
+        private Label lblTextureType;
+        private DarkCheckBox chkRenderBelowEntity;
+        private DarkComboBox cmbAnimation;
+        private Label lblAnimation;
+        private DarkComboBox cmbTextureSource;
+        private Label lblTerxtureSource;
+        private ListBox lstStates;
+        private DarkButton btnRemoveState;
+        private DarkButton btnAddState;
+        private Label lblStateName;
+        private DarkTextBox txtStateName;
+        private Label lblStateRange;
+        private DarkNumericUpDown nudStateRangeMax;
+        private DarkNumericUpDown nudStateRangeMin;
+        private DarkCheckBox chkUseExplicitMaxHealthForResourceStates;
+        private Label lblHpRegen;
     }
 }
