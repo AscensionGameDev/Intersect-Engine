@@ -465,7 +465,7 @@ public partial class Resource : Entity, IResource
                 {
                     selectedGraphic = deadGraphic;
                 }
-                else if (!IsDead && graphicState is { MinimumHealth: > 0 } aliveGraphic)
+                else if (graphicState is { MinimumHealth: > 0 } aliveGraphic)
                 {
                     selectedGraphic = aliveGraphic;
                 }
