@@ -1384,6 +1384,9 @@ public static partial class Graphics
                     continue;
                 }
 
+                float xpos = x * tileWidth + xoffset;
+                float ypos = y * tileHeight + yoffset;
+
                 if (tmpMap.Attributes[x, y].Type == MapAttributeType.Resource && !upper && !alternate)
                 {
                     var resource = ResourceDescriptor.Get(((MapResourceAttribute) tmpMap.Attributes[x, y]).ResourceId);
@@ -1405,9 +1408,6 @@ public static partial class Graphics
                     {
                         continue;
                     }
-
-                    float xpos = x * tileWidth + xoffset;
-                    float ypos = y * tileHeight + yoffset;
 
                     // we have the graphic, now lets build based on type
                     switch (resourceGraphic.TextureType)
@@ -1526,8 +1526,9 @@ public static partial class Graphics
 
                     if (animation != null)
                     {
-                        float xpos = x * tileWidth + xoffset + tileWidth / 2;
-                        float ypos = y * tileHeight + yoffset + tileHeight / 2;
+                        xpos += tileWidth / 2f;
+                        ypos += tileHeight / 2f;
+
                         if (tmpMap.Attributes[x, y] != null)
                         {
                             var animInstance = tmpMap.GetAttributeAnimation(tmpMap.Attributes[x, y], animation.Id);
