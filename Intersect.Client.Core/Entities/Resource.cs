@@ -49,17 +49,6 @@ public partial class Resource : Entity, IResource
         get => _descriptor;
         set
         {
-            if (value is { } descriptor)
-            {
-                _maximumHealthForStates = (int)(descriptor.UseExplicitMaxHealthForResourceStates
-                    ? descriptor.MaxHp
-                    : MaxVital[(int)Enums.Vital.Health]);
-            }
-            else
-            {
-                _maximumHealthForStates = 0;
-            }
-
             if (value == _descriptor)
             {
                 return;
@@ -194,6 +183,10 @@ public partial class Resource : Entity, IResource
 
             return;
         }
+
+        _maximumHealthForStates = (int)(descriptor.UseExplicitMaxHealthForResourceStates
+            ? descriptor.MaxHp
+            : MaxVital[(int)Enums.Vital.Health]);
 
         Descriptor = descriptor;
 
