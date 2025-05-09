@@ -83,7 +83,7 @@ public partial class RecipeItem
         mMouseOver = false;
         mMouseX = -1;
         mMouseY = -1;
-        Interface.GameUi.ItemDescriptionWindow.Hide();
+        Interface.GameUi.ItemDescriptionWindow?.Hide();
     }
 
     void pnl_HoverEnter(Base sender, EventArgs arguments)
@@ -104,7 +104,7 @@ public partial class RecipeItem
 
         if (mIngredient != null && ItemDescriptor.TryGet(mIngredient.ItemId, out var itemDescriptor))
         {
-            Interface.GameUi.ItemDescriptionWindow.Show(itemDescriptor, mIngredient.Quantity);
+            Interface.GameUi.ItemDescriptionWindow?.Show(itemDescriptor, mIngredient.Quantity);
         }
     }
 

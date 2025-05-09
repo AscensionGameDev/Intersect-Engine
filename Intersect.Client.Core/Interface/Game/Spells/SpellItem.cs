@@ -121,12 +121,12 @@ public partial class SpellItem : SlotItem
             return;
         }
 
-        Interface.GameUi.SpellDescriptionWindow.Show(spellSlots[SlotIndex].Id);
+        Interface.GameUi.SpellDescriptionWindow?.Show(spellSlots[SlotIndex].Id);
     }
 
     private void Icon_HoverLeave(Base sender, EventArgs arguments)
     {
-        Interface.GameUi.SpellDescriptionWindow.Hide();
+        Interface.GameUi.SpellDescriptionWindow?.Hide();
     }
 
     private void Icon_Clicked(Base sender, MouseButtonState arguments)

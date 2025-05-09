@@ -108,12 +108,12 @@ public partial class BagItem : SlotItem
         }
 
         var item = bagSlots[SlotIndex];
-        Interface.GameUi.ItemDescriptionWindow.Show(item.Descriptor, item.Quantity, item.ItemProperties);
+        Interface.GameUi.ItemDescriptionWindow?.Show(item.Descriptor, item.Quantity, item.ItemProperties);
     }
 
     private void Icon_HoverLeave(Base sender, EventArgs arguments)
     {
-        Interface.GameUi.ItemDescriptionWindow.Hide();
+        Interface.GameUi.ItemDescriptionWindow?.Hide();
     }
 
     private void Icon_Clicked(Base sender, MouseButtonState arguments)

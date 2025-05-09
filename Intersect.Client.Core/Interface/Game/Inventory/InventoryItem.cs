@@ -298,7 +298,7 @@ public partial class InventoryItem : SlotItem
 
     private void Icon_HoverLeave(Base sender, EventArgs arguments)
     {
-        Interface.GameUi.ItemDescriptionWindow.Hide();
+        Interface.GameUi.ItemDescriptionWindow?.Hide();
     }
 
     void Icon_HoverEnter(Base? sender, EventArgs? arguments)
@@ -326,7 +326,7 @@ public partial class InventoryItem : SlotItem
 
         if (Globals.GameShop == null)
         {
-            Interface.GameUi.ItemDescriptionWindow.Show(inventorySlotDescriptor, inventorySlot.Quantity, inventorySlot.ItemProperties);
+            Interface.GameUi.ItemDescriptionWindow?.Show(inventorySlotDescriptor, inventorySlot.Quantity, inventorySlot.ItemProperties);
         }
         else
         {
@@ -348,7 +348,7 @@ public partial class InventoryItem : SlotItem
                     return;
                 }
 
-                Interface.GameUi.ItemDescriptionWindow.Show(
+                Interface.GameUi.ItemDescriptionWindow?.Show(
                     inventorySlotDescriptor,
                     inventorySlot.Quantity,
                     inventorySlot.ItemProperties,
@@ -363,7 +363,7 @@ public partial class InventoryItem : SlotItem
                     return;
                 }
 
-                Interface.GameUi.ItemDescriptionWindow.Show(
+                Interface.GameUi.ItemDescriptionWindow?.Show(
                     inventorySlotDescriptor,
                     inventorySlot.Quantity,
                     inventorySlot.ItemProperties,
@@ -372,7 +372,7 @@ public partial class InventoryItem : SlotItem
             }
             else
             {
-                Interface.GameUi.ItemDescriptionWindow.Show(
+                Interface.GameUi.ItemDescriptionWindow?.Show(
                     inventorySlotDescriptor,
                     inventorySlot.Quantity,
                     inventorySlot.ItemProperties,

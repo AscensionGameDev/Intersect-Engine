@@ -99,7 +99,7 @@ public partial class TradeItem
         mMouseOver = false;
         mMouseX = -1;
         mMouseY = -1;
-        Interface.GameUi.ItemDescriptionWindow.Hide();
+        Interface.GameUi.ItemDescriptionWindow?.Hide();
     }
 
     void pnl_HoverEnter(Base sender, EventArgs arguments)
@@ -121,7 +121,7 @@ public partial class TradeItem
             return;
         }
 
-        Interface.GameUi.ItemDescriptionWindow.Show(descriptor, tradeItem.Quantity, tradeItem.ItemProperties);
+        Interface.GameUi.ItemDescriptionWindow?.Show(descriptor, tradeItem.Quantity, tradeItem.ItemProperties);
     }
 
     public FloatRect RenderBounds()

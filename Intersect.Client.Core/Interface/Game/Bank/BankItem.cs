@@ -109,12 +109,12 @@ public partial class BankItem : SlotItem
         }
 
         var item = bankSlots[SlotIndex];
-        Interface.GameUi.ItemDescriptionWindow.Show(item.Descriptor, item.Quantity, item.ItemProperties);
+        Interface.GameUi.ItemDescriptionWindow?.Show(item.Descriptor, item.Quantity, item.ItemProperties);
     }
 
     private void Icon_HoverLeave(Base sender, EventArgs arguments)
     {
-        Interface.GameUi.ItemDescriptionWindow.Hide();
+        Interface.GameUi.ItemDescriptionWindow?.Hide();
     }
 
     private void Icon_Clicked(Base sender, MouseButtonState arguments)

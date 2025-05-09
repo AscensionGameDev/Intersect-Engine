@@ -160,7 +160,7 @@ public partial class CraftingWindow : Window
                 RemoveChild(container, true);
             }
 
-            Interface.GameUi.ItemDescriptionWindow.Hide();
+            Interface.GameUi.ItemDescriptionWindow?.Hide();
         }
 
         var craftedItemDescriptorId = craftDescriptor.ItemId;
@@ -188,7 +188,7 @@ public partial class CraftingWindow : Window
         foreach (var recipeItem in mItems)
         {
             //Clear the old item description box
-            Interface.GameUi.ItemDescriptionWindow.Hide();
+            Interface.GameUi.ItemDescriptionWindow?.Hide();
             if (recipeItem.Container is { } container)
             {
                 mItemContainer.RemoveChild(container, true);

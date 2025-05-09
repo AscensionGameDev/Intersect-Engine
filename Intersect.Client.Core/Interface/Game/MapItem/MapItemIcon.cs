@@ -49,7 +49,7 @@ public partial class MapItemIcon
 
     void pnl_HoverLeave(Base sender, EventArgs arguments)
     {
-        Interface.GameUi.ItemDescriptionWindow.Hide();
+        Interface.GameUi.ItemDescriptionWindow?.Hide();
     }
 
     void pnl_HoverEnter(Base? sender, EventArgs? arguments)
@@ -69,7 +69,7 @@ public partial class MapItemIcon
             return;
         }
 
-        Interface.GameUi.ItemDescriptionWindow.Show(ItemDescriptor.Get(MyItem.ItemId), MyItem.Quantity, MyItem.ItemProperties);
+        Interface.GameUi.ItemDescriptionWindow?.Show(ItemDescriptor.Get(MyItem.ItemId), MyItem.Quantity, MyItem.ItemProperties);
     }
 
     public FloatRect RenderBounds()

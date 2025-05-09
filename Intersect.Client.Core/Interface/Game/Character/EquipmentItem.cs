@@ -71,7 +71,7 @@ public partial class EquipmentItem
 
     void pnl_HoverLeave(Base sender, EventArgs arguments)
     {
-        Interface.GameUi.ItemDescriptionWindow.Hide();
+        Interface.GameUi.ItemDescriptionWindow?.Hide();
     }
 
     void pnl_HoverEnter(Base sender, EventArgs arguments)
@@ -92,7 +92,7 @@ public partial class EquipmentItem
             return;
         }
 
-        Interface.GameUi.ItemDescriptionWindow.Show(item, 1, mItemProperties);
+        Interface.GameUi.ItemDescriptionWindow?.Show(item, 1, mItemProperties);
     }
 
     public FloatRect RenderBounds()

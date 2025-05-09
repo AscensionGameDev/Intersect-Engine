@@ -170,7 +170,7 @@ public partial class HotbarItem : SlotItem
 
     private void Icon_HoverLeave(Base sender, EventArgs arguments)
     {
-        Interface.GameUi.ItemDescriptionWindow.Hide();
+        Interface.GameUi.ItemDescriptionWindow?.Hide();
     }
 
     private void Icon_HoverEnter(Base sender, EventArgs arguments)
@@ -194,11 +194,11 @@ public partial class HotbarItem : SlotItem
                 quantityOfItem = Globals.Me.GetQuantityOfItemInInventory(_currentItem.Id);
             }
 
-            Interface.GameUi.ItemDescriptionWindow.Show(_currentItem, quantityOfItem, _inventoryItem.ItemProperties);
+            Interface.GameUi.ItemDescriptionWindow?.Show(_currentItem, quantityOfItem, _inventoryItem.ItemProperties);
         }
         else if (_currentSpell != null)
         {
-            Interface.GameUi.SpellDescriptionWindow.Show(_currentSpell.Id);
+            Interface.GameUi.SpellDescriptionWindow?.Show(_currentSpell.Id);
         }
     }
 

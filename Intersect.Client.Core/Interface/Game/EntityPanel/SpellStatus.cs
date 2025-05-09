@@ -40,12 +40,12 @@ public partial class SpellStatus
 
     public void pnl_HoverLeave(Base sender, EventArgs arguments)
     {
-        Interface.GameUi.SpellDescriptionWindow.Hide();
+        Interface.GameUi.SpellDescriptionWindow?.Hide();
     }
 
     void pnl_HoverEnter(Base sender, EventArgs arguments)
     {
-        Interface.GameUi.SpellDescriptionWindow.Show(_status.SpellId);
+        Interface.GameUi.SpellDescriptionWindow?.Show(_status.SpellId);
     }
 
     public void UpdateStatus(Status status)

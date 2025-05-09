@@ -70,7 +70,7 @@ public partial class ShopItem : SlotItem
                 StatModifiers = item.StatsGiven,
             };
 
-            Interface.GameUi.ItemDescriptionWindow.Show(
+            Interface.GameUi.ItemDescriptionWindow?.Show(
                 gameShop.SellingItems[_mySlot].Item,
                 amount: 1,
                 itemProperties: itemProperty,
@@ -81,7 +81,7 @@ public partial class ShopItem : SlotItem
 
     private void Icon_HoverLeave(Base sender, EventArgs arguments)
     {
-        Interface.GameUi.ItemDescriptionWindow.Hide();
+        Interface.GameUi.ItemDescriptionWindow?.Hide();
     }
 
     private void Icon_RightClicked(Base sender, MouseButtonState arguments)
