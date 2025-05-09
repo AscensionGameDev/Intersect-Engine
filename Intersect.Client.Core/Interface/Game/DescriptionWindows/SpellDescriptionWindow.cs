@@ -30,8 +30,11 @@ public partial class SpellDescriptionWindow() : DescriptionWindowBase(Interface.
 
     public override void Hide()
     {
-        Interface.GameUi.SpellDescriptionWindow?.Dispose();
-        Interface.GameUi.SpellDescriptionWindow = default;
+        if (Interface.GameUi.SpellDescriptionWindow == this)
+        {
+            Interface.GameUi.GameCanvas.RemoveChild(Interface.GameUi.SpellDescriptionWindow, true);
+            Interface.GameUi.SpellDescriptionWindow = default;
+        }
     }
 
     protected void SetupDescriptionWindow()

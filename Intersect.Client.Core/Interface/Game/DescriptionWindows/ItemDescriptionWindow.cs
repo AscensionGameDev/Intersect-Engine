@@ -88,10 +88,17 @@ public partial class ItemDescriptionWindow() : DescriptionWindowBase(Interface.G
 
     public override void Hide()
     {
-        Interface.GameUi.ItemDescriptionWindow?.Dispose();
-        Interface.GameUi.ItemDescriptionWindow = default;
-        Interface.GameUi.SpellDescriptionWindow?.Dispose();
-        Interface.GameUi.SpellDescriptionWindow = default;
+        if (Interface.GameUi.ItemDescriptionWindow == this)
+        {
+            Interface.GameUi.GameCanvas.RemoveChild(Interface.GameUi.ItemDescriptionWindow, true);
+            Interface.GameUi.ItemDescriptionWindow = default;
+        }
+
+        if (Interface.GameUi.SpellDescriptionWindow != default)
+        {
+            Interface.GameUi.GameCanvas.RemoveChild(Interface.GameUi.SpellDescriptionWindow, true);
+            Interface.GameUi.SpellDescriptionWindow = default;
+        }
     }
 
     protected void SetupDescriptionWindow()
