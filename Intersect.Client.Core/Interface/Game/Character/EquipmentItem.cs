@@ -4,26 +4,19 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
-using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.Framework.Core.GameObjects.Items;
-using Intersect.GameObjects;
-using Intersect.Network.Packets.Server;
 
 namespace Intersect.Client.Interface.Game.Character;
 
-
 public partial class EquipmentItem
 {
-
     public ImagePanel ContentPanel;
 
     private WindowControl mCharacterWindow;
 
     private Guid mCurrentItemId;
-
-    private ItemDescriptionWindow mDescWindow;
 
     private ItemProperties mItemProperties = null;
 
@@ -78,11 +71,7 @@ public partial class EquipmentItem
 
     void pnl_HoverLeave(Base sender, EventArgs arguments)
     {
-        if (mDescWindow != null)
-        {
-            mDescWindow.Dispose();
-            mDescWindow = null;
-        }
+        Interface.GameUi.ItemDescriptionWindow.Hide();
     }
 
     void pnl_HoverEnter(Base sender, EventArgs arguments)
@@ -97,19 +86,13 @@ public partial class EquipmentItem
             return;
         }
 
-        if (mDescWindow != null)
-        {
-            mDescWindow.Dispose();
-            mDescWindow = null;
-        }
-
         var item = ItemDescriptor.Get(mCurrentItemId);
         if (item == null)
         {
             return;
         }
 
-        mDescWindow = new ItemDescriptionWindow(item, 1, mCharacterWindow.X, mCharacterWindow.Y, mItemProperties, item.Name);
+        Interface.GameUi.ItemDescriptionWindow.Show(item, 1, mItemProperties);
     }
 
     public FloatRect RenderBounds()

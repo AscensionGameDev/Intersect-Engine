@@ -9,7 +9,6 @@ using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
-using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Interface.Game.Inventory;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
@@ -24,7 +23,6 @@ public partial class BankItem : SlotItem
     // Controls
     private readonly Label _quantityLabel;
     private BankWindow _bankWindow;
-    private ItemDescriptionWindow? _descriptionWindow;
 
     // Context Menu Handling
     private MenuItem _withdrawContextItem;
@@ -100,10 +98,6 @@ public partial class BankItem : SlotItem
             return;
         }
 
-
-        _descriptionWindow?.Dispose();
-        _descriptionWindow = null;
-
         if (Globals.BankSlots is not { Length: > 0 } bankSlots)
         {
             return;
@@ -115,19 +109,12 @@ public partial class BankItem : SlotItem
         }
 
         var item = bankSlots[SlotIndex];
-        _descriptionWindow = new ItemDescriptionWindow(
-            item.Descriptor,
-            item.Quantity,
-            _bankWindow.X,
-            _bankWindow.Y,
-            item.ItemProperties
-        );
+        Interface.GameUi.ItemDescriptionWindow.Show(item.Descriptor, item.Quantity, item.ItemProperties);
     }
 
     private void Icon_HoverLeave(Base sender, EventArgs arguments)
     {
-        _descriptionWindow?.Dispose();
-        _descriptionWindow = default;
+        Interface.GameUi.ItemDescriptionWindow.Hide();
     }
 
     private void Icon_Clicked(Base sender, MouseButtonState arguments)
@@ -298,8 +285,5 @@ public partial class BankItem : SlotItem
                 Icon.IsVisibleInParent = false;
             }
         }
-
-        _descriptionWindow?.Dispose();
-        _descriptionWindow = default;
     }
 }

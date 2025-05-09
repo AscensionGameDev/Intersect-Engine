@@ -4,7 +4,6 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
-using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Configuration;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
@@ -22,8 +21,6 @@ public partial class TradeItem
     public ImagePanel Container;
 
     private Guid mCurrentItemId;
-
-    private ItemDescriptionWindow mDescWindow;
 
     private Draggable mDragIcon;
 
@@ -102,11 +99,7 @@ public partial class TradeItem
         mMouseOver = false;
         mMouseX = -1;
         mMouseY = -1;
-        if (mDescWindow != null)
-        {
-            mDescWindow.Dispose();
-            mDescWindow = null;
-        }
+        Interface.GameUi.ItemDescriptionWindow.Hide();
     }
 
     void pnl_HoverEnter(Base sender, EventArgs arguments)
@@ -118,19 +111,17 @@ public partial class TradeItem
 
         mMouseOver = true;
 
-        if (mDescWindow != null)
+        if (Globals.Trade[mMySide, mMySlot] is not { } tradeItem)
         {
-            mDescWindow.Dispose();
-            mDescWindow = null;
+            return;
         }
 
-        if (ItemDescriptor.Get(Globals.Trade[mMySide, mMySlot].ItemId) != null)
+        if (!ItemDescriptor.TryGet(Globals.Trade[mMySide, mMySlot].ItemId, out var descriptor))
         {
-            mDescWindow = new ItemDescriptionWindow(
-                Globals.Trade[mMySide, mMySlot].Descriptor, Globals.Trade[mMySide, mMySlot].Quantity, mTradeWindow.X,
-                mTradeWindow.Y, Globals.Trade[mMySide, mMySlot].ItemProperties
-            );
+            return;
         }
+
+        Interface.GameUi.ItemDescriptionWindow.Show(descriptor, tradeItem.Quantity, tradeItem.ItemProperties);
     }
 
     public FloatRect RenderBounds()

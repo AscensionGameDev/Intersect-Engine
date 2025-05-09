@@ -7,7 +7,6 @@ using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
-using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Interface.Game.Inventory;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
@@ -21,7 +20,6 @@ public partial class BagItem : SlotItem
     // Controls
     private readonly Label _quantityLabel;
     private readonly BagWindow _bagWindow;
-    private ItemDescriptionWindow? _descriptionWindow;
 
     // Context Menu Handling
     private readonly MenuItem _withdrawContextItem;
@@ -99,9 +97,6 @@ public partial class BagItem : SlotItem
             return;
         }
 
-        _descriptionWindow?.Dispose();
-        _descriptionWindow = default;
-
         if (Globals.BagSlots is not { Length: > 0 } bagSlots)
         {
             return;
@@ -113,19 +108,12 @@ public partial class BagItem : SlotItem
         }
 
         var item = bagSlots[SlotIndex];
-        _descriptionWindow = new ItemDescriptionWindow(
-            item.Descriptor,
-            item.Quantity,
-            _bagWindow.X,
-            _bagWindow.Y,
-            item.ItemProperties
-        );
+        Interface.GameUi.ItemDescriptionWindow.Show(item.Descriptor, item.Quantity, item.ItemProperties);
     }
 
     private void Icon_HoverLeave(Base sender, EventArgs arguments)
     {
-        _descriptionWindow?.Dispose();
-        _descriptionWindow = default;
+        Interface.GameUi.ItemDescriptionWindow.Hide();
     }
 
     private void Icon_Clicked(Base sender, MouseButtonState arguments)
@@ -232,8 +220,5 @@ public partial class BagItem : SlotItem
                 Icon.IsVisibleInParent = false;
             }
         }
-
-        _descriptionWindow?.Dispose();
-        _descriptionWindow = default;
     }
 }

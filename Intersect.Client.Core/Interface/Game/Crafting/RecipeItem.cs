@@ -2,7 +2,6 @@ using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
-using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
@@ -14,8 +13,6 @@ public partial class RecipeItem
 {
 
     public ImagePanel? Container;
-
-    public ItemDescriptionWindow? DescWindow;
 
     public bool IsDragging;
 
@@ -86,11 +83,7 @@ public partial class RecipeItem
         mMouseOver = false;
         mMouseX = -1;
         mMouseY = -1;
-        if (DescWindow != null)
-        {
-            DescWindow.Dispose();
-            DescWindow = null;
-        }
+        Interface.GameUi.ItemDescriptionWindow.Hide();
     }
 
     void pnl_HoverEnter(Base sender, EventArgs arguments)
@@ -109,17 +102,9 @@ public partial class RecipeItem
             return;
         }
 
-        if (DescWindow != null)
-        {
-            DescWindow.Dispose();
-            DescWindow = null;
-        }
-
         if (mIngredient != null && ItemDescriptor.TryGet(mIngredient.ItemId, out var itemDescriptor))
         {
-            DescWindow = new ItemDescriptionWindow(
-                itemDescriptor, mIngredient.Quantity, mCraftingWindow.X, mCraftingWindow.Y, null
-            );
+            Interface.GameUi.ItemDescriptionWindow.Show(itemDescriptor, mIngredient.Quantity);
         }
     }
 

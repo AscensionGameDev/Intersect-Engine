@@ -8,7 +8,6 @@ using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
-using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Interface.Game.Hotbar;
 using Intersect.Client.Localization;
 using Intersect.Configuration;
@@ -22,7 +21,6 @@ public partial class SpellItem : SlotItem
     // Controls
     private readonly Label _cooldownLabel;
     private readonly SpellsWindow _spellWindow;
-    private SpellDescriptionWindow? _descriptionWindow;
 
     // Context Menu Handling
     private readonly MenuItem _useSpellMenuItem;
@@ -118,21 +116,17 @@ public partial class SpellItem : SlotItem
             return;
         }
 
-        _descriptionWindow?.Dispose();
-        _descriptionWindow = null;
-
         if (Globals.Me?.Spells is not { Length: > 0 } spellSlots)
         {
             return;
         }
 
-        _descriptionWindow = new SpellDescriptionWindow(spellSlots[SlotIndex].Id, _spellWindow.X, _spellWindow.Y);
+        Interface.GameUi.SpellDescriptionWindow.Show(spellSlots[SlotIndex].Id);
     }
 
     private void Icon_HoverLeave(Base sender, EventArgs arguments)
     {
-        _descriptionWindow?.Dispose();
-        _descriptionWindow = null;
+        Interface.GameUi.SpellDescriptionWindow.Hide();
     }
 
     private void Icon_Clicked(Base sender, MouseButtonState arguments)
@@ -242,9 +236,6 @@ public partial class SpellItem : SlotItem
                     Icon.IsVisibleInParent = false;
                 }
             }
-
-            _descriptionWindow?.Dispose();
-            _descriptionWindow = null;
         }
     }
 }
