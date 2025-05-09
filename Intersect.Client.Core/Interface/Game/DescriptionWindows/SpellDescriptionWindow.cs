@@ -1,37 +1,36 @@
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Utilities;
-using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Framework.File_Management;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows;
 
-public partial class SpellDescriptionWindow : DescriptionWindowBase
+public partial class SpellDescriptionWindow() : DescriptionWindowBase(Interface.GameUi.GameCanvas, "DescriptionWindow")
 {
-    protected SpellDescriptor mSpell;
+    private SpellDescriptor? _spellDescriptor;
 
-    public SpellDescriptionWindow(Guid spellId, int x, int y, ImagePanel? itemDecriptionContainer = null) : base(Interface.GameUi.GameCanvas, "DescriptionWindow")
+    public void Show(Guid spellId, ItemDescriptionWindow? itemDecriptionContainer = default)
     {
-        mSpell = SpellDescriptor.Get(spellId);
-
-        GenerateComponents();
+        _spellDescriptor = SpellDescriptor.Get(spellId);
         SetupDescriptionWindow();
-        SetPosition(x, y, itemDecriptionContainer);
-    }
 
-    public SpellDescriptionWindow(Guid spellId, ImagePanel _statusIcon) : base(Interface.GameUi.GameCanvas, "DescriptionWindow")
-    {
-        mSpell = SpellDescriptor.Get(spellId);
+        if (itemDecriptionContainer != default)
+        {
+            SetPosition(itemDecriptionContainer.X, itemDecriptionContainer.Y + itemDecriptionContainer.Height);
+            SetSize(itemDecriptionContainer.Width, itemDecriptionContainer.Height);
+        }
+        else
+        {
+            PositionToHoveredControl();
+        }
 
-        GenerateComponents();
-        SetupDescriptionWindow();
-        SetPosition(_statusIcon, this);
+        base.Show();
     }
 
     protected void SetupDescriptionWindow()
     {
-        if (mSpell == null)
+        if (_spellDescriptor == default)
         {
             return;
         }
@@ -43,13 +42,13 @@ public partial class SpellDescriptionWindow : DescriptionWindowBase
         SetupSpellInfo();
 
         // if we have a description, set that up.
-        if (!string.IsNullOrWhiteSpace(mSpell.Description))
+        if (!string.IsNullOrWhiteSpace(_spellDescriptor.Description))
         {
             SetupDescription();
         }
 
         // Set up information depending on the item type.
-        switch (mSpell.SpellType)
+        switch (_spellDescriptor.SpellType)
         {
             case SpellType.CombatSpell:
             case SpellType.WarpTo:
@@ -70,34 +69,39 @@ public partial class SpellDescriptionWindow : DescriptionWindowBase
 
     protected void SetupHeader()
     {
+        if (_spellDescriptor == default)
+        {
+            return;
+        }
+
         // Create our header, but do not load our layout yet since we're adding components manually.
         var header = AddHeader();
 
         // Set up the icon, if we can load it.
-        var tex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Spell, mSpell.Icon);
+        var tex = GameContentManager.Current.GetTexture(Framework.Content.TextureType.Spell, _spellDescriptor.Icon);
         if (tex != null)
         {
             header.SetIcon(tex, Color.White);
         }
 
         // Set up the header as the item name.
-        header.SetTitle(mSpell.Name, Color.White);
+        header.SetTitle(_spellDescriptor.Name, Color.White);
 
         // Set up the spell type description.
-        Strings.SpellDescription.SpellTypes.TryGetValue((int)mSpell.SpellType, out var spellType);
+        Strings.SpellDescription.SpellTypes.TryGetValue((int)_spellDescriptor.SpellType, out var spellType);
         header.SetSubtitle(spellType, Color.White);
 
         // Set up the spelldescription based on what kind of spell it is.
-        if (mSpell.SpellType == (int)SpellType.CombatSpell)
+        if (_spellDescriptor.SpellType == (int)SpellType.CombatSpell)
         {
-            if (mSpell.Combat.TargetType == SpellTargetType.Projectile)
+            if (_spellDescriptor.Combat.TargetType == SpellTargetType.Projectile)
             {
-                var proj = ProjectileDescriptor.Get(mSpell.Combat.ProjectileId);
-                header.SetDescription(Strings.SpellDescription.TargetTypes[(int)mSpell.Combat.TargetType].ToString(proj?.Range ?? 0, mSpell.Combat.HitRadius), Color.White);
+                var proj = ProjectileDescriptor.Get(_spellDescriptor.Combat.ProjectileId);
+                header.SetDescription(Strings.SpellDescription.TargetTypes[(int)_spellDescriptor.Combat.TargetType].ToString(proj?.Range ?? 0, _spellDescriptor.Combat.HitRadius), Color.White);
             }
             else
             {
-                header.SetDescription(Strings.SpellDescription.TargetTypes[(int)mSpell.Combat.TargetType].ToString(mSpell.Combat.CastRange, mSpell.Combat.HitRadius), Color.White);
+                header.SetDescription(Strings.SpellDescription.TargetTypes[(int)_spellDescriptor.Combat.TargetType].ToString(_spellDescriptor.Combat.CastRange, _spellDescriptor.Combat.HitRadius), Color.White);
             }
         }
 
@@ -106,6 +110,11 @@ public partial class SpellDescriptionWindow : DescriptionWindowBase
 
     protected void SetupSpellInfo()
     {
+        if (_spellDescriptor == default)
+        {
+            return;
+        }
+
         // Add a divider.
         AddDivider();
 
@@ -113,9 +122,9 @@ public partial class SpellDescriptionWindow : DescriptionWindowBase
         var rows = AddRowContainer();
 
         // Friendly / Non Friendly for combat spells.
-        if (mSpell.SpellType == SpellType.CombatSpell || mSpell.SpellType == SpellType.WarpTo)
+        if (_spellDescriptor.SpellType == SpellType.CombatSpell || _spellDescriptor.SpellType == SpellType.WarpTo)
         {
-            if (mSpell.Combat.Friendly)
+            if (_spellDescriptor.Combat.Friendly)
             {
                 rows.AddKeyValueRow(Strings.SpellDescription.Friendly, string.Empty);
             }
@@ -127,41 +136,41 @@ public partial class SpellDescriptionWindow : DescriptionWindowBase
 
         // Add cast time
         var castTime = Strings.SpellDescription.Instant;
-        if (mSpell.CastDuration > 0)
+        if (_spellDescriptor.CastDuration > 0)
         {
-            castTime = TimeSpan.FromMilliseconds(mSpell.CastDuration).WithSuffix();
+            castTime = TimeSpan.FromMilliseconds(_spellDescriptor.CastDuration).WithSuffix();
         }
         rows.AddKeyValueRow(Strings.SpellDescription.CastTime, castTime);
 
         // Add Vital Costs
         for (var i = 0; i < Enum.GetValues<Vital>().Length; i++)
         {
-            if (mSpell.VitalCost[i] != 0)
+            if (_spellDescriptor.VitalCost[i] != 0)
             {
-                rows.AddKeyValueRow(Strings.SpellDescription.VitalCosts[i], mSpell.VitalCost[i].ToString());
+                rows.AddKeyValueRow(Strings.SpellDescription.VitalCosts[i], _spellDescriptor.VitalCost[i].ToString());
             }
         }
 
         // Add Cooldown time
-        if (mSpell.CooldownDuration > 0)
+        if (_spellDescriptor.CooldownDuration > 0)
         {
-            rows.AddKeyValueRow(Strings.SpellDescription.Cooldown, TimeSpan.FromMilliseconds(mSpell.CooldownDuration).WithSuffix());
+            rows.AddKeyValueRow(Strings.SpellDescription.Cooldown, TimeSpan.FromMilliseconds(_spellDescriptor.CooldownDuration).WithSuffix());
         }
 
         // Add Cooldown Group
-        if (!string.IsNullOrWhiteSpace(mSpell.CooldownGroup))
+        if (!string.IsNullOrWhiteSpace(_spellDescriptor.CooldownGroup))
         {
-            rows.AddKeyValueRow(Strings.SpellDescription.CooldownGroup, mSpell.CooldownGroup);
+            rows.AddKeyValueRow(Strings.SpellDescription.CooldownGroup, _spellDescriptor.CooldownGroup);
         }
 
         // Ignores global cooldown if enabled?
-        if (Options.Instance.Combat.EnableGlobalCooldowns && mSpell.IgnoreGlobalCooldown)
+        if (Options.Instance.Combat.EnableGlobalCooldowns && _spellDescriptor.IgnoreGlobalCooldown)
         {
             rows.AddKeyValueRow(Strings.SpellDescription.IgnoreGlobalCooldown, string.Empty);
         }
 
         // Ignore cooldown reduction stat?
-        if (mSpell.IgnoreCooldownReduction)
+        if (_spellDescriptor.IgnoreCooldownReduction)
         {
             rows.AddKeyValueRow(Strings.SpellDescription.IgnoreCooldownReduction, string.Empty);
         }
@@ -172,16 +181,26 @@ public partial class SpellDescriptionWindow : DescriptionWindowBase
 
     protected void SetupDescription()
     {
+        if (_spellDescriptor == default)
+        {
+            return;
+        }
+
         // Add a divider.
         AddDivider();
 
         // Add the actual description.
         var description = AddDescription();
-        description.AddText(Strings.ItemDescription.Description.ToString(mSpell.Description), Color.White);
+        description.AddText(Strings.ItemDescription.Description.ToString(_spellDescriptor.Description), Color.White);
     }
 
     protected void SetupCombatInfo()
     {
+        if (_spellDescriptor == default)
+        {
+            return;
+        }
+
         // Add a divider.
         AddDivider();
 
@@ -194,34 +213,34 @@ public partial class SpellDescriptionWindow : DescriptionWindowBase
         var isDamage = false;
         for (var i = 0; i < Enum.GetValues<Vital>().Length; i++)
         {
-            if (mSpell.Combat.VitalDiff[i] < 0)
+            if (_spellDescriptor.Combat.VitalDiff[i] < 0)
             {
-                rows.AddKeyValueRow(Strings.SpellDescription.VitalRecovery[i], Math.Abs(mSpell.Combat.VitalDiff[i]).ToString());
+                rows.AddKeyValueRow(Strings.SpellDescription.VitalRecovery[i], Math.Abs(_spellDescriptor.Combat.VitalDiff[i]).ToString());
                 isHeal = true;
             }
-            else if (mSpell.Combat.VitalDiff[i] > 0)
+            else if (_spellDescriptor.Combat.VitalDiff[i] > 0)
             {
-                rows.AddKeyValueRow(Strings.SpellDescription.VitalDamage[i], mSpell.Combat.VitalDiff[i].ToString());
+                rows.AddKeyValueRow(Strings.SpellDescription.VitalDamage[i], _spellDescriptor.Combat.VitalDiff[i].ToString());
                 isDamage = true;
             }
         }
 
         // Damage Type:
-        Strings.SpellDescription.DamageTypes.TryGetValue(mSpell.Combat.DamageType, out var damageType);
+        Strings.SpellDescription.DamageTypes.TryGetValue(_spellDescriptor.Combat.DamageType, out var damageType);
         rows.AddKeyValueRow(Strings.SpellDescription.DamageType, damageType);
 
-        if (mSpell.Combat.Scaling > 0)
+        if (_spellDescriptor.Combat.Scaling > 0)
         {
-            Strings.SpellDescription.Stats.TryGetValue(mSpell.Combat.ScalingStat, out var stat);
+            Strings.SpellDescription.Stats.TryGetValue(_spellDescriptor.Combat.ScalingStat, out var stat);
             rows.AddKeyValueRow(Strings.SpellDescription.ScalingStat, stat);
-            rows.AddKeyValueRow(Strings.SpellDescription.ScalingPercentage, Strings.SpellDescription.Percentage.ToString(mSpell.Combat.Scaling));
+            rows.AddKeyValueRow(Strings.SpellDescription.ScalingPercentage, Strings.SpellDescription.Percentage.ToString(_spellDescriptor.Combat.Scaling));
         }
 
         // Crit Chance
-        if (mSpell.Combat.CritChance > 0)
+        if (_spellDescriptor.Combat.CritChance > 0)
         {
-            rows.AddKeyValueRow(Strings.SpellDescription.CritChance, Strings.SpellDescription.Percentage.ToString(mSpell.Combat.CritChance));
-            rows.AddKeyValueRow(Strings.SpellDescription.CritMultiplier, Strings.SpellDescription.Multiplier.ToString(mSpell.Combat.CritMultiplier));
+            rows.AddKeyValueRow(Strings.SpellDescription.CritChance, Strings.SpellDescription.Percentage.ToString(_spellDescriptor.Combat.CritChance));
+            rows.AddKeyValueRow(Strings.SpellDescription.CritMultiplier, Strings.SpellDescription.Multiplier.ToString(_spellDescriptor.Combat.CritMultiplier));
         }
 
         var showDuration = false;
@@ -230,17 +249,17 @@ public partial class SpellDescriptionWindow : DescriptionWindowBase
         for (var i = 0; i < Enum.GetValues<Stat>().Length; i++)
         {
             Tuple<string, string> data = null;
-            if (mSpell.Combat.StatDiff[i] != 0 && mSpell.Combat.PercentageStatDiff[i] != 0)
+            if (_spellDescriptor.Combat.StatDiff[i] != 0 && _spellDescriptor.Combat.PercentageStatDiff[i] != 0)
             {
-                data = new Tuple<string, string>(Strings.SpellDescription.StatCounts[i], Strings.SpellDescription.RegularAndPercentage.ToString(mSpell.Combat.StatDiff[i], mSpell.Combat.PercentageStatDiff[i]));
+                data = new Tuple<string, string>(Strings.SpellDescription.StatCounts[i], Strings.SpellDescription.RegularAndPercentage.ToString(_spellDescriptor.Combat.StatDiff[i], _spellDescriptor.Combat.PercentageStatDiff[i]));
             }
-            else if (mSpell.Combat.StatDiff[i] != 0)
+            else if (_spellDescriptor.Combat.StatDiff[i] != 0)
             {
-                data = new Tuple<string, string>(Strings.SpellDescription.StatCounts[i], mSpell.Combat.StatDiff[i].ToString());
+                data = new Tuple<string, string>(Strings.SpellDescription.StatCounts[i], _spellDescriptor.Combat.StatDiff[i].ToString());
             }
-            else if (mSpell.Combat.PercentageStatDiff[i] != 0)
+            else if (_spellDescriptor.Combat.PercentageStatDiff[i] != 0)
             {
-                data = new Tuple<string, string>(Strings.SpellDescription.StatCounts[i], Strings.ItemDescription.Percentage.ToString(mSpell.Combat.PercentageStatDiff[i]));
+                data = new Tuple<string, string>(Strings.SpellDescription.StatCounts[i], Strings.ItemDescription.Percentage.ToString(_spellDescriptor.Combat.PercentageStatDiff[i]));
             }
 
             // Make sure we only add a blank row the first time we add a stat row.
@@ -259,7 +278,7 @@ public partial class SpellDescriptionWindow : DescriptionWindowBase
         }
 
         // Handle HoT and DoT displays.
-        if (mSpell.Combat.HoTDoT)
+        if (_spellDescriptor.Combat.HoTDoT)
         {
             showDuration = true;
             rows.AddKeyValueRow(string.Empty, string.Empty);
@@ -271,21 +290,21 @@ public partial class SpellDescriptionWindow : DescriptionWindowBase
             {
                 rows.AddKeyValueRow(Strings.SpellDescription.DoT, string.Empty);
             }
-            rows.AddKeyValueRow(Strings.SpellDescription.Tick, TimeSpan.FromMilliseconds(mSpell.Combat.HotDotInterval).WithSuffix());
+            rows.AddKeyValueRow(Strings.SpellDescription.Tick, TimeSpan.FromMilliseconds(_spellDescriptor.Combat.HotDotInterval).WithSuffix());
         }
 
         // Handle effect display.
-        if (mSpell.Combat.Effect != SpellEffect.None)
+        if (_spellDescriptor.Combat.Effect != SpellEffect.None)
         {
             showDuration = true;
             rows.AddKeyValueRow(string.Empty, string.Empty);
-            rows.AddKeyValueRow(Strings.SpellDescription.Effect, Strings.SpellDescription.Effects[(int)mSpell.Combat.Effect]);
+            rows.AddKeyValueRow(Strings.SpellDescription.Effect, Strings.SpellDescription.Effects[(int)_spellDescriptor.Combat.Effect]);
         }
 
         // Show Stat Buff / Effect / HoT / DoT duration.
         if (showDuration)
         {
-            rows.AddKeyValueRow(Strings.SpellDescription.Duration, TimeSpan.FromMilliseconds(mSpell.Combat.Duration).WithSuffix("0.#"));
+            rows.AddKeyValueRow(Strings.SpellDescription.Duration, TimeSpan.FromMilliseconds(_spellDescriptor.Combat.Duration).WithSuffix("0.#"));
         }
 
         // Resize and position the container.
@@ -294,6 +313,11 @@ public partial class SpellDescriptionWindow : DescriptionWindowBase
 
     protected void SetupDashInfo()
     {
+        if (_spellDescriptor == default)
+        {
+            return;
+        }
+
         // Add a divider.
         AddDivider();
 
@@ -301,30 +325,30 @@ public partial class SpellDescriptionWindow : DescriptionWindowBase
         var rows = AddRowContainer();
 
         // Dash Distance Information.
-        rows.AddKeyValueRow(Strings.SpellDescription.Distance, Strings.SpellDescription.Tiles.ToString(mSpell.Combat.CastRange));
+        rows.AddKeyValueRow(Strings.SpellDescription.Distance, Strings.SpellDescription.Tiles.ToString(_spellDescriptor.Combat.CastRange));
 
         // Ignore map blocks?
-        if (mSpell.Dash.IgnoreMapBlocks)
+        if (_spellDescriptor.Dash.IgnoreMapBlocks)
         {
-            rows.AddKeyValueRow(Strings.SpellDescription.IgnoreMapBlock, String.Empty);
+            rows.AddKeyValueRow(Strings.SpellDescription.IgnoreMapBlock, string.Empty);
         }
 
         // Ignore resource blocks?
-        if (mSpell.Dash.IgnoreActiveResources)
+        if (_spellDescriptor.Dash.IgnoreActiveResources)
         {
-            rows.AddKeyValueRow(Strings.SpellDescription.IgnoreResourceBlock, String.Empty);
+            rows.AddKeyValueRow(Strings.SpellDescription.IgnoreResourceBlock, string.Empty);
         }
 
         // Ignore inactive resource blocks?
-        if (mSpell.Dash.IgnoreInactiveResources)
+        if (_spellDescriptor.Dash.IgnoreInactiveResources)
         {
-            rows.AddKeyValueRow(Strings.SpellDescription.IgnoreConsumedResourceBlock, String.Empty);
+            rows.AddKeyValueRow(Strings.SpellDescription.IgnoreConsumedResourceBlock, string.Empty);
         }
 
         // Ignore Z-Dimension?
-        if (Options.Instance.Map.ZDimensionVisible && mSpell.Dash.IgnoreZDimensionAttributes)
+        if (Options.Instance.Map.ZDimensionVisible && _spellDescriptor.Dash.IgnoreZDimensionAttributes)
         {
-            rows.AddKeyValueRow(Strings.SpellDescription.IgnoreZDimension, String.Empty);
+            rows.AddKeyValueRow(Strings.SpellDescription.IgnoreZDimension, string.Empty);
         }
 
         // Resize and position the container.
@@ -333,8 +357,13 @@ public partial class SpellDescriptionWindow : DescriptionWindowBase
 
     protected void SetupExtraInfo()
     {
+        if (_spellDescriptor == default)
+        {
+            return;
+        }
+
         // Display only if this spell is bound.
-        if (mSpell.Bound)
+        if (_spellDescriptor.Bound)
         {
             // Add a divider.
             AddDivider();
