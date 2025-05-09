@@ -52,9 +52,9 @@ public partial class GameInterface : MutableInterface
 
     private SettingsWindow? _settingsWindow;
 
-    private ItemDescriptionWindow _itemDescriptionWindow;
+    private ItemDescriptionWindow? _itemDescriptionWindow;
 
-    private SpellDescriptionWindow _spellDescriptionWindow;
+    private SpellDescriptionWindow? _spellDescriptionWindow;
 
     private bool mShouldCloseBag;
 
@@ -131,9 +131,17 @@ public partial class GameInterface : MutableInterface
 
     public AnnouncementWindow AnnouncementWindow => _announcementWindow ??= new AnnouncementWindow(GameCanvas) { IsHidden = true };
 
-    public ItemDescriptionWindow ItemDescriptionWindow => _itemDescriptionWindow ??= new ItemDescriptionWindow() { IsHidden = true };
+    public ItemDescriptionWindow? ItemDescriptionWindow
+    {
+        get => _itemDescriptionWindow ??= new ItemDescriptionWindow();
+        set => _itemDescriptionWindow = value;
+    }
 
-    public SpellDescriptionWindow SpellDescriptionWindow => _spellDescriptionWindow ??= new SpellDescriptionWindow() { IsHidden = true };
+    public SpellDescriptionWindow? SpellDescriptionWindow
+    {
+        get => _spellDescriptionWindow ??= new SpellDescriptionWindow();
+        set => _spellDescriptionWindow = value;
+    }
 
     public MenuContainer GameMenu { get; private set; }
 

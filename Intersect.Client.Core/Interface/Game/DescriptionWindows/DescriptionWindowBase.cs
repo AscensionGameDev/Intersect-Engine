@@ -19,16 +19,6 @@ public partial class DescriptionWindowBase : ComponentBase
         LoadJsonUi(Framework.File_Management.GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
     }
 
-    protected override void OnVisibilityChanged(object? sender, VisibilityChangedEventArgs eventArgs)
-    {
-        base.OnVisibilityChanged(sender, eventArgs);
-
-        if (!eventArgs.IsVisibleInTree)
-        {
-            ClearChildren();
-        }
-    }
-
     protected override void OnPreDraw(Framework.Gwen.Skin.Base skin)
     {
         base.OnPreDraw(skin);

@@ -28,6 +28,12 @@ public partial class SpellDescriptionWindow() : DescriptionWindowBase(Interface.
         base.Show();
     }
 
+    public override void Hide()
+    {
+        Interface.GameUi.SpellDescriptionWindow?.Dispose();
+        Interface.GameUi.SpellDescriptionWindow = default;
+    }
+
     protected void SetupDescriptionWindow()
     {
         if (_spellDescriptor == default)
