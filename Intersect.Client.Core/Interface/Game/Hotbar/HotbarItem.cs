@@ -8,7 +8,6 @@ using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
-using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Items;
 using Intersect.Client.Localization;
 using Intersect.Client.Spells;
@@ -34,10 +33,8 @@ public partial class HotbarItem : SlotItem
     private ControlBinding? _hotKey;
     private Item? _inventoryItem = null;
     private int _inventoryItemIndex = -1;
-    private ItemDescriptionWindow? _itemDescriptionWindow;
     private Label _quantityLabel;
     private Spell? _spellBookItem = null;
-    private SpellDescriptionWindow? _spellDescriptionWindow;
     private bool _textureLoaded;
 
     public HotbarItem(int hotbarSlotIndex, Base hotbarWindow)
@@ -173,11 +170,7 @@ public partial class HotbarItem : SlotItem
 
     private void Icon_HoverLeave(Base sender, EventArgs arguments)
     {
-        _itemDescriptionWindow?.Dispose();
-        _itemDescriptionWindow = null;
-
-        _spellDescriptionWindow?.Dispose();
-        _spellDescriptionWindow = null;
+        Interface.GameUi.ItemDescriptionWindow?.Hide();
     }
 
     private void Icon_HoverEnter(Base sender, EventArgs arguments)
@@ -194,9 +187,6 @@ public partial class HotbarItem : SlotItem
 
         if (_currentItem != null && _inventoryItem != null)
         {
-            _itemDescriptionWindow?.Dispose();
-            _itemDescriptionWindow = null;
-
             var quantityOfItem = 1;
 
             if (_currentItem.IsStackable)
@@ -204,19 +194,11 @@ public partial class HotbarItem : SlotItem
                 quantityOfItem = Globals.Me.GetQuantityOfItemInInventory(_currentItem.Id);
             }
 
-            _itemDescriptionWindow = new ItemDescriptionWindow(
-                _currentItem, quantityOfItem, _hotbarWindow.X + (_hotbarWindow.Width / 2), _hotbarWindow.Y + _hotbarWindow.Height + 2,
-                _inventoryItem.ItemProperties, _currentItem.Name, ""
-            );
+            Interface.GameUi.ItemDescriptionWindow?.Show(_currentItem, quantityOfItem, _inventoryItem.ItemProperties);
         }
         else if (_currentSpell != null)
         {
-            _spellDescriptionWindow?.Dispose();
-            _spellDescriptionWindow = null;
-
-            _spellDescriptionWindow = new SpellDescriptionWindow(
-                _currentSpell.Id, _hotbarWindow.X + (_hotbarWindow.Width / 2), _hotbarWindow.Y + _hotbarWindow.Height + 2
-            );
+            Interface.GameUi.SpellDescriptionWindow?.Show(_currentSpell.Id);
         }
     }
 

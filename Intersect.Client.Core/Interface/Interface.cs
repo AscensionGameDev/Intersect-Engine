@@ -292,6 +292,14 @@ public static partial class Interface
         _canvasMainMenu = null;
         _uiMainMenu = null;
 
+        // Destroy our target UI as well! Above code does NOT appear to clear this properly.
+        if (Globals.Me != null)
+        {
+            Globals.Me.ClearTarget();
+            Globals.Me.TargetBox?.Dispose();
+            Globals.Me.TargetBox = null;
+        }
+
         if (_uiInGame is { } gameUi)
         {
             gameUi.Dispose();
@@ -303,14 +311,6 @@ public static partial class Interface
 
         _canvasInGame = null;
         _uiInGame = null;
-
-        // Destroy our target UI as well! Above code does NOT appear to clear this properly.
-        if (Globals.Me != null)
-        {
-            Globals.Me.ClearTarget();
-            Globals.Me.TargetBox?.Dispose();
-            Globals.Me.TargetBox = null;
-        }
 
         _initialized = false;
     }

@@ -2729,14 +2729,6 @@ public partial class Base : IDisposable
     }
 
     /// <summary>
-    ///     Sets the control position based on ImagePanel
-    /// </summary>
-    public virtual void SetPosition(Base _icon)
-    {
-        SetPosition((int)_icon.ToCanvas(new Point(0, 0)).X, (int)_icon.ToCanvas(new Point(0, 0)).Y);
-    }
-
-    /// <summary>
     ///     Sets the control position.
     /// </summary>
     /// <param name="x">Target x coordinate.</param>

@@ -1,23 +1,15 @@
-﻿using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Framework.Gwen.Control;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows.Components;
 
 public partial class DescriptionComponent : ComponentBase
 {
-    protected RichLabel mDescription;
+    private readonly RichLabel _description;
 
     public DescriptionComponent(Base parent, string name) : base(parent, name)
     {
-        GenerateComponents();
-    }
-
-    protected override void GenerateComponents()
-    {
-        base.GenerateComponents();
-
-        mDescription = new RichLabel(mContainer, "Description");
-        mDescription.SizeChanged += (_, _) => mContainer.SizeToChildren();
-
+        _description = new RichLabel(this, "Description");
+        _description.SizeChanged += (_, _) => SizeToChildren();
     }
 
     /// <summary>
@@ -27,26 +19,31 @@ public partial class DescriptionComponent : ComponentBase
     /// <param name="color">The <see cref="Color"/> the description text should render with.</param>
     public void AddText(string description, Color color)
     {
-        mDescription.AddText(description, color);
-        mDescription.SizeToChildren(false, true);
-        mContainer.SizeToChildren(false, true);
+        _description.AddText(description, color);
+        _description.SizeToChildren(false, true);
+        SizeToChildren(false, true);
     }
 
     /// <summary>
     /// Adds a line break to the description.
     /// </summary>
-    public void AddLineBreak() => mDescription.AddLineBreak();
+    public void AddLineBreak() => _description.AddLineBreak();
 
     /// <inheritdoc/>
     public override void CorrectWidth()
     {
         base.CorrectWidth();
-        var margins = mDescription.Margin;
 
-        mDescription.SetSize(mContainer.InnerWidth - margins.Right, mContainer.InnerHeight);
-        mDescription.ForceImmediateRebuild();
-        mDescription.SizeToChildren(false, true);
-        mDescription.SetSize(mDescription.Width, mDescription.Height + margins.Bottom);
-        mContainer.SizeToChildren(false, true);
+        if (Parent == default)
+        {
+            return;
+        }
+
+        var margins = _description.Margin;
+        _description.SetSize(InnerWidth - margins.Right, InnerHeight);
+        _description.ForceImmediateRebuild();
+        _description.SizeToChildren(false, true);
+        _description.SetSize(_description.Width, _description.Height + margins.Bottom);
+        SizeToChildren(false, true);
     }
 }

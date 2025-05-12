@@ -1,10 +1,9 @@
-﻿using Intersect.Client.Core;
+using Intersect.Client.Core;
 using Intersect.Client.Entities;
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
-using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 using Label = Intersect.Client.Framework.Gwen.Control.Label;
@@ -15,8 +14,6 @@ namespace Intersect.Client.Interface.Game.EntityPanel;
 public partial class SpellStatus
 {
     private Guid _currentSpellId;
-
-    private SpellDescriptionWindow? _descriptionWindow;
 
     private Label _durationLabel;
 
@@ -43,25 +40,12 @@ public partial class SpellStatus
 
     public void pnl_HoverLeave(Base sender, EventArgs arguments)
     {
-        if (_descriptionWindow != null)
-        {
-            _descriptionWindow.Dispose();
-            _descriptionWindow = null;
-        }
+        Interface.GameUi.SpellDescriptionWindow?.Hide();
     }
 
     void pnl_HoverEnter(Base sender, EventArgs arguments)
     {
-        if (_descriptionWindow != null)
-        {
-            _descriptionWindow.Dispose();
-            _descriptionWindow = null;
-        }
-
-        var X = _statusIcon.ToCanvas(new Point(0, 0)).X;
-        var Y = _statusIcon.ToCanvas(new Point(0, 0)).Y;
-
-        _descriptionWindow = new SpellDescriptionWindow(_status.SpellId, _statusIcon);
+        Interface.GameUi.SpellDescriptionWindow?.Show(_status.SpellId);
     }
 
     public void UpdateStatus(Status status)

@@ -5,17 +5,13 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
-using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Items;
 using Intersect.Framework.Core.GameObjects.Items;
-using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Inventory;
 
-
 public partial class MapItemIcon
 {
-
     public ImagePanel Container;
 
     public MapItemInstance? MyItem;
@@ -27,8 +23,6 @@ public partial class MapItemIcon
     public ImagePanel Pnl;
 
     private MapItemWindow mMapItemWindow;
-
-    private ItemDescriptionWindow mDescWindow;
 
     public MapItemIcon(MapItemWindow window)
     {
@@ -55,14 +49,10 @@ public partial class MapItemIcon
 
     void pnl_HoverLeave(Base sender, EventArgs arguments)
     {
-        if (mDescWindow != null)
-        {
-            mDescWindow.Dispose();
-            mDescWindow = null;
-        }
+        Interface.GameUi.ItemDescriptionWindow?.Hide();
     }
 
-    void pnl_HoverEnter(Base sender, EventArgs arguments)
+    void pnl_HoverEnter(Base? sender, EventArgs? arguments)
     {
         if (MyItem == null)
         {
@@ -79,15 +69,7 @@ public partial class MapItemIcon
             return;
         }
 
-        if (mDescWindow != null)
-        {
-            mDescWindow.Dispose();
-            mDescWindow = null;
-        }
-        mDescWindow = new ItemDescriptionWindow(
-            ItemDescriptor.Get(MyItem.ItemId), MyItem.Quantity, mMapItemWindow.X,
-            mMapItemWindow.Y, MyItem.ItemProperties
-       );
+        Interface.GameUi.ItemDescriptionWindow?.Show(ItemDescriptor.Get(MyItem.ItemId), MyItem.Quantity, MyItem.ItemProperties);
     }
 
     public FloatRect RenderBounds()
@@ -136,11 +118,6 @@ public partial class MapItemIcon
 
         }
 
-        if (mDescWindow != null)
-        {
-            mDescWindow.Dispose();
-            mDescWindow = null;
-            pnl_HoverEnter(null, null);
-        }
+        pnl_HoverEnter(null, null);
     }
 }

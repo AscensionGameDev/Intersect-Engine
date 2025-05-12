@@ -1,60 +1,109 @@
 using Intersect.Enums;
-using Intersect.GameObjects;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Core;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects.Ranges;
-using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
 using Microsoft.Extensions.Logging;
+using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Gwen.Input;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows;
 
-public partial class ItemDescriptionWindow : DescriptionWindowBase
+public partial class ItemDescriptionWindow() : DescriptionWindowBase(Interface.GameUi.GameCanvas, "DescriptionWindow")
 {
-    protected ItemDescriptor mItem;
+    private ItemDescriptor? _itemDescriptor;
+    private ItemProperties? _itemProperties;
+    private int _amount;
+    private string? _valueLabel;
 
-    protected int mAmount;
-
-    protected ItemProperties? mItemProperties;
-
-    protected string mTitleOverride;
-
-    protected string mValueLabel;
-
-    protected SpellDescriptionWindow? mSpellDescWindow;
-
-    public ItemDescriptionWindow(
+    public void Show(
         ItemDescriptor item,
         int amount,
-        int x,
-        int y,
-        ItemProperties? itemProperties,
-        string titleOverride = "",
+        ItemProperties? itemProperties = default,
         string valueLabel = ""
-    ) : base(Interface.GameUi.GameCanvas, "DescriptionWindow")
+    )
     {
-        mItem = item;
-        mAmount = amount;
-        mItemProperties = itemProperties;
-        mTitleOverride = titleOverride;
-        mValueLabel = valueLabel;
+        _itemDescriptor = item;
+        _amount = amount;
+        _itemProperties = itemProperties;
+        _valueLabel = valueLabel;
 
-        GenerateComponents();
         SetupDescriptionWindow();
-        SetPosition(x, y);
+        PositionToHoveredControl();
 
         // If a spell, also display the spell description!
-        if (mItem.ItemType == ItemType.Spell)
+        if (_itemDescriptor.ItemType == ItemType.Spell && _itemDescriptor.SpellId != Guid.Empty)
         {
-            mSpellDescWindow = new SpellDescriptionWindow(mItem.SpellId, x, y, mContainer);
+            if (Canvas == default || InputHandler.HoveredControl is not { } hoveredControl)
+            {
+                return;
+            }
+
+            var spellDesc = Interface.GameUi.SpellDescriptionWindow;
+            spellDesc.Show(_itemDescriptor.SpellId);
+
+            // we need to control the spell desc window position here
+            var hoveredPos = InputHandler.HoveredControl.ToCanvas(new Point(0, 0));
+            var windowX = 0;
+            var windowY = Y;
+
+            // if spell desc is out of screen
+            if (Y + spellDesc.Height > Canvas.Height)
+            {
+                windowY = Canvas.Height - spellDesc.Height;
+            }
+
+            // let consider some situations
+            // item desc is on right side of hovered icon
+            if (X >= hoveredPos.X + hoveredControl.Width)
+            {
+                // lets try to put spell desc on left side of hovered icon
+                windowX = hoveredPos.X - spellDesc.Width;
+
+                // ops, our spell desc is out of screen
+                if (windowX < 0)
+                {
+                    windowX = X + Width;
+                }
+            }
+            else
+            {
+                // lets try to put spell desc on right side of hovered icon
+                windowX = hoveredPos.X + hoveredControl.Width;
+
+                // ops, our spell desc is out of screen
+                if (windowX + spellDesc.Width > Canvas.Width)
+                {
+                    windowX = X - spellDesc.Width;
+                }
+            }
+
+            spellDesc.SetPosition(windowX, windowY);
+        }
+
+        base.Show();
+    }
+
+    public override void Hide()
+    {
+        if (Interface.GameUi.ItemDescriptionWindow == this)
+        {
+            Interface.GameUi.GameCanvas.RemoveChild(Interface.GameUi.ItemDescriptionWindow, true);
+            Interface.GameUi.ItemDescriptionWindow = default;
+        }
+
+        if (Interface.GameUi.SpellDescriptionWindow != default)
+        {
+            Interface.GameUi.GameCanvas.RemoveChild(Interface.GameUi.SpellDescriptionWindow, true);
+            Interface.GameUi.SpellDescriptionWindow = default;
         }
     }
 
     protected void SetupDescriptionWindow()
     {
-        if (mItem == null)
+        if (_itemDescriptor == default)
         {
             return;
         }
@@ -66,13 +115,13 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
         SetupItemLimits();
 
         // if we have a description, set that up.
-        if (!string.IsNullOrWhiteSpace(mItem.Description))
+        if (!string.IsNullOrWhiteSpace(_itemDescriptor.Description))
         {
             SetupDescription();
         }
 
         // Set up information depending on the item type.
-        switch (mItem.ItemType)
+        switch (_itemDescriptor.ItemType)
         {
             case ItemType.Equipment:
                 SetupEquipmentInfo();
@@ -100,29 +149,33 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
 
     protected void SetupHeader()
     {
+        if (_itemDescriptor == default)
+        {
+            return;
+        }
+
         // Create our header, but do not load our layout yet since we're adding components manually.
         var header = AddHeader();
 
         // Set up the icon, if we can load it.
-        var tex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, mItem.Icon);
+        var tex = GameContentManager.Current.GetTexture(Framework.Content.TextureType.Item, _itemDescriptor.Icon);
         if (tex != null)
         {
-            header.SetIcon(tex, mItem.Color);
+            header.SetIcon(tex, _itemDescriptor.Color);
         }
 
         // Set up the header as the item name.
-        CustomColors.Items.Rarities.TryGetValue(mItem.Rarity, out var rarityColor);
-        var name = !string.IsNullOrWhiteSpace(mTitleOverride) ? mTitleOverride : mItem.Name;
-        header.SetTitle(name, rarityColor ?? Color.White);
+        CustomColors.Items.Rarities.TryGetValue(_itemDescriptor.Rarity, out var rarityColor);
+        header.SetTitle(_itemDescriptor.Name, rarityColor ?? Color.White);
 
         // Set up the description telling us what type of item this is.
         // if equipment, also list what kind.
-        Strings.ItemDescription.ItemTypes.TryGetValue((int)mItem.ItemType, out var typeDesc);
-        if (mItem.ItemType == ItemType.Equipment)
+        Strings.ItemDescription.ItemTypes.TryGetValue((int)_itemDescriptor.ItemType, out var typeDesc);
+        if (_itemDescriptor.ItemType == ItemType.Equipment)
         {
-            var equipSlot = Options.Instance.Equipment.Slots[mItem.EquipmentSlot];
+            var equipSlot = Options.Instance.Equipment.Slots[_itemDescriptor.EquipmentSlot];
             var extraInfo = equipSlot;
-            if (mItem.EquipmentSlot == Options.Instance.Equipment.WeaponSlot && mItem.TwoHanded)
+            if (_itemDescriptor.EquipmentSlot == Options.Instance.Equipment.WeaponSlot && _itemDescriptor.TwoHanded)
             {
                 extraInfo = $"{Strings.ItemDescription.TwoHand} {equipSlot}";
             }
@@ -136,7 +189,7 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
         // Set up the item rarity label.
         try
         {
-            if (Options.Instance.Items.TryGetRarityName(mItem.Rarity, out var rarityName))
+            if (Options.Instance.Items.TryGetRarityName(_itemDescriptor.Rarity, out var rarityName))
             {
                 _ = Strings.ItemDescription.Rarity.TryGetValue(rarityName, out var rarityLabel);
                 header.SetDescription(rarityLabel, rarityColor ?? Color.White);
@@ -147,7 +200,7 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
             ApplicationContext.Context.Value?.Logger.LogError(
                 exception,
                 "Error setting rarity description for rarity {Rarity}",
-                mItem.Rarity
+                _itemDescriptor.Rarity
             );
             throw;
         }
@@ -157,29 +210,34 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
 
     protected void SetupItemLimits()
     {
+        if (_itemDescriptor == default)
+        {
+            return;
+        }
+
         // Gather up what limitations apply to this item.
         var limits = new List<string>();
-        if (!mItem.CanBank)
+        if (!_itemDescriptor.CanBank)
         {
             limits.Add(Strings.ItemDescription.Banked);
         }
-        if (!mItem.CanGuildBank)
+        if (!_itemDescriptor.CanGuildBank)
         {
             limits.Add(Strings.ItemDescription.GuildBanked);
         }
-        if (!mItem.CanBag)
+        if (!_itemDescriptor.CanBag)
         {
             limits.Add(Strings.ItemDescription.Bagged);
         }
-        if (!mItem.CanTrade)
+        if (!_itemDescriptor.CanTrade)
         {
             limits.Add(Strings.ItemDescription.Traded);
         }
-        if (!mItem.CanDrop)
+        if (!_itemDescriptor.CanDrop)
         {
             limits.Add(Strings.ItemDescription.Dropped);
         }
-        if (!mItem.CanSell)
+        if (!_itemDescriptor.CanSell)
         {
             limits.Add(Strings.ItemDescription.Sold);
         }
@@ -200,16 +258,31 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
 
     protected void SetupDescription()
     {
+        if (_itemDescriptor == default)
+        {
+            return;
+        }
+
         // Add a divider.
         AddDivider();
 
         // Add the actual description.
         var description = AddDescription();
-        description.AddText(Strings.ItemDescription.Description.ToString(mItem.Description), Color.White);
+        description.AddText(Strings.ItemDescription.Description.ToString(_itemDescriptor.Description), Color.White);
     }
 
     protected void SetupEquipmentInfo()
     {
+        if (_itemDescriptor == default)
+        {
+            return;
+        }
+
+        if (Globals.Me is not { } player)
+        {
+            return;
+        }
+
         // Add a divider.
         AddDivider();
 
@@ -217,42 +290,42 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
         var rows = AddRowContainer();
 
         // Is this a weapon?
-        if (mItem.EquipmentSlot == Options.Instance.Equipment.WeaponSlot)
+        if (_itemDescriptor.EquipmentSlot == Options.Instance.Equipment.WeaponSlot)
         {
             // Base Damage:
-            rows.AddKeyValueRow(Strings.ItemDescription.BaseDamage, mItem.Damage.ToString());
+            rows.AddKeyValueRow(Strings.ItemDescription.BaseDamage, _itemDescriptor.Damage.ToString());
 
             // Damage Type:
-            Strings.ItemDescription.DamageTypes.TryGetValue(mItem.DamageType, out var damageType);
+            Strings.ItemDescription.DamageTypes.TryGetValue(_itemDescriptor.DamageType, out var damageType);
             rows.AddKeyValueRow(Strings.ItemDescription.BaseDamageType, damageType);
 
-            if (mItem.Scaling > 0)
+            if (_itemDescriptor.Scaling > 0)
             {
-                Strings.ItemDescription.Stats.TryGetValue(mItem.ScalingStat, out var stat);
+                Strings.ItemDescription.Stats.TryGetValue(_itemDescriptor.ScalingStat, out var stat);
                 rows.AddKeyValueRow(Strings.ItemDescription.ScalingStat, stat);
-                rows.AddKeyValueRow(Strings.ItemDescription.ScalingPercentage, Strings.ItemDescription.Percentage.ToString(mItem.Scaling));
+                rows.AddKeyValueRow(Strings.ItemDescription.ScalingPercentage, Strings.ItemDescription.Percentage.ToString(_itemDescriptor.Scaling));
             }
 
             // Crit Chance
-            if (mItem.CritChance > 0)
+            if (_itemDescriptor.CritChance > 0)
             {
-                rows.AddKeyValueRow(Strings.ItemDescription.CritChance, Strings.ItemDescription.Percentage.ToString(mItem.CritChance));
-                rows.AddKeyValueRow(Strings.ItemDescription.CritMultiplier, Strings.ItemDescription.Multiplier.ToString(mItem.CritMultiplier));
+                rows.AddKeyValueRow(Strings.ItemDescription.CritChance, Strings.ItemDescription.Percentage.ToString(_itemDescriptor.CritChance));
+                rows.AddKeyValueRow(Strings.ItemDescription.CritMultiplier, Strings.ItemDescription.Multiplier.ToString(_itemDescriptor.CritMultiplier));
             }
 
             // Attack Speed
             // Are we supposed to change our attack time based on a modifier?
-            if (mItem.AttackSpeedModifier == 0)
+            if (_itemDescriptor.AttackSpeedModifier == 0)
             {
                 // No modifier, assuming base attack rate? We have to calculate the speed stat manually here though..!
-                var speed = Globals.Me.Stat[(int)Stat.Speed];
+                var speed = player.Stat[(int)Stat.Speed];
 
                 // Remove currently equipped weapon stats.. We want to create a fair display!
-                var weaponSlot = Globals.Me.MyEquipment[Options.Instance.Equipment.WeaponSlot];
+                var weaponSlot = player.MyEquipment[Options.Instance.Equipment.WeaponSlot];
                 if (weaponSlot != -1)
                 {
-                    var randomStats = Globals.Me.Inventory[weaponSlot].ItemProperties.StatModifiers;
-                    var weapon = ItemDescriptor.Get(Globals.Me.Inventory[weaponSlot].ItemId);
+                    var randomStats = player.Inventory[weaponSlot].ItemProperties.StatModifiers;
+                    var weapon = ItemDescriptor.Get(player.Inventory[weaponSlot].ItemId);
                     if (weapon != null && randomStats != null)
                     {
                         speed = (int)Math.Round(speed / ((100 + weapon.PercentageStatsGiven[(int)Stat.Speed]) / 100f));
@@ -262,85 +335,85 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
                 }
 
                 // Add current item's speed stats!
-                if (mItemProperties?.StatModifiers != default)
+                if (_itemProperties?.StatModifiers != default)
                 {
-                    speed += mItem.StatsGiven[(int)Stat.Speed];
-                    speed += mItemProperties.StatModifiers[(int)Stat.Speed];
-                    speed += (int)Math.Floor(speed * (mItem.PercentageStatsGiven[(int)Stat.Speed] / 100f));
+                    speed += _itemDescriptor.StatsGiven[(int)Stat.Speed];
+                    speed += _itemProperties.StatModifiers[(int)Stat.Speed];
+                    speed += (int)Math.Floor(speed * (_itemDescriptor.PercentageStatsGiven[(int)Stat.Speed] / 100f));
                 }
 
                 // Display the actual speed this weapon would have based off of our calculated speed stat.
-                rows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, TimeSpan.FromMilliseconds(Globals.Me.CalculateAttackTime(speed)).WithSuffix());
+                rows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, TimeSpan.FromMilliseconds(player.CalculateAttackTime(speed)).WithSuffix());
             }
-            else if (mItem.AttackSpeedModifier == 1)
+            else if (_itemDescriptor.AttackSpeedModifier == 1)
             {
                 // Static, so this weapon's attack speed.
-                rows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, TimeSpan.FromMilliseconds(mItem.AttackSpeedValue).WithSuffix());
+                rows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, TimeSpan.FromMilliseconds(_itemDescriptor.AttackSpeedValue).WithSuffix());
             }
-            else if (mItem.AttackSpeedModifier == 2)
+            else if (_itemDescriptor.AttackSpeedModifier == 2)
             {
                 // Percentage based.
-                rows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, Strings.ItemDescription.Percentage.ToString(mItem.AttackSpeedValue));
+                rows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, Strings.ItemDescription.Percentage.ToString(_itemDescriptor.AttackSpeedValue));
             }
         }
 
         //Blocking options
-        if (mItem.EquipmentSlot == Options.Instance.Equipment.ShieldSlot)
+        if (_itemDescriptor.EquipmentSlot == Options.Instance.Equipment.ShieldSlot)
         {
-            if (mItem.BlockChance > 0)
+            if (_itemDescriptor.BlockChance > 0)
             {
-                rows.AddKeyValueRow(Strings.ItemDescription.BlockChance, Strings.ItemDescription.Percentage.ToString(mItem.BlockChance));
+                rows.AddKeyValueRow(Strings.ItemDescription.BlockChance, Strings.ItemDescription.Percentage.ToString(_itemDescriptor.BlockChance));
             }
 
-            if (mItem.BlockAmount > 0)
+            if (_itemDescriptor.BlockAmount > 0)
             {
-                rows.AddKeyValueRow(Strings.ItemDescription.BlockAmount, Strings.ItemDescription.Percentage.ToString(mItem.BlockAmount));
+                rows.AddKeyValueRow(Strings.ItemDescription.BlockAmount, Strings.ItemDescription.Percentage.ToString(_itemDescriptor.BlockAmount));
             }
 
-            if (mItem.BlockAbsorption > 0)
+            if (_itemDescriptor.BlockAbsorption > 0)
             {
-                rows.AddKeyValueRow(Strings.ItemDescription.BlockAbsorption, Strings.ItemDescription.Percentage.ToString(mItem.BlockAbsorption));
+                rows.AddKeyValueRow(Strings.ItemDescription.BlockAbsorption, Strings.ItemDescription.Percentage.ToString(_itemDescriptor.BlockAbsorption));
             }
         }
 
         // Vitals
         for (var i = 0; i < Enum.GetValues<Vital>().Length; i++)
         {
-            if (mItem.VitalsGiven[i] != 0 && mItem.PercentageVitalsGiven[i] != 0)
+            if (_itemDescriptor.VitalsGiven[i] != 0 && _itemDescriptor.PercentageVitalsGiven[i] != 0)
             {
-                rows.AddKeyValueRow(Strings.ItemDescription.Vitals[i], Strings.ItemDescription.RegularAndPercentage.ToString(mItem.VitalsGiven[i], mItem.PercentageVitalsGiven[i]));
+                rows.AddKeyValueRow(Strings.ItemDescription.Vitals[i], Strings.ItemDescription.RegularAndPercentage.ToString(_itemDescriptor.VitalsGiven[i], _itemDescriptor.PercentageVitalsGiven[i]));
             }
-            else if (mItem.VitalsGiven[i] != 0)
+            else if (_itemDescriptor.VitalsGiven[i] != 0)
             {
-                rows.AddKeyValueRow(Strings.ItemDescription.Vitals[i], mItem.VitalsGiven[i].ToString());
+                rows.AddKeyValueRow(Strings.ItemDescription.Vitals[i], _itemDescriptor.VitalsGiven[i].ToString());
             }
-            else if (mItem.PercentageVitalsGiven[i] != 0)
+            else if (_itemDescriptor.PercentageVitalsGiven[i] != 0)
             {
-                rows.AddKeyValueRow(Strings.ItemDescription.Vitals[i], Strings.ItemDescription.Percentage.ToString(mItem.PercentageVitalsGiven[i]));
+                rows.AddKeyValueRow(Strings.ItemDescription.Vitals[i], Strings.ItemDescription.Percentage.ToString(_itemDescriptor.PercentageVitalsGiven[i]));
             }
         }
 
         // Vitals Regen
         for (var i = 0; i < Enum.GetValues<Vital>().Length; i++)
         {
-            if (mItem.VitalsRegen[i] != 0)
+            if (_itemDescriptor.VitalsRegen[i] != 0)
             {
-                rows.AddKeyValueRow(Strings.ItemDescription.VitalsRegen[i], Strings.ItemDescription.Percentage.ToString(mItem.VitalsRegen[i]));
+                rows.AddKeyValueRow(Strings.ItemDescription.VitalsRegen[i], Strings.ItemDescription.Percentage.ToString(_itemDescriptor.VitalsRegen[i]));
             }
         }
 
         // Stats
-        var statModifiers = mItemProperties?.StatModifiers;
+        var statModifiers = _itemProperties?.StatModifiers;
         for (var statIndex = 0; statIndex < Enum.GetValues<Stat>().Length; statIndex++)
         {
             var stat = (Stat)statIndex;
             // Do we have item properties, if so this is a finished item. Otherwise does this item not have growing stats?
             var statLabel = Strings.ItemDescription.StatCounts[statIndex];
             ItemRange? rangeForStat = default;
-            var percentageGivenForStat = mItem.PercentageStatsGiven[statIndex];
-            if (statModifiers != default || !mItem.TryGetRangeFor(stat, out rangeForStat) || rangeForStat.LowRange == rangeForStat.HighRange)
+            var percentageGivenForStat = _itemDescriptor.PercentageStatsGiven[statIndex];
+            if (statModifiers != default || !_itemDescriptor.TryGetRangeFor(stat, out rangeForStat) || rangeForStat.LowRange == rangeForStat.HighRange)
             {
-                var flatValueGivenForStat = mItem.StatsGiven[statIndex];
+                var flatValueGivenForStat = _itemDescriptor.StatsGiven[statIndex];
                 if (statModifiers != default)
                 {
                     flatValueGivenForStat += statModifiers[statIndex];
@@ -369,9 +442,9 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
                 }
             }
             // We do not have item properties and have growing stats! So don't display a finished stat but a range instead.
-            else if (mItem.TryGetRangeFor(stat, out var range))
+            else if (_itemDescriptor.TryGetRangeFor(stat, out var range))
             {
-                var statGiven = mItem.StatsGiven[statIndex];
+                var statGiven = _itemDescriptor.StatsGiven[statIndex];
                 var percentageStatGiven = percentageGivenForStat;
                 var statLow = statGiven + range.LowRange;
                 var statHigh = statGiven + range.HighRange;
@@ -391,7 +464,7 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
         }
 
         // Bonus Effect
-        foreach (var effect in mItem.Effects)
+        foreach (var effect in _itemDescriptor.Effects)
         {
             if (effect.Type != ItemEffect.None && effect.Percentage != 0)
             {
@@ -405,6 +478,11 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
 
     protected void SetupConsumableInfo()
     {
+        if (_itemDescriptor == default)
+        {
+            return;
+        }
+
         // Add a divider.
         AddDivider();
 
@@ -412,19 +490,19 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
         var rows = AddRowContainer();
 
         // Consumable data.
-        if (mItem.Consumable != null)
+        if (_itemDescriptor.Consumable != null)
         {
-            if (mItem.Consumable.Value > 0 && mItem.Consumable.Percentage > 0)
+            if (_itemDescriptor.Consumable.Value > 0 && _itemDescriptor.Consumable.Percentage > 0)
             {
-                rows.AddKeyValueRow(Strings.ItemDescription.ConsumableTypes[(int)mItem.Consumable.Type], Strings.ItemDescription.RegularAndPercentage.ToString(mItem.Consumable.Value, mItem.Consumable.Percentage));
+                rows.AddKeyValueRow(Strings.ItemDescription.ConsumableTypes[(int)_itemDescriptor.Consumable.Type], Strings.ItemDescription.RegularAndPercentage.ToString(_itemDescriptor.Consumable.Value, _itemDescriptor.Consumable.Percentage));
             }
-            else if (mItem.Consumable.Value > 0)
+            else if (_itemDescriptor.Consumable.Value > 0)
             {
-                rows.AddKeyValueRow(Strings.ItemDescription.ConsumableTypes[(int)mItem.Consumable.Type], mItem.Consumable.Value.ToString());
+                rows.AddKeyValueRow(Strings.ItemDescription.ConsumableTypes[(int)_itemDescriptor.Consumable.Type], _itemDescriptor.Consumable.Value.ToString());
             }
-            else if (mItem.Consumable.Percentage > 0)
+            else if (_itemDescriptor.Consumable.Percentage > 0)
             {
-                rows.AddKeyValueRow(Strings.ItemDescription.ConsumableTypes[(int)mItem.Consumable.Type], Strings.ItemDescription.Percentage.ToString(mItem.Consumable.Percentage));
+                rows.AddKeyValueRow(Strings.ItemDescription.ConsumableTypes[(int)_itemDescriptor.Consumable.Type], Strings.ItemDescription.Percentage.ToString(_itemDescriptor.Consumable.Percentage));
             }
         }
 
@@ -434,6 +512,11 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
 
     protected void SetupSpellInfo()
     {
+        if (_itemDescriptor == default)
+        {
+            return;
+        }
+
         // Add a divider.
         AddDivider();
 
@@ -441,18 +524,18 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
         var rows = AddRowContainer();
 
         // Spell data.
-        if (mItem.Spell != null)
+        if (_itemDescriptor.Spell != null)
         {
-            if (mItem.QuickCast)
+            if (_itemDescriptor.QuickCast)
             {
-                rows.AddKeyValueRow(Strings.ItemDescription.CastSpell.ToString(mItem.Spell.Name), string.Empty);
+                rows.AddKeyValueRow(Strings.ItemDescription.CastSpell.ToString(_itemDescriptor.Spell.Name), string.Empty);
             }
             else
             {
-                rows.AddKeyValueRow(Strings.ItemDescription.TeachSpell.ToString(mItem.Spell.Name), string.Empty);
+                rows.AddKeyValueRow(Strings.ItemDescription.TeachSpell.ToString(_itemDescriptor.Spell.Name), string.Empty);
             }
 
-            if (mItem.SingleUse)
+            if (_itemDescriptor.SingleUse)
             {
                 rows.AddKeyValueRow(Strings.ItemDescription.SingleUse, string.Empty);
             }
@@ -464,6 +547,11 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
 
     protected void SetupBagInfo()
     {
+        if (_itemDescriptor == default)
+        {
+            return;
+        }
+
         // Add a divider.
         AddDivider();
 
@@ -471,7 +559,7 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
         var rows = AddRowContainer();
 
         // Bag data.
-        rows.AddKeyValueRow(Strings.ItemDescription.BagSlots, mItem.SlotCount.ToString());
+        rows.AddKeyValueRow(Strings.ItemDescription.BagSlots, _itemDescriptor.SlotCount.ToString());
 
         // Resize and position the container.
         rows.SizeToChildren(true, true);
@@ -479,25 +567,30 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
 
     protected void SetupExtraInfo()
     {
+        if (_itemDescriptor == default)
+        {
+            return;
+        }
+
         // Our list of data to add, should we need to.
         var data = new List<Tuple<string, string>>();
 
         // Display our amount, but only if we are stackable and have more than one.
-        if (mItem.IsStackable && mAmount > 1)
+        if (_itemDescriptor.IsStackable && _amount > 1)
         {
-            data.Add(new Tuple<string, string>(Strings.ItemDescription.Amount, mAmount.ToString("N0").Replace(",", Strings.Numbers.Comma)));
+            data.Add(new Tuple<string, string>(Strings.ItemDescription.Amount, _amount.ToString("N0").Replace(",", Strings.Numbers.Comma)));
         }
 
         // Display item drop chance if configured.
-        if (mItem.DropChanceOnDeath > 0)
+        if (_itemDescriptor.DropChanceOnDeath > 0)
         {
-            data.Add(new Tuple<string, string>(Strings.ItemDescription.DropOnDeath, Strings.ItemDescription.Percentage.ToString(mItem.DropChanceOnDeath)));
+            data.Add(new Tuple<string, string>(Strings.ItemDescription.DropOnDeath, Strings.ItemDescription.Percentage.ToString(_itemDescriptor.DropChanceOnDeath)));
         }
 
         // Display shop value if we have one.
-        if (!string.IsNullOrWhiteSpace(mValueLabel))
+        if (!string.IsNullOrWhiteSpace(_valueLabel))
         {
-            data.Add(new Tuple<string, string>(mValueLabel, string.Empty));
+            data.Add(new Tuple<string, string>(_valueLabel, string.Empty));
         }
 
         // Do we have any data to display? If so, generate the element and add the data to it.
@@ -517,12 +610,5 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
             // Resize and position the container.
             rows.SizeToChildren(true, true);
         }
-    }
-
-    /// <inheritdoc/>
-    public override void Dispose()
-    {
-        base.Dispose();
-        mSpellDescWindow?.Dispose();
     }
 }

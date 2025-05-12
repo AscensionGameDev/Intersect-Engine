@@ -10,7 +10,6 @@ using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Bag;
 using Intersect.Client.Interface.Game.Bank;
-using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Interface.Game.Hotbar;
 using Intersect.Client.Interface.Game.Shop;
 using Intersect.Client.Localization;
@@ -30,7 +29,6 @@ public partial class InventoryItem : SlotItem
     private readonly Label _cooldownLabel;
     private readonly ImagePanel _equipImageBackground;
     private readonly InventoryWindow _inventoryWindow;
-    private ItemDescriptionWindow? _descriptionWindow;
 
     // Context Menu Handling
     private readonly MenuItem _useItemMenuItem;
@@ -300,8 +298,7 @@ public partial class InventoryItem : SlotItem
 
     private void Icon_HoverLeave(Base sender, EventArgs arguments)
     {
-        _descriptionWindow?.Dispose();
-        _descriptionWindow = null;
+        Interface.GameUi.ItemDescriptionWindow?.Hide();
     }
 
     void Icon_HoverEnter(Base? sender, EventArgs? arguments)
@@ -314,12 +311,6 @@ public partial class InventoryItem : SlotItem
         if (Globals.InputManager.IsMouseButtonDown(MouseButton.Left))
         {
             return;
-        }
-
-        if (_descriptionWindow != null)
-        {
-            _descriptionWindow.Dispose();
-            _descriptionWindow = null;
         }
 
         if (Globals.Me?.Inventory[SlotIndex] is not { } inventorySlot)
@@ -335,13 +326,7 @@ public partial class InventoryItem : SlotItem
 
         if (Globals.GameShop == null)
         {
-            _descriptionWindow = new ItemDescriptionWindow(
-                inventorySlotDescriptor,
-                inventorySlot.Quantity,
-                _inventoryWindow.X,
-                _inventoryWindow.Y,
-                inventorySlot.ItemProperties
-            );
+            Interface.GameUi.ItemDescriptionWindow?.Show(inventorySlotDescriptor, inventorySlot.Quantity, inventorySlot.ItemProperties);
         }
         else
         {
@@ -363,41 +348,34 @@ public partial class InventoryItem : SlotItem
                     return;
                 }
 
-                _descriptionWindow = new ItemDescriptionWindow(
+                Interface.GameUi.ItemDescriptionWindow?.Show(
                     inventorySlotDescriptor,
                     inventorySlot.Quantity,
-                    _inventoryWindow.X,
-                    _inventoryWindow.Y,
                     inventorySlot.ItemProperties,
-                    "",
                     Strings.Shop.SellsFor.ToString(shopItemDescriptor.CostItemQuantity, hoveredItem.Name)
                 );
             }
             else if (shopItemDescriptor == null)
             {
                 var costItem = Globals.GameShop.DefaultCurrency;
-                if (inventorySlotDescriptor != null && costItem != null)
+                if (inventorySlotDescriptor == null || costItem == null)
                 {
-                    _descriptionWindow = new ItemDescriptionWindow(
-                        inventorySlotDescriptor,
-                        inventorySlot.Quantity,
-                        _inventoryWindow.X,
-                        _inventoryWindow.Y,
-                        inventorySlot.ItemProperties,
-                        "",
-                        Strings.Shop.SellsFor.ToString(inventorySlotDescriptor.Price.ToString(), costItem.Name)
-                    );
+                    return;
                 }
+
+                Interface.GameUi.ItemDescriptionWindow?.Show(
+                    inventorySlotDescriptor,
+                    inventorySlot.Quantity,
+                    inventorySlot.ItemProperties,
+                    Strings.Shop.SellsFor.ToString(inventorySlotDescriptor.Price.ToString(), costItem.Name)
+                );
             }
             else
             {
-                _descriptionWindow = new ItemDescriptionWindow(
+                Interface.GameUi.ItemDescriptionWindow?.Show(
                     inventorySlotDescriptor,
                     inventorySlot.Quantity,
-                    _inventoryWindow.X,
-                    _inventoryWindow.Y,
                     inventorySlot.ItemProperties,
-                    "",
                     Strings.Shop.WontBuy
                 );
             }
@@ -564,13 +542,6 @@ public partial class InventoryItem : SlotItem
                 Icon.IsVisibleInParent = false;
             }
         }
-
-        if (_descriptionWindow != null)
-        {
-            _descriptionWindow.Dispose();
-            _descriptionWindow = null;
-            Icon_HoverEnter(null, null);
-        }
     }
 
     private void _reset()
@@ -581,7 +552,5 @@ public partial class InventoryItem : SlotItem
         _quantityLabel.IsVisibleInParent = false;
         _equipLabel.IsVisibleInParent = false;
         _cooldownLabel.IsVisibleInParent = false;
-        _descriptionWindow?.Dispose();
-        _descriptionWindow = default;
     }
 }

@@ -6,7 +6,6 @@ using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
-using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Interface.Game.Inventory;
 using Intersect.Client.Localization;
 using Intersect.Configuration;
@@ -19,7 +18,6 @@ public partial class ShopItem : SlotItem
     private readonly int _mySlot;
     private readonly ShopWindow _shopWindow;
     private readonly MenuItem _buyMenuItem;
-    private ItemDescriptionWindow? _descriptionWindow;
 
     public ShopItem(ShopWindow shopWindow, Base parent, int index, ContextMenu contextMenu)
         : base(parent, nameof(ShopItem), index, contextMenu)
@@ -55,12 +53,6 @@ public partial class ShopItem : SlotItem
             return;
         }
 
-        if (_descriptionWindow != default)
-        {
-            _descriptionWindow.Dispose();
-            _descriptionWindow = default;
-        }
-
         if (Globals.GameShop is not { SellingItems.Count: > 0 } gameShop)
         {
             return;
@@ -78,24 +70,18 @@ public partial class ShopItem : SlotItem
                 StatModifiers = item.StatsGiven,
             };
 
-            _descriptionWindow = new ItemDescriptionWindow(
-                item: gameShop.SellingItems[_mySlot].Item,
+            Interface.GameUi.ItemDescriptionWindow?.Show(
+                gameShop.SellingItems[_mySlot].Item,
                 amount: 1,
-                x: _shopWindow.X,
-                y: _shopWindow.Y,
                 itemProperties: itemProperty,
-                valueLabel: Strings.Shop.Costs.ToString(gameShop.SellingItems[_mySlot].CostItemQuantity, item.Name)
+                Strings.Shop.Costs.ToString(gameShop.SellingItems[_mySlot].CostItemQuantity, item.Name)
             );
         }
     }
 
     private void Icon_HoverLeave(Base sender, EventArgs arguments)
     {
-        if (_descriptionWindow != null)
-        {
-            _descriptionWindow.Dispose();
-            _descriptionWindow = null;
-        }
+        Interface.GameUi.ItemDescriptionWindow?.Hide();
     }
 
     private void Icon_RightClicked(Base sender, MouseButtonState arguments)

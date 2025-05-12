@@ -5,6 +5,7 @@ using Intersect.Client.Interface.Game.Bag;
 using Intersect.Client.Interface.Game.Bank;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Interface.Game.Crafting;
+using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Interface.Game.EntityPanel;
 using Intersect.Client.Interface.Game.Hotbar;
 using Intersect.Client.Interface.Game.Inventory;
@@ -20,10 +21,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.Interface.Game;
 
-
 public partial class GameInterface : MutableInterface
 {
-
     public bool FocusChat;
 
     public bool UnfocusChat;
@@ -52,6 +51,10 @@ public partial class GameInterface : MutableInterface
     private MapItemWindow mMapItemWindow;
 
     private SettingsWindow? _settingsWindow;
+
+    private ItemDescriptionWindow? _itemDescriptionWindow;
+
+    private SpellDescriptionWindow? _spellDescriptionWindow;
 
     private bool mShouldCloseBag;
 
@@ -127,6 +130,18 @@ public partial class GameInterface : MutableInterface
     public TargetContextMenu TargetContextMenu => _targetContextMenu ??= new TargetContextMenu(GameCanvas) {IsHidden = true};
 
     public AnnouncementWindow AnnouncementWindow => _announcementWindow ??= new AnnouncementWindow(GameCanvas) { IsHidden = true };
+
+    public ItemDescriptionWindow? ItemDescriptionWindow
+    {
+        get => _itemDescriptionWindow ??= new ItemDescriptionWindow();
+        set => _itemDescriptionWindow = value;
+    }
+
+    public SpellDescriptionWindow? SpellDescriptionWindow
+    {
+        get => _spellDescriptionWindow ??= new SpellDescriptionWindow();
+        set => _spellDescriptionWindow = value;
+    }
 
     public MenuContainer GameMenu { get; private set; }
 
@@ -612,5 +627,4 @@ public partial class GameInterface : MutableInterface
         CloseTrading();
         GameCanvas.Dispose();
     }
-
 }
