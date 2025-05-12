@@ -2310,7 +2310,7 @@ public partial class Base : IDisposable
 
     private static int LastIndexOf(Base @this, Func<Base?, bool> predicate)
     {
-        for (var index = @this._children.Count - 1; index >= 0; ++index)
+        for (var index = @this._children.Count - 1; index >= 0; --index)
         {
             if (predicate(@this._children[index]))
             {
