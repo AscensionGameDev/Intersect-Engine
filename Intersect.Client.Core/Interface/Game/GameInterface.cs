@@ -524,6 +524,11 @@ public partial class GameInterface : MutableInterface
         }
     }
 
+    public void UpdateAdminWindowMapList()
+    {
+        mAdminWindow?.UpdateMapList();
+    }
+
     public void Draw(TimeSpan elapsed, TimeSpan total)
     {
         GameCanvas.RenderCanvas(elapsed, total);

@@ -519,7 +519,7 @@ public partial class AdminWindow : Window
         UpdateMapList();
     }
 
-    private void UpdateMapList()
+    public void UpdateMapList()
     {
         _mapTree?.DelayedDelete();
 
