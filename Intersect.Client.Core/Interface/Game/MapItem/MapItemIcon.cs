@@ -115,9 +115,6 @@ public partial class MapItemIcon
             {
                 Pnl.Texture = null;
             }
-
         }
-
-        pnl_HoverEnter(null, null);
     }
 }
