@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 
 namespace Intersect.Client.Framework.Gwen.Control;
@@ -133,11 +133,11 @@ public partial class TextBoxNumeric : TextBox, INumericInput
         var text = Text;
         if (string.IsNullOrWhiteSpace(text) || text == "-")
         {
-            _value = 0;
+            Value = 0;
         }
         else
         {
-            _value = double.Parse(text);
+            Value = double.Parse(text);
         }
 
         base.OnTextChanged();
