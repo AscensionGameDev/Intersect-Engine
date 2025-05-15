@@ -668,7 +668,7 @@ internal sealed partial class PacketHandler
         MapList.List.JsonData = packet.MapListData;
         MapList.List.PostLoad(MapDescriptor.Lookup, false, true);
 
-        //TODO ? If admin window is open update it
+        Interface.Interface.GameUi.UpdateAdminWindowMapList();
     }
 
     //EntityMovementPackets
