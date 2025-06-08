@@ -1888,7 +1888,7 @@ public partial class Player : Entity, IPlayer
             return;
         }
 
-        if (CanTurnAround)
+        if (!CanTurnAround)
         {
             return;
         }
