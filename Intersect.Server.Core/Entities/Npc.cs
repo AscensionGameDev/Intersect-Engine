@@ -65,6 +65,7 @@ public partial class Npc : Entity
 
     //Moving
     public long LastRandomMove;
+    private byte _randomMoveRange;
 
     //Pathfinding
     private Pathfinder mPathFinder;
@@ -1158,53 +1159,24 @@ public partial class Npc : Entity
 
                     CheckForResetLocation();
 
-                    //Move randomly
-                    if (targetMap != Guid.Empty)
+                    if (targetMap != Guid.Empty || LastRandomMove >= Timing.Global.Milliseconds || IsCasting)
                     {
                         return;
                     }
 
-                    if (LastRandomMove >= Timing.Global.Milliseconds || IsCasting)
+                    switch (Descriptor.Movement)
                     {
-                        return;
+                        case (int)NpcMovement.StandStill:
+                            LastRandomMove = Timing.Global.Milliseconds + Randomization.Next(1000, 3000);
+                            return;
+                        case (int)NpcMovement.TurnRandomly:
+                            ChangeDir(Randomization.NextDirection());
+                            LastRandomMove = Timing.Global.Milliseconds + Randomization.Next(1000, 3000);
+                            return;
+                        case (int)NpcMovement.MoveRandomly:
+                            MoveRandomly();
+                            break;
                     }
-
-                    if (Descriptor.Movement == (int)NpcMovement.StandStill)
-                    {
-                        LastRandomMove = Timing.Global.Milliseconds + Randomization.Next(1000, 3000);
-
-                        return;
-                    }
-                    else if (Descriptor.Movement == (int)NpcMovement.TurnRandomly)
-                    {
-                        ChangeDir(Randomization.NextDirection());
-                        LastRandomMove = Timing.Global.Milliseconds + Randomization.Next(1000, 3000);
-
-                        return;
-                    }
-
-                    var i = Randomization.Next(0, 1);
-                    if (i == 0)
-                    {
-                        var direction = Randomization.NextDirection();
-                        if (CanMoveInDirection(direction))
-                        {
-                            //check if NPC is snared or stunned
-                            foreach (var status in CachedStatuses)
-                            {
-                                if (status.Type == SpellEffect.Stun ||
-                                    status.Type == SpellEffect.Snare ||
-                                    status.Type == SpellEffect.Sleep)
-                                {
-                                    return;
-                                }
-                            }
-
-                            Move(direction, null);
-                        }
-                    }
-
-                    LastRandomMove = Timing.Global.Milliseconds + Randomization.Next(1000, 3000);
 
                     if (fleeing)
                     {
@@ -1239,6 +1211,40 @@ public partial class Npc : Entity
             {
                 Monitor.Exit(EntityLock);
             }
+        }
+    }
+
+    private void MoveRandomly()
+    {
+        if (_randomMoveRange <= 0)
+        {
+            Dir = Randomization.NextDirection();
+            LastRandomMove = Timing.Global.Milliseconds + Randomization.Next(1000, 2000);
+            _randomMoveRange = (byte)Randomization.Next(0, Descriptor.SightRange + Randomization.Next(0, 3));
+        }
+        else if (CanMoveInDirection(Dir))
+        {
+            foreach (var status in CachedStatuses)
+            {
+                if (status.Type is SpellEffect.Stun or SpellEffect.Snare or SpellEffect.Sleep)
+                {
+                    return;
+                }
+            }
+
+            Move(Dir, null);
+            LastRandomMove = Timing.Global.Milliseconds + (long)GetMovementTime();
+
+            if (_randomMoveRange <= Randomization.Next(0, 3))
+            {
+                Dir = Randomization.NextDirection();
+            }
+
+            _randomMoveRange--;
+        }
+        else
+        {
+            Dir = Randomization.NextDirection();
         }
     }
 
