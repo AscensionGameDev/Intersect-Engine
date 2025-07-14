@@ -824,33 +824,23 @@ public partial class Entity : IEntity
                 var equipmentAnimation = EquipmentAnimations[z];
                 if (Equipment[z] != Guid.Empty && (this != Globals.Me || MyEquipment[z] < Options.Instance.Player.MaxInventory))
                 {
-                    var itemId = Guid.Empty;
-                    if (this == Globals.Me)
-                    {
-                        var slot = MyEquipment[z];
-                        if (slot > -1)
-                        {
-                            itemId = Inventory[slot].ItemId;
-                        }
-                    }
-                    else
-                    {
-                        itemId = Equipment[z];
-                    }
+                    var itemId = (this == Globals.Me && MyEquipment[z] > -1)
+                        ? Inventory[MyEquipment[z]].ItemId
+                        : Equipment[z];
 
-                    if (ItemDescriptor.TryGet(itemId, out var itemDescriptor) &&
-                        itemDescriptor.EquipmentAnimation is { } animationDescriptor)
+                    if (ItemDescriptor.TryGet(itemId, out var itemDescriptor) && itemDescriptor.EquipmentAnimation is { } animationDescriptor)
                     {
-                        if (equipmentAnimation != null &&
-                            (equipmentAnimation.Descriptor != animationDescriptor || equipmentAnimation.IsDisposed))
+                        if (equipmentAnimation == null || equipmentAnimation.Descriptor != animationDescriptor || equipmentAnimation.IsDisposed)
                         {
-                            TryRemoveAnimation(equipmentAnimation, dispose: true);
-                            EquipmentAnimations[z] = null;
-                        }
+                            if (equipmentAnimation != null)
+                            {
+                                TryRemoveAnimation(equipmentAnimation, dispose: true);
+                            }
 
-                        equipmentAnimation = new Animation(animationDescriptor, true, true, -1, this);
-                        EquipmentAnimations[z] = equipmentAnimation;
-                        _animations.Add(equipmentAnimation);
+                            var newAnimation = new Animation(animationDescriptor, true, true, -1, this);
+                            EquipmentAnimations[z] = newAnimation;
+                            _animations.Add(newAnimation);
+                        }
                     }
                     else if (equipmentAnimation != null)
                     {
