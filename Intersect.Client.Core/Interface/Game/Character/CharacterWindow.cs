@@ -9,8 +9,6 @@ using Intersect.Client.Networking;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
-using Intersect.GameObjects;
-using Intersect.Network.Packets.Server;
 
 namespace Intersect.Client.Interface.Game.Character;
 
@@ -71,39 +69,23 @@ public partial class CharacterWindow
     public int Y;
 
     //Extra Buffs
+    Button _detailsButton;
+    
     ClassDescriptor mPlayer;
-
-    Label mHpRegen;
 
     long HpRegenAmount;
 
-    Label mManaRegen;
-
     long ManaRegenAmount;
-
-    Label mLifeSteal;
 
     int LifeStealAmount = 0;
 
-    Label mAttackSpeed;
-
-    Label mExtraExp;
-
     int ExtraExpAmount = 0;
-
-    Label mLuck;
 
     int LuckAmount = 0;
 
-    Label mTenacity;
-
     int TenacityAmount = 0;
 
-    Label mCooldownReduction;
-
     int CooldownAmount = 0;
-
-    Label mManaSteal;
 
     int ManaStealAmount = 0;
 
@@ -168,18 +150,12 @@ public partial class CharacterWindow
             Items[i].Setup();
         }
 
-        var extraBuffsLabel = new Label(mCharacterWindow, "ExtraBuffsLabel");
-        extraBuffsLabel.SetText(Strings.Character.ExtraBuffs);
-
-        mHpRegen = new Label(mCharacterWindow, "HpRegen");
-        mManaRegen = new Label(mCharacterWindow, "ManaRegen");
-        mLifeSteal = new Label(mCharacterWindow, "Lifesteal");
-        mAttackSpeed = new Label(mCharacterWindow, "AttackSpeed");
-        mExtraExp = new Label(mCharacterWindow, "ExtraExp");
-        mLuck = new Label(mCharacterWindow, "Luck");
-        mTenacity = new Label(mCharacterWindow, "Tenacity");
-        mCooldownReduction = new Label(mCharacterWindow, "CooldownReduction");
-        mManaSteal = new Label(mCharacterWindow, "Manasteal");
+        _detailsButton = new Button(mCharacterWindow, nameof(_detailsButton))
+        {
+            Text = Strings.Character.ExtraBuffDetails,
+        };
+        _detailsButton.HoverEnter += UpdateExtraBuffTooltip; // Update Tooltip on hover.
+        UpdateExtraBuffTooltip(null, null); // Initial tooltip update.
 
         mCharacterWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
     }
@@ -213,7 +189,7 @@ public partial class CharacterWindow
     //Methods
     public void Update()
     {
-        if (mCharacterWindow.IsHidden)
+        if (mCharacterWindow.IsHidden || Globals.Me is null)
         {
             return;
         }
@@ -375,21 +351,31 @@ public partial class CharacterWindow
         mAddSpeedBtn.IsHidden =
             Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int) Stat.Speed] == Options.Instance.Player.MaxStat;
 
-        UpdateExtraBuffs();
+        UpdateEquippedItems();
+    }
+
+    private void UpdateEquippedItems(bool updateExtraBuffs = false)
+    {
+        if (Globals.Me is not { } player)
+        {
+            return;
+        }
 
         for (var i = 0; i < Options.Instance.Equipment.Slots.Count; i++)
         {
-            if (Globals.Me.MyEquipment[i] > -1 && Globals.Me.MyEquipment[i] < Options.Instance.Player.MaxInventory)
+            if (player.MyEquipment[i] > -1 && player.MyEquipment[i] < Options.Instance.Player.MaxInventory)
             {
-                if (Globals.Me.Inventory[Globals.Me.MyEquipment[i]].ItemId != Guid.Empty)
+                if (player.Inventory[player.MyEquipment[i]].ItemId != Guid.Empty)
                 {
                     Items[i]
                         .Update(
-                            Globals.Me.Inventory[Globals.Me.MyEquipment[i]].ItemId,
-                            Globals.Me.Inventory[Globals.Me.MyEquipment[i]].ItemProperties
+                            player.Inventory[player.MyEquipment[i]].ItemId,
+                            player.Inventory[player.MyEquipment[i]].ItemProperties
                         );
-
-                    UpdateExtraBuffs(Globals.Me.Inventory[Globals.Me.MyEquipment[i]].ItemId);
+                    if (updateExtraBuffs)
+                    {
+                        UpdateExtraBuffs(player.Inventory[player.MyEquipment[i]].ItemId);
+                    }
                 }
                 else
                 {
@@ -406,41 +392,8 @@ public partial class CharacterWindow
     /// <summary>
     /// Update Extra Buffs Effects like hp/mana regen and items effect types
     /// </summary>
-    public void UpdateExtraBuffs()
-    {
-        mPlayer = ClassDescriptor.Get(Globals.Me?.Class ?? Guid.Empty);
-
-        //Getting HP and Mana Regen
-        if (mPlayer != null)
-        {
-            HpRegenAmount = mPlayer.VitalRegen[0];
-            mHpRegen.SetText(Strings.Character.HealthRegen.ToString(HpRegenAmount));
-            ManaRegenAmount = mPlayer.VitalRegen[1];
-            mManaRegen.SetText(Strings.Character.ManaRegen.ToString(ManaRegenAmount));
-        }
-
-        CooldownAmount = 0;
-        LifeStealAmount = 0;
-        TenacityAmount = 0;
-        LuckAmount = 0;
-        ExtraExpAmount = 0;
-        ManaStealAmount = 0;
-
-        mLifeSteal.SetText(Strings.Character.Lifesteal.ToString(0));
-        mExtraExp.SetText(Strings.Character.ExtraExp.ToString(0));
-        mLuck.SetText(Strings.Character.Luck.ToString(0));
-        mTenacity.SetText(Strings.Character.Tenacity.ToString(0));
-        mCooldownReduction.SetText(Strings.Character.CooldownReduction.ToString(0));
-        mManaSteal.SetText(Strings.Character.Manasteal.ToString(0));
-
-        mAttackSpeed.SetText(Strings.Character.AttackSpeed.ToString(Globals.Me.CalculateAttackTime() / 1000f));
-    }
-
-    /// <summary>
-    /// Update Extra Buffs Effects like hp/mana regen and items effect types
-    /// </summary>
     /// <param name="itemId">Id of item to update extra buffs</param>
-    public void UpdateExtraBuffs(Guid itemId)
+    private void UpdateExtraBuffs(Guid itemId)
     {
         var item = ItemDescriptor.Get(itemId);
 
@@ -449,23 +402,21 @@ public partial class CharacterWindow
             return;
         }
 
-        //Getting HP and Mana Regen
-        if (item.VitalsRegen[0] != 0)
+        //Getting HP and Mana Regen from items
+        if (item.VitalsRegen[(int)Vital.Health] != 0)
         {
-            HpRegenAmount += item.VitalsRegen[0];
-            mHpRegen?.SetText(Strings.Character.HealthRegen.ToString(HpRegenAmount));
+            HpRegenAmount += item.VitalsRegen[(int)Vital.Health];
         }
 
-        if (item.VitalsRegen[1] != 0)
+        if (item.VitalsRegen[(int)Vital.Mana] != 0)
         {
-            ManaRegenAmount += item.VitalsRegen[1];
-            mManaRegen?.SetText(Strings.Character.ManaRegen.ToString(ManaRegenAmount));
+            ManaRegenAmount += item.VitalsRegen[(int)Vital.Mana];
         }
 
-        //Getting extra buffs
+        //Getting extra buffs from items
         if (item.Effects.Find(effect => effect.Type != ItemEffect.None && effect.Percentage > 0) != default)
         {
-            foreach(var effect in item.Effects)
+            foreach (var effect in item.Effects)
             {
                 if (effect.Percentage <= 0)
                 {
@@ -476,37 +427,54 @@ public partial class CharacterWindow
                 {
                     case ItemEffect.CooldownReduction:
                         CooldownAmount += effect.Percentage;
-                        mCooldownReduction?.SetText(Strings.Character.CooldownReduction.ToString(CooldownAmount));
-
                         break;
                     case ItemEffect.Lifesteal:
                         LifeStealAmount += effect.Percentage;
-                        mLifeSteal?.SetText(Strings.Character.Lifesteal.ToString(LifeStealAmount));
-
                         break;
                     case ItemEffect.Tenacity:
                         TenacityAmount += effect.Percentage;
-                        mTenacity?.SetText(Strings.Character.Tenacity.ToString(TenacityAmount));
-
                         break;
                     case ItemEffect.Luck:
                         LuckAmount += effect.Percentage;
-                        mLuck?.SetText(Strings.Character.Luck.ToString(LuckAmount));
-
                         break;
                     case ItemEffect.EXP:
                         ExtraExpAmount += effect.Percentage;
-                        mExtraExp?.SetText(Strings.Character.ExtraExp.ToString(ExtraExpAmount));
-
                         break;
                     case ItemEffect.Manasteal:
                         ManaStealAmount += effect.Percentage;
-                        mManaSteal?.SetText(Strings.Character.Manasteal.ToString(ManaStealAmount));
-
                         break;
                 }
             }
         }
+    }
+
+    private void UpdateExtraBuffTooltip(Base? sender, EventArgs? arguments)
+    {
+        //Reset all values
+        HpRegenAmount = mPlayer?.VitalRegen[(int)Vital.Health] ?? 0;
+        ManaRegenAmount = mPlayer?.VitalRegen[(int)Vital.Mana] ?? 0;
+        CooldownAmount = 0;
+        LifeStealAmount = 0;
+        TenacityAmount = 0;
+        LuckAmount = 0;
+        ExtraExpAmount = 0;
+        ManaStealAmount = 0;
+
+        // Update extra buffs from equipped items
+        UpdateEquippedItems(true);
+
+        // Update tooltip with the current extra buffs
+        var tooltip = new System.Text.StringBuilder();
+        tooltip.AppendLine(Strings.Character.HealthRegen.ToString(HpRegenAmount));
+        tooltip.AppendLine(Strings.Character.ManaRegen.ToString(ManaRegenAmount));
+        tooltip.AppendLine(Strings.Character.Lifesteal.ToString(LifeStealAmount));
+        tooltip.AppendLine(Strings.Character.AttackSpeed.ToString(Globals.Me?.CalculateAttackTime() / 1000f));
+        tooltip.AppendLine(Strings.Character.ExtraExp.ToString(ExtraExpAmount));
+        tooltip.AppendLine(Strings.Character.Luck.ToString(LuckAmount));
+        tooltip.AppendLine(Strings.Character.Tenacity.ToString(TenacityAmount));
+        tooltip.AppendLine(Strings.Character.CooldownReduction.ToString(CooldownAmount));
+        tooltip.AppendLine(Strings.Character.Manasteal.ToString(ManaStealAmount));
+        _detailsButton.SetToolTipText(tooltip.ToString());
     }
 
     /// <summary>
