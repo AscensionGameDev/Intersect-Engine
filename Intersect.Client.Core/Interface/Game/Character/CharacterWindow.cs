@@ -363,28 +363,24 @@ public partial class CharacterWindow
 
         for (var i = 0; i < Options.Instance.Equipment.Slots.Count; i++)
         {
-            if (player.MyEquipment[i] > -1 && player.MyEquipment[i] < Options.Instance.Player.MaxInventory)
-            {
-                if (player.Inventory[player.MyEquipment[i]].ItemId != Guid.Empty)
-                {
-                    Items[i]
-                        .Update(
-                            player.Inventory[player.MyEquipment[i]].ItemId,
-                            player.Inventory[player.MyEquipment[i]].ItemProperties
-                        );
-                    if (updateExtraBuffs)
-                    {
-                        UpdateExtraBuffs(player.Inventory[player.MyEquipment[i]].ItemId);
-                    }
-                }
-                else
-                {
-                    Items[i].Update(Guid.Empty, mItemProperties);
-                }
-            }
-            else
+            var invSlot = player.MyEquipment[i];
+            if (invSlot < 0 || invSlot >= Options.Instance.Player.MaxInventory)
             {
                 Items[i].Update(Guid.Empty, mItemProperties);
+                continue;
+            }
+
+            var item = player.Inventory[invSlot];
+            if (item.ItemId == Guid.Empty)
+            {
+                Items[i].Update(Guid.Empty, mItemProperties);
+                continue;
+            }
+
+            Items[i].Update(item.ItemId, item.ItemProperties);
+            if (updateExtraBuffs)
+            {
+                UpdateExtraBuffs(item.ItemId);
             }
         }
     }

@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -20,7 +22,7 @@ public partial class EquipmentItem
 
     private ItemProperties mItemProperties = null;
 
-    private bool mTexLoaded;
+    private string? _loadedTexture;
 
     private int mYindex;
 
@@ -110,32 +112,31 @@ public partial class EquipmentItem
 
     public void Update(Guid currentItemId, ItemProperties itemProperties)
     {
-        if (currentItemId != mCurrentItemId || !mTexLoaded)
+        if (!ItemDescriptor.TryGet(currentItemId, out var item))
         {
-            mCurrentItemId = currentItemId;
-            mItemProperties = itemProperties;
-            var item = ItemDescriptor.Get(mCurrentItemId);
-            if (item != null)
-            {
-                var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);
-                if (itemTex != null)
-                {
-                    ContentPanel.Show();
-                    ContentPanel.Texture = itemTex;
-                    ContentPanel.RenderColor = item.Color;
-                }
-                else
-                {
-                    ContentPanel.Hide();
-                }
-            }
-            else
-            {
-                ContentPanel.Hide();
-            }
-
-            mTexLoaded = true;
+            ContentPanel.Hide();
+            _loadedTexture = default;
+            return;
         }
-    }
 
+        if (currentItemId == mCurrentItemId && ContentPanel.Texture?.Name == _loadedTexture)
+        {
+            return;
+        }
+
+        mCurrentItemId = currentItemId;
+        mItemProperties = itemProperties;
+
+        if (GameContentManager.Current.GetTexture(Framework.Content.TextureType.Item, item.Icon) is not { } itemTexture)
+        {
+            ContentPanel.Hide();
+            _loadedTexture = default;
+            return;
+        }
+
+        ContentPanel.Show();
+        ContentPanel.Texture = itemTexture;
+        ContentPanel.RenderColor = item.Color;
+        _loadedTexture = ContentPanel.Texture?.Name;
+    }
 }
