@@ -117,7 +117,6 @@ public partial class FrmMapLayers : DockContent
             SetTileset(cmbTilesets.Items[0].ToString());
         }
 
-        rbZDimension.Visible = Options.Instance.Map.ZDimensionVisible;
         grpZResource.Visible = Options.Instance.Map.ZDimensionVisible;
         grpInstanceSettings.Visible = chkChangeInstance.Checked;
 
@@ -131,6 +130,7 @@ public partial class FrmMapLayers : DockContent
 
         cmbWarpSound.Items.Clear();
         RefreshMapWarpSounds();
+        PopulateAttributeTypes();
     }
 
     //Tiles Tab
@@ -467,306 +467,290 @@ public partial class FrmMapLayers : DockContent
         grpCritter.Visible = false;
     }
 
-    private void rbItem_CheckedChanged(object sender, EventArgs e)
-    {
-        HideAttributeMenus();
-        grpItem.Visible = true;
-        cmbItemAttribute.Items.Clear();
-        cmbItemAttribute.Items.AddRange(ItemDescriptor.Names);
-        if (cmbItemAttribute.Items.Count > 0)
-        {
-            cmbItemAttribute.SelectedIndex = 0;
-        }
-        nudItemRespawnTime.Value = 0;
-    }
-
-    private void rbBlocked_CheckedChanged(object sender, EventArgs e)
-    {
-        HideAttributeMenus();
-    }
-
-    private void rbNPCAvoid_CheckedChanged(object sender, EventArgs e)
-    {
-        HideAttributeMenus();
-    }
-
-    private void rbZDimension_CheckedChanged(object sender, EventArgs e)
-    {
-        HideAttributeMenus();
-        grpZDimension.Visible = true;
-    }
-
-    private void rbWarp_CheckedChanged(object sender, EventArgs e)
-    {
-        nudWarpX.Maximum = Options.Instance.Map.MapWidth;
-        nudWarpY.Maximum = Options.Instance.Map.MapHeight;
-        cmbWarpMap.Items.Clear();
-        for (var i = 0; i < MapList.OrderedMaps.Count; i++)
-        {
-            cmbWarpMap.Items.Add(MapList.OrderedMaps[i].Name);
-        }
-
-        cmbWarpMap.SelectedIndex = 0;
-        cmbDirection.SelectedIndex = 0;
-        if (!rbWarp.Checked)
-        {
-            return;
-        }
-
-        HideAttributeMenus();
-        RefreshMapWarpSounds();
-        grpWarp.Visible = true;
-    }
-
-    private void rbSound_CheckedChanged(object sender, EventArgs e)
-    {
-        HideAttributeMenus();
-        grpSound.Visible = true;
-        cmbMapAttributeSound.Items.Clear();
-        cmbMapAttributeSound.Items.Add(Strings.General.None);
-        cmbMapAttributeSound.Items.AddRange(GameContentManager.SmartSortedSoundNames);
-        cmbMapAttributeSound.SelectedIndex = 0;
-    }
-
-    private void rbResource_CheckedChanged(object sender, EventArgs e)
-    {
-        cmbResourceAttribute.Items.Clear();
-        cmbResourceAttribute.Items.AddRange(ResourceDescriptor.Names);
-        if (cmbResourceAttribute.Items.Count > 0)
-        {
-            cmbResourceAttribute.SelectedIndex = 0;
-        }
-
-        if (!rbResource.Checked)
-        {
-            return;
-        }
-
-        HideAttributeMenus();
-        grpResource.Visible = true;
-    }
-
     // Used for returning an integer value depending on which radio button is selected on the forms. This is merely used to make PlaceAtrribute less messy.
     private byte GetEditorDimensionGateway()
     {
-        if (rbGateway1.Checked == true)
-        {
-            return 1;
-        }
-        else if (rbGateway2.Checked == true)
-        {
-            return 2;
-        }
-
-        return 0;
+        return rbGateway1.Checked ? (byte)1 : rbGateway2.Checked ? (byte)2 : (byte)0;
     }
 
     private byte GetEditorDimensionBlock()
     {
-        if (rbBlock1.Checked == true)
-        {
-            return 1;
-        }
-        else if (rbBlock2.Checked == true)
-        {
-            return 2;
-        }
-
-        return 0;
+        return rbBlock1.Checked ? (byte)1 : rbBlock2.Checked ? (byte)2 : (byte)0;
     }
 
-    public int GetAttributeFromEditor()
+    private static readonly Dictionary<MapAttributeType, string> AttributeTypeStrings = new()
     {
-        if (rbBlocked.Checked == true)
+        {MapAttributeType.Animation, Strings.Attributes.MapAnimation},
+        {MapAttributeType.Blocked,Strings.Attributes.Blocked},
+        {MapAttributeType.Critter,Strings.Attributes.Critter},
+        {MapAttributeType.GrappleStone,Strings.Attributes.Grapple},
+        {MapAttributeType.Item,Strings.Attributes.ItemSpawn},
+        {MapAttributeType.NpcAvoid,Strings.Attributes.NpcAvoid},
+        {MapAttributeType.Resource,Strings.Attributes.ResourceSpawn},
+        {MapAttributeType.Sound,Strings.Attributes.MapSound},
+        {MapAttributeType.Slide,Strings.Attributes.Slide},
+        {MapAttributeType.Warp,Strings.Attributes.Warp},
+        {MapAttributeType.ZDimension,Strings.Attributes.ZDimension},
+    };
+
+    private static readonly Dictionary<string, MapAttributeType> AttributeTypeStringToEnum =
+        AttributeTypeStrings.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
+
+    private void PopulateAttributeTypes()
+    {
+        var attributeTypes = Enum.GetValues(typeof(MapAttributeType))
+            .Cast<MapAttributeType>().Where(type => type != MapAttributeType.Walkable);
+
+        cmbAttributeType.Items.Clear();
+        foreach (var type in attributeTypes)
         {
-            return (int) MapAttributeType.Blocked;
-        }
-        else if (rbItem.Checked == true)
-        {
-            return (int) MapAttributeType.Item;
-        }
-        else if (rbZDimension.Checked == true)
-        {
-            return (int) MapAttributeType.ZDimension;
-        }
-        else if (rbNPCAvoid.Checked == true)
-        {
-            return (int) MapAttributeType.NpcAvoid;
-        }
-        else if (rbWarp.Checked == true)
-        {
-            return (int) MapAttributeType.Warp;
-        }
-        else if (rbSound.Checked == true)
-        {
-            return (int) MapAttributeType.Sound;
-        }
-        else if (rbResource.Checked == true)
-        {
-            return (int) MapAttributeType.Resource;
-        }
-        else if (rbAnimation.Checked == true)
-        {
-            return (int) MapAttributeType.Animation;
-        }
-        else if (rbGrappleStone.Checked == true)
-        {
-            return (int) MapAttributeType.GrappleStone;
-        }
-        else if (rbSlide.Checked == true)
-        {
-            return (int) MapAttributeType.Slide;
-        }
-        else if (rbCritter.Checked == true)
-        {
-            return (int) MapAttributeType.Critter;
+            if (type == MapAttributeType.ZDimension && !Options.Instance.Map.ZDimensionVisible)
+            {
+                continue;
+            }
+            cmbAttributeType.Items.Add(AttributeTypeStrings.TryGetValue(type, out var str) ? str : type.ToString());
         }
 
-        return (int) MapAttributeType.Walkable;
+        cmbAttributeType.SelectedIndex = cmbAttributeType.Items.Count > 0 ? 0 : -1;
+    }
+
+    private void cmbAttributeType_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        HideAttributeMenus();
+
+        if (cmbAttributeType.SelectedItem is not string selectedTypeString ||
+            !AttributeTypeStringToEnum.TryGetValue(selectedTypeString, out var selectedType))
+        {
+            return;
+        }
+
+        switch (selectedType)
+        {
+            case MapAttributeType.Item:
+                grpItem.Visible = true;
+                cmbItemAttribute.Items.Clear();
+                cmbItemAttribute.Items.AddRange(ItemDescriptor.Names);
+                if (cmbItemAttribute.Items.Count > 0)
+                {
+                    cmbItemAttribute.SelectedIndex = 0;
+                }
+
+                nudItemRespawnTime.Value = 0;
+                break;
+            case MapAttributeType.ZDimension:
+                grpZDimension.Visible = true;
+                break;
+            case MapAttributeType.Warp:
+                grpWarp.Visible = true;
+                nudWarpX.Maximum = Options.Instance.Map.MapWidth;
+                nudWarpY.Maximum = Options.Instance.Map.MapHeight;
+                cmbWarpMap.Items.Clear();
+                for (var i = 0; i < MapList.OrderedMaps.Count; i++)
+                {
+                    cmbWarpMap.Items.Add(MapList.OrderedMaps[i].Name);
+                }
+
+                cmbWarpMap.SelectedIndex = 0;
+                cmbDirection.SelectedIndex = 0;
+                RefreshMapWarpSounds();
+                break;
+            case MapAttributeType.Sound:
+                grpSound.Visible = true;
+                cmbMapAttributeSound.Items.Clear();
+                cmbMapAttributeSound.Items.Add(Strings.General.None);
+                cmbMapAttributeSound.Items.AddRange(GameContentManager.SmartSortedSoundNames);
+                cmbMapAttributeSound.SelectedIndex = 0;
+                break;
+            case MapAttributeType.Resource:
+                grpResource.Visible = true;
+                cmbResourceAttribute.Items.Clear();
+                cmbResourceAttribute.Items.AddRange(ResourceDescriptor.Names);
+                if (cmbResourceAttribute.Items.Count > 0)
+                {
+                    cmbResourceAttribute.SelectedIndex = 0;
+                }
+
+                break;
+            case MapAttributeType.Animation:
+                grpAnimation.Visible = true;
+                cmbAnimationAttribute.Items.Clear();
+                cmbAnimationAttribute.Items.AddRange(AnimationDescriptor.Names);
+                if (cmbAnimationAttribute.Items.Count > 0)
+                {
+                    cmbAnimationAttribute.SelectedIndex = 0;
+                }
+
+                break;
+            case MapAttributeType.Slide:
+                grpSlide.Visible = true;
+                cmbSlideDir.SelectedIndex = 0;
+                break;
+            case MapAttributeType.Critter:
+                grpCritter.Visible = true;
+                cmbCritterAnimation.Items.Clear();
+                cmbCritterAnimation.Items.Add(Strings.General.None);
+                cmbCritterAnimation.Items.AddRange(AnimationDescriptor.Names);
+                cmbCritterAnimation.SelectedIndex = 0;
+                cmbCritterSprite.Items.Clear();
+                cmbCritterSprite.Items.Add(Strings.General.None);
+                cmbCritterSprite.Items.AddRange(
+                    GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity)
+                );
+                cmbCritterSprite.SelectedIndex = 0;
+                if (nudCritterMoveFrequency.Value == 0)
+                {
+                    nudCritterMoveFrequency.Value = 1000;
+                }
+
+                if (nudCritterMoveSpeed.Value == 0)
+                {
+                    nudCritterMoveSpeed.Value = 400;
+                }
+
+                break;
+            default:
+                // For Blocked, GrappleStone, NpcAvoid, etc.
+                break;
+        }
     }
 
     private MapAttributeType SelectedMapAttributeType
     {
         get
         {
-            if (rbBlocked.Checked)
+            if (cmbAttributeType.SelectedItem is string selectedString &&
+                AttributeTypeStringToEnum.TryGetValue(selectedString, out var type))
             {
-                return MapAttributeType.Blocked;
+                return type;
             }
 
-            if (rbItem.Checked)
-            {
-                return MapAttributeType.Item;
-            }
-
-            if (rbZDimension.Checked)
-            {
-                return MapAttributeType.ZDimension;
-            }
-
-            if (rbNPCAvoid.Checked)
-            {
-                return MapAttributeType.NpcAvoid;
-            }
-
-            if (rbWarp.Checked)
-            {
-                return MapAttributeType.Warp;
-            }
-
-            if (rbSound.Checked)
-            {
-                return MapAttributeType.Sound;
-            }
-
-            if (rbResource.Checked)
-            {
-                return MapAttributeType.Resource;
-            }
-
-            if (rbAnimation.Checked)
-            {
-                return MapAttributeType.Animation;
-            }
-
-            if (rbGrappleStone.Checked)
-            {
-                return MapAttributeType.GrappleStone;
-            }
-
-            if (rbSlide.Checked)
-            {
-                return MapAttributeType.Slide;
-            }
-
-            if (rbCritter.Checked)
-            {
-                return MapAttributeType.Critter;
-            }
-
-            return (MapAttributeType) byte.MaxValue;
+            return MapAttributeType.Blocked;
         }
     }
 
-    [Obsolete("The entire switch statement should be implemented as a parameterized CreateAttribute().")]
     public MapAttribute CreateAttribute()
     {
         var attributeType = SelectedMapAttributeType;
-        var attribute = MapAttribute.CreateAttribute(attributeType);
-        switch (SelectedMapAttributeType)
+        return CreateAttribute(attributeType);
+    }
+
+    public MapAttribute CreateAttribute(MapAttributeType attributeType)
+    {
+        switch (attributeType)
         {
             case MapAttributeType.Walkable:
             case MapAttributeType.Blocked:
             case MapAttributeType.GrappleStone:
             case MapAttributeType.NpcAvoid:
-                break;
+                return MapAttribute.CreateAttribute(attributeType);
 
             case MapAttributeType.Item:
-                var itemAttribute = attribute as MapItemAttribute;
-                itemAttribute.ItemId = ItemDescriptor.IdFromList(cmbItemAttribute.SelectedIndex);
-                itemAttribute.Quantity = (int)nudItemQuantity.Value;
-                itemAttribute.RespawnTime = (long)nudItemRespawnTime.Value;
-                break;
+                return CreateItemAttribute();
 
             case MapAttributeType.ZDimension:
-                var zDimensionAttribute = attribute as MapZDimensionAttribute;
-                zDimensionAttribute.GatewayTo = GetEditorDimensionGateway();
-                zDimensionAttribute.BlockedLevel = GetEditorDimensionBlock();
-                break;
+                return CreateZDimensionAttribute();
 
             case MapAttributeType.Warp:
-                var warpAttribute = attribute as MapWarpAttribute;
-                warpAttribute.MapId = MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId;
-                warpAttribute.X = (byte)nudWarpX.Value;
-                warpAttribute.Y = (byte)nudWarpY.Value;
-                warpAttribute.Direction = (WarpDirection)cmbDirection.SelectedIndex;
-                warpAttribute.ChangeInstance = chkChangeInstance.Checked;
-                warpAttribute.InstanceType = (MapInstanceType)cmbInstanceType.SelectedIndex;
-                warpAttribute.WarpSound = TextUtils.SanitizeNone(cmbWarpSound.Text);
-                break;
+                return CreateWarpAttribute();
 
             case MapAttributeType.Sound:
-                var soundAttribute = attribute as MapSoundAttribute;
-                soundAttribute.Distance = (byte)nudSoundDistance.Value;
-                soundAttribute.File = TextUtils.SanitizeNone(cmbMapAttributeSound.Text);
-                soundAttribute.LoopInterval = (int)nudSoundLoopInterval.Value;
-                break;
+                return CreateSoundAttribute();
 
             case MapAttributeType.Resource:
-                var resourceAttribute = attribute as MapResourceAttribute;
-                resourceAttribute.ResourceId = ResourceDescriptor.IdFromList(cmbResourceAttribute.SelectedIndex);
-                resourceAttribute.SpawnLevel = (byte)(rbLevel1.Checked ? 0 : 1);
-                break;
+                return CreateResourceAttribute();
 
             case MapAttributeType.Animation:
-                var animationAttribute = attribute as MapAnimationAttribute;
-                animationAttribute.AnimationId = AnimationDescriptor.IdFromList(cmbAnimationAttribute.SelectedIndex);
-                animationAttribute.IsBlock = chkAnimationBlock.Checked;
-                break;
+                return CreateAnimationAttribute();
 
             case MapAttributeType.Slide:
-                var slideAttribute = attribute as MapSlideAttribute;
-                slideAttribute.Direction = (Direction)cmbSlideDir.SelectedIndex;
-                break;
+                return CreateSlideAttribute();
 
             case MapAttributeType.Critter:
-                var critterAttribute = attribute as MapCritterAttribute;
-                critterAttribute.Sprite = cmbCritterSprite.Text;
-                critterAttribute.AnimationId = AnimationDescriptor.IdFromList(cmbCritterAnimation.SelectedIndex - 1);
-                critterAttribute.Movement = (byte)cmbCritterMovement.SelectedIndex;
-                critterAttribute.Layer = (byte)cmbCritterLayer.SelectedIndex;
-                critterAttribute.Speed = (int)nudCritterMoveSpeed.Value;
-                critterAttribute.Frequency = (int)nudCritterMoveFrequency.Value;
-                critterAttribute.IgnoreNpcAvoids = chkCritterIgnoreNpcAvoids.Checked;
-                critterAttribute.BlockPlayers = chkCritterBlockPlayers.Checked;
-                critterAttribute.Direction = (byte)cmbCritterDirection.SelectedIndex;
-                break;
+                return CreateCritterAttribute();
 
             default:
-                throw new ArgumentOutOfRangeException(nameof(SelectedMapAttributeType), @"The currently selected attribute type has not been fully implemented.");
+                throw new ArgumentOutOfRangeException(
+                    nameof(attributeType),
+                    @"The currently selected attribute type has not been fully implemented."
+                );
         }
+    }
 
-        return attribute;
+    private MapItemAttribute CreateItemAttribute()
+    {
+        var itemAttribute = (MapItemAttribute)MapAttribute.CreateAttribute(MapAttributeType.Item);
+        itemAttribute.ItemId = ItemDescriptor.IdFromList(cmbItemAttribute.SelectedIndex);
+        itemAttribute.Quantity = (int)nudItemQuantity.Value;
+        itemAttribute.RespawnTime = (long)nudItemRespawnTime.Value;
+        return itemAttribute;
+    }
+
+    private MapZDimensionAttribute CreateZDimensionAttribute()
+    {
+        var zDimensionAttribute = (MapZDimensionAttribute)MapAttribute.CreateAttribute(MapAttributeType.ZDimension);
+        zDimensionAttribute.GatewayTo = GetEditorDimensionGateway();
+        zDimensionAttribute.BlockedLevel = GetEditorDimensionBlock();
+        return zDimensionAttribute;
+    }
+
+    private MapWarpAttribute CreateWarpAttribute()
+    {
+        var warpAttribute = (MapWarpAttribute)MapAttribute.CreateAttribute(MapAttributeType.Warp);
+        warpAttribute.MapId = MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId;
+        warpAttribute.X = (byte)nudWarpX.Value;
+        warpAttribute.Y = (byte)nudWarpY.Value;
+        warpAttribute.Direction = (WarpDirection)cmbDirection.SelectedIndex;
+        warpAttribute.ChangeInstance = chkChangeInstance.Checked;
+        warpAttribute.InstanceType = (MapInstanceType)cmbInstanceType.SelectedIndex;
+        warpAttribute.WarpSound = TextUtils.SanitizeNone(cmbWarpSound.Text);
+        return warpAttribute;
+    }
+
+    private MapSoundAttribute CreateSoundAttribute()
+    {
+        var soundAttribute = (MapSoundAttribute)MapAttribute.CreateAttribute(MapAttributeType.Sound);
+        soundAttribute.Distance = (byte)nudSoundDistance.Value;
+        soundAttribute.File = TextUtils.SanitizeNone(cmbMapAttributeSound.Text);
+        soundAttribute.LoopInterval = (int)nudSoundLoopInterval.Value;
+        return soundAttribute;
+    }
+
+    private MapResourceAttribute CreateResourceAttribute()
+    {
+        var resourceAttribute = (MapResourceAttribute)MapAttribute.CreateAttribute(MapAttributeType.Resource);
+        resourceAttribute.ResourceId = ResourceDescriptor.IdFromList(cmbResourceAttribute.SelectedIndex);
+        resourceAttribute.SpawnLevel = (byte)(rbLevel1.Checked ? 0 : 1);
+        return resourceAttribute;
+    }
+
+    private MapAnimationAttribute CreateAnimationAttribute()
+    {
+        var animationAttribute = (MapAnimationAttribute)MapAttribute.CreateAttribute(MapAttributeType.Animation);
+        animationAttribute.AnimationId = AnimationDescriptor.IdFromList(cmbAnimationAttribute.SelectedIndex);
+        animationAttribute.IsBlock = chkAnimationBlock.Checked;
+        return animationAttribute;
+    }
+
+    private MapSlideAttribute CreateSlideAttribute()
+    {
+        var slideAttribute = (MapSlideAttribute)MapAttribute.CreateAttribute(MapAttributeType.Slide);
+        slideAttribute.Direction = (Direction)cmbSlideDir.SelectedIndex;
+        return slideAttribute;
+    }
+
+    private MapCritterAttribute CreateCritterAttribute()
+    {
+        var critterAttribute = (MapCritterAttribute)MapAttribute.CreateAttribute(MapAttributeType.Critter);
+        critterAttribute.Sprite = cmbCritterSprite.Text;
+        critterAttribute.AnimationId = AnimationDescriptor.IdFromList(cmbCritterAnimation.SelectedIndex - 1);
+        critterAttribute.Movement = (byte)cmbCritterMovement.SelectedIndex;
+        critterAttribute.Layer = (byte)cmbCritterLayer.SelectedIndex;
+        critterAttribute.Speed = (int)nudCritterMoveSpeed.Value;
+        critterAttribute.Frequency = (int)nudCritterMoveFrequency.Value;
+        critterAttribute.IgnoreNpcAvoids = chkCritterIgnoreNpcAvoids.Checked;
+        critterAttribute.BlockPlayers = chkCritterBlockPlayers.Checked;
+        critterAttribute.Direction = (byte)cmbCritterDirection.SelectedIndex;
+        return critterAttribute;
     }
 
     public MapAttribute PlaceAttribute(MapDescriptor mapDescriptor, int x, int y, MapAttribute attribute = null)
@@ -996,55 +980,6 @@ public partial class FrmMapLayers : DockContent
         }
     }
 
-    private void rbAnimation_CheckedChanged(object sender, EventArgs e)
-    {
-        cmbAnimationAttribute.Items.Clear();
-        cmbAnimationAttribute.Items.AddRange(AnimationDescriptor.Names);
-        if (cmbAnimationAttribute.Items.Count > 0)
-        {
-            cmbAnimationAttribute.SelectedIndex = 0;
-        }
-
-        if (!rbAnimation.Checked)
-        {
-            return;
-        }
-
-        HideAttributeMenus();
-        grpAnimation.Visible = true;
-    }
-
-    private void rbCritter_CheckedChanged(object sender, EventArgs e)
-    {
-        cmbCritterAnimation.Items.Clear();
-        cmbCritterAnimation.Items.Add(Strings.General.None);
-        cmbCritterAnimation.Items.AddRange(AnimationDescriptor.Names);
-        cmbCritterAnimation.SelectedIndex = 0;
-
-        cmbCritterSprite.Items.Clear();
-        cmbCritterSprite.Items.Add(Strings.General.None);
-        cmbCritterSprite.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity));
-        cmbCritterSprite.SelectedIndex = 0;
-
-        if (nudCritterMoveFrequency.Value == 0)
-        {
-            nudCritterMoveFrequency.Value = 1000;
-        }
-
-        if (nudCritterMoveSpeed.Value == 0)
-        {
-            nudCritterMoveSpeed.Value = 400;
-        }
-
-        if (!rbCritter.Checked)
-        {
-            return;
-        }
-
-        HideAttributeMenus();
-        grpCritter.Visible = true;
-    }
-
     private void frmMapLayers_Load(object sender, EventArgs e)
     {
         CreateSwapChain();
@@ -1076,19 +1011,6 @@ public partial class FrmMapLayers : DockContent
         cmbAutotile.Items.Add(Strings.Tiles.waterfall);
         cmbAutotile.Items.Add(Strings.Tiles.autotilexp);
         cmbAutotile.Items.Add(Strings.Tiles.animatedxp);
-
-        //Attributes Panel
-        rbBlocked.Text = Strings.Attributes.Blocked;
-        rbZDimension.Text = Strings.Attributes.ZDimension;
-        rbNPCAvoid.Text = Strings.Attributes.NpcAvoid;
-        rbWarp.Text = Strings.Attributes.Warp;
-        rbItem.Text = Strings.Attributes.ItemSpawn;
-        rbSound.Text = Strings.Attributes.MapSound;
-        rbResource.Text = Strings.Attributes.ResourceSpawn;
-        rbAnimation.Text = Strings.Attributes.MapAnimation;
-        rbGrappleStone.Text = Strings.Attributes.Grapple;
-        rbSlide.Text = Strings.Attributes.Slide;
-        rbCritter.Text = Strings.Attributes.Critter;
 
         //Map Animation Groupbox
         grpAnimation.Text = Strings.Attributes.MapAnimation;
@@ -1237,18 +1159,6 @@ public partial class FrmMapLayers : DockContent
         }
     }
 
-    private void rbGrappleStone_CheckedChanged(object sender, EventArgs e)
-    {
-        HideAttributeMenus();
-    }
-
-    private void rbSlide_CheckedChanged(object sender, EventArgs e)
-    {
-        HideAttributeMenus();
-        grpSlide.Visible = true;
-        cmbSlideDir.SelectedIndex = 0;
-    }
-
     private void lstMapNpcs_MouseDown(object sender, MouseEventArgs e)
     {
         lstMapNpcs.SelectedIndex = lstMapNpcs.IndexFromPoint(e.Location);
@@ -1266,11 +1176,6 @@ public partial class FrmMapLayers : DockContent
         pnlLights.Hide();
         pnlEvents.Hide();
         pnlNpcs.Hide();
-
-        //Force Game Object Lists to Refresh
-        rbAnimation_CheckedChanged(null, null);
-        rbWarp_CheckedChanged(null, null);
-        rbResource_CheckedChanged(null, null);
 
         if (Globals.EditingLight != null)
         {
