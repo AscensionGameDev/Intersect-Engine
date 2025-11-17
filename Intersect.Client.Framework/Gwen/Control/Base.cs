@@ -1391,7 +1391,7 @@ public partial class Base : IDisposable
         var children = @this._children.ToArray();
         try
         {
-            foreach (var child in @this._children)
+            foreach (var child in children)
             {
                 child.Dispose();
             }
