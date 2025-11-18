@@ -1,4 +1,4 @@
-﻿using System.IO.Compression;
+using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -23,8 +23,8 @@ public static partial class GzipCompression
 
         // Take a few bytes out of this delicious morsel and grow stronk.
         var keyBytes = ASCIIEncoding.ASCII.GetBytes(cryptoKey);
-        cryptoProvider.Key = keyBytes.Take(16).ToArray();
-        cryptoProvider.IV = keyBytes.Reverse().Take(16).ToArray();
+        cryptoProvider.Key = [.. keyBytes.Take(16)];
+        cryptoProvider.IV = [.. ((IEnumerable<byte>)keyBytes).Reverse().Take(16)];
     }
 
     /// <summary>
