@@ -20,6 +20,7 @@ using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
+using Intersect.Framework.Core.GameObjects.Skills;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
@@ -782,6 +783,10 @@ public static partial class DbInterface
                 UserVariableDescriptor.Lookup.Clear();
 
                 break;
+            case GameObjectType.Skill:
+                SkillDescriptor.Lookup.Clear();
+
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(type), type, null);
         }
@@ -929,6 +934,13 @@ public static partial class DbInterface
                         foreach (var psw in context.UserVariables)
                         {
                             UserVariableDescriptor.Lookup.Set(psw.Id, psw);
+                        }
+
+                        break;
+                    case GameObjectType.Skill:
+                        foreach (var skill in context.Skills)
+                        {
+                            SkillDescriptor.Lookup.Set(skill.Id, skill);
                         }
 
                         break;
@@ -1181,6 +1193,10 @@ public static partial class DbInterface
                 dbObj = new UserVariableDescriptor(predefinedid);
 
                 break;
+            case GameObjectType.Skill:
+                dbObj = new SkillDescriptor(predefinedid);
+
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(gameObjectType), gameObjectType, null);
         }
@@ -1304,6 +1320,12 @@ public static partial class DbInterface
                     case GameObjectType.UserVariable:
                         context.UserVariables.Add((UserVariableDescriptor)dbObj);
                         UserVariableDescriptor.Lookup.Set(dbObj.Id, dbObj);
+
+                        break;
+
+                    case GameObjectType.Skill:
+                        context.Skills.Add((SkillDescriptor)dbObj);
+                        SkillDescriptor.Lookup.Set(dbObj.Id, dbObj);
 
                         break;
 
@@ -1599,6 +1621,10 @@ public static partial class DbInterface
                         break;
                     case GameObjectType.UserVariable:
                         context.UserVariables.Update((UserVariableDescriptor)gameObject);
+
+                        break;
+                    case GameObjectType.Skill:
+                        context.Skills.Update((SkillDescriptor)gameObject);
 
                         break;
                 }

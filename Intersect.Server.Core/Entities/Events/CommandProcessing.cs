@@ -7,6 +7,7 @@ using Intersect.Framework.Core.GameObjects.Events.Commands;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
+using Intersect.Framework.Core.GameObjects.Skills;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.Server.Core.MapInstancing;
@@ -466,6 +467,52 @@ public static partial class CommandProcessing
         else if (quantity < 0)
         {
             player.TakeExperience(Math.Abs(quantity), command.EnableLosingLevels, force: true);
+        }
+    }
+
+    //Give Skill Experience Command
+    private static void ProcessCommand(
+        GiveSkillExperienceCommand command,
+        Player player,
+        Event instance,
+        CommandInstance stackInfo,
+        Stack<CommandInstance> callStack
+    )
+    {
+        var skillDescriptor = SkillDescriptor.Get(command.SkillId);
+        if (skillDescriptor == null)
+        {
+            return;
+        }
+
+        var quantity = command.Exp;
+        if (command.UseVariable)
+        {
+            switch (command.VariableType)
+            {
+                case VariableType.PlayerVariable:
+                    quantity = (int)player.GetVariableValue(command.VariableId).Integer;
+
+                    break;
+                case VariableType.ServerVariable:
+                    quantity = (int)ServerVariableDescriptor.Get(command.VariableId)?.Value.Integer;
+
+                    break;
+
+                case VariableType.GuildVariable:
+                    quantity = (int)player.Guild?.GetVariableValue(command.VariableId)?.Integer;
+
+                    break;
+            }
+        }
+
+        if (quantity > 0)
+        {
+            player.GiveSkillExperience(command.SkillId, quantity);
+        }
+        else if (quantity < 0)
+        {
+            player.TakeSkillExperience(command.SkillId, Math.Abs(quantity), command.EnableLosingLevels);
         }
     }
 

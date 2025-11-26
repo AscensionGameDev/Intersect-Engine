@@ -136,4 +136,6 @@ public enum EventCommandType
     CastSpellOn,
 
     Fade,
+
+    GiveSkillExperience,
 }

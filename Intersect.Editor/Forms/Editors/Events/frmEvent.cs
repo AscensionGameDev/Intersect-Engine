@@ -579,6 +579,10 @@ public partial class FrmEvent : Form
                 tmpCommand = new GiveExperienceCommand();
 
                 break;
+            case EventCommandType.GiveSkillExperience:
+                tmpCommand = new GiveSkillExperienceCommand();
+
+                break;
             case EventCommandType.ChangeLevel:
                 tmpCommand = new ChangeLevelCommand();
 
@@ -1235,6 +1239,10 @@ public partial class FrmEvent : Form
                 break;
             case EventCommandType.GiveExperience:
                 cmdWindow = new EventCommandGiveExperience((GiveExperienceCommand)command, this);
+
+                break;
+            case EventCommandType.GiveSkillExperience:
+                cmdWindow = new EventCommandGiveSkillExperience((GiveSkillExperienceCommand)command, this);
 
                 break;
             case EventCommandType.ChangeLevel:

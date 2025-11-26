@@ -1481,6 +1481,37 @@ internal sealed partial class PacketHandler
         }
     }
 
+    //SkillDataPacket
+    public void HandlePacket(IPacketSender packetSender, SkillDataPacket packet)
+    {
+        if (Globals.Me != null && packet.Skills != null)
+        {
+            foreach (var skillEntry in packet.Skills)
+            {
+                if (Globals.Me.Skills.TryGetValue(skillEntry.Key, out var existingSkill))
+                {
+                    existingSkill.Experience = skillEntry.Value.Experience;
+                    existingSkill.Level = skillEntry.Value.Level;
+                    existingSkill.ExperienceToNextLevel = skillEntry.Value.ExperienceToNextLevel;
+                }
+                else
+                {
+                    Globals.Me.Skills[skillEntry.Key] = new ClientSkillData(
+                        skillEntry.Value.Experience,
+                        skillEntry.Value.Level,
+                        skillEntry.Value.ExperienceToNextLevel
+                    );
+                }
+            }
+
+            // Update skills window if it's open
+            if (Interface.Interface.HasInGameUI)
+            {
+                Interface.Interface.EnqueueInGame(uiInGame => uiInGame.GameMenu.SkillsWindow?.UpdateSkills());
+            }
+        }
+    }
+
     //ProjectileDeadPacket
     public void HandlePacket(IPacketSender packetSender, ProjectileDeadPacket packet)
     {

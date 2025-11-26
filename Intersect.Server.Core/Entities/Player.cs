@@ -18,6 +18,7 @@ using Intersect.Framework.Core.GameObjects.Maps.Attributes;
 using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Quests;
+using Intersect.Framework.Core.GameObjects.Skills;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.Network;
@@ -172,6 +173,20 @@ public partial class Player : Entity
 
     //Variables
     public virtual List<PlayerVariable> Variables { get; set; } = [];
+
+    //Skills - Experience and Level per skill
+    [NotMapped, JsonIgnore]
+    public Dictionary<Guid, SkillData> Skills { get; set; } = new();
+
+    [Column("Skills"), JsonIgnore]
+    public string SkillsJson
+    {
+        get => JsonConvert.SerializeObject(Skills);
+        set
+        {
+            Skills = JsonConvert.DeserializeObject<Dictionary<Guid, SkillData>>(value ?? "{}") ?? new Dictionary<Guid, SkillData>();
+        }
+    }
 
     [JsonIgnore, NotMapped]
     public bool IsValidPlayer => !IsDisposed && Client?.Entity == this;
@@ -1455,6 +1470,158 @@ public partial class Player : Entity
 
         AddLevels(levelCount, false); //If zero, still calls PacketSender.SendExperience
     }
+
+    #region Skill Leveling
+
+    /// <summary>
+    /// Gets or initializes skill data for a given skill
+    /// </summary>
+    private SkillData GetOrCreateSkillData(Guid skillId)
+    {
+        if (!Skills.TryGetValue(skillId, out var skillData))
+        {
+            skillData = new SkillData(1, 0);
+            Skills[skillId] = skillData;
+        }
+        return skillData;
+    }
+
+    /// <summary>
+    /// Gets the experience required to reach the next level for a skill
+    /// </summary>
+    public long GetSkillExperienceToNextLevel(Guid skillId)
+    {
+        var skillDescriptor = SkillDescriptor.Get(skillId);
+        if (skillDescriptor == null)
+        {
+            return 0;
+        }
+
+        var skillData = GetOrCreateSkillData(skillId);
+        return skillDescriptor.ExperienceToNextLevel(skillData.Level);
+    }
+
+    /// <summary>
+    /// Gives experience to a skill and checks for level ups
+    /// </summary>
+    public void GiveSkillExperience(Guid skillId, long amount)
+    {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        var skillDescriptor = SkillDescriptor.Get(skillId);
+        if (skillDescriptor == null)
+        {
+            return;
+        }
+
+        var skillData = GetOrCreateSkillData(skillId);
+        skillData.Experience += amount;
+
+        CheckSkillLevelUp(skillId, skillDescriptor, skillData);
+        PacketSender.SendSkillData(this);
+    }
+
+    /// <summary>
+    /// Takes experience from a skill
+    /// </summary>
+    public void TakeSkillExperience(Guid skillId, long amount, bool enableLosingLevels = false)
+    {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        var skillDescriptor = SkillDescriptor.Get(skillId);
+        if (skillDescriptor == null)
+        {
+            return;
+        }
+
+        var skillData = GetOrCreateSkillData(skillId);
+        skillData.Experience -= amount;
+
+        var levelsToRemove = 0;
+        while (skillData.Experience < 0)
+        {
+            if (enableLosingLevels && skillData.Level - levelsToRemove > 1)
+            {
+                ++levelsToRemove;
+                skillData.Experience += skillDescriptor.ExperienceToNextLevel(skillData.Level - levelsToRemove);
+            }
+            else
+            {
+                skillData.Experience = 0;
+            }
+        }
+
+        if (levelsToRemove > 0)
+        {
+            skillData.Level = Math.Max(1, skillData.Level - levelsToRemove);
+        }
+    }
+
+    /// <summary>
+    /// Checks if the player has enough experience to level up a skill
+    /// </summary>
+    private void CheckSkillLevelUp(Guid skillId, SkillDescriptor skillDescriptor, SkillData skillData)
+    {
+        var levelCount = 0;
+        var experienceToNextLevel = skillDescriptor.ExperienceToNextLevel(skillData.Level + levelCount);
+        
+        while (skillData.Experience >= experienceToNextLevel && experienceToNextLevel > 0 && skillData.Level + levelCount < skillDescriptor.MaxLevel)
+        {
+            skillData.Experience -= experienceToNextLevel;
+            levelCount++;
+            experienceToNextLevel = skillDescriptor.ExperienceToNextLevel(skillData.Level + levelCount);
+        }
+
+        if (skillData.Experience < 0)
+        {
+            skillData.Experience = 0;
+        }
+
+        if (levelCount > 0)
+        {
+            skillData.Level = Math.Min(skillDescriptor.MaxLevel, skillData.Level + levelCount);
+            PacketSender.SendChatMsg(
+                this,
+                $"Your {skillDescriptor.Name} level increased to {skillData.Level}!",
+                ChatMessageType.Experience,
+                CustomColors.Combat.LevelUp,
+                Name
+            );
+            PacketSender.SendSkillData(this);
+        }
+    }
+
+    /// <summary>
+    /// Gets the current level of a skill
+    /// </summary>
+    public int GetSkillLevel(Guid skillId)
+    {
+        if (Skills.TryGetValue(skillId, out var skillData))
+        {
+            return skillData.Level;
+        }
+        return 1;
+    }
+
+    /// <summary>
+    /// Gets the current experience of a skill
+    /// </summary>
+    public long GetSkillExperience(Guid skillId)
+    {
+        if (Skills.TryGetValue(skillId, out var skillData))
+        {
+            return skillData.Experience;
+        }
+        return 0;
+    }
+
+    #endregion
 
     #endregion
 

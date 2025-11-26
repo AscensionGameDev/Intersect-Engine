@@ -51,6 +51,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             var restoreMPTreeNode = new TreeNode("Restore MP");
             var levelUpTreeNode = new TreeNode("Level Up");
             var giveExperienceTreeNode = new TreeNode("Give Experience");
+            var giveSkillExperienceTreeNode = new TreeNode("Give Skill Experience");
             var changeLevelTreeNode = new TreeNode("Change Level");
             var changeSpellsTreeNode = new TreeNode("Change Spells");
             var changeItemsTreeNode = new TreeNode("Change Items");
@@ -66,7 +67,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             var changePlayerNameTreeNode = new TreeNode("Change Player Name");
             var resetStatPointTreeNode = new TreeNode("Reset Stat Point Allocations");
             var castSpellOnTreeNode = new TreeNode("Cast Spell On");
-            var playerControlTreeNode = new TreeNode("Player Control", new TreeNode[] { restoreHPTreeNode, restoreMPTreeNode, levelUpTreeNode, giveExperienceTreeNode, changeLevelTreeNode, changeSpellsTreeNode, changeItemsTreeNode, changeSpriteTreeNode, changePlayerColorTreeNode, changeFaceTreeNode, changeGenderTreeNode, setAccessTreeNode, changeClassTreeNode, equipUneqiupTreeNode, changeNameColorTreeNode, changePlayerLabelTreeNode, changePlayerNameTreeNode, resetStatPointTreeNode, castSpellOnTreeNode });
+            var playerControlTreeNode = new TreeNode("Player Control", new TreeNode[] { restoreHPTreeNode, restoreMPTreeNode, levelUpTreeNode, giveExperienceTreeNode, giveSkillExperienceTreeNode, changeLevelTreeNode, changeSpellsTreeNode, changeItemsTreeNode, changeSpriteTreeNode, changePlayerColorTreeNode, changeFaceTreeNode, changeGenderTreeNode, setAccessTreeNode, changeClassTreeNode, equipUneqiupTreeNode, changeNameColorTreeNode, changePlayerLabelTreeNode, changePlayerNameTreeNode, resetStatPointTreeNode, castSpellOnTreeNode });
             var warpPlayerTreeNode = new TreeNode("Warp Player");
             var setMoveRouteTreeNode = new TreeNode("Set Move Route");
             var waitForRouteCompleteTreeNode = new TreeNode("Wait for Route Completion");
@@ -882,6 +883,9 @@ namespace Intersect.Editor.Forms.Editors.Events
             giveExperienceTreeNode.Name = "giveexperience";
             giveExperienceTreeNode.Tag = (int)EventCommandType.GiveExperience;
             giveExperienceTreeNode.Text = "Give Experience";
+            giveSkillExperienceTreeNode.Name = "giveskillexperience";
+            giveSkillExperienceTreeNode.Tag = (int)EventCommandType.GiveSkillExperience;
+            giveSkillExperienceTreeNode.Text = "Give Skill Experience";
             changeLevelTreeNode.Name = "changelevel";
             changeLevelTreeNode.Tag = (int)EventCommandType.ChangeLevel;
             changeLevelTreeNode.Text = "Change Level";

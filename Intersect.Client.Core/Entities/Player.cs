@@ -63,6 +63,8 @@ public partial class Player : Entity, IPlayer
 
     public long ExperienceToNextLevel { get; set; } = 0;
 
+    public Dictionary<Guid, ClientSkillData> Skills { get; set; } = new();
+
     IReadOnlyList<IFriendInstance> IPlayer.Friends => Friends;
 
     public List<IFriendInstance> Friends { get; set; } = [];

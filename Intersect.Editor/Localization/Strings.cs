@@ -8,6 +8,7 @@ using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
+using Intersect.Framework.Core.GameObjects.Skills;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
@@ -184,6 +185,41 @@ public static partial class Strings
         }
 
         return EventConditionDesc.levelorstat.ToString(lvlorstat, pLvl);
+    }
+
+    public static string GetEventConditionalDesc(SkillLevelCondition condition)
+    {
+        var skillName = SkillDescriptor.Get(condition.SkillId)?.Name ?? "Unknown Skill";
+        var pLvl = string.Empty;
+        switch (condition.Comparator)
+        {
+            case VariableComparator.Equal:
+                pLvl = EventConditionDesc.equal.ToString(condition.Value);
+
+                break;
+            case VariableComparator.GreaterOrEqual:
+                pLvl = EventConditionDesc.greaterequal.ToString(condition.Value);
+
+                break;
+            case VariableComparator.LesserOrEqual:
+                pLvl = EventConditionDesc.lessthanequal.ToString(condition.Value);
+
+                break;
+            case VariableComparator.Greater:
+                pLvl = EventConditionDesc.greater.ToString(condition.Value);
+
+                break;
+            case VariableComparator.Less:
+                pLvl = EventConditionDesc.lessthan.ToString(condition.Value);
+
+                break;
+            case VariableComparator.NotEqual:
+                pLvl = EventConditionDesc.notequal.ToString(condition.Value);
+
+                break;
+        }
+
+        return EventConditionDesc.skilllevel.ToString(skillName, pLvl);
     }
 
     public static string GetEventConditionalDesc(SelfSwitchCondition condition)
@@ -2085,6 +2121,8 @@ Tick timer saved in server config.json.";
 
         public static LocalizedString giveexp = @"Give Player {00} Experience";
 
+        public static LocalizedString giveskillexp = @"Give Player {00} Skill {01} Experience";
+
         public static LocalizedString globalswitch = @"Set Global Switch {00} to {01}";
 
         public static LocalizedString globalvariable = @"Set Global Variable {00} ({01})";
@@ -2355,6 +2393,7 @@ Tick timer saved in server config.json.";
             {"exiteventprocess", @"Exit Event Process"},
             {"fadeoutbgm", @"Fadeout BGM"},
             {"giveexperience", @"Give Experience"},
+            {"giveskillexperience", @"Give Skill Experience"},
             {"gotolabel", @"Go To Label"},
             {"hidepicture", @"Hide Picture"},
             {"holdplayer", @"Hold Player"},
@@ -2480,6 +2519,7 @@ Tick timer saved in server config.json.";
             {ConditionType.ClassIs, @"Class is..."},
             {ConditionType.KnowsSpell, @"Knows spell..."},
             {ConditionType.LevelOrStat, @"Level or Stat is..."},
+            {ConditionType.SkillLevel, @"Skill Level is..."},
             {ConditionType.SelfSwitch, @"Self Switch is..."},
             {ConditionType.AccessIs, @"Power level is..."},
             {ConditionType.TimeBetween, @"Time is between..."},
@@ -2536,6 +2576,12 @@ Tick timer saved in server config.json.";
         public static LocalizedString levelstatitem = @"Level or Stat:";
 
         public static LocalizedString levelstatvalue = @"Value:";
+
+        public static LocalizedString skilllevel = @"Skill Level Is....";
+
+        public static LocalizedString skill = @"Skill:";
+
+        public static LocalizedString skilllevelvalue = @"Value:";
 
         public static LocalizedString male = @"Male";
 
@@ -2714,6 +2760,8 @@ Tick timer saved in server config.json.";
         public static LocalizedString level = @"Level";
 
         public static LocalizedString levelorstat = @"{00} {01}";
+
+        public static LocalizedString skilllevel = @"{00} Skill Level {01}";
 
         public static LocalizedString male = @"Male";
 
@@ -4157,6 +4205,8 @@ Tick timer saved in server config.json.";
         public static LocalizedString resourceeditor = @"Resource Editor";
 
         public static LocalizedString resources = @"Resources";
+
+        public static LocalizedString skilleditor = @"Skill Editor";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Events = @"Events";

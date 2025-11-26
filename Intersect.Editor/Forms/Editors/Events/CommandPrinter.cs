@@ -10,6 +10,7 @@ using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
+using Intersect.Framework.Core.GameObjects.Skills;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Microsoft.Extensions.Logging;
@@ -828,6 +829,38 @@ public static partial class CommandPrinter
         else
         {
             return Strings.EventCommandList.giveexp.ToString(command.Exp);
+        }
+    }
+
+    private static string GetCommandText(GiveSkillExperienceCommand command, MapInstance map)
+    {
+        var skillName = SkillDescriptor.GetName(command.SkillId);
+        if (string.IsNullOrEmpty(skillName))
+        {
+            skillName = "Unknown Skill";
+        }
+
+        if (command.UseVariable)
+        {
+            var exp = string.Empty;
+            switch (command.VariableType)
+            {
+                case VariableType.PlayerVariable:
+                    exp = string.Format(@"({0}: {1})", Strings.EventGiveExperience.PlayerVariable, PlayerVariableDescriptor.GetName(command.VariableId));
+                    break;
+                case VariableType.ServerVariable:
+                    exp = string.Format(@"({0}: {1})", Strings.EventGiveExperience.ServerVariable, ServerVariableDescriptor.GetName(command.VariableId));
+                    break;
+                case VariableType.GuildVariable:
+                    exp = string.Format(@"({0}: {1})", Strings.EventGiveExperience.GuildVariable, GuildVariableDescriptor.GetName(command.VariableId));
+                    break;
+            }
+
+            return Strings.EventCommandList.giveskillexp.ToString(skillName, exp);
+        }
+        else
+        {
+            return Strings.EventCommandList.giveskillexp.ToString(skillName, command.Exp);
         }
     }
 

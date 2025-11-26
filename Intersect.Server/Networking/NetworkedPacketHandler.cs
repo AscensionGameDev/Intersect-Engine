@@ -11,6 +11,7 @@ using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
+using Intersect.Framework.Core.GameObjects.Skills;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Core.Security;
 using Intersect.GameObjects;
@@ -932,6 +933,11 @@ internal sealed partial class NetworkedPacketHandler
 
                     break;
 
+                case GameObjectType.Skill:
+                    obj = SkillDescriptor.Get(id);
+
+                    break;
+
                 case GameObjectType.CraftTables:
                     obj = DatabaseObject<CraftingTableDescriptor>.Lookup.Get(id);
 
@@ -1061,6 +1067,11 @@ internal sealed partial class NetworkedPacketHandler
 
                 case GameObjectType.Spell:
                     obj = SpellDescriptor.Get(id);
+
+                    break;
+
+                case GameObjectType.Skill:
+                    obj = SkillDescriptor.Get(id);
 
                     break;
 

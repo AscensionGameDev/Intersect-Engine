@@ -63,6 +63,8 @@ public partial class FrmMain : Form
 
     private FrmResource mResourceEditor;
 
+    private FrmSkill mSkillEditor;
+
     private FrmShop mShopEditor;
 
     private FrmSpell mSpellEditor;
@@ -189,6 +191,7 @@ public partial class FrmMain : Form
         projectileEditorToolStripMenuItem.Text = Strings.MainForm.projectileeditor;
         questEditorToolStripMenuItem.Text = Strings.MainForm.questeditor;
         resourceEditorToolStripMenuItem.Text = Strings.MainForm.resourceeditor;
+        skillEditorToolStripMenuItem.Text = Strings.MainForm.skilleditor;
         shopEditorToolStripMenuItem.Text = Strings.MainForm.shopeditor;
         spellEditorToolStripMenuItem.Text = Strings.MainForm.spelleditor;
         variableEditorToolStripMenuItem.Text = Strings.MainForm.variableeditor;
@@ -1267,6 +1270,11 @@ public partial class FrmMain : Form
         PacketSender.SendOpenEditor(GameObjectType.Resource);
     }
 
+    private void skillEditorToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        PacketSender.SendOpenEditor(GameObjectType.Skill);
+    }
+
     private void classEditorToolStripMenuItem_Click(object sender, EventArgs e)
     {
         PacketSender.SendOpenEditor(GameObjectType.Class);
@@ -1637,6 +1645,15 @@ public partial class FrmMain : Form
                         mResourceEditor = new FrmResource();
                         mResourceEditor.InitEditor();
                         mResourceEditor.Show();
+                    }
+
+                    break;
+                case GameObjectType.Skill:
+                    if (mSkillEditor == null || mSkillEditor.Visible == false)
+                    {
+                        mSkillEditor = new FrmSkill();
+                        mSkillEditor.InitEditor();
+                        mSkillEditor.Show();
                     }
 
                     break;

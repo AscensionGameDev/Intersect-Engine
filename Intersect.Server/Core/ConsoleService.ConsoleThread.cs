@@ -25,32 +25,45 @@ namespace Intersect.Server.Core
 
                 Parser = new CommandParser(new ParserSettings(localization: Strings.Commands.Parsing));
 
-                Parser.Register<AnnouncementCommand>();
-                Parser.Register<ApiCommand>();
-                Parser.Register<ApiGrantCommand>();
-                Parser.Register<ApiRevokeCommand>();
-                Parser.Register<ApiRolesCommand>();
-                Parser.Register<BanCommand>();
-                Parser.Register<CpsCommand>();
-                Parser.Register<ExitCommand>();
-                Parser.Register<GetVariableCommand>();
-                Parser.Register<HelpCommand>(Parser.Settings);
-                Parser.Register<KickCommand>();
-                Parser.Register<KillCommand>();
-                Parser.Register<ListVariablesCommand>();
-                Parser.Register<MetricsCommand>();
-                Parser.Register<MakePrivateCommand>();
-                Parser.Register<MakePublicCommand>();
-                Parser.Register<MigrateCommand>();
-                Parser.Register<MuteCommand>();
-                Parser.Register<NetDebugCommand>();
-                Parser.Register<OnlineListCommand>();
-                Parser.Register<PanicCommand>();
-                Parser.Register<PowerAccountCommand>();
-                Parser.Register<PowerCommand>();
-                Parser.Register<SetVariableCommand>();
-                Parser.Register<UnbanCommand>();
-                Parser.Register<UnmuteCommand>();
+                try
+                {
+                    Parser.Register<AnnouncementCommand>();
+                    Parser.Register<ApiCommand>();
+                    Parser.Register<ApiGrantCommand>();
+                    Parser.Register<ApiRevokeCommand>();
+                    Parser.Register<ApiRolesCommand>();
+                    Parser.Register<BanCommand>();
+                    Parser.Register<CpsCommand>();
+                    Parser.Register<ExitCommand>();
+                    Parser.Register<GetVariableCommand>();
+                    Parser.Register<HelpCommand>(Parser.Settings);
+                    Parser.Register<KickCommand>();
+                    Parser.Register<KillCommand>();
+                    Parser.Register<ListVariablesCommand>();
+                    Parser.Register<MetricsCommand>();
+                    Parser.Register<MakePrivateCommand>();
+                    Parser.Register<MakePublicCommand>();
+                    Parser.Register<MigrateCommand>();
+                    Parser.Register<MuteCommand>();
+                    Parser.Register<NetDebugCommand>();
+                    Parser.Register<OnlineListCommand>();
+                    Parser.Register<PanicCommand>();
+                    Parser.Register<PowerAccountCommand>();
+                    Parser.Register<PowerCommand>();
+                    Parser.Register<SetVariableCommand>();
+                    Parser.Register<UnbanCommand>();
+                    Parser.Register<UnmuteCommand>();
+                    Parser.Register<GiveSkillXpCommand>();
+                }
+                catch (Exception registrationException)
+                {
+                    // Log to a file since ApplicationContext might not be available yet
+                    System.IO.File.WriteAllText(
+                        "logs/command-registration-error.log",
+                        $"{DateTime.Now}: Error registering commands: {registrationException}\n{registrationException.StackTrace}"
+                    );
+                    throw;
+                }
             }
 
             public CommandParser Parser { get; }
@@ -83,7 +96,16 @@ namespace Intersect.Server.Core
                             Console.Write(Console.WaitPrefix);
 #endif
 
-                            line = Console.ReadLine()?.Trim();
+                            try
+                            {
+                                line = Console.ReadLine()?.Trim();
+                            }
+                            catch (Exception readException)
+                            {
+                                ApplicationContext.Context.Value?.Logger.LogError(readException, "Error reading console input");
+                                ServerContext.DispatchUnhandledException(readException, isTerminating: false);
+                                break;
+                            }
 
                             if (mDoNotContinue)
                             {

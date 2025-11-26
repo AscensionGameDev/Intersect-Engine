@@ -7,6 +7,7 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Character;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Interface.Game.Inventory;
+using Intersect.Client.Interface.Game.Skills;
 using Intersect.Client.Interface.Game.Spells;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
@@ -51,6 +52,10 @@ public partial class MenuContainer : Panel
     private readonly Button _escapeMenuButton;
 
     private readonly MapItemWindow _mapItemWindow;
+
+    private readonly SkillsWindow _skillsWindow;
+
+    public SkillsWindow SkillsWindow => _skillsWindow;
 
     public MenuContainer(Canvas gameCanvas) : base(parent: gameCanvas, name: nameof(MenuContainer))
     {
@@ -241,6 +246,7 @@ public partial class MenuContainer : Panel
         _questsWindow = new QuestsWindow(gameCanvas: gameCanvas);
         _mapItemWindow = new MapItemWindow(gameCanvas: gameCanvas);
         _guildWindow = new GuildWindow(gameCanvas: gameCanvas);
+        _skillsWindow = new SkillsWindow(gameCanvas: gameCanvas);
     }
 
     //Methods
@@ -254,6 +260,7 @@ public partial class MenuContainer : Panel
         _questsWindow.Update(updateQuestLog);
         _mapItemWindow.Update();
         _guildWindow.Update();
+        _skillsWindow.UpdateSkills();
     }
 
     public void UpdateFriendsList()
@@ -281,6 +288,7 @@ public partial class MenuContainer : Panel
         _questsWindow.Hide();
         _spellsWindow.Hide();
         _guildWindow.Hide();
+        _skillsWindow.Hide();
     }
 
     public void ToggleCharacterWindow()
@@ -419,6 +427,19 @@ public partial class MenuContainer : Panel
         _guildWindow.Hide();
     }
 
+    public void ToggleSkillsWindow()
+    {
+        if (_skillsWindow.IsVisibleInTree)
+        {
+            _skillsWindow.Hide();
+        }
+        else
+        {
+            HideWindows();
+            _skillsWindow.Show();
+        }
+    }
+
     public bool HasWindowsOpen()
     {
         var windowsOpen = _characterWindow.IsVisible() ||
@@ -427,7 +448,8 @@ public partial class MenuContainer : Panel
                           _questsWindow.IsVisible() ||
                           _spellsWindow.IsVisibleInTree ||
                           _partyWindow.IsVisible() ||
-                          _guildWindow.IsVisibleInTree;
+                          _guildWindow.IsVisibleInTree ||
+                          _skillsWindow.IsVisibleInTree;
         return windowsOpen;
     }
 
