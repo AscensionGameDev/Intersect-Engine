@@ -1858,6 +1858,12 @@ internal sealed partial class PacketHandler
                 {
 
                 }
+                
+                // If a skill descriptor was loaded/updated, refresh the skills window
+                if (type == GameObjectType.Skill && Interface.Interface.HasInGameUI)
+                {
+                    Interface.Interface.EnqueueInGame(uiInGame => uiInGame.GameMenu.SkillsWindow?.UpdateSkills());
+                }
 
                 break;
         }
