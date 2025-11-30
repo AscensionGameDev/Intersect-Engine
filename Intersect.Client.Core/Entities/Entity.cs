@@ -1179,7 +1179,14 @@ public partial class Entity : IEntity
                     entityY = MapHeight * 3 + Y;
                 }
 
-                entityY = (int)Math.Floor(entityY + OffsetY / TileHeight);
+                if (IsMoving && DirectionMoving == Direction.Up || DirectionMoving == Direction.UpLeft || DirectionMoving == Direction.UpRight)
+                {
+                    entityY = entityY - 1;
+                }
+                else if (IsMoving && DirectionMoving == Direction.Down || DirectionMoving == Direction.DownLeft || DirectionMoving == Direction.DownRight)
+                {
+                    entityY = entityY + 1;
+                }
 
                 if (priority >= renderingEntities.GetLength(0) || entityY >= renderingEntities.GetLength(1))
                 {
