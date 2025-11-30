@@ -61,7 +61,8 @@ public record AtlasReference(
 
     public static bool TryGet(string assetName, [NotNullWhen(true)] out AtlasReference? atlasReference)
     {
-        return _atlasReferences.TryGetValue(assetName, out atlasReference) ||
-               _atlasReferences.TryGetValue(assetName.ToLowerInvariant(), out atlasReference);
+        var normalizedAssetName = assetName.Replace('\\', '/');
+        return _atlasReferences.TryGetValue(normalizedAssetName, out atlasReference) ||
+               _atlasReferences.TryGetValue(normalizedAssetName.ToLowerInvariant(), out atlasReference);
     }
 }
