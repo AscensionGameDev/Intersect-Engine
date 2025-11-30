@@ -1561,8 +1561,8 @@ public partial class Entity : IEntity
         }
 
         mOrigin = new Vector2(
-            LatestMap.X + X * TileWidth + OffsetX + TileWidth / 2,
-            LatestMap.Y + Y * TileHeight + OffsetY + TileHeight
+            (float)Math.Round(LatestMap.X + X * TileWidth + OffsetX + TileWidth / 2f),
+            (float)Math.Round(LatestMap.Y + Y * TileHeight + OffsetY + TileHeight)
         );
     }
 
