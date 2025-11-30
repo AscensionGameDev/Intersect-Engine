@@ -38,10 +38,19 @@ public class JsonDatabase : GameDatabase
                     fileInfo.Directory.Create();
                 }
 
-                using var streamWriter = fileInfo.CreateText();
-                streamWriter.WriteLine("{}");
-                instance = new JObject();
-                return true;
+                //Allow game devs to provide default settings
+                var defaultSettingsJson = Path.Combine("resources", "default_settings.json");
+                if (File.Exists(defaultSettingsJson))
+                {
+                    File.Copy(defaultSettingsJson, instancePath);
+                }
+                else
+                {
+                    using var streamWriter = fileInfo.CreateText();
+                    streamWriter.WriteLine("{}");
+                    instance = new JObject();
+                    return true;
+                }
             }
 
             using var streamReader = fileInfo.OpenText();
