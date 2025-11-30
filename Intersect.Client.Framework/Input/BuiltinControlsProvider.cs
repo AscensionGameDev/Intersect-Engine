@@ -53,8 +53,17 @@ internal sealed class BuiltinControlsProvider : IControlsProvider
 
     public Control[] Controls { get; } = Enum.GetValues<Control>().Where(control => control.IsValid()).ToArray();
 
-    public bool TryGetDefaultMapping(Control control, [NotNullWhen(true)] out ControlMapping? defaultMapping) =>
-        _defaultMappings.TryGetValue(control, out defaultMapping);
+    public bool TryGetDefaultMapping(Control control, [NotNullWhen(true)] out ControlMapping? defaultMapping)
+    {
+        if (_defaultMappings.TryGetValue(control, out var mapping))
+        {
+            defaultMapping = new ControlMapping(mapping);
+            return true;
+        }
+
+        defaultMapping = null;
+        return false;
+    }
 
     public void ReloadFromOptions(Options? options)
     {
