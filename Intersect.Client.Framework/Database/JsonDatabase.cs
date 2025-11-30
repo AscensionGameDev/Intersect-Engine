@@ -19,6 +19,12 @@ public class JsonDatabase : GameDatabase
         _ = TryOpenOrCreate(_instancePath, out _instance);
     }
 
+    public JsonDatabase(string path)
+    {
+        _instancePath = path;
+        _ = TryOpenOrCreate(_instancePath, out _instance);
+    }
+
     private static string GetInstancePath(ClientConfiguration instance)
     {
         return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ".intersect",

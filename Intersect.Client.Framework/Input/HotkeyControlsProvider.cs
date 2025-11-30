@@ -13,13 +13,7 @@ internal sealed class HotkeyControlsProvider : IControlsProvider
 
     public bool TryGetDefaultMapping(Control control, [NotNullWhen(true)] out ControlMapping? defaultMapping)
     {
-        // Lazy-load on first call
-        if (_defaultMappings == null)
-        {
-            _defaultMappings = DefaultSettingsLoader.LoadDefaultsFromFile(Controls);
-        }
-
-        return _defaultMappings.TryGetValue(control, out defaultMapping);
+        return BuiltinControlsProvider.LoadDefaultMappings().TryGetValue(control, out defaultMapping);
     }
 
     private static Control[] ControlsFromOptions(Options? options) =>

@@ -1,5 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
+using Intersect.Client.Framework.Database;
 using Intersect.Client.Framework.GenericClasses;
+using Newtonsoft.Json;
 
 namespace Intersect.Client.Framework.Input;
 
@@ -30,18 +32,29 @@ internal sealed class BuiltinControlsProvider : IControlsProvider
     /// <summary>
     /// Loads default mappings by starting with hardcoded defaults and then merging overrides from default_settings.json if present.
     /// </summary>
-    private static Dictionary<Control, ControlMapping> LoadDefaultMappings()
+    public static Dictionary<Control, ControlMapping> LoadDefaultMappings()
     {
         // Start with all hardcoded defaults
         var defaults = GetHardcodedDefaults();
 
-        // Load file overrides
-        var fileDefaults = DefaultSettingsLoader.LoadDefaultsFromFile(defaults.Keys);
-
-        // Merge: file overrides hardcoded defaults
-        foreach (var (control, mapping) in fileDefaults)
+        // Load default controls from default_settings.json
+        var defaultSettingsPath = Path.Combine("resources", "default_settings.json");
+        if (File.Exists(defaultSettingsPath))
         {
-            defaults[control] = mapping;
+            var db = new JsonDatabase(defaultSettingsPath);
+
+            foreach (var control in defaults.Keys)
+            {
+                var controlId = control.GetControlId();
+                var bindings = new List<ControlBinding>();
+
+                if (db.HasPreference($"{controlId}_binding0") && db.HasPreference($"{controlId}_binding1"))
+                {
+                    var binding1 = JsonConvert.DeserializeObject<ControlBinding>(db.LoadPreference($"{controlId}_binding0"));
+                    var binding2 = JsonConvert.DeserializeObject<ControlBinding>(db.LoadPreference($"{controlId}_binding1"));
+                    defaults[control] = new ControlMapping(binding1, binding2);
+                }
+            }
         }
 
         return defaults;
