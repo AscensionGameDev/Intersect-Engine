@@ -54,15 +54,16 @@ public partial class MonoContentManager : GameContentManager
         foreach (var t in tilesetnames)
         {
             var realFilename = tilesetFiles.FirstOrDefault(file => t.Equals(file, StringComparison.InvariantCultureIgnoreCase)) ?? t;
+            var assetName = Path.Combine(ClientConfiguration.ResourcesDirectory, "tilesets", t.ToLower()).Replace('\\', '/');
             if (!string.IsNullOrWhiteSpace(t) &&
                 (!string.IsNullOrWhiteSpace(realFilename) ||
-                 AtlasReference.TryGet(Path.Combine(ClientConfiguration.ResourcesDirectory, "tilesets", t.ToLower()), out _) != null) &&
+                 AtlasReference.TryGet(assetName, out _)) &&
                 !mTilesetDict.ContainsKey(t.ToLower()))
             {
                 mTilesetDict.Add(
                     t.ToLower(),
                     Core.Graphics.Renderer.LoadTexture(
-                        Path.Combine(ClientConfiguration.ResourcesDirectory, "tilesets", t),
+                        assetName,
                         Path.Combine(ClientConfiguration.ResourcesDirectory, "tilesets", realFilename)
                     )
                 );
