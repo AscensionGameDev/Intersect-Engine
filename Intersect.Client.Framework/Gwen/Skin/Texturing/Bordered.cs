@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 
 namespace Intersect.Client.Framework.Gwen.Skin.Texturing;
@@ -185,7 +185,7 @@ public partial struct Bordered : IEquatable<Bordered>, IAtlasDrawable
 
     public bool Equals(Bordered other)
     {
-        return _texture.Equals(other._texture) && _subRects.Equals(other._subRects) && _margin.Equals(other._margin) && _width.Equals(other._width) && _height.Equals(other._height);
+        return (_texture?.Equals(other._texture) ?? false) && _subRects.Equals(other._subRects) && _margin.Equals(other._margin) && _width.Equals(other._width) && _height.Equals(other._height);
     }
 
     public override bool Equals(object? obj)
