@@ -13,7 +13,8 @@ internal sealed class HotkeyControlsProvider : IControlsProvider
 
     public bool TryGetDefaultMapping(Control control, [NotNullWhen(true)] out ControlMapping? defaultMapping)
     {
-        return BuiltinControlsProvider.LoadDefaultMappings().TryGetValue(control, out defaultMapping);
+        _defaultMappings ??= BuiltinControlsProvider.LoadDefaultMappings(); 
+        return _defaultMappings.TryGetValue(control, out defaultMapping);
     }
 
     private static Control[] ControlsFromOptions(Options? options) =>

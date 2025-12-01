@@ -52,7 +52,10 @@ internal sealed class BuiltinControlsProvider : IControlsProvider
                 {
                     var binding1 = JsonConvert.DeserializeObject<ControlBinding>(db.LoadPreference($"{controlId}_binding0"));
                     var binding2 = JsonConvert.DeserializeObject<ControlBinding>(db.LoadPreference($"{controlId}_binding1"));
-                    defaults[control] = new ControlMapping(binding1, binding2);
+                    if (binding1 != null && binding2 != null)
+                    {
+                        defaults[control] = new ControlMapping(binding1, binding2);
+                    }
                 }
             }
         }
