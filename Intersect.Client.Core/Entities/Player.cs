@@ -28,6 +28,7 @@ using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.Attributes;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
+using Intersect.Framework.Core.GameObjects.Skills;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
@@ -62,6 +63,8 @@ public partial class Player : Entity, IPlayer
     public long Experience { get; set; } = 0;
 
     public long ExperienceToNextLevel { get; set; } = 0;
+
+    public Dictionary<Guid, ClientSkillData> Skills { get; set; } = new();
 
     IReadOnlyList<IFriendInstance> IPlayer.Friends => Friends;
 
@@ -2370,6 +2373,21 @@ public partial class Player : Entity, IPlayer
     public long GetNextLevelExperience()
     {
         return ExperienceToNextLevel;
+    }
+
+    public long GetSkillExperienceToNextLevel(Guid skillId)
+    {
+        if (!SkillDescriptor.TryGet(skillId, out var skillDescriptor))
+        {
+            return 0;
+        }
+
+        if (!Skills.TryGetValue(skillId, out var skillData))
+        {
+            return skillDescriptor.ExperienceToNextLevel(1); // Default to level 1 if no data
+        }
+
+        return skillDescriptor.ExperienceToNextLevel(skillData.Level);
     }
 
     public override int CalculateAttackTime()

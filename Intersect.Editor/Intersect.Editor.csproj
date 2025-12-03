@@ -594,6 +594,9 @@
     <EmbeddedResource Update="Forms\Editors\frmResource.resx">
       <DependentUpon>frmResource.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Editors\frmSkill.resx">
+      <DependentUpon>frmSkill.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Update="Forms\Editors\frmShop.resx">
       <DependentUpon>frmShop.cs</DependentUpon>
     </EmbeddedResource>

@@ -112,6 +112,7 @@ namespace Intersect.Editor.Forms
             this.projectileEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.questEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resourceEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.skillEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.shopEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.spellEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.variableEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -814,6 +815,7 @@ namespace Intersect.Editor.Forms
             this.projectileEditorToolStripMenuItem,
             this.questEditorToolStripMenuItem,
             this.resourceEditorToolStripMenuItem,
+            this.skillEditorToolStripMenuItem,
             this.shopEditorToolStripMenuItem,
             this.spellEditorToolStripMenuItem,
             this.variableEditorToolStripMenuItem,
@@ -902,6 +904,14 @@ namespace Intersect.Editor.Forms
             this.resourceEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.resourceEditorToolStripMenuItem.Text = "Resource Editor";
             this.resourceEditorToolStripMenuItem.Click += new System.EventHandler(this.resourceEditorToolStripMenuItem_Click);
+            // 
+            // skillEditorToolStripMenuItem
+            // 
+            this.skillEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.skillEditorToolStripMenuItem.Name = "skillEditorToolStripMenuItem";
+            this.skillEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.skillEditorToolStripMenuItem.Text = "Skill Editor";
+            this.skillEditorToolStripMenuItem.Click += new System.EventHandler(this.skillEditorToolStripMenuItem_Click);
             // 
             // shopEditorToolStripMenuItem
             // 
@@ -1106,6 +1116,7 @@ namespace Intersect.Editor.Forms
 		private ToolStripMenuItem projectileEditorToolStripMenuItem;
 		private ToolStripMenuItem questEditorToolStripMenuItem;
 		private ToolStripMenuItem resourceEditorToolStripMenuItem;
+		private ToolStripMenuItem skillEditorToolStripMenuItem;
 		private ToolStripMenuItem shopEditorToolStripMenuItem;
 		private ToolStripMenuItem spellEditorToolStripMenuItem;
 		private ToolStripMenuItem variableEditorToolStripMenuItem;

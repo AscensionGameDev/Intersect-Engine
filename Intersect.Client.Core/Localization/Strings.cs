@@ -1258,6 +1258,9 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Spells = @"Spell Book";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Skills = @"Skills";
     }
 
     public partial struct General

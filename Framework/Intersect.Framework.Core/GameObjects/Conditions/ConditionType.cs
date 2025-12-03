@@ -41,4 +41,6 @@ public enum ConditionType
     CheckEquipment,
 
     IsInCombat,
+
+    SkillLevel,
 }

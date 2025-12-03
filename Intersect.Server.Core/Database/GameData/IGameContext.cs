@@ -7,6 +7,7 @@ using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
+using Intersect.Framework.Core.GameObjects.Skills;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.Server.Maps;
@@ -51,4 +52,6 @@ public interface IGameContext : IDbContext
     DbSet<TilesetDescriptor> Tilesets { get; set; }
 
     DbSet<DaylightCycleDescriptor> Time { get; set; }
+
+    DbSet<SkillDescriptor> Skills { get; set; }
 }

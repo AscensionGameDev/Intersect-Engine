@@ -11,6 +11,7 @@ using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
+using Intersect.Framework.Core.GameObjects.Skills;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Core.Network.Packets.Security;
 using Intersect.Framework.Core.Security;
@@ -415,6 +416,7 @@ public static partial class PacketSender
             SendQuestsProgress(player);
             SendItemCooldowns(player);
             SendSpellCooldowns(player);
+            SendSkillData(player);
         }
 
         switch (entity)
@@ -1583,6 +1585,35 @@ public static partial class PacketSender
         player.SendPacket(new ExperiencePacket(player.Exp, player.ExperienceToNextLevel), TransmissionMode.Any);
     }
 
+    //SkillDataPacket
+    public static void SendSkillData(Player player)
+    {
+        if (player.Skills == null || player.Skills.Count == 0)
+        {
+            return;
+        }
+
+        var skillData = new Dictionary<Guid, SkillDataEntry>();
+        foreach (var skill in player.Skills)
+        {
+            var skillDescriptor = SkillDescriptor.Get(skill.Key);
+            if (skillDescriptor != null)
+            {
+                var experienceToNextLevel = skillDescriptor.ExperienceToNextLevel(skill.Value.Level);
+                skillData[skill.Key] = new SkillDataEntry(
+                    skill.Value.Experience,
+                    skill.Value.Level,
+                    experienceToNextLevel
+                );
+            }
+        }
+
+        if (skillData.Count > 0)
+        {
+            player.SendPacket(new SkillDataPacket(skillData), TransmissionMode.Any);
+        }
+    }
+
     //PlayAnimationPacket
     public static void SendAnimationToProximity(
         Guid animId,
@@ -1789,6 +1820,13 @@ public static partial class PacketSender
                 break;
             case GameObjectType.Spell:
                 foreach (var obj in SpellDescriptor.Lookup)
+                {
+                    SendGameObject(client, obj.Value, false, false, packetList);
+                }
+
+                break;
+            case GameObjectType.Skill:
+                foreach (var obj in SkillDescriptor.Lookup)
                 {
                     SendGameObject(client, obj.Value, false, false, packetList);
                 }

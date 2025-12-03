@@ -15,6 +15,7 @@ using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
+using Intersect.Framework.Core.GameObjects.Skills;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.Network;
@@ -575,6 +576,21 @@ internal sealed partial class PacketHandler
                     var res = new ResourceDescriptor(id);
                     res.Load(json);
                     ResourceDescriptor.Lookup.Set(id, res);
+                }
+
+                break;
+
+            case GameObjectType.Skill:
+                if (deleted)
+                {
+                    var skill = SkillDescriptor.Get(id);
+                    skill.Delete();
+                }
+                else
+                {
+                    var skill = new SkillDescriptor(id);
+                    skill.Load(json);
+                    SkillDescriptor.Lookup.Set(id, skill);
                 }
 
                 break;

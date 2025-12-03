@@ -70,6 +70,7 @@ public partial class CharacterWindow
 
     //Extra Buffs
     Button _detailsButton;
+    Button _skillsButton;
     
     ClassDescriptor mPlayer;
 
@@ -158,6 +159,21 @@ public partial class CharacterWindow
         UpdateExtraBuffTooltip(null, null); // Initial tooltip update.
 
         mCharacterWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+        // Create skills button positioned below the details button
+        _skillsButton = new Button(mCharacterWindow, nameof(_skillsButton));
+        _skillsButton.SetText(Strings.GameMenu.Skills);
+        // Copy size from details button
+        _skillsButton.Size = _detailsButton.Size;
+        // Ensure button is wide enough for text (minimum 80 pixels)
+        if (_skillsButton.Width < 80)
+        {
+            _skillsButton.Width = 80;
+        }
+        // Position below details button
+        _skillsButton.X = _detailsButton.X;
+        _skillsButton.Y = _detailsButton.Y + _detailsButton.Height + 4; // 4 pixels spacing
+        _skillsButton.Clicked += SkillsButton_Clicked;
     }
 
     //Update Button Event Handlers
@@ -184,6 +200,11 @@ public partial class CharacterWindow
     void _addAttackBtn_Clicked(Base sender, MouseButtonState arguments)
     {
         PacketSender.SendUpgradeStat((int) Stat.Attack);
+    }
+
+    void SkillsButton_Clicked(Base sender, MouseButtonState arguments)
+    {
+        Interface.GameUi.GameMenu.ToggleSkillsWindow();
     }
 
     //Methods

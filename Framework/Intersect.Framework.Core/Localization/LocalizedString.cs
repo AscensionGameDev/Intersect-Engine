@@ -6,10 +6,10 @@ namespace Intersect.Localization;
 [Serializable]
 public partial class LocalizedString(string value) : Localized
 {
-    private readonly string _value = value;
+    private readonly string _value = value ?? string.Empty;
 
     [JsonIgnore]
-    public int ArgumentCount { get; } = CountArguments(value);
+    public int ArgumentCount { get; } = CountArguments(value ?? string.Empty);
 
     public static implicit operator LocalizedString(string value) => new(value);
 
@@ -36,6 +36,11 @@ public partial class LocalizedString(string value) : Localized
 
     public static int CountArguments(string formatString)
     {
+        if (string.IsNullOrEmpty(formatString))
+        {
+            return 0;
+        }
+
         HashSet<int> argumentIndices = [];
 
         var matches = PatternArgument.Matches(formatString);

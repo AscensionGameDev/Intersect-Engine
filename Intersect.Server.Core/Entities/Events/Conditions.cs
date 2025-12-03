@@ -265,6 +265,64 @@ public static partial class Conditions
     }
 
     public static bool MeetsCondition(
+        SkillLevelCondition condition,
+        Player player,
+        Event eventInstance,
+        QuestDescriptor questDescriptor
+    )
+    {
+        var skillLevel = player.GetSkillLevel(condition.SkillId);
+
+        switch (condition.Comparator)
+        {
+            case VariableComparator.Equal:
+                if (skillLevel == condition.Value)
+                {
+                    return true;
+                }
+
+                break;
+            case VariableComparator.GreaterOrEqual:
+                if (skillLevel >= condition.Value)
+                {
+                    return true;
+                }
+
+                break;
+            case VariableComparator.LesserOrEqual:
+                if (skillLevel <= condition.Value)
+                {
+                    return true;
+                }
+
+                break;
+            case VariableComparator.Greater:
+                if (skillLevel > condition.Value)
+                {
+                    return true;
+                }
+
+                break;
+            case VariableComparator.Less:
+                if (skillLevel < condition.Value)
+                {
+                    return true;
+                }
+
+                break;
+            case VariableComparator.NotEqual:
+                if (skillLevel != condition.Value)
+                {
+                    return true;
+                }
+
+                break;
+        }
+
+        return false;
+    }
+
+    public static bool MeetsCondition(
         SelfSwitchCondition condition,
         Player player,
         Event eventInstance,
