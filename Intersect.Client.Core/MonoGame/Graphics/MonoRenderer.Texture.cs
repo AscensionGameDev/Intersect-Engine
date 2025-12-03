@@ -148,9 +148,13 @@ internal partial class MonoRenderer
         {
         }
 
-        public override int Width => PlatformTexture?.Width ?? 0;
+        public override int Width => AtlasReference?.IsRotated == true
+            ? AtlasReference.Bounds.Height
+            : AtlasReference?.Bounds.Width ?? PlatformTexture?.Width ?? 0;
 
-        public override int Height => PlatformTexture?.Height ?? 0;
+        public override int Height => AtlasReference?.IsRotated == true
+            ? AtlasReference.Bounds.Width
+            : AtlasReference?.Bounds.Height ?? PlatformTexture?.Height ?? 0;
 
         protected override Texture2D? CreatePlatformTextureFromStream(Stream stream)
         {
