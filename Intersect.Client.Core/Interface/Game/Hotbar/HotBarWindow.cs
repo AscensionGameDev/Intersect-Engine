@@ -3,14 +3,15 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
+using Intersect.Client.Interface;
 
 namespace Intersect.Client.Interface.Game.Hotbar;
 
-public partial class HotBarWindow : ImagePanel
+public partial class HotBarWindow : DraggableImagePanel
 {
     public readonly List<HotbarItem> Items = [];
 
-    public HotBarWindow(Canvas gameCanvas) : base(gameCanvas, nameof(HotBarWindow))
+    public HotBarWindow(Canvas gameCanvas) : base(gameCanvas, nameof(HotBarWindow), nameof(HotBarWindow))
     {
         AlignmentPadding = new Padding { Top = 4, Right = 4 };
         Alignment = [Alignments.Top, Alignments.Right];

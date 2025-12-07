@@ -1594,11 +1594,6 @@ public partial class Player : Entity, IPlayer
             return;
         }
 
-        if (Interface.Interface.HasInputFocus())
-        {
-            return;
-        }
-
         var inputDirection = GetInputDirection();
         if (TryTurnAround(inputDirection))
         {

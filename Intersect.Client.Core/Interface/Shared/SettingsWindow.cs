@@ -829,27 +829,28 @@ public partial class SettingsWindow : Window
 
     private void UpdateWorldScaleControls()
     {
-        if (!Options.IsLoaded)
-        {
-            _worldScale.IsHidden = true;
-            return;
-        }
-
-        _worldScale.IsHidden = false;
-        _worldScale.IsDisabled = false;
-        _worldScale.SetToolTipText(null);
-
         var worldScaleNotches = new double[] { 1, 2, 4 }.Select(n => n * Graphics.MinimumWorldScale).ToList();
         while (worldScaleNotches.Last() < Graphics.MaximumWorldScale)
         {
             worldScaleNotches.Add(worldScaleNotches.Last() * 2);
         }
 
-        Globals.Database.WorldZoom = (float)MathHelper.Clamp(
-            Globals.Database.WorldZoom,
-            worldScaleNotches.Min(),
-            worldScaleNotches.Max()
-        );
+        if (Options.IsLoaded)
+        {
+            _worldScale.IsDisabled = false;
+            _worldScale.SetToolTipText(null);
+
+            Globals.Database.WorldZoom = (float)MathHelper.Clamp(
+                Globals.Database.WorldZoom,
+                worldScaleNotches.Min(),
+                worldScaleNotches.Max()
+            );
+        }
+        else
+        {
+            _worldScale.SetToolTipText(Strings.Settings.WorldScaleTooltip);
+            _worldScale.IsDisabled = true;
+        }
 
         _worldScale.SetRange(worldScaleNotches.Min(), worldScaleNotches.Max());
         _worldScale.Notches = worldScaleNotches.ToArray();
@@ -1174,10 +1175,7 @@ public partial class SettingsWindow : Window
 
         // Video Settings.
         Globals.Database.EnableScrollingWorldZoom = _enableScrollingWorldZoomCheckbox.IsChecked;
-        if (!_worldScale.IsHidden)
-        {
-            Globals.Database.WorldZoom = (float)_worldScale.Value;
-        }
+        Globals.Database.WorldZoom = (float)_worldScale.Value;
 
         var resolutionItem = _resolutionList.SelectedItem;
         var targetResolution = resolutionItem?.UserData as int? ?? -1;

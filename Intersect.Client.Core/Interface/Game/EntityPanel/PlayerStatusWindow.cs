@@ -3,11 +3,12 @@ using Intersect.Client.Entities;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
+using Intersect.Client.Interface;
 
 namespace Intersect.Client.Interface.Game.EntityPanel;
 
 
-public partial class PlayerStatusWindow : ImagePanel
+public partial class PlayerStatusWindow : DraggableImagePanel
 {
     private readonly Dictionary<Guid, SpellStatus> _activeStatuses = [];
 
@@ -19,7 +20,7 @@ public partial class PlayerStatusWindow : ImagePanel
 
     public bool ShouldUpdateStatuses { get; set; }
 
-    public PlayerStatusWindow(Canvas gameCanvas, string? name = default) : base(gameCanvas, name ?? nameof(PlayerStatusWindow))
+    public PlayerStatusWindow(Canvas gameCanvas, string? name = default) : base(gameCanvas, name ?? nameof(PlayerStatusWindow), name ?? nameof(PlayerStatusWindow))
     {
         _playerStatusControl = new ScrollControl(this, "PlayerStatusControl");
         MyEntity = Globals.Me;

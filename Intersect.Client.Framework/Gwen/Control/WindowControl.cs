@@ -5,6 +5,8 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
+using Intersect.Client.Framework.Gwen.Input;
+using Intersect.Client.Framework.Input;
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control;
@@ -40,6 +42,11 @@ public partial class WindowControl : ResizableControl
 
     private bool mDeleteOnClose;
 
+    // Alt+drag state
+    private bool _isAltDragging;
+    private Point _altDragStartPos;
+    private Point _altDragStartWindowPos;
+
     protected Base InnerPanel => _innerPanel ?? throw new InvalidOperationException("Windows must have inner panels");
 
     public ImagePanel IconContainer => _titlebar.Icon;
@@ -63,6 +70,11 @@ public partial class WindowControl : ResizableControl
     public event GwenEventHandler<EventArgs>? Closed;
 
     /// <summary>
+    /// Event fired when the window position changes (via drag or Alt+drag).
+    /// </summary>
+    public event GwenEventHandler<EventArgs>? PositionChanged;
+
+    /// <summary>
     ///     Initializes a new instance of the <see cref="WindowControl" /> class.
     /// </summary>
     /// <param name="parent">Parent control.</param>
@@ -79,7 +91,7 @@ public partial class WindowControl : ResizableControl
         };
 
         // Create a blank content control, dock it to the top - Should this be a ScrollControl?
-        _innerPanel = new Base(this, name: nameof(_innerPanel));
+        _innerPanel = new AltDragForwardingPanel(this, nameof(_innerPanel));
         _innerPanel.Dock = Pos.Fill;
 
         ClampMovement = true;
@@ -95,6 +107,9 @@ public partial class WindowControl : ResizableControl
         {
             MakeModal();
         }
+
+        // Subscribe to dragged event to save position
+        Titlebar.Dragged += OnWindowDragged;
     }
 
     protected override void OnBoundsChanged(Rectangle oldBounds, Rectangle newBounds)
@@ -425,6 +440,161 @@ public partial class WindowControl : ResizableControl
                 return mInactiveImageFilename;
             default:
                 return null;
+        }
+    }
+
+    protected override void OnChildTouched(Base control)
+    {
+        base.OnChildTouched(control);
+
+        // If Alt is held when a child is clicked, start Alt+drag
+        try
+        {
+            if (InputHandler.MousePosition is { } mousePosition &&
+                (GameInput.Current.IsKeyDown(Keys.Alt) || GameInput.Current.IsKeyDown(Keys.LMenu)))
+            {
+                HandleAltDragStart(mousePosition);
+            }
+        }
+        catch
+        {
+            // GameInput.Current may not be initialized yet
+        }
+    }
+
+    private void HandleAltDragStart(Point mousePosition)
+    {
+        // Remove alignments so window can be freely positioned
+        RemoveAlignments();
+        
+        // Start Alt+drag - store the hold position relative to the window
+        _isAltDragging = true;
+        _altDragStartPos = CanvasPosToLocal(mousePosition);
+        _altDragStartWindowPos = new Point(X, Y);
+        InputHandler.MouseFocus = this;
+    }
+
+    protected override void OnMouseDown(MouseButton mouseButton, Point mousePosition, bool userAction = true)
+    {
+        base.OnMouseDown(mouseButton, mousePosition, userAction);
+
+        // Check if Alt key is held and left mouse button is pressed
+        if (userAction && mouseButton == MouseButton.Left)
+        {
+            try
+            {
+                if (GameInput.Current.IsKeyDown(Keys.Alt) || GameInput.Current.IsKeyDown(Keys.LMenu))
+                {
+                    HandleAltDragStart(mousePosition);
+                }
+            }
+            catch
+            {
+                // GameInput.Current may not be initialized yet
+            }
+        }
+    }
+
+    protected override void OnMouseUp(MouseButton mouseButton, Point mousePosition, bool userAction = true)
+    {
+        base.OnMouseUp(mouseButton, mousePosition, userAction);
+
+        if (_isAltDragging && mouseButton == MouseButton.Left)
+        {
+            _isAltDragging = false;
+            InputHandler.MouseFocus = null;
+            
+            // Notify that position changed (for saving in Client.Core)
+            PositionChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    protected override void OnMouseMoved(int x, int y, int dx, int dy)
+    {
+        base.OnMouseMoved(x, y, dx, dy);
+
+        if (_isAltDragging && IsActive)
+        {
+            // Calculate new position based on mouse movement (similar to Dragger)
+            // x, y are canvas coordinates
+            Point position = new(x - _altDragStartPos.X, y - _altDragStartPos.Y);
+            if (Parent is { } parent)
+            {
+                position = parent.ToLocal(position.X, position.Y);
+            }
+
+            // Clamp to parent bounds if ClampMovement is enabled
+            var newX = position.X;
+            var newY = position.Y;
+
+            if (Parent != null && ClampMovement)
+            {
+                var windowWidth = Bounds.Width;
+                var windowHeight = Bounds.Height;
+                var parentWidth = Parent.Bounds.Width;
+                var parentHeight = Parent.Bounds.Height;
+
+                if (newX + windowWidth > parentWidth)
+                {
+                    newX = parentWidth - windowWidth;
+                }
+                if (newX < 0)
+                {
+                    newX = 0;
+                }
+                if (newY + windowHeight > parentHeight)
+                {
+                    newY = parentHeight - windowHeight;
+                }
+                if (newY < 0)
+                {
+                    newY = 0;
+                }
+            }
+
+            MoveTo(newX, newY);
+        }
+    }
+
+    private void OnWindowDragged(Base sender, EventArgs args)
+    {
+        // Position saving is handled by Window class (in Client.Core)
+        // WindowControl doesn't have access to database
+    }
+
+    /// <summary>
+    /// Inner panel that forwards Alt+drag events to parent WindowControl.
+    /// </summary>
+    private class AltDragForwardingPanel : Base
+    {
+        private readonly WindowControl _parentWindow;
+
+        public AltDragForwardingPanel(WindowControl parent, string? name) : base(parent, name)
+        {
+            _parentWindow = parent;
+            MouseInputEnabled = true;
+        }
+
+        protected override void OnMouseDown(MouseButton mouseButton, Point mousePosition, bool userAction = true)
+        {
+            base.OnMouseDown(mouseButton, mousePosition, userAction);
+
+            // Forward Alt+drag to parent window
+            if (userAction && mouseButton == MouseButton.Left)
+            {
+                try
+                {
+                    if (GameInput.Current.IsKeyDown(Keys.Alt) || GameInput.Current.IsKeyDown(Keys.LMenu))
+                    {
+                        var windowLocalPos = _parentWindow.CanvasPosToLocal(mousePosition);
+                        _parentWindow.InputMouseButtonState(mouseButton, windowLocalPos, true, userAction);
+                    }
+                }
+                catch
+                {
+                    // GameInput.Current may not be initialized yet
+                }
+            }
         }
     }
 

@@ -159,6 +159,13 @@ public partial class CharacterWindow
         UpdateExtraBuffTooltip(null, null); // Initial tooltip update.
 
         mCharacterWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        
+        // Hook into drag events to save position
+        mCharacterWindow.Titlebar.Dragged += (sender, args) => SavePosition();
+        mCharacterWindow.PositionChanged += (sender, args) => SavePosition();
+        
+        // Load saved position after JSON UI is loaded
+        LoadSavedPosition();
 
         // Create skills button positioned below the details button
         _skillsButton = new Button(mCharacterWindow, nameof(_skillsButton));
@@ -516,6 +523,71 @@ public partial class CharacterWindow
     public void Hide()
     {
         mCharacterWindow.IsHidden = true;
+    }
+
+    private void SavePosition()
+    {
+        if (string.IsNullOrWhiteSpace(mCharacterWindow.Name) || Globals.Database == null)
+        {
+            return;
+        }
+
+        var positionKey = $"WindowPosition_{mCharacterWindow.Name}";
+        var positionValue = $"{mCharacterWindow.X},{mCharacterWindow.Y}";
+        Globals.Database.SavePreference(positionKey, positionValue);
+    }
+
+    private void LoadSavedPosition()
+    {
+        if (string.IsNullOrWhiteSpace(mCharacterWindow.Name) || Globals.Database == null)
+        {
+            return;
+        }
+
+        var positionKey = $"WindowPosition_{mCharacterWindow.Name}";
+        var positionValue = Globals.Database.LoadPreference(positionKey);
+        
+        if (string.IsNullOrWhiteSpace(positionValue))
+        {
+            return;
+        }
+
+        // Parse position (format: "X,Y")
+        var parts = positionValue.Split(',');
+        if (parts.Length == 2 && 
+            int.TryParse(parts[0], out var x) && 
+            int.TryParse(parts[1], out var y))
+        {
+            // Validate position is within parent bounds
+            if (mCharacterWindow.Parent != null)
+            {
+                var windowWidth = mCharacterWindow.Bounds.Width;
+                var windowHeight = mCharacterWindow.Bounds.Height;
+                var parentWidth = mCharacterWindow.Parent.Bounds.Width;
+                var parentHeight = mCharacterWindow.Parent.Bounds.Height;
+
+                if (x + windowWidth > parentWidth)
+                {
+                    x = parentWidth - windowWidth;
+                }
+                if (x < 0)
+                {
+                    x = 0;
+                }
+                if (y + windowHeight > parentHeight)
+                {
+                    y = parentHeight - windowHeight;
+                }
+                if (y < 0)
+                {
+                    y = 0;
+                }
+            }
+
+            // Remove alignments when loading custom position
+            mCharacterWindow.RemoveAlignments();
+            mCharacterWindow.MoveTo(x, y);
+        }
     }
 
 }

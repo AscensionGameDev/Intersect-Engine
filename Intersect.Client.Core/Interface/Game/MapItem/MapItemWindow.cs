@@ -4,6 +4,7 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
+using Intersect.Client.Interface;
 using Intersect.Client.Items;
 using Intersect.Client.Localization;
 using Intersect.Client.Maps;
@@ -20,7 +21,7 @@ public partial class MapItemWindow
     private List<Label> mValues = new List<Label>();
 
     //Controls
-    private ImagePanel mMapItemWindow;
+    private DraggableImagePanel mMapItemWindow;
 
     private Label mMenuHeader;
 
@@ -37,7 +38,7 @@ public partial class MapItemWindow
     //Init
     public MapItemWindow(Canvas gameCanvas)
     {
-        mMapItemWindow = new ImagePanel(gameCanvas, "MapItemWindow");
+        mMapItemWindow = new DraggableImagePanel(gameCanvas, "MapItemWindow", "MapItemWindow");
         mMenuHeader = new Label(mMapItemWindow, "Title");
         mMenuHeader.SetText(Strings.MapItemWindow.Title);
 

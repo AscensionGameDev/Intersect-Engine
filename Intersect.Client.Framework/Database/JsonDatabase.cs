@@ -19,12 +19,6 @@ public class JsonDatabase : GameDatabase
         _ = TryOpenOrCreate(_instancePath, out _instance);
     }
 
-    public JsonDatabase(string path)
-    {
-        _instancePath = path;
-        _ = TryOpenOrCreate(_instancePath, out _instance);
-    }
-
     private static string GetInstancePath(ClientConfiguration instance)
     {
         return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ".intersect",
@@ -44,19 +38,10 @@ public class JsonDatabase : GameDatabase
                     fileInfo.Directory.Create();
                 }
 
-                //Allow game devs to provide default settings
-                var defaultSettingsJson = Path.Combine("resources", "default_settings.json");
-                if (File.Exists(defaultSettingsJson))
-                {
-                    File.Copy(defaultSettingsJson, instancePath);
-                }
-                else
-                {
-                    using var streamWriter = fileInfo.CreateText();
-                    streamWriter.WriteLine("{}");
-                    instance = new JObject();
-                    return true;
-                }
+                using var streamWriter = fileInfo.CreateText();
+                streamWriter.WriteLine("{}");
+                instance = new JObject();
+                return true;
             }
 
             using var streamReader = fileInfo.OpenText();

@@ -4,6 +4,7 @@ using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
+using Intersect.Client.Interface;
 using Intersect.Client.Interface.Game.Character;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Interface.Game.Inventory;
@@ -18,7 +19,7 @@ using Intersect.Enums;
 namespace Intersect.Client.Interface.Game;
 
 
-public partial class MenuContainer : Panel
+public partial class MenuContainer : DraggablePanel
 {
     private readonly ImagePanel _inventoryButtonContainer;
     private readonly Button _inventoryButton;
@@ -51,13 +52,12 @@ public partial class MenuContainer : Panel
     private readonly ImagePanel _escapeMenuButtonContainer;
     private readonly Button _escapeMenuButton;
 
-    private readonly MapItemWindow _mapItemWindow;
 
     private readonly SkillsWindow _skillsWindow;
 
     public SkillsWindow SkillsWindow => _skillsWindow;
 
-    public MenuContainer(Canvas gameCanvas) : base(parent: gameCanvas, name: nameof(MenuContainer))
+    public MenuContainer(Canvas gameCanvas) : base(parent: gameCanvas, name: nameof(MenuContainer), preferenceKey: nameof(MenuContainer))
     {
         Alignment = [Alignments.Bottom, Alignments.Right];
         AlignmentPadding = new Padding { Bottom = 4, Right = 4 };
@@ -244,7 +244,6 @@ public partial class MenuContainer : Panel
         _spellsWindow = new SpellsWindow(gameCanvas: gameCanvas);
         _characterWindow = new CharacterWindow(gameCanvas: gameCanvas);
         _questsWindow = new QuestsWindow(gameCanvas: gameCanvas);
-        _mapItemWindow = new MapItemWindow(gameCanvas: gameCanvas);
         _guildWindow = new GuildWindow(gameCanvas: gameCanvas);
         _skillsWindow = new SkillsWindow(gameCanvas: gameCanvas);
     }
@@ -258,7 +257,6 @@ public partial class MenuContainer : Panel
         _partyWindow.Update();
         _friendsWindow.Update();
         _questsWindow.Update(updateQuestLog);
-        _mapItemWindow.Update();
         _guildWindow.Update();
         _skillsWindow.UpdateSkills();
     }

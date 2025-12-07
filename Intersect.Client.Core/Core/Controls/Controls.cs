@@ -224,16 +224,6 @@ public partial class Controls : IControlSet
                 }
             }
 
-            // Check for corrupted controls bug (all bindings are None/None)
-            if (AreAllControlsBroken())
-            {
-                ApplicationContext.Context.Value?.Logger.LogWarning(
-                    "Detected broken control bindings (all None/None), resetting to defaults"
-                );
-                ResetDefaults();
-                TrySave();
-            }
-
             return success;
         }
         catch (Exception exception)
@@ -241,25 +231,6 @@ public partial class Controls : IControlSet
             ApplicationContext.Context.Value?.Logger.LogError(exception, "Error while getting controls");
             return false;
         }
-    }
-
-    private bool AreAllControlsBroken()
-    {
-        // Check if all controls have all bindings set to None/None (broken state from old bug)
-        foreach (var (control, mapping) in Mappings)
-        {
-            foreach (var binding in mapping.Bindings)
-            {
-                // If we find any binding that's not None/None, controls are not broken
-                if (binding.Modifier != Keys.None || binding.Key != Keys.None)
-                {
-                    return false;
-                }
-            }
-        }
-
-        // All bindings are None/None, this is the broken state
-        return true;
     }
 
     private bool TryLoadBindingFor(Control control, int bindingIndex, [NotNullWhen(true)] out ControlBinding? binding)

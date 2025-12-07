@@ -257,12 +257,6 @@ public abstract partial class GameTexture<TPlatformTexture, TPlatformRenderer> :
             }
 
             atlasTexture.LoadPlatformTexture(force);
-            IsMissingOrCorrupt = atlasTexture.IsMissingOrCorrupt;
-            if (!IsMissingOrCorrupt)
-            {
-                UpdateAccessTime();
-                EmitLoaded();
-            }
             return;
         }
 

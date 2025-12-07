@@ -7,65 +7,42 @@ using Base = Intersect.Client.Framework.Gwen.Control.Base;
 
 namespace Intersect.Client.Interface;
 
-public abstract class Window : WindowControl
+/// <summary>
+/// Panel with Alt+drag functionality for UI customization.
+/// </summary>
+public class DraggablePanel : Panel
 {
-    private delegate void Initializer(Intersect.Client.Framework.Gwen.Skin.Base skin);
-
-    private readonly object _initializationLock = new();
-    private volatile bool _initialized;
-
-    private Initializer? _initializer;
-
     // Alt+drag state
     private bool _isAltDragging;
     private Point _altDragStartPos;
     private Point _altDragStartWindowPos;
+    private string? _preferenceKey;
 
-    protected Window(
-        Base parent,
-        string? title = default,
-        bool modal = false,
-        string? name = default
-    ) : base(parent, title, modal, name)
+    public DraggablePanel(Base parent, string? name = default, string? preferenceKey = null) 
+        : base(parent, name)
     {
-        _initializer = Initialize;
-
-        SetTextColor(Color.White, ControlState.Active);
-        SetTextColor(new Color(a: 255, r: 191, g: 191, b: 191), ControlState.Inactive);
-
-        SkipRender();
-
-        // Subscribe to dragged event to save position
-        Titlebar.Dragged += OnWindowDragged;
+        _preferenceKey = preferenceKey ?? name;
+        MouseInputEnabled = true;
     }
 
-    protected override void OnPreDraw(Intersect.Client.Framework.Gwen.Skin.Base skin)
+    protected override void OnChildTouched(Base control)
     {
-        base.OnPreDraw(skin);
+        base.OnChildTouched(control);
 
-        if (_initializer is { } initializer)
+        // If Alt is held when a child is clicked, start Alt+drag
+        if (Globals.InputManager != null && 
+            (Globals.InputManager.IsKeyDown(Keys.Alt) || Globals.InputManager.IsKeyDown(Keys.LMenu)) &&
+            InputHandler.MousePosition is { } mousePosition)
         {
-            _initializer = null;
-            initializer(skin);
+            // Remove alignments so control can be freely positioned
+            RemoveAlignments();
+            
+            // Start Alt+drag - store the hold position relative to the control
+            _isAltDragging = true;
+            _altDragStartPos = CanvasPosToLocal(mousePosition);
+            _altDragStartWindowPos = new Point(X, Y);
+            InputHandler.MouseFocus = this;
         }
-    }
-
-    private void Initialize(Intersect.Client.Framework.Gwen.Skin.Base skin)
-    {
-        lock (_initializationLock)
-        {
-            EnsureInitialized();
-            DoLayoutIfNeeded(skin);
-        }
-    }
-
-    protected abstract void EnsureInitialized();
-
-    protected override void OnJsonReloaded()
-    {
-        base.OnJsonReloaded();
-        // Load saved position after JSON UI is loaded so it overrides default positions
-        LoadSavedPosition();
     }
 
     protected override void OnMouseDown(MouseButton mouseButton, Point mousePosition, bool userAction = true)
@@ -77,10 +54,10 @@ public abstract class Window : WindowControl
             Globals.InputManager != null && 
             (Globals.InputManager.IsKeyDown(Keys.Alt) || Globals.InputManager.IsKeyDown(Keys.LMenu)))
         {
-            // Remove alignments so window can be freely positioned
+            // Remove alignments so control can be freely positioned
             RemoveAlignments();
             
-            // Start Alt+drag - store the hold position relative to the window
+            // Start Alt+drag - store the hold position relative to the control
             _isAltDragging = true;
             _altDragStartPos = CanvasPosToLocal(mousePosition);
             _altDragStartWindowPos = new Point(X, Y);
@@ -108,7 +85,7 @@ public abstract class Window : WindowControl
 
         if (_isAltDragging && IsActive)
         {
-            // Calculate new position based on mouse movement (similar to Dragger)
+            // Calculate new position based on mouse movement
             // x, y are canvas coordinates
             Point position = new(x - _altDragStartPos.X, y - _altDragStartPos.Y);
             if (Parent is { } parent)
@@ -116,28 +93,28 @@ public abstract class Window : WindowControl
                 position = parent.ToLocal(position.X, position.Y);
             }
 
-            // Clamp to parent bounds if ClampMovement is enabled
+            // Clamp to parent bounds if RestrictToParent is enabled
             var newX = position.X;
             var newY = position.Y;
 
-            if (Parent != null && ClampMovement)
+            if (Parent != null && RestrictToParent)
             {
-                var windowWidth = Bounds.Width;
-                var windowHeight = Bounds.Height;
+                var controlWidth = Bounds.Width;
+                var controlHeight = Bounds.Height;
                 var parentWidth = Parent.Bounds.Width;
                 var parentHeight = Parent.Bounds.Height;
 
-                if (newX + windowWidth > parentWidth)
+                if (newX + controlWidth > parentWidth)
                 {
-                    newX = parentWidth - windowWidth;
+                    newX = parentWidth - controlWidth;
                 }
                 if (newX < 0)
                 {
                     newX = 0;
                 }
-                if (newY + windowHeight > parentHeight)
+                if (newY + controlHeight > parentHeight)
                 {
-                    newY = parentHeight - windowHeight;
+                    newY = parentHeight - controlHeight;
                 }
                 if (newY < 0)
                 {
@@ -149,39 +126,36 @@ public abstract class Window : WindowControl
         }
     }
 
-    private void OnWindowDragged(Base sender, EventArgs args)
+    protected override void OnJsonReloaded()
     {
-        // Save position when window is dragged via titlebar
-        SavePosition();
+        base.OnJsonReloaded();
+        // Load saved position after JSON UI is loaded so it overrides default positions
+        if (!string.IsNullOrWhiteSpace(_preferenceKey))
+        {
+            LoadSavedPosition();
+        }
     }
 
     private void SavePosition()
     {
-        if (string.IsNullOrWhiteSpace(Name) || Globals.Database == null)
+        if (string.IsNullOrWhiteSpace(_preferenceKey) || Globals.Database == null)
         {
             return;
         }
 
-        // Only save if window has a custom position (not using alignments)
-        if (Alignment.Length > 0)
-        {
-            // If window has alignments, we might want to clear them when Alt+dragged
-            // For now, we'll save the position anyway
-        }
-
-        var positionKey = $"WindowPosition_{Name}";
+        var positionKey = $"WindowPosition_{_preferenceKey}";
         var positionValue = $"{X},{Y}";
         Globals.Database.SavePreference(positionKey, positionValue);
     }
 
     private void LoadSavedPosition()
     {
-        if (string.IsNullOrWhiteSpace(Name) || Globals.Database == null)
+        if (string.IsNullOrWhiteSpace(_preferenceKey) || Globals.Database == null)
         {
             return;
         }
 
-        var positionKey = $"WindowPosition_{Name}";
+        var positionKey = $"WindowPosition_{_preferenceKey}";
         var positionValue = Globals.Database.LoadPreference(positionKey);
         
         if (string.IsNullOrWhiteSpace(positionValue))
@@ -198,22 +172,22 @@ public abstract class Window : WindowControl
             // Validate position is within parent bounds
             if (Parent != null)
             {
-                var windowWidth = Bounds.Width;
-                var windowHeight = Bounds.Height;
+                var controlWidth = Bounds.Width;
+                var controlHeight = Bounds.Height;
                 var parentWidth = Parent.Bounds.Width;
                 var parentHeight = Parent.Bounds.Height;
 
-                if (x + windowWidth > parentWidth)
+                if (x + controlWidth > parentWidth)
                 {
-                    x = parentWidth - windowWidth;
+                    x = parentWidth - controlWidth;
                 }
                 if (x < 0)
                 {
                     x = 0;
                 }
-                if (y + windowHeight > parentHeight)
+                if (y + controlHeight > parentHeight)
                 {
-                    y = parentHeight - windowHeight;
+                    y = parentHeight - controlHeight;
                 }
                 if (y < 0)
                 {
@@ -227,3 +201,4 @@ public abstract class Window : WindowControl
         }
     }
 }
+

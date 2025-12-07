@@ -6,6 +6,7 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
+using Intersect.Client.Interface;
 using Intersect.Client.Localization;
 using Intersect.Configuration;
 using Intersect.Core;
@@ -109,7 +110,7 @@ public partial class EntityBox
         EntityType = entityType;
         _isPlayerBox = isPlayerBox;
         EntityWindow =
-            _isPlayerBox ? new ImagePanel(gameCanvas, "PlayerBox") : new ImagePanel(gameCanvas, "TargetBox");
+            _isPlayerBox ? new DraggableImagePanel(gameCanvas, "PlayerBox", "PlayerBox") : new DraggableImagePanel(gameCanvas, "TargetBox", "TargetBox");
 
         EntityWindow.ShouldCacheToTexture = true;
 

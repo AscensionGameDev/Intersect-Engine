@@ -9,6 +9,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
@@ -55,7 +56,7 @@ public partial class Chatbox
     private Dictionary<ChatboxTab, Button> mTabButtons = new Dictionary<ChatboxTab, Button>();
 
     //Window Controls
-    private ImagePanel mChatboxWindow;
+    private DraggableImagePanel mChatboxWindow;
 
     private GameInterface mGameUi;
 
@@ -100,7 +101,7 @@ public partial class Chatbox
         mGameUi = gameUi;
 
         //Chatbox Window
-        mChatboxWindow = new ImagePanel(gameCanvas, "ChatboxWindow");
+        mChatboxWindow = new DraggableImagePanel(gameCanvas, "ChatboxWindow", "ChatboxWindow");
         mChatboxMessages = new ListBox(mChatboxWindow, "MessageList")
         {
             Dock = Pos.Fill,
