@@ -1,125 +1,191 @@
-# Skills System Database Migrations
+# Skills System Database Migrations (SQLite Only)
 
-This directory contains SQL scripts to add the Skills system to your Intersect database.
+This guide provides instructions for adding the Skills system to your Intersect SQLite databases.
 
 ## Overview
 
 The Skills system requires two database changes:
-1. **Game Database** (`gamedata.db` or MySQL equivalent): Add a `Skills` table to store skill definitions
-2. **Player Database** (`playerdata.db` or MySQL equivalent): Add a `Skills` column to the `Players` table to store player skill progress
+1. **Game Database** (`resources/gamedata.db`): Add a `Skills` table to store skill definitions
+2. **Player Database** (`resources/playerdata.db`): Add a `Skills` column to the `Players` table to store player skill progress
 
-## Important Notes
+## ⚠️ IMPORTANT: Before You Begin
 
-- **Backup your databases** before running these scripts!
-- These scripts are idempotent - they can be run multiple times safely (they check if tables/columns already exist)
-- Make sure your server is **stopped** before running these migrations
+- **STOP YOUR INTERSECT SERVER** before making any database changes
+- **BACKUP YOUR DATABASES** - Copy both database files to a safe location
+- Close any database management tools (DB Browser for SQLite, etc.)
+- These migrations are safe to run multiple times (idempotent)
 
-## Migration Steps
+## Method 1: Using SQL Scripts (Recommended)
 
-### For SQLite (Default)
+### Step 1: Backup Your Databases
 
-1. **Stop your Intersect server**
-2. **Backup your databases:**
-   - Copy `resources/gamedata.db` to `resources/gamedata.db.backup`
-   - Copy `resources/playerdata.db` to `resources/playerdata.db.backup`
-
-3. **Run the game database migration:**
-   ```bash
-   sqlite3 resources/gamedata.db < database_migrations/001_add_skills_table_sqlite.sql
-   ```
-
-4. **Run the player database migration:**
-   ```bash
-   sqlite3 resources/playerdata.db < database_migrations/002_add_skills_to_players_sqlite.sql
-   ```
-
-5. **Start your server** and verify everything works
-
-### For MySQL
-
-1. **Stop your Intersect server**
-2. **Backup your databases** (use your preferred MySQL backup method)
-
-3. **Run the game database migration:**
-   ```bash
-   mysql -u your_username -p your_game_database < database_migrations/001_add_skills_table_mysql.sql
-   ```
-
-4. **Run the player database migration:**
-   ```bash
-   mysql -u your_username -p your_player_database < database_migrations/002_add_skills_to_players_mysql.sql
-   ```
-
-5. **Start your server** and verify everything works
-
-## Verification
-
-After running the migrations, you can verify they worked:
-
-### SQLite
 ```bash
-# Check Skills table exists
-sqlite3 resources/gamedata.db ".tables" | grep -i skills
+# Windows PowerShell
+Copy-Item resources\gamedata.db resources\gamedata.db.backup
+Copy-Item resources\playerdata.db resources\playerdata.db.backup
 
-# Check Players table has Skills column
-sqlite3 resources/playerdata.db "PRAGMA table_info(Players);" | grep -i skills
+# Linux/Mac
+cp resources/gamedata.db resources/gamedata.db.backup
+cp resources/playerdata.db resources/playerdata.db.backup
 ```
 
-### MySQL
+### Step 2: Run the Migration Scripts
+
+**For Game Database (gamedata.db):**
+```bash
+sqlite3 resources/gamedata.db < database_migrations/001_add_skills_table.sql
+```
+
+**For Player Database (playerdata.db):**
+```bash
+sqlite3 resources/playerdata.db < database_migrations/002_add_skills_to_players.sql
+```
+
+### Step 3: Verify the Migrations
+
+**Check Skills table exists:**
+```bash
+sqlite3 resources/gamedata.db ".tables" | findstr /i skills
+# Should output: Skills
+```
+
+**Check Players table has Skills column:**
+```bash
+sqlite3 resources/playerdata.db "PRAGMA table_info(Players);" | findstr /i skills
+# Should show a row with column name "Skills"
+```
+
+## Method 2: Manual SQL Commands
+
+If you prefer to run the SQL commands manually (using DB Browser for SQLite, sqlite3 command line, etc.):
+
+### Step 1: Backup Your Databases
+Same as Method 1, Step 1.
+
+### Step 2: Add Skills Table to Game Database
+
+Open `resources/gamedata.db` and run:
+
 ```sql
--- Check Skills table exists
-SHOW TABLES LIKE 'Skills';
-
--- Check Players table has Skills column
-DESCRIBE Players;
--- Look for a 'Skills' column in the output
+CREATE TABLE IF NOT EXISTS Skills (
+    Id BLOB NOT NULL PRIMARY KEY,
+    TimeCreated INTEGER NOT NULL,
+    Name TEXT,
+    MaxLevel INTEGER NOT NULL DEFAULT 99,
+    BaseExperience INTEGER NOT NULL DEFAULT 100,
+    ExperienceIncrease INTEGER NOT NULL DEFAULT 50,
+    ExperienceOverrides TEXT,
+    ExperienceCurve TEXT,
+    Icon TEXT,
+    Description TEXT,
+    Folder TEXT
+);
 ```
+
+### Step 3: Add Skills Column to Players Table
+
+Open `resources/playerdata.db` and run:
+
+```sql
+-- Check if column already exists first
+-- Run this to see all columns:
+PRAGMA table_info(Players);
+
+-- If Skills column is NOT in the list, run:
+ALTER TABLE Players ADD COLUMN Skills TEXT;
+```
+
+**Note:** If you get an error "duplicate column name: Skills", the column already exists and you can ignore the error.
+
+### Step 4: Verify the Changes
+
+**In Game Database:**
+```sql
+-- Should return 1 row showing the Skills table
+SELECT name FROM sqlite_master WHERE type='table' AND name='Skills';
+```
+
+**In Player Database:**
+```sql
+-- Should show Skills in the column list
+PRAGMA table_info(Players);
+```
+
+## Verification Checklist
+
+After running migrations, verify:
+
+- [ ] `resources/gamedata.db` has a `Skills` table
+- [ ] `resources/playerdata.db` `Players` table has a `Skills` column (TEXT type)
+- [ ] Server starts without database errors
+- [ ] You can create skills in the editor
+- [ ] Skills appear in the client skills window
 
 ## Troubleshooting
 
-### "Table already exists" or "Column already exists"
-This is normal if you've already run the migration. The scripts are designed to be safe to run multiple times.
-
 ### "Database is locked"
-- Make sure your Intersect server is completely stopped
-- Close any database management tools (like DB Browser for SQLite)
+- Make sure the Intersect server is completely stopped
+- Close all database management tools
 - Wait a few seconds and try again
 
-### Migration fails partway through
-1. Restore your database backups
-2. Check the error message
-3. Ensure your database user has proper permissions (for MySQL)
-4. Try running the migration again
+### "Table already exists" or "Column already exists"
+- This is normal if you've already run the migration
+- The scripts use `CREATE TABLE IF NOT EXISTS` and check for existing columns
+- You can safely ignore these messages
 
-## Rollback
+### "No such table: Skills" after migration
+- Verify you ran the migration on the correct database file
+- Check that the migration script completed without errors
+- Try running the migration again
 
-If you need to rollback these changes:
+### "No such column: p.Skills" after migration
+- Verify you ran the player database migration
+- Check that the `Skills` column exists: `PRAGMA table_info(Players);`
+- If missing, run the migration again
 
-### SQLite
+## Rollback (If Needed)
+
+If you need to remove the Skills system:
+
+**Remove Skills column from Players:**
 ```sql
--- Remove Skills column from Players table
+-- Run in playerdata.db
 ALTER TABLE Players DROP COLUMN Skills;
+```
 
--- Remove Skills table
+**Remove Skills table:**
+```sql
+-- Run in gamedata.db
 DROP TABLE IF EXISTS Skills;
 ```
 
-### MySQL
-```sql
--- Remove Skills column from Players table
-ALTER TABLE Players DROP COLUMN Skills;
+**⚠️ WARNING:** This will delete all skill data! Make sure you have backups.
 
--- Remove Skills table
-DROP TABLE IF EXISTS Skills;
-```
+## Schema Reference
 
-**Warning:** Rolling back will delete all skill data! Make sure you have backups.
+### Skills Table Structure
+- `Id` (BLOB, PRIMARY KEY) - GUID of the skill
+- `TimeCreated` (INTEGER) - Timestamp when skill was created
+- `Name` (TEXT) - Name of the skill
+- `MaxLevel` (INTEGER, DEFAULT 99) - Maximum level for this skill
+- `BaseExperience` (INTEGER, DEFAULT 100) - Base experience required
+- `ExperienceIncrease` (INTEGER, DEFAULT 50) - Experience increase per level
+- `ExperienceOverrides` (TEXT) - JSON dictionary of level->experience overrides
+- `ExperienceCurve` (TEXT) - JSON serialized ExperienceCurve object
+- `Icon` (TEXT) - Icon texture filename
+- `Description` (TEXT) - Skill description
+- `Folder` (TEXT) - Folder organization path
+
+### Players.Skills Column
+- `Skills` (TEXT) - JSON serialized Dictionary<Guid, SkillData>
+  - Format: `{"skill-guid-1": {"Experience": 100, "Level": 5}, "skill-guid-2": {...}}`
 
 ## Support
 
-If you encounter issues with these migrations, please:
-1. Check that you've backed up your databases
-2. Verify your database type (SQLite vs MySQL)
-3. Check the error messages carefully
-4. Ensure your server is stopped before running migrations
+If you encounter issues:
+1. Verify you backed up your databases
+2. Check that the server is stopped
+3. Review error messages carefully
+4. Ensure you're modifying the correct database files
+5. Try running the migrations again
 
