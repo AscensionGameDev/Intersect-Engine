@@ -1551,10 +1551,51 @@ public abstract partial class Entity : IEntity
             return;
         }
 
+        // Apply healing modifiers for Health only (positive amounts = healing)
+        if (vital == Vital.Health && amount > 0)
+        {
+            amount = ApplyHealingModifiers(amount);
+        }
+
         var vitalId = (int)vital;
         var maxVitalValue = GetMaxVital(vitalId);
         var safeAmount = Math.Min(amount, long.MaxValue - maxVitalValue);
         SetVital(vital, GetVital(vital) + safeAmount);
+    }
+
+    /// <summary>
+    /// Applies Grievous Wounds and Healing Boost modifiers to healing amount.
+    /// Formula: Healing × (1 + boost) × (1 - reduction)
+    /// </summary>
+    protected long ApplyHealingModifiers(long healAmount)
+    {
+        if (healAmount <= 0)
+        {
+            return healAmount;
+        }
+
+        var boostModifier = 0.0;
+        var reductionModifier = 0.0;
+
+        foreach (var status in CachedStatuses)
+        {
+            if (status.Type == SpellEffect.GrievousWounds)
+            {
+                reductionModifier += Options.Instance.Combat.GrievousWoundsHealingReduction / 100.0;
+            }
+            else if (status.Type == SpellEffect.HealingBoost)
+            {
+                boostModifier += Options.Instance.Combat.HealingBoostPercentage / 100.0;
+            }
+        }
+
+        // Cap reduction at 100% to avoid negative healing
+        reductionModifier = Math.Min(1.0, reductionModifier);
+
+        // Apply multiplicative formula: Healing × (1 + boost) × (1 - reduction)
+        var finalModifier = (1.0 + boostModifier) * (1.0 - reductionModifier);
+
+        return (long)(healAmount * finalModifier);
     }
 
     public void SubVital(Vital vital, long amount)
@@ -2211,10 +2252,17 @@ public abstract partial class Entity : IEntity
             }
             else if (baseDamage < 0 && !enemy.IsFullVital(Vital.Health))
             {
-                enemy.AddVital(Vital.Health, -baseDamage);
-                PacketSender.SendActionMsg(
-                    enemy, Strings.Combat.AddSymbol + Math.Abs(baseDamage), CustomColors.Combat.Heal
-                );
+                var healAmount = -baseDamage;
+                var previousHealth = enemy.GetVital(Vital.Health);
+                enemy.AddVital(Vital.Health, healAmount);
+                var actualHealed = enemy.GetVital(Vital.Health) - previousHealth;
+                
+                if (actualHealed > 0)
+                {
+                    PacketSender.SendActionMsg(
+                        enemy, Strings.Combat.AddSymbol + actualHealed, CustomColors.Combat.Heal
+                    );
+                }
             }
         }
 

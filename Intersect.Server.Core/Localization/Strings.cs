@@ -334,6 +334,9 @@ public static partial class Strings
             {10, @"SLEEP!"},
             {11, @"ON HIT!"},
             {12, @"TAUNT!"},
+            {13, @"KNOCKBACK!"},
+            {14, @"GRIEVOUS WOUNDS!"},
+            {15, @"HEALING BOOST!"},
             }
         );
 

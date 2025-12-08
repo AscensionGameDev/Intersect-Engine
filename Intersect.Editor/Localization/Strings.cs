@@ -5312,6 +5312,9 @@ Tick timer saved in server config.json.";
             {10, @"Sleep"},
             {11, @"OnHit"},
             {12, @"Taunt"},
+            {13, @"Knockback"},
+            {14, @"Grievous Wounds"},
+            {15, @"Healing Boost"},
         };
 
         public static LocalizedString effectgroup = @"Effect";
