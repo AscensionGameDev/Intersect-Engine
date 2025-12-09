@@ -535,6 +535,8 @@ public partial class FrmSpell : EditorForm
         lblSprite.Visible = false;
         cmbTransform.Visible = false;
         picSprite.Visible = false;
+        lblKnockbackTiles.Visible = false;
+        nudKnockbackTiles.Visible = false;
 
         if (cmbExtraEffect.SelectedIndex == 6) //Transform
         {
@@ -566,6 +568,13 @@ public partial class FrmSpell : EditorForm
             {
                 picSprite.BackgroundImage = null;
             }
+        }
+
+        if (cmbExtraEffect.SelectedIndex == (int)SpellEffect.Knockback) // Knockback
+        {
+            lblKnockbackTiles.Visible = true;
+            nudKnockbackTiles.Visible = true;
+            nudKnockbackTiles.Value = Math.Max(1, mEditorItem.Combat.KnockbackTiles);
         }
     }
 
@@ -1099,5 +1108,10 @@ public partial class FrmSpell : EditorForm
     {
         Guid animationId = AnimationDescriptor.IdFromList(cmbTickAnimation.SelectedIndex - 1);
         mEditorItem.TickAnimation = AnimationDescriptor.Get(animationId);
+    }
+
+    private void nudKnockbackTiles_ValueChanged(object sender, EventArgs e)
+    {
+        mEditorItem.Combat.KnockbackTiles = (int)nudKnockbackTiles.Value;
     }
 }

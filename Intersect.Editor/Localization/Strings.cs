@@ -5364,6 +5364,9 @@ Tick timer saved in server config.json.";
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString TickAnimation = @"Tick Animation:";
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString knockbacktiles = @"Tiles:";
+
         public static LocalizedString magicresist = @"Magic Resist:";
 
         public static LocalizedString manacost = @"Mana Cost:";

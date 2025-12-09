@@ -121,6 +121,8 @@ namespace Intersect.Editor.Forms.Editors
             this.picSprite = new System.Windows.Forms.PictureBox();
             this.cmbTransform = new DarkUI.Controls.DarkComboBox();
             this.lblSprite = new System.Windows.Forms.Label();
+            this.lblKnockbackTiles = new System.Windows.Forms.Label();
+            this.nudKnockbackTiles = new DarkUI.Controls.DarkNumericUpDown();
             this.grpEffectDuration = new DarkUI.Controls.DarkGroupBox();
             this.nudBuffDuration = new DarkUI.Controls.DarkNumericUpDown();
             this.lblBuffDuration = new System.Windows.Forms.Label();
@@ -206,6 +208,7 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudTick)).BeginInit();
             this.grpEffect.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picSprite)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudKnockbackTiles)).BeginInit();
             this.grpEffectDuration.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudBuffDuration)).BeginInit();
             this.grpDamage.SuspendLayout();
@@ -1511,6 +1514,8 @@ namespace Intersect.Editor.Forms.Editors
             this.grpEffect.Controls.Add(this.picSprite);
             this.grpEffect.Controls.Add(this.cmbTransform);
             this.grpEffect.Controls.Add(this.lblSprite);
+            this.grpEffect.Controls.Add(this.lblKnockbackTiles);
+            this.grpEffect.Controls.Add(this.nudKnockbackTiles);
             this.grpEffect.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpEffect.Location = new System.Drawing.Point(224, 243);
             this.grpEffect.Name = "grpEffect";
@@ -1554,7 +1559,10 @@ namespace Intersect.Editor.Forms.Editors
             "Shield",
             "Sleep",
             "On Hit",
-            "Taunt"});
+            "Taunt",
+            "Knockback",
+            "Grievous Wounds",
+            "Healing Boost"});
             this.cmbExtraEffect.Location = new System.Drawing.Point(5, 31);
             this.cmbExtraEffect.Name = "cmbExtraEffect";
             this.cmbExtraEffect.Size = new System.Drawing.Size(80, 21);
@@ -1604,6 +1612,32 @@ namespace Intersect.Editor.Forms.Editors
             this.lblSprite.Size = new System.Drawing.Size(37, 13);
             this.lblSprite.TabIndex = 40;
             this.lblSprite.Text = "Sprite:";
+            // 
+            // lblKnockbackTiles
+            // 
+
+            this.lblKnockbackTiles.AutoSize = true;
+            this.lblKnockbackTiles.Location = new System.Drawing.Point(91, 34);
+            this.lblKnockbackTiles.Name = "lblKnockbackTiles";
+            this.lblKnockbackTiles.Size = new System.Drawing.Size(32, 13);
+            this.lblKnockbackTiles.TabIndex = 45;
+            this.lblKnockbackTiles.Text = "Tiles:";
+            this.lblKnockbackTiles.Visible = false;
+            // 
+            // nudKnockbackTiles
+            // 
+
+            this.nudKnockbackTiles.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudKnockbackTiles.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudKnockbackTiles.Location = new System.Drawing.Point(129, 31);
+            this.nudKnockbackTiles.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
+            this.nudKnockbackTiles.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            this.nudKnockbackTiles.Name = "nudKnockbackTiles";
+            this.nudKnockbackTiles.Size = new System.Drawing.Size(50, 20);
+            this.nudKnockbackTiles.TabIndex = 46;
+            this.nudKnockbackTiles.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            this.nudKnockbackTiles.Visible = false;
+            this.nudKnockbackTiles.ValueChanged += new System.EventHandler(this.nudKnockbackTiles_ValueChanged);
             // 
             // grpEffectDuration
             // 
@@ -2415,6 +2449,7 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudHitRadius)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCastRange)).EndInit();
             this.grpCombat.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.nudKnockbackTiles)).EndInit();
             this.grpStats.ResumeLayout(false);
             this.grpStats.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudSpdPercentage)).EndInit();
@@ -2607,5 +2642,7 @@ namespace Intersect.Editor.Forms.Editors
         private DarkComboBox cmbTickAnimation;
         private System.Windows.Forms.Label lblSpriteCastAnimation;
         private DarkComboBox cmbCastSprite;
+        private System.Windows.Forms.Label lblKnockbackTiles;
+        private DarkNumericUpDown nudKnockbackTiles;
     }
 }

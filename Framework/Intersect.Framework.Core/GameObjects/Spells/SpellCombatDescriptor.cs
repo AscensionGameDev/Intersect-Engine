@@ -83,6 +83,11 @@ public partial class SpellCombatDescriptor
 
     public SpellEffect Effect { get; set; }
 
+    /// <summary>
+    /// Number of tiles to push the target when Knockback effect is applied.
+    /// </summary>
+    public int KnockbackTiles { get; set; } = 1;
+
     public string TransformSprite { get; set; }
 
     [Column("OnHit")]
