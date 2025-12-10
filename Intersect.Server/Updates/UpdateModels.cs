@@ -15,6 +15,7 @@ namespace Intersect.Server.Updates
         [JsonProperty("generated")]
         public DateTime Generated { get; set; }
     }
+
     public class UpdateFile
     {
         [JsonProperty("name")]
@@ -29,6 +30,7 @@ namespace Intersect.Server.Updates
         [JsonProperty("url")]
         public string Url { get; set; }
     }
+
     public class UploadUpdateRequest
     {
         public string Version { get; set; }
