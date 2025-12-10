@@ -82,29 +82,6 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
         var updateServerSection = builder.Configuration.GetSection(GetOptionsName<UpdateServerOptions>());
         builder.Services.Configure<UpdateServerOptions>(updateServerSection);
 
-        // Register UpdateService for handling game update distribution
-        builder.Services.AddSingleton(serviceProvider =>
-        {
-            var context = serviceProvider.GetRequiredService();
-            var workingDirectory = Environment.CurrentDirectory;
-    
-            // Try to get the port from API configuration
-            var apiConfig = apiConfigurationSection.Get();
-            var port = 5400; // Default
-    
-            // You may need to adjust this based on where the actual server port is configured
-            // For now, using default
-            var serverUrl = $"http://localhost:{port}";
-    
-            context.Logger.LogInformation(
-                "Initializing UpdateService with directory: {WorkingDirectory}, URL: {ServerUrl}", 
-                workingDirectory, 
-                serverUrl
-            );
-    
-            return new UpdateService(workingDirectory, serverUrl);
-        });
-
         // I can't get System.Text.Json to deserialize an array as non-null, and it totally ignores
         // the JsonConverter attribute I tried putting on it, so I am just giving up and doing this
         // to make sure the array is not null in the event that it is empty.
