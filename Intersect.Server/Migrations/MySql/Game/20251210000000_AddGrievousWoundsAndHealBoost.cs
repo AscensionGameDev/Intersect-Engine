@@ -11,29 +11,17 @@ namespace Intersect.Server.Migrations.MySql.Game
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<int>(
-                name: "Combat_GrievousWoundsReduction",
+                name: "Combat_PercentageEffect",
                 table: "Spells",
                 type: "int",
-                nullable: false,
-                defaultValue: 0);
-
-            migrationBuilder.AddColumn<int>(
-                name: "Combat_HealingBoostPercentage",
-                table: "Spells",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+                nullable: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Combat_GrievousWoundsReduction",
-                table: "Spells");
-
-            migrationBuilder.DropColumn(
-                name: "Combat_HealingBoostPercentage",
+                name: "Combat_PercentageEffect",
                 table: "Spells");
         }
     }

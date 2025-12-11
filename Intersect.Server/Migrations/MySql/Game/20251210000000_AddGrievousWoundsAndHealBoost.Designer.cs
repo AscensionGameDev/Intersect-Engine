@@ -31,10 +31,7 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.Property<int>("Combat_KnockbackTiles")
                         .HasColumnType("int");
 
-                    b.Property<int>("Combat_GrievousWoundsReduction")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Combat_HealingBoostPercentage")
+                    b.Property<int?>("Combat_PercentageEffect")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
