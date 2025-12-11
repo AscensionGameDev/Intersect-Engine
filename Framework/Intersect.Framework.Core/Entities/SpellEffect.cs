@@ -30,7 +30,7 @@ public enum SpellEffect
 
     Knockback = 13,
 
-    GrievousWounds = 14,
+    HealingReduction = 14,
 
     HealingBoost = 15,
 }

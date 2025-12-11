@@ -88,6 +88,8 @@ public partial class SpellCombatDescriptor
     /// </summary>
     public int KnockbackTiles { get; set; } = 1;
 
+    public int? PercentageEffect { get; set; }
+
     public string TransformSprite { get; set; }
 
     [Column("OnHit")]

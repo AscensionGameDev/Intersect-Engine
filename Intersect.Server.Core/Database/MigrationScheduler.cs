@@ -63,13 +63,16 @@ public sealed class MigrationScheduler<TContext>
 
         while (scheduleSegment.Any())
         {
+            ApplicationContext.Context.Value?.Logger.LogInformation($"Schedule segment count: {scheduleSegment.Count}");
             var targetMigration = scheduleSegment
                 .TakeWhile(metadata => metadata is SchemaMigrationMetadata)
                 .LastOrDefault();
 
             if (targetMigration is SchemaMigrationMetadata)
             {
+                ApplicationContext.Context.Value?.Logger.LogInformation($"Migrating schema via EF Core to: {targetMigration.Name}");
                 migrator.Migrate(targetMigration.Name);
+                ApplicationContext.Context.Value?.Logger.LogInformation($"EF Core migration to {targetMigration.Name} finished.");
 
                 scheduleSegment = scheduleSegment
                     .SkipWhile(metadata => metadata is SchemaMigrationMetadata)
@@ -94,7 +97,9 @@ public sealed class MigrationScheduler<TContext>
                 throw new InvalidOperationException($"Failed to create instance of data migration: {scheduledDataMigration.MigratorType.FullName}");
             }
 
+            ApplicationContext.Context.Value?.Logger.LogInformation($"Executing data migration: {scheduledDataMigration.Name}");
             dataMigration.Up(_context.ContextOptions);
+            ApplicationContext.Context.Value?.Logger.LogInformation($"Data migration {scheduledDataMigration.Name} finished.");
 
             scheduleSegment = scheduleSegment
                 .Skip(1)

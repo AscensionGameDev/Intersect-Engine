@@ -1564,8 +1564,9 @@ public abstract partial class Entity : IEntity
     }
 
     /// <summary>
-    /// Applies Grievous Wounds and Healing Boost modifiers to healing amount.
-    /// Formula: Healing × (1 + boost) × (1 - reduction)
+    /// Applies Healing Reduction and Healing Boost modifiers to healing amount.
+    /// Formula: Healing * (1 + boost) OR Healing * (1 - reduction)
+    /// Only the latest applied effect is considered.
     /// </summary>
     protected long ApplyHealingModifiers(long healAmount)
     {
@@ -1574,28 +1575,34 @@ public abstract partial class Entity : IEntity
             return healAmount;
         }
 
-        var boostModifier = 0.0;
-        var reductionModifier = 0.0;
+        // Find the latest applied status that is either HealingReduction or HealingBoost
+        var latestStatus = CachedStatuses
+            .Where(s => s.Type == SpellEffect.HealingReduction || s.Type == SpellEffect.HealingBoost)
+            .OrderByDescending(s => s.StartTime)
+            .FirstOrDefault();
 
-        foreach (var status in CachedStatuses)
+        if (latestStatus == null)
         {
-            if (status.Type == SpellEffect.GrievousWounds)
-            {
-                reductionModifier += Options.Instance.Combat.GrievousWoundsHealingReduction / 100.0;
-            }
-            else if (status.Type == SpellEffect.HealingBoost)
-            {
-                boostModifier += Options.Instance.Combat.HealingBoostPercentage / 100.0;
-            }
+            return healAmount;
         }
 
-        // Cap reduction at 100% to avoid negative healing
-        reductionModifier = Math.Min(1.0, reductionModifier);
+        var percentage = latestStatus.Spell.Combat.PercentageEffect ?? 0;
 
-        // Apply multiplicative formula: Healing × (1 + boost) × (1 - reduction)
-        var finalModifier = (1.0 + boostModifier) * (1.0 - reductionModifier);
+        if (latestStatus.Type == SpellEffect.HealingReduction)
+        {
+             // Reduction: 0 to 100%
+             var reduction = Math.Clamp(percentage, 0, 100) / 100.0;
+             return (long)(healAmount * (1.0 - reduction));
+        }
+        
+        if (latestStatus.Type == SpellEffect.HealingBoost)
+        {
+            // Boost: 0 to 1000%
+            var boost = Math.Clamp(percentage, 0, 1000) / 100.0;
+            return (long)(healAmount * (1.0 + boost));
+        }
 
-        return (long)(healAmount * finalModifier);
+        return healAmount;
     }
 
     public void SubVital(Vital vital, long amount)
