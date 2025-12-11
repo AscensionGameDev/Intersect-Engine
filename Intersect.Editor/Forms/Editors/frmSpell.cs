@@ -378,6 +378,7 @@ public partial class FrmSpell : EditorForm
             chkHOTDOT.Checked = mEditorItem.Combat.HoTDoT;
             nudBuffDuration.Value = mEditorItem.Combat.Duration;
             nudTick.Value = mEditorItem.Combat.HotDotInterval;
+            nudPercentageEffect.Value = mEditorItem.Combat.PercentageEffect ?? 0;
             cmbExtraEffect.SelectedIndex = (int)mEditorItem.Combat.Effect;
             cmbExtraEffect_SelectedIndexChanged(null, null);
         }
@@ -537,6 +538,8 @@ public partial class FrmSpell : EditorForm
         picSprite.Visible = false;
         lblKnockbackTiles.Visible = false;
         nudKnockbackTiles.Visible = false;
+        lblPercentageEffect.Visible = false;
+        nudPercentageEffect.Visible = false;
 
         if (cmbExtraEffect.SelectedIndex == 6) //Transform
         {
@@ -575,6 +578,12 @@ public partial class FrmSpell : EditorForm
             lblKnockbackTiles.Visible = true;
             nudKnockbackTiles.Visible = true;
             nudKnockbackTiles.Value = Math.Max(1, mEditorItem.Combat.KnockbackTiles);
+        }
+
+        if (cmbExtraEffect.SelectedIndex == (int)SpellEffect.HealingReduction || cmbExtraEffect.SelectedIndex == (int)SpellEffect.HealingBoost)
+        {
+            lblPercentageEffect.Visible = true;
+            nudPercentageEffect.Visible = true;
         }
     }
 
@@ -1113,5 +1122,10 @@ public partial class FrmSpell : EditorForm
     private void nudKnockbackTiles_ValueChanged(object sender, EventArgs e)
     {
         mEditorItem.Combat.KnockbackTiles = (int)nudKnockbackTiles.Value;
+    }
+
+    private void nudPercentageEffect_ValueChanged(object sender, EventArgs e)
+    {
+        mEditorItem.Combat.PercentageEffect = (int)nudPercentageEffect.Value;
     }
 }

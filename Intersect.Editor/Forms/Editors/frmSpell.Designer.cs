@@ -123,6 +123,8 @@ namespace Intersect.Editor.Forms.Editors
             this.lblSprite = new System.Windows.Forms.Label();
             this.lblKnockbackTiles = new System.Windows.Forms.Label();
             this.nudKnockbackTiles = new DarkUI.Controls.DarkNumericUpDown();
+            this.lblPercentageEffect = new System.Windows.Forms.Label();
+            this.nudPercentageEffect = new DarkUI.Controls.DarkNumericUpDown();
             this.grpEffectDuration = new DarkUI.Controls.DarkGroupBox();
             this.nudBuffDuration = new DarkUI.Controls.DarkNumericUpDown();
             this.lblBuffDuration = new System.Windows.Forms.Label();
@@ -209,6 +211,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpEffect.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picSprite)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudKnockbackTiles)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPercentageEffect)).BeginInit();
             this.grpEffectDuration.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudBuffDuration)).BeginInit();
             this.grpDamage.SuspendLayout();
@@ -1516,6 +1519,8 @@ namespace Intersect.Editor.Forms.Editors
             this.grpEffect.Controls.Add(this.lblSprite);
             this.grpEffect.Controls.Add(this.lblKnockbackTiles);
             this.grpEffect.Controls.Add(this.nudKnockbackTiles);
+            this.grpEffect.Controls.Add(this.lblPercentageEffect);
+            this.grpEffect.Controls.Add(this.nudPercentageEffect);
             this.grpEffect.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpEffect.Location = new System.Drawing.Point(224, 243);
             this.grpEffect.Name = "grpEffect";
@@ -1638,6 +1643,30 @@ namespace Intersect.Editor.Forms.Editors
             this.nudKnockbackTiles.Value = new decimal(new int[] { 1, 0, 0, 0 });
             this.nudKnockbackTiles.Visible = false;
             this.nudKnockbackTiles.ValueChanged += new System.EventHandler(this.nudKnockbackTiles_ValueChanged);
+            // 
+            // lblPercentageEffect
+            // 
+            this.lblPercentageEffect.AutoSize = true;
+            this.lblPercentageEffect.Location = new System.Drawing.Point(91, 34);
+            this.lblPercentageEffect.Name = "lblPercentageEffect";
+            this.lblPercentageEffect.Size = new System.Drawing.Size(32, 13);
+            this.lblPercentageEffect.TabIndex = 47;
+            this.lblPercentageEffect.Text = "%:";
+            this.lblPercentageEffect.Visible = false;
+            // 
+            // nudPercentageEffect
+            // 
+            this.nudPercentageEffect.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudPercentageEffect.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudPercentageEffect.Location = new System.Drawing.Point(129, 31);
+            this.nudPercentageEffect.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            this.nudPercentageEffect.Minimum = new decimal(new int[] { 0, 0, 0, 0 });
+            this.nudPercentageEffect.Name = "nudPercentageEffect";
+            this.nudPercentageEffect.Size = new System.Drawing.Size(50, 20);
+            this.nudPercentageEffect.TabIndex = 48;
+            this.nudPercentageEffect.Value = new decimal(new int[] { 0, 0, 0, 0 });
+            this.nudPercentageEffect.Visible = false;
+            this.nudPercentageEffect.ValueChanged += new System.EventHandler(this.nudPercentageEffect_ValueChanged);
             // 
             // grpEffectDuration
             // 
@@ -2450,6 +2479,7 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudCastRange)).EndInit();
             this.grpCombat.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.nudKnockbackTiles)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPercentageEffect)).EndInit();
             this.grpStats.ResumeLayout(false);
             this.grpStats.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudSpdPercentage)).EndInit();
@@ -2644,5 +2674,7 @@ namespace Intersect.Editor.Forms.Editors
         private DarkComboBox cmbCastSprite;
         private System.Windows.Forms.Label lblKnockbackTiles;
         private DarkNumericUpDown nudKnockbackTiles;
+        private System.Windows.Forms.Label lblPercentageEffect;
+        private DarkNumericUpDown nudPercentageEffect;
     }
 }

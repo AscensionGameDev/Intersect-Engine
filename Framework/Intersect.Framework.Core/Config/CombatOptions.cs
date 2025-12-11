@@ -84,13 +84,5 @@ public partial class CombatOptions
     /// </summary>
     public bool EnableAllPlayersFriendlyInSafeZone { get; set; } = false;
 
-    /// <summary>
-    /// Percentage of healing reduction when Grievous Wounds effect is applied. Default 50%.
-    /// </summary>
-    public int GrievousWoundsHealingReduction { get; set; } = 50;
 
-    /// <summary>
-    /// Percentage of healing increase when Healing Boost effect is applied. Default 50%.
-    /// </summary>
-    public int HealingBoostPercentage { get; set; } = 50;
 }
