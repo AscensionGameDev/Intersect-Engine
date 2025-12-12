@@ -21,6 +21,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MathHelper = Intersect.Utilities.MathHelper;
 using XNARectangle = Microsoft.Xna.Framework.Rectangle;
 using XNAColor = Microsoft.Xna.Framework.Color;
+using ArabicSupport;
 
 namespace Intersect.Client.MonoGame.Graphics;
 
@@ -475,6 +476,8 @@ internal partial class MonoRenderer : GameRenderer
         Color? borderColor = null
     )
     {
+        // Apply Arabic text fixing if needed
+        text = ArabicFixer.FixIfNeeded(text) ?? text;
         if (font is not Font<SpriteFont> platformFont)
         {
             return;
