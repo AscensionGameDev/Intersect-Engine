@@ -3,7 +3,6 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Configuration;
 using Intersect.Core;
 using Microsoft.Extensions.Logging;
-using ArabicSupport;
 
 namespace Intersect.Client.Framework.Gwen.Renderer;
 
@@ -89,8 +88,6 @@ public partial class IntersectRenderer : Base, ICacheToTexture
 
     public override void RenderText(IFont font, int fontSize, Point pos, string text, float scale = 1f)
     {
-        // Apply Arabic text fixing if needed
-        text = ArabicFixer.FixIfNeeded(text) ?? text;
         pos = Translate(pos);
         var clip = new FloatRect(ClipRegion.X, ClipRegion.Y, ClipRegion.Width, ClipRegion.Height);
         clip.X = (int) Math.Round(clip.X * Scale);
