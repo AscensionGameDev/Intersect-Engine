@@ -25,6 +25,7 @@ using Intersect.Server.Localization;
 using Intersect.Server.Metrics;
 using Intersect.Server.Networking;
 using Intersect.Server.Plugins;
+using Intersect.Server.Systems;
 using Intersect.Threading;
 using Intersect.Utilities;
 using Microsoft.Extensions.Logging;
@@ -234,6 +235,8 @@ internal static class Bootstrapper
         ExportDependencies(args);
 
         Formulas.LoadFormulas();
+
+        SkillTreeSystem.Initialize();
 
         CustomColors.Load();
 

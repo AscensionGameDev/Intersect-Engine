@@ -26,6 +26,7 @@ using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.Security;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Core;
+using Intersect.Server.Systems;
 using Microsoft.Extensions.Logging;
 using ChatMsgPacket = Intersect.Network.Packets.Client.ChatMsgPacket;
 using LoginPacket = Intersect.Network.Packets.Client.LoginPacket;

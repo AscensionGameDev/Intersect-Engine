@@ -426,6 +426,9 @@ public partial class ItemDescriptor : DatabaseObject<ItemDescriptor>, IFolderabl
         effectToEdit.Percentage = value;
     }
 
+    [Column("SkillPoints")]
+    public int SkillPoints { get; set; }
+
     /// <inheritdoc />
     public string Folder { get; set; } = string.Empty;
 

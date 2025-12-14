@@ -25,6 +25,7 @@ using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.Entities.Events;
 using Intersect.Server.General;
+using Intersect.Server.Systems;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Utilities;
@@ -89,6 +90,7 @@ public static partial class PacketSender
         client.TimedBufferPacketsRemaining = 5;
         client.Send(new JoinGamePacket());
         SendGameData(client);
+        SendSkillTreeDefinitions(client);
 
         if (!client.IsEditor)
         {
@@ -1302,7 +1304,7 @@ public static partial class PacketSender
     //StatPointsPacket
     public static void SendPointsTo(Player player)
     {
-        player.SendPacket(new StatPointsPacket(player.StatPoints), TransmissionMode.Any);
+        player.SendPacket(new StatPointsPacket(player.StatPoints, player.SkillPoints), TransmissionMode.Any);
     }
 
     //HotbarPacket
@@ -2417,4 +2419,8 @@ public static partial class PacketSender
         }
     }
 
+    public static void SendSkillTreeDefinitions(Client client)
+    {
+        client.Send(new SkillTreeDefinitionPacket(SkillTreeSystem.SkillTrees));
+    }
 }

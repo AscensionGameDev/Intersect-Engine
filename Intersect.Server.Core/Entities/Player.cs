@@ -82,6 +82,8 @@ public partial class Player : Entity
 
     public int StatPoints { get; set; }
 
+    public int SkillPoints { get; set; }
+
     [Column("Equipment"), JsonIgnore]
     public string EquipmentJson
     {
@@ -1363,6 +1365,12 @@ public partial class Player : Entity
         if (StatPoints > 0)
         {
             messageList.Add((Strings.Player.StatPoints.ToString(StatPoints), CustomColors.Combat.StatPoints));
+        }
+
+        if (amount > 0)
+        {
+           SkillPoints += amount;
+           messageList.Add(($"Gained {amount} Skill Points!", CustomColors.Alerts.Info));
         }
 
         foreach (var (message, color) in messageList)
@@ -3422,6 +3430,15 @@ public partial class Player : Entity
             }
 
             var useEvent = itemBase.GetEventTrigger(ItemEventTrigger.OnUse);
+
+            if (itemBase.SkillPoints > 0)
+            {
+                SkillPoints += itemBase.SkillPoints;
+                PacketSender.SendChatMsg(this, $"Gained {itemBase.SkillPoints} Skill Points!", ChatMessageType.Experience, CustomColors.Alerts.Info);
+                PacketSender.SendActionMsg(this, $"+{itemBase.SkillPoints} SP", CustomColors.Combat.LevelUp);
+                TryTakeItem(slot, 1, true);
+                return;
+            }
 
             switch (itemBase.ItemType)
             {

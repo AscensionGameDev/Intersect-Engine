@@ -10,12 +10,16 @@ public partial class StatPointsPacket : IntersectPacket
     {
     }
 
-    public StatPointsPacket(int points)
+    public StatPointsPacket(int points, int skillPoints)
     {
         Points = points;
+        SkillPoints = skillPoints;
     }
 
     [Key(0)]
     public int Points { get; set; }
+
+    [Key(1)]
+    public int SkillPoints { get; set; }
 
 }

@@ -106,6 +106,8 @@ namespace Intersect.Editor.Forms.Editors
             nudIntervalPercentage = new DarkNumericUpDown();
             lblPlus3 = new Label();
             nudInterval = new DarkNumericUpDown();
+            lblSkillPoints = new Label();
+            nudSkillPoints = new DarkNumericUpDown();
             lblVital = new Label();
             cmbConsume = new DarkComboBox();
             lblInterval = new Label();
@@ -249,6 +251,7 @@ namespace Intersect.Editor.Forms.Editors
             ((ISupportInitialize)picItem).BeginInit();
             grpConsumable.SuspendLayout();
             ((ISupportInitialize)nudIntervalPercentage).BeginInit();
+            ((ISupportInitialize)nudSkillPoints).BeginInit();
             ((ISupportInitialize)nudInterval).BeginInit();
             grpEvent.SuspendLayout();
             grpBags.SuspendLayout();
@@ -1233,6 +1236,8 @@ namespace Intersect.Editor.Forms.Editors
             grpConsumable.Controls.Add(lblPercentage3);
             grpConsumable.Controls.Add(nudIntervalPercentage);
             grpConsumable.Controls.Add(lblPlus3);
+            grpConsumable.Controls.Add(lblSkillPoints);
+            grpConsumable.Controls.Add(nudSkillPoints);
             grpConsumable.Controls.Add(nudInterval);
             grpConsumable.Controls.Add(lblVital);
             grpConsumable.Controls.Add(cmbConsume);
@@ -1242,7 +1247,7 @@ namespace Intersect.Editor.Forms.Editors
             grpConsumable.Margin = new Padding(4, 3, 4, 3);
             grpConsumable.Name = "grpConsumable";
             grpConsumable.Padding = new Padding(4, 3, 4, 3);
-            grpConsumable.Size = new Size(253, 150);
+            grpConsumable.Size = new Size(253, 190);
             grpConsumable.TabIndex = 12;
             grpConsumable.TabStop = false;
             grpConsumable.Text = "Consumable";
@@ -1336,6 +1341,29 @@ namespace Intersect.Editor.Forms.Editors
             lblInterval.Size = new Size(49, 15);
             lblInterval.TabIndex = 9;
             lblInterval.Text = "Interval:";
+            // 
+            // lblSkillPoints
+            // 
+            lblSkillPoints.AutoSize = true;
+            lblSkillPoints.Location = new System.Drawing.Point(22, 137);
+            lblSkillPoints.Margin = new Padding(4, 0, 4, 0);
+            lblSkillPoints.Name = "lblSkillPoints";
+            lblSkillPoints.Size = new Size(66, 15);
+            lblSkillPoints.TabIndex = 100;
+            lblSkillPoints.Text = "Skill Points:";
+            // 
+            // nudSkillPoints
+            // 
+            nudSkillPoints.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            nudSkillPoints.ForeColor = System.Drawing.Color.Gainsboro;
+            nudSkillPoints.Location = new System.Drawing.Point(22, 155);
+            nudSkillPoints.Margin = new Padding(4, 3, 4, 3);
+            nudSkillPoints.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            nudSkillPoints.Name = "nudSkillPoints";
+            nudSkillPoints.Size = new Size(124, 23);
+            nudSkillPoints.TabIndex = 101;
+            nudSkillPoints.Value = new decimal(new int[] { 0, 0, 0, 0 });
+            nudSkillPoints.ValueChanged += nudSkillPoints_ValueChanged;
             // 
             // grpEvent
             // 
@@ -3007,6 +3035,7 @@ namespace Intersect.Editor.Forms.Editors
             grpConsumable.ResumeLayout(false);
             grpConsumable.PerformLayout();
             ((ISupportInitialize)nudIntervalPercentage).EndInit();
+            ((ISupportInitialize)nudSkillPoints).EndInit();
             ((ISupportInitialize)nudInterval).EndInit();
             grpEvent.ResumeLayout(false);
             grpEvent.PerformLayout();
@@ -3266,6 +3295,9 @@ namespace Intersect.Editor.Forms.Editors
         private DarkGroupBox grpEvents;
         private DarkComboBox cmbEventTriggers;
         private Label lblEventForTrigger;
+        private Label lblEventForTrigger;
         private ListBox lstEventTriggers;
+        private Label lblSkillPoints;
+        private DarkNumericUpDown nudSkillPoints;
     }
 }

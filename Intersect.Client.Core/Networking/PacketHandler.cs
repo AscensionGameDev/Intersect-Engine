@@ -187,6 +187,11 @@ internal sealed partial class PacketHandler
     }
 
     //JoinGamePacket
+    public void HandlePacket(IPacketSender packetSender, SkillTreeDefinitionPacket packet)
+    {
+        Globals.SkillTrees = packet.Trees;
+    }
+
     public void HandlePacket(IPacketSender packetSender, JoinGamePacket packet)
     {
         Main.JoinGame();
@@ -1385,6 +1390,7 @@ internal sealed partial class PacketHandler
         if (Globals.Me != null)
         {
             Globals.Me.StatPoints = packet.Points;
+            Globals.Me.SkillPoints = packet.SkillPoints;
         }
     }
 

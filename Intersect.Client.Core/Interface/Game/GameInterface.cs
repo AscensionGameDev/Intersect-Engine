@@ -11,6 +11,7 @@ using Intersect.Client.Interface.Game.Hotbar;
 using Intersect.Client.Interface.Game.Inventory;
 using Intersect.Client.Interface.Game.Shop;
 using Intersect.Client.Interface.Game.Trades;
+using Intersect.Client.Interface.Game.SkillTree;
 using Intersect.Client.Interface.Menu;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Networking;
@@ -141,6 +142,25 @@ public partial class GameInterface : MutableInterface
     {
         get => _spellDescriptionWindow ??= new SpellDescriptionWindow();
         set => _spellDescriptionWindow = value;
+    }
+
+    private SkillTreeWindow? _skillTreeWindow;
+
+    public void ToggleSkillTreeWindow()
+    {
+        if (_skillTreeWindow == null)
+        {
+            _skillTreeWindow = new SkillTreeWindow(GameCanvas);
+        }
+
+        if (_skillTreeWindow.IsVisible())
+        {
+            _skillTreeWindow.Hide();
+        }
+        else
+        {
+            _skillTreeWindow.Show();
+        }
     }
 
     public MenuContainer GameMenu { get; private set; }

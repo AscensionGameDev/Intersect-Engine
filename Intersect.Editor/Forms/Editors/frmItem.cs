@@ -417,6 +417,7 @@ public partial class FrmItem : EditorForm
                 cmbConsume.SelectedIndex = (int)mEditorItem.Consumable.Type;
                 nudInterval.Value = mEditorItem.Consumable.Value;
                 nudIntervalPercentage.Value = mEditorItem.Consumable.Percentage;
+                nudSkillPoints.Value = mEditorItem.SkillPoints;
             }
 
             picItem.BackgroundImage?.Dispose();
@@ -502,6 +503,7 @@ public partial class FrmItem : EditorForm
             cmbConsume.SelectedIndex = (int)mEditorItem.Consumable.Type;
             nudInterval.Value = mEditorItem.Consumable.Value;
             nudIntervalPercentage.Value = mEditorItem.Consumable.Percentage;
+            nudSkillPoints.Value = mEditorItem.SkillPoints;
             grpConsumable.Visible = true;
         }
         else if (cmbType.SelectedIndex == (int)ItemType.Spell)
@@ -797,6 +799,12 @@ public partial class FrmItem : EditorForm
     private void cmbProjectile_SelectedIndexChanged(object sender, EventArgs e)
     {
         mEditorItem.Projectile = ProjectileDescriptor.Get(ProjectileDescriptor.IdFromList(cmbProjectile.SelectedIndex - 1));
+    }
+
+    private void nudSkillPoints_ValueChanged(object sender, EventArgs e)
+    {
+        if (mEditorItem == null) return;
+        mEditorItem.SkillPoints = (int)nudSkillPoints.Value;
     }
 
     private void btnEditRequirements_Click(object sender, EventArgs e)

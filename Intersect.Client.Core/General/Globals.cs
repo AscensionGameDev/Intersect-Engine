@@ -15,6 +15,7 @@ using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
+using Intersect.Framework.SkillTree;
 using Microsoft.Extensions.Logging;
 
 namespace Intersect.Client.General;
@@ -98,7 +99,10 @@ public static partial class Globals
     public static GameSystem System;
 
     //Trading (Only 2 people can trade at once)
+    //Trading (Only 2 people can trade at once)
     public static Item[,] Trade;
+
+    public static List<SkillTree> SkillTrees { get; set; } = new List<SkillTree>();
 
     //Scene management
 
