@@ -56,5 +56,10 @@ namespace Intersect.Client.Interface.Game.SkillTree
             base.Show();
             LoadTree(); // Reload on show to update states
         }
+
+        protected override void EnsureInitialized()
+        {
+            LoadTree();
+        }
     }
 }

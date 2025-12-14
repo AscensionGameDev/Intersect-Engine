@@ -38,7 +38,7 @@ namespace Intersect.Client.Interface.Game.SkillTree
             OnClicked += SkillNodeItem_OnClicked;
         }
 
-        private void SkillNodeItem_OnClicked(Base sender, ClickedEventArgs arguments)
+        private void SkillNodeItem_OnClicked(Base sender, MouseButtonState arguments)
         {
             if (Globals.Me == null) return;
             

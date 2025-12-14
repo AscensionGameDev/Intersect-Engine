@@ -3436,7 +3436,10 @@ public partial class Player : Entity
                 SkillPoints += itemBase.SkillPoints;
                 PacketSender.SendChatMsg(this, $"Gained {itemBase.SkillPoints} Skill Points!", ChatMessageType.Experience, CustomColors.Alerts.Info);
                 PacketSender.SendActionMsg(this, $"+{itemBase.SkillPoints} SP", CustomColors.Combat.LevelUp);
-                TryTakeItem(slot, 1, true);
+                if (TryGetSlot(slot, out var invSlot))
+                {
+                   TryTakeItem(invSlot, 1, ItemHandling.Normal, true);
+                }
                 return;
             }
 
