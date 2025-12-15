@@ -209,16 +209,7 @@ public partial class Status
 
         }
 
-        // If this is a Knockback effect, apply the displacement (push target away from attacker)
-        if (Type == SpellEffect.Knockback && spell.Combat.KnockbackTiles > 0)
-        {
-            // Calculate direction from attacker to target, then that's the direction to push
-            var knockbackDirection = Attacker.GetDirectionTo(en);
-            if (knockbackDirection != Direction.None)
-            {
-                var dash = new Dash(en, spell.Combat.KnockbackTiles, knockbackDirection, false, false, false, false);
-            }
-        }
+
     }
 
     public long[] Shield { get; set; } = new long[Enum.GetValues<Vital>().Length];
