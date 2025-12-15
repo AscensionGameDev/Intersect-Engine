@@ -1575,34 +1575,36 @@ public abstract partial class Entity : IEntity
             return healAmount;
         }
 
-        // Find the latest applied status that is either HealingReduction or HealingBoost
-        var latestStatus = CachedStatuses
-            .Where(s => s.Type == SpellEffect.HealingReduction || s.Type == SpellEffect.HealingBoost)
-            .OrderByDescending(s => s.StartTime)
-            .FirstOrDefault();
+        // Multiplicative Stacking Logic
+        // 1. Calculate the strongest (highest %) Healing Boost currently active.
+        var maxBoost = 0;
+        var maxReduction = 0;
 
-        if (latestStatus == null)
+        foreach (var status in CachedStatuses)
         {
-            return healAmount;
+            if (status.Type == SpellEffect.HealingBoost)
+            {
+                var val = status.Spell.Combat.PercentageEffect ?? 0;
+                if (val > maxBoost) maxBoost = val;
+            }
+            else if (status.Type == SpellEffect.HealingReduction)
+            {
+                var val = status.Spell.Combat.PercentageEffect ?? 0;
+                if (val > maxReduction) maxReduction = val;
+            }
         }
 
-        var percentage = latestStatus.Spell.Combat.PercentageEffect ?? 0;
+        // 2. Apply Boost Multiplier (e.g. 50% boost -> 1.5x)
+        double boostMultiplier = 1.0 + (Math.Clamp(maxBoost, 0, 1000) / 100.0);
 
-        if (latestStatus.Type == SpellEffect.HealingReduction)
-        {
-             // Reduction: 0 to 100%
-             var reduction = Math.Clamp(percentage, 0, 100) / 100.0;
-             return (long)(healAmount * (1.0 - reduction));
-        }
-        
-        if (latestStatus.Type == SpellEffect.HealingBoost)
-        {
-            // Boost: 0 to 1000%
-            var boost = Math.Clamp(percentage, 0, 1000) / 100.0;
-            return (long)(healAmount * (1.0 + boost));
-        }
+        // 3. Apply Reduction Multiplier (e.g. 40% reduction -> 0.6x)
+        // Clamp reduction to max 100% (multiplier 0.0) to prevents negative healing (damage)
+        double reductionMultiplier = 1.0 - (Math.Clamp(maxReduction, 0, 100) / 100.0);
 
-        return healAmount;
+        // 4. Final Calculation
+        // Result = Base * Boost * Reduction
+        // If reduction is 100%, multiplier is 0, result is 0.
+        return (long)(healAmount * boostMultiplier * reductionMultiplier);
     }
 
     public void SubVital(Vital vital, long amount)
@@ -1663,7 +1665,8 @@ public abstract partial class Entity : IEntity
 
         if (parentSpell != null)
         {
-            TryAttack(target, parentSpell);
+            var willKnockback = projectile != null && projectile.Knockback > 0;
+            TryAttack(target, parentSpell, false, false, willKnockback);
         }
 
         var targetPlayer = target as Player;
@@ -1711,7 +1714,8 @@ public abstract partial class Entity : IEntity
             var s = projectile.Spell;
             if (s != null)
             {
-                HandleAoESpell(projectile.SpellId, s.Combat.HitRadius, target.MapId, target.X, target.Y, null);
+                var willKnockback = projectile.Knockback > 0;
+                HandleAoESpell(projectile.SpellId, s.Combat.HitRadius, target.MapId, target.X, target.Y, null, willKnockback ? target : null);
             }
 
             //Check that the npc has not been destroyed by the splash spell
@@ -1727,79 +1731,9 @@ public abstract partial class Entity : IEntity
             return;
         }
 
-        if (projectile.HomingBehavior || projectile.DirectShotBehavior)
-        {
-            // we need to get the direction based on the shooter's position and the target's position and angle between them
-            double angle = 0;
-            if (target.MapId == MapId)
-            {
-                angle = Math.Atan2(target.Y - Y, target.X - X);
-            }
-            else
-            {
-                var grid = DbInterface.GetGrid(Map.MapGrid);
-                bool angleFound = false;
-
-                for (var y = Map.MapGridY - 1; y <= Map.MapGridY + 1; y++)
-                {
-                    for (var x = Map.MapGridX - 1; x <= Map.MapGridX + 1; x++)
-                    {
-                        if (x < 0 || x >= grid.MapIdGrid.GetLength(0) || y < 0 || y >= grid.MapIdGrid.GetLength(1))
-                        {
-                            continue;
-                        }
-
-                        if (grid.MapIdGrid[x, y] == target.MapId)
-                        {
-                            int targetAbsoluteX = target.X + (x * Options.Instance.Map.MapWidth);
-                            int targetAbsoluteY = target.Y + (y * Options.Instance.Map.MapHeight);
-                            int playerAbsoluteX = X + (Map.MapGridX * Options.Instance.Map.MapWidth);
-                            int playerAbsoluteY = Y + (Map.MapGridY * Options.Instance.Map.MapHeight);
-
-                            angle = Math.Atan2(targetAbsoluteY - playerAbsoluteY, targetAbsoluteX - playerAbsoluteX);
-                            angleFound = true;
-                            break;
-                        }
-                    }
-
-                    if (angleFound) break;
-                }
-            }
-
-            var angleDegrees = angle * (180 / Math.PI);
-            if (angleDegrees >= -30 && angleDegrees <= 30)
-            {
-                projectileDir = Direction.Right;
-            }
-            else if (angleDegrees >= 30 && angleDegrees <= 60)
-            {
-                projectileDir = Direction.DownRight;
-            }
-            else if (angleDegrees >= 60 && angleDegrees <= 120)
-            {
-                projectileDir = Direction.Down;
-            }
-            else if (angleDegrees >= 120 && angleDegrees <= 150)
-            {
-                projectileDir = Direction.DownLeft;
-            }
-            else if (angleDegrees >= 150 || angleDegrees <= -150)
-            {
-                projectileDir = Direction.Left;
-            }
-            else if (angleDegrees >= -150 && angleDegrees <= -120)
-            {
-                projectileDir = Direction.UpLeft;
-            }
-            else if (angleDegrees >= -120 && angleDegrees <= -60)
-            {
-                projectileDir = Direction.Up;
-            }
-            else if (angleDegrees >= -60 && angleDegrees <= -30)
-            {
-                projectileDir = Direction.UpRight;
-            }
-        }
+        // Logic removed: Trust the projectileDir passed from ProjectileSpawn, which knows the impact angle.
+        // Previously, this recalculated direction based on Shooter <-> Target, which caused incorrect knockback
+        // if the shooter moved or if the projectile curved (homing).
 
         // If there is knock-back: knock them backwards.
         if (projectile.Knockback > 0 && ((int)projectileDir < Options.Instance.Map.MovementDirections) && !target.Immunities.Contains(SpellEffect.Knockback))
@@ -1813,7 +1747,8 @@ public abstract partial class Entity : IEntity
         Entity target,
         SpellDescriptor spellDescriptor,
         bool onHitTrigger = false,
-        bool trapTrigger = false
+        bool trapTrigger = false,
+        bool ignoreKnockback = false
     )
     {
         if (target is Resource || target is EventPageInstance)
@@ -1978,6 +1913,21 @@ public abstract partial class Entity : IEntity
                 if (!target.Immunities.Contains(spellDescriptor.Combat.Effect))
                 {
                     new Status(target, this, spellDescriptor, spellDescriptor.Combat.Effect, statBuffTime, "");
+
+                    // Handle Knockback (moved here from Status.cs to prevent double-application)
+                    if (spellDescriptor.Combat.Effect == SpellEffect.Knockback && !ignoreKnockback && !target.Immunities.Contains(SpellEffect.Knockback))
+                    {
+                         var knockbackDirection = GetDirectionTo(target);
+                         if (knockbackDirection != Direction.None)
+                         {
+                             // Use Spell's KnockbackTiles configuration
+                             var tiles = spellDescriptor.Combat.KnockbackTiles;
+                             if (tiles > 0)
+                             {
+                                 new Dash(target, tiles, knockbackDirection, false, false, false, false);
+                             }
+                         }
+                    }
 
                     if (target is Npc npc)
                     {
@@ -2749,7 +2699,8 @@ public abstract partial class Entity : IEntity
         Guid startMapId,
         int startX,
         int startY,
-        Entity spellTarget
+        Entity spellTarget,
+        Entity knockbackExclusionTarget = null
     )
     {
         var spellBase = SpellDescriptor.Get(spellId);
@@ -2778,7 +2729,7 @@ public abstract partial class Entity : IEntity
                                     }
                                 }
 
-                                TryAttack(entity, spellBase); //Handle damage
+                                TryAttack(entity, spellBase, false, false, entity == knockbackExclusionTarget); //Handle damage
                             }
                         }
                     }

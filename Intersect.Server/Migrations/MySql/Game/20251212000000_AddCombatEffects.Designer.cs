@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intersect.Server.Migrations.MySql.Game
 {
     [DbContext(typeof(MySqlGameContext))]
-    [Migration("20251210000000_AddGrievousWoundsAndHealBoost")]
-    partial class AddGrievousWoundsAndHealBoost
+    [Migration("20251212000000_AddCombatEffects")]
+    partial class AddCombatEffects
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
