@@ -208,8 +208,6 @@ public partial class Status
             }
 
         }
-
-
     }
 
     public long[] Shield { get; set; } = new long[Enum.GetValues<Vital>().Length];
