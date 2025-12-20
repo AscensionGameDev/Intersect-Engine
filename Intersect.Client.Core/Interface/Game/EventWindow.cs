@@ -1,3 +1,4 @@
+using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Framework.Content;
@@ -24,22 +25,18 @@ namespace Intersect.Client.Interface.Game;
 public partial class EventWindow : Panel
 {
     private readonly IFont? _defaultFont;
-
     private readonly Panel _promptPanel;
-
     private readonly ImagePanel _faceImage;
     private readonly ScrollControl _promptScroller;
     private readonly Label _promptTemplateLabel;
     private readonly RichLabel _promptLabel;
-
-    private readonly Panel _optionsPanel;
-    private readonly Button[] _optionButtons = new Button[4];
-
-    private readonly bool _typewriting;
+    private readonly ScrollControl _optionsScroller;
+    private readonly List<Button> _optionButtons = new();
+    private bool _typewriting;
     private readonly long _typewriterResponseDelay = ClientConfiguration.Instance.TypewriterResponseDelay;
-    private readonly Typewriter? _writer;
-
+    private Typewriter? _writer;
     private readonly Dialog _dialog;
+    private static EventWindow? _instance;
 
     private EventWindow(Canvas gameCanvas, Dialog dialog) : base(gameCanvas, nameof(EventWindow))
     {
@@ -48,127 +45,146 @@ public partial class EventWindow : Panel
         _dialog = dialog;
         _defaultFont = GameContentManager.Current.GetFont(name: "sourcesansproblack");
 
+        Size = new Point(618, 680);
+        Dock = Pos.None;
+        Padding = new Padding(16, 16, 16, 16);
+        ShouldDrawBackground = false;
+        MouseInputEnabled = false;
         Alignment = [Alignments.Center];
-        MinimumSize = new Point(520, 180);
-        MaximumSize = new Point(720, 520);
-        Padding = new Padding(16);
+        MinimumSize = new Point(488, 150);
+        MaximumSize = new Point(618, 680);
 
         _promptPanel = new Panel(this, nameof(_promptPanel))
         {
-            Dock = Pos.Fill,
-            DockChildSpacing = new Padding(8),
-        };
-
-        _optionsPanel = new Panel(this, nameof(_optionsPanel))
-        {
-            BackgroundColor = Color.Transparent,
-            Dock = Pos.Bottom,
-            DockChildSpacing = new Padding(8),
-            Margin = new Margin(0, 8, 0, 0),
-        };
-
-        for (var optionIndex = 0; optionIndex < 4; ++optionIndex)
-        {
-            var optionButton = new Button(_optionsPanel, $"{nameof(_optionButtons)}[{optionIndex}]")
-            {
-                Dock = Pos.Top,
-                Font = _defaultFont,
-                FontSize = 12,
-                UserData = (EventResponseType)(optionIndex + 1),
-            };
-            optionButton.Clicked += (sender, _) =>
-            {
-                if (sender.UserData is not EventResponseType eventResponseType)
-                {
-                    return;
-                }
-
-                CloseEventResponse(eventResponseType);
-            };
-            _optionButtons[optionIndex] = optionButton;
-        }
-
-        _optionsPanel.PostLayout.Enqueue(
-            ResizeOptionsPanelToChildren,
-            _optionsPanel
-        );
-
-        _faceImage = new ImagePanel(_promptPanel, nameof(_faceImage))
-        {
-            Dock = Pos.Left,
-            MaintainAspectRatio = true,
-            Margin = new Margin(8, 8, 0, 8),
-            MaximumSize = new Point(128, 128),
-            RestrictToParent = true,
+            Size = new Point(616, 200),
+            Y = 180,
+            Dock = Pos.None,
+            Padding = Padding.Zero,
+            Margin = Margin.Zero,
+            ShouldDrawBackground = true,
+            MinimumSize = new Point(616, 150),
+            MaximumSize = new Point(616, 200),
+            MouseInputEnabled = false,
         };
 
         _promptScroller = new ScrollControl(_promptPanel, nameof(_promptScroller))
         {
+            Size = new Point(616, 196),
             Dock = Pos.Fill,
+            Padding = new Padding(4, 4, 4, 4),
+            Margin = Margin.Zero,
+            ShouldDrawBackground = false,
+            MinimumSize = new Point(616, 150),
+            MaximumSize = new Point(616, 4096),
+            RestrictToParent = true,
+            MouseInputEnabled = true,
+            OverflowX = OverflowBehavior.Hidden,
+            OverflowY = OverflowBehavior.Auto,
         };
 
         _promptTemplateLabel = new Label(_promptScroller, nameof(_promptTemplateLabel))
         {
-            Font = _defaultFont,
+            Size = new Point(0, 20),
+            Dock = Pos.None,
+            ShouldDrawBackground = false,
+            AutoSizeToContents = true,
+            FontName = "sourcesansproblack",
             FontSize = 12,
             IsVisibleInTree = false,
         };
 
         _promptLabel = new RichLabel(_promptScroller, nameof(_promptLabel))
         {
+            Size = new Point(16, 16),
             Dock = Pos.Fill,
+            Padding = new Padding(8, 8, 8, 8),
+            ShouldDrawBackground = false,
             Font = _defaultFont,
             FontSize = 12,
-            Padding = new Padding(8),
         };
 
-        _promptPanel.SizeToChildren(recursive: true);
+        _optionsScroller = new ScrollControl(this, nameof(_optionsScroller))
+        {
+            Size = new Point(616, 120),
+            Y = 386,
+            Dock = Pos.None,
+            Padding = Padding.Zero,
+            Margin = Margin.Zero,
+            ShouldDrawBackground = false,
+            MinimumSize = new Point(616, 120),
+            MaximumSize = new Point(4096, 4096),
+            MouseInputEnabled = true,
+            OverflowX = OverflowBehavior.Hidden,
+            OverflowY = OverflowBehavior.Auto,
+        };
 
-        #region Configure and Display
+        _faceImage = new ImagePanel(this, nameof(_faceImage))
+        {
+            Size = new Point(128, 128),
+            X = 245, Y = 60,
+            Dock = Pos.None,
+            Padding = Padding.Zero,
+            Margin = Margin.Zero,
+            ShouldDrawBackground = true,
+            MinimumSize = new Point(128, 128),
+            MaximumSize = new Point(128, 128),
+            RestrictToParent = true,
+            MouseInputEnabled = false,
+            MaintainAspectRatio = true,
+        };
 
+        CreateOptionButtons();
+
+        try
+        {
+            Name = nameof(EventWindow);
+            LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        }
+        catch (Exception ex)
+        {
+            ApplicationContext.CurrentContext.Logger?.LogWarning(
+                ex,
+                "Failed to load EventWindow JSON UI, using code fallback layout"
+            );
+        }
+
+        ApplyFace();
+        ApplyPromptAndTypewriter();
+        RunOnMainThread(static @this => @this._promptScroller.ScrollToTop(), this);
+
+        var dimmedBackground = ClientConfiguration.Instance.DimmedEventWindowBackground;
+        MakeModal(dim: dimmedBackground);
+        BringToFront();
+        Interface.InputBlockingComponents.Add(this);
+        ApplicationContext.CurrentContext.Logger?.LogTrace("Event window opened");
+    }
+
+    private void ApplyFace()
+    {
         if (_dialog.Face is { } faceTextureName)
         {
-            var faceTexture = Globals.ContentManager.GetTexture(TextureType.Face, faceTextureName);
+            var faceTexture = Globals.ContentManager?.GetTexture(TextureType.Face, faceTextureName);
             _faceImage.Texture = faceTexture;
-            if (faceTexture is not null)
+
+            var show = faceTexture is not null;
+            _faceImage.IsHidden = !show;
+            _faceImage.IsVisibleInParent = show;
+
+            if (show)
             {
-                _faceImage.IsVisibleInTree = true;
                 _faceImage.SizeToContents();
-            }
-            else
-            {
-                _faceImage.IsVisibleInTree = false;
             }
         }
         else
         {
             _faceImage.Texture = null;
-            _faceImage.IsVisibleInTree = false;
+            _faceImage.IsHidden = true;
+            _faceImage.IsVisibleInParent = false;
         }
+    }
 
-        var visibleOptions = _dialog.Options.Where(option => !string.IsNullOrEmpty(option)).ToArray();
-        if (visibleOptions.Length < 1)
-        {
-            visibleOptions = [Strings.EventWindow.Continue];
-        }
-
-        for (var optionIndex = 0; optionIndex < _optionButtons.Length; ++optionIndex)
-        {
-            var optionButton = _optionButtons[optionIndex];
-            if (optionIndex < visibleOptions.Length)
-            {
-                optionButton.Text = visibleOptions[optionIndex];
-                optionButton.IsVisibleInTree = true;
-            }
-            else
-            {
-                optionButton.IsVisibleInTree = false;
-            }
-        }
-
-        // Name = $"{nameof(EventWindow)}_{Math.Max(1, visibleOptions.Length)}";
-        // LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer?.GetResolutionString());
-
+    private void ApplyPromptAndTypewriter()
+    {
         SkipRender();
 
         _promptLabel.ClearText();
@@ -180,11 +196,11 @@ public partial class EventWindow : Panel
         }
 
         _promptLabel.ForceImmediateRebuild();
-
         _ = _promptLabel.SizeToChildren();
 
         _typewriting = ClientConfiguration.Instance.TypewriterEnabled &&
-                       Globals.Database.TypewriterBehavior != TypewriterBehavior.Off;
+                       Globals.Database?.TypewriterBehavior != TypewriterBehavior.Off;
+
         if (_typewriting)
         {
             _promptLabel.ClearText();
@@ -196,52 +212,56 @@ public partial class EventWindow : Panel
                 }
             );
         }
+        else
+        {
+            _writer = null;
+        }
+    }
 
-        RunOnMainThread(
-            static @this =>
+    private void CreateOptionButtons()
+    {
+        foreach (var button in _optionButtons)
+        {
+            button.Dispose();
+        }
+
+        _optionButtons.Clear();
+        _optionsScroller.ClearChildren();
+
+        var visibleOptions = _dialog.Options.Where(option => !string.IsNullOrEmpty(option)).ToArray();
+        if (visibleOptions.Length < 1)
+        {
+            visibleOptions = [Strings.EventWindow.Continue];
+        }
+
+        for (var optionIndex = 0; optionIndex < visibleOptions.Length; optionIndex++)
+        {
+            var optionButton = new Button(_optionsScroller, $"OptionButton_{optionIndex}")
             {
-                @this.SizeToChildren(recursive: true);
-                @this._promptScroller.ScrollToTop();
-            },
-            this
-        );
+                Dock = Pos.Top,
+                Font = _defaultFont,
+                FontSize = 12,
+                Text = visibleOptions[optionIndex],
+                UserData = (EventResponseType)(optionIndex + 1),
+            };
 
-        MakeModal(dim: true);
-        BringToFront();
-        Interface.InputBlockingComponents.Add(this);
-        ApplicationContext.CurrentContext.Logger.LogTrace("Event window opened");
+            optionButton.Clicked += (sender, _) =>
+            {
+                if (sender.UserData is not EventResponseType eventResponseType)
+                {
+                    return;
+                }
 
-        #endregion Configure and Display
+                CloseEventResponse(eventResponseType);
+            };
+
+            _optionButtons.Add(optionButton);
+        }
     }
-
-    private static void ResizeOptionsPanelToChildren(Panel optionsPanel)
-    {
-        optionsPanel.SizeToChildren(new SizeToChildrenArgs(Recurse: true));
-    }
-
-    protected override void OnMouseClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
-    {
-        base.OnMouseClicked(mouseButton, mousePosition, userAction);
-
-        SkipTypewriting();
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        EnsureControlRestored();
-        base.Dispose(disposing);
-    }
-
-    private static EventWindow? _instance;
 
     private void Update()
     {
-        if (!IsVisibleInTree || !_typewriting)
-        {
-            return;
-        }
-
-        if (_writer is null)
+        if (!IsVisibleInTree || !_typewriting || _writer is null)
         {
             return;
         }
@@ -250,13 +270,12 @@ public partial class EventWindow : Panel
 
         foreach (var optionButton in _optionButtons)
         {
-            optionButton.IsVisibleInTree = writerCompleted && !string.IsNullOrEmpty(optionButton.Text);
+            optionButton.IsVisibleInParent = writerCompleted && !string.IsNullOrEmpty(optionButton.Text);
         }
 
         if (writerCompleted)
         {
-            var disableResponse = Timing.Global.MillisecondsUtc - _writer.DoneAtMilliseconds <
-                                  _typewriterResponseDelay;
+            var disableResponse = Timing.Global.MillisecondsUtc - _writer.DoneAtMilliseconds < _typewriterResponseDelay;
             foreach (var optionButton in _optionButtons)
             {
                 optionButton.IsDisabled = disableResponse;
@@ -279,7 +298,6 @@ public partial class EventWindow : Panel
     {
         if (_instance is { } instance)
         {
-            // ApplicationContext.CurrentContext.Logger.LogTrace("Updating previous opened event window");
             instance.Update();
             return;
         }
@@ -312,12 +330,23 @@ public partial class EventWindow : Panel
         EnsureDestroyed();
     }
 
+    private void SkipTypewriting()
+    {
+        if (_writer?.IsDone ?? true)
+        {
+            return;
+        }
+
+        _writer.End();
+    }
+
     private void EnsureControlRestored()
     {
         if (_instance == this)
         {
             _instance = null;
         }
+
         _ = Interface.InputBlockingComponents.Remove(this);
         RemoveModal();
     }
@@ -336,13 +365,15 @@ public partial class EventWindow : Panel
         }
     }
 
-    private void SkipTypewriting()
+    protected override void Dispose(bool disposing)
     {
-        if (_writer?.IsDone ?? true)
-        {
-            return;
-        }
+        EnsureControlRestored();
+        base.Dispose(disposing);
+    }
 
-        _writer.End();
+    protected override void OnMouseClicked(MouseButton mouseButton, Point mousePosition, bool userAction = true)
+    {
+        base.OnMouseClicked(mouseButton, mousePosition, userAction);
+        SkipTypewriting();
     }
 }
