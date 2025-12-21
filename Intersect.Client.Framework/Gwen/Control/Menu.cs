@@ -140,7 +140,7 @@ public partial class Menu : ScrollControl
 
     public MenuItem[] MenuItems => Children.OfType<MenuItem>().ToArray();
 
-    /// <summary>C:\Users\JC Snider\Desktop\AGD\Intersect-Engine\Intersect.Client.Framework\Gwen\Control\Button.cs
+    /// <summary>
     ///     Renders the control using specified skin.
     /// </summary>
     /// <param name="skin">Skin to use.</param>
