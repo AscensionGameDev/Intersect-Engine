@@ -2703,8 +2703,10 @@ public partial class Player : Entity, IPlayer
                 backgroundColor = guildColors.Background;
             }
 
-            // Enemies in PvP
-            else if (Globals.Me.IsAllyOf(this) && Globals.Me.MapInstance?.ZoneType != MapZone.Safe && CustomColors.Names.Players.TryGetValue("Hostile", out var hostileColors))
+            // Enemies in PvP (non-allies only)
+            else if (!Globals.Me.IsAllyOf(this) && // <-- note the !
+                     Globals.Me.MapInstance?.ZoneType != MapZone.Safe &&
+                     CustomColors.Names.Players.TryGetValue("Hostile", out var hostileColors))
             {
                 textColor = hostileColors.Name;
                 borderColor = hostileColors.Outline;
