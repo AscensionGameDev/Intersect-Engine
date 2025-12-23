@@ -640,8 +640,11 @@ public static partial class CommandProcessing
         Stack<CommandInstance> callStack
     )
     {
-        player.Sprite = command.Sprite;
-        PacketSender.SendEntityDataToProximity(player);
+        if (player.Sprite != command.Sprite)
+        {
+            player.Sprite = command.Sprite;
+            PacketSender.SendEntityDataToProximity(player);
+        }
     }
 
     //Change Face Command
