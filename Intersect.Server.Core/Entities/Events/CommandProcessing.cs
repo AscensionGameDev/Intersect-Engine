@@ -640,7 +640,7 @@ public static partial class CommandProcessing
         Stack<CommandInstance> callStack
     )
     {
-        if (player.Sprite != command.Sprite)
+        if (!string.Equals(player.Sprite, command.Sprite, StringComparison.OrdinalIgnoreCase))
         {
             player.Sprite = command.Sprite;
             PacketSender.SendEntityDataToProximity(player);
