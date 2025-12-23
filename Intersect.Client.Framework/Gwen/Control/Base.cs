@@ -1295,23 +1295,27 @@ public partial class Base : IDisposable
     /// </summary>
     public void Dispose()
     {
-        try
+        // TODO : GWEN: We need to spend more time on this.
+        if (_disposed)
         {
-            ObjectDisposedException.ThrowIf(_disposed, this);
-        }
-        catch
-        {
-            throw;
+            return;
         }
 
+        // I think its only used for diagnosis, so Im adding the DEBUG condition. I hope so
+#if DEBUG
         _disposeStack = new StackTrace(fNeedFileInfo: true);
+#endif
 
+        // We mark that Dispose() has been called to prevents Dispose from being executed again
         _disposed = true;
 
+        // Remove all pending tasks from the thread queue of this control
         _threadQueue.ClearPending();
 
+        // Virtual Dispose() so that inherited classes can release their resources
         Dispose(disposing: true);
 
+        // Reserve an assistant variable for the texture caching mechanism
         ICacheToTexture? cache = default;
 
 #pragma warning disable CA1031 // Do not catch general exception types
@@ -1325,34 +1329,35 @@ public partial class Base : IDisposable
         }
 #pragma warning restore CA1031 // Do not catch general exception types
 
+        // If the control was cached in the texture cache, free that memory
         if (ShouldCacheToTexture && cache != null)
         {
             cache.DisposeCachedTexture(this);
         }
 
+        // Clear input indicators if they point to this control
         if (InputHandler.HoveredControl == this)
-        {
             InputHandler.HoveredControl = null;
-        }
-
         if (InputHandler.KeyboardFocus == this)
-        {
             InputHandler.KeyboardFocus = null;
-        }
-
         if (InputHandler.MouseFocus == this)
-        {
             InputHandler.MouseFocus = null;
-        }
 
         DragAndDrop.ControlDeleted(this);
         ToolTip.ControlDeleted(this);
         Animation.Cancel(this);
 
+        // Remove and release all child controls
         DisposeChildrenOf(this);
 
+        // TODO : check if we need to dispose tooltip 
+        // if (_tooltip != null)
+        //    _tooltip.Dispose();
+
+        // Prevents the finalizer from restarting for this object
         GC.SuppressFinalize(this);
 
+        // Informs that the object has completed the resource release process
         _disposeCompleted = true;
 
         try
@@ -1370,6 +1375,14 @@ public partial class Base : IDisposable
         }
     }
 
+    /// <summary>
+    /// Releases resources used by the control.
+    /// When <paramref name="disposing"/> is true, both managed and unmanaged resources
+    /// should be released. When false (finalizer), only unmanaged resources should be released.
+    /// Override this method in derived classes to dispose additional resources and ensure
+    /// to call the base implementation.
+    /// </summary>
+    /// <param name="disposing">True when called from <see cref="Dispose()"/>, false when called from finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
     }
@@ -1591,7 +1604,7 @@ public partial class Base : IDisposable
                 }
                 catch (Exception exception)
                 {
-                    //Log JSON UI Loading Error
+                    // Log JSON UI Loading Error
                     throw new Exception("Error loading json ui for " + ParentQualifiedName, exception);
                 }
             }
@@ -1717,30 +1730,30 @@ public partial class Base : IDisposable
 
         if (obj["DrawBackground"] != null)
         {
-            ShouldDrawBackground = (bool) obj["DrawBackground"];
+            ShouldDrawBackground = (bool)obj["DrawBackground"];
         }
 
         if (obj["Disabled"] != null)
         {
-            IsDisabled = (bool) obj["Disabled"];
+            IsDisabled = (bool)obj["Disabled"];
         }
 
         if (obj["Hidden"] != null)
         {
-            IsHidden = (bool) obj["Hidden"];
+            IsHidden = (bool)obj["Hidden"];
         }
 
         if (obj[nameof(RestrictToParent)] != null)
         {
-            RestrictToParent = (bool) obj[nameof(RestrictToParent)];
+            RestrictToParent = (bool)obj[nameof(RestrictToParent)];
         }
 
         if (obj[nameof(MouseInputEnabled)] != null)
         {
-            MouseInputEnabled = (bool) obj[nameof(MouseInputEnabled)];
+            MouseInputEnabled = (bool)obj[nameof(MouseInputEnabled)];
         }
 
-        if (obj["HideToolTip"] != null && (bool) obj["HideToolTip"])
+        if (obj["HideToolTip"] != null && (bool)obj["HideToolTip"])
         {
             _tooltipEnabled = false;
             SetToolTipText(null);

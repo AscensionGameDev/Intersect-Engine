@@ -8,47 +8,23 @@ namespace Intersect.Client.Interface.Game.Admin;
 public partial class BanMuteBox : WindowControl
 {
     private readonly TextBox _textboxReason;
-    private readonly ComboBox _comboboxDuration;
+    private readonly ComboBox? _comboboxDuration;
     private readonly LabeledCheckBox _checkboxIP;
 
-    private readonly Dictionary<string, int> _dayCount = new()
+    private static readonly List<(string Label, int Days)> _durationOptions = new()
     {
-        {
-            Strings.BanMute.OneDay, 1
-        },
-        {
-            Strings.BanMute.TwoDays, 2
-        },
-        {
-            Strings.BanMute.ThreeDays, 3
-        },
-        {
-            Strings.BanMute.FourDays, 4
-        },
-        {
-            Strings.BanMute.FiveDays, 5
-        },
-        {
-            Strings.BanMute.OneWeek, 7
-        },
-        {
-            Strings.BanMute.TwoWeeks, 14
-        },
-        {
-            Strings.BanMute.OneMonth, 30
-        },
-        {
-            Strings.BanMute.TwoMonths, 60
-        },
-        {
-            Strings.BanMute.SixMonths, 180
-        },
-        {
-            Strings.BanMute.OneYear, 365
-        },
-        {
-            Strings.BanMute.Forever, 999999
-        },
+        (Strings.BanMute.OneDay, 1),
+        (Strings.BanMute.TwoDays, 2),
+        (Strings.BanMute.ThreeDays, 3),
+        (Strings.BanMute.FourDays, 4),
+        (Strings.BanMute.FiveDays, 5),
+        (Strings.BanMute.OneWeek, 7),
+        (Strings.BanMute.TwoWeeks, 14),
+        (Strings.BanMute.OneMonth, 30),
+        (Strings.BanMute.TwoMonths, 60),
+        (Strings.BanMute.SixMonths, 180),
+        (Strings.BanMute.OneYear, 365),
+        (Strings.BanMute.Forever, int.MaxValue),
     };
 
     public BanMuteBox(string title, string prompt, EventHandler okayHandler) : base(
@@ -84,9 +60,9 @@ public partial class BanMuteBox : WindowControl
 
         // Duration combobox
         _comboboxDuration = new ComboBox(this, "ComboBoxDuration");
-        foreach (var day in _dayCount)
+        foreach (var option in _durationOptions)
         {
-            _ = _comboboxDuration.AddItem(day.Key, userData: day.Value);
+            _ = _comboboxDuration.AddItem(option.Label, userData: option.Days);
         }
 
         // Include IP checkbox
@@ -103,16 +79,22 @@ public partial class BanMuteBox : WindowControl
         buttonOkay.Clicked += (s, e) =>
         {
             okayHandler?.Invoke(this, EventArgs.Empty);
-            Dispose();
+            Close();
         };
 
         var buttonCancel = new Button(this, "ButtonCancel")
         {
             Text = Strings.BanMute.Cancel,
         };
-        buttonCancel.Clicked += (s, e) => Dispose();
+        buttonCancel.Clicked += (s, e) => Close();
 
         LoadJsonUi(UI.InGame, Graphics.Renderer?.GetResolutionString(), true);
+
+        // Set the first element by default after loading the UI (ensures deterministic selection).
+        if (_comboboxDuration != null && _durationOptions.Count > 0)
+        {
+            _ = _comboboxDuration.SelectByUserData(_durationOptions[0].Days);
+        }
 
         richLabelPrompt.ClearText();
         richLabelPrompt.Width = promptContainer.Width - promptContainer.VerticalScrollBar.Width;
@@ -122,24 +104,34 @@ public partial class BanMuteBox : WindowControl
 
     protected override void Dispose(bool disposing)
     {
-        Close();
-        Interface.GameUi.GameCanvas.RemoveChild(this, false);
+        Interface.InputBlockingComponents.Remove(this);
+
+        if (_textboxReason != null)
+        {
+            Interface.FocusComponents.Remove(_textboxReason);
+        }
 
         base.Dispose(disposing);
     }
 
     public int GetDuration()
     {
-        return (int)_comboboxDuration.SelectedItem.UserData;
+        var selected = _comboboxDuration?.SelectedItem;
+
+        if (selected?.UserData is int days)
+        {
+            return days;
+        }
+        return 1; // default value should be 1 day for safety
     }
 
     public string GetReason()
     {
-        return _textboxReason.Text;
+        return _textboxReason?.Text ?? string.Empty;
     }
 
     public bool BanIp()
     {
-        return _checkboxIP.IsChecked;
+        return _checkboxIP?.IsChecked ?? false;
     }
 }
