@@ -24,7 +24,7 @@ public partial class BanMuteBox : WindowControl
         (Strings.BanMute.TwoMonths, 60),
         (Strings.BanMute.SixMonths, 180),
         (Strings.BanMute.OneYear, 365),
-        (Strings.BanMute.Forever, int.MaxValue),
+        (Strings.BanMute.Forever, 999999),
     };
 
     public BanMuteBox(string title, string prompt, EventHandler okayHandler) : base(

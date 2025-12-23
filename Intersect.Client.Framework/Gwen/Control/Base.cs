@@ -1301,12 +1301,12 @@ public partial class Base : IDisposable
             return;
         }
 
-        // I think its only used for diagnosis, so Im adding the DEBUG condition. I hope so
+        // This stack trace is only used for diagnostics, so it is included only in DEBUG builds.
 #if DEBUG
         _disposeStack = new StackTrace(fNeedFileInfo: true);
 #endif
 
-        // We mark that Dispose() has been called to prevents Dispose from being executed again
+        // We mark that Dispose() has been called to prevent Dispose from being executed again
         _disposed = true;
 
         // Remove all pending tasks from the thread queue of this control
@@ -1315,7 +1315,7 @@ public partial class Base : IDisposable
         // Virtual Dispose() so that inherited classes can release their resources
         Dispose(disposing: true);
 
-        // Reserve an assistant variable for the texture caching mechanism
+        // Reserve a temporary variable for the texture caching mechanism
         ICacheToTexture? cache = default;
 
 #pragma warning disable CA1031 // Do not catch general exception types
