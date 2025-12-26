@@ -103,14 +103,14 @@ public partial class BanMuteBox : WindowControl
         buttonOkay.Clicked += (s, e) =>
         {
             okayHandler?.Invoke(this, EventArgs.Empty);
-            Dispose();
+            DelayedDelete();
         };
 
         var buttonCancel = new Button(this, "ButtonCancel")
         {
             Text = Strings.BanMute.Cancel,
         };
-        buttonCancel.Clicked += (s, e) => Dispose();
+        buttonCancel.Clicked += (s, e) => DelayedDelete();
 
         LoadJsonUi(UI.InGame, Graphics.Renderer?.GetResolutionString(), true);
 

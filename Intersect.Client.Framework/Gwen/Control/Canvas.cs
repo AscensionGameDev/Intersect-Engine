@@ -262,21 +262,42 @@ public partial class Canvas : Base
 
     private void ProcessDelayedDeletes()
     {
+        List<IDisposable> controlsToDispose;
+
         lock (_disposeQueue)
         {
-            foreach (var control in _disposeQueue)
+            if (_disposeQueue.Count == 0)
             {
-#if DEBUG
-                if (control is Base node)
-                {
-                    _delayedDeleteStackTraces.Remove(node);
-                }
-#endif
-
-                control.Dispose();
+                return;
             }
 
+            controlsToDispose = new List<IDisposable>(_disposeQueue);
             _disposeQueue.Clear();
+
+#if DEBUG
+            // Remove all the stuff from debug tracking in one go
+            _delayedDeleteStackTraces.Clear();
+#endif
+        }
+
+        // Dispose outside the lock
+        foreach (var control in controlsToDispose)
+        {
+            try
+            {
+                control.Dispose();
+            }
+            catch (ObjectDisposedException)
+            {
+                // Already disposed, ignore
+            }
+            catch (Exception ex)
+            {
+                ApplicationContext.Context.Value?.Logger.LogError(
+                    ex,
+                    "Error disposing control during ProcessDelayedDeletes"
+                );
+            }
         }
     }
 
