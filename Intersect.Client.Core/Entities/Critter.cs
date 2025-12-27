@@ -15,7 +15,10 @@ namespace Intersect.Client.Entities;
 public partial class Critter : Entity
 {
     private readonly MapCritterAttribute mAttribute;
-    private long mLastMove = -1;
+    
+    // Critter's Movement
+    private long _lastMove = -1;
+    private byte _randomMoveRange;
 
     public Critter(MapInstance map, byte x, byte y, MapCritterAttribute att) : base(Guid.NewGuid(), null, EntityType.GlobalEntity)
     {
@@ -50,65 +53,65 @@ public partial class Critter : Entity
 
     public override bool Update()
     {
-        if (base.Update())
+        if (!base.Update())
         {
-            if (mLastMove < Timing.Global.MillisecondsUtc)
-            {
-                switch (mAttribute.Movement)
-                {
-                    case 0: //Move Randomly
-                        MoveRandomly();
-                        break;
-                    case 1: //Turn?
-                        DirectionFacing = Randomization.NextDirection();
-                        break;
+            return false;
+        }
 
-                }
-
-                mLastMove = Timing.Global.MillisecondsUtc + mAttribute.Frequency + Globals.Random.Next((int)(mAttribute.Frequency * .5f));
-            }
-
+        // Only skip if we are NOT in the middle of a range-walk AND the frequency timer is active
+        if (_randomMoveRange <= 0 && _lastMove >= Timing.Global.MillisecondsUtc)
+        {
             return true;
         }
 
-        return false;
+        switch (mAttribute.Movement)
+        {
+            case 0: // Move Randomly
+                MoveRandomly();
+                break;
+            case 1: // Turn Randomly
+                DirectionFacing = Randomization.NextDirection();
+                // Set pause after turning
+                _lastMove = Timing.Global.MillisecondsUtc + mAttribute.Frequency + Globals.Random.Next((int)(mAttribute.Frequency * .5f));
+                break;
+        }
+
+        return true;
     }
 
     private void MoveRandomly()
     {
-        DirectionMoving = Randomization.NextDirection();
-        var tmpX = (sbyte)X;
-        var tmpY = (sbyte)Y;
-        IEntity? blockedBy = null;
-
+        // Don't start a new step if currently moving between tiles
         if (IsMoving || MoveTimer >= Timing.Global.MillisecondsUtc)
         {
             return;
         }
 
+        // No range left: pick a new direction and range
+        if (_randomMoveRange <= 0)
+        {
+            DirectionFacing = Randomization.NextDirection();
+            _randomMoveRange = (byte)Randomization.Next(1, 5);
+        }
+
         var deltaX = 0;
         var deltaY = 0;
-
-        switch (DirectionMoving)
+        switch (DirectionFacing)
         {
             case Direction.Up:
-                deltaX = 0;
                 deltaY = -1;
                 break;
 
             case Direction.Down:
-                deltaX = 0;
                 deltaY = 1;
                 break;
 
             case Direction.Left:
                 deltaX = -1;
-                deltaY = 0;
                 break;
 
             case Direction.Right:
                 deltaX = 1;
-                deltaY = 0;
                 break;
 
             case Direction.UpLeft:
@@ -132,59 +135,37 @@ public partial class Critter : Entity
                 break;
         }
 
-        if (deltaX != 0 || deltaY != 0)
+        var newX = (sbyte)X + deltaX;
+        var newY = (sbyte)Y + deltaY;
+        IEntity? blockedBy = null;
+
+        // Boundary checks
+        var isBlocked = -1 == IsTileBlocked(new Point(newX, newY), Z, MapId, ref blockedBy, true, true, mAttribute.IgnoreNpcAvoids);
+        var playerOnTile = PlayerOnTile(MapId, newX, newY);
+
+        if (isBlocked && !playerOnTile && 
+            newX >= 0 && newX < Options.Instance.Map.MapWidth &&
+            newY >= 0 && newY < Options.Instance.Map.MapHeight)
         {
-            var newX = tmpX + deltaX;
-            var newY = tmpY + deltaY;
-            var isBlocked = -1 ==
-                            IsTileBlocked(
-                                new Point(newX, newY),
-                                Z,
-                                MapId,
-                                ref blockedBy,
-                                true,
-                                true,
-                                mAttribute.IgnoreNpcAvoids
-                            );
-            var playerOnTile = PlayerOnTile(MapId, newX, newY);
+            X = (byte)newX;
+            Y = (byte)newY;
+            IsMoving = true;
+            OffsetX = deltaX == 0 ? 0 : (deltaX > 0 ? -Options.Instance.Map.TileWidth : Options.Instance.Map.TileWidth);
+            OffsetY = deltaY == 0 ? 0 : (deltaY > 0 ? -Options.Instance.Map.TileHeight : Options.Instance.Map.TileHeight);
+            MoveTimer = Timing.Global.MillisecondsUtc + (long)GetMovementTime();
+            _randomMoveRange--;
 
-            if (isBlocked && newX >= 0 && newX < Options.Instance.Map.MapWidth && newY >= 0 && newY < Options.Instance.Map.MapHeight &&
-                (!mAttribute.BlockPlayers || !playerOnTile))
+            // Critter's last step: set an idle pause timer
+            if (_randomMoveRange <= 0)
             {
-                tmpX += (sbyte)deltaX;
-                tmpY += (sbyte)deltaY;
-                IsMoving = true;
-                DirectionFacing = DirectionMoving;
-
-                if (deltaX == 0)
-                {
-                    OffsetX = 0;
-                }
-                else
-                {
-                    OffsetX = deltaX > 0 ? -Options.Instance.Map.TileWidth : Options.Instance.Map.TileWidth;
-                }
-
-                if (deltaY == 0)
-                {
-                    OffsetY = 0;
-                }
-                else
-                {
-                    OffsetY = deltaY > 0 ? -Options.Instance.Map.TileHeight : Options.Instance.Map.TileHeight;
-                }
+                _lastMove = Timing.Global.MillisecondsUtc + mAttribute.Frequency + Globals.Random.Next((int)(mAttribute.Frequency * .5f));
             }
         }
-
-        if (IsMoving)
+        else
         {
-            X = (byte)tmpX;
-            Y = (byte)tmpY;
-            MoveTimer = Timing.Global.MillisecondsUtc + (long)GetMovementTime();
-        }
-        else if (DirectionMoving != DirectionFacing)
-        {
-            DirectionFacing = DirectionMoving;
+            // Blocked by something: end range early and trigger pause
+            _randomMoveRange = 0;
+            _lastMove = Timing.Global.MillisecondsUtc + mAttribute.Frequency;
         }
     }
 
