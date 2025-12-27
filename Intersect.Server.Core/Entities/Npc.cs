@@ -64,25 +64,23 @@ public partial class Npc : Entity
     public bool Despawnable;
 
     //Moving
-    public long LastRandomMove;
-    private byte _randomMoveRange;
+    private long _lastMovement;
+    private byte _movementRange;
+    private int _patrolOriginX = -1;
+    private int _patrolOriginY = -1;
+    private bool _movingAwayFromPatrolOrigin;
+    private readonly Direction[] _lastFleeDirs = new Direction[3];
 
     //Pathfinding
     private Pathfinder mPathFinder;
-
     private Task mPathfindingTask;
-
     public byte Range;
 
     //Respawn/Despawn
-    public long RespawnTime;
-
     public long FindTargetWaitTime;
     public int FindTargetDelay = 500;
-
     private int mTargetFailCounter = 0;
     private int mTargetFailMax = 10;
-
     private int mResetDistance = 0;
     private int mResetCounter = 0;
     private int mResetMax = 100;
@@ -107,6 +105,21 @@ public partial class Npc : Entity
     /// The Z value on which this NPC was "aggro'd" and started chasing a target.
     /// </summary>
     public int AggroCenterZ;
+    
+    /// <summary>
+    /// The map on which this NPC originally spawned.
+    /// </summary>
+    private MapController? _spawnMap;
+
+    /// <summary>
+    /// The X coordinate where this NPC originally spawned.
+    /// </summary>
+    private int _spawnX;
+
+    /// <summary>
+    /// The Y coordinate where this NPC originally spawned.
+    /// </summary>
+    private int _spawnY;
 
     public Npc(NPCDescriptor npcDescriptor, bool despawnable = false) : base()
     {
@@ -159,6 +172,8 @@ public partial class Npc : Entity
     private bool IsStunnedOrSleeping => CachedStatuses.Any(PredicateStunnedOrSleeping);
 
     private bool IsUnableToCastSpells => CachedStatuses.Any(PredicateUnableToCastSpells);
+    
+    private bool IsUnableToMove => CachedStatuses.Any(PredicateUnableToMove);
 
     public override EntityType GetEntityType()
     {
@@ -170,11 +185,7 @@ public partial class Npc : Entity
         lock (EntityLock)
         {
             base.Die(generateLoot, killer);
-
-            AggroCenterMap = null;
-            AggroCenterX = 0;
-            AggroCenterY = 0;
-            AggroCenterZ = 0;
+            ResetAggroCenter();
 
             if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
             {
@@ -335,13 +346,9 @@ public partial class Npc : Entity
             return false;
         }
 
-        //Check if the attacker is stunned or blinded.
-        foreach (var status in CachedStatuses)
+        if (IsStunnedOrSleeping)
         {
-            if (status.Type == SpellEffect.Stun || status.Type == SpellEffect.Sleep)
-            {
-                return false;
-            }
+            return false;
         }
 
         if (entity.HasStatusEffect(SpellEffect.Stealth))
@@ -538,6 +545,31 @@ public partial class Npc : Entity
         }
     }
 
+    private static bool PredicateUnableToMove(Status status)
+    {
+        switch (status?.Type)
+        {
+            case SpellEffect.Stun:
+            case SpellEffect.Sleep:
+            case SpellEffect.Snare:
+                return true;
+            case SpellEffect.Silence:
+            case SpellEffect.None:
+            case SpellEffect.Blind:
+            case SpellEffect.Stealth:
+            case SpellEffect.Transform:
+            case SpellEffect.Cleanse:
+            case SpellEffect.Invulnerable:
+            case SpellEffect.Shield:
+            case SpellEffect.OnHit:
+            case SpellEffect.Taunt:
+            case null:
+                return false;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
     protected override bool IgnoresNpcAvoid => false;
 
     /// <inheritdoc />
@@ -717,14 +749,14 @@ public partial class Npc : Entity
             var dirToEnemy = DirectionToTarget(target);
             if (dirToEnemy != Dir)
             {
-                if (LastRandomMove >= Timing.Global.Milliseconds)
+                if (_lastMovement >= Timing.Global.Milliseconds)
                 {
                     return;
                 }
 
                 //Face the target -- next frame fire -- then go on with life
                 ChangeDir(dirToEnemy); // Gotta get dir to enemy
-                LastRandomMove = Timing.Global.Milliseconds + Randomization.Next(1000, 3000);
+                _lastMovement = Timing.Global.Milliseconds + Randomization.Next(1000, 3000);
 
                 return;
             }
@@ -805,7 +837,110 @@ public partial class Npc : Entity
         return false;
     }
 
-    // TODO: Improve NPC movement to be more fluid like a player
+    private bool TrySmartFlee(Entity? target)
+    {
+        if (target == null || mResetting || IsUnableToMove || IsStunnedOrSleeping || IsCasting)
+        {
+            return false;
+        }
+
+        var bestDir = GetBestFleeDirection(target);
+        if (bestDir == Direction.None)
+        {
+            return false;
+        }
+
+        ChangeDir(bestDir);
+        if (CanMoveInDirection(bestDir, out var blockerType, out _, out _) || blockerType == MovementBlockerType.Slide)
+        {
+            Move(bestDir, null);
+            ShiftFleeHistory(bestDir);
+            return true;
+        }
+
+        return false;
+    }
+
+    private Direction GetBestFleeDirection(Entity target)
+    {
+        var bestDirs = new List<(Direction dir, int score)>();
+        var dirs = new[]
+        {
+            Direction.Up, Direction.Down,
+            Direction.Left, Direction.Right,
+            Direction.UpLeft, Direction.UpRight,
+            Direction.DownLeft, Direction.DownRight
+        };
+        var tx = target.X;
+        var ty = target.Y;
+        var curDistSq = (X - tx) * (X - tx) + (Y - ty) * (Y - ty);
+
+        foreach (var dir in dirs)
+        {
+            if (CanMoveInDirection(dir, out var blockerType2, out _, out _) || blockerType2 == MovementBlockerType.Slide)
+            {
+                var (dx, dy) = GetDirOffset(dir);
+                var nx = X + dx;
+                var ny = Y + dy;
+                var newDistSq = (nx - tx) * (nx - tx) + (ny - ty) * (ny - ty);
+                var delta = newDistSq - curDistSq;
+                if (delta <= 0)
+                {
+                    continue;
+                }
+
+                var score = delta * delta;
+                if (!IsDiagonal(dir))
+                {
+                    score += delta / 2;
+                }
+
+                score += GetAntiLoopMultiplier(dir) * delta;
+                bestDirs.Add((dir, score));
+            }
+        }
+
+        if (bestDirs.Count == 0)
+        {
+            return Direction.None;
+        }
+
+        var maxScore = bestDirs.Max(d => d.score);
+        var topDirs = bestDirs.Where(d => d.score >= maxScore - (maxScore / 20)).Select(d => d.dir).ToArray();
+        return topDirs[Randomization.Next(topDirs.Length)];
+    }
+
+    private static (int dx, int dy) GetDirOffset(Direction dir) => dir switch
+    {
+        Direction.Up => (0, -1),
+        Direction.Down => (0, 1),
+        Direction.Left => (-1, 0),
+        Direction.Right => (1, 0),
+        Direction.UpLeft => (-1, -1),
+        Direction.UpRight => (1, -1),
+        Direction.DownLeft => (-1, 1),
+        Direction.DownRight => (1, 1),
+        _ => (0, 0)
+    };
+
+    private static bool IsDiagonal(Direction dir) => dir is Direction.UpLeft or Direction.UpRight or Direction.DownLeft or Direction.DownRight;
+
+    private int GetAntiLoopMultiplier(Direction dir)
+    {
+        var mult = _lastFleeDirs.Where(t => t == dir).Aggregate(1, (current, t) => current - 1);
+        return Math.Max(mult, -2);
+    }
+
+    private void ShiftFleeHistory(Direction dir)
+    {
+        for (var i = _lastFleeDirs.Length - 1; i > 0; i--)
+        {
+            _lastFleeDirs[i] = _lastFleeDirs[i - 1];
+        }
+
+        _lastFleeDirs[0] = dir;
+    }
+
     //General Updating
     public override void Update(long timeMs)
     {
@@ -815,17 +950,20 @@ public partial class Npc : Entity
             Monitor.TryEnter(EntityLock, ref lockObtained);
             if (lockObtained)
             {
+                if (_spawnMap == null && MapController.TryGet(MapId, out var currentMap))
+                {
+                    _spawnMap = currentMap;
+                    _spawnX = X;
+                    _spawnY = Y;
+                }
+
                 var curMapLink = MapId;
                 base.Update(timeMs);
-
                 var tempTarget = Target;
 
-                foreach (var status in CachedStatuses)
+                if (IsStunnedOrSleeping)
                 {
-                    if (status.Type is SpellEffect.Stun or SpellEffect.Sleep)
-                    {
-                        return;
-                    }
+                    return;
                 }
 
                 var fleeing = IsFleeing();
@@ -860,7 +998,7 @@ public partial class Npc : Entity
                     // Are we resetting? If so, regenerate completely!
                     if (mResetting)
                     {
-                        var distance = GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY);
+                        var distance = GetDistanceTo(_spawnMap, _spawnX, _spawnY);
                         // Have we reached our destination? If so, clear it.
                         if (distance < 1)
                         {
@@ -881,6 +1019,7 @@ public partial class Npc : Entity
                             mResetCounter++;
                             if (mResetCounter > mResetMax)
                             {
+                                Warp(_spawnMap.Id, _spawnX, _spawnY);
                                 ResetAggroCenter(out targetMap);
                                 mResetCounter = 0;
                                 mResetDistance = 0;
@@ -941,11 +1080,33 @@ public partial class Npc : Entity
 
                         if (mPathFinder.GetTarget() == null)
                         {
-                            mPathFinder.SetTarget(new PathfinderTarget(targetMap, targetX, targetY, targetZ));
-
-                            if (tempTarget != null && tempTarget != Target)
+                            if (fleeing && tempTarget != null && !mResetting)
                             {
-                                tempTarget = Target;
+                                // Safe far flee spot
+                                var fx = X; var fy = Y;
+                                if (tempTarget.X < X)
+                                {
+                                    fx = Math.Min(X + 5, Options.Instance.Map.MapWidth - 1);
+                                }
+                                else if (tempTarget.X > X)
+                                {
+                                    fx = Math.Max(X - 5, 0);
+                                }
+
+                                if (tempTarget.Y < Y)
+                                {
+                                    fy = Math.Min(Y + 5, Options.Instance.Map.MapHeight - 1);
+                                }
+                                else if (tempTarget.Y > Y)
+                                {
+                                    fy = Math.Max(Y - 5, 0);
+                                }
+
+                                mPathFinder.SetTarget(new PathfinderTarget(MapId, fx, fy, Z));
+                            }
+                            else
+                            {
+                                mPathFinder.SetTarget(new PathfinderTarget(targetMap, targetX, targetY, targetZ));
                             }
                         }
 
@@ -954,13 +1115,10 @@ public partial class Npc : Entity
                     if (mPathFinder.GetTarget() != null && Descriptor.Movement != (int)NpcMovement.Static)
                     {
                         TryCastSpells();
-                        // TODO: Make resetting mobs actually return to their starting location.
                         if ((!mResetting && !IsOneBlockAway(
                             mPathFinder.GetTarget().TargetMapId, mPathFinder.GetTarget().TargetX,
                             mPathFinder.GetTarget().TargetY, mPathFinder.GetTarget().TargetZ
-                        )) ||
-                        (mResetting && GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) != 0)
-                        )
+                        )) || (mResetting && GetDistanceTo(_spawnMap, _spawnX, _spawnY) != 0))
                         {
                             var pathFinderResult = mPathFinder.Update(timeMs);
                             switch (pathFinderResult.Type)
@@ -969,35 +1127,11 @@ public partial class Npc : Entity
                                     var nextPathDirection = mPathFinder.GetMove();
                                     if (nextPathDirection > Direction.None)
                                     {
-                                        if (fleeing)
-                                        {
-                                            nextPathDirection = nextPathDirection switch
-                                            {
-                                                Direction.Up => Direction.Down,
-                                                Direction.Down => Direction.Up,
-                                                Direction.Left => Direction.Right,
-                                                Direction.Right => Direction.Left,
-                                                Direction.UpLeft => Direction.UpRight,
-                                                Direction.UpRight => Direction.UpLeft,
-                                                Direction.DownRight => Direction.DownLeft,
-                                                Direction.DownLeft => Direction.DownRight,
-                                                _ => nextPathDirection,
-                                            };
-                                        }
-
                                         if (CanMoveInDirection(nextPathDirection, out var blockerType, out var blockingEntityType, out var blockingEntity) || blockerType == MovementBlockerType.Slide)
                                         {
-                                            //check if NPC is snared or stunned
-                                            // ReSharper disable once LoopCanBeConvertedToQuery
-                                            foreach (var status in CachedStatuses)
+                                            if (IsUnableToMove)
                                             {
-                                                // ReSharper disable once MergeIntoLogicalPattern
-                                                if (status.Type == SpellEffect.Stun ||
-                                                    status.Type == SpellEffect.Snare ||
-                                                    status.Type == SpellEffect.Sleep)
-                                                {
-                                                    return;
-                                                }
+                                                return;
                                             }
 
                                             Move(nextPathDirection, null);
@@ -1031,18 +1165,11 @@ public partial class Npc : Entity
                                         // Are we resetting?
                                         if (mResetting)
                                         {
-                                            // Have we reached our destination? If so, clear it.
-                                            if (GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) == 0)
+                                            // Have we reached our spawn destination? If so, clear it.
+                                            if (GetDistanceTo(_spawnMap, _spawnX, _spawnY) == 0)
                                             {
                                                 targetMap = Guid.Empty;
-
-                                                // Reset our aggro center so we can get "pulled" again.
-                                                AggroCenterMap = null;
-                                                AggroCenterX = 0;
-                                                AggroCenterY = 0;
-                                                AggroCenterZ = 0;
-                                                mPathFinder?.SetTarget(null);
-                                                mResetting = false;
+                                                ResetAggroCenter();
                                             }
                                         }
                                     }
@@ -1068,65 +1195,18 @@ public partial class Npc : Entity
                                 default:
                                     throw new ArgumentOutOfRangeException();
                             }
+
+                            if (tempTarget == null)
+                            {
+                                SoftReset();
+                            }
                         }
                         else
                         {
                             var fleed = false;
                             if (tempTarget != null && fleeing)
                             {
-                                var dir = DirectionToTarget(tempTarget);
-                                switch (dir)
-                                {
-                                    case Direction.Up:
-                                        dir = Direction.Down;
-
-                                        break;
-                                    case Direction.Down:
-                                        dir = Direction.Up;
-
-                                        break;
-                                    case Direction.Left:
-                                        dir = Direction.Right;
-
-                                        break;
-                                    case Direction.Right:
-                                        dir = Direction.Left;
-
-                                        break;
-                                    case Direction.UpLeft:
-                                        dir = Direction.UpRight;
-
-                                        break;
-                                    case Direction.UpRight:
-                                        dir = Direction.UpLeft;
-                                        break;
-
-                                    case Direction.DownRight:
-                                        dir = Direction.DownLeft;
-
-                                        break;
-                                    case Direction.DownLeft:
-                                        dir = Direction.DownRight;
-
-                                        break;
-                                }
-
-                                if (CanMoveInDirection(dir, out var blockerType, out _) || blockerType == MovementBlockerType.Slide)
-                                {
-                                    //check if NPC is snared or stunned
-                                    foreach (var status in CachedStatuses)
-                                    {
-                                        if (status.Type == SpellEffect.Stun ||
-                                            status.Type == SpellEffect.Snare ||
-                                            status.Type == SpellEffect.Sleep)
-                                        {
-                                            return;
-                                        }
-                                    }
-
-                                    Move(dir, null);
-                                    fleed = true;
-                                }
+                                fleed = TrySmartFlee(tempTarget);
                             }
 
                             if (!fleed)
@@ -1159,28 +1239,40 @@ public partial class Npc : Entity
 
                     CheckForResetLocation();
 
-                    if (targetMap != Guid.Empty || LastRandomMove >= Timing.Global.Milliseconds || IsCasting)
+                    if (IsUnableToMove || targetMap != Guid.Empty || _lastMovement >= Timing.Global.Milliseconds || IsCasting)
+                    {
+                        return;
+                    }
+
+                    if (Target != null || mResetting || fleeing)
                     {
                         return;
                     }
 
                     switch (Descriptor.Movement)
                     {
-                        case (int)NpcMovement.StandStill:
-                            LastRandomMove = Timing.Global.Milliseconds + Randomization.Next(1000, 3000);
+                        case (byte)NpcMovement.StandStill:
+                            _lastMovement = Timing.Global.Milliseconds + Randomization.Next(1000, 3000);
                             return;
-                        case (int)NpcMovement.TurnRandomly:
+                        case (byte)NpcMovement.TurnRandomly:
                             ChangeDir(Randomization.NextDirection());
-                            LastRandomMove = Timing.Global.Milliseconds + Randomization.Next(1000, 3000);
+                            _lastMovement = Timing.Global.Milliseconds + Randomization.Next(1000, 3000);
                             return;
-                        case (int)NpcMovement.MoveRandomly:
+                        case (byte)NpcMovement.MoveRandomly:
                             MoveRandomly();
                             break;
-                    }
-
-                    if (fleeing)
-                    {
-                        LastRandomMove = Timing.Global.Milliseconds + (long)GetMovementTime();
+                        case (byte)NpcMovement.HorizontalPatrol:
+                            HorizontalPatrol();
+                            break;
+                        case (byte)NpcMovement.VerticalPatrol:
+                            VerticalPatrol();
+                            break;
+                        case (byte)NpcMovement.BackslashPatrol:
+                            BackslashPatrol();
+                            break;
+                        case (byte)NpcMovement.ForwardslashPatrol:
+                            ForwardslashPatrol();
+                            break;
                     }
                 }
 
@@ -1216,35 +1308,238 @@ public partial class Npc : Entity
 
     private void MoveRandomly()
     {
-        if (_randomMoveRange <= 0)
+        var currentTime = Timing.Global.Milliseconds;
+
+        // Pick a valid random direction and range
+        if (_movementRange <= 0)
         {
-            Dir = Randomization.NextDirection();
-            LastRandomMove = Timing.Global.Milliseconds + Randomization.Next(1000, 2000);
-            _randomMoveRange = (byte)Randomization.Next(0, Descriptor.SightRange + Randomization.Next(0, 3));
+            ChangeDir(FindValidRandomPath());
+            _movementRange = (byte)Randomization.Next(0, Descriptor.SightRange + 1);
         }
-        else if (CanMoveInDirection(Dir))
+
+        // chance to change behavior while walking
+        if (_movementRange >= 1 && Randomization.Next(0, 100) < 35)
         {
-            foreach (var status in CachedStatuses)
+            if (Randomization.Next(0, 100) < 50)
             {
-                if (status.Type is SpellEffect.Stun or SpellEffect.Snare or SpellEffect.Sleep)
-                {
-                    return;
-                }
+                // change to a random valid direction
+                ChangeDir(FindValidRandomPath());
             }
+            else
+            {
+                // stop and think: abandon path and trigger an idle pause
+                _movementRange = 0;
+                _lastMovement = currentTime + Randomization.Next(840, 1000);
+                return;
+            }
+        }
 
+        // try to move in current direction
+        if (CanMoveInDirection(Dir) && !IsUnableToMove)
+        {
             Move(Dir, null);
-            LastRandomMove = Timing.Global.Milliseconds + (long)GetMovementTime();
-
-            if (_randomMoveRange <= Randomization.Next(0, 3))
-            {
-                Dir = Randomization.NextDirection();
-            }
-
-            _randomMoveRange--;
+            _movementRange--;
+            _lastMovement = _movementRange > 0 ? currentTime + (long)GetMovementTime() : currentTime + Randomization.Next(420, 840);
         }
         else
         {
-            Dir = Randomization.NextDirection();
+            // Blocked: try valid alternative directions
+            var alternativeDir = FindValidRandomPath();
+            if (alternativeDir != Direction.None)
+            {
+                Move(alternativeDir, null);
+                _movementRange--;
+                _lastMovement = currentTime + (long)GetMovementTime();
+            }
+            else
+            {
+                // Completely stuck: pick new random direction and wait
+                ChangeDir(Randomization.NextDirection());
+                _movementRange = 0;
+                _lastMovement = currentTime + 420;
+            }
+        }
+    }
+
+    private Direction FindValidRandomPath()
+    {
+        var allDirections = Enum.GetValues<Direction>();
+        var maxDirs = Options.Instance.Map.EnableDiagonalMovement ? 8 : 4;
+        var start = Randomization.Next(maxDirs);
+
+        for (int i = 0; i < maxDirs; i++)
+        {
+            var dir = allDirections[(start + i) % maxDirs];
+            if (dir != Direction.None && CanMoveInDirection(dir))
+            {
+                return dir;
+            }
+        }
+
+        return Direction.None;
+    }
+
+    // Horizontal patrol (left/right from spawn)
+    private void HorizontalPatrol()
+    {
+        var currentTime = Timing.Global.Milliseconds;
+
+        if (_patrolOriginX == -1)
+        {
+            _patrolOriginX = X;
+            _movingAwayFromPatrolOrigin = true;
+        }
+
+        // Initialize direction
+        if (Dir != Direction.Left && Dir != Direction.Right)
+        {
+            Dir = Randomization.Next(0, 2) == 0 ? Direction.Left : Direction.Right;
+        }
+
+        var distanceFromSpawn = Math.Abs(X - _patrolOriginX);
+
+        switch (_movingAwayFromPatrolOrigin)
+        {
+            // Only reverse at endpoints
+            case true when distanceFromSpawn >= Descriptor.SightRange:
+                Dir = Dir == Direction.Left ? Direction.Right : Direction.Left;
+                _movingAwayFromPatrolOrigin = false;
+                break;
+            case false when distanceFromSpawn == 0:
+                _movingAwayFromPatrolOrigin = true;
+                break;
+        }
+
+        if (CanMoveInDirection(Dir) && !IsUnableToMove)
+        {
+            Move(Dir, null);
+            _lastMovement = currentTime + (long)GetMovementTime();
+        }
+        else
+        {
+            _lastMovement = currentTime + 420;
+        }
+    }
+
+    // Vertical patrol (up/down from spawn)
+    private void VerticalPatrol()
+    {
+        var currentTime = Timing.Global.Milliseconds;
+
+        if (_patrolOriginY == -1)
+        {
+            _patrolOriginY = Y;
+            _movingAwayFromPatrolOrigin = true;
+        }
+
+        if (Dir != Direction.Up && Dir != Direction.Down)
+        {
+            Dir = Randomization.Next(0, 2) == 0 ? Direction.Up : Direction.Down;
+        }
+
+        var distanceFromSpawn = Math.Abs(Y - _patrolOriginY);
+
+        switch (_movingAwayFromPatrolOrigin)
+        {
+            case true when distanceFromSpawn >= Descriptor.SightRange:
+                Dir = Dir == Direction.Up ? Direction.Down : Direction.Up;
+                _movingAwayFromPatrolOrigin = false;
+                break;
+            case false when distanceFromSpawn == 0:
+                _movingAwayFromPatrolOrigin = true;
+                break;
+        }
+
+        if (CanMoveInDirection(Dir) && !IsUnableToMove)
+        {
+            Move(Dir, null);
+            _lastMovement = currentTime + (long)GetMovementTime();
+        }
+        else
+        {
+            _lastMovement = currentTime + 420;
+        }
+    }
+
+    // Diagonal patrol (Backslash pattern: \)
+    private void BackslashPatrol()
+    {
+        var currentTime = Timing.Global.Milliseconds;
+
+        if (_patrolOriginX == -1)
+        {
+            _patrolOriginX = X;
+            _patrolOriginY = Y;
+            _movingAwayFromPatrolOrigin = true;
+        }
+
+        if (Dir != Direction.UpLeft && Dir != Direction.DownRight)
+        {
+            Dir = Randomization.Next(0, 2) == 0 ? Direction.UpLeft : Direction.DownRight;
+        }
+
+        var distanceFromSpawn = Math.Max(Math.Abs(X - _patrolOriginX), Math.Abs(Y - _patrolOriginY));
+
+        switch (_movingAwayFromPatrolOrigin)
+        {
+            case true when distanceFromSpawn >= Descriptor.SightRange:
+                Dir = Dir == Direction.UpLeft ? Direction.DownRight : Direction.UpLeft;
+                _movingAwayFromPatrolOrigin = false;
+                break;
+            case false when X == _patrolOriginX && Y == _patrolOriginY:
+                _movingAwayFromPatrolOrigin = true;
+                break;
+        }
+
+        if (CanMoveInDirection(Dir) && !IsUnableToMove)
+        {
+            Move(Dir, null);
+            _lastMovement = currentTime + (long)GetMovementTime();
+        }
+        else
+        {
+            _lastMovement = currentTime + 420;
+        }
+    }
+
+    // Diagonal patrol (Forwardslash pattern: /)
+    private void ForwardslashPatrol()
+    {
+        var currentTime = Timing.Global.Milliseconds;
+
+        if (_patrolOriginX == -1)
+        {
+            _patrolOriginX = X;
+            _patrolOriginY = Y;
+            _movingAwayFromPatrolOrigin = true;
+        }
+
+        if (Dir != Direction.UpRight && Dir != Direction.DownLeft)
+        {
+            Dir = Randomization.Next(0, 2) == 0 ? Direction.UpRight : Direction.DownLeft;
+        }
+
+        var distanceFromSpawn = Math.Max(Math.Abs(X - _patrolOriginX), Math.Abs(Y - _patrolOriginY));
+
+        switch (_movingAwayFromPatrolOrigin)
+        {
+            case true when distanceFromSpawn >= Descriptor.SightRange:
+                Dir = Dir == Direction.UpRight ? Direction.DownLeft : Direction.UpRight;
+                _movingAwayFromPatrolOrigin = false;
+                break;
+            case false when X == _patrolOriginX && Y == _patrolOriginY:
+                _movingAwayFromPatrolOrigin = true;
+                break;
+        }
+
+        if (CanMoveInDirection(Dir) && !IsUnableToMove)
+        {
+            Move(Dir, null);
+            _lastMovement = currentTime + (long)GetMovementTime();
+        }
+        else
+        {
+            _lastMovement = currentTime + 420;
         }
     }
 
@@ -1261,45 +1556,98 @@ public partial class Npc : Entity
         AggroCenterX = 0;
         AggroCenterY = 0;
         AggroCenterZ = 0;
-        mPathFinder?.SetTarget(null);
+        mPathFinder.SetTarget(null);
+
+        // Reset patrol origin
+        _patrolOriginX = -1;
+        _patrolOriginY = -1;
+        _movingAwayFromPatrolOrigin = false;
+
         mResetting = false;
+    }
+
+    private void ResetAggroCenter()
+    {
+        _ = mPathFinder.GetTarget()?.TargetMapId ?? Guid.Empty;
+        ResetAggroCenter(out _);
     }
 
     private bool CheckForResetLocation(bool forceDistance = false)
     {
         // Check if we've moved out of our range we're allowed to move from after being "aggro'd" by something.
         // If so, remove target and move back to the origin point.
-        if (Options.Instance.Npc.AllowResetRadius && AggroCenterMap != null && (GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) > Math.Max(Options.Instance.Npc.ResetRadius, Math.Min(Descriptor.ResetRadius, Math.Max(Options.Instance.Map.MapWidth, Options.Instance.Map.MapHeight))) || forceDistance))
+        if (Options.Instance.Npc.AllowResetRadius && _spawnMap != null && AggroCenterMap != null && (GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) > Math.Max(Options.Instance.Npc.ResetRadius, Math.Min(Descriptor.ResetRadius, Math.Max(Options.Instance.Map.MapWidth, Options.Instance.Map.MapHeight))) || forceDistance))
         {
-            Reset(Options.Instance.Npc.ResetVitalsAndStatuses);
-
+            Reset(IsFleeing() || Options.Instance.Npc.ResetVitalsAndStatuses);
             mResetCounter = 0;
             mResetDistance = 0;
+            mPathFinder.SetTarget(null);
 
-            // Try and move back to where we came from before we started chasing something.
-            mResetting = true;
-            mPathFinder.SetTarget(new PathfinderTarget(AggroCenterMap.Id, AggroCenterX, AggroCenterY, AggroCenterZ));
+            // If on different map when resetting: warp immediately
+            if (_spawnMap.Id != MapId)
+            {
+                mResetting = true;
+                Warp(_spawnMap.Id, _spawnX, _spawnY);
+                ResetAggroCenter();
+            }
+            else
+            {
+                // Same map - set pathfinder to spawn point
+                mResetting = true;
+                mPathFinder.SetTarget(new PathfinderTarget(_spawnMap.Id, _spawnX, _spawnY, Z));
+            }
             return true;
         }
         return false;
+    }
+
+    private void SoftReset()
+    {
+        if (_spawnMap == null)
+        {
+            return;
+        }
+
+        Reset(IsFleeing(), true);
+        mResetCounter = 0;
+        mResetDistance = 0;
+        mPathFinder.SetTarget(null);
+
+        // Move back to where we SPAWNED (only for patrol movement patterns)
+        switch (Descriptor.Movement)
+        {
+            case (byte)NpcMovement.HorizontalPatrol:
+            case (byte)NpcMovement.VerticalPatrol:
+            case (byte)NpcMovement.BackslashPatrol:
+            case (byte)NpcMovement.ForwardslashPatrol:
+                // If on different map when resetting: warp immediately
+                if (_spawnMap.Id != MapId)
+                {
+                    mResetting = true;
+                    Warp(_spawnMap.Id, _spawnX, _spawnY);
+                    ResetAggroCenter();
+                }
+                else
+                {
+                    // Same map - set pathfinder to spawn point
+                    mResetting = true;
+                    mPathFinder.SetTarget(new PathfinderTarget(_spawnMap.Id, _spawnX, _spawnY, Z));
+                }
+                break;
+        }
     }
 
     private void Reset(bool resetVitals, bool clearLocation = false)
     {
         // Remove our target.
         RemoveTarget();
-
         DamageMap.Clear();
         LootMap.Clear();
         LootMapCache = Array.Empty<Guid>();
 
         if (clearLocation)
         {
-            mPathFinder.SetTarget(null);
-            AggroCenterMap = null;
-            AggroCenterX = 0;
-            AggroCenterY = 0;
-            AggroCenterZ = 0;
+            ResetAggroCenter();
         }
 
         // Reset our vitals and statusses when configured.
@@ -1319,9 +1667,9 @@ public partial class Npc : Entity
     // Completely resets an Npc to full health and its spawnpoint if it's current chasing something.
     public override void Reset()
     {
-        if (AggroCenterMap != null)
+        if (_spawnMap != null)
         {
-            Warp(AggroCenterMap.Id, AggroCenterX, AggroCenterY);
+            Warp(_spawnMap.Id, _spawnX, _spawnY);
         }
 
         Reset(true, true);
