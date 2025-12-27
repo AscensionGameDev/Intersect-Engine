@@ -43,6 +43,8 @@ internal partial class IntersectGame : Game
 
     private GraphicsDeviceManager mGraphics;
 
+    private bool _isShowingExitConfirmation = false;
+
     #region "Autoupdate Variables"
 
     private Updater? _updater;
@@ -339,51 +341,62 @@ internal partial class IntersectGame : Game
 
     protected override void OnExiting(object sender, ExitingEventArgs args)
     {
+        // If already showing dialog, just cancel and return
+        if (_isShowingExitConfirmation)
+        {
+            args.Cancel = true;
+            return;
+        }
+
         ApplicationContext.Context.Value?.Logger.LogInformation("System window closing (due to user interaction most likely).");
 
-        if (Globals.Me != null && Globals.Me.CombatTimer > Timing.Global?.Milliseconds)
+        // Check if player is logged in and in game
+        if (Globals.Me != null && Globals.LoggedIn && Globals.GameState == GameStates.InGame)
         {
-            //Try to prevent SDL Window Close
-            var exception = false;
-            try
-            {
-                var platform = GetType()
-                    .GetField("Platform", BindingFlags.NonPublic | BindingFlags.Instance)
-                    .GetValue(this);
+            // Set flag to prevent multiple dialogs
+            _isShowingExitConfirmation = true;
 
-                var field = platform.GetType()
-                    .GetField("_isExiting", BindingFlags.NonPublic | BindingFlags.Instance);
+            // Check if player is in combat
+            bool inCombat = Globals.Me.CombatTimer > Timing.Global?.Milliseconds;
 
-                field.SetValue(platform, 0);
-            }
-            catch
-            {
-                //TODO: Should we log here? I really don't know if it's necessary.
-                exception = true;
-            }
+            // Cancel the exit event
+            args.Cancel = true;
 
-            if (!exception)
+            if (inCombat)
             {
-                //Show Message Getting Exit Confirmation From Player to Leave in Combat
-                _ = new InputBox(
+                // Show combat warning
+                var inputBox = new InputBox(
                     title: Strings.Combat.WarningTitle,
-                    prompt: Strings.Combat.WarningCharacterSelect,
+                    prompt: Strings.Combat.WarningExitDesktop,
                     inputType: InputType.YesNo,
                     onSubmit: (s, e) =>
                     {
-                        if (Globals.Me != null)
-                        {
-                            Globals.Me.CombatTimer = 0;
-                        }
-
+                        Globals.Me.CombatTimer = 0;
+                        _isShowingExitConfirmation = false;
                         Globals.IsRunning = false;
-                    }
+                    },
+                    onCancel: (s, e) => { _isShowingExitConfirmation = false; }
                 );
-
-                //Restart the MonoGame RunLoop
-                Run();
-                return;
+                inputBox.Closed += (s, e) => { _isShowingExitConfirmation = false; };
             }
+            else
+            {
+                // Show quit confirmation
+                var inputBox = new InputBox(
+                    title: Strings.General.QuitTitle,
+                    prompt: Strings.General.QuitPrompt,
+                    inputType: InputType.YesNo,
+                    onSubmit: (s, e) =>
+                    {
+                        _isShowingExitConfirmation = false;
+                        Globals.IsRunning = false;
+                    },
+                    onCancel: (s, e) => { _isShowingExitConfirmation = false; }
+                );
+                inputBox.Closed += (s, e) => { _isShowingExitConfirmation = false; };
+            }
+
+            return;
         }
 
         try
