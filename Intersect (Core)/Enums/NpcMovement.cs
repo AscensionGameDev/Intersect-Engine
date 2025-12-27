@@ -9,4 +9,12 @@ public enum NpcMovement
     StandStill,
 
     Static,
+
+    HorizontalPatrol,
+
+    VerticalPatrol,
+
+    BackslashPatrol,
+
+    ForwardslashPatrol,
 }
