@@ -861,6 +861,12 @@ public partial class Base : IDisposable
 
     private static void SetVisible(Base @this, bool value)
     {
+        // Check if already disposed
+        if (@this._disposed)
+        {
+            return;
+        }
+
         var wasVisibleInParent = @this._visible;
 
         if (@this.GetType().Name == "VersionPanel")

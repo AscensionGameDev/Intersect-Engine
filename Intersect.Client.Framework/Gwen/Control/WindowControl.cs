@@ -273,7 +273,14 @@ public partial class WindowControl : ResizableControl
             return;
         }
 
-        IsHidden = true;
+        try
+        {
+            IsHidden = true;
+        }
+        catch (ObjectDisposedException)
+        {
+            // Canvas already disposed during shutdown, this is fine
+        }
 
         if (_modal != null)
         {
