@@ -43,8 +43,6 @@ internal partial class IntersectGame : Game
 
     private GraphicsDeviceManager mGraphics;
 
-    private bool _isShowingExitConfirmation = false;
-
     #region "Autoupdate Variables"
 
     private Updater? _updater;
@@ -341,64 +339,57 @@ internal partial class IntersectGame : Game
 
     protected override void OnExiting(object sender, ExitingEventArgs args)
     {
-        // If already showing dialog, just cancel and return
-        if (_isShowingExitConfirmation)
+        // If game is already shutting down, allow it to exit normally
+        if (!Globals.IsRunning)
         {
-            args.Cancel = true;
+            ApplicationContext.Context.Value?.Logger.LogInformation("System window closing (due to user interaction most likely).");
+            TryExit(sender, args);
             return;
         }
 
-        ApplicationContext.Context.Value?.Logger.LogInformation("System window closing (due to user interaction most likely).");
+        // Cancel the exit event
+        args.Cancel = true;
 
-        // Check if player is logged in and in game
-        if (Globals.Me != null && Globals.LoggedIn && Globals.GameState == GameStates.InGame)
+        // Check if there's a player in combat
+        bool inCombat = Globals.Me != null &&
+                        Globals.Me.CombatTimer > Timing.Global?.Milliseconds &&
+                        Globals.GameState == GameStates.InGame;
+
+        if (inCombat)
         {
-            // Set flag to prevent multiple dialogs
-            _isShowingExitConfirmation = true;
-
-            // Check if player is in combat
-            bool inCombat = Globals.Me.CombatTimer > Timing.Global?.Milliseconds;
-
-            // Cancel the exit event
-            args.Cancel = true;
-
-            if (inCombat)
-            {
-                // Show combat warning
-                var inputBox = new InputBox(
-                    title: Strings.Combat.WarningTitle,
-                    prompt: Strings.Combat.WarningExitDesktop,
-                    inputType: InputType.YesNo,
-                    onSubmit: (s, e) =>
+            AlertWindow.Open(
+                Strings.Combat.WarningExitDesktop,
+                Strings.Combat.WarningTitle,
+                AlertType.Warning,
+                inputType: InputType.YesNo,
+                handleSubmit: (_, _) =>
+                {
+                    if (Globals.Me != null)
                     {
                         Globals.Me.CombatTimer = 0;
-                        _isShowingExitConfirmation = false;
-                        Globals.IsRunning = false;
-                    },
-                    onCancel: (s, e) => { _isShowingExitConfirmation = false; }
-                );
-                inputBox.Closed += (s, e) => { _isShowingExitConfirmation = false; };
-            }
-            else
-            {
-                // Show quit confirmation
-                var inputBox = new InputBox(
-                    title: Strings.General.QuitTitle,
-                    prompt: Strings.General.QuitPrompt,
-                    inputType: InputType.YesNo,
-                    onSubmit: (s, e) =>
-                    {
-                        _isShowingExitConfirmation = false;
-                        Globals.IsRunning = false;
-                    },
-                    onCancel: (s, e) => { _isShowingExitConfirmation = false; }
-                );
-                inputBox.Closed += (s, e) => { _isShowingExitConfirmation = false; };
-            }
+                    }
 
-            return;
+                    Globals.IsRunning = false;
+                }
+            );
         }
+        else
+        {
+            AlertWindow.Open(
+                Strings.General.QuitPrompt,
+                Strings.General.QuitTitle,
+                AlertType.Warning,
+                inputType: InputType.YesNo,
+                handleSubmit: (_, _) =>
+                {
+                    Globals.IsRunning = false;
+                }
+            );
+        }
+    }
 
+    private void TryExit(object sender, ExitingEventArgs args)
+    {
         try
         {
             _updater?.Stop();
