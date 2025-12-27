@@ -102,16 +102,19 @@ public sealed partial class VariablesController : IntersectController
             return NotFound($@"No server variable with id '{variableId}'.");
         }
 
-        var changed = false;
-        if (variable.Value != null && variable.Value.Value != variableValue.Value)
+        if (variable.Value == null)
         {
-            variable.Value.Value = variableValue.Value;
-            changed = true;
+            return InternalServerError("Variable value storage is missing.");
         }
 
-        // ReSharper disable once InvertIf
-        if (changed)
+        if (!VariableValueHelper.TryConvertValue(variable.DataType, variableValue.Value, out object convertedValue, out string error))
         {
+            return BadRequest(error);
+        }
+
+        if (!VariableValueHelper.Equals(variable.DataType, variable.Value, convertedValue))
+        {
+            variable.Value.Value = convertedValue;
             Player.StartCommonEventsWithTriggerForAll(
                 CommonEventTrigger.ServerVariableChange,
                 "",
