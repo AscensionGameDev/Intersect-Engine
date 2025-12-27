@@ -156,11 +156,20 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
 
     private static void ExitToDesktop(object? sender, EventArgs? e)
     {
-        if (Globals.Me != null)
-        {
-            Globals.Me.CombatTimer = 0;
-        }
+        AlertWindow.Open(
+            Strings.General.QuitPrompt,
+            Strings.General.QuitTitle,
+            AlertType.Warning,
+            inputType: InputType.YesNo,
+            handleSubmit: (_, _) =>
+            {
+                if (Globals.Me != null)
+                {
+                    Globals.Me.CombatTimer = 0;
+                }
 
-        Globals.IsRunning = false;
+                Globals.IsRunning = false;
+            }
+        );
     }
 }
