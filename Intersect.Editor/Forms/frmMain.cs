@@ -199,6 +199,7 @@ public partial class FrmMain : Form
     {
         toolsToolStripMenuItem.Text = Strings.MainForm.tools;
         packageUpdateToolStripMenuItem.Text = Strings.MainForm.MenuToolsPackageUpdate;
+        uploadToServerToolStripMenuItem.Text = Strings.MainForm.MenuToolsUploadToServer;
     }
 
     private void InitLocalizationMenuHelp()
@@ -2010,6 +2011,12 @@ public partial class FrmMain : Form
     }
 
     private void packageUpdateToolStripMenuItem_Click(object sender, EventArgs e) => PackageUpdate();
+
+    private void uploadToServerToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        var uploadForm = new FrmUploadToServer();
+        uploadForm.ShowDialog(this);
+    }
 
     private void PackageUpdate()
     {

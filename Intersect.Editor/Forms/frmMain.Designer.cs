@@ -123,6 +123,7 @@ namespace Intersect.Editor.Forms
             this.menuStrip = new DarkUI.Controls.DarkMenuStrip();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packageUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uploadToServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.menuStrip.SuspendLayout();
@@ -989,21 +990,30 @@ namespace Intersect.Editor.Forms
             this.menuStrip.Text = "menuStrip1";
             // 
             // toolsToolStripMenuItem
-            // 
+            //
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.packageUpdateToolStripMenuItem});
+            this.packageUpdateToolStripMenuItem,
+            this.uploadToServerToolStripMenuItem});
             this.toolsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
-            // 
+            //
             // packageUpdateToolStripMenuItem
-            // 
+            //
             this.packageUpdateToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.packageUpdateToolStripMenuItem.Name = "packageUpdateToolStripMenuItem";
-            this.packageUpdateToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.packageUpdateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.packageUpdateToolStripMenuItem.Text = "Package Update";
             this.packageUpdateToolStripMenuItem.Click += new System.EventHandler(this.packageUpdateToolStripMenuItem_Click);
+            //
+            // uploadToServerToolStripMenuItem
+            //
+            this.uploadToServerToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.uploadToServerToolStripMenuItem.Name = "uploadToServerToolStripMenuItem";
+            this.uploadToServerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.uploadToServerToolStripMenuItem.Text = "Upload to Server";
+            this.uploadToServerToolStripMenuItem.Click += new System.EventHandler(this.uploadToServerToolStripMenuItem_Click);
             // 
             // FrmMain
             // 
@@ -1121,6 +1131,7 @@ namespace Intersect.Editor.Forms
 		private ToolStripSeparator toolStripSeparator13;
 		private ToolStripMenuItem craftsEditorToolStripMenuItem;
         private ToolStripMenuItem packageUpdateToolStripMenuItem;
+        private ToolStripMenuItem uploadToServerToolStripMenuItem;
         private ToolStripMenuItem layersToolStripMenuItem;
         private ToolStripMenuItem hideEventsToolStripMenuItem;
     }
