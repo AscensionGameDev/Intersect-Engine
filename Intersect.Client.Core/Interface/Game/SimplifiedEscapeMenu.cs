@@ -35,7 +35,7 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
         _settings.Clicked += OpenSettingsWindow;
         _character.Clicked += LogoutToCharacterSelectSelectClicked;
         _logout.Clicked += LogoutToMainToMainMenuClicked;
-        _exit.Clicked += ExitToDesktopToDesktopClicked;
+        _exit.Clicked += ExitToDesktopClicked;
 
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer?.GetResolutionString());
     }
@@ -80,7 +80,13 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
     {
         if (Globals.Me?.CombatTimer > Timing.Global.Milliseconds)
         {
-            ShowCombatWarning();
+            AlertWindow.Open(
+                Strings.Combat.WarningCharacterSelect,
+                Strings.Combat.WarningTitle,
+                AlertType.Warning,
+                handleSubmit: LogoutToCharacterSelect,
+                inputType: InputType.YesNo
+            );
         }
         else
         {
@@ -92,7 +98,13 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
     {
         if (Globals.Me?.CombatTimer > Timing.Global.Milliseconds)
         {
-            ShowCombatWarning();
+            AlertWindow.Open(
+                Strings.Combat.WarningLogout,
+                Strings.Combat.WarningTitle,
+                AlertType.Warning,
+                handleSubmit: LogoutToMainMenu,
+                inputType: InputType.YesNo
+            );
         }
         else
         {
@@ -100,27 +112,35 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
         }
     }
 
-    private void ExitToDesktopToDesktopClicked(Base sender, MouseButtonState arguments)
+    private void ExitToDesktopClicked(Base sender, MouseButtonState arguments)
     {
-        if (Globals.Me?.CombatTimer > Timing.Global.Milliseconds)
+        if (Globals.Me?.CombatTimer > Timing.Global?.Milliseconds)
         {
-            ShowCombatWarning();
+            AlertWindow.Open(
+                Strings.Combat.WarningExitDesktop,
+                Strings.Combat.WarningTitle,
+                AlertType.Warning,
+                inputType: InputType.YesNo,
+                handleSubmit: (_, _) =>
+                {
+                    Globals.Me.CombatTimer = 0;
+                    Globals.IsRunning = false;
+                }
+            );
         }
         else
         {
-            ExitToDesktop(null, null);
+            AlertWindow.Open(
+                Strings.General.QuitPrompt,
+                Strings.General.QuitTitle,
+                AlertType.Warning,
+                inputType: InputType.YesNo,
+                handleSubmit: (_, _) =>
+                {
+                    Globals.IsRunning = false;
+                }
+            );
         }
-    }
-
-    private static void ShowCombatWarning()
-    {
-        AlertWindow.Open(
-            Strings.Combat.WarningCharacterSelect,
-            Strings.Combat.WarningTitle,
-            AlertType.Warning,
-            handleSubmit: LogoutToCharacterSelect,
-            inputType: InputType.YesNo
-        );
     }
 
     private void OpenSettingsWindow(object? sender, EventArgs? e)
@@ -152,15 +172,5 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
         }
 
         Main.Logout(false);
-    }
-
-    private static void ExitToDesktop(object? sender, EventArgs? e)
-    {
-        if (Globals.Me != null)
-        {
-            Globals.Me.CombatTimer = 0;
-        }
-
-        Globals.IsRunning = false;
     }
 }

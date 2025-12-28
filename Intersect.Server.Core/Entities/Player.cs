@@ -6980,8 +6980,9 @@ public partial class Player : Entity
 
                                     break;
                                 case VariableDataType.String:
-                                    if (newValueString.Length >= cmd.Minimum &&
-                                        newValueString.Length <= cmd.Maximum)
+                                    var stringValue = newValueString ?? string.Empty;
+                                    var stringLength = stringValue.Length;
+                                    if (stringLength >= cmd.Minimum && stringLength <= cmd.Maximum)
                                     {
                                         if (value.String != newValueString)
                                         {

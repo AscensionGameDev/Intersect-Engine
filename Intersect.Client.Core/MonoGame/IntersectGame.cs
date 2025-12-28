@@ -339,53 +339,57 @@ internal partial class IntersectGame : Game
 
     protected override void OnExiting(object sender, ExitingEventArgs args)
     {
-        ApplicationContext.Context.Value?.Logger.LogInformation("System window closing (due to user interaction most likely).");
-
-        if (Globals.Me != null && Globals.Me.CombatTimer > Timing.Global?.Milliseconds)
+        // If game is already shutting down, allow it to exit normally
+        if (!Globals.IsRunning)
         {
-            //Try to prevent SDL Window Close
-            var exception = false;
-            try
-            {
-                var platform = GetType()
-                    .GetField("Platform", BindingFlags.NonPublic | BindingFlags.Instance)
-                    .GetValue(this);
-
-                var field = platform.GetType()
-                    .GetField("_isExiting", BindingFlags.NonPublic | BindingFlags.Instance);
-
-                field.SetValue(platform, 0);
-            }
-            catch
-            {
-                //TODO: Should we log here? I really don't know if it's necessary.
-                exception = true;
-            }
-
-            if (!exception)
-            {
-                //Show Message Getting Exit Confirmation From Player to Leave in Combat
-                _ = new InputBox(
-                    title: Strings.Combat.WarningTitle,
-                    prompt: Strings.Combat.WarningCharacterSelect,
-                    inputType: InputType.YesNo,
-                    onSubmit: (s, e) =>
-                    {
-                        if (Globals.Me != null)
-                        {
-                            Globals.Me.CombatTimer = 0;
-                        }
-
-                        Globals.IsRunning = false;
-                    }
-                );
-
-                //Restart the MonoGame RunLoop
-                Run();
-                return;
-            }
+            ApplicationContext.Context.Value?.Logger.LogInformation("System window closing (due to user interaction most likely).");
+            TryExit(sender, args);
+            return;
         }
 
+        // Cancel the exit event
+        args.Cancel = true;
+
+        // Check if there's a player in combat
+        bool inCombat = Globals.Me != null &&
+                        Globals.Me.CombatTimer > Timing.Global?.Milliseconds &&
+                        Globals.GameState == GameStates.InGame;
+
+        if (inCombat)
+        {
+            AlertWindow.Open(
+                Strings.Combat.WarningExitDesktop,
+                Strings.Combat.WarningTitle,
+                AlertType.Warning,
+                inputType: InputType.YesNo,
+                handleSubmit: (_, _) =>
+                {
+                    if (Globals.Me != null)
+                    {
+                        Globals.Me.CombatTimer = 0;
+                    }
+
+                    Globals.IsRunning = false;
+                }
+            );
+        }
+        else
+        {
+            AlertWindow.Open(
+                Strings.General.QuitPrompt,
+                Strings.General.QuitTitle,
+                AlertType.Warning,
+                inputType: InputType.YesNo,
+                handleSubmit: (_, _) =>
+                {
+                    Globals.IsRunning = false;
+                }
+            );
+        }
+    }
+
+    private void TryExit(object sender, ExitingEventArgs args)
+    {
         try
         {
             _updater?.Stop();

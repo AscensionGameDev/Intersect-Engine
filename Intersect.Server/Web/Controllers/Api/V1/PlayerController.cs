@@ -693,19 +693,19 @@ namespace Intersect.Server.Web.Controllers.Api.V1
 
             var variable = player.GetVariable(variableDescriptor.Id, true);
 
-            var changed = false;
-            if (variable?.Value != null)
+            if (variable?.Value == null)
             {
-                if (variable.Value.Value != valueBody.Value)
-                {
-                    variable.Value.Value = valueBody.Value;
-                    changed = true;
-                }
+                return InternalServerError("Variable value storage is missing.");
             }
 
-            // ReSharper disable once InvertIf
-            if (changed)
+            if (!VariableValueHelper.TryConvertValue(variableDescriptor.DataType, valueBody.Value, out object convertedValue, out string error))
             {
+                return BadRequest(error);
+            }
+
+            if (!VariableValueHelper.Equals(variableDescriptor.DataType, variable.Value, convertedValue))
+            {
+                variable.Value.Value = convertedValue;
                 player.StartCommonEventsWithTrigger(CommonEventTrigger.PlayerVariableChange, string.Empty, variableId.ToString());
                 using var context = DbInterface.CreatePlayerContext(false);
                 _ = context.Update(player);
