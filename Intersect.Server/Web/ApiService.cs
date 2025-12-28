@@ -658,8 +658,6 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
 
         app.UseAuthorization();
 
-        UpdatesEndpoint.RegisterRoutes(app);
-
         app.MapHtmxAntiforgeryScript();
 
         app.UseCookiePolicy(

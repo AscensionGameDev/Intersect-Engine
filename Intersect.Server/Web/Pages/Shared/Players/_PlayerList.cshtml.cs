@@ -9,7 +9,7 @@ public partial class PlayerListModel : PageModel
 
     public int Count { get; set; } = 10;
 
-    public int Page { get; set; }
+    public new int Page { get; set; }
 
     public bool ShowRank { get; set; } = true;
 
