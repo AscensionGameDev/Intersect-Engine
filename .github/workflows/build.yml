@@ -132,6 +132,7 @@ jobs:
         if-no-files-found: error
         name: keys
         path: ./Intersect.Network/bin/Release/keys/*
+        token: ${{ secrets.GITHUB_TOKEN }}
 
   build-linux:
     name: Build for Linux
@@ -200,6 +201,7 @@ jobs:
         if-no-files-found: error
         name: engine-${{ runner.os }}
         path: linux.tar
+        token: ${{ secrets.GITHUB_TOKEN }}
 
   build-macos:
     name: Build for MacOS
@@ -272,6 +274,7 @@ jobs:
         if-no-files-found: error
         name: engine-${{ runner.os }}
         path: osx.tar
+        token: ${{ secrets.GITHUB_TOKEN }}
 
   build-windows:
     name: Build for Windows
@@ -343,6 +346,7 @@ jobs:
         if-no-files-found: error
         name: engine-${{ runner.os }}
         path: win.tar
+        token: ${{ secrets.GITHUB_TOKEN }}
 
   debug-build-artifacts:
     name: Debug Build Artifacts
