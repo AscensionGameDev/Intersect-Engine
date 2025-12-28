@@ -426,6 +426,7 @@ jobs:
           name: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
           prerelease: true
           tag: v${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   publish-forum:
     name: Publish to Forum
