@@ -53,13 +53,13 @@ jobs:
     if: inputs.packagingDebug != true
     outputs:
       publish-forum: ${{ secrets.INTERSECTBOT_FORUM_TOKEN != '' }}
-      publish-github: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN != '' }}
+      publish-github: 'true'
     steps:
       - id: dump-token-state
         name: Log the state of the tokens
         env:
           PUBLISH_FORUM: ${{ secrets.INTERSECTBOT_FORUM_TOKEN != '' }}
-          PUBLISH_GITHUB: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN != '' }}
+          PUBLISH_GITHUB: 'true'
         run: |
           echo "PUBLISH_FORUM='$PUBLISH_FORUM'"
           echo "PUBLISH_GITHUB='$PUBLISH_GITHUB'"
