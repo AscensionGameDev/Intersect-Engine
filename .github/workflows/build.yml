@@ -385,23 +385,11 @@ jobs:
           tar -xvf osx.tar
           tar -xvf win.tar
 
-      - name: Checkout assets main_upgrade branch
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          path: assets_upgrade
-          repository: AscensionGameDev/Intersect-Assets
-          ref: main_upgrade
-          token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
+      - name: Clone assets main_upgrade branch
+        run: git clone --branch main_upgrade https://github.com/AscensionGameDev/Intersect-Assets.git assets_upgrade
 
-      - name: Checkout target main_full branch
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          path: assets_full
-          repository: AscensionGameDev/Intersect-Assets
-          ref: main_full
-          token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
+      - name: Clone assets main_full branch
+        run: git clone --branch main_full https://github.com/AscensionGameDev/Intersect-Assets.git assets_full
 
       - name: Package artifacts
         uses: AscensionGameDev/actions@7bc0d0221a73dfcd7620c5c151b31ee8815d95a0
