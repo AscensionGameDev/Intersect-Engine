@@ -50,7 +50,7 @@ jobs:
   check-tokens:
     name: Check the access tokens used for publishing
     runs-on: ubuntu-latest
-    if: inputs.packagingDebug != true && inputs.skipForumPublish != true
+    if: inputs.packagingDebug != true
     outputs:
       publish-forum: ${{ secrets.INTERSECTBOT_FORUM_TOKEN != '' }}
       publish-github: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN != '' }}
