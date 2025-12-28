@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Net;
 using System.Security.Claims;
+using Intersect.Server.Web.Controllers.AssetManagement;
 using Intersect.Server.Web.Extensions;
 using Intersect.Server.Web.Http;
 using Intersect.Server.Web.Types;
