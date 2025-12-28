@@ -33,10 +33,6 @@ on:
         description: 'If the packaging step should be debugged (skips publishing)'
         default: false
         type: boolean
-      skipForumPublish:
-        description: 'If publishing to the forum should be skipped'
-        default: true
-        type: boolean
 
 permissions:
   contents: write
@@ -50,18 +46,15 @@ jobs:
   check-tokens:
     name: Check the access tokens used for publishing
     runs-on: ubuntu-latest
-    if: (github.event_name == 'push') || (inputs.packagingDebug != true && inputs.skipForumPublish != true)
+    if: (github.event_name == 'push') || (inputs.packagingDebug != true)
     outputs:
-      publish-forum: ${{ secrets.INTERSECTBOT_FORUM_TOKEN != '' }}
       publish-github: 'true'
     steps:
       - id: dump-token-state
         name: Log the state of the tokens
         env:
-          PUBLISH_FORUM: ${{ secrets.INTERSECTBOT_FORUM_TOKEN != '' }}
           PUBLISH_GITHUB: 'true'
         run: |
-          echo "PUBLISH_FORUM='$PUBLISH_FORUM'"
           echo "PUBLISH_GITHUB='$PUBLISH_GITHUB'"
 
   # debug-check-tokens:
@@ -431,19 +424,3 @@ jobs:
           prerelease: true
           tag: v${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
           token: ${{ secrets.GITHUB_TOKEN }}
-
-  publish-forum:
-    name: Publish to Forum
-    needs: [build-linux, build-macos, build-windows, check-tokens]
-    runs-on: ubuntu-latest
-    if: github.event_name != 'push' && inputs.workflowDebug != true && inputs.packagingDebug != true && inputs.skipForumPublish != true && needs.check-tokens.outputs.publish-forum == 'true'
-    steps:
-      - name: Publish to Forum
-        uses: AscensionGameDev/actions@0223df40becb110039c705c02cfd2cd8f274199c
-        with:
-          api-key: ${{ secrets.INTERSECTBOT_FORUM_TOKEN }}
-          build: ${{ github.run_number }}
-          hash: ${{ github.sha }}
-          runtime-identifiers: linux-x64,osx-x64,win-x64
-          topic-id: ${{ vars.INTERSECTBOT_FORUM_TOPIC_ID }}
-          version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}
