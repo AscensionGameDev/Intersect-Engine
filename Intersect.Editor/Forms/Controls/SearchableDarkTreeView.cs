@@ -56,7 +56,7 @@ public partial class SearchableDarkTreeView : UserControl
         }
     }
 
-    public virtual void Refresh()
+    public new virtual void Refresh()
     {
         UpdateNodes();
     }
