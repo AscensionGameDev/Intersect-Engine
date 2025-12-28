@@ -386,6 +386,7 @@ jobs:
           tar -xvf win.tar
 
       - name: Checkout assets main_upgrade branch
+        if: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN != '' }}
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -395,6 +396,7 @@ jobs:
           token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
 
       - name: Checkout target main_full branch
+        if: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN != '' }}
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -404,17 +406,18 @@ jobs:
           token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
 
       - name: Package artifacts
+        if: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN != '' }}
         uses: AscensionGameDev/actions@7bc0d0221a73dfcd7620c5c151b31ee8815d95a0
         with:
           bundle: .github/bundles/*.json
           version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
 
       - name: Debug packaging output
-        if: inputs.packagingDebug == true
+        if: inputs.packagingDebug == true && secrets.INTERSECTBOT_ACCESS_TOKEN != ''
         run: ls -laR ./dist
 
       - name: Publish GitHub Release
-        if: github.event_name == 'push' || inputs.packagingDebug != true
+        if: (github.event_name == 'push' || inputs.packagingDebug != true) && secrets.INTERSECTBOT_ACCESS_TOKEN != ''
         uses: ncipollo/release-action@v1.13.0
         with:
           artifacts: "dist/**/*.zip"
