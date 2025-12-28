@@ -27,11 +27,11 @@ on:
         type: boolean
       workflowDebug:
         description: 'If the workflow should be debugged (skips packaging and publishing)'
-        default: true
+        default: false
         type: boolean
       packagingDebug:
         description: 'If the packaging step should be debugged (skips publishing)'
-        default: true
+        default: false
         type: boolean
       skipForumPublish:
         description: 'If publishing to the forum should be skipped'
