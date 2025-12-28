@@ -4191,6 +4191,8 @@ Tick timer saved in server config.json.";
 
         public static LocalizedString MenuToolsPackageUpdate = @"Package Update";
 
+        public static LocalizedString MenuToolsUploadToServer = @"Upload to Server";
+
         public static LocalizedString toolsdir = @"tools";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -5717,6 +5719,42 @@ Negative values for time to flow backwards.";
         public static LocalizedString Calculating = @"Calculating checksums, and creating update list...";
 
         public static LocalizedString Done = @"Done!";
+
+    }
+
+    public partial struct UploadToServer
+    {
+        public static LocalizedString Title = @"Upload to Server";
+
+        public static LocalizedString SelectDirectory = @"Select Directory to Upload";
+
+        public static LocalizedString SourceDirectoryPrompt = @"Pick the directory containing files to upload";
+
+        public static LocalizedString ServerUrl = @"Server URL:";
+
+        public static LocalizedString UploadType = @"Upload Type:";
+
+        public static LocalizedString ClientAssets = @"Client Assets";
+
+        public static LocalizedString EditorAssets = @"Editor Assets";
+
+        public static LocalizedString Uploading = @"Uploading files... {00}%";
+
+        public static LocalizedString Success = @"Upload completed successfully!";
+
+        public static LocalizedString Error = @"Upload failed: {00}";
+
+        public static LocalizedString InvalidUrl = @"Please enter a valid server URL";
+
+        public static LocalizedString InvalidDirectory = @"Please select a valid directory";
+
+        public static LocalizedString Completed = @"Upload Complete";
+
+        public static LocalizedString Failed = @"Upload Failed";
+
+        public static LocalizedString FilesUploaded = @"{00} of {01} files uploaded";
+
+        public static LocalizedString AuthenticationRequired = @"Authentication required. Please log in to the server first.";
 
     }
 
