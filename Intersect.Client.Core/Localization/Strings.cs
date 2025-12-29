@@ -2652,6 +2652,9 @@ If you are sure you want to hand over your guild enter '\c{{#ff8080}}{02}\c{{}}'
             {10, @"Sleep"},
             {11, @"On-Hit"},
             {12, @"Taunt"},
+            {13, @"Knockback"},
+            {14, @"Grievous Wounds"},
+            {15, @"Healing Boost"},
         };
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
