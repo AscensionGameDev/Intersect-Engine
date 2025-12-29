@@ -1468,11 +1468,13 @@ internal sealed partial class PacketHandler
     //EventInputVariablePacket
     public void HandlePacket(Client client, EventInputVariablePacket packet)
     {
-        client.Entity.RespondToEventInput(
+        var player = client?.Entity;
+
+        player?.RespondToEventInput(
             packet.EventId,
             packet.BooleanValue,
             packet.Value,
-            packet.StringValue,
+            packet.StringValue ?? string.Empty,
             packet.Canceled
         );
     }

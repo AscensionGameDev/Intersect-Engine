@@ -1273,6 +1273,12 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString PingLabelFormat = @"{0}ms";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString QuitTitle { get; set; } = @"Quit Game";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString QuitPrompt { get; set; } = @"Are you sure you want to quit the game?";
     }
 
     public partial struct Guilds

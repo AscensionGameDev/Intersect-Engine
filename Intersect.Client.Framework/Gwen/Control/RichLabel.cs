@@ -328,17 +328,17 @@ public partial class RichLabel : Base
         int availableWidth
     )
     {
-        var spaced = Util.SplitAndKeep(text, " ");
-        if (spaced.Length == 0)
+        if (string.IsNullOrEmpty(text))
         {
             return;
         }
 
         var spaceLeft = availableWidth - x;
-        string leftOver;
 
-        // Does the whole word fit in?
+        // Measure full string
         var stringSize = Skin.Renderer.MeasureText(font, fontSize, text);
+
+        // If the whole text fits, just create one label.
         if (spaceLeft > stringSize.X)
         {
             CreateLabel(
@@ -355,9 +355,49 @@ public partial class RichLabel : Base
             return;
         }
 
-        // If the first word is bigger than the line, just give up.
-        var wordSize = Skin.Renderer.MeasureText(font, fontSize, spaced[0]);
-        if (wordSize.X >= spaceLeft)
+        // Try normal word-based splitting first
+        var spaced = Util.SplitAndKeep(text, " ");
+        // If there are no spaces, or the first "word" is already wider than available space,
+        // fall back to character-based splitting.
+        if (spaced.Length == 0)
+        {
+            SplitLabelByChars(
+                text,
+                font,
+                fontSize,
+                block,
+                ref x,
+                ref y,
+                ref lineHeight,
+                initialX,
+                availableWidth
+            );
+
+            return;
+        }
+
+        var firstWordSize = Skin.Renderer.MeasureText(font, fontSize, spaced[0]);
+        if (firstWordSize.X >= spaceLeft && spaced[0].Length >= text.Length)
+        {
+            // Single long chunk with no spaces that does not fit → char-based split.
+            SplitLabelByChars(
+                text,
+                font,
+                fontSize,
+                block,
+                ref x,
+                ref y,
+                ref lineHeight,
+                initialX,
+                availableWidth
+            );
+
+            return;
+        }
+
+        // Original word-based logic (unchanged, but using availableWidth)
+        string leftOver;
+        if (firstWordSize.X >= spaceLeft)
         {
             CreateLabel(
                 spaced[0],
@@ -390,10 +430,10 @@ public partial class RichLabel : Base
             return;
         }
 
-        var newString = String.Empty;
+        var newString = string.Empty;
         for (var i = 0; i < spaced.Length; i++)
         {
-            wordSize = Skin.Renderer.MeasureText(font, fontSize, newString + spaced[i]);
+            var wordSize = Skin.Renderer.MeasureText(font, fontSize, newString + spaced[i]);
             if (wordSize.X > spaceLeft)
             {
                 CreateLabel(
@@ -418,7 +458,7 @@ public partial class RichLabel : Base
         var newstrLen = newString.Length;
         if (newstrLen < text.Length)
         {
-            leftOver = text.Substring(newstrLen + 1);
+            leftOver = text.Substring(newstrLen);
             SplitLabel(
                 leftOver,
                 font,
@@ -429,6 +469,65 @@ public partial class RichLabel : Base
                 ref lineHeight,
                 initialX,
                 availableWidth
+            );
+        }
+    }
+
+    private void SplitLabelByChars(
+        string text,
+        IFont font,
+        int fontSize,
+        TextBlock block,
+        ref int x,
+        ref int y,
+        ref int lineHeight,
+        int initialX,
+        int availableWidth
+    )
+    {
+        var current = string.Empty;
+
+        for (var i = 0; i < text.Length; i++)
+        {
+            var next = current + text[i];
+            var size = Skin.Renderer.MeasureText(font, fontSize, next);
+
+            if (size.X > availableWidth - x && current.Length > 0)
+            {
+                // Commit current chunk
+                CreateLabel(
+                    current,
+                    block,
+                    ref x,
+                    ref y,
+                    ref lineHeight,
+                    initialX,
+                    availableWidth,
+                    true
+                );
+
+                // New line
+                x = initialX;
+                y += lineHeight;
+                current = text[i].ToString();
+            }
+            else
+            {
+                current = next;
+            }
+        }
+
+        if (current.Length > 0)
+        {
+            CreateLabel(
+                current,
+                block,
+                ref x,
+                ref y,
+                ref lineHeight,
+                initialX,
+                availableWidth,
+                true
             );
         }
     }

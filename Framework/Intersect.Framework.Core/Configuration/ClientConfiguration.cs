@@ -90,6 +90,8 @@ public sealed partial class ClientConfiguration : IConfiguration<ClientConfigura
 
     public static List<string> DefaultTypewriterSounds => ["octave-beep-tapped.wav"];
 
+    private const bool DefaultDimmedEventWindowBackground = true;
+
     #endregion
 
     #region Static Properties and Methods
@@ -257,6 +259,11 @@ public sealed partial class ClientConfiguration : IConfiguration<ClientConfigura
     public int TypewriterSoundFrequency { get; set; } = DefaultTypewriterSoundFrequency;
 
     public List<string> TypewriterSounds { get; set; } = DefaultTypewriterSounds;
+
+    /// <summary>
+    ///     Adds dimmed background to EventWindow.
+    /// </summary>
+    public bool DimmedEventWindowBackground { get; set; } = DefaultDimmedEventWindowBackground;
 
     #region Hidden Properties
 
