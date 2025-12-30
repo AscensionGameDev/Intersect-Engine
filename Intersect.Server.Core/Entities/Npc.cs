@@ -159,6 +159,8 @@ public partial class Npc : Entity
     private bool IsStunnedOrSleeping => CachedStatuses.Any(PredicateStunnedOrSleeping);
 
     private bool IsUnableToCastSpells => CachedStatuses.Any(PredicateUnableToCastSpells);
+    
+    private bool IsUnableToMove => CachedStatuses.Any(PredicateUnableToMove);
 
     public override EntityType GetEntityType()
     {
@@ -533,6 +535,31 @@ public partial class Npc : Entity
             case null:
                 return false;
 
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private static bool PredicateUnableToMove(Status status)
+    {
+        switch (status?.Type)
+        {
+            case SpellEffect.Stun:
+            case SpellEffect.Sleep:
+            case SpellEffect.Snare:
+                return true;
+            case SpellEffect.Silence:
+            case SpellEffect.None:
+            case SpellEffect.Blind:
+            case SpellEffect.Stealth:
+            case SpellEffect.Transform:
+            case SpellEffect.Cleanse:
+            case SpellEffect.Invulnerable:
+            case SpellEffect.Shield:
+            case SpellEffect.OnHit:
+            case SpellEffect.Taunt:
+            case null:
+                return false;
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -1159,7 +1186,7 @@ public partial class Npc : Entity
 
                     CheckForResetLocation();
 
-                    if (targetMap != Guid.Empty || LastRandomMove >= Timing.Global.Milliseconds || IsCasting)
+                    if (IsUnableToMove || targetMap != Guid.Empty || LastRandomMove >= Timing.Global.Milliseconds || IsCasting)
                     {
                         return;
                     }
@@ -1216,36 +1243,91 @@ public partial class Npc : Entity
 
     private void MoveRandomly()
     {
+        var currentTime = Timing.Global.Milliseconds;
+
+        // Pick new direction and range
         if (_randomMoveRange <= 0)
         {
-            Dir = Randomization.NextDirection();
-            LastRandomMove = Timing.Global.Milliseconds + Randomization.Next(1000, 2000);
-            _randomMoveRange = (byte)Randomization.Next(0, Descriptor.SightRange + Randomization.Next(0, 3));
+            Dir = FindValidDirectionOrRandom();
+            _randomMoveRange = (byte)Randomization.Next(0, Descriptor.SightRange + 1);
         }
-        else if (CanMoveInDirection(Dir))
+
+        // Mid-path deviation: 35% chance to change behavior while walking
+        if (_randomMoveRange > 1 && Randomization.Next(0, 100) < 35)
         {
-            foreach (var status in CachedStatuses)
+            if (Randomization.Next(0, 100) < 50)
             {
-                if (status.Type is SpellEffect.Stun or SpellEffect.Snare or SpellEffect.Sleep)
-                {
-                    return;
-                }
+                // Pivot: change to a valid direction
+                Dir = FindValidDirectionOrRandom();
             }
+            else
+            {
+                // Stop and think: abandon path and trigger an idle pause
+                _randomMoveRange = 0;
+                LastRandomMove = currentTime + Randomization.Next(840, 1000);
+                return;
+            }
+        }
 
+        // Check if path is clear
+        if (CanMoveInDirection(Dir) && !IsUnableToMove)
+        {
             Move(Dir, null);
-            LastRandomMove = Timing.Global.Milliseconds + (long)GetMovementTime();
-
-            if (_randomMoveRange <= Randomization.Next(0, 3))
-            {
-                Dir = Randomization.NextDirection();
-            }
-
             _randomMoveRange--;
+
+            LastRandomMove = _randomMoveRange > 0
+                ? currentTime + (long)GetMovementTime()
+                : currentTime + Randomization.Next(420, 840);
         }
         else
         {
-            Dir = Randomization.NextDirection();
+            // Blocked: try to find alternative direction immediately
+            var alternativeDir = FindValidDirection();
+            if (alternativeDir != Direction.None)
+            {
+                Dir = alternativeDir;
+                Move(Dir, null);
+                _randomMoveRange--;
+                LastRandomMove = currentTime + (long)GetMovementTime();
+            }
+            else
+            {
+                // Completely blocked: clear range and wait
+                _randomMoveRange = 0;
+                LastRandomMove = currentTime + 420;
+            }
         }
+    }
+
+    // Finds a valid unblocked direction, or returns Direction.None if all blocked
+    private Direction FindValidDirection()
+    {
+        // Get all directions from Intersect's Direction enum
+        var directions = Enum.GetValues<Direction>().Where(d => d != Direction.None).ToArray();
+
+        // Shuffle for randomization
+        for (int i = directions.Length - 1; i > 0; i--)
+        {
+            int j = Randomization.Next(0, i + 1);
+            (directions[i], directions[j]) = (directions[j], directions[i]);
+        }
+
+        foreach (var dir in directions)
+        {
+            if (CanMoveInDirection(dir))
+            {
+                return dir;
+            }
+        }
+
+        return Direction.None;
+    }
+
+    // Finds a valid direction, falls back to random if all blocked
+    private Direction FindValidDirectionOrRandom()
+    {
+        var validDir = FindValidDirection();
+        return validDir != Direction.None ? validDir : Randomization.NextDirection();
     }
 
     /// <summary>
