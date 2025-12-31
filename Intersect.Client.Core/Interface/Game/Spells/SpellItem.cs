@@ -219,22 +219,24 @@ public partial class SpellItem : SlotItem
             Icon.RenderColor.A = 255;
         }
 
-        if (Path.GetFileName(Icon.Texture?.Name) != spell.Icon)
+        if (Icon.TextureFilename == spell.Icon)
         {
-            var spellIconTexture = GameContentManager.Current.GetTexture(TextureType.Spell, spell.Icon);
-            if (spellIconTexture != null)
+            return;
+        }
+
+        var spellTexture = GameContentManager.Current.GetTexture(TextureType.Spell, spell.Icon);
+        if (spellTexture != default)
+        {
+            Icon.Texture = spellTexture;
+            Icon.RenderColor.A = (byte)(_cooldownLabel.IsVisibleInParent ? 100 : 255);
+            Icon.IsVisibleInParent = true;
+        }
+        else
+        {
+            if (Icon.Texture != null)
             {
-                Icon.Texture = spellIconTexture;
-                Icon.RenderColor.A = (byte)(_cooldownLabel.IsVisibleInParent ? 100 : 255);
-                Icon.IsVisibleInParent = true;
-            }
-            else
-            {
-                if (Icon.Texture != null)
-                {
-                    Icon.Texture = null;
-                    Icon.IsVisibleInParent = false;
-                }
+                Icon.Texture = null;
+                Icon.IsVisibleInParent = false;
             }
         }
     }
