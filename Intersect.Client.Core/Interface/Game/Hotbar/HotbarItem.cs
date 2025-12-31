@@ -217,12 +217,9 @@ public partial class HotbarItem : SlotItem
             if (targetNode is HotbarItem hotbarItem)
             {
                 player.HotbarSwap(SlotIndex, hotbarItem.SlotIndex);
-                return true;
             }
-            else
-            {
-                targetNode = targetNode.Parent;
-            }
+
+            targetNode = targetNode.Parent;
         }
 
         // If we've reached the top of the tree, we can't drop here, so cancel drop

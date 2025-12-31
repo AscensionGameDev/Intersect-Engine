@@ -58,7 +58,7 @@ public partial class BagWindow : Window
 
         for (var slotIndex = 0; slotIndex < bagSlots.Length; slotIndex++)
         {
-            Items.Add(new BagItem(this, _slotContainer, slotIndex, _contextMenu));
+            Items.Add(new BagItem(_slotContainer, slotIndex, _contextMenu));
         }
 
         PopulateSlotContainer.Populate(_slotContainer, Items);
