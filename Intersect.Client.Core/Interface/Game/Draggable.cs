@@ -16,6 +16,7 @@ public partial class Draggable(Base parent, string name) : ImagePanel(parent, na
 
     public override bool DragAndDrop_CanAcceptPackage(Package package)
     {
+        // Important: Icon is the topmost hovered control, so it must be allowed to "receive" the drop, BUT: we forward handling to SlotItem.
         return true;
     }
 
@@ -27,6 +28,7 @@ public partial class Draggable(Base parent, string name) : ImagePanel(parent, na
             DrawControl = this,
             Name = Name,
             HoldOffset = ToLocal(InputHandler.MousePosition.X, InputHandler.MousePosition.Y),
+            UserData = Parent, // Expected to be SlotItem (InventoryItem/BankItem/etc)
         };
     }
 
@@ -38,5 +40,23 @@ public partial class Draggable(Base parent, string name) : ImagePanel(parent, na
     public override void DragAndDrop_EndDragging(bool success, int x, int y)
     {
         IsVisibleInParent = true;
+    }
+
+    public override bool DragAndDrop_HandleDrop(Package package, int x, int y)
+    {
+        // Never allow Base.DragAndDrop_HandleDrop() to run on the icon because it reparents SourceControl (Base.cs)
+        // Forward drop handling to the slot (or nearest SlotItem ancestor).
+        var node = Parent;
+        while (node != null)
+        {
+            if (node is SlotItem)
+            {
+                return node.DragAndDrop_HandleDrop(package, x, y);
+            }
+
+            node = node.Parent;
+        }
+
+        return false;
     }
 }
