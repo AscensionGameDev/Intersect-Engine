@@ -477,6 +477,7 @@ public partial class InventoryItem : SlotItem
 
         // empty texture to reload on update
         Icon.Texture = default;
+        Icon.IsVisibleInParent = false;
     }
 
     public override void Update()
