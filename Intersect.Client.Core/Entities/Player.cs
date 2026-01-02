@@ -415,7 +415,7 @@ public partial class Player : Entity, IPlayer
         }
 
         var quantity = inventorySlot.Quantity;
-        var canDropMultiple = quantity > 1;
+        var canDropMultiple = GetQuantityOfItemInInventory(itemDescriptor.Id) > 1;
         var inputType = canDropMultiple ? InputType.NumericSliderInput : InputType.YesNo;
         var prompt = canDropMultiple ? Strings.Inventory.DropItemPrompt : Strings.Inventory.DropPrompt;
         _ = new InputBox(

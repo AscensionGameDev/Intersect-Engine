@@ -403,12 +403,6 @@ public partial class InventoryItem : SlotItem
             return false;
         }
 
-        if (!Interface.DoesMouseHitInterface() && !player.IsBusy)
-        {
-            PacketSender.SendDropItem(SlotIndex, inventorySlot.Quantity);
-            return true;
-        }
-
         var targetNode = Interface.FindComponentUnderCursor();
 
         // Find the first parent acceptable in that tree that can accept the package
@@ -430,13 +424,12 @@ public partial class InventoryItem : SlotItem
                     return true;
 
                 case BankItem bankItem:
-                    player.TryStoreItemInBank(
+                    return player.TryStoreItemInBank(
                         SlotIndex,
                         bankSlotIndex: bankItem.SlotIndex,
                         quantityHint: inventorySlot.Quantity,
                         skipPrompt: true
                     );
-                    return true;
 
                 case HotbarItem hotbarItem:
                     player.AddToHotbar(hotbarItem.SlotIndex, 0, SlotIndex);
@@ -452,7 +445,11 @@ public partial class InventoryItem : SlotItem
             }
         }
 
-        // If we've reached the top of the tree, we can't drop here, so cancel drop
+        if (!Interface.DoesMouseHitInterface() && !player.IsBusy)
+        {
+            player.TryDropItem(SlotIndex);
+        }
+
         return false;
     }
 

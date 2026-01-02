@@ -39,10 +39,7 @@ public partial class Draggable(Base parent, string name) : ImagePanel(parent, na
 
     public override void DragAndDrop_EndDragging(bool success, int x, int y)
     {
-        if (!success)
-        {
-            IsVisibleInParent = true;
-        }
+        IsVisibleInParent = !success;
     }
 
     public override bool DragAndDrop_HandleDrop(Package package, int x, int y)
