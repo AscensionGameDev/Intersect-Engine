@@ -415,7 +415,8 @@ public partial class Player : Entity, IPlayer
         }
 
         var quantity = inventorySlot.Quantity;
-        var canDropMultiple = GetQuantityOfItemInInventory(itemDescriptor.Id) > 1;
+        var maxQuantity = GetQuantityOfItemInInventory(itemDescriptor.Id);
+        var canDropMultiple = maxQuantity > 1;
         var inputType = canDropMultiple ? InputType.NumericSliderInput : InputType.YesNo;
         var prompt = canDropMultiple ? Strings.Inventory.DropItemPrompt : Strings.Inventory.DropPrompt;
         _ = new InputBox(
@@ -423,7 +424,7 @@ public partial class Player : Entity, IPlayer
             prompt: prompt.ToString(itemDescriptor.Name),
             inputType: inputType,
             quantity: quantity,
-            maximumQuantity: GetQuantityOfItemInInventory(itemDescriptor.Id),
+            maximumQuantity: maxQuantity,
             userData: inventorySlotIndex,
             onSubmit: (sender, args) =>
             {
