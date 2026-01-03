@@ -22,15 +22,12 @@ public partial class BankItem : SlotItem
 {
     // Controls
     private readonly Label _quantityLabel;
-    private BankWindow _bankWindow;
 
     // Context Menu Handling
     private MenuItem _withdrawContextItem;
 
-    public BankItem(BankWindow bankWindow, Base parent, int index, ContextMenu contextMenu) :
-        base(parent, nameof(BankItem), index, contextMenu)
+    public BankItem(Base parent, int index, ContextMenu contextMenu) : base(parent, nameof(BankItem), index, contextMenu)
     {
-        _bankWindow = bankWindow;
         TextureFilename = "bankitem.png";
 
         Icon.HoverEnter += Icon_HoverEnter;
@@ -105,6 +102,7 @@ public partial class BankItem : SlotItem
 
         if (bankSlots[SlotIndex] is not { Descriptor: not null } or { Quantity: <= 0 })
         {
+             _quantityLabel.IsVisibleInParent = false;
             return;
         }
 
@@ -194,29 +192,28 @@ public partial class BankItem : SlotItem
             }
         }
 
+        if (Globals.BankSlots is not { Length: > 0 } bankSlots)
+        {
+            return false;
+        }
+
         var targetNode = Interface.FindComponentUnderCursor();
 
         // Find the first parent acceptable in that tree that can accept the package
         while (targetNode != default)
         {
+            if (bankSlots[SlotIndex] is not { Quantity: > 0 } slot)
+            {
+                return false;
+            }
+
             switch (targetNode)
             {
                 case BankItem bankItem:
                     PacketSender.SendMoveBankItems(SlotIndex, bankItem.SlotIndex);
-                    return true;
+                    return bankSlots[bankItem.SlotIndex] is not { Quantity: > 0 };
 
                 case InventoryItem inventoryItem:
-
-                    if (Globals.BankSlots is not { Length: > 0 } bankSlots)
-                    {
-                        return false;
-                    }
-
-                    if (bankSlots[SlotIndex] is not { Quantity: > 0 } slot)
-                    {
-                        return false;
-                    }
-
                     player.TryRetrieveItemFromBank(
                         SlotIndex,
                         inventorySlotIndex: inventoryItem.SlotIndex,
@@ -259,7 +256,7 @@ public partial class BankItem : SlotItem
         var bankSlot = bankSlots[SlotIndex];
         var descriptor = bankSlot.Descriptor;
 
-        _quantityLabel.IsVisibleInParent = !Icon.IsDragging && descriptor.IsStackable && bankSlot.Quantity > 1;
+        _quantityLabel.IsVisibleInParent = descriptor.IsStackable && bankSlot.Quantity > 1 && !Icon.IsHidden;
         if (_quantityLabel.IsVisibleInParent)
         {
             _quantityLabel.Text = Strings.FormatQuantityAbbreviated(bankSlot.Quantity);
@@ -283,6 +280,7 @@ public partial class BankItem : SlotItem
             {
                 Icon.Texture = default;
                 Icon.IsVisibleInParent = false;
+                _quantityLabel.IsVisibleInParent = false;
             }
         }
     }

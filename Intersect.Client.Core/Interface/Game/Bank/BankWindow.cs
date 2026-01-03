@@ -67,7 +67,7 @@ public partial class BankWindow : Window
     {
         for (var slotIndex = 0; slotIndex < Globals.BankSlotCount; slotIndex++)
         {
-            Items.Add(new BankItem(this, _slotContainer, slotIndex, _contextMenu));
+            Items.Add(new BankItem(_slotContainer, slotIndex, _contextMenu));
         }
 
         PopulateSlotContainer.Populate(_slotContainer, Items);
