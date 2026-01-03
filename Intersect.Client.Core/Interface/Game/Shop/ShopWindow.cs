@@ -58,7 +58,7 @@ public partial class ShopWindow : Window
 
         for (var slotIndex = 0; slotIndex < gameShop.SellingItems.Count; slotIndex++)
         {
-            _items.Add(new ShopItem(this, _slotContainer, slotIndex, _contextMenu));
+            _items.Add(new ShopItem(_slotContainer, slotIndex, _contextMenu));
         }
 
         PopulateSlotContainer.Populate(_slotContainer, _items);

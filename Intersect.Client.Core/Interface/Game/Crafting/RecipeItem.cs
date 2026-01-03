@@ -4,7 +4,6 @@ using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Items;
-using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Crafting;
 
@@ -13,8 +12,6 @@ public partial class RecipeItem
 {
 
     public ImagePanel? Container;
-
-    public bool IsDragging;
 
     //Dragging
     private bool mCanDrag;

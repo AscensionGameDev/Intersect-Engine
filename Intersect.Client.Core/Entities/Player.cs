@@ -1121,41 +1121,32 @@ public partial class Player : Entity, IPlayer
         }
 
         var quantity = inventorySlot.Quantity;
-        var maxQuantity = quantity;
-
-        if (maxQuantity < 2)
-        {
-            PacketSender.SendStoreBagItem(inventorySlotIndex, 1, bagSlotIndex);
-            return;
-        }
 
         _ = new InputBox(
             title: Strings.Bags.StoreItem,
             prompt: Strings.Bags.StoreItemPrompt.ToString(itemDescriptor.Name),
-            inputType: InputType.NumericSliderInput,
+            inputType: InputType.YesNo,
             quantity: quantity,
-            maximumQuantity: maxQuantity,
-            userData: new Tuple<int, int>(inventorySlotIndex, bagSlotIndex),
+            userData: new Tuple<int, int, int>(inventorySlotIndex, bagSlotIndex, quantity),
             onSubmit: TryStoreItemInBagOnSubmit
         );
     }
 
     private static void TryStoreItemInBagOnSubmit(Base sender, InputSubmissionEventArgs args)
     {
-        if (sender is not InputBox { UserData: (int inventorySlotIndex, int bagSlotIndex) })
+        if (sender is not InputBox { UserData: (int inventorySlotIndex, int bagSlotIndex, int quantity) })
         {
             return;
         }
 
-        if (args.Value is not NumericalSubmissionValue submissionValue)
+        if (args.Value is not BooleanSubmissionValue submissionValue)
         {
             return;
         }
 
-        var value = (int)Math.Round(submissionValue.Value);
-        if (value > 0)
+        if (submissionValue.Value)
         {
-            PacketSender.SendStoreBagItem(inventorySlotIndex, value, bagSlotIndex);
+            PacketSender.SendStoreBagItem(inventorySlotIndex, quantity, bagSlotIndex);
         }
     }
 
@@ -1445,11 +1436,16 @@ public partial class Player : Entity, IPlayer
         PacketSender.SendHotbarUpdate(hotbarSlot, itemType, itemSlot);
     }
 
-    public void HotbarSwap(int index, int swapIndex)
+    public bool HotbarSwap(int index, int swapIndex)
     {
         var itemId = Hotbar[index].ItemOrSpellId;
         var bagId = Hotbar[index].BagId;
         var stats = Hotbar[index].PreferredStatBuffs;
+
+        if (Hotbar[swapIndex].ItemOrSpellId == itemId)
+        {
+            return false;
+        }
 
         Hotbar[index].ItemOrSpellId = Hotbar[swapIndex].ItemOrSpellId;
         Hotbar[index].BagId = Hotbar[swapIndex].BagId;
@@ -1460,6 +1456,7 @@ public partial class Player : Entity, IPlayer
         Hotbar[swapIndex].PreferredStatBuffs = stats;
 
         PacketSender.SendHotbarSwap(index, swapIndex);
+        return true;
     }
 
     // Change the dimension if the player is on a gateway

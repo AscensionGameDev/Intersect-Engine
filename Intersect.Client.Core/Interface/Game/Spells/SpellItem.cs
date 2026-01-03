@@ -173,7 +173,7 @@ public partial class SpellItem : SlotItem
 
                 case HotbarItem hotbarItem:
                     player.AddToHotbar(hotbarItem.SlotIndex, 1, SlotIndex);
-                    return true;
+                    return false;
 
                 default:
                     targetNode = targetNode.Parent;
@@ -207,7 +207,7 @@ public partial class SpellItem : SlotItem
             return;
         }
 
-        _cooldownLabel.IsVisibleInParent = !Icon.IsDragging && Globals.Me.IsSpellOnCooldown(SlotIndex);
+        _cooldownLabel.IsVisibleInParent = !Icon.IsHidden && Globals.Me.IsSpellOnCooldown(SlotIndex);
         if (_cooldownLabel.IsVisibleInParent)
         {
             var itemCooldownRemaining = Globals.Me.GetSpellRemainingCooldown(SlotIndex);

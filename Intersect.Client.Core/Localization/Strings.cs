@@ -541,7 +541,10 @@ public static partial class Strings
         public static LocalizedString StoreItem = @"Store Item";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString StoreItemPrompt = @"How many/much {00} would you like to store?";
+        public static LocalizedString StoreMultipleItemPrompt = @"How many/much {00} would you like to store?";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString StoreItemPrompt = @"Do you wish to store the item: {00} ?";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Title = @"Bag";
