@@ -458,8 +458,22 @@ public partial class Slider : Base
     /// <param name="max">Maximum value.</param>
     public void SetRange(double min, double max)
     {
-        _minimumValue = min;
-        _maximumValue = max;
+        if (min > Maximum)
+        {
+            _maximumValue = max;
+            _minimumValue = min;
+        }
+        else if (max < Minimum)
+        {
+            _minimumValue = min;
+            _maximumValue = max;
+        }
+        else
+        {
+            // Safe to set in either order
+            _minimumValue = min;
+            _maximumValue = max;
+        }
     }
 
     /// <summary>
