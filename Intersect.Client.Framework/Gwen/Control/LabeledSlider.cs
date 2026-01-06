@@ -378,7 +378,25 @@ public partial class LabeledSlider : Base, ISmartAutoSizeToContents, INumericInp
         SizeToChildren(resizeX: AutoSizeToContentWidthOnChildResize, resizeY: AutoSizeToContentHeightOnChildResize);
     }
 
-    public void SetRange(double min, double max) => (Minimum, Maximum) = (min, max);
+    public void SetRange(double min, double max)
+    {
+        if (min > Maximum)
+        {
+            Maximum = max;
+            Minimum = min;
+        }
+        else if (max < Minimum)
+        {
+            Minimum = min;
+            Maximum = max;
+        }
+        else
+        {
+            // Safe to set in either order
+            Minimum = min;
+            Maximum = max;
+        }
+    }
 
     public bool AutoSizeToContents
     {
