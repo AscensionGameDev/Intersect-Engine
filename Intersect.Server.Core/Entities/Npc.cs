@@ -837,6 +837,24 @@ public partial class Npc : Entity
                     var targetY = 0;
                     var targetZ = 0;
 
+                    // If target is on a different instance, clear it immediately
+                    if (tempTarget != null && tempTarget.MapInstanceId != MapInstanceId)
+                    {
+                        RemoveTarget();
+                        tempTarget = null;
+
+                        // Also clear aggro center since target is unreachable
+                        if (AggroCenterMap != null)
+                        {
+                            AggroCenterMap = null;
+                            AggroCenterX = 0;
+                            AggroCenterY = 0;
+                            AggroCenterZ = 0;
+                            mPathFinder?.SetTarget(null);
+                            mResetting = false;
+                        }
+                    }
+
                     if (tempTarget != null && (tempTarget.IsDead || !InRangeOf(tempTarget, Options.Instance.Map.MapWidth * 2) || !CanTarget(tempTarget)))
                     {
                         _ = TryFindNewTarget(Timing.Global.Milliseconds, tempTarget.Id, !CanTarget(tempTarget));
