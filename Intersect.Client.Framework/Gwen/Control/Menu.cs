@@ -193,7 +193,13 @@ public partial class Menu : ScrollControl
 
     protected virtual void OnPositioningBeforeOpen()
     {
+        var menuItems = Children.OfType<MenuItem>().ToArray();
+        foreach (var menuItem in menuItems)
+        {
+            menuItem.AutoSizeToContents = false;
+        }
 
+        SizeToChildren(recursive: true);
     }
 
     protected virtual void OnOpen()

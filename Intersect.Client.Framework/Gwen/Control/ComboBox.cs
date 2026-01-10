@@ -422,10 +422,8 @@ public partial class ComboBox : Button
         var menuItems = @this._menu.Children.OfType<MenuItem>().ToArray();
         foreach (var menuItem in menuItems)
         {
-            menuItem.SizeToContents();
+            menuItem.AutoSizeToContents = false;
             totalChildHeight += menuItem.OuterHeight;
-            // TODO(2553): I thought this was the solution, it isn't. Results in menu growing each time it's opened.
-            // width = Math.Max(width, menuItem.OuterWidth + menuPaddingH);
         }
 
         var offset = @this.ToCanvas(default);
