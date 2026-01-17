@@ -11,8 +11,6 @@ using Intersect.Client.MonoGame.Network;
 using Intersect.Configuration;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Diagnostics;
-using System.Reflection;
 using Intersect.Client.Framework.Database;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.ThirdParty;
@@ -58,6 +56,8 @@ internal partial class IntersectGame : Game
     private SpriteBatch? updateBatch;
 
     private bool updaterGraphicsReset;
+    
+    public static bool _isShowingExitConfirmation;
 
     #endregion
 
@@ -355,6 +355,11 @@ internal partial class IntersectGame : Game
                         Globals.Me.CombatTimer > Timing.Global?.Milliseconds &&
                         Globals.GameState == GameStates.InGame;
 
+        if (_isShowingExitConfirmation)
+        {
+            return;
+        }
+
         if (inCombat)
         {
             AlertWindow.Open(
@@ -369,7 +374,12 @@ internal partial class IntersectGame : Game
                         Globals.Me.CombatTimer = 0;
                     }
 
+                    _isShowingExitConfirmation = false;
                     Globals.IsRunning = false;
+                },
+                handleCancel: (_, _) =>
+                {
+                    _isShowingExitConfirmation = false;
                 }
             );
         }
@@ -382,10 +392,16 @@ internal partial class IntersectGame : Game
                 inputType: InputType.YesNo,
                 handleSubmit: (_, _) =>
                 {
+                    _isShowingExitConfirmation = false;
                     Globals.IsRunning = false;
+                },
+                handleCancel: (_, _) =>
+                {
+                    _isShowingExitConfirmation = false;
                 }
             );
         }
+        _isShowingExitConfirmation = true;
     }
 
     private void TryExit(object sender, ExitingEventArgs args)
