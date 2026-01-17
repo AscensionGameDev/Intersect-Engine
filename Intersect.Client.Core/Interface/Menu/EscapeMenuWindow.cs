@@ -5,8 +5,8 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
+using Intersect.Client.MonoGame;
 using Intersect.Framework.Core;
-using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Menu;
 
@@ -217,6 +217,11 @@ public partial class EscapeMenuWindow : Window
 
     private void ExitToDesktop(object? sender, EventArgs? e)
     {
+        if (IntersectGame._isShowingExitConfirmation)
+        {
+            return;
+        }
+
         AlertWindow.Open(
             Strings.General.QuitPrompt,
             Strings.General.QuitTitle,
@@ -229,8 +234,15 @@ public partial class EscapeMenuWindow : Window
                     Globals.Me.CombatTimer = 0;
                 }
 
+                IntersectGame._isShowingExitConfirmation = false;
                 Globals.IsRunning = false;
+            },
+            handleCancel: (_, _) =>
+            {
+                IntersectGame._isShowingExitConfirmation = false;
             }
         );
+
+        IntersectGame._isShowingExitConfirmation = true;
     }
 }
