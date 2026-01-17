@@ -198,6 +198,7 @@ public partial class SelectCharacterWindow : Window
 
         LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer?.GetResolutionString());
         EnsureArrowsVisibility();
+        UpdateDisplay();
     }
 
     //Methods
