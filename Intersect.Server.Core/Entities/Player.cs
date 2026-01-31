@@ -1118,6 +1118,19 @@ public partial class Player : Entity
     {
         CastTime = 0;
         CastTarget = null;
+        
+        // Remove player from ALL threat lists.
+        foreach (var instance in MapController.GetSurroundingMapInstances(Map.Id, MapInstanceId, true))
+        {
+            foreach (var entity in instance.GetCachedEntities())
+            {
+                if (entity is Npc npc)
+                {
+                    npc.RemoveTarget();
+                    npc.RemoveFromDamageMap(this);
+                }
+            }
+        }
 
         //Flag death to the client
         PacketSender.SendPlayerDeath(this);
@@ -1128,23 +1141,10 @@ public partial class Player : Entity
             evt.Value.PlayerHasDied = true;
         }
 
-        // Remove player from ALL threat lists.
-        foreach (var instance in MapController.GetSurroundingMapInstances(Map.Id, MapInstanceId, true))
-        {
-            foreach (var entity in instance.GetCachedEntities())
-            {
-                if (entity is Npc npc)
-                {
-                    npc.RemoveFromDamageMap(this);
-                }
-            }
-        }
-
         lock (EntityLock)
         {
             base.Die(dropItems, killer);
         }
-
 
         // EXP Loss - don't lose in shared instance, or in an Arena zone
         if (InstanceType != MapInstanceType.Shared || Options.Instance.Instancing.LoseExpOnInstanceDeath)
