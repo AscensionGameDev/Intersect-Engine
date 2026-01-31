@@ -580,6 +580,7 @@ public partial class InputBox : Window
 
         Submitted += onSubmit;
         Canceled += onCancel;
+        Closed += onCancel;
     }
 
     private void YesButtonOnClicked(Base sender, MouseButtonState arguments)

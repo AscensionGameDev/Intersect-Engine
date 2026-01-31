@@ -6,8 +6,8 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
+using Intersect.Client.MonoGame;
 using Intersect.Framework.Core;
-using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game;
 
@@ -114,6 +114,11 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
 
     private void ExitToDesktopClicked(Base sender, MouseButtonState arguments)
     {
+        if (IntersectGame._isShowingExitConfirmation)
+        {
+            return;
+        }
+
         if (Globals.Me?.CombatTimer > Timing.Global?.Milliseconds)
         {
             AlertWindow.Open(
@@ -123,8 +128,13 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
                 inputType: InputType.YesNo,
                 handleSubmit: (_, _) =>
                 {
+                    IntersectGame._isShowingExitConfirmation = false;
                     Globals.Me.CombatTimer = 0;
                     Globals.IsRunning = false;
+                },
+                handleCancel: (_, _) =>
+                {
+                    IntersectGame._isShowingExitConfirmation = false;
                 }
             );
         }
@@ -137,10 +147,17 @@ public sealed partial class SimplifiedEscapeMenu : Framework.Gwen.Control.Menu
                 inputType: InputType.YesNo,
                 handleSubmit: (_, _) =>
                 {
+                    IntersectGame._isShowingExitConfirmation = false;
                     Globals.IsRunning = false;
+                },
+                handleCancel: (_, _) =>
+                {
+                    IntersectGame._isShowingExitConfirmation = false;
                 }
             );
         }
+
+        IntersectGame._isShowingExitConfirmation = true;
     }
 
     private void OpenSettingsWindow(object? sender, EventArgs? e)
