@@ -315,8 +315,13 @@ public partial class MonoInput : GameInput
 
             if (gamePadState.IsConnected)
             {
-                var deltaX = (int)(gamePadState.ThumbSticks.Right.X * elapsed.TotalSeconds * 1000);
-                var deltaY = (int)(-gamePadState.ThumbSticks.Right.Y * elapsed.TotalSeconds * 1000);
+                const float DEADZONE = 0.15f; // deadzone threshold
+
+                var rightStickX = Math.Abs(gamePadState.ThumbSticks.Right.X) > DEADZONE ? gamePadState.ThumbSticks.Right.X : 0f;
+                var rightStickY = Math.Abs(gamePadState.ThumbSticks.Right.Y) > DEADZONE ? gamePadState.ThumbSticks.Right.Y : 0f;
+
+                var deltaX = (int)(rightStickX * elapsed.TotalSeconds * 1000);
+                var deltaY = (int)(-rightStickY * elapsed.TotalSeconds * 1000);
 
                 if (deltaX != 0 || deltaY != 0)
                 {
