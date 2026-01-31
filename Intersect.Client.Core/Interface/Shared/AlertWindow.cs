@@ -20,7 +20,6 @@ public record struct Alert(string Message, string? Title = default, AlertType Ty
 public class AlertWindow : InputBox
 {
     private static readonly HashSet<AlertWindow> _instances = [];
-    private readonly GwenEventHandler<EventArgs>? _handleCancel;
 
     private AlertWindow(
         string title,
@@ -40,8 +39,6 @@ public class AlertWindow : InputBox
         userData: userData
     )
     {
-        _handleCancel = handleCancel;
-
         Icon = GameContentManager.Current.GetTexture(
             TextureType.Gui,
             $"icon.alert.{alertType.ToString().ToLowerInvariant()}.png"
@@ -52,15 +49,6 @@ public class AlertWindow : InputBox
 
         var titleLabelMargin = TitleLabel.Margin;
         TitleLabel.Margin = titleLabelMargin with { Left = titleLabelMargin.Left + 4 };
-
-        // Subscribe to the Closed event to handle X button clicks
-        Closed += OnWindowClosed;
-    }
-
-    private void OnWindowClosed(Base sender, EventArgs args)
-    {
-        // Trigger the cancel handler when window is closed via X button
-        _handleCancel?.Invoke(this, args);
     }
 
     protected override void OnCanceled(Base sender, EventArgs args)
