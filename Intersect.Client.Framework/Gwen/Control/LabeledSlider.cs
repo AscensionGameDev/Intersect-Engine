@@ -380,21 +380,18 @@ public partial class LabeledSlider : Base, ISmartAutoSizeToContents, INumericInp
 
     public void SetRange(double min, double max)
     {
-        if (min > Maximum)
+        var actualMin = Math.Min(min, max);
+        var actualMax = Math.Max(min, max);
+
+        if (actualMin > Maximum)
         {
-            Maximum = max;
-            Minimum = min;
-        }
-        else if (max < Minimum)
-        {
-            Minimum = min;
-            Maximum = max;
+            Maximum = actualMax;
+            Minimum = actualMin;
         }
         else
         {
-            // Safe to set in either order
-            Minimum = min;
-            Maximum = max;
+            Minimum = actualMin;
+            Maximum = actualMax;
         }
     }
 
