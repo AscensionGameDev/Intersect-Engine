@@ -6,7 +6,6 @@ using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Configuration;
 using Intersect.Framework.Core.GameObjects.Items;
-using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Trades;
 

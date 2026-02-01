@@ -173,7 +173,7 @@ public partial class SpellItem : SlotItem
 
                 case HotbarItem hotbarItem:
                     player.AddToHotbar(hotbarItem.SlotIndex, 1, SlotIndex);
-                    return true;
+                    return false;
 
                 default:
                     targetNode = targetNode.Parent;
@@ -207,7 +207,7 @@ public partial class SpellItem : SlotItem
             return;
         }
 
-        _cooldownLabel.IsVisibleInParent = !Icon.IsDragging && Globals.Me.IsSpellOnCooldown(SlotIndex);
+        _cooldownLabel.IsVisibleInParent = !Icon.IsHidden && Globals.Me.IsSpellOnCooldown(SlotIndex);
         if (_cooldownLabel.IsVisibleInParent)
         {
             var itemCooldownRemaining = Globals.Me.GetSpellRemainingCooldown(SlotIndex);
@@ -219,22 +219,24 @@ public partial class SpellItem : SlotItem
             Icon.RenderColor.A = 255;
         }
 
-        if (Path.GetFileName(Icon.Texture?.Name) != spell.Icon)
+        if (Icon.TextureFilename == spell.Icon)
         {
-            var spellIconTexture = GameContentManager.Current.GetTexture(TextureType.Spell, spell.Icon);
-            if (spellIconTexture != null)
+            return;
+        }
+
+        var spellTexture = GameContentManager.Current.GetTexture(TextureType.Spell, spell.Icon);
+        if (spellTexture != default)
+        {
+            Icon.Texture = spellTexture;
+            Icon.RenderColor.A = (byte)(_cooldownLabel.IsVisibleInParent ? 100 : 255);
+            Icon.IsVisibleInParent = true;
+        }
+        else
+        {
+            if (Icon.Texture != null)
             {
-                Icon.Texture = spellIconTexture;
-                Icon.RenderColor.A = (byte)(_cooldownLabel.IsVisibleInParent ? 100 : 255);
-                Icon.IsVisibleInParent = true;
-            }
-            else
-            {
-                if (Icon.Texture != null)
-                {
-                    Icon.Texture = null;
-                    Icon.IsVisibleInParent = false;
-                }
+                Icon.Texture = null;
+                Icon.IsVisibleInParent = false;
             }
         }
     }

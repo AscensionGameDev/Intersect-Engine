@@ -13,7 +13,6 @@ using Intersect.Client.Interface.Game.Bank;
 using Intersect.Client.Interface.Game.Hotbar;
 using Intersect.Client.Interface.Game.Shop;
 using Intersect.Client.Localization;
-using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.GameObjects;
@@ -403,12 +402,6 @@ public partial class InventoryItem : SlotItem
             return false;
         }
 
-        if (!Interface.DoesMouseHitInterface() && !player.IsBusy)
-        {
-            PacketSender.SendDropItem(SlotIndex, inventorySlot.Quantity);
-            return true;
-        }
-
         var targetNode = Interface.FindComponentUnderCursor();
 
         // Find the first parent acceptable in that tree that can accept the package
@@ -427,24 +420,23 @@ public partial class InventoryItem : SlotItem
 
                 case BagItem bagItem:
                     player.TryStoreItemInBag(SlotIndex, bagItem.SlotIndex);
-                    return true;
+                    return false;
 
                 case BankItem bankItem:
-                    player.TryStoreItemInBank(
+                    return player.TryStoreItemInBank(
                         SlotIndex,
                         bankSlotIndex: bankItem.SlotIndex,
                         quantityHint: inventorySlot.Quantity,
                         skipPrompt: true
                     );
-                    return true;
 
                 case HotbarItem hotbarItem:
                     player.AddToHotbar(hotbarItem.SlotIndex, 0, SlotIndex);
-                    return true;
+                    return false;
 
                 case ShopWindow:
                     player.TrySellItem(SlotIndex);
-                    return true;
+                    return false;
 
                 default:
                     targetNode = targetNode.Parent;
@@ -452,7 +444,11 @@ public partial class InventoryItem : SlotItem
             }
         }
 
-        // If we've reached the top of the tree, we can't drop here, so cancel drop
+        if (!Interface.DoesMouseHitInterface() && !player.IsBusy)
+        {
+            player.TryDropItem(SlotIndex);
+        }
+
         return false;
     }
 
@@ -477,6 +473,7 @@ public partial class InventoryItem : SlotItem
 
         // empty texture to reload on update
         Icon.Texture = default;
+        Icon.IsVisibleInParent = false;
     }
 
     public override void Update()
@@ -498,17 +495,14 @@ public partial class InventoryItem : SlotItem
         }
 
         var equipped = Globals.Me.MyEquipment.Any(s => s == SlotIndex);
-        var isDragging = Icon.IsDragging;
-        _equipImageBackground.IsVisibleInParent = !isDragging && equipped;
-        _equipLabel.IsVisibleInParent = !isDragging && equipped;
-
-        _quantityLabel.IsVisibleInParent = !isDragging && descriptor.IsStackable && inventorySlot.Quantity > 1;
+        _equipImageBackground.IsVisibleInParent = !Icon.IsDragging && equipped;
+        _equipLabel.IsVisibleInParent = !Icon.IsHidden && equipped;
+        _quantityLabel.IsVisibleInParent = !Icon.IsHidden && descriptor.IsStackable && inventorySlot.Quantity > 1;
         if (_quantityLabel.IsVisibleInParent)
         {
             _quantityLabel.Text = Strings.FormatQuantityAbbreviated(inventorySlot.Quantity);
         }
-
-        _cooldownLabel.IsVisibleInParent = !isDragging && Globals.Me.IsItemOnCooldown(SlotIndex);
+        _cooldownLabel.IsVisibleInParent = !Icon.IsHidden && Globals.Me.IsItemOnCooldown(SlotIndex);
         if (_cooldownLabel.IsVisibleInParent)
         {
             var itemCooldownRemaining = Globals.Me.GetItemRemainingCooldown(SlotIndex);

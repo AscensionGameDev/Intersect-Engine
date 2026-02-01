@@ -19,15 +19,13 @@ public partial class BagItem : SlotItem
 {
     // Controls
     private readonly Label _quantityLabel;
-    private readonly BagWindow _bagWindow;
 
     // Context Menu Handling
     private readonly MenuItem _withdrawContextItem;
 
-    public BagItem(BagWindow bagWindow, Base parent, int index, ContextMenu contextMenu)
+    public BagItem(Base parent, int index, ContextMenu contextMenu)
         : base(parent, nameof(BagItem), index, contextMenu)
     {
-        _bagWindow = bagWindow;
         TextureFilename = "bagitem.png";
 
         Icon.HoverEnter += Icon_HoverEnter;
@@ -145,6 +143,16 @@ public partial class BagItem : SlotItem
 
     public override bool DragAndDrop_HandleDrop(Package package, int x, int y)
     {
+        if (Globals.Me is not { } player)
+        {
+            return false;
+        }
+
+        if (Globals.BagSlots is not { Length: > 0 } bagSlots)
+        {
+            return false;
+        }
+
         var targetNode = Interface.FindComponentUnderCursor();
 
         // Find the first parent acceptable in that tree that can accept the package
@@ -154,11 +162,11 @@ public partial class BagItem : SlotItem
             {
                 case BagItem bagItem:
                     PacketSender.SendMoveBagItems(SlotIndex, bagItem.SlotIndex);
-                    return true;
+                    return bagSlots[bagItem.SlotIndex] is not { Quantity: > 0 };
 
                 case InventoryItem inventoryItem:
-                    Globals.Me?.TryRetrieveItemFromBag(SlotIndex, inventoryItem.SlotIndex);
-                    return true;
+                    player.TryRetrieveItemFromBag(SlotIndex, inventoryItem.SlotIndex);
+                    return bagSlots[inventoryItem.SlotIndex] is not { Quantity: > 0 };
 
                 default:
                     targetNode = targetNode.Parent;
@@ -194,7 +202,7 @@ public partial class BagItem : SlotItem
         var bagSlot = bagSlots[SlotIndex];
         var descriptor = bagSlot.Descriptor;
 
-        _quantityLabel.IsVisibleInParent = !Icon.IsDragging && descriptor.IsStackable && bagSlot.Quantity > 1;
+        _quantityLabel.IsVisibleInParent = !Icon.IsHidden && descriptor.IsStackable && bagSlot.Quantity > 1;
         if (_quantityLabel.IsVisibleInParent)
         {
             _quantityLabel.Text = Strings.FormatQuantityAbbreviated(bagSlot.Quantity);
