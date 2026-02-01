@@ -12,7 +12,6 @@ using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.Framework.Core.GameObjects.Variables;
-using Intersect.Framework.Core.Network.Packets.Security;
 using Intersect.Framework.Core.Security;
 using Intersect.GameObjects;
 using Intersect.Models;
@@ -27,7 +26,6 @@ using Intersect.Server.Entities.Events;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
-using Intersect.Utilities;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -52,6 +50,30 @@ public static partial class PacketSender
         SentPackets = 0;
         SentBytes = 0;
     }
+
+    //Tracks last sent stats per entity so we can skip redundant packet updates.
+    private sealed record EntityStatsSnapshot(int[] Stats);
+
+    private static readonly Dictionary<Guid, EntityStatsSnapshot> _lastEntityStatsSnapshot = new Dictionary<Guid, EntityStatsSnapshot>();
+
+    // Tracks last sent vitals per entity for map‑wide batch updates.
+    private sealed record EntityVitalSnapshot(long[] Vitals, long[] MaxVitals, long CombatTimeRemaining);
+
+    private static readonly Dictionary<Guid, EntityVitalSnapshot> _lastEntityVitalSnapshot = new Dictionary<Guid, EntityVitalSnapshot>();
+
+    // Tracks last sent equipment item ids per player.
+    private static readonly Dictionary<Guid, Guid[]> _lastPlayerEquipmentSnapshot = new Dictionary<Guid, Guid[]>();
+
+    // Tracks last sent statuses per entity so we can skip redundant packet updates.
+    private sealed record EntityStatusSnapshot(StatusPacket[] Statuses);
+
+    private static readonly Dictionary<Guid, EntityStatusSnapshot> _lastEntityStatusSnapshot = new Dictionary<Guid, EntityStatusSnapshot>();
+
+    // Tracks last sent NPC aggression per (player, npc) pair.
+    private static readonly Dictionary<(Guid PlayerId, Guid NpcId), NpcAggression> _lastNpcAggressionSnapshot = new Dictionary<(Guid PlayerId, Guid NpcId), NpcAggression>();
+
+    // Tracks last sent map item state per (player, map) to avoid regenerating and resending already sent item packets.
+    private static readonly Dictionary<(Guid PlayerId, Guid MapId), int> _lastMapItemsSnapshot = new Dictionary<(Guid PlayerId, Guid MapId), int>();
 
     //PingPacket
     public static void SendPing(Client client, bool request = true)
@@ -620,6 +642,24 @@ public static partial class PacketSender
             var players = mapInstance.GetPlayers();
             foreach (var pl in players)
             {
+                if (pl == null)
+                {
+                    continue;
+                }
+
+                var key = (PlayerId: pl.Id, NpcId: en.Id);
+                var currentAggro = en.GetAggression(pl); // Returns NpcAggression now
+
+                if (_lastNpcAggressionSnapshot.TryGetValue(key, out var lastAggro))
+                {
+                    if (lastAggro.Equals(currentAggro))
+                    {
+                        // No change in aggression towards this player; skip.
+                        continue;
+                    }
+                }
+
+                _lastNpcAggressionSnapshot[key] = currentAggro;
                 SendNpcAggressionTo(pl, en);
             }
         }
@@ -640,24 +680,28 @@ public static partial class PacketSender
     public static void SendEntityLeaveMap(Entity en, Guid leftMap)
     {
         SendDataToMapInstance(leftMap, en.MapInstanceId, new EntityLeftPacket(en.Id, en.GetEntityType(), en.MapId));
+        ClearEntitySnapshotCache(en);
     }
 
     //EntityLeftPacket
     public static void SendEntityLeave(Entity en)
     {
         SendDataToProximityOnMapInstance(en.MapId, en.MapInstanceId, new EntityLeftPacket(en.Id, en.GetEntityType(), en.MapId));
+        ClearEntitySnapshotCache(en);
     }
 
     //EntityLeftPacket
     public static void SendEntityLeaveLayer(Entity en, Guid mapInstanceId)
     {
         SendDataToProximityOnMapInstance(en.MapId, mapInstanceId, new EntityLeftPacket(en.Id, en.GetEntityType(), en.MapId));
+        ClearEntitySnapshotCache(en);
     }
 
     //EntityLeftPacket
     public static void SendEntityLeaveInstanceOfMap(Entity en, Guid mapId, Guid mapInstanceId)
     {
         SendDataToProximityOnMapInstance(mapId, mapInstanceId, new EntityLeftPacket(en.Id, en.GetEntityType(), en.MapId));
+        ClearEntitySnapshotCache(en);
     }
 
     //EntityLeavePacket
@@ -770,6 +814,88 @@ public static partial class PacketSender
         }
 
         CachedGameDataPacket = new GameDataPacket(gameObjects.ToArray(), CustomColors.Json());
+    }
+
+    private static void ClearEntitySnapshotCache(Entity en)
+    {
+        if (en != null)
+        {
+            _lastEntityStatsSnapshot.Remove(en.Id);
+            _lastEntityVitalSnapshot.Remove(en.Id);
+            _lastPlayerEquipmentSnapshot.Remove(en.Id);
+            _lastEntityStatusSnapshot.Remove(en.Id);
+            ClearNpcAggressionSnapshot(en);
+        }
+    }
+
+    private static void ClearNpcAggressionSnapshot(Entity en)
+    {
+        if (en == null)
+        {
+            return;
+        }
+
+        // If this entity is an NPC, drop all entries referencing that NPC.
+        if (en is Npc npc)
+        {
+            var npcId = npc.Id;
+            var keysToRemove = _lastNpcAggressionSnapshot
+                .Where(kvp => kvp.Key.NpcId == npcId)
+                .Select(kvp => kvp.Key)
+                .ToArray();
+
+            foreach (var key in keysToRemove)
+            {
+                _lastNpcAggressionSnapshot.Remove(key);
+            }
+        }
+
+        // If this entity is a Player, drop all entries referencing that player.
+        if (en is Player player)
+        {
+            var playerId = player.Id;
+            var keysToRemove = _lastNpcAggressionSnapshot
+                .Where(kvp => kvp.Key.PlayerId == playerId)
+                .Select(kvp => kvp.Key)
+                .ToArray();
+
+            foreach (var key in keysToRemove)
+            {
+                _lastNpcAggressionSnapshot.Remove(key);
+            }
+        }
+    }
+
+    private static int ComputeVisibleMapItemsHash(Player player, Guid mapId)
+    {
+        if (player == null)
+        {
+            return 0;
+        }
+
+        if (!MapController.TryGetInstanceFromMap(mapId, player.MapInstanceId, out var mapInstance))
+        {
+            return 0;
+        }
+
+        var hash = new HashCode();
+
+        foreach (var item in mapInstance.AllMapItems.Values)
+        {
+            if (!item.VisibleToAll && item.Owner != player.Id)
+            {
+                continue;
+            }
+
+            hash.Add(item.TileIndex);
+            hash.Add(item.UniqueId);
+            hash.Add(item.ItemId);
+            hash.Add(item.BagId);
+            hash.Add(item.Quantity);
+            hash.Add(item.Properties);
+        }
+
+        return hash.ToHashCode();
     }
 
     /// <summary>
@@ -945,40 +1071,108 @@ public static partial class PacketSender
     //EntityVitalsPacket
     public static void SendMapEntityVitalUpdate(MapController map, Entity[] entities, Guid mapInstanceId)
     {
-        // Generate a list of vitals to send to our users!
-        var data = new List<EntityVitalData>();
-        foreach (var entity in entities)
+        if (map == null || entities == null || entities.Length == 0)
         {
-            data.Add(new EntityVitalData()
-            {
-                Id = entity.Id,
-                Type = entity.GetEntityType(),
-                Vitals = entity.GetVitals(),
-                MaxVitals = entity.GetMaxVitals(),
-                CombatTimeRemaining = entity.CombatTimer - Timing.Global.Milliseconds
-            });
+            return;
         }
 
-        // Send the data to the surroundings!
-        SendDataToProximityOnMapInstance(map.Id, mapInstanceId, new MapEntityVitalsPacket(map.Id, data.ToArray()));
+        var data = new List<EntityVitalData>();
+
+        foreach (var entity in entities)
+        {
+            if (entity == null)
+            {
+                continue;
+            }
+
+            var vitals = entity.GetVitals();
+            var maxVitals = entity.GetMaxVitals();
+            var combatRemaining = entity.CombatTimer - Timing.Global.Milliseconds;
+
+            var newSnapshot = new EntityVitalSnapshot(vitals, maxVitals, combatRemaining);
+
+            if (_lastEntityVitalSnapshot.TryGetValue(entity.Id, out var oldSnapshot))
+            {
+                if (oldSnapshot.Vitals.SequenceEqual(newSnapshot.Vitals) &&
+                    oldSnapshot.MaxVitals.SequenceEqual(newSnapshot.MaxVitals) &&
+                    oldSnapshot.CombatTimeRemaining == newSnapshot.CombatTimeRemaining)
+                {
+                    // Nothing relevant changed, skip this entity.
+                    continue;
+                }
+            }
+
+            _lastEntityVitalSnapshot[entity.Id] = newSnapshot;
+
+            data.Add(
+                new EntityVitalData
+                {
+                    Id = entity.Id,
+                    Type = entity.GetEntityType(),
+                    Vitals = vitals,
+                    MaxVitals = maxVitals,
+                    CombatTimeRemaining = combatRemaining
+                }
+            );
+        }
+
+        // Only send if at least one entity actually changed.
+        if (data.Count > 0)
+        {
+            SendDataToProximityOnMapInstance(map.Id, mapInstanceId, new MapEntityVitalsPacket(map.Id, data.ToArray()));
+        }
     }
 
     public static void SendMapEntityStatusUpdate(MapController map, Entity[] entities, Guid mapInstanceId)
     {
-        // Generate a list of statuses to send to our users!
-        var data = new List<EntityStatusData>();
-        foreach (var entity in entities)
+        if (map == null || entities == null || entities.Length == 0)
         {
-            data.Add(new EntityStatusData()
-            {
-                Id = entity.Id,
-                Type = entity.GetEntityType(),
-                Statuses = entity.StatusPackets()
-            });
+            return;
         }
 
-        // Send the data to the surroundings!
-        SendDataToProximityOnMapInstance(map.Id, mapInstanceId, new MapEntityStatusPacket(map.Id, data.ToArray()));
+        var data = new List<EntityStatusData>();
+
+        foreach (var entity in entities)
+        {
+            if (entity == null)
+            {
+                continue;
+            }
+
+            var statuses = entity.StatusPackets(); // Existing API
+
+            var newSnapshot = new EntityStatusSnapshot(statuses);
+
+            if (_lastEntityStatusSnapshot.TryGetValue(entity.Id, out var oldSnapshot))
+            {
+                if (oldSnapshot.Statuses.SequenceEqual(newSnapshot.Statuses))
+                {
+                    // No status change; skip this entity.
+                    continue;
+                }
+            }
+
+            _lastEntityStatusSnapshot[entity.Id] = newSnapshot;
+
+            data.Add(
+                new EntityStatusData
+                {
+                    Id = entity.Id,
+                    Type = entity.GetEntityType(),
+                    Statuses = statuses
+                }
+            );
+        }
+
+        // Only send if at least one entity actually changed.
+        if (data.Count > 0)
+        {
+            SendDataToProximityOnMapInstance(
+                map.Id,
+                mapInstanceId,
+                new MapEntityStatusPacket(map.Id, data.ToArray())
+            );
+        }
     }
 
     //EntityStatsPacket
@@ -989,7 +1183,26 @@ public static partial class PacketSender
             return;
         }
 
-        SendDataToProximityOnMapInstance(en.MapId, en.MapInstanceId, GenerateEntityStatsPacket(en), null, TransmissionMode.Any);
+        // Build current stats array (same logic as GenerateEntityStatsPacket)
+        var stats = new int[Enum.GetValues<Stat>().Length];
+        for (var i = 0; i < stats.Length; i++)
+        {
+            stats[i] = en.Stat[i].Value();
+        }
+
+        var newSnapshot = new EntityStatsSnapshot(stats);
+
+        if (_lastEntityStatsSnapshot.TryGetValue(en.Id, out var oldSnapshot))
+        {
+            if (oldSnapshot.Stats.SequenceEqual(newSnapshot.Stats))
+            {
+                // No visible stat changes; skip the packet update entirely.
+                return;
+            }
+        }
+
+        _lastEntityStatsSnapshot[en.Id] = newSnapshot;
+        SendDataToProximityOnMapInstance(en.MapId, en.MapInstanceId, new EntityStatsPacket(en.Id, en.GetEntityType(), en.MapId, stats), null, TransmissionMode.Any);
     }
 
     //EntityVitalsPacket
@@ -1127,6 +1340,25 @@ public static partial class PacketSender
         // Send all players on a map instance and its surrounding instances a map item update.
         foreach (var player in mapInstance.GetPlayers(true))
         {
+            if (player == null)
+            {
+                continue;
+            }
+
+            var key = (PlayerId: player.Id, MapId: mapId);
+            var newHash = ComputeVisibleMapItemsHash(player, mapId);
+
+            if (_lastMapItemsSnapshot.TryGetValue(key, out var lastHash))
+            {
+                if (lastHash == newHash)
+                {
+                    // Visible item set unchanged for this player on this map; skip.
+                    continue;
+                }
+            }
+
+            _lastMapItemsSnapshot[key] = newHash;
+
             player.SendPacket(GenerateMapItemsPacket(player, mapId));
         }
     }
@@ -1295,6 +1527,36 @@ public static partial class PacketSender
     //EquipmentPacket
     public static void SendPlayerEquipmentToProximity(Player en)
     {
+        if (en == null)
+        {
+            return;
+        }
+
+        var slots = Options.Instance.Equipment.Slots.Count;
+        var equipment = new Guid[slots];
+
+        for (var i = 0; i < slots; i++)
+        {
+            if (en.Equipment[i] == -1 || en.Items[en.Equipment[i]].ItemId == Guid.Empty)
+            {
+                equipment[i] = Guid.Empty;
+            }
+            else
+            {
+                equipment[i] = en.Items[en.Equipment[i]].ItemId;
+            }
+        }
+
+        if (_lastPlayerEquipmentSnapshot.TryGetValue(en.Id, out var last))
+        {
+            if (last.Length == equipment.Length && last.SequenceEqual(equipment))
+            {
+                // Nothing changed, skip entirely.
+                return;
+            }
+        }
+
+        _lastPlayerEquipmentSnapshot[en.Id] = equipment;
         SendDataToProximityOnMapInstance(en.MapId, en.MapInstanceId, GenerateEquipmentPacket(null, en), null, TransmissionMode.Any);
         SendPlayerEquipmentTo(en, en);
     }
