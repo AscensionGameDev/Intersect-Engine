@@ -59,21 +59,22 @@ public partial class BankItem : SlotItem
 
     protected override void OnContextMenuOpening(ContextMenu contextMenu)
     {
-        if (Globals.BankSlots is not { Length: > 0 } bankSlots)
-        {
-            return;
-        }
-
-        if (!ItemDescriptor.TryGet(bankSlots[SlotIndex].ItemId, out var item))
-        {
-            return;
-        }
-
-        // Clear the context menu and add the withdraw item with updated item name
+        // Clear out the old options since we might not show all of them
         contextMenu.ClearChildren();
-        contextMenu.AddChild(_withdrawContextItem);
-        _withdrawContextItem.SetText(Strings.BankContextMenu.Withdraw.ToString(item.Name));
 
+        if (Globals.BankSlots[SlotIndex] is not { } bankSlot)
+        {
+            return;
+        }
+
+        if (!ItemDescriptor.TryGet(bankSlot.ItemId, out var item))
+        {
+            return;
+        }
+
+        // update context menu
+        _withdrawContextItem.SetText(Strings.BankContextMenu.Withdraw.ToString(item.Name));
+        contextMenu.AddChild(_withdrawContextItem);
         base.OnContextMenuOpening(contextMenu);
     }
 
