@@ -220,25 +220,28 @@ public static partial class DbInterface
     {
         if (!context.HasPendingMigrations)
         {
-            ApplicationContext.Context.Value?.Logger.LogDebug($"No pending migrations for {context.GetType().GetName(qualified: true)}, skipping...");
+            ApplicationContext.Context.Value?.Logger.LogInformation($"No pending migrations for {context.GetType().GetName(qualified: true)}, skipping...");
             return;
         }
 
-        ApplicationContext.Context.Value?.Logger.LogDebug($"Pending schema migrations for {typeof(TContext).Name}:\n\t{string.Join("\n\t", context.PendingSchemaMigrations)}");
-        ApplicationContext.Context.Value?.Logger.LogDebug($"Pending data migrations for {typeof(TContext).Name}:\n\t{string.Join("\n\t", context.PendingDataMigrationNames)}");
+        ApplicationContext.Context.Value?.Logger.LogInformation($"Pending schema migrations for {typeof(TContext).Name}:\n\t{string.Join("\n\t", context.PendingSchemaMigrations)}");
+        ApplicationContext.Context.Value?.Logger.LogInformation($"Pending data migrations for {typeof(TContext).Name}:\n\t{string.Join("\n\t", context.PendingDataMigrationNames)}");
 
         var migrationScheduler = new MigrationScheduler<TContext>(context);
-        ApplicationContext.Context.Value?.Logger.LogDebug("Scheduling pending migrations...");
+        ApplicationContext.Context.Value?.Logger.LogInformation("Scheduling pending migrations...");
         migrationScheduler.SchedulePendingMigrations();
 
-        ApplicationContext.Context.Value?.Logger.LogDebug("Applying scheduled migrations...");
+        ApplicationContext.Context.Value?.Logger.LogInformation("Applying scheduled migrations...");
         migrationScheduler.ApplyScheduledMigrations();
+        ApplicationContext.Context.Value?.Logger.LogInformation("Scheduled migrations applied.");
 
         var remainingPendingSchemaMigrations = context.PendingSchemaMigrations.ToList();
         var processedSchemaMigrations =
             context.PendingSchemaMigrations.Where(migration => !remainingPendingSchemaMigrations.Contains(migration));
 
+        ApplicationContext.Context.Value?.Logger.LogInformation("Notifying context of processed schema migrations...");
         context.OnSchemaMigrationsProcessed(processedSchemaMigrations.ToArray());
+        ApplicationContext.Context.Value?.Logger.LogInformation("Migration processing complete.");
     }
 
     internal static ILoggerFactory CreateLoggerFactory<TDBContext>(DatabaseOptions databaseOptions)
@@ -302,6 +305,7 @@ public static partial class DbInterface
             EnableSensitiveDataLogging = true,
             LoggerFactory = CreateLoggerFactory<LoggingContext>(loggingDatabaseOptions),
         });
+        ApplicationContext.Context.Value?.Logger.LogInformation("Logging context created.");
 
         // We don't want anyone running the old migration tool accidentally
         try
@@ -326,6 +330,7 @@ public static partial class DbInterface
             // ignored
         }
 
+        ApplicationContext.Context.Value?.Logger.LogInformation("Checking pending migrations...");
         var gameContextPendingMigrations = gameContext.PendingSchemaMigrations;
         var playerContextPendingMigrations = playerContext.PendingSchemaMigrations;
         var loggingContextPendingMigrations = loggingContext.PendingSchemaMigrations;
@@ -339,6 +344,8 @@ public static partial class DbInterface
             loggingContextPendingMigrations.Any() &&
             !loggingContextPendingMigrations.Contains("20191118024649_RequestLogs")
         );
+
+        ApplicationContext.Context.Value?.Logger.LogInformation($"Show migration warning: {showMigrationWarning}");
 
         if (showMigrationWarning)
         {
@@ -394,11 +401,14 @@ public static partial class DbInterface
             Console.WriteLine("No migrations pending that require user acceptance, skipping prompt...");
         }
 
+        ApplicationContext.Context.Value?.Logger.LogInformation("Processing migrations...");
         var contexts = new List<DbContext> { gameContext, playerContext, loggingContext };
         foreach (var context in contexts)
         {
             var contextType = context.GetType().FindGenericTypeParameters(typeof(IntersectDbContext<>)).First();
+            ApplicationContext.Context.Value?.Logger.LogInformation($"Processing migration for context: {contextType.Name}");
             _methodInfoProcessMigrations.MakeGenericMethod(contextType).Invoke(null, new object[] { context });
+            ApplicationContext.Context.Value?.Logger.LogInformation($"Finished migration for context: {contextType.Name}");
         }
 
         return true;

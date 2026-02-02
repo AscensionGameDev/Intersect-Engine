@@ -29,4 +29,8 @@ public enum SpellEffect
     Taunt = 12,
 
     Knockback = 13,
+
+    HealingReduction = 14,
+
+    HealingBoost = 15,
 }
