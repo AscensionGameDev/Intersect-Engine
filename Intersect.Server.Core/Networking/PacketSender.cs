@@ -765,14 +765,16 @@ public static partial class PacketSender
                     continue;
                 }
 
-                if ((GameObjectType)val == GameObjectType.Shop ||
-                     (GameObjectType)val == GameObjectType.Event ||
-                     (GameObjectType)val == GameObjectType.PlayerVariable ||
-                     (GameObjectType)val == GameObjectType.ServerVariable ||
-                     (GameObjectType)val == GameObjectType.GuildVariable ||
-                     (GameObjectType)val == GameObjectType.UserVariable)
+                switch ((GameObjectType)val)
                 {
-                    SendGameObjects(client, (GameObjectType)val, null);
+                    case GameObjectType.Shop:
+                    case GameObjectType.Event:
+                    case GameObjectType.PlayerVariable:
+                    case GameObjectType.ServerVariable:
+                    case GameObjectType.GuildVariable:
+                    case GameObjectType.UserVariable:
+                        SendGameObjects(client, (GameObjectType)val, null);
+                        break;
                 }
             }
         }
@@ -796,22 +798,20 @@ public static partial class PacketSender
         //Send massive amounts of game data
         foreach (var val in Enum.GetValues(typeof(GameObjectType)))
         {
-            if ((GameObjectType)val == GameObjectType.Map)
+            switch ((GameObjectType)val)
             {
-                continue;
+                case GameObjectType.Map:
+                case GameObjectType.Shop:
+                case GameObjectType.Event:
+                case GameObjectType.PlayerVariable:
+                case GameObjectType.ServerVariable:
+                case GameObjectType.GuildVariable:
+                case GameObjectType.UserVariable:
+                    continue;
+                default:
+                    SendGameObjects(null, (GameObjectType)val, gameObjects);
+                    break;
             }
-
-            if ((GameObjectType)val == GameObjectType.Shop ||
-                (GameObjectType)val == GameObjectType.Event ||
-                (GameObjectType)val == GameObjectType.PlayerVariable ||
-                (GameObjectType)val == GameObjectType.ServerVariable ||
-                (GameObjectType)val == GameObjectType.GuildVariable ||
-                (GameObjectType)val == GameObjectType.UserVariable)
-            {
-                continue;
-            }
-
-            SendGameObjects(null, (GameObjectType)val, gameObjects);
         }
 
         CachedGameDataPacket = new GameDataPacket(gameObjects.ToArray(), CustomColors.Json());
