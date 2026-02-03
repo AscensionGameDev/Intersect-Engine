@@ -251,7 +251,7 @@ public partial class CharacterCreationWindow : Window
 
     public void Show(bool force)
     {
-        _backButton.IsVisibleInTree = !force;
+        _backButton.IsVisibleInTree = true;
         _createButton.Alignment = force ? [Alignments.Center] : [Alignments.Left];
 
         _renderLayers = new ImagePanel[Options.Instance.Equipment.Paperdoll.Down.Count];
