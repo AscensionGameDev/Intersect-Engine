@@ -708,6 +708,7 @@ public static partial class PacketSender
     public static void SendEntityLeaveTo(Player player, Entity en)
     {
         player.SendPacket(new EntityLeftPacket(en.Id, en.GetEntityType(), en.MapId));
+        ClearEntitySnapshotCache(en);
     }
 
     //EventLeavePacket
@@ -1252,6 +1253,7 @@ public static partial class PacketSender
     public static void SendEntityDie(Entity en)
     {
         SendDataToProximityOnMapInstance(en.MapId, en.MapInstanceId, new EntityDiePacket(en.Id, en.GetEntityType(), en.MapId));
+        ClearEntitySnapshotCache(en);
     }
 
     //EntityDirectionPacket
