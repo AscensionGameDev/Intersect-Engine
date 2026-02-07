@@ -59,20 +59,29 @@ public partial class BankItem : SlotItem
 
     protected override void OnContextMenuOpening(ContextMenu contextMenu)
     {
-        // Clear out the old options since we might not show all of them
-        contextMenu.ClearChildren();
+        contextMenu.ClearChildren(); // Clear context menu
 
-        if (Globals.BankSlots[SlotIndex] is not { } bankSlot)
+        if (Globals.BankSlots is not { Length: > 0 } bankSlots)
         {
             return;
         }
 
-        if (!ItemDescriptor.TryGet(bankSlot.ItemId, out var item))
+        if (bankSlots[SlotIndex] is null)
         {
             return;
         }
 
-        // update context menu
+        if (SlotIndex >= bankSlots.Length)
+        {
+            return;
+        }
+
+        if (!ItemDescriptor.TryGet(bankSlots[SlotIndex].ItemId, out var item))
+        {
+            return;
+        }
+
+        // Update context menu
         _withdrawContextItem.SetText(Strings.BankContextMenu.Withdraw.ToString(item.Name));
         contextMenu.AddChild(_withdrawContextItem);
         base.OnContextMenuOpening(contextMenu);
