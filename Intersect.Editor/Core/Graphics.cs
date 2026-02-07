@@ -6,7 +6,6 @@ using Intersect.Editor.Forms.DockingElements;
 using Intersect.Editor.Forms.Helpers;
 using Intersect.Editor.General;
 using Intersect.Editor.Maps;
-using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Events;
@@ -15,7 +14,6 @@ using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.Attributes;
 using Intersect.Framework.Core.GameObjects.Resources;
-using Intersect.GameObjects;
 using Intersect.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
@@ -34,6 +32,8 @@ public static partial class Graphics
     public static System.Drawing.Rectangle CurrentView;
 
     public static RenderTarget2D DarknessTexture;
+
+    private static Texture2D _transparentGridTexture;
 
     public static object GraphicsLock = new object();
 
@@ -60,8 +60,6 @@ public static partial class Graphics
     public static BlendState MultiplyState;
 
     //Overlay Stuff
-    public static System.Drawing.Color OverlayColor = System.Drawing.Color.Transparent;
-
     private static BlendState sCurrentBlendmode = BlendState.NonPremultiplied;
 
     private static Effect sCurrentShader;
@@ -147,6 +145,15 @@ public static partial class Graphics
         }
     }
 
+    // New consolidated attribute drawing
+    private static void DrawAllMapAttributes(MapInstance map, int gridX, int gridY, bool screenShotting, RenderTarget2D target)
+    {
+        // Combine the 3 separate DrawMapAttributes calls
+        DrawMapAttributes(map, gridX, gridY, screenShotting, target, false, false);
+        DrawMapAttributes(map, gridX, gridY, screenShotting, target, false, true);
+        DrawMapAttributes(map, gridX, gridY, screenShotting, target, true, true);
+    }
+    
     public static GraphicsDevice GetGraphicsDevice()
     {
         return sGraphicsDevice;
@@ -209,89 +216,7 @@ public static partial class Graphics
                     Globals.CurrentMap != null &&
                     Globals.MapGrid.Loaded)
                 {
-                    //Draw The lower maps
-                    for (var y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
-                    {
-                        for (var x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
-                        {
-                            if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
-                            {
-                                MapInstance map = null;
-                                try
-                                {
-                                    map = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
-                                }
-                                catch (Exception exception)
-                                {
-                                    Intersect.Core.ApplicationContext.Context.Value?.Logger.LogError(
-                                        exception,
-                                        $"{Globals.MapGrid.Grid.GetLength(0)}x{Globals.MapGrid.Grid.GetLength(1)} -- {x},{y}"
-                                    );
-                                }
-
-                                if (map != null)
-                                {
-                                    lock (map.MapLock)
-                                    {
-                                        //Draw this map
-                                        DrawMap(
-                                            map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
-                                            false, 0, null
-                                        );
-                                    }
-                                }
-                                else
-                                {
-                                    DrawTransparentBorders(
-                                        x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY
-                                    );
-                                }
-                            }
-                            else
-                            {
-                                DrawTransparentBorders(
-                                    x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY
-                                );
-                            }
-                        }
-                    }
-
-                    //Draw the lower resources/animations
-                    for (var y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
-                    {
-                        for (var x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
-                        {
-                            if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
-                            {
-                                var mapGridItem = Globals.MapGrid.Grid[x, y];
-                                var map = MapInstance.Get(mapGridItem.MapId);
-                                if (map == null)
-                                {
-                                    continue;
-                                }
-
-                                lock (map.MapLock)
-                                {
-                                    DrawMapAttributes(
-                                        map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
-                                        false, null, false, false
-                                    );
-
-                                    DrawMapAttributes(
-                                        map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
-                                        false, null, false, true
-                                    );
-
-                                    DrawMapAttributes(
-                                        map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
-                                        false, null, true, true
-                                    );
-                                }
-                            }
-                        }
-                    }
-
-                    // Draw events
+                    // ONE optimized loop
                     for (var y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
                     {
                         for (var x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
@@ -301,59 +226,35 @@ public static partial class Graphics
                                 var map = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
                                 if (map != null)
                                 {
+                                    var relX = x - Globals.CurrentMap.MapGridX;
+                                    var relY = y - Globals.CurrentMap.MapGridY;
+
                                     lock (map.MapLock)
                                     {
-                                        DrawMapEvents(
-                                            map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
-                                            false, null
-                                        );
+                                        // Lower layers
+                                        DrawMap(map, relX, relY, false, 0, null);
+
+                                        // Attributes - consolidate 3 calls into 1
+                                        DrawAllMapAttributes(map, relX, relY, false, null);
+
+                                        // Events
+                                        DrawMapEvents(map, relX, relY, false, null);
+
+                                        // Upper layers
+                                        DrawMap(map, relX, relY, false, 1, null);
+
+                                        // Upper attributes
+                                        DrawMapAttributes(map, relX, relY, false, null, true, false);
                                     }
+                                }
+                                else // Empty Map, fill it with checkered transparent texture
+                                {
+                                    DrawTransparentBorders(x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY);
                                 }
                             }
-                        }
-                    }
-
-                    //Draw The upper maps
-                    for (var y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
-                    {
-                        for (var x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
-                        {
-                            if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
+                            else // Outside grid bounds: fill it with checkered transparent texture
                             {
-                                var map = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
-                                if (map != null)
-                                {
-                                    lock (map.MapLock)
-                                    {
-                                        //Draw this map
-                                        DrawMap(
-                                            map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
-                                            false, 1, null
-                                        );
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    //Draw the upper resources/animations
-                    for (var y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
-                    {
-                        for (var x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
-                        {
-                            if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
-                            {
-                                var map = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
-                                if (map != null)
-                                {
-                                    lock (map.MapLock)
-                                    {
-                                        DrawMapAttributes(
-                                            map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
-                                            false, null, true, false
-                                        );
-                                    }
-                                }
+                                DrawTransparentBorders(x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY);
                             }
                         }
                     }
@@ -390,55 +291,56 @@ public static partial class Graphics
 
     private static void DrawGridOverlay()
     {
-        for (var x = 0; x < Options.Instance.Map.MapWidth; x++)
+        var tileWidth = Options.Instance.Map.TileWidth;
+        var tileHeight = Options.Instance.Map.TileHeight;
+        var mapWidth = Options.Instance.Map.MapWidth;
+        var mapHeight = Options.Instance.Map.MapHeight;
+        var leftPos = CurrentView.Left;
+        var topPos = CurrentView.Top;
+        var totalWidth = mapWidth * tileWidth;
+        var totalHeight = mapHeight * tileHeight;
+
+        // Draw vertical lines
+        for (var x = 0; x <= mapWidth; x++)
         {
-            DrawTexture(
-                sWhiteTex, new RectangleF(0, 0, 1, 1),
-                new RectangleF(
-                    CurrentView.Left + x * Options.Instance.Map.TileWidth, CurrentView.Top, 1,
-                    Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight
-                ), null
-            );
+            DrawTexture(sWhiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(leftPos + x * tileWidth, topPos, 1, totalHeight), null);
         }
 
-        for (var y = 0; y < Options.Instance.Map.MapHeight; y++)
+        // Draw horizontal lines
+        for (var y = 0; y <= mapHeight; y++)
         {
-            DrawTexture(
-                sWhiteTex, new RectangleF(0, 0, 1, 1),
-                new RectangleF(
-                    CurrentView.Left, CurrentView.Top + y * Options.Instance.Map.TileHeight,
-                    Options.Instance.Map.MapWidth * Options.Instance.Map.TileWidth, 1
-                ), null
-            );
+            DrawTexture(sWhiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(leftPos, topPos + y * tileHeight, totalWidth, 1), null);
         }
     }
 
     private static void DrawTransparentBorders(int gridX, int gridY)
     {
-        var transTex = GameContentManager.GetTexture(GameContentManager.TextureType.Misc, "transtile.png");
-        if (transTex == null)
+        if (_transparentGridTexture == null || _transparentGridTexture.IsDisposed)
+        {
+            _transparentGridTexture = GameContentManager.GetTexture(GameContentManager.TextureType.Misc, "transtile.png");
+        }
+
+        if (_transparentGridTexture == null)
         {
             return;
         }
 
-        var xoffset = CurrentView.Left + gridX * Options.Instance.Map.TileWidth * Options.Instance.Map.MapWidth;
-        var yoffset = CurrentView.Top + gridY * Options.Instance.Map.TileHeight * Options.Instance.Map.MapHeight;
-        for (var x = 0; x < Options.Instance.Map.MapWidth; x++)
+        var tileWidth = Options.Instance.Map.TileWidth;
+        var tileHeight = Options.Instance.Map.TileHeight;
+        var mapWidth = Options.Instance.Map.MapWidth;
+        var mapHeight = Options.Instance.Map.MapHeight;
+        var xoffset = CurrentView.Left + gridX * tileWidth * mapWidth;
+        var yoffset = CurrentView.Top + gridY * tileHeight * mapHeight;
+        var texRect = new RectangleF(0, 0, _transparentGridTexture.Width, _transparentGridTexture.Height);
+        var viewRect = new System.Drawing.Rectangle(0, 0, CurrentView.Width, CurrentView.Height);
+        
+        for (var x = 0; x < mapWidth; x++)
         {
-            for (var y = 0; y < Options.Instance.Map.MapHeight; y++)
+            for (var y = 0; y < mapHeight; y++)
             {
-                if (new System.Drawing.Rectangle(
-                    x * Options.Instance.Map.TileWidth + xoffset, y * Options.Instance.Map.TileHeight + yoffset, Options.Instance.Map.TileWidth,
-                    Options.Instance.Map.TileHeight
-                ).IntersectsWith(new System.Drawing.Rectangle(0, 0, CurrentView.Width, CurrentView.Height)))
+                if (new System.Drawing.Rectangle(x * tileWidth + xoffset, y * tileHeight + yoffset, tileWidth, tileHeight).IntersectsWith(viewRect))
                 {
-                    DrawTexture(
-                        transTex, new RectangleF(0, 0, transTex.Width, transTex.Height),
-                        new RectangleF(
-                            xoffset + x * Options.Instance.Map.TileWidth, yoffset + y * Options.Instance.Map.TileHeight, Options.Instance.Map.TileWidth,
-                            Options.Instance.Map.TileHeight
-                        ), System.Drawing.Color.White, null
-                    );
+                    DrawTexture(_transparentGridTexture, texRect, new RectangleF(xoffset + x * tileWidth, yoffset + y * tileHeight, tileWidth, tileHeight), System.Drawing.Color.White, null);
                 }
             }
         }
@@ -1092,109 +994,76 @@ public static partial class Graphics
         EndSpriteBatch();
         SetRenderTarget(sMapGridChain);
         sGraphicsDevice.Clear(Microsoft.Xna.Framework.Color.FromNonPremultiplied(60, 63, 65, 255));
-        var rand = new Random();
+
         var grid = Globals.MapGrid;
         lock (Globals.MapGrid.GetMapGridLock())
         {
             grid.Update(sMapGridChain.Bounds);
+
+            // Pre-calculate colors and textures to avoid fetching them inside the loop
+            var whiteTex = GetWhiteTex();
+            var paddingColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            var emptySlotColor = System.Drawing.Color.Transparent;
+
             for (var x = 0; x < grid.GridWidth + 2; x++)
             {
                 for (var y = 0; y < grid.GridHeight + 2; y++)
                 {
-                    var renderRect = new System.Drawing.Rectangle(
-                        grid.ContentRect.X + x * grid.TileWidth, grid.ContentRect.Y + y * grid.TileHeight,
-                        grid.TileWidth, grid.TileHeight
-                    );
+                    // Calculate position ONCE
+                    float drawX = grid.ContentRect.X + x * grid.TileWidth;
+                    float drawY = grid.ContentRect.Y + y * grid.TileHeight;
+                    var renderRect = new System.Drawing.Rectangle((int)drawX, (int)drawY, grid.TileWidth, grid.TileHeight);
 
-                    if (grid.ViewRect.IntersectsWith(renderRect))
+                    // View Culling: Skip drawing if outside the visible area
+                    if (!grid.ViewRect.IntersectsWith(renderRect))
                     {
-                        if (x == 0 ||
-                            y == 0 ||
-                            x == grid.GridWidth + 1 ||
-                            y == grid.GridHeight + 1 ||
-                            grid.Grid[x - 1, y - 1].MapId == Guid.Empty)
+                        continue;
+                    }
+
+                    // We need a RectangleF for the drawing calls
+                    var destRect = new RectangleF(drawX, drawY, grid.TileWidth, grid.TileHeight);
+                    bool isPadding = x == 0 || y == 0 || x == grid.GridWidth + 1 || y == grid.GridHeight + 1;
+
+                    if (isPadding)
+                    {
+                        // Draw Border/Padding Background
+                        DrawTexture(whiteTex, new RectangleF(0, 0, 1, 1), destRect, paddingColor, sMapGridChain);
+                    }
+                    else
+                    {
+                        var tile = grid.Grid[x - 1, y - 1];
+                        
+                        if (tile.MapId == Guid.Empty || tile.Tex == null)
                         {
-                            DrawTexture(
-                                GetWhiteTex(), new RectangleF(0, 0, 1, 1),
-                                new RectangleF(
-                                    grid.ContentRect.X + x * grid.TileWidth,
-                                    grid.ContentRect.Y + y * grid.TileHeight, grid.TileWidth, grid.TileHeight
-                                ), System.Drawing.Color.FromArgb(45, 45, 48), sMapGridChain
-                            );
+                            DrawTexture(whiteTex, new RectangleF(0, 0, 1, 1), destRect, emptySlotColor, sMapGridChain);
                         }
                         else
                         {
-                            if (grid.Grid[x - 1, y - 1].MapId != Guid.Empty)
-                            {
-                                if (grid.Grid[x - 1, y - 1].Tex != null &&
-                                    grid.Grid[x - 1, y - 1].Tex.Width == grid.TileWidth &&
-                                    grid.Grid[x - 1, y - 1].Tex.Height == grid.TileHeight)
-                                {
-                                    DrawTexture(
-                                        grid.Grid[x - 1, y - 1].Tex, grid.ContentRect.X + x * grid.TileWidth,
-                                        grid.ContentRect.Y + y * grid.TileHeight, sMapGridChain
-                                    );
-                                }
-                                else
-                                {
-                                    DrawTexture(
-                                        GetWhiteTex(), new RectangleF(0, 0, 1, 1),
-                                        new RectangleF(
-                                            grid.ContentRect.X + x * grid.TileWidth,
-                                            grid.ContentRect.Y + y * grid.TileHeight, grid.TileWidth,
-                                            grid.TileHeight
-                                        ), System.Drawing.Color.Green, sMapGridChain
-                                    );
-                                }
-                            }
-                            else
-                            {
-                                DrawTexture(
-                                    GetWhiteTex(), new RectangleF(0, 0, 1, 1),
-                                    new RectangleF(
-                                        grid.ContentRect.X + x * grid.TileWidth,
-                                        grid.ContentRect.Y + y * grid.TileHeight, grid.TileWidth, grid.TileHeight
-                                    ), System.Drawing.Color.Gray, sMapGridChain
-                                );
-                            }
-                        }
-
-                        if (Globals.MapGrid.ShowLines)
-                        {
-                            DrawTexture(
-                                GetWhiteTex(), new RectangleF(0, 0, 1, 1),
-                                new RectangleF(
-                                    grid.ContentRect.X + x * grid.TileWidth,
-                                    grid.ContentRect.Y + y * grid.TileHeight, grid.TileWidth, 1
-                                ), System.Drawing.Color.DarkGray, sMapGridChain
-                            );
-
-                            DrawTexture(
-                                GetWhiteTex(), new RectangleF(0, 0, 1, 1),
-                                new RectangleF(
-                                    grid.ContentRect.X + x * grid.TileWidth,
-                                    grid.ContentRect.Y + y * grid.TileHeight, 1, grid.TileHeight
-                                ), System.Drawing.Color.DarkGray, sMapGridChain
-                            );
-
-                            DrawTexture(
-                                GetWhiteTex(), new RectangleF(0, 0, 1, 1),
-                                new RectangleF(
-                                    grid.ContentRect.X + x * grid.TileWidth + grid.TileWidth,
-                                    grid.ContentRect.Y + y * grid.TileHeight, 1, grid.TileHeight
-                                ), System.Drawing.Color.DarkGray, sMapGridChain
-                            );
-
-                            DrawTexture(
-                                GetWhiteTex(), new RectangleF(0, 0, 1, 1),
-                                new RectangleF(
-                                    grid.ContentRect.X + x * grid.TileWidth,
-                                    grid.ContentRect.Y + y * grid.TileHeight + grid.TileHeight, grid.TileWidth, 1
-                                ), System.Drawing.Color.DarkGray, sMapGridChain
-                            );
+                            DrawTexture(tile.Tex, new RectangleF(0, 0, tile.Tex.Width, tile.Tex.Height), destRect, Color.White, sMapGridChain);
                         }
                     }
                 }
+            }
+        }
+
+        if (Globals.MapGrid.ShowLines)
+        {
+            var srcRect = new RectangleF(0, 0, 1, 1);
+            var whiteTex = GetWhiteTex();
+            var gridLineColor = System.Drawing.Color.White;
+
+            // Draw all vertical lines
+            for (var x = 0; x <= grid.GridWidth + 2; x++)
+            {
+                float lineX = grid.ContentRect.X + x * grid.TileWidth;
+                DrawTexture(whiteTex, srcRect, new RectangleF(lineX, grid.ContentRect.Y, 1, (grid.GridHeight + 2) * grid.TileHeight), gridLineColor, sMapGridChain);
+            }
+
+            // Draw all horizontal lines
+            for (var y = 0; y <= grid.GridHeight + 2; y++)
+            {
+                float lineY = grid.ContentRect.Y + y * grid.TileHeight;
+                DrawTexture(whiteTex, srcRect, new RectangleF(grid.ContentRect.X, lineY, (grid.GridWidth + 2) * grid.TileWidth, 1), gridLineColor, sMapGridChain);
             }
         }
 
@@ -1259,63 +1128,18 @@ public static partial class Graphics
 
     private static void DrawMapBorders()
     {
-        //Horizontal Top
-        DrawTexture(
-            sWhiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(0, CurrentView.Y - 1, CurrentView.Width, 3),
-            System.Drawing.Color.DimGray
-        );
+        var borderColor = System.Drawing.Color.DimGray;
+        var srcRect = new RectangleF(0, 0, 1, 1);
+        var mapWidth = Options.Instance.Map.TileWidth * Options.Instance.Map.MapWidth;
+        var mapHeight = Options.Instance.Map.TileHeight * Options.Instance.Map.MapHeight;
 
-        //Horizontal Buttom
-        DrawTexture(
-            sWhiteTex, new RectangleF(0, 0, 1, 1),
-            new RectangleF(0, CurrentView.Y + Options.Instance.Map.TileHeight * Options.Instance.Map.MapHeight - 1, CurrentView.Width, 3),
-            System.Drawing.Color.DimGray
-        );
+        // Horizontal borders (Top and Bottom)
+        DrawTexture(sWhiteTex, srcRect, new RectangleF(0, CurrentView.Y - 1, CurrentView.Width, 3), borderColor);
+        DrawTexture(sWhiteTex, srcRect, new RectangleF(0, CurrentView.Y + mapHeight - 1, CurrentView.Width, 3), borderColor);
 
-        //Vertical Left
-        DrawTexture(
-            sWhiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(CurrentView.Left - 1, 0, 3, CurrentView.Height),
-            System.Drawing.Color.DimGray
-        );
-
-        //Vertical Right
-        DrawTexture(
-            sWhiteTex, new RectangleF(0, 0, 1, 1),
-            new RectangleF(CurrentView.Left + Options.Instance.Map.TileWidth * Options.Instance.Map.MapWidth - 1, 0, 3, CurrentView.Height),
-            System.Drawing.Color.DimGray
-        );
-
-        //Horizontal Top
-        DrawTexture(
-            sWhiteTex, new RectangleF(0, 0, 1, 1),
-            new RectangleF(CurrentView.Left, CurrentView.Y - 1, Options.Instance.Map.TileWidth * Options.Instance.Map.MapWidth, 3),
-            System.Drawing.Color.DimGray
-        );
-
-        //Horizontal Buttom
-        DrawTexture(
-            sWhiteTex, new RectangleF(0, 0, 1, 1),
-            new RectangleF(
-                CurrentView.Left, CurrentView.Y + Options.Instance.Map.TileHeight * Options.Instance.Map.MapHeight - 1,
-                Options.Instance.Map.TileWidth * Options.Instance.Map.MapWidth, 3
-            ), System.Drawing.Color.DimGray
-        );
-
-        //Vertical Left
-        DrawTexture(
-            sWhiteTex, new RectangleF(0, 0, 1, 1),
-            new RectangleF(CurrentView.Left - 1, CurrentView.Y, 3, Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight),
-            System.Drawing.Color.DimGray
-        );
-
-        //Vertical Right
-        DrawTexture(
-            sWhiteTex, new RectangleF(0, 0, 1, 1),
-            new RectangleF(
-                CurrentView.Left + Options.Instance.Map.TileWidth * Options.Instance.Map.MapWidth - 1, CurrentView.Y, 3,
-                Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight
-            ), System.Drawing.Color.DimGray
-        );
+        // Vertical borders (Left and Right)
+        DrawTexture(sWhiteTex, srcRect, new RectangleF(CurrentView.Left - 1, 0, 3, CurrentView.Height), borderColor);
+        DrawTexture(sWhiteTex, srcRect, new RectangleF(CurrentView.Left + mapWidth - 1, 0, 3, CurrentView.Height), borderColor);
     }
 
     private static void DrawMapAttributes(
