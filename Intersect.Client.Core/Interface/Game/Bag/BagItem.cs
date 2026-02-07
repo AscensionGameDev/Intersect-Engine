@@ -56,7 +56,19 @@ public partial class BagItem : SlotItem
 
     protected override void OnContextMenuOpening(ContextMenu contextMenu)
     {
+        contextMenu.ClearChildren();
+
         if (Globals.BagSlots is not { Length: > 0 } bagSlots)
+        {
+            return;
+        }
+
+        if (bagSlots[SlotIndex] is null)
+        {
+            return;
+        }
+
+        if (SlotIndex >= bagSlots.Length)
         {
             return;
         }
@@ -66,8 +78,6 @@ public partial class BagItem : SlotItem
             return;
         }
 
-        // Clear the context menu and add the withdraw item with updated item name
-        contextMenu.ClearChildren();
         _withdrawContextItem.SetText(Strings.BagContextMenu.Withdraw.ToString(item.Name));
         contextMenu.AddChild(_withdrawContextItem);
         base.OnContextMenuOpening(contextMenu);
