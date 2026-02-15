@@ -59,7 +59,19 @@ public partial class BankItem : SlotItem
 
     protected override void OnContextMenuOpening(ContextMenu contextMenu)
     {
+        contextMenu.ClearChildren(); // Clear context menu
+
         if (Globals.BankSlots is not { Length: > 0 } bankSlots)
+        {
+            return;
+        }
+
+        if (bankSlots[SlotIndex] is null)
+        {
+            return;
+        }
+
+        if (SlotIndex >= bankSlots.Length)
         {
             return;
         }
@@ -69,11 +81,9 @@ public partial class BankItem : SlotItem
             return;
         }
 
-        // Clear the context menu and add the withdraw item with updated item name
-        contextMenu.ClearChildren();
-        contextMenu.AddChild(_withdrawContextItem);
+        // Update context menu
         _withdrawContextItem.SetText(Strings.BankContextMenu.Withdraw.ToString(item.Name));
-
+        contextMenu.AddChild(_withdrawContextItem);
         base.OnContextMenuOpening(contextMenu);
     }
 
