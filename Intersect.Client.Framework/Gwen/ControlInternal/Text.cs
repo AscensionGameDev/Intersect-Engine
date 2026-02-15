@@ -365,10 +365,33 @@ public partial class Text : Base
         }
 
         var substring = displayedText[..index];
-        var substringSize = Skin.Renderer.MeasureText(font, fontSize: _fontSize, substring) with
+        var substringSize = Skin.Renderer.MeasureText(font, fontSize: _fontSize, substring, _scale) with
         {
             Y = 0,
         };
+
+        if (substringSize.X <= 0 && substring.Length > 0)
+        {
+            var referenceCharWidth = Skin.Renderer.MeasureText(font, fontSize: _fontSize, "n", _scale).X;
+
+            if (referenceCharWidth <= 0)
+            {
+                referenceCharWidth = (int)(_fontSize * 0.6f);
+            }
+
+            var spaceWidth = (int)(referenceCharWidth * 0.4f);
+            var accumulatedWidth = 0;
+
+            for (int i = 0; i < substring.Length; i++)
+            {
+                var charStr = substring[i].ToString();
+                var charSize = Skin.Renderer.MeasureText(font, fontSize: _fontSize, charStr, _scale);
+
+                accumulatedWidth += charSize.X > 0 ? charSize.X : spaceWidth;
+            }
+
+            return new Point(accumulatedWidth, 0);
+        }
 
         return substringSize;
     }
