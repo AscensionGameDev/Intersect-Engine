@@ -745,31 +745,31 @@ public partial class Label : Base, ILabel, IFontProvider
     {
         base.OnChildBoundsChanged(child, oldChildBounds, newChildBounds);
 
-        if (oldChildBounds.Size != newChildBounds.Size)
+        if (oldChildBounds.Size == newChildBounds.Size)
         {
-            if (_autoSizeToContents)
-            {
-                Invalidate();
-            }
-            else
-            {
-                if (child is Text)
-                {
-                    var textSize = newChildBounds.Size;
-                    var ownSize = Size;
-                    if (textSize.X > ownSize.X || textSize.Y > ownSize.Y)
-                    {
-                        OnTextExceedsSize(ownSize, textSize);
-                    }
-                }
+            return;
+        }
 
-                AlignTextElement(_textElement);
+        if (!_autoSizeToContents)
+        {
+            if (child is Text)
+            {
+                var textSize = newChildBounds.Size;
+                var ownSize = Size;
+                if (textSize.X > ownSize.X || textSize.Y > ownSize.Y)
+                {
+                    OnTextExceedsSize(ownSize, textSize);
+                }
             }
         }
+
+        // Always invalidate when text bounds change
+        Invalidate();
     }
 
     protected virtual void OnTextExceedsSize(Point ownSize, Point textSize)
     {
+        Invalidate();
     }
 
     public virtual void SetTextScale(float scale)
