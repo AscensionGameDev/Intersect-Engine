@@ -63,17 +63,17 @@ public partial class BagItem : SlotItem
             return;
         }
 
-        if (bagSlots[SlotIndex] is null)
-        {
-            return;
-        }
-
         if (SlotIndex >= bagSlots.Length)
         {
             return;
         }
 
-        if (!ItemDescriptor.TryGet(bagSlots[SlotIndex].ItemId, out var item))
+        if (bagSlots[SlotIndex] is not { } bagSlot)
+        {
+            return;
+        }
+
+        if (!ItemDescriptor.TryGet(bagSlot.ItemId, out var item))
         {
             return;
         }

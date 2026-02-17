@@ -66,17 +66,17 @@ public partial class BankItem : SlotItem
             return;
         }
 
-        if (bankSlots[SlotIndex] is null)
-        {
-            return;
-        }
-
         if (SlotIndex >= bankSlots.Length)
         {
             return;
         }
 
-        if (!ItemDescriptor.TryGet(bankSlots[SlotIndex].ItemId, out var item))
+        if (bankSlots[SlotIndex] is not { } bankSlot)
+        {
+            return;
+        }
+
+        if (!ItemDescriptor.TryGet(bankSlot.ItemId, out var item))
         {
             return;
         }
