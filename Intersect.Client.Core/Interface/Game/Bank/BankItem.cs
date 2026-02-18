@@ -66,12 +66,14 @@ public partial class BankItem : SlotItem
             return;
         }
 
-        if (SlotIndex >= bankSlots.Length)
+        var slotIndex = SlotIndex;
+
+        if (slotIndex >= bankSlots.Length)
         {
             return;
         }
 
-        if (bankSlots[SlotIndex] is not { } bankSlot)
+        if (bankSlots[slotIndex] is not { } bankSlot)
         {
             return;
         }

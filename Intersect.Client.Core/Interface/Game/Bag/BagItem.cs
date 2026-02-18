@@ -63,12 +63,14 @@ public partial class BagItem : SlotItem
             return;
         }
 
-        if (SlotIndex >= bagSlots.Length)
+        var slotIndex = SlotIndex;
+
+        if (slotIndex >= bagSlots.Length)
         {
             return;
         }
 
-        if (bagSlots[SlotIndex] is not { } bagSlot)
+        if (bagSlots[slotIndex] is not { } bagSlot)
         {
             return;
         }
