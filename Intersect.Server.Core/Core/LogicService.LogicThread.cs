@@ -11,7 +11,6 @@ using Intersect.Framework.Core;
 using Intersect.Server.Metrics;
 using Intersect.Server.Networking;
 using Intersect.Server.Database.PlayerData.Players;
-using Intersect.Utilities;
 using Intersect.Server.Database.PlayerData.Api;
 using Intersect.Server.Core.MapInstancing;
 
@@ -68,6 +67,12 @@ internal sealed partial class LogicService
         /// </summary>
         public readonly Dictionary<Guid, MapInstance> ActiveMapInstances = new Dictionary<Guid, MapInstance>();
 
+        // Reusable buffer for UpdateInstanceControllers — avoids ToArray() every 250ms.
+        private MapInstance[] _activeMapInstancesBuffer = Array.Empty<MapInstance>();
+
+        // Track last console title to avoid redundant syscalls every second.
+        private string _lastConsoleTitle = string.Empty;
+
         protected override void ThreadStart(ServerContext serverContext)
         {
             if (serverContext == null)
@@ -87,6 +92,7 @@ internal sealed partial class LogicService
 
                 var processedMapInstances = new HashSet<Guid>();
                 var sourceMapInstances = new HashSet<Guid>();
+                var toRemove = new List<Guid>();
                 var players = 0;
 
                 while (ServerContext.Instance.IsRunning)
@@ -128,7 +134,12 @@ internal sealed partial class LogicService
                                 if (Options.Instance.Metrics.Enable)
                                 {
                                     events += player.EventLookup.Count;
-                                    eventsProcessing += player.EventLookup.Values.Where(e => e.CallStack?.Count > 0).Count();
+
+                                    foreach (var evt in player.EventLookup.Values)
+                                    {
+                                        if (evt.CallStack?.Count > 0) eventsProcessing++;
+                                    }
+
                                     autorunEvents += player.CommonAutorunEvents + player.MapAutorunEvents;
                                 }
                             }
@@ -143,7 +154,7 @@ internal sealed partial class LogicService
                                     {
                                         if (!processedMapInstances.Contains(instance.Id))
                                         {
-                                            if (!ActiveMapInstances.Keys.Contains(instance.Id))
+                                            if (!ActiveMapInstances.ContainsKey(instance.Id)) // ContainsKey() directly instead of .Keys.Contains().
                                             {
                                                 AddToQueue(instance);
                                             }
@@ -157,8 +168,9 @@ internal sealed partial class LogicService
                             }
                         }
 
-                        //Refresh list of active maps & their instances
-                        foreach (var (instanceId, mapInstance) in ActiveMapInstances.ToArray())
+                        // Iterate dictionary directly; collect removals in reusable list.
+                        toRemove.Clear();
+                        foreach (var (instanceId, mapInstance) in ActiveMapInstances)
                         {
                             if (processedMapInstances.Contains(instanceId) || mapInstance.ShouldBeActive())
                             {
@@ -176,12 +188,23 @@ internal sealed partial class LogicService
                                     mapInstance.ResetNpcSpawns();
                                 }
                             }
-
-                            ActiveMapInstances.Remove(instanceId);
+                            toRemove.Add(instanceId);
                         }
 
-                        // Allow our instance controllers to keep their instances up to date
-                        InstanceProcessor.UpdateInstanceControllers(ActiveMapInstances.Values.ToArray());
+                        foreach (var id in toRemove)
+                        {
+                            ActiveMapInstances.Remove(id);
+                        }
+
+                        // Reuse buffer; only reallocate when count changes.
+                        var activeCount = ActiveMapInstances.Count;
+                        if (_activeMapInstancesBuffer.Length != activeCount)
+                        {
+                            _activeMapInstancesBuffer = new MapInstance[activeCount];
+                        }
+
+                        ActiveMapInstances.Values.CopyTo(_activeMapInstancesBuffer, 0);
+                        InstanceProcessor.UpdateInstanceControllers(_activeMapInstancesBuffer);
 
                         if (Options.Instance.Metrics.Enable)
                         {
@@ -237,7 +260,14 @@ internal sealed partial class LogicService
                         swCps = 0;
 
                         var cyclesPerSecond = ApplicationContext.GetCurrentContext<IServerContext>().LogicService.CyclesPerSecond;
-                        Console.Title = $"Intersect Server - CPS: {cyclesPerSecond}, Players: {players}, Active Maps: {ActiveMapInstances.Count}, Logic Threads: {LogicPool.ActiveThreads} ({LogicPool.InUseThreads} In Use), Pool Queue: {LogicPool.CurrentWorkItemsCount}, Idle: {LogicPool.IsIdle}";
+
+                        // Only call Console.Title when the value actually changed.
+                        var newTitle = $"Intersect Server - CPS: {cyclesPerSecond}, Players: {players}, Active Maps: {ActiveMapInstances.Count}, Logic Threads: {LogicPool.ActiveThreads} ({LogicPool.InUseThreads} In Use), Pool Queue: {LogicPool.CurrentWorkItemsCount}, Idle: {LogicPool.IsIdle}";
+                        if (newTitle != _lastConsoleTitle)
+                        {
+                            Console.Title = newTitle;
+                            _lastConsoleTitle = newTitle;
+                        }
 
                         if (Options.Instance.Metrics.Enable)
                         {
@@ -368,7 +398,7 @@ internal sealed partial class LogicService
                 if (onlyProjectiles)
                 {
                     mapInstance.UpdateProjectiles(Timing.Global.Milliseconds);
-                    if (ActiveMapInstances.Keys.Contains(mapInstance.Id))
+                    if (ActiveMapInstances.ContainsKey(mapInstance.Id))
                     {
                         MapInstanceProjectileQueue.Enqueue(mapInstance);
                     }
@@ -392,7 +422,7 @@ internal sealed partial class LogicService
                         mapInstance.Update(Timing.Global.Milliseconds);
                     }
 
-                    if (ActiveMapInstances.Keys.Contains(mapInstance.Id))
+                    if (ActiveMapInstances.ContainsKey(mapInstance.Id))
                     {
                         MapInstanceUpdateQueue.Enqueue(mapInstance);
                     }
