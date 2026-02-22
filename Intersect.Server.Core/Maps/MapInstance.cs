@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Collections.Concurrent;
 using Intersect.Core;
 using Intersect.Enums;
@@ -77,8 +78,11 @@ public partial class MapInstance : IMapInstance
     /// </summary>
     private bool mIsProcessing;
 
-    //SyncLock
+    // Separate entity-list lock from the broad map-process lock so entity mutations don't contend with the full update cycle.
+    // Lock acquisition order MUST always be: mMapProcessLock → _entityListLock.
+    // Never acquire mMapProcessLock while holding _entityListLock (deadlock risk).
     protected object mMapProcessLock = new object();
+    private readonly object _entityListLock = new object();
 
     /// <summary>
     /// A unique identifier referring to this processing instance alone.
@@ -113,7 +117,11 @@ public partial class MapInstance : IMapInstance
     // Players & Entities
     private ConcurrentDictionary<Guid, Player> mPlayers = new ConcurrentDictionary<Guid, Player>();
     private readonly ConcurrentDictionary<Guid, Entity> mEntities = new ConcurrentDictionary<Guid, Entity>();
-    private Entity[] mCachedEntities = new Entity[0];
+    private Entity[] mCachedEntities = Array.Empty<Entity>();
+
+    // Dirty flag: entity cache rebuilt once per tick, not on every add/remove.
+    private volatile bool _entityCacheDirty = false;
+
     private MapEntityMovements mEntityMovements = new MapEntityMovements();
 
     // NPCs
@@ -130,10 +138,17 @@ public partial class MapInstance : IMapInstance
 
     // Projectiles & Traps
     public ConcurrentDictionary<Guid, Projectile> MapProjectiles { get; } = new ConcurrentDictionary<Guid, Projectile>();
-    public Projectile[] MapProjectilesCached = new Projectile[0];
+    public Projectile[] MapProjectilesCached = Array.Empty<Projectile>();
+
+    // Dirty flag: projectile cache rebuilt once per tick.
+    private volatile bool _projectileCacheDirty = false;
+
     public long LastProjectileUpdateTime = -1;
     public ConcurrentDictionary<Guid, MapTrapInstance> MapTraps = new ConcurrentDictionary<Guid, MapTrapInstance>();
-    public MapTrapInstance[] MapTrapsCached = new MapTrapInstance[0];
+    public MapTrapInstance[] MapTrapsCached = Array.Empty<MapTrapInstance>();
+
+    // Dirty flag: trap cache rebuilt once per tick.
+    private volatile bool _trapCacheDirty = false;
 
     // Collision
     private BytePoint[] mMapBlocks = Array.Empty<BytePoint>();
@@ -150,6 +165,11 @@ public partial class MapInstance : IMapInstance
     private MapActionMessages mActionMessages = new MapActionMessages();
     private MapAnimations mMapAnimations = new MapAnimations();
 
+    // Cached surrounding-instance lists rebuilt only when dirty.
+    private List<MapInstance> _cachedSurroundingInstances = new List<MapInstance>();
+    private List<MapInstance> _cachedSurroundingInstancesWithSelf = new List<MapInstance>();
+    private bool _surroundingCacheDirty = true;
+
     public MapInstance(MapController map, Guid mapInstanceId, Player creator)
     {
         mMapController = map;
@@ -160,10 +180,58 @@ public partial class MapInstance : IMapInstance
 
     public bool IsDisposed { get; protected set; }
 
-    /// <summary>
-    /// Initializes the processing instance for processing - called in the constructor. Essentially refreshes the instance
-    /// so that it can give everything it has to offer to the player by the time they arrive in it
-    /// </summary>
+    // Invalidate the surrounding-instance cache when grid/instance topology changes.
+    public void InvalidateSurroundingCache() => _surroundingCacheDirty = true;
+
+    // Returns a cached list of surrounding MapInstances (only rebuilt when dirty).
+    private List<MapInstance> GetCachedSurroundingInstances(bool includeSelf)
+    {
+        if (!_surroundingCacheDirty)
+        {
+            return includeSelf ? _cachedSurroundingInstancesWithSelf : _cachedSurroundingInstances;
+        }
+
+        _cachedSurroundingInstances.Clear();
+        _cachedSurroundingInstancesWithSelf.Clear();
+
+        foreach (var controllerId in mMapController.GetSurroundingMapIds(false))
+        {
+            if (MapController.TryGetInstanceFromMap(controllerId, MapInstanceId, out var inst))
+            {
+                _cachedSurroundingInstances.Add(inst);
+                _cachedSurroundingInstancesWithSelf.Add(inst);
+            }
+        }
+        _cachedSurroundingInstancesWithSelf.Add(this);
+        _surroundingCacheDirty = false;
+        return includeSelf ? _cachedSurroundingInstancesWithSelf : _cachedSurroundingInstances;
+    }
+
+    // Flush all dirty caches once at the top of each Update tick.
+    private void FlushDirtyCaches()
+    {
+        if (_entityCacheDirty)
+        {
+            lock (_entityListLock)
+            {
+                mCachedEntities = mEntities.Values.ToArray();
+                _entityCacheDirty = false;
+            }
+        }
+
+        if (_projectileCacheDirty)
+        {
+            MapProjectilesCached = MapProjectiles.Values.ToArray();
+            _projectileCacheDirty = false;
+        }
+
+        if (_trapCacheDirty)
+        {
+            MapTrapsCached = MapTraps.Values.ToArray();
+            _trapCacheDirty = false;
+        }
+    }
+
     public void Initialize()
     {
         lock (GetLock())
@@ -176,15 +244,9 @@ public partial class MapInstance : IMapInstance
         }
     }
 
-    public bool ShouldBeCleaned()
-    {
-        return (MapInstanceId != OverworldInstanceId && !ShouldBeActive());
-    }
+    public bool ShouldBeCleaned() => MapInstanceId != OverworldInstanceId && !ShouldBeActive();
 
-    public bool ShouldBeActive()
-    {
-        return (mIsProcessing || LastRequestedUpdateTime <= mLastUpdateTime + Options.Instance.Map.TimeUntilMapCleanup);
-    }
+    public bool ShouldBeActive() => mIsProcessing || LastRequestedUpdateTime <= mLastUpdateTime + Options.Instance.Map.TimeUntilMapCleanup;
 
     public void RemoveLayerFromController()
     {
@@ -194,19 +256,7 @@ public partial class MapInstance : IMapInstance
         }
     }
 
-    public object GetLock()
-    {
-        return mMapProcessLock;
-    }
-
-    /// <summary>
-    /// Gets our _parent's_ map lock.
-    /// </summary>
-    /// <returns>The parent map instance's map lock</returns>
-    public object GetControllerLock()
-    {
-        return mMapController.GetMapLock();
-    }
+    public object GetLock() => mMapProcessLock;
 
     public virtual void Dispose()
     {
@@ -216,10 +266,7 @@ public partial class MapInstance : IMapInstance
         }
     }
 
-    public MapController GetController()
-    {
-        return mMapController;
-    }
+    public MapController GetController() => mMapController;
 
     /// <summary>
     /// Destroys the processable elements of the instance - RespawnEverything() to bring them back, and begin processing them
@@ -264,6 +311,9 @@ public partial class MapInstance : IMapInstance
         {
             if (mIsProcessing)
             {
+                // Flush all dirty caches once before the update pass.
+                FlushDirtyCaches();
+
                 if (Options.Instance.Processing.MapUpdateInterval == Options.Instance.Processing.ProjectileUpdateInterval)
                 {
                     UpdateProjectiles(timeMs);
@@ -279,8 +329,8 @@ public partial class MapInstance : IMapInstance
                 mLastUpdateTime = timeMs;
             }
 
-            // If there are no players on this or surrounding processing layers, stop processing updates.
-            mIsProcessing = GetPlayers(true).Any();
+            // Use cached surrounding instances; avoids per-call allocation.
+            mIsProcessing = GetCachedSurroundingInstances(true).Any(i => !i.mPlayers.IsEmpty);
             LastRequestedUpdateTime = timeMs;
         }
     }
@@ -324,7 +374,8 @@ public partial class MapInstance : IMapInstance
             }
         }
 
-        mCachedEntities = mEntities.Values.ToArray();
+        // Mark dirty instead of rebuilding the array on every add.
+        _entityCacheDirty = true;
     }
 
     /// <summary>
@@ -335,12 +386,14 @@ public partial class MapInstance : IMapInstance
     /// <param name="en">The entity to remove.</param>
     public void RemoveEntity(Entity en)
     {
-        mEntities.TryRemove(en.Id, out var result);
+        mEntities.TryRemove(en.Id, out _);
         if (mPlayers.ContainsKey(en.Id))
         {
-            mPlayers.TryRemove(en.Id, out var pResult);
+            mPlayers.TryRemove(en.Id, out _);
         }
-        mCachedEntities = mEntities.Values.ToArray();
+
+        // Mark dirty instead of rebuilding the array on every remove.
+        _entityCacheDirty = true;
     }
 
     /// <summary>
@@ -351,14 +404,14 @@ public partial class MapInstance : IMapInstance
     /// <returns>A list of Entities</returns>
     public List<Entity> GetEntities(bool includeSurroundingMaps = false)
     {
-        var entities = new List<Entity>(mEntities.Values.ToList());
-
-        // ReSharper disable once InvertIf
+        // Return a list wrapping the cached snapshot directly.
+        var entities = new List<Entity>(mCachedEntities);
         if (includeSurroundingMaps)
         {
-            foreach (var mapInstance in MapController.GetSurroundingMapInstances(mMapController.Id, MapInstanceId, false))
+            // Use cached surrounding instances.
+            foreach (var mapInstance in GetCachedSurroundingInstances(false))
             {
-                entities.AddRange(mapInstance.GetEntities());
+                entities.AddRange(mapInstance.mCachedEntities);
             }
         }
 
@@ -381,8 +434,8 @@ public partial class MapInstance : IMapInstance
         // Send the entities/items of this current MapInstance to the player
         SendMapEntitiesTo(player);
 
-        // send the entities/items of the SURROUNDING maps on this instance to the player
-        foreach (var surroundingMapInstance in MapController.GetSurroundingMapInstances(mMapController.Id, MapInstanceId, false))
+        // Use cached surrounding instances.
+        foreach (var surroundingMapInstance in GetCachedSurroundingInstances(false))
         {
             surroundingMapInstance.SendMapEntitiesTo(player);
             PacketSender.SendMapItems(player, surroundingMapInstance.GetController().Id);
@@ -396,13 +449,15 @@ public partial class MapInstance : IMapInstance
     /// <param name="player">The player to send entities to</param>
     public void SendMapEntitiesTo(Player player)
     {
-        if (player != null)
+        if (player == null)
         {
-            PacketSender.SendMapEntitiesTo(player, mEntities);
-            if (player.MapId == mMapController.Id && player.MapInstanceId == MapInstanceId)
-            {
-                player.SendEvents();
-            }
+            return;
+        }
+
+        PacketSender.SendMapEntitiesTo(player, mEntities);
+        if (player.MapId == mMapController.Id && player.MapInstanceId == MapInstanceId)
+        {
+            player.SendEvents();
         }
     }
 
@@ -418,7 +473,8 @@ public partial class MapInstance : IMapInstance
 
         if (includeSurrounding)
         {
-            foreach (var mapInstance in MapController.GetSurroundingMapInstances(mMapController.Id, MapInstanceId, false))
+            // Use cached surrounding instances.
+            foreach (var mapInstance in GetCachedSurroundingInstances(false))
             {
                 var adjoiningPlayers = mapInstance.GetPlayers(false);
                 if (adjoiningPlayers != null)
@@ -476,18 +532,8 @@ public partial class MapInstance : IMapInstance
     /// <param name="dir">The direction to spawn at; out</param>
     private void FindNpcSpawnLocation(NpcSpawn spawn, out int x, out int y, out Direction dir)
     {
-        dir = 0;
-        x = 0;
-        y = 0;
-
-        if (spawn.Direction != NpcSpawnDirection.Random)
-        {
-            dir = (Direction)(spawn.Direction - 1);
-        }
-        else
-        {
-            dir = Randomization.NextDirection();
-        }
+        dir = spawn.Direction != NpcSpawnDirection.Random ? (Direction)(spawn.Direction - 1) : Randomization.NextDirection();
+        x = 0; y = 0;
 
         if (spawn.X >= 0 && spawn.Y >= 0)
         {
@@ -505,8 +551,7 @@ public partial class MapInstance : IMapInstance
                     break;
                 }
 
-                x = 0;
-                y = 0;
+                x = 0; y = 0;
             }
         }
     }
@@ -525,16 +570,7 @@ public partial class MapInstance : IMapInstance
         var npcBase = NPCDescriptor.Get(npcId);
         if (npcBase != null)
         {
-            var processLayer = this.MapInstanceId;
-            var npc = new Npc(npcBase, despawnable)
-            {
-                MapId = mMapController.Id,
-                X = tileX,
-                Y = tileY,
-                Dir = dir,
-                MapInstanceId = processLayer
-            };
-
+            var npc = new Npc(npcBase, despawnable) { MapId = mMapController.Id, X = tileX, Y = tileY, Dir = dir, MapInstanceId = MapInstanceId };
             AddEntity(npc);
             PacketSender.SendEntityDataToProximity(npc);
 
@@ -545,82 +581,82 @@ public partial class MapInstance : IMapInstance
     }
 
     /// <summary>
-    /// Forcibly reset all Npcs originating from this map.
+    /// Snapshot spawn list before acquiring EntityLocks to avoid nested-lock deadlock.
     /// </summary>
     public void ResetNpcSpawns()
     {
-        //Kill all npcs spawned from this map
+        NpcSpawn[] keys;
+        MapNpcSpawn[] spawns;
         lock (GetLock())
         {
-            foreach (var npcSpawn in NpcSpawnInstances)
+            keys = NpcSpawnInstances.Keys.ToArray();
+            spawns = NpcSpawnInstances.Values.ToArray();
+        }
+
+        for (var i = 0; i < spawns.Length; i++)
+        {
+            var spawnInstance = spawns[i];
+            var key = keys[i];
+            lock (spawnInstance.Entity.EntityLock)
             {
-                lock (npcSpawn.Value.Entity.EntityLock)
+                var npc = spawnInstance.Entity as Npc;
+                if (npc.IsDead)
                 {
-                    var npc = npcSpawn.Value.Entity as Npc;
-                    if (!npc.IsDead)
-                    {
-                        // If we keep track of reset radiuses, just reset it to that value.
-                        if (Options.Instance.Npc.AllowResetRadius)
-                        {
-                            npc.Reset();
-                        }
-                        // If we don't.. Kill and respawn the Npc assuming it's in combat.
-                        else
-                        {
-                            if (npc.Target != null || npc.CombatTimer > Timing.Global.Milliseconds)
-                            {
-                                npc.Die(false);
-                                FindNpcSpawnLocation(npcSpawn.Key, out var x, out var y, out var dir);
-                                npcSpawn.Value.Entity = SpawnNpc((byte)x, (byte)y, dir, npcSpawn.Key.NpcId);
-                            }
-                        }
-                    }
+                    continue;
+                }
+
+                if (Options.Instance.Npc.AllowResetRadius)
+                {
+                    npc.Reset();
+                }
+                else if (npc.Target != null || npc.CombatTimer > Timing.Global.Milliseconds)
+                {
+                    npc.Die(false);
+                    FindNpcSpawnLocation(key, out var x, out var y, out var dir);
+                    spawnInstance.Entity = SpawnNpc((byte)x, (byte)y, dir, key.NpcId);
                 }
             }
         }
     }
 
     /// <summary>
-    /// Despawns all NPCs, and removes them from our dictionary of Spawn Instances.
+    /// Snapshot before EntityLocks to avoid nested-lock deadlock.
     /// </summary>
     private void DespawnNpcs()
     {
-        //Kill all npcs spawned from this map
+        MapNpcSpawn[] spawnValues;
+        Entity[] entityValues;
         lock (GetLock())
         {
-            foreach (var npcSpawn in NpcSpawnInstances)
-            {
-                lock (npcSpawn.Value.Entity.EntityLock)
-                {
-                    npcSpawn.Value.Entity.Die(false);
-                }
-            }
-
+            spawnValues = NpcSpawnInstances.Values.ToArray();
+            entityValues = mEntities.Values.ToArray();
             NpcSpawnInstances.Clear();
+        }
 
-            //Kill any other npcs on this map (only players should remain)
-            foreach (var entity in mEntities)
+        foreach (var spawnInstance in spawnValues)
+        {
+            lock (spawnInstance.Entity.EntityLock) { spawnInstance.Entity.Die(false); }
+        }
+
+        foreach (var entity in entityValues)
+        {
+            if (entity is not Npc npc)
             {
-                if (entity.Value is Npc npc)
-                {
-                    lock (npc.EntityLock)
-                    {
-                        npc.Die(false);
-                    }
-                }
+                continue;
             }
+
+            lock (npc.EntityLock) { npc.Die(false); }
         }
     }
 
     /// <summary>
-    /// Clears the given entity of any targets that an NPC has on them. For AI purposes.
+    /// Iterates mCachedEntities directly and clears the given entity of any targets that an NPC has on them.
     /// </summary>
-    /// <param name="en">The entitiy to clear targets of.</param>
     public void ClearEntityTargetsOf(Entity en)
     {
-        foreach (var entity in mEntities)
+        foreach (var entity in mCachedEntities)
         {
-            if (entity.Value is Npc npc && npc.Target == en)
+            if (entity is Npc npc && npc.Target == en)
             {
                 npc.RemoveTarget();
             }
@@ -639,8 +675,7 @@ public partial class MapInstance : IMapInstance
         var tempResource = new ResourceSpawn()
         {
             ResourceId = ((MapResourceAttribute)mMapController.Attributes[x, y]).ResourceId,
-            X = x,
-            Y = y,
+            X = x, Y = y,
             Z = ((MapResourceAttribute)mMapController.Attributes[x, y]).SpawnLevel
         };
 
@@ -669,25 +704,17 @@ public partial class MapInstance : IMapInstance
             return;
         }
 
-        var id = Guid.Empty;
         if (!ResourceSpawnInstances.TryGetValue(spawn, out var resourceSpawnInstance))
         {
             resourceSpawnInstance = new MapResourceSpawn();
             _ = ResourceSpawnInstances.TryAdd(spawn, resourceSpawnInstance);
         }
-
+        var id = Guid.Empty;
         if (resourceSpawnInstance.Entity == default)
         {
             if (ResourceDescriptor.TryGet(spawn.ResourceId, out var resourceDescriptor))
             {
-                var res = new Resource(resourceDescriptor)
-                {
-                    X = spawn.X,
-                    Y = spawn.Y,
-                    Z = spawn.Z,
-                    MapId = mMapController.Id,
-                    MapInstanceId = MapInstanceId
-                };
+                var res = new Resource(resourceDescriptor) { X = spawn.X, Y = spawn.Y, Z = spawn.Z, MapId = mMapController.Id, MapInstanceId = MapInstanceId };
                 id = res.Id;
                 resourceSpawnInstance.Entity = res;
                 AddEntity(res);
@@ -697,7 +724,6 @@ public partial class MapInstance : IMapInstance
         {
             id = resourceSpawnInstance.Entity.Id;
         }
-
         if (id != Guid.Empty)
         {
             resourceSpawnInstance.Entity.Spawn();
@@ -714,11 +740,13 @@ public partial class MapInstance : IMapInstance
         {
             foreach (var resourceSpawn in ResourceSpawnInstances)
             {
-                if (resourceSpawn.Value != null && resourceSpawn.Value.Entity != null)
+                if (resourceSpawn.Value?.Entity == null)
                 {
-                    resourceSpawn.Value.Entity.Destroy();
-                    RemoveEntity(resourceSpawn.Value.Entity);
+                    continue;
                 }
+
+                resourceSpawn.Value.Entity.Destroy();
+                RemoveEntity(resourceSpawn.Value.Entity);
             }
 
             ResourceSpawnInstances.Clear();
@@ -754,16 +782,6 @@ public partial class MapInstance : IMapInstance
     /// <param name="y">The vertical location of this item.</param>
     /// <param name="item">The <see cref="Item"/> to spawn on the map.</param>
     /// <param name="amount">The amount of times to spawn this item to the map. Set to the <see cref="Item"/> quantity, overwrites quantity if stackable!</param>
-    public void SpawnItem(IItemSource? source, int x, int y, Item item, int amount) => SpawnItem(source, x, y, item, amount, Guid.Empty);
-
-    /// <summary>
-    /// Spawn an item to this map instance.
-    /// </summary>
-    /// <param name="source">The source of the item, e.g. a player who dropped it, or a monster who spawned it on death, or the map instance in which it was spawned</param>
-    /// <param name="x">The horizontal location of this item</param>
-    /// <param name="y">The vertical location of this item.</param>
-    /// <param name="item">The <see cref="Item"/> to spawn on the map.</param>
-    /// <param name="amount">The amount of times to spawn this item to the map. Set to the <see cref="Item"/> quantity, overwrites quantity if stackable!</param>
     /// <param name="owner">The player Id that will be the temporary owner of this item.</param>
     public void SpawnItem(IItemSource? source, int x, int y, Item item, int amount, Guid owner, bool sendUpdate = true)
     {
@@ -778,26 +796,22 @@ public partial class MapInstance : IMapInstance
         if (itemDescriptor == null)
         {
             ApplicationContext.Context.Value?.Logger.LogWarning($"No item found for {item.ItemId}.");
-
             return;
         }
 
-        // if we can stack this item or the user configured to drop items consolidated, simply spawn a single stack of it.
-        // Does not count for Equipment and bags, these are ALWAYS their own separate item spawn. We don't want to lose data on that!
         if ((itemDescriptor.ItemType != ItemType.Equipment && itemDescriptor.ItemType != ItemType.Bag) &&
             (itemDescriptor.Stackable || Options.Instance.Loot.ConsolidateMapDrops))
         {
-            // Does this item already exist on this tile? If so, get its value so we can simply consolidate the stack.
             var existingCount = 0;
             var existingItems = FindItemsAt(y * Options.Instance.Map.MapWidth + x);
-            var toRemove = new List<MapItem>();
+            // Lazy-init toRemove: no allocation in the common zero-match case.
+            List<MapItem>? toRemove = null;
             foreach (var exItem in existingItems)
             {
-                // If the Id and Owner matches, get its quantity and remove the item so we don't get multiple stacks.
                 if (exItem.ItemId == item.ItemId && exItem.Owner == owner)
                 {
                     existingCount += exItem.Quantity;
-                    toRemove.Add(exItem);
+                    (toRemove ??= new List<MapItem>()).Add(exItem);
                 }
             }
 
@@ -814,13 +828,12 @@ public partial class MapInstance : IMapInstance
                 return;
             }
 
-            // Remove existing items if we need to.
-            foreach (var reItem in toRemove)
+            if (toRemove != null)
             {
-                RemoveItem(reItem);
-                if (sendUpdate)
+                foreach (var reItem in toRemove)
                 {
-                    PacketSender.SendMapItemUpdate(mMapController.Id, MapInstanceId, reItem, true);
+                    RemoveItem(reItem);
+                    if (sendUpdate) PacketSender.SendMapItemUpdate(mMapController.Id, MapInstanceId, reItem, true);
                 }
             }
 
@@ -868,11 +881,8 @@ public partial class MapInstance : IMapInstance
     /// <returns>Returns a <see cref="MapItem"/> if one is found with the desired Unique Id.</returns>
     public MapItem FindItem(Guid uniqueId)
     {
-        if (AllMapItems.TryGetValue(uniqueId, out MapItem item))
-        {
-            return item;
-        }
-        return null;
+        AllMapItems.TryGetValue(uniqueId, out MapItem item);
+        return item;
     }
 
     /// <summary>
@@ -886,6 +896,7 @@ public partial class MapInstance : IMapInstance
         {
             return Array.Empty<MapItem>();
         }
+
         return TileItems[tileIndex].Values;
     }
 
@@ -896,32 +907,27 @@ public partial class MapInstance : IMapInstance
     /// <param name="respawn">Whether or not this item will respawn</param>
     public void RemoveItem(MapItem item, bool respawn = true)
     {
-        if (item != null)
+        if (item == null)
         {
-            // Only try to handle respawns for items that have attribute spawn locations.
-            if (item.AttributeSpawnX > -1)
-            {
-                if (respawn)
-                {
-                    var spawn = new MapItemSpawn()
-                    {
-                        AttributeSpawnX = item.X,
-                        AttributeSpawnY = item.Y,
-                        RespawnTime = Timing.Global.Milliseconds + (item.AttributeRespawnTime <= 0 ? Options.Instance.Map.ItemAttributeRespawnTime : item.AttributeRespawnTime)
-                    };
-                    ItemRespawns.TryAdd(spawn.Id, spawn);
-                }
-            }
-
-            var oldOwner = item.Owner;
-            AllMapItems.TryRemove(item.UniqueId, out MapItem removed);
-            TileItems[item.TileIndex]?.TryRemove(item.UniqueId, out MapItem tileRemoved);
-            if (TileItems[item.TileIndex]?.IsEmpty ?? false)
-            {
-                TileItems[item.TileIndex] = null;
-            }
-            PacketSender.SendMapItemUpdate(mMapController.Id, MapInstanceId, item, true, item.VisibleToAll, oldOwner);
+            return;
         }
+
+        if (item.AttributeSpawnX > -1 && respawn)
+        {
+            var spawn = new MapItemSpawn()
+            {
+                AttributeSpawnX = item.X,
+                AttributeSpawnY = item.Y,
+                RespawnTime = Timing.Global.Milliseconds + (item.AttributeRespawnTime <= 0 ? Options.Instance.Map.ItemAttributeRespawnTime : item.AttributeRespawnTime),
+            };
+            ItemRespawns.TryAdd(spawn.Id, spawn);
+        }
+
+        var oldOwner = item.Owner;
+        AllMapItems.TryRemove(item.UniqueId, out _);
+        TileItems[item.TileIndex]?.TryRemove(item.UniqueId, out _);
+        if (TileItems[item.TileIndex]?.IsEmpty ?? false) TileItems[item.TileIndex] = null;
+        PacketSender.SendMapItemUpdate(mMapController.Id, MapInstanceId, item, true, item.VisibleToAll, oldOwner);
     }
 
     /// <summary>
@@ -980,16 +986,19 @@ public partial class MapInstance : IMapInstance
         {
             for (byte y = 0; y < Options.Instance.Map.MapHeight; y++)
             {
-                if (mMapController.Attributes[x, y] != null)
+                if (mMapController.Attributes[x, y] == null)
                 {
-                    if (mMapController.Attributes[x, y].Type == MapAttributeType.Item)
-                    {
+                    continue;
+                }
+
+                switch (mMapController.Attributes[x, y].Type)
+                {
+                    case MapAttributeType.Item:
                         SpawnAttributeItem(x, y);
-                    }
-                    else if (mMapController.Attributes[x, y].Type == MapAttributeType.Resource)
-                    {
+                        break;
+                    case MapAttributeType.Resource:
                         SpawnAttributeResource(x, y);
-                    }
+                        break;
                 }
             }
         }
@@ -1010,23 +1019,12 @@ public partial class MapInstance : IMapInstance
     /// <param name="z">Z co-ordinate to spawn at, if enabled in config</param>
     /// <param name="direction">Direction in which to spawn</param>
     /// <param name="target">The target of the projectil</param>
-    public void SpawnMapProjectile(
-        Entity owner,
-        ProjectileDescriptor projectile,
-        SpellDescriptor parentSpell,
-        ItemDescriptor parentItem,
-        Guid mapId,
-        byte x,
-        byte y,
-        byte z,
-        Direction direction,
-        Entity target
-    )
+    public void SpawnMapProjectile(Entity owner, ProjectileDescriptor projectile, SpellDescriptor parentSpell, ItemDescriptor parentItem, Guid mapId, byte x, byte y, byte z, Direction direction, Entity target)
     {
         var proj = new Projectile(owner, parentSpell, parentItem, projectile, mMapController.Id, x, y, z, direction, target);
         proj.MapInstanceId = MapInstanceId;
         MapProjectiles.TryAdd(proj.Id, proj);
-        MapProjectilesCached = MapProjectiles.Values.ToArray();
+        _projectileCacheDirty = true; // Mark dirty; cache rebuilt once per tick.
         PacketSender.SendEntityDataToProximity(proj);
     }
 
@@ -1035,43 +1033,58 @@ public partial class MapInstance : IMapInstance
     /// </summary>
     public void DespawnProjectiles()
     {
-        var guids = new List<Guid>();
-        foreach (var proj in MapProjectiles)
+        var count = MapProjectilesCached.Length;
+        var guids = ArrayPool<Guid>.Shared.Rent(Math.Max(count, 1));
+        try
         {
-            if (proj.Value != null)
+            var written = 0;
+            foreach (var proj in MapProjectilesCached)
             {
-                guids.Add(proj.Value.Id);
-                proj.Value.Die();
+                if (proj == null)
+                {
+                    continue;
+                }
+
+                guids[written++] = proj.Id;
+                proj.Die();
             }
+
+            PacketSender.SendRemoveProjectileSpawns(mMapController.Id, MapInstanceId, guids[..written], null);
         }
-        PacketSender.SendRemoveProjectileSpawns(mMapController.Id, MapInstanceId, guids.ToArray(), null);
+        finally
+        {
+            ArrayPool<Guid>.Shared.Return(guids);
+        }
+
         MapProjectiles.Clear();
-        MapProjectilesCached = new Projectile[0];
+        MapProjectilesCached = [];
+        _projectileCacheDirty = false;
     }
 
     public void RemoveProjectile(Projectile en)
     {
-        MapProjectiles.TryRemove(en.Id, out Projectile removed);
-        MapProjectilesCached = MapProjectiles.Values.ToArray();
+        MapProjectiles.TryRemove(en.Id, out _);
+        _projectileCacheDirty = true;
     }
 
     public void SpawnTrap(Entity owner, SpellDescriptor parentSpell, byte x, byte y, byte z)
     {
         var trap = new MapTrapInstance(owner, parentSpell, mMapController.Id, MapInstanceId, x, y, z);
         MapTraps.TryAdd(trap.Id, trap);
-        MapTrapsCached = MapTraps.Values.ToArray();
+        _trapCacheDirty = true;
     }
 
     public void DespawnTraps()
     {
         MapTraps.Clear();
-        MapTrapsCached = new MapTrapInstance[0];
+        MapTrapsCached = [];
+        _trapCacheDirty = false;
     }
 
     public void RemoveTrap(MapTrapInstance trap)
     {
-        MapTraps.TryRemove(trap.Id, out MapTrapInstance removed);
-        MapTrapsCached = MapTraps.Values.ToArray();
+        MapTraps.TryRemove(trap.Id, out _);
+        _trapCacheDirty = true;
     }
 
     #endregion
@@ -1107,21 +1120,17 @@ public partial class MapInstance : IMapInstance
 
     public Event GetGlobalEventInstance(EventDescriptor eventDescriptor)
     {
-        if (GlobalEventInstances.ContainsKey(eventDescriptor))
-        {
-            return GlobalEventInstances[eventDescriptor];
-        }
-
-        return null;
+        GlobalEventInstances.TryGetValue(eventDescriptor, out var evt);
+        return evt;
     }
 
     public bool FindEvent(EventDescriptor eventDescriptor, EventPageInstance globalClone)
     {
-        if (GlobalEventInstances.ContainsKey(eventDescriptor))
+        if (GlobalEventInstances.TryGetValue(eventDescriptor, out var evtInstance))
         {
-            for (var i = 0; i < GlobalEventInstances[eventDescriptor].GlobalPageInstance.Length; i++)
+            for (var i = 0; i < evtInstance.GlobalPageInstance.Length; i++)
             {
-                if (GlobalEventInstances[eventDescriptor].GlobalPageInstance[i] == globalClone)
+                if (evtInstance.GlobalPageInstance[i] == globalClone)
                 {
                     return true;
                 }
@@ -1137,11 +1146,9 @@ public partial class MapInstance : IMapInstance
         foreach (var evt in mMapController.EventIds)
         {
             var itm = EventDescriptor.Get(evt);
-            if (itm != null)
-            {
-                events.Add(itm);
-            }
+            if (itm != null) events.Add(itm);
         }
+
         EventsCache = events;
     }
     #endregion
@@ -1163,56 +1170,43 @@ public partial class MapInstance : IMapInstance
             return true;
         }
 
-        //See if there are any entities in the way
-        var entities = GetEntities();
-        for (var i = 0; i < entities.Count; i++)
+        var cached = mCachedEntities;
+        for (var i = 0; i < cached.Length; i++)
         {
-            if (entities[i] != null && !(entities[i] is Projectile))
+            var e = cached[i];
+            if (e != null && e is not Projectile && !e.Passable && e.X == x && e.Y == y)
             {
-                //If Npc or Player then blocked.. if resource then check
-                if (!entities[i].Passable && entities[i].X == x && entities[i].Y == y)
-                {
-                    return true;
-                }
+                return true;
             }
         }
 
         //Check Global Events
         foreach (var globalEvent in GlobalEventInstances)
         {
-            if (globalEvent.Value != null && globalEvent.Value.PageInstance != null)
+            if (globalEvent.Value?.PageInstance != null && !globalEvent.Value.PageInstance.Passable &&
+                globalEvent.Value.PageInstance.X == x && globalEvent.Value.PageInstance.Y == y)
             {
-                if (!globalEvent.Value.PageInstance.Passable &&
-                    globalEvent.Value.PageInstance.X == x &&
-                    globalEvent.Value.PageInstance.Y == y)
-                {
-                    return true;
-                }
+                return true;
             }
         }
 
         return false;
     }
+
     #endregion
 
     #region Packet Batching
-    public void AddBatchedAnimation(PlayAnimationPacket packet)
-    {
-        mMapAnimations.Add(packet);
-    }
 
-    public void AddBatchedMovement(Entity en, bool correction, Player forPlayer)
-    {
-        mEntityMovements.Add(en, correction, forPlayer);
-    }
+    public void AddBatchedAnimation(PlayAnimationPacket packet) => mMapAnimations.Add(packet);
 
-    public void AddBatchedActionMessage(ActionMsgPacket packet)
-    {
-        mActionMessages.Add(packet);
-    }
+    public void AddBatchedMovement(Entity en, bool correction, Player forPlayer) => mEntityMovements.Add(en, correction, forPlayer);
+
+    public void AddBatchedActionMessage(ActionMsgPacket packet) => mActionMessages.Add(packet);
+
     #endregion
 
     #region Caching
+
     public void CacheMapBlocks()
     {
         var blocks = new List<BytePoint>();
@@ -1221,66 +1215,55 @@ public partial class MapInstance : IMapInstance
         {
             for (byte y = 0; y < Options.Instance.Map.MapHeight; y++)
             {
-                if (mMapController.Attributes[x, y] != null)
+                if (mMapController.Attributes[x, y] == null)
                 {
-                    if (mMapController.Attributes[x, y].Type == MapAttributeType.Blocked ||
-                        mMapController.Attributes[x, y].Type == MapAttributeType.GrappleStone ||
-                        mMapController.Attributes[x, y].Type == MapAttributeType.Animation && ((MapAnimationAttribute)mMapController.Attributes[x, y]).IsBlock)
-                    {
+                    continue;
+                }
+
+                switch (mMapController.Attributes[x, y].Type)
+                {
+                    case MapAttributeType.Blocked:
+                    case MapAttributeType.GrappleStone:
+                    case MapAttributeType.Animation when
+                        ((MapAnimationAttribute)mMapController.Attributes[x, y]).IsBlock:
                         blocks.Add(new BytePoint(x, y));
                         npcBlocks.Add(new BytePoint(x, y));
-                    }
-                    else if (mMapController.Attributes[x, y].Type == MapAttributeType.NpcAvoid)
-                    {
+                        break;
+                    case MapAttributeType.NpcAvoid:
                         npcBlocks.Add(new BytePoint(x, y));
-                    }
+                        break;
                 }
             }
         }
 
-        mMapBlocks = blocks.ToArray();
-        mNpcMapBlocks = npcBlocks.ToArray();
+        mMapBlocks = blocks.ToArray(); mNpcMapBlocks = npcBlocks.ToArray();
     }
 
-    public Entity[] GetCachedEntities()
-    {
-        return mCachedEntities;
-    }
+    public Entity[] GetCachedEntities() => mCachedEntities;
 
-    public BytePoint[] GetCachedBlocks(bool isPlayer)
-    {
-        return isPlayer ? mMapBlocks : mNpcMapBlocks;
-    }
+    public BytePoint[] GetCachedBlocks(bool isPlayer) => isPlayer ? mMapBlocks : mNpcMapBlocks;
+
     #endregion
 
     #region Updates
+
     private void UpdateEntities(long timeMs)
     {
-        var surrMaps = mMapController.GetSurroundingMaps(true);
-
-        // Keep a list of all entities with changed vitals and statusses.
         var vitalUpdates = new List<Entity>();
         var statusUpdates = new List<Entity>();
-
         foreach (var en in mEntities)
         {
-            //Let's see if and how long this map has been inactive, if longer than X seconds, regenerate everything on the map
-            if (timeMs > mLastUpdateTime + Options.Instance.Map.TimeUntilMapCleanup)
+            if (timeMs > mLastUpdateTime + Options.Instance.Map.TimeUntilMapCleanup && en.Value is Resource or Npc)
             {
-                //Regen Everything & Forget Targets
-                if (en.Value is Resource || en.Value is Npc)
+                en.Value.RestoreVital(Vital.Health);
+                en.Value.RestoreVital(Vital.Mana);
+                if (en.Value is Npc npc)
                 {
-                    en.Value.RestoreVital(Vital.Health);
-                    en.Value.RestoreVital(Vital.Mana);
-
-                    if (en.Value is Npc npc)
-                    {
-                        npc.AssignTarget(null);
-                    }
-                    else
-                    {
-                        en.Value.Target = null;
-                    }
+                    npc.AssignTarget(null);
+                }
+                else
+                {
+                    en.Value.Target = null;
                 }
             }
 
@@ -1306,7 +1289,6 @@ public partial class MapInstance : IMapInstance
             if (en.Value.StatusesUpdated)
             {
                 statusUpdates.Add(en.Value);
-
                 en.Value.StatusesUpdated = false;
             }
 
@@ -1369,8 +1351,6 @@ public partial class MapInstance : IMapInstance
             }
             else if (spawnInstance.RespawnTime < now)
             {
-                // Check to see if this resource can be respawned, if there's an Npc or Player on it we shouldn't let it respawn yet..
-                // Unless of course the resource is walkable regardless.
                 var canSpawn = false;
                 if (spawnInstance.Entity.Descriptor.WalkableBefore)
                 {
@@ -1378,19 +1358,30 @@ public partial class MapInstance : IMapInstance
                 }
                 else
                 {
-                    // Check if this resource is currently stepped on
-                    var spawnBlockers = GetEntities().Where(x => x is Player || x is Npc).ToArray();
-                    if (!spawnBlockers.Any(e => e.X == spawnInstance.Entity.X && e.Y == spawnInstance.Entity.Y))
+                    var cached = mCachedEntities;
+                    var blocked = false;
+                    for (var i = 0; i < cached.Length; i++)
                     {
-                        canSpawn = true;
+                        var e = cached[i];
+                        if ((e is not Player && e is not Npc) || e.X != spawnInstance.Entity.X || e.Y != spawnInstance.Entity.Y)
+                        {
+                            continue;
+                        }
+
+                        blocked = true;
+                        break;
                     }
+
+                    canSpawn = !blocked;
                 }
 
-                if (canSpawn)
+                if (!canSpawn)
                 {
-                    SpawnMapResource(spawn.Value);
-                    spawnInstance.RespawnTime = -1;
+                    continue;
                 }
+
+                SpawnMapResource(spawn.Value);
+                spawnInstance.RespawnTime = -1;
             }
         }
     }
@@ -1400,7 +1391,6 @@ public partial class MapInstance : IMapInstance
         var spawnDeaths = new List<KeyValuePair<Guid, int>>();
         var projDeaths = new List<Guid>();
 
-        //Process all of the projectiles
         foreach (var proj in MapProjectilesCached)
         {
             proj.Update(projDeaths, spawnDeaths);
@@ -1411,7 +1401,6 @@ public partial class MapInstance : IMapInstance
             PacketSender.SendRemoveProjectileSpawns(mMapController.Id, MapInstanceId, projDeaths.ToArray(), spawnDeaths.ToArray());
         }
 
-        //Process all of the traps
         foreach (var trap in MapTrapsCached)
         {
             trap.Update();
@@ -1440,48 +1429,58 @@ public partial class MapInstance : IMapInstance
 
         foreach (var itemRespawn in ItemRespawns.Values)
         {
-            if (itemRespawn.RespawnTime < timeMs)
+            if (itemRespawn.RespawnTime >= timeMs)
             {
-                SpawnAttributeItem(itemRespawn.AttributeSpawnX, itemRespawn.AttributeSpawnY);
-                ItemRespawns.TryRemove(itemRespawn.Id, out MapItemSpawn spawn);
+                continue;
             }
+
+            SpawnAttributeItem(itemRespawn.AttributeSpawnX, itemRespawn.AttributeSpawnY);
+            ItemRespawns.TryRemove(itemRespawn.Id, out _);
         }
     }
 
+    /// <summary>
+    /// Iterate GlobalEventInstances.Values directly
+    /// Also uses GetCachedSurroundingInstances via GetPlayers(true)
+    /// Short-circuits active check as soon as one active player is found.
+    /// </summary>
     private void UpdateGlobalEvents(long timeMs)
     {
-        var evts = GlobalEventInstances.Values.ToList();
-        for (var i = 0; i < evts.Count; i++)
+        foreach (var evt in GlobalEventInstances.Values)
         {
             //Only do movement processing on the first page.
             //This is because global events need to keep all of their pages at the same tile
             //Think about a global event moving randomly that needed to turn into a warewolf and back (separate pages)
             //If they were in different tiles the transition would make the event jump
             //Something like described here: https://www.ascensiongamedev.com/community/bug_tracker/intersect/events-randomly-appearing-and-disappearing-r983/
-            for (var x = 0; x < evts[i].GlobalPageInstance.Length; x++)
+            for (var x = 0; x < evt.GlobalPageInstance.Length; x++)
             {
                 //Gotta figure out if any players are interacting with this event.
                 var active = false;
                 foreach (var player in GetPlayers(true))
                 {
-                    var eventInstance = player.FindGlobalEventInstance(evts[i].GlobalPageInstance[x]);
-                    if (eventInstance != null && eventInstance.CallStack.Count > 0)
+                    var eventInstance = player.FindGlobalEventInstance(evt.GlobalPageInstance[x]);
+                    if (eventInstance == null || eventInstance.CallStack.Count <= 0)
                     {
-                        active = true;
+                        continue;
                     }
+
+                    active = true;
+                    break;
                 }
 
-                evts[i].GlobalPageInstance[x].Update(active, timeMs);
+                evt.GlobalPageInstance[x].Update(active, timeMs);
             }
         }
     }
 
+    /// <summary>
+    /// Use GetCachedSurroundingInstances (avoids allocating a new List on every tick).
+    /// </summary>
     private void SendBatchedPacketsToPlayers()
     {
         var nearbyPlayers = new HashSet<Player>();
-
-        // Get all players in surrounding and current maps
-        foreach (var mapInstance in MapController.GetSurroundingMapInstances(mMapController.Id, MapInstanceId, true))
+        foreach (var mapInstance in GetCachedSurroundingInstances(true))
         {
             foreach (var plyr in mapInstance.GetPlayers())
             {
