@@ -5,28 +5,44 @@ using Intersect.Server.Maps;
 using Microsoft.Extensions.Logging;
 
 namespace Intersect.Server.Core.MapInstancing;
+
 public static class InstanceProcessor
 {
-    private static Dictionary<Guid, InstanceController> InstanceControllers = new();
+    private static readonly Dictionary<Guid, InstanceController> InstanceControllers = new();
 
-    public static Guid[] CurrentControllers => InstanceControllers.Keys.ToArray();
+    private static readonly HashSet<Guid> ActiveIdScratch = [];
 
-    public static bool TryGetInstanceController(Guid instanceId, out InstanceController controller)
+    public static bool TryGetInstanceController(Guid instanceId, out InstanceController controller) => InstanceControllers.TryGetValue(instanceId, out controller);
+
+    private static void CleanupOrphanedControllers(MapInstance[] activeMaps)
     {
-        return InstanceControllers.TryGetValue(instanceId, out controller);
-    }
-
-    private static void CleanupOrphanedControllers(IEnumerable<Guid> activeInstanceIds)
-    {
-        var processingInstances = InstanceControllers.Keys
-            .Except(activeInstanceIds)
-            .Except(new Guid[1] { default }) // Never cleanup the overworld instance
-            .ToArray();
-
-        foreach (var id in processingInstances)
+        ActiveIdScratch.Clear();
+        for (var i = 0; i < activeMaps.Length; i++)
         {
-            InstanceControllers.Remove(id);
-            ApplicationContext.Context.Value?.Logger.LogDebug($"Removing instance controller {id}");
+            ActiveIdScratch.Add(activeMaps[i].MapInstanceId);
+        }
+
+        List<Guid>? toRemove = null;
+        foreach (var id in InstanceControllers.Keys)
+        {
+            if (id == default)
+            {
+                continue; // never clean overworld
+            }
+
+            if (!ActiveIdScratch.Contains(id))
+            {
+                (toRemove ??= new List<Guid>()).Add(id);
+            }
+        }
+
+        if (toRemove != null)
+        {
+            foreach (var id in toRemove)
+            {
+                InstanceControllers.Remove(id);
+                ApplicationContext.Context.Value?.Logger.LogDebug($"Removing instance controller {id}");
+            }
         }
     }
 
@@ -48,14 +64,21 @@ public static class InstanceProcessor
             return;
         }
 
-        // Cleanup inactive instances
-        CleanupOrphanedControllers(activeMaps.Select(map => map.MapInstanceId));
+        CleanupOrphanedControllers(activeMaps);
 
-        Dictionary<Guid, MapInstance[]> mapsAndInstances = activeMaps
-            .GroupBy(m => m.MapInstanceId)
-            .ToDictionary(m => m.Key, m => m.ToArray());
+        // Manual grouping + ToDictionary allocations
+        var mapsAndInstances = new Dictionary<Guid, List<MapInstance>>();
+        for (var i = 0; i < activeMaps.Length; i++)
+        {
+            var map = activeMaps[i];
+            if (!mapsAndInstances.TryGetValue(map.MapInstanceId, out var list))
+            {
+                mapsAndInstances[map.MapInstanceId] = list = new List<MapInstance>();
+            }
 
-        // For each instance...
+            list.Add(map);
+        }
+
         foreach (var (instanceId, mapsInInstance) in mapsAndInstances)
         {
             // Fetch our instance controller...
