@@ -388,6 +388,11 @@ public partial class LabeledSlider : Base, ISmartAutoSizeToContents, INumericInp
             Maximum = actualMax;
             Minimum = actualMin;
         }
+        else if (actualMax < Minimum)
+        {
+            Minimum = actualMin;
+            Maximum = actualMax;
+        }
         else
         {
             Minimum = actualMin;

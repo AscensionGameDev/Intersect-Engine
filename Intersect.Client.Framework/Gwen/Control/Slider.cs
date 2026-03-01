@@ -461,10 +461,15 @@ public partial class Slider : Base
         var actualMin = Math.Min(min, max);
         var actualMax = Math.Max(min, max);
 
-        if (actualMin > Maximum)
+        if (actualMin > _maximumValue)
         {
             _maximumValue = actualMax;
             _minimumValue = actualMin;
+        }
+        else if (actualMax < _minimumValue)
+        {
+            _minimumValue = actualMin;
+            _maximumValue = actualMax;
         }
         else
         {
