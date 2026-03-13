@@ -34,7 +34,7 @@ public interface IPlayer : IEntity
     void AddToHotbar(int hotbarSlot, sbyte itemType, int itemSlot);
     int FindHotbarItem(IHotbarInstance hotbarInstance);
     int FindHotbarSpell(IHotbarInstance hotbarInstance);
-    void HotbarSwap(int index, int swapIndex);
+    bool HotbarSwap(int index, int swapIndex);
     int FindItem(Guid itemId, int itemVal = 1);
     void SwapItems(int item1, int item2);
     long GetItemCooldown(Guid id);

@@ -58,7 +58,7 @@ public static partial class DragAndDrop
 
         // Not been dragged far enough
         var length = Math.Abs(x - sLastPressedPos.X) + Math.Abs(y - sLastPressedPos.Y);
-        if (length < 5)
+        if (length <= 1)
         {
             return false;
         }

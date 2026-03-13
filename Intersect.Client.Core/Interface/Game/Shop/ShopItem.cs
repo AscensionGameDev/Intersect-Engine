@@ -16,13 +16,11 @@ namespace Intersect.Client.Interface.Game.Shop;
 public partial class ShopItem : SlotItem
 {
     private readonly int _mySlot;
-    private readonly ShopWindow _shopWindow;
     private readonly MenuItem _buyMenuItem;
 
-    public ShopItem(ShopWindow shopWindow, Base parent, int index, ContextMenu contextMenu)
+    public ShopItem(Base parent, int index, ContextMenu contextMenu)
         : base(parent, nameof(ShopItem), index, contextMenu)
     {
-        _shopWindow = shopWindow;
         _mySlot = index;
         TextureFilename = "shopitem.png";
 
@@ -106,7 +104,7 @@ public partial class ShopItem : SlotItem
         Globals.Me?.TryBuyItem(_mySlot);
     }
 
-    private void _buyMenuItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.MouseButtonState arguments)
+    private void _buyMenuItem_Clicked(Base sender, MouseButtonState arguments)
     {
         Globals.Me?.TryBuyItem(_mySlot);
     }
