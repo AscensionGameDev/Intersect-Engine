@@ -503,6 +503,9 @@ public partial class Npc : Entity
             case SpellEffect.Shield:
             case SpellEffect.OnHit:
             case SpellEffect.Taunt:
+            case SpellEffect.Knockback:
+            case SpellEffect.HealingReduction:
+            case SpellEffect.HealingBoost:
             case null:
                 return false;
 
@@ -530,6 +533,9 @@ public partial class Npc : Entity
             case SpellEffect.Shield:
             case SpellEffect.OnHit:
             case SpellEffect.Taunt:
+            case SpellEffect.Knockback:
+            case SpellEffect.HealingReduction:
+            case SpellEffect.HealingBoost:
             case null:
                 return false;
 

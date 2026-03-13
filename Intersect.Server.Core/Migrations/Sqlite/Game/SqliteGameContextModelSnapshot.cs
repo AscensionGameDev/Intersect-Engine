@@ -1535,6 +1535,9 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                             b1.Property<int>("HotDotInterval")
                                 .HasColumnType("INTEGER");
 
+                            b1.Property<int>("KnockbackTiles")
+                                .HasColumnType("INTEGER");
+
                             b1.Property<int>("OnHitDuration")
                                 .HasColumnType("INTEGER")
                                 .HasColumnName("OnHit");

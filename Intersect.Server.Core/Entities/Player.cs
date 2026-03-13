@@ -1668,7 +1668,8 @@ public partial class Player : Entity
         Entity target,
         SpellDescriptor spellDescriptor,
         bool onHitTrigger = false,
-        bool trapTrigger = false
+        bool trapTrigger = false,
+        bool ignoreKnockback = false
     )
     {
         if (!trapTrigger && !ValidTauntTarget(target)) //Traps ignore taunts.
@@ -1676,7 +1677,7 @@ public partial class Player : Entity
             return;
         }
 
-        base.TryAttack(target, spellDescriptor, onHitTrigger, trapTrigger);
+        base.TryAttack(target, spellDescriptor, onHitTrigger, trapTrigger, ignoreKnockback);
     }
 
     /// <summary>

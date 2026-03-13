@@ -5312,6 +5312,9 @@ Tick timer saved in server config.json.";
             {10, @"Sleep"},
             {11, @"OnHit"},
             {12, @"Taunt"},
+            {13, @"Knockback"},
+            {14, @"Grievous Wounds"},
+            {15, @"Healing Boost"},
         };
 
         public static LocalizedString effectgroup = @"Effect";
@@ -5360,6 +5363,9 @@ Tick timer saved in server config.json.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString TickAnimation = @"Tick Animation:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString knockbacktiles = @"Tiles:";
 
         public static LocalizedString magicresist = @"Magic Resist:";
 
