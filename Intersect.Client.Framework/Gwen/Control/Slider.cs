@@ -458,8 +458,24 @@ public partial class Slider : Base
     /// <param name="max">Maximum value.</param>
     public void SetRange(double min, double max)
     {
-        _minimumValue = min;
-        _maximumValue = max;
+        var actualMin = Math.Min(min, max);
+        var actualMax = Math.Max(min, max);
+
+        if (actualMin > _maximumValue)
+        {
+            _maximumValue = actualMax;
+            _minimumValue = actualMin;
+        }
+        else if (actualMax < _minimumValue)
+        {
+            _minimumValue = actualMin;
+            _maximumValue = actualMax;
+        }
+        else
+        {
+            _minimumValue = actualMin;
+            _maximumValue = actualMax;
+        }
     }
 
     /// <summary>
