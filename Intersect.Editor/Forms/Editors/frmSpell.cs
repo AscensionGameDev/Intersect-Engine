@@ -1,3 +1,4 @@
+using System.IO;
 using DarkUI.Controls;
 using DarkUI.Forms;
 using Intersect.Editor.Content;
@@ -108,11 +109,6 @@ public partial class FrmSpell : EditorForm
         cmbTickAnimation.Items.Clear();
         cmbTickAnimation.Items.Add(Strings.General.None);
         cmbTickAnimation.Items.AddRange(AnimationDescriptor.Names);
-
-        cmbSprite.Items.Clear();
-        cmbSprite.Items.Add(Strings.General.None);
-        var spellNames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Spell);
-        cmbSprite.Items.AddRange(spellNames);
 
         cmbTransform.Items.Clear();
         cmbTransform.Items.Add(Strings.General.None);
@@ -302,12 +298,15 @@ public partial class FrmSpell : EditorForm
 
             chkBound.Checked = mEditorItem.Bound;
 
-            cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Icon));
             picSpell.BackgroundImage?.Dispose();
             picSpell.BackgroundImage = null;
-            if (cmbSprite.SelectedIndex > 0)
+            if (!string.IsNullOrEmpty(mEditorItem.Icon) && mEditorItem.Icon != "None")
             {
-                picSpell.BackgroundImage = Image.FromFile("resources/spells/" + cmbSprite.Text);
+                var iconPath = Path.Combine("resources", "spells", mEditorItem.Icon);
+                if (File.Exists(iconPath))
+                {
+                    picSpell.BackgroundImage = Image.FromFile(iconPath);
+                }
             }
 
             nudHPCost.Value = mEditorItem.VitalCost[(int)Vital.Health];
@@ -502,14 +501,24 @@ public partial class FrmSpell : EditorForm
         }
     }
 
-    private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
+    private void btnSelectIcon_Click(object sender, EventArgs e)
     {
-        mEditorItem.Icon = cmbSprite.Text;
-        picSpell.BackgroundImage?.Dispose();
-        picSpell.BackgroundImage = null;
-        picSpell.BackgroundImage = cmbSprite.SelectedIndex > 0
-            ? Image.FromFile("resources/spells/" + cmbSprite.Text)
-            : null;
+        var frm = new FrmIconSelector(Path.Combine("resources", "spells"), mEditorItem.Icon);
+        frm.ShowDialog();
+        if (frm.DialogResult == DialogResult.OK)
+        {
+            mEditorItem.Icon = frm.SelectedIcon;
+            picSpell.BackgroundImage?.Dispose();
+            picSpell.BackgroundImage = null;
+            if (!string.IsNullOrEmpty(mEditorItem.Icon))
+            {
+                var iconPath = Path.Combine("resources", "spells", mEditorItem.Icon);
+                if (File.Exists(iconPath))
+                {
+                    picSpell.BackgroundImage = Image.FromFile(iconPath);
+                }
+            }
+        }
     }
 
     private void cmbTargetType_SelectedIndexChanged(object sender, EventArgs e)

@@ -92,7 +92,8 @@ namespace Intersect.Editor.Forms.Editors
             cmbAnimation = new DarkComboBox();
             lblDesc = new Label();
             txtDesc = new DarkTextBox();
-            cmbPic = new DarkComboBox();
+            btnSelectIcon = new DarkButton();
+            txtSelectedIcon = new DarkTextBox();
             lblAnim = new Label();
             lblPrice = new Label();
             lblPic = new Label();
@@ -417,7 +418,8 @@ namespace Intersect.Editor.Forms.Editors
             grpGeneral.Controls.Add(cmbAnimation);
             grpGeneral.Controls.Add(lblDesc);
             grpGeneral.Controls.Add(txtDesc);
-            grpGeneral.Controls.Add(cmbPic);
+            grpGeneral.Controls.Add(btnSelectIcon);
+            grpGeneral.Controls.Add(txtSelectedIcon);
             grpGeneral.Controls.Add(lblAnim);
             grpGeneral.Controls.Add(lblPrice);
             grpGeneral.Controls.Add(lblPic);
@@ -1108,28 +1110,29 @@ namespace Intersect.Editor.Forms.Editors
             txtDesc.TabIndex = 12;
             txtDesc.TextChanged += txtDesc_TextChanged;
             // 
-            // cmbPic
+            // btnSelectIcon
             // 
-            cmbPic.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
-            cmbPic.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
-            cmbPic.BorderStyle = ButtonBorderStyle.Solid;
-            cmbPic.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
-            cmbPic.DrawDropdownHoverOutline = false;
-            cmbPic.DrawFocusRectangle = false;
-            cmbPic.DrawMode = DrawMode.OwnerDrawFixed;
-            cmbPic.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbPic.FlatStyle = FlatStyle.Flat;
-            cmbPic.ForeColor = System.Drawing.Color.Gainsboro;
-            cmbPic.FormattingEnabled = true;
-            cmbPic.Items.AddRange(new object[] { "None" });
-            cmbPic.Location = new System.Drawing.Point(327, 45);
-            cmbPic.Margin = new Padding(4, 3, 4, 3);
-            cmbPic.Name = "cmbPic";
-            cmbPic.Size = new Size(184, 24);
-            cmbPic.TabIndex = 11;
-            cmbPic.Text = "None";
-            cmbPic.TextPadding = new Padding(2);
-            cmbPic.SelectedIndexChanged += cmbPic_SelectedIndexChanged;
+            btnSelectIcon.Location = new System.Drawing.Point(327, 45);
+            btnSelectIcon.Margin = new Padding(4, 3, 4, 3);
+            btnSelectIcon.Name = "btnSelectIcon";
+            btnSelectIcon.Padding = new Padding(5);
+            btnSelectIcon.Size = new Size(100, 24);
+            btnSelectIcon.TabIndex = 11;
+            btnSelectIcon.Text = "Select Icon";
+            btnSelectIcon.Click += btnSelectIcon_Click;
+            // 
+            // txtSelectedIcon
+            // 
+            txtSelectedIcon.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            txtSelectedIcon.BorderStyle = BorderStyle.FixedSingle;
+            txtSelectedIcon.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            txtSelectedIcon.Location = new System.Drawing.Point(434, 45);
+            txtSelectedIcon.Margin = new Padding(4, 3, 4, 3);
+            txtSelectedIcon.Name = "txtSelectedIcon";
+            txtSelectedIcon.ReadOnly = true;
+            txtSelectedIcon.Size = new Size(77, 23);
+            txtSelectedIcon.TabIndex = 12;
+            txtSelectedIcon.Text = "None";
             // 
             // lblAnim
             // 
@@ -3116,7 +3119,8 @@ namespace Intersect.Editor.Forms.Editors
         private DarkComboBox cmbConsume;
         private DarkGroupBox grpSpell;
         private DarkButton btnCancel;
-        private DarkComboBox cmbPic;
+        private DarkButton btnSelectIcon;
+        private DarkTextBox txtSelectedIcon;
         private DarkComboBox cmbMalePaperdoll;
         private DarkTextBox txtDesc;
         private DarkCheckBox chk2Hand;

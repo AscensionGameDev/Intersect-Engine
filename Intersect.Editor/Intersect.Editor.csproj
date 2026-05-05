@@ -453,6 +453,12 @@
     <Compile Update="Forms\Editors\Events\frmEvent.Designer.cs">
       <DependentUpon>frmEvent.cs</DependentUpon>
     </Compile>
+    <Compile Update="Forms\Editors\frmIconSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\frmIconSelector.Designer.cs">
+      <DependentUpon>frmIconSelector.cs</DependentUpon>
+    </Compile>
     <Compile Update="Forms\Editors\frmItem.cs">
       <SubType>Form</SubType>
     </Compile>

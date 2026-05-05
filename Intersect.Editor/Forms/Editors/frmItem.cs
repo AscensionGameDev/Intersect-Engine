@@ -1,4 +1,5 @@
 using System.Drawing.Imaging;
+using System.IO;
 using DarkUI.Forms;
 using Intersect.Editor.Content;
 using Intersect.Editor.Core;
@@ -107,12 +108,6 @@ public partial class FrmItem : EditorForm
 
     private void frmItem_Load(object sender, EventArgs e)
     {
-        cmbPic.Items.Clear();
-        cmbPic.Items.Add(Strings.General.None);
-
-        var itemnames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Item);
-        cmbPic.Items.AddRange(itemnames);
-
         cmbWeaponSprite.Items.Clear();
         cmbWeaponSprite.Items.Add(Strings.General.None);
         cmbWeaponSprite.Items.AddRange(
@@ -341,7 +336,7 @@ public partial class FrmItem : EditorForm
             cmbFolder.Text = mEditorItem.Folder;
             txtDesc.Text = mEditorItem.Description;
             cmbType.SelectedIndex = (int)mEditorItem.ItemType;
-            cmbPic.SelectedIndex = cmbPic.FindString(TextUtils.NullToNone(mEditorItem.Icon));
+            txtSelectedIcon.Text = TextUtils.NullToNone(mEditorItem.Icon);
             nudRgbaR.Value = mEditorItem.Color.R;
             nudRgbaG.Value = mEditorItem.Color.G;
             nudRgbaB.Value = mEditorItem.Color.B;
@@ -421,7 +416,7 @@ public partial class FrmItem : EditorForm
 
             picItem.BackgroundImage?.Dispose();
             picItem.BackgroundImage = null;
-            if (cmbPic.SelectedIndex > 0)
+            if (!string.IsNullOrEmpty(txtSelectedIcon.Text) && txtSelectedIcon.Text != Strings.General.None)
             {
                 DrawItemIcon();
             }
@@ -613,14 +608,24 @@ public partial class FrmItem : EditorForm
         lstGameObjects.UpdateText(txtName.Text);
     }
 
-    private void cmbPic_SelectedIndexChanged(object sender, EventArgs e)
+    private void btnSelectIcon_Click(object sender, EventArgs e)
     {
-        mEditorItem.Icon = cmbPic.SelectedIndex < 1 ? null : cmbPic.Text;
-        picItem.BackgroundImage?.Dispose();
-        picItem.BackgroundImage = null;
-        if (cmbPic.SelectedIndex > 0)
+        var currentIcon = mEditorItem.Icon;
+        var iconDirectory = Path.Combine("resources", "items");
+        var iconSelector = new FrmIconSelector(iconDirectory, currentIcon);
+
+        if (iconSelector.ShowDialog() == DialogResult.OK)
         {
-            DrawItemIcon();
+            mEditorItem.Icon = iconSelector.SelectedIcon;
+            txtSelectedIcon.Text = TextUtils.NullToNone(mEditorItem.Icon);
+
+            picItem.BackgroundImage?.Dispose();
+            picItem.BackgroundImage = null;
+
+            if (!string.IsNullOrEmpty(mEditorItem.Icon))
+            {
+                DrawItemIcon();
+            }
         }
     }
 
@@ -1154,9 +1159,9 @@ public partial class FrmItem : EditorForm
         var picItemBmp = new Bitmap(picItem.Width, picItem.Height);
         var gfx = Graphics.FromImage(picItemBmp);
         gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picItem.Width, picItem.Height));
-        if (cmbPic.SelectedIndex > 0)
+        if (!string.IsNullOrEmpty(txtSelectedIcon.Text) && txtSelectedIcon.Text != Strings.General.None)
         {
-            var img = Image.FromFile("resources/items/" + cmbPic.Text);
+            var img = Image.FromFile("resources/items/" + txtSelectedIcon.Text);
             var imgAttributes = new ImageAttributes();
 
             // Microsoft, what the heck is this crap?

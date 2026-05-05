@@ -47,7 +47,7 @@ namespace Intersect.Editor.Forms.Editors
             this.picSpell = new System.Windows.Forms.PictureBox();
             this.lblHitAnimation = new System.Windows.Forms.Label();
             this.lblCastAnimation = new System.Windows.Forms.Label();
-            this.cmbSprite = new DarkUI.Controls.DarkComboBox();
+            this.btnSelectIcon = new DarkUI.Controls.DarkButton();
             this.lblIcon = new System.Windows.Forms.Label();
             this.lblType = new System.Windows.Forms.Label();
             this.cmbType = new DarkUI.Controls.DarkComboBox();
@@ -258,7 +258,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGeneral.Controls.Add(this.picSpell);
             this.grpGeneral.Controls.Add(this.lblHitAnimation);
             this.grpGeneral.Controls.Add(this.lblCastAnimation);
-            this.grpGeneral.Controls.Add(this.cmbSprite);
+            this.grpGeneral.Controls.Add(this.btnSelectIcon);
             this.grpGeneral.Controls.Add(this.lblIcon);
             this.grpGeneral.Controls.Add(this.lblType);
             this.grpGeneral.Controls.Add(this.cmbType);
@@ -444,28 +444,15 @@ namespace Intersect.Editor.Forms.Editors
             this.lblCastAnimation.TabIndex = 14;
             this.lblCastAnimation.Text = "Extra Cast Anim.:";
             // 
-            // cmbSprite
+            // btnSelectIcon
             // 
-            this.cmbSprite.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbSprite.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbSprite.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbSprite.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbSprite.DrawDropdownHoverOutline = false;
-            this.cmbSprite.DrawFocusRectangle = false;
-            this.cmbSprite.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbSprite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbSprite.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbSprite.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbSprite.FormattingEnabled = true;
-            this.cmbSprite.Items.AddRange(new object[] {
-            "None"});
-            this.cmbSprite.Location = new System.Drawing.Point(60, 111);
-            this.cmbSprite.Name = "cmbSprite";
-            this.cmbSprite.Size = new System.Drawing.Size(161, 21);
-            this.cmbSprite.TabIndex = 11;
-            this.cmbSprite.Text = "None";
-            this.cmbSprite.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbSprite.SelectedIndexChanged += new System.EventHandler(this.cmbSprite_SelectedIndexChanged);
+            this.btnSelectIcon.Location = new System.Drawing.Point(60, 111);
+            this.btnSelectIcon.Name = "btnSelectIcon";
+            this.btnSelectIcon.Padding = new System.Windows.Forms.Padding(5);
+            this.btnSelectIcon.Size = new System.Drawing.Size(161, 23);
+            this.btnSelectIcon.TabIndex = 11;
+            this.btnSelectIcon.Text = "Select Icon";
+            this.btnSelectIcon.Click += new System.EventHandler(this.btnSelectIcon_Click);
             // 
             // lblIcon
             // 
@@ -2465,7 +2452,7 @@ namespace Intersect.Editor.Forms.Editors
         private DarkGroupBox grpSpells;
         private DarkGroupBox grpGeneral;
         private System.Windows.Forms.Label lblCooldownDuration;
-        private DarkComboBox cmbSprite;
+        private DarkButton btnSelectIcon;
         private System.Windows.Forms.Label lblCastDuration;
         private System.Windows.Forms.Label lblIcon;
         private System.Windows.Forms.PictureBox picSpell;
