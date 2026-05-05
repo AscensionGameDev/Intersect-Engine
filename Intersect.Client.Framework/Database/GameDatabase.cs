@@ -77,6 +77,8 @@ public abstract partial class GameDatabase
 
     public float WorldZoom { get; set; } = 1.0f;
 
+    public string Language { get; set; } = "en";
+
     public abstract void DeletePreference(string key);
 
     public abstract bool HasPreference(string key);
@@ -150,6 +152,7 @@ public abstract partial class GameDatabase
         UIScale = LoadPreference(nameof(UIScale), 1.0f);
         EnableScrollingWorldZoom = LoadPreference(nameof(EnableScrollingWorldZoom), false);
         WorldZoom = LoadPreference(nameof(WorldZoom), 1.0f);
+        Language = LoadPreference(nameof(Language), "en");
     }
 
     /// <summary>
@@ -191,6 +194,7 @@ public abstract partial class GameDatabase
         SavePreference(nameof(UIScale), UIScale);
         SavePreference(nameof(EnableScrollingWorldZoom), EnableScrollingWorldZoom);
         SavePreference(nameof(WorldZoom), WorldZoom);
+        SavePreference(nameof(Language), Language);
     }
 
     public abstract bool LoadConfig();

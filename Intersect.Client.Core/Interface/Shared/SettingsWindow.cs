@@ -44,6 +44,7 @@ public partial class SettingsWindow : Window
     private readonly LabeledCheckBox _showHealthAsPercentageCheckbox;
     private readonly LabeledCheckBox _showManaAsPercentageCheckbox;
     private readonly LabeledCheckBox _simplifiedEscapeMenu;
+    private readonly LabeledComboBox _languageComboBox;
 
     // Game Settings - Information
     private readonly TabButton _gameSettingsTabInformation;
@@ -237,6 +238,25 @@ public partial class SettingsWindow : Window
             FontSize = 12,
             Text = Strings.Settings.TypewriterText,
         };
+
+        // Game Settings - Interface: Language Selection.
+        _languageComboBox = new LabeledComboBox(parent: _interfaceSettings, name: nameof(_languageComboBox))
+        {
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            FontSize = 12,
+            Label = Strings.Settings.Language,
+            TextPadding = new Padding(8, 4, 0, 4),
+        };
+
+        // Populate available languages from detected language files.
+        var availableLanguages = Strings.GetAvailableLanguages();
+        foreach (var langCode in availableLanguages)
+        {
+            var displayName = GetLanguageDisplayName(langCode);
+            var addedItem = _languageComboBox.AddItem(label: displayName, userData: langCode);
+            addedItem.TextAlign = Pos.Left;
+        }
 
         // Game > Information
 
@@ -991,6 +1011,9 @@ public partial class SettingsWindow : Window
         _autoSoftRetargetOnSelfCast.IsChecked = Globals.Database.AutoSoftRetargetOnSelfCast;
         _typewriterCheckbox.IsChecked = Globals.Database.TypewriterBehavior == Enums.TypewriterBehavior.Word;
 
+        // Language Settings.
+        _languageComboBox.SelectByUserData(Globals.Database.Language);
+
         // Video Settings.
         _fullscreenCheckbox.IsChecked = Globals.Database.FullScreen;
         _lightingEnabledCheckbox.IsChecked = Globals.Database.EnableLighting;
@@ -1172,6 +1195,15 @@ public partial class SettingsWindow : Window
         Globals.Database.AutoSoftRetargetOnSelfCast = _autoSoftRetargetOnSelfCast.IsChecked;
         Globals.Database.TypewriterBehavior = _typewriterCheckbox.IsChecked ? Enums.TypewriterBehavior.Word : Enums.TypewriterBehavior.Off;
 
+        // Language Settings — detect if language changed and prompt restart.
+        var previousLanguage = Globals.Database.Language;
+        var selectedLanguage = _languageComboBox.SelectedItem?.UserData as string ?? "en";
+        var languageChanged = !string.Equals(previousLanguage, selectedLanguage, StringComparison.OrdinalIgnoreCase);
+        if (languageChanged)
+        {
+            Globals.Database.Language = selectedLanguage;
+        }
+
         // Video Settings.
         Globals.Database.EnableScrollingWorldZoom = _enableScrollingWorldZoomCheckbox.IsChecked;
         if (!_worldScale.IsHidden)
@@ -1249,6 +1281,22 @@ public partial class SettingsWindow : Window
 
         // Hide the currently opened window.
         Hide();
+
+        // Show restart prompt if the language was changed.
+        if (languageChanged)
+        {
+            AlertWindow.Open(
+                Strings.Settings.LanguageRestartPrompt,
+                Strings.Settings.LanguageRestartTitle,
+                AlertType.Information,
+                inputType: InputType.YesNo,
+                handleSubmit: (_, _) =>
+                {
+                    Intersect.Framework.Utilities.ProcessHelper.TryRelaunch();
+                    Globals.IsRunning = false;
+                }
+            );
+        }
     }
 
     private void CancelPendingChangesButton_Clicked(Base sender, MouseButtonState arguments)
@@ -1263,5 +1311,44 @@ public partial class SettingsWindow : Window
 
         // Hide our current window.
         Hide();
+    }
+
+    /// <summary>
+    /// Maps a language code to a human-readable display name.
+    /// </summary>
+    private static string GetLanguageDisplayName(string langCode)
+    {
+        return langCode.ToLowerInvariant() switch
+        {
+            "en" => "English",
+            "ar" => "العربية (Arabic)",
+            "fr" => "Français (French)",
+            "es" => "Español (Spanish)",
+            "de" => "Deutsch (German)",
+            "pt" => "Português (Portuguese)",
+            "ru" => "Русский (Russian)",
+            "zh" => "中文 (Chinese)",
+            "ja" => "日本語 (Japanese)",
+            "ko" => "한국어 (Korean)",
+            "tr" => "Türkçe (Turkish)",
+            "it" => "Italiano (Italian)",
+            "nl" => "Nederlands (Dutch)",
+            "pl" => "Polski (Polish)",
+            "sv" => "Svenska (Swedish)",
+            "da" => "Dansk (Danish)",
+            "fi" => "Suomi (Finnish)",
+            "no" => "Norsk (Norwegian)",
+            "id" => "Bahasa Indonesia (Indonesian)",
+            "th" => "ไทย (Thai)",
+            "vi" => "Tiếng Việt (Vietnamese)",
+            "hi" => "हिन्दी (Hindi)",
+            "uk" => "Українська (Ukrainian)",
+            "cs" => "Čeština (Czech)",
+            "ro" => "Română (Romanian)",
+            "hu" => "Magyar (Hungarian)",
+            "el" => "Ελληνικά (Greek)",
+            "he" => "עברית (Hebrew)",
+            _ => langCode.ToUpperInvariant(),
+        };
     }
 }

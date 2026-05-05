@@ -19,6 +19,8 @@ namespace Intersect.Client.Localization;
 public static partial class Strings
 {
     private const string StringsFileName = "client_strings.json";
+    private const string StringsFilePrefix = "client_strings";
+    private const string StringsFileExtension = ".json";
     private static char[] mQuantityTrimChars = new char[] { '.', '0' };
 
     private static string[] _unitsBits = [string.Empty, "Ki", "Mi", "Gi", "Ti"];
@@ -131,6 +133,69 @@ public static partial class Strings
         Core.Program.OpenALLink = Errors.OpenAllLink.ToString();
     }
 
+    /// <summary>
+    /// Gets the language-specific strings filename based on the current language preference.
+    /// Falls back to the default file if the language-specific file does not exist.
+    /// </summary>
+    private static string GetStringsFileName()
+    {
+        var language = Intersect.Client.General.Globals.Database?.Language;
+        if (string.IsNullOrWhiteSpace(language) || string.Equals(language, "en", StringComparison.OrdinalIgnoreCase))
+        {
+            // Default English uses the base filename for backward compatibility
+            return StringsFileName;
+        }
+
+        var languageFileName = $"{StringsFilePrefix}_{language}{StringsFileExtension}";
+        var languageFilePath = Path.Combine(ClientConfiguration.ResourcesDirectory, languageFileName);
+
+        // Fall back to default if the language-specific file doesn't exist
+        return File.Exists(languageFilePath) ? languageFileName : StringsFileName;
+    }
+
+    /// <summary>
+    /// Scans the resources directory for all available language files and returns a sorted list
+    /// of language codes (e.g., "en", "ar", "fr").
+    /// </summary>
+    public static List<string> GetAvailableLanguages()
+    {
+        var languages = new List<string> { "en" }; // English is always available (default)
+
+        try
+        {
+            var resourcesDir = ClientConfiguration.ResourcesDirectory;
+            if (!Directory.Exists(resourcesDir))
+            {
+                return languages;
+            }
+
+            var pattern = $"{StringsFilePrefix}_*{StringsFileExtension}";
+            var files = Directory.GetFiles(resourcesDir, pattern);
+
+            foreach (var file in files)
+            {
+                var fileName = Path.GetFileNameWithoutExtension(file);
+                // Extract language code from "client_strings_xx"
+                var prefix = StringsFilePrefix + "_";
+                if (fileName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                {
+                    var langCode = fileName.Substring(prefix.Length);
+                    if (!string.IsNullOrWhiteSpace(langCode) && !languages.Contains(langCode, StringComparer.OrdinalIgnoreCase))
+                    {
+                        languages.Add(langCode);
+                    }
+                }
+            }
+        }
+        catch (Exception exception)
+        {
+            ApplicationContext.Context.Value?.Logger.LogWarning(exception, "Error occurred while scanning for language files");
+        }
+
+        languages.Sort(StringComparer.OrdinalIgnoreCase);
+        return languages;
+    }
+
     private class OrdinalComparer : IComparer<string>
     {
         public int Compare(string? x, string? y) => string.CompareOrdinal(x, y);
@@ -148,8 +213,9 @@ public static partial class Strings
         try
         {
             var serialized = new Dictionary<string, Dictionary<string, object>>();
+            var stringsFile = GetStringsFileName();
             serialized = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(
-                File.ReadAllText(Path.Combine(ClientConfiguration.ResourcesDirectory, StringsFileName))
+                File.ReadAllText(Path.Combine(ClientConfiguration.ResourcesDirectory, stringsFile))
             );
 
             var rootType = typeof(Strings);
@@ -408,8 +474,9 @@ public static partial class Strings
         var languageDirectory = Path.Combine(ClientConfiguration.ResourcesDirectory);
         if (Directory.Exists(languageDirectory))
         {
+            var stringsFile = GetStringsFileName();
             File.WriteAllText(
-                Path.Combine(languageDirectory, StringsFileName),
+                Path.Combine(languageDirectory, stringsFile),
                 JsonConvert.SerializeObject(serialized, Formatting.Indented)
             );
         }
@@ -2146,6 +2213,12 @@ If you are sure you want to hand over your guild enter '\c{{#ff8080}}{02}\c{{}}'
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Language = @"Language";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString LanguageRestartTitle = @"Language Changed";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString LanguageRestartPrompt = @"The language has been changed. Would you like to restart the game now for the new language to take effect?";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString MusicVolume = @"Music Volume: {00}%";
