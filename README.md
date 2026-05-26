@@ -53,6 +53,10 @@ After cloning or updating,
 
 Before updating on non-Windows platforms, run `git apply -R disable-windows-only.patch`
 
+**Note**: The client **will not run** from the debugger **without** assets being added into `assets/development/client` (e.g. from Intersect-Assets)!
+
+It is recommended that you create a symbolic link from your own custom resources repository (or a clone of the `main_full` branch of `Intersect-Assets`) to `assets/development/client/resources` for development.
+
 ### Compiling
 
 To compile either use an IDE or one of the following commands:
