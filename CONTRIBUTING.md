@@ -9,6 +9,7 @@
   - [Links](#links)
   - [Table of Contents](#table-of-contents)
   - [Code of Conduct](#code-of-conduct)
+  - [Large Language Models / Generative AI](#large-language-models--generative-ai)
   - [Git, GitHub, and GPG](#git-github-and-gpg)
     - [Git and GitHub](#git-and-github)
       - [Cloning](#cloning)
