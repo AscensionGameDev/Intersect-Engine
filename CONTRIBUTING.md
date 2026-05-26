@@ -9,6 +9,7 @@
   - [Links](#links)
   - [Table of Contents](#table-of-contents)
   - [Code of Conduct](#code-of-conduct)
+  - [Large Language Models / Generative AI](#large-language-models--generative-ai)
   - [Git, GitHub, and GPG](#git-github-and-gpg)
     - [Git and GitHub](#git-and-github)
       - [Cloning](#cloning)
@@ -39,6 +40,18 @@ We expect everyone to adhere to the [Code of Conduct](CODE_OF_CONDUCT.md), and m
 If we fail to do so, please let us know [on our Discord](https://discord.gg/qaJ8kRmdKA) in our [#code-of-conduct channel](https://discord.com/channels/363106200243535872/951191802977849354) (requires accepting the rules when you join).
 
 If you see possible violations of the Code of Conduct please report them per the instructions in our [#reporting channel on Discord](https://discord.com/channels/363106200243535872/951209899134709780).
+
+--------------------
+
+## Large Language Models / Generative AI
+
+All content created with LLMs and/or generative AI is not permitted to be contributed to any Intersect repository.
+- It CANNOT be used for any reason for new code features, documentation, bug fixes, or art content.﻿
+- If you did not write the code yourself, you should not be submitting it to the project.
+- When found, any generated contributions will be immediately removed (or if in an open PR, the PR will be closed).
+- It is not possible to guarantee that code generated from public models is not reproducing code that was stolen, and it is not feasible for us to verify that someone using a self-trained model was trained on public domain or self-authored code that is not subject to any licenses.
+
+The Intersect project is meant to be a base for people to build games with that they are able to monetize, and as such we cannot merge generated or stolen code into the engine without risking exposing all users of the versions of Intersect containing that code to legal action. Given the nature of compilation, it is improbable that anyone who chooses to use generated or stolen code will get caught, however the risk is not truly zero. The best way to protect us and users of Intersect is to ensure that we can trace authorship of all code with their commits back to their human authors who had the rights to the code they contributed.
 
 --------------------
 ## Git, GitHub, and GPG
