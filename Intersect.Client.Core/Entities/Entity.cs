@@ -2488,6 +2488,11 @@ public partial class Entity : IEntity
                     {
                         if (en.Value is not Projectile)
                         {
+                            // Allow players to walk through NPC/monster entities
+                            if (en.Value.Type == EntityType.GlobalEntity)
+                            {
+                                continue;
+                            }
                             switch (en.Value)
                             {
                                 case Resource resource:
