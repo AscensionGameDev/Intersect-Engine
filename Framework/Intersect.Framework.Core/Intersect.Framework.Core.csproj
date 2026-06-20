@@ -38,7 +38,7 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="NCalcSync" Version="3.8.0" />
+      <PackageReference Include="NCalcSync" Version="6.1.1" />
       <PackageReference Include="Semver" Version="2.3.0" />
       <PackageReference Include="System.Collections.Immutable" Version="9.0.0" />
       <PackageReference Include="System.IO.Abstractions" Version="22.0.10" />
