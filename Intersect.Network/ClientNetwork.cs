@@ -72,41 +72,8 @@ public partial class ClientNetwork : AbstractNetwork, IClient
 
             if (Configuration.Host is not { } hostNameOrAddress || UnresolvableHostNames.Contains(hostNameOrAddress))
             {
-                return -1;
-            }
-
-            try
-            {
-                // TODO: Add feature-specific log filtering, this one gets annoying
-                // ApplicationContext.Logger.LogTrace("Sending ping to server");
-
-                // Send a ping to the server. Timeout: 5000ms (5 seconds). Packet size: 32 bytes. TTL: 64. Don't fragment.
-                var reply = _ping.Send(hostNameOrAddress, 5000, [], new PingOptions(64, true));
-                if (reply is { Status: IPStatus.Success })
-                {
-                    // Return the roundtrip time in milliseconds (ms) as an integer value (no decimals).
-                    return (int)reply.RoundtripTime;
-                }
-            }
-            catch (PingException pingException)
-            {
-                if (pingException.InnerException is SocketException { SocketErrorCode: SocketError.HostNotFound })
-                {
-                    UnresolvableHostNames.Add(hostNameOrAddress);
-                    ApplicationContext.Logger.LogWarning(
-                        pingException,
-                        "Invalid hostname '{HostNameOrAddress}' will not be pinged again",
-                        hostNameOrAddress
-                    );
-                }
-                else
-                {
-                    ApplicationContext.Logger.LogWarning(pingException, "Error sending ping request");
-                }
-            }
-            catch (Exception exception)
-            {
-                ApplicationContext.Logger.LogWarning(exception, "Unknown error sending ping request");
+                // Return a distinct ping value for unresolved host addresses so that it's clear why it's not showing
+                return -2;
             }
 
             return -1;

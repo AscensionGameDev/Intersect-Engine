@@ -17,6 +17,7 @@ using Intersect.Client.Localization;
 using Intersect.Core;
 using Intersect.Framework.Core;
 using Intersect.Network.Packets.Unconnected.Client;
+using Intersect.Network.Packets.Unconnected.Server;
 using Intersect.Rsa;
 using Microsoft.Extensions.Logging;
 
@@ -97,6 +98,9 @@ internal partial class MonoSocket : GameSocket
     private int? _lastPort;
     private IPEndPoint? _lastEndpoint;
     private volatile bool _resolvingHost;
+    private int _ping;
+
+    private ServerStatusRequestMetadata? _serverStatusRequestMetadata;
 
     public static MonoSocket Instance { get; private set; } = default!;
 
@@ -108,7 +112,7 @@ internal partial class MonoSocket : GameSocket
 
     public override bool IsConnected => Network.IsConnected;
 
-    public override int Ping => Network.Ping;
+    public override int Ping => _ping < 0 ? Network.Ping : _ping;
 
     private bool TryResolveEndPoint([NotNullWhen(true)] out IPEndPoint? endPoint)
     {
@@ -210,60 +214,80 @@ internal partial class MonoSocket : GameSocket
             OnDataReceived(dequeued.Value);
         }
 
-        // ReSharper disable once InvertIf
-        if (Globals.GameState == GameStates.Menu)
+        switch (Globals.GameState)
         {
-            var now = Timing.Global.MillisecondsUtc;
-            // ReSharper disable once InvertIf
-            if (_nextServerStatusPing <= now || MainMenu.LastNetworkStatusChangeTime < 0)
+            case GameStates.InGame:
+            case GameStates.Error:
+            case GameStates.Intro:
+            case GameStates.Loading:
+                _ping = -1;
+                break;
+
+            case GameStates.Menu:
             {
-                if (!_resolvingHost)
+                var now = Timing.Global.MillisecondsUtc;
+                // ReSharper disable once InvertIf
+                if (_nextServerStatusPing <= now || MainMenu.LastNetworkStatusChangeTime < 0)
                 {
-                    _resolvingHost = true;
-                    Task.Run(
-                        () =>
-                        {
-                            try
+                    if (!_resolvingHost)
+                    {
+                        _resolvingHost = true;
+                        Task.Run(
+                            () =>
                             {
-                                if (TryResolveEndPoint(out var serverEndpoint))
+                                try
                                 {
-                                    var network = Network;
-                                    if (network == default)
+                                    if (TryResolveEndPoint(out var serverEndpoint))
                                     {
-                                        ApplicationContext.Context.Value?.Logger.LogInformation("No network created to poll for server status.");
-                                    }
-                                    else
-                                    {
-                                        network.SendUnconnected(
-                                            serverEndpoint,
-                                            new ServerStatusRequestPacket
+                                        var network = Network;
+                                        if (network == default)
+                                        {
+                                            ApplicationContext.Context.Value?.Logger.LogInformation("No network created to poll for server status.");
+                                        }
+                                        else
+                                        {
+                                            ServerStatusRequestMetadata requestMetadata = new()
                                             {
-                                                VersionData = SharedConstants.VersionData,
-                                            }
-                                        );
+                                                RequestTime = DateTime.UtcNow,
+                                                StateToken = Guid.NewGuid(),
+                                            };
+
+                                            network.SendUnconnected(
+                                                serverEndpoint,
+                                                new ServerStatusRequestPacket
+                                                {
+                                                    StateToken = requestMetadata.StateToken.ToByteArray(),
+                                                    VersionData = SharedConstants.VersionData,
+                                                }
+                                            );
+
+                                            _serverStatusRequestMetadata = requestMetadata;
+                                        }
+                                    }
+                                    else if (!ClientNetwork.UnresolvableHostNames.Contains(_lastHost))
+                                    {
+                                        ApplicationContext.Context.Value?.Logger.LogInformation($"Unable to resolve '{_lastHost}:{_lastPort}'");
                                     }
                                 }
-                                else if (!ClientNetwork.UnresolvableHostNames.Contains(_lastHost))
+                                catch (Exception exception)
                                 {
-                                    ApplicationContext.Context.Value?.Logger.LogInformation($"Unable to resolve '{_lastHost}:{_lastPort}'");
+                                    ApplicationContext.Context.Value?.Logger.LogError(exception, "Error resolving host");
                                 }
-                            }
-                            catch (Exception exception)
-                            {
-                                ApplicationContext.Context.Value?.Logger.LogError(exception, "Error resolving host");
-                            }
 
-                            _resolvingHost = false;
-                        }
-                    );
+                                _resolvingHost = false;
+                            }
+                        );
+                    }
+
+                    if (MainMenu.LastNetworkStatusChangeTime + (int)(ServerStatusPingInterval * 1.5f) < now)
+                    {
+                        MainMenu.SetNetworkStatus(NetworkStatus.Offline);
+                    }
+
+                    _nextServerStatusPing = now + ServerStatusPingInterval;
                 }
 
-                if (MainMenu.LastNetworkStatusChangeTime + (int)(ServerStatusPingInterval * 1.5f) < now)
-                {
-                    MainMenu.SetNetworkStatus(NetworkStatus.Offline);
-                }
-
-                _nextServerStatusPing = now + ServerStatusPingInterval;
+                break;
             }
         }
     }
@@ -278,5 +302,31 @@ internal partial class MonoSocket : GameSocket
         _network?.Close();
         _network?.Dispose();
         _network = default;
+    }
+
+    public void NotifyServerStatusResponse(ServerStatusResponsePacket responsePacket)
+    {
+        var now = DateTime.UtcNow;
+
+        if (_serverStatusRequestMetadata is not {} requestMetadata)
+        {
+            return;
+        }
+
+        Guid responseStateToken = new(responsePacket.StateToken);
+        if (requestMetadata.StateToken != responseStateToken)
+        {
+            return;
+        }
+
+        var elapsed = now - requestMetadata.RequestTime;
+        _ping = (int)(elapsed.TotalMilliseconds * 0.5);
+        _serverStatusRequestMetadata = null;
+    }
+
+    private record struct ServerStatusRequestMetadata
+    {
+        public DateTime RequestTime { get; init; }
+        public Guid StateToken { get; init; }
     }
 }

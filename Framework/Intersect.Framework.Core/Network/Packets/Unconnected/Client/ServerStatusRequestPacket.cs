@@ -13,4 +13,6 @@ public partial class ServerStatusRequestPacket : UnconnectedRequestPacket
     }
 
     [Key(2)] public byte[] VersionData { get; set; }
+
+    [Key(3)] public byte[] StateToken { get; set; }
 }

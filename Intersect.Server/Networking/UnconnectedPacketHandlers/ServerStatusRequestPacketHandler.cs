@@ -16,6 +16,7 @@ public class ServerStatusRequestPacketHandler : AbstractPacketHandler<ServerStat
                 {
                     ResponseKey = packet.ResponseKey,
                     Status = NetworkStatus.VersionMismatch,
+                    StateToken = packet.StateToken,
                 }
             );
         }
@@ -27,6 +28,7 @@ public class ServerStatusRequestPacketHandler : AbstractPacketHandler<ServerStat
                 {
                     ResponseKey = packet.ResponseKey,
                     Status = NetworkStatus.ServerFull,
+                    StateToken = packet.StateToken,
                 }
             );
         }
@@ -36,6 +38,7 @@ public class ServerStatusRequestPacketHandler : AbstractPacketHandler<ServerStat
             {
                 ResponseKey = packet.ResponseKey,
                 Status = NetworkStatus.Online,
+                StateToken = packet.StateToken,
             }
         );
     }

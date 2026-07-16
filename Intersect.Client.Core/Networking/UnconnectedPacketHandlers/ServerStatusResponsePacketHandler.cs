@@ -1,4 +1,5 @@
 using Intersect.Client.Interface.Menu;
+using Intersect.Client.MonoGame.Network;
 using Intersect.Core;
 using Intersect.Network;
 using Intersect.Network.Packets.Unconnected.Server;
@@ -13,6 +14,7 @@ public class ServerStatusResponsePacketHandler : AbstractPacketHandler<ServerSta
     {
         try
         {
+            MonoSocket.Instance?.NotifyServerStatusResponse(packet);
             MainMenu.SetNetworkStatus(packet.Status);
             return true;
         }
