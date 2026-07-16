@@ -320,7 +320,7 @@ internal partial class MonoSocket : GameSocket
         }
 
         var elapsed = now - requestMetadata.RequestTime;
-        _ping = (int)(elapsed.TotalMilliseconds * 0.5);
+        _ping = (int)elapsed.TotalMilliseconds;
         _serverStatusRequestMetadata = null;
     }
 
