@@ -487,6 +487,11 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
 #if DIAGNOSTIC
         var logLatencyUpdate = true;
 #else
+        if (latency < 0)
+        {
+            return;
+        }
+
         var logLatencyUpdate = latency > 0;
 #endif
 
