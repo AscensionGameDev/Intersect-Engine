@@ -297,6 +297,24 @@
     <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_OpenShop.Designer.cs">
       <DependentUpon>EventCommand_OpenShop.cs</DependentUpon>
     </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangePet.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangePet.Designer.cs">
+      <DependentUpon>EventCommand_ChangePet.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_EnterDungeon.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_EnterDungeon.Designer.cs">
+      <DependentUpon>EventCommand_EnterDungeon.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_SetDungeonObjective.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_SetDungeonObjective.Designer.cs">
+      <DependentUpon>EventCommand_SetDungeonObjective.cs</DependentUpon>
+    </Compile>
     <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_Options.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -441,6 +459,24 @@
     <Compile Update="Forms\Editors\frmCraftingTables.Designer.cs">
       <DependentUpon>frmCraftingTables.cs</DependentUpon>
     </Compile>
+    <Compile Update="Forms\Editors\frmTitle.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\frmTitle.Designer.cs">
+      <DependentUpon>frmTitle.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\frmPet.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\frmPet.Designer.cs">
+      <DependentUpon>frmPet.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\frmDungeon.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\frmDungeon.Designer.cs">
+      <DependentUpon>frmDungeon.cs</DependentUpon>
+    </Compile>
     <Compile Update="Forms\Editors\frmDynamicRequirements.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -578,6 +614,15 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Forms\Editors\frmCraftingTables.resx">
       <DependentUpon>frmCraftingTables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Editors\frmTitle.resx">
+      <DependentUpon>frmTitle.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Editors\frmPet.resx">
+      <DependentUpon>frmPet.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Editors\frmDungeon.resx">
+      <DependentUpon>frmDungeon.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Forms\Editors\Events\frmEvent.resx">
       <DependentUpon>frmEvent.cs</DependentUpon>

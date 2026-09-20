@@ -45,6 +45,10 @@ public partial class EventCommandInput : UserControl
         {
             rdoUserVariables.Checked = true;
         }
+        else if (mMyCommand.VariableType == VariableType.InstanceVariable)
+        {
+            rdoInstanceVariables.Checked = true;
+        }
 
         LoadVariableList();
         InitLocalization();
@@ -63,6 +67,7 @@ public partial class EventCommandInput : UserControl
         rdoGlobalVariables.Text = Strings.EventInput.globalvariable;
         rdoGuildVariables.Text = Strings.EventInput.guildvariable;
         rdoUserVariables.Text = Strings.GameObjectStrings.UserVariable;
+        rdoInstanceVariables.Text = Strings.GameObjectStrings.InstanceVariable;
     }
 
     private void LoadVariableList()
@@ -111,6 +116,17 @@ public partial class EventCommandInput : UserControl
             {
                 UpdateMinMaxValues(
                    userVar.DataType
+                );
+            }
+        }
+        else if (rdoInstanceVariables.Checked)
+        {
+            cmbVariable.Items.AddRange(InstanceVariableDescriptor.Names);
+            cmbVariable.SelectedIndex = InstanceVariableDescriptor.ListIndex(mMyCommand.VariableId);
+            if (cmbVariable.SelectedIndex != -1 && InstanceVariableDescriptor.TryGet(InstanceVariableDescriptor.IdFromList(cmbVariable.SelectedIndex), out var instanceVar))
+            {
+                UpdateMinMaxValues(
+                   instanceVar.DataType
                 );
             }
         }
@@ -173,6 +189,11 @@ public partial class EventCommandInput : UserControl
             mMyCommand.VariableType = VariableType.UserVariable;
             mMyCommand.VariableId = UserVariableDescriptor.IdFromList(cmbVariable.SelectedIndex);
         }
+        else if (rdoInstanceVariables.Checked)
+        {
+            mMyCommand.VariableType = VariableType.InstanceVariable;
+            mMyCommand.VariableId = InstanceVariableDescriptor.IdFromList(cmbVariable.SelectedIndex);
+        }
 
         mEventEditor.FinishCommandEdit();
     }
@@ -203,6 +224,11 @@ public partial class EventCommandInput : UserControl
     }
 
     private void rdoUserVariables_CheckedChanged(object sender, EventArgs e)
+    {
+        VariableRadioChanged();
+    }
+
+    private void rdoInstanceVariables_CheckedChanged(object sender, EventArgs e)
     {
         VariableRadioChanged();
     }

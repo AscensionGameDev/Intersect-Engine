@@ -31,6 +31,7 @@ partial class ConditionControl_Variable
         grpVariable = new DarkUI.Controls.DarkGroupBox();
         grpSelectVariable = new DarkUI.Controls.DarkGroupBox();
         rdoUserVariable = new DarkUI.Controls.DarkRadioButton();
+        rdoInstanceVariable = new DarkUI.Controls.DarkRadioButton();
         rdoPlayerVariable = new DarkUI.Controls.DarkRadioButton();
         cmbVariable = new DarkUI.Controls.DarkComboBox();
         rdoGlobalVariable = new DarkUI.Controls.DarkRadioButton();
@@ -40,7 +41,9 @@ partial class ConditionControl_Variable
         lblBetweenSeparator = new Label();
         rdoTimeSystem = new DarkUI.Controls.DarkRadioButton();
         cmbCompareUserVar = new DarkUI.Controls.DarkComboBox();
+        cmbCompareInstanceVar = new DarkUI.Controls.DarkComboBox();
         rdoVarCompareUserVar = new DarkUI.Controls.DarkRadioButton();
+        rdoVarCompareInstanceVar = new DarkUI.Controls.DarkRadioButton();
         cmbNumericComparitor = new DarkUI.Controls.DarkComboBox();
         nudVariableValue = new DarkUI.Controls.DarkNumericUpDown();
         lblNumericComparator = new Label();
@@ -59,7 +62,9 @@ partial class ConditionControl_Variable
         lblStringComparator = new Label();
         grpBooleanVariable = new DarkUI.Controls.DarkGroupBox();
         cmbBooleanUserVariable = new DarkUI.Controls.DarkComboBox();
+        cmbBooleanInstanceVariable = new DarkUI.Controls.DarkComboBox();
         optBooleanUserVariable = new DarkUI.Controls.DarkRadioButton();
+        optBooleanInstanceVariable = new DarkUI.Controls.DarkRadioButton();
         optBooleanTrue = new DarkUI.Controls.DarkRadioButton();
         optBooleanFalse = new DarkUI.Controls.DarkRadioButton();
         cmbBooleanComparator = new DarkUI.Controls.DarkComboBox();
@@ -92,7 +97,7 @@ partial class ConditionControl_Variable
         grpVariable.Margin = new Padding(4, 3, 4, 3);
         grpVariable.Name = "grpVariable";
         grpVariable.Padding = new Padding(4, 3, 4, 3);
-        grpVariable.Size = new Size(308, 435);
+        grpVariable.Size = new Size(308, 466);
         grpVariable.TabIndex = 25;
         grpVariable.TabStop = false;
         grpVariable.Text = "Variable is...";
@@ -102,6 +107,7 @@ partial class ConditionControl_Variable
         grpSelectVariable.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         grpSelectVariable.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
         grpSelectVariable.Controls.Add(rdoUserVariable);
+        grpSelectVariable.Controls.Add(rdoInstanceVariable);
         grpSelectVariable.Controls.Add(rdoPlayerVariable);
         grpSelectVariable.Controls.Add(cmbVariable);
         grpSelectVariable.Controls.Add(rdoGlobalVariable);
@@ -126,6 +132,17 @@ partial class ConditionControl_Variable
         rdoUserVariable.TabIndex = 36;
         rdoUserVariable.Text = "Account Variable";
         rdoUserVariable.CheckedChanged += rdoUserVariable_CheckedChanged;
+        // 
+        // rdoInstanceVariable
+        // 
+        rdoInstanceVariable.AutoSize = true;
+        rdoInstanceVariable.Location = new System.Drawing.Point(8, 70);
+        rdoInstanceVariable.Margin = new Padding(4, 3, 4, 3);
+        rdoInstanceVariable.Name = "rdoInstanceVariable";
+        rdoInstanceVariable.Size = new Size(114, 19);
+        rdoInstanceVariable.TabIndex = 36;
+        rdoInstanceVariable.Text = "Instance Variable";
+        rdoInstanceVariable.CheckedChanged += rdoInstanceVariable_CheckedChanged;
         // 
         // rdoPlayerVariable
         // 
@@ -192,7 +209,9 @@ partial class ConditionControl_Variable
         grpNumericVariable.Controls.Add(lblBetweenSeparator);
         grpNumericVariable.Controls.Add(rdoTimeSystem);
         grpNumericVariable.Controls.Add(cmbCompareUserVar);
+        grpNumericVariable.Controls.Add(cmbCompareInstanceVar);
         grpNumericVariable.Controls.Add(rdoVarCompareUserVar);
+        grpNumericVariable.Controls.Add(rdoVarCompareInstanceVar);
         grpNumericVariable.Controls.Add(cmbNumericComparitor);
         grpNumericVariable.Controls.Add(nudVariableValue);
         grpNumericVariable.Controls.Add(lblNumericComparator);
@@ -208,7 +227,7 @@ partial class ConditionControl_Variable
         grpNumericVariable.Margin = new Padding(4, 3, 4, 3);
         grpNumericVariable.Name = "grpNumericVariable";
         grpNumericVariable.Padding = new Padding(4, 3, 4, 3);
-        grpNumericVariable.Size = new Size(288, 264);
+        grpNumericVariable.Size = new Size(288, 295);
         grpNumericVariable.TabIndex = 51;
         grpNumericVariable.TabStop = false;
         grpNumericVariable.Text = "Numeric Variable:";
@@ -239,7 +258,7 @@ partial class ConditionControl_Variable
         // rdoTimeSystem
         // 
         rdoTimeSystem.AutoSize = true;
-        rdoTimeSystem.Location = new System.Drawing.Point(9, 236);
+        rdoTimeSystem.Location = new System.Drawing.Point(9, 267);
         rdoTimeSystem.Margin = new Padding(4, 3, 4, 3);
         rdoTimeSystem.Name = "rdoTimeSystem";
         rdoTimeSystem.Size = new Size(92, 19);
@@ -268,6 +287,27 @@ partial class ConditionControl_Variable
         cmbCompareUserVar.Text = null;
         cmbCompareUserVar.TextPadding = new Padding(2);
         // 
+        // cmbCompareInstanceVar
+        // 
+        cmbCompareInstanceVar.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+        cmbCompareInstanceVar.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+        cmbCompareInstanceVar.BorderStyle = ButtonBorderStyle.Solid;
+        cmbCompareInstanceVar.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+        cmbCompareInstanceVar.DrawDropdownHoverOutline = false;
+        cmbCompareInstanceVar.DrawFocusRectangle = false;
+        cmbCompareInstanceVar.DrawMode = DrawMode.OwnerDrawFixed;
+        cmbCompareInstanceVar.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbCompareInstanceVar.FlatStyle = FlatStyle.Flat;
+        cmbCompareInstanceVar.ForeColor = System.Drawing.Color.Gainsboro;
+        cmbCompareInstanceVar.FormattingEnabled = true;
+        cmbCompareInstanceVar.Location = new System.Drawing.Point(172, 237);
+        cmbCompareInstanceVar.Margin = new Padding(4, 3, 4, 3);
+        cmbCompareInstanceVar.Name = "cmbCompareInstanceVar";
+        cmbCompareInstanceVar.Size = new Size(109, 24);
+        cmbCompareInstanceVar.TabIndex = 51;
+        cmbCompareInstanceVar.Text = null;
+        cmbCompareInstanceVar.TextPadding = new Padding(2);
+        // 
         // rdoVarCompareUserVar
         // 
         rdoVarCompareUserVar.AutoSize = true;
@@ -278,6 +318,17 @@ partial class ConditionControl_Variable
         rdoVarCompareUserVar.TabIndex = 50;
         rdoVarCompareUserVar.Text = "Account Variable Value:";
         rdoVarCompareUserVar.CheckedChanged += rdoVarCompareUserVar_CheckedChanged;
+        // 
+        // rdoVarCompareInstanceVar
+        // 
+        rdoVarCompareInstanceVar.AutoSize = true;
+        rdoVarCompareInstanceVar.Location = new System.Drawing.Point(9, 238);
+        rdoVarCompareInstanceVar.Margin = new Padding(4, 3, 4, 3);
+        rdoVarCompareInstanceVar.Name = "rdoVarCompareInstanceVar";
+        rdoVarCompareInstanceVar.Size = new Size(148, 19);
+        rdoVarCompareInstanceVar.TabIndex = 50;
+        rdoVarCompareInstanceVar.Text = "Instance Variable Value:";
+        rdoVarCompareInstanceVar.CheckedChanged += rdoVarCompareInstanceVar_CheckedChanged;
         // 
         // cmbNumericComparitor
         // 
@@ -522,7 +573,9 @@ partial class ConditionControl_Variable
         grpBooleanVariable.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         grpBooleanVariable.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
         grpBooleanVariable.Controls.Add(cmbBooleanUserVariable);
+        grpBooleanVariable.Controls.Add(cmbBooleanInstanceVariable);
         grpBooleanVariable.Controls.Add(optBooleanUserVariable);
+        grpBooleanVariable.Controls.Add(optBooleanInstanceVariable);
         grpBooleanVariable.Controls.Add(optBooleanTrue);
         grpBooleanVariable.Controls.Add(optBooleanFalse);
         grpBooleanVariable.Controls.Add(cmbBooleanComparator);
@@ -538,7 +591,7 @@ partial class ConditionControl_Variable
         grpBooleanVariable.Margin = new Padding(4, 3, 4, 3);
         grpBooleanVariable.Name = "grpBooleanVariable";
         grpBooleanVariable.Padding = new Padding(4, 3, 4, 3);
-        grpBooleanVariable.Size = new Size(288, 210);
+        grpBooleanVariable.Size = new Size(288, 236);
         grpBooleanVariable.TabIndex = 52;
         grpBooleanVariable.TabStop = false;
         grpBooleanVariable.Text = "Boolean Variable:";
@@ -564,6 +617,27 @@ partial class ConditionControl_Variable
         cmbBooleanUserVariable.Text = null;
         cmbBooleanUserVariable.TextPadding = new Padding(2);
         // 
+        // cmbBooleanInstanceVariable
+        // 
+        cmbBooleanInstanceVariable.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+        cmbBooleanInstanceVariable.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+        cmbBooleanInstanceVariable.BorderStyle = ButtonBorderStyle.Solid;
+        cmbBooleanInstanceVariable.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+        cmbBooleanInstanceVariable.DrawDropdownHoverOutline = false;
+        cmbBooleanInstanceVariable.DrawFocusRectangle = false;
+        cmbBooleanInstanceVariable.DrawMode = DrawMode.OwnerDrawFixed;
+        cmbBooleanInstanceVariable.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbBooleanInstanceVariable.FlatStyle = FlatStyle.Flat;
+        cmbBooleanInstanceVariable.ForeColor = System.Drawing.Color.Gainsboro;
+        cmbBooleanInstanceVariable.FormattingEnabled = true;
+        cmbBooleanInstanceVariable.Location = new System.Drawing.Point(170, 205);
+        cmbBooleanInstanceVariable.Margin = new Padding(4, 3, 4, 3);
+        cmbBooleanInstanceVariable.Name = "cmbBooleanInstanceVariable";
+        cmbBooleanInstanceVariable.Size = new Size(109, 24);
+        cmbBooleanInstanceVariable.TabIndex = 52;
+        cmbBooleanInstanceVariable.Text = null;
+        cmbBooleanInstanceVariable.TextPadding = new Padding(2);
+        // 
         // optBooleanUserVariable
         // 
         optBooleanUserVariable.AutoSize = true;
@@ -573,6 +647,16 @@ partial class ConditionControl_Variable
         optBooleanUserVariable.Size = new Size(148, 19);
         optBooleanUserVariable.TabIndex = 51;
         optBooleanUserVariable.Text = "Account Variable Value:";
+        // 
+        // optBooleanInstanceVariable
+        // 
+        optBooleanInstanceVariable.AutoSize = true;
+        optBooleanInstanceVariable.Location = new System.Drawing.Point(13, 206);
+        optBooleanInstanceVariable.Margin = new Padding(4, 3, 4, 3);
+        optBooleanInstanceVariable.Name = "optBooleanInstanceVariable";
+        optBooleanInstanceVariable.Size = new Size(148, 19);
+        optBooleanInstanceVariable.TabIndex = 51;
+        optBooleanInstanceVariable.Text = "Instance Variable Value:";
         // 
         // optBooleanTrue
         // 
@@ -726,7 +810,7 @@ partial class ConditionControl_Variable
         BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         Controls.Add(grpVariable);
         Name = "ConditionControl_Variable";
-        Size = new Size(310, 437);
+        Size = new Size(310, 468);
         grpVariable.ResumeLayout(false);
         grpSelectVariable.ResumeLayout(false);
         grpSelectVariable.PerformLayout();
@@ -746,6 +830,7 @@ partial class ConditionControl_Variable
     private DarkUI.Controls.DarkGroupBox grpVariable;
     private DarkUI.Controls.DarkGroupBox grpSelectVariable;
     private DarkUI.Controls.DarkRadioButton rdoUserVariable;
+    private DarkUI.Controls.DarkRadioButton rdoInstanceVariable;
     private DarkUI.Controls.DarkRadioButton rdoPlayerVariable;
     internal DarkUI.Controls.DarkComboBox cmbVariable;
     private DarkUI.Controls.DarkRadioButton rdoGlobalVariable;
@@ -754,6 +839,8 @@ partial class ConditionControl_Variable
     internal DarkUI.Controls.DarkRadioButton rdoTimeSystem;
     internal DarkUI.Controls.DarkComboBox cmbCompareUserVar;
     internal DarkUI.Controls.DarkRadioButton rdoVarCompareUserVar;
+    internal DarkUI.Controls.DarkComboBox cmbCompareInstanceVar;
+    internal DarkUI.Controls.DarkRadioButton rdoVarCompareInstanceVar;
     private DarkUI.Controls.DarkComboBox cmbNumericComparitor;
     private DarkUI.Controls.DarkNumericUpDown nudVariableValue;
     private Label lblNumericComparator;
@@ -773,6 +860,8 @@ partial class ConditionControl_Variable
     private DarkUI.Controls.DarkGroupBox grpBooleanVariable;
     internal DarkUI.Controls.DarkComboBox cmbBooleanUserVariable;
     internal DarkUI.Controls.DarkRadioButton optBooleanUserVariable;
+    internal DarkUI.Controls.DarkComboBox cmbBooleanInstanceVariable;
+    internal DarkUI.Controls.DarkRadioButton optBooleanInstanceVariable;
     internal DarkUI.Controls.DarkRadioButton optBooleanTrue;
     internal DarkUI.Controls.DarkRadioButton optBooleanFalse;
     private DarkUI.Controls.DarkComboBox cmbBooleanComparator;

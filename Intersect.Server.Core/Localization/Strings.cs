@@ -647,6 +647,9 @@ public static partial class Strings
         public readonly LocalizedString UserVariable = @"\uservar";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString InstanceVariable = @"\instvar";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString WatchdogKill = @"Event killed due to commands processed in a single frame surpassing Event Watchdog Threshold. (Map: {00} Event: {01})";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1003,6 +1006,72 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString Product = @"Intersect Game Engine";
+    }
+
+    public sealed partial class DungeonsNamespace : LocaleNamespace
+    {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString AlreadyInDungeon = @"You are already in a dungeon.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Completed = @"Dungeon {00} completed in {01}!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Entered = @"You have entered {00}.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Failed = @"Dungeon {00} failed: {01}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString FailedByEvent = @"the run was ended.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString GuildRequired = @"You must be in a guild to enter this dungeon.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString InvalidEntry = @"This dungeon has no valid entrance yet.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString InviteAccepted = @"{00} accepted the dungeon invitation.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString InviteDeclined = @"{00} declined the dungeon invitation.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString InvitePending = @"You already have a dungeon invitation waiting for answers.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString InviteSent = @"Dungeon invitation sent to {00} party member(s). The run starts when everyone answered (20s max).";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString LeaderOnly = @"Only the party leader can start a dungeon.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString LevelTooLow = @"You must be level {00} to enter this dungeon.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString LivesRemaining = @"{00} has fallen! {01} live(s) remaining.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString MemberSkipped = @"{00}: {01}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString NobodyEligible = @"Nobody in your group can enter this dungeon right now.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString NotEnoughPlayers = @"This dungeon requires at least {00} players.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString OnCooldown = @"You can enter this dungeon again in {00}.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString OutOfLives = @"no lives left.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString OutOfTime = @"time is up.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString TooManyPlayers = @"This dungeon allows at most {00} players.";
     }
 
     public sealed partial class PartiesNamespace : LocaleNamespace
@@ -1473,6 +1542,8 @@ public static partial class Strings
 
         public readonly NotificationsNamespace NotificationsNamespace = new NotificationsNamespace();
 
+        public readonly DungeonsNamespace Dungeons = new DungeonsNamespace();
+
         public readonly PartiesNamespace Parties = new PartiesNamespace();
 
         public readonly PasswordResetNotificationNamespace PasswordResetNotificationNamespace =
@@ -1549,6 +1620,8 @@ public static partial class Strings
     public static NetworkingNamespace Networking => Root.Networking;
 
     public static NotificationsNamespace Notifications => Root.NotificationsNamespace;
+
+    public static DungeonsNamespace Dungeons => Root.Dungeons;
 
     public static PartiesNamespace Parties => Root.Parties;
 

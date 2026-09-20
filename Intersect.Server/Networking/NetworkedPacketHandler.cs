@@ -3,14 +3,17 @@ using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Dungeons;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Pets;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
+using Intersect.Framework.Core.GameObjects.Titles;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Core.Security;
 using Intersect.GameObjects;
@@ -976,6 +979,26 @@ internal sealed partial class NetworkedPacketHandler
 
                     break;
 
+                case GameObjectType.Title:
+                    obj = TitleDescriptor.Get(id);
+
+                    break;
+
+                case GameObjectType.Pet:
+                    obj = PetDescriptor.Get(id);
+
+                    break;
+
+                case GameObjectType.Dungeon:
+                    obj = DungeonDescriptor.Get(id);
+
+                    break;
+
+                case GameObjectType.InstanceVariable:
+                    obj = InstanceVariableDescriptor.Get(id);
+
+                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -996,6 +1019,16 @@ internal sealed partial class NetworkedPacketHandler
                         break;
                     case ResourceDescriptor resourceDescriptor:
                         MapController.DespawnInstancesOf(resourceDescriptor);
+                        break;
+                    //if Title, take it off anyone currently wearing it
+                    case TitleDescriptor titleDescriptor:
+                        foreach (var player in Player.OnlinePlayers)
+                        {
+                            if (player.EquippedTitleId == titleDescriptor.Id)
+                            {
+                                player.RemoveTitle();
+                            }
+                        }
                         break;
                 }
 
@@ -1108,6 +1141,26 @@ internal sealed partial class NetworkedPacketHandler
 
                     break;
 
+                case GameObjectType.Title:
+                    obj = TitleDescriptor.Get(id);
+
+                    break;
+
+                case GameObjectType.Pet:
+                    obj = PetDescriptor.Get(id);
+
+                    break;
+
+                case GameObjectType.Dungeon:
+                    obj = DungeonDescriptor.Get(id);
+
+                    break;
+
+                case GameObjectType.InstanceVariable:
+                    obj = InstanceVariableDescriptor.Get(id);
+
+                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -1184,6 +1237,21 @@ internal sealed partial class NetworkedPacketHandler
                     else if (type == GameObjectType.UserVariable)
                     {
                         DbInterface.CacheUserVariableEventTextLookups();
+                    }
+                    else if (type == GameObjectType.InstanceVariable)
+                    {
+                        DbInterface.CacheInstanceVariableEventTextLookups();
+                    }
+                    else if (type == GameObjectType.Title)
+                    {
+                        // Refresh the label of anyone wearing this title so renames/recolors show up immediately
+                        foreach (var player in Player.OnlinePlayers)
+                        {
+                            if (player.EquippedTitleId == obj.Id)
+                            {
+                                player.EquipTitle(obj.Id);
+                            }
+                        }
                     }
 
                     DbInterface.SaveGameObject(obj);

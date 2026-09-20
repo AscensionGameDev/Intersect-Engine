@@ -18,6 +18,13 @@ public partial class PlayerOptions
     public bool AllowCombatMovement { get; set; } = true;
 
     /// <summary>
+    /// While a player keeps walking, the next tile move is measured from the previous move timer's expiry rather than
+    /// from the (frame-quantized) moment the client sent it, as long as the gap is at most this many milliseconds.
+    /// Removes the tiny stall between tiles. 0 disables chaining.
+    /// </summary>
+    public long MoveTimerChainWindowMs { get; set; } = 100;
+
+    /// <summary>
     /// Sets the delay (milliseconds) for the feature 'Auto-turn to target'.
     /// </summary>
     public ushort AutoTurnToTargetDelay { get; set; } = 500;

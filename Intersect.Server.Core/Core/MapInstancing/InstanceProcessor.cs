@@ -26,6 +26,7 @@ public static class InstanceProcessor
         foreach (var id in processingInstances)
         {
             InstanceControllers.Remove(id);
+            InstanceVariables.Clear(id);
             ApplicationContext.Context.Value?.Logger.LogDebug($"Removing instance controller {id}");
         }
     }

@@ -107,4 +107,25 @@ public enum VariableModType
 
     [RelatedVariableType(VariableType.UserVariable)]
     RightShiftUserVariable,
+
+    [RelatedVariableType(VariableType.InstanceVariable)]
+    DuplicateInstanceVariable,
+
+    [RelatedVariableType(VariableType.InstanceVariable)]
+    AddInstanceVariable,
+
+    [RelatedVariableType(VariableType.InstanceVariable)]
+    SubtractInstanceVariable,
+
+    [RelatedVariableType(VariableType.InstanceVariable)]
+    MultiplyInstanceVariable,
+
+    [RelatedVariableType(VariableType.InstanceVariable)]
+    DivideInstanceVariable,
+
+    [RelatedVariableType(VariableType.InstanceVariable)]
+    LeftShiftInstanceVariable,
+
+    [RelatedVariableType(VariableType.InstanceVariable)]
+    RightShiftInstanceVariable,
 }

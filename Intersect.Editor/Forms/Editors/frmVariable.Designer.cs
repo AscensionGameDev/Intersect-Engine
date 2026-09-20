@@ -34,6 +34,7 @@ namespace Intersect.Editor.Forms.Editors
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmSwitchVariable));
             this.grpTypes = new DarkUI.Controls.DarkGroupBox();
             this.rdoUserVariables = new DarkUI.Controls.DarkRadioButton();
+            this.rdoInstanceVariables = new DarkUI.Controls.DarkRadioButton();
             this.rdoGuildVariables = new DarkUI.Controls.DarkRadioButton();
             this.rdoGlobalVariables = new DarkUI.Controls.DarkRadioButton();
             this.rdoPlayerVariables = new DarkUI.Controls.DarkRadioButton();
@@ -81,13 +82,14 @@ namespace Intersect.Editor.Forms.Editors
             this.grpTypes.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpTypes.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpTypes.Controls.Add(this.rdoUserVariables);
+            this.grpTypes.Controls.Add(this.rdoInstanceVariables);
             this.grpTypes.Controls.Add(this.rdoGuildVariables);
             this.grpTypes.Controls.Add(this.rdoGlobalVariables);
             this.grpTypes.Controls.Add(this.rdoPlayerVariables);
             this.grpTypes.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpTypes.Location = new System.Drawing.Point(13, 13);
             this.grpTypes.Name = "grpTypes";
-            this.grpTypes.Size = new System.Drawing.Size(490, 53);
+            this.grpTypes.Size = new System.Drawing.Size(600, 53);
             this.grpTypes.TabIndex = 0;
             this.grpTypes.TabStop = false;
             this.grpTypes.Text = "Variable Type";
@@ -101,6 +103,16 @@ namespace Intersect.Editor.Forms.Editors
             this.rdoUserVariables.TabIndex = 5;
             this.rdoUserVariables.Text = "User Variables";
             this.rdoUserVariables.CheckedChanged += new System.EventHandler(this.rdoUserVariables_CheckedChanged);
+            // 
+            // rdoInstanceVariables
+            // 
+            this.rdoInstanceVariables.AutoSize = true;
+            this.rdoInstanceVariables.Location = new System.Drawing.Point(470, 20);
+            this.rdoInstanceVariables.Name = "rdoInstanceVariables";
+            this.rdoInstanceVariables.Size = new System.Drawing.Size(125, 17);
+            this.rdoInstanceVariables.TabIndex = 6;
+            this.rdoInstanceVariables.Text = "Instance Variables";
+            this.rdoInstanceVariables.CheckedChanged += new System.EventHandler(this.rdoInstanceVariables_CheckedChanged);
             // 
             // rdoGuildVariables
             // 
@@ -535,7 +547,7 @@ namespace Intersect.Editor.Forms.Editors
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.ClientSize = new System.Drawing.Size(515, 554);
+            this.ClientSize = new System.Drawing.Size(625, 554);
             this.ControlBox = true;
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
@@ -601,5 +613,6 @@ namespace Intersect.Editor.Forms.Editors
         private Controls.GameObjectList lstGameObjects;
         private DarkRadioButton rdoGuildVariables;
         private DarkRadioButton rdoUserVariables;
+        private DarkRadioButton rdoInstanceVariables;
     }
 }

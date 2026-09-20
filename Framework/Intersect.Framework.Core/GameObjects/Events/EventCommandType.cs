@@ -136,4 +136,12 @@ public enum EventCommandType
     CastSpellOn,
 
     Fade,
+
+    ChangePet,
+
+    //Dungeons
+    EnterDungeon,
+    CompleteDungeon,
+    FailDungeon,
+    SetDungeonObjective,
 }

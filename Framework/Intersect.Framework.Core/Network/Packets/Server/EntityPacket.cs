@@ -9,6 +9,7 @@ namespace Intersect.Network.Packets.Server;
 [Union(2, typeof(NpcEntityPacket))]
 [Union(3, typeof(ProjectileEntityPacket))]
 [Union(4, typeof(ResourceEntityPacket))]
+[Union(5, typeof(PetEntityPacket))]
 public abstract partial class EntityPacket : IntersectPacket
 {
 

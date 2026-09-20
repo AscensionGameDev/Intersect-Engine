@@ -4,6 +4,7 @@ using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.GameObjects.Conditions.ConditionMetadata;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Variables;
+using Intersect.Server.Core.MapInstancing;
 using Intersect.GameObjects;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
@@ -123,6 +124,10 @@ public static partial class Conditions
         else if (condition.VariableType == VariableType.UserVariable)
         {
             value = player.User.GetVariableValue(condition.VariableId);
+        }
+        else if (condition.VariableType == VariableType.InstanceVariable)
+        {
+            value = InstanceVariables.GetVariableValue(player.MapInstanceId, condition.VariableId);
         }
 
         if (value == null)
@@ -513,6 +518,21 @@ public static partial class Conditions
     }
 
     public static bool MeetsCondition(
+        InDungeonCondition condition,
+        Player player,
+        Event eventInstance,
+        QuestDescriptor questDescriptor)
+    {
+        var dungeon = player.CurrentDungeon;
+        if (dungeon == null || !dungeon.IsRunning)
+        {
+            return false;
+        }
+
+        return condition.DungeonId == Guid.Empty || dungeon.Descriptor.Id == condition.DungeonId;
+    }
+
+    public static bool MeetsCondition(
         CombatCondition condition,
         Player player,
         Event eventInstance,
@@ -558,6 +578,10 @@ public static partial class Conditions
             else if (comparison.CompareVariableType == VariableType.UserVariable)
             {
                 compValue = player.User.GetVariableValue(comparison.CompareVariableId);
+            }
+            else if (comparison.CompareVariableType == VariableType.InstanceVariable)
+            {
+                compValue = InstanceVariables.GetVariableValue(player.MapInstanceId, comparison.CompareVariableId);
             }
         }
         else
@@ -618,6 +642,10 @@ public static partial class Conditions
             else if (comparison.CompareVariableType == VariableType.UserVariable)
             {
                 compValue = player.User.GetVariableValue(comparison.CompareVariableId);
+            }
+            else if (comparison.CompareVariableType == VariableType.InstanceVariable)
+            {
+                compValue = InstanceVariables.GetVariableValue(player.MapInstanceId, comparison.CompareVariableId);
             }
         }
         else if (comparison.TimeSystem)

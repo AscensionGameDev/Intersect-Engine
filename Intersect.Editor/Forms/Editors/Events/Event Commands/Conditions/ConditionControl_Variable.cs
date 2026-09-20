@@ -34,6 +34,7 @@ public partial class ConditionControl_Variable : UserControl
         rdoGlobalVariable.Text = Strings.EventConditional.globalvariable;
         rdoGuildVariable.Text = Strings.EventConditional.guildvariable;
         rdoUserVariable.Text = Strings.GameObjectStrings.UserVariable;
+        rdoInstanceVariable.Text = Strings.GameObjectStrings.InstanceVariable;
 
         //Numeric Variable
         grpNumericVariable.Text = Strings.EventConditional.numericvariable;
@@ -43,6 +44,7 @@ public partial class ConditionControl_Variable : UserControl
         rdoVarCompareGlobalVar.Text = Strings.EventConditional.globalvariablevalue;
         rdoVarCompareGuildVar.Text = Strings.EventConditional.guildvariablevalue;
         rdoVarCompareUserVar.Text = Strings.EventConditional.UserVariableValue;
+        rdoVarCompareInstanceVar.Text = Strings.EventConditional.InstanceVariableValue;
         cmbNumericComparitor.Items.Clear();
         cmbNumericComparitor.Items.AddRange(Strings.EventConditional.comparators.Values.ToArray());
         cmbNumericComparitor.SelectedIndex = 0;
@@ -59,6 +61,7 @@ public partial class ConditionControl_Variable : UserControl
         optBooleanPlayerVariable.Text = Strings.EventConditional.playervariablevalue;
         optBooleanGuildVariable.Text = Strings.EventConditional.guildvariablevalue;
         optBooleanUserVariable.Text = Strings.EventConditional.UserVariableValue;
+        optBooleanInstanceVariable.Text = Strings.EventConditional.InstanceVariableValue;
 
         //String Variable
         grpStringVariable.Text = Strings.EventConditional.stringvariable;
@@ -92,6 +95,10 @@ public partial class ConditionControl_Variable : UserControl
         {
             rdoUserVariable.Checked = true;
         }
+        else if (condition.VariableType == VariableType.InstanceVariable)
+        {
+            rdoInstanceVariable.Checked = true;
+        }
 
         InitVariableElements(condition.VariableId);
         UpdateVariableElements();
@@ -118,6 +125,11 @@ public partial class ConditionControl_Variable : UserControl
         {
             condition.VariableType = VariableType.UserVariable;
             condition.VariableId = UserVariableDescriptor.IdFromList(cmbVariable.SelectedIndex);
+        }
+        else if (rdoInstanceVariable.Checked)
+        {
+            condition.VariableType = VariableType.InstanceVariable;
+            condition.VariableId = InstanceVariableDescriptor.IdFromList(cmbVariable.SelectedIndex);
         }
 
         if (grpBooleanVariable.Visible)
@@ -148,6 +160,8 @@ public partial class ConditionControl_Variable : UserControl
         cmbCompareGuildVar.Items.AddRange(GuildVariableDescriptor.Names);
         cmbCompareUserVar.Items.Clear();
         cmbCompareUserVar.Items.AddRange(UserVariableDescriptor.Names);
+        cmbCompareInstanceVar.Items.Clear();
+        cmbCompareInstanceVar.Items.AddRange(InstanceVariableDescriptor.Names);
 
         cmbBooleanGlobalVariable.Items.Clear();
         cmbBooleanGlobalVariable.Items.AddRange(ServerVariableDescriptor.Names);
@@ -157,6 +171,8 @@ public partial class ConditionControl_Variable : UserControl
         cmbBooleanGuildVariable.Items.AddRange(GuildVariableDescriptor.Names);
         cmbBooleanUserVariable.Items.Clear();
         cmbBooleanUserVariable.Items.AddRange(UserVariableDescriptor.Names);
+        cmbBooleanInstanceVariable.Items.Clear();
+        cmbBooleanInstanceVariable.Items.AddRange(InstanceVariableDescriptor.Names);
 
         base.Show();
     }
@@ -188,6 +204,11 @@ public partial class ConditionControl_Variable : UserControl
         {
             cmbVariable.Items.AddRange(UserVariableDescriptor.Names);
             cmbVariable.SelectedIndex = UserVariableDescriptor.ListIndex(variableId);
+        }
+        else if (rdoInstanceVariable.Checked)
+        {
+            cmbVariable.Items.AddRange(InstanceVariableDescriptor.Names);
+            cmbVariable.SelectedIndex = InstanceVariableDescriptor.ListIndex(variableId);
         }
 
         _root.Loading = false;
@@ -234,6 +255,14 @@ public partial class ConditionControl_Variable : UserControl
                 if (userVar != null)
                 {
                     varType = (byte)userVar.DataType;
+                }
+            }
+            else if (rdoInstanceVariable.Checked)
+            {
+                var instanceVar = InstanceVariableDescriptor.FromList(cmbVariable.SelectedIndex);
+                if (instanceVar != null)
+                {
+                    varType = (byte)instanceVar.DataType;
                 }
             }
         }
@@ -310,6 +339,11 @@ public partial class ConditionControl_Variable : UserControl
                 optBooleanUserVariable.Checked = true;
                 cmbBooleanUserVariable.SelectedIndex = UserVariableDescriptor.ListIndex(booleanComparison.CompareVariableId);
             }
+            else if (booleanComparison.CompareVariableType == VariableType.InstanceVariable)
+            {
+                optBooleanInstanceVariable.Checked = true;
+                cmbBooleanInstanceVariable.SelectedIndex = InstanceVariableDescriptor.ListIndex(booleanComparison.CompareVariableId);
+            }
         }
     }
 
@@ -348,6 +382,11 @@ public partial class ConditionControl_Variable : UserControl
             {
                 rdoVarCompareUserVar.Checked = true;
                 cmbCompareUserVar.SelectedIndex = UserVariableDescriptor.ListIndex(integerComparison.CompareVariableId);
+            }
+            else if (integerComparison.CompareVariableType == VariableType.InstanceVariable)
+            {
+                rdoVarCompareInstanceVar.Checked = true;
+                cmbCompareInstanceVar.SelectedIndex = InstanceVariableDescriptor.ListIndex(integerComparison.CompareVariableId);
             }
         }
         else if (integerComparison.TimeSystem)
@@ -414,6 +453,11 @@ public partial class ConditionControl_Variable : UserControl
             comparison.CompareVariableType = VariableType.UserVariable;
             comparison.CompareVariableId = UserVariableDescriptor.IdFromList(cmbBooleanUserVariable.SelectedIndex);
         }
+        else if (optBooleanInstanceVariable.Checked)
+        {
+            comparison.CompareVariableType = VariableType.InstanceVariable;
+            comparison.CompareVariableId = InstanceVariableDescriptor.IdFromList(cmbBooleanInstanceVariable.SelectedIndex);
+        }
 
         return comparison;
     }
@@ -460,6 +504,11 @@ public partial class ConditionControl_Variable : UserControl
             comparison.CompareVariableType = VariableType.UserVariable;
             comparison.CompareVariableId = UserVariableDescriptor.IdFromList(cmbCompareUserVar.SelectedIndex);
         }
+        else if (rdoVarCompareInstanceVar.Checked)
+        {
+            comparison.CompareVariableType = VariableType.InstanceVariable;
+            comparison.CompareVariableId = InstanceVariableDescriptor.IdFromList(cmbCompareInstanceVar.SelectedIndex);
+        }
         else
         {
             comparison.TimeSystem = true;
@@ -503,6 +552,8 @@ public partial class ConditionControl_Variable : UserControl
         cmbCompareGuildVar.Enabled = rdoVarCompareGuildVar.Checked;
         rdoVarCompareUserVar.Enabled = rdoVarCompareUserVar.Checked || !isBetween;
         cmbCompareUserVar.Enabled = rdoVarCompareUserVar.Checked;
+        rdoVarCompareInstanceVar.Enabled = rdoVarCompareInstanceVar.Checked || !isBetween;
+        cmbCompareInstanceVar.Enabled = rdoVarCompareInstanceVar.Checked;
         rdoTimeSystem.Enabled = rdoTimeSystem.Checked || !isBetween;
     }
 
@@ -534,6 +585,10 @@ public partial class ConditionControl_Variable : UserControl
     {
         UpdateNumericVariableElements();
     }
+    private void rdoVarCompareInstanceVar_CheckedChanged(object sender, EventArgs e)
+    {
+        UpdateNumericVariableElements();
+    }
 
     private void rdoTimeSystem_CheckedChanged(object sender, EventArgs e)
     {
@@ -560,6 +615,11 @@ public partial class ConditionControl_Variable : UserControl
     }
 
     private void rdoUserVariable_CheckedChanged(object sender, EventArgs e)
+    {
+        VariableRadioChanged();
+    }
+
+    private void rdoInstanceVariable_CheckedChanged(object sender, EventArgs e)
     {
         VariableRadioChanged();
     }
@@ -595,6 +655,10 @@ public partial class ConditionControl_Variable : UserControl
         else if (rdoUserVariable.Checked)
         {
             InitVariableElements(UserVariableDescriptor.IdFromList(cmbVariable.SelectedIndex));
+        }
+        else if (rdoInstanceVariable.Checked)
+        {
+            InitVariableElements(InstanceVariableDescriptor.IdFromList(cmbVariable.SelectedIndex));
         }
 
         UpdateVariableElements();

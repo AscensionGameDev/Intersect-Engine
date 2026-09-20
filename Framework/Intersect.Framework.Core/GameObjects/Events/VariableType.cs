@@ -20,4 +20,7 @@ public enum VariableType
 
     [RelatedTable(GameObjectType.UserVariable)]
     UserVariable,
+
+    [RelatedTable(GameObjectType.InstanceVariable)]
+    InstanceVariable,
 }

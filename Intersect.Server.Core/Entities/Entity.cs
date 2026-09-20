@@ -1608,6 +1608,11 @@ public abstract partial class Entity : IEntity
         ItemDescriptor parentItem,
         Direction projectileDir)
     {
+        if (target is Pet)
+        {
+            return;
+        }
+
         if (target is Resource && parentSpell != null)
         {
             return;
@@ -1768,7 +1773,7 @@ public abstract partial class Entity : IEntity
         bool trapTrigger = false
     )
     {
-        if (target is Resource || target is EventPageInstance)
+        if (target is Resource || target is EventPageInstance || target is Pet)
         {
             return;
         }
@@ -1988,7 +1993,7 @@ public abstract partial class Entity : IEntity
         List<KeyValuePair<Guid, Direction>> aliveAnimations = null,
         ItemDescriptor weapon = null)
     {
-        if (IsAttacking)
+        if (IsAttacking || target is Pet)
         {
             return;
         }
@@ -2072,7 +2077,8 @@ public abstract partial class Entity : IEntity
         var damagingAttack = baseDamage > 0;
         var secondaryDamagingAttack = secondaryDamage > 0;
 
-        if (enemy == null)
+        // Pets are decorative companions: nothing can hurt them.
+        if (enemy == null || enemy is Pet)
         {
             return;
         }

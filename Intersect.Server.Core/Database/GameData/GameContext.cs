@@ -1,13 +1,16 @@
 using Intersect.Extensions;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Dungeons;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Pets;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
+using Intersect.Framework.Core.GameObjects.Titles;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.Server.Database.GameData.Migrations;
@@ -75,6 +78,17 @@ public abstract partial class GameContext : IntersectDbContext<GameContext>, IGa
     public DbSet<GuildVariableDescriptor> GuildVariables { get; set; }
 
     public DbSet<UserVariableDescriptor> UserVariables { get; set; }
+
+    //Titles
+    public DbSet<TitleDescriptor> Titles { get; set; }
+
+    //Pets
+    public DbSet<PetDescriptor> Pets { get; set; }
+
+    //Dungeons
+    public DbSet<DungeonDescriptor> Dungeons { get; set; }
+
+    public DbSet<InstanceVariableDescriptor> InstanceVariables { get; set; }
 
     //Tilesets
     public DbSet<TilesetDescriptor> Tilesets { get; set; }

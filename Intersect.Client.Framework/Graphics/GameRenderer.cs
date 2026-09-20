@@ -558,6 +558,8 @@ public abstract partial class GameRenderer : IGameRenderer, ITextHelper
                 else if (texture.AccessTime > staleCutoffTime)
                 {
                     // We are below our stale VRAM threshold, but the texture is not yet considered stale, don't unload
+                    // The list is sorted by access time: if the oldest texture is not stale, none of them are.
+                    break;
                 }
                 else
                 {

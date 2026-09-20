@@ -68,7 +68,7 @@ public static partial class Strings
         public readonly LocaleCommand UnlockTitle = new LocaleCommand
         {
             Name = @"unlocktitle",
-            Description = @"Unlocks a title (by name, see resources/titles.json) for an online player.",
+            Description = @"Unlocks a title (by name, as defined in the Title Editor) for an online player.",
             Help = @"unlocks a title for an online player"
         };
 

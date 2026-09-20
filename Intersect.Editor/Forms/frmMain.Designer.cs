@@ -116,6 +116,9 @@ namespace Intersect.Editor.Forms
             this.spellEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.variableEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timeEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.titleEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.petEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dungeonEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.postQuestionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reportBugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -817,7 +820,10 @@ namespace Intersect.Editor.Forms
             this.shopEditorToolStripMenuItem,
             this.spellEditorToolStripMenuItem,
             this.variableEditorToolStripMenuItem,
-            this.timeEditorToolStripMenuItem});
+            this.timeEditorToolStripMenuItem,
+            this.titleEditorToolStripMenuItem,
+            this.petEditorToolStripMenuItem,
+            this.dungeonEditorToolStripMenuItem});
             this.contentEditorsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.contentEditorsToolStripMenuItem.Name = "contentEditorsToolStripMenuItem";
             this.contentEditorsToolStripMenuItem.Size = new System.Drawing.Size(101, 20);
@@ -934,6 +940,30 @@ namespace Intersect.Editor.Forms
             this.timeEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.timeEditorToolStripMenuItem.Text = "Time Editor";
             this.timeEditorToolStripMenuItem.Click += new System.EventHandler(this.timeEditorToolStripMenuItem_Click);
+            // 
+            // titleEditorToolStripMenuItem
+            // 
+            this.titleEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.titleEditorToolStripMenuItem.Name = "titleEditorToolStripMenuItem";
+            this.titleEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.titleEditorToolStripMenuItem.Text = "Title Editor";
+            this.titleEditorToolStripMenuItem.Click += new System.EventHandler(this.titleEditorToolStripMenuItem_Click);
+            // 
+            // petEditorToolStripMenuItem
+            // 
+            this.petEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.petEditorToolStripMenuItem.Name = "petEditorToolStripMenuItem";
+            this.petEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.petEditorToolStripMenuItem.Text = "Pet Editor";
+            this.petEditorToolStripMenuItem.Click += new System.EventHandler(this.petEditorToolStripMenuItem_Click);
+            // 
+            // dungeonEditorToolStripMenuItem
+            // 
+            this.dungeonEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.dungeonEditorToolStripMenuItem.Name = "dungeonEditorToolStripMenuItem";
+            this.dungeonEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.dungeonEditorToolStripMenuItem.Text = "Dungeon Editor";
+            this.dungeonEditorToolStripMenuItem.Click += new System.EventHandler(this.dungeonEditorToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -1110,6 +1140,9 @@ namespace Intersect.Editor.Forms
 		private ToolStripMenuItem spellEditorToolStripMenuItem;
 		private ToolStripMenuItem variableEditorToolStripMenuItem;
 		private ToolStripMenuItem timeEditorToolStripMenuItem;
+		private ToolStripMenuItem titleEditorToolStripMenuItem;
+		private ToolStripMenuItem petEditorToolStripMenuItem;
+		private ToolStripMenuItem dungeonEditorToolStripMenuItem;
 		private ToolStripMenuItem helpToolStripMenuItem;
 		private ToolStripMenuItem postQuestionToolStripMenuItem;
 		private ToolStripMenuItem reportBugToolStripMenuItem;

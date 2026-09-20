@@ -530,9 +530,16 @@ namespace Intersect.Server.Migrations.Sqlite.Player
                     b.Property<int>("Dir")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("DungeonDataJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("DungeonData");
+
                     b.Property<string>("EquipmentJson")
                         .HasColumnType("TEXT")
                         .HasColumnName("Equipment");
+
+                    b.Property<Guid>("EquippedTitleId")
+                        .HasColumnType("TEXT");
 
                     b.Property<long>("Exp")
                         .HasColumnType("INTEGER");
@@ -608,6 +615,9 @@ namespace Intersect.Server.Migrations.Sqlite.Player
                     b.Property<Guid>("PersonalMapInstanceId")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("PetId")
+                        .HasColumnType("TEXT");
+
                     b.Property<ulong>("PlayTimeSeconds")
                         .HasColumnType("INTEGER");
 
@@ -644,6 +654,10 @@ namespace Intersect.Server.Migrations.Sqlite.Player
                     b.Property<string>("StatsJson")
                         .HasColumnType("TEXT")
                         .HasColumnName("BaseStats");
+
+                    b.Property<string>("UnlockedTitlesJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("UnlockedTitles");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("TEXT");

@@ -339,6 +339,9 @@ public partial class MapInstance : IMapInstance
         if (mPlayers.ContainsKey(en.Id))
         {
             mPlayers.TryRemove(en.Id, out var pResult);
+
+            // A pet never outlives its owner's presence on the map; it is respawned when they enter the next one.
+            (en as Player)?.DespawnPet();
         }
         mCachedEntities = mEntities.Values.ToArray();
     }
@@ -388,6 +391,9 @@ public partial class MapInstance : IMapInstance
             PacketSender.SendMapItems(player, surroundingMapInstance.GetController().Id);
         }
         PacketSender.SendEntityDataToProximity(player, player);
+
+        // Bring the player's pet along.
+        player.SpawnPet();
     }
 
     /// <summary>
@@ -806,7 +812,8 @@ public partial class MapInstance : IMapInstance
                 DespawnTime = Timing.Global.Milliseconds + (itemDescriptor.DespawnTime <= 0 ? Options.Instance.Loot.ItemDespawnTime : itemDescriptor.DespawnTime),
                 Owner = owner,
                 OwnershipTime = Timing.Global.Milliseconds + Options.Instance.Loot.ItemOwnershipTime,
-                VisibleToAll = Options.Instance.Loot.ShowUnownedItems || owner == Guid.Empty
+                VisibleToAll = Options.Instance.Loot.ShowUnownedItems || owner == Guid.Empty,
+                DroppedByPlayer = source is EntityItemSource { EntityType: EntityType.Player }
             };
 
             if (mapItem.TileIndex > Options.Instance.Map.MapHeight * Options.Instance.Map.MapWidth || mapItem.TileIndex < 0)
@@ -841,7 +848,8 @@ public partial class MapInstance : IMapInstance
                     DespawnTime = Timing.Global.Milliseconds + Options.Instance.Loot.ItemDespawnTime,
                     Owner = owner,
                     OwnershipTime = Timing.Global.Milliseconds + Options.Instance.Loot.ItemOwnershipTime,
-                    VisibleToAll = Options.Instance.Loot.ShowUnownedItems || owner == Guid.Empty
+                    VisibleToAll = Options.Instance.Loot.ShowUnownedItems || owner == Guid.Empty,
+                    DroppedByPlayer = source is EntityItemSource { EntityType: EntityType.Player }
                 };
 
                 // If this is a piece of equipment, set up the stat buffs for it.

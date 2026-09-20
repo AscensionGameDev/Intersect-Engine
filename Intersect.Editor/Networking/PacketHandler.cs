@@ -7,14 +7,17 @@ using Intersect.Editor.Maps;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Dungeons;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Pets;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
+using Intersect.Framework.Core.GameObjects.Titles;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.Network;
@@ -733,6 +736,66 @@ internal sealed partial class PacketHandler
                     var pvar = new UserVariableDescriptor(id);
                     pvar.Load(json);
                     UserVariableDescriptor.Lookup.Set(id, pvar);
+                }
+
+                break;
+
+            case GameObjectType.Title:
+                if (deleted)
+                {
+                    var title = TitleDescriptor.Get(id);
+                    title.Delete();
+                }
+                else
+                {
+                    var title = new TitleDescriptor(id);
+                    title.Load(json);
+                    TitleDescriptor.Lookup.Set(id, title);
+                }
+
+                break;
+
+            case GameObjectType.Pet:
+                if (deleted)
+                {
+                    var pet = PetDescriptor.Get(id);
+                    pet.Delete();
+                }
+                else
+                {
+                    var pet = new PetDescriptor(id);
+                    pet.Load(json);
+                    PetDescriptor.Lookup.Set(id, pet);
+                }
+
+                break;
+
+            case GameObjectType.Dungeon:
+                if (deleted)
+                {
+                    var dungeon = DungeonDescriptor.Get(id);
+                    dungeon.Delete();
+                }
+                else
+                {
+                    var dungeon = new DungeonDescriptor(id);
+                    dungeon.Load(json);
+                    DungeonDescriptor.Lookup.Set(id, dungeon);
+                }
+
+                break;
+
+            case GameObjectType.InstanceVariable:
+                if (deleted)
+                {
+                    var ivar = InstanceVariableDescriptor.Get(id);
+                    ivar.Delete();
+                }
+                else
+                {
+                    var ivar = new InstanceVariableDescriptor(id);
+                    ivar.Load(json);
+                    InstanceVariableDescriptor.Lookup.Set(id, ivar);
                 }
 
                 break;

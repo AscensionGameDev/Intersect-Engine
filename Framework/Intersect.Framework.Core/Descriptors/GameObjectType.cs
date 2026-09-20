@@ -1,13 +1,16 @@
 using Intersect.Extensions;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Dungeons;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Pets;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
+using Intersect.Framework.Core.GameObjects.Titles;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 
@@ -71,4 +74,16 @@ public enum GameObjectType
 
     [GameObjectInfo(typeof(UserVariableDescriptor), "user_variables")]
     UserVariable,
+
+    [GameObjectInfo(typeof(TitleDescriptor), "titles")]
+    Title,
+
+    [GameObjectInfo(typeof(PetDescriptor), "pets")]
+    Pet,
+
+    [GameObjectInfo(typeof(DungeonDescriptor), "dungeons")]
+    Dungeon,
+
+    [GameObjectInfo(typeof(InstanceVariableDescriptor), "instance_variables")]
+    InstanceVariable,
 }

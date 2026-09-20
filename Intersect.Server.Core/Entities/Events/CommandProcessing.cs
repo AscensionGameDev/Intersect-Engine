@@ -2,6 +2,7 @@ using System.Text;
 using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Dungeons;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Events.Commands;
 using Intersect.Framework.Core.GameObjects.Items;
@@ -110,6 +111,11 @@ public static partial class CommandProcessing
         else if (command.VariableType == VariableType.UserVariable)
         {
             var variable = UserVariableDescriptor.Get(command.VariableId);
+            type = (int)variable.DataType;
+        }
+        else if (command.VariableType == VariableType.InstanceVariable)
+        {
+            var variable = InstanceVariableDescriptor.Get(command.VariableId);
             type = (int)variable.DataType;
         }
         else if (type == -1)
@@ -1248,6 +1254,74 @@ public static partial class CommandProcessing
         callStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Bank;
     }
 
+    //Enter Dungeon Command
+    private static void ProcessCommand(
+        EnterDungeonCommand command,
+        Player player,
+        Event instance,
+        CommandInstance stackInfo,
+        Stack<CommandInstance> callStack
+    )
+    {
+        if (DungeonDescriptor.Get(command.DungeonId) is not { } descriptor)
+        {
+            return;
+        }
+
+        if (!player.TryEnterDungeon(descriptor, out var reason))
+        {
+            PacketSender.SendChatMsg(player, reason, ChatMessageType.Notice, CustomColors.Alerts.Declined);
+        }
+    }
+
+    //Complete Dungeon Command
+    private static void ProcessCommand(
+        CompleteDungeonCommand command,
+        Player player,
+        Event instance,
+        CommandInstance stackInfo,
+        Stack<CommandInstance> callStack
+    )
+    {
+        player.CurrentDungeon?.Complete();
+    }
+
+    //Fail Dungeon Command
+    private static void ProcessCommand(
+        FailDungeonCommand command,
+        Player player,
+        Event instance,
+        CommandInstance stackInfo,
+        Stack<CommandInstance> callStack
+    )
+    {
+        player.CurrentDungeon?.Fail(Strings.Dungeons.FailedByEvent);
+    }
+
+    //Set Dungeon Objective Command
+    private static void ProcessCommand(
+        SetDungeonObjectiveCommand command,
+        Player player,
+        Event instance,
+        CommandInstance stackInfo,
+        Stack<CommandInstance> callStack
+    )
+    {
+        player.CurrentDungeon?.SetObjective(ParseEventText(command.Objective, player, instance));
+    }
+
+    //Change Pet Command
+    private static void ProcessCommand(
+        ChangePetCommand command,
+        Player player,
+        Event instance,
+        CommandInstance stackInfo,
+        Stack<CommandInstance> callStack
+    )
+    {
+        player.ChangePet(command.PetId);
+    }
+
     //Open Shop Command
     private static void ProcessCommand(
         OpenShopCommand command,
@@ -1832,6 +1906,12 @@ public static partial class CommandProcessing
                     sb.Replace(val.Key, (player.User.GetVariableValue(val.Value.Id) ?? new VariableValue()).ToString((val.Value).DataType));
             }
 
+            foreach (var val in DbInterface.InstanceVariableEventTextLookup)
+            {
+                if (input.Contains(val.Key))
+                    sb.Replace(val.Key, InstanceVariables.GetVariableValue(player.MapInstanceId, val.Value.Id).ToString((val.Value).DataType));
+            }
+
             if (instance != null)
             {
                 var parms = instance.GetParams(player);
@@ -1887,6 +1967,10 @@ public static partial class CommandProcessing
         {
             value = player.User.GetVariableValue(command.VariableId);
         }
+        else if (command.VariableType == VariableType.InstanceVariable)
+        {
+            value = InstanceVariables.GetVariableValue(player.MapInstanceId, command.VariableId);
+        }
 
         if (value == null)
         {
@@ -1923,6 +2007,10 @@ public static partial class CommandProcessing
                 {
                     value.Boolean = player.User.GetVariableValue(mod.DuplicateVariableId).Value.Boolean;
                 }
+            }
+            else if (mod.DupVariableType == VariableType.InstanceVariable)
+            {
+                value.Boolean = InstanceVariables.GetVariableValue(player.MapInstanceId, mod.DuplicateVariableId).Boolean;
             }
         }
         else
@@ -1980,6 +2068,13 @@ public static partial class CommandProcessing
                 player.User.UpdatedVariables.AddOrUpdate(command.VariableId, UserVariableDescriptor.Get(command.VariableId), (key, oldValue) => UserVariableDescriptor.Get(command.VariableId));
             }
         }
+        else if (command.VariableType == VariableType.InstanceVariable)
+        {
+            if (changed)
+            {
+                Player.StartCommonEventsWithTriggerForInstance(player.MapInstanceId, CommonEventTrigger.InstanceVariableChange, "", command.VariableId.ToString());
+            }
+        }
     }
 
     private static void ProcessVariableModification(
@@ -2012,6 +2107,10 @@ public static partial class CommandProcessing
         else if (command.VariableType == VariableType.UserVariable)
         {
             value = player.User.GetVariableValue(command.VariableId);
+        }
+        else if (command.VariableType == VariableType.InstanceVariable)
+        {
+            value = InstanceVariables.GetVariableValue(player.MapInstanceId, command.VariableId);
         }
 
         if (value == null)
@@ -2153,6 +2252,38 @@ public static partial class CommandProcessing
                 }
 
                 break;
+            case VariableModType.DuplicateInstanceVariable:
+                value.Integer = InstanceVariables.GetVariableValue(player.MapInstanceId, mod.DuplicateVariableId).Integer;
+
+                break;
+            case VariableModType.AddInstanceVariable:
+                value.Integer += InstanceVariables.GetVariableValue(player.MapInstanceId, mod.DuplicateVariableId).Integer;
+
+                break;
+            case VariableModType.SubtractInstanceVariable:
+                value.Integer -= InstanceVariables.GetVariableValue(player.MapInstanceId, mod.DuplicateVariableId).Integer;
+
+                break;
+            case VariableModType.MultiplyInstanceVariable:
+                value.Integer *= InstanceVariables.GetVariableValue(player.MapInstanceId, mod.DuplicateVariableId).Integer;
+
+                break;
+            case VariableModType.DivideInstanceVariable:
+                var divisor = InstanceVariables.GetVariableValue(player.MapInstanceId, mod.DuplicateVariableId).Integer;
+                if (divisor != 0)
+                {
+                    value.Integer /= divisor;
+                }
+
+                break;
+            case VariableModType.LeftShiftInstanceVariable:
+                value.Integer = value.Integer << (int)InstanceVariables.GetVariableValue(player.MapInstanceId, mod.DuplicateVariableId).Integer;
+
+                break;
+            case VariableModType.RightShiftInstanceVariable:
+                value.Integer = value.Integer >> (int)InstanceVariables.GetVariableValue(player.MapInstanceId, mod.DuplicateVariableId).Integer;
+
+                break;
         }
 
         var changed = value.Integer != originalValue;
@@ -2201,6 +2332,13 @@ public static partial class CommandProcessing
                 player.User.UpdatedVariables.AddOrUpdate(command.VariableId, UserVariableDescriptor.Get(command.VariableId), (key, oldValue) => UserVariableDescriptor.Get(command.VariableId));
             }
         }
+        else if (command.VariableType == VariableType.InstanceVariable)
+        {
+            if (changed)
+            {
+                Player.StartCommonEventsWithTriggerForInstance(player.MapInstanceId, CommonEventTrigger.InstanceVariableChange, "", command.VariableId.ToString());
+            }
+        }
     }
 
     private static void ProcessVariableModification(
@@ -2233,6 +2371,10 @@ public static partial class CommandProcessing
         else if (command.VariableType == VariableType.UserVariable)
         {
             value = player.User.GetVariableValue(command.VariableId);
+        }
+        else if (command.VariableType == VariableType.InstanceVariable)
+        {
+            value = InstanceVariables.GetVariableValue(player.MapInstanceId, command.VariableId);
         }
 
         if (value == null)
@@ -2299,6 +2441,13 @@ public static partial class CommandProcessing
             {
                 player.User.StartCommonEventsWithTriggerForAll(CommonEventTrigger.UserVariableChange, "", command.VariableId.ToString());
                 player.User.UpdatedVariables.AddOrUpdate(command.VariableId, UserVariableDescriptor.Get(command.VariableId), (key, oldValue) => UserVariableDescriptor.Get(command.VariableId));
+            }
+        }
+        else if (command.VariableType == VariableType.InstanceVariable)
+        {
+            if (changed)
+            {
+                Player.StartCommonEventsWithTriggerForInstance(player.MapInstanceId, CommonEventTrigger.InstanceVariableChange, "", command.VariableId.ToString());
             }
         }
     }

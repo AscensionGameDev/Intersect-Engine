@@ -71,6 +71,12 @@ public partial class FrmMain : Form
 
     private FrmTime mTimeEditor;
 
+    private FrmTitle mTitleEditor;
+
+    private FrmPet mPetEditor;
+
+    private FrmDungeon mDungeonEditor;
+
     //General Editting Variables
     bool mTMouseDown;
 
@@ -193,6 +199,9 @@ public partial class FrmMain : Form
         spellEditorToolStripMenuItem.Text = Strings.MainForm.spelleditor;
         variableEditorToolStripMenuItem.Text = Strings.MainForm.variableeditor;
         timeEditorToolStripMenuItem.Text = Strings.MainForm.timeeditor;
+        titleEditorToolStripMenuItem.Text = Strings.MainForm.titleeditor;
+        petEditorToolStripMenuItem.Text = Strings.MainForm.peteditor;
+        dungeonEditorToolStripMenuItem.Text = Strings.MainForm.dungeoneditor;
     }
 
     private void InitLocalizationMenuTools()
@@ -1302,6 +1311,21 @@ public partial class FrmMain : Form
         PacketSender.SendOpenEditor(GameObjectType.Time);
     }
 
+    private void titleEditorToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        PacketSender.SendOpenEditor(GameObjectType.Title);
+    }
+
+    private void petEditorToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        PacketSender.SendOpenEditor(GameObjectType.Pet);
+    }
+
+    private void dungeonEditorToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        PacketSender.SendOpenEditor(GameObjectType.Dungeon);
+    }
+
     private void layersToolStripMenuItem_DropDownOpened(object sender, EventArgs e)
     {
         foreach (var itm in ((ToolStripMenuItem)sender).DropDownItems)
@@ -1726,6 +1750,33 @@ public partial class FrmMain : Form
                         mTimeEditor = new FrmTime();
                         mTimeEditor.InitEditor(DaylightCycleDescriptor.Instance);
                         mTimeEditor.Show();
+                    }
+
+                    break;
+                case GameObjectType.Title:
+                    if (mTitleEditor == null || mTitleEditor.Visible == false)
+                    {
+                        mTitleEditor = new FrmTitle();
+                        mTitleEditor.InitEditor();
+                        mTitleEditor.Show();
+                    }
+
+                    break;
+                case GameObjectType.Pet:
+                    if (mPetEditor == null || mPetEditor.Visible == false)
+                    {
+                        mPetEditor = new FrmPet();
+                        mPetEditor.InitEditor();
+                        mPetEditor.Show();
+                    }
+
+                    break;
+                case GameObjectType.Dungeon:
+                    if (mDungeonEditor == null || mDungeonEditor.Visible == false)
+                    {
+                        mDungeonEditor = new FrmDungeon();
+                        mDungeonEditor.InitEditor();
+                        mDungeonEditor.Show();
                     }
 
                     break;

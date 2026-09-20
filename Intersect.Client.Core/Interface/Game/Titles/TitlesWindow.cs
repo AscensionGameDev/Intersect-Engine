@@ -5,6 +5,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Framework.Core.GameObjects.Titles;
 
 namespace Intersect.Client.Interface.Game.Titles;
 
@@ -34,10 +35,16 @@ public partial class TitlesWindow
         mWindow.SetPosition(280, 180);
         mWindow.DisableResizing();
 
-        mTitleList = new ListBox(mWindow, "TitleList");
+        mTitleList = new ListBox(mWindow, "TitleList")
+        {
+            FontName = "sourcesansproblack",
+            FontSize = 10,
+        };
         mTitleList.SetBounds(8, 32, 204, 240);
         mTitleList.EnableScroll(false, true);
         mTitleList.RowSelected += TitleList_RowSelected;
+
+        mWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
     }
 
     public bool IsVisible => !mWindow.IsHidden;
@@ -66,10 +73,16 @@ public partial class TitlesWindow
             return;
         }
 
-        foreach (var title in Globals.Me.UnlockedTitles)
+        foreach (var titleId in Globals.Me.UnlockedTitleIds)
         {
+            // Titles are game objects: resolve name/color from the lookup filled by the game data packets.
+            if (TitleDescriptor.Get(titleId) is not { } title)
+            {
+                continue;
+            }
+
             var row = mTitleList.AddRow(title.Name, name: null, userData: title.Id);
-            row.TextColor = title.Color;
+            row.SetTextColor(title.Color);
 
             if (title.Id == Globals.Me.EquippedTitleId)
             {
@@ -80,7 +93,8 @@ public partial class TitlesWindow
 
     private void TitleList_RowSelected(Base sender, ItemSelectedEventArgs arguments)
     {
-        if (arguments.SelectedUserData is not Guid titleId)
+        // ListBox raises this event without populating SelectedUserData, so read the row's UserData directly.
+        if (arguments.SelectedItem?.UserData is not Guid titleId)
         {
             return;
         }

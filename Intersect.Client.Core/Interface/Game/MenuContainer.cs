@@ -49,6 +49,8 @@ public partial class MenuContainer : Panel
 
     private readonly Titles.TitlesWindow _titlesWindow;
 
+    private readonly Dungeons.DungeonsWindow _dungeonsWindow;
+
     private readonly ImagePanel _escapeMenuButtonContainer;
     private readonly Button _escapeMenuButton;
 
@@ -244,6 +246,7 @@ public partial class MenuContainer : Panel
         _mapItemWindow = new MapItemWindow(gameCanvas: gameCanvas);
         _guildWindow = new GuildWindow(gameCanvas: gameCanvas);
         _titlesWindow = new Titles.TitlesWindow(gameCanvas: gameCanvas);
+        _dungeonsWindow = new Dungeons.DungeonsWindow(gameCanvas: gameCanvas);
     }
 
     //Methods
@@ -258,6 +261,7 @@ public partial class MenuContainer : Panel
         _mapItemWindow.Update();
         _guildWindow.Update();
         _titlesWindow.Update();
+        _dungeonsWindow.Update();
     }
 
     public void UpdateFriendsList()
@@ -273,6 +277,14 @@ public partial class MenuContainer : Panel
     public void UpdateTitlesList()
     {
         _titlesWindow.UpdateList();
+    }
+
+    public void UpdateDungeonsList()
+    {
+        if (_dungeonsWindow.IsVisible)
+        {
+            _dungeonsWindow.UpdateList();
+        }
     }
 
     // ReSharper disable once MemberCanBePrivate.Global
@@ -291,6 +303,7 @@ public partial class MenuContainer : Panel
         _spellsWindow.Hide();
         _guildWindow.Hide();
         _titlesWindow.Hide();
+        _dungeonsWindow.Hide();
     }
 
     public void ToggleCharacterWindow()
@@ -321,6 +334,22 @@ public partial class MenuContainer : Panel
         }
 
         return _friendsWindow.IsVisible;
+    }
+
+    public bool ToggleDungeonsWindow()
+    {
+        if (_dungeonsWindow.IsVisible)
+        {
+            _dungeonsWindow.Hide();
+        }
+        else
+        {
+            HideWindows();
+            _dungeonsWindow.UpdateList();
+            _dungeonsWindow.Show();
+        }
+
+        return _dungeonsWindow.IsVisible;
     }
 
     public bool ToggleTitlesWindow()

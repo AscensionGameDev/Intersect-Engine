@@ -426,6 +426,32 @@ public static partial class PacketSender
         Network.SendPacket(new EquipTitlePacket(titleId));
     }
 
+    public static void SendEnterDungeon(Guid dungeonId)
+    {
+        Network.SendPacket(new EnterDungeonPacket(dungeonId));
+    }
+
+    public static void SendLeaveDungeon()
+    {
+        Network.SendPacket(new LeaveDungeonPacket());
+    }
+
+    public static void SendDungeonInviteAccept(object? sender, EventArgs e)
+    {
+        if (sender is InputBox inputBox && inputBox.UserData is Guid leaderId)
+        {
+            Network.SendPacket(new DungeonInviteResponsePacket(leaderId, true));
+        }
+    }
+
+    public static void SendDungeonInviteDecline(object? sender, EventArgs e)
+    {
+        if (sender is InputBox inputBox && inputBox.UserData is Guid leaderId)
+        {
+            Network.SendPacket(new DungeonInviteResponsePacket(leaderId, false));
+        }
+    }
+
     public static void SendFriendRequestAccept(Object? sender, EventArgs e)
     {
         if (sender is InputBox inputBox && inputBox.UserData is Guid requestId)

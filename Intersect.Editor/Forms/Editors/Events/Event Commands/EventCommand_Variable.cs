@@ -530,6 +530,37 @@ public partial class EventCommandVariable : UserControl
                 mod.ModType = VariableModType.RightShiftUserVariable;
             }
         }
+        else if (mSettingVariableType == VariableType.InstanceVariable)
+        {
+            if (optNumericSet.Checked)
+            {
+                mod.ModType = VariableModType.DuplicateInstanceVariable;
+            }
+            else if (optNumericAdd.Checked)
+            {
+                mod.ModType = VariableModType.AddInstanceVariable;
+            }
+            else if (optNumericSubtract.Checked)
+            {
+                mod.ModType = VariableModType.SubtractInstanceVariable;
+            }
+            else if (optNumericMultiply.Checked)
+            {
+                mod.ModType = VariableModType.MultiplyInstanceVariable;
+            }
+            else if (optNumericDivide.Checked)
+            {
+                mod.ModType = VariableModType.DivideInstanceVariable;
+            }
+            else if (optNumericLeftShift.Checked)
+            {
+                mod.ModType = VariableModType.LeftShiftInstanceVariable;
+            }
+            else
+            {
+                mod.ModType = VariableModType.RightShiftInstanceVariable;
+            }
+        }
 
         return mod;
     }

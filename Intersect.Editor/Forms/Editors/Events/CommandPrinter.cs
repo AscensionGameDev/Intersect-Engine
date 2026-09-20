@@ -4,11 +4,13 @@ using Intersect.Editor.Maps;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Dungeons;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Events.Commands;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Pets;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
@@ -1221,6 +1223,33 @@ public static partial class CommandPrinter
         return Strings.EventCommandList.openshop.ToString(ShopDescriptor.GetName(command.ShopId));
     }
 
+    private static string GetCommandText(ChangePetCommand command, MapInstance map)
+    {
+        return command.PetId == Guid.Empty
+            ? Strings.EventCommandList.removepet
+            : Strings.EventCommandList.changepet.ToString(PetDescriptor.GetName(command.PetId));
+    }
+
+    private static string GetCommandText(EnterDungeonCommand command, MapInstance map)
+    {
+        return Strings.EventCommandList.enterdungeon.ToString(DungeonDescriptor.GetName(command.DungeonId));
+    }
+
+    private static string GetCommandText(CompleteDungeonCommand command, MapInstance map)
+    {
+        return Strings.EventCommandList.completedungeon;
+    }
+
+    private static string GetCommandText(FailDungeonCommand command, MapInstance map)
+    {
+        return Strings.EventCommandList.faildungeon;
+    }
+
+    private static string GetCommandText(SetDungeonObjectiveCommand command, MapInstance map)
+    {
+        return Strings.EventCommandList.setdungeonobjective.ToString(command.Objective);
+    }
+
     private static string GetCommandText(OpenCraftingTableCommand command, MapInstance map)
     {
         return command.JournalMode ?
@@ -1368,6 +1397,13 @@ public static partial class CommandPrinter
                     UserVariableDescriptor.GetName(mod.DuplicateVariableId)
                 );
             }
+            else if (mod.DupVariableType == VariableType.InstanceVariable)
+            {
+                varvalue = Strings.EventCommandList.DupUserVariable.ToString(
+                    Strings.GameObjectStrings.InstanceVariable,
+                    InstanceVariableDescriptor.GetName(mod.DuplicateVariableId)
+                );
+            }
         }
         else
         {
@@ -1407,6 +1443,14 @@ public static partial class CommandPrinter
             return Strings.EventCommandList.UserVariable.ToString(
                 Strings.GameObjectStrings.UserVariable,
                 UserVariableDescriptor.GetName(command.VariableId),
+                varvalue
+            );
+        }
+        if (command.VariableType == VariableType.InstanceVariable)
+        {
+            return Strings.EventCommandList.InstanceVariable.ToString(
+                Strings.GameObjectStrings.InstanceVariable,
+                InstanceVariableDescriptor.GetName(command.VariableId),
                 varvalue
             );
         }
@@ -1642,6 +1686,57 @@ public static partial class CommandPrinter
                 );
 
                 break;
+
+            //Instance Variable
+            case VariableModType.DuplicateInstanceVariable:
+                varvalue = Strings.EventCommandList.DupInstanceVariable.ToString(
+                    Strings.GameObjectStrings.InstanceVariable,
+                    InstanceVariableDescriptor.GetName(mod.DuplicateVariableId)
+                );
+
+                break;
+            case VariableModType.AddInstanceVariable:
+                varvalue = Strings.EventCommandList.AddInstanceVariable.ToString(
+                    Strings.GameObjectStrings.InstanceVariable,
+                    InstanceVariableDescriptor.GetName(mod.DuplicateVariableId)
+                );
+
+                break;
+            case VariableModType.SubtractInstanceVariable:
+                varvalue = Strings.EventCommandList.SubtractInstanceVariable.ToString(
+                    Strings.GameObjectStrings.InstanceVariable,
+                    InstanceVariableDescriptor.GetName(mod.DuplicateVariableId)
+                );
+
+                break;
+            case VariableModType.MultiplyInstanceVariable:
+                varvalue = Strings.EventCommandList.MultiplyInstanceVariable.ToString(
+                    Strings.GameObjectStrings.InstanceVariable,
+                    InstanceVariableDescriptor.GetName(mod.DuplicateVariableId)
+                );
+
+                break;
+            case VariableModType.DivideInstanceVariable:
+                varvalue = Strings.EventCommandList.DivideInstanceVariable.ToString(
+                    Strings.GameObjectStrings.InstanceVariable,
+                    InstanceVariableDescriptor.GetName(mod.DuplicateVariableId)
+                );
+
+                break;
+            case VariableModType.LeftShiftInstanceVariable:
+                varvalue = Strings.EventCommandList.LeftShiftInstanceVariable.ToString(
+                    Strings.GameObjectStrings.InstanceVariable,
+                    InstanceVariableDescriptor.GetName(mod.DuplicateVariableId)
+                );
+
+                break;
+            case VariableModType.RightShiftInstanceVariable:
+                varvalue = Strings.EventCommandList.RightShiftInstanceVariable.ToString(
+                    Strings.GameObjectStrings.InstanceVariable,
+                    InstanceVariableDescriptor.GetName(mod.DuplicateVariableId)
+                );
+
+                break;
         }
 
         if (command.VariableType == VariableType.PlayerVariable)
@@ -1670,6 +1765,14 @@ public static partial class CommandPrinter
             return Strings.EventCommandList.UserVariable.ToString(
                 Strings.GameObjectStrings.UserVariable,
                 UserVariableDescriptor.GetName(command.VariableId),
+                varvalue
+            );
+        }
+        if (command.VariableType == VariableType.InstanceVariable)
+        {
+            return Strings.EventCommandList.InstanceVariable.ToString(
+                Strings.GameObjectStrings.InstanceVariable,
+                InstanceVariableDescriptor.GetName(command.VariableId),
                 varvalue
             );
         }
@@ -1718,6 +1821,14 @@ public static partial class CommandPrinter
             return Strings.EventCommandList.UserVariable.ToString(
                 Strings.GameObjectStrings.UserVariable,
                 UserVariableDescriptor.GetName(command.VariableId),
+                varvalue
+            );
+        }
+        if (command.VariableType == VariableType.InstanceVariable)
+        {
+            return Strings.EventCommandList.InstanceVariable.ToString(
+                Strings.GameObjectStrings.InstanceVariable,
+                InstanceVariableDescriptor.GetName(command.VariableId),
                 varvalue
             );
         }

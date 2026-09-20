@@ -44,6 +44,8 @@ public enum Control
 
     OpenTitles,
 
+    OpenDungeons,
+
     OpenSettings,
 
     OpenDebugger,

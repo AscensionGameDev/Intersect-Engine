@@ -1,4 +1,3 @@
-using Intersect.Framework.Core.GameObjects.Titles;
 using MessagePack;
 
 namespace Intersect.Network.Packets.Server;
@@ -11,14 +10,18 @@ public partial class UnlockedTitlesPacket : IntersectPacket
     {
     }
 
-    public UnlockedTitlesPacket(List<TitleDescriptor> unlockedTitles, Guid equippedTitleId)
+    public UnlockedTitlesPacket(List<Guid> unlockedTitleIds, Guid equippedTitleId)
     {
-        UnlockedTitles = unlockedTitles;
+        UnlockedTitleIds = unlockedTitleIds;
         EquippedTitleId = equippedTitleId;
     }
 
+    /// <summary>
+    /// Ids of the titles the player has unlocked. The client resolves them against the
+    /// <c>TitleDescriptor</c> lookup it receives with the rest of the game data.
+    /// </summary>
     [Key(0)]
-    public List<TitleDescriptor> UnlockedTitles { get; set; } = [];
+    public List<Guid> UnlockedTitleIds { get; set; } = [];
 
     [Key(1)]
     public Guid EquippedTitleId { get; set; }

@@ -324,6 +324,10 @@ public static partial class Input
                             Interface.Interface.GameUi.GameMenu?.ToggleTitlesWindow();
                             break;
 
+                        case Control.OpenDungeons:
+                            Interface.Interface.GameUi.GameMenu?.ToggleDungeonsWindow();
+                            break;
+
                         case Control.OpenSettings:
                             Interface.Interface.GameUi.EscapeMenu?.OpenSettingsWindow();
                             break;

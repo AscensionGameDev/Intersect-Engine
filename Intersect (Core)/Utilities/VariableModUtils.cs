@@ -12,6 +12,7 @@ public static class VariableModUtils
             VariableModType.DupGlobalVar,
             VariableModType.DupGuildVar,
             VariableModType.DuplicateUserVariable,
+            VariableModType.DuplicateInstanceVariable,
         });
 
     public static readonly ImmutableArray<VariableModType> AddMods = ImmutableArray.Create(new VariableModType[] {
@@ -20,6 +21,7 @@ public static class VariableModUtils
             VariableModType.AddGlobalVar,
             VariableModType.AddGuildVar,
             VariableModType.AddUserVariable,
+            VariableModType.AddInstanceVariable,
         });
 
     public static readonly ImmutableArray<VariableModType> SubMods = ImmutableArray.Create(new VariableModType[] {
@@ -28,6 +30,7 @@ public static class VariableModUtils
             VariableModType.SubtractGlobalVar,
             VariableModType.SubtractGuildVar,
             VariableModType.SubtractUserVariable,
+            VariableModType.SubtractInstanceVariable,
         });
 
     public static readonly ImmutableArray<VariableModType> MultMods = ImmutableArray.Create(new VariableModType[] {
@@ -36,6 +39,7 @@ public static class VariableModUtils
             VariableModType.MultiplyGlobalVar,
             VariableModType.MultiplyGuildVar,
             VariableModType.MultiplyUserVariable,
+            VariableModType.MultiplyInstanceVariable,
         });
 
     public static readonly ImmutableArray<VariableModType> DivideMods = ImmutableArray.Create(new VariableModType[] {
@@ -44,6 +48,7 @@ public static class VariableModUtils
             VariableModType.DivideGlobalVar,
             VariableModType.DivideGuildVar,
             VariableModType.DivideUserVariable,
+            VariableModType.DivideInstanceVariable,
         });
 
     public static readonly ImmutableArray<VariableModType> LShiftMods = ImmutableArray.Create(new VariableModType[] {
@@ -52,6 +57,7 @@ public static class VariableModUtils
             VariableModType.LeftShiftGlobalVar,
             VariableModType.LeftShiftGuildVar,
             VariableModType.LeftShiftUserVariable,
+            VariableModType.LeftShiftInstanceVariable,
         });
 
     public static readonly ImmutableArray<VariableModType> RShiftMods = ImmutableArray.Create(new VariableModType[] {
@@ -60,6 +66,7 @@ public static class VariableModUtils
             VariableModType.RightShiftGlobalVar,
             VariableModType.RightShiftGuildVar,
             VariableModType.RightShiftUserVariable,
+            VariableModType.RightShiftInstanceVariable,
         });
 
 }

@@ -1,12 +1,15 @@
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Dungeons;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Pets;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
+using Intersect.Framework.Core.GameObjects.Titles;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.Server.Maps;
@@ -49,6 +52,14 @@ public interface IGameContext : IDbContext
     DbSet<ServerVariableDescriptor> ServerVariables { get; set; }
 
     DbSet<TilesetDescriptor> Tilesets { get; set; }
+
+    DbSet<TitleDescriptor> Titles { get; set; }
+
+    DbSet<PetDescriptor> Pets { get; set; }
+
+    DbSet<DungeonDescriptor> Dungeons { get; set; }
+
+    DbSet<InstanceVariableDescriptor> InstanceVariables { get; set; }
 
     DbSet<DaylightCycleDescriptor> Time { get; set; }
 }

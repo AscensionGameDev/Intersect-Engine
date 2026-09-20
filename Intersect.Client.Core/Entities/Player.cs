@@ -18,7 +18,6 @@ using Intersect.Client.Localization;
 using Intersect.Client.Maps;
 using Intersect.Client.Networking;
 using Intersect.Config.Guilds;
-using Intersect.Framework.Core.GameObjects.Titles;
 using Intersect.Configuration;
 using Intersect.Core;
 using Intersect.Enums;
@@ -68,9 +67,15 @@ public partial class Player : Entity, IPlayer
 
     public List<IFriendInstance> Friends { get; set; } = [];
 
-    public List<TitleDescriptor> UnlockedTitles { get; set; } = [];
+    public List<Guid> UnlockedTitleIds { get; set; } = [];
 
     public Guid EquippedTitleId { get; set; } = Guid.Empty;
+
+    /// <summary>Personal dungeon history (completions, best time, cooldown), keyed by dungeon id.</summary>
+    public Dictionary<Guid, DungeonRecordPacket> DungeonRecords { get; set; } = new();
+
+    /// <summary>Local time the records were received, so cooldowns can be counted down between server updates.</summary>
+    public long DungeonRecordsReceivedAt { get; set; }
 
     IReadOnlyList<IHotbarInstance> IPlayer.HotbarSlots => Hotbar.ToList();
 
@@ -2609,7 +2614,13 @@ public partial class Player : Entity, IPlayer
 
             TryToChangeDimension();
             PacketSender.SendMove();
-            MoveTimer = (Timing.Global.Milliseconds) + (long)GetMovementTime();
+
+            // When walking continuously, chain the timer from the previous expiry instead of the frame time:
+            // otherwise every tile costs up to one extra frame of waiting (frame quantization), which is
+            // the little stall you feel on each tile. The server applies the same rule when validating.
+            var now = Timing.Global.Milliseconds;
+            var chainBase = now - MoveTimer <= Options.Instance.Player.MoveTimerChainWindowMs ? MoveTimer : now;
+            MoveTimer = chainBase + (long)GetMovementTime();
         }
         else
         {

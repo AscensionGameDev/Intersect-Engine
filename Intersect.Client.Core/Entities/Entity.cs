@@ -151,6 +151,7 @@ public partial class Entity : IEntity
 
     public long MoveTimer { get; set; }
 
+
     protected byte mRenderPriority = 1;
 
     protected string mTransformedSprite = string.Empty;
@@ -282,6 +283,26 @@ public partial class Entity : IEntity
     //     get => (Position.Y % 1) * TileHeight;
     //     set => Position = Position with { Y = Y + (value / TileHeight) };
     // }
+
+    /// <summary>
+    /// Longest pause (ms) between two tile moves that is still considered "continuous walking" and gets its lost pixels carried over.
+    /// </summary>
+    private const long MovementCarryWindowMs = 60;
+
+    /// <summary>
+    /// Never carry more than this fraction of a tile, so a hiccup can't make the sprite jump.
+    /// </summary>
+    private const float MaxMovementCarryRatio = 0.5f;
+
+    /// <summary>
+    /// When the last tile move visually ended (frame time minus the overshoot), 0 if not applicable.
+    /// </summary>
+    private long _movementFinishedAt;
+
+    private bool _wasMoving;
+
+    private static float MoveTowardsZero(float value, float amount) =>
+        Math.Abs(value) <= amount ? 0 : value - Math.Sign(value) * amount;
 
     public Entity(Guid id, EntityPacket? packet, EntityType entityType)
     {
@@ -707,114 +728,68 @@ public partial class Entity : IEntity
         }
         else if (IsMoving)
         {
-            var displacementTime = ecTime * TileHeight / GetMovementTime();
+            var movementTime = GetMovementTime();
+            var pixelsPerMs = TileHeight / movementTime;
+
+            // A move that starts right after the previous one ended gets the pixels that were "lost" in between
+            // (the overshoot of the last frame plus the frame(s) spent waiting for the move timer), so that
+            // continuous walking is one uninterrupted motion instead of a tiny stall on every tile.
+            if (!_wasMoving && _movementFinishedAt > 0)
+            {
+                var gapMs = mLastUpdate - _movementFinishedAt;
+                if (gapMs > 0 && gapMs <= MovementCarryWindowMs)
+                {
+                    var carryPixels = Math.Min(gapMs * pixelsPerMs, TileHeight * MaxMovementCarryRatio);
+                    OffsetX = MoveTowardsZero(OffsetX, carryPixels);
+                    OffsetY = MoveTowardsZero(OffsetY, carryPixels);
+                }
+            }
+
+            _movementFinishedAt = 0;
+
+            var displacementTime = ecTime * pixelsPerMs;
 
             PickLastDirection(DirectionFacing);
 
-            switch (DirectionFacing)
+            var delta = DirectionFacing.GetDeltaPoint();
+            var overshoot = 0f;
+            if (delta.X != 0)
             {
-                case Direction.Up:
-                    OffsetY -= displacementTime;
+                OffsetX += delta.X * displacementTime;
+                // Crossed the tile boundary: remember by how much so the next move can pick it up.
+                if (Math.Sign(OffsetX) == Math.Sign(delta.X))
+                {
+                    overshoot = Math.Max(overshoot, Math.Abs(OffsetX));
                     OffsetX = 0;
-                    if (OffsetY < 0)
-                    {
-                        OffsetY = 0;
-                    }
+                }
+            }
+            else
+            {
+                OffsetX = 0;
+            }
 
-                    break;
-
-                case Direction.Down:
-                    OffsetY += displacementTime;
-                    OffsetX = 0;
-                    if (OffsetY > 0)
-                    {
-                        OffsetY = 0;
-                    }
-
-                    break;
-
-                case Direction.Left:
-                    OffsetX -= displacementTime;
+            if (delta.Y != 0)
+            {
+                OffsetY += delta.Y * displacementTime;
+                if (Math.Sign(OffsetY) == Math.Sign(delta.Y))
+                {
+                    overshoot = Math.Max(overshoot, Math.Abs(OffsetY));
                     OffsetY = 0;
-                    if (OffsetX < 0)
-                    {
-                        OffsetX = 0;
-                    }
-
-                    break;
-
-                case Direction.Right:
-                    OffsetX += displacementTime;
-                    OffsetY = 0;
-                    if (OffsetX > 0)
-                    {
-                        OffsetX = 0;
-                    }
-
-                    break;
-                case Direction.UpLeft:
-                    OffsetY -= displacementTime;
-                    OffsetX -= displacementTime;
-                    if (OffsetY < 0)
-                    {
-                        OffsetY = 0;
-                    }
-
-                    if (OffsetX < 0)
-                    {
-                        OffsetX = 0;
-                    }
-
-                    break;
-                case Direction.UpRight:
-                    OffsetY -= displacementTime;
-                    OffsetX += displacementTime;
-                    if (OffsetY < 0)
-                    {
-                        OffsetY = 0;
-                    }
-
-                    if (OffsetX > 0)
-                    {
-                        OffsetX = 0;
-                    }
-
-                    break;
-                case Direction.DownLeft:
-                    OffsetY += displacementTime;
-                    OffsetX -= displacementTime;
-                    if (OffsetY > 0)
-                    {
-                        OffsetY = 0;
-                    }
-
-                    if (OffsetX < 0)
-                    {
-                        OffsetX = 0;
-                    }
-
-                    break;
-                case Direction.DownRight:
-                    OffsetY += displacementTime;
-                    OffsetX += displacementTime;
-                    if (OffsetY > 0)
-                    {
-                        OffsetY = 0;
-                    }
-
-                    if (OffsetX > 0)
-                    {
-                        OffsetX = 0;
-                    }
-
-                    break;
+                }
+            }
+            else
+            {
+                OffsetY = 0;
             }
 
             if (OffsetX == 0 && OffsetY == 0)
             {
                 IsMoving = false;
+                _movementFinishedAt = Timing.Global.Milliseconds - (long)(overshoot / pixelsPerMs);
             }
         }
+
+        _wasMoving = IsMoving;
 
         //Check to see if we should start or stop equipment animations
         if (Equipment.Length == Options.Instance.Equipment.Slots.Count)

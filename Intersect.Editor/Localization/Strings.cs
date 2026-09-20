@@ -2,6 +2,7 @@ using System.Reflection;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.GameObjects.Conditions.ConditionMetadata;
+using Intersect.Framework.Core.GameObjects.Dungeons;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
@@ -94,6 +95,14 @@ public static partial class Strings
             return EventConditionDesc.UserVariable.ToString(
                 Strings.GameObjectStrings.UserVariable,
                 UserVariableDescriptor.GetName(condition.VariableId),
+                pVar
+            );
+        }
+        else if (condition.VariableType == VariableType.InstanceVariable)
+        {
+            return EventConditionDesc.InstanceVariable.ToString(
+                Strings.GameObjectStrings.InstanceVariable,
+                InstanceVariableDescriptor.GetName(condition.VariableId),
                 pVar
             );
         }
@@ -359,6 +368,13 @@ public static partial class Strings
     public static string GetEventConditionalDesc(MapZoneTypeIs condition)
     {
         return EventConditionDesc.MapZoneTypeIs.ToString(MapProperties.zones[(int)condition.ZoneType]);
+    }
+
+    public static string GetEventConditionalDesc(InDungeonCondition condition)
+    {
+        return EventConditionDesc.InDungeon.ToString(
+            condition.DungeonId == Guid.Empty ? EventConditional.AnyDungeon.ToString() : DungeonDescriptor.GetName(condition.DungeonId)
+        );
     }
 
     public static string GetEventConditionalDesc(CheckEquippedSlot condition)
@@ -1997,6 +2013,8 @@ Tick timer saved in server config.json.";
 
         public static LocalizedString DupUserVariable = @"{00}: {01}'s Value";
 
+        public static LocalizedString DupInstanceVariable = @"{00}: {01}'s Value";
+
         public static LocalizedString addglobalvariable = @"Add Global Variable: {00}'s Value";
 
         public static LocalizedString addplayervariable = @"Add Player Variable: {00}'s Value";
@@ -2004,6 +2022,8 @@ Tick timer saved in server config.json.";
         public static LocalizedString addguildvariable = @"Add Guild Variable: {00}'s Value";
 
         public static LocalizedString AddUserVariable = @"Add {00}: {01}'s Value";
+
+        public static LocalizedString AddInstanceVariable = @"Add {00}: {01}'s Value";
 
         public static LocalizedString subtractglobalvariable = @"Subtract Global Variable: {00}'s Value";
 
@@ -2013,6 +2033,8 @@ Tick timer saved in server config.json.";
 
         public static LocalizedString SubtractUserVariable = @"Subtract {00}: {01}'s Value";
 
+        public static LocalizedString SubtractInstanceVariable = @"Subtract {00}: {01}'s Value";
+
         public static LocalizedString multiplyglobalvariable = @"Multiply Global Variable: {00}'s Value";
 
         public static LocalizedString multiplyplayervariable = @"Multiply Player Variable: {00}'s Value";
@@ -2020,6 +2042,8 @@ Tick timer saved in server config.json.";
         public static LocalizedString multiplyguildvariable = @"Multiply Guild Variable: {00}'s Value";
 
         public static LocalizedString MultiplyUserVariable = @"Multiply {00}: {01}'s Value";
+
+        public static LocalizedString MultiplyInstanceVariable = @"Multiply {00}: {01}'s Value";
 
         public static LocalizedString divideglobalvariable = @"Divide Global Variable: {00}'s Value";
 
@@ -2029,6 +2053,8 @@ Tick timer saved in server config.json.";
 
         public static LocalizedString DivideUserVariable = @"Divide {00}: {01}'s Value";
 
+        public static LocalizedString DivideInstanceVariable = @"Divide {00}: {01}'s Value";
+
         public static LocalizedString leftshiftglobalvariable = @"Left Bit Shift Global Variable: {00}'s Value";
 
         public static LocalizedString leftshiftplayervariable = @"Left Bit Shift Player Variable: {00}'s Value";
@@ -2037,6 +2063,8 @@ Tick timer saved in server config.json.";
 
         public static LocalizedString LeftShiftUserVariable = @"Left Bit Shift {00}: {01}'s Value";
 
+        public static LocalizedString LeftShiftInstanceVariable = @"Left Bit Shift {00}: {01}'s Value";
+
         public static LocalizedString rightshiftglobalvariable = @"Right Bit Shift Global Variable: {00}'s Value";
 
         public static LocalizedString rightshiftplayervariable = @"Right Bit Shift Player Variable: {00}'s Value";
@@ -2044,6 +2072,8 @@ Tick timer saved in server config.json.";
         public static LocalizedString rightshiftguildvariable = @"Right Bit Shift Guild Variable: {00}'s Value";
 
         public static LocalizedString RightShiftUserVariable = @"Right Bit Shift {00}: {01}'s Value";
+
+        public static LocalizedString RightShiftInstanceVariable = @"Right Bit Shift {00}: {01}'s Value";
 
         public static LocalizedString enditemchange = @"End Item Change";
 
@@ -2093,6 +2123,8 @@ Tick timer saved in server config.json.";
 
         public static LocalizedString UserVariable = @"Set {00} {01} ({02})";
 
+        public static LocalizedString InstanceVariable = @"Set {00} {01} ({02})";
+
         public static LocalizedString gotolabel = @"Go to Label {00}";
 
         public static LocalizedString hidepicture = @"Hide Picture";
@@ -2141,6 +2173,18 @@ Tick timer saved in server config.json.";
         public static LocalizedString OpenCraftingJournal = @"Open Crafting Journal [{00}]";
 
         public static LocalizedString openshop = @"Open Shop [{00}]";
+
+        public static LocalizedString changepet = @"Change Pet [{00}]";
+
+        public static LocalizedString removepet = @"Remove Pet";
+
+        public static LocalizedString enterdungeon = @"Enter Dungeon [{00}]";
+
+        public static LocalizedString completedungeon = @"Complete Dungeon";
+
+        public static LocalizedString faildungeon = @"Fail Dungeon";
+
+        public static LocalizedString setdungeonobjective = @"Set Dungeon Objective [{00}]";
 
         public static LocalizedString playanimation = @"Play Animation {00} {01}";
 
@@ -2406,6 +2450,12 @@ Tick timer saved in server config.json.";
             {"resetstatallocations", @"Reset Stat Point Allocations"},
             {"castspellon", @"Cast Spell On"},
             {"fade", @"Screen Fade"},
+            {"changepet", @"Change Pet"},
+            {"dungeons", @"Dungeons"},
+            {"enterdungeon", @"Enter Dungeon"},
+            {"completedungeon", @"Complete Dungeon"},
+            {"faildungeon", @"Fail Dungeon"},
+            {"setdungeonobjective", @"Set Dungeon Objective"},
         };
 
     }
@@ -2495,6 +2545,7 @@ Tick timer saved in server config.json.";
             {ConditionType.MapZoneTypeIs, @"Map Zone Type is..." },
             {ConditionType.CheckEquipment, @"Check Equipped Slot..." },
             {ConditionType.IsInCombat, @"Is in Combat" },
+            {ConditionType.InDungeon, @"Is in Dungeon..." },
         };
 
         public static LocalizedString endrange = @"End Range:";
@@ -2650,6 +2701,12 @@ Tick timer saved in server config.json.";
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString MapZoneTypeIs = @"Map Zone Type is:";
 
+        public static LocalizedString InDungeon = @"In Dungeon:";
+
+        public static LocalizedString InDungeonLabel = @"Dungeon:";
+
+        public static LocalizedString AnyDungeon = @"Any dungeon";
+
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString MapZoneTypeLabel = @"Zone Type:";
 
@@ -2658,6 +2715,8 @@ Tick timer saved in server config.json.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString UserVariableValue = @"User Variable Value:";
+
+        public static LocalizedString InstanceVariableValue = @"Instance Variable Value:";
     }
 
     public partial struct EventConditionDesc
@@ -2755,6 +2814,8 @@ Tick timer saved in server config.json.";
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString MapZoneTypeIs = @"Map Zone Type is {00}";
 
+        public static LocalizedString InDungeon = @"In Dungeon: {00}";
+
         public static Dictionary<int, LocalizedString> selfswitches = new Dictionary<int, LocalizedString>
         {
             {0, @"A"},
@@ -2776,6 +2837,8 @@ Tick timer saved in server config.json.";
         public static LocalizedString True = @"True";
 
         public static LocalizedString UserVariable = @"{00}: {01} {02}";
+
+        public static LocalizedString InstanceVariable = @"{00}: {01} {02}";
 
     }
 
@@ -2859,6 +2922,7 @@ Tick timer saved in server config.json.";
             {CommonEventTrigger.UserVariableChange, @"User Variable Changed"},
             {CommonEventTrigger.LevelDown, @"Level Down"},
             {CommonEventTrigger.Logout, @"Logout"},
+            {CommonEventTrigger.InstanceVariableChange, @"Instance Variable Changed"},
         };
 
         public static LocalizedString conditions = @"Conditions";
@@ -3192,6 +3256,47 @@ Tick timer saved in server config.json.";
         public static LocalizedString okay = @"Ok";
 
         public static LocalizedString title = @"Open Shop";
+
+    }
+
+    public partial struct EventChangePet
+    {
+
+        public static LocalizedString cancel = @"Cancel";
+
+        public static LocalizedString label = @"Pet:";
+
+        public static LocalizedString none = @"None (remove pet)";
+
+        public static LocalizedString okay = @"Ok";
+
+        public static LocalizedString title = @"Change Pet";
+
+    }
+
+    public partial struct EventEnterDungeon
+    {
+
+        public static LocalizedString cancel = @"Cancel";
+
+        public static LocalizedString label = @"Dungeon:";
+
+        public static LocalizedString okay = @"Ok";
+
+        public static LocalizedString title = @"Enter Dungeon";
+
+    }
+
+    public partial struct EventSetDungeonObjective
+    {
+
+        public static LocalizedString cancel = @"Cancel";
+
+        public static LocalizedString label = @"Objective:";
+
+        public static LocalizedString okay = @"Ok";
+
+        public static LocalizedString title = @"Set Dungeon Objective";
 
     }
 
@@ -3646,8 +3751,12 @@ Tick timer saved in server config.json.";
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString UserVariable = @"User Variable";
 
+        public static LocalizedString InstanceVariable = @"Instance Variable";
+
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString UserVariables = @"User Variables";
+
+        public static LocalizedString InstanceVariables = @"Instance Variables";
     }
 
     public partial struct Time
@@ -4184,6 +4293,12 @@ Tick timer saved in server config.json.";
         public static LocalizedString tilepreview = @"Tile Preview";
 
         public static LocalizedString timeeditor = @"Time Editor";
+
+        public static LocalizedString titleeditor = @"Title Editor";
+
+        public static LocalizedString peteditor = @"Pet Editor";
+
+        public static LocalizedString dungeoneditor = @"Dungeon Editor";
 
         public static LocalizedString title = @"Intersect Editor - {00}";
 
@@ -5510,6 +5625,8 @@ Tick timer saved in server config.json.";
 
         public static LocalizedString UserVariableId = @"Text Id: \uservar ";
 
+        public static LocalizedString InstanceVariableId = @"Text Id: \instvar ";
+
     }
 
     public partial struct TaskEditor
@@ -5617,6 +5734,295 @@ Tick timer saved in server config.json.";
 
         public static LocalizedString waterfall = @"Waterfall   [VX Format]";
 
+    }
+
+    public partial struct DungeonEditor
+    {
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString access = @"Access:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString accessguild = @"Guild";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString accessparty = @"Party";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString accesssolo = @"Solo";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString addreward = @"Add";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString cancel = @"Cancel";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString cooldown = @"Cooldown (s):";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString copy = @"Copy Dungeon";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString delete = @"Delete Dungeon";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString deleteprompt = @"Are you sure you want to delete this dungeon? This action cannot be reverted!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString description = @"Description:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString direction = @"Direction:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString dungeons = @"Dungeons";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString entrance = @"Entrance";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString exitdelay = @"Exit delay (s):";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString folderlabel = @"Folder:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString folderprompt = @"Enter a name for the folder you'd like to add:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString foldertitle = @"Add Folder";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString general = @"General";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString level = @"Required level:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString lives = @"Lives (0 = unlimited):";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString map = @"Map:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString maxplayers = @"Max players (0 = any):";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString minplayers = @"Min players:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString name = @"Name:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString New = @"New Dungeon";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString paste = @"Paste Dungeon";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString removereward = @"Remove";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString rewardentry = @"{00} x{01}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString rewardexp = @"Experience:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString rewarditem = @"Item:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString rewardquantity = @"Quantity:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString rewards = @"Rewards";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString rewardtitle = @"Title:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString rules = @"Rules";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString save = @"Save";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString searchplaceholder = @"Search...";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString sortalphabetically = @"Order Alphabetically";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString timelimit = @"Time limit (s, 0 = none):";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString title = @"Dungeon Editor";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString undo = @"Undo Changes";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString undoprompt = @"Are you sure you want to undo changes made to this dungeon? This action cannot be reverted!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString undotitle = @"Undo Changes";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString visual = @"Open Visual Interface";
+    }
+
+    public partial struct PetEditor
+    {
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString cancel = @"Cancel";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString copy = @"Copy Pet";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString delete = @"Delete Pet";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString deleteprompt =
+            @"Are you sure you want to delete this pet? Players who own it will lose it. This action cannot be reverted!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString behavior = @"Behavior";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString folderlabel = @"Folder:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString foldertitle = @"Add Folder";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString folderprompt = @"Enter a name for the folder you'd like to add:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString general = @"General";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString name = @"Name:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString New = @"New Pet";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString paste = @"Paste Pet";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString pets = @"Pets";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString pickupownerdrops = @"Also pick up items the owner dropped";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString pickuprange = @"Pickup Range (tiles):";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString pickupunowned = @"Also pick up items nobody owns";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString save = @"Save";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString searchplaceholder = @"Search...";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString sortalphabetically = @"Order Alphabetically";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString speed = @"Speed:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString sprite = @"Sprite:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString title = @"Pet Editor";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString undo = @"Undo Changes";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString undoprompt =
+            @"Are you sure you want to undo changes made to this pet? This action cannot be reverted!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString undotitle = @"Undo Changes";
+    }
+
+    public partial struct TitleEditor
+    {
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString cancel = @"Cancel";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString color = @"Color:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString copy = @"Copy Title";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString delete = @"Delete Title";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString deleteprompt =
+            @"Are you sure you want to delete this title? Players who have it equipped will lose it. This action cannot be reverted!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString folderlabel = @"Folder:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString foldertitle = @"Add Folder";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString folderprompt = @"Enter a name for the folder you'd like to add:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString general = @"General";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString name = @"Name:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString New = @"New Title";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString paste = @"Paste Title";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString preview = @"Preview";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString save = @"Save";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString searchplaceholder = @"Search...";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString selectcolor = @"Select Color";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString sortalphabetically = @"Order Alphabetically";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString title = @"Title Editor";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString titles = @"Titles";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString undo = @"Undo Changes";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString undoprompt =
+            @"Are you sure you want to undo changes made to this title? This action cannot be reverted!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString undotitle = @"Undo Changes";
     }
 
     public partial struct TimeEditor
@@ -5797,6 +6203,7 @@ Negative values for time to flow backwards.";
             {(int) VariableType.ServerVariable, @"Server Variable" },
             {(int) VariableType.GuildVariable, @"Guild Variable" },
             {(int) VariableType.UserVariable, @"User Variable" },
+            {(int) VariableType.InstanceVariable, @"Instance Variable" },
         };
 
     }

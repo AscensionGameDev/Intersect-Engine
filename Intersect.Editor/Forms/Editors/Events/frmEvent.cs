@@ -675,6 +675,26 @@ public partial class FrmEvent : Form
                 tmpCommand = new OpenShopCommand();
 
                 break;
+            case EventCommandType.ChangePet:
+                tmpCommand = new ChangePetCommand();
+
+                break;
+            case EventCommandType.EnterDungeon:
+                tmpCommand = new EnterDungeonCommand();
+
+                break;
+            case EventCommandType.CompleteDungeon:
+                tmpCommand = new CompleteDungeonCommand();
+
+                break;
+            case EventCommandType.FailDungeon:
+                tmpCommand = new FailDungeonCommand();
+
+                break;
+            case EventCommandType.SetDungeonObjective:
+                tmpCommand = new SetDungeonObjectiveCommand();
+
+                break;
             case EventCommandType.OpenCraftingTable:
                 tmpCommand = new OpenCraftingTableCommand();
 
@@ -1345,6 +1365,21 @@ public partial class FrmEvent : Form
                 cmdWindow = new EventCommandOpenShop((OpenShopCommand)command, this);
 
                 break;
+            case EventCommandType.ChangePet:
+                cmdWindow = new EventCommandChangePet((ChangePetCommand)command, this);
+
+                break;
+            case EventCommandType.EnterDungeon:
+                cmdWindow = new EventCommandEnterDungeon((EnterDungeonCommand)command, this);
+
+                break;
+            case EventCommandType.SetDungeonObjective:
+                cmdWindow = new EventCommandSetDungeonObjective((SetDungeonObjectiveCommand)command, this);
+
+                break;
+            case EventCommandType.CompleteDungeon:
+            case EventCommandType.FailDungeon:
+                break;
             case EventCommandType.OpenCraftingTable:
                 cmdWindow = new EventCommandOpenCraftingTable((OpenCraftingTableCommand)command, this);
 
@@ -1892,6 +1927,15 @@ public partial class FrmEvent : Form
                 lblVariableTrigger.Show();
                 lblVariableTrigger.Text = Strings.EventEditor.VariableTrigger;
             }
+            else if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.InstanceVariableChange)
+            {
+                cmbVariable.Show();
+                cmbVariable.Items.Add(Strings.General.None);
+                cmbVariable.Items.AddRange(InstanceVariableDescriptor.Names);
+                cmbVariable.SelectedIndex = InstanceVariableDescriptor.ListIndex(CurrentPage.TriggerId) + 1;
+                lblVariableTrigger.Show();
+                lblVariableTrigger.Text = Strings.EventEditor.VariableTrigger;
+            }
         }
     }
 
@@ -1914,6 +1958,10 @@ public partial class FrmEvent : Form
             else if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.UserVariableChange)
             {
                 CurrentPage.TriggerId = UserVariableDescriptor.IdFromList(cmbVariable.SelectedIndex - 1);
+            }
+            else if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.InstanceVariableChange)
+            {
+                CurrentPage.TriggerId = InstanceVariableDescriptor.IdFromList(cmbVariable.SelectedIndex - 1);
             }
         }
     }

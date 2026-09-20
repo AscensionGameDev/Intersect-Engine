@@ -19,6 +19,7 @@ using System.Text;
 using Intersect.Core;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Dungeons;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
@@ -827,7 +828,13 @@ internal sealed partial class PacketHandler
                 if (player.MoveTimer > currentMs)
                 {
                     player.MoveTimer = currentMs + latencyAdjustmentMs + (long)(player.GetMovementTime() * .75f);
-                    player.ClientMoveTimer = clientTime + (long)player.GetMovementTime();
+
+                    // Same chaining rule as the client: while walking continuously the next move is measured from the
+                    // previous expiry, not from the (frame-quantized) send time, so a legit client is never rejected.
+                    var chainBase = clientTime - player.ClientMoveTimer <= Options.Instance.Player.MoveTimerChainWindowMs
+                        ? player.ClientMoveTimer
+                        : clientTime;
+                    player.ClientMoveTimer = chainBase + (long)player.GetMovementTime();
                 }
             }
             else
@@ -2181,6 +2188,45 @@ internal sealed partial class PacketHandler
         }
 
         player.CancelQuest(packet.QuestId);
+    }
+
+    //EnterDungeonPacket
+    public void HandlePacket(Client client, EnterDungeonPacket packet)
+    {
+        var player = client?.Entity;
+        if (player == null || DungeonDescriptor.Get(packet.DungeonId) is not { } descriptor)
+        {
+            return;
+        }
+
+        if (!player.TryEnterDungeon(descriptor, out var reason))
+        {
+            PacketSender.SendChatMsg(player, reason, ChatMessageType.Notice, CustomColors.Alerts.Declined);
+        }
+    }
+
+    //DungeonInviteResponsePacket
+    public void HandlePacket(Client client, DungeonInviteResponsePacket packet)
+    {
+        var player = client?.Entity;
+        if (player?.PendingDungeonInvite is not { } invite || invite.Leader.Id != packet.LeaderId)
+        {
+            return;
+        }
+
+        invite.Respond(player, packet.Accepted);
+    }
+
+    //LeaveDungeonPacket
+    public void HandlePacket(Client client, LeaveDungeonPacket packet)
+    {
+        var player = client?.Entity;
+        if (player?.CurrentDungeon == null)
+        {
+            return;
+        }
+
+        player.LeaveDungeon(sendHome: true);
     }
 
     //EquipTitlePacket

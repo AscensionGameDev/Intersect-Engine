@@ -43,4 +43,6 @@ public enum CommonEventTrigger
     LevelDown,
 
     Logout,
+
+    InstanceVariableChange,
 }

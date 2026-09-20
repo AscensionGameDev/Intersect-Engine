@@ -228,6 +228,7 @@ internal sealed partial class LogicService
                     }
 
                     Time.Update();
+                    Dungeons.DungeonManager.Update(Timing.Global.Milliseconds);
                     swCps++;
 
                     var endTime = Timing.Global.Milliseconds;

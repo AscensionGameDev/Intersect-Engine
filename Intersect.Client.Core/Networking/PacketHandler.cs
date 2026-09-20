@@ -388,6 +388,22 @@ internal sealed partial class PacketHandler
         }
     }
 
+    //PetEntityPacket
+    public void HandlePacket(IPacketSender packetSender, PetEntityPacket packet)
+    {
+        // Pets are drawn like any other generic (non-player) entity: sprite, name and labels.
+        var en = Globals.GetEntity(packet.EntityId, EntityType.GlobalEntity);
+        if (en != null)
+        {
+            en.Load(packet);
+        }
+        else
+        {
+            var entity = new Entity(packet.EntityId, packet, EntityType.GlobalEntity);
+            Globals.Entities.Add(entity.Id, entity);
+        }
+    }
+
     //ResourceEntityPacket
     public void HandlePacket(IPacketSender packetSender, ResourceEntityPacket packet)
     {
@@ -2181,6 +2197,61 @@ internal sealed partial class PacketHandler
         Interface.Interface.EnqueueInGame(gameInterface => gameInterface.NotifyUpdateFriendsList());
     }
 
+    //DungeonInvitePacket
+    public void HandlePacket(IPacketSender packetSender, DungeonInvitePacket packet)
+    {
+        var dungeonName = Intersect.Framework.Core.GameObjects.Dungeons.DungeonDescriptor.GetName(packet.DungeonId);
+        _ = new InputBox(
+            title: Strings.Dungeons.InviteTitle,
+            prompt: Strings.Dungeons.InvitePrompt.ToString(packet.LeaderName, dungeonName, packet.TimeoutMs / 1000),
+            inputType: InputType.YesNo,
+            userData: packet.LeaderId,
+            onSubmit: PacketSender.SendDungeonInviteAccept,
+            onCancel: PacketSender.SendDungeonInviteDecline
+        );
+    }
+
+    //DungeonStatusPacket
+    public void HandlePacket(IPacketSender packetSender, DungeonStatusPacket packet)
+    {
+        Globals.ActiveDungeon = packet.State == DungeonRunState.None ? null : packet;
+        Globals.ActiveDungeonReceivedAt = Timing.Global.Milliseconds;
+
+        // Leaving the dungeon (or being sent home) closes the result screen if it is still up.
+        if (Globals.ActiveDungeon == null && Interface.Interface.HasInGameUI)
+        {
+            Interface.Interface.EnqueueInGame(gameInterface => gameInterface.DungeonResultWindow.Hide());
+        }
+    }
+
+    //DungeonResultPacket
+    public void HandlePacket(IPacketSender packetSender, DungeonResultPacket packet)
+    {
+        if (!Interface.Interface.HasInGameUI)
+        {
+            return;
+        }
+
+        Interface.Interface.EnqueueInGame(gameInterface => gameInterface.DungeonResultWindow.Show(packet));
+    }
+
+    //DungeonRecordsPacket
+    public void HandlePacket(IPacketSender packetSender, DungeonRecordsPacket packet)
+    {
+        if (Globals.Me == null)
+        {
+            return;
+        }
+
+        Globals.Me.DungeonRecords = packet.Records.ToDictionary(record => record.DungeonId, record => record);
+        Globals.Me.DungeonRecordsReceivedAt = Timing.Global.Milliseconds;
+
+        if (Interface.Interface.HasInGameUI)
+        {
+            Interface.Interface.EnqueueInGame(gameInterface => gameInterface.GameMenu?.UpdateDungeonsList());
+        }
+    }
+
     //UnlockedTitlesPacket
     public void HandlePacket(IPacketSender packetSender, UnlockedTitlesPacket packet)
     {
@@ -2189,7 +2260,7 @@ internal sealed partial class PacketHandler
             return;
         }
 
-        Globals.Me.UnlockedTitles = packet.UnlockedTitles;
+        Globals.Me.UnlockedTitleIds = packet.UnlockedTitleIds;
         Globals.Me.EquippedTitleId = packet.EquippedTitleId;
 
         if (!Interface.Interface.HasInGameUI)

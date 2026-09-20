@@ -131,6 +131,12 @@ public static partial class Globals
     //Only need 1 shop, and that is the one we see at a given moment in time.
     public static ShopDescriptor? GameShop { get; set; }
 
+    /// <summary>Latest dungeon HUD state from the server, null when not in a dungeon.</summary>
+    public static Intersect.Network.Packets.Server.DungeonStatusPacket? ActiveDungeon { get; set; }
+
+    /// <summary>Local time at which <see cref="ActiveDungeon"/> was received, to run the countdown between updates.</summary>
+    public static long ActiveDungeonReceivedAt { get; set; }
+
     /// <see cref="GameStates" />
     public static GameStates GameState
     {

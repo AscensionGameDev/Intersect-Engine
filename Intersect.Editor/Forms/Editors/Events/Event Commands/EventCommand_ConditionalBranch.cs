@@ -22,6 +22,7 @@ public partial class EventCommandConditionalBranch : UserControl
     private readonly ConditionControl_HasItemOrSlots _itemControl;
     private readonly ConditionControl_Map _mapControl;
     private readonly ConditionControl_MapZone _mapZoneControl;
+    private readonly ConditionControl_InDungeon _inDungeonControl;
     private readonly ConditionControl_NoNpcOnMap _npcControl;
     private readonly ConditionControl_PlayerClass _playerClassControl;
     private readonly ConditionControl_PlayerGender _playerGenderControl;
@@ -57,6 +58,7 @@ public partial class EventCommandConditionalBranch : UserControl
         _itemControl = new(this);
         _mapControl = new();
         _mapZoneControl = new();
+        _inDungeonControl = new();
         _npcControl = new();
         _playerClassControl = new();
         _playerGenderControl = new();
@@ -76,6 +78,7 @@ public partial class EventCommandConditionalBranch : UserControl
         pnlConditionControl.Controls.Add(_itemControl);
         pnlConditionControl.Controls.Add(_mapControl);
         pnlConditionControl.Controls.Add(_mapZoneControl);
+        pnlConditionControl.Controls.Add(_inDungeonControl);
         pnlConditionControl.Controls.Add(_npcControl);
         pnlConditionControl.Controls.Add(_playerClassControl);
         pnlConditionControl.Controls.Add(_playerGenderControl);
@@ -136,6 +139,7 @@ public partial class EventCommandConditionalBranch : UserControl
         _itemControl.Hide();
         _mapControl.Hide();
         _mapZoneControl.Hide();
+        _inDungeonControl.Hide();
         _npcControl.Hide();
         _playerClassControl.Hide();
         _playerGenderControl.Hide();
@@ -174,6 +178,10 @@ public partial class EventCommandConditionalBranch : UserControl
 
             case ConditionType.MapZoneTypeIs:
                 _mapZoneControl.Show();
+                break;
+
+            case ConditionType.InDungeon:
+                _inDungeonControl.Show();
                 break;
 
             case ConditionType.NoNpcsOnMap:
@@ -264,6 +272,10 @@ public partial class EventCommandConditionalBranch : UserControl
                 _mapZoneControl.SetupFormValues(mapZoneTypeCondition);
                 break;
 
+            case InDungeonCondition inDungeonCondition:
+                _inDungeonControl.SetupFormValues(inDungeonCondition);
+                break;
+
             case NoNpcsOnMapCondition npcsOnMapCondition:
                 _npcControl.SetupFormValues(npcsOnMapCondition);
                 break;
@@ -350,6 +362,10 @@ public partial class EventCommandConditionalBranch : UserControl
 
             case MapZoneTypeIs mapZoneTypeCondition:
                 _mapZoneControl.SaveFormValues(mapZoneTypeCondition);
+                break;
+
+            case InDungeonCondition inDungeonCondition:
+                _inDungeonControl.SaveFormValues(inDungeonCondition);
                 break;
 
             case NoNpcsOnMapCondition npcsOnMapCondition:
@@ -481,6 +497,10 @@ public partial class EventCommandConditionalBranch : UserControl
 
                 case ConditionType.MapZoneTypeIs:
                     Condition = new MapZoneTypeIs();
+                    break;
+
+                case ConditionType.InDungeon:
+                    Condition = new InDungeonCondition();
                     break;
 
                 case ConditionType.NoNpcsOnMap:

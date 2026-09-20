@@ -31,6 +31,8 @@ public partial class FrmSwitchVariable : EditorForm
 
     private List<string> mUserKnownFolders = new List<string>();
 
+    private List<string> mInstanceKnownFolders = new List<string>();
+
     private List<string> mUserExpandedFolders = new List<string>();
 
     public FrmSwitchVariable()
@@ -69,6 +71,10 @@ public partial class FrmSwitchVariable : EditorForm
             {
                 obj = UserVariableDescriptor.Get(id);
             }
+            else if (rdoInstanceVariables.Checked)
+            {
+                obj = InstanceVariableDescriptor.Get(id);
+            }
 
             if (obj != null)
             {
@@ -93,6 +99,7 @@ public partial class FrmSwitchVariable : EditorForm
         rdoGlobalVariables.Text = Strings.VariableEditor.globalvariables;
         rdoGuildVariables.Text = Strings.VariableEditor.guildvariables;
         rdoUserVariables.Text = Strings.GameObjectStrings.UserVariables;
+        rdoInstanceVariables.Text = Strings.GameObjectStrings.InstanceVariables;
         grpEditor.Text = Strings.VariableEditor.editor;
         lblName.Text = Strings.VariableEditor.name;
         grpValue.Text = Strings.VariableEditor.value;
@@ -156,6 +163,15 @@ public partial class FrmSwitchVariable : EditorForm
                 UpdateEditor();
             }
         }
+        else if (type == GameObjectType.InstanceVariable)
+        {
+            InitEditor();
+            if (mEditorItem != null && !InstanceVariableDescriptor.Lookup.Values.Contains(mEditorItem))
+            {
+                mEditorItem = null;
+                UpdateEditor();
+            }
+        }
     }
 
     private void toolStripItemNew_Click(object sender, EventArgs e)
@@ -175,6 +191,10 @@ public partial class FrmSwitchVariable : EditorForm
         else if (rdoUserVariables.Checked)
         {
             PacketSender.SendCreateObject(GameObjectType.UserVariable);
+        }
+        else if (rdoInstanceVariables.Checked)
+        {
+            PacketSender.SendCreateObject(GameObjectType.InstanceVariable);
         }
     }
 
@@ -254,6 +274,10 @@ public partial class FrmSwitchVariable : EditorForm
     {
         VariableRadioChanged();
     }
+    private void rdoInstanceVariables_CheckedChanged(object sender, EventArgs e)
+    {
+        VariableRadioChanged();
+    }
 
     private void VariableRadioChanged()
     {
@@ -307,6 +331,14 @@ public partial class FrmSwitchVariable : EditorForm
                 cmbFolder.Text = ((UserVariableDescriptor)mEditorItem).Folder;
                 cmbVariableType.SelectedIndex = (int)(((UserVariableDescriptor)mEditorItem).DataType - 1);
             }
+            else if (rdoInstanceVariables.Checked)
+            {
+                lblObject.Text = Strings.GameObjectStrings.InstanceVariable;
+                txtObjectName.Text = ((InstanceVariableDescriptor)mEditorItem).Name;
+                txtId.Text = ((InstanceVariableDescriptor)mEditorItem).TextId;
+                cmbFolder.Text = ((InstanceVariableDescriptor)mEditorItem).Folder;
+                cmbVariableType.SelectedIndex = (int)(((InstanceVariableDescriptor)mEditorItem).DataType - 1);
+            }
 
             InitValueGroup();
         }
@@ -349,6 +381,12 @@ public partial class FrmSwitchVariable : EditorForm
                 lstGameObjects.SelectedNode.Text = obj.Name;
                 grpValue.Hide();
             }
+            else if (rdoInstanceVariables.Checked)
+            {
+                var obj = InstanceVariableDescriptor.Get((Guid)lstGameObjects.SelectedNode.Tag);
+                lstGameObjects.SelectedNode.Text = obj.Name;
+                grpValue.Hide();
+            }
         }
     }
 
@@ -379,6 +417,12 @@ public partial class FrmSwitchVariable : EditorForm
             else if (rdoUserVariables.Checked)
             {
                 var obj = UserVariableDescriptor.Get((Guid)lstGameObjects.SelectedNode.Tag);
+                obj.Name = txtObjectName.Text;
+                lstGameObjects.UpdateText(obj.Name);
+            }
+            else if (rdoInstanceVariables.Checked)
+            {
+                var obj = InstanceVariableDescriptor.Get((Guid)lstGameObjects.SelectedNode.Tag);
                 obj.Name = txtObjectName.Text;
                 lstGameObjects.UpdateText(obj.Name);
             }
@@ -414,6 +458,11 @@ public partial class FrmSwitchVariable : EditorForm
                 var obj = UserVariableDescriptor.Get((Guid)lstGameObjects.SelectedNode.Tag);
                 obj.TextId = txtId.Text;
             }
+            else if (rdoInstanceVariables.Checked)
+            {
+                var obj = InstanceVariableDescriptor.Get((Guid)lstGameObjects.SelectedNode.Tag);
+                obj.TextId = txtId.Text;
+            }
         }
     }
 
@@ -441,6 +490,11 @@ public partial class FrmSwitchVariable : EditorForm
                 var obj = UserVariableDescriptor.Get((Guid)lstGameObjects.SelectedNode.Tag);
                 obj.DataType = (VariableDataType)(cmbVariableType.SelectedIndex + 1);
             }
+            else if (rdoInstanceVariables.Checked)
+            {
+                var obj = InstanceVariableDescriptor.Get((Guid)lstGameObjects.SelectedNode.Tag);
+                obj.DataType = (VariableDataType)(cmbVariableType.SelectedIndex + 1);
+            }
 
             InitValueGroup();
             UpdateSelection();
@@ -449,7 +503,7 @@ public partial class FrmSwitchVariable : EditorForm
 
     private void InitValueGroup()
     {
-        if (rdoPlayerVariables.Checked || rdoGuildVariables.Checked || rdoUserVariables.Checked)
+        if (rdoPlayerVariables.Checked || rdoGuildVariables.Checked || rdoUserVariables.Checked || rdoInstanceVariables.Checked)
         {
             grpValue.Hide();
         }
@@ -562,6 +616,10 @@ public partial class FrmSwitchVariable : EditorForm
         {
             grpVariables.Text = rdoUserVariables.Text;
         }
+        else if (rdoInstanceVariables.Checked)
+        {
+            grpVariables.Text = rdoInstanceVariables.Text;
+        }
 
         grpEditor.Hide();
         cmbBooleanValue.Hide();
@@ -649,6 +707,25 @@ public partial class FrmSwitchVariable : EditorForm
             cmbFolder.Items.AddRange(mUserKnownFolders.ToArray());
             lblId.Text = Strings.VariableEditor.UserVariableId;
         }
+        else if (rdoInstanceVariables.Checked)
+        {
+            foreach (var itm in InstanceVariableDescriptor.Lookup)
+            {
+                if (!string.IsNullOrEmpty(((InstanceVariableDescriptor)itm.Value).Folder) &&
+                    !mFolders.Contains(((InstanceVariableDescriptor)itm.Value).Folder))
+                {
+                    mFolders.Add(((InstanceVariableDescriptor)itm.Value).Folder);
+                    if (!mInstanceKnownFolders.Contains(((InstanceVariableDescriptor)itm.Value).Folder))
+                    {
+                        mInstanceKnownFolders.Add(((InstanceVariableDescriptor)itm.Value).Folder);
+                    }
+                }
+            }
+
+            mInstanceKnownFolders.Sort();
+            cmbFolder.Items.AddRange(mInstanceKnownFolders.ToArray());
+            lblId.Text = Strings.VariableEditor.InstanceVariableId;
+        }
 
         mFolders.Sort();
 
@@ -673,6 +750,11 @@ public partial class FrmSwitchVariable : EditorForm
         {
             items = UserVariableDescriptor.Lookup.OrderBy(p => p.Value?.TimeCreated).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
                 new KeyValuePair<string, string>(((UserVariableDescriptor)pair.Value)?.Name ?? DatabaseObject<UserVariableDescriptor>.Deleted, ((UserVariableDescriptor)pair.Value)?.Folder ?? ""))).ToArray();
+        }
+        else if (rdoInstanceVariables.Checked)
+        {
+            items = InstanceVariableDescriptor.Lookup.OrderBy(p => p.Value?.TimeCreated).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
+                new KeyValuePair<string, string>(((InstanceVariableDescriptor)pair.Value)?.Name ?? DatabaseObject<InstanceVariableDescriptor>.Deleted, ((InstanceVariableDescriptor)pair.Value)?.Folder ?? ""))).ToArray();
         }
 
         lstGameObjects.Repopulate(items, mFolders, btnAlphabetical.Checked, CustomSearch(), txtSearch.Text);
@@ -718,6 +800,12 @@ public partial class FrmSwitchVariable : EditorForm
                         obj.Folder = folderName;
                         mUserExpandedFolders.Add(folderName);
                     }
+                    else if (rdoInstanceVariables.Checked)
+                    {
+                        var obj = InstanceVariableDescriptor.Get((Guid)lstGameObjects.SelectedNode.Tag);
+                        obj.Folder = folderName;
+                        mUserExpandedFolders.Add(folderName);
+                    }
 
                     InitEditor();
                     cmbFolder.Text = folderName;
@@ -748,6 +836,11 @@ public partial class FrmSwitchVariable : EditorForm
             else if (rdoUserVariables.Checked)
             {
                 var obj = UserVariableDescriptor.Get((Guid)lstGameObjects.SelectedNode.Tag);
+                obj.Folder = cmbFolder.Text;
+            }
+            else if (rdoInstanceVariables.Checked)
+            {
+                var obj = InstanceVariableDescriptor.Get((Guid)lstGameObjects.SelectedNode.Tag);
                 obj.Folder = cmbFolder.Text;
             }
 

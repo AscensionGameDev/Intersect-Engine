@@ -612,6 +612,11 @@ public static partial class Graphics
 
         Interface.Interface.DrawGui(deltaTime, totalTime);
 
+        if (gameState == GameStates.InGame && Interface.Interface.HasInGameUI)
+        {
+            Interface.Interface.GameUi.DungeonHud.Draw();
+        }
+
         DrawGameTexture(
             tex: renderer.WhitePixel,
             srcRectangle: new FloatRect(0, 0, 1, 1),
@@ -947,6 +952,23 @@ public static partial class Graphics
         }
     }
 
+    /// <summary>
+    /// Time constant (ms) of the camera easing: the camera closes ~63% of the gap to the player in this time.
+    /// 0 = rigid camera (old behaviour).
+    /// </summary>
+    private const int CameraSmoothingTimeMs = 70;
+
+    /// <summary>
+    /// Beyond this distance (in tiles) the camera snaps instead of easing (warps, teleports).
+    /// </summary>
+    private const int CameraSnapDistanceTiles = 4;
+
+    private static float _cameraX;
+
+    private static float _cameraY;
+
+    private static long _cameraLastUpdate;
+
     private static void UpdateView()
     {
         if (Renderer == default)
@@ -963,6 +985,7 @@ public static partial class Graphics
             var sx = 0;
             var sy = 0;
             CurrentView = new FloatRect(sx, sy, sw / scale, sh / scale);
+            _cameraLastUpdate = 0; // snap to the player when we get back in game
             return;
         }
 
@@ -1009,11 +1032,47 @@ public static partial class Graphics
         var w = x1 - x;
         var h = y1 - y;
         var restrictView = new FloatRect(x, y, w, h );
+
+        var viewWidth = Renderer.ScreenWidth / scale;
+        var viewHeight = Renderer.ScreenHeight / scale;
+        var targetX = en.Center.X - viewWidth / 2f;
+        var targetY = en.Center.Y - viewHeight / 2f;
+
+        // Smooth camera: ease towards the player instead of being rigidly glued to them. Snap on the first frame
+        // and on big jumps (warps), otherwise the camera would visibly fly across the map.
+        var now = Timing.Global.Milliseconds;
+        var snapDistance = Options.Instance.Map.TileWidth * CameraSnapDistanceTiles;
+        if (_cameraLastUpdate == 0 ||
+            Math.Abs(targetX - _cameraX) > snapDistance ||
+            Math.Abs(targetY - _cameraY) > snapDistance)
+        {
+            _cameraX = targetX;
+            _cameraY = targetY;
+        }
+        else if (CameraSmoothingTimeMs > 0)
+        {
+            var deltaMs = Math.Max(0, now - _cameraLastUpdate);
+            var t = 1f - (float)Math.Exp(-deltaMs / (float)CameraSmoothingTimeMs);
+            _cameraX += (targetX - _cameraX) * t;
+            _cameraY += (targetY - _cameraY) * t;
+        }
+        else
+        {
+            _cameraX = targetX;
+            _cameraY = targetY;
+        }
+
+        _cameraLastUpdate = now;
+
+        // Sprites are drawn on whole pixels using Ceiling of their world position, so the camera must snap the same
+        // way or the player jitters by a pixel against the scrolling background. Keep the rigid (grid-locked) camera
+        // of the original engine and only add the rounded smoothing lag on top: the lag converges monotonically, so
+        // the player only ever shifts on screen by whole pixels in one direction.
         var newView = new FloatRect(
-            (int)Math.Ceiling(en.Center.X - Renderer.ScreenWidth / scale / 2f),
-            (int)Math.Ceiling(en.Center.Y - Renderer.ScreenHeight / scale / 2f),
-            Renderer.ScreenWidth / scale,
-            Renderer.ScreenHeight / scale
+            (int)Math.Ceiling(targetX) + (float)Math.Round(_cameraX - targetX),
+            (int)Math.Ceiling(targetY) + (float)Math.Round(_cameraY - targetY),
+            viewWidth,
+            viewHeight
         );
 
         if (restrictView.Width >= newView.Width)

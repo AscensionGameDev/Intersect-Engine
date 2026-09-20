@@ -4,13 +4,16 @@ using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Dungeons;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Pets;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
+using Intersect.Framework.Core.GameObjects.Titles;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Core.Network.Packets.Security;
 using Intersect.Framework.Core.Security;
@@ -120,6 +123,8 @@ public static partial class PacketSender
 
             // Send the player's unlocked/equipped titles so the Titles window can populate without a round trip.
             PacketSender.SendUnlockedTitles(player);
+            PacketSender.SendDungeonRecords(player);
+            PacketSender.SendDungeonStatus(player);
 
             var pendingGuildInvite = player.PendingGuildInvite;
             // ReSharper disable once InvertIf
@@ -728,7 +733,8 @@ public static partial class PacketSender
                      (GameObjectType)val == GameObjectType.PlayerVariable ||
                      (GameObjectType)val == GameObjectType.ServerVariable ||
                      (GameObjectType)val == GameObjectType.GuildVariable ||
-                     (GameObjectType)val == GameObjectType.UserVariable)
+                     (GameObjectType)val == GameObjectType.UserVariable ||
+                     (GameObjectType)val == GameObjectType.InstanceVariable)
                 {
                     SendGameObjects(client, (GameObjectType)val, null);
                 }
@@ -764,7 +770,8 @@ public static partial class PacketSender
                 (GameObjectType)val == GameObjectType.PlayerVariable ||
                 (GameObjectType)val == GameObjectType.ServerVariable ||
                 (GameObjectType)val == GameObjectType.GuildVariable ||
-                (GameObjectType)val == GameObjectType.UserVariable)
+                (GameObjectType)val == GameObjectType.UserVariable ||
+                (GameObjectType)val == GameObjectType.InstanceVariable)
             {
                 continue;
             }
@@ -1860,6 +1867,34 @@ public static partial class PacketSender
                 }
 
                 break;
+            case GameObjectType.Title:
+                foreach (var obj in TitleDescriptor.Lookup)
+                {
+                    SendGameObject(client, obj.Value, false, false, packetList);
+                }
+
+                break;
+            case GameObjectType.Pet:
+                foreach (var obj in PetDescriptor.Lookup)
+                {
+                    SendGameObject(client, obj.Value, false, false, packetList);
+                }
+
+                break;
+            case GameObjectType.Dungeon:
+                foreach (var obj in DungeonDescriptor.Lookup)
+                {
+                    SendGameObject(client, obj.Value, false, false, packetList);
+                }
+
+                break;
+            case GameObjectType.InstanceVariable:
+                foreach (var obj in InstanceVariableDescriptor.Lookup)
+                {
+                    SendGameObject(client, obj.Value, false, false, packetList);
+                }
+
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(type), type, null);
         }
@@ -2234,6 +2269,47 @@ public static partial class PacketSender
         player.SendPacket(new FriendsPacket(online, offline.ToArray()));
     }
 
+    //DungeonStatusPacket
+    public static void SendDungeonStatus(Player player)
+    {
+        if (player == null)
+        {
+            return;
+        }
+
+        var packet = player.CurrentDungeon?.BuildStatusPacket()
+                     ?? new DungeonStatusPacket(Guid.Empty, DungeonRunState.None, 0, -1, 0, 0, string.Empty);
+        player.SendPacket(packet);
+    }
+
+    //DungeonRecordsPacket
+    public static void SendDungeonRecords(Player player)
+    {
+        if (player == null)
+        {
+            return;
+        }
+
+        var records = DungeonDescriptor.Lookup.Values
+            .OfType<DungeonDescriptor>()
+            .Select(
+                descriptor =>
+                {
+                    player.DungeonData.Records.TryGetValue(descriptor.Id, out var record);
+
+                    return new DungeonRecordPacket(
+                        descriptor.Id,
+                        record?.Completions ?? 0,
+                        record?.BestTimeMs ?? 0,
+                        player.GetDungeonCooldownRemainingMs(descriptor)
+                    );
+                }
+            )
+            .ToArray();
+
+        player.SendPacket(new DungeonRecordsPacket(records));
+    }
+
     //UnlockedTitlesPacket
     public static void SendUnlockedTitles(Player player)
     {
@@ -2242,11 +2318,8 @@ public static partial class PacketSender
             return;
         }
 
-        var unlocked = player.UnlockedTitleIds
-            .Select(Intersect.Server.General.TitleManager.Get)
-            .Where(title => title != null)
-            .Select(title => title!)
-            .ToList();
+        // Only send titles that still exist (a title may have been deleted in the editor since it was unlocked).
+        var unlocked = player.UnlockedTitleIds.Where(id => TitleDescriptor.Get(id) != null).ToList();
 
         player.SendPacket(new UnlockedTitlesPacket(unlocked, player.EquippedTitleId));
     }

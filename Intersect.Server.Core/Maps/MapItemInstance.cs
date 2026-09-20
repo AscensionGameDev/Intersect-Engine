@@ -34,6 +34,12 @@ public partial class MapItem : Item
     // We need this mostly for the client-side.. They can't keep track of our timer after all!
     public bool VisibleToAll = true;
 
+    /// <summary>
+    /// True when a player deliberately dropped this item (as opposed to loot). Used by pets to avoid
+    /// picking their owner's drops straight back up.
+    /// </summary>
+    [JsonIgnore] public bool DroppedByPlayer;
+
     public MapItem(Guid itemId, int quantity, int x, int y, long respawnTime = 0) : base(itemId, quantity)
     {
         UniqueId = Guid.NewGuid();

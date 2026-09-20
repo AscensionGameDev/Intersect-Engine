@@ -47,6 +47,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.rdoGlobalVariables = new DarkUI.Controls.DarkRadioButton();
             this.rdoUserVariables = new DarkUI.Controls.DarkRadioButton();
+            this.rdoInstanceVariables = new DarkUI.Controls.DarkRadioButton();
             this.grpInput.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxVal)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMinVal)).BeginInit();
@@ -57,6 +58,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpInput.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpInput.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpInput.Controls.Add(this.rdoUserVariables);
+            this.grpInput.Controls.Add(this.rdoInstanceVariables);
             this.grpInput.Controls.Add(this.lblTitle);
             this.grpInput.Controls.Add(this.txtTitle);
             this.grpInput.Controls.Add(this.nudMaxVal);
@@ -75,7 +77,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpInput.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpInput.Location = new System.Drawing.Point(3, 3);
             this.grpInput.Name = "grpInput";
-            this.grpInput.Size = new System.Drawing.Size(259, 305);
+            this.grpInput.Size = new System.Drawing.Size(259, 326);
             this.grpInput.TabIndex = 17;
             this.grpInput.TabStop = false;
             this.grpInput.Text = "Input Variable";
@@ -103,7 +105,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             this.nudMaxVal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudMaxVal.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudMaxVal.Location = new System.Drawing.Point(126, 244);
+            this.nudMaxVal.Location = new System.Drawing.Point(126, 265);
             this.nudMaxVal.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -121,7 +123,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // lblMaxVal
             // 
             this.lblMaxVal.AutoSize = true;
-            this.lblMaxVal.Location = new System.Drawing.Point(11, 246);
+            this.lblMaxVal.Location = new System.Drawing.Point(11, 267);
             this.lblMaxVal.Name = "lblMaxVal";
             this.lblMaxVal.Size = new System.Drawing.Size(84, 13);
             this.lblMaxVal.TabIndex = 52;
@@ -131,7 +133,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             this.nudMinVal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudMinVal.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudMinVal.Location = new System.Drawing.Point(126, 218);
+            this.nudMinVal.Location = new System.Drawing.Point(126, 239);
             this.nudMinVal.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -149,7 +151,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // lblMinVal
             // 
             this.lblMinVal.AutoSize = true;
-            this.lblMinVal.Location = new System.Drawing.Point(11, 220);
+            this.lblMinVal.Location = new System.Drawing.Point(11, 241);
             this.lblMinVal.Name = "lblMinVal";
             this.lblMinVal.Size = new System.Drawing.Size(81, 13);
             this.lblMinVal.TabIndex = 50;
@@ -168,7 +170,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbVariable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbVariable.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbVariable.FormattingEnabled = true;
-            this.cmbVariable.Location = new System.Drawing.Point(7, 188);
+            this.cmbVariable.Location = new System.Drawing.Point(7, 209);
             this.cmbVariable.Name = "cmbVariable";
             this.cmbVariable.Size = new System.Drawing.Size(234, 21);
             this.cmbVariable.TabIndex = 49;
@@ -234,7 +236,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(89, 276);
+            this.btnCancel.Location = new System.Drawing.Point(89, 297);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
@@ -244,7 +246,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(7, 276);
+            this.btnSave.Location = new System.Drawing.Point(7, 297);
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(75, 23);
@@ -272,6 +274,16 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.rdoUserVariables.Text = "Account Variables";
             this.rdoUserVariables.CheckedChanged += new System.EventHandler(this.rdoUserVariables_CheckedChanged);
             // 
+            // rdoInstanceVariables
+            // 
+            this.rdoInstanceVariables.AutoSize = true;
+            this.rdoInstanceVariables.Location = new System.Drawing.Point(14, 186);
+            this.rdoInstanceVariables.Name = "rdoInstanceVariables";
+            this.rdoInstanceVariables.Size = new System.Drawing.Size(115, 17);
+            this.rdoInstanceVariables.TabIndex = 65;
+            this.rdoInstanceVariables.Text = "Instance Variables";
+            this.rdoInstanceVariables.CheckedChanged += new System.EventHandler(this.rdoInstanceVariables_CheckedChanged);
+            // 
             // EventCommandInput
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -280,7 +292,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpInput);
             this.Name = "EventCommandInput";
-            this.Size = new System.Drawing.Size(268, 318);
+            this.Size = new System.Drawing.Size(268, 339);
             this.grpInput.ResumeLayout(false);
             this.grpInput.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxVal)).EndInit();
@@ -308,5 +320,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private System.Windows.Forms.Label lblTitle;
         private DarkTextBox txtTitle;
         private DarkRadioButton rdoUserVariables;
+        private DarkRadioButton rdoInstanceVariables;
     }
 }

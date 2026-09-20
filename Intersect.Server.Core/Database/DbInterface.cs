@@ -12,14 +12,17 @@ using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Dungeons;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Pets;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
+using Intersect.Framework.Core.GameObjects.Titles;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
@@ -77,6 +80,8 @@ public static partial class DbInterface
     public static Dictionary<string, GuildVariableDescriptor> GuildVariableEventTextLookup = new();
 
     public static Dictionary<string, UserVariableDescriptor> UserVariableEventTextLookup = new();
+
+    public static Dictionary<string, InstanceVariableDescriptor> InstanceVariableEventTextLookup = new();
 
     public static ConcurrentDictionary<Guid, ServerVariableDescriptor> UpdatedServerVariables = new();
 
@@ -429,6 +434,7 @@ public static partial class DbInterface
         CachePlayerVariableEventTextLookups();
         CacheGuildVariableEventTextLookups();
         CacheUserVariableEventTextLookups();
+        CacheInstanceVariableEventTextLookups();
 
         CheckPlayerDatabaseCaseInsensitiveCollisions();
 
@@ -782,6 +788,22 @@ public static partial class DbInterface
                 UserVariableDescriptor.Lookup.Clear();
 
                 break;
+            case GameObjectType.Title:
+                TitleDescriptor.Lookup.Clear();
+
+                break;
+            case GameObjectType.Pet:
+                PetDescriptor.Lookup.Clear();
+
+                break;
+            case GameObjectType.Dungeon:
+                DungeonDescriptor.Lookup.Clear();
+
+                break;
+            case GameObjectType.InstanceVariable:
+                InstanceVariableDescriptor.Lookup.Clear();
+
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(type), type, null);
         }
@@ -929,6 +951,34 @@ public static partial class DbInterface
                         foreach (var psw in context.UserVariables)
                         {
                             UserVariableDescriptor.Lookup.Set(psw.Id, psw);
+                        }
+
+                        break;
+                    case GameObjectType.Title:
+                        foreach (var title in context.Titles)
+                        {
+                            TitleDescriptor.Lookup.Set(title.Id, title);
+                        }
+
+                        break;
+                    case GameObjectType.Pet:
+                        foreach (var pet in context.Pets)
+                        {
+                            PetDescriptor.Lookup.Set(pet.Id, pet);
+                        }
+
+                        break;
+                    case GameObjectType.Dungeon:
+                        foreach (var dungeon in context.Dungeons)
+                        {
+                            DungeonDescriptor.Lookup.Set(dungeon.Id, dungeon);
+                        }
+
+                        break;
+                    case GameObjectType.InstanceVariable:
+                        foreach (var variable in context.InstanceVariables)
+                        {
+                            InstanceVariableDescriptor.Lookup.Set(variable.Id, variable);
                         }
 
                         break;
@@ -1181,6 +1231,22 @@ public static partial class DbInterface
                 dbObj = new UserVariableDescriptor(predefinedid);
 
                 break;
+            case GameObjectType.Title:
+                dbObj = new TitleDescriptor(predefinedid);
+
+                break;
+            case GameObjectType.Pet:
+                dbObj = new PetDescriptor(predefinedid);
+
+                break;
+            case GameObjectType.Dungeon:
+                dbObj = new DungeonDescriptor(predefinedid);
+
+                break;
+            case GameObjectType.InstanceVariable:
+                dbObj = new InstanceVariableDescriptor(predefinedid);
+
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(gameObjectType), gameObjectType, null);
         }
@@ -1304,6 +1370,26 @@ public static partial class DbInterface
                     case GameObjectType.UserVariable:
                         context.UserVariables.Add((UserVariableDescriptor)dbObj);
                         UserVariableDescriptor.Lookup.Set(dbObj.Id, dbObj);
+
+                        break;
+                    case GameObjectType.Title:
+                        context.Titles.Add((TitleDescriptor)dbObj);
+                        TitleDescriptor.Lookup.Set(dbObj.Id, dbObj);
+
+                        break;
+                    case GameObjectType.Pet:
+                        context.Pets.Add((PetDescriptor)dbObj);
+                        PetDescriptor.Lookup.Set(dbObj.Id, dbObj);
+
+                        break;
+                    case GameObjectType.Dungeon:
+                        context.Dungeons.Add((DungeonDescriptor)dbObj);
+                        DungeonDescriptor.Lookup.Set(dbObj.Id, dbObj);
+
+                        break;
+                    case GameObjectType.InstanceVariable:
+                        context.InstanceVariables.Add((InstanceVariableDescriptor)dbObj);
+                        InstanceVariableDescriptor.Lookup.Set(dbObj.Id, dbObj);
 
                         break;
 
@@ -1444,6 +1530,22 @@ public static partial class DbInterface
                         break;
                     case GameObjectType.UserVariable:
                         context.UserVariables.Remove((UserVariableDescriptor)gameObject);
+
+                        break;
+                    case GameObjectType.Title:
+                        context.Titles.Remove((TitleDescriptor)gameObject);
+
+                        break;
+                    case GameObjectType.Pet:
+                        context.Pets.Remove((PetDescriptor)gameObject);
+
+                        break;
+                    case GameObjectType.Dungeon:
+                        context.Dungeons.Remove((DungeonDescriptor)gameObject);
+
+                        break;
+                    case GameObjectType.InstanceVariable:
+                        context.InstanceVariables.Remove((InstanceVariableDescriptor)gameObject);
 
                         break;
                 }
@@ -1601,6 +1703,22 @@ public static partial class DbInterface
                         context.UserVariables.Update((UserVariableDescriptor)gameObject);
 
                         break;
+                    case GameObjectType.Title:
+                        context.Titles.Update((TitleDescriptor)gameObject);
+
+                        break;
+                    case GameObjectType.Pet:
+                        context.Pets.Update((PetDescriptor)gameObject);
+
+                        break;
+                    case GameObjectType.Dungeon:
+                        context.Dungeons.Update((DungeonDescriptor)gameObject);
+
+                        break;
+                    case GameObjectType.InstanceVariable:
+                        context.InstanceVariables.Update((InstanceVariableDescriptor)gameObject);
+
+                        break;
                 }
 
                 context.ChangeTracker.DetectChanges();
@@ -1733,6 +1851,21 @@ public static partial class DbInterface
             }
         }
         UserVariableEventTextLookup = lookup;
+    }
+
+    public static void CacheInstanceVariableEventTextLookups()
+    {
+        var lookup = new Dictionary<string, InstanceVariableDescriptor>();
+        var addedIds = new HashSet<string>();
+        foreach (InstanceVariableDescriptor variable in InstanceVariableDescriptor.Lookup.Values)
+        {
+            if (!string.IsNullOrWhiteSpace(variable.TextId) && !addedIds.Contains(variable.TextId))
+            {
+                lookup.Add(Strings.Events.InstanceVariable + "{" + variable.TextId + "}", variable);
+                addedIds.Add(variable.TextId);
+            }
+        }
+        InstanceVariableEventTextLookup = lookup;
     }
 
     //Extra Map Helper Functions

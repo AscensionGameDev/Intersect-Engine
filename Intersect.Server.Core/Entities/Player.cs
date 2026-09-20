@@ -10,17 +10,18 @@ using Intersect.Framework;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Crafting;
+using Intersect.Framework.Core.GameObjects.Dungeons;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Events.Commands;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.Attributes;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Pets;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Quests;
 using Intersect.Framework.Core.GameObjects.Titles;
 using Intersect.Framework.Core.GameObjects.Variables;
-using Intersect.Server.General;
 using Intersect.GameObjects;
 using Intersect.Network;
 using Intersect.Network.Packets.Server;
@@ -30,6 +31,7 @@ using Intersect.Server.Database.Logging.Entities;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
+using Intersect.Server.Dungeons;
 using Intersect.Server.Entities.Events;
 using Intersect.Server.Framework.Entities;
 using Intersect.Server.Framework.Items;
@@ -507,6 +509,13 @@ public partial class Player : Entity
             }
 
             _saving = true;
+        }
+
+        CurrentDungeon?.RemovePlayer(this);
+        PendingDungeonInvite?.Respond(this, false);
+        if (DungeonManager.TryGetInvite(Id, out var ownInvite))
+        {
+            ownInvite.Cancel();
         }
 
         if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
@@ -2186,6 +2195,21 @@ public partial class Player : Entity
     /// </summary>
     public void LoginWarp()
     {
+        if (DungeonData.InDungeon)
+        {
+            // The run is gone (runs don't survive a logout): put the player back where they entered the dungeon from.
+            DungeonData.InDungeon = false;
+            InstanceType = MapInstanceType.Overworld;
+            SharedMapInstanceId = Guid.Empty;
+            MapInstanceId = Guid.Empty;
+            if (MapController.Get(DungeonData.ReturnMapId) != null)
+            {
+                MapId = DungeonData.ReturnMapId;
+                X = DungeonData.ReturnX;
+                Y = DungeonData.ReturnY;
+            }
+        }
+
         if (MapId == null || MapId == Guid.Empty)
         {
             WarpToSpawn();
@@ -2232,6 +2256,18 @@ public partial class Player : Entity
 
     public void WarpToSpawn(bool forceClassRespawn = false)
     {
+        // Inside a dungeon run the shared life pool decides: respawn at the entrance while lives remain,
+        // otherwise the run fails and everyone is sent home by the dungeon itself.
+        if (CurrentDungeon is { } dungeon && !forceClassRespawn)
+        {
+            if (dungeon.OnPlayerDied(this) || !dungeon.IsRunning)
+            {
+                Warp(dungeon.Descriptor.EntryMapId, dungeon.Descriptor.EntryX, dungeon.Descriptor.EntryY, dungeon.Descriptor.EntryDirection);
+            }
+
+            return;
+        }
+
         var mapId = Guid.Empty;
         byte x = 0;
         byte y = 0;
@@ -2477,7 +2513,14 @@ public partial class Player : Entity
         // Save values before change for reference/emergency recall
         PreviousMapInstanceId = MapInstanceId;
         PreviousMapInstanceType = InstanceType;
-        if (mapInstanceType != null) // If we're requesting an instance type change
+        if (_pendingDungeonInstanceId is { } dungeonInstanceId) // Dungeons pick the exact shared instance to join (see JoinDungeon)
+        {
+            _pendingDungeonInstanceId = null;
+            InstanceType = MapInstanceType.Shared;
+            SharedMapInstanceId = dungeonInstanceId;
+            MapInstanceId = dungeonInstanceId;
+        }
+        else if (mapInstanceType != null) // If we're requesting an instance type change
         {
             // Update our saved instance type - this helps us determine what to do on login, warps, etc
             InstanceType = (MapInstanceType)mapInstanceType;
@@ -6152,6 +6195,24 @@ public partial class Player : Entity
         }
     }
 
+    /// <summary>
+    /// Like <see cref="StartCommonEventsWithTriggerForAll"/> but only for the players sharing a map instance (instance variables).
+    /// </summary>
+    public static void StartCommonEventsWithTriggerForInstance(Guid mapInstanceId, CommonEventTrigger trigger, string command = "", string param = "")
+    {
+        var players = OnlinePlayers.Where(player => player.MapInstanceId == mapInstanceId).ToArray();
+        foreach (var value in EventDescriptor.Lookup.Values)
+        {
+            if (value is EventDescriptor eventDescriptor && eventDescriptor.Pages.Any(p => p.CommonTrigger == trigger))
+            {
+                foreach (var player in players)
+                {
+                    player.EnqueueStartCommonEvent(eventDescriptor, trigger, command, param);
+                }
+            }
+        }
+    }
+
     //Stats
     public void UpgradeStat(int statIndex)
     {
@@ -6944,6 +7005,16 @@ public partial class Player : Entity
 
                             value = User.GetVariableValue(cmd.VariableId) ?? new VariableValue();
                         }
+                        else if (cmd.VariableType == VariableType.InstanceVariable)
+                        {
+                            var variable = InstanceVariableDescriptor.Get(cmd.VariableId);
+                            if (variable != null)
+                            {
+                                type = variable.DataType;
+                            }
+
+                            value = InstanceVariables.GetVariableValue(MapInstanceId, cmd.VariableId);
+                        }
 
                         if (value == null)
                         {
@@ -7048,6 +7119,14 @@ public partial class Player : Entity
                                 variable.Value = value;
                                 User.StartCommonEventsWithTriggerForAll(CommonEventTrigger.UserVariableChange, "", cmd.VariableId.ToString());
                                 User.UpdatedVariables.AddOrUpdate(cmd.VariableId, UserVariableDescriptor.Get(cmd.VariableId), (key, oldValue) => UserVariableDescriptor.Get(cmd.VariableId));
+                            }
+                        }
+                        else if (cmd.VariableType == VariableType.InstanceVariable)
+                        {
+                            // The value object is the live one from the instance store, it has already been updated in place.
+                            if (changed)
+                            {
+                                StartCommonEventsWithTriggerForInstance(MapInstanceId, CommonEventTrigger.InstanceVariableChange, "", cmd.VariableId.ToString());
                             }
                         }
 
@@ -7186,6 +7265,11 @@ public partial class Player : Entity
                         continue;
                     }
 
+                    if (trigger == CommonEventTrigger.InstanceVariableChange && param != eventDescriptor.Pages[i].TriggerId.ToString())
+                    {
+                        continue;
+                    }
+
                     newEvent = new Event(evtId, null, this, eventDescriptor)
                     {
                         MapId = mapId,
@@ -7223,6 +7307,7 @@ public partial class Player : Entity
                         case CommonEventTrigger.InventoryChanged:
                         case CommonEventTrigger.MapChanged:
                         case CommonEventTrigger.UserVariableChange:
+                        case CommonEventTrigger.InstanceVariableChange:
                         case CommonEventTrigger.LevelDown:
                             break;
 
@@ -7891,6 +7976,397 @@ public partial class Player : Entity
 
     #endregion
 
+    #region Dungeons
+
+    /// <summary>
+    /// Per-dungeon history of this player (completions, best time, last start for cooldowns).
+    /// </summary>
+    public sealed class DungeonRecord
+    {
+        public int Completions { get; set; }
+
+        public long BestTimeMs { get; set; }
+
+        /// <summary>UTC ticks of the last run start, used for the cooldown.</summary>
+        public long LastStartedUtcTicks { get; set; }
+    }
+
+    /// <summary>
+    /// Everything about dungeons that must survive a logout: records, and where to put the player back if they
+    /// were inside a run (dungeon instances don't survive a restart or a logout).
+    /// </summary>
+    public sealed class DungeonPlayerData
+    {
+        public Dictionary<Guid, DungeonRecord> Records { get; set; } = new();
+
+        public Guid ReturnMapId { get; set; } = Guid.Empty;
+
+        public int ReturnX { get; set; }
+
+        public int ReturnY { get; set; }
+
+        /// <summary>True while the player is (or was, at logout) inside a dungeon run.</summary>
+        public bool InDungeon { get; set; }
+    }
+
+    [JsonIgnore, Column("DungeonData")]
+    public string DungeonDataJson
+    {
+        get => JsonConvert.SerializeObject(DungeonData);
+        set => DungeonData = JsonConvert.DeserializeObject<DungeonPlayerData>(value ?? "{}") ?? new DungeonPlayerData();
+    }
+
+    [JsonIgnore, NotMapped]
+    public DungeonPlayerData DungeonData { get; set; } = new();
+
+    [JsonIgnore, NotMapped]
+    public DungeonInstance? CurrentDungeon { get; set; }
+
+    /// <summary>
+    /// Set right before the entry warp of a dungeon so that <see cref="ProcessMapInstanceChange"/> switches to that exact
+    /// shared instance (and cleanly leaves the previous one) instead of generating a new id.
+    /// </summary>
+    [JsonIgnore, NotMapped]
+    private Guid? _pendingDungeonInstanceId;
+
+    public long GetDungeonCooldownRemainingMs(DungeonDescriptor descriptor)
+    {
+        if (descriptor.CooldownSeconds <= 0 || !DungeonData.Records.TryGetValue(descriptor.Id, out var record))
+        {
+            return 0;
+        }
+
+        var availableAt = new DateTime(record.LastStartedUtcTicks, DateTimeKind.Utc).AddSeconds(descriptor.CooldownSeconds);
+
+        return Math.Max(0, (long)(availableAt - DateTime.UtcNow).TotalMilliseconds);
+    }
+
+    /// <summary>
+    /// Checks whether this player alone satisfies the dungeon's requirements.
+    /// </summary>
+    public bool CanEnterDungeon(DungeonDescriptor descriptor, out string reason)
+    {
+        reason = string.Empty;
+
+        if (CurrentDungeon != null)
+        {
+            reason = Strings.Dungeons.AlreadyInDungeon;
+
+            return false;
+        }
+
+        if (Level < descriptor.RequiredLevel)
+        {
+            reason = Strings.Dungeons.LevelTooLow.ToString(descriptor.RequiredLevel);
+
+            return false;
+        }
+
+        var cooldown = GetDungeonCooldownRemainingMs(descriptor);
+        if (cooldown > 0)
+        {
+            reason = Strings.Dungeons.OnCooldown.ToString(DungeonInstance.FormatTime(cooldown));
+
+            return false;
+        }
+
+        if (MapController.Get(descriptor.EntryMapId) == null)
+        {
+            reason = Strings.Dungeons.InvalidEntry;
+
+            return false;
+        }
+
+        return true;
+    }
+
+    [JsonIgnore, NotMapped]
+    public DungeonInvite? PendingDungeonInvite { get; set; }
+
+    /// <summary>
+    /// Starts (or, for a party, proposes) a run of <paramref name="descriptor"/>. Solo and guild dungeons start right
+    /// away; party dungeons send an invitation to every member and start when they answered or the timer ran out.
+    /// Only the party leader may start a party dungeon.
+    /// </summary>
+    public bool TryEnterDungeon(DungeonDescriptor descriptor, out string reason)
+    {
+        if (!CanEnterDungeon(descriptor, out reason))
+        {
+            return false;
+        }
+
+        switch (descriptor.AccessType)
+        {
+            case DungeonAccessType.Party:
+                var party = Party is { Count: > 1 } ? Party : [this];
+                if (party.Count > 1 && PartyLeader?.Id != Id)
+                {
+                    reason = Strings.Dungeons.LeaderOnly;
+
+                    return false;
+                }
+
+                if (party.Count < Math.Max(1, descriptor.MinPlayers))
+                {
+                    reason = Strings.Dungeons.NotEnoughPlayers.ToString(descriptor.MinPlayers);
+
+                    return false;
+                }
+
+                if (descriptor.MaxPlayers > 0 && party.Count > descriptor.MaxPlayers)
+                {
+                    reason = Strings.Dungeons.TooManyPlayers.ToString(descriptor.MaxPlayers);
+
+                    return false;
+                }
+
+                if (party.Count == 1)
+                {
+                    return StartDungeonRun(descriptor, this, [this], out reason);
+                }
+
+                if (DungeonManager.TryGetInvite(Id, out _))
+                {
+                    reason = Strings.Dungeons.InvitePending;
+
+                    return false;
+                }
+
+                var invite = new DungeonInvite(descriptor, this, party);
+                DungeonManager.AddInvite(invite);
+                invite.Send();
+
+                return true;
+
+            case DungeonAccessType.Guild:
+                if (Guild == null)
+                {
+                    reason = Strings.Dungeons.GuildRequired;
+
+                    return false;
+                }
+
+                return StartDungeonRun(descriptor, this, Guild.FindOnlineMembers(), out reason);
+
+            default:
+                return StartDungeonRun(descriptor, this, [this], out reason);
+        }
+    }
+
+    /// <summary>
+    /// Creates the run and warps every eligible participant into it. Participants that no longer qualify are told why and left out.
+    /// </summary>
+    public static bool StartDungeonRun(DungeonDescriptor descriptor, Player starter, IEnumerable<Player> participants)
+        => StartDungeonRun(descriptor, starter, participants, out var reason)
+           || ReportDungeonStartFailure(starter, reason);
+
+    private static bool ReportDungeonStartFailure(Player starter, string reason)
+    {
+        PacketSender.SendChatMsg(starter, reason, ChatMessageType.Notice, CustomColors.Alerts.Declined);
+
+        return false;
+    }
+
+    public static bool StartDungeonRun(DungeonDescriptor descriptor, Player starter, IEnumerable<Player> participants, out string reason)
+    {
+        reason = string.Empty;
+
+        var instance = new DungeonInstance(descriptor);
+        DungeonManager.Add(instance);
+
+        foreach (var participant in participants)
+        {
+            if (participant.IsDisposed)
+            {
+                continue;
+            }
+
+            if (!participant.CanEnterDungeon(descriptor, out var memberReason))
+            {
+                PacketSender.SendChatMsg(participant, Strings.Dungeons.MemberSkipped.ToString(descriptor.Name, memberReason), ChatMessageType.Notice, CustomColors.Alerts.Declined);
+                if (participant != starter)
+                {
+                    PacketSender.SendChatMsg(starter, Strings.Dungeons.MemberSkipped.ToString(descriptor.Name, $"{participant.Name}: {memberReason}"), ChatMessageType.Notice, CustomColors.Alerts.Declined);
+                }
+
+                continue;
+            }
+
+            participant.JoinDungeon(instance);
+        }
+
+        if (instance.PlayerCount == 0)
+        {
+            DungeonManager.Remove(instance);
+            reason = Strings.Dungeons.NobodyEligible;
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private void JoinDungeon(DungeonInstance instance)
+    {
+        var descriptor = instance.Descriptor;
+
+        // Remember where to put the player back afterwards (also survives a logout mid-run).
+        DungeonData.ReturnMapId = MapId;
+        DungeonData.ReturnX = X;
+        DungeonData.ReturnY = Y;
+        DungeonData.InDungeon = true;
+        if (!DungeonData.Records.TryGetValue(descriptor.Id, out var record))
+        {
+            record = new DungeonRecord();
+            DungeonData.Records[descriptor.Id] = record;
+        }
+
+        record.LastStartedUtcTicks = DateTime.UtcNow.Ticks;
+
+        // Piggy-back on the engine's shared-instance plumbing (respawn point, overworld fallback on login...).
+        UpdateLastOverworldLocation(MapId, X, Y);
+        UpdateSharedInstanceRespawnLocation(descriptor.EntryMapId, descriptor.EntryX, descriptor.EntryY, descriptor.EntryDirection);
+
+        instance.AddPlayer(this);
+
+        // Switch to the dungeon instance the same way any instance change is done (PreviousMapInstanceId is recorded so the
+        // old instance is properly left behind). Warp short-circuits ProcessMapInstanceChange when forceInstanceChange is
+        // set, hence the explicit call here.
+        _pendingDungeonInstanceId = instance.MapInstanceId;
+        ProcessMapInstanceChange(null, false);
+
+        var warpStopwatch = System.Diagnostics.Stopwatch.StartNew();
+        Warp(descriptor.EntryMapId, descriptor.EntryX, descriptor.EntryY, descriptor.EntryDirection, forceInstanceChange: true);
+        ApplicationContext.Context.Value?.Logger.LogInformation(
+            "[Dungeon] {Player} entered {Dungeon} (instance creation + warp took {Elapsed}ms)",
+            Name,
+            descriptor.Name,
+            warpStopwatch.ElapsedMilliseconds
+        );
+
+        PacketSender.SendChatMsg(this, Strings.Dungeons.Entered.ToString(descriptor.Name), ChatMessageType.Notice, CustomColors.Alerts.Accepted);
+        PacketSender.SendDungeonRecords(this);
+    }
+
+    /// <summary>
+    /// Takes the player out of their current run. With <paramref name="sendHome"/> they are warped back to where
+    /// they started the dungeon from.
+    /// </summary>
+    public void LeaveDungeon(bool sendHome)
+    {
+        var instance = CurrentDungeon;
+        instance?.RemovePlayer(this);
+        CurrentDungeon = null;
+
+        var hadReturnPoint = DungeonData.InDungeon;
+        DungeonData.InDungeon = false;
+
+        if (!sendHome)
+        {
+            return;
+        }
+
+        SharedMapInstanceId = Guid.Empty;
+        if (hadReturnPoint && MapController.Get(DungeonData.ReturnMapId) != null)
+        {
+            Warp(DungeonData.ReturnMapId, DungeonData.ReturnX, DungeonData.ReturnY, Dir, mapInstanceType: MapInstanceType.Overworld);
+        }
+        else
+        {
+            WarpToLastOverworldLocation(false);
+        }
+
+        PacketSender.SendDungeonRecords(this);
+    }
+
+    public void RecordDungeonCompletion(Guid dungeonId, long elapsedMs)
+    {
+        if (!DungeonData.Records.TryGetValue(dungeonId, out var record))
+        {
+            record = new DungeonRecord();
+            DungeonData.Records[dungeonId] = record;
+        }
+
+        record.Completions++;
+        if (record.BestTimeMs <= 0 || elapsedMs < record.BestTimeMs)
+        {
+            record.BestTimeMs = elapsedMs;
+        }
+    }
+
+    #endregion
+
+    #region Pets
+
+    /// <summary>
+    /// The pet this player currently has out (persisted so it comes back on login). Empty = no pet.
+    /// </summary>
+    public Guid PetId { get; set; } = Guid.Empty;
+
+    [JsonIgnore, NotMapped]
+    public Pet? ActivePet { get; private set; }
+
+    /// <summary>
+    /// Gives the player a pet and summons it right away (dismissing any previous one), or dismisses
+    /// the current pet when <paramref name="petId"/> is <see cref="Guid.Empty"/>.
+    /// </summary>
+    public bool ChangePet(Guid petId)
+    {
+        if (petId != Guid.Empty && PetDescriptor.Get(petId) is null)
+        {
+            return false;
+        }
+
+        DespawnPet();
+        PetId = petId;
+        SpawnPet();
+
+        return true;
+    }
+
+    /// <summary>
+    /// Creates the pet entity next to the player on their current map instance, if they have one.
+    /// </summary>
+    public void SpawnPet()
+    {
+        if (PetId == Guid.Empty || PetDescriptor.Get(PetId) is not { } descriptor)
+        {
+            return;
+        }
+
+        if (!MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var mapInstance))
+        {
+            return;
+        }
+
+        // Already out on this map instance: nothing to do.
+        if (ActivePet is { IsDisposed: false } existing && existing.MapInstanceId == MapInstanceId && existing.Descriptor.Id == PetId)
+        {
+            existing.TeleportToOwner();
+
+            return;
+        }
+
+        DespawnPet();
+
+        var pet = new Pet(descriptor, this);
+        ActivePet = pet;
+        mapInstance.AddEntity(pet);
+        PacketSender.SendEntityDataToProximity(pet);
+    }
+
+    /// <summary>
+    /// Removes the pet entity from the world (the player keeps the pet, see <see cref="PetId"/>).
+    /// </summary>
+    public void DespawnPet()
+    {
+        var pet = ActivePet;
+        ActivePet = null;
+        pet?.Despawn();
+    }
+
+    #endregion
+
     #region Titles
 
     [JsonIgnore, Column("UnlockedTitles")]
@@ -7900,7 +8376,7 @@ public partial class Player : Entity
         set => UnlockedTitleIds = JsonConvert.DeserializeObject<List<Guid>>(value ?? "[]") ?? new List<Guid>();
     }
 
-    [JsonIgnore] public List<Guid> UnlockedTitleIds { get; set; } = new List<Guid>();
+    [JsonIgnore, NotMapped] public List<Guid> UnlockedTitleIds { get; set; } = new List<Guid>();
 
     public Guid EquippedTitleId { get; set; } = Guid.Empty;
 
@@ -7909,7 +8385,7 @@ public partial class Player : Entity
     /// </summary>
     public bool UnlockTitle(Guid titleId)
     {
-        if (titleId == Guid.Empty || TitleManager.Get(titleId) is null)
+        if (titleId == Guid.Empty || TitleDescriptor.Get(titleId) is null)
         {
             return false;
         }
@@ -7936,7 +8412,7 @@ public partial class Player : Entity
             return RemoveTitle();
         }
 
-        var title = TitleManager.Get(titleId);
+        var title = TitleDescriptor.Get(titleId);
         if (title is null || !UnlockedTitleIds.Contains(titleId))
         {
             return false;

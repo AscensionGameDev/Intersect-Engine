@@ -116,6 +116,8 @@ public partial class GameInterface : MutableInterface
     public Canvas GameCanvas { get; }
 
     private AnnouncementWindow? _announcementWindow;
+
+    private Dungeons.DungeonHud? _dungeonHud;
     private EscapeMenuWindow? _escapeMenu;
     private SimplifiedEscapeMenu? _simplifiedEscapeMenu;
     private TargetContextMenu? _targetContextMenu;
@@ -130,6 +132,12 @@ public partial class GameInterface : MutableInterface
     public TargetContextMenu TargetContextMenu => _targetContextMenu ??= new TargetContextMenu(GameCanvas) {IsHidden = true};
 
     public AnnouncementWindow AnnouncementWindow => _announcementWindow ??= new AnnouncementWindow(GameCanvas) { IsHidden = true };
+
+    public Dungeons.DungeonHud DungeonHud => _dungeonHud ??= new Dungeons.DungeonHud(GameCanvas);
+
+    private Dungeons.DungeonResultWindow? _dungeonResultWindow;
+
+    public Dungeons.DungeonResultWindow DungeonResultWindow => _dungeonResultWindow ??= new Dungeons.DungeonResultWindow(GameCanvas);
 
     public ItemDescriptionWindow? ItemDescriptionWindow
     {
@@ -354,6 +362,7 @@ public partial class GameInterface : MutableInterface
         PlayerStatusWindow?.Update();
         mMapItemWindow.Update();
         AnnouncementWindow?.Update();
+        DungeonHud.Update();
         mPictureWindow?.Update();
 
         var questDescriptorId = Globals.QuestOffers.FirstOrDefault();
