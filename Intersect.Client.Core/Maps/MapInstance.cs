@@ -17,6 +17,7 @@ using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Animations;
+using Intersect.Framework.Core.GameObjects.Furniture;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
@@ -97,6 +98,9 @@ public partial class MapInstance : MapDescriptor, IGameObject<Guid, MapInstance>
     public Dictionary<int, List<IMapItemInstance>> MapItems { get; set; } = new Dictionary<int, List<IMapItemInstance>>();
 
     IReadOnlyList<IMapItemInstance> IMapInstance.Items => MapItems.Values.SelectMany(x => x).ToList();
+
+    //Guild Hall Furniture
+    public Dictionary<Guid, FurnitureInstance> Furniture { get; set; } = new Dictionary<Guid, FurnitureInstance>();
 
     //Map Attributes
     private Dictionary<MapAttribute, Animation> mAttributeAnimInstances = new Dictionary<MapAttribute, Animation>();
@@ -961,6 +965,47 @@ public partial class MapInstance : MapDescriptor, IGameObject<Guid, MapInstance>
                 var textureXPosition = centerX - (mapItemWidth / 2);
                 var textureYPosition = centerY - (mapItemHeight / 2);
 
+                // Diablo-style loot beam: a soft pulsing ground glow plus a vertical shaft of light
+                // rising from the item, both tinted by rarity, so loot reads at a glance from a distance
+                // instead of having to walk up and hover every item.
+                var rarityColor = CustomColors.Items.MapRarities.GetValueOrDefault(
+                    itemDescriptor.Rarity,
+                    new LabelColor(Color.White, Color.Black, new Color(100, 0, 0, 0))
+                ).Name;
+
+                var pulse = (float)(Math.Sin(Timing.Global.Milliseconds / 350.0) * 0.15 + 0.55);
+
+                // Ground glow: two stacked, softly-alpha'd squares fake a radial falloff without needing
+                // a dedicated glow texture - a big faint outer layer plus a smaller, brighter inner one.
+                foreach (var (sizeFactor, alphaFactor) in new[] { (2.1f, 0.35f), (1.4f, 0.6f) })
+                {
+                    var glowSize = mapItemWidth * sizeFactor;
+                    var glowColor = new Color((byte)(pulse * 150 * alphaFactor), rarityColor.R, rarityColor.G, rarityColor.B);
+                    Graphics.DrawGameTexture(
+                        Graphics.Renderer.WhitePixel,
+                        new FloatRect(0, 0, 1, 1),
+                        new FloatRect(centerX - glowSize / 2, centerY - glowSize / 2, glowSize, glowSize),
+                        glowColor
+                    );
+                }
+
+                // The beam itself: a tall shaft rising from the item, drawn as a bright narrow core plus
+                // a wider, fainter halo layer for soft edges (no gradient texture available, so we fake
+                // the falloff with two flat-alpha layers same as the ground glow above).
+                var beamHeight = mapItemHeight * 3.2f;
+                var beamBottom = centerY + mapItemHeight * 0.25f;
+                var beamTop = beamBottom - beamHeight;
+                foreach (var (beamWidth, alphaFactor) in new[] { (10f, 0.22f), (4f, 0.55f) })
+                {
+                    var beamColor = new Color((byte)(pulse * 170 * alphaFactor), rarityColor.R, rarityColor.G, rarityColor.B);
+                    Graphics.DrawGameTexture(
+                        Graphics.Renderer.WhitePixel,
+                        new FloatRect(0, 0, 1, 1),
+                        new FloatRect(centerX - beamWidth / 2, beamTop, beamWidth, beamHeight),
+                        beamColor
+                    );
+                }
+
                 // Draw the item texture.
                 Graphics.DrawGameTexture(
                     itemTexture,
@@ -979,6 +1024,102 @@ public partial class MapInstance : MapDescriptor, IGameObject<Guid, MapInstance>
             var y = Y + (light.TileY * _tileHeight + light.OffsetY) + _tileHeight / 2f;
             Graphics.AddLight((int)x, (int)y, (int)w, light.Intensity, light.Expand, light.Color);
         }
+    }
+
+    /// <summary>
+    /// Draws each piece of guild hall furniture as a single, static, idle-frame sprite - no animation or
+    /// movement logic needed since these are purely decorative and never move on their own.
+    /// </summary>
+    public void DrawFurniture()
+    {
+        foreach (var furniture in Furniture.Values)
+        {
+            if (!FurnitureDescriptor.TryGet(furniture.DescriptorId, out var descriptor))
+            {
+                continue;
+            }
+
+            if (descriptor.UseTilesetSprite)
+            {
+                DrawFurnitureFromTileset(furniture, descriptor);
+            }
+            else
+            {
+                DrawFurnitureFromEntitySprite(furniture, descriptor);
+            }
+        }
+    }
+
+    private void DrawFurnitureFromEntitySprite(FurnitureInstance furniture, FurnitureDescriptor descriptor)
+    {
+        if (string.IsNullOrEmpty(descriptor.Sprite))
+        {
+            return;
+        }
+
+        var texture = GameContentManager.Current.GetTexture(Framework.Content.TextureType.Entity, descriptor.Sprite);
+        if (texture == null)
+        {
+            return;
+        }
+
+        // Furniture sprites use the same entity spritesheet convention (4 directions x N frames) as
+        // characters/NPCs - draw only the idle "down" frame for the furniture's facing direction.
+        var spriteRow = PickFurnitureSpriteRow(furniture.Direction);
+        var frameWidth = texture.Width / Options.Instance.Sprites.NormalFrames;
+        var frameHeight = texture.Height / Options.Instance.Sprites.Directions;
+
+        if (frameWidth <= 0 || frameHeight <= 0)
+        {
+            return;
+        }
+
+        var srcRectangle = new FloatRect(0, spriteRow * frameHeight, frameWidth, frameHeight);
+        var destRectangle = new FloatRect(
+            X + furniture.X * _tileWidth + (_tileWidth - frameWidth) / 2f,
+            Y + furniture.Y * _tileHeight + _tileHeight - frameHeight,
+            frameWidth,
+            frameHeight
+        );
+
+        Graphics.DrawGameTexture(texture, srcRectangle, destRectangle, Color.White);
+    }
+
+    private void DrawFurnitureFromTileset(FurnitureInstance furniture, FurnitureDescriptor descriptor)
+    {
+        if (descriptor.TilesetId == Guid.Empty || !TilesetDescriptor.TryGet(descriptor.TilesetId, out var tileset))
+        {
+            return;
+        }
+
+        var texture = GameContentManager.Current.GetTexture(Framework.Content.TextureType.Tileset, tileset.Name);
+        if (texture == null)
+        {
+            return;
+        }
+
+        // A tileset tile is a single static image - no direction/frame slicing needed, just blit the
+        // one tile at the furniture's position.
+        var srcRectangle = new FloatRect(descriptor.TileX * _tileWidth, descriptor.TileY * _tileHeight, _tileWidth, _tileHeight);
+        var destRectangle = new FloatRect(
+            X + furniture.X * _tileWidth,
+            Y + furniture.Y * _tileHeight,
+            _tileWidth,
+            _tileHeight
+        );
+
+        Graphics.DrawGameTexture(texture, srcRectangle, destRectangle, Color.White);
+    }
+
+    private static int PickFurnitureSpriteRow(Direction direction)
+    {
+        return direction switch
+        {
+            Direction.Left => 1,
+            Direction.Right => 2,
+            Direction.Up => 3,
+            _ => 0,
+        };
     }
 
     /// <summary>

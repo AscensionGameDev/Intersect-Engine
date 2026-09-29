@@ -118,6 +118,10 @@ namespace Intersect.Editor.Forms
             this.timeEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.titleEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.petEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mountEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.achievementEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.factionEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.territoryEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dungeonEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.postQuestionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -823,6 +827,10 @@ namespace Intersect.Editor.Forms
             this.timeEditorToolStripMenuItem,
             this.titleEditorToolStripMenuItem,
             this.petEditorToolStripMenuItem,
+            this.mountEditorToolStripMenuItem,
+            this.achievementEditorToolStripMenuItem,
+            this.factionEditorToolStripMenuItem,
+            this.territoryEditorToolStripMenuItem,
             this.dungeonEditorToolStripMenuItem});
             this.contentEditorsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.contentEditorsToolStripMenuItem.Name = "contentEditorsToolStripMenuItem";
@@ -956,6 +964,38 @@ namespace Intersect.Editor.Forms
             this.petEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.petEditorToolStripMenuItem.Text = "Pet Editor";
             this.petEditorToolStripMenuItem.Click += new System.EventHandler(this.petEditorToolStripMenuItem_Click);
+            // 
+            // mountEditorToolStripMenuItem
+            // 
+            this.mountEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.mountEditorToolStripMenuItem.Name = "mountEditorToolStripMenuItem";
+            this.mountEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.mountEditorToolStripMenuItem.Text = "Mount Editor";
+            this.mountEditorToolStripMenuItem.Click += new System.EventHandler(this.mountEditorToolStripMenuItem_Click);
+            // 
+            // achievementEditorToolStripMenuItem
+            // 
+            this.achievementEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.achievementEditorToolStripMenuItem.Name = "achievementEditorToolStripMenuItem";
+            this.achievementEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.achievementEditorToolStripMenuItem.Text = "Achievement Editor";
+            this.achievementEditorToolStripMenuItem.Click += new System.EventHandler(this.achievementEditorToolStripMenuItem_Click);
+            // 
+            // factionEditorToolStripMenuItem
+            // 
+            this.factionEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.factionEditorToolStripMenuItem.Name = "factionEditorToolStripMenuItem";
+            this.factionEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.factionEditorToolStripMenuItem.Text = "Faction Editor";
+            this.factionEditorToolStripMenuItem.Click += new System.EventHandler(this.factionEditorToolStripMenuItem_Click);
+            // 
+            // territoryEditorToolStripMenuItem
+            // 
+            this.territoryEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.territoryEditorToolStripMenuItem.Name = "territoryEditorToolStripMenuItem";
+            this.territoryEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.territoryEditorToolStripMenuItem.Text = "Territory Editor";
+            this.territoryEditorToolStripMenuItem.Click += new System.EventHandler(this.territoryEditorToolStripMenuItem_Click);
             // 
             // dungeonEditorToolStripMenuItem
             // 
@@ -1142,6 +1182,10 @@ namespace Intersect.Editor.Forms
 		private ToolStripMenuItem timeEditorToolStripMenuItem;
 		private ToolStripMenuItem titleEditorToolStripMenuItem;
 		private ToolStripMenuItem petEditorToolStripMenuItem;
+		private ToolStripMenuItem mountEditorToolStripMenuItem;
+		private ToolStripMenuItem achievementEditorToolStripMenuItem;
+		private ToolStripMenuItem factionEditorToolStripMenuItem;
+		private ToolStripMenuItem territoryEditorToolStripMenuItem;
 		private ToolStripMenuItem dungeonEditorToolStripMenuItem;
 		private ToolStripMenuItem helpToolStripMenuItem;
 		private ToolStripMenuItem postQuestionToolStripMenuItem;

@@ -96,6 +96,8 @@ public partial class GameInterface : MutableInterface
 
     public PlayerStatusWindow PlayerStatusWindow;
 
+    public QuestTrackerWindow QuestTracker;
+
     private SettingsWindow GetOrCreateSettingsWindow()
     {
         _settingsWindow ??= new SettingsWindow(GameCanvas)
@@ -135,6 +137,10 @@ public partial class GameInterface : MutableInterface
 
     public Dungeons.DungeonHud DungeonHud => _dungeonHud ??= new Dungeons.DungeonHud(GameCanvas);
 
+    private Territories.TerritoryHud? _territoryHud;
+
+    public Territories.TerritoryHud TerritoryHud => _territoryHud ??= new Territories.TerritoryHud();
+
     private Dungeons.DungeonResultWindow? _dungeonResultWindow;
 
     public Dungeons.DungeonResultWindow DungeonResultWindow => _dungeonResultWindow ??= new Dungeons.DungeonResultWindow(GameCanvas);
@@ -161,6 +167,7 @@ public partial class GameInterface : MutableInterface
         PlayerBox = new EntityBox(GameCanvas, EntityType.Player, Globals.Me, true);
         PlayerBox.SetEntity(Globals.Me);
         PlayerStatusWindow = new PlayerStatusWindow(GameCanvas);
+        QuestTracker = new QuestTrackerWindow(GameCanvas);
         if (mPictureWindow == null)
         {
             mPictureWindow = new PictureWindow(GameCanvas);
@@ -313,6 +320,7 @@ public partial class GameInterface : MutableInterface
     public void NotifyQuestsUpdated()
     {
         mShouldUpdateQuestLog = true;
+        QuestTracker?.NotifyQuestsUpdated();
     }
 
     //Trading
@@ -360,9 +368,11 @@ public partial class GameInterface : MutableInterface
         EscapeMenu.Update();
         PlayerBox?.Update();
         PlayerStatusWindow?.Update();
+        QuestTracker?.Update();
         mMapItemWindow.Update();
         AnnouncementWindow?.Update();
         DungeonHud.Update();
+        TerritoryHud.Update();
         mPictureWindow?.Update();
 
         var questDescriptorId = Globals.QuestOffers.FirstOrDefault();

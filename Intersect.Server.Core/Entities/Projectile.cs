@@ -177,6 +177,19 @@ public partial class Projectile : Entity
     private static Direction FindProjectileRotationDir(Direction entityDir, Direction projectionDir) =>
         (Direction)ProjectileDescriptor.ProjectileRotationDir[(int)entityDir * ProjectileDescriptor.MAX_PROJECTILE_DIRECTIONS + (int)projectionDir];
 
+    /// <summary>
+    /// Seeds this projectile's aim point directly (e.g. from the caster's mouse cursor at cast time,
+    /// for MouseAimedBehavior) instead of requiring a targeted Entity. MoveFragment's "last known target
+    /// location" branch already moves in a straight line towards whatever _lastTargetX/Y holds, as long
+    /// as Target itself isn't also set for Homing/DirectShot - so this reuses that exact code path.
+    /// </summary>
+    public void SetMouseAimPoint(Guid mapId, int x, int y)
+    {
+        _lastTargetX = x;
+        _lastTargetY = y;
+        _lastTargetMapId = mapId;
+    }
+
     public void Update(List<Guid> projDeaths, List<KeyValuePair<Guid, int>> spawnDeaths)
     {
         if (_quantity < Descriptor.Quantity && Timing.Global.Milliseconds > _spawnTime)
@@ -477,9 +490,15 @@ public partial class Projectile : Entity
                 var (directionX, directionY) = (GetProjectileOffset(spawn, true), GetProjectileOffset(spawn, false));
                 var distance = MathF.Sqrt(directionX * directionX + directionY * directionY);
 
-                // Normalize the direction and update the projectile's position.
-                spawn.X += directionX / distance;
-                spawn.Y += directionY / distance;
+                // Guard against a 0/0 = NaN when the projectile has arrived exactly on the target's tile -
+                // an unguarded NaN here gets broadcast to every client's position for this entity, corrupting
+                // its rendering (and, with NaN reaching vertex/light data, can crash some GPU drivers).
+                if (distance != 0)
+                {
+                    // Normalize the direction and update the projectile's position.
+                    spawn.X += directionX / distance;
+                    spawn.Y += directionY / distance;
+                }
 
                 // For direct shots, reset the target after moving towards it once.
                 if (Descriptor.DirectShotBehavior)
@@ -493,9 +512,13 @@ public partial class Projectile : Entity
                 var (directionX, directionY) = (GetProjectileOffset(spawn, true), GetProjectileOffset(spawn, false));
                 var distance = MathF.Sqrt(directionX * directionX + directionY * directionY);
 
-                // Normalize the direction and update the projectile's position.
-                spawn.X += directionX / distance;
-                spawn.Y += directionY / distance;
+                // Same 0-distance guard as above.
+                if (distance != 0)
+                {
+                    // Normalize the direction and update the projectile's position.
+                    spawn.X += directionX / distance;
+                    spawn.Y += directionY / distance;
+                }
             }
             else
             {

@@ -316,6 +316,12 @@ public partial class MapDescriptor : DatabaseObject<MapDescriptor>
 
     public MapZone ZoneType { get; set; } = MapZone.Normal;
 
+    /// <summary>Recommended level range for this map, used to auto-scale NPCs spawned here and warn players who
+    /// are outside the range. <see cref="MaxLevel"/> &lt;= 0 means "not configured" - no scaling, no warning.</summary>
+    public int MinLevel { get; set; }
+
+    public int MaxLevel { get; set; }
+
     public int PlayerLightSize { get; set; } = 300;
 
     public byte PlayerLightIntensity { get; set; } = 255;

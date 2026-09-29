@@ -9,4 +9,7 @@ public enum NpcMovement
     StandStill,
 
     Static,
+
+    /// <summary>Wanders within the NPC's configured patrol radius of its spawn point when it has no target.</summary>
+    Patrol,
 }

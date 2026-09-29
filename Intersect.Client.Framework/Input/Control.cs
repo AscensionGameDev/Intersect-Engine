@@ -46,6 +46,12 @@ public enum Control
 
     OpenDungeons,
 
+    OpenMounts,
+
+    ToggleMount,
+
+    OpenAchievements,
+
     OpenSettings,
 
     OpenDebugger,

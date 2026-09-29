@@ -21,6 +21,8 @@ public static partial class Interface
 
     private static bool _initialized;
 
+    private static bool _pendingReload;
+
     public static InputBase GwenInput { get; set; } = default!;
 
     public static Base GwenRenderer { get; set; } = default!;
@@ -325,9 +327,23 @@ public static partial class Interface
 
     #region "GUI Functions"
 
+    // Queues a full UI teardown+rebuild for the start of the next frame (never mid-click, since GWEN
+    // input is processed during Update(), before this frame's DrawGui() call) - used to pick up a
+    // freshly-Load()'ed Strings set without needing to restart the client.
+    public static void QueueFullReload()
+    {
+        _pendingReload = true;
+    }
+
     //Actual Drawing Function
     public static void DrawGui(TimeSpan elapsed, TimeSpan total)
     {
+        if (_pendingReload)
+        {
+            _pendingReload = false;
+            DestroyGwen();
+        }
+
         if (!_initialized)
         {
             InitGwen();

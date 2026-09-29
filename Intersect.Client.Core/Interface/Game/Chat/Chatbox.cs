@@ -612,6 +612,14 @@ public partial class Chatbox
             return;
         }
 
+        if (msg.StartsWith("/decorer", StringComparison.OrdinalIgnoreCase))
+        {
+            Interface.GameUi?.GameMenu?.ToggleFurnitureWindow();
+            mChatboxInput.Text = GetDefaultInputText();
+
+            return;
+        }
+
         mLastChatTime = Timing.Global.MillisecondsUtc + Options.Instance.Chat.MinIntervalBetweenChats;
 
         PacketSender.SendChatMsg(

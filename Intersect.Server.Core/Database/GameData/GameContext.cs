@@ -8,11 +8,18 @@ using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.Pets;
+using Intersect.Framework.Core.GameObjects.Factions;
+using Intersect.Framework.Core.GameObjects.Furniture;
+using Intersect.Framework.Core.GameObjects.Territories;
+using Intersect.Framework.Core.GameObjects.Achievements;
+using Intersect.Framework.Core.GameObjects.Mounts;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.Framework.Core.GameObjects.Titles;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
+using Intersect.Server.Dungeons;
+using Intersect.Server.Territories;
 using Intersect.Server.Database.GameData.Migrations;
 using Intersect.Server.Maps;
 using Microsoft.EntityFrameworkCore;
@@ -85,6 +92,24 @@ public abstract partial class GameContext : IntersectDbContext<GameContext>, IGa
     //Pets
     public DbSet<PetDescriptor> Pets { get; set; }
 
+    //Mounts
+    public DbSet<MountDescriptor> Mounts { get; set; }
+
+    //Achievements
+    public DbSet<AchievementDescriptor> Achievements { get; set; }
+
+    //Factions
+    public DbSet<FactionDescriptor> Factions { get; set; }
+
+    //Territories
+    public DbSet<TerritoryDescriptor> Territories { get; set; }
+
+    //Dungeon leaderboard (plain entity, not a game object)
+    public DbSet<DungeonLeaderboardEntry> DungeonLeaderboardEntries { get; set; }
+
+    //Territory control (plain entity, not a game object)
+    public DbSet<TerritoryControl> TerritoryControls { get; set; }
+
     //Dungeons
     public DbSet<DungeonDescriptor> Dungeons { get; set; }
 
@@ -92,6 +117,9 @@ public abstract partial class GameContext : IntersectDbContext<GameContext>, IGa
 
     //Tilesets
     public DbSet<TilesetDescriptor> Tilesets { get; set; }
+
+    //Furniture
+    public DbSet<FurnitureDescriptor> Furniture { get; set; }
 
     //Time
     public DbSet<DaylightCycleDescriptor> Time { get; set; }

@@ -15,6 +15,7 @@ using Intersect.Server.Entities.Events;
 using Intersect.Server.Entities.Pathfinding;
 using Intersect.Server.Framework.Entities;
 using Intersect.Server.Framework.Items;
+using Intersect.Server.General;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
@@ -88,6 +89,15 @@ public partial class Npc : Entity
     private int mResetMax = 100;
     private bool mResetting = false;
 
+    /// <summary>The map this NPC was placed on when it spawned - the center of its patrol area (Movement = Patrol).</summary>
+    public Guid SpawnMapId;
+
+    /// <summary>The X tile this NPC was placed on when it spawned.</summary>
+    public int SpawnX;
+
+    /// <summary>The Y tile this NPC was placed on when it spawned.</summary>
+    public int SpawnY;
+
     /// <summary>
     /// The map on which this NPC was "aggro'd" and started chasing a target.
     /// </summary>
@@ -107,6 +117,68 @@ public partial class Npc : Entity
     /// The Z value on which this NPC was "aggro'd" and started chasing a target.
     /// </summary>
     public int AggroCenterZ;
+
+    /// <summary>
+    /// How far (in tiles) a summon may drift from its owner - with no target and past this distance,
+    /// it teleports back next to them instead of getting left behind on the previous map/area.
+    /// </summary>
+    private const int SummonMaxDistanceFromOwner = 16;
+
+    /// <summary>
+    /// If set, this NPC is a summon: it was spawned by a <see cref="SpellType.Summon"/> spell rather than
+    /// placed on the map. It fights on behalf of <see cref="Owner"/> (mirroring their current target),
+    /// never targets them, and follows them around when it has nothing to fight. The owner can be a
+    /// <see cref="Player"/> (a necromancer's/ranger's summon) or another <see cref="Npc"/> (a boss's adds).
+    /// </summary>
+    public Entity? Owner { get; set; }
+
+    /// <summary>
+    /// True once this NPC has been configured as a summon via <see cref="ConfigureAsSummon"/>.
+    /// </summary>
+    public bool IsSummon { get; private set; }
+
+    /// <summary>
+    /// If true, this summon is removed the instant <see cref="Owner"/> dies (rather than lingering for
+    /// the rest of its <see cref="_summonExpireAt"/> window, if any).
+    /// </summary>
+    private bool _despawnOnOwnerDeath = true;
+
+    /// <summary>
+    /// Timing.Global.Milliseconds value at which this summon disappears on its own. 0 means it never
+    /// expires by itself (it only goes away if its owner is gone, or dies while
+    /// <see cref="_despawnOnOwnerDeath"/> is set).
+    /// </summary>
+    private long _summonExpireAt;
+
+    /// <summary>
+    /// If true, this summon was told to stand down via "Ordre : Repli" - it keeps following its owner
+    /// but stops auto-mirroring their target in <see cref="TryFindNewTarget"/> until "Ordre : Charge"
+    /// (or a fresh <see cref="AssignTarget"/> call) tells it otherwise.
+    /// </summary>
+    public bool IsRecalled { get; private set; }
+
+    /// <summary>
+    /// Sets or clears <see cref="IsRecalled"/> directly - used by "Ordre : Repli" to stand this summon
+    /// down without needing an actual target to hand to <see cref="AssignTarget"/>.
+    /// </summary>
+    public void SetRecalled(bool recalled)
+    {
+        IsRecalled = recalled;
+    }
+
+    /// <summary>
+    /// Turns a freshly-spawned NPC into a summon bound to <paramref name="owner"/>. Called right after
+    /// <see cref="Intersect.Server.Maps.MapInstance.SpawnNpc"/> by the <see cref="SpellType.Summon"/>
+    /// handler in <see cref="Entity"/> - kept separate from the constructor so the normal map-placed
+    /// NPC path (and <see cref="Framework.Core.GameObjects.Events.Commands.SpawnNpcCommand"/>) stays untouched.
+    /// </summary>
+    public void ConfigureAsSummon(Entity owner, int durationMs, bool despawnOnOwnerDeath)
+    {
+        Owner = owner;
+        IsSummon = true;
+        _despawnOnOwnerDeath = despawnOnOwnerDeath;
+        _summonExpireAt = durationMs > 0 ? Timing.Global.Milliseconds + durationMs : 0;
+    }
 
     public Npc(NPCDescriptor npcDescriptor, bool despawnable = false) : base()
     {
@@ -152,6 +224,52 @@ public partial class Npc : Entity
 
         Range = (byte)npcDescriptor.SightRange;
         mPathFinder = new Pathfinder(this);
+
+        ScaledExperience = npcDescriptor.Experience;
+    }
+
+    /// <summary>XP awarded for killing this NPC. Equal to <see cref="NPCDescriptor.Experience"/> unless
+    /// <see cref="ApplyLevelScaling"/> has adjusted it for the zone it spawned in.</summary>
+    public long ScaledExperience { get; private set; }
+
+    /// <summary>
+    /// Rescales this NPC's level, base stats, max vitals and XP reward to <paramref name="targetLevel"/>, relative
+    /// to the level it was authored at in the editor. Called once at spawn time for NPCs placed on a map with a
+    /// configured level range (see <see cref="MapInstance.SpawnNpc"/>) - never touches the shared
+    /// <see cref="NPCDescriptor"/> itself, only this instance.
+    /// </summary>
+    public void ApplyLevelScaling(int targetLevel)
+    {
+        if (targetLevel == Level)
+        {
+            return;
+        }
+
+        var ratio = Formulas.GetNpcStatMultiplier(targetLevel) / Formulas.GetNpcStatMultiplier(Level);
+
+        // Defense/MagicResist/max Health scale on a steeper curve than the rest: with mitigation shaped
+        // like 100/(100+Defense), small base Defense values barely move even after a big level gap under
+        // the general curve, which is how an under-leveled player with no gear could one- or two-shot a
+        // level-appropriate monster. This keeps attack/speed/ability power on the original curve.
+        var toughnessRatio = Formulas.GetNpcToughnessMultiplier(targetLevel) / Formulas.GetNpcToughnessMultiplier(Level);
+
+        Level = targetLevel;
+
+        for (var i = 0; i < BaseStats.Length; i++)
+        {
+            var statRatio = (Intersect.Enums.Stat)i is Intersect.Enums.Stat.Defense or Intersect.Enums.Stat.MagicResist ? toughnessRatio : ratio;
+            BaseStats[i] = (int)Math.Round(BaseStats[i] * statRatio);
+        }
+
+        for (var i = 0; i < Enum.GetValues<Vital>().Length; i++)
+        {
+            var vitalRatio = (Vital)i == Vital.Health ? toughnessRatio : ratio;
+            var scaled = (long)Math.Round(GetMaxVital(i) * vitalRatio);
+            SetMaxVital(i, scaled);
+            SetVital(i, scaled);
+        }
+
+        ScaledExperience = (long)Math.Round(Descriptor.Experience * ratio);
     }
 
     public NPCDescriptor Descriptor { get; private set; }
@@ -170,6 +288,11 @@ public partial class Npc : Entity
         lock (EntityLock)
         {
             base.Die(generateLoot, killer);
+
+            if (IsSummon)
+            {
+                Owner?.Summons.Remove(this);
+            }
 
             AggroCenterMap = null;
             AggroCenterX = 0;
@@ -212,6 +335,10 @@ public partial class Npc : Entity
         //Why are we doing all of this logic if we are assigning a target that we already have?
         if (entity != null && entity != Target)
         {
+            // Getting an explicit new target (charged onto one, or defending itself) cancels any
+            // earlier "Ordre : Repli".
+            IsRecalled = false;
+
             // Can't assign a new target if taunted, unless we're resetting their target somehow.
             // Also make sure the taunter is in range.. If they're dead or gone, we go for someone else!
             if ((pathTarget != null && AggroCenterMap != null && (pathTarget.TargetMapId != AggroCenterMap.Id || pathTarget.TargetX != AggroCenterX || pathTarget.TargetY != AggroCenterY)))
@@ -285,6 +412,12 @@ public partial class Npc : Entity
 
     public override bool CanTarget(Entity entity)
     {
+        // Summons never attack their own owner.
+        if (Owner != null && entity == Owner)
+        {
+            return false;
+        }
+
         // ReSharper disable once InvertIf
         if (entity is Npc npc)
         {
@@ -431,12 +564,75 @@ public partial class Npc : Entity
             );
         }
 
+        long damage = Descriptor.Damage;
+        if (Descriptor.CombatStyle == NpcCombatStyle.Brute && IsEnraged)
+        {
+            damage = (long)Math.Round(damage * BruteEnrageDamageMultiplier);
+        }
+
         base.TryAttack(
-            target, Descriptor.Damage, (DamageType)Descriptor.DamageType, (Stat)Descriptor.ScalingStat, Descriptor.Scaling,
+            target, (int)damage, (DamageType)Descriptor.DamageType, (Stat)Descriptor.ScalingStat, Descriptor.Scaling,
             Descriptor.CritChance, Descriptor.CritMultiplier, deadAnimations, aliveAnimations
         );
 
         PacketSender.SendEntityAttack(this, CalculateAttackTime());
+    }
+
+    /// <summary>Brute enrage threshold: at or below this fraction of max HP, its attacks hit harder.</summary>
+    private const float BruteEnrageHealthThreshold = 0.3f;
+
+    private const float BruteEnrageDamageMultiplier = 1.5f;
+
+    /// <summary>True once a <see cref="NpcCombatStyle.Brute"/> has dropped to its enrage threshold.</summary>
+    public bool IsEnraged =>
+        Descriptor.CombatStyle == NpcCombatStyle.Brute &&
+        GetMaxVital(Vital.Health) > 0 &&
+        GetVital(Vital.Health) <= GetMaxVital(Vital.Health) * BruteEnrageHealthThreshold;
+
+    private const int GuardianRetaliateChancePercent = 25;
+
+    /// <summary>
+    /// Guardian-style combat quirk: a chance to immediately strike back at whoever just landed a hit,
+    /// instead of passively waiting for its next scheduled attack. Called from <see cref="Entity.Attack"/>
+    /// right after this NPC takes damage.
+    /// </summary>
+    public void TryCombatStyleRetaliate(Entity attacker)
+    {
+        if (Descriptor.CombatStyle != NpcCombatStyle.Guardian || IsDead || attacker is not { IsDead: false })
+        {
+            return;
+        }
+
+        if (Randomization.Next(0, 100) >= GuardianRetaliateChancePercent)
+        {
+            return;
+        }
+
+        if (!IsOneBlockAway(attacker) || !CanAttack(attacker, null))
+        {
+            return;
+        }
+
+        Attack(
+            attacker, Descriptor.Damage, 0, (DamageType)Descriptor.DamageType, (Stat)Descriptor.ScalingStat,
+            Descriptor.Scaling, Descriptor.CritChance, Descriptor.CritMultiplier
+        );
+    }
+
+    /// <summary>Skirmisher flee threshold, used as a floor on top of whatever the descriptor configures.</summary>
+    private const byte SkirmisherFleeHealthPercentage = 40;
+
+    private const float SkirmisherFleeSpeedMultiplier = 1.5f;
+
+    public override float GetMovementTime()
+    {
+        var time = base.GetMovementTime();
+        if (Descriptor.CombatStyle == NpcCombatStyle.Skirmisher && IsFleeing())
+        {
+            time /= SkirmisherFleeSpeedMultiplier;
+        }
+
+        return time;
     }
 
     public bool CanNpcCombat(Entity enemy, bool friendly = false)
@@ -446,6 +642,15 @@ public partial class Npc : Entity
         {
             if (enemy != null && enemy is Npc enemyNpc && Descriptor != null)
             {
+                // Summons fight whatever their owner is engaging - AssignTarget/CanTarget already
+                // restrict them to mirroring the owner's target, so it's safe to bypass the wild-NPC
+                // NpcVsNpcEnabled/AggroList gates (those exist for NPC-authored infighting, not for
+                // player-owned summons, and most monsters don't have NpcVsNpcEnabled set at all).
+                if (IsSummon)
+                {
+                    return true;
+                }
+
                 if (enemyNpc.Descriptor.NpcVsNpcEnabled == false)
                 {
                     return false;
@@ -769,6 +974,13 @@ public partial class Npc : Entity
                 break;
         }
 
+        // Casters are built around their spell kit rather than their fists - let them chain casts much
+        // more aggressively than their configured SpellFrequency alone would allow.
+        if (Descriptor.CombatStyle == NpcCombatStyle.Caster)
+        {
+            CastFreq = Timing.Global.Milliseconds + (CastFreq - Timing.Global.Milliseconds) / 2;
+        }
+
         SpellCastSlot = spellIndex;
 
         if (spellBase.CastAnimationId != Guid.Empty)
@@ -794,9 +1006,16 @@ public partial class Npc : Entity
 
     public bool IsFleeing()
     {
-        if (Descriptor.FleeHealthPercentage > 0)
+        var fleeThreshold = Descriptor.FleeHealthPercentage;
+        if (Descriptor.CombatStyle == NpcCombatStyle.Skirmisher)
         {
-            var fleeHpCutoff = GetMaxVital(Vital.Health) * (Descriptor.FleeHealthPercentage / 100f);
+            // Skirmishers always know when to bolt, even if the author never set a flee percentage.
+            fleeThreshold = Math.Max(fleeThreshold, SkirmisherFleeHealthPercentage);
+        }
+
+        if (fleeThreshold > 0)
+        {
+            var fleeHpCutoff = GetMaxVital(Vital.Health) * (fleeThreshold / 100f);
             if (GetVital(Vital.Health) < fleeHpCutoff)
             {
                 return true;
@@ -815,6 +1034,11 @@ public partial class Npc : Entity
             Monitor.TryEnter(EntityLock, ref lockObtained);
             if (lockObtained)
             {
+                if (IsSummon && HandleSummonLifecycle(timeMs))
+                {
+                    return;
+                }
+
                 var curMapLink = MapId;
                 base.Update(timeMs);
 
@@ -904,6 +1128,17 @@ public partial class Npc : Entity
                         // Check if attack on sight or have other npc's to target
                         TryFindNewTarget(timeMs);
                         tempTarget = Target;
+                    }
+
+                    // Summons with nothing to fight follow their owner around instead of wandering off
+                    // via their normal Descriptor.Movement behavior.
+                    if (targetMap == Guid.Empty && IsSummon && Owner is { IsDisposed: false } owner &&
+                        owner.MapInstanceId == MapInstanceId && GetDistanceTo(owner) > 1)
+                    {
+                        targetMap = owner.MapId;
+                        targetX = owner.X;
+                        targetY = owner.Y;
+                        targetZ = owner.Z;
                     }
 
                     if (targetMap != Guid.Empty)
@@ -1006,7 +1241,7 @@ public partial class Npc : Entity
                                         {
                                             var blockerAttacked = false;
                                             if (!fleeing && blockerType == MovementBlockerType.Entity &&
-                                                blockingEntityType == EntityType.Player)
+                                                blockingEntityType == EntityType.Player && blockingEntity != Owner)
                                             {
                                                 if (!(blockingEntity?.IsDisposed ?? true))
                                                 {
@@ -1176,6 +1411,9 @@ public partial class Npc : Entity
                         case (int)NpcMovement.MoveRandomly:
                             MoveRandomly();
                             break;
+                        case (int)NpcMovement.Patrol:
+                            Patrol();
+                            break;
                     }
 
                     if (fleeing)
@@ -1214,6 +1452,68 @@ public partial class Npc : Entity
         }
     }
 
+    /// <summary>
+    /// Handles despawn-on-owner-gone/expiry and idle follow-the-owner behavior for summons. Returns true
+    /// if the summon was despawned this tick (caller should stop processing the rest of <see cref="Update"/>).
+    /// </summary>
+    private bool HandleSummonLifecycle(long timeMs)
+    {
+        if (Owner == null || Owner.IsDisposed || (Owner.IsDead && _despawnOnOwnerDeath))
+        {
+            Die(false);
+
+            return true;
+        }
+
+        if (_summonExpireAt > 0 && timeMs >= _summonExpireAt)
+        {
+            Die(false);
+
+            return true;
+        }
+
+        // Left behind on a different map/instance than the owner (they warped, changed instance, etc.):
+        // teleport along with them instead of getting stranded or despawning.
+        if (Owner.MapInstanceId != MapInstanceId || Owner.MapId != MapId)
+        {
+            if (!MapController.TryGetInstanceFromMap(Owner.MapId, Owner.MapInstanceId, out var newInstance))
+            {
+                Die(false);
+
+                return true;
+            }
+
+            if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var oldInstance))
+            {
+                oldInstance.RemoveEntity(this);
+            }
+
+            MapId = Owner.MapId;
+            MapInstanceId = Owner.MapInstanceId;
+            X = Owner.X;
+            Y = Owner.Y;
+            Z = Owner.Z;
+            Dir = Owner.Dir;
+
+            newInstance.AddEntity(this);
+            PacketSender.SendEntityDataToProximity(this);
+
+            return true;
+        }
+
+        // Idle (no target) and drifted too far - snap back next to the owner instead of getting stranded.
+        if (Target == null && GetDistanceTo(Owner) > SummonMaxDistanceFromOwner)
+        {
+            X = Owner.X;
+            Y = Owner.Y;
+            Z = Owner.Z;
+            Dir = Owner.Dir;
+            PacketSender.SendEntityPositionToAll(this);
+        }
+
+        return false;
+    }
+
     private void MoveRandomly()
     {
         if (_randomMoveRange <= 0)
@@ -1246,6 +1546,38 @@ public partial class Npc : Entity
         {
             Dir = Randomization.NextDirection();
         }
+    }
+
+    /// <summary>
+    /// Wanders around <see cref="SpawnX"/>/<see cref="SpawnY"/> when idle. The block above this switch (which
+    /// steps toward whatever tile <c>mPathFinder</c> currently targets - combat chase, reset-to-spawn, or this)
+    /// already walks the NPC there every tick; this method only decides where to go once arrived/idle.
+    /// </summary>
+    private void Patrol()
+    {
+        var currentTarget = mPathFinder.GetTarget();
+        if (currentTarget != null)
+        {
+            if (IsOneBlockAway(currentTarget.TargetMapId, currentTarget.TargetX, currentTarget.TargetY, currentTarget.TargetZ))
+            {
+                // Arrived - clear it so we pick a new spot next time the random-move throttle allows it, and
+                // pause here for a bit first instead of immediately setting off again.
+                mPathFinder.SetTarget(null);
+                LastRandomMove = Timing.Global.Milliseconds + Randomization.Next(2000, 5000);
+            }
+
+            return;
+        }
+
+        if (SpawnMapId == Guid.Empty)
+        {
+            return;
+        }
+
+        var radius = Math.Max(1, Descriptor.PatrolRadius);
+        var offsetX = Randomization.Next(-radius, radius + 1);
+        var offsetY = Randomization.Next(-radius, radius + 1);
+        mPathFinder.SetTarget(new PathfinderTarget(SpawnMapId, SpawnX + offsetX, SpawnY + offsetY, Z));
     }
 
     /// <summary>
@@ -1423,6 +1755,21 @@ public partial class Npc : Entity
         if (!ignoreTimer && FindTargetWaitTime > timeMs)
         {
             return false;
+        }
+
+        // Summons fight for their owner: just mirror whoever the owner is currently engaging instead of
+        // running the usual aggro-list/damage-map scan below - unless they've been told to stand down
+        // via "Ordre : Repli", in which case they leave the owner's target alone until "Ordre : Charge".
+        if (!IsRecalled && Owner != null && !Owner.IsDisposed && Owner.MapInstanceId == MapInstanceId)
+        {
+            var ownerTarget = Owner.Target;
+            if (ownerTarget != null && !ownerTarget.IsDead && ownerTarget.Id != avoidId && CanTarget(ownerTarget))
+            {
+                AssignTarget(ownerTarget);
+                FindTargetWaitTime = timeMs + FindTargetDelay;
+
+                return true;
+            }
         }
 
         // Are we resetting? If so, do not allow for a new target.

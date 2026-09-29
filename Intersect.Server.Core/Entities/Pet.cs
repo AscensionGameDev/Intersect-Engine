@@ -124,8 +124,18 @@ public partial class Pet : Entity
 
         _nextThinkTime = timeMs + ThinkIntervalMs;
 
-        // Owner changed map instance (warp, instance change...) or got too far away: catch up instantly.
-        if (Owner.MapInstanceId != MapInstanceId || Owner.MapId == Guid.Empty || GetDistanceTo(Owner) > MaxDistanceFromOwner)
+        // Map/instance transitions are handled deterministically by Player.SpawnPet()/DespawnPet()
+        // (called from MapInstance.PlayerEnteredMap/RemoveEntity when the owner actually enters/leaves
+        // a map instance). Reacting to a mismatch here too raced with that system: both could try to
+        // relocate/dispose the pet at the same time, leaving a stale duplicate stuck on the old map
+        // while a fresh one followed the owner. Just wait for the deterministic path once mismatched.
+        if (Owner.MapInstanceId != MapInstanceId || Owner.MapId == Guid.Empty)
+        {
+            return;
+        }
+
+        // Still on the same map/instance as the owner but lagging behind: catch up instantly.
+        if (GetDistanceTo(Owner) > MaxDistanceFromOwner)
         {
             TeleportToOwner();
 
@@ -427,6 +437,16 @@ public partial class Pet : Entity
         }
 
         PacketSender.SendEntityLeave(this);
+
+        // The proximity broadcast above can miss the owner: by the time a pet despawns because its
+        // owner is leaving a map, the owner has usually already been removed from that map's player
+        // list, so they never receive the notification. Their client then keeps the pet cached as
+        // still present, and it resurfaces as a frozen ghost if they revisit that map later.
+        if (Owner.Client != null)
+        {
+            PacketSender.SendEntityLeaveTo(Owner, this);
+        }
+
         Dispose();
     }
 

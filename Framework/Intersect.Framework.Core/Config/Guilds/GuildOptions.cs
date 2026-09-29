@@ -38,6 +38,13 @@ public partial class GuildOptions
     public int InitialBankSlots { get; set; } = DefaultBankSlots;
 
     /// <summary>
+    /// The map used as the guild hall template. Every guild gets its own live instance of this
+    /// same map (see <c>MapInstanceType.Guild</c>) - leave as <see cref="Guid.Empty"/> to disable
+    /// guild halls entirely.
+    /// </summary>
+    public Guid HallMapId { get; set; } = Guid.Empty;
+
+    /// <summary>
     /// Array of guild ranks that are available in this game
     /// </summary>
     public GuildRank[] Ranks { get; set; } =
@@ -54,7 +61,8 @@ public partial class GuildOptions
                 Promote = true,
                 BankDeposit = true,
                 BankMove = true,
-                BankRetrieve = true
+                BankRetrieve = true,
+                ManageHall = true
             }
         },
         new()
@@ -69,7 +77,8 @@ public partial class GuildOptions
                 Promote = true,
                 BankDeposit = true,
                 BankMove = true,
-                BankRetrieve = true
+                BankRetrieve = true,
+                ManageHall = true
             }
         },
         new()

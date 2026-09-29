@@ -18,9 +18,11 @@ using System.Diagnostics;
 using System.Text;
 using Intersect.Core;
 using Intersect.Framework.Core;
+using Intersect.Framework.Core.GameObjects.Factions;
 using Intersect.Framework.Core.GameObjects.Crafting;
 using Intersect.Framework.Core.GameObjects.Dungeons;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Furniture;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
@@ -685,6 +687,7 @@ internal sealed partial class PacketHandler
         if (client.Characters == default || client.Characters.Count < 1)
         {
             PacketSender.SendGameObjects(client, GameObjectType.Class);
+            PacketSender.SendGameObjects(client, GameObjectType.Faction);
             PacketSender.SendCreateCharacter(client, force: true);
             return;
         }
@@ -1373,10 +1376,19 @@ internal sealed partial class PacketHandler
 #endif
                 if (MapController.TryGetInstanceFromMap(player.MapId, player.MapInstanceId, out var mapInstance))
                 {
+                    (Guid mapId, byte x, byte y)? weaponAimPoint = null;
+                    if (projectileBase.MouseAimedBehavior && packet.AimMapId != Guid.Empty)
+                    {
+                        weaponAimPoint = (packet.AimMapId, packet.AimX, packet.AimY);
+                    }
+
+                    // See the equivalent comment in Entity.CastSpell's Projectile case: Dir stays as the
+                    // player's real facing (drives the SpawnLocations grid), the flight path follows the
+                    // mouse via weaponAimPoint regardless.
                     mapInstance
                         .SpawnMapProjectile(
                             player, projectileBase, null, weaponItem, player.MapId,
-                            (byte)player.X, (byte)player.Y, (byte)player.Z, player.Dir, null);
+                            (byte)player.X, (byte)player.Y, (byte)player.Z, player.Dir, null, weaponAimPoint);
 
                     player.AttackTimer = Timing.Global.Milliseconds +
                                          latencyAdjustmentMs +
@@ -1572,6 +1584,7 @@ internal sealed partial class PacketHandler
 
                 //Start the character creation process for the newly created account.
                 PacketSender.SendGameObjects(client, GameObjectType.Class);
+                PacketSender.SendGameObjects(client, GameObjectType.Faction);
                 PacketSender.SendCreateCharacter(client, force: true);
             }
         }
@@ -1630,6 +1643,14 @@ internal sealed partial class PacketHandler
             newChar.Gender = classBase.Sprites[spriteIndex].Gender;
         }
 
+        newChar.SpriteColors = (packet.SpriteColors ?? []).Select(color => color ?? Color.White).ToList();
+        newChar.SpriteParts = SpritePart.SanitizeAll(packet.SpriteParts).ToList();
+
+        if (FactionDescriptor.Get(packet.FactionId) != null)
+        {
+            newChar.FactionId = packet.FactionId;
+        }
+
         client.LoadCharacter(newChar);
 
         newChar.SetVital(Vital.Health, classBase.BaseVital[(int)Vital.Health]);
@@ -1671,6 +1692,17 @@ internal sealed partial class PacketHandler
         newChar.SetOnline();
 
         PacketSender.SendJoinGame(client);
+    }
+
+    //SetLanguagePacket
+    public void HandlePacket(Client client, SetLanguagePacket packet)
+    {
+        if (client == null)
+        {
+            return;
+        }
+
+        client.Language = packet.Language ?? string.Empty;
     }
 
     //PickupItemPacket
@@ -1772,6 +1804,126 @@ internal sealed partial class PacketHandler
         }
     }
 
+    //PlaceFurniturePacket
+    public void HandlePacket(Client client, PlaceFurniturePacket packet)
+    {
+        var player = client?.Entity;
+        if (player == null || !TryGetGuildHallContext(player, out var guild, out var mapInstance))
+        {
+            return;
+        }
+
+        if (!FurnitureDescriptor.TryGet(packet.FurnitureDescriptorId, out _))
+        {
+            return;
+        }
+
+        if (packet.X >= Options.Instance.Map.MapWidth || packet.Y >= Options.Instance.Map.MapHeight)
+        {
+            return;
+        }
+
+        var placement = guild.PlaceFurniture(packet.FurnitureDescriptorId, packet.X, packet.Y, packet.Direction);
+        var furniture = new FurnitureInstance(placement.Id, placement.FurnitureDescriptorId, placement.X, placement.Y, placement.Direction);
+        mapInstance.FurnitureInstances.TryAdd(furniture.PlacementId, furniture);
+
+        PacketSender.SendFurnitureInstanceUpdate(mapInstance.GetController().Id, mapInstance.MapInstanceId, furniture);
+    }
+
+    //MoveFurniturePacket
+    public void HandlePacket(Client client, MoveFurniturePacket packet)
+    {
+        var player = client?.Entity;
+        if (player == null || !TryGetGuildHallContext(player, out var guild, out var mapInstance))
+        {
+            return;
+        }
+
+        if (packet.X >= Options.Instance.Map.MapWidth || packet.Y >= Options.Instance.Map.MapHeight)
+        {
+            return;
+        }
+
+        if (!guild.MoveFurniture(packet.PlacementId, packet.X, packet.Y, packet.Direction))
+        {
+            return;
+        }
+
+        if (mapInstance.FurnitureInstances.TryGetValue(packet.PlacementId, out var furniture))
+        {
+            furniture.X = packet.X;
+            furniture.Y = packet.Y;
+            furniture.Direction = packet.Direction;
+
+            PacketSender.SendFurnitureInstanceUpdate(mapInstance.GetController().Id, mapInstance.MapInstanceId, furniture);
+        }
+    }
+
+    //RemoveFurniturePacket
+    public void HandlePacket(Client client, RemoveFurniturePacket packet)
+    {
+        var player = client?.Entity;
+        if (player == null || !TryGetGuildHallContext(player, out var guild, out var mapInstance))
+        {
+            return;
+        }
+
+        if (!guild.RemoveFurniture(packet.PlacementId))
+        {
+            return;
+        }
+
+        mapInstance.FurnitureInstances.TryRemove(packet.PlacementId, out _);
+        PacketSender.SendFurnitureInstanceRemoved(mapInstance.GetController().Id, mapInstance.MapInstanceId, packet.PlacementId);
+    }
+
+    //RequestFurniturePacket
+    public void HandlePacket(Client client, RequestFurniturePacket packet)
+    {
+        var player = client?.Entity;
+        if (player == null)
+        {
+            return;
+        }
+
+        if (!MapController.TryGetInstanceFromMap(player.MapId, player.MapInstanceId, out var mapInstance))
+        {
+            return;
+        }
+
+        PacketSender.SendFurnitureInstances(player, mapInstance);
+    }
+
+    /// <summary>
+    /// Validates that <paramref name="player"/> is currently standing inside their own guild's hall instance and
+    /// has the <see cref="GuildPermissions.ManageHall"/> permission, resolving the guild and active
+    /// <see cref="MapInstance"/> for convenience. Used by the furniture placement packet handlers.
+    /// </summary>
+    private static bool TryGetGuildHallContext(Player player, out Guild guild, out MapInstance mapInstance)
+    {
+        guild = null;
+        mapInstance = null;
+
+        if (player.Guild == null || player.MapInstanceId != player.Guild.GuildInstanceId)
+        {
+            return false;
+        }
+
+        var rank = Options.Instance.Guild.Ranks[Math.Max(0, Math.Min(Options.Instance.Guild.Ranks.Length - 1, player.GuildRank))];
+        if (!rank.Permissions.ManageHall && player.GuildRank != 0)
+        {
+            return false;
+        }
+
+        if (!MapController.TryGetInstanceFromMap(player.MapId, player.MapInstanceId, out mapInstance))
+        {
+            return false;
+        }
+
+        guild = player.Guild;
+        return true;
+    }
+
     //SwapInvItemsPacket
     public void HandlePacket(Client client, SwapInvItemsPacket packet)
     {
@@ -1868,7 +2020,7 @@ internal sealed partial class PacketHandler
                 {
                     if (en.Id == packet.TargetId)
                     {
-                        player.UseSpell(packet.Slot, en, packet.SoftRetargetOnSelfCast);
+                        player.UseSpell(packet.Slot, en, packet.SoftRetargetOnSelfCast, packet.AimMapId, packet.AimX, packet.AimY);
                         casted = true;
 
                         break;
@@ -1879,7 +2031,7 @@ internal sealed partial class PacketHandler
 
         if (!casted)
         {
-            player.UseSpell(packet.Slot, null, packet.SoftRetargetOnSelfCast);
+            player.UseSpell(packet.Slot, null, packet.SoftRetargetOnSelfCast, packet.AimMapId, packet.AimX, packet.AimY);
         }
     }
 
@@ -2239,6 +2391,42 @@ internal sealed partial class PacketHandler
         }
 
         player.EquipTitle(packet.TitleId);
+    }
+
+    //SetActiveMountPacket
+    public void HandlePacket(Client client, SetActiveMountPacket packet)
+    {
+        var player = client?.Entity;
+        if (player == null)
+        {
+            return;
+        }
+
+        player.SetActiveMount(packet.MountId);
+    }
+
+    //ToggleMountPacket
+    public void HandlePacket(Client client, ToggleMountPacket packet)
+    {
+        var player = client?.Entity;
+        if (player == null)
+        {
+            return;
+        }
+
+        player.ToggleMount();
+    }
+
+    //RequestDungeonLeaderboardPacket
+    public void HandlePacket(Client client, RequestDungeonLeaderboardPacket packet)
+    {
+        var player = client?.Entity;
+        if (player == null || DungeonDescriptor.Get(packet.DungeonId) == null)
+        {
+            return;
+        }
+
+        PacketSender.SendDungeonLeaderboard(player, packet.DungeonId);
     }
 
     //TradeRequestPacket
@@ -2724,6 +2912,7 @@ internal sealed partial class PacketHandler
         if (client?.Characters?.Count < Options.Instance.Player.MaxCharacters)
         {
             PacketSender.SendGameObjects(client, GameObjectType.Class);
+            PacketSender.SendGameObjects(client, GameObjectType.Faction);
             PacketSender.SendCreateCharacter(client);
         }
         else

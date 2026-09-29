@@ -238,6 +238,7 @@ public partial class SelectCharacterWindow : Window
         {
             paperdollPortrait.Texture = default;
             paperdollPortrait.Hide();
+            SpriteColorPreview.Clear(paperdollPortrait);
         }
 
         var selectedPreviewMetadata = CharacterSelectionPreviews[_selectedCharacterIndex];
@@ -336,6 +337,11 @@ public partial class SelectCharacterWindow : Window
 
             paperdollContainer.SetTextureRect(0, 0, textureWidth, textureHeight);
             _ = paperdollContainer.SetSize(textureWidth, textureHeight);
+
+            if (string.Equals("Player", paperdollLayerType, StringComparison.Ordinal))
+            {
+                SpriteColorPreview.Apply(paperdollContainer, selectedPreviewMetadata.SpriteColors, selectedPreviewMetadata.SpriteParts, textureWidth, textureHeight);
+            }
 
             var centerX = (_preview.Width / 2) - (paperdollContainer.Width / 2);
             var centerY = (_preview.Height / 2) - (paperdollContainer.Height / 2);

@@ -200,11 +200,13 @@ public partial class BagItem : SlotItem
         {
             _quantityLabel.IsVisibleInParent = false;
             Icon.Texture = default;
+            SetRarity(null);
             return;
         }
 
         var bagSlot = bagSlots[SlotIndex];
         var descriptor = bagSlot.Descriptor;
+        SetRarity(descriptor.Rarity);
 
         _quantityLabel.IsVisibleInParent = !Icon.IsDragging && descriptor.IsStackable && bagSlot.Quantity > 1;
         if (_quantityLabel.IsVisibleInParent)

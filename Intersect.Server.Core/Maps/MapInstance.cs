@@ -3,9 +3,11 @@ using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Furniture;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.Attributes;
+using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.GameObjects;
@@ -139,12 +141,22 @@ public partial class MapInstance : IMapInstance
     private BytePoint[] mMapBlocks = Array.Empty<BytePoint>();
     private BytePoint[] mNpcMapBlocks = Array.Empty<BytePoint>();
 
+    // Kept separate from mMapBlocks/mNpcMapBlocks: tileset-configured blocking represents
+    // ground-level obstacles (rocks, logs, decorations) and should only affect entities at
+    // Z=0, unlike a classic "Blocked" attribute which is a universal wall blocking every level.
+    // Otherwise a bridge (Z-Dimension) crossing over such a tile would wrongly block anyone above it.
+    private BytePoint[] mTilesetBlocks = Array.Empty<BytePoint>();
+
     // Events
     /* Processing Layers have Global Events - these are global to the PROCESSING instance, NOT to the MapController.
      * As of the initial "Add Instancing" refactor, this is what the stock "Is Global?" event tick box in the editor
      * will enable - an "Instance-Global" event */
     public ConcurrentDictionary<EventDescriptor, Event> GlobalEventInstances = new ConcurrentDictionary<EventDescriptor, Event>();
     public List<EventDescriptor> EventsCache = new List<EventDescriptor>();
+
+    // Guild Hall Furniture - only ever populated when this instance's MapInstanceId matches a guild's
+    // GuildInstanceId (see SpawnGuildFurniture()). Purely decorative, no processing/update loop involvement.
+    public ConcurrentDictionary<Guid, FurnitureInstance> FurnitureInstances { get; } = new ConcurrentDictionary<Guid, FurnitureInstance>();
 
     // Animations & Text
     private MapActionMessages mActionMessages = new MapActionMessages();
@@ -233,6 +245,7 @@ public partial class MapInstance : IMapInstance
         DespawnTraps();
         DespawnItems();
         DespawnGlobalEvents();
+        FurnitureInstances.Clear();
     }
 
     /// <summary>
@@ -247,6 +260,27 @@ public partial class MapInstance : IMapInstance
         SpawnMapResources();
         RefreshEventsCache();
         SpawnGlobalEvents();
+        SpawnGuildFurniture();
+    }
+
+    /// <summary>
+    /// If this instance is a guild hall (its <see cref="MapInstanceId"/> matches a guild's
+    /// <see cref="Database.PlayerData.Players.Guild.GuildInstanceId"/>), populate <see cref="FurnitureInstances"/>
+    /// from that guild's persisted <see cref="Database.PlayerData.Players.Guild.Furniture"/> placements.
+    /// </summary>
+    private void SpawnGuildFurniture()
+    {
+        var guild = Database.PlayerData.Players.Guild.GetGuildByInstanceId(MapInstanceId);
+        if (guild == null)
+        {
+            return;
+        }
+
+        foreach (var placement in guild.Furniture)
+        {
+            var furniture = new FurnitureInstance(placement.Id, placement.FurnitureDescriptorId, placement.X, placement.Y, placement.Direction);
+            FurnitureInstances.TryAdd(furniture.PlacementId, furniture);
+        }
     }
 
     /// <summary>
@@ -377,6 +411,7 @@ public partial class MapInstance : IMapInstance
         //Send Entity Info to Everyone and Everyone to the Entity
         player.Client?.SentMaps?.Clear();
         PacketSender.SendMapItems(player, mMapController.Id);
+        PacketSender.SendFurnitureInstances(player, this);
 
         AddEntity(player);
         player.LastMapEntered = mMapController.Id;
@@ -538,8 +573,18 @@ public partial class MapInstance : IMapInstance
                 X = tileX,
                 Y = tileY,
                 Dir = dir,
-                MapInstanceId = processLayer
+                MapInstanceId = processLayer,
+                SpawnMapId = mMapController.Id,
+                SpawnX = tileX,
+                SpawnY = tileY,
             };
+
+            if (mMapController.MaxLevel > 0)
+            {
+                var minLevel = Math.Max(1, mMapController.MinLevel);
+                var maxLevel = Math.Max(minLevel, mMapController.MaxLevel);
+                npc.ApplyLevelScaling(Randomization.Next(minLevel, maxLevel + 1));
+            }
 
             AddEntity(npc);
             PacketSender.SendEntityDataToProximity(npc);
@@ -1028,10 +1073,16 @@ public partial class MapInstance : IMapInstance
         byte y,
         byte z,
         Direction direction,
-        Entity target
+        Entity target,
+        (Guid mapId, byte x, byte y)? aimPoint = null
     )
     {
         var proj = new Projectile(owner, parentSpell, parentItem, projectile, mMapController.Id, x, y, z, direction, target);
+        if (aimPoint.HasValue)
+        {
+            proj.SetMouseAimPoint(aimPoint.Value.mapId, aimPoint.Value.x, aimPoint.Value.y);
+        }
+
         proj.MapInstanceId = MapInstanceId;
         MapProjectiles.TryAdd(proj.Id, proj);
         MapProjectilesCached = MapProjectiles.Values.ToArray();
@@ -1164,9 +1215,19 @@ public partial class MapInstance : IMapInstance
             return true;
         }
 
+        var attribute = mMapController.Attributes[x, y];
+
         //Check if tile is a blocked attribute
-        if (mMapController.Attributes[x, y] != null && (mMapController.Attributes[x, y].Type == MapAttributeType.Blocked ||
-            mMapController.Attributes[x, y].Type == MapAttributeType.Animation && ((MapAnimationAttribute)mMapController.Attributes[x, y]).IsBlock))
+        if (attribute != null && (attribute.Type == MapAttributeType.Blocked ||
+            attribute.Type == MapAttributeType.Animation && ((MapAnimationAttribute)attribute).IsBlock))
+        {
+            return true;
+        }
+
+        //If the map doesn't explicitly mark this tile as walkable (an override), fall back to
+        //whether any of the tiles painted here are configured as always-blocked on their tileset
+        //(cached once in CacheMapBlocks, alongside classic attribute blocks).
+        if ((attribute == null || attribute.Type != MapAttributeType.Walkable) && IsPositionBlocked(true, x, y))
         {
             return true;
         }
@@ -1201,6 +1262,42 @@ public partial class MapInstance : IMapInstance
 
         return false;
     }
+
+    /// <summary>
+    /// Checks whether any tile painted at (x,y), across every layer, is one that its tileset
+    /// has been configured as always-blocked (set once in the editor's tileset palette rather
+    /// than painted per-map).
+    /// </summary>
+    private bool IsTileBlockedByTileset(int x, int y)
+    {
+        if (mMapController.Layers == null)
+        {
+            return false;
+        }
+
+        foreach (var layer in mMapController.Layers)
+        {
+            var tiles = layer.Value;
+            if (tiles == null || x >= tiles.GetLength(0) || y >= tiles.GetLength(1))
+            {
+                continue;
+            }
+
+            var tile = tiles[x, y];
+            if (tile.TilesetId == Guid.Empty)
+            {
+                continue;
+            }
+
+            var tileset = TilesetDescriptor.Get(tile.TilesetId);
+            if (tileset != null && tileset.IsTileBlocked(tile.X, tile.Y))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
     #endregion
 
     #region Packet Batching
@@ -1225,29 +1322,101 @@ public partial class MapInstance : IMapInstance
     {
         var blocks = new List<BytePoint>();
         var npcBlocks = new List<BytePoint>();
+        var tilesetBlocks = new List<BytePoint>();
+
+        // Layers is normally left null on the server (only TileData, the raw blob, is kept) -
+        // load it just for this scan so tileset-configured blocking can be picked up, then
+        // release it again to match the server's normal "not loaded" convention.
+        var loadedLayers = mMapController.EnsureLayersLoaded();
+
         for (byte x = 0; x < Options.Instance.Map.MapWidth; x++)
         {
             for (byte y = 0; y < Options.Instance.Map.MapHeight; y++)
             {
-                if (mMapController.Attributes[x, y] != null)
+                var attribute = mMapController.Attributes[x, y];
+                if (attribute != null)
                 {
-                    if (mMapController.Attributes[x, y].Type == MapAttributeType.Blocked ||
-                        mMapController.Attributes[x, y].Type == MapAttributeType.GrappleStone ||
-                        mMapController.Attributes[x, y].Type == MapAttributeType.Animation && ((MapAnimationAttribute)mMapController.Attributes[x, y]).IsBlock)
+                    if (attribute.Type == MapAttributeType.Blocked ||
+                        attribute.Type == MapAttributeType.GrappleStone ||
+                        attribute.Type == MapAttributeType.Animation && ((MapAnimationAttribute)attribute).IsBlock)
                     {
                         blocks.Add(new BytePoint(x, y));
                         npcBlocks.Add(new BytePoint(x, y));
+
+                        continue;
                     }
-                    else if (mMapController.Attributes[x, y].Type == MapAttributeType.NpcAvoid)
+
+                    if (attribute.Type == MapAttributeType.NpcAvoid)
                     {
                         npcBlocks.Add(new BytePoint(x, y));
                     }
+                }
+
+                // Tiles configured as always-blocked on their tileset (set once in the editor's
+                // tileset palette) also need to keep the pathfinder from routing NPCs through them -
+                // unless the map explicitly overrides this exact tile back to walkable. Kept in a
+                // separate ground-level-only list (see mTilesetBlocks).
+                if ((attribute == null || attribute.Type != MapAttributeType.Walkable) && IsTileBlockedByTileset(x, y))
+                {
+                    tilesetBlocks.Add(new BytePoint(x, y));
                 }
             }
         }
 
         mMapBlocks = blocks.ToArray();
         mNpcMapBlocks = npcBlocks.ToArray();
+        mTilesetBlocks = tilesetBlocks.ToArray();
+
+        if (loadedLayers)
+        {
+            mMapController.ReleaseLayers();
+        }
+    }
+
+    /// <summary>
+    /// True if (x,y) is blocked for the given entity type according to the cached block lists
+    /// built by <see cref="CacheMapBlocks"/> - this is the single source of truth both the
+    /// pathfinder and live step-by-step movement checks use, so the two always agree. Classic
+    /// map attribute blocks (walls, etc.) apply at every Z level; tileset-configured blocking
+    /// (rocks, logs, decorations) only applies at ground level (Z=0), so it doesn't wrongly
+    /// block entities crossing above on a Z-Dimension bridge.
+    /// </summary>
+    public bool IsPositionBlocked(bool isPlayer, int x, int y, int z = 0)
+    {
+        var blocks = GetCachedBlocks(isPlayer);
+        foreach (var block in blocks)
+        {
+            if (block.X == x && block.Y == y)
+            {
+                return true;
+            }
+        }
+
+        if (z == 0)
+        {
+            foreach (var block in mTilesetBlocks)
+            {
+                if (block.X == x && block.Y == y)
+                {
+                    return true;
+                }
+            }
+
+            foreach (var furniture in FurnitureInstances.Values)
+            {
+                if (furniture.X != x || furniture.Y != y)
+                {
+                    continue;
+                }
+
+                if (FurnitureDescriptor.TryGet(furniture.DescriptorId, out var descriptor) && !descriptor.Passable)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     public Entity[] GetCachedEntities()

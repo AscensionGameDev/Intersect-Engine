@@ -57,6 +57,8 @@ public partial class CharacterWindow
 
     Label mPointsLabel;
 
+    Label mPowerLabel;
+
     Label mSpeedLabel;
 
     public ImagePanel[] PaperdollPanels;
@@ -158,6 +160,35 @@ public partial class CharacterWindow
         UpdateExtraBuffTooltip(null, null); // Initial tooltip update.
 
         mCharacterWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+        // Combat-power score, shown right below the stat points counter.
+        mPowerLabel = new Label(mPointsLabel.Parent ?? mCharacterWindow, "PowerLabel");
+        mPowerLabel.SetBounds(mPointsLabel.X, mPointsLabel.Y + 22, mPointsLabel.Width + 160, 20);
+        mPowerLabel.FontName = "sourcesansproblack";
+        mPowerLabel.FontSize = 12;
+        mPowerLabel.SetTextColor(Color.White, ComponentState.Normal);
+    }
+
+    /// <summary>
+    /// Flavor "combat power" score combining level, stats, and max vitals into a single growing number,
+    /// purely cosmetic - it doesn't feed into any combat calculation.
+    /// </summary>
+    private static long CalculatePowerScore()
+    {
+        if (Globals.Me is not { } player)
+        {
+            return 0;
+        }
+
+        var statSum = 0L;
+        for (var i = 0; i < player.Stat.Length; i++)
+        {
+            statSum += player.Stat[i];
+        }
+
+        var vitalSum = player.MaxVital[(int)Vital.Health] + player.MaxVital[(int)Vital.Mana];
+
+        return player.Level * 50L + statSum * 20L + vitalSum / 2L;
     }
 
     //Update Button Event Handlers
@@ -336,6 +367,7 @@ public partial class CharacterWindow
         );
 
         mPointsLabel.SetText(Strings.Character.Points.ToString(Globals.Me.StatPoints));
+        mPowerLabel.SetText(Strings.Character.Power.ToString(CalculatePowerScore()));
         mAddAbilityPwrBtn.IsHidden = Globals.Me.StatPoints == 0 ||
                                      Globals.Me.Stat[(int) Stat.AbilityPower] == Options.Instance.Player.MaxStat;
 

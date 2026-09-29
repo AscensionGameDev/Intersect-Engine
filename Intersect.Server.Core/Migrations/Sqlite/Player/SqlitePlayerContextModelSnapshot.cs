@@ -275,6 +275,34 @@ namespace Intersect.Server.Migrations.Sqlite.Player
                     b.ToTable("Guild_Bank");
                 });
 
+            modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.GuildFurniturePlacement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Direction")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("FurnitureDescriptorId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("GuildId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte>("X")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte>("Y")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GuildId");
+
+                    b.ToTable("Guild_Furniture");
+                });
+
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.GuildVariable", b =>
                 {
                     b.Property<Guid>("Id")
@@ -521,6 +549,9 @@ namespace Intersect.Server.Migrations.Sqlite.Player
                         .HasColumnType("TEXT")
                         .HasColumnOrder(0);
 
+                    b.Property<Guid>("ActiveMountId")
+                        .HasColumnType("TEXT");
+
                     b.Property<Guid>("ClassId")
                         .HasColumnType("TEXT");
 
@@ -545,6 +576,9 @@ namespace Intersect.Server.Migrations.Sqlite.Player
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Face")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("FactionId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FooterLabelJson")
@@ -644,6 +678,14 @@ namespace Intersect.Server.Migrations.Sqlite.Player
                     b.Property<string>("Sprite")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("SpriteColorsJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("SpriteColors");
+
+                    b.Property<string>("SpritePartsJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("SpriteParts");
+
                     b.Property<int>("StatPoints")
                         .HasColumnType("INTEGER");
 
@@ -654,6 +696,14 @@ namespace Intersect.Server.Migrations.Sqlite.Player
                     b.Property<string>("StatsJson")
                         .HasColumnType("TEXT")
                         .HasColumnName("BaseStats");
+
+                    b.Property<string>("UnlockedAchievementsJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("UnlockedAchievements");
+
+                    b.Property<string>("UnlockedMountsJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("UnlockedMounts");
 
                     b.Property<string>("UnlockedTitlesJson")
                         .HasColumnType("TEXT")
@@ -789,6 +839,17 @@ namespace Intersect.Server.Migrations.Sqlite.Player
                     b.Navigation("Guild");
                 });
 
+            modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.GuildFurniturePlacement", b =>
+                {
+                    b.HasOne("Intersect.Server.Database.PlayerData.Players.Guild", "Guild")
+                        .WithMany("Furniture")
+                        .HasForeignKey("GuildId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Guild");
+                });
+
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.GuildVariable", b =>
                 {
                     b.HasOne("Intersect.Server.Database.PlayerData.Players.Guild", "Guild")
@@ -912,6 +973,8 @@ namespace Intersect.Server.Migrations.Sqlite.Player
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.Guild", b =>
                 {
                     b.Navigation("Bank");
+
+                    b.Navigation("Furniture");
 
                     b.Navigation("Variables");
                 });

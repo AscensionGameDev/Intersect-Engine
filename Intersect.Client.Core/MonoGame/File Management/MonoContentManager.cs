@@ -51,14 +51,27 @@ public partial class MonoContentManager : GameContentManager
             tilesetFiles = Directory.GetFiles(dir).Select(f => Path.GetFileName(f));
         }
 
+        AssetPacker tilesetPack = default;
+        var tilesetPackIndexFile = Path.Combine(ClientConfiguration.ResourcesDirectory, "packs", "tilesets.index");
+        if (File.Exists(tilesetPackIndexFile))
+        {
+            tilesetPack = new AssetPacker(tilesetPackIndexFile, Path.Combine(ClientConfiguration.ResourcesDirectory, "packs"));
+        }
+
         foreach (var t in tilesetnames)
         {
             var realFilename = tilesetFiles.FirstOrDefault(file => t.Equals(file, StringComparison.InvariantCultureIgnoreCase)) ?? t;
             var assetName = Path.Combine(ClientConfiguration.ResourcesDirectory, "tilesets", t.ToLower()).Replace('\\', '/');
-            if (!string.IsNullOrWhiteSpace(t) &&
-                (!string.IsNullOrWhiteSpace(realFilename) ||
-                 AtlasReference.TryGet(assetName, out _)) &&
-                !mTilesetDict.ContainsKey(t.ToLower()))
+            if (string.IsNullOrWhiteSpace(t) || mTilesetDict.ContainsKey(t.ToLower()))
+            {
+                continue;
+            }
+
+            if (tilesetPack != null && tilesetPack.Contains(t))
+            {
+                mTilesetDict.Add(t.ToLower(), Core.Graphics.Renderer.CreateTextureFromStreamFactory(t, () => tilesetPack.GetAsset(t)));
+            }
+            else if (!string.IsNullOrWhiteSpace(realFilename) || AtlasReference.TryGet(assetName, out _))
             {
                 mTilesetDict.Add(
                     t.ToLower(),
@@ -145,6 +158,24 @@ public partial class MonoContentManager : GameContentManager
             if (!dict.ContainsKey(filename))
             {
                 dict.Add(filename, Core.Graphics.Renderer.LoadTexture(Path.Combine(dir, filename), Path.Combine(dir, Path.Combine(dir, filename))));
+            }
+        }
+
+        // Assets bundled with the resource packer (see Intersect.Tools.ResourcePacker) ship as opaque
+        // .pack/.index blobs instead of loose files - only used when someone actually ran the packer.
+        var packIndexFile = Path.Combine(ClientConfiguration.ResourcesDirectory, "packs", $"{directory}.index");
+        if (File.Exists(packIndexFile))
+        {
+            var pack = new AssetPacker(packIndexFile, Path.Combine(ClientConfiguration.ResourcesDirectory, "packs"));
+            foreach (var fileName in pack.FileList)
+            {
+                var key = fileName.ToLower();
+                if (dict.ContainsKey(key))
+                {
+                    continue;
+                }
+
+                dict.Add(key, Core.Graphics.Renderer.CreateTextureFromStreamFactory(fileName, () => pack.GetAsset(fileName)));
             }
         }
     }

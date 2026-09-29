@@ -120,6 +120,11 @@ namespace Intersect.Editor.Forms.Editors
             chkQuickCast = new DarkCheckBox();
             cmbTeachSpell = new DarkComboBox();
             lblSpell = new Label();
+            grpPetMount = new DarkGroupBox();
+            cmbPetMount = new DarkComboBox();
+            lblPetMount = new Label();
+            cmbPetMountSlot = new DarkComboBox();
+            lblPetMountSlot = new Label();
             grpEquipment = new DarkGroupBox();
             grpStatRanges = new DarkGroupBox();
             lblStatRangeFrom = new Label();
@@ -430,6 +435,7 @@ namespace Intersect.Editor.Forms.Editors
             grpGeneral.Controls.Add(grpEvent);
             grpGeneral.Controls.Add(grpBags);
             grpGeneral.Controls.Add(grpSpell);
+            grpGeneral.Controls.Add(grpPetMount);
             grpGeneral.ForeColor = System.Drawing.Color.Gainsboro;
             grpGeneral.Location = new System.Drawing.Point(11, 3);
             grpGeneral.Margin = new Padding(4, 3, 4, 3);
@@ -1504,9 +1510,92 @@ namespace Intersect.Editor.Forms.Editors
             lblSpell.Size = new Size(35, 15);
             lblSpell.TabIndex = 11;
             lblSpell.Text = "Spell:";
-            // 
+            //
+            // grpPetMount
+            //
+            grpPetMount.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpPetMount.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpPetMount.Controls.Add(cmbPetMount);
+            grpPetMount.Controls.Add(lblPetMount);
+            grpPetMount.Controls.Add(cmbPetMountSlot);
+            grpPetMount.Controls.Add(lblPetMountSlot);
+            grpPetMount.ForeColor = System.Drawing.Color.Gainsboro;
+            grpPetMount.Location = new System.Drawing.Point(321, 307);
+            grpPetMount.Margin = new Padding(4, 3, 4, 3);
+            grpPetMount.Name = "grpPetMount";
+            grpPetMount.Padding = new Padding(4, 3, 4, 3);
+            grpPetMount.Size = new Size(253, 150);
+            grpPetMount.TabIndex = 13;
+            grpPetMount.TabStop = false;
+            grpPetMount.Text = "Pet";
+            grpPetMount.Visible = false;
+            //
+            // cmbPetMount
+            //
+            cmbPetMount.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbPetMount.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbPetMount.BorderStyle = ButtonBorderStyle.Solid;
+            cmbPetMount.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbPetMount.DrawDropdownHoverOutline = false;
+            cmbPetMount.DrawFocusRectangle = false;
+            cmbPetMount.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbPetMount.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbPetMount.FlatStyle = FlatStyle.Flat;
+            cmbPetMount.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbPetMount.FormattingEnabled = true;
+            cmbPetMount.Location = new System.Drawing.Point(18, 46);
+            cmbPetMount.Margin = new Padding(4, 3, 4, 3);
+            cmbPetMount.Name = "cmbPetMount";
+            cmbPetMount.Size = new Size(209, 24);
+            cmbPetMount.TabIndex = 12;
+            cmbPetMount.Text = null;
+            cmbPetMount.TextPadding = new Padding(2);
+            cmbPetMount.SelectedIndexChanged += cmbPetMount_SelectedIndexChanged;
+            //
+            // lblPetMount
+            //
+            lblPetMount.AutoSize = true;
+            lblPetMount.Location = new System.Drawing.Point(14, 24);
+            lblPetMount.Margin = new Padding(4, 0, 4, 0);
+            lblPetMount.Name = "lblPetMount";
+            lblPetMount.Size = new Size(35, 15);
+            lblPetMount.TabIndex = 11;
+            lblPetMount.Text = "Pet:";
+            //
+            // cmbPetMountSlot
+            //
+            cmbPetMountSlot.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbPetMountSlot.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbPetMountSlot.BorderStyle = ButtonBorderStyle.Solid;
+            cmbPetMountSlot.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbPetMountSlot.DrawDropdownHoverOutline = false;
+            cmbPetMountSlot.DrawFocusRectangle = false;
+            cmbPetMountSlot.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbPetMountSlot.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbPetMountSlot.FlatStyle = FlatStyle.Flat;
+            cmbPetMountSlot.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbPetMountSlot.FormattingEnabled = true;
+            cmbPetMountSlot.Location = new System.Drawing.Point(18, 100);
+            cmbPetMountSlot.Margin = new Padding(4, 3, 4, 3);
+            cmbPetMountSlot.Name = "cmbPetMountSlot";
+            cmbPetMountSlot.Size = new Size(209, 24);
+            cmbPetMountSlot.TabIndex = 14;
+            cmbPetMountSlot.Text = null;
+            cmbPetMountSlot.TextPadding = new Padding(2);
+            cmbPetMountSlot.SelectedIndexChanged += cmbPetMountSlot_SelectedIndexChanged;
+            //
+            // lblPetMountSlot
+            //
+            lblPetMountSlot.AutoSize = true;
+            lblPetMountSlot.Location = new System.Drawing.Point(14, 78);
+            lblPetMountSlot.Margin = new Padding(4, 0, 4, 0);
+            lblPetMountSlot.Name = "lblPetMountSlot";
+            lblPetMountSlot.Size = new Size(35, 15);
+            lblPetMountSlot.TabIndex = 11;
+            lblPetMountSlot.Text = "Equipment Slot:";
+            //
             // grpEquipment
-            // 
+            //
             grpEquipment.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
             grpEquipment.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
             grpEquipment.Controls.Add(grpStatRanges);
@@ -3115,6 +3204,11 @@ namespace Intersect.Editor.Forms.Editors
         private DarkGroupBox grpConsumable;
         private DarkComboBox cmbConsume;
         private DarkGroupBox grpSpell;
+        private DarkGroupBox grpPetMount;
+        private DarkComboBox cmbPetMount;
+        private Label lblPetMount;
+        private DarkComboBox cmbPetMountSlot;
+        private Label lblPetMountSlot;
         private DarkButton btnCancel;
         private DarkComboBox cmbPic;
         private DarkComboBox cmbMalePaperdoll;

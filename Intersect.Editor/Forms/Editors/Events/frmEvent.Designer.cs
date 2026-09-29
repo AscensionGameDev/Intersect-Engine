@@ -67,7 +67,9 @@ namespace Intersect.Editor.Forms.Editors.Events
             var resetStatPointTreeNode = new TreeNode("Reset Stat Point Allocations");
             var castSpellOnTreeNode = new TreeNode("Cast Spell On");
             var changePetTreeNode = new TreeNode("Change Pet");
-            var playerControlTreeNode = new TreeNode("Player Control", new TreeNode[] { restoreHPTreeNode, restoreMPTreeNode, levelUpTreeNode, giveExperienceTreeNode, changeLevelTreeNode, changeSpellsTreeNode, changeItemsTreeNode, changeSpriteTreeNode, changePlayerColorTreeNode, changeFaceTreeNode, changeGenderTreeNode, setAccessTreeNode, changeClassTreeNode, equipUneqiupTreeNode, changeNameColorTreeNode, changePlayerLabelTreeNode, changePlayerNameTreeNode, resetStatPointTreeNode, castSpellOnTreeNode, changePetTreeNode });
+            var unlockMountTreeNode = new TreeNode("Unlock Mount");
+            var unlockAchievementTreeNode = new TreeNode("Unlock Achievement");
+            var playerControlTreeNode = new TreeNode("Player Control", new TreeNode[] { restoreHPTreeNode, restoreMPTreeNode, levelUpTreeNode, giveExperienceTreeNode, changeLevelTreeNode, changeSpellsTreeNode, changeItemsTreeNode, changeSpriteTreeNode, changePlayerColorTreeNode, changeFaceTreeNode, changeGenderTreeNode, setAccessTreeNode, changeClassTreeNode, equipUneqiupTreeNode, changeNameColorTreeNode, changePlayerLabelTreeNode, changePlayerNameTreeNode, resetStatPointTreeNode, castSpellOnTreeNode, changePetTreeNode, unlockMountTreeNode, unlockAchievementTreeNode });
             var warpPlayerTreeNode = new TreeNode("Warp Player");
             var setMoveRouteTreeNode = new TreeNode("Set Move Route");
             var waitForRouteCompleteTreeNode = new TreeNode("Wait for Route Completion");
@@ -927,6 +929,12 @@ namespace Intersect.Editor.Forms.Editors.Events
             changePetTreeNode.Name = "changepet";
             changePetTreeNode.Tag = (int)EventCommandType.ChangePet;
             changePetTreeNode.Text = "Change Pet";
+            unlockMountTreeNode.Name = "unlockmount";
+            unlockMountTreeNode.Tag = (int)EventCommandType.UnlockMount;
+            unlockMountTreeNode.Text = "Unlock Mount";
+            unlockAchievementTreeNode.Name = "unlockachievement";
+            unlockAchievementTreeNode.Tag = (int)EventCommandType.UnlockAchievement;
+            unlockAchievementTreeNode.Text = "Unlock Achievement";
             changePlayerNameTreeNode.Name = "changename";
             changePlayerNameTreeNode.Tag = (int)EventCommandType.ChangeName;
             changePlayerNameTreeNode.Text = "Change Player Name";

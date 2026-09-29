@@ -128,12 +128,39 @@ public static partial class Graphics
         // If we're going to be rendering a custom mouse cursor, hide the default one!
         string? mouseCursor = ClientConfiguration.Instance.MouseCursor;
         Renderer.CursorName = mouseCursor;
+        Intersect.Client.Framework.Gwen.Platform.Neutral.CursorChanged = OnGwenCursorChanged;
 
         (GameFont, GameFontSize) = FindFont(ClientConfiguration.Instance.GameFont);
         (UIFont, UIFontSize) = FindFont(ClientConfiguration.Instance.UIFont);
         (EntityNameFont, EntityNameFontSize) = FindFont(ClientConfiguration.Instance.EntityNameFont);
         (ChatBubbleFont, ChatBubbleFontSize) = FindFont(ClientConfiguration.Instance.ChatBubbleFont);
         (ActionMsgFont, ActionMsgFontSize) = FindFont(ClientConfiguration.Instance.ActionMsgFont);
+    }
+
+    /// <summary>
+    /// Swaps the custom cursor texture whenever the in-game UI (GWEN) changes what kind of cursor it
+    /// wants shown - hovering a button, resizing a window, dragging something over an invalid drop
+    /// target, etc. Each cursor type falls back to the base <see cref="ClientConfiguration.MouseCursor"/>
+    /// texture when its own texture isn't configured, so a game only needs to supply the one default
+    /// texture to begin with and can add the others incrementally.
+    /// </summary>
+    private static void OnGwenCursorChanged(Cursor cursor)
+    {
+        var config = ClientConfiguration.Instance;
+        var textureName = cursor?.Type switch
+        {
+            Cursors.CursorTypes.Hand => config.MouseCursorHand,
+            Cursors.CursorTypes.SizeAll => config.MouseCursorSizeAll,
+            Cursors.CursorTypes.SizeNs => config.MouseCursorSizeNs,
+            Cursors.CursorTypes.SizeWe => config.MouseCursorSizeWe,
+            Cursors.CursorTypes.SizeNwse => config.MouseCursorSizeNwse,
+            Cursors.CursorTypes.SizeNesw => config.MouseCursorSizeNesw,
+            Cursors.CursorTypes.No => config.MouseCursorNo,
+            Cursors.CursorTypes.Drag => config.MouseCursorDrag,
+            _ => config.MouseCursor,
+        };
+
+        Renderer.CursorName = string.IsNullOrWhiteSpace(textureName) ? config.MouseCursor : textureName;
     }
 
     private static (IFont?, int) FindFont(string font)
@@ -380,6 +407,7 @@ public static partial class Graphics
                         {
                             var map = MapInstance.Get(Globals.MapGrid[x1, y1]);
                             map?.DrawItemsAndLights();
+                            map?.DrawFurniture();
                         }
                     }
                 }
@@ -615,6 +643,7 @@ public static partial class Graphics
         if (gameState == GameStates.InGame && Interface.Interface.HasInGameUI)
         {
             Interface.Interface.GameUi.DungeonHud.Draw();
+            Interface.Interface.GameUi.TerritoryHud.Draw();
         }
 
         DrawGameTexture(

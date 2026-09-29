@@ -13,12 +13,24 @@ public static partial class Neutral
     private static DateTime sFirstTime = DateTime.Now;
 
     /// <summary>
+    /// Lets the client project hook into cursor-type changes without this (lower-level, platform-agnostic)
+    /// project needing to reference the client's rendering/config types directly.
+    /// </summary>
+    public static Action<Cursor>? CursorChanged { get; set; }
+
+    /// <summary>
     ///     Changes the mouse cursor.
     /// </summary>
     /// <param name="cursor">Cursor type.</param>
     public static void SetCursor(Cursor cursor)
     {
+        if (Cursor.Current?.Type == cursor?.Type)
+        {
+            return;
+        }
+
         Cursor.Current = cursor;
+        CursorChanged?.Invoke(cursor);
     }
 
     /// <summary>

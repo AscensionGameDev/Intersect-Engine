@@ -1,5 +1,6 @@
 using DarkUI.Forms;
 using Intersect.Editor.Core;
+using Intersect.Editor.Forms.Editors;
 using Intersect.Editor.Forms.Editors.Events;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
@@ -35,6 +36,17 @@ public partial class FrmQuest : EditorForm
         _btnCancel = btnCancel;
 
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
+
+        EditorFormHelper.AddTranslateEnButtonAbove(btnSave, (_, _) =>
+        {
+            if (mEditorItem == null)
+            {
+                return;
+            }
+
+            using var frm = new FrmQuestTranslation(mEditorItem);
+            frm.ShowDialog();
+        }, matchReferenceSize: true);
 
         UpdateEditor();
     }

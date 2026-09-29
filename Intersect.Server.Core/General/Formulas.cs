@@ -19,6 +19,19 @@ public partial class Formulas
 
     public Formula ExpFormula = new("BaseExp * Power(Gain, Level)");
 
+    /// <summary>Relative stat multiplier applied to an NPC scaled to a given level (see <see cref="Npc.ApplyLevelScaling"/>).
+    /// The ratio between two levels' multipliers is what actually gets applied, so the curve's absolute scale doesn't matter,
+    /// only its shape.</summary>
+    public string NpcStatScaling = "1 + (Level - 1) * 0.15";
+
+    /// <summary>Steeper counterpart to <see cref="NpcStatScaling"/>, applied only to an NPC's Defense,
+    /// MagicResist and max Health when it's scaled to a given level (see <see cref="Npc.ApplyLevelScaling"/>).
+    /// With defense mitigation shaped like 100/(100+Defense), small base Defense values barely move even
+    /// after a big level gap under the flatter general curve, which is why a level-appropriate monster
+    /// could be one- or two-shot by an under-leveled player with no gear at all - this curve exists so
+    /// "resistance/HP" can be tuned independently of attack/speed without touching every NPC by hand.</summary>
+    public string NpcToughnessScaling = "1 + (Level - 1) * 0.35";
+
     public string MagicDamage = DefaultFormulaMagicDamage;
     public string PhysicalDamage = DefaultFormulaPhysicalDamage;
     public string TrueDamage = DefaultFormulaTrueDamage;
@@ -42,6 +55,42 @@ public partial class Formulas
         catch (Exception ex)
         {
             throw new Exception(Strings.Formulas.Missing, ex);
+        }
+    }
+
+    public static double GetNpcStatMultiplier(int level)
+    {
+        return EvaluateNpcScalingFormula(_formulas?.NpcStatScaling, level, "NPC stat scaling");
+    }
+
+    /// <summary>Steeper multiplier for Defense/MagicResist/max Health - see <see cref="NpcToughnessScaling"/>.</summary>
+    public static double GetNpcToughnessMultiplier(int level)
+    {
+        return EvaluateNpcScalingFormula(_formulas?.NpcToughnessScaling, level, "NPC toughness scaling");
+    }
+
+    private static double EvaluateNpcScalingFormula(string? formula, int level, string formulaLabel)
+    {
+        if (_formulas == null || formula == null)
+        {
+            throw new InvalidOperationException("Formulas not yet initialized");
+        }
+
+        var expression = new Expression(formula);
+        if (expression.Parameters == null)
+        {
+            throw new ArgumentNullException(nameof(expression.Parameters));
+        }
+
+        expression.Parameters["Level"] = level;
+
+        try
+        {
+            return Convert.ToDouble(expression.Evaluate());
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Failed to evaluate {formulaLabel} formula", ex);
         }
     }
 

@@ -5,10 +5,12 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments.InputSubmissionEven
 using Intersect.Client.General;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Maps;
+using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.Framework;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Models;
+using Intersect.Network.Packets;
 using Intersect.Network.Packets.Client;
 using AdminAction = Intersect.Admin.Actions.AdminAction;
 
@@ -23,8 +25,17 @@ public static partial class PacketSender
         Network.SendPacket(new PingPacket { Responding = true });
     }
 
+    public static void SendSetLanguage(string language)
+    {
+        Network.SendPacket(new SetLanguagePacket(language));
+    }
+
     public static void SendLogin(string username, string password)
     {
+        // Sent right before login (rather than at raw socket connect) so the server is guaranteed to
+        // already have a registered Client for this connection - sending it too early, right as the
+        // socket connects, can race the server's own connection setup and get silently dropped.
+        SendSetLanguage(ClientConfiguration.Instance.Language);
         Network.SendPacket(new LoginPacket(username, password));
     }
 
@@ -114,9 +125,9 @@ public static partial class PacketSender
         Network.SendPacket(new ChatMsgPacket(msg, channel));
     }
 
-    public static void SendAttack(Guid targetId)
+    public static void SendAttack(Guid targetId, Guid aimMapId = default, byte aimX = 0, byte aimY = 0)
     {
-        Network.SendPacket(new AttackPacket(targetId));
+        Network.SendPacket(new AttackPacket(targetId, aimMapId, aimX, aimY));
     }
 
     public static void SendBlock(bool blocking)
@@ -182,9 +193,9 @@ public static partial class PacketSender
         Network.SendPacket(new UserRegistrationRequestPacket(username, password, email));
     }
 
-    public static void SendCreateCharacter(string name, Guid classId, int sprite)
+    public static void SendCreateCharacter(string name, Guid classId, int sprite, Color[]? spriteColors = null, SpritePart[]? spriteParts = null, Guid factionId = default)
     {
-        Network.SendPacket(new CreateCharacterPacket(name, classId, sprite));
+        Network.SendPacket(new CreateCharacterPacket(name, classId, sprite, spriteColors, spriteParts, factionId));
     }
 
     public static void SendPickupItem(Guid mapId, int tileIndex, Guid uniqueId)
@@ -195,6 +206,26 @@ public static partial class PacketSender
     public static void SendSwapInvItems(int item1, int item2)
     {
         Network.SendPacket(new SwapInvItemsPacket(item1, item2));
+    }
+
+    public static void SendPlaceFurniture(Guid furnitureDescriptorId, byte x, byte y, Direction direction)
+    {
+        Network.SendPacket(new PlaceFurniturePacket(furnitureDescriptorId, x, y, direction));
+    }
+
+    public static void SendMoveFurniture(Guid placementId, byte x, byte y, Direction direction)
+    {
+        Network.SendPacket(new MoveFurniturePacket(placementId, x, y, direction));
+    }
+
+    public static void SendRemoveFurniture(Guid placementId)
+    {
+        Network.SendPacket(new RemoveFurniturePacket(placementId));
+    }
+
+    public static void SendRequestFurniture()
+    {
+        Network.SendPacket(new RequestFurniturePacket());
     }
 
     public static void SendDropItem(int slot, int amount)
@@ -217,9 +248,9 @@ public static partial class PacketSender
         Network.SendPacket(new ForgetSpellPacket(slot));
     }
 
-    public static void SendUseSpell(int slot, Guid targetId)
+    public static void SendUseSpell(int slot, Guid targetId, Guid aimMapId = default, byte aimX = 0, byte aimY = 0)
     {
-        Network.SendPacket(new UseSpellPacket(slot, targetId, Globals.ShouldSoftRetargetOnSelfCast));
+        Network.SendPacket(new UseSpellPacket(slot, targetId, Globals.ShouldSoftRetargetOnSelfCast, aimMapId, aimX, aimY));
     }
 
     public static void SendUnequipItem(int slot)
@@ -426,9 +457,24 @@ public static partial class PacketSender
         Network.SendPacket(new EquipTitlePacket(titleId));
     }
 
+    public static void SendSetActiveMount(Guid mountId)
+    {
+        Network.SendPacket(new SetActiveMountPacket(mountId));
+    }
+
+    public static void SendToggleMount()
+    {
+        Network.SendPacket(new ToggleMountPacket());
+    }
+
     public static void SendEnterDungeon(Guid dungeonId)
     {
         Network.SendPacket(new EnterDungeonPacket(dungeonId));
+    }
+
+    public static void SendRequestDungeonLeaderboard(Guid dungeonId)
+    {
+        Network.SendPacket(new RequestDungeonLeaderboardPacket(dungeonId));
     }
 
     public static void SendLeaveDungeon()

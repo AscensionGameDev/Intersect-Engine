@@ -208,6 +208,12 @@ public partial class ClassDescriptor : DatabaseObject<ClassDescriptor>, IFoldera
     //Locked - Can the partial class be chosen from character select?
     public bool Locked { get; set; }
 
+    /// <summary>
+    /// Short flavor text shown on the character-creation class carousel (and anywhere else a one or two
+    /// line pitch for the class is useful). Empty by default - purely cosmetic, no gameplay effect.
+    /// </summary>
+    public string Description { get; set; } = string.Empty;
+
     public int PointIncrease { get; set; }
 
     public int Scaling { get; set; } = 100;

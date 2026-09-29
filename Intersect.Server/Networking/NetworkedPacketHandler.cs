@@ -10,6 +10,11 @@ using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Factions;
+using Intersect.Framework.Core.GameObjects.Furniture;
+using Intersect.Framework.Core.GameObjects.Territories;
+using Intersect.Framework.Core.GameObjects.Achievements;
+using Intersect.Framework.Core.GameObjects.Mounts;
 using Intersect.Framework.Core.GameObjects.Pets;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
@@ -988,6 +993,22 @@ internal sealed partial class NetworkedPacketHandler
                     obj = PetDescriptor.Get(id);
 
                     break;
+                case GameObjectType.Mount:
+                    obj = MountDescriptor.Get(id);
+
+                    break;
+                case GameObjectType.Achievement:
+                    obj = AchievementDescriptor.Get(id);
+
+                    break;
+                case GameObjectType.Faction:
+                    obj = FactionDescriptor.Get(id);
+
+                    break;
+                case GameObjectType.Territory:
+                    obj = TerritoryDescriptor.Get(id);
+
+                    break;
 
                 case GameObjectType.Dungeon:
                     obj = DungeonDescriptor.Get(id);
@@ -996,6 +1017,11 @@ internal sealed partial class NetworkedPacketHandler
 
                 case GameObjectType.InstanceVariable:
                     obj = InstanceVariableDescriptor.Get(id);
+
+                    break;
+
+                case GameObjectType.Furniture:
+                    obj = FurnitureDescriptor.Get(id);
 
                     break;
 
@@ -1126,6 +1152,8 @@ internal sealed partial class NetworkedPacketHandler
                     break;
 
                 case GameObjectType.Tileset:
+                    obj = TilesetDescriptor.Get(id);
+
                     break;
 
                 case GameObjectType.Time:
@@ -1150,6 +1178,22 @@ internal sealed partial class NetworkedPacketHandler
                     obj = PetDescriptor.Get(id);
 
                     break;
+                case GameObjectType.Mount:
+                    obj = MountDescriptor.Get(id);
+
+                    break;
+                case GameObjectType.Achievement:
+                    obj = AchievementDescriptor.Get(id);
+
+                    break;
+                case GameObjectType.Faction:
+                    obj = FactionDescriptor.Get(id);
+
+                    break;
+                case GameObjectType.Territory:
+                    obj = TerritoryDescriptor.Get(id);
+
+                    break;
 
                 case GameObjectType.Dungeon:
                     obj = DungeonDescriptor.Get(id);
@@ -1158,6 +1202,11 @@ internal sealed partial class NetworkedPacketHandler
 
                 case GameObjectType.InstanceVariable:
                     obj = InstanceVariableDescriptor.Get(id);
+
+                    break;
+
+                case GameObjectType.Furniture:
+                    obj = FurnitureDescriptor.Get(id);
 
                     break;
 

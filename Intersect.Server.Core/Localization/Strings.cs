@@ -1008,6 +1008,18 @@ public static partial class Strings
         public readonly LocalizedString Product = @"Intersect Game Engine";
     }
 
+    public sealed partial class AchievementsNamespace : LocaleNamespace
+    {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Unlocked = @"Achievement unlocked: {00}!";
+    }
+
+    public sealed partial class TerritoriesNamespace : LocaleNamespace
+    {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString Captured = @"{00} has captured {01}!";
+    }
+
     public sealed partial class DungeonsNamespace : LocaleNamespace
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1072,6 +1084,15 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString TooManyPlayers = @"This dungeon allows at most {00} players.";
+    }
+
+    public sealed partial class MapsNamespace : LocaleNamespace
+    {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ZoneTooDangerous = @"This area is recommended for level {00}+ characters - be careful.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ZoneTooEasy = @"This area is recommended for characters up to level {00} - you may find it too easy.";
     }
 
     public sealed partial class PartiesNamespace : LocaleNamespace
@@ -1544,6 +1565,12 @@ public static partial class Strings
 
         public readonly DungeonsNamespace Dungeons = new DungeonsNamespace();
 
+        public readonly MapsNamespace Maps = new MapsNamespace();
+
+        public readonly AchievementsNamespace Achievements = new AchievementsNamespace();
+
+        public readonly TerritoriesNamespace Territories = new TerritoriesNamespace();
+
         public readonly PartiesNamespace Parties = new PartiesNamespace();
 
         public readonly PasswordResetNotificationNamespace PasswordResetNotificationNamespace =
@@ -1622,6 +1649,12 @@ public static partial class Strings
     public static NotificationsNamespace Notifications => Root.NotificationsNamespace;
 
     public static DungeonsNamespace Dungeons => Root.Dungeons;
+
+    public static MapsNamespace Maps => Root.Maps;
+
+    public static AchievementsNamespace Achievements => Root.Achievements;
+
+    public static TerritoriesNamespace Territories => Root.Territories;
 
     public static PartiesNamespace Parties => Root.Parties;
 

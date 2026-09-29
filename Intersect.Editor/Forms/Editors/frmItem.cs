@@ -9,6 +9,8 @@ using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Framework.Core.GameObjects.Mounts;
+using Intersect.Framework.Core.GameObjects.Pets;
 using Intersect.GameObjects;
 using Intersect.Localization;
 using Intersect.Utilities;
@@ -478,6 +480,7 @@ public partial class FrmItem : EditorForm
         grpEquipment.Visible = false;
         grpEvent.Visible = false;
         grpBags.Visible = false;
+        grpPetMount.Visible = false;
         chkStackable.Enabled = true;
 
         if ((int)mEditorItem.ItemType != cmbType.SelectedIndex)
@@ -495,6 +498,8 @@ public partial class FrmItem : EditorForm
 
             mEditorItem.Spell = null;
             mEditorItem.Event = null;
+            mEditorItem.Pet = null;
+            mEditorItem.Mount = null;
         }
 
         if (cmbType.SelectedIndex == (int)ItemType.Consumable)
@@ -549,6 +554,38 @@ public partial class FrmItem : EditorForm
         {
             // Whether this item type is stackable is not up for debate.
             chkStackable.Checked = true;
+            chkStackable.Enabled = false;
+        }
+        else if (cmbType.SelectedIndex == (int)ItemType.Pet)
+        {
+            grpPetMount.Visible = true;
+            lblPetMount.Text = "Pet:";
+            grpPetMount.Text = "Pet";
+
+            cmbPetMount.Items.Clear();
+            cmbPetMount.Items.AddRange(PetDescriptor.Names);
+            cmbPetMount.SelectedIndex = PetDescriptor.ListIndex(mEditorItem.PetId);
+
+            RefreshPetMountSlotCombo();
+
+            // Whether this item type is stackable is not up for debate.
+            chkStackable.Checked = false;
+            chkStackable.Enabled = false;
+        }
+        else if (cmbType.SelectedIndex == (int)ItemType.Mount)
+        {
+            grpPetMount.Visible = true;
+            lblPetMount.Text = "Mount:";
+            grpPetMount.Text = "Mount";
+
+            cmbPetMount.Items.Clear();
+            cmbPetMount.Items.AddRange(MountDescriptor.Names);
+            cmbPetMount.SelectedIndex = MountDescriptor.ListIndex(mEditorItem.MountId);
+
+            RefreshPetMountSlotCombo();
+
+            // Whether this item type is stackable is not up for debate.
+            chkStackable.Checked = false;
             chkStackable.Enabled = false;
         }
 
@@ -673,6 +710,36 @@ public partial class FrmItem : EditorForm
     private void cmbToolType_SelectedIndexChanged(object sender, EventArgs e)
     {
         mEditorItem.Tool = cmbToolType.SelectedIndex - 1;
+    }
+
+    private void RefreshPetMountSlotCombo()
+    {
+        cmbPetMountSlot.Items.Clear();
+        cmbPetMountSlot.Items.AddRange(Options.Instance.Equipment.Slots.ToArray());
+
+        if (mEditorItem.EquipmentSlot < 0 || mEditorItem.EquipmentSlot >= cmbPetMountSlot.Items.Count)
+        {
+            mEditorItem.EquipmentSlot = 0;
+        }
+
+        cmbPetMountSlot.SelectedIndex = mEditorItem.EquipmentSlot;
+    }
+
+    private void cmbPetMount_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (cmbType.SelectedIndex == (int)ItemType.Pet)
+        {
+            mEditorItem.PetId = PetDescriptor.IdFromList(cmbPetMount.SelectedIndex);
+        }
+        else if (cmbType.SelectedIndex == (int)ItemType.Mount)
+        {
+            mEditorItem.MountId = MountDescriptor.IdFromList(cmbPetMount.SelectedIndex);
+        }
+    }
+
+    private void cmbPetMountSlot_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        mEditorItem.EquipmentSlot = cmbPetMountSlot.SelectedIndex;
     }
 
     private void cmbEquipmentBonus_SelectedIndexChanged(object sender, EventArgs e)

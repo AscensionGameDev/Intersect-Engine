@@ -1,6 +1,7 @@
 using Intersect.Config;
 using Intersect.Editor.Content;
 using Intersect.Editor.Core;
+using Intersect.Editor.Forms.Editors;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
@@ -65,6 +66,37 @@ public partial class FrmMapLayers : DockContent
         mMapLayers.Add(picLayer3);
         mMapLayers.Add(picLayer4);
         mMapLayers.Add(picLayer5);
+
+        AddTilesetPassabilityButton();
+    }
+
+    // Small button next to the tileset picker that opens a tool to mark tiles as always-blocked
+    // once per tileset (RPG Maker style), instead of painting the Blocked attribute per-map.
+    // Added here rather than in the Designer file to avoid touching its fragile generated layout.
+    private void AddTilesetPassabilityButton()
+    {
+        var btnTilesetPassability = new DarkUI.Controls.DarkButton
+        {
+            Location = new System.Drawing.Point(cmbTilesets.Right + 6, cmbTilesets.Top - 1),
+            Size = new System.Drawing.Size(24, 23),
+            Text = "🚫",
+            Padding = new System.Windows.Forms.Padding(0),
+        };
+        new ToolTip().SetToolTip(
+            btnTilesetPassability, "Passabilité du tileset : marque des tuiles comme toujours bloquées, sur toutes les cartes."
+        );
+        btnTilesetPassability.Click += (_, _) =>
+        {
+            if (Globals.CurrentTileset == null)
+            {
+                return;
+            }
+
+            new FrmTilesetPassability(Globals.CurrentTileset).ShowDialog();
+        };
+
+        cmbTilesets.Parent?.Controls.Add(btnTilesetPassability);
+        btnTilesetPassability.BringToFront();
     }
 
     public void Init()

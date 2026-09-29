@@ -29,6 +29,13 @@ local.properties
 .buildpath
 
 #################
+## Secrets / private deployment info - never commit to this public repo
+#################
+Intersect.Network/keys-backup/
+update-aetherion.ps1
+Mise à jour Aetherion.bat
+
+#################
 ## Visual Studio
 #################
 

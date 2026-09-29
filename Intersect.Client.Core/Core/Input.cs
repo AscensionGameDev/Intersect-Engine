@@ -39,28 +39,14 @@ public static partial class Input
 
     public static HandleKeyEvent? MouseUp { get => _mouseUp; set => _mouseUp = value; }
 
+    // World zoom is locked to Graphics.LockedWorldScale - players can no longer change it, so these
+    // are no-ops. Kept (rather than removed) since they're still wired to keybinds/scroll/controller.
     public static void HandleZoomOut(bool wrap = true)
     {
-        var nextZoom = Globals.Database.WorldZoom / 2;
-
-        if (nextZoom < Graphics.MinimumWorldScale)
-        {
-            nextZoom = wrap ? Graphics.MaximumWorldScale : Graphics.MinimumWorldScale;
-        }
-
-        Globals.Database.WorldZoom = nextZoom;
     }
 
     public static void HandleZoomIn(bool wrap = true)
     {
-        var nextZoom = Globals.Database.WorldZoom * 2;
-
-        if (nextZoom > Graphics.MaximumWorldScale)
-        {
-            nextZoom = wrap ? Graphics.MinimumWorldScale : Graphics.MaximumWorldScale;
-        }
-
-        Globals.Database.WorldZoom = nextZoom;
     }
 
     public static void OnKeyPressed(Keys modifier, Keys key)
@@ -328,6 +314,14 @@ public static partial class Input
                             Interface.Interface.GameUi.GameMenu?.ToggleDungeonsWindow();
                             break;
 
+                        case Control.ToggleMount:
+                            PacketSender.SendToggleMount();
+                            break;
+
+                        case Control.OpenAchievements:
+                            Interface.Interface.GameUi.GameMenu?.ToggleAchievementsWindow();
+                            break;
+
                         case Control.OpenSettings:
                             Interface.Interface.GameUi.EscapeMenu?.OpenSettingsWindow();
                             break;
@@ -459,6 +453,18 @@ public static partial class Input
             return;
         }
 
+        if (modifier == Keys.None && mouseButton == MouseButton.Left && Interface.Game.Furniture.FurniturePlacementState.IsArmed)
+        {
+            TryPlaceArmedFurniture();
+
+            return;
+        }
+
+        if (modifier == Keys.None && mouseButton == MouseButton.Right && TryRemoveFurnitureAtCursor())
+        {
+            return;
+        }
+
         if (modifier == Keys.None && mouseButton == MouseButton.Left && Globals.Me.TryTarget())
         {
             return;
@@ -580,6 +586,88 @@ public static partial class Input
 
             return;
         }
+    }
+
+    private static void TryPlaceArmedFurniture()
+    {
+        var furnitureDescriptorId = Interface.Game.Furniture.FurniturePlacementState.ArmedFurnitureDescriptorId;
+        Interface.Game.Furniture.FurniturePlacementState.Clear();
+
+        if (furnitureDescriptorId is not { } descriptorId)
+        {
+            return;
+        }
+
+        var mouseInWorld = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
+        var x = (int)mouseInWorld.X;
+        var y = (int)mouseInWorld.Y;
+
+        foreach (MapInstance map in MapInstance.Lookup.Values.Cast<MapInstance>())
+        {
+            if (!(x >= map.X) || !(x <= map.X + Options.Instance.Map.MapWidth * Options.Instance.Map.TileWidth))
+            {
+                continue;
+            }
+
+            if (!(y >= map.Y) || !(y <= map.Y + Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight))
+            {
+                continue;
+            }
+
+            x -= (int)map.X;
+            y -= (int)map.Y;
+            x /= Options.Instance.Map.TileWidth;
+            y /= Options.Instance.Map.TileHeight;
+            var mapNum = map.Id;
+
+            if (Globals.Me.TryGetRealLocation(ref x, ref y, ref mapNum))
+            {
+                PacketSender.SendPlaceFurniture(descriptorId, (byte)x, (byte)y, Direction.Down);
+            }
+
+            return;
+        }
+    }
+
+    /// <summary>
+    /// Right-click on a placed piece of guild hall furniture to remove it. Returns false (and does nothing)
+    /// when the cursor isn't over any furniture, so the caller can fall back to normal right-click behavior.
+    /// </summary>
+    private static bool TryRemoveFurnitureAtCursor()
+    {
+        var mouseInWorld = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
+        var x = (int)mouseInWorld.X;
+        var y = (int)mouseInWorld.Y;
+
+        foreach (MapInstance map in MapInstance.Lookup.Values.Cast<MapInstance>())
+        {
+            if (!(x >= map.X) || !(x <= map.X + Options.Instance.Map.MapWidth * Options.Instance.Map.TileWidth))
+            {
+                continue;
+            }
+
+            if (!(y >= map.Y) || !(y <= map.Y + Options.Instance.Map.MapHeight * Options.Instance.Map.TileHeight))
+            {
+                continue;
+            }
+
+            var tileX = (x - (int)map.X) / Options.Instance.Map.TileWidth;
+            var tileY = (y - (int)map.Y) / Options.Instance.Map.TileHeight;
+
+            foreach (var furniture in map.Furniture.Values)
+            {
+                if (furniture.X == tileX && furniture.Y == tileY)
+                {
+                    PacketSender.SendRemoveFurniture(furniture.Id);
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return false;
     }
 
     public static bool IsModifier(Keys key)

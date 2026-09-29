@@ -108,6 +108,11 @@ public partial class ProjectileDescriptor : DatabaseObject<ProjectileDescriptor>
 
     public bool DirectShotBehavior { get; set; }
 
+    // Direct shot towards wherever the caster's mouse cursor was pointing at cast time, instead of
+    // towards a targeted entity - see Projectile.cs, which treats this exactly like DirectShotBehavior
+    // but seeds the aim point from the cast packet's map coordinates rather than from Target.
+    public bool MouseAimedBehavior { get; set; }
+
     [Column("SpawnLocations")]
     [JsonIgnore]
     public string SpawnsJson

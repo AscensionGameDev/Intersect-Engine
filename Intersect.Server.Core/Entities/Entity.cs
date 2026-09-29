@@ -10,6 +10,7 @@ using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.Attributes;
+using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
@@ -54,6 +55,22 @@ public abstract partial class Entity : IEntity
         .ToDictionary(t => (Vital)t.index, t => t.value).AsReadOnly();
 
     [NotMapped, JsonIgnore] public Entity? Target { get; set; }
+
+    /// <summary>
+    /// NPCs currently summoned by (fighting for) this entity via a <see cref="SpellType.Summon"/> spell.
+    /// An entity can be a <see cref="Player"/> (necromancer/ranger summons) or an <see cref="Npc"/> (a
+    /// boss summoning adds) - see <see cref="Npc.ConfigureAsSummon"/>.
+    /// </summary>
+    [NotMapped, JsonIgnore]
+    public List<Npc> Summons { get; } = new();
+
+    /// <summary>
+    /// Timing.Global.Milliseconds timestamp of this entity's last damaging hit against each target,
+    /// keyed by target id. Used by <see cref="ApplyLienUltimeBonus"/> to detect an owner and their
+    /// summon landing hits on the same target within a short window of each other.
+    /// </summary>
+    [NotMapped, JsonIgnore]
+    private readonly ConcurrentDictionary<Guid, long> _lastHitTimestamps = new();
 
     public Entity() : this(Guid.NewGuid(), Guid.Empty)
     {
@@ -213,6 +230,17 @@ public abstract partial class Entity : IEntity
 
     [NotMapped, JsonIgnore]
     public Entity CastTarget { get; set; }
+
+    // Where the caster's mouse was pointing at cast time (map tile coordinates), for spells whose
+    // projectile has MouseAimedBehavior. CastAimMapId == Guid.Empty means "no aim point was captured".
+    [NotMapped, JsonIgnore]
+    public Guid CastAimMapId { get; set; }
+
+    [NotMapped, JsonIgnore]
+    public byte CastAimX { get; set; }
+
+    [NotMapped, JsonIgnore]
+    public byte CastAimY { get; set; }
 
     [NotMapped, JsonIgnore]
     public bool SoftRetargetOnSelfCast { get; set; }
@@ -535,6 +563,15 @@ public abstract partial class Entity : IEntity
 
         if (IsBlockedByMapAttribute(direction, mapController.Attributes[tileX, tileY], out blockerType))
         {
+            blockingEntity = default;
+            return false;
+        }
+
+        if (mapController.Attributes[tileX, tileY]?.Type != MapAttributeType.Walkable &&
+            mapController.TryGetInstance(MapInstanceId, out var tileMapInstance) &&
+            tileMapInstance.IsPositionBlocked(this is Player, tileX, tileY, Z))
+        {
+            blockerType = MovementBlockerType.MapAttribute;
             blockingEntity = default;
             return false;
         }
@@ -1158,6 +1195,20 @@ public abstract partial class Entity : IEntity
                     var newMaps = currentMap?.GetSurroundingMaps(true);
 
                     MapId = tile.GetMapId();
+
+                    // Ordinary grid-to-grid walking never goes through Player.Warp() (that's reserved for
+                    // teleports/logins/dungeons), so the zone level-range warning has to be checked here too.
+                    if (this is Player movedPlayer && currentMap != null && currentMap.MaxLevel > 0)
+                    {
+                        if (movedPlayer.Level < currentMap.MinLevel)
+                        {
+                            PacketSender.SendChatMsg(movedPlayer, Strings.Maps.ZoneTooDangerous.ToString(currentMap.MinLevel), ChatMessageType.Notice, CustomColors.Alerts.Declined);
+                        }
+                        else if (movedPlayer.Level > currentMap.MaxLevel)
+                        {
+                            PacketSender.SendChatMsg(movedPlayer, Strings.Maps.ZoneTooEasy.ToString(currentMap.MaxLevel), ChatMessageType.Notice, CustomColors.Alerts.Info);
+                        }
+                    }
 
                     if (oldMaps != null)
                     {
@@ -2106,6 +2157,11 @@ public abstract partial class Entity : IEntity
         );
         }
 
+        if (damagingAttack)
+        {
+            baseDamage = ApplyLienUltimeBonus(enemy, baseDamage);
+        }
+
         //Check on each attack if the enemy is a player AND if they are blocking.
         if (enemy is Player player && player.IsBlocking)
         {
@@ -2211,6 +2267,8 @@ public abstract partial class Entity : IEntity
                     enemyNpc.LootMap.TryAdd(Id, true);
                     enemyNpc.LootMapCache = enemyNpc.LootMap.Keys.ToArray();
                     enemyNpc.TryFindNewTarget(Timing.Global.Milliseconds, default, false, this);
+
+                    enemyNpc.TryCombatStyleRetaliate(this);
                 }
 
                 enemy.NotifySwarm(this);
@@ -2263,6 +2321,10 @@ public abstract partial class Entity : IEntity
         // Set combat timers!
         enemy.CombatTimer = Timing.Global.Milliseconds + Options.Instance.Combat.CombatTime;
         CombatTimer = Timing.Global.Milliseconds + Options.Instance.Combat.CombatTime;
+
+        // Riding into a fight is not a thing: combat dismounts both sides.
+        if (enemy is Player enemyMountedPlayer) { enemyMountedPlayer.Dismount(); }
+        if (this is Player selfPlayer) { selfPlayer.Dismount(); }
 
         var thisPlayer = this as Player;
 
@@ -2599,6 +2661,18 @@ public abstract partial class Entity : IEntity
                             {
                                 if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var mapInstance))
                                 {
+                                    (Guid mapId, byte x, byte y)? aimPoint = null;
+                                    if (projectileBase.MouseAimedBehavior && CastAimMapId != Guid.Empty)
+                                    {
+                                        aimPoint = (CastAimMapId, CastAimX, CastAimY);
+                                    }
+
+                                    // Deliberately still passing Dir here, not a mouse-derived direction:
+                                    // Dir feeds the SpawnLocations grid rotation lookup, which is designed
+                                    // around the caster's actual facing. The flight path itself already
+                                    // follows the mouse via aimPoint/_lastTargetX-Y regardless of Dir (see
+                                    // Projectile.MoveFragment) - overriding Dir here previously caused the
+                                    // projectile to visibly spawn/launch from the wrong side of the caster.
                                     mapInstance.SpawnMapProjectile(
                                         this,
                                         projectileBase,
@@ -2609,7 +2683,8 @@ public abstract partial class Entity : IEntity
                                         (byte)Y,
                                         (byte)Z,
                                         Dir,
-                                        CastTarget
+                                        CastTarget,
+                                        aimPoint
                                     );
                                 }
                             }
@@ -2679,6 +2754,14 @@ public abstract partial class Entity : IEntity
                     );
 
                     break;
+                case SpellType.Summon:
+                    HandleSummonSpell(spellBase);
+
+                    break;
+                case SpellType.CompanionCommand:
+                    HandleCompanionCommandSpell(spellBase);
+
+                    break;
                 default:
                     break;
             }
@@ -2692,6 +2775,163 @@ public abstract partial class Entity : IEntity
                 Die(true, this);
             }
         }
+    }
+
+    /// <summary>
+    /// Spawns the NPC(s) configured on <paramref name="spellBase"/>'s <see cref="SpellSummonDescriptor"/> as
+    /// followers of this entity. Works the same whether the caster is a <see cref="Player"/> (a class summon
+    /// spell) or an <see cref="Npc"/> (a boss calling in adds) - both flow through this same spell-cast path.
+    /// </summary>
+    private void HandleSummonSpell(SpellDescriptor spellBase)
+    {
+        var summonInfo = spellBase.Summon;
+        var npcDescriptor = NPCDescriptor.Get(summonInfo.NpcId);
+        if (npcDescriptor == null)
+        {
+            return;
+        }
+
+        if (!MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var mapInstance))
+        {
+            return;
+        }
+
+        if (summonInfo.ReplaceExisting)
+        {
+            foreach (var existing in Summons.ToArray())
+            {
+                existing.Die(false);
+            }
+        }
+
+        var amount = Math.Max(1, summonInfo.Amount);
+        for (var i = 0; i < amount; i++)
+        {
+            var spawnPos = GetPositionNearTarget(MapId, X, Y);
+            var summon = mapInstance.SpawnNpc((byte)spawnPos[0], (byte)spawnPos[1], Dir, summonInfo.NpcId, despawnable: true);
+            if (Level > 0)
+            {
+                summon.ApplyLevelScaling(Level);
+
+                // SpawnNpc() already broadcast the entity at its pre-scaling level/stats - resend now
+                // that we've overridden them with the caster's level, or clients keep showing the stale
+                // (map-range-scaled or authored) level forever.
+                PacketSender.SendEntityDataToProximity(summon);
+            }
+
+            summon.ConfigureAsSummon(this, summonInfo.Duration, summonInfo.DespawnOnOwnerDeath);
+            Summons.Add(summon);
+        }
+    }
+
+    /// <summary>
+    /// "Ordre : Charge" / "Ordre : Repli" - lets the caster manually direct their <see cref="Summons"/>
+    /// instead of relying purely on the automatic owner-target mirroring in <see cref="Npc.TryFindNewTarget"/>.
+    /// </summary>
+    private void HandleCompanionCommandSpell(SpellDescriptor spellBase)
+    {
+        if (Summons.Count == 0)
+        {
+            return;
+        }
+
+        if (spellBase.CompanionCommand.Retreat)
+        {
+            foreach (var summon in Summons.ToArray())
+            {
+                summon.AssignTarget(null);
+                summon.SetRecalled(true);
+            }
+        }
+        else if (CastTarget != null)
+        {
+            foreach (var summon in Summons.ToArray())
+            {
+                summon.SetRecalled(false);
+                if (summon.CanTarget(CastTarget))
+                {
+                    summon.AssignTarget(CastTarget);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// "Lien Ultime" - a Rôdeur passive: if the caster's summon and the caster hit the same target within
+    /// the learned spell's window, the second of the two hits is boosted. Quietly no-ops for anyone who
+    /// hasn't learned a <see cref="SpellType.PassiveBond"/> spell, has no summon, or isn't a summon/owner pair.
+    /// </summary>
+    private long ApplyLienUltimeBonus(Entity enemy, long baseDamage)
+    {
+        if (baseDamage <= 0)
+        {
+            return baseDamage;
+        }
+
+        var (controller, partner) = GetLienUltimePair();
+        if (controller == null || partner == null || !TryGetLienUltimeSpell(controller, out var lienUltime))
+        {
+            _lastHitTimestamps[enemy.Id] = Timing.Global.Milliseconds;
+
+            return baseDamage;
+        }
+
+        var now = Timing.Global.Milliseconds;
+        var windowMs = Math.Max(1, lienUltime.PassiveBond.WindowMs);
+
+        var boosted = baseDamage;
+        if (partner._lastHitTimestamps.TryGetValue(enemy.Id, out var partnerHitAt) && now - partnerHitAt <= windowMs)
+        {
+            boosted = (long)Math.Round(baseDamage * (1 + lienUltime.PassiveBond.BonusDamagePercent / 100.0));
+        }
+
+        _lastHitTimestamps[enemy.Id] = now;
+
+        return boosted;
+    }
+
+    /// <summary>
+    /// Resolves the "controller" (the player whose learned spells decide if the bond is active) and
+    /// "partner" (the other half of the owner/summon pair) for <see cref="ApplyLienUltimeBonus"/>.
+    /// </summary>
+    private (Player? Controller, Entity? Partner) GetLienUltimePair()
+    {
+        if (this is Player selfPlayer)
+        {
+            var companion = selfPlayer.Summons.FirstOrDefault(summon => !summon.IsDead && !summon.IsDisposed);
+
+            return companion == null ? (null, null) : (selfPlayer, companion);
+        }
+
+        if (this is Npc { IsSummon: true } summonNpc && summonNpc.Owner is Player ownerPlayer)
+        {
+            return (ownerPlayer, ownerPlayer);
+        }
+
+        return (null, null);
+    }
+
+    private static bool TryGetLienUltimeSpell(Player controller, out SpellDescriptor lienUltime)
+    {
+        foreach (var slot in controller.Spells)
+        {
+            if (slot.IsEmpty)
+            {
+                continue;
+            }
+
+            var descriptor = SpellDescriptor.Get(slot.SpellId);
+            if (descriptor?.SpellType == SpellType.PassiveBond)
+            {
+                lienUltime = descriptor;
+
+                return true;
+            }
+        }
+
+        lienUltime = null;
+
+        return false;
     }
 
     private void HandleAoESpell(
@@ -3014,6 +3254,54 @@ public abstract partial class Entity : IEntity
         return yPositive ? Direction.UpRight : Direction.DownRight;
     }
 
+    /// <summary>
+    /// Same grid-relative direction math as <see cref="DirectionToTarget"/>, but towards an arbitrary
+    /// map/x/y point instead of another Entity - used to spawn MouseAimedBehavior projectiles facing
+    /// the clicked point instead of the caster's last discrete facing (which only updates while
+    /// stationary and could be stale/unrelated to where the mouse was aiming).
+    /// </summary>
+    public Direction DirectionToPoint(Guid mapId, int x, int y)
+    {
+        if (!MapController.TryGet(MapId, out var originMapController) ||
+            !MapController.TryGet(mapId, out var targetMapController))
+        {
+            return Dir;
+        }
+
+        var originY = Y + originMapController.MapGridY * Options.Instance.Map.MapHeight;
+        var originX = X + originMapController.MapGridX * Options.Instance.Map.MapWidth;
+        var targetY = y + targetMapController.MapGridY * Options.Instance.Map.MapHeight;
+        var targetX = x + targetMapController.MapGridX * Options.Instance.Map.MapWidth;
+
+        var yDiff = originY - targetY;
+        var xDiff = originX - targetX;
+
+        if (yDiff == 0 && xDiff == 0)
+        {
+            return Dir;
+        }
+
+        if (yDiff == 0)
+        {
+            return xDiff > 0 ? Direction.Left : Direction.Right;
+        }
+
+        if (xDiff == 0 || !Options.Instance.Map.EnableDiagonalMovement)
+        {
+            return yDiff > 0 ? Direction.Up : Direction.Down;
+        }
+
+        var xPositive = xDiff > 0;
+        var yPositive = yDiff > 0;
+
+        if (xPositive)
+        {
+            return yPositive ? Direction.UpLeft : Direction.DownLeft;
+        }
+
+        return yPositive ? Direction.UpRight : Direction.DownRight;
+    }
+
     protected bool IsOneBlockAway(Guid mapId, int x, int y, int z = 0)
     {
         if (z != Z)
@@ -3168,6 +3456,21 @@ public abstract partial class Entity : IEntity
             if (!ShouldDropItem(killer, itemDescriptor, drop, dropRateModifier, out Guid lootOwner))
             {
                 continue;
+            }
+
+            // Currency drops go straight into the recipient's pocket instead of sitting on the ground -
+            // no "walk over the coin pile" busywork, matching how most modern RPGs handle gold.
+            if (itemDescriptor.ItemType == ItemType.Currency && playerKiller != null)
+            {
+                if (playerKiller.TryGiveItem(new Item(drop.ItemId, drop.Quantity), ItemHandling.Normal, true))
+                {
+                    OnDropItem(slot, drop);
+
+                    continue;
+                }
+
+                // Inventory truly can't take it even with bank overflow (e.g. bank is full too) - fall
+                // back to a normal ground drop so the currency isn't just lost.
             }
 
             // Spawn the actual item!

@@ -1,8 +1,10 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Interface.Shared;
+using Intersect.Client.Localization;
 using Intersect.Framework;
 using Intersect.Framework.Core;
 using Intersect.Network;
@@ -106,10 +108,108 @@ public partial class MainMenu : MutableInterface
             IsVisibleInTree = true,
         };
 
-        var logo = new ImagePanel(menuCanvas, "Logo");
-        logo.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+        CreateGameTitle(menuCanvas);
 
         NetworkStatusChanged += HandleNetworkStatusChanged;
+    }
+
+    private static void CreateGameTitle(Canvas menuCanvas)
+    {
+        // Si un logo image existe (resources/gui/menu-logo.png), on l'affiche a la place
+        // du titre texte genere par code - ca permet de remplacer le logo sans toucher au code,
+        // juste en deposant le fichier au bon endroit.
+        var logoTexture = GameContentManager.Current.GetTexture(
+            Framework.Content.TextureType.Gui, "menu-logo.png"
+        );
+
+        if (logoTexture != default)
+        {
+            var aspectRatio = logoTexture.Width / (float)logoTexture.Height;
+            const int maxWidth = 820;
+            const int maxHeight = 340;
+            var width = maxWidth;
+            var height = (int)(width / aspectRatio);
+            if (height > maxHeight)
+            {
+                height = maxHeight;
+                width = (int)(height * aspectRatio);
+            }
+
+            _ = new ImagePanel(menuCanvas, nameof(CreateGameTitle))
+            {
+                Alignment = [Alignments.CenterH],
+                Y = 20,
+                Size = new Point(width, height),
+                Texture = logoTexture,
+                MouseInputEnabled = false,
+            };
+
+            return;
+        }
+
+        var titlePanel = new Panel(menuCanvas, nameof(CreateGameTitle))
+        {
+            Alignment = [Alignments.CenterH],
+            Y = 60,
+            Size = new Point(560, 96),
+            MouseInputEnabled = false,
+        };
+
+        var titleFont = GameContentManager.Current.GetFont("sourcesansproblack");
+        var taglineFont = GameContentManager.Current.GetFont("sourcesanspro");
+        var spacedTitle = string.Join(" ", Strings.MainMenu.GameTitle.ToString().ToUpperInvariant());
+
+        _ = new Label(titlePanel, "GameTitleShadow")
+        {
+            X = 2,
+            Y = 10,
+            Width = titlePanel.Width,
+            Height = 40,
+            Font = titleFont,
+            FontSize = 26,
+            TextAlign = Pos.Center,
+            TextColor = new Color(150, 10, 8, 6),
+            Text = spacedTitle,
+            MouseInputEnabled = false,
+        };
+
+        _ = new Label(titlePanel, "GameTitleLabel")
+        {
+            X = 0,
+            Y = 8,
+            Width = titlePanel.Width,
+            Height = 40,
+            Font = titleFont,
+            FontSize = 26,
+            TextAlign = Pos.Center,
+            TextColor = new Color(255, 235, 196, 110),
+            Text = spacedTitle,
+            MouseInputEnabled = false,
+        };
+
+        _ = new Panel(titlePanel, "GameTitleRule")
+        {
+            X = 90,
+            Y = 56,
+            Width = titlePanel.Width - 180,
+            Height = 2,
+            BackgroundColor = new Color(150, 235, 196, 110),
+            MouseInputEnabled = false,
+        };
+
+        _ = new Label(titlePanel, "GameTagline")
+        {
+            X = 0,
+            Y = 66,
+            Width = titlePanel.Width,
+            Height = 20,
+            Font = taglineFont,
+            FontSize = 10,
+            TextAlign = Pos.Center,
+            TextColor = new Color(220, 214, 206, 196),
+            Text = Strings.MainMenu.GameTagline,
+            MouseInputEnabled = false,
+        };
     }
 
     ~MainMenu()

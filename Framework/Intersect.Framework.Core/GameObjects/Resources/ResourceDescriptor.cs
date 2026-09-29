@@ -98,6 +98,18 @@ public partial class ResourceDescriptor : DatabaseObject<ResourceDescriptor>, IF
 
     public bool WalkableBefore { get; set; }
 
+    // Procedural idle animation (sway/float/bounce) - no hand-drawn frames needed, computed client-side.
+    public IdleMotionType IdleMotionType { get; set; } = IdleMotionType.None;
+
+    // Oscillations per second.
+    public float IdleMotionSpeed { get; set; } = 1f;
+
+    // Pixels for Float/Bounce, degrees for Sway.
+    public float IdleMotionAmplitude { get; set; } = 4f;
+
+    // For Sway: where the rotation pivot sits, 0 = top, 100 = bottom (like a tree trunk).
+    public float IdleMotionPivotPercent { get; set; } = 100f;
+
     /// <inheritdoc />
     public string Folder { get; set; } = string.Empty;
 }

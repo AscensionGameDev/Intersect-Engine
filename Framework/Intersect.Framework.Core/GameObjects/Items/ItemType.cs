@@ -15,4 +15,8 @@ public enum ItemType
     Event = 5,
 
     Bag = 6,
+
+    Pet = 7,
+
+    Mount = 8,
 }

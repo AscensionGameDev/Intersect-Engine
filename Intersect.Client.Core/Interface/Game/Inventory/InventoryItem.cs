@@ -139,6 +139,8 @@ public partial class InventoryItem : SlotItem
                 break;
 
             case ItemType.Equipment:
+            case ItemType.Pet:
+            case ItemType.Mount:
                 contextMenu.AddChild(_useItemMenuItem);
                 var equipItemLabel = Globals.Me.MyEquipment.Contains(SlotIndex) ? Strings.ItemContextMenu.Unequip : Strings.ItemContextMenu.Equip;
                 _useItemMenuItem.Text = equipItemLabel.ToString(descriptor.Name);
@@ -497,6 +499,8 @@ public partial class InventoryItem : SlotItem
             return;
         }
 
+        SetRarity(descriptor.Rarity);
+
         var equipped = Globals.Me.MyEquipment.Any(s => s == SlotIndex);
         var isDragging = Icon.IsDragging;
         _equipImageBackground.IsVisibleInParent = !isDragging && equipped;
@@ -547,6 +551,7 @@ public partial class InventoryItem : SlotItem
     private void _reset()
     {
         Icon.IsVisibleInParent = false;
+        SetRarity(null);
         Icon.Texture = default;
         _equipImageBackground.IsVisibleInParent = false;
         _quantityLabel.IsVisibleInParent = false;

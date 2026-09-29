@@ -27,9 +27,11 @@ using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.Attributes;
+using Intersect.Framework.Core.GameObjects.Mounts;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
+using Intersect.Network.Packets;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
 using Microsoft.Extensions.Logging;
@@ -41,6 +43,33 @@ public partial class Player : Entity, IPlayer
     public delegate void InventoryUpdatedEventHandler(Player player, int slotIndex);
 
     private Guid _class;
+
+    /// <summary>Tints of the sprite colour layers picked at character creation (see <see cref="SpriteColorLayers"/>).</summary>
+    public Color[] SpriteColors { get; set; } = [];
+
+    /// <summary>Interchangeable sprite parts (hair, outfit, ...) picked at character creation.</summary>
+    public SpritePart[] SpriteParts { get; set; } = [];
+
+    /// <summary>The mount the player would ride if <see cref="IsMounted"/> is true.</summary>
+    public Guid MountId { get; set; } = Guid.Empty;
+
+    /// <summary>Whether the player is currently riding <see cref="MountId"/>. While true, <see cref="Entity.Draw"/> shows the mount's sprite instead of the player's.</summary>
+    public bool IsMounted { get; set; }
+
+    /// <summary>Faction this player picked at character creation, empty if the server has none defined.</summary>
+    public Guid FactionId { get; set; } = Guid.Empty;
+
+    /// <summary>Riding is faster: the mount's speed bonus shortens the time it takes to cross one tile (must mirror the server's calc so movement stays smooth).</summary>
+    public override float GetMovementTime()
+    {
+        var time = base.GetMovementTime();
+        if (IsMounted && MountDescriptor.Get(MountId) is { } mount && mount.SpeedBonus > 0)
+        {
+            time /= 1f + mount.SpeedBonus / 100f;
+        }
+
+        return time;
+    }
 
     public Guid Class
     {
@@ -70,6 +99,11 @@ public partial class Player : Entity, IPlayer
     public List<Guid> UnlockedTitleIds { get; set; } = [];
 
     public Guid EquippedTitleId { get; set; } = Guid.Empty;
+
+    public List<Guid> UnlockedMountIds { get; set; } = [];
+
+    /// <summary>Achievement id -> the UTC unix time (ms) it was unlocked at.</summary>
+    public Dictionary<Guid, long> UnlockedAchievements { get; set; } = [];
 
     /// <summary>Personal dungeon history (completions, best time, cooldown), keyed by dungeon id.</summary>
     public Dictionary<Guid, DungeonRecordPacket> DungeonRecords { get; set; } = new();
@@ -129,6 +163,18 @@ public partial class Player : Entity, IPlayer
     public PlayerStatusWindow? StatusWindow { get; set; }
 
     public Guid TargetId { get; set; }
+
+    // Set when a target is freshly selected by clicking it (see TryTarget), cleared when the target dies
+    // or is cleared - lets combat keep swinging/chasing without holding the attack button down, matching
+    // the classic MMO "click enemy, auto-attack starts" flow instead of requiring a held key.
+    public bool IsAutoAttacking { get; set; }
+
+    // Where the mouse is aiming for attack tile selection (see TryAttack/FaceMouseBeforeAttack) -
+    // deliberately kept separate from DirectionFacing, which drives the glide offset math in
+    // Entity.Draw and must stay tied to DirectionMoving during a real move (mixing the two caused the
+    // character to visibly "jump"/snap whenever the attack-aim direction diverged from the walk
+    // direction). This lets an attack throw towards the mouse mid-stride without touching rendering.
+    public Direction AttackAimDirection { get; private set; } = Direction.None;
 
     TargetType IPlayer.TargetType => (TargetType)TargetType;
 
@@ -276,13 +322,34 @@ public partial class Player : Entity, IPlayer
 
         if (!IsBusy)
         {
+            // While chasing a distant target, the actual attack swing must NOT fire (TryAttack() throws
+            // an "empty swing" at thin air when nothing's in range, which sets IsAttacking and stalls the
+            // walk-in-progress every attack cooldown - looked like the character freezing/refusing to
+            // move or auto-attack). So this is computed once up front and used to gate BOTH the movement
+            // step below AND the attack call further down.
+            // Auto-attack (IsAutoAttacking, set when a target is freshly clicked) keeps swinging/chasing
+            // on its own without the attack button held down - it's OR'd alongside the held-button case
+            // everywhere below so both flows share the exact same logic.
+            var isAttackHeldOrAuto = this == Globals.Me &&
+                                      (Controls.IsControlPressed(Control.AttackInteract) || IsAutoAttacking);
+
+            var chaseDirection = Direction.None;
+            var isChasingTarget = isAttackHeldOrAuto && ShouldAutoWalkToTarget(out chaseDirection);
+
             if (this == Globals.Me && IsMoving == false)
             {
+                if (isChasingTarget)
+                {
+                    DirectionMoving = chaseDirection;
+                }
+
                 ProcessDirectionalInput();
             }
 
-            if (Controls.IsControlPressed(Control.AttackInteract))
+            if (isAttackHeldOrAuto)
             {
+                Globals.Me?.FaceMouseBeforeAttack();
+
                 if (IsCasting)
                 {
                     if (IsCastingCheckTimer < Timing.Global.Milliseconds &&
@@ -293,7 +360,7 @@ public partial class Player : Entity, IPlayer
                         IsCastingCheckTimer = Timing.Global.Milliseconds + 350;
                     }
                 }
-                else if (Globals.Me?.TryAttack() == false)
+                else if (!isChasingTarget && Globals.Me?.TryAttack() == false)
                 {
                     if (!Globals.Me.IsAttacking && (!IsMoving || Options.Instance.Player.AllowCombatMovement))
                     {
@@ -360,6 +427,11 @@ public partial class Player : Entity, IPlayer
 
         Gender = playerPacket.Gender;
         Class = playerPacket.ClassId;
+        SpriteColors = playerPacket.SpriteColors ?? [];
+        SpriteParts = playerPacket.SpriteParts ?? [];
+        MountId = playerPacket.MountId;
+        IsMounted = playerPacket.IsMounted;
+        FactionId = playerPacket.FactionId;
         AccessLevel = playerPacket.AccessLevel;
         CombatTimer = playerPacket.CombatTimeRemaining + Timing.Global.Milliseconds;
         Guild = playerPacket.Guild;
@@ -1376,7 +1448,58 @@ public partial class Player : Entity, IPlayer
             }
         }
 
-        PacketSender.SendUseSpell(index, TargetId);
+        var aimMapId = Guid.Empty;
+        byte aimX = 0;
+        byte aimY = 0;
+        if (spellDescriptor.Combat?.Projectile is { MouseAimedBehavior: true } && TryGetMouseTilePosition(out var mouseMapId, out var mouseX, out var mouseY))
+        {
+            aimMapId = mouseMapId;
+            aimX = mouseX;
+            aimY = mouseY;
+        }
+
+        PacketSender.SendUseSpell(index, TargetId, aimMapId, aimX, aimY);
+    }
+
+    // Converts the current mouse cursor position into map tile coordinates - same conversion TryTarget()
+    // uses to figure out what's under the cursor, factored out so spell casting can reuse it for
+    // MouseAimedBehavior projectiles without duplicating the pixel/tile math.
+    private bool TryGetMouseTilePosition(out Guid mapId, out byte tileX, out byte tileY)
+    {
+        mapId = Guid.Empty;
+        tileX = 0;
+        tileY = 0;
+
+        var mouseInWorld = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
+        var x = (int)mouseInWorld.X;
+        var y = (int)mouseInWorld.Y;
+
+        foreach (MapInstance map in Maps.MapInstance.Lookup.Values.Cast<MapInstance>())
+        {
+            if (x < map.X || x > map.X + MapWidth * TileWidth || y < map.Y || y > map.Y + MapHeight * TileHeight)
+            {
+                continue;
+            }
+
+            var localX = x - (int)map.X;
+            var localY = y - (int)map.Y;
+            localX /= TileWidth;
+            localY /= TileHeight;
+            var localMapId = map.Id;
+
+            if (!TryGetRealLocation(ref localX, ref localY, ref localMapId))
+            {
+                continue;
+            }
+
+            mapId = localMapId;
+            tileX = (byte)localX;
+            tileY = (byte)localY;
+
+            return true;
+        }
+
+        return false;
     }
 
     public long GetSpellCooldown(Guid id)
@@ -1855,6 +1978,14 @@ public partial class Player : Entity, IPlayer
 
     private void SetTargetBox(IEntity? targetEntity)
     {
+        // Self-targeting (e.g. soft-retargeting a friendly buff onto ourselves when nothing else is
+        // selected) shouldn't pop up a redundant "target" frame duplicating our own status icons -
+        // those already show in our permanent HUD box and status bar.
+        if (targetEntity == this)
+        {
+            targetEntity = null;
+        }
+
         switch (targetEntity)
         {
             case null:
@@ -1938,6 +2069,57 @@ public partial class Player : Entity, IPlayer
         PickLastDirection(DirectionFacing);
     }
 
+    /// <summary>
+    /// Turns the player to face the mouse cursor right before an attack is thrown, so melee/projectile swings
+    /// land in whatever direction the player is aiming instead of whichever way they last moved.
+    /// </summary>
+    private void FaceMouseBeforeAttack()
+    {
+        if (this != Globals.Me || IsAttacking)
+        {
+            return;
+        }
+
+        if (Interface.Interface.DoesMouseHitInterface())
+        {
+            return;
+        }
+
+        var mouseInWorld = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
+        var mouseDirection = DirectionToWorldPoint(mouseInWorld.X, mouseInWorld.Y);
+
+        if (mouseDirection != Direction.None)
+        {
+            // Always kept up to date regardless of movement state - TryAttack() uses this (not
+            // DirectionFacing) to pick which tile to swing at, so an attack can throw towards the mouse
+            // even mid-stride without touching the entity's rendered facing/glide direction at all.
+            AttackAimDirection = mouseDirection;
+        }
+
+        // CanTurnAround is false while IsMoving (stops the player spinning mid-glide, which the glide
+        // offset math in Entity.Draw depends on DirectionFacing/DirectionMoving staying in sync for).
+        // Only actually turn the rendered character while stationary; AttackAimDirection above already
+        // covers "throw the attack towards the mouse" independently of this.
+        if (!CanTurnAround)
+        {
+            return;
+        }
+
+        // Gating on IsAttacking/CanTurnAround here matters: this runs every single frame the attack
+        // button/click is held, so without it, holding near a 45deg direction-wedge boundary could flip
+        // DirectionFacing back and forth every frame and fire a SendDirection packet each time - fast
+        // enough to trip the server's packet-flood protection and get the player force-disconnected.
+        if (mouseDirection == Direction.None || mouseDirection == DirectionFacing)
+        {
+            return;
+        }
+
+        DirectionFacing = mouseDirection;
+        DirectionMoving = Direction.None;
+        PacketSender.SendDirection(DirectionFacing);
+        PickLastDirection(DirectionFacing);
+    }
+
     private static void ToggleTargetContextMenu(Entity en)
     {
         if (Globals.InputManager.IsMouseButtonDown(MouseButton.Right))
@@ -1968,6 +2150,106 @@ public partial class Player : Entity, IPlayer
         return IsBlocking;
     }
 
+    /// <summary>
+    /// Computes (without changing any state) whether we should walk straight towards our current target
+    /// instead of swinging - true while Attack is held, a target is selected, and it isn't adjacent yet.
+    /// No real pathfinding, a simple direct approach like most MMOs use for basic auto-attack chasing.
+    /// Never fights the player's own movement input: false whenever they're already pressing a direction
+    /// key themselves. Deliberately does NOT check IsAttacking/IsCasting for the "not adjacent" case - the
+    /// caller uses this same result to skip the attack swing itself, so those flags would be circular here.
+    /// </summary>
+    private bool ShouldAutoWalkToTarget(out Direction step)
+    {
+        step = Direction.None;
+
+        if (this != Globals.Me || IsCasting)
+        {
+            return false;
+        }
+
+        if (GetInputDirection() != Direction.None)
+        {
+            return false;
+        }
+
+        var target = Target;
+        if (target == null || target == this || (target as Entity)?.CanBeAttacked == false)
+        {
+            // Dead/invalid target (e.g. it just died) - stop auto-attacking instead of chasing a corpse.
+            IsAutoAttacking = false;
+            return false;
+        }
+
+        // Compare via world-grid tile coordinates (same approach as GetDistanceTo) instead of raw
+        // X/Y, so a target on an adjacent map in the seamless grid still gets chased correctly instead
+        // of being silently ignored just because MapId differs from ours.
+        var myMap = Maps.MapInstance.Get(MapId);
+        var targetMap = Maps.MapInstance.Get(target.MapId);
+        if (myMap == null || targetMap == null)
+        {
+            return false;
+        }
+
+        var myWorldX = X + myMap.GridX * MapWidth;
+        var myWorldY = Y + myMap.GridY * MapHeight;
+        var targetWorldX = target.X + targetMap.GridX * MapWidth;
+        var targetWorldY = target.Y + targetMap.GridY * MapHeight;
+
+        var dx = Math.Abs(targetWorldX - myWorldX);
+        var dy = Math.Abs(targetWorldY - myWorldY);
+        var isAdjacent = dx <= 1 && dy <= 1 && (dx + dy > 0) &&
+                          (dx == 0 || dy == 0 || Options.Instance.Map.EnableDiagonalMovement);
+
+        if (isAdjacent)
+        {
+            return false;
+        }
+
+        var stepX = Math.Sign(targetWorldX - myWorldX);
+        var stepY = Math.Sign(targetWorldY - myWorldY);
+
+        step = (stepX, stepY) switch
+        {
+            (0, -1) => Direction.Up,
+            (0, 1) => Direction.Down,
+            (-1, 0) => Direction.Left,
+            (1, 0) => Direction.Right,
+            (-1, -1) => Direction.UpLeft,
+            (1, -1) => Direction.UpRight,
+            (1, 1) => Direction.DownRight,
+            (-1, 1) => Direction.DownLeft,
+            _ => Direction.None,
+        };
+
+        if (step == Direction.None)
+        {
+            return false;
+        }
+
+        if (step > Direction.Right && !Options.Instance.Map.EnableDiagonalMovement)
+        {
+            // No diagonal movement allowed - fall back to whichever single axis has the bigger gap.
+            step = dx >= dy
+                ? (stepX < 0 ? Direction.Left : Direction.Right)
+                : (stepY < 0 ? Direction.Up : Direction.Down);
+        }
+
+        return true;
+    }
+
+    private static (int dx, int dy) DirectionOffset(Direction direction) => direction switch
+    {
+        Direction.Up => (0, -1),
+        Direction.Down => (0, 1),
+        Direction.Left => (-1, 0),
+        Direction.Right => (1, 0),
+        Direction.UpLeft => (-1, -1),
+        Direction.UpRight => (1, -1),
+        Direction.DownRight => (1, 1),
+        Direction.DownLeft => (-1, 1),
+        _ => (0, 0),
+    };
+
     public bool TryAttack()
     {
         if (IsAttacking || IsBlocking || (IsMoving && !Options.Instance.Player.AllowCombatMovement) || Globals.Me == default)
@@ -1975,51 +2257,57 @@ public partial class Player : Entity, IPlayer
             return false;
         }
 
-        int x = Globals.Me.X;
-        int y = Globals.Me.Y;
-        var map = Globals.Me.MapId;
+        // Check every adjacent tile, not just one exact tile - the server's own adjacency check
+        // (IsOneBlockAway) already allows attacking any surrounding tile regardless of facing, so a
+        // client that only tries one tile was rejecting hits the server would've accepted. The tile
+        // aimed at with the mouse (AttackAimDirection, falling back to DirectionFacing while stationary
+        // and the mouse hasn't moved yet) is tried first, the rest follow so a slightly-off aim doesn't
+        // just whiff.
+        var primaryDirection = Globals.Me.AttackAimDirection != Direction.None
+            ? Globals.Me.AttackAimDirection
+            : Globals.Me.DirectionFacing;
 
-        switch (Globals.Me.DirectionFacing)
+        // Captured once and sent with every attack below - the server only actually uses this for a
+        // weapon's linked projectile when that projectile has MouseAimedBehavior (see PacketHandler's
+        // AttackPacket handler), so it's harmless to include unconditionally otherwise.
+        var aimMapId = Guid.Empty;
+        byte aimX = 0;
+        byte aimY = 0;
+        if (TryGetMouseTilePosition(out var mouseMapId, out var mouseX, out var mouseY))
         {
-            case Direction.Up:
-                y--;
-                break;
-
-            case Direction.Down:
-                y++;
-                break;
-
-            case Direction.Left:
-                x--;
-                break;
-
-            case Direction.Right:
-                x++;
-                break;
-
-            case Direction.UpLeft:
-                y--;
-                x--;
-                break;
-
-            case Direction.UpRight:
-                y--;
-                x++;
-                break;
-
-            case Direction.DownRight:
-                y++;
-                x++;
-                break;
-
-            case Direction.DownLeft:
-                y++;
-                x--;
-                break;
+            aimMapId = mouseMapId;
+            aimX = mouseX;
+            aimY = mouseY;
         }
 
-        if (TryGetRealLocation(ref x, ref y, ref map))
+        var candidateDirections = new List<Direction> { primaryDirection };
+        foreach (Direction dir in Enum.GetValues(typeof(Direction)))
         {
+            if (dir == Direction.None || dir == primaryDirection)
+            {
+                continue;
+            }
+
+            if (dir > Direction.Right && !Options.Instance.Map.EnableDiagonalMovement)
+            {
+                continue;
+            }
+
+            candidateDirections.Add(dir);
+        }
+
+        foreach (var direction in candidateDirections)
+        {
+            var (dx, dy) = DirectionOffset(direction);
+            int x = Globals.Me.X + dx;
+            int y = Globals.Me.Y + dy;
+            var map = Globals.Me.MapId;
+
+            if (!TryGetRealLocation(ref x, ref y, ref map))
+            {
+                continue;
+            }
+
             // Iterate through all entities
             foreach (var en in Globals.Entities)
             {
@@ -2047,38 +2335,48 @@ public partial class Player : Entity, IPlayer
                 }
 
                 // Attack the entity.
-                PacketSender.SendAttack(en.Key);
+                PacketSender.SendAttack(en.Key, aimMapId, aimX, aimY);
                 AttackTimer = Timing.Global.Milliseconds + CalculateAttackTime();
 
                 return true;
             }
         }
 
-        foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values.Cast<MapInstance>())
         {
-            foreach (var en in eventMap.LocalEntities)
+            int x = Globals.Me.X;
+            int y = Globals.Me.Y;
+            var map = Globals.Me.MapId;
+            var (fdx, fdy) = DirectionOffset(Globals.Me.DirectionFacing);
+            x += fdx;
+            y += fdy;
+            TryGetRealLocation(ref x, ref y, ref map);
+
+            foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values.Cast<MapInstance>())
             {
-                if (en.Value == null)
+                foreach (var en in eventMap.LocalEntities)
                 {
-                    continue;
-                }
-
-                if (en.Value.MapId == map && en.Value.X == x && en.Value.Y == y)
-                {
-                    if (en.Value is Event evt && evt.Trigger == EventTrigger.ActionButton)
+                    if (en.Value == null)
                     {
-                        //Talk to Event
-                        PacketSender.SendActivateEvent(en.Key);
-                        AttackTimer = Timing.Global.Milliseconds + CalculateAttackTime();
+                        continue;
+                    }
 
-                        return true;
+                    if (en.Value.MapId == map && en.Value.X == x && en.Value.Y == y)
+                    {
+                        if (en.Value is Event evt && evt.Trigger == EventTrigger.ActionButton)
+                        {
+                            //Talk to Event
+                            PacketSender.SendActivateEvent(en.Key);
+                            AttackTimer = Timing.Global.Milliseconds + CalculateAttackTime();
+
+                            return true;
+                        }
                     }
                 }
             }
         }
 
         //Projectile/empty swing for animations
-        PacketSender.SendAttack(Guid.Empty);
+        PacketSender.SendAttack(Guid.Empty, aimMapId, aimX, aimY);
         AttackTimer = Timing.Global.Milliseconds + CalculateAttackTime();
 
         return true;
@@ -2211,14 +2509,22 @@ public partial class Player : Entity, IPlayer
                             }
                         }
 
-                        if (bestMatch != null && bestMatch.Id != TargetId)
+                        if (bestMatch != null)
                         {
-                            Target = bestMatch;
-
-                            if (bestMatch is Player && Interface.Interface.GameUi.IsAdminWindowOpen)
+                            // Re-clicking the entity that's already our target (very common mid-fight,
+                            // e.g. nudging the mouse to keep aiming at a moving enemy) must count as a hit
+                            // here too - otherwise it falls through to the "clicked empty space" branch
+                            // below and clears the target whenever Sticky Target is off (the default).
+                            if (bestMatch.Id != TargetId)
                             {
-                                // Select in admin window if open
-                                Interface.Interface.GameUi.AdminWindowSelectName(bestMatch.Name);
+                                Target = bestMatch;
+                                IsAutoAttacking = (bestMatch as Entity)?.CanBeAttacked ?? false;
+
+                                if (bestMatch is Player && Interface.Interface.GameUi.IsAdminWindowOpen)
+                                {
+                                    // Select in admin window if open
+                                    Interface.Interface.GameUi.AdminWindowSelectName(bestMatch.Name);
+                                }
                             }
 
                             return true;
@@ -2313,6 +2619,7 @@ public partial class Player : Entity, IPlayer
     public bool ClearTarget()
     {
         _target = null;
+        IsAutoAttacking = false;
 
         if (TargetId == default && TargetType == -1)
         {
@@ -2504,7 +2811,6 @@ public partial class Player : Entity, IPlayer
             List<Direction> possibleDirections = new(4) { moveDir };
             if (dir.IsAdjacent(moveDir))
             {
-                System.Console.WriteLine($"{dir} is adjacent to {moveDir}");
                 possibleDirections.Add(dir);
             }
 
@@ -2517,7 +2823,7 @@ public partial class Player : Entity, IPlayer
             {
                 var delta = possibleDirection.GetDeltaPoint();
                 var target = position + delta;
-                if (IsTileBlocked(target, Z, MapId, ref blockedBy) != -1)
+                if (IsTileBlocked(target, Z, MapId, ref blockedBy, direction: possibleDirection) != -1)
                 {
                     continue;
                 }
@@ -2525,8 +2831,9 @@ public partial class Player : Entity, IPlayer
                 if (!enableCrossingDiagonalBlocks && possibleDirection.IsDiagonal())
                 {
                     if (possibleDirection.GetComponentDirections()
-                        .Select(componentDirection => componentDirection.GetDeltaPoint() + position)
-                        .All(componentTarget => IsTileBlocked(componentTarget, Z, MapId, ref blockedBy) != -1))
+                        .All(componentDirection => IsTileBlocked(
+                            componentDirection.GetDeltaPoint() + position, Z, MapId, ref blockedBy, direction: componentDirection
+                        ) != -1))
                     {
                         continue;
                     }

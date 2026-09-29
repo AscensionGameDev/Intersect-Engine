@@ -1,10 +1,13 @@
 using Intersect.Enums;
 using Intersect.Framework.Core;
+using Intersect.Server.Database;
 using Intersect.Framework.Core.GameObjects.Dungeons;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Network.Packets.Server;
+using Intersect.Server.Dungeons.Generation;
 using Intersect.Server.Entities;
 using Intersect.Server.Localization;
+using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 
 namespace Intersect.Server.Dungeons;
@@ -19,19 +22,38 @@ public sealed class DungeonInstance
 
     private readonly HashSet<Player> _players = new();
 
-    public DungeonInstance(DungeonDescriptor descriptor)
+    public DungeonInstance(DungeonDescriptor descriptor, Player starter)
     {
         Descriptor = descriptor;
         MapInstanceId = Guid.NewGuid();
         StartTime = Timing.Global.Milliseconds;
         Lives = descriptor.Lives;
         Objective = string.Empty;
+
+        if (descriptor.ProceduralGeneration)
+        {
+            GeneratedMap = DungeonMapGenerator.Generate(descriptor, starter, MapInstanceId, out var entryX, out var entryY);
+            GeneratedEntryX = entryX;
+            GeneratedEntryY = entryY;
+        }
     }
 
     public DungeonDescriptor Descriptor { get; }
 
     /// <summary>The map instance id all participants are warped onto.</summary>
     public Guid MapInstanceId { get; }
+
+    /// <summary>The map generated for this run, or <c>null</c> when <see cref="DungeonDescriptor.ProceduralGeneration"/> is off.</summary>
+    public MapController? GeneratedMap { get; }
+
+    public int GeneratedEntryX { get; }
+
+    public int GeneratedEntryY { get; }
+
+    /// <summary>The map/coordinates participants should warp/respawn onto for this run.</summary>
+    public (Guid MapId, int X, int Y, Direction Direction) EntryPoint => GeneratedMap != null
+        ? (GeneratedMap.Id, GeneratedEntryX, GeneratedEntryY, Direction.Down)
+        : (Descriptor.EntryMapId, Descriptor.EntryX, Descriptor.EntryY, Descriptor.EntryDirection);
 
     public long StartTime { get; }
 
@@ -184,6 +206,7 @@ public sealed class DungeonInstance
             var previousBest = player.DungeonData.Records.TryGetValue(Descriptor.Id, out var record) ? record.BestTimeMs : 0;
             GiveRewards(player);
             player.RecordDungeonCompletion(Descriptor.Id, elapsed);
+            DbInterface.UpsertDungeonLeaderboardEntry(Descriptor.Id, player.Name, elapsed);
             player.SendPacket(BuildResultPacket(completed: true, string.Empty, previousBest));
             PacketSender.SendChatMsg(
                 player,
@@ -281,6 +304,11 @@ public sealed class DungeonInstance
         if (Descriptor.RewardTitleId != Guid.Empty)
         {
             player.UnlockTitle(Descriptor.RewardTitleId);
+        }
+
+        if (Descriptor.RewardAchievementId != Guid.Empty)
+        {
+            player.UnlockAchievement(Descriptor.RewardAchievementId);
         }
     }
 

@@ -17,10 +17,12 @@ using Intersect.Client.Spells;
 using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core;
+using Intersect.Framework.Core.GameObjects.Mounts;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.Attributes;
+using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
@@ -1179,6 +1181,16 @@ public partial class Entity : IEntity
     }
 
     //Rendering Functions
+    // Overridden by Event for decorations (swaying trees, floating items, bouncing balls) - procedural
+    // idle motion computed from time, no hand-drawn animation frames required.
+    protected virtual float GetIdleMotionOffsetY() => 0f;
+
+    protected virtual float GetIdleMotionRotationDegrees() => 0f;
+
+    // Additional world-space translation so a Sway rotation can pivot from a point other than the
+    // sprite's center (e.g. the base, so a tree's trunk stays put and only the foliage swings).
+    protected virtual Vector2 GetIdleMotionPivotShift(float width, float height, float rotationDegrees) => Vector2.Zero;
+
     public virtual void Draw()
     {
         if (IsHidden)
@@ -1198,6 +1210,15 @@ public partial class Entity : IEntity
         var renderColor = new Color(Color.A, Color.R, Color.G, Color.B);
 
         string transformedSprite = string.Empty;
+
+        // Riding a mount swaps the rendered sprite for the mount's, the same way a Transform spell status does below,
+        // so equipment and colour layers correctly stop drawing on top of it.
+        if (this is Player mountedPlayer && mountedPlayer.IsMounted &&
+            MountDescriptor.Get(mountedPlayer.MountId) is { } riddenMount &&
+            !string.IsNullOrWhiteSpace(riddenMount.Sprite))
+        {
+            transformedSprite = sprite = riddenMount.Sprite;
+        }
 
         // Loop through the entity status list.
         for (var n = 0; n < Status.Count; n++)
@@ -1276,6 +1297,15 @@ public partial class Entity : IEntity
 
         WorldPos = destRectangle;
 
+        // Purely procedural (no hand-drawn frames) idle motion - overridden by Event for decorations
+        // like swaying trees/floating items. Only the drawn rect shifts, WorldPos stays the logical tile
+        // position so click-targeting isn't affected by the wobble.
+        var idleRotation = GetIdleMotionRotationDegrees();
+        destRectangle.Y += GetIdleMotionOffsetY();
+        var idlePivotShift = GetIdleMotionPivotShift(destRectangle.Width, destRectangle.Height, idleRotation);
+        destRectangle.X += idlePivotShift.X;
+        destRectangle.Y += idlePivotShift.Y;
+
         //Order the layers of paperdolls and sprites
         for (var z = 0; z < Options.Instance.Equipment.Paperdoll.Directions[(int)_lastDirection].Count; z++)
         {
@@ -1285,7 +1315,11 @@ public partial class Entity : IEntity
             //Check for player
             if (string.Equals("Player", paperdoll, StringComparison.Ordinal))
             {
-                Graphics.DrawGameTexture(texture, srcRectangle, destRectangle, renderColor);
+                Graphics.DrawGameTexture(texture, srcRectangle, destRectangle, renderColor, rotationDegrees: idleRotation);
+                if (sprite == Sprite && this is Player coloredPlayer)
+                {
+                    SpriteColorLayers.Draw(texture, srcRectangle, destRectangle, coloredPlayer.SpriteColors, coloredPlayer.SpriteParts, renderColor);
+                }
             }
             else if (equipSlot > -1)
             {
@@ -1699,6 +1733,42 @@ public partial class Entity : IEntity
             true,
             null,
             Color.FromArgb(borderColor.ToArgb())
+        );
+
+        if (this is Events.Event { QuestMarker: > 0 } questEvent)
+        {
+            DrawQuestMarker(questEvent.QuestMarker, x, y);
+        }
+    }
+
+    /// <summary>
+    /// Draws the classic yellow "!" (quest available) / blue "?" (quest in progress, turn in here) above
+    /// a quest-giver event's name, so quest givers stand out on sight the way they do in most MMOs.
+    /// </summary>
+    private void DrawQuestMarker(byte marker, float nameCenterX, float nameY)
+    {
+        if (Graphics.Renderer == default)
+        {
+            return;
+        }
+
+        var symbol = marker == 2 ? "?" : "!";
+        var color = marker == 2 ? new Color(255, 80, 160, 255) : new Color(255, 255, 220, 40);
+
+        var markerSize = Graphics.EntityNameFontSize + 6;
+        var textSize = Graphics.Renderer.MeasureText(symbol, Graphics.EntityNameFont, markerSize, 1);
+
+        Graphics.Renderer.DrawString(
+            symbol,
+            Graphics.EntityNameFont,
+            markerSize,
+            nameCenterX - textSize.X / 2f,
+            nameY - textSize.Y - 2,
+            1,
+            color,
+            true,
+            null,
+            Color.Black
         );
     }
 
@@ -2377,6 +2447,55 @@ public partial class Entity : IEntity
         return yPositive ? Direction.UpRight : Direction.DownRight;
     }
 
+    /// <summary>
+    /// Same purpose as <see cref="DirectionToTarget"/> but aimed at an arbitrary world-pixel point (e.g. the
+    /// mouse cursor) instead of another entity's tile. Splits the surrounding space into 8 equal 45° wedges
+    /// (4 when diagonal movement is disabled) centered on each compass direction.
+    /// </summary>
+    public Direction DirectionToWorldPoint(float worldX, float worldY)
+    {
+        if (LatestMap == default)
+        {
+            return DirectionFacing;
+        }
+
+        var originX = LatestMap.X + X * TileWidth + TileWidth / 2f;
+        var originY = LatestMap.Y + Y * TileHeight + TileHeight / 2f;
+
+        var dx = worldX - originX;
+        var dy = worldY - originY;
+
+        if (dx == 0 && dy == 0)
+        {
+            return DirectionFacing;
+        }
+
+        var angleDeg = Math.Atan2(dy, dx) * (180.0 / Math.PI);
+
+        if (!Options.Instance.Map.EnableDiagonalMovement)
+        {
+            return angleDeg switch
+            {
+                > -45 and <= 45 => Direction.Right,
+                > 45 and <= 135 => Direction.Down,
+                <= -135 or > 135 => Direction.Left,
+                _ => Direction.Up,
+            };
+        }
+
+        return angleDeg switch
+        {
+            > -22.5 and <= 22.5 => Direction.Right,
+            > 22.5 and <= 67.5 => Direction.DownRight,
+            > 67.5 and <= 112.5 => Direction.Down,
+            > 112.5 and <= 157.5 => Direction.DownLeft,
+            <= -157.5 or > 157.5 => Direction.Left,
+            > -157.5 and <= -112.5 => Direction.UpLeft,
+            > -112.5 and <= -67.5 => Direction.Up,
+            _ => Direction.UpRight, // -67.5..-22.5
+        };
+    }
+
     //Movement
     /// <summary>
     ///     Returns -6 if the tile is blocked by a global (non-event) entity
@@ -2396,7 +2515,8 @@ public partial class Entity : IEntity
         bool ignoreAliveResources = true,
         bool ignoreDeadResources = true,
         bool ignoreNpcAvoids = true,
-        bool projectileTrigger = false
+        bool projectileTrigger = false,
+        Direction direction = Direction.None
     )
     {
         var mapInstance = Maps.MapInstance.Get(mapId);
@@ -2557,26 +2677,45 @@ public partial class Entity : IEntity
             var gameMap = Maps.MapInstance.Get(Globals.MapGrid[gridX, gridY]);
             if (gameMap != null)
             {
-                if (gameMap.Attributes[tmpX, tmpY] != null)
+                var attribute = gameMap.Attributes[tmpX, tmpY];
+                if (attribute != null)
                 {
-                    if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributeType.Blocked || (gameMap.Attributes[tmpX, tmpY].Type == MapAttributeType.Animation && ((MapAnimationAttribute)gameMap.Attributes[tmpX, tmpY]).IsBlock))
+                    if (attribute.Type == MapAttributeType.Blocked || (attribute.Type == MapAttributeType.Animation && ((MapAnimationAttribute)attribute).IsBlock))
                     {
                         return -2;
                     }
-                    else if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributeType.ZDimension)
+                    else if (attribute.Type == MapAttributeType.ZDimension)
                     {
-                        if (((MapZDimensionAttribute)gameMap.Attributes[tmpX, tmpY]).BlockedLevel - 1 == z)
+                        if (((MapZDimensionAttribute)attribute).BlockedLevel - 1 == z)
                         {
                             return -3;
                         }
                     }
-                    else if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributeType.NpcAvoid)
+                    else if (attribute.Type == MapAttributeType.NpcAvoid)
                     {
                         if (!ignoreNpcAvoids)
                         {
                             return -2;
                         }
                     }
+                }
+
+                //If the map doesn't explicitly mark this tile as walkable (an override), fall back to
+                //whether any of the tiles painted here have a blocked quadrant on their tileset.
+                //Tileset blocking represents ground-level obstacles, so it only applies at Z=0 -
+                //otherwise it would wrongly block entities crossing above on a Z-Dimension bridge.
+                if (z == 0 && (attribute == null || attribute.Type != MapAttributeType.Walkable) &&
+                    IsBlockedByTilesetPassability(gameMap, tmpX, tmpY))
+                {
+                    return -2;
+                }
+
+                //Guild hall furniture blocks movement client-side too, otherwise the client lets the
+                //player start walking into it before the server's correction snaps them back (the
+                //same rollback jolt that tileset/attribute blocking used to cause before being predicted here).
+                if (z == 0 && IsBlockedByFurniture(gameMap, tmpX, tmpY))
+                {
+                    return -2;
                 }
             }
             else
@@ -2590,6 +2729,63 @@ public partial class Entity : IEntity
         {
             return -2;
         }
+    }
+
+    /// <summary>
+    /// Checks whether a piece of (non-passable) guild hall furniture sits at (x,y) on this map instance.
+    /// </summary>
+    private static bool IsBlockedByFurniture(Maps.MapInstance gameMap, int x, int y)
+    {
+        foreach (var furniture in gameMap.Furniture.Values)
+        {
+            if (furniture.X != x || furniture.Y != y)
+            {
+                continue;
+            }
+
+            if (Intersect.Framework.Core.GameObjects.Furniture.FurnitureDescriptor.TryGet(furniture.DescriptorId, out var descriptor) && !descriptor.Passable)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Checks whether any tile painted at (x,y), across every layer, has ANY blocked quadrant on
+    /// its tileset (set once per tileset in the editor's tileset palette, rather than painted
+    /// per-map). A tile with any quadrant marked blocks movement from every direction.
+    /// </summary>
+    private static bool IsBlockedByTilesetPassability(Maps.MapInstance gameMap, int x, int y)
+    {
+        if (gameMap.Layers == null)
+        {
+            return false;
+        }
+
+        foreach (var layer in gameMap.Layers)
+        {
+            var tiles = layer.Value;
+            if (tiles == null || x < 0 || x >= tiles.GetLength(0) || y < 0 || y >= tiles.GetLength(1))
+            {
+                continue;
+            }
+
+            var tile = tiles[x, y];
+            if (tile.TilesetId == Guid.Empty)
+            {
+                continue;
+            }
+
+            var tileset = TilesetDescriptor.Get(tile.TilesetId);
+            if (tileset != null && tileset.IsTileBlocked(tile.X, tile.Y))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     ~Entity()

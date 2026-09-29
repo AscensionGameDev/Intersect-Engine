@@ -75,7 +75,8 @@ public abstract partial class GameDatabase
 
     public bool EnableScrollingWorldZoom { get; set; }
 
-    public float WorldZoom { get; set; } = 1.0f;
+    // World zoom is locked to 2x - not player-adjustable.
+    public float WorldZoom { get; set; } = 2.0f;
 
     public abstract void DeletePreference(string key);
 
@@ -149,7 +150,7 @@ public abstract partial class GameDatabase
         TypewriterBehavior = LoadPreference(nameof(TypewriterBehavior), TypewriterBehavior.Word);
         UIScale = LoadPreference(nameof(UIScale), 1.0f);
         EnableScrollingWorldZoom = LoadPreference(nameof(EnableScrollingWorldZoom), false);
-        WorldZoom = LoadPreference(nameof(WorldZoom), 1.0f);
+        WorldZoom = 2.0f; // Locked - ignore any previously-saved value.
     }
 
     /// <summary>

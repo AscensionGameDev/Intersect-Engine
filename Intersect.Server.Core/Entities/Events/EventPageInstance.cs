@@ -91,6 +91,10 @@ public partial class EventPageInstance : Entity
         MyGraphic.Y = MyPage.Graphic.Y;
         MyGraphic.Width = MyPage.Graphic.Width;
         MyGraphic.Height = MyPage.Graphic.Height;
+        MyGraphic.IdleMotionType = MyPage.Graphic.IdleMotionType;
+        MyGraphic.IdleMotionSpeed = MyPage.Graphic.IdleMotionSpeed;
+        MyGraphic.IdleMotionAmplitude = MyPage.Graphic.IdleMotionAmplitude;
+        MyGraphic.IdleMotionPivotPercent = MyPage.Graphic.IdleMotionPivotPercent;
         Sprite = MyPage.Graphic.Filename;
         mDirectionFix = MyPage.DirectionFix;
         mWalkingAnim = MyPage.WalkingAnimation;
@@ -166,6 +170,10 @@ public partial class EventPageInstance : Entity
         MyGraphic.Y = globalClone.MyGraphic.Y;
         MyGraphic.Width = globalClone.MyGraphic.Width;
         MyGraphic.Height = globalClone.MyGraphic.Height;
+        MyGraphic.IdleMotionType = globalClone.MyGraphic.IdleMotionType;
+        MyGraphic.IdleMotionSpeed = globalClone.MyGraphic.IdleMotionSpeed;
+        MyGraphic.IdleMotionAmplitude = globalClone.MyGraphic.IdleMotionAmplitude;
+        MyGraphic.IdleMotionPivotPercent = globalClone.MyGraphic.IdleMotionPivotPercent;
         Sprite = MyPage.Graphic.Filename;
         mDirectionFix = MyPage.DirectionFix;
         mWalkingAnim = MyPage.WalkingAnimation;
@@ -284,8 +292,52 @@ public partial class EventPageInstance : Entity
         pkt.Graphic = MyGraphic;
         pkt.RenderLayer = (byte)mRenderLayer;
         pkt.Trigger = Trigger;
+        pkt.QuestMarker = GetQuestMarker(forPlayer);
 
         return pkt;
+    }
+
+    /// <summary>
+    /// Per-viewer quest-giver indicator for this event: 1 (yellow "!") if it's the <see
+    /// cref="QuestDescriptor.StartEventId"/> for a quest <paramref name="forPlayer"/> can start, 2 (blue
+    /// "?") if it's the <see cref="QuestDescriptor.EndEventId"/> for a quest they have in progress, 0
+    /// otherwise. Mirrors the classic "! available / ? turn-in" convention.
+    /// </summary>
+    private byte GetQuestMarker(Player forPlayer)
+    {
+        if (forPlayer == null || Descriptor == null)
+        {
+            return 0;
+        }
+
+        foreach (var obj in QuestDescriptor.Lookup.Values)
+        {
+            if (obj is not QuestDescriptor quest || quest.EndEventId != Descriptor.Id)
+            {
+                continue;
+            }
+
+            var progress = forPlayer.Quests.Find(q => q.QuestId == quest.Id);
+            if (progress != null && progress.TaskId != Guid.Empty && !progress.Completed)
+            {
+                return 2;
+            }
+        }
+
+        foreach (var obj in QuestDescriptor.Lookup.Values)
+        {
+            if (obj is not QuestDescriptor quest || quest.StartEventId != Descriptor.Id)
+            {
+                continue;
+            }
+
+            if (forPlayer.CanStartQuest(quest))
+            {
+                return 1;
+            }
+        }
+
+        return 0;
     }
 
     public void SetMovementSpeed(EventMovementSpeed speed)
@@ -643,6 +695,10 @@ public partial class EventPageInstance : Entity
                         MyGraphic.Y = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Y;
                         MyGraphic.Width = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Width;
                         MyGraphic.Height = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Height;
+                        MyGraphic.IdleMotionType = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.IdleMotionType;
+                        MyGraphic.IdleMotionSpeed = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.IdleMotionSpeed;
+                        MyGraphic.IdleMotionAmplitude = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.IdleMotionAmplitude;
+                        MyGraphic.IdleMotionPivotPercent = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.IdleMotionPivotPercent;
                         if (MyGraphic.Type == EventGraphicType.Sprite)
                         {
                             switch (MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Y)

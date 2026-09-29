@@ -18,7 +18,28 @@ namespace Intersect.Client.Localization;
 
 public static partial class Strings
 {
-    private const string StringsFileName = "client_strings.json";
+    private const string DefaultStringsFileName = "client_strings.json";
+
+    /// <summary>
+    /// The strings file to load, based on <see cref="ClientConfiguration.Language"/> - falls back to the
+    /// default (English) file if a translated one doesn't exist yet for the configured language, so
+    /// picking an untranslated language never breaks the client, it just shows English text.
+    /// </summary>
+    private static string StringsFileName
+    {
+        get
+        {
+            var language = ClientConfiguration.Instance?.Language;
+            if (string.IsNullOrWhiteSpace(language) || string.Equals(language, "en", StringComparison.OrdinalIgnoreCase))
+            {
+                return DefaultStringsFileName;
+            }
+
+            var localizedFileName = $"client_strings.{language}.json";
+            var localizedPath = Path.Combine(ClientConfiguration.ResourcesDirectory, localizedFileName);
+            return File.Exists(localizedPath) ? localizedFileName : DefaultStringsFileName;
+        }
+    }
     private static char[] mQuantityTrimChars = new char[] { '.', '0' };
 
     private static string[] _unitsBits = [string.Empty, "Ki", "Mi", "Gi", "Ti"];
@@ -664,6 +685,9 @@ public static partial class Strings
         public static LocalizedString Points = @"Points: {00}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Power = @"Power: {00}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString StatLabelValue = @"{00}: {01}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -682,10 +706,49 @@ public static partial class Strings
         public static LocalizedString Back = @"Back";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Colors = @"Colors";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString ColorZone = @"Color {00}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString RandomColors = @"Random";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString PartNone = @"None";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString PartCounter = @"{00} / {01}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString ZoneBase = @"Base {00}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString ZonePart = @"{00} {01}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Class = @"Class";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Faction = @"Faction";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Create = @"Create";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Next = @"Next";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString StatForce = @"Force";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString StatDefense = @"Défense";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString StatMagic = @"Magie";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString StatAgility = @"Agilité";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Female = @"Female";
@@ -1313,6 +1376,12 @@ public static partial class Strings
         public static LocalizedString NeverCompleted = @"Never completed.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString LeaderboardHeader = @"Top times:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString LeaderboardEntry = @"{00}. {01} - {02}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString HudLives = @"Lives: {00}/{01}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1374,6 +1443,63 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString None = @"You haven't unlocked any titles yet.";
+    }
+
+    public partial struct Mounts
+    {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Title = @"Mounts";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Mount = @"Mount Up";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Dismount = @"Dismount";
+    }
+
+    public partial struct Furniture
+    {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Title = @"Decoration";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString PlacementHint = @"Select a piece, then click a tile in your hall.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString PlacementArmed = @"Click a tile to place it.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString NotAllowedHere = @"You can only decorate your own guild hall.";
+    }
+
+    public partial struct Achievements
+    {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Title = @"Achievements";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Hidden = @"???";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString HiddenDescription = @"Keep playing to discover this achievement.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Progress = @"{00} / {01} unlocked";
+    }
+
+    public partial struct Territories
+    {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Uncontrolled = @"{00}: Uncontrolled";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString ControlledBy = @"{00}: controlled by {01}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Contested = @"Contested!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Capturing = @"{00} capturing... {01}s / {02}s";
     }
 
     public partial struct GameMenu
@@ -1899,6 +2025,8 @@ If you are sure you want to hand over your guild enter '\c{{#ff8080}}{02}\c{{}}'
             {4, @"Spell"},
             {5, @"Special"},
             {6, @"Bag"},
+            {7, @"Pet"},
+            {8, @"Mount"},
         };
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -2195,7 +2323,7 @@ If you are sure you want to hand over your guild enter '\c{{#ff8080}}{02}\c{{}}'
     public partial struct Main
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString GameName = @"Intersect";
+        public static LocalizedString GameName = @"Aetherion";
     }
 
     public partial struct MainMenu
@@ -2205,6 +2333,12 @@ If you are sure you want to hand over your guild enter '\c{{#ff8080}}{02}\c{{}}'
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Exit = @"Exit";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString GameTagline = @"A Realm of Magic and Steel";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString GameTitle = @"Aetherion";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Login = @"Login";
@@ -2489,6 +2623,9 @@ If you are sure you want to hand over your guild enter '\c{{#ff8080}}{02}\c{{}}'
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Title = @"Quest Log";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString TrackerEmpty = @"No active quests.";
     }
 
     public partial struct QuestOffer
@@ -2501,6 +2638,9 @@ If you are sure you want to hand over your guild enter '\c{{#ff8080}}{02}\c{{}}'
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Title = @"Quest Offer";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Rewards = @"Rewards:";
     }
 
     public partial struct Regex
@@ -2802,6 +2942,9 @@ If you are sure you want to hand over your guild enter '\c{{#ff8080}}{02}\c{{}}'
             {2, @"Warp to Target"},
             {3, @"Dash"},
             {4, @"Special"},
+            {5, @"Summon"},
+            {6, @"Companion Command"},
+            {7, @"Passive"},
         };
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

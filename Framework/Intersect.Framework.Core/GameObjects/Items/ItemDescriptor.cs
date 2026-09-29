@@ -4,6 +4,8 @@ using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.GameObjects.Events;
+using Intersect.Framework.Core.GameObjects.Mounts;
+using Intersect.Framework.Core.GameObjects.Pets;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Ranges;
 using Intersect.Models;
@@ -167,6 +169,30 @@ public partial class ItemDescriptor : DatabaseObject<ItemDescriptor>, IFolderabl
     {
         get => EventDescriptor.Get(EventId);
         set => EventId = value?.Id ?? Guid.Empty;
+    }
+
+    [Column("Pet")]
+    [JsonProperty]
+    public Guid PetId { get; set; }
+
+    [NotMapped]
+    [JsonIgnore]
+    public PetDescriptor? Pet
+    {
+        get => PetDescriptor.Get(PetId);
+        set => PetId = value?.Id ?? Guid.Empty;
+    }
+
+    [Column("Mount")]
+    [JsonProperty]
+    public Guid MountId { get; set; }
+
+    [NotMapped]
+    [JsonIgnore]
+    public MountDescriptor? Mount
+    {
+        get => MountDescriptor.Get(MountId);
+        set => MountId = value?.Id ?? Guid.Empty;
     }
 
     public string Description { get; set; } = string.Empty;

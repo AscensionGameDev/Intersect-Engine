@@ -25,6 +25,12 @@ public partial class PlayerOptions
     public long MoveTimerChainWindowMs { get; set; } = 100;
 
     /// <summary>
+    /// Draw order (bottom to top) of the interchangeable sprite part categories ("{sprite}_{category}_{n}.png").
+    /// Categories found in the textures but missing here are drawn last, alphabetically.
+    /// </summary>
+    public List<string> SpritePartOrder { get; set; } = ["outfit", "hair", "beard", "eyes", "hat"];
+
+    /// <summary>
     /// Sets the delay (milliseconds) for the feature 'Auto-turn to target'.
     /// </summary>
     public ushort AutoTurnToTargetDelay { get; set; } = 500;

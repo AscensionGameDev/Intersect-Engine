@@ -9,6 +9,9 @@ using Amib.Threading;
 using Intersect.Collections;
 using Intersect.Config;
 using Intersect.Core;
+using Intersect.Server.Dungeons;
+using Intersect.Server.Territories;
+using Intersect.Framework.Core;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Animations;
 using Intersect.Framework.Core.GameObjects.Crafting;
@@ -19,6 +22,11 @@ using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Factions;
+using Intersect.Framework.Core.GameObjects.Furniture;
+using Intersect.Framework.Core.GameObjects.Territories;
+using Intersect.Framework.Core.GameObjects.Achievements;
+using Intersect.Framework.Core.GameObjects.Mounts;
 using Intersect.Framework.Core.GameObjects.Pets;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
@@ -796,12 +804,32 @@ public static partial class DbInterface
                 PetDescriptor.Lookup.Clear();
 
                 break;
+            case GameObjectType.Mount:
+                MountDescriptor.Lookup.Clear();
+
+                break;
+            case GameObjectType.Achievement:
+                AchievementDescriptor.Lookup.Clear();
+
+                break;
+            case GameObjectType.Faction:
+                FactionDescriptor.Lookup.Clear();
+
+                break;
+            case GameObjectType.Territory:
+                TerritoryDescriptor.Lookup.Clear();
+
+                break;
             case GameObjectType.Dungeon:
                 DungeonDescriptor.Lookup.Clear();
 
                 break;
             case GameObjectType.InstanceVariable:
                 InstanceVariableDescriptor.Lookup.Clear();
+
+                break;
+            case GameObjectType.Furniture:
+                FurnitureDescriptor.Lookup.Clear();
 
                 break;
             default:
@@ -968,6 +996,34 @@ public static partial class DbInterface
                         }
 
                         break;
+                    case GameObjectType.Mount:
+                        foreach (var mount in context.Mounts)
+                        {
+                            MountDescriptor.Lookup.Set(mount.Id, mount);
+                        }
+
+                        break;
+                    case GameObjectType.Achievement:
+                        foreach (var achievement in context.Achievements)
+                        {
+                            AchievementDescriptor.Lookup.Set(achievement.Id, achievement);
+                        }
+
+                        break;
+                    case GameObjectType.Faction:
+                        foreach (var faction in context.Factions)
+                        {
+                            FactionDescriptor.Lookup.Set(faction.Id, faction);
+                        }
+
+                        break;
+                    case GameObjectType.Territory:
+                        foreach (var territory in context.Territories)
+                        {
+                            TerritoryDescriptor.Lookup.Set(territory.Id, territory);
+                        }
+
+                        break;
                     case GameObjectType.Dungeon:
                         foreach (var dungeon in context.Dungeons)
                         {
@@ -979,6 +1035,14 @@ public static partial class DbInterface
                         foreach (var variable in context.InstanceVariables)
                         {
                             InstanceVariableDescriptor.Lookup.Set(variable.Id, variable);
+                        }
+
+                        break;
+
+                    case GameObjectType.Furniture:
+                        foreach (var furniture in context.Furniture)
+                        {
+                            FurnitureDescriptor.Lookup.Set(furniture.Id, furniture);
                         }
 
                         break;
@@ -1098,6 +1162,93 @@ public static partial class DbInterface
             correctedEvents
         );
     }
+
+    #region Dungeon Leaderboard
+
+    /// <summary>
+    /// Records a clear if it beats the player's existing best for that dungeon (or is their first). One row per
+    /// (dungeon, player); cheap to query "top N" for a dungeon by sorting on TimeMs.
+    /// </summary>
+    public static void UpsertDungeonLeaderboardEntry(Guid dungeonId, string playerName, long timeMs)
+    {
+        using var context = CreateGameContext(readOnly: false);
+        var existing = context.DungeonLeaderboardEntries
+            .FirstOrDefault(entry => entry.DungeonId == dungeonId && entry.PlayerName == playerName);
+
+        if (existing != null)
+        {
+            if (timeMs >= existing.TimeMs)
+            {
+                return;
+            }
+
+            existing.TimeMs = timeMs;
+            existing.AchievedAt = Timing.Global.MillisecondsUtc;
+        }
+        else
+        {
+            context.DungeonLeaderboardEntries.Add(new DungeonLeaderboardEntry
+            {
+                DungeonId = dungeonId,
+                PlayerName = playerName,
+                TimeMs = timeMs,
+                AchievedAt = Timing.Global.MillisecondsUtc,
+            });
+        }
+
+        context.SaveChanges();
+    }
+
+    /// <summary>Best times for a dungeon, fastest first.</summary>
+    public static List<DungeonLeaderboardEntry> GetDungeonLeaderboard(Guid dungeonId, int limit = 10)
+    {
+        using var context = CreateGameContext(readOnly: true);
+
+        return context.DungeonLeaderboardEntries
+            .Where(entry => entry.DungeonId == dungeonId)
+            .OrderBy(entry => entry.TimeMs)
+            .Take(limit)
+            .ToList();
+    }
+
+    #endregion
+
+    #region Territory Control
+
+    /// <summary>All persisted territory ownership, keyed by territory id.</summary>
+    public static Dictionary<Guid, TerritoryControl> GetAllTerritoryControl()
+    {
+        using var context = CreateGameContext(readOnly: true);
+
+        return context.TerritoryControls.ToDictionary(control => control.TerritoryId);
+    }
+
+    /// <summary>Persists a territory change of hands.</summary>
+    public static void SetTerritoryControl(Guid territoryId, Guid controllingFactionId)
+    {
+        using var context = CreateGameContext(readOnly: false);
+        var existing = context.TerritoryControls.FirstOrDefault(control => control.TerritoryId == territoryId);
+
+        if (existing != null)
+        {
+            existing.ControllingFactionId = controllingFactionId;
+            existing.CapturedAt = Timing.Global.MillisecondsUtc;
+        }
+        else
+        {
+            context.TerritoryControls.Add(new TerritoryControl
+            {
+                TerritoryId = territoryId,
+                ControllingFactionId = controllingFactionId,
+                CapturedAt = Timing.Global.MillisecondsUtc,
+            });
+        }
+
+        context.SaveChanges();
+    }
+
+    #endregion
+
 
     private static void ValidateResourceStates()
     {
@@ -1239,12 +1390,32 @@ public static partial class DbInterface
                 dbObj = new PetDescriptor(predefinedid);
 
                 break;
+            case GameObjectType.Mount:
+                dbObj = new MountDescriptor(predefinedid);
+
+                break;
+            case GameObjectType.Achievement:
+                dbObj = new AchievementDescriptor(predefinedid);
+
+                break;
+            case GameObjectType.Faction:
+                dbObj = new FactionDescriptor(predefinedid);
+
+                break;
+            case GameObjectType.Territory:
+                dbObj = new TerritoryDescriptor(predefinedid);
+
+                break;
             case GameObjectType.Dungeon:
                 dbObj = new DungeonDescriptor(predefinedid);
 
                 break;
             case GameObjectType.InstanceVariable:
                 dbObj = new InstanceVariableDescriptor(predefinedid);
+
+                break;
+            case GameObjectType.Furniture:
+                dbObj = new FurnitureDescriptor(predefinedid);
 
                 break;
             default:
@@ -1382,6 +1553,26 @@ public static partial class DbInterface
                         PetDescriptor.Lookup.Set(dbObj.Id, dbObj);
 
                         break;
+                    case GameObjectType.Mount:
+                        context.Mounts.Add((MountDescriptor)dbObj);
+                        MountDescriptor.Lookup.Set(dbObj.Id, dbObj);
+
+                        break;
+                    case GameObjectType.Achievement:
+                        context.Achievements.Add((AchievementDescriptor)dbObj);
+                        AchievementDescriptor.Lookup.Set(dbObj.Id, dbObj);
+
+                        break;
+                    case GameObjectType.Faction:
+                        context.Factions.Add((FactionDescriptor)dbObj);
+                        FactionDescriptor.Lookup.Set(dbObj.Id, dbObj);
+
+                        break;
+                    case GameObjectType.Territory:
+                        context.Territories.Add((TerritoryDescriptor)dbObj);
+                        TerritoryDescriptor.Lookup.Set(dbObj.Id, dbObj);
+
+                        break;
                     case GameObjectType.Dungeon:
                         context.Dungeons.Add((DungeonDescriptor)dbObj);
                         DungeonDescriptor.Lookup.Set(dbObj.Id, dbObj);
@@ -1390,6 +1581,12 @@ public static partial class DbInterface
                     case GameObjectType.InstanceVariable:
                         context.InstanceVariables.Add((InstanceVariableDescriptor)dbObj);
                         InstanceVariableDescriptor.Lookup.Set(dbObj.Id, dbObj);
+
+                        break;
+
+                    case GameObjectType.Furniture:
+                        context.Furniture.Add((FurnitureDescriptor)dbObj);
+                        FurnitureDescriptor.Lookup.Set(dbObj.Id, dbObj);
 
                         break;
 
@@ -1540,12 +1737,33 @@ public static partial class DbInterface
                         context.Pets.Remove((PetDescriptor)gameObject);
 
                         break;
+                    case GameObjectType.Mount:
+                        context.Mounts.Remove((MountDescriptor)gameObject);
+
+                        break;
+                    case GameObjectType.Achievement:
+                        context.Achievements.Remove((AchievementDescriptor)gameObject);
+
+                        break;
+                    case GameObjectType.Faction:
+                        context.Factions.Remove((FactionDescriptor)gameObject);
+
+                        break;
+                    case GameObjectType.Territory:
+                        context.Territories.Remove((TerritoryDescriptor)gameObject);
+
+                        break;
                     case GameObjectType.Dungeon:
                         context.Dungeons.Remove((DungeonDescriptor)gameObject);
 
                         break;
                     case GameObjectType.InstanceVariable:
                         context.InstanceVariables.Remove((InstanceVariableDescriptor)gameObject);
+
+                        break;
+
+                    case GameObjectType.Furniture:
+                        context.Furniture.Remove((FurnitureDescriptor)gameObject);
 
                         break;
                 }
@@ -1711,12 +1929,33 @@ public static partial class DbInterface
                         context.Pets.Update((PetDescriptor)gameObject);
 
                         break;
+                    case GameObjectType.Mount:
+                        context.Mounts.Update((MountDescriptor)gameObject);
+
+                        break;
+                    case GameObjectType.Achievement:
+                        context.Achievements.Update((AchievementDescriptor)gameObject);
+
+                        break;
+                    case GameObjectType.Faction:
+                        context.Factions.Update((FactionDescriptor)gameObject);
+
+                        break;
+                    case GameObjectType.Territory:
+                        context.Territories.Update((TerritoryDescriptor)gameObject);
+
+                        break;
                     case GameObjectType.Dungeon:
                         context.Dungeons.Update((DungeonDescriptor)gameObject);
 
                         break;
                     case GameObjectType.InstanceVariable:
                         context.InstanceVariables.Update((InstanceVariableDescriptor)gameObject);
+
+                        break;
+
+                    case GameObjectType.Furniture:
+                        context.Furniture.Update((FurnitureDescriptor)gameObject);
 
                         break;
                 }
@@ -1996,6 +2235,23 @@ public static partial class DbInterface
         lock (mapGrids)
         {
             return mapGrids[index];
+        }
+    }
+
+    /// <summary>
+    /// Registers a standalone 1x1 grid for a map that isn't linked (Up/Down/Left/Right) to any other map - e.g. a
+    /// procedurally generated dungeon map. Without a grid entry, <see cref="MapController.MapGrid"/> defaults to 0
+    /// (an unrelated real grid), so the normal "send the maps around the player" sync in <c>Player.Warp</c> would
+    /// never actually reach this map and the client would never load it.
+    /// </summary>
+    public static MapGrid AddStandaloneMapGrid(Guid mapId)
+    {
+        lock (mapGrids)
+        {
+            var grid = new MapGrid(mapId, mapGrids.Count);
+            mapGrids.Add(grid);
+
+            return grid;
         }
     }
 

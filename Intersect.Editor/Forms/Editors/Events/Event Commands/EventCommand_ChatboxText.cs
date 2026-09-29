@@ -1,3 +1,4 @@
+using Intersect.Editor.Forms.Editors;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
@@ -37,6 +38,16 @@ public partial class EventCommandChatboxText : UserControl
         chkShowChatBubble.Checked = mMyCommand.ShowChatBubble;
 
         chkShowChatBubbleInProximity.Checked = mMyCommand.ShowChatBubbleInProximity;
+
+        EditorFormHelper.AddTranslateEnButtonAbove(btnCancel, (_, _) =>
+        {
+            using var frm = new FrmTextTranslation(
+                "English Translation",
+                [("Text", mMyCommand.Text, mMyCommand.TextEn)],
+                results => mMyCommand.TextEn = results[0]
+            );
+            frm.ShowDialog();
+        }, matchReferenceSize: true);
     }
 
     private void InitLocalization()

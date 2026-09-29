@@ -120,6 +120,13 @@ public partial class SpellDescriptor : DatabaseObject<SpellDescriptor>, IFoldera
     //Dash Info
     public SpellDashDescriptor Dash { get; set; } = new();
 
+    //Summon Info
+    public SpellSummonDescriptor Summon { get; set; } = new();
+
+    public SpellCompanionCommandDescriptor CompanionCommand { get; set; } = new();
+
+    public SpellPassiveBondDescriptor PassiveBond { get; set; } = new();
+
     //Event Info
     [Column("Event")]
     public Guid EventId { get; set; }

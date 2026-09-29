@@ -6,6 +6,7 @@ using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
 using Intersect.Core;
 using Intersect.Enums;
+using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Network.Packets.Server;
 using Microsoft.Extensions.Logging;
@@ -27,6 +28,9 @@ public partial class Event : Entity
     public int RenderLevel { get; set; } = 1;
 
     public bool WalkingAnim { get; set; } = true;
+
+    /// <summary>0 = none, 1 = quest available ("!"), 2 = quest in progress, turn-in here ("?").</summary>
+    public byte QuestMarker { get; set; }
 
     public EventTrigger Trigger { get; set; }
 
@@ -72,6 +76,7 @@ public partial class Event : Entity
         Graphic = eventEntityPacket.Graphic;
         RenderLevel = eventEntityPacket.RenderLayer;
         Trigger = eventEntityPacket.Trigger;
+        QuestMarker = eventEntityPacket.QuestMarker;
 
         _drawCompletedWithoutTexture = Graphic.Type != EventGraphicType.Tileset;
 
@@ -106,6 +111,60 @@ public partial class Event : Entity
         texture = Texture;
         _drawCompletedWithoutTexture = (texture == default);
         return !_drawCompletedWithoutTexture;
+    }
+
+    // Phase in seconds, based on this event's map position, so identical decorations (e.g. a row of
+    // trees) don't all sway perfectly in sync.
+    private float IdleMotionPhase => ((X * 13 + Y * 7) % 10) / 10f;
+
+    protected override float GetIdleMotionOffsetY()
+    {
+        if (Graphic.IdleMotionType is not (IdleMotionType.Float or IdleMotionType.Bounce))
+        {
+            return 0f;
+        }
+
+        var t = Timing.Global.Milliseconds / 1000f * Graphic.IdleMotionSpeed + IdleMotionPhase;
+        return Graphic.IdleMotionType switch
+        {
+            IdleMotionType.Float => Graphic.IdleMotionAmplitude * MathF.Sin(t * MathF.Tau),
+            IdleMotionType.Bounce => -Graphic.IdleMotionAmplitude * MathF.Abs(MathF.Sin(t * MathF.Tau)),
+            _ => 0f,
+        };
+    }
+
+    protected override float GetIdleMotionRotationDegrees()
+    {
+        if (Graphic.IdleMotionType != IdleMotionType.Sway)
+        {
+            return 0f;
+        }
+
+        var t = Timing.Global.Milliseconds / 1000f * Graphic.IdleMotionSpeed + IdleMotionPhase;
+        return Graphic.IdleMotionAmplitude * MathF.Sin(t * MathF.Tau);
+    }
+
+    // The renderer always rotates a sprite around its own center. To make it look like it's pivoting
+    // from a different point instead (e.g. a tree's base, so the trunk stays put while the foliage
+    // swings), we shift the whole draw by the difference between where the desired pivot point ends up
+    // after a center-rotation and where it started - keeping that point visually fixed.
+    protected override Vector2 GetIdleMotionPivotShift(float width, float height, float rotationDegrees)
+    {
+        if (Graphic.IdleMotionType != IdleMotionType.Sway || rotationDegrees == 0f)
+        {
+            return Vector2.Zero;
+        }
+
+        var pivotOffsetFromCenter = new Vector2(0, height * (Graphic.IdleMotionPivotPercent / 100f - 0.5f));
+        var radians = rotationDegrees * MathF.PI / 180f;
+        var sin = MathF.Sin(radians);
+        var cos = MathF.Cos(radians);
+        var rotated = new Vector2(
+            pivotOffsetFromCenter.X * cos - pivotOffsetFromCenter.Y * sin,
+            pivotOffsetFromCenter.X * sin + pivotOffsetFromCenter.Y * cos
+        );
+
+        return pivotOffsetFromCenter - rotated;
     }
 
     public override void Draw()
@@ -170,7 +229,13 @@ public partial class Event : Entity
             return;
         }
 
-        Graphics.DrawGameTexture(texture, srcRectangle, destRectangle, Color.White);
+        var idleRotation = GetIdleMotionRotationDegrees();
+        var idlePivotShift = GetIdleMotionPivotShift(destRectangle.Width, destRectangle.Height, idleRotation);
+        var drawRectangle = destRectangle;
+        drawRectangle.Y += GetIdleMotionOffsetY();
+        drawRectangle.X += idlePivotShift.X;
+        drawRectangle.Y += idlePivotShift.Y;
+        Graphics.DrawGameTexture(texture, srcRectangle, drawRectangle, Color.White, rotationDegrees: idleRotation);
     }
 
     public override void LoadTextures(string textureName)

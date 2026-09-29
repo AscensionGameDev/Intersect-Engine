@@ -7,7 +7,9 @@ using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
 using Intersect.Core;
 using Intersect.Enums;
+using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Animations;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.Network.Packets.Server;
 using Microsoft.Extensions.Logging;
@@ -506,6 +508,58 @@ public partial class Resource : Entity, IResource
         _recalculateRenderBounds = false;
     }
 
+    // Phase in seconds, based on this resource's map position, so identical decorations (e.g. a row of
+    // trees) don't all sway perfectly in sync.
+    private float IdleMotionPhase => ((X * 13 + Y * 7) % 10) / 10f;
+
+    protected override float GetIdleMotionOffsetY()
+    {
+        if (Descriptor is not { } descriptor || descriptor.IdleMotionType is not (IdleMotionType.Float or IdleMotionType.Bounce) || IsDead)
+        {
+            return 0f;
+        }
+
+        var t = Timing.Global.Milliseconds / 1000f * descriptor.IdleMotionSpeed + IdleMotionPhase;
+        return descriptor.IdleMotionType switch
+        {
+            IdleMotionType.Float => descriptor.IdleMotionAmplitude * MathF.Sin(t * MathF.Tau),
+            IdleMotionType.Bounce => -descriptor.IdleMotionAmplitude * MathF.Abs(MathF.Sin(t * MathF.Tau)),
+            _ => 0f,
+        };
+    }
+
+    protected override float GetIdleMotionRotationDegrees()
+    {
+        if (Descriptor is not { } descriptor || descriptor.IdleMotionType != IdleMotionType.Sway || IsDead)
+        {
+            return 0f;
+        }
+
+        var t = Timing.Global.Milliseconds / 1000f * descriptor.IdleMotionSpeed + IdleMotionPhase;
+        return descriptor.IdleMotionAmplitude * MathF.Sin(t * MathF.Tau);
+    }
+
+    // See Event.GetIdleMotionPivotShift for the math explanation - shifts the draw so a Sway rotation
+    // pivots from a configurable point (e.g. a tree's base) instead of the sprite's center.
+    protected override System.Numerics.Vector2 GetIdleMotionPivotShift(float width, float height, float rotationDegrees)
+    {
+        if (Descriptor is not { } descriptor || descriptor.IdleMotionType != IdleMotionType.Sway || rotationDegrees == 0f)
+        {
+            return System.Numerics.Vector2.Zero;
+        }
+
+        var pivotOffsetFromCenter = new System.Numerics.Vector2(0, height * (descriptor.IdleMotionPivotPercent / 100f - 0.5f));
+        var radians = rotationDegrees * MathF.PI / 180f;
+        var sin = MathF.Sin(radians);
+        var cos = MathF.Cos(radians);
+        var rotated = new System.Numerics.Vector2(
+            pivotOffsetFromCenter.X * cos - pivotOffsetFromCenter.Y * sin,
+            pivotOffsetFromCenter.X * sin + pivotOffsetFromCenter.Y * cos
+        );
+
+        return pivotOffsetFromCenter - rotated;
+    }
+
     //Rendering Resources
     public override void Draw()
     {
@@ -525,6 +579,13 @@ public partial class Resource : Entity, IResource
             return;
         }
 
-        Graphics.DrawGameTexture(Texture, _renderBoundsSrc, _renderBoundsDest, Color.White);
+        var idleRotation = GetIdleMotionRotationDegrees();
+        var idlePivotShift = GetIdleMotionPivotShift(_renderBoundsDest.Width, _renderBoundsDest.Height, idleRotation);
+        var drawRectangle = _renderBoundsDest;
+        drawRectangle.Y += GetIdleMotionOffsetY();
+        drawRectangle.X += idlePivotShift.X;
+        drawRectangle.Y += idlePivotShift.Y;
+
+        Graphics.DrawGameTexture(Texture, _renderBoundsSrc, drawRectangle, Color.White, rotationDegrees: idleRotation);
     }
 }

@@ -20,10 +20,14 @@ using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.Pets;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Quests;
+using Intersect.Framework.Core.GameObjects.Factions;
+using Intersect.Framework.Core.GameObjects.Achievements;
+using Intersect.Framework.Core.GameObjects.Mounts;
 using Intersect.Framework.Core.GameObjects.Titles;
 using Intersect.Framework.Core.GameObjects.Variables;
 using Intersect.GameObjects;
 using Intersect.Network;
+using Intersect.Network.Packets;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Core.MapInstancing;
 using Intersect.Server.Database;
@@ -76,6 +80,9 @@ public partial class Player : Entity
 
     //Name, X, Y, Dir, Etc all in the base Entity Class
     public Guid ClassId { get; set; }
+
+    /// <summary>The faction picked at character creation, permanent for now. Empty for characters created before factions existed.</summary>
+    public Guid FactionId { get; set; } = Guid.Empty;
 
     [NotMapped]
     public string ClassName => ClassDescriptor.GetName(ClassId);
@@ -1068,6 +1075,11 @@ public partial class Player : Entity
         var pkt = (PlayerEntityPacket)packet;
         pkt.Gender = Gender;
         pkt.ClassId = ClassId;
+        pkt.SpriteColors = SpriteColors.ToArray();
+        pkt.SpriteParts = SpriteParts.ToArray();
+        pkt.MountId = ActiveMountId;
+        pkt.IsMounted = IsMounted;
+        pkt.FactionId = FactionId;
         pkt.Stats = GetStatValues();
 
         if (Power.IsAdmin)
@@ -1486,7 +1498,7 @@ public partial class Player : Entity
                         var partyMembersInXpRange = Party.Where(partyMember => partyMember.InRangeOf(this, Options.Instance.Party.SharedXpRange)).ToArray();
                         float bonusExp = Options.Instance.Party.BonusExperiencePercentPerMember / 100;
                         var multiplier = 1.0f + (partyMembersInXpRange.Length * bonusExp);
-                        var partyExperience = (int)(descriptor.Experience * multiplier) / partyMembersInXpRange.Length;
+                        var partyExperience = (int)(npc.ScaledExperience * multiplier) / partyMembersInXpRange.Length;
                         foreach (var partyMember in partyMembersInXpRange)
                         {
                             partyMember.GiveExperience(partyExperience);
@@ -1506,7 +1518,7 @@ public partial class Player : Entity
                     }
                     else
                     {
-                        GiveExperience(descriptor.Experience);
+                        GiveExperience(npc.ScaledExperience);
                         UpdateQuestKillTasks(entity);
                     }
 
@@ -2170,6 +2182,18 @@ public partial class Player : Entity
 
             mSentMap = true;
 
+            if (newMap.MaxLevel > 0)
+            {
+                if (Level < newMap.MinLevel)
+                {
+                    PacketSender.SendChatMsg(this, Strings.Maps.ZoneTooDangerous.ToString(newMap.MinLevel), ChatMessageType.Notice, CustomColors.Alerts.Declined);
+                }
+                else if (Level > newMap.MaxLevel)
+                {
+                    PacketSender.SendChatMsg(this, Strings.Maps.ZoneTooEasy.ToString(newMap.MaxLevel), ChatMessageType.Notice, CustomColors.Alerts.Info);
+                }
+            }
+
             StartCommonEventsWithTrigger(CommonEventTrigger.MapChanged);
         }
         else // Player moved on same map?
@@ -2262,7 +2286,8 @@ public partial class Player : Entity
         {
             if (dungeon.OnPlayerDied(this) || !dungeon.IsRunning)
             {
-                Warp(dungeon.Descriptor.EntryMapId, dungeon.Descriptor.EntryX, dungeon.Descriptor.EntryY, dungeon.Descriptor.EntryDirection);
+                var (respawnMapId, respawnX, respawnY, respawnDirection) = dungeon.EntryPoint;
+                Warp(respawnMapId, respawnX, respawnY, respawnDirection);
             }
 
             return;
@@ -2342,8 +2367,18 @@ public partial class Player : Entity
         }
         else
         {
+            // A faction's own spawn point (Alliance/Horde-style) takes priority over the class spawn.
+            var faction = FactionDescriptor.Get(FactionId);
+            if (faction != null && MapController.Lookup.Keys.Contains(faction.StartMapId))
+            {
+                mapId = faction.StartMapId;
+                x = (byte)faction.StartX;
+                y = (byte)faction.StartY;
+                dir = (Direction)faction.StartDir;
+            }
+
             var cls = ClassDescriptor.Get(ClassId);
-            if (cls != null)
+            if (cls != null && mapId == Guid.Empty)
             {
                 if (MapController.Lookup.Keys.Contains(cls.SpawnMapId))
                 {
@@ -2384,7 +2419,7 @@ public partial class Player : Entity
         switch (instanceType)
         {
             case MapInstanceType.Guild:
-                if (Guild == null)
+                if (Guild == null || Options.Instance.Guild.HallMapId == Guid.Empty)
                 {
                     isValid = false;
 
@@ -3429,7 +3464,8 @@ public partial class Player : Entity
 
             // Unequip items even if you do not meet the requirements.
             // (Need this for silly devs who give people items and then later add restrictions...)
-            if (itemBase.ItemType == ItemType.Equipment && SlotIsEquipped(slot, out var equippedSlot))
+            var isEquippableType = itemBase.ItemType is ItemType.Equipment or ItemType.Pet or ItemType.Mount;
+            if (isEquippableType && SlotIsEquipped(slot, out var equippedSlot))
             {
                 UnequipItem(equippedSlot, true);
                 return;
@@ -3549,6 +3585,8 @@ public partial class Player : Entity
 
                     break;
                 case ItemType.Equipment:
+                case ItemType.Pet:
+                case ItemType.Mount:
                     if (SlotIsEquipped(slot, out var eqpSlot))
                     {
                         UnequipItem(eqpSlot, true);
@@ -5733,7 +5771,7 @@ public partial class Player : Entity
         return true;
     }
 
-    public void UseSpell(int spellSlot, Entity target, bool softRetargetOnSelfCast)
+    public void UseSpell(int spellSlot, Entity target, bool softRetargetOnSelfCast, Guid aimMapId = default, byte aimX = 0, byte aimY = 0)
     {
         var spellDescriptorId = Spells[spellSlot].SpellId;
         Target = target;
@@ -5818,6 +5856,9 @@ public partial class Player : Entity
             // Set to lower case target instead of Target to facilitate soft
             // retargeting for auto self-cast on friendly when targeting hostile
             CastTarget = target;
+            CastAimMapId = aimMapId;
+            CastAimX = aimX;
+            CastAimY = aimY;
 
             SoftRetargetOnSelfCast = softRetargetOnSelfCast;
 
@@ -5980,7 +6021,10 @@ public partial class Player : Entity
     //Equipment
     public void EquipItem(ItemDescriptor itemDescriptor, int slot = -1, bool updateCooldown = false)
     {
-        if (itemDescriptor == null || itemDescriptor.ItemType != ItemType.Equipment)
+        if (itemDescriptor == null ||
+            (itemDescriptor.ItemType != ItemType.Equipment &&
+             itemDescriptor.ItemType != ItemType.Pet &&
+             itemDescriptor.ItemType != ItemType.Mount))
         {
             return;
         }
@@ -6082,6 +6126,55 @@ public partial class Player : Entity
 
         CacheEquipmentTriggers();
         UnequipInvalidItems();
+        SyncPetAndMountFromEquipment();
+    }
+
+    /// <summary>
+    /// Keeps the active pet/mount in sync with whatever Pet/Mount-type item is currently equipped in the
+    /// dedicated equipment slots (<see cref="Config.EquipmentOptions.PetSlot"/>/<see cref="Config.EquipmentOptions.MountSlot"/>).
+    /// Pets and mounts are owned/traded as regular items; equipping one summons it, unequipping despawns it.
+    /// </summary>
+    private void SyncPetAndMountFromEquipment()
+    {
+        var petSlot = Options.Instance.Equipment.PetSlot;
+        if (petSlot >= 0)
+        {
+            var equippedPetId = TryGetEquippedItem(petSlot, out var petItem) &&
+                                 petItem?.Descriptor is { ItemType: ItemType.Pet } petDescriptor
+                ? petDescriptor.PetId
+                : Guid.Empty;
+
+            if (equippedPetId != PetId)
+            {
+                PetId = equippedPetId;
+                if (equippedPetId == Guid.Empty)
+                {
+                    DespawnPet();
+                }
+                else
+                {
+                    SpawnPet();
+                }
+            }
+        }
+
+        var mountSlot = Options.Instance.Equipment.MountSlot;
+        if (mountSlot >= 0)
+        {
+            var equippedMountId = TryGetEquippedItem(mountSlot, out var mountItem) &&
+                                   mountItem?.Descriptor is { ItemType: ItemType.Mount } mountDescriptor
+                ? mountDescriptor.MountId
+                : Guid.Empty;
+
+            if (equippedMountId != ActiveMountId)
+            {
+                ActiveMountId = equippedMountId;
+                if (equippedMountId == Guid.Empty)
+                {
+                    Dismount();
+                }
+            }
+        }
     }
 
     [NotMapped, JsonIgnore]
@@ -6155,8 +6248,9 @@ public partial class Player : Entity
         foreach (var item in EquippedItems)
         {
             var descriptor = item.Descriptor;
+            var isEquippableType = descriptor?.ItemType is ItemType.Equipment or ItemType.Pet or ItemType.Mount;
             if (descriptor == default ||
-                descriptor.ItemType != ItemType.Equipment ||
+                !isEquippableType ||
                 !Conditions.MeetsConditionLists(descriptor.UsageRequirements, this, null))
             {
                 UnequipItem(item.ItemId);
@@ -8171,7 +8265,7 @@ public partial class Player : Entity
     {
         reason = string.Empty;
 
-        var instance = new DungeonInstance(descriptor);
+        var instance = new DungeonInstance(descriptor, starter);
         DungeonManager.Add(instance);
 
         foreach (var participant in participants)
@@ -8223,9 +8317,11 @@ public partial class Player : Entity
 
         record.LastStartedUtcTicks = DateTime.UtcNow.Ticks;
 
+        var (entryMapId, entryX, entryY, entryDirection) = instance.EntryPoint;
+
         // Piggy-back on the engine's shared-instance plumbing (respawn point, overworld fallback on login...).
         UpdateLastOverworldLocation(MapId, X, Y);
-        UpdateSharedInstanceRespawnLocation(descriptor.EntryMapId, descriptor.EntryX, descriptor.EntryY, descriptor.EntryDirection);
+        UpdateSharedInstanceRespawnLocation(entryMapId, entryX, entryY, entryDirection);
 
         instance.AddPlayer(this);
 
@@ -8236,7 +8332,22 @@ public partial class Player : Entity
         ProcessMapInstanceChange(null, false);
 
         var warpStopwatch = System.Diagnostics.Stopwatch.StartNew();
-        Warp(descriptor.EntryMapId, descriptor.EntryX, descriptor.EntryY, descriptor.EntryDirection, forceInstanceChange: true);
+        Warp(entryMapId, entryX, entryY, entryDirection, forceInstanceChange: true);
+
+        // Send the generated map's own standalone grid (see DungeonMapGenerator/DbInterface.AddStandaloneMapGrid)
+        // so the client actually adds it to Globals.GridMaps - Warp()'s normal grid sync only fires for maps that
+        // share a grid with where the player came from, which a freshly generated map never does.
+        //
+        // The client's own catch-up request (SendNeedMapForGrid) can't help here either: it looks up a local
+        // MapInstance for Globals.Me.MapId to find its grid position before it will ask for anything, but no such
+        // MapInstance exists yet for a map the client has never seen - a chicken-and-egg gap that only affects
+        // maps nobody has ever loaded before. So we push the map data directly instead of waiting to be asked.
+        if (instance.GeneratedMap != null)
+        {
+            PacketSender.SendMapGrid(Client, instance.GeneratedMap.MapGrid, true);
+            PacketSender.SendMap(Client, instance.GeneratedMap.Id);
+        }
+
         ApplicationContext.Context.Value?.Logger.LogInformation(
             "[Dungeon] {Player} entered {Dungeon} (instance creation + warp took {Elapsed}ms)",
             Name,
@@ -8367,6 +8478,43 @@ public partial class Player : Entity
 
     #endregion
 
+    #region Sprite colors
+
+    /// <summary>
+    /// Tints chosen at character creation for the sprite colour layers ("sprite_c1.png", "sprite_c2.png", ...).
+    /// Index i colours layer i+1; an empty list means the sprite is drawn as-is.
+    /// </summary>
+    [JsonIgnore, Column("SpriteColors")]
+    public string SpriteColorsJson
+    {
+        get => JsonConvert.SerializeObject(SpriteColors.Select(color => color.ToString()).ToList());
+        set => SpriteColors = (JsonConvert.DeserializeObject<List<string>>(value ?? "[]") ?? new List<string>())
+            .Select(text => Color.FromString(text, Color.White))
+            .ToList();
+    }
+
+    [JsonIgnore, NotMapped] public List<Color> SpriteColors { get; set; } = new List<Color>();
+
+    /// <summary>
+    /// Interchangeable parts of the sprite (hair, outfit, ...) with their colours, see <see cref="SpritePart"/>.
+    /// </summary>
+    [JsonIgnore, Column("SpriteParts")]
+    public string SpritePartsJson
+    {
+        get => JsonConvert.SerializeObject(
+            SpriteParts.Select(part => new StoredSpritePart(part.Category, part.Index, part.Colors.Select(color => color.ToString()).ToList())).ToList()
+        );
+        set => SpriteParts = (JsonConvert.DeserializeObject<List<StoredSpritePart>>(value ?? "[]") ?? new List<StoredSpritePart>())
+            .Select(stored => new SpritePart(stored.Category, stored.Index, (stored.Colors ?? new List<string>()).Select(text => Color.FromString(text, Color.White)).ToArray()))
+            .ToList();
+    }
+
+    [JsonIgnore, NotMapped] public List<SpritePart> SpriteParts { get; set; } = new List<SpritePart>();
+
+    private sealed record StoredSpritePart(string Category, int Index, List<string> Colors);
+
+    #endregion
+
     #region Titles
 
     [JsonIgnore, Column("UnlockedTitles")]
@@ -8432,9 +8580,197 @@ public partial class Player : Entity
     public bool RemoveTitle()
     {
         EquippedTitleId = Guid.Empty;
-        HeaderLabel = new Label(string.Empty, HeaderLabel.Color);
+    HeaderLabel = new Label(string.Empty, HeaderLabel.Color);
         PacketSender.SendEntityDataToProximity(this);
         PacketSender.SendUnlockedTitles(this);
+
+        return true;
+    }
+
+    #endregion
+
+    #region Mounts
+
+    [JsonIgnore, Column("UnlockedMounts")]
+    public string UnlockedMountsJson
+    {
+        get => JsonConvert.SerializeObject(UnlockedMountIds);
+        set => UnlockedMountIds = JsonConvert.DeserializeObject<List<Guid>>(value ?? "[]") ?? new List<Guid>();
+    }
+
+    [JsonIgnore, NotMapped] public List<Guid> UnlockedMountIds { get; set; } = new List<Guid>();
+
+    /// <summary>The mount that will be ridden the next time the player mounts up.</summary>
+    public Guid ActiveMountId { get; set; } = Guid.Empty;
+
+    /// <summary>
+    /// Whether the player is currently riding <see cref="ActiveMountId"/>. Not persisted: players always start
+    /// dismounted on login, same as most MMOs, to avoid ever loading in stuck on a mount that no longer exists.
+    /// </summary>
+    [JsonIgnore, NotMapped] public bool IsMounted { get; private set; }
+
+    /// <summary>
+    /// Unlocks a mount for this player if it exists and isn't already unlocked. Does not mount it.
+    /// </summary>
+    public bool UnlockMount(Guid mountId)
+    {
+        if (mountId == Guid.Empty || MountDescriptor.Get(mountId) is null)
+        {
+            return false;
+        }
+
+        if (UnlockedMountIds.Contains(mountId))
+        {
+            return false;
+        }
+
+        UnlockedMountIds.Add(mountId);
+        if (ActiveMountId == Guid.Empty)
+        {
+            // convenience: a player's first mount is selected automatically so "unlock then ride" just works
+            ActiveMountId = mountId;
+        }
+
+        PacketSender.SendUnlockedMounts(this);
+
+        return true;
+    }
+
+    /// <summary>
+    /// Picks which unlocked mount <see cref="Mount"/> will ride. Pass <see cref="Guid.Empty"/> to clear the
+    /// selection (dismounting if currently mounted).
+    /// </summary>
+    public bool SetActiveMount(Guid mountId)
+    {
+        if (mountId != Guid.Empty && (!UnlockedMountIds.Contains(mountId) || MountDescriptor.Get(mountId) is null))
+        {
+            return false;
+        }
+
+        ActiveMountId = mountId;
+        if (mountId == Guid.Empty)
+        {
+            Dismount();
+        }
+
+        PacketSender.SendUnlockedMounts(this);
+
+        return true;
+    }
+
+    /// <summary>Mounts up if dismounted, dismounts if mounted.</summary>
+    public bool ToggleMount() => IsMounted ? Dismount() : Mount();
+
+    /// <summary>
+    /// Starts riding <see cref="ActiveMountId"/>. Fails silently (like most action gates in this codebase) if the
+    /// player has nothing selected, is already mounted, or is mid-cast/blocking.
+    /// </summary>
+    public bool Mount()
+    {
+        if (IsMounted || ActiveMountId == Guid.Empty || MountDescriptor.Get(ActiveMountId) is null)
+        {
+            return false;
+        }
+
+        if (IsCasting || IsBlocking)
+        {
+            return false;
+        }
+
+        IsMounted = true;
+        PacketSender.SendEntityDataToProximity(this);
+
+        return true;
+    }
+
+    /// <summary>
+    /// Stops riding. Combat (see <see cref="Entity.TryAttack(Entity, Framework.Core.GameObjects.Items.ItemDescriptor, DamageType, Enums.Stat, double, double, bool)"/>)
+    /// dismounts automatically, same as most MMOs.
+    /// </summary>
+    public bool Dismount()
+    {
+        if (!IsMounted)
+        {
+            return false;
+        }
+
+        IsMounted = false;
+        PacketSender.SendEntityDataToProximity(this);
+
+        return true;
+    }
+
+    /// <summary>Riding is faster: the mount's speed bonus shortens the time it takes to cross one tile.</summary>
+    public override float GetMovementTime()
+    {
+        var time = base.GetMovementTime();
+        if (IsMounted && MountDescriptor.Get(ActiveMountId) is { } mount && mount.SpeedBonus > 0)
+        {
+            time /= 1f + mount.SpeedBonus / 100f;
+        }
+
+        return time;
+    }
+
+    #endregion
+
+    #region Achievements
+
+    [JsonIgnore, Column("UnlockedAchievements")]
+    public string UnlockedAchievementsJson
+    {
+        get => JsonConvert.SerializeObject(UnlockedAchievements);
+        set => UnlockedAchievements = JsonConvert.DeserializeObject<Dictionary<Guid, long>>(value ?? "{}") ?? new Dictionary<Guid, long>();
+    }
+
+    /// <summary>Achievement id -> the UTC unix time (ms) it was unlocked at.</summary>
+    [JsonIgnore, NotMapped] public Dictionary<Guid, long> UnlockedAchievements { get; set; } = new Dictionary<Guid, long>();
+
+    /// <summary>
+    /// Unlocks an achievement for this player if it exists and isn't already unlocked, granting its rewards
+    /// and announcing it in chat. Returns false if there was nothing to unlock.
+    /// </summary>
+    public bool UnlockAchievement(Guid achievementId)
+    {
+        if (achievementId == Guid.Empty || AchievementDescriptor.Get(achievementId) is not { } achievement)
+        {
+            return false;
+        }
+
+        if (UnlockedAchievements.ContainsKey(achievementId))
+        {
+            return false;
+        }
+
+        UnlockedAchievements[achievementId] = Timing.Global.MillisecondsUtc;
+
+        if (achievement.RewardExperience > 0)
+        {
+            GiveExperience(achievement.RewardExperience);
+        }
+
+        if (achievement.RewardItemId != Guid.Empty && achievement.RewardItemQuantity > 0 && ItemDescriptor.Get(achievement.RewardItemId) != null)
+        {
+            TryGiveItem(achievement.RewardItemId, achievement.RewardItemQuantity, ItemHandling.Overflow, true);
+        }
+
+        if (achievement.RewardTitleId != Guid.Empty)
+        {
+            UnlockTitle(achievement.RewardTitleId);
+        }
+
+        if (achievement.RewardMountId != Guid.Empty)
+        {
+            UnlockMount(achievement.RewardMountId);
+        }
+
+        PacketSender.SendUnlockedAchievements(this);
+        PacketSender.SendChatMsg(
+            this,
+            Strings.Achievements.Unlocked.ToString(achievement.Name),
+            ChatMessageType.Notice,
+            CustomColors.Alerts.Accepted
+        );
 
         return true;
     }

@@ -45,6 +45,8 @@ public abstract partial class PlayerContext : IntersectDbContext<PlayerContext>,
 
     public DbSet<GuildBankSlot> Guild_Bank { get; set; }
 
+    public DbSet<GuildFurniturePlacement> Guild_Furniture { get; set; }
+
     public DbSet<GuildVariable> Guild_Variables { get; set; }
 
     public DbSet<UserVariable> User_Variables { get; set; }

@@ -203,9 +203,66 @@ public sealed partial class ClientConfiguration : IConfiguration<ClientConfigura
     public string? UpdateUrl { get; set; }
 
     /// <summary>
-    /// Sets a custom mouse cursor.
+    /// The language code the client's UI text is loaded in (e.g. "en", "fr"). Looks for a
+    /// <c>client_strings.{Language}.json</c> file alongside the default <c>client_strings.json</c> -
+    /// falls back to English if that file doesn't exist yet for the chosen language.
+    /// </summary>
+    public string Language { get; set; } = "en";
+
+    /// <summary>
+    /// Sets a custom mouse cursor for the default state. Used as the fallback for any of the
+    /// <c>MouseCursor*</c> fields below that are left unset, so a game only needs to supply this one
+    /// texture to get a fully custom cursor, and can add the others incrementally.
     /// </summary>
     public string? MouseCursor { get; set; }
+
+    /// <summary>
+    /// Custom cursor texture shown while hovering a clickable/interactive UI element (buttons, etc.).
+    /// Falls back to <see cref="MouseCursor"/> when unset.
+    /// </summary>
+    public string? MouseCursorHand { get; set; }
+
+    /// <summary>
+    /// Custom cursor texture shown while resizing a window from a corner or edge that grows/shrinks it
+    /// in both directions at once. Falls back to <see cref="MouseCursor"/> when unset.
+    /// </summary>
+    public string? MouseCursorSizeAll { get; set; }
+
+    /// <summary>
+    /// Custom cursor texture shown while resizing a window vertically. Falls back to
+    /// <see cref="MouseCursor"/> when unset.
+    /// </summary>
+    public string? MouseCursorSizeNs { get; set; }
+
+    /// <summary>
+    /// Custom cursor texture shown while resizing a window horizontally. Falls back to
+    /// <see cref="MouseCursor"/> when unset.
+    /// </summary>
+    public string? MouseCursorSizeWe { get; set; }
+
+    /// <summary>
+    /// Custom cursor texture shown while resizing a window diagonally (top-left/bottom-right corner).
+    /// Falls back to <see cref="MouseCursor"/> when unset.
+    /// </summary>
+    public string? MouseCursorSizeNwse { get; set; }
+
+    /// <summary>
+    /// Custom cursor texture shown while resizing a window diagonally (top-right/bottom-left corner).
+    /// Falls back to <see cref="MouseCursor"/> when unset.
+    /// </summary>
+    public string? MouseCursorSizeNesw { get; set; }
+
+    /// <summary>
+    /// Custom cursor texture shown while dragging something over a drop target that won't accept it.
+    /// Falls back to <see cref="MouseCursor"/> when unset.
+    /// </summary>
+    public string? MouseCursorNo { get; set; }
+
+    /// <summary>
+    /// Custom cursor texture shown while dragging a UI element (an inventory item onto a hotbar slot,
+    /// for example). Falls back to <see cref="MouseCursor"/> when unset.
+    /// </summary>
+    public string? MouseCursorDrag { get; set; }
 
     /// <summary>
     /// Determines the time it takes to fade-in or fade-out a song when no other instructions are given.

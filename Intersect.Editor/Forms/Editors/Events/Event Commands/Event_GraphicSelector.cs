@@ -51,7 +51,122 @@ public partial class EventGraphicSelector : UserControl
         mNewRouteAction = newMoveRouteAction;
         mLoading = false;
         mTmpGraphic.CopyFrom(mEditingGraphic);
+        InitIdleMotionControls();
         UpdatePreview();
+    }
+
+    private DarkUI.Controls.DarkComboBox cmbIdleMotionType;
+
+    private DarkUI.Controls.DarkNumericUpDown nudIdleMotionSpeed;
+
+    private DarkUI.Controls.DarkNumericUpDown nudIdleMotionAmplitude;
+
+    private DarkUI.Controls.DarkNumericUpDown nudIdleMotionPivot;
+
+    // Procedural idle animation (sway/float/bounce) - purely code-driven, no hand-drawn frames needed.
+    // Added as a second row inside grpSelector; grpSelector grows taller and grpPreview shrinks/shifts
+    // down by the same amount so the overall dialog size stays unchanged.
+    private void InitIdleMotionControls()
+    {
+        const int grow = 30;
+        grpSelector.Height += grow;
+        grpPreview.Location = new System.Drawing.Point(grpPreview.Location.X, grpPreview.Location.Y + grow);
+        grpPreview.Height -= grow;
+
+        var lblIdleMotionType = new DarkUI.Controls.DarkLabel
+        {
+            Text = "Idle Motion:",
+            Location = new System.Drawing.Point(6, 51),
+            Size = new System.Drawing.Size(77, 13),
+            ForeColor = System.Drawing.Color.Gainsboro,
+        };
+
+        cmbIdleMotionType = new DarkUI.Controls.DarkComboBox
+        {
+            Location = new System.Drawing.Point(89, 48),
+            Size = new System.Drawing.Size(121, 21),
+            DropDownStyle = ComboBoxStyle.DropDownList,
+        };
+        cmbIdleMotionType.Items.AddRange(System.Enum.GetNames(typeof(IdleMotionType)));
+        cmbIdleMotionType.SelectedIndex = (int)mTmpGraphic.IdleMotionType;
+        cmbIdleMotionType.SelectedIndexChanged += (_, _) =>
+            mTmpGraphic.IdleMotionType = (IdleMotionType)cmbIdleMotionType.SelectedIndex;
+
+        var lblSpeed = new DarkUI.Controls.DarkLabel
+        {
+            Text = "Speed:",
+            Location = new System.Drawing.Point(216, 51),
+            Size = new System.Drawing.Size(40, 13),
+            ForeColor = System.Drawing.Color.Gainsboro,
+        };
+
+        nudIdleMotionSpeed = new DarkUI.Controls.DarkNumericUpDown
+        {
+            Location = new System.Drawing.Point(258, 48),
+            Size = new System.Drawing.Size(60, 21),
+            DecimalPlaces = 1,
+            Increment = 0.1M,
+            Minimum = 0.1M,
+            Maximum = 10M,
+            Value = (decimal)mTmpGraphic.IdleMotionSpeed,
+        };
+        nudIdleMotionSpeed.ValueChanged += (_, _) =>
+            mTmpGraphic.IdleMotionSpeed = (float)nudIdleMotionSpeed.Value;
+
+        var lblAmplitude = new DarkUI.Controls.DarkLabel
+        {
+            Text = "Amplitude:",
+            Location = new System.Drawing.Point(326, 51),
+            Size = new System.Drawing.Size(60, 13),
+            ForeColor = System.Drawing.Color.Gainsboro,
+        };
+
+        nudIdleMotionAmplitude = new DarkUI.Controls.DarkNumericUpDown
+        {
+            Location = new System.Drawing.Point(392, 48),
+            Size = new System.Drawing.Size(60, 21),
+            DecimalPlaces = 1,
+            Increment = 0.5M,
+            Minimum = 0M,
+            Maximum = 90M,
+            Value = (decimal)mTmpGraphic.IdleMotionAmplitude,
+        };
+        nudIdleMotionAmplitude.ValueChanged += (_, _) =>
+            mTmpGraphic.IdleMotionAmplitude = (float)nudIdleMotionAmplitude.Value;
+
+        var lblPivot = new DarkUI.Controls.DarkLabel
+        {
+            Text = "Pivot:",
+            Location = new System.Drawing.Point(464, 51),
+            Size = new System.Drawing.Size(36, 13),
+            ForeColor = System.Drawing.Color.Gainsboro,
+        };
+
+        nudIdleMotionPivot = new DarkUI.Controls.DarkNumericUpDown
+        {
+            Location = new System.Drawing.Point(504, 48),
+            Size = new System.Drawing.Size(60, 21),
+            DecimalPlaces = 0,
+            Increment = 5M,
+            Minimum = 0M,
+            Maximum = 100M,
+            Value = (decimal)mTmpGraphic.IdleMotionPivotPercent,
+        };
+        nudIdleMotionPivot.ValueChanged += (_, _) =>
+            mTmpGraphic.IdleMotionPivotPercent = (float)nudIdleMotionPivot.Value;
+        new ToolTip().SetToolTip(
+            nudIdleMotionPivot,
+            "0 = pivote depuis le haut, 100 = pivote depuis le bas (comme un tronc d'arbre), 50 = tout le sprite bascule en bloc."
+        );
+
+        grpSelector.Controls.Add(lblIdleMotionType);
+        grpSelector.Controls.Add(cmbIdleMotionType);
+        grpSelector.Controls.Add(lblSpeed);
+        grpSelector.Controls.Add(nudIdleMotionSpeed);
+        grpSelector.Controls.Add(lblAmplitude);
+        grpSelector.Controls.Add(nudIdleMotionAmplitude);
+        grpSelector.Controls.Add(lblPivot);
+        grpSelector.Controls.Add(nudIdleMotionPivot);
     }
 
     private void InitLocalization()

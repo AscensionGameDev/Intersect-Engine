@@ -10,6 +10,8 @@ using Intersect.Framework.Core.GameObjects.Events.Commands;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Achievements;
+using Intersect.Framework.Core.GameObjects.Mounts;
 using Intersect.Framework.Core.GameObjects.Pets;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Variables;
@@ -1228,6 +1230,16 @@ public static partial class CommandPrinter
         return command.PetId == Guid.Empty
             ? Strings.EventCommandList.removepet
             : Strings.EventCommandList.changepet.ToString(PetDescriptor.GetName(command.PetId));
+    }
+
+    private static string GetCommandText(UnlockMountCommand command, MapInstance map)
+    {
+        return Strings.EventCommandList.unlockmount.ToString(MountDescriptor.GetName(command.MountId));
+    }
+
+    private static string GetCommandText(UnlockAchievementCommand command, MapInstance map)
+    {
+        return Strings.EventCommandList.unlockachievement.ToString(AchievementDescriptor.GetName(command.AchievementId));
     }
 
     private static string GetCommandText(EnterDungeonCommand command, MapInstance map)

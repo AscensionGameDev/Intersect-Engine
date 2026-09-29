@@ -6,6 +6,7 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.NPCs;
@@ -18,6 +19,11 @@ namespace Intersect.Client.Interface.Game;
 
 public partial class QuestsWindow
 {
+    /// <summary>
+    /// True when the player's client is set to English - quest text falls back to English translations
+    /// (when filled in by the map/quest author) instead of the base (originally-authored) text.
+    /// </summary>
+    private static bool PreferEnglish => string.Equals(ClientConfiguration.Instance.Language, "en", StringComparison.OrdinalIgnoreCase);
 
     private readonly Button mBackButton;
 
@@ -81,8 +87,8 @@ public partial class QuestsWindow
         if (mSelectedQuest != null)
         {
             _ = new InputBox(
-                title: Strings.QuestLog.AbandonTitle.ToString(mSelectedQuest.Name),
-                prompt: Strings.QuestLog.AbandonPrompt.ToString(mSelectedQuest.Name),
+                title: Strings.QuestLog.AbandonTitle.ToString(mSelectedQuest.GetLocalizedName(PreferEnglish)),
+                prompt: Strings.QuestLog.AbandonPrompt.ToString(mSelectedQuest.GetLocalizedName(PreferEnglish)),
                 inputType: InputType.YesNo,
                 userData: mSelectedQuest.Id,
                 onSubmit: (s, e) =>
@@ -199,7 +205,7 @@ public partial class QuestsWindow
                     var sortedList = dict[category].OrderBy(l => l.Item2).ThenBy(l => l.Item1.OrderValue).ToList();
                     foreach (var qst in sortedList)
                     {
-                        AddQuestToList(qst.Item1.Name, qst.Item3, qst.Item1.Id, true);
+                        AddQuestToList(qst.Item1.GetLocalizedName(PreferEnglish), qst.Item3, qst.Item1.Id, true);
                     }
                 }
             }
@@ -209,7 +215,7 @@ public partial class QuestsWindow
                 var sortedList = dict[""].OrderBy(l => l.Item2).ThenBy(l => l.Item1.OrderValue).ToList();
                 foreach (var qst in sortedList)
                 {
-                    AddQuestToList(qst.Item1.Name, qst.Item3, qst.Item1.Id, false);
+                    AddQuestToList(qst.Item1.GetLocalizedName(PreferEnglish), qst.Item3, qst.Item1.Id, false);
                 }
             }
 
@@ -344,9 +350,10 @@ public partial class QuestsWindow
                     mQuestStatus.SetTextColor(CustomColors.QuestWindow.InProgress, ComponentState.Normal);
                     mQuestDescTemplateLabel.SetTextColor(CustomColors.QuestWindow.QuestDesc, ComponentState.Normal);
 
-                    if (mSelectedQuest.InProgressDescription.Length > 0)
+                    var inProgressDescription = mSelectedQuest.GetLocalizedInProgressDescription(PreferEnglish);
+                    if (inProgressDescription.Length > 0)
                     {
-                        mQuestDescLabel.AddText(mSelectedQuest.InProgressDescription, mQuestDescTemplateLabel);
+                        mQuestDescLabel.AddText(inProgressDescription, mQuestDescTemplateLabel);
 
                         mQuestDescLabel.AddLineBreak();
                         mQuestDescLabel.AddLineBreak();
@@ -359,9 +366,12 @@ public partial class QuestsWindow
                     {
                         if (mSelectedQuest.Tasks[i].Id == Globals.Me.QuestProgress[mSelectedQuest.Id].TaskId)
                         {
-                            if (mSelectedQuest.Tasks[i].Description.Length > 0)
+                            var taskDescription = PreferEnglish && !string.IsNullOrWhiteSpace(mSelectedQuest.Tasks[i].DescriptionEn)
+                                ? mSelectedQuest.Tasks[i].DescriptionEn
+                                : mSelectedQuest.Tasks[i].Description;
+                            if (taskDescription.Length > 0)
                             {
-                                mQuestDescLabel.AddText(mSelectedQuest.Tasks[i].Description, mQuestDescTemplateLabel);
+                                mQuestDescLabel.AddText(taskDescription, mQuestDescTemplateLabel);
 
                                 mQuestDescLabel.AddLineBreak();
                                 mQuestDescLabel.AddLineBreak();
@@ -401,7 +411,7 @@ public partial class QuestsWindow
                         {
                             mQuestStatus.SetText(Strings.QuestLog.Completed);
                             mQuestStatus.SetTextColor(CustomColors.QuestWindow.Completed, ComponentState.Normal);
-                            mQuestDescLabel.AddText(mSelectedQuest.EndDescription, mQuestDescTemplateLabel);
+                            mQuestDescLabel.AddText(mSelectedQuest.GetLocalizedEndDescription(PreferEnglish), mQuestDescTemplateLabel);
                         }
                     }
                     else
@@ -411,7 +421,7 @@ public partial class QuestsWindow
                         {
                             mQuestStatus.SetText(Strings.QuestLog.NotStarted);
                             mQuestStatus.SetTextColor(CustomColors.QuestWindow.NotStarted, ComponentState.Normal);
-                            mQuestDescLabel.AddText(mSelectedQuest.BeforeDescription, mQuestDescTemplateLabel);
+                            mQuestDescLabel.AddText(mSelectedQuest.GetLocalizedBeforeDescription(PreferEnglish), mQuestDescTemplateLabel);
 
                             mQuitButton?.Hide();
                         }
@@ -425,13 +435,13 @@ public partial class QuestsWindow
                 {
                     mQuestStatus.SetText(Strings.QuestLog.NotStarted);
                     mQuestStatus.SetTextColor(CustomColors.QuestWindow.NotStarted, ComponentState.Normal);
-                    mQuestDescLabel.AddText(mSelectedQuest.BeforeDescription, mQuestDescTemplateLabel);
+                    mQuestDescLabel.AddText(mSelectedQuest.GetLocalizedBeforeDescription(PreferEnglish), mQuestDescTemplateLabel);
                 }
             }
 
             _questList.Hide();
             mQuestTitle.IsHidden = false;
-            mQuestTitle.Text = mSelectedQuest.Name;
+            mQuestTitle.Text = mSelectedQuest.GetLocalizedName(PreferEnglish);
             mQuestDescArea.IsHidden = false;
             mQuestDescLabel.Width = mQuestDescArea.Width - mQuestDescArea.VerticalScrollBar.Width;
             mQuestDescLabel.SizeToChildren(false, true);

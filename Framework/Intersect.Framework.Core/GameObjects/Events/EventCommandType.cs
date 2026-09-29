@@ -139,6 +139,10 @@ public enum EventCommandType
 
     ChangePet,
 
+    UnlockMount,
+
+    UnlockAchievement,
+
     //Dungeons
     EnterDungeon,
     CompleteDungeon,

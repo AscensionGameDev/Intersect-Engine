@@ -17,6 +17,50 @@ namespace Intersect.Server.Migrations.Sqlite.Game
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
 
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Achievements.AchievementDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Folder")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Hidden")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Icon")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("RewardExperience")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("RewardItemId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RewardItemQuantity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("RewardMountId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("RewardTitleId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("TimeCreated")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Achievements");
+                });
+
             modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Animations.AnimationDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
@@ -122,6 +166,9 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.Property<int>("AccessType")
                         .HasColumnType("INTEGER");
 
+                    b.Property<Guid>("BossNpcId")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("CooldownSeconds")
                         .HasColumnType("INTEGER");
 
@@ -143,6 +190,18 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.Property<int>("ExitDelaySeconds")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("FloorTileIsAutotile")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("FloorTileX")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("FloorTileY")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("FloorTilesetId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Folder")
                         .HasColumnType("TEXT");
 
@@ -152,18 +211,46 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.Property<int>("Lives")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("MaxNpcsPerRoom")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("MaxPlayers")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MaxRoomSize")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MaxRooms")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MinNpcsPerRoom")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("MinPlayers")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("MinRoomSize")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MinRooms")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("MonsterPoolNpcIdsJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("MonsterPoolNpcIds");
+
                     b.Property<string>("Name")
                         .HasColumnType("TEXT")
                         .HasColumnOrder(0);
 
+                    b.Property<bool>("ProceduralGeneration")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("RequiredLevel")
                         .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("RewardAchievementId")
+                        .HasColumnType("TEXT");
 
                     b.Property<long>("RewardExperience")
                         .HasColumnType("INTEGER");
@@ -180,6 +267,18 @@ namespace Intersect.Server.Migrations.Sqlite.Game
 
                     b.Property<int>("TimeLimitSeconds")
                         .HasColumnType("INTEGER");
+
+                    b.Property<bool>("WallTileIsAutotile")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("WallTileX")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("WallTileY")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("WallTilesetId")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -226,6 +325,83 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.HasKey("Id");
 
                     b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Factions.FactionDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Folder")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("JsonColor")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Color");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("StartDir")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("StartMapId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("StartX")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("StartY")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("TimeCreated")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Factions");
+                });
+
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Furniture.FurnitureDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("DefaultDirection")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Folder")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(0);
+
+                    b.Property<bool>("Passable")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Sprite")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TileX")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TileY")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("TilesetId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("TimeCreated")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("UseTilesetSprite")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Furniture");
                 });
 
             modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Items.EquipmentProperties", b =>
@@ -369,6 +545,10 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.Property<int>("MaxInventoryStack")
                         .HasColumnType("INTEGER");
 
+                    b.Property<Guid>("MountId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Mount");
+
                     b.Property<string>("Name")
                         .HasColumnType("TEXT")
                         .HasColumnOrder(0);
@@ -380,6 +560,10 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.Property<string>("PercentageVitalsJson")
                         .HasColumnType("TEXT")
                         .HasColumnName("PercentageVitalsGiven");
+
+                    b.Property<Guid>("PetId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Pet");
 
                     b.Property<int>("Price")
                         .HasColumnType("INTEGER");
@@ -451,6 +635,10 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.Property<Guid>("Id")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("BlockedTilesData")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("BlockedTiles");
+
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
@@ -476,6 +664,32 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.ToTable("MapFolders");
                 });
 
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Mounts.MountDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Folder")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("SpeedBonus")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Sprite")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("TimeCreated")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Mounts");
+                });
+
             modelBuilder.Entity("Intersect.Framework.Core.GameObjects.NPCs.NPCDescriptor", b =>
                 {
                     b.Property<Guid>("Id")
@@ -499,6 +713,9 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("AttackSpeedValue")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CombatStyle")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("CraftsJson")
@@ -576,6 +793,9 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.Property<Guid>("OnDeathPartyEventId")
                         .HasColumnType("TEXT")
                         .HasColumnName("OnDeathPartyEvent");
+
+                    b.Property<int>("PatrolRadius")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("PlayerCanAttackConditionsJson")
                         .HasColumnType("TEXT")
@@ -695,6 +915,9 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.Property<int>("DamageType")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
                     b.Property<long>("ExpIncrease")
                         .HasColumnType("INTEGER");
 
@@ -796,6 +1019,18 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.Property<string>("Folder")
                         .HasColumnType("TEXT");
 
+                    b.Property<float>("IdleMotionAmplitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<float>("IdleMotionPivotPercent")
+                        .HasColumnType("REAL");
+
+                    b.Property<float>("IdleMotionSpeed")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("IdleMotionType")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("JsonDrops")
                         .HasColumnType("TEXT")
                         .HasColumnName("Drops");
@@ -842,6 +1077,53 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.HasKey("Id");
 
                     b.ToTable("Resources");
+                });
+
+            modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Territories.TerritoryDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("CaptureTimeSeconds")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Folder")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("MapId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("Radius")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RewardExperience")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RewardGold")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RewardTickSeconds")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("TimeCreated")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("X")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Y")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Territories");
                 });
 
             modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Titles.TitleDescriptor", b =>
@@ -1075,6 +1357,9 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.Property<int>("Knockback")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("MouseAimedBehavior")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .HasColumnType("TEXT")
                         .HasColumnOrder(0);
@@ -1115,6 +1400,9 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.Property<string>("BeforeDescription")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("BeforeDescriptionEn")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("CompletedCategory")
                         .HasColumnType("TEXT");
 
@@ -1122,6 +1410,9 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("EndDescription")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("EndDescriptionEn")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("EndEventId")
@@ -1135,6 +1426,9 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                         .HasColumnType("TEXT");
 
                     b.Property<string>("InProgressDescription")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("InProgressDescriptionEn")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("JsonRequirements")
@@ -1151,6 +1445,9 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                         .HasColumnType("TEXT")
                         .HasColumnOrder(0);
 
+                    b.Property<string>("NameEn")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("OrderValue")
                         .HasColumnType("INTEGER");
 
@@ -1160,7 +1457,17 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.Property<bool>("Repeatable")
                         .HasColumnType("INTEGER");
 
+                    b.Property<long>("RewardCurrency")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("RewardItemsJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("RewardItems");
+
                     b.Property<string>("StartDescription")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("StartDescriptionEn")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("StartEventId")
@@ -1300,6 +1607,29 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.ToTable("Spells");
                 });
 
+            modelBuilder.Entity("Intersect.Server.Dungeons.DungeonLeaderboardEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("AchievedAt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("DungeonId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PlayerName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("TimeMs")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DungeonLeaderboardEntries");
+                });
+
             modelBuilder.Entity("Intersect.Server.Maps.MapController", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1352,6 +1682,12 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.Property<string>("LightsJson")
                         .HasColumnType("TEXT")
                         .HasColumnName("Lights");
+
+                    b.Property<int>("MaxLevel")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MinLevel")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Music")
                         .HasColumnType("TEXT");
@@ -1423,6 +1759,23 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.HasKey("Id");
 
                     b.ToTable("Maps");
+                });
+
+            modelBuilder.Entity("Intersect.Server.Territories.TerritoryControl", b =>
+                {
+                    b.Property<Guid>("TerritoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("CapturedAt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("ControllingFactionId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("TerritoryId");
+
+                    b.ToTable("TerritoryControls");
                 });
 
             modelBuilder.Entity("Intersect.Framework.Core.GameObjects.Animations.AnimationDescriptor", b =>
@@ -1736,6 +2089,22 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                                 .HasForeignKey("SpellDescriptorId");
                         });
 
+                    b.OwnsOne("Intersect.GameObjects.SpellCompanionCommandDescriptor", "CompanionCommand", b1 =>
+                        {
+                            b1.Property<Guid>("SpellDescriptorId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<bool>("Retreat")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("SpellDescriptorId");
+
+                            b1.ToTable("Spells");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SpellDescriptorId");
+                        });
+
                     b.OwnsOne("Intersect.GameObjects.SpellDashDescriptor", "Dash", b1 =>
                         {
                             b1.Property<Guid>("SpellDescriptorId")
@@ -1751,6 +2120,53 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                                 .HasColumnType("INTEGER");
 
                             b1.Property<bool>("IgnoreZDimensionAttributes")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("SpellDescriptorId");
+
+                            b1.ToTable("Spells");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SpellDescriptorId");
+                        });
+
+                    b.OwnsOne("Intersect.GameObjects.SpellPassiveBondDescriptor", "PassiveBond", b1 =>
+                        {
+                            b1.Property<Guid>("SpellDescriptorId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<double>("BonusDamagePercent")
+                                .HasColumnType("REAL");
+
+                            b1.Property<int>("WindowMs")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("SpellDescriptorId");
+
+                            b1.ToTable("Spells");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SpellDescriptorId");
+                        });
+
+                    b.OwnsOne("Intersect.GameObjects.SpellSummonDescriptor", "Summon", b1 =>
+                        {
+                            b1.Property<Guid>("SpellDescriptorId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<int>("Amount")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<bool>("DespawnOnOwnerDeath")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("Duration")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<Guid>("NpcId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<bool>("ReplaceExisting")
                                 .HasColumnType("INTEGER");
 
                             b1.HasKey("SpellDescriptorId");
@@ -1788,7 +2204,13 @@ namespace Intersect.Server.Migrations.Sqlite.Game
 
                     b.Navigation("Combat");
 
+                    b.Navigation("CompanionCommand");
+
                     b.Navigation("Dash");
+
+                    b.Navigation("PassiveBond");
+
+                    b.Navigation("Summon");
 
                     b.Navigation("Warp");
                 });

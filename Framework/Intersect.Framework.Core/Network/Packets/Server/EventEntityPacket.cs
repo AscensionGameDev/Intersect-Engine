@@ -39,4 +39,11 @@ public partial class EventEntityPacket : EntityPacket
     [Key(30)]
     public EventTrigger Trigger { get; set; }
 
+    /// <summary>
+    /// 0 = no quest tie to this event for the viewing player, 1 = offers a quest they can start
+    /// (draw a yellow "!"), 2 = they have a quest in progress that finishes here (draw a blue "?").
+    /// </summary>
+    [Key(31)]
+    public byte QuestMarker { get; set; }
+
 }

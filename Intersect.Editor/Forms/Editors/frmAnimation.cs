@@ -55,7 +55,27 @@ public partial class FrmAnimation : EditorForm
         InitializeComponent();
         Icon = Program.Icon;
 
+        FixSoundCheckboxLayout();
+
         lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
+    }
+
+    // These checkboxes were sized for their (short) English text and get clipped by longer translations
+    // (e.g. French) since they don't wrap. Widen to the available space before btnSwap, allow 2 lines,
+    // and shift the checkbox below down to match.
+    private void FixSoundCheckboxLayout()
+    {
+        var newWidth = btnSwap.Left - chkCompleteSoundPlayback.Left - 10;
+        var newHeight = 34;
+
+        chkCompleteSoundPlayback.AutoSize = false;
+        chkCompleteSoundPlayback.Width = newWidth;
+        chkCompleteSoundPlayback.Height = newHeight;
+
+        var shift = newHeight - 20;
+        chkLoopSoundDuringPreview.AutoSize = false;
+        chkLoopSoundDuringPreview.Width = newWidth;
+        chkLoopSoundDuringPreview.Top += shift;
     }
 
     private void AssignEditorItem(Guid id)

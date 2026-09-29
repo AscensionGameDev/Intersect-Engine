@@ -209,19 +209,34 @@ public partial class HotbarItem : SlotItem
             return false;
         }
 
-        var targetNode = Interface.FindComponentUnderCursor();
+        // We're the drop target (this hotbar slot), so what matters is what's actually being dragged: walk up
+        // from the drag's source control (not "what's under the cursor", which is just us) to find it.
+        var sourceNode = DragAndDrop.SourceControl;
 
-        // Find the first parent acceptable in that tree that can accept the package
-        while (targetNode != default)
+        while (sourceNode != default)
         {
-            if (targetNode is HotbarItem hotbarItem)
+            switch (sourceNode)
             {
-                player.HotbarSwap(SlotIndex, hotbarItem.SlotIndex);
-                return true;
-            }
-            else
-            {
-                targetNode = targetNode.Parent;
+                case HotbarItem hotbarItem:
+                    if (hotbarItem.SlotIndex == SlotIndex)
+                    {
+                        return false;
+                    }
+
+                    player.HotbarSwap(SlotIndex, hotbarItem.SlotIndex);
+                    return true;
+
+                case Inventory.InventoryItem inventoryItem:
+                    player.AddToHotbar(SlotIndex, 0, inventoryItem.SlotIndex);
+                    return true;
+
+                case Spells.SpellItem spellItem:
+                    player.AddToHotbar(SlotIndex, 1, spellItem.SlotIndex);
+                    return true;
+
+                default:
+                    sourceNode = sourceNode.Parent;
+                    break;
             }
         }
 

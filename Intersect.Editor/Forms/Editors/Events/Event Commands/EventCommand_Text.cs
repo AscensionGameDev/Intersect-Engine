@@ -1,4 +1,5 @@
 using Intersect.Editor.Content;
+using Intersect.Editor.Forms.Editors;
 using Intersect.Editor.Localization;
 using Intersect.Framework.Core.GameObjects.Events.Commands;
 using Intersect.Utilities;
@@ -26,6 +27,16 @@ public partial class EventCommandText : UserControl
         cmbFace.SelectedIndex = Math.Max(0, cmbFace.Items.IndexOf(TextUtils.NullToNone(mMyCommand.Face)));
 
         UpdateFacePreview();
+
+        EditorFormHelper.AddTranslateEnButtonAbove(btnCancel, (_, _) =>
+        {
+            using var frm = new FrmTextTranslation(
+                "English Translation",
+                [("Text", mMyCommand.Text, mMyCommand.TextEn)],
+                results => mMyCommand.TextEn = results[0]
+            );
+            frm.ShowDialog();
+        }, matchReferenceSize: true);
     }
 
     private void InitLocalization()

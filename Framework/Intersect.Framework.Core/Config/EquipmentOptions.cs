@@ -8,6 +8,16 @@ public partial class EquipmentOptions
 
     public int ShieldSlot { get; set; } = 3;
 
+    /// <summary>
+    /// Index into <see cref="Slots"/> of the equipment slot used for Pet-type items. -1 disables the feature.
+    /// </summary>
+    public int PetSlot { get; set; } = -1;
+
+    /// <summary>
+    /// Index into <see cref="Slots"/> of the equipment slot used for Mount-type items. -1 disables the feature.
+    /// </summary>
+    public int MountSlot { get; set; } = -1;
+
     public List<string> Slots { get; set; } =
     [
         "Helmet",
@@ -52,6 +62,16 @@ public partial class EquipmentOptions
         if (ShieldSlot < -1 || ShieldSlot > Slots.Count - 1)
         {
             throw new Exception("Config Error: (ShieldSlot) was out of bounds!");
+        }
+
+        if (PetSlot < -1 || PetSlot > Slots.Count - 1)
+        {
+            throw new Exception("Config Error: (PetSlot) was out of bounds!");
+        }
+
+        if (MountSlot < -1 || MountSlot > Slots.Count - 1)
+        {
+            throw new Exception("Config Error: (MountSlot) was out of bounds!");
         }
 
         Paperdoll.Validate(this);

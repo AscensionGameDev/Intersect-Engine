@@ -5,6 +5,8 @@ using Intersect.Client.Entities.Projectiles;
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.Items;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.Territories;
+using Intersect.Framework.Core.GameObjects.Territories;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Interface.Menu;
 using Intersect.Client.Items;
@@ -338,6 +340,14 @@ internal sealed partial class PacketHandler
         }
 
         mapInstance.MarkLoadFinished();
+
+        // The server pushes guild hall furniture as soon as the player enters an instance, which can race
+        // ahead of this (client-pulled) map load - if the furniture packet arrived before this MapInstance
+        // existed it was silently dropped, so ask the server to resend it now that we're ready.
+        if (mapId == Globals.Me?.MapId)
+        {
+            PacketSender.SendRequestFurniture();
+        }
     }
 
     //MapPacket
@@ -591,6 +601,14 @@ internal sealed partial class PacketHandler
         en.DirectionFacing = (Direction)packet.Direction;
         en.Passable = packet.Passable;
         en.HideName = packet.HideName;
+
+        // The server sends this to correct a rejected/invalid move. If we'd already started the
+        // local walk animation toward the tile we just got denied, clear it here too - otherwise
+        // the leftover mid-step offset combines with the hard position snap into a visible double
+        // jolt instead of the entity just staying put.
+        en.IsMoving = false;
+        en.OffsetX = 0;
+        en.OffsetY = 0;
     }
 
     //EntityLeftPacket
@@ -1338,6 +1356,41 @@ internal sealed partial class PacketHandler
                 // Reverse the array again to match server, add item.. then  reverse again to get the right render order.
                 map.MapItems[packet.TileIndex].Add(mapItem);
             }
+        }
+    }
+
+    //FurnitureInstancesPacket
+    public void HandlePacket(IPacketSender packetSender, FurnitureInstancesPacket packet)
+    {
+        var map = MapInstance.Get(packet.MapId);
+        if (map == null)
+        {
+            return;
+        }
+
+        map.Furniture.Clear();
+        foreach (var furniture in packet.Furniture)
+        {
+            map.Furniture[furniture.Id] = new FurnitureInstance(furniture.Id, furniture.DescriptorId, furniture.X, furniture.Y, furniture.Direction);
+        }
+    }
+
+    //FurnitureInstanceUpdatePacket
+    public void HandlePacket(IPacketSender packetSender, FurnitureInstanceUpdatePacket packet)
+    {
+        var map = MapInstance.Get(packet.MapId);
+        if (map == null)
+        {
+            return;
+        }
+
+        if (packet.DescriptorId == Guid.Empty)
+        {
+            map.Furniture.Remove(packet.Id);
+        }
+        else
+        {
+            map.Furniture[packet.Id] = new FurnitureInstance(packet.Id, packet.DescriptorId, packet.X, packet.Y, packet.Direction);
         }
     }
 
@@ -2224,6 +2277,23 @@ internal sealed partial class PacketHandler
         }
     }
 
+    //DungeonLeaderboardPacket
+    public void HandlePacket(IPacketSender packetSender, DungeonLeaderboardPacket packet)
+    {
+        if (!Interface.Interface.HasInGameUI)
+        {
+            return;
+        }
+
+        Interface.Interface.EnqueueInGame(gameInterface => gameInterface.GameMenu?.UpdateDungeonLeaderboard(packet));
+    }
+
+    //TerritoryStatusPacket
+    public void HandlePacket(IPacketSender packetSender, TerritoryStatusPacket packet)
+    {
+        TerritoryHud.OnStatus(packet);
+    }
+
     //DungeonResultPacket
     public void HandlePacket(IPacketSender packetSender, DungeonResultPacket packet)
     {
@@ -2271,6 +2341,36 @@ internal sealed partial class PacketHandler
         Interface.Interface.EnqueueInGame(gameInterface => gameInterface.GameMenu?.UpdateTitlesList());
     }
 
+    //UnlockedMountsPacket
+    public void HandlePacket(IPacketSender packetSender, UnlockedMountsPacket packet)
+    {
+        if (Globals.Me == null)
+        {
+            return;
+        }
+
+        Globals.Me.UnlockedMountIds = packet.UnlockedMountIds;
+        Globals.Me.MountId = packet.ActiveMountId;
+    }
+
+    //UnlockedAchievementsPacket
+    public void HandlePacket(IPacketSender packetSender, UnlockedAchievementsPacket packet)
+    {
+        if (Globals.Me == null)
+        {
+            return;
+        }
+
+        Globals.Me.UnlockedAchievements = packet.UnlockedAchievements;
+
+        if (!Interface.Interface.HasInGameUI)
+        {
+            return;
+        }
+
+        Interface.Interface.EnqueueInGame(gameInterface => gameInterface.GameMenu?.UpdateAchievementsList());
+    }
+
     //FriendRequestPacket
     public void HandlePacket(IPacketSender packetSender, FriendRequestPacket packet)
     {
@@ -2297,7 +2397,9 @@ internal sealed partial class PacketHandler
                     characterPacket.Face,
                     characterPacket.Level,
                     characterPacket.ClassName,
-                    characterPacket.Equipment
+                    characterPacket.Equipment,
+                    characterPacket.SpriteColors ?? [],
+                    characterPacket.SpriteParts ?? []
                 )
             ),
         ];

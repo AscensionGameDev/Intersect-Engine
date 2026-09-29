@@ -1,4 +1,5 @@
 using System.Reflection;
+using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Conditions;
 using Intersect.Framework.Core.GameObjects.Conditions.ConditionMetadata;
@@ -21,7 +22,28 @@ namespace Intersect.Editor.Localization;
 
 public static partial class Strings
 {
-    private const string StringsFileName = "editor_strings.json";
+    private const string DefaultStringsFileName = "editor_strings.json";
+
+    /// <summary>
+    /// The strings file to load, based on <see cref="ClientConfiguration.Language"/> - falls back to the
+    /// default (English) file if a translated one doesn't exist yet for the configured language, so
+    /// picking an untranslated language never breaks the editor, it just shows English text.
+    /// </summary>
+    private static string StringsFileName
+    {
+        get
+        {
+            var language = ClientConfiguration.Instance?.Language;
+            if (string.IsNullOrWhiteSpace(language) || string.Equals(language, "en", StringComparison.OrdinalIgnoreCase))
+            {
+                return DefaultStringsFileName;
+            }
+
+            var localizedFileName = $"editor_strings.{language}.json";
+            var localizedPath = Path.Combine("resources", localizedFileName);
+            return File.Exists(localizedPath) ? localizedFileName : DefaultStringsFileName;
+        }
+    }
 
     public static string FormatBoolean(bool value, BooleanStyle booleanStyle)
     {
@@ -2178,6 +2200,10 @@ Tick timer saved in server config.json.";
 
         public static LocalizedString removepet = @"Remove Pet";
 
+        public static LocalizedString unlockmount = @"Unlock Mount [{00}]";
+
+        public static LocalizedString unlockachievement = @"Unlock Achievement [{00}]";
+
         public static LocalizedString enterdungeon = @"Enter Dungeon [{00}]";
 
         public static LocalizedString completedungeon = @"Complete Dungeon";
@@ -2451,6 +2477,8 @@ Tick timer saved in server config.json.";
             {"castspellon", @"Cast Spell On"},
             {"fade", @"Screen Fade"},
             {"changepet", @"Change Pet"},
+            {"unlockmount", @"Unlock Mount"},
+            {"unlockachievement", @"Unlock Achievement"},
             {"dungeons", @"Dungeons"},
             {"enterdungeon", @"Enter Dungeon"},
             {"completedungeon", @"Complete Dungeon"},
@@ -3274,6 +3302,32 @@ Tick timer saved in server config.json.";
 
     }
 
+    public partial struct EventUnlockMount
+    {
+
+        public static LocalizedString cancel = @"Cancel";
+
+        public static LocalizedString label = @"Mount:";
+
+        public static LocalizedString okay = @"Ok";
+
+        public static LocalizedString title = @"Unlock Mount";
+
+    }
+
+    public partial struct EventUnlockAchievement
+    {
+
+        public static LocalizedString cancel = @"Cancel";
+
+        public static LocalizedString label = @"Achievement:";
+
+        public static LocalizedString okay = @"Ok";
+
+        public static LocalizedString title = @"Unlock Achievement";
+
+    }
+
     public partial struct EventEnterDungeon
     {
 
@@ -4090,6 +4144,8 @@ Tick timer saved in server config.json.";
             {4, @"Spell"},
             {5, @"Event"},
             {6, @"Bag"},
+            {7, @"Pet"},
+            {8, @"Mount"},
         };
 
         public static LocalizedString undo = @"Undo Changes";
@@ -4502,6 +4558,8 @@ Tick timer saved in server config.json.";
             {"fogyspeed", @"Fog Y Speed"},
             {"ghue", @"GHue"},
             {"isindoors", @"Is Indoors"},
+            {"minlevel", @"Min Level"},
+            {"maxlevel", @"Max Level"},
             {"music", @"Music"},
             {"name", @"Name"},
             {"overlaygraphic", @"Overlay Graphic"},
@@ -4528,6 +4586,8 @@ Tick timer saved in server config.json.";
             },
             {"bhuedesc", @"The amount of blue in the overlay. (Range: 0 to 255)"},
             {"brightnessdesc", @"How bright is this map? (Range: 0 to 100)."},
+            {"minleveldesc", @"Recommended minimum level for this area. Monsters spawned here auto-scale within Min/Max Level, and players below it get a warning. 0 = not configured (no scaling, no warning)."},
+            {"maxleveldesc", @"Recommended maximum level for this area. Must be set (> 0) for the level range to take effect."},
             {
                 "fogalphadesc",
                 @"How strong the fog overlay appears. (Range: 0 [transparent/invisible] to 255 [solid/can't see map])"
@@ -4697,6 +4757,7 @@ Tick timer saved in server config.json.";
             {1, @"Turn Randomly"},
             {2, @"Stand Still"},
             {3, @"Static"},
+            {4, @"Patrol"},
         };
 
         public static LocalizedString mpregen = @"MP (%):";
@@ -5806,6 +5867,9 @@ Tick timer saved in server config.json.";
         public static LocalizedString map = @"Map:";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString returnmap = @"Return map:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString maxplayers = @"Max players (0 = any):";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -5837,6 +5901,9 @@ Tick timer saved in server config.json.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString rewards = @"Rewards";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString rewardachievement = @"Achievement:";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString rewardtitle = @"Title:";
@@ -5953,6 +6020,257 @@ Tick timer saved in server config.json.";
         public static LocalizedString undotitle = @"Undo Changes";
     }
 
+    public partial struct MountEditor
+    {
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString cancel = @"Cancel";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString copy = @"Copy Mount";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString delete = @"Delete Mount";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString deleteprompt =
+            @"Are you sure you want to delete this mount? Players who own it will lose it. This action cannot be reverted!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString behavior = @"Behavior";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString folderlabel = @"Folder:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString foldertitle = @"Add Folder";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString folderprompt = @"Enter a name for the folder you'd like to add:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString general = @"General";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString name = @"Name:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString New = @"New Mount";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString paste = @"Paste Mount";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString mounts = @"Mounts";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString save = @"Save";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString searchplaceholder = @"Search...";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString sortalphabetically = @"Order Alphabetically";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString speed = @"Speed Bonus (%):";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString sprite = @"Sprite:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString title = @"Mount Editor";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString undo = @"Undo Changes";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString undoprompt =
+            @"Are you sure you want to undo changes made to this mount? This action cannot be reverted!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString undotitle = @"Undo Changes";
+    }
+
+
+    public partial struct TerritoryEditor
+    {
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString cancel = @"Cancel";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString capturepoint = @"Capture Point";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString capturesettings = @"Capture Settings";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString capturetime = @"Capture time (s):";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString copy = @"Copy Territory";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString delete = @"Delete Territory";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString deleteprompt = @"Are you sure you want to delete this territory? This action cannot be reverted!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString description = @"Description:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString folderlabel = @"Folder:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString folderprompt = @"Enter a name for the folder you'd like to add:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString foldertitle = @"Add Folder";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString general = @"General";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString map = @"Map:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString name = @"Name:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString New = @"New Territory";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString paste = @"Paste Territory";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString radius = @"Radius (tiles):";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString rewardexp = @"Tick experience:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString rewardgold = @"Tick gold:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString rewardtick = @"Tick every (s):";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString save = @"Save";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString searchplaceholder = @"Search...";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString sortalphabetically = @"Order Alphabetically";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString territories = @"Territories";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString title = @"Territory Editor";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString undo = @"Undo Changes";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString undoprompt = @"Are you sure you want to undo changes made to this territory? This action cannot be reverted!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString undotitle = @"Undo Changes";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString visual = @"Open Visual Interface";
+    }
+    public partial struct AchievementEditor
+    {
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString achievements = @"Achievements";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString cancel = @"Cancel";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString copy = @"Copy Achievement";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString delete = @"Delete Achievement";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString deleteprompt = @"Are you sure you want to delete this achievement? Players who unlocked it will lose it. This action cannot be reverted!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString description = @"Description:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString folderlabel = @"Folder:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString folderprompt = @"Enter a name for the folder you'd like to add:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString foldertitle = @"Add Folder";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString general = @"General";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString hidden = @"Hidden until unlocked";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString icon = @"Icon:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString name = @"Name:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString New = @"New Achievement";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString paste = @"Paste Achievement";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString rewardexp = @"Experience:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString rewarditem = @"Item:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString rewardmount = @"Mount:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString rewardquantity = @"Qty:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString rewards = @"Rewards";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString rewardtitle = @"Title:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString save = @"Save";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString searchplaceholder = @"Search...";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString sortalphabetically = @"Order Alphabetically";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString title = @"Achievement Editor";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString undo = @"Undo Changes";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString undoprompt = @"Are you sure you want to undo changes made to this achievement? This action cannot be reverted!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString undotitle = @"Undo Changes";
+    }
+
     public partial struct TitleEditor
     {
 
@@ -6023,6 +6341,90 @@ Tick timer saved in server config.json.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString undotitle = @"Undo Changes";
+    }
+
+    public partial struct FactionEditor
+    {
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString appearance = @"Appearance";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString cancel = @"Cancel";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString color = @"Color:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString copy = @"Copy Faction";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString delete = @"Delete Faction";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString deleteprompt =
+            @"Are you sure you want to delete this faction? Players who picked it will keep it, but it will show as unknown. This action cannot be reverted!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString direction = @"Direction:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString factions = @"Factions";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString folderlabel = @"Folder:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString foldertitle = @"Add Folder";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString folderprompt = @"Enter a name for the folder you'd like to add:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString general = @"General";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString map = @"Map:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString name = @"Name:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString New = @"New Faction";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString paste = @"Paste Faction";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString save = @"Save";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString searchplaceholder = @"Search...";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString selectcolor = @"Select Color";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString sortalphabetically = @"Order Alphabetically";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString spawnpoint = @"Spawn Point";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString title = @"Faction Editor";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString undo = @"Undo Changes";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString undoprompt =
+            @"Are you sure you want to undo changes made to this faction? This action cannot be reverted!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString undotitle = @"Undo Changes";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString visual = @"Open Visual Interface";
     }
 
     public partial struct TimeEditor

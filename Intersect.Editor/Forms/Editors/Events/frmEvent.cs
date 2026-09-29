@@ -679,6 +679,16 @@ public partial class FrmEvent : Form
                 tmpCommand = new ChangePetCommand();
 
                 break;
+
+            case EventCommandType.UnlockMount:
+                tmpCommand = new UnlockMountCommand();
+
+                break;
+
+            case EventCommandType.UnlockAchievement:
+                tmpCommand = new UnlockAchievementCommand();
+
+                break;
             case EventCommandType.EnterDungeon:
                 tmpCommand = new EnterDungeonCommand();
 
@@ -1367,6 +1377,16 @@ public partial class FrmEvent : Form
                 break;
             case EventCommandType.ChangePet:
                 cmdWindow = new EventCommandChangePet((ChangePetCommand)command, this);
+
+                break;
+
+            case EventCommandType.UnlockMount:
+                cmdWindow = new EventCommandUnlockMount((UnlockMountCommand)command, this);
+
+                break;
+
+            case EventCommandType.UnlockAchievement:
+                cmdWindow = new EventCommandUnlockAchievement((UnlockAchievementCommand)command, this);
 
                 break;
             case EventCommandType.EnterDungeon:

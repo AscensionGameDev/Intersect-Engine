@@ -7,6 +7,10 @@ using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.Pets;
+using Intersect.Framework.Core.GameObjects.Factions;
+using Intersect.Framework.Core.GameObjects.Territories;
+using Intersect.Framework.Core.GameObjects.Achievements;
+using Intersect.Framework.Core.GameObjects.Mounts;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.Framework.Core.GameObjects.Titles;
@@ -56,6 +60,14 @@ public interface IGameContext : IDbContext
     DbSet<TitleDescriptor> Titles { get; set; }
 
     DbSet<PetDescriptor> Pets { get; set; }
+
+    DbSet<MountDescriptor> Mounts { get; set; }
+
+    DbSet<AchievementDescriptor> Achievements { get; set; }
+
+    DbSet<FactionDescriptor> Factions { get; set; }
+
+    DbSet<TerritoryDescriptor> Territories { get; set; }
 
     DbSet<DungeonDescriptor> Dungeons { get; set; }
 

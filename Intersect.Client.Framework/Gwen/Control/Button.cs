@@ -1,5 +1,6 @@
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
@@ -44,6 +45,7 @@ public partial class Button : Label
         TextAlign = Pos.Center;
         Size = new Point(100, 20);
         Padding = new Padding(3, 3, 3, 3);
+        Cursor = Cursors.Hand;
 
         SetSound(ButtonSoundState.Hover, "octave-tap-resonant.wav");
         SetSound(ButtonSoundState.MouseDown, "octave-tap-warm.wav");

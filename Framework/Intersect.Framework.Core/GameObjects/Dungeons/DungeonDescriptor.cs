@@ -41,6 +41,61 @@ public partial class DungeonDescriptor : DatabaseObject<DungeonDescriptor>, IFol
 
     public Direction EntryDirection { get; set; } = Direction.Down;
 
+    /// <summary>
+    /// When enabled, a fresh room-and-corridor layout is generated on every run instead of using
+    /// <see cref="EntryMapId"/> as the dungeon map. <see cref="EntryMapId"/>/<see cref="EntryX"/>/<see cref="EntryY"/>/
+    /// <see cref="EntryDirection"/> then instead describe the point participants are sent back to when they leave
+    /// the generated dungeon.
+    /// </summary>
+    public bool ProceduralGeneration { get; set; }
+
+    public Guid FloorTilesetId { get; set; }
+
+    public int FloorTileX { get; set; }
+
+    public int FloorTileY { get; set; }
+
+    /// <summary>When set, <see cref="FloorTileX"/>/<see cref="FloorTileY"/> is treated as the top-left corner of an
+    /// autotile block (same convention as painting an autotile in the map editor) instead of a plain single tile,
+    /// so floor tiles blend at their edges instead of repeating identically everywhere.</summary>
+    public bool FloorTileIsAutotile { get; set; }
+
+    public Guid WallTilesetId { get; set; }
+
+    public int WallTileX { get; set; }
+
+    public int WallTileY { get; set; }
+
+    /// <summary>Same as <see cref="FloorTileIsAutotile"/> but for the wall tile.</summary>
+    public bool WallTileIsAutotile { get; set; }
+
+    public int MinRooms { get; set; } = 6;
+
+    public int MaxRooms { get; set; } = 10;
+
+    public int MinRoomSize { get; set; } = 5;
+
+    public int MaxRoomSize { get; set; } = 9;
+
+    /// <summary>NPCs to randomly pick from when populating generated rooms (not the entry or boss room).</summary>
+    [NotMapped]
+    public List<Guid> MonsterPoolNpcIds { get; set; } = [];
+
+    [Column("MonsterPoolNpcIds")]
+    [JsonIgnore]
+    public string MonsterPoolNpcIdsJson
+    {
+        get => JsonConvert.SerializeObject(MonsterPoolNpcIds);
+        set => MonsterPoolNpcIds = JsonConvert.DeserializeObject<List<Guid>>(value ?? "[]") ?? [];
+    }
+
+    public int MinNpcsPerRoom { get; set; } = 1;
+
+    public int MaxNpcsPerRoom { get; set; } = 3;
+
+    /// <summary>NPC spawned in the last generated room, empty = no boss.</summary>
+    public Guid BossNpcId { get; set; } = Guid.Empty;
+
     /// <summary>Minimum party size for <see cref="DungeonAccessType.Party"/> dungeons (1 = can be soloed).</summary>
     public int MinPlayers { get; set; } = 1;
 
@@ -65,6 +120,9 @@ public partial class DungeonDescriptor : DatabaseObject<DungeonDescriptor>, IFol
 
     /// <summary>Title unlocked on completion, empty = none.</summary>
     public Guid RewardTitleId { get; set; } = Guid.Empty;
+
+    /// <summary>Achievement unlocked on completion, empty = none.</summary>
+    public Guid RewardAchievementId { get; set; } = Guid.Empty;
 
     [NotMapped]
     public List<DungeonReward> Rewards { get; set; } = [];

@@ -157,9 +157,15 @@ public partial class NPCDescriptor : DatabaseObject<NPCDescriptor>, IFolderable
 
     public byte FleeHealthPercentage { get; set; }
 
+    /// <summary>Type-specific combat behavior layered on top of this NPC's stats - see <see cref="Enums.NpcCombatStyle"/>.</summary>
+    public NpcCombatStyle CombatStyle { get; set; } = NpcCombatStyle.Standard;
+
     public bool FocusHighestDamageDealer { get; set; } = true;
 
     public int ResetRadius { get; set; }
+
+    /// <summary>How far (in tiles) from its spawn point this NPC wanders when its Movement is set to Patrol.</summary>
+    public int PatrolRadius { get; set; } = 5;
 
     //Conditions
     [Column("PlayerFriendConditions")]

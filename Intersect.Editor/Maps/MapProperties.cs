@@ -163,6 +163,38 @@ partial class MapProperties
         }
     }
 
+    [CustomCategory("general"), CustomDescription("minleveldesc"), CustomDisplayName("minlevel"),
+     DefaultValue(0)]
+    public int MinLevel
+    {
+        get => mMyMap.MinLevel;
+        set
+        {
+            if (mMyMap.MinLevel != value)
+            {
+                Globals.MapEditorWindow.PrepUndoState();
+                mMyMap.MinLevel = Math.Max(value, 0);
+                Globals.MapEditorWindow.AddUndoState();
+            }
+        }
+    }
+
+    [CustomCategory("general"), CustomDescription("maxleveldesc"), CustomDisplayName("maxlevel"),
+     DefaultValue(0)]
+    public int MaxLevel
+    {
+        get => mMyMap.MaxLevel;
+        set
+        {
+            if (mMyMap.MaxLevel != value)
+            {
+                Globals.MapEditorWindow.PrepUndoState();
+                mMyMap.MaxLevel = Math.Max(value, 0);
+                Globals.MapEditorWindow.AddUndoState();
+            }
+        }
+    }
+
     [CustomCategory("lighting"), CustomDescription("brightnessdesc"), CustomDisplayName("brightness"),
      DefaultValue(100)]
     public int Brightness

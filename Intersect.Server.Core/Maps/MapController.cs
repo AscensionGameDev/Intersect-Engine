@@ -330,6 +330,16 @@ public partial class MapController : MapDescriptor
     {
         lock (mMapLock)
         {
+            // Live edits from the Editor land here with fresh TileData/AttributeData already assigned to
+            // this controller - but existing MapInstances only rebuild their tileset-derived collision
+            // cache in their own Initialize() (see CacheMapBlocks()), which is otherwise only called from
+            // their constructor. Without this, players already on the map keep the stale collision grid
+            // until the server restarts and creates brand new instances.
+            foreach (var mapInstance in mInstances.Values)
+            {
+                mapInstance.CacheMapBlocks();
+            }
+
             DespawnAllInstances();
             RespawnAllInstances();
         }
@@ -629,6 +639,50 @@ public partial class MapController : MapDescriptor
     }
     #endregion
     
+    /// <summary>
+    /// Commits an in-memory <see cref="MapDescriptor.Layers"/> built programmatically (e.g. procedural generation)
+    /// down to <see cref="MapDescriptor.TileData"/>, then clears <see cref="MapDescriptor.Layers"/> again to match
+    /// the server's normal convention of only holding tiles deserialized on demand.
+    /// </summary>
+    public void CommitGeneratedLayers()
+    {
+        TileData = LZ4.PickleString(JsonConvert.SerializeObject(Layers, Formatting.None, mJsonSerializerSettings));
+        Layers = null;
+    }
+
+    /// <summary>
+    /// The server normally keeps <see cref="MapDescriptor.Layers"/> null and only holds the raw
+    /// <see cref="MapDescriptor.TileData"/> blob, since collision historically only needed the
+    /// <see cref="MapDescriptor.Attributes"/> grid. Tileset-based passability needs the actual
+    /// tile graphics though, so this decodes them on demand - pair with <see cref="ReleaseLayers"/>
+    /// once done to go back to the normal "not loaded" convention.
+    /// </summary>
+    /// <returns>true if this call loaded Layers (and so should release it when done); false if it was already loaded.</returns>
+    public bool EnsureLayersLoaded()
+    {
+        if (Layers != null)
+        {
+            return false;
+        }
+
+        if (TileData == null)
+        {
+            return false;
+        }
+
+        Layers = JsonConvert.DeserializeObject<Dictionary<string, Tile[,]>>(
+            LZ4.UnPickleString(TileData), mJsonSerializerSettings
+        );
+
+        return true;
+    }
+
+    /// <summary>See <see cref="EnsureLayersLoaded"/>.</summary>
+    public void ReleaseLayers()
+    {
+        Layers = null;
+    }
+
     /// <summary>
     /// Gets rid of any orphaned tile layers
     /// </summary>

@@ -75,6 +75,16 @@ public partial class FrmMain : Form
 
     private FrmPet mPetEditor;
 
+    private FrmMount mMountEditor;
+
+    private FrmAchievement mAchievementEditor;
+
+    private FrmFurniture mFurnitureEditor;
+
+    private FrmFaction mFactionEditor;
+
+    private FrmTerritory mTerritoryEditor;
+
     private FrmDungeon mDungeonEditor;
 
     //General Editting Variables
@@ -98,6 +108,17 @@ public partial class FrmMain : Form
         Globals.MapLayersWindow.Show(dockLeft, DockState.DockLeft);
         Globals.MapGridWindowNew.Show(dockLeft, DockState.Document);
         Globals.MapEditorWindow.Show(dockLeft, DockState.Document);
+
+        // Added here rather than in the Designer file to avoid touching its fragile generated layout.
+        var furnitureEditorToolStripMenuItem = new ToolStripMenuItem
+        {
+            ForeColor = System.Drawing.Color.FromArgb(220, 220, 220),
+            Name = "furnitureEditorToolStripMenuItem",
+            Size = new System.Drawing.Size(191, 22),
+            Text = "Furniture Editor",
+        };
+        furnitureEditorToolStripMenuItem.Click += (_, _) => PacketSender.SendOpenEditor(GameObjectType.Furniture);
+        contentEditorsToolStripMenuItem.DropDownItems.Add(furnitureEditorToolStripMenuItem);
     }
 
     [System.Runtime.InteropServices.DllImport("user32.dll")]
@@ -1321,6 +1342,26 @@ public partial class FrmMain : Form
         PacketSender.SendOpenEditor(GameObjectType.Pet);
     }
 
+    private void mountEditorToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        PacketSender.SendOpenEditor(GameObjectType.Mount);
+    }
+
+    private void achievementEditorToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        PacketSender.SendOpenEditor(GameObjectType.Achievement);
+    }
+
+    private void factionEditorToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        PacketSender.SendOpenEditor(GameObjectType.Faction);
+    }
+
+    private void territoryEditorToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        PacketSender.SendOpenEditor(GameObjectType.Territory);
+    }
+
     private void dungeonEditorToolStripMenuItem_Click(object sender, EventArgs e)
     {
         PacketSender.SendOpenEditor(GameObjectType.Dungeon);
@@ -1768,6 +1809,51 @@ public partial class FrmMain : Form
                         mPetEditor = new FrmPet();
                         mPetEditor.InitEditor();
                         mPetEditor.Show();
+                    }
+
+                    break;
+                case GameObjectType.Mount:
+                    if (mMountEditor == null || mMountEditor.Visible == false)
+                    {
+                        mMountEditor = new FrmMount();
+                        mMountEditor.InitEditor();
+                        mMountEditor.Show();
+                    }
+
+                    break;
+                case GameObjectType.Achievement:
+                    if (mAchievementEditor == null || mAchievementEditor.Visible == false)
+                    {
+                        mAchievementEditor = new FrmAchievement();
+                        mAchievementEditor.InitEditor();
+                        mAchievementEditor.Show();
+                    }
+
+                    break;
+                case GameObjectType.Furniture:
+                    if (mFurnitureEditor == null || mFurnitureEditor.Visible == false)
+                    {
+                        mFurnitureEditor = new FrmFurniture();
+                        mFurnitureEditor.InitEditor();
+                        mFurnitureEditor.Show();
+                    }
+
+                    break;
+                case GameObjectType.Faction:
+                    if (mFactionEditor == null || mFactionEditor.Visible == false)
+                    {
+                        mFactionEditor = new FrmFaction();
+                        mFactionEditor.InitEditor();
+                        mFactionEditor.Show();
+                    }
+
+                    break;
+                case GameObjectType.Territory:
+                    if (mTerritoryEditor == null || mTerritoryEditor.Visible == false)
+                    {
+                        mTerritoryEditor = new FrmTerritory();
+                        mTerritoryEditor.InitEditor();
+                        mTerritoryEditor.Show();
                     }
 
                     break;

@@ -726,11 +726,16 @@ internal partial class MonoRenderer : GameRenderer
             }
         }
 
-        var origin = Vector2.Zero;
-        if (Math.Abs(rotationDegrees) > 0.01)
+        // Always anchor on the source-rect center (never just the corner at rotation ~0) so rotation
+        // is continuous as it crosses zero - e.g. an oscillating sway animation used to visibly "pop"
+        // every time it passed through 0 degrees, because that threshold used to flip between a
+        // corner-anchored draw and a center-anchored one. width/height below always equal tw/th (this
+        // "rotated AABB" calculation cancels out to the original size regardless of angle - the rotation
+        // is applied by the sprite batch itself via `origin`), so unifying the two paths draws pixel
+        // identically to the old corner-anchored path when rotationDegrees is exactly 0.
+        var origin = new Vector2(sw / 2f, sh / 2f);
         {
             rotationDegrees = (float)(Math.PI / 180 * rotationDegrees);
-            origin = new Vector2(sw / 2f, sh / 2f);
 
             //TODO: Optimize in terms of memory AND performance.
             var pnt = new Vector2(0, 0);

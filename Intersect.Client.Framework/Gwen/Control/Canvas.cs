@@ -322,6 +322,7 @@ public partial class Canvas : Base
         InputHandler.OnMouseMoved(this, x, y, dx, dy);
 
         var hoveredControl = InputHandler.HoveredControl;
+
         if (hoveredControl == null)
         {
             // ApplicationContext.Context.Value?.Logger.LogTrace(

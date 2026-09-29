@@ -38,6 +38,16 @@ public static partial class CommandProcessing
         stackInfo.CommandIndex++;
     }
 
+    /// <summary>
+    /// Picks a player's preferred-language text: the English translation when their client reported
+    /// <c>"en"</c> and the map/quest author filled one in, otherwise the base (originally-authored) text.
+    /// </summary>
+    private static string PickLocalizedText(Player player, string baseText, string? englishText)
+    {
+        var preferEnglish = string.Equals(player.Client?.Language, "en", StringComparison.OrdinalIgnoreCase);
+        return preferEnglish && !string.IsNullOrWhiteSpace(englishText) ? englishText : baseText;
+    }
+
     //Show Text Command
     private static void ProcessCommand(
         ShowTextCommand command,
@@ -48,7 +58,10 @@ public static partial class CommandProcessing
     )
     {
         PacketSender.SendEventDialog(
-            player, ParseEventText(command.Text, player, instance), command.Face, instance.PageInstance.Id
+            player,
+            ParseEventText(PickLocalizedText(player, command.Text, command.TextEn), player, instance),
+            command.Face,
+            instance.PageInstance.Id
         );
 
         stackInfo.WaitingForResponse = CommandInstance.EventResponse.Dialogue;
@@ -63,11 +76,11 @@ public static partial class CommandProcessing
         Stack<CommandInstance> callStack
     )
     {
-        var txt = ParseEventText(command.Text, player, instance);
-        var opt1 = ParseEventText(command.Options[0], player, instance);
-        var opt2 = ParseEventText(command.Options[1], player, instance);
-        var opt3 = ParseEventText(command.Options[2], player, instance);
-        var opt4 = ParseEventText(command.Options[3], player, instance);
+        var txt = ParseEventText(PickLocalizedText(player, command.Text, command.TextEn), player, instance);
+        var opt1 = ParseEventText(PickLocalizedText(player, command.Options[0], command.OptionsEn[0]), player, instance);
+        var opt2 = ParseEventText(PickLocalizedText(player, command.Options[1], command.OptionsEn[1]), player, instance);
+        var opt3 = ParseEventText(PickLocalizedText(player, command.Options[2], command.OptionsEn[2]), player, instance);
+        var opt4 = ParseEventText(PickLocalizedText(player, command.Options[3], command.OptionsEn[3]), player, instance);
         PacketSender.SendEventDialog(player, txt, opt1, opt2, opt3, opt4, command.Face, instance.PageInstance.Id);
         stackInfo.WaitingForResponse = CommandInstance.EventResponse.Dialogue;
         stackInfo.WaitingOnCommand = command;
@@ -140,7 +153,10 @@ public static partial class CommandProcessing
         Stack<CommandInstance> callStack
     )
     {
-        var txt = ParseEventText(command.Text, player, instance);
+        // Note: for broadcast channels (Local/Global/Party/Guild) this only considers the TRIGGERING
+        // player's language, not each recipient's - true per-recipient translation would need reworking
+        // the proximity/party/guild send helpers to carry both text variants.
+        var txt = ParseEventText(PickLocalizedText(player, command.Text, command.TextEn), player, instance);
         var color = Color.FromName(command.Color, Strings.Colors.Presets);
         switch (command.Channel)
         {
@@ -1322,6 +1338,30 @@ public static partial class CommandProcessing
         player.ChangePet(command.PetId);
     }
 
+    //Unlock Mount Command
+    private static void ProcessCommand(
+        UnlockMountCommand command,
+        Player player,
+        Event instance,
+        CommandInstance stackInfo,
+        Stack<CommandInstance> callStack
+    )
+    {
+        player.UnlockMount(command.MountId);
+    }
+
+    //Unlock Achievement Command
+    private static void ProcessCommand(
+        UnlockAchievementCommand command,
+        Player player,
+        Event instance,
+        CommandInstance stackInfo,
+        Stack<CommandInstance> callStack
+    )
+    {
+        player.UnlockAchievement(command.AchievementId);
+    }
+
     //Open Shop Command
     private static void ProcessCommand(
         OpenShopCommand command,
@@ -1357,11 +1397,27 @@ public static partial class CommandProcessing
         Stack<CommandInstance> callStack
     )
     {
-        if (ClassDescriptor.Get(command.ClassId) != null)
+        var classDescriptor = ClassDescriptor.Get(command.ClassId);
+        if (classDescriptor != null)
         {
             player.ClassId = command.ClassId;
             player.RecalculateStatsAndPoints();
             player.UnequipInvalidItems();
+
+            // AddLevels() only teaches a class's spell at the exact moment the player crosses that
+            // level - it never backfills. A manual class change (this command) has no such "crossing"
+            // to hook into, so without this the player would keep their old class's spells (or none)
+            // forever regardless of level. Teach everything the new class grants up to their current
+            // level, same as if they had levelled up as that class from the start.
+            foreach (var spell in classDescriptor.Spells)
+            {
+                if (spell.Level > player.Level)
+                {
+                    continue;
+                }
+
+                _ = player.TryTeachSpell(new Spell(spell.Id));
+            }
         }
 
         PacketSender.SendEntityDataToProximity(player);

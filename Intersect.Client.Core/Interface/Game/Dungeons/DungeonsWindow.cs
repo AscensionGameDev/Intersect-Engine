@@ -9,6 +9,7 @@ using Intersect.Client.Networking;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Dungeons;
 using Intersect.Framework.Core.GameObjects.Items;
+using Intersect.Network.Packets.Server;
 using Intersect.Framework.Core.GameObjects.Titles;
 
 namespace Intersect.Client.Interface.Game.Dungeons;
@@ -37,6 +38,10 @@ public partial class DungeonsWindow
     private Button mEnterButton;
 
     private DungeonDescriptor? mSelected;
+
+    private Guid mLeaderboardDungeonId = Guid.Empty;
+
+    private DungeonLeaderboardEntryPacket[] mLeaderboardEntries = [];
 
     public DungeonsWindow(Canvas gameCanvas)
     {
@@ -143,6 +148,11 @@ public partial class DungeonsWindow
             mSelected = dungeons.FirstOrDefault();
         }
 
+        if (mSelected != null)
+        {
+            PacketSender.SendRequestDungeonLeaderboard(mSelected.Id);
+        }
+
         UpdateDetails();
     }
 
@@ -155,6 +165,23 @@ public partial class DungeonsWindow
 
         mSelected = DungeonDescriptor.Get(dungeonId);
         UpdateDetails();
+
+        if (mSelected != null)
+        {
+            PacketSender.SendRequestDungeonLeaderboard(mSelected.Id);
+        }
+    }
+
+    /// <summary>Called by <see cref="MenuContainer"/> when the server answers a leaderboard request.</summary>
+    public void SetLeaderboard(DungeonLeaderboardPacket packet)
+    {
+        mLeaderboardDungeonId = packet.DungeonId;
+        mLeaderboardEntries = packet.Entries;
+
+        if (mSelected?.Id == mLeaderboardDungeonId)
+        {
+            UpdateDetails();
+        }
     }
 
     private void EnterButton_Clicked(Base sender, MouseButtonState arguments)
@@ -253,6 +280,23 @@ public partial class DungeonsWindow
         else
         {
             mDetailsLabel.AddText(Strings.Dungeons.NeverCompleted, mDetailsTemplateLabel);
+        }
+
+        if (mLeaderboardDungeonId == dungeon.Id && mLeaderboardEntries.Length > 0)
+        {
+            mDetailsLabel.AddLineBreak();
+            mDetailsLabel.AddLineBreak();
+            mDetailsLabel.AddText(Strings.Dungeons.LeaderboardHeader, mDetailsTemplateLabel);
+            mDetailsLabel.AddLineBreak();
+            for (var rank = 0; rank < mLeaderboardEntries.Length; rank++)
+            {
+                var entry = mLeaderboardEntries[rank];
+                mDetailsLabel.AddText(
+                    Strings.Dungeons.LeaderboardEntry.ToString(rank + 1, entry.PlayerName, FormatTime(entry.TimeMs)),
+                    mDetailsTemplateLabel
+                );
+                mDetailsLabel.AddLineBreak();
+            }
         }
 
         UpdateEnterButton();

@@ -66,6 +66,13 @@ public partial class Guild
     public int BankSlotsCount { get; set; } = Options.Instance.Guild.InitialBankSlots;
 
     /// <summary>
+    /// Furniture this guild has placed inside its guild hall instance. Unlike <see cref="Bank"/>
+    /// this isn't a fixed-slot list - a guild can place as many pieces as fit.
+    /// </summary>
+    [JsonIgnore]
+    public virtual List<GuildFurniturePlacement> Furniture { get; set; } = new List<GuildFurniturePlacement>();
+
+    /// <summary>
     /// The guild's instance id. This is a unique identifier generated at guild creation time that
     /// we can use to reference this guild alone when requesting a warp to a "Guild" instance, ensuring
     /// that players in the same guild will be warped to the same instance.
@@ -196,6 +203,7 @@ public partial class Guild
         var guild = context.Guilds.Where(g => g.Id == id)
             .Include(g => g.Bank)
             .Include(g => g.Variables)
+            .Include(g => g.Furniture)
             .AsSplitQuery()
             .FirstOrDefault();
         if (guild == default)
@@ -544,6 +552,18 @@ public partial class Guild
     }
 
     /// <summary>
+    /// Search for a guild by its guild hall instance Id, amongst guilds that currently have at least one
+    /// member online (and are therefore cached in <see cref="Guilds"/>). Used to figure out which guild's
+    /// furniture to spawn when a <see cref="MapInstanceType.Guild"/> instance activates.
+    /// </summary>
+    /// <param name="instanceId">The <see cref="GuildInstanceId"/> to search for.</param>
+    /// <returns>Returns the matching <see cref="Guild"/>, if any.</returns>
+    public static Guild GetGuildByInstanceId(Guid instanceId)
+    {
+        return Guilds.Values.FirstOrDefault(guild => guild.GuildInstanceId == instanceId);
+    }
+
+    /// <summary>
     /// Search for a guild by Name.
     /// </summary>
     /// <param name="name">The guild Name to search for.</param>
@@ -780,6 +800,60 @@ public partial class Guild
             BankSlotsCount = count;
             SlotHelper.ValidateSlotList(Bank, BankSlotsCount);
             DbInterface.Pool.QueueWorkItem(Save);
+        }
+    }
+
+    /// <summary>
+    /// Places a new piece of furniture in this guild's hall. Caller is responsible for validating
+    /// permissions and that (x,y) is a legal, unoccupied spot on the hall map.
+    /// </summary>
+    public GuildFurniturePlacement PlaceFurniture(Guid furnitureDescriptorId, byte x, byte y, Direction direction)
+    {
+        var placement = new GuildFurniturePlacement(furnitureDescriptorId, x, y, direction);
+        lock (mLock)
+        {
+            Furniture.Add(placement);
+            DbInterface.Pool.QueueWorkItem(Save);
+        }
+
+        return placement;
+    }
+
+    /// <summary>Moves an already-placed piece of furniture to a new spot.</summary>
+    public bool MoveFurniture(Guid placementId, byte x, byte y, Direction direction)
+    {
+        lock (mLock)
+        {
+            var placement = Furniture.Find(f => f.Id == placementId);
+            if (placement == null)
+            {
+                return false;
+            }
+
+            placement.X = x;
+            placement.Y = y;
+            placement.Direction = direction;
+            DbInterface.Pool.QueueWorkItem(Save);
+
+            return true;
+        }
+    }
+
+    /// <summary>Removes a placed piece of furniture from this guild's hall.</summary>
+    public bool RemoveFurniture(Guid placementId)
+    {
+        lock (mLock)
+        {
+            var placement = Furniture.Find(f => f.Id == placementId);
+            if (placement == null)
+            {
+                return false;
+            }
+
+            Furniture.Remove(placement);
+            DbInterface.Pool.QueueWorkItem(Save);
+
+            return true;
         }
     }
 

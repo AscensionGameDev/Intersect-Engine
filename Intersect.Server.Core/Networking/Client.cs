@@ -138,6 +138,14 @@ public partial class Client : IPacketSender
 
     public Player Entity { get; set; }
 
+    /// <summary>
+    /// The language code this client's UI is set to (e.g. "en", "fr"), as reported by the client itself
+    /// right after connecting. Used to pick English translations of event dialogue/quest text when
+    /// filled in by the map/quest author - empty until the client reports it, in which case the
+    /// originally-authored text is shown like normal.
+    /// </summary>
+    public string Language { get; set; } = string.Empty;
+
     public IApplicationContext ApplicationContext { get; }
 
     public INetwork Network { get; }

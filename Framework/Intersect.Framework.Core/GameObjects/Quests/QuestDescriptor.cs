@@ -47,6 +47,32 @@ public partial class QuestDescriptor : DatabaseObject<QuestDescriptor>, IFoldera
 
     public string InProgressDescription { get; set; } = string.Empty;
 
+    /// <summary>
+    /// English translation of <see cref="Name"/>. Optional - when empty, English-language clients just see
+    /// the base <see cref="Name"/> (whatever language it was written in) like everyone else.
+    /// </summary>
+    public string NameEn { get; set; } = string.Empty;
+
+    /// <summary>
+    /// English translation of <see cref="StartDescription"/>. Optional, see <see cref="NameEn"/>.
+    /// </summary>
+    public string StartDescriptionEn { get; set; } = string.Empty;
+
+    /// <summary>
+    /// English translation of <see cref="BeforeDescription"/>. Optional, see <see cref="NameEn"/>.
+    /// </summary>
+    public string BeforeDescriptionEn { get; set; } = string.Empty;
+
+    /// <summary>
+    /// English translation of <see cref="EndDescription"/>. Optional, see <see cref="NameEn"/>.
+    /// </summary>
+    public string EndDescriptionEn { get; set; } = string.Empty;
+
+    /// <summary>
+    /// English translation of <see cref="InProgressDescription"/>. Optional, see <see cref="NameEn"/>.
+    /// </summary>
+    public string InProgressDescriptionEn { get; set; } = string.Empty;
+
     public bool LogAfterComplete { get; set; }
 
     public bool LogBeforeOffer { get; set; }
@@ -95,6 +121,27 @@ public partial class QuestDescriptor : DatabaseObject<QuestDescriptor>, IFoldera
     {
         get => JsonConvert.SerializeObject(Tasks);
         set => Tasks = JsonConvert.DeserializeObject<List<QuestTaskDescriptor>>(value);
+    }
+
+    /// <summary>
+    /// Currency granted on completion, purely for the reward preview shown on the quest offer/turn-in
+    /// window - the actual grant still happens via whatever commands the quest's EndEvent runs, so this
+    /// needs to be kept in sync with that by whoever authors the quest.
+    /// </summary>
+    public long RewardCurrency { get; set; }
+
+    [NotMapped]
+    [JsonIgnore]
+    public List<QuestRewardItem> RewardItems { get; set; } = [];
+
+    [Column("RewardItems")]
+    [JsonIgnore]
+    public string RewardItemsJson
+    {
+        get => JsonConvert.SerializeObject(RewardItems);
+        set => RewardItems = string.IsNullOrWhiteSpace(value)
+            ? []
+            : JsonConvert.DeserializeObject<List<QuestRewardItem>>(value) ?? [];
     }
 
     [NotMapped]
@@ -155,6 +202,29 @@ public partial class QuestDescriptor : DatabaseObject<QuestDescriptor>, IFoldera
     /// </summary>
     public int OrderValue { get; set; }
 
+    /// <summary>
+    /// Picks the English text when <paramref name="preferEnglish"/> is true and an English translation was
+    /// filled in, otherwise falls back to the base (originally-authored) text.
+    /// </summary>
+    public string GetLocalizedName(bool preferEnglish) =>
+        preferEnglish && !string.IsNullOrWhiteSpace(NameEn) ? NameEn : Name;
+
+    /// <inheritdoc cref="GetLocalizedName"/>
+    public string GetLocalizedStartDescription(bool preferEnglish) =>
+        preferEnglish && !string.IsNullOrWhiteSpace(StartDescriptionEn) ? StartDescriptionEn : StartDescription;
+
+    /// <inheritdoc cref="GetLocalizedName"/>
+    public string GetLocalizedBeforeDescription(bool preferEnglish) =>
+        preferEnglish && !string.IsNullOrWhiteSpace(BeforeDescriptionEn) ? BeforeDescriptionEn : BeforeDescription;
+
+    /// <inheritdoc cref="GetLocalizedName"/>
+    public string GetLocalizedEndDescription(bool preferEnglish) =>
+        preferEnglish && !string.IsNullOrWhiteSpace(EndDescriptionEn) ? EndDescriptionEn : EndDescription;
+
+    /// <inheritdoc cref="GetLocalizedName"/>
+    public string GetLocalizedInProgressDescription(bool preferEnglish) =>
+        preferEnglish && !string.IsNullOrWhiteSpace(InProgressDescriptionEn) ? InProgressDescriptionEn : InProgressDescription;
+
     public int GetTaskIndex(Guid taskId)
     {
         for (var i = 0; i < Tasks.Count; i++)
@@ -214,20 +284,28 @@ public partial class QuestTaskDescriptor
 
     public string Description { get; set; } = string.Empty;
 
-    public string GetTaskString(Dictionary<int, LocalizedString> descriptions)
+    /// <summary>
+    /// English translation of <see cref="Description"/>. Optional - when empty, English-language clients
+    /// just see the base <see cref="Description"/>. Stored inside the parent quest's JSON-serialized
+    /// <c>Tasks</c> column, so no separate migration is needed for this field.
+    /// </summary>
+    public string DescriptionEn { get; set; } = string.Empty;
+
+    public string GetTaskString(Dictionary<int, LocalizedString> descriptions, bool preferEnglish = false)
     {
+        var description = preferEnglish && !string.IsNullOrWhiteSpace(DescriptionEn) ? DescriptionEn : Description;
         var taskString = string.Empty;
         switch (Objective)
         {
             case QuestObjective.EventDriven: //Event Driven
-                taskString = descriptions[(int)Objective].ToString(Description);
+                taskString = descriptions[(int)Objective].ToString(description);
 
                 break;
             case QuestObjective.GatherItems: //Gather Items
                 taskString = descriptions[(int)Objective].ToString(
                     ItemDescriptor.GetName(TargetId),
                     Quantity,
-                    Description
+                    description
                 );
 
                 break;
@@ -235,7 +313,7 @@ public partial class QuestTaskDescriptor
                 taskString = descriptions[(int)Objective].ToString(
                     NPCDescriptor.GetName(TargetId),
                     Quantity,
-                    Description
+                    description
                 );
 
                 break;
@@ -243,4 +321,14 @@ public partial class QuestTaskDescriptor
 
         return taskString;
     }
+}
+
+/// <summary>
+/// One item line in a quest's reward preview (see <see cref="QuestDescriptor.RewardItems"/>).
+/// </summary>
+public partial class QuestRewardItem
+{
+    public Guid ItemId { get; set; }
+
+    public int Quantity { get; set; } = 1;
 }

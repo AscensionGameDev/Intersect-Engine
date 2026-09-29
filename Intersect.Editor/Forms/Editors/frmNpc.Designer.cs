@@ -116,6 +116,8 @@ namespace Intersect.Editor.Forms.Editors
             grpBehavior = new DarkGroupBox();
             nudResetRadius = new DarkNumericUpDown();
             lblResetRadius = new Label();
+            nudPatrolRadius = new DarkNumericUpDown();
+            lblPatrolRadius = new Label();
             chkFocusDamageDealer = new DarkCheckBox();
             nudFlee = new DarkNumericUpDown();
             lblFlee = new Label();
@@ -1333,6 +1335,8 @@ namespace Intersect.Editor.Forms.Editors
             grpBehavior.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
             grpBehavior.Controls.Add(nudResetRadius);
             grpBehavior.Controls.Add(lblResetRadius);
+            grpBehavior.Controls.Add(nudPatrolRadius);
+            grpBehavior.Controls.Add(lblPatrolRadius);
             grpBehavior.Controls.Add(chkFocusDamageDealer);
             grpBehavior.Controls.Add(nudSpawnDuration);
             grpBehavior.Controls.Add(lblSpawnDuration);
@@ -1350,7 +1354,7 @@ namespace Intersect.Editor.Forms.Editors
             grpBehavior.Margin = new Padding(4, 3, 4, 3);
             grpBehavior.Name = "grpBehavior";
             grpBehavior.Padding = new Padding(4, 3, 4, 3);
-            grpBehavior.Size = new Size(264, 391);
+            grpBehavior.Size = new Size(264, 424);
             grpBehavior.TabIndex = 32;
             grpBehavior.TabStop = false;
             grpBehavior.Text = "Behavior:";
@@ -1367,9 +1371,9 @@ namespace Intersect.Editor.Forms.Editors
             nudResetRadius.TabIndex = 76;
             nudResetRadius.Value = new decimal(new int[] { 9999, 0, 0, 0 });
             nudResetRadius.ValueChanged += nudResetRadius_ValueChanged;
-            // 
+            //
             // lblResetRadius
-            // 
+            //
             lblResetRadius.AutoSize = true;
             lblResetRadius.Location = new System.Drawing.Point(12, 115);
             lblResetRadius.Margin = new Padding(4, 0, 4, 0);
@@ -1377,7 +1381,30 @@ namespace Intersect.Editor.Forms.Editors
             lblResetRadius.Size = new Size(76, 15);
             lblResetRadius.TabIndex = 75;
             lblResetRadius.Text = "Reset Radius:";
-            // 
+            //
+            // nudPatrolRadius
+            //
+            nudPatrolRadius.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            nudPatrolRadius.ForeColor = System.Drawing.Color.Gainsboro;
+            nudPatrolRadius.Location = new System.Drawing.Point(119, 248);
+            nudPatrolRadius.Margin = new Padding(4, 3, 4, 3);
+            nudPatrolRadius.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
+            nudPatrolRadius.Name = "nudPatrolRadius";
+            nudPatrolRadius.Size = new Size(135, 23);
+            nudPatrolRadius.TabIndex = 78;
+            nudPatrolRadius.Value = new decimal(new int[] { 5, 0, 0, 0 });
+            nudPatrolRadius.ValueChanged += nudPatrolRadius_ValueChanged;
+            //
+            // lblPatrolRadius
+            //
+            lblPatrolRadius.AutoSize = true;
+            lblPatrolRadius.Location = new System.Drawing.Point(12, 250);
+            lblPatrolRadius.Margin = new Padding(4, 0, 4, 0);
+            lblPatrolRadius.Name = "lblPatrolRadius";
+            lblPatrolRadius.Size = new Size(78, 15);
+            lblPatrolRadius.TabIndex = 77;
+            lblPatrolRadius.Text = "Patrol Radius:";
+            //
             // chkFocusDamageDealer
             // 
             chkFocusDamageDealer.AutoSize = true;
@@ -1430,7 +1457,7 @@ namespace Intersect.Editor.Forms.Editors
             grpConditions.Controls.Add(btnPlayerCanAttackCond);
             grpConditions.Controls.Add(btnPlayerFriendProtectorCond);
             grpConditions.ForeColor = System.Drawing.Color.Gainsboro;
-            grpConditions.Location = new System.Drawing.Point(12, 248);
+            grpConditions.Location = new System.Drawing.Point(12, 281);
             grpConditions.Margin = new Padding(4, 3, 4, 3);
             grpConditions.Name = "grpConditions";
             grpConditions.Padding = new Padding(4, 3, 4, 3);
@@ -1777,7 +1804,7 @@ namespace Intersect.Editor.Forms.Editors
             grpNpcVsNpc.Controls.Add(chkAttackAllies);
             grpNpcVsNpc.Controls.Add(chkEnabled);
             grpNpcVsNpc.ForeColor = System.Drawing.Color.Gainsboro;
-            grpNpcVsNpc.Location = new System.Drawing.Point(844, 404);
+            grpNpcVsNpc.Location = new System.Drawing.Point(844, 437);
             grpNpcVsNpc.Margin = new Padding(4, 3, 4, 3);
             grpNpcVsNpc.Name = "grpNpcVsNpc";
             grpNpcVsNpc.Padding = new Padding(4, 3, 4, 3);
@@ -2137,7 +2164,7 @@ namespace Intersect.Editor.Forms.Editors
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
             BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
-            ClientSize = new Size(1393, 728);
+            ClientSize = new Size(1393, 761);
             ControlBox = true;
             Controls.Add(toolStrip);
             Controls.Add(btnCancel);
@@ -2344,6 +2371,8 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblRed;
         private DarkNumericUpDown nudResetRadius;
         private System.Windows.Forms.Label lblResetRadius;
+        private DarkNumericUpDown nudPatrolRadius;
+        private System.Windows.Forms.Label lblPatrolRadius;
         private DarkCheckBox chkIndividualLoot;
         private Controls.GameObjectList lstGameObjects;
         private DarkGroupBox grpImmunities;

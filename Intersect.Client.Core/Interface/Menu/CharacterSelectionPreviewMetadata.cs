@@ -1,3 +1,4 @@
+using Intersect.Network.Packets;
 using Intersect.Network.Packets.Server;
 
 namespace Intersect.Client.Interface.Menu;
@@ -9,5 +10,7 @@ public record struct CharacterSelectionPreviewMetadata(
     string Face,
     int Level,
     string Class,
-    EquipmentFragment[] Equipment
+    EquipmentFragment[] Equipment,
+    Color[] SpriteColors,
+    SpritePart[] SpriteParts
 );

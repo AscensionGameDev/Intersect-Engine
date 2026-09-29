@@ -8,6 +8,11 @@ public partial class AddChatboxTextCommand : EventCommand
 
     public string Text { get; set; } = string.Empty;
 
+    /// <summary>
+    /// English translation of <see cref="Text"/>. Optional, see <see cref="ShowTextCommand.TextEn"/>.
+    /// </summary>
+    public string TextEn { get; set; } = string.Empty;
+
     // TODO: Expose this option to the user?
     public ChatMessageType MessageType { get; set; } = ChatMessageType.Notice;
 

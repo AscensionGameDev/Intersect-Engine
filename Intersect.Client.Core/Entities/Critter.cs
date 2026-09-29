@@ -144,7 +144,8 @@ public partial class Critter : Entity
                                 ref blockedBy,
                                 true,
                                 true,
-                                mAttribute.IgnoreNpcAvoids
+                                mAttribute.IgnoreNpcAvoids,
+                                direction: DirectionMoving
                             );
             var playerOnTile = PlayerOnTile(MapId, newX, newY);
 

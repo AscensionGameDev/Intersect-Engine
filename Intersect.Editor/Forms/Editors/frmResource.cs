@@ -8,6 +8,7 @@ using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.Framework.Core.GameObjects.Animations;
+using Intersect.Framework.Core.GameObjects.Events;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.Utilities;
@@ -50,6 +51,8 @@ public partial class FrmResource : EditorForm
         lstStates.DisplayMember = nameof(ResourceStateDescriptor.Name);
         lstStates.ValueMember = nameof(ResourceStateDescriptor.Id);
 
+        InitIdleMotionControls();
+
         lstGameObjects.Init(
             UpdateToolStripItems,
             AssignEditorItem,
@@ -59,6 +62,166 @@ public partial class FrmResource : EditorForm
             toolStripItemPaste_Click,
             toolStripItemDelete_Click
         );
+    }
+
+    private DarkUI.Controls.DarkComboBox cmbIdleMotionType;
+
+    private DarkUI.Controls.DarkNumericUpDown nudIdleMotionSpeed;
+
+    private DarkUI.Controls.DarkNumericUpDown nudIdleMotionAmplitude;
+
+    private DarkUI.Controls.DarkNumericUpDown nudIdleMotionPivot;
+
+    // Procedural idle animation (sway/float/bounce) - purely code-driven, no hand-drawn frames needed.
+    // grpGeneral was already full (Walkable Before/After + Use Explicit Max HP checkboxes ran all the
+    // way to its bottom edge), so this grows the group taller and shifts grpGraphics (the "Appearance"
+    // section right below it) down by the same amount to avoid overlapping it. The containing panel
+    // scrolls, so the extra height doesn't get clipped.
+    private void InitIdleMotionControls()
+    {
+        var originalBottom = grpGeneral.Height;
+
+        // chkWalkableBefore/After and chkUseExplicitMaxHealthForResourceStates were sized for their
+        // (short) English text and don't wrap - longer translations (French) overflow onto a 2nd/3rd
+        // line that their fixed 1-line height clips, overlapping whatever comes next. Re-flow them in
+        // cascade with heights that fit their actual (translated) text, then place Idle Motion below.
+        const int gap = 7;
+        var y = chkWalkableBefore.Top;
+
+        chkWalkableBefore.AutoSize = false;
+        chkWalkableBefore.Height = 34;
+        chkWalkableBefore.Top = y;
+        y = chkWalkableBefore.Bottom + gap;
+
+        chkWalkableAfter.AutoSize = false;
+        chkWalkableAfter.Height = 34;
+        chkWalkableAfter.Top = y;
+        y = chkWalkableAfter.Bottom + gap;
+
+        chkUseExplicitMaxHealthForResourceStates.AutoSize = false;
+        chkUseExplicitMaxHealthForResourceStates.Height = 40;
+        chkUseExplicitMaxHealthForResourceStates.Top = y;
+        y = chkUseExplicitMaxHealthForResourceStates.Bottom + 12;
+
+        var idleMotionTop = y;
+
+        var lblIdleMotionType = new DarkUI.Controls.DarkLabel
+        {
+            Text = "Idle Motion:",
+            Location = new System.Drawing.Point(7, idleMotionTop),
+            Size = new System.Drawing.Size(239, 13),
+            ForeColor = System.Drawing.Color.Gainsboro,
+        };
+
+        cmbIdleMotionType = new DarkUI.Controls.DarkComboBox
+        {
+            Location = new System.Drawing.Point(7, idleMotionTop + 16),
+            Size = new System.Drawing.Size(239, 24),
+            DropDownStyle = ComboBoxStyle.DropDownList,
+        };
+        cmbIdleMotionType.Items.AddRange(System.Enum.GetNames(typeof(IdleMotionType)));
+        cmbIdleMotionType.SelectedIndexChanged += (_, _) =>
+        {
+            if (_editorItem != null)
+            {
+                _editorItem.IdleMotionType = (IdleMotionType)cmbIdleMotionType.SelectedIndex;
+            }
+        };
+
+        var row2Top = idleMotionTop + 43;
+
+        var lblSpeed = new DarkUI.Controls.DarkLabel
+        {
+            Text = "Speed",
+            Location = new System.Drawing.Point(7, row2Top),
+            Size = new System.Drawing.Size(70, 13),
+            ForeColor = System.Drawing.Color.Gainsboro,
+        };
+
+        nudIdleMotionSpeed = new DarkUI.Controls.DarkNumericUpDown
+        {
+            Location = new System.Drawing.Point(7, row2Top + 16),
+            Size = new System.Drawing.Size(70, 24),
+            DecimalPlaces = 1,
+            Increment = 0.1M,
+            Minimum = 0.1M,
+            Maximum = 10M,
+        };
+        nudIdleMotionSpeed.ValueChanged += (_, _) =>
+        {
+            if (_editorItem != null)
+            {
+                _editorItem.IdleMotionSpeed = (float)nudIdleMotionSpeed.Value;
+            }
+        };
+
+        var lblAmplitude = new DarkUI.Controls.DarkLabel
+        {
+            Text = "Amplitude",
+            Location = new System.Drawing.Point(84, row2Top),
+            Size = new System.Drawing.Size(70, 13),
+            ForeColor = System.Drawing.Color.Gainsboro,
+        };
+
+        nudIdleMotionAmplitude = new DarkUI.Controls.DarkNumericUpDown
+        {
+            Location = new System.Drawing.Point(84, row2Top + 16),
+            Size = new System.Drawing.Size(70, 24),
+            DecimalPlaces = 1,
+            Increment = 0.5M,
+            Minimum = 0M,
+            Maximum = 90M,
+        };
+        nudIdleMotionAmplitude.ValueChanged += (_, _) =>
+        {
+            if (_editorItem != null)
+            {
+                _editorItem.IdleMotionAmplitude = (float)nudIdleMotionAmplitude.Value;
+            }
+        };
+
+        var lblPivot = new DarkUI.Controls.DarkLabel
+        {
+            Text = "Pivot",
+            Location = new System.Drawing.Point(161, row2Top),
+            Size = new System.Drawing.Size(70, 13),
+            ForeColor = System.Drawing.Color.Gainsboro,
+        };
+
+        nudIdleMotionPivot = new DarkUI.Controls.DarkNumericUpDown
+        {
+            Location = new System.Drawing.Point(161, row2Top + 16),
+            Size = new System.Drawing.Size(70, 24),
+            DecimalPlaces = 0,
+            Increment = 5M,
+            Minimum = 0M,
+            Maximum = 100M,
+        };
+        nudIdleMotionPivot.ValueChanged += (_, _) =>
+        {
+            if (_editorItem != null)
+            {
+                _editorItem.IdleMotionPivotPercent = (float)nudIdleMotionPivot.Value;
+            }
+        };
+        new ToolTip().SetToolTip(
+            nudIdleMotionPivot,
+            "0 = pivote depuis le haut, 100 = pivote depuis le bas (comme un tronc d'arbre), 50 = tout le sprite bascule en bloc."
+        );
+
+        grpGeneral.Controls.Add(lblIdleMotionType);
+        grpGeneral.Controls.Add(cmbIdleMotionType);
+        grpGeneral.Controls.Add(lblSpeed);
+        grpGeneral.Controls.Add(nudIdleMotionSpeed);
+        grpGeneral.Controls.Add(lblAmplitude);
+        grpGeneral.Controls.Add(nudIdleMotionAmplitude);
+        grpGeneral.Controls.Add(lblPivot);
+        grpGeneral.Controls.Add(nudIdleMotionPivot);
+
+        var newBottom = nudIdleMotionSpeed.Bottom + 12;
+        var grow = newBottom - originalBottom;
+        grpGeneral.Height = newBottom;
+        grpGraphics.Location = new System.Drawing.Point(grpGraphics.Location.X, grpGraphics.Location.Y + grow);
     }
 
     #region Basic Editor Functions
@@ -298,6 +461,10 @@ public partial class FrmResource : EditorForm
             cmbEvent.SelectedIndex = EventDescriptor.ListIndex(_editorItem.EventId) + 1;
             txtCannotHarvest.Text = _editorItem.CannotHarvestMessage;
             nudHpRegen.Value = _editorItem.VitalRegen;
+            cmbIdleMotionType.SelectedIndex = (int)_editorItem.IdleMotionType;
+            nudIdleMotionSpeed.Value = (decimal)_editorItem.IdleMotionSpeed;
+            nudIdleMotionAmplitude.Value = (decimal)_editorItem.IdleMotionAmplitude;
+            nudIdleMotionPivot.Value = (decimal)_editorItem.IdleMotionPivotPercent;
             picResource.Hide();
 
             _stateList.Clear();

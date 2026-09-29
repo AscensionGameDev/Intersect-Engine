@@ -20,7 +20,18 @@ public partial class ShowOptionsCommand : EventCommand
 
     public string Text { get; set; } = string.Empty;
 
+    /// <summary>
+    /// English translation of <see cref="Text"/>. Optional, see <see cref="ShowTextCommand.TextEn"/>.
+    /// </summary>
+    public string TextEn { get; set; } = string.Empty;
+
     public string[] Options { get; set; } = new string[4];
+
+    /// <summary>
+    /// English translations of <see cref="Options"/> (same indices). Optional per-entry, see
+    /// <see cref="ShowTextCommand.TextEn"/>.
+    /// </summary>
+    public string[] OptionsEn { get; set; } = new string[4];
 
     //Id of the command list(s) you follow when a particular option is selected
     public Guid[] BranchIds { get; set; } = new Guid[4];

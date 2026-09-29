@@ -9,8 +9,12 @@ using Intersect.Client.Framework.Gwen.Control.Layout;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
+using Intersect.Client.Networking;
 using Intersect.Config;
+using Intersect.Configuration;
+using Intersect.Enums;
 using Intersect.Core;
 using Intersect.Framework.Core;
 using Intersect.Utilities;
@@ -73,6 +77,7 @@ public partial class SettingsWindow : Window
     private readonly TabButton _videoSettingsTab;
     private readonly ScrollControl _videoContainer;
     private readonly LabeledComboBox _resolutionList;
+    private readonly LabeledComboBox _languageList;
     private readonly LabeledComboBox _fpsList;
     private readonly LabeledCheckBox _showFPSCounterCheckbox;
     private readonly LabeledCheckBox _showPingCounterCheckbox;
@@ -420,6 +425,19 @@ public partial class SettingsWindow : Window
             addedItem.TextAlign = Pos.Left;
         }
 
+        // Video Settings - Language List.
+        _languageList = new LabeledComboBox(parent: _videoContainer, name: nameof(_languageList))
+        {
+            Dock = Pos.Top,
+            Font = _defaultFont,
+            FontSize = 12,
+            Label = Strings.Settings.Language,
+            TextPadding = new Padding(8, 4, 0, 4),
+        };
+        _ = _languageList.AddItem(label: "English", userData: "en");
+        _ = _languageList.AddItem(label: "Français", userData: "fr");
+        _languageList.SelectByUserData(ClientConfiguration.Instance.Language);
+
         // Video Settings - FPS List.
         _fpsList = new LabeledComboBox(parent: _videoContainer, name: nameof(_fpsList))
         {
@@ -464,12 +482,14 @@ public partial class SettingsWindow : Window
         };
 
         // Video Settings - Enable Scrolling World Zoom Checkbox
+        // World zoom is locked to 2x, so this control is created (other code still references it) but hidden.
         _enableScrollingWorldZoomCheckbox = new LabeledCheckBox(parent: _videoContainer, name: nameof(_enableScrollingWorldZoomCheckbox))
         {
             Dock = Pos.Top,
             Font = _defaultFont,
             FontSize = 12,
             Text = Strings.Settings.EnableScrollingWorldZoom,
+            IsHidden = true,
         };
 
         _worldScale = new LabeledSlider(parent: _videoContainer, name: nameof(_worldScale))
@@ -829,31 +849,8 @@ public partial class SettingsWindow : Window
 
     private void UpdateWorldScaleControls()
     {
-        if (!Options.IsLoaded)
-        {
-            _worldScale.IsHidden = true;
-            return;
-        }
-
-        _worldScale.IsHidden = false;
-        _worldScale.IsDisabled = false;
-        _worldScale.SetToolTipText(null);
-
-        var worldScaleNotches = new double[] { 1, 2, 4 }.Select(n => n * Graphics.MinimumWorldScale).ToList();
-        while (worldScaleNotches.Last() < Graphics.MaximumWorldScale)
-        {
-            worldScaleNotches.Add(worldScaleNotches.Last() * 2);
-        }
-
-        Globals.Database.WorldZoom = (float)MathHelper.Clamp(
-            Globals.Database.WorldZoom,
-            worldScaleNotches.Min(),
-            worldScaleNotches.Max()
-        );
-
-        _worldScale.SetRange(worldScaleNotches.Min(), worldScaleNotches.Max());
-        _worldScale.Notches = worldScaleNotches.ToArray();
-        _worldScale.Value = Globals.Database.WorldZoom;
+        // World zoom is locked to 2x - the player can no longer change it, so this control stays hidden.
+        _worldScale.IsHidden = true;
     }
 
     void InterfaceSettings_Clicked(Base sender, MouseButtonState arguments)
@@ -1177,6 +1174,16 @@ public partial class SettingsWindow : Window
         if (!_worldScale.IsHidden)
         {
             Globals.Database.WorldZoom = (float)_worldScale.Value;
+        }
+
+        var selectedLanguage = _languageList.SelectedItem?.UserData as string ?? "en";
+        if (!string.Equals(ClientConfiguration.Instance.Language, selectedLanguage, StringComparison.OrdinalIgnoreCase))
+        {
+            ClientConfiguration.Instance.Language = selectedLanguage;
+            ClientConfiguration.Instance.Save();
+            PacketSender.SendSetLanguage(selectedLanguage);
+            Strings.Load();
+            Interface.QueueFullReload();
         }
 
         var resolutionItem = _resolutionList.SelectedItem;

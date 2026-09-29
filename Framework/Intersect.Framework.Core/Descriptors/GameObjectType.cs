@@ -8,6 +8,11 @@ using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.NPCs;
 using Intersect.Framework.Core.GameObjects.Pets;
+using Intersect.Framework.Core.GameObjects.Factions;
+using Intersect.Framework.Core.GameObjects.Furniture;
+using Intersect.Framework.Core.GameObjects.Territories;
+using Intersect.Framework.Core.GameObjects.Achievements;
+using Intersect.Framework.Core.GameObjects.Mounts;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
 using Intersect.Framework.Core.GameObjects.Titles;
@@ -81,9 +86,24 @@ public enum GameObjectType
     [GameObjectInfo(typeof(PetDescriptor), "pets")]
     Pet,
 
+    [GameObjectInfo(typeof(MountDescriptor), "mounts")]
+    Mount,
+
+    [GameObjectInfo(typeof(AchievementDescriptor), "achievements")]
+    Achievement,
+
+    [GameObjectInfo(typeof(FactionDescriptor), "factions")]
+    Faction,
+
+    [GameObjectInfo(typeof(TerritoryDescriptor), "territories")]
+    Territory,
+
     [GameObjectInfo(typeof(DungeonDescriptor), "dungeons")]
     Dungeon,
 
     [GameObjectInfo(typeof(InstanceVariableDescriptor), "instance_variables")]
     InstanceVariable,
+
+    [GameObjectInfo(typeof(FurnitureDescriptor), "furniture")]
+    Furniture,
 }

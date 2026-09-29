@@ -10,6 +10,7 @@ using Intersect.Client.Interface.Game.Inventory;
 using Intersect.Client.Interface.Game.Spells;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Network.Packets.Server;
 using Intersect.Enums;
 
 // ReSharper disable PrivateFieldCanBeConvertedToLocalVariable
@@ -50,6 +51,10 @@ public partial class MenuContainer : Panel
     private readonly Titles.TitlesWindow _titlesWindow;
 
     private readonly Dungeons.DungeonsWindow _dungeonsWindow;
+
+    private readonly Achievements.AchievementsWindow _achievementsWindow;
+
+    private readonly Furniture.FurnitureWindow _furnitureWindow;
 
     private readonly ImagePanel _escapeMenuButtonContainer;
     private readonly Button _escapeMenuButton;
@@ -247,6 +252,8 @@ public partial class MenuContainer : Panel
         _guildWindow = new GuildWindow(gameCanvas: gameCanvas);
         _titlesWindow = new Titles.TitlesWindow(gameCanvas: gameCanvas);
         _dungeonsWindow = new Dungeons.DungeonsWindow(gameCanvas: gameCanvas);
+        _achievementsWindow = new Achievements.AchievementsWindow(gameCanvas: gameCanvas);
+        _furnitureWindow = new Furniture.FurnitureWindow(gameCanvas: gameCanvas);
     }
 
     //Methods
@@ -262,6 +269,8 @@ public partial class MenuContainer : Panel
         _guildWindow.Update();
         _titlesWindow.Update();
         _dungeonsWindow.Update();
+        _achievementsWindow.Update();
+        _furnitureWindow.Update();
     }
 
     public void UpdateFriendsList()
@@ -277,6 +286,16 @@ public partial class MenuContainer : Panel
     public void UpdateTitlesList()
     {
         _titlesWindow.UpdateList();
+    }
+
+    public void UpdateAchievementsList()
+    {
+        _achievementsWindow.UpdateList();
+    }
+
+    public void UpdateDungeonLeaderboard(DungeonLeaderboardPacket packet)
+    {
+        _dungeonsWindow.SetLeaderboard(packet);
     }
 
     public void UpdateDungeonsList()
@@ -304,6 +323,8 @@ public partial class MenuContainer : Panel
         _guildWindow.Hide();
         _titlesWindow.Hide();
         _dungeonsWindow.Hide();
+        _achievementsWindow.Hide();
+        _furnitureWindow.Hide();
     }
 
     public void ToggleCharacterWindow()
@@ -316,6 +337,9 @@ public partial class MenuContainer : Panel
         {
             HideWindows();
             _characterWindow.Show();
+            // Opening Character also opens Inventory alongside it - Inventory's own button still
+            // opens it independently (OpenInventory/ToggleInventoryWindow are unaffected).
+            OpenInventory();
         }
     }
 
@@ -366,6 +390,37 @@ public partial class MenuContainer : Panel
         }
 
         return _titlesWindow.IsVisible;
+    }
+
+    public bool ToggleFurnitureWindow()
+    {
+        if (_furnitureWindow.IsVisible)
+        {
+            _furnitureWindow.Hide();
+        }
+        else
+        {
+            HideWindows();
+            _furnitureWindow.Show();
+        }
+
+        return _furnitureWindow.IsVisible;
+    }
+
+    public bool ToggleAchievementsWindow()
+    {
+        if (_achievementsWindow.IsVisible)
+        {
+            _achievementsWindow.Hide();
+        }
+        else
+        {
+            HideWindows();
+            _achievementsWindow.UpdateList();
+            _achievementsWindow.Show();
+        }
+
+        return _achievementsWindow.IsVisible;
     }
 
     public bool ToggleGuildWindow()

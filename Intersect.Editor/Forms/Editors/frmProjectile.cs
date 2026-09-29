@@ -193,17 +193,21 @@ public partial class FrmProjectile : EditorForm
                 lstAnimations.SelectedIndex = 0;
             }
 
-            if (!mEditorItem.HomingBehavior && !mEditorItem.DirectShotBehavior)
-            {
-                rdoBehaviorDefault.Checked = true;
-            }
-            else if (mEditorItem.HomingBehavior)
+            if (mEditorItem.HomingBehavior)
             {
                 rdoBehaviorHoming.Checked = true;
             }
             else if (mEditorItem.DirectShotBehavior)
             {
                 rdoBehaviorDirectShot.Checked = true;
+            }
+            else if (mEditorItem.MouseAimedBehavior)
+            {
+                rdoBehaviorMouseAimed.Checked = true;
+            }
+            else
+            {
+                rdoBehaviorDefault.Checked = true;
             }
 
             UpdateAnimationData(0);
@@ -842,22 +846,36 @@ public partial class FrmProjectile : EditorForm
         UpdateTargettingOptions();
     }
 
+    private void rdoBehaviorMouseAimed_CheckedChanged(object sender, EventArgs e)
+    {
+        UpdateTargettingOptions();
+    }
+
     private void UpdateTargettingOptions()
     {
-        if (rdoBehaviorDefault.Checked)
-        {
-            mEditorItem.HomingBehavior = false;
-            mEditorItem.DirectShotBehavior = false;
-        }
-        else if (rdoBehaviorHoming.Checked)
+        if (rdoBehaviorHoming.Checked)
         {
             mEditorItem.HomingBehavior = true;
             mEditorItem.DirectShotBehavior = false;
+            mEditorItem.MouseAimedBehavior = false;
         }
         else if (rdoBehaviorDirectShot.Checked)
         {
             mEditorItem.HomingBehavior = false;
             mEditorItem.DirectShotBehavior = true;
+            mEditorItem.MouseAimedBehavior = false;
+        }
+        else if (rdoBehaviorMouseAimed.Checked)
+        {
+            mEditorItem.HomingBehavior = false;
+            mEditorItem.DirectShotBehavior = false;
+            mEditorItem.MouseAimedBehavior = true;
+        }
+        else
+        {
+            mEditorItem.HomingBehavior = false;
+            mEditorItem.DirectShotBehavior = false;
+            mEditorItem.MouseAimedBehavior = false;
         }
     }
 }

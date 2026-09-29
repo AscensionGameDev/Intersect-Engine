@@ -14,6 +14,11 @@ using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Factions;
+using Intersect.Framework.Core.GameObjects.Furniture;
+using Intersect.Framework.Core.GameObjects.Territories;
+using Intersect.Framework.Core.GameObjects.Achievements;
+using Intersect.Framework.Core.GameObjects.Mounts;
 using Intersect.Framework.Core.GameObjects.Pets;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
@@ -769,6 +774,62 @@ internal sealed partial class PacketHandler
                 }
 
                 break;
+            case GameObjectType.Mount:
+                if (deleted)
+                {
+                    var mount = MountDescriptor.Get(id);
+                    mount.Delete();
+                }
+                else
+                {
+                    var mount = new MountDescriptor(id);
+                    mount.Load(json);
+                    MountDescriptor.Lookup.Set(id, mount);
+                }
+
+                break;
+            case GameObjectType.Achievement:
+                if (deleted)
+                {
+                    var achievement = AchievementDescriptor.Get(id);
+                    achievement.Delete();
+                }
+                else
+                {
+                    var achievement = new AchievementDescriptor(id);
+                    achievement.Load(json);
+                    AchievementDescriptor.Lookup.Set(id, achievement);
+                }
+
+                break;
+            case GameObjectType.Faction:
+                if (deleted)
+                {
+                    var faction = FactionDescriptor.Get(id);
+                    faction.Delete();
+                }
+                else
+                {
+                    var faction = new FactionDescriptor(id);
+                    faction.Load(json);
+                    FactionDescriptor.Lookup.Set(id, faction);
+                }
+
+                break;
+            case GameObjectType.Territory:
+                if (deleted)
+                {
+                    var territory = TerritoryDescriptor.Get(id);
+                    territory.Delete();
+                }
+                else
+                {
+                    var territory = new TerritoryDescriptor(id);
+                    territory.Load(json);
+                    TerritoryDescriptor.Lookup.Set(id, territory);
+                }
+
+                break;
 
             case GameObjectType.Dungeon:
                 if (deleted)
@@ -796,6 +857,20 @@ internal sealed partial class PacketHandler
                     var ivar = new InstanceVariableDescriptor(id);
                     ivar.Load(json);
                     InstanceVariableDescriptor.Lookup.Set(id, ivar);
+                }
+
+                break;
+            case GameObjectType.Furniture:
+                if (deleted)
+                {
+                    var furniture = FurnitureDescriptor.Get(id);
+                    furniture.Delete();
+                }
+                else
+                {
+                    var furniture = new FurnitureDescriptor(id);
+                    furniture.Load(json);
+                    FurnitureDescriptor.Lookup.Set(id, furniture);
                 }
 
                 break;

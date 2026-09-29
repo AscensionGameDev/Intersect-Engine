@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
@@ -28,6 +30,12 @@ public partial class EquipmentItem
 
     public ImagePanel Pnl;
 
+    /// <summary>Thin colored frame tinted to the equipped item's rarity, same palette as inventory slots.</summary>
+    private ImagePanel _rarityBorder;
+
+    /// <summary>Slot-name placeholder shown in empty slots so they don't look like dead/broken tiles.</summary>
+    private Label _emptySlotLabel;
+
     public EquipmentItem(int index, WindowControl characterWindow)
     {
         mYindex = index;
@@ -42,6 +50,29 @@ public partial class EquipmentItem
 
         ContentPanel = new ImagePanel(Pnl, "EquipmentIcon");
         ContentPanel.MouseInputEnabled = false;
+
+        _rarityBorder = new ImagePanel(Pnl, "RarityBorder")
+        {
+            Dock = Pos.Fill,
+            MouseInputEnabled = false,
+            TextureFilename = "raritybackdrop.png",
+            IsHidden = true,
+        };
+        _rarityBorder.TextureNinePatchMargin = new Margin(4);
+        _rarityBorder.SendToBack();
+
+        _emptySlotLabel = new Label(Pnl, "EmptySlotLabel")
+        {
+            Dock = Pos.Fill,
+            MouseInputEnabled = false,
+            TextAlign = Pos.Center,
+            FontName = "sourcesansproblack",
+            FontSize = 7,
+        };
+        _emptySlotLabel.SetTextColor(new Color(180, 150, 150, 150), ComponentState.Normal);
+        _emptySlotLabel.SetText(Options.Instance.Equipment.Slots[mYindex]);
+        _emptySlotLabel.SendToBack();
+
         Pnl.SetToolTipText(Options.Instance.Equipment.Slots[mYindex]);
     }
 
@@ -116,6 +147,8 @@ public partial class EquipmentItem
         {
             ContentPanel.Hide();
             _loadedTexture = default;
+            _rarityBorder.IsHidden = true;
+            _emptySlotLabel.IsHidden = false;
             return;
         }
 
@@ -131,6 +164,8 @@ public partial class EquipmentItem
         {
             ContentPanel.Hide();
             _loadedTexture = default;
+            _rarityBorder.IsHidden = true;
+            _emptySlotLabel.IsHidden = false;
             return;
         }
 
@@ -138,5 +173,17 @@ public partial class EquipmentItem
         ContentPanel.Texture = itemTexture;
         ContentPanel.RenderColor = item.Color;
         _loadedTexture = ContentPanel.Texture?.Name;
+        _emptySlotLabel.IsHidden = true;
+
+        // Rarity 0 ("common") stays borderless, like WoW/Diablo — a frame on every single item would just be noise.
+        if (item.Rarity > 0 && CustomColors.Items.Rarities.TryGetValue(item.Rarity, out var rarityColor))
+        {
+            _rarityBorder.RenderColor = rarityColor;
+            _rarityBorder.IsHidden = false;
+        }
+        else
+        {
+            _rarityBorder.IsHidden = true;
+        }
     }
 }

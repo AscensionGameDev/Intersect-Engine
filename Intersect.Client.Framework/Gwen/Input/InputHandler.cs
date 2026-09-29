@@ -89,20 +89,6 @@ public static partial class InputHandler
 
             var previousNode = _focusedMouse;
             _focusedMouse = value;
-            // ApplicationContext.Context.Value?.Logger.LogTrace(
-            //     "Setting mouse focused node to {NextNode} from {PreviousNode} ({HoveredName} is hovered)",
-            //     value?.Name ?? "(none)",
-            //     previousNode?.Name ?? "(none)",
-            //     HoveredControl?.Name ?? "(none)"
-            // );
-
-            // if (value == null)
-            // {
-            //     ApplicationContext.Context.Value?.Logger.LogTrace(
-            //         "Stack:\n{Frames}",
-            //         string.Join('\n', new StackTrace(fNeedFileInfo: true).GetFrames().Select(frame => $"\t{frame}"))
-            //     );
-            // }
         }
     }
 
@@ -580,6 +566,14 @@ public static partial class InputHandler
     {
         var mouseFocusedControl = MouseFocus;
         if (mouseFocusedControl?.Canvas != canvas)
+        {
+            mouseFocusedControl = null;
+        }
+
+        // While dragging a package, hover must always track the real cursor position. A stray/duplicate mouse-down
+        // right as the drag starts can re-lock MouseFocus onto whatever was hovered at that instant, which would
+        // otherwise freeze the hovered control for the rest of the drag and break every drop target past that point.
+        if (DragAndDrop.IsDragging)
         {
             mouseFocusedControl = null;
         }

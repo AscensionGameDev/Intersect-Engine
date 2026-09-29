@@ -112,8 +112,12 @@ public partial class EntityBox
             _isPlayerBox ? new ImagePanel(gameCanvas, "PlayerBox") : new ImagePanel(gameCanvas, "TargetBox");
 
         EntityWindow.ShouldCacheToTexture = true;
+        // This window's own background area isn't interactive (only the context menu button below is), but its
+        // bounds are sized wider/taller than what's visually drawn, so leaving mouse input on here would swallow
+        // clicks meant for whatever UI sits underneath that empty space (e.g. the hotbar).
+        EntityWindow.MouseInputEnabled = false;
 
-        EntityInfoPanel = new ImagePanel(EntityWindow, "EntityInfoPanel");
+        EntityInfoPanel = new ImagePanel(EntityWindow, "EntityInfoPanel") { MouseInputEnabled = false };
 
         EntityName = new Label(EntityInfoPanel, "EntityNameLabel") { Text = myEntity?.Name };
         EntityLevel = new Label(EntityInfoPanel, "EntityLevelLabel");
@@ -149,21 +153,21 @@ public partial class EntityBox
             EventDesc = new RichLabel(EntityInfoPanel, "EventDescLabel");
         }
 
-        HpBackground = new ImagePanel(EntityInfoPanel, "HPBarBackground");
-        HpBar = new ImagePanel(EntityInfoPanel, "HPBar");
-        ShieldBar = new ImagePanel(EntityInfoPanel, "ShieldBar");
+        HpBackground = new ImagePanel(EntityInfoPanel, "HPBarBackground") { MouseInputEnabled = false };
+        HpBar = new ImagePanel(EntityInfoPanel, "HPBar") { MouseInputEnabled = false };
+        ShieldBar = new ImagePanel(EntityInfoPanel, "ShieldBar") { MouseInputEnabled = false };
         HpTitle = new Label(EntityInfoPanel, "HPTitle");
         HpTitle.SetText(Strings.EntityBox.Vital0);
         HpLbl = new Label(EntityInfoPanel, "HPLabel");
 
-        MpBackground = new ImagePanel(EntityInfoPanel, "MPBackground");
-        MpBar = new ImagePanel(EntityInfoPanel, "MPBar");
+        MpBackground = new ImagePanel(EntityInfoPanel, "MPBackground") { MouseInputEnabled = false };
+        MpBar = new ImagePanel(EntityInfoPanel, "MPBar") { MouseInputEnabled = false };
         MpTitle = new Label(EntityInfoPanel, "MPTitle");
         MpTitle.SetText(Strings.EntityBox.Vital1);
         MpLbl = new Label(EntityInfoPanel, "MPLabel");
 
-        ExpBackground = new ImagePanel(EntityInfoPanel, "EXPBackground");
-        ExpBar = new ImagePanel(EntityInfoPanel, "EXPBar");
+        ExpBackground = new ImagePanel(EntityInfoPanel, "EXPBackground") { MouseInputEnabled = false };
+        ExpBar = new ImagePanel(EntityInfoPanel, "EXPBar") { MouseInputEnabled = false };
         ExpTitle = new Label(EntityInfoPanel, "EXPTitle");
         ExpTitle.SetText(Strings.EntityBox.Exp);
         ExpLbl = new Label(EntityInfoPanel, "EXPLabel");
@@ -275,6 +279,18 @@ public partial class EntityBox
         ShieldBar.Hide();
         UpdateHpBar(0, true);
         UpdateMpBar(0, true);
+
+        // Entities that will never have mana (most monsters) show an always-empty MP row otherwise -
+        // hide the whole row (background track included, not just the fill) rather than leave a
+        // perpetually-empty bar visible.
+        if (MyEntity != null && MyEntity.MaxVitals[Vital.Mana] <= 0)
+        {
+            MpBackground.Hide();
+            MpBar.Hide();
+            MpTitle.Hide();
+            MpLbl.Hide();
+        }
+
         if (MyEntity is Player)
         {
             UpdateXpBar(0, true);

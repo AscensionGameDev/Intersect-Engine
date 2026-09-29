@@ -10,6 +10,11 @@ using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Framework.Core.GameObjects.Mapping.Tilesets;
 using Intersect.Framework.Core.GameObjects.Maps.MapList;
 using Intersect.Framework.Core.GameObjects.NPCs;
+using Intersect.Framework.Core.GameObjects.Factions;
+using Intersect.Framework.Core.GameObjects.Furniture;
+using Intersect.Framework.Core.GameObjects.Territories;
+using Intersect.Framework.Core.GameObjects.Achievements;
+using Intersect.Framework.Core.GameObjects.Mounts;
 using Intersect.Framework.Core.GameObjects.Pets;
 using Intersect.Framework.Core.GameObjects.PlayerClass;
 using Intersect.Framework.Core.GameObjects.Resources;
@@ -123,6 +128,8 @@ public static partial class PacketSender
 
             // Send the player's unlocked/equipped titles so the Titles window can populate without a round trip.
             PacketSender.SendUnlockedTitles(player);
+            PacketSender.SendUnlockedMounts(player);
+            PacketSender.SendUnlockedAchievements(player);
             PacketSender.SendDungeonRecords(player);
             PacketSender.SendDungeonStatus(player);
 
@@ -1194,6 +1201,37 @@ public static partial class PacketSender
         }
     }
 
+    //FurnitureInstancesPacket
+    public static void SendFurnitureInstances(Player player, MapInstance mapInstance)
+    {
+        if (player == null || mapInstance == null)
+        {
+            return;
+        }
+
+        var furniture = mapInstance.FurnitureInstances.Values.Select(
+            f => new FurnitureInstanceUpdatePacket(mapInstance.GetController().Id, f.PlacementId, f.DescriptorId, f.X, f.Y, f.Direction)
+        ).ToArray();
+
+        player.SendPacket(new FurnitureInstancesPacket(mapInstance.GetController().Id, furniture));
+    }
+
+    //FurnitureInstanceUpdatePacket
+    public static void SendFurnitureInstanceUpdate(Guid mapId, Guid mapInstanceId, FurnitureInstance furniture)
+    {
+        SendDataToProximityOnMapInstance(
+            mapId,
+            mapInstanceId,
+            new FurnitureInstanceUpdatePacket(mapId, furniture.PlacementId, furniture.DescriptorId, furniture.X, furniture.Y, furniture.Direction)
+        );
+    }
+
+    //FurnitureInstanceUpdatePacket (removal)
+    public static void SendFurnitureInstanceRemoved(Guid mapId, Guid mapInstanceId, Guid placementId)
+    {
+        SendDataToProximityOnMapInstance(mapId, mapInstanceId, new FurnitureInstanceUpdatePacket(mapId, placementId));
+    }
+
 
     //InventoryPacket
     public static void SendInventory(Player player)
@@ -1439,7 +1477,9 @@ public static partial class PacketSender
                     character.Face,
                     character.Level,
                     ClassDescriptor.GetName(character.ClassId),
-                    equipment
+                    equipment,
+                    character.SpriteColors.ToArray(),
+                    character.SpriteParts.ToArray()
                 )
             );
         }
@@ -1881,6 +1921,34 @@ public static partial class PacketSender
                 }
 
                 break;
+            case GameObjectType.Mount:
+                foreach (var obj in MountDescriptor.Lookup)
+                {
+                    SendGameObject(client, obj.Value, false, false, packetList);
+                }
+
+                break;
+            case GameObjectType.Achievement:
+                foreach (var obj in AchievementDescriptor.Lookup)
+                {
+                    SendGameObject(client, obj.Value, false, false, packetList);
+                }
+
+                break;
+            case GameObjectType.Faction:
+                foreach (var obj in FactionDescriptor.Lookup)
+                {
+                    SendGameObject(client, obj.Value, false, false, packetList);
+                }
+
+                break;
+            case GameObjectType.Territory:
+                foreach (var obj in TerritoryDescriptor.Lookup)
+                {
+                    SendGameObject(client, obj.Value, false, false, packetList);
+                }
+
+                break;
             case GameObjectType.Dungeon:
                 foreach (var obj in DungeonDescriptor.Lookup)
                 {
@@ -1890,6 +1958,13 @@ public static partial class PacketSender
                 break;
             case GameObjectType.InstanceVariable:
                 foreach (var obj in InstanceVariableDescriptor.Lookup)
+                {
+                    SendGameObject(client, obj.Value, false, false, packetList);
+                }
+
+                break;
+            case GameObjectType.Furniture:
+                foreach (var obj in FurnitureDescriptor.Lookup)
                 {
                     SendGameObject(client, obj.Value, false, false, packetList);
                 }
@@ -2322,6 +2397,48 @@ public static partial class PacketSender
         var unlocked = player.UnlockedTitleIds.Where(id => TitleDescriptor.Get(id) != null).ToList();
 
         player.SendPacket(new UnlockedTitlesPacket(unlocked, player.EquippedTitleId));
+    }
+
+    public static void SendUnlockedMounts(Player player)
+    {
+        if (player == null)
+        {
+            return;
+        }
+
+        // Only send mounts that still exist (a mount may have been deleted in the editor since it was unlocked).
+        var unlocked = player.UnlockedMountIds.Where(id => MountDescriptor.Get(id) != null).ToList();
+
+        player.SendPacket(new UnlockedMountsPacket(unlocked, player.ActiveMountId));
+    }
+
+    public static void SendUnlockedAchievements(Player player)
+    {
+        if (player == null)
+        {
+            return;
+        }
+
+        // Only send achievements that still exist (one may have been deleted in the editor since it was unlocked).
+        var unlocked = player.UnlockedAchievements
+            .Where(pair => AchievementDescriptor.Get(pair.Key) != null)
+            .ToDictionary(pair => pair.Key, pair => pair.Value);
+
+        player.SendPacket(new UnlockedAchievementsPacket(unlocked));
+    }
+
+    public static void SendDungeonLeaderboard(Player player, Guid dungeonId)
+    {
+        if (player == null)
+        {
+            return;
+        }
+
+        var entries = DbInterface.GetDungeonLeaderboard(dungeonId)
+            .Select(entry => new DungeonLeaderboardEntryPacket(entry.PlayerName, entry.TimeMs))
+            .ToArray();
+
+        player.SendPacket(new DungeonLeaderboardPacket(dungeonId, entries));
     }
 
     //FriendRequestPacket

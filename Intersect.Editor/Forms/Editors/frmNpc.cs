@@ -298,6 +298,7 @@ public partial class FrmNpc : EditorForm
             nudFlee.Value = mEditorItem.FleeHealthPercentage;
             chkFocusDamageDealer.Checked = mEditorItem.FocusHighestDamageDealer;
             nudResetRadius.Value = mEditorItem.ResetRadius;
+            nudPatrolRadius.Value = mEditorItem.PatrolRadius;
 
             //Common Events
             cmbOnDeathEventKiller.SelectedIndex = EventDescriptor.ListIndex(mEditorItem.OnDeathEventId) + 1;
@@ -961,6 +962,11 @@ public partial class FrmNpc : EditorForm
         // Use whatever is the lowest, either the maximum path find distance or the user entered value.
         nudResetRadius.Value = Math.Min(maxPathFindingDistance, maxUserEnteredValue);
         mEditorItem.ResetRadius = (int)nudResetRadius.Value;
+    }
+
+    private void nudPatrolRadius_ValueChanged(object sender, EventArgs e)
+    {
+        mEditorItem.PatrolRadius = (int)nudPatrolRadius.Value;
     }
 
     #region "Item List - Folders, Searching, Sorting, Etc"

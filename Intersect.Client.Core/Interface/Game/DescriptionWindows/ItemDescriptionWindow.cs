@@ -171,7 +171,7 @@ public partial class ItemDescriptionWindow() : DescriptionWindowBase(Interface.G
         // Set up the description telling us what type of item this is.
         // if equipment, also list what kind.
         Strings.ItemDescription.ItemTypes.TryGetValue((int)_itemDescriptor.ItemType, out var typeDesc);
-        if (_itemDescriptor.ItemType == ItemType.Equipment)
+        if (_itemDescriptor.ItemType is ItemType.Equipment or ItemType.Pet or ItemType.Mount)
         {
             var equipSlot = Options.Instance.Equipment.Slots[_itemDescriptor.EquipmentSlot];
             var extraInfo = equipSlot;

@@ -147,6 +147,8 @@ public partial class ShopItem : SlotItem
             Icon.Texture = itemTex;
             Icon.RenderColor = itemDescriptor.Color;
         }
+
+        SetRarity(itemDescriptor.Rarity);
     }
 
     public override bool DragAndDrop_HandleDrop(Package package, int x, int y)

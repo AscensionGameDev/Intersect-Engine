@@ -229,9 +229,8 @@ public static partial class DragAndDrop
         // the dropped control will land etc..
         HoveredControl.DragAndDrop_Hover(CurrentPackage, x, y);
 
-        // Override the cursor - since it might have been set my underlying controls
-        // Ideally this would show the 'being dragged' control. TODO
-        Platform.Neutral.SetCursor(Cursors.Default);
+        // Override the cursor - since it might have been set by underlying controls.
+        Platform.Neutral.SetCursor(Cursors.Drag);
 
         hoveredControl.Redraw();
     }

@@ -27,7 +27,9 @@ public partial class CharacterPacket : IntersectPacket
         string face,
         int level,
         string className,
-        EquipmentFragment[] equipment
+        EquipmentFragment[] equipment,
+        Color[] spriteColors = null,
+        SpritePart[] spriteParts = null
     )
     {
         Id = id;
@@ -37,6 +39,8 @@ public partial class CharacterPacket : IntersectPacket
         Level = level;
         ClassName = className;
         Equipment = equipment;
+        SpriteColors = spriteColors ?? [];
+        SpriteParts = spriteParts ?? [];
     }
 
     [Key(0)]
@@ -59,5 +63,11 @@ public partial class CharacterPacket : IntersectPacket
 
     [Key(6)]
     public EquipmentFragment[] Equipment { get; set; }
+
+    [Key(7)]
+    public Color[] SpriteColors { get; set; } = [];
+
+    [Key(8)]
+    public SpritePart[] SpriteParts { get; set; } = [];
 
 }

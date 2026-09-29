@@ -15,6 +15,12 @@ public partial class Cursor
         mType = (int) t;
     }
 
+    /// <summary>
+    /// The kind of cursor this represents - used by the client to pick which custom cursor texture (if
+    /// any) to draw in place of the OS cursor.
+    /// </summary>
+    public Cursors.CursorTypes Type => (Cursors.CursorTypes) mType;
+
     public static Cursor Current { get; set; }
 
 }
@@ -37,7 +43,11 @@ public static partial class Cursors
 
         SizeNesw,
 
-        No
+        No,
+
+        Hand,
+
+        Drag
 
     }
 
@@ -54,5 +64,9 @@ public static partial class Cursors
     public static Cursor SizeNesw => new Cursor(CursorTypes.SizeNesw);
 
     public static Cursor No => new Cursor(CursorTypes.No);
+
+    public static Cursor Hand => new Cursor(CursorTypes.Hand);
+
+    public static Cursor Drag => new Cursor(CursorTypes.Drag);
 
 }

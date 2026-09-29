@@ -36,4 +36,9 @@ public partial class GuildPermissions
     /// Determines whether or not guild members of this rank can move items around within the guild bank
     /// </summary>
     public bool BankMove { get; set; }
+
+    /// <summary>
+    /// Determines whether or not guild members of this rank can place/move/remove furniture in the guild hall
+    /// </summary>
+    public bool ManageHall { get; set; }
 }

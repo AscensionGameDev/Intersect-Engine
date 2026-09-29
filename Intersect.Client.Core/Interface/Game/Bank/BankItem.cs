@@ -265,11 +265,13 @@ public partial class BankItem : SlotItem
         {
             _quantityLabel.IsVisibleInParent = false;
             Icon.Texture = default;
+            SetRarity(null);
             return;
         }
 
         var bankSlot = bankSlots[SlotIndex];
         var descriptor = bankSlot.Descriptor;
+        SetRarity(descriptor.Rarity);
 
         _quantityLabel.IsVisibleInParent = !Icon.IsDragging && descriptor.IsStackable && bankSlot.Quantity > 1;
         if (_quantityLabel.IsVisibleInParent)

@@ -48,6 +48,18 @@ public partial class QuestTaskEditor : UserControl
         InitLocalization();
         cmbTaskType.SelectedIndex = mMyTask == null ? -1 : (int) mMyTask.Objective;
         txtStartDesc.Text = mMyTask?.Description;
+
+        Intersect.Editor.Forms.Editors.EditorFormHelper.AddTranslateEnButtonBelow(txtStartDesc, (_, _) =>
+        {
+            if (mMyTask == null)
+            {
+                return;
+            }
+
+            using var frm = new FrmQuestTaskTranslation(mMyTask);
+            frm.ShowDialog();
+        });
+
         UpdateFormElements();
         switch (cmbTaskType.SelectedIndex)
         {

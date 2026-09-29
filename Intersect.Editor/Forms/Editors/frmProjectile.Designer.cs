@@ -76,6 +76,7 @@ namespace Intersect.Editor.Forms.Editors
             rdoBehaviorDefault = new DarkRadioButton();
             rdoBehaviorDirectShot = new DarkRadioButton();
             rdoBehaviorHoming = new DarkRadioButton();
+            rdoBehaviorMouseAimed = new DarkRadioButton();
             grpGrappleOptions = new DarkGroupBox();
             chkGrappleOnNpc = new DarkCheckBox();
             chkGrappleOnResource = new DarkCheckBox();
@@ -671,12 +672,13 @@ namespace Intersect.Editor.Forms.Editors
             grpTargettingOptions.Controls.Add(rdoBehaviorDefault);
             grpTargettingOptions.Controls.Add(rdoBehaviorDirectShot);
             grpTargettingOptions.Controls.Add(rdoBehaviorHoming);
+            grpTargettingOptions.Controls.Add(rdoBehaviorMouseAimed);
             grpTargettingOptions.ForeColor = System.Drawing.Color.Gainsboro;
             grpTargettingOptions.Location = new System.Drawing.Point(2, 317);
             grpTargettingOptions.Margin = new Padding(4, 3, 4, 3);
             grpTargettingOptions.Name = "grpTargettingOptions";
             grpTargettingOptions.Padding = new Padding(4, 3, 4, 3);
-            grpTargettingOptions.Size = new Size(216, 101);
+            grpTargettingOptions.Size = new Size(216, 127);
             grpTargettingOptions.TabIndex = 41;
             grpTargettingOptions.TabStop = false;
             grpTargettingOptions.Text = "Targeting Options:";
@@ -715,6 +717,17 @@ namespace Intersect.Editor.Forms.Editors
             rdoBehaviorHoming.TabIndex = 36;
             rdoBehaviorHoming.Text = "Homing Behavior";
             rdoBehaviorHoming.CheckedChanged += rdoBehaviorHoming_CheckedChanged;
+            //
+            // rdoBehaviorMouseAimed
+            //
+            rdoBehaviorMouseAimed.AutoSize = true;
+            rdoBehaviorMouseAimed.Location = new System.Drawing.Point(8, 99);
+            rdoBehaviorMouseAimed.Margin = new Padding(4, 3, 4, 3);
+            rdoBehaviorMouseAimed.Name = "rdoBehaviorMouseAimed";
+            rdoBehaviorMouseAimed.Size = new Size(140, 19);
+            rdoBehaviorMouseAimed.TabIndex = 39;
+            rdoBehaviorMouseAimed.Text = "Mouse Aimed Behavior";
+            rdoBehaviorMouseAimed.CheckedChanged += rdoBehaviorMouseAimed_CheckedChanged;
             // 
             // grpGrappleOptions
             // 
@@ -1106,5 +1119,6 @@ namespace Intersect.Editor.Forms.Editors
         private DarkRadioButton rdoBehaviorHoming;
         private DarkRadioButton rdoBehaviorDirectShot;
         private DarkRadioButton rdoBehaviorDefault;
+        private DarkRadioButton rdoBehaviorMouseAimed;
     }
 }
