@@ -1,4 +1,6 @@
 using System.Text;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 using Intersect.Enums;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Crafting;
@@ -961,6 +963,25 @@ public static partial class CommandProcessing
         {
             var npc = instance.SpawnNpc((byte)tileX, (byte)tileY, direction, npcId, true);
             player.SpawnedNpcs.Add(npc);
+            return;
+        }
+
+        // The requested tile is outside the map (e.g. "2 tiles above the player" at the top edge): rather than
+        // silently spawning nothing (a missing boss phase!), spawn next to the player and leave a trace.
+        ApplicationContext.Context.Value?.Logger.LogWarning(
+            "SpawnNpc {NpcId} failed at map {MapId} ({X},{Y}); falling back to a tile next to {Player}",
+            npcId,
+            mapId,
+            tileX,
+            tileY,
+            player.Name
+        );
+
+        if (MapController.TryGetInstanceFromMap(player.MapId, player.MapInstanceId, out var playerInstance))
+        {
+            var fallback = player.GetPositionNearTarget(player.MapId, player.X, player.Y);
+            var fallbackNpc = playerInstance.SpawnNpc((byte)fallback[0], (byte)fallback[1], direction, npcId, true);
+            player.SpawnedNpcs.Add(fallbackNpc);
         }
     }
 

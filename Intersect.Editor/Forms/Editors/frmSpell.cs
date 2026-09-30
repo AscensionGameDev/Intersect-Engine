@@ -170,6 +170,13 @@ public partial class FrmSpell : EditorForm
             cmbType.Items.Add(Strings.SpellEditor.types[i]);
         }
 
+        // Spell types without a dedicated editor panel (Summon, CompanionCommand, PassiveBond) still need an
+        // entry, otherwise opening such a spell throws (SelectedIndex out of range). Their data is edited in the DB.
+        for (var i = cmbType.Items.Count; i < Enum.GetValues<SpellType>().Length; i++)
+        {
+            cmbType.Items.Add(((SpellType)i).ToString());
+        }
+
         lblIcon.Text = Strings.SpellEditor.icon;
         lblDesc.Text = Strings.SpellEditor.description;
         lblCastAnimation.Text = Strings.SpellEditor.castanimation;

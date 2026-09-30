@@ -1952,6 +1952,10 @@ If you are sure you want to hand over your guild enter '\c{{#ff8080}}{02}\c{{}}'
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString ItemLimits = @"Cannot be {00}";
 
+        public static LocalizedString RequiredLevel = @"Required level: {00}";
+
+        public static LocalizedString RequiredStat = @"Required {00}: {01}";
+
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Multiplier = @"{00}x";
 

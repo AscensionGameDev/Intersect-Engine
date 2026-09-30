@@ -261,6 +261,55 @@ public abstract partial class Entity : IEntity
     [NotMapped, JsonIgnore]
     public bool IsCasting => CastTime > Timing.Global.Milliseconds;
 
+    /// <summary>True for entities that keep moving while a cast is in progress (e.g. homing boss hazards).</summary>
+    protected virtual bool CanMoveWhileCasting => false;
+
+    private const int StaggeredSummonIntervalMs = 800;
+
+    /// <summary>Summons queued by a "rain" spell: each one spawns once its due time has passed.</summary>
+    private readonly List<(long Due, Action Spawn)> _pendingSummonSpawns = [];
+
+    private void ProcessPendingSummonSpawns()
+    {
+        if (_pendingSummonSpawns.Count == 0)
+        {
+            return;
+        }
+
+        var now = Timing.Global.Milliseconds;
+        var due = _pendingSummonSpawns.Where(pending => pending.Due <= now).OrderBy(pending => pending.Due).ToList();
+        if (due.Count == 0)
+        {
+            return;
+        }
+
+        _pendingSummonSpawns.RemoveAll(pending => pending.Due <= now);
+        foreach (var pending in due)
+        {
+            pending.Spawn();
+        }
+    }
+
+    /// <summary>
+    /// True when <paramref name="other"/> is on the same "summon team" as this entity (its owner, its owner's other
+    /// summons, or one of its own summons): hostile area spells must not hurt them.
+    /// </summary>
+    private bool IsSummonFamilyOf(Entity other)
+    {
+        if (ReferenceEquals(other, this))
+        {
+            return false;
+        }
+
+        if (this is Npc self && self.Owner != null &&
+            (ReferenceEquals(other, self.Owner) || (other is Npc sibling && ReferenceEquals(sibling.Owner, self.Owner))))
+        {
+            return true;
+        }
+
+        return other is Npc summon && ReferenceEquals(summon.Owner, this);
+    }
+
     [NotMapped, JsonIgnore]
     public bool IsTurnAroundWhileCastingDisabled => !Options.Instance.Combat.EnableTurnAroundWhileCasting && IsCasting;
 
@@ -368,6 +417,8 @@ public abstract partial class Entity : IEntity
                 {
                     Target = default;
                 }
+
+                ProcessPendingSummonSpawns();
 
                 //Cast timers
                 if (CastTime != 0 && !IsCasting && SpellCastSlot < Spells.Count && SpellCastSlot >= 0)
@@ -563,6 +614,17 @@ public abstract partial class Entity : IEntity
 
         if (IsBlockedByMapAttribute(direction, mapController.Attributes[tileX, tileY], out blockerType))
         {
+            blockingEntity = default;
+            return false;
+        }
+
+        // Buildings: only a door tile connects the inside (Indoor tiles) with the outside.
+        if (MapController.TryGet(MapId, out var currentMapController) &&
+            X >= 0 && X < currentMapController.Attributes.GetLength(0) &&
+            Y >= 0 && Y < currentMapController.Attributes.GetLength(1) &&
+            MapIndoorAttribute.BlocksMove(currentMapController.Attributes[X, Y], mapController.Attributes[tileX, tileY]))
+        {
+            blockerType = MovementBlockerType.MapAttribute;
             blockingEntity = default;
             return false;
         }
@@ -1098,7 +1160,8 @@ public abstract partial class Entity : IEntity
     public virtual void Move(Direction moveDir, Player forPlayer, bool doNotUpdate = false,
         bool correction = false)
     {
-        if (Timing.Global.Milliseconds < MoveTimer || (!Options.Instance.Combat.MovementCancelsCast && IsCasting))
+        if (Timing.Global.Milliseconds < MoveTimer ||
+            (!Options.Instance.Combat.MovementCancelsCast && IsCasting && !CanMoveWhileCasting))
         {
             return;
         }
@@ -2223,6 +2286,22 @@ public abstract partial class Entity : IEntity
                     PacketSender.SendActionMsg(enemy, Strings.Combat.Critical, CustomColors.Combat.Critical);
                 }
 
+                // Hit sounds for the attacking player (and the victim, if a player): a ringing hit on criticals,
+                // a blade sound on normal physical hits. Spells keep their own animation sounds.
+                if (damageType == DamageType.Physical || isCrit)
+                {
+                    var hitSound = isCrit ? "metal-ringing.wav" : "knifeSlice.wav";
+                    if (this is Player hittingPlayer)
+                    {
+                        PacketSender.SendPlaySound(hittingPlayer, hitSound);
+                    }
+
+                    if (enemy is Player hitPlayer && !ReferenceEquals(hitPlayer, this))
+                    {
+                        PacketSender.SendPlaySound(hitPlayer, hitSound);
+                    }
+                }
+
                 enemy.SubVital(Vital.Health, baseDamage);
                 switch (damageType)
                 {
@@ -2782,6 +2861,24 @@ public abstract partial class Entity : IEntity
     /// followers of this entity. Works the same whether the caster is a <see cref="Player"/> (a class summon
     /// spell) or an <see cref="Npc"/> (a boss calling in adds) - both flow through this same spell-cast path.
     /// </summary>
+    private int[] GetRingSpawnPosition(Maps.MapInstance mapInstance, int index, int count, int radius)
+    {
+        var angle = 2 * Math.PI * index / count;
+        var offsetX = (int)Math.Round(Math.Cos(angle) * radius);
+        var offsetY = (int)Math.Round(Math.Sin(angle) * radius);
+
+        var tile = new TileHelper(MapId, X, Y);
+        if (tile.Translate(offsetX, offsetY) &&
+            tile.GetMapId() == MapId &&
+            !mapInstance.IsPositionBlocked(false, tile.GetX(), tile.GetY(), Z))
+        {
+            return [tile.GetX(), tile.GetY()];
+        }
+
+        // Out of the map or blocked: fall back to any free tile next to the caster.
+        return GetPositionNearTarget(MapId, X, Y);
+    }
+
     private void HandleSummonSpell(SpellDescriptor spellBase)
     {
         var summonInfo = spellBase.Summon;
@@ -2805,9 +2902,31 @@ public abstract partial class Entity : IEntity
         }
 
         var amount = Math.Max(1, summonInfo.Amount);
-        for (var i = 0; i < amount; i++)
+
+        // A summon spell with a hit radius spawns its NPCs evenly spread on a circle of that radius around the caster.
+        var ringRadius = spellBase.Combat?.HitRadius ?? 0;
+
+        // A summon spell with a cast range works in "rain" mode: its NPCs are dropped one after the other, each
+        // one right on top of a living player found within that range (random pick, same map only), and stays
+        // locked on that player - boss hazards that keep players running instead of one simultaneous volley.
+        var castRange = spellBase.Combat?.CastRange ?? 0;
+        var staggered = castRange > 0;
+
+        void SpawnOne(int index)
         {
-            var spawnPos = GetPositionNearTarget(MapId, X, Y);
+            Player? victim = staggered
+                ? mapInstance.GetCachedEntities()
+                    .OfType<Player>()
+                    .Where(player => !player.IsDead && player.MapId == MapId && player.Z == Z && GetDistanceTo(player) <= castRange)
+                    .OrderBy(_ => Random.Shared.Next())
+                    .FirstOrDefault()
+                : null;
+
+            var spawnPos = victim != null
+                ? [victim.X, victim.Y]
+                : ringRadius > 0
+                    ? GetRingSpawnPosition(mapInstance, index, amount, ringRadius)
+                    : GetPositionNearTarget(MapId, X, Y);
             var summon = mapInstance.SpawnNpc((byte)spawnPos[0], (byte)spawnPos[1], Dir, summonInfo.NpcId, despawnable: true);
             if (Level > 0)
             {
@@ -2820,7 +2939,29 @@ public abstract partial class Entity : IEntity
             }
 
             summon.ConfigureAsSummon(this, summonInfo.Duration, summonInfo.DespawnOnOwnerDeath);
+            summon.PinnedTarget = victim;
             Summons.Add(summon);
+        }
+
+        for (var i = 0; i < amount; i++)
+        {
+            if (!staggered || i == 0)
+            {
+                SpawnOne(i);
+                continue;
+            }
+
+            var index = i;
+            _pendingSummonSpawns.Add((
+                Timing.Global.Milliseconds + i * StaggeredSummonIntervalMs,
+                () =>
+                {
+                    if (!IsDead && !IsDisposed)
+                    {
+                        SpawnOne(index);
+                    }
+                }
+            ));
         }
     }
 
@@ -2951,6 +3092,12 @@ public abstract partial class Entity : IEntity
             {
                 foreach (var entity in instance.GetCachedEntities())
                 {
+                    // Hostile zones never hurt the caster's own summon team (a boss and its adds/hazards).
+                    if (entity != null && !(spellBase.Combat?.Friendly ?? false) && IsSummonFamilyOf(entity))
+                    {
+                        continue;
+                    }
+
                     if (entity != null && (entity is Player || entity is Npc))
                     {
                         if (spellTarget == null || spellTarget == entity)
@@ -2978,7 +3125,7 @@ public abstract partial class Entity : IEntity
         }
     }
 
-    private int[] GetPositionNearTarget(Guid mapId, int x, int y)
+    public int[] GetPositionNearTarget(Guid mapId, int x, int y)
     {
         if (MapController.TryGetInstanceFromMap(mapId, MapInstanceId, out var instance))
         {

@@ -934,7 +934,20 @@ public static partial class Graphics
                                 Options.Instance.Map.TileHeight
                             );
 
-                            if (attributesTex != null)
+                            // Attribute types newer than the icon sheet (e.g. Indoor) have no frame: use a tint.
+                            if (((int)attr.Type - 1) * attributesTex.Width + attributesTex.Width > attributesTex.Height)
+                            {
+                                DrawTexture(
+                                    sWhiteTex,
+                                    new RectangleF(0, 0, 1, 1),
+                                    tileBounds,
+                                    attr.Type == MapAttributeType.IndoorDoor
+                                        ? System.Drawing.Color.FromArgb(140, 60, 220, 90)
+                                        : System.Drawing.Color.FromArgb(120, 60, 160, 255),
+                                    null
+                                );
+                            }
+                            else if (attributesTex != null)
                             {
                                 var blue = (attr is MapWarpAttribute warp && warp.ChangeInstance) ? 0 : 255;
                                 DrawTexture(

@@ -516,6 +516,8 @@ public partial class FrmMapLayers : DockContent
         {MapAttributeType.Blocked,Strings.Attributes.Blocked},
         {MapAttributeType.Critter,Strings.Attributes.Critter},
         {MapAttributeType.GrappleStone,Strings.Attributes.Grapple},
+        {MapAttributeType.Indoor,Strings.Attributes.Indoor},
+        {MapAttributeType.IndoorDoor,Strings.Attributes.IndoorDoor},
         {MapAttributeType.Item,Strings.Attributes.ItemSpawn},
         {MapAttributeType.NpcAvoid,Strings.Attributes.NpcAvoid},
         {MapAttributeType.Resource,Strings.Attributes.ResourceSpawn},
@@ -674,6 +676,8 @@ public partial class FrmMapLayers : DockContent
             case MapAttributeType.Blocked:
             case MapAttributeType.GrappleStone:
             case MapAttributeType.NpcAvoid:
+            case MapAttributeType.Indoor:
+            case MapAttributeType.IndoorDoor:
                 return MapAttribute.CreateAttribute(attributeType);
 
             case MapAttributeType.Item:

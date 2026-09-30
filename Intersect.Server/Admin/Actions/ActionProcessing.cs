@@ -257,12 +257,21 @@ namespace Intersect.Server.Admin.Actions
                     {
                         power = UserRights.Moderation;
                     }
+                    else if (action.Power == "Guide")
+                    {
+                        power = UserRights.GuideRights;
+                    }
 
                     var targetClient = target.Client;
                     targetClient.Power = power;
                     if (targetClient.Power.IsAdmin)
                     {
                         PacketSender.SendGlobalMsg(Strings.Player.Admin.ToString(target.Name));
+                    }
+                    else if (targetClient.Power.IsGuide)
+                    {
+                        // Guides have no moderation powers: just refresh their rank tag for everyone nearby.
+                        PacketSender.SendEntityDataToProximity(target);
                     }
                     else if (targetClient.Power.IsModerator)
                     {

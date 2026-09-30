@@ -2081,6 +2081,20 @@ public static partial class PacketSender
         SendDataToAllPlayers(new AnnouncementPacket(message, duration));
     }
 
+    /// <summary>
+    /// Send an announcement banner only to the players of one map instance (e.g. a boss alert).
+    /// </summary>
+    public static void SendAnnouncementToMapInstance(
+        Guid mapId,
+        Guid mapInstanceId,
+        string message,
+        long duration,
+        byte style = 0
+    )
+    {
+        SendDataToMapInstance(mapId, mapInstanceId, new AnnouncementPacket(message, duration, style));
+    }
+
     //ActionMsgPacket
     public static void SendActionMsg(Entity en, string message, Color color)
     {

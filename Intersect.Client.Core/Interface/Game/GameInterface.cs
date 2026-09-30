@@ -135,6 +135,11 @@ public partial class GameInterface : MutableInterface
 
     public AnnouncementWindow AnnouncementWindow => _announcementWindow ??= new AnnouncementWindow(GameCanvas) { IsHidden = true };
 
+    private AnnouncementWindow? _alertWindow;
+
+    /// <summary>Small banner near the top of the screen, used for boss attack alerts.</summary>
+    public AnnouncementWindow AlertWindow => _alertWindow ??= new AnnouncementWindow(GameCanvas, "AlertWindow") { IsHidden = true };
+
     public Dungeons.DungeonHud DungeonHud => _dungeonHud ??= new Dungeons.DungeonHud(GameCanvas);
 
     private Territories.TerritoryHud? _territoryHud;
@@ -371,6 +376,7 @@ public partial class GameInterface : MutableInterface
         QuestTracker?.Update();
         mMapItemWindow.Update();
         AnnouncementWindow?.Update();
+        _alertWindow?.Update();
         DungeonHud.Update();
         TerritoryHud.Update();
         mPictureWindow?.Update();

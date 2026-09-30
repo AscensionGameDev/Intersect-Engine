@@ -1138,12 +1138,35 @@ public static partial class Graphics
             newView.Y = restrictView.Y - (newView.Height - restrictView.Height) / 2;
         }
 
+        // Brief screen shake (critical hits): a small random offset that fades out over its duration.
+        var shakeX = 0f;
+        var shakeY = 0f;
+        var shakeNow = Timing.Global.Milliseconds;
+        if (shakeNow < _shakeEnd && _shakeDuration > 0)
+        {
+            var fade = (_shakeEnd - shakeNow) / (float)_shakeDuration;
+            shakeX = (Random.Shared.NextSingle() * 2 - 1) * _shakeStrength * fade;
+            shakeY = (Random.Shared.NextSingle() * 2 - 1) * _shakeStrength * fade;
+        }
+
         CurrentView = new FloatRect(
-            newView.X,
-            newView.Y,
+            newView.X + shakeX,
+            newView.Y + shakeY,
             newView.Width * scale,
             newView.Height * scale
         );
+    }
+
+    private static long _shakeEnd;
+    private static int _shakeDuration;
+    private static float _shakeStrength;
+
+    /// <summary>Shakes the camera for a moment (strength in pixels, fading out over the duration).</summary>
+    public static void StartScreenShake(float strength, int durationMs)
+    {
+        _shakeStrength = strength;
+        _shakeDuration = durationMs;
+        _shakeEnd = Timing.Global.Milliseconds + durationMs;
     }
 
     //Lighting

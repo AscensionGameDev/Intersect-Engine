@@ -124,6 +124,7 @@ public partial class AdminWindow : Window
             Label = Strings.AdminWindow.Access,
         };
         _ = _accessDropdown.AddItem(Strings.General.None, userData: "None");
+        _ = _accessDropdown.AddItem("Guide", userData: "Guide");
         _ = _accessDropdown.AddItem(Strings.AdminWindow.Access1, userData: "Moderator");
         _ = _accessDropdown.AddItem(Strings.AdminWindow.Access2, userData: "Admin");
 

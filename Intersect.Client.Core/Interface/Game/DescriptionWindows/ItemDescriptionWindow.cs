@@ -114,6 +114,9 @@ public partial class ItemDescriptionWindow() : DescriptionWindowBase(Interface.G
         // Set up our item limit information.
         SetupItemLimits();
 
+        // Level / stat requirements to use or equip the item.
+        SetupUsageRequirements();
+
         // if we have a description, set that up.
         if (!string.IsNullOrWhiteSpace(_itemDescriptor.Description))
         {
@@ -171,9 +174,12 @@ public partial class ItemDescriptionWindow() : DescriptionWindowBase(Interface.G
         // Set up the description telling us what type of item this is.
         // if equipment, also list what kind.
         Strings.ItemDescription.ItemTypes.TryGetValue((int)_itemDescriptor.ItemType, out var typeDesc);
-        if (_itemDescriptor.ItemType is ItemType.Equipment or ItemType.Pet or ItemType.Mount)
+        var equipmentSlots = Options.Instance.Equipment.Slots;
+        if (_itemDescriptor.ItemType is ItemType.Equipment or ItemType.Pet or ItemType.Mount &&
+            _itemDescriptor.EquipmentSlot >= 0 &&
+            _itemDescriptor.EquipmentSlot < equipmentSlots.Count)
         {
-            var equipSlot = Options.Instance.Equipment.Slots[_itemDescriptor.EquipmentSlot];
+            var equipSlot = equipmentSlots[_itemDescriptor.EquipmentSlot];
             var extraInfo = equipSlot;
             if (_itemDescriptor.EquipmentSlot == Options.Instance.Equipment.WeaponSlot && _itemDescriptor.TwoHanded)
             {
@@ -206,6 +212,61 @@ public partial class ItemDescriptionWindow() : DescriptionWindowBase(Interface.G
         }
 
         header.SizeToChildren(true, false);
+    }
+
+    /// <summary>
+    /// Lists the level and stat minimums found in the item's usage requirements ("Required level: 10"),
+    /// in red when the local player does not meet them yet.
+    /// </summary>
+    protected void SetupUsageRequirements()
+    {
+        if (_itemDescriptor == default)
+        {
+            return;
+        }
+
+        var lines = new List<(string Text, bool Met)>();
+        foreach (var list in _itemDescriptor.UsageRequirements?.Lists ?? [])
+        {
+            foreach (var condition in list.Conditions.OfType<Intersect.Framework.Core.GameObjects.Conditions.ConditionMetadata.LevelOrStatCondition>())
+            {
+                var minimum = condition.Comparator switch
+                {
+                    Intersect.Framework.Core.GameObjects.Events.VariableComparator.GreaterOrEqual => condition.Value,
+                    Intersect.Framework.Core.GameObjects.Events.VariableComparator.Greater => condition.Value + 1,
+                    Intersect.Framework.Core.GameObjects.Events.VariableComparator.Equal => condition.Value,
+                    _ => (int?)null,
+                };
+
+                if (minimum is not { } required)
+                {
+                    continue;
+                }
+
+                if (condition.ComparingLevel)
+                {
+                    lines.Add((Strings.ItemDescription.RequiredLevel.ToString(required), (Globals.Me?.Level ?? 0) >= required));
+                }
+                else
+                {
+                    var current = Globals.Me?.Stat[(int)condition.Stat] ?? 0;
+                    lines.Add((Strings.ItemDescription.RequiredStat.ToString(condition.Stat, required), current >= required));
+                }
+            }
+        }
+
+        if (lines.Count < 1)
+        {
+            return;
+        }
+
+        AddDivider();
+        var description = AddDescription();
+        foreach (var (text, met) in lines)
+        {
+            description.AddText(text, met ? Color.White : new Color(255, 255, 90, 90));
+            description.AddLineBreak();
+        }
     }
 
     protected void SetupItemLimits()

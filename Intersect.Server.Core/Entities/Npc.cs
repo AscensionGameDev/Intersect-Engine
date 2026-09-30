@@ -283,10 +283,73 @@ public partial class Npc : Entity
         return EntityType.GlobalEntity;
     }
 
+    /// <summary>When set (boss hazards dropped on a player), this NPC keeps chasing that entity.</summary>
+    public Entity? PinnedTarget { get; set; }
+
+    protected override bool CanMoveWhileCasting => PinnedTarget != null;
+
+    public override void KilledEntity(Entity entity)
+    {
+        base.KilledEntity(entity);
+
+        // A player's summon (companion) landing the final blow on a boss must still trigger the boss' death
+        // event - next phase, dungeon completion - for its owner, who is the only one able to run events.
+        if (IsSummon && Owner is Player owner && entity is Npc { IsBoss: true })
+        {
+            owner.KilledEntity(entity);
+        }
+    }
+
+    /// <summary>True for NPCs filed in a descriptor folder whose name starts with "Boss".</summary>
+    private bool IsBoss => Descriptor?.Folder?.StartsWith("Boss", StringComparison.OrdinalIgnoreCase) ?? false;
+
+    /// <summary>
+    /// Phase change alert: when a boss dies and its death event spawns another NPC, announce that NPC's name
+    /// (the event's own Wait command delays the actual spawn).
+    /// </summary>
+    private void AnnounceNextBossPhase()
+    {
+        if (!IsBoss || Descriptor.OnDeathEvent is not { } deathEvent)
+        {
+            return;
+        }
+
+        var nextNpcId = deathEvent.Pages
+            .SelectMany(page => page.CommandLists.Values)
+            .SelectMany(commands => commands)
+            .OfType<Intersect.Framework.Core.GameObjects.Events.Commands.SpawnNpcCommand>()
+            .Select(command => command.NpcId)
+            .FirstOrDefault(id => id != Guid.Empty);
+
+        if (nextNpcId == Guid.Empty || !NPCDescriptor.TryGet(nextNpcId, out var nextNpc))
+        {
+            return;
+        }
+
+        PacketSender.SendAnnouncementToMapInstance(MapId, MapInstanceId, $"⚠ {nextNpc.Name} approche...", 3500);
+    }
+
     public override void Die(bool generateLoot = true, Entity killer = null)
     {
         lock (EntityLock)
         {
+            // Only a real kill announces the next phase (not a despawn, e.g. at the end of a dungeon).
+            if (killer != null)
+            {
+                if (IsBoss && Descriptor.OnDeathEvent != null)
+                {
+                    ApplicationContext.Context.Value?.Logger.LogInformation(
+                        "Boss {Boss} defeated by {Killer} ({KillerType}); death event {Event}",
+                        Name,
+                        killer.Name,
+                        killer.GetType().Name,
+                        Descriptor.OnDeathEvent.Name
+                    );
+                }
+
+                AnnounceNextBossPhase();
+            }
+
             base.Die(generateLoot, killer);
 
             if (IsSummon)
@@ -983,6 +1046,18 @@ public partial class Npc : Entity
 
         SpellCastSlot = spellIndex;
 
+        // Boss alert: NPCs filed in a "Boss..." folder announce each spell they start casting.
+        if (IsBoss)
+        {
+            PacketSender.SendAnnouncementToMapInstance(
+                MapId,
+                MapInstanceId,
+                $"⚠ {spellBase.Name} !",
+                Math.Max(1500, spellBase.CastDuration + 500),
+                style: 1
+            );
+        }
+
         if (spellBase.CastAnimationId != Guid.Empty)
         {
             PacketSender.SendAnimationToProximity(
@@ -1115,7 +1190,9 @@ public partial class Npc : Entity
                     //Check if there is a target, if so, run their ass down.
                     if (tempTarget != null && CanTarget(tempTarget))
                     {
-                        if (!tempTarget.IsDead && CanAttack(tempTarget, null))
+                        // A homing hazard keeps tracking its target while casting (CanAttack is false mid-cast),
+                        // otherwise it would lose its target and drift back to its owner.
+                        if (!tempTarget.IsDead && (CanAttack(tempTarget, null) || CanMoveWhileCasting))
                         {
                             targetMap = tempTarget.MapId;
                             targetX = tempTarget.X;
@@ -1184,6 +1261,12 @@ public partial class Npc : Entity
                             }
                         }
 
+                    }
+
+                    // Static NPCs (e.g. boss "foyers") never move, but must still be able to cast at their target.
+                    if (mPathFinder.GetTarget() != null && Descriptor.Movement == (int)NpcMovement.Static)
+                    {
+                        TryCastSpells();
                     }
 
                     if (mPathFinder.GetTarget() != null && Descriptor.Movement != (int)NpcMovement.Static)
@@ -1760,6 +1843,14 @@ public partial class Npc : Entity
         // Summons fight for their owner: just mirror whoever the owner is currently engaging instead of
         // running the usual aggro-list/damage-map scan below - unless they've been told to stand down
         // via "Ordre : Repli", in which case they leave the owner's target alone until "Ordre : Charge".
+        if (PinnedTarget is { IsDead: false, IsDisposed: false } pinned && pinned.MapInstanceId == MapInstanceId && CanTarget(pinned))
+        {
+            AssignTarget(pinned);
+            FindTargetWaitTime = timeMs + FindTargetDelay;
+
+            return true;
+        }
+
         if (!IsRecalled && Owner != null && !Owner.IsDisposed && Owner.MapInstanceId == MapInstanceId)
         {
             var ownerTarget = Owner.Target;

@@ -318,6 +318,7 @@ public partial class Player : Entity, IPlayer
         if (Globals.Me == this)
         {
             HandleInput();
+            ProcessQueuedSpell();
         }
 
         if (!IsBusy)
@@ -1417,6 +1418,35 @@ public partial class Player : Entity, IPlayer
         PacketSender.SendForgetSpell(slotIndex);
     }
 
+    private const long SpellQueueWindowMs = 350;
+    private const long SpellQueueGraceMs = 150;
+    private int _queuedSpellSlot = -1;
+    private long _queuedSpellExpiry;
+
+    private void ProcessQueuedSpell()
+    {
+        if (_queuedSpellSlot < 0)
+        {
+            return;
+        }
+
+        var now = Timing.Global.Milliseconds;
+        if (now > _queuedSpellExpiry)
+        {
+            _queuedSpellSlot = -1;
+            return;
+        }
+
+        var slot = _queuedSpellSlot;
+        if (IsCasting || GetSpellRemainingCooldown(slot) > now)
+        {
+            return;
+        }
+
+        _queuedSpellSlot = -1;
+        TryUseSpell(slot);
+    }
+
     public void TryUseSpell(int index)
     {
         if (index < 0 || Spells.Length <= index)
@@ -1430,8 +1460,18 @@ public partial class Player : Entity, IPlayer
             return;
         }
 
-        if (GetSpellRemainingCooldown(index) > Timing.Global.Milliseconds)
+        // Spell queue (WoW-style): a spell pressed just before its cooldown or the current cast ends is not
+        // lost - it is remembered for a short window and fired the moment it becomes available.
+        var spellNow = Timing.Global.Milliseconds;
+        var readyAt = Math.Max(GetSpellRemainingCooldown(index), IsCasting ? CastTime : 0);
+        if (readyAt > spellNow)
         {
+            if (readyAt - spellNow <= SpellQueueWindowMs)
+            {
+                _queuedSpellSlot = index;
+                _queuedSpellExpiry = readyAt + SpellQueueGraceMs;
+            }
+
             return;
         }
 
@@ -2436,6 +2476,10 @@ public partial class Player : Entity, IPlayer
         return false;
     }
 
+    private const long AutoAttackDoubleClickMs = 450;
+    private Guid _lastClickedEntityId;
+    private long _lastEntityClickTime;
+
     public bool TryTarget()
     {
         //Check for taunt status if so don't allow to change target
@@ -2515,16 +2559,28 @@ public partial class Player : Entity, IPlayer
                             // e.g. nudging the mouse to keep aiming at a moving enemy) must count as a hit
                             // here too - otherwise it falls through to the "clicked empty space" branch
                             // below and clears the target whenever Sticky Target is off (the default).
+                            // Auto-attack now needs a double click: two clicks on the same entity in quick succession.
+                            var clickTime = Timing.Global.Milliseconds;
+                            var isDoubleClick = bestMatch.Id == _lastClickedEntityId &&
+                                                clickTime - _lastEntityClickTime <= AutoAttackDoubleClickMs;
+                            _lastClickedEntityId = bestMatch.Id;
+                            _lastEntityClickTime = clickTime;
+
                             if (bestMatch.Id != TargetId)
                             {
                                 Target = bestMatch;
-                                IsAutoAttacking = (bestMatch as Entity)?.CanBeAttacked ?? false;
+                                IsAutoAttacking = false;
 
                                 if (bestMatch is Player && Interface.Interface.GameUi.IsAdminWindowOpen)
                                 {
                                     // Select in admin window if open
                                     Interface.Interface.GameUi.AdminWindowSelectName(bestMatch.Name);
                                 }
+                            }
+
+                            if (isDoubleClick)
+                            {
+                                IsAutoAttacking = (bestMatch as Entity)?.CanBeAttacked ?? false;
                             }
 
                             return true;
@@ -2969,6 +3025,15 @@ public partial class Player : Entity, IPlayer
 
         base.DrawEquipment(filename, renderColor);
     }
+
+    /// <summary>Rank tag shown before the name: [GM] admin, [M] moderator, [G] guide.</summary>
+    public string RankPrefix => AccessLevel switch
+    {
+        Access.Admin => "[GM] ",
+        Access.Moderator => "[M] ",
+        Access.Guide => "[G] ",
+        _ => string.Empty,
+    };
 
     //Override of the original function, used for rendering the color of a player based on rank
     public override void DrawName(Color? textColor, Color? borderColor, Color? backgroundColor)

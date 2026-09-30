@@ -1090,6 +1090,10 @@ public partial class Player : Entity
         {
             pkt.AccessLevel = Access.Moderator;
         }
+        else if (Power.IsGuide)
+        {
+            pkt.AccessLevel = Access.Guide;
+        }
         else
         {
             pkt.AccessLevel = Access.None;

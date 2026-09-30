@@ -20,7 +20,7 @@ public partial class AnnouncementWindow : ImagePanel
     /// Create a new instance of the <see cref="AnnouncementWindow"/> class.
     /// </summary>
     /// <param name="gameCanvas">The <see cref="Canvas"/> to render this control on.</param>
-    public AnnouncementWindow(Canvas gameCanvas) : base(gameCanvas, nameof(AnnouncementWindow))
+    public AnnouncementWindow(Canvas gameCanvas, string name = nameof(AnnouncementWindow)) : base(gameCanvas, name)
     {
         _label = new Label(this, "AnnouncementLabel");
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer?.GetResolutionString());

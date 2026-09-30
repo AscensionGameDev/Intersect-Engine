@@ -656,7 +656,11 @@ internal sealed partial class PacketHandler
     public void HandlePacket(IPacketSender packetSender, AnnouncementPacket packet)
     {
         Interface.Interface.EnqueueInGame(
-            gameInterface => gameInterface.AnnouncementWindow.ShowAnnouncement(packet.Message, packet.Duration)
+            gameInterface =>
+            {
+                var window = packet.Style == 1 ? gameInterface.AlertWindow : gameInterface.AnnouncementWindow;
+                window.ShowAnnouncement(packet.Message, packet.Duration);
+            }
         );
     }
 
@@ -681,6 +685,14 @@ internal sealed partial class PacketHandler
                     new Color(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B)
                 )
             );
+
+            // A critical hit (recognised by its message colour) gives the camera a short kick.
+            var critical = CustomColors.Combat.Critical;
+            if (packet.Color.A == critical.A && packet.Color.R == critical.R &&
+                packet.Color.G == critical.G && packet.Color.B == critical.B)
+            {
+                Graphics.StartScreenShake(4f, 170);
+            }
         }
     }
 

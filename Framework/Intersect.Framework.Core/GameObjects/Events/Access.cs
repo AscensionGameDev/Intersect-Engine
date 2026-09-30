@@ -7,4 +7,6 @@ public enum Access
     Moderator,
 
     Admin,
+
+    Guide,
 }

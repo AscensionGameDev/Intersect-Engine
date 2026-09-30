@@ -19,6 +19,13 @@ public partial class LayerOptions
     [JsonProperty]
     public List<string> UpperLayers { get; private set; } = ["Fringe 2"];
 
+    /// <summary>
+    /// Upper layers that are hidden while the local player stands on an Indoor tile (roofs).
+    /// When empty, every upper layer is hidden.
+    /// </summary>
+    [JsonProperty]
+    public List<string> RoofLayers { get; private set; } = [];
+
     [JsonIgnore]
     public List<string> All { get; private set; } = [];
 
@@ -32,6 +39,7 @@ public partial class LayerOptions
         LowerLayers.Clear();
         MiddleLayers.Clear();
         UpperLayers.Clear();
+        RoofLayers.Clear();
     }
 
     [OnDeserialized]
@@ -45,6 +53,7 @@ public partial class LayerOptions
         LowerLayers = [..LowerLayers.Distinct()];
         MiddleLayers = [..MiddleLayers.Distinct()];
         UpperLayers = [..UpperLayers.Distinct()];
+        RoofLayers = [..RoofLayers.Distinct().Where(UpperLayers.Contains)];
 
         var reservedLayers = new string[] { Attributes, Npcs, Lights, Events };
         All.Clear();

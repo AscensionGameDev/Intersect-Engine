@@ -216,7 +216,33 @@ public sealed class DungeonInstance
             );
         }
 
+        // The run is over: whatever is still alive in the dungeon (an unkilled boss included) disappears,
+        // otherwise it could still be attacked until the players leave the instance.
+        DespawnRemainingNpcs();
+
         BroadcastStatus();
+    }
+
+    private void DespawnRemainingNpcs()
+    {
+        foreach (var controller in MapController.Lookup.Values.OfType<MapController>().ToArray())
+        {
+            if (!controller.TryGetInstance(MapInstanceId, out var instance) || instance == default)
+            {
+                continue;
+            }
+
+            foreach (var npc in instance.GetCachedEntities().OfType<Npc>().ToArray())
+            {
+                // Keep companions that belong to players.
+                if (npc.Owner is Player)
+                {
+                    continue;
+                }
+
+                npc.Die(false);
+            }
+        }
     }
 
     public void Fail(string reason)

@@ -25,4 +25,8 @@ public enum MapAttributeType : byte
     Slide,
 
     Critter,
+
+    Indoor,
+
+    IndoorDoor,
 }

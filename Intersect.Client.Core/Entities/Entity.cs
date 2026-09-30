@@ -1707,6 +1707,12 @@ public partial class Entity : IEntity
             name = Strings.GameWindow.EntityNameAndLevel.ToString(Name, Level);
         }
 
+        // Staff ranks ([GM], [M], [G]) go on the same line, right before the name.
+        if (this is Player rankedPlayer)
+        {
+            name = rankedPlayer.RankPrefix + name;
+        }
+
         var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, Graphics.EntityNameFontSize, 1);
 
         var x = (int)Math.Ceiling(Origin.X);
@@ -2678,9 +2684,22 @@ public partial class Entity : IEntity
             if (gameMap != null)
             {
                 var attribute = gameMap.Attributes[tmpX, tmpY];
+
+                // Buildings: only a door tile connects the inside (Indoor tiles) with the outside.
+                if (mapId == MapId &&
+                    Math.Abs(delta.X - X) <= 1 &&
+                    Math.Abs(delta.Y - Y) <= 1 &&
+                    Maps.MapInstance.Get(MapId)?.Attributes is { } currentAttributes &&
+                    X < currentAttributes.GetLength(0) &&
+                    Y < currentAttributes.GetLength(1) &&
+                    MapIndoorAttribute.BlocksMove(currentAttributes[X, Y], attribute))
+                {
+                    return -2;
+                }
+
                 if (attribute != null)
                 {
-                    if (attribute.Type == MapAttributeType.Blocked || (attribute.Type == MapAttributeType.Animation && ((MapAnimationAttribute)attribute).IsBlock))
+                    if (attribute.Type == MapAttributeType.Blocked ||(attribute.Type == MapAttributeType.Animation && ((MapAnimationAttribute)attribute).IsBlock))
                     {
                         return -2;
                     }

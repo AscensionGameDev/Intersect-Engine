@@ -38,6 +38,10 @@ public abstract partial class MapAttribute
                 return new MapSlideAttribute();
             case MapAttributeType.Critter:
                 return new MapCritterAttribute();
+            case MapAttributeType.Indoor:
+                return new MapIndoorAttribute();
+            case MapAttributeType.IndoorDoor:
+                return new MapIndoorDoorAttribute();
         }
 
         return null;

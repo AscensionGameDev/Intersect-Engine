@@ -879,6 +879,29 @@ public partial class MapInstance : MapDescriptor, IGameObject<Guid, MapInstance>
         _tileBuffersPerLayer.Clear();
     }
 
+    private bool IsLocalPlayerIndoors()
+    {
+        var player = Globals.Me;
+        if (player == default || player.MapId != Id)
+        {
+            return false;
+        }
+
+        // Standing on a higher Z level (entered through a Z-Dimension gateway, e.g. a door) counts as indoors.
+        if (player.Z > 0)
+        {
+            return true;
+        }
+
+        var attributes = Attributes;
+        if (attributes == default || player.X >= attributes.GetLength(0) || player.Y >= attributes.GetLength(1))
+        {
+            return false;
+        }
+
+        return attributes[player.X, player.Y]?.Type is MapAttributeType.Indoor or MapAttributeType.IndoorDoor;
+    }
+
     //Rendering/Drawing Code
     public void Draw(int layer) //Lower, Middle, Upper
     {
@@ -898,6 +921,11 @@ public partial class MapInstance : MapDescriptor, IGameObject<Guid, MapInstance>
             BuildVBOs();
         }
 
+        // Roof layers (all upper layers if none are configured) are hidden while the local player stands
+        // on an Indoor tile of this map.
+        var hideRoofs = layer > 1 && IsLocalPlayerIndoors();
+        var roofLayers = Options.Instance.Map.Layers.RoofLayers;
+
         var drawLayers = layer switch
         {
             1 => Options.Instance.Map.Layers.MiddleLayers,
@@ -907,6 +935,11 @@ public partial class MapInstance : MapDescriptor, IGameObject<Guid, MapInstance>
 
         foreach (var drawLayer in drawLayers)
         {
+            if (hideRoofs && (roofLayers.Count < 1 || roofLayers.Contains(drawLayer)))
+            {
+                continue;
+            }
+
             if (!_tileBuffersPerLayer.TryGetValue(drawLayer, out var layerBuffers))
             {
                 continue;

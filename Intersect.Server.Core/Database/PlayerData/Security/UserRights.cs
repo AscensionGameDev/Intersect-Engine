@@ -34,6 +34,9 @@ public sealed partial class UserRights : IComparable<UserRights>, IEquatable<Use
 
     public bool Mute { get; set; }
 
+    /// <summary>Cosmetic rank shown as [G] above the player: a guide has no moderation right.</summary>
+    public bool Guide { get; set; }
+
     public bool Api { get; set; }
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -43,9 +46,17 @@ public sealed partial class UserRights : IComparable<UserRights>, IEquatable<Use
     public bool IsModerator => Ban || Mute || Kick;
 
     [JsonIgnore]
+    public bool IsGuide => Guide;
+
+    [JsonIgnore]
     public bool IsAdmin => Ban && Mute && Kick && Editor;
 
     public static UserRights None => new UserRights();
+
+    public static UserRights GuideRights => new UserRights
+    {
+        Guide = true
+    };
 
     public static UserRights Moderation => new UserRights
     {
@@ -157,6 +168,9 @@ public static partial class AccessExtensions
 
             case Access.Moderator:
                 return UserRights.Moderation;
+
+            case Access.Guide:
+                return UserRights.GuideRights;
 
             case Access.None:
                 return UserRights.None;

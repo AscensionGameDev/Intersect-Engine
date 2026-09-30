@@ -948,6 +948,8 @@ public static partial class Strings
             {(int) MapAttributeType.Blocked, @"Blocked" },
             {(int) MapAttributeType.Critter, @"Critter" },
             {(int) MapAttributeType.GrappleStone, @"Grapple Stone" },
+            {(int) MapAttributeType.Indoor, @"Indoor" },
+            {(int) MapAttributeType.IndoorDoor, @"Indoor Door" },
             {(int) MapAttributeType.Item, @"Item Spawn" },
             {(int) MapAttributeType.NpcAvoid, @"Npc Avoid" },
             {(int) MapAttributeType.Resource, @"Resource Spawn" },
@@ -1038,6 +1040,10 @@ public static partial class Strings
         public static LocalizedString MapAnimationBlock = @"Block Tile";
 
         public static LocalizedString MapSound = @"Map Sound";
+
+        public static LocalizedString Indoor = @"House: inside (hides roof)";
+
+        public static LocalizedString IndoorDoor = @"House: door";
 
         public static LocalizedString NpcAvoid = @"NPC Avoid";
 
