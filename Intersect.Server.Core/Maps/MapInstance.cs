@@ -579,7 +579,13 @@ public partial class MapInstance : IMapInstance
                 SpawnY = tileY,
             };
 
-            if (mMapController.MaxLevel > 0)
+            if (Dungeons.DungeonManager.TryGet(processLayer, out var dungeonRun))
+            {
+                // Every monster of a dungeon run (placed on the map, spawned by an event or summoned by a spell)
+                // is scaled to the level of the chosen difficulty: Easy 10, Normal 30, Hard 60.
+                npc.ApplyLevelScaling(dungeonRun.MonsterLevel);
+            }
+            else if (mMapController.MaxLevel > 0)
             {
                 var minLevel = Math.Max(1, mMapController.MinLevel);
                 var maxLevel = Math.Max(minLevel, mMapController.MaxLevel);

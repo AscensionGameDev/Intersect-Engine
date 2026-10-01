@@ -117,6 +117,9 @@ public partial class ItemDescriptionWindow() : DescriptionWindowBase(Interface.G
         // Level / stat requirements to use or equip the item.
         SetupUsageRequirements();
 
+        // Rune enchantment (weapon flame aura).
+        SetupEnchantment();
+
         // if we have a description, set that up.
         if (!string.IsNullOrWhiteSpace(_itemDescriptor.Description))
         {
@@ -267,6 +270,18 @@ public partial class ItemDescriptionWindow() : DescriptionWindowBase(Interface.G
             description.AddText(text, met ? Color.White : new Color(255, 255, 90, 90));
             description.AddLineBreak();
         }
+    }
+
+    protected void SetupEnchantment()
+    {
+        if (_itemProperties is not { EnchantLevel: > 0 } properties)
+        {
+            return;
+        }
+
+        AddDivider();
+        var description = AddDescription();
+        description.AddText(Strings.ItemDescription.EnchantLevel.ToString(properties.EnchantLevel), new Color(255, 255, 170, 60));
     }
 
     protected void SetupItemLimits()

@@ -467,14 +467,14 @@ public static partial class PacketSender
         Network.SendPacket(new ToggleMountPacket());
     }
 
-    public static void SendEnterDungeon(Guid dungeonId)
+    public static void SendEnterDungeon(Guid dungeonId, byte difficulty = 0)
     {
-        Network.SendPacket(new EnterDungeonPacket(dungeonId));
+        Network.SendPacket(new EnterDungeonPacket(dungeonId, difficulty));
     }
 
-    public static void SendRequestDungeonLeaderboard(Guid dungeonId)
+    public static void SendRequestDungeonLeaderboard(Guid dungeonId, byte difficulty = 0)
     {
-        Network.SendPacket(new RequestDungeonLeaderboardPacket(dungeonId));
+        Network.SendPacket(new RequestDungeonLeaderboardPacket(dungeonId, difficulty));
     }
 
     public static void SendLeaveDungeon()

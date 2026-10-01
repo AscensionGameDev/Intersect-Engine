@@ -1309,9 +1309,19 @@ public static partial class PacketSender
     //EquipmentPacket
     public static EquipmentPacket GenerateEquipmentPacket(Player forPlayer, Player en)
     {
+        // Enchantment level of the item worn in each slot (drives the weapon's flame aura on every client).
+        var enchantLevels = new byte[Options.Instance.Equipment.Slots.Count];
+        for (var i = 0; i < enchantLevels.Length; i++)
+        {
+            if (en.Equipment[i] >= 0 && en.Equipment[i] < en.Items.Count && en.Items[en.Equipment[i]].ItemId != Guid.Empty)
+            {
+                enchantLevels[i] = en.Items[en.Equipment[i]].Properties?.EnchantLevel ?? 0;
+            }
+        }
+
         if (forPlayer != null && forPlayer == en)
         {
-            return new EquipmentPacket(en.Id, en.Equipment, null);
+            return new EquipmentPacket(en.Id, en.Equipment, null, enchantLevels);
         }
         else
         {
@@ -1330,7 +1340,7 @@ public static partial class PacketSender
 
             }
 
-            return new EquipmentPacket(en.Id, null, equipment);
+            return new EquipmentPacket(en.Id, null, equipment, enchantLevels);
         }
     }
 
@@ -2379,20 +2389,24 @@ public static partial class PacketSender
             return;
         }
 
+        // One record per dungeon AND difficulty: the client looks them up with DungeonDifficulties.RecordKey.
         var records = DungeonDescriptor.Lookup.Values
             .OfType<DungeonDescriptor>()
-            .Select(
-                descriptor =>
-                {
-                    player.DungeonData.Records.TryGetValue(descriptor.Id, out var record);
+            .SelectMany(
+                descriptor => Enumerable.Range(0, DungeonDifficulties.Count).Select(
+                    difficulty =>
+                    {
+                        var key = DungeonDifficulties.RecordKey(descriptor.Id, (byte)difficulty);
+                        player.DungeonData.Records.TryGetValue(key, out var record);
 
-                    return new DungeonRecordPacket(
-                        descriptor.Id,
-                        record?.Completions ?? 0,
-                        record?.BestTimeMs ?? 0,
-                        player.GetDungeonCooldownRemainingMs(descriptor)
-                    );
-                }
+                        return new DungeonRecordPacket(
+                            key,
+                            record?.Completions ?? 0,
+                            record?.BestTimeMs ?? 0,
+                            player.GetDungeonCooldownRemainingMs(descriptor, (byte)difficulty)
+                        );
+                    }
+                )
             )
             .ToArray();
 
@@ -2441,18 +2455,18 @@ public static partial class PacketSender
         player.SendPacket(new UnlockedAchievementsPacket(unlocked));
     }
 
-    public static void SendDungeonLeaderboard(Player player, Guid dungeonId)
+    public static void SendDungeonLeaderboard(Player player, Guid dungeonId, byte difficulty = 0)
     {
         if (player == null)
         {
             return;
         }
 
-        var entries = DbInterface.GetDungeonLeaderboard(dungeonId)
+        var entries = DbInterface.GetDungeonLeaderboard(DungeonDifficulties.RecordKey(dungeonId, difficulty))
             .Select(entry => new DungeonLeaderboardEntryPacket(entry.PlayerName, entry.TimeMs))
             .ToArray();
 
-        player.SendPacket(new DungeonLeaderboardPacket(dungeonId, entries));
+        player.SendPacket(new DungeonLeaderboardPacket(dungeonId, entries, difficulty));
     }
 
     //FriendRequestPacket

@@ -4,7 +4,6 @@ using Intersect.Server.Database;
 using Intersect.Framework.Core.GameObjects.Dungeons;
 using Intersect.Framework.Core.GameObjects.Items;
 using Intersect.Network.Packets.Server;
-using Intersect.Server.Dungeons.Generation;
 using Intersect.Server.Entities;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
@@ -22,38 +21,34 @@ public sealed class DungeonInstance
 
     private readonly HashSet<Player> _players = new();
 
-    public DungeonInstance(DungeonDescriptor descriptor, Player starter)
+    public DungeonInstance(DungeonDescriptor descriptor, Player starter, byte difficulty = 0)
     {
         Descriptor = descriptor;
+        Difficulty = DungeonDifficulties.Clamp(difficulty);
         MapInstanceId = Guid.NewGuid();
         StartTime = Timing.Global.Milliseconds;
         Lives = descriptor.Lives;
         Objective = string.Empty;
-
-        if (descriptor.ProceduralGeneration)
-        {
-            GeneratedMap = DungeonMapGenerator.Generate(descriptor, starter, MapInstanceId, out var entryX, out var entryY);
-            GeneratedEntryX = entryX;
-            GeneratedEntryY = entryY;
-        }
     }
 
     public DungeonDescriptor Descriptor { get; }
 
+    /// <summary>0 = Easy, 1 = Normal, 2 = Hard.</summary>
+    public byte Difficulty { get; }
+
+    /// <summary>Level every monster of this run is scaled to.</summary>
+    public int MonsterLevel => DungeonDifficulties.MonsterLevel(Difficulty);
+
+    /// <summary>Id under which records, cooldown and leaderboard are kept for this dungeon and difficulty.</summary>
+    public Guid RecordKey => DungeonDifficulties.RecordKey(Descriptor.Id, Difficulty);
+
     /// <summary>The map instance id all participants are warped onto.</summary>
     public Guid MapInstanceId { get; }
 
-    /// <summary>The map generated for this run, or <c>null</c> when <see cref="DungeonDescriptor.ProceduralGeneration"/> is off.</summary>
-    public MapController? GeneratedMap { get; }
-
-    public int GeneratedEntryX { get; }
-
-    public int GeneratedEntryY { get; }
-
     /// <summary>The map/coordinates participants should warp/respawn onto for this run.</summary>
-    public (Guid MapId, int X, int Y, Direction Direction) EntryPoint => GeneratedMap != null
-        ? (GeneratedMap.Id, GeneratedEntryX, GeneratedEntryY, Direction.Down)
-        : (Descriptor.EntryMapId, Descriptor.EntryX, Descriptor.EntryY, Descriptor.EntryDirection);
+    public (Guid MapId, int X, int Y, Direction Direction) EntryPoint =>
+        (Descriptor.EntryMapId, Descriptor.EntryX, Descriptor.EntryY, Descriptor.EntryDirection);
+
 
     public long StartTime { get; }
 
@@ -203,10 +198,10 @@ public sealed class DungeonInstance
         var elapsed = ElapsedMs;
         foreach (var player in Players)
         {
-            var previousBest = player.DungeonData.Records.TryGetValue(Descriptor.Id, out var record) ? record.BestTimeMs : 0;
+            var previousBest = player.DungeonData.Records.TryGetValue(RecordKey, out var record) ? record.BestTimeMs : 0;
             GiveRewards(player);
-            player.RecordDungeonCompletion(Descriptor.Id, elapsed);
-            DbInterface.UpsertDungeonLeaderboardEntry(Descriptor.Id, player.Name, elapsed);
+            player.RecordDungeonCompletion(RecordKey, elapsed);
+            DbInterface.UpsertDungeonLeaderboardEntry(RecordKey, player.Name, elapsed);
             player.SendPacket(BuildResultPacket(completed: true, string.Empty, previousBest));
             PacketSender.SendChatMsg(
                 player,
@@ -319,12 +314,12 @@ public sealed class DungeonInstance
             }
 
             // Overflow goes to the ground/bank so nobody loses their loot to a full bag.
-            player.TryGiveItem(reward.ItemId, reward.Quantity, ItemHandling.Overflow, true);
+            player.TryGiveItem(reward.ItemId, reward.Quantity * DungeonDifficulties.ItemMultiplier(Difficulty), ItemHandling.Overflow, true);
         }
 
         if (Descriptor.RewardExperience > 0)
         {
-            player.GiveExperience(Descriptor.RewardExperience);
+            player.GiveExperience(Descriptor.RewardExperience * DungeonDifficulties.ExperienceMultiplier(Difficulty));
         }
 
         if (Descriptor.RewardTitleId != Guid.Empty)

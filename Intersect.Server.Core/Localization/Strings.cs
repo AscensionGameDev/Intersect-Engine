@@ -183,6 +183,21 @@ public static partial class Strings
         public readonly LocalizedString AnnouncementCommand = @"/announcement";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString LevelCommand = @"/level";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString LevelUsage = @"Usage : /level <pseudo> <niveau>  (ou /level <niveau> pour toi-meme)";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString LevelPlayerNotFound = @"Joueur introuvable (hors ligne ?) : {00}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString LevelSet = @"{00} est maintenant niveau {01}.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString LevelSetByAdmin = @"Un administrateur a regle ton niveau a {00}.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString Global = @"[GLOBAL] {00}: {01}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

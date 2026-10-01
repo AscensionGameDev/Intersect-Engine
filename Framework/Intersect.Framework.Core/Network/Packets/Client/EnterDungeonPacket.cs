@@ -13,11 +13,16 @@ public partial class EnterDungeonPacket : IntersectPacket
     {
     }
 
-    public EnterDungeonPacket(Guid dungeonId)
+    public EnterDungeonPacket(Guid dungeonId, byte difficulty = 0)
     {
         DungeonId = dungeonId;
+        Difficulty = difficulty;
     }
 
     [Key(0)]
     public Guid DungeonId { get; set; }
+
+    /// <summary>0 = Easy, 1 = Normal, 2 = Hard (see DungeonDifficulties).</summary>
+    [Key(1)]
+    public byte Difficulty { get; set; }
 }

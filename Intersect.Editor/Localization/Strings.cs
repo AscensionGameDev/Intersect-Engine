@@ -5873,9 +5873,6 @@ Tick timer saved in server config.json.";
         public static LocalizedString map = @"Map:";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public static LocalizedString returnmap = @"Return map:";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString maxplayers = @"Max players (0 = any):";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

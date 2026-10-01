@@ -183,7 +183,7 @@ namespace Intersect.Editor.Forms.Editors
                 MakeSeparator(), this.toolStripItemCopy, this.toolStripItemPaste, MakeSeparator(), this.toolStripItemUndo });
 
             // ---- Left: list
-            this.grpDungeons = MakeGroup("Dungeons", 12, 36, 203, 833);
+            this.grpDungeons = MakeGroup("Dungeons", 12, 36, 203, 573);
             this.txtSearch = MakeTextBox(6, 16, 167);
             this.txtSearch.Text = "Search...";
             this.txtSearch.Click += new System.EventHandler(this.txtSearch_Click);
@@ -204,7 +204,7 @@ namespace Intersect.Editor.Forms.Editors
                 Location = new System.Drawing.Point(6, 42),
                 Name = "lstGameObjects",
                 SelectedImageIndex = 0,
-                Size = new System.Drawing.Size(191, 785),
+                Size = new System.Drawing.Size(191, 525),
             };
             this.grpDungeons.Controls.Add(this.btnClearSearch);
             this.grpDungeons.Controls.Add(this.txtSearch);
@@ -214,7 +214,7 @@ namespace Intersect.Editor.Forms.Editors
             this.pnlContainer = new System.Windows.Forms.Panel
             {
                 Location = new System.Drawing.Point(221, 36),
-                Size = new System.Drawing.Size(527, 833),
+                Size = new System.Drawing.Size(527, 573),
                 Visible = false,
             };
 
@@ -253,82 +253,8 @@ namespace Intersect.Editor.Forms.Editors
             this.grpEntry.Controls.AddRange(new System.Windows.Forms.Control[] {
                 this.lblEntryMap, this.cmbEntryMap, this.lblEntryX, this.nudEntryX, this.lblEntryY, this.nudEntryY, this.lblEntryDir, this.cmbEntryDir, this.btnVisual });
 
-            // Procedural generation
-            this.grpGeneration = MakeGroup("Procedural Generation", 7, 223, 513, 260);
-            this.chkProceduralGeneration = MakeCheckBox("Generate a new room-and-corridor layout on every run", 6, 20);
-            this.chkProceduralGeneration.CheckedChanged += new System.EventHandler(this.chkProceduralGeneration_CheckedChanged);
-            this.lblFloorTile = MakeLabel("Floor tile:", 6, 46);
-            this.cmbFloorTileset = MakeCombo(80, 43, 160);
-            this.cmbFloorTileset.SelectedIndexChanged += new System.EventHandler(this.cmbFloorTileset_SelectedIndexChanged);
-            this.lblFloorTileX = MakeLabel("X:", 246, 46);
-            this.nudFloorTileX = MakeNumeric(266, 44, 50, 0, 999, 0);
-            this.nudFloorTileX.ValueChanged += new System.EventHandler(this.nudGenerationTile_ValueChanged);
-            this.lblFloorTileY = MakeLabel("Y:", 322, 46);
-            this.nudFloorTileY = MakeNumeric(342, 44, 50, 0, 999, 0);
-            this.nudFloorTileY.ValueChanged += new System.EventHandler(this.nudGenerationTile_ValueChanged);
-            this.btnPickFloorTile = MakeButton("Pick...", 398, 43, 90, 21);
-            this.btnPickFloorTile.Click += new System.EventHandler(this.btnPickFloorTile_Click);
-            this.lblWallTile = MakeLabel("Wall tile:", 6, 72);
-            this.cmbWallTileset = MakeCombo(80, 69, 160);
-            this.cmbWallTileset.SelectedIndexChanged += new System.EventHandler(this.cmbWallTileset_SelectedIndexChanged);
-            this.lblWallTileX = MakeLabel("X:", 246, 72);
-            this.nudWallTileX = MakeNumeric(266, 70, 50, 0, 999, 0);
-            this.nudWallTileX.ValueChanged += new System.EventHandler(this.nudGenerationTile_ValueChanged);
-            this.lblWallTileY = MakeLabel("Y:", 322, 72);
-            this.nudWallTileY = MakeNumeric(342, 70, 50, 0, 999, 0);
-            this.nudWallTileY.ValueChanged += new System.EventHandler(this.nudGenerationTile_ValueChanged);
-            this.btnPickWallTile = MakeButton("Pick...", 398, 69, 90, 21);
-            this.btnPickWallTile.Click += new System.EventHandler(this.btnPickWallTile_Click);
-            this.chkFloorAutotile = MakeCheckBox("Floor is an autotile block", 6, 98);
-            this.chkFloorAutotile.CheckedChanged += new System.EventHandler(this.chkTileIsAutotile_CheckedChanged);
-            this.chkWallAutotile = MakeCheckBox("Wall is an autotile block", 246, 98);
-            this.chkWallAutotile.CheckedChanged += new System.EventHandler(this.chkTileIsAutotile_CheckedChanged);
-            this.lblRoomCount = MakeLabel("Rooms:", 6, 124);
-            this.nudMinRooms = MakeNumeric(80, 122, 50, 1, 50, 6);
-            this.nudMinRooms.ValueChanged += new System.EventHandler(this.nudGenerationLayout_ValueChanged);
-            this.lblRoomCountSep = MakeLabel("to", 134, 124);
-            this.nudMaxRooms = MakeNumeric(156, 122, 50, 1, 50, 10);
-            this.nudMaxRooms.ValueChanged += new System.EventHandler(this.nudGenerationLayout_ValueChanged);
-            this.lblRoomSize = MakeLabel("Room size:", 246, 124);
-            this.nudMinRoomSize = MakeNumeric(320, 122, 50, 3, 20, 5);
-            this.nudMinRoomSize.ValueChanged += new System.EventHandler(this.nudGenerationLayout_ValueChanged);
-            this.lblRoomSizeSep = MakeLabel("to", 374, 124);
-            this.nudMaxRoomSize = MakeNumeric(396, 122, 50, 3, 20, 9);
-            this.nudMaxRoomSize.ValueChanged += new System.EventHandler(this.nudGenerationLayout_ValueChanged);
-            this.lblBossNpc = MakeLabel("Boss NPC:", 6, 150);
-            this.cmbBossNpc = MakeCombo(80, 147, 180);
-            this.cmbBossNpc.SelectedIndexChanged += new System.EventHandler(this.cmbBossNpc_SelectedIndexChanged);
-            this.lblNpcsPerRoom = MakeLabel("Monsters/room:", 262, 150);
-            this.nudMinNpcsPerRoom = MakeNumeric(366, 147, 45, 0, 20, 1);
-            this.nudMinNpcsPerRoom.ValueChanged += new System.EventHandler(this.nudNpcsPerRoom_ValueChanged);
-            this.lblNpcsPerRoomSep = MakeLabel("to", 414, 150);
-            this.nudMaxNpcsPerRoom = MakeNumeric(436, 147, 45, 0, 20, 3);
-            this.nudMaxNpcsPerRoom.ValueChanged += new System.EventHandler(this.nudNpcsPerRoom_ValueChanged);
-            this.lblMonsterPool = MakeLabel("Monster pool:", 6, 176);
-            this.lstMonsterPool = new System.Windows.Forms.ListBox
-            {
-                BackColor = System.Drawing.Color.FromArgb(60, 63, 65),
-                BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle,
-                ForeColor = System.Drawing.Color.Gainsboro,
-                FormattingEnabled = true,
-                Location = new System.Drawing.Point(6, 194),
-                Size = new System.Drawing.Size(250, 55),
-            };
-            this.cmbMonsterPoolNpc = MakeCombo(264, 194, 180);
-            this.btnAddMonster = MakeButton("Add", 264, 218, 85, 22);
-            this.btnAddMonster.Click += new System.EventHandler(this.btnAddMonster_Click);
-            this.btnRemoveMonster = MakeButton("Remove", 354, 218, 90, 22);
-            this.btnRemoveMonster.Click += new System.EventHandler(this.btnRemoveMonster_Click);
-            this.grpGeneration.Controls.AddRange(new System.Windows.Forms.Control[] {
-                this.chkProceduralGeneration, this.lblFloorTile, this.cmbFloorTileset, this.lblFloorTileX, this.nudFloorTileX, this.lblFloorTileY, this.nudFloorTileY, this.btnPickFloorTile,
-                this.lblWallTile, this.cmbWallTileset, this.lblWallTileX, this.nudWallTileX, this.lblWallTileY, this.nudWallTileY, this.btnPickWallTile,
-                this.chkFloorAutotile, this.chkWallAutotile,
-                this.lblRoomCount, this.nudMinRooms, this.lblRoomCountSep, this.nudMaxRooms, this.lblRoomSize, this.nudMinRoomSize, this.lblRoomSizeSep, this.nudMaxRoomSize,
-                this.lblBossNpc, this.cmbBossNpc, this.lblNpcsPerRoom, this.nudMinNpcsPerRoom, this.lblNpcsPerRoomSep, this.nudMaxNpcsPerRoom,
-                this.lblMonsterPool, this.lstMonsterPool, this.cmbMonsterPoolNpc, this.btnAddMonster, this.btnRemoveMonster });
-
             // Rules
-            this.grpRules = MakeGroup("Rules", 7, 491, 513, 130);
+            this.grpRules = MakeGroup("Rules", 7, 223, 513, 130);
             this.lblAccess = MakeLabel("Access:", 6, 22);
             this.cmbAccess = MakeCombo(110, 19, 130);
             this.cmbAccess.SelectedIndexChanged += new System.EventHandler(this.cmbAccess_SelectedIndexChanged);
@@ -362,7 +288,7 @@ namespace Intersect.Editor.Forms.Editors
                 this.lblCooldown, this.nudCooldown, this.lblExitDelay, this.nudExitDelay });
 
             // Rewards
-            this.grpRewards = MakeGroup("Rewards", 7, 629, 513, 196);
+            this.grpRewards = MakeGroup("Rewards", 7, 361, 513, 196);
             this.lstRewards = new System.Windows.Forms.ListBox
             {
                 BackColor = System.Drawing.Color.FromArgb(60, 63, 65),
@@ -394,12 +320,12 @@ namespace Intersect.Editor.Forms.Editors
                 this.btnAddReward, this.btnRemoveReward, this.lblRewardExp, this.nudRewardExp, this.lblRewardTitle, this.cmbRewardTitle,
                 this.lblRewardAchievement, this.cmbRewardAchievement });
 
-            this.pnlContainer.Controls.AddRange(new System.Windows.Forms.Control[] { this.grpGeneral, this.grpEntry, this.grpGeneration, this.grpRules, this.grpRewards });
+            this.pnlContainer.Controls.AddRange(new System.Windows.Forms.Control[] { this.grpGeneral, this.grpEntry, this.grpRules, this.grpRewards });
 
             // ---- Bottom buttons
-            this.btnSave = MakeButton("Save", 380, 877, 169, 27);
+            this.btnSave = MakeButton("Save", 380, 617, 169, 27);
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            this.btnCancel = MakeButton("Cancel", 555, 877, 172, 27);
+            this.btnCancel = MakeButton("Cancel", 555, 617, 172, 27);
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
 
@@ -407,7 +333,7 @@ namespace Intersect.Editor.Forms.Editors
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = PanelColor;
-            this.ClientSize = new System.Drawing.Size(760, 917);
+            this.ClientSize = new System.Drawing.Size(760, 657);
             this.ControlBox = true;
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.pnlContainer);
@@ -463,44 +389,6 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblEntryDir;
         private DarkComboBox cmbEntryDir;
         private DarkButton btnVisual;
-
-        private DarkGroupBox grpGeneration;
-        private DarkCheckBox chkProceduralGeneration;
-        private System.Windows.Forms.Label lblFloorTile;
-        private DarkComboBox cmbFloorTileset;
-        private System.Windows.Forms.Label lblFloorTileX;
-        private DarkNumericUpDown nudFloorTileX;
-        private System.Windows.Forms.Label lblFloorTileY;
-        private DarkNumericUpDown nudFloorTileY;
-        private DarkButton btnPickFloorTile;
-        private System.Windows.Forms.Label lblWallTile;
-        private DarkComboBox cmbWallTileset;
-        private System.Windows.Forms.Label lblWallTileX;
-        private DarkNumericUpDown nudWallTileX;
-        private System.Windows.Forms.Label lblWallTileY;
-        private DarkNumericUpDown nudWallTileY;
-        private DarkButton btnPickWallTile;
-        private DarkCheckBox chkFloorAutotile;
-        private DarkCheckBox chkWallAutotile;
-        private System.Windows.Forms.Label lblRoomCount;
-        private DarkNumericUpDown nudMinRooms;
-        private System.Windows.Forms.Label lblRoomCountSep;
-        private DarkNumericUpDown nudMaxRooms;
-        private System.Windows.Forms.Label lblRoomSize;
-        private DarkNumericUpDown nudMinRoomSize;
-        private System.Windows.Forms.Label lblRoomSizeSep;
-        private DarkNumericUpDown nudMaxRoomSize;
-        private System.Windows.Forms.Label lblBossNpc;
-        private DarkComboBox cmbBossNpc;
-        private System.Windows.Forms.Label lblNpcsPerRoom;
-        private DarkNumericUpDown nudMinNpcsPerRoom;
-        private System.Windows.Forms.Label lblNpcsPerRoomSep;
-        private DarkNumericUpDown nudMaxNpcsPerRoom;
-        private System.Windows.Forms.Label lblMonsterPool;
-        private System.Windows.Forms.ListBox lstMonsterPool;
-        private DarkComboBox cmbMonsterPoolNpc;
-        private DarkButton btnAddMonster;
-        private DarkButton btnRemoveMonster;
 
         private DarkGroupBox grpRules;
         private System.Windows.Forms.Label lblAccess;

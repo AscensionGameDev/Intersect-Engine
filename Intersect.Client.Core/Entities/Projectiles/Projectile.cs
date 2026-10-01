@@ -173,12 +173,27 @@ public partial class Projectile : Entity
     /// <summary>
     /// Adds projectile spawns based on predefined spawn locations and directions.
     /// </summary>
+    private static readonly Direction[] DirectionCircle =
+    [
+        Direction.Up, Direction.UpRight, Direction.Right, Direction.DownRight,
+        Direction.Down, Direction.DownLeft, Direction.Left, Direction.UpLeft,
+    ];
+
+    private static Direction RotateDirection(Direction direction, int steps)
+    {
+        var index = Array.IndexOf(DirectionCircle, direction);
+        return index < 0 ? direction : DirectionCircle[(index + steps) % DirectionCircle.Length];
+    }
+
     private void AddProjectileSpawns()
     {
         if (_myBase == default || _spawns == default)
         {
             return;
         }
+
+        // Same rule as the server: projectiles named "Spirale..." turn 45 degrees on every wave.
+        var rotatesEachWave = _myBase.Name?.StartsWith("Spirale", StringComparison.OrdinalIgnoreCase) ?? false;
 
         var spawn = FindSpawnAnimationData();
         var animBase = AnimationDescriptor.Get(_myBase.Animations[spawn].AnimationId);
@@ -194,7 +209,7 @@ public partial class Projectile : Entity
                     {
                         // Calculate the spawn position and direction for the new projectile
                         var s = new ProjectileSpawns(
-                            FindProjectileRotationDir(DirectionFacing, (Direction)d),
+                            FindProjectileRotationDir(DirectionFacing, rotatesEachWave ? RotateDirection((Direction)d, _quantity) : (Direction)d),
                             (byte)(X + FindProjectileRotation(DirectionFacing, x - 2, y - 2, true)),
                             (byte)(Y + FindProjectileRotation(DirectionFacing, x - 2, y - 2, false)), Z, MapId, animBase,
                             _myBase.Animations[spawn].AutoRotate, _myBase, this

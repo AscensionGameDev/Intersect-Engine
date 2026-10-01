@@ -9,10 +9,11 @@ public partial class DungeonLeaderboardPacket : IntersectPacket
     {
     }
 
-    public DungeonLeaderboardPacket(Guid dungeonId, DungeonLeaderboardEntryPacket[] entries)
+    public DungeonLeaderboardPacket(Guid dungeonId, DungeonLeaderboardEntryPacket[] entries, byte difficulty = 0)
     {
         DungeonId = dungeonId;
         Entries = entries;
+        Difficulty = difficulty;
     }
 
     [Key(0)]
@@ -21,4 +22,7 @@ public partial class DungeonLeaderboardPacket : IntersectPacket
     /// <summary>Best times for the dungeon, fastest first.</summary>
     [Key(1)]
     public DungeonLeaderboardEntryPacket[] Entries { get; set; } = [];
+
+    [Key(2)]
+    public byte Difficulty { get; set; }
 }

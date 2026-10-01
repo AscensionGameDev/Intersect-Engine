@@ -79,30 +79,6 @@ public partial class FrmDungeon : EditorForm
                 cmbEntryDir.SelectedIndex = Math.Clamp((int)mEditorItem.EntryDirection, 0, cmbEntryDir.Items.Count - 1);
             }
 
-            chkProceduralGeneration.Checked = mEditorItem.ProceduralGeneration;
-            SelectTileset(cmbFloorTileset, mEditorItem.FloorTilesetId);
-            nudFloorTileX.Value = Math.Clamp(mEditorItem.FloorTileX, nudFloorTileX.Minimum, nudFloorTileX.Maximum);
-            nudFloorTileY.Value = Math.Clamp(mEditorItem.FloorTileY, nudFloorTileY.Minimum, nudFloorTileY.Maximum);
-            SelectTileset(cmbWallTileset, mEditorItem.WallTilesetId);
-            nudWallTileX.Value = Math.Clamp(mEditorItem.WallTileX, nudWallTileX.Minimum, nudWallTileX.Maximum);
-            nudWallTileY.Value = Math.Clamp(mEditorItem.WallTileY, nudWallTileY.Minimum, nudWallTileY.Maximum);
-            chkFloorAutotile.Checked = mEditorItem.FloorTileIsAutotile;
-            chkWallAutotile.Checked = mEditorItem.WallTileIsAutotile;
-            nudMinRooms.Value = Math.Clamp(mEditorItem.MinRooms, nudMinRooms.Minimum, nudMinRooms.Maximum);
-            nudMaxRooms.Value = Math.Clamp(mEditorItem.MaxRooms, nudMaxRooms.Minimum, nudMaxRooms.Maximum);
-            nudMinRoomSize.Value = Math.Clamp(mEditorItem.MinRoomSize, nudMinRoomSize.Minimum, nudMinRoomSize.Maximum);
-            nudMaxRoomSize.Value = Math.Clamp(mEditorItem.MaxRoomSize, nudMaxRoomSize.Minimum, nudMaxRoomSize.Maximum);
-            cmbBossNpc.SelectedIndex = mEditorItem.BossNpcId == Guid.Empty ? 0 : NPCDescriptor.ListIndex(mEditorItem.BossNpcId) + 1;
-            if (cmbBossNpc.SelectedIndex < 0)
-            {
-                cmbBossNpc.SelectedIndex = 0;
-            }
-
-            nudMinNpcsPerRoom.Value = Math.Clamp(mEditorItem.MinNpcsPerRoom, nudMinNpcsPerRoom.Minimum, nudMinNpcsPerRoom.Maximum);
-            nudMaxNpcsPerRoom.Value = Math.Clamp(mEditorItem.MaxNpcsPerRoom, nudMaxNpcsPerRoom.Minimum, nudMaxNpcsPerRoom.Maximum);
-            UpdateMonsterPoolList();
-            UpdateGenerationControls();
-
             if (cmbAccess.Items.Count > 0)
             {
                 cmbAccess.SelectedIndex = Math.Clamp((int)mEditorItem.AccessType, 0, cmbAccess.Items.Count - 1);
@@ -161,73 +137,12 @@ public partial class FrmDungeon : EditorForm
         }
     }
 
-    private void SelectTileset(DarkComboBox combo, Guid tilesetId)
-    {
-        combo.SelectedIndex = tilesetId == Guid.Empty ? -1 : TilesetDescriptor.ListIndex(tilesetId);
-    }
-
-    /// <summary>
-    /// Shows/hides the tile pickers and layout numerics, and swaps the entrance map label, depending on whether
-    /// procedural generation is enabled for this dungeon.
-    /// </summary>
-    private void UpdateGenerationControls()
-    {
-        var generated = chkProceduralGeneration.Checked;
-
-        lblFloorTile.Visible = generated;
-        cmbFloorTileset.Visible = generated;
-        lblFloorTileX.Visible = generated;
-        nudFloorTileX.Visible = generated;
-        lblFloorTileY.Visible = generated;
-        nudFloorTileY.Visible = generated;
-        btnPickFloorTile.Visible = generated;
-        lblWallTile.Visible = generated;
-        cmbWallTileset.Visible = generated;
-        lblWallTileX.Visible = generated;
-        nudWallTileX.Visible = generated;
-        lblWallTileY.Visible = generated;
-        nudWallTileY.Visible = generated;
-        btnPickWallTile.Visible = generated;
-        chkFloorAutotile.Visible = generated;
-        chkWallAutotile.Visible = generated;
-        lblRoomCount.Visible = generated;
-        nudMinRooms.Visible = generated;
-        lblRoomCountSep.Visible = generated;
-        nudMaxRooms.Visible = generated;
-        lblRoomSize.Visible = generated;
-        nudMinRoomSize.Visible = generated;
-        lblRoomSizeSep.Visible = generated;
-        nudMaxRoomSize.Visible = generated;
-        lblBossNpc.Visible = generated;
-        cmbBossNpc.Visible = generated;
-        lblNpcsPerRoom.Visible = generated;
-        nudMinNpcsPerRoom.Visible = generated;
-        lblNpcsPerRoomSep.Visible = generated;
-        nudMaxNpcsPerRoom.Visible = generated;
-        lblMonsterPool.Visible = generated;
-        lstMonsterPool.Visible = generated;
-        cmbMonsterPoolNpc.Visible = generated;
-        btnAddMonster.Visible = generated;
-        btnRemoveMonster.Visible = generated;
-
-        lblEntryMap.Text = generated ? Strings.DungeonEditor.returnmap : Strings.DungeonEditor.map;
-    }
-
     private void UpdateRewardList()
     {
         lstRewards.Items.Clear();
         foreach (var reward in mEditorItem.Rewards)
         {
             lstRewards.Items.Add(Strings.DungeonEditor.rewardentry.ToString(ItemDescriptor.GetName(reward.ItemId), reward.Quantity));
-        }
-    }
-
-    private void UpdateMonsterPoolList()
-    {
-        lstMonsterPool.Items.Clear();
-        foreach (var npcId in mEditorItem.MonsterPoolNpcIds)
-        {
-            lstMonsterPool.Items.Add(NPCDescriptor.GetName(npcId));
         }
     }
 
@@ -297,152 +212,6 @@ public partial class FrmDungeon : EditorForm
         SelectMap(frmWarpSelection.GetMap());
         nudEntryX.Value = frmWarpSelection.GetX();
         nudEntryY.Value = frmWarpSelection.GetY();
-    }
-
-    private void chkProceduralGeneration_CheckedChanged(object sender, EventArgs e)
-    {
-        UpdateGenerationControls();
-
-        if (mLoading)
-        {
-            return;
-        }
-
-        mEditorItem.ProceduralGeneration = chkProceduralGeneration.Checked;
-    }
-
-    private void cmbFloorTileset_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        if (!mLoading)
-        {
-            mEditorItem.FloorTilesetId = cmbFloorTileset.SelectedIndex > -1 ? TilesetDescriptor.IdFromList(cmbFloorTileset.SelectedIndex) : Guid.Empty;
-        }
-    }
-
-    private void cmbWallTileset_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        if (!mLoading)
-        {
-            mEditorItem.WallTilesetId = cmbWallTileset.SelectedIndex > -1 ? TilesetDescriptor.IdFromList(cmbWallTileset.SelectedIndex) : Guid.Empty;
-        }
-    }
-
-    private void chkTileIsAutotile_CheckedChanged(object sender, EventArgs e)
-    {
-        if (mLoading)
-        {
-            return;
-        }
-
-        mEditorItem.FloorTileIsAutotile = chkFloorAutotile.Checked;
-        mEditorItem.WallTileIsAutotile = chkWallAutotile.Checked;
-    }
-
-    private void btnPickFloorTile_Click(object sender, EventArgs e)
-    {
-        if (mEditorItem.FloorTilesetId == Guid.Empty)
-        {
-            DarkMessageBox.ShowWarning("Choose a floor tileset first.", "No Tileset Selected", DarkDialogButton.Ok, Icon);
-            return;
-        }
-
-        var picker = new FrmTilePicker(mEditorItem.FloorTilesetId, (int)nudFloorTileX.Value, (int)nudFloorTileY.Value);
-        picker.ShowDialog();
-        if (picker.Result)
-        {
-            nudFloorTileX.Value = Math.Clamp(picker.SelectedX, nudFloorTileX.Minimum, nudFloorTileX.Maximum);
-            nudFloorTileY.Value = Math.Clamp(picker.SelectedY, nudFloorTileY.Minimum, nudFloorTileY.Maximum);
-        }
-    }
-
-    private void btnPickWallTile_Click(object sender, EventArgs e)
-    {
-        if (mEditorItem.WallTilesetId == Guid.Empty)
-        {
-            DarkMessageBox.ShowWarning("Choose a wall tileset first.", "No Tileset Selected", DarkDialogButton.Ok, Icon);
-            return;
-        }
-
-        var picker = new FrmTilePicker(mEditorItem.WallTilesetId, (int)nudWallTileX.Value, (int)nudWallTileY.Value);
-        picker.ShowDialog();
-        if (picker.Result)
-        {
-            nudWallTileX.Value = Math.Clamp(picker.SelectedX, nudWallTileX.Minimum, nudWallTileX.Maximum);
-            nudWallTileY.Value = Math.Clamp(picker.SelectedY, nudWallTileY.Minimum, nudWallTileY.Maximum);
-        }
-    }
-
-    private void nudGenerationTile_ValueChanged(object sender, EventArgs e)
-    {
-        if (mLoading)
-        {
-            return;
-        }
-
-        mEditorItem.FloorTileX = (int)nudFloorTileX.Value;
-        mEditorItem.FloorTileY = (int)nudFloorTileY.Value;
-        mEditorItem.WallTileX = (int)nudWallTileX.Value;
-        mEditorItem.WallTileY = (int)nudWallTileY.Value;
-    }
-
-    private void nudGenerationLayout_ValueChanged(object sender, EventArgs e)
-    {
-        if (mLoading)
-        {
-            return;
-        }
-
-        mEditorItem.MinRooms = (int)nudMinRooms.Value;
-        mEditorItem.MaxRooms = (int)nudMaxRooms.Value;
-        mEditorItem.MinRoomSize = (int)nudMinRoomSize.Value;
-        mEditorItem.MaxRoomSize = (int)nudMaxRoomSize.Value;
-    }
-
-    private void cmbBossNpc_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        if (mLoading)
-        {
-            return;
-        }
-
-        mEditorItem.BossNpcId = cmbBossNpc.SelectedIndex > 0 ? NPCDescriptor.IdFromList(cmbBossNpc.SelectedIndex - 1) : Guid.Empty;
-    }
-
-    private void nudNpcsPerRoom_ValueChanged(object sender, EventArgs e)
-    {
-        if (mLoading)
-        {
-            return;
-        }
-
-        mEditorItem.MinNpcsPerRoom = (int)nudMinNpcsPerRoom.Value;
-        mEditorItem.MaxNpcsPerRoom = (int)nudMaxNpcsPerRoom.Value;
-    }
-
-    private void btnAddMonster_Click(object sender, EventArgs e)
-    {
-        if (cmbMonsterPoolNpc.SelectedIndex < 0)
-        {
-            return;
-        }
-
-        var npcId = NPCDescriptor.IdFromList(cmbMonsterPoolNpc.SelectedIndex);
-        if (npcId == Guid.Empty)
-        {
-            return;
-        }
-
-        mEditorItem.MonsterPoolNpcIds.Add(npcId);
-        UpdateMonsterPoolList();
-    }
-
-    private void btnRemoveMonster_Click(object sender, EventArgs e)
-    {
-        if (lstMonsterPool.SelectedIndex > -1 && lstMonsterPool.SelectedIndex < mEditorItem.MonsterPoolNpcIds.Count)
-        {
-            mEditorItem.MonsterPoolNpcIds.RemoveAt(lstMonsterPool.SelectedIndex);
-            UpdateMonsterPoolList();
-        }
     }
 
     private void cmbAccess_SelectedIndexChanged(object sender, EventArgs e)
@@ -643,18 +412,6 @@ public partial class FrmDungeon : EditorForm
 
         cmbAccess.Items.Clear();
         cmbAccess.Items.AddRange(new object[] { Strings.DungeonEditor.accesssolo, Strings.DungeonEditor.accessparty, Strings.DungeonEditor.accessguild });
-
-        cmbFloorTileset.Items.Clear();
-        cmbFloorTileset.Items.AddRange(TilesetDescriptor.Names);
-        cmbWallTileset.Items.Clear();
-        cmbWallTileset.Items.AddRange(TilesetDescriptor.Names);
-
-        cmbBossNpc.Items.Clear();
-        cmbBossNpc.Items.Add(Strings.General.None);
-        cmbBossNpc.Items.AddRange(NPCDescriptor.Names);
-
-        cmbMonsterPoolNpc.Items.Clear();
-        cmbMonsterPoolNpc.Items.AddRange(NPCDescriptor.Names);
 
         cmbRewardItem.Items.Clear();
         cmbRewardItem.Items.AddRange(ItemDescriptor.Names);

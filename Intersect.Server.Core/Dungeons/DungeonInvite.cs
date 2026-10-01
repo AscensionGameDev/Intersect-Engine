@@ -22,9 +22,10 @@ public sealed class DungeonInvite
 
     private readonly List<Player> _accepted = new();
 
-    public DungeonInvite(DungeonDescriptor descriptor, Player leader, IEnumerable<Player> members)
+    public DungeonInvite(DungeonDescriptor descriptor, Player leader, IEnumerable<Player> members, byte difficulty = 0)
     {
         Descriptor = descriptor;
+        Difficulty = difficulty;
         Leader = leader;
         ExpiresAt = Timing.Global.Milliseconds + TimeoutMs;
         _accepted.Add(leader);
@@ -39,6 +40,8 @@ public sealed class DungeonInvite
     }
 
     public DungeonDescriptor Descriptor { get; }
+
+    public byte Difficulty { get; }
 
     public Player Leader { get; }
 
@@ -143,7 +146,7 @@ public sealed class DungeonInvite
             return;
         }
 
-        Player.StartDungeonRun(Descriptor, Leader, participants);
+        Player.StartDungeonRun(Descriptor, Leader, participants, Difficulty);
     }
 
     private void ClearPending()

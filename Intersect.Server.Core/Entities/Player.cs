@@ -3440,6 +3440,51 @@ public partial class Player : Entity
         _ = TryTakeItem(slot, drop.Quantity);
     }
 
+    public const int MaxEnchantLevel = 10;
+
+    private void UseEnchantRune(int runeSlot, ItemDescriptor rune)
+    {
+        var level = (int)Math.Clamp(rune.Consumable?.Value ?? 0, 1, MaxEnchantLevel);
+
+        var weaponSlot = Options.Instance.Equipment.WeaponSlot;
+        var weaponInventorySlot = weaponSlot >= 0 && weaponSlot < Equipment.Length ? Equipment[weaponSlot] : -1;
+        if (weaponInventorySlot < 0 || weaponInventorySlot >= Items.Count || Items[weaponInventorySlot].ItemId == Guid.Empty)
+        {
+            PacketSender.SendChatMsg(this, "Equipe d'abord une arme pour utiliser une rune d'enchantement.", ChatMessageType.Error);
+
+            return;
+        }
+
+        var weapon = Items[weaponInventorySlot];
+        weapon.Properties ??= new ItemProperties();
+        if (weapon.Properties.EnchantLevel >= level)
+        {
+            PacketSender.SendChatMsg(
+                this,
+                $"Ton arme est deja enchantee niveau {weapon.Properties.EnchantLevel} : une rune de niveau {level} n'apporterait rien.",
+                ChatMessageType.Error
+            );
+
+            return;
+        }
+
+        if (!TryTakeItem(Items[runeSlot], 1))
+        {
+            return;
+        }
+
+        weapon.Properties.EnchantLevel = (byte)level;
+        PacketSender.SendInventoryItemUpdate(this, weaponInventorySlot);
+        PacketSender.SendPlayerEquipmentToProximity(this);
+        PacketSender.SendPlaySound(this, "magic1.wav");
+        PacketSender.SendChatMsg(
+            this,
+            $"Ton arme est maintenant enchantee niveau {level} !",
+            ChatMessageType.Notice,
+            CustomColors.Alerts.Accepted
+        );
+    }
+
     public void UseItem(int slot, Entity target = null)
     {
         var equipped = false;
@@ -3472,6 +3517,15 @@ public partial class Player : Entity
             if (isEquippableType && SlotIsEquipped(slot, out var equippedSlot))
             {
                 UnequipItem(equippedSlot, true);
+                return;
+            }
+
+            // Enchantment runes: consumables filed in the "Runes" item folder enchant the equipped weapon
+            // to the level held in their consumable value (1-10). A weapon is never downgraded.
+            if (string.Equals(itemBase.Folder, "Runes", StringComparison.OrdinalIgnoreCase))
+            {
+                UseEnchantRune(slot, itemBase);
+
                 return;
             }
 
@@ -8127,9 +8181,9 @@ public partial class Player : Entity
     [JsonIgnore, NotMapped]
     private Guid? _pendingDungeonInstanceId;
 
-    public long GetDungeonCooldownRemainingMs(DungeonDescriptor descriptor)
+    public long GetDungeonCooldownRemainingMs(DungeonDescriptor descriptor, byte difficulty = 0)
     {
-        if (descriptor.CooldownSeconds <= 0 || !DungeonData.Records.TryGetValue(descriptor.Id, out var record))
+        if (descriptor.CooldownSeconds <= 0 || !DungeonData.Records.TryGetValue(DungeonDifficulties.RecordKey(descriptor.Id, difficulty), out var record))
         {
             return 0;
         }
@@ -8142,7 +8196,7 @@ public partial class Player : Entity
     /// <summary>
     /// Checks whether this player alone satisfies the dungeon's requirements.
     /// </summary>
-    public bool CanEnterDungeon(DungeonDescriptor descriptor, out string reason)
+    public bool CanEnterDungeon(DungeonDescriptor descriptor, out string reason, byte difficulty = 0)
     {
         reason = string.Empty;
 
@@ -8160,7 +8214,7 @@ public partial class Player : Entity
             return false;
         }
 
-        var cooldown = GetDungeonCooldownRemainingMs(descriptor);
+        var cooldown = GetDungeonCooldownRemainingMs(descriptor, difficulty);
         if (cooldown > 0)
         {
             reason = Strings.Dungeons.OnCooldown.ToString(DungeonInstance.FormatTime(cooldown));
@@ -8186,9 +8240,9 @@ public partial class Player : Entity
     /// away; party dungeons send an invitation to every member and start when they answered or the timer ran out.
     /// Only the party leader may start a party dungeon.
     /// </summary>
-    public bool TryEnterDungeon(DungeonDescriptor descriptor, out string reason)
+    public bool TryEnterDungeon(DungeonDescriptor descriptor, out string reason, byte difficulty = 0)
     {
-        if (!CanEnterDungeon(descriptor, out reason))
+        if (!CanEnterDungeon(descriptor, out reason, difficulty))
         {
             return false;
         }
@@ -8220,7 +8274,7 @@ public partial class Player : Entity
 
                 if (party.Count == 1)
                 {
-                    return StartDungeonRun(descriptor, this, [this], out reason);
+                    return StartDungeonRun(descriptor, this, [this], out reason, difficulty);
                 }
 
                 if (DungeonManager.TryGetInvite(Id, out _))
@@ -8230,7 +8284,7 @@ public partial class Player : Entity
                     return false;
                 }
 
-                var invite = new DungeonInvite(descriptor, this, party);
+                var invite = new DungeonInvite(descriptor, this, party, difficulty);
                 DungeonManager.AddInvite(invite);
                 invite.Send();
 
@@ -8244,18 +8298,18 @@ public partial class Player : Entity
                     return false;
                 }
 
-                return StartDungeonRun(descriptor, this, Guild.FindOnlineMembers(), out reason);
+                return StartDungeonRun(descriptor, this, Guild.FindOnlineMembers(), out reason, difficulty);
 
             default:
-                return StartDungeonRun(descriptor, this, [this], out reason);
+                return StartDungeonRun(descriptor, this, [this], out reason, difficulty);
         }
     }
 
     /// <summary>
     /// Creates the run and warps every eligible participant into it. Participants that no longer qualify are told why and left out.
     /// </summary>
-    public static bool StartDungeonRun(DungeonDescriptor descriptor, Player starter, IEnumerable<Player> participants)
-        => StartDungeonRun(descriptor, starter, participants, out var reason)
+    public static bool StartDungeonRun(DungeonDescriptor descriptor, Player starter, IEnumerable<Player> participants, byte difficulty = 0)
+        => StartDungeonRun(descriptor, starter, participants, out var reason, difficulty)
            || ReportDungeonStartFailure(starter, reason);
 
     private static bool ReportDungeonStartFailure(Player starter, string reason)
@@ -8265,11 +8319,11 @@ public partial class Player : Entity
         return false;
     }
 
-    public static bool StartDungeonRun(DungeonDescriptor descriptor, Player starter, IEnumerable<Player> participants, out string reason)
+    public static bool StartDungeonRun(DungeonDescriptor descriptor, Player starter, IEnumerable<Player> participants, out string reason, byte difficulty = 0)
     {
         reason = string.Empty;
 
-        var instance = new DungeonInstance(descriptor, starter);
+        var instance = new DungeonInstance(descriptor, starter, difficulty);
         DungeonManager.Add(instance);
 
         foreach (var participant in participants)
@@ -8279,7 +8333,7 @@ public partial class Player : Entity
                 continue;
             }
 
-            if (!participant.CanEnterDungeon(descriptor, out var memberReason))
+            if (!participant.CanEnterDungeon(descriptor, out var memberReason, difficulty))
             {
                 PacketSender.SendChatMsg(participant, Strings.Dungeons.MemberSkipped.ToString(descriptor.Name, memberReason), ChatMessageType.Notice, CustomColors.Alerts.Declined);
                 if (participant != starter)
@@ -8313,10 +8367,10 @@ public partial class Player : Entity
         DungeonData.ReturnX = X;
         DungeonData.ReturnY = Y;
         DungeonData.InDungeon = true;
-        if (!DungeonData.Records.TryGetValue(descriptor.Id, out var record))
+        if (!DungeonData.Records.TryGetValue(instance.RecordKey, out var record))
         {
             record = new DungeonRecord();
-            DungeonData.Records[descriptor.Id] = record;
+            DungeonData.Records[instance.RecordKey] = record;
         }
 
         record.LastStartedUtcTicks = DateTime.UtcNow.Ticks;
@@ -8338,19 +8392,6 @@ public partial class Player : Entity
         var warpStopwatch = System.Diagnostics.Stopwatch.StartNew();
         Warp(entryMapId, entryX, entryY, entryDirection, forceInstanceChange: true);
 
-        // Send the generated map's own standalone grid (see DungeonMapGenerator/DbInterface.AddStandaloneMapGrid)
-        // so the client actually adds it to Globals.GridMaps - Warp()'s normal grid sync only fires for maps that
-        // share a grid with where the player came from, which a freshly generated map never does.
-        //
-        // The client's own catch-up request (SendNeedMapForGrid) can't help here either: it looks up a local
-        // MapInstance for Globals.Me.MapId to find its grid position before it will ask for anything, but no such
-        // MapInstance exists yet for a map the client has never seen - a chicken-and-egg gap that only affects
-        // maps nobody has ever loaded before. So we push the map data directly instead of waiting to be asked.
-        if (instance.GeneratedMap != null)
-        {
-            PacketSender.SendMapGrid(Client, instance.GeneratedMap.MapGrid, true);
-            PacketSender.SendMap(Client, instance.GeneratedMap.Id);
-        }
 
         ApplicationContext.Context.Value?.Logger.LogInformation(
             "[Dungeon] {Player} entered {Dungeon} (instance creation + warp took {Elapsed}ms)",

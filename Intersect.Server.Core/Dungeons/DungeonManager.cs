@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using Intersect.Server.Dungeons.Generation;
 
 namespace Intersect.Server.Dungeons;
 
@@ -20,7 +19,6 @@ public static class DungeonManager
     {
         Instances.TryRemove(instance.MapInstanceId, out _);
         Core.MapInstancing.InstanceVariables.Clear(instance.MapInstanceId);
-        DungeonMapGenerator.Discard(instance.GeneratedMap);
     }
 
     public static bool TryGet(Guid mapInstanceId, out DungeonInstance instance) => Instances.TryGetValue(mapInstanceId, out instance!);

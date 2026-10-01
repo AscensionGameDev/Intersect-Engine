@@ -1324,6 +1324,26 @@ public static partial class Strings
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString NoDungeons = @"No dungeons are available yet.";
 
+        public static LocalizedString DifficultyEasy = @"Facile";
+
+        public static LocalizedString DifficultyNormal = @"Normal";
+
+        public static LocalizedString DifficultyHard = @"Difficile";
+
+        public static LocalizedString LevelShort = @"niv. {00}";
+
+        public static LocalizedString DifficultyHeader = @"-- Difficulte --";
+
+        public static LocalizedString MonsterLevelLine = @"Niveau des monstres : {00}";
+
+        public static LocalizedString RecommendedLevelLine = @"Niveau conseille : {00}";
+
+        public static LocalizedString InfoHeader = @"-- Donjon --";
+
+        public static LocalizedString RecordHeader = @"-- Ton record --";
+
+        public static LocalizedString EnterDifficulty = @"Entrer - {00} (niv. {01})";
+
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString AccessLabel = @"Access:";
 
@@ -1443,6 +1463,15 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString None = @"You haven't unlocked any titles yet.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Current = @"Titre equipe : {00}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString NoneEquipped = @"aucun";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString Count = @"{00} titre(s) debloque(s). Clique pour equiper.";
     }
 
     public partial struct Mounts
@@ -1482,6 +1511,30 @@ public static partial class Strings
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString HiddenDescription = @"Keep playing to discover this achievement.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString StatusUnlocked = @"Debloque";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString StatusLocked = @"Verrouille";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString SelectHint = @"Choisis un succes dans la liste.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString RewardsHeader = @"-- Recompenses --";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString RewardExperience = @"{00} experience";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString RewardItem = @"{00} x{01}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString RewardTitle = @"Titre : {00}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public static LocalizedString RewardMount = @"Monture : {00}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static LocalizedString Progress = @"{00} / {01} unlocked";
@@ -1953,6 +2006,8 @@ If you are sure you want to hand over your guild enter '\c{{#ff8080}}{02}\c{{}}'
         public static LocalizedString ItemLimits = @"Cannot be {00}";
 
         public static LocalizedString RequiredLevel = @"Required level: {00}";
+
+        public static LocalizedString EnchantLevel = @"Enchantment: level {00}";
 
         public static LocalizedString RequiredStat = @"Required {00}: {01}";
 

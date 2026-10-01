@@ -1456,6 +1456,9 @@ internal sealed partial class PacketHandler
                 {
                     entity.Equipment = packet.ItemIds;
                 }
+
+                // Enchantment level per equipment slot (weapon flame aura), sent for everyone.
+                entity.EquipmentEnchantLevels = packet.EnchantLevels ?? [];
             }
         }
     }

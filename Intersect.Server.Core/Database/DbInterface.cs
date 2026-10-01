@@ -2238,23 +2238,6 @@ public static partial class DbInterface
         }
     }
 
-    /// <summary>
-    /// Registers a standalone 1x1 grid for a map that isn't linked (Up/Down/Left/Right) to any other map - e.g. a
-    /// procedurally generated dungeon map. Without a grid entry, <see cref="MapController.MapGrid"/> defaults to 0
-    /// (an unrelated real grid), so the normal "send the maps around the player" sync in <c>Player.Warp</c> would
-    /// never actually reach this map and the client would never load it.
-    /// </summary>
-    public static MapGrid AddStandaloneMapGrid(Guid mapId)
-    {
-        lock (mapGrids)
-        {
-            var grid = new MapGrid(mapId, mapGrids.Count);
-            mapGrids.Add(grid);
-
-            return grid;
-        }
-    }
-
     public static bool GridsContain(Guid id)
     {
         lock (mapGrids)

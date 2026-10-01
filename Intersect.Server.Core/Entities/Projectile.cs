@@ -99,8 +99,24 @@ public partial class Projectile : Entity
     /// <summary>
     /// Adds projectile spawns based on predefined spawn locations and directions.
     /// </summary>
+    private static readonly Direction[] DirectionCircle =
+    [
+        Direction.Up, Direction.UpRight, Direction.Right, Direction.DownRight,
+        Direction.Down, Direction.DownLeft, Direction.Left, Direction.UpLeft,
+    ];
+
+    /// <summary>Turns a direction clockwise by the given number of 45-degree steps.</summary>
+    private static Direction RotateDirection(Direction direction, int steps)
+    {
+        var index = Array.IndexOf(DirectionCircle, direction);
+        return index < 0 ? direction : DirectionCircle[(index + steps) % DirectionCircle.Length];
+    }
+
     private void AddProjectileSpawns()
     {
+        // Projectiles whose name starts with "Spirale" turn by 45 degrees on every wave (rotating spirals).
+        var rotatesEachWave = Descriptor.Name?.StartsWith("Spirale", StringComparison.OrdinalIgnoreCase) ?? false;
+
         // Iterate over all possible spawn locations within the defined width and height
         for (byte x = 0; x < ProjectileDescriptor.SPAWN_LOCATIONS_WIDTH; x++)
         {
@@ -115,7 +131,7 @@ public partial class Projectile : Entity
                     {
                         // Calculate the spawn position and direction for the new projectile
                         var s = new ProjectileSpawn(
-                            FindProjectileRotationDir(Dir, (Direction)d),
+                            FindProjectileRotationDir(Dir, rotatesEachWave ? RotateDirection((Direction)d, _quantity) : (Direction)d),
                             (byte)(X + FindProjectileRotation(Dir, x - 2, y - 2, true)),
                             (byte)(Y + FindProjectileRotation(Dir, x - 2, y - 2, false)),
                             (byte)Z, MapId, MapInstanceId, Descriptor, this

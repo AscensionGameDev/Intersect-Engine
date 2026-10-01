@@ -1349,7 +1349,14 @@ public partial class Entity : IEntity
                             var itemPaperdoll = Gender == 0
                                 ? itemDescriptor.MalePaperdoll
                                 : itemDescriptor.FemalePaperdoll;
+
+                            // A rune-enchanted weapon burns with a flame aura whose strength follows its level.
+                            _equipmentEnchant = equipSlot == Options.Instance.Equipment.WeaponSlot &&
+                                                equipSlot < EquipmentEnchantLevels.Length
+                                ? EquipmentEnchantLevels[equipSlot]
+                                : (byte)0;
                             DrawEquipment(itemPaperdoll, item.Color * renderColor);
+                            _equipmentEnchant = 0;
                         }
                     }
                 }
@@ -1554,7 +1561,92 @@ public partial class Entity : IEntity
 
         // Draw the paperdoll texture using: source and destination rectangles along with the render color.
         Graphics.DrawGameTexture(paperdollTex, srcRectangle, destRectangle, renderColor);
+
+        // Enchantment flame aura (runes, level 1-10): the weapon frame is redrawn several times, additively and
+        // tinted, drifting upward, swaying and fading from a white-yellow core to a red tip - so the flames
+        // hug the blade exactly through every walk/attack frame. The level drives height, number of tongues,
+        // brightness and a soft halo, so a higher level is visibly stronger.
+        if (_equipmentEnchant > 0)
+        {
+            var level = Math.Clamp((int)_equipmentEnchant, 1, 10);
+            var time = Timing.Global.Milliseconds;
+            var height = 2f + level * 1.5f;
+            var tongues = 2 + level / 3;
+            var intensity = 0.16f + level * 0.035f;
+
+            // Flames are drawn from the weapon's white silhouette ("<paperdoll>_mask.png") so their colour is pure
+            // flame colour whatever the blade looks like (an orange tint on a blue blade would come out black).
+            var maskTexture = Globals.ContentManager.GetTexture(
+                TextureType.Paperdoll,
+                Path.GetFileNameWithoutExtension(paperdollTex.Name) + "_mask.png"
+            ) ?? paperdollTex;
+
+            // Faint halo around the blade from level 5 (kept subtle so the blade stays readable).
+            if (level >= 4)
+            {
+                var haloReach = 1;
+                var haloAlpha = (byte)Math.Clamp(255 * (0.06f + level * 0.014f), 0, 255);
+                for (var dx = -haloReach; dx <= haloReach; dx++)
+                {
+                    for (var dy = -haloReach; dy <= haloReach; dy++)
+                    {
+                        if (dx == 0 && dy == 0)
+                        {
+                            continue;
+                        }
+
+                        Graphics.DrawGameTexture(
+                            maskTexture,
+                            srcRectangle,
+                            new FloatRect(destRectangle.X + dx, destRectangle.Y + dy, destRectangle.Width, destRectangle.Height),
+                            new Color(haloAlpha, 255, 120, 30),
+                            null,
+                            GameBlendModes.Add
+                        );
+                    }
+                }
+            }
+
+            for (var i = 0; i < tongues; i++)
+            {
+                var t = tongues == 1 ? 0f : i / (float)(tongues - 1);
+
+                // Flicker: each tongue sways and breathes with its own phase.
+                var sway = (float)Math.Sin(time / 85.0 + i * 1.9) * (0.6f + 1.6f * t);
+                var breathe = 0.80f + 0.20f * (float)Math.Sin(time / 63.0 + i * 2.7);
+                var rise = -t * height * breathe;
+
+                // Colour ramp: white-yellow core -> orange -> deep red tip.
+                var r = (byte)255;
+                var g = (byte)Math.Clamp(215 - t * 175, 40, 255);
+                var b = (byte)Math.Clamp(110 - t * 110, 0, 255);
+                var alpha = (byte)Math.Clamp(255 * intensity * (1f - 0.78f * t) * breathe, 0, 255);
+
+                Graphics.DrawGameTexture(
+                    maskTexture,
+                    srcRectangle,
+                    new FloatRect(
+                        (float)Math.Round(destRectangle.X + sway),
+                        (float)Math.Round(destRectangle.Y + rise),
+                        destRectangle.Width,
+                        destRectangle.Height
+                    ),
+                    new Color(alpha, r, g, b),
+                    null,
+                    GameBlendModes.Add
+                );
+            }
+
+            // Draw the weapon itself again, normally, on top of the flames: the blade stays crisp and readable,
+            // with the fire licking out around it instead of washing it out.
+            Graphics.DrawGameTexture(paperdollTex, srcRectangle, destRectangle, renderColor);
+        }
     }
+
+    private byte _equipmentEnchant;
+
+    /// <summary>Enchantment level of the item worn in each equipment slot (0 = none), as sent by the server.</summary>
+    public byte[] EquipmentEnchantLevels { get; set; } = [];
 
     protected virtual void CalculateOrigin()
     {
@@ -2082,9 +2174,12 @@ public partial class Entity : IEntity
             targetTexture.Height
         );
 
+        // The marker is a small arrow floating above the target, above its name and title (the top-most label),
+        // bobbing gently up and down so it reads at a glance without covering the character.
+        var bob = (float)Math.Round(Math.Sin(Timing.Global.Milliseconds / 170.0) * 2.5);
         var destRectangle = new FloatRect(
-            (float)Math.Ceiling(WorldPos.X + (WorldPos.Width - targetTexture.Width / 2) / 2),
-            (float)Math.Ceiling(WorldPos.Y + (WorldPos.Height - targetTexture.Height) / 2),
+            (float)Math.Ceiling(Origin.X - srcRectangle.Width / 2f),
+            (float)Math.Ceiling(GetLabelLocation(LabelType.Header) - srcRectangle.Height - 4f + bob),
             srcRectangle.Width,
             srcRectangle.Height
         );

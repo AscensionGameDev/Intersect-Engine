@@ -640,17 +640,6 @@ public partial class MapController : MapDescriptor
     #endregion
     
     /// <summary>
-    /// Commits an in-memory <see cref="MapDescriptor.Layers"/> built programmatically (e.g. procedural generation)
-    /// down to <see cref="MapDescriptor.TileData"/>, then clears <see cref="MapDescriptor.Layers"/> again to match
-    /// the server's normal convention of only holding tiles deserialized on demand.
-    /// </summary>
-    public void CommitGeneratedLayers()
-    {
-        TileData = LZ4.PickleString(JsonConvert.SerializeObject(Layers, Formatting.None, mJsonSerializerSettings));
-        Layers = null;
-    }
-
-    /// <summary>
     /// The server normally keeps <see cref="MapDescriptor.Layers"/> null and only holds the raw
     /// <see cref="MapDescriptor.TileData"/> blob, since collision historically only needed the
     /// <see cref="MapDescriptor.Attributes"/> grid. Tileset-based passability needs the actual

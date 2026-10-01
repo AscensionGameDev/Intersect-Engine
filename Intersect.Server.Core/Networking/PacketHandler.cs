@@ -1063,6 +1063,71 @@ internal sealed partial class PacketHandler
                 ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Notice, Guid.Empty);
             }
         }
+        else if (cmd == Strings.Chat.LevelCommand)
+        {
+            // /level <pseudo> <niveau>  or  /level <niveau> (yourself) - administrators only.
+            if (client?.Power.IsAdmin ?? false)
+            {
+                Player? levelTarget = null;
+                string? levelText = null;
+                if (msgSplit.Length >= 2)
+                {
+                    levelTarget = Player.FindOnline(msgSplit[0].ToLower());
+                    levelText = msgSplit[1];
+                    if (levelTarget == null)
+                    {
+                        PacketSender.SendChatMsg(
+                            player,
+                            Strings.Chat.LevelPlayerNotFound.ToString(msgSplit[0]),
+                            ChatMessageType.Admin,
+                            CustomColors.Alerts.Error
+                        );
+
+                        return;
+                    }
+                }
+                else if (msgSplit.Length == 1)
+                {
+                    levelTarget = player;
+                    levelText = msgSplit[0];
+                }
+
+                if (levelTarget == null || !int.TryParse(levelText, out var newLevel) || newLevel < 1)
+                {
+                    PacketSender.SendChatMsg(player, Strings.Chat.LevelUsage, ChatMessageType.Admin, CustomColors.Alerts.Error);
+
+                    return;
+                }
+
+                newLevel = Math.Min(newLevel, Options.Instance.Player.MaxLevel);
+                if (newLevel > levelTarget.Level)
+                {
+                    // Going up goes through AddLevels so class spells of the crossed levels are learned too.
+                    levelTarget.AddLevels(newLevel - levelTarget.Level, resetExperience: true);
+                }
+                else
+                {
+                    levelTarget.SetLevel(newLevel, resetExperience: true);
+                }
+
+                PacketSender.SendChatMsg(
+                    player,
+                    Strings.Chat.LevelSet.ToString(levelTarget.Name, levelTarget.Level),
+                    ChatMessageType.Admin,
+                    CustomColors.Alerts.Accepted
+                );
+
+                if (!ReferenceEquals(levelTarget, player))
+                {
+                    PacketSender.SendChatMsg(
+                        levelTarget,
+                        Strings.Chat.LevelSetByAdmin.ToString(levelTarget.Level),
+                        ChatMessageType.Notice,
+                        CustomColors.Alerts.Info
+                    );
+                }
+            }
+        }
         else if (cmd == Strings.Chat.PrivateMessageCommand || cmd == Strings.Chat.MessageCommand)
         {
             if (msgSplit.Length < 2)
@@ -2351,7 +2416,7 @@ internal sealed partial class PacketHandler
             return;
         }
 
-        if (!player.TryEnterDungeon(descriptor, out var reason))
+        if (!player.TryEnterDungeon(descriptor, out var reason, DungeonDifficulties.Clamp(packet.Difficulty)))
         {
             PacketSender.SendChatMsg(player, reason, ChatMessageType.Notice, CustomColors.Alerts.Declined);
         }
@@ -2426,7 +2491,7 @@ internal sealed partial class PacketHandler
             return;
         }
 
-        PacketSender.SendDungeonLeaderboard(player, packet.DungeonId);
+        PacketSender.SendDungeonLeaderboard(player, packet.DungeonId, DungeonDifficulties.Clamp(packet.Difficulty));
     }
 
     //TradeRequestPacket

@@ -41,14 +41,13 @@ public partial class DungeonDescriptor : DatabaseObject<DungeonDescriptor>, IFol
 
     public Direction EntryDirection { get; set; } = Direction.Down;
 
-    /// <summary>
-    /// When enabled, a fresh room-and-corridor layout is generated on every run instead of using
-    /// <see cref="EntryMapId"/> as the dungeon map. <see cref="EntryMapId"/>/<see cref="EntryX"/>/<see cref="EntryY"/>/
-    /// <see cref="EntryDirection"/> then instead describe the point participants are sent back to when they leave
-    /// the generated dungeon.
-    /// </summary>
-    public bool ProceduralGeneration { get; set; }
 
+    // ---- LEGACY (procedural generation) ----
+    // The procedural dungeon generator was removed from the server and the editor. The properties below are no longer
+    // used by anything; they stay only because they are mapped to NOT NULL columns of the Dungeons table (dropping them
+    // needs an EF migration). Safe to delete together with such a migration.
+
+    public bool ProceduralGeneration { get; set; }
     public Guid FloorTilesetId { get; set; }
 
     public int FloorTileX { get; set; }
