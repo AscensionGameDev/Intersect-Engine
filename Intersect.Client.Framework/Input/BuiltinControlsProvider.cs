@@ -95,6 +95,7 @@ internal sealed class BuiltinControlsProvider : IControlsProvider
             { Control.OpenMounts, new ControlMapping(new ControlBinding(Keys.None, Keys.U), ControlBinding.Default) },
             { Control.ToggleMount, new ControlMapping(new ControlBinding(Keys.None, Keys.R), ControlBinding.Default) },
             { Control.OpenAchievements, new ControlMapping(new ControlBinding(Keys.None, Keys.H), ControlBinding.Default) },
+            { Control.OpenProfessions, new ControlMapping(new ControlBinding(Keys.None, Keys.N), ControlBinding.Default) },
             { Control.OpenSettings, new ControlMapping(new ControlBinding(Keys.None, Keys.O), ControlBinding.Default) },
             { Control.OpenDebugger, new ControlMapping(new ControlBinding(Keys.None, Keys.F2), ControlBinding.Default) },
             { Control.OpenAdminPanel, new ControlMapping(new ControlBinding(Keys.None, Keys.Insert), ControlBinding.Default) },

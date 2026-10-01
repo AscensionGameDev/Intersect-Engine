@@ -1237,6 +1237,20 @@ public static partial class CommandPrinter
         return Strings.EventCommandList.unlockmount.ToString(MountDescriptor.GetName(command.MountId));
     }
 
+    private static string GetCommandText(ProfessionCommand command, MapInstance map)
+    {
+        var detail = command.Action switch
+        {
+            ProfessionAction.LearnRecipe => $"apprendre la recette [{CraftingRecipeDescriptor.GetName(command.RecipeId)}]",
+            ProfessionAction.GatheringSkillUp => $"{Professions.GetName(command.Profession)} : montée de skill (requis {command.Amount})",
+            ProfessionAction.AddSkill => $"{Professions.GetName(command.Profession)} : +{command.Amount} skill",
+            ProfessionAction.ForgetProfession => $"oublier {Professions.GetName(command.Profession)}",
+            _ => $"apprendre {Professions.GetName(command.Profession)}",
+        };
+
+        return Strings.EventCommandList.profession.ToString(detail);
+    }
+
     private static string GetCommandText(UnlockAchievementCommand command, MapInstance map)
     {
         return Strings.EventCommandList.unlockachievement.ToString(AchievementDescriptor.GetName(command.AchievementId));

@@ -2356,6 +2356,25 @@ internal sealed partial class PacketHandler
         Interface.Interface.EnqueueInGame(gameInterface => gameInterface.GameMenu?.UpdateTitlesList());
     }
 
+    //ProfessionsPacket
+    public void HandlePacket(IPacketSender packetSender, ProfessionsPacket packet)
+    {
+        if (Globals.Me == null)
+        {
+            return;
+        }
+
+        Globals.Me.ProfessionSkills = packet.Skills ?? [];
+        Globals.Me.KnownRecipeIds = packet.KnownRecipes ?? [];
+
+        if (!Interface.Interface.HasInGameUI)
+        {
+            return;
+        }
+
+        Interface.Interface.EnqueueInGame(gameInterface => gameInterface.GameMenu?.UpdateProfessionsList());
+    }
+
     //UnlockedMountsPacket
     public void HandlePacket(IPacketSender packetSender, UnlockedMountsPacket packet)
     {

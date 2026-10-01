@@ -689,6 +689,10 @@ public partial class FrmEvent : Form
                 tmpCommand = new UnlockAchievementCommand();
 
                 break;
+            case EventCommandType.Profession:
+                tmpCommand = new ProfessionCommand();
+
+                break;
             case EventCommandType.EnterDungeon:
                 tmpCommand = new EnterDungeonCommand();
 
@@ -1387,6 +1391,10 @@ public partial class FrmEvent : Form
 
             case EventCommandType.UnlockAchievement:
                 cmdWindow = new EventCommandUnlockAchievement((UnlockAchievementCommand)command, this);
+
+                break;
+            case EventCommandType.Profession:
+                cmdWindow = new EventCommandProfession((ProfessionCommand)command, this);
 
                 break;
             case EventCommandType.EnterDungeon:

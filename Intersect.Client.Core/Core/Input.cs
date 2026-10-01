@@ -310,6 +310,10 @@ public static partial class Input
                             Interface.Interface.GameUi.GameMenu?.ToggleTitlesWindow();
                             break;
 
+                        case Control.OpenProfessions:
+                            Interface.Interface.GameUi.GameMenu?.ToggleProfessionsWindow();
+                            break;
+
                         case Control.OpenDungeons:
                             Interface.Interface.GameUi.GameMenu?.ToggleDungeonsWindow();
                             break;

@@ -4372,7 +4372,8 @@ public partial class Player : Entity
         lock (EntityLock)
         {
             var craftRoll = Randomization.Next(0, 101);
-            var failedCraft = craftRoll < craftDescriptor.FailureChance;
+            // Profession recipes never fail (as in WoW): the colour system regulates progression instead.
+            var failedCraft = craftDescriptor.Profession == 0 && craftRoll < craftDescriptor.FailureChance;
             if (failedCraft)
             {
                 var message = Strings.Crafting.CraftFailure;
@@ -4447,6 +4448,8 @@ public partial class Player : Entity
                         CustomColors.Alerts.Success
                     );
 
+                    TryRaiseCraftingSkill(craftDescriptor);
+
                     if (craftDescriptor.Event != default)
                     {
                         EnqueueStartCommonEvent(craftDescriptor.Event);
@@ -4511,6 +4514,13 @@ public partial class Player : Entity
         if (!Conditions.MeetsConditionLists(craftDescriptor.CraftingRequirements, this, null))
         {
             PacketSender.SendChatMsg(this, Strings.Crafting.RequirementsNotMet.ToString(), ChatMessageType.Error);
+            return true;
+        }
+
+        var professionBlock = GetRecipeBlockReason(craftDescriptor);
+        if (professionBlock != null)
+        {
+            PacketSender.SendChatMsg(this, professionBlock, ChatMessageType.Error, CustomColors.Alerts.Error);
             return true;
         }
 
@@ -8557,6 +8567,226 @@ public partial class Player : Entity
     [JsonIgnore, NotMapped] public List<SpritePart> SpriteParts { get; set; } = new List<SpritePart>();
 
     private sealed record StoredSpritePart(string Category, int Index, List<string> Colors);
+
+    #endregion
+
+    #region Professions
+
+    [JsonIgnore, Column("Professions")]
+    public string ProfessionsJson
+    {
+        get => JsonConvert.SerializeObject(ProfessionSkills);
+        set => ProfessionSkills = JsonConvert.DeserializeObject<Dictionary<int, int>>(value ?? "{}") ?? new Dictionary<int, int>();
+    }
+
+    /// <summary>Profession id → skill, for every profession the player has learned.</summary>
+    [JsonIgnore, NotMapped] public Dictionary<int, int> ProfessionSkills { get; set; } = new Dictionary<int, int>();
+
+    [JsonIgnore, Column("KnownRecipes")]
+    public string KnownRecipesJson
+    {
+        get => JsonConvert.SerializeObject(KnownRecipeIds);
+        set => KnownRecipeIds = JsonConvert.DeserializeObject<List<Guid>>(value ?? "[]") ?? new List<Guid>();
+    }
+
+    /// <summary>Recipes learned outside the trainer (recipe items, quests, bosses).</summary>
+    [JsonIgnore, NotMapped] public List<Guid> KnownRecipeIds { get; set; } = new List<Guid>();
+
+    public bool HasProfession(Profession profession) => ProfessionSkills.ContainsKey((int)profession);
+
+    public int GetProfessionSkill(Profession profession) =>
+        ProfessionSkills.TryGetValue((int)profession, out var skill) ? skill : 0;
+
+    private int CraftingProfessionCount => ProfessionSkills.Keys.Count(id => Professions.IsCrafting((Profession)id));
+
+    /// <summary>Learns a profession at skill 1. Crafting professions are limited per player, gathering ones are free.</summary>
+    public bool LearnProfession(Profession profession)
+    {
+        if (profession == Profession.None || HasProfession(profession))
+        {
+            return false;
+        }
+
+        if (Professions.IsCrafting(profession) && CraftingProfessionCount >= Professions.MaxCraftingProfessions)
+        {
+            PacketSender.SendChatMsg(
+                this,
+                $"Tu connais déjà {Professions.MaxCraftingProfessions} métiers de fabrication. Oublie-en un avant d'apprendre {Professions.GetName(profession)}.",
+                ChatMessageType.Crafting,
+                CustomColors.Alerts.Error
+            );
+
+            return false;
+        }
+
+        ProfessionSkills[(int)profession] = 1;
+        PacketSender.SendChatMsg(
+            this,
+            $"Tu apprends le métier : {Professions.GetName(profession)} (niveau 1/{Professions.MaxSkill}).",
+            ChatMessageType.Crafting,
+            CustomColors.Alerts.Success
+        );
+        PacketSender.SendProfessions(this);
+
+        return true;
+    }
+
+    public bool ForgetProfession(Profession profession)
+    {
+        if (!ProfessionSkills.Remove((int)profession))
+        {
+            return false;
+        }
+
+        PacketSender.SendChatMsg(
+            this,
+            $"Tu oublies le métier : {Professions.GetName(profession)}.",
+            ChatMessageType.Crafting,
+            CustomColors.Alerts.Info
+        );
+        PacketSender.SendProfessions(this);
+
+        return true;
+    }
+
+    public bool LearnRecipe(Guid recipeId)
+    {
+        if (!CraftingRecipeDescriptor.TryGet(recipeId, out var recipe) || KnownRecipeIds.Contains(recipeId))
+        {
+            return false;
+        }
+
+        KnownRecipeIds.Add(recipeId);
+        PacketSender.SendChatMsg(
+            this,
+            $"Nouvelle recette apprise : {recipe.Name}.",
+            ChatMessageType.Crafting,
+            CustomColors.Alerts.Success
+        );
+        PacketSender.SendProfessions(this);
+
+        return true;
+    }
+
+    /// <summary>
+    /// The recipe is known when it has no profession (classic recipe), when the trainer teaches it and the skill is
+    /// high enough, or when it was learned some other way.
+    /// </summary>
+    public bool KnowsRecipe(CraftingRecipeDescriptor recipe)
+    {
+        if (recipe.Profession == 0)
+        {
+            return true;
+        }
+
+        if (KnownRecipeIds.Contains(recipe.Id))
+        {
+            return true;
+        }
+
+        return recipe.Trainable && GetProfessionSkill((Profession)recipe.Profession) >= recipe.SkillOrange;
+    }
+
+    /// <summary>Why the recipe cannot be crafted right now, or null when it can.</summary>
+    public string GetRecipeBlockReason(CraftingRecipeDescriptor recipe)
+    {
+        if (recipe.Profession == 0)
+        {
+            return null;
+        }
+
+        var profession = (Profession)recipe.Profession;
+        if (!HasProfession(profession))
+        {
+            return $"Tu dois connaître le métier {Professions.GetName(profession)}.";
+        }
+
+        if (GetProfessionSkill(profession) < recipe.SkillOrange)
+        {
+            return $"{Professions.GetName(profession)} {recipe.SkillOrange} requis ({GetProfessionSkill(profession)} actuellement).";
+        }
+
+        if (!KnowsRecipe(recipe))
+        {
+            return "Tu n'as pas encore appris cette recette.";
+        }
+
+        return null;
+    }
+
+    public static RecipeDifficulty GetRecipeDifficulty(CraftingRecipeDescriptor recipe, int skill) => recipe.GetDifficulty(skill);
+
+    private static int GetSkillUpChance(RecipeDifficulty difficulty) => difficulty switch
+    {
+        RecipeDifficulty.Orange => 100,
+        RecipeDifficulty.Yellow => 75,
+        RecipeDifficulty.Green => 25,
+        _ => 0,
+    };
+
+    /// <summary>Rolls a skill gain for a successful craft of the given recipe (WoW colours).</summary>
+    public void TryRaiseCraftingSkill(CraftingRecipeDescriptor recipe)
+    {
+        if (recipe.Profession == 0)
+        {
+            return;
+        }
+
+        var profession = (Profession)recipe.Profession;
+        var skill = GetProfessionSkill(profession);
+        if (skill <= 0 || skill >= Professions.MaxSkill)
+        {
+            return;
+        }
+
+        var chance = GetSkillUpChance(GetRecipeDifficulty(recipe, skill));
+        if (chance > 0 && Randomization.Next(0, 100) < chance)
+        {
+            RaiseProfessionSkill(profession, 1);
+        }
+    }
+
+    /// <summary>
+    /// Gathering skill-up: the node needs <paramref name="requiredSkill"/>; the colours follow the WoW offsets
+    /// (yellow +25, green +50, grey +75).
+    /// </summary>
+    public void TryRaiseGatheringSkill(Profession profession, int requiredSkill)
+    {
+        var skill = GetProfessionSkill(profession);
+        if (skill <= 0 || skill >= Professions.MaxSkill)
+        {
+            return;
+        }
+
+        var difficulty = skill >= requiredSkill + 75 ? RecipeDifficulty.Grey
+            : skill >= requiredSkill + 50 ? RecipeDifficulty.Green
+            : skill >= requiredSkill + 25 ? RecipeDifficulty.Yellow
+            : RecipeDifficulty.Orange;
+
+        var chance = GetSkillUpChance(difficulty);
+        if (chance > 0 && Randomization.Next(0, 100) < chance)
+        {
+            RaiseProfessionSkill(profession, 1);
+        }
+    }
+
+    public void RaiseProfessionSkill(Profession profession, int amount)
+    {
+        if (!HasProfession(profession) || amount <= 0)
+        {
+            return;
+        }
+
+        var skill = Professions.ClampSkill(GetProfessionSkill(profession) + amount);
+        ProfessionSkills[(int)profession] = skill;
+        PacketSender.SendChatMsg(
+            this,
+            $"Ton niveau de {Professions.GetName(profession)} passe à {skill}/{Professions.MaxSkill}.",
+            ChatMessageType.Crafting,
+            CustomColors.Alerts.Success
+        );
+        PacketSender.SendProfessions(this);
+    }
 
     #endregion
 

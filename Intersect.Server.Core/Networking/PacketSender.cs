@@ -130,6 +130,7 @@ public static partial class PacketSender
             PacketSender.SendUnlockedTitles(player);
             PacketSender.SendUnlockedMounts(player);
             PacketSender.SendUnlockedAchievements(player);
+            PacketSender.SendProfessions(player);
             PacketSender.SendDungeonRecords(player);
             PacketSender.SendDungeonStatus(player);
 
@@ -1769,7 +1770,9 @@ public static partial class PacketSender
             foreach (var craft in table.Crafts)
             {
                 var craftBase = CraftingRecipeDescriptor.Get(craft);
-                if (!(craftBase != null && Conditions.MeetsConditionLists(craftBase.CraftingRequirements, player, null)))
+                // Profession recipes are only listed once the player knows them (WoW-style recipe book).
+                if (!(craftBase != null && player.KnowsRecipe(craftBase) &&
+                      Conditions.MeetsConditionLists(craftBase.CraftingRequirements, player, null)))
                 {
                     playerTable.Crafts.Remove(craft);
                 }
@@ -2425,6 +2428,19 @@ public static partial class PacketSender
         var unlocked = player.UnlockedTitleIds.Where(id => TitleDescriptor.Get(id) != null).ToList();
 
         player.SendPacket(new UnlockedTitlesPacket(unlocked, player.EquippedTitleId));
+    }
+
+    //ProfessionsPacket
+    public static void SendProfessions(Player player)
+    {
+        if (player == null)
+        {
+            return;
+        }
+
+        var known = player.KnownRecipeIds.Where(id => CraftingRecipeDescriptor.Get(id) != null).ToList();
+
+        player.SendPacket(new ProfessionsPacket(new Dictionary<int, int>(player.ProfessionSkills), known));
     }
 
     public static void SendUnlockedMounts(Player player)

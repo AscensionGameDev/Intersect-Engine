@@ -1383,6 +1383,35 @@ public static partial class CommandProcessing
         player.UnlockAchievement(command.AchievementId);
     }
 
+    //Profession Command
+    private static void ProcessCommand(
+        ProfessionCommand command,
+        Player player,
+        Event instance,
+        CommandInstance stackInfo,
+        Stack<CommandInstance> callStack
+    )
+    {
+        switch (command.Action)
+        {
+            case ProfessionAction.LearnProfession:
+                player.LearnProfession(command.Profession);
+                break;
+            case ProfessionAction.ForgetProfession:
+                player.ForgetProfession(command.Profession);
+                break;
+            case ProfessionAction.LearnRecipe:
+                player.LearnRecipe(command.RecipeId);
+                break;
+            case ProfessionAction.GatheringSkillUp:
+                player.TryRaiseGatheringSkill(command.Profession, command.Amount);
+                break;
+            case ProfessionAction.AddSkill:
+                player.RaiseProfessionSkill(command.Profession, command.Amount);
+                break;
+        }
+    }
+
     //Open Shop Command
     private static void ProcessCommand(
         OpenShopCommand command,

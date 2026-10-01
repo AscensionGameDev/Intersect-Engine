@@ -1,6 +1,7 @@
 using Intersect.Client.Core;
 using Intersect.Client.Entities;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -531,6 +532,7 @@ public partial class CraftingWindow : Window
                 Strings.Crafting.RecipeListEntry.ToString(craftNumber, craftRecipeDescriptor.Name)
             );
             craftingRecipeRow.UserData = craftRecipeDescriptor;
+            ApplyDifficultyColor(craftingRecipeRow, craftRecipeDescriptor);
             craftingRecipeRow.DoubleClicked += CraftingRecipeRowOnClicked;
             craftingRecipeRow.Clicked += CraftingRecipeRowOnClicked;
 
@@ -541,6 +543,26 @@ public partial class CraftingWindow : Window
         {
             LoadCraftRecipe(craftRecipeDescriptorToLoad);
         }
+    }
+
+    /// <summary>WoW colours: orange = always raises the skill, yellow = often, green = rarely, grey = never.</summary>
+    private static void ApplyDifficultyColor(ListBoxRow row, CraftingRecipeDescriptor recipe)
+    {
+        if (recipe.Profession == 0 || Globals.Me == null)
+        {
+            return;
+        }
+
+        var skill = Globals.Me.ProfessionSkills.TryGetValue(recipe.Profession, out var value) ? value : 0;
+        var color = recipe.GetDifficulty(skill) switch
+        {
+            RecipeDifficulty.Orange => new Color(255, 255, 140, 0),
+            RecipeDifficulty.Yellow => new Color(255, 255, 215, 0),
+            RecipeDifficulty.Green => new Color(255, 80, 200, 80),
+            _ => new Color(255, 140, 140, 140),
+        };
+
+        row.SetTextColor(color);
     }
 
     protected override void Render(Framework.Gwen.Skin.Base skin)

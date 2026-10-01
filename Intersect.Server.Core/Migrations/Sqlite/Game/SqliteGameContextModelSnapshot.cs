@@ -112,6 +112,24 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.Property<int>("ItemLossChance")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("Profession")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SkillGray")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SkillGreen")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SkillOrange")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SkillYellow")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Trainable")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("JsonCraftingRequirements")
                         .HasColumnType("TEXT")
                         .HasColumnName("CraftingRequirements");

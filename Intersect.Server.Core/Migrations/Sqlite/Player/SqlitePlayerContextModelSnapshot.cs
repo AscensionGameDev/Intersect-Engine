@@ -697,6 +697,14 @@ namespace Intersect.Server.Migrations.Sqlite.Player
                         .HasColumnType("TEXT")
                         .HasColumnName("BaseStats");
 
+                    b.Property<string>("KnownRecipesJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("KnownRecipes");
+
+                    b.Property<string>("ProfessionsJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Professions");
+
                     b.Property<string>("UnlockedAchievementsJson")
                         .HasColumnType("TEXT")
                         .HasColumnName("UnlockedAchievements");

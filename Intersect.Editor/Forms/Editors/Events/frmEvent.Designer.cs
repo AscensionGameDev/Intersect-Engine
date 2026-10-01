@@ -69,7 +69,8 @@ namespace Intersect.Editor.Forms.Editors.Events
             var changePetTreeNode = new TreeNode("Change Pet");
             var unlockMountTreeNode = new TreeNode("Unlock Mount");
             var unlockAchievementTreeNode = new TreeNode("Unlock Achievement");
-            var playerControlTreeNode = new TreeNode("Player Control", new TreeNode[] { restoreHPTreeNode, restoreMPTreeNode, levelUpTreeNode, giveExperienceTreeNode, changeLevelTreeNode, changeSpellsTreeNode, changeItemsTreeNode, changeSpriteTreeNode, changePlayerColorTreeNode, changeFaceTreeNode, changeGenderTreeNode, setAccessTreeNode, changeClassTreeNode, equipUneqiupTreeNode, changeNameColorTreeNode, changePlayerLabelTreeNode, changePlayerNameTreeNode, resetStatPointTreeNode, castSpellOnTreeNode, changePetTreeNode, unlockMountTreeNode, unlockAchievementTreeNode });
+            var professionTreeNode = new TreeNode("Profession");
+            var playerControlTreeNode = new TreeNode("Player Control", new TreeNode[] { restoreHPTreeNode, restoreMPTreeNode, levelUpTreeNode, giveExperienceTreeNode, changeLevelTreeNode, changeSpellsTreeNode, changeItemsTreeNode, changeSpriteTreeNode, changePlayerColorTreeNode, changeFaceTreeNode, changeGenderTreeNode, setAccessTreeNode, changeClassTreeNode, equipUneqiupTreeNode, changeNameColorTreeNode, changePlayerLabelTreeNode, changePlayerNameTreeNode, resetStatPointTreeNode, castSpellOnTreeNode, changePetTreeNode, unlockMountTreeNode, unlockAchievementTreeNode, professionTreeNode });
             var warpPlayerTreeNode = new TreeNode("Warp Player");
             var setMoveRouteTreeNode = new TreeNode("Set Move Route");
             var waitForRouteCompleteTreeNode = new TreeNode("Wait for Route Completion");
@@ -935,6 +936,9 @@ namespace Intersect.Editor.Forms.Editors.Events
             unlockAchievementTreeNode.Name = "unlockachievement";
             unlockAchievementTreeNode.Tag = (int)EventCommandType.UnlockAchievement;
             unlockAchievementTreeNode.Text = "Unlock Achievement";
+            professionTreeNode.Name = "profession";
+            professionTreeNode.Tag = (int)EventCommandType.Profession;
+            professionTreeNode.Text = "Profession";
             changePlayerNameTreeNode.Name = "changename";
             changePlayerNameTreeNode.Tag = (int)EventCommandType.ChangeName;
             changePlayerNameTreeNode.Text = "Change Player Name";

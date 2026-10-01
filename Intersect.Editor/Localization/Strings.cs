@@ -2210,6 +2210,8 @@ Tick timer saved in server config.json.";
 
         public static LocalizedString unlockachievement = @"Unlock Achievement [{00}]";
 
+        public static LocalizedString profession = @"Profession : {00}";
+
         public static LocalizedString enterdungeon = @"Enter Dungeon [{00}]";
 
         public static LocalizedString completedungeon = @"Complete Dungeon";
@@ -2485,6 +2487,7 @@ Tick timer saved in server config.json.";
             {"changepet", @"Change Pet"},
             {"unlockmount", @"Unlock Mount"},
             {"unlockachievement", @"Unlock Achievement"},
+            {"profession", @"Profession"},
             {"dungeons", @"Dungeons"},
             {"enterdungeon", @"Enter Dungeon"},
             {"completedungeon", @"Complete Dungeon"},
@@ -3318,6 +3321,25 @@ Tick timer saved in server config.json.";
         public static LocalizedString okay = @"Ok";
 
         public static LocalizedString title = @"Unlock Mount";
+
+    }
+
+    public partial struct EventProfession
+    {
+
+        public static LocalizedString action = @"Action :";
+
+        public static LocalizedString amount = @"Valeur :";
+
+        public static LocalizedString cancel = @"Cancel";
+
+        public static LocalizedString okay = @"Ok";
+
+        public static LocalizedString profession = @"Métier :";
+
+        public static LocalizedString recipe = @"Recette :";
+
+        public static LocalizedString title = @"Profession";
 
     }
 

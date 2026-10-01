@@ -30,6 +30,7 @@ public partial class FrmCrafts : EditorForm
     {
         ApplyHooks();
         InitializeComponent();
+        BuildProfessionControls();
         Icon = Program.Icon;
         _btnSave = btnSave;
         _btnCancel = btnCancel;
@@ -83,6 +84,7 @@ public partial class FrmCrafts : EditorForm
             cmbResult.SelectedIndex = ItemDescriptor.ListIndex(mEditorItem.ItemId) + 1;
 
             nudCraftQuantity.Value = mEditorItem.Quantity;
+            LoadProfessionControls();
 
             lstIngredients.Items.Clear();
             cmbIngredient.Hide();

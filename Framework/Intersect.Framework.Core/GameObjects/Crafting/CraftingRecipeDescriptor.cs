@@ -31,6 +31,46 @@ public partial class CraftingRecipeDescriptor : DatabaseObject<CraftingRecipeDes
         protected set => Ingredients = JsonConvert.DeserializeObject<List<CraftingRecipeIngredient>>(value);
     }
 
+    /// <summary>Profession this recipe belongs to (0 = none: classic recipe, no skill involved).</summary>
+    [JsonProperty(Order = -10)]
+    public int Profession { get; set; }
+
+    /// <summary>Skill at which the recipe becomes available and always raises the skill (orange).</summary>
+    [JsonProperty(Order = -9)]
+    public int SkillOrange { get; set; }
+
+    /// <summary>Skill from which the recipe is yellow (often raises the skill).</summary>
+    [JsonProperty(Order = -8)]
+    public int SkillYellow { get; set; }
+
+    /// <summary>Skill from which the recipe is green (rarely raises the skill).</summary>
+    [JsonProperty(Order = -7)]
+    public int SkillGreen { get; set; }
+
+    /// <summary>Skill from which the recipe is grey (never raises the skill).</summary>
+    [JsonProperty(Order = -7)]
+    public int SkillGray { get; set; }
+
+    /// <summary>True: taught by the trainer as soon as the skill is high enough. False: must be learned (recipe item, quest, boss...).</summary>
+    [JsonProperty(Order = -7)]
+    public bool Trainable { get; set; } = true;
+
+    /// <summary>WoW colour of this recipe for a player with the given skill.</summary>
+    public RecipeDifficulty GetDifficulty(int skill)
+    {
+        if (skill >= SkillGray)
+        {
+            return RecipeDifficulty.Grey;
+        }
+
+        if (skill >= SkillGreen)
+        {
+            return RecipeDifficulty.Green;
+        }
+
+        return skill >= SkillYellow ? RecipeDifficulty.Yellow : RecipeDifficulty.Orange;
+    }
+
     [JsonProperty(Order = -6)]
     public int ItemLossChance { get; set; } = 100;
 

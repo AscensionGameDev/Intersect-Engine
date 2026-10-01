@@ -148,4 +148,7 @@ public enum EventCommandType
     CompleteDungeon,
     FailDungeon,
     SetDungeonObjective,
+
+    //Professions
+    Profession,
 }

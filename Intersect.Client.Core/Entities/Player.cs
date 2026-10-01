@@ -98,6 +98,12 @@ public partial class Player : Entity, IPlayer
 
     public List<Guid> UnlockedTitleIds { get; set; } = [];
 
+    /// <summary>Profession id → skill for every profession the player has learned.</summary>
+    public Dictionary<int, int> ProfessionSkills { get; set; } = [];
+
+    /// <summary>Recipes learned outside the trainer (recipe items, quests, bosses).</summary>
+    public List<Guid> KnownRecipeIds { get; set; } = [];
+
     public Guid EquippedTitleId { get; set; } = Guid.Empty;
 
     public List<Guid> UnlockedMountIds { get; set; } = [];

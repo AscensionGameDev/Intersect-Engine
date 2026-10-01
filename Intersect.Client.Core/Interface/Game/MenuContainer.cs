@@ -50,6 +50,8 @@ public partial class MenuContainer : Panel
 
     private readonly Titles.TitlesWindow _titlesWindow;
 
+    private readonly Metiers.ProfessionsWindow _professionsWindow;
+
     private readonly Dungeons.DungeonsWindow _dungeonsWindow;
 
     private readonly Achievements.AchievementsWindow _achievementsWindow;
@@ -251,6 +253,7 @@ public partial class MenuContainer : Panel
         _mapItemWindow = new MapItemWindow(gameCanvas: gameCanvas);
         _guildWindow = new GuildWindow(gameCanvas: gameCanvas);
         _titlesWindow = new Titles.TitlesWindow(gameCanvas: gameCanvas);
+        _professionsWindow = new Metiers.ProfessionsWindow(gameCanvas: gameCanvas);
         _dungeonsWindow = new Dungeons.DungeonsWindow(gameCanvas: gameCanvas);
         _achievementsWindow = new Achievements.AchievementsWindow(gameCanvas: gameCanvas);
         _furnitureWindow = new Furniture.FurnitureWindow(gameCanvas: gameCanvas);
@@ -268,6 +271,7 @@ public partial class MenuContainer : Panel
         _mapItemWindow.Update();
         _guildWindow.Update();
         _titlesWindow.Update();
+        _professionsWindow.Update();
         _dungeonsWindow.Update();
         _achievementsWindow.Update();
         _furnitureWindow.Update();
@@ -286,6 +290,11 @@ public partial class MenuContainer : Panel
     public void UpdateTitlesList()
     {
         _titlesWindow.UpdateList();
+    }
+
+    public void UpdateProfessionsList()
+    {
+        _professionsWindow.UpdateList();
     }
 
     public void UpdateAchievementsList()
@@ -322,6 +331,7 @@ public partial class MenuContainer : Panel
         _spellsWindow.Hide();
         _guildWindow.Hide();
         _titlesWindow.Hide();
+        _professionsWindow.Hide();
         _dungeonsWindow.Hide();
         _achievementsWindow.Hide();
         _furnitureWindow.Hide();
@@ -374,6 +384,22 @@ public partial class MenuContainer : Panel
         }
 
         return _dungeonsWindow.IsVisible;
+    }
+
+    public bool ToggleProfessionsWindow()
+    {
+        if (_professionsWindow.IsVisible)
+        {
+            _professionsWindow.Hide();
+        }
+        else
+        {
+            HideWindows();
+            _professionsWindow.UpdateList();
+            _professionsWindow.Show();
+        }
+
+        return _professionsWindow.IsVisible;
     }
 
     public bool ToggleTitlesWindow()

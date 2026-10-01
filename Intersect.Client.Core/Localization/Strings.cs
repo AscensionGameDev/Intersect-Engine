@@ -956,6 +956,7 @@ public static partial class Strings
             {"openfriends", @"Open Friends:"},
             {"openguild", @"Open Guild:"},
             {"opentitles", @"Open Titles:"},
+            {"openprofessions", @"Open Professions:"},
             {"opendungeons", @"Open Dungeons:"},
             {"opensettings", @"Open Settings:"},
             {"opendebugger", @"Open Debugger:"},
