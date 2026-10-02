@@ -70,10 +70,6 @@ public partial class HailPacket : ConnectionPacket
             buffer.Write(VersionData);
             buffer.Write(HandshakeSecret, SIZE_HANDSHAKE_SECRET);
             buffer.Write(Adjusted);
-#if DEBUG
-            buffer.Write(UTC);
-            buffer.Write(Offset);
-#endif
 
 #if INTERSECT_DIAGNOSTIC
             ApplicationContext.Context.Value?.Logger.LogDebug($"VersionData: {BitConverter.ToString(VersionData)}");
@@ -129,17 +125,6 @@ public partial class HailPacket : ConnectionPacket
                     return false;
                 }
 
-#if DEBUG
-                if (!buffer.Read(out mUTC))
-                {
-                    return false;
-                }
-
-                if (!buffer.Read(out mOffset))
-                {
-                    return false;
-                }
-#endif
 
 #if INTERSECT_DIAGNOSTIC
                 ApplicationContext.Context.Value?.Logger.LogDebug($"VersionData: {BitConverter.ToString(VersionData)}");

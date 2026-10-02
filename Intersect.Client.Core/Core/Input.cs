@@ -70,6 +70,12 @@ public static partial class Input
                     break;
                 }
 
+                if (StoryIntro.IsActive)
+                {
+                    StoryIntro.Finish();
+                    return;
+                }
+
                 Fade.FadeIn(ClientConfiguration.Instance.FadeDurationMs);
                 Globals.GameState = GameStates.Menu;
 

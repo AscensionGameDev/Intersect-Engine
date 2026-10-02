@@ -57,10 +57,6 @@ public class ApprovalPacket : ConnectionPacket
             buffer.Write(AesKey, SIZE_AES_KEY);
             buffer.Write(Guid.ToByteArray(), SIZE_GUID);
             buffer.Write(Adjusted);
-#if DEBUG
-            buffer.Write(UTC);
-            buffer.Write(Offset);
-#endif
 
             Debug.Assert(mRsa != null, "mRsa != null");
             EncryptedData = mRsa.Encrypt(buffer.ToArray(), RSAEncryptionPadding.OaepSHA256) ??
@@ -113,17 +109,6 @@ public class ApprovalPacket : ConnectionPacket
                     return false;
                 }
 
-#if DEBUG
-                if (!buffer.Read(out mUTC))
-                {
-                    return false;
-                }
-
-                if (!buffer.Read(out mOffset))
-                {
-                    return false;
-                }
-#endif
 
 #if INTERSECT_DIAGNOSTIC
                 ApplicationContext.Context.Value?.Logger.LogDebug($"Handshake secret: {BitConverter.ToString(HandshakeSecret)}.");

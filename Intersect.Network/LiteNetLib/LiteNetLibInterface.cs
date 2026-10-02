@@ -46,7 +46,7 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
 #if DEBUG
             DisconnectTimeout = 600_000,
 #else
-            DisconnectTimeout = 60_000,
+            DisconnectTimeout = 120_000,
 #endif
             IPv6Enabled = true,
             PingInterval = 5000,

@@ -301,7 +301,7 @@ public partial class Npc : Entity
     }
 
     /// <summary>True for NPCs filed in a descriptor folder whose name starts with "Boss".</summary>
-    private bool IsBoss => Descriptor?.Folder?.StartsWith("Boss", StringComparison.OrdinalIgnoreCase) ?? false;
+    internal bool IsBoss => Descriptor?.Folder?.StartsWith("Boss", StringComparison.OrdinalIgnoreCase) ?? false;
 
     /// <summary>
     /// Phase change alert: when a boss dies and its death event spawns another NPC, announce that NPC's name

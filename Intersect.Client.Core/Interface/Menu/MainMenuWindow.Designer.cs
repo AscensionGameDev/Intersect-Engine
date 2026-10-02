@@ -24,31 +24,36 @@ public partial class MainMenuWindow
             _buttonExit,
         }.Where(button => button.IsVisibleInTree).ToArray();
 
-        const int defaultWidth = 87;
-        const int defaultHeight = 154;
+        const int listWidth = 320;
+        const int buttonHeight = 54;
 
         Size = new Point(
-            defaultWidth * visibleButtons.Length + InnerPanelPadding.Left + InnerPanelPadding.Right,
-            defaultHeight + TitleBarBounds.Bottom + InnerPanelPadding.Top + InnerPanelPadding.Bottom
+            listWidth + InnerPanelPadding.Left + InnerPanelPadding.Right,
+            buttonHeight * visibleButtons.Length + InnerPanelPadding.Top + InnerPanelPadding.Bottom
         );
 
         Titlebar.MouseInputEnabled = false;
         TitleLabel.FontSize = 14;
         TitleLabel.TextColorOverride = Color.White;
 
+        var normalTextColor = new Color(255, 214, 210, 198);
+        var hoverTextColor = new Color(255, 235, 196, 110);
+        var disabledTextColor = new Color(150, 140, 140, 140);
+
         foreach (var button in visibleButtons)
         {
-            button.Size = new Point(defaultWidth, defaultHeight);
+            button.Size = new Point(listWidth, buttonHeight);
             button.FontName = "sourcesansproblack";
-            button.FontSize = 12;
-            button.Padding = new Padding(0, 24, 0, 0);
-            button.Dock = Pos.Left;
+            button.FontSize = 19;
+            button.Padding = new Padding(8, 0, 8, 0);
+            button.Dock = Pos.Top;
+            button.TextAlign = Pos.Left | Pos.CenterV;
+            button.ShouldDrawBackground = false;
 
-            var buttonName = button.Name;
-            button.SetStateTexture(ComponentState.Normal, $"mainmenu{buttonName}.png");
-            button.SetStateTexture(ComponentState.Active, $"mainmenu{buttonName}_clicked.png");
-            button.SetStateTexture(ComponentState.Disabled, $"mainmenu{buttonName}_disabled.png");
-            button.SetStateTexture(ComponentState.Hovered, $"mainmenu{buttonName}_hovered.png");
+            button.SetTextColor(normalTextColor, ComponentState.Normal);
+            button.SetTextColor(hoverTextColor, ComponentState.Hovered);
+            button.SetTextColor(hoverTextColor, ComponentState.Active);
+            button.SetTextColor(disabledTextColor, ComponentState.Disabled);
         }
 
         LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());

@@ -32,6 +32,12 @@ public partial class Formulas
     /// "resistance/HP" can be tuned independently of attack/speed without touching every NPC by hand.</summary>
     public string NpcToughnessScaling = "1 + (Level - 1) * 0.35";
 
+    /// <summary>Multiplier applied to damage a monster deals to a player (A_Level = monster, V_Level = player).
+    /// Without it level is purely cosmetic: a level 4 monster hits a level 60 player exactly as hard as a
+    /// level 60 one would, only reduced by Defense. The default ignores the first 10 levels of gap, then removes
+    /// 2.5% per extra level, never going below 10% (bosses are exempt); the resulting hit is always at least 1.</summary>
+    public string MonsterVsPlayerLevelMitigation = "Max(0.1, 1 - Max(0, V_Level - A_Level - 10) * 0.025)";
+
     public string MagicDamage = DefaultFormulaMagicDamage;
     public string PhysicalDamage = DefaultFormulaPhysicalDamage;
     public string TrueDamage = DefaultFormulaTrueDamage;
@@ -177,6 +183,16 @@ public partial class Formulas
             };
 
             var result = Convert.ToDouble(expression.Evaluate());
+
+            if (!negate && result > 0 && attacker is Npc { IsBoss: false } && victim is Player &&
+                !string.IsNullOrWhiteSpace(_formulas.MonsterVsPlayerLevelMitigation))
+            {
+                var mitigation = new Expression(_formulas.MonsterVsPlayerLevelMitigation);
+                mitigation.Parameters["A_Level"] = attacker.Level;
+                mitigation.Parameters["V_Level"] = victim.Level;
+                result = Math.Max(1, result * Convert.ToDouble(mitigation.Evaluate()));
+            }
+
             if (negate)
             {
                 result = -result;

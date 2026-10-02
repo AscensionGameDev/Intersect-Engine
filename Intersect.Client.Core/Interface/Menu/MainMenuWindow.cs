@@ -36,6 +36,8 @@ public partial class MainMenuWindow : Window
         Padding = Padding.Zero;
         InnerPanelPadding = new Padding(8);
         Titlebar.MouseInputEnabled = false;
+        Titlebar.IsHidden = true;
+        DrawShadow = false;
 
         _buttonStart = new Button(this, nameof(_buttonStart))
         {
@@ -88,6 +90,20 @@ public partial class MainMenuWindow : Window
             Text = Strings.MainMenu.Exit,
         };
         _buttonExit.Clicked += _buttonExit_Clicked;
+
+        foreach (var button in new[] { _buttonStart, _buttonLogin, _buttonRegister, _buttonSettings, _buttonCredits, _buttonExit })
+        {
+            WireHoverCaret(button);
+        }
+    }
+
+    // Prefixe le texte du bouton survole d'un chevron (style liste de menu plutot que gros boutons-
+    // images) pour renforcer visuellement l'etat de survol en plus du changement de couleur de texte.
+    private static void WireHoverCaret(Button button)
+    {
+        var baseText = button.Text;
+        button.HoverEnter += (_, _) => button.Text = $"›  {baseText}";
+        button.HoverLeave += (_, _) => button.Text = baseText;
     }
 
     private void _buttonCredits_Clicked(Base sender, MouseButtonState arguments) => _mainMenu.SwitchToWindow<CreditsWindow>();
@@ -214,5 +230,12 @@ public partial class MainMenuWindow : Window
         var isOffline = networkStatus != NetworkStatus.Online;
         _buttonLogin.IsDisabled = isOffline;
         _buttonRegister.IsDisabled = isOffline || (Options.IsLoaded && Options.Instance.BlockClientRegistrations);
+    }
+
+    // On ne veut pas de la boite/texture de fenetre classique (skin.DrawWindow) pour le menu
+    // principal - juste la liste de boutons texte au-dessus du fond plein ecran. Les enfants
+    // (boutons) sont rendus separement par le framework donc ce no-op ne les affecte pas.
+    protected override void Render(Intersect.Client.Framework.Gwen.Skin.Base skin)
+    {
     }
 }

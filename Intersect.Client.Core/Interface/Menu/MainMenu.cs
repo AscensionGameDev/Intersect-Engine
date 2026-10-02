@@ -101,16 +101,50 @@ public partial class MainMenu : MutableInterface
     public MainMenu(Canvas menuCanvas) : base(menuCanvas)
     {
         _menuCanvas = menuCanvas;
+
+        CreateBackground(menuCanvas);
+
         _mainMenuWindow = new MainMenuWindow(_menuCanvas, this)
         {
-            Alignment = [Alignments.CenterH],
-            Y = 480,
+            Alignment = [Alignments.CenterV, Alignments.Right],
             IsVisibleInTree = true,
         };
 
         CreateGameTitle(menuCanvas);
 
         NetworkStatusChanged += HandleNetworkStatusChanged;
+    }
+
+    /// <summary>
+    /// Fond plein ecran derriere le menu. Si un artwork existe (resources/gui/menu-background.png),
+    /// on l'affiche etire a toute la fenetre ; sinon on retombe sur un fond sombre uni plutot que
+    /// de laisser l'ecran de jeu vide/noir sous le menu.
+    /// </summary>
+    private static void CreateBackground(Canvas menuCanvas)
+    {
+        var backgroundTexture = GameContentManager.Current.GetTexture(
+            Framework.Content.TextureType.Gui, "menu-background.png"
+        );
+
+        if (backgroundTexture != default)
+        {
+            var background = new ImagePanel(menuCanvas, "MenuBackground")
+            {
+                Dock = Pos.Fill,
+                Texture = backgroundTexture,
+                MouseInputEnabled = false,
+            };
+            background.SendToBack();
+            return;
+        }
+
+        var fallback = new Panel(menuCanvas, "MenuBackgroundFallback")
+        {
+            Dock = Pos.Fill,
+            BackgroundColor = new Color(255, 14, 13, 20),
+            MouseInputEnabled = false,
+        };
+        fallback.SendToBack();
     }
 
     private static void CreateGameTitle(Canvas menuCanvas)
@@ -125,8 +159,8 @@ public partial class MainMenu : MutableInterface
         if (logoTexture != default)
         {
             var aspectRatio = logoTexture.Width / (float)logoTexture.Height;
-            const int maxWidth = 820;
-            const int maxHeight = 340;
+            const int maxWidth = 420;
+            const int maxHeight = 180;
             var width = maxWidth;
             var height = (int)(width / aspectRatio);
             if (height > maxHeight)
@@ -137,8 +171,9 @@ public partial class MainMenu : MutableInterface
 
             _ = new ImagePanel(menuCanvas, nameof(CreateGameTitle))
             {
-                Alignment = [Alignments.CenterH],
-                Y = 20,
+                Alignment = [Alignments.Left, Alignments.Top],
+                X = 40,
+                Y = 30,
                 Size = new Point(width, height),
                 Texture = logoTexture,
                 MouseInputEnabled = false,
@@ -149,8 +184,9 @@ public partial class MainMenu : MutableInterface
 
         var titlePanel = new Panel(menuCanvas, nameof(CreateGameTitle))
         {
-            Alignment = [Alignments.CenterH],
-            Y = 60,
+            Alignment = [Alignments.Left, Alignments.Top],
+            X = 40,
+            Y = 30,
             Size = new Point(560, 96),
             MouseInputEnabled = false,
         };
@@ -167,7 +203,7 @@ public partial class MainMenu : MutableInterface
             Height = 40,
             Font = titleFont,
             FontSize = 26,
-            TextAlign = Pos.Center,
+            TextAlign = Pos.Left,
             TextColor = new Color(150, 10, 8, 6),
             Text = spacedTitle,
             MouseInputEnabled = false,
@@ -181,7 +217,7 @@ public partial class MainMenu : MutableInterface
             Height = 40,
             Font = titleFont,
             FontSize = 26,
-            TextAlign = Pos.Center,
+            TextAlign = Pos.Left,
             TextColor = new Color(255, 235, 196, 110),
             Text = spacedTitle,
             MouseInputEnabled = false,
@@ -189,7 +225,7 @@ public partial class MainMenu : MutableInterface
 
         _ = new Panel(titlePanel, "GameTitleRule")
         {
-            X = 90,
+            X = 2,
             Y = 56,
             Width = titlePanel.Width - 180,
             Height = 2,
@@ -199,13 +235,13 @@ public partial class MainMenu : MutableInterface
 
         _ = new Label(titlePanel, "GameTagline")
         {
-            X = 0,
+            X = 2,
             Y = 66,
             Width = titlePanel.Width,
             Height = 20,
             Font = taglineFont,
             FontSize = 10,
-            TextAlign = Pos.Center,
+            TextAlign = Pos.Left,
             TextColor = new Color(220, 214, 206, 196),
             Text = Strings.MainMenu.GameTagline,
             MouseInputEnabled = false,

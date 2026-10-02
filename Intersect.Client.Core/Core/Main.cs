@@ -105,6 +105,12 @@ internal static partial class Main
 
     private static void ProcessIntro()
     {
+        if (StoryIntro.ShouldRun)
+        {
+            StoryIntro.Update();
+            return;
+        }
+
         if (ClientConfiguration.Instance.IntroImages.Count > 0)
         {
             IGameTexture imageTex = Globals.ContentManager.GetTexture(

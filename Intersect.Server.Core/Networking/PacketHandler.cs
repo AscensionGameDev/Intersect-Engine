@@ -17,6 +17,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text;
 using Intersect.Core;
+using Intersect.Server.Core;
 using Intersect.Framework.Core;
 using Intersect.Framework.Core.GameObjects.Factions;
 using Intersect.Framework.Core.GameObjects.Crafting;
@@ -550,6 +551,22 @@ internal sealed partial class PacketHandler
             {
                 PacketSender.SendError(client, Strings.Account.UnknownServerErrorRetryLogin, Strings.General.NoticeError);
             }
+
+            return;
+        }
+
+        if (MaintenanceMode.Enabled && user.Power?.Editor != true)
+        {
+            UserActivityHistory.LogActivity(
+                user.Id,
+                Guid.Empty,
+                client?.Ip,
+                UserActivityHistory.PeerType.Client,
+                UserActivityHistory.UserAction.FailedLogin,
+                $"{username},Maintenance"
+            );
+
+            PacketSender.SendError(client, MaintenanceMode.Message, Strings.General.NoticeError);
 
             return;
         }

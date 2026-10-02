@@ -192,6 +192,12 @@ public static partial class Graphics
 
     public static void DrawIntro()
     {
+        if (StoryIntro.IsActive)
+        {
+            StoryIntro.Draw();
+            return;
+        }
+
         var introImages = ClientConfiguration.Instance.IntroImages;
         if (introImages.Count <= Globals.IntroIndex)
         {

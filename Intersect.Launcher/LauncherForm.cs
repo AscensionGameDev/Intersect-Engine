@@ -6,6 +6,7 @@ namespace Intersect.Launcher;
 public sealed class LauncherForm : Form
 {
     private const string ServerBaseUrl = "https://github.com/Yorudan210/aetherion-releases/releases/latest/download/";
+    private const string PatchNotesUrl = "http://159.69.156.73/patch-notes.txt";
 
     private const string ClientExeName = "Intersect Client.exe";
     private const string GameFolderName = "game";
@@ -22,16 +23,28 @@ public sealed class LauncherForm : Form
 
     private static readonly Color ColorBackground = Color.FromArgb(16, 18, 28);
     private static readonly Color ColorPanel = Color.FromArgb(22, 24, 36);
+    private static readonly Color ColorPanelLight = Color.FromArgb(28, 31, 46);
     private static readonly Color ColorBorder = Color.FromArgb(58, 52, 74);
     private static readonly Color ColorGold = Color.FromArgb(235, 196, 110);
     private static readonly Color ColorGoldDim = Color.FromArgb(150, 130, 90);
     private static readonly Color ColorText = Color.FromArgb(214, 214, 224);
+    private static readonly Color ColorMuted = Color.FromArgb(140, 140, 158);
+    private static readonly Color ColorGreen = Color.FromArgb(120, 200, 140);
+    private static readonly Color ColorRed = Color.FromArgb(230, 100, 100);
 
+    // --- Panneau gauche : identité, version, statut, actions -----------------
+    private readonly Label _localVersionValue;
+    private readonly Label _serverVersionValue;
+    private readonly PictureBox _statusIcon;
     private readonly Label _statusLabel;
-    private readonly Label _versionLabel;
     private readonly SimpleProgressBar _progressBar;
     private readonly Button _playButton;
+    private readonly Button _retryButton;
     private readonly PictureBox? _logoBox;
+
+    // --- Panneau droit : nouveautés + journal ---------------------------------
+    private readonly TextBox _patchNotesBox;
+    private readonly TextBox _logBox;
 
     private readonly string _baseDirectory;
     private readonly string _gameDirectory;
@@ -50,7 +63,7 @@ public sealed class LauncherForm : Form
 
         Text = "Aetherion Launcher";
         FormBorderStyle = FormBorderStyle.None;
-        ClientSize = new Size(520, 300);
+        ClientSize = new Size(960, 600);
         StartPosition = FormStartPosition.CenterScreen;
         BackColor = ColorBackground;
         DoubleBuffered = true;
@@ -59,7 +72,7 @@ public sealed class LauncherForm : Form
         var titleBar = new Panel
         {
             Dock = DockStyle.Top,
-            Height = 32,
+            Height = 34,
             BackColor = ColorPanel,
         };
         titleBar.MouseDown += TitleBar_MouseDown;
@@ -68,14 +81,14 @@ public sealed class LauncherForm : Form
 
         var titleText = new Label
         {
-            Text = "AETHERION LAUNCHER",
+            Text = "LAUNCHER AETHERION",
             ForeColor = ColorGoldDim,
             Font = new Font("Segoe UI", 9, FontStyle.Bold),
             AutoSize = false,
             TextAlign = ContentAlignment.MiddleLeft,
             Dock = DockStyle.Left,
             Width = 300,
-            Padding = new Padding(12, 0, 0, 0),
+            Padding = new Padding(14, 0, 0, 0),
         };
         titleText.MouseDown += TitleBar_MouseDown;
         titleText.MouseMove += TitleBar_MouseMove;
@@ -88,20 +101,27 @@ public sealed class LauncherForm : Form
             AutoSize = false,
             TextAlign = ContentAlignment.MiddleCenter,
             Dock = DockStyle.Right,
-            Width = 40,
+            Width = 42,
             Cursor = Cursors.Hand,
         };
-        closeButton.MouseEnter += (_, _) => closeButton.ForeColor = Color.FromArgb(230, 90, 90);
+        closeButton.MouseEnter += (_, _) => closeButton.ForeColor = ColorRed;
         closeButton.MouseLeave += (_, _) => closeButton.ForeColor = ColorText;
         closeButton.Click += (_, _) => Close();
 
         titleBar.Controls.Add(titleText);
         titleBar.Controls.Add(closeButton);
 
-        // Logo (optionnel, fourni par l'utilisateur : <dossier launcher>/logo.png) ---
-        var logoPath = Path.Combine(_baseDirectory, LogoFileName);
-        var contentTop = 44;
+        // ===================== PANNEAU GAUCHE =====================
+        var leftPanel = new Panel
+        {
+            Dock = DockStyle.Left,
+            Width = 340,
+            BackColor = ColorBackground,
+            Padding = new Padding(20, 16, 20, 16),
+        };
 
+        var logoPath = Path.Combine(_baseDirectory, LogoFileName);
+        Control logoOrTitle;
         if (File.Exists(logoPath))
         {
             try
@@ -112,58 +132,77 @@ public sealed class LauncherForm : Form
                 {
                     Image = image,
                     SizeMode = PictureBoxSizeMode.Zoom,
-                    Location = new Point(0, 44),
-                    Size = new Size(520, 140),
+                    Location = new Point(20, 16),
+                    Size = new Size(300, 150),
                     BackColor = Color.Transparent,
                 };
-                Controls.Add(_logoBox);
-                contentTop = 192;
+                logoOrTitle = _logoBox;
             }
             catch
             {
-                // Fichier logo invalide/corrompu : on se rabat sur le titre texte ci-dessous.
                 _logoBox = null;
+                logoOrTitle = BuildFallbackTitle();
             }
         }
-
-        if (_logoBox is null)
+        else
         {
-            var fallbackTitle = new Label
-            {
-                Text = "AETHERION",
-                Font = new Font("Georgia", 26, FontStyle.Bold),
-                ForeColor = ColorGold,
-                AutoSize = false,
-                TextAlign = ContentAlignment.MiddleCenter,
-                Location = new Point(0, 60),
-                Size = new Size(520, 60),
-            };
-            Controls.Add(fallbackTitle);
-            contentTop = 140;
+            logoOrTitle = BuildFallbackTitle();
         }
 
+        var versionBox = BuildInfoBox("INFORMATIONS DE VERSION", out var versionBoxBody);
+        versionBox.Location = new Point(20, 182);
+        versionBox.Size = new Size(300, 86);
+
+        var localRow = BuildInfoRow("Version locale :", out _localVersionValue);
+        var serverRow = BuildInfoRow("Version serveur :", out _serverVersionValue);
+        serverRow.Top = localRow.Bottom + 4;
+        versionBoxBody.Controls.Add(localRow);
+        versionBoxBody.Controls.Add(serverRow);
+
+        var statusBox = BuildInfoBox("ÉTAT DE LA MISE À JOUR", out var statusBoxBody);
+        statusBox.Location = new Point(20, 282);
+        statusBox.Size = new Size(300, 110);
+
+        _statusIcon = new PictureBox
+        {
+            Location = new Point(0, 2),
+            Size = new Size(20, 20),
+            SizeMode = PictureBoxSizeMode.CenterImage,
+        };
         _statusLabel = new Label
         {
-            Text = "Prêt à démarrer...",
+            Text = "Initialisation...",
             ForeColor = ColorText,
-            Font = new Font("Segoe UI", 9.5f),
+            Font = new Font("Segoe UI", 10, FontStyle.Bold),
             AutoSize = false,
-            TextAlign = ContentAlignment.MiddleCenter,
-            Location = new Point(30, contentTop),
-            Size = new Size(460, 22),
+            TextAlign = ContentAlignment.MiddleLeft,
+            Location = new Point(26, 0),
+            Size = new Size(254, 22),
         };
-
         _progressBar = new SimpleProgressBar
         {
-            Location = new Point(30, contentTop + 28),
-            Size = new Size(460, 8),
+            Location = new Point(0, 30),
+            Size = new Size(280, 8),
         };
+        var logLink = new Label
+        {
+            Text = "Voir le journal ⟶",
+            ForeColor = ColorMuted,
+            Font = new Font("Segoe UI", 8),
+            AutoSize = true,
+            Location = new Point(0, 48),
+            Cursor = Cursors.Default,
+        };
+        statusBoxBody.Controls.Add(_statusIcon);
+        statusBoxBody.Controls.Add(_statusLabel);
+        statusBoxBody.Controls.Add(_progressBar);
+        statusBoxBody.Controls.Add(logLink);
 
         _playButton = new Button
         {
-            Text = "JOUER",
-            Location = new Point(170, contentTop + 50),
-            Size = new Size(180, 38),
+            Text = "▶  LANCER LE JEU",
+            Location = new Point(20, 410),
+            Size = new Size(300, 42),
             Enabled = false,
             BackColor = ColorGold,
             ForeColor = Color.FromArgb(24, 20, 14),
@@ -175,25 +214,218 @@ public sealed class LauncherForm : Form
         _playButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(245, 212, 140);
         _playButton.Click += (_, _) => LaunchGame();
 
-        _versionLabel = new Label
+        _retryButton = new Button
         {
-            Text = string.Empty,
-            ForeColor = Color.FromArgb(110, 108, 122),
-            Font = new Font("Segoe UI", 7.5f),
-            AutoSize = false,
-            TextAlign = ContentAlignment.MiddleRight,
-            Dock = DockStyle.Bottom,
-            Height = 20,
-            Padding = new Padding(0, 0, 10, 0),
+            Text = "RÉESSAYER",
+            Location = new Point(20, 410),
+            Size = new Size(300, 42),
+            Visible = false,
+            BackColor = ColorPanelLight,
+            ForeColor = ColorText,
+            FlatStyle = FlatStyle.Flat,
+            Font = new Font("Segoe UI", 11, FontStyle.Bold),
+            Cursor = Cursors.Hand,
+        };
+        _retryButton.FlatAppearance.BorderSize = 1;
+        _retryButton.FlatAppearance.BorderColor = ColorBorder;
+        _retryButton.FlatAppearance.MouseOverBackColor = ColorBorder;
+        _retryButton.Click += async (_, _) => await RunStartupSequenceAsync();
+
+        var quitButton = new Button
+        {
+            Text = "QUITTER",
+            Location = new Point(20, 460),
+            Size = new Size(300, 34),
+            BackColor = ColorBackground,
+            ForeColor = ColorMuted,
+            FlatStyle = FlatStyle.Flat,
+            Font = new Font("Segoe UI", 9),
+            Cursor = Cursors.Hand,
+        };
+        quitButton.FlatAppearance.BorderSize = 1;
+        quitButton.FlatAppearance.BorderColor = ColorBorder;
+        quitButton.FlatAppearance.MouseOverBackColor = ColorPanelLight;
+        quitButton.Click += (_, _) => Close();
+
+        leftPanel.Controls.Add(logoOrTitle);
+        leftPanel.Controls.Add(versionBox);
+        leftPanel.Controls.Add(statusBox);
+        leftPanel.Controls.Add(_playButton);
+        leftPanel.Controls.Add(_retryButton);
+        leftPanel.Controls.Add(quitButton);
+
+        // ===================== PANNEAU DROIT =====================
+        var rightPanel = new Panel
+        {
+            Dock = DockStyle.Fill,
+            BackColor = ColorPanel,
+            Padding = new Padding(20, 16, 20, 16),
         };
 
+        var newsHeader = BuildSectionHeader("DERNIÈRES NOUVELLES", "Actualités et notes de mise à jour");
+        _patchNotesBox = new TextBox
+        {
+            Multiline = true,
+            ReadOnly = true,
+            ScrollBars = ScrollBars.Vertical,
+            BorderStyle = BorderStyle.None,
+            BackColor = ColorPanelLight,
+            ForeColor = ColorText,
+            Font = new Font("Segoe UI", 9.5f),
+            Text = "Chargement des nouveautés...",
+            Dock = DockStyle.Fill,
+        };
+        var newsBoxWrap = new Panel
+        {
+            Location = new Point(0, 56),
+            Size = new Size(560, 300),
+            BackColor = ColorPanelLight,
+            Padding = new Padding(14),
+        };
+        newsBoxWrap.Controls.Add(_patchNotesBox);
+
+        var logHeader = BuildSectionHeader("JOURNAL DU LAUNCHER", "État de la vérification et de l'installation");
+        logHeader.Top = 372;
+        _logBox = new TextBox
+        {
+            Multiline = true,
+            ReadOnly = true,
+            ScrollBars = ScrollBars.Vertical,
+            BorderStyle = BorderStyle.None,
+            BackColor = ColorPanelLight,
+            ForeColor = ColorMuted,
+            Font = new Font("Consolas", 9f),
+            Dock = DockStyle.Fill,
+        };
+        var logBoxWrap = new Panel
+        {
+            Location = new Point(0, 428),
+            Size = new Size(560, 120),
+            BackColor = ColorPanelLight,
+            Padding = new Padding(14),
+        };
+        logBoxWrap.Controls.Add(_logBox);
+
+        var rightInner = new Panel { Dock = DockStyle.Fill };
+        rightInner.Controls.Add(newsHeader);
+        rightInner.Controls.Add(newsBoxWrap);
+        rightInner.Controls.Add(logHeader);
+        rightInner.Controls.Add(logBoxWrap);
+        rightInner.Resize += (_, _) =>
+        {
+            newsBoxWrap.Width = rightInner.Width;
+            logHeader.Width = rightInner.Width;
+            logBoxWrap.Width = rightInner.Width;
+        };
+        rightPanel.Controls.Add(rightInner);
+
+        Controls.Add(rightPanel);
+        Controls.Add(leftPanel);
         Controls.Add(titleBar);
-        Controls.Add(_statusLabel);
-        Controls.Add(_progressBar);
-        Controls.Add(_playButton);
-        Controls.Add(_versionLabel);
 
         Load += async (_, _) => await RunStartupSequenceAsync();
+    }
+
+    private Control BuildFallbackTitle()
+    {
+        return new Label
+        {
+            Text = "AETHERION",
+            Font = new Font("Georgia", 24, FontStyle.Bold),
+            ForeColor = ColorGold,
+            AutoSize = false,
+            TextAlign = ContentAlignment.MiddleCenter,
+            Location = new Point(20, 50),
+            Size = new Size(300, 80),
+        };
+    }
+
+    private Panel BuildInfoBox(string title, out Panel body)
+    {
+        var box = new Panel
+        {
+            BackColor = ColorPanel,
+            Padding = new Padding(14, 10, 14, 10),
+        };
+        using (var pen = new Pen(ColorBorder))
+        {
+            // La bordure est dessinée via OnPaint du panel parent (voir boucle ci-dessous) ;
+            // on se contente ici d'un leger panel interieur pour positionner les enfants.
+        }
+        var header = new Label
+        {
+            Text = title,
+            ForeColor = ColorGold,
+            Font = new Font("Segoe UI", 8.5f, FontStyle.Bold),
+            AutoSize = false,
+            Dock = DockStyle.Top,
+            Height = 20,
+        };
+        body = new Panel
+        {
+            Dock = DockStyle.Fill,
+        };
+        box.Controls.Add(body);
+        box.Controls.Add(header);
+        box.Paint += (_, e) =>
+        {
+            using var pen = new Pen(ColorBorder);
+            e.Graphics.DrawRectangle(pen, 0, 0, box.Width - 1, box.Height - 1);
+        };
+        return box;
+    }
+
+    private Panel BuildInfoRow(string label, out Label valueLabel)
+    {
+        var row = new Panel { Size = new Size(272, 20) };
+        var labelControl = new Label
+        {
+            Text = label,
+            ForeColor = ColorMuted,
+            Font = new Font("Segoe UI", 8.5f),
+            AutoSize = false,
+            Dock = DockStyle.Left,
+            Width = 140,
+            TextAlign = ContentAlignment.MiddleLeft,
+        };
+        valueLabel = new Label
+        {
+            Text = "—",
+            ForeColor = ColorText,
+            Font = new Font("Segoe UI", 8.5f, FontStyle.Bold),
+            AutoSize = false,
+            Dock = DockStyle.Fill,
+            TextAlign = ContentAlignment.MiddleRight,
+        };
+        row.Controls.Add(valueLabel);
+        row.Controls.Add(labelControl);
+        return row;
+    }
+
+    private Panel BuildSectionHeader(string title, string subtitle)
+    {
+        var header = new Panel { Location = new Point(0, 0), Size = new Size(560, 48) };
+        var titleLabel = new Label
+        {
+            Text = title,
+            ForeColor = ColorGold,
+            Font = new Font("Segoe UI", 13, FontStyle.Bold),
+            AutoSize = false,
+            Dock = DockStyle.Top,
+            Height = 26,
+        };
+        var subtitleLabel = new Label
+        {
+            Text = subtitle,
+            ForeColor = ColorMuted,
+            Font = new Font("Segoe UI", 8.5f),
+            AutoSize = false,
+            Dock = DockStyle.Top,
+            Height = 18,
+        };
+        header.Controls.Add(subtitleLabel);
+        header.Controls.Add(titleLabel);
+        return header;
     }
 
     protected override void OnPaint(PaintEventArgs e)
@@ -225,6 +457,19 @@ public sealed class LauncherForm : Form
         Location = new Point(screenPoint.X - _dragCursorOffset.X, screenPoint.Y - _dragCursorOffset.Y);
     }
 
+    /// <summary>
+    /// Ajoute une ligne au journal (panneau droit) et met aussi a jour le statut court affiche dans le
+    /// panneau gauche, pour que les deux zones restent synchronisees sans dupliquer les appels.
+    /// </summary>
+    private void Log(string message, Color? statusColor = null)
+    {
+        _statusLabel.Text = message;
+        _statusLabel.ForeColor = statusColor ?? ColorText;
+
+        var timestamp = DateTime.Now.ToString("HH:mm:ss");
+        _logBox.AppendText($"[{timestamp}] {message}{Environment.NewLine}");
+    }
+
     private static HttpClient CreateHttpClient()
     {
         var handler = new SocketsHttpHandler
@@ -244,8 +489,48 @@ public sealed class LauncherForm : Form
         };
     }
 
+    /// <summary>
+    /// Réessaie une opération réseau transitoire jusqu'à <paramref name="maxAttempts"/> fois, avec une
+    /// courte pause entre chaque essai - utile contre les coupures/latences ponctuelles plutôt que de
+    /// faire échouer tout le launcher sur un simple accroc réseau.
+    /// </summary>
+    private static async Task<T> RetryAsync<T>(Func<Task<T>> operation, int maxAttempts = 3)
+    {
+        Exception? lastException = null;
+        for (var attempt = 1; attempt <= maxAttempts; attempt++)
+        {
+            try
+            {
+                return await operation();
+            }
+            catch (Exception exception)
+            {
+                lastException = exception;
+                if (attempt < maxAttempts)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(1.5 * attempt));
+                }
+            }
+        }
+
+        throw lastException!;
+    }
+
+    private void ShowFailureState(string message)
+    {
+        Log(message, ColorRed);
+        _progressBar.Value = 0;
+        _retryButton.Visible = true;
+        _playButton.Visible = !_retryButton.Visible || File.Exists(Path.Combine(_gameDirectory, ClientExeName));
+    }
+
     private async Task RunStartupSequenceAsync()
     {
+        _retryButton.Visible = false;
+        _playButton.Visible = true;
+
+        _ = LoadPatchNotesAsync();
+
         using var httpClient = CreateHttpClient();
 
         var selfUpdated = await CheckForLauncherSelfUpdateAsync(httpClient);
@@ -259,6 +544,31 @@ public sealed class LauncherForm : Form
     }
 
     /// <summary>
+    /// Récupère les notes de version depuis le site (texte brut) pour les afficher dans le panneau
+    /// "Dernières nouvelles" - echec silencieux (juste un message dans la zone) puisque ce n'est pas
+    /// bloquant pour jouer.
+    /// </summary>
+    private async Task LoadPatchNotesAsync()
+    {
+        try
+        {
+            using var httpClient = CreateHttpClient();
+            var text = await RetryAsync(() => httpClient.GetStringAsync(PatchNotesUrl), maxAttempts: 2);
+            if (IsHandleCreated)
+            {
+                Invoke(() => _patchNotesBox.Text = text.Replace("\n", "\r\n"));
+            }
+        }
+        catch
+        {
+            if (IsHandleCreated)
+            {
+                Invoke(() => _patchNotesBox.Text = "Impossible de récupérer les nouveautés pour le moment.");
+            }
+        }
+    }
+
+    /// <summary>
     /// Vérifie si une nouvelle version du LAUNCHER LUI-MÊME est disponible. Si oui,
     /// télécharge le nouvel exécutable, prépare un petit script qui attend la fermeture
     /// du processus courant, remplace le fichier et relance le launcher, puis quitte.
@@ -268,7 +578,7 @@ public sealed class LauncherForm : Form
     {
         try
         {
-            _statusLabel.Text = "Vérification du launcher...";
+            Log("Vérification du launcher...");
 
             var remoteVersion = (await httpClient.GetStringAsync($"{ServerBaseUrl}{LauncherVersionAssetName}")).Trim();
             var localVersion = File.Exists(_localLauncherVersionFilePath)
@@ -280,7 +590,7 @@ public sealed class LauncherForm : Form
                 return false;
             }
 
-            _statusLabel.Text = "Mise à jour du launcher...";
+            Log("Mise à jour du launcher...");
 
             var updateId = Guid.NewGuid().ToString("N");
             var extractDirectory = Path.Combine(Path.GetTempPath(), $"aetherion-launcher-update-{updateId}");
@@ -357,20 +667,21 @@ public sealed class LauncherForm : Form
     {
         try
         {
-            _statusLabel.Text = "Vérification des mises à jour...";
+            Log("Vérification des mises à jour...");
 
-            var remoteVersion = (await httpClient.GetStringAsync($"{ServerBaseUrl}{GameVersionAssetName}")).Trim();
+            var remoteVersion = (await RetryAsync(() => httpClient.GetStringAsync($"{ServerBaseUrl}{GameVersionAssetName}"))).Trim();
             var localVersion = File.Exists(_localGameVersionFilePath)
                 ? (await File.ReadAllTextAsync(_localGameVersionFilePath)).Trim()
                 : string.Empty;
 
-            _versionLabel.Text = $"v{remoteVersion}";
+            _serverVersionValue.Text = $"v{remoteVersion}";
+            _localVersionValue.Text = string.IsNullOrEmpty(localVersion) ? "—" : $"v{localVersion}";
 
             var clientExists = File.Exists(Path.Combine(_gameDirectory, ClientExeName));
 
             if (clientExists && string.Equals(remoteVersion, localVersion, StringComparison.Ordinal))
             {
-                _statusLabel.Text = "Jeu à jour.";
+                Log("Le jeu est à jour.", ColorGreen);
                 _progressBar.Value = 100;
                 _playButton.Enabled = true;
                 return;
@@ -380,19 +691,23 @@ public sealed class LauncherForm : Form
         }
         catch (Exception exception)
         {
-            _statusLabel.Text = $"Erreur : {exception.Message}";
+            var hasLocalClient = File.Exists(Path.Combine(_gameDirectory, ClientExeName));
+            ShowFailureState(hasLocalClient
+                ? $"Impossible de vérifier les mises à jour ({exception.Message}). Tu peux jouer avec la version déjà installée."
+                : $"Erreur : {exception.Message}");
 
             // Si le jeu est déjà installé, on permet quand même de jouer hors-ligne du check de version.
-            if (File.Exists(Path.Combine(_gameDirectory, ClientExeName)))
+            if (hasLocalClient)
             {
                 _playButton.Enabled = true;
+                _playButton.Visible = true;
             }
         }
     }
 
     private async Task DownloadAndInstallAsync(HttpClient httpClient, string remoteVersion)
     {
-        _statusLabel.Text = "Téléchargement du jeu...";
+        Log("Téléchargement du jeu...");
         _playButton.Enabled = false;
 
         var tempZipPath = Path.Combine(Path.GetTempPath(), $"aetherion-client-{Guid.NewGuid():N}.zip");
@@ -413,6 +728,7 @@ public sealed class LauncherForm : Form
                 var buffer = new byte[81920];
                 long totalRead = 0;
                 int bytesRead;
+                var lastLoggedPercent = -1;
                 while ((bytesRead = await contentStream.ReadAsync(buffer)) > 0)
                 {
                     await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead));
@@ -423,11 +739,32 @@ public sealed class LauncherForm : Form
                         var percent = (int)(totalRead * 100 / totalBytes);
                         _progressBar.Value = Math.Clamp(percent, 0, 100);
                         _statusLabel.Text = $"Téléchargement... {percent}%";
+
+                        // On n'ecrit dans le journal que tous les 10% pour ne pas le noyer de lignes.
+                        if (percent / 10 != lastLoggedPercent / 10)
+                        {
+                            lastLoggedPercent = percent;
+                            _logBox.AppendText($"[{DateTime.Now:HH:mm:ss}] Téléchargement... {percent}%{Environment.NewLine}");
+                        }
                     }
                 }
             }
 
-            _statusLabel.Text = "Installation...";
+            Log("Vérification du fichier téléchargé...");
+
+            // Un telechargement coupe/corrompu produit un zip illisible - mieux vaut le detecter ici et
+            // le signaler clairement que de planter plus tard avec une erreur obscure pendant l'extraction.
+            try
+            {
+                using var verifyArchive = ZipFile.OpenRead(tempZipPath);
+                _ = verifyArchive.Entries.Count;
+            }
+            catch (InvalidDataException)
+            {
+                throw new InvalidDataException("Le fichier téléchargé est corrompu (coupure réseau probable). Réessaie.");
+            }
+
+            Log("Installation...");
             _progressBar.Value = 0;
 
             Directory.CreateDirectory(tempExtractDir);
@@ -437,8 +774,9 @@ public sealed class LauncherForm : Form
             SyncDirectory(tempExtractDir, _gameDirectory);
 
             await File.WriteAllTextAsync(_localGameVersionFilePath, remoteVersion);
+            _localVersionValue.Text = $"v{remoteVersion}";
 
-            _statusLabel.Text = "Installation terminée.";
+            Log("Installation terminée.", ColorGreen);
             _progressBar.Value = 100;
             _playButton.Enabled = true;
         }
@@ -532,7 +870,7 @@ public sealed class LauncherForm : Form
         var clientExePath = Path.Combine(_gameDirectory, ClientExeName);
         if (!File.Exists(clientExePath))
         {
-            _statusLabel.Text = "Client introuvable, relance le launcher.";
+            Log("Client introuvable, relance le launcher.", ColorRed);
             return;
         }
 
