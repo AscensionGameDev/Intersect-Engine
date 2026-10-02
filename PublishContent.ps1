@@ -52,7 +52,7 @@ if [ "$MODE" = "preview" ]; then
   cp $TEST/gamedata.db /tmp/pc-test.db
   python3 /tmp/pc-merge.py /tmp/pc-prod.db /tmp/pc-test.db
   echo "cartes en prod apres fusion : $(sqlite3 /tmp/pc-prod.db 'SELECT COUNT(*) FROM Maps;') (aucune n'est supprimee)"
-  rm -f /tmp/pc-prod.db /tmp/pc-test.db /tmp/pc-merge.py
+  rm -f /tmp/pc-prod.db /tmp/pc-test.db
   exit 0
 fi
 
