@@ -22,7 +22,7 @@ $cRed = [System.Drawing.Color]::FromArgb(230, 100, 100)
 
 $form = New-Object System.Windows.Forms.Form
 $form.Text = 'Aetherion Dev Hub'
-$form.ClientSize = New-Object System.Drawing.Size(560, 620)
+$form.ClientSize = New-Object System.Drawing.Size(560, 700)
 $form.StartPosition = 'CenterScreen'
 $form.BackColor = $cBg
 $form.ForeColor = $cText
@@ -99,7 +99,34 @@ function Set-TestTarget {
 
 function Start-Console($script) {
     $full = "Set-Location '$Root'; $script; Write-Host ''; Read-Host 'Termine - appuie sur Entree pour fermer'"
-    Start-Process powershell -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', $full
+    return Start-Process powershell -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', $full -PassThru
+}
+
+$ResSync = Join-Path $Root 'ResSync.ps1'
+$ResStatusFile = Join-Path $env:TEMP 'aetherion-ressync-status.txt'
+$script:resProc = $null
+$script:consoleProc = $null
+
+function Start-ResCheck {
+    if (-not (Test-Path $ResSync)) { return }
+    if ($script:resProc -and -not $script:resProc.HasExited) { return }
+    $lblRes.Text = 'verification...'
+    $lblRes.ForeColor = $cMuted
+    Remove-Item $ResStatusFile -ErrorAction SilentlyContinue
+    $script:resProc = Start-Process powershell -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $ResSync, 'Status' -WindowStyle Hidden -RedirectStandardOutput $ResStatusFile -PassThru
+}
+
+function Show-ResResult {
+    $line = $null
+    if (Test-Path $ResStatusFile) { $line = Get-Content $ResStatusFile | Where-Object { $_ -like 'STATUS:*' } | Select-Object -Last 1 }
+    if (-not $line) { $lblRes.Text = 'verification impossible'; $lblRes.ForeColor = $cRed; return }
+    switch -Wildcard ($line) {
+        'STATUS:UPTODATE*' { $lblRes.Text = 'a jour'; $lblRes.ForeColor = $cGreen }
+        'STATUS:REMOTE_NEWER*' { $lblRes.Text = 'NOUVELLE VERSION disponible : clique sur Recuperer'; $lblRes.ForeColor = $cGold }
+        'STATUS:LOCAL_CHANGES*' { $lblRes.Text = ('{0} fichier(s) modifie(s) ici : a envoyer' -f $line.Split(' ')[1]); $lblRes.ForeColor = $cGold }
+        'STATUS:EMPTY*' { $lblRes.Text = 'serveur vide : envoie depuis le PC qui a les ressources'; $lblRes.ForeColor = $cGold }
+        default { $lblRes.Text = $line.Replace('STATUS:ERROR ', 'erreur : '); $lblRes.ForeColor = $cRed }
+    }
 }
 
 $null = New-Label 'AETHERION' 24 16 300 36 20 $true $cGold
@@ -111,28 +138,30 @@ $null = New-Label 'Client :' 24 118 120 22 10 $false $cMuted
 $lblClient = New-Label '-' 150 118 380 22 10 $true $cText
 $null = New-Label 'Editeur :' 24 144 120 22 10 $false $cMuted
 $lblEditor = New-Label '-' 150 144 380 22 10 $true $cText
+$null = New-Label 'Ressources :' 24 170 120 22 10 $false $cMuted
+$lblRes = New-Label '-' 150 170 390 22 10 $true $cMuted
 
-$null = New-HubButton 'Lancer Client + Editeur' 24 184 512 $true {
+$null = New-HubButton 'Lancer Client + Editeur' 24 210 512 $true {
     Start-App 'Client' $ClientExe
     Start-App 'Editeur' $EditorExe
 }
-$null = New-HubButton 'Lancer le Client' 24 238 250 $false { Start-App 'Client' $ClientExe }
-$null = New-HubButton "Lancer l'Editeur" 286 238 250 $false { Start-App 'Editeur' $EditorExe }
-$null = New-HubButton 'Tout arreter' 24 292 250 $false { Stop-Apps }
-$null = New-HubButton 'Panel web du serveur' 286 292 250 $false {
+$null = New-HubButton 'Lancer le Client' 24 264 250 $false { Start-App 'Client' $ClientExe }
+$null = New-HubButton "Lancer l'Editeur" 286 264 250 $false { Start-App 'Editeur' $EditorExe }
+$null = New-HubButton 'Tout arreter' 24 318 250 $false { Stop-Apps }
+$null = New-HubButton 'Panel web du serveur' 286 318 250 $false {
     Start-Process $PanelUrl
     Write-Log 'Panel web ouvert.'
 }
-$null = New-HubButton 'Compiler tout (ordre sur)' 24 346 250 $false {
+$null = New-HubButton 'Compiler tout (ordre sur)' 24 372 250 $false {
     Stop-Apps
     Write-Log 'Compilation lancee dans une console (Network, Server, Client, Editor).'
     Start-Console ('$ok = $true; foreach ($p in "Intersect.Network/Intersect.Network.csproj","Intersect.Server/Intersect.Server.csproj","Intersect.Client/Intersect.Client.csproj","Intersect.Editor/Intersect.Editor.csproj") { if ($ok) { Write-Host "=== $p" -ForegroundColor Cyan; dotnet build $p -c Debug; if ($LASTEXITCODE -ne 0) { $ok = $false; Write-Host "ECHEC sur $p" -ForegroundColor Red } } }; if ($ok) { Write-Host "Tout est compile." -ForegroundColor Green }')
 }
-$null = New-HubButton 'Mettre a jour (git pull)' 286 346 250 $false {
+$null = New-HubButton 'Mettre a jour (git pull)' 286 372 250 $false {
     Write-Log 'git pull + sous-modules lances dans une console.'
     Start-Console 'git pull; git submodule update --init --recursive'
 }
-$null = New-HubButton 'Synchro OneDrive' 24 400 250 $false {
+$null = New-HubButton 'Synchro OneDrive' 24 426 250 $false {
     if (Test-Path $SyncBat) {
         Start-Process $SyncBat
         Write-Log 'Synchro OneDrive lancee.'
@@ -140,8 +169,16 @@ $null = New-HubButton 'Synchro OneDrive' 24 400 250 $false {
         Write-Log "Sync Intersect.bat introuvable ($SyncBat)."
     }
 }
-$null = New-HubButton 'Ouvrir le dossier du projet' 286 400 250 $false { Start-Process explorer.exe $Root }
-$null = New-HubButton 'Cibler le serveur de test (Client + Editeur)' 24 454 512 $true { Set-TestTarget }
+$null = New-HubButton 'Ouvrir le dossier du projet' 286 426 250 $false { Start-Process explorer.exe $Root }
+$null = New-HubButton 'Cibler le serveur de test (Client + Editeur)' 24 480 512 $true { Set-TestTarget }
+$null = New-HubButton 'Recuperer les ressources' 24 534 250 $true {
+    Write-Log 'Recuperation des ressources lancee dans une console.'
+    $script:consoleProc = Start-Console "& '$ResSync' Pull"
+}
+$null = New-HubButton 'Envoyer mes ressources' 286 534 250 $false {
+    Write-Log 'Envoi des ressources lance dans une console.'
+    $script:consoleProc = Start-Console "& '$ResSync' Push"
+}
 
 $logBox = New-Object System.Windows.Forms.TextBox
 $logBox.Multiline = $true
@@ -151,7 +188,7 @@ $logBox.BorderStyle = 'None'
 $logBox.BackColor = $cPanel
 $logBox.ForeColor = $cMuted
 $logBox.Font = New-Object System.Drawing.Font('Consolas', 9)
-$logBox.Location = New-Object System.Drawing.Point(24, 514)
+$logBox.Location = New-Object System.Drawing.Point(24, 596)
 $logBox.Size = New-Object System.Drawing.Size(512, 80)
 $form.Controls.Add($logBox)
 
@@ -176,9 +213,14 @@ function Update-Status {
 
 $timer = New-Object System.Windows.Forms.Timer
 $timer.Interval = 2000
-$timer.Add_Tick({ Update-Status })
+$timer.Add_Tick({
+    Update-Status
+    if ($script:resProc -and $script:resProc.HasExited) { $script:resProc = $null; Show-ResResult }
+    if ($script:consoleProc -and $script:consoleProc.HasExited) { $script:consoleProc = $null; Start-ResCheck }
+})
 $timer.Start()
 
 Update-Status
+Start-ResCheck
 Write-Log "Projet : $Root"
 [void]$form.ShowDialog()
