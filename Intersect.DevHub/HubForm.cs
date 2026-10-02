@@ -234,7 +234,7 @@ public sealed class HubForm : Form
 
     private Process? RunConsole(string script)
     {
-        var full = $"Set-Location '{_root}'; {script}; Write-Host ''; Read-Host 'Terminé - appuie sur Entrée pour fermer'";
+        var full = $"Set-Location '{_root}'; try {{ {script} }} catch {{ Write-Host ('ERREUR : ' + $_.Exception.Message) -ForegroundColor Red }}; Write-Host ''; Read-Host 'Terminé - appuie sur Entrée pour fermer'";
         var encoded = Convert.ToBase64String(Encoding.Unicode.GetBytes(full));
         return Process.Start(new ProcessStartInfo("powershell.exe", $"-NoProfile -ExecutionPolicy Bypass -EncodedCommand {encoded}")
         {
@@ -260,6 +260,21 @@ public sealed class HubForm : Form
             Log("update-aetherion.ps1 copié depuis OneDrive dans le projet.");
         }
 
+        if (choice is "3" or "4" && !IsInPath("gh.exe"))
+        {
+            MessageBox.Show(
+                "La publication utilise la GitHub CLI (gh), introuvable sur ce PC." + Environment.NewLine + Environment.NewLine +
+                "1) Installe-la : winget install GitHub.cli" + Environment.NewLine +
+                "2) Connecte-la : gh auth login" + Environment.NewLine +
+                "3) Rouvre le Dev Hub, puis recommence.",
+                "Aetherion Dev Hub",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            );
+            Log("gh (GitHub CLI) introuvable : publication impossible sur ce PC.");
+            return;
+        }
+
         var answer = MessageBox.Show(
             $"{label}.{Environment.NewLine}{Environment.NewLine}Cela concerne le serveur de PRODUCTION et les joueurs. Continuer ?",
             "Aetherion Dev Hub",
@@ -274,6 +289,17 @@ public sealed class HubForm : Form
 
         Log($"{label} lancé dans une console.");
         _consoleProcess = RunConsole($"& '{script}' -Run {choice}");
+    }
+
+    private static bool IsInPath(string fileName)
+    {
+        var path = Environment.GetEnvironmentVariable("PATH") ?? string.Empty;
+        return path.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
+            .Any(directory =>
+            {
+                try { return File.Exists(Path.Combine(directory.Trim('"'), fileName)); }
+                catch { return false; }
+            });
     }
 
     private void BuildAll()
