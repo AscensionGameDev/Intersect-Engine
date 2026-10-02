@@ -46,7 +46,7 @@ public sealed class HubForm : Form
         _resSyncScript = Path.Combine(_root, "ResSync.ps1");
 
         Text = "Aetherion Dev Hub";
-        ClientSize = new Size(560, 690);
+        ClientSize = new Size(560, 770);
         StartPosition = FormStartPosition.CenterScreen;
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;
@@ -103,6 +103,11 @@ public sealed class HubForm : Form
         AddButton("Ouvrir le dossier du projet", 24, 534, 512, false, (_, _) =>
             Process.Start(new ProcessStartInfo("explorer.exe", $"\"{_root}\"") { UseShellExecute = true }));
 
+        AddLabel("Mise à jour du jeu (production, pour les joueurs)", 24, 588, 512, 22, 10, true, ColorGold);
+        AddButton("Déployer le serveur", 24, 614, 162, false, (_, _) => RunUpdate("2", "Déploiement du serveur (prod)"));
+        AddButton("Publier le client", 199, 614, 162, false, (_, _) => RunUpdate("3", "Publication du client"));
+        AddButton("Publier le launcher", 374, 614, 162, false, (_, _) => RunUpdate("4", "Publication du launcher"));
+
         _logBox = new TextBox
         {
             Multiline = true,
@@ -112,7 +117,7 @@ public sealed class HubForm : Form
             BackColor = ColorPanel,
             ForeColor = ColorMuted,
             Font = new Font("Consolas", 9),
-            Location = new Point(24, 592),
+            Location = new Point(24, 672),
             Size = new Size(512, 82),
         };
         Controls.Add(_logBox);
@@ -236,6 +241,39 @@ public sealed class HubForm : Form
             UseShellExecute = true,
             WorkingDirectory = _root,
         });
+    }
+
+    private void RunUpdate(string choice, string label)
+    {
+        var script = Path.Combine(_root, "update-aetherion.ps1");
+        if (!File.Exists(script))
+        {
+            var oneDrive = Environment.GetEnvironmentVariable("OneDrive");
+            var source = oneDrive == null ? null : Path.Combine(oneDrive, "IntersectSync", "deploy", "update-aetherion.ps1");
+            if (source == null || !File.Exists(source))
+            {
+                Log("update-aetherion.ps1 introuvable (ni dans le projet, ni dans OneDrive/IntersectSync/deploy).");
+                return;
+            }
+
+            File.Copy(source, script);
+            Log("update-aetherion.ps1 copié depuis OneDrive dans le projet.");
+        }
+
+        var answer = MessageBox.Show(
+            $"{label}.{Environment.NewLine}{Environment.NewLine}Cela concerne le serveur de PRODUCTION et les joueurs. Continuer ?",
+            "Aetherion Dev Hub",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Question
+        );
+        if (answer != DialogResult.Yes)
+        {
+            Log("Annulé.");
+            return;
+        }
+
+        Log($"{label} lancé dans une console.");
+        _consoleProcess = RunConsole($"& '{script}' -Run {choice}");
     }
 
     private void BuildAll()
