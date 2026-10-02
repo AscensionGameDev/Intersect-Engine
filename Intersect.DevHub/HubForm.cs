@@ -46,7 +46,7 @@ public sealed class HubForm : Form
         _resSyncScript = Path.Combine(_root, "ResSync.ps1");
 
         Text = "Aetherion Dev Hub";
-        ClientSize = new Size(560, 770);
+        ClientSize = new Size(560, 830);
         StartPosition = FormStartPosition.CenterScreen;
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;
@@ -107,6 +107,7 @@ public sealed class HubForm : Form
         AddButton("Déployer le serveur", 24, 614, 162, false, (_, _) => RunUpdate("2", "Déploiement du serveur (prod)"));
         AddButton("Publier le client", 199, 614, 162, false, (_, _) => RunUpdate("3", "Publication du client"));
         AddButton("Publier le launcher", 374, 614, 162, false, (_, _) => RunUpdate("4", "Publication du launcher"));
+        AddButton("Publier le contenu de l'éditeur sur la prod (test → prod)", 24, 668, 512, true, (_, _) => RunPublishContent());
 
         _logBox = new TextBox
         {
@@ -117,7 +118,7 @@ public sealed class HubForm : Form
             BackColor = ColorPanel,
             ForeColor = ColorMuted,
             Font = new Font("Consolas", 9),
-            Location = new Point(24, 672),
+            Location = new Point(24, 732),
             Size = new Size(512, 82),
         };
         Controls.Add(_logBox);
@@ -289,6 +290,19 @@ public sealed class HubForm : Form
 
         Log($"{label} lancé dans une console.");
         _consoleProcess = RunConsole($"& '{script}' -Run {choice}");
+    }
+
+    private void RunPublishContent()
+    {
+        var script = Path.Combine(_root, "PublishContent.ps1");
+        if (!File.Exists(script))
+        {
+            Log("PublishContent.ps1 introuvable : fais d'abord un git pull.");
+            return;
+        }
+
+        Log("Publication du contenu (test → prod) lancée dans une console : un aperçu s'affiche avant toute modification.");
+        _consoleProcess = RunConsole($"& '{script}'");
     }
 
     private static bool IsInPath(string fileName)
