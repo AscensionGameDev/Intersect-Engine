@@ -455,6 +455,10 @@ internal sealed partial class PacketHandler
     public void HandlePacket(IPacketSender packetSender, EventEntityPacket packet)
     {
         var map = MapInstance.Get(packet.MapId);
+        ApplicationContext.CurrentContext.Logger.LogInformation(
+            "[diag-pnj] paquet evenement recu : '{Name}' carte={MapId} carteConnue={Known} carteChargee={Loaded}",
+            packet.Name, packet.MapId, map != null, map?.IsLoaded
+        );
 
         // Une carte qui existe mais n'est pas encore chargee (premiere connexion, cache de cartes vide)
         // ignorerait l'evenement dans AddEvent : on le met en attente jusqu'a la fin du chargement.

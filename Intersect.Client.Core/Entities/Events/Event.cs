@@ -167,12 +167,31 @@ public partial class Event : Entity
         return pivotOffsetFromCenter - rotated;
     }
 
+    private bool _diagLogged;
+
     public override void Draw()
     {
         WorldPos.Reset();
         if (MapInstance == default || !Globals.GridMaps.ContainsKey(MapId) || !TryEnsureTexture(out var texture))
         {
+            if (!_diagLogged)
+            {
+                _diagLogged = true;
+                ApplicationContext.Context.Value?.Logger.LogInformation(
+                    "[diag-pnj] Draw abandonne pour '{Name}' : carteNulle={NoMap} dansGrille={InGrid} texture={HasTexture} sprite='{Sprite}'",
+                    Name, MapInstance == default, Globals.GridMaps.ContainsKey(MapId), Texture != default, Sprite
+                );
+            }
+
             return;
+        }
+
+        if (!_diagLogged)
+        {
+            _diagLogged = true;
+            ApplicationContext.Context.Value?.Logger.LogInformation(
+                "[diag-pnj] Draw ok pour '{Name}' sprite='{Sprite}' x={X} y={Y} masque={Hidden}", Name, Sprite, X, Y, IsHidden
+            );
         }
 
         FloatRect srcRectangle;

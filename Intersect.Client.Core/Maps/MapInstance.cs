@@ -1814,6 +1814,10 @@ public partial class MapInstance : MapDescriptor, IGameObject<Guid, MapInstance>
     //Events
     public void AddEvent(Guid evtId, EventEntityPacket packet)
     {
+        ApplicationContext.CurrentContext.Logger.LogInformation(
+            "[diag-pnj] AddEvent '{Name}' carte='{Map}' chargee={Loaded} image={Graphic}",
+            packet.Name, Name, IsLoaded, packet.Graphic?.Filename
+        );
         if (IsLoaded)
         {
             if (LocalEntities.ContainsKey(evtId))
