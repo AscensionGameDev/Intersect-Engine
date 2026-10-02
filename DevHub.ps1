@@ -6,6 +6,9 @@ $Root = $PSScriptRoot
 $ClientExe = Join-Path $Root 'Intersect.Client\bin\Debug\net8.0\Intersect Client.exe'
 $EditorExe = Join-Path $Root 'Intersect.Editor\bin\Debug\net8.0-windows\win-x64\Intersect Editor.exe'
 $ClientConfig = Join-Path $Root 'Intersect.Client\bin\Debug\net8.0\resources\config.json'
+$EditorConfig = Join-Path $Root 'Intersect.Editor\bin\Debug\net8.0-windows\win-x64\resources\config.json'
+$TestHost = '159.69.156.73'
+$TestPort = 5401
 $SyncBat = Join-Path $env:OneDrive 'IntersectSync\Sync Intersect.bat'
 $PanelUrl = 'http://159.69.156.73/admin/'
 
@@ -19,7 +22,7 @@ $cRed = [System.Drawing.Color]::FromArgb(230, 100, 100)
 
 $form = New-Object System.Windows.Forms.Form
 $form.Text = 'Aetherion Dev Hub'
-$form.ClientSize = New-Object System.Drawing.Size(560, 560)
+$form.ClientSize = New-Object System.Drawing.Size(560, 620)
 $form.StartPosition = 'CenterScreen'
 $form.BackColor = $cBg
 $form.ForeColor = $cText
@@ -79,6 +82,21 @@ function Stop-Apps {
     Write-Log 'Client / Editeur / Serveur local arretes.'
 }
 
+function Set-TestTarget {
+    foreach ($entry in @(@('Client', $ClientConfig), @('Editeur', $EditorConfig))) {
+        if (-not (Test-Path $entry[1])) {
+            Write-Log ('{0} : config.json introuvable (lance-le une fois, puis reessaie).' -f $entry[0])
+            continue
+        }
+        $text = Get-Content $entry[1] -Raw
+        $text = $text -replace '"Host"\s*:\s*"[^"]*"', ('"Host": "{0}"' -f $TestHost)
+        $text = $text -replace '"Port"\s*:\s*\d+', ('"Port": {0}' -f $TestPort)
+        [System.IO.File]::WriteAllText($entry[1], $text, (New-Object System.Text.UTF8Encoding($false)))
+        Write-Log ('{0} -> {1}:{2}' -f $entry[0], $TestHost, $TestPort)
+    }
+    Update-Status
+}
+
 function Start-Console($script) {
     $full = "Set-Location '$Root'; $script; Write-Host ''; Read-Host 'Termine - appuie sur Entree pour fermer'"
     Start-Process powershell -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', $full
@@ -123,6 +141,7 @@ $null = New-HubButton 'Synchro OneDrive' 24 400 250 $false {
     }
 }
 $null = New-HubButton 'Ouvrir le dossier du projet' 286 400 250 $false { Start-Process explorer.exe $Root }
+$null = New-HubButton 'Cibler le serveur de test (Client + Editeur)' 24 454 512 $true { Set-TestTarget }
 
 $logBox = New-Object System.Windows.Forms.TextBox
 $logBox.Multiline = $true
@@ -132,7 +151,7 @@ $logBox.BorderStyle = 'None'
 $logBox.BackColor = $cPanel
 $logBox.ForeColor = $cMuted
 $logBox.Font = New-Object System.Drawing.Font('Consolas', 9)
-$logBox.Location = New-Object System.Drawing.Point(24, 460)
+$logBox.Location = New-Object System.Drawing.Point(24, 514)
 $logBox.Size = New-Object System.Drawing.Size(512, 80)
 $form.Controls.Add($logBox)
 
