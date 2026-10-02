@@ -21,7 +21,7 @@ function Invoke-Remote([string]$Command) {
     $previous = $ErrorActionPreference
     $ErrorActionPreference = 'Continue'
     try {
-        & ssh @sshOpts $target $Command 2>&1 | ForEach-Object { if ($_ -isnot [System.Management.Automation.ErrorRecord]) { $_ } }
+        & ssh @sshOpts $target $Command 2>&1 | ForEach-Object { if ($_ -is [System.Management.Automation.ErrorRecord]) { $_.ToString() } else { $_ } }
     } finally { $ErrorActionPreference = $previous }
     if ($LASTEXITCODE -ne 0) { throw "La commande distante a echoue (code $LASTEXITCODE)." }
 }
@@ -94,6 +94,7 @@ try {
     }
 
     Write-Host "`nApplication (arret, sauvegarde, fusion, redemarrage)..." -ForegroundColor Cyan
+    Send-File $mergeScript '/tmp/pc-merge.py'
     Invoke-Remote 'bash /tmp/pc-publish.sh apply'
 
     Write-Host "`nVerification..." -ForegroundColor Cyan
