@@ -99,7 +99,17 @@ try {
 
     Write-Host "`nVerification..." -ForegroundColor Cyan
     Start-Sleep -Seconds 10
-    Invoke-Remote 'echo "serveur : $(systemctl is-active intersect-server)"; R=/home/aetherion/intersect-server/resources; echo "integrite de la base : $(sqlite3 $R/gamedata.db "PRAGMA integrity_check;")"; echo "cartes : $(sqlite3 $R/gamedata.db "SELECT COUNT(*) FROM Maps;")  objets : $(sqlite3 $R/gamedata.db "SELECT COUNT(*) FROM Items;")  sorts : $(sqlite3 $R/gamedata.db "SELECT COUNT(*) FROM Spells;")  recettes : $(sqlite3 $R/gamedata.db "SELECT COUNT(*) FROM Crafts;")"; echo "comptes (inchanges) : $(sqlite3 $R/playerdata.db "SELECT COUNT(*) FROM Users;")"; rm -f /tmp/pc-publish.sh'
+    $verify = @'
+R=/home/aetherion/intersect-server/resources
+echo "serveur : $(systemctl is-active intersect-server)"
+echo "integrite de la base : $(sqlite3 $R/gamedata.db 'PRAGMA integrity_check;')"
+echo "cartes : $(sqlite3 $R/gamedata.db 'SELECT COUNT(*) FROM Maps;')  objets : $(sqlite3 $R/gamedata.db 'SELECT COUNT(*) FROM Items;')  sorts : $(sqlite3 $R/gamedata.db 'SELECT COUNT(*) FROM Spells;')  recettes : $(sqlite3 $R/gamedata.db 'SELECT COUNT(*) FROM Crafts;')"
+echo "comptes (inchanges) : $(sqlite3 $R/playerdata.db 'SELECT COUNT(*) FROM Users;')"
+rm -f /tmp/pc-publish.sh /tmp/pc-verify.sh
+'@
+    [System.IO.File]::WriteAllText((Join-Path $tmp 'verify.sh'), ($verify -replace "`r`n", "`n"), $utf8)
+    Send-File (Join-Path $tmp 'verify.sh') '/tmp/pc-verify.sh'
+    Invoke-Remote 'bash /tmp/pc-verify.sh'
     Write-Host "`nTermine : le contenu du test est maintenant en production." -ForegroundColor Green
     Write-Host "Rappel : les images liees arrivent chez les joueurs avec 'Publier le client'." -ForegroundColor Yellow
 }
