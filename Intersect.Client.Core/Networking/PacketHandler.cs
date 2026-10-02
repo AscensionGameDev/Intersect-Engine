@@ -455,9 +455,12 @@ internal sealed partial class PacketHandler
     public void HandlePacket(IPacketSender packetSender, EventEntityPacket packet)
     {
         var map = MapInstance.Get(packet.MapId);
-        if (map != null)
+
+        // Une carte qui existe mais n'est pas encore chargee (premiere connexion, cache de cartes vide)
+        // ignorerait l'evenement dans AddEvent : on le met en attente jusqu'a la fin du chargement.
+        if (map is { IsLoaded: true })
         {
-            map?.AddEvent(packet.EntityId, packet);
+            map.AddEvent(packet.EntityId, packet);
         }
         else
         {
