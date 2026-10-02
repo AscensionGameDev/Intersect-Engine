@@ -228,3 +228,5 @@ packages/
 .local/
 
 Custom*.props
+# Dev Hub compile (distribue via OneDrive, trop gros pour git)
+Aetherion Dev Hub.exe
