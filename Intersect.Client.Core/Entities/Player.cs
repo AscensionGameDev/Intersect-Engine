@@ -341,7 +341,8 @@ public partial class Player : Entity, IPlayer
                                       (Controls.IsControlPressed(Control.AttackInteract) || IsAutoAttacking);
 
             var chaseDirection = Direction.None;
-            var isChasingTarget = isAttackHeldOrAuto && ShouldAutoWalkToTarget(out chaseDirection);
+            // Only the double-click auto-attack walks up to its target: holding the attack button just swings where you stand.
+            var isChasingTarget = IsAutoAttacking && ShouldAutoWalkToTarget(out chaseDirection);
 
             if (this == Globals.Me && IsMoving == false)
             {
