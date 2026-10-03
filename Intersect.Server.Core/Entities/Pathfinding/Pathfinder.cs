@@ -182,6 +182,14 @@ partial class Pathfinder
                                                     PathNodeBlockType.AttributeBlock;
                                             }
 
+                                            // Walls from the tileset passability editor block movement exactly like
+                                            // blocked map tiles (movement itself already refuses them).
+                                            foreach (var block in instance.GetCachedTilesetBlocks())
+                                            {
+                                                mapGrid[mx + block.X, my + block.Y].BlockType =
+                                                    PathNodeBlockType.AttributeBlock;
+                                            }
+
                                             //Block of Players, Npcs, and Resources
                                             foreach (var en in instance.GetEntities())
                                             {

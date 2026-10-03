@@ -1434,6 +1434,15 @@ public partial class MapInstance : IMapInstance
     {
         return isPlayer ? mMapBlocks : mNpcMapBlocks;
     }
+
+    /// <summary>
+    /// Ground-level tiles blocked by the tileset passability set in the editor (see <see cref="IsPositionBlocked"/>).
+    /// The pathfinder needs them too, otherwise monsters try to walk straight through those walls instead of around.
+    /// </summary>
+    public BytePoint[] GetCachedTilesetBlocks()
+    {
+        return mTilesetBlocks;
+    }
     #endregion
 
     #region Updates
