@@ -1,3 +1,4 @@
+using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
@@ -13,6 +14,12 @@ public partial class InventoryWindow : Window
     public List<SlotItem> Items { get; set; } = [];
     private readonly ScrollControl _slotContainer;
     private readonly ContextMenu _contextMenu;
+    private TextBox? _searchBox;
+    private string _searchText = string.Empty;
+    private int _windowWidth;
+
+    private const int ExtraWidth = 120;
+    private const int ExtraHeight = 90;
 
     public InventoryWindow(Canvas gameCanvas) : base(gameCanvas, Strings.Inventory.Title, false, nameof(InventoryWindow))
     {
@@ -44,6 +51,27 @@ public partial class InventoryWindow : Window
     protected override void EnsureInitialized()
     {
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+        // WoW-style: more columns, list pulled inside the frame, search box on top.
+        _windowWidth = Width + ExtraWidth;
+        var windowHeight = Height + ExtraHeight;
+        MinimumSize = new Point(_windowWidth, windowHeight);
+        SetSize(_windowWidth, windowHeight);
+        InvalidateAlignment();
+        _slotContainer.Margin = new Margin(28, 38, 8, 14);
+
+        _searchBox = new TextBox(this, "InventorySearchBox")
+        {
+            PlaceholderText = "Rechercher…",
+            TextColor = Color.White,
+            FontName = "sourcesansproblack",
+            FontSize = 11,
+        };
+        _searchBox.SetBounds(28, 8, _windowWidth - 68, 24);
+        _searchBox.TextChanged += (_, _) => _searchText = (_searchBox.Text ?? string.Empty).Trim();
+        Interface.FocusComponents.Add(_searchBox);
+        _searchBox.SubmitPressed += (_, _) => _searchBox.Blur();
+
         InitItemContainer();
     }
 
@@ -64,6 +92,12 @@ public partial class InventoryWindow : Window
             return;
         }
 
+        // Release keyboard focus when clicking anywhere else, otherwise the game keeps ignoring input.
+        if (_searchBox is { HasFocus: true } && InputHandler.IsLeftMouseDown && InputHandler.HoveredControl != _searchBox)
+        {
+            _searchBox.Blur();
+        }
+
         IsClosable = Globals.CanCloseInventory;
 
         if (Globals.Me?.Inventory == default)
@@ -75,6 +109,10 @@ public partial class InventoryWindow : Window
         for (var slotIndex = 0; slotIndex < slotCount; slotIndex++)
         {
             Items[slotIndex].Update();
+            if (Items[slotIndex] is InventoryItem inventoryItem)
+            {
+                inventoryItem.ApplySearch(_searchText);
+            }
         }
     }
 
@@ -85,7 +123,7 @@ public partial class InventoryWindow : Window
             Items.Add(new InventoryItem(this, _slotContainer, slotIndex, _contextMenu));
         }
 
-        PopulateSlotContainer.Populate(_slotContainer, Items);
+        PopulateSlotContainer.Populate(_slotContainer, Items, _windowWidth - 82);
     }
 
     public override void Hide()

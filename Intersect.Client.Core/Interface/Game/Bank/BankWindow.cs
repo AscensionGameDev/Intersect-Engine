@@ -1,3 +1,6 @@
+using Intersect.Client.Framework.Gwen.Input;
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
@@ -13,6 +16,12 @@ public partial class BankWindow : Window
     public List<SlotItem> Items = [];
     private readonly ScrollControl _slotContainer;
     private readonly ContextMenu _contextMenu;
+    private TextBox? _searchBox;
+    private string _searchText = string.Empty;
+    private int _windowWidth;
+
+    private const int ExtraWidth = 260;
+    private const int ExtraHeight = 90;
 
     //Init
     public BankWindow(Canvas gameCanvas) : base(
@@ -60,6 +69,39 @@ public partial class BankWindow : Window
     protected override void EnsureInitialized()
     {
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+        try
+        {
+            // WoW-style: wider window (more columns), list pulled inside the frame, search box on top.
+            _windowWidth = Width + ExtraWidth;
+            var windowHeight = Height + ExtraHeight;
+            MinimumSize = new Point(_windowWidth, windowHeight);
+            SetSize(_windowWidth, windowHeight);
+            InvalidateAlignment();
+
+            // Dock to the left (WoW-style) so the wider bank never covers the inventory on the right:
+            // a window hidden behind the bank cannot receive dropped items.
+            Alignment = [Alignments.Left, Alignments.CenterV];
+            Margin = new Margin(20, 0, 0, 0);
+            _slotContainer.Margin = new Margin(30, 38, 8, 14);
+
+            _searchBox = new TextBox(this, "BankSearchBox")
+            {
+                PlaceholderText = "Rechercher…",
+                TextColor = Color.White,
+                FontName = "sourcesansproblack",
+                FontSize = 11,
+            };
+            _searchBox.SetBounds(30, 8, _windowWidth - 74, 24);
+            _searchBox.TextChanged += (_, _) => _searchText = (_searchBox.Text ?? string.Empty).Trim();
+            Interface.FocusComponents.Add(_searchBox);
+            _searchBox.SubmitPressed += (_, _) => _searchBox.Blur();
+        }
+        catch (Exception exception)
+        {
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Failed to set up the bank window extras");
+        }
+
         InitItemContainer();
     }
 
@@ -70,7 +112,7 @@ public partial class BankWindow : Window
             Items.Add(new BankItem(this, _slotContainer, slotIndex, _contextMenu));
         }
 
-        PopulateSlotContainer.Populate(_slotContainer, Items);
+        PopulateSlotContainer.Populate(_slotContainer, Items, _windowWidth - 84);
     }
 
     public void Update()
@@ -80,11 +122,18 @@ public partial class BankWindow : Window
             return;
         }
 
+        // Release keyboard focus when clicking anywhere else, otherwise the game keeps ignoring input.
+        if (_searchBox is { HasFocus: true } && InputHandler.IsLeftMouseDown && InputHandler.HoveredControl != _searchBox)
+        {
+            _searchBox.Blur();
+        }
+
         for (var i = 0; i < Items.Count; i++)
         {
             if (Items[i] is BankItem bankItem)
             {
                 bankItem.Update();
+                bankItem.ApplySearch(_searchText);
             }
         }
     }
