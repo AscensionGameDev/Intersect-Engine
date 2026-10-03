@@ -234,6 +234,8 @@ public partial class Controls : IControlSet
                 TrySave();
             }
 
+            MigrateInteractSplit();
+
             return success;
         }
         catch (Exception exception)
@@ -241,6 +243,34 @@ public partial class Controls : IControlSet
             ApplicationContext.Context.Value?.Logger.LogError(exception, "Error while getting controls");
             return false;
         }
+    }
+
+    /// <summary>
+    /// "E" used to be bound to Attack/Interact, so talking to an NPC also swung the weapon. Interact is now its own
+    /// control (E by default); drop E from Attack/Interact once, so attacking stays on the mouse button.
+    /// </summary>
+    private void MigrateInteractSplit()
+    {
+        const string flag = "controls_interact_split_done";
+        if (Globals.Database.HasPreference(flag))
+        {
+            return;
+        }
+
+        if (TryGetMappingFor(Control.AttackInteract, out var attackMapping))
+        {
+            for (var bindingIndex = 0; bindingIndex < attackMapping.Bindings.Count; bindingIndex++)
+            {
+                var binding = attackMapping.Bindings[bindingIndex];
+                if (binding.Modifier == Keys.None && binding.Key == Keys.E)
+                {
+                    attackMapping.Bindings[bindingIndex] = ControlBinding.Default;
+                    _ = TrySaveBindingFor(Control.AttackInteract, bindingIndex, attackMapping.Bindings[bindingIndex]);
+                }
+            }
+        }
+
+        Globals.Database.SavePreference(flag, true);
     }
 
     private bool AreAllControlsBroken()

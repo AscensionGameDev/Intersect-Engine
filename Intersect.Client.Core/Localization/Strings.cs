@@ -926,7 +926,8 @@ public static partial class Strings
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public static Dictionary<string, LocalizedString> KeyDictionary = new()
         {
-            {"attackinteract", @"Attack/Interact:"},
+            {"attackinteract", @"Attack:"},
+            {"interact", @"Interact (NPC, objects):"},
             {"block", @"Block:"},
             {"autotarget", @"Auto Target:"},
             {"enter", @"Chat:"},

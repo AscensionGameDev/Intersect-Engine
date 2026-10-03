@@ -270,6 +270,10 @@ public static partial class Input
                             Globals.Database.AutoSoftRetargetOnSelfCast = !Globals.Database.AutoSoftRetargetOnSelfCast;
                             break;
 
+                        case Control.Interact:
+                            _ = Globals.Me?.TryInteract();
+                            break;
+
                         case Control.PickUp:
                             if (Globals.Me != default && Globals.Me.MapInstance != default)
                             {

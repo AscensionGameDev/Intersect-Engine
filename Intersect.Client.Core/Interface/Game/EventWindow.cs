@@ -281,7 +281,7 @@ public partial class EventWindow : Panel
                 optionButton.IsDisabled = disableResponse;
             }
         }
-        else if (Controls.IsControlJustPressed(Control.AttackInteract))
+        else if (Controls.IsControlJustPressed(Control.AttackInteract) || Controls.IsControlJustPressed(Control.Interact))
         {
             SkipTypewriting();
             PostLayout.Enqueue(_promptScroller.ScrollToBottom);

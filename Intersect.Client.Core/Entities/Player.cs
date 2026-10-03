@@ -2296,6 +2296,42 @@ public partial class Player : Entity, IPlayer
         _ => (0, 0),
     };
 
+    /// <summary>
+    /// Talks to / activates an action-button event on the tile the player is facing, without ever swinging a weapon.
+    /// </summary>
+    public bool TryInteract()
+    {
+        if (Globals.Me == default || IsAttacking || IsBlocking || IsCasting)
+        {
+            return false;
+        }
+
+        int x = Globals.Me.X;
+        int y = Globals.Me.Y;
+        var map = Globals.Me.MapId;
+        var (fdx, fdy) = DirectionOffset(Globals.Me.DirectionFacing);
+        x += fdx;
+        y += fdy;
+        TryGetRealLocation(ref x, ref y, ref map);
+
+        foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values.Cast<MapInstance>())
+        {
+            foreach (var en in eventMap.LocalEntities)
+            {
+                if (en.Value is Event { Trigger: EventTrigger.ActionButton } evt &&
+                    evt.MapId == map &&
+                    evt.X == x &&
+                    evt.Y == y)
+                {
+                    PacketSender.SendActivateEvent(en.Key);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public bool TryAttack()
     {
         if (IsAttacking || IsBlocking || (IsMoving && !Options.Instance.Player.AllowCombatMovement) || Globals.Me == default)
