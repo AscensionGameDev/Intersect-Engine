@@ -1793,8 +1793,12 @@ public partial class Entity : IEntity
         }
 
         var name = Name;
-        if ((this is Player && Options.Instance.Player.ShowLevelByName) ||
-            (Type == EntityType.GlobalEntity && Options.Instance.Npc.ShowLevelByName))
+        if (this is Player)
+        {
+            // Always shown for players: "Name [Nv: 60]".
+            name = $"{Name} [Nv: {Level}]";
+        }
+        else if (Type == EntityType.GlobalEntity && Options.Instance.Npc.ShowLevelByName)
         {
             name = Strings.GameWindow.EntityNameAndLevel.ToString(Name, Level);
         }

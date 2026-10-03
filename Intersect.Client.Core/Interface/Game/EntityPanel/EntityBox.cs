@@ -400,6 +400,15 @@ public partial class EntityBox
         {
             EntityName.SetText(MyEntity.Name);
             UpdateLevel();
+
+            // The local player's name and level are shown over their head ("Name [Nv: 60]"), not in this box.
+            if (ReferenceEquals(MyEntity, Globals.Me))
+            {
+                EntityName.Hide();
+                EntityLevel.Hide();
+                EntityNameAndLevel.Hide();
+            }
+
             UpdateMap();
             UpdateHpBar(elapsedTime);
             UpdateMpBar(elapsedTime);
