@@ -77,6 +77,7 @@ public partial class BankWindow : Window
         };
         _searchBox.SetBounds(16, 8, Width - 56, 24);
         _searchBox.TextChanged += (_, _) => _searchText = (_searchBox.Text ?? string.Empty).Trim();
+        Interface.FocusComponents.Add(_searchBox);
 
         InitItemContainer();
     }

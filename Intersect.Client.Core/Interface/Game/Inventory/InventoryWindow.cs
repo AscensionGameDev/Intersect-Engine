@@ -60,6 +60,7 @@ public partial class InventoryWindow : Window
         };
         _searchBox.SetBounds(14, 8, Width - 52, 24);
         _searchBox.TextChanged += (_, _) => _searchText = (_searchBox.Text ?? string.Empty).Trim();
+        Interface.FocusComponents.Add(_searchBox);
 
         InitItemContainer();
     }

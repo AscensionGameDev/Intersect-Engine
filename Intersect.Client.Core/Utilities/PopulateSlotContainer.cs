@@ -12,7 +12,7 @@ public static class PopulateSlotContainer
         {
             var slot = items[slotIndex];
             var outerSize = slot.OuterBounds.Size;
-            var itemsPerRow = (int)(containerInnerWidth / outerSize.X);
+            var itemsPerRow = Math.Max(1, (int)(containerInnerWidth / outerSize.X));
 
             var column = slotIndex % itemsPerRow;
             var row = slotIndex / itemsPerRow;
