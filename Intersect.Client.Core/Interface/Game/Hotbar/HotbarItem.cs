@@ -202,6 +202,23 @@ public partial class HotbarItem : SlotItem
         }
     }
 
+    private bool TrySwapWithHotbarSlotUnderCursor(Entities.Player player)
+    {
+        var targetNode = Interface.FindComponentUnderCursor();
+        while (targetNode != default)
+        {
+            if (targetNode is HotbarItem targetSlot && targetSlot.SlotIndex != SlotIndex)
+            {
+                player.HotbarSwap(SlotIndex, targetSlot.SlotIndex);
+                return true;
+            }
+
+            targetNode = targetNode.Parent;
+        }
+
+        return false;
+    }
+
     public override bool DragAndDrop_HandleDrop(Package package, int x, int y)
     {
         if (Globals.Me is not { } player)
@@ -220,7 +237,9 @@ public partial class HotbarItem : SlotItem
                 case HotbarItem hotbarItem:
                     if (hotbarItem.SlotIndex == SlotIndex)
                     {
-                        return false;
+                        // We are the source slot (drop handlers are called on the dragged-from slot): the target is
+                        // whichever hotbar slot is under the cursor.
+                        return TrySwapWithHotbarSlotUnderCursor(player);
                     }
 
                     player.HotbarSwap(SlotIndex, hotbarItem.SlotIndex);

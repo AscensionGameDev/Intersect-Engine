@@ -1,6 +1,3 @@
-using Intersect.Client.General;
-using Intersect.Core;
-using Microsoft.Extensions.Logging;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
@@ -40,14 +37,6 @@ public partial class Draggable(Base parent, string name) : ImagePanel(parent, na
 
     public override void DragAndDrop_EndDragging(bool success, int x, int y)
     {
-        ApplicationContext.Context.Value?.Logger.LogInformation(
-            "[diag-dnd] fin du glisser : succes={Success} survole={Hovered} sousCurseur={Under} occupe={Busy} focusSaisie={Focus}",
-            success,
-            DragAndDrop.HoveredControl?.GetType().Name ?? "(aucun)",
-            Interface.FindComponentUnderCursor()?.GetType().Name ?? "(aucun)",
-            Globals.Me?.IsBusy,
-            Interface.HasInputFocus()
-        );
         IsVisibleInParent = true;
     }
 }

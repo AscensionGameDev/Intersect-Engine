@@ -33,11 +33,15 @@ public partial class HotBarWindow : ImagePanel
 
         SizeToChildren();
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        // Slot positions come from the layout; clamping them to the (tightly sized) window pushed the last slot
+        // against the one before it, so keep them where the layout put them and leave the window a little room.
         foreach (var item in Items)
         {
-            item.RestrictToParent = true;
+            item.RestrictToParent = false;
         }
+
         SizeToChildren();
+        SetSize(Width + 8, Height);
     }
 
     public void Update()
