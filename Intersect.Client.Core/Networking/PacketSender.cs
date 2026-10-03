@@ -135,8 +135,22 @@ public static partial class PacketSender
         Network.SendPacket(new BlockPacket(blocking));
     }
 
+    private static long _lastDirectionSentAt;
+
+    // Facing is cosmetic, but several code paths (mouse aim, auto-chase against an obstacle, blocked movement) can
+    // fight over it every frame and flip it back and forth. At 60 fps that is enough direction packets to trip the
+    // server's flood protection and get the player disconnected, so never send them more than ~12 times a second.
+    private const long MinDirectionPacketIntervalMs = 80;
+
     public static void SendDirection(Direction dir)
     {
+        var now = Environment.TickCount64;
+        if (now - _lastDirectionSentAt < MinDirectionPacketIntervalMs)
+        {
+            return;
+        }
+
+        _lastDirectionSentAt = now;
         Network.SendPacket(new DirectionPacket(dir));
     }
 
