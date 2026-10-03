@@ -305,6 +305,11 @@ public partial class HotbarItem : SlotItem
                 }
 
                 _keyLabel.Text = assembledKeyText;
+
+                // The layout's tiny grey digit is hard to read: bigger, bright, and given room in the slot corner.
+                _keyLabel.FontSize = 12;
+                _keyLabel.TextColorOverride = new Color(255, 255, 235, 140);
+                _keyLabel.SetSize(Math.Max(14, assembledKeyText.Length * 9), 16);
                 _keyLabel.IsVisibleInTree = true;
             }
 
