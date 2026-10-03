@@ -1,3 +1,5 @@
+using Intersect.Client.Framework.Input;
+using Intersect.Client.Localization;
 using System.Numerics;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.GenericClasses;
@@ -168,6 +170,84 @@ public partial class Event : Entity
     }
 
     public override void Draw()
+    {
+        DrawEvent();
+        DrawInteractionHint();
+    }
+
+    private static readonly Color HintGold = new(255, 255, 215, 0);
+
+    private string GetInteractKeyLabel()
+    {
+        if (Intersect.Client.Core.Controls.Controls.ActiveControls?.TryGetMappingFor(Control.Interact, out var mapping) == true &&
+            mapping.Bindings.FirstOrDefault(binding => binding.Key != Keys.None) is { } bound)
+        {
+            var keyName = bound.Key.GetKeyId(isModifier: false).ToLowerInvariant();
+            return Strings.Keys.KeyDictionary.TryGetValue(keyName, out var localized)
+                ? localized.ToString()
+                : keyName.ToUpperInvariant();
+        }
+
+        return "E";
+    }
+
+    /// <summary>
+    /// When the mouse is over an event that reacts to the action button (NPCs, objects), outline it and show a
+    /// small "Press E" bubble above it, so the player knows they can interact.
+    /// </summary>
+    private void DrawInteractionHint()
+    {
+        if (Trigger != EventTrigger.ActionButton || IsHidden || Graphic.Type == EventGraphicType.None ||
+            Graphics.Renderer == default || WorldPos.Width <= 0 || WorldPos.Height <= 0 ||
+            Globals.Me == default || Interface.Interface.DoesMouseHitInterface())
+        {
+            return;
+        }
+
+        var mouse = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
+        if (mouse.X < WorldPos.X || mouse.X > WorldPos.X + WorldPos.Width ||
+            mouse.Y < WorldPos.Y || mouse.Y > WorldPos.Y + WorldPos.Height)
+        {
+            return;
+        }
+
+        // Outline around the sprite.
+        var white = Graphics.Renderer.WhitePixel;
+        var src = new FloatRect(0, 0, 1, 1);
+        var rect = WorldPos;
+        const float thickness = 1.5f;
+        Graphics.DrawGameTexture(white, src, new FloatRect(rect.X - thickness, rect.Y - thickness, rect.Width + thickness * 2, thickness), HintGold);
+        Graphics.DrawGameTexture(white, src, new FloatRect(rect.X - thickness, rect.Y + rect.Height, rect.Width + thickness * 2, thickness), HintGold);
+        Graphics.DrawGameTexture(white, src, new FloatRect(rect.X - thickness, rect.Y, thickness, rect.Height), HintGold);
+        Graphics.DrawGameTexture(white, src, new FloatRect(rect.X + rect.Width, rect.Y, thickness, rect.Height), HintGold);
+
+        // Bubble above the sprite.
+        var text = $"Press \"{GetInteractKeyLabel()}\"";
+        var textSize = Graphics.Renderer.MeasureText(text, Graphics.EntityNameFont, Graphics.EntityNameFontSize, 1);
+        var bubbleWidth = textSize.X + 14;
+        var bubbleHeight = textSize.Y + 8;
+        var bubbleX = rect.X + (rect.Width / 2f) - (bubbleWidth / 2f);
+        var bubbleY = rect.Y - bubbleHeight - 10;
+
+        Graphics.DrawGameTexture(white, src, new FloatRect(bubbleX - 1, bubbleY - 1, bubbleWidth + 2, bubbleHeight + 2), HintGold);
+        Graphics.DrawGameTexture(white, src, new FloatRect(bubbleX, bubbleY, bubbleWidth, bubbleHeight), new Color(235, 20, 20, 28));
+        // Little tail pointing down at the sprite.
+        Graphics.DrawGameTexture(white, src, new FloatRect(bubbleX + (bubbleWidth / 2f) - 3, bubbleY + bubbleHeight, 6, 3), new Color(235, 20, 20, 28));
+        Graphics.Renderer.DrawString(
+            text,
+            Graphics.EntityNameFont,
+            Graphics.EntityNameFontSize,
+            bubbleX + 7,
+            bubbleY + 4,
+            1,
+            Color.White,
+            true,
+            null,
+            Color.Black
+        );
+    }
+
+    private void DrawEvent()
     {
         WorldPos.Reset();
         if (MapInstance == default || !Globals.GridMaps.ContainsKey(MapId) || !TryEnsureTexture(out var texture))
