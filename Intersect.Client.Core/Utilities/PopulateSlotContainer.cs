@@ -5,14 +5,14 @@ namespace Intersect.Client.Utilities;
 
 public static class PopulateSlotContainer
 {
-    public static void Populate(ScrollControl slotContainer, List<SlotItem> items, float? widthOverride = null)
+    public static void Populate(ScrollControl slotContainer, List<SlotItem> items)
     {
-        float containerInnerWidth = widthOverride ?? slotContainer.InnerPanel.InnerWidth;
+        float containerInnerWidth = slotContainer.InnerPanel.InnerWidth;
         for (var slotIndex = 0; slotIndex < items.Count; slotIndex++)
         {
             var slot = items[slotIndex];
             var outerSize = slot.OuterBounds.Size;
-            var itemsPerRow = Math.Max(1, (int)(containerInnerWidth / outerSize.X));
+            var itemsPerRow = (int)(containerInnerWidth / outerSize.X);
 
             var column = slotIndex % itemsPerRow;
             var row = slotIndex / itemsPerRow;

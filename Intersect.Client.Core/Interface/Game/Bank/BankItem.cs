@@ -249,21 +249,6 @@ public partial class BankItem : SlotItem
 
     #endregion
 
-    /// <summary>Dims the slot when its item does not match the search text (empty text matches everything).</summary>
-    public void ApplySearch(string search)
-    {
-        if (Globals.BankSlots is not { Length: > 0 } bankSlots || SlotIndex >= bankSlots.Length ||
-            bankSlots[SlotIndex] is not { Descriptor: { } descriptor, Quantity: > 0 })
-        {
-            return;
-        }
-
-        var matches = string.IsNullOrEmpty(search) ||
-                      descriptor.Name.Contains(search, StringComparison.CurrentCultureIgnoreCase);
-        var color = descriptor.Color;
-        Icon.RenderColor = matches ? color : new Color(60, color.R, color.G, color.B);
-    }
-
     public override void Update()
     {
         if (Globals.Me == default)
