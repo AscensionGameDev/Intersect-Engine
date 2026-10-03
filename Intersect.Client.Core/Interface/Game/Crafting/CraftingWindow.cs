@@ -53,13 +53,15 @@ public partial class CraftingWindow : Window
     private readonly List<Label> mIngredientNames = [];
     private Label? mBlockLabel;
     private Label? mEmptyLabel;
-    private Label? mDescriptionLabel;
+    private readonly List<Label> mDescriptionLines = [];
+    private const int DescriptionLineCount = 3;
     private Label? mRequiresLabel;
 
     // Extra room compared to the layout JSON so long texts and recipe names stay inside the frame.
     private const int ExtraWidth = 150;
     private const int ExtraHeight = 80;
-    private const int ListWidth = 290;
+    private const int ListWidth = 270;
+    private const int ListInset = 26;
     private const int IconSize = 48;
 
     // Right-hand detail panel (WoW-style): product, description, requirement, components, stats.
@@ -306,9 +308,10 @@ public partial class CraftingWindow : Window
                                 CustomColors.Items.Rarities.TryGetValue(craftedItemDescriptor.Rarity, out var rarityColor)
             ? rarityColor
             : new Color(255, 120, 230, 120);
-        if (mDescriptionLabel != null)
+        var descriptionLines = WrapText(craftedItemDescriptor?.Description ?? string.Empty, Math.Max(10, (int)(mRightW / 6.5)));
+        for (var line = 0; line < mDescriptionLines.Count; line++)
         {
-            mDescriptionLabel.Text = craftedItemDescriptor?.Description ?? string.Empty;
+            mDescriptionLines[line].Text = line < descriptionLines.Count ? descriptionLines[line] : string.Empty;
         }
 
         if (mRequiresLabel != null)
@@ -641,7 +644,8 @@ public partial class CraftingWindow : Window
         SetSize(Width + ExtraWidth, Height + ExtraHeight);
         Align.Center(this);
 
-        mRecipes.SetBounds(mRecipes.X, mRecipes.Y, ListWidth, mRecipes.Height + ExtraHeight);
+        // The layout puts the list slightly outside the window frame; pull it inside.
+        mRecipes.SetBounds(mRecipes.X + ListInset, mRecipes.Y, ListWidth, mRecipes.Height + ExtraHeight);
 
         mRightX = mRecipes.X + ListWidth + 16;
         mRightW = Width - mRightX - 44;
@@ -660,14 +664,18 @@ public partial class CraftingWindow : Window
         // Product name next to the icon created in LoadCraftRecipe.
         mLblProduct.SetBounds(mRightX + IconSize + 12, 10, mRightW - IconSize - 12, 24);
 
-        mDescriptionLabel = new Label(this, "DescriptionLabel")
+        // The description is wrapped by hand over a few single-line labels (Gwen's wrapped labels collapse here).
+        for (var line = 0; line < DescriptionLineCount; line++)
         {
-            Font = mLblProduct.Font,
-            TextColor = new Color(255, 235, 235, 235),
-            WrappingBehavior = WrappingBehavior.Wrapped,
-            Text = string.Empty,
-        };
-        mDescriptionLabel.SetBounds(mRightX, 66, mRightW, 56);
+            var lineLabel = new Label(this, $"DescriptionLine{line}")
+            {
+                Font = mLblProduct.Font,
+                TextColor = new Color(255, 235, 235, 235),
+                Text = string.Empty,
+            };
+            lineLabel.SetBounds(mRightX, 62 + (line * 20), mRightW, 20);
+            mDescriptionLines.Add(lineLabel);
+        }
 
         mRequiresLabel = new Label(this, "RequiresLabel")
         {
@@ -696,6 +704,31 @@ public partial class CraftingWindow : Window
             Text = string.Empty,
         };
         mBlockLabel.SetBounds(mRightX, blockY, mRightW, 22);
+    }
+
+    private static List<string> WrapText(string text, int maxChars)
+    {
+        var lines = new List<string>();
+        var current = string.Empty;
+        foreach (var word in text.Replace('\n', ' ').Split(' ', StringSplitOptions.RemoveEmptyEntries))
+        {
+            if (current.Length > 0 && current.Length + 1 + word.Length > maxChars)
+            {
+                lines.Add(current);
+                current = word;
+            }
+            else
+            {
+                current = current.Length == 0 ? word : $"{current} {word}";
+            }
+        }
+
+        if (current.Length > 0)
+        {
+            lines.Add(current);
+        }
+
+        return lines;
     }
 
     private void ShowEmptyMessage()
