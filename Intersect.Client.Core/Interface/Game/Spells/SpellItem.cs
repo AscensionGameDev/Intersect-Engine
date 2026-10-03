@@ -161,6 +161,11 @@ public partial class SpellItem : SlotItem
             return false;
         }
 
+        // The spell/item tooltip can still be showing under the cursor when the spell is released; it would be found
+        // instead of the hotbar slot below it and the drop would be refused.
+        Interface.GameUi.SpellDescriptionWindow?.Hide();
+        Interface.GameUi.ItemDescriptionWindow?.Hide();
+
         var targetNode = Interface.FindComponentUnderCursor();
 
         var chain = new List<string>();
