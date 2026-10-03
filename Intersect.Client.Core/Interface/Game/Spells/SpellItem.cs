@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Logging;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
@@ -167,18 +166,6 @@ public partial class SpellItem : SlotItem
         Interface.GameUi.ItemDescriptionWindow?.Hide();
 
         var targetNode = Interface.FindComponentUnderCursor();
-
-        var chain = new List<string>();
-        for (var node = targetNode; node != default; node = node.Parent)
-        {
-            chain.Add(node.GetType().Name);
-        }
-
-        Intersect.Core.ApplicationContext.Context.Value?.Logger.LogInformation(
-            "[diag-sort] depot du sort {Slot} : sousCurseur={Chain}",
-            SlotIndex,
-            string.Join(" > ", chain)
-        );
 
         // Find the first parent acceptable in that tree that can accept the package
         while (targetNode != default)
