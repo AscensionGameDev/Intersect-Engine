@@ -290,22 +290,22 @@ public partial class Event : Entity
             Graphics.DrawGameTexture(
                 white,
                 src,
-                new FloatRect(WorldPos.X + (edgeX * scaleX), WorldPos.Y + (edgeY * scaleY), scaleX, scaleY),
+                new FloatRect(WorldPos.X + ((edgeX - 0.5f) * scaleX), WorldPos.Y + ((edgeY - 0.5f) * scaleY), scaleX * 2, scaleY * 2),
                 HintGold
             );
         }
 
-        // Bubble above the sprite's real top (clear of the name drawn just over the head).
+        // Bubble under the sprite's feet: above the head it collides with the name and the guild/title labels.
         var text = $"Press \"{GetInteractKeyLabel()}\"";
         var textSize = Graphics.Renderer.MeasureText(text, Graphics.EntityNameFont, Graphics.EntityNameFontSize, 1);
         var bubbleWidth = textSize.X + 14;
         var bubbleHeight = textSize.Y + 8;
         var bubbleX = WorldPos.X + ((outline.MinX + outline.MaxX + 1) / 2f * scaleX) - (bubbleWidth / 2f);
-        var bubbleY = WorldPos.Y + (outline.MinY * scaleY) - bubbleHeight - 28;
+        var bubbleY = WorldPos.Y + ((outline.MaxY + 1) * scaleY) + 10;
 
         Graphics.DrawGameTexture(white, src, new FloatRect(bubbleX - 1, bubbleY - 1, bubbleWidth + 2, bubbleHeight + 2), HintGold);
         Graphics.DrawGameTexture(white, src, new FloatRect(bubbleX, bubbleY, bubbleWidth, bubbleHeight), new Color(235, 20, 20, 28));
-        Graphics.DrawGameTexture(white, src, new FloatRect(bubbleX + (bubbleWidth / 2f) - 3, bubbleY + bubbleHeight, 6, 3), new Color(235, 20, 20, 28));
+        Graphics.DrawGameTexture(white, src, new FloatRect(bubbleX + (bubbleWidth / 2f) - 3, bubbleY - 3, 6, 3), new Color(235, 20, 20, 28));
         Graphics.Renderer.DrawString(
             text,
             Graphics.EntityNameFont,
