@@ -18,6 +18,7 @@ public partial class BankWindow : Window
     private readonly ContextMenu _contextMenu;
     private TextBox? _searchBox;
     private string _searchText = string.Empty;
+    private int _windowWidth;
 
     private const int ExtraWidth = 260;
     private const int ExtraHeight = 90;
@@ -72,7 +73,11 @@ public partial class BankWindow : Window
         try
         {
             // WoW-style: wider window (more columns), list pulled inside the frame, search box on top.
-            SetSize(Width + ExtraWidth, Height + ExtraHeight);
+            _windowWidth = Width + ExtraWidth;
+            var windowHeight = Height + ExtraHeight;
+            MinimumSize = new Point(_windowWidth, windowHeight);
+            SetSize(_windowWidth, windowHeight);
+            InvalidateAlignment();
 
             // Dock to the left (WoW-style) so the wider bank never covers the inventory on the right:
             // a window hidden behind the bank cannot receive dropped items.
@@ -87,7 +92,7 @@ public partial class BankWindow : Window
                 FontName = "sourcesansproblack",
                 FontSize = 11,
             };
-            _searchBox.SetBounds(30, 8, Width - 74, 24);
+            _searchBox.SetBounds(30, 8, _windowWidth - 74, 24);
             _searchBox.TextChanged += (_, _) => _searchText = (_searchBox.Text ?? string.Empty).Trim();
             Interface.FocusComponents.Add(_searchBox);
             _searchBox.SubmitPressed += (_, _) => _searchBox.Blur();
@@ -107,7 +112,7 @@ public partial class BankWindow : Window
             Items.Add(new BankItem(this, _slotContainer, slotIndex, _contextMenu));
         }
 
-        PopulateSlotContainer.Populate(_slotContainer, Items, Width - 84);
+        PopulateSlotContainer.Populate(_slotContainer, Items, _windowWidth - 84);
     }
 
     public void Update()

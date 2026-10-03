@@ -16,6 +16,7 @@ public partial class InventoryWindow : Window
     private readonly ContextMenu _contextMenu;
     private TextBox? _searchBox;
     private string _searchText = string.Empty;
+    private int _windowWidth;
 
     private const int ExtraWidth = 120;
     private const int ExtraHeight = 90;
@@ -52,7 +53,11 @@ public partial class InventoryWindow : Window
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
         // WoW-style: more columns, list pulled inside the frame, search box on top.
-        SetSize(Width + ExtraWidth, Height + ExtraHeight);
+        _windowWidth = Width + ExtraWidth;
+        var windowHeight = Height + ExtraHeight;
+        MinimumSize = new Point(_windowWidth, windowHeight);
+        SetSize(_windowWidth, windowHeight);
+        InvalidateAlignment();
         _slotContainer.Margin = new Margin(28, 38, 8, 14);
 
         _searchBox = new TextBox(this, "InventorySearchBox")
@@ -62,7 +67,7 @@ public partial class InventoryWindow : Window
             FontName = "sourcesansproblack",
             FontSize = 11,
         };
-        _searchBox.SetBounds(28, 8, Width - 68, 24);
+        _searchBox.SetBounds(28, 8, _windowWidth - 68, 24);
         _searchBox.TextChanged += (_, _) => _searchText = (_searchBox.Text ?? string.Empty).Trim();
         Interface.FocusComponents.Add(_searchBox);
         _searchBox.SubmitPressed += (_, _) => _searchBox.Blur();
@@ -118,7 +123,7 @@ public partial class InventoryWindow : Window
             Items.Add(new InventoryItem(this, _slotContainer, slotIndex, _contextMenu));
         }
 
-        PopulateSlotContainer.Populate(_slotContainer, Items, Width - 82);
+        PopulateSlotContainer.Populate(_slotContainer, Items, _windowWidth - 82);
     }
 
     public override void Hide()
