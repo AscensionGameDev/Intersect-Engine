@@ -110,7 +110,7 @@ public partial class InventoryWindow : Window
             Items.Add(new InventoryItem(this, _slotContainer, slotIndex, _contextMenu));
         }
 
-        PopulateSlotContainer.Populate(_slotContainer, Items);
+        PopulateSlotContainer.Populate(_slotContainer, Items, Width - 70);
     }
 
     public override void Hide()

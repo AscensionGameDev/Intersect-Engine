@@ -100,7 +100,7 @@ public partial class BankWindow : Window
             Items.Add(new BankItem(this, _slotContainer, slotIndex, _contextMenu));
         }
 
-        PopulateSlotContainer.Populate(_slotContainer, Items);
+        PopulateSlotContainer.Populate(_slotContainer, Items, Width - 70);
     }
 
     public void Update()

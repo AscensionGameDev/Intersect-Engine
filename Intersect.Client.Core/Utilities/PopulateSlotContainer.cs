@@ -5,9 +5,9 @@ namespace Intersect.Client.Utilities;
 
 public static class PopulateSlotContainer
 {
-    public static void Populate(ScrollControl slotContainer, List<SlotItem> items)
+    public static void Populate(ScrollControl slotContainer, List<SlotItem> items, float? widthOverride = null)
     {
-        float containerInnerWidth = slotContainer.InnerPanel.InnerWidth;
+        float containerInnerWidth = widthOverride ?? slotContainer.InnerPanel.InnerWidth;
         for (var slotIndex = 0; slotIndex < items.Count; slotIndex++)
         {
             var slot = items[slotIndex];
