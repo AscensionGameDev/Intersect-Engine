@@ -73,6 +73,11 @@ public partial class BankWindow : Window
         {
             // WoW-style: wider window (more columns), list pulled inside the frame, search box on top.
             SetSize(Width + ExtraWidth, Height + ExtraHeight);
+
+            // Dock to the left (WoW-style) so the wider bank never covers the inventory on the right:
+            // a window hidden behind the bank cannot receive dropped items.
+            Alignment = [Alignments.Left, Alignments.CenterV];
+            Margin = new Margin(20, 0, 0, 0);
             _slotContainer.Margin = new Margin(30, 38, 8, 14);
 
             _searchBox = new TextBox(this, "BankSearchBox")
