@@ -1,3 +1,5 @@
+using Intersect.Core;
+using Microsoft.Extensions.Logging;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
@@ -66,18 +68,27 @@ public partial class BankWindow : Window
     {
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
-        // WoW-style: wider window (more columns), list pulled inside the frame, search box on top.
-        SetSize(Width + ExtraWidth, Height + ExtraHeight);
-        Align.Center(this);
-        _slotContainer.Margin = new Margin(16, 38, 8, 12);
-
-        _searchBox = new TextBox(this, "BankSearchBox")
+        try
         {
-            PlaceholderText = "Rechercher…",
-        };
-        _searchBox.SetBounds(16, 8, Width - 56, 24);
-        _searchBox.TextChanged += (_, _) => _searchText = (_searchBox.Text ?? string.Empty).Trim();
-        Interface.FocusComponents.Add(_searchBox);
+            // WoW-style: wider window (more columns), list pulled inside the frame, search box on top.
+            SetSize(Width + ExtraWidth, Height + ExtraHeight);
+            _slotContainer.Margin = new Margin(16, 38, 8, 12);
+
+            _searchBox = new TextBox(this, "BankSearchBox")
+            {
+                PlaceholderText = "Rechercher…",
+                TextColor = Color.White,
+                FontName = "sourcesansproblack",
+                FontSize = 11,
+            };
+            _searchBox.SetBounds(16, 8, Width - 56, 24);
+            _searchBox.TextChanged += (_, _) => _searchText = (_searchBox.Text ?? string.Empty).Trim();
+            Interface.FocusComponents.Add(_searchBox);
+        }
+        catch (Exception exception)
+        {
+            ApplicationContext.Context.Value?.Logger.LogError(exception, "Failed to set up the bank window extras");
+        }
 
         InitItemContainer();
     }

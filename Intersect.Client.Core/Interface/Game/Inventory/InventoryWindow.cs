@@ -57,6 +57,9 @@ public partial class InventoryWindow : Window
         _searchBox = new TextBox(this, "InventorySearchBox")
         {
             PlaceholderText = "Rechercher…",
+            TextColor = Color.White,
+            FontName = "sourcesansproblack",
+            FontSize = 11,
         };
         _searchBox.SetBounds(14, 8, Width - 52, 24);
         _searchBox.TextChanged += (_, _) => _searchText = (_searchBox.Text ?? string.Empty).Trim();
