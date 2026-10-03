@@ -997,6 +997,9 @@ public partial class Entity : IEntity
     /// </summary>
     public virtual bool ShouldDraw => !IsHidden && (!IsStealthed || this == Globals.Me || Globals.Me?.IsInMyParty(Id) == true);
 
+    /// <summary>How close (in tiles) the player must be for an event's name to be displayed.</summary>
+    private const float EventNameProximityTiles = 4f;
+
     /// <summary>
     /// Returns whether the name of this entity should be drawn.
     /// </summary>
@@ -1024,7 +1027,15 @@ public partial class Entity : IEntity
                     return false;
 
                 case Event _:
-                    return true;
+                    // Names of NPCs/objects only show when the mouse is over them or the player is close, so the
+                    // screen is not covered with names.
+                    if (IsHovered)
+                    {
+                        return true;
+                    }
+
+                    return Globals.Me is { } localPlayer &&
+                           Vector2.Distance(Origin, localPlayer.Origin) <= EventNameProximityTiles * Options.Instance.Map.TileWidth;
 
                 case Player player:
                     if (IsHovered)
