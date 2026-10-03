@@ -2424,38 +2424,7 @@ public partial class Player : Entity, IPlayer
             }
         }
 
-        {
-            int x = Globals.Me.X;
-            int y = Globals.Me.Y;
-            var map = Globals.Me.MapId;
-            var (fdx, fdy) = DirectionOffset(Globals.Me.DirectionFacing);
-            x += fdx;
-            y += fdy;
-            TryGetRealLocation(ref x, ref y, ref map);
-
-            foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values.Cast<MapInstance>())
-            {
-                foreach (var en in eventMap.LocalEntities)
-                {
-                    if (en.Value == null)
-                    {
-                        continue;
-                    }
-
-                    if (en.Value.MapId == map && en.Value.X == x && en.Value.Y == y)
-                    {
-                        if (en.Value is Event evt && evt.Trigger == EventTrigger.ActionButton)
-                        {
-                            //Talk to Event
-                            PacketSender.SendActivateEvent(en.Key);
-                            AttackTimer = Timing.Global.Milliseconds + CalculateAttackTime();
-
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
+        // Talking to events is no longer part of attacking: that is the separate Interact control (see TryInteract).
 
         //Projectile/empty swing for animations
         PacketSender.SendAttack(Guid.Empty, aimMapId, aimX, aimY);
