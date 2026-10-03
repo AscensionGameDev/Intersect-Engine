@@ -5839,8 +5839,42 @@ public partial class Player : Entity
         return true;
     }
 
+    private long _lastWeaponWarningAt;
+
+    /// <summary>
+    /// Attacking and casting spells both require an equipped weapon. Returns false (after telling the player, at most
+    /// once every two seconds) when no weapon is equipped.
+    /// </summary>
+    public bool HasWeaponEquipped(string action)
+    {
+        if (TryGetEquippedItem(Options.Instance.Equipment.WeaponSlot, out _))
+        {
+            return true;
+        }
+
+        var now = Timing.Global.Milliseconds;
+        if (now - _lastWeaponWarningAt >= 2000)
+        {
+            _lastWeaponWarningAt = now;
+            var what = action == "attaquer" ? "attaquer" : "lancer des sorts";
+            PacketSender.SendChatMsg(
+                this,
+                $"Tu dois équiper une arme pour {what}.",
+                ChatMessageType.Error,
+                CustomColors.Alerts.Error
+            );
+        }
+
+        return false;
+    }
+
     public void UseSpell(int spellSlot, Entity target, bool softRetargetOnSelfCast, Guid aimMapId = default, byte aimX = 0, byte aimY = 0)
     {
+        if (!HasWeaponEquipped("lancer des sorts"))
+        {
+            return;
+        }
+
         var spellDescriptorId = Spells[spellSlot].SpellId;
         Target = target;
         if (!SpellDescriptor.TryGet(spellDescriptorId, out var spellDescriptor))

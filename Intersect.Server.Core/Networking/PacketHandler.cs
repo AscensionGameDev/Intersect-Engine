@@ -1313,6 +1313,12 @@ internal sealed partial class PacketHandler
             return;
         }
 
+        // Attacking (like casting spells) needs an equipped weapon.
+        if (!player.HasWeaponEquipped("attaquer"))
+        {
+            return;
+        }
+
         var utcDeltaMs = (Timing.Global.TicksUtc - packet.UTC) / TimeSpan.TicksPerMillisecond;
         var latencyAdjustmentMs = -(client.Ping + Math.Max(0, utcDeltaMs));
 

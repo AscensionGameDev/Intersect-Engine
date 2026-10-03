@@ -1453,6 +1453,116 @@ public partial class Player : Entity, IPlayer
         TryUseSpell(slot);
     }
 
+    public override void Draw()
+    {
+        base.Draw();
+        DrawAttackSlash();
+    }
+
+    private static (float X, float Y) DirectionVector(Direction direction) => direction switch
+    {
+        Direction.Up => (0f, -1f),
+        Direction.Down => (0f, 1f),
+        Direction.Left => (-1f, 0f),
+        Direction.Right => (1f, 0f),
+        Direction.UpLeft => (-0.7071f, -0.7071f),
+        Direction.UpRight => (0.7071f, -0.7071f),
+        Direction.DownLeft => (-0.7071f, 0.7071f),
+        Direction.DownRight => (0.7071f, 0.7071f),
+        _ => (0f, 1f),
+    };
+
+    /// <summary>
+    /// A quick bright slash arc swept in front of the player during the first part of an attack, so every swing is
+    /// visible (including swings at thin air) without needing any animation content.
+    /// </summary>
+    private void DrawAttackSlash()
+    {
+        if (Graphics.Renderer == default || IsHidden)
+        {
+            return;
+        }
+
+        var totalTime = CalculateAttackTime();
+        var remaining = AttackTimer - Timing.Global.Milliseconds;
+        if (totalTime <= 0 || remaining <= 0 || remaining > totalTime)
+        {
+            return;
+        }
+
+        const float visibleFraction = 0.5f;
+        var progress = 1f - (remaining / (float)totalTime);
+        if (progress > visibleFraction)
+        {
+            return;
+        }
+
+        var sweep = progress / visibleFraction;
+        var facing = this == Globals.Me && AttackAimDirection != Direction.None ? AttackAimDirection : DirectionFacing;
+        var (dx, dy) = DirectionVector(facing);
+        var baseAngle = MathF.Atan2(dy, dx);
+
+        var tileWidth = Options.Instance.Map.TileWidth;
+        var tileHeight = Options.Instance.Map.TileHeight;
+        var centerX = Origin.X + (dx * tileWidth * 0.3f);
+        var centerY = Origin.Y - (tileHeight * 0.6f) + (dy * tileHeight * 0.3f);
+        var radius = tileWidth * 0.8f;
+
+        const float halfArc = 70f * MathF.PI / 180f;
+        var headAngle = baseAngle - halfArc + (2f * halfArc * sweep);
+        const int segments = 9;
+        var white = Graphics.Renderer.WhitePixel;
+        var src = new FloatRect(0, 0, 1, 1);
+
+        for (var segment = 0; segment < segments; segment++)
+        {
+            // Each segment trails the head a little further behind, and fades with it and with the swing's progress.
+            var trail = segment / (float)segments;
+            var angle = headAngle - (trail * halfArc * 0.9f);
+            if (angle < baseAngle - halfArc)
+            {
+                continue;
+            }
+
+            var alpha = (int)(230 * (1f - trail) * (1f - (sweep * 0.5f)));
+            var x = centerX + (MathF.Cos(angle) * radius);
+            var y = centerY + (MathF.Sin(angle) * radius);
+            var length = tileWidth * 0.28f;
+            var thickness = 4f - (trail * 2.5f);
+            Graphics.DrawGameTexture(
+                white,
+                src,
+                new FloatRect(x - (length / 2f), y - (thickness / 2f), length, thickness),
+                new Color(alpha, 255, 245, 200),
+                rotationDegrees: (angle * 180f / MathF.PI) + 90f
+            );
+        }
+    }
+
+    private long _lastWeaponWarningAt;
+
+    /// <summary>Attacking and casting spells both need an equipped weapon (the server enforces it too).</summary>
+    private bool HasWeaponEquipped(string what)
+    {
+        var weaponSlot = Options.Instance.Equipment.WeaponSlot;
+        if (weaponSlot >= 0 && weaponSlot < MyEquipment.Length &&
+            MyEquipment[weaponSlot] >= 0 && MyEquipment[weaponSlot] < Options.Instance.Player.MaxInventory)
+        {
+            return true;
+        }
+
+        var now = Timing.Global.Milliseconds;
+        if (now - _lastWeaponWarningAt >= 2000)
+        {
+            _lastWeaponWarningAt = now;
+            ChatboxMsg.AddMessage(
+                new ChatboxMsg($"Tu dois équiper une arme pour {what}.", CustomColors.Alerts.Error, ChatMessageType.Combat)
+            );
+        }
+
+        return false;
+    }
+
     public void TryUseSpell(int index)
     {
         if (index < 0 || Spells.Length <= index)
@@ -1462,6 +1572,11 @@ public partial class Player : Entity, IPlayer
 
         var spell = Spells[index];
         if (spell.Id == default)
+        {
+            return;
+        }
+
+        if (this == Globals.Me && !HasWeaponEquipped("lancer des sorts"))
         {
             return;
         }
@@ -2335,6 +2450,11 @@ public partial class Player : Entity, IPlayer
     public bool TryAttack()
     {
         if (IsAttacking || IsBlocking || (IsMoving && !Options.Instance.Player.AllowCombatMovement) || Globals.Me == default)
+        {
+            return false;
+        }
+
+        if (!HasWeaponEquipped("attaquer"))
         {
             return false;
         }
