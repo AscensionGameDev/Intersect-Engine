@@ -1,0 +1,75 @@
+diff --git a/LiteNetLib/NetManager.Socket.cs b/LiteNetLib/NetManager.Socket.cs
+index 4087570..90e0c8a 100644
+--- a/LiteNetLib/NetManager.Socket.cs
++++ b/LiteNetLib/NetManager.Socket.cs
+@@ -120,8 +120,8 @@ namespace LiteNetLib
+             }
+             catch (Exception e)
+             {
+-                //protects socket receive thread
+-                NetDebug.WriteError("[NM] SocketReceiveThread error: " + e);
++                //protects socket receive thread (without ever spinning: a repeating error used to fill the disk)
++                ReportReceiveError(e);
+             }
+         }
+ 
+@@ -188,8 +188,8 @@ namespace LiteNetLib
+                 }
+                 catch (Exception e)
+                 {
+-                    //protects socket receive thread
+-                    NetDebug.WriteError("[NM] SocketReceiveThread error: " + e);
++                    //protects socket receive thread (without ever spinning: a repeating error used to fill the disk)
++                    ReportReceiveError(e);
+                 }
+             }
+ 
+@@ -249,12 +249,37 @@ namespace LiteNetLib
+             }
+         }
+ 
++        private long _lastReceiveErrorLogTick;
++
++        /// <summary>
++        /// A receive error that repeats on every pass of the loop (typically while the sockets are being closed during
++        /// shutdown) used to spin the thread and write the same stack trace millions of times. Log at most once per
++        /// second and yield the CPU so the loop can never run hot.
++        /// </summary>
++        private void ReportReceiveError(Exception e)
++        {
++            var now = Environment.TickCount64;
++            if (now - _lastReceiveErrorLogTick >= 1000)
++            {
++                _lastReceiveErrorLogTick = now;
++                NetDebug.WriteError("[NM] SocketReceiveThread error: " + e);
++            }
++
++            Thread.Sleep(5);
++        }
++
+         private void ReceiveFrom(Socket s, ref EndPoint bufferEndPoint)
+         {
+             var packet = PoolGetPacket(NetConstants.MaxPacketSize);
+ #if NET8_0_OR_GREATER
+             var sockAddr = s.AddressFamily == AddressFamily.InterNetwork ? _sockAddrCacheV4 : _sockAddrCacheV6;
+             packet.Size = s.ReceiveFrom(packet, SocketFlags.None, sockAddr);
++            if (sockAddr.Family != AddressFamily.InterNetwork && sockAddr.Family != AddressFamily.InterNetworkV6)
++            {
++                // Nothing usable was received (the socket is being closed): drop it instead of throwing on every pass.
++                return;
++            }
++
+             OnMessageReceived(packet, TryGetPeer(sockAddr, out var peer) ? peer : (IPEndPoint)bufferEndPoint.Create(sockAddr));
+ #else
+             packet.Size = s.ReceiveFrom(packet.RawData, 0, NetConstants.MaxPacketSize, SocketFlags.None, ref bufferEndPoint);
+@@ -323,8 +348,8 @@ namespace LiteNetLib
+                 }
+                 catch (Exception e)
+                 {
+-                    //protects socket receive thread
+-                    NetDebug.WriteError("[NM] SocketReceiveThread error: " + e);
++                    //protects socket receive thread (without ever spinning: a repeating error used to fill the disk)
++                    ReportReceiveError(e);
+                 }
+             }
+         }

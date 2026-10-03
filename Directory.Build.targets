@@ -1,0 +1,21 @@
+<Project>
+
+  <!--
+    LiteNetLib is a git submodule of the upstream project, so local fixes cannot be committed inside it. The fixes live
+    in /patches and are applied here, once, right before LiteNetLib is compiled (a reverse check skips patches that are
+    already applied).
+
+    litenetlib-receive-loop.patch: a receive error that repeats on every pass (e.g. while the sockets are being closed
+    during shutdown) used to spin the thread and write the same stack trace millions of times (a 179 MB error log).
+  -->
+  <Target Name="ApplyLiteNetLibPatches"
+          BeforeTargets="BeforeCompile"
+          Condition="'$(MSBuildProjectName)' == 'LiteNetLib' And Exists('$(MSBuildThisFileDirectory)patches\litenetlib-receive-loop.patch')">
+    <Exec Command="git apply --reverse --check --ignore-whitespace &quot;$(MSBuildThisFileDirectory)patches\litenetlib-receive-loop.patch&quot; &gt;nul 2&gt;&amp;1 || git apply --ignore-whitespace &quot;$(MSBuildThisFileDirectory)patches\litenetlib-receive-loop.patch&quot;"
+          WorkingDirectory="$(MSBuildThisFileDirectory)vendor\LiteNetLib"
+          ContinueOnError="true"
+          IgnoreExitCode="true"
+          StandardOutputImportance="low" />
+  </Target>
+
+</Project>
