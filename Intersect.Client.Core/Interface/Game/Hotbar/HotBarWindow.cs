@@ -41,7 +41,7 @@ public partial class HotBarWindow : ImagePanel
         }
 
         SizeToChildren();
-        SetSize(Width + 8, Height);
+        SetSize(Width + 8, Height + 8);
 
         // Raise the bar so the slots are fully visible above the bottom edge of the screen.
         AlignmentPadding = new Padding { Bottom = 36 };
