@@ -277,6 +277,7 @@ public partial class CraftingWindow : Window
             var hasEnough = onHand >= craftingIngredient.Quantity;
             var nameLabel = new Label(mItemContainer, "IngredientName")
             {
+                Font = mLblProduct.Font,
                 Text = ItemDescriptor.TryGet(craftingIngredient.ItemId, out var ingredientDescriptor)
                     ? $"{ingredientDescriptor.Name} x{craftingIngredient.Quantity}"
                     : "?",
@@ -661,6 +662,7 @@ public partial class CraftingWindow : Window
 
         mDescriptionLabel = new Label(this, "DescriptionLabel")
         {
+            Font = mLblProduct.Font,
             TextColor = new Color(255, 235, 235, 235),
             WrappingBehavior = WrappingBehavior.Wrapped,
             Text = string.Empty,
@@ -669,17 +671,10 @@ public partial class CraftingWindow : Window
 
         mRequiresLabel = new Label(this, "RequiresLabel")
         {
+            Font = mLblProduct.Font,
             Text = string.Empty,
         };
         mRequiresLabel.SetBounds(mRightX, 128, mRightW, 22);
-
-        // New labels use the default (larger) font; align the layout-JSON labels on it so every text reads the same.
-        if (mDescriptionLabel.Font is { } readableFont)
-        {
-            mLblProduct.Font = readableFont;
-            mLblIngredients.Font = readableFont;
-            mLblCraftingTime.Font = readableFont;
-        }
 
         mLblIngredients.Text = "Composants :";
         mLblIngredients.TextColor = GoldColor;
@@ -696,6 +691,7 @@ public partial class CraftingWindow : Window
 
         mBlockLabel = new Label(this, "BlockReasonLabel")
         {
+            Font = mLblProduct.Font,
             TextColor = new Color(255, 230, 150, 60),
             Text = string.Empty,
         };
@@ -706,6 +702,7 @@ public partial class CraftingWindow : Window
     {
         mEmptyLabel = new Label(this, "EmptyRecipesLabel")
         {
+            Font = mLblProduct.Font,
             TextColor = new Color(255, 200, 200, 200),
             Text = "Aucune recette disponible ici.\nApprends ce métier auprès du formateur.",
         };
