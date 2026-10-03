@@ -8,11 +8,23 @@ con.execute("ATTACH DATABASE ? AS src", (source_path,))
 cur = con.cursor()
 
 # Tables de contenu a fusionner (jamais les comptes : ce script ne connait que gamedata.db).
-TABLES = ["Spells", "Items", "Crafts", "CraftingTables", "Animations", "Events", "Maps"]
+# Definitions made in the editor. Tables that hold live game state (variables, leaderboards, territory control, time)
+# are deliberately NOT merged: they would overwrite what is happening on the production server.
+TABLES = [
+    "Spells", "Items", "Crafts", "CraftingTables", "Animations", "Events", "Maps",
+    "Npcs", "Shops", "Projectiles", "Classes", "Quests", "Resources", "Tilesets",
+    "Titles", "Factions", "Furniture", "Mounts", "Pets", "Achievements", "Dungeons",
+]
 # NON fusionne : MapFolders (l'arborescence listerait en moins les cartes qui n'existent que en prod).
 
 report = []
 for table in TABLES:
+    in_main = cur.execute("SELECT 1 FROM main.sqlite_master WHERE type='table' AND name=?", (table,)).fetchone()
+    in_src = cur.execute("SELECT 1 FROM src.sqlite_master WHERE type='table' AND name=?", (table,)).fetchone()
+    if not in_main or not in_src:
+        print("%-16s absente d'un cote : ignoree" % table)
+        continue
+
     cols = [c[1] for c in cur.execute("PRAGMA main.table_info(%s)" % table)]
     src_cols = [c[1] for c in cur.execute("PRAGMA src.table_info(%s)" % table)]
     if cols != src_cols:
