@@ -1,3 +1,4 @@
+using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Core;
 using Microsoft.Extensions.Logging;
 using Intersect.Client.Core;
@@ -84,6 +85,7 @@ public partial class BankWindow : Window
             _searchBox.SetBounds(16, 8, Width - 56, 24);
             _searchBox.TextChanged += (_, _) => _searchText = (_searchBox.Text ?? string.Empty).Trim();
             Interface.FocusComponents.Add(_searchBox);
+            _searchBox.SubmitPressed += (_, _) => _searchBox.Blur();
         }
         catch (Exception exception)
         {
@@ -108,6 +110,12 @@ public partial class BankWindow : Window
         if (IsVisibleInTree == false)
         {
             return;
+        }
+
+        // Release keyboard focus when clicking anywhere else, otherwise the game keeps ignoring input.
+        if (_searchBox is { HasFocus: true } && InputHandler.IsLeftMouseDown && InputHandler.HoveredControl != _searchBox)
+        {
+            _searchBox.Blur();
         }
 
         for (var i = 0; i < Items.Count; i++)

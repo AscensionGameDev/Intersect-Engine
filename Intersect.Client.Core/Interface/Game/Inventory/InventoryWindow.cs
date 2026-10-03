@@ -1,3 +1,4 @@
+using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
@@ -64,6 +65,7 @@ public partial class InventoryWindow : Window
         _searchBox.SetBounds(14, 8, Width - 52, 24);
         _searchBox.TextChanged += (_, _) => _searchText = (_searchBox.Text ?? string.Empty).Trim();
         Interface.FocusComponents.Add(_searchBox);
+        _searchBox.SubmitPressed += (_, _) => _searchBox.Blur();
 
         InitItemContainer();
     }
@@ -83,6 +85,12 @@ public partial class InventoryWindow : Window
         if (!IsVisibleInParent)
         {
             return;
+        }
+
+        // Release keyboard focus when clicking anywhere else, otherwise the game keeps ignoring input.
+        if (_searchBox is { HasFocus: true } && InputHandler.IsLeftMouseDown && InputHandler.HoveredControl != _searchBox)
+        {
+            _searchBox.Blur();
         }
 
         IsClosable = Globals.CanCloseInventory;
