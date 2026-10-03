@@ -570,14 +570,6 @@ public static partial class InputHandler
             mouseFocusedControl = null;
         }
 
-        // While dragging a package, hover must always track the real cursor position. A stray/duplicate mouse-down
-        // right as the drag starts can re-lock MouseFocus onto whatever was hovered at that instant, which would
-        // otherwise freeze the hovered control for the rest of the drag and break every drop target past that point.
-        if (DragAndDrop.IsDragging)
-        {
-            mouseFocusedControl = null;
-        }
-
         nextNode = mouseFocusedControl ?? nextNode;
 
         var previousNode = HoveredControl;
